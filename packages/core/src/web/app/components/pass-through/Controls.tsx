@@ -1,31 +1,33 @@
-import classNames from 'classnames';
 import React, { useCallback, useContext, useMemo } from 'react';
+
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Switch, Tooltip } from 'antd';
+import classNames from 'classnames';
 import { sprintf } from 'sprintf-js';
 
-import browser from '@app/implementations/browser';
 import constant from '@core/app/actions/beambox/constant';
-import storage from '@app/implementations/storage';
+import workareaManager from '@core/app/svgedit/workarea';
 import UnitInput from '@core/app/widgets/UnitInput';
 import useI18n from '@core/helpers/useI18n';
-import workareaManager from '@core/app/svgedit/workarea';
+
+import browser from '@app/implementations/browser';
+import storage from '@app/implementations/storage';
 
 import styles from './PassThrough.module.scss';
 import { PassThroughContext } from './PassThroughContext';
 
-const Controls = (): JSX.Element => {
+const Controls = (): React.JSX.Element => {
   const lang = useI18n().pass_through;
 
   const {
+    guideMark,
+    passThroughHeight,
+    referenceLayer,
+    setGuideMark,
+    setPassThroughHeight,
+    setReferenceLayer,
     workarea,
     workareaObj,
-    passThroughHeight,
-    setPassThroughHeight,
-    referenceLayer,
-    setReferenceLayer,
-    guideMark,
-    setGuideMark,
   } = useContext(PassThroughContext);
 
   const { max, min } = useMemo(
@@ -42,12 +44,12 @@ const Controls = (): JSX.Element => {
     [max, min, setPassThroughHeight],
   );
 
-  const { show, x: guideMarkX, width: guideMarkWidth } = guideMark;
-  const { xMax, xMin, widthMax } = useMemo(
+  const { show, width: guideMarkWidth, x: guideMarkX } = guideMark;
+  const { widthMax, xMax, xMin } = useMemo(
     () => ({
+      widthMax: (workareaObj.width - guideMarkX) * 2,
       xMax: workareaObj.width - guideMarkWidth / 2,
       xMin: guideMarkWidth / 2,
-      widthMax: (workareaObj.width - guideMarkX) * 2,
     }),
     [workareaObj.width, guideMarkX, guideMarkWidth],
   );
@@ -73,16 +75,28 @@ const Controls = (): JSX.Element => {
   const isInch = useMemo(() => storage.get('default-units') === 'inches', []);
   const objectSize = useMemo(() => {
     const svgcontent = document.getElementById('svgcontent') as unknown as SVGSVGElement;
-    if (!svgcontent) return { width: 0, height: 0 };
+
+    if (!svgcontent) {
+      return { height: 0, width: 0 };
+    }
+
     const bbox = svgcontent.getBBox();
     let { height } = bbox;
-    if (bbox.y + height > workareaManager.height) height = workareaManager.height - bbox.y;
-    if (bbox.y < 0) height += bbox.y;
+
+    if (bbox.y + height > workareaManager.height) {
+      height = workareaManager.height - bbox.y;
+    }
+
+    if (bbox.y < 0) {
+      height += bbox.y;
+    }
+
     return {
-      width: Math.round((bbox.width / constant.dpmm / (isInch ? 25.4 : 1)) * 100) / 100,
       height: Math.round((height / constant.dpmm / (isInch ? 25.4 : 1)) * 100) / 100,
+      width: Math.round((bbox.width / constant.dpmm / (isInch ? 25.4 : 1)) * 100) / 100,
     };
   }, [isInch]);
+
   return (
     <div className={styles.controls}>
       {lang.help_links[workarea] && (
@@ -100,21 +114,19 @@ const Controls = (): JSX.Element => {
         <div>
           {lang.workarea_height}
           <UnitInput
+            addonAfter={isInch ? 'in' : 'mm'}
             className={styles.input}
-            value={passThroughHeight}
-            onChange={handleWorkareaHeightChange}
+            controls={false}
+            isInch={isInch}
             max={max}
             min={min}
-            addonAfter={isInch ? 'in' : 'mm'}
-            isInch={isInch}
-            controls={false}
+            onChange={handleWorkareaHeightChange}
+            value={passThroughHeight}
           />
           <Tooltip
             overlayClassName={styles.tooltip}
             title={`${lang.height_desc}\n(${
-              isInch
-                ? `${(min / 25.4).toFixed(2)}' ~ ${(max / 25.4).toFixed(2)}'`
-                : `${min}mm ~ ${max}mm`
+              isInch ? `${(min / 25.4).toFixed(2)}' ~ ${(max / 25.4).toFixed(2)}'` : `${min}mm ~ ${max}mm`
             })`}
           >
             <QuestionCircleOutlined className={styles.hint} />
@@ -126,8 +138,8 @@ const Controls = (): JSX.Element => {
           <div className={classNames(styles.cell, styles.title)}>{lang.ref_layer}</div>
           <div className={styles.cell}>
             <Switch
-              disabled={objectSize.width === 0 || objectSize.height === 0}
               checked={referenceLayer}
+              disabled={objectSize.width === 0 || objectSize.height === 0}
               onChange={() => setReferenceLayer((val) => !val)}
             />
           </div>
@@ -136,8 +148,8 @@ const Controls = (): JSX.Element => {
           <div className={classNames(styles.cell, styles.title)}>{lang.guide_mark}</div>
           <div className={styles.cell}>
             <Switch
-              disabled={objectSize.width === 0 || objectSize.height === 0}
               checked={show}
+              disabled={objectSize.width === 0 || objectSize.height === 0}
               onChange={(val) => setGuideMark((cur) => ({ ...cur, show: val }))}
             />
           </div>
@@ -148,14 +160,14 @@ const Controls = (): JSX.Element => {
               <div className={classNames(styles.cell, styles.title)}>{lang.guide_mark_length}</div>
               <div className={styles.cell}>
                 <UnitInput
+                  addonAfter={isInch ? 'in' : 'mm'}
                   className={styles.input}
-                  value={guideMarkWidth}
-                  onChange={setWidth}
+                  controls={false}
+                  isInch={isInch}
                   max={widthMax}
                   min={0}
-                  addonAfter={isInch ? 'in' : 'mm'}
-                  isInch={isInch}
-                  controls={false}
+                  onChange={setWidth}
+                  value={guideMarkWidth}
                 />
               </div>
             </div>
@@ -163,14 +175,14 @@ const Controls = (): JSX.Element => {
               <div className={classNames(styles.cell, styles.title)}>{lang.guide_mark_x}</div>
               <div className={styles.cell}>
                 <UnitInput
+                  addonAfter={isInch ? 'in' : 'mm'}
                   className={styles.input}
-                  value={guideMarkX}
-                  onChange={setX}
+                  controls={false}
+                  isInch={isInch}
                   max={xMax}
                   min={xMin}
-                  addonAfter={isInch ? 'in' : 'mm'}
-                  isInch={isInch}
-                  controls={false}
+                  onChange={setX}
+                  value={guideMarkX}
                 />
               </div>
             </div>

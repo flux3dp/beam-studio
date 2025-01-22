@@ -6,6 +6,7 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import styles from './ElementTitle.module.scss';
 
 let svgCanvas;
+
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
@@ -16,8 +17,9 @@ interface Props {
   selectedElem: Element | null;
 }
 
-function ElementTitle({ selectedElem }: Props): JSX.Element {
+function ElementTitle({ selectedElem }: Props): React.JSX.Element {
   let content = '';
+
   if (selectedElem) {
     if (selectedElem.getAttribute('data-tempgroup') === 'true') {
       content = LANG.tag_names.multi_select;
@@ -40,9 +42,11 @@ function ElementTitle({ selectedElem }: Props): JSX.Element {
       }
     }
   }
+
   if (!content) {
     return null;
   }
+
   return <div className={styles['element-title']}>{content}</div>;
 }
 

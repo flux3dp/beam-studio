@@ -1,11 +1,8 @@
-import React, { Dispatch, SetStateAction } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
+import React from 'react';
+
+import { QuestionCircleOutlined, ReloadOutlined, ZoomInOutlined, ZoomOutOutlined } from '@ant-design/icons';
 import { Button, Tooltip } from 'antd';
-import {
-  QuestionCircleOutlined,
-  ReloadOutlined,
-  ZoomInOutlined,
-  ZoomOutOutlined,
-} from '@ant-design/icons';
 
 import useI18n from '@core/helpers/useI18n';
 
@@ -18,7 +15,7 @@ interface Props {
   setZoomKey: Dispatch<SetStateAction<number>>;
 }
 
-const CanvasController = ({ setResetKey, setZoomKey }: Props): JSX.Element => {
+const CanvasController = ({ setResetKey, setZoomKey }: Props): React.JSX.Element => {
   const lang = useI18n().boxgen;
 
   const onClick = (type: ControlType) => {
@@ -37,14 +34,8 @@ const CanvasController = ({ setResetKey, setZoomKey }: Props): JSX.Element => {
     }
   };
 
-  const renderButton = (type: ControlType, icon: JSX.Element) => (
-    <Button
-      className={styles.button}
-      shape="circle"
-      type="text"
-      icon={icon}
-      onClick={() => onClick(type)}
-    />
+  const renderButton = (type: ControlType, icon: React.JSX.Element) => (
+    <Button className={styles.button} icon={icon} onClick={() => onClick(type)} shape="circle" type="text" />
   );
 
   return (
@@ -62,10 +53,10 @@ const CanvasController = ({ setResetKey, setZoomKey }: Props): JSX.Element => {
       </div>
       <div>
         <Tooltip
-          overlayClassName={styles['tooltip-text']}
-          title={navigator.maxTouchPoints >= 1 ? lang.control_tooltip_touch : lang.control_tooltip}
-          placement="topRight"
           arrow={{ pointAtCenter: true }}
+          overlayClassName={styles['tooltip-text']}
+          placement="topRight"
+          title={navigator.maxTouchPoints >= 1 ? lang.control_tooltip_touch : lang.control_tooltip}
         >
           <QuestionCircleOutlined className={styles.tooltip} />
         </Tooltip>

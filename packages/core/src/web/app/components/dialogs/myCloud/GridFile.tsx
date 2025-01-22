@@ -1,7 +1,5 @@
-import classNames from 'classnames';
-import dayjs from 'dayjs';
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { Dropdown, Input, Popconfirm } from 'antd';
+
 import {
   ArrowRightOutlined,
   CopyOutlined,
@@ -10,12 +8,16 @@ import {
   EditOutlined,
   EllipsisOutlined,
 } from '@ant-design/icons';
+import { Dropdown, Input, Popconfirm } from 'antd';
+import classNames from 'classnames';
+import dayjs from 'dayjs';
 
-import useI18n from '@core/helpers/useI18n';
-import { getWorkarea, WorkAreaModel } from '@core/app/constants/workarea-constants';
-import { IFile } from '@core/interfaces/IMyCloud';
+import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { MyCloudContext } from '@core/app/contexts/MyCloudContext';
 import { useIsMobile } from '@core/helpers/system-helper';
+import useI18n from '@core/helpers/useI18n';
+import type { IFile } from '@core/interfaces/IMyCloud';
 
 import styles from './GridFile.module.scss';
 
@@ -28,21 +30,25 @@ const getFileSize = (bytes: number) => {
   const units = ['B', 'KB', 'MB', 'GB'];
   let size = bytes;
   let i = 0;
+
   for (; i < units.length - 1; i += 1) {
-    if (size > k) size /= k;
-    else break;
+    if (size > k) {
+      size /= k;
+    } else {
+      break;
+    }
   }
+
   return size.toFixed(1) + units[i];
 };
 
-const GridFile = ({ file }: Props): JSX.Element => {
+const GridFile = ({ file }: Props): React.JSX.Element => {
   const lang = useI18n().my_cloud.action;
   const isMobile = useIsMobile();
   const workarea = getWorkarea(file.workarea as WorkAreaModel);
   const [actionDropdownOpen, setActionDropdownOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const { fileOperation, editingId, setEditingId, selectedId, setSelectedId } =
-    useContext(MyCloudContext);
+  const { editingId, fileOperation, selectedId, setEditingId, setSelectedId } = useContext(MyCloudContext);
   const inputRef = useRef(null);
   const [error, setError] = useState(false);
   const isEditing = useMemo(() => editingId === file.uuid, [editingId, file]);
@@ -51,25 +57,29 @@ const GridFile = ({ file }: Props): JSX.Element => {
   const onClick = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation();
     setSelectedId(file.uuid);
+
     if (isMobile) {
       setActionDropdownOpen(!actionDropdownOpen);
     }
   };
 
   const onDoubleClick = () => {
-    if (!isMobile) fileOperation.open(file);
+    if (!isMobile) {
+      fileOperation.open(file);
+    }
   };
 
   const actions = [
-    { key: 'open', icon: <ArrowRightOutlined />, label: lang.open },
-    { key: 'rename', icon: <EditOutlined />, label: lang.rename },
-    { key: 'duplicate', icon: <CopyOutlined />, label: lang.duplicate },
-    { key: 'download', icon: <DownloadOutlined />, label: lang.download },
-    { key: 'delete', icon: <DeleteOutlined />, label: lang.delete, danger: true },
+    { icon: <ArrowRightOutlined />, key: 'open', label: lang.open },
+    { icon: <EditOutlined />, key: 'rename', label: lang.rename },
+    { icon: <CopyOutlined />, key: 'duplicate', label: lang.duplicate },
+    { icon: <DownloadOutlined />, key: 'download', label: lang.download },
+    { danger: true, icon: <DeleteOutlined />, key: 'delete', label: lang.delete },
   ];
 
   const onAction = (e: { key: string }) => {
     setActionDropdownOpen(false);
+
     if (e.key === 'open') {
       fileOperation.open(file);
     } else if (e.key === 'rename') {
@@ -87,9 +97,12 @@ const GridFile = ({ file }: Props): JSX.Element => {
   const onChangeName = async (e) => {
     if (error) {
       setEditingId(null);
+
       return;
     }
+
     const newName = e.target.value;
+
     await fileOperation.rename(file, newName);
   };
 
@@ -104,35 +117,33 @@ const GridFile = ({ file }: Props): JSX.Element => {
       <div className={styles['img-container']}>
         <div
           className={styles['guide-lines']}
-          style={{ background: "url('core-img/flux-plus/guide-lines.png')" }}
           onClick={onClick}
           onDoubleClick={onDoubleClick}
+          style={{ background: "url('core-img/flux-plus/guide-lines.png')" }}
         >
-          {file.thumbnail_url && (
-            <img src={`${file.thumbnail_url}?lastmod=${file.last_modified_at}`} />
-          )}
+          {file.thumbnail_url && <img src={`${file.thumbnail_url}?lastmod=${file.last_modified_at}`} />}
           <Dropdown
-            menu={{ items: actions, onClick: onAction }}
-            trigger={['click']}
-            placement="bottomRight"
             getPopupContainer={(triggerNode) => triggerNode.parentElement}
-            overlayClassName={styles.overlay}
-            open={actionDropdownOpen}
+            menu={{ items: actions, onClick: onAction }}
             onOpenChange={setActionDropdownOpen}
+            open={actionDropdownOpen}
+            overlayClassName={styles.overlay}
+            placement="bottomRight"
+            trigger={['click']}
           >
             <div className={classNames(styles.overlay, styles.trigger)}>
               <EllipsisOutlined />
             </div>
           </Dropdown>
           <Popconfirm
-            getPopupContainer={(triggerNode) => triggerNode.parentElement}
-            overlayClassName={styles.overlay}
-            title={lang.confirmFileDelete}
-            onConfirm={() => fileOperation.delete(file)}
             arrow={false}
-            open={deleteModalOpen}
+            getPopupContainer={(triggerNode) => triggerNode.parentElement}
+            onConfirm={() => fileOperation.delete(file)}
             onOpenChange={setDeleteModalOpen}
             onPopupClick={(e) => e.stopPropagation()}
+            open={deleteModalOpen}
+            overlayClassName={styles.overlay}
+            title={lang.confirmFileDelete}
           />
         </div>
       </div>
@@ -140,17 +151,18 @@ const GridFile = ({ file }: Props): JSX.Element => {
         {isEditing ? (
           <Input
             className={styles.edit}
-            size="small"
             defaultValue={file.name}
-            ref={inputRef}
+            maxLength={255}
+            onBlur={onChangeName}
             onChange={(e) => {
               const { value } = e.target;
+
               setError(!value || value.includes('/'));
             }}
-            onBlur={onChangeName}
             onPressEnter={onChangeName}
+            ref={inputRef}
+            size="small"
             status={error ? 'error' : undefined}
-            maxLength={255}
           />
         ) : (
           <div className={styles.display} onClick={onClick} onDoubleClick={onDoubleClick}>

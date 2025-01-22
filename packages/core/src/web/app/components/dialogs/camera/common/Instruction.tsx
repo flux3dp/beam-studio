@@ -1,5 +1,5 @@
-/* eslint-disable react/no-array-index-key */
 import React, { useRef } from 'react';
+
 import { Button, Modal } from 'antd';
 
 import useDidUpdateEffect from '@core/helpers/hooks/useDidUpdateEffect';
@@ -7,44 +7,37 @@ import useDidUpdateEffect from '@core/helpers/hooks/useDidUpdateEffect';
 import styles from './Instruction.module.scss';
 
 interface Props {
-  animationSrcs?: { src: string; type: string }[];
-  title: React.ReactNode;
-  text?: string;
-  steps?: string[];
+  animationSrcs?: Array<{ src: string; type: string }>;
+  buttons: Array<{ label: string; onClick: () => void; type?: 'default' | 'primary' }>;
   children?: React.ReactNode;
-  buttons: { label: string; type?: 'primary' | 'default'; onClick: () => void }[];
   onClose?: (done?: boolean) => void;
+  steps?: string[];
+  text?: string;
+  title: React.ReactNode;
 }
 
-const Instruction = ({
-  animationSrcs,
-  title,
-  text,
-  steps,
-  children,
-  buttons,
-  onClose,
-}: Props): JSX.Element => {
+const Instruction = ({ animationSrcs, buttons, children, onClose, steps, text, title }: Props): React.JSX.Element => {
   const videoRef = useRef<HTMLVideoElement>(null);
+
   useDidUpdateEffect(() => {
     videoRef.current?.load();
   }, [animationSrcs]);
 
   return (
     <Modal
-      width={400}
-      open
       centered
-      maskClosable={false}
-      title={title}
       className={styles.container}
       closable={!!onClose}
-      onCancel={() => onClose?.(false)}
-      footer={buttons.map(({ label, type, onClick }) => (
-        <Button key={label} type={type} onClick={onClick}>
+      footer={buttons.map(({ label, onClick, type }) => (
+        <Button key={label} onClick={onClick} type={type}>
           {label}
         </Button>
       ))}
+      maskClosable={false}
+      onCancel={() => onClose?.(false)}
+      open
+      title={title}
+      width={400}
     >
       {text}
       {steps && (
@@ -56,7 +49,7 @@ const Instruction = ({
       )}
       {children}
       {animationSrcs && (
-        <video className={styles.video} ref={videoRef} autoPlay loop muted>
+        <video autoPlay className={styles.video} loop muted ref={videoRef}>
           {animationSrcs.map(({ src, type }) => (
             <source key={src} src={src} type={type} />
           ))}

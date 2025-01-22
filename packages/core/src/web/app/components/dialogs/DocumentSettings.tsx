@@ -1,33 +1,33 @@
-import classNames from 'classnames';
 import React, { useEffect, useMemo, useState } from 'react';
-import { Checkbox, Modal, Switch, Tooltip } from 'antd';
+
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Checkbox, Modal, Switch, Tooltip } from 'antd';
+import classNames from 'classnames';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import alertConstants from '@core/app/constants/alert-constants';
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import browser from '@app/implementations/browser';
-import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import constant, { promarkModels } from '@core/app/actions/beambox/constant';
-import diodeBoundaryDrawer from '@core/app/actions/canvas/diode-boundary-drawer';
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import isDev from '@core/helpers/is-dev';
-import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
-import localeHelper from '@core/helpers/locale-helper';
 import OpenBottomBoundaryDrawer from '@core/app/actions/beambox/open-bottom-boundary-drawer';
+import diodeBoundaryDrawer from '@core/app/actions/canvas/diode-boundary-drawer';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
-import Select from '@core/app/widgets/AntdSelect';
-import storage from '@app/implementations/storage';
-import UnitInput from '@core/app/widgets/UnitInput';
-import useI18n from '@core/helpers/useI18n';
-import { getPromarkInfo, setPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import { getSupportInfo } from '@core/app/constants/add-on';
-import {
-  LaserType,
-  workareaOptions as pmWorkareaOptions,
-} from '@core/app/constants/promark-constants';
-import { WorkAreaModel, getWorkarea } from '@core/app/constants/workarea-constants';
+import alertConstants from '@core/app/constants/alert-constants';
+import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
+import { LaserType, workareaOptions as pmWorkareaOptions } from '@core/app/constants/promark-constants';
+import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
+import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
+import Select from '@core/app/widgets/AntdSelect';
+import UnitInput from '@core/app/widgets/UnitInput';
+import { getPromarkInfo, setPromarkInfo } from '@core/helpers/device/promark/promark-info';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import isDev from '@core/helpers/is-dev';
+import localeHelper from '@core/helpers/locale-helper';
+import useI18n from '@core/helpers/useI18n';
+
+import browser from '@app/implementations/browser';
+import storage from '@app/implementations/storage';
 
 import styles from './DocumentSettings.module.scss';
 
@@ -57,50 +57,41 @@ interface Props {
   unmount: () => void;
 }
 
-const DocumentSettings = ({ unmount }: Props): JSX.Element => {
+const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const {
-    global: tGlobal,
     beambox: { document_panel: tDocu },
+    global: tGlobal,
   } = useI18n();
   const [engraveDpi, setEngraveDpi] = useState(BeamboxPreference.read('engrave_dpi'));
 
   const origWorkarea = useMemo(() => BeamboxPreference.read('workarea'), []);
   const [pmInfo, setPmInfo] = useState(getPromarkInfo());
   const [workarea, setWorkarea] = useState<WorkAreaModel>(origWorkarea || 'fbb1b');
-  const [customDimension, setCustomDimension] = useState<
-    Record<WorkAreaModel, { width: number; height: number }>
-  >(BeamboxPreference.read('customized-dimension') ?? {});
+  const [customDimension, setCustomDimension] = useState<Record<WorkAreaModel, { height: number; width: number }>>(
+    BeamboxPreference.read('customized-dimension') ?? {},
+  );
   const supportInfo = useMemo(() => getSupportInfo(workarea), [workarea]);
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
   const [rotaryMode, setRotaryMode] = useState<number>(BeamboxPreference.read('rotary_mode') ?? 0);
-  const [enableStartButton, setEnableStartButton] = useState(
-    !!BeamboxPreference.read('promark-start-button'),
-  );
+  const [enableStartButton, setEnableStartButton] = useState(!!BeamboxPreference.read('promark-start-button'));
   const [shouldFrame, setShouldFrame] = useState(!!BeamboxPreference.read('frame-before-start'));
-  const [enableJobOrigin, setEnableJobOrigin] = useState<number>(
-    BeamboxPreference.read('enable-job-origin') ?? 0,
-  );
+  const [enableJobOrigin, setEnableJobOrigin] = useState<number>(BeamboxPreference.read('enable-job-origin') ?? 0);
   const [jobOrigin, setJobOrigin] = useState<number>(BeamboxPreference.read('job-origin') ?? 1);
   const [extendRotaryWorkarea, setExtendRotaryWorkarea] = useState<boolean>(
     !!BeamboxPreference.read('extend-rotary-workarea'),
   );
-  const [mirrorRotary, setMirrorRotary] = useState<boolean>(
-    !!BeamboxPreference.read('rotary-mirror'),
-  );
+  const [mirrorRotary, setMirrorRotary] = useState<boolean>(!!BeamboxPreference.read('rotary-mirror'));
   const [borderless, setBorderless] = useState(!!BeamboxPreference.read('borderless'));
   const [enableDiode, setEnableDiode] = useState(!!BeamboxPreference.read('enable-diode'));
-  const [enableAutofocus, setEnableAutofocus] = useState(
-    !!BeamboxPreference.read('enable-autofocus'),
-  );
+  const [enableAutofocus, setEnableAutofocus] = useState(!!BeamboxPreference.read('enable-autofocus'));
   const [passThrough, setPassThrough] = useState(!!BeamboxPreference.read('pass-through'));
 
   const isInch = useMemo(() => storage.get('default-units') === 'inches', []);
   const workareaObj = useMemo(() => getWorkarea(workarea), [workarea]);
   const [passThroughHeight, setPassThroughHeight] = useState<number>(
-    BeamboxPreference.read('pass-through-height') ||
-      workareaObj.displayHeight ||
-      workareaObj.height,
+    BeamboxPreference.read('pass-through-height') || workareaObj.displayHeight || workareaObj.height,
   );
+
   useEffect(() => {
     if (rotaryMode > 0) {
       setBorderless(false);
@@ -108,14 +99,21 @@ const DocumentSettings = ({ unmount }: Props): JSX.Element => {
     }
   }, [rotaryMode]);
   useEffect(() => {
-    if (borderless) setRotaryMode(0);
-    else if (supportInfo.openBottom) setPassThrough(false);
+    if (borderless) {
+      setRotaryMode(0);
+    } else if (supportInfo.openBottom) {
+      setPassThrough(false);
+    }
   }, [supportInfo, borderless]);
   useEffect(() => {
-    if (passThrough) setRotaryMode(0);
+    if (passThrough) {
+      setRotaryMode(0);
+    }
   }, [passThrough]);
   useEffect(() => {
-    if (borderless) setPassThroughHeight((cur) => Math.max(cur, workareaObj.height));
+    if (borderless) {
+      setPassThroughHeight((cur) => Math.max(cur, workareaObj.height));
+    }
   }, [borderless, workareaObj]);
 
   const handleRotaryModeChange = (on: boolean) => setRotaryMode(on ? 1 : 0);
@@ -124,15 +122,20 @@ const DocumentSettings = ({ unmount }: Props): JSX.Element => {
 
   const handleSave = () => {
     BeamboxPreference.write('engrave_dpi', engraveDpi);
+
     const dpiEvent = eventEmitterFactory.createEventEmitter('dpi-info');
+
     dpiEvent.emit('UPDATE_DPI', engraveDpi);
     BeamboxPreference.write('borderless', supportInfo.openBottom && borderless);
     BeamboxPreference.write('enable-diode', supportInfo.hybridLaser && enableDiode);
     BeamboxPreference.write('enable-autofocus', supportInfo.autoFocus && enableAutofocus);
+
     const workareaChanged = workarea !== origWorkarea;
     let customDimensionChanged = false;
+
     if (workareaObj.dismensionCustomizable) {
       const origVal = BeamboxPreference.read('customized-dimension') ?? {};
+
       customDimensionChanged =
         customDimension[workarea]?.width !== origVal[workarea]?.width ||
         customDimension[workarea]?.height !== origVal[workarea]?.height;
@@ -141,54 +144,66 @@ const DocumentSettings = ({ unmount }: Props): JSX.Element => {
         [workarea]: customDimension[workarea],
       });
     }
+
     const rotaryChanged =
       rotaryMode !== BeamboxPreference.read('rotary_mode') ||
       extendRotaryWorkarea !== !!BeamboxPreference.read('extend-rotary-workarea');
+
     BeamboxPreference.write('rotary_mode', rotaryMode);
+
     if (rotaryMode > 0) {
-      if (supportInfo.rotary.extendWorkarea)
+      if (supportInfo.rotary.extendWorkarea) {
         BeamboxPreference.write('extend-rotary-workarea', extendRotaryWorkarea);
-      if (supportInfo.rotary.mirror) BeamboxPreference.write('rotary-mirror', mirrorRotary);
+      }
+
+      if (supportInfo.rotary.mirror) {
+        BeamboxPreference.write('rotary-mirror', mirrorRotary);
+      }
     }
+
     const newPassThrough = showPassThrough && passThrough;
     const passThroughChanged = newPassThrough !== !!BeamboxPreference.read('pass-through');
+
     BeamboxPreference.write('pass-through', newPassThrough);
-    const passThroughHeightChanged =
-      passThroughHeight !== BeamboxPreference.read('pass-through-height');
+
+    const passThroughHeightChanged = passThroughHeight !== BeamboxPreference.read('pass-through-height');
+
     BeamboxPreference.write('pass-through-height', passThroughHeight);
     BeamboxPreference.write('enable-job-origin', enableJobOrigin);
     BeamboxPreference.write('job-origin', jobOrigin);
-    if (
-      workareaChanged ||
-      customDimensionChanged ||
-      rotaryChanged ||
-      passThroughChanged ||
-      passThroughHeightChanged
-    ) {
+
+    if (workareaChanged || customDimensionChanged || rotaryChanged || passThroughChanged || passThroughHeightChanged) {
       changeWorkarea(workarea, { toggleModule: workareaChanged });
       rotaryAxis.toggleDisplay();
     } else {
       // this is called in changeWorkarea
       OpenBottomBoundaryDrawer.update();
-      if (supportInfo.hybridLaser && enableDiode) diodeBoundaryDrawer.show();
-      else diodeBoundaryDrawer.hide();
+
+      if (supportInfo.hybridLaser && enableDiode) {
+        diodeBoundaryDrawer.show();
+      } else {
+        diodeBoundaryDrawer.hide();
+      }
     }
+
     if (promarkModels.has(workarea)) {
       setPromarkInfo(pmInfo);
       BeamboxPreference.write('promark-start-button', enableStartButton ? 1 : 0);
       BeamboxPreference.write('frame-before-start', shouldFrame ? 1 : 0);
     }
+
     presprayArea.togglePresprayArea();
+
     const canvasEvents = eventEmitterFactory.createEventEmitter('canvas');
+
     canvasEvents.emit('document-settings-saved');
   };
 
   return (
     <Modal
-      open
+      cancelText={tGlobal.cancel}
       centered
-      width={440}
-      title={tDocu.document_settings}
+      okText={tGlobal.save}
       onCancel={unmount}
       onOk={async () => {
         if (
@@ -199,21 +214,26 @@ const DocumentSettings = ({ unmount }: Props): JSX.Element => {
         ) {
           const res = await new Promise((resolve) => {
             alertCaller.popUp({
+              buttonType: alertConstants.CONFIRM_CANCEL,
               id: 'save-document-settings',
               message: tDocu.notification.changeFromPrintingWorkareaTitle,
               messageIcon: 'notice',
-              buttonType: alertConstants.CONFIRM_CANCEL,
-              onConfirm: () => resolve(true),
               onCancel: () => resolve(false),
+              onConfirm: () => resolve(true),
             });
           });
-          if (!res) return;
+
+          if (!res) {
+            return;
+          }
         }
+
         handleSave();
         unmount();
       }}
-      cancelText={tGlobal.cancel}
-      okText={tGlobal.save}
+      open
+      title={tDocu.document_settings}
+      width={440}
     >
       <div className={styles.container}>
         <div className={styles.block}>
@@ -221,13 +241,7 @@ const DocumentSettings = ({ unmount }: Props): JSX.Element => {
             <label className={styles.title} htmlFor="workareaSelect">
               {tDocu.machine}:
             </label>
-            <Select
-              id="workareaSelect"
-              value={workarea}
-              className={styles.control}
-              bordered
-              onChange={setWorkarea}
-            >
+            <Select bordered className={styles.control} id="workareaSelect" onChange={setWorkarea} value={workarea}>
               {workareaOptions.map((option) => (
                 <Select.Option key={option.value} value={option.value}>
                   {option.label}
@@ -241,16 +255,16 @@ const DocumentSettings = ({ unmount }: Props): JSX.Element => {
                 {tDocu.workarea}:
               </label>
               <Select
-                id="customDimension"
-                value={customDimension[workarea]?.width ?? workareaObj.width}
-                className={styles.control}
                 bordered
+                className={styles.control}
+                id="customDimension"
                 onChange={(val) =>
                   setCustomDimension((cur) => ({
                     ...cur,
-                    [workarea]: { width: val, height: val },
+                    [workarea]: { height: val, width: val },
                   }))
                 }
+                value={customDimension[workarea]?.width ?? workareaObj.width}
               >
                 {pmWorkareaOptions.map((val) => (
                   <Select.Option key={val} value={val}>
@@ -266,14 +280,15 @@ const DocumentSettings = ({ unmount }: Props): JSX.Element => {
                 {tDocu.laser_source}:
               </label>
               <Select
-                id="pm-laser-source"
-                value={`${pmInfo.laserType}-${pmInfo.watt}`}
-                className={styles.control}
                 bordered
+                className={styles.control}
+                id="pm-laser-source"
                 onChange={(val) => {
                   const [type, watt] = val.split('-').map(Number);
+
                   setPmInfo({ laserType: type, watt });
                 }}
+                value={`${pmInfo.laserType}-${pmInfo.watt}`}
               >
                 {promarkLaserOptions.map(({ label, value }) => (
                   <Select.Option key={value} value={value}>
@@ -287,13 +302,7 @@ const DocumentSettings = ({ unmount }: Props): JSX.Element => {
             <label className={styles.title} htmlFor="dpi">
               {tDocu.engrave_dpi}:
             </label>
-            <Select
-              id="dpi"
-              value={engraveDpi}
-              className={styles.control}
-              bordered
-              onChange={setEngraveDpi}
-            >
+            <Select bordered className={styles.control} id="dpi" onChange={setEngraveDpi} value={engraveDpi}>
               {dpiOptions.map((val) => (
                 <Select.Option key={val} value={val}>
                   {tDocu[val]} ({constant.dpiValueMap[val]} DPI)
@@ -314,11 +323,11 @@ const DocumentSettings = ({ unmount }: Props): JSX.Element => {
                   {tDocu.start_from}:
                 </label>
                 <Select
-                  id="startFrom"
-                  value={enableJobOrigin}
-                  className={styles.control}
                   bordered
+                  className={styles.control}
+                  id="startFrom"
                   onChange={setEnableJobOrigin}
+                  value={enableJobOrigin}
                 >
                   <Select.Option value={0}>{tDocu.origin}</Select.Option>
                   <Select.Option value={1}>{tDocu.current_position}</Select.Option>
@@ -331,25 +340,25 @@ const DocumentSettings = ({ unmount }: Props): JSX.Element => {
                     <div className={styles.radioGroup}>
                       {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((val) => (
                         <input
+                          checked={jobOrigin === val}
                           id={`jobOrigin-${val}`}
                           key={val}
                           name="jobOrigin"
-                          type="radio"
-                          checked={jobOrigin === val}
                           onChange={() => setJobOrigin(val)}
+                          type="radio"
                         />
                       ))}
                     </div>
                     <div className={styles['job-origin-example']}>
-                      <img src="core-img/document-panel/job-origin-example.jpg" alt="Origin" />
+                      <img alt="Origin" src="core-img/document-panel/job-origin-example.jpg" />
                       <div
                         className={classNames(styles.mark, {
+                          [styles.b]: jobOrigin > 6,
+                          [styles.c]: jobOrigin > 3 && jobOrigin <= 6,
                           [styles.l]: jobOrigin % 3 === 1,
                           [styles.m]: jobOrigin % 3 === 2,
                           [styles.r]: jobOrigin % 3 === 0,
                           [styles.t]: jobOrigin <= 3,
-                          [styles.c]: jobOrigin > 3 && jobOrigin <= 6,
-                          [styles.b]: jobOrigin > 6,
                         })}
                       />
                     </div>
@@ -371,24 +380,22 @@ const DocumentSettings = ({ unmount }: Props): JSX.Element => {
               </div>
               <div className={styles.control}>
                 <Switch
-                  id="start_button"
-                  className={styles.switch}
                   checked={enableStartButton}
+                  className={styles.switch}
+                  id="start_button"
                   onChange={setEnableStartButton}
                 />
                 {enableStartButton && (
                   <div className={styles.subCheckbox}>
                     <div>
                       <Checkbox
-                        id="frame_before_start"
                         checked={shouldFrame}
+                        id="frame_before_start"
                         onChange={(e) => setShouldFrame(e.target.checked)}
                       >
                         {tDocu.frame_before_start}
                       </Checkbox>
-                      <QuestionCircleOutlined
-                        onClick={() => browser.open(tDocu.frame_before_start_url)}
-                      />
+                      <QuestionCircleOutlined onClick={() => browser.open(tDocu.frame_before_start_url)} />
                     </div>
                   </div>
                 )}
@@ -406,35 +413,31 @@ const DocumentSettings = ({ unmount }: Props): JSX.Element => {
               </div>
               <div className={styles.control}>
                 <Switch
-                  id="rotary_mode"
-                  className={styles.switch}
                   checked={rotaryMode > 0}
+                  className={styles.switch}
                   disabled={!supportInfo.rotary}
+                  id="rotary_mode"
                   onChange={handleRotaryModeChange}
                 />
-                {(supportInfo.rotary.mirror || supportInfo.rotary.extendWorkarea) &&
-                  rotaryMode > 0 && (
-                    <>
-                      <div className={styles.subCheckbox}>
-                        {supportInfo.rotary.extendWorkarea && (
-                          <Checkbox
-                            checked={extendRotaryWorkarea}
-                            onChange={(e) => setExtendRotaryWorkarea(e.target.checked)}
-                          >
-                            {tDocu.extend_workarea}
-                          </Checkbox>
-                        )}
-                        {supportInfo.rotary.mirror && (
-                          <Checkbox
-                            checked={mirrorRotary}
-                            onChange={(e) => setMirrorRotary(e.target.checked)}
-                          >
-                            {tDocu.mirror}
-                          </Checkbox>
-                        )}
-                      </div>
-                    </>
-                  )}
+                {(supportInfo.rotary.mirror || supportInfo.rotary.extendWorkarea) && rotaryMode > 0 && (
+                  <>
+                    <div className={styles.subCheckbox}>
+                      {supportInfo.rotary.extendWorkarea && (
+                        <Checkbox
+                          checked={extendRotaryWorkarea}
+                          onChange={(e) => setExtendRotaryWorkarea(e.target.checked)}
+                        >
+                          {tDocu.extend_workarea}
+                        </Checkbox>
+                      )}
+                      {supportInfo.rotary.mirror && (
+                        <Checkbox checked={mirrorRotary} onChange={(e) => setMirrorRotary(e.target.checked)}>
+                          {tDocu.mirror}
+                        </Checkbox>
+                      )}
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           )}
@@ -445,10 +448,10 @@ const DocumentSettings = ({ unmount }: Props): JSX.Element => {
               </div>
               <div className={styles.control}>
                 <Switch
-                  id="autofocus-module"
-                  className={styles.switch}
                   checked={supportInfo.autoFocus && enableAutofocus}
+                  className={styles.switch}
                   disabled={!supportInfo.autoFocus}
+                  id="autofocus-module"
                   onChange={setEnableAutofocus}
                 />
               </div>
@@ -461,10 +464,10 @@ const DocumentSettings = ({ unmount }: Props): JSX.Element => {
               </div>
               <div className={styles.control}>
                 <Switch
-                  id="borderless_mode"
-                  className={styles.switch}
                   checked={supportInfo.openBottom && borderless}
+                  className={styles.switch}
                   disabled={!supportInfo.openBottom}
+                  id="borderless_mode"
                   onChange={setBorderless}
                 />
               </div>
@@ -477,10 +480,10 @@ const DocumentSettings = ({ unmount }: Props): JSX.Element => {
               </div>
               <div className={styles.control}>
                 <Switch
-                  id="diode_module"
-                  className={styles.switch}
                   checked={supportInfo.hybridLaser && enableDiode}
+                  className={styles.switch}
                   disabled={!supportInfo.hybridLaser}
+                  id="diode_module"
                   onChange={setEnableDiode}
                 />
               </div>
@@ -493,24 +496,24 @@ const DocumentSettings = ({ unmount }: Props): JSX.Element => {
               </div>
               <div className={styles.control}>
                 <Switch
-                  id="pass_through"
-                  className={styles.switch}
                   checked={supportInfo.passThrough && passThrough}
+                  className={styles.switch}
                   disabled={!supportInfo.passThrough}
+                  id="pass_through"
                   onChange={setPassThrough}
                 />
                 {passThrough && (
                   <>
                     <UnitInput
-                      id="pass_through_height"
-                      className={styles.input}
-                      value={passThroughHeight}
-                      min={workareaObj.displayHeight ?? workareaObj.height}
                       addonAfter={isInch ? 'in' : 'mm'}
+                      className={styles.input}
+                      id="pass_through_height"
                       isInch={isInch}
-                      precision={isInch ? 2 : 0}
+                      min={workareaObj.displayHeight ?? workareaObj.height}
                       onChange={setPassThroughHeight}
+                      precision={isInch ? 2 : 0}
                       size="small"
+                      value={passThroughHeight}
                     />
                     <Tooltip title={tDocu.pass_through_height_desc}>
                       <QuestionCircleOutlined className={styles.hint} />

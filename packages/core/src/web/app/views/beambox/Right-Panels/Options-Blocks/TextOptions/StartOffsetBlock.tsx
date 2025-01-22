@@ -1,41 +1,42 @@
 import React from 'react';
 
-import i18n from '@core/helpers/i18n';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import styles from '@core/app/views/beambox/Right-Panels/OptionsPanel.module.scss';
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
+import i18n from '@core/helpers/i18n';
 import { useIsMobile } from '@core/helpers/system-helper';
 
 interface Props {
-  value: number;
   onValueChange: (val: number) => void;
+  value: number;
 }
 
-export default function StartOffsetBlock({ value, onValueChange }: Props): JSX.Element {
+export default function StartOffsetBlock({ onValueChange, value }: Props): React.JSX.Element {
   const LANG = i18n.lang.beambox.right_panel.object_panel.option_panel;
   const isMobile = useIsMobile();
+
   return isMobile ? (
     <ObjectPanelItem.Number
+      decimal={0}
       id="start_offset"
       label={LANG.start_offset}
-      value={value}
-      min={0}
       max={100}
-      updateValue={onValueChange}
+      min={0}
       unit=""
-      decimal={0}
+      updateValue={onValueChange}
+      value={value}
     />
   ) : (
     <div className={styles['option-block']}>
       <div className={styles.label}>{LANG.start_offset}</div>
       <UnitInput
-        min={0}
-        max={100}
-        unit=""
-        decimal={0}
         className={{ [styles['option-input']]: true }}
+        decimal={0}
         defaultValue={value}
         getValue={onValueChange}
+        max={100}
+        min={0}
+        unit=""
       />
     </div>
   );

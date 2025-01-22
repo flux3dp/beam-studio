@@ -1,13 +1,15 @@
 import React from 'react';
-import { SelectProps, Select as AntdSelect } from 'antd';
+
+import type { SelectProps } from 'antd';
+import { Select as AntdSelect } from 'antd';
 
 import isWeb from '@core/helpers/is-web';
 
 // TODO: replace native selects (including widgets/Select.tsx) and rename to Select.tsx
-const Select = (props: SelectProps): JSX.Element => (
-  // eslint-disable-next-line react/jsx-props-no-spreading
+const Select = (props: SelectProps): React.JSX.Element => (
   <AntdSelect {...props} dropdownAlign={!isWeb() && { overflow: { adjustY: 0 } }} />
 );
+
 Select.Option = AntdSelect.Option;
 Select.OptGroup = AntdSelect.OptGroup;
 

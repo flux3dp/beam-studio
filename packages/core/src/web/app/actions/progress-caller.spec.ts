@@ -1,5 +1,5 @@
-/* eslint-disable import/first */
 const mockEmit = jest.fn();
+
 jest.mock('@core/helpers/eventEmitterFactory', () => ({
   createEventEmitter: () => ({
     emit: mockEmit,
@@ -7,6 +7,7 @@ jest.mock('@core/helpers/eventEmitterFactory', () => ({
 }));
 
 import ProgressConstants from '@core/app/constants/progress-constants';
+
 import progressCaller from './progress-caller';
 
 describe('test progress-caller', () => {
@@ -16,38 +17,38 @@ describe('test progress-caller', () => {
 
   test('test openNonstopProgress', () => {
     progressCaller.openNonstopProgress({
+      caption: 'flux caption',
       id: '12345',
       type: 'flux progress',
-      caption: 'flux caption',
     });
     expect(mockEmit).toHaveBeenCalledTimes(1);
     expect(mockEmit).toHaveBeenNthCalledWith(
       1,
       'OPEN_PROGRESS',
       {
+        caption: 'flux caption',
         id: '12345',
         isProgress: true,
         type: ProgressConstants.NONSTOP,
-        caption: 'flux caption',
       },
       expect.anything(),
     );
 
     progressCaller.openNonstopProgress({
       id: '12345',
-      type: 'flux progress',
       message: 'flux message',
+      type: 'flux progress',
     });
     expect(mockEmit).toHaveBeenCalledTimes(2);
     expect(mockEmit).toHaveBeenNthCalledWith(
       2,
       'OPEN_PROGRESS',
       {
+        caption: 'flux message',
         id: '12345',
         isProgress: true,
-        type: ProgressConstants.NONSTOP,
-        caption: 'flux message',
         message: 'flux message',
+        type: ProgressConstants.NONSTOP,
       },
       expect.anything(),
     );
@@ -56,8 +57,8 @@ describe('test progress-caller', () => {
   test('test openSteppingProgress', () => {
     progressCaller.openSteppingProgress({
       id: '12345',
-      type: 'flux progress',
       percentage: 100,
+      type: 'flux progress',
     });
     expect(mockEmit).toHaveBeenCalledTimes(1);
     expect(mockEmit).toHaveBeenNthCalledWith(
@@ -66,8 +67,8 @@ describe('test progress-caller', () => {
       {
         id: '12345',
         isProgress: true,
-        type: ProgressConstants.STEPPING,
         percentage: 100,
+        type: ProgressConstants.STEPPING,
       },
       expect.anything(),
     );
@@ -83,8 +84,8 @@ describe('test progress-caller', () => {
       {
         id: '12345',
         isProgress: true,
-        type: ProgressConstants.STEPPING,
         percentage: 0,
+        type: ProgressConstants.STEPPING,
       },
       expect.anything(),
     );

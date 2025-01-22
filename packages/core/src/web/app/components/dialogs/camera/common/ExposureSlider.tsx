@@ -1,32 +1,31 @@
-import classNames from 'classnames';
-import React, { Dispatch } from 'react';
-import { Slider, Tooltip } from 'antd';
+import type { Dispatch } from 'react';
+import React from 'react';
 
-import deviceMaster from '@core/helpers/device-master';
+import { Slider, Tooltip } from 'antd';
+import classNames from 'classnames';
+
 import progressCaller from '@core/app/actions/progress-caller';
-import useI18n from '@core/helpers/useI18n';
 import WorkareaIcons from '@core/app/icons/workarea/WorkareaIcons';
-import { IConfigSetting } from '@core/interfaces/IDevice';
+import deviceMaster from '@core/helpers/device-master';
+import useI18n from '@core/helpers/useI18n';
+import type { IConfigSetting } from '@core/interfaces/IDevice';
 
 import styles from './ExposureSlider.module.scss';
 
 interface Props {
   className?: string;
   exposureSetting: IConfigSetting | null;
-  setExposureSetting: Dispatch<IConfigSetting | null>;
   onChanged?: () => void;
+  setExposureSetting: Dispatch<IConfigSetting | null>;
 }
 
-const ExposureSlider = ({
-  className,
-  exposureSetting,
-  setExposureSetting,
-  onChanged,
-}: Props): JSX.Element => {
+const ExposureSlider = ({ className, exposureSetting, onChanged, setExposureSetting }: Props): React.JSX.Element => {
   const lang = useI18n();
+
   if (!exposureSetting) {
     return null;
   }
+
   return (
     <div className={classNames(styles.container, className)}>
       <Tooltip title={lang.editor.exposure}>
@@ -34,11 +33,8 @@ const ExposureSlider = ({
       </Tooltip>
       <Slider
         className={styles.slider}
-        min={Math.max(exposureSetting.min, 250)}
         max={Math.min(exposureSetting.max, 650)}
-        step={exposureSetting.step}
-        value={exposureSetting.value}
-        onChange={(value: number) => setExposureSetting({ ...exposureSetting, value })}
+        min={Math.max(exposureSetting.min, 250)}
         onAfterChange={async (value: number) => {
           try {
             progressCaller.openNonstopProgress({ id: 'exposure-slider' });
@@ -49,7 +45,10 @@ const ExposureSlider = ({
             progressCaller.popById('exposure-slider');
           }
         }}
+        onChange={(value: number) => setExposureSetting({ ...exposureSetting, value })}
+        step={exposureSetting.step}
         tooltip={{ open: false }}
+        value={exposureSetting.value}
       />
     </div>
   );

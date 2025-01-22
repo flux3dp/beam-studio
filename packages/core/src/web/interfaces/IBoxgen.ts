@@ -1,27 +1,27 @@
-import * as THREE from 'three';
+import type * as THREE from 'three';
 
 export interface IPlaneShape {
+  height: number;
   shape: THREE.Shape;
   width: number;
-  height: number;
 }
 
 export interface IController {
-  volume: 'outer' | 'inner';
   cover: boolean;
-  width: number;
-  height: number;
   depth: number;
-  sheetThickness: number;
+  height: number;
   joint: 'edge' | 'finger' | 't-slot';
+  sheetThickness: number;
   teethLength: number;
   tSlotCount: number;
   tSlotDiameter: number;
   tSlotLength: number;
+  volume: 'inner' | 'outer';
+  width: number;
 }
 
 export interface IExportOptions {
+  compRadius: number;
   joinOutput: boolean;
   textLabel: boolean;
-  compRadius: number;
 }

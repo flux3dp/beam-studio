@@ -10,7 +10,7 @@ interface Props {
   updateNestOptions: (options: { generations?: number; population?: number }) => void;
 }
 
-function NestGAPanel({ nestOptions, updateNestOptions }: Props): JSX.Element {
+function NestGAPanel({ nestOptions, updateNestOptions }: Props): React.JSX.Element {
   const [generations, updateGenerations] = React.useState(nestOptions.generations);
   const [population, updatePopulation] = React.useState(nestOptions.population);
 
@@ -27,7 +27,7 @@ function NestGAPanel({ nestOptions, updateNestOptions }: Props): JSX.Element {
   return (
     <div className="tool-panel">
       <label className="controls accordion">
-        <input type="checkbox" className="accordion-switcher" defaultChecked />
+        <input className="accordion-switcher" defaultChecked type="checkbox" />
         <p className="caption">
           GA
           <span className="value">{`G${generations}, P${population}`}</span>
@@ -36,23 +36,11 @@ function NestGAPanel({ nestOptions, updateNestOptions }: Props): JSX.Element {
           <div>
             <span className="text-center header">Generations</span>
             <div className="control">
-              <UnitInput
-                min={1}
-                unit=""
-                decimal={0}
-                defaultValue={generations}
-                getValue={updateGen}
-              />
+              <UnitInput decimal={0} defaultValue={generations} getValue={updateGen} min={1} unit="" />
             </div>
             <span className="text-center header">Population</span>
             <div className="control">
-              <UnitInput
-                min={2}
-                unit=""
-                decimal={0}
-                defaultValue={population}
-                getValue={updatePopu}
-              />
+              <UnitInput decimal={0} defaultValue={population} getValue={updatePopu} min={2} unit="" />
             </div>
           </div>
         </label>

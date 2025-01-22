@@ -28,15 +28,15 @@ export default {
   },
 
   laser_default: {
+    isShading: true,
     material: {
-      value: 'custom',
-      label: 'Custom',
       data: {
         laser_speed: 3,
         power: 255,
       },
+      label: 'Custom',
+      value: 'custom',
     },
     objectHeight: 0,
-    isShading: true,
   },
 };

@@ -1,9 +1,11 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import FlipButtons from './FlipButtons';
 
 const mockFlipSelectedElements = jest.fn();
+
 jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) => {
     callback({
@@ -15,6 +17,7 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
 }));
 
 const mockUseIsMobile = jest.fn();
+
 jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => mockUseIsMobile(),
 }));
@@ -32,7 +35,7 @@ jest.mock('@core/helpers/useI18n', () => () => ({
 }));
 
 jest.mock('@core/app/views/beambox/Right-Panels/ObjectPanelItem', () => ({
-  ActionList: ({ id, actions, content, label }: any) => (
+  ActionList: ({ actions, content, id, label }: any) => (
     <div id={id}>
       {actions.map(({ icon, label: actionLabel, onClick }) => (
         <div key={actionLabel} onClick={onClick}>
@@ -53,19 +56,25 @@ describe('test FlipButtons', () => {
 
   it('should render correctly when not in mobile', () => {
     mockUseIsMobile.mockReturnValue(false);
+
     const { container } = render(<FlipButtons />);
+
     expect(container).toMatchSnapshot();
   });
 
   it('should render correctly when in mobile', () => {
     mockUseIsMobile.mockReturnValue(true);
+
     const { container } = render(<FlipButtons />);
+
     expect(container).toMatchSnapshot();
   });
 
   test('callback should work', () => {
     mockUseIsMobile.mockReturnValue(false);
+
     const { container } = render(<FlipButtons />);
+
     expect(mockFlipSelectedElements).not.toHaveBeenCalled();
     fireEvent.click(container.querySelector('#horizontal_flip'));
     expect(mockFlipSelectedElements).toBeCalledTimes(1);

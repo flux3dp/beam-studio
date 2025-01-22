@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import { MonitorContext } from '@core/app/contexts/MonitorContext';
@@ -18,23 +19,24 @@ describe('test DirectoryItem', () => {
       <MonitorContext.Provider
         value={
           {
+            highlightedItem: { name: 'directory', type: 'FOLDER' },
             onHighlightItem: mockOnHighlightItem,
             onSelectFolder: mockOnSelectFolder,
-            highlightedItem: { name: 'directory', type: 'FOLDER' },
           } as any
         }
       >
         <DirectoryItem name="directory" />
       </MonitorContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
     rerender(
       <MonitorContext.Provider
         value={
           {
+            highlightedItem: { name: 'directory2', type: 'FOLDER' },
             onHighlightItem: mockOnHighlightItem,
             onSelectFolder: mockOnSelectFolder,
-            highlightedItem: { name: 'directory2', type: 'FOLDER' },
           } as any
         }
       >
@@ -49,9 +51,9 @@ describe('test DirectoryItem', () => {
       <MonitorContext.Provider
         value={
           {
+            highlightedItem: { name: 'directory', type: 'FOLDER' },
             onHighlightItem: mockOnHighlightItem,
             onSelectFolder: mockOnSelectFolder,
-            highlightedItem: { name: 'directory', type: 'FOLDER' },
           } as any
         }
       >
@@ -59,6 +61,7 @@ describe('test DirectoryItem', () => {
       </MonitorContext.Provider>,
     );
     const divContainer = container.querySelector('.container');
+
     expect(mockOnHighlightItem).not.toBeCalled();
     fireEvent.click(divContainer);
     expect(mockOnHighlightItem).toBeCalledTimes(1);

@@ -37,7 +37,7 @@ const PathInput = ({
   forceValidValue = true,
   getValue,
   type,
-}: Props): JSX.Element => {
+}: Props): React.JSX.Element => {
   const [displayValue, setDisplayValue] = useState(defaultValue);
   const [savedValue, setSavedValue] = useState(defaultValue);
   const inputEl = useRef(null);
@@ -53,10 +53,7 @@ const PathInput = ({
         return true;
       }
 
-      return (
-        (type === InputType.FILE && fs.isFile(val)) ||
-        (type === InputType.FOLDER && fs.isDirectory(val))
-      );
+      return (type === InputType.FILE && fs.isFile(val)) || (type === InputType.FOLDER && fs.isDirectory(val));
     }
 
     return false;

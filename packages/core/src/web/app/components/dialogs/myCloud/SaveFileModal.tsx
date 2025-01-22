@@ -1,15 +1,16 @@
 import React, { useMemo, useState } from 'react';
+
 import { Button, Input, Modal, Space, Typography } from 'antd';
 
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import useI18n from '@core/helpers/useI18n';
 
 interface Props {
-  onClose: (fileName: string | null, isCancelled?: boolean) => void;
+  onClose: (fileName: null | string, isCancelled?: boolean) => void;
   uuid?: string;
 }
 
-const SaveFileModal = ({ onClose, uuid }: Props): JSX.Element => {
+const SaveFileModal = ({ onClose, uuid }: Props): React.JSX.Element => {
   const LANG = useI18n();
   const lang = LANG.my_cloud.save_file;
   const [isEditingName, setIsEditingName] = useState(!uuid);
@@ -21,20 +22,20 @@ const SaveFileModal = ({ onClose, uuid }: Props): JSX.Element => {
 
   return isEditingName ? (
     <Modal
-      title={LANG.topbar.menu.save_to_cloud}
-      onOk={() => onClose(fileName)}
-      onCancel={() => onClose(null, true)}
-      okButtonProps={{ disabled: error }}
-      width={350}
       centered
+      okButtonProps={{ disabled: error }}
+      onCancel={() => onClose(null, true)}
+      onOk={() => onClose(fileName)}
       open
+      title={LANG.topbar.menu.save_to_cloud}
+      width={350}
     >
       <Input
-        size="small"
-        value={fileName}
-        status={error ? 'error' : undefined}
-        onChange={(e) => setFileName(e.target.value)}
         maxLength={255}
+        onChange={(e) => setFileName(e.target.value)}
+        size="small"
+        status={error ? 'error' : undefined}
+        value={fileName}
       />
       {slashError && (
         <div>
@@ -44,21 +45,21 @@ const SaveFileModal = ({ onClose, uuid }: Props): JSX.Element => {
     </Modal>
   ) : (
     <Modal
-      title={lang.choose_action}
-      onCancel={() => onClose(null, true)}
+      centered
       footer={
         <Space>
-          <Button type="primary" onClick={() => setIsEditingName(true)}>
+          <Button onClick={() => setIsEditingName(true)} type="primary">
             {lang.save_new}
           </Button>
-          <Button type="primary" onClick={() => onClose(null)}>
+          <Button onClick={() => onClose(null)} type="primary">
             {lang.save}
           </Button>
         </Space>
       }
-      width={350}
-      centered
+      onCancel={() => onClose(null, true)}
       open
+      title={lang.choose_action}
+      width={350}
     />
   );
 };

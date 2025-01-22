@@ -13,7 +13,7 @@ exports[`test Footer should render correctly 1`] = `
 exports[`test Footer should render correctly 2`] = `
 <div>
   <div
-    class="footer mobile windows desktop class class2"
+    class="footer desktop mobile windows class class2"
   >
     Footer
   </div>

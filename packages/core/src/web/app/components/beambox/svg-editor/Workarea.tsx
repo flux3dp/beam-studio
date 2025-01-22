@@ -1,50 +1,53 @@
 import React from 'react';
 
+import svgEditor from '@core/app/actions/beambox/svg-editor';
 import clipboard from '@core/app/svgedit/operations/clipboard';
+import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
-import svgEditor from '@core/app/actions/beambox/svg-editor';
-import {
-  ContextMenu,
-  ContextMenuTrigger,
-  MenuItem,
-  SubMenu,
-} from '@core/helpers/react-contextmenu';
 import { getObjectLayer, moveToOtherLayer } from '@core/helpers/layer/layer-helper';
+import { ContextMenu, ContextMenuTrigger, MenuItem, SubMenu } from '@core/helpers/react-contextmenu';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
 
 let svgCanvas;
+
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
 
 const eventEmitter = eventEmitterFactory.createEventEmitter('workarea');
 
-const getCurrentLayer = (selectedElement?: Element): string | null => {
-  if (!selectedElement) return null;
+const getCurrentLayer = (selectedElement?: Element): null | string => {
+  if (!selectedElement) {
+    return null;
+  }
+
   if (selectedElement.getAttribute('data-tempgroup') === 'true') {
     const originalLayers = new Set(
       ([...selectedElement.childNodes] as SVGElement[])
         .filter((elem) => elem?.getAttribute('data-imageborder') !== 'true')
         .map((elem) => elem.getAttribute('data-original-layer')),
     );
+
     if (originalLayers.size === 1) {
       const [firstValue] = originalLayers;
+
       return firstValue;
     }
   } else {
     const currentLayer = getObjectLayer(selectedElement as SVGElement);
+
     return currentLayer?.title;
   }
+
   return null;
 };
 
 interface State {
-  menuDisabled: boolean;
-  select: boolean;
-  paste: boolean;
   group: boolean;
+  menuDisabled: boolean;
+  paste: boolean;
+  select: boolean;
   ungroup: boolean;
 }
 
@@ -52,10 +55,10 @@ export default class Workarea extends React.PureComponent<{ className: string },
   constructor(props: { className: string }) {
     super(props);
     this.state = {
-      menuDisabled: false,
-      select: false,
-      paste: false,
       group: false,
+      menuDisabled: false,
+      paste: false,
+      select: false,
       ungroup: false,
     };
   }
@@ -75,24 +78,21 @@ export default class Workarea extends React.PureComponent<{ className: string },
     }));
   };
 
-  renderLayerSubMenu = (): JSX.Element => {
+  renderLayerSubMenu = (): React.JSX.Element => {
     const { select } = this.state;
     const drawing = svgCanvas?.getCurrentDrawing();
-    const layerNames: string[] =
-      drawing?.all_layers.map(
-        // eslint-disable-next-line no-underscore-dangle
-        (layer: { name_: string }) => layer.name_,
-      ) || [];
+    const layerNames: string[] = drawing?.all_layers.map((layer: { name_: string }) => layer.name_) || [];
     const selectedElems = svgCanvas?.getSelectedElems();
     const currentLayer = getCurrentLayer(selectedElems?.[0]);
+
     return (
       <>
         <div className="seperator" />
         <SubMenu disabled={!select} title={i18n.lang.beambox.right_panel.layer_panel.move_elems_to}>
           {layerNames.map((layerName) => (
             <MenuItem
-              key={layerName}
               disabled={layerName === currentLayer}
+              key={layerName}
               onClick={() => moveToOtherLayer(layerName, () => {}, false)}
             >
               {layerName}
@@ -103,21 +103,22 @@ export default class Workarea extends React.PureComponent<{ className: string },
     );
   };
 
-  render(): JSX.Element {
+  render(): React.JSX.Element {
     const LANG = i18n.lang.beambox.context_menu;
     const { className } = this.props;
-    const { menuDisabled, select, paste, group, ungroup } = this.state;
+    const { group, menuDisabled, paste, select, ungroup } = this.state;
 
     const isTouchable = navigator.maxTouchPoints >= 1;
+
     return (
       <>
         <ContextMenuTrigger
-          id="canvas-contextmenu"
+          disable={menuDisabled}
           holdToDisplay={isTouchable ? 1000 : -1}
           holdToDisplayMouse={-1}
-          disable={menuDisabled}
+          id="canvas-contextmenu"
         >
-          <div id="workarea" className={className}>
+          <div className={className} id="workarea">
             <div
               id="svgcanvas"
               style={{
@@ -139,10 +140,7 @@ export default class Workarea extends React.PureComponent<{ className: string },
           <MenuItem disabled={!paste} onClick={() => clipboard.pasteElements('in_place')}>
             {LANG.paste_in_place}
           </MenuItem>
-          <MenuItem
-            disabled={!select}
-            onClick={async () => svgCanvas.cloneSelectedElements(20, 20)}
-          >
+          <MenuItem disabled={!select} onClick={async () => svgCanvas.cloneSelectedElements(20, 20)}>
             {LANG.duplicate}
           </MenuItem>
           <div className="seperator" />
@@ -153,10 +151,7 @@ export default class Workarea extends React.PureComponent<{ className: string },
           <MenuItem disabled={!select || !group} onClick={() => svgCanvas.groupSelectedElements()}>
             {LANG.group}
           </MenuItem>
-          <MenuItem
-            disabled={!select || !ungroup}
-            onClick={() => svgCanvas.ungroupSelectedElement()}
-          >
+          <MenuItem disabled={!select || !ungroup} onClick={() => svgCanvas.ungroupSelectedElement()}>
             {LANG.ungroup}
           </MenuItem>
           <div className="seperator" />

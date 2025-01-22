@@ -6,7 +6,7 @@ exports[`test RatingPanel set star and submit should work 1`] = `
     Dummy Modal
     <p>
       props: 
-      {"open":true,"centered":true,"title":"👨‍🚀 Enjoy Beam Studio?"}
+      {"centered":true,"open":true,"title":"👨‍🚀 Enjoy Beam Studio?"}
     </p>
     <div
       class="main-content"
@@ -65,7 +65,7 @@ exports[`test RatingPanel set star and submit should work 2`] = `
     Dummy Modal
     <p>
       props: 
-      {"open":true,"centered":true,"title":"👨‍🚀 Enjoy Beam Studio?"}
+      {"centered":true,"open":true,"title":"👨‍🚀 Enjoy Beam Studio?"}
     </p>
     <strong>
       🙏
@@ -91,7 +91,7 @@ exports[`test RatingPanel should render correctly 1`] = `
     Dummy Modal
     <p>
       props: 
-      {"open":true,"centered":true,"title":"👨‍🚀 Enjoy Beam Studio?"}
+      {"centered":true,"open":true,"title":"👨‍🚀 Enjoy Beam Studio?"}
     </p>
     <div
       class="main-content"
@@ -150,7 +150,7 @@ exports[`test RatingPanel toggle checkbox and cancel should work 1`] = `
     Dummy Modal
     <p>
       props: 
-      {"open":true,"centered":true,"title":"👨‍🚀 Enjoy Beam Studio?"}
+      {"centered":true,"open":true,"title":"👨‍🚀 Enjoy Beam Studio?"}
     </p>
     <div
       class="main-content"

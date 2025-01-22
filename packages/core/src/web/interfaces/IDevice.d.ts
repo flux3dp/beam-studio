@@ -1,56 +1,56 @@
-import { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 
-import Camera from '../helpers/api/camera';
-// eslint-disable-next-line import/no-cycle
-import IControlSocket from './IControlSocket';
+import type Camera from '../helpers/api/camera';
+
+import type IControlSocket from './IControlSocket';
 
 export interface IDeviceInfo {
+  addr: string;
   alive: boolean;
-  lastAlive?: number;
-  ipaddr: string;
-  st_id: number;
   error_label: never;
-  uuid: string;
+  ipaddr: string;
+  lastAlive?: number;
   model: WorkAreaModel;
-  version: string;
+  name: string;
   password: boolean;
   plaintext_password: string;
   serial: string;
   source: string;
-  name: string;
-  addr: string;
+  st_id: number;
   st_prog?: number;
+  uuid: string;
+  version: string;
 }
 
 export interface IDeviceConnection {
-  info: IDeviceInfo;
-  control: IControlSocket;
-  errors: string[];
   camera: Camera;
   cameraNeedsFlip: boolean;
+  control: IControlSocket;
+  errors: string[];
+  info: IDeviceInfo;
 }
 
 export interface IReport {
+  Beam_Air: number;
+  error: string[];
+  laser_pwr: number;
+  prog: number;
+  raw_laser: number;
   session?: number;
   st_id: number;
   st_label: string;
-  error: string[];
-  prog: number;
   traveled: number;
-  laser_pwr: number;
-  raw_laser: number;
-  Beam_Air: number;
 }
 
 export interface IDeviceDetailInfo {
   head_submodule_info: string;
-  x_acc: string;
   head_type: string;
+  x_acc: string;
 }
 
 export interface IConfigSetting {
-  min: number;
   max: number;
-  value: number;
+  min: number;
   step: number;
+  value: number;
 }

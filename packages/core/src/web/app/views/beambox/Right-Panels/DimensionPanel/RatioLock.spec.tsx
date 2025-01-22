@@ -1,13 +1,14 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import RatioLock from './RatioLock';
 
 jest.mock('@core/app/views/beambox/Right-Panels/ObjectPanelItem', () => ({
-  Item: ({ id, content, onClick }: any) => (
+  Item: ({ content, id, onClick }: any) => (
     <div id={id}>
       <div>{content}</div>
-      <button type="button" onClick={onClick} />
+      <button onClick={onClick} type="button" />
     </div>
   ),
 }));
@@ -24,6 +25,7 @@ jest.mock('@core/helpers/useI18n', () => () => ({
 }));
 
 const mockUseIsMobile = jest.fn();
+
 jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => mockUseIsMobile(),
 }));
@@ -37,7 +39,9 @@ describe('test RatioLock', () => {
 
   it('should render correctly on desktop', () => {
     mockUseIsMobile.mockReturnValue(false);
+
     const { container, rerender } = render(<RatioLock isLocked={false} onClick={mockOnClick} />);
+
     expect(container).toMatchSnapshot();
     rerender(<RatioLock isLocked onClick={mockOnClick} />);
     expect(container).toMatchSnapshot();
@@ -45,7 +49,9 @@ describe('test RatioLock', () => {
 
   it('should render correctly on mobile', () => {
     mockUseIsMobile.mockReturnValue(true);
+
     const { container, rerender } = render(<RatioLock isLocked={false} onClick={mockOnClick} />);
+
     expect(container).toMatchSnapshot();
     rerender(<RatioLock isLocked onClick={mockOnClick} />);
     expect(container).toMatchSnapshot();
@@ -53,16 +59,20 @@ describe('test RatioLock', () => {
 
   test('onClick on desktop', () => {
     mockUseIsMobile.mockReturnValue(false);
+
     const { container } = render(<RatioLock isLocked={false} onClick={mockOnClick} />);
     const button = container.querySelector('button');
+
     fireEvent.click(button);
     expect(mockOnClick).toBeCalledTimes(1);
   });
 
   test('onClick on mobile', () => {
     mockUseIsMobile.mockReturnValue(true);
+
     const { container } = render(<RatioLock isLocked={false} onClick={mockOnClick} />);
     const button = container.querySelector('button');
+
     fireEvent.click(button);
     expect(mockOnClick).toBeCalledTimes(1);
   });

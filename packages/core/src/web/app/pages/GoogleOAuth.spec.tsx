@@ -1,14 +1,16 @@
-/* eslint-disable import/first */
 import React from 'react';
+
 import { render, waitFor } from '@testing-library/react';
 
 const socialAuth = jest.fn();
+
 jest.mock('@core/helpers/social-auth', () => socialAuth);
 
 const signInWithGoogleCode = jest.fn();
+
 jest.mock('@core/helpers/api/flux-id', () => ({
-  signInWithGoogleCode,
   G_REDIRECT_URI: 'https://store.flux3dp.com/beam-studio-oauth?isWeb=true',
+  signInWithGoogleCode,
 }));
 
 import GoogleOAuth from './GoogleOAuth';
@@ -16,8 +18,8 @@ import GoogleOAuth from './GoogleOAuth';
 test('should render correctly', async () => {
   signInWithGoogleCode.mockResolvedValue(true);
   window.location.hash =
-    // eslint-disable-next-line max-len
     '#/google-auth?code=4/0AX4XfWhjY6oc1K0NJKzWnD0FayFqaSqjNMuAjcsCYSopozsP3pZ-ImYrVG_fvBAKnr_y3Q&redirect_url=https://store.flux3dp.com/beam-studio-oauth?isWeb=true';
+
   const { container } = render(<GoogleOAuth />);
 
   expect(signInWithGoogleCode).toHaveBeenCalledTimes(1);

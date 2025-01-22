@@ -1,5 +1,5 @@
-/* eslint-disable import/first */
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import SegmentedControl from './SegmentedControl';
@@ -10,7 +10,6 @@ describe('test SegmentedControl', () => {
     const { container } = render(
       <SegmentedControl
         isDisabled={false}
-        selectedIndexes={[0]}
         onChanged={onChanged}
         segments={[
           {
@@ -29,8 +28,10 @@ describe('test SegmentedControl', () => {
             value: 2,
           },
         ]}
-      />
+        selectedIndexes={[0]}
+      />,
     );
+
     expect(container).toMatchSnapshot();
 
     fireEvent.click(container.querySelector('div[title="tSmooth"]'));
@@ -43,7 +44,6 @@ describe('test SegmentedControl', () => {
     const { container } = render(
       <SegmentedControl
         isDisabled
-        selectedIndexes={[0]}
         onChanged={onChanged}
         segments={[
           {
@@ -62,8 +62,10 @@ describe('test SegmentedControl', () => {
             value: 2,
           },
         ]}
-      />
+        selectedIndexes={[0]}
+      />,
     );
+
     expect(container).toMatchSnapshot();
 
     fireEvent.click(container.querySelector('div[title="tSmooth"]'));
@@ -75,7 +77,6 @@ describe('test SegmentedControl', () => {
     const { container } = render(
       <SegmentedControl
         isDisabled={false}
-        selectedIndexes={[0]}
         onChanged={onChanged}
         segments={[
           {
@@ -94,8 +95,10 @@ describe('test SegmentedControl', () => {
             value: 2,
           },
         ]}
-      />
+        selectedIndexes={[0]}
+      />,
     );
+
     expect(container).toMatchSnapshot();
 
     fireEvent.click(container.querySelector('div[title="tCorner"]'));
@@ -107,7 +110,6 @@ describe('test SegmentedControl', () => {
     const { container } = render(
       <SegmentedControl
         isDisabled={false}
-        selectedIndexes={[0, 1, 2]}
         onChanged={onChanged}
         segments={[
           {
@@ -126,8 +128,10 @@ describe('test SegmentedControl', () => {
             value: 2,
           },
         ]}
-      />
+        selectedIndexes={[0, 1, 2]}
+      />,
     );
+
     expect(container).toMatchSnapshot();
   });
 });

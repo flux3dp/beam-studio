@@ -204,10 +204,7 @@ class TabManager {
   };
 
   private preloadTab = (): void => {
-    if (
-      !this.preloadedTab &&
-      (!tabConstants.maxTab || this.tabsList.length < tabConstants.maxTab)
-    ) {
+    if (!this.preloadedTab && (!tabConstants.maxTab || this.tabsList.length < tabConstants.maxTab)) {
       this.preloadedTab = this.createTab();
       this.focusTab(this.focusedId);
     }

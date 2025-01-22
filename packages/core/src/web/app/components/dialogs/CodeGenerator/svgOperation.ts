@@ -1,15 +1,11 @@
-/* eslint-disable no-param-reassign */
-import fontFuncs, {
-  convertTextToPathByFontkit,
-  getFontObj,
-} from '@core/app/actions/beambox/font-funcs';
+import fontFuncs, { convertTextToPathByFontkit, getFontObj } from '@core/app/actions/beambox/font-funcs';
 import NS from '@core/app/constants/namespaces';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import importSvgString from '@core/app/svgedit/operations/import/importSvgString';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import { FontDescriptor } from '@core/interfaces/IFont';
-import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import type { FontDescriptor } from '@core/interfaces/IFont';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 let svgCanvas: ISVGCanvas;
 
@@ -17,10 +13,8 @@ getSVGAsync(({ Canvas }) => {
   svgCanvas = Canvas;
 });
 
-export function extractSvgTags(svgString: string, tag: string): Array<string> {
-  const elements = new DOMParser()
-    .parseFromString(svgString, 'image/svg+xml')
-    .querySelectorAll(tag);
+export function extractSvgTags(svgString: string, tag: string): string[] {
+  const elements = new DOMParser().parseFromString(svgString, 'image/svg+xml').querySelectorAll(tag);
 
   return Array.from(elements).map(({ outerHTML }) => outerHTML);
 }
@@ -35,23 +29,16 @@ function extractFontDetails(fontStyle: string): {
   const isItalic = /italic/i.test(fontStyle);
   const fontSizeInfo = fontStyle.match(/(\d+px|\d+em|\d+rem|\d+pt)/)?.[0] || '16px';
   const fontSize = Number.parseFloat(fontSizeInfo.match(/^(\d+(\.\d+)?)/)?.[0]) || 16;
-  const fontFamily = fontStyle
-    .replace(/font:\s*|bold|italic|(\d+px|\d+em|\d+rem|\d+pt)/g, '')
-    .trim();
+  const fontFamily = fontStyle.replace(/font:\s*|bold|italic|(\d+px|\d+em|\d+rem|\d+pt)/g, '').trim();
 
   return { fontFamily, fontSize, isBold, isItalic };
 }
 
-function findMatchingFont(
-  fontInfos: Array<FontDescriptor>,
-  isBold: boolean,
-  isItalic: boolean,
-): FontDescriptor {
+function findMatchingFont(fontInfos: FontDescriptor[], isBold: boolean, isItalic: boolean): FontDescriptor {
   return (
     fontInfos.find(
       ({ postscriptName }) =>
-        isBold === postscriptName.includes('Bold') &&
-        isItalic === postscriptName.includes('Italic'),
+        isBold === postscriptName.includes('Bold') && isItalic === postscriptName.includes('Italic'),
     ) || fontInfos[0]
   );
 }
@@ -64,10 +51,8 @@ function preProcessTextTag(svgElement: SVGElement): SVGElement {
   }
 
   texts.forEach((text) => {
-    const { fontFamily, fontSize, isBold, isItalic } = extractFontDetails(
-      text.getAttribute('style'),
-    );
-    const fonts: Array<FontDescriptor> = fontFuncs.requestFontsOfTheFontFamily(fontFamily);
+    const { fontFamily, fontSize, isBold, isItalic } = extractFontDetails(text.getAttribute('style'));
+    const fonts: FontDescriptor[] = fontFuncs.requestFontsOfTheFontFamily(fontFamily);
     const font = findMatchingFont(fonts, isBold, isItalic);
 
     text.setAttribute('font-family', `'${font.family}'`);
@@ -85,9 +70,9 @@ function getTranslateValues(transform: string): { x: number; y: number } {
   const match = transform.match(/translate\(([^,]+),?\s*([^)]+)?\)/);
 
   if (match) {
-    const x = parseFloat(match[1]);
+    const x = Number.parseFloat(match[1]);
     // default to 0 if missing
-    const y = match[2] ? parseFloat(match[2]) : 0;
+    const y = match[2] ? Number.parseFloat(match[2]) : 0;
 
     return { x, y };
   }
@@ -102,9 +87,7 @@ async function getDFromBarcodeSvgElement(svgElement: SVGElement) {
   preProcessTextTag(svgElement);
 
   const fontObj = await getFontObj(
-    fontFuncs.getFontOfPostscriptName(
-      svgElement.querySelector('text')?.getAttribute('font-postscript'),
-    ),
+    fontFuncs.getFontOfPostscriptName(svgElement.querySelector('text')?.getAttribute('font-postscript')),
   );
 
   svgElement.querySelectorAll('g').forEach((g) => {
@@ -147,7 +130,7 @@ async function getDFromBarcodeSvgElement(svgElement: SVGElement) {
 }
 
 async function getSubtractedDFromBarcodeSvgElement(svgElement: SVGElement) {
-  const { width, height } = svgElement.getBoundingClientRect();
+  const { height, width } = svgElement.getBoundingClientRect();
   const backgroundPath = document.createElementNS(NS.SVG, 'path');
 
   backgroundPath.setAttribute('fill', 'black');
@@ -171,19 +154,16 @@ async function getSubtractedDFromBarcodeSvgElement(svgElement: SVGElement) {
   return subtractedD;
 }
 
-export async function importBarcodeSvgElement(
-  svgElement: SVGElement,
-  isInvert = false,
-): Promise<void> {
+export async function importBarcodeSvgElement(svgElement: SVGElement, isInvert = false): Promise<void> {
   const batchCmd = new history.BatchCommand('Import Barcode');
   const d = isInvert
     ? await getSubtractedDFromBarcodeSvgElement(svgElement)
     : await getDFromBarcodeSvgElement(svgElement);
 
   const pathElement = svgCanvas.addSvgElementFromJson({
-    element: 'path',
+    attr: { d, fill: 'black', 'fill-opacity': 1, id: svgCanvas.getNextId(), opacity: 1 },
     curStyles: true,
-    attr: { d, fill: 'black', opacity: 1, 'fill-opacity': 1, id: svgCanvas.getNextId() },
+    element: 'path',
   });
 
   batchCmd.addSubCommand(new history.InsertElementCommand(pathElement));
@@ -209,10 +189,7 @@ function handleQrCodeInvertColor(svgElement: SVGElement): string {
   svg.setAttribute('width', '1000');
   svg.setAttribute('viewBox', `0 0 ${size} ${size}`);
 
-  const [backgroundPath, codePath] = extractSvgTags(
-    new XMLSerializer().serializeToString(svgElement),
-    'path',
-  );
+  const [backgroundPath, codePath] = extractSvgTags(new XMLSerializer().serializeToString(svgElement), 'path');
   const subtractedD = svgCanvas.pathActions.booleanOperation(backgroundPath, codePath, 2);
   const path = document.createElementNS(NS.SVG, 'path');
 
@@ -228,13 +205,8 @@ function handleQrCodeInvertColor(svgElement: SVGElement): string {
   return svgString;
 }
 
-export async function importQrCodeSvgElement(
-  svgElement: SVGElement,
-  isInvert = false,
-): Promise<void> {
-  const svgString = isInvert
-    ? handleQrCodeInvertColor(svgElement)
-    : new XMLSerializer().serializeToString(svgElement);
+export async function importQrCodeSvgElement(svgElement: SVGElement, isInvert = false): Promise<void> {
+  const svgString = isInvert ? handleQrCodeInvertColor(svgElement) : new XMLSerializer().serializeToString(svgElement);
 
   await importSvgString(svgString, { type: 'layer' });
 }

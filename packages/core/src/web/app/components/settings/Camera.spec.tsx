@@ -1,24 +1,21 @@
 import React from 'react';
+
 import { render } from '@testing-library/react';
 
 import { OptionValues } from '@core/app/constants/enums';
 
 jest.mock('@core/app/components/settings/Control', () => 'mock-control');
 
-jest.mock('@core/app/components/settings/SelectControl', () =>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ({ id, label, url, onChange, options }: any) => (
-    <div>
-      mock-select-control id:{id}
-      label:{label}
-      url:{url}
-      options:{JSON.stringify(options)}
-      <input className="select-control" onChange={onChange} />
-    </div>
-  ),
-);
+jest.mock('@core/app/components/settings/SelectControl', () => ({ id, label, onChange, options, url }: any) => (
+  <div>
+    mock-select-control id:{id}
+    label:{label}
+    url:{url}
+    options:{JSON.stringify(options)}
+    <input className="select-control" onChange={onChange} />
+  </div>
+));
 
-// eslint-disable-next-line import/first
 import Camera from './Camera';
 
 const mockUpdateBeamboxPreferenceChange = jest.fn();
@@ -29,31 +26,32 @@ test('should render correctly', () => {
     <Camera
       enableCustomPreviewHeightOptions={[
         {
-          value: OptionValues.TRUE,
           label: 'On',
           selected: false,
+          value: OptionValues.TRUE,
         },
         {
-          value: OptionValues.FALSE,
           label: 'Off',
           selected: true,
+          value: OptionValues.FALSE,
         },
       ]}
       getBeamboxPreferenceEditingValue={mockGetBeamboxPreferenceEditingValue}
       keepPreviewResultOptions={[
         {
-          value: OptionValues.TRUE,
           label: 'On',
           selected: false,
+          value: OptionValues.TRUE,
         },
         {
-          value: OptionValues.FALSE,
           label: 'Off',
           selected: true,
+          value: OptionValues.FALSE,
         },
       ]}
       updateBeamboxPreferenceChange={mockUpdateBeamboxPreferenceChange}
     />,
   );
+
   expect(container).toMatchSnapshot();
 });

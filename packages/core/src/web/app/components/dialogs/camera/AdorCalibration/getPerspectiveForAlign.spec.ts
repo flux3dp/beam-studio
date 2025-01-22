@@ -4,21 +4,24 @@ const mockFetchAutoLevelingData = jest.fn();
 const mockEnterRawMode = jest.fn();
 const mockRawGetProbePos = jest.fn();
 const mockEndRawMode = jest.fn();
+
 jest.mock('@core/helpers/device-master', () => ({
-  fetchAutoLevelingData: (...args) => mockFetchAutoLevelingData(...args),
-  enterRawMode: (...args) => mockEnterRawMode(...args),
-  rawGetProbePos: (...args) => mockRawGetProbePos(...args),
   endRawMode: (...args) => mockEndRawMode(...args),
+  enterRawMode: (...args) => mockEnterRawMode(...args),
+  fetchAutoLevelingData: (...args) => mockFetchAutoLevelingData(...args),
+  rawGetProbePos: (...args) => mockRawGetProbePos(...args),
 }));
 
 const mockGetPerspectivePointsZ3Regression = jest.fn();
 const mockInterpolatePointsFromHeight = jest.fn();
+
 jest.mock('@core/helpers/camera-calibration-helper', () => ({
   getPerspectivePointsZ3Regression: (...args) => mockGetPerspectivePointsZ3Regression(...args),
   interpolatePointsFromHeight: (...args) => mockInterpolatePointsFromHeight(...args),
 }));
 
 const mockGetWorkarea = jest.fn();
+
 jest.mock('@core/app/constants/workarea-constants', () => ({
   getWorkarea: (...args) => mockGetWorkarea(...args),
 }));
@@ -60,18 +63,20 @@ describe('test getPerspectiveForAlign', () => {
         I: 18,
       });
     mockEnterRawMode.mockResolvedValueOnce(null);
-    mockRawGetProbePos.mockResolvedValueOnce({ z: 1, didAf: true });
+    mockRawGetProbePos.mockResolvedValueOnce({ didAf: true, z: 1 });
     mockEndRawMode.mockResolvedValueOnce(null);
   });
 
   it('should return correct perspective when using z3regParam', async () => {
-    mockGetWorkarea.mockReturnValue({ width: 100, height: 100, deep: 2 });
+    mockGetWorkarea.mockReturnValue({ deep: 2, height: 100, width: 100 });
     mockGetPerspectivePointsZ3Regression.mockReturnValueOnce('mock-perspective');
+
     const res = await getPerspectiveForAlign(
       { model: 'ado1' } as any,
       { heights: 'mock-heights', z3regParam: 'mock-z3-reg-param' } as any,
       'mock-center' as any,
     );
+
     expect(mockGetWorkarea).toBeCalledTimes(2);
     expect(mockGetWorkarea).toHaveBeenNthCalledWith(1, 'ado1', 'ado1');
     expect(mockGetWorkarea).toHaveBeenNthCalledWith(2, 'ado1', 'ado1');
@@ -82,9 +87,8 @@ describe('test getPerspectiveForAlign', () => {
     expect(mockInterpolatePointsFromHeight).not.toBeCalled();
     expect(mockGetPerspectivePointsZ3Regression).toBeCalledTimes(1);
     expect(mockGetPerspectivePointsZ3Regression).toHaveBeenLastCalledWith(1, 'mock-z3-reg-param', {
-      chessboard: [48, 36],
-      workarea: [100, 100],
       center: 'mock-center',
+      chessboard: [48, 36],
       levelingOffsets: {
         A: -6,
         B: -2,
@@ -96,6 +100,7 @@ describe('test getPerspectiveForAlign', () => {
         H: 22,
         I: 26,
       },
+      workarea: [100, 100],
     });
     expect(res).toEqual('mock-perspective');
   });

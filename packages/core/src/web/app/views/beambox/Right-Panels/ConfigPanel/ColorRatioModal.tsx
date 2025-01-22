@@ -1,12 +1,13 @@
 import React, { useContext, useMemo, useState } from 'react';
+
 import { Col, ConfigProvider, Modal, Row } from 'antd';
 
-import useI18n from '@core/helpers/useI18n';
 import { ColorRatioModalBlock } from '@core/app/constants/antd-config';
-import { ConfigItem } from '@core/interfaces/ILayerConfig';
-import { getLayerByName } from '@core/helpers/layer/layer-helper';
 import { PrintingColors } from '@core/app/constants/color-constants';
 import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
+import { getLayerByName } from '@core/helpers/layer/layer-helper';
+import useI18n from '@core/helpers/useI18n';
+import type { ConfigItem } from '@core/interfaces/ILayerConfig';
 
 import ConfigPanelContext from './ConfigPanelContext';
 import ModalBlock from './ModalBlock';
@@ -17,66 +18,65 @@ interface Props {
 }
 
 // TODO: add test
-const ColorRationModal = ({ fullColor, onClose }: Props): JSX.Element => {
+const ColorRationModal = ({ fullColor, onClose }: Props): React.JSX.Element => {
   const {
-    global: tGlobal,
     beambox: {
       right_panel: { laser_panel: t },
     },
+    global: tGlobal,
   } = useI18n();
   const { dispatch, selectedLayers, state } = useContext(ConfigPanelContext);
   const [draftValue, setDraftValue] = useState<{ [key: string]: ConfigItem<number> }>({
     cRatio: state.cRatio,
-    mRatio: state.mRatio,
-    yRatio: state.yRatio,
     kRatio: state.kRatio,
+    mRatio: state.mRatio,
     printingStrength: state.printingStrength,
+    yRatio: state.yRatio,
   });
   const handleSave = () => {
     const newState = { ...state };
     const keys = fullColor ? ['cRatio', 'mRatio', 'yRatio', 'kRatio'] : ['printingStrength'];
+
     selectedLayers.forEach((layerName) => {
       const layer = getLayerByName(layerName);
-      keys.forEach((key: 'cRatio' | 'mRatio' | 'yRatio' | 'kRatio' | 'printingStrength') => {
-        if (
-          state[key].value !== draftValue[key].value ||
-          state[key].hasMultiValue !== draftValue[key].hasMultiValue
-        ) {
+
+      keys.forEach((key: 'cRatio' | 'kRatio' | 'mRatio' | 'printingStrength' | 'yRatio') => {
+        if (state[key].value !== draftValue[key].value || state[key].hasMultiValue !== draftValue[key].hasMultiValue) {
           writeDataLayer(layer, key, draftValue[key].value);
           newState[key] = draftValue[key];
         }
       });
     });
-    dispatch({ type: 'update', payload: newState });
+    dispatch({ payload: newState, type: 'update' });
     onClose();
   };
   const handleValueChange = (key: string, value: number) => {
-    setDraftValue((cur) => ({ ...cur, [key]: { value, hasMultiValue: false } }));
+    setDraftValue((cur) => ({ ...cur, [key]: { hasMultiValue: false, value } }));
   };
-  const colorLayer = useMemo<'c' | 'm' | 'y' | 'k' | undefined>(
+  const colorLayer = useMemo<'c' | 'k' | 'm' | 'y' | undefined>(
     () =>
       state.color.hasMultiValue
         ? undefined
         : ({
+            [PrintingColors.BLACK]: 'k',
             [PrintingColors.CYAN]: 'c',
             [PrintingColors.MAGENTA]: 'm',
             [PrintingColors.YELLOW]: 'y',
-            [PrintingColors.BLACK]: 'k',
-          }[state.color.value] as 'c' | 'm' | 'y' | 'k') || undefined,
+          }[state.color.value] as 'c' | 'k' | 'm' | 'y') || undefined,
     [state.color.hasMultiValue, state.color.value],
   );
 
   return (
     <Modal
-      centered
-      open
-      maskClosable={false}
-      width={fullColor ? 600 : 300}
-      onOk={handleSave}
-      onCancel={onClose}
       cancelText={tGlobal.cancel}
+      centered
+      maskClosable={false}
       okText={tGlobal.save}
+      onCancel={onClose}
+      onOk={handleSave}
+      open
       title={t.color_adjustment}
+      width={fullColor ? 600 : 300}
     >
       <ConfigProvider theme={ColorRatioModalBlock}>
         {fullColor ? (
@@ -85,47 +85,47 @@ const ColorRationModal = ({ fullColor, onClose }: Props): JSX.Element => {
               <Col span={12}>
                 <ModalBlock
                   color="c"
-                  title="Cyan"
                   label={t.color_strength}
-                  value={draftValue.cRatio.value}
                   setValue={(val) => handleValueChange('cRatio', val)}
+                  title="Cyan"
+                  value={draftValue.cRatio.value}
                 />
               </Col>
               <Col span={12}>
                 <ModalBlock
                   color="m"
-                  title="Magenta"
                   label={t.color_strength}
-                  value={draftValue.mRatio.value}
                   setValue={(val) => handleValueChange('mRatio', val)}
+                  title="Magenta"
+                  value={draftValue.mRatio.value}
                 />
               </Col>
               <Col span={12}>
                 <ModalBlock
                   color="y"
-                  title="Yellow"
                   label={t.color_strength}
-                  value={draftValue.yRatio.value}
                   setValue={(val) => handleValueChange('yRatio', val)}
+                  title="Yellow"
+                  value={draftValue.yRatio.value}
                 />
               </Col>
               <Col span={12}>
                 <ModalBlock
                   color="k"
-                  title="Black"
                   label={t.color_strength}
-                  value={draftValue.kRatio.value}
                   setValue={(val) => handleValueChange('kRatio', val)}
+                  title="Black"
+                  value={draftValue.kRatio.value}
                 />
               </Col>
             </Row>
           </>
         ) : (
           <ModalBlock
-            label={t.color_strength}
-            value={draftValue.printingStrength.value}
-            setValue={(val) => handleValueChange('printingStrength', val)}
             color={colorLayer}
+            label={t.color_strength}
+            setValue={(val) => handleValueChange('printingStrength', val)}
+            value={draftValue.printingStrength.value}
           />
         )}
       </ConfigProvider>

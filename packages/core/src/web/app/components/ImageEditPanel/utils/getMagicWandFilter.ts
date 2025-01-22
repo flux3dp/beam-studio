@@ -1,22 +1,16 @@
-/* eslint-disable no-continue */
-/* eslint-disable no-param-reassign */
-/* eslint-disable no-bitwise */
-/* eslint-disable @typescript-eslint/no-shadow */
-/* eslint-disable import/prefer-default-export */
-
 interface TargetPointInfo {
+  tolerance: number;
   x: number;
   y: number;
-  tolerance: number;
 }
 
 export const getMagicWandFilter = (
   imageData: ImageData,
-  { x, y, tolerance }: TargetPointInfo
+  { tolerance, x, y }: TargetPointInfo,
 ): ((imageData: ImageData) => void) => {
   const getFilteredPoints = (x: number, y: number, imageData: ImageData) => {
     const points = Array.of<number>();
-    const { width, height, data } = imageData;
+    const { data, height, width } = imageData;
     const idx = (y * width + x) * 4;
     const targetR = data[idx];
     const targetG = data[idx + 1];
@@ -56,14 +50,17 @@ export const getMagicWandFilter = (
           markVisited(pos - 1);
           queue.push(pos - 1);
         }
+
         if (x < width - 1 && !isVisited(pos + 1)) {
           markVisited(pos + 1);
           queue.push(pos + 1);
         }
+
         if (y > 0 && !isVisited(pos - width)) {
           markVisited(pos - width);
           queue.push(pos - width);
         }
+
         if (y < height - 1 && !isVisited(pos + width)) {
           markVisited(pos + width);
           queue.push(pos + width);

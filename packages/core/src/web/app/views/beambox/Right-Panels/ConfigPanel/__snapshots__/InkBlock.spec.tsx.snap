@@ -50,7 +50,7 @@ exports[`test InkBlock should render correctly 1`] = `
       </p>
       <p>
         options: 
-        [{"value":1,"label":"very_low"},{"value":2,"label":"low"},{"value":3,"label":"regular"},{"value":4,"label":"high"},{"value":5,"label":"very_high"}]
+        [{"label":"very_low","value":1},{"label":"low","value":2},{"label":"regular","value":3},{"label":"high","value":4},{"label":"very_high","value":5}]
       </p>
       <button
         type="button"

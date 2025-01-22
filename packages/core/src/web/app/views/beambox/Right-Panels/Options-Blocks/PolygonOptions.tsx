@@ -1,16 +1,17 @@
 import React, { useEffect } from 'react';
 
+import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
-import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
-import useI18n from '@core/helpers/useI18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
+import useI18n from '@core/helpers/useI18n';
 
 import styles from './PolygonOptions.module.scss';
 
 let svgCanvas;
+
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
@@ -20,38 +21,57 @@ interface Props {
   polygonSides: number;
 }
 
-function PolygonOptions({ elem, polygonSides }: Props): JSX.Element {
+function PolygonOptions({ elem, polygonSides }: Props): React.JSX.Element {
   const [sides, setSides] = React.useState(polygonSides || 5);
   const isMobile = useIsMobile();
   const lang = useI18n().beambox.right_panel.object_panel.option_panel;
+
   useEffect(() => {
-    if (polygonSides) setSides(polygonSides);
+    if (polygonSides) {
+      setSides(polygonSides);
+    }
   }, [polygonSides]);
 
   const handleSideChanage = (val) => {
-    if (val === sides) return;
+    if (val === sides) {
+      return;
+    }
+
     const batchCmd = HistoryCommandFactory.createBatchCommand('Change Polygon Sides');
+
     svgCanvas.undoMgr.beginUndoableChange('sides', [elem]);
     svgCanvas.undoMgr.beginUndoableChange('points', [elem]);
     window.updatePolygonSides?.(elem, val - sides);
+
     let cmd = svgCanvas.undoMgr.finishUndoableChange();
-    if (!cmd.isEmpty()) batchCmd.addSubCommand(cmd);
+
+    if (!cmd.isEmpty()) {
+      batchCmd.addSubCommand(cmd);
+    }
+
     cmd = svgCanvas.undoMgr.finishUndoableChange();
-    if (!cmd.isEmpty()) batchCmd.addSubCommand(cmd);
-    if (!batchCmd.isEmpty()) svgCanvas.undoMgr.addCommandToHistory(batchCmd);
-    setSides(parseInt(elem.getAttribute('sides'), 10));
+
+    if (!cmd.isEmpty()) {
+      batchCmd.addSubCommand(cmd);
+    }
+
+    if (!batchCmd.isEmpty()) {
+      svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+    }
+
+    setSides(Number.parseInt(elem.getAttribute('sides'), 10));
   };
 
   const renderSides = () =>
     isMobile ? (
       <ObjectPanelItem.Number
-        id="polygon-sides"
-        value={sides}
-        min={3}
-        updateValue={handleSideChanage}
-        label={lang.sides}
-        unit=""
         decimal={0}
+        id="polygon-sides"
+        label={lang.sides}
+        min={3}
+        unit=""
+        updateValue={handleSideChanage}
+        value={sides}
       />
     ) : (
       <div className={styles['polygon-sides']} key="polygon-sides">
@@ -59,11 +79,11 @@ function PolygonOptions({ elem, polygonSides }: Props): JSX.Element {
           <OptionPanelIcons.PolygonSide />
         </div>
         <UnitInput
-          min={3}
           className={{ 'option-input': true }}
-          defaultValue={sides}
           decimal={0}
+          defaultValue={sides}
           getValue={(val) => handleSideChanage(val)}
+          min={3}
         />
       </div>
     );

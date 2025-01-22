@@ -1,18 +1,16 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import NestGAPanel from './NestGAPanel';
 
-jest.mock('@core/app/widgets/Unit-Input-v2', () =>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ({ min, defaultValue, getValue }: any) => (
-    <div>
-      mock-unit-input min:{min}
-      defaultValue:{defaultValue}
-      <input className="unit-input" onChange={(e) => getValue(+e.target.value)} />
-    </div>
-  ),
-);
+jest.mock('@core/app/widgets/Unit-Input-v2', () => ({ defaultValue, getValue, min }: any) => (
+  <div>
+    mock-unit-input min:{min}
+    defaultValue:{defaultValue}
+    <input className="unit-input" onChange={(e) => getValue(+e.target.value)} />
+  </div>
+));
 
 test('should render correctly', () => {
   const updateNestOptions = jest.fn();
@@ -25,9 +23,11 @@ test('should render correctly', () => {
       updateNestOptions={updateNestOptions}
     />,
   );
+
   expect(container).toMatchSnapshot();
 
   const inputs = container.querySelectorAll('input.unit-input');
+
   fireEvent.change(inputs[0], { target: { value: 2 } });
   expect(updateNestOptions).toHaveBeenCalledTimes(1);
   expect(updateNestOptions).toHaveBeenNthCalledWith(1, { generations: 2 });

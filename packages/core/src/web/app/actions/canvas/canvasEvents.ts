@@ -30,7 +30,7 @@ const setColorPreviewing = (val: boolean): void => {
   canvasEventEmitter.emit('SET_COLOR_PREVIEWING', val);
 };
 
-const setupPreviewMode = (opts: { showModal?: boolean; callback?: () => void } = {}): void => {
+const setupPreviewMode = (opts: { callback?: () => void; showModal?: boolean } = {}): void => {
   canvasEventEmitter.emit('SETUP_PREVIEW_MODE', opts);
 };
 

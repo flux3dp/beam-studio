@@ -1,15 +1,17 @@
 import React, { useContext, useMemo } from 'react';
+
 import { Button, Modal, Space } from 'antd';
 
-import browser from '@app/implementations/browser';
-import FloatingPanel from '@core/app/widgets/FloatingPanel';
-import FluxIcons from '@core/app/icons/flux/FluxIcons';
-import isFluxPlusActive from '@core/helpers/is-flux-plus-active';
 import layoutConstants from '@core/app/constants/layout-constants';
-import useI18n from '@core/helpers/useI18n';
-import { getCurrentUser } from '@core/helpers/api/flux-id';
 import { MyCloudContext, MyCloudProvider } from '@core/app/contexts/MyCloudContext';
+import FluxIcons from '@core/app/icons/flux/FluxIcons';
+import FloatingPanel from '@core/app/widgets/FloatingPanel';
+import { getCurrentUser } from '@core/helpers/api/flux-id';
+import isFluxPlusActive from '@core/helpers/is-flux-plus-active';
 import { useIsMobile } from '@core/helpers/system-helper';
+import useI18n from '@core/helpers/useI18n';
+
+import browser from '@app/implementations/browser';
 
 import GridFile from './GridFile';
 import Head from './Head';
@@ -19,39 +21,44 @@ interface Props {
   onClose: () => void;
 }
 
-const MyCloudModal = (): JSX.Element => {
+const MyCloudModal = (): React.JSX.Element => {
   const user = getCurrentUser();
   const LANG = useI18n();
   const lang = LANG.my_cloud;
   const isMobile = useIsMobile();
-  const { onClose, files, setSelectedId } = useContext(MyCloudContext);
+  const { files, onClose, setSelectedId } = useContext(MyCloudContext);
   const anchors = [0, window.innerHeight - layoutConstants.menuberHeight];
 
   const content = useMemo(() => {
-    if (files === undefined) return <div className={styles.placeholder}>{lang.loading_file}</div>;
-    if (files.length === 0)
+    if (files === undefined) {
+      return <div className={styles.placeholder}>{lang.loading_file}</div>;
+    }
+
+    if (files.length === 0) {
       return (
         <div className={styles.placeholder}>
           <div>{lang.no_file_title}</div>
           <div>{lang.no_file_subtitle}</div>
         </div>
       );
+    }
+
     return (
       <div className={styles.grids} onClick={() => setSelectedId(null)}>
         {files.map((file) => (
-          <GridFile key={file.uuid} file={file} />
+          <GridFile file={file} key={file.uuid} />
         ))}
       </div>
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line hooks/exhaustive-deps
   }, [files]);
 
   const title = (
     <Space
-      className={styles['title-container']}
-      size="middle"
       align="center"
+      className={styles['title-container']}
       direction={isMobile ? 'vertical' : 'horizontal'}
+      size="middle"
     >
       <div className={styles.title}>
         {user.info?.subscription?.is_valid && <FluxIcons.FluxPlus />}
@@ -63,11 +70,7 @@ const MyCloudModal = (): JSX.Element => {
             {lang.file_limit} {files ? files.length : '?'}/5
           </div>
           {isFluxPlusActive && (
-            <Button
-              type="link"
-              size="small"
-              onClick={() => browser.open(LANG.flux_id_login.flux_plus.website_url)}
-            >
+            <Button onClick={() => browser.open(LANG.flux_id_login.flux_plus.website_url)} size="small" type="link">
               {lang.upgrade}
             </Button>
           )}
@@ -77,24 +80,18 @@ const MyCloudModal = (): JSX.Element => {
   );
 
   return isMobile ? (
-    <FloatingPanel
-      className={styles.panel}
-      anchors={anchors}
-      title={title}
-      fixedContent={<Head />}
-      onClose={onClose}
-    >
+    <FloatingPanel anchors={anchors} className={styles.panel} fixedContent={<Head />} onClose={onClose} title={title}>
       {content}
     </FloatingPanel>
   ) : (
-    <Modal title={title} footer={null} width={720} onCancel={onClose} centered open>
+    <Modal centered footer={null} onCancel={onClose} open title={title} width={720}>
       <Head />
       {content}
     </Modal>
   );
 };
 
-const MyCloud = ({ onClose }: Props): JSX.Element => (
+const MyCloud = ({ onClose }: Props): React.JSX.Element => (
   <MyCloudProvider onClose={onClose}>
     <MyCloudModal />
   </MyCloudProvider>

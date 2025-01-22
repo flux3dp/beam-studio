@@ -1,16 +1,11 @@
-/* eslint-disable jsx-a11y/no-noninteractive-element-to-interactive-role */
-/* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import React from 'react';
+
 import cx from 'classnames';
 
-import { hideMenu } from './actions';
 import AbstractMenu from './AbstractMenu';
-import {
-  callIfExists, cssClasses, hasOwnProp, store,
-} from './helpers';
+import { hideMenu } from './actions';
 import listener from './globalEventListener';
+import { callIfExists, cssClasses, hasOwnProp, store } from './helpers';
 
 // interface Props {
 //   title: Node
@@ -29,17 +24,17 @@ import listener from './globalEventListener';
 
 export default class SubMenu extends AbstractMenu {
   static defaultProps = {
-    disabled: false,
-    hoverDelay: 500,
     attributes: {},
     className: '',
-    rtl: false,
-    selected: false,
+    disabled: false,
+    forceClose: () => null,
+    forceOpen: false,
+    hoverDelay: 500,
     onMouseMove: () => null,
     onMouseOut: () => null,
-    forceOpen: false,
-    forceClose: () => null,
     parentKeyNavigationHandler: () => null,
+    rtl: false,
+    selected: false,
   };
 
   private listenId: string;
@@ -64,25 +59,31 @@ export default class SubMenu extends AbstractMenu {
   }
 
   componentDidMount() {
-    this.listenId = listener.register(() => { }, this.hideSubMenu);
+    this.listenId = listener.register(() => {}, this.hideSubMenu);
   }
 
   getSubMenuType = () => SubMenu;
 
   shouldComponentUpdate(nextProps, nextState) {
-    this.isVisibilityChange = (this.state.visible !== nextState.visible
-      || this.props.forceOpen !== nextProps.forceOpen)
-      && !(this.state.visible && nextProps.forceOpen)
-      && !(this.props.forceOpen && nextState.visible);
+    this.isVisibilityChange =
+      (this.state.visible !== nextState.visible || this.props.forceOpen !== nextProps.forceOpen) &&
+      !(this.state.visible && nextProps.forceOpen) &&
+      !(this.props.forceOpen && nextState.visible);
+
     return true;
   }
 
   componentDidUpdate() {
-    if (!this.isVisibilityChange) return;
+    if (!this.isVisibilityChange) {
+      return;
+    }
+
     if (this.props.forceOpen || this.state.visible) {
       const wrapper = window.requestAnimationFrame || setTimeout;
+
       wrapper(() => {
         this.subMenu.classList.add(cssClasses.menuVisible);
+
         const styles = this.props.rtl ? this.getRTLMenuPosition() : this.getMenuPosition();
 
         this.subMenu.style.removeProperty('top');
@@ -90,10 +91,21 @@ export default class SubMenu extends AbstractMenu {
         this.subMenu.style.removeProperty('left');
         this.subMenu.style.removeProperty('right');
 
-        if (hasOwnProp(styles, 'top')) this.subMenu.style.top = styles.top;
-        if (hasOwnProp(styles, 'left')) this.subMenu.style.left = styles.left;
-        if (hasOwnProp(styles, 'bottom')) this.subMenu.style.bottom = styles.bottom;
-        if (hasOwnProp(styles, 'right')) this.subMenu.style.right = styles.right;
+        if (hasOwnProp(styles, 'top')) {
+          this.subMenu.style.top = styles.top;
+        }
+
+        if (hasOwnProp(styles, 'left')) {
+          this.subMenu.style.left = styles.left;
+        }
+
+        if (hasOwnProp(styles, 'bottom')) {
+          this.subMenu.style.bottom = styles.bottom;
+        }
+
+        if (hasOwnProp(styles, 'right')) {
+          this.subMenu.style.right = styles.right;
+        }
 
         this.registerHandlers();
         this.setState({ selectedItem: null });
@@ -106,6 +118,7 @@ export default class SubMenu extends AbstractMenu {
         this.subMenu.style.left = '100%';
         this.unregisterHandlers();
       };
+
       this.subMenu.classList.remove(cssClasses.menuVisible);
       cleanup();
     }
@@ -116,15 +129,19 @@ export default class SubMenu extends AbstractMenu {
       listener.unregister(this.listenId);
     }
 
-    if (this.opentimer) clearTimeout(this.opentimer);
+    if (this.opentimer) {
+      clearTimeout(this.opentimer);
+    }
 
-    if (this.closetimer) clearTimeout(this.closetimer);
+    if (this.closetimer) {
+      clearTimeout(this.closetimer);
+    }
 
     this.unregisterHandlers(true);
   }
 
   getMenuPosition = () => {
-    const { innerWidth, innerHeight } = window;
+    const { innerHeight, innerWidth } = window;
     const rect = this.subMenu.getBoundingClientRect();
     const position: { [key: string]: string } = {};
 
@@ -177,47 +194,63 @@ export default class SubMenu extends AbstractMenu {
     if (this.props.forceOpen) {
       this.props.forceClose();
     }
-    this.setState({ visible: false, selectedItem: null });
+
+    this.setState({ selectedItem: null, visible: false });
     this.unregisterHandlers();
   };
 
   handleClick = (event) => {
     event.preventDefault();
 
-    if (this.props.disabled) return;
+    if (this.props.disabled) {
+      return;
+    }
 
-    callIfExists(
-      this.props.onClick,
-      event,
-      { ...this.props.data, ...store.data },
-      store.target,
-    );
+    callIfExists(this.props.onClick, event, { ...this.props.data, ...store.data }, store.target);
 
-    if (!this.props.onClick || this.props.preventCloseOnClick) return;
+    if (!this.props.onClick || this.props.preventCloseOnClick) {
+      return;
+    }
 
     hideMenu();
   };
 
   handleMouseEnter = () => {
-    if (this.closetimer) clearTimeout(this.closetimer);
+    if (this.closetimer) {
+      clearTimeout(this.closetimer);
+    }
 
-    if (this.props.disabled || this.state.visible) return;
+    if (this.props.disabled || this.state.visible) {
+      return;
+    }
 
-    this.opentimer = setTimeout(() => this.setState({
-      visible: true,
-      selectedItem: null,
-    }), this.props.hoverDelay);
+    this.opentimer = setTimeout(
+      () =>
+        this.setState({
+          selectedItem: null,
+          visible: true,
+        }),
+      this.props.hoverDelay,
+    );
   };
 
   handleMouseLeave = () => {
-    if (this.opentimer) clearTimeout(this.opentimer);
+    if (this.opentimer) {
+      clearTimeout(this.opentimer);
+    }
 
-    if (!this.state.visible) return;
+    if (!this.state.visible) {
+      return;
+    }
 
-    this.closetimer = setTimeout(() => this.setState({
-      visible: false,
-      selectedItem: null,
-    }), this.props.hoverDelay);
+    this.closetimer = setTimeout(
+      () =>
+        this.setState({
+          selectedItem: null,
+          visible: false,
+        }),
+      this.props.hoverDelay,
+    );
   };
 
   menuRef = (c) => {
@@ -235,52 +268,51 @@ export default class SubMenu extends AbstractMenu {
 
   unregisterHandlers = (dismounting?) => {
     document.removeEventListener('keydown', this.handleKeyNavigation);
+
     if (!dismounting) {
       document.addEventListener('keydown', this.props.parentKeyNavigationHandler);
     }
   };
 
   render() {
-    const {
-      children, attributes, disabled, title, selected,
-    } = this.props;
+    const { attributes, children, disabled, selected, title } = this.props;
     const { visible } = this.state;
     const menuProps = {
-      ref: this.menuRef,
+      className: cx(cssClasses.subMenu, attributes.listClassName),
       onMouseEnter: this.handleMouseEnter,
       onMouseLeave: this.handleMouseLeave,
-      className: cx(cssClasses.subMenu, attributes.listClassName),
+      ref: this.menuRef,
     };
     const menuItemProps = {
       className: cx(cssClasses.menuItem, attributes.className, {
-        [cx(cssClasses.menuItemDisabled, attributes.disabledClassName)]: disabled,
         [cx(cssClasses.menuItemActive, attributes.visibleClassName)]: visible,
+        [cx(cssClasses.menuItemDisabled, attributes.disabledClassName)]: disabled,
         [cx(cssClasses.menuItemSelected, attributes.selectedClassName)]: selected,
       }),
+      onClick: this.handleClick,
       onMouseMove: this.props.onMouseMove,
       onMouseOut: this.props.onMouseOut,
-      onClick: this.handleClick,
     };
     const subMenuProps = {
-      ref: this.subMenuRef,
       className: cx(cssClasses.menu, this.props.className),
+      ref: this.subMenuRef,
     };
 
     return (
-      <nav {...menuProps} role="menuitem" tabIndex={-1} aria-haspopup="true" style={{ position: 'relative' }}>
+      <nav {...menuProps} aria-haspopup="true" role="menuitem" style={{ position: 'relative' }} tabIndex={-1}>
         <div {...attributes} {...menuItemProps}>
           {title}
         </div>
         <nav
           {...subMenuProps}
           role="menu"
-          tabIndex={-1}
           style={{
+            left: '100%',
             position: 'absolute',
             top: 0,
-            left: '100%',
             whiteSpace: 'nowrap',
           }}
+          tabIndex={-1}
         >
           {this.renderChildren(children)}
         </nav>

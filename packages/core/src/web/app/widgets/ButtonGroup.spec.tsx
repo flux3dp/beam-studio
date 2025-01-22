@@ -1,49 +1,52 @@
 import React from 'react';
+
 import { render } from '@testing-library/react';
 
 import ButtonGroup from './ButtonGroup';
 
 describe('should render correctly', () => {
   test('no buttons', () => {
-    const { container } = render(<ButtonGroup className="flux" buttons={[]} />);
+    const { container } = render(<ButtonGroup buttons={[]} className="flux" />);
+
     expect(container).toMatchSnapshot();
   });
 
   test('has buttons', () => {
     const { container } = render(
       <ButtonGroup
-        className="flux"
         buttons={[
           {
-            type: 'link',
+            className: 'btn-test',
             dataAttrs: {
               abc: 123,
             },
-            className: 'btn-test',
-            right: true,
-            label: 'BTN-LABEL',
             href: 'https://flux3dp.com/',
+            label: 'BTN-LABEL',
             onClick: jest.fn(),
+            right: true,
+            type: 'link',
           },
           {
-            type: 'icon',
             className: '',
-            right: false,
             label: 'icon-label',
-            title: 'flux3dp',
             onClick: jest.fn(),
+            right: false,
+            title: 'flux3dp',
+            type: 'icon',
           },
           {
             label: 'button-label',
-            title: 'flux3dp',
             onClick: jest.fn(),
             onMouseDown: jest.fn(),
-            onMouseUp: jest.fn(),
             onMouseLeave: jest.fn(),
+            onMouseUp: jest.fn(),
+            title: 'flux3dp',
           },
         ]}
-      />
+        className="flux"
+      />,
     );
+
     expect(container).toMatchSnapshot();
   });
 });

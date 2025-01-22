@@ -1,6 +1,7 @@
-import classNames from 'classnames';
 import React, { useContext } from 'react';
+
 import { Button } from 'antd';
+import classNames from 'classnames';
 
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
 import { FullWindowPanelContext } from '@core/app/widgets/FullWindowPanel/FullWindowPanel';
@@ -13,22 +14,23 @@ interface Props {
   onClose?: () => void;
 }
 
-const BackButton = ({ className = '', children, onClose }: Props): JSX.Element => {
+const BackButton = ({ children, className = '', onClose }: Props): React.JSX.Element => {
   const { isDesktop, isWindows } = useContext(FullWindowPanelContext);
+
   return (
     <Button
       className={classNames(
         styles.enhancer,
         styles.button,
         {
-          [styles.windows]: isWindows,
           [styles.desktop]: isDesktop,
+          [styles.windows]: isWindows,
         },
         className,
       )}
-      type="text"
       icon={<TopBarIcons.Undo />}
       onClick={onClose}
+      type="text"
     >
       {children}
     </Button>

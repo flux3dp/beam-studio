@@ -1,57 +1,57 @@
-import { LaserType, mopaWatts, promarkWatts } from '@core/app/constants/promark-constants';
-import { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import type { LaserType, mopaWatts, promarkWatts } from '@core/app/constants/promark-constants';
+import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 
 export type ConfigKeyTypeMap = {
+  backlash: number;
+  biDirectional: boolean;
+  clipRect: string; // x y w h
+  color: string;
   // meta configs
   configName: string;
+  cRatio: number;
+  crossHatch: boolean;
+  diode: number;
+  dottingTime: number;
+  fillAngle: number;
+  fillInterval: number;
+  focus: number;
+  focusStep: number;
+  // promark configs
+  frequency: number;
+  // printing configs
+  fullcolor: boolean;
+  halftone: number;
+  height: number;
+  ink: number;
+  kRatio: number;
+  minPower: number;
   module: number;
-  color: string;
-  clipRect: string; // x y w h
+  mRatio: number;
+  multipass: number;
+  power: number;
+  printingSpeed: number;
+  printingStrength: number;
+  pulseWidth: number; // Mopa only
   ref: boolean;
   // common configs
   repeat: number;
-  backlash: number;
   // laser configs
   speed: number;
-  power: number;
-  minPower: number;
-  height: number;
-  zStep: number;
-  diode: number;
-  focus: number;
-  focusStep: number;
-  // printing configs
-  fullcolor: boolean;
   split: boolean;
-  printingSpeed: number;
-  ink: number;
-  multipass: number;
-  cRatio: number;
-  mRatio: number;
-  yRatio: number;
-  kRatio: number;
-  printingStrength: number;
-  halftone: number;
+  uv: number;
   wInk: number;
-  wSpeed: number;
   wMultipass: number;
   wRepeat: number;
-  uv: number;
-  // promark configs
-  frequency: number;
-  pulseWidth: number; // Mopa only
-  fillInterval: number;
-  fillAngle: number;
-  biDirectional: boolean;
-  crossHatch: boolean;
-  dottingTime: number;
+  wSpeed: number;
+  yRatio: number;
+  zStep: number;
 };
 
 type ConfigKey = keyof ConfigKeyTypeMap;
 
 export interface ConfigItem<T> {
-  value: T;
   hasMultiValue?: boolean;
+  value: T;
 }
 
 // Used for ConfigPanel, selected layer(s) config
@@ -60,16 +60,16 @@ export type ILayerConfig = {
 };
 
 // Saved parameters, containing presets and user saved configs
-export type Preset = {
-  isDefault?: boolean;
-  name?: string;
-  key?: string;
+export type Preset = Partial<ConfigKeyTypeMap> & {
   hide?: boolean;
+  isDefault?: boolean;
+  key?: string;
   module?: number;
-} & Partial<ConfigKeyTypeMap>;
+  name?: string;
+};
 
 type TPromarkDesktop = `${LaserType.Desktop}_${(typeof promarkWatts)[number]}`;
 type TPromarkMopa = `${LaserType.MOPA}_${(typeof mopaWatts)[number]}`;
 
 export type PromarkModel = `fpm1_${TPromarkDesktop | TPromarkMopa}`;
-export type PresetModel = WorkAreaModel | PromarkModel;
+export type PresetModel = PromarkModel | WorkAreaModel;

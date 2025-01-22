@@ -1,5 +1,5 @@
-@use '@core/styles/variables' as variables;
-@use './connection_setting_page' as connectionSettingPage;
+@use "@core/styles/variables" as variables;
+@use "./connection_setting_page" as connectionSettingPage;
 
 .container {
   @include connectionSettingPage.container;

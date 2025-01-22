@@ -1,5 +1,5 @@
-/* eslint-disable import/first */
 import React from 'react';
+
 import { render } from '@testing-library/react';
 
 jest.mock('@core/helpers/i18n', () => ({
@@ -16,11 +16,13 @@ jest.mock('@core/helpers/i18n', () => ({
 }));
 
 const get = jest.fn();
+
 jest.mock('@app/implementations/storage', () => ({
   get,
 }));
 
 const getSVGAsync = jest.fn();
+
 jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync,
 }));
@@ -28,22 +30,25 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
 const setMode = jest.fn();
 const gridArraySelectedElement = jest.fn();
 const nestElements = jest.fn();
+
 getSVGAsync.mockImplementation((callback) => {
   callback({
     Canvas: {
-      setMode,
       gridArraySelectedElement,
       nestElements,
+      setMode,
     },
   });
 });
 
 const mockSetHasUnsavedChanges = jest.fn();
+
 jest.mock('@core/app/svgedit/currentFileManager', () => ({
   setHasUnsavedChanges: (...args) => mockSetHasUnsavedChanges(...args),
 }));
 
 const offsetElements = jest.fn();
+
 jest.mock(
   '@core/helpers/clipper/offset',
   () =>
@@ -55,27 +60,16 @@ jest.mock('@core/app/views/beambox/ToolPanels/Interval', () => 'dummy-interval')
 jest.mock('@core/app/views/beambox/ToolPanels/NestGAPanel', () => ({ nestOptions }: any) => (
   <div>dummy-nest-ga-panel nestOptions: {JSON.stringify(nestOptions)}</div>
 ));
-jest.mock(
-  '@core/app/views/beambox/ToolPanels/NestRotationPanel',
-  () => 'dummy-nest-rotation-panel',
-);
+jest.mock('@core/app/views/beambox/ToolPanels/NestRotationPanel', () => 'dummy-nest-rotation-panel');
 jest.mock('@core/app/views/beambox/ToolPanels/NestSpacingPanel', () => 'dummy-nest-spacing-panel');
-jest.mock(
-  '@core/app/views/beambox/ToolPanels/OffsetCornerPanel',
-  () => 'dummy-offset-corner-panel',
-);
-jest.mock(
-  '@core/app/views/beambox/ToolPanels/OffsetDirectionPanel',
-  () => 'dummy-offset-direction-panel',
-);
-jest.mock(
-  '@core/app/views/beambox/ToolPanels/OffsetDistancePanel',
-  () => 'dummy-offset-distance-panel',
-);
+jest.mock('@core/app/views/beambox/ToolPanels/OffsetCornerPanel', () => 'dummy-offset-corner-panel');
+jest.mock('@core/app/views/beambox/ToolPanels/OffsetDirectionPanel', () => 'dummy-offset-direction-panel');
+jest.mock('@core/app/views/beambox/ToolPanels/OffsetDistancePanel', () => 'dummy-offset-distance-panel');
 jest.mock('@core/app/views/beambox/ToolPanels/RowColumn', () => 'dummy-row-column');
 jest.mock('@core/app/actions/beambox/toolPanelsController', () => ({}));
 
 const isMobile = jest.fn();
+
 jest.mock('@core/helpers/system-helper', () => ({
   isMobile: () => isMobile(),
 }));
@@ -83,10 +77,11 @@ jest.mock('@core/helpers/system-helper', () => ({
 const isIdExist = jest.fn();
 const popDialogById = jest.fn();
 const addDialogComponent = jest.fn();
+
 jest.mock('@core/app/actions/dialog-caller', () => ({
+  addDialogComponent,
   isIdExist,
   popDialogById,
-  addDialogComponent,
 }));
 
 import ToolPanels from './ToolPanels';
@@ -100,20 +95,21 @@ describe('should render correctly', () => {
     const unmount = jest.fn();
     const { container } = render(
       <ToolPanels
-        type="gridArray"
         data={{
-          rowcolumn: {
-            row: 1,
-            column: 1,
-          },
           distance: {
             dx: 0,
             dy: 0,
           },
+          rowcolumn: {
+            column: 1,
+            row: 1,
+          },
         }}
+        type="gridArray"
         unmount={unmount}
       />,
     );
+
     expect(container).toMatchSnapshot();
   });
 
@@ -121,20 +117,21 @@ describe('should render correctly', () => {
     const unmount = jest.fn();
     const { container } = render(
       <ToolPanels
-        type="offset"
         data={{
-          rowcolumn: {
-            row: 1,
-            column: 1,
-          },
           distance: {
             dx: 0,
             dy: 0,
           },
+          rowcolumn: {
+            column: 1,
+            row: 1,
+          },
         }}
+        type="offset"
         unmount={unmount}
       />,
     );
+
     expect(container).toMatchSnapshot();
   });
 
@@ -142,20 +139,21 @@ describe('should render correctly', () => {
     const unmount = jest.fn();
     const { container } = render(
       <ToolPanels
-        type="nest"
         data={{
-          rowcolumn: {
-            row: 1,
-            column: 1,
-          },
           distance: {
             dx: 0,
             dy: 0,
           },
+          rowcolumn: {
+            column: 1,
+            row: 1,
+          },
         }}
+        type="nest"
         unmount={unmount}
       />,
     );
+
     expect(container).toMatchSnapshot();
   });
 });
@@ -170,20 +168,21 @@ describe('should render correctly in mobile', () => {
     const unmount = jest.fn();
     const { container } = render(
       <ToolPanels
-        type="gridArray"
         data={{
-          rowcolumn: {
-            row: 1,
-            column: 1,
-          },
           distance: {
             dx: 0,
             dy: 0,
           },
+          rowcolumn: {
+            column: 1,
+            row: 1,
+          },
         }}
+        type="gridArray"
         unmount={unmount}
       />,
     );
+
     expect(container).toMatchSnapshot();
     expect(isIdExist).toBeCalledTimes(1);
     expect(isIdExist).toBeCalledWith('gridArray');
@@ -196,20 +195,21 @@ describe('should render correctly in mobile', () => {
     const unmount = jest.fn();
     const { container } = render(
       <ToolPanels
-        type="offset"
         data={{
-          rowcolumn: {
-            row: 1,
-            column: 1,
-          },
           distance: {
             dx: 0,
             dy: 0,
           },
+          rowcolumn: {
+            column: 1,
+            row: 1,
+          },
         }}
+        type="offset"
         unmount={unmount}
       />,
     );
+
     expect(container).toMatchSnapshot();
     expect(isIdExist).toBeCalledWith('offset');
     expect(addDialogComponent).toBeCalledTimes(1);

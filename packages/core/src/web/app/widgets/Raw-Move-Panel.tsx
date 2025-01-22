@@ -1,44 +1,47 @@
 import * as React from 'react';
+
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
 import DeviceMaster from '@core/helpers/device-master';
-import { getWorkarea, WorkAreaModel } from '@core/app/constants/workarea-constants';
 
 interface Props {
-  onMoveStart: () => void;
   onMoveEnd: (x: number, y: number) => void;
+  onMoveStart: () => void;
 }
 
 interface State {
-  workarea: {
-    maxX: number;
-    maxY: number;
-  };
-  safeDistance: {
-    x: number;
-    y: number;
-  };
   currentX: number;
   currentY: number;
   feedrate: number;
   isMoving: boolean;
+  safeDistance: {
+    x: number;
+    y: number;
+  };
+  workarea: {
+    maxX: number;
+    maxY: number;
+  };
 }
 
 class RawMovePanel extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
+
     const device = DeviceMaster.currentDevice.info;
     const workarea = getWorkarea(device.model as WorkAreaModel);
+
     this.state = {
-      workarea: { maxX: workarea.width, maxY: workarea.height },
-      safeDistance: this.getSafeDistance(),
       currentX: 0, // mm
       currentY: 0, // mm
       feedrate: 6000,
       isMoving: false,
+      safeDistance: this.getSafeDistance(),
+      workarea: { maxX: workarea.width, maxY: workarea.height },
     };
   }
 
-  // eslint-disable-next-line class-methods-use-this
   getSafeDistance(): { x: number; y: number } {
     if (BeamboxPreference.read('enable-diode')) {
       return {
@@ -46,6 +49,7 @@ class RawMovePanel extends React.Component<Props, State> {
         y: 15,
       };
     }
+
     return {
       x: 10,
       y: 15,
@@ -55,6 +59,7 @@ class RawMovePanel extends React.Component<Props, State> {
   handleMoveEnd = (): void => {
     const { onMoveEnd } = this.props;
     const { currentX, currentY } = this.state;
+
     if (onMoveEnd) {
       onMoveEnd(currentX, currentY);
     }
@@ -64,6 +69,7 @@ class RawMovePanel extends React.Component<Props, State> {
     const { currentX, currentY, feedrate } = this.state;
     const dist = Math.hypot(currentX - x, currentY - y); // mm
     const estimatedTime = (dist / feedrate) * 60; // s
+
     return new Promise<void>((resolve) => {
       setTimeout(() => {
         resolve();
@@ -73,9 +79,11 @@ class RawMovePanel extends React.Component<Props, State> {
 
   rawHome = async (): Promise<void> => {
     const { onMoveStart } = this.props;
+
     if (onMoveStart) {
       onMoveStart();
     }
+
     await DeviceMaster.rawHome();
     this.setState(
       {
@@ -87,21 +95,27 @@ class RawMovePanel extends React.Component<Props, State> {
   };
 
   rawMove = async (x: number, y: number): Promise<void> => {
-    const { feedrate, workarea, safeDistance, isMoving } = this.state;
+    const { feedrate, isMoving, safeDistance, workarea } = this.state;
+
     if (isMoving) {
       return;
     }
+
     this.setState({ isMoving: true });
+
     const { onMoveStart } = this.props;
+
     if (onMoveStart) {
       onMoveStart();
     }
+
     const newX = Math.max(0, Math.min(workarea.maxX - safeDistance.x, x));
     const newY = Math.max(0, Math.min(workarea.maxY - safeDistance.y, y));
+
     await DeviceMaster.rawMove({
+      f: feedrate, // mm / min
       x: newX,
       y: newY,
-      f: feedrate, // mm / min
     });
     await this.estimateMoveTime(newX, newY);
     this.setState(
@@ -116,11 +130,12 @@ class RawMovePanel extends React.Component<Props, State> {
 
   rawMoveRelative = async (x = 0, y = 0): Promise<void> => {
     const { currentX, currentY } = this.state;
+
     this.rawMove(currentX + x, currentY + y);
   };
 
   moveToPoint = (point: string): void => {
-    const { workarea, safeDistance } = this.state;
+    const { safeDistance, workarea } = this.state;
     const pointsMap = {
       a: {
         x: 0,
@@ -140,19 +155,21 @@ class RawMovePanel extends React.Component<Props, State> {
       },
     };
     const target = pointsMap[point];
+
     this.rawMove(target.x, target.y);
   };
 
-  render(): JSX.Element {
-    const { currentX, currentY, workarea, safeDistance } = this.state;
+  render(): React.JSX.Element {
+    const { currentX, currentY, safeDistance, workarea } = this.state;
+
     return (
       <svg
         className="maintain-move-panel"
+        preserveAspectRatio="none"
         version="1.1"
+        viewBox="0 0 538 535.7"
         x="0px"
         y="0px"
-        viewBox="0 0 538 535.7"
-        preserveAspectRatio="none"
       >
         <g>
           <path
@@ -216,68 +233,68 @@ class RawMovePanel extends React.Component<Props, State> {
         </g>
         <path
           className="st1 move-btn"
-          onMouseUp={() => this.rawMoveRelative(0, -0.1)}
           d="M297.2,222.8l37-37c-39.1-34.1-97.6-34.1-136.7,0l37,37C253,208.8,278.7,208.8,297.2,222.8z"
+          onMouseUp={() => this.rawMoveRelative(0, -0.1)}
         />
         <path
           className="st2 move-btn"
-          onMouseUp={() => this.rawMoveRelative(-1, 0)}
           d="M187.3,196l-36.9-36.9c-54.4,59.5-54.4,150.8,0,210.4l36.9-36.9C153.2,293.5,153.2,235.1,187.3,196z"
+          onMouseUp={() => this.rawMoveRelative(-1, 0)}
         />
         <path
           className="st2 move-btn"
-          onMouseUp={() => this.rawMoveRelative(0, 1)}
           d="M334.2,342.8c-39.1,34.1-97.6,34.1-136.7,0l-36.9,36.9c59.5,54.4,150.8,54.4,210.4,0L334.2,342.8z"
+          onMouseUp={() => this.rawMoveRelative(0, 1)}
         />
         <path
           className="st2 move-btn"
-          onMouseUp={() => this.rawMoveRelative(0, -1)}
           d="M197.5,185.8c39.1-34.1,97.6-34.1,136.7,0L371,149c-59.5-54.4-150.8-54.4-210.4,0L197.5,185.8z"
+          onMouseUp={() => this.rawMoveRelative(0, -1)}
         />
         <path
           className="st3 move-btn"
-          onMouseUp={() => this.rawMoveRelative(0, -10)}
           d="M160.6,149c59.5-54.4,150.8-54.4,210.4,0l36.8-36.8c-79.9-74.7-204.1-74.7-284,0L160.6,149z"
+          onMouseUp={() => this.rawMoveRelative(0, -10)}
         />
         <path
           className="st3 move-btn"
-          onMouseUp={() => this.rawMoveRelative(0, 10)}
           d="M371,379.7c-59.5,54.4-150.8,54.4-210.4,0l-36.8,36.8c79.9,74.7,204.1,74.7,284,0L371,379.7z"
+          onMouseUp={() => this.rawMoveRelative(0, 10)}
         />
         <path
           className="st3 move-btn"
-          onMouseUp={() => this.rawMoveRelative(-10, 0)}
           d="M150.5,369.5c-54.4-59.5-54.4-150.8,0-210.4l-36.8-36.8c-74.7,79.9-74.7,204.1,0,284L150.5,369.5z"
+          onMouseUp={() => this.rawMoveRelative(-10, 0)}
         />
         <path
           className="st2 move-btn"
-          onMouseUp={() => this.rawMoveRelative(1, 0)}
           d="M344.3,332.7l36.9,36.9c54.4-59.5,54.4-150.8,0-210.4L344.3,196C378.5,235.1,378.5,293.5,344.3,332.7z"
+          onMouseUp={() => this.rawMoveRelative(1, 0)}
         />
         <path
           className="st3 move-btn"
-          onMouseUp={() => this.rawMoveRelative(10, 0)}
           d="M418,122.3l-36.8,36.8c54.4,59.5,54.4,150.8,0,210.4l36.8,36.8C492.7,326.4,492.7,202.2,418,122.3z"
+          onMouseUp={() => this.rawMoveRelative(10, 0)}
         />
         <path
           className="st4 xmax-btn "
-          onMouseUp={() => this.rawMove(workarea.maxX - safeDistance.x, currentY)}
           d="M454.8,85.5L418,122.3c74.7,79.9,74.7,204.1,0,284l36.8,36.8C549.9,342.9,549.9,185.8,454.8,85.5z"
+          onMouseUp={() => this.rawMove(workarea.maxX - safeDistance.x, currentY)}
         />
         <path
           className="st4 ymin-btn"
-          onMouseUp={() => this.rawMove(currentX, 0)}
           d="M123.8,112.1c79.9-74.7,204.1-74.7,284,0l36.8-36.8c-100.3-95-257.4-95-357.7,0L123.8,112.1z"
+          onMouseUp={() => this.rawMove(currentX, 0)}
         />
         <path
           className="st4 xmin-btn"
-          onMouseUp={() => this.rawMove(0, currentY)}
           d="M113.6,406.3c-74.7-79.9-74.7-204.1,0-284L76.8,85.5c-95,100.3-95,257.4,0,357.7L113.6,406.3z"
+          onMouseUp={() => this.rawMove(0, currentY)}
         />
         <path
           className="st4 ymax-btn"
-          onMouseUp={() => this.rawMove(currentX, workarea.maxY - safeDistance.y)}
           d="M407.8,416.5c-79.9,74.7-204.1,74.7-284,0L87,453.3c100.3,95,257.4,95,357.7,0L407.8,416.5z"
+          onMouseUp={() => this.rawMove(currentX, workarea.maxY - safeDistance.y)}
         />
         <g>
           <path
@@ -286,10 +303,7 @@ class RawMovePanel extends React.Component<Props, State> {
                 L36.3,269.6z"
           />
           <path className="st5" d="M40.5,256.6v3.1H24.3v-3.1H40.5z" />
-          <path
-            className="st5"
-            d="M40.5,242.4v3.2l-10.4,5.2l0,0.1h10.4v3.2H24.3v-3.2l10.4-5.2l0-0.1H24.3v-3.2H40.5z"
-          />
+          <path className="st5" d="M40.5,242.4v3.2l-10.4,5.2l0,0.1h10.4v3.2H24.3v-3.2l10.4-5.2l0-0.1H24.3v-3.2H40.5z" />
         </g>
         <g>
           <path
@@ -332,10 +346,7 @@ class RawMovePanel extends React.Component<Props, State> {
                 L251.9,36.8z"
           />
           <path className="st5" d="M264.9,41h-3.1V24.7h3.1V41z" />
-          <path
-            className="st5"
-            d="M279.2,41H276l-5.2-10.4l-0.1,0V41h-3.2V24.7h3.2l5.2,10.4l0.1,0V24.7h3.2V41z"
-          />
+          <path className="st5" d="M279.2,41H276l-5.2-10.4l-0.1,0V41h-3.2V24.7h3.2l5.2,10.4l0.1,0V24.7h3.2V41z" />
         </g>
         <g id="svg-home-btn" onMouseUp={() => this.rawHome()}>
           <g>
@@ -355,10 +366,7 @@ class RawMovePanel extends React.Component<Props, State> {
             </g>
           </g>
           <g>
-            <path
-              className="st5"
-              d="M250.5,272.5h-3.1v-6.8h-5.2v6.8H239v-16.3h3.2v7h5.2v-7h3.1V272.5z"
-            />
+            <path className="st5" d="M250.5,272.5h-3.1v-6.8h-5.2v6.8H239v-16.3h3.2v7h5.2v-7h3.1V272.5z" />
             <path
               className="st5"
               d="M264.6,266.6c0,1.9-0.5,3.4-1.6,4.5c-1.1,1.1-2.5,1.6-4.3,1.6c-1.8,0-3.2-0.5-4.3-1.6
@@ -371,10 +379,7 @@ class RawMovePanel extends React.Component<Props, State> {
               d="M273.9,268.3L273.9,268.3l3.1-12.1h4.1v16.3H278v-10.2l-0.1,0l-2.9,10.3h-2.1l-2.9-10.2l-0.1,0v10.2h-3.1
                             v-16.3h4.1L273.9,268.3z"
             />
-            <path
-              className="st5"
-              d="M291.7,265.3h-5v4.7h6v2.5h-9.1v-16.3h9.1v2.5h-5.9v4.2h5V265.3z"
-            />
+            <path className="st5" d="M291.7,265.3h-5v4.7h6v2.5h-9.1v-16.3h9.1v2.5h-5.9v4.2h5V265.3z" />
           </g>
         </g>
         <g>
@@ -432,19 +437,19 @@ class RawMovePanel extends React.Component<Props, State> {
         </g>
         <path
           className="st1 move-btn"
-          onMouseUp={() => this.rawMoveRelative(0, 0.1)}
           d="M234.5,305.9l-37,37c39.1,34.1,97.6,34.1,136.7,0l-37-37C278.7,319.9,253,319.9,234.5,305.9z"
+          onMouseUp={() => this.rawMoveRelative(0, 0.1)}
         />
         <polygon className="st5" points="265.8,352.1 278,331 253.7,331 " />
         <path
           className="st1 move-btn"
-          onMouseUp={() => this.rawMoveRelative(-0.1, 0)}
           d="M224.3,233l-37-37c-34.1,39.1-34.1,97.6,0,136.7l37-37C210.3,277.2,210.3,251.5,224.3,233z"
+          onMouseUp={() => this.rawMoveRelative(-0.1, 0)}
         />
         <path
           className="st1 move-btn"
-          onMouseUp={() => this.rawMoveRelative(0.1, 0)}
           d="M344.3,196l-37,37c14,18.5,14,44.2,0,62.7l37,37C378.5,293.5,378.5,235.1,344.3,196z"
+          onMouseUp={() => this.rawMoveRelative(0.1, 0)}
         />
         <polygon className="st5" points="353.5,264.3 332.5,252.2 332.5,276.5 " />
         <polygon className="st5" points="178.1,264.3 199.2,276.5 199.2,252.2 " />
@@ -471,10 +476,7 @@ class RawMovePanel extends React.Component<Props, State> {
               d="M64.3,12.9L64.3,12.9l1.9-7.2h2.5v9.8h-1.9V9.3l0,0L65,15.4h-1.3L62,9.3l0,0v6.1H60V5.7h2.5L64.3,12.9z"
             />
             <path className="st7" d="M72.1,15.4h-1.9V5.7h1.9V15.4z" />
-            <path
-              className="st7"
-              d="M80.7,15.4h-1.9l-3.1-6.2l0,0v6.2h-1.9V5.7h1.9l3.1,6.2l0,0V5.7h1.9V15.4z"
-            />
+            <path className="st7" d="M80.7,15.4h-1.9l-3.1-6.2l0,0v6.2h-1.9V5.7h1.9l3.1,6.2l0,0V5.7h1.9V15.4z" />
           </g>
           <g>
             <path
@@ -489,10 +491,7 @@ class RawMovePanel extends React.Component<Props, State> {
               d="M15.2,78.7L15.2,78.7l-7-1.8v-2.4h9.5v1.8h-6l0,0l6,1.7v1.2L11.7,81l0,0h5.9v1.8H8.2v-2.4L15.2,78.7z"
             />
             <path className="st5" d="M17.7,71.2V73H8.2v-1.8H17.7z" />
-            <path
-              className="st5"
-              d="M17.7,62.8v1.8l-6.1,3l0,0h6.1v1.8H8.2v-1.8l6.1-3l0,0H8.2v-1.8H17.7z"
-            />
+            <path className="st5" d="M17.7,62.8v1.8l-6.1,3l0,0h6.1v1.8H8.2v-1.8l6.1-3l0,0H8.2v-1.8H17.7z" />
           </g>
         </g>
         <g className="dest-btn" id="dest-C-btn" onMouseUp={() => this.moveToPoint('c')}>
@@ -542,10 +541,7 @@ class RawMovePanel extends React.Component<Props, State> {
               d="M16,464.7L16,464.7l-7-1.8v-2.4h9.5v1.8h-6l0,0l6,1.7v1.2l-5.9,1.7l0,0h5.9v1.8H9v-2.4L16,464.7z"
             />
             <path className="st7" d="M18.5,457.1v1.8H9v-1.8H18.5z" />
-            <path
-              className="st7"
-              d="M18.5,448.8v1.8l-6.1,3l0,0h6.1v1.8H9v-1.8l6.1-3l0,0H9v-1.8H18.5z"
-            />
+            <path className="st7" d="M18.5,448.8v1.8l-6.1,3l0,0h6.1v1.8H9v-1.8l6.1-3l0,0H9v-1.8H18.5z" />
           </g>
         </g>
         <g className="dest-btn" id="dest-B-btn" onMouseUp={() => this.moveToPoint('b')}>
@@ -581,10 +577,7 @@ class RawMovePanel extends React.Component<Props, State> {
                                 L450.1,12.9z"
             />
             <path className="st7" d="M457.9,15.4H456V5.7h1.9V15.4z" />
-            <path
-              className="st7"
-              d="M466.4,15.4h-1.9l-3.1-6.2l0,0v6.2h-1.9V5.7h1.9l3.1,6.2l0,0V5.7h1.9V15.4z"
-            />
+            <path className="st7" d="M466.4,15.4h-1.9l-3.1-6.2l0,0v6.2h-1.9V5.7h1.9l3.1,6.2l0,0V5.7h1.9V15.4z" />
           </g>
           <g>
             <path

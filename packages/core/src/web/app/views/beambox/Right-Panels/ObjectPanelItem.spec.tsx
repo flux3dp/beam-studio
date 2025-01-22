@@ -172,10 +172,7 @@ describe('should render correctly', () => {
       fireEvent.click(getByText('mock action 1'));
       expect(mockOnClick1).toBeCalledTimes(1);
       expect(baseElement.querySelector('div.action')).toHaveClass('active');
-      await waitFor(
-        () => expect(baseElement.querySelector('div.action')).not.toHaveClass('active'),
-        { timeout: 2000 },
-      );
+      await waitFor(() => expect(baseElement.querySelector('div.action')).not.toHaveClass('active'), { timeout: 2000 });
       fireEvent.click(getByText('mock action 2'));
       expect(mockOnClick2).toBeCalledTimes(0);
       expect(baseElement.querySelectorAll('div.action')[1]).not.toHaveClass('active');
@@ -186,9 +183,7 @@ describe('should render correctly', () => {
     test('when unit is mm', async () => {
       mockStorage.mockReturnValue('mm');
 
-      const { baseElement, container, getByText } = render(
-        <MockNumberItem id="mock-number-item-mm" />,
-      );
+      const { baseElement, container, getByText } = render(<MockNumberItem id="mock-number-item-mm" />);
 
       expect(container).toMatchSnapshot();
 
@@ -252,9 +247,7 @@ describe('should render correctly', () => {
     test('when unit is inch', async () => {
       mockStorage.mockReturnValue('inches');
 
-      const { baseElement, container, getByText } = render(
-        <MockNumberItem id="mock-number-item-inch" />,
-      );
+      const { baseElement, container, getByText } = render(<MockNumberItem id="mock-number-item-inch" />);
 
       expect(container).toMatchSnapshot();
 
@@ -300,9 +293,7 @@ describe('should render correctly', () => {
     test('when unit is degree', async () => {
       mockStorage.mockReturnValue('inches');
 
-      const { baseElement, container } = render(
-        <MockNumberItem id="mock-number-item-angle" unit="degree" />,
-      );
+      const { baseElement, container } = render(<MockNumberItem id="mock-number-item-angle" unit="degree" />);
 
       expect(container).toMatchSnapshot();
 
@@ -331,9 +322,7 @@ describe('should render correctly', () => {
     });
 
     test('when decimal is given', async () => {
-      const { baseElement, getByText } = render(
-        <MockNumberItem decimal={3} id="mock-number-item-integer" />,
-      );
+      const { baseElement, getByText } = render(<MockNumberItem decimal={3} id="mock-number-item-integer" />);
       const mask = baseElement.querySelector('div.mask');
       const objectPanelItem = baseElement.querySelector('div.object-panel-item');
       const displayBtn = baseElement.querySelector('button.number-item');
@@ -358,9 +347,7 @@ describe('should render correctly', () => {
     });
 
     test('when decimal is 0', async () => {
-      const { baseElement, getByText } = render(
-        <MockNumberItem decimal={0} id="mock-number-item-integer" />,
-      );
+      const { baseElement, getByText } = render(<MockNumberItem decimal={0} id="mock-number-item-integer" />);
       const mask = baseElement.querySelector('div.mask');
       const objectPanelItem = baseElement.querySelector('div.object-panel-item');
       const displayBtn = baseElement.querySelector('button.number-item');

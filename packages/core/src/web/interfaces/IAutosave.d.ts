@@ -1,6 +1,6 @@
 export interface IConfig {
-  enabled: boolean,
-  directory: string,
-  fileNumber: number,
-  timeInterval: number,
+  directory: string;
+  enabled: boolean;
+  fileNumber: number;
+  timeInterval: number;
 }

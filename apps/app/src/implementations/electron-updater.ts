@@ -35,10 +35,7 @@ const checkForUpdate = (isAutoCheck: boolean) => {
   }, 15000);
   communicator.once(
     'UPDATE_AVAILABLE',
-    (
-      event: any,
-      res: { error: { code: any }; info: { version: string }; isUpdateAvailable: any },
-    ) => {
+    (event: any, res: { error: { code: any }; info: { version: string }; isUpdateAvailable: any }) => {
       hasGetResponse = true;
 
       if (!isAutoCheck) {

@@ -1,37 +1,40 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
-import { IAnnouncement } from '@core/interfaces/IAnnouncement';
+import type { IAnnouncement } from '@core/interfaces/IAnnouncement';
 
 import AnnouncementPanel from './AnnouncementPanel';
 
 const mockAnnouncement: IAnnouncement = {
-  id: 11,
-  title: 'mock title',
   content: 'mock content',
+  id: 11,
   link: 'https://example.com',
   link_text: 'mock link content',
+  title: 'mock title',
 };
 
 jest.mock('@core/helpers/useI18n', () => () => ({
   alert: {
-    learn_more: 'Learn More',
     close: 'Close',
+    learn_more: 'Learn More',
   },
   beambox: {
     announcement_panel: {
-      title: 'Announcement',
       dont_show_again: "Don't show again",
+      title: 'Announcement',
     },
   },
 }));
 
 const mockOpen = jest.fn();
+
 jest.mock('@app/implementations/browser', () => ({
   open: (...args) => mockOpen(...args),
 }));
 
 const mockSetNotShowing = jest.fn();
+
 jest.mock('@core/helpers/announcement-helper', () => ({
   setNotShowing: (...args) => mockSetNotShowing(...args),
 }));
@@ -47,6 +50,7 @@ describe('test AnnouncementPanel', () => {
     const { baseElement, getByText } = render(
       <AnnouncementPanel announcement={mockAnnouncement} onClose={mockOnClose} />,
     );
+
     expect(baseElement).toMatchSnapshot();
 
     fireEvent.click(getByText('mock link content'));
@@ -58,6 +62,7 @@ describe('test AnnouncementPanel', () => {
     expect(mockSetNotShowing).not.toHaveBeenCalled();
 
     const checkbox = baseElement.querySelector('.ant-checkbox');
+
     expect(checkbox).not.toHaveClass('ant-checkbox-checked');
     fireEvent.click(getByText("Don't show again"));
     expect(checkbox).toHaveClass('ant-checkbox-checked');
@@ -71,9 +76,11 @@ describe('test AnnouncementPanel', () => {
     const { baseElement, getByText } = render(
       <AnnouncementPanel announcement={{ ...mockAnnouncement, link: '' }} onClose={mockOnClose} />,
     );
+
     expect(baseElement).toMatchSnapshot();
 
     const closeButton = getByText('Close');
+
     fireEvent.click(closeButton);
     expect(mockOpen).not.toHaveBeenCalled();
     expect(mockOnClose).toHaveBeenCalledTimes(1);

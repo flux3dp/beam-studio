@@ -1,7 +1,8 @@
-import classNames from 'classnames';
 import React, { useEffect, useState } from 'react';
-import { Color } from 'antd/es/color-picker';
-import { ColorPicker, Button, Input, Popover } from 'antd';
+
+import { Button, ColorPicker, Input, Popover } from 'antd';
+import type { Color } from 'antd/es/color-picker';
+import classNames from 'classnames';
 
 import ColorBlock from '@core/app/components/beambox/right-panel/ColorBlock';
 import isWeb from '@core/helpers/is-web';
@@ -12,20 +13,20 @@ import styles from './ColorPicker.module.scss';
 interface Props {
   color: string;
   onChange: (color: string, actual?: boolean) => void;
-  open: boolean;
   onClose: () => void;
+  open: boolean;
 }
 
-const getDisplayValue = (c: string) =>
-  !c || c === 'none' ? '00000000' : c.replace('#', '').toUpperCase();
+const getDisplayValue = (c: string) => (!c || c === 'none' ? '00000000' : c.replace('#', '').toUpperCase());
 const isHex = (c: string) => c && c.match(/^[A-Fa-f0-9]{6}$/);
 const isWhiteTopBar = window.os !== 'MacOS' && !isWeb();
 
-const ColorPickerMobile = ({ color, onChange, open, onClose }: Props): JSX.Element => {
+const ColorPickerMobile = ({ color, onChange, onClose, open }: Props): React.JSX.Element => {
   const lang = useI18n().alert;
   const previewColor = (c: string) => onChange(c, false);
   const [displayValue, setDisplayValue] = useState(getDisplayValue(color));
   const isClear = color === 'none';
+
   useEffect(() => {
     setDisplayValue(getDisplayValue(color));
   }, [color]);
@@ -41,30 +42,32 @@ const ColorPickerMobile = ({ color, onChange, open, onClose }: Props): JSX.Eleme
       <div className={styles.footer}>
         <Input
           className={styles.input}
-          size="small"
-          value={displayValue}
-          prefix={<span className={styles.prefix}>#</span>}
           maxLength={6}
+          onBlur={() => setDisplayValue(getDisplayValue(color))}
           onChange={(e) => {
             const newValue = e.target.value;
+
             setDisplayValue(newValue);
+
             if (isHex(newValue)) {
               previewColor(`#${newValue}`);
             }
           }}
-          onBlur={() => setDisplayValue(getDisplayValue(color))}
+          prefix={<span className={styles.prefix}>#</span>}
+          size="small"
+          value={displayValue}
         />
-        <Button shape="round" type="default" className={styles.btn} onClick={onClose}>
+        <Button className={styles.btn} onClick={onClose} shape="round" type="default">
           {lang.cancel}
         </Button>
         <Button
-          shape="round"
-          type="primary"
           className={styles.btn}
           onClick={() => {
             onChange(color);
             onClose();
           }}
+          shape="round"
+          type="primary"
         >
           {lang.ok}
         </Button>
@@ -75,20 +78,19 @@ const ColorPickerMobile = ({ color, onChange, open, onClose }: Props): JSX.Eleme
   return (
     <>
       <ColorPicker
-        rootClassName={styles['mobile-container']}
-        getPopupContainer={(triggerNode) => triggerNode.parentElement}
-        open={open}
-        value={isClear ? '#000000' : color}
-        onChange={(c: Color) => previewColor(c.toHexString())}
-        panelRender={panelRender}
         arrow={false}
         disabledAlpha
+        getPopupContainer={(triggerNode) => triggerNode.parentElement}
+        onChange={(c: Color) => previewColor(c.toHexString())}
+        open={open}
+        panelRender={panelRender}
+        rootClassName={styles['mobile-container']}
+        value={isClear ? '#000000' : color}
       >
         <div />
       </ColorPicker>
       <Popover
-        rootClassName={styles['mask-container']}
-        open={open}
+        arrow={false}
         content={
           <>
             <div
@@ -98,7 +100,8 @@ const ColorPickerMobile = ({ color, onChange, open, onClose }: Props): JSX.Eleme
             <div className={styles['bottom-mask']} onClick={() => onClose()} />
           </>
         }
-        arrow={false}
+        open={open}
+        rootClassName={styles['mask-container']}
       />
     </>
   );

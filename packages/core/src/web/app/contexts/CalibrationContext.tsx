@@ -1,64 +1,65 @@
 import React, { createContext, useState } from 'react';
 
-import DeviceMaster from '@core/helpers/device-master';
 import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
-import storage from '@app/implementations/storage';
-import versionChecker from '@core/helpers/version-checker';
-import { CameraConfig } from '@core/interfaces/Camera';
 import {
   DEFAULT_CAMERA_OFFSET,
   STEP_ASK_READJUST,
   STEP_PUT_PAPER,
 } from '@core/app/constants/camera-calibration-constants';
-import { IDeviceInfo } from '@core/interfaces/IDevice';
+import DeviceMaster from '@core/helpers/device-master';
+import versionChecker from '@core/helpers/version-checker';
+import type { CameraConfig } from '@core/interfaces/Camera';
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
+
+import storage from '@app/implementations/storage';
 
 interface CalibrationContextType {
   borderless: boolean;
-  cameraPosition: { x: number; y: number };
-  setCameraPosition: (val: { x: number; y: number }) => void;
   calibratedMachines: string[];
-  setCalibratedMachines: (val: string[]) => void;
+  cameraPosition: { x: number; y: number };
   currentOffset: CameraConfig;
-  setCurrentOffset: (val: CameraConfig) => void;
   currentStep: symbol;
-  setCurrentStep: (val: symbol) => void;
-  lastConfig: CameraConfig;
-  setLastConfig: (val: CameraConfig) => void;
+  device: IDeviceInfo;
   gotoNextStep: (step: symbol) => void;
+  imgBlobUrl: string;
+  lastConfig: CameraConfig;
   onClose: (completed: boolean) => void;
   originFanSpeed: number;
-  setOriginFanSpeed: (val: number) => void;
-  imgBlobUrl: string;
+  setCalibratedMachines: (val: string[]) => void;
+  setCameraPosition: (val: { x: number; y: number }) => void;
+  setCurrentOffset: (val: CameraConfig) => void;
+  setCurrentStep: (val: symbol) => void;
   setImgBlobUrl: (v: string) => void;
-  device: IDeviceInfo;
+  setLastConfig: (val: CameraConfig) => void;
+  setOriginFanSpeed: (val: number) => void;
   unit: string;
 }
 
 export const CalibrationContext = createContext<CalibrationContextType>({
   borderless: false,
-  cameraPosition: { x: 0, y: 0 },
-  setCameraPosition: () => {},
   calibratedMachines: [],
-  setCalibratedMachines: () => {},
+  cameraPosition: { x: 0, y: 0 },
   currentOffset: null,
-  setCurrentOffset: () => {},
   currentStep: STEP_PUT_PAPER,
-  setCurrentStep: () => {},
-  lastConfig: null,
-  setLastConfig: () => {},
-  gotoNextStep: () => {},
-  onClose: () => {},
-  imgBlobUrl: '',
-  setImgBlobUrl: () => {},
-  originFanSpeed: 100,
-  setOriginFanSpeed: () => {},
   device: null,
+  gotoNextStep: () => {},
+  imgBlobUrl: '',
+  lastConfig: null,
+  onClose: () => {},
+  originFanSpeed: 100,
+  setCalibratedMachines: () => {},
+  setCameraPosition: () => {},
+  setCurrentOffset: () => {},
+  setCurrentStep: () => {},
+  setImgBlobUrl: () => {},
+  setLastConfig: () => {},
+  setOriginFanSpeed: () => {},
   unit: 'mm',
 });
 
 interface CalibrationProviderProps {
-  children: React.ReactNode;
   borderless: boolean;
+  children: React.ReactNode;
   device: IDeviceInfo;
   onClose: (completed: boolean) => void;
 }
@@ -66,11 +67,11 @@ interface CalibrationProviderProps {
 let calibratedMachines = [];
 
 export function CalibrationProvider({
-  children,
   borderless,
+  children,
   device,
   onClose,
-}: CalibrationProviderProps): JSX.Element {
+}: CalibrationProviderProps): React.JSX.Element {
   const didCalibrate = calibratedMachines.includes(device.uuid);
   const initStep: symbol = didCalibrate ? STEP_ASK_READJUST : STEP_PUT_PAPER;
   const [currentStep, setCurrentStep] = useState(initStep);
@@ -87,7 +88,9 @@ export function CalibrationProvider({
   const wrappedOnClose = async (completed: boolean) => {
     onClose(completed);
     await PreviewModeController.end({ shouldWaitForEnd: true });
+
     const tempCmdAvailable = versionChecker(device?.version).meetRequirement('TEMP_I2C_CMD');
+
     if (originFanSpeed && !tempCmdAvailable) {
       await DeviceMaster.setFan(originFanSpeed);
     }
@@ -97,24 +100,24 @@ export function CalibrationProvider({
     <CalibrationContext.Provider
       value={{
         borderless,
-        device,
-        currentStep,
-        setCurrentStep,
-        cameraPosition,
-        setCameraPosition,
-        currentOffset,
-        setCurrentOffset,
-        lastConfig,
-        setLastConfig,
         calibratedMachines,
-        setCalibratedMachines,
-        imgBlobUrl,
-        setImgBlobUrl,
-        originFanSpeed,
-        setOriginFanSpeed,
+        cameraPosition,
+        currentOffset,
+        currentStep,
+        device,
         gotoNextStep: setCurrentStep,
-        unit,
+        imgBlobUrl,
+        lastConfig,
         onClose: wrappedOnClose,
+        originFanSpeed,
+        setCalibratedMachines,
+        setCameraPosition,
+        setCurrentOffset,
+        setCurrentStep,
+        setImgBlobUrl,
+        setLastConfig,
+        setOriginFanSpeed,
+        unit,
       }}
     >
       {children}

@@ -34,8 +34,7 @@ exports[`test Controller should behave correctly 1`] = `
         Workarea
          : 
         beamo
-         (
-         
+         ( 
         300
          x
          

@@ -1,45 +1,61 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Button, Checkbox, Modal, Tooltip } from 'antd';
-import { QuestionCircleOutlined } from '@ant-design/icons';
 
-import deviceMaster from '@core/helpers/device-master';
-import getDevice from '@core/helpers/device/get-device';
-import storage from '@app/implementations/storage';
-import UnitInput from '@core/app/widgets/UnitInput';
-import useI18n from '@core/helpers/useI18n';
-import { getWorkarea, WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Button, Checkbox, Modal, Tooltip } from 'antd';
+
 import { underlineInputTheme } from '@core/app/constants/antd-config';
+import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
+import UnitInput from '@core/app/widgets/UnitInput';
+import getDevice from '@core/helpers/device/get-device';
+import deviceMaster from '@core/helpers/device-master';
+import useI18n from '@core/helpers/useI18n';
+
+import storage from '@app/implementations/storage';
 
 import styles from './PreviewHeight.module.scss';
 
 enum Step {
-  ASK_FOCUS = 0,
   ADJUST = 1,
+  ASK_FOCUS = 0,
 }
 
 interface Props {
   initValue?: number;
-  onOk: (val: number | null) => void;
   onClose: () => void;
+  onOk: (val: null | number) => void;
 }
 
 const getProbeHeight = async () => {
   try {
-    if (!deviceMaster.currentDevice) await getDevice();
+    if (!deviceMaster.currentDevice) {
+      await getDevice();
+    }
+
     const device = deviceMaster.currentDevice;
-    if (device.control.getMode() !== 'raw') deviceMaster.enterRawMode();
+
+    if (device.control.getMode() !== 'raw') {
+      deviceMaster.enterRawMode();
+    }
+
     const { didAf, z } = await deviceMaster.rawGetProbePos();
-    if (!didAf) return null;
+
+    if (!didAf) {
+      return null;
+    }
+
     const { deep } = getWorkarea(device.info.model as WorkAreaModel, 'ado1');
+
     return Math.round((deep - z) * 100) / 100;
   } catch (err) {
     console.log(err);
+
     return null;
   }
 };
 
 // TODO: add test
-const PreviewHeight = ({ initValue, onOk, onClose }: Props): JSX.Element => {
+const PreviewHeight = ({ initValue, onClose, onOk }: Props): React.JSX.Element => {
   const lang = useI18n();
   const hasInitValue = useMemo(() => typeof initValue === 'number', [initValue]);
   const [adjustChecked, setAdjustChecked] = useState(!hasInitValue);
@@ -51,17 +67,21 @@ const PreviewHeight = ({ initValue, onOk, onClose }: Props): JSX.Element => {
   useEffect(() => {
     let effectEnded = false;
     let timeout: NodeJS.Timeout;
+
     if (step === Step.ASK_FOCUS && (value === undefined || value === null)) {
       const checkHeight = async () => {
         const probeHeight = await getProbeHeight();
+
         if (probeHeight !== null) {
           setValue(probeHeight);
         } else if (!effectEnded) {
           timeout = setTimeout(checkHeight, 1000);
         }
       };
+
       checkHeight();
     }
+
     return () => {
       effectEnded = true;
       clearTimeout(timeout);
@@ -71,11 +91,8 @@ const PreviewHeight = ({ initValue, onOk, onClose }: Props): JSX.Element => {
   if (step === Step.ASK_FOCUS) {
     return (
       <Modal
-        open
         centered
         closable={false}
-        maskClosable={false}
-        title={lang.message.preview.auto_focus}
         footer={[
           <Button
             key="cancel"
@@ -96,20 +113,23 @@ const PreviewHeight = ({ initValue, onOk, onClose }: Props): JSX.Element => {
             {lang.message.preview.enter_manually}
           </Button>,
           <Button
-            type="primary"
-            key="ok"
             disabled={value === undefined || value === null}
+            key="ok"
             onClick={() => {
               onOk(value);
               onClose();
             }}
+            type="primary"
           >
             {lang.global.apply}
           </Button>,
         ]}
+        maskClosable={false}
+        open
+        title={lang.message.preview.auto_focus}
       >
         <div className={styles.text}>{lang.message.preview.auto_focus_instruction}</div>
-        <video className={styles.video} autoPlay loop muted>
+        <video autoPlay className={styles.video} loop muted>
           <source src="video/ador-preview-af.webm" type="video/webm" />
           <source src="video/ador-preview-af.mp4" type="video/mp4" />
         </video>
@@ -119,11 +139,8 @@ const PreviewHeight = ({ initValue, onOk, onClose }: Props): JSX.Element => {
 
   return (
     <Modal
-      open
       centered
       closable={false}
-      maskClosable={false}
-      title={lang.message.preview.camera_preview}
       footer={[
         <Button
           key="cancel"
@@ -135,42 +152,39 @@ const PreviewHeight = ({ initValue, onOk, onClose }: Props): JSX.Element => {
           {lang.alert.cancel}
         </Button>,
         <Button
-          type="primary"
           key="ok"
           onClick={() => {
             onOk(value);
             onClose();
           }}
+          type="primary"
         >
           {lang.global.apply}
         </Button>,
       ]}
+      maskClosable={false}
+      open
+      title={lang.message.preview.camera_preview}
     >
       <div className={styles.text}>
-        {hasInitValue
-          ? lang.message.preview.already_performed_auto_focus
-          : lang.message.preview.please_enter_height}
+        {hasInitValue ? lang.message.preview.already_performed_auto_focus : lang.message.preview.please_enter_height}
         {hasInitValue && (
-          <Tooltip
-            className={styles.tooltip}
-            trigger="hover"
-            title={lang.message.preview.adjust_height_tooltip}
-          >
+          <Tooltip className={styles.tooltip} title={lang.message.preview.adjust_height_tooltip} trigger="hover">
             <QuestionCircleOutlined />
           </Tooltip>
         )}
       </div>
       <div className={styles.inputs}>
         <UnitInput
-          unit={unit}
+          disabled={!adjustChecked}
           isInch={isInch}
-          value={value}
+          onChange={(val) => setValue(val)}
           precision={isInch ? 3 : 2}
           step={isInch ? 0.254 : 0.1}
-          disabled={!adjustChecked}
-          onChange={(val) => setValue(val)}
           theme={underlineInputTheme}
           underline
+          unit={unit}
+          value={value}
         />
         {hasInitValue && (
           <Checkbox checked={adjustChecked} onChange={(e) => setAdjustChecked(e.target.checked)}>

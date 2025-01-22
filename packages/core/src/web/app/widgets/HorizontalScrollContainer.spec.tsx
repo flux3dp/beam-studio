@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import HorizontalScrollContainer from './HorizontalScrollContainer';
@@ -10,10 +11,13 @@ describe('test HorizontalScrollContainer', () => {
     const { container } = render(
       <HorizontalScrollContainer className="classname">
         <div />
-      </HorizontalScrollContainer>
+      </HorizontalScrollContainer>,
     );
+
     expect(container).toMatchSnapshot();
+
     const div = container.querySelector('.classname') as Element;
+
     fireEvent.wheel(div, {
       currentTarget: {
         scrollLeft: 0,

@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { act, fireEvent, render } from '@testing-library/react';
 
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
@@ -9,56 +10,46 @@ jest.mock('@core/app/contexts/CanvasContext', () => ({
   CanvasContext: React.createContext({ isColorPreviewing: false }),
 }));
 
-jest.mock(
-  '@core/app/widgets/ColorPicker',
-  () =>
-    ({ allowClear, initColor, triggerType, onChange }: any) =>
-      (
-        <div>
-          Mock ColorPicker
-          <p>allowClear: {allowClear ? 't' : 'f'}</p>
-          <p>initColor: {initColor}</p>
-          <p>triggerType: {triggerType}</p>
-          <button type="button" onClick={() => onChange('#AAAAFF')}>
-            onChange
-          </button>
-        </div>
-      ),
-);
+jest.mock('@core/app/widgets/ColorPicker', () => ({ allowClear, initColor, onChange, triggerType }: any) => (
+  <div>
+    Mock ColorPicker
+    <p>allowClear: {allowClear ? 't' : 'f'}</p>
+    <p>initColor: {initColor}</p>
+    <p>triggerType: {triggerType}</p>
+    <button onClick={() => onChange('#AAAAFF')} type="button">
+      onChange
+    </button>
+  </div>
+));
 
-jest.mock(
-  '@core/app/widgets/ColorPickerMobile',
-  () =>
-    ({ color, onChange, open, onClose }: any) =>
-      (
-        <div>
-          Mock ColorPicker Mobile
-          <p>color: {color}</p>
-          <p>open: {open ? 't' : 'f'}</p>
-          <button type="button" onClick={() => onChange('#FFFFFF', false)}>
-            onPreview
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              onChange('#AAAAFF');
-              onClose();
-            }}
-          >
-            onChange
-          </button>
-          <button type="button" onClick={onClose}>
-            onClose
-          </button>
-        </div>
-      ),
-);
+jest.mock('@core/app/widgets/ColorPickerMobile', () => ({ color, onChange, onClose, open }: any) => (
+  <div>
+    Mock ColorPicker Mobile
+    <p>color: {color}</p>
+    <p>open: {open ? 't' : 'f'}</p>
+    <button onClick={() => onChange('#FFFFFF', false)} type="button">
+      onPreview
+    </button>
+    <button
+      onClick={() => {
+        onChange('#AAAAFF');
+        onClose();
+      }}
+      type="button"
+    >
+      onChange
+    </button>
+    <button onClick={onClose} type="button">
+      onClose
+    </button>
+  </div>
+));
 
-jest.mock('@core/app/widgets/FloatingPanel', () => ({ title, children, onClose }: any) => (
+jest.mock('@core/app/widgets/FloatingPanel', () => ({ children, onClose, title }: any) => (
   <div>
     Mock Floating Panel
     <p>title: {title}</p>
-    <button type="button" onClick={onClose}>
+    <button onClick={onClose} type="button">
       onClose
     </button>
     {children}
@@ -66,6 +57,7 @@ jest.mock('@core/app/widgets/FloatingPanel', () => ({ title, children, onClose }
 ));
 
 const mockColloectColors = jest.fn();
+
 jest.mock(
   '@core/helpers/color/collectColors',
   () =>
@@ -74,6 +66,7 @@ jest.mock(
 );
 
 const mockCreateBatchCommand = jest.fn();
+
 jest.mock('@core/app/svgedit/history/HistoryCommandFactory', () => ({
   createBatchCommand: (...args) => mockCreateBatchCommand(...args),
 }));
@@ -85,6 +78,7 @@ const mockBatchCommand = {
 };
 
 const mockReRenderImageSymbolArray = jest.fn();
+
 jest.mock('@core/helpers/symbol-maker', () => ({
   reRenderImageSymbolArray: (...args) => mockReRenderImageSymbolArray(...args),
 }));
@@ -95,32 +89,34 @@ const mockFinishUndoableChange = jest.fn();
 const mockAddCommandToHistory = jest.fn();
 const mockSetCurrentMode = jest.fn();
 const mockResize = jest.fn();
+
 jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) => {
     callback({
       Canvas: {
         changeSelectedAttributeNoUndo: (...args) => mockChangeSelectedAttributeNoUndo(...args),
+        selectorManager: {
+          requestSelector: () => ({ resize: (...args) => mockResize(...args) }),
+        },
         undoMgr: {
+          addCommandToHistory: (...args) => mockAddCommandToHistory(...args),
           beginUndoableChange: (...args) => mockBeginUndoableChange(...args),
           finishUndoableChange: (...args) => mockFinishUndoableChange(...args),
-          addCommandToHistory: (...args) => mockAddCommandToHistory(...args),
         },
         unsafeAccess: {
           setCurrentMode: (...args) => mockSetCurrentMode(...args),
-        },
-        selectorManager: {
-          requestSelector: () => ({ resize: (...args) => mockResize(...args) }),
         },
       },
     });
   },
 }));
 
-jest.mock('@core/app/widgets/HorizontalScrollContainer', () => ({ className, children }: any) => (
+jest.mock('@core/app/widgets/HorizontalScrollContainer', () => ({ children, className }: any) => (
   <div className={className}>{children}</div>
 ));
 
 const mockUseIsMobile = jest.fn();
+
 jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => mockUseIsMobile(),
 }));
@@ -144,10 +140,10 @@ describe('test MultiColorOptions', () => {
   beforeEach(() => {
     jest.resetAllMocks();
     mockColloectColors.mockReturnValue({
-      '#AAFFFF': [{ element: '1', attribute: 'fill', useElement: mockUseElem }],
+      '#AAFFFF': [{ attribute: 'fill', element: '1', useElement: mockUseElem }],
       '#FFAAFF': [
-        { element: '2', attribute: 'fill', useElement: mockUseElem },
-        { element: '3', attribute: 'stroke', useElement: mockUseElem },
+        { attribute: 'fill', element: '2', useElement: mockUseElem },
+        { attribute: 'stroke', element: '3', useElement: mockUseElem },
       ],
     });
     mockCreateBatchCommand.mockReturnValue(mockBatchCommand);
@@ -159,22 +155,24 @@ describe('test MultiColorOptions', () => {
         <MultiColorOptions elem={document.createElement('rect')} />
       </CanvasContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
   });
 
   test('editing color in use element should work', async () => {
-    const { getByText, getAllByText } = render(
+    const { getAllByText, getByText } = render(
       <CanvasContext.Provider value={{ isColorPreviewing: false } as any}>
         <MultiColorOptions elem={mockUseElem} />
       </CanvasContext.Provider>,
     );
     const mockChangeCmd = { isEmpty: () => false };
+
     mockColloectColors.mockReturnValue({
-      '#AAFFFF': [{ element: '1', attribute: 'fill', useElement: mockUseElem }],
       '#AAAAFF': [
-        { element: '2', attribute: 'fill', useElement: mockUseElem },
-        { element: '3', attribute: 'stroke', useElement: mockUseElem },
+        { attribute: 'fill', element: '2', useElement: mockUseElem },
+        { attribute: 'stroke', element: '3', useElement: mockUseElem },
       ],
+      '#AAFFFF': [{ attribute: 'fill', element: '1', useElement: mockUseElem }],
     });
     mockFinishUndoableChange.mockReturnValue(mockChangeCmd);
     await act(async () => {
@@ -187,9 +185,7 @@ describe('test MultiColorOptions', () => {
     expect(mockBeginUndoableChange).toHaveBeenNthCalledWith(2, 'stroke', ['3']);
     expect(mockChangeSelectedAttributeNoUndo).toHaveBeenCalledTimes(2);
     expect(mockChangeSelectedAttributeNoUndo).toHaveBeenNthCalledWith(1, 'fill', '#AAAAFF', ['2']);
-    expect(mockChangeSelectedAttributeNoUndo).toHaveBeenNthCalledWith(2, 'stroke', '#AAAAFF', [
-      '3',
-    ]);
+    expect(mockChangeSelectedAttributeNoUndo).toHaveBeenNthCalledWith(2, 'stroke', '#AAAAFF', ['3']);
     expect(mockFinishUndoableChange).toHaveBeenCalledTimes(2);
     expect(mockAddSubCommand).toBeCalledTimes(2);
     expect(mockAddSubCommand).toHaveBeenNthCalledWith(1, mockChangeCmd);
@@ -209,10 +205,10 @@ describe('test MultiColorOptions mobile', () => {
     jest.resetAllMocks();
     mockUseIsMobile.mockReturnValue(true);
     mockColloectColors.mockReturnValue({
-      '#AAFFFF': [{ element: '1', attribute: 'fill', useElement: mockUseElem }],
+      '#AAFFFF': [{ attribute: 'fill', element: '1', useElement: mockUseElem }],
       '#FFAAFF': [
-        { element: '2', attribute: 'fill', useElement: mockUseElem },
-        { element: '3', attribute: 'stroke', useElement: mockUseElem },
+        { attribute: 'fill', element: '2', useElement: mockUseElem },
+        { attribute: 'stroke', element: '3', useElement: mockUseElem },
       ],
     });
     mockCreateBatchCommand.mockReturnValue(mockBatchCommand);
@@ -226,6 +222,7 @@ describe('test MultiColorOptions mobile', () => {
         <MultiColorOptions elem={document.createElement('rect')} />
       </CanvasContext.Provider>,
     );
+
     act(() => {
       fireEvent.click(getByText('Color'));
     });
@@ -244,6 +241,7 @@ describe('test MultiColorOptions mobile', () => {
       </CanvasContext.Provider>,
     );
     const mockChangeCmd = { isEmpty: () => false };
+
     mockFinishUndoableChange.mockReturnValue(mockChangeCmd);
     act(() => {
       fireEvent.click(getByText('Color'));
@@ -263,9 +261,7 @@ describe('test MultiColorOptions mobile', () => {
     expect(mockBeginUndoableChange).toHaveBeenNthCalledWith(2, 'stroke', ['3']);
     expect(mockChangeSelectedAttributeNoUndo).toHaveBeenCalledTimes(2);
     expect(mockChangeSelectedAttributeNoUndo).toHaveBeenNthCalledWith(1, 'fill', '#FFFFFF', ['2']);
-    expect(mockChangeSelectedAttributeNoUndo).toHaveBeenNthCalledWith(2, 'stroke', '#FFFFFF', [
-      '3',
-    ]);
+    expect(mockChangeSelectedAttributeNoUndo).toHaveBeenNthCalledWith(2, 'stroke', '#FFFFFF', ['3']);
     expect(mockFinishUndoableChange).toHaveBeenCalledTimes(2);
     expect(mockAddSubCommand).toBeCalledTimes(2);
     expect(mockAddSubCommand).toHaveBeenNthCalledWith(1, mockChangeCmd);
@@ -286,13 +282,9 @@ describe('test MultiColorOptions mobile', () => {
     expect(mockBeginUndoableChange).toHaveBeenNthCalledWith(6, 'stroke', ['3']);
     expect(mockChangeSelectedAttributeNoUndo).toHaveBeenCalledTimes(6);
     expect(mockChangeSelectedAttributeNoUndo).toHaveBeenNthCalledWith(3, 'fill', '#FFAAFF', ['2']);
-    expect(mockChangeSelectedAttributeNoUndo).toHaveBeenNthCalledWith(4, 'stroke', '#FFAAFF', [
-      '3',
-    ]);
+    expect(mockChangeSelectedAttributeNoUndo).toHaveBeenNthCalledWith(4, 'stroke', '#FFAAFF', ['3']);
     expect(mockChangeSelectedAttributeNoUndo).toHaveBeenNthCalledWith(5, 'fill', '#AAAAFF', ['2']);
-    expect(mockChangeSelectedAttributeNoUndo).toHaveBeenNthCalledWith(6, 'stroke', '#AAAAFF', [
-      '3',
-    ]);
+    expect(mockChangeSelectedAttributeNoUndo).toHaveBeenNthCalledWith(6, 'stroke', '#AAAAFF', ['3']);
     expect(mockFinishUndoableChange).toHaveBeenCalledTimes(6);
     expect(mockAddSubCommand).toBeCalledTimes(6);
     expect(mockAddCommandToHistory).toBeCalledTimes(1);

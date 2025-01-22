@@ -6,47 +6,44 @@ import useI18n from '@core/helpers/useI18n';
 import ConfigPanelContext from './ConfigPanelContext';
 import ConfigSlider from './ConfigSlider';
 import ConfigValueDisplay from './ConfigValueDisplay';
-
 import styles from './WhiteInkSettingsModal.module.scss';
 
 interface Props {
-  value: number;
   hasMultiValue?: boolean;
   onChange: (val: number) => void;
+  value: number;
 }
 
 // TODO: add test
-const WhiteInkMultipass = ({ value, hasMultiValue, onChange }: Props): JSX.Element => {
+const WhiteInkMultipass = ({ hasMultiValue, onChange, value }: Props): React.JSX.Element => {
   const MIN_VALUE = 1;
   const MAX_VALUE = 10;
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
   const { simpleMode = true } = useContext(ConfigPanelContext);
 
-  const sliderOptions = useMemo(
-    () => (simpleMode ? configOptions.whiteMultipassOptions : null),
-    [simpleMode],
-  );
+  const sliderOptions = useMemo(() => (simpleMode ? configOptions.whiteMultipassOptions : null), [simpleMode]);
+
   return (
     <div className={styles.panel}>
       <span className={styles.title}>{t.print_multipass}</span>
       <ConfigValueDisplay
+        hasMultiValue={hasMultiValue}
         inputId="white-multipass-input"
-        type="modal"
         max={MAX_VALUE}
         min={MIN_VALUE}
-        value={value}
-        hasMultiValue={hasMultiValue}
         onChange={onChange}
         options={sliderOptions}
+        type="modal"
+        value={value}
       />
       <ConfigSlider
         id="white-multipass-slider"
         max={MAX_VALUE}
         min={MIN_VALUE}
-        value={value}
         onChange={onChange}
         options={sliderOptions}
+        value={value}
       />
     </div>
   );

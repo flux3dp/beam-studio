@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import ConfigPanelContext from './ConfigPanelContext';
@@ -18,47 +18,49 @@ jest.mock(
   './ConfigValueDisplay',
   () =>
     ({
+      decimal = 0,
+      hasMultiValue = false,
       inputId,
-      type = 'default',
       max,
       min,
-      value,
-      unit,
-      hasMultiValue = false,
-      decimal = 0,
       onChange,
       options,
-    }: any) =>
-      (
-        <div>
-          MockConfigValueDisplay
-          <p>inputId: {inputId}</p>
-          <p>type: {type}</p>
-          <p>max: {max}</p>
-          <p>min: {min}</p>
-          <p>value: {value}</p>
-          <p>unit: {unit}</p>
-          <p>hasMultiValue: {hasMultiValue}</p>
-          <p>decimal: {decimal}</p>
-          <p>options: {JSON.stringify(options)}</p>
-          <button type="button" onClick={() => onChange(8.8)}>
-            MockConfigValueDisplayButton
-          </button>
-        </div>
-      ),
+      type = 'default',
+      unit,
+      value,
+    }: any) => (
+      <div>
+        MockConfigValueDisplay
+        <p>inputId: {inputId}</p>
+        <p>type: {type}</p>
+        <p>max: {max}</p>
+        <p>min: {min}</p>
+        <p>value: {value}</p>
+        <p>unit: {unit}</p>
+        <p>hasMultiValue: {hasMultiValue}</p>
+        <p>decimal: {decimal}</p>
+        <p>options: {JSON.stringify(options)}</p>
+        <button onClick={() => onChange(8.8)} type="button">
+          MockConfigValueDisplayButton
+        </button>
+      </div>
+    ),
 );
 
 const mockWriteData = jest.fn();
+
 jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   writeData: (...args) => mockWriteData(...args),
 }));
 
 const mockStorage = jest.fn();
+
 jest.mock('@app/implementations/storage', () => ({
   get: (key) => mockStorage(key),
 }));
 
 const mockAddCommandToHistory = jest.fn();
+
 jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) =>
     callback({
@@ -68,23 +70,24 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
     }),
 }));
 
-let batchCmd = { onAfter: undefined, count: 0 };
+let batchCmd = { count: 0, onAfter: undefined };
 const mockBatchCommand = jest.fn().mockImplementation(() => {
-  batchCmd = { onAfter: undefined, count: batchCmd.count + 1 };
+  batchCmd = { count: batchCmd.count + 1, onAfter: undefined };
+
   return batchCmd;
 });
+
 jest.mock('@core/app/svgedit/history/history', () => ({
   BatchCommand: mockBatchCommand,
 }));
 
 const mockSelectedLayers = ['layer1', 'layer2'];
 const mockContextState = {
-  backlash: { value: 8.7, hasMultiValue: false },
+  backlash: { hasMultiValue: false, value: 8.7 },
 };
 const mockDispatch = jest.fn();
 const mockInitState = jest.fn();
 
-// eslint-disable-next-line import/first
 import Backlash from './Backlash';
 
 describe('test Backlash', () => {
@@ -92,15 +95,16 @@ describe('test Backlash', () => {
     const { container } = render(
       <ConfigPanelContext.Provider
         value={{
-          state: mockContextState as any,
           dispatch: mockDispatch,
-          selectedLayers: mockSelectedLayers,
           initState: mockInitState,
+          selectedLayers: mockSelectedLayers,
+          state: mockContextState as any,
         }}
       >
         <Backlash />
       </ConfigPanelContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
   });
 
@@ -108,15 +112,16 @@ describe('test Backlash', () => {
     const { getByText } = render(
       <ConfigPanelContext.Provider
         value={{
-          state: mockContextState as any,
           dispatch: mockDispatch,
-          selectedLayers: mockSelectedLayers,
           initState: mockInitState,
+          selectedLayers: mockSelectedLayers,
+          state: mockContextState as any,
         }}
       >
         <Backlash />
       </ConfigPanelContext.Provider>,
     );
+
     expect(mockDispatch).not.toBeCalled();
     expect(mockWriteData).not.toBeCalled();
     expect(mockBatchCommand).not.toBeCalled();
@@ -124,8 +129,8 @@ describe('test Backlash', () => {
     fireEvent.click(getByText('MockConfigValueDisplayButton'));
     expect(mockDispatch).toBeCalledTimes(1);
     expect(mockDispatch).toHaveBeenLastCalledWith({
-      type: 'change',
       payload: { backlash: 8.8 },
+      type: 'change',
     });
     expect(mockBatchCommand).toBeCalledTimes(1);
     expect(mockBatchCommand).lastCalledWith('Change backlash');

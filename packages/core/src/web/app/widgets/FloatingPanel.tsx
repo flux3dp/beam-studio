@@ -1,31 +1,32 @@
 import * as React from 'react';
-import classNames from 'classnames';
+
+import Icon from '@ant-design/icons';
 import { FloatingPanel as AntdFloatingPanel } from 'antd-mobile';
+import classNames from 'classnames';
 
 import ActionIcon from '@core/app/icons/action-panel/ActionPanelIcons';
-import Icon from '@ant-design/icons';
 
 import styles from './FloatingPanel.module.scss';
 
 interface Props {
-  className?: string;
   anchors: number[];
-  title: string | JSX.Element;
-  fixedContent?: React.ReactNode;
   children: React.ReactNode;
+  className?: string;
+  fixedContent?: React.ReactNode;
   forceClose?: boolean;
   onClose?: () => void;
+  title: React.JSX.Element | string;
 }
 
 const FloatingPanel = ({
-  className,
   anchors,
-  title,
-  fixedContent,
   children,
+  className,
+  fixedContent,
   forceClose = false,
   onClose,
-}: Props): JSX.Element => {
+  title,
+}: Props): React.JSX.Element => {
   const panelRef = React.useRef(null);
   const [panelHeight, setPanelHeight] = React.useState(anchors[0]);
   const [isAnimating, setIsAnimating] = React.useState(true);
@@ -38,12 +39,13 @@ const FloatingPanel = ({
       panelRef.current.setHeight(anchors.find((anchor) => anchor > 0));
       hasClosedRef.current = false;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line hooks/exhaustive-deps
   }, [anchors, panelRef, forceClose]);
 
   const onHeightChange = (height: number, animating: boolean) => {
     setPanelHeight(height);
     setIsAnimating(animating);
+
     if (height <= 0 && !hasClosedRef.current) {
       hasClosedRef.current = true;
       onClose?.();
@@ -52,12 +54,12 @@ const FloatingPanel = ({
 
   return (
     <AntdFloatingPanel
-      className={classNames(className, styles.panel)}
-      ref={panelRef}
-      data-animating={isAnimating}
       anchors={anchors}
+      className={classNames(className, styles.panel)}
+      data-animating={isAnimating}
       handleDraggingOfContent={false}
       onHeightChange={onHeightChange}
+      ref={panelRef}
       style={{ height: panelHeight }}
     >
       <Icon

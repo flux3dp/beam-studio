@@ -1,10 +1,10 @@
 export enum Mode {
-  WORKING = 'WORKING',
-  PREVIEW = 'PREVIEW',
-  FILE = 'FILE',
-  FILE_PREVIEW = 'FILE_PREVIEW',
   CAMERA = 'CAMERA',
   CAMERA_RELOCATE = 'CAMERA_RELOCATE',
+  FILE = 'FILE',
+  FILE_PREVIEW = 'FILE_PREVIEW',
+  PREVIEW = 'PREVIEW',
+  WORKING = 'WORKING',
 }
 
 export enum ItemType {
@@ -13,6 +13,6 @@ export enum ItemType {
 }
 
 export default {
-  Mode,
   ItemType,
+  Mode,
 };

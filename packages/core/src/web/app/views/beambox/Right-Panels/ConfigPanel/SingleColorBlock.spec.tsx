@@ -1,10 +1,12 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import ConfigPanelContext from './ConfigPanelContext';
 import SingleColorBlock from './SingleColorBlock';
 
 const mockBatchCommand = jest.fn();
+
 jest.mock('@core/app/svgedit/history/history', () => ({
   BatchCommand: function BatchCommand(...args) {
     return mockBatchCommand(...args);
@@ -12,11 +14,13 @@ jest.mock('@core/app/svgedit/history/history', () => ({
 }));
 
 const mockUpdateLayerPanel = jest.fn();
+
 jest.mock('@core/app/views/beambox/Right-Panels/contexts/LayerPanelController', () => ({
   updateLayerPanel: (...args) => mockUpdateLayerPanel(...args),
 }));
 
 const mockToggleFullColorLayer = jest.fn();
+
 jest.mock(
   '@core/helpers/layer/full-color/toggleFullColorLayer',
   () =>
@@ -25,6 +29,7 @@ jest.mock(
 );
 
 const mockAddCommandToHistory = jest.fn();
+
 jest.mock('@core/app/svgedit/history/undoManager', () => ({
   addCommandToHistory: (...args) => mockAddCommandToHistory(...args),
 }));
@@ -32,6 +37,7 @@ jest.mock('@core/app/svgedit/history/undoManager', () => ({
 const mockGetData = jest.fn();
 const mockGetMultiSelectData = jest.fn();
 const mockWriteDataLayer = jest.fn();
+
 jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   getData: (...args) => mockGetData(...args),
   getMultiSelectData: (...args) => mockGetMultiSelectData(...args),
@@ -39,6 +45,7 @@ jest.mock('@core/helpers/layer/layer-config-helper', () => ({
 }));
 
 const mockGetLayerByName = jest.fn();
+
 jest.mock('@core/helpers/layer/layer-helper', () => ({
   getLayerByName: (...args) => mockGetLayerByName(...args),
 }));
@@ -56,9 +63,9 @@ jest.mock('@core/helpers/useI18n', () => () => ({
 
 const mockSelectedLayers = ['layer1', 'layer2'];
 const mockContextState = {
-  fullcolor: { value: true, hasMultiValue: false },
-  split: { value: false },
+  fullcolor: { hasMultiValue: false, value: true },
   selectedLayer: 'layer1',
+  split: { value: false },
 };
 const mockDispatch = jest.fn();
 const mockInitState = jest.fn();
@@ -72,55 +79,62 @@ describe('test SingleColorBlock', () => {
     const { container } = render(
       <ConfigPanelContext.Provider
         value={{
-          state: mockContextState as any,
           dispatch: mockDispatch,
-          selectedLayers: mockSelectedLayers,
           initState: mockInitState,
+          selectedLayers: mockSelectedLayers,
+          state: mockContextState as any,
         }}
       >
         <SingleColorBlock />
       </ConfigPanelContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
   });
 
   test('toggle full color', () => {
     const mockBatchCommandInstance = { addSubCommand: jest.fn() };
+
     mockBatchCommand.mockReturnValue(mockBatchCommandInstance);
+
     const mockLayers = {
       layer1: { color: 'red' },
       layer2: { color: 'blue' },
     };
+
     mockGetLayerByName.mockImplementation((name) => mockLayers[name]);
     mockGetData.mockReturnValue(true);
+
     const mockSubCmd = { isEmpty: () => false };
+
     mockToggleFullColorLayer.mockReturnValue(mockSubCmd);
     mockGetMultiSelectData.mockReturnValue('mock-multi-select-data');
 
     const { container } = render(
       <ConfigPanelContext.Provider
         value={{
-          state: mockContextState as any,
           dispatch: mockDispatch,
-          selectedLayers: mockSelectedLayers,
           initState: mockInitState,
+          selectedLayers: mockSelectedLayers,
+          state: mockContextState as any,
         }}
       >
         <SingleColorBlock />
       </ConfigPanelContext.Provider>,
     );
     const btn = container.querySelector('button#single-color');
+
     fireEvent.click(btn);
     expect(mockBatchCommand).toBeCalledTimes(1);
     expect(mockBatchCommand).toHaveBeenNthCalledWith(1, 'Toggle full color');
     expect(mockDispatch).toBeCalledTimes(2);
     expect(mockDispatch).toHaveBeenNthCalledWith(1, {
-      type: 'change',
       payload: { fullcolor: false },
+      type: 'change',
     });
     expect(mockDispatch).toHaveBeenNthCalledWith(2, {
-      type: 'update',
       payload: { color: 'mock-multi-select-data' },
+      type: 'update',
     });
     expect(mockGetLayerByName).toBeCalledTimes(2);
     expect(mockGetData).toBeCalledTimes(4);

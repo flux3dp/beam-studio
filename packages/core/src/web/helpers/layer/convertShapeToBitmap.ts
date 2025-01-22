@@ -6,9 +6,9 @@ import LayerModule from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
 import updateImageDisplay from '@core/helpers/image/updateImageDisplay';
 
-import layerToImage from './layerToImage';
-import { getAllLayerNames, getLayerElementByName } from './layer-helper';
 import { getData } from './layer-config-helper';
+import { getAllLayerNames, getLayerElementByName } from './layer-helper';
+import layerToImage from './layerToImage';
 
 /**
  * convertShapeToBitmap
@@ -25,28 +25,36 @@ const convertShapeToBitmap = async (): Promise<() => void> => {
   const selector = ['g', 'image', 'title', 'filter', 'clipPath', 'clipPath > *']
     .map((tagName) => `:not(${tagName})`)
     .join('');
+
   for (let i = 0; i < allLayerNames.length; i += 1) {
     const layerName = allLayerNames[i];
     const layer = getLayerElementByName(layerName);
+
     if (!getData(layer, 'fullcolor') && getData(layer, 'module') === LayerModule.PRINTER) {
       // eslint-disable-next-line no-async-promise-executor
       const promise = new Promise<void>(async (resolve) => {
-        const { rgbBlob: blob, bbox } = await layerToImage(layer as SVGGElement, {
+        const { bbox, rgbBlob: blob } = await layerToImage(layer as SVGGElement, {
           shapesOnly: true,
         });
+
         Array.from(layer.querySelectorAll(`*${selector}`))
           .reverse()
           .forEach((elem) => {
-            const { parentNode, nextSibling } = elem;
-            elementsToKeep.push({ elem, parentNode, nextSibling });
+            const { nextSibling, parentNode } = elem;
+
+            elementsToKeep.push({ elem, nextSibling, parentNode });
             elem.remove();
           });
+
         if (!blob || bbox.width === 0 || bbox.height === 0) {
           resolve();
+
           return;
         }
+
         const newImgUrl = URL.createObjectURL(blob);
         const newImage = document.createElementNS(NS.SVG, 'image') as unknown as SVGImageElement;
+
         newImage.setAttribute('x', bbox.x.toString());
         newImage.setAttribute('y', bbox.y.toString());
         newImage.setAttribute('width', bbox.width.toString());
@@ -62,17 +70,23 @@ const convertShapeToBitmap = async (): Promise<() => void> => {
         newImages.push(newImage);
         resolve();
       });
+
       promises.push(promise);
     }
   }
   await Promise.allSettled(promises);
+
   const revert = () => {
     newImages.forEach((image) => image.remove());
-    elementsToKeep.forEach(({ elem, parentNode, nextSibling }) => {
-      if (nextSibling) parentNode.insertBefore(elem, nextSibling);
-      else parentNode.appendChild(elem);
+    elementsToKeep.forEach(({ elem, nextSibling, parentNode }) => {
+      if (nextSibling) {
+        parentNode.insertBefore(elem, nextSibling);
+      } else {
+        parentNode.appendChild(elem);
+      }
     });
   };
+
   return revert;
 };
 

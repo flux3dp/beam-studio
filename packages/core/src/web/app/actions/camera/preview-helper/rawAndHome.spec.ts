@@ -16,25 +16,28 @@ const mockRawHome = jest.fn();
 const mockRawLooseMotor = jest.fn();
 const mockRawHomeZ = jest.fn();
 const mockRawMoveZRelToLastHome = jest.fn();
+
 jest.mock('@core/helpers/device-master', () => ({
   enterRawMode: (...args) => mockEnterRawMode(...args),
-  rawSetRotary: (...args) => mockRawSetRotary(...args),
   rawHome: (...args) => mockRawHome(...args),
-  rawLooseMotor: (...args) => mockRawLooseMotor(...args),
   rawHomeZ: (...args) => mockRawHomeZ(...args),
+  rawLooseMotor: (...args) => mockRawLooseMotor(...args),
   rawMoveZRelToLastHome: (...args) => mockRawMoveZRelToLastHome(...args),
+  rawSetRotary: (...args) => mockRawSetRotary(...args),
 }));
 
 const mockOpenNonstopProgress = jest.fn();
 const mockUpdate = jest.fn();
 const mockPopById = jest.fn();
+
 jest.mock('@core/app/actions/progress-caller', () => ({
   openNonstopProgress: (...args) => mockOpenNonstopProgress(...args),
-  update: (...args) => mockUpdate(...args),
   popById: (...args) => mockPopById(...args),
+  update: (...args) => mockUpdate(...args),
 }));
 
 const mockRead = jest.fn();
+
 jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read: (...args) => mockRead(...args),
 }));

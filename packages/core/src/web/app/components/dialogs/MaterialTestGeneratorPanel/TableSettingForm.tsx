@@ -1,23 +1,25 @@
-/* eslint-disable @typescript-eslint/no-shadow */
 import React, { useEffect, useMemo } from 'react';
+
+import { Flex } from 'antd';
+
+import { promarkModels } from '@core/app/actions/beambox/constant';
+import type { LaserType } from '@core/app/constants/promark-constants';
+import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import Select from '@core/app/widgets/AntdSelect';
 import UnitInput from '@core/app/widgets/UnitInput';
 import useI18n from '@core/helpers/useI18n';
-import { Flex } from 'antd';
-import Select from '@core/app/widgets/AntdSelect';
-import { LaserType } from '@core/app/constants/promark-constants';
-import { WorkAreaModel } from '@core/app/constants/workarea-constants';
-import { promarkModels } from '@core/app/actions/beambox/constant';
-import { Detail, tableParams, TableSetting } from './TableSetting';
+
 import styles from './Form.module.scss';
+import type { Detail, tableParams, TableSetting } from './TableSetting';
 
 interface Props {
+  blockOption?: 'cut' | 'engrave';
+  className?: string;
+  handleChange: (tableSetting: TableSetting) => void;
   isInch: boolean;
+  laserType?: LaserType;
   tableSetting: TableSetting;
   workarea?: WorkAreaModel;
-  laserType?: LaserType;
-  blockOption?: 'cut' | 'engrave';
-  handleChange: (tableSetting: TableSetting) => void;
-  className?: string;
 }
 
 type TableParams = (typeof tableParams)[number];
@@ -27,14 +29,14 @@ function camelToSnake(str: string): string {
 }
 
 export default function TableSettingForm({
+  blockOption,
+  className,
+  handleChange,
   isInch,
+  laserType,
   tableSetting,
   workarea,
-  laserType,
-  blockOption,
-  handleChange,
-  className,
-}: Props): JSX.Element {
+}: Props): React.JSX.Element {
   const {
     beambox: {
       right_panel: { laser_panel: tLaserPanel },
@@ -42,21 +44,19 @@ export default function TableSettingForm({
     material_test_generator: tMaterial,
   } = useI18n();
   const lengthUnit = isInch ? 'in' : 'mm';
-  const { settingEntries, options } = useMemo(
+  const { options, settingEntries } = useMemo(
     () => ({
-      settingEntries: Object.entries(tableSetting) as Array<[TableParams, Detail]>,
       options: Object.keys(tableSetting)
         .filter((key) => blockOption === 'engrave' || key !== 'fillInterval')
-        .map((value) => ({ value, label: tLaserPanel[camelToSnake(value)] })),
+        .map((value) => ({ label: tLaserPanel[camelToSnake(value)], value })),
+      settingEntries: Object.entries(tableSetting) as Array<[TableParams, Detail]>,
     }),
     [blockOption, tLaserPanel, tableSetting],
   );
 
   const handleOptionChange = () => {
     const availableOptions = new Set(options.map(({ value }) => value));
-    const invalidEntries = settingEntries.filter(
-      ([key, { selected }]) => !availableOptions.has(key) && selected !== 2,
-    );
+    const invalidEntries = settingEntries.filter(([key, { selected }]) => !availableOptions.has(key) && selected !== 2);
 
     if (!invalidEntries.length) {
       return;
@@ -68,9 +68,10 @@ export default function TableSettingForm({
     invalidEntries.forEach(([key, { selected }]) => {
       modifiedTableSetting[key].selected = 2;
 
-      const [replacedKey] = Object.entries(modifiedTableSetting).find(
-        ([, { selected }]) => selected === 2,
-      ) as [TableParams, Detail];
+      const [replacedKey] = Object.entries(modifiedTableSetting).find(([, { selected }]) => selected === 2) as [
+        TableParams,
+        Detail,
+      ];
 
       modifiedTableSetting[replacedKey].selected = selected;
     });
@@ -87,7 +88,7 @@ export default function TableSettingForm({
 
   useEffect(() => {
     handleBlockOptionChange(blockOption);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line hooks/exhaustive-deps
   }, [blockOption, laserType, workarea]);
 
   const handleSelectChange = (value: string, index: number) => {
@@ -104,13 +105,10 @@ export default function TableSettingForm({
     });
   };
 
-  const handleValueChange = (key: TableParams, prefix: 'min' | 'max', value: number) => {
-    const { min, max } = tableSetting[key];
+  const handleValueChange = (key: TableParams, prefix: 'max' | 'min', value: number) => {
+    const { max, min } = tableSetting[key];
     const limitValue = (v: number) => {
-      const rangedValue = Math[prefix](
-        v,
-        tableSetting[key][prefix === 'min' ? 'maxValue' : 'minValue'],
-      );
+      const rangedValue = Math[prefix](v, tableSetting[key][prefix === 'min' ? 'maxValue' : 'minValue']);
 
       return Math.min(max, Math.max(min, rangedValue));
     };
@@ -126,13 +124,13 @@ export default function TableSettingForm({
     const useInch = isInch && key === 'speed';
 
     return (
-      <Flex vertical justify="space-between" gap="8px" key={`table-setting-${index}`}>
+      <Flex gap="8px" justify="space-between" key={`table-setting-${index}`} vertical>
         <div className={styles['sub-title']}>{tMaterial[index ? 'rows' : 'columns']}</div>
         <Select
           className={styles.input}
+          onChange={(value) => handleSelectChange(value, index)}
           options={options}
           value={key}
-          onChange={(value) => handleSelectChange(value, index)}
         />
         {['min', 'max'].map((prefix) => {
           const addonAfter = () => {
@@ -159,17 +157,17 @@ export default function TableSettingForm({
 
           return (
             <UnitInput
-              key={`${prefix}-${key}`}
+              addonAfter={addonAfter()}
+              className={styles.input}
               data-testid={`${prefix}-${key}`}
               isInch={useInch}
-              className={styles.input}
-              value={detail[`${prefix}Value`]}
+              key={`${prefix}-${key}`}
               max={detail.max}
               min={detail.min}
+              onChange={(value) => handleValueChange(key, prefix as 'max' | 'min', value)}
               precision={precision}
               step={step()}
-              addonAfter={addonAfter()}
-              onChange={(value) => handleValueChange(key, prefix as 'min' | 'max', value)}
+              value={detail[`${prefix}Value`]}
             />
           );
         })}
@@ -179,14 +177,14 @@ export default function TableSettingForm({
 
   return (
     <Flex className={className} justify="space-between">
-      <Flex vertical justify="space-between" gap="8px">
+      <Flex gap="8px" justify="space-between" vertical>
         <div className={styles.title}>{tMaterial.table_settings}</div>
         <div className={styles.label}>{tMaterial.parameter}</div>
         <div className={styles.label}>{tMaterial.min}</div>
         <div className={styles.label}>{tMaterial.max}</div>
       </Flex>
 
-      <Flex className={styles.inputs} justify="flex-end" gap="20px">
+      <Flex className={styles.inputs} gap="20px" justify="flex-end">
         {[0, 1].map(renderInputGroup)}
       </Flex>
     </Flex>

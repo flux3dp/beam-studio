@@ -1,32 +1,30 @@
-import classNames from 'classnames';
 import React, { memo, useContext, useMemo } from 'react';
 
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import classNames from 'classnames';
+
 import history from '@core/app/svgedit/history/history';
-import ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
-import useI18n from '@core/helpers/useI18n';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { CUSTOM_PRESET_CONSTANT, writeData } from '@core/helpers/layer/layer-config-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import useI18n from '@core/helpers/useI18n';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import ConfigPanelContext from './ConfigPanelContext';
 import styles from './Block.module.scss';
+import ConfigPanelContext from './ConfigPanelContext';
 
 let svgCanvas: ISVGCanvas;
+
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
 
-const RepeatBlock = ({
-  type = 'default',
-}: {
-  type?: 'default' | 'panel-item' | 'modal';
-}): JSX.Element => {
+const RepeatBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.JSX.Element => {
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
 
-  const { selectedLayers, state, dispatch, initState } = useContext(ConfigPanelContext);
+  const { dispatch, initState, selectedLayers, state } = useContext(ConfigPanelContext);
   const { repeat } = state;
   const timeEstimationButtonEventEmitter = useMemo(
     () => eventEmitterFactory.createEventEmitter('time-estimation-button'),
@@ -35,12 +33,14 @@ const RepeatBlock = ({
 
   const handleChange = (value: number) => {
     dispatch({
+      payload: { configName: CUSTOM_PRESET_CONSTANT, repeat: value },
       type: 'change',
-      payload: { repeat: value, configName: CUSTOM_PRESET_CONSTANT },
     });
     timeEstimationButtonEventEmitter.emit('SET_ESTIMATED_TIME', null);
+
     if (type !== 'modal') {
       const batchCmd = new history.BatchCommand('Change repeat');
+
       selectedLayers.forEach((layerName) => {
         writeData(layerName, 'repeat', value, { batchCmd });
         writeData(layerName, 'configName', CUSTOM_PRESET_CONSTANT, { batchCmd });
@@ -52,28 +52,28 @@ const RepeatBlock = ({
 
   return type === 'panel-item' ? (
     <ObjectPanelItem.Number
+      decimal={0}
       id="repeat"
       label={t.repeat}
-      value={repeat.value}
-      min={0}
       max={100}
-      updateValue={handleChange}
+      min={0}
       unit={t.times}
-      decimal={0}
+      updateValue={handleChange}
+      value={repeat.value}
     />
   ) : (
     <div className={classNames(styles.panel, styles['without-drag'])}>
       <span className={styles.title}>{t.repeat}</span>
       <UnitInput
-        id="repeat"
         className={{ [styles.input]: true }}
-        min={0}
-        max={100}
-        unit={t.times}
-        defaultValue={repeat.value}
-        getValue={handleChange}
         decimal={0}
+        defaultValue={repeat.value}
         displayMultiValue={repeat.hasMultiValue}
+        getValue={handleChange}
+        id="repeat"
+        max={100}
+        min={0}
+        unit={t.times}
       />
     </div>
   );

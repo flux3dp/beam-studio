@@ -1,14 +1,16 @@
 import React from 'react';
+
 import classNames from 'classnames';
 
 import { MonitorContext } from '@core/app/contexts/MonitorContext';
 import DeviceMaster from '@core/helpers/device-master';
-import { IDeviceInfo } from '@core/interfaces/IDevice';
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 const hdChecked = {};
 
 const getImageSize = (url: string, onSize: (size: number[]) => void) => {
   const img = new Image();
+
   img.onload = () => {
     onSize([img.naturalWidth, img.naturalHeight]);
   };
@@ -32,18 +34,13 @@ export default class MonitorCamera extends React.PureComponent<Props, State> {
 
   constructor(props) {
     super(props);
+
     const { device } = this.props;
     const { model } = device;
-    this.isBeamboxCamera = [
-      'mozu1',
-      'fbm1',
-      'fbb1b',
-      'fbb1p',
-      'fhexa1',
-      'laser-b1',
-      'laser-b2',
-      'darwin-dev',
-    ].includes(model);
+
+    this.isBeamboxCamera = ['darwin-dev', 'fbb1b', 'fbb1p', 'fbm1', 'fhexa1', 'laser-b1', 'laser-b2', 'mozu1'].includes(
+      model,
+    );
     this.state = {
       isHd: false,
     };
@@ -61,13 +58,18 @@ export default class MonitorCamera extends React.PureComponent<Props, State> {
   processImage = ({ imgBlob }: { imgBlob: Blob }) => {
     const { device } = this.props;
     const cameraImage = document.getElementById('camera-image');
-    if (!cameraImage) return;
+
+    if (!cameraImage) {
+      return;
+    }
 
     const url = URL.createObjectURL(imgBlob);
+
     if (device) {
       if (!hdChecked[device.serial]) {
         getImageSize(url, (size: number[]) => {
           console.log('image size', size);
+
           if (size[0] > 720) {
             hdChecked[device.serial] = 2;
           } else if (size[0] > 0) {
@@ -78,11 +80,15 @@ export default class MonitorCamera extends React.PureComponent<Props, State> {
 
       this.setState({ isHd: hdChecked[device.serial] !== 1 });
     }
+
     this.previewBlob = imgBlob;
+
     const originalUrl = cameraImage.getAttribute('src');
+
     if (originalUrl) {
       URL.revokeObjectURL(originalUrl);
     }
+
     cameraImage.setAttribute('src', url);
   };
 
@@ -92,9 +98,10 @@ export default class MonitorCamera extends React.PureComponent<Props, State> {
       'beambox-camera': this.isBeamboxCamera,
       hd: isHd,
     });
+
     return (
       <div className="camera">
-        <img id="camera-image" className={className} />
+        <img className={className} id="camera-image" />
       </div>
     );
   }

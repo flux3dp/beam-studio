@@ -2,10 +2,11 @@ import weldPath from './weldPath';
 
 const mockImportSVG = jest.fn();
 const mockExportSVG = jest.fn();
+
 jest.mock('paper', () => ({
   Project: jest.fn().mockImplementation(() => ({
-    importSVG: mockImportSVG,
     exportSVG: mockExportSVG,
+    importSVG: mockImportSVG,
   })),
 }));
 
@@ -14,40 +15,46 @@ describe('test weldPath', () => {
     const mockUnite = jest.fn();
     const mockObjA = {
       area: 100,
-      remove: jest.fn(),
-      unite: mockUnite,
       pathData: 'mock-data-1',
+      remove: jest.fn(),
       reverse: jest.fn(),
+      unite: mockUnite,
     };
     const mockObjB = {
       area: -20,
-      remove: jest.fn(),
-      unite: mockUnite,
       pathData: 'mock-data-2',
+      remove: jest.fn(),
       reverse: jest.fn(),
+      unite: mockUnite,
     };
     const mockObjC = {
       area: 100,
-      remove: jest.fn(),
-      unite: mockUnite,
       pathData: 'mock-data-1',
+      remove: jest.fn(),
       reverse: jest.fn(),
+      unite: mockUnite,
     };
     const pathD = 'M123 234 L 345 456 L567 678z M123 345 L 567 789 L 123 456';
+
     mockImportSVG.mockReturnValue({ children: [mockObjA, mockObjB, mockObjC] });
     mockUnite.mockReturnValueOnce(mockObjC).mockReturnValueOnce(mockObjB);
+
     const mockGetAttribute = jest.fn();
+
     mockExportSVG.mockReturnValue({
-      children: [ // svg
+      children: [
+        // svg
         {
-          children: [ // canvas
+          children: [
+            // canvas
             {
-              children: [ // results
+              children: [
+                // results
                 { getAttribute: mockGetAttribute },
                 { getAttribute: mockGetAttribute },
                 { getAttribute: mockGetAttribute },
               ],
-            }
+            },
           ],
         },
       ],
@@ -56,7 +63,9 @@ describe('test weldPath', () => {
       .mockReturnValueOnce('mock-path-1,')
       .mockReturnValueOnce('mock-path-2,')
       .mockReturnValueOnce('mock-path-3,');
+
     const res = weldPath(pathD);
+
     expect(mockImportSVG).toBeCalledTimes(1);
     expect(mockUnite).toBeCalledTimes(2);
     // sorted by area

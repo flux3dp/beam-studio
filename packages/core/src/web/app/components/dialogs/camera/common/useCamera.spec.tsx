@@ -1,9 +1,11 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import useCamera from './useCamera';
 
 const mockPopUpError = jest.fn();
+
 jest.mock('@core/app/actions/alert-caller', () => ({
   popUpError: (...args) => mockPopUpError(...args),
 }));
@@ -12,15 +14,17 @@ const mockTakeOnePicture = jest.fn();
 const mockConnectCamera = jest.fn();
 const mockDisconnectCamera = jest.fn();
 const mockGetDeviceSetting = jest.fn();
+
 jest.mock('@core/helpers/device-master', () => ({
-  takeOnePicture: (...args) => mockTakeOnePicture(...args),
   connectCamera: (...args) => mockConnectCamera(...args),
   disconnectCamera: (...args) => mockDisconnectCamera(...args),
   getDeviceSetting: (...args) => mockGetDeviceSetting(...args),
+  takeOnePicture: (...args) => mockTakeOnePicture(...args),
 }));
 
 const mockOpenNonstopProgress = jest.fn();
 const mockPopById = jest.fn();
+
 jest.mock('@core/app/actions/progress-caller', () => ({
   openNonstopProgress: (...args) => mockOpenNonstopProgress(...args),
   popById: (...args) => mockPopById(...args),
@@ -36,10 +40,11 @@ jest.mock('@core/helpers/i18n', () => ({
 
 const MockComponent = ({ handleImg }: { handleImg: (blob: Blob) => boolean }) => {
   const { exposureSetting, handleTakePicture } = useCamera(handleImg);
+
   return (
     <div>
       <p>exposureSetting: {JSON.stringify(exposureSetting)}</p>
-      <button type="button" onClick={() => handleTakePicture()}>
+      <button onClick={() => handleTakePicture()} type="button">
         Take Picture
       </button>
     </div>
@@ -49,6 +54,7 @@ const MockComponent = ({ handleImg }: { handleImg: (blob: Blob) => boolean }) =>
 const mockConsoleLog = jest.fn();
 
 const mockHandleImg = jest.fn();
+
 describe('test useCamera', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -61,6 +67,7 @@ describe('test useCamera', () => {
     mockHandleImg.mockReturnValue(true);
 
     const { container, unmount } = render(<MockComponent handleImg={mockHandleImg} />);
+
     await new Promise((resolve) => setTimeout(resolve, 0));
     expect(mockConnectCamera).toBeCalledTimes(1);
     expect(mockGetDeviceSetting).toBeCalledTimes(1);
@@ -85,6 +92,7 @@ describe('test useCamera', () => {
     mockHandleImg.mockReturnValue(true);
 
     const { getByText } = render(<MockComponent handleImg={mockHandleImg} />);
+
     await new Promise((resolve) => setTimeout(resolve, 0));
     jest.clearAllMocks();
     mockTakeOnePicture.mockResolvedValue({ imgBlob: new Blob() });
@@ -105,7 +113,9 @@ describe('test useCamera', () => {
     mockGetDeviceSetting.mockRejectedValue(new Error('error'));
     mockTakeOnePicture.mockResolvedValue({ imgBlob: new Blob() });
     mockHandleImg.mockReturnValue(true);
+
     const { container } = render(<MockComponent handleImg={mockHandleImg} />);
+
     await new Promise((resolve) => setTimeout(resolve, 0));
     expect(mockConsoleLog).toBeCalledTimes(1);
     expect(mockConsoleLog).toBeCalledWith('Failed to get exposure setting', new Error('error'));

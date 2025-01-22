@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import keyCodeConstants from '@core/app/constants/keycode-constants';
@@ -8,8 +9,9 @@ import ValidationTextInput from './Validation-Text-Input';
 describe('test Validation-Text-Input', () => {
   test('should render correctly', () => {
     const { container } = render(
-      <ValidationTextInput defaultValue="123" validation={jest.fn()} getValue={jest.fn()} />,
+      <ValidationTextInput defaultValue="123" getValue={jest.fn()} validation={jest.fn()} />,
     );
+
     expect(container).toMatchSnapshot();
   });
 
@@ -17,13 +19,10 @@ describe('test Validation-Text-Input', () => {
     const mockValidation = jest.fn();
     const mockGetValue = jest.fn();
     const { container } = render(
-      <ValidationTextInput
-        defaultValue="123"
-        validation={mockValidation}
-        getValue={mockGetValue}
-      />,
+      <ValidationTextInput defaultValue="123" getValue={mockGetValue} validation={mockValidation} />,
     );
     const input = container.querySelector('input');
+
     expect(input).toHaveValue('123');
 
     mockValidation.mockReturnValue('789');
@@ -57,13 +56,10 @@ describe('test Validation-Text-Input', () => {
     const mockValidation = jest.fn();
     const mockGetValue = jest.fn();
     const { container } = render(
-      <ValidationTextInput
-        defaultValue="123"
-        validation={mockValidation}
-        getValue={mockGetValue}
-      />,
+      <ValidationTextInput defaultValue="123" getValue={mockGetValue} validation={mockValidation} />,
     );
     const input = container.querySelector('input');
+
     expect(input).toHaveValue('123');
 
     input.value = '456';

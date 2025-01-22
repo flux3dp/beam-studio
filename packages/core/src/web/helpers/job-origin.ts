@@ -1,19 +1,20 @@
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
-import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import type LayerModule from '@core/app/constants/layer-module/layer-modules';
 import workareaManager from '@core/app/svgedit/workarea';
-import { getAllLayers } from '@core/helpers/layer/layer-helper';
 import { getData } from '@core/helpers/layer/layer-config-helper';
+import { getAllLayers } from '@core/helpers/layer/layer-helper';
 
 export const getRefModule = (): LayerModule => {
   const firstLayer = getAllLayers()
     .reverse()
     .find((layer) => layer.getAttribute('display') !== 'none');
+
   return getData(firstLayer, 'module') as LayerModule;
 };
 
 const getJobOrigin = (px = false): { x: number; y: number } => {
-  const { width: workareaWidth, height: fullHeight, expansion } = workareaManager;
+  const { expansion, height: fullHeight, width: workareaWidth } = workareaManager;
   const workareaHeight = fullHeight - expansion[0] - expansion[1];
   const svgcontent = document.getElementById('svgcontent') as unknown as SVGSVGElement;
   const boundary = svgcontent.getBBox();
@@ -25,16 +26,28 @@ const getJobOrigin = (px = false): { x: number; y: number } => {
   const xRef = (jobOrigin - 1) % 3;
   const yRef = Math.floor((jobOrigin - 1) / 3);
   const res = { x: 0, y: 0 };
-  if (xRef === 0) res.x = left;
-  else if (xRef === 1) res.x = (left + right) / 2;
-  else res.x = right;
-  if (yRef === 0) res.y = top;
-  else if (yRef === 1) res.y = (top + bottom) / 2;
-  else res.y = bottom;
+
+  if (xRef === 0) {
+    res.x = left;
+  } else if (xRef === 1) {
+    res.x = (left + right) / 2;
+  } else {
+    res.x = right;
+  }
+
+  if (yRef === 0) {
+    res.y = top;
+  } else if (yRef === 1) {
+    res.y = (top + bottom) / 2;
+  } else {
+    res.y = bottom;
+  }
+
   if (!px) {
     res.x /= constant.dpmm;
     res.y /= constant.dpmm;
   }
+
   return res;
 };
 

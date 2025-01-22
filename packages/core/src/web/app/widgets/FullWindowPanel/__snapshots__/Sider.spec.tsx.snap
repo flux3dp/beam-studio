@@ -13,7 +13,7 @@ exports[`test Sider should render correctly 1`] = `
 exports[`test Sider should render correctly 2`] = `
 <div>
   <div
-    class="sider mobile windows desktop class class2"
+    class="sider desktop mobile windows class class2"
   >
     Sider
   </div>

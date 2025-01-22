@@ -1,20 +1,20 @@
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import isDev from '@core/helpers/is-dev';
-import layoutConstants from '@core/app/constants/layout-constants';
 import { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
+import layoutConstants from '@core/app/constants/layout-constants';
+import isDev from '@core/helpers/is-dev';
 
 export enum TopRef {
-  WINDOW = 0,
-  TOPBAR = 1,
   LAYER_LIST = 2,
   LAYER_PARAMS = 3,
+  TOPBAR = 1,
+  WINDOW = 0,
 }
 
 export enum RightRef {
-  WINDOW = 0,
-  RIGHT_SROLL_BAR = 1,
-  RIGHT_PANEL = 2,
   PATH_PREVIEW_BTN = 3,
+  RIGHT_PANEL = 2,
+  RIGHT_SROLL_BAR = 1,
+  WINDOW = 0,
 }
 
 export const calculateTop = (top: number, ref: TopRef = TopRef.WINDOW): number => {
@@ -25,6 +25,7 @@ export const calculateTop = (top: number, ref: TopRef = TopRef.WINDOW): number =
       return top + layoutConstants.topBarHeight + layoutConstants.layerListHeight;
     case TopRef.LAYER_PARAMS: {
       const offset = document.querySelector('#layer-parameters')?.getBoundingClientRect().top || 0;
+
       return top + offset;
     }
     default:
@@ -42,6 +43,7 @@ export const calculateRight = (right: number, ref: RightRef = RightRef.WINDOW): 
       const workarea = beamboxPreference.read('workarea');
       const shouldHideBtn = !isDev() && modelsWithModules.has(workarea);
       const offset = shouldHideBtn ? 6 : 48;
+
       return right + offset;
     }
     default:

@@ -1,12 +1,12 @@
 import alertCaller from '@core/app/actions/alert-caller';
+import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
+import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
+import progressCaller from '@core/app/actions/progress-caller';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
-import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
-import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
-import progressCaller from '@core/app/actions/progress-caller';
-import { FisheyeCameraParameters, FisheyePreviewManager } from '@core/interfaces/FisheyePreview';
-import { IDeviceInfo } from '@core/interfaces/IDevice';
-import { PreviewManager } from '@core/interfaces/PreviewManager';
+import type { FisheyeCameraParameters, FisheyePreviewManager } from '@core/interfaces/FisheyePreview';
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
+import type { PreviewManager } from '@core/interfaces/PreviewManager';
 
 import BasePreviewManager from './BasePreviewManager';
 import FisheyePreviewManagerV1 from './FisheyePreviewManagerV1';
@@ -25,31 +25,39 @@ class AdorPreviewManager extends BasePreviewManager implements PreviewManager {
   public setup = async (args?: { progressId?: string }): Promise<boolean> => {
     const { lang } = i18n;
     const { progressId } = args || {};
-    if (progressId) this.progressId = progressId;
+
+    if (progressId) {
+      this.progressId = progressId;
+    }
+
     try {
       progressCaller.openNonstopProgress({
         id: this.progressId,
         message: lang.message.connectingCamera,
       });
       await deviceMaster.connectCamera();
+
       let params: FisheyeCameraParameters;
+
       try {
         params = await deviceMaster.fetchFisheyeParams();
       } catch (err) {
         console.log('Fail to fetchFisheyeParams', err?.message);
-        throw new Error(
-          'Unable to get fisheye parameters, please make sure you have calibrated the camera',
-        );
+        throw new Error('Unable to get fisheye parameters, please make sure you have calibrated the camera');
       }
+
       if (!('v' in params)) {
         this.fisheyeManager = new FisheyePreviewManagerV1(this.device, params);
       } else if (params.v === 2) {
         this.fisheyeManager = new FisheyePreviewManagerV2(this.device, params);
       }
+
       const res = await this.fisheyeManager.setupFisheyePreview({ progressId: this.progressId });
+
       return res;
     } catch (error) {
       console.error(error);
+
       if (error.message && error.message.startsWith('Camera WS')) {
         alertCaller.popUpError({
           message: `${lang.topbar.alerts.fail_to_connect_with_camera}<br/>${error.message || ''}`,
@@ -59,6 +67,7 @@ class AdorPreviewManager extends BasePreviewManager implements PreviewManager {
           message: `${lang.topbar.alerts.fail_to_start_preview}<br/>${error.message || ''}`,
         });
       }
+
       return false;
     } finally {
       if (deviceMaster.currentControlMode === 'raw') {
@@ -66,6 +75,7 @@ class AdorPreviewManager extends BasePreviewManager implements PreviewManager {
         progressCaller.update(this.progressId, { message: lang.message.endingRawMode });
         await deviceMaster.endRawMode();
       }
+
       progressCaller.popById(this.progressId);
     }
   };
@@ -76,27 +86,29 @@ class AdorPreviewManager extends BasePreviewManager implements PreviewManager {
     await this.fisheyeManager?.reloadLevelingOffset();
   };
 
-  resetObjectHeight = async (): Promise<boolean> =>
-    (await this.fisheyeManager?.resetObjectHeight()) ?? false;
+  resetObjectHeight = async (): Promise<boolean> => (await this.fisheyeManager?.resetObjectHeight()) ?? false;
 
   public preview = async (): Promise<boolean> => {
     try {
       MessageCaller.openMessage({
-        key: 'full-area-preview',
         content: i18n.lang.topbar.preview,
-        level: MessageLevel.LOADING,
         duration: 20,
+        key: 'full-area-preview',
+        level: MessageLevel.LOADING,
       });
+
       const imgUrl = await this.getPhotoFromMachine();
+
       await new Promise<void>((resolve) => {
         PreviewModeBackgroundDrawer.drawFullWorkarea(imgUrl, resolve);
       });
       MessageCaller.openMessage({
-        key: 'full-area-preview',
-        level: MessageLevel.SUCCESS,
         content: 'Successfully previewed',
         duration: 3,
+        key: 'full-area-preview',
+        level: MessageLevel.SUCCESS,
       });
+
       return true;
     } catch (error) {
       MessageCaller.closeMessage('full-area-preview');
@@ -106,11 +118,13 @@ class AdorPreviewManager extends BasePreviewManager implements PreviewManager {
 
   public previewRegion = async (): Promise<boolean> => {
     const res = await this.preview();
+
     return res;
   };
 
   public previewFullWorkarea? = async (): Promise<boolean> => {
     const res = await this.preview();
+
     return res;
   };
 }

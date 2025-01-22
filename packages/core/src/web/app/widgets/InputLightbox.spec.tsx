@@ -1,4 +1,5 @@
 import * as React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import Constants from '@core/app/constants/input-lightbox-constants';
@@ -33,14 +34,14 @@ describe('test InputLightbox', () => {
   it('should trigger onSubmit when file is selected and input events are triggered', () => {
     const { baseElement, getByText } = render(
       <InputLightbox
+        caption="Firmware upload (*.bin / *.fxfw)"
+        confirmText="UPLOAD"
         defaultValue=""
         inputHeader="header"
-        caption="Firmware upload (*.bin / *.fxfw)"
         maxLength={100}
-        type={Constants.TYPE_FILE}
-        confirmText="UPLOAD"
-        onSubmit={mockOnSubmit}
         onClose={mockOnClose}
+        onSubmit={mockOnSubmit}
+        type={Constants.TYPE_FILE}
       />,
     );
 
@@ -52,13 +53,15 @@ describe('test InputLightbox', () => {
     // Mock the files getter
     const filesGetter = jest.spyOn(input, 'files', 'get');
     const mockFile = new File(['mock-file'], 'mock-file');
+
     filesGetter.mockReturnValue([mockFile] as any);
 
     // Fire a keyup event to simulate user interaction
-    fireEvent.keyUp(input, { key: 'Enter', code: 'Enter' });
+    fireEvent.keyUp(input, { code: 'Enter', key: 'Enter' });
 
     // Ensure that the "UPLOAD" button is enabled after input interaction
     const uploadButton = getByText('UPLOAD').closest('button');
+
     expect(uploadButton).not.toBeDisabled();
 
     // Fire the click event on the enabled button
@@ -75,16 +78,17 @@ describe('test InputLightbox', () => {
   it('should render correctly when type is password', () => {
     const { baseElement, getByText } = render(
       <InputLightbox
+        caption="ABCDE requires a password"
+        confirmText="CONNECT"
         defaultValue=""
         inputHeader="Password"
-        caption="ABCDE requires a password"
         maxLength={100}
-        type={Constants.TYPE_PASSWORD}
-        confirmText="CONNECT"
-        onSubmit={mockOnSubmit}
         onClose={mockOnClose}
+        onSubmit={mockOnSubmit}
+        type={Constants.TYPE_PASSWORD}
       />,
     );
+
     expect(baseElement).toMatchSnapshot();
     fireEvent.change(baseElement.querySelector('input'), { target: { value: 'pAssw0rd' } });
     expect(mockOnSubmit).not.toBeCalled();

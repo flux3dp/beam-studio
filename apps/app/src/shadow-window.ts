@@ -5,10 +5,7 @@ const main = async () => {
 
   ipc.on('SVG_URL_TO_IMG_URL', (e, data) => {
     const { fullColor, height, id, senderId, strokeWidth, url, width } = data;
-    const img = new Image(
-      width + Number.parseInt(strokeWidth, 10),
-      height + Number.parseInt(strokeWidth, 10),
-    );
+    const img = new Image(width + Number.parseInt(strokeWidth, 10), height + Number.parseInt(strokeWidth, 10));
 
     img.onload = async () => {
       const imgCanvas = document.createElement('canvas');

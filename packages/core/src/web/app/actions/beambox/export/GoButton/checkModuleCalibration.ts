@@ -1,18 +1,20 @@
-/* eslint-disable import/prefer-default-export */
 import alertCaller from '@core/app/actions/alert-caller';
-import alertConfig, { AlertConfigKey } from '@core/helpers/api/alert-config';
-import alertConstants from '@core/app/constants/alert-constants';
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import CalibrationType from '@core/app/components/dialogs/camera/AdorCalibration/calibrationTypes';
-import LayerModules, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
-import { IDeviceInfo } from '@core/interfaces/IDevice';
 import { showAdorCalibration } from '@core/app/components/dialogs/camera/AdorCalibration';
-import { ILang } from '@core/interfaces/ILang';
+import CalibrationType from '@core/app/components/dialogs/camera/AdorCalibration/calibrationTypes';
+import alertConstants from '@core/app/constants/alert-constants';
+import LayerModules, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
+import type { AlertConfigKey } from '@core/helpers/api/alert-config';
+import alertConfig from '@core/helpers/api/alert-config';
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
+import type { ILang } from '@core/interfaces/ILang';
 
 export const checkModuleCalibration = async (device: IDeviceInfo, lang: ILang): Promise<void> => {
   const workarea = BeamboxPreference.read('workarea');
 
-  if (!modelsWithModules.has(workarea) || !modelsWithModules.has(device.model)) return;
+  if (!modelsWithModules.has(workarea) || !modelsWithModules.has(device.model)) {
+    return;
+  }
 
   const moduleOffsets = BeamboxPreference.read('module-offsets') || {};
   const getLayers = (module: LayerModules) =>
@@ -31,23 +33,21 @@ export const checkModuleCalibration = async (device: IDeviceInfo, lang: ILang): 
     if (!moduleOffsets?.[layerModule] && !alertConfig.read(alertConfigKey as AlertConfigKey)) {
       const moduleLayers = [...getLayers(layerModule)];
 
-      if (
-        moduleLayers.some((g) =>
-          Boolean(g.querySelector(':not(title):not(filter):not(g):not(feColorMatrix)')),
-        )
-      ) {
+      if (moduleLayers.some((g) => Boolean(g.querySelector(':not(title):not(filter):not(g):not(feColorMatrix)')))) {
         const doCali = await new Promise((resolve) => {
           alertCaller.popUp({
-            id: 'module-cali-warning',
-            caption: alertTitle,
-            message: alertMsg,
             buttonType: alertConstants.CONFIRM_CANCEL,
-            onConfirm: () => resolve(true),
+            caption: alertTitle,
+            id: 'module-cali-warning',
+            message: alertMsg,
             onCancel: () => resolve(false),
+            onConfirm: () => resolve(true),
           });
         });
 
-        if (doCali) await showAdorCalibration(calibrationType);
+        if (doCali) {
+          await showAdorCalibration(calibrationType);
+        }
       }
     }
   };

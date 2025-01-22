@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
 import FloatingPanel from './FloatingPanel';
@@ -7,17 +8,13 @@ const mockOnClose = jest.fn();
 
 const MockComponent = () => {
   const [close, setClose] = React.useState(false);
+
   return (
     <div>
-      <button type="button" onClick={() => setClose(true)}>
+      <button onClick={() => setClose(true)} type="button">
         Close
       </button>
-      <FloatingPanel
-        anchors={[0, 40, 100]}
-        title="mock-title"
-        forceClose={close}
-        onClose={mockOnClose}
-      >
+      <FloatingPanel anchors={[0, 40, 100]} forceClose={close} onClose={mockOnClose} title="mock-title">
         <div>children</div>
       </FloatingPanel>
     </div>
@@ -26,12 +23,12 @@ const MockComponent = () => {
 
 async function mockDrag(el: Element, startY: number, endY: number) {
   fireEvent.mouseDown(el, {
-    clientY: startY,
     buttons: 1,
+    clientY: startY,
   });
   fireEvent.mouseMove(el, {
-    clientY: endY,
     buttons: 1,
+    clientY: endY,
   });
   fireEvent.mouseUp(el);
 }
@@ -44,25 +41,27 @@ describe('test FloatingPanel', () => {
   it('should render correctly', () => {
     const { container } = render(
       <FloatingPanel
-        className="mock-class"
         anchors={[0, 40, 100]}
-        title="mock-title"
+        className="mock-class"
         fixedContent={<div>fixed</div>}
         onClose={mockOnClose}
+        title="mock-title"
       >
         <div>children</div>
-      </FloatingPanel>
+      </FloatingPanel>,
     );
+
     expect(container).toMatchSnapshot();
   });
 
   it('should behave correctly when changing height', async () => {
     const { container } = render(
-      <FloatingPanel anchors={[0, 40, 100]} title="mock-title" onClose={mockOnClose}>
+      <FloatingPanel anchors={[0, 40, 100]} onClose={mockOnClose} title="mock-title">
         <div>children</div>
-      </FloatingPanel>
+      </FloatingPanel>,
     );
     const panelEl = container.querySelector('.adm-floating-panel') as HTMLElement;
+
     // antd init height = first anchor
     expect(panelEl.style.transform).toBe('translateY(calc(100% + (0px)))');
     expect(panelEl.style.height).toBe('0px');
@@ -70,7 +69,9 @@ describe('test FloatingPanel', () => {
     await waitFor(() => expect(panelEl.style.transform).toBe('translateY(calc(100% + (-40px)))'));
     await waitFor(() => expect(panelEl.getAttribute('data-animating')).toBe('false'));
     expect(Math.round(Number(panelEl.style.height.slice(0, -2)))).toBe(40);
+
     const draggableBar = container.querySelector('.adm-floating-panel .adm-floating-panel-header');
+
     mockDrag(draggableBar, 0, -80);
     await waitFor(() => expect(panelEl.style.transform).toBe('translateY(calc(100% + (-100px)))'));
     await waitFor(() => expect(panelEl.getAttribute('data-animating')).toBe('false'));
@@ -86,9 +87,12 @@ describe('test FloatingPanel', () => {
   it('should close when close is true', async () => {
     const { container } = render(<MockComponent />);
     const panelEl = container.querySelector('.adm-floating-panel') as HTMLElement;
+
     await waitFor(() => expect(panelEl.style.transform).toBe('translateY(calc(100% + (-40px)))'));
     expect(mockOnClose).not.toBeCalled();
+
     const btn = container.querySelector('button');
+
     fireEvent.click(btn);
     await waitFor(() => expect(panelEl.style.transform).toBe('translateY(calc(100% + (0px)))'));
     await waitFor(() => expect(mockOnClose).toBeCalledTimes(1));
@@ -96,14 +100,17 @@ describe('test FloatingPanel', () => {
 
   it('should close when clicking close button', async () => {
     const { container } = render(
-      <FloatingPanel anchors={[0, 40, 100]} title="mock-title" onClose={mockOnClose}>
+      <FloatingPanel anchors={[0, 40, 100]} onClose={mockOnClose} title="mock-title">
         <div>children</div>
-      </FloatingPanel>
+      </FloatingPanel>,
     );
     const panelEl = container.querySelector('.adm-floating-panel') as HTMLElement;
+
     await waitFor(() => expect(panelEl.style.transform).toBe('translateY(calc(100% + (-40px)))'));
     expect(mockOnClose).not.toBeCalled();
+
     const close = container.querySelector('.close-icon');
+
     fireEvent.click(close);
     await waitFor(() => expect(panelEl.style.transform).toBe('translateY(calc(100% + (0px)))'));
     await waitFor(() => expect(mockOnClose).toBeCalledTimes(1));

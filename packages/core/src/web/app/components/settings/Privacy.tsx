@@ -1,24 +1,25 @@
 import * as React from 'react';
 
-import i18n from '@core/helpers/i18n';
 import SelectControl from '@core/app/components/settings/SelectControl';
-import { StorageKey } from '@core/interfaces/IStorage';
+import i18n from '@core/helpers/i18n';
+import type { StorageKey } from '@core/interfaces/IStorage';
 
 interface Props {
-  enableSentryOptions: { value: any; label: string; selected: boolean }[];
+  enableSentryOptions: Array<{ label: string; selected: boolean; value: any }>;
   updateConfigChange: (id: StorageKey, newVal: any) => void;
 }
 
-function Privacy({ enableSentryOptions, updateConfigChange }: Props): JSX.Element {
+function Privacy({ enableSentryOptions, updateConfigChange }: Props): React.JSX.Element {
   const lang = i18n.lang;
+
   return (
     <>
       <div className="subtitle">{lang.settings.groups.privacy}</div>
       <SelectControl
-        label={lang.settings.share_with_flux}
         id="set-sentry"
-        options={enableSentryOptions}
+        label={lang.settings.share_with_flux}
         onChange={(e) => updateConfigChange('enable-sentry', e.target.value)}
+        options={enableSentryOptions}
       />
     </>
   );

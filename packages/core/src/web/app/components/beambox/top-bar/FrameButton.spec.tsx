@@ -1,12 +1,14 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
-import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { CanvasMode } from '@core/app/constants/canvasMode';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
 
 import FrameButton from './FrameButton';
 
 const mockShowFramingModal = jest.fn();
+
 jest.mock('@core/app/components/dialogs/FramingModal', () => ({
   showFramingModal: (...args) => mockShowFramingModal(...args),
 }));
@@ -21,17 +23,19 @@ jest.mock('@core/app/contexts/CanvasContext', () => ({
   CanvasContext: React.createContext({ mode: 1 }),
   CanvasMode: {
     Draw: 1,
-    Preview: 2,
     PathPreview: 3,
+    Preview: 2,
   },
 }));
 
 const mockGetSelectedDevice = jest.fn();
+
 jest.mock('@core/app/views/beambox/TopBar/contexts/TopBarController', () => ({
   getSelectedDevice: () => mockGetSelectedDevice(),
 }));
 
 const mockOn = jest.fn();
+
 jest.mock('@core/helpers/shortcuts', () => ({
   on: (...args) => mockOn(...args),
 }));
@@ -43,6 +47,7 @@ describe('test FrameButton', () => {
 
   test('should render correctly', async () => {
     const { container } = render(<FrameButton />);
+
     expect(container).toMatchSnapshot();
     fireEvent.click(container.querySelector('div[class*="button"]'));
     expect(mockShowFramingModal).toBeCalledTimes(1);
@@ -50,11 +55,11 @@ describe('test FrameButton', () => {
 
   test('should render correctly with previewing mode', () => {
     const { container } = render(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       <CanvasContext.Provider value={{ mode: CanvasMode.Preview } as any}>
         <FrameButton />
       </CanvasContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
   });
 
@@ -62,7 +67,9 @@ describe('test FrameButton', () => {
     render(<FrameButton />);
     expect(mockOn).toBeCalledTimes(1);
     expect(mockOn).toBeCalledWith(['F1'], expect.any(Function));
+
     const handler = mockOn.mock.calls[0][1];
+
     expect(mockShowFramingModal).not.toBeCalled();
     mockGetSelectedDevice.mockReturnValue({ model: 'fpm1' });
     handler();

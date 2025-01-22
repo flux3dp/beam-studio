@@ -1,5 +1,5 @@
-/* eslint-disable import/first */
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 jest.mock('@core/helpers/i18n', () => ({
@@ -21,6 +21,7 @@ import OffsetDirectionPanel from './OffsetDirectionPanel';
 test('should render correctly', () => {
   const onValueChange = jest.fn();
   const { container } = render(<OffsetDirectionPanel dir={1} onValueChange={onValueChange} />);
+
   expect(container).toMatchSnapshot();
 
   fireEvent.click(container.querySelector('p.caption'));

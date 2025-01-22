@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import SliderControl from './Slider-Control';
@@ -7,18 +8,19 @@ describe('test Slider-Control', () => {
   test('should render correctly', () => {
     const { container } = render(
       <SliderControl
+        default={0}
+        doOnlyOnBlur
+        doOnlyOnMouseUp
         id="abc"
         label="Threshold"
-        min={0}
         max={100}
-        step={2}
-        default={0}
+        min={0}
         onChange={jest.fn()}
+        step={2}
         unit="cm"
-        doOnlyOnMouseUp
-        doOnlyOnBlur
-      />
+      />,
     );
+
     expect(container).toMatchSnapshot();
   });
 
@@ -27,19 +29,20 @@ describe('test Slider-Control', () => {
     const setState = jest.spyOn(SliderControl.prototype, 'setState');
     const { container } = render(
       <SliderControl
+        default={0}
+        doOnlyOnBlur
+        doOnlyOnMouseUp
         id="abc"
         label="Threshold"
-        min={0}
         max={100}
-        step={2}
-        default={0}
+        min={0}
         onChange={mockOnChange}
+        step={2}
         unit="cm"
-        doOnlyOnMouseUp
-        doOnlyOnBlur
-      />
+      />,
     );
     const [slider, input] = container.querySelectorAll('input');
+
     expect(input).toHaveValue('0');
     expect(slider).toHaveValue('0');
 
@@ -55,7 +58,7 @@ describe('test Slider-Control', () => {
         lastValidValue: '1',
         sliderValue: '1',
       },
-      expect.any(Function)
+      expect.any(Function),
     );
     expect(mockOnChange).not.toHaveBeenCalled();
 
@@ -101,17 +104,18 @@ describe('test Slider-Control', () => {
     const mockOnChange = jest.fn();
     const { container } = render(
       <SliderControl
+        default={0}
         id="abc"
         label="Threshold"
-        min={0}
         max={100}
-        step={2}
-        default={0}
+        min={0}
         onChange={mockOnChange}
+        step={2}
         unit="cm"
-      />
+      />,
     );
     const [slider, input] = container.querySelectorAll('input');
+
     expect(input).toHaveValue('0');
     expect(slider).toHaveValue('0');
 

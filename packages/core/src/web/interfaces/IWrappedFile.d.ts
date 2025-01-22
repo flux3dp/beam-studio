@@ -1,24 +1,21 @@
 interface IWrappedTaskFile {
-  data: string | ArrayBuffer;
-  name: string;
-  uploadName: string;
+  data: ArrayBuffer | string;
   extension: string;
-  type: string;
+  index: number;
+  name: string;
   size: number;
   thumbnailSize: number;
-  index: number;
   totalFiles: number;
+  type: string;
+  uploadName: string;
 }
 
 interface IWrappedSwiftrayTaskFile {
   data: string;
-  name: string; // currently unused
-  uploadName: string; // currently unused
   extension: string; // currently unused
+  name: string; // currently unused
   thumbnail: string; // currently unused
+  uploadName: string; // currently unused
 }
 
-export {
-  IWrappedTaskFile,
-  IWrappedSwiftrayTaskFile
-}
+export { IWrappedSwiftrayTaskFile, IWrappedTaskFile };

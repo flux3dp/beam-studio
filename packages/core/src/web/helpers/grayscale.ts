@@ -3,15 +3,17 @@
  */
 export default function (data, opts) {
   opts = opts || {};
-  opts.threshold = (typeof opts.threshold === 'number' ? opts.threshold : 128);
-  opts.is_shading = (typeof opts.is_shading === 'boolean' ? opts.is_shading : true);
-  opts.is_binary = (typeof opts.is_binary === 'boolean' ? opts.is_binary : false);
+  opts.threshold = typeof opts.threshold === 'number' ? opts.threshold : 128;
+  opts.is_shading = typeof opts.is_shading === 'boolean' ? opts.is_shading : true;
+  opts.is_binary = typeof opts.is_binary === 'boolean' ? opts.is_binary : false;
+
   const binary = new Uint8Array(data.length);
   const WHITE = 255;
   const BLACK = 0;
 
   for (let i = 0; i < data.length; i += 4) {
-    const getGrayScale = (alpha, r, g, b) => (1 - alpha) * WHITE + alpha * Math.round(0.299 * r + 0.587 * g + 0.114 * b);
+    const getGrayScale = (alpha, r, g, b) =>
+      (1 - alpha) * WHITE + alpha * Math.round(0.299 * r + 0.587 * g + 0.114 * b);
     // http://yolijn.com/convert-rgba-to-rgb
     const alpha = data[i + 3] / 255;
     // refers to http://en.wikipedia.org/wiki/Grayscale
@@ -28,7 +30,7 @@ export default function (data, opts) {
         grayscale = BLACK;
       }
 
-      grayscale = (opts.threshold > grayscale ? grayscale : WHITE);
+      grayscale = opts.threshold > grayscale ? grayscale : WHITE;
 
       binary[i] = grayscale;
       binary[i + 1] = grayscale;

@@ -1,39 +1,40 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
 import { Button, Col, Modal, Row } from 'antd';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import alertConstants from '@core/app/constants/alert-constants';
-import dialog from '@app/implementations/dialog';
-import deviceMaster from '@core/helpers/device-master';
 import progressCaller from '@core/app/actions/progress-caller';
+import alertConstants from '@core/app/constants/alert-constants';
+import { calibrateChessboard, startFisheyeCalibrate } from '@core/helpers/camera-calibration-helper';
+import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
-import {
-  calibrateChessboard,
-  startFisheyeCalibrate,
-} from '@core/helpers/camera-calibration-helper';
-import { FisheyeCameraParametersV2Cali } from '@core/interfaces/FisheyePreview';
+import type { FisheyeCameraParametersV2Cali } from '@core/interfaces/FisheyePreview';
+
+import dialog from '@app/implementations/dialog';
 
 import styles from './CalibrateChessBoard.module.scss';
 import { getMaterialHeight, prepareToTakePicture } from './utils';
 
 interface Props {
-  updateParam: (param: FisheyeCameraParametersV2Cali) => void;
-  onClose: (complete?: boolean) => void;
   onBack: () => void;
+  onClose: (complete?: boolean) => void;
   onNext: () => void;
+  updateParam: (param: FisheyeCameraParametersV2Cali) => void;
 }
 
-const CalibrateChessBoard = ({ updateParam, onClose, onBack, onNext }: Props): JSX.Element => {
+const CalibrateChessBoard = ({ onBack, onClose, onNext, updateParam }: Props): React.JSX.Element => {
   const lang = useI18n();
   const progressId = useMemo(() => 'ador-calibration-v2', []);
   const [res, setRes] = useState<{
-    success: boolean;
-    origBlob: Blob;
+    data: FisheyeCameraParametersV2Cali;
     imgblob: Blob;
     imgUrl: string;
-    data: FisheyeCameraParametersV2Cali;
+    origBlob: Blob;
+    success: boolean;
   }>(null);
+
   useEffect(() => () => URL.revokeObjectURL(res?.imgUrl), [res]);
+
   const objectHeight = useRef<number>(0);
 
   const initSetup = useCallback(async () => {
@@ -41,7 +42,9 @@ const CalibrateChessBoard = ({ updateParam, onClose, onBack, onNext }: Props): J
       id: progressId,
       message: lang.calibration.getting_plane_height,
     });
+
     const height = await getMaterialHeight('A');
+
     progressCaller.update(progressId, { message: lang.calibration.preparing_to_take_picture });
     await prepareToTakePicture();
     console.log('height', height);
@@ -52,7 +55,7 @@ const CalibrateChessBoard = ({ updateParam, onClose, onBack, onNext }: Props): J
     } finally {
       progressCaller.popById(progressId);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line hooks/exhaustive-deps
   }, []);
 
   const handleCalibrate = async (retryTimes = 0) => {
@@ -60,42 +63,56 @@ const CalibrateChessBoard = ({ updateParam, onClose, onBack, onNext }: Props): J
       id: progressId,
       message: lang.calibration.taking_picture,
     });
+
     const { imgBlob } = (await deviceMaster.takeOnePicture()) || {};
+
     if (!imgBlob) {
-      if (retryTimes < 3) handleCalibrate(retryTimes + 1);
-      else alertCaller.popUpError({ message: 'Unable to get image' });
+      if (retryTimes < 3) {
+        handleCalibrate(retryTimes + 1);
+      } else {
+        alertCaller.popUpError({ message: 'Unable to get image' });
+      }
     } else {
       try {
         await startFisheyeCalibrate();
+
         const calibrateRes = await calibrateChessboard(imgBlob, objectHeight.current);
+
         console.log(calibrateRes);
+
         let displayBlob = imgBlob;
+
         if (calibrateRes.success === false) {
-          if (retryTimes < 3) handleCalibrate(retryTimes + 1);
-          else
+          if (retryTimes < 3) {
+            handleCalibrate(retryTimes + 1);
+          } else {
             alertCaller.popUpError({
               message: `Failed to get correct corners ${calibrateRes.data.reason}`,
             });
+          }
         } else {
           displayBlob = calibrateRes.blob;
+
           if (calibrateRes.data.ret > 3) {
             alertCaller.popUp({
-              type: alertConstants.WARNING,
               message: `Large deviation: ${calibrateRes.data.ret}, please chessboard.`,
+              type: alertConstants.WARNING,
             });
           }
         }
+
         setRes({
-          success: calibrateRes.success,
-          origBlob: imgBlob,
+          data: calibrateRes.success ? calibrateRes.data : null,
           imgblob: displayBlob,
           imgUrl: URL.createObjectURL(displayBlob),
-          data: calibrateRes.success ? calibrateRes.data : null,
+          origBlob: imgBlob,
+          success: calibrateRes.success,
         });
       } catch (err) {
         alertCaller.popUpError({ message: err.message || 'Fail to find corners' });
       }
     }
+
     progressCaller.popById(progressId);
   };
 
@@ -103,42 +120,51 @@ const CalibrateChessBoard = ({ updateParam, onClose, onBack, onNext }: Props): J
     initSetup().then(() => {
       handleCalibrate();
     });
+
     return () => deviceMaster.disconnectCamera();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line hooks/exhaustive-deps
   }, []);
 
   const handleNext = useCallback(async () => {
-    if (!res.success) return;
+    if (!res.success) {
+      return;
+    }
+
     updateParam({
-      k: res.data.k,
       d: res.data.d,
-      rvec: res.data.rvec,
-      tvec: res.data.tvec,
-      refHeight: 0,
+      k: res.data.k,
       // Assuming chessboard is flat
       levelingData: { A: 0, B: 0, C: 0, D: 0, E: 0, F: 0, G: 0, H: 0, I: 0 },
+      refHeight: 0,
+      rvec: res.data.rvec,
       source: 'device',
+      tvec: res.data.tvec,
     });
+
     const ls = await deviceMaster.ls('camera_calib');
+
     if (ls.files.length > 0) {
       const override = await new Promise((resolve) => {
         alertCaller.popUp({
-          type: alertConstants.WARNING,
-          message: 'Do you want to override the device images?',
           buttonType: alertConstants.CONFIRM_CANCEL,
-          onConfirm: () => resolve(true),
+          message: 'Do you want to override the device images?',
           onCancel: () => resolve(false),
+          onConfirm: () => resolve(true),
+          type: alertConstants.WARNING,
         });
       });
+
       if (!override) {
         onNext();
+
         return;
       }
+
       for (let i = 0; i < ls.files.length; i += 1) {
-        // eslint-disable-next-line no-await-in-loop
         await deviceMaster.deleteFile('camera_calib', ls.files[i]);
       }
     }
+
     await deviceMaster.uploadToDirectory(
       res.origBlob,
       'camera_calib',
@@ -149,42 +175,43 @@ const CalibrateChessBoard = ({ updateParam, onClose, onBack, onNext }: Props): J
 
   const handleDownloadImage = useCallback(async () => {
     const tFile = lang.topmenu.file;
+
     dialog.writeFileDialog(() => res.imgblob, 'Download Image', 'chessboard.jpg', [
       {
-        name: window.os === 'MacOS' ? `${tFile.jpg_files} (*.jpg)` : tFile.jpg_files,
         extensions: ['jpg'],
+        name: window.os === 'MacOS' ? `${tFile.jpg_files} (*.jpg)` : tFile.jpg_files,
       },
-      { name: tFile.all_files, extensions: ['*'] },
+      { extensions: ['*'], name: tFile.all_files },
     ]);
   }, [res?.imgblob, lang]);
 
   const renderFooter = () =>
     [
-      <Button onClick={onBack} key="back">
+      <Button key="back" onClick={onBack}>
         {lang.buttons.back}
       </Button>,
-      <Button onClick={() => handleCalibrate(0)} key="retry">
+      <Button key="retry" onClick={() => handleCalibrate(0)}>
         Retry
       </Button>,
       res?.imgblob ? (
-        <Button onClick={handleDownloadImage} key="download">
+        <Button key="download" onClick={handleDownloadImage}>
           Download Image
         </Button>
       ) : null,
-      <Button onClick={handleNext} disabled={!res?.success} key="next" type="primary">
+      <Button disabled={!res?.success} key="next" onClick={handleNext} type="primary">
         {lang.buttons.next}
       </Button>,
     ].filter((btn) => btn);
 
   return (
     <Modal
-      open
       centered
-      onCancel={() => onClose(false)}
-      title={lang.calibration.camera_calibration}
-      footer={renderFooter}
       closable
+      footer={renderFooter}
       maskClosable={false}
+      onCancel={() => onClose(false)}
+      open
+      title={lang.calibration.camera_calibration}
     >
       Calibrate Chessboard
       <Row gutter={[16, 0]}>

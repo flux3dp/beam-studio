@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable import/order */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { IBatchCommand, ICommand } from '@core/interfaces/IHistory';

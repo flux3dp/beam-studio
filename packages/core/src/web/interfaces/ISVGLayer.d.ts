@@ -1,9 +1,9 @@
-export interface ISVGLayerConscrtuctor{
-  new (name: string, group: SVGGElement | null, svgElem: Element, color: string): ISVGLayer;
+export interface ISVGLayerConscrtuctor {
+  new (name: string, group: null | SVGGElement, svgElem: Element, color: string): ISVGLayer;
 }
 
 declare class ISVGLayer {
-  constructor(name: string, group: SVGGElement | null, svgElem: Element, color: string);
+  constructor(name: string, group: null | SVGGElement, svgElem: Element, color: string);
 
   group_: SVGGElement;
 

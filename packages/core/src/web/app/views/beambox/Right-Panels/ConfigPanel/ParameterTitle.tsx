@@ -1,17 +1,17 @@
 import React, { memo, useContext } from 'react';
 
+import { showPresetsManagementPanel } from '@core/app/components/dialogs/PresetsManagementPanel/PresetsManagementPanel';
 import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';
 import useI18n from '@core/helpers/useI18n';
-import { showPresetsManagementPanel } from '@core/app/components/dialogs/PresetsManagementPanel/PresetsManagementPanel';
 
 import ConfigPanelContext from './ConfigPanelContext';
-import SaveConfigButton from './SaveConfigButton';
 import styles from './ParameterTitle.module.scss';
+import SaveConfigButton from './SaveConfigButton';
 
-const ParameterTitle = (): JSX.Element => {
+const ParameterTitle = (): React.JSX.Element => {
   const t = useI18n().beambox.right_panel.laser_panel;
   const { initState, state } = useContext(ConfigPanelContext);
-  const { module, configName } = state;
+  const { configName, module } = state;
 
   const handleOpenManageModal = () => {
     showPresetsManagementPanel({
@@ -26,7 +26,7 @@ const ParameterTitle = (): JSX.Element => {
       <div className={styles.title}>{t.parameters}</div>
       <div>
         <SaveConfigButton />
-        <button title={t.preset_management.title} type="button" onClick={handleOpenManageModal}>
+        <button onClick={handleOpenManageModal} title={t.preset_management.title} type="button">
           <ConfigPanelIcons.Settings />
         </button>
       </div>

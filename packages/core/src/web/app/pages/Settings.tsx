@@ -1,38 +1,38 @@
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
+
 import classNames from 'classnames';
 
+import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import settings from '@core/app/app-settings';
 import AdorModule from '@core/app/components/settings/AdorModule';
 import AutoSave from '@core/app/components/settings/AutoSave';
-import autoSaveHelper from '@core/helpers/auto-save-helper';
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import Camera from '@core/app/components/settings/Camera';
 import Connection from '@core/app/components/settings/Connection';
 import Editor from '@core/app/components/settings/Editor';
 import Engraving from '@core/app/components/settings/Engraving';
 import Experimental from '@core/app/components/settings/Experimental';
 import General from '@core/app/components/settings/General';
-import i18n from '@core/helpers/i18n';
-import isWeb from '@core/helpers/is-web';
 import Mask from '@core/app/components/settings/Mask';
 import Module from '@core/app/components/settings/Module';
 import onOffOptionFactory from '@core/app/components/settings/onOffOptionFactory';
 import Path from '@core/app/components/settings/Path';
 import Privacy from '@core/app/components/settings/Privacy';
-import settings from '@core/app/app-settings';
-import storage from '@app/implementations/storage';
 import TextToPath from '@core/app/components/settings/TextToPath';
 import Update from '@core/app/components/settings/Update';
-import { IConfig } from '@core/interfaces/IAutosave';
-import { ILang } from '@core/interfaces/ILang';
 import { OptionValues } from '@core/app/constants/enums';
-import { StorageKey } from '@core/interfaces/IStorage';
-import { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import autoSaveHelper from '@core/helpers/auto-save-helper';
+import i18n from '@core/helpers/i18n';
+import isWeb from '@core/helpers/is-web';
+import type { IConfig } from '@core/interfaces/IAutosave';
+import type { ILang } from '@core/interfaces/ILang';
+import type { StorageKey } from '@core/interfaces/IStorage';
+
+import storage from '@app/implementations/storage';
 
 interface State {
-  lang?: ILang;
   editingAutosaveConfig?: IConfig;
+  lang?: ILang;
   selectedModel: WorkAreaModel;
   warnings?: Record<string, string>;
 }
@@ -47,8 +47,8 @@ class Settings extends React.PureComponent<null, State> {
   constructor(props) {
     super(props);
     this.state = {
-      lang: i18n.lang,
       editingAutosaveConfig: autoSaveHelper.getConfig(),
+      lang: i18n.lang,
       selectedModel: BeamboxPreference.read('model') || 'fbm1',
       warnings: {},
     };
@@ -76,9 +76,7 @@ class Settings extends React.PureComponent<null, State> {
   };
 
   updateBeamboxPreferenceChange = (key: string, newVal: any): void => {
-    const val =
-      // eslint-disable-next-line no-nested-ternary
-      newVal === OptionValues.TRUE ? true : newVal === OptionValues.FALSE ? false : newVal;
+    const val = newVal === OptionValues.TRUE ? true : newVal === OptionValues.FALSE ? false : newVal;
 
     this.beamboxPreferenceChanges[key] = val;
     this.forceUpdate();
@@ -94,7 +92,7 @@ class Settings extends React.PureComponent<null, State> {
 
   resetBS = (): void => {
     const { lang } = this.state;
-    // eslint-disable-next-line no-alert
+
     if (window.confirm(lang.settings.confirm_reset)) {
       storage.clearAllExceptIP();
       localStorage.clear();
@@ -135,16 +133,15 @@ class Settings extends React.PureComponent<null, State> {
     offValue?: T,
     onLabel?: string,
     offLabel?: string,
-  ): Array<{ value: T; label: string; selected: boolean }> => {
+  ): Array<{ label: string; selected: boolean; value: T }> => {
     const { lang } = this.state;
 
-    return onOffOptionFactory(isOnSelected, { onValue, offValue, onLabel, offLabel, lang });
+    return onOffOptionFactory(isOnSelected, { lang, offLabel, offValue, onLabel, onValue });
   };
 
   render() {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     const { supported_langs } = settings.i18n;
-    const { lang, selectedModel, editingAutosaveConfig, warnings } = this.state;
+    const { editingAutosaveConfig, lang, selectedModel, warnings } = this.state;
 
     const isNotificationOn = this.getConfigEditingValue('notification') === 1;
     const notificationOptions = this.onOffOptionFactory(
@@ -173,23 +170,16 @@ class Settings extends React.PureComponent<null, State> {
     const isSentryEnabled = this.getConfigEditingValue('enable-sentry') === 1;
     const enableSentryOptions = this.onOffOptionFactory(isSentryEnabled, 1, 0);
 
-    const isCustomPrevHeightEnabled = this.getBeamboxPreferenceEditingValue(
-      'enable-custom-preview-height',
-    );
-    const enableCustomPreviewHeightOptions =
-      this.onOffOptionFactory<OptionValues>(isCustomPrevHeightEnabled);
+    const isCustomPrevHeightEnabled = this.getBeamboxPreferenceEditingValue('enable-custom-preview-height');
+    const enableCustomPreviewHeightOptions = this.onOffOptionFactory<OptionValues>(isCustomPrevHeightEnabled);
 
     const isKeepPreviewResult = this.getBeamboxPreferenceEditingValue('keep-preview-result');
     const keepPreviewResultOptions = this.onOffOptionFactory<OptionValues>(isKeepPreviewResult);
 
-    const isMultipassCompensationEnabled =
-      this.getBeamboxPreferenceEditingValue('multipass-compensation') !== false;
-    const multipassCompensationOptions = this.onOffOptionFactory<OptionValues>(
-      isMultipassCompensationEnabled,
-    );
+    const isMultipassCompensationEnabled = this.getBeamboxPreferenceEditingValue('multipass-compensation') !== false;
+    const multipassCompensationOptions = this.onOffOptionFactory<OptionValues>(isMultipassCompensationEnabled);
 
-    const oneWayPrintingEnabled =
-      this.getBeamboxPreferenceEditingValue('one-way-printing') !== false;
+    const oneWayPrintingEnabled = this.getBeamboxPreferenceEditingValue('one-way-printing') !== false;
     const oneWayPrintingOptions = this.onOffOptionFactory<OptionValues>(oneWayPrintingEnabled);
 
     const autoSaveOptions = this.onOffOptionFactory(editingAutosaveConfig.enabled);
@@ -203,42 +193,42 @@ class Settings extends React.PureComponent<null, State> {
         <div className="settings-gradient-overlay" />
         <div className="form general">
           <General
-            isWeb={web}
-            supportedLangs={supported_langs}
-            notificationOptions={notificationOptions}
             changeActiveLang={this.changeActiveLang}
+            isWeb={web}
+            notificationOptions={notificationOptions}
+            supportedLangs={supported_langs}
             updateConfigChange={this.updateConfigChange}
           />
           <Update
             isWeb={web}
-            updateNotificationOptions={updateNotificationOptions}
             updateConfigChange={this.updateConfigChange}
+            updateNotificationOptions={updateNotificationOptions}
           />
           <Connection
-            originalIP={this.getConfigEditingValue('poke-ip-addr')}
-            guessingPokeOptions={guessingPokeOptions}
             autoConnectOptions={autoConnectOptions}
+            guessingPokeOptions={guessingPokeOptions}
+            originalIP={this.getConfigEditingValue('poke-ip-addr')}
             updateConfigChange={this.updateConfigChange}
           />
           <AutoSave
-            isWeb={web}
             autoSaveOptions={autoSaveOptions}
             editingAutosaveConfig={editingAutosaveConfig}
-            warnings={warnings}
+            isWeb={web}
             updateState={(state) => this.setState(state)}
+            warnings={warnings}
           />
           <Camera
             enableCustomPreviewHeightOptions={enableCustomPreviewHeightOptions}
-            keepPreviewResultOptions={keepPreviewResultOptions}
             getBeamboxPreferenceEditingValue={this.getBeamboxPreferenceEditingValue}
+            keepPreviewResultOptions={keepPreviewResultOptions}
             updateBeamboxPreferenceChange={this.updateBeamboxPreferenceChange}
           />
           <Editor
             defaultUnit={defaultUnit}
-            selectedModel={selectedModel}
             getBeamboxPreferenceEditingValue={this.getBeamboxPreferenceEditingValue}
-            updateConfigChange={this.updateConfigChange}
+            selectedModel={selectedModel}
             updateBeamboxPreferenceChange={this.updateBeamboxPreferenceChange}
+            updateConfigChange={this.updateConfigChange}
             updateModel={(newModel) => this.setState({ selectedModel: newModel })}
           />
           <Engraving
@@ -246,12 +236,12 @@ class Settings extends React.PureComponent<null, State> {
             updateBeamboxPreferenceChange={this.updateBeamboxPreferenceChange}
           />
           <Path
-            selectedModel={selectedModel}
             defaultUnit={defaultUnit}
-            loopCompensation={this.getConfigEditingValue('loop_compensation')}
             getBeamboxPreferenceEditingValue={this.getBeamboxPreferenceEditingValue}
-            updateConfigChange={this.updateConfigChange}
+            loopCompensation={this.getConfigEditingValue('loop_compensation')}
+            selectedModel={selectedModel}
             updateBeamboxPreferenceChange={this.updateBeamboxPreferenceChange}
+            updateConfigChange={this.updateConfigChange}
           />
           <Mask
             getBeamboxPreferenceEditingValue={this.getBeamboxPreferenceEditingValue}
@@ -263,20 +253,17 @@ class Settings extends React.PureComponent<null, State> {
           />
           <Module
             defaultUnit={defaultUnit}
-            selectedModel={selectedModel}
             getBeamboxPreferenceEditingValue={this.getBeamboxPreferenceEditingValue}
+            selectedModel={selectedModel}
             updateBeamboxPreferenceChange={this.updateBeamboxPreferenceChange}
           />
           <AdorModule
             defaultUnit={defaultUnit}
-            selectedModel={selectedModel}
             getBeamboxPreferenceEditingValue={this.getBeamboxPreferenceEditingValue}
+            selectedModel={selectedModel}
             updateBeamboxPreferenceChange={this.updateBeamboxPreferenceChange}
           />
-          <Privacy
-            enableSentryOptions={enableSentryOptions}
-            updateConfigChange={this.updateConfigChange}
-          />
+          <Privacy enableSentryOptions={enableSentryOptions} updateConfigChange={this.updateConfigChange} />
           <Experimental
             multipassCompensationOptions={multipassCompensationOptions}
             oneWayPrintingOptions={oneWayPrintingOptions}
@@ -286,10 +273,7 @@ class Settings extends React.PureComponent<null, State> {
             <b>{lang.settings.reset_now}</b>
           </div>
           <div className="clearfix" />
-          <div
-            className={classNames('btn btn-done', { disabled: !isAllValid })}
-            onClick={this.handleDone}
-          >
+          <div className={classNames('btn btn-done', { disabled: !isAllValid })} onClick={this.handleDone}>
             {lang.settings.done}
           </div>
           <div className="btn btn-cancel" onClick={this.handleCancel}>

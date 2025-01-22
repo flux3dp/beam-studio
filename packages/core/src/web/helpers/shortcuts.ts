@@ -4,10 +4,10 @@ import { isMac, isMobile } from '@core/helpers/system-helper';
  * setting up shortcut
  */
 interface ShortcutEvent {
-  keySet: string;
   callback: (event: KeyboardEvent) => void;
-  priority: number;
   isPreventDefault: boolean;
+  keySet: string;
+  priority: number;
 }
 
 interface RegisterOptions {
@@ -16,7 +16,7 @@ interface RegisterOptions {
   splitKey?: string;
 }
 
-const eventScopes: Array<Array<ShortcutEvent>> = [[]];
+const eventScopes: ShortcutEvent[][] = [[]];
 const getCurrentEvents = () => eventScopes[eventScopes.length - 1];
 const currentPressedKeys = new Set<string>();
 let hasBind = false;
@@ -49,6 +49,7 @@ const matchedEventsByKeySet = (keySet: string) =>
   );
 
 let layoutMap: Map<string, string> | null = null;
+
 navigator.keyboard?.getLayoutMap?.().then((map) => {
   layoutMap = map;
 });
@@ -77,6 +78,7 @@ navigator.keyboard?.getLayoutMap?.().then((map) => {
  */
 const getKeyFromEvent = (event: KeyboardEvent): string => {
   const key = layoutMap?.has(event.code) ? layoutMap.get(event.code) : event.key;
+
   return key?.toLowerCase();
 };
 
@@ -89,12 +91,18 @@ const keyupEvent = (event: KeyboardEvent) => {
     currentPressedKeys.clear();
   } else {
     const key = getKeyFromEvent(event);
-    if (key) currentPressedKeys.delete(key);
+
+    if (key) {
+      currentPressedKeys.delete(key);
+    }
   }
 };
 
 const isFocusingOnInputs = () => {
-  if (!document.activeElement) return false;
+  if (!document.activeElement) {
+    return false;
+  }
+
   return (
     document.activeElement.tagName.toLowerCase() === 'input' ||
     document.activeElement?.getAttribute('role') === 'slider'
@@ -106,8 +114,12 @@ const keydownEvent = (event: KeyboardEvent) => {
   if (event.key === undefined || isFocusingOnInputs()) {
     return;
   }
+
   const currentKey = getKeyFromEvent(event);
-  if (!currentKey) return;
+
+  if (!currentKey) {
+    return;
+  }
 
   /**
    * on MacOs, the keyup event is not triggered when the non-modifier key is released if metaKey is pressed
@@ -149,12 +161,44 @@ const initialize = (): void => {
 const unsubscribe = (eventToUnsubscribe: ShortcutEvent) => {
   const events = getCurrentEvents();
   const idx = events.indexOf(eventToUnsubscribe);
-  if (idx >= 0) events.splice(idx, 1);
+
+  if (idx >= 0) {
+    events.splice(idx, 1);
+  }
 };
 
 export default {
+  enterScope(): () => void {
+    const newEvents: ShortcutEvent[] = [];
+
+    eventScopes.push(newEvents);
+
+    const exitScope = () => {
+      // use splice instead of pop to in case another scope is entered before exitted
+      const idx = eventScopes.indexOf(newEvents);
+
+      if (idx >= 0) {
+        eventScopes.splice(idx, 1);
+      }
+    };
+
+    return exitScope;
+  },
+  initialize,
+  isInBaseScope(): boolean {
+    return eventScopes.length === 1;
+  },
+  off(keySets: string[]): void {
+    const currentEvents = getCurrentEvents();
+
+    for (let i = currentEvents.length - 1; i >= 0; i--) {
+      if (keySets.includes(currentEvents[i].keySet)) {
+        currentEvents.splice(i, 1);
+      }
+    }
+  },
   on(
-    keys: Array<string>,
+    keys: string[],
     callback: (event: KeyboardEvent) => void,
     { isBlocking = false, isPreventDefault = true, splitKey = '+' }: RegisterOptions = {},
   ): (() => void) | null {
@@ -163,13 +207,14 @@ export default {
     }
 
     const keySets = keys.map((key) => parseKeySet(key, splitKey));
-    const newEvents: Array<ShortcutEvent> = keySets.map((keySet) => ({
-      keySet,
+    const newEvents: ShortcutEvent[] = keySets.map((keySet) => ({
       callback,
-      priority: isBlocking ? matchedEventsByKeySet(keySet).maxPriority + 1 : 0,
       isPreventDefault,
+      keySet,
+      priority: isBlocking ? matchedEventsByKeySet(keySet).maxPriority + 1 : 0,
     }));
     const currentEvents = getCurrentEvents();
+
     newEvents.forEach((newEvent) => {
       currentEvents.push(newEvent);
     });
@@ -181,29 +226,5 @@ export default {
         unsubscribe(newEvent);
       });
     };
-  },
-  off(keySets: Array<string>): void {
-    const currentEvents = getCurrentEvents();
-    for (let i = currentEvents.length - 1; i >= 0; i--) {
-      if (keySets.includes(currentEvents[i].keySet)) {
-        currentEvents.splice(i, 1);
-      }
-    }
-  },
-  initialize,
-  enterScope(): () => void {
-    const newEvents: Array<ShortcutEvent> = [];
-    eventScopes.push(newEvents);
-    const exitScope = () => {
-      // use splice instead of pop to in case another scope is entered before exitted
-      const idx = eventScopes.indexOf(newEvents);
-      if (idx >= 0) {
-        eventScopes.splice(idx, 1);
-      }
-    };
-    return exitScope;
-  },
-  isInBaseScope(): boolean {
-    return eventScopes.length === 1;
   },
 };

@@ -1,43 +1,36 @@
-/* eslint-disable max-len */
-/* eslint-disable no-underscore-dangle */
-/* eslint-disable react/no-array-index-key */
-/* eslint-disable @typescript-eslint/no-shadow */
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Flex } from 'antd';
+import type Konva from 'konva';
+import type { Filter } from 'konva/lib/Node';
 import { Layer, Line, Stage } from 'react-konva';
-import Konva from 'konva';
-import { Filter } from 'konva/lib/Node';
-
-import { preprocessByUrl } from '@core/helpers/image-edit-panel/preprocess';
-import calculateBase64 from '@core/helpers/image-edit-panel/calculate-base64';
-import handleFinish from '@core/helpers/image-edit-panel/handle-finish';
-import useI18n from '@core/helpers/useI18n';
-import shortcuts from '@core/helpers/shortcuts';
 
 import progressCaller from '@core/app/actions/progress-caller';
 import FullWindowPanel from '@core/app/widgets/FullWindowPanel/FullWindowPanel';
-
-import useNewShortcutsScope from '@core/helpers/hooks/useNewShortcutsScope';
 import useKonvaCanvas from '@core/helpers/hooks/konva/useKonvaCanvas';
-import useForceUpdate from '@core/helpers/use-force-update';
 import { useKeyDown } from '@core/helpers/hooks/useKeyDown';
 import { useMouseDown } from '@core/helpers/hooks/useMouseDown';
-import KonvaImage, { KonvaImageRef } from './components/KonvaImage';
+import useNewShortcutsScope from '@core/helpers/hooks/useNewShortcutsScope';
+import calculateBase64 from '@core/helpers/image-edit-panel/calculate-base64';
+import handleFinish from '@core/helpers/image-edit-panel/handle-finish';
+import { preprocessByUrl } from '@core/helpers/image-edit-panel/preprocess';
+import shortcuts from '@core/helpers/shortcuts';
+import useForceUpdate from '@core/helpers/use-force-update';
+import useI18n from '@core/helpers/useI18n';
+
+import type { KonvaImageRef } from './components/KonvaImage';
+import KonvaImage from './components/KonvaImage';
 import Sider from './components/Sider';
 import TopBar from './components/TopBar';
-
 import { useHistory } from './hooks/useHistory';
-
-import { getMagicWandFilter } from './utils/getMagicWandFilter';
-import { generateCursorSvg } from './utils/generateCursorSvg';
-
 import styles from './index.module.scss';
+import { generateCursorSvg } from './utils/generateCursorSvg';
+import { getMagicWandFilter } from './utils/getMagicWandFilter';
 
 interface Props {
-  src: string;
   image: SVGImageElement;
   onClose: () => void;
+  src: string;
 }
 
 interface LineItem {
@@ -50,57 +43,57 @@ const EXPORTING = 1;
 
 const IMAGE_PADDING = 30;
 
-function ImageEditPanel({ src, image, onClose }: Props): JSX.Element {
+function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
   const {
     beambox: { photo_edit_panel: langPhoto },
     image_edit_panel: lang,
   } = useI18n();
 
-  const { history, push, undo, redo } = useHistory({
-    items: [{ lines: [], filters: [] }],
-    index: 0,
+  const { history, push, redo, undo } = useHistory({
     hasUndid: false,
+    index: 0,
+    items: [{ filters: [], lines: [] }],
   });
   const forceUpdate = useForceUpdate();
 
-  const { isShading, threshold, isFullColor } = useMemo(
+  const { isFullColor, isShading, threshold } = useMemo(
     () => ({
+      isFullColor: image.getAttribute('data-fullcolor') === '1',
       isShading: image.getAttribute('data-shading') === 'true',
       threshold: Number.parseInt(image.getAttribute('data-threshold'), 10),
-      isFullColor: image.getAttribute('data-fullcolor') === '1',
     }),
     [image],
   );
-  const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
+  const [imageSize, setImageSize] = useState({ height: 0, width: 0 });
   const [mode, setMode] = useState<'eraser' | 'magicWand'>('eraser');
-  const [lines, setLines] = useState<Array<LineItem>>([]);
-  const [filters, setFilters] = useState<Array<Filter>>([]);
+  const [lines, setLines] = useState<LineItem[]>([]);
+  const [filters, setFilters] = useState<Filter[]>([]);
   const [displayImage, setDisplayImage] = useState('');
   const [progress, setProgress] = useState(EDITING);
   const [brushSize, setBrushSize] = useState(20);
   const [tolerance, setTolerance] = useState(40);
   // only for display percentage, not for calculation
   const [zoomScale, setZoomScale] = useState(1);
-  const [operation, setOperation] = useState<'eraser' | 'magicWand' | 'drag' | null>(null);
-  const [fitScreenDimension, setFitScreenDimension] = useState({ x: 0, y: 0, scale: 1 });
+  const [operation, setOperation] = useState<'drag' | 'eraser' | 'magicWand' | null>(null);
+  const [fitScreenDimension, setFitScreenDimension] = useState({ scale: 1, x: 0, y: 0 });
   const divRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>(null);
   const layerRef = useRef<Konva.Layer>(null);
   const imageRef = useRef<KonvaImageRef>(null);
   const imageData = useRef<ImageData>(null);
 
-  const { isDragging, handleWheel, handleZoom, handleZoomByScale } = useKonvaCanvas(stageRef, {
+  const { handleWheel, handleZoom, handleZoomByScale, isDragging } = useKonvaCanvas(stageRef, {
     onScaleChanged: setZoomScale,
   });
 
   useKeyDown({
-    predicate: useCallback(({ key }) => key === ' ', []),
     keyUp: useCallback(() => setOperation(null), []),
+    predicate: useCallback(({ key }) => key === ' ', []),
   });
 
   useMouseDown({
-    predicate: useCallback(({ button }) => button === 1, []),
     mouseUp: useCallback(() => setOperation(null), []),
+    predicate: useCallback(({ button }) => button === 1, []),
   });
 
   const cursorStyle = useMemo(() => {
@@ -119,10 +112,10 @@ function ImageEditPanel({ src, image, onClose }: Props): JSX.Element {
     return { cursor: `url('core-img/image-edit-panel/magic-wand.svg') 7 7, auto` };
   }, [isDragging, mode, brushSize]);
 
-  const handlePushHistory = useCallback(() => push({ lines, filters }), [push, lines, filters]);
+  const handlePushHistory = useCallback(() => push({ filters, lines }), [push, lines, filters]);
   const handleHistoryChange = useCallback(
-    (action: 'undo' | 'redo') => () => {
-      const { lines, filters } = action === 'undo' ? undo() : redo();
+    (action: 'redo' | 'undo') => () => {
+      const { filters, lines } = action === 'undo' ? undo() : redo();
 
       setLines(lines);
       setFilters(filters);
@@ -140,7 +133,7 @@ function ImageEditPanel({ src, image, onClose }: Props): JSX.Element {
   }, []);
 
   const handleMouseDown = useCallback(
-    ({ target, evt }: Konva.KonvaEventObject<MouseEvent>) => {
+    ({ evt, target }: Konva.KonvaEventObject<MouseEvent>) => {
       if (isDragging || evt.button !== 0) {
         return;
       }
@@ -158,7 +151,7 @@ function ImageEditPanel({ src, image, onClose }: Props): JSX.Element {
       } else if (mode === 'magicWand') {
         setOperation('magicWand');
 
-        const filter = getMagicWandFilter(imageData.current, { x, y, tolerance });
+        const filter = getMagicWandFilter(imageData.current, { tolerance, x, y });
 
         setFilters((prevFilters) => prevFilters.concat(filter));
       }
@@ -178,10 +171,7 @@ function ImageEditPanel({ src, image, onClose }: Props): JSX.Element {
         const updatedLines = [...prevLines];
         const lastLine = { ...updatedLines[updatedLines.length - 1] };
 
-        if (
-          lastLine.points[lastLine.points.length - 2] === x &&
-          lastLine.points[lastLine.points.length - 1] === y
-        ) {
+        if (lastLine.points[lastLine.points.length - 2] === x && lastLine.points[lastLine.points.length - 1] === y) {
           return updatedLines;
         }
 
@@ -267,8 +257,8 @@ function ImageEditPanel({ src, image, onClose }: Props): JSX.Element {
       const { clientHeight, clientWidth } = divRef.current;
       const {
         blobUrl,
-        originalWidth: width,
         originalHeight: height,
+        originalWidth: width,
       } = await preprocessByUrl(src, { isFullResolution: true });
       const fullColorImage = await calculateBase64(blobUrl, true, 255, true);
       const initScale = Math.min(
@@ -280,13 +270,13 @@ function ImageEditPanel({ src, image, onClose }: Props): JSX.Element {
       const imageX = Math.max(IMAGE_PADDING, (clientWidth - width * initScale) / 2);
       const imageY = Math.max(IMAGE_PADDING, (clientHeight - height * initScale) / 2);
 
-      setFitScreenDimension({ x: imageX, y: imageY, scale: initScale });
+      setFitScreenDimension({ scale: initScale, x: imageX, y: imageY });
       setZoomScale(initScale);
 
       stageRef.current.position({ x: imageX, y: imageY });
       stageRef.current.scale({ x: initScale, y: initScale });
 
-      setImageSize({ width, height });
+      setImageSize({ height, width });
       setDisplayImage(fullColorImage);
 
       progressCaller.popById('image-editing-init');
@@ -303,7 +293,7 @@ function ImageEditPanel({ src, image, onClose }: Props): JSX.Element {
         return;
       }
 
-      elements.forEach(({ contentRect: { width, height } }) => {
+      elements.forEach(({ contentRect: { height, width } }) => {
         stage.width(width);
         stage.height(height);
         stage.batchDraw();
@@ -315,7 +305,7 @@ function ImageEditPanel({ src, image, onClose }: Props): JSX.Element {
     return () => {
       observer.disconnect();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line hooks/exhaustive-deps
   }, []);
 
   useNewShortcutsScope();
@@ -338,55 +328,53 @@ function ImageEditPanel({ src, image, onClose }: Props): JSX.Element {
 
   return (
     <FullWindowPanel
-      onClose={onClose}
       mobileTitle={lang.title}
-      renderMobileFixedContent={() => null}
-      renderMobileContents={() => null}
+      onClose={onClose}
       renderContents={() => (
         <>
           <Sider
-            onClose={onClose}
-            handleComplete={handleComplete}
             brushSize={brushSize}
-            setBrushSize={setBrushSize}
-            tolerance={tolerance}
-            setTolerance={setTolerance}
+            handleComplete={handleComplete}
             mode={mode}
+            onClose={onClose}
+            setBrushSize={setBrushSize}
             setMode={setMode}
             setOperation={setOperation}
+            setTolerance={setTolerance}
+            tolerance={tolerance}
           />
-          <Flex vertical className={styles['w-100']}>
+          <Flex className={styles['w-100']} vertical>
             <TopBar
+              handleHistoryChange={handleHistoryChange}
               handleReset={handleReset}
               handleZoomByScale={handleZoomByScale}
-              zoomScale={zoomScale}
               history={history}
-              handleHistoryChange={handleHistoryChange}
+              zoomScale={zoomScale}
             />
             <div className={styles['outer-container']}>
-              <div style={cursorStyle} ref={divRef} className={styles.container}>
+              <div className={styles.container} ref={divRef} style={cursorStyle}>
                 <Stage
-                  ref={stageRef}
-                  pixelRatio={1}
-                  onWheel={handleWheel}
-                  onMouseDown={handleMouseDown}
-                  onMousemove={handleMouseMove}
-                  onMouseLeave={handleExitDrawing}
-                  onMouseup={handleExitDrawing}
                   draggable={isDragging}
+                  onMouseDown={handleMouseDown}
+                  onMouseLeave={handleExitDrawing}
+                  onMousemove={handleMouseMove}
+                  onMouseup={handleExitDrawing}
+                  onWheel={handleWheel}
+                  pixelRatio={1}
+                  ref={stageRef}
                 >
-                  <Layer ref={layerRef} pixelRatio={1}>
-                    <KonvaImage ref={imageRef} src={displayImage} filters={filters} />
+                  <Layer pixelRatio={1} ref={layerRef}>
+                    <KonvaImage filters={filters} ref={imageRef} src={displayImage} />
                     {lines.map((line, i) => (
                       <Line
+                        globalCompositeOperation="destination-out"
                         key={`line-${i}`}
+                        lineCap="round"
+                        lineJoin="round"
                         points={line.points}
                         stroke="#df4b26"
                         strokeWidth={line.strokeWidth}
                         tension={0.5}
-                        lineCap="round"
-                        lineJoin="round"
-                        globalCompositeOperation="destination-out"
                       />
                     ))}
                   </Layer>
@@ -396,6 +384,8 @@ function ImageEditPanel({ src, image, onClose }: Props): JSX.Element {
           </Flex>
         </>
       )}
+      renderMobileContents={() => null}
+      renderMobileFixedContent={() => null}
     />
   );
 }

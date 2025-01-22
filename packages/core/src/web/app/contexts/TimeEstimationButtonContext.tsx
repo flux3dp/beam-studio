@@ -3,8 +3,8 @@ import React from 'react';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
 interface ITimeEstimationButtonContext {
-  estimatedTime: number | null;
-  setEstimatedTime: (estimatedTime: number | null) => void;
+  estimatedTime: null | number;
+  setEstimatedTime: (estimatedTime: null | number) => void;
 }
 
 export const TimeEstimationButtonContext = React.createContext<ITimeEstimationButtonContext>({
@@ -12,11 +12,10 @@ export const TimeEstimationButtonContext = React.createContext<ITimeEstimationBu
   setEstimatedTime: () => {},
 });
 
-const timeEstimationButtonEventEmitter =
-  eventEmitterFactory.createEventEmitter('time-estimation-button');
+const timeEstimationButtonEventEmitter = eventEmitterFactory.createEventEmitter('time-estimation-button');
 
 interface State {
-  estimatedTime: number | null;
+  estimatedTime: null | number;
 }
 
 export class TimeEstimationButtonContextProvider extends React.Component<any, State> {
@@ -35,8 +34,9 @@ export class TimeEstimationButtonContextProvider extends React.Component<any, St
     timeEstimationButtonEventEmitter.removeAllListeners();
   }
 
-  setEstimatedTime = (newTime: number | null): void => {
+  setEstimatedTime = (newTime: null | number): void => {
     const { estimatedTime } = this.state;
+
     if (newTime !== estimatedTime) {
       this.setState({ estimatedTime: newTime });
     }
@@ -46,11 +46,12 @@ export class TimeEstimationButtonContextProvider extends React.Component<any, St
     const { setEstimatedTime } = this;
     const { estimatedTime } = this.state;
     const { children } = this.props;
+
     return (
       <TimeEstimationButtonContext.Provider
         value={{
-          setEstimatedTime,
           estimatedTime,
+          setEstimatedTime,
         }}
       >
         {children}

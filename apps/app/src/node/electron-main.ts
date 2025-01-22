@@ -58,7 +58,6 @@ const globalData: {
   devices: {},
 };
 
-// eslint-disable-next-line no-unused-vars
 let logger: { write: (data: string) => void };
 
 function createLogFile() {
@@ -388,16 +387,7 @@ ipcMain.on(events.CHECK_BACKEND_STATUS, (evt) => {
 });
 
 ipcMain.on(events.SVG_URL_TO_IMG_URL, (e, data) => {
-  const {
-    bb,
-    fullColor,
-    id,
-    imageRatio,
-    imgHeight: height,
-    imgWidth: width,
-    strokeWidth,
-    svgUrl,
-  } = data;
+  const { bb, fullColor, id, imageRatio, imgHeight: height, imgWidth: width, strokeWidth, svgUrl } = data;
 
   if (shadowWindow) {
     const senderId = e.sender.id;
@@ -477,12 +467,7 @@ if (os.arch() === 'ia32' || os.arch() === 'x32') {
   app.commandLine.appendSwitch('js-flags', '--max-old-space-size=4096');
 }
 
-const onMenuClick = (data: {
-  id: string;
-  machineName?: string;
-  serial?: string;
-  uuid?: string;
-}) => {
+const onMenuClick = (data: { id: string; machineName?: string; serial?: string; uuid?: string }) => {
   data = {
     id: data.id,
     machineName: data.machineName,

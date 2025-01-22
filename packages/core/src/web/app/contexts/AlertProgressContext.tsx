@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { createContext } from 'react';
 
 import type { MessageInstance } from 'antd/es/message/interface';

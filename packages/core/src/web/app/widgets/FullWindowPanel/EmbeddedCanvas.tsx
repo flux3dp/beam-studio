@@ -1,23 +1,24 @@
-import classNames from 'classnames';
 import React, { memo, useEffect, useRef } from 'react';
 
-import ZoomBlock from '@core/app/components/beambox/ZoomBlock';
+import classNames from 'classnames';
 
 import constant from '@core/app/actions/beambox/constant';
+import ZoomBlock from '@core/app/components/beambox/ZoomBlock';
+
 import styles from './EmbeddedCanvas.module.scss';
 import { EmbeddedCanvasManager } from './EmbeddedCanvasManager';
 
 interface Props {
-  className?: string;
   canvasManager?: EmbeddedCanvasManager;
   children?: React.ReactNode;
+  className?: string;
 }
 
 const EmbeddedCanvas = ({
-  className,
   canvasManager = EmbeddedCanvasManager.getInstance(),
   children,
-}: Props): JSX.Element => {
+  className,
+}: Props): React.JSX.Element => {
   const canvasRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -32,8 +33,8 @@ const EmbeddedCanvas = ({
       <ZoomBlock
         className={styles['zoom-block']}
         getZoom={() => canvasManager.zoomRatio * constant.dpmm}
-        setZoom={(ratio) => canvasManager.zoom(ratio / constant.dpmm)}
         resetView={canvasManager.resetView}
+        setZoom={(ratio) => canvasManager.zoom(ratio / constant.dpmm)}
       />
       {children}
     </div>

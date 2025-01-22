@@ -4,7 +4,6 @@ jest.mock('@app/implementations/storage', () => ({
   get: mockGet,
 }));
 
-// eslint-disable-next-line import/first
 import socialAuth from './social-auth';
 
 describe('test social-auth', () => {

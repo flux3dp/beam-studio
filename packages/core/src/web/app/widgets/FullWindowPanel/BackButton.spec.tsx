@@ -1,9 +1,9 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
-import { FullWindowPanelContext } from './FullWindowPanel';
-
 import BackButton from './BackButton';
+import { FullWindowPanelContext } from './FullWindowPanel';
 
 jest.mock('@core/app/widgets/FullWindowPanel/FullWindowPanel', () => ({
   FullWindowPanelContext: React.createContext({
@@ -32,6 +32,7 @@ describe('test BackButton', () => {
         <BackButton>Back</BackButton>
       </FullWindowPanelContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
     rerender(
       <FullWindowPanelContext.Provider
@@ -49,6 +50,7 @@ describe('test BackButton', () => {
 
   it('should call onClose when clicked', () => {
     const { getByRole } = render(<BackButton onClose={mockOnClose}>Back</BackButton>);
+
     fireEvent.click(getByRole('button'));
     expect(mockOnClose).toHaveBeenCalledTimes(1);
   });

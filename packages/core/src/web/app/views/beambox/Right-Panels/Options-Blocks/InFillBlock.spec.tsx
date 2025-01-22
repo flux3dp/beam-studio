@@ -1,9 +1,11 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import InFillBlock from './InFillBlock';
 
 const mockIsMobile = jest.fn();
+
 jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => () => mockIsMobile(),
 }));
@@ -24,14 +26,15 @@ const isElemFillable = jest.fn();
 const calcElemFilledInfo = jest.fn();
 const setElemsUnfill = jest.fn();
 const setElemsFill = jest.fn();
+
 jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) => {
     callback({
       Canvas: {
-        isElemFillable: (...args) => isElemFillable(...args),
         calcElemFilledInfo: (...args) => calcElemFilledInfo(...args),
-        setElemsUnfill: (...args) => setElemsUnfill(...args),
+        isElemFillable: (...args) => isElemFillable(...args),
         setElemsFill: (...args) => setElemsFill(...args),
+        setElemsUnfill: (...args) => setElemsUnfill(...args),
       },
     });
   },
@@ -45,10 +48,11 @@ describe('should render correctly', () => {
   test('is not fillable', () => {
     isElemFillable.mockReturnValue(false);
     calcElemFilledInfo.mockReturnValue({
-      isAnyFilled: true,
       isAllFilled: false,
+      isAnyFilled: true,
     });
     document.body.innerHTML = '<div id="flux" />';
+
     const { container } = render(<InFillBlock elem={document.getElementById('flux')} />);
 
     expect(container).toMatchSnapshot();
@@ -61,14 +65,17 @@ describe('should render correctly', () => {
   test('is fillable', () => {
     isElemFillable.mockReturnValue(true);
     calcElemFilledInfo.mockReturnValue({
-      isAnyFilled: false,
       isAllFilled: false,
+      isAnyFilled: false,
     });
     document.body.innerHTML = '<div id="flux" />';
+
     const { container } = render(<InFillBlock elem={document.getElementById('flux')} />);
+
     expect(container).toMatchSnapshot();
 
     const switchBtn = container.querySelector('button.ant-switch');
+
     fireEvent.click(switchBtn);
     expect(container).toMatchSnapshot();
     expect(setElemsUnfill).not.toHaveBeenCalled();
@@ -85,16 +92,17 @@ describe('should render correctly', () => {
   test('with label', () => {
     isElemFillable.mockReturnValue(true);
     calcElemFilledInfo.mockReturnValue({
-      isAnyFilled: false,
       isAllFilled: false,
+      isAnyFilled: false,
     });
     document.body.innerHTML = '<div id="flux" />';
-    const { container } = render(
-      <InFillBlock label="Infill" elem={document.getElementById('flux')} />,
-    );
+
+    const { container } = render(<InFillBlock elem={document.getElementById('flux')} label="Infill" />);
+
     expect(container).toMatchSnapshot();
 
     const switchBtn = container.querySelector('button.ant-switch');
+
     fireEvent.click(switchBtn);
     expect(container).toMatchSnapshot();
     expect(setElemsUnfill).not.toHaveBeenCalled();
@@ -118,24 +126,26 @@ describe('should render correctly in mobile', () => {
   test('id given', () => {
     isElemFillable.mockReturnValue(true);
     calcElemFilledInfo.mockReturnValue({
-      isAnyFilled: false,
       isAllFilled: false,
+      isAnyFilled: false,
     });
     document.body.innerHTML = '<div id="flux" />';
-    const { container } = render(
-      <InFillBlock elem={document.getElementById('flux')} id="mock-infill-id" />,
-    );
+
+    const { container } = render(<InFillBlock elem={document.getElementById('flux')} id="mock-infill-id" />);
+
     expect(container).toMatchSnapshot();
   });
 
   test('is not fillable', () => {
     isElemFillable.mockReturnValue(false);
     calcElemFilledInfo.mockReturnValue({
-      isAnyFilled: true,
       isAllFilled: false,
+      isAnyFilled: true,
     });
     document.body.innerHTML = '<div id="flux" />';
+
     const { container } = render(<InFillBlock elem={document.getElementById('flux')} />);
+
     expect(container).toMatchSnapshot();
     expect(mockIsMobile).toHaveBeenCalledTimes(0);
     expect(isElemFillable).toHaveBeenCalledTimes(1);
@@ -147,14 +157,17 @@ describe('should render correctly in mobile', () => {
   test('is fillable', () => {
     isElemFillable.mockReturnValue(true);
     calcElemFilledInfo.mockReturnValue({
-      isAnyFilled: false,
       isAllFilled: false,
+      isAnyFilled: false,
     });
     document.body.innerHTML = '<div id="flux" />';
+
     const { container } = render(<InFillBlock elem={document.getElementById('flux')} />);
+
     expect(container).toMatchSnapshot();
 
     const switchBtn = container.querySelector('button');
+
     fireEvent.click(switchBtn);
     expect(container).toMatchSnapshot();
     expect(setElemsUnfill).not.toHaveBeenCalled();

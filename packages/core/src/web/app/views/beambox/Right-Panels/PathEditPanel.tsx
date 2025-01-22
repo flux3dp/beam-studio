@@ -1,24 +1,26 @@
 import React, { useEffect } from 'react';
-import classNames from 'classnames';
-import { Button, ConfigProvider, Divider, Space } from 'antd';
 
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import FloatingPanel from '@core/app/widgets/FloatingPanel';
-import i18n from '@core/helpers/i18n';
-import ISVGCanvas from '@core/interfaces/ISVGCanvas';
-import PathEditIcons from '@core/app/icons/path-edit-panel/PathEditIcons';
-import useForceUpdate from '@core/helpers/use-force-update';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import { ISVGPath } from '@core/interfaces/ISVGPath';
+import { Button, ConfigProvider, Divider, Space } from 'antd';
+import classNames from 'classnames';
+
 import { textButtonTheme } from '@core/app/constants/antd-config';
 import { TrashIcon } from '@core/app/icons/icons';
+import PathEditIcons from '@core/app/icons/path-edit-panel/PathEditIcons';
+import FloatingPanel from '@core/app/widgets/FloatingPanel';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import i18n from '@core/helpers/i18n';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
+import useForceUpdate from '@core/helpers/use-force-update';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import type { ISVGPath } from '@core/interfaces/ISVGPath';
 
 import styles from './PathEditPanel.module.scss';
 
 let svgedit;
 let svgEditor;
 let svgCanvas: ISVGCanvas;
+
 getSVGAsync((globalSVG) => {
   svgedit = globalSVG.Edit;
   svgEditor = globalSVG.Editor;
@@ -40,10 +42,12 @@ const PanelContent = ({ isMobile = false }: { isMobile?: boolean }) => {
 
   useEffect(() => {
     rightPanelEventEmitter.on('UPDATE_PATH_EDIT_PANEL', forceUpdate);
+
     return () => {
       rightPanelEventEmitter.off('UPDATE_PATH_EDIT_PANEL', forceUpdate);
     };
   }, [forceUpdate]);
+
   const currentPath: ISVGPath = svgedit.path.path;
   let containsSharpNodes = false;
   let containsRoundNodes = false;
@@ -52,6 +56,7 @@ const PanelContent = ({ isMobile = false }: { isMobile?: boolean }) => {
   const selectedNodes = currentPath?.selected_pts
     .map((index) => currentPath.nodePoints[index])
     .filter((point) => point);
+
   if (currentPath) {
     containsSharpNodes = selectedNodes.some((node) => node.isSharp());
     containsRoundNodes = selectedNodes.some((node) => node.isRound());
@@ -62,15 +67,14 @@ const PanelContent = ({ isMobile = false }: { isMobile?: boolean }) => {
     });
     selectedNodeTypes = [...new Set(selectedNodeTypes)];
     selectedNodeTypes.sort();
+
     if (selectedNodeTypes.length > 1) {
       selectedNodeTypes = [];
     }
   }
 
-  const canConnect =
-    selectedNodes?.length === 2 && selectedNodes.every((point) => !point.prevSeg || !point.nextSeg);
-  const canDisconnect =
-    selectedNodes?.length === 1 && selectedNodes[0].prev && selectedNodes[0].next;
+  const canConnect = selectedNodes?.length === 2 && selectedNodes.every((point) => !point.prevSeg || !point.nextSeg);
+  const canDisconnect = selectedNodes?.length === 1 && selectedNodes[0].prev && selectedNodes[0].next;
   const canDelete = selectedNodes?.length > 0;
   const buttonShape = isMobile ? 'round' : 'default';
 
@@ -78,23 +82,23 @@ const PanelContent = ({ isMobile = false }: { isMobile?: boolean }) => {
     <div className={styles['node-type-panel']}>
       {!isMobile && <div className={styles.title}>{LANG.node_type}</div>}
       <ConfigProvider theme={textButtonTheme}>
-        <ConfigProvider theme={{ token: { controlHeight: isMobile ? 30 : 24, borderRadius: 4 } }}>
+        <ConfigProvider theme={{ token: { borderRadius: 4, controlHeight: isMobile ? 30 : 24 } }}>
           <Space.Compact block>
             {[
-              { title: 'Corner', value: LINKTYPE_CORNER, icon: <PathEditIcons.Corner /> },
-              { title: 'Smooth', value: LINKTYPE_SMOOTH, icon: <PathEditIcons.Smooth /> },
-              { title: 'Symmetry', value: LINKTYPE_SYMMETRIC, icon: <PathEditIcons.Symmetry /> },
-            ].map(({ title, value, icon }) => (
+              { icon: <PathEditIcons.Corner />, title: 'Corner', value: LINKTYPE_CORNER },
+              { icon: <PathEditIcons.Smooth />, title: 'Smooth', value: LINKTYPE_SMOOTH },
+              { icon: <PathEditIcons.Symmetry />, title: 'Symmetry', value: LINKTYPE_SYMMETRIC },
+            ].map(({ icon, title, value }) => (
               <Button
                 className={classNames(styles['compact-button'], {
                   [styles.active]: selectedNodeTypes.includes(value),
                 })}
-                key={title}
-                title={title}
+                disabled={isDisabled}
                 icon={icon}
+                key={title}
                 onClick={() => onNodeTypeChange(value)}
                 shape={buttonShape}
-                disabled={isDisabled}
+                title={title}
               />
             ))}
           </Space.Compact>
@@ -102,53 +106,53 @@ const PanelContent = ({ isMobile = false }: { isMobile?: boolean }) => {
         <Divider className={styles.divider} />
         <Space className={styles.actions} wrap>
           <Button
+            block
             className={styles.button}
             disabled={!containsRoundNodes}
+            icon={<PathEditIcons.Sharp />}
             onClick={() => svgCanvas.pathActions.setSharp()}
             shape={buttonShape}
-            icon={<PathEditIcons.Sharp />}
-            block
           >
             <span className={styles.label}>{LANG.sharp}</span>
           </Button>
           <Button
+            block
             className={styles.button}
             disabled={!containsSharpNodes}
+            icon={<PathEditIcons.Round />}
             onClick={() => svgCanvas.pathActions.setRound()}
             shape={buttonShape}
-            icon={<PathEditIcons.Round />}
-            block
           >
             <span className={styles.label}>{LANG.round}</span>
           </Button>
           <Button
+            block
             className={styles.button}
             disabled={!canConnect}
+            icon={<PathEditIcons.Connect />}
             onClick={svgCanvas.pathActions.connectNodes}
             shape={buttonShape}
-            icon={<PathEditIcons.Connect />}
-            block
           >
             <span className={styles.label}>{LANG.connect}</span>
           </Button>
           <Button
+            block
             className={styles.button}
             disabled={!canDisconnect}
+            icon={<PathEditIcons.Disconnect />}
             onClick={svgCanvas.pathActions.disconnectNode}
             shape={buttonShape}
-            icon={<PathEditIcons.Disconnect />}
-            block
           >
             <span className={styles.label}>{LANG.disconnect}</span>
           </Button>
           {isMobile && (
             <Button
+              block
               className={styles.button}
               disabled={!canDelete}
+              icon={<TrashIcon />}
               onClick={svgEditor.deleteSelected}
               shape={buttonShape}
-              icon={<TrashIcon />}
-              block
             >
               <span className={styles.label}>{LANG.delete}</span>
             </Button>
@@ -159,21 +163,24 @@ const PanelContent = ({ isMobile = false }: { isMobile?: boolean }) => {
   );
 };
 
-function PathEditPanel(): JSX.Element {
+function PathEditPanel(): React.JSX.Element {
   const isMobile = useIsMobile();
-  if (!svgCanvas || !svgedit) return null;
+
+  if (!svgCanvas || !svgedit) {
+    return null;
+  }
 
   return isMobile ? (
     <FloatingPanel
-      className={styles.panel}
       anchors={[0, 280]}
-      title={i18n.lang.beambox.right_panel.tabs.path_edit}
+      className={styles.panel}
       onClose={() => svgCanvas.pathActions.toSelectMode(svgedit.path.path.elem)}
+      title={i18n.lang.beambox.right_panel.tabs.path_edit}
     >
       <PanelContent isMobile />
     </FloatingPanel>
   ) : (
-    <div id="pathedit-panel" className={styles.panel}>
+    <div className={styles.panel} id="pathedit-panel">
       <PanelContent />
     </div>
   );

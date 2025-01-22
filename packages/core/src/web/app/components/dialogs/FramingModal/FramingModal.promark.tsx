@@ -1,18 +1,18 @@
-/* eslint-disable @typescript-eslint/no-shadow */
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Button, Divider, Flex, Modal, Spin } from 'antd';
-import { LoadingOutlined } from '@ant-design/icons';
 
-import FramingIcons from '@core/app/icons/framing/FramingIcons';
-import FramingTaskManager, { FramingType } from '@core/helpers/device/framing';
-import icons from '@core/app/icons/icons';
+import { LoadingOutlined } from '@ant-design/icons';
+import { Button, Divider, Flex, Modal, Spin } from 'antd';
+import classNames from 'classnames';
+
+import { handleExportClick } from '@core/app/actions/beambox/export/GoButton/handleExportClick';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
+import FramingIcons from '@core/app/icons/framing/FramingIcons';
+import icons from '@core/app/icons/icons';
+import FramingTaskManager, { FramingType } from '@core/helpers/device/framing';
 import shortcuts from '@core/helpers/shortcuts';
 import useI18n from '@core/helpers/useI18n';
-import { IDeviceInfo } from '@core/interfaces/IDevice';
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
-import classNames from 'classnames';
-import { handleExportClick } from '@core/app/actions/beambox/export/GoButton/handleExportClick';
 import styles from './index.module.scss';
 
 interface Props {
@@ -22,7 +22,7 @@ interface Props {
 }
 
 // TODO: add unit test
-const PromarkFramingModal = ({ device, onClose, startOnOpen = false }: Props): JSX.Element => {
+const PromarkFramingModal = ({ device, onClose, startOnOpen = false }: Props): React.JSX.Element => {
   const lang = useI18n();
   const { framing: tFraming } = lang;
   const options = [FramingType.Framing] as const;
@@ -68,7 +68,7 @@ const PromarkFramingModal = ({ device, onClose, startOnOpen = false }: Props): J
     manager.current.on('status-change', setIsFraming);
     manager.current.on('close-message', () => MessageCaller.closeMessage(key));
     manager.current.on('message', (content: string) => {
-      MessageCaller.openMessage({ key, level: MessageLevel.LOADING, content });
+      MessageCaller.openMessage({ content, key, level: MessageLevel.LOADING });
     });
 
     return () => {
@@ -87,17 +87,12 @@ const PromarkFramingModal = ({ device, onClose, startOnOpen = false }: Props): J
     }
 
     return shortcuts.on(['F1'], () => shortcutHandler.current?.(), { isBlocking: true });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line hooks/exhaustive-deps
   }, []);
 
   return (
     <Modal
-      open
       centered
-      width={360}
-      title={tFraming.framing}
-      maskClosable={false}
-      onCancel={onClose}
       footer={
         <div className={styles.footer}>
           <Button className={classNames(styles.button, styles['mr-8'])} onClick={onClose}>
@@ -105,6 +100,8 @@ const PromarkFramingModal = ({ device, onClose, startOnOpen = false }: Props): J
           </Button>
           <Button
             className={styles.button}
+            icon={<icons.Play className={styles.icon} />}
+            iconPosition="end"
             onClick={() => {
               handleStop();
               setTimeout(() => {
@@ -113,18 +110,22 @@ const PromarkFramingModal = ({ device, onClose, startOnOpen = false }: Props): J
               }, 500);
             }}
             type="primary"
-            icon={<icons.Play className={styles.icon} />}
-            iconPosition="end"
           >
             {tFraming.start_task}
           </Button>
         </div>
       }
+      maskClosable={false}
+      onCancel={onClose}
+      open
+      title={tFraming.framing}
+      width={360}
     >
       <div className={styles.container}>
         <Flex>
           {options.map((option) => (
             <Button
+              className={styles['icon-text-button']}
               key={`framing-${option}`}
               onClick={
                 isFraming
@@ -134,7 +135,6 @@ const PromarkFramingModal = ({ device, onClose, startOnOpen = false }: Props): J
                       handleStart(option);
                     }
               }
-              className={styles['icon-text-button']}
             >
               <div className={styles['icon-text-container']}>
                 {renderIcon(option)}

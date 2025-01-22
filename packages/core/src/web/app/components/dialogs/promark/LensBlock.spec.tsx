@@ -1,12 +1,13 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import LensBlock from './LensBlock';
 
 const mockSetData = jest.fn();
 const mockData = {
-  x: { scale: 101, bulge: 1.1, skew: 1.1, trapezoid: 1.1 },
-  y: { scale: 99, bulge: 0.9, skew: 0.9, trapezoid: 0.9 },
+  x: { bulge: 1.1, scale: 101, skew: 1.1, trapezoid: 1.1 },
+  y: { bulge: 0.9, scale: 99, skew: 0.9, trapezoid: 0.9 },
 };
 
 describe('test LensBlock', () => {
@@ -16,26 +17,30 @@ describe('test LensBlock', () => {
 
   it('should render correctly', () => {
     const { container } = render(<LensBlock data={mockData} setData={mockSetData} />);
+
     expect(container).toMatchSnapshot();
   });
 
   describe('test edit values', () => {
     [
-      { axis: 'x', key: 'scale', id: 'scale-x', value: 100 },
-      { axis: 'x', key: 'bulge', id: 'bulge-x', value: 1 },
-      { axis: 'x', key: 'skew', id: 'skew-x', value: 1 },
-      { axis: 'x', key: 'trapezoid', id: 'trapezoid-x', value: 1 },
-      { axis: 'y', key: 'scale', id: 'scale-y', value: 100 },
-      { axis: 'y', key: 'bulge', id: 'bulge-y', value: 1 },
-      { axis: 'y', key: 'skew', id: 'skew-y', value: 1 },
-      { axis: 'y', key: 'trapezoid', id: 'trapezoid-y', value: 1 },
-    ].forEach(({ axis, key, id, value }) => {
+      { axis: 'x', id: 'scale-x', key: 'scale', value: 100 },
+      { axis: 'x', id: 'bulge-x', key: 'bulge', value: 1 },
+      { axis: 'x', id: 'skew-x', key: 'skew', value: 1 },
+      { axis: 'x', id: 'trapezoid-x', key: 'trapezoid', value: 1 },
+      { axis: 'y', id: 'scale-y', key: 'scale', value: 100 },
+      { axis: 'y', id: 'bulge-y', key: 'bulge', value: 1 },
+      { axis: 'y', id: 'skew-y', key: 'skew', value: 1 },
+      { axis: 'y', id: 'trapezoid-y', key: 'trapezoid', value: 1 },
+    ].forEach(({ axis, id, key, value }) => {
       test(`edit ${key} of ${axis}`, () => {
         const { getByTestId } = render(<LensBlock data={mockData} setData={mockSetData} />);
         const input = getByTestId(id);
+
         fireEvent.change(input, { target: { value: value.toString() } });
         expect(mockSetData).toBeCalledTimes(1);
+
         const [[dispatch]] = mockSetData.mock.calls;
+
         expect(dispatch(mockData)).toEqual({
           ...mockData,
           [axis]: { ...mockData[axis], [key]: value },
@@ -47,9 +52,12 @@ describe('test LensBlock', () => {
   test('switch axis', () => {
     const { getByText } = render(<LensBlock data={mockData} setData={mockSetData} />);
     const btn = getByText('Switch X/Y');
+
     fireEvent.click(btn);
     expect(mockSetData).toBeCalledTimes(1);
+
     const [[dispatch]] = mockSetData.mock.calls;
+
     expect(dispatch(mockData)).toEqual({
       x: mockData.y,
       y: mockData.x,

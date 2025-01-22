@@ -15,7 +15,7 @@ exports[`should render correctly 1`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004496575
     options:
-    [{"value":"TRUE","label":"On","selected":true},{"value":"FALSE","label":"Off","selected":false}]
+    [{"label":"On","selected":true,"value":"TRUE"},{"label":"Off","selected":false,"value":"FALSE"}]
     <input
       class="select-control"
     />
@@ -28,7 +28,7 @@ exports[`should render correctly 1`] = `
     url:
     https://support.flux3dp.com/hc/Convert-Text-to-Path
     options:
-    [{"value":"1.0","label":"1.0","selected":true},{"value":"2.0","label":"2.0","selected":false}]
+    [{"label":"1.0","selected":true,"value":"1.0"},{"label":"2.0","selected":false,"value":"2.0"}]
     <input
       class="select-control"
     />

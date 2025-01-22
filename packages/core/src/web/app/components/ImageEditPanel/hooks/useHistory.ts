@@ -1,8 +1,6 @@
-/* eslint-disable no-case-declarations */
-/* eslint-disable import/prefer-default-export */
 import { useCallback, useReducer } from 'react';
 
-import { Filter } from 'konva/lib/Node';
+import type { Filter } from 'konva/lib/Node';
 
 interface LineItem {
   points: number[];
@@ -10,38 +8,38 @@ interface LineItem {
 }
 
 interface HistoryItem {
-  lines: Array<LineItem>;
-  filters: Array<Filter>;
+  filters: Filter[];
+  lines: LineItem[];
 }
 
 export interface HistoryState {
-  items: Array<HistoryItem>;
-  index: number;
   hasUndid?: boolean;
+  index: number;
+  items: HistoryItem[];
 }
 
 interface HistoryAction {
-  type: 'PUSH' | 'UNDO' | 'REDO';
   payload?: HistoryItem;
+  type: 'PUSH' | 'REDO' | 'UNDO';
 }
 
 interface HistoryContext {
   history: HistoryState;
   push: (item: HistoryItem) => void;
-  undo: () => HistoryItem;
   redo: () => HistoryItem;
+  undo: () => HistoryItem;
 }
 
-const historyReducer = (state: HistoryState, { type, payload }: HistoryAction) => {
-  const { items, index } = state;
+const historyReducer = (state: HistoryState, { payload, type }: HistoryAction) => {
+  const { index, items } = state;
 
   switch (type) {
     case 'PUSH':
-      return { items: items.slice(0, index + 1).concat(payload), index: index + 1 };
+      return { index: index + 1, items: items.slice(0, index + 1).concat(payload) };
     case 'UNDO':
-      return index > 0 ? { items, index: index - 1 } : state;
+      return index > 0 ? { index: index - 1, items } : state;
     case 'REDO':
-      return index < items.length - 1 ? { items, index: index + 1 } : state;
+      return index < items.length - 1 ? { index: index + 1, items } : state;
     default:
       return state;
   }
@@ -51,7 +49,7 @@ const historyReducer = (state: HistoryState, { type, payload }: HistoryAction) =
 export const useHistory = (initialState: HistoryState): HistoryContext => {
   const [history, dispatch] = useReducer(historyReducer, initialState);
 
-  const push = useCallback((payload: HistoryItem) => dispatch({ type: 'PUSH', payload }), []);
+  const push = useCallback((payload: HistoryItem) => dispatch({ payload, type: 'PUSH' }), []);
   const undo = useCallback(() => {
     // return the initial state if there is no history to undo
     if (history.index === 0) {
@@ -77,5 +75,5 @@ export const useHistory = (initialState: HistoryState): HistoryContext => {
     return nextItem;
   }, [history]);
 
-  return { history, push, undo, redo };
+  return { history, push, redo, undo };
 };

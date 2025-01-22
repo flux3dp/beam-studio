@@ -1,46 +1,46 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 jest.mock('@core/helpers/useI18n', () => () => ({
   settings: {
-    on: 'On',
-    off: 'Off',
-    mask: 'Workarea Clipping',
-    help_center_urls: {
-      mask: 'https://support.flux3dp.com/hc/en-us/articles/360004408876',
-    },
     groups: {
       mask: 'Workarea Clipping',
     },
+    help_center_urls: {
+      mask: 'https://support.flux3dp.com/hc/en-us/articles/360004408876',
+    },
+    mask: 'Workarea Clipping',
+    off: 'Off',
+    on: 'On',
   },
 }));
 
-jest.mock('@core/app/components/settings/SelectControl', () =>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ({ id, label, onChange, options, url }: any) => (
-    <div>
-      mock-select-control id:{id}
-      label:{label}
-      url:{url}
-      options:{JSON.stringify(options)}
-      <input className="select-control" onChange={onChange} />
-    </div>
-  ),
-);
+jest.mock('@core/app/components/settings/SelectControl', () => ({ id, label, onChange, options, url }: any) => (
+  <div>
+    mock-select-control id:{id}
+    label:{label}
+    url:{url}
+    options:{JSON.stringify(options)}
+    <input className="select-control" onChange={onChange} />
+  </div>
+));
 
-// eslint-disable-next-line import/first
 import Mask from './Mask';
 
 test('should render correctly', () => {
   const getBeamboxPreferenceEditingValue = jest.fn();
   const updateBeamboxPreferenceChange = jest.fn();
+
   getBeamboxPreferenceEditingValue.mockReturnValue(true);
+
   const { container } = render(
     <Mask
       getBeamboxPreferenceEditingValue={getBeamboxPreferenceEditingValue}
       updateBeamboxPreferenceChange={updateBeamboxPreferenceChange}
     />,
   );
+
   expect(container).toMatchSnapshot();
 
   fireEvent.change(container.querySelector('.select-control'), { target: { value: 'FALSE' } });

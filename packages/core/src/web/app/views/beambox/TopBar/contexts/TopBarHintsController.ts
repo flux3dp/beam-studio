@@ -11,6 +11,6 @@ const removeHint = (): void => {
 };
 
 export default {
-  setHint,
   removeHint,
+  setHint,
 };

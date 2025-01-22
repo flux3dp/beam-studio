@@ -25,8 +25,10 @@ describe('test check-camera', () => {
     mockConnectCamera.mockResolvedValue(null);
     mockTakeOnePicture.mockResolvedValue(null);
     mockDisconnectCamera.mockReturnValue(null);
+
     // @ts-expect-error testing checkCamera with fake data
     const res = await checkCamera('device');
+
     expect(mockSelect).toBeCalledTimes(1);
     expect(mockSelect).toHaveBeenLastCalledWith('device');
     expect(mockConnectCamera).toBeCalledTimes(1);
@@ -40,8 +42,10 @@ describe('test check-camera', () => {
     mockConnectCamera.mockResolvedValue(null);
     mockTakeOnePicture.mockRejectedValue('error');
     mockDisconnectCamera.mockReturnValue(null);
+
     // @ts-expect-error testing checkCamera with fake data
     const res = await checkCamera('device');
+
     expect(mockSelect).toBeCalledTimes(1);
     expect(mockSelect).toHaveBeenLastCalledWith('device');
     expect(mockConnectCamera).toBeCalledTimes(1);

@@ -1,51 +1,63 @@
-/* eslint-disable react/jsx-props-no-spreading */
+/* eslint-disable ts/no-unused-vars */
 import * as React from 'react';
-import { Button, Form, FormInstance, InputNumber, Modal, Space, Table } from 'antd';
-import { DeleteFilled, PlusCircleFilled } from '@ant-design/icons';
 import { useContext, useEffect, useRef, useState } from 'react';
+
+import { DeleteFilled, PlusCircleFilled } from '@ant-design/icons';
+import type { FormInstance } from 'antd';
+import { Button, Form, InputNumber, Modal, Space, Table } from 'antd';
 
 import Alert from '@core/app/actions/alert-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
+import type { ColorConfig } from '@core/app/constants/color-constants';
+import { DefaultColorConfigs } from '@core/app/constants/color-constants';
 import Input from '@core/app/widgets/Input';
 import InputKeyWrapper from '@core/app/widgets/InputKeyWrapper';
-import storage from '@app/implementations/storage';
 import useI18n from '@core/helpers/useI18n';
-import { ColorConfig, DefaultColorConfigs } from '@core/app/constants/color-constants';
+
+import storage from '@app/implementations/storage';
 
 import AddColorConfigModal from '../dialogs/AddColorConfigModal';
 
-const formatHexColor = (input: string): string | null => {
+const formatHexColor = (input: string): null | string => {
   const val = input.replace(/ +/, '');
   const matchHex6 = val.match(/#[0-9A-F]{6}\b/i);
+
   if (matchHex6) {
     return matchHex6[0].toUpperCase();
   }
 
   const matchHex3 = val.match(/#[0-9A-F]{3}\b/i);
+
   if (matchHex3) {
     return matchHex3[0].replace(/#([0-9A-F])([0-9A-F])([0-9A-F])/i, '#$1$1$2$2$3$3').toUpperCase();
   }
 
   const matchRGB = val.match(/(rgb)?\([0-9]{1,3},[0-9]{1,3},[0-9]{1,3}\)(?!.)/i);
+
   if (matchRGB) {
     const rgb = matchRGB[0].match(/[0-9]{1,3},[0-9]{1,3},[0-9]{1,3}/)[0].split(',');
     let hex = (
-      parseInt(rgb[0], 10) * 65536 +
-      parseInt(rgb[1], 10) * 256 +
-      parseInt(rgb[2], 10)
+      Number.parseInt(rgb[0], 10) * 65536 +
+      Number.parseInt(rgb[1], 10) * 256 +
+      Number.parseInt(rgb[2], 10)
     ).toString(16);
+
     if (hex === 'NaN') {
       hex = '0';
     }
+
     while (hex.length < 6) {
       hex = `0${hex}`;
     }
+
     return `#${hex}`.toUpperCase();
   }
+
   return null;
 };
 
 const EditableContext = React.createContext<FormInstance<any> | null>(null);
+
 interface EditableRowProps {
   index: number;
 }
@@ -55,22 +67,23 @@ interface Props {
 }
 
 interface EditableCellProps {
-  title: React.ReactNode;
-  editable: boolean;
   children: React.ReactNode;
   dataIndex: keyof ColorConfig;
-  record: ColorConfig;
-  unit: string;
-  min: number;
-  max: number;
-  validator: (val: string) => string;
+  editable: boolean;
   handleSave: (record: ColorConfig) => void;
+  max: number;
+  min: number;
+  record: ColorConfig;
+  title: React.ReactNode;
+  unit: string;
+  validator: (val: string) => string;
 }
 
 const EditableRow = ({ index, ...props }: EditableRowProps) => {
   const [form] = Form.useForm();
+
   return (
-    <Form form={form} component={false} size="small">
+    <Form component={false} form={form} size="small">
       <EditableContext.Provider value={form}>
         <tr {...props} />
       </EditableContext.Provider>
@@ -79,16 +92,16 @@ const EditableRow = ({ index, ...props }: EditableRowProps) => {
 };
 
 const EditableCell = ({
-  title,
-  editable,
   children,
   dataIndex,
-  unit,
-  min,
-  max,
-  record,
-  validator,
+  editable,
   handleSave,
+  max,
+  min,
+  record,
+  title,
+  unit,
+  validator,
   ...restProps
 }: EditableCellProps) => {
   const [editing, setEditing] = useState(false);
@@ -109,6 +122,7 @@ const EditableCell = ({
   const save = async () => {
     try {
       const values = await form.validateFields();
+
       toggleEdit();
       handleSave({ ...record, ...values });
     } catch (errInfo) {
@@ -121,51 +135,55 @@ const EditableCell = ({
   if (editable) {
     childNode = editing ? (
       <Form.Item
-        style={{ margin: 0 }}
         name={dataIndex}
         rules={[
           {
-            required: true,
             message: `${title} is required.`,
+            required: true,
           },
           {
             validator: (_, value: string) => {
-              if (!validator) return Promise.resolve();
+              if (!validator) {
+                return Promise.resolve();
+              }
+
               if (formatHexColor(value)) {
                 return Promise.resolve();
               }
+
               return Promise.reject();
             },
           },
         ]}
+        style={{ margin: 0 }}
       >
         {max ? (
           <InputNumber
-            size="small"
-            ref={inputRef}
-            keyboard
-            onPressEnter={save}
-            onBlur={save}
-            min={min}
-            max={max}
             formatter={(value) => `${value} ${unit}`}
+            keyboard
+            max={max}
+            min={min}
+            onBlur={save}
+            onPressEnter={save}
             parser={(value) => Number(value?.replace(unit, ''))}
+            ref={inputRef}
+            size="small"
           />
         ) : (
           <Input
-            size="small"
-            ref={inputRef}
-            onPressEnter={save}
             onBlur={(e) => {
               form.setFieldsValue({ [dataIndex]: formatHexColor(e.target.value) });
               save();
             }}
+            onPressEnter={save}
+            ref={inputRef}
+            size="small"
             suffix={unit}
           />
         )}
       </Form.Item>
     ) : (
-      <div className="editable-cell-value-wrap" style={{ paddingRight: 24 }} onClick={toggleEdit}>
+      <div className="editable-cell-value-wrap" onClick={toggleEdit} style={{ paddingRight: 24 }}>
         {children}
         &nbsp;
         {unit}
@@ -176,10 +194,8 @@ const EditableCell = ({
   return (
     <td {...restProps}>
       <InputKeyWrapper inputRef={inputRef}>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          {dataIndex === 'color' && (
-            <div style={{ background: record.color }} className="config-color-block" />
-          )}
+        <div style={{ alignItems: 'center', display: 'flex' }}>
+          {dataIndex === 'color' && <div className="config-color-block" style={{ background: record.color }} />}
           {childNode}
         </div>
       </InputKeyWrapper>
@@ -191,10 +207,10 @@ type DataType = ColorConfig & { key: React.Key };
 type EditableTableProps = Parameters<typeof Table>[0];
 type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
 
-const LayerColorConfigPanel = (props: Props): JSX.Element => {
+const LayerColorConfigPanel = (props: Props): React.JSX.Element => {
   const {
-    global: tGlobal,
     beambox: { layer_color_config_panel: t },
+    global: tGlobal,
   } = useI18n();
   const [displayAddPanel, setDisplayAddPanel] = useState(false);
   const { onClose } = props;
@@ -214,6 +230,7 @@ const LayerColorConfigPanel = (props: Props): JSX.Element => {
 
   const handleDelete = (key: React.Key) => {
     const newData = dataSource.filter((item) => item.key !== key);
+
     setDataSource(newData);
   };
 
@@ -221,6 +238,7 @@ const LayerColorConfigPanel = (props: Props): JSX.Element => {
     const newData = [...dataSource];
     const index = newData.findIndex((item) => row.key === item.key);
     const item = newData[index];
+
     newData.splice(index, 1, {
       ...item,
       ...row,
@@ -228,61 +246,64 @@ const LayerColorConfigPanel = (props: Props): JSX.Element => {
     setDataSource(newData);
   };
 
-  const columns: (ColumnTypes[number] & {
-    editable?: boolean;
-    dataIndex: string;
-    unit?: string;
-    min?: number;
-    max?: number;
-    validator?: (val: string) => string;
-  })[] = [
+  const columns: Array<
+    ColumnTypes[number] & {
+      dataIndex: string;
+      editable?: boolean;
+      max?: number;
+      min?: number;
+      unit?: string;
+      validator?: (val: string) => string;
+    }
+  > = [
     {
-      title: t.color,
       dataIndex: 'color',
       editable: true,
+      title: t.color,
       validator: (value) => formatHexColor(value) || value,
       width: '130px',
     },
     {
-      title: t.speed,
       dataIndex: 'speed',
       editable: true,
-      min: 0,
       max: 900,
+      min: 0,
+      title: t.speed,
       unit: 'mm/s',
       width: '60px',
     },
     {
-      title: t.power,
       dataIndex: 'power',
       editable: true,
-      min: 0,
       max: 100,
+      min: 0,
+      title: t.power,
       unit: '%',
       width: '60px',
     },
     {
-      title: t.repeat,
       dataIndex: 'repeat',
       editable: true,
-      min: 0,
       max: 999,
+      min: 0,
+      title: t.repeat,
       unit: '',
       width: '60px',
     },
     {
-      title: '',
       dataIndex: 'operation',
       render: (_, record: { key: React.Key }) => (
-        <Button type="text" onClick={() => handleDelete(record.key)}>
+        <Button onClick={() => handleDelete(record.key)} type="text">
           <DeleteFilled />
         </Button>
       ),
+      title: '',
     },
   ].map((col) => {
     if (!col.editable) {
       return col;
     }
+
     return {
       ...col,
       onCell: (record: DataType) => ({
@@ -312,23 +333,26 @@ const LayerColorConfigPanel = (props: Props): JSX.Element => {
 
   const onSave = () => {
     const backwardCompatibleConfigDict = {};
+
     dataSource.forEach((config, index) => {
       backwardCompatibleConfigDict[config.color] = index;
     });
+
     const configData = { array: dataSource, dict: backwardCompatibleConfigDict };
+
     console.log(configData);
     storage.set('layer-color-config', configData);
     onClose();
   };
 
   const renderFooter = () => [
-    <Button key="reset" type="dashed" onClick={onResetDefault}>
+    <Button key="reset" onClick={onResetDefault} type="dashed">
       {t.default}
     </Button>,
     <Button key="cancel" onClick={onClose}>
       {tGlobal.cancel}
     </Button>,
-    <Button key="save" type="primary" onClick={onSave}>
+    <Button key="save" onClick={onSave} type="primary">
       {tGlobal.save}
     </Button>,
   ];
@@ -336,13 +360,13 @@ const LayerColorConfigPanel = (props: Props): JSX.Element => {
   const handleAddConfig = (config: ColorConfig) => {
     if (!config.color) {
       Alert.popUp({
-        type: AlertConstants.SHOW_POPUP_ERROR,
         message: t.no_input,
+        type: AlertConstants.SHOW_POPUP_ERROR,
       });
     } else if (hasColor(config.color)) {
       Alert.popUp({
-        type: AlertConstants.SHOW_POPUP_ERROR,
         message: t.in_use,
+        type: AlertConstants.SHOW_POPUP_ERROR,
       });
     } else {
       setDataSource((prev) => [...prev, { key: config.color, ...config }]);
@@ -351,35 +375,33 @@ const LayerColorConfigPanel = (props: Props): JSX.Element => {
   };
 
   const render = () => (
-    <Modal open centered onCancel={onClose} title={t.layer_color_config} footer={renderFooter()}>
+    <Modal centered footer={renderFooter()} onCancel={onClose} open title={t.layer_color_config}>
       <Space direction="vertical" style={{ width: '100%' }}>
-        <Button type="primary" onClick={() => setDisplayAddPanel(true)}>
+        <Button onClick={() => setDisplayAddPanel(true)} type="primary">
           <PlusCircleFilled />
           {t.add_config}
         </Button>
         <Table
-          pagination={{ pageSize: 8 }}
-          size="small"
+          bordered
+          columns={columns as ColumnTypes}
           components={{
             body: {
-              row: EditableRow,
               cell: EditableCell,
+              row: EditableRow,
             },
           }}
-          rowClassName={() => 'editable-row'}
-          bordered
           dataSource={dataSource}
-          columns={columns as ColumnTypes}
+          pagination={{ pageSize: 8 }}
+          rowClassName={() => 'editable-row'}
+          size="small"
         />
         {displayAddPanel && (
-          <AddColorConfigModal
-            onClose={() => setDisplayAddPanel(false)}
-            handleAddConfig={handleAddConfig}
-          />
+          <AddColorConfigModal handleAddConfig={handleAddConfig} onClose={() => setDisplayAddPanel(false)} />
         )}
       </Space>
     </Modal>
   );
+
   return render();
 };
 

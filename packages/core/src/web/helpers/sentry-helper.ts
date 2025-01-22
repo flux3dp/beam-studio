@@ -22,12 +22,7 @@ const initSentry = (): void => {
   }
 };
 
-const captureMessage = (
-  lastVersion: string,
-  uuid: string,
-  version: string,
-  model: string,
-): void => {
+const captureMessage = (lastVersion: string, uuid: string, version: string, model: string): void => {
   Sentry.captureMessage('Device Info', {
     level: 'info',
     tags: {

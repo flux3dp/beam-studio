@@ -1,9 +1,11 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import DocumentButton from './DocumentButton';
 
 const mockShowDocumentSettings = jest.fn();
+
 jest.mock('@core/app/actions/dialog-caller', () => ({
   showDocumentSettings: (...args) => mockShowDocumentSettings(...args),
 }));
@@ -19,6 +21,7 @@ jest.mock('@core/helpers/useI18n', () => () => ({
 describe('test DocumentButton', () => {
   it('should render correctly', () => {
     const { container } = render(<DocumentButton />);
+
     expect(container).toMatchSnapshot();
     expect(mockShowDocumentSettings).not.toBeCalled();
     fireEvent.click(container.firstChild);

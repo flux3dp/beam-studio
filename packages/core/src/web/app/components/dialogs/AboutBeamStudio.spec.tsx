@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import AboutBeamStudio from './AboutBeamStudio';
@@ -6,9 +7,9 @@ import AboutBeamStudio from './AboutBeamStudio';
 jest.mock('@core/helpers/i18n', () => ({
   lang: {
     topmenu: {
-      version: 'Version',
       credit: 'credit',
       ok: 'OK',
+      version: 'Version',
     },
   },
 }));
@@ -25,6 +26,7 @@ describe('test AboutBeamStudio', () => {
   it('should render correctly', () => {
     const onClose = jest.fn();
     const { baseElement, getByText } = render(<AboutBeamStudio onClose={onClose} />);
+
     expect(baseElement).toMatchSnapshot();
     expect(onClose).not.toBeCalled();
     fireEvent.click(getByText('OK'));

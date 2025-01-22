@@ -1,40 +1,45 @@
 import React, { useContext, useEffect } from 'react';
+
 import { Modal } from 'antd';
 import { SpinLoading } from 'antd-mobile';
 
-import useI18n from '@core/helpers/useI18n';
 import { AlertProgressContext } from '@core/app/contexts/AlertProgressContext';
-import { IProgressDialog } from '@core/interfaces/IProgress';
+import useI18n from '@core/helpers/useI18n';
+import type { IProgressDialog } from '@core/interfaces/IProgress';
 
 import styles from './AlertAndProgress.module.scss';
 
-const NonStopProgress = ({ data }: { data: IProgressDialog }): JSX.Element => {
+const NonStopProgress = ({ data }: { data: IProgressDialog }): React.JSX.Element => {
   const lang = useI18n();
   const { popById } = useContext(AlertProgressContext);
-  const { key, id, caption, timeout, onCancel } = data;
+  const { caption, id, key, onCancel, timeout } = data;
+
   useEffect(() => {
-    if (timeout) setTimeout(() => popById(id), timeout);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (timeout) {
+      setTimeout(() => popById(id), timeout);
+    }
+    // eslint-disable-next-line hooks/exhaustive-deps
   }, []);
+
   return (
     <Modal
-      open
+      cancelButtonProps={onCancel ? undefined : { style: { display: 'none' } }}
+      cancelText={lang.alert.cancel}
+      centered
       className={styles.nonstop}
+      closable={false}
       key={`${key}-${id}`}
-      style={{
-        minWidth: 150,
-      }}
-      width="fit-content"
+      maskClosable={false}
+      okButtonProps={{ style: { display: 'none' } }}
       onCancel={() => {
         popById(id);
         onCancel();
       }}
-      centered
-      closable={false}
-      maskClosable={false}
-      cancelText={lang.alert.cancel}
-      cancelButtonProps={onCancel ? undefined : { style: { display: 'none' } }}
-      okButtonProps={{ style: { display: 'none' } }}
+      open
+      style={{
+        minWidth: 150,
+      }}
+      width="fit-content"
     >
       <div>
         <div className={styles['spinner-container']}>

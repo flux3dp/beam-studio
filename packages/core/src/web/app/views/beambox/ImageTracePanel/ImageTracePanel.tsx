@@ -1,22 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import Cropper from 'cropperjs';
+
+import type Cropper from 'cropperjs';
 
 import BeamboxStore from '@core/app/stores/beambox-store';
 import StepCrop from '@core/app/views/beambox/ImageTracePanel/StepCrop';
 import StepTune from '@core/app/views/beambox/ImageTracePanel/StepTune';
 
 enum Step {
-  NONE = 0,
   CROP = 1,
+  NONE = 0,
   TUNE = 2,
 }
 
-const ImageTracePanel = (): JSX.Element => {
+const ImageTracePanel = (): React.JSX.Element => {
   const [step, setStep] = useState(Step.NONE);
   const [cropResult, setCropResult] = useState<{ data: Cropper.Data; url: string }>(null);
+
   useEffect(() => {
     const handleStart = () => setStep((prev) => (prev === Step.NONE ? Step.CROP : prev));
+
     BeamboxStore.onCropperShown(handleStart);
+
     return () => {
       BeamboxStore.removeCropperShownListener(handleStart);
     };
@@ -27,22 +31,18 @@ const ImageTracePanel = (): JSX.Element => {
       setCropResult({ data, url });
       setStep(Step.TUNE);
     };
-    return <StepCrop onCropFinish={onFinish} onCancel={() => setStep(Step.NONE)} />;
+
+    return <StepCrop onCancel={() => setStep(Step.NONE)} onCropFinish={onFinish} />;
   }
+
   if (step === Step.TUNE) {
     const { data, url } = cropResult;
     const handleGoBack = () => {
       URL.revokeObjectURL(url);
       setStep(Step.CROP);
     };
-    return (
-      <StepTune
-        cropData={data}
-        imageUrl={url}
-        onGoBack={handleGoBack}
-        onClose={() => setStep(Step.NONE)}
-      />
-    );
+
+    return <StepTune cropData={data} imageUrl={url} onClose={() => setStep(Step.NONE)} onGoBack={handleGoBack} />;
   }
 
   return null;

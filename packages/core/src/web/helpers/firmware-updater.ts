@@ -2,14 +2,14 @@
  * firmware updater
  */
 import Alert from '@core/app/actions/alert-caller';
-import AlertConstants from '@core/app/constants/alert-constants';
-import DeviceMaster from '@core/helpers/device-master';
 import Dialog from '@core/app/actions/dialog-caller';
-import i18n from '@core/helpers/i18n';
-import InputLightboxConstants from '@core/app/constants/input-lightbox-constants';
-import Progress from '@core/app/actions/progress-caller';
-import { IDeviceInfo } from '@core/interfaces/IDevice';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
+import Progress from '@core/app/actions/progress-caller';
+import AlertConstants from '@core/app/constants/alert-constants';
+import InputLightboxConstants from '@core/app/constants/input-lightbox-constants';
+import DeviceMaster from '@core/helpers/device-master';
+import i18n from '@core/helpers/i18n';
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 export default (response, device: IDeviceInfo, forceUpdate?: boolean): void => {
   const { lang } = i18n;
@@ -17,13 +17,13 @@ export default (response, device: IDeviceInfo, forceUpdate?: boolean): void => {
   const onFinishUpdate = (isSuccess: boolean) => {
     if (isSuccess === true) {
       Alert.popUp({
-        type: AlertConstants.SHOW_POPUP_INFO,
         message: lang.update.firmware.update_success,
+        type: AlertConstants.SHOW_POPUP_INFO,
       });
     } else {
       Alert.popUp({
-        type: AlertConstants.SHOW_POPUP_ERROR,
         message: lang.update.firmware.update_fail,
+        type: AlertConstants.SHOW_POPUP_ERROR,
       });
     }
   };
@@ -32,15 +32,17 @@ export default (response, device: IDeviceInfo, forceUpdate?: boolean): void => {
 
   const uploadToDevice = async (file) => {
     const res = await DeviceMaster.select(device);
+
     if (res.success) {
       Progress.openSteppingProgress({
-        id: 'update-firmware',
         caption: lang.topbar.menu.update_firmware,
+        id: 'update-firmware',
         message: lang.update.updating,
       });
       try {
         await doUpdate(file, (r) => {
           const percentage = Number(r.percentage || 0).toFixed(2);
+
           Progress.update('update-firmware', {
             caption: lang.topbar.menu.update_firmware,
             message: lang.update.updating,
@@ -48,7 +50,7 @@ export default (response, device: IDeviceInfo, forceUpdate?: boolean): void => {
           });
         });
         onFinishUpdate(true);
-      } catch (error) {
+      } catch {
         onFinishUpdate(false);
       }
       Progress.popById('update-firmware');
@@ -63,20 +65,21 @@ export default (response, device: IDeviceInfo, forceUpdate?: boolean): void => {
     req.responseType = 'blob';
 
     MessageCaller.openMessage({
-      key: 'downloading-firmware',
-      level: MessageLevel.LOADING,
       content: i18n.lang.update.software.checking,
       duration: 10,
+      key: 'downloading-firmware',
+      level: MessageLevel.LOADING,
     });
 
     req.onload = function onload() {
       if (this.status === 200) {
         const file = req.response;
+
         uploadToDevice(file);
       } else {
         Alert.popUp({
-          type: AlertConstants.SHOW_POPUP_ERROR,
           message: lang.update.cannot_reach_internet,
+          type: AlertConstants.SHOW_POPUP_ERROR,
         });
       }
     };
@@ -86,6 +89,7 @@ export default (response, device: IDeviceInfo, forceUpdate?: boolean): void => {
   const onSubmit = async (files) => {
     const file = files.item(0);
     const res = await DeviceMaster.select(device);
+
     if (res.success) {
       Progress.openSteppingProgress({
         id: 'update-firmware',
@@ -94,13 +98,14 @@ export default (response, device: IDeviceInfo, forceUpdate?: boolean): void => {
       try {
         await doUpdate(file, (r) => {
           const percentage = Number(r.percentage || 0).toFixed(2);
+
           Progress.update('update-firmware', {
             message: `${lang.update.updating} (${percentage}%)`,
             percentage,
           });
         });
         onFinishUpdate(true);
-      } catch (error) {
+      } catch {
         onFinishUpdate(false);
       }
       Progress.popById('update-firmware');
@@ -109,11 +114,11 @@ export default (response, device: IDeviceInfo, forceUpdate?: boolean): void => {
 
   const onInstall = () => {
     Dialog.showInputLightbox('upload-firmware', {
-      type: InputLightboxConstants.TYPE_FILE,
       caption: lang.update.firmware.upload_file,
       confirmText: lang.update.firmware.confirm,
-      onSubmit,
       onCancel: () => {},
+      onSubmit,
+      type: InputLightboxConstants.TYPE_FILE,
     });
   };
 

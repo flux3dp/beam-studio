@@ -5,7 +5,7 @@ const RULES = {
   'unicorn/no-instanceof-array': 'error',
   'unicorn/no-new-array': 'error',
   'unicorn/no-new-buffer': 'error',
-  'unicorn/number-literal-case': 'error',
+  // 'unicorn/number-literal-case': 'error',
   'unicorn/prefer-dom-node-text-content': 'error',
   'unicorn/prefer-includes': 'error',
   'unicorn/prefer-node-protocol': 'off',

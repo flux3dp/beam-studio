@@ -1,16 +1,19 @@
 import updateLayerColor from './updateLayerColor';
 
 const mockRead = jest.fn();
+
 jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read: (...args) => mockRead(...args),
 }));
 
 const mockGetLayerName = jest.fn();
+
 jest.mock('@core/helpers/layer/layer-helper', () => ({
   getLayerName: (...args) => mockGetLayerName(...args),
 }));
 
 const mockGetTempGroup = jest.fn();
+
 jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (cb) =>
     cb({
@@ -21,6 +24,7 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
 }));
 
 const mockSetElementsColor = jest.fn();
+
 jest.mock(
   '@core/helpers/color/setElementsColor',
   () =>
@@ -29,6 +33,7 @@ jest.mock(
 );
 
 const mockUpdateLayerColorFilter = jest.fn();
+
 jest.mock(
   '@core/helpers/color/updateLayerColorFilter',
   () =>
@@ -40,6 +45,7 @@ describe('test updateLayerColor', () => {
   it('should update layer color', async () => {
     const layer = document.createElement('g');
     const mockRect = document.createElement('rect');
+
     layer.appendChild(mockRect);
     layer.setAttribute('data-color', '#123456');
     mockRead.mockReturnValueOnce(true);

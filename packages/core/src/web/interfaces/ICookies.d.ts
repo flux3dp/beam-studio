@@ -1,14 +1,13 @@
 export interface ICookies {
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  on(event: 'changed', listener: any): void;
   get(filter: CookiesFilter): Promise<Cookie[]>;
   getBrowserCookie(name: string): string | undefined;
+  on(event: 'changed', listener: any): void;
   remove(url: string, name: string): Promise<void>;
 }
 
 export interface CookiesFilter {
-  name?: string;
   domain?: string;
+  name?: string;
 }
 
 export interface Cookie {

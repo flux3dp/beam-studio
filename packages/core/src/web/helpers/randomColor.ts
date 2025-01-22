@@ -13,8 +13,9 @@ class RandomColorHelper {
 
   public getNextColor() {
     const color = colorConstants.randomLayerColors[this.currentIdx];
-    this.currentIdx =
-      this.currentIdx < colorConstants.randomLayerColors.length - 1 ? this.currentIdx + 1 : 0;
+
+    this.currentIdx = this.currentIdx < colorConstants.randomLayerColors.length - 1 ? this.currentIdx + 1 : 0;
+
     return color;
   }
 }

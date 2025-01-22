@@ -1,22 +1,21 @@
 import React from 'react';
 
+import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import CurveEngravingTool from '@core/app/components/beambox/left-panel/CurveEngravingTool';
 import DrawingToolButtonGroup from '@core/app/components/beambox/left-panel/DrawingToolButtonGroup';
-import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
-import i18n from '@core/helpers/i18n';
 import LeftPanelButton from '@core/app/components/beambox/left-panel/LeftPanelButton';
-import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import PreviewToolButtonGroup from '@core/app/components/beambox/left-panel/PreviewToolButtonGroup';
-import shortcuts from '@core/helpers/shortcuts';
-import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { CanvasMode } from '@core/app/constants/canvasMode';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
+import i18n from '@core/helpers/i18n';
+import shortcuts from '@core/helpers/shortcuts';
 
 import styles from './LeftPanel.module.scss';
 
 const LANG = i18n.lang.beambox.left_panel;
 
 class LeftPanel extends React.PureComponent {
-  // eslint-disable-next-line react/static-property-placement
   declare context: React.ContextType<typeof CanvasContext>;
 
   componentDidMount(): void {
@@ -31,42 +30,66 @@ class LeftPanel extends React.PureComponent {
 
     shortcuts.on(['v'], () => {
       const { mode } = this.context;
-      if (mode === CanvasMode.Draw) FnWrapper.useSelectTool();
+
+      if (mode === CanvasMode.Draw) {
+        FnWrapper.useSelectTool();
+      }
     });
 
     shortcuts.on(['i'], () => {
       const { mode } = this.context;
-      if (mode === CanvasMode.Draw) FnWrapper.importImage();
+
+      if (mode === CanvasMode.Draw) {
+        FnWrapper.importImage();
+      }
     });
 
     shortcuts.on(['t'], () => {
       const { mode } = this.context;
-      if (mode === CanvasMode.Draw) FnWrapper.insertText();
+
+      if (mode === CanvasMode.Draw) {
+        FnWrapper.insertText();
+      }
     });
 
     shortcuts.on(['m'], () => {
       const { mode } = this.context;
-      if (mode === CanvasMode.Draw) FnWrapper.insertRectangle();
+
+      if (mode === CanvasMode.Draw) {
+        FnWrapper.insertRectangle();
+      }
     });
 
     shortcuts.on(['c'], () => {
       const { mode } = this.context;
-      if (mode === CanvasMode.Draw) FnWrapper.insertEllipse();
+
+      if (mode === CanvasMode.Draw) {
+        FnWrapper.insertEllipse();
+      }
     });
 
     shortcuts.on(['\\'], () => {
       const { mode } = this.context;
-      if (mode === CanvasMode.Draw) FnWrapper.insertLine();
+
+      if (mode === CanvasMode.Draw) {
+        FnWrapper.insertLine();
+      }
     });
 
     shortcuts.on(['p'], () => {
       const { mode } = this.context;
-      if (mode === CanvasMode.Draw) FnWrapper.insertPath();
+
+      if (mode === CanvasMode.Draw) {
+        FnWrapper.insertPath();
+      }
     });
 
     shortcuts.on(['e'], () => {
       const { mode } = this.context;
-      if (mode === CanvasMode.Draw) $('#left-Element').trigger('click');
+
+      if (mode === CanvasMode.Draw) {
+        $('#left-Element').trigger('click');
+      }
     });
   }
 
@@ -74,26 +97,30 @@ class LeftPanel extends React.PureComponent {
     $('#svg_editor').removeClass('color');
   }
 
-  render(): JSX.Element {
+  render(): React.JSX.Element {
     const { mode, togglePathPreview } = this.context;
+
     if (mode === CanvasMode.Draw) {
       return <DrawingToolButtonGroup className={styles.container} />;
     }
+
     if (mode === CanvasMode.PathPreview) {
       return (
         <div className={styles.container}>
           <LeftPanelButton
-            id="Exit-Preview"
-            title={LANG.label.end_preview}
             icon={<LeftPanelIcons.Back />}
+            id="Exit-Preview"
             onClick={togglePathPreview}
+            title={LANG.label.end_preview}
           />
         </div>
       );
     }
+
     if (mode === CanvasMode.CurveEngraving) {
       return <CurveEngravingTool className={styles.container} />;
     }
+
     return <PreviewToolButtonGroup className={styles.container} />;
   }
 }

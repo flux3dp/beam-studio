@@ -1,20 +1,23 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable ts/no-unused-vars */
 import React from 'react';
+
+import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Tooltip } from 'antd';
+
 import alertCaller from '@core/app/actions/alert-caller';
-import alertConfig from '@core/helpers/api/alert-config';
-import alertConstants from '@core/app/constants/alert-constants';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import deviceMaster from '@core/helpers/device-master';
-import i18n from '@core/helpers/i18n';
-import { getSupportInfo } from '@core/app/constants/add-on';
-import { getWorkarea, WorkArea, WorkAreaModel } from '@core/app/constants/workarea-constants';
-import { IDeviceInfo } from '@core/interfaces/IDevice';
-import { PreviewManager } from '@core/interfaces/PreviewManager';
 import { PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
+import { getSupportInfo } from '@core/app/constants/add-on';
+import alertConstants from '@core/app/constants/alert-constants';
+import type { WorkArea, WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
+import alertConfig from '@core/helpers/api/alert-config';
+import deviceMaster from '@core/helpers/device-master';
+import i18n from '@core/helpers/i18n';
 import shortcuts from '@core/helpers/shortcuts';
-import { Tooltip } from 'antd';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
+import type { PreviewManager } from '@core/interfaces/PreviewManager';
 
 import styles from './BasePreviewManager.module.scss';
 
@@ -44,8 +47,12 @@ class BasePreviewManager implements PreviewManager {
     this.ended = true;
     try {
       const res = await deviceMaster.select(this.device);
+
       deviceMaster.disconnectCamera();
-      if (res.success) deviceMaster.kick();
+
+      if (res.success) {
+        deviceMaster.kick();
+      }
     } catch (error) {
       console.error('Failed to end PreviewManager', error);
     }
@@ -54,17 +61,12 @@ class BasePreviewManager implements PreviewManager {
   public preview = async (
     x: number,
     y: number,
-    opts?: { overlapRatio?: number; overlapFlag?: number },
+    opts?: { overlapFlag?: number; overlapRatio?: number },
   ): Promise<boolean> => {
     throw new Error('Method not implemented.');
   };
 
-  public previewRegion = async (
-    x1: number,
-    y1: number,
-    x2: number,
-    y2: number,
-  ): Promise<boolean> => {
+  public previewRegion = async (x1: number, y1: number, x2: number, y2: number): Promise<boolean> => {
     throw new Error('Method not implemented.');
   };
 
@@ -78,7 +80,7 @@ class BasePreviewManager implements PreviewManager {
       getPoints = () => [],
       overlapRatio = 0.05,
     }: {
-      getPoints?: () => Array<{ point: [number, number]; overlapFlag: number }>;
+      getPoints?: () => Array<{ overlapFlag: number; point: [number, number] }>;
       overlapRatio?: number;
     } = {},
   ): Promise<boolean> => {
@@ -92,10 +94,11 @@ class BasePreviewManager implements PreviewManager {
 
     try {
       for (let i = 0; i < points.length; i += 1) {
-        if (this.ended) return false;
+        if (this.ended) {
+          return false;
+        }
 
         MessageCaller.openMessage({
-          key: 'camera-preview',
           // add margin to prevent message display at the draggable area
           className: styles['mt-24'],
           content: (
@@ -106,27 +109,33 @@ class BasePreviewManager implements PreviewManager {
               </Tooltip>
             </>
           ),
-          level: MessageLevel.LOADING,
           duration: 20,
+          key: 'camera-preview',
+          level: MessageLevel.LOADING,
         });
 
-        const { point, overlapFlag } = points[i];
-        // eslint-disable-next-line no-await-in-loop
-        const result = await this.preview(point[0], point[1], { overlapRatio, overlapFlag });
+        const { overlapFlag, point } = points[i];
 
-        if (!result) return false;
-        if (isStopped) break;
+        const result = await this.preview(point[0], point[1], { overlapFlag, overlapRatio });
+
+        if (!result) {
+          return false;
+        }
+
+        if (isStopped) {
+          break;
+        }
       }
 
       if (isStopped) {
         MessageCaller.closeMessage('camera-preview');
       } else {
         MessageCaller.openMessage({
-          key: 'camera-preview',
           className: styles['mt-24'],
-          level: MessageLevel.SUCCESS,
           content: i18n.lang.device.completed,
           duration: 3,
+          key: 'camera-preview',
+          level: MessageLevel.SUCCESS,
         });
       }
 
@@ -142,11 +151,20 @@ class BasePreviewManager implements PreviewManager {
 
   protected getMovementSpeed = (): number => {
     // fixed to 3600 for diode laser
-    if (beamboxPreference.read('enable-diode') && getSupportInfo(this.workarea).hybridLaser)
+    if (beamboxPreference.read('enable-diode') && getSupportInfo(this.workarea).hybridLaser) {
       return 3600;
+    }
+
     const previewMovementSpeedLevel = beamboxPreference.read('preview_movement_speed_level');
-    if (previewMovementSpeedLevel === PreviewSpeedLevel.FAST) return 18000;
-    if (previewMovementSpeedLevel === PreviewSpeedLevel.MEDIUM) return 14400;
+
+    if (previewMovementSpeedLevel === PreviewSpeedLevel.FAST) {
+      return 18000;
+    }
+
+    if (previewMovementSpeedLevel === PreviewSpeedLevel.MEDIUM) {
+      return 14400;
+    }
+
     return 10800;
   };
 
@@ -156,8 +174,9 @@ class BasePreviewManager implements PreviewManager {
    * @param y y in px
    */
   constrainPreviewXY = (x: number, y: number): { x: number; y: number } => {
-    const { pxWidth: width, pxHeight, pxDisplayHeight } = this.workareaObj;
+    const { pxDisplayHeight, pxHeight, pxWidth: width } = this.workareaObj;
     const height = pxDisplayHeight ?? pxHeight;
+
     return {
       x: Math.min(Math.max(x, 0), width),
       y: Math.min(Math.max(y, 0), height),
@@ -172,7 +191,10 @@ class BasePreviewManager implements PreviewManager {
    */
   async getPhotoAfterMoveTo(movementX: number, movementY: number): Promise<string> {
     const moveRes = await this.moveTo(movementX, movementY);
-    if (!moveRes) return null;
+
+    if (!moveRes) {
+      return null;
+    }
 
     return this.getPhotoFromMachine();
   }
@@ -185,49 +207,66 @@ class BasePreviewManager implements PreviewManager {
    */
   async moveTo(movementX: number, movementY: number): Promise<boolean> {
     const selectRes = await deviceMaster.select(this.device);
-    if (!selectRes.success) return false;
+
+    if (!selectRes.success) {
+      return false;
+    }
+
     const control = await deviceMaster.getControl();
-    if (control.getMode() !== 'raw') await deviceMaster.enterRawMode();
-    if (!this.movementSpeed) this.movementSpeed = this.getMovementSpeed();
+
+    if (control.getMode() !== 'raw') {
+      await deviceMaster.enterRawMode();
+    }
+
+    if (!this.movementSpeed) {
+      this.movementSpeed = this.getMovementSpeed();
+    }
+
     const movement = { f: this.movementSpeed, x: movementX, y: movementY };
+
     await deviceMaster.rawMove(movement);
+
     const [lastX, lastY] = this.lastPosition;
     const [distX, distY] = [Math.abs(movementX - lastX), Math.abs(movementY - lastY)];
     const totalDist = Math.hypot(distX, distY);
     // the actual speed is limited by maxSpeedX and maxSpeedY
     const [maxSpeedX, maxSpeedY] = this.maxMovementSpeed;
-    let timeToWait =
-      Math.max(distX / maxSpeedX, distY / maxSpeedY, totalDist / this.movementSpeed) * 60000; // min => ms
+    let timeToWait = Math.max(distX / maxSpeedX, distY / maxSpeedY, totalDist / this.movementSpeed) * 60000; // min => ms
+
     // wait for moving camera to take a stable picture, this value need to be optimized
     timeToWait *= 1.2;
     timeToWait += 100;
     this.lastPosition = [movementX, movementY];
     await new Promise<void>((r) => setTimeout(r, timeToWait));
+
     return true;
   }
 
   async getPhotoFromMachine(): Promise<string> {
     const { lang } = i18n;
     const { imgBlob, needCameraCableAlert } = (await deviceMaster.takeOnePicture()) ?? {};
+
     if (!imgBlob) {
       throw new Error(lang.message.camera.ws_closed_unexpectly);
     } else if (needCameraCableAlert && !alertConfig.read('skip_camera_cable_alert')) {
       const shouldContinue = await new Promise<boolean>((resolve) => {
         alertCaller.popUp({
-          id: 'camera_cable_alert',
-          message: lang.message.camera.camera_cable_unstable,
-          type: alertConstants.SHOW_POPUP_WARNING,
-          checkbox: {
-            text: lang.beambox.popup.dont_show_again,
-            callbacks: () => alertConfig.write('skip_camera_cable_alert', true),
-          },
           buttonLabels: [lang.message.camera.abort_preview, lang.message.camera.continue_preview],
           callbacks: [() => resolve(false), () => resolve(true)],
+          checkbox: {
+            callbacks: () => alertConfig.write('skip_camera_cable_alert', true),
+            text: lang.beambox.popup.dont_show_again,
+          },
+          id: 'camera_cable_alert',
+          message: lang.message.camera.camera_cable_unstable,
           primaryButtonIndex: 1,
+          type: alertConstants.SHOW_POPUP_WARNING,
         });
       });
+
       if (!shouldContinue) {
         this.end();
+
         return null;
       }
     }

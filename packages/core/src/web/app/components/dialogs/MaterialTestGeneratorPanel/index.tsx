@@ -1,36 +1,39 @@
-/* eslint-disable @typescript-eslint/no-shadow */
 import React, { useMemo, useRef, useState } from 'react';
 
-import useI18n from '@core/helpers/useI18n';
-
 import { Button, Flex, Radio } from 'antd';
-import { createLayer } from '@core/helpers/layer/layer-helper';
-import svgEditor from '@core/app/actions/beambox/svg-editor';
-import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
-import constant, { promarkModels } from '@core/app/actions/beambox/constant';
-import ISVGCanvas from '@core/interfaces/ISVGCanvas';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import updateElementColor from '@core/helpers/color/updateElementColor';
-import history from '@core/app/svgedit/history/history';
-import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
-import storage from '@app/implementations/storage';
-import createNewText from '@core/app/svgedit/text/createNewText';
-import undoManager from '@core/app/svgedit/history/undoManager';
-import { IBatchCommand } from '@core/interfaces/IHistory';
-import workareaManager from '@core/app/svgedit/workarea';
-import DraggableModal from '@core/app/widgets/DraggableModal';
-import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
+
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import constant, { promarkModels } from '@core/app/actions/beambox/constant';
+import svgEditor from '@core/app/actions/beambox/svg-editor';
 import { LaserType } from '@core/app/constants/promark-constants';
-import styles from './index.module.scss';
-import WorkAreaInfo from './WorkAreaInfo';
-import TableSettingForm from './TableSettingForm';
+import history from '@core/app/svgedit/history/history';
+import undoManager from '@core/app/svgedit/history/undoManager';
+import createNewText from '@core/app/svgedit/text/createNewText';
+import workareaManager from '@core/app/svgedit/workarea';
+import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
+import DraggableModal from '@core/app/widgets/DraggableModal';
+import updateElementColor from '@core/helpers/color/updateElementColor';
+import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
+import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
+import { createLayer } from '@core/helpers/layer/layer-helper';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import useI18n from '@core/helpers/useI18n';
+import type { IBatchCommand } from '@core/interfaces/IHistory';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
+
+import storage from '@app/implementations/storage';
+
+import type { BlockInfo, BlockSetting } from './BlockSetting';
+import { getBlockSetting } from './BlockSetting';
 import BlockSettingForm from './BlockSettingForm';
+import type { SvgInfo } from './generateSvgInfo';
+import generateSvgInfo from './generateSvgInfo';
+import styles from './index.module.scss';
 import { getTableSetting } from './TableSetting';
+import TableSettingForm from './TableSettingForm';
 import { getTextSetting } from './TextSetting';
-import { BlockInfo, BlockSetting, getBlockSetting } from './BlockSetting';
-import generateSvgInfo, { SvgInfo } from './generateSvgInfo';
 import TextSettingForm from './TextSettingForm';
+import WorkAreaInfo from './WorkAreaInfo';
 
 interface Props {
   onClose: () => void;
@@ -45,35 +48,35 @@ getSVGAsync(({ Canvas }) => {
 const { dpmm } = constant;
 
 const paramWidth = {
+  fillInterval: 96.77,
+  frequency: 97.31,
+  pulseWidth: 97.79,
+  repeat: 42.63,
   speed: 81.61,
   strength: 60.66,
-  repeat: 42.63,
-  pulseWidth: 97.79,
-  frequency: 97.31,
-  fillInterval: 96.77,
 };
 const paramString = {
+  fillInterval: 'Fill Interval (mm)',
+  frequency: 'Frequency (kHz)',
+  pulseWidth: 'Pulse Width (ns)',
+  repeat: 'Passes',
   speed: 'Speed (mm/s)',
   strength: 'Power (%)',
-  repeat: 'Passes',
-  pulseWidth: 'Pulse Width (ns)',
-  frequency: 'Frequency (kHz)',
-  fillInterval: 'Fill Interval (mm)',
 };
 
 const getTextAdjustment = (rawText: number | string) => (rawText.toString().length * 2.7) / 2;
 const getEnd = (start: number, block: BlockInfo) =>
   start + (block.count.value - 1) * (block.spacing.value + block.size.value);
 
-const MaterialTestGeneratorPanel = ({ onClose }: Props): JSX.Element => {
+const MaterialTestGeneratorPanel = ({ onClose }: Props): React.JSX.Element => {
   const t = useI18n();
   const isInch = useMemo(() => storage.get('default-units') === 'inches', []);
   const { laserType } = getPromarkInfo();
   const workarea = useMemo(() => beamboxPreference.read('workarea'), []);
-  const { isPromark, isMopa } = useMemo(
+  const { isMopa, isPromark } = useMemo(
     () => ({
-      isPromark: promarkModels.has(workarea),
       isMopa: laserType === LaserType.MOPA,
+      isPromark: promarkModels.has(workarea),
     }),
     [laserType, workarea],
   );
@@ -87,11 +90,7 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): JSX.Element => {
   ];
   const batchCmd = useRef(new history.BatchCommand('Material Test Generator'));
 
-  const generateText = (
-    svgInfos: Array<SvgInfo>,
-    blockSetting: BlockSetting,
-    batchCmd: IBatchCommand,
-  ) => {
+  const generateText = (svgInfos: SvgInfo[], blockSetting: BlockSetting, batchCmd: IBatchCommand) => {
     const { column, row } = blockSetting;
     const [startPadding, endPadding] = [30, 10];
     const [right, bottom] = [row, column].map((block) => getEnd(startPadding, block));
@@ -99,9 +98,7 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): JSX.Element => {
       (right + row.size.value + endPadding * 2) * dpmm,
       (bottom + column.size.value + endPadding * 2) * dpmm,
     ];
-    const [colParam, rowParam] = Object.entries(tableSetting).sort(
-      ([, { selected: a }], [, { selected: b }]) => a - b,
-    );
+    const [colParam, rowParam] = Object.entries(tableSetting).sort(([, { selected: a }], [, { selected: b }]) => a - b);
 
     const { cmd: tableCmd } = createLayer('Material Test - Frame', {
       hexCode: '#000',
@@ -113,23 +110,23 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): JSX.Element => {
     }
 
     svgCanvas.addSvgElementFromJson({
-      element: 'rect',
-      curStyles: false,
       attr: {
-        x: 0,
-        y: 0,
-        width,
-        height,
-        stroke: '#000',
-        id: svgCanvas.getNextId(),
         fill: 'none',
         'fill-opacity': 0,
+        height,
+        id: svgCanvas.getNextId(),
         opacity: 1,
         rx: 50,
+        stroke: '#000',
+        width,
+        x: 0,
+        y: 0,
       },
+      curStyles: false,
+      element: 'rect',
     });
 
-    const { layer: infoLayer, cmd: infoCmd } = createLayer('Material Test - Info', {
+    const { cmd: infoCmd, layer: infoLayer } = createLayer('Material Test - Info', {
       hexCode: '#000',
       isSubCmd: true,
     });
@@ -146,10 +143,10 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): JSX.Element => {
       (startPadding + (right - startPadding) / 2 - paramWidth[rowParam[0]] / 2) * dpmm,
       (startPadding / 2) * dpmm,
       {
-        text: paramString[rowParam[0]],
-        fontSize: 130,
         fill: '#000',
+        fontSize: 130,
         isDefaultFont: true,
+        text: paramString[rowParam[0]],
       },
     );
 
@@ -158,10 +155,10 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): JSX.Element => {
       (-(paramWidth[colParam[0]] * 0.55) + 13.19) * dpmm,
       (startPadding + (bottom - startPadding) / 2 + paramWidth[colParam[0]] / 10) * dpmm,
       {
-        text: paramString[colParam[0]],
-        fontSize: 130,
         fill: '#000',
+        fontSize: 130,
         isDefaultFont: true,
+        text: paramString[colParam[0]],
       },
     );
 
@@ -177,10 +174,10 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): JSX.Element => {
           dpmm,
         startPadding * dpmm,
         {
-          text: svgInfos[index][rowParam[0]].toString(),
-          fontSize: 48,
           fill: '#000',
+          fontSize: 48,
           isDefaultFont: true,
+          text: svgInfos[index][rowParam[0]].toString(),
         },
       );
 
@@ -190,84 +187,73 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): JSX.Element => {
     Array.from({ length: column.count.value }).forEach((_, index) => {
       createNewText(
         (startPadding - 10) * dpmm,
-        (startPadding +
-          (column.size.value + column.spacing.value) * index +
-          column.size.value / 2 +
-          4 / 2 +
-          10) *
-          dpmm,
+        (startPadding + (column.size.value + column.spacing.value) * index + column.size.value / 2 + 4 / 2 + 10) * dpmm,
         {
-          text: svgInfos[index * row.count.value][colParam[0]].toString(),
-          fontSize: 48,
           fill: '#000',
+          fontSize: 48,
           isDefaultFont: true,
+          text: svgInfos[index * row.count.value][colParam[0]].toString(),
         },
       );
     });
   };
 
-  const generateBlocks = (
-    svgInfos: Array<SvgInfo>,
-    blockSetting: BlockSetting,
-    batchCmd: IBatchCommand,
-  ) => {
-    const { row, column } = blockSetting;
+  const generateBlocks = (svgInfos: SvgInfo[], blockSetting: BlockSetting, batchCmd: IBatchCommand) => {
+    const { column, row } = blockSetting;
     const startPadding = 30;
     const [width, height] = [row.size.value, column.size.value].map((value) => value * dpmm);
     const [right, bottom] = [row, column].map((block) => getEnd(startPadding, block) + 10);
     let [x, y] = [right, bottom].map((value) => value * dpmm);
 
-    [...svgInfos]
-      .reverse()
-      .forEach(({ name, strength, speed, repeat, pulseWidth, frequency, fillInterval }, index) => {
-        const { layer, cmd } = createLayer(name, { isSubCmd: true });
+    [...svgInfos].reverse().forEach(({ fillInterval, frequency, name, pulseWidth, repeat, speed, strength }, index) => {
+      const { cmd, layer } = createLayer(name, { isSubCmd: true });
 
-        if (cmd && !cmd.isEmpty()) {
-          batchCmd.addSubCommand(cmd);
-        }
+      if (cmd && !cmd.isEmpty()) {
+        batchCmd.addSubCommand(cmd);
+      }
 
-        writeDataLayer(layer, 'power', strength);
-        writeDataLayer(layer, 'speed', speed);
-        writeDataLayer(layer, 'repeat', repeat);
+      writeDataLayer(layer, 'power', strength);
+      writeDataLayer(layer, 'speed', speed);
+      writeDataLayer(layer, 'repeat', repeat);
 
-        if (isPromark) {
-          writeDataLayer(layer, 'fillInterval', fillInterval);
-          writeDataLayer(layer, 'frequency', frequency);
-        }
+      if (isPromark) {
+        writeDataLayer(layer, 'fillInterval', fillInterval);
+        writeDataLayer(layer, 'frequency', frequency);
+      }
 
-        if (isMopa) {
-          writeDataLayer(layer, 'pulseWidth', pulseWidth);
-        }
+      if (isMopa) {
+        writeDataLayer(layer, 'pulseWidth', pulseWidth);
+      }
 
-        const newRect = svgCanvas.addSvgElementFromJson({
-          element: 'rect',
-          curStyles: false,
-          attr: {
-            x,
-            y,
-            width,
-            height,
-            stroke: '#000',
-            id: svgCanvas.getNextId(),
-            fill: blockOption === 'engrave' ? '#000' : 'none',
-            'fill-opacity': blockOption === 'engrave' ? 1 : 0,
-            opacity: 1,
-          },
-        });
-
-        if ((index + 1) % row.count.value === 0) {
-          x = right * dpmm;
-          y -= (column.size.value + column.spacing.value) * dpmm;
-        } else {
-          x -= (row.size.value + row.spacing.value) * dpmm;
-        }
-
-        updateElementColor(newRect);
+      const newRect = svgCanvas.addSvgElementFromJson({
+        attr: {
+          fill: blockOption === 'engrave' ? '#000' : 'none',
+          'fill-opacity': blockOption === 'engrave' ? 1 : 0,
+          height,
+          id: svgCanvas.getNextId(),
+          opacity: 1,
+          stroke: '#000',
+          width,
+          x,
+          y,
+        },
+        curStyles: false,
+        element: 'rect',
       });
+
+      if ((index + 1) % row.count.value === 0) {
+        x = right * dpmm;
+        y -= (column.size.value + column.spacing.value) * dpmm;
+      } else {
+        x -= (row.size.value + row.spacing.value) * dpmm;
+      }
+
+      updateElementColor(newRect);
+    });
   };
 
   const handlePreview = () => {
-    const svgInfos = generateSvgInfo({ tableSetting, blockSetting });
+    const svgInfos = generateSvgInfo({ blockSetting, tableSetting });
 
     batchCmd.current.unapply();
     // to prevent layer id conflict
@@ -299,55 +285,55 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): JSX.Element => {
   React.useEffect(() => {
     workareaManager.resetView();
     handlePreview();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line hooks/exhaustive-deps
   }, [tableSetting, blockSetting, textSetting, blockOption]);
 
   return (
     <DraggableModal
-      open
       centered
-      wrapClassName={styles['modal-wrap']}
-      title={t.material_test_generator.title}
-      onCancel={handleCancel}
       footer={
         <div className={styles.footer}>
           <Button onClick={handleCancel}>{t.global.cancel}</Button>
-          <Button type="primary" onClick={handleExport}>
+          <Button onClick={handleExport} type="primary">
             {t.material_test_generator.export}
           </Button>
         </div>
       }
+      onCancel={handleCancel}
+      open
+      title={t.material_test_generator.title}
+      wrapClassName={styles['modal-wrap']}
     >
       <Flex className={styles['mb-28']} justify="space-between">
         <WorkAreaInfo isInch={isInch} />
         <Radio.Group
-          options={blockOptions}
           onChange={({ target: { value } }) => {
             setBlockOption(value);
           }}
-          value={blockOption}
+          options={blockOptions}
           optionType="button"
+          value={blockOption}
         />
       </Flex>
 
       <TableSettingForm
+        blockOption={blockOption}
         className={styles['mb-28']}
+        handleChange={setTableSetting}
         isInch={isInch}
+        laserType={laserType}
         tableSetting={tableSetting}
         workarea={workarea}
-        laserType={laserType}
-        blockOption={blockOption}
-        handleChange={setTableSetting}
       />
 
       <BlockSettingForm
-        className={styles['mb-28']}
-        isInch={isInch}
         blockSetting={blockSetting}
+        className={styles['mb-28']}
         handleChange={setBlockSetting}
+        isInch={isInch}
       />
 
-      <TextSettingForm isInch={isInch} setting={textSetting} handleChange={setTextSetting} />
+      <TextSettingForm handleChange={setTextSetting} isInch={isInch} setting={textSetting} />
     </DraggableModal>
   );
 };

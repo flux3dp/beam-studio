@@ -7,9 +7,8 @@ import communicator from '@app/implementations/communicator';
 export default {
   checkIPExist: async (ip: string, trial: number) =>
     new Promise<{ error?: string; isExisting: boolean }>((resolve) => {
-      communicator.once(
-        'CHECK_IP_EXIST_RESULT',
-        (e: any, res: { error?: string; isExisting: boolean }) => resolve(res),
+      communicator.once('CHECK_IP_EXIST_RESULT', (e: any, res: { error?: string; isExisting: boolean }) =>
+        resolve(res),
       );
       communicator.send('CHECK_IP_EXIST', ip, trial);
     }),

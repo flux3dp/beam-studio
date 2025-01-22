@@ -1,47 +1,55 @@
-import classNames from 'classnames';
 import React, { memo, useCallback, useContext, useEffect, useMemo } from 'react';
+
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Switch, Tooltip } from 'antd';
+import classNames from 'classnames';
 
 import history from '@core/app/svgedit/history/history';
+import undoManager from '@core/app/svgedit/history/undoManager';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
-import undoManager from '@core/app/svgedit/history/undoManager';
-import useI18n from '@core/helpers/useI18n';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
+import useI18n from '@core/helpers/useI18n';
 
-import ConfigPanelContext from './ConfigPanelContext';
 import styles from './Block.module.scss';
+import ConfigPanelContext from './ConfigPanelContext';
 
 // TODO: add tests
-const FocusBlock = ({
-  type = 'default',
-}: {
-  type?: 'default' | 'panel-item' | 'modal';
-}): JSX.Element => {
+const FocusBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.JSX.Element => {
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
-  const { selectedLayers, state, dispatch, initState } = useContext(ConfigPanelContext);
+  const { dispatch, initState, selectedLayers, state } = useContext(ConfigPanelContext);
   const { focus, focusStep, repeat } = state;
 
   const focusStepMax = useMemo(() => {
-    if (repeat.value <= 1) return 10;
+    if (repeat.value <= 1) {
+      return 10;
+    }
+
     return 10 / (repeat.value - 1);
   }, [repeat]);
 
   const toggleFocusAdjust = () => {
     const value = -focus.value;
-    dispatch({ type: 'change', payload: { focus: value } });
+
+    dispatch({ payload: { focus: value }, type: 'change' });
+
     const batchCmd = new history.BatchCommand('Toggle focus adjustment');
+
     selectedLayers.forEach((layerName) => writeData(layerName, 'focus', value, { batchCmd }));
     batchCmd.onAfter = initState;
     undoManager.addCommandToHistory(batchCmd);
   };
 
   const handleFocusChange = (value: number) => {
-    if (value < 0.01 || value > 10) return;
-    dispatch({ type: 'change', payload: { focus: value } });
+    if (value < 0.01 || value > 10) {
+      return;
+    }
+
+    dispatch({ payload: { focus: value }, type: 'change' });
+
     const batchCmd = new history.BatchCommand('Change focus adjustment height');
+
     selectedLayers.forEach((layerName) => writeData(layerName, 'focus', value, { batchCmd }));
     batchCmd.onAfter = initState;
     undoManager.addCommandToHistory(batchCmd);
@@ -49,8 +57,11 @@ const FocusBlock = ({
 
   const toggleFocusStep = () => {
     const value = -focusStep.value;
-    dispatch({ type: 'change', payload: { focusStep: value } });
+
+    dispatch({ payload: { focusStep: value }, type: 'change' });
+
     const batchCmd = new history.BatchCommand('Toggle focus step');
+
     selectedLayers.forEach((layerName) => writeData(layerName, 'focusStep', value, { batchCmd }));
     batchCmd.onAfter = initState;
     undoManager.addCommandToHistory(batchCmd);
@@ -58,9 +69,14 @@ const FocusBlock = ({
 
   const handleFocusStepChange = useCallback(
     (value: number) => {
-      if (value < 0.01 || value > focusStepMax) return;
-      dispatch({ type: 'change', payload: { focusStep: value } });
+      if (value < 0.01 || value > focusStepMax) {
+        return;
+      }
+
+      dispatch({ payload: { focusStep: value }, type: 'change' });
+
       const batchCmd = new history.BatchCommand('Change auto focus z step');
+
       selectedLayers.forEach((layerName) => {
         writeData(layerName, 'focusStep', value, { batchCmd });
       });
@@ -80,24 +96,24 @@ const FocusBlock = ({
     return (
       <>
         <ObjectPanelItem.Number
+          decimal={2}
           id="focus-adjustment"
           label={t.focus_adjustment}
-          value={focus.value}
-          min={0.01}
           max={10}
-          updateValue={handleFocusChange}
+          min={0.01}
           unit="mm"
-          decimal={2}
+          updateValue={handleFocusChange}
+          value={focus.value}
         />
         <ObjectPanelItem.Number
+          decimal={2}
           id="focus-step"
           label={t.z_step}
-          value={focusStep.value}
-          min={0.01}
           max={focusStepMax}
-          updateValue={handleFocusChange}
+          min={0.01}
           unit="mm"
-          decimal={2}
+          updateValue={handleFocusChange}
+          value={focusStep.value}
         />
       </>
     );
@@ -114,25 +130,25 @@ const FocusBlock = ({
             <QuestionCircleOutlined className={styles.hint} />
           </Tooltip>
           <Switch
+            checked={focus.value > 0}
             className={styles.switch}
             id="lower-focus"
-            size="small"
-            checked={focus.value > 0}
             onChange={toggleFocusAdjust}
+            size="small"
           />
         </div>
         {focus.value >= 0 && (
           <div className={classNames(styles.panel, styles['without-drag'])}>
             <span className={classNames(styles.title, styles.light)}>{t.by}</span>
             <UnitInput
-              id="focus-adjustment"
               className={{ [styles.input]: true }}
-              min={0.01}
-              max={10}
-              unit="mm"
               defaultValue={focus.value}
-              getValue={handleFocusChange}
               displayMultiValue={focus.hasMultiValue}
+              getValue={handleFocusChange}
+              id="focus-adjustment"
+              max={10}
+              min={0.01}
+              unit="mm"
             />
           </div>
         )}
@@ -147,25 +163,25 @@ const FocusBlock = ({
               <QuestionCircleOutlined className={styles.hint} />
             </Tooltip>
             <Switch
+              checked={focusStep.value > 0}
               className={styles.switch}
               id="focus-step-toggle"
-              size="small"
-              checked={focusStep.value > 0}
               onChange={toggleFocusStep}
+              size="small"
             />
           </div>
           {focusStep.value >= 0 && (
             <div className={classNames(styles.panel, styles['without-drag'])}>
               <span className={classNames(styles.title, styles.light)}>{t.z_step}</span>
               <UnitInput
-                id="focus-step"
                 className={{ [styles.input]: true }}
-                min={0.01}
-                max={focusStepMax}
-                unit="mm"
                 defaultValue={focusStep.value}
-                getValue={handleFocusStepChange}
                 displayMultiValue={focusStep.hasMultiValue}
+                getValue={handleFocusStepChange}
+                id="focus-step"
+                max={focusStepMax}
+                min={0.01}
+                unit="mm"
               />
             </div>
           )}

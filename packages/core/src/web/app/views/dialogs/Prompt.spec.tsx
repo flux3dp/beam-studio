@@ -1,19 +1,21 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import Prompt from './Prompt';
 
 const mockWrite = jest.fn();
 const mockRead = jest.fn();
+
 jest.mock('@core/helpers/api/alert-config', () => ({
-  write: (...args: any[]) => mockWrite(...args),
   read: (...args: any[]) => mockRead(...args),
+  write: (...args: any[]) => mockWrite(...args),
 }));
 
 jest.mock('@core/helpers/useI18n', () => () => ({
   alert: {
-    ok2: 'OK',
     cancel: 'Cancel',
+    ok2: 'OK',
   },
   beambox: {
     popup: {
@@ -25,8 +27,8 @@ jest.mock('@core/helpers/useI18n', () => () => ({
 jest.mock('@core/helpers/i18n', () => ({
   lang: {
     alert: {
-      ok2: 'OK',
       cancel: 'Cancel',
+      ok2: 'OK',
     },
   },
 }));
@@ -42,14 +44,9 @@ describe('test Prompt', () => {
 
   test('should render correctly', () => {
     const { baseElement, getByText } = render(
-      <Prompt
-        caption="New Preset Name"
-        defaultValue=""
-        onYes={onYes}
-        onCancel={onCancel}
-        onClose={onClose}
-      />,
+      <Prompt caption="New Preset Name" defaultValue="" onCancel={onCancel} onClose={onClose} onYes={onYes} />,
     );
+
     expect(baseElement).toMatchSnapshot();
 
     expect(onYes).not.toBeCalled();
@@ -70,13 +67,14 @@ describe('test Prompt', () => {
     const { baseElement, getByText } = render(
       <Prompt
         caption="New Preset Name"
-        defaultValue=""
         confirmValue="value"
-        onYes={onYes}
+        defaultValue=""
         onCancel={onCancel}
         onClose={onClose}
+        onYes={onYes}
       />,
     );
+
     expect(baseElement).toMatchSnapshot();
 
     expect(onYes).not.toBeCalled();
@@ -101,15 +99,16 @@ describe('test Prompt', () => {
   it('should work with alertConfigKey', () => {
     const { baseElement, getByText } = render(
       <Prompt
-        caption="New Preset Name"
-        defaultValue=""
-        confirmValue="value"
         alertConfigKey="skip_svg_version_warning"
-        onYes={onYes}
+        caption="New Preset Name"
+        confirmValue="value"
+        defaultValue=""
         onCancel={onCancel}
         onClose={onClose}
+        onYes={onYes}
       />,
     );
+
     expect(baseElement).toMatchSnapshot();
 
     fireEvent.click(baseElement.querySelector('input[type="checkbox"]'));

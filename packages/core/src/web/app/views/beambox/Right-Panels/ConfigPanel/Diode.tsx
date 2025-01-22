@@ -1,31 +1,36 @@
-import classNames from 'classnames';
 import React, { memo, useContext } from 'react';
+
 import { Switch } from 'antd';
+import classNames from 'classnames';
 
 import history from '@core/app/svgedit/history/history';
-import ISVGCanvas from '@core/interfaces/ISVGCanvas';
-import useI18n from '@core/helpers/useI18n';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import useI18n from '@core/helpers/useI18n';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import ConfigPanelContext from './ConfigPanelContext';
 import styles from './Block.module.scss';
+import ConfigPanelContext from './ConfigPanelContext';
 
 let svgCanvas: ISVGCanvas;
+
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
 
-const Diode = (): JSX.Element => {
+const Diode = (): React.JSX.Element => {
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
-  const { selectedLayers, state, dispatch, initState } = useContext(ConfigPanelContext);
+  const { dispatch, initState, selectedLayers, state } = useContext(ConfigPanelContext);
   const { diode } = state;
 
   const handleToggle = () => {
     const newValue = diode.value === 1 ? 0 : 1;
-    dispatch({ type: 'change', payload: { diode: newValue } });
+
+    dispatch({ payload: { diode: newValue }, type: 'change' });
+
     const batchCmd = new history.BatchCommand('Change diode toggle');
+
     selectedLayers.forEach((layerName) => writeData(layerName, 'diode', newValue, { batchCmd }));
     batchCmd.onAfter = initState;
     svgCanvas.addCommandToHistory(batchCmd);
@@ -36,13 +41,7 @@ const Diode = (): JSX.Element => {
       <label className={styles.title} htmlFor="diode">
         {t.diode}
       </label>
-      <Switch
-        className={styles.switch}
-        id="diode"
-        size="small"
-        checked={diode.value === 1}
-        onChange={handleToggle}
-      />
+      <Switch checked={diode.value === 1} className={styles.switch} id="diode" onChange={handleToggle} size="small" />
     </div>
   );
 };

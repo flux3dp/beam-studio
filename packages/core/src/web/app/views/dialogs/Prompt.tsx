@@ -1,82 +1,91 @@
-/* eslint-disable react/require-default-props */
 import React, { useState } from 'react';
-import { Checkbox, InputRef, Modal } from 'antd';
 
-import alertConfig, { AlertConfigKey } from '@core/helpers/api/alert-config';
+import type { InputRef } from 'antd';
+import { Checkbox, Modal } from 'antd';
+
 import Input from '@core/app/widgets/Input';
 import InputKeyWrapper from '@core/app/widgets/InputKeyWrapper';
+import type { AlertConfigKey } from '@core/helpers/api/alert-config';
+import alertConfig from '@core/helpers/api/alert-config';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './Prompt.module.scss';
 
 interface Props {
-  caption: string;
-  message?: string;
-  placeholder?: string;
-  defaultValue?: string;
-  confirmValue?: string;
   alertConfigKey?: AlertConfigKey;
-  onYes: (value?: string) => void;
+  caption: string;
+  confirmValue?: string;
+  defaultValue?: string;
+  message?: string;
   onCancel?: (value?: string) => void;
   onClose: () => void;
+  onYes: (value?: string) => void;
+  placeholder?: string;
 }
 
 function Prompt({
-  caption,
-  message,
-  placeholder,
-  defaultValue = '',
-  confirmValue,
   alertConfigKey,
-  onYes,
+  caption,
+  confirmValue,
+  defaultValue = '',
+  message,
   onCancel = () => {},
   onClose,
-}: Props): JSX.Element {
+  onYes,
+  placeholder,
+}: Props): React.JSX.Element {
   const lang = useI18n();
   const langAlert = lang.alert;
   const inputRef = React.useRef<InputRef>(null);
   const [checkboxChecked, setCheckboxChecked] = useState(false);
 
-  const messageContent =
-    typeof message === 'string' ? message.split('\n').map((t) => <p key={t}>{t}</p>) : message;
+  const messageContent = typeof message === 'string' ? message.split('\n').map((t) => <p key={t}>{t}</p>) : message;
   const handleOk = (): void => {
     const inputElem = inputRef.current;
     const value = inputElem?.input?.value;
+
     onYes(value);
+
     if (!confirmValue || value?.toLowerCase() === confirmValue?.toLowerCase()) {
-      if (alertConfigKey && checkboxChecked) alertConfig.write(alertConfigKey, true);
+      if (alertConfigKey && checkboxChecked) {
+        alertConfig.write(alertConfigKey, true);
+      }
+
       onClose();
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent): void => {
-    if (e.key === 'Enter' && !e.nativeEvent.isComposing) handleOk();
+    if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
+      handleOk();
+    }
   };
 
   return (
     <Modal
-      open
-      title={caption}
+      cancelText={langAlert.cancel}
       centered
-      onOk={handleOk}
+      okText={langAlert.ok2}
       onCancel={() => {
         const inputElem = inputRef.current;
+
         onCancel?.(inputElem?.input?.value);
         onClose();
       }}
-      okText={langAlert.ok2}
-      cancelText={langAlert.cancel}
+      onOk={handleOk}
+      open
+      title={caption}
     >
       {messageContent}
       <InputKeyWrapper inputRef={inputRef}>
         <Input
           autoFocus
-          ref={inputRef}
           className="text-input"
-          type="text"
+          defaultValue={defaultValue}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          defaultValue={defaultValue}
+          ref={inputRef}
+          type="text"
         />
       </InputKeyWrapper>
       {alertConfigKey && (

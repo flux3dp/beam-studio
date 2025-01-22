@@ -1,76 +1,78 @@
-import React, { Dispatch, SetStateAction } from 'react';
-import { Flex, Tooltip } from 'antd';
+import type { Dispatch, SetStateAction } from 'react';
+import React from 'react';
+
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Flex, Tooltip } from 'antd';
 
 import UnitInput from '@core/app/widgets/UnitInput';
 import useI18n from '@core/helpers/useI18n';
-import { Field } from '@core/interfaces/Promark';
+import type { Field } from '@core/interfaces/Promark';
 
 import styles from './Block.module.scss';
 
 interface Props {
-  isInch: boolean;
-  width: number;
   field: Field;
+  isInch: boolean;
   setField: Dispatch<SetStateAction<Field>>;
+  width: number;
 }
 
-const FieldBlock = ({ isInch, width, field, setField }: Props): JSX.Element => {
+const FieldBlock = ({ field, isInch, setField, width }: Props): React.JSX.Element => {
   const {
-    promark_settings: t,
     beambox: { document_panel: tDocu },
+    promark_settings: t,
   } = useI18n();
-  const { offsetX, offsetY, angle } = field;
+  const { angle, offsetX, offsetY } = field;
 
   return (
-    <Flex className={styles.block} vertical gap={8}>
+    <Flex className={styles.block} gap={8} vertical>
       <div className={styles.title}>{t.field}</div>
-      <Flex className={styles.row} justify="space-between" align="center">
+      <Flex align="center" className={styles.row} justify="space-between">
         <Flex align="center">
           <span className={styles.label}>{tDocu.workarea}</span>
           <Tooltip title={t.workarea_hint}>
             <QuestionCircleOutlined className={styles.tooltip} />
           </Tooltip>
         </Flex>
-        <UnitInput className={styles.input} size="small" value={width} addonAfter="mm" disabled />
+        <UnitInput addonAfter="mm" className={styles.input} disabled size="small" value={width} />
       </Flex>
-      <Flex className={styles.row} justify="space-between" align="center">
+      <Flex align="center" className={styles.row} justify="space-between">
         <span className={styles.label}>{t.offsetX}</span>
         <UnitInput
-          data-testid="offset-x"
-          size="small"
-          className={styles.input}
-          value={offsetX}
-          precision={isInch ? 5 : 3}
           addonAfter={isInch ? 'in' : 'mm'}
+          className={styles.input}
+          data-testid="offset-x"
           isInch={isInch}
           onChange={(val) => setField((cur) => ({ ...cur, offsetX: val }))}
+          precision={isInch ? 5 : 3}
+          size="small"
+          value={offsetX}
         />
       </Flex>
-      <Flex className={styles.row} justify="space-between" align="center">
+      <Flex align="center" className={styles.row} justify="space-between">
         <span className={styles.label}>{t.offsetY}</span>
         <UnitInput
-          data-testid="offset-y"
-          size="small"
-          className={styles.input}
-          value={offsetY}
-          precision={isInch ? 5 : 3}
           addonAfter={isInch ? 'in' : 'mm'}
+          className={styles.input}
+          data-testid="offset-y"
           isInch={isInch}
           onChange={(val) => setField((cur) => ({ ...cur, offsetY: val }))}
+          precision={isInch ? 5 : 3}
+          size="small"
+          value={offsetY}
         />
       </Flex>
-      <Flex className={styles.row} justify="space-between" align="center">
+      <Flex align="center" className={styles.row} justify="space-between">
         <span className={styles.label}>{t.angle}</span>
         <UnitInput
-          data-testid="angle"
-          size="small"
-          className={styles.input}
-          value={angle}
-          precision={3}
           addonAfter="deg"
-          step={0.001}
+          className={styles.input}
+          data-testid="angle"
           onChange={(val) => setField((cur) => ({ ...cur, angle: val }))}
+          precision={3}
+          size="small"
+          step={0.001}
+          value={angle}
         />
       </Flex>
     </Flex>

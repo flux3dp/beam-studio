@@ -1,5 +1,6 @@
-import classNames from 'classnames';
 import React, { useContext } from 'react';
+
+import classNames from 'classnames';
 
 import { ItemType } from '@core/app/constants/monitor-constants';
 import { MonitorContext } from '@core/app/contexts/MonitorContext';
@@ -10,7 +11,7 @@ interface Props {
   name: string;
 }
 
-const DirectoryItem = ({ name }: Props): JSX.Element => {
+const DirectoryItem = ({ name }: Props): React.JSX.Element => {
   const { highlightedItem, onHighlightItem, onSelectFolder } = useContext(MonitorContext);
   const isSelected = highlightedItem.type === ItemType.FOLDER && highlightedItem.name === name;
 

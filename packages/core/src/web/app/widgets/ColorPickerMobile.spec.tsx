@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import ColorPickerMobile from './ColorPickerMobile';
@@ -14,6 +15,7 @@ const mockOnChange = jest.fn();
 const mockOnClose = jest.fn();
 const MockComponent = () => {
   const [color, setColor] = useState('#333333');
+
   return (
     <ColorPickerMobile
       color={color}
@@ -31,6 +33,7 @@ const MockComponent = () => {
 // Use original hex input to trigger antd color picker onChange event
 const mockSelectColor = (container: HTMLElement, color: string) => {
   const input = container.querySelector('.ant-color-picker-input input');
+
   fireEvent.change(input, { target: { value: color } });
 };
 
@@ -43,23 +46,21 @@ describe('test ColorPickerMobile', () => {
     const { baseElement } = render(
       <ColorPickerMobile color="#333333" onChange={mockOnChange} onClose={mockOnClose} open />,
     );
+
     expect(baseElement).toMatchSnapshot();
   });
 
   it('should render correctly when closed', () => {
     const { baseElement } = render(
-      <ColorPickerMobile
-        color="#333333"
-        onChange={mockOnChange}
-        onClose={mockOnClose}
-        open={false}
-      />,
+      <ColorPickerMobile color="#333333" onChange={mockOnChange} onClose={mockOnClose} open={false} />,
     );
+
     expect(baseElement).toMatchSnapshot();
   });
 
   test('preview and cancel', () => {
     const { container, getByText } = render(<MockComponent />);
+
     mockSelectColor(container, 'AAFFFF');
     expect(mockOnChange).toBeCalledTimes(1);
     expect(mockOnChange).toBeCalledWith('#aaffff', false);
@@ -70,6 +71,7 @@ describe('test ColorPickerMobile', () => {
 
   test('preview and ok', () => {
     const { container, getByText } = render(<MockComponent />);
+
     mockSelectColor(container, 'AAFFFF');
     expect(mockOnChange).toBeCalledTimes(1);
     expect(mockOnChange).toBeCalledWith('#aaffff', false);
@@ -82,6 +84,7 @@ describe('test ColorPickerMobile', () => {
   test('hex input', () => {
     const { container } = render(<MockComponent />);
     const input = container.querySelector('.footer .input input');
+
     fireEvent.change(input, { target: { value: 'aaaaff' } });
     expect(mockOnChange).toBeCalledTimes(1);
     expect(mockOnChange).toBeCalledWith('#aaaaff', false);
@@ -96,6 +99,7 @@ describe('test ColorPickerMobile', () => {
   test('clear button', () => {
     const { container } = render(<MockComponent />);
     const claerBtn = container.querySelector('.clear-button>div');
+
     fireEvent.click(claerBtn);
     expect(mockOnChange).toBeCalledTimes(1);
     expect(mockOnChange).toBeCalledWith('none', false);

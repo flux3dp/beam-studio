@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 declare global {
   interface Window {
     FLUX: {
@@ -35,12 +34,7 @@ declare global {
       };
       draw: {
         Drawing: (svgElem: SVGSVGElement, opt_idPrefix: string) => any;
-        Layer: (
-          name: string,
-          group: null | SVGGElement,
-          svgElem: SVGGElement,
-          color: string,
-        ) => any;
+        Layer: (name: string, group: null | SVGGElement, svgElem: SVGGElement, color: string) => any;
         randomizeIds: (enableRandomization: string, currentDrawing: any) => void;
       };
       getReverseNS: () => { [key: string]: string };
@@ -50,18 +44,8 @@ declare global {
         HistoryEventTypes: { [key: string]: string };
         HistoryRecordingService: (undoManager: any) => any;
         InsertElementCommand: (elem: Element, text?: string) => any;
-        MoveElementCommand: (
-          elem: Element,
-          oldNextSibling: Element,
-          oldParent: Element,
-          text?: string,
-        ) => any;
-        RemoveElementCommand: (
-          elem: Element,
-          oldNextSibling: Element,
-          oldParent: Element,
-          text?: string,
-        ) => any;
+        MoveElementCommand: (elem: Element, oldNextSibling: Element, oldParent: Element, text?: string) => any;
+        RemoveElementCommand: (elem: Element, oldNextSibling: Element, oldParent: Element, text?: string) => any;
         UndoManager: (historyEventHandler: any) => any;
       };
       math: {
@@ -125,13 +109,7 @@ declare global {
       NS: { [key: string]: string };
       path: {
         addDrawingCtrlGrip: (id: number) => HTMLElement;
-        addDrawingPoint: (
-          index: number,
-          x: number,
-          y: number,
-          canvasX: number,
-          canvasY: number,
-        ) => HTMLElement;
+        addDrawingPoint: (index: number, x: number, y: number, canvasX: number, canvasY: number) => HTMLElement;
         clearData: () => void;
         getCtrlLine: (id: number) => HTMLElement;
         getGripContainer: () => HTMLElement;

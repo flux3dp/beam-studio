@@ -1,16 +1,18 @@
 import React, { memo, useEffect, useRef } from 'react';
 
 import AlertIcons from '@core/app/icons/alerts/AlertIcons';
-import browser from '@app/implementations/browser';
-import ISVGCanvas from '@core/interfaces/ISVGCanvas';
-import rotateBBox from '@core/app/svgedit/utils/rotateBBox';
-import useI18n from '@core/helpers/useI18n';
 import { getRotationAngle } from '@core/app/svgedit/transform/rotation';
+import rotateBBox from '@core/app/svgedit/utils/rotateBBox';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import useI18n from '@core/helpers/useI18n';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
+
+import browser from '@app/implementations/browser';
 
 import styles from './Info.module.scss';
 
 let svgCanvas: ISVGCanvas;
+
 getSVGAsync(({ Canvas }) => {
   svgCanvas = Canvas;
 });
@@ -19,18 +21,18 @@ interface Props {
   element: SVGElement;
 }
 
-const Info = ({ element }: Props): JSX.Element => {
+const Info = ({ element }: Props): React.JSX.Element => {
   const { auto_fit: t } = useI18n();
   const svgRef = useRef<SVGSVGElement>(null);
+
   useEffect(() => {
     if (svgRef.current) {
       const bbox =
-        element.tagName === 'use'
-          ? svgCanvas.getSvgRealLocation(element)
-          : svgCanvas.calculateTransformedBBox(element);
+        element.tagName === 'use' ? svgCanvas.getSvgRealLocation(element) : svgCanvas.calculateTransformedBBox(element);
       const angle = getRotationAngle(element);
-      let { x, y, width, height } = rotateBBox(bbox, angle);
+      let { height, width, x, y } = rotateBBox(bbox, angle);
       const padding = 0.1;
+
       x -= padding * width;
       y -= padding * height;
       width *= 1 + padding * 2;
@@ -46,11 +48,7 @@ const Info = ({ element }: Props): JSX.Element => {
   return (
     <div className={styles.container}>
       <div className={styles.content}>
-        <button
-          className={styles.link}
-          type="button"
-          onClick={() => browser.open(t.learn_more_url)}
-        >
+        <button className={styles.link} onClick={() => browser.open(t.learn_more_url)} type="button">
           {t.learn_more}
           <AlertIcons.ExtLink className={styles.icon} />
         </button>

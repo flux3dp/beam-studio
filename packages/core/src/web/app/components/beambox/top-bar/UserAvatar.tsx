@@ -13,12 +13,10 @@ interface Props {
   user: IUser | null;
 }
 
-const UserAvatar = ({ user }: Props): JSX.Element => (
+const UserAvatar = ({ user }: Props): React.JSX.Element => (
   <div className={styles['user-avatar']} onClick={() => dialogCaller.showFluxCreditDialog()}>
     <Badge
-      count={
-        user?.info?.subscription?.is_valid ? <FluxIcons.FluxPlus className={styles.badge} /> : 0
-      }
+      count={user?.info?.subscription?.is_valid ? <FluxIcons.FluxPlus className={styles.badge} /> : 0}
       offset={[-4, 4]}
     >
       <Avatar

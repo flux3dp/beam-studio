@@ -1,10 +1,13 @@
 import network from '@app/implementations/network';
 
-const checkRpiIp = async (): Promise<string | null> => {
+const checkRpiIp = async (): Promise<null | string> => {
   try {
     const addresses = await network.dnsLookUpAll('raspberrypi.local');
+
     for (let i = 0; i < addresses.length; i += 1) {
-      if (addresses[i].family === 4) return addresses[i].address;
+      if (addresses[i].family === 4) {
+        return addresses[i].address;
+      }
     }
   } catch (e) {
     if (e.toString().includes('ENOTFOUND')) {
@@ -13,6 +16,7 @@ const checkRpiIp = async (): Promise<string | null> => {
       console.log(`Error when dns looking up raspberrypi:\n${e}`);
     }
   }
+
   return null;
 };
 

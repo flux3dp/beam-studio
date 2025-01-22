@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { render } from '@testing-library/react';
 
 import { CanvasMode } from '@core/app/constants/canvasMode';
@@ -6,6 +7,7 @@ import { CanvasMode } from '@core/app/constants/canvasMode';
 import SvgEditor from './SvgEditor';
 
 const mockGet = jest.fn();
+
 jest.mock('implementations/storage', () => ({
   get: (...args) => mockGet(...args),
 }));
@@ -25,13 +27,12 @@ jest.mock(
     },
 );
 
-jest.mock('@core/app/components/beambox/path-preview/PathPreview', () => () => (
-  <div>MockPathPreview</div>
-));
+jest.mock('@core/app/components/beambox/path-preview/PathPreview', () => () => <div>MockPathPreview</div>);
 jest.mock('@core/app/components/beambox/ZoomBlock', () => () => <div>MockZoomBlock</div>);
 jest.mock('@core/app/components/beambox/DpiInfo', () => () => <div>MockDpiInfo</div>);
 
 const mockInit = jest.fn();
+
 jest.mock('@core/app/actions/beambox/svg-editor', () => ({
   init: () => mockInit(),
 }));
@@ -45,6 +46,7 @@ jest.mock('@core/app/contexts/CanvasContext', () => ({
 }));
 
 const mockZoom = jest.fn();
+
 jest.mock('@core/app/svgedit/workarea', () => ({
   zoom: (...args) => mockZoom(...args),
 }));
@@ -55,7 +57,9 @@ describe('test svg-editor', () => {
     Object.defineProperty(window, 'os', {
       value: 'MacOS',
     });
+
     const { container } = render(<SvgEditor />);
+
     expect(container).toMatchSnapshot();
   });
 
@@ -64,7 +68,9 @@ describe('test svg-editor', () => {
     Object.defineProperty(window, 'os', {
       value: 'Windows',
     });
+
     const { container } = render(<SvgEditor />);
+
     expect(container).toMatchSnapshot();
   });
 });

@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import ConfigPanelContext from './ConfigPanelContext';
@@ -15,12 +15,14 @@ jest.mock('@core/helpers/useI18n', () => () => ({
 }));
 
 const mockWriteData = jest.fn();
+
 jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   CUSTOM_PRESET_CONSTANT: 'CUSTOM_PRESET_CONSTANT',
   writeData: (...args) => mockWriteData(...args),
 }));
 
 const mockAddCommandToHistory = jest.fn();
+
 jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) =>
     callback({
@@ -30,23 +32,24 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
     }),
 }));
 
-let batchCmd = { onAfter: undefined, count: 0 };
+let batchCmd = { count: 0, onAfter: undefined };
 const mockBatchCommand = jest.fn().mockImplementation(() => {
-  batchCmd = { onAfter: undefined, count: batchCmd.count + 1 };
+  batchCmd = { count: batchCmd.count + 1, onAfter: undefined };
+
   return batchCmd;
 });
+
 jest.mock('@core/app/svgedit/history/history', () => ({
   BatchCommand: mockBatchCommand,
 }));
 
 const mockSelectedLayers = ['layer1', 'layer2'];
 const mockContextState = {
-  diode: { value: 1, hasMultiValue: false },
+  diode: { hasMultiValue: false, value: 1 },
 };
 const mockDispatch = jest.fn();
 const mockInitState = jest.fn();
 
-// eslint-disable-next-line import/first
 import Diode from './Diode';
 
 describe('test Diode', () => {
@@ -54,15 +57,16 @@ describe('test Diode', () => {
     const { container } = render(
       <ConfigPanelContext.Provider
         value={{
-          state: mockContextState as any,
           dispatch: mockDispatch,
-          selectedLayers: mockSelectedLayers,
           initState: mockInitState,
+          selectedLayers: mockSelectedLayers,
+          state: mockContextState as any,
         }}
       >
         <Diode />
       </ConfigPanelContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
   });
 
@@ -70,16 +74,17 @@ describe('test Diode', () => {
     const { container } = render(
       <ConfigPanelContext.Provider
         value={{
-          state: mockContextState as any,
           dispatch: mockDispatch,
-          selectedLayers: mockSelectedLayers,
           initState: mockInitState,
+          selectedLayers: mockSelectedLayers,
+          state: mockContextState as any,
         }}
       >
         <Diode />
       </ConfigPanelContext.Provider>,
     );
     const btn = container.querySelector('button#diode');
+
     expect(mockDispatch).not.toBeCalled();
     expect(mockWriteData).not.toBeCalled();
     expect(mockBatchCommand).not.toBeCalled();
@@ -87,8 +92,8 @@ describe('test Diode', () => {
     fireEvent.click(btn);
     expect(mockDispatch).toBeCalledTimes(1);
     expect(mockDispatch).toHaveBeenLastCalledWith({
-      type: 'change',
       payload: { diode: 0 },
+      type: 'change',
     });
     expect(mockBatchCommand).toBeCalledTimes(1);
     expect(mockBatchCommand).lastCalledWith('Change diode toggle');

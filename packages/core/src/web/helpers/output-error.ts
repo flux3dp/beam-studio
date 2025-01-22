@@ -1,17 +1,17 @@
-/* eslint-disable no-console */
 /**
  * output error log
  */
 import Alert from '@core/app/actions/alert-caller';
+import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
-import dialog from '@app/implementations/dialog';
-import fs from '@app/implementations/fileSystem';
 import i18n from '@core/helpers/i18n';
 import Logger from '@core/helpers/logger';
+import type { StorageKey } from '@core/interfaces/IStorage';
+
+import dialog from '@app/implementations/dialog';
+import fs from '@app/implementations/fileSystem';
 import os from '@app/implementations/os';
-import Progress from '@core/app/actions/progress-caller';
 import store from '@app/implementations/storage';
-import { StorageKey } from '@core/interfaces/IStorage';
 
 const LANG = i18n.lang.beambox;
 
@@ -20,10 +20,10 @@ const getOutput = (): string[] => {
   const logger = Logger('websocket');
   let allLog = logger.getAll();
   const reportInfo = {
-    ws: allLog.websocket || '',
     discoverDeviceList: allLog.discover || '',
-    localStorage: {},
     general: allLog.generic || '',
+    localStorage: {},
+    ws: allLog.websocket || '',
   };
 
   allLog = null;
@@ -40,6 +40,7 @@ const getOutput = (): string[] => {
   if (window.FLUX.logfile) {
     try {
       const buf = fs.readFile(window.FLUX.logfile, 'utf8');
+
       output.push('\n\n======::backend::======\n');
       output.push(buf);
     } catch (err) {
@@ -56,13 +57,17 @@ const getOutput = (): string[] => {
   output.push('\n\n======::storage::======\n');
 
   const keys = Object.keys(store.getStore()) as StorageKey[];
+
   for (let i = 0; i < keys.length; i += 1) {
     const key = keys[i];
     let value = store.get(key);
+
     console.log(key, value);
+
     if (typeof value === 'string' && value.startsWith('-----BEGIN RSA PRIVATE KEY-----\n')) {
       value = '[hidden]';
     }
+
     output.push(`${key}=${typeof value === 'object' ? JSON.stringify(value) : value}\n\n`);
   }
 
@@ -73,32 +78,33 @@ const getOutput = (): string[] => {
 };
 
 export default {
-  getOutput,
   downloadErrorLog: async (): Promise<void> => {
     console.log('Outputing');
 
     const output = getOutput();
     const fileName = `bugreport_${Math.floor(Date.now() / 1000)}.txt`;
     const getContent = () => output.join('');
+
     await dialog.writeFileDialog(getContent, LANG.popup.bug_report, fileName, [
       {
-        name: window.os === 'MacOS' ? 'txt (*.txt)' : 'txt',
         extensions: ['txt'],
+        name: window.os === 'MacOS' ? 'txt (*.txt)' : 'txt',
       },
     ]);
   },
+  getOutput,
   uploadBackendErrorLog: async (): Promise<void> => {
     Progress.openNonstopProgress({
       id: 'output-error-log',
       message: LANG.popup.progress.uploading,
     });
+
     const output = getOutput();
     const reportFile = new Blob(output, { type: 'application/octet-stream' });
     // reportFile.lastModifiedDate = new Date();
-    const reportName = `bugreport_${Math.floor(Date.now() / 1000)}_${window.os}_${
-      window.FLUX.version
-    }.log`;
+    const reportName = `bugreport_${Math.floor(Date.now() / 1000)}_${window.os}_${window.FLUX.version}.log`;
     const uploadFormData = new FormData();
+
     uploadFormData.append('file', reportFile);
     uploadFormData.append('Content-Type', reportFile.type);
     uploadFormData.append('acl', 'bucket-owner-full-control');
@@ -106,33 +112,35 @@ export default {
 
     const url = `https://beamstudio-bug-report.s3.amazonaws.com/backend/${reportName}`;
     const config = {
-      method: 'PUT',
+      body: uploadFormData,
       headers: new Headers({
         Accept: 'application/xml',
         'Content-Type': 'multipart/form-data',
       }),
-      body: uploadFormData,
+      method: 'PUT',
     };
+
     try {
       const r = await fetch(url, config);
+
       if (r.status === 200) {
         console.log('Success', r);
         Alert.popUp({
-          type: AlertConstants.SHOW_POPUP_INFO,
           message: LANG.popup.successfully_uploaded,
+          type: AlertConstants.SHOW_POPUP_INFO,
         });
       } else {
         console.log('Failed', r);
         Alert.popUp({
-          type: AlertConstants.SHOW_POPUP_ERROR,
           message: `${LANG.popup.upload_failed}\n${r.status}`,
+          type: AlertConstants.SHOW_POPUP_ERROR,
         });
       }
     } catch (e) {
       console.log(e);
       Alert.popUp({
-        type: AlertConstants.SHOW_POPUP_ERROR,
         message: `${LANG.popup.upload_failed}\n${e}`,
+        type: AlertConstants.SHOW_POPUP_ERROR,
       });
     } finally {
       Progress.popById('output-error-log');

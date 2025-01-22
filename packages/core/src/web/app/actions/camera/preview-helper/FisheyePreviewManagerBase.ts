@@ -1,10 +1,9 @@
-/* eslint-disable class-methods-use-this */
-import deviceMaster from '@core/helpers/device-master';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import progressCaller from '@core/app/actions/progress-caller';
+import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
-import { FisheyeCameraParameters, FisheyePreviewManager } from '@core/interfaces/FisheyePreview';
-import { IDeviceInfo } from '@core/interfaces/IDevice';
+import type { FisheyeCameraParameters, FisheyePreviewManager } from '@core/interfaces/FisheyePreview';
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 import getLevelingData from './getLevelingData';
 
@@ -40,15 +39,18 @@ class FisheyePreviewManagerBase implements FisheyePreviewManager {
 
   async resetObjectHeight(): Promise<boolean> {
     let res = false;
+
     try {
       const newHeight = await dialogCaller.getPreviewHeight({
         initValue: this.objectHeight,
       });
+
       if (typeof newHeight === 'number') {
         this.objectHeight = newHeight;
         await this.onObjectHeightChanged();
         res = true;
       }
+
       return res;
     } finally {
       if (deviceMaster.currentControlMode === 'raw') {
@@ -56,6 +58,7 @@ class FisheyePreviewManagerBase implements FisheyePreviewManager {
         progressCaller.update(this.progressId, { message: i18n.lang.message.endingRawMode });
         await deviceMaster.endRawMode();
       }
+
       progressCaller.popById(this.progressId);
     }
   }

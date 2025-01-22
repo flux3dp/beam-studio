@@ -1,24 +1,26 @@
-import React, { useState, useMemo, useRef } from 'react';
-import { Flex, Radio } from 'antd';
-import useI18n from '@core/helpers/useI18n';
-import DraggableModal from '@core/app/widgets/DraggableModal';
-import styles from './index.module.scss';
+import React, { useMemo, useRef, useState } from 'react';
 
-import QRCodeGenerator from './QRCodeGenerator';
+import { Flex, Radio } from 'antd';
+
+import DraggableModal from '@core/app/widgets/DraggableModal';
+import useI18n from '@core/helpers/useI18n';
+
 import BarcodeGenerator from './BarcodeGenerator';
+import styles from './index.module.scss';
+import QRCodeGenerator from './QRCodeGenerator';
 import { importBarcodeSvgElement, importQrCodeSvgElement } from './svgOperation';
 
 interface Props {
   onClose: () => void;
 }
 
-export default function CodeGenerator({ onClose }: Props): JSX.Element {
+export default function CodeGenerator({ onClose }: Props): React.JSX.Element {
   const {
     alert: tAlert,
+    code_generator: tCodeGenerator,
     topbar: {
       menu: { tools: tTools },
     },
-    code_generator: tCodeGenerator,
   } = useI18n();
   const [tabKey, setTabKey] = useState('qrcode');
   const [isInvert, setIsInvert] = useState(false);
@@ -53,50 +55,44 @@ export default function CodeGenerator({ onClose }: Props): JSX.Element {
 
   const renderContent = () =>
     tabKey === 'qrcode' ? (
-      <QRCodeGenerator
-        ref={generatorRef}
-        isInvert={isInvert}
-        setIsInvert={setIsInvert}
-        text={text}
-        setText={setText}
-      />
+      <QRCodeGenerator isInvert={isInvert} ref={generatorRef} setIsInvert={setIsInvert} setText={setText} text={text} />
     ) : (
       <BarcodeGenerator
-        ref={generatorRef}
         isInvert={isInvert}
+        ref={generatorRef}
         setIsInvert={setIsInvert}
-        text={text}
         setText={setText}
+        text={text}
       />
     );
 
   return (
     <DraggableModal
-      open
+      cancelText={tAlert.cancel}
       centered
+      className={styles.modal}
+      okButtonProps={{ disabled: !text }}
+      okText={tAlert.confirm}
+      onCancel={onClose}
+      onOk={handleOk}
+      open
       title={
-        <Flex gap={12} className={styles['title-flex']}>
+        <Flex className={styles['title-flex']} gap={12}>
           <div>{tTools.code_generator}</div>
           <Radio.Group
             className={styles['fw-n']}
-            size="small"
-            optionType="button"
-            options={options}
             defaultValue={tabKey}
             onChange={(e) => {
               setTabKey(e.target.value);
               setIsInvert(false);
             }}
+            options={options}
+            optionType="button"
+            size="small"
           />
         </Flex>
       }
-      onCancel={onClose}
-      onOk={handleOk}
       width="520"
-      cancelText={tAlert.cancel}
-      okText={tAlert.confirm}
-      okButtonProps={{ disabled: !text }}
-      className={styles.modal}
     >
       {renderContent()}
     </DraggableModal>

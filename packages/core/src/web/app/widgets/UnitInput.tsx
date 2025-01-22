@@ -1,17 +1,18 @@
-/* eslint-disable react/jsx-props-no-spreading */
+import React, { forwardRef, useCallback, useImperativeHandle, useRef } from 'react';
+
+import type { InputNumberProps, ThemeConfig } from 'antd';
+import { ConfigProvider, InputNumber } from 'antd';
 import classNames from 'classnames';
-import React, { forwardRef, useCallback, useRef, useImperativeHandle } from 'react';
-import { ConfigProvider, InputNumber, InputNumberProps, ThemeConfig } from 'antd';
 
 import styles from './UnitInput.module.scss';
 
 interface Props extends InputNumberProps<number> {
-  unit?: string;
+  clipValue?: boolean;
+  fireOnChange?: boolean;
   isInch?: boolean;
   theme?: ThemeConfig;
   underline?: boolean;
-  fireOnChange?: boolean;
-  clipValue?: boolean;
+  unit?: string;
 }
 
 /**
@@ -23,34 +24,31 @@ interface Props extends InputNumberProps<number> {
 const UnitInput = forwardRef<HTMLInputElement, Props>(
   (
     {
-      unit,
+      clipValue = false,
+      fireOnChange = false,
       isInch,
       onBlur,
       onChange,
+      precision = 4,
       theme,
       underline,
-      precision = 4,
-      fireOnChange = false,
-      clipValue = false,
+      unit,
       ...props
     }: Props,
-    outerRef
-  ): JSX.Element => {
+    outerRef,
+  ): React.JSX.Element => {
     const inputRef = useRef<HTMLInputElement>(null);
     const valueRef = useRef<number | undefined>(); // for onChange
 
-    useImperativeHandle(
-      outerRef,
-      () => {
-        const input = inputRef.current;
-        return input.parentNode?.querySelector('input') || input;
-      },
-      []
-    );
+    useImperativeHandle(outerRef, () => {
+      const input = inputRef.current;
+
+      return input.parentNode?.querySelector('input') || input;
+    }, []);
 
     const formatter = useCallback(
-      (value: string | number) => {
-        let newVal = typeof value === 'string' ? parseFloat(value) : value;
+      (value: number | string) => {
+        let newVal = typeof value === 'string' ? Number.parseFloat(value) : value;
 
         if (isInch) {
           newVal /= 25.4;
@@ -58,12 +56,12 @@ const UnitInput = forwardRef<HTMLInputElement, Props>(
 
         return String(Math.round(newVal * 10 ** precision) / 10 ** precision);
       },
-      [isInch, precision]
+      [isInch, precision],
     );
 
     const parser = useCallback(
-      (value: string) => parseFloat(value.trim().replaceAll(',', '.')) * (isInch ? 25.4 : 1),
-      [isInch]
+      (value: string) => Number.parseFloat(value.trim().replaceAll(',', '.')) * (isInch ? 25.4 : 1),
+      [isInch],
     );
 
     const handleValueChange = useCallback(
@@ -71,15 +69,20 @@ const UnitInput = forwardRef<HTMLInputElement, Props>(
         // Only trigger onChange if the value has changed
         if (value !== valueRef.current && !Number.isNaN(value)) {
           let val = value;
+
           if (clipValue) {
-            if (val > props.max) val = props.max;
-            else if (val < props.min) val = props.min;
+            if (val > props.max) {
+              val = props.max;
+            } else if (val < props.min) {
+              val = props.min;
+            }
           }
+
           valueRef.current = val; // Update the previous value
           onChange?.(val);
         }
       },
-      [clipValue, onChange, props.max, props.min]
+      [clipValue, onChange, props.max, props.min],
     );
 
     const handlePressEnter = useCallback(() => {
@@ -91,34 +94,34 @@ const UnitInput = forwardRef<HTMLInputElement, Props>(
         handleValueChange(parser(inputRef.current?.value));
         onBlur?.(e);
       },
-      [handleValueChange, parser, onBlur]
+      [handleValueChange, parser, onBlur],
     );
 
     const handleStep = useCallback(
       (value: number) => {
         handleValueChange(value);
       },
-      [handleValueChange]
+      [handleValueChange],
     );
 
     return (
       <div className={classNames(styles.input, { [styles.underline]: underline })}>
         <ConfigProvider theme={theme}>
           <InputNumber
-            ref={inputRef}
             onPressEnter={handlePressEnter}
+            ref={inputRef}
             {...props}
+            formatter={formatter}
             onBlur={handleBlur}
             onChange={fireOnChange ? onChange : undefined}
             onStep={handleStep}
-            formatter={formatter}
             parser={parser}
           />
           {unit && <span className={styles.unit}>{unit}</span>}
         </ConfigProvider>
       </div>
     );
-  }
+  },
 );
 
 export default UnitInput;

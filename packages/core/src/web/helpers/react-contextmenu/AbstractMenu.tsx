@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable ts/no-unused-vars */
 import React, { Component } from 'react';
 
 import MenuItem from './MenuItem';
@@ -12,8 +11,8 @@ export default class AbstractMenu extends Component<any, any> {
 
     this.seletedItemRef = null;
     this.state = {
-      selectedItem: null,
       forceSubMenuOpen: false,
+      selectedItem: null,
     };
   }
 
@@ -22,6 +21,7 @@ export default class AbstractMenu extends Component<any, any> {
     // when this code executes in the context of SubMenu
     // but we only need to check when it runs in the ContextMenu context
     const { isVisible } = this.state;
+
     if (isVisible === false) {
       return;
     }
@@ -48,13 +48,9 @@ export default class AbstractMenu extends Component<any, any> {
         this.tryToOpenSubMenu(e);
         {
           // determine the selected item is disabled or not
-          const disabled = this.seletedItemRef
-            && this.seletedItemRef.props
-            && this.seletedItemRef.props.disabled;
+          const disabled = this.seletedItemRef && this.seletedItemRef.props && this.seletedItemRef.props.disabled;
 
-          if (this.seletedItemRef
-            && this.seletedItemRef.ref instanceof HTMLElement
-            && !disabled) {
+          if (this.seletedItemRef && this.seletedItemRef.ref instanceof HTMLElement && !disabled) {
             this.seletedItemRef.ref.click();
           } else {
             this.hideMenu(e);
@@ -70,13 +66,13 @@ export default class AbstractMenu extends Component<any, any> {
     this.setState({ forceSubMenuOpen: false });
   };
 
-  // eslint-disable-next-line class-methods-use-this
   getSubMenuType(): any {
     throw new Error('hideMenu not implemented');
   }
 
   tryToOpenSubMenu = (e) => {
     const { selectedItem } = this.state;
+
     if (selectedItem && selectedItem.type === this.getSubMenuType()) {
       e.preventDefault();
       this.setState({ forceSubMenuOpen: true });
@@ -96,7 +92,7 @@ export default class AbstractMenu extends Component<any, any> {
         return;
       }
 
-      if ([MenuItem, this.getSubMenuType()].indexOf(child.type) < 0) {
+      if (![MenuItem, this.getSubMenuType()].includes(child.type)) {
         // Maybe the MenuItem or SubMenu is capsuled in a wrapper div or something else
         React.Children.forEach(child.props.children, childCollector);
       } else if (!child.props.divider) {
@@ -110,7 +106,9 @@ export default class AbstractMenu extends Component<any, any> {
     };
 
     const { children: propsChildren } = this.props;
+
     React.Children.forEach(propsChildren, childCollector);
+
     if (disabledChildrenCount === children.length) {
       // All menu items are disabled, so none can be selected, don't do anything
       return;
@@ -144,54 +142,67 @@ export default class AbstractMenu extends Component<any, any> {
 
     if (nextEnabledChildIndex !== null) {
       this.setState({
-        selectedItem: children[nextEnabledChildIndex],
         forceSubMenuOpen: false,
+        selectedItem: children[nextEnabledChildIndex],
       });
     }
   };
 
   onChildMouseMove = (child): void => {
     const { selectedItem } = this.state;
+
     if (selectedItem !== child) {
-      this.setState({ selectedItem: child, forceSubMenuOpen: false });
+      this.setState({ forceSubMenuOpen: false, selectedItem: child });
     }
   };
 
   onChildMouseLeave = (): void => {
-    this.setState({ selectedItem: null, forceSubMenuOpen: false });
+    this.setState({ forceSubMenuOpen: false, selectedItem: null });
   };
 
-  // eslint-disable-next-line class-methods-use-this, @typescript-eslint/no-unused-vars
   hideMenu(e: Event): void {
     throw new Error('hideMenu not implemented');
   }
 
-  renderChildren = (children) => React.Children.map(children, (
-    child: Component<{ divider: any; children: React.ReactNode }>,
-  ) => {
-    const props: any = {};
-    if (!React.isValidElement(child)) return child;
-    if ([MenuItem, this.getSubMenuType()].indexOf(child.type) < 0) {
-      // Maybe the MenuItem or SubMenu is capsuled in a wrapper div or something else
-      props.children = this.renderChildren(child.props.children);
+  renderChildren = (children) =>
+    React.Children.map(children, (child: Component<{ children: React.ReactNode; divider: any }>) => {
+      const props: any = {};
+
+      if (!React.isValidElement(child)) {
+        return child;
+      }
+
+      if (![MenuItem, this.getSubMenuType()].includes(child.type)) {
+        // Maybe the MenuItem or SubMenu is capsuled in a wrapper div or something else
+        props.children = this.renderChildren(child.props.children);
+
+        return React.cloneElement(child, props);
+      }
+
+      props.onMouseLeave = this.onChildMouseLeave.bind(this);
+
+      const { forceSubMenuOpen, selectedItem } = this.state;
+
+      if (child.type === this.getSubMenuType()) {
+        // special props for SubMenu only
+        props.forceOpen = forceSubMenuOpen && selectedItem === child;
+        props.forceClose = this.handleForceClose;
+        props.parentKeyNavigationHandler = this.handleKeyNavigation;
+      }
+
+      if (!child.props.divider && selectedItem === child) {
+        // special props for selected item only
+        props.selected = true;
+        props.ref = (ref) => {
+          this.seletedItemRef = ref;
+        };
+
+        return React.cloneElement(child, props);
+      }
+
+      // onMouseMove is only needed for non selected items
+      props.onMouseMove = () => this.onChildMouseMove(child);
+
       return React.cloneElement(child, props);
-    }
-    props.onMouseLeave = this.onChildMouseLeave.bind(this);
-    const { forceSubMenuOpen, selectedItem } = this.state;
-    if (child.type === this.getSubMenuType()) {
-      // special props for SubMenu only
-      props.forceOpen = forceSubMenuOpen && (selectedItem === child);
-      props.forceClose = this.handleForceClose;
-      props.parentKeyNavigationHandler = this.handleKeyNavigation;
-    }
-    if (!child.props.divider && selectedItem === child) {
-      // special props for selected item only
-      props.selected = true;
-      props.ref = (ref) => { this.seletedItemRef = ref; };
-      return React.cloneElement(child, props);
-    }
-    // onMouseMove is only needed for non selected items
-    props.onMouseMove = () => this.onChildMouseMove(child);
-    return React.cloneElement(child, props);
-  });
+    });
 }

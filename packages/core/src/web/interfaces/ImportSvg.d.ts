@@ -1,1 +1,1 @@
-export type ImportType = 'color' | 'layer' | 'nolayer' | 'printing' | 'image-trace';
+export type ImportType = 'color' | 'image-trace' | 'layer' | 'nolayer' | 'printing';

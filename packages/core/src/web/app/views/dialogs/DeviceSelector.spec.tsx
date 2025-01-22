@@ -1,25 +1,33 @@
 import React from 'react';
+
 import { act, fireEvent, render } from '@testing-library/react';
 
 import DeviceSelector from './DeviceSelector';
 
 const mockGetSelectedDevice = jest.fn();
+
 jest.mock('@core/app/views/beambox/TopBar/contexts/TopBarController', () => ({
   getSelectedDevice: () => mockGetSelectedDevice(),
 }));
 
 const mockPopUp = jest.fn();
+
 jest.mock('@core/app/actions/alert-caller', () => ({
   popUp: (...args) => mockPopUp(...args),
 }));
 
 const mockToggleUnsavedChangedDialog = jest.fn();
+
 jest.mock('@core/helpers/file-export-helper', () => ({
   toggleUnsavedChangedDialog: (...args) => mockToggleUnsavedChangedDialog(...args),
 }));
 
 jest.mock('@core/helpers/i18n', () => ({
+  getActiveLang: () => 'en',
   lang: {
+    alert: {
+      cancel: 'Cancel',
+    },
     machine_status: {
       '-17': 'Cartridge IO Mode',
       '-10': 'Maintain mode',
@@ -46,17 +54,14 @@ jest.mock('@core/helpers/i18n', () => ({
     select_device: {
       select_device: 'Select Device',
     },
-    alert: {
-      cancel: 'Cancel',
-    },
     topbar: {
       select_machine: 'Select a machine',
     },
   },
-  getActiveLang: () => 'en',
 }));
 
 const mockDiscover = jest.fn();
+
 jest.mock(
   '@core/helpers/api/discover',
   () =>
@@ -71,6 +76,7 @@ describe('should render correctly', () => {
 
   test('no devices', () => {
     const mockRemoveListener = jest.fn();
+
     mockDiscover.mockReturnValue({
       removeListener: mockRemoveListener,
     });
@@ -78,18 +84,21 @@ describe('should render correctly', () => {
     const mockOnSelect = jest.fn();
     const mockOnClose = jest.fn();
     const { baseElement, getByTestId, unmount } = render(
-      <DeviceSelector onSelect={mockOnSelect} onClose={mockOnClose} />,
+      <DeviceSelector onClose={mockOnClose} onSelect={mockOnSelect} />,
     );
+
     expect(baseElement).toMatchSnapshot();
     expect(mockDiscover).toHaveBeenCalledTimes(1);
     expect(mockDiscover).toHaveBeenLastCalledWith('device-selector', expect.anything());
+
     const [, discoverListener] = mockDiscover.mock.calls[0];
     const mockDevice = {
+      name: 'name',
+      serial: 'serial',
       st_id: 1,
       uuid: 'uuid',
-      serial: 'serial',
-      name: 'name',
     };
+
     act(() => {
       discoverListener([mockDevice]);
     });

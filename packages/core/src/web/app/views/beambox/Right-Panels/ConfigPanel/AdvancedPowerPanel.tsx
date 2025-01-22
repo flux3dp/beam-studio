@@ -1,42 +1,46 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { ConfigProvider, Modal, InputNumber, Slider } from 'antd';
 
+import { ConfigProvider, InputNumber, Modal, Slider } from 'antd';
+
+import { ConfigModalBlock } from '@core/app/constants/antd-config';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
-import useI18n from '@core/helpers/useI18n';
-import { ConfigModalBlock } from '@core/app/constants/antd-config';
-import { ConfigItem } from '@core/interfaces/ILayerConfig';
-import { getLayerByName } from '@core/helpers/layer/layer-helper';
 import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
+import { getLayerByName } from '@core/helpers/layer/layer-helper';
+import useI18n from '@core/helpers/useI18n';
+import type { ConfigItem } from '@core/interfaces/ILayerConfig';
 
-import ConfigPanelContext from './ConfigPanelContext';
 import styles from './AdvancedPowerPanel.module.scss';
+import ConfigPanelContext from './ConfigPanelContext';
 
 interface Props {
   onClose: () => void;
 }
 
 // TODO: add test
-const AdvancedPowerPanel = ({ onClose }: Props): JSX.Element => {
+const AdvancedPowerPanel = ({ onClose }: Props): React.JSX.Element => {
   const {
-    global: tGlobal,
     beambox: {
       right_panel: { laser_panel: t },
     },
+    global: tGlobal,
   } = useI18n();
   const { dispatch, initState, selectedLayers, state } = useContext(ConfigPanelContext);
   const [draftValue, setDraftValue] = useState<{ minPower: ConfigItem<number> }>({
     minPower: state.minPower,
   });
   const [displayValue, setDisplayValue] = useState(draftValue);
+
   useEffect(() => setDisplayValue(draftValue), [draftValue]);
 
   const power = state.power.value;
   const handleSave = () => {
     const newState = { ...state };
     const batchCmd = new history.BatchCommand('Change power advanced setting');
+
     selectedLayers.forEach((layerName) => {
       const layer = getLayerByName(layerName);
+
       if (
         state.minPower.value !== draftValue.minPower.value ||
         state.minPower.hasMultiValue !== draftValue.minPower.hasMultiValue
@@ -47,24 +51,28 @@ const AdvancedPowerPanel = ({ onClose }: Props): JSX.Element => {
     });
     batchCmd.onAfter = initState;
     undoManager.addCommandToHistory(batchCmd);
-    dispatch({ type: 'update', payload: newState });
+    dispatch({ payload: newState, type: 'update' });
     onClose();
   };
   const handleValueChange = useCallback((key: string, value: number, display = false) => {
-    if (display) setDisplayValue((cur) => ({ ...cur, [key]: { value, hasMultiValue: false } }));
-    else setDraftValue((cur) => ({ ...cur, [key]: { value, hasMultiValue: false } }));
+    if (display) {
+      setDisplayValue((cur) => ({ ...cur, [key]: { hasMultiValue: false, value } }));
+    } else {
+      setDraftValue((cur) => ({ ...cur, [key]: { hasMultiValue: false, value } }));
+    }
   }, []);
+
   return (
     <Modal
-      centered
-      open
-      maskClosable={false}
-      width={320}
-      onOk={handleSave}
-      onCancel={onClose}
       cancelText={tGlobal.cancel}
+      centered
+      maskClosable={false}
       okText={tGlobal.save}
+      onCancel={onClose}
+      onOk={handleSave}
+      open
       title={t.pwm_advanced_setting}
+      width={320}
     >
       <ConfigProvider theme={ConfigModalBlock}>
         <div className={styles.desc}>
@@ -75,41 +83,33 @@ const AdvancedPowerPanel = ({ onClose }: Props): JSX.Element => {
           <div className={styles.header}>
             <span className={styles.input}>
               <InputNumber
+                controls={false}
+                max={power}
+                min={0}
+                onChange={(val) => handleValueChange('minPower', val)}
+                precision={0}
                 size="small"
                 value={draftValue.minPower.value}
-                controls={false}
-                min={0}
-                max={power}
-                precision={0}
-                onChange={(val) => handleValueChange('minPower', val)}
               />
               <span className={styles.unit}>%</span>
             </span>
             <span className={styles.input}>
-              <InputNumber
-                disabled
-                size="small"
-                value={power}
-                controls={false}
-                min={0}
-                max={power}
-                precision={0}
-              />
+              <InputNumber controls={false} disabled max={power} min={0} precision={0} size="small" value={power} />
               <span className={styles.unit}>%</span>
             </span>
           </div>
           <Slider
             className={styles['one-side-slider']}
-            min={0}
             max={power}
-            step={1}
-            range
-            value={[displayValue.minPower.value, power]}
+            min={0}
             onAfterChange={(values) => handleValueChange('minPower', values[0])}
             onChange={(values) => handleValueChange('minPower', values[0], true)}
+            range
+            step={1}
             tooltip={{
               formatter: (v: number) => `${v}%`,
             }}
+            value={[displayValue.minPower.value, power]}
           />
           <div className={styles.footer}>
             <span>Min</span>

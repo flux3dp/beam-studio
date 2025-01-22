@@ -1,27 +1,36 @@
 import React, { useCallback, useContext, useMemo } from 'react';
 
-import getDevice from '@core/helpers/device/get-device';
-import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
-import useI18n from '@core/helpers/useI18n';
-import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { CanvasMode } from '@core/app/constants/canvasMode';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
+import getDevice from '@core/helpers/device/get-device';
 import { useIsMobile } from '@core/helpers/system-helper';
+import useI18n from '@core/helpers/useI18n';
 
 import styles from './SelectMachineButton.module.scss';
 
-function SelectMachineButton(): JSX.Element {
+function SelectMachineButton(): React.JSX.Element {
   const isMobile = useIsMobile();
   const i18n = useI18n();
   const { mode, selectedDevice, setupPreviewMode } = useContext(CanvasContext);
   const text = useMemo(() => {
-    if (isMobile) return '';
-    if (selectedDevice) return selectedDevice.name;
+    if (isMobile) {
+      return '';
+    }
+
+    if (selectedDevice) {
+      return selectedDevice.name;
+    }
+
     return i18n.topbar.select_machine;
   }, [isMobile, selectedDevice, i18n]);
 
   const handleClick = useCallback(() => {
-    if (mode !== CanvasMode.Preview) getDevice(true);
-    else setupPreviewMode({ showModal: true });
+    if (mode !== CanvasMode.Preview) {
+      getDevice(true);
+    } else {
+      setupPreviewMode({ showModal: true });
+    }
   }, [mode, setupPreviewMode]);
 
   return (

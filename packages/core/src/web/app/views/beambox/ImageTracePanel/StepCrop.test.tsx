@@ -1,9 +1,11 @@
 import React from 'react';
+
 import { act, fireEvent, render } from '@testing-library/react';
 
 import StepCrop from './StepCrop';
 
 const mockCropper = jest.fn();
+
 jest.mock(
   'cropperjs',
   () =>
@@ -18,9 +20,10 @@ const mockGetCroppedCanvas = jest.fn();
 
 const mockGetCameraCanvasUrl = jest.fn();
 const mockGetCoordinates = jest.fn();
+
 jest.mock('@core/app/actions/beambox/preview-mode-background-drawer', () => ({
-  getCoordinates: () => mockGetCoordinates(),
   getCameraCanvasUrl: () => mockGetCameraCanvasUrl(),
+  getCoordinates: () => mockGetCoordinates(),
 }));
 
 jest.mock('@core/helpers/i18n', () => ({
@@ -50,8 +53,8 @@ describe('test StepCrop', () => {
     jest.clearAllMocks();
     mockCropper.mockImplementation(() => ({
       destroy: mockDestroy,
-      getData: mockGetData,
       getCroppedCanvas: mockGetCroppedCanvas,
+      getData: mockGetData,
     }));
     global.URL.createObjectURL = mockCreateObjectURL;
     global.URL.revokeObjectURL = mockRevokeObjectURL;
@@ -75,34 +78,26 @@ describe('test StepCrop', () => {
 
   it('should render correctly', async () => {
     mockGetCoordinates.mockReturnValue({
-      minX: 0,
       maxX: 100,
-      minY: 0,
       maxY: 100,
+      minX: 0,
+      minY: 0,
     });
     mockGetCameraCanvasUrl.mockReturnValue('mock-camera-canvas');
-    const { baseElement } = render(
-      <StepCrop onCancel={mockOnCancel} onCropFinish={mockOnCropFinish} />,
-    );
+
+    const { baseElement } = render(<StepCrop onCancel={mockOnCancel} onCropFinish={mockOnCropFinish} />);
+
     expect(mockGetCoordinates).toBeCalledTimes(1);
     expect(mockGetCameraCanvasUrl).toBeCalledTimes(1);
     expect(mockDrawImage).toBeCalledTimes(1);
-    expect(mockDrawImage).toHaveBeenLastCalledWith(
-      expect.anything(),
-      0,
-      0,
-      100,
-      100,
-      0,
-      0,
-      100,
-      100,
-    );
+    expect(mockDrawImage).toHaveBeenLastCalledWith(expect.anything(), 0, 0, 100, 100, 0, 0, 100, 100);
 
     expect(mockToBlob).toBeCalledTimes(1);
     expect(mockCreateObjectURL).not.toBeCalled();
     mockCreateObjectURL.mockReturnValue('mock-object-url');
+
     const [callback] = mockToBlob.mock.calls[0];
+
     expect(baseElement).toMatchSnapshot();
     await act(async () => callback('mock-blob'));
     expect(mockCreateObjectURL).toBeCalledTimes(1);
@@ -112,18 +107,20 @@ describe('test StepCrop', () => {
 
   test('cropper should work', async () => {
     mockGetCoordinates.mockReturnValue({
-      minX: 0,
       maxX: 100,
-      minY: 0,
       maxY: 100,
+      minX: 0,
+      minY: 0,
     });
     mockGetCameraCanvasUrl.mockReturnValue('mock-camera-canvas');
-    const { baseElement, getByText } = render(
-      <StepCrop onCancel={mockOnCancel} onCropFinish={mockOnCropFinish} />,
-    );
+
+    const { baseElement, getByText } = render(<StepCrop onCancel={mockOnCancel} onCropFinish={mockOnCropFinish} />);
+
     mockCreateObjectURL.mockReturnValue('mock-object-url');
     await act(async () => mockToBlob.mock.calls[0][0]('mock-blob'));
+
     const img = baseElement.querySelector('img');
+
     fireEvent.load(img);
     expect(mockGetData).not.toBeCalled();
     mockGetData.mockReturnValue('mock-data');

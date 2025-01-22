@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
@@ -8,9 +9,9 @@ import LayerList from './LayerList';
 const mockDrawing = {
   all_layers: [],
   getCurrentLayerName: jest.fn(),
-  identifyLayers: jest.fn(),
-  getLayerVisibility: jest.fn(),
   getLayerColor: jest.fn(),
+  getLayerVisibility: jest.fn(),
+  identifyLayers: jest.fn(),
 };
 
 jest.mock('@core/helpers/svg-editor-helper', () => ({
@@ -23,6 +24,7 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
 }));
 
 const mockUseWorkarea = jest.fn();
+
 jest.mock(
   '@core/helpers/hooks/useWorkarea',
   () =>
@@ -31,12 +33,14 @@ jest.mock(
 );
 
 const mockGetData = jest.fn();
+
 jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   getData: (...args) => mockGetData(...args),
 }));
 
 const mockGetAllLayerNames = jest.fn();
 const mockGetLayerElementByName = jest.fn();
+
 jest.mock('@core/helpers/layer/layer-helper', () => ({
   getAllLayerNames: () => mockGetAllLayerNames(),
   getLayerElementByName: (...args) => mockGetLayerElementByName(...args),
@@ -47,6 +51,7 @@ jest.mock('@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext', () 
 }));
 
 const mockUseIsMobile = jest.fn();
+
 jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => mockUseIsMobile(),
 }));
@@ -54,19 +59,18 @@ jest.mock('@core/helpers/system-helper', () => ({
 jest.mock(
   '@core/app/widgets/ColorPicker',
   () =>
-    ({ disabled, initColor, triggerSize, printerColor, onChange }: any) =>
-      (
-        <div>
-          MockColorPicker
-          <p>disabled: {disabled ? 'y' : 'n'}</p>
-          <p>initColor: {initColor}</p>
-          <p>triggerSize: {triggerSize}</p>
-          <p>printerColor: {printerColor ? 'y' : 'n'}</p>
-          <button type="button" onClick={() => onChange('#000000')}>
-            changeColor
-          </button>
-        </div>
-      ),
+    ({ disabled, initColor, onChange, printerColor, triggerSize }: any) => (
+      <div>
+        MockColorPicker
+        <p>disabled: {disabled ? 'y' : 'n'}</p>
+        <p>initColor: {initColor}</p>
+        <p>triggerSize: {triggerSize}</p>
+        <p>printerColor: {printerColor ? 'y' : 'n'}</p>
+        <button onClick={() => onChange('#000000')} type="button">
+          changeColor
+        </button>
+      </div>
+    ),
 );
 
 const mockOnLayerClick = jest.fn();
@@ -92,13 +96,18 @@ describe('test LayerList', () => {
   it('should render correctly', () => {
     mockUseWorkarea.mockReturnValue('fbm1');
     mockGetData.mockImplementation((layer, key) => {
-      if (key === 'module') return 2;
+      if (key === 'module') {
+        return 2;
+      }
+
       return false;
     });
     mockGetAllLayerNames.mockReturnValue(['layer1', 'layer2']);
+
     const mockLayer = {
       getAttribute: jest.fn(),
     };
+
     mockLayer.getAttribute
       .mockReturnValueOnce('true')
       .mockReturnValueOnce('1')
@@ -114,22 +123,23 @@ describe('test LayerList', () => {
       <LayerPanelContext.Provider value={{ selectedLayers: ['layer1'] } as any}>
         <LayerList
           draggingDestIndex={null}
-          onLayerClick={mockOnLayerClick}
           highlightLayer={mockHighlightLayer}
-          onLayerDragStart={mockOnLayerDragStart}
-          onlayerDragEnd={mockOnLayerDragEnd}
-          onLayerTouchStart={mockOnLayerTouchStart}
-          onLayerTouchMove={mockOnLayerTouchMove}
-          onLayerTouchEnd={mockOnLayerTouchEnd}
-          onSensorAreaDragEnter={mockOnSensorAreaDragEnter}
           onLayerCenterDragEnter={mockOnLayerCenterDragEnter}
-          onLayerDoubleClick={mockOnLayerDoubleClick}
+          onLayerClick={mockOnLayerClick}
           onLayerColorChange={mockOnLayerColorChange}
+          onLayerDoubleClick={mockOnLayerDoubleClick}
+          onlayerDragEnd={mockOnLayerDragEnd}
+          onLayerDragStart={mockOnLayerDragStart}
+          onLayerTouchEnd={mockOnLayerTouchEnd}
+          onLayerTouchMove={mockOnLayerTouchMove}
+          onLayerTouchStart={mockOnLayerTouchStart}
+          onSensorAreaDragEnter={mockOnSensorAreaDragEnter}
           setLayerVisibility={mockSetLayerVisibility}
           unLockLayers={mockUnLockLayers}
         />
       </LayerPanelContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
     expect(mockUseWorkarea).toBeCalledTimes(1);
     expect(mockGetData).toBeCalledTimes(4);
@@ -151,42 +161,48 @@ describe('test LayerList', () => {
 
   it('should render correctly on mobile', () => {
     mockGetAllLayerNames.mockReturnValue(['layer1', 'layer2']);
+
     const mockLayer = {
       getAttribute: jest.fn(),
     };
+
     mockLayer.getAttribute.mockReturnValueOnce('true').mockReturnValueOnce('false');
     mockGetLayerElementByName.mockReturnValue(mockLayer);
     mockDrawing.getLayerVisibility.mockReturnValueOnce(true).mockReturnValueOnce(false);
     mockDrawing.getLayerColor.mockReturnValueOnce('#000000').mockReturnValueOnce('#ffffff');
     mockUseIsMobile.mockReturnValue(true);
+
     const { container } = render(
       <LayerPanelContext.Provider value={{ selectedLayers: ['layer1'] } as any}>
         <LayerList
           draggingDestIndex={null}
-          onLayerClick={mockOnLayerClick}
           highlightLayer={mockHighlightLayer}
-          onLayerDragStart={mockOnLayerDragStart}
-          onlayerDragEnd={mockOnLayerDragEnd}
-          onLayerTouchStart={mockOnLayerTouchStart}
-          onLayerTouchMove={mockOnLayerTouchMove}
-          onLayerTouchEnd={mockOnLayerTouchEnd}
-          onSensorAreaDragEnter={mockOnSensorAreaDragEnter}
           onLayerCenterDragEnter={mockOnLayerCenterDragEnter}
-          onLayerDoubleClick={mockOnLayerDoubleClick}
+          onLayerClick={mockOnLayerClick}
           onLayerColorChange={mockOnLayerColorChange}
+          onLayerDoubleClick={mockOnLayerDoubleClick}
+          onlayerDragEnd={mockOnLayerDragEnd}
+          onLayerDragStart={mockOnLayerDragStart}
+          onLayerTouchEnd={mockOnLayerTouchEnd}
+          onLayerTouchMove={mockOnLayerTouchMove}
+          onLayerTouchStart={mockOnLayerTouchStart}
+          onSensorAreaDragEnter={mockOnSensorAreaDragEnter}
           setLayerVisibility={mockSetLayerVisibility}
           unLockLayers={mockUnLockLayers}
         />
       </LayerPanelContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
   });
 
   test('event should be handled correctly', () => {
     mockGetAllLayerNames.mockReturnValue(['layer1', 'layer2']);
+
     const mockLayer = {
       getAttribute: jest.fn(),
     };
+
     mockLayer.getAttribute.mockReturnValueOnce('true').mockReturnValueOnce('false');
     mockGetLayerElementByName.mockReturnValue(mockLayer);
     mockDrawing.getLayerVisibility.mockReturnValueOnce(true).mockReturnValueOnce(false);
@@ -196,23 +212,24 @@ describe('test LayerList', () => {
       <LayerPanelContext.Provider value={{ selectedLayers: ['layer1'] } as any}>
         <LayerList
           draggingDestIndex={null}
-          onLayerClick={mockOnLayerClick}
           highlightLayer={mockHighlightLayer}
-          onLayerDragStart={mockOnLayerDragStart}
-          onlayerDragEnd={mockOnLayerDragEnd}
-          onLayerTouchStart={mockOnLayerTouchStart}
-          onLayerTouchMove={mockOnLayerTouchMove}
-          onLayerTouchEnd={mockOnLayerTouchEnd}
-          onSensorAreaDragEnter={mockOnSensorAreaDragEnter}
           onLayerCenterDragEnter={mockOnLayerCenterDragEnter}
-          onLayerDoubleClick={mockOnLayerDoubleClick}
+          onLayerClick={mockOnLayerClick}
           onLayerColorChange={mockOnLayerColorChange}
+          onLayerDoubleClick={mockOnLayerDoubleClick}
+          onlayerDragEnd={mockOnLayerDragEnd}
+          onLayerDragStart={mockOnLayerDragStart}
+          onLayerTouchEnd={mockOnLayerTouchEnd}
+          onLayerTouchMove={mockOnLayerTouchMove}
+          onLayerTouchStart={mockOnLayerTouchStart}
+          onSensorAreaDragEnter={mockOnSensorAreaDragEnter}
           setLayerVisibility={mockSetLayerVisibility}
           unLockLayers={mockUnLockLayers}
         />
       </LayerPanelContext.Provider>,
     );
     const layer1Item = getByTestId('layer1');
+
     expect(mockOnLayerClick).not.toBeCalled();
     fireEvent.click(layer1Item);
     expect(mockOnLayerClick).toBeCalledTimes(1);
@@ -249,6 +266,7 @@ describe('test LayerList', () => {
     expect(mockOnLayerTouchEnd).toBeCalledTimes(1);
 
     const dragSensorAreas = container.querySelectorAll('.drag-sensor-area');
+
     expect(mockOnSensorAreaDragEnter).not.toBeCalled();
     expect(dragSensorAreas).toHaveLength(4);
     fireEvent.dragEnter(dragSensorAreas[0]);
@@ -256,6 +274,7 @@ describe('test LayerList', () => {
     expect(mockOnSensorAreaDragEnter).toHaveBeenLastCalledWith(2);
 
     const layer2Center = container.querySelectorAll('.row')[0];
+
     expect(mockOnLayerCenterDragEnter).not.toBeCalled();
     fireEvent.dragEnter(layer2Center);
     expect(mockOnLayerCenterDragEnter).toBeCalledTimes(1);
@@ -267,12 +286,14 @@ describe('test LayerList', () => {
     expect(mockOnLayerColorChange).toHaveBeenLastCalledWith('layer2', '#000000');
 
     const layer1Vis = container.querySelectorAll('.vis')[1];
+
     expect(mockSetLayerVisibility).not.toBeCalled();
     fireEvent.click(layer1Vis);
     expect(mockSetLayerVisibility).toBeCalledTimes(1);
     expect(mockSetLayerVisibility).toHaveBeenLastCalledWith('layer1');
 
     const layerLocks = container.querySelectorAll('.lock');
+
     expect(mockUnLockLayers).not.toBeCalled();
     fireEvent.click(layerLocks[1]);
     expect(mockUnLockLayers).not.toBeCalled();

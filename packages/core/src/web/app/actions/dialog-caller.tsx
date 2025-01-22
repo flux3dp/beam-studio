@@ -1,61 +1,63 @@
 import * as React from 'react';
 
-import AboutBeamStudio from '@core/app/components/dialogs/AboutBeamStudio';
-import AnnouncementPanel from '@core/app/components/dialogs/AnnouncementPanel';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import Boxgen from '@core/app/components/boxgen/Boxgen';
+import AboutBeamStudio from '@core/app/components/dialogs/AboutBeamStudio';
+import AnnouncementPanel from '@core/app/components/dialogs/AnnouncementPanel';
 import CartridgeSettingPanel from '@core/app/components/dialogs/CartridgeSettingPanel';
 import ChangeLog from '@core/app/components/dialogs/ChangeLog';
 import CodeGenerator from '@core/app/components/dialogs/CodeGenerator';
-import CropPanel from '@core/app/views/dialogs/image-edit/CropPanel';
-import DeviceSelector from '@core/app/views/dialogs/DeviceSelector';
-import DialogBox from '@core/app/widgets/Dialog-Box';
 import DocumentSettings from '@core/app/components/dialogs/DocumentSettings';
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import FirmwareUpdate from '@core/app/components/dialogs/FirmwareUpdate';
 import FluxCredit from '@core/app/components/dialogs/FluxCredit';
 import FluxIdLogin from '@core/app/components/dialogs/FluxIdLogin';
 import FluxPlusWarning from '@core/app/components/dialogs/FluxPlusWarning';
-import i18n from '@core/helpers/i18n';
-import InputLightBox from '@core/app/widgets/InputLightbox';
-import isWeb from '@core/helpers/is-web';
-import LayerColorConfigPanel from '@core/app/views/beambox/Layer-Color-Config';
 import MaterialTestGeneratorPanel from '@core/app/components/dialogs/MaterialTestGeneratorPanel';
 import MediaTutorial from '@core/app/components/dialogs/MediaTutorial';
 import MyCloud from '@core/app/components/dialogs/myCloud/MyCloud';
-import NetworkTestingPanel from '@core/app/views/beambox/NetworkTestingPanel';
-import NounProjectPanel from '@core/app/views/beambox/Noun-Project-Panel';
-import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
-import PhotoEditPanel, { PhotoEditMode } from '@core/app/views/beambox/Photo-Edit-Panel';
+import SaveFileModal from '@core/app/components/dialogs/myCloud/SaveFileModal';
 import PreviewHeight from '@core/app/components/dialogs/PreviewHeight';
-import Prompt from '@core/app/views/dialogs/Prompt';
 import RadioSelectDialog from '@core/app/components/dialogs/RadioSelectDialog';
 import RatingPanel from '@core/app/components/dialogs/RatingPanel';
-import SaveFileModal from '@core/app/components/dialogs/myCloud/SaveFileModal';
-import ShapePanel from '@core/app/views/beambox/ShapePanel/ShapePanel';
-import shortcuts from '@core/helpers/shortcuts';
 import SocialMediaModal from '@core/app/components/dialogs/SocialMediaModal';
-import SvgNestButtons from '@core/app/views/beambox/SvgNestButtons';
-import Tutorial from '@core/app/views/tutorials/Tutorial';
-import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
-import { AlertConfigKey } from '@core/helpers/api/alert-config';
-import { ChipSettings } from '@core/interfaces/Cartridge';
-import { eventEmitter } from '@core/app/contexts/DialogContext';
-import { getCurrentUser, getInfo } from '@core/helpers/api/flux-id';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import { IAnnouncement } from '@core/interfaces/IAnnouncement';
-import { IDeviceInfo } from '@core/interfaces/IDevice';
-import { IDialogBoxStyle, IInputLightBox, IPrompt } from '@core/interfaces/IDialog';
-import { IMediaTutorial, ITutorial } from '@core/interfaces/ITutorial';
 import ImageEditPanel from '@core/app/components/ImageEditPanel';
+import { eventEmitter } from '@core/app/contexts/DialogContext';
+import LayerColorConfigPanel from '@core/app/views/beambox/Layer-Color-Config';
+import NetworkTestingPanel from '@core/app/views/beambox/NetworkTestingPanel';
+import NounProjectPanel from '@core/app/views/beambox/Noun-Project-Panel';
+import type { PhotoEditMode } from '@core/app/views/beambox/Photo-Edit-Panel';
+import PhotoEditPanel from '@core/app/views/beambox/Photo-Edit-Panel';
+import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
+import ShapePanel from '@core/app/views/beambox/ShapePanel/ShapePanel';
+import SvgNestButtons from '@core/app/views/beambox/SvgNestButtons';
+import DeviceSelector from '@core/app/views/dialogs/DeviceSelector';
+import CropPanel from '@core/app/views/dialogs/image-edit/CropPanel';
+import Prompt from '@core/app/views/dialogs/Prompt';
+import Tutorial from '@core/app/views/tutorials/Tutorial';
+import DialogBox from '@core/app/widgets/Dialog-Box';
+import InputLightBox from '@core/app/widgets/InputLightbox';
+import type { AlertConfigKey } from '@core/helpers/api/alert-config';
+import { getCurrentUser, getInfo } from '@core/helpers/api/flux-id';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import i18n from '@core/helpers/i18n';
+import isWeb from '@core/helpers/is-web';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
+import type { ChipSettings } from '@core/interfaces/Cartridge';
+import type { IAnnouncement } from '@core/interfaces/IAnnouncement';
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
+import type { IDialogBoxStyle, IInputLightBox, IPrompt } from '@core/interfaces/IDialog';
+import type { IMediaTutorial, ITutorial } from '@core/interfaces/ITutorial';
 
 let svgCanvas;
+
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
+
 const layerPanelEventEmitter = eventEmitterFactory.createEventEmitter('layer-panel');
 
-const addDialogComponent = (id: string, component: JSX.Element): void => {
+const addDialogComponent = (id: string, component: React.JSX.Element): void => {
   eventEmitter.emit('ADD_DIALOG_COMPONENT', id, component);
 };
 
@@ -67,7 +69,9 @@ const isIdExist = (id: string): boolean => {
   const response = {
     isIdExist: false,
   };
+
   eventEmitter.emit('CHECK_ID_EXIST', id, response);
+
   return response.isIdExist;
 };
 
@@ -78,39 +82,53 @@ const popDialogById = (id: string): void => {
 let promptIndex = 0;
 const getPromptId = (): string => {
   const id = `prompt-${promptIndex}`;
+
   promptIndex = (promptIndex + 1) % 10000;
+
   return id;
 };
 
 const showLoginDialog = (callback?: () => void, silent = false): void => {
-  if (isIdExist('flux-id-login')) return;
+  if (isIdExist('flux-id-login')) {
+    return;
+  }
+
   if (isWeb() && callback) {
     window.addEventListener('DISMISS_FLUX_LOGIN', callback);
   }
+
   addDialogComponent(
     'flux-id-login',
     <FluxIdLogin
-      silent={silent}
       onClose={() => {
         window.removeEventListener('DISMISS_FLUX_LOGIN', callback);
         popDialogById('flux-id-login');
-        if (callback) callback();
+
+        if (callback) {
+          callback();
+        }
       }}
+      silent={silent}
     />,
   );
 };
 
 const forceLoginWrapper = (
-  callback: () => void | Promise<void>,
+  callback: () => Promise<void> | void,
   silent?: boolean,
-  failCallback?: () => void | Promise<void>,
+  failCallback?: () => Promise<void> | void,
 ): void => {
   let user = getCurrentUser();
+
   if (!user) {
     showLoginDialog(() => {
       user = getCurrentUser();
-      if (user) callback();
-      else failCallback?.();
+
+      if (user) {
+        callback();
+      } else {
+        failCallback?.();
+      }
     }, silent);
   } else {
     callback();
@@ -119,33 +137,38 @@ const forceLoginWrapper = (
 
 // TODO: decouple dialog caller and dialog modals
 const showFluxPlusWarning = (monotype?: boolean): void => {
-  if (isIdExist('flux-plus-warning')) return;
+  if (isIdExist('flux-plus-warning')) {
+    return;
+  }
+
   addDialogComponent(
     'flux-plus-warning',
-    <FluxPlusWarning onClose={() => popDialogById('flux-plus-warning')} monotype={monotype} />,
+    <FluxPlusWarning monotype={monotype} onClose={() => popDialogById('flux-plus-warning')} />,
   );
 };
+
 eventEmitter.on('SHOW_FLUX_PLUS_WARNING', showFluxPlusWarning);
 
 const showDeviceSelector = (onSelect) => {
   addDialogComponent(
     'device-selector',
-    <DeviceSelector onSelect={onSelect} onClose={() => popDialogById('device-selector')} />,
+    <DeviceSelector onClose={() => popDialogById('device-selector')} onSelect={onSelect} />,
   );
 };
 
 const promptDialog = (args: IPrompt): void => {
   const id = getPromptId();
+
   promptIndex = (promptIndex + 1) % 10000;
   addDialogComponent(
     id,
     <Prompt
       caption={args.caption}
-      message={args.message}
       defaultValue={args.defaultValue}
-      onYes={args.onYes}
+      message={args.message}
       onCancel={args.onCancel}
       onClose={() => popDialogById(id)}
+      onYes={args.onYes}
     />,
   );
 };
@@ -153,21 +176,210 @@ const promptDialog = (args: IPrompt): void => {
 export default {
   addDialogComponent,
   clearAllDialogComponents,
+  forceLoginWrapper,
+  getPreviewHeight: (args: { initValue: number }): Promise<null | number> =>
+    new Promise((resolve) => {
+      const id = 'get-preview-height';
+
+      if (isIdExist(id)) {
+        popDialogById(id);
+      }
+
+      addDialogComponent(
+        id,
+        <PreviewHeight initValue={args.initValue} onClose={() => popDialogById(id)} onOk={(val) => resolve(val)} />,
+      );
+    }),
+  getPromptValue: (args: IPrompt): Promise<null | string> =>
+    new Promise((resolve) => {
+      const onYes = (val?: string) => resolve(val);
+      const onCancel = () => resolve(null);
+
+      promptDialog({ ...args, onCancel, onYes });
+    }),
   isIdExist,
   popDialogById,
+  promptDialog,
+  saveToCloud: (uuid?: string): Promise<{ fileName: null | string; isCancelled?: boolean }> =>
+    new Promise<{ fileName: null | string; isCancelled?: boolean }>((resolve) => {
+      addDialogComponent(
+        'save-to-cloud',
+        <SaveFileModal
+          onClose={(fileName: null | string, isCancelled?: boolean) => {
+            popDialogById('save-to-cloud');
+            resolve({ fileName, isCancelled });
+          }}
+          uuid={uuid}
+        />,
+      );
+    }),
   selectDevice: async (): Promise<IDeviceInfo> => {
     const device = await webNeedConnectionWrapper(
       () => new Promise<IDeviceInfo>((resolve) => showDeviceSelector(resolve)),
     );
+
     return device;
   },
   showAboutBeamStudio: (): void => {
-    if (isIdExist('about-bs')) return;
+    if (isIdExist('about-bs')) {
+      return;
+    }
+
     addDialogComponent('about-bs', <AboutBeamStudio onClose={() => popDialogById('about-bs')} />);
   },
+  showAnnouncementDialog: (announcement: IAnnouncement): void => {
+    const id = `announcement-${announcement.id}`;
+
+    if (isIdExist(id)) {
+      return;
+    }
+
+    addDialogComponent(id, <AnnouncementPanel announcement={announcement} onClose={() => popDialogById(id)} />);
+  },
+  showBoxGen: (onClose: () => void = () => {}): void => {
+    if (isIdExist('box-gen')) {
+      return;
+    }
+
+    addDialogComponent(
+      'box-gen',
+      <Boxgen
+        onClose={() => {
+          onClose();
+          popDialogById('box-gen');
+        }}
+      />,
+    );
+  },
+  showCatridgeSettingPanel: (initData: ChipSettings, inkLevel: number): void => {
+    if (isIdExist('catridge-setting')) {
+      return;
+    }
+
+    addDialogComponent(
+      'catridge-setting',
+      <CartridgeSettingPanel
+        initData={initData}
+        inkLevel={inkLevel}
+        onClose={() => popDialogById('catridge-setting')}
+      />,
+    );
+  },
+  showChangLog: (args: { callback?: () => void } = {}): void => {
+    if (isIdExist('change-log')) {
+      return;
+    }
+
+    const { callback } = args;
+
+    addDialogComponent(
+      'change-log',
+      <ChangeLog
+        onClose={() => {
+          popDialogById('change-log');
+
+          if (callback) {
+            callback();
+          }
+        }}
+      />,
+    );
+  },
+  showCodeGenerator: (onClose: () => void = () => {}): void => {
+    if (isIdExist('code-generator')) {
+      return;
+    }
+
+    addDialogComponent(
+      'code-generator',
+      <CodeGenerator
+        onClose={() => {
+          popDialogById('code-generator');
+          onClose();
+        }}
+      />,
+    );
+  },
+  showConfirmPromptDialog: (args: {
+    alertConfigKey?: AlertConfigKey;
+    caption?: string;
+    confirmValue?: string;
+    message?: string;
+  }): Promise<boolean> =>
+    new Promise((resolve) => {
+      const id = getPromptId();
+
+      addDialogComponent(
+        id,
+        <Prompt
+          alertConfigKey={args.alertConfigKey}
+          caption={args.caption}
+          confirmValue={args.confirmValue}
+          message={args.message}
+          onCancel={() => resolve(false)}
+          onClose={() => popDialogById(id)}
+          onYes={(value) => {
+            if (value?.toLowerCase() === args.confirmValue?.toLowerCase()) {
+              resolve(true);
+            }
+          }}
+          placeholder={args.confirmValue}
+        />,
+      );
+    }),
+  showCropPanel: (): void => {
+    if (isIdExist('image-crop')) {
+      return;
+    }
+
+    const selectedElements = svgCanvas.getSelectedElems();
+
+    if (selectedElements.length !== 1) {
+      return;
+    }
+
+    const element = selectedElements[0];
+    const src = element.getAttribute('origImage') || element.getAttribute('xlink:href');
+
+    addDialogComponent(
+      'image-crop',
+      <CropPanel
+        image={element}
+        onClose={() => {
+          popDialogById('image-crop');
+          ObjectPanelController.updateActiveKey(null);
+        }}
+        src={src}
+      />,
+    );
+  },
+  showDialogBox: (id: string, style: IDialogBoxStyle, content: string): void => {
+    if (isIdExist(id)) {
+      return;
+    }
+
+    console.log(style);
+    addDialogComponent(
+      id,
+      <DialogBox
+        arrowColor={style.arrowColor}
+        arrowDirection={style.arrowDirection}
+        arrowHeight={style.arrowHeight}
+        arrowPadding={style.arrowPadding}
+        arrowWidth={style.arrowWidth}
+        content={content}
+        onClose={() => popDialogById(id)}
+        position={style.position}
+      />,
+    );
+  },
   showDocumentSettings: (): void => {
-    if (isIdExist('docu-setting')) return;
+    if (isIdExist('docu-setting')) {
+      return;
+    }
+
     const unmount = () => popDialogById('docu-setting');
+
     addDialogComponent('docu-setting', <DocumentSettings unmount={unmount} />);
   },
   showDxfDpiSelector: (defaultValue: number): Promise<number> =>
@@ -176,209 +388,20 @@ export default {
         'dxf-dpi-select',
         <Prompt
           caption={i18n.lang.message.please_enter_dpi}
-          message="1, 2.54, 25.4, 72, 96, ...etc."
           defaultValue={defaultValue.toString()}
-          onYes={(val: string) => {
-            popDialogById('dxf-dpi-select');
-            resolve(Number(val));
-          }}
+          message="1, 2.54, 25.4, 72, 96, ...etc."
           onCancel={() => {
             popDialogById('dxf-dpi-select');
             resolve(null);
           }}
           onClose={() => popDialogById('dxf-dpi-select')}
-        />,
-      );
-    }),
-  showNetworkTestingPanel: (ip?: string): void => {
-    if (isIdExist('network-test')) return;
-    addDialogComponent(
-      'network-test',
-      <NetworkTestingPanel ip={ip} onClose={() => popDialogById('network-test')} />,
-    );
-  },
-  showNounProjectPanel: (): void => {
-    if (isIdExist('noun-project')) return;
-    addDialogComponent(
-      'noun-project',
-      <NounProjectPanel onClose={() => popDialogById('noun-project')} />,
-    );
-  },
-  showCropPanel: (): void => {
-    if (isIdExist('image-crop')) return;
-    const selectedElements = svgCanvas.getSelectedElems();
-    if (selectedElements.length !== 1) return;
-    const element = selectedElements[0];
-    const src = element.getAttribute('origImage') || element.getAttribute('xlink:href');
-    addDialogComponent(
-      'image-crop',
-      <CropPanel
-        src={src}
-        image={element}
-        onClose={() => {
-          popDialogById('image-crop');
-          ObjectPanelController.updateActiveKey(null);
-        }}
-      />,
-    );
-  },
-  showPhotoEditPanel: (mode: PhotoEditMode): void => {
-    if (isIdExist('photo-edit')) return;
-    const selectedElements = svgCanvas.getSelectedElems();
-    if (selectedElements.length !== 1) return;
-    const element = selectedElements[0];
-    const src = element.getAttribute('origImage') || element.getAttribute('xlink:href');
-    addDialogComponent(
-      'photo-edit',
-      <PhotoEditPanel
-        mode={mode}
-        element={element}
-        src={src}
-        unmount={() => popDialogById('photo-edit')}
-      />,
-    );
-  },
-  showLayerColorConfig: (): void => {
-    if (isIdExist('layer-color-config')) return;
-    addDialogComponent(
-      'layer-color-config',
-      <LayerColorConfigPanel onClose={() => popDialogById('layer-color-config')} />,
-    );
-  },
-  showRatingDialog: (onSubmit: (score: number) => void): void => {
-    if (isIdExist('rating-dialog')) return;
-    addDialogComponent(
-      'rating-dialog',
-      <RatingPanel onSubmit={onSubmit} onClose={() => popDialogById('rating-dialog')} />,
-    );
-  },
-  showAnnouncementDialog: (announcement: IAnnouncement): void => {
-    const id = `announcement-${announcement.id}`;
-    if (isIdExist(id)) return;
-    addDialogComponent(
-      id,
-      <AnnouncementPanel announcement={announcement} onClose={() => popDialogById(id)} />,
-    );
-  },
-  showSvgNestButtons: (): void => {
-    if (isIdExist('svg-nest')) return;
-    addDialogComponent('svg-nest', <SvgNestButtons onClose={() => popDialogById('svg-nest')} />);
-  },
-  showTutorial: (tutorial: ITutorial, callback: () => void): void => {
-    const { id } = tutorial;
-    if (isIdExist(id)) return;
-    svgCanvas.clearSelection();
-    layerPanelEventEmitter.emit('startTutorial');
-    addDialogComponent(
-      id,
-      <Tutorial
-        hasNextButton={tutorial.hasNextButton}
-        end_alert={tutorial.end_alert}
-        dialogStylesAndContents={tutorial.dialogStylesAndContents}
-        onClose={() => {
-          popDialogById(id);
-          layerPanelEventEmitter.emit('endTutorial');
-          callback();
-        }}
-      />,
-    );
-  },
-  promptDialog,
-  getPreviewHeight: (args: { initValue: number }): Promise<number | null> =>
-    new Promise((resolve) => {
-      const id = 'get-preview-height';
-      if (isIdExist(id)) popDialogById(id);
-      addDialogComponent(
-        id,
-        <PreviewHeight
-          initValue={args.initValue}
-          onOk={(val) => resolve(val)}
-          onClose={() => popDialogById(id)}
-        />,
-      );
-    }),
-  getPromptValue: (args: IPrompt): Promise<string | null> =>
-    new Promise((resolve) => {
-      const onYes = (val?: string) => resolve(val);
-      const onCancel = () => resolve(null);
-      promptDialog({ ...args, onYes, onCancel });
-    }),
-  showConfirmPromptDialog: (args: {
-    caption?: string;
-    message?: string;
-    confirmValue?: string;
-    alertConfigKey?: AlertConfigKey;
-  }): Promise<boolean> =>
-    new Promise((resolve) => {
-      const id = getPromptId();
-      addDialogComponent(
-        id,
-        <Prompt
-          caption={args.caption}
-          message={args.message}
-          placeholder={args.confirmValue}
-          confirmValue={args.confirmValue}
-          onYes={(value) => {
-            if (value?.toLowerCase() === args.confirmValue?.toLowerCase()) resolve(true);
+          onYes={(val: string) => {
+            popDialogById('dxf-dpi-select');
+            resolve(Number(val));
           }}
-          alertConfigKey={args.alertConfigKey}
-          onCancel={() => resolve(false)}
-          onClose={() => popDialogById(id)}
         />,
       );
     }),
-  showChangLog: (args: { callback?: () => void } = {}): void => {
-    if (isIdExist('change-log')) return;
-    const { callback } = args;
-    addDialogComponent(
-      'change-log',
-      <ChangeLog
-        onClose={() => {
-          popDialogById('change-log');
-          if (callback) callback();
-        }}
-      />,
-    );
-  },
-  showInputLightbox: (id: string, args: IInputLightBox): void => {
-    addDialogComponent(
-      id,
-      <InputLightBox
-        caption={args.caption}
-        type={args.type || 'TEXT_INPUT'}
-        inputHeader={args.inputHeader}
-        defaultValue={args.defaultValue}
-        confirmText={args.confirmText}
-        maxLength={args.maxLength}
-        onSubmit={(value) => {
-          args.onSubmit(value);
-        }}
-        onClose={(from: string) => {
-          popDialogById(id);
-          if (from !== 'submit') args.onCancel();
-        }}
-      />,
-    );
-  },
-  showLoginDialog,
-  forceLoginWrapper,
-  showDialogBox: (id: string, style: IDialogBoxStyle, content: string): void => {
-    if (isIdExist(id)) return;
-    console.log(style);
-    addDialogComponent(
-      id,
-      <DialogBox
-        position={style.position}
-        arrowDirection={style.arrowDirection}
-        arrowWidth={style.arrowWidth}
-        arrowHeight={style.arrowHeight}
-        arrowPadding={style.arrowPadding}
-        arrowColor={style.arrowColor}
-        content={content}
-        onClose={() => popDialogById(id)}
-      />,
-    );
-  },
   showFirmwareUpdateDialog: (
     device: IDeviceInfo,
     updateInfo: {
@@ -389,21 +412,129 @@ export default {
     onDownload: () => void,
     onInstall: () => void,
   ): void => {
-    if (isIdExist('update-dialog')) return;
-    const { name, model, version } = device;
-    const releaseNode =
-      i18n.getActiveLang() === 'zh-tw' ? updateInfo.changelog_zh : updateInfo.changelog_en;
+    if (isIdExist('update-dialog')) {
+      return;
+    }
+
+    const { model, name, version } = device;
+    const releaseNode = i18n.getActiveLang() === 'zh-tw' ? updateInfo.changelog_zh : updateInfo.changelog_en;
+
     addDialogComponent(
       'update-dialog',
       <FirmwareUpdate
-        deviceName={name}
-        deviceModel={model}
         currentVersion={version}
+        deviceModel={model}
+        deviceName={name}
         latestVersion={updateInfo.latestVersion}
-        releaseNote={releaseNode}
+        onClose={() => popDialogById('update-dialog')}
         onDownload={onDownload}
         onInstall={onInstall}
-        onClose={() => popDialogById('update-dialog')}
+        releaseNote={releaseNode}
+      />,
+    );
+  },
+  showFluxCreditDialog: (): void => {
+    if (isIdExist('flux-id-credit')) {
+      return;
+    }
+
+    forceLoginWrapper(async () => {
+      await getInfo(true);
+
+      if (isIdExist('flux-id-credit')) {
+        return;
+      }
+
+      addDialogComponent('flux-id-credit', <FluxCredit onClose={() => popDialogById('flux-id-credit')} />);
+    }, true);
+  },
+  showImageEditPanel: (onClose: () => void = () => {}): void => {
+    if (isIdExist('image-edit-panel')) {
+      return;
+    }
+
+    const selectedElements = svgCanvas.getSelectedElems();
+
+    if (selectedElements.length !== 1) {
+      return;
+    }
+
+    const element = selectedElements[0];
+    const src = element.getAttribute('origImage') || element.getAttribute('xlink:href');
+
+    addDialogComponent(
+      'image-edit-panel',
+      <ImageEditPanel
+        image={element}
+        onClose={() => {
+          onClose();
+          ObjectPanelController.updateActiveKey(null);
+          popDialogById('image-edit-panel');
+        }}
+        src={src}
+      />,
+    );
+  },
+  showInputLightbox: (id: string, args: IInputLightBox): void => {
+    addDialogComponent(
+      id,
+      <InputLightBox
+        caption={args.caption}
+        confirmText={args.confirmText}
+        defaultValue={args.defaultValue}
+        inputHeader={args.inputHeader}
+        maxLength={args.maxLength}
+        onClose={(from: string) => {
+          popDialogById(id);
+
+          if (from !== 'submit') {
+            args.onCancel();
+          }
+        }}
+        onSubmit={(value) => {
+          args.onSubmit(value);
+        }}
+        type={args.type || 'TEXT_INPUT'}
+      />,
+    );
+  },
+  showLayerColorConfig: (): void => {
+    if (isIdExist('layer-color-config')) {
+      return;
+    }
+
+    addDialogComponent(
+      'layer-color-config',
+      <LayerColorConfigPanel onClose={() => popDialogById('layer-color-config')} />,
+    );
+  },
+  showLoadingWindow: (): void => {
+    const id = 'loading-window';
+
+    if (isIdExist(id)) {
+      return;
+    }
+
+    addDialogComponent(
+      id,
+      <div className="loading-background">
+        <div className="spinner-roller absolute-center" />
+      </div>,
+    );
+  },
+  showLoginDialog,
+  showMaterialTestGenerator: (onClose: () => void = () => {}): void => {
+    if (isIdExist('material-test-generator')) {
+      return;
+    }
+
+    addDialogComponent(
+      'material-test-generator',
+      <MaterialTestGeneratorPanel
+        onClose={() => {
+          popDialogById('material-test-generator');
+          onClose();
+        }}
       />,
     );
   },
@@ -420,114 +551,16 @@ export default {
         />,
       );
     }),
-  showLoadingWindow: (): void => {
-    const id = 'loading-window';
-    if (isIdExist(id)) return;
-    addDialogComponent(
-      id,
-      <div className="loading-background">
-        <div className="spinner-roller absolute-center" />
-      </div>,
-    );
-  },
-  showShapePanel: (onClose: () => void): void => {
-    if (isIdExist('shape-panel')) return;
-    addDialogComponent(
-      'shape-panel',
-      <ShapePanel
-        onClose={() => {
-          onClose();
-          popDialogById('shape-panel');
-        }}
-      />,
-    );
-  },
-  showCatridgeSettingPanel: (initData: ChipSettings, inkLevel: number): void => {
-    if (isIdExist('catridge-setting')) return;
-    addDialogComponent(
-      'catridge-setting',
-      <CartridgeSettingPanel
-        inkLevel={inkLevel}
-        initData={initData}
-        onClose={() => popDialogById('catridge-setting')}
-      />,
-    );
-  },
-  showRadioSelectDialog: <T,>({
-    id = 'radio-select',
-    title,
-    options,
-    defaultValue = options[0].value,
-  }: {
-    id?: string;
-    title: string;
-    options: Array<{ label: string; value: T }>;
-    defaultValue?: T;
-  }): Promise<T> =>
-    new Promise((resolve) => {
-      if (isIdExist(id)) {
+  showMyCloud: (onClose: () => void): void => {
+    if (isIdExist('my-cloud')) {
+      return;
+    }
+
+    forceLoginWrapper(() => {
+      if (isIdExist('my-cloud')) {
         return;
       }
 
-      addDialogComponent(
-        id,
-        <RadioSelectDialog<T>
-          title={title}
-          options={options}
-          defaultValue={defaultValue}
-          onOk={(val) => {
-            popDialogById(id);
-            beamboxPreference.write(id, val);
-            resolve(val);
-          }}
-          onCancel={() => {
-            popDialogById(id);
-            resolve(null);
-          }}
-        />,
-      );
-    }),
-  showCodeGenerator: (onClose: () => void = () => {}): void => {
-    if (isIdExist('code-generator')) return;
-
-    addDialogComponent(
-      'code-generator',
-      <CodeGenerator
-        onClose={() => {
-          popDialogById('code-generator');
-          onClose();
-        }}
-      />,
-    );
-  },
-  showFluxCreditDialog: (): void => {
-    if (isIdExist('flux-id-credit')) return;
-    forceLoginWrapper(async () => {
-      await getInfo(true);
-      if (isIdExist('flux-id-credit')) return;
-      addDialogComponent(
-        'flux-id-credit',
-        <FluxCredit onClose={() => popDialogById('flux-id-credit')} />,
-      );
-    }, true);
-  },
-  showBoxGen: (onClose: () => void = () => {}): void => {
-    if (isIdExist('box-gen')) return;
-
-    addDialogComponent(
-      'box-gen',
-      <Boxgen
-        onClose={() => {
-          onClose();
-          popDialogById('box-gen');
-        }}
-      />,
-    );
-  },
-  showMyCloud: (onClose: () => void): void => {
-    if (isIdExist('my-cloud')) return;
-    forceLoginWrapper(() => {
-      if (isIdExist('my-cloud')) return;
       addDialogComponent(
         'my-cloud',
         <MyCloud
@@ -539,58 +572,133 @@ export default {
       );
     }, true);
   },
-  saveToCloud: (uuid?: string): Promise<{ fileName: string | null; isCancelled?: boolean }> =>
-    new Promise<{ fileName: string | null; isCancelled?: boolean }>((resolve) => {
+  showNetworkTestingPanel: (ip?: string): void => {
+    if (isIdExist('network-test')) {
+      return;
+    }
+
+    addDialogComponent('network-test', <NetworkTestingPanel ip={ip} onClose={() => popDialogById('network-test')} />);
+  },
+  showNounProjectPanel: (): void => {
+    if (isIdExist('noun-project')) {
+      return;
+    }
+
+    addDialogComponent('noun-project', <NounProjectPanel onClose={() => popDialogById('noun-project')} />);
+  },
+  showPhotoEditPanel: (mode: PhotoEditMode): void => {
+    if (isIdExist('photo-edit')) {
+      return;
+    }
+
+    const selectedElements = svgCanvas.getSelectedElems();
+
+    if (selectedElements.length !== 1) {
+      return;
+    }
+
+    const element = selectedElements[0];
+    const src = element.getAttribute('origImage') || element.getAttribute('xlink:href');
+
+    addDialogComponent(
+      'photo-edit',
+      <PhotoEditPanel element={element} mode={mode} src={src} unmount={() => popDialogById('photo-edit')} />,
+    );
+  },
+  showRadioSelectDialog: <T,>({
+    options,
+    defaultValue = options[0].value,
+    id = 'radio-select',
+    title,
+  }: {
+    defaultValue?: T;
+    id?: string;
+    options: Array<{ label: string; value: T }>;
+    title: string;
+  }): Promise<T> =>
+    new Promise((resolve) => {
+      if (isIdExist(id)) {
+        return;
+      }
+
       addDialogComponent(
-        'save-to-cloud',
-        <SaveFileModal
-          onClose={(fileName: string | null, isCancelled?: boolean) => {
-            popDialogById('save-to-cloud');
-            resolve({ fileName, isCancelled });
+        id,
+        <RadioSelectDialog<T>
+          defaultValue={defaultValue}
+          onCancel={() => {
+            popDialogById(id);
+            resolve(null);
           }}
-          uuid={uuid}
+          onOk={(val) => {
+            popDialogById(id);
+            beamboxPreference.write(id, val);
+            resolve(val);
+          }}
+          options={options}
+          title={title}
         />,
       );
     }),
-  showMaterialTestGenerator: (onClose: () => void = () => {}): void => {
-    if (isIdExist('material-test-generator')) {
+  showRatingDialog: (onSubmit: (score: number) => void): void => {
+    if (isIdExist('rating-dialog')) {
       return;
     }
 
     addDialogComponent(
-      'material-test-generator',
-      <MaterialTestGeneratorPanel
+      'rating-dialog',
+      <RatingPanel onClose={() => popDialogById('rating-dialog')} onSubmit={onSubmit} />,
+    );
+  },
+  showShapePanel: (onClose: () => void): void => {
+    if (isIdExist('shape-panel')) {
+      return;
+    }
+
+    addDialogComponent(
+      'shape-panel',
+      <ShapePanel
         onClose={() => {
-          popDialogById('material-test-generator');
           onClose();
+          popDialogById('shape-panel');
         }}
       />,
     );
   },
   showSocialMedia: (): void => {
     const id = 'social-media';
-    if (isIdExist(id)) return;
-    addDialogComponent(id, <SocialMediaModal onClose={() => popDialogById(id)} />);
-  },
-  showImageEditPanel: (onClose: () => void = () => {}): void => {
-    if (isIdExist('image-edit-panel')) {
+
+    if (isIdExist(id)) {
       return;
     }
 
-    const selectedElements = svgCanvas.getSelectedElems();
-    if (selectedElements.length !== 1) return;
-    const element = selectedElements[0];
-    const src = element.getAttribute('origImage') || element.getAttribute('xlink:href');
+    addDialogComponent(id, <SocialMediaModal onClose={() => popDialogById(id)} />);
+  },
+  showSvgNestButtons: (): void => {
+    if (isIdExist('svg-nest')) {
+      return;
+    }
 
+    addDialogComponent('svg-nest', <SvgNestButtons onClose={() => popDialogById('svg-nest')} />);
+  },
+  showTutorial: (tutorial: ITutorial, callback: () => void): void => {
+    const { id } = tutorial;
+
+    if (isIdExist(id)) {
+      return;
+    }
+
+    svgCanvas.clearSelection();
+    layerPanelEventEmitter.emit('startTutorial');
     addDialogComponent(
-      'image-edit-panel',
-      <ImageEditPanel
-        src={src}
-        image={element}
+      id,
+      <Tutorial
+        dialogStylesAndContents={tutorial.dialogStylesAndContents}
+        end_alert={tutorial.end_alert}
+        hasNextButton={tutorial.hasNextButton}
         onClose={() => {
-          onClose();
-          ObjectPanelController.updateActiveKey(null);
-          popDialogById('image-edit-panel');
+          popDialogById(id);
+          layerPanelEventEmitter.emit('endTutorial');
+          callback();
         }}
       />,
     );

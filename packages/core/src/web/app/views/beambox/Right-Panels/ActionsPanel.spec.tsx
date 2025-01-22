@@ -1,5 +1,5 @@
-/* eslint-disable import/first */
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import i18n from '@core/helpers/i18n';
@@ -7,6 +7,7 @@ import i18n from '@core/helpers/i18n';
 const mockShowCropPanel = jest.fn();
 const showPhotoEditPanel = jest.fn();
 const mockSvgNestButtons = jest.fn();
+
 jest.mock('@core/app/actions/dialog-caller', () => ({
   showCropPanel: (...args) => mockShowCropPanel(...args),
   showPhotoEditPanel,
@@ -14,11 +15,13 @@ jest.mock('@core/app/actions/dialog-caller', () => ({
 }));
 
 const getFileFromDialog = jest.fn();
+
 jest.mock('@app/implementations/dialog', () => ({
   getFileFromDialog,
 }));
 
 const convertTextToPath = jest.fn();
+
 jest.mock('@core/app/actions/beambox/font-funcs', () => ({
   convertTextToPath,
 }));
@@ -28,15 +31,17 @@ const generateStampBevel = jest.fn();
 const colorInvert = jest.fn();
 const mockRemoveBackground = jest.fn();
 const mockPotrace = jest.fn();
+
 jest.mock('@core/helpers/image-edit', () => ({
-  generateStampBevel,
   colorInvert,
+  generateStampBevel,
   potrace: (...args) => mockPotrace(...args),
-  traceImage: (...args) => mockTraceImage(...args),
   removeBackground: (...args) => mockRemoveBackground(...args),
+  traceImage: (...args) => mockTraceImage(...args),
 }));
 
 const renderText = jest.fn();
+
 jest.mock('@core/app/svgedit/text/textedit', () => ({
   renderText,
 }));
@@ -44,25 +49,29 @@ jest.mock('@core/app/svgedit/text/textedit', () => ({
 const editTextPath = jest.fn();
 const detachText = jest.fn();
 const attachTextToPath = jest.fn();
+
 jest.mock('@core/app/actions/beambox/textPathEdit', () => ({
-  editPath: editTextPath,
-  detachText,
   attachTextToPath,
+  detachText,
+  editPath: editTextPath,
 }));
 
 const mockShowRotaryWarped = jest.fn();
+
 jest.mock('@core/app/views/dialogs/image-edit/RotaryWarped', () => ({
   showRotaryWarped: (...args) => mockShowRotaryWarped(...args),
 }));
 
 const openNonstopProgress = jest.fn();
 const popById = jest.fn();
+
 jest.mock('@core/app/actions/progress-caller', () => ({
   openNonstopProgress,
   popById,
 }));
 
 const toSelectMode = jest.fn();
+
 jest.mock('@core/app/svgedit/text/textactions', () => ({
   isEditing: true,
   toSelectMode,
@@ -71,16 +80,19 @@ jest.mock('@core/app/svgedit/text/textactions', () => ({
 jest.mock('@core/helpers/web-need-connection-helper', () => (callback) => callback());
 
 const mockCheckConnection = jest.fn();
+
 jest.mock('@core/helpers/api/discover', () => ({
   checkConnection: mockCheckConnection,
 }));
 
 const getSVGAsync = jest.fn();
+
 jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync,
 }));
 
 const isMobile = jest.fn();
+
 jest.mock('@core/helpers/system-helper', () => ({
   isMobile: () => isMobile(),
 }));
@@ -116,6 +128,7 @@ getSVGAsync.mockImplementation((callback) => {
 import ActionsPanel from './ActionsPanel';
 
 const mockUpdateElementColor = jest.fn();
+
 jest.mock(
   '@core/helpers/color/updateElementColor',
   () =>
@@ -132,6 +145,7 @@ function tick() {
 const tActionPanel = i18n.lang.beambox.right_panel.object_panel.actions_panel;
 
 const mockAutoFit = jest.fn();
+
 jest.mock(
   '@core/app/svgedit/operations/autoFit',
   () =>
@@ -146,17 +160,19 @@ describe('should render correctly', () => {
 
   test('no elements', () => {
     const { container } = render(<ActionsPanel elem={null} />);
+
     expect(container).toMatchSnapshot();
   });
 
   test('image', async () => {
     document.body.innerHTML = '<image id="svg_1" />';
-    const { container, getByText } = render(
-      <ActionsPanel elem={document.getElementById('svg_1')} />,
-    );
+
+    const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_1')} />);
+
     expect(container).toMatchSnapshot();
 
     const blob = new Blob();
+
     getFileFromDialog.mockResolvedValueOnce(blob);
 
     fireEvent.click(getByText(tActionPanel.replace_with));
@@ -165,22 +181,8 @@ describe('should render correctly', () => {
     expect(getFileFromDialog).toHaveBeenNthCalledWith(1, {
       filters: [
         {
+          extensions: ['png', 'jpg', 'jpeg', 'jpe', 'jif', 'jfif', 'jfi', 'bmp', 'jp2', 'j2k', 'jpf', 'jpx', 'jpm'],
           name: 'Images',
-          extensions: [
-            'png',
-            'jpg',
-            'jpeg',
-            'jpe',
-            'jif',
-            'jfif',
-            'jfi',
-            'bmp',
-            'jp2',
-            'j2k',
-            'jpf',
-            'jpx',
-            'jpm',
-          ],
         },
       ],
     });
@@ -233,9 +235,9 @@ describe('should render correctly', () => {
       },
     });
     document.body.innerHTML = '<text id="svg_1" />';
-    const { container, getByText } = render(
-      <ActionsPanel elem={document.getElementById('svg_1')} />,
-    );
+
+    const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_1')} />);
+
     expect(container).toMatchSnapshot();
 
     convertTextToPath.mockResolvedValueOnce({});
@@ -263,9 +265,9 @@ describe('should render correctly', () => {
 
   test('path', () => {
     document.body.innerHTML = '<path id="svg_1" />';
-    const { container, getByText } = render(
-      <ActionsPanel elem={document.getElementById('svg_1')} />,
-    );
+
+    const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_1')} />);
+
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getByText(tActionPanel.edit_path));
@@ -282,9 +284,9 @@ describe('should render correctly', () => {
 
   test('rect', () => {
     document.body.innerHTML = '<rect id="svg_1" />';
-    const { container, getByText } = render(
-      <ActionsPanel elem={document.getElementById('svg_1')} />,
-    );
+
+    const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_1')} />);
+
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getByText(tActionPanel.convert_to_path));
@@ -299,9 +301,9 @@ describe('should render correctly', () => {
 
   test('ellipse', () => {
     document.body.innerHTML = '<ellipse id="svg_1" />';
-    const { container, getByText } = render(
-      <ActionsPanel elem={document.getElementById('svg_1')} />,
-    );
+
+    const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_1')} />);
+
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getByText(tActionPanel.convert_to_path));
@@ -316,9 +318,9 @@ describe('should render correctly', () => {
 
   test('polygon', () => {
     document.body.innerHTML = '<polygon id="svg_1" />';
-    const { container, getByText } = render(
-      <ActionsPanel elem={document.getElementById('svg_1')} />,
-    );
+
+    const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_1')} />);
+
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getByText(tActionPanel.convert_to_path));
@@ -333,9 +335,9 @@ describe('should render correctly', () => {
 
   test('line', () => {
     document.body.innerHTML = '<line id="svg_1" />';
-    const { container, getByText } = render(
-      <ActionsPanel elem={document.getElementById('svg_1')} />,
-    );
+
+    const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_1')} />);
+
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getByText(tActionPanel.convert_to_path));
@@ -350,9 +352,9 @@ describe('should render correctly', () => {
 
   test('use', () => {
     document.body.innerHTML = '<use id="svg_1" />';
-    const { container, getByText } = render(
-      <ActionsPanel elem={document.getElementById('svg_1')} />,
-    );
+
+    const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_1')} />);
+
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getByText(tActionPanel.disassemble_use));
@@ -371,9 +373,9 @@ describe('should render correctly', () => {
           <ellipse id="svg_2" />
         </g>
       `;
-      const { container, getByText } = render(
-        <ActionsPanel elem={document.getElementById('svg_3')} />,
-      );
+
+      const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_3')} />);
+
       expect(container).toMatchSnapshot();
 
       fireEvent.click(getByText(tActionPanel.offset));
@@ -386,9 +388,9 @@ describe('should render correctly', () => {
 
     test('single selection', () => {
       document.body.innerHTML = '<g id="svg_1" />';
-      const { container, getByText } = render(
-        <ActionsPanel elem={document.getElementById('svg_1')} />,
-      );
+
+      const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_1')} />);
+
       expect(container).toMatchSnapshot();
 
       fireEvent.click(getByText(tActionPanel.array));
@@ -407,17 +409,19 @@ describe('should render correctly in mobile', () => {
 
   test('no elements', () => {
     const { container } = render(<ActionsPanel elem={null} />);
+
     expect(container).toMatchSnapshot();
   });
 
   test('image', async () => {
     document.body.innerHTML = '<image id="svg_1" />';
-    const { container, getByText } = render(
-      <ActionsPanel elem={document.getElementById('svg_1')} />,
-    );
+
+    const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_1')} />);
+
     expect(container).toMatchSnapshot();
 
     const blob = new Blob();
+
     getFileFromDialog.mockResolvedValueOnce(blob);
 
     fireEvent.click(getByText(tActionPanel.replace_with_short));
@@ -426,22 +430,8 @@ describe('should render correctly in mobile', () => {
     expect(getFileFromDialog).toHaveBeenNthCalledWith(1, {
       filters: [
         {
+          extensions: ['png', 'jpg', 'jpeg', 'jpe', 'jif', 'jfif', 'jfi', 'bmp', 'jp2', 'j2k', 'jpf', 'jpx', 'jpm'],
           name: 'Images',
-          extensions: [
-            'png',
-            'jpg',
-            'jpeg',
-            'jpe',
-            'jif',
-            'jfif',
-            'jfi',
-            'bmp',
-            'jp2',
-            'j2k',
-            'jpf',
-            'jpx',
-            'jpm',
-          ],
         },
       ],
     });
@@ -496,9 +486,9 @@ describe('should render correctly in mobile', () => {
       },
     });
     document.body.innerHTML = '<text id="svg_1" />';
-    const { container, getByText } = render(
-      <ActionsPanel elem={document.getElementById('svg_1')} />,
-    );
+
+    const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_1')} />);
+
     expect(container).toMatchSnapshot();
 
     convertTextToPath.mockResolvedValueOnce({});
@@ -526,9 +516,9 @@ describe('should render correctly in mobile', () => {
 
   test('path', () => {
     document.body.innerHTML = '<path id="svg_1" />';
-    const { container, getByText } = render(
-      <ActionsPanel elem={document.getElementById('svg_1')} />,
-    );
+
+    const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_1')} />);
+
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getByText(tActionPanel.edit_path));
@@ -545,9 +535,9 @@ describe('should render correctly in mobile', () => {
 
   test('rect', () => {
     document.body.innerHTML = '<rect id="svg_1" />';
-    const { container, getByText } = render(
-      <ActionsPanel elem={document.getElementById('svg_1')} />,
-    );
+
+    const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_1')} />);
+
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getByText(tActionPanel.outline));
@@ -562,9 +552,9 @@ describe('should render correctly in mobile', () => {
 
   test('ellipse', () => {
     document.body.innerHTML = '<ellipse id="svg_1" />';
-    const { container, getByText } = render(
-      <ActionsPanel elem={document.getElementById('svg_1')} />,
-    );
+
+    const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_1')} />);
+
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getByText(tActionPanel.outline));
@@ -579,9 +569,9 @@ describe('should render correctly in mobile', () => {
 
   test('polygon', () => {
     document.body.innerHTML = '<polygon id="svg_1" />';
-    const { container, getByText } = render(
-      <ActionsPanel elem={document.getElementById('svg_1')} />,
-    );
+
+    const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_1')} />);
+
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getByText(tActionPanel.outline));
@@ -596,9 +586,9 @@ describe('should render correctly in mobile', () => {
 
   test('line', () => {
     document.body.innerHTML = '<line id="svg_1" />';
-    const { container, getByText } = render(
-      <ActionsPanel elem={document.getElementById('svg_1')} />,
-    );
+
+    const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_1')} />);
+
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getByText(tActionPanel.outline));
@@ -613,9 +603,9 @@ describe('should render correctly in mobile', () => {
 
   test('use', () => {
     document.body.innerHTML = '<use id="svg_1" />';
-    const { container, getByText } = render(
-      <ActionsPanel elem={document.getElementById('svg_1')} />,
-    );
+
+    const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_1')} />);
+
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getByText(tActionPanel.disassemble_use));
@@ -634,9 +624,9 @@ describe('should render correctly in mobile', () => {
           <ellipse id="svg_2" />
         </g>
       `;
-      const { container, getByText } = render(
-        <ActionsPanel elem={document.getElementById('svg_3')} />,
-      );
+
+      const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_3')} />);
+
       expect(container).toMatchSnapshot();
       fireEvent.click(getByText(tActionPanel.offset));
       expect(triggerOffsetTool).toHaveBeenCalledTimes(1);
@@ -648,9 +638,9 @@ describe('should render correctly in mobile', () => {
 
     test('single selection', () => {
       document.body.innerHTML = '<g id="svg_1" />';
-      const { container, getByText } = render(
-        <ActionsPanel elem={document.getElementById('svg_1')} />,
-      );
+
+      const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_1')} />);
+
       expect(container).toMatchSnapshot();
       fireEvent.click(getByText(tActionPanel.array));
       expect(triggerGridTool).toHaveBeenCalledTimes(1);

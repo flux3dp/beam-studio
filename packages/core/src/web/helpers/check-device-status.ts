@@ -2,12 +2,14 @@
  * check device status and action
  */
 import i18n from '@core/helpers/i18n';
-import DeviceMaster from './device-master';
-import DeviceConstants from '../app/constants/device-constants';
-import PreviewModeController from '../app/actions/beambox/preview-mode-controller';
+
 import Alert from '../app/actions/alert-caller';
-import AlertConstants from '../app/constants/alert-constants';
+import PreviewModeController from '../app/actions/beambox/preview-mode-controller';
 import Progress from '../app/actions/progress-caller';
+import AlertConstants from '../app/constants/alert-constants';
+import DeviceConstants from '../app/constants/device-constants';
+
+import DeviceMaster from './device-master';
 
 const lang = i18n.lang;
 
@@ -15,18 +17,24 @@ export default async function (printer, allowPause?: boolean, forceAbort?: boole
   if (!printer) {
     return;
   }
+
   const deferred = $.Deferred();
 
   const onYes = async (id) => {
     let timer;
+
     if (PreviewModeController.isPreviewMode()) {
       await PreviewModeController.end();
     }
+
     const res = await DeviceMaster.select(printer);
+
     if (!res.success) {
       deferred.resolve(false);
+
       return;
     }
+
     switch (id) {
       case 'kick':
         await DeviceMaster.kick();
@@ -41,6 +49,7 @@ export default async function (printer, allowPause?: boolean, forceAbort?: boole
         await DeviceMaster.stop();
         timer = setInterval(async () => {
           const report = await DeviceMaster.getReport();
+
           if (report.st_id === DeviceConstants.status.ABORTED) {
             setTimeout(function () {
               DeviceMaster.quit();
@@ -54,6 +63,7 @@ export default async function (printer, allowPause?: boolean, forceAbort?: boole
         break;
     }
   };
+
   switch (printer.st_id) {
     // null for simulate
     // undefined for not found default device
@@ -69,27 +79,30 @@ export default async function (printer, allowPause?: boolean, forceAbort?: boole
     case DeviceConstants.status.MAINTAIN:
       // ask kick?
       Alert.popUp({
+        buttonType: AlertConstants.YES_NO,
         id: 'kick',
         message: lang.message.device_is_used,
-        buttonType: AlertConstants.YES_NO,
-        onYes: () => {
-          onYes('kick');
-        },
         onNo: () => {
           deferred.resolve(false);
+        },
+        onYes: () => {
+          onYes('kick');
         },
       });
       break;
     case DeviceConstants.status.COMPLETED:
     case DeviceConstants.status.ABORTED:
       // quit
+      // eslint-disable-next-line no-case-declarations
       const res = await DeviceMaster.select(printer);
+
       if (res.success) {
         await DeviceMaster.quit();
         deferred.resolve('ok');
       } else {
         deferred.resolve(false);
       }
+
       break;
     case DeviceConstants.status.RUNNING:
     case DeviceConstants.status.PAUSED:
@@ -105,25 +118,26 @@ export default async function (printer, allowPause?: boolean, forceAbort?: boole
           onYes('abort');
         } else {
           Alert.popUp({
+            buttonType: AlertConstants.YES_NO,
             id: 'abort',
             message: lang.message.device_is_used,
-            buttonType: AlertConstants.YES_NO,
-            onYes: () => {
-              onYes('abort');
-            },
             onNo: () => {
               deferred.resolve(false);
+            },
+            onYes: () => {
+              onYes('abort');
             },
           });
         }
       }
+
       break;
     default:
       // device busy
       console.log('Device Busy ', printer.st_id);
       Alert.popUp({
-        id: 'on-select-printer',
         caption: lang.message.device_busy.caption,
+        id: 'on-select-printer',
         message: lang.message.device_busy.message,
       });
       break;

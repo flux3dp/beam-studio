@@ -7,7 +7,7 @@ exports[`should render correctly 1`] = `
   >
     <div
       class="dialog-box-arrow top"
-      style="border-width: 0px 10px 10px 10px; border-color: transparent transparent black transparent; right: 30px;"
+      style="border-color: transparent transparent black transparent; border-width: 0px 10px 10px 10px; right: 30px;"
     />
     <div
       class="dialog-box"

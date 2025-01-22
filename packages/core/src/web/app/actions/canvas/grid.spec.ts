@@ -1,20 +1,21 @@
 const mockRead = jest.fn();
+
 jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read: (...args) => mockRead(...args),
 }));
 mockRead.mockReturnValue(true);
 
-// eslint-disable-next-line import/first
 import grid from './grid';
 
 const mockGetWidth = jest.fn();
 const mockGetHeight = jest.fn();
+
 jest.mock('@core/app/svgedit/workarea', () => ({
-  get width() {
-    return mockGetWidth();
-  },
   get height() {
     return mockGetHeight();
+  },
+  get width() {
+    return mockGetWidth();
   },
 }));
 

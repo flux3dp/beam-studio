@@ -1,5 +1,5 @@
-@use '@core/styles/variables' as variables;
-@use '../mixins' as rightPanelMixins;
+@use "@core/styles/variables" as variables;
+@use "../mixins" as rightPanelMixins;
 
 .config-panel {
   background-color: #f8f8f8;
@@ -67,7 +67,7 @@
   .select {
     width: 100%;
   }
-  [class*='panel'] {
+  [class*="panel"] {
     padding-left: 0;
     padding-right: 0;
   }

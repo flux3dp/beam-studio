@@ -1,26 +1,27 @@
-import classNames from 'classnames';
 import React from 'react';
+
+import classNames from 'classnames';
 
 import styles from './ColorBlock.module.scss';
 
 interface Props {
-  id?: string;
   className?: string;
-  size?: 'mini' | 'small' | 'defalut' | 'large';
   color: string;
+  id?: string;
   onClick?: (e: React.MouseEvent) => void;
+  size?: 'defalut' | 'large' | 'mini' | 'small';
 }
 
-const ColorBlock = ({ id, className, size = 'defalut', color, onClick }: Props): JSX.Element => {
+const ColorBlock = ({ className, color, id, onClick, size = 'defalut' }: Props): React.JSX.Element => {
   const isFullColor = color === 'fullcolor';
   const isCleared = color === 'none';
 
   return (
-    <div id={id} className={classNames(className, styles.color, styles[size])}>
+    <div className={classNames(className, styles.color, styles[size])} id={id}>
       <div
-        className={classNames({ [styles['full-color']]: isFullColor, [styles.clear]: isCleared })}
-        style={isFullColor || isCleared ? undefined : { backgroundColor: color }}
+        className={classNames({ [styles.clear]: isCleared, [styles['full-color']]: isFullColor })}
         onClick={onClick}
+        style={isFullColor || isCleared ? undefined : { backgroundColor: color }}
       />
     </div>
   );

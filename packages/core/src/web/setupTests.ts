@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-/* eslint-disable no-unused-vars */
+
 import '@testing-library/jest-dom';
 
 import { TextEncoder } from 'util';
@@ -91,8 +91,7 @@ if (typeof global.TextEncoder === 'undefined') {
 const antdCssDevOnlyRegex = /css-dev-only-do-not-override-([A-Za-z0-9]*)/g;
 
 expect.addSnapshotSerializer({
-  print: (val) =>
-    `"${(val as string).replace(antdCssDevOnlyRegex, 'css-dev-only-do-not-override-hash')}"`,
+  print: (val) => `"${(val as string).replace(antdCssDevOnlyRegex, 'css-dev-only-do-not-override-hash')}"`,
   test: (val) => typeof val === 'string' && !!val.match(antdCssDevOnlyRegex),
 });
 

@@ -1,16 +1,18 @@
-import classNames from 'classnames';
 import React, { memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { Button, Popover } from 'antd-mobile';
 
+import { Button, Popover } from 'antd-mobile';
+import classNames from 'classnames';
+
+import { getWorkarea } from '@core/app/constants/workarea-constants';
 import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';
-import checkPwmImages from '@core/helpers/layer/check-pwm-images';
 import history from '@core/app/svgedit/history/history';
-import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
-import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
-import objectPanelItemStyles from '@core/app/views/beambox/Right-Panels/ObjectPanelItem.module.scss';
 import undoManager from '@core/app/svgedit/history/undoManager';
-import useI18n from '@core/helpers/useI18n';
+import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
+import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
+import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
+import objectPanelItemStyles from '@core/app/views/beambox/Right-Panels/ObjectPanelItem.module.scss';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
+import checkPwmImages from '@core/helpers/layer/check-pwm-images';
 import {
   CUSTOM_PRESET_CONSTANT,
   getData,
@@ -18,35 +20,33 @@ import {
   writeDataLayer,
 } from '@core/helpers/layer/layer-config-helper';
 import { getLayerByName } from '@core/helpers/layer/layer-helper';
-import { getWorkarea } from '@core/app/constants/workarea-constants';
-import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
+import useI18n from '@core/helpers/useI18n';
 
 import AdvancedPowerPanel from './AdvancedPowerPanel';
+import styles from './Block.module.scss';
 import ConfigPanelContext from './ConfigPanelContext';
 import ConfigSlider from './ConfigSlider';
 import ConfigValueDisplay from './ConfigValueDisplay';
-import styles from './Block.module.scss';
 
 const MAX_VALUE = 100;
 const MIN_VALUE = 0;
 
-function PowerBlock({
-  type = 'default',
-}: {
-  type?: 'default' | 'panel-item' | 'modal';
-}): JSX.Element {
+function PowerBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.JSX.Element {
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
-  const { selectedLayers, state, dispatch, initState } = useContext(ConfigPanelContext);
+  const { dispatch, initState, selectedLayers, state } = useContext(ConfigPanelContext);
   const { activeKey } = useContext(ObjectPanelContext);
   const [showModal, setShowModal] = useState(false);
   const openModal = useCallback(() => setShowModal(true), []);
   const closeModal = useCallback(() => setShowModal(false), []);
   const visible = activeKey === 'power';
   const [hasPwmImages, setHasPwmImages] = useState(() => checkPwmImages(selectedLayers));
+
   useEffect(() => {
     const handler = () => setHasPwmImages(checkPwmImages(selectedLayers));
+
     ObjectPanelController.events.on('pwm-changed', handler);
+
     return () => {
       ObjectPanelController.events.off('pwm-changed', handler);
     };
@@ -58,27 +58,34 @@ function PowerBlock({
   const { power, selectedLayer } = state;
   const handleChange = (value: number) => {
     dispatch({
+      payload: { configName: CUSTOM_PRESET_CONSTANT, power: value },
       type: 'change',
-      payload: { power: value, configName: CUSTOM_PRESET_CONSTANT },
     });
+
     if (type !== 'modal') {
       const batchCmd = new history.BatchCommand('Change power');
       const layers = selectedLayers.map((layerName) => getLayerByName(layerName));
       let minPowerChanged = false;
+
       layers.forEach((layer) => {
         writeDataLayer(layer, 'power', value, { batchCmd });
         writeDataLayer(layer, 'configName', CUSTOM_PRESET_CONSTANT, { batchCmd });
+
         const minPower = getData(layer, 'minPower');
+
         if (value <= minPower) {
           writeDataLayer(layer, 'minPower', 0, { batchCmd });
           minPowerChanged = true;
         }
       });
+
       if (minPowerChanged) {
         const selectedIdx = selectedLayers.findIndex((layerName) => layerName === selectedLayer);
         const config = getMultiSelectData(layers, selectedIdx, 'minPower');
-        dispatch({ type: 'update', payload: { minPower: config } });
+
+        dispatch({ payload: { minPower: config }, type: 'update' });
       }
+
       batchCmd.onAfter = initState;
       undoManager.addCommandToHistory(batchCmd);
     }
@@ -91,29 +98,29 @@ function PowerBlock({
       <span className={styles.title}>
         {t.strength}
         {type !== 'panel-item' && hasPwmImages && (
-          <span className={styles.icon} title={t.pwm_advanced_setting} onClick={openModal}>
+          <span className={styles.icon} onClick={openModal} title={t.pwm_advanced_setting}>
             <ConfigPanelIcons.ColorAdjustment />
           </span>
         )}
       </span>
       <ConfigValueDisplay
+        decimal={1}
+        hasMultiValue={power.hasMultiValue}
         inputId="power-input"
-        type={type}
         max={MAX_VALUE}
         min={MIN_VALUE}
-        value={power.value}
-        unit="%"
-        hasMultiValue={power.hasMultiValue}
-        decimal={1}
         onChange={handleChange}
+        type={type}
+        unit="%"
+        value={power.value}
       />
       <ConfigSlider
         id="power_value"
-        value={power.value}
-        onChange={handleChange}
-        min={MIN_VALUE}
         max={MAX_VALUE}
+        min={MIN_VALUE}
+        onChange={handleChange}
         step={1}
+        value={power.value}
       />
       {power.value < workareaObj.minPower && (
         <div className={styles.warning}>
@@ -127,21 +134,16 @@ function PowerBlock({
   return (
     <>
       {type === 'panel-item' ? (
-        <Popover visible={visible} content={content}>
+        <Popover content={content} visible={visible}>
           <ObjectPanelItem.Item
-            id="power"
+            autoClose={false}
             content={
-              <Button
-                className={objectPanelItemStyles['number-item']}
-                shape="rounded"
-                size="mini"
-                fill="outline"
-              >
+              <Button className={objectPanelItemStyles['number-item']} fill="outline" shape="rounded" size="mini">
                 {power.value}
               </Button>
             }
+            id="power"
             label={t.strength}
-            autoClose={false}
           />
         </Popover>
       ) : (

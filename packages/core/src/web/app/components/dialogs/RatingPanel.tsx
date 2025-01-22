@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+
 import { Checkbox, Form, Modal, Rate } from 'antd';
 
 import i18n from '@core/helpers/i18n';
@@ -11,7 +12,7 @@ interface Props {
   onSubmit: (score: number) => void;
 }
 
-const RatingPanel = ({ onClose, onSubmit }: Props): JSX.Element => {
+const RatingPanel = ({ onClose, onSubmit }: Props): React.JSX.Element => {
   const [star, setStar] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
@@ -25,16 +26,17 @@ const RatingPanel = ({ onClose, onSubmit }: Props): JSX.Element => {
     if (isCheckboxChecked) {
       RatingHelper.setNotShowing();
     }
+
     onClose();
   };
 
   return (
     <Modal
-      open
       centered
-      title={`👨‍🚀 ${LANG.title}`}
       onCancel={handleCancel}
       onOk={() => (isFinished ? handleCancel() : handleSubmit(star))}
+      open
+      title={`👨‍🚀 ${LANG.title}`}
     >
       {isFinished ? (
         <strong>
@@ -47,10 +49,7 @@ const RatingPanel = ({ onClose, onSubmit }: Props): JSX.Element => {
           <Rate onChange={(val) => setStar(val)} />
           <Form>
             <Form.Item label={LANG.dont_show_again}>
-              <Checkbox
-                checked={isCheckboxChecked}
-                onChange={(e) => setIsCheckboxChecked(e.target.checked)}
-              />
+              <Checkbox checked={isCheckboxChecked} onChange={(e) => setIsCheckboxChecked(e.target.checked)} />
             </Form.Item>
           </Form>
         </div>

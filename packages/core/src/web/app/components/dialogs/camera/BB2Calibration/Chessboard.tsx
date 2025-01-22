@@ -1,28 +1,31 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+
 import { LoadingOutlined } from '@ant-design/icons';
 import { Modal, Spin } from 'antd';
 import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import dialog from '@app/implementations/dialog';
 import progressCaller from '@core/app/actions/progress-caller';
-import useI18n from '@core/helpers/useI18n';
-import { ContextMenu, ContextMenuTrigger, MenuItem } from '@core/helpers/react-contextmenu';
 import { calibrateChessboard } from '@core/helpers/camera-calibration-helper';
-import { FisheyeCameraParametersV3Cali } from '@core/interfaces/FisheyePreview';
+import { ContextMenu, ContextMenuTrigger, MenuItem } from '@core/helpers/react-contextmenu';
+import useI18n from '@core/helpers/useI18n';
+import type { FisheyeCameraParametersV3Cali } from '@core/interfaces/FisheyePreview';
+
+import dialog from '@app/implementations/dialog';
 
 import ExposureSlider from '../common/ExposureSlider';
-import styles from './Chessboard.module.scss';
 import useCamera from '../common/useCamera';
+
+import styles from './Chessboard.module.scss';
 
 interface Props {
   chessboard: [number, number];
-  updateParam: (param: FisheyeCameraParametersV3Cali) => void;
-  onNext: () => void;
   onClose: (complete?: boolean) => void;
+  onNext: () => void;
+  updateParam: (param: FisheyeCameraParametersV3Cali) => void;
 }
 
-const Chessboard = ({ chessboard, updateParam, onNext, onClose }: Props): JSX.Element => {
+const Chessboard = ({ chessboard, onClose, onNext, updateParam }: Props): React.JSX.Element => {
   const t = useI18n();
   const tCali = useI18n().calibration;
   const [img, setImg] = useState<{ blob: Blob; url: string }>(null);
@@ -30,11 +33,13 @@ const Chessboard = ({ chessboard, updateParam, onNext, onClose }: Props): JSX.El
   const liveTimeout = useRef(null);
   const handleImg = useCallback((imgBlob: Blob) => {
     const url = URL.createObjectURL(imgBlob);
+
     setImg({ blob: imgBlob, url });
+
     return true;
   }, []);
 
-  const { exposureSetting, setExposureSetting, handleTakePicture } = useCamera(handleImg);
+  const { exposureSetting, handleTakePicture, setExposureSetting } = useCamera(handleImg);
 
   useEffect(() => {
     if (cameraLive.current) {
@@ -49,42 +54,58 @@ const Chessboard = ({ chessboard, updateParam, onNext, onClose }: Props): JSX.El
     progressCaller.openNonstopProgress({ id: 'calibrate-chessboard', message: tCali.calibrating });
     clearTimeout(liveTimeout.current);
     cameraLive.current = false;
+
     let success = false;
+
     try {
       const res = await calibrateChessboard(img.blob, 0, chessboard);
+
       if (res.success === true) {
-        const { ret, k, d, rvec, tvec } = res.data;
+        const { d, k, ret, rvec, tvec } = res.data;
         const resp = await new Promise<boolean>((resolve) => {
           let rank = tCali.res_excellent;
-          if (ret > 2) rank = tCali.res_poor;
-          else if (ret > 1) rank = tCali.res_average;
+
+          if (ret > 2) {
+            rank = tCali.res_poor;
+          } else if (ret > 1) {
+            rank = tCali.res_average;
+          }
+
           alertCaller.popUp({
-            message: sprintf(tCali.calibrate_chessboard_success_msg, rank, ret),
             buttons: [
               {
+                className: 'primary',
                 label: tCali.next,
                 onClick: () => resolve(true),
-                className: 'primary',
               },
               {
                 label: tCali.cancel,
                 onClick: () => resolve(false),
               },
             ],
+            message: sprintf(tCali.calibrate_chessboard_success_msg, rank, ret),
           });
         });
-        if (!resp) return;
-        updateParam({ ret, k, d, rvec, tvec });
+
+        if (!resp) {
+          return;
+        }
+
+        updateParam({ d, k, ret, rvec, tvec });
         onNext();
         success = true;
+
         return;
       }
+
       const { reason } = res.data;
+
       alertCaller.popUpError({ message: `${tCali.failed_to_calibrate_chessboard} ${reason}` });
     } catch (error) {
       console.error(error);
     } finally {
       progressCaller.popById('calibrate-chessboard');
+
       if (!success) {
         cameraLive.current = true;
         handleTakePicture({ silent: true });
@@ -98,16 +119,16 @@ const Chessboard = ({ chessboard, updateParam, onNext, onClose }: Props): JSX.El
 
   return (
     <Modal
-      width="80vw"
-      open
+      cancelText={tCali.cancel}
       centered
       maskClosable={false}
-      title={tCali.camera_calibration}
-      okText={tCali.next}
-      cancelText={tCali.cancel}
-      onOk={handleCalibrate}
-      onCancel={() => onClose(false)}
       okButtonProps={{ disabled: !img }}
+      okText={tCali.next}
+      onCancel={() => onClose(false)}
+      onOk={handleCalibrate}
+      open
+      title={tCali.camera_calibration}
+      width="80vw"
     >
       <div className={styles.container}>
         <div className={styles.desc}>
@@ -119,12 +140,12 @@ const Chessboard = ({ chessboard, updateParam, onNext, onClose }: Props): JSX.El
           {img ? (
             <>
               <ContextMenuTrigger
-                id="chessboard-context-menu"
+                hideOnLeaveHoldPosition
                 holdToDisplay={-1}
                 holdToDisplayMouse={-1}
-                hideOnLeaveHoldPosition
+                id="chessboard-context-menu"
               >
-                <img src={img?.url} alt="Chessboard" />
+                <img alt="Chessboard" src={img?.url} />
                 <div className={styles.indicator} />
               </ContextMenuTrigger>
               <ContextMenu id="chessboard-context-menu">
@@ -140,8 +161,8 @@ const Chessboard = ({ chessboard, updateParam, onNext, onClose }: Props): JSX.El
         <ExposureSlider
           className={styles.slider}
           exposureSetting={exposureSetting}
-          setExposureSetting={setExposureSetting}
           onChanged={handleTakePicture}
+          setExposureSetting={setExposureSetting}
         />
       </div>
     </Modal>

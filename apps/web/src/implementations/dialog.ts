@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars */
+/* eslint-disable ts/no-unused-vars */
 import { saveAs } from 'file-saver';
 
 import type { DialogFilter, IDialog, OpenDialogProperties } from '@core/interfaces/IDialog';
@@ -117,11 +117,7 @@ export default {
       filePaths: value ? [value] : [],
     };
   },
-  async showSaveDialog(
-    title?: string,
-    defaultPath?: string,
-    filters?: DialogFilter[],
-  ): Promise<null | string> {
+  async showSaveDialog(title?: string, defaultPath?: string, filters?: DialogFilter[]): Promise<null | string> {
     return Promise.resolve(null);
   },
   async writeFileDialog(

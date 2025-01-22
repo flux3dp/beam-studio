@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { EventEmitter } from 'events';
 
 import type { MenuItemConstructorOptions } from 'electron';
@@ -50,10 +49,7 @@ function buildOSXAppMenu(callback: (data: MenuData) => void) {
   };
 }
 
-function buildAccountMenuItems(
-  callback: (data: MenuData) => void,
-  accInfo: null | { email: string },
-) {
+function buildAccountMenuItems(callback: (data: MenuData) => void, accInfo: null | { email: string }) {
   const signoutLabel = accInfo ? `${r.sign_out} (${accInfo.email})` : r.sign_out;
 
   return [
@@ -89,12 +85,7 @@ function getDeviceMenuId(uuid: string, data: { source: string }): string {
   return `device:${data.source}:${uuid}`;
 }
 
-function buildDeviceMenu(
-  callback: (data: MenuData) => void,
-  uuid: string,
-  data: DeviceInfo,
-  isDevMode = false,
-) {
+function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data: DeviceInfo, isDevMode = false) {
   const { model, name, serial, source } = data;
   const menuLabel = source === 'lan' ? name : `${name} (USB)`;
   const machineName = name;
@@ -752,8 +743,7 @@ class MenuManager extends EventEmitter {
 
     if (process.platform !== 'darwin') {
       const currentChannel = app.getVersion().split('-')[1] || 'latest';
-      const switchChannelLabel =
-        currentChannel === 'latest' ? r.switch_to_beta : r.switch_to_latest;
+      const switchChannelLabel = currentChannel === 'latest' ? r.switch_to_beta : r.switch_to_latest;
 
       helpSubmenu.push({ click: callback, id: 'SWITCH_VERSION', label: switchChannelLabel });
     }

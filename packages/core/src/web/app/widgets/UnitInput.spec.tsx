@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import UnitInput from './UnitInput';
@@ -11,13 +12,15 @@ describe('test UnitInput', () => {
   });
 
   it('should render correctly', () => {
-    const { container } = render(<UnitInput id="test" value={0} unit="mm" underline />);
+    const { container } = render(<UnitInput id="test" underline unit="mm" value={0} />);
+
     expect(container).toMatchSnapshot();
   });
 
   test('onChange without fireOnChage', () => {
-    const { container } = render(<UnitInput id="test" value={0} onChange={mockOnChange} />);
+    const { container } = render(<UnitInput id="test" onChange={mockOnChange} value={0} />);
     const input = container.querySelector('input');
+
     fireEvent.change(input, { target: { value: '1' } });
     expect(mockOnChange).not.toBeCalled();
     fireEvent.blur(input);
@@ -26,20 +29,18 @@ describe('test UnitInput', () => {
   });
 
   test('onChange with fireOnChage', () => {
-    const { container } = render(
-      <UnitInput id="test" value={0} onChange={mockOnChange} fireOnChange />
-    );
+    const { container } = render(<UnitInput fireOnChange id="test" onChange={mockOnChange} value={0} />);
     const input = container.querySelector('input');
+
     fireEvent.change(input, { target: { value: '1' } });
     expect(mockOnChange).toBeCalledTimes(1);
     expect(mockOnChange).toBeCalledWith(1);
   });
 
   test('inch conversion', () => {
-    const { container } = render(
-      <UnitInput id="test" value={25.4} onChange={mockOnChange} isInch precision={0} />
-    );
+    const { container } = render(<UnitInput id="test" isInch onChange={mockOnChange} precision={0} value={25.4} />);
     const input = container.querySelector('input');
+
     expect(input).toHaveValue('1');
     fireEvent.change(input, { target: { value: '2' } });
     fireEvent.blur(input);
@@ -48,10 +49,9 @@ describe('test UnitInput', () => {
   });
 
   test('clip min', () => {
-    const { container } = render(
-      <UnitInput id="test" value={0} onChange={mockOnChange} min={10} clipValue />
-    );
+    const { container } = render(<UnitInput clipValue id="test" min={10} onChange={mockOnChange} value={0} />);
     const input = container.querySelector('input');
+
     fireEvent.change(input, { target: { value: '1' } });
     fireEvent.blur(input);
     expect(mockOnChange).toBeCalledTimes(1);
@@ -59,10 +59,9 @@ describe('test UnitInput', () => {
   });
 
   test('clip max', () => {
-    const { container } = render(
-      <UnitInput id="test" value={0} onChange={mockOnChange} max={10} clipValue />
-    );
+    const { container } = render(<UnitInput clipValue id="test" max={10} onChange={mockOnChange} value={0} />);
     const input = container.querySelector('input');
+
     fireEvent.change(input, { target: { value: '11' } });
     fireEvent.blur(input);
     expect(mockOnChange).toBeCalledTimes(1);

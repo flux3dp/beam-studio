@@ -1,5 +1,7 @@
-import Konva from 'konva';
-import { MutableRefObject, useCallback, useState } from 'react';
+import type { MutableRefObject } from 'react';
+import { useCallback, useState } from 'react';
+
+import type Konva from 'konva';
 
 import { useKeyDown } from '../useKeyDown';
 import { useMouseDown } from '../useMouseDown';
@@ -17,10 +19,10 @@ interface Options {
  * @property handleZoom handle zoom event
  */
 interface ReturnType {
-  isDragging: boolean;
   handleWheel: (e: Konva.KonvaEventObject<WheelEvent>) => void;
   handleZoom: (scale: number, isPointer?: boolean) => void;
   handleZoomByScale: (scaleBy: number, isPointer?: boolean) => void;
+  isDragging: boolean;
 }
 
 /**
@@ -34,44 +36,46 @@ interface ReturnType {
  */
 const useKonvaCanvas = (
   stageRef: MutableRefObject<Konva.Stage>,
-  { maxScale = 20, minScale = 0.01, onScaleChanged }: Options = {}
+  { maxScale = 20, minScale = 0.01, onScaleChanged }: Options = {},
 ): ReturnType => {
   const [isDragging, setIsDragging] = useState(false);
+
   useKeyDown({
-    predicate: useCallback(({ key }) => key === ' ', []),
     keyDown: useCallback(() => setIsDragging(true), []),
     keyUp: useCallback(() => setIsDragging(false), []),
+    predicate: useCallback(({ key }) => key === ' ', []),
   });
   useMouseDown({
-    predicate: useCallback(({ button }) => button === 1, []),
     mouseDown: useCallback(() => {
       setIsDragging(true);
       // start drag directly
       stageRef.current.startDrag();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+      // eslint-disable-next-line hooks/exhaustive-deps
     }, []),
     mouseUp: useCallback(() => setIsDragging(false), []),
+    predicate: useCallback(({ button }) => button === 1, []),
   });
 
   const handleMove = useCallback(
     ({ evt: { deltaX, deltaY } }: Konva.KonvaEventObject<WheelEvent>) => {
       const stage = stageRef.current;
       const { x, y } = stage.position();
+
       stage.position({ x: x - deltaX, y: y - deltaY });
       stage.batchDraw();
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    // eslint-disable-next-line hooks/exhaustive-deps
+    [],
   );
   const handleZoom = useCallback(
     (scale: number, isPointer = false) => {
       const stage = stageRef.current;
       const oldScale = stage.scaleX();
-      const targetPosition = isPointer
-        ? stage.getPointerPosition()
-        : { x: stage.width() / 2, y: stage.height() / 2 };
+      const targetPosition = isPointer ? stage.getPointerPosition() : { x: stage.width() / 2, y: stage.height() / 2 };
 
-      if (!targetPosition) return;
+      if (!targetPosition) {
+        return;
+      }
 
       const mousePointTo = {
         x: (targetPosition.x - stage.x()) / oldScale,
@@ -89,8 +93,8 @@ const useKonvaCanvas = (
       stage.position(pos);
       stage.batchDraw();
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [onScaleChanged, maxScale, minScale]
+    // eslint-disable-next-line hooks/exhaustive-deps
+    [onScaleChanged, maxScale, minScale],
   );
 
   const handleZoomByScale = useCallback(
@@ -100,8 +104,8 @@ const useKonvaCanvas = (
 
       handleZoom(scale * scaleBy, isPointer);
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [handleZoom]
+    // eslint-disable-next-line hooks/exhaustive-deps
+    [handleZoom],
   );
 
   const handleWheel = useCallback(
@@ -114,14 +118,14 @@ const useKonvaCanvas = (
         handleMove(e);
       }
     },
-    [handleMove, handleZoomByScale]
+    [handleMove, handleZoomByScale],
   );
 
   return {
-    isDragging,
     handleWheel,
     handleZoom,
     handleZoomByScale,
+    isDragging,
   };
 };
 

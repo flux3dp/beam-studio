@@ -1,44 +1,52 @@
 import React from 'react';
+
 import { render } from '@testing-library/react';
 
+import CanvasMode from '@core/app/constants/canvasMode';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 
-import CanvasMode from '@core/app/constants/canvasMode';
 import GoButton from './GoButton';
 
 const popUp = jest.fn();
+
 jest.mock('@core/app/actions/alert-caller', () => ({
   popUp: (...args) => popUp(...args),
 }));
 
 const alertConfigRead = jest.fn();
 const write = jest.fn();
+
 jest.mock('@core/helpers/api/alert-config', () => ({
   read: (...args) => alertConfigRead(...args),
   write: (...args) => write(...args),
 }));
 
 const beamboxPreferenceRead = jest.fn();
+
 jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read: (...args) => beamboxPreferenceRead(...args),
 }));
 
 const showConfirmPromptDialog = jest.fn();
+
 jest.mock('@core/app/actions/dialog-caller', () => ({
   showConfirmPromptDialog: (...args) => showConfirmPromptDialog(...args),
 }));
 
 const uploadFcode = jest.fn();
+
 jest.mock('@core/app/actions/beambox/export-funcs', () => ({
   uploadFcode: (...args) => uploadFcode(...args),
 }));
 
 const get = jest.fn();
+
 jest.mock('@app/implementations/storage', () => ({
   get: (...args) => get(...args),
 }));
 
 const switchImageSymbolForAll = jest.fn();
+
 jest.mock('@core/helpers/symbol-maker', () => ({
   switchImageSymbolForAll: (...args) => switchImageSymbolForAll(...args),
 }));
@@ -48,6 +56,7 @@ jest.mock('@core/app/constants/tutorial-constants', () => ({
 }));
 
 const versionChecker = jest.fn();
+
 jest.mock(
   '@core/helpers/version-checker',
   () =>
@@ -57,17 +66,20 @@ jest.mock(
 
 const getNextStepRequirement = jest.fn();
 const handleNextStep = jest.fn();
+
 jest.mock('@core/app/views/tutorials/tutorialController', () => ({
   getNextStepRequirement: (...args) => getNextStepRequirement(...args),
   handleNextStep: (...args) => handleNextStep(...args),
 }));
 
 const mockExecuteFirmwareUpdate = jest.fn();
+
 jest.mock('@core/app/actions/beambox/menuDeviceActions', () => ({
   executeFirmwareUpdate: (...args) => mockExecuteFirmwareUpdate(...args),
 }));
 
 const getCurrentDrawing = jest.fn();
+
 jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) =>
     callback({
@@ -82,6 +94,7 @@ jest.mock('@core/app/contexts/CanvasContext', () => ({
 }));
 
 const mockCheckOldFirmware = jest.fn();
+
 jest.mock(
   '@core/helpers/device/checkOldFirmware',
   () =>
@@ -90,6 +103,7 @@ jest.mock(
 );
 
 const mockCheckDeviceStatus = jest.fn();
+
 jest.mock(
   '@core/helpers/check-device-status',
   () =>
@@ -98,6 +112,7 @@ jest.mock(
 );
 
 const mockGetDevice = jest.fn();
+
 jest.mock(
   '@core/helpers/device/get-device',
   () =>
@@ -106,6 +121,7 @@ jest.mock(
 );
 
 const mockShowAdorCalibration = jest.fn();
+
 jest.mock('@core/app/components/dialogs/camera/AdorCalibration', () => ({
   showAdorCalibration: (...args) => mockShowAdorCalibration(...args),
 }));
@@ -114,11 +130,12 @@ const mockSetStatus = jest.fn();
 const mockHandleFinish = jest.fn();
 const mockSetExportFn = jest.fn();
 const mockOnContextChanged = jest.fn();
+
 jest.mock('@core/helpers/device/promark/promark-button-handler', () => ({
-  setStatus: (...args) => mockSetStatus(...args),
   handleFinish: (...args) => mockHandleFinish(...args),
-  setExportFn: (...args) => mockSetExportFn(...args),
   onContextChanged: (...args) => mockOnContextChanged(...args),
+  setExportFn: (...args) => mockSetExportFn(...args),
+  setStatus: (...args) => mockSetStatus(...args),
 }));
 
 describe('test GoButton', () => {
@@ -126,10 +143,7 @@ describe('test GoButton', () => {
     const endPreviewMode = jest.fn();
     const mockDevice = { uuid: 'mock-device' };
     const { container } = render(
-      <CanvasContext.Provider
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        value={{ endPreviewMode, mode: CanvasMode.Draw, selectedDevice: mockDevice } as any}
-      >
+      <CanvasContext.Provider value={{ endPreviewMode, mode: CanvasMode.Draw, selectedDevice: mockDevice } as any}>
         <GoButton hasDiscoverdMachine={false} />
       </CanvasContext.Provider>,
     );

@@ -1,7 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-/* eslint-disable react/jsx-props-no-spreading */
 import React, { Component } from 'react';
+
 import listener from './globalEventListener';
 
 // expect the id of the menu to be responsible for as outer parameter
@@ -29,10 +27,13 @@ export default function connectFactory(menuId) {
       }
 
       handleShow = (e) => {
-        if (e.detail.id !== menuId) return;
+        if (e.detail.id !== menuId) {
+          return;
+        }
 
         // the onShow event's detail.data object holds all ContextMenuTrigger props
         const filteredData = {};
+
         this.setState({ trigger: filteredData });
       };
 
@@ -42,6 +43,7 @@ export default function connectFactory(menuId) {
 
       render() {
         const { trigger } = this.state;
+
         return <Child {...this.props} id={menuId} trigger={trigger} />;
       }
     };

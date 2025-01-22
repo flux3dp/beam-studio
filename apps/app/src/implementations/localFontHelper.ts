@@ -45,9 +45,7 @@ export default {
       }
 
       if (fontkitFont.name) {
-        const firstNotEn = Object.keys(fontkitFont.name.records.fontFamily).find(
-          (key) => key !== 'en',
-        );
+        const firstNotEn = Object.keys(fontkitFont.name.records.fontFamily).find((key) => key !== 'en');
 
         fontName =
           fontkitFont.name.records.fontFamily[navigator.language] ||

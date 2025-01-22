@@ -1,60 +1,62 @@
 import React, { useCallback, useMemo } from 'react';
+
 import { ConfigProvider } from 'antd';
 
 import Constant from '@core/app/actions/beambox/constant';
+import { iconButtonTheme } from '@core/app/constants/antd-config';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
-import SymbolMaker from '@core/helpers/symbol-maker';
-import useForceUpdate from '@core/helpers/use-force-update';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import { IBatchCommand } from '@core/interfaces/IHistory';
-import { iconButtonTheme } from '@core/app/constants/antd-config';
+import SymbolMaker from '@core/helpers/symbol-maker';
 import { useIsMobile } from '@core/helpers/system-helper';
+import useForceUpdate from '@core/helpers/use-force-update';
+import type { IBatchCommand } from '@core/interfaces/IHistory';
 
-import PositionInput from './PositionInput';
+import styles from './DimensionPanel.module.scss';
 import FlipButtons from './FlipButtons';
+import PositionInput from './PositionInput';
 import RatioLock from './RatioLock';
 import Rotation from './Rotation';
 import SizeInput from './SizeInput';
-import styles from './DimensionPanel.module.scss';
 import { getValue } from './utils';
 
 let svgCanvas;
+
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
 
 const panelMap = {
+  ellipse: ['cx', 'cy', 'rx', 'ry'],
   g: ['x', 'y', 'w', 'h'],
+  image: ['x', 'y', 'w', 'h'],
+  img: ['x', 'y', 'w', 'h'],
+  line: ['x1', 'y1', 'x2', 'y2'],
   path: ['x', 'y', 'w', 'h'],
   polygon: ['x', 'y', 'w', 'h'],
   rect: ['x', 'y', 'w', 'h'],
-  ellipse: ['cx', 'cy', 'rx', 'ry'],
-  line: ['x1', 'y1', 'x2', 'y2'],
-  image: ['x', 'y', 'w', 'h'],
-  img: ['x', 'y', 'w', 'h'],
   text: ['x', 'y', 'w', 'h'],
   use: ['x', 'y', 'w', 'h'],
 };
 
 const panelMapMobile = {
+  ellipse: ['rx', 'lock', 'ry', 'rot', 'cx', 'cy'],
   g: ['w', 'lock', 'h', 'rot', 'x', 'y'],
+  image: ['w', 'lock', 'h', 'rot', 'x', 'y'],
+  img: ['w', 'lock', 'h', 'rot', 'x', 'y'],
+  line: ['x1', 'y1', 'lock', 'x2', 'y2', 'rot'],
   path: ['w', 'lock', 'h', 'rot', 'x', 'y'],
   polygon: ['w', 'lock', 'h', 'rot', 'x', 'y'],
   rect: ['w', 'lock', 'h', 'rot', 'x', 'y'],
-  ellipse: ['rx', 'lock', 'ry', 'rot', 'cx', 'cy'],
-  line: ['x1', 'y1', 'lock', 'x2', 'y2', 'rot'],
-  image: ['w', 'lock', 'h', 'rot', 'x', 'y'],
-  img: ['w', 'lock', 'h', 'rot', 'x', 'y'],
   text: ['w', 'lock', 'h', 'rot', 'x', 'y'],
   use: ['w', 'lock', 'h', 'rot', 'x', 'y'],
 };
 
 const fixedSizeMapping = {
-  width: 'height',
   height: 'width',
   rx: 'ry',
   ry: 'rx',
+  width: 'height',
 };
 
 interface Props {
@@ -63,11 +65,7 @@ interface Props {
   updateDimensionValues: (newDimensionValue: { [key: string]: any }) => void;
 }
 
-const DimensionPanel = ({
-  elem,
-  updateDimensionValues,
-  getDimensionValues,
-}: Props): JSX.Element => {
+const DimensionPanel = ({ elem, getDimensionValues, updateDimensionValues }: Props): React.JSX.Element => {
   const isMobile = useIsMobile();
   const positionKeys = useMemo(() => new Set(['x', 'y', 'x1', 'y1', 'x2', 'y2', 'cx', 'cy']), []);
   const sizeKeys = useMemo(() => new Set(['w', 'h', 'rx', 'ry']), []);
@@ -79,6 +77,7 @@ const DimensionPanel = ({
       SymbolMaker.reRenderImageSymbol(elem as SVGUseElement);
     } else if (elem?.tagName === 'g') {
       const allUses = Array.from(elem.querySelectorAll('use'));
+
       SymbolMaker.reRenderImageSymbolArray(allUses);
     }
   }, [elem]);
@@ -86,9 +85,13 @@ const DimensionPanel = ({
   const handlePositionChange = useCallback(
     (type: string, val: number): void => {
       const posVal = val * Constant.dpmm;
-      if (!['use', 'text'].includes(elem?.tagName))
+
+      if (!['text', 'use'].includes(elem?.tagName)) {
         svgCanvas.changeSelectedAttribute(type, posVal, [elem]);
-      else svgCanvas.setSvgElemPosition(type, posVal, elem);
+      } else {
+        svgCanvas.setSvgElemPosition(type, posVal, elem);
+      }
+
       updateDimensionValues({ [type]: posVal });
       forceUpdate();
     },
@@ -98,13 +101,18 @@ const DimensionPanel = ({
   const handleRotationChange = useCallback(
     (val: number, addToHistory = false): void => {
       let rotationDeg = val % 360;
-      if (rotationDeg > 180) rotationDeg -= 360;
+
+      if (rotationDeg > 180) {
+        rotationDeg -= 360;
+      }
+
       if (elem.getAttribute('data-tempgroup') === 'true' && !addToHistory) {
         svgCanvas.setRotationAngle(rotationDeg, true, elem);
         updateDimensionValues({ rotation: rotationDeg });
       } else {
         svgCanvas.setRotationAngle(rotationDeg, false, elem);
       }
+
       forceUpdate();
     },
     [elem, forceUpdate, updateDimensionValues],
@@ -133,41 +141,57 @@ const DimensionPanel = ({
         default:
           break;
       }
+
       if (elem?.tagName === 'text') {
-        elem?.setAttribute(
-          'stroke-width',
-          elem.getAttribute('stroke-width') === '2' ? '2.01' : '2',
-        );
+        elem?.setAttribute('stroke-width', elem.getAttribute('stroke-width') === '2' ? '2.01' : '2');
       }
+
       return cmd;
     },
     [elem],
   );
 
   const handleSizeChange = useCallback(
-    (type: 'width' | 'height' | 'rx' | 'ry', val: number): void => {
+    (type: 'height' | 'rx' | 'ry' | 'width', val: number): void => {
       const batchCmd = HistoryCommandFactory.createBatchCommand('Object Panel Size Change');
       const response = {
         dimensionValues: {} as { [key: string]: number },
       };
+
       getDimensionValues(response);
+
       const { dimensionValues } = response;
       const isRatioFixed = dimensionValues.isRatioFixed || false;
       const sizeVal = val * Constant.dpmm;
 
       let cmd = changeSize(type, sizeVal);
-      if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
+
+      if (cmd && !cmd.isEmpty()) {
+        batchCmd.addSubCommand(cmd);
+      }
+
       const newValues = { [type]: sizeVal };
+
       if (isRatioFixed) {
         const ratio = sizeVal / dimensionValues[type];
         const counterPart = fixedSizeMapping[type];
         const newCounterPartVal = ratio * dimensionValues[counterPart];
+
         cmd = changeSize(counterPart, newCounterPartVal);
-        if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
+
+        if (cmd && !cmd.isEmpty()) {
+          batchCmd.addSubCommand(cmd);
+        }
+
         newValues[counterPart] = newCounterPartVal;
       }
+
       updateDimensionValues(newValues);
-      if (batchCmd && !batchCmd.isEmpty()) svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+
+      if (batchCmd && !batchCmd.isEmpty()) {
+        svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+      }
+
       forceUpdate();
     },
     [changeSize, getDimensionValues, updateDimensionValues, forceUpdate],
@@ -175,60 +199,58 @@ const DimensionPanel = ({
 
   const handleFixRatio = useCallback((): void => {
     const isRatioFixed = elem?.getAttribute('data-ratiofixed') === 'true';
-    if (elem) svgCanvas.changeSelectedAttribute('data-ratiofixed', String(!isRatioFixed), [elem]);
+
+    if (elem) {
+      svgCanvas.changeSelectedAttribute('data-ratiofixed', String(!isRatioFixed), [elem]);
+    }
+
     updateDimensionValues({ isRatioFixed: !isRatioFixed });
     forceUpdate();
   }, [elem, updateDimensionValues, forceUpdate]);
 
   const response = { dimensionValues: {} as any };
+
   getDimensionValues(response);
+
   const { dimensionValues } = response;
 
-  const renderBlock = (type: string): JSX.Element => {
+  const renderBlock = (type: string): React.JSX.Element => {
     if (positionKeys.has(type)) {
       return (
         <PositionInput
           key={type}
-          type={type as 'x' | 'y' | 'x1' | 'y1' | 'x2' | 'y2' | 'cx' | 'cy'}
-          value={getValue(dimensionValues, type, { unit: 'mm' })}
           onChange={handlePositionChange}
+          type={type as 'cx' | 'cy' | 'x1' | 'x2' | 'x' | 'y1' | 'y2' | 'y'}
+          value={getValue(dimensionValues, type, { unit: 'mm' })}
         />
       );
     }
+
     if (sizeKeys.has(type)) {
       return (
         <SizeInput
           key={type}
-          type={type as 'w' | 'h' | 'rx' | 'ry'}
-          value={getValue(dimensionValues, type, { unit: 'mm' })}
-          onChange={handleSizeChange}
           onBlur={handleSizeBlur}
+          onChange={handleSizeChange}
+          type={type as 'h' | 'rx' | 'ry' | 'w'}
+          value={getValue(dimensionValues, type, { unit: 'mm' })}
         />
       );
     }
+
     if (type === 'rot') {
-      return (
-        <Rotation key="rot" value={dimensionValues.rotation} onChange={handleRotationChange} />
-      );
+      return <Rotation key="rot" onChange={handleRotationChange} value={dimensionValues.rotation} />;
     }
+
     if (type === 'lock') {
-      return (
-        <RatioLock
-          key="lock"
-          isLocked={dimensionValues.isRatioFixed || false}
-          onClick={handleFixRatio}
-        />
-      );
+      return <RatioLock isLocked={dimensionValues.isRatioFixed || false} key="lock" onClick={handleFixRatio} />;
     }
+
     return null;
   };
-  const panels: string[] = (isMobile ? panelMapMobile : panelMap)[elem?.tagName.toLowerCase()] || [
-    'x',
-    'y',
-    'w',
-    'h',
-  ];
+  const panels: string[] = (isMobile ? panelMapMobile : panelMap)[elem?.tagName.toLowerCase()] || ['x', 'y', 'w', 'h'];
   const contents = [];
+
   panels.forEach((type) => {
     contents.push(renderBlock(type));
   });

@@ -1,19 +1,19 @@
-/* eslint-disable @typescript-eslint/no-shadow */
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { Button, Col, Flex, Progress, Row, Spin } from 'antd';
-import { ClockCircleOutlined, FileOutlined, LoadingOutlined } from '@ant-design/icons';
 
+import { ClockCircleOutlined, FileOutlined, LoadingOutlined } from '@ant-design/icons';
+import { Button, Col, Flex, Progress, Row, Spin } from 'antd';
+
+import { promarkModels } from '@core/app/actions/beambox/constant';
+import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import DeviceConstants from '@core/app/constants/device-constants';
-import FormatDuration from '@core/helpers/duration-formatter';
 import { Mode } from '@core/app/constants/monitor-constants';
 import { MonitorContext } from '@core/app/contexts/MonitorContext';
-
-import useI18n from '@core/helpers/useI18n';
-import { IDeviceInfo } from '@core/interfaces/IDevice';
-import { promarkModels } from '@core/app/actions/beambox/constant';
-import FramingTaskManager, { FramingType } from '@core/helpers/device/framing';
 import FramingIcons from '@core/app/icons/framing/FramingIcons';
-import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
+import FramingTaskManager, { FramingType } from '@core/helpers/device/framing';
+import FormatDuration from '@core/helpers/duration-formatter';
+import useI18n from '@core/helpers/useI18n';
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
+
 import MonitorControl from './MonitorControl';
 import styles from './MonitorTask.module.scss';
 
@@ -23,10 +23,9 @@ interface Props {
   device: IDeviceInfo;
 }
 
-const MonitorTask = ({ device }: Props): JSX.Element => {
-  const { monitor: tMonitor, framing: tFraming } = useI18n();
-  const { taskTime, mode, report, uploadProgress, taskImageURL, fileInfo, previewTask } =
-    useContext(MonitorContext);
+const MonitorTask = ({ device }: Props): React.JSX.Element => {
+  const { framing: tFraming, monitor: tMonitor } = useI18n();
+  const { fileInfo, mode, previewTask, report, taskImageURL, taskTime, uploadProgress } = useContext(MonitorContext);
   const isPromark = useMemo(() => promarkModels.has(device.model), [device.model]);
   /* for Promark framing */
   const options = [FramingType.Framing] as const;
@@ -82,7 +81,7 @@ const MonitorTask = ({ device }: Props): JSX.Element => {
     [isFraming, type],
   );
 
-  const renderPromarkFramingButton = (): JSX.Element => {
+  const renderPromarkFramingButton = (): React.JSX.Element => {
     if (!isPromark) {
       return null;
     }
@@ -91,8 +90,9 @@ const MonitorTask = ({ device }: Props): JSX.Element => {
       <Flex>
         {options.map((option) => (
           <Button
-            key={`monitor-framing-${option}`}
             disabled={isFramingButtonDisabled}
+            icon={renderIcon(option)}
+            key={`monitor-framing-${option}`}
             onClick={
               isFraming
                 ? handleFramingStop
@@ -102,7 +102,6 @@ const MonitorTask = ({ device }: Props): JSX.Element => {
                     handleFramingStart(option);
                   }
             }
-            icon={renderIcon(option)}
           >
             {tFraming.framing}
           </Button>
@@ -112,18 +111,14 @@ const MonitorTask = ({ device }: Props): JSX.Element => {
   };
   /* for Promark framing */
 
-  const renderProgress = (): JSX.Element => {
+  const renderProgress = (): React.JSX.Element => {
     if (isFraming) {
       return renderPromarkFramingButton();
     }
 
     if (uploadProgress !== null) {
       return (
-        <Progress
-          percent={Number(uploadProgress)}
-          status="active"
-          strokeColor={{ from: '#108ee9', to: '#87d068' }}
-        />
+        <Progress percent={Number(uploadProgress)} status="active" strokeColor={{ from: '#108ee9', to: '#87d068' }} />
       );
     }
 
@@ -164,16 +159,10 @@ const MonitorTask = ({ device }: Props): JSX.Element => {
       return renderPromarkFramingButton();
     }
 
-    return (
-      <Progress
-        percent={displayPercentage}
-        status="active"
-        strokeColor={{ from: '#108ee9', to: '#87d068' }}
-      />
-    );
+    return <Progress percent={displayPercentage} status="active" strokeColor={{ from: '#108ee9', to: '#87d068' }} />;
   };
 
-  const renderFileInfo = (): JSX.Element => {
+  const renderFileInfo = (): React.JSX.Element => {
     const fileName = fileInfo ? fileInfo[0] : previewTask?.fileName;
 
     return (
@@ -201,7 +190,7 @@ const MonitorTask = ({ device }: Props): JSX.Element => {
     });
     manager.current.on('close-message', () => MessageCaller.closeMessage(key));
     manager.current.on('message', (content: string) => {
-      MessageCaller.openMessage({ key, level: MessageLevel.LOADING, content });
+      MessageCaller.openMessage({ content, key, level: MessageLevel.LOADING });
     });
 
     return () => {
@@ -216,10 +205,10 @@ const MonitorTask = ({ device }: Props): JSX.Element => {
         <img src={taskImageURL || defaultImage} />
         <div className={styles['info-bar']}>
           <Row>
-            <Col span={24} md={12}>
+            <Col md={12} span={24}>
               {renderFileInfo()}
             </Col>
-            <Col span={24} md={12}>
+            <Col md={12} span={24}>
               <div className={styles['right-text']}>
                 <ClockCircleOutlined />
                 &nbsp;
@@ -230,16 +219,12 @@ const MonitorTask = ({ device }: Props): JSX.Element => {
         </div>
       </div>
       <Row>
-        <Col span={24} md={12}>
+        <Col md={12} span={24}>
           {renderProgress()}
         </Col>
-        <Col span={24} md={12}>
+        <Col md={12} span={24}>
           <div className={styles['control-buttons']}>
-            <MonitorControl
-              isPromark={isPromark}
-              isFraming={isFraming}
-              setEstimateTaskTime={setEstimateTaskTime}
-            />
+            <MonitorControl isFraming={isFraming} isPromark={isPromark} setEstimateTaskTime={setEstimateTaskTime} />
           </div>
         </Col>
       </Row>

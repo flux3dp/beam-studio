@@ -1,5 +1,5 @@
-/* eslint-disable import/first */
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 jest.mock('@core/helpers/i18n', () => ({
@@ -8,8 +8,8 @@ jest.mock('@core/helpers/i18n', () => ({
       tool_panels: {
         _offset: {
           corner_type: 'Corner',
-          sharp: 'Sharp',
           round: 'Round',
+          sharp: 'Sharp',
         },
       },
     },
@@ -20,9 +20,8 @@ import OffsetCornerPanel from './OffsetCornerPanel';
 
 test('should render correctly', () => {
   const onValueChange = jest.fn();
-  const { container } = render(
-    <OffsetCornerPanel cornerType="sharp" onValueChange={onValueChange} />,
-  );
+  const { container } = render(<OffsetCornerPanel cornerType="sharp" onValueChange={onValueChange} />);
+
   expect(container).toMatchSnapshot();
 
   fireEvent.click(container.querySelector('p.caption'));

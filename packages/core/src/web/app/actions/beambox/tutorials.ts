@@ -1,10 +1,10 @@
 import Alert from '@core/app/actions/alert-caller';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import Dialog from '@core/app/actions/dialog-caller';
-import Discover from '@core/helpers/api/discover';
-import i18n from '@core/helpers/i18n';
 import Progress from '@core/app/actions/progress-caller';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
+import Discover from '@core/helpers/api/discover';
+import i18n from '@core/helpers/i18n';
 
 const LANG = i18n.lang.tutorial;
 const getMachineForTutorial = async () =>
@@ -16,6 +16,7 @@ const getMachineForTutorial = async () =>
         discover = null;
       }
     });
+
     setTimeout(() => {
       if (discover) {
         resolve(false);
@@ -30,36 +31,38 @@ const startNewUserTutorial = async (callback: () => void): Promise<void> => {
     id: 'tutorial-find-machine',
     message: LANG.look_for_machine,
   });
+
   const isAnyMachineAvailable = await getMachineForTutorial();
+
   Progress.popById('tutorial-find-machine');
+
   if (isAnyMachineAvailable) {
     const autoSwitch = beamboxPreference.read('auto-switch-tab');
     const tutorial = {
       ...TutorialConstants.NEW_USER_TUTORIAL,
       dialogStylesAndContents: autoSwitch
-        ? TutorialConstants.NEW_USER_TUTORIAL.dialogStylesAndContents.filter(
-            ({ id }) => id !== 'switch-tab',
-          )
+        ? TutorialConstants.NEW_USER_TUTORIAL.dialogStylesAndContents.filter(({ id }) => id !== 'switch-tab')
         : TutorialConstants.NEW_USER_TUTORIAL.dialogStylesAndContents,
     };
+
     Dialog.showTutorial(tutorial, callback);
   } else {
     const buttons = [
       {
-        label: LANG.set_connection,
         className: 'btn-default primary',
+        label: LANG.set_connection,
         onClick: () => {
           window.location.hash = '#initialize/connect/select-machine-model';
         },
       },
       {
-        label: LANG.retry,
         className: 'btn-default primary',
+        label: LANG.retry,
         onClick: () => startNewUserTutorial(callback),
       },
       {
-        label: LANG.skip,
         className: 'btn-default',
+        label: LANG.skip,
         onClick: () => {
           Alert.popUp({
             message: LANG.skip_tutorial,
@@ -67,9 +70,10 @@ const startNewUserTutorial = async (callback: () => void): Promise<void> => {
         },
       },
     ];
+
     Alert.popUp({
-      message: LANG.unable_to_find_machine,
       buttons,
+      message: LANG.unable_to_find_machine,
     });
   }
 };
@@ -79,6 +83,6 @@ const startInterfaceTutorial = (callback) => {
 };
 
 export default {
-  startNewUserTutorial,
   startInterfaceTutorial,
+  startNewUserTutorial,
 };

@@ -4,6 +4,7 @@ export default function checkWebGL(): boolean {
   if (supportWebgl === null) {
     const canvas = document.createElement('canvas');
     const gl = canvas.getContext('webgl');
+
     // Report the result.
     if (gl && gl instanceof WebGLRenderingContext) {
       supportWebgl = true;
@@ -11,5 +12,6 @@ export default function checkWebGL(): boolean {
       supportWebgl = false;
     }
   }
+
   return supportWebgl;
 }

@@ -2,8 +2,8 @@ import { EventEmitter } from 'eventemitter3';
 
 import arrayBuffer from '@core/helpers/arrayBuffer';
 import Websocket from '@core/helpers/websocket';
-import { FisheyeCameraParameters, PerspectiveGrid } from '@core/interfaces/FisheyePreview';
-import { WrappedWebSocket } from '@core/interfaces/WebSocket';
+import type { FisheyeCameraParameters, PerspectiveGrid } from '@core/interfaces/FisheyePreview';
+import type { WrappedWebSocket } from '@core/interfaces/WebSocket';
 
 class CameraTransformAPI extends EventEmitter {
   private ws: WrappedWebSocket;
@@ -12,14 +12,14 @@ class CameraTransformAPI extends EventEmitter {
     super();
     this.ws = Websocket({
       method: 'camera-transform',
-      onMessage: (data) => {
-        this.emit('message', data);
-      },
       onError: (response) => {
         this.emit('error', response);
       },
       onFatal: (response) => {
         this.emit('fatal', response);
+      },
+      onMessage: (data) => {
+        this.emit('message', data);
       },
     });
   }
@@ -36,7 +36,10 @@ class CameraTransformAPI extends EventEmitter {
 
   setDefaultErrorResponse(reject: (reason?) => void, timeoutTimer?: NodeJS.Timeout): void {
     this.on('error', (response) => {
-      if (timeoutTimer) clearTimeout(timeoutTimer);
+      if (timeoutTimer) {
+        clearTimeout(timeoutTimer);
+      }
+
       this.removeCommandListeners();
       reject(response.info);
     });
@@ -44,12 +47,19 @@ class CameraTransformAPI extends EventEmitter {
 
   setDefaultFatalResponse(reject: (reason?) => void, timeoutTimer?: NodeJS.Timeout): void {
     this.on('fatal', (response) => {
-      if (timeoutTimer) clearTimeout(timeoutTimer);
+      if (timeoutTimer) {
+        clearTimeout(timeoutTimer);
+      }
+
       this.removeCommandListeners();
       console.log(response);
+
       if (response.error) {
-        if (response.error.join) reject(response.error.join(''));
-        else reject(response.error);
+        if (response.error.join) {
+          reject(response.error.join(''));
+        } else {
+          reject(response.error);
+        }
       } else {
         reject();
       }
@@ -61,14 +71,17 @@ class CameraTransformAPI extends EventEmitter {
       if (typeof val === 'number') {
         return Math.round(val * 1e6) / 1e6;
       }
+
       return val;
     });
+
     return new Promise<boolean>((resolve, reject) => {
       this.removeCommandListeners();
       this.setDefaultErrorResponse(reject);
       this.setDefaultFatalResponse(reject);
       this.on('message', (response: { [key: string]: string }) => {
         const { status } = response;
+
         if (status === 'ok') {
           this.removeCommandListeners();
           resolve(true);
@@ -83,12 +96,14 @@ class CameraTransformAPI extends EventEmitter {
 
   setFisheyeGrid = async (grid: PerspectiveGrid): Promise<boolean> => {
     const data = JSON.stringify(grid);
+
     return new Promise<boolean>((resolve, reject) => {
       this.removeCommandListeners();
       this.setDefaultErrorResponse(reject);
       this.setDefaultFatalResponse(reject);
       this.on('message', (response: { [key: string]: string }) => {
         const { status } = response;
+
         if (status === 'ok') {
           this.removeCommandListeners();
           resolve(true);
@@ -103,6 +118,7 @@ class CameraTransformAPI extends EventEmitter {
 
   transformImage = async (image: Blob): Promise<Blob> => {
     const data = await arrayBuffer(image);
+
     return new Promise((resolve, reject) => {
       this.removeCommandListeners();
       this.setDefaultErrorResponse(reject);
@@ -111,6 +127,7 @@ class CameraTransformAPI extends EventEmitter {
         if (response.status === 'continue') {
           this.ws.send(data);
         }
+
         if (response instanceof Blob) {
           this.removeCommandListeners();
           resolve(response);

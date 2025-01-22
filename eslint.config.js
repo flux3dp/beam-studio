@@ -48,12 +48,16 @@ module.exports = [
     languageOptions: {
       globals: {
         ...globals.browser,
+        ...globals.es2022,
         ...globals.node,
         ...globals.worker,
+        ...globals.builtin,
         $: true,
         BufferEncoding: true,
         Electron: true,
+        JSX: true,
         NodeJS: true,
+        React: true,
       },
       parser: tsParser,
     },
@@ -103,14 +107,7 @@ module.exports = [
       'n/no-new-require': 'error',
       'n/no-path-concat': 'error',
       'n/process-exit-as-throw': 'error',
-      'no-unused-vars': [
-        'error',
-        {
-          argsIgnorePattern: '^_',
-          caughtErrorsIgnorePattern: '^_',
-          varsIgnorePattern: '^_',
-        },
-      ],
+      'no-unused-vars': 'off',
       // nx
       // enable following rule if our implementations are ready
       // '@nx/enforce-module-boundaries': [
@@ -137,6 +134,14 @@ module.exports = [
       // ts
       'ts/array-type': ['error', { default: 'array-simple', readonly: 'generic' }],
       'ts/consistent-type-imports': 'error',
+      'ts/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+        },
+      ],
       'unusedImport/no-unused-imports': 'error',
       ...perfectionistRules,
       ...unicornRules,
@@ -165,6 +170,9 @@ module.exports = [
   {
     files: SRC_GLOB_TESTS,
     languageOptions: { globals: { ...globals.jest } },
+    rules: {
+      'import/order': 'off',
+    },
   },
   {
     files: ['**/webpack.*.js', 'eslint.config.js', './eslint/**/*.js'],

@@ -1,25 +1,27 @@
-import classNames from 'classnames';
-import Konva from 'konva';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Layer, Path, Stage } from 'react-konva';
+
 import { Button, Modal } from 'antd';
+import classNames from 'classnames';
+import type Konva from 'konva';
+import { Layer, Path, Stage } from 'react-konva';
 
 import constant from '@core/app/actions/beambox/constant';
-import ISVGCanvas from '@core/interfaces/ISVGCanvas';
-import useKonvaCanvas from '@core/helpers/hooks/konva/useKonvaCanvas';
-import useI18n from '@core/helpers/useI18n';
-import ZoomBlock from '@core/app/components/beambox/ZoomBlock';
-import { AutoFitContour } from '@core/interfaces/IAutoFit';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
+import ZoomBlock from '@core/app/components/beambox/ZoomBlock';
 import { getRotationAngle } from '@core/app/svgedit/transform/rotation';
+import useKonvaCanvas from '@core/helpers/hooks/konva/useKonvaCanvas';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import useI18n from '@core/helpers/useI18n';
+import type { AutoFitContour } from '@core/interfaces/IAutoFit';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import Controls from './Controls';
-import KonvaImage from './KonvaImage';
+import type { ImageDimension } from './dimension';
 import styles from './index.module.scss';
-import { ImageDimension } from './dimension';
+import KonvaImage from './KonvaImage';
 
 let svgCanvas: ISVGCanvas;
+
 getSVGAsync(({ Canvas }) => {
   svgCanvas = Canvas;
 });
@@ -31,7 +33,7 @@ interface Props {
   onClose?: () => void;
 }
 
-const AlignModal = ({ contour, element, onApply, onClose }: Props): JSX.Element => {
+const AlignModal = ({ contour, element, onApply, onClose }: Props): React.JSX.Element => {
   const { auto_fit: t, global: tGlobal } = useI18n();
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>(null);
@@ -41,19 +43,25 @@ const AlignModal = ({ contour, element, onApply, onClose }: Props): JSX.Element 
   const [zoomScale, setZoomScale] = useState(1);
   const [isMouseOnImage, setIsMouseOnImage] = useState(false);
   const { dpmm } = constant;
+
   // Fix stage size when container size changed
   useEffect(() => {
     const observer = new ResizeObserver((elements) => {
       const stage = stageRef.current;
-      if (!stage) return;
 
-      elements.forEach(({ contentRect: { width, height } }) => {
+      if (!stage) {
+        return;
+      }
+
+      elements.forEach(({ contentRect: { height, width } }) => {
         stage.width(width);
         stage.height(height);
         stage.batchDraw();
       });
     });
+
     observer.observe(containerRef.current);
+
     return () => {
       observer.disconnect();
     };
@@ -61,34 +69,44 @@ const AlignModal = ({ contour, element, onApply, onClose }: Props): JSX.Element 
 
   const zoomToFitContour = useCallback(() => {
     const stage = stageRef.current;
-    if (!stage) return;
+
+    if (!stage) {
+      return;
+    }
+
     let stageWidth = stage.width();
     let stageHeight = stage.height();
+
     if (!stageWidth || !stageHeight) {
       stageWidth = containerRef.current?.clientWidth || 0;
       stageHeight = containerRef.current?.clientHeight || 0;
     }
-    if (!stageWidth || !stageHeight) return;
+
+    if (!stageWidth || !stageHeight) {
+      return;
+    }
+
     const { bbox } = contour;
     const [, , width, height] = bbox;
     const scale = Math.min(stageWidth / width, stageHeight / height) * 0.8;
+
     stage.position({ x: (stageWidth - width * scale) / 2, y: (stageHeight - height * scale) / 2 });
     stage.scale({ x: scale, y: scale });
     stage.batchDraw();
   }, [contour]);
+
   useEffect(() => zoomToFitContour(), [zoomToFitContour]);
 
-  const { isDragging, handleWheel, handleZoom } = useKonvaCanvas(stageRef, {
+  const { handleWheel, handleZoom, isDragging } = useKonvaCanvas(stageRef, {
     onScaleChanged: setZoomScale,
   });
 
-  const { elemBBox, elemAngle } = useMemo(() => {
+  const { elemAngle, elemBBox } = useMemo(() => {
     const bbox =
-      element.tagName === 'use'
-        ? svgCanvas.getSvgRealLocation(element)
-        : svgCanvas.calculateTransformedBBox(element);
+      element.tagName === 'use' ? svgCanvas.getSvgRealLocation(element) : svgCanvas.calculateTransformedBBox(element);
     const angle = getRotationAngle(element);
-    return { elemBBox: bbox, elemAngle: angle };
+
+    return { elemAngle: angle, elemBBox: bbox };
   }, [element]);
   const initDimension = useMemo(() => {
     const { bbox, center } = contour;
@@ -97,27 +115,37 @@ const AlignModal = ({ contour, element, onApply, onClose }: Props): JSX.Element 
     // konva dimension, origin at top-left of bbox
     const konvaCx = centerX - bboxX;
     const konvaCy = centerY - bboxY;
-    const { width: elemW, height: elemH } = elemBBox;
+    const { height: elemH, width: elemW } = elemBBox;
     const scale = Math.min(contourWidth / elemW, countourHeight / elemH) * 0.8;
     const width = elemW * scale;
     const height = elemH * scale;
     const rad = (elemAngle * Math.PI) / 180;
     const x = konvaCx - (width / 2) * Math.cos(rad) + (height / 2) * Math.sin(rad);
     const y = konvaCy - (height / 2) * Math.cos(rad) - (width / 2) * Math.sin(rad);
-    return { x, y, width, height, rotation: elemAngle };
+
+    return { height, rotation: elemAngle, width, x, y };
   }, [contour, elemBBox, elemAngle]);
   // recording image dimension of konva
   const [imageDimension, setImageDimension] = useState(initDimension);
+
   useEffect(() => setImageDimension(initDimension), [initDimension]);
 
   // background contour path
   const pathD = useMemo(() => {
-    const { contour: contourPoints, bbox } = contour;
+    const { bbox, contour: contourPoints } = contour;
+
     return contourPoints
       .map(([x, y], k) => {
         const pointStr = `${x - bbox[0]},${y - bbox[1]}`;
-        if (k === 0) return `M${pointStr}`;
-        if (k === contourPoints.length - 1) return `${pointStr} z`;
+
+        if (k === 0) {
+          return `M${pointStr}`;
+        }
+
+        if (k === contourPoints.length - 1) {
+          return `${pointStr} z`;
+        }
+
         return `${pointStr}`;
       })
       .join(' L');
@@ -130,50 +158,48 @@ const AlignModal = ({ contour, element, onApply, onClose }: Props): JSX.Element 
 
   return (
     <Modal
-      width={700}
-      open
       centered
-      maskClosable={false}
-      title={t.title}
-      onCancel={onClose}
       footer={
         <div className={styles.footer}>
           <Button onClick={onClose}>{tGlobal.back}</Button>
-          <Button type="primary" onClick={handleApply}>
+          <Button onClick={handleApply} type="primary">
             {tGlobal.apply}
           </Button>
         </div>
       }
+      maskClosable={false}
+      onCancel={onClose}
+      open
+      title={t.title}
+      width={700}
     >
       <div className={styles.container}>
         <Controls
           contour={contour}
-          imageRef={imageRef}
           dimension={imageDimension}
+          imageRef={imageRef}
           initDimension={initDimension}
           setDimension={setImageDimension}
         />
         <div
           className={classNames(styles.canvas, {
-            [styles.move]: isMouseOnImage,
             [styles.dragging]: isDragging,
+            [styles.move]: isMouseOnImage,
           })}
         >
-          <div ref={containerRef} className={styles['konva-container']}>
-            <Stage ref={stageRef} onWheel={handleWheel} draggable={isDragging}>
+          <div className={styles['konva-container']} ref={containerRef}>
+            <Stage draggable={isDragging} onWheel={handleWheel} ref={stageRef}>
               <Layer ref={layerRef}>
-                <Path data={pathD} stroke="#9babba" fill="#ffffff" />
+                <Path data={pathD} fill="#ffffff" stroke="#9babba" />
                 <KonvaImage
-                  ref={imageRef}
-                  isDragging={isDragging}
                   element={element}
                   elementBBox={elemBBox}
                   initDimension={initDimension}
+                  isDragging={isDragging}
+                  onChange={(newDimension) => setImageDimension((cur) => ({ ...cur, ...newDimension }))}
                   onMouseEnter={() => setIsMouseOnImage(true)}
                   onMouseLeave={() => setIsMouseOnImage(false)}
-                  onChange={(newDimension) =>
-                    setImageDimension((cur) => ({ ...cur, ...newDimension }))
-                  }
+                  ref={imageRef}
                 />
               </Layer>
             </Stage>
@@ -181,8 +207,8 @@ const AlignModal = ({ contour, element, onApply, onClose }: Props): JSX.Element 
           <ZoomBlock
             className={styles.zoom}
             getZoom={() => zoomScale * dpmm}
-            setZoom={(val) => handleZoom(val / dpmm)}
             resetView={zoomToFitContour}
+            setZoom={(val) => handleZoom(val / dpmm)}
           />
         </div>
       </div>
@@ -196,15 +222,11 @@ export const showAlignModal = (
   onApply: (initDimension: ImageDimension, imageDimension: ImageDimension) => void,
 ): void => {
   const dialogId = 'auto-fit-align';
+
   if (!isIdExist(dialogId)) {
     addDialogComponent(
       dialogId,
-      <AlignModal
-        element={element}
-        contour={contour}
-        onApply={onApply}
-        onClose={() => popDialogById(dialogId)}
-      />,
+      <AlignModal contour={contour} element={element} onApply={onApply} onClose={() => popDialogById(dialogId)} />,
     );
   }
 };

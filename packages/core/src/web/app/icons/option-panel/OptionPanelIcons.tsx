@@ -1,6 +1,6 @@
 import Color from './color.svg';
-import Infill from './infill.svg';
 import InfillPartial from './infill-partial.svg';
+import Infill from './infill.svg';
 import Left from './left.svg';
 import LetterSpacing from './letter-spacing.svg';
 import LineSpacing from './line-spacing.svg';

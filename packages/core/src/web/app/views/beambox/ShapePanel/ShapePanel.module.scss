@@ -6,7 +6,7 @@ $gap: 8px;
 $scrollbar-x: 20px;
 
 // clear scroll setting of floating panel
-.panel [class*='scroll-content']:not(.scroll-content) {
+.panel [class*="scroll-content"]:not(.scroll-content) {
   overflow: hidden;
   margin-bottom: 0;
   padding-bottom: 0;
@@ -37,7 +37,11 @@ $scrollbar-x: 20px;
     left: calc($gap / -2);
     width: calc(100% + $gap);
     height: 27px;
-    background: linear-gradient(0, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
+    background: linear-gradient(
+      0,
+      rgba(0, 0, 0, 0.1) 0%,
+      rgba(0, 0, 0, 0) 100%
+    );
   }
   @media screen and (max-width: 600px) {
     height: 100%;
@@ -69,7 +73,8 @@ $scrollbar-x: 20px;
     grid-template-columns: repeat($number-per-row-mobile, 1fr);
     margin: 0 $margin-x;
     font-size: calc(
-      (100vw - $margin-x * 2 - $gap * ($number-per-row-mobile - 1)) / $number-per-row-mobile
+      (100vw - $margin-x * 2 - $gap * ($number-per-row-mobile - 1)) /
+        $number-per-row-mobile
     );
   }
 

@@ -1,20 +1,20 @@
 import React from 'react';
 
-import { Col, Form, InputNumber, Row, Slider } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Col, Form, InputNumber, Row, Slider } from 'antd';
 
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './PanelContent.module.scss';
 
 interface Props {
-  tolerance: number;
   setTolerance: (tolerance: number) => void;
+  tolerance: number;
 }
 
 const MAX_TOLERANCE = 100;
 
-export default function MagicWand({ tolerance, setTolerance }: Props): JSX.Element {
+export default function MagicWand({ setTolerance, tolerance }: Props): React.JSX.Element {
   const { image_edit_panel: lang } = useI18n();
 
   return (
@@ -27,22 +27,10 @@ export default function MagicWand({ tolerance, setTolerance }: Props): JSX.Eleme
         <Form.Item label={`${lang.magic_wand.tolerance}:`}>
           <Row>
             <Col flex="auto">
-              <Slider
-                min={1}
-                max={MAX_TOLERANCE}
-                step={1}
-                value={tolerance}
-                onChange={setTolerance}
-              />
+              <Slider max={MAX_TOLERANCE} min={1} onChange={setTolerance} step={1} value={tolerance} />
             </Col>
             <Col flex="100px">
-              <InputNumber
-                min={1}
-                max={MAX_TOLERANCE}
-                step={1}
-                value={tolerance}
-                onChange={setTolerance}
-              />
+              <InputNumber max={MAX_TOLERANCE} min={1} onChange={setTolerance} step={1} value={tolerance} />
             </Col>
           </Row>
         </Form.Item>

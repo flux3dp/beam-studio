@@ -1,37 +1,31 @@
-/* eslint-disable import/prefer-default-export */
 import alertCaller from '@core/app/actions/alert-caller';
-import alertConfig from '@core/helpers/api/alert-config';
-import alertConstants from '@core/app/constants/alert-constants';
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
-import checkOldFirmware from '@core/helpers/device/checkOldFirmware';
 import ExportFuncs from '@core/app/actions/beambox/export-funcs';
-import isDev from '@core/helpers/is-dev';
-import promarkButtonHandler from '@core/helpers/device/promark/promark-button-handler';
-import VersionChecker from '@core/helpers/version-checker';
-
 import { executeFirmwareUpdate } from '@core/app/actions/beambox/menuDeviceActions';
 import { getSupportInfo } from '@core/app/constants/add-on';
-import { IDeviceInfo } from '@core/interfaces/IDevice';
-import { ILang } from '@core/interfaces/ILang';
+import alertConstants from '@core/app/constants/alert-constants';
+import alertConfig from '@core/helpers/api/alert-config';
+import checkOldFirmware from '@core/helpers/device/checkOldFirmware';
+import promarkButtonHandler from '@core/helpers/device/promark/promark-button-handler';
+import isDev from '@core/helpers/is-dev';
+import VersionChecker from '@core/helpers/version-checker';
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
+import type { ILang } from '@core/interfaces/ILang';
 
-export const exportTask = async (
-  device: IDeviceInfo,
-  byHandler: boolean,
-  lang: ILang,
-): Promise<void> => {
+export const exportTask = async (device: IDeviceInfo, byHandler: boolean, lang: ILang): Promise<void> => {
   const showForceUpdateAlert = (id: string) => {
     alertCaller.popUp({
+      buttonLabels: [lang.update.update],
+      buttonType: alertConstants.CUSTOM_CANCEL,
+      callbacks: () => executeFirmwareUpdate(device),
       id,
       message: lang.update.firmware.force_update_message,
-      type: alertConstants.SHOW_POPUP_ERROR,
-      buttonType: alertConstants.CUSTOM_CANCEL,
-      buttonLabels: [lang.update.update],
-      callbacks: () => executeFirmwareUpdate(device),
       onCancel: () => {},
+      type: alertConstants.SHOW_POPUP_ERROR,
     });
   };
-  const { version, model } = device;
+  const { model, version } = device;
   const supportInfo = getSupportInfo(model);
 
   if (version === '4.1.1' && model !== 'fhexa1') {
@@ -41,9 +35,11 @@ export const exportTask = async (
   }
 
   const rotaryMode = BeamboxPreference.read('rotary_mode');
+
   // Check 4.1.5 / 4.1.6 rotary
   if (rotaryMode && ['4.1.5', '4.1.6'].includes(version) && model !== 'fhexa1') {
     showForceUpdateAlert('4.1.5,6-rotary-alert');
+
     return;
   }
 
@@ -52,10 +48,13 @@ export const exportTask = async (
   if (!isDev() && constant.adorModels.includes(model)) {
     if (!versionCheckResult.meetRequirement('ADOR_FCODE_V3')) {
       showForceUpdateAlert('ador-fcode-v3');
+
       return;
     }
+
     if (rotaryMode && !versionCheckResult.meetRequirement('ADOR_ROTARY')) {
       showForceUpdateAlert('ador-rotary');
+
       return;
     }
   }
@@ -72,7 +71,9 @@ export const exportTask = async (
 
   const res = await checkOldFirmware(device.version);
 
-  if (!res) return;
+  if (!res) {
+    return;
+  }
 
   const currentWorkarea = BeamboxPreference.read('workarea') || BeamboxPreference.read('model');
   const allowedWorkareas = constant.allowedWorkarea[model];
@@ -96,16 +97,16 @@ export const exportTask = async (
   ) {
     await new Promise((resolve) => {
       alertCaller.popUp({
-        message: lang.topbar.alerts.job_origin_warning,
-        type: alertConstants.SHOW_POPUP_WARNING,
+        callbacks: () => resolve(null),
         checkbox: {
-          text: lang.beambox.popup.dont_show_again,
           callbacks: () => {
             alertConfig.write('skip-job-origin-warning', true);
             resolve(null);
           },
+          text: lang.beambox.popup.dont_show_again,
         },
-        callbacks: () => resolve(null),
+        message: lang.topbar.alerts.job_origin_warning,
+        type: alertConstants.SHOW_POPUP_WARNING,
       });
     });
   }

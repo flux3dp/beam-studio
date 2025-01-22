@@ -6,15 +6,15 @@ import SelectView from '@core/app/widgets/Select';
 interface Props {
   id?: string;
   label: string;
-  url?: string;
   onChange: (e) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  options: { value: any; label: string; selected: boolean }[];
+
+  options: Array<{ label: string; selected: boolean; value: any }>;
+  url?: string;
 }
 
-const SelectControl = ({ id = null, url, label, onChange, options }: Props): JSX.Element => (
+const SelectControl = ({ id = null, label, onChange, options, url }: Props): React.JSX.Element => (
   <Controls label={label} url={url}>
-    <SelectView id={id} className="font3" options={options} onChange={onChange} />
+    <SelectView className="font3" id={id} onChange={onChange} options={options} />
   </Controls>
 );
 

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable import/order */
 /* eslint-disable max-classes-per-file */
 /**
  * Package: svedit.history
@@ -44,7 +44,7 @@ export class BaseHistoryCommand implements ICommand {
     return [this.elem];
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line no-unused-vars
   doApply = (handler?: IHistoryHandler): void => {
     throw Error('apply not implemented');
   };
@@ -57,7 +57,7 @@ export class BaseHistoryCommand implements ICommand {
     handler?.handleHistoryEvent(HistoryEventTypes.AFTER_APPLY, this);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line no-unused-vars
   doUnapply = (handler?: IHistoryHandler): void => {
     throw Error('unapply not implemented');
   };

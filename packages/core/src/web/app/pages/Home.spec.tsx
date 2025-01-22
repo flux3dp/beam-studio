@@ -1,16 +1,17 @@
-import classNames from 'classnames';
 import React from 'react';
+
 import { render } from '@testing-library/react';
+import classNames from 'classnames';
 
 jest.mock('@core/helpers/i18n', () => ({
   getActiveLang: () => 'en',
-  setActiveLang: jest.fn(),
   lang: {
     initialize: {
-      select_language: 'Select Language',
       next: 'Next',
+      select_language: 'Select Language',
     },
   },
+  setActiveLang: jest.fn(),
 }));
 
 jest.mock('@app/implementations/menu', () => ({
@@ -21,10 +22,10 @@ jest.mock('@core/app/widgets/Modal', () => ({ className, content }: any) => (
   <div className={classNames(className)}>{content}</div>
 ));
 
-// eslint-disable-next-line import/first
 import Home from './Home';
 
 test('should render correctly', () => {
   const { container } = render(<Home />);
+
   expect(container).toMatchSnapshot();
 });

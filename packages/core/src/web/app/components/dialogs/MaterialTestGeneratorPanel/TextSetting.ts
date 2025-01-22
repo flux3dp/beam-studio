@@ -1,16 +1,16 @@
 import { promarkModels } from '@core/app/actions/beambox/constant';
-import { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 
 export interface TextSetting {
-  select: { value: string; label: string };
   power: number;
+  select: { label: string; value: string };
   speed: number;
 }
 
 export const textParams = ['power', 'speed'] as const;
 
 export const getTextSetting = (workarea: WorkAreaModel): TextSetting => ({
-  select: { value: 'custom', label: 'Custom' },
   power: 15,
+  select: { label: 'Custom', value: 'custom' },
   speed: promarkModels.has(workarea) ? 1000 : 20,
 });

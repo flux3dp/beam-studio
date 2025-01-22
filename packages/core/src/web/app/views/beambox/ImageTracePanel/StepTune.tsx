@@ -1,60 +1,64 @@
-import Cropper from 'cropperjs';
 import React, { useEffect, useState } from 'react';
-import { Button, Modal, Slider } from 'antd';
 
-import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
-import ImageData from '@core/helpers/image-data';
-import i18n from '@core/helpers/i18n';
+import { Button, Modal, Slider } from 'antd';
+import type Cropper from 'cropperjs';
+
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
+import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
+import i18n from '@core/helpers/i18n';
+import ImageData from '@core/helpers/image-data';
 import traceAndImportPath from '@core/helpers/image-trace-panel/trace-and-import-path';
 
 import styles from './StepTune.module.scss';
 
 const LANG = i18n.lang.beambox.image_trace_panel;
+
 interface Props {
-  imageUrl: string;
   cropData: Cropper.Data;
-  onGoBack: () => void;
+  imageUrl: string;
   onClose: () => void;
+  onGoBack: () => void;
 }
 
 const MODAL_PADDING_X = 80;
 const MODAL_PADDING_Y = 210;
 
-function StepTune({ imageUrl, cropData, onGoBack, onClose }: Props): JSX.Element {
+function StepTune({ cropData, imageUrl, onClose, onGoBack }: Props): React.JSX.Element {
   const [threshold, setThreshold] = useState(128);
   const [previewImgBase64, setPreviewImgBase64] = useState('');
 
   const generatePreviewImgUrl = (val: number) => {
     ImageData(imageUrl, {
-      width: 0,
-      height: 0,
       grayscale: {
         is_rgba: true,
         is_shading: false,
-        threshold: val,
         is_svg: false,
+        threshold: val,
       },
+      height: 0,
       onComplete: (result) => setPreviewImgBase64(result.pngBase64),
+      width: 0,
     });
   };
+
   // listen event on slide onAfterChange but not here to avoid massive calculation
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line hooks/exhaustive-deps
   useEffect(() => generatePreviewImgUrl(threshold), []);
 
   const handleOk = async () => {
     const { minX, minY } = PreviewModeBackgroundDrawer.getCoordinates();
     const dimension = {
+      height: cropData.height,
+      width: cropData.width,
       x: cropData.x + minX,
       y: cropData.y + minY,
-      width: cropData.width,
-      height: cropData.height,
     };
+
     await traceAndImportPath(previewImgBase64, dimension);
     FnWrapper.insertImage(imageUrl, dimension, threshold);
     onClose();
   };
-  const { width, height } = cropData;
+  const { height, width } = cropData;
   const maxWidth = window.innerWidth - MODAL_PADDING_X;
   const maxHieght = window.innerHeight - MODAL_PADDING_Y;
   const isWideImage = width / maxWidth > height / maxHieght;
@@ -63,7 +67,7 @@ function StepTune({ imageUrl, cropData, onGoBack, onClose }: Props): JSX.Element
     <>
       <Button onClick={onClose}>{LANG.cancel}</Button>
       <Button onClick={onGoBack}>{LANG.back}</Button>
-      <Button type="primary" onClick={handleOk}>
+      <Button onClick={handleOk} type="primary">
         {LANG.next}
       </Button>
     </>
@@ -72,11 +76,11 @@ function StepTune({ imageUrl, cropData, onGoBack, onClose }: Props): JSX.Element
   return (
     <Modal
       centered
-      open
       closable={false}
-      maskClosable={false}
-      width={isWideImage ? maxWidth : undefined}
       footer={renderFooter()}
+      maskClosable={false}
+      open
+      width={isWideImage ? maxWidth : undefined}
     >
       <div>
         <img
@@ -91,12 +95,12 @@ function StepTune({ imageUrl, cropData, onGoBack, onClose }: Props): JSX.Element
           <h5 className={styles.subtitle}>{LANG.threshold}</h5>
           <Slider
             id="threshold"
-            min={0}
             max={255}
+            min={0}
+            onAfterChange={(val: number) => generatePreviewImgUrl(val)}
+            onChange={(val: number) => setThreshold(val)}
             step={1}
             value={threshold}
-            onChange={(val: number) => setThreshold(val)}
-            onAfterChange={(val: number) => generatePreviewImgUrl(val)}
           />
         </div>
       </div>

@@ -1,15 +1,15 @@
 import React, { useContext, useEffect, useMemo } from 'react';
 
-import EmbeddedCanvas from '@core/app/widgets/FullWindowPanel/EmbeddedCanvas';
 import constant from '@core/app/actions/beambox/constant';
+import EmbeddedCanvas from '@core/app/widgets/FullWindowPanel/EmbeddedCanvas';
 
-import styles from './PassThrough.module.scss';
 import { PassThroughCanvasManager } from './canvasManager';
+import styles from './PassThrough.module.scss';
 import { PassThroughContext } from './PassThroughContext';
 
-const Canvas = (): JSX.Element => {
+const Canvas = (): React.JSX.Element => {
   const canvasManager = useMemo(() => PassThroughCanvasManager.getInstance(), []);
-  const { passThroughHeight, guideMark } = useContext(PassThroughContext);
+  const { guideMark, passThroughHeight } = useContext(PassThroughContext);
 
   useEffect(() => () => PassThroughCanvasManager.clear(), []);
 
@@ -17,14 +17,10 @@ const Canvas = (): JSX.Element => {
     canvasManager.setPassThroughHeight(passThroughHeight * constant.dpmm);
   }, [canvasManager, passThroughHeight]);
   useEffect(() => {
-    canvasManager.setGuideMark(
-      guideMark.show,
-      guideMark.x * constant.dpmm,
-      guideMark.width * constant.dpmm,
-    );
+    canvasManager.setGuideMark(guideMark.show, guideMark.x * constant.dpmm, guideMark.width * constant.dpmm);
   }, [canvasManager, guideMark]);
 
-  return <EmbeddedCanvas className={styles.container} canvasManager={canvasManager} />;
+  return <EmbeddedCanvas canvasManager={canvasManager} className={styles.container} />;
 };
 
 export default Canvas;

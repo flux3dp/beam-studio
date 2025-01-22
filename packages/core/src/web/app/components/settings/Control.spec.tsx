@@ -1,17 +1,19 @@
 import * as React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 const open = jest.fn();
+
 jest.mock('@app/implementations/browser', () => ({
   open,
 }));
 
 const useIsMobile = jest.fn();
+
 jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => useIsMobile(),
 }));
 
-// eslint-disable-next-line import/first
 import Control from './Control';
 
 describe('test Control', () => {
@@ -21,6 +23,7 @@ describe('test Control', () => {
         <div>Hello World</div>
       </Control>,
     );
+
     expect(container).toMatchSnapshot();
 
     rerender(
@@ -37,11 +40,13 @@ describe('test Control', () => {
 
   it('should render correctly in mobile', () => {
     useIsMobile.mockReturnValue(true);
+
     const { container } = render(
       <Control label="Flux">
         <div>Hello World</div>
       </Control>,
     );
+
     expect(container).toMatchSnapshot();
   });
 });

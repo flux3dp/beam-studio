@@ -1,10 +1,12 @@
 import React from 'react';
-import browser from '@app/implementations/browser';
 
 import classNames from 'classnames';
+
+import browser from '@app/implementations/browser';
+
 import styles from './Hint.module.scss';
 
-export default ({ message }: { message: string }): JSX.Element => {
+export default ({ message }: { message: string }): React.JSX.Element => {
   // Regex to match <a> tags with href and text inside
   const linkRegex = /<a\s+[^>]*href="([^"]+)"[^>]*>(.*?)<\/a>/gi;
 
@@ -39,7 +41,5 @@ export default ({ message }: { message: string }): JSX.Element => {
     return parts;
   };
 
-  return (
-    <div className={classNames(styles.contents, styles.tutorial)}>{parseMessage(message)}</div>
-  );
+  return <div className={classNames(styles.contents, styles.tutorial)}>{parseMessage(message)}</div>;
 };

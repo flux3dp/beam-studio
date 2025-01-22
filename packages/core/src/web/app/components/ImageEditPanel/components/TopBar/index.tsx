@@ -1,36 +1,30 @@
 import React, { memo, useCallback } from 'react';
 
+import { ArrowLeftOutlined, ArrowRightOutlined, MinusOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import { Button, Flex } from 'antd';
-import {
-  ArrowLeftOutlined,
-  ArrowRightOutlined,
-  MinusOutlined,
-  PlusOutlined,
-  ReloadOutlined,
-} from '@ant-design/icons';
 import classNames from 'classnames';
 
 import useI18n from '@core/helpers/useI18n';
 
-import { HistoryState } from '../../hooks/useHistory';
+import type { HistoryState } from '../../hooks/useHistory';
 
 import styles from './index.module.scss';
 
 interface Props {
+  handleHistoryChange: (type: 'redo' | 'undo') => () => void;
   handleReset: () => void;
   handleZoomByScale: (scale: number) => void;
-  zoomScale: number;
   history: HistoryState;
-  handleHistoryChange: (type: 'undo' | 'redo') => () => void;
+  zoomScale: number;
 }
 
 function TopBar({
+  handleHistoryChange,
   handleReset,
   handleZoomByScale,
-  zoomScale,
   history: { index, items },
-  handleHistoryChange,
-}: Props): JSX.Element {
+  zoomScale,
+}: Props): React.JSX.Element {
   const {
     global: { editing: lang },
   } = useI18n();
@@ -39,48 +33,43 @@ function TopBar({
     () => (
       <div className={styles['dp-flex']}>
         <Button
-          title={lang.zoom_out}
           className={styles['mr-8px']}
-          shape="round"
           icon={<MinusOutlined />}
           onClick={() => handleZoomByScale(0.8)}
-        />
-        <div className={classNames(styles['mr-8px'], styles['lh-32px'])}>
-          {Math.round(zoomScale * 100)}%
-        </div>
-        <Button
-          title={lang.zoom_in}
-          className={styles['mr-8px']}
           shape="round"
+          title={lang.zoom_out}
+        />
+        <div className={classNames(styles['mr-8px'], styles['lh-32px'])}>{Math.round(zoomScale * 100)}%</div>
+        <Button
+          className={styles['mr-8px']}
           icon={<PlusOutlined />}
           onClick={() => handleZoomByScale(1.2)}
+          shape="round"
+          title={lang.zoom_in}
         />
-        <Button title={lang.reset} shape="circle" icon={<ReloadOutlined />} onClick={handleReset} />
+        <Button icon={<ReloadOutlined />} onClick={handleReset} shape="circle" title={lang.reset} />
       </div>
     ),
     [handleReset, handleZoomByScale, zoomScale, lang],
   );
 
   return (
-    <Flex
-      justify="space-between"
-      className={classNames(styles['w-100'], styles['top-bar'], styles.bdb)}
-    >
+    <Flex className={classNames(styles['w-100'], styles['top-bar'], styles.bdb)} justify="space-between">
       <div>
         <Button
           className={styles['mr-8px']}
-          title={lang.undo}
-          shape="round"
-          icon={<ArrowLeftOutlined />}
           disabled={index === 0}
+          icon={<ArrowLeftOutlined />}
           onClick={handleHistoryChange('undo')}
+          shape="round"
+          title={lang.undo}
         />
         <Button
+          disabled={index === items.length - 1}
+          icon={<ArrowRightOutlined />}
+          onClick={handleHistoryChange('redo')}
           shape="round"
           title={lang.redo}
-          icon={<ArrowRightOutlined />}
-          disabled={index === items.length - 1}
-          onClick={handleHistoryChange('redo')}
         />
       </div>
       {renderZoomButton()}

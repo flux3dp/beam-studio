@@ -1,32 +1,33 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
-import { IFile } from '@core/interfaces/IMyCloud';
 import { MyCloudContext } from '@core/app/contexts/MyCloudContext';
+import type { IFile } from '@core/interfaces/IMyCloud';
 
 import GridFile from './GridFile';
 
 jest.mock('@core/helpers/useI18n', () => () => ({
   my_cloud: {
     action: {
+      confirmFileDelete: 'Are you sure you want to delete this file?',
+      delete: 'Delete',
+      download: 'Download',
+      duplicate: 'Duplicate',
       open: 'Open',
       rename: 'Rename',
-      duplicate: 'Duplicate',
-      download: 'Download',
-      delete: 'Delete',
-      confirmFileDelete: 'Are you sure you want to delete this file?',
     },
   },
 }));
 
 const mockFile: IFile = {
-  uuid: 'mock-uuid',
+  created_at: '2024-01-09T04:14:36.801586Z',
+  last_modified_at: '2024-01-09T06:42:04.824942Z',
   name: 'File name',
   size: 5788,
   thumbnail_url: 'https://s3/url',
+  uuid: 'mock-uuid',
   workarea: 'fhexa1',
-  created_at: '2024-01-09T04:14:36.801586Z',
-  last_modified_at: '2024-01-09T06:42:04.824942Z',
 };
 
 const mockOpen = jest.fn();
@@ -36,18 +37,18 @@ const mockRename = jest.fn();
 const mockDelete = jest.fn();
 const mockSetEditingId = jest.fn();
 const mockSetSelectedId = jest.fn();
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 const mockContext: any = {
-  fileOperation: {
-    open: mockOpen,
-    duplicate: mockDuplicate,
-    download: mockDownload,
-    rename: mockRename,
-    delete: mockDelete,
-  },
   editingId: null,
-  setEditingId: mockSetEditingId,
+  fileOperation: {
+    delete: mockDelete,
+    download: mockDownload,
+    duplicate: mockDuplicate,
+    open: mockOpen,
+    rename: mockRename,
+  },
   selectedId: null,
+  setEditingId: mockSetEditingId,
   setSelectedId: mockSetSelectedId,
 };
 
@@ -56,6 +57,7 @@ jest.mock('@core/app/contexts/MyCloudContext', () => ({
 }));
 
 const mockUseIsMobile = jest.fn();
+
 jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => mockUseIsMobile(),
 }));
@@ -71,9 +73,11 @@ describe('test GridFile', () => {
         <GridFile file={mockFile} />
       </MyCloudContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
 
     const previewImg = container.querySelector('.guide-lines');
+
     fireEvent.click(previewImg);
     expect(mockSetSelectedId).toBeCalledTimes(1);
     expect(mockSetSelectedId).toHaveBeenNthCalledWith(1, 'mock-uuid');
@@ -82,6 +86,7 @@ describe('test GridFile', () => {
     expect(mockOpen).toHaveBeenNthCalledWith(1, mockFile);
 
     let dropdown = container.querySelector('.ant-dropdown');
+
     expect(dropdown).not.toBeInTheDocument();
 
     fireEvent.click(container.querySelector('.trigger'));
@@ -106,7 +111,9 @@ describe('test GridFile', () => {
         <GridFile file={mockFile} />
       </MyCloudContext.Provider>,
     );
+
     const input = container.querySelector('.edit');
+
     expect(input).toBeInTheDocument();
     expect(container).toMatchSnapshot();
     fireEvent.change(input, { target: { value: 'new name' } });
@@ -129,7 +136,9 @@ describe('test GridFile', () => {
     expect(mockDownload).toBeCalledWith(mockFile);
 
     fireEvent.click(getByText('Delete'));
+
     const confirm = container.querySelector('.ant-popconfirm');
+
     expect(confirm).toBeInTheDocument();
     expect(container).toMatchSnapshot();
     fireEvent.click(getByText('OK'));
@@ -139,18 +148,23 @@ describe('test GridFile', () => {
 
   test('should rendered correctly in mobile', () => {
     mockUseIsMobile.mockReturnValue(true);
+
     const { container } = render(
       <MyCloudContext.Provider value={mockContext}>
         <GridFile file={mockFile} />
       </MyCloudContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
 
     const previewImg = container.querySelector('.guide-lines');
+
     fireEvent.click(previewImg);
     expect(mockSetSelectedId).toBeCalledTimes(1);
     expect(mockSetSelectedId).toHaveBeenNthCalledWith(1, 'mock-uuid');
+
     const dropdown = container.querySelector('.ant-dropdown');
+
     expect(dropdown).toBeInTheDocument();
     expect(dropdown).not.toHaveClass('ant-dropdown-hidden');
     fireEvent.doubleClick(previewImg);

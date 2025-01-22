@@ -1,14 +1,15 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import CanvasController from './CanvasController';
 
 jest.mock('@core/helpers/useI18n', () => () => ({
   boxgen: {
-    reset: 'Reset',
-    zoom: 'Zoom',
     control_tooltip: 'Left mouse to rotate\nScroll to zoom\nRight mouse to pan',
     control_tooltip_touch: 'Drag to rotate\nPinch to zoom\nTwo-finger to pan',
+    reset: 'Reset',
+    zoom: 'Zoom',
   },
 }));
 
@@ -27,11 +28,12 @@ jest.mock('@core/app/contexts/BoxgenContext', () => ({
 
 describe('test CanvasController', () => {
   test('should behave correctly', () => {
-    const { container } = render(
-      <CanvasController setResetKey={mockSetResetKey} setZoomKey={mockSetZoomKey} />,
-    );
+    const { container } = render(<CanvasController setResetKey={mockSetResetKey} setZoomKey={mockSetZoomKey} />);
+
     expect(container).toMatchSnapshot();
+
     const buttons = container.querySelectorAll('.button');
+
     fireEvent.click(buttons[0]);
     expect(mockSetResetKey).toBeCalledTimes(1);
     expect(mockResetKey).toBe(1);

@@ -1,21 +1,18 @@
 import React, { useState } from 'react';
-import { Divider, Flex, Radio, RadioChangeEvent, Space } from 'antd';
+
+import type { RadioChangeEvent } from 'antd';
+import { Divider, Flex, Radio, Space } from 'antd';
 import classNames from 'classnames';
 
-import useI18n from '@core/helpers/useI18n';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import {
-  laserSourceWattMap,
-  LaserType,
-  workareaOptions,
-} from '@core/app/constants/promark-constants';
-
+import { laserSourceWattMap, LaserType, workareaOptions } from '@core/app/constants/promark-constants';
 import { setPromarkInfo } from '@core/helpers/device/promark/promark-info';
-import { PromarkInfo } from '@core/interfaces/Promark';
+import useI18n from '@core/helpers/useI18n';
+import type { PromarkInfo } from '@core/interfaces/Promark';
 
 import styles from './index.module.scss';
 
-export default function ChoosePromarkLaserSource(): JSX.Element {
+export default function ChoosePromarkLaserSource(): React.JSX.Element {
   const { initialize: t } = useI18n();
   const [laserSource, setLaserSource] = useState('');
   const [workarea, setWorkarea] = useState(0);
@@ -25,8 +22,7 @@ export default function ChoosePromarkLaserSource(): JSX.Element {
       label: `${source} - ${watt}W`,
       value: `${source}-${watt}`,
     }));
-  const generateWorkareaOptions = () =>
-    workareaOptions.map((area) => ({ label: `${area}x${area}`, value: area }));
+  const generateWorkareaOptions = () => workareaOptions.map((area) => ({ label: `${area}x${area}`, value: area }));
 
   const renderLaserSourceRadio = (options: ReturnType<typeof generateLaserSourceOptions>) => (
     <Space direction="vertical">
@@ -56,7 +52,7 @@ export default function ChoosePromarkLaserSource(): JSX.Element {
 
     beamboxPreference.write('customized-dimension', {
       ...customizedDimension,
-      fpm1: { width: workarea, height: workarea },
+      fpm1: { height: workarea, width: workarea },
     });
 
     setPromarkInfo({ laserType: LaserType[source], watt: Number(watt) } as PromarkInfo);
@@ -68,14 +64,9 @@ export default function ChoosePromarkLaserSource(): JSX.Element {
     <div className={styles.container}>
       <div className={styles['top-bar']} />
 
-      <Flex justify="space-between" gap={40}>
+      <Flex gap={40} justify="space-between">
         <div className={styles.image}>
-          <img
-            src="core-img/init-panel/promark-real.png"
-            draggable="false"
-            width={300}
-            height={300}
-          />
+          <img draggable="false" height={300} src="core-img/init-panel/promark-real.png" width={300} />
         </div>
 
         <Flex vertical>
@@ -83,7 +74,7 @@ export default function ChoosePromarkLaserSource(): JSX.Element {
             <div className={styles.title}>{t.promark.select_laser_source}</div>
             <Flex>
               <Radio.Group onChange={onLaserSourceChange} value={laserSource}>
-                <Space split={<Divider type="vertical" className={styles['space-divider']} />}>
+                <Space split={<Divider className={styles['space-divider']} type="vertical" />}>
                   {renderLaserSourceRadio(generateLaserSourceOptions('Desktop'))}
                   {renderLaserSourceRadio(generateLaserSourceOptions('MOPA'))}
                 </Space>
@@ -92,15 +83,9 @@ export default function ChoosePromarkLaserSource(): JSX.Element {
           </div>
 
           <div>
-            <div className={classNames(styles.subtitle, styles['mb-12px'])}>
-              {t.promark.select_workarea}
-            </div>
+            <div className={classNames(styles.subtitle, styles['mb-12px'])}>{t.promark.select_workarea}</div>
             <Flex>
-              <Radio.Group
-                onChange={onWorkareaChange}
-                options={generateWorkareaOptions()}
-                value={workarea}
-              />
+              <Radio.Group onChange={onWorkareaChange} options={generateWorkareaOptions()} value={workarea} />
             </Flex>
           </div>
         </Flex>

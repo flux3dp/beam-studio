@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
@@ -7,12 +7,14 @@ import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts
 import ConfigPanelContext from './ConfigPanelContext';
 
 const mockWriteData = jest.fn();
+
 jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   CUSTOM_PRESET_CONSTANT: 'CUSTOM_PRESET_CONSTANT',
   writeData: (...args) => mockWriteData(...args),
 }));
 
 const mockAddCommandToHistory = jest.fn();
+
 jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) =>
     callback({
@@ -22,17 +24,19 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
     }),
 }));
 
-let batchCmd = { onAfter: undefined, count: 0 };
+let batchCmd = { count: 0, onAfter: undefined };
 const mockBatchCommand = jest.fn().mockImplementation(() => {
-  batchCmd = { onAfter: undefined, count: batchCmd.count + 1 };
+  batchCmd = { count: batchCmd.count + 1, onAfter: undefined };
+
   return batchCmd;
 });
+
 jest.mock('@core/app/svgedit/history/history', () => ({
   BatchCommand: mockBatchCommand,
 }));
 
 const mockSelectedLayers = ['layer1', 'layer2'];
-const mockContextState = { dottingTime: { value: 140, hasMultiValue: false } };
+const mockContextState = { dottingTime: { hasMultiValue: false, value: 140 } };
 const mockDispatch = jest.fn();
 const mockInitState = jest.fn();
 
@@ -47,34 +51,34 @@ jest.mock('@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext', () 
 jest.mock(
   '@core/app/widgets/Unit-Input-v2',
   () =>
-    ({ id, min, max, unit, defaultValue, decimal, displayMultiValue, getValue }: any) =>
-      (
-        <div>
-          MockUnitInput
-          <p>min: {min}</p>
-          <p>max: {max}</p>
-          <p>unit: {unit}</p>
-          <p>defaultValue: {defaultValue}</p>
-          <p>decimal: {decimal}</p>
-          <p>displayMultiValue: {displayMultiValue ? 'Y' : 'N'}</p>
-          <input
-            id={id}
-            data-testid={id}
-            type="number"
-            value={defaultValue}
-            onChange={(e) => getValue(parseFloat(e.target.value))}
-          />
-        </div>
-      ),
+    ({ decimal, defaultValue, displayMultiValue, getValue, id, max, min, unit }: any) => (
+      <div>
+        MockUnitInput
+        <p>min: {min}</p>
+        <p>max: {max}</p>
+        <p>unit: {unit}</p>
+        <p>defaultValue: {defaultValue}</p>
+        <p>decimal: {decimal}</p>
+        <p>displayMultiValue: {displayMultiValue ? 'Y' : 'N'}</p>
+        <input
+          data-testid={id}
+          id={id}
+          onChange={(e) => getValue(Number.parseFloat(e.target.value))}
+          type="number"
+          value={defaultValue}
+        />
+      </div>
+    ),
 );
 
 const mockCreateEventEmitter = jest.fn();
+
 jest.mock('@core/helpers/eventEmitterFactory', () => ({
   createEventEmitter: (...args) => mockCreateEventEmitter(...args),
 }));
+
 const mockEmit = jest.fn();
 
-// eslint-disable-next-line import/first
 import DottingTimeBlock from './DottingTimeBlock';
 
 describe('test DottingTimeBlock', () => {
@@ -90,16 +94,17 @@ describe('test DottingTimeBlock', () => {
       <LayerPanelContext.Provider value={{ hasGradient: true } as any}>
         <ConfigPanelContext.Provider
           value={{
-            state: mockContextState as any,
             dispatch: mockDispatch,
-            selectedLayers: mockSelectedLayers,
             initState: mockInitState,
+            selectedLayers: mockSelectedLayers,
+            state: mockContextState as any,
           }}
         >
           <DottingTimeBlock />
         </ConfigPanelContext.Provider>
       </LayerPanelContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
   });
 
@@ -108,16 +113,17 @@ describe('test DottingTimeBlock', () => {
       <LayerPanelContext.Provider value={{ hasGradient: true } as any}>
         <ConfigPanelContext.Provider
           value={{
-            state: mockContextState as any,
             dispatch: mockDispatch,
-            selectedLayers: mockSelectedLayers,
             initState: mockInitState,
+            selectedLayers: mockSelectedLayers,
+            state: mockContextState as any,
           }}
         >
           <DottingTimeBlock type="panel-item" />
         </ConfigPanelContext.Provider>
       </LayerPanelContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
   });
 
@@ -126,16 +132,17 @@ describe('test DottingTimeBlock', () => {
       <LayerPanelContext.Provider value={{ hasGradient: false } as any}>
         <ConfigPanelContext.Provider
           value={{
-            state: mockContextState as any,
             dispatch: mockDispatch,
-            selectedLayers: mockSelectedLayers,
             initState: mockInitState,
+            selectedLayers: mockSelectedLayers,
+            state: mockContextState as any,
           }}
         >
           <DottingTimeBlock />
         </ConfigPanelContext.Provider>
       </LayerPanelContext.Provider>,
     );
+
     expect(container).toBeEmptyDOMElement();
   });
 
@@ -144,16 +151,17 @@ describe('test DottingTimeBlock', () => {
       <LayerPanelContext.Provider value={{ hasGradient: true } as any}>
         <ConfigPanelContext.Provider
           value={{
-            state: mockContextState as any,
             dispatch: mockDispatch,
-            selectedLayers: mockSelectedLayers,
             initState: mockInitState,
+            selectedLayers: mockSelectedLayers,
+            state: mockContextState as any,
           }}
         >
           <DottingTimeBlock />
         </ConfigPanelContext.Provider>
       </LayerPanelContext.Provider>,
     );
+
     expect(mockCreateEventEmitter).toBeCalledTimes(1);
     expect(mockCreateEventEmitter).toHaveBeenLastCalledWith('time-estimation-button');
 
@@ -162,33 +170,23 @@ describe('test DottingTimeBlock', () => {
     expect(mockEmit).not.toBeCalled();
     expect(mockBatchCommand).not.toBeCalled();
     expect(batchCmd.count).toBe(0);
+
     const input = container.querySelector('input');
+
     fireEvent.change(input, { target: { value: '88' } });
     expect(mockDispatch).toBeCalledTimes(1);
     expect(mockDispatch).toHaveBeenLastCalledWith({
+      payload: { configName: 'CUSTOM_PRESET_CONSTANT', dottingTime: 88 },
       type: 'change',
-      payload: { dottingTime: 88, configName: 'CUSTOM_PRESET_CONSTANT' },
     });
     expect(mockBatchCommand).toBeCalledTimes(1);
     expect(mockBatchCommand).lastCalledWith('Change dotting time');
     expect(batchCmd.count).toBe(1);
     expect(mockWriteData).toBeCalledTimes(4);
     expect(mockWriteData).toHaveBeenNthCalledWith(1, 'layer1', 'dottingTime', 88, { batchCmd });
-    expect(mockWriteData).toHaveBeenNthCalledWith(
-      2,
-      'layer1',
-      'configName',
-      'CUSTOM_PRESET_CONSTANT',
-      { batchCmd },
-    );
+    expect(mockWriteData).toHaveBeenNthCalledWith(2, 'layer1', 'configName', 'CUSTOM_PRESET_CONSTANT', { batchCmd });
     expect(mockWriteData).toHaveBeenNthCalledWith(3, 'layer2', 'dottingTime', 88, { batchCmd });
-    expect(mockWriteData).toHaveBeenNthCalledWith(
-      4,
-      'layer2',
-      'configName',
-      'CUSTOM_PRESET_CONSTANT',
-      { batchCmd },
-    );
+    expect(mockWriteData).toHaveBeenNthCalledWith(4, 'layer2', 'configName', 'CUSTOM_PRESET_CONSTANT', { batchCmd });
     expect(mockEmit).toBeCalledTimes(1);
     expect(mockEmit).toHaveBeenLastCalledWith('SET_ESTIMATED_TIME', null);
     expect(batchCmd.onAfter).toBe(mockInitState);
@@ -201,28 +199,31 @@ describe('test DottingTimeBlock', () => {
       <LayerPanelContext.Provider value={{ hasGradient: true } as any}>
         <ConfigPanelContext.Provider
           value={{
-            state: mockContextState as any,
             dispatch: mockDispatch,
-            selectedLayers: mockSelectedLayers,
             initState: mockInitState,
+            selectedLayers: mockSelectedLayers,
+            state: mockContextState as any,
           }}
         >
           <DottingTimeBlock type="modal" />
         </ConfigPanelContext.Provider>
       </LayerPanelContext.Provider>,
     );
+
     expect(mockCreateEventEmitter).toBeCalledTimes(1);
     expect(mockCreateEventEmitter).toHaveBeenLastCalledWith('time-estimation-button');
 
     expect(mockDispatch).not.toBeCalled();
     expect(mockWriteData).not.toBeCalled();
     expect(mockEmit).not.toBeCalled();
+
     const input = container.querySelector('input');
+
     fireEvent.change(input, { target: { value: '88' } });
     expect(mockDispatch).toBeCalledTimes(1);
     expect(mockDispatch).toHaveBeenLastCalledWith({
+      payload: { configName: 'CUSTOM_PRESET_CONSTANT', dottingTime: 88 },
       type: 'change',
-      payload: { dottingTime: 88, configName: 'CUSTOM_PRESET_CONSTANT' },
     });
     expect(mockWriteData).not.toBeCalled();
     expect(mockBatchCommand).not.toBeCalled();

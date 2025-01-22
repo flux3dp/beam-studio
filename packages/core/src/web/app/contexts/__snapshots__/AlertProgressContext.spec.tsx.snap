@@ -4,67 +4,67 @@ exports[`should render correctly 1`] = `<div />`;
 
 exports[`should render correctly 2`] = `
 <div>
-  {"id":"check-status","type":"NONSTOP","caption":"preparing","isProgress":true,"message":""}
-  {"id":"get_log","type":"STEPPING","message":"downloading","isProgress":true,"percentage":0,"caption":""}
+  {"caption":"preparing","id":"check-status","isProgress":true,"type":"NONSTOP","message":""}
+  {"id":"get_log","isProgress":true,"message":"downloading","percentage":0,"type":"STEPPING","caption":""}
 </div>
 `;
 
 exports[`should render correctly 3`] = `
 <div>
-  {"id":"check-status","type":"NONSTOP","caption":"preparing","isProgress":true,"message":""}
-  {"id":"get_log","type":"STEPPING","message":"downloading","isProgress":true,"percentage":0,"caption":""}
+  {"caption":"preparing","id":"check-status","isProgress":true,"type":"NONSTOP","message":""}
+  {"id":"get_log","isProgress":true,"message":"downloading","percentage":0,"type":"STEPPING","caption":""}
 </div>
 `;
 
 exports[`should render correctly 4`] = `
 <div>
-  {"id":"check-status","type":"NONSTOP","caption":"preparing","isProgress":true,"message":""}
-  {"id":"get_log","type":"STEPPING","message":"downloading","isProgress":true,"percentage":100,"caption":""}
+  {"caption":"preparing","id":"check-status","isProgress":true,"type":"NONSTOP","message":""}
+  {"id":"get_log","isProgress":true,"message":"downloading","percentage":100,"type":"STEPPING","caption":""}
 </div>
 `;
 
 exports[`should render correctly 5`] = `
 <div>
-  {"id":"check-status","type":"NONSTOP","caption":"prepared","isProgress":true,"message":"prepared"}
-  {"id":"get_log","type":"STEPPING","message":"downloading","isProgress":true,"percentage":100,"caption":""}
+  {"caption":"prepared","id":"check-status","isProgress":true,"type":"NONSTOP","message":"prepared"}
+  {"id":"get_log","isProgress":true,"message":"downloading","percentage":100,"type":"STEPPING","caption":""}
 </div>
 `;
 
 exports[`should render correctly 6`] = `
 <div>
-  {"id":"check-status","type":"NONSTOP","caption":"prepared","isProgress":true,"message":"prepared"}
-  {"id":"get_log","type":"STEPPING","message":"downloading","isProgress":true,"percentage":100,"caption":""}
-  {"type":"SHOW_POPUP_INFO","message":"File already exists, do you want to replace it?","buttonType":"YES_NO","buttons":[{"className":"btn-default primary","label":"Yes"},{"className":"btn-default","label":"No"}],"caption":"INFO"}
-  {"type":"SHOW_POPUP_WARNING","message":"Some texts were changed to other Fonts when parsing texts to paths and some character may not converted normally.","checkbox":{"text":"Don't Show this next time."},"buttons":[{"className":"btn-default primary","label":"OK"}],"caption":"WARNING"}
-  {"id":"monitor-reconnect","type":"SHOW_POPUP_ERROR","buttonType":"RETRY_CANCEL","message":"The connection with the machine has broken. Do you want to reconnect?","buttons":[{"className":"btn-default primary","label":"Retry"},{"className":"btn-default","label":"Cancel"}],"caption":"UH-OH"}
+  {"caption":"prepared","id":"check-status","isProgress":true,"type":"NONSTOP","message":"prepared"}
+  {"id":"get_log","isProgress":true,"message":"downloading","percentage":100,"type":"STEPPING","caption":""}
+  {"buttonType":"YES_NO","message":"File already exists, do you want to replace it?","type":"SHOW_POPUP_INFO","buttons":[{"className":"btn-default primary","label":"Yes"},{"className":"btn-default","label":"No"}],"caption":"INFO"}
+  {"checkbox":{"text":"Don't Show this next time."},"message":"Some texts were changed to other Fonts when parsing texts to paths and some character may not converted normally.","type":"SHOW_POPUP_WARNING","buttons":[{"className":"btn-default primary","label":"OK"}],"caption":"WARNING"}
+  {"buttonType":"RETRY_CANCEL","id":"monitor-reconnect","message":"The connection with the machine has broken. Do you want to reconnect?","type":"SHOW_POPUP_ERROR","buttons":[{"className":"btn-default primary","label":"Retry"},{"className":"btn-default","label":"Cancel"}],"caption":"UH-OH"}
   {"buttonType":"CONFIRM_CANCEL","message":"This will load arrangement of presets and replacing customized parameters set in the file, are you sure to proceed?","buttons":[{"className":"btn-default primary","label":"Confirm"},{"className":"btn-default","label":"Cancel"}]}
-  {"id":"latest-firmware","message":"You have the latest Machine firmware","caption":"Machine firmware Update","buttonType":"CUSTOM_CANCEL","buttonLabels":["UPDATE"],"buttons":[{"className":"btn-default primary","label":"UPDATE"},{"className":"btn-default","label":"Cancel"}]}
-  {"message":"Unable to find machine ","buttons":[{"label":"Set Connection","className":"btn-default primary"},{"label":"Retry","className":"btn-default primary"}]}
-  {"id":"machine-info","type":"SHOW_POPUP_INFO","caption":"abcde","message":"abcde: 111.222.333.444","buttonLabels":["Test Network","OK"],"callbacks":[null,null],"primaryButtonIndex":1,"buttons":[{"className":"btn-default","label":"Test Network"},{"className":"btn-default primary","label":"OK"}]}
+  {"buttonLabels":["UPDATE"],"buttonType":"CUSTOM_CANCEL","caption":"Machine firmware Update","id":"latest-firmware","message":"You have the latest Machine firmware","buttons":[{"className":"btn-default primary","label":"UPDATE"},{"className":"btn-default","label":"Cancel"}]}
+  {"buttons":[{"className":"btn-default primary","label":"Set Connection"},{"className":"btn-default primary","label":"Retry"}],"message":"Unable to find machine "}
+  {"buttonLabels":["Test Network","OK"],"callbacks":[null,null],"caption":"abcde","id":"machine-info","message":"abcde: 111.222.333.444","primaryButtonIndex":1,"type":"SHOW_POPUP_INFO","buttons":[{"className":"btn-default","label":"Test Network"},{"className":"btn-default primary","label":"OK"}]}
 </div>
 `;
 
 exports[`should render correctly 7`] = `
 <div>
-  {"id":"check-status","type":"NONSTOP","caption":"prepared","isProgress":true,"message":"prepared"}
-  {"id":"get_log","type":"STEPPING","message":"downloading","isProgress":true,"percentage":100,"caption":""}
-  {"type":"SHOW_POPUP_INFO","message":"File already exists, do you want to replace it?","buttonType":"YES_NO","buttons":[{"className":"btn-default primary","label":"Yes"},{"className":"btn-default","label":"No"}],"caption":"INFO"}
-  {"type":"SHOW_POPUP_WARNING","message":"Some texts were changed to other Fonts when parsing texts to paths and some character may not converted normally.","checkbox":{"text":"Don't Show this next time."},"buttons":[{"className":"btn-default primary","label":"OK"}],"caption":"WARNING"}
-  {"id":"monitor-reconnect","type":"SHOW_POPUP_ERROR","buttonType":"RETRY_CANCEL","message":"The connection with the machine has broken. Do you want to reconnect?","buttons":[{"className":"btn-default primary","label":"Retry"},{"className":"btn-default","label":"Cancel"}],"caption":"UH-OH"}
+  {"caption":"prepared","id":"check-status","isProgress":true,"type":"NONSTOP","message":"prepared"}
+  {"id":"get_log","isProgress":true,"message":"downloading","percentage":100,"type":"STEPPING","caption":""}
+  {"buttonType":"YES_NO","message":"File already exists, do you want to replace it?","type":"SHOW_POPUP_INFO","buttons":[{"className":"btn-default primary","label":"Yes"},{"className":"btn-default","label":"No"}],"caption":"INFO"}
+  {"checkbox":{"text":"Don't Show this next time."},"message":"Some texts were changed to other Fonts when parsing texts to paths and some character may not converted normally.","type":"SHOW_POPUP_WARNING","buttons":[{"className":"btn-default primary","label":"OK"}],"caption":"WARNING"}
+  {"buttonType":"RETRY_CANCEL","id":"monitor-reconnect","message":"The connection with the machine has broken. Do you want to reconnect?","type":"SHOW_POPUP_ERROR","buttons":[{"className":"btn-default primary","label":"Retry"},{"className":"btn-default","label":"Cancel"}],"caption":"UH-OH"}
   {"buttonType":"CONFIRM_CANCEL","message":"This will load arrangement of presets and replacing customized parameters set in the file, are you sure to proceed?","buttons":[{"className":"btn-default primary","label":"Confirm"},{"className":"btn-default","label":"Cancel"}]}
-  {"id":"latest-firmware","message":"You have the latest Machine firmware","caption":"Machine firmware Update","buttonType":"CUSTOM_CANCEL","buttonLabels":["UPDATE"],"buttons":[{"className":"btn-default primary","label":"UPDATE"},{"className":"btn-default","label":"Cancel"}]}
-  {"message":"Unable to find machine ","buttons":[{"label":"Set Connection","className":"btn-default primary"},{"label":"Retry","className":"btn-default primary"}]}
+  {"buttonLabels":["UPDATE"],"buttonType":"CUSTOM_CANCEL","caption":"Machine firmware Update","id":"latest-firmware","message":"You have the latest Machine firmware","buttons":[{"className":"btn-default primary","label":"UPDATE"},{"className":"btn-default","label":"Cancel"}]}
+  {"buttons":[{"className":"btn-default primary","label":"Set Connection"},{"className":"btn-default primary","label":"Retry"}],"message":"Unable to find machine "}
 </div>
 `;
 
 exports[`should render correctly 8`] = `
 <div>
-  {"id":"check-status","type":"NONSTOP","caption":"prepared","isProgress":true,"message":"prepared"}
-  {"type":"SHOW_POPUP_INFO","message":"File already exists, do you want to replace it?","buttonType":"YES_NO","buttons":[{"className":"btn-default primary","label":"Yes"},{"className":"btn-default","label":"No"}],"caption":"INFO"}
-  {"type":"SHOW_POPUP_WARNING","message":"Some texts were changed to other Fonts when parsing texts to paths and some character may not converted normally.","checkbox":{"text":"Don't Show this next time."},"buttons":[{"className":"btn-default primary","label":"OK"}],"caption":"WARNING"}
-  {"id":"monitor-reconnect","type":"SHOW_POPUP_ERROR","buttonType":"RETRY_CANCEL","message":"The connection with the machine has broken. Do you want to reconnect?","buttons":[{"className":"btn-default primary","label":"Retry"},{"className":"btn-default","label":"Cancel"}],"caption":"UH-OH"}
+  {"caption":"prepared","id":"check-status","isProgress":true,"type":"NONSTOP","message":"prepared"}
+  {"buttonType":"YES_NO","message":"File already exists, do you want to replace it?","type":"SHOW_POPUP_INFO","buttons":[{"className":"btn-default primary","label":"Yes"},{"className":"btn-default","label":"No"}],"caption":"INFO"}
+  {"checkbox":{"text":"Don't Show this next time."},"message":"Some texts were changed to other Fonts when parsing texts to paths and some character may not converted normally.","type":"SHOW_POPUP_WARNING","buttons":[{"className":"btn-default primary","label":"OK"}],"caption":"WARNING"}
+  {"buttonType":"RETRY_CANCEL","id":"monitor-reconnect","message":"The connection with the machine has broken. Do you want to reconnect?","type":"SHOW_POPUP_ERROR","buttons":[{"className":"btn-default primary","label":"Retry"},{"className":"btn-default","label":"Cancel"}],"caption":"UH-OH"}
   {"buttonType":"CONFIRM_CANCEL","message":"This will load arrangement of presets and replacing customized parameters set in the file, are you sure to proceed?","buttons":[{"className":"btn-default primary","label":"Confirm"},{"className":"btn-default","label":"Cancel"}]}
-  {"id":"latest-firmware","message":"You have the latest Machine firmware","caption":"Machine firmware Update","buttonType":"CUSTOM_CANCEL","buttonLabels":["UPDATE"],"buttons":[{"className":"btn-default primary","label":"UPDATE"},{"className":"btn-default","label":"Cancel"}]}
-  {"message":"Unable to find machine ","buttons":[{"label":"Set Connection","className":"btn-default primary"},{"label":"Retry","className":"btn-default primary"}]}
+  {"buttonLabels":["UPDATE"],"buttonType":"CUSTOM_CANCEL","caption":"Machine firmware Update","id":"latest-firmware","message":"You have the latest Machine firmware","buttons":[{"className":"btn-default primary","label":"UPDATE"},{"className":"btn-default","label":"Cancel"}]}
+  {"buttons":[{"className":"btn-default primary","label":"Set Connection"},{"className":"btn-default primary","label":"Retry"}],"message":"Unable to find machine "}
 </div>
 `;

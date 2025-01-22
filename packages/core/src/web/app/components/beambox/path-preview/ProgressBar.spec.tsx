@@ -1,13 +1,13 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import ProgressBar from './ProgressBar';
 
 test('should render correctly', () => {
   const handleSimTimeChange = jest.fn();
-  const { container } = render(
-    <ProgressBar simTime={0.5} simTimeMax={1} handleSimTimeChange={handleSimTimeChange} />
-  );
+  const { container } = render(<ProgressBar handleSimTimeChange={handleSimTimeChange} simTime={0.5} simTimeMax={1} />);
+
   expect(container).toMatchSnapshot();
 
   fireEvent.change(container.querySelector('input.slider'), {

@@ -1,16 +1,16 @@
 import React from 'react';
 
-import i18n from '@core/helpers/i18n';
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
+import i18n from '@core/helpers/i18n';
 
 const LANG = i18n.lang.beambox.tool_panels;
 
 interface Props {
-  rotations: number;
   onValueChange: (val: number) => void;
+  rotations: number;
 }
 
-function NestRotationPanel({ rotations: rotationsProps, onValueChange }: Props): JSX.Element {
+function NestRotationPanel({ onValueChange, rotations: rotationsProps }: Props): React.JSX.Element {
   const [rotations, updateRotations] = React.useState(rotationsProps);
 
   const updateVal = (val) => {
@@ -21,7 +21,7 @@ function NestRotationPanel({ rotations: rotationsProps, onValueChange }: Props):
   return (
     <div className="tool-panel">
       <label className="controls accordion">
-        <input type="checkbox" className="accordion-switcher" defaultChecked />
+        <input className="accordion-switcher" defaultChecked type="checkbox" />
         <p className="caption">
           {LANG._nest.rotations}
           <span className="value">{rotations.toString()}</span>
@@ -29,13 +29,7 @@ function NestRotationPanel({ rotations: rotationsProps, onValueChange }: Props):
         <label className="accordion-body">
           <div>
             <div className="control nest-rotations">
-              <UnitInput
-                min={1}
-                decimal={0}
-                unit=""
-                defaultValue={rotations}
-                getValue={updateVal}
-              />
+              <UnitInput decimal={0} defaultValue={rotations} getValue={updateVal} min={1} unit="" />
             </div>
           </div>
         </label>

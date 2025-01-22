@@ -15,8 +15,7 @@ export const setTabManager = (tabManager: TabManager): void => {
   currentTabManager = tabManager;
 };
 
-export const getFocusedView = (): null | WebContentsView =>
-  currentTabManager?.getFocusedView() ?? null;
+export const getFocusedView = (): null | WebContentsView => currentTabManager?.getFocusedView() ?? null;
 
 export default {
   getFocusedView,

@@ -1,6 +1,8 @@
-import classNames from 'classnames';
-import React, { Dispatch, SetStateAction } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
+import React from 'react';
+
 import { Flex } from 'antd';
+import classNames from 'classnames';
 
 import UnitInput from '@core/app/widgets/UnitInput';
 import useI18n from '@core/helpers/useI18n';
@@ -18,11 +20,7 @@ interface Props {
   setParameters: Dispatch<SetStateAction<MarkParameters>>;
 }
 
-const ParametersBlock = ({
-  isInch,
-  parameters: { power, speed },
-  setParameters,
-}: Props): JSX.Element => {
+const ParametersBlock = ({ isInch, parameters: { power, speed }, setParameters }: Props): React.JSX.Element => {
   const {
     beambox: {
       right_panel: { laser_panel: tLaserPanel },
@@ -31,34 +29,34 @@ const ParametersBlock = ({
 
   return (
     <>
-      <Flex justify="space-between" align="center" gap={20}>
-        <Flex className={styles.row} justify="space-between" align="center" gap={12}>
+      <Flex align="center" gap={20} justify="space-between">
+        <Flex align="center" className={styles.row} gap={12} justify="space-between">
           <span className={styles.label}>{tLaserPanel.strength}</span>
           <UnitInput
-            data-testid="power"
+            addonAfter="%"
             className={classNames(styles.input, styles.short)}
+            data-testid="power"
+            max={100}
+            min={0}
+            onChange={(val) => setParameters((cur) => ({ ...cur, power: val }))}
+            precision={0}
             size="small"
             value={power}
-            min={0}
-            max={100}
-            precision={0}
-            addonAfter="%"
-            onChange={(val) => setParameters((cur) => ({ ...cur, power: val }))}
           />
         </Flex>
-        <Flex className={styles.row} justify="space-between" align="center" gap={12}>
+        <Flex align="center" className={styles.row} gap={12} justify="space-between">
           <span className={styles.label}>{tLaserPanel.speed}</span>
           <UnitInput
-            data-testid="speed"
-            className={styles.input}
-            size="small"
-            isInch={isInch}
-            value={speed}
-            min={100}
-            max={3000}
-            precision={0}
             addonAfter={isInch ? 'in/s' : 'mm/s'}
+            className={styles.input}
+            data-testid="speed"
+            isInch={isInch}
+            max={3000}
+            min={100}
             onChange={(val) => setParameters((cur) => ({ ...cur, speed: val }))}
+            precision={0}
+            size="small"
+            value={speed}
           />
         </Flex>
       </Flex>

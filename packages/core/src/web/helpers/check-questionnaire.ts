@@ -9,25 +9,33 @@ const checkQuestionnaire = async (
     allowOldVersion?: boolean;
     useCache?: boolean;
   } = {},
-): Promise<{ version: number; urls: { [key: string]: string } }> => {
+): Promise<{ urls: { [key: string]: string }; version: number }> => {
   const { allowOldVersion = false, useCache = true } = opts;
 
   try {
     let result;
+
     if (resultCache && useCache) {
       result = resultCache;
     } else {
       const resp = await fetch('https://id.flux3dp.com/api/questionnaire/1');
+
       result = await resp.json();
       resultCache = result;
     }
+
     const lastQuestionnaireVersion = storage.get('questionnaire-version') || 0;
-    if (!allowOldVersion && lastQuestionnaireVersion >= result.version) return null;
+
+    if (!allowOldVersion && lastQuestionnaireVersion >= result.version) {
+      return null;
+    }
+
     if (result.version >= MIN_ALLOWED_VERSION) {
       return result;
     }
+
     return null;
-  } catch (e) {
+  } catch {
     return null;
   }
 };

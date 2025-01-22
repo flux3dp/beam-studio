@@ -1,14 +1,11 @@
 import React from 'react';
+
 import { render } from '@testing-library/react';
 
 import AlertAndProgress from './AlertAndProgress';
 
-jest.mock('@core/app/views/dialogs/Alert', () => ({ data }: any) => (
-  <div>DummyAlert {JSON.stringify(data)}</div>
-));
-jest.mock('@core/app/views/dialogs/Progress', () => ({ data }: any) => (
-  <div>DummyProgress {JSON.stringify(data)}</div>
-));
+jest.mock('@core/app/views/dialogs/Alert', () => ({ data }: any) => <div>DummyAlert {JSON.stringify(data)}</div>);
+jest.mock('@core/app/views/dialogs/Progress', () => ({ data }: any) => <div>DummyProgress {JSON.stringify(data)}</div>);
 jest.mock('@core/app/views/dialogs/NonStopProgress', () => ({ data }: any) => (
   <div>DummyNonStopProgress {JSON.stringify(data)}</div>
 ));
@@ -17,34 +14,35 @@ jest.mock('@core/app/contexts/AlertProgressContext', () => ({
   AlertProgressContext: React.createContext({
     alertProgressStack: [
       {
-        id: 'alert',
-        message: 'Yes or No',
-        caption: 'Hello World',
-        iconUrl: 'https://www.flux3dp.com/icon.svg',
         buttons: [
           {
-            title: 'Yes',
             label: 'Yes',
+            title: 'Yes',
           },
           {
-            title: 'No',
             label: 'No',
+            title: 'No',
           },
         ],
-        checkboxText: 'Select',
+        caption: 'Hello World',
         checkboxCallbacks: jest.fn(),
+        checkboxText: 'Select',
+        iconUrl: 'https://www.flux3dp.com/icon.svg',
+        id: 'alert',
+        message: 'Yes or No',
       },
       {
         id: 'progress',
         isProgress: true,
       },
     ],
-    popFromStack: jest.fn(),
     popById: jest.fn(),
+    popFromStack: jest.fn(),
   }),
 }));
 
 test('should render correctly', () => {
   const { baseElement } = render(<AlertAndProgress />);
+
   expect(baseElement).toMatchSnapshot();
 });

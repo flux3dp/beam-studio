@@ -3,6 +3,7 @@ import fetchMock from 'jest-fetch-mock';
 import checkQuestionnaire from './check-questionnaire';
 
 const mockGet = jest.fn();
+
 jest.mock('@app/implementations/storage', () => ({
   get: (key) => mockGet(key),
 }));
@@ -26,12 +27,15 @@ describe('test check-questionnaire', () => {
         version: 1,
       }),
     );
+
     const result = await checkQuestionnaire();
+
     expect(result).toBe(null);
   });
 
   test('success', async () => {
     const fetchSpy = jest.spyOn(window, 'fetch');
+
     fetchMock.mockResponse(
       JSON.stringify({
         urls: {
@@ -47,7 +51,9 @@ describe('test check-questionnaire', () => {
     );
 
     mockGet.mockReturnValue(0);
+
     const result = await checkQuestionnaire({ useCache: false });
+
     expect(mockGet).toBeCalledTimes(1);
     expect(mockGet).toHaveBeenLastCalledWith('questionnaire-version');
     expect(result.version).toBe(3);

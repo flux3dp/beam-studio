@@ -1,5 +1,5 @@
-/* eslint-disable import/first */
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 jest.mock('@core/helpers/i18n', () => ({
@@ -15,21 +15,19 @@ jest.mock('@core/helpers/i18n', () => ({
 }));
 
 const get = jest.fn();
+
 jest.mock('@app/implementations/storage', () => ({
   get,
 }));
 
-jest.mock('@core/app/widgets/Unit-Input-v2', () =>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ({ min, unit, defaultValue, getValue }: any) => (
-    <div>
-      mock-unit-input min:{min}
-      unit:{unit}
-      defaultValue:{defaultValue}
-      <input className="unit-input" onChange={(e) => getValue(+e.target.value)} />
-    </div>
-  ),
-);
+jest.mock('@core/app/widgets/Unit-Input-v2', () => ({ defaultValue, getValue, min, unit }: any) => (
+  <div>
+    mock-unit-input min:{min}
+    unit:{unit}
+    defaultValue:{defaultValue}
+    <input className="unit-input" onChange={(e) => getValue(+e.target.value)} />
+  </div>
+));
 
 import OffsetDistancePanel from './OffsetDistancePanel';
 
@@ -40,10 +38,10 @@ describe('should render correctly', () => {
 
   test('default unit is inches', () => {
     get.mockReturnValue('inches');
+
     const onValueChange = jest.fn();
-    const { container } = render(
-      <OffsetDistancePanel distance={100} onValueChange={onValueChange} />,
-    );
+    const { container } = render(<OffsetDistancePanel distance={100} onValueChange={onValueChange} />);
+
     expect(container).toMatchSnapshot();
 
     fireEvent.click(container.querySelector('p.caption'));
@@ -57,9 +55,9 @@ describe('should render correctly', () => {
 
   test('default unit is mm', () => {
     get.mockReturnValue(undefined);
-    const { container, rerender } = render(
-      <OffsetDistancePanel distance={100} onValueChange={jest.fn()} />,
-    );
+
+    const { container, rerender } = render(<OffsetDistancePanel distance={100} onValueChange={jest.fn()} />);
+
     expect(container).toMatchSnapshot();
 
     get.mockReturnValue(undefined);

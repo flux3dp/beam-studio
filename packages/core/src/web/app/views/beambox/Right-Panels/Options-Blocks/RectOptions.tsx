@@ -1,18 +1,20 @@
 import React from 'react';
 
 import Constant from '@core/app/actions/beambox/constant';
-import i18n from '@core/helpers/i18n';
+import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
-import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
-import storage from '@app/implementations/storage';
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
+import i18n from '@core/helpers/i18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
+
+import storage from '@app/implementations/storage';
 
 import styles from './RectOptions.module.scss';
 
 let svgCanvas;
+
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
@@ -25,10 +27,9 @@ interface Props {
   updateDimensionValues: (val: { [key: string]: any }) => void;
 }
 
-function RectOptions({ elem, rx, updateDimensionValues }: Props): JSX.Element {
+function RectOptions({ elem, rx, updateDimensionValues }: Props): React.JSX.Element {
   const isMobile = useIsMobile();
   const handleRoundedCornerChange = (val) => {
-    // eslint-disable-next-line no-param-reassign
     val *= Constant.dpmm;
     svgCanvas.changeSelectedAttribute('rx', val, [elem]);
     updateDimensionValues({ rx: val });
@@ -37,16 +38,17 @@ function RectOptions({ elem, rx, updateDimensionValues }: Props): JSX.Element {
   const renderRoundCornerBlock = () => {
     const unit = storage.get('default-units') || 'mm';
     const isInch = unit === 'inches';
+
     return isMobile ? (
       <ObjectPanelItem.Number
         id="rounded-corner"
-        value={rx / Constant.dpmm || 0}
+        label={LANG.rounded_corner}
         min={0}
         updateValue={(val) => {
           handleRoundedCornerChange(val);
           ObjectPanelController.updateObjectPanel();
         }}
-        label={LANG.rounded_corner}
+        value={rx / Constant.dpmm || 0}
       />
     ) : (
       <div className={styles['rounded-corner']} key="rounded-corner">
@@ -54,11 +56,11 @@ function RectOptions({ elem, rx, updateDimensionValues }: Props): JSX.Element {
           <OptionPanelIcons.RoundedCorner />
         </div>
         <UnitInput
-          min={0}
-          unit={isInch ? 'in' : 'mm'}
           className={{ 'option-input': true }}
           defaultValue={rx / Constant.dpmm || 0}
           getValue={(val) => handleRoundedCornerChange(val)}
+          min={0}
+          unit={isInch ? 'in' : 'mm'}
         />
       </div>
     );

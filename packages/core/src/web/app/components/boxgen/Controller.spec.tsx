@@ -1,31 +1,32 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
-import { BoxgenContext } from '@core/app/contexts/BoxgenContext';
 import { DEFAULT_CONTROLLER_MM } from '@core/app/constants/boxgen-constants';
+import { BoxgenContext } from '@core/app/contexts/BoxgenContext';
 
 import Controller from './Controller';
 
 jest.mock('@core/helpers/useI18n', () => () => ({
   boxgen: {
-    workarea: 'Workarea',
-    max_dimension_tooltip: 'Max width/height/depth setting is %s. ',
-    volume: 'Volume',
-    outer: 'Outer',
-    inner: 'Inner',
-    width: 'Width',
-    height: 'Height',
-    depth: 'Depth',
-    cover: 'Cover',
-    thickness: 'Thickness',
     add_option: 'Add Option',
-    joints: 'Joint',
-    finger: 'Finger',
-    tSlot: 'T-Slot',
+    cover: 'Cover',
+    depth: 'Depth',
     edge: 'Edge',
+    finger: 'Finger',
+    height: 'Height',
+    inner: 'Inner',
+    joints: 'Joint',
+    max_dimension_tooltip: 'Max width/height/depth setting is %s. ',
+    outer: 'Outer',
     tCount: 'T Count',
     tDiameter: 'T Diameter',
+    thickness: 'Thickness',
     tLength: 'T Length',
+    tSlot: 'T-Slot',
+    volume: 'Volume',
+    width: 'Width',
+    workarea: 'Workarea',
   },
 }));
 
@@ -43,36 +44,36 @@ describe('test Controller', () => {
         value={
           {
             boxData: mockData,
+            lengthUnit: { decimal: 0, unit: 'mm', unitRatio: 1 },
             setBoxData: mockSetData,
-            workarea: { value: 'fbm1', label: 'beamo', canvasWidth: 300, canvasHeight: 210 },
-            lengthUnit: { unit: 'mm', unitRatio: 1, decimal: 0 },
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            workarea: { canvasHeight: 210, canvasWidth: 300, label: 'beamo', value: 'fbm1' },
           } as any
         }
       >
         <Controller />
       </BoxgenContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
 
     fireEvent.click(container.querySelector('input[value="inner"]'));
     expect(mockSetData).toBeCalledTimes(1);
     expect(mockSetData).toHaveBeenLastCalledWith({
       ...mockData,
+      depth: 86,
+      height: 86,
       volume: 'inner',
       width: 86,
-      height: 86,
-      depth: 86,
     });
 
     fireEvent.change(container.querySelector('input#width'), { target: { value: 90 } });
     expect(mockSetData).toBeCalledTimes(2);
     expect(mockSetData).toHaveBeenLastCalledWith({
       ...mockData,
+      depth: 86,
+      height: 86,
       volume: 'inner',
       width: 96,
-      height: 86,
-      depth: 86,
     });
   });
 });

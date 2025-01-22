@@ -1,10 +1,10 @@
 const mockParse = jest.fn();
+
 jest.mock('bcp-47', () => ({
   parse: (...args) => mockParse(...args),
 }));
 jest.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(300);
 
-// eslint-disable-next-line import/first
 import localeHelper from './locale-helper';
 
 const mockConsoleError = jest.fn();
@@ -18,6 +18,7 @@ describe('test locale-helper', () => {
   describe('test isNorthAmerica', () => {
     test('when locale is en-US and timezone offset is 300', () => {
       const navigator = { language: 'en-US' };
+
       Object.defineProperty(global, 'navigator', { value: navigator });
       jest.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(300);
       mockParse.mockReturnValue({ region: 'US' });
@@ -27,6 +28,7 @@ describe('test locale-helper', () => {
 
     test('when locale is en-US and timezone offset is 660', () => {
       const navigator = { language: 'en-US' };
+
       Object.defineProperty(global, 'navigator', { value: navigator });
       jest.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(660);
       mockParse.mockReturnValue({ region: 'US' });
@@ -36,6 +38,7 @@ describe('test locale-helper', () => {
 
     test('when locale is en-CA and timezone offset is 300', () => {
       const navigator = { language: 'en-CA' };
+
       Object.defineProperty(global, 'navigator', { value: navigator });
       jest.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(300);
       mockParse.mockReturnValue({ region: 'CA' });
@@ -45,6 +48,7 @@ describe('test locale-helper', () => {
 
     test('when locale is en-CA and timezone offset is 660', () => {
       const navigator = { language: 'en-CA' };
+
       Object.defineProperty(global, 'navigator', { value: navigator });
       jest.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(660);
       mockParse.mockReturnValue({ region: 'CA' });
@@ -54,6 +58,7 @@ describe('test locale-helper', () => {
 
     test('when locale is zh-CN and timezone offset is 300', () => {
       const navigator = { language: 'zh-CN' };
+
       Object.defineProperty(global, 'navigator', { value: navigator });
       jest.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(300);
       mockParse.mockReturnValue({ region: 'CN' });
@@ -63,6 +68,7 @@ describe('test locale-helper', () => {
 
     test('when locale is zh-CN and timezone offset is 660', () => {
       const navigator = { language: 'zh-CN' };
+
       Object.defineProperty(global, 'navigator', { value: navigator });
       jest.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(660);
       mockParse.mockReturnValue({ region: 'CN' });
@@ -74,6 +80,7 @@ describe('test locale-helper', () => {
   describe('test isTwOrHk', () => {
     test('when locale is zh-TW', () => {
       const navigator = { language: 'zh-TW' };
+
       Object.defineProperty(global, 'navigator', { value: navigator });
       jest.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(-480);
       mockParse.mockReturnValue({ region: 'TW' });
@@ -83,6 +90,7 @@ describe('test locale-helper', () => {
 
     test('when locale is zh-HK', () => {
       const navigator = { language: 'zh-HK' };
+
       Object.defineProperty(global, 'navigator', { value: navigator });
       jest.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(-480);
       mockParse.mockReturnValue({ region: 'HK' });
@@ -92,6 +100,7 @@ describe('test locale-helper', () => {
 
     test('when locale is zh-CN', () => {
       const navigator = { language: 'zh-CN' };
+
       Object.defineProperty(global, 'navigator', { value: navigator });
       jest.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(-480);
       mockParse.mockReturnValue({ region: 'CN' });
@@ -103,6 +112,7 @@ describe('test locale-helper', () => {
   describe('test isJp', () => {
     test('when locale is ja', () => {
       const navigator = { language: 'ja' };
+
       Object.defineProperty(global, 'navigator', { value: navigator });
       jest.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(-540);
       mockParse.mockReturnValue({ language: 'ja' });
@@ -112,6 +122,7 @@ describe('test locale-helper', () => {
 
     test('when locale is ja-JP', () => {
       const navigator = { language: 'ja-JP' };
+
       Object.defineProperty(global, 'navigator', { value: navigator });
       jest.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(-540);
       mockParse.mockReturnValue({ region: 'JP' });

@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import { RotaryType } from '@core/app/constants/add-on';
@@ -7,12 +8,14 @@ import RotarySettings from './RotarySettings';
 
 const mockRead = jest.fn();
 const mockWrite = jest.fn();
+
 jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read: (...args) => mockRead(...args),
   write: (...args) => mockWrite(...args),
 }));
 
 const mockChangeWorkarea = jest.fn();
+
 jest.mock(
   '@core/app/svgedit/operations/changeWorkarea',
   () =>
@@ -21,11 +24,13 @@ jest.mock(
 );
 
 const mockToggleDisplay = jest.fn();
+
 jest.mock('@core/app/actions/canvas/rotary-axis', () => ({
   toggleDisplay: (...args) => mockToggleDisplay(...args),
 }));
 
 const mockStorageGet = jest.fn();
+
 jest.mock('@app/implementations/storage', () => ({
   get: (...args) => mockStorageGet(...args),
 }));
@@ -33,6 +38,7 @@ jest.mock('@app/implementations/storage', () => ({
 const mockAddDialogComponent = jest.fn();
 const mockIsIdExist = jest.fn();
 const mockPopDialogById = jest.fn();
+
 jest.mock('@core/app/actions/dialog-controller', () => ({
   addDialogComponent: (...args) => mockAddDialogComponent(...args),
   isIdExist: (...args) => mockIsIdExist(...args),
@@ -49,36 +55,53 @@ describe('test RotarySettings', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockRead.mockImplementation((key) => {
-      if (key === 'workarea') return 'ado1';
+      if (key === 'workarea') {
+        return 'ado1';
+      }
+
       return undefined;
     });
   });
 
   it('should render correctly', () => {
     const { baseElement } = render(<RotarySettings onClose={mockOnClose} />);
+
     expect(baseElement).toMatchSnapshot();
   });
 
   test('disabled and enabled fields', () => {
     const { baseElement, getByText } = render(<RotarySettings onClose={mockOnClose} />);
     const segControl = baseElement.querySelector('#rotary_type');
+
     expect(segControl).toHaveClass('ant-segmented-disabled');
+
     const chuckDiameter = baseElement.querySelector('#object_diameter');
+
     expect(chuckDiameter).toHaveAttribute('disabled');
+
     const circumference = baseElement.querySelector('#circumference');
+
     expect(circumference).toHaveAttribute('disabled');
+
     const mirrorCheckbox = baseElement.querySelector('#mirror');
+
     expect(mirrorCheckbox.parentNode).toHaveClass('ant-checkbox-disabled');
+
     const extendCheckbox = baseElement.querySelector('#extend');
+
     expect(extendCheckbox.parentNode).toHaveClass('ant-checkbox-disabled');
+
     const rotaryMode = baseElement.querySelector('#rotary_mode');
+
     fireEvent.click(rotaryMode);
     expect(segControl).not.toHaveClass('ant-segmented-disabled');
     expect(chuckDiameter).toHaveAttribute('disabled');
     expect(circumference).toHaveAttribute('disabled');
     expect(mirrorCheckbox.parentNode).not.toHaveClass('ant-checkbox-disabled');
     expect(extendCheckbox.parentNode).not.toHaveClass('ant-checkbox-disabled');
+
     const chuckSegmentSelector = getByText('Chuck');
+
     fireEvent.click(chuckSegmentSelector);
     expect(chuckDiameter).not.toHaveAttribute('disabled');
     expect(circumference).not.toHaveAttribute('disabled');
@@ -87,15 +110,23 @@ describe('test RotarySettings', () => {
   test('save settings', () => {
     const { baseElement, getByText } = render(<RotarySettings onClose={mockOnClose} />);
     const rotaryMode = baseElement.querySelector('#rotary_mode');
+
     fireEvent.click(rotaryMode);
+
     const chuckSegmentSelector = getByText('Chuck');
+
     fireEvent.click(chuckSegmentSelector);
+
     const chuckDiameter = baseElement.querySelector('#object_diameter');
+
     fireEvent.change(chuckDiameter, { target: { value: 10 } });
+
     const extendCheckbox = baseElement.querySelector('#extend');
+
     fireEvent.click(extendCheckbox);
 
     const saveButton = baseElement.querySelector('.ant-btn-primary');
+
     fireEvent.click(saveButton);
     expect(mockWrite).toHaveBeenCalledTimes(5);
     expect(mockWrite).toHaveBeenNthCalledWith(1, 'rotary_mode', 1);

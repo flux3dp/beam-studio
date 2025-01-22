@@ -6,12 +6,17 @@ const LaserModuleSet = new Set([LayerModule.LASER_10W_DIODE, LayerModule.LASER_2
 
 const getDefaultLaserModule = (): LayerModule => {
   const value = beamboxPreference.read('default-laser-module') as LayerModule;
-  if (LaserModuleSet.has(value)) return value;
+
+  if (LaserModuleSet.has(value)) {
+    return value;
+  }
+
   return LayerModule.LASER_20W_DIODE;
 };
 
 const getModulesTranslations = (): { [module: number]: string } => {
   const t = i18n.lang.layer_module;
+
   return {
     0: t.none,
     [LayerModule.LASER_10W_DIODE]: t.laser_10w_diode,

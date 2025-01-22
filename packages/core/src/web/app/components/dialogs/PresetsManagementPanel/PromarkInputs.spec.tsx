@@ -1,23 +1,24 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import PromarkInputs from './PromarkInputs';
 
 const handleChange = jest.fn();
 const preset = {
-  power: 100,
-  speed: 100,
-  repeat: 1,
-  focus: 0,
-  focusStep: 1,
-  pulseWidth: 100,
-  frequency: 30,
-  fillInterval: 0.1,
-  fillAngle: 0,
   biDirectional: true,
   crossHatch: false,
   dottingTime: 100,
+  fillAngle: 0,
+  fillInterval: 0.1,
+  focus: 0,
+  focusStep: 1,
+  frequency: 30,
   isDefault: false,
+  power: 100,
+  pulseWidth: 100,
+  repeat: 1,
+  speed: 100,
 };
 const maxSpeed = 100;
 const minSpeed = 0.1;
@@ -41,11 +42,11 @@ const switchTests = [
 ];
 
 jest.mock('@core/helpers/layer/layer-config-helper', () => ({
-  getPromarkLimit: () => ({
-    pulseWidth: { min: 2, max: 350 },
-    frequency: { min: 1, max: 4000 },
-  }),
   getDefaultConfig: () => ({}),
+  getPromarkLimit: () => ({
+    frequency: { max: 4000, min: 1 },
+    pulseWidth: { max: 350, min: 2 },
+  }),
 }));
 
 describe('PromarkInputs', () => {
@@ -55,26 +56,18 @@ describe('PromarkInputs', () => {
 
   it('should render correctly', () => {
     const { container } = render(
-      <PromarkInputs
-        preset={preset}
-        maxSpeed={maxSpeed}
-        minSpeed={minSpeed}
-        handleChange={handleChange}
-      />,
+      <PromarkInputs handleChange={handleChange} maxSpeed={maxSpeed} minSpeed={minSpeed} preset={preset} />,
     );
+
     expect(container).toMatchSnapshot();
   });
 
   it.each(inputTests)('should call handleChange when $key value changes', ({ key, value }) => {
     const { getByTestId } = render(
-      <PromarkInputs
-        preset={preset}
-        maxSpeed={maxSpeed}
-        minSpeed={minSpeed}
-        handleChange={handleChange}
-      />,
+      <PromarkInputs handleChange={handleChange} maxSpeed={maxSpeed} minSpeed={minSpeed} preset={preset} />,
     );
     const input = getByTestId(key);
+
     fireEvent.change(input, { target: { value } });
     expect(handleChange).toBeCalledTimes(1);
     expect(handleChange).toHaveBeenLastCalledWith(key, value);
@@ -82,14 +75,10 @@ describe('PromarkInputs', () => {
 
   it.each(switchTests)('should call handleChange when $key value changes', ({ key, value }) => {
     const { getByTestId } = render(
-      <PromarkInputs
-        preset={preset}
-        maxSpeed={maxSpeed}
-        minSpeed={minSpeed}
-        handleChange={handleChange}
-      />,
+      <PromarkInputs handleChange={handleChange} maxSpeed={maxSpeed} minSpeed={minSpeed} preset={preset} />,
     );
     const input = getByTestId(key);
+
     fireEvent.click(input);
     expect(handleChange).toBeCalledTimes(1);
     expect(handleChange).toHaveBeenLastCalledWith(key, value);

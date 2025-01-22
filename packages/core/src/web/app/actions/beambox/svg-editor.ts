@@ -22,59 +22,62 @@
 TODOS
 1. JSDoc
 */
-import clipboard from '@core/app/svgedit/operations/clipboard';
+import textPathEdit from '@core/app/actions/beambox/textPathEdit';
+import canvasEvents from '@core/app/actions/canvas/canvasEvents';
+import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
+import AlertConstants from '@core/app/constants/alert-constants';
+import { PanelType } from '@core/app/constants/right-panel-types';
+import TutorialConstants from '@core/app/constants/tutorial-constants';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
+import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import currentFileManager from '@core/app/svgedit/currentFileManager';
 import history from '@core/app/svgedit/history/history';
 import historyUtils from '@core/app/svgedit/history/utils';
-import svgCanvasClass from '@core/app/svgedit/svgcanvas';
-import textActions from '@core/app/svgedit/text/textactions';
-import textEdit from '@core/app/svgedit/text/textedit';
-import textPathEdit from '@core/app/actions/beambox/textPathEdit';
-import workareaManager from '@core/app/svgedit/workarea';
+import clipboard from '@core/app/svgedit/operations/clipboard';
 import { deleteSelectedElements } from '@core/app/svgedit/operations/delete';
-import { moveSelectedElements } from '@core/app/svgedit/operations/move';
-
-import canvasEvents from '@core/app/actions/canvas/canvasEvents';
-import currentFileManager from '@core/app/svgedit/currentFileManager';
-import ToolPanelsController from './toolPanelsController';
-import RightPanelController from '@core/app/views/beambox/Right-Panels/contexts/RightPanelController';
-import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
-import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
-import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
-import { getNextStepRequirement } from '@core/app/views/tutorials/tutorialController';
-import { getWorkarea, WorkAreaModel } from '@core/app/constants/workarea-constants';
-import { NounProjectPanelController } from '@core/app/views/beambox/Noun-Project-Panel';
-import BeamboxPreference from './beambox-preference';
-import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
-import OpenBottomBoundaryDrawer from './open-bottom-boundary-drawer';
-import PreviewModeController from './preview-mode-controller';
-import Alert from '../alert-caller';
-import AlertConstants from '@core/app/constants/alert-constants';
-import TutorialConstants from '@core/app/constants/tutorial-constants';
-import Progress from '../progress-caller';
-import BeamFileHelper from '@core/helpers/beam-file-helper';
-import fileExportHelper from '@core/helpers/file-export-helper';
-import ImageData from '@core/helpers/image-data';
-import storage from '@app/implementations/storage';
-import pdfHelper from '@app/implementations/pdfHelper';
-import Shortcuts from '@core/helpers/shortcuts';
-import i18n from '@core/helpers/i18n';
-import isWeb from '@core/helpers/is-web';
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import { IFont } from '@core/interfaces/IFont';
-import { IIcon } from '@core/interfaces/INoun-Project';
-import { IStorage, StorageKey } from '@core/interfaces/IStorage';
-import ISVGConfig from '@core/interfaces/ISVGConfig';
-import ISVGCanvas from '@core/interfaces/ISVGCanvas';
-import getExifRotationFlag from '@core/helpers/image/getExifRotationFlag';
 import importBitmap from '@core/app/svgedit/operations/import/importBitmap';
 import importBvg from '@core/app/svgedit/operations/import/importBvg';
 import importDxf from '@core/app/svgedit/operations/import/importDxf';
 import importSvg from '@core/app/svgedit/operations/import/importSvg';
 import readBitmapFile from '@core/app/svgedit/operations/import/readBitmapFile';
-import { isMobile } from '@core/helpers/system-helper';
-import { PanelType } from '@core/app/constants/right-panel-types';
+import { moveSelectedElements } from '@core/app/svgedit/operations/move';
+import svgCanvasClass from '@core/app/svgedit/svgcanvas';
+import textActions from '@core/app/svgedit/text/textactions';
+import textEdit from '@core/app/svgedit/text/textedit';
+import workareaManager from '@core/app/svgedit/workarea';
+import { NounProjectPanelController } from '@core/app/views/beambox/Noun-Project-Panel';
+import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
+import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
+import RightPanelController from '@core/app/views/beambox/Right-Panels/contexts/RightPanelController';
+import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
+import { getNextStepRequirement } from '@core/app/views/tutorials/tutorialController';
+import BeamFileHelper from '@core/helpers/beam-file-helper';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import fileExportHelper from '@core/helpers/file-export-helper';
+import i18n from '@core/helpers/i18n';
+import getExifRotationFlag from '@core/helpers/image/getExifRotationFlag';
+import ImageData from '@core/helpers/image-data';
+import isWeb from '@core/helpers/is-web';
 import { importPresets } from '@core/helpers/presets/preset-helper';
+import Shortcuts from '@core/helpers/shortcuts';
+import { isMobile } from '@core/helpers/system-helper';
 import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
+import type { IFont } from '@core/interfaces/IFont';
+import type { IIcon } from '@core/interfaces/INoun-Project';
+import type { IStorage } from '@core/interfaces/IStorage';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import type ISVGConfig from '@core/interfaces/ISVGConfig';
+
+import pdfHelper from '@app/implementations/pdfHelper';
+import storage from '@app/implementations/storage';
+
+import Alert from '../alert-caller';
+import Progress from '../progress-caller';
+
+import BeamboxPreference from './beambox-preference';
+import OpenBottomBoundaryDrawer from './open-bottom-boundary-drawer';
+import PreviewModeController from './preview-mode-controller';
+import ToolPanelsController from './toolPanelsController';
 
 if (svgCanvasClass) {
   console.log('svgCanvas loaded successfully');
@@ -82,43 +85,55 @@ if (svgCanvasClass) {
 
 const LANG = i18n.lang.beambox;
 // TODO: change to require('svgedit')
-const { svgedit, $ } = window;
+const { $, svgedit } = window;
 
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 const workareaEvents = eventEmitterFactory.createEventEmitter('workarea');
 
 declare global {
   interface JQueryStatic {
-    pref: any;
-    confirm: any;
-    getSvgIcon: any;
-    select: any;
-    prompt: any;
     alert: any;
-    svgIcons: any;
-    SvgCanvas: any;
+    confirm: any;
     deparam: any;
+    getSvgIcon: any;
+    pref: any;
     process_cancel: any;
+    prompt: any;
+    select: any;
+    SvgCanvas: any;
+    svgIcons: any;
   }
 
   interface JQuery {
     andSelf(): JQuery;
-    SpinButton(options: any): JQuery;
-    slider(arg0?: any, arg1?: any, arg3?: any): JQuery;
-    draggable(options: any): JQuery;
     contextMenu: any;
+    draggable(options: any): JQuery;
+    slider(arg0?: any, arg1?: any, arg3?: any): JQuery;
+    SpinButton(options: any): JQuery;
   }
 }
 
 interface ISVGEditor {
   addExtension: () => void;
   canvas: any;
+  clearScene: () => Promise<void>;
   clickSelect: (clearSelection?: boolean) => void;
+  clipboardData: any;
+  copySelected: () => void;
   curConfig: ISVGConfig;
   curPrefs: ISVGPref;
+  cutSelected: () => void;
+  deleteSelected: () => void;
+  dimensions: number[];
+  exportWindowCt: number;
+  handleFile: (file: any) => Promise<void>;
   init: () => void;
-  putLocale(lang: string | number | string[], good_langs: any[]);
+  isClipboardDataReady: any;
+  langChanged: boolean;
+  openPrep(arg0: (ok: any) => void);
+  putLocale(lang: number | string | string[], good_langs: any[]);
   readSVG: (blob: any, type: any, layerName: any) => Promise<unknown>;
+  ready(arg0: () => void);
   replaceBitmap: any;
   runCallbacks: () => void;
   setConfig: (opts: any, cfgCfg: any) => void;
@@ -126,63 +141,65 @@ interface ISVGEditor {
   setImageURL: (url: any) => void;
   setLang: (lang: any, allStrings: any) => void;
   setPanning: (active: any) => void;
+  showSaveWarning: boolean;
   storage: IStorage;
+  storagePromptClosed: boolean;
+  tool_scale: number;
   toolButtonClick: (button: any, noHiding: any) => boolean;
   triggerGridTool: () => void;
-  triggerOffsetTool: () => void;
-  handleFile: (file: any) => Promise<void>;
-  openPrep(arg0: (ok: any) => void);
-  ready(arg0: () => void);
-  clipboardData: any;
-  isClipboardDataReady: any;
   triggerNestTool: () => void;
-  deleteSelected: () => void;
-  tool_scale: number;
-  exportWindowCt: number;
-  langChanged: boolean;
-  showSaveWarning: boolean;
-  storagePromptClosed: boolean;
-  dimensions: number[];
+  triggerOffsetTool: () => void;
   uiStrings: any;
   updateContextPanel: () => void;
-  clearScene: () => Promise<void>;
-  cutSelected: () => void;
-  copySelected: () => void;
 }
 
 interface ISVGPref {
-  // EDITOR OPTIONS (DIALOG)
-  lang?: string; // Default to "en" if locale.js detection does not detect another language
   bkgd_color?: string;
   bkgd_url?: string;
+  export_notice_done?: boolean;
+  // EDITOR OPTIONS (DIALOG)
+  lang?: string; // Default to "en" if locale.js detection does not detect another language
   // DOCUMENT PROPERTIES (DIALOG)
   // ALERT NOTICES
   // Only shows in UI as far as alert notices, but useful to remember, so keeping as pref
   save_notice_done?: boolean;
-  export_notice_done?: boolean;
 }
 
 const svgEditor = (window['svgEditor'] = (function () {
   // set workarea according to default model.
   const defaultModel = BeamboxPreference.read('model');
+
   if (defaultModel !== undefined) {
     BeamboxPreference.write('workarea', defaultModel);
   }
+
   // EDITOR PROPERTIES: (defined below)
   //		curPrefs, curConfig, canvas, storage, uiStrings
   //
   // STATE MAINTENANCE PROPERTIES
   const workarea = BeamboxPreference.read('workarea') as WorkAreaModel;
-  const { pxWidth, pxHeight, pxDisplayHeight } = getWorkarea(workarea);
+  const { pxDisplayHeight, pxHeight, pxWidth } = getWorkarea(workarea);
   const editor: ISVGEditor = {
     addExtension: () => {},
     canvas: null,
+    clearScene: async () => {},
     clickSelect: () => {},
+    clipboardData: null,
+    copySelected: () => {},
     curConfig: null,
     curPrefs: null,
+    cutSelected: () => {},
+    deleteSelected: () => {},
+    dimensions: [pxWidth, pxDisplayHeight ?? pxHeight],
+    exportWindowCt: 0,
+    handleFile: async (file) => {},
     init: () => {},
-    putLocale: (lang: string | number | string[], good_langs: any[]) => {},
+    isClipboardDataReady: false,
+    langChanged: false,
+    openPrep: () => {},
+    putLocale: (lang: number | string | string[], good_langs: any[]) => {},
     readSVG: async (blob: any, type: any, layerName: any) => {},
+    ready: () => {},
     replaceBitmap: null,
     runCallbacks: () => {},
     setConfig: (opts: any, cfgCfg: any) => {},
@@ -190,54 +207,42 @@ const svgEditor = (window['svgEditor'] = (function () {
     setImageURL: (url: any) => {},
     setLang: (lang: any, allStrings: any) => {},
     setPanning: (active: any) => {},
+    showSaveWarning: false,
     storage: storage,
+    storagePromptClosed: false, // For use with ext-storage.js
+    tool_scale: 1, // Dependent on icon size, so any use to making configurable instead? Used by JQuerySpinBtn.js
     toolButtonClick: (button: any, noHiding: any) => {
       return false;
     },
     triggerGridTool: () => {},
-    triggerOffsetTool: () => {},
-    handleFile: async (file) => {},
-    openPrep: () => {},
-    ready: () => {},
-    clipboardData: null,
-    isClipboardDataReady: false,
     triggerNestTool: () => {},
-    deleteSelected: () => {},
-    tool_scale: 1, // Dependent on icon size, so any use to making configurable instead? Used by JQuerySpinBtn.js
-    exportWindowCt: 0,
-    langChanged: false,
-    showSaveWarning: false,
-    storagePromptClosed: false, // For use with ext-storage.js
-    dimensions: [pxWidth, pxDisplayHeight ?? pxHeight],
+    triggerOffsetTool: () => {},
     uiStrings: {},
     updateContextPanel: () => {},
-    clearScene: async () => {},
-    cutSelected: () => {},
-    copySelected: () => {},
   };
 
   const availableLangMap = {
+    da: 'da',
     de: 'de',
+    el: 'el',
     en: 'en',
     es: 'es',
-    pt: 'pt',
-    ja: 'ja',
-    kr: 'kr',
-    'zh-tw': 'zh-TW',
-    'zh-cn': 'zh-CN',
-    fr: 'fr',
-    nl: 'nl',
-    pl: 'pl',
-    da: 'da',
-    el: 'el',
     fi: 'fi',
+    fr: 'fr',
     id: 'id',
     it: 'it',
+    ja: 'ja',
+    kr: 'kr',
     ms: 'ms',
+    nl: 'nl',
     no: 'no',
+    pl: 'pl',
+    pt: 'pt',
     se: 'se',
     th: 'th',
     vi: 'vi',
+    'zh-cn': 'zh-CN',
+    'zh-tw': 'zh-TW',
   };
   const defaultFont = storage.get('default-font') as IFont;
   let pressedKey = [];
@@ -250,6 +255,7 @@ const svgEditor = (window['svgEditor'] = (function () {
 
   document.addEventListener('keyup', (e) => {
     const index = pressedKey.findIndex((key) => key === e.key);
+
     if (index > 0) {
       pressedKey.splice(index, 1);
     }
@@ -271,24 +277,21 @@ const svgEditor = (window['svgEditor'] = (function () {
      */
     // The iteration algorithm for defaultPrefs does not currently support array/objects
     defaultPrefs: ISVGPref = {
-      // EDITOR OPTIONS (DIALOG)
-      lang: availableLangMap[i18n.getActiveLang()] || 'en', // Default to "en" if locale.js detection does not detect another language
       bkgd_color: '#FFF',
       bkgd_url: '',
+      export_notice_done: false,
+      // EDITOR OPTIONS (DIALOG)
+      lang: availableLangMap[i18n.getActiveLang()] || 'en', // Default to "en" if locale.js detection does not detect another language
       // DOCUMENT PROPERTIES (DIALOG)
       // ALERT NOTICES
       // Only shows in UI as far as alert notices, but useful to remember, so keeping as pref
       save_notice_done: false,
-      export_notice_done: false,
     },
     curPrefs: ISVGPref = {},
     // Note: The difference between Prefs and Config is that Prefs
     //   can be changed in the UI and are stored in the browser,
     //   while config cannot
     curConfig: ISVGConfig = {
-      // We do not put on defaultConfig to simplify object copying
-      //   procedures (we obtain instead from defaultExtensions)
-      extensions: [],
       /**
        * Can use window.location.origin to indicate the current
        * origin. Can contain a '*' to allow all domains or 'null' (as
@@ -304,6 +307,9 @@ const svgEditor = (window['svgEditor'] = (function () {
        * @todo We might instead make as a user-facing preference.
        */
       allowedOrigins: [],
+      // We do not put on defaultConfig to simplify object copying
+      //   procedures (we obtain instead from defaultExtensions)
+      extensions: [],
     },
     defaultExtensions = [
       'ext-markers.js',
@@ -318,58 +324,58 @@ const svgEditor = (window['svgEditor'] = (function () {
       'ext-closepath.js',
     ],
     defaultConfig: ISVGConfig = {
+      baseUnit: 'px',
       // Change the following to preferences and add pref controls to the UI (e.g., initTool, wireframe, showlayers)?
       canvasName: 'default',
+      defaultUnit: storage.get('default-units') || 'mm',
+      // DOCUMENT PROPERTIES
+      // Change the following to a preference (already in the Document Properties dialog)?
+      dimensions: editor.dimensions,
+      emptyStorageOnDecline: false, // Used by ext-storage.js; empty any prior storage if the user declines to store
+      exportWindowType: 'new', // 'same' (todo: also support 'download')
+      extPath: 'js/lib/svgeditor/extensions/',
+      forceStorage: false, // Some interaction with ext-storage.js; strongly discouraged from modification as it bypasses user privacy by preventing them from choosing whether to keep local storage or not
+      // EDITOR OPTIONS
+      // Change the following to preferences (already in the Editor Options dialog)?
+      gridSnapping: false,
+      // PATH CONFIGURATION
+      // The following path configuration items are disallowed in the URL (as should any future path configurations)
+      imgPath: 'js/lib/svgeditor/images/',
       initFill: {
         color: 'FFFFFF',
         opacity: 0,
       },
+      initOpacity: 1,
       initStroke: {
-        width: 1,
         color: '000000', // solid black
         opacity: 1,
+        width: 1,
       },
-      text: {
-        stroke_width: 1,
-        font_size: isWeb() ? 200 : 100,
-        font_family: defaultFont ? defaultFont.family : 'Arial',
-        font_postscriptName: defaultFont ? defaultFont.postscriptName : 'ArialMT',
-        fill: '#fff',
-        fill_opacity: '0',
-        text_anchor: 'start',
-      },
-      initOpacity: 1,
       initTool: 'select',
-      exportWindowType: 'new', // 'same' (todo: also support 'download')
-      wireframe: true,
-      showlayers: true,
-      no_save_warning: true,
-      // PATH CONFIGURATION
-      // The following path configuration items are disallowed in the URL (as should any future path configurations)
-      imgPath: 'js/lib/svgeditor/images/',
       langPath: 'js/lib/svgeditor/locale/',
-      extPath: 'js/lib/svgeditor/extensions/',
-      // DOCUMENT PROPERTIES
-      // Change the following to a preference (already in the Document Properties dialog)?
-      dimensions: editor.dimensions,
-      // EDITOR OPTIONS
-      // Change the following to preferences (already in the Editor Options dialog)?
-      gridSnapping: false,
-      baseUnit: 'px',
-      defaultUnit: storage.get('default-units') || 'mm',
-      snappingStep: 10,
+      // EXTENSION CONFIGURATION (see also preventAllURLConfig)
+      lockExtensions: false, // Disallowed in URL setting
+      no_save_warning: true,
+      noDefaultExtensions: false, // noDefaultExtensions can only be meaningfully used in config.js or in the URL
+      // EXTENSION-RELATED (STORAGE)
+      noStorageOnLoad: false, // Some interaction with ext-storage.js; prevent even the loading of previously saved local storage
       // URL BEHAVIOR CONFIGURATION
       preventAllURLConfig: true,
       preventURLContentLoading: true,
-      // EXTENSION CONFIGURATION (see also preventAllURLConfig)
-      lockExtensions: false, // Disallowed in URL setting
-      noDefaultExtensions: false, // noDefaultExtensions can only be meaningfully used in config.js or in the URL
       // EXTENSION-RELATED (GRID)
       showGrid: true, // Set by ext-grid.js
-      // EXTENSION-RELATED (STORAGE)
-      noStorageOnLoad: false, // Some interaction with ext-storage.js; prevent even the loading of previously saved local storage
-      forceStorage: false, // Some interaction with ext-storage.js; strongly discouraged from modification as it bypasses user privacy by preventing them from choosing whether to keep local storage or not
-      emptyStorageOnDecline: false, // Used by ext-storage.js; empty any prior storage if the user declines to store
+      showlayers: true,
+      snappingStep: 10,
+      text: {
+        fill: '#fff',
+        fill_opacity: '0',
+        font_family: defaultFont ? defaultFont.family : 'Arial',
+        font_postscriptName: defaultFont ? defaultFont.postscriptName : 'ArialMT',
+        font_size: isWeb() ? 200 : 100,
+        stroke_width: 1,
+        text_anchor: 'start',
+      },
+      wireframe: true,
     },
     /**
      * LOCALE
@@ -377,37 +383,36 @@ const svgEditor = (window['svgEditor'] = (function () {
      */
     uiStrings = (editor.uiStrings = {
       common: {
-        ok: 'OK',
         cancel: 'Cancel',
-        key_up: 'Up',
-        key_down: 'Down',
         key_backspace: 'Backspace',
         key_del: 'Del',
+        key_down: 'Down',
+        key_up: 'Up',
+        ok: 'OK',
       },
       // This is needed if the locale is English, since the locale strings are not read in that instance.
       layers: {
         layer: 'Layer',
       },
       notification: {
-        invalidAttrValGiven: 'Invalid value given',
-        noContentToFitTo: 'No content to fit to',
-        dupeLayerName: 'There is already a layer named that!',
-        enterUniqueLayerName: 'Please enter a unique layer name',
-        enterNewLayerName: 'Please enter the new layer name',
-        layerHasThatName: 'Layer already has that name',
-        QwantToOpen: 'Do you want to open a new file?\nThis will also erase your undo history!',
-        QerrorsRevertToSource:
-          'There were parsing errors in your SVG source.\nRevert back to original SVG source?',
-        QignoreSourceChanges: 'Ignore changes made to SVG source?',
-        featNotSupported: 'Feature not supported',
-        enterNewImgURL: 'Enter the new image URL',
         defsFailOnSave:
           'NOTE: Due to a bug in your browser, this image may appear wrong (missing gradients or elements). It will however appear correct once actually saved.',
-        saveFromBrowser: "Select 'Save As...' in your browser to save this image as a %s file.",
-        noteTheseIssues: 'Also note the following issues: ',
+        dupeLayerName: 'There is already a layer named that!',
+        enterNewImgURL: 'Enter the new image URL',
+        enterNewLayerName: 'Please enter the new layer name',
         enterNewLinkURL: 'Enter the new hyperlink URL',
-        URLloadFail: 'Unable to load from URL',
+        enterUniqueLayerName: 'Please enter a unique layer name',
+        featNotSupported: 'Feature not supported',
+        invalidAttrValGiven: 'Invalid value given',
+        layerHasThatName: 'Layer already has that name',
+        noContentToFitTo: 'No content to fit to',
+        noteTheseIssues: 'Also note the following issues: ',
+        QerrorsRevertToSource: 'There were parsing errors in your SVG source.\nRevert back to original SVG source?',
+        QignoreSourceChanges: 'Ignore changes made to SVG source?',
+        QwantToOpen: 'Do you want to open a new file?\nThis will also erase your undo history!',
         retrieving: "Retrieving '%s' ...",
+        saveFromBrowser: "Select 'Save As...' in your browser to save this image as a %s file.",
+        URLloadFail: 'Unable to load from URL',
       },
     });
   /**
@@ -430,8 +435,10 @@ const svgEditor = (window['svgEditor'] = (function () {
     if (val) {
       curPrefs[key] = val;
       editor.curPrefs = curPrefs; // Update exported value
+
       return;
     }
+
     return key in curPrefs ? curPrefs[key] : defaultPrefs[key];
   };
 
@@ -469,24 +476,23 @@ const svgEditor = (window['svgEditor'] = (function () {
       } else {
         cfgObj[key] = val;
       }
+
       return;
     }
     $.each(opts, function (key: string, val) {
       if (opts.hasOwnProperty(key)) {
         // Only allow prefs defined in defaultPrefs
         if (defaultPrefs.hasOwnProperty(key)) {
-          if (
-            cfgCfg.overwrite === false &&
-            (curConfig.preventAllURLConfig || curPrefs.hasOwnProperty(key))
-          ) {
+          if (cfgCfg.overwrite === false && (curConfig.preventAllURLConfig || curPrefs.hasOwnProperty(key))) {
             return;
           }
+
           if (cfgCfg.allowInitialUserOverride === true) {
             defaultPrefs[key] = val;
           } else {
             $.pref(key, val);
           }
-        } else if (['extensions', 'allowedOrigins'].indexOf(key) > -1) {
+        } else if (['allowedOrigins', 'extensions'].includes(key)) {
           if (
             cfgCfg.overwrite === false &&
             (curConfig.preventAllURLConfig ||
@@ -495,21 +501,21 @@ const svgEditor = (window['svgEditor'] = (function () {
           ) {
             return;
           }
+
           curConfig[key] = curConfig[key].concat(val); // We will handle any dupes later
         }
         // Only allow other curConfig if defined in defaultConfig
         else if (defaultConfig.hasOwnProperty(key)) {
-          if (
-            cfgCfg.overwrite === false &&
-            (curConfig.preventAllURLConfig || curConfig.hasOwnProperty(key))
-          ) {
+          if (cfgCfg.overwrite === false && (curConfig.preventAllURLConfig || curConfig.hasOwnProperty(key))) {
             return;
           }
+
           // Potentially overwriting of previously set config
           if (curConfig.hasOwnProperty(key)) {
             if (cfgCfg.overwrite === false) {
               return;
             }
+
             extendOrAdd(curConfig, key, val);
           } else {
             if (cfgCfg.allowInitialUserOverride === true) {
@@ -544,6 +550,7 @@ const svgEditor = (window['svgEditor'] = (function () {
 
     // Todo: Avoid var-defined functions and group functions together, etc. where possible
     var good_langs = [];
+
     $('#lang_select option').each(function (this: HTMLOptionElement) {
       good_langs.push(this.value);
     });
@@ -561,6 +568,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       if (!curConfig.noDefaultExtensions) {
         curConfig.extensions = curConfig.extensions.concat(defaultExtensions);
       }
+
       // ...and remove any dupes
       $.each(['extensions', 'allowedOrigins'], function (i, cfg) {
         curConfig[cfg] = $.grep(curConfig[cfg], function (n, i) {
@@ -575,24 +583,30 @@ const svgEditor = (window['svgEditor'] = (function () {
 
     var setIcon = (editor.setIcon = function (elem, icon_id) {
       var icon = typeof icon_id === 'string' ? $.getSvgIcon(icon_id, true) : icon_id.clone();
+
       if (!icon) {
         console.log('NOTE: Icon image missing: ' + icon_id);
+
         return;
       }
+
       $(elem).empty().append(icon);
     });
 
     var extFunc = function () {
       $.each(curConfig.extensions, function () {
         var extname = this;
+
         if (!extname.match(/^ext-.*\.js/)) {
           // Ensure URL cannot specify some other unintended file in the extPath
           return;
         }
+
         $.getScript(curConfig.extPath + extname, function (d) {
           // Fails locally in Chrome 5
           if (!d) {
             var s = document.createElement('script');
+
             s.src = curConfig.extPath + extname;
             document.querySelector('head').appendChild(s);
           }
@@ -612,12 +626,11 @@ const svgEditor = (window['svgEditor'] = (function () {
     } else {
       extFunc();
     }
+
     editor.runCallbacks();
-    window['svgCanvas'] =
-      editor.canvas =
-      svgCanvas =
-        new $.SvgCanvas(document.getElementById('svgcanvas'), curConfig);
+    window['svgCanvas'] = editor.canvas = svgCanvas = new $.SvgCanvas(document.getElementById('svgcanvas'), curConfig);
     OpenBottomBoundaryDrawer.update();
+
     var resize_timer,
       Actions,
       path = svgCanvas.pathActions,
@@ -634,6 +647,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       // let the opener know SVG Edit is ready (now that config is set up)
       var svgEditorReadyEvent,
         w = window.opener || window.parent;
+
       if (w) {
         try {
           svgEditorReadyEvent = w.document.createEvent('Event');
@@ -655,14 +669,14 @@ const svgEditor = (window['svgEditor'] = (function () {
         cancel: '#dialog_content, #dialog_buttons *',
         containment: 'window',
       });
+
       var box = $('#dialog_box'),
         btn_holder = $('#dialog_buttons'),
         dialog_content = $('#dialog_content'),
         dbox = function (type, msg?, callback?, defaultVal?, opts?, changeCb?, checkbox?) {
           var ok, ctrl, chkbx;
-          dialog_content
-            .html('<p>' + msg.replace(/\n/g, '</p><p>') + '</p>')
-            .toggleClass('prompt', type === 'prompt');
+
+          dialog_content.html('<p>' + msg.replace(/\n/g, '</p><p>') + '</p>').toggleClass('prompt', type === 'prompt');
           btn_holder.empty();
 
           ok = $('<input type="button" value="' + uiStrings.common.ok + '">').appendTo(btn_holder);
@@ -672,6 +686,7 @@ const svgEditor = (window['svgEditor'] = (function () {
               .appendTo(btn_holder)
               .click(function () {
                 box.hide();
+
                 if (callback) {
                   callback(false);
                 }
@@ -686,17 +701,23 @@ const svgEditor = (window['svgEditor'] = (function () {
             });
           } else if (type === 'select') {
             var div = $('<div style="text-align:center;">');
+
             ctrl = $('<select>').appendTo(div);
+
             if (checkbox) {
               var label = $('<label>').text(checkbox.label);
+
               chkbx = $('<input type="checkbox">').appendTo(label);
               chkbx.val(checkbox.value);
+
               if (checkbox.tooltip) {
                 label.attr('title', checkbox.tooltip);
               }
+
               chkbx.prop('checked', !!checkbox.checked);
               div.append($('<div>').append(label));
             }
+
             $.each(opts || [], function (opt, val) {
               if (typeof val === 'object') {
                 ctrl.append($('<option>').val(val.value).html(val.text));
@@ -705,12 +726,15 @@ const svgEditor = (window['svgEditor'] = (function () {
               }
             });
             dialog_content.append(div);
+
             if (defaultVal) {
               ctrl.val(defaultVal);
             }
+
             if (changeCb) {
               ctrl.bind('change', 'return', changeCb);
             }
+
             ctrl.bind('keydown', 'return', function () {
               ok.click();
             });
@@ -722,7 +746,9 @@ const svgEditor = (window['svgEditor'] = (function () {
 
           ok.click(function () {
             box.hide();
+
             var resp = type === 'prompt' || type === 'select' ? ctrl.val() : true;
+
             if (callback) {
               if (chkbx) {
                 callback(resp, chkbx.prop('checked'));
@@ -757,6 +783,7 @@ const svgEditor = (window['svgEditor'] = (function () {
     var setSelectMode = function () {
       svgCanvas.setMode('select');
       workarea.css('cursor', 'auto');
+
       if (curveEngravingModeController.started) {
         // do nothing for now
       } else if (PreviewModeController.isPreviewMode() || TopBarController.getTopBarPreviewMode()) {
@@ -772,8 +799,10 @@ const svgEditor = (window['svgEditor'] = (function () {
 
     var togglePathEditMode = function (editmode, elems) {
       $('#path_node_panel').toggle(editmode);
+
       if (editmode) {
         multiselected = false;
+
         if (elems.length) {
           selectedElement = elems[0];
         }
@@ -792,12 +821,13 @@ const svgEditor = (window['svgEditor'] = (function () {
 
       // Alert will only appear the first time saved OR the first time the bug is encountered
       var done = $.pref('save_notice_done');
+
       if (done !== 'all') {
         var note = uiStrings.notification.saveFromBrowser.replace('%s', 'SVG');
 
         // Check if FF and has <defs/>
         if (svgedit.browser.isGecko()) {
-          if (svg.indexOf('<defs') !== -1) {
+          if (svg.includes('<defs')) {
             // warning about Mozilla bug #308590 when applicable (seems to be fixed now in Feb 2013)
             note += '\n\n' + uiStrings.notification.defsFailOnSave;
             $.pref('save_notice_done', 'all');
@@ -808,6 +838,7 @@ const svgEditor = (window['svgEditor'] = (function () {
         } else {
           $.pref('save_notice_done', 'all');
         }
+
         if (done !== 'part') {
           win.alert(note);
         }
@@ -823,13 +854,16 @@ const svgEditor = (window['svgEditor'] = (function () {
       }
 
       exportWindow.location.href = data.datauri;
+
       var done = $.pref('export_notice_done');
+
       if (done !== 'all') {
         var note = uiStrings.notification.saveFromBrowser.replace('%s', data.type);
 
         // Check if there's issues
         if (issues.length) {
           var pre = '\n \u2022 ';
+
           note += '\n\n' + uiStrings.notification.noteTheseIssues + pre + issues.join(pre);
         }
 
@@ -849,30 +883,34 @@ const svgEditor = (window['svgEditor'] = (function () {
       if ($(button).hasClass('disabled')) {
         return false;
       }
+
       var fadeFlyouts = 'normal';
+
       workarea.css('cursor', 'auto');
       $('.tool_button_current').removeClass('tool_button_current').addClass('tool_button');
       $(button).addClass('tool_button_current').removeClass('tool_button');
+
       return true;
     });
 
     var clickSelect = (editor.clickSelect = function (clearSelection: boolean = true) {
-      if (
-        [TutorialConstants.DRAW_A_CIRCLE, TutorialConstants.DRAW_A_RECT].includes(
-          getNextStepRequirement(),
-        )
-      ) {
+      if ([TutorialConstants.DRAW_A_CIRCLE, TutorialConstants.DRAW_A_RECT].includes(getNextStepRequirement())) {
         return;
       }
+
       workarea.css('cursor', 'auto');
       svgCanvas.setMode('select');
-      if (clearSelection) svgCanvas.clearSelection();
+
+      if (clearSelection) {
+        svgCanvas.clearSelection();
+      }
     });
 
     var setImageURL = (editor.setImageURL = function (url) {
       if (!url) {
         url = defaultImageURL;
       }
+
       svgCanvas.setImageURL(url);
 
       if (url.indexOf('data:') === 0) {
@@ -889,6 +927,7 @@ const svgEditor = (window['svgEditor'] = (function () {
 
     function promptImgURL() {
       var curhref = svgCanvas.getHref(selectedElement);
+
       curhref = curhref.indexOf('data:') === 0 ? '' : curhref;
       $.prompt(uiStrings.notification.enterNewImgURL, curhref, function (url) {
         if (url) {
@@ -900,14 +939,17 @@ const svgEditor = (window['svgEditor'] = (function () {
     // updates the context panel tools based on the selected element
     var updateContextPanel = function () {
       var elem = selectedElement;
+
       // If element has just been deleted, consider it null
       if (elem != null && !elem.parentNode) {
         elem = null;
       }
+
       var currentMode = svgCanvas.getMode();
       var unit = curConfig.baseUnit !== 'px' ? curConfig.baseUnit : null;
 
       var is_node = currentMode === 'pathedit'; //elem ? (elem.id && elem.id.indexOf('pathpointgrip') == 0) : false;
+
       if (is_node) {
         canvasEvents.setPathEditing(true);
         canvasEvents.setSelectedElement(null);
@@ -926,6 +968,7 @@ const svgEditor = (window['svgEditor'] = (function () {
         //					}
 
         var angle = svgCanvas.getRotationAngle(elem);
+
         ObjectPanelController.updateDimensionValues({ rotation: angle });
 
         if (svgCanvas.addedNew) {
@@ -943,31 +986,35 @@ const svgEditor = (window['svgEditor'] = (function () {
         if (!is_node && currentMode !== 'pathedit') {
           //$('#selected_panel').show();
           // Elements in this array already have coord fields
-          if (['line', 'circle', 'ellipse'].indexOf(elname) >= 0) {
+          if (['circle', 'ellipse', 'line'].includes(elname)) {
           } else {
             var x, y;
 
             // Get BBox vals for g, polyline and path
-            if (['g', 'polyline', 'path', 'polygon'].indexOf(elname) >= 0) {
+            if (['g', 'path', 'polygon', 'polyline'].includes(elname)) {
               var bb = svgCanvas.getStrokedBBox([elem]);
+
               if (bb) {
                 x = bb.x;
                 y = bb.y;
+
                 if (elname !== 'polyline') {
                   let bbox = elem.getBBox();
+
                   ObjectPanelController.updateDimensionValues({
-                    width: bbox.width,
                     height: bbox.height,
+                    width: bbox.width,
                   });
                 }
               }
             } else if (['text'].includes(elname)) {
               const bb = svgCanvas.calculateTransformedBBox(elem);
+
               x = bb.x;
               y = bb.y;
               ObjectPanelController.updateDimensionValues({
-                width: bb.width,
                 height: bb.height,
+                width: bb.width,
               });
             } else {
               x = elem.getAttribute('x');
@@ -980,8 +1027,8 @@ const svgEditor = (window['svgEditor'] = (function () {
             }
 
             ObjectPanelController.updateDimensionValues({
-              x: parseFloat(x) || 0,
-              y: parseFloat(y) || 0,
+              x: Number.parseFloat(x) || 0,
+              y: Number.parseFloat(y) || 0,
             });
 
             svgCanvas.selectorManager.requestSelector(elem).resize();
@@ -995,20 +1042,21 @@ const svgEditor = (window['svgEditor'] = (function () {
               point.y = svgedit.units.convertUnit(point.y);
             }
           }
+
           return;
         }
 
         // update contextual tools here
         var panels = {
-          g: [],
           a: [],
-          rect: ['rx', 'width', 'height'],
-          image: ['width', 'height'],
           circle: ['cx', 'cy', 'r'],
           ellipse: ['cx', 'cy', 'rx', 'ry'],
+          g: [],
+          image: ['width', 'height'],
           line: ['x1', 'y1', 'x2', 'y2'],
           path: [],
           polygon: [],
+          rect: ['rx', 'width', 'height'],
           text: [],
           use: [],
         };
@@ -1038,10 +1086,13 @@ const svgEditor = (window['svgEditor'] = (function () {
 
           $.each(cur_panels, function (i, item) {
             var attrVal = elem.getAttribute(item);
+
             if (curConfig.baseUnit !== 'px' && elem[item]) {
               var bv = elem[item].baseVal.value;
+
               attrVal = svgedit.units.convertUnit(bv);
             }
+
             $('#' + el_name + '_' + item).val(attrVal || 0);
             newDimensionValue[item] = attrVal;
           });
@@ -1055,6 +1106,7 @@ const svgEditor = (window['svgEditor'] = (function () {
                   $('#text').focus().select();
                 }, 100);
               }
+
               textActions.setFontSize(textEdit.getFontSize());
               textActions.setIsVertical(elem.getAttribute('data-verti') === 'true');
               break;
@@ -1062,19 +1114,23 @@ const svgEditor = (window['svgEditor'] = (function () {
               if (svgCanvas.getMode() === 'image') {
                 setImageURL(svgCanvas.getHref(elem));
               }
+
               break;
             case 'g':
             case 'use':
               $('#container_panel').show();
+
               if (el_name === 'use' && $(elem).attr('data-xform')) {
                 const location = svgCanvas.getSvgRealLocation(elem);
+
                 ObjectPanelController.updateDimensionValues({
+                  height: location.height,
+                  width: location.width,
                   x: location.x,
                   y: location.y,
-                  width: location.width,
-                  height: location.height,
                 });
               }
+
               break;
             case 'path':
               //$('#container_panel').show();
@@ -1095,7 +1151,9 @@ const svgEditor = (window['svgEditor'] = (function () {
             ungroup: el_name === 'g' && !elem?.getAttribute('data-pass-through'),
           });
         }
+
         const isRatioFixed = elem.getAttribute('data-ratiofixed') === 'true';
+
         ObjectPanelController.updateDimensionValues({ isRatioFixed });
       } else if (multiselected) {
         //$('#multiselected_panel').show();
@@ -1120,10 +1178,12 @@ const svgEditor = (window['svgEditor'] = (function () {
 
       ObjectPanelController.updateObjectPanel();
     };
+
     editor.updateContextPanel = updateContextPanel;
 
     var updateTitle = function (title?: string) {
       title = title || svgCanvas.getDocumentTitle();
+
       var newTitle = origTitle + (title ? ': ' + title : '');
 
       // Remove title update with current context info, isn't really necessary
@@ -1136,10 +1196,13 @@ const svgEditor = (window['svgEditor'] = (function () {
     // called when we've selected a different element
     var selectedChanged = function (win, elems) {
       var mode = svgCanvas.getMode();
+
       if (mode === 'select') {
         setSelectMode();
       }
+
       var is_node = mode === 'pathedit';
+
       // if elems[1] is present, then we have more than one element
       selectedElement = elems.length === 1 || elems[1] == null ? elems[0] : null;
       multiselected = elems.length >= 2 && elems[1] != null;
@@ -1148,11 +1211,13 @@ const svgEditor = (window['svgEditor'] = (function () {
       updateContextPanel();
       svgCanvas.runExtensions('selectedChanged', {
         elems: elems,
-        selectedElement: selectedElement,
         multiselected: multiselected,
+        selectedElement: selectedElement,
       });
-      if (elems.length === 1 && elems[0]?.tagName === 'polygon')
+
+      if (elems.length === 1 && elems[0]?.tagName === 'polygon') {
         ObjectPanelController.updatePolygonSides($(selectedElement).attr('sides'));
+      }
     };
 
     // Call when part of element is in process of changing, generally
@@ -1191,17 +1256,14 @@ const svgEditor = (window['svgEditor'] = (function () {
      * @returns {boolean} True if the element is a layer
      */
     function isLayer(elem) {
-      return (
-        elem &&
-        elem.tagName === 'g' &&
-        svgedit.draw.Layer.CLASS_REGEX.test(elem.getAttribute('class'))
-      );
+      return elem && elem.tagName === 'g' && svgedit.draw.Layer.CLASS_REGEX.test(elem.getAttribute('class'));
     }
 
     // called when any element has changed
     var elementChanged = function (win, elems) {
       var i,
         mode = svgCanvas.getMode();
+
       if (mode === 'select') {
         setSelectMode();
       }
@@ -1210,6 +1272,7 @@ const svgEditor = (window['svgEditor'] = (function () {
         var elem = elems[i];
 
         var isSvgElem = elem && elem.tagName === 'svg';
+
         if (isSvgElem || isLayer(elem)) {
           LayerPanelController.updateLayerPanel();
         }
@@ -1239,23 +1302,25 @@ const svgEditor = (window['svgEditor'] = (function () {
 
     $('#cur_context_panel').delegate('a', 'click', function () {
       var link = $(this);
+
       if (link.attr('data-root')) {
         svgCanvas.leaveContext();
       } else {
         svgCanvas.setContext(link.text());
       }
+
       svgCanvas.clearSelection();
+
       return false;
     });
 
     var contextChanged = function (win, context) {
       var link_str = '';
+
       if (context) {
         var str = '';
-        link_str =
-          '<a href="#" data-root="y">' +
-          svgCanvas.getCurrentDrawing().getCurrentLayerName() +
-          '</a>';
+
+        link_str = '<a href="#" data-root="y">' + svgCanvas.getCurrentDrawing().getCurrentLayerName() + '</a>';
 
         $(context)
           .parentsUntil('#svgcontent > g')
@@ -1263,6 +1328,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           .each(function () {
             if (this.id) {
               str += ' > ' + this.id;
+
               if (this !== context) {
                 link_str += ' > <a href="#">' + this.id + '</a>';
               } else {
@@ -1271,6 +1337,7 @@ const svgEditor = (window['svgEditor'] = (function () {
             }
           });
       }
+
       $('#cur_context_panel').toggle(!!context).html(link_str);
 
       updateTitle();
@@ -1280,6 +1347,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       var prop;
       var regex = /^(Moz|Webkit|Khtml|O|ms|Icab)(?=[A-Z])/;
       var someScript = document.getElementsByTagName('script')[0];
+
       for (prop in someScript.style) {
         if (regex.test(prop)) {
           // test is faster than match, so it's better to perform
@@ -1287,10 +1355,12 @@ const svgEditor = (window['svgEditor'] = (function () {
           return prop.match(regex)[0];
         }
       }
+
       // Nothing found so far?
       if ('WebkitOpacity' in someScript.style) {
         return 'Webkit';
       }
+
       if ('KhtmlOpacity' in someScript.style) {
         return 'Khtml';
       }
@@ -1314,12 +1384,15 @@ const svgEditor = (window['svgEditor'] = (function () {
         for (i = 0; i < 4; i++) {
           var s = sides[i];
           var cur = el.data('orig_margin-' + s);
+
           if (cur == null) {
-            cur = parseInt(el.css('margin-' + s), 10);
+            cur = Number.parseInt(el.css('margin-' + s), 10);
             // Cache the original margin
             el.data('orig_margin-' + s, cur);
           }
+
           var val = cur * scale;
+
           if (s === 'right') {
             val += w;
           } else if (s === 'bottom') {
@@ -1335,17 +1408,22 @@ const svgEditor = (window['svgEditor'] = (function () {
     // TODO: Combine this with addDropDown or find other way to optimize
     var addAltDropDown = function (elem, list, callback, opts) {
       var button = $(elem);
+
       list = $(list);
+
       var on_button = false;
       var dropUp = opts.dropUp;
+
       if (dropUp) {
         $(elem).addClass('dropup');
       }
+
       list.find('li').bind('mouseup', function () {
         if (opts.seticon) {
           setIcon('#cur_' + button[0].id, $(this).children());
           $(this).addClass('current').siblings().removeClass('current');
         }
+
         callback.apply(this, arguments);
       });
 
@@ -1354,10 +1432,11 @@ const svgEditor = (window['svgEditor'] = (function () {
           button.removeClass('down');
           list.hide();
           list.css({
-            top: 0,
             left: 0,
+            top: 0,
           });
         }
+
         on_button = false;
       });
 
@@ -1365,12 +1444,14 @@ const svgEditor = (window['svgEditor'] = (function () {
       button
         .bind('mousedown', function () {
           var off = button.offset();
+
           if (dropUp) {
             off.top -= list.height();
             off.left += 8;
           } else {
             off.top += button.height();
           }
+
           list.offset(off);
 
           if (!button.hasClass('down')) {
@@ -1380,10 +1461,11 @@ const svgEditor = (window['svgEditor'] = (function () {
             // CSS position must be reset for Webkit
             list.hide();
             list.css({
-              top: 0,
               left: 0,
+              top: 0,
             });
           }
+
           button.toggleClass('down');
         })
         .hover(function () {
@@ -1405,6 +1487,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       if (!ext) {
         return;
       }
+
       var cb_called = false;
       var resize_done = false;
       var cb_ready = true; // Set to false to delay callback (e.g. wait for $.svgIcons)
@@ -1413,6 +1496,7 @@ const svgEditor = (window['svgEditor'] = (function () {
         if (editor.langChanged) {
           // We check for this since the "lang" pref could have been set by storage
           var lang = $.pref('lang');
+
           ext.langReady({
             lang: lang,
             uiStrings: uiStrings,
@@ -1449,20 +1533,25 @@ const svgEditor = (window['svgEditor'] = (function () {
           switch (tool.type) {
             case 'tool_button':
               html = '<div class="tool_button">' + tool.id + '</div>';
+
               var div = $(html).appendTo(panel);
+
               if (tool.events) {
                 $.each(tool.events, function (evt: string, func) {
                   $(div).bind(evt, func);
                 });
               }
+
               break;
             case 'select':
               html = '<label' + cont_id + '>' + '<select id="' + tool.id + '">';
               $.each(tool.options, function (val: string, text) {
                 var sel = val == tool.defval ? ' selected' : '';
+
                 html += '<option value="' + val + '"' + sel + '>' + text + '</option>';
               });
               html += '</select></label>';
+
               // Creates the tool, hides & adds it, returns the select element
               var sel = $(html).appendTo(panel).find('select');
 
@@ -1491,11 +1580,11 @@ const svgEditor = (window['svgEditor'] = (function () {
               var dropdown = $(html).appendTo(panel).children();
 
               btn_selects.push({
+                callback: tool.events.change,
+                cur: '#cur_' + tool.id,
                 elem: '#' + tool.id,
                 list: '#' + tool.id + '_opts',
                 title: tool.title,
-                callback: tool.events.change,
-                cur: '#cur_' + tool.id,
               });
 
               break;
@@ -1529,6 +1618,7 @@ const svgEditor = (window['svgEditor'] = (function () {
                   inp.bind(evt, func);
                 });
               }
+
               break;
 
             default:
@@ -1559,6 +1649,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           } else {
             fallback_obj[id] = btn.icon;
             svgicon = btn.svgicon || btn.id;
+
             if (btn.type === 'app_menu') {
               placement_obj['#' + id + ' > div'] = svgicon;
             } else {
@@ -1573,19 +1664,23 @@ const svgEditor = (window['svgEditor'] = (function () {
             case 'context':
               cls = 'tool_button';
               parent = '#' + btn.panel;
+
               // create the panel if it doesn't exist
               if (!$(parent).length) {
                 $('<div>', {
                   id: btn.panel,
                 }).appendTo('#tools_top');
               }
+
               break;
           }
+
           var flyout_holder, cur_h, show_btn, ref_data, ref_btn;
           var button = $(btn.list || btn.type === 'app_menu' ? '<li/>' : '<div/>')
             .attr('id', id)
             .attr('title', btn.title)
             .addClass(cls);
+
           if (!btn.includeWith && !btn.list) {
             if ('position' in btn) {
               if ($(parent).children().eq(btn.position).length) {
@@ -1596,6 +1691,7 @@ const svgEditor = (window['svgEditor'] = (function () {
             } else {
               button.appendTo(parent);
             }
+
             if (btn.type === 'app_menu') {
               button.append('<div>').append(btn.title);
             }
@@ -1603,6 +1699,7 @@ const svgEditor = (window['svgEditor'] = (function () {
             // Add button to list
             button.addClass('push_button');
             $('#' + btn.list + '_opts').append(button);
+
             if (btn.isDefault) {
               $('#cur_' + btn.list).append(button.children().clone());
               svgicon = btn.svgicon || btn.id;
@@ -1611,10 +1708,12 @@ const svgEditor = (window['svgEditor'] = (function () {
           } else if (btn.includeWith) {
             // Add to flyout menu / make flyout menu
             var opts = btn.includeWith;
+
             // opts.button, default, position
             ref_btn = $(opts.button);
 
             flyout_holder = ref_btn.parent();
+
             // Create a flyout menu if there isn't one already
             if (!ref_btn.parent().hasClass('tools_flyout')) {
               // Create flyout placeholder
@@ -1639,11 +1738,11 @@ const svgEditor = (window['svgEditor'] = (function () {
             // Include data for extension button as well as ref button
             cur_h = holders['#' + flyout_holder[0].id] = [
               {
-                sel: '#' + id,
                 fn: btn.events.click,
                 icon: btn.id,
-                key: btn.key,
                 isDefault: btn.includeWith ? btn.includeWith.isDefault : 0,
+                key: btn.key,
+                sel: '#' + id,
               },
               ref_data,
             ];
@@ -1677,8 +1776,10 @@ const svgEditor = (window['svgEditor'] = (function () {
                     }
                   });
                 }
+
                 if (btn.key) {
                   $(document).bind('keydown', btn.key, func);
+
                   if (btn.title) {
                     button.attr('title', btn.title + ' [' + btn.key + ']');
                   }
@@ -1712,9 +1813,11 @@ const svgEditor = (window['svgEditor'] = (function () {
     svgCanvas.bind('exported', exportHandler);
     svgCanvas.bind('exportedPDF', function (win, data) {
       var exportWindowName = data.exportWindowName;
+
       if (exportWindowName) {
         exportWindow = window.open('', exportWindowName); // A hack to get the window via JSON-able name without opening a new one
       }
+
       exportWindow.location.href = data.dataurlstring;
     });
     svgCanvas.bind('contextset', contextChanged);
@@ -1723,13 +1826,11 @@ const svgEditor = (window['svgEditor'] = (function () {
 
     var changeStrokeWidth = function (ctl) {
       var val = ctl.value;
-      if (
-        val == 0 &&
-        selectedElement &&
-        ['line', 'polyline'].indexOf(selectedElement.nodeName) >= 0
-      ) {
+
+      if (val == 0 && selectedElement && ['line', 'polyline'].includes(selectedElement.nodeName)) {
         val = ctl.value = 1;
       }
+
       svgCanvas.setStrokeWidth(val);
     };
 
@@ -1738,10 +1839,13 @@ const svgEditor = (window['svgEditor'] = (function () {
       if (val == null) {
         val = ctl.value;
       }
+
       var complete = false;
+
       if (!ctl || !ctl.handle) {
         complete = true;
       }
+
       if (noUndo) {
         svgCanvas.setBlurNoUndo(val);
       } else {
@@ -1762,29 +1866,36 @@ const svgEditor = (window['svgEditor'] = (function () {
 
     $('#text').on('keyup input', function (this: HTMLInputElement, evt) {
       evt.stopPropagation();
+
       if (!textActions.isEditing && evt.type === 'input') {
         // Hack: Windows input event will some how block undo/redo event
         // So do undo/redo when not entering & input event triggered
         evt.preventDefault();
+
         const originalEvent = evt.originalEvent as InputEvent;
+
         if (originalEvent.inputType === 'historyUndo') {
           historyUtils.undo();
         } else if (originalEvent.inputType === 'historyRedo') {
           historyUtils.redo();
         }
+
         return;
       }
+
       if (evt.key === 'Enter' && !wasNewLineAdded) {
         textActions.toSelectMode(true);
       } else if (textActions.isEditing) {
         textEdit.setTextContent(this.value);
       }
+
       if (evt.key !== 'Shift') {
         wasNewLineAdded = false;
       }
     });
     textInput.addEventListener('keydown', (evt: KeyboardEvent) => {
       evt.stopPropagation();
+
       if (evt.key === 'ArrowUp') {
         evt.preventDefault();
         textActions.onUpKey();
@@ -1800,7 +1911,9 @@ const svgEditor = (window['svgEditor'] = (function () {
       } else if (evt.key === 'Escape') {
         clickSelect();
       }
+
       const isFunctionKeyPressed = checkFunctionKeyPressed(evt);
+
       if ((isMobile() || evt.shiftKey) && evt.key === 'Enter') {
         evt.preventDefault();
         textActions.newLine();
@@ -1822,13 +1935,15 @@ const svgEditor = (window['svgEditor'] = (function () {
         textActions.selectAll();
         textEdit.setTextContent(textInput.value);
       } else if (isFunctionKeyPressed && evt.key === 'z') {
-        if (window.os === 'MacOS') evt.preventDefault();
+        if (window.os === 'MacOS') {
+          evt.preventDefault();
+        }
       }
     });
 
     $('.attr_changer').change(function (this: HTMLInputElement) {
       var attr = this.getAttribute('data-attr');
-      var val = parseFloat(this.value);
+      var val = Number.parseFloat(this.value);
       var valid = svgedit.units.isValidUnit(attr, val, selectedElement);
 
       if (!valid) {
@@ -1836,6 +1951,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           message: uiStrings.notification.invalidAttrValGiven,
         });
         this.value = selectedElement.getAttribute(attr);
+
         return false;
       }
 
@@ -1847,12 +1963,7 @@ const svgEditor = (window['svgEditor'] = (function () {
 
           var unitData = svgedit.units.getTypeMap();
 
-          if (
-            selectedElement[attr] ||
-            svgCanvas.getMode() === 'pathedit' ||
-            attr === 'x' ||
-            attr === 'y'
-          ) {
+          if (selectedElement[attr] || svgCanvas.getMode() === 'pathedit' || attr === 'x' || attr === 'y') {
             val = val * unitData[curConfig.baseUnit];
           }
         }
@@ -1862,12 +1973,14 @@ const svgEditor = (window['svgEditor'] = (function () {
       // change the ID, then re-select it with the new ID
       if (attr === 'id') {
         var elem = selectedElement;
+
         svgCanvas.clearSelection();
         elem.id = val;
         svgCanvas.addToSelection([elem], true);
       } else {
         svgCanvas.changeSelectedAttribute(attr, val);
       }
+
       this.blur();
       updateContextPanel();
     });
@@ -1878,6 +1991,7 @@ const svgEditor = (window['svgEditor'] = (function () {
         w_area = workarea[0],
         panning = false,
         keypan = false;
+
       window['w_area'] = workarea[0];
 
       $('#svgcanvas')
@@ -1895,6 +2009,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           if (evt.type === 'mouseup') {
             panning = false;
           }
+
           return false;
         })
         .mousedown(function (evt) {
@@ -1902,6 +2017,7 @@ const svgEditor = (window['svgEditor'] = (function () {
             panning = true;
             last_x = evt.clientX;
             last_y = evt.clientY;
+
             return false;
           }
         });
@@ -1951,6 +2067,7 @@ const svgEditor = (window['svgEditor'] = (function () {
         })
         .blur(function () {
           workarea.unbind('mousedown', unfocus);
+
           // Go back to selecting text if in textedit mode
           if (svgCanvas.getMode() === 'textedit') {
             $('#text').focus();
@@ -1960,72 +2077,69 @@ const svgEditor = (window['svgEditor'] = (function () {
 
     const triggerGridTool = function () {
       if (selectedElement != null || multiselected) {
-        ToolPanelsController.setVisibility(
-          ToolPanelsController.type != 'gridArray' || !ToolPanelsController.isVisible,
-        );
+        ToolPanelsController.setVisibility(ToolPanelsController.type != 'gridArray' || !ToolPanelsController.isVisible);
         ToolPanelsController.setType('gridArray');
         ToolPanelsController.render();
       } else {
         Alert.popUp({
+          callbacks: () => ObjectPanelController.updateActiveKey(null),
+          caption: LANG.left_panel.label.array,
           id: 'select first',
           message: LANG.popup.select_first,
-          caption: LANG.left_panel.label.array,
-          callbacks: () => ObjectPanelController.updateActiveKey(null),
         });
       }
     };
+
     editor.triggerGridTool = triggerGridTool;
 
     let triggerOffsetTool = function () {
-      if (
-        selectedElement.tagName === 'g' &&
-        selectedElement.getAttribute('data-tempgroup') === 'true'
-      ) {
+      if (selectedElement.tagName === 'g' && selectedElement.getAttribute('data-tempgroup') === 'true') {
         const childs: HTMLElement[] = Array.from(selectedElement.childNodes);
         const supportOffset = childs.every((child) => {
-          return !['g', 'text', 'image', 'use'].includes(child.tagName);
+          return !['g', 'image', 'text', 'use'].includes(child.tagName);
         });
+
         if (!supportOffset) {
           Alert.popUp({
+            caption: LANG.tool_panels.offset,
             id: 'Offset not support',
             message: LANG.tool_panels._offset.not_support_message,
-            caption: LANG.tool_panels.offset,
           });
+
           return;
         }
       }
+
       if (selectedElement != null || multiselected) {
-        ToolPanelsController.setVisibility(
-          ToolPanelsController.type != 'offset' || !ToolPanelsController.isVisible,
-        );
+        ToolPanelsController.setVisibility(ToolPanelsController.type != 'offset' || !ToolPanelsController.isVisible);
         ToolPanelsController.setType('offset');
         ToolPanelsController.render();
       } else {
         Alert.popUp({
+          callbacks: () => ObjectPanelController.updateActiveKey(null),
+          caption: LANG.tool_panels.offset,
           id: 'select first',
           message: LANG.popup.select_first,
-          caption: LANG.tool_panels.offset,
-          callbacks: () => ObjectPanelController.updateActiveKey(null),
         });
       }
     };
+
     editor.triggerOffsetTool = triggerOffsetTool;
 
     let triggerNestTool = function () {
       if (selectedElement != null || multiselected) {
-        ToolPanelsController.setVisibility(
-          ToolPanelsController.type != 'nest' || !ToolPanelsController.isVisible,
-        );
+        ToolPanelsController.setVisibility(ToolPanelsController.type != 'nest' || !ToolPanelsController.isVisible);
         ToolPanelsController.setType('nest');
         ToolPanelsController.render();
       } else {
         Alert.popUp({
+          caption: LANG.tool_panels.nest,
           id: 'select first',
           message: LANG.popup.select_first,
-          caption: LANG.tool_panels.nest,
         });
       }
     };
+
     editor.triggerNestTool = triggerNestTool;
 
     // Delete is a contextual tool that only appears in the ribbon if
@@ -2035,10 +2149,12 @@ const svgEditor = (window['svgEditor'] = (function () {
         textActions.clear();
         deleteSelectedElements();
       }
+
       if (svgedit.path.path) {
         svgedit.path.path.onDelete(textEdit, textPathEdit);
       }
     };
+
     editor.deleteSelected = deleteSelected;
 
     var cutSelected = function () {
@@ -2046,15 +2162,19 @@ const svgEditor = (window['svgEditor'] = (function () {
       if (document.activeElement.tagName.toLowerCase() === 'input') {
         return;
       }
+
       if (!textActions.isEditing && (selectedElement != null || multiselected)) {
         clipboard.cutSelectedElements();
       }
     };
+
     editor.cutSelected = cutSelected;
     document.addEventListener(
       'cut',
       () => {
-        if (Shortcuts.isInBaseScope()) cutSelected();
+        if (Shortcuts.isInBaseScope()) {
+          cutSelected();
+        }
       },
       false,
     );
@@ -2064,15 +2184,19 @@ const svgEditor = (window['svgEditor'] = (function () {
       if (document.activeElement.tagName.toLowerCase() === 'input') {
         return;
       }
+
       if (!textActions.isEditing && (selectedElement != null || multiselected)) {
         clipboard.copySelectedElements();
       }
     };
+
     editor.copySelected = copySelected;
     document.addEventListener(
       'copy',
       () => {
-        if (Shortcuts.isInBaseScope()) copySelected();
+        if (Shortcuts.isInBaseScope()) {
+          copySelected();
+        }
       },
       false,
     );
@@ -2080,7 +2204,10 @@ const svgEditor = (window['svgEditor'] = (function () {
     // handle paste
     document.addEventListener('paste', async (e) => {
       // disabled when not in base scope
-      if (!Shortcuts.isInBaseScope()) return;
+      if (!Shortcuts.isInBaseScope()) {
+        return;
+      }
+
       // disabled when focusing input element
       if (document.activeElement.tagName.toLowerCase() === 'input') {
         return;
@@ -2092,28 +2219,35 @@ const svgEditor = (window['svgEditor'] = (function () {
 
       const clipboardData = e.clipboardData;
       let importedFromClipboard = false;
+
       if (clipboardData) {
         if (clipboardData.types.includes('Files')) {
           console.log('handle clip board file');
           for (let i = 0; i < clipboardData.files.length; i++) {
             let file = clipboardData.files[i];
+
             svgEditor.handleFile(file);
             importedFromClipboard = true;
           }
         } else if (clipboardData.types.includes('text/html')) {
           const htmlData = clipboardData.getData('text/html');
           const matchImgs = htmlData.match(/<img[^>]+>/);
+
           if (matchImgs) {
             console.log('handle clip board html img');
             for (let i = 0; i < matchImgs.length; i++) {
               const matchSrc = matchImgs[i].match(/src="([^"]+)"/);
+
               if (matchSrc && matchSrc[1]) {
                 importedFromClipboard = true;
                 console.log(matchSrc[1]);
+
                 let res = await fetch(matchSrc[1]);
+
                 if (res.ok) {
                   const resBlob = await res.blob();
                   const blobSrc = URL.createObjectURL(resBlob);
+
                   ImageData(blobSrc, {
                     grayscale: {
                       is_rgba: true,
@@ -2123,29 +2257,30 @@ const svgEditor = (window['svgEditor'] = (function () {
                     },
                     onComplete: function (result) {
                       let newImage = svgCanvas.addSvgElementFromJson({
-                        element: 'image',
                         attr: {
-                          x: 0,
-                          y: 0,
-                          width: result.canvas.width,
+                          'data-ratiofixed': true,
+                          'data-shading': true,
+                          'data-threshold': 254,
                           height: result.canvas.height,
                           id: svgCanvas.getNextId(),
-                          style: 'pointer-events:inherit',
-                          preserveAspectRatio: 'none',
-                          'data-threshold': 254,
-                          'data-shading': true,
-                          'data-ratiofixed': true,
                           origImage: blobSrc,
+                          preserveAspectRatio: 'none',
+                          style: 'pointer-events:inherit',
+                          width: result.canvas.width,
+                          x: 0,
                           'xlink:href': result.pngBase64,
+                          y: 0,
                         },
+                        element: 'image',
                       });
+
                       svgCanvas.updateElementColor(newImage);
                     },
                   });
                 } else {
                   Alert.popUp({
-                    type: AlertConstants.SHOW_POPUP_WARNING,
                     message: LANG.svg_editor.unable_to_fetch_clipboard_img,
+                    type: AlertConstants.SHOW_POPUP_WARNING,
                   });
                 }
               }
@@ -2153,6 +2288,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           }
         }
       }
+
       if (!importedFromClipboard) {
         clipboard.pasteInCenter();
       }
@@ -2163,9 +2299,11 @@ const svgEditor = (window['svgEditor'] = (function () {
         if (curConfig.gridSnapping) {
           // Use grid snap value regardless of zoom level
           var multi = workareaManager.zoomRatio * curConfig.snappingStep;
+
           dx *= multi;
           dy *= multi;
         }
+
         moveSelectedElements(dx, dy);
       }
     };
@@ -2173,6 +2311,7 @@ const svgEditor = (window['svgEditor'] = (function () {
     var addSubPath = function () {
       var button = $('#tool_add_subpath');
       var sp = !button.hasClass('push_button_pressed');
+
       button.toggleClass('push_button_pressed tool_button');
       path.addSubPath(sp);
     };
@@ -2183,7 +2322,11 @@ const svgEditor = (window['svgEditor'] = (function () {
 
     var clearScene = async function () {
       const res = await fileExportHelper.toggleUnsavedChangedDialog();
-      if (!res) return;
+
+      if (!res) {
+        return;
+      }
+
       setSelectMode();
       svgCanvas.clear();
       workareaManager.resetView();
@@ -2202,6 +2345,7 @@ const svgEditor = (window['svgEditor'] = (function () {
         if ($('#ruler_x').length !== 0) {
           $('#ruler_x')[0].scrollLeft = workarea[0].scrollLeft;
         }
+
         if ($('#ruler_y').length !== 0) {
           $('#ruler_y')[0].scrollTop = workarea[0].scrollTop - workarea[0].offsetTop;
         }
@@ -2251,11 +2395,14 @@ const svgEditor = (window['svgEditor'] = (function () {
     (function () {
       var pre = '-' + uaPrefix.toLowerCase() + '-zoom-';
       var zoom = pre + 'in';
+
       workarea.css('cursor', zoom);
+
       if (workarea.css('cursor') === zoom) {
         zoomInIcon = zoom;
         zoomOutIcon = pre + 'out';
       }
+
       workarea.css('cursor', 'auto');
     })();
 
@@ -2285,6 +2432,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       var orig_val = Number(elem.value);
       var sug_val = orig_val + step;
       var increasing = sug_val >= orig_val;
+
       if (step === 0) {
         return orig_val;
       }
@@ -2293,14 +2441,18 @@ const svgEditor = (window['svgEditor'] = (function () {
         if (increasing) {
           return Math.round(orig_val * 1.1);
         }
+
         return Math.round(orig_val / 1.1);
       }
+
       if (orig_val <= 1) {
         if (increasing) {
           return orig_val * 2;
         }
+
         return orig_val / 2;
       }
+
       return sug_val;
     }
 
@@ -2312,6 +2464,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       return {
         setAll: function () {
           const moveUnit = storage.get('default-units') === 'inches' ? 25.4 : 10; // 0.1 in : 1 mm
+
           Shortcuts.on(['Delete', 'Backspace'], () => deleteSelected());
           Shortcuts.on(['Fnkey+a'], (e) => {
             e.stopPropagation();
@@ -2322,6 +2475,7 @@ const svgEditor = (window['svgEditor'] = (function () {
               moveSelected([0], [-moveUnit]);
             } else {
               const workArea = document.getElementById('workarea');
+
               workArea.scrollTop -= 5;
             }
           });
@@ -2330,6 +2484,7 @@ const svgEditor = (window['svgEditor'] = (function () {
               moveSelected([0], [-moveUnit * 10]);
             } else {
               const workArea = document.getElementById('workarea');
+
               workArea.scrollTop -= 50;
             }
           });
@@ -2338,6 +2493,7 @@ const svgEditor = (window['svgEditor'] = (function () {
               moveSelected([0], [moveUnit]);
             } else {
               const workArea = document.getElementById('workarea');
+
               workArea.scrollTop += 5;
             }
           });
@@ -2346,6 +2502,7 @@ const svgEditor = (window['svgEditor'] = (function () {
               moveSelected([0], [moveUnit * 10]);
             } else {
               const workArea = document.getElementById('workarea');
+
               workArea.scrollTop += 50;
             }
           });
@@ -2354,6 +2511,7 @@ const svgEditor = (window['svgEditor'] = (function () {
               moveSelected([-moveUnit], [0]);
             } else {
               const workArea = document.getElementById('workarea');
+
               workArea.scrollLeft -= 5;
             }
           });
@@ -2362,6 +2520,7 @@ const svgEditor = (window['svgEditor'] = (function () {
               moveSelected([-moveUnit * 10], [0]);
             } else {
               const workArea = document.getElementById('workarea');
+
               workArea.scrollLeft -= 50;
             }
           });
@@ -2370,6 +2529,7 @@ const svgEditor = (window['svgEditor'] = (function () {
               moveSelected([moveUnit], [0]);
             } else {
               const workArea = document.getElementById('workarea');
+
               workArea.scrollLeft += 5;
             }
           });
@@ -2378,6 +2538,7 @@ const svgEditor = (window['svgEditor'] = (function () {
               moveSelected([moveUnit * 10], [0]);
             } else {
               const workArea = document.getElementById('workarea');
+
               workArea.scrollLeft += 50;
             }
           });
@@ -2396,6 +2557,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           Shortcuts.on(['l'], () => RightPanelController.setPanelType(PanelType.Layer));
           Shortcuts.on(['o'], () => {
             const isPathEdit = svgCanvas.getMode() === 'pathedit';
+
             RightPanelController.setPanelType(isPathEdit ? PanelType.PathEdit : PanelType.Object);
           });
           Shortcuts.on(['Escape'], () => clickSelect());
@@ -2428,13 +2590,17 @@ const svgEditor = (window['svgEditor'] = (function () {
     window.addEventListener(
       'beforeunload',
       (e) => {
-        if (!isWeb()) return null;
+        if (!isWeb()) {
+          return null;
+        }
 
         if (!currentFileManager.getHasUnsavedChanges()) {
           return null;
         }
+
         e.preventDefault();
         e.returnValue = '';
+
         return '';
       },
       false,
@@ -2464,72 +2630,88 @@ const svgEditor = (window['svgEditor'] = (function () {
       e.preventDefault();
       // hypothetical indicator should be removed here
     }
+
     // Use HTML5 File API: http://www.w3.org/TR/FileAPI/
     // if browser has HTML5 File API support, then we will show the open menu item
     // and provide a file input to click. When that change event fires, it will
     // get the text contents of the file and send it to the canvas
     if (window.FileReader) {
       const replaceBitmap = async (file, imageElem) => {
-        Progress.openNonstopProgress({ id: 'loading_image', caption: LANG.popup.loading_image });
+        Progress.openNonstopProgress({ caption: LANG.popup.loading_image, id: 'loading_image' });
+
         return new Promise<void>((resolve, reject) => {
           const reader = new FileReader();
+
           reader.onloadend = async function (e) {
             let rotationFlag = getExifRotationFlag(e.target.result as string);
+
             console.log(rotationFlag);
+
             var img = new Image();
             var blob = new Blob([reader.result]);
             const src = URL.createObjectURL(blob);
+
             img.src = src;
             img.style.opacity = '0';
             img.onload = function () {
               let imgWidth = img.width;
               let imgHeight = img.height;
               const isFullColor = imageElem.getAttribute('data-fullcolor') === '1';
+
               ImageData(src, {
-                width: imgWidth,
-                height: imgHeight,
-                rotationFlag,
                 grayscale: isFullColor
                   ? undefined
                   : {
                       is_rgba: true,
                       is_shading: imageElem.getAttribute('data-shading') === 'true',
-                      threshold: parseInt(imageElem.getAttribute('data-threshold')),
                       is_svg: false,
+                      threshold: Number.parseInt(imageElem.getAttribute('data-threshold')),
                     },
+                height: imgHeight,
                 onComplete: function (result) {
                   const batchCmd = new history.BatchCommand('Replace Image');
                   let cmd;
+
                   svgCanvas.undoMgr.beginUndoableChange('origImage', [imageElem]);
                   imageElem.setAttribute('origImage', src);
                   cmd = svgCanvas.undoMgr.finishUndoableChange();
+
                   if (!cmd.isEmpty()) {
                     batchCmd.addSubCommand(cmd);
                   }
+
                   svgCanvas.undoMgr.beginUndoableChange('xlink:href', [imageElem]);
                   imageElem.setAttribute('xlink:href', result.pngBase64);
                   cmd = svgCanvas.undoMgr.finishUndoableChange();
+
                   if (!cmd.isEmpty()) {
                     batchCmd.addSubCommand(cmd);
                   }
+
                   svgCanvas.undoMgr.addCommandToHistory(batchCmd);
                   updateContextPanel();
                   Progress.popById('loading_image');
                   resolve(null);
                 },
+                rotationFlag,
+                width: imgWidth,
               });
             };
           };
           reader.readAsArrayBuffer(file);
         });
       };
+
       editor.replaceBitmap = replaceBitmap;
 
       const importJsScript = async (file) => {
         Progress.popById('loading_image');
+
         const reader = new FileReader();
+
         reader.onloadend = (evt) => {
           const script = evt.target.result as string;
+
           Function(script)();
         };
         reader.readAsText(file);
@@ -2539,17 +2721,21 @@ const svgEditor = (window['svgEditor'] = (function () {
         e.stopPropagation();
         e.preventDefault();
         $('#workarea').removeAttr('style');
+
         if (e.dataTransfer && e.dataTransfer.types.includes('text/noun-project-icon')) {
-          const nounProjectIcon = JSON.parse(
-            e.dataTransfer.getData('text/noun-project-icon'),
-          ) as IIcon;
+          const nounProjectIcon = JSON.parse(e.dataTransfer.getData('text/noun-project-icon')) as IIcon;
+
           NounProjectPanelController.emit('insertIcon', nounProjectIcon);
+
           return;
         }
+
         const file = e.type === 'drop' ? e.dataTransfer.files[0] : this.files[0];
+
         if (!file) {
           return;
         }
+
         handleFile(file);
         // let file input import same file again.
         // Beacause function 'importImage' is triggered by onChange event, so we remove the value to ensure onChange event fire
@@ -2558,21 +2744,24 @@ const svgEditor = (window['svgEditor'] = (function () {
 
       const importIconFromNounProject = async (icon: IIcon) => {
         console.log(icon);
+
         if (icon.icon_url) {
           const response = await fetch(icon.icon_url);
           const blob = await response.blob();
+
           importSvg(blob as File);
         } else {
           const response = await fetch(icon.preview_url);
           const blob = await response.blob();
+
           readBitmapFile(blob);
         }
       };
 
       const handleFile = async (file) => {
         await Progress.openNonstopProgress({
-          id: 'loading_image',
           caption: LANG.popup.loading_image,
+          id: 'loading_image',
         });
         svgCanvas.clearSelection();
 
@@ -2580,9 +2769,11 @@ const svgEditor = (window['svgEditor'] = (function () {
           if (file.name.toLowerCase().endsWith('.beam')) {
             return 'beam';
           }
+
           if (file.name.toLowerCase().endsWith('.bvg')) {
             return 'bvg';
           }
+
           if (file.type.toLowerCase().includes('image')) {
             if (file.type.toLowerCase().includes('svg')) {
               return 'svg';
@@ -2592,27 +2783,27 @@ const svgEditor = (window['svgEditor'] = (function () {
               return 'bitmap';
             }
           }
+
           if (file.name.toLowerCase().includes('.dxf')) {
             return 'dxf';
           }
+
           if (file.name.toLowerCase().includes('.json')) {
             return 'json';
           }
+
           if (file.name.toLowerCase().includes('.js')) {
             return 'js';
           }
-          if (
-            file.name.toLowerCase().endsWith('.pdf') ||
-            (file.path && file.path.toLowerCase().endsWith('.pdf'))
-          ) {
+
+          if (file.name.toLowerCase().endsWith('.pdf') || (file.path && file.path.toLowerCase().endsWith('.pdf'))) {
             return 'pdf';
           }
-          if (
-            file.name.toLowerCase().endsWith('.ai') ||
-            (file.path && file.path.toLowerCase().endsWith('.ai'))
-          ) {
+
+          if (file.name.toLowerCase().endsWith('.ai') || (file.path && file.path.toLowerCase().endsWith('.ai'))) {
             return 'ai';
           }
+
           return 'unknown';
         })();
 
@@ -2643,6 +2834,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           case 'pdf':
           case 'ai':
             const { blob, errorMessage } = await pdfHelper.pdfToSvgBlob(file);
+
             if (blob) {
               Object.assign(blob, { name: file.name });
               await importSvg(blob as File, { skipByLayer: true });
@@ -2650,10 +2842,11 @@ const svgEditor = (window['svgEditor'] = (function () {
             } else {
               Progress.popById('loading_image');
               Alert.popUp({
-                type: AlertConstants.SHOW_POPUP_ERROR,
                 message: errorMessage,
+                type: AlertConstants.SHOW_POPUP_ERROR,
               });
             }
+
             break;
           case 'js':
             importJsScript(file);
@@ -2681,6 +2874,7 @@ const svgEditor = (window['svgEditor'] = (function () {
             } else {
               currentFileManager.setFileName(file.name, { extractFromPath: true });
             }
+
             currentFileManager.setHasUnsavedChanges(false);
             break;
           case 'dxf':
@@ -2690,11 +2884,13 @@ const svgEditor = (window['svgEditor'] = (function () {
             if (!currentFileManager.getName()) {
               currentFileManager.setFileName(file.name, { extractFromPath: true });
             }
+
             currentFileManager.setHasUnsavedChanges(true);
             break;
         }
         canvasEvents.addImage();
       };
+
       editor.handleFile = handleFile;
 
       workarea[0].addEventListener('dragenter', onDragEnter, false);
@@ -2707,6 +2903,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       var imgImport = $(
         '<input type="file" accept=".svg,.bvg,.jpg,.png,.dxf,.js,.beam,.ai,.pdf" data-file-input="import_image">',
       ).change(importImage);
+
       $('#tool_import').show().prepend(imgImport);
 
       window['updateContextPanel'] = updateContextPanel;
@@ -2729,9 +2926,11 @@ const svgEditor = (window['svgEditor'] = (function () {
       editor.langChanged = true;
       $.pref('lang', lang);
       $('#lang_select').val(lang);
+
       if (!allStrings) {
         return;
       }
+
       // var notif = allStrings.notification; // Currently unused
       // $.extend will only replace the given strings
       var oldLayerName = $('#layerlist tr.layersel td.layername').text();
@@ -2749,6 +2948,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       if (extsPreLang.length) {
         while (extsPreLang.length) {
           var ext = extsPreLang.shift();
+
           ext.langReady({
             lang: lang,
             uiStrings: uiStrings,
@@ -2760,6 +2960,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           uiStrings: uiStrings,
         });
       }
+
       svgCanvas.runExtensions('langChanged', lang);
 
       // Copy alignment titles
@@ -2772,11 +2973,13 @@ const svgEditor = (window['svgEditor'] = (function () {
     (function () {
       const svgdoc = document.getElementById('svgcanvas').ownerDocument;
       const greyscaleFilter = svgdoc.createElementNS(svgedit.NS.SVG, 'filter');
+
       svgCanvas.assignAttributes(greyscaleFilter, {
         id: 'greyscaleFilter',
       });
 
       const greyscaleMatrix = svgdoc.createElementNS(svgedit.NS.SVG, 'feColorMatrix');
+
       svgCanvas.assignAttributes(greyscaleMatrix, {
         type: 'matrix',
         values:

@@ -20,10 +20,10 @@ const fragmentShader = `uniform float thickness;
 `;
 
 const ThicknessShader = {
-  uniforms: { thickness: { value: 0.1 } },
-  vertexShader,
   fragmentShader,
   side: THREE.DoubleSide,
+  uniforms: { thickness: { value: 0.1 } },
+  vertexShader,
 };
 
 export default ThicknessShader;

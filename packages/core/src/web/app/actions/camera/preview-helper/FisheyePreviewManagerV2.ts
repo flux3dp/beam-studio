@@ -1,10 +1,7 @@
 import progressCaller from '@core/app/actions/progress-caller';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
-import type {
-  FisheyeCameraParametersV2,
-  FisheyePreviewManager,
-} from '@core/interfaces/FisheyePreview';
+import type { FisheyeCameraParametersV2, FisheyePreviewManager } from '@core/interfaces/FisheyePreview';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 import FisheyePreviewManagerBase from './FisheyePreviewManagerBase';

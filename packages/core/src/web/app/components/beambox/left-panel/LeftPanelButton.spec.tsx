@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import LeftPanelButton from './LeftPanelButton';
@@ -12,28 +13,25 @@ describe('test LeftPanelButton', () => {
 
   it('should render correctly', () => {
     const { container } = render(
-      <LeftPanelButton id="test" title="test" icon={<div>test</div>} onClick={mockOnClick} />
+      <LeftPanelButton icon={<div>test</div>} id="test" onClick={mockOnClick} title="test" />,
     );
+
     expect(container).toMatchSnapshot();
   });
 
   it('should render flux plus icon correctly', () => {
     const { container } = render(
-      <LeftPanelButton
-        id="test"
-        title="test"
-        icon={<div>test</div>}
-        onClick={mockOnClick}
-        showBadge
-      />
+      <LeftPanelButton icon={<div>test</div>} id="test" onClick={mockOnClick} showBadge title="test" />,
     );
+
     expect(container).toMatchSnapshot();
   });
 
   it('should call onClick when click', () => {
     const { container } = render(
-      <LeftPanelButton id="test" title="test" icon={<div>test</div>} onClick={mockOnClick} />
+      <LeftPanelButton icon={<div>test</div>} id="test" onClick={mockOnClick} title="test" />,
     );
+
     expect(mockOnClick).not.toBeCalled();
     fireEvent.click(container.querySelector('.container'));
     expect(mockOnClick).toBeCalledTimes(1);

@@ -1,39 +1,40 @@
-import classNames from 'classnames';
 import React from 'react';
+
 import { Badge } from 'antd';
+import classNames from 'classnames';
 
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
 
 import styles from './LeftPanelButton.module.scss';
 
 interface Props {
-  id: string;
-  title: string;
-  icon: React.ReactNode;
-  onClick: () => void;
   active?: boolean;
   disabled?: boolean;
+  icon: React.ReactNode;
+  id: string;
+  onClick: () => void;
   showBadge?: boolean;
+  title: string;
 }
 
 function LeftPanelButton({
-  id,
-  title,
-  icon,
-  onClick,
   active = false,
   disabled = false,
+  icon,
+  id,
+  onClick,
   showBadge = false,
-}: Props): JSX.Element {
+  title,
+}: Props): React.JSX.Element {
   return (
     <div
-      id={id}
       className={classNames(styles.container, {
         [styles.active]: active,
         [styles.disabled]: disabled,
       })}
-      title={title}
+      id={id}
       onClick={disabled ? undefined : onClick}
+      title={title}
     >
       <Badge
         className={styles.badge}

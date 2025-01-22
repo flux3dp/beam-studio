@@ -1,22 +1,23 @@
 import React from 'react';
 
 import i18n from '@core/helpers/i18n';
-import { IButton } from '@core/interfaces/IButton';
+import type { IButton } from '@core/interfaces/IButton';
+
 import ButtonGroup from './ButtonGroup';
 
 let lang = i18n.lang.buttons;
 
 interface Props {
+  buttons: IButton[];
   caption: string;
   checkbox: string;
-  message: string | JSX.Element;
-  buttons: IButton[];
+  checkedCallback: (...args: any[]) => void;
   displayImages: boolean;
   images: string[];
   imgClass: string;
-  onCustom: (...args: any[]) => void;
+  message: React.JSX.Element | string;
   onClose: (...args: any[]) => void;
-  checkedCallback: (...args: any[]) => void;
+  onCustom: (...args: any[]) => void;
 }
 
 interface States {
@@ -28,16 +29,16 @@ interface States {
  */
 class AlertDialog extends React.Component<Props, States> {
   static defaultProps: Props = {
+    buttons: [],
     caption: '',
     checkbox: '',
-    message: '',
-    buttons: [],
+    checkedCallback: () => {},
+    displayImages: false,
     images: [],
     imgClass: '',
-    displayImages: false,
-    onCustom: () => {},
+    message: '',
     onClose: () => {},
-    checkedCallback: () => {},
+    onCustom: () => {},
   };
 
   constructor(props: Props) {
@@ -47,11 +48,13 @@ class AlertDialog extends React.Component<Props, States> {
     };
   }
 
-  renderMessage = (): JSX.Element => {
-    const { displayImages, imgClass, images, message } = this.props;
+  renderMessage = (): React.JSX.Element => {
+    const { displayImages, images, imgClass, message } = this.props;
+
     if (displayImages) {
       return <img className={imgClass} src={images[this.state.imgIndex]} />;
     }
+
     return typeof message === 'string' ? (
       <pre className="message" dangerouslySetInnerHTML={{ __html: message }} />
     ) : (
@@ -72,13 +75,14 @@ class AlertDialog extends React.Component<Props, States> {
           self.props.onClose();
         };
       }
+
       self.setState(self.state);
     };
 
     if (this.props.checkbox) {
       return (
         <div className="modal-checkbox">
-          <input type="checkbox" onClick={_handleCheckboxClick}></input>
+          <input onClick={_handleCheckboxClick} type="checkbox"></input>
           {this.props.checkbox}
         </div>
       );
@@ -89,6 +93,7 @@ class AlertDialog extends React.Component<Props, States> {
 
   _renderButtons = () => {
     var self = this;
+
     if (this.props.displayImages) {
       if (this.state.imgIndex < this.props.images.length - 1) {
         return (
@@ -96,10 +101,10 @@ class AlertDialog extends React.Component<Props, States> {
             buttons={[
               {
                 label: lang.next,
-                right: true,
                 onClick: () => {
                   self.setState({ imgIndex: this.state.imgIndex + 1 });
                 },
+                right: true,
               },
             ]}
           />
@@ -110,12 +115,12 @@ class AlertDialog extends React.Component<Props, States> {
             buttons={[
               {
                 label: lang.next,
-                right: true,
                 onClick: () => {
                   self.setState({ imgIndex: 0 });
                   this.props.onCustom();
                   self.props.onClose();
                 },
+                right: true,
               },
             ]}
           />
@@ -127,8 +132,7 @@ class AlertDialog extends React.Component<Props, States> {
   };
 
   render() {
-    var caption =
-        '' !== this.props.caption ? <h2 className="caption">{this.props.caption}</h2> : '',
+    var caption = '' !== this.props.caption ? <h2 className="caption">{this.props.caption}</h2> : '',
       html = this.renderMessage(),
       checkbox = this._renderCheckbox(),
       buttons = this._renderButtons(),

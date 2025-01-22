@@ -1,8 +1,9 @@
-import { parse, Schema } from 'bcp-47';
+import type { Schema } from 'bcp-47';
+import { parse } from 'bcp-47';
 
 function detectLocale(
   bcp47Predicate: (schema: Schema) => boolean,
-  timezoneOffsetPredicate: (timezoneOffset: number) => boolean
+  timezoneOffsetPredicate: (timezoneOffset: number) => boolean,
 ): () => boolean {
   return () => {
     try {
@@ -24,29 +25,29 @@ function detectLocale(
 const detectNorthAmerica = detectLocale(
   (schema) => schema.region === 'US' || schema.region === 'CA',
   // UTC-10 (Hawaii) to UTC-4 (Eastern Time Zone)
-  (timezoneOffset) => timezoneOffset <= 600 && timezoneOffset >= 240
+  (timezoneOffset) => timezoneOffset <= 600 && timezoneOffset >= 240,
 );
 const isNorthAmerica = detectNorthAmerica();
 
 const detectTwOrHk = detectLocale(
   (schema) => schema.region === 'TW' || schema.region === 'HK',
   // UTC+8 timezone
-  (timezoneOffset) => timezoneOffset === -480
+  (timezoneOffset) => timezoneOffset === -480,
 );
 const isTwOrHk = detectTwOrHk();
 
 const detectJp = detectLocale(
   (schema) => schema.region === 'JP' || schema.language === 'ja',
   // UTC+9 timezone
-  (timezoneOffset) => timezoneOffset === -540
+  (timezoneOffset) => timezoneOffset === -540,
 );
 const isJp = detectJp();
 
 export default {
-  isNorthAmerica,
+  detectJp,
   detectNorthAmerica,
-  isTwOrHk,
   detectTwOrHk,
   isJp,
-  detectJp,
+  isNorthAmerica,
+  isTwOrHk,
 };

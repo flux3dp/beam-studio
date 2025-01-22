@@ -1,8 +1,8 @@
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import NS from '@core/app/constants/namespaces';
-import touchEvents from '@core/app/svgedit/touchEvents';
 import wheelEventHandlerGenerator from '@core/app/svgedit/interaction/wheelEventHandler';
+import touchEvents from '@core/app/svgedit/touchEvents';
 import workareaManager from '@core/app/svgedit/workarea';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
 import styles from './EmbeddedCanvas.module.scss';
 
@@ -28,6 +28,7 @@ export class EmbeddedCanvasManager {
     if (!this.instance) {
       this.instance = new this();
     }
+
     return this.instance;
   }
 
@@ -44,11 +45,14 @@ export class EmbeddedCanvasManager {
     this.setupContainer(container);
     this.renderContent();
     this.resetView();
+
     const wheelHandler = wheelEventHandlerGenerator(() => this.zoomRatio, this.zoom, {
-      maxZoom: 10,
       getCenter: (e) => ({ x: e.layerX ?? e.clientX, y: e.layerY ?? e.clientY }),
+      maxZoom: 10,
     });
+
     this.container.addEventListener('wheel', wheelHandler);
+
     if (navigator.maxTouchPoints > 1) {
       touchEvents.setupCanvasTouchEvents(
         this.container,
@@ -70,7 +74,9 @@ export class EmbeddedCanvasManager {
     this.root.setAttribute('xlinkns', NS.XLINK);
     this.root.setAttribute('xmlns', NS.SVG);
     this.background = document.createElementNS(NS.SVG, 'svg') as SVGSVGElement;
+
     const backgroundRect = document.createElementNS(NS.SVG, 'rect');
+
     backgroundRect.setAttribute('x', '0');
     backgroundRect.setAttribute('y', '0');
     backgroundRect.setAttribute('width', '100%');
@@ -81,8 +87,13 @@ export class EmbeddedCanvasManager {
     backgroundRect.setAttribute('vector-effect', 'non-scaling-stroke');
     this.background.classList.add(styles.background);
     this.background.appendChild(backgroundRect);
+
     const canvasGrid = document.querySelector('#canvasGrid') as SVGSVGElement;
-    if (canvasGrid) this.background.appendChild(canvasGrid.cloneNode(true));
+
+    if (canvasGrid) {
+      this.background.appendChild(canvasGrid.cloneNode(true));
+    }
+
     this.root.appendChild(this.background);
     this.container.appendChild(this.root);
   };
@@ -103,7 +114,9 @@ export class EmbeddedCanvasManager {
   zoom = (zoomRatio: number, staticPoint?: { x: number; y: number }): void => {
     const targetZoom = Math.max(0.05, zoomRatio);
     const oldZoomRatio = this.zoomRatio;
+
     this.zoomRatio = targetZoom;
+
     const w = this.width * targetZoom;
     const h = this.height * targetZoom;
     const rootW = w * this.canvasExpansion;
@@ -111,6 +124,7 @@ export class EmbeddedCanvasManager {
     const expansionRatio = (this.canvasExpansion - 1) / 2;
     const x = this.width * targetZoom * expansionRatio;
     const y = this.height * targetZoom * expansionRatio;
+
     this.root?.setAttribute('x', x.toString());
     this.root?.setAttribute('y', y.toString());
     this.root?.setAttribute('width', rootW.toString());
@@ -126,13 +140,14 @@ export class EmbeddedCanvasManager {
     this.svgcontent?.setAttribute('width', w.toString());
     this.svgcontent?.setAttribute('height', h.toString());
 
-    // eslint-disable-next-line no-param-reassign
     staticPoint = staticPoint ?? {
       x: this.container.clientWidth / 2,
       y: this.container.clientHeight / 2,
     };
+
     const oldScroll = { x: this.container.scrollLeft, y: this.container.scrollTop };
     const zoomChanged = targetZoom / oldZoomRatio;
+
     this.container.scrollLeft = (oldScroll.x + staticPoint.x) * zoomChanged - staticPoint.x;
     this.container.scrollTop = (oldScroll.y + staticPoint.y) * zoomChanged - staticPoint.y;
     zoomBlockEventEmitter.emit('UPDATE_ZOOM_BLOCK');
@@ -147,21 +162,24 @@ export class EmbeddedCanvasManager {
   };
 
   resetView = (): void => {
-    const { width, height } = this;
-    const { clientWidth, clientHeight } = this.container;
+    const { height, width } = this;
+    const { clientHeight, clientWidth } = this.container;
     const workareaToDimensionRatio = Math.min(clientWidth / width, clientHeight / height);
     const zoomLevel = workareaToDimensionRatio * 0.95;
     const workAreaWidth = width * zoomLevel;
     const workAreaHeight = height * zoomLevel;
     const offsetX = (clientWidth - workAreaWidth) / 2;
     const offsetY = (clientHeight - workAreaHeight) / 2;
+
     this.zoom(zoomLevel);
-    const x = parseFloat(this.background.getAttribute('x'));
-    const y = parseFloat(this.background.getAttribute('y'));
+
+    const x = Number.parseFloat(this.background.getAttribute('x'));
+    const y = Number.parseFloat(this.background.getAttribute('y'));
     const defaultScroll = {
       x: (x - offsetX) / zoomLevel,
       y: (y - offsetY) / zoomLevel,
     };
+
     this.container.scrollLeft = defaultScroll.x * zoomLevel;
     this.container.scrollTop = defaultScroll.y * zoomLevel;
   };

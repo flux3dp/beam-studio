@@ -1,26 +1,27 @@
-import ISVGLayer, { ISVGLayerConscrtuctor } from '@core/interfaces/ISVGLayer';
+import type { ISVGLayerConscrtuctor } from '@core/interfaces/ISVGLayer';
+import type ISVGLayer from '@core/interfaces/ISVGLayer';
 
 export default interface ISVGDrawing {
   all_layers: ISVGLayer[];
-  copyElem: (elem: Element) => Element;
-  getCurrentLayer: () => SVGGElement | null;
-  setCurrentLayer: (layerName: string) => boolean;
-  getCurrentLayerName: () => string | null;
-  getLayerVisibility: (layerName: string) => boolean;
-  getLayerColor: (layerName: string) => string;
-  getLayerName: (index: number) => string | null;
-  hasLayer: (layerName: string) => boolean;
-  createLayer: (name: string) => SVGGElement;
-  layer_map: { [key: string]: ISVGLayer };
-  getLayerByName: (layerName: string) => SVGGElement | null;
-  getNumLayers: () => number;
-  identifyLayers: () => void;
-  setLayerOpacity: (name: string, opacity: number) => void;
-  releaseId: (id: string) => void;
-  draw: {
-    Layer: ISVGLayerConscrtuctor;
-  };
   browser: {
     isTouch: () => boolean;
   };
+  copyElem: (elem: Element) => Element;
+  createLayer: (name: string) => SVGGElement;
+  draw: {
+    Layer: ISVGLayerConscrtuctor;
+  };
+  getCurrentLayer: () => null | SVGGElement;
+  getCurrentLayerName: () => null | string;
+  getLayerByName: (layerName: string) => null | SVGGElement;
+  getLayerColor: (layerName: string) => string;
+  getLayerName: (index: number) => null | string;
+  getLayerVisibility: (layerName: string) => boolean;
+  getNumLayers: () => number;
+  hasLayer: (layerName: string) => boolean;
+  identifyLayers: () => void;
+  layer_map: { [key: string]: ISVGLayer };
+  releaseId: (id: string) => void;
+  setCurrentLayer: (layerName: string) => boolean;
+  setLayerOpacity: (name: string, opacity: number) => void;
 }

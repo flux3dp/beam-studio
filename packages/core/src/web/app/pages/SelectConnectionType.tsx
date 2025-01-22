@@ -1,21 +1,22 @@
-import classNames from 'classnames';
 import React, { useMemo } from 'react';
 
-import useI18n from '@core/helpers/useI18n';
-import { supportUsbModels } from '@core/app/actions/beambox/constant';
-
-import { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import classNames from 'classnames';
 import { useLocation } from 'react-router-dom';
+
+import { supportUsbModels } from '@core/app/actions/beambox/constant';
+import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import useI18n from '@core/helpers/useI18n';
+
 import styles from './SelectConnectionType.module.scss';
 
 const TYPE_URL_MAP = {
-  wifi: '#initialize/connect/connect-wi-fi',
-  wired: '#initialize/connect/connect-wired',
   ether2ether: '#initialize/connect/connect-ethernet',
   usb: '#initialize/connect/connect-usb',
+  wifi: '#initialize/connect/connect-wi-fi',
+  wired: '#initialize/connect/connect-wired',
 };
 
-const SelectConnectionType = (): JSX.Element => {
+const SelectConnectionType = (): React.JSX.Element => {
   const lang = useI18n().initialize;
   const { search } = useLocation();
   const model = useMemo(() => new URLSearchParams(search).get('model') as WorkAreaModel, [search]);
@@ -24,7 +25,7 @@ const SelectConnectionType = (): JSX.Element => {
     window.location.hash = '#initialize/connect/select-machine-model';
   };
 
-  const handleConnectionTypeClick = (type: 'wifi' | 'wired' | 'ether2ether' | 'usb') => {
+  const handleConnectionTypeClick = (type: 'ether2ether' | 'usb' | 'wifi' | 'wired') => {
     const url = TYPE_URL_MAP[type];
     const urlParams = new URLSearchParams({ model });
     const queryString = urlParams.toString();
@@ -32,24 +33,20 @@ const SelectConnectionType = (): JSX.Element => {
     window.location.hash = `${url}?${queryString}`;
   };
 
-  const renderConnectionTypeButton = (
-    type: 'wifi' | 'wired' | 'ether2ether' | 'usb',
-  ): JSX.Element => (
+  const renderConnectionTypeButton = (type: 'ether2ether' | 'usb' | 'wifi' | 'wired'): React.JSX.Element => (
     <button
-      id={`connect-${type}`}
-      type="button"
       className={classNames('btn', styles.btn)}
+      id={`connect-${type}`}
       onClick={() => handleConnectionTypeClick(type)}
+      type="button"
     >
       {lang.connection_types[type]}
     </button>
   );
 
-  const renderConnectionTypeContainer = (
-    type: 'wifi' | 'wired' | 'ether2ether' | 'usb',
-  ): JSX.Element => (
+  const renderConnectionTypeContainer = (type: 'ether2ether' | 'usb' | 'wifi' | 'wired'): React.JSX.Element => (
     <div className={styles['btn-container']}>
-      <img className={styles.icon} src={`img/init-panel/icon-${type}.svg`} draggable="false" />
+      <img className={styles.icon} draggable="false" src={`img/init-panel/icon-${type}.svg`} />
       {renderConnectionTypeButton(type)}
     </div>
   );

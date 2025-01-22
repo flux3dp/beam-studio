@@ -3,31 +3,30 @@ import React from 'react';
 import units from '@core/helpers/units';
 
 interface Props {
+  handleSimTimeChange: (value: number) => void;
   simTime: number;
   simTimeMax: number;
-  handleSimTimeChange: (value: number) => void;
 }
 
-function ProgressBar({ simTime, simTimeMax, handleSimTimeChange }: Props): JSX.Element {
+function ProgressBar({ handleSimTimeChange, simTime, simTimeMax }: Props): React.JSX.Element {
   const percentage = `${Math.round(10000 * (simTime / simTimeMax)) / 100}%`;
+
   return (
     <div>
       <div className="label pull-left" />
-      <div id="progress-bar" className="path-preview-slider-container">
+      <div className="path-preview-slider-container" id="progress-bar">
         <input
           className="slider"
-          type="range"
-          min={0}
           max={units.convertTimeUnit(simTimeMax, 'ms', 'm')}
+          min={0}
+          onChange={(e) => handleSimTimeChange(units.convertTimeUnit(Number(e.target.value), 'm', 'ms'))}
           step={units.convertTimeUnit(0.1, 'ms')}
-          value={units.convertTimeUnit(simTime, 'ms', 'm')}
           style={{
             // @ts-ignore Set variable for css to use
             '--percentage': percentage,
           }}
-          onChange={(e) =>
-            handleSimTimeChange(units.convertTimeUnit(Number(e.target.value), 'm', 'ms'))
-          }
+          type="range"
+          value={units.convertTimeUnit(simTime, 'ms', 'm')}
         />
       </div>
     </div>

@@ -1,40 +1,42 @@
-/* eslint-disable react/no-array-index-key */
-/* eslint-disable @typescript-eslint/no-shadow */
+import type { KeyboardEventHandler } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+
 import classNames from 'classnames';
-import React, { KeyboardEventHandler, useEffect, useMemo, useRef, useState } from 'react';
 import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import alertConfig from '@core/helpers/api/alert-config';
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import checkCamera from '@core/helpers/device/check-camera';
+import { adorModels, bb2Models, promarkModels } from '@core/app/actions/beambox/constant';
+import menuDeviceActions from '@core/app/actions/beambox/menuDeviceActions';
+import dialogCaller from '@core/app/actions/dialog-caller';
+import TestInfo from '@core/app/components/settings/connection/TestInfo';
+import TestState, { isTesting } from '@core/app/constants/connection-test';
+import { allWorkareas } from '@core/app/constants/workarea-constants';
+import alertConfig from '@core/helpers/api/alert-config';
+import Discover from '@core/helpers/api/discover';
+import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 import checkIPFormat from '@core/helpers/check-ip-format';
 import checkRpiIp from '@core/helpers/check-rpi-ip';
 import checkSoftwareForAdor from '@core/helpers/check-software';
-import Discover from '@core/helpers/api/discover';
-import dialogCaller from '@core/app/actions/dialog-caller';
+import checkCamera from '@core/helpers/device/check-camera';
+import deviceMaster from '@core/helpers/device-master';
 import isWeb from '@core/helpers/is-web';
-import menuDeviceActions from '@core/app/actions/beambox/menuDeviceActions';
-import network from '@app/implementations/network';
-import storage from '@app/implementations/storage';
-import TestInfo from '@core/app/components/settings/connection/TestInfo';
-import TestState, { isTesting } from '@core/app/constants/connection-test';
 import useI18n from '@core/helpers/useI18n';
 import versionChecker from '@core/helpers/version-checker';
-import { adorModels, bb2Models, promarkModels } from '@core/app/actions/beambox/constant';
-import { allWorkareas } from '@core/app/constants/workarea-constants';
-import { IDeviceInfo } from '@core/interfaces/IDevice';
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
-import { swiftrayClient } from '@core/helpers/api/swiftray-client';
-import deviceMaster from '@core/helpers/device-master';
-import styles from './index.module.scss';
-import { initialState, State } from './state';
+import network from '@app/implementations/network';
+import storage from '@app/implementations/storage';
+
 import Hint from './Hint';
+import styles from './index.module.scss';
+import type { State } from './state';
+import { initialState } from './state';
 
 const MACHINE_CONNECTION_TIMEOUT = 30;
 
 // TODO: add test
-const ConnectMachineIp = (): JSX.Element => {
+const ConnectMachineIp = (): React.JSX.Element => {
   const lang = useI18n();
   const [ipValue, setIpValue] = useState('');
   const [state, setState] = useState<State>(initialState);
@@ -42,13 +44,13 @@ const ConnectMachineIp = (): JSX.Element => {
   const intervalId = useRef(0);
   const discoveredDevicesRef = useRef(Array.of<IDeviceInfo>());
 
-  const { isWired, isUsb, model } = useMemo(() => {
+  const { isUsb, isWired, model } = useMemo(() => {
     const queryString = window.location.hash.split('?')[1] || '';
     const urlParams = new URLSearchParams(queryString);
 
     return {
-      isWired: urlParams.get('wired') === '1',
       isUsb: urlParams.get('usb') === '1',
+      isWired: urlParams.get('wired') === '1',
       model: urlParams.get('model'),
     };
   }, []);
@@ -68,12 +70,15 @@ const ConnectMachineIp = (): JSX.Element => {
     [model],
   );
   const testingIps = isUsb ? ['10.55.0.1', '10.55.0.17'] : [ipValue];
-  const updateTestState = (newState: Partial<State>) =>
-    setState((prev) => ({ ...prev, ...newState }));
+  const updateTestState = (newState: Partial<State>) => setState((prev) => ({ ...prev, ...newState }));
 
   const validateIpFormat = () => {
     const isValid = testingIps.every((ip) => checkIPFormat(ip));
-    if (!isValid) updateTestState({ testState: TestState.IP_FORMAT_ERROR });
+
+    if (!isValid) {
+      updateTestState({ testState: TestState.IP_FORMAT_ERROR });
+    }
+
     return isValid;
   };
 
@@ -82,11 +87,16 @@ const ConnectMachineIp = (): JSX.Element => {
 
     for (let i = 0; i < testingIps.length; i++) {
       const ip = testingIps[i];
-      // eslint-disable-next-line no-await-in-loop
+
       const { error, isExisting } = await network.checkIPExist(ip, 3);
 
-      if (isExisting) return ip;
-      if (error) updateTestState({ testState: TestState.IP_UNREACHABLE });
+      if (isExisting) {
+        return ip;
+      }
+
+      if (error) {
+        updateTestState({ testState: TestState.IP_UNREACHABLE });
+      }
     }
 
     return null;
@@ -117,15 +127,12 @@ const ConnectMachineIp = (): JSX.Element => {
           const device = discoveredDevicesRef.current.find(predicate);
 
           if (device) {
-            if (
-              isWeb() &&
-              !versionChecker(device.version).meetRequirement('LATEST_GHOST_FOR_WEB')
-            ) {
+            if (isWeb() && !versionChecker(device.version).meetRequirement('LATEST_GHOST_FOR_WEB')) {
               alertCaller.popUp({
-                message: sprintf(lang.update.firmware.too_old_for_web, device.version),
                 buttonLabels: [lang.update.download, lang.update.later],
-                primaryButtonIndex: 0,
                 callbacks: [() => menuDeviceActions.UPDATE_FIRMWARE(device), () => {}],
+                message: sprintf(lang.update.firmware.too_old_for_web, device.version),
+                primaryButtonIndex: 0,
               });
             }
 
@@ -137,11 +144,9 @@ const ConnectMachineIp = (): JSX.Element => {
             setState((prev) => ({
               ...prev,
               countDownDisplay: countDown.current,
-              testState:
-                countDown.current > 0
-                  ? TestState.CONNECTION_TESTING
-                  : TestState.CONNECTION_TEST_FAILED,
+              testState: countDown.current > 0 ? TestState.CONNECTION_TESTING : TestState.CONNECTION_TEST_FAILED,
             }));
+
             if (countDown.current <= 0) {
               clearInterval(intervalId.current);
               resolve(null);
@@ -168,9 +173,9 @@ const ConnectMachineIp = (): JSX.Element => {
 
     updateTestState({ testState: TestState.CAMERA_TEST_FAILED });
     alertCaller.popUp({
-      messageIcon: 'warning',
       caption: lang.initialize.connect_machine_ip.check_camera,
       message: isPromark ? lang.web_cam.no_device : lang.topbar.alerts.fail_to_connect_with_camera,
+      messageIcon: 'warning',
     });
   };
 
@@ -186,9 +191,9 @@ const ConnectMachineIp = (): JSX.Element => {
     if (readyState === WebSocket.CLOSED) {
       updateTestState({ testState: TestState.IP_UNREACHABLE });
       alertCaller.popUp({
-        messageIcon: 'warning',
         caption: lang.initialize.connect_machine_ip.check_swiftray_connection,
         message: lang.initialize.connect_machine_ip.alert.swiftray_connection_error,
+        messageIcon: 'warning',
       });
     }
 
@@ -196,20 +201,25 @@ const ConnectMachineIp = (): JSX.Element => {
   };
 
   const handleStartTestForPromark = async () => {
-    if (!checkSwiftrayConnection()) return;
+    if (!checkSwiftrayConnection()) {
+      return;
+    }
 
     const device = await testConnection(({ model }) => promarkModels.has(model));
+
     if (!device) {
       alertCaller.popUp({
-        messageIcon: 'warning',
         caption: lang.initialize.connect_machine_ip.check_connection,
         message: lang.message.unknown_device,
+        messageIcon: 'warning',
       });
+
       return;
     }
 
     // for correctly select promark device serial
     const res = await deviceMaster.select(device);
+
     console.log('🚀 ~ file: index.tsx:212 ~ handleStartTestForPromark ~ deviceMaster.select:', res);
 
     await testCamera(device);
@@ -218,15 +228,25 @@ const ConnectMachineIp = (): JSX.Element => {
   const handleStartTest = async () => {
     if (isPromark) {
       handleStartTestForPromark();
+
       return;
     }
 
     const { testState } = state;
-    if (isTesting(testState)) return;
-    if (!validateIpFormat()) return;
+
+    if (isTesting(testState)) {
+      return;
+    }
+
+    if (!validateIpFormat()) {
+      return;
+    }
 
     const ip = await testIpReachability();
-    if (!ip) return;
+
+    if (!ip) {
+      return;
+    }
 
     setUpLocalStorageIp(ip);
 
@@ -237,11 +257,15 @@ const ConnectMachineIp = (): JSX.Element => {
     });
 
     const device = await testConnection();
-    if (!device) return;
+
+    if (!device) {
+      return;
+    }
 
     if (!checkSoftwareForAdor(device)) {
       setIpValue('');
       setState((prev) => ({ ...prev, device: null, testState: TestState.NONE }));
+
       return;
     }
 
@@ -258,7 +282,7 @@ const ConnectMachineIp = (): JSX.Element => {
     return () => {
       clearInterval(intervalId.current);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line hooks/exhaustive-deps
   }, [isUsb]);
 
   const onFinish = async () => {
@@ -300,6 +324,7 @@ const ConnectMachineIp = (): JSX.Element => {
     // go to select-promark-laser-source for promark devices
     if (isPromark) {
       window.location.hash = '#initialize/connect/select-promark-laser-source';
+
       return;
     }
 
@@ -342,11 +367,17 @@ const ConnectMachineIp = (): JSX.Element => {
     }
   };
 
-  const { testState, countDownDisplay, device } = state;
+  const { countDownDisplay, device, testState } = state;
 
   const touchPanelSrc = useMemo(() => {
-    if (isAdor) return 'core-img/init-panel/ador-ip.jpg';
-    if (isBb2) return `core-img/init-panel/beambox-2-ip-${isWired ? 'wired' : 'wireless'}.png`;
+    if (isAdor) {
+      return 'core-img/init-panel/ador-ip.jpg';
+    }
+
+    if (isBb2) {
+      return `core-img/init-panel/beambox-2-ip-${isWired ? 'wired' : 'wireless'}.png`;
+    }
+
     return `img/init-panel/network-panel-${isWired ? 'wired' : 'wireless'}.jpg`;
   }, [isAdor, isWired, isBb2]);
 
@@ -363,43 +394,33 @@ const ConnectMachineIp = (): JSX.Element => {
         {isUsb ? (
           <div className={classNames(styles.image, styles['is-usb'])}>
             <div className={classNames(styles.circle, styles.c1)} />
-            <img
-              className={styles['is-usb']}
-              src="img/init-panel/icon-usb-cable.svg"
-              draggable="false"
-            />
+            <img className={styles['is-usb']} draggable="false" src="img/init-panel/icon-usb-cable.svg" />
             <div className={classNames(styles.circle, styles.c2)} />
           </div>
         ) : (
           <div className={styles.image}>
             <div className={classNames(styles.hint, { [styles.wired]: isWired })} />
-            <img src={touchPanelSrc} draggable="false" />
+            <img draggable="false" src={touchPanelSrc} />
           </div>
         )}
         <div className={styles.text}>
           <div className={styles.title}>
-            {isUsb
-              ? lang.initialize.connect_machine_ip.check_usb
-              : lang.initialize.connect_machine_ip.enter_ip}
+            {isUsb ? lang.initialize.connect_machine_ip.check_usb : lang.initialize.connect_machine_ip.enter_ip}
           </div>
           {!isUsb ? (
             <input
               className={classNames(styles.input)}
-              value={ipValue}
               onChange={(e) => setIpValue(e.currentTarget.value)}
-              placeholder="192.168.0.1"
-              type="text"
               onKeyDown={(e) => {
                 e.stopPropagation();
                 handleInputKeyDown(e);
               }}
+              placeholder="192.168.0.1"
+              type="text"
+              value={ipValue}
             />
           ) : null}
-          <TestInfo
-            testState={testState}
-            connectionCountDown={countDownDisplay}
-            firmwareVersion={device?.version}
-          />
+          <TestInfo connectionCountDown={countDownDisplay} firmwareVersion={device?.version} testState={testState} />
           {isPromark && <Hint message={lang.initialize.connect_machine_ip.promark_hint} />}
         </div>
       </div>

@@ -1,8 +1,8 @@
 import React from 'react';
+
 import { render } from '@testing-library/react';
 
 import { FullWindowPanelContext } from './FullWindowPanel';
-
 import Header from './Header';
 
 jest.mock('@core/app/widgets/FullWindowPanel/FullWindowPanel', () => ({
@@ -26,6 +26,7 @@ describe('test Header', () => {
         <Header className="class">Header</Header>
       </FullWindowPanelContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
     rerender(
       <FullWindowPanelContext.Provider

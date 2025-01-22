@@ -1,21 +1,25 @@
 import i18n from '@core/helpers/i18n';
+
 import Alert from '../app/actions/alert-caller';
-import AlertConstants from '../app/constants/alert-constants';
 import Progress from '../app/actions/progress-caller';
+import AlertConstants from '../app/constants/alert-constants';
 
 const LANG = i18n.lang.beambox;
+
 export default {
   uploadToS3: async (fileName, body) => {
     if (body.length > 10000000) {
       // 10M
       setTimeout(() => {
         Alert.popUp({
-          type: AlertConstants.SHOW_POPUP_ERROR,
           message: LANG.popup.upload_file_too_large,
+          type: AlertConstants.SHOW_POPUP_ERROR,
         });
       }, 100);
+
       return;
     }
+
     Progress.openNonstopProgress({ id: 'upload-to-aws', message: LANG.popup.progress.uploading });
 
     try {
@@ -26,6 +30,7 @@ export default {
       }-${fileName}`;
 
       const uploadFormData = new FormData();
+
       uploadFormData.append('file', reportFile);
       uploadFormData.append('Content-Type', reportFile.type);
       uploadFormData.append('acl', 'bucket-owner-full-control');
@@ -33,32 +38,33 @@ export default {
 
       const url = `https://beamstudio-bug-report.s3.amazonaws.com/svg&bvg/reportName`;
       const config = {
-        method: 'PUT',
+        body: uploadFormData,
         headers: new Headers({
           Accept: 'application/xml',
           'Content-Type': 'multipart/form-data',
         }),
-        body: uploadFormData,
+        method: 'PUT',
       };
       let r = await fetch(url, config);
+
       if (r.status === 200) {
         console.log('Success', r);
         Alert.popUp({
-          type: AlertConstants.SHOW_POPUP_INFO,
           message: LANG.popup.successfully_uploaded,
+          type: AlertConstants.SHOW_POPUP_INFO,
         });
       } else {
         console.log('Failed', r);
         Alert.popUp({
-          type: AlertConstants.SHOW_POPUP_ERROR,
           message: `${LANG.popup.upload_failed}\n${r.status}`,
+          type: AlertConstants.SHOW_POPUP_ERROR,
         });
       }
     } catch (e) {
       console.log(e);
       Alert.popUp({
-        type: AlertConstants.SHOW_POPUP_ERROR,
         message: `${LANG.popup.upload_failed}\n${e}`,
+        type: AlertConstants.SHOW_POPUP_ERROR,
       });
     } finally {
       Progress.popById('upload-to-aws');

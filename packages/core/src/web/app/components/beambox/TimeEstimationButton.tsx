@@ -1,27 +1,31 @@
 import React, { useContext } from 'react';
+
 import { Tooltip } from 'antd';
 
 import ExportFuncs from '@core/app/actions/beambox/export-funcs';
+import { CanvasMode } from '@core/app/constants/canvasMode';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import { TimeEstimationButtonContext } from '@core/app/contexts/TimeEstimationButtonContext';
+import WorkareaIcons from '@core/app/icons/workarea/WorkareaIcons';
 import FormatDuration from '@core/helpers/duration-formatter';
 import useI18n from '@core/helpers/useI18n';
 import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
-import WorkareaIcons from '@core/app/icons/workarea/WorkareaIcons';
-import { CanvasContext } from '@core/app/contexts/CanvasContext';
-import { CanvasMode } from '@core/app/constants/canvasMode';
-import { TimeEstimationButtonContext } from '@core/app/contexts/TimeEstimationButtonContext';
 
 import styles from './TimeEstimationButton.module.scss';
 
-const TimeEstimationButton = (): JSX.Element => {
+const TimeEstimationButton = (): React.JSX.Element => {
   const { estimatedTime, setEstimatedTime } = useContext(TimeEstimationButtonContext);
   const { mode } = useContext(CanvasContext);
   const lang = useI18n().beambox.time_est_button;
 
-  if (mode === CanvasMode.PathPreview) return <div />;
+  if (mode === CanvasMode.PathPreview) {
+    return <div />;
+  }
 
   const calculateEstimatedTime = async () => {
     webNeedConnectionWrapper(async () => {
       const estimateTime = await ExportFuncs.estimateTime();
+
       setEstimatedTime(estimateTime);
     });
   };

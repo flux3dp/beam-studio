@@ -5,18 +5,19 @@
 // even though React doesn't support any pointer events yet.
 
 import React from 'react';
+
 import ReactDOM from 'react-dom';
 
 // A mapping of pointer event props to event names.
 const pointerEventMap = {
-  onPointerMove: 'pointermove',
+  onPointerCancel: 'pointercancel',
   onPointerDown: 'pointerdown',
-  onPointerUp: 'pointerup',
-  onPointerOver: 'pointerover',
-  onPointerOut: 'pointerout',
   onPointerEnter: 'pointerenter',
   onPointerLeave: 'pointerleave',
-  onPointerCancel: 'pointercancel',
+  onPointerMove: 'pointermove',
+  onPointerOut: 'pointerout',
+  onPointerOver: 'pointerover',
+  onPointerUp: 'pointerup',
 };
 
 // An array of just the pointer event props.
@@ -32,6 +33,7 @@ const initNodeWithPE = (node, props) => {
   pointerEventProps.forEach((eventProp) => {
     // If an event prop exists in given props, add the event listener.
     const listener = props[eventProp];
+
     if (listener) {
       hasPE = true;
       node.addEventListener(pointerEventMap[eventProp], (e) => {
@@ -66,7 +68,9 @@ const updateNodeWithPE = (node, prevProps, nextProps) => {
     // If listener hasn't changed, there's nothing to do.
     // Note the additional check exists
     // because `undefined` !== `null` but both mean "no event listener".
-    if (listenerOld === listenerNew || (!listenerOld && !listenerNew)) return;
+    if (listenerOld === listenerNew || (!listenerOld && !listenerNew)) {
+      return;
+    }
 
     // Remove existing event listener.
     if (listenerOld) {
@@ -90,17 +94,17 @@ const updateNodeWithPE = (node, prevProps, nextProps) => {
 };
 
 interface Props {
-  touchAction: 'auto' | 'none' | 'pan-x' | 'pan-y' | 'manipulation';
-  style?: any;
-  onPointerMove?: any;
+  onPointerCancel?: any;
   onPointerDown?: any;
-  onPointerUp?: any;
-  onPointerOver?: any;
-  onPointerOut?: any;
   onPointerEnter?: any;
   onPointerLeave?: any;
-  onPointerCancel?: any;
+  onPointerMove?: any;
+  onPointerOut?: any;
+  onPointerOver?: any;
+  onPointerUp?: any;
   onWheel?: any;
+  style?: any;
+  touchAction: 'auto' | 'manipulation' | 'none' | 'pan-x' | 'pan-y';
 }
 
 // Component with pointer events enabled (specially made for Pointer Events Polyfill)
@@ -125,20 +129,22 @@ class Pointable extends React.Component<Props> {
 
     // Create a shallow copy of props
     const otherProps = { ...this.props };
+
     // Remove known pointer event props
     pointerEventProps.forEach((prop) => delete otherProps[prop]);
     // Remove other props used by <Pointable />
     delete otherProps.children;
     delete otherProps.touchAction;
     delete otherProps.onWheel;
+
     return (
       <div
+        onWheel={onWheel}
         ref={(node) => {
           this.pointableNode = node;
+
           return null;
         }}
-        onWheel={onWheel}
-        // eslint-disable-next-line react/jsx-props-no-spreading
         {...otherProps}
       >
         {children}

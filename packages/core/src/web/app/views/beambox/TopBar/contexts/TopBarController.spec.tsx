@@ -3,6 +3,7 @@ import TopBarController from './TopBarController';
 const mockEmit = jest.fn();
 const mockOn = jest.fn();
 const mockRemoveListener = jest.fn();
+
 jest.mock('@core/helpers/eventEmitterFactory', () => ({
   createEventEmitter: () => ({
     emit: (...args) => mockEmit(...args),
@@ -13,6 +14,7 @@ jest.mock('@core/helpers/eventEmitterFactory', () => ({
 
 const mockOnObjectBlur = jest.fn();
 const mockOnObjectFocus = jest.fn();
+
 jest.mock('@core/app/actions/beambox/beambox-global-interaction', () => ({
   onObjectBlur: (...args) => mockOnObjectBlur(...args),
   onObjectFocus: (...args) => mockOnObjectFocus(...args),
@@ -32,6 +34,7 @@ describe('test TopBarController', () => {
 
   test('test setElement', () => {
     const testElem = document.createElement('div');
+
     TopBarController.setElement(testElem);
     expect(mockOnObjectBlur).toHaveBeenCalledTimes(1);
     expect(mockOnObjectFocus).toBeCalledTimes(1);
@@ -67,8 +70,8 @@ describe('test TopBarController', () => {
   });
 
   test('test setSelectedDevice', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const mockDevice: any = { name: 'ABC' };
+
     TopBarController.setSelectedDevice(mockDevice);
     expect(mockEmit).toHaveBeenCalledTimes(1);
     expect(mockEmit).toHaveBeenNthCalledWith(1, 'SET_SELECTED_DEVICE', mockDevice);
@@ -76,6 +79,7 @@ describe('test TopBarController', () => {
 
   test('test onTitleChange', () => {
     const mockHandler = jest.fn();
+
     TopBarController.onTitleChange(mockHandler);
     expect(mockOn).toHaveBeenCalledTimes(1);
     expect(mockOn).toHaveBeenNthCalledWith(1, 'UPDATE_TITLE', mockHandler);
@@ -83,6 +87,7 @@ describe('test TopBarController', () => {
 
   test('test offTitleChange', () => {
     const mockHandler = jest.fn();
+
     TopBarController.offTitleChange(mockHandler);
     expect(mockRemoveListener).toHaveBeenCalledTimes(1);
     expect(mockRemoveListener).toHaveBeenNthCalledWith(1, 'UPDATE_TITLE', mockHandler);

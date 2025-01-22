@@ -1,52 +1,59 @@
-import classNames from 'classnames';
 import React, { useContext } from 'react';
+
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Switch, Tooltip } from 'antd';
+import classNames from 'classnames';
 
 import colorConstants, { PrintingColors } from '@core/app/constants/color-constants';
 import history from '@core/app/svgedit/history/history';
+import undoManager from '@core/app/svgedit/history/undoManager';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
-import undoManager from '@core/app/svgedit/history/undoManager';
-import useI18n from '@core/helpers/useI18n';
-import {
-  getData,
-  getMultiSelectData,
-  writeDataLayer,
-} from '@core/helpers/layer/layer-config-helper';
+import { getData, getMultiSelectData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { getLayerByName } from '@core/helpers/layer/layer-helper';
+import useI18n from '@core/helpers/useI18n';
 
-import ConfigPanelContext from './ConfigPanelContext';
 import styles from './Block.module.scss';
+import ConfigPanelContext from './ConfigPanelContext';
 
-const SingleColorBlock = (): JSX.Element => {
+const SingleColorBlock = (): React.JSX.Element => {
   const t = useI18n().beambox.right_panel.laser_panel;
-  const { selectedLayers, state, initState, dispatch } = useContext(ConfigPanelContext);
-  const { fullcolor, split, selectedLayer } = state;
+  const { dispatch, initState, selectedLayers, state } = useContext(ConfigPanelContext);
+  const { fullcolor, selectedLayer, split } = state;
 
   const handleToggleFullColor = () => {
     const batchCmd = new history.BatchCommand('Toggle full color');
     const newVal = !fullcolor.value;
-    dispatch({ type: 'change', payload: { fullcolor: newVal } });
+
+    dispatch({ payload: { fullcolor: newVal }, type: 'change' });
+
     let colorChanged = false;
     const layers = selectedLayers.map((layerName) => getLayerByName(layerName));
+
     layers.forEach((layer) => {
-      if (getData(layer, 'fullcolor') === newVal) return;
-      if (
-        !newVal &&
-        !colorConstants.printingLayerColor.includes(getData(layer, 'color') as PrintingColors)
-      ) {
+      if (getData(layer, 'fullcolor') === newVal) {
+        return;
+      }
+
+      if (!newVal && !colorConstants.printingLayerColor.includes(getData(layer, 'color') as PrintingColors)) {
         colorChanged = true;
         writeDataLayer(layer, 'color', PrintingColors.BLACK, { batchCmd });
       }
+
       const cmd = toggleFullColorLayer(layer, { val: newVal });
-      if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
+
+      if (cmd && !cmd.isEmpty()) {
+        batchCmd.addSubCommand(cmd);
+      }
     });
+
     if (colorChanged) {
       const selectedIdx = selectedLayers.findIndex((layerName) => layerName === selectedLayer);
       const config = getMultiSelectData(layers, selectedIdx, 'color');
-      dispatch({ type: 'update', payload: { color: config } });
+
+      dispatch({ payload: { color: config }, type: 'update' });
     }
+
     LayerPanelController.updateLayerPanel();
     batchCmd.onAfter = initState;
     undoManager.addCommandToHistory(batchCmd);
@@ -61,12 +68,12 @@ const SingleColorBlock = (): JSX.Element => {
         <QuestionCircleOutlined className={styles.hint} />
       </Tooltip>
       <Switch
-        disabled={split.value}
-        className={classNames(styles.switch, { [styles.partial]: fullcolor.hasMultiValue })}
-        id="single-color"
-        size="small"
         checked={!fullcolor.value}
+        className={classNames(styles.switch, { [styles.partial]: fullcolor.hasMultiValue })}
+        disabled={split.value}
+        id="single-color"
         onChange={handleToggleFullColor}
+        size="small"
       />
     </div>
   );

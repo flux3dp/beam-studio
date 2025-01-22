@@ -1,9 +1,9 @@
-/* eslint-disable no-continue */
 import * as paper from 'paper';
 
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 
 let svgCanvas;
+
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
@@ -11,39 +11,60 @@ getSVGAsync((globalSVG) => {
 const getElemString = (elem: Element) => {
   if (elem.tagName === 'rect' && elem.getAttribute('rx')) {
     const cloned = elem.cloneNode(true) as Element;
+
     cloned.setAttribute('ry', elem.getAttribute('rx'));
+
     return cloned.outerHTML;
   }
+
   return elem.outerHTML;
 };
 
-const checkParent = (elem: Element): { shouldSkip: boolean; parent?: Element } => {
-  if (!elem.isConnected) return { shouldSkip: true };
-  if (elem.tagName === 'defs' || ['svgcontent', 'svg_defs'].includes(elem.id))
-    return { shouldSkip: false, parent: elem };
-  if (elem.tagName === 'symbol')
+const checkParent = (elem: Element): { parent?: Element; shouldSkip: boolean } => {
+  if (!elem.isConnected) {
+    return { shouldSkip: true };
+  }
+
+  if (elem.tagName === 'defs' || ['svg_defs', 'svgcontent'].includes(elem.id)) {
+    return { parent: elem, shouldSkip: false };
+  }
+
+  if (elem.tagName === 'symbol') {
     return {
-      shouldSkip: !document.querySelector(`#svgcontent use[*|href="#${elem.id}"]`),
       parent: elem,
+      shouldSkip: !document.querySelector(`#svgcontent use[*|href="#${elem.id}"]`),
     };
+  }
+
   return checkParent(elem.parentNode as Element);
 };
 
-const updateMatrix = (
-  elem: Element,
-  matrix: SVGMatrix | undefined | null,
-  inverse = false,
-): SVGMatrix | null => {
+const updateMatrix = (elem: Element, matrix: null | SVGMatrix | undefined, inverse = false): null | SVGMatrix => {
   // Skip transform of top level elem
-  if (matrix === undefined) return null;
+  if (matrix === undefined) {
+    return null;
+  }
+
   const tlist = svgCanvas.getTransformList(elem);
+
   if (tlist.numberOfItems > 0) {
-    if (!inverse) elem.removeAttribute('transform');
+    if (!inverse) {
+      elem.removeAttribute('transform');
+    }
+
     const newMatrix = svgCanvas.transformListToTransform(tlist).matrix;
-    if (!matrix) return inverse ? newMatrix.inverse() : newMatrix;
-    if (inverse) return newMatrix.inverse().multiply(matrix);
+
+    if (!matrix) {
+      return inverse ? newMatrix.inverse() : newMatrix;
+    }
+
+    if (inverse) {
+      return newMatrix.inverse().multiply(matrix);
+    }
+
     return matrix.multiply(newMatrix);
   }
+
   return matrix;
 };
 
@@ -54,7 +75,8 @@ const getBBoxByAttr = (elem: Element) => {
   const top = +elem.getAttribute('y');
   const width = +elem.getAttribute('width');
   const height = +elem.getAttribute('height');
-  return { left, top, right: left + width, bottom: top + height, width, height };
+
+  return { bottom: top + height, height, left, right: left + width, top, width };
 };
 
 // Note:
@@ -66,7 +88,10 @@ const convertClipPath = async (): Promise<() => void> => {
   const clippedElems = Array.from(
     document.querySelectorAll('#svgcontent *[clip-path*="url"], #svg_defs *[clip-path*="url"]'),
   );
-  if (clippedElems.length === 0) return revert;
+
+  if (clippedElems.length === 0) {
+    return revert;
+  }
 
   const newElems = [];
   const oldElems = [];
@@ -78,63 +103,89 @@ const convertClipPath = async (): Promise<() => void> => {
     const transform = elem.getAttribute('transform') || '';
     const items = proj.importSVG(`<svg transform="${transform}">${elem.innerHTML}</svg>`);
     let pathItem: paper.PathItem = paper.PathItem.create('');
+
     for (let i = 0; i < items.children.length; i += 1) {
-      const obj = items.children[i] as paper.Shape | paper.Path | paper.CompoundPath;
+      const obj = items.children[i] as paper.CompoundPath | paper.Path | paper.Shape;
       const objPath = obj instanceof paper.Shape ? obj.toPath(insert) : obj.clone({ insert });
+
       objPath.closePath();
       pathItem = pathItem.unite(objPath, { insert });
     }
+
     return pathItem;
   };
 
-  const clip = async (clipPathKey: string, elem: Element, matrix?: SVGMatrix | null) => {
+  const clip = async (clipPathKey: string, elem: Element, matrix?: null | SVGMatrix) => {
     if (elem.tagName === 'g') {
       const m = updateMatrix(elem, matrix);
       const promises = [];
+
       elem.childNodes.forEach((subElem) => {
         const p = clip(clipPathKey, subElem as Element, m);
+
         promises.push(p);
       });
       await Promise.all(promises);
-    } else if (['rect', 'circle', 'ellipse', 'path', 'polygon', 'line'].includes(elem.tagName)) {
+    } else if (['circle', 'ellipse', 'line', 'path', 'polygon', 'rect'].includes(elem.tagName)) {
       const { isAllFilled } = svgCanvas.calcElemFilledInfo(elem);
+
       if (matrix) {
         const m = updateMatrix(elem, matrix);
+
         elem.setAttribute('transform', matrix2String(m));
       }
+
       const proj = new paper.Project(document.createElement('canvas'));
       const items = proj.importSVG(`<svg>${getElemString(elem)}</svg>`);
-      let obj = items.children[0] as paper.Shape | paper.Path | paper.CompoundPath;
+      let obj = items.children[0] as paper.CompoundPath | paper.Path | paper.Shape;
+
       if (obj instanceof paper.Shape) {
         obj = obj.toPath();
       }
+
       let resPath: paper.PathItem;
       const clipPath = clipPathMap[clipPathKey];
+
       if (obj instanceof paper.Path) {
-        if (isAllFilled) obj.closePath();
+        if (isAllFilled) {
+          obj.closePath();
+        }
+
         resPath = obj.intersect(clipPath, { trace: isAllFilled });
       } else {
         resPath = new paper.CompoundPath('');
         for (let i = 0; i < obj.children.length; i += 1) {
           const subPath = obj.children[i] as paper.PathItem;
-          if (isAllFilled) subPath.closePath();
-          resPath.addChild(subPath.intersect(clipPath, { trace: isAllFilled, insert: false }));
+
+          if (isAllFilled) {
+            subPath.closePath();
+          }
+
+          resPath.addChild(subPath.intersect(clipPath, { insert: false, trace: isAllFilled }));
         }
       }
+
       resPath.fillColor = items.fillColor;
       elem.replaceWith(resPath.exportSVG());
     } else if (elem.tagName === 'image') {
       const clipPath = document.querySelector(clipPathKey.split('-')[1]);
       const clipRect = clipPath.firstChild as SVGRectElement;
-      if (clipRect.tagName !== 'rect') return;
+
+      if (clipRect.tagName !== 'rect') {
+        return;
+      }
 
       const m0 = updateMatrix(elem, matrix);
       const m = updateMatrix(clipPath, m0, true);
       const transformPoint = (x: number, y: number) => {
-        if (!m) return { x, y };
+        if (!m) {
+          return { x, y };
+        }
+
         const { a, b, c, d, e, f } = m;
         const newX = a * x + c * y + e;
         const newY = b * x + d * y + f;
+
         return { x: newX, y: newY };
       };
 
@@ -150,24 +201,20 @@ const convertClipPath = async (): Promise<() => void> => {
       const maxY = Math.max(topLeft.y, topRight.y, bottomLeft.y, bottomRight.y);
 
       const clipBBox = getBBoxByAttr(clipRect);
-      if (
-        clipBBox.left > maxX ||
-        clipBBox.right < minX ||
-        clipBBox.top > maxY ||
-        clipBBox.bottom < minY
-      ) {
+
+      if (clipBBox.left > maxX || clipBBox.right < minX || clipBBox.top > maxY || clipBBox.bottom < minY) {
         // Completely outside
         elem.remove();
+
         return;
       }
-      if (
-        clipBBox.left <= minX &&
-        clipBBox.right >= maxX &&
-        clipBBox.top <= minY &&
-        clipBBox.bottom >= maxY
-      ) {
+
+      if (clipBBox.left <= minX && clipBBox.right >= maxX && clipBBox.top <= minY && clipBBox.bottom >= maxY) {
         // Completely inside
-        if (m0) elem.setAttribute('transform', matrix2String(m0));
+        if (m0) {
+          elem.setAttribute('transform', matrix2String(m0));
+        }
+
         return;
       }
 
@@ -179,22 +226,32 @@ const convertClipPath = async (): Promise<() => void> => {
 
       // Clip & draw image
       const canvas = document.createElement('canvas');
+
       canvas.width = maxX - minX;
       canvas.height = maxY - minY;
+
       const ctx = canvas.getContext('2d');
       const region = new Path2D();
+
       region.rect(cropLeft - minX, cropTop - minY, cropRight - cropLeft, cropBottom - cropTop);
       ctx.clip(region);
+
       const img = new Image();
+
       await new Promise<void>((resolve) => {
         img.onload = () => resolve();
         img.src = elem.getAttribute('xlink:href');
       });
       ctx.save();
       ctx.translate(-minX, -minY);
-      if (m) ctx.transform(m.a, m.b, m.c, m.d, m.e, m.f);
+
+      if (m) {
+        ctx.transform(m.a, m.b, m.c, m.d, m.e, m.f);
+      }
+
       ctx.drawImage(img, 0, 0, img.width, img.height, bBox.left, bBox.top, bBox.width, bBox.height);
       ctx.restore();
+
       const base64 = canvas.toDataURL('image/png');
 
       elem.setAttribute('xlink:href', base64);
@@ -202,40 +259,68 @@ const convertClipPath = async (): Promise<() => void> => {
       elem.setAttribute('y', minY.toString());
       elem.setAttribute('width', (maxX - minX).toString());
       elem.setAttribute('height', (maxY - minY).toString());
+
       const clipTransform = clipPath.getAttribute('transform');
-      if (clipTransform) elem.setAttribute('transform', clipTransform);
+
+      if (clipTransform) {
+        elem.setAttribute('transform', clipTransform);
+      }
+
       elem.removeAttribute('origImage');
     } else if (elem.tagName === 'use') {
       const symbolId = elem.getAttribute('xlink:href').replace('#', '');
       const symbol = document.getElementById(symbolId);
+
       if (!symbol) {
         // Should not happen
         elem.remove();
+
         return;
       }
+
       let m = updateMatrix(elem, matrix || null);
       const subClipped = symbol.querySelectorAll('*[clip-path*="url"]');
+
       if (clippedElems.length > 0 && subClipped.length > 0) {
-        if (m) elem.setAttribute('transform', matrix2String(m));
+        if (m) {
+          elem.setAttribute('transform', matrix2String(m));
+        }
+
         elem.setAttribute('data-clip-path', clipPathKey.split('-')[1]);
         clippedElems.unshift(elem);
+
         return;
       }
+
       const offset = svgCanvas.transformListToTransform(null).matrix;
+
       offset.e = +elem.getAttribute('x');
-      if (offset.e !== 0) elem.setAttribute('x', '0');
+
+      if (offset.e !== 0) {
+        elem.setAttribute('x', '0');
+      }
+
       offset.f = +elem.getAttribute('y');
-      if (offset.f !== 0) elem.setAttribute('y', '0');
+
+      if (offset.f !== 0) {
+        elem.setAttribute('y', '0');
+      }
+
       m = m ? m.multiply(offset) : offset;
+
       const cloned = symbol.cloneNode(true) as Element;
       const promises = [];
+
       cloned.childNodes.forEach((subElem) => {
         const p = clip(clipPathKey, subElem as Element, m);
+
         promises.push(p);
       });
       await Promise.all(promises);
-      const { parentNode, nextSibling } = symbol;
-      oldElems.unshift({ elem: symbol, parentNode, nextSibling });
+
+      const { nextSibling, parentNode } = symbol;
+
+      oldElems.unshift({ elem: symbol, nextSibling, parentNode });
       newElems.push(cloned);
       parentNode.insertBefore(cloned, symbol);
       symbol.remove();
@@ -244,57 +329,80 @@ const convertClipPath = async (): Promise<() => void> => {
 
   while (clippedElems.length > 0) {
     const elem = clippedElems.pop();
-    const { shouldSkip, parent } = checkParent(elem);
-    if (shouldSkip) continue;
+    const { parent, shouldSkip } = checkParent(elem);
+
+    if (shouldSkip) {
+      continue;
+    }
+
     const clipPathSelector =
       elem.tagName === 'use'
         ? elem.getAttribute('data-clip-path')
         : svgCanvas.getUrlFromAttr(elem.getAttribute('clip-path'));
     // Add parent id to avoid collision clip path id in duplicated import process
     const clipPathKey = `${parent.id}-${clipPathSelector}`;
+
     if (!(clipPathKey in clipPathMap)) {
       const clipPathElem = parent.querySelector(clipPathSelector);
-      if (!clipPathElem) continue;
+
+      if (!clipPathElem) {
+        continue;
+      }
+
       if (
         clippedElems.length > 0 &&
-        (clipPathElem.hasAttribute('clip-path') ||
-          !!clipPathElem.querySelector('*[clip-path*="url"]'))
+        (clipPathElem.hasAttribute('clip-path') || !!clipPathElem.querySelector('*[clip-path*="url"]'))
       ) {
         // Should handle inner clip-path first
         clippedElems.unshift(elem);
         continue;
       }
+
       clipPathMap[clipPathKey] = getClipPathItem(clipPathElem);
     }
+
     const cloned = elem.cloneNode(true) as Element;
-    // eslint-disable-next-line no-await-in-loop
+
     await clip(clipPathKey, cloned);
     cloned.removeAttribute('clip-path');
-    const { parentNode, nextSibling } = elem;
+
+    const { nextSibling, parentNode } = elem;
+
     newElems.push(cloned);
     parentNode.insertBefore(cloned, elem);
-    oldElems.unshift({ elem, parentNode, nextSibling });
+    oldElems.unshift({ elem, nextSibling, parentNode });
     elem.remove();
   }
+
   // Remove all clipPath elements
   const clipPathElems = document.querySelectorAll('#svgcontent clipPath, #svg_defs clipPath');
+
   for (let i = 0; i < clipPathElems.length; i += 1) {
     const clipPathElem = clipPathElems[i];
-    const { parentNode, nextSibling } = clipPathElem;
-    oldElems.unshift({ elem: clipPathElem, parentNode, nextSibling });
+    const { nextSibling, parentNode } = clipPathElem;
+
+    oldElems.unshift({ elem: clipPathElem, nextSibling, parentNode });
     clipPathElem.remove();
   }
 
   revert = () => {
-    oldElems.forEach(({ elem, parentNode, nextSibling }) => {
+    oldElems.forEach(({ elem, nextSibling, parentNode }) => {
       let p = parentNode;
+
       // defs may be removed when generating thumbnail
-      if (!parentNode.isConnected && parentNode.tagName === 'defs') p = svgCanvas.findDefs();
-      if (nextSibling) p.insertBefore(elem, nextSibling);
-      else p.appendChild(elem);
+      if (!parentNode.isConnected && parentNode.tagName === 'defs') {
+        p = svgCanvas.findDefs();
+      }
+
+      if (nextSibling) {
+        p.insertBefore(elem, nextSibling);
+      } else {
+        p.appendChild(elem);
+      }
     });
     newElems.forEach((elem) => elem.remove());
   };
+
   return revert;
 };
 

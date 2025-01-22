@@ -1,25 +1,26 @@
 import React from 'react';
+
 import classNames from 'classnames';
 
 import constant from '@core/app/actions/beambox/constant';
+import svgEditor from '@core/app/actions/beambox/svg-editor';
 import DpiInfo from '@core/app/components/beambox/DpiInfo';
 import PathPreview from '@core/app/components/beambox/path-preview/PathPreview';
 import Ruler from '@core/app/components/beambox/svg-editor/Ruler';
-import svgEditor from '@core/app/actions/beambox/svg-editor';
 import Workarea from '@core/app/components/beambox/svg-editor/Workarea';
-import workareaManager from '@core/app/svgedit/workarea';
 import ZoomBlock from '@core/app/components/beambox/ZoomBlock';
-import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { CanvasMode } from '@core/app/constants/canvasMode';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import workareaManager from '@core/app/svgedit/workarea';
 
 import styles from './SvgEditor.module.scss';
 
 export default class SvgEditor extends React.Component {
-  // eslint-disable-next-line react/static-property-placement
   declare context: React.ContextType<typeof CanvasContext>;
 
   componentDidMount(): void {
     const { $ } = window;
+
     $(svgEditor.init);
   }
 
@@ -29,26 +30,28 @@ export default class SvgEditor extends React.Component {
       mac: window.os === 'MacOS',
       [styles.mac]: window.os === 'MacOS',
     });
+
     return (
       <div
-        id="svg_editor"
         className={platformClassNames}
+        id="svg_editor"
         style={mode === CanvasMode.PathPreview ? { display: 'none' } : {}}
       >
         <div>
           <Ruler />
           <Workarea className={platformClassNames} />
           <div id="tool_import" style={{ display: 'none' }} />
-          <input id="text" type="text" size={35} />
+          <input id="text" size={35} type="text" />
           <div id="cur_context_panel" />
-          <div id="option_lists" className="dropdown" />
+          <div className="dropdown" id="option_lists" />
         </div>
       </div>
     );
   };
 
-  render(): JSX.Element {
+  render(): React.JSX.Element {
     const { mode } = this.context;
+
     // HIDE ALMOST ALL TOOLS USING CSS
     return (
       <>
@@ -66,8 +69,8 @@ export default class SvgEditor extends React.Component {
         {mode !== CanvasMode.PathPreview && (
           <>
             <ZoomBlock
-              setZoom={(zoom) => workareaManager.zoom(zoom / constant.dpmm)}
               resetView={workareaManager.resetView}
+              setZoom={(zoom) => workareaManager.zoom(zoom / constant.dpmm)}
             />
             <DpiInfo />
           </>

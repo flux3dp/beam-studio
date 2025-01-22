@@ -1,4 +1,4 @@
-import { IController } from '@core/interfaces/IBoxgen';
+import type { IController } from '@core/interfaces/IBoxgen';
 
 export const SHEET_THICKNESS_MM = [
   { label: '3 mm', value: 3 },
@@ -39,15 +39,15 @@ export const BOLT_HEX_WIDTH = {
 };
 
 export const DEFAULT_STROKE_COLOR = {
-  r: 0x00,
-  g: 0x00,
   b: 0xff,
+  g: 0x00,
+  r: 0x00,
 };
 
 export const DEFAULT_LABEL_COLOR = {
-  r: 0xcc,
-  g: 0xcc,
   b: 0xcc,
+  g: 0xcc,
+  r: 0xcc,
 };
 
 export const SCREW_SIZE_MM = [
@@ -86,29 +86,29 @@ export const SCREW_LENGTH_INCH = [
 ];
 
 export const DEFAULT_CONTROLLER_MM: IController = {
-  volume: 'outer',
   cover: true,
-  width: 80,
-  height: 80,
   depth: 80,
-  sheetThickness: 3,
+  height: 80,
   joint: 'finger',
+  sheetThickness: 3,
   teethLength: 40,
   tSlotCount: 0,
   tSlotDiameter: 3,
   tSlotLength: 16,
+  volume: 'outer',
+  width: 80,
 };
 
 export const DEFAULT_CONTROLLER_INCH: IController = {
-  volume: 'outer',
   cover: true,
-  width: 76.2,
-  height: 76.2,
   depth: 76.2,
-  sheetThickness: 3.175,
+  height: 76.2,
   joint: 'finger',
+  sheetThickness: 3.175,
   teethLength: 38.1,
   tSlotCount: 0,
   tSlotDiameter: 3.175,
   tSlotLength: 15.875,
+  volume: 'outer',
+  width: 76.2,
 };

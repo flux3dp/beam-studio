@@ -1,6 +1,6 @@
 import BeamboxGlobalInteraction from '@core/app/actions/beambox/beambox-global-interaction';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import { IDeviceInfo } from '@core/interfaces/IDevice';
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 const topBarEventEmitter = eventEmitterFactory.createEventEmitter('top-bar');
 
@@ -35,7 +35,9 @@ const getTopBarPreviewMode = (): boolean => {
   const response = {
     isPreviewMode: false,
   };
+
   topBarEventEmitter.emit('GET_TOP_BAR_PREVIEW_MODE', response);
+
   return response.isPreviewMode;
 };
 
@@ -43,7 +45,9 @@ const getSelectedDevice = (): IDeviceInfo | null => {
   const response = {
     selectedDevice: null,
   };
+
   topBarEventEmitter.emit('GET_SELECTED_DEVICE', response);
+
   return response.selectedDevice;
 };
 
@@ -52,12 +56,12 @@ const setSelectedDevice = (device: IDeviceInfo): void => {
 };
 
 export default {
-  setElement,
-  updateTitle,
-  setHasUnsavedChange,
-  getTopBarPreviewMode,
   getSelectedDevice,
-  setSelectedDevice,
-  onTitleChange,
+  getTopBarPreviewMode,
   offTitleChange,
+  onTitleChange,
+  setElement,
+  setHasUnsavedChange,
+  setSelectedDevice,
+  updateTitle,
 };

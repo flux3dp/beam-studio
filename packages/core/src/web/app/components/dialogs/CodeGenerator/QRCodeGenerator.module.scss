@@ -30,8 +30,12 @@ $padding: 12px;
       height: var(--code-size) !important;
 
       canvas {
-        width: calc(var(--code-size) - $padding * 2 - $border-width * 2) !important;
-        height: calc(var(--code-size) - $padding * 2 - $border-width * 2) !important;
+        width: calc(
+          var(--code-size) - $padding * 2 - $border-width * 2
+        ) !important;
+        height: calc(
+          var(--code-size) - $padding * 2 - $border-width * 2
+        ) !important;
       }
     }
 

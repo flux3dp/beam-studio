@@ -115,39 +115,6 @@ exports[`test ChangeLog should render correctly 1`] = `
                   <strong
                     class="change-log-category"
                   >
-                    Fixed:
-                  </strong>
-                  <div
-                    class="change-log-item"
-                  >
-                    <span
-                      class="index"
-                    >
-                      1.
-                    </span>
-                    <span
-                      class="log"
-                    >
-                      Increase the speed of import the SVG file.
-                    </span>
-                  </div>
-                  <div
-                    class="change-log-item"
-                  >
-                    <span
-                      class="index"
-                    >
-                      2.
-                    </span>
-                    <span
-                      class="log"
-                    >
-                      Increase the speed of the "Disassemble" function.
-                    </span>
-                  </div>
-                  <strong
-                    class="change-log-category"
-                  >
                     Changed:
                   </strong>
                   <div
@@ -176,6 +143,39 @@ exports[`test ChangeLog should render correctly 1`] = `
                       class="log"
                     >
                       changed: 2
+                    </span>
+                  </div>
+                  <strong
+                    class="change-log-category"
+                  >
+                    Fixed:
+                  </strong>
+                  <div
+                    class="change-log-item"
+                  >
+                    <span
+                      class="index"
+                    >
+                      1.
+                    </span>
+                    <span
+                      class="log"
+                    >
+                      Increase the speed of import the SVG file.
+                    </span>
+                  </div>
+                  <div
+                    class="change-log-item"
+                  >
+                    <span
+                      class="index"
+                    >
+                      2.
+                    </span>
+                    <span
+                      class="log"
+                    >
+                      Increase the speed of the "Disassemble" function.
                     </span>
                   </div>
                 </div>

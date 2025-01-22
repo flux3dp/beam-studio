@@ -1,4 +1,5 @@
 import * as React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import FirmwareUpdate from './FirmwareUpdate';
@@ -6,15 +7,15 @@ import FirmwareUpdate from './FirmwareUpdate';
 jest.mock('@core/helpers/i18n', () => ({
   lang: {
     update: {
-      release_note: 'Release Note:',
+      download: 'ONLINE UPDATE',
       firmware: {
         caption: 'A Firmware Update to the machine is available',
         message_pattern_1: '"%s" is now ready for firmware update.',
         message_pattern_2: '%s Firmware v%s is now available - You have v%s.',
       },
-      skip: 'Skip This Version',
       later: 'LATER',
-      download: 'ONLINE UPDATE',
+      release_note: 'Release Note:',
+      skip: 'Skip This Version',
       upload: 'UPLOAD',
     },
   },
@@ -22,6 +23,7 @@ jest.mock('@core/helpers/i18n', () => ({
 
 const mockGet = jest.fn();
 const mockSet = jest.fn();
+
 jest.mock('@app/implementations/storage', () => ({
   get: (...args) => mockGet(...args),
   set: (...args) => mockSet(...args),
@@ -35,16 +37,17 @@ describe('test update dialog', () => {
   test('should render correctly', () => {
     const { baseElement, getByText } = render(
       <FirmwareUpdate
-        deviceName="flux"
-        deviceModel="Beamo"
         currentVersion="1.0.0"
+        deviceModel="Beamo"
+        deviceName="flux"
         latestVersion="1.0.1"
-        releaseNote="fix bugs"
-        onDownload={mockOnDownload}
         onClose={mockOnClose}
+        onDownload={mockOnDownload}
         onInstall={mockOnInstall}
+        releaseNote="fix bugs"
       />,
     );
+
     expect(baseElement).toMatchSnapshot();
 
     expect(mockOnClose).not.toBeCalled();

@@ -1,4 +1,3 @@
-/* eslint-disable import/first */
 const mockMoveElementCommand = jest.fn();
 const mockChangeElementCommand = jest.fn();
 const mockInsertElementCommand = jest.fn();
@@ -11,11 +10,11 @@ const mockBatchCommand = jest.fn().mockImplementation(() => ({
 }));
 
 jest.mock('@core/app/svgedit/history/history', () => ({
-  MoveElementCommand: mockMoveElementCommand,
+  BatchCommand: mockBatchCommand,
   ChangeElementCommand: mockChangeElementCommand,
   InsertElementCommand: mockInsertElementCommand,
+  MoveElementCommand: mockMoveElementCommand,
   RemoveElementCommand: mockRemoveElementCommand,
-  BatchCommand: mockBatchCommand,
 }));
 
 const mockResize = jest.fn();
@@ -34,11 +33,11 @@ jest.mock('@core/app/svgedit/selector', () => ({
 const mockSvgCanvas = {
   changeSelectedAttribute: jest.fn(),
   getNextId: jest.fn(),
-  pushGroupProperties: jest.fn(),
-  selectOnly: jest.fn(),
   pathActions: {
     toEditMode: jest.fn(),
   },
+  pushGroupProperties: jest.fn(),
+  selectOnly: jest.fn(),
   undoMgr: {
     addCommandToHistory: jest.fn(),
   },
@@ -87,20 +86,28 @@ describe('test textPathEdit', () => {
 
   test('test ungroupTextPath', () => {
     document.body.innerHTML = textPathHtml;
+
     const g = document.getElementsByTagName('g')[0];
+
     textPathEdit.ungroupTextPath(g);
     expect(document.getElementsByTagName('g').length).toBe(0);
+
     const svg = document.getElementsByTagName('svg')[0];
+
     expect(document.getElementById('path').parentElement).toBe(svg);
     expect(document.getElementById('text').parentElement).toBe(svg);
   });
 
   test('test attachTextToPath', () => {
     document.body.innerHTML = textAndPathHtml;
+
     const path = document.getElementById('path');
     const text = document.getElementById('text');
+
     textPathEdit.attachTextToPath(text, path, false);
+
     const textPath = document.getElementsByTagName('textPath');
+
     expect(textPath.length).toBe(1);
     expect(textPath[0].parentElement).toBe(text);
     expect(textPath[0].getAttribute('href')).toBe('#path');
@@ -110,9 +117,11 @@ describe('test textPathEdit', () => {
 
   test('test detachText', () => {
     document.body.innerHTML = textPathHtml;
+
     const g = document.getElementsByTagName('g')[0];
     const text = document.getElementById('text');
     const { textContent } = text;
+
     textPathEdit.detachText(g, false);
     expect(text.textContent.trim()).toBe(textContent.trim());
     expect(mockSvgCanvas.undoMgr.addCommandToHistory).toBeCalledTimes(1);
@@ -120,16 +129,20 @@ describe('test textPathEdit', () => {
 
   test('test setStartOffset', () => {
     document.body.innerHTML = textPathHtml;
+
     const text = document.getElementById('text') as unknown as SVGTextElement;
     const textPath = document.getElementsByTagName('textPath')[0];
+
     textPathEdit.setStartOffset(20, text);
     expect(mockSvgCanvas.changeSelectedAttribute).toBeCalledWith('startOffset', '20%', [textPath]);
   });
 
   test('test setVerticalAlign', () => {
     document.body.innerHTML = textPathHtml;
+
     const text = document.getElementById('text') as unknown as SVGTextElement;
     const textPath = document.getElementsByTagName('textPath')[0];
+
     textPathEdit.setVerticalAlign(text, VerticalAlign.MIDDLE);
     expect(textPath.getAttribute('dominant-baseline')).toBe('middle');
     expect(textPath.getAttribute('alignment-baseline')).toBe('middle');

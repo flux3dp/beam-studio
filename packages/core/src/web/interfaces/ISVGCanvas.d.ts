@@ -1,14 +1,15 @@
-import IShapeStyle from '@core/interfaces/IShapeStyle';
-import ISVGConfig from '@core/interfaces/ISVGConfig';
-import ISVGDrawing from '@core/interfaces/ISVGDrawing';
-import { EventEmitter } from 'events';
-import { IBatchCommand, ICommand, IUndoManager } from '@core/interfaces/IHistory';
-import { ImportType } from '@core/interfaces/ImportSvg';
-import { IPathActions } from '@core/app/svgedit/operations/pathActions';
-import { SelectorManager } from '@core/app/svgedit/selector';
-import { Units } from '@core/helpers/units';
-import textActions from '@core/app/svgedit/text/textactions';
-import { BaseHistoryCommand } from '@core/app/svgedit/history/history';
+import type { EventEmitter } from 'events';
+
+import type { BaseHistoryCommand } from '@core/app/svgedit/history/history';
+import type { IPathActions } from '@core/app/svgedit/operations/pathActions';
+import type { SelectorManager } from '@core/app/svgedit/selector';
+import type textActions from '@core/app/svgedit/text/textactions';
+import type { Units } from '@core/helpers/units';
+import type { IBatchCommand, ICommand, IUndoManager } from '@core/interfaces/IHistory';
+import type { ImportType } from '@core/interfaces/ImportSvg';
+import type IShapeStyle from '@core/interfaces/IShapeStyle';
+import type ISVGConfig from '@core/interfaces/ISVGConfig';
+import type ISVGDrawing from '@core/interfaces/ISVGDrawing';
 
 export interface IPoint {
   x: number;
@@ -16,10 +17,10 @@ export interface IPoint {
 }
 
 interface IRect {
+  height: number;
+  width: number;
   x: number;
   y: number;
-  width: number;
-  height: number;
 }
 
 export default interface ISVGCanvas {
@@ -27,41 +28,42 @@ export default interface ISVGCanvas {
   addCommandToHistory: (command: ICommand) => void;
   addedNew: boolean;
   addExtension: any;
-  addSvgElementFromJson<T = SVGElement>(obj: {
-    element: string;
-    curStyles?: boolean;
-    attr: any;
-  }): T;
+  addSvgElementFromJson<T = SVGElement>(obj: { attr: any; curStyles?: boolean; element: string }): T;
   addToSelection: (elemsToAdd: SVGElement[], showGrips?: boolean, noCall?: boolean) => void;
   alignSelectedElements(
-    type: 'l' | 'c' | 'r' | 't' | 'm' | 'b',
-    relativeTo: 'selected' | 'largest' | 'smallest' | 'page',
+    type: 'b' | 'c' | 'l' | 'm' | 'r' | 't',
+    relativeTo: 'largest' | 'page' | 'selected' | 'smallest',
   ): void;
   assignAttributes(element: HTMLElement, args: any): void;
-  bind: (eventName: string, callback: boolean | ((win: any, elem: any) => void)) => void;
+  bind: (eventName: string, callback: ((win: any, elem: any) => void) | boolean) => void;
   calculateTransformedBBox(elem: Element): IRect;
-  call: (eventName: string, args?: SVGElement[] | any) => void;
-  changeSelectedAttribute(attr: string, val: string | number): void;
-  changeSelectedAttributeNoUndo: (attr: string, val: string | number, elems: Element[]) => void;
+  call: (eventName: string, args?: any | SVGElement[]) => void;
+  changeSelectedAttribute(attr: string, val: number | string): void;
+  changeSelectedAttributeNoUndo: (attr: string, val: number | string, elems: Element[]) => void;
   cleanupElement: (elem: SVGElement) => void;
   clear: () => void;
   clearBoundingBox: () => void;
   clearSelection: (noCall?: boolean) => void;
+  convertGradients: (elem: Element) => void;
   convertToNum(attr: string, val: number): number;
+  convertToPath: (elem: SVGElement, isSubCmd?: boolean) => { cmd: BaseHistoryCommand; path: SVGPathElement };
   deleteSelectedElements: () => void;
+  disassembleUse2Group: (
+    elems: SVGElement[],
+    skipConfirm?: boolean,
+    addToHistory?: boolean,
+    showProgress?: boolean,
+  ) => Promise<BaseHistoryCommand>;
   drawAlignLine: (x: number, y: number, xMatchPoint: IPoint, yMatchPoint: IPoint) => void;
   drawing: ISVGDrawing;
   embedImage(url: string, callback?: (dataURI: string) => void): void;
   events: EventEmitter;
   findMatchPoint: (x: number, y: number) => { xMatchPoint: IPoint; yMatchPoint: IPoint };
-  getVisibleElementsAndBBoxes: (elems?: SVGElement[]) => { elem: Element; bbox: IRect }[];
   getColor: (key: string) => string;
-  getContentElem: () => SVGGElement;
-  setContentElem: (content: Element) => void;
   getContainer: () => SVGElement;
+  getContentElem: () => SVGGElement;
   getCurrentConfig: () => ISVGConfig;
   getCurrentDrawing: () => ISVGDrawing;
-  resetCurrentDrawing: (content?: Element) => void;
   getCurrentGroup: () => SVGGElement;
   getCurrentMode: () => string;
   getCurrentResizeMode: () => string;
@@ -89,64 +91,69 @@ export default interface ISVGCanvas {
   getStartTransform: () => any;
   getStrokedBBox(elems: Element[]): IRect;
   getSvgRealLocation: (elem: SVGElement) => IRect;
-  removeUnusedDefs: () => void;
   getSvgString: (opts?: { unit?: Units }) => string;
   getTempGroup: () => SVGGElement;
   getTitle: () => string;
+  getVisibleElementsAndBBoxes: (elems?: SVGElement[]) => Array<{ bbox: IRect; elem: Element }>;
   getZoom: () => number; // Old getter for current_zoom
   groupSelectedElements: (isSubCmd?: boolean) => BaseHistoryCommand | void;
+  groupSvgElem: (elem: SVGElement) => void;
   handleGenerateSensorArea: (evt: MouseEvent) => void;
-  prepareSvg: (newDoc: Document) => void;
+  identifyLayers: () => void;
   importSvgString(
     xmlString: string,
     args: {
-      type?: ImportType;
       layerName?: string;
       parentCmd?: IBatchCommand;
       targetModule?: number;
+      type?: ImportType;
     },
   ): Promise<SVGUseElement>;
   isBezierPathAlignToEdge: boolean;
   isUsingLayerColor: boolean;
   leaveContext: () => void;
-  mergeLayer: () => void;
   mergeAllLayers: () => void;
+  mergeLayer: () => void;
   moveDownSelectedElement(): void;
-  moveTopBottomSelected(direction: 'top' | 'bottom'): void;
+  moveTopBottomSelected(direction: 'bottom' | 'top'): void;
   moveUpSelectedElement(): void;
   opacityAnimation: SVGAnimateElement;
   open: () => void;
   pathActions: IPathActions;
+  prepareSvg: (newDoc: Document) => void;
   pushGroupProperties: (g: SVGGElement, undoable: boolean) => IBatchCommand;
   randomizeIds(enableRandomization: boolean): string;
   ready: (arg0: () => void) => any;
   recalculateAllSelectedDimensions: (isSubCommand?: boolean) => IBatchCommand;
   removeFromSelection: (elems: SVGElement[]) => void;
   removeFromTempGroup: (elem: SVGElement) => void;
+  removeUnusedDefs: () => void;
   renameCurrentLayer: (layerName: string) => void;
   reorientGrads: (elem: SVGElement, matrix: SVGMatrix) => void;
+  resetCurrentDrawing: (content?: Element) => void;
   resetOrientation: (elem: SVGElement) => void;
   runExtensions: (eventName: string, args?: any, returnArray?: boolean) => any;
   selectAll: () => void;
   selectOnly: (elems: SVGElement[], showGrips?: boolean) => void;
   selectorManager: SelectorManager;
-  sensorAreaInfo: { x: number; y: number; dx: number; dy: number; elem: SVGElement };
+  sensorAreaInfo: { dx: number; dy: number; elem: SVGElement; x: number; y: number };
   setBackground: (color: string, url: string) => void;
   setBlur(blurValue: number, shouldComplete: boolean): void;
   setBlurNoUndo(blurValue: number): void;
   setColor: (pickerType: string, color: string, preventUndo?: boolean) => void;
   setConfig(curConfig: ISVGConfig): void;
+  setContentElem: (content: Element) => void;
   setContext(element: Element): void;
   setCurrentLayer: (layerName: string) => boolean;
   setCurrentResizeMode: (mode: string) => void;
-  setCurrentStyleProperties: (key: string, val: string | number) => void;
-  setHref: (elem: SVGImageElement | SVGElement, href: string) => void;
+  setCurrentStyleProperties: (key: string, val: number | string) => void;
+  setHref: (elem: SVGElement | SVGImageElement, href: string) => void;
   setImageURL: (url: string) => void;
   setLastClickPoint: (point: { x: number; y: number }) => void;
   setLayerVisibility(
     layerName: string,
     visible: boolean,
-    opts?: { parentCmd?: IBatchCommand; addToHistory?: boolean },
+    opts?: { addToHistory?: boolean; parentCmd?: IBatchCommand },
   ): void;
   setMode: (mode: string) => void;
   setOpacity: (opacity: number) => void;
@@ -155,11 +162,7 @@ export default interface ISVGCanvas {
   setRotationAngle: (val: number, preventUndo: boolean, elem?: SVGElement) => void;
   setStrokeAttr(attrKey: string, value: string): void;
   setStrokeWidth(width: number): void;
-  setSvgElemSize: (
-    type: 'width' | 'height' | 'rx' | 'ry',
-    val: number,
-    addToHistory?: boolean,
-  ) => IBatchCommand | null;
+  setSvgElemSize: (type: 'height' | 'rx' | 'ry' | 'width', val: number, addToHistory?: boolean) => IBatchCommand | null;
   setSvgString: (content: string) => boolean;
   setUiStrings(allStrings: Record<string, string>): void;
   sortTempGroupByLayer: () => void;
@@ -167,31 +170,18 @@ export default interface ISVGCanvas {
   svgToString(elem: Element, indent: number, units?: Units): string;
   tempGroupSelectedElements: () => SVGElement[];
   textActions: typeof textActions;
-  ungroupTempGroup(elem?: SVGElement): SVGElement[];
   undoMgr: IUndoManager;
   ungroupSelectedElement(): void;
-  updateElementColor: (elem: Element) => void;
-  updateRecentFiles(path: string): void;
+  ungroupTempGroup(elem?: SVGElement): SVGElement[];
+  uniquifyElems: (elem: SVGElement) => void;
   unsafeAccess: {
     setCurrentMode: (v: string) => void;
     setRubberBox: (v: SVGRectElement) => void;
-    setStarted: (v: boolean) => void;
     setSelectedElements: (elems: SVGElement[]) => void;
+    setStarted: (v: boolean) => void;
     setStartTransform: (transform: any) => void;
   };
-  uniquifyElems: (elem: SVGElement) => void;
-  groupSvgElem: (elem: SVGElement) => void;
-  convertGradients: (elem: Element) => void;
-  identifyLayers: () => void;
-  disassembleUse2Group: (
-    elems: Array<SVGElement>,
-    skipConfirm?: boolean,
-    addToHistory?: boolean,
-    showProgress?: boolean,
-  ) => Promise<BaseHistoryCommand>;
+  updateElementColor: (elem: Element) => void;
+  updateRecentFiles(path: string): void;
   zoomSvgElem: (zoom: number) => void;
-  convertToPath: (
-    elem: SVGElement,
-    isSubCmd?: boolean,
-  ) => { path: SVGPathElement; cmd: BaseHistoryCommand };
 }

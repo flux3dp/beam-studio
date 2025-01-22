@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 export enum TabEvents {
   AddNewTab = 'add-new-tab',
   CloseTab = 'close-tab',

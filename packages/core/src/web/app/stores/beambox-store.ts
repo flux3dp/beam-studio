@@ -4,7 +4,16 @@ const SHOW_CROPPER = 'SHOW_CROPPER';
 const DRAW_GUIDE_LINES = 'DRAW_GUIDE_LINES';
 
 const eventEmitter = eventEmitterFactory.createEventEmitter();
+
 export default {
+  emitDrawGuideLines(): void {
+    eventEmitter.emit(DRAW_GUIDE_LINES);
+  },
+
+  emitShowCropper(): void {
+    eventEmitter.emit(SHOW_CROPPER);
+  },
+
   onCropperShown(callback: () => void): void {
     eventEmitter.on(SHOW_CROPPER, callback);
   },
@@ -15,13 +24,5 @@ export default {
 
   removeCropperShownListener(callback): void {
     eventEmitter.removeListener(SHOW_CROPPER, callback);
-  },
-
-  emitShowCropper(): void {
-    eventEmitter.emit(SHOW_CROPPER);
-  },
-
-  emitDrawGuideLines(): void {
-    eventEmitter.emit(DRAW_GUIDE_LINES);
   },
 };

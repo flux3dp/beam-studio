@@ -1,8 +1,9 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import React, { useRef, useState } from 'react';
-import * as THREE from 'three';
-import { Canvas, RenderProps, useFrame } from '@react-three/fiber';
+
 import { OrbitControls } from '@react-three/drei';
+import type { RenderProps } from '@react-three/fiber';
+import { Canvas, useFrame } from '@react-three/fiber';
+import * as THREE from 'three';
 
 import CanvasController from './CanvasController';
 
@@ -24,24 +25,30 @@ const Camera = ({ zoomKey, zoomRatio = 1.5 }: CameraProps) => {
           new THREE.Vector3(
             camera.position.x / zoomRatio,
             camera.position.y / zoomRatio,
-            camera.position.z / zoomRatio
-          )
+            camera.position.z / zoomRatio,
+          ),
         );
       } else {
         setPosition(
           new THREE.Vector3(
             camera.position.x * zoomRatio,
             camera.position.y * zoomRatio,
-            camera.position.z * zoomRatio
-          )
+            camera.position.z * zoomRatio,
+          ),
         );
       }
+
       currentZoomKey.current = zoomKey;
     }
+
     if (position) {
       const dist = camera.position.distanceTo(position);
-      if (dist < 1) setPosition(null);
-      else camera.position.lerp(position, 0.1);
+
+      if (dist < 1) {
+        setPosition(null);
+      } else {
+        camera.position.lerp(position, 0.1);
+      }
     }
   });
 
@@ -50,11 +57,11 @@ const Camera = ({ zoomKey, zoomRatio = 1.5 }: CameraProps) => {
 
 interface Props extends RenderProps<HTMLCanvasElement> {
   children?: React.ReactNode;
-  withControler?: boolean;
   orbitControls?: React.ReactNode;
+  withControler?: boolean;
 }
 
-const ThreeCanvas = ({ children, withControler = true, orbitControls, ...props }: Props): JSX.Element => {
+const ThreeCanvas = ({ children, orbitControls, withControler = true, ...props }: Props): React.JSX.Element => {
   const [resetKey, setResetKey] = useState(0);
   const [zoomKey, setZoomKey] = useState(0);
 

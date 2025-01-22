@@ -2,24 +2,25 @@ import React, { useContext, useMemo } from 'react';
 
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import configOptions from '@core/app/constants/config-options';
-import storage from '@app/implementations/storage';
+import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
 import useI18n from '@core/helpers/useI18n';
-import { getWorkarea, WorkAreaModel } from '@core/app/constants/workarea-constants';
+
+import storage from '@app/implementations/storage';
 
 import ConfigPanelContext from './ConfigPanelContext';
 import ConfigSlider from './ConfigSlider';
 import ConfigValueDisplay from './ConfigValueDisplay';
-
 import styles from './WhiteInkSettingsModal.module.scss';
 
 interface Props {
-  value: number;
   hasMultiValue?: boolean;
   onChange: (val: number) => void;
+  value: number;
 }
 
 // TODO: add test
-const WhiteInkSpeed = ({ value, hasMultiValue, onChange }: Props): JSX.Element => {
+const WhiteInkSpeed = ({ hasMultiValue, onChange, value }: Props): React.JSX.Element => {
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
   const { simpleMode = true } = useContext(ConfigPanelContext);
@@ -29,15 +30,17 @@ const WhiteInkSpeed = ({ value, hasMultiValue, onChange }: Props): JSX.Element =
     [simpleMode, lang],
   );
 
-  const { display: displayUnit, decimal } = useMemo(() => {
-    const unit: 'mm' | 'inches' = storage.get('default-units') || 'mm';
-    const display = { mm: 'mm/s', inches: 'in/s' }[unit];
-    const d = { mm: 1, inches: 2 }[unit];
-    return { display, decimal: d };
+  const { decimal, display: displayUnit } = useMemo(() => {
+    const unit: 'inches' | 'mm' = storage.get('default-units') || 'mm';
+    const display = { inches: 'in/s', mm: 'mm/s' }[unit];
+    const d = { inches: 2, mm: 1 }[unit];
+
+    return { decimal: d, display };
   }, []);
   const workarea: WorkAreaModel = beamboxPreference.read('workarea');
   const { maxValue, minValue } = useMemo(() => {
     const workareaObj = getWorkarea(workarea);
+
     return { maxValue: workareaObj.maxSpeed, minValue: workareaObj.minSpeed };
   }, [workarea]);
 
@@ -45,26 +48,26 @@ const WhiteInkSpeed = ({ value, hasMultiValue, onChange }: Props): JSX.Element =
     <div className={styles.panel}>
       <span className={styles.title}>{t.speed}</span>
       <ConfigValueDisplay
+        decimal={decimal}
+        hasMultiValue={hasMultiValue}
         inputId="white-speed-input"
         max={maxValue}
         min={minValue}
-        value={value}
-        hasMultiValue={hasMultiValue}
-        unit={displayUnit}
-        decimal={decimal}
         onChange={onChange}
         options={sliderOptions}
+        unit={displayUnit}
+        value={value}
       />
       <ConfigSlider
-        id="white-speed"
-        value={value}
-        onChange={onChange}
-        min={minValue}
-        max={maxValue}
-        step={0.1}
-        options={sliderOptions}
-        unit={displayUnit}
         decimal={decimal}
+        id="white-speed"
+        max={maxValue}
+        min={minValue}
+        onChange={onChange}
+        options={sliderOptions}
+        step={0.1}
+        unit={displayUnit}
+        value={value}
       />
     </div>
   );

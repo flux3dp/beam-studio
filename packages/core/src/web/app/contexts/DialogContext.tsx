@@ -10,10 +10,10 @@ export const DialogContext = React.createContext({
 export const eventEmitter = eventEmitterFactory.createEventEmitter();
 
 export class DialogContextProvider extends React.Component<any> {
-  private dialogComponents: {
+  private dialogComponents: Array<{
+    component: React.JSX.Element;
     id: string;
-    component: JSX.Element;
-  }[];
+  }>;
 
   constructor(props) {
     super(props);
@@ -25,6 +25,7 @@ export class DialogContextProvider extends React.Component<any> {
     eventEmitter.on('CLEAR_ALL_DIALOG_COMPONENTS', this.clearAllDialogComponents.bind(this));
     eventEmitter.on('CHECK_ID_EXIST', this.isIdExist.bind(this));
     eventEmitter.on('POP_DIALOG_BY_ID', this.popDialogById.bind(this));
+
     if (isWeb()) {
       window.addEventListener('DISMISS_FLUX_LOGIN', () => {
         this.popDialogById.call(this, 'flux-id-login');
@@ -36,8 +37,8 @@ export class DialogContextProvider extends React.Component<any> {
     eventEmitter.removeAllListeners();
   }
 
-  addDialogComponent = (id: string, dialogComponent: JSX.Element): void => {
-    this.dialogComponents.push({ id, component: dialogComponent });
+  addDialogComponent = (id: string, dialogComponent: React.JSX.Element): void => {
+    this.dialogComponents.push({ component: dialogComponent, id });
     this.forceUpdate();
   };
 
@@ -62,6 +63,7 @@ export class DialogContextProvider extends React.Component<any> {
 
   render() {
     const { children } = this.props;
+
     return (
       <DialogContext.Provider
         value={{

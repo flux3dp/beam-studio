@@ -1,47 +1,51 @@
-import classNames from 'classnames';
 import React from 'react';
 
-import i18n from '@core/helpers/i18n';
+import classNames from 'classnames';
+
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
+import i18n from '@core/helpers/i18n';
 
 const LANG = i18n.lang.beambox.tool_panels;
 
 interface Props {
-  row?: number;
   column?: number;
-  onValueChange?: (rc: { row: number; column: number }) => void;
+  onValueChange?: (rc: { column: number; row: number }) => void;
+  row?: number;
 }
 
 interface State {
-  row: number;
   column: number;
   isCollapsed: boolean;
+  row: number;
 }
 
 class RowColumn extends React.Component<Props, State> {
   constructor(props) {
     super(props);
-    const { row, column } = this.props;
+
+    const { column, row } = this.props;
+
     this.state = {
-      row,
       column,
       isCollapsed: false,
+      row,
     };
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
     this.setState({
-      row: nextProps.row,
       column: nextProps.column,
+      row: nextProps.row,
     });
   }
 
   onRawChanged = (row: number) => {
     const { onValueChange } = this.props;
     const { column } = this.state;
+
     onValueChange({
-      row,
       column,
+      row,
     });
     this.setState({ row });
   };
@@ -49,19 +53,21 @@ class RowColumn extends React.Component<Props, State> {
   onColumnChanged = (column: number) => {
     const { onValueChange } = this.props;
     const { row } = this.state;
+
     onValueChange({
-      row,
       column,
+      row,
     });
     this.setState({ column });
   };
 
-  render(): JSX.Element {
-    const { row, column, isCollapsed } = this.state;
+  render(): React.JSX.Element {
+    const { column, isCollapsed, row } = this.state;
+
     return (
       <div className="tool-panel">
         <label className="controls accordion">
-          <input type="checkbox" className="accordion-switcher" defaultChecked />
+          <input className="accordion-switcher" defaultChecked type="checkbox" />
           <p className="caption" onClick={() => this.setState({ isCollapsed: !isCollapsed })}>
             {LANG.array_dimension}
             <span className="value">{`${row} X ${column}`}</span>
@@ -70,24 +76,17 @@ class RowColumn extends React.Component<Props, State> {
             <div className="control">
               <div className="text-center header">{LANG.columns}</div>
               <UnitInput
-                id="columns"
-                min={1}
-                unit=""
                 decimal={0}
                 defaultValue={column || 1}
                 getValue={this.onColumnChanged}
+                id="columns"
+                min={1}
+                unit=""
               />
             </div>
             <div className="control">
               <div className="text-center header">{LANG.rows}</div>
-              <UnitInput
-                id="rows"
-                min={1}
-                unit=""
-                decimal={0}
-                defaultValue={row || 1}
-                getValue={this.onRawChanged}
-              />
+              <UnitInput decimal={0} defaultValue={row || 1} getValue={this.onRawChanged} id="rows" min={1} unit="" />
             </div>
           </div>
         </label>

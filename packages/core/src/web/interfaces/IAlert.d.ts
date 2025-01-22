@@ -1,34 +1,33 @@
-/* eslint-disable @typescript-eslint/ban-types */
-import { IButton } from './IButton';
+import type { IButton } from './IButton';
 
-export type MessageIcon = 'notice' | 'error' | 'info' | 'success' | 'warning';
+export type MessageIcon = 'error' | 'info' | 'notice' | 'success' | 'warning';
 
 export interface IAlert {
-  id?: string;
-  key?: number;
-  type?: string;
-  message: string | JSX.Element;
-  messageIcon?: MessageIcon;
-  caption?: string;
-  iconUrl?: string;
-  children?: Element;
+  buttonLabels?: string[];
   buttons?: IButton[];
   buttonType?: string;
-  buttonLabels?: string[];
   callbacks?: Function | Function[];
-  primaryButtonIndex?: number;
-  onYes?: Function;
-  onNo?: Function;
-  onConfirm?: Function;
-  onRetry?: Function;
-  onCancel?: Function;
-  links?: {
+  caption?: string;
+  checkbox?: {
+    callbacks: Function | Function[];
+    text: string;
+  };
+  children?: Element;
+  iconUrl?: string;
+  id?: string;
+  isProgress?: false;
+  key?: number;
+  links?: Array<{
     text: string;
     url: string;
-  }[];
-  checkbox?: {
-    text: string;
-    callbacks: Function | Function[];
-  };
-  isProgress?: false;
+  }>;
+  message: React.JSX.Element | string;
+  messageIcon?: MessageIcon;
+  onCancel?: Function;
+  onConfirm?: Function;
+  onNo?: Function;
+  onRetry?: Function;
+  onYes?: Function;
+  primaryButtonIndex?: number;
+  type?: string;
 }

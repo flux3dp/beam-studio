@@ -1,94 +1,95 @@
 import * as React from 'react';
+
+import { StyleProvider } from '@ant-design/cssinjs';
+import { ConfigProvider, message, theme } from 'antd';
+import daDK from 'antd/locale/da_DK';
+import deDE from 'antd/locale/de_DE';
+import elGR from 'antd/locale/el_GR';
+import enUS from 'antd/locale/en_US';
+import fiFI from 'antd/locale/fi_FI';
+import frFR from 'antd/locale/fr_FR';
+import idID from 'antd/locale/id_ID';
+import itIT from 'antd/locale/it_IT';
+import jaJP from 'antd/locale/ja_JP';
+import koKR from 'antd/locale/ko_KR';
+import msMY from 'antd/locale/ms_MY';
+import nbNO from 'antd/locale/nb_NO';
+import nlBE from 'antd/locale/nl_BE';
+import nlNL from 'antd/locale/nl_NL';
+import plPL from 'antd/locale/pl_PL';
+import svSE from 'antd/locale/sv_SE';
+import thTH from 'antd/locale/th_TH';
+import viVN from 'antd/locale/vi_VN';
+import zhTW from 'antd/locale/zh_TW';
+import type { Container } from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import { HashRouter, Route, Switch } from 'react-router-dom';
 
-import AlertsAndProgress from '@core/app/views/dialogs/AlertAndProgress';
+import { AlertProgressContextProvider } from '@core/app/contexts/AlertProgressContext';
+import { DialogContextProvider } from '@core/app/contexts/DialogContext';
 import Beambox from '@core/app/pages/Beambox';
 import ConnectEthernet from '@core/app/pages/ConnectEthernet';
 import ConnectMachineIp from '@core/app/pages/ConnectMachineIp';
 import ConnectUsb from '@core/app/pages/ConnectUsb';
 import ConnectWiFi from '@core/app/pages/ConnectWiFi';
 import ConnectWired from '@core/app/pages/ConnectWired';
-import Dialog from '@core/app/views/dialogs/Dialog';
 import Error from '@core/app/pages/Error';
 import FacebookOAuth from '@core/app/pages/FacebookOAuth';
 import FluxIdLogin from '@core/app/pages/FluxIdLogin';
 import GoogleOAuth from '@core/app/pages/GoogleOAuth';
 import Home from '@core/app/pages/Home';
-import Settings from '@core/app/pages/Settings';
+import PromarkSettings from '@core/app/pages/PromarkSettings';
 import SelectConnectionType from '@core/app/pages/SelectConnectionType';
 import SelectMachineModel from '@core/app/pages/SelectMachineModel';
 import SelectPromarkLaserSource from '@core/app/pages/SelectPromarkLaserSource';
-import PromarkSettings from '@core/app/pages/PromarkSettings';
-import { AlertProgressContextProvider } from '@core/app/contexts/AlertProgressContext';
-import { DialogContextProvider } from '@core/app/contexts/DialogContext';
-import { StyleProvider } from '@ant-design/cssinjs';
-import { ConfigProvider, message, theme } from 'antd';
-
-import enUS from 'antd/locale/en_US';
-import deDE from 'antd/locale/de_DE';
-import nlNL from 'antd/locale/nl_NL';
-import nlBE from 'antd/locale/nl_BE';
-import itIT from 'antd/locale/it_IT';
-import frFR from 'antd/locale/fr_FR';
-import zhTW from 'antd/locale/zh_TW';
-import koKR from 'antd/locale/ko_KR';
-import jaJP from 'antd/locale/ja_JP';
-import plPL from 'antd/locale/pl_PL';
-import daDK from 'antd/locale/da_DK';
-import elGR from 'antd/locale/el_GR';
-import fiFI from 'antd/locale/fi_FI';
-import idID from 'antd/locale/id_ID';
-import msMY from 'antd/locale/ms_MY';
-import nbNO from 'antd/locale/nb_NO';
-import svSE from 'antd/locale/sv_SE';
-import thTH from 'antd/locale/th_TH';
-import viVN from 'antd/locale/vi_VN';
-import { Container } from 'react-dom';
+import Settings from '@core/app/pages/Settings';
+import AlertsAndProgress from '@core/app/views/dialogs/AlertAndProgress';
+import Dialog from '@core/app/views/dialogs/Dialog';
 
 const { defaultAlgorithm } = theme;
 
 const localeMap = {
-  'nl-NL': nlNL,
-  'nl-BE': nlBE,
-  'zh-TW': zhTW,
-  'ko-KR': koKR,
-  'ja-JP': jaJP,
-  'fr-FR': frFR,
-  'it-IT': itIT,
-  'de-DE': deDE,
-  'en-US': enUS,
-  'pl-PL': plPL,
   da_DK: daDK,
+  'de-DE': deDE,
   el_GR: elGR,
+  'en-US': enUS,
   fi_FI: fiFI,
+  'fr-FR': frFR,
   id_ID: idID,
+  'it-IT': itIT,
+  'ja-JP': jaJP,
+  'ko-KR': koKR,
   ms_MY: msMY,
   nb_NO: nbNO,
+  'nl-BE': nlBE,
+  'nl-NL': nlNL,
+  'pl-PL': plPL,
   sv_SE: svSE,
   th_TH: thTH,
   vi_VN: viVN,
+  'zh-TW': zhTW,
 };
 
 console.log('Loading language', navigator.language);
 
-const App = (): JSX.Element => {
+const App = (): React.JSX.Element => {
   const [messageApi, contextHolder] = message.useMessage();
+
   return (
     <AlertProgressContextProvider messageApi={messageApi}>
       <DialogContextProvider>
         <ConfigProvider
+          locale={localeMap[navigator.language]}
           theme={{
             algorithm: defaultAlgorithm,
-            token: { screenMD: 601, screenMDMin: 601, screenSMMax: 600 },
             components: {
               Message: {
                 // set this value because zIndex of windows custom title bar is 99999
                 zIndexPopup: 100000,
               },
             },
+            token: { screenMD: 601, screenMDMin: 601, screenSMMax: 600 },
           }}
-          locale={localeMap[navigator.language]}
         >
           <StyleProvider hashPriority="high">
             <Dialog />
@@ -96,46 +97,26 @@ const App = (): JSX.Element => {
             {contextHolder}
             <HashRouter>
               <Switch>
-                <Route exact path="/google-auth" component={GoogleOAuth} />
-                <Route exact path="/fb-auth" component={FacebookOAuth} />
+                <Route component={GoogleOAuth} exact path="/google-auth" />
+                <Route component={FacebookOAuth} exact path="/fb-auth" />
+                <Route component={SelectConnectionType} exact path="/initialize/connect/select-connection-type" />
+                <Route component={SelectMachineModel} exact path="/initialize/connect/select-machine-model" />
+                <Route component={ConnectMachineIp} exact path="/initialize/connect/connect-machine-ip" />
+                <Route component={ConnectUsb} exact path="/initialize/connect/connect-usb" />
+                <Route component={ConnectWiFi} exact path="/initialize/connect/connect-wi-fi" />
+                <Route component={ConnectWired} exact path="/initialize/connect/connect-wired" />
+                <Route component={ConnectEthernet} exact path="/initialize/connect/connect-ethernet" />
+                <Route component={FluxIdLogin} exact path="/initialize/connect/flux-id-login" />
                 <Route
-                  exact
-                  path="/initialize/connect/select-connection-type"
-                  component={SelectConnectionType}
-                />
-                <Route
-                  exact
-                  path="/initialize/connect/select-machine-model"
-                  component={SelectMachineModel}
-                />
-                <Route
-                  exact
-                  path="/initialize/connect/connect-machine-ip"
-                  component={ConnectMachineIp}
-                />
-                <Route exact path="/initialize/connect/connect-usb" component={ConnectUsb} />
-                <Route exact path="/initialize/connect/connect-wi-fi" component={ConnectWiFi} />
-                <Route exact path="/initialize/connect/connect-wired" component={ConnectWired} />
-                <Route
-                  exact
-                  path="/initialize/connect/connect-ethernet"
-                  component={ConnectEthernet}
-                />
-                <Route exact path="/initialize/connect/flux-id-login" component={FluxIdLogin} />
-                <Route
+                  component={SelectPromarkLaserSource}
                   exact
                   path="/initialize/connect/select-promark-laser-source"
-                  component={SelectPromarkLaserSource}
                 />
-                <Route
-                  exact
-                  path="/initialize/connect/promark-settings"
-                  component={PromarkSettings}
-                />
-                <Route exact path="/studio/settings" component={Settings} />
-                <Route exact path="/studio/beambox" component={Beambox} />
-                <Route path="/error/*" component={Error} />
-                <Route path="*" component={Home} />
+                <Route component={PromarkSettings} exact path="/initialize/connect/promark-settings" />
+                <Route component={Settings} exact path="/studio/settings" />
+                <Route component={Beambox} exact path="/studio/beambox" />
+                <Route component={Error} path="/error/*" />
+                <Route component={Home} path="*" />
               </Switch>
             </HashRouter>
           </StyleProvider>

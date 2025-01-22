@@ -1,4 +1,4 @@
-import { CSSProperties, ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 
 export enum MessageLevel {
   OPEN,
@@ -10,13 +10,13 @@ export enum MessageLevel {
 }
 
 export interface IMessage {
-  level: MessageLevel,
-  className?: string,
-  content: string | ReactNode,
-  duration?: number,
-  icon?: ReactNode,
-  key?: string,
-  style?: CSSProperties,
-  onClick?: () => void,
-  onClose?: () => void,
+  className?: string;
+  content: ReactNode | string;
+  duration?: number;
+  icon?: ReactNode;
+  key?: string;
+  level: MessageLevel;
+  onClick?: () => void;
+  onClose?: () => void;
+  style?: CSSProperties;
 }

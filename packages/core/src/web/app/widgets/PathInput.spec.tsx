@@ -1,8 +1,9 @@
-/* eslint-disable import/first */
 import React from 'react';
+
 import { act, fireEvent, render } from '@testing-library/react';
 
 const mockShowOpenDialog = jest.fn();
+
 jest.mock('@app/implementations/dialog', () => ({
   showOpenDialog: mockShowOpenDialog,
 }));
@@ -10,10 +11,11 @@ jest.mock('@app/implementations/dialog', () => ({
 const mockExists = jest.fn();
 const mockIsFile = jest.fn();
 const mockIsDirectory = jest.fn();
+
 jest.mock('@app/implementations/fileSystem', () => ({
   exists: mockExists,
-  isFile: mockIsFile,
   isDirectory: mockIsDirectory,
+  isFile: mockIsFile,
 }));
 
 import PathInput from './PathInput';
@@ -31,25 +33,26 @@ describe('test PathInput', () => {
         type={1}
       />,
     );
+
     expect(container).toMatchSnapshot();
     mockShowOpenDialog.mockResolvedValue({
-      filePaths: [],
       canceled: true,
+      filePaths: [],
     });
     await act(async () => {
       fireEvent.click(container.querySelector('.btn'));
     });
     expect(mockShowOpenDialog).toHaveBeenCalledTimes(1);
     expect(mockShowOpenDialog).toHaveBeenNthCalledWith(1, {
-      properties: ['openDirectory', 'createDirectory', 'promptToCreate'],
       defaultPath: 'defaultFolder',
+      properties: ['openDirectory', 'createDirectory', 'promptToCreate'],
     });
     expect(mockGetValue).not.toHaveBeenCalled();
     expect(container).toMatchSnapshot();
 
     mockShowOpenDialog.mockResolvedValue({
-      filePaths: ['myDocuments'],
       canceled: false,
+      filePaths: ['myDocuments'],
     });
     mockExists.mockReturnValue(false);
     await act(async () => {
@@ -57,8 +60,8 @@ describe('test PathInput', () => {
     });
     expect(mockShowOpenDialog).toHaveBeenCalledTimes(2);
     expect(mockShowOpenDialog).toHaveBeenNthCalledWith(2, {
-      properties: ['openDirectory', 'createDirectory', 'promptToCreate'],
       defaultPath: 'defaultFolder',
+      properties: ['openDirectory', 'createDirectory', 'promptToCreate'],
     });
     expect(mockExists).toHaveBeenCalledTimes(1);
     expect(mockExists).toHaveBeenNthCalledWith(1, 'myDocuments');

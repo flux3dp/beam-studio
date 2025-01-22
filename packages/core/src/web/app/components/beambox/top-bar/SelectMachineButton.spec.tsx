@@ -52,7 +52,6 @@ describe('test SelectMachineButton', () => {
             mode: CanvasMode.Draw,
             selectedDevice: null,
             setupPreviewMode: mockSetupPreviewMode,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
           } as any
         }
       >
@@ -76,7 +75,6 @@ describe('test SelectMachineButton', () => {
             mode: CanvasMode.Draw,
             selectedDevice: null,
             setupPreviewMode: mockSetupPreviewMode,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
           } as any
         }
       >
@@ -98,7 +96,6 @@ describe('test SelectMachineButton', () => {
             mode: CanvasMode.Draw,
             selectedDevice: { model: 'fbm1', name: 'device name' },
             setupPreviewMode: mockSetupPreviewMode,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
           } as any
         }
       >
@@ -120,7 +117,6 @@ describe('test SelectMachineButton', () => {
             mode: CanvasMode.Preview,
             selectedDevice: null,
             setupPreviewMode: mockSetupPreviewMode,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
           } as any
         }
       >

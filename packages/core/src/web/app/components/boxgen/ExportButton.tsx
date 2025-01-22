@@ -1,93 +1,105 @@
 import React, { useContext, useMemo, useState } from 'react';
-import { Button, Form, InputNumber, Modal, Pagination, Switch } from 'antd';
-import { DownloadOutlined } from '@ant-design/icons';
 
+import { DownloadOutlined } from '@ant-design/icons';
+import { Button, Form, InputNumber, Modal, Pagination, Switch } from 'antd';
+
+import { BoxgenContext } from '@core/app/contexts/BoxgenContext';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
 import importSvgString from '@core/app/svgedit/operations/import/importSvgString';
-import ISVGLayer from '@core/interfaces/ISVGLayer';
-import useI18n from '@core/helpers/useI18n';
-import wrapSVG from '@core/helpers/boxgen/wrapSVG';
-import { BoxgenContext } from '@core/app/contexts/BoxgenContext';
 import { getLayouts } from '@core/helpers/boxgen/Layout';
+import wrapSVG from '@core/helpers/boxgen/wrapSVG';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import { IExportOptions } from '@core/interfaces/IBoxgen';
+import useI18n from '@core/helpers/useI18n';
+import type { IExportOptions } from '@core/interfaces/IBoxgen';
+import type ISVGLayer from '@core/interfaces/ISVGLayer';
 
 import styles from './ExportButton.module.scss';
 
 let svgCanvas;
+
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
 
 const ExportDialog = ({
-  visible,
   setVisible,
+  visible,
 }: {
-  visible: boolean;
   setVisible: (visible: boolean) => void;
-}): JSX.Element => {
+  visible: boolean;
+}): React.JSX.Element => {
   const lang = useI18n().boxgen;
-  const { boxData, workarea, onClose, lengthUnit } = useContext(BoxgenContext);
-  const { unit, unitRatio, decimal } = lengthUnit;
+  const { boxData, lengthUnit, onClose, workarea } = useContext(BoxgenContext);
+  const { decimal, unit, unitRatio } = lengthUnit;
   const isMM = useMemo(() => unit === 'mm', [unit]);
   const [page, setPage] = useState(1);
   const [options, setOptions] = useState<IExportOptions>({
+    compRadius: 0.1,
     joinOutput: false,
     textLabel: false,
-    compRadius: 0.1,
   });
   const [confirmLoading, setConfirmLoading] = useState(false);
-  if (!visible) return null;
 
-  const { canvasWidth, canvasHeight } = workarea;
+  if (!visible) {
+    return null;
+  }
+
+  const { canvasHeight, canvasWidth } = workarea;
   const layouts = getLayouts(canvasWidth, canvasHeight, boxData, options);
 
   const handleOk = async () => {
     setConfirmLoading(true);
+
     const boxLayers = [];
     const newLayers = [];
     const drawing = svgCanvas.getCurrentDrawing();
+
     (drawing.all_layers as ISVGLayer[]).forEach((layer) => {
-      // eslint-disable-next-line no-underscore-dangle
-      if (layer.name_.startsWith('Box ')) boxLayers.push(layer.name_.split('-')[0]);
+      if (layer.name_.startsWith('Box ')) {
+        boxLayers.push(layer.name_.split('-')[0]);
+      }
     });
+
     let i = 0;
     let uniqBoxName = '';
+
     do {
       i += 1;
       uniqBoxName = `Box ${i}`;
     } while (boxLayers.includes(uniqBoxName));
+
     const batchCmd = HistoryCommandFactory.createBatchCommand('Import box layer');
-    const promises: Promise<SVGUseElement>[] = [];
+    const promises: Array<Promise<SVGUseElement>> = [];
+
     layouts.pages.forEach((pageContent, idx) => {
       let content = wrapSVG(canvasWidth, canvasHeight, pageContent.shape);
+
       promises.push(
         importSvgString(content, {
-          type: 'layer',
           layerName: `${uniqBoxName}-${idx + 1}`,
           parentCmd: batchCmd,
+          type: 'layer',
         }),
       );
       newLayers.push(`${uniqBoxName}-${idx + 1}`);
+
       if (options.textLabel) {
         content = wrapSVG(canvasWidth, canvasHeight, pageContent.label);
         promises.push(
           importSvgString(content, {
-            type: 'layer',
             layerName: `${uniqBoxName}-${idx + 1} Label`,
             parentCmd: batchCmd,
+            type: 'layer',
           }),
         );
         newLayers.push(`${uniqBoxName}-${idx + 1} Label`);
       }
     });
-    const elems = (await Promise.allSettled(promises)).map((p) =>
-      p.status === 'fulfilled' ? p.value : null,
-    );
+
+    const elems = (await Promise.allSettled(promises)).map((p) => (p.status === 'fulfilled' ? p.value : null));
+
     batchCmd.addSubCommand(await svgCanvas.disassembleUse2Group(elems, true, false, false));
-    newLayers
-      .slice(options.textLabel ? 2 : 1)
-      .forEach((layername) => drawing.setLayerVisibility(layername, false));
+    newLayers.slice(options.textLabel ? 2 : 1).forEach((layername) => drawing.setLayerVisibility(layername, false));
     svgCanvas.addCommandToHistory(batchCmd);
     setConfirmLoading(false);
     setVisible(false);
@@ -96,31 +108,27 @@ const ExportDialog = ({
 
   return (
     <Modal
-      title={lang.import}
-      open={visible}
-      onOk={handleOk}
-      onCancel={() => setVisible(false)}
-      okButtonProps={{ icon: <DownloadOutlined /> }}
-      okText={lang.import}
       cancelText={lang.cancel}
       confirmLoading={confirmLoading}
+      okButtonProps={{ icon: <DownloadOutlined /> }}
+      okText={lang.import}
+      onCancel={() => setVisible(false)}
+      onOk={handleOk}
+      open={visible}
+      title={lang.import}
     >
-      <svg
-        width="100%"
-        height={250}
-        viewBox={`-0.5 -0.5 ${canvasWidth + 0.5} ${canvasHeight + 0.5}`}
-      >
+      <svg height={250} viewBox={`-0.5 -0.5 ${canvasWidth + 0.5} ${canvasHeight + 0.5}`} width="100%">
         <rect
-          x={0}
-          y={0}
-          width={canvasWidth}
           height={canvasHeight}
           style={{
-            stroke: '#CCC',
             fill: 'none',
-            strokeWidth: 1,
+            stroke: '#CCC',
             strokeDasharray: 4,
+            strokeWidth: 1,
           }}
+          width={canvasWidth}
+          x={0}
+          y={0}
         />
         {layouts.pages[page - 1].shape}
         {layouts.pages[page - 1].label}
@@ -128,9 +136,9 @@ const ExportDialog = ({
       <Pagination
         className={styles.pagination}
         current={page}
+        defaultPageSize={1}
         onChange={(value) => setPage(value)}
         total={layouts.pages.length}
-        defaultPageSize={1}
       />
       <div className={styles['form-title']}>{lang.customize}</div>
       <Form
@@ -141,39 +149,29 @@ const ExportDialog = ({
           setPage(1);
         }}
       >
-        <Form.Item
-          className={styles['form-item']}
-          label={lang.merge}
-          name="joinOutput"
-          valuePropName="checked"
-        >
+        <Form.Item className={styles['form-item']} label={lang.merge} name="joinOutput" valuePropName="checked">
+          <Switch />
+        </Form.Item>
+        <Form.Item className={styles['form-item']} label={lang.text_label} name="textLabel" valuePropName="checked">
           <Switch />
         </Form.Item>
         <Form.Item
-          className={styles['form-item']}
-          label={lang.text_label}
-          name="textLabel"
-          valuePropName="checked"
-        >
-          <Switch />
-        </Form.Item>
-        <Form.Item
-          tooltip={lang.beam_radius_warning}
           className={styles['form-item']}
           label={lang.beam_radius}
           name="compRadius"
+          tooltip={lang.beam_radius_warning}
         >
           <InputNumber<number>
-            type="number"
-            size="small"
-            min={0}
-            max={isMM ? 0.3 : 0.3048}
             addonAfter={unit}
-            step={isMM ? 0.1 : 0.001 * unitRatio}
-            formatter={(v, { userTyping, input }) =>
+            formatter={(v, { input, userTyping }) =>
               userTyping ? input : ((v as number) / unitRatio).toFixed(decimal + 2)
             }
+            max={isMM ? 0.3 : 0.3048}
+            min={0}
             parser={(v) => Number(v) * unitRatio}
+            size="small"
+            step={isMM ? 0.1 : 0.001 * unitRatio}
+            type="number"
           />
         </Form.Item>
       </Form>
@@ -181,15 +179,16 @@ const ExportDialog = ({
   );
 };
 
-const ExportButton = (): JSX.Element => {
+const ExportButton = (): React.JSX.Element => {
   const lang = useI18n().boxgen;
   const [visible, setVisible] = useState(false);
+
   return (
     <>
-      <Button type="primary" onClick={() => setVisible(true)}>
+      <Button onClick={() => setVisible(true)} type="primary">
         {lang.continue_import}
       </Button>
-      <ExportDialog visible={visible} setVisible={setVisible} />
+      <ExportDialog setVisible={setVisible} visible={visible} />
     </>
   );
 };

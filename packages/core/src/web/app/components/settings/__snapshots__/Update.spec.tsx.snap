@@ -13,7 +13,7 @@ exports[`should render correctly desktop version 1`] = `
     label:
     Auto Check
     options:
-    [{"value":"TRUE","label":"On","selected":true},{"value":"FALSE","label":"Off","selected":false}]
+    [{"label":"On","selected":true,"value":"TRUE"},{"label":"Off","selected":false,"value":"FALSE"}]
     <input
       class="select-control"
     />

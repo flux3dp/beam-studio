@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import ConfigPanelContext from './ConfigPanelContext';
@@ -19,31 +19,32 @@ jest.mock('@core/helpers/useI18n', () => () => ({
 jest.mock(
   '@core/app/widgets/Unit-Input-v2',
   () =>
-    ({ id, min, max, unit, defaultValue, decimal, displayMultiValue, getValue }: any) =>
-      (
-        <div>
-          MockUnitInput
-          <p>id: {id}</p>
-          <p>min: {min}</p>
-          <p>max: {max}</p>
-          <p>unit: {unit}</p>
-          <p>defaultValue: {defaultValue}</p>
-          <p>decimal: {decimal}</p>
-          <p>displayMultiValue: {displayMultiValue}</p>
-          <button type="button" onClick={() => getValue(7)}>
-            change-{id}
-          </button>
-        </div>
-      ),
+    ({ decimal, defaultValue, displayMultiValue, getValue, id, max, min, unit }: any) => (
+      <div>
+        MockUnitInput
+        <p>id: {id}</p>
+        <p>min: {min}</p>
+        <p>max: {max}</p>
+        <p>unit: {unit}</p>
+        <p>defaultValue: {defaultValue}</p>
+        <p>decimal: {decimal}</p>
+        <p>displayMultiValue: {displayMultiValue}</p>
+        <button onClick={() => getValue(7)} type="button">
+          change-{id}
+        </button>
+      </div>
+    ),
 );
 
 const mockWriteData = jest.fn();
+
 jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   CUSTOM_PRESET_CONSTANT: 'CUSTOM_PRESET_CONSTANT',
   writeData: (...args: any) => mockWriteData(...args),
 }));
 
 const mockAddCommandToHistory = jest.fn();
+
 jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) =>
     callback({
@@ -53,25 +54,26 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
     }),
 }));
 
-let batchCmd = { onAfter: undefined, count: 0 };
+let batchCmd = { count: 0, onAfter: undefined };
 const mockBatchCommand = jest.fn().mockImplementation(() => {
-  batchCmd = { onAfter: undefined, count: batchCmd.count + 1 };
+  batchCmd = { count: batchCmd.count + 1, onAfter: undefined };
+
   return batchCmd;
 });
+
 jest.mock('@core/app/svgedit/history/history', () => ({
   BatchCommand: mockBatchCommand,
 }));
 
 const mockSelectedLayers = ['layer1', 'layer2'];
 const mockContextState = {
-  height: { value: 3, hasMultiValue: false },
-  repeat: { value: 1, hasMultiValue: false },
-  zStep: { value: 0, hasMultiValue: false },
+  height: { hasMultiValue: false, value: 3 },
+  repeat: { hasMultiValue: false, value: 1 },
+  zStep: { hasMultiValue: false, value: 0 },
 };
 const mockDispatch = jest.fn();
 const mockInitState = jest.fn();
 
-// eslint-disable-next-line import/first
 import AutoFocus from './AutoFocus';
 
 describe('test AutoFocus', () => {
@@ -83,15 +85,16 @@ describe('test AutoFocus', () => {
     const { container, queryByText } = render(
       <ConfigPanelContext.Provider
         value={{
-          selectedLayers: mockSelectedLayers,
-          state,
           dispatch: mockDispatch,
           initState: mockInitState,
+          selectedLayers: mockSelectedLayers,
+          state,
         }}
       >
         <AutoFocus />
       </ConfigPanelContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
     expect(queryByText('height')).not.toBeInTheDocument();
     expect(queryByText('z_step')).not.toBeInTheDocument();
@@ -104,15 +107,16 @@ describe('test AutoFocus', () => {
     const { container, queryByText } = render(
       <ConfigPanelContext.Provider
         value={{
-          selectedLayers: mockSelectedLayers,
-          state,
           dispatch: mockDispatch,
           initState: mockInitState,
+          selectedLayers: mockSelectedLayers,
+          state,
         }}
       >
         <AutoFocus />
       </ConfigPanelContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
     expect(queryByText('height')).toBeInTheDocument();
     expect(queryByText('z_step')).not.toBeInTheDocument();
@@ -126,15 +130,16 @@ describe('test AutoFocus', () => {
     const { container, queryByText } = render(
       <ConfigPanelContext.Provider
         value={{
-          selectedLayers: mockSelectedLayers,
-          state,
           dispatch: mockDispatch,
           initState: mockInitState,
+          selectedLayers: mockSelectedLayers,
+          state,
         }}
       >
         <AutoFocus />
       </ConfigPanelContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
     expect(queryByText('height')).toBeInTheDocument();
     expect(queryByText('z_step')).toBeInTheDocument();
@@ -148,22 +153,23 @@ describe('test AutoFocus', () => {
     const { container, getByText } = render(
       <ConfigPanelContext.Provider
         value={{
-          selectedLayers: mockSelectedLayers,
-          state,
           dispatch: mockDispatch,
           initState: mockInitState,
+          selectedLayers: mockSelectedLayers,
+          state,
         }}
       >
         <AutoFocus />
       </ConfigPanelContext.Provider>,
     );
+
     expect(mockDispatch).not.toBeCalled();
     expect(mockWriteData).not.toBeCalled();
     expect(mockBatchCommand).not.toBeCalled();
     expect(batchCmd.count).toBe(0);
     fireEvent.click(container.querySelector('button#auto-focus'));
     expect(mockDispatch).toBeCalledTimes(1);
-    expect(mockDispatch).lastCalledWith({ type: 'change', payload: { height: -3 } });
+    expect(mockDispatch).lastCalledWith({ payload: { height: -3 }, type: 'change' });
     expect(mockBatchCommand).toBeCalledTimes(1);
     expect(mockBatchCommand).lastCalledWith('Change auto focus toggle');
     expect(batchCmd.count).toBe(1);
@@ -176,7 +182,7 @@ describe('test AutoFocus', () => {
 
     fireEvent.click(getByText('change-height'));
     expect(mockDispatch).toBeCalledTimes(2);
-    expect(mockDispatch).lastCalledWith({ type: 'change', payload: { height: 7 } });
+    expect(mockDispatch).lastCalledWith({ payload: { height: 7 }, type: 'change' });
     expect(mockBatchCommand).toBeCalledTimes(2);
     expect(mockBatchCommand).lastCalledWith('Change auto focus height');
     expect(batchCmd.count).toBe(2);
@@ -190,29 +196,17 @@ describe('test AutoFocus', () => {
     fireEvent.click(getByText('change-z_step'));
     expect(mockDispatch).toBeCalledTimes(3);
     expect(mockDispatch).lastCalledWith({
+      payload: { configName: 'CUSTOM_PRESET_CONSTANT', zStep: 7 },
       type: 'change',
-      payload: { zStep: 7, configName: 'CUSTOM_PRESET_CONSTANT' },
     });
     expect(mockBatchCommand).toBeCalledTimes(3);
     expect(mockBatchCommand).lastCalledWith('Change auto focus z step');
     expect(batchCmd.count).toBe(3);
     expect(mockWriteData).toBeCalledTimes(8);
     expect(mockWriteData).toHaveBeenNthCalledWith(5, 'layer1', 'zStep', 7, { batchCmd });
-    expect(mockWriteData).toHaveBeenNthCalledWith(
-      6,
-      'layer1',
-      'configName',
-      'CUSTOM_PRESET_CONSTANT',
-      { batchCmd },
-    );
+    expect(mockWriteData).toHaveBeenNthCalledWith(6, 'layer1', 'configName', 'CUSTOM_PRESET_CONSTANT', { batchCmd });
     expect(mockWriteData).toHaveBeenNthCalledWith(7, 'layer2', 'zStep', 7, { batchCmd });
-    expect(mockWriteData).toHaveBeenNthCalledWith(
-      8,
-      'layer2',
-      'configName',
-      'CUSTOM_PRESET_CONSTANT',
-      { batchCmd },
-    );
+    expect(mockWriteData).toHaveBeenNthCalledWith(8, 'layer2', 'configName', 'CUSTOM_PRESET_CONSTANT', { batchCmd });
     expect(batchCmd.onAfter).toBe(mockInitState);
     expect(mockAddCommandToHistory).toBeCalledTimes(3);
     expect(mockAddCommandToHistory).lastCalledWith(batchCmd);

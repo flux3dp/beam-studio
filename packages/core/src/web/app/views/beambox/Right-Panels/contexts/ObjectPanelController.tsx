@@ -10,7 +10,9 @@ const getDimensionValues = (key?: string): any => {
   const response = {
     dimensionValues: {},
   };
+
   objectPanelEventEmitter.emit('GET_DIMENSION_VALUES', response, key);
+
   return response.dimensionValues;
 };
 
@@ -27,24 +29,26 @@ const updatePolygonSides = (polygonSides: number): void => {
   objectPanelEventEmitter.emit('UPDATE_POLYGON_SIDES', polygonSides);
 };
 
-const updateActiveKey = (activeKey: string | null): void => {
+const updateActiveKey = (activeKey: null | string): void => {
   objectPanelEventEmitter.emit('UPDATE_ACTIVE_KEY', activeKey);
 };
 
-const getActiveKey = (): string | null => {
+const getActiveKey = (): null | string => {
   const response = {
     activeKey: undefined,
   };
+
   objectPanelEventEmitter.emit('GET_ACTIVE_KEY', response);
+
   return response.activeKey;
 };
 
 export default {
-  updateObjectPanel,
-  updateDimensionValues,
-  getDimensionValues,
-  updatePolygonSides,
-  updateActiveKey,
-  getActiveKey,
   events: objectPanelEventEmitter,
+  getActiveKey,
+  getDimensionValues,
+  updateActiveKey,
+  updateDimensionValues,
+  updateObjectPanel,
+  updatePolygonSides,
 };

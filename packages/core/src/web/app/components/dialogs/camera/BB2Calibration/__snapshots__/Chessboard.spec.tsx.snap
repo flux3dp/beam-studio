@@ -282,7 +282,7 @@ exports[`test Chessboard should render correctly 2`] = `
                     <nav
                       class="react-contextmenu"
                       role="menu"
-                      style="position: fixed; opacity: 0; pointer-events: none;"
+                      style="opacity: 0; pointer-events: none; position: fixed;"
                       tabindex="-1"
                     >
                       <div

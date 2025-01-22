@@ -1,6 +1,7 @@
 import handleFinish from './handle-finish';
 
 const mockSelectOnly = jest.fn();
+
 jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) =>
     callback({
@@ -11,6 +12,7 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
 }));
 
 const mockAddBatchCommand = jest.fn();
+
 jest.mock('@core/helpers/image-edit', () => ({
   addBatchCommand: (...args) => mockAddBatchCommand(...args),
 }));
@@ -20,16 +22,17 @@ describe('test image-edit-panel/handle-finish', () => {
     const mockElement = {
       setAttribute: jest.fn(),
     };
+
     handleFinish(mockElement as unknown as SVGImageElement, 'mock-src', 'mock-base64', {
-      width: 100,
       height: 200,
+      width: 100,
     });
     expect(mockAddBatchCommand).toBeCalledTimes(1);
     expect(mockAddBatchCommand).toHaveBeenLastCalledWith('Image Edit', mockElement, {
-      origImage: 'mock-src',
-      'xlink:href': 'mock-base64',
-      width: 100,
       height: 200,
+      origImage: 'mock-src',
+      width: 100,
+      'xlink:href': 'mock-base64',
     });
     expect(mockSelectOnly).toBeCalledTimes(1);
     expect(mockSelectOnly).toHaveBeenLastCalledWith([mockElement], true);

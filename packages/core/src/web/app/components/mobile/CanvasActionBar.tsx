@@ -1,20 +1,21 @@
 import React from 'react';
+
 import { TabBar } from 'antd-mobile';
 
 import svgEditor from '@core/app/actions/beambox/svg-editor';
 import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
 import { TrashIcon } from '@core/app/icons/icons';
 
-const CanvasActionBar = (): JSX.Element => {
+const CanvasActionBar = (): React.JSX.Element => {
   const { selectedElement } = React.useContext(SelectedElementContext);
   const [activeKey, setActiveKey] = React.useState('dmkt');
 
   const tabs = [
     {
+      disabled: !selectedElement,
+      icon: <TrashIcon />,
       key: 'trash',
       title: '刪除',
-      icon: <TrashIcon />,
-      disabled: !selectedElement,
     },
   ];
 
@@ -22,19 +23,20 @@ const CanvasActionBar = (): JSX.Element => {
     if (key === 'trash') {
       svgEditor.deleteSelected();
     }
+
     setActiveKey('dmkt');
   };
 
   return (
     <div
       style={{
+        background: '#FFFFFF',
+        borderTop: 'solid 1px #CCC',
+        bottom: 50,
+        overflowX: 'scroll',
         position: 'fixed',
         width: '100%',
-        borderTop: 'solid 1px #CCC',
-        background: '#FFFFFF',
         zIndex: 998,
-        overflowX: 'scroll',
-        bottom: 50,
       }}
     >
       <div style={{ width: '100%' }}>
@@ -46,12 +48,7 @@ const CanvasActionBar = (): JSX.Element => {
           }}
         >
           {tabs.map((item) => (
-            <TabBar.Item
-              key={item.key}
-              icon={item.icon}
-              title={item.title}
-              aria-disabled={item.disabled}
-            />
+            <TabBar.Item aria-disabled={item.disabled} icon={item.icon} key={item.key} title={item.title} />
           ))}
         </TabBar>
       </div>

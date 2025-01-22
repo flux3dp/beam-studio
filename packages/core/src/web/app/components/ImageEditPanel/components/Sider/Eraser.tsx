@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { Col, Form, InputNumber, Row, Slider } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Col, Form, InputNumber, Row, Slider } from 'antd';
 
 import useI18n from '@core/helpers/useI18n';
 
@@ -14,7 +14,7 @@ interface Props {
 
 const MAX_BRUSH_SIZE = 128;
 
-export default function Eraser({ brushSize, setBrushSize }: Props): JSX.Element {
+export default function Eraser({ brushSize, setBrushSize }: Props): React.JSX.Element {
   const { image_edit_panel: lang } = useI18n();
 
   return (
@@ -27,22 +27,10 @@ export default function Eraser({ brushSize, setBrushSize }: Props): JSX.Element 
         <Form.Item label={`${lang.eraser.brush_size}:`}>
           <Row>
             <Col flex="auto">
-              <Slider
-                min={1}
-                max={MAX_BRUSH_SIZE}
-                step={1}
-                value={brushSize}
-                onChange={setBrushSize}
-              />
+              <Slider max={MAX_BRUSH_SIZE} min={1} onChange={setBrushSize} step={1} value={brushSize} />
             </Col>
             <Col flex="100px">
-              <InputNumber
-                min={1}
-                max={MAX_BRUSH_SIZE}
-                step={1}
-                value={brushSize}
-                onChange={setBrushSize}
-              />
+              <InputNumber max={MAX_BRUSH_SIZE} min={1} onChange={setBrushSize} step={1} value={brushSize} />
             </Col>
           </Row>
         </Form.Item>

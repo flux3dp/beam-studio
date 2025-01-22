@@ -10,7 +10,11 @@
   font-weight: bold;
   font-size: 13px;
   letter-spacing: 0.95px;
-  text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
+  text-shadow:
+    -1px 0 white,
+    0 1px white,
+    1px 0 white,
+    0 -1px white;
 
   @media screen and (max-width: 600px) {
     margin-top: 20px;

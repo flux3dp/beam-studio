@@ -1,20 +1,20 @@
 export type Option = Partial<{
-  hostname: string;
-  port: string;
-  method: string;
   autoReconnect: boolean;
-  onMessage: (data: any) => void;
-  onOpen: (data: any) => void;
+  hostname: string;
+  method: string;
   onClose: (data: any) => void;
   onError: (error: any) => void;
   onFatal: (error: any) => void;
+  onMessage: (data: any) => void;
+  onOpen: (data: any) => void;
+  port: string;
 }>;
 
 export interface WrappedWebSocket {
-  currentState: number;
-  url: string;
-  log: string[];
-  send: (data: string | Blob | ArrayBuffer) => WrappedWebSocket;
   close: (reconnect?: boolean) => void;
+  currentState: number;
+  log: string[];
+  send: (data: ArrayBuffer | Blob | string) => WrappedWebSocket;
   setOnMessage: (onMessage: (data: any) => void) => WrappedWebSocket;
+  url: string;
 }

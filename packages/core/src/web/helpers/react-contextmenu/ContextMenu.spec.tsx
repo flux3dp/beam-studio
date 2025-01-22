@@ -1,9 +1,10 @@
 import React from 'react';
-import { act } from 'react-dom/test-utils';
-import { fireEvent, render } from '@testing-library/react';
 
+import { fireEvent, render } from '@testing-library/react';
+import { act } from 'react-dom/test-utils';
+
+import { hideMenu, showMenu } from './actions';
 import ContextMenu from './ContextMenu';
-import { showMenu, hideMenu } from './actions';
 
 const setState = jest.spyOn(ContextMenu.prototype, 'setState');
 
@@ -19,7 +20,7 @@ describe('ContextMenu tests', () => {
     const { container } = render(<ContextMenu id={ID} />);
 
     expect(container).toMatchSnapshot();
-    act(() => showMenu({ position: { x, y }, id: ID }));
+    act(() => showMenu({ id: ID, position: { x, y } }));
     expect(setState).toHaveBeenCalledTimes(1);
     expect(setState).toHaveBeenNthCalledWith(1, {
       isVisible: true,
@@ -37,17 +38,18 @@ describe('ContextMenu tests', () => {
     const { container } = render(<ContextMenu id={ID} />);
 
     expect(container).toMatchSnapshot();
-    act(() => showMenu({ position: { x, y }, id: 'ID' }));
+    act(() => showMenu({ id: 'ID', position: { x, y } }));
     expect(setState).not.toBeCalled();
     expect(container.querySelectorAll('.react-contextmenu--visible').length).toBe(0);
     expect(container).toMatchSnapshot();
   });
 
   test('onShow and onHide are triggered correctly', () => {
-    const data = { position: { x: 50, y: 50 }, id: 'CORRECT_ID' };
+    const data = { id: 'CORRECT_ID', position: { x: 50, y: 50 } };
     const onShow = jest.fn();
     const onHide = jest.fn();
-    render(<ContextMenu id={data.id} onShow={onShow} onHide={onHide} />);
+
+    render(<ContextMenu id={data.id} onHide={onHide} onShow={onShow} />);
 
     act(() => {
       hideMenu();
@@ -65,8 +67,8 @@ describe('ContextMenu tests', () => {
     act(() => hideMenu());
     expect(setState).toHaveBeenCalledTimes(2);
     expect(setState).toHaveBeenNthCalledWith(2, {
-      isVisible: false,
       forceSubMenuOpen: false,
+      isVisible: false,
       selectedItem: null,
     });
     expect(onShow).toHaveBeenCalledTimes(1);
@@ -74,9 +76,11 @@ describe('ContextMenu tests', () => {
   });
 
   test('menu should close on "Escape"', () => {
-    const data = { position: { x: 50, y: 50 }, id: 'CORRECT_ID' };
+    const data = { id: 'CORRECT_ID', position: { x: 50, y: 50 } };
     const onHide = jest.fn();
+
     render(<ContextMenu id={data.id} onHide={onHide} />);
+
     const escape = new window.KeyboardEvent('keydown', { keyCode: 27 });
 
     act(() => showMenu(data));
@@ -88,17 +92,19 @@ describe('ContextMenu tests', () => {
     document.dispatchEvent(escape);
     expect(setState).toHaveBeenCalledTimes(2);
     expect(setState).toHaveBeenNthCalledWith(2, {
-      isVisible: false,
       forceSubMenuOpen: false,
+      isVisible: false,
       selectedItem: null,
     });
     expect(onHide).toHaveBeenCalled();
   });
 
   test('menu should close on "Enter" when selectedItem is null', () => {
-    const data = { position: { x: 50, y: 50 }, id: 'CORRECT_ID' };
+    const data = { id: 'CORRECT_ID', position: { x: 50, y: 50 } };
     const onHide = jest.fn();
+
     render(<ContextMenu id={data.id} onHide={onHide} />);
+
     const enter = new window.KeyboardEvent('keydown', { keyCode: 13 });
 
     act(() => showMenu(data));
@@ -110,15 +116,15 @@ describe('ContextMenu tests', () => {
     document.dispatchEvent(enter);
     expect(setState).toHaveBeenCalledTimes(2);
     expect(setState).toHaveBeenNthCalledWith(2, {
-      isVisible: false,
       forceSubMenuOpen: false,
+      isVisible: false,
       selectedItem: null,
     });
     expect(onHide).toHaveBeenCalled();
   });
 
   test('menu should close on "outside" click', () => {
-    const data = { position: { x: 50, y: 50 }, id: 'CORRECT_ID' };
+    const data = { id: 'CORRECT_ID', position: { x: 50, y: 50 } };
     const onHide = jest.fn();
     const { container } = render(<ContextMenu id={data.id} onHide={onHide} />);
     const outsideClick = new window.MouseEvent('mousedown');
@@ -134,19 +140,17 @@ describe('ContextMenu tests', () => {
     document.dispatchEvent(outsideClick);
     expect(setState).toHaveBeenCalledTimes(2);
     expect(setState).toHaveBeenNthCalledWith(2, {
-      isVisible: false,
       forceSubMenuOpen: false,
+      isVisible: false,
       selectedItem: null,
     });
     expect(onHide).toHaveBeenCalled();
   });
 
   test('hideOnLeave and onMouseLeave options', () => {
-    const data = { position: { x: 50, y: 50 }, id: 'CORRECT_ID' };
+    const data = { id: 'CORRECT_ID', position: { x: 50, y: 50 } };
     const onMouseLeave = jest.fn();
-    const { container } = render(
-      <ContextMenu id={data.id} hideOnLeave onMouseLeave={onMouseLeave} />
-    );
+    const { container } = render(<ContextMenu hideOnLeave id={data.id} onMouseLeave={onMouseLeave} />);
 
     act(() => showMenu(data));
     expect(setState).toHaveBeenCalledTimes(1);
@@ -157,8 +161,8 @@ describe('ContextMenu tests', () => {
     fireEvent.mouseLeave(container.querySelector('nav'));
     expect(setState).toHaveBeenCalledTimes(2);
     expect(setState).toHaveBeenNthCalledWith(2, {
-      isVisible: false,
       forceSubMenuOpen: false,
+      isVisible: false,
       selectedItem: null,
     });
     expect(onMouseLeave).toHaveBeenCalled();

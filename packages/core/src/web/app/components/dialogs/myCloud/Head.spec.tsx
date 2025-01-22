@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import { MyCloudContext } from '@core/app/contexts/MyCloudContext';
@@ -8,19 +9,19 @@ import Head from './Head';
 jest.mock('@core/helpers/useI18n', () => () => ({
   my_cloud: {
     sort: {
+      a_to_z: 'Name: A - Z',
       most_recent: 'Most Recent',
       oldest: 'Oldest',
-      a_to_z: 'Name: A - Z',
       z_to_a: 'Name: Z - A',
     },
   },
 }));
 
 const mockSetSortby = jest.fn();
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 const mockContext: any = {
-  sortBy: 'recent',
   setSortBy: mockSetSortby,
+  sortBy: 'recent',
 };
 
 jest.mock('@core/app/contexts/MyCloudContext', () => ({
@@ -28,6 +29,7 @@ jest.mock('@core/app/contexts/MyCloudContext', () => ({
 }));
 
 const mockUseIsMobile = jest.fn();
+
 jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => mockUseIsMobile(),
 }));
@@ -43,10 +45,13 @@ describe('test Head', () => {
         <Head />
       </MyCloudContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
 
     fireEvent.mouseDown(container.querySelector('.select .ant-select-selector'));
+
     const dropdown = baseElement.querySelector('.select-dropdown');
+
     expect(dropdown).toBeInTheDocument();
     fireEvent.click(getByText('Name: A - Z'));
     expect(mockSetSortby).toBeCalledTimes(1);
@@ -55,11 +60,13 @@ describe('test Head', () => {
 
   test('should rendered correctly in mobile', () => {
     mockUseIsMobile.mockReturnValue(true);
+
     const { container, getByText } = render(
       <MyCloudContext.Provider value={mockContext}>
         <Head />
       </MyCloudContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getByText('Name: A - Z'));

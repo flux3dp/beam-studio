@@ -1,10 +1,12 @@
 import React from 'react';
+
 import { render } from '@testing-library/react';
 
 import ConnectWifi from './ConnectWiFi';
 
 jest.mock('@core/helpers/useI18n', () => () => ({
   initialize: {
+    back: 'Back',
     connect_wifi: {
       title: 'Connecting to Wi-Fi',
       tutorial1: '1. Go to Touch Panel > Click "Network" > "Connect to WiFi".',
@@ -16,7 +18,6 @@ jest.mock('@core/helpers/useI18n', () => () => ({
       what_if_2_content: 'what_if_2_content',
     },
     next: 'Next',
-    back: 'Back',
   },
 }));
 
@@ -27,17 +28,18 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-// eslint-disable-next-line import/first
-
 describe('test ConnectWiFi', () => {
   test('should render correctly', () => {
     const { container } = render(<ConnectWifi />);
+
     expect(container).toMatchSnapshot();
   });
 
   test('should render correctly when is ador', () => {
     window.location.hash = '?model=ado1';
+
     const { container } = render(<ConnectWifi />);
+
     expect(container).toMatchSnapshot();
   });
 });

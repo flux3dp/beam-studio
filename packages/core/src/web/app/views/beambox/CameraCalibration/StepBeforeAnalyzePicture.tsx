@@ -1,20 +1,20 @@
-/* eslint-disable no-console */
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+
+import { QuestionOutlined } from '@ant-design/icons';
 import { Button, Col, Form, InputNumber, Modal, Row, Space } from 'antd';
 
 import Alert from '@core/app/actions/alert-caller';
-import AlertConstants from '@core/app/constants/alert-constants';
 import Constant from '@core/app/actions/beambox/constant';
 import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import Progress from '@core/app/actions/progress-caller';
-import useI18n from '@core/helpers/useI18n';
-import { CalibrationContext } from '@core/app/contexts/CalibrationContext';
-import { CameraConfig } from '@core/interfaces/Camera';
+import AlertConstants from '@core/app/constants/alert-constants';
 import { STEP_FINISH, STEP_REFOCUS } from '@core/app/constants/camera-calibration-constants';
-import { QuestionOutlined } from '@ant-design/icons';
+import { CalibrationContext } from '@core/app/contexts/CalibrationContext';
 import { sendPictureThenSetConfig } from '@core/helpers/camera-calibration-helper';
+import useI18n from '@core/helpers/useI18n';
+import type { CameraConfig } from '@core/interfaces/Camera';
 
-const StepBeforeAnalyzePicture = (): JSX.Element => {
+const StepBeforeAnalyzePicture = (): React.JSX.Element => {
   const lang = useI18n().calibration;
   const [showHint, setShowHint] = useState(false);
   const [showLastConfig, setShowLastConfig] = useState(false);
@@ -22,17 +22,17 @@ const StepBeforeAnalyzePicture = (): JSX.Element => {
   const context = useContext(CalibrationContext);
   const {
     borderless,
-    device,
     cameraPosition,
-    setCameraPosition,
-    lastConfig,
     currentOffset,
+    device,
+    gotoNextStep,
     imgBlobUrl,
+    lastConfig,
+    onClose,
+    setCameraPosition,
     setCurrentOffset,
     setImgBlobUrl,
-    gotoNextStep,
     unit,
-    onClose,
   } = context;
 
   useEffect(() => {
@@ -42,11 +42,15 @@ const StepBeforeAnalyzePicture = (): JSX.Element => {
   const renderHintModal = () => {
     const virtualSquare = $('.modal-camera-calibration .virtual-square');
     const position1 = virtualSquare.offset();
+
     position1.top += virtualSquare.height() + 5;
+
     const controls = $('.modal-camera-calibration .controls');
     const position2 = controls.offset();
+
     position2.left += 30;
     position2.top -= 45;
+
     return (
       <div className="hint-modal-background" onClick={() => setShowHint(false)}>
         <div className="hint-box" style={position1}>
@@ -68,7 +72,9 @@ const StepBeforeAnalyzePicture = (): JSX.Element => {
         message: lang.taking_picture,
         timeout: 30000,
       });
+
       let { x, y } = cameraPosition;
+
       switch (dir) {
         case 'up':
           y -= 3;
@@ -85,7 +91,9 @@ const StepBeforeAnalyzePicture = (): JSX.Element => {
         default:
           break;
       }
+
       const blobUrl = await PreviewModeController.getPhotoAfterMoveTo(x, y);
+
       console.log(x, y);
       setCameraPosition({ x, y });
       setImgBlobUrl(blobUrl);
@@ -106,12 +114,13 @@ const StepBeforeAnalyzePicture = (): JSX.Element => {
     const { centerX, centerY } = Constant.camera.calibrationPicture;
     const left = 100 - width / 2 - ((cc.X - centerX + cameraPosition.x) * mmToImage) / cc.SX;
     const top = 100 - height / 2 - ((cc.Y - centerY + cameraPosition.y) * mmToImage) / cc.SY;
+
     return {
-      width,
       height,
       left,
       top,
       transform: `rotate(${-cc.R * (180 / Math.PI)}deg)`,
+      width,
     };
   };
 
@@ -127,11 +136,11 @@ const StepBeforeAnalyzePicture = (): JSX.Element => {
   };
 
   const convertToDisplayValue = (cc) => ({
-    X: cc.X - 15,
-    Y: cc.Y - 30,
     R: cc.R * (Math.PI / 180),
     SX: (3.25 - cc.SX) * (100 / 1.625),
     SY: (3.25 - cc.SY) * (100 / 1.625),
+    X: cc.X - 15,
+    Y: cc.Y - 30,
   });
 
   const useLastConfigValue = () => {
@@ -159,75 +168,63 @@ const StepBeforeAnalyzePicture = (): JSX.Element => {
           <div className="camera-control right" onClick={() => moveAndRetakePicture('right')} />
         </div>
         <div className="checkbox-container" onClick={() => setShowLastConfig(!showLastConfig)}>
-          <input type="checkbox" checked={showLastConfig} onChange={() => {}} />
+          <input checked={showLastConfig} onChange={() => {}} type="checkbox" />
           <div className="title">{lang.show_last_config}</div>
         </div>
       </Col>
       <Col span={12}>
-        <Form size="small" className="controls" form={form}>
-          <Form.Item name="X" label={lang.dx} initialValue={currentOffset.X - 15}>
+        <Form className="controls" form={form} size="small">
+          <Form.Item initialValue={currentOffset.X - 15} label={lang.dx} name="X">
             <InputNumber
-              type="number"
-              min={-50}
-              max={50}
-              precision={2}
               addonAfter={unit}
+              max={50}
+              min={-50}
               onChange={(val) => handleValueChange('X', val + 15)}
+              precision={2}
               step={unit === 'inches' ? 0.005 : 0.1}
+              type="number"
             />
           </Form.Item>
-          <Form.Item name="Y" label={lang.dy} initialValue={currentOffset.Y - 30}>
+          <Form.Item initialValue={currentOffset.Y - 30} label={lang.dy} name="Y">
             <InputNumber
-              min={-50}
-              max={50}
-              precision={2}
               addonAfter={unit}
+              max={50}
+              min={-50}
               onChange={(val) => handleValueChange('Y', val + 30)}
+              precision={2}
               step={unit === 'inches' ? 0.005 : 0.1}
             />
           </Form.Item>
-          <Form.Item
-            name="R"
-            label={lang.rotation_angle}
-            initialValue={currentOffset.R * (180 / Math.PI)}
-          >
+          <Form.Item initialValue={currentOffset.R * (180 / Math.PI)} label={lang.rotation_angle} name="R">
             <InputNumber
-              min={-180}
-              max={180}
-              precision={3}
               addonAfter="deg"
+              max={180}
+              min={-180}
               onChange={(val) => handleValueChange('R', val * (Math.PI / 180))}
+              precision={3}
               step={0.1}
             />
           </Form.Item>
-          <Form.Item
-            name="SX"
-            label={lang.x_ratio}
-            initialValue={(3.25 - currentOffset.SX) * (100 / 1.625)}
-          >
+          <Form.Item initialValue={(3.25 - currentOffset.SX) * (100 / 1.625)} label={lang.x_ratio} name="SX">
             <InputNumber
-              type="number"
-              min={10}
-              max={200}
               addonAfter="%"
-              precision={2}
+              max={200}
+              min={10}
               onChange={(val) => handleValueChange('SX', (200 - val) * (1.625 / 100))}
+              precision={2}
               step={0.1}
+              type="number"
             />
           </Form.Item>
-          <Form.Item
-            name="SY"
-            label={lang.y_ratio}
-            initialValue={(3.25 - currentOffset.SY) * (100 / 1.625)}
-          >
+          <Form.Item initialValue={(3.25 - currentOffset.SY) * (100 / 1.625)} label={lang.y_ratio} name="SY">
             <InputNumber
-              type="number"
-              min={10}
-              max={200}
               addonAfter="%"
-              precision={2}
+              max={200}
+              min={10}
               onChange={(val) => handleValueChange('SY', (200 - val) * (1.625 / 100))}
+              precision={2}
               step={0.1}
+              type="number"
             />
           </Form.Item>
           <Space>
@@ -250,22 +247,19 @@ const StepBeforeAnalyzePicture = (): JSX.Element => {
     } catch (error) {
       console.log(error);
       Alert.popUp({
-        id: 'menu-item',
-        type: AlertConstants.SHOW_POPUP_ERROR,
-        message: `#816 ${error.toString().replace('Error: ', '')}`,
         callbacks: () => gotoNextStep(STEP_REFOCUS),
+        id: 'menu-item',
+        message: `#816 ${error.toString().replace('Error: ', '')}`,
+        type: AlertConstants.SHOW_POPUP_ERROR,
       });
     }
   };
 
   return (
     <Modal
-      width={500}
-      open
       centered
-      closable={false}
       className="modal-camera-calibration"
-      title={lang.camera_calibration}
+      closable={false}
       footer={[
         <Button
           onClick={async () => {
@@ -276,10 +270,13 @@ const StepBeforeAnalyzePicture = (): JSX.Element => {
           {lang.back}
         </Button>,
         <Button onClick={() => onClose(false)}>{lang.cancel}</Button>,
-        <Button type="primary" onClick={refocus}>
+        <Button onClick={refocus} type="primary">
           {lang.next}
         </Button>,
       ]}
+      open
+      title={lang.camera_calibration}
+      width={500}
     >
       {manualCalibration}
     </Modal>

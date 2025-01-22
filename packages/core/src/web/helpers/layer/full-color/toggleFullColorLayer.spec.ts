@@ -2,6 +2,7 @@ import toggleFullColorLayer from './toggleFullColorLayer';
 
 const mockBeginUndoableChange = jest.fn();
 const mockFinishUndoableChange = jest.fn();
+
 jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (cb) => {
     cb({
@@ -16,6 +17,7 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
 }));
 
 const mockUpdateLayerColor = jest.fn();
+
 jest.mock(
   '@core/helpers/color/updateLayerColor',
   () =>
@@ -31,8 +33,11 @@ describe('test toggleFullColorLayer', () => {
   it('should work when set to true', () => {
     const layer = document.createElement('g');
     const mockCmd = { onAfter: jest.fn() };
+
     mockFinishUndoableChange.mockReturnValue(mockCmd);
+
     const cmd = toggleFullColorLayer(layer, { val: true });
+
     expect(cmd).toBe(mockCmd);
     expect(mockBeginUndoableChange).toBeCalledWith('data-fullcolor', [layer]);
     expect(mockFinishUndoableChange).toBeCalled();
@@ -41,10 +46,15 @@ describe('test toggleFullColorLayer', () => {
 
   it('should work when set to false', () => {
     const layer = document.createElement('g');
+
     layer.setAttribute('data-fullcolor', '1');
+
     const mockCmd = { onAfter: jest.fn() };
+
     mockFinishUndoableChange.mockReturnValue(mockCmd);
+
     const cmd = toggleFullColorLayer(layer, { val: false });
+
     expect(cmd).toBe(mockCmd);
     expect(mockBeginUndoableChange).toBeCalledWith('data-fullcolor', [layer]);
     expect(mockFinishUndoableChange).toBeCalled();
@@ -53,10 +63,15 @@ describe('test toggleFullColorLayer', () => {
 
   it('should work without val', () => {
     const layer = document.createElement('g');
+
     layer.setAttribute('data-fullcolor', '1');
+
     const mockCmd = { onAfter: jest.fn() };
+
     mockFinishUndoableChange.mockReturnValue(mockCmd);
+
     const cmd = toggleFullColorLayer(layer);
+
     expect(cmd).toBe(mockCmd);
     expect(mockBeginUndoableChange).toBeCalledWith('data-fullcolor', [layer]);
     expect(mockFinishUndoableChange).toBeCalled();
@@ -66,8 +81,11 @@ describe('test toggleFullColorLayer', () => {
 
   it('should return null when val is same as original', () => {
     const layer = document.createElement('g');
+
     layer.setAttribute('data-fullcolor', '1');
+
     const cmd = toggleFullColorLayer(layer, { val: true });
+
     expect(cmd).toBeNull();
     expect(mockUpdateLayerColor).not.toBeCalled();
   });

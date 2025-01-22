@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
 import { BoxgenContext } from '@core/app/contexts/BoxgenContext';
@@ -7,15 +8,15 @@ import ExportButton from './ExportButton';
 
 jest.mock('@core/helpers/useI18n', () => () => ({
   boxgen: {
-    continue_import: 'Continue to Import',
-    import: 'Import',
-    cancel: 'Cancel',
-    customize: 'Customize',
-    merge: 'Merge',
-    text_label: 'Label',
     beam_radius: 'Kerf compensation',
     beam_radius_warning:
       'Remove Kerf compensation when the edges or joints of the box are short to ensure box assembly',
+    cancel: 'Cancel',
+    continue_import: 'Continue to Import',
+    customize: 'Customize',
+    import: 'Import',
+    merge: 'Merge',
+    text_label: 'Label',
   },
 }));
 
@@ -24,11 +25,13 @@ jest.mock('@core/app/contexts/BoxgenContext', () => ({
 }));
 
 const mockGetLayouts = jest.fn();
+
 jest.mock('@core/helpers/boxgen/Layout', () => ({
   getLayouts: (...args) => mockGetLayouts(...args),
 }));
 
 const mockWrapSVG = jest.fn().mockReturnValue('mock-svg');
+
 jest.mock(
   '@core/helpers/boxgen/wrapSVG',
   () =>
@@ -37,6 +40,7 @@ jest.mock(
 );
 
 const mockImportSvgString = jest.fn().mockResolvedValue('mock-svg-object');
+
 jest.mock(
   '@core/app/svgedit/operations/import/importSvgString',
   () =>
@@ -47,22 +51,24 @@ jest.mock(
 const mockAddCommandToHistory = jest.fn();
 const mockDisassembleUse2Group = jest.fn();
 const mockSetLayerVisibility = jest.fn();
+
 jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) =>
     callback({
       Canvas: {
+        addCommandToHistory: (...args) => mockAddCommandToHistory(...args),
+        disassembleUse2Group: (...args) => mockDisassembleUse2Group(...args),
         getCurrentDrawing: () => ({
           all_layers: [{ name_: 'Box 1' }, { name_: 'Box 2-1' }],
           setLayerVisibility: (...args) => mockSetLayerVisibility(...args),
         }),
-        addCommandToHistory: (...args) => mockAddCommandToHistory(...args),
-        disassembleUse2Group: (...args) => mockDisassembleUse2Group(...args),
       },
     }),
 }));
 
 const mockBatchCommand = { addSubCommand: jest.fn() };
 const mockCreateBatchCommand = jest.fn().mockImplementation(() => mockBatchCommand);
+
 jest.mock('@core/app/svgedit/history/HistoryCommandFactory', () => ({
   createBatchCommand: (...args) => mockCreateBatchCommand(...args),
 }));
@@ -76,46 +82,50 @@ describe('test ExportButton', () => {
       <BoxgenContext.Provider
         value={
           {
-            onClose: mockOnClose,
             boxData: mockData,
-            workarea: { value: 'fbm1', label: 'beamo', canvasWidth: 300, canvasHeight: 210 },
-            lengthUnit: { unit: 'mm', unitRatio: 1, decimal: 0 },
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            lengthUnit: { decimal: 0, unit: 'mm', unitRatio: 1 },
+            onClose: mockOnClose,
+            workarea: { canvasHeight: 210, canvasWidth: 300, label: 'beamo', value: 'fbm1' },
           } as any
         }
       >
         <ExportButton />
       </BoxgenContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
 
     mockGetLayouts
       .mockReturnValueOnce({
         pages: [
-          { shape: ['layer1-1', 'layer1-2'], label: [] },
-          { shape: ['layer2'], label: [] },
+          { label: [], shape: ['layer1-1', 'layer1-2'] },
+          { label: [], shape: ['layer2'] },
         ],
       })
       .mockReturnValue({
         pages: [
-          { shape: ['layer1-1', 'layer1-2'], label: ['layer1-1 label', 'layer1-2 label'] },
-          { shape: ['layer2'], label: ['layer2 label'] },
+          { label: ['layer1-1 label', 'layer1-2 label'], shape: ['layer1-1', 'layer1-2'] },
+          { label: ['layer2 label'], shape: ['layer2'] },
         ],
       });
+
     const button = container.querySelector('button');
+
     fireEvent.click(button);
 
     const modal = baseElement.querySelector('.ant-modal-root');
+
     waitFor(() => expect(modal).toBeInTheDocument());
     expect(baseElement).toMatchSnapshot();
     expect(mockGetLayouts).toBeCalledTimes(1);
     expect(mockGetLayouts).toBeCalledWith(300, 210, mockData, {
+      compRadius: 0.1,
       joinOutput: false,
       textLabel: false,
-      compRadius: 0.1,
     });
 
     const paginationButtons = modal.querySelectorAll('.ant-pagination-item');
+
     expect(paginationButtons[0]).toHaveClass('ant-pagination-item-active');
     expect(paginationButtons[1]).not.toHaveClass('ant-pagination-item-active');
     fireEvent.click(modal.querySelector('.ant-pagination-item-2'));
@@ -124,12 +134,13 @@ describe('test ExportButton', () => {
     expect(paginationButtons[1]).toHaveClass('ant-pagination-item-active');
 
     const optionButtons = modal.querySelectorAll('button.ant-switch');
+
     fireEvent.click(optionButtons[0]);
     expect(mockGetLayouts).toBeCalledTimes(3);
     expect(mockGetLayouts).toHaveBeenLastCalledWith(300, 210, mockData, {
+      compRadius: 0.1,
       joinOutput: true,
       textLabel: false,
-      compRadius: 0.1,
     });
     expect(optionButtons[0].getAttribute('aria-checked')).toBe('true');
     expect(paginationButtons[0]).toHaveClass('ant-pagination-item-active');
@@ -137,9 +148,9 @@ describe('test ExportButton', () => {
     fireEvent.click(optionButtons[1]);
     expect(mockGetLayouts).toBeCalledTimes(4);
     expect(mockGetLayouts).toHaveBeenLastCalledWith(300, 210, mockData, {
+      compRadius: 0.1,
       joinOutput: true,
       textLabel: true,
-      compRadius: 0.1,
     });
 
     fireEvent.click(modal.querySelector('.ant-btn-primary'));

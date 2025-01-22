@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import Rotation from './Rotation';
@@ -6,16 +7,17 @@ import Rotation from './Rotation';
 const mockCreateEventEmitter = jest.fn();
 const mockOn = jest.fn();
 const mockRemoveListener = jest.fn();
+
 jest.mock('@core/helpers/eventEmitterFactory', () => ({
   createEventEmitter: (...args: any) => mockCreateEventEmitter(...args),
 }));
 
 jest.mock('@core/app/views/beambox/Right-Panels/ObjectPanelItem', () => ({
-  Number: ({ id, value, updateValue, label }: any) => (
+  Number: ({ id, label, updateValue, value }: any) => (
     <div id={id}>
       {label}
       <div>{value}</div>
-      <button type="button" onClick={() => updateValue(value + 1)} />
+      <button onClick={() => updateValue(value + 1)} type="button" />
     </div>
   ),
 }));
@@ -29,6 +31,7 @@ jest.mock('@core/helpers/useI18n', () => () => ({
 }));
 
 const mockUseIsMobile = jest.fn();
+
 jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => mockUseIsMobile(),
 }));
@@ -46,20 +49,26 @@ describe('test Rotation', () => {
 
   it('should render correctly on desktop', () => {
     mockUseIsMobile.mockReturnValue(false);
-    const { container } = render(<Rotation value={0} onChange={mockOnChange} />);
+
+    const { container } = render(<Rotation onChange={mockOnChange} value={0} />);
+
     expect(container).toMatchSnapshot();
   });
 
   it('should render correctly on mobile', () => {
     mockUseIsMobile.mockReturnValue(true);
-    const { container } = render(<Rotation value={0} onChange={mockOnChange} />);
+
+    const { container } = render(<Rotation onChange={mockOnChange} value={0} />);
+
     expect(container).toMatchSnapshot();
   });
 
   test('onChange on desktop', () => {
     mockUseIsMobile.mockReturnValue(false);
-    const { container } = render(<Rotation value={0} onChange={mockOnChange} />);
+
+    const { container } = render(<Rotation onChange={mockOnChange} value={0} />);
     const input = container.querySelector('input');
+
     fireEvent.change(input, { target: { value: 1 } });
     expect(mockOnChange).toBeCalledTimes(1);
     expect(mockOnChange).toHaveBeenLastCalledWith(1);
@@ -67,12 +76,16 @@ describe('test Rotation', () => {
 
   test('UPDATE_DIMENSION_VALUES event on desktop', () => {
     mockUseIsMobile.mockReturnValue(false);
-    const { container, unmount } = render(<Rotation value={0} onChange={mockOnChange} />);
+
+    const { container, unmount } = render(<Rotation onChange={mockOnChange} value={0} />);
+
     expect(mockCreateEventEmitter).toBeCalledTimes(1);
     expect(mockOn).toBeCalledTimes(1);
     expect(mockOn).toBeCalledWith('UPDATE_DIMENSION_VALUES', expect.any(Function));
     expect(mockRemoveListener).toBeCalledTimes(0);
+
     const handler = mockOn.mock.calls[0][1];
+
     handler({ rotation: 1 });
     expect(container.querySelector('input').value).toBe('1.00');
     unmount();
@@ -82,8 +95,10 @@ describe('test Rotation', () => {
 
   test('onChange on mobile', () => {
     mockUseIsMobile.mockReturnValue(true);
-    const { container } = render(<Rotation value={0} onChange={mockOnChange} />);
+
+    const { container } = render(<Rotation onChange={mockOnChange} value={0} />);
     const button = container.querySelector('button');
+
     fireEvent.click(button);
     expect(mockOnChange).toBeCalledTimes(1);
     expect(mockOnChange).toHaveBeenLastCalledWith(1);

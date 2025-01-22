@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
+
 import { Modal } from 'antd';
 
+import type { ColorConfig } from '@core/app/constants/color-constants';
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
-import useI18n from '@core/helpers/useI18n';
 import ValidationTextInput from '@core/app/widgets/Validation-Text-Input';
-import { ColorConfig } from '@core/app/constants/color-constants';
+import useI18n from '@core/helpers/useI18n';
 
 interface Props {
-  onClose: () => void;
   handleAddConfig: (config: ColorConfig) => void;
+  onClose: () => void;
 }
 
-const AddColorConfigModal = ({ onClose, handleAddConfig }: Props): JSX.Element => {
+const AddColorConfigModal = ({ handleAddConfig, onClose }: Props): React.JSX.Element => {
   const lang = useI18n().beambox.layer_color_config_panel;
   const [newColor, setNewColor] = useState('#FFFFFF');
   let newPower = 50;
@@ -20,18 +21,18 @@ const AddColorConfigModal = ({ onClose, handleAddConfig }: Props): JSX.Element =
 
   return (
     <Modal
-      open
-      title={lang.add_config}
       okText={lang.add}
+      onCancel={onClose}
       onOk={() =>
         handleAddConfig({
           color: newColor,
           power: newPower,
-          speed: newSpeed,
           repeat: newRepeat,
+          speed: newSpeed,
         })
       }
-      onCancel={onClose}
+      open
+      title={lang.add_config}
     >
       <div className="add-config-panel">
         <div className="input-column">
@@ -39,52 +40,52 @@ const AddColorConfigModal = ({ onClose, handleAddConfig }: Props): JSX.Element =
           <div className="name color">{`${lang.color} :`}</div>
           <ValidationTextInput
             defaultValue={newColor}
-            validation={(val) => val}
             getValue={(val) => {
               setNewColor(val);
             }}
+            validation={(val) => val}
           />
         </div>
         <div className="input-column">
           <div className="name">{`${lang.power} :`}</div>
           <UnitInput
             className={{ power: true }}
-            min={1}
-            max={100}
-            unit="%"
+            decimal={1}
             defaultValue={newPower}
             getValue={(val) => {
               newPower = val;
             }}
-            decimal={1}
+            max={100}
+            min={1}
+            unit="%"
           />
         </div>
         <div className="input-column">
           <div className="name">{`${lang.speed} :`}</div>
           <UnitInput
             className={{ speed: true }}
-            min={3}
-            max={300}
-            unit="mm/s"
+            decimal={1}
             defaultValue={newSpeed}
             getValue={(val) => {
               newSpeed = val;
             }}
-            decimal={1}
+            max={300}
+            min={3}
+            unit="mm/s"
           />
         </div>
         <div className="input-column">
           <div className="name">{`${lang.repeat} :`}</div>
           <UnitInput
             className={{ repeat: true }}
-            min={1}
-            max={10}
-            unit=""
+            decimal={0}
             defaultValue={newRepeat}
             getValue={(val) => {
               newRepeat = val;
             }}
-            decimal={0}
+            max={10}
+            min={1}
+            unit=""
           />
         </div>
       </div>

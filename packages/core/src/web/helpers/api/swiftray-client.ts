@@ -1,60 +1,61 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 // Swiftray Client Typescript API Client
 import { EventEmitter } from 'eventemitter3';
 
-import communicator from '@app/implementations/communicator';
+import { promarkModels } from '@core/app/actions/beambox/constant';
+import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
+import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
+import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
-import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
-import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
 import { booleanConfig, getDefaultConfig } from '@core/helpers/layer/layer-config-helper';
-import { ButtonState } from '@core/interfaces/Promark';
-import { getWorkarea, WorkAreaModel } from '@core/app/constants/workarea-constants';
-import { IDeviceDetailInfo, IDeviceInfo, IReport } from '@core/interfaces/IDevice';
-import { IWrappedSwiftrayTaskFile } from '@core/interfaces/IWrappedFile';
-import { promarkModels } from '@core/app/actions/beambox/constant';
+import type { IDeviceDetailInfo, IDeviceInfo, IReport } from '@core/interfaces/IDevice';
+import type { IWrappedSwiftrayTaskFile } from '@core/interfaces/IWrappedFile';
+import type { ButtonState } from '@core/interfaces/Promark';
+
+import communicator from '@app/implementations/communicator';
 
 interface ErrorObject {
   code: number;
-  message: string;
   details?: any;
+  message: string;
 }
 
 interface DeviceSettings {
-  workingRange: {
-    x: number;
-    y: number;
-  };
+  calibrationData: string;
   origin: {
     x: number;
     y: number;
   };
-  calibrationData: string;
+  workingRange: {
+    x: number;
+    y: number;
+  };
 }
 
 // SystemInfo
 interface SystemInfo {
-  swiftrayVersion: string;
-  qtVersion: string;
-  os: string;
-  cpuArchitecture: string;
-  totalMemory: number;
   availableMemory: number;
+  cpuArchitecture: string;
+  os: string;
+  qtVersion: string;
+  swiftrayVersion: string;
+  totalMemory: number;
 }
 
 // PreferenceSettingsObject
 interface PreferenceSettingsObject {
   convertSettings: {
-    unitScaling: number;
-    optimizePaths: boolean;
-    joinCurves: boolean;
     filletCorners: boolean;
+    joinCurves: boolean;
+    optimizePaths: boolean;
     simplifyGeometry: boolean;
+    unitScaling: number;
   };
 }
 
-type TStatus = 'init' | 'connected' | 'disconnected';
+type TStatus = 'connected' | 'disconnected' | 'init';
 
 class SwiftrayClient extends EventEmitter {
   private socket: WebSocket; // The websocket here is the browser websocket, not wrapped FLUX websocket
@@ -96,38 +97,47 @@ class SwiftrayClient extends EventEmitter {
 
   private async updateStatus(newStatus: TStatus): Promise<void> {
     if (newStatus === 'disconnected') {
-      if (this.status !== 'connected') return;
+      if (this.status !== 'connected') {
+        return;
+      }
+
       MessageCaller.openMessage({
-        key: 'swiftray-error-hint',
         content: i18n.lang.message.swiftray_disconnected,
+        key: 'swiftray-error-hint',
         level: MessageLevel.ERROR,
       });
       this.emit('disconnected');
+
       const device = TopBarController.getSelectedDevice();
+
       this.lastPromark = promarkModels.has(device?.model) ? device : null;
     } else if (newStatus === 'connected' && this.status === 'disconnected') {
       // Reconnect to Promark
       let device = TopBarController.getSelectedDevice();
       let retry = 8;
       let reconnect = false;
+
       while (!device && this.lastPromark && retry > 0) {
-        // eslint-disable-next-line no-await-in-loop
         await new Promise((resolve) => setTimeout(resolve, 2000));
         device = TopBarController.getSelectedDevice();
         retry -= 1;
       }
+
       if (promarkModels.has(device?.model)) {
         const resp = await deviceMaster.select(device);
+
         reconnect = resp.success;
         console.log('Reconnect to Promark', reconnect);
       }
+
       MessageCaller.openMessage({
-        key: 'swiftray-error-hint',
         content: i18n.lang.message.swiftray_reconnected,
+        key: 'swiftray-error-hint',
         level: MessageLevel.SUCCESS,
       });
       this.emit('reconnected', reconnect);
     }
+
     this.status = newStatus;
   }
 
@@ -135,7 +145,9 @@ class SwiftrayClient extends EventEmitter {
     console.log('Connected to Swiftray server 🎉');
     this.updateStatus('connected');
     this.retryCount = 0;
+
     const resp = await this.getSystemInfo();
+
     console.log(`Swiftray version ${resp?.info?.swiftrayVersion}`);
   }
 
@@ -163,21 +175,24 @@ class SwiftrayClient extends EventEmitter {
 
   private handleMessage(event: MessageEvent) {
     const data = JSON.parse(event.data);
+
     this.emit(data.type, data);
   }
 
   public async action<T>(path: string, action: string, params?: any): Promise<T> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const id = Math.random().toString(36).substr(2, 9);
-      const payload = { id, action, params };
+      const payload = { action, id, params };
+
       if (this.readyState !== WebSocket.OPEN && action !== 'list') {
         MessageCaller.openMessage({
-          key: 'swiftray-error-hint',
           content: i18n.lang.message.swiftray_disconnected,
+          key: 'swiftray-error-hint',
           level: MessageLevel.ERROR,
         });
       }
-      this.socket.send(JSON.stringify({ type: 'action', path, data: payload }));
+
+      this.socket.send(JSON.stringify({ data: payload, path, type: 'action' }));
 
       const callback = (data) => {
         if (data.id === id) {
@@ -186,6 +201,7 @@ class SwiftrayClient extends EventEmitter {
           resolve(data.result);
         }
       };
+
       this.addListener('callback', callback);
     });
   }
@@ -194,142 +210,133 @@ class SwiftrayClient extends EventEmitter {
   public async loadSVG(
     file: IWrappedSwiftrayTaskFile,
     eventListeners: {
-      onProgressing: (progress) => void;
-      onFinished: () => void;
       onError: (message: string) => void;
+      onFinished: () => void;
+      onProgressing: (progress) => void;
     },
     loadOptions: {
+      engraveDpi: number;
       model: string;
       rotaryMode: boolean;
-      engraveDpi: number;
     },
-  ): Promise<{ success: boolean; error?: ErrorObject }> {
+  ): Promise<{ error?: ErrorObject; success: boolean }> {
     const defaultConfig: any = getDefaultConfig();
+
     booleanConfig.forEach((key) => {
-      if (defaultConfig[key]) defaultConfig[key] = 1;
+      if (defaultConfig[key]) {
+        defaultConfig[key] = 1;
+      }
     });
-    const uploadRes = await this.action<{ success: boolean; error?: ErrorObject }>(
-      '/parser',
-      'loadSVG',
-      {
-        file,
-        model: loadOptions.model,
-        rotaryMode: loadOptions.rotaryMode,
-        engraveDpi: loadOptions.engraveDpi,
-        defaultConfig,
-      },
-    );
+
+    const uploadRes = await this.action<{ error?: ErrorObject; success: boolean }>('/parser', 'loadSVG', {
+      defaultConfig,
+      engraveDpi: loadOptions.engraveDpi,
+      file,
+      model: loadOptions.model,
+      rotaryMode: loadOptions.rotaryMode,
+    });
+
     return uploadRes;
   }
 
   public async convert(
-    type: 'gcode' | 'fcode' | 'preview',
+    type: 'fcode' | 'gcode' | 'preview',
     eventListeners: {
-      onProgressing: (progress) => void;
-      onFinished: (
-        taskBlob: Blob,
-        fileName: string,
-        timeCost: number,
-        metadata: Record<string, string>,
-      ) => void;
       onError: (message: string) => void;
+      onFinished: (taskBlob: Blob, fileName: string, timeCost: number, metadata: Record<string, string>) => void;
+      onProgressing: (progress) => void;
     },
     convertOptions: {
-      model: WorkAreaModel;
-      isPromark: boolean;
       enableAutoFocus?: boolean;
       enableDiode?: boolean;
-      shouldUseFastGradient?: boolean;
-      shouldMockFastGradient?: boolean;
-      vectorSpeedConstraint?: boolean;
+      isPromark: boolean;
+      model: WorkAreaModel;
       paddingAccel?: number;
+      shouldMockFastGradient?: boolean;
+      shouldUseFastGradient?: boolean;
       travelSpeed?: number;
+      vectorSpeedConstraint?: boolean;
     },
   ): Promise<{
-    success: boolean;
-    estimatedTime?: number;
     error?: ErrorObject;
+    estimatedTime?: number;
+    success: boolean;
   }> {
     const workarea = getWorkarea(convertOptions.model);
     const convertResult = await this.action<{
-      success: boolean;
-      fileName?: string;
-      timeCost?: number;
-      fcode?: string;
-      gcode?: string;
-      estimatedTime?: number;
-      metadata?: Record<string, string>;
       error?: ErrorObject;
+      estimatedTime?: number;
+      fcode?: string;
+      fileName?: string;
+      gcode?: string;
+      metadata?: Record<string, string>;
+      success: boolean;
+      timeCost?: number;
     }>('/parser', 'convert', {
       type,
       workarea: {
-        width: workarea.width,
         height: workarea.displayHeight || workarea.height,
+        width: workarea.width,
       },
       ...convertOptions,
     });
-    const taskBlob = new Blob(
-      [type === 'fcode' ? Buffer.from(convertResult.fcode, 'base64') : convertResult.gcode],
-      { type: 'text/plain' },
-    );
-    eventListeners.onFinished(
-      taskBlob,
-      convertResult.fileName,
-      convertResult.timeCost,
-      convertResult.metadata,
-    );
+    const taskBlob = new Blob([type === 'fcode' ? Buffer.from(convertResult.fcode, 'base64') : convertResult.gcode], {
+      type: 'text/plain',
+    });
+
+    eventListeners.onFinished(taskBlob, convertResult.fileName, convertResult.timeCost, convertResult.metadata);
+
     return {
-      success: convertResult.success,
       error: convertResult.error,
+      success: convertResult.success,
     };
   }
 
-  public async interruptCalculation(): Promise<{ success: boolean; error?: ErrorObject }> {
+  public async interruptCalculation(): Promise<{ error?: ErrorObject; success: boolean }> {
     return this.action('/parser', 'interrupt');
   }
 
-  public async loadSettings(
-    data: PreferenceSettingsObject,
-  ): Promise<{ success: boolean; error?: ErrorObject }> {
+  public async loadSettings(data: PreferenceSettingsObject): Promise<{ error?: ErrorObject; success: boolean }> {
     return this.action('/parser', 'loadSettings', data);
   }
 
   // System API
   public async getSystemInfo(): Promise<{
-    success: boolean;
-    info?: SystemInfo;
     error?: ErrorObject;
+    info?: SystemInfo;
+    success: boolean;
   }> {
     return this.action('/ws/sr/system', 'getInfo');
   }
 
   // Device API
   public async listDevices(): Promise<{
-    success: boolean;
     devices?: IDeviceInfo[];
     error?: ErrorObject;
+    success: boolean;
   }> {
     return this.action('/devices', 'list');
   }
 
-  public async connectDevice(port: string): Promise<{ success: boolean; error?: ErrorObject }> {
+  public async connectDevice(port: string): Promise<{ error?: ErrorObject; success: boolean }> {
     this.port = port;
+
     return this.action(`/devices/${port}`, 'connect');
   }
 
-  public async startTask(): Promise<{ success: boolean; error?: ErrorObject }> {
+  public async startTask(): Promise<{ error?: ErrorObject; success: boolean }> {
     return this.action(`/devices/${this.port}`, 'start');
   }
 
-  public async pauseTask(): Promise<{ success: boolean; error?: ErrorObject }> {
+  public async pauseTask(): Promise<{ error?: ErrorObject; success: boolean }> {
     return this.action(`/devices/${this.port}`, 'pause');
   }
 
-  public async resumeTask(): Promise<{ success: boolean; error?: ErrorObject }> {
+  public async resumeTask(): Promise<{ error?: ErrorObject; success: boolean }> {
     return this.action(`/devices/${this.port}`, 'resume');
   }
 
-  public async stopTask(): Promise<{ success: boolean; error?: ErrorObject }> {
+  public async stopTask(): Promise<{ error?: ErrorObject; success: boolean }> {
     return this.action(`/devices/${this.port}`, 'stop');
   }
 
@@ -337,7 +344,7 @@ class SwiftrayClient extends EventEmitter {
     return this.action(`/devices/${this.port}`, 'getParam', { name });
   }
 
-  public async setDeviceParam(name: string, value: string | number): Promise<void> {
+  public async setDeviceParam(name: string, value: number | string): Promise<void> {
     return this.action(`/devices/${this.port}`, 'setParam', { name, value });
   }
 
@@ -350,39 +357,37 @@ class SwiftrayClient extends EventEmitter {
   }
 
   public async getDeviceSettings(): Promise<{
-    success: boolean;
-    settings?: DeviceSettings;
     error?: ErrorObject;
+    settings?: DeviceSettings;
+    success: boolean;
   }> {
     return this.action(`/devices/${this.port}`, 'getSettings');
   }
 
   public async updateDeviceSettings(settings: DeviceSettings): Promise<{
-    success: boolean;
     error?: ErrorObject;
+    success: boolean;
   }> {
     return this.action(`/devices/${this.port}`, 'updateSettings', settings);
   }
 
-  public async deleteDeviceSettings(
-    name: string,
-  ): Promise<{ success: boolean; error?: ErrorObject }> {
+  public async deleteDeviceSettings(name: string): Promise<{ error?: ErrorObject; success: boolean }> {
     return this.action(`/devices/${this.port}`, 'deleteSettings', { name });
   }
 
-  public async updateFirmware(blob: Blob): Promise<{ success: boolean; error?: ErrorObject }> {
+  public async updateFirmware(blob: Blob): Promise<{ error?: ErrorObject; success: boolean }> {
     return this.action(`/devices/${this.port}`, 'updateFirmware', blob);
   }
 
-  public async endMode(): Promise<{ success: boolean; error?: ErrorObject }> {
+  public async endMode(): Promise<{ error?: ErrorObject; success: boolean }> {
     return this.action(`/devices/${this.port}`, 'endMode');
   }
 
-  public async switchMode(mode: string): Promise<{ success: boolean; error?: ErrorObject }> {
+  public async switchMode(mode: string): Promise<{ error?: ErrorObject; success: boolean }> {
     return this.action(`/devices/${this.port}`, 'switchMode', mode);
   }
 
-  public async quitTask(): Promise<{ success: boolean; error?: ErrorObject }> {
+  public async quitTask(): Promise<{ error?: ErrorObject; success: boolean }> {
     return this.action(`/devices/${this.port}`, 'quit');
   }
 
@@ -408,8 +413,9 @@ class SwiftrayClient extends EventEmitter {
     return this.action(`/devices/${this.port}`, 'getPreview');
   }
 
-  public async startFraming(points?: [number, number][]): Promise<void> {
+  public async startFraming(points?: Array<[number, number]>): Promise<void> {
     const { width } = getWorkarea('fpm1');
+
     return this.action(`/devices/${this.port}`, 'startFraming', { points, width });
   }
 
@@ -424,8 +430,9 @@ class SwiftrayClient extends EventEmitter {
   public async upload(data: Blob, path?: string): Promise<void> {
     try {
       const text = await data.text();
+
       return await this.action(`/devices/${this.port}`, 'upload', { data: text, path });
-    } catch (e) {
+    } catch {
       return this.action(`/devices/${this.port}`, 'upload', { data, path });
     }
   }
@@ -449,7 +456,10 @@ class SwiftrayClient extends EventEmitter {
 
 const checkSwiftray = (): boolean => {
   const res = !isWeb() && window.os !== 'Linux';
-  if (!res) return false;
+
+  if (!res) {
+    return false;
+  }
 
   return communicator.sendSync('CHECK_SWIFTRAY');
 };
@@ -462,12 +472,13 @@ const getDeviceClient = async (port: string): Promise<SwiftrayClient> => {
   // TODO:SWIFTRAY - Open a new instance of Swiftray, and use different port number
   // const sc = new SwiftrayClient(`ws://localhost:6611/`);
   await swiftrayClient.connectDevice(port);
+
   return swiftrayClient;
 };
 
 export {
+  getDeviceClient,
   hasSwiftray,
   swiftrayClient, // default connection to Swiftray server
-  getDeviceClient,
   SwiftrayClient,
 };

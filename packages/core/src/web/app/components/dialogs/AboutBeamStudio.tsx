@@ -1,5 +1,5 @@
-/* eslint-disable react/no-danger */
 import * as React from 'react';
+
 import { Col, Modal, Row } from 'antd';
 
 import i18n from '@core/helpers/i18n';
@@ -12,19 +12,19 @@ interface Props {
   onClose: () => void;
 }
 
-function AboutBeamStudio({ onClose }: Props): JSX.Element {
+function AboutBeamStudio({ onClose }: Props): React.JSX.Element {
   return (
     <Modal
-      open={VISIBLE}
-      centered
-      onCancel={onClose}
-      okText={LANG.ok}
-      onOk={onClose}
       cancelButtonProps={{ style: { display: 'none' } }}
+      centered
+      okText={LANG.ok}
+      onCancel={onClose}
+      onOk={onClose}
+      open={VISIBLE}
     >
       <Row gutter={10}>
         <Col span={7}>
-          <img width={150} src="img/icon.png" style={{ float: 'left' }} />
+          <img src="img/icon.png" style={{ float: 'left' }} width={150} />
         </Col>
         <Col span={12}>
           <strong>Beam Studio</strong>

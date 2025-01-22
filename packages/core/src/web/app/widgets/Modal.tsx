@@ -1,14 +1,16 @@
 import * as React from 'react';
+
 import classNames from 'classnames';
+
 import shortcuts from '../../helpers/shortcuts';
 
 interface Props {
-  children?: JSX.Element;
-  onOpen?: (any?) => void;
-  onClose?: (any?) => void;
-  content?: JSX.Element;
-  disabledEscapeOnBackground?: boolean;
+  children?: React.JSX.Element;
   className?: any;
+  content?: React.JSX.Element;
+  disabledEscapeOnBackground?: boolean;
+  onClose?: (any?) => void;
+  onOpen?: (any?) => void;
 }
 class View extends React.Component<Props> {
   componentDidMount() {
@@ -24,6 +26,7 @@ class View extends React.Component<Props> {
 
   componentWillUnmount() {
     shortcuts.off(['Escape']);
+
     if (window.svgEditor) {
       shortcuts.on(['Escape'], window.svgEditor.clickSelect);
     }
@@ -31,6 +34,7 @@ class View extends React.Component<Props> {
 
   onOpen = () => {
     const { onOpen = () => {} } = this.props;
+
     if (onOpen) {
       onOpen(this);
     }
@@ -38,13 +42,15 @@ class View extends React.Component<Props> {
 
   onEscapeOnBackground = (e): void => {
     const { disabledEscapeOnBackground = false, onClose = () => {} } = this.props;
+
     if (!disabledEscapeOnBackground) {
       onClose(e);
     }
   };
 
   render() {
-    const { className = {}, children, content = <div /> } = this.props;
+    const { children, className = {}, content = <div /> } = this.props;
+
     className['modal-window'] = true;
 
     return (

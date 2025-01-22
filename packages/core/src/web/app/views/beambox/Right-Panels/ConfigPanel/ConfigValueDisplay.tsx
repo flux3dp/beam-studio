@@ -1,77 +1,77 @@
 import React, { useMemo } from 'react';
+
 import { ConfigProvider, InputNumber } from 'antd';
 
-import ConfigOption from '@core/interfaces/ConfigOption';
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
+import type ConfigOption from '@core/interfaces/ConfigOption';
 
 import styles from './ConfigValueDisplay.module.scss';
 
 interface Props {
+  decimal?: number;
+  hasMultiValue?: boolean;
   inputId?: string;
-  type?: 'default' | 'panel-item' | 'modal';
   max: number;
   min: number;
-  value: number;
-  unit?: string;
-  hasMultiValue?: boolean;
-  decimal?: number;
   onChange: (value: number) => void;
   options?: ConfigOption[];
+  type?: 'default' | 'modal' | 'panel-item';
+  unit?: string;
+  value: number;
 }
 
 const ConfigValueDisplay = ({
+  decimal = 0,
+  hasMultiValue = false,
   inputId,
-  type = 'default',
   max,
   min,
-  value,
-  unit,
-  hasMultiValue = false,
-  decimal = 0,
   onChange,
   options,
-}: Props): JSX.Element => {
+  type = 'default',
+  unit,
+  value,
+}: Props): React.JSX.Element => {
   const selectedOption = options?.find((opt) => opt.value === value);
   const ratio = useMemo(() => (unit?.includes('in') ? 25.4 : 1), [unit]);
-  if (selectedOption)
-    return (
-      <span className={styles.value}>
-        {hasMultiValue ? '-' : selectedOption.label || selectedOption.value}
-      </span>
-    );
-  if (type === 'panel-item')
+
+  if (selectedOption) {
+    return <span className={styles.value}>{hasMultiValue ? '-' : selectedOption.label || selectedOption.value}</span>;
+  }
+
+  if (type === 'panel-item') {
     return (
       <ConfigProvider theme={{ token: { borderRadius: 100 } }}>
         <InputNumber
           className={styles.input}
-          type="number"
-          min={min}
+          controls={false}
+          formatter={(v, { input, userTyping }) => (userTyping ? input : (v / ratio).toFixed(decimal))}
           max={max}
-          suffix={unit}
-          step={ratio}
-          value={value}
+          min={min}
           onChange={onChange}
-          formatter={(v, { userTyping, input }) =>
-            userTyping ? input : (v / ratio).toFixed(decimal)
-          }
           parser={(v) => Number(v) * ratio}
           precision={decimal}
-          controls={false}
+          step={ratio}
+          suffix={unit}
+          type="number"
+          value={value}
         />
       </ConfigProvider>
     );
+  }
+
   return (
     <UnitInput
-      id={inputId}
       className={{ [styles.input]: true }}
-      min={min}
-      max={max}
-      unit={unit}
-      defaultValue={value}
-      getValue={onChange}
       decimal={decimal}
-      displayMultiValue={hasMultiValue}
+      defaultValue={value}
       disabled={!!options}
+      displayMultiValue={hasMultiValue}
+      getValue={onChange}
+      id={inputId}
+      max={max}
+      min={min}
+      unit={unit}
     />
   );
 };

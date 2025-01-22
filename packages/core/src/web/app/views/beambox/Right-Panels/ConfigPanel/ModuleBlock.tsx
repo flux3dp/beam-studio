@@ -1,58 +1,61 @@
 import React, { memo, useContext, useEffect } from 'react';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import alertConfig from '@core/helpers/api/alert-config';
-import alertConstants from '@core/app/constants/alert-constants';
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import history from '@core/app/svgedit/history/history';
-import ISVGCanvas from '@core/interfaces/ISVGCanvas';
-import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
-import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import moduleBoundaryDrawer from '@core/app/actions/canvas/module-boundary-drawer';
-import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
-import presetHelper from '@core/helpers/presets/preset-helper';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
+import alertConstants from '@core/app/constants/alert-constants';
+import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
+import history from '@core/app/svgedit/history/history';
+import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
+import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import Select from '@core/app/widgets/AntdSelect';
-import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
-import useI18n from '@core/helpers/useI18n';
+import alertConfig from '@core/helpers/api/alert-config';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
-import {
-  applyPreset,
-  baseConfig,
-  getData,
-  writeDataLayer,
-} from '@core/helpers/layer/layer-config-helper';
+import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
+import { applyPreset, baseConfig, getData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { getLayerElementByName } from '@core/helpers/layer/layer-helper';
+import presetHelper from '@core/helpers/presets/preset-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
+import useI18n from '@core/helpers/useI18n';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import ConfigPanelContext from './ConfigPanelContext';
 import styles from './ModuleBlock.module.scss';
 
 let svgCanvas: ISVGCanvas;
+
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
 
-const ModuleBlock = (): JSX.Element => {
+const ModuleBlock = (): React.JSX.Element => {
   const isMobile = useIsMobile();
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
-  const { selectedLayers, state, initState } = useContext(ConfigPanelContext);
+  const { initState, selectedLayers, state } = useContext(ConfigPanelContext);
   const { module } = state;
   const { value } = module;
   const workarea = useWorkarea();
 
   useEffect(() => {
     const handler = () => moduleBoundaryDrawer.update(value);
+
     handler();
+
     const canvasEvents = eventEmitterFactory.createEventEmitter('canvas');
+
     canvasEvents.on('canvas-change', handler);
+
     return () => {
       canvasEvents.off('canvas-change', handler);
     };
   }, [workarea, value]);
-  if (!modelsWithModules.has(workarea)) return null;
+
+  if (!modelsWithModules.has(workarea)) {
+    return null;
+  }
 
   const handleChange = async (newVal: number) => {
     if (
@@ -62,15 +65,9 @@ const ModuleBlock = (): JSX.Element => {
     ) {
       const res = await new Promise((resolve) => {
         alertCaller.popUp({
-          id: 'switch-to-printer-module',
-          caption: lang.layer_module.notification.convertFromPrintingModuleTitle,
-          message: lang.layer_module.notification.convertFromPrintingModuleMsg,
-          messageIcon: 'notice',
           buttonType: alertConstants.CONFIRM_CANCEL,
-          onConfirm: () => resolve(true),
-          onCancel: () => resolve(false),
+          caption: lang.layer_module.notification.convertFromPrintingModuleTitle,
           checkbox: {
-            text: lang.beambox.popup.dont_show_again,
             callbacks: [
               () => {
                 alertConfig.write('skip-switch-to-printer-module', true);
@@ -78,10 +75,19 @@ const ModuleBlock = (): JSX.Element => {
               },
               () => resolve(false),
             ],
+            text: lang.beambox.popup.dont_show_again,
           },
+          id: 'switch-to-printer-module',
+          message: lang.layer_module.notification.convertFromPrintingModuleMsg,
+          messageIcon: 'notice',
+          onCancel: () => resolve(false),
+          onConfirm: () => resolve(true),
         });
       });
-      if (!res) return;
+
+      if (!res) {
+        return;
+      }
     } else if (
       value !== LayerModule.PRINTER &&
       newVal === LayerModule.PRINTER &&
@@ -89,15 +95,9 @@ const ModuleBlock = (): JSX.Element => {
     ) {
       const res = await new Promise((resolve) => {
         alertCaller.popUp({
-          id: 'switch-to-laser-module',
-          caption: lang.layer_module.notification.convertFromLaserModuleTitle,
-          message: lang.layer_module.notification.convertFromLaserModuleMsg,
-          messageIcon: 'notice',
           buttonType: alertConstants.CONFIRM_CANCEL,
-          onConfirm: () => resolve(true),
-          onCancel: () => resolve(false),
+          caption: lang.layer_module.notification.convertFromLaserModuleTitle,
           checkbox: {
-            text: lang.beambox.popup.dont_show_again,
             callbacks: [
               () => {
                 alertConfig.write('skip-switch-to-laser-module', true);
@@ -105,26 +105,37 @@ const ModuleBlock = (): JSX.Element => {
               },
               () => resolve(false),
             ],
+            text: lang.beambox.popup.dont_show_again,
           },
+          id: 'switch-to-laser-module',
+          message: lang.layer_module.notification.convertFromLaserModuleMsg,
+          messageIcon: 'notice',
+          onCancel: () => resolve(false),
+          onConfirm: () => resolve(true),
         });
       });
-      if (!res) return;
+
+      if (!res) {
+        return;
+      }
     }
+
     const presetsList = presetHelper.getPresetsList(workarea, value);
     const newPresetsList = presetHelper.getPresetsList(workarea, newVal);
     const batchCmd = new history.BatchCommand('Change layer module');
+
     selectedLayers.forEach((layerName) => {
       const layer = getLayerElementByName(layerName);
+
       writeDataLayer(layer, 'module', newVal, { batchCmd });
+
       const configName = getData(layer, 'configName');
-      const oldPreset = configName
-        ? presetsList.find((p) => configName === p.key || configName === p.name)
-        : null;
-      const newPreset = oldPreset
-        ? newPresetsList.find((p) => configName === p.key || configName === p.name)
-        : null;
+      const oldPreset = configName ? presetsList.find((p) => configName === p.key || configName === p.name) : null;
+      const newPreset = oldPreset ? newPresetsList.find((p) => configName === p.key || configName === p.name) : null;
+
       if (!newPreset) {
         writeDataLayer(layer, 'configName', undefined, { batchCmd });
+
         if (value === LayerModule.PRINTER && newVal !== LayerModule.PRINTER) {
           writeDataLayer(layer, 'speed', baseConfig.speed, { batchCmd });
           writeDataLayer(layer, 'power', baseConfig.power, { batchCmd });
@@ -136,6 +147,7 @@ const ModuleBlock = (): JSX.Element => {
       } else if (newPreset !== oldPreset) {
         applyPreset(layer, newPreset, { batchCmd });
       }
+
       batchCmd.addSubCommand(toggleFullColorLayer(layer, { val: newVal === LayerModule.PRINTER }));
     });
     initState(selectedLayers);
@@ -159,10 +171,10 @@ const ModuleBlock = (): JSX.Element => {
   return isMobile ? (
     <ObjectPanelItem.Select
       id="module"
-      selected={options.find((option) => option.value === value)}
+      label={t.module}
       onChange={handleChange}
       options={options}
-      label={t.module}
+      selected={options.find((option) => option.value === value)}
     />
   ) : (
     <div className={styles.panel}>

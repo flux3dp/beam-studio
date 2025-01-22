@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars */
+/* eslint-disable ts/no-unused-vars */
 import type { IFileSystem } from '@core/interfaces/IFileSystem';
 
 export default {

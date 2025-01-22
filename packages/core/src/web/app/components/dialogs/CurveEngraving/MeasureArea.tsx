@@ -1,17 +1,17 @@
-/* eslint-disable no-await-in-loop */
-/* eslint-disable react/no-array-index-key */
-import classNames from 'classnames';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { Button, Col, Modal, InputNumber, Row, Segmented } from 'antd';
+
+import { Button, Col, InputNumber, Modal, Row, Segmented } from 'antd';
+import classNames from 'classnames';
+
+import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
+import useI18n from '@core/helpers/useI18n';
+import type { CurveMeasurer } from '@core/interfaces/CurveMeasurer';
+import type { BBox, MeasureData } from '@core/interfaces/ICurveEngraving';
 
 import browser from '@app/implementations/browser';
-import useI18n from '@core/helpers/useI18n';
-import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
-import { BBox, MeasureData } from '@core/interfaces/ICurveEngraving';
-import { CurveMeasurer } from '@core/interfaces/CurveMeasurer';
 
-import rangeGenerator from './rangeGenerator';
 import styles from './MeasureArea.module.scss';
+import rangeGenerator from './rangeGenerator';
 
 enum Type {
   Amount = 1,
@@ -21,17 +21,12 @@ enum Type {
 interface Props {
   bbox: BBox;
   measurer: CurveMeasurer;
-  onFinished: (data: MeasureData) => void;
   onCancel: () => void;
+  onFinished: (data: MeasureData) => void;
 }
 
 // TODO: Add unit tests
-const MeasureArea = ({
-  bbox: { x, y, width, height },
-  measurer,
-  onFinished,
-  onCancel,
-}: Props): JSX.Element => {
+const MeasureArea = ({ bbox: { height, width, x, y }, measurer, onCancel, onFinished }: Props): React.JSX.Element => {
   const lang = useI18n();
   const [selectedType, setSelectedType] = useState(Type.Amount);
   const [row, setRow] = useState(12);
@@ -45,37 +40,52 @@ const MeasureArea = ({
   const [finishedPoints, setFinishedPoints] = useState<number>(0);
   const [progressText, setProgressText] = useState('');
   const xRange = useMemo(() => {
-    if (selectedType === Type.Amount)
+    if (selectedType === Type.Amount) {
       return rangeGenerator.countRangeGenerator(x, x + width, column);
+    }
+
     return rangeGenerator.stepRangeGenerator(x, x + width, columnGap);
   }, [x, width, column, columnGap, selectedType]);
   const yRange = useMemo(() => {
-    if (selectedType === Type.Amount) return rangeGenerator.countRangeGenerator(y, y + height, row);
+    if (selectedType === Type.Amount) {
+      return rangeGenerator.countRangeGenerator(y, y + height, row);
+    }
+
     return rangeGenerator.stepRangeGenerator(y, y + height, rowGap);
   }, [y, height, row, rowGap, selectedType]);
 
   const checkAndUpdate = useCallback((newVal, setState) => {
     setState((cur: number) => {
-      if (Number.isNaN(Number(newVal)) || !newVal) return cur;
+      if (Number.isNaN(Number(newVal)) || !newVal) {
+        return cur;
+      }
+
       return newVal;
     });
   }, []);
 
   const handleStartMeasuring = async () => {
-    if (isMeasuring) return;
+    if (isMeasuring) {
+      return;
+    }
+
     canceledRef.current = false;
     setCancelling(false);
     setIsMeasuring(true);
     setFinishedPoints(0);
+
     const data = await measurer.measureArea(xRange, yRange, objectHeight, {
-      onProgressText: setProgressText,
-      onPointFinished: setFinishedPoints,
       checkCancel: () => canceledRef.current,
+      onPointFinished: setFinishedPoints,
+      onProgressText: setProgressText,
     });
+
     if (!data) {
       setIsMeasuring(false);
+
       return;
     }
+
     onFinished(data);
   };
 
@@ -87,16 +97,12 @@ const MeasureArea = ({
 
   return (
     <Modal
-      title={lang.curve_engraving.measure_audofocus_area}
-      open
       centered
       closable={false}
-      width={540}
-      maskClosable={false}
       footer={
         isMeasuring
           ? [
-              <Button key="cancel" disabled={cancelling} onClick={handleCancel}>
+              <Button disabled={cancelling} key="cancel" onClick={handleCancel}>
                 {lang.alert.cancel}
               </Button>,
             ]
@@ -104,11 +110,15 @@ const MeasureArea = ({
               <Button key="cancel" onClick={onCancel}>
                 {lang.curve_engraving.reselect_area}
               </Button>,
-              <Button key="start" type="primary" onClick={handleStartMeasuring}>
+              <Button key="start" onClick={handleStartMeasuring} type="primary">
                 {lang.curve_engraving.start_autofocus}
               </Button>,
             ]
       }
+      maskClosable={false}
+      open
+      title={lang.curve_engraving.measure_audofocus_area}
+      width={540}
     >
       <div className={styles.points}>
         {yRange.map((yValue, yIdx) => (
@@ -130,60 +140,49 @@ const MeasureArea = ({
             <Col span={24}>
               <Row gutter={[48, 0]} justify="center">
                 <Col className={styles.col} span={12}>
-                  <Row gutter={[0, 12]} justify="space-around" align="middle">
+                  <Row align="middle" gutter={[0, 12]} justify="space-around">
                     <Col span={24}>
                       <Segmented
                         block
-                        options={[
-                          { value: Type.Amount, label: lang.curve_engraving.amount },
-                          { value: Type.Gap, label: lang.curve_engraving.gap },
-                        ]}
                         onChange={(v: Type) => setSelectedType(v)}
+                        options={[
+                          { label: lang.curve_engraving.amount, value: Type.Amount },
+                          { label: lang.curve_engraving.gap, value: Type.Gap },
+                        ]}
                       />
                     </Col>
                     <Col span={12}>
-                      {selectedType === Type.Amount
-                        ? lang.curve_engraving.rows
-                        : lang.curve_engraving.gap}
+                      {selectedType === Type.Amount ? lang.curve_engraving.rows : lang.curve_engraving.gap}
                     </Col>
                     <Col span={12}>
                       <InputNumber<number>
+                        addonAfter={selectedType === Type.Amount ? undefined : 'mm'}
+                        min={selectedType === Type.Amount ? 2 : 1}
+                        onChange={(val) => checkAndUpdate(val, selectedType === Type.Amount ? setRow : setRowGap)}
+                        precision={0}
+                        step={1}
                         type="number"
                         value={selectedType === Type.Amount ? row : rowGap}
-                        min={selectedType === Type.Amount ? 2 : 1}
-                        onChange={(val) =>
-                          checkAndUpdate(val, selectedType === Type.Amount ? setRow : setRowGap)
-                        }
-                        step={1}
-                        precision={0}
-                        addonAfter={selectedType === Type.Amount ? undefined : 'mm'}
                       />
                     </Col>
                     <Col span={12}>
-                      {selectedType === Type.Amount
-                        ? lang.curve_engraving.coloumns
-                        : lang.curve_engraving.column_gap}
+                      {selectedType === Type.Amount ? lang.curve_engraving.coloumns : lang.curve_engraving.column_gap}
                     </Col>
                     <Col span={12}>
                       <InputNumber<number>
+                        addonAfter={selectedType === Type.Amount ? undefined : 'mm'}
+                        min={selectedType === Type.Amount ? 2 : 1}
+                        onChange={(val) => checkAndUpdate(val, selectedType === Type.Amount ? setColumn : setColumnGap)}
+                        precision={0}
+                        step={1}
                         type="number"
                         value={selectedType === Type.Amount ? column : columnGap}
-                        min={selectedType === Type.Amount ? 2 : 1}
-                        onChange={(val) =>
-                          checkAndUpdate(
-                            val,
-                            selectedType === Type.Amount ? setColumn : setColumnGap,
-                          )
-                        }
-                        step={1}
-                        precision={0}
-                        addonAfter={selectedType === Type.Amount ? undefined : 'mm'}
                       />
                     </Col>
                   </Row>
                 </Col>
                 <Col className={styles.col} span={12}>
-                  <Row gutter={[0, 12]} align="middle">
+                  <Row align="middle" gutter={[0, 12]}>
                     <Col className={styles.title} span={24}>
                       {lang.curve_engraving.set_object_height}
                     </Col>
@@ -192,13 +191,13 @@ const MeasureArea = ({
                     </Col>
                     <Col span={12}>
                       <InputNumber<number>
-                        type="number"
-                        value={objectHeight}
+                        addonAfter="mm"
                         min={0}
                         onChange={(val) => checkAndUpdate(val, setObjectHeight)}
-                        step={1}
                         precision={0}
-                        addonAfter="mm"
+                        step={1}
+                        type="number"
+                        value={objectHeight}
                       />
                     </Col>
                   </Row>
@@ -208,8 +207,8 @@ const MeasureArea = ({
           </div>
           <button
             className={styles.link}
-            type="button"
             onClick={() => browser.open(lang.curve_engraving.help_center_url)}
+            type="button"
           >
             {lang.alert.learn_more}
           </button>
@@ -222,23 +221,23 @@ const MeasureArea = ({
 
 export default MeasureArea;
 
-export const showMeasureArea = (
-  bbox: BBox,
-  measurer: CurveMeasurer,
-): Promise<MeasureData | null> => {
-  if (isIdExist('measure-area')) popDialogById('measure-area');
+export const showMeasureArea = (bbox: BBox, measurer: CurveMeasurer): Promise<MeasureData | null> => {
+  if (isIdExist('measure-area')) {
+    popDialogById('measure-area');
+  }
+
   return new Promise<MeasureData | null>((resolve) => {
     addDialogComponent(
       'measure-area',
       <MeasureArea
         bbox={bbox}
         measurer={measurer}
-        onFinished={(data) => {
-          resolve(data);
-          popDialogById('measure-area');
-        }}
         onCancel={() => {
           resolve(null);
+          popDialogById('measure-area');
+        }}
+        onFinished={(data) => {
+          resolve(data);
           popDialogById('measure-area');
         }}
       />,

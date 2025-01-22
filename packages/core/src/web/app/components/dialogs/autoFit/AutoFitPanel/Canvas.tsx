@@ -1,19 +1,20 @@
 import React, { memo, useEffect, useMemo } from 'react';
 
 import EmbeddedCanvas from '@core/app/widgets/FullWindowPanel/EmbeddedCanvas';
-import { AutoFitContour } from '@core/interfaces/IAutoFit';
+import type { AutoFitContour } from '@core/interfaces/IAutoFit';
 
-import OpacitySlider from './OpacitySlider';
 import { AutoFitCanvasManager } from './CanvasManager';
+import OpacitySlider from './OpacitySlider';
 
 interface Props {
   data: AutoFitContour[][];
-  imageUrl: string;
   focusedIndex: number;
+  imageUrl: string;
 }
 
-const Canvas = ({ data, imageUrl, focusedIndex }: Props): JSX.Element => {
+const Canvas = ({ data, focusedIndex, imageUrl }: Props): React.JSX.Element => {
   const canvasManager = useMemo(() => new AutoFitCanvasManager(), []);
+
   useEffect(() => {
     AutoFitCanvasManager.clear();
   }, []);

@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 interface Font {
   family: string;
   italic: boolean;

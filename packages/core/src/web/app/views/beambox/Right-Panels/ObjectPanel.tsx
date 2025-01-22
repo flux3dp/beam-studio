@@ -1,26 +1,28 @@
-import classNames from 'classnames';
 import React, { memo, useContext } from 'react';
-import { Button, ConfigProvider } from 'antd';
 
+import { Button, ConfigProvider } from 'antd';
+import classNames from 'classnames';
+
+import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
+import dialogCaller from '@core/app/actions/dialog-caller';
+import { iconButtonTheme } from '@core/app/constants/antd-config';
+import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
+import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
 import ActionsPanel from '@core/app/views/beambox/Right-Panels/ActionsPanel';
 import ConfigPanel from '@core/app/views/beambox/Right-Panels/ConfigPanel/ConfigPanel';
-import dialogCaller from '@core/app/actions/dialog-caller';
+import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 import DimensionPanel from '@core/app/views/beambox/Right-Panels/DimensionPanel/DimensionPanel';
-import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
-import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import OptionsPanel from '@core/app/views/beambox/Right-Panels/OptionsPanel';
-import useI18n from '@core/helpers/useI18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import { iconButtonTheme } from '@core/app/constants/antd-config';
-import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
-import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
 import { useIsMobile } from '@core/helpers/system-helper';
+import useI18n from '@core/helpers/useI18n';
 
 import styles from './ObjectPanel.module.scss';
 
 let svgCanvas;
 let svgEditor;
+
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
   svgEditor = globalSVG.Editor;
@@ -30,7 +32,7 @@ interface Props {
   hide?: boolean;
 }
 
-function ObjectPanel({ hide }: Props): JSX.Element {
+function ObjectPanel({ hide }: Props): React.JSX.Element {
   const lang = useI18n();
   const tObjectpanel = lang.beambox.right_panel.object_panel;
   const isMobile = useIsMobile();
@@ -40,89 +42,91 @@ function ObjectPanel({ hide }: Props): JSX.Element {
     if (!elem) {
       return {};
     }
+
     let elems = [elem];
+
     if (elems.length > 0 && elems[0].getAttribute('data-tempgroup') === 'true') {
       elems = Array.from(elems[0].childNodes) as Element[];
     }
+
     const allowBooleanOperations = (e: Element) => {
-      if (['rect', 'polygon', 'ellipse'].includes(e.tagName.toLowerCase())) {
+      if (['ellipse', 'polygon', 'rect'].includes(e.tagName.toLowerCase())) {
         return true;
       }
+
       return e.tagName.toLowerCase() === 'path' && svgCanvas.isElemFillable(e);
     };
     const isSingleGroup = elems?.length === 1 && elems[0].tagName.toLowerCase() === 'g';
+
     return {
-      group: !isSingleGroup || elems?.length > 1,
-      ungroup:
-        isSingleGroup &&
-        !elem.getAttribute('data-textpath-g') &&
-        !elem.getAttribute('data-pass-through'),
-      dist: elems?.length > 2,
       boolean: elems?.length > 1 && elems?.every(allowBooleanOperations),
-      union: elems?.length > 1 && elems?.every(allowBooleanOperations),
-      subtract: elems?.length === 2 && elems?.every(allowBooleanOperations),
-      intersect: elems?.length > 1 && elems?.every(allowBooleanOperations),
       difference: elems?.length > 1 && elems?.every(allowBooleanOperations),
+      dist: elems?.length > 2,
+      group: !isSingleGroup || elems?.length > 1,
+      intersect: elems?.length > 1 && elems?.every(allowBooleanOperations),
+      subtract: elems?.length === 2 && elems?.every(allowBooleanOperations),
+      ungroup: isSingleGroup && !elem.getAttribute('data-textpath-g') && !elem.getAttribute('data-pass-through'),
+      union: elems?.length > 1 && elems?.every(allowBooleanOperations),
     };
   };
 
   const renderToolBtn = (
     label: string,
-    icon: JSX.Element,
+    icon: React.JSX.Element,
     disabled: boolean,
     onClick: () => void,
     id: string,
-  ): JSX.Element => (
-    <Button type="text" id={id} icon={icon} onClick={onClick} disabled={disabled} title={label} />
+  ): React.JSX.Element => (
+    <Button disabled={disabled} icon={icon} id={id} onClick={onClick} title={label} type="text" />
   );
 
-  const renderCommonActionPanel = (): JSX.Element => (
+  const renderCommonActionPanel = (): React.JSX.Element => (
     <div className={styles.tools}>
       <ObjectPanelItem.Item
-        id="delete"
         content={<ObjectPanelIcons.Trash />}
+        id="delete"
         label={lang.topbar.menu.delete}
         onClick={() => svgEditor.deleteSelected()}
       />
       <ObjectPanelItem.Item
-        id="duplicate"
         content={<ObjectPanelIcons.Duplicate />}
+        id="duplicate"
         label={lang.topbar.menu.duplicate}
         onClick={async () => svgCanvas.cloneSelectedElements(20, 20)}
       />
       <ObjectPanelItem.Item
-        id="parameter"
+        autoClose={false}
         content={<ObjectPanelIcons.Parameter />}
+        id="parameter"
         label={lang.beambox.right_panel.laser_panel.parameters}
         onClick={() => {
           dialogCaller.addDialogComponent('config-panel', <ConfigPanel UIType="modal" />);
         }}
-        autoClose={false}
       />
     </div>
   );
 
-  const renderToolBtns = (): JSX.Element => {
+  const renderToolBtns = (): React.JSX.Element => {
     const buttonAvailability = getAvailableFunctions();
+
     return isMobile ? (
       <div className={styles.tools}>
         <ObjectPanelItem.Divider />
         <ObjectPanelItem.Item
-          id="group"
           content={<ObjectPanelIcons.Group />}
+          disabled={!buttonAvailability.group}
+          id="group"
           label={tObjectpanel.group}
           onClick={() => svgCanvas.groupSelectedElements()}
-          disabled={!buttonAvailability.group}
         />
         <ObjectPanelItem.Item
-          id="ungroup"
           content={<ObjectPanelIcons.Ungroup />}
+          disabled={!buttonAvailability.ungroup}
+          id="ungroup"
           label={tObjectpanel.ungroup}
           onClick={() => svgCanvas.ungroupSelectedElement()}
-          disabled={!buttonAvailability.ungroup}
         />
         <ObjectPanelItem.ActionList
-          id="align"
           actions={[
             {
               icon: <ObjectPanelIcons.VAlignTop />,
@@ -156,10 +160,10 @@ function ObjectPanel({ hide }: Props): JSX.Element {
             },
           ]}
           content={<ObjectPanelIcons.VAlignMid />}
+          id="align"
           label={tObjectpanel.align}
         />
         <ObjectPanelItem.ActionList
-          id="distribute"
           actions={[
             {
               icon: <ObjectPanelIcons.HDist />,
@@ -173,40 +177,41 @@ function ObjectPanel({ hide }: Props): JSX.Element {
             },
           ]}
           content={<ObjectPanelIcons.VDist />}
-          label={tObjectpanel.distribute}
           disabled={!buttonAvailability.dist}
+          id="distribute"
+          label={tObjectpanel.distribute}
         />
         <ObjectPanelItem.ActionList
-          id="boolean"
           actions={[
             {
+              disabled: !buttonAvailability.union,
               icon: <ObjectPanelIcons.Union />,
               label: tObjectpanel.union,
               onClick: () => svgCanvas.booleanOperationSelectedElements('union'),
-              disabled: !buttonAvailability.union,
             },
             {
+              disabled: !buttonAvailability.subtract,
               icon: <ObjectPanelIcons.Subtract />,
               label: tObjectpanel.subtract,
               onClick: () => svgCanvas.booleanOperationSelectedElements('diff'),
-              disabled: !buttonAvailability.subtract,
             },
             {
+              disabled: !buttonAvailability.intersect,
               icon: <ObjectPanelIcons.Intersect />,
               label: tObjectpanel.intersect,
               onClick: () => svgCanvas.booleanOperationSelectedElements('intersect'),
-              disabled: !buttonAvailability.intersect,
             },
             {
+              disabled: !buttonAvailability.difference,
               icon: <ObjectPanelIcons.Diff />,
               label: tObjectpanel.difference,
               onClick: () => svgCanvas.booleanOperationSelectedElements('xor'),
-              disabled: !buttonAvailability.difference,
             },
           ]}
           content={<ObjectPanelIcons.Union />}
-          label={tObjectpanel.boolean}
           disabled={!buttonAvailability.boolean}
+          id="boolean"
+          label={tObjectpanel.boolean}
         />
       </div>
     ) : (
@@ -327,31 +332,33 @@ function ObjectPanel({ hide }: Props): JSX.Element {
     );
   };
 
-  const renderDimensionPanel = (): JSX.Element => {
-    const { updateDimensionValues, getDimensionValues } = context;
+  const renderDimensionPanel = (): React.JSX.Element => {
+    const { getDimensionValues, updateDimensionValues } = context;
+
     return (
       <DimensionPanel
         elem={elem}
-        updateDimensionValues={updateDimensionValues}
         getDimensionValues={getDimensionValues}
+        updateDimensionValues={updateDimensionValues}
       />
     );
   };
 
-  const renderOptionPanel = (): JSX.Element => {
-    const { polygonSides, dimensionValues, updateDimensionValues, updateObjectPanel } = context;
+  const renderOptionPanel = (): React.JSX.Element => {
+    const { dimensionValues, polygonSides, updateDimensionValues, updateObjectPanel } = context;
+
     return (
       <OptionsPanel
         elem={elem}
-        rx={dimensionValues.rx}
         polygonSides={polygonSides}
-        updateObjectPanel={updateObjectPanel}
+        rx={dimensionValues.rx}
         updateDimensionValues={updateDimensionValues}
+        updateObjectPanel={updateObjectPanel}
       />
     );
   };
 
-  const renderActionPanel = (): JSX.Element => <ActionsPanel elem={elem} />;
+  const renderActionPanel = (): React.JSX.Element => <ActionsPanel elem={elem} />;
 
   const contents = isMobile ? (
     <>
@@ -371,7 +378,7 @@ function ObjectPanel({ hide }: Props): JSX.Element {
   );
 
   return (
-    <div id="object-panel" className={classNames(styles.container, { [styles.hide]: hide })}>
+    <div className={classNames(styles.container, { [styles.hide]: hide })} id="object-panel">
       {elem ? contents : null}
     </div>
   );

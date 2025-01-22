@@ -4,6 +4,7 @@ import { act, fireEvent, render, waitFor } from '@testing-library/react';
 import CropPanel from './CropPanel';
 
 const mockCropper = jest.fn();
+
 jest.mock(
   'cropperjs',
   () =>
@@ -13,40 +14,46 @@ jest.mock(
 );
 
 const mockCalculateBase64 = jest.fn();
+
 jest.mock(
-  '@core/helpers/image-edit-panel/calculate-base64',
+  'helpers/image-edit-panel/calculate-base64',
   () =>
     (...args) =>
       mockCalculateBase64(...args),
 );
 
 const mockHandleFinish = jest.fn();
+
 jest.mock(
-  '@core/helpers/image-edit-panel/handle-finish',
+  'helpers/image-edit-panel/handle-finish',
   () =>
     (...args) =>
       mockHandleFinish(...args),
 );
 
 const mockCropImage = jest.fn();
-jest.mock('@core/helpers/jimp-helper', () => ({
+
+jest.mock('helpers/jimp-helper', () => ({
   cropImage: (...args) => mockCropImage(...args),
 }));
 
 const mockOpenNonstopProgress = jest.fn();
 const mockPopById = jest.fn();
-jest.mock('@core/app/actions/progress-caller', () => ({
+
+jest.mock('app/actions/progress-caller', () => ({
   openNonstopProgress: (...args) => mockOpenNonstopProgress(...args),
   popById: (...args) => mockPopById(...args),
 }));
 
 const mockPreprocessByUrl = jest.fn();
-jest.mock('@core/helpers/image-edit-panel/preprocess', () => ({
+
+jest.mock('helpers/image-edit-panel/preprocess', () => ({
   preprocessByUrl: (...args) => mockPreprocessByUrl(...args),
 }));
 
 const useIsMobile = jest.fn();
-jest.mock('@core/helpers/system-helper', () => ({
+
+jest.mock('helpers/system-helper', () => ({
   useIsMobile: () => useIsMobile(),
 }));
 
@@ -62,13 +69,34 @@ describe('test CropPanel', () => {
     jest.resetAllMocks();
     global.URL.revokeObjectURL = mockRevokeObjectURL;
     mockImage.getAttribute.mockImplementation((key) => {
-      if (key === 'data-shading') return 'true';
-      if (key === 'data-threshold') return '125';
-      if (key === 'data-fullcolor') return null;
-      if (key === 'width') return '200';
-      if (key === 'height') return '200';
-      if (key === 'x') return '100';
-      if (key === 'y') return '100';
+      if (key === 'data-shading') {
+        return 'true';
+      }
+
+      if (key === 'data-threshold') {
+        return '125';
+      }
+
+      if (key === 'data-fullcolor') {
+        return null;
+      }
+
+      if (key === 'width') {
+        return '200';
+      }
+
+      if (key === 'height') {
+        return '200';
+      }
+
+      if (key === 'x') {
+        return '100';
+      }
+
+      if (key === 'y') {
+        return '100';
+      }
+
       return undefined;
     });
   });
@@ -76,19 +104,18 @@ describe('test CropPanel', () => {
   it('should render correctly', async () => {
     mockPreprocessByUrl.mockResolvedValue({
       blobUrl: 'mock-url-1',
-      dimension: { x: 0, y: 0, width: 100, height: 100 },
-      originalWidth: 200,
+      dimension: { height: 100, width: 100, x: 0, y: 0 },
       originalHeight: 200,
+      originalWidth: 200,
     });
     mockCalculateBase64.mockResolvedValueOnce('mock-base64-1');
+
     const { baseElement } = render(
-      <CropPanel
-        src="mock-src"
-        image={mockImage as unknown as SVGImageElement}
-        onClose={mockOnClose}
-      />,
+      <CropPanel image={mockImage as unknown as SVGImageElement} onClose={mockOnClose} src="mock-src" />,
     );
+
     await waitFor(() => {
+      mockImage.getAttribute.mockReturnValueOnce('true');
       expect(mockOpenNonstopProgress).toBeCalledTimes(1);
       expect(mockOpenNonstopProgress).toHaveBeenLastCalledWith({
         id: 'photo-edit-processing',
@@ -101,34 +128,56 @@ describe('test CropPanel', () => {
       expect(mockPopById).toBeCalledTimes(1);
       expect(mockPopById).toHaveBeenLastCalledWith('photo-edit-processing');
     });
-    await waitFor(() =>
-      expect(baseElement.querySelector('.ant-modal')).not.toHaveClass('ant-zoom-appear'),
-    );
+    await waitFor(() => expect(baseElement.querySelector('.ant-modal')).not.toHaveClass('ant-zoom-appear'));
     expect(baseElement).toMatchSnapshot();
   });
 
   it('should render correctly when image is full color', async () => {
     mockPreprocessByUrl.mockResolvedValue({
       blobUrl: 'mock-url-1',
-      dimension: { x: 0, y: 0, width: 100, height: 100 },
-      originalWidth: 200,
+      dimension: { height: 100, width: 100, x: 0, y: 0 },
       originalHeight: 200,
+      originalWidth: 200,
     });
     mockImage.getAttribute.mockReset();
-    mockImage.getAttribute
-      .mockReturnValueOnce('true')
-      .mockReturnValueOnce('125')
-      .mockReturnValueOnce('1')
-      .mockReturnValueOnce('200')
-      .mockReturnValueOnce('200');
+    mockImage.getAttribute.mockImplementation((key) => {
+      if (key === 'data-shading') {
+        return 'true';
+      }
+
+      if (key === 'data-threshold') {
+        return '125';
+      }
+
+      if (key === 'data-fullcolor') {
+        return '1';
+      }
+
+      if (key === 'width') {
+        return '200';
+      }
+
+      if (key === 'height') {
+        return '200';
+      }
+
+      if (key === 'x') {
+        return '100';
+      }
+
+      if (key === 'y') {
+        return '100';
+      }
+
+      return undefined;
+    });
+
     mockCalculateBase64.mockResolvedValueOnce('mock-base64-1');
+
     const { baseElement } = render(
-      <CropPanel
-        src="mock-src"
-        image={mockImage as unknown as SVGImageElement}
-        onClose={mockOnClose}
-      />,
+      <CropPanel image={mockImage as unknown as SVGImageElement} onClose={mockOnClose} src="mock-src" />,
     );
+
     await waitFor(() => {
       expect(mockOpenNonstopProgress).toBeCalledTimes(1);
       expect(mockOpenNonstopProgress).toHaveBeenLastCalledWith({
@@ -142,9 +191,7 @@ describe('test CropPanel', () => {
       expect(mockPopById).toBeCalledTimes(1);
       expect(mockPopById).toHaveBeenLastCalledWith('photo-edit-processing');
     });
-    await waitFor(() =>
-      expect(baseElement.querySelector('.ant-modal')).not.toHaveClass('ant-zoom-appear'),
-    );
+    await waitFor(() => expect(baseElement.querySelector('.ant-modal')).not.toHaveClass('ant-zoom-appear'));
     expect(baseElement).toMatchSnapshot();
   });
 
@@ -152,18 +199,16 @@ describe('test CropPanel', () => {
     useIsMobile.mockReturnValue(true);
     mockPreprocessByUrl.mockResolvedValue({
       blobUrl: 'mock-url-1',
-      dimension: { x: 0, y: 0, width: 100, height: 100 },
-      originalWidth: 200,
+      dimension: { height: 100, width: 100, x: 0, y: 0 },
       originalHeight: 200,
+      originalWidth: 200,
     });
     mockCalculateBase64.mockResolvedValueOnce('mock-base64-1');
+
     const { baseElement } = render(
-      <CropPanel
-        src="mock-src"
-        image={mockImage as unknown as SVGImageElement}
-        onClose={mockOnClose}
-      />,
+      <CropPanel image={mockImage as unknown as SVGImageElement} onClose={mockOnClose} src="mock-src" />,
     );
+
     await waitFor(() => {
       expect(mockOpenNonstopProgress).toBeCalledTimes(1);
       expect(mockOpenNonstopProgress).toHaveBeenLastCalledWith({
@@ -177,57 +222,59 @@ describe('test CropPanel', () => {
       expect(mockPopById).toBeCalledTimes(1);
       expect(mockPopById).toHaveBeenLastCalledWith('photo-edit-processing');
     });
-    await waitFor(() =>
-      expect(baseElement.querySelector('.ant-modal')).not.toHaveClass('ant-zoom-appear'),
-    );
+    await waitFor(() => expect(baseElement.querySelector('.ant-modal')).not.toHaveClass('ant-zoom-appear'));
     expect(baseElement).toMatchSnapshot();
   });
 
   test('cropper apply and complete', async () => {
     mockPreprocessByUrl.mockResolvedValue({
       blobUrl: 'mock-url-1',
-      dimension: { x: 0, y: 0, width: 100, height: 100 },
-      originalWidth: 200,
+      dimension: { height: 100, width: 100, x: 0, y: 0 },
       originalHeight: 200,
+      originalWidth: 200,
     });
-    mockCalculateBase64
-      .mockResolvedValueOnce('mock-base64-1')
-      .mockResolvedValueOnce('mock-base64-2');
+    mockCalculateBase64.mockResolvedValueOnce('mock-base64-1').mockResolvedValueOnce('mock-base64-2');
+
     const { baseElement, getByText, unmount } = render(
-      <CropPanel
-        src="mock-src"
-        image={mockImage as unknown as SVGImageElement}
-        onClose={mockOnClose}
-      />,
+      <CropPanel image={mockImage as unknown as SVGImageElement} onClose={mockOnClose} src="mock-src" />,
     );
+
     await waitFor(() => {
       expect(mockPopById).toBeCalledTimes(1);
       expect(mockPopById).toHaveBeenLastCalledWith('photo-edit-processing');
     });
     await new Promise((r) => setTimeout(r));
+
     const mockCropperInstance = {
       destroy: jest.fn(),
       getData: jest.fn(),
     };
+
     mockCropper.mockImplementation(() => mockCropperInstance);
+
     // apply
     const img = baseElement.querySelector('img');
+
     fireEvent.load(img);
     expect(mockCropper).toBeCalledTimes(1);
     expect(mockCropper).toHaveBeenLastCalledWith(img, {
-      aspectRatio: NaN,
+      aspectRatio: Number.NaN,
       autoCropArea: 1,
-      zoomable: false,
-      viewMode: 2,
-      minCropBoxWidth: 1,
       minCropBoxHeight: 1,
+      minCropBoxWidth: 1,
+      viewMode: 2,
+      zoomable: false,
     });
     expect(mockCropperInstance.destroy).not.toBeCalled();
+
     const mockImageNatureWidth = jest.spyOn(img, 'naturalWidth', 'get');
+
     mockImageNatureWidth.mockReturnValue(100);
+
     const mockImageNatureHeight = jest.spyOn(img, 'naturalHeight', 'get');
+
     mockImageNatureHeight.mockReturnValue(100);
-    mockCropperInstance.getData.mockReturnValueOnce({ x: 10, y: 10, width: 80, height: 80 });
+    mockCropperInstance.getData.mockReturnValueOnce({ height: 80, width: 80, x: 10, y: 10 });
     mockCropImage.mockResolvedValueOnce('mock-url-2');
     await act(async () => {
       fireEvent.click(getByText('Apply'));
@@ -246,21 +293,19 @@ describe('test CropPanel', () => {
     expect(mockCropperInstance.destroy).toBeCalledTimes(1);
     expect(mockCropper).toBeCalledTimes(2);
     expect(mockCropper).toHaveBeenLastCalledWith(img, {
-      aspectRatio: NaN,
+      aspectRatio: Number.NaN,
       autoCropArea: 1,
-      zoomable: false,
-      viewMode: 2,
-      minCropBoxWidth: 1,
       minCropBoxHeight: 1,
+      minCropBoxWidth: 1,
+      viewMode: 2,
+      zoomable: false,
     });
-    await waitFor(() =>
-      expect(baseElement.querySelector('.ant-modal')).not.toHaveClass('ant-zoom-appear'),
-    );
+    await waitFor(() => expect(baseElement.querySelector('.ant-modal')).not.toHaveClass('ant-zoom-appear'));
     expect(baseElement).toMatchSnapshot();
 
     mockImageNatureWidth.mockReturnValue(80);
     mockImageNatureHeight.mockReturnValue(80);
-    mockCropperInstance.getData.mockReturnValueOnce({ x: 10, y: 10, width: 60, height: 60 });
+    mockCropperInstance.getData.mockReturnValueOnce({ height: 60, width: 60, x: 10, y: 10 });
     mockCropImage.mockResolvedValueOnce('mock-url-3');
     mockCalculateBase64.mockResolvedValueOnce('mock-base64-3');
     await act(async () => {
@@ -275,10 +320,10 @@ describe('test CropPanel', () => {
     expect(mockCalculateBase64).toHaveBeenLastCalledWith('mock-url-3', true, 125, false);
     expect(mockHandleFinish).toBeCalledTimes(1);
     expect(mockHandleFinish).toHaveBeenLastCalledWith(mockImage, 'mock-url-3', 'mock-base64-3', {
+      height: 120,
+      width: 120,
       x: 140,
       y: 140,
-      width: 120,
-      height: 120,
     });
     expect(mockPopById).toBeCalledTimes(3);
     expect(mockOnClose).toBeCalledTimes(1);
@@ -291,48 +336,52 @@ describe('test CropPanel', () => {
   test('apply and go back', async () => {
     mockPreprocessByUrl.mockResolvedValue({
       blobUrl: 'mock-url-1',
-      dimension: { x: 0, y: 0, width: 100, height: 100 },
-      originalWidth: 200,
+      dimension: { height: 100, width: 100, x: 0, y: 0 },
       originalHeight: 200,
+      originalWidth: 200,
     });
-    mockCalculateBase64
-      .mockResolvedValueOnce('mock-base64-1')
-      .mockResolvedValueOnce('mock-base64-2');
+    mockCalculateBase64.mockResolvedValueOnce('mock-base64-1').mockResolvedValueOnce('mock-base64-2');
+
     const { baseElement, getByText, unmount } = render(
-      <CropPanel
-        src="mock-src"
-        image={mockImage as unknown as SVGImageElement}
-        onClose={mockOnClose}
-      />,
+      <CropPanel image={mockImage as unknown as SVGImageElement} onClose={mockOnClose} src="mock-src" />,
     );
+
     await waitFor(() => {
       expect(mockPopById).toBeCalledTimes(1);
       expect(mockPopById).toHaveBeenLastCalledWith('photo-edit-processing');
     });
     await new Promise((r) => setTimeout(r));
+
     const mockCropperInstance = {
       destroy: jest.fn(),
       getData: jest.fn(),
     };
+
     mockCropper.mockImplementation(() => mockCropperInstance);
+
     // apply
     const img = baseElement.querySelector('img');
+
     fireEvent.load(img);
     expect(mockCropper).toBeCalledTimes(1);
     expect(mockCropper).toHaveBeenLastCalledWith(img, {
-      aspectRatio: NaN,
+      aspectRatio: Number.NaN,
       autoCropArea: 1,
-      zoomable: false,
-      viewMode: 2,
-      minCropBoxWidth: 1,
       minCropBoxHeight: 1,
+      minCropBoxWidth: 1,
+      viewMode: 2,
+      zoomable: false,
     });
     expect(mockCropperInstance.destroy).not.toBeCalled();
+
     const mockImageNatureWidth = jest.spyOn(img, 'naturalWidth', 'get');
+
     mockImageNatureWidth.mockReturnValue(100);
+
     const mockImageNatureHeight = jest.spyOn(img, 'naturalHeight', 'get');
+
     mockImageNatureHeight.mockReturnValue(100);
-    mockCropperInstance.getData.mockReturnValueOnce({ x: 10, y: 10, width: 80, height: 80 });
+    mockCropperInstance.getData.mockReturnValueOnce({ height: 80, width: 80, x: 10, y: 10 });
     mockCropImage.mockResolvedValueOnce('mock-url-2');
     await act(async () => {
       fireEvent.click(getByText('Apply'));
@@ -369,43 +418,45 @@ describe('test CropPanel', () => {
     useIsMobile.mockReturnValue(true);
     mockPreprocessByUrl.mockResolvedValue({
       blobUrl: 'mock-url-1',
-      dimension: { x: 0, y: 0, width: 100, height: 150 },
-      originalWidth: 200,
+      dimension: { height: 150, width: 100, x: 0, y: 0 },
       originalHeight: 300,
+      originalWidth: 200,
     });
-    mockCalculateBase64
-      .mockResolvedValueOnce('mock-base64-1')
-      .mockResolvedValueOnce('mock-base64-2');
+    mockCalculateBase64.mockResolvedValueOnce('mock-base64-1').mockResolvedValueOnce('mock-base64-2');
+
     const { baseElement, getByText, unmount } = render(
-      <CropPanel
-        src="mock-src"
-        image={mockImage as unknown as SVGImageElement}
-        onClose={mockOnClose}
-      />,
+      <CropPanel image={mockImage as unknown as SVGImageElement} onClose={mockOnClose} src="mock-src" />,
     );
+
     await waitFor(() => {
       expect(mockPopById).toBeCalledTimes(1);
       expect(mockPopById).toHaveBeenLastCalledWith('photo-edit-processing');
     });
     await new Promise((r) => setTimeout(r));
+
     const mockCropperInstance = {
       destroy: jest.fn(),
       getData: jest.fn(),
     };
+
     mockCropper.mockImplementation(() => mockCropperInstance);
+
     const img = baseElement.querySelector('img');
+
     fireEvent.load(img);
     expect(mockCropper).toBeCalledTimes(1);
     expect(mockCropper).toHaveBeenLastCalledWith(img, {
-      aspectRatio: NaN,
+      aspectRatio: Number.NaN,
       autoCropArea: 1,
-      zoomable: false,
-      viewMode: 2,
-      minCropBoxWidth: 1,
       minCropBoxHeight: 1,
+      minCropBoxWidth: 1,
+      viewMode: 2,
+      zoomable: false,
     });
     expect(mockCropperInstance.destroy).not.toBeCalled();
+
     const ratioSelect = baseElement.querySelector('.ant-select-selector');
+
     expect(ratioSelect).toHaveTextContent('Free');
     fireEvent.mouseDown(ratioSelect);
     fireEvent.click(getByText('4:3'));
@@ -415,10 +466,10 @@ describe('test CropPanel', () => {
     expect(mockCropper).toHaveBeenLastCalledWith(img, {
       aspectRatio: 4 / 3,
       autoCropArea: 1,
-      zoomable: false,
-      viewMode: 2,
-      minCropBoxWidth: 1,
       minCropBoxHeight: 1,
+      minCropBoxWidth: 1,
+      viewMode: 2,
+      zoomable: false,
     });
     fireEvent.mouseDown(ratioSelect);
     fireEvent.click(getByText('Original'));
@@ -428,10 +479,10 @@ describe('test CropPanel', () => {
     expect(mockCropper).toHaveBeenLastCalledWith(img, {
       aspectRatio: 2 / 3,
       autoCropArea: 1,
-      zoomable: false,
-      viewMode: 2,
-      minCropBoxWidth: 1,
       minCropBoxHeight: 1,
+      minCropBoxWidth: 1,
+      viewMode: 2,
+      zoomable: false,
     });
     unmount();
   });

@@ -1,9 +1,11 @@
-import classNames from 'classnames';
 import React from 'react';
 
-import i18n from '@core/helpers/i18n';
-import storage from '@app/implementations/storage';
+import classNames from 'classnames';
+
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
+import i18n from '@core/helpers/i18n';
+
+import storage from '@app/implementations/storage';
 
 const LANG = i18n.lang.beambox.tool_panels;
 
@@ -12,7 +14,7 @@ interface Props {
   onValueChange: (val: number) => void;
 }
 
-function OffsetDistancePanel({ distance: distanceProps, onValueChange }: Props): JSX.Element {
+function OffsetDistancePanel({ distance: distanceProps, onValueChange }: Props): React.JSX.Element {
   const [distance, updateDistance] = React.useState(distanceProps);
   const [isCollapsed, updateIsCollapsed] = React.useState(false);
 
@@ -23,13 +25,14 @@ function OffsetDistancePanel({ distance: distanceProps, onValueChange }: Props):
 
   const getValueCaption = () => {
     const units = storage.get('default-units') || 'mm';
-    return units === 'inches' ? `${Number(distance / 25.4).toFixed(3)}\"` : `${distance} mm`;
+
+    return units === 'inches' ? `${Number(distance / 25.4).toFixed(3)}"` : `${distance} mm`;
   };
 
   return (
     <div className="tool-panel">
       <label className="controls accordion">
-        <input type="checkbox" className="accordion-switcher" defaultChecked />
+        <input className="accordion-switcher" defaultChecked type="checkbox" />
         <p className="caption" onClick={() => updateIsCollapsed(!isCollapsed)}>
           {LANG._offset.dist}
           <span className="value">{getValueCaption()}</span>
@@ -37,12 +40,7 @@ function OffsetDistancePanel({ distance: distanceProps, onValueChange }: Props):
         <div className={classNames('tool-panel-body', { collapsed: isCollapsed })}>
           <div>
             <div className="control offset-dist">
-              <UnitInput
-                min={0}
-                unit="mm"
-                defaultValue={distance}
-                getValue={(val) => updateDist(val)}
-              />
+              <UnitInput defaultValue={distance} getValue={(val) => updateDist(val)} min={0} unit="mm" />
             </div>
           </div>
         </div>

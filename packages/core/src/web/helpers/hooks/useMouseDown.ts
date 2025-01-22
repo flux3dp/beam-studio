@@ -1,13 +1,12 @@
 import { useEffect } from 'react';
 
 interface Props {
-  predicate: (e: MouseEvent) => boolean;
   mouseDown?: () => void;
   mouseUp?: () => void;
+  predicate: (e: MouseEvent) => boolean;
 }
 
-/* eslint-disable import/prefer-default-export */
-export const useMouseDown = ({ predicate, mouseDown, mouseUp }: Props): void => {
+export const useMouseDown = ({ mouseDown, mouseUp, predicate }: Props): void => {
   useEffect(() => {
     const handleMouseDown = (e: MouseEvent) => {
       if (predicate(e)) {
@@ -22,12 +21,22 @@ export const useMouseDown = ({ predicate, mouseDown, mouseUp }: Props): void => 
       }
     };
 
-    if (mouseDown) document.addEventListener('mousedown', handleMouseDown);
-    if (mouseUp) document.addEventListener('mouseup', handleMouseUp);
+    if (mouseDown) {
+      document.addEventListener('mousedown', handleMouseDown);
+    }
+
+    if (mouseUp) {
+      document.addEventListener('mouseup', handleMouseUp);
+    }
 
     return () => {
-      if (mouseDown) document.removeEventListener('mousedown', handleMouseDown);
-      if (mouseUp) document.removeEventListener('mouseup', handleMouseUp);
+      if (mouseDown) {
+        document.removeEventListener('mousedown', handleMouseDown);
+      }
+
+      if (mouseUp) {
+        document.removeEventListener('mouseup', handleMouseUp);
+      }
     };
   }, [mouseDown, mouseUp, predicate]);
 };

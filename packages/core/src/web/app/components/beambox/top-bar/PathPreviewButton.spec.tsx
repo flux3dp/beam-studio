@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable import/first */
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
-import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { CanvasMode } from '@core/app/constants/canvasMode';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
 
 jest.mock('@core/helpers/useI18n', () => () => ({
   topbar: {
@@ -13,14 +12,17 @@ jest.mock('@core/helpers/useI18n', () => () => ({
 }));
 
 const checkWebGL = jest.fn();
+
 jest.mock('@core/helpers/check-webgl', () => checkWebGL);
 
 const getSVGAsync = jest.fn();
+
 jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync,
 }));
 
 const clearSelection = jest.fn();
+
 getSVGAsync.mockImplementation((callback) => {
   callback({
     Canvas: {
@@ -35,35 +37,40 @@ jest.mock('@core/app/contexts/CanvasContext', () => ({
   }),
   CanvasMode: {
     Draw: 1,
-    Preview: 2,
     PathPreview: 3,
+    Preview: 2,
   },
 }));
 
 import PathPreviewButton from './PathPreviewButton';
 
 const mockUseWorkarea = jest.fn();
+
 jest.mock('@core/helpers/hooks/useWorkarea', () => () => mockUseWorkarea());
 
 describe('test PathPreviewButton', () => {
   test('no WebGL', () => {
     checkWebGL.mockReturnValue(false);
+
     const { container } = render(
       <CanvasContext.Provider value={{ mode: CanvasMode.PathPreview } as any}>
         <PathPreviewButton isDeviceConnected togglePathPreview={jest.fn()} />
       </CanvasContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
   });
 
   describe('workarea is Ador', () => {
     it('should not render', () => {
       mockUseWorkarea.mockReturnValue('ado1');
+
       const { container } = render(
         <CanvasContext.Provider value={{ mode: CanvasMode.PathPreview } as any}>
           <PathPreviewButton isDeviceConnected togglePathPreview={jest.fn()} />
         </CanvasContext.Provider>,
       );
+
       expect(container).toMatchSnapshot();
     });
   });
@@ -77,21 +84,25 @@ describe('test PathPreviewButton', () => {
     test('no devices connected in web version', () => {
       window.FLUX.version = 'web';
       checkWebGL.mockReturnValue(true);
+
       const { container } = render(
         <CanvasContext.Provider value={{ mode: CanvasMode.PathPreview } as any}>
           <PathPreviewButton isDeviceConnected={false} togglePathPreview={jest.fn()} />
         </CanvasContext.Provider>,
       );
+
       expect(container).toMatchSnapshot();
     });
 
     test('no devices connected in desktop version', () => {
       window.FLUX.version = '1.2.3';
+
       const { container } = render(
         <CanvasContext.Provider value={{ mode: CanvasMode.PathPreview } as any}>
           <PathPreviewButton isDeviceConnected={false} togglePathPreview={jest.fn()} />
         </CanvasContext.Provider>,
       );
+
       expect(container).toMatchSnapshot();
     });
 
@@ -102,6 +113,7 @@ describe('test PathPreviewButton', () => {
 
       test('is path previewing', () => {
         checkWebGL.mockReturnValue(true);
+
         const togglePathPreview = jest.fn();
         const { container } = render(
           <CanvasContext.Provider value={{ mode: CanvasMode.PathPreview } as any}>
@@ -116,12 +128,14 @@ describe('test PathPreviewButton', () => {
 
       test('is not path previewing', () => {
         checkWebGL.mockReturnValue(true);
+
         const togglePathPreview = jest.fn();
         const { container } = render(
           <CanvasContext.Provider value={{ mode: CanvasMode.Draw } as any}>
             <PathPreviewButton isDeviceConnected togglePathPreview={togglePathPreview} />
           </CanvasContext.Provider>,
         );
+
         fireEvent.click(container.querySelector('div[class*="button"]'));
         expect(clearSelection).toHaveBeenCalledTimes(1);
         expect(togglePathPreview).toHaveBeenCalledTimes(1);

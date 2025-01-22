@@ -1,11 +1,13 @@
-import classNames from 'classnames';
 import React from 'react';
 
+import classNames from 'classnames';
+
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import i18n from '@core/helpers/i18n';
-import storage from '@app/implementations/storage';
-import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import UnitInput from '@core/app/widgets/Unit-Input-v2';
+import i18n from '@core/helpers/i18n';
+
+import storage from '@app/implementations/storage';
 
 const LANG = i18n.lang.beambox.tool_panels;
 
@@ -24,7 +26,9 @@ interface State {
 class Interval extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
+
     const { dx, dy } = this.props;
+
     this.state = {
       dx,
       dy,
@@ -42,6 +46,7 @@ class Interval extends React.Component<Props, State> {
   onDxChanged = (dx: number): void => {
     const { onValueChange } = this.props;
     const { dy } = this.state;
+
     onValueChange({
       dx,
       dy,
@@ -52,6 +57,7 @@ class Interval extends React.Component<Props, State> {
   onDyChanged = (dy: number): void => {
     const { onValueChange } = this.props;
     const { dx } = this.state;
+
     onValueChange({
       dx,
       dy,
@@ -62,18 +68,20 @@ class Interval extends React.Component<Props, State> {
   getValueCaption = (): string => {
     const { dx, dy } = this.state;
     const units = storage.get('default-units') || 'mm';
+
     return units === 'inches'
       ? `${Number(dx / 25.4).toFixed(3)}", ${Number(dy / 25.4).toFixed(3)}"`
       : `${dx}, ${dy} mm`;
   };
 
-  render(): JSX.Element {
+  render(): React.JSX.Element {
     const { dx, dy, isCollapsed } = this.state;
     const workarea = getWorkarea(BeamboxPreference.read('workarea'));
+
     return (
       <div className="tool-panel">
         <label className="controls accordion">
-          <input type="checkbox" className="accordion-switcher" defaultChecked />
+          <input className="accordion-switcher" defaultChecked type="checkbox" />
           <p className="caption" onClick={() => this.setState({ isCollapsed: !isCollapsed })}>
             {LANG.array_interval}
             <span className="value">{this.getValueCaption()}</span>
@@ -82,23 +90,23 @@ class Interval extends React.Component<Props, State> {
             <div className="control">
               <span className="text-center header">{LANG.dx}</span>
               <UnitInput
-                id="array_width"
-                min={0}
-                max={workarea.width}
-                unit="mm"
                 defaultValue={dx}
                 getValue={this.onDxChanged}
+                id="array_width"
+                max={workarea.width}
+                min={0}
+                unit="mm"
               />
             </div>
             <div className="control">
               <span className="text-center header">{LANG.dy}</span>
               <UnitInput
-                id="array_height"
-                min={0}
-                max={workarea.displayHeight || workarea.height}
-                unit="mm"
                 defaultValue={dy}
                 getValue={this.onDyChanged}
+                id="array_height"
+                max={workarea.displayHeight || workarea.height}
+                min={0}
+                unit="mm"
               />
             </div>
           </div>

@@ -1,4 +1,4 @@
-@use '../_mixins.scss' as mixins;
+@use "../_mixins.scss" as mixins;
 
 div.polygon-sides {
   @include mixins.icon-input();

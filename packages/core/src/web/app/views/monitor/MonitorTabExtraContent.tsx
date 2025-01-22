@@ -1,23 +1,28 @@
 import React, { useContext } from 'react';
+
 import { DownloadOutlined, UploadOutlined } from '@ant-design/icons';
 
-import { Mode, ItemType } from '@core/app/constants/monitor-constants';
+import { ItemType, Mode } from '@core/app/constants/monitor-constants';
 import { MonitorContext } from '@core/app/contexts/MonitorContext';
+
 import styles from './MonitorTabExtraContent.module.scss';
 
-const MonitorTabExtraContent = (): JSX.Element => {
-  const { currentPath, mode, highlightedItem, onDownload, showUploadDialog } =
-    useContext(MonitorContext);
+const MonitorTabExtraContent = (): React.JSX.Element => {
+  const { currentPath, highlightedItem, mode, onDownload, showUploadDialog } = useContext(MonitorContext);
 
-  if (mode !== Mode.FILE) return null;
+  if (mode !== Mode.FILE) {
+    return null;
+  }
+
   const canDownload = highlightedItem?.type === ItemType.FILE;
   const canUpload = currentPath.length > 0;
+
   return (
     <>
-      <button type="button" className={styles.btn} disabled={!canUpload} onClick={showUploadDialog}>
+      <button className={styles.btn} disabled={!canUpload} onClick={showUploadDialog} type="button">
         <UploadOutlined />
       </button>
-      <button type="button" className={styles.btn} disabled={!canDownload} onClick={onDownload}>
+      <button className={styles.btn} disabled={!canDownload} onClick={onDownload} type="button">
         <DownloadOutlined />
       </button>
     </>

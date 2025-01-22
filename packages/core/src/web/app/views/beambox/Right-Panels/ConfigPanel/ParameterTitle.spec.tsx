@@ -1,4 +1,5 @@
 import React, { createContext } from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import ConfigPanelContext from './ConfigPanelContext';
@@ -6,11 +7,12 @@ import ParameterTitle from './ParameterTitle';
 
 const mockInitState = jest.fn();
 const mockState = {
-  module: { value: 1 },
   configName: { value: 'pre1' },
+  module: { value: 1 },
 };
 
 const mockShowPresetsManagementPanel = jest.fn();
+
 jest.mock('@core/app/components/dialogs/PresetsManagementPanel/PresetsManagementPanel', () => ({
   showPresetsManagementPanel: (...args) => mockShowPresetsManagementPanel(...args),
 }));
@@ -39,6 +41,7 @@ describe('test ParameterTitle', () => {
         <ParameterTitle />
       </ConfigPanelContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
   });
 
@@ -48,6 +51,7 @@ describe('test ParameterTitle', () => {
         <ParameterTitle />
       </ConfigPanelContext.Provider>,
     );
+
     fireEvent.click(getByTitle('preset_management_title'));
     expect(mockShowPresetsManagementPanel).toHaveBeenCalledTimes(1);
     expect(mockShowPresetsManagementPanel).toHaveBeenCalledWith({

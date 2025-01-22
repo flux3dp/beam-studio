@@ -9,21 +9,19 @@ interface Props {
   updateBeamboxPreferenceChange: (key: string, newVal: boolean) => void;
 }
 
-function Mask({
-  getBeamboxPreferenceEditingValue,
-  updateBeamboxPreferenceChange,
-}: Props): JSX.Element {
+function Mask({ getBeamboxPreferenceEditingValue, updateBeamboxPreferenceChange }: Props): React.JSX.Element {
   const lang = useI18n();
   const maskOptions = onOffOptionFactory(getBeamboxPreferenceEditingValue('enable_mask'), { lang });
+
   return (
     <>
       <div className="subtitle">{lang.settings.groups.mask}</div>
       <SelectControl
-        label={lang.settings.mask}
-        url={lang.settings.help_center_urls.mask}
         id="set-mask"
-        options={maskOptions}
+        label={lang.settings.mask}
         onChange={(e) => updateBeamboxPreferenceChange('enable_mask', e.target.value)}
+        options={maskOptions}
+        url={lang.settings.help_center_urls.mask}
       />
     </>
   );

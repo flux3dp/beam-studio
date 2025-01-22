@@ -1,31 +1,29 @@
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import clipboard from '@core/app/svgedit/operations/clipboard';
 import constant from '@core/app/actions/beambox/constant';
-import findDefs from '@core/app/svgedit/utils/findDef';
-import history from '@core/app/svgedit/history/history';
-import ISVGCanvas from '@core/interfaces/ISVGCanvas';
-import i18n from '@core/helpers/i18n';
-import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
-import layerConfigHelper, {
-  initLayerConfig,
-  writeDataLayer,
-} from '@core/helpers/layer/layer-config-helper';
-import NS from '@core/app/constants/namespaces';
 import progressCaller from '@core/app/actions/progress-caller';
-import updateElementColor from '@core/helpers/color/updateElementColor';
-import workareaManager from '@core/app/svgedit/workarea';
-import { changeBeamboxPreferenceValue } from '@core/app/svgedit/history/beamboxPreferenceCommand';
-import { createLayer, getLayerName } from '@core/helpers/layer/layer-helper';
-import { deleteUseRef } from '@core/app/svgedit/operations/delete';
-import { GuideMark } from '@core/interfaces/IPassThrough';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import NS from '@core/app/constants/namespaces';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
-import { IBatchCommand } from '@core/interfaces/IHistory';
+import { changeBeamboxPreferenceValue } from '@core/app/svgedit/history/beamboxPreferenceCommand';
+import history from '@core/app/svgedit/history/history';
+import clipboard from '@core/app/svgedit/operations/clipboard';
+import { deleteUseRef } from '@core/app/svgedit/operations/delete';
+import findDefs from '@core/app/svgedit/utils/findDef';
+import workareaManager from '@core/app/svgedit/workarea';
+import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
+import updateElementColor from '@core/helpers/color/updateElementColor';
+import i18n from '@core/helpers/i18n';
+import layerConfigHelper, { initLayerConfig, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
+import { createLayer, getLayerName } from '@core/helpers/layer/layer-helper';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import type { IBatchCommand } from '@core/interfaces/IHistory';
+import type { GuideMark } from '@core/interfaces/IPassThrough';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import { PassThroughCanvasManager } from './canvasManager';
 
 let svgCanvas: ISVGCanvas;
 let svgedit;
+
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
   svgedit = globalSVG.Edit;
@@ -33,12 +31,14 @@ getSVGAsync((globalSVG) => {
 
 const sliceWorkarea = async (
   sliceHeight: number,
-  opt: { refLayers?: boolean; guideMark?: GuideMark; parentCmd?: IBatchCommand } = {},
+  opt: { guideMark?: GuideMark; parentCmd?: IBatchCommand; refLayers?: boolean } = {},
 ): Promise<void> => {
   const progressId = 'slice-workarea';
   const lang = i18n.lang.pass_through;
+
   progressCaller.openNonstopProgress({ id: progressId, message: lang.exporting });
-  const { refLayers, parentCmd, guideMark = { show: false, x: 0, width: 40 } } = opt;
+
+  const { guideMark = { show: false, width: 40, x: 0 }, parentCmd, refLayers } = opt;
   const { dpmm } = constant;
   const workarea = beamboxPreference.read('workarea');
   const workareaObj = getWorkarea(workarea);
@@ -46,7 +46,7 @@ const sliceWorkarea = async (
   const currentDrawing = svgCanvas.getCurrentDrawing();
   const sliceHeightPx = sliceHeight * dpmm;
   const defs = findDefs();
-  const { width, height: workareaHeight } = workareaManager;
+  const { height: workareaHeight, width } = workareaManager;
   const topPadding = (workareaObj.height - sliceHeight) / 2;
   const topPaddingPx = topPadding * dpmm;
   const refImageBase64s = refLayers
@@ -55,15 +55,16 @@ const sliceWorkarea = async (
 
   const generateGuideMark = () => {
     if (guideMark.show) {
-      const { x, width: lineWidth } = guideMark;
+      const { width: lineWidth, x } = guideMark;
       const {
+        cmd,
         layer: newLayer,
         name,
-        cmd,
       } = createLayer(lang.guide_mark, {
-        isSubCmd: true,
         hexCode: '#9745ff',
+        isSubCmd: true,
       });
+
       initLayerConfig(name);
 
       const start = document.createElementNS(NS.SVG, 'path') as SVGPathElement;
@@ -76,6 +77,7 @@ const sliceWorkarea = async (
       const endMid = topPaddingPx + sliceHeightPx;
       const endTop = (endMid - halfHeight).toFixed(2);
       const endBottom = (endMid + halfHeight).toFixed(2);
+
       start.setAttribute(
         'd',
         `M ${left} ${startMid} L ${right} ${startTop} L ${right} ${startBottom} L ${left} ${startMid} Z`,
@@ -85,98 +87,129 @@ const sliceWorkarea = async (
       start.setAttribute('vector-effect', 'non-scaling-stroke');
       start.id = svgCanvas.getNextId();
       newLayer.appendChild(start);
+
       const end = start.cloneNode(true) as SVGPathElement;
-      end.setAttribute(
-        'd',
-        `M ${left} ${endMid} L ${right} ${endTop} L ${right} ${endBottom} L ${left} ${endMid} Z`,
-      );
+
+      end.setAttribute('d', `M ${left} ${endMid} L ${right} ${endTop} L ${right} ${endBottom} L ${left} ${endMid} Z`);
       end.id = svgCanvas.getNextId();
       newLayer.appendChild(end);
       updateElementColor(start);
       updateElementColor(end);
-      if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
+
+      if (cmd && !cmd.isEmpty()) {
+        batchCmd.addSubCommand(cmd);
+      }
     }
   };
 
-  const clonedLayers = Array.from(document.querySelectorAll('#svgcontent > .layer')).map(
-    (layer) => {
-      const name = getLayerName(layer);
-      const clonedLayer = layer.cloneNode(true) as SVGGElement;
-      clonedLayer.querySelectorAll('title').forEach((el) => el.remove());
-      clonedLayer.querySelector('filter')?.remove();
-      clonedLayer.id = `passThroughRef_${Date.now()}`;
-      defs.appendChild(clonedLayer);
-      const bbox = clonedLayer.getBBox();
-      if (bbox.height + bbox.y > workareaHeight) bbox.height = workareaHeight - bbox.y;
-      if (bbox.y < 0) {
-        bbox.height += bbox.y;
-        bbox.y = 0;
-      }
-      clonedLayer.remove();
-      return { name, bbox, element: clonedLayer, origLayer: layer, hasNewLayer: false };
-    },
-  );
+  const clonedLayers = Array.from(document.querySelectorAll('#svgcontent > .layer')).map((layer) => {
+    const name = getLayerName(layer);
+    const clonedLayer = layer.cloneNode(true) as SVGGElement;
+
+    clonedLayer.querySelectorAll('title').forEach((el) => el.remove());
+    clonedLayer.querySelector('filter')?.remove();
+    clonedLayer.id = `passThroughRef_${Date.now()}`;
+    defs.appendChild(clonedLayer);
+
+    const bbox = clonedLayer.getBBox();
+
+    if (bbox.height + bbox.y > workareaHeight) {
+      bbox.height = workareaHeight - bbox.y;
+    }
+
+    if (bbox.y < 0) {
+      bbox.height += bbox.y;
+      bbox.y = 0;
+    }
+
+    clonedLayer.remove();
+
+    return { bbox, element: clonedLayer, hasNewLayer: false, name, origLayer: layer };
+  });
 
   const updateUseElementPromises = [];
+
   for (let i = Math.ceil(workareaHeight / sliceHeightPx) - 1; i >= 0; i -= 1) {
     const start = i * sliceHeightPx;
     const end = Math.min((i + 1) * sliceHeightPx, workareaHeight);
     let anyLayer = false;
+
     for (let j = 0; j < clonedLayers.length; j += 1) {
-      const { name, bbox, element } = clonedLayers[j];
-      const { y, width: bboxW, height } = bbox;
-      // eslint-disable-next-line no-continue
-      if (bboxW === 0 || height === 0 || y + height < start || y > end) continue;
+      const { bbox, element, name } = clonedLayers[j];
+      const { height, width: bboxW, y } = bbox;
+
+      if (bboxW === 0 || height === 0 || y + height < start || y > end) {
+        continue;
+      }
+
       anyLayer = true;
       clonedLayers[j].hasNewLayer = true;
 
       const {
+        cmd,
         layer,
         name: newLayerName,
-        cmd,
       } = createLayer(`${name} - ${i + 1}`, {
         isSubCmd: true,
       });
-      if (!cmd.isEmpty()) batchCmd.addSubCommand(cmd);
+
+      if (!cmd.isEmpty()) {
+        batchCmd.addSubCommand(cmd);
+      }
+
       layerConfigHelper.cloneLayerConfig(newLayerName, name);
       layer.setAttribute('data-lock', 'true');
-      if (i > 0) layer.setAttribute('display', 'none');
+
+      if (i > 0) {
+        layer.setAttribute('display', 'none');
+      }
 
       const container = document.createElementNS(NS.SVG, 'g') as SVGGElement;
+
       container.setAttribute('transform', `translate(0, ${topPaddingPx - start})`);
       for (let k = 0; k < element.children.length; k += 1) {
         const child = element.children[k] as SVGGraphicsElement;
+
         container.appendChild(child.cloneNode(true));
       }
       container.id = svgCanvas.getNextId();
       container.setAttribute('data-pass-through', '1');
       layer.appendChild(container);
+
       const children = Array.from(container.childNodes);
+
       for (let k = children.length - 1; k >= 0; k -= 1) {
         const child = children[k] as SVGGraphicsElement;
+
         if (child.tagName !== 'use' && child.tagName !== 'text' && child.getBBox) {
-          const { y: childY, height: childH } = child.getBBox();
+          const { height: childH, y: childY } = child.getBBox();
+
           if (childY + childH < start || childY > end) {
             child.remove();
           }
         }
       }
       svgedit.recalculate.recalculateDimensions(container);
+
       const descendants = Array.from(container.querySelectorAll('*'));
       const refMap = {}; // id changes
-      // eslint-disable-next-line @typescript-eslint/no-loop-func
+
       descendants.forEach(async (el) => {
         if (el.id) {
           const oldId = el.id;
+
           el.setAttribute('id', svgCanvas.getNextId());
+
           if (el.tagName.toLowerCase() === 'clippath') {
             refMap[oldId] = el.id;
           }
         }
       });
       updateUseElementPromises.push(clipboard.handlePastedRef(container));
+
       const clipPath = document.createElementNS(NS.SVG, 'clipPath') as SVGClipPathElement;
       const clipRect = document.createElementNS(NS.SVG, 'rect') as SVGRectElement;
+
       clipPath.appendChild(clipRect);
       clipRect.setAttribute('x', '0');
       clipRect.setAttribute('y', topPaddingPx.toString());
@@ -186,24 +219,38 @@ const sliceWorkarea = async (
 
       // wrap container with clipPath
       const g = document.createElementNS(NS.SVG, 'g') as SVGGElement;
+
       g.id = svgCanvas.getNextId();
       g.setAttribute('clip-path', `url(#${clipPath.id})`);
-      while (container.firstChild) g.appendChild(container.firstChild);
+      while (container.firstChild) {
+        g.appendChild(container.firstChild);
+      }
       container.appendChild(g);
       container.insertBefore(clipPath, container.firstChild);
     }
+
     if (anyLayer && refImageBase64s?.[i]) {
-      const { layer, name, cmd } = createLayer(`${lang.ref_layer_name}-${i + 1}`, {
+      const { cmd, layer, name } = createLayer(`${lang.ref_layer_name}-${i + 1}`, {
         isSubCmd: true,
       });
+
       layer.setAttribute('data-lock', 'true');
-      if (i > 0) layer.setAttribute('display', 'none');
-      if (!cmd.isEmpty()) batchCmd.addSubCommand(cmd);
+
+      if (i > 0) {
+        layer.setAttribute('display', 'none');
+      }
+
+      if (!cmd.isEmpty()) {
+        batchCmd.addSubCommand(cmd);
+      }
+
       layerConfigHelper.initLayerConfig(name);
       writeDataLayer(layer, 'fullcolor', true);
       writeDataLayer(layer, 'ref', true);
       writeDataLayer(layer, 'repeat', 0);
+
       const image = document.createElementNS(NS.SVG, 'image') as SVGImageElement;
+
       image.setAttribute('x', '0');
       image.setAttribute('y', '0');
       image.setAttribute('width', width.toString());
@@ -217,23 +264,33 @@ const sliceWorkarea = async (
     if (hasNewLayer) {
       const { nextSibling } = origLayer;
       const parent = origLayer.parentNode;
+
       origLayer.remove();
+
       const uses = origLayer.querySelectorAll('use');
+
       uses.forEach((use) => deleteUseRef(use, { parentCmd: batchCmd }));
       batchCmd.addSubCommand(new history.RemoveElementCommand(origLayer, nextSibling, parent));
     }
   });
   generateGuideMark();
   changeBeamboxPreferenceValue('pass-through', false, { parentCmd: batchCmd });
+
   const onAfter = () => {
     currentDrawing.identifyLayers();
     LayerPanelController.setSelectedLayers([]);
     workareaManager.setWorkarea(workarea);
     workareaManager.resetView();
   };
+
   onAfter();
-  if (parentCmd) parentCmd.addSubCommand(batchCmd);
-  else svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+
+  if (parentCmd) {
+    parentCmd.addSubCommand(batchCmd);
+  } else {
+    svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+  }
+
   batchCmd.onAfter = onAfter;
   progressCaller.popById(progressId);
 };

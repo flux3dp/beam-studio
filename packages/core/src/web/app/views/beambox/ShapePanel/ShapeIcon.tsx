@@ -54,8 +54,7 @@ const importShape = async (IconComponent, jsonMap) => {
       type: 'layer',
     });
     const { height, width } = svgCanvas.getSvgRealLocation(newElementnewElement);
-    const [newWidth, newHeight] =
-      width > height ? [500, (height * 500) / width] : [(width * 500) / height, 500];
+    const [newWidth, newHeight] = width > height ? [500, (height * 500) / width] : [(width * 500) / height, 500];
 
     svgCanvas.selectOnly([newElementnewElement]);
     batchCmd.addSubCommand(svgCanvas.setSvgElemSize('width', newWidth));
@@ -63,9 +62,7 @@ const importShape = async (IconComponent, jsonMap) => {
     batchCmd.addSubCommand(svgCanvas.setSvgElemPosition('x', 0, newElementnewElement, false));
     batchCmd.addSubCommand(svgCanvas.setSvgElemPosition('y', 0, newElementnewElement, false));
     newElementnewElement.setAttribute('data-ratiofixed', 'true');
-    batchCmd.addSubCommand(
-      await svgCanvas.disassembleUse2Group([newElementnewElement], true, false),
-    );
+    batchCmd.addSubCommand(await svgCanvas.disassembleUse2Group([newElementnewElement], true, false));
     updateElementColor(svgCanvas.getSelectedElems()[0]);
     svgCanvas.addCommandToHistory(batchCmd);
   }
@@ -79,7 +76,7 @@ const ShapeIcon = ({
   activeTab: string;
   fileName: string;
   onClose: () => void;
-}): JSX.Element => {
+}): React.JSX.Element => {
   const forceUpdate = useForceUpdate();
   const key = `${activeTab}/${fileName}`;
 
@@ -98,7 +95,7 @@ const ShapeIcon = ({
       .catch((err) => {
         console.error(`Fail to load icon from '@core/app/icons/shape/${key}.svg': ${err}`);
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line hooks/exhaustive-deps
   }, [key]);
 
   const IconComponent = icons[key];

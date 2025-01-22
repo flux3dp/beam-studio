@@ -1,34 +1,37 @@
-import ClassNames from 'classnames';
+/* eslint-disable ts/no-unused-vars */
 import React from 'react';
 
+import ClassNames from 'classnames';
+
 import keyCodeConstants from '@core/app/constants/keycode-constants';
+
 import storage from '@app/implementations/storage';
 
 interface Props {
-  id?: string;
-  min?: number;
-  max?: number;
-  step?: number;
+  abbr?: boolean;
+  className?: string | { [key: string]: boolean };
   decimal?: number;
   defaultValue: number;
-  unit?: string;
-  className?: string | { [key: string]: boolean };
-  type?: string;
   disabled?: boolean;
-  abbr?: boolean;
-  isDoOnInput?: boolean;
   displayMultiValue?: boolean;
   forceUsePropsUnit?: boolean;
   getValue: (value: number) => void;
-  onKeyUp?: (e?: any) => void;
+  id?: string;
+  isDoOnInput?: boolean;
+  max?: number;
+  min?: number;
   onBlur?: () => void;
   onFocus?: () => void;
+  onKeyUp?: (e?: any) => void;
+  step?: number;
+  type?: string;
+  unit?: string;
 }
 
 interface States {
+  displayValue: number | string;
   id?: string;
   isEditing: boolean;
-  displayValue: string | number;
   savedValue: string;
 }
 
@@ -37,33 +40,35 @@ interface States {
  */
 class UnitInput extends React.Component<Props, States> {
   static defaultProps = {
-    getValue: function (value) {},
-    defaultValue: 0,
-    className: {},
-    type: 'text',
-    unit: '',
-    min: Number.MIN_SAFE_INTEGER,
-    max: Number.MAX_SAFE_INTEGER,
-    step: 1,
-    disabled: false,
     abbr: false,
-    isDoOnInput: false,
+    className: {},
+    defaultValue: 0,
+    disabled: false,
     displayMultiValue: false,
     forceUsePropsUnit: false,
-    onKeyUp: () => {},
+    getValue: function (value) {},
+    isDoOnInput: false,
+    max: Number.MAX_SAFE_INTEGER,
+    min: Number.MIN_SAFE_INTEGER,
     onBlur: () => {},
     onFocus: () => {},
+    onKeyUp: () => {},
+    step: 1,
+    type: 'text',
+    unit: '',
   };
 
   private decimal: number = 0;
 
   constructor(props) {
     super(props);
+
     const { defaultValue } = this.props;
+
     this.setDecimal();
     this.state = {
-      isEditing: false,
       displayValue: this.getTransformedValue(this._validateValue(defaultValue)),
+      isEditing: false,
       savedValue: Number(defaultValue).toFixed(this.decimal),
     };
     this._handleBlur = this._handleBlur.bind(this);
@@ -74,10 +79,13 @@ class UnitInput extends React.Component<Props, States> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { defaultValue, unit, max } = this.props;
+    const { defaultValue, max, unit } = this.props;
+
     if (prevProps.unit !== unit) {
       this.setDecimal();
+
       const val = this._validateValue(defaultValue);
+
       this.setState({
         displayValue: this.getTransformedValue(Number(val)),
         savedValue: val,
@@ -87,12 +95,14 @@ class UnitInput extends React.Component<Props, States> {
     if (prevProps.max !== max) {
       const { displayValue } = this.state;
       const val = this._validateValue(displayValue);
+
       this._updateValue(val);
     }
   }
 
   UNSAFE_componentWillReceiveProps(nextProps: Props) {
     const val = this._validateValue(nextProps.defaultValue);
+
     this.setState({
       displayValue: this.getTransformedValue(Number(val)),
       savedValue: val,
@@ -101,23 +111,29 @@ class UnitInput extends React.Component<Props, States> {
 
   setDecimal() {
     const { decimal } = this.props;
+
     if (decimal !== undefined) {
       this.decimal = decimal;
+
       return;
     }
+
     if (['in', 'in/s'].includes(this.getLengthUnit())) {
       this.decimal = 4;
+
       return;
     }
+
     this.decimal = 2;
+
     return;
   }
 
   //always return valid value
   _validateValue(val) {
-    let value: string | number = parseFloat(val);
+    let value: number | string = Number.parseFloat(val);
 
-    if (isNaN(value)) {
+    if (Number.isNaN(value)) {
       if (this.state) {
         value = this.state.savedValue;
       } else {
@@ -136,6 +152,7 @@ class UnitInput extends React.Component<Props, States> {
     if (['in', 'in/s'].includes(this.getLengthUnit())) {
       newVal *= 25.4;
     }
+
     const newValue = this._validateValue(newVal);
 
     this.setState({
@@ -184,29 +201,35 @@ class UnitInput extends React.Component<Props, States> {
 
     switch (e.keyCode) {
       case keyCodeConstants.KEY_RETURN:
+        // eslint-disable-next-line no-case-declarations
         const activeElement = document.activeElement as HTMLElement;
+
         // this seems unnecessary
         // this._updateValue(e.target.value);
         if (activeElement.tagName === 'INPUT') {
           activeElement.blur();
         }
+
         return;
       case keyCodeConstants.KEY_ESC:
         this.setState({ displayValue: this.getTransformedValue(this.state.savedValue) });
+
         return;
       case keyCodeConstants.KEY_UP:
-        if (!this.props.isDoOnInput)
+        if (!this.props.isDoOnInput) {
           this._updateValue(
-            Math.round(this.getTransformedValue(parseFloat(this.state.savedValue)) / step) * step +
-              step,
+            Math.round(this.getTransformedValue(Number.parseFloat(this.state.savedValue)) / step) * step + step,
           );
+        }
+
         return;
       case keyCodeConstants.KEY_DOWN:
-        if (!this.props.isDoOnInput)
+        if (!this.props.isDoOnInput) {
           this._updateValue(
-            Math.round(this.getTransformedValue(parseFloat(this.state.savedValue)) / step) * step -
-              step,
+            Math.round(this.getTransformedValue(Number.parseFloat(this.state.savedValue)) / step) * step - step,
           );
+        }
+
         return;
       default:
         return;
@@ -216,9 +239,11 @@ class UnitInput extends React.Component<Props, States> {
   getLengthUnit() {
     if (this.props.unit === 'mm') {
       let unit = 'mm';
+
       if (!this.props.forceUsePropsUnit) {
         unit = storage.get('default-units') || 'mm';
       }
+
       if (unit === 'mm') {
         return this.props.abbr ? '' : 'mm';
       } else {
@@ -238,9 +263,10 @@ class UnitInput extends React.Component<Props, States> {
   }
 
   render() {
-    const { id, type, step, unit, disabled, className, displayMultiValue } = this.props;
-    let renderUnit: string | JSX.Element = '';
-    const { isEditing, displayValue } = this.state;
+    const { className, disabled, displayMultiValue, id, step, type, unit } = this.props;
+    let renderUnit: React.JSX.Element | string = '';
+    const { displayValue, isEditing } = this.state;
+
     if (unit !== '') {
       renderUnit = <span className="unit">{this.getLengthUnit()}</span>;
     }
@@ -248,22 +274,23 @@ class UnitInput extends React.Component<Props, States> {
     className['ui ui-control-unit-input-v2'] = true;
 
     const shouldHideValue = displayMultiValue && !isEditing;
+
     return (
       <div className={ClassNames(className)}>
         <input
+          disabled={disabled}
           id={id}
-          type={type}
-          step={step}
-          value={shouldHideValue ? '-' : displayValue}
+          onBlur={this._handleBlur}
+          onChange={this._handleChange}
           onFocus={(e) => {
             this._handleFocus(e);
           }}
-          onBlur={this._handleBlur}
-          onKeyUp={this._handleKeyUp}
-          onKeyDown={this._handleKeyDown}
-          onChange={this._handleChange}
           onInput={this._handleInput}
-          disabled={disabled}
+          onKeyDown={this._handleKeyDown}
+          onKeyUp={this._handleKeyUp}
+          step={step}
+          type={type}
+          value={shouldHideValue ? '-' : displayValue}
         />
         {renderUnit}
       </div>

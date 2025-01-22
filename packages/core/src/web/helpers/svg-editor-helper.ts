@@ -1,15 +1,16 @@
-import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 interface ISVGGlobal {
   Canvas: ISVGCanvas;
-  Editor: any;
   Edit: any;
+  Editor: any;
 }
 
 export const getSVGCanvas = () => {
   if (!window.svgCanvas) {
     throw new Error('Access to svgCanvas before svgCanvas was inited');
   }
+
   return window.svgCanvas;
 };
 
@@ -19,12 +20,18 @@ export const getSVGEdit = () => window.svgedit;
 
 export const getSVGAsync = (callback: (p: ISVGGlobal) => void): void => {
   const refreshTimer = setInterval(() => {
-    if (!window.svgCanvas) return;
-    if (!window.svgEditor) return;
+    if (!window.svgCanvas) {
+      return;
+    }
+
+    if (!window.svgEditor) {
+      return;
+    }
+
     callback({
       Canvas: getSVGCanvas(),
-      Editor: getSVGEditor(),
       Edit: getSVGEdit(),
+      Editor: getSVGEditor(),
     });
     clearInterval(refreshTimer);
   }, 200);

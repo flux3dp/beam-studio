@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { render } from '@testing-library/react';
 
 import MenuItem from './MenuItem';
@@ -10,7 +11,7 @@ describe('MenuItem tests', () => {
       className: 'CLASSNAME_ATTRIBUTE',
     };
 
-    const { container } = render(<MenuItem className={className} attributes={attributes} />);
+    const { container } = render(<MenuItem attributes={attributes} className={className} />);
 
     expect(container).toMatchSnapshot();
   });

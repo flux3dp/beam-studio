@@ -4,34 +4,38 @@ const mockEventEmitter = {
   on: jest.fn(),
 };
 const mockCreateEventEmitter = jest.fn(() => mockEventEmitter);
+
 jest.mock('@core/helpers/eventEmitterFactory', () => ({
   createEventEmitter: () => mockCreateEventEmitter(),
 }));
 
 const mockOpen = jest.fn();
+
 jest.mock('@app/implementations/browser', () => ({
   open: (...args) => mockOpen(...args),
 }));
 
 const mockConfigRead = jest.fn();
 const mockConfigWrite = jest.fn();
+
 jest.mock('@core/helpers/api/alert-config', () => ({
   read: (...args) => mockConfigRead(...args),
   write: (...args) => mockConfigWrite(...args),
 }));
 
 const mockPopUp = jest.fn();
+
 jest.mock('@core/helpers/i18n', () => ({
   lang: {
     beambox: {
       popup: {
         facebook_group_invitation: {
-          title: 'title',
-          message: 'message',
-          join_now: 'join_now',
-          later: 'later',
           already_joined: 'already_joined',
           dont_show_again: 'dont_show_again',
+          join_now: 'join_now',
+          later: 'later',
+          message: 'message',
+          title: 'title',
         },
       },
     },
@@ -59,7 +63,9 @@ describe('test alert helper', () => {
 
   test('should show facebook group invitation', () => {
     alertHelper.registerAlertEvents(mockPopUp);
+
     const eventHandler = mockEventEmitter.on.mock.calls[0][1];
+
     expect(mockPopUp).not.toBeCalled();
     expect(mockConfigRead).not.toBeCalled();
     mockConfigRead.mockReturnValue(false);
@@ -68,20 +74,22 @@ describe('test alert helper', () => {
     expect(mockConfigRead).toHaveBeenLastCalledWith('skip-fb-group-invitation');
     expect(mockPopUp).toBeCalledTimes(1);
     expect(mockPopUp).toHaveBeenLastCalledWith({
-      caption: 'title',
-      message: 'message',
       buttonLabels: ['join_now', 'later', 'already_joined'],
-      primaryButtonIndex: 0,
       callbacks: [expect.any(Function), expect.any(Function), expect.any(Function)],
+      caption: 'title',
       checkbox: {
-        text: 'dont_show_again',
         callbacks: [expect.any(Function), expect.any(Function), expect.any(Function)],
+        text: 'dont_show_again',
       },
+      message: 'message',
+      primaryButtonIndex: 0,
     });
 
     expect(mockConfigWrite).not.toBeCalled();
     expect(mockOpen).not.toBeCalled();
+
     const onJoinNow = mockPopUp.mock.calls[0][0].callbacks[0];
+
     onJoinNow();
     expect(mockConfigWrite).toBeCalledTimes(1);
     expect(mockConfigWrite).toBeCalledWith('skip-fb-group-invitation', true);

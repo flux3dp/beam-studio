@@ -1,25 +1,27 @@
-import classNames from 'classnames';
 import React, { useContext } from 'react';
+
+import classNames from 'classnames';
 
 import { FullWindowPanelContext } from '@core/app/widgets/FullWindowPanel/FullWindowPanel';
 
 import styles from './Footer.module.scss';
 
 interface Props {
-  className?: string;
   children?: React.ReactNode;
+  className?: string;
 }
 
-const Footer = ({ className = '', children }: Props): JSX.Element => {
-  const { isDesktop, isWindows, isMobile } = useContext(FullWindowPanelContext);
+const Footer = ({ children, className = '' }: Props): React.JSX.Element => {
+  const { isDesktop, isMobile, isWindows } = useContext(FullWindowPanelContext);
+
   return (
     <div
       className={classNames(
         styles.footer,
         {
+          [styles.desktop]: isDesktop,
           [styles.mobile]: isMobile,
           [styles.windows]: isWindows,
-          [styles.desktop]: isDesktop,
         },
         className,
       )}

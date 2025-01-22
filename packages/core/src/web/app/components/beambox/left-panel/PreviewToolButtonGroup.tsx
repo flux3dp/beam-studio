@@ -1,20 +1,21 @@
 import React, { useContext, useMemo } from 'react';
 
-import beamboxStore from '@core/app/stores/beambox-store';
 import constant from '@core/app/actions/beambox/constant';
-import ISVGCanvas from '@core/interfaces/ISVGCanvas';
-import LeftPanelButton from '@core/app/components/beambox/left-panel/LeftPanelButton';
-import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
-import localeHelper from '@core/helpers/locale-helper';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
-import useI18n from '@core/helpers/useI18n';
-import useForceUpdate from '@core/helpers/use-force-update';
-import useWorkarea from '@core/helpers/hooks/useWorkarea';
+import LeftPanelButton from '@core/app/components/beambox/left-panel/LeftPanelButton';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
+import beamboxStore from '@core/app/stores/beambox-store';
+import useWorkarea from '@core/helpers/hooks/useWorkarea';
+import localeHelper from '@core/helpers/locale-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import useForceUpdate from '@core/helpers/use-force-update';
+import useI18n from '@core/helpers/useI18n';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 let svgCanvas: ISVGCanvas;
+
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
@@ -23,12 +24,12 @@ interface Props {
   className: string;
 }
 
-const PreviewToolButtonGroup = ({ className }: Props): JSX.Element => {
+const PreviewToolButtonGroup = ({ className }: Props): React.JSX.Element => {
   const lang = useI18n().beambox.left_panel;
   const workarea = useWorkarea();
   const isAdorSeries = useMemo(() => constant.adorModels.includes(workarea), [workarea]);
   const forceUpdate = useForceUpdate();
-  const { setupPreviewMode, endPreviewMode } = useContext(CanvasContext);
+  const { endPreviewMode, setupPreviewMode } = useContext(CanvasContext);
 
   const startImageTrace = () => {
     endPreviewMode();
@@ -46,65 +47,67 @@ const PreviewToolButtonGroup = ({ className }: Props): JSX.Element => {
   const isCanvasEmpty = PreviewModeController.isDrawing || PreviewModeBackgroundDrawer.isClean();
   const isLiveMode = PreviewModeController.isLiveModeOn();
   const isPreviewMode = PreviewModeController.isPreviewMode();
+
   return (
     <div className={className}>
       <LeftPanelButton
-        id="preview-back"
         icon={<LeftPanelIcons.Back />}
-        title={lang.label.end_preview}
+        id="preview-back"
         onClick={endPreviewMode}
+        title={lang.label.end_preview}
       />
       <LeftPanelButton
-        id="preview-shoot"
-        icon={<LeftPanelIcons.Shoot />}
-        title={lang.label.preview}
         active
+        icon={<LeftPanelIcons.Shoot />}
+        id="preview-shoot"
         onClick={() => {
           if (!PreviewModeController.isPreviewMode()) {
             setupPreviewMode();
           }
         }}
+        title={lang.label.preview}
       />
       {isAdorSeries && !localeHelper.isNorthAmerica && (
         <LeftPanelButton
-          id="preview-live"
-          icon={<LeftPanelIcons.Live />}
-          title={lang.label.live_feed}
           active={isLiveMode}
           disabled={!isPreviewMode}
+          icon={<LeftPanelIcons.Live />}
+          id="preview-live"
           onClick={() => {
             if (PreviewModeController.isPreviewMode()) {
               PreviewModeController.toggleFullWorkareaLiveMode();
               forceUpdate();
             }
           }}
+          title={lang.label.live_feed}
         />
       )}
       <LeftPanelButton
-        id="image-trace"
-        icon={<LeftPanelIcons.Trace />}
-        title={lang.label.trace}
         disabled={isCanvasEmpty}
+        icon={<LeftPanelIcons.Trace />}
+        id="image-trace"
         onClick={startImageTrace}
+        title={lang.label.trace}
       />
       {isAdorSeries && (
         <LeftPanelButton
-          id="adjust-height"
-          icon={<LeftPanelIcons.AdjustHeight />}
-          title={lang.label.adjust_height}
           disabled={!isPreviewMode}
+          icon={<LeftPanelIcons.AdjustHeight />}
+          id="adjust-height"
           onClick={() => {
-            if (PreviewModeController.isPreviewMode())
+            if (PreviewModeController.isPreviewMode()) {
               PreviewModeController.resetFishEyeObjectHeight();
+            }
           }}
+          title={lang.label.adjust_height}
         />
       )}
       <LeftPanelButton
-        id="clear-preview"
-        icon={<LeftPanelIcons.Delete />}
-        title={lang.label.clear_preview}
         disabled={isCanvasEmpty}
+        icon={<LeftPanelIcons.Delete />}
+        id="clear-preview"
         onClick={clearPreview}
+        title={lang.label.clear_preview}
       />
     </div>
   );

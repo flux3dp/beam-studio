@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
-import { act } from 'react-dom/test-utils';
+
 import { render } from '@testing-library/react';
+import { act } from 'react-dom/test-utils';
 
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
@@ -8,6 +9,7 @@ import { TopBarHintsContext, TopBarHintsContextProvider } from './TopBarHintsCon
 
 const Children = () => {
   const { hintType } = useContext(TopBarHintsContext);
+
   return <>{hintType}</>;
 };
 

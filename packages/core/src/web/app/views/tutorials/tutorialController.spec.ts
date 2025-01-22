@@ -1,5 +1,5 @@
-/* eslint-disable import/first */
 const mockEmit = jest.fn();
+
 jest.mock('@core/app/views/tutorials/TutorialContext', () => ({
   eventEmitter: {
     emit: mockEmit,

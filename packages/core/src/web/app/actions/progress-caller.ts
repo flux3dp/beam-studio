@@ -1,14 +1,35 @@
 import ProgressConstants from '@core/app/constants/progress-constants';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import { IProgressDialog } from '@core/interfaces/IProgress';
+import type { IProgressDialog } from '@core/interfaces/IProgress';
 
 const eventEmitter = eventEmitterFactory.createEventEmitter('alert-progress');
+
 export default {
+  checkIdExist: (id: string): boolean => {
+    const response = {
+      result: false,
+    };
+
+    eventEmitter.emit('CHECK_PROGRESS_EXIST', id, response);
+
+    return response.result;
+  },
+  openMessage: (args: IProgressDialog): Promise<void> =>
+    new Promise((resolve) => {
+      eventEmitter.emit(
+        'OPEN_MESSAGE',
+        {
+          ...args,
+          isProgress: true,
+        },
+        resolve,
+      );
+    }),
   openNonstopProgress: async (args: IProgressDialog): Promise<void> => {
     if (!args.caption && args.message) {
-      // eslint-disable-next-line no-param-reassign
       args.caption = args.message;
     }
+
     return new Promise((resolve) => {
       eventEmitter.emit(
         'OPEN_PROGRESS',
@@ -28,19 +49,8 @@ export default {
         {
           ...args,
           isProgress: true,
-          type: ProgressConstants.STEPPING,
           percentage: args.percentage || 0,
-        },
-        resolve,
-      );
-    }),
-  openMessage: (args: IProgressDialog): Promise<void> =>
-    new Promise((resolve) => {
-      eventEmitter.emit(
-        'OPEN_MESSAGE',
-        {
-          ...args,
-          isProgress: true,
+          type: ProgressConstants.STEPPING,
         },
         resolve,
       );
@@ -53,12 +63,5 @@ export default {
   },
   update: (id: string, args: IProgressDialog): void => {
     eventEmitter.emit('UPDATE_PROGRESS', id, args);
-  },
-  checkIdExist: (id: string): boolean => {
-    const response = {
-      result: false,
-    };
-    eventEmitter.emit('CHECK_PROGRESS_EXIST', id, response);
-    return response.result;
   },
 };

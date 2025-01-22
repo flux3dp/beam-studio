@@ -1,8 +1,8 @@
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import Constant from '@core/app/actions/beambox/constant';
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import NS from '@core/app/constants/namespaces';
 import workareaManager from '@core/app/svgedit/workarea';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 
@@ -13,7 +13,9 @@ const createBoundary = () => {
   diodeBoundaryPath = document.createElementNS(NS.SVG, 'path') as unknown as SVGPathElement;
   document.getElementById('canvasBackground')?.appendChild(diodeBoundarySvg);
   diodeBoundarySvg.appendChild(diodeBoundaryPath);
-  const { width, height } = workareaManager;
+
+  const { height, width } = workareaManager;
+
   diodeBoundarySvg.setAttribute('id', 'diode-boundary');
   diodeBoundarySvg.setAttribute('width', '100%');
   diodeBoundarySvg.setAttribute('height', '100%');
@@ -30,39 +32,53 @@ const createBoundary = () => {
 };
 
 const updateCanvasSize = (): void => {
-  const { width, height } = workareaManager;
+  const { height, width } = workareaManager;
   const viewBox = `0 0 ${width} ${height}`;
+
   diodeBoundarySvg?.setAttribute('viewBox', viewBox);
 };
+
 canvasEventEmitter.on('canvas-change', updateCanvasSize);
 
 const show = (isDiode = false): void => {
-  if (!diodeBoundaryPath) createBoundary();
-  const { width: w, height: h } = workareaManager;
+  if (!diodeBoundaryPath) {
+    createBoundary();
+  }
+
+  const { height: h, width: w } = workareaManager;
 
   let d = '';
+
   if (isDiode) {
     let offsetX = BeamboxPreference.read('diode_offset_x') ?? Constant.diode.defaultOffsetX;
     let offsetY = BeamboxPreference.read('diode_offset_y') ?? Constant.diode.defaultOffsetY;
+
     offsetX = Math.max(offsetX, 0);
     offsetY = Math.max(offsetY, 0);
+
     const limitXL = offsetX * Constant.dpmm;
     const limitYT = offsetY * Constant.dpmm;
+
     d = `M0,0H${w}V${limitYT}H${limitXL}V${h}H0V0`;
   } else {
     const limitXR = Constant.diode.limitX * Constant.dpmm;
     const limitYB = Constant.diode.limitY * Constant.dpmm;
+
     d = `M${w},${h}H0,V${h - limitYB}H${w - limitXR}V0H${w}V${h}`;
   }
+
   diodeBoundaryPath.setAttribute('d', d);
 };
 const hide = (): void => {
-  if (!diodeBoundaryPath) return;
+  if (!diodeBoundaryPath) {
+    return;
+  }
+
   diodeBoundaryPath.setAttribute('d', '');
 };
 
 export default {
-  show,
   hide,
+  show,
   updateCanvasSize,
 };

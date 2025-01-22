@@ -1,15 +1,12 @@
 import communicator from '@app/implementations/communicator';
 
 const initBackendEvents = (): void => {
-  communicator.on(
-    'BACKEND_UP',
-    (_: any, status: { alive: boolean; logfile: any; port: number }) => {
-      window.FLUX.ghostPort = status.port;
-      window.FLUX.logfile = status.logfile;
-      window.FLUX.backendAlive = status.alive;
-      console.log(`Backend start at ${status.port}`);
-    },
-  );
+  communicator.on('BACKEND_UP', (_: any, status: { alive: boolean; logfile: any; port: number }) => {
+    window.FLUX.ghostPort = status.port;
+    window.FLUX.logfile = status.logfile;
+    window.FLUX.backendAlive = status.alive;
+    console.log(`Backend start at ${status.port}`);
+  });
 
   communicator.on('BACKEND_DOWN', () => {
     window.FLUX.backendAlive = false;

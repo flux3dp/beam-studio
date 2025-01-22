@@ -1,23 +1,24 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Button, InputNumber, Modal, Segmented, Spin, Tooltip } from 'antd';
+
 import { LoadingOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { Button, InputNumber, Modal, Segmented, Spin, Tooltip } from 'antd';
+import classNames from 'classnames';
 
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import { promarkModels } from '@core/app/actions/beambox/constant';
+import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
+import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
+import { getSupportInfo } from '@core/app/constants/add-on';
 import FramingIcons from '@core/app/icons/framing/FramingIcons';
+import icons from '@core/app/icons/icons';
 import FramingTaskManager, { FramingType } from '@core/helpers/device/framing';
 import getDevice from '@core/helpers/device/get-device';
-import icons from '@core/app/icons/icons';
-import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import shortcuts from '@core/helpers/shortcuts';
 import useI18n from '@core/helpers/useI18n';
-import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
-import { getSupportInfo } from '@core/app/constants/add-on';
-import { IDeviceInfo } from '@core/interfaces/IDevice';
-import { promarkModels } from '@core/app/actions/beambox/constant';
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
-import classNames from 'classnames';
-import styles from './index.module.scss';
 import PromarkFramingModal from './FramingModal.promark';
+import styles from './index.module.scss';
 
 interface Props {
   device: IDeviceInfo;
@@ -26,7 +27,7 @@ interface Props {
 }
 
 // TODO: add unit test
-const FramingModal = ({ device, onClose, startOnOpen = false }: Props): JSX.Element => {
+const FramingModal = ({ device, onClose, startOnOpen = false }: Props): React.JSX.Element => {
   const lang = useI18n();
   const { framing: tFraming } = lang;
   const options = [FramingType.Framing, FramingType.Hull, FramingType.AreaCheck];
@@ -55,7 +56,7 @@ const FramingModal = ({ device, onClose, startOnOpen = false }: Props): JSX.Elem
     manager.current.on('close-message', () => MessageCaller.closeMessage(key));
     manager.current.on('message', (message: string) => {
       MessageCaller.closeMessage(key);
-      MessageCaller.openMessage({ key, level: MessageLevel.LOADING, content: message });
+      MessageCaller.openMessage({ content: message, key, level: MessageLevel.LOADING });
     });
 
     return () => {
@@ -74,27 +75,18 @@ const FramingModal = ({ device, onClose, startOnOpen = false }: Props): JSX.Elem
     }
 
     return shortcuts.on(['F1'], () => shortcutHandler.current?.(), { isBlocking: true });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line hooks/exhaustive-deps
   }, []);
 
   return (
     <Modal
-      open
       centered
-      width={360}
-      title={tFraming.framing}
-      maskClosable={false}
-      onCancel={onClose}
       footer={
         <div className={styles.footer}>
           <Button className={classNames(styles.button, styles['mr-8'])} onClick={onClose}>
             {lang.alert.cancel}
           </Button>
-          <Button
-            className={styles.button}
-            onClick={isFraming ? handleStop : handleStart}
-            type="primary"
-          >
+          <Button className={styles.button} onClick={isFraming ? handleStop : handleStart} type="primary">
             {isFraming ? lang.alert.stop : lang.device.start}
             {isFraming ? (
               <Spin indicator={<LoadingOutlined className={styles.icon} spin />} />
@@ -104,6 +96,11 @@ const FramingModal = ({ device, onClose, startOnOpen = false }: Props): JSX.Elem
           </Button>
         </div>
       }
+      maskClosable={false}
+      onCancel={onClose}
+      open
+      title={tFraming.framing}
+      width={360}
     >
       <div className={styles.container}>
         {supportInfo.framingLowLaser && (
@@ -115,37 +112,36 @@ const FramingModal = ({ device, onClose, startOnOpen = false }: Props): JSX.Elem
               {tFraming.low_laser}:
             </div>
             <InputNumber
-              className={styles.input}
-              min={0}
-              max={20}
-              value={lowLaser}
-              onChange={(val) => setLowLaser(val)}
               addonAfter="%"
+              className={styles.input}
               controls={false}
+              max={20}
+              min={0}
+              onChange={(val) => setLowLaser(val)}
               precision={0}
+              value={lowLaser}
             />
           </div>
         )}
         <Segmented
           className={styles.segmented}
-          value={type}
           onChange={setType}
           options={options.map((opt) => ({
             label: (
               <div className={styles.seg}>
                 {
                   {
+                    [FramingType.AreaCheck]: <FramingIcons.AreaCheck />,
                     [FramingType.Framing]: <FramingIcons.Framing />,
                     [FramingType.Hull]: <FramingIcons.Hull />,
-                    [FramingType.AreaCheck]: <FramingIcons.AreaCheck />,
                   }[opt]
                 }
                 <div>
                   {
                     {
+                      [FramingType.AreaCheck]: tFraming.area_check,
                       [FramingType.Framing]: tFraming.framing,
                       [FramingType.Hull]: tFraming.hull,
-                      [FramingType.AreaCheck]: tFraming.area_check,
                     }[opt]
                   }
                 </div>
@@ -153,20 +149,21 @@ const FramingModal = ({ device, onClose, startOnOpen = false }: Props): JSX.Elem
             ),
             value: opt,
           }))}
+          value={type}
         />
         <div className={styles.desc}>
           <div className={styles.title}>
             {{
+              [FramingType.AreaCheck]: tFraming.area_check,
               [FramingType.Framing]: tFraming.framing,
               [FramingType.Hull]: tFraming.hull,
-              [FramingType.AreaCheck]: tFraming.area_check,
             }[type] ?? tFraming.framing}
           </div>
           <div className={styles.content}>
             {{
+              [FramingType.AreaCheck]: tFraming.areacheck_desc,
               [FramingType.Framing]: tFraming.framing_desc,
               [FramingType.Hull]: tFraming.hull_desc,
-              [FramingType.AreaCheck]: tFraming.areacheck_desc,
             }[type] ?? tFraming.framing_desc}
           </div>
         </div>
@@ -187,11 +184,7 @@ export const showFramingModal = async (): Promise<void> => {
   addDialogComponent(
     'framing-modal',
     promarkModels.has(device.model) ? (
-      <PromarkFramingModal
-        device={device}
-        onClose={() => popDialogById('framing-modal')}
-        startOnOpen
-      />
+      <PromarkFramingModal device={device} onClose={() => popDialogById('framing-modal')} startOnOpen />
     ) : (
       <FramingModal device={device} onClose={() => popDialogById('framing-modal')} />
     ),

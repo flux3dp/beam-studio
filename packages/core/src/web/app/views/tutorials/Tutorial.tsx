@@ -2,15 +2,12 @@ import * as React from 'react';
 
 import Alert from '@core/app/actions/alert-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
+import { TutorialContext, TutorialContextProvider } from '@core/app/views/tutorials/TutorialContext';
 import DialogBox from '@core/app/widgets/Dialog-Box';
-import i18n from '@core/helpers/i18n';
 import Modal from '@core/app/widgets/Modal';
 import ModalWithHole from '@core/app/widgets/Modal-With-Hole';
-import { ITutorialDialog } from '@core/interfaces/ITutorial';
-import {
-  TutorialContext,
-  TutorialContextProvider,
-} from '@core/app/views/tutorials/TutorialContext';
+import i18n from '@core/helpers/i18n';
+import type { ITutorialDialog } from '@core/interfaces/ITutorial';
 
 // TODO: move all styles from web to modules.scss
 import styles from './Tutorial.module.scss';
@@ -22,17 +19,16 @@ class TutorialComponent extends React.Component<{
 }> {
   renderTutorialDialog() {
     const { endTutorial } = this.props;
-    const { currentStep, dialogStylesAndContents, hasNextButton, handleNextStep } = this.context;
-    const { dialogBoxStyles, text, subElement } = dialogStylesAndContents[currentStep];
+    const { currentStep, dialogStylesAndContents, handleNextStep, hasNextButton } = this.context;
+    const { dialogBoxStyles, subElement, text } = dialogStylesAndContents[currentStep];
+
     return (
       <DialogBox
+        arrowColor={dialogBoxStyles.arrowColor}
         arrowDirection={dialogBoxStyles.arrowDirection}
         arrowHeight={dialogBoxStyles.arrowHeight}
-        arrowWidth={dialogBoxStyles.arrowWidth}
-        arrowColor={dialogBoxStyles.arrowColor}
         arrowPadding={dialogBoxStyles.arrowPadding}
-        position={dialogBoxStyles.position}
-        onClose={endTutorial}
+        arrowWidth={dialogBoxStyles.arrowWidth}
         content={
           <div className="tutorial-dialog">
             {`${currentStep + 1}/${dialogStylesAndContents.length}\n`}
@@ -45,6 +41,8 @@ class TutorialComponent extends React.Component<{
             ) : null}
           </div>
         }
+        onClose={endTutorial}
+        position={dialogBoxStyles.position}
       />
     );
   }
@@ -52,21 +50,27 @@ class TutorialComponent extends React.Component<{
   renderHintCircle() {
     const { currentStep, dialogStylesAndContents } = this.context;
     const { hintCircle } = dialogStylesAndContents[currentStep];
+
     if (!hintCircle) {
       return null;
     }
+
     return <div className="hint-circle" style={hintCircle} />;
   }
 
   render() {
     const { currentStep, dialogStylesAndContents, onClose } = this.context;
+
     if (currentStep >= dialogStylesAndContents.length) {
       onClose();
+
       return null;
     }
+
     const { holePosition, holeSize } = dialogStylesAndContents[currentStep];
     const tutorialDialog = this.renderTutorialDialog();
     const hintCircle = this.renderHintCircle();
+
     if (!holePosition) {
       return (
         <Modal className={{ 'no-background': true, [styles.tutorial]: true }}>
@@ -77,6 +81,7 @@ class TutorialComponent extends React.Component<{
         </Modal>
       );
     }
+
     return (
       <ModalWithHole className={styles.tutorial} holePosition={holePosition} holeSize={holeSize}>
         <div className="tutorial-container">
@@ -91,31 +96,31 @@ class TutorialComponent extends React.Component<{
 TutorialComponent.contextType = TutorialContext;
 
 interface Props {
-  end_alert: string;
   dialogStylesAndContents: ITutorialDialog[];
+  end_alert: string;
   hasNextButton: boolean;
   onClose: () => void;
 }
 
 export default function Tutorial({
-  end_alert,
   dialogStylesAndContents,
+  end_alert,
   hasNextButton,
   onClose,
-}: Props): JSX.Element {
+}: Props): React.JSX.Element {
   const endTutorial = () => {
     Alert.popUp({
+      buttonType: AlertConstants.YES_NO,
       id: 'end-tutorial',
       message: end_alert,
-      buttonType: AlertConstants.YES_NO,
       onYes: onClose,
     });
   };
 
   return (
     <TutorialContextProvider
-      hasNextButton={hasNextButton}
       dialogStylesAndContents={dialogStylesAndContents}
+      hasNextButton={hasNextButton}
       onClose={onClose}
     >
       <TutorialComponent endTutorial={endTutorial} />

@@ -1,6 +1,6 @@
 export enum OptionValues {
-  TRUE = 'TRUE',
   FALSE = 'FALSE',
+  TRUE = 'TRUE',
 }
 
 export default {

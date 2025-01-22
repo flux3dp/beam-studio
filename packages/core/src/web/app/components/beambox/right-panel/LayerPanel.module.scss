@@ -1,5 +1,5 @@
-@use '@core/app/views/beambox/Right-Panels/_mixins' as mixins;
-@use '@core/styles/variables' as variables;
+@use "@core/app/views/beambox/Right-Panels/_mixins" as mixins;
+@use "@core/styles/variables" as variables;
 
 $handle-height: 10px;
 $layer-background: white;
@@ -20,7 +20,7 @@ $layer-background: white;
   }
 }
 
-.floating-panel [class*='scroll-content'] {
+.floating-panel [class*="scroll-content"] {
   // scrolling is handled by layerlist_container
   overflow-y: auto;
   margin-bottom: 120px;

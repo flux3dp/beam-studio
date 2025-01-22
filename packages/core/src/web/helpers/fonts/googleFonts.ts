@@ -1,4 +1,4 @@
-import { WebFont } from '@core/interfaces/IFont';
+import type { WebFont } from '@core/interfaces/IFont';
 
 // Note:
 // TextOptions Fallback font family: Noto Sans
@@ -10,9 +10,9 @@ const fonts: WebFont[] = [
     family: 'Noto Sans',
     italic: false,
     postscriptName: 'NotoSans-Regular',
+    queryString: 'family=Noto+Sans:ital,wght@0,400;0,700;1,400;1,700',
     style: 'Regular',
     weight: 400,
-    queryString: 'family=Noto+Sans:ital,wght@0,400;0,700;1,400;1,700',
   },
   {
     family: 'Noto Sans',
@@ -55,12 +55,12 @@ const fonts: WebFont[] = [
   // },
   {
     family: 'Noto Sans TC',
+    fileName: 'NotoSansTC-Regular.otf',
     italic: false,
     postscriptName: 'NotoSansTC-Regular',
+    queryString: 'family=Noto+Sans+TC:wght@400;700',
     style: 'Regular',
     weight: 400,
-    queryString: 'family=Noto+Sans+TC:wght@400;700',
-    fileName: 'NotoSansTC-Regular.otf',
   },
   // {
   //   family: 'Noto Sans TC',
@@ -72,11 +72,11 @@ const fonts: WebFont[] = [
   // },
   {
     family: 'Noto Sans TC',
+    fileName: 'NotoSansTC-Bold.otf',
     italic: false,
     postscriptName: 'NotoSansTC-Bold',
     style: 'Bold',
     weight: 700,
-    fileName: 'NotoSansTC-Bold.otf',
   },
   // {
   //   family: 'Noto Sans TC',
@@ -90,77 +90,77 @@ const fonts: WebFont[] = [
   // Noto Sans HK
   {
     family: 'Noto Sans HK',
+    fileName: 'NotoSansHK-Regular.otf',
     italic: false,
     postscriptName: 'NotoSansHK-Regular',
+    queryString: 'family=Noto+Sans+HK:wght@400;700',
     style: 'Regular',
     weight: 400,
-    queryString: 'family=Noto+Sans+HK:wght@400;700',
-    fileName: 'NotoSansHK-Regular.otf',
   },
   {
     family: 'Noto Sans HK',
+    fileName: 'NotoSansHK-Bold.otf',
     italic: false,
     postscriptName: 'NotoSansHK-Bold',
     style: 'Bold',
     weight: 700,
-    fileName: 'NotoSansHK-Bold.otf',
   },
 
   // Noto Sans SC
   {
     family: 'Noto Sans SC',
+    fileName: 'NotoSansSC-Regular.otf',
     italic: false,
     postscriptName: 'NotoSansSC-Regular',
+    queryString: 'family=Noto+Sans+SC:wght@400;700',
     style: 'Regular',
     weight: 400,
-    queryString: 'family=Noto+Sans+SC:wght@400;700',
-    fileName: 'NotoSansSC-Regular.otf',
   },
   {
     family: 'Noto Sans SC',
+    fileName: 'NotoSansSC-Bold.otf',
     italic: false,
     postscriptName: 'NotoSansSC-Bold',
     style: 'Bold',
     weight: 700,
-    fileName: 'NotoSansSC-Bold.otf',
   },
 
   // Noto Sans JP
   {
     family: 'Noto Sans JP',
+    fileName: 'NotoSansJP-Regular.otf',
     italic: false,
     postscriptName: 'NotoSansJP-Regular',
+    queryString: 'family=Noto+Sans+JP:wght@400;700',
     style: 'Regular',
     weight: 400,
-    queryString: 'family=Noto+Sans+JP:wght@400;700',
-    fileName: 'NotoSansJP-Regular.otf',
   },
   {
     family: 'Noto Sans JP',
+    fileName: 'NotoSansJP-Bold.otf',
     italic: false,
     postscriptName: 'NotoSansJP-Bold',
     style: 'Bold',
     weight: 700,
-    fileName: 'NotoSansJP-Bold.otf',
   },
 
   // Noto Sans KR
   {
     family: 'Noto Sans KR',
+    fileName: 'NotoSansKR-Regular.otf',
     italic: false,
     postscriptName: 'NotoSansKR-Regular',
+    queryString: 'family=Noto+Sans+KR:wght@400;700',
     style: 'Regular',
     weight: 400,
-    queryString: 'family=Noto+Sans+KR:wght@400;700',
-    fileName: 'NotoSansKR-Regular.otf',
   },
   {
     family: 'Noto Sans KR',
+    fileName: 'NotoSansKR-Bold.otf',
     italic: false,
     postscriptName: 'NotoSansKR-Bold',
     style: 'Bold',
     weight: 700,
-    fileName: 'NotoSansKR-Bold.otf',
   },
 
   // Noto Serif
@@ -168,9 +168,9 @@ const fonts: WebFont[] = [
     family: 'Noto Serif',
     italic: false,
     postscriptName: 'NotoSerif-Regular',
+    queryString: 'family=Noto+Serif:ital,wght@0,400;0,700;1,400;1,700',
     style: 'Regular',
     weight: 400,
-    queryString: 'family=Noto+Serif:ital,wght@0,400;0,700;1,400;1,700',
   },
   {
     family: 'Noto Serif',
@@ -197,77 +197,77 @@ const fonts: WebFont[] = [
   // Noto Serif TC
   {
     family: 'Noto Serif TC',
+    fileName: 'NotoSerifTC-Regular.otf',
     italic: false,
     postscriptName: 'NotoSerifTC-Regular',
+    queryString: 'family=Noto+Serif+TC:wght@400;700',
     style: 'Regular',
     weight: 400,
-    queryString: 'family=Noto+Serif+TC:wght@400;700',
-    fileName: 'NotoSerifTC-Regular.otf',
   },
   {
     family: 'Noto Serif TC',
+    fileName: 'NotoSerifTC-Bold.otf',
     italic: false,
     postscriptName: 'NotoSerifTC-Bold',
     style: 'Bold',
     weight: 700,
-    fileName: 'NotoSerifTC-Bold.otf',
   },
 
   // Noto Serif SC
   {
     family: 'Noto Serif SC',
+    fileName: 'NotoSerifSC-Regular.otf',
     italic: false,
     postscriptName: 'NotoSerifSC-Regular',
+    queryString: 'family=Noto+Serif+SC:wght@400;700',
     style: 'Regular',
     weight: 400,
-    queryString: 'family=Noto+Serif+SC:wght@400;700',
-    fileName: 'NotoSerifSC-Regular.otf',
   },
   {
     family: 'Noto Serif SC',
+    fileName: 'NotoSerifSC-Bold.otf',
     italic: false,
     postscriptName: 'NotoSerifSC-Bold',
     style: 'Bold',
     weight: 700,
-    fileName: 'NotoSerifSC-Bold.otf',
   },
 
   // Noto Serif JP
   {
     family: 'Noto Serif JP',
+    fileName: 'NotoSerifJP-Regular.otf',
     italic: false,
     postscriptName: 'NotoSerifJP-Regular',
+    queryString: 'family=Noto+Serif+JP:wght@400;700',
     style: 'Regular',
     weight: 400,
-    queryString: 'family=Noto+Serif+JP:wght@400;700',
-    fileName: 'NotoSerifJP-Regular.otf',
   },
   {
     family: 'Noto Serif JP',
+    fileName: 'NotoSerifJP-Bold.otf',
     italic: false,
     postscriptName: 'NotoSerifJP-Bold',
     style: 'Bold',
     weight: 700,
-    fileName: 'NotoSerifJP-Bold.otf',
   },
 
   // Noto Serif KR
   {
     family: 'Noto Serif KR',
+    fileName: 'NotoSerifKR-Regular.otf',
     italic: false,
     postscriptName: 'NotoSerifKR-Regular',
+    queryString: 'family=Noto+Serif+KR:wght@400;700',
     style: 'Regular',
     weight: 400,
-    queryString: 'family=Noto+Serif+KR:wght@400;700',
-    fileName: 'NotoSerifKR-Regular.otf',
   },
   {
     family: 'Noto Serif KR',
+    fileName: 'NotoSerifKR-Bold.otf',
     italic: false,
     postscriptName: 'NotoSerifKR-Bold',
     style: 'Bold',
     weight: 700,
-    fileName: 'NotoSerifKR-Bold.otf',
   },
 
   // Open Sans
@@ -275,9 +275,9 @@ const fonts: WebFont[] = [
     family: 'Open Sans',
     italic: false,
     postscriptName: 'OpenSans-Regular',
+    queryString: 'family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700',
     style: 'Regular',
     weight: 400,
-    queryString: 'family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700',
   },
   {
     family: 'Open Sans',
@@ -306,9 +306,9 @@ const fonts: WebFont[] = [
     family: 'arimo',
     italic: false,
     postscriptName: 'Arimo-Regular',
+    queryString: 'family=Arimo:ital,wght@0,400;0,700;1,400;1,700',
     style: 'Regular',
     weight: 400,
-    queryString: 'family=Arimo:ital,wght@0,400;0,700;1,400;1,700',
   },
   {
     family: 'arimo',
@@ -337,9 +337,9 @@ const fonts: WebFont[] = [
     family: 'Comic Neue',
     italic: false,
     postscriptName: 'ComicNeue-Regular',
+    queryString: 'family=Comic+Neue:ital,wght@0,400;0,700;1,400;1,700',
     style: 'Regular',
     weight: 400,
-    queryString: 'family=Comic+Neue:ital,wght@0,400;0,700;1,400;1,700',
   },
   {
     family: 'Comic Neue',
@@ -368,9 +368,9 @@ const fonts: WebFont[] = [
     family: 'fira sans',
     italic: false,
     postscriptName: 'FiraSans-Regular',
+    queryString: 'family=Fira+Sans:ital,wght@0,400;0,700;1,400;1,700',
     style: 'Regular',
     weight: 400,
-    queryString: 'family=Fira+Sans:ital,wght@0,400;0,700;1,400;1,700',
   },
   {
     family: 'fira sans',
@@ -399,9 +399,9 @@ const fonts: WebFont[] = [
     family: 'courier prime',
     italic: false,
     postscriptName: 'CourierPrime-Regular',
+    queryString: 'family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700',
     style: 'Regular',
     weight: 400,
-    queryString: 'family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700',
   },
   {
     family: 'courier prime',
@@ -430,9 +430,9 @@ const fonts: WebFont[] = [
     family: 'Tinos',
     italic: false,
     postscriptName: 'Tinos-Regular',
+    queryString: 'family=Tinos:ital,wght@0,400;0,700;1,400;1,700',
     style: 'Regular',
     weight: 400,
-    queryString: 'family=Tinos:ital,wght@0,400;0,700;1,400;1,700',
   },
   {
     family: 'Tinos',
@@ -461,9 +461,9 @@ const fonts: WebFont[] = [
     family: 'Oswald',
     italic: false,
     postscriptName: 'Oswald-Regular',
+    queryString: 'family=Oswald:wght@400;700',
     style: 'Regular',
     weight: 400,
-    queryString: 'family=Oswald:wght@400;700',
   },
   {
     family: 'Oswald',
@@ -478,9 +478,9 @@ const fonts: WebFont[] = [
     family: 'Lato',
     italic: false,
     postscriptName: 'Lato-Regular',
+    queryString: 'family=Lato:ital,wght@0,400;0,700;1,400;1,700',
     style: 'Regular',
     weight: 400,
-    queryString: 'family=Lato:ital,wght@0,400;0,700;1,400;1,700',
   },
   {
     family: 'Lato',
@@ -509,9 +509,9 @@ const fonts: WebFont[] = [
     family: 'roboto',
     italic: false,
     postscriptName: 'Roboto-Regular',
+    queryString: 'family=Roboto:ital,wght@0,400;0,700;1,400;1,700',
     style: 'Regular',
     weight: 400,
-    queryString: 'family=Roboto:ital,wght@0,400;0,700;1,400;1,700',
   },
   {
     family: 'roboto',
@@ -540,9 +540,9 @@ const fonts: WebFont[] = [
     family: 'Montserrat',
     italic: false,
     postscriptName: 'Montserrat-Regular',
+    queryString: 'family=Montserrat:ital,wght@0,400;0,700;1,400;1,700',
     style: 'Regular',
     weight: 400,
-    queryString: 'family=Montserrat:ital,wght@0,400;0,700;1,400;1,700',
   },
   {
     family: 'Montserrat',
@@ -571,9 +571,9 @@ const fonts: WebFont[] = [
     family: 'Source Serif Pro',
     italic: false,
     postscriptName: 'SourceSerifPro-Regular',
+    queryString: 'family=Source+Serif+Pro:ital,wght@0,400;0,700;1,400;1,700',
     style: 'Regular',
     weight: 400,
-    queryString: 'family=Source+Serif+Pro:ital,wght@0,400;0,700;1,400;1,700',
   },
   {
     family: 'Source Serif Pro',
@@ -602,9 +602,9 @@ const fonts: WebFont[] = [
     family: 'zilla Slab',
     italic: false,
     postscriptName: 'ZillaSlab-Regular',
+    queryString: 'family=Zilla+Slab:ital,wght@0,400;0,700;1,400;1,700',
     style: 'Regular',
     weight: 400,
-    queryString: 'family=Zilla+Slab:ital,wght@0,400;0,700;1,400;1,700',
   },
   {
     family: 'zilla Slab',
@@ -633,9 +633,9 @@ const fonts: WebFont[] = [
     family: 'arsenal',
     italic: false,
     postscriptName: 'Arsenal-Regular',
+    queryString: 'family=Arsenal:ital,wght@0,400;0,700;1,400;1,700',
     style: 'Regular',
     weight: 400,
-    queryString: 'family=Arsenal:ital,wght@0,400;0,700;1,400;1,700',
   },
   {
     family: 'arsenal',
@@ -663,9 +663,9 @@ const fonts: WebFont[] = [
     family: 'Rubik',
     italic: false,
     postscriptName: 'Rubik-Regular',
+    queryString: 'family=Rubik:ital,wght@0,400;0,700;1,400;1,700',
     style: 'Regular',
     weight: 400,
-    queryString: 'family=Rubik:ital,wght@0,400;0,700;1,400;1,700',
   },
   {
     family: 'Rubik',
@@ -694,9 +694,9 @@ const fonts: WebFont[] = [
     family: 'libre franklin',
     italic: false,
     postscriptName: 'LibreFranklin-Regular',
+    queryString: 'family=Libre+Franklin:ital,wght@0,400;0,700;1,400;1,700',
     style: 'Regular',
     weight: 400,
-    queryString: 'family=Libre+Franklin:ital,wght@0,400;0,700;1,400;1,700',
   },
   {
     family: 'libre franklin',
@@ -725,9 +725,9 @@ const fonts: WebFont[] = [
     family: 'josefin sans',
     italic: false,
     postscriptName: 'JosefinSans-Regular',
+    queryString: 'family=Josefin+Sans:ital,wght@0,400;0,700;1,400;1,700',
     style: 'Regular',
     weight: 400,
-    queryString: 'family=Josefin+Sans:ital,wght@0,400;0,700;1,400;1,700',
   },
   {
     family: 'josefin sans',
@@ -756,9 +756,9 @@ const fonts: WebFont[] = [
     family: 'poppins',
     italic: false,
     postscriptName: 'Poppins-Regular',
+    queryString: 'family=Poppins:ital,wght@0,400;0,700;1,400;1,700',
     style: 'Regular',
     weight: 400,
-    queryString: 'family=Poppins:ital,wght@0,400;0,700;1,400;1,700',
   },
   {
     family: 'poppins',
@@ -787,9 +787,9 @@ const fonts: WebFont[] = [
     family: 'lobster',
     italic: false,
     postscriptName: 'Lobster-Regular',
+    queryString: 'family=Lobster',
     style: 'Regular',
     weight: 400,
-    queryString: 'family=Lobster',
   },
 
   // Pacifico
@@ -797,19 +797,19 @@ const fonts: WebFont[] = [
     family: 'pacifico',
     italic: false,
     postscriptName: 'Pacifico-Regular',
+    queryString: 'family=Pacifico',
     style: 'Regular',
     weight: 400,
-    queryString: 'family=Pacifico',
   },
   // Yomogi
   {
     family: 'yomogi',
     italic: false,
     postscriptName: 'Yomogi-Regular',
-    style: 'Regular',
-    weight: 400,
     queryString: 'family=Yomogi',
+    style: 'Regular',
     supportLangs: ['ja', 'zh-tw'],
+    weight: 400,
   },
 
   // Dela Gothic One
@@ -817,20 +817,20 @@ const fonts: WebFont[] = [
     family: 'Dela Gothic One',
     italic: false,
     postscriptName: 'DelaGothicOne-Regular',
-    style: 'Regular',
-    weight: 400,
     queryString: 'family=Dela+Gothic+One',
+    style: 'Regular',
     supportLangs: ['ja', 'zh-tw'],
+    weight: 400,
   },
   // Potta_One
   {
     family: 'potta One',
     italic: false,
     postscriptName: 'PottaOne-Regular',
-    style: 'Regular',
-    weight: 400,
     queryString: 'family=Potta+One',
+    style: 'Regular',
     supportLangs: ['ja', 'zh-tw'],
+    weight: 400,
   },
 
   // Train_One
@@ -838,10 +838,10 @@ const fonts: WebFont[] = [
     family: 'train One',
     italic: false,
     postscriptName: 'TrainOne-Regular',
-    style: 'Regular',
-    weight: 400,
     queryString: 'family=Train+One',
+    style: 'Regular',
     supportLangs: ['ja', 'zh-tw'],
+    weight: 400,
   },
 
   // Stick
@@ -849,10 +849,10 @@ const fonts: WebFont[] = [
     family: 'STICK',
     italic: false,
     postscriptName: 'Stick-Regular',
-    style: 'Regular',
-    weight: 400,
     queryString: 'family=Stick',
+    style: 'Regular',
     supportLangs: ['ja', 'zh-tw'],
+    weight: 400,
   },
 
   // Reggae_One
@@ -860,10 +860,10 @@ const fonts: WebFont[] = [
     family: 'reggae One',
     italic: false,
     postscriptName: 'ReggaeOne-Regular',
-    style: 'Regular',
-    weight: 400,
     queryString: 'family=Reggae+One',
+    style: 'Regular',
     supportLangs: ['ja', 'zh-tw'],
+    weight: 400,
   },
 
   // RocknRoll_One
@@ -871,10 +871,10 @@ const fonts: WebFont[] = [
     family: 'rocknRoll One',
     italic: false,
     postscriptName: 'RocknRollOne-Regular',
-    style: 'Regular',
-    weight: 400,
     queryString: 'family=RocknRoll+One',
+    style: 'Regular',
     supportLangs: ['ja', 'zh-tw'],
+    weight: 400,
   },
 
   // DotGothic16
@@ -882,10 +882,10 @@ const fonts: WebFont[] = [
     family: 'DotGothic16',
     italic: false,
     postscriptName: 'DotGothic16-Regular',
-    style: 'Regular',
-    weight: 400,
     queryString: 'family=DotGothic16',
+    style: 'Regular',
     supportLangs: ['ja', 'zh-tw'],
+    weight: 400,
   },
 
   // Palette Mosaic
@@ -893,10 +893,10 @@ const fonts: WebFont[] = [
     family: 'palette Mosaic',
     italic: false,
     postscriptName: 'PaletteMosaic-Regular',
-    style: 'Regular',
-    weight: 400,
     queryString: 'family=Palette+Mosaic',
+    style: 'Regular',
     supportLangs: ['ja'],
+    weight: 400,
   },
 
   // M PLUS Rounded 1c
@@ -904,18 +904,18 @@ const fonts: WebFont[] = [
     family: 'M PLUS Rounded 1c',
     italic: false,
     postscriptName: 'MPLUSRounded1c-Regular',
-    style: 'Regular',
-    weight: 400,
     queryString: 'family=M+PLUS+Rounded+1c:wght@400;700',
+    style: 'Regular',
     supportLangs: ['ja'],
+    weight: 400,
   },
   {
     family: 'M PLUS Rounded 1c',
     italic: false,
     postscriptName: 'MPLUSRounded1c-Bold',
     style: 'Bold',
-    weight: 700,
     supportLangs: ['ja'],
+    weight: 700,
   },
 
   // M PLUS 1p
@@ -923,38 +923,38 @@ const fonts: WebFont[] = [
     family: 'm plus 1p',
     italic: false,
     postscriptName: 'MPLUS1p-Regular',
-    style: 'Regular',
-    weight: 400,
     queryString: 'family=M+PLUS+1p:wght@400;700',
+    style: 'Regular',
     supportLangs: ['ja'],
+    weight: 400,
   },
   {
     family: 'm plus 1p',
     italic: false,
     postscriptName: 'MPLUS1p-Bold',
     style: 'Bold',
-    weight: 700,
     supportLangs: ['ja'],
+    weight: 700,
   },
   // Sawarabi Mincho
   {
     family: 'Sawarabi mincho',
     italic: false,
     postscriptName: 'SawarabiMincho-Regular',
-    style: 'Regular',
-    weight: 400,
     queryString: 'family=Sawarabi+Mincho',
+    style: 'Regular',
     supportLangs: ['ja'],
+    weight: 400,
   },
   // Sawarabi Gothic
   {
     family: 'sawarabi Gothic',
     italic: false,
     postscriptName: 'SawarabiGothic-Regular',
-    style: 'Regular',
-    weight: 400,
     queryString: 'family=Sawarabi+Gothic',
+    style: 'Regular',
     supportLangs: ['ja'],
+    weight: 400,
   },
 
   // Kosugi
@@ -962,10 +962,10 @@ const fonts: WebFont[] = [
     family: 'Kosugi',
     italic: false,
     postscriptName: 'Kosugi-Regular',
-    style: 'Regular',
-    weight: 400,
     queryString: 'family=Kosugi',
+    style: 'Regular',
     supportLangs: ['ja'],
+    weight: 400,
   },
 
   // Shippori Mincho
@@ -973,18 +973,18 @@ const fonts: WebFont[] = [
     family: 'Shippori Mincho',
     italic: false,
     postscriptName: 'ShipporiMincho-Regular',
-    style: 'Regular',
-    weight: 400,
     queryString: 'family=Shippori+Mincho:wght@400;700',
+    style: 'Regular',
     supportLangs: ['ja', 'zh-tw'],
+    weight: 400,
   },
   {
     family: 'Shippori Mincho',
     italic: false,
     postscriptName: 'ShipporiMincho-Bold',
     style: 'Bold',
-    weight: 700,
     supportLangs: ['ja', 'zh-tw'],
+    weight: 700,
   },
 
   // Shippori Mincho B1
@@ -992,18 +992,18 @@ const fonts: WebFont[] = [
     family: 'Shippori Mincho B1',
     italic: false,
     postscriptName: 'ShipporiMinchoB1-Regular',
-    style: 'Regular',
-    weight: 400,
     queryString: 'family=Shippori+Mincho+B1:wght@400;700',
+    style: 'Regular',
     supportLangs: ['ja', 'zh-tw'],
+    weight: 400,
   },
   {
     family: 'Shippori Mincho B1',
     italic: false,
     postscriptName: 'ShipporiMinchoB1-Bold',
     style: 'Bold',
-    weight: 700,
     supportLangs: ['ja', 'zh-tw'],
+    weight: 700,
   },
 
   // Kiwi Maru
@@ -1011,10 +1011,10 @@ const fonts: WebFont[] = [
     family: 'Kiwi Maru',
     italic: false,
     postscriptName: 'KiwiMaru-Regular',
-    style: 'Regular',
-    weight: 400,
     queryString: 'family=Kiwi+Maru',
+    style: 'Regular',
     supportLangs: ['ja', 'zh-tw'],
+    weight: 400,
   },
 
   // Hachi Maru Pop
@@ -1022,10 +1022,10 @@ const fonts: WebFont[] = [
     family: 'hachi maru pop',
     italic: false,
     postscriptName: 'HachiMaruPop-Regular',
-    style: 'Regular',
-    weight: 400,
     queryString: 'family=Hachi+Maru+Pop',
+    style: 'Regular',
     supportLangs: ['ja', 'zh-tw'],
+    weight: 400,
   },
 
   // Yusei Magic
@@ -1033,10 +1033,10 @@ const fonts: WebFont[] = [
     family: 'Yusei Magic',
     italic: false,
     postscriptName: 'YuseiMagic-Regular',
-    style: 'Regular',
-    weight: 400,
     queryString: 'family=Yusei+Magic',
+    style: 'Regular',
     supportLangs: ['ja', 'zh-tw'],
+    weight: 400,
   },
 
   // Otomanopee One
@@ -1044,10 +1044,10 @@ const fonts: WebFont[] = [
     family: 'Otomanopee One',
     italic: false,
     postscriptName: 'OtomanopeeOne-Regular',
-    style: 'Regular',
-    weight: 400,
     queryString: 'family=Otomanopee+One',
+    style: 'Regular',
     supportLangs: ['ja'],
+    weight: 400,
   },
 
   // New Tegomin
@@ -1055,10 +1055,10 @@ const fonts: WebFont[] = [
     family: 'New Tegomin',
     italic: false,
     postscriptName: 'NewTegomin-Regular',
-    style: 'Regular',
-    weight: 400,
     queryString: 'family=New+Tegomin',
+    style: 'Regular',
     supportLangs: ['ja', 'zh-tw'],
+    weight: 400,
   },
 
   // ZCOOL XiaoWei
@@ -1066,10 +1066,10 @@ const fonts: WebFont[] = [
     family: 'ZCOOL xiaowei',
     italic: false,
     postscriptName: 'ZCOOLXiaoWei-Regular',
-    style: 'Regular',
-    weight: 400,
     queryString: 'family=ZCOOL+XiaoWei',
+    style: 'Regular',
     supportLangs: ['zh-cn'],
+    weight: 400,
   },
 
   // ZCOOL QingKe HuangYou
@@ -1077,10 +1077,10 @@ const fonts: WebFont[] = [
     family: 'ZCOOL QingKe HuangYou',
     italic: false,
     postscriptName: 'ZCOOLQingKeHuangYou-Regular',
-    style: 'Regular',
-    weight: 400,
     queryString: 'family=ZCOOL+QingKe+HuangYou',
+    style: 'Regular',
     supportLangs: ['zh-cn', 'zh-tw'],
+    weight: 400,
   },
 
   // Ma Shan Zheng
@@ -1088,10 +1088,10 @@ const fonts: WebFont[] = [
     family: 'Ma Shan Zheng',
     italic: false,
     postscriptName: 'MaShanZheng-Regular',
-    style: 'Regular',
-    weight: 400,
     queryString: 'family=Ma+Shan+Zheng',
+    style: 'Regular',
     supportLangs: ['zh-cn'],
+    weight: 400,
   },
 
   // ZCOOL KuaiLe
@@ -1099,10 +1099,10 @@ const fonts: WebFont[] = [
     family: 'ZCOOL kuaile',
     italic: false,
     postscriptName: 'ZCOOLKuaiLe-Regular',
-    style: 'Regular',
-    weight: 400,
     queryString: 'family=ZCOOL+KuaiLe',
+    style: 'Regular',
     supportLangs: ['zh-cn'],
+    weight: 400,
   },
 
   // long cang
@@ -1110,10 +1110,10 @@ const fonts: WebFont[] = [
     family: 'long cang',
     italic: false,
     postscriptName: 'LongCang-Regular',
-    style: 'Regular',
-    weight: 400,
     queryString: 'family=Long+Cang',
+    style: 'Regular',
     supportLangs: ['zh-cn'],
+    weight: 400,
   },
 
   // Liu Jian Mao Cao
@@ -1121,10 +1121,10 @@ const fonts: WebFont[] = [
     family: 'Liu Jian Mao Cao',
     italic: false,
     postscriptName: 'LiuJianMaoCao-Regular',
-    style: 'Regular',
-    weight: 400,
     queryString: 'family=Liu+Jian+Mao+Cao',
+    style: 'Regular',
     supportLangs: ['zh-cn'],
+    weight: 400,
   },
 
   // Zhi Mang Xing
@@ -1132,10 +1132,10 @@ const fonts: WebFont[] = [
     family: 'Zhi Mang Xing',
     italic: false,
     postscriptName: 'ZhiMangXing-Regular',
-    style: 'Regular',
-    weight: 400,
     queryString: 'family=Zhi+Mang+Xing',
+    style: 'Regular',
     supportLangs: ['zh-cn'],
+    weight: 400,
   },
 ];
 
@@ -1147,19 +1147,25 @@ const applyStyle = (fontsInUse: WebFont[]): void => {
 
   const queryString = `https://fonts.googleapis.com/css2?${query}&display=swap`;
   const link = document.createElement('link');
+
   link.setAttribute('href', queryString);
   link.setAttribute('rel', 'stylesheet');
+
   const head = document.querySelector('head');
+
   head?.appendChild(link);
 };
 
 const getAvailableFonts = (lang: string): WebFont[] =>
   fonts.filter((font) => {
-    if (!font.supportLangs) return true;
+    if (!font.supportLangs) {
+      return true;
+    }
+
     return font.supportLangs.includes(lang);
   });
 
 export default {
-  getAvailableFonts,
   applyStyle,
+  getAvailableFonts,
 };

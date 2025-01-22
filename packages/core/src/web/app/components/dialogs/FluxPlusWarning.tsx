@@ -1,31 +1,31 @@
 import React from 'react';
+
 import { Button } from 'antd';
 
-import browser from '@app/implementations/browser';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
-import useI18n from '@core/helpers/useI18n';
 import { getCurrentUser } from '@core/helpers/api/flux-id';
+import useI18n from '@core/helpers/useI18n';
+
+import browser from '@app/implementations/browser';
 
 import FluxPlusModal from './FluxPlusModal';
 import styles from './FluxPlusWarning.module.scss';
 
 interface Props {
-  onClose: () => void;
   monotype?: boolean;
+  onClose: () => void;
 }
 
-const FluxPlusWarning = ({ onClose, monotype = false }: Props): JSX.Element => {
+const FluxPlusWarning = ({ monotype = false, onClose }: Props): React.JSX.Element => {
   const lang = useI18n().flux_id_login;
   const user = getCurrentUser();
-  const note = monotype
-    ? lang.flux_plus.access_monotype_feature_note
-    : lang.flux_plus.access_plus_feature_note;
+  const note = monotype ? lang.flux_plus.access_monotype_feature_note : lang.flux_plus.access_plus_feature_note;
 
   return (
     <FluxPlusModal onClose={onClose}>
       <div className={styles['flux-plus']}>
-        <img src="core-img/flux-plus/man-guess.jpg" alt={note} />
+        <img alt={note} src="core-img/flux-plus/man-guess.jpg" />
         <div className={styles.text}>
           {monotype ? (
             lang.flux_plus.access_monotype_feature
@@ -38,21 +38,17 @@ const FluxPlusWarning = ({ onClose, monotype = false }: Props): JSX.Element => {
           )}
         </div>
         <div className={styles.buttons}>
-          <Button
-            block
-            type="primary"
-            onClick={() => browser.open(lang.flux_plus.member_center_url)}
-          >
+          <Button block onClick={() => browser.open(lang.flux_plus.member_center_url)} type="primary">
             {monotype ? lang.flux_plus.get_addon : lang.flux_plus.subscribe_now}
           </Button>
           {!user && (
             <Button
               block
-              type="default"
               onClick={() => {
                 onClose();
                 dialogCaller.showLoginDialog();
               }}
+              type="default"
             >
               {lang.login}
             </Button>

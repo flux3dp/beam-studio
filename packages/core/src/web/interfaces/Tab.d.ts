@@ -1,11 +1,11 @@
-import CanvasMode from '@core/app/constants/canvasMode';
+import type CanvasMode from '@core/app/constants/canvasMode';
 
 export interface Tab {
   id: number;
-  title: string;
   isCloud: boolean;
   isLoading: boolean;
   mode?: CanvasMode;
+  title: string;
 }
 
 export default Tab;

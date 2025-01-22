@@ -12,9 +12,7 @@ import util from 'util';
 import i18n from '@core/helpers/i18n';
 import type { PdfHelper } from '@core/interfaces/IPdfHelper';
 
-const resourcesRoot = localStorage.getItem('dev-pdf2svg')
-  ? window.process.cwd()
-  : window.process.resourcesPath;
+const resourcesRoot = localStorage.getItem('dev-pdf2svg') ? window.process.cwd() : window.process.resourcesPath;
 const tempDir = os.tmpdir();
 
 let isInitialized = false;

@@ -1,5 +1,5 @@
-/* eslint-disable import/first */
 import React from 'react';
+
 import { render } from '@testing-library/react';
 
 import { TopBarHintsContext } from '@core/app/contexts/TopBarHintsContext';
@@ -12,6 +12,7 @@ test('should render correctly', () => {
       <TopBarHints />
     </TopBarHintsContext.Provider>,
   );
+
   expect(container).toMatchSnapshot();
 
   ({ container } = render(

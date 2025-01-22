@@ -1,37 +1,34 @@
-/* eslint-disable no-nested-ternary */
-import classNames from 'classnames';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Button, Dropdown, Modal } from 'antd';
+
 import { DownloadOutlined, PlusCircleFilled, UploadOutlined } from '@ant-design/icons';
+import { Button, Dropdown, Modal } from 'antd';
+import classNames from 'classnames';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import alertConstants from '@core/app/constants/alert-constants';
-import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';
-import dialogCaller from '@core/app/actions/dialog-caller';
-import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
-import layerModuleHelper from '@core/helpers/layer-module/layer-module-helper';
-import presets from '@core/app/constants/presets';
-import presetHelper from '@core/helpers/presets/preset-helper';
-import Select from '@core/app/widgets/AntdSelect';
-import storage from '@app/implementations/storage';
-import useI18n from '@core/helpers/useI18n';
-import useWorkarea from '@core/helpers/hooks/useWorkarea';
-import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
-import { ConfigKey, ConfigKeyTypeMap, Preset } from '@core/interfaces/ILayerConfig';
-import {
-  baseConfig,
-  getDefaultConfig,
-  postPresetChange,
-} from '@core/helpers/layer/layer-config-helper';
-import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { promarkModels } from '@core/app/actions/beambox/constant';
+import dialogCaller from '@core/app/actions/dialog-caller';
+import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
+import alertConstants from '@core/app/constants/alert-constants';
+import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
+import presets from '@core/app/constants/presets';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
+import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';
+import Select from '@core/app/widgets/AntdSelect';
+import useWorkarea from '@core/helpers/hooks/useWorkarea';
+import { baseConfig, getDefaultConfig, postPresetChange } from '@core/helpers/layer/layer-config-helper';
+import layerModuleHelper from '@core/helpers/layer-module/layer-module-helper';
+import presetHelper from '@core/helpers/presets/preset-helper';
+import useI18n from '@core/helpers/useI18n';
+import type { ConfigKey, ConfigKeyTypeMap, Preset } from '@core/interfaces/ILayerConfig';
+
+import storage from '@app/implementations/storage';
 
 import Footer from './Footer';
 import LaserInputs from './LaserInputs';
 import PresetList from './PresetList';
+import styles from './PresetsManagementPanel.module.scss';
 import PrintingInputs from './PrintingInputs';
 import PromarkInputs from './PromarkInputs';
-import styles from './PresetsManagementPanel.module.scss';
 
 enum Filter {
   ALL = '0',
@@ -45,7 +42,7 @@ interface Props {
   onClose: () => void;
 }
 
-const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): JSX.Element => {
+const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): React.JSX.Element => {
   const lang = useI18n();
   const tLaserPanel = lang.beambox.right_panel.laser_panel;
   const t = tLaserPanel.preset_management;
@@ -64,75 +61,117 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
     () =>
       editingPresets.filter((c) => {
         if (!c.isDefault) {
-          if (filter === Filter.ALL) return true;
-          return c.module === LayerModule.PRINTER
-            ? filter === Filter.PRINT
-            : filter === Filter.LASER;
+          if (filter === Filter.ALL) {
+            return true;
+          }
+
+          return c.module === LayerModule.PRINTER ? filter === Filter.PRINT : filter === Filter.LASER;
         }
+
         const hasPreset = presetHelper.modelHasPreset(workarea, c.key);
-        if (!hasPreset) return false;
-        if (filter === Filter.ALL || !hasModule) return true;
-        const isPrintingPreset = Boolean(
-          presetHelper.getDefaultPreset(c.key, workarea, LayerModule.PRINTER),
-        );
+
+        if (!hasPreset) {
+          return false;
+        }
+
+        if (filter === Filter.ALL || !hasModule) {
+          return true;
+        }
+
+        const isPrintingPreset = Boolean(presetHelper.getDefaultPreset(c.key, workarea, LayerModule.PRINTER));
+
         return isPrintingPreset ? filter === Filter.PRINT : filter === Filter.LASER;
       }),
     [workarea, hasModule, editingPresets, filter],
   );
-  const [selectedPreset, setSelectedPreset] = useState<Preset | null>(
+  const [selectedPreset, setSelectedPreset] = useState<null | Preset>(
     initPreset
-      ? displayList.find((p) => initPreset === p.name || initPreset === p.key) ?? displayList[0]
+      ? (displayList.find((p) => initPreset === p.name || initPreset === p.key) ?? displayList[0])
       : displayList[0],
   );
+
   useEffect(() => {
-    if (!selectedPreset || !listRef.current) return;
-    const { key, name, isDefault } = selectedPreset;
+    if (!selectedPreset || !listRef.current) {
+      return;
+    }
+
+    const { isDefault, key, name } = selectedPreset;
     const item = listRef.current.querySelector(`[data-key="${isDefault ? key : name}"]`);
-    if (!item) return;
-    const { offsetTop, scrollTop, clientHeight: listHeight } = listRef.current;
-    const { offsetTop: itemTop, clientHeight: itemHeight } = item as HTMLElement;
+
+    if (!item) {
+      return;
+    }
+
+    const { clientHeight: listHeight, offsetTop, scrollTop } = listRef.current;
+    const { clientHeight: itemHeight, offsetTop: itemTop } = item as HTMLElement;
     const listTop = offsetTop + scrollTop;
     const itemBottom = itemTop + itemHeight;
     const listBottom = listTop + listHeight;
+
     if (itemBottom < listTop || itemTop > listBottom) {
       item?.scrollIntoView({ behavior: 'auto' });
     }
   }, [selectedPreset]);
+
   const availableModules = useMemo(() => {
     if (selectedPreset?.isDefault && hasModule) {
-      return Object.keys(presets[selectedPreset.key]?.[workarea] || {}).map((m) => parseInt(m, 10));
+      return Object.keys(presets[selectedPreset.key]?.[workarea] || {}).map((m) => Number.parseInt(m, 10));
     }
+
     return [];
   }, [workarea, hasModule, selectedPreset]);
   const [selectedModule, setSelectedModule] = useState(currentModule);
+
   useEffect(() => {
     if (availableModules.length > 0) {
       setSelectedModule((cur) => {
-        if (availableModules.includes(cur)) return cur;
+        if (availableModules.includes(cur)) {
+          return cur;
+        }
+
         return availableModules[0];
       });
     } else if (selectedPreset?.module) {
       setSelectedModule(selectedPreset.module);
     }
   }, [availableModules, selectedPreset]);
+
   const displayPreset = useMemo(() => {
-    if (!selectedPreset) return { name: '', isDefault: true };
-    if (!selectedPreset.isDefault)
+    if (!selectedPreset) {
+      return { isDefault: true, name: '' };
+    }
+
+    if (!selectedPreset.isDefault) {
       return { ...selectedPreset, ...editingValues[selectedPreset.name] };
+    }
+
     const presetModel = presetHelper.getPresetModel(workarea);
     const keyPresets = presets[selectedPreset.key]?.[presetModel];
-    if (!keyPresets) return selectedPreset;
-    if (keyPresets[selectedModule]) return { ...selectedPreset, ...keyPresets[selectedModule] };
+
+    if (!keyPresets) {
+      return selectedPreset;
+    }
+
+    if (keyPresets[selectedModule]) {
+      return { ...selectedPreset, ...keyPresets[selectedModule] };
+    }
+
     return { ...selectedPreset, ...Object.values(keyPresets)[0] };
   }, [workarea, selectedPreset, selectedModule, editingValues]);
 
   const handleChange = <T extends ConfigKey>(key: T, value: ConfigKeyTypeMap[T]) => {
-    const { name, isDefault } = selectedPreset;
-    if (isDefault) return;
+    const { isDefault, name } = selectedPreset;
+
+    if (isDefault) {
+      return;
+    }
+
     const editing = editingValues[name] || {};
     const origValue = selectedPreset[key];
+
     if (origValue === value) {
       delete editing[key];
+
       if (Object.keys(editing).length === 0) {
         delete editingValues[name];
       }
@@ -140,34 +179,41 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
       editing[key] = value;
       editingValues[name] = editing;
     }
+
     setEditingValues({ ...editingValues });
   };
 
   const toggleHidePreset = (preset: Preset) => {
-    // eslint-disable-next-line no-param-reassign
     preset.hide = !preset.hide;
     setEditingPresets([...editingPresets]);
   };
   const isPrinting = useMemo(() => displayPreset.module === LayerModule.PRINTER, [displayPreset]);
 
   const handleDelete = () => {
-    if (selectedPreset.isDefault) return;
+    if (selectedPreset.isDefault) {
+      return;
+    }
+
     const displayIdx = displayList.findIndex((p) => p === selectedPreset);
     const newPresets = editingPresets.filter((p) => p !== selectedPreset);
+
     setSelectedPreset(displayList[displayIdx === 0 ? 1 : displayIdx - 1]);
     setEditingPresets(newPresets);
   };
 
   const getCurrentPresets = useCallback(() => {
     const res = [...editingPresets];
+
     for (let i = 0; i < res.length; i += 1) {
-      const { name, isDefault } = editingPresets[i];
+      const { isDefault, name } = editingPresets[i];
+
       if (editingValues[name] && !isDefault) {
         res[i] = { ...editingPresets[i], ...editingValues[name] };
       } else {
         res[i] = { ...editingPresets[i] };
       }
     }
+
     return res;
   }, [editingPresets, editingValues]);
 
@@ -179,8 +225,10 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
 
   const handleImport = useCallback(async () => {
     const res = await presetHelper.importPresets();
+
     if (res) {
       const newPresets = presetHelper.getAllPresets();
+
       setEditingPresets(newPresets);
       setSelectedPreset(newPresets[0]);
     }
@@ -192,93 +240,107 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
 
   const handleReset = useCallback(() => {
     alertCaller.popUp({
-      type: alertConstants.WARNING,
-      message: t.sure_to_reset,
       buttonType: alertConstants.CONFIRM_CANCEL,
+      message: t.sure_to_reset,
       onConfirm: () => {
         presetHelper.resetPresetList();
         postPresetChange();
         onClose();
       },
+      type: alertConstants.WARNING,
     });
   }, [t, onClose]);
 
   const handleAddPreset = async () => {
     let presetModule = LayerModule.LASER_UNIVERSAL;
+
     if (hasModule) {
       presetModule = await dialogCaller.showRadioSelectDialog({
         id: 'import-module',
-        title: lang.beambox.popup.select_import_module,
         options: [
           { label: t.laser, value: LayerModule.LASER_UNIVERSAL },
           { label: t.print, value: LayerModule.PRINTER },
         ],
+        title: lang.beambox.popup.select_import_module,
       });
-      if (!presetModule) return;
+
+      if (!presetModule) {
+        return;
+      }
     }
+
     const name = await new Promise<string>((resolve) => {
       dialogCaller.promptDialog({
         caption: t.new_preset_name,
-        onYes: resolve,
         onCancel: () => resolve(''),
+        onYes: resolve,
       });
     });
-    if (!name) return;
-    if (editingPresets.find((p) => p.name === name || p.key === name)) {
-      alertCaller.popUpError({ message: tLaserPanel.existing_name });
+
+    if (!name) {
       return;
     }
+
+    if (editingPresets.find((p) => p.name === name || p.key === name)) {
+      alertCaller.popUpError({ message: tLaserPanel.existing_name });
+
+      return;
+    }
+
     const newPreset: Preset = {
       ...getDefaultConfig(),
-      name: name.trim(),
       isDefault: false,
       module: presetModule,
+      name: name.trim(),
     };
+
     if (presetModule === LayerModule.PRINTER) {
       newPreset.halftone = 1;
       newPreset.speed = baseConfig.printingSpeed;
     }
+
     setEditingPresets([...editingPresets, newPreset]);
     setSelectedPreset(newPreset);
   };
 
   return (
     <Modal
-      open
       centered
-      wrapClassName={styles['modal-wrap']}
-      title={t.title}
+      footer={<Footer handleReset={handleReset} handleSave={handleSave} onClose={onClose} />}
       onCancel={onClose}
-      footer={<Footer handleSave={handleSave} handleReset={handleReset} onClose={onClose} />}
+      open
+      title={t.title}
+      wrapClassName={styles['modal-wrap']}
     >
       <div className={styles.container}>
         <PresetList
-          presets={editingPresets}
           displayList={displayList}
           editingValues={editingValues}
+          onReorder={setEditingPresets}
+          presets={editingPresets}
+          ref={listRef}
           selected={selectedPreset}
           setSelectedPreset={setSelectedPreset}
           toggleHidePreset={toggleHidePreset}
-          onReorder={setEditingPresets}
-          ref={listRef}
         />
         <div className={styles.controls}>
           <div>
-            <button className={styles.add} type="button" onClick={handleAddPreset}>
+            <button className={styles.add} onClick={handleAddPreset} type="button">
               <PlusCircleFilled className={styles.icon} />
               {t.add_new}
             </button>
           </div>
           <div>
-            <button type="button" onClick={handleImport} title={t.import}>
+            <button onClick={handleImport} title={t.import} type="button">
               <UploadOutlined className={styles.icon} />
             </button>
-            <button type="button" onClick={handleExport} title={t.export}>
+            <button onClick={handleExport} title={t.export} type="button">
               <DownloadOutlined className={styles.icon} />
             </button>
             {hasModule && (
               <Dropdown
                 menu={{
+                  defaultSelectedKeys: [filter],
                   items: [
                     {
                       key: Filter.ALL,
@@ -293,9 +355,8 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
                       label: t.print,
                     },
                   ],
-                  selectable: true,
-                  defaultSelectedKeys: [filter],
                   onClick: ({ key }) => setFilter(key as Filter),
+                  selectable: true,
                 }}
               >
                 <ConfigPanelIcons.Filter
@@ -309,12 +370,12 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
           <div className={styles.header}>
             <div className={styles.title}>{selectedPreset?.name}</div>
             {!displayPreset.isDefault && (
-              <Button danger onClick={handleDelete} data-testid="delete">
+              <Button danger data-testid="delete" onClick={handleDelete}>
                 {t.delete}
               </Button>
             )}
             {hasModule && displayPreset.isDefault && (
-              <Select value={selectedModule} onChange={setSelectedModule}>
+              <Select onChange={setSelectedModule} value={selectedModule}>
                 {availableModules.map((m) => (
                   <Select.Option key={m} value={m}>
                     {moduleTranslations[m]}
@@ -325,30 +386,30 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
           </div>
           {isPromark ? (
             <PromarkInputs
-              preset={displayPreset}
-              maxSpeed={workareaObj.maxSpeed}
-              minSpeed={workareaObj.minSpeed}
+              handleChange={handleChange}
               isInch={isInch}
               lengthUnit={lengthUnit}
-              handleChange={handleChange}
+              maxSpeed={workareaObj.maxSpeed}
+              minSpeed={workareaObj.minSpeed}
+              preset={displayPreset}
             />
           ) : isPrinting ? (
             <PrintingInputs
-              preset={displayPreset}
-              maxSpeed={workareaObj.maxSpeed}
-              minSpeed={workareaObj.minSpeed}
+              handleChange={handleChange}
               isInch={isInch}
               lengthUnit={lengthUnit}
-              handleChange={handleChange}
+              maxSpeed={workareaObj.maxSpeed}
+              minSpeed={workareaObj.minSpeed}
+              preset={displayPreset}
             />
           ) : (
             <LaserInputs
-              preset={displayPreset}
-              maxSpeed={workareaObj.maxSpeed}
-              minSpeed={workareaObj.minSpeed}
+              handleChange={handleChange}
               isInch={isInch}
               lengthUnit={lengthUnit}
-              handleChange={handleChange}
+              maxSpeed={workareaObj.maxSpeed}
+              minSpeed={workareaObj.minSpeed}
+              preset={displayPreset}
             />
           )}
         </div>

@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import Instruction from './Instruction';
@@ -17,13 +18,16 @@ describe('test Instruction', () => {
     const { baseElement, getByText } = render(
       <Instruction
         animationSrcs={[{ src: 'video.webm', type: 'image/webm' }]}
-        title="title"
-        text="text"
         buttons={[{ label: 'label', onClick: mockOnClick }]}
-      />
+        text="text"
+        title="title"
+      />,
     );
+
     expect(baseElement).toMatchSnapshot();
+
     const button = getByText('label');
+
     expect(mockOnClick).not.toBeCalled();
     fireEvent.click(button);
     expect(mockOnClick).toBeCalledTimes(1);

@@ -1,13 +1,12 @@
-/* eslint-disable no-restricted-syntax */
-import { MENU_SHOW, MENU_HIDE } from './actions';
-import { uniqueId, hasOwnProp, canUseDOM } from './helpers';
+import { MENU_HIDE, MENU_SHOW } from './actions';
+import { canUseDOM, hasOwnProp, uniqueId } from './helpers';
 
 class GlobalEventListener {
   private callbacks: {
     [id: string]: {
-      show: (e: Event) => void,
-      hide: (e: Event) => void,
-    }
+      hide: (e: Event) => void;
+      show: (e: Event) => void;
+    };
   };
 
   constructor() {
@@ -21,13 +20,17 @@ class GlobalEventListener {
 
   handleShowEvent = (event) => {
     for (const id in this.callbacks) {
-      if (hasOwnProp(this.callbacks, id)) this.callbacks[id].show(event);
+      if (hasOwnProp(this.callbacks, id)) {
+        this.callbacks[id].show(event);
+      }
     }
   };
 
   handleHideEvent = (event) => {
     for (const id in this.callbacks) {
-      if (hasOwnProp(this.callbacks, id)) this.callbacks[id].hide(event);
+      if (hasOwnProp(this.callbacks, id)) {
+        this.callbacks[id].hide(event);
+      }
     }
   };
 
@@ -35,8 +38,8 @@ class GlobalEventListener {
     const id = uniqueId();
 
     this.callbacks[id] = {
-      show: showCallback,
       hide: hideCallback,
+      show: showCallback,
     };
 
     return id;

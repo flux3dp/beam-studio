@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import SelectConnectionType from './SelectConnectionType';
@@ -12,27 +13,29 @@ jest.mock('react-router-dom', () => ({
 }));
 
 const mockShowLoadingWindow = jest.fn();
+
 jest.mock('@core/app/actions/dialog-caller', () => ({
   showLoadingWindow: (...args) => mockShowLoadingWindow(...args),
 }));
 
 jest.mock('@core/helpers/useI18n', () => () => ({
   initialize: {
-    select_connection_type: 'How do you wish to connect?',
-    connection_types: {
-      wifi: 'Wi-Fi',
-      wired: 'Wired Network',
-      ether2ether: 'Direct Connection',
-      usb: 'USB Connection',
-    },
+    back: 'back',
     connect_usb: {
       title_sub: ' (HEXA Only)',
     },
-    back: 'back',
+    connection_types: {
+      ether2ether: 'Direct Connection',
+      usb: 'USB Connection',
+      wifi: 'Wi-Fi',
+      wired: 'Wired Network',
+    },
+    select_connection_type: 'How do you wish to connect?',
   },
 }));
 
 const mockWindowLocationReload = jest.fn();
+
 jest.mock('@core/app/actions/windowLocation', () => () => mockWindowLocationReload());
 
 describe('test SelectConnectionType', () => {
@@ -43,6 +46,7 @@ describe('test SelectConnectionType', () => {
 
   test('should render correctly', () => {
     const { container, getByText } = render(<SelectConnectionType />);
+
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getByText('Wi-Fi'));

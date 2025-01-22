@@ -1,20 +1,18 @@
 import React, { Fragment } from 'react';
-import { CapsuleTabs } from 'antd-mobile';
-import { Modal } from 'antd';
 
-import FloatingPanel from '@core/app/widgets/FloatingPanel';
+import { Modal } from 'antd';
+import { CapsuleTabs } from 'antd-mobile';
+
 import layoutConstants from '@core/app/constants/layout-constants';
-import Shapes, {
-  ShapeTabs,
-  generateFileNameArray,
-} from '@core/app/constants/shape-panel-constants';
+import Shapes, { generateFileNameArray, ShapeTabs } from '@core/app/constants/shape-panel-constants';
 import ShapeIcon from '@core/app/views/beambox/ShapePanel/ShapeIcon';
-import useI18n from '@core/helpers/useI18n';
+import FloatingPanel from '@core/app/widgets/FloatingPanel';
 import { useIsMobile } from '@core/helpers/system-helper';
+import useI18n from '@core/helpers/useI18n';
 
 import styles from './ShapePanel.module.scss';
 
-const ShapePanel = ({ onClose }: { onClose: () => void }): JSX.Element => {
+const ShapePanel = ({ onClose }: { onClose: () => void }): React.JSX.Element => {
   const lang = useI18n().beambox.shapes_panel;
   const isMobile = useIsMobile();
   const anchors = [0, window.innerHeight - layoutConstants.menuberHeight];
@@ -35,38 +33,45 @@ const ShapePanel = ({ onClose }: { onClose: () => void }): JSX.Element => {
         shodowRef.current.style.display = 'block';
       }
     } else {
-      if (shodowRef.current) shodowRef.current.style.display = 'none';
+      if (shodowRef.current) {
+        shodowRef.current.style.display = 'none';
+      }
+
       setTimeout(handleShadow, 500);
     }
   };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
+  // eslint-disable-next-line hooks/exhaustive-deps
   React.useEffect(handleShadow, [activeTab]);
 
   const renderIconList = () => {
     const subtypes = Object.keys(Shapes[activeTab]);
+
     return (
       <div className={styles['shadow-container']}>
-        <div ref={scrollDivRef} className={styles['scroll-content']} onScroll={handleShadow}>
+        <div className={styles['scroll-content']} onScroll={handleShadow} ref={scrollDivRef}>
           <div className={styles['icon-list']}>
             {subtypes.map((subtype) => {
               if (!Shapes[activeTab][subtype].fileNames) {
-                const fileNames = generateFileNameArray(
-                  subtype,
-                  Shapes[activeTab][subtype].setting,
-                );
+                const fileNames = generateFileNameArray(subtype, Shapes[activeTab][subtype].setting);
+
                 Shapes[activeTab][subtype].fileNames = fileNames;
               }
+
               return (
                 <Fragment key={subtype}>
                   <div className={styles.label}>{lang[subtype]}</div>
                   {Shapes[activeTab][subtype].fileNames.map((fileName) => (
                     <ShapeIcon
-                      key={fileName}
                       activeTab={activeTab}
                       fileName={fileName}
+                      key={fileName}
                       onClose={() => {
                         setClose(true);
-                        if (!isMobile) onClose();
+
+                        if (!isMobile) {
+                          onClose();
+                        }
                       }}
                     />
                   ))}
@@ -82,26 +87,26 @@ const ShapePanel = ({ onClose }: { onClose: () => void }): JSX.Element => {
 
   return isMobile ? (
     <FloatingPanel
-      className={styles.panel}
       anchors={anchors}
-      title={lang.title}
+      className={styles.panel}
       fixedContent={
-        <CapsuleTabs className={styles.tabs} activeKey={activeTab} onChange={setActiveTab}>
+        <CapsuleTabs activeKey={activeTab} className={styles.tabs} onChange={setActiveTab}>
           {ShapeTabs.map((key) => (
-            <CapsuleTabs.Tab title={lang[key]} key={key} />
+            <CapsuleTabs.Tab key={key} title={lang[key]} />
           ))}
         </CapsuleTabs>
       }
       forceClose={close}
       onClose={onClose}
+      title={lang.title}
     >
       {renderIconList()}
     </FloatingPanel>
   ) : (
-    <Modal onCancel={onClose} title={lang.title} footer={null} width={500} open={!close} centered>
-      <CapsuleTabs className={styles.tabs} activeKey={activeTab} onChange={setActiveTab}>
+    <Modal centered footer={null} onCancel={onClose} open={!close} title={lang.title} width={500}>
+      <CapsuleTabs activeKey={activeTab} className={styles.tabs} onChange={setActiveTab}>
         {ShapeTabs.map((key) => (
-          <CapsuleTabs.Tab title={lang[key]} key={key} />
+          <CapsuleTabs.Tab key={key} title={lang[key]} />
         ))}
       </CapsuleTabs>
       {renderIconList()}

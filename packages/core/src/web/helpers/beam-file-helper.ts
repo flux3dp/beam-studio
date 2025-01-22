@@ -80,14 +80,14 @@
 import { Buffer } from 'buffer';
 
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
-import history from '@core/app/svgedit/history/history';
 import Progress from '@core/app/actions/progress-caller';
+import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
-import updateImagesResolution from '@core/helpers/image/updateImagesResolution';
-import updateImageDisplay from '@core/helpers/image/updateImageDisplay';
-import { CurveEngraving } from '@core/interfaces/ICurveEngraving';
 import { importBvgString } from '@core/app/svgedit/operations/import/importBvg';
-import { IBatchCommand } from '@core/interfaces/IHistory';
+import updateImageDisplay from '@core/helpers/image/updateImageDisplay';
+import updateImagesResolution from '@core/helpers/image/updateImagesResolution';
+import type { CurveEngraving } from '@core/interfaces/ICurveEngraving';
+import type { IBatchCommand } from '@core/interfaces/IHistory';
 
 interface MiscData {
   ce?: CurveEngraving;
@@ -97,12 +97,15 @@ interface MiscData {
 const valueToVIntBuffer = (value) => {
   const a: number[] = [];
   let remainingValue = value;
+
   while (remainingValue > 127) {
     const b = (remainingValue % 128) + 128;
+
     a.push(b);
     remainingValue = Math.floor(remainingValue / 128);
   }
   a.push(remainingValue);
+
   return Buffer.from(a);
 };
 
@@ -110,22 +113,26 @@ const readVInt = (buffer, offset = 0) => {
   let v = 0;
   let currentByte = 0;
   let currentOffset = offset;
+
   while (true) {
     const b = buffer.readUInt8(currentOffset);
+
     currentOffset += 1;
     v += (b % 128) * 2 ** (7 * currentByte);
     currentByte += 1;
-    if (b < 128) break;
+
+    if (b < 128) {
+      break;
+    }
   }
+
   return {
-    value: v,
     offset: currentOffset,
+    value: v,
   };
 };
 
-const localHeaderTypeBuffer = (
-  type: 'svgContent' | 'imageSource' | 'thumbnail' | 'miscData',
-): Buffer => {
+const localHeaderTypeBuffer = (type: 'imageSource' | 'miscData' | 'svgContent' | 'thumbnail'): Buffer => {
   switch (type) {
     case 'svgContent':
       return Buffer.from([0x01]);
@@ -138,6 +145,7 @@ const localHeaderTypeBuffer = (
     default:
       break;
   }
+
   return Buffer.from([]);
 };
 
@@ -146,6 +154,7 @@ const genertateSvgBlockBuffer = (svgString: string) => {
   const typeBuf = localHeaderTypeBuffer('svgContent');
   const svgStringBuf = Buffer.from(svgString);
   const lengthVintBuf = valueToVIntBuffer(svgStringBuf.length);
+
   return Buffer.concat([typeBuf, lengthVintBuf, svgStringBuf]);
 };
 
@@ -154,27 +163,30 @@ const generateImageSourceBlockBuffer = (imageSources: { [id: string]: ArrayBuffe
   let imageSourceBlockBuffer = localHeaderTypeBuffer('imageSource');
   let tempbuffer = Buffer.alloc(0);
   const ids = Object.keys(imageSources);
+
   for (let i = 0; i < ids.length; i += 1) {
     const id = ids[i];
     const idSizeBuf = Buffer.alloc(1);
     const idBuf = Buffer.from(id);
+
     idSizeBuf.writeUInt8(idBuf.length, 0);
+
     const imageBuf = Buffer.from(imageSources[id]);
     const imageSizeBuf = valueToVIntBuffer(imageBuf.length);
+
     tempbuffer = Buffer.concat([tempbuffer, idSizeBuf, idBuf, imageSizeBuf, imageBuf]);
   }
-  imageSourceBlockBuffer = Buffer.concat([
-    imageSourceBlockBuffer,
-    valueToVIntBuffer(tempbuffer.length),
-    tempbuffer,
-  ]);
+  imageSourceBlockBuffer = Buffer.concat([imageSourceBlockBuffer, valueToVIntBuffer(tempbuffer.length), tempbuffer]);
+
   return imageSourceBlockBuffer;
 };
 
 const generateThumbnailBlockBuffer = (thumbnail: ArrayBuffer): Buffer => {
   let blocBuffer = localHeaderTypeBuffer('thumbnail');
   const imageBuffer = Buffer.from(thumbnail);
+
   blocBuffer = Buffer.concat([blocBuffer, valueToVIntBuffer(imageBuffer.length), imageBuffer]);
+
   return blocBuffer;
 };
 
@@ -182,6 +194,7 @@ const generateMiscDataBlockBuffer = (data: MiscData): Buffer => {
   const headerBuf = localHeaderTypeBuffer('miscData');
   const contentBuf = Buffer.from(JSON.stringify(data));
   const lengthVintBuf = valueToVIntBuffer(contentBuf.length);
+
   return Buffer.concat([headerBuf, lengthVintBuf, contentBuf]);
 };
 
@@ -195,9 +208,13 @@ const generateBeamBuffer = (
   const imageSourceBlockBuffer = generateImageSourceBlockBuffer(imageSources);
   const thumbnailBlockBuffer = thumbnail ? generateThumbnailBlockBuffer(thumbnail) : null;
   const miscData: MiscData = {};
-  if (curveEngravingModeController.data) miscData.ce = curveEngravingModeController.data;
+
+  if (curveEngravingModeController.data) {
+    miscData.ce = curveEngravingModeController.data;
+  }
+
   const miscDataBuffer = generateMiscDataBlockBuffer(miscData);
-  const metaData = { version: window.FLUX?.version, contents: [1, 2, 3, 4] };
+  const metaData = { contents: [1, 2, 3, 4], version: window.FLUX?.version };
 
   const metaDataBuf = Buffer.from(JSON.stringify(metaData));
   const headerBuffer = Buffer.concat([
@@ -219,17 +236,21 @@ const generateBeamBuffer = (
     miscDataBuffer,
     Buffer.from([0x00]),
   ]);
+
   return buffer;
 };
 
 const readHeader = (headerBuf: Buffer) => {
   let vInt;
   let offset = 0;
+
   vInt = readVInt(headerBuf, offset);
   offset = vInt.offset;
+
   const metadataSize = vInt.value;
   // Can be used to load specific data without read all blocks
   const metaData = headerBuf.toString('utf-8', offset, offset + metadataSize);
+
   console.log(metaData);
   offset += metadataSize;
   vInt = readVInt(headerBuf, offset);
@@ -237,6 +258,7 @@ const readHeader = (headerBuf: Buffer) => {
   // console.log('svgBlockSize', vInt.value);
   vInt = readVInt(headerBuf, offset);
   offset = vInt.offset;
+
   // console.log('Image Source block Size', vInt.value);
   if (offset < headerBuf.length) {
     vInt = readVInt(headerBuf, offset);
@@ -247,17 +269,27 @@ const readHeader = (headerBuf: Buffer) => {
 
 const readImageSource = (buf: Buffer, offset: number, end: number) => {
   let currentOffset = offset;
+
   while (currentOffset < end) {
     const idSize = buf.readUInt8(currentOffset);
+
     currentOffset += 1;
+
     const id = buf.toString('utf-8', currentOffset, currentOffset + idSize);
+
     currentOffset += idSize;
-    const { value: imageSize, offset: newOffset } = readVInt(buf, currentOffset);
+
+    const { offset: newOffset, value: imageSize } = readVInt(buf, currentOffset);
+
     currentOffset = newOffset;
+
     const blob = new Blob([buf.subarray(currentOffset, currentOffset + imageSize)]);
     const src = URL.createObjectURL(blob);
+
     currentOffset += imageSize;
+
     const image = document.querySelector(`image#${id}`);
+
     if (image) {
       image.setAttribute('origImage', src);
       image.setAttribute('preserveAspectRatio', 'none');
@@ -268,29 +300,38 @@ const readImageSource = (buf: Buffer, offset: number, end: number) => {
 
 const readBlocks = async (buf: Buffer, offset: number, command?: IBatchCommand) => {
   if (offset >= buf.length) {
-    // eslint-disable-next-line no-console
     console.warn('offset exceed buffer length');
+
     return -1;
   }
+
   let currentOffset = offset;
   const blockType = buf.readUInt8(currentOffset);
+
   currentOffset += 1;
+
   if (blockType === 0) {
     // Ending Block
     currentOffset = -1;
   } else if (blockType === 1) {
     // Svg Content
     console.log('Svg Content Block');
+
     const { offset: newOffset, value } = readVInt(buf, currentOffset);
+
     currentOffset = newOffset;
     console.log('Size', value);
+
     const svgString = buf.toString('utf-8', currentOffset, currentOffset + value);
+
     await importBvgString(svgString, { parentCmd: command });
     currentOffset += value;
   } else if (blockType === 2) {
     // image source
     console.log('Image Source Block');
+
     const { offset: newOffset, value } = readVInt(buf, currentOffset);
+
     currentOffset = newOffset;
     console.log('Size', value);
     readImageSource(buf, currentOffset, currentOffset + value);
@@ -299,34 +340,45 @@ const readBlocks = async (buf: Buffer, offset: number, command?: IBatchCommand) 
   } else if (blockType === 3) {
     // thumbnail
     console.log('Thumbnail Block');
+
     const { offset: newOffset, value } = readVInt(buf, currentOffset);
+
     console.log('Size', value);
     currentOffset = newOffset + value;
   } else if (blockType === 4) {
     // misc data
     console.log('Miscellaneous data');
+
     const { offset: newOffset, value } = readVInt(buf, currentOffset);
+
     console.log('Size', value);
+
     const miscData = buf.toString('utf-8', newOffset, newOffset + value);
+
     try {
       const data: MiscData = JSON.parse(miscData);
-      if (data.ce) console.log(data.ce);
+
+      if (data.ce) {
+        console.log(data.ce);
+      }
+
       curveEngravingModeController.loadData(data.ce, { parentCmd: command });
     } catch (e) {
       console.error('Failed to parse misc data', e);
     }
     currentOffset = newOffset + value;
   } else {
-    // eslint-disable-next-line no-console
     console.error(`Unknown Block Type: ${blockType}`);
     currentOffset = -1;
   }
+
   return currentOffset;
 };
 
 const readBeam = async (file: File): Promise<void> => {
   const data = await new Promise<ArrayBuffer>((resolve) => {
     const fr = new FileReader();
+
     fr.onloadend = (evt) => {
       resolve(evt.target.result as ArrayBuffer);
     };
@@ -336,21 +388,27 @@ const readBeam = async (file: File): Promise<void> => {
 
   let offset = 0;
   const signatureBuffer = buf.subarray(offset, 5);
-  // eslint-disable-next-line no-console
+
   console.log('Signature:', signatureBuffer.toString());
   offset += 5;
+
   const version = signatureBuffer.readUInt8(4);
-  // eslint-disable-next-line no-console
+
   console.log('Beam Version: ', version);
+
   const vint = readVInt(buf, offset);
   const headerSize = vint.value;
+
   offset = vint.offset;
+
   const headerBuf = buf.subarray(offset, offset + headerSize);
+
   readHeader(headerBuf);
   offset += headerSize;
+
   const command = new history.BatchCommand('Load Beam File');
+
   while (offset > 0) {
-    // eslint-disable-next-line no-await-in-loop
     offset = await readBlocks(buf, offset, command);
   }
   undoManager.addCommandToHistory(command);

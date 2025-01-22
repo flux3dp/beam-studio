@@ -6,15 +6,11 @@ import useI18n from '@core/helpers/useI18n';
 
 import styles from './DocumentButton.module.scss';
 
-const DocumentButton = (): JSX.Element => {
+const DocumentButton = (): React.JSX.Element => {
   const lang = useI18n().topbar.menu;
 
   return (
-    <div
-      className={styles.button}
-      onClick={dialogCaller.showDocumentSettings}
-      title={lang.document_setting}
-    >
+    <div className={styles.button} onClick={dialogCaller.showDocumentSettings} title={lang.document_setting}>
       <TopBarIcons.Document />
     </div>
   );

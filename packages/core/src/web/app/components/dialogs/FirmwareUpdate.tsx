@@ -1,31 +1,33 @@
 import React from 'react';
+
 import { Button, Modal } from 'antd';
 import { sprintf } from 'sprintf-js';
 
 import i18n from '@core/helpers/i18n';
 
 const LANG = i18n.lang.update;
+
 interface Props {
-  deviceName: string;
-  deviceModel: string;
   currentVersion: string;
+  deviceModel: string;
+  deviceName: string;
   latestVersion: string;
-  releaseNote: string;
-  onDownload: () => void;
   onClose: () => void;
+  onDownload: () => void;
   onInstall: () => void;
+  releaseNote: string;
 }
 
 const FirmwareUpdate = ({
-  deviceName = '',
-  deviceModel = '',
   currentVersion = '',
+  deviceModel = '',
+  deviceName = '',
   latestVersion = '',
-  releaseNote = '',
-  onDownload = () => {},
   onClose = () => {},
+  onDownload = () => {},
   onInstall = () => {},
-}: Props): JSX.Element => {
+  releaseNote = '',
+}: Props): React.JSX.Element => {
   const handleUpload = () => {
     onInstall();
     onClose();
@@ -37,10 +39,7 @@ const FirmwareUpdate = ({
 
   return (
     <Modal
-      open
       centered
-      title={LANG.firmware.caption}
-      onCancel={onClose}
       footer={[
         <Button key="later" onClick={onClose}>
           {LANG.later}
@@ -48,17 +47,18 @@ const FirmwareUpdate = ({
         <Button key="upload" onClick={handleUpload}>
           {LANG.upload}
         </Button>,
-        <Button key="download" type="primary" onClick={handleDownload}>
+        <Button key="download" onClick={handleDownload} type="primary">
           {LANG.download}
         </Button>,
       ]}
+      onCancel={onClose}
+      open
+      title={LANG.firmware.caption}
     >
       <div className="update-wrapper">
         <article className="update-brief">
           <p>{sprintf(LANG.firmware.message_pattern_1, deviceName)}</p>
-          <p>
-            {sprintf(LANG.firmware.message_pattern_2, deviceModel, latestVersion, currentVersion)}
-          </p>
+          <p>{sprintf(LANG.firmware.message_pattern_2, deviceModel, latestVersion, currentVersion)}</p>
         </article>
         <h4 className="release-note-caption">{LANG.release_note}</h4>
         <div

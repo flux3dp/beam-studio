@@ -3,15 +3,17 @@ import FisheyePreviewManagerBase from './FisheyePreviewManagerBase';
 const mockGetCurrentControlMode = jest.fn();
 const mockRawLooseMotor = jest.fn();
 const mockEndRawMode = jest.fn();
+
 jest.mock('@core/helpers/device-master', () => ({
   get currentControlMode() {
     return mockGetCurrentControlMode();
   },
-  rawLooseMotor: (...args) => mockRawLooseMotor(...args),
   endRawMode: (...args) => mockEndRawMode(...args),
+  rawLooseMotor: (...args) => mockRawLooseMotor(...args),
 }));
 
 const mockGetLevelingData = jest.fn();
+
 jest.mock(
   './getLevelingData',
   () =>
@@ -20,15 +22,17 @@ jest.mock(
 );
 
 const mockGetPreviewHeight = jest.fn();
+
 jest.mock('@core/app/actions/dialog-caller', () => ({
   getPreviewHeight: (...args) => mockGetPreviewHeight(...args),
 }));
 
 const mockUpdate = jest.fn();
 const mockPopById = jest.fn();
+
 jest.mock('@core/app/actions/progress-caller', () => ({
-  update: (...args) => mockUpdate(...args),
   popById: (...args) => mockPopById(...args),
+  update: (...args) => mockUpdate(...args),
 }));
 
 jest.mock('@core/helpers/i18n', () => ({
@@ -46,6 +50,7 @@ describe('test FisheyePreviewManagerBase', () => {
 
   it('should work for reloadLevelingOffset', async () => {
     const manager = new FisheyePreviewManagerBase();
+
     mockGetLevelingData.mockResolvedValue({ x: 1, y: 2, z: 3 });
     try {
       await manager.reloadLevelingOffset();
@@ -59,6 +64,7 @@ describe('test FisheyePreviewManagerBase', () => {
 
   it('should work for resetObjectHeight', async () => {
     const manager = new FisheyePreviewManagerBase();
+
     mockGetPreviewHeight.mockResolvedValue(10);
     mockGetCurrentControlMode.mockReturnValue('raw');
     try {

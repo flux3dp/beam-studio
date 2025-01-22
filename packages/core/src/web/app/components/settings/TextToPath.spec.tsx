@@ -1,44 +1,44 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 jest.mock('@core/helpers/useI18n', () => () => ({
   settings: {
-    font_substitute: 'Substitute Unsupported Characters',
     font_convert: 'Convert Text to Path',
-    help_center_urls: {
-      font_substitute: 'https://support.flux3dp.com/hc/en-us/articles/360004496575',
-      font_convert: 'https://support.flux3dp.com/hc/Convert-Text-to-Path',
-    },
+    font_substitute: 'Substitute Unsupported Characters',
     groups: {
       text_to_path: 'Text',
+    },
+    help_center_urls: {
+      font_convert: 'https://support.flux3dp.com/hc/Convert-Text-to-Path',
+      font_substitute: 'https://support.flux3dp.com/hc/en-us/articles/360004496575',
     },
   },
 }));
 
-jest.mock('@core/app/components/settings/SelectControl', () =>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ({ id, label, onChange, options, url }: any) => (
-    <div>
-      mock-select-control id:{id}
-      label:{label}
-      url:{url}
-      options:{JSON.stringify(options)}
-      <input className="select-control" onChange={onChange} />
-    </div>
-  ),
-);
+jest.mock('@core/app/components/settings/SelectControl', () => ({ id, label, onChange, options, url }: any) => (
+  <div>
+    mock-select-control id:{id}
+    label:{label}
+    url:{url}
+    options:{JSON.stringify(options)}
+    <input className="select-control" onChange={onChange} />
+  </div>
+));
 
-// eslint-disable-next-line import/first
 import TextToPath from './TextToPath';
 
 test('should render correctly', () => {
   const getBeamboxPreferenceEditingValue = jest.fn();
+
   getBeamboxPreferenceEditingValue.mockImplementation((key: string) => {
     if (key === 'font-substitute') {
       return true;
     }
+
     return '1.0';
   });
+
   const updateBeamboxPreferenceChange = jest.fn();
   const { container } = render(
     <TextToPath
@@ -46,9 +46,11 @@ test('should render correctly', () => {
       updateBeamboxPreferenceChange={updateBeamboxPreferenceChange}
     />,
   );
+
   expect(container).toMatchSnapshot();
 
   const controls = container.querySelectorAll('.select-control');
+
   fireEvent.change(controls[0], { target: { value: 'FALSE' } });
   expect(updateBeamboxPreferenceChange).toHaveBeenCalledTimes(1);
   expect(updateBeamboxPreferenceChange).toHaveBeenNthCalledWith(1, 'font-substitute', 'FALSE');

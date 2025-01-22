@@ -1,20 +1,22 @@
-import classNames from 'classnames';
 import React, { useContext } from 'react';
+
+import classNames from 'classnames';
 
 import { FullWindowPanelContext } from '@core/app/widgets/FullWindowPanel/FullWindowPanel';
 
 import styles from './Header.module.scss';
 
 interface Props {
+  children?: React.ReactNode;
+  className?: string;
   icon?: React.ReactNode;
   title?: string;
-  className?: string;
-  children?: React.ReactNode;
 }
 
-const Header = ({ icon, title, className = '', children }: Props): JSX.Element => {
+const Header = ({ children, className = '', icon, title }: Props): React.JSX.Element => {
   // For future need to use context
   useContext(FullWindowPanelContext);
+
   return (
     <div className={classNames(styles.header, className)}>
       {icon && <div className={styles.icon}>{icon}</div>}

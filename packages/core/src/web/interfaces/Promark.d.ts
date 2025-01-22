@@ -1,5 +1,5 @@
-import { FisheyeCameraParametersV3 } from '@core/interfaces/FisheyePreview';
-import { LaserType, mopaWatts, promarkWatts } from '@core/app/constants/promark-constants';
+import type { LaserType, mopaWatts, promarkWatts } from '@core/app/constants/promark-constants';
+import type { FisheyeCameraParametersV3 } from '@core/interfaces/FisheyePreview';
 
 export type PromarkInfo =
   | {
@@ -12,9 +12,9 @@ export type PromarkInfo =
     };
 
 export interface Field {
+  angle: number;
   offsetX: number;
   offsetY: number;
-  angle: number;
 }
 
 export interface RedDot {
@@ -25,8 +25,8 @@ export interface RedDot {
 }
 
 export interface LensCorrection {
-  scale: number;
   bulge: number;
+  scale: number;
   skew: number;
   trapezoid: number;
 }
@@ -37,16 +37,16 @@ export interface GalvoParameters {
 }
 
 export interface PromarkStore {
-  info?: PromarkInfo;
-  field?: Field;
-  redDot?: RedDot;
-  cameraParameters?: FisheyeCameraParametersV3;
   cameraDeviceId?: string;
+  cameraParameters?: FisheyeCameraParametersV3;
+  field?: Field;
   galvoParameters?: GalvoParameters;
+  info?: PromarkInfo;
+  redDot?: RedDot;
 }
 
 export interface ButtonState {
-  pressed: boolean;
-  isRunning?: boolean;
   isFraming?: boolean;
+  isRunning?: boolean;
+  pressed: boolean;
 }

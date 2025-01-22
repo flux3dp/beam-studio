@@ -1,45 +1,45 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
 
-import i18n from '@core/helpers/i18n';
 import SelectControl from '@core/app/components/settings/SelectControl';
-import { StorageKey } from '@core/interfaces/IStorage';
+import i18n from '@core/helpers/i18n';
+import type { StorageKey } from '@core/interfaces/IStorage';
 
 interface Props {
-  isWeb: boolean;
-  supportedLangs: { [key: string]: string };
-  notificationOptions: { value: any; label: string; selected: boolean }[];
   changeActiveLang: (e: React.ChangeEvent) => void;
+  isWeb: boolean;
+  notificationOptions: Array<{ label: string; selected: boolean; value: any }>;
+  supportedLangs: { [key: string]: string };
   updateConfigChange: (id: StorageKey, newVal: any) => void;
 }
 
 function General({
-  isWeb,
-  supportedLangs,
-  notificationOptions,
   changeActiveLang,
+  isWeb,
+  notificationOptions,
+  supportedLangs,
   updateConfigChange,
-}: Props): JSX.Element {
+}: Props): React.JSX.Element {
   const { lang } = i18n;
+
   return (
     <>
       <div className="subtitle">{lang.settings.groups.general}</div>
       <SelectControl
-        label={lang.settings.language}
         id="select-lang"
+        label={lang.settings.language}
+        onChange={changeActiveLang}
         options={Object.keys(supportedLangs).map((l) => ({
-          value: l,
           label: supportedLangs[l],
           selected: l === i18n.getActiveLang(),
+          value: l,
         }))}
-        onChange={changeActiveLang}
       />
       {isWeb ? null : (
         <SelectControl
-          label={lang.settings.notifications}
           id="set-notifications"
-          options={notificationOptions}
+          label={lang.settings.notifications}
           onChange={(e) => updateConfigChange('notification', e.target.value)}
+          options={notificationOptions}
         />
       )}
     </>

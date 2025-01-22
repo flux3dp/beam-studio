@@ -1,32 +1,34 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { act } from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import ExposureSlider from './ExposureSlider';
 
 jest.mock('antd', () => ({
-  Slider: ({ className, min, max, step, value, onChange, onAfterChange }: any) => (
+  Slider: ({ className, max, min, onAfterChange, onChange, step, value }: any) => (
     <div className={className}>
       <h1>Mock Slider</h1>
       <p>min: {min}</p>
       <p>max: {max}</p>
       <p>step: {step}</p>
       <input onChange={(e) => onChange(Number(e.target.value))} value={value} />
-      <button type="button" onClick={() => onAfterChange(87)}>
+      <button onClick={() => onAfterChange(87)} type="button">
         Mock After Change
       </button>
     </div>
   ),
-  Tooltip: ({ title, children }: any) => <div title={title}>{children}</div>,
+  Tooltip: ({ children, title }: any) => <div title={title}>{children}</div>,
 }));
 
 const mockSetDeviceSetting = jest.fn();
+
 jest.mock('@core/helpers/device-master', () => ({
   setDeviceSetting: (...args) => mockSetDeviceSetting(...args),
 }));
 
 const mockOpenNonstopProgress = jest.fn();
 const mockPopById = jest.fn();
+
 jest.mock('@core/app/actions/progress-caller', () => ({
   openNonstopProgress: (...args) => mockOpenNonstopProgress(...args),
   popById: (...args) => mockPopById(...args),
@@ -39,8 +41,8 @@ jest.mock('@core/helpers/useI18n', () => () => ({
 }));
 
 const mockExposureSetting = {
-  min: 250,
   max: 650,
+  min: 250,
   step: 1,
   value: 300,
 };
@@ -58,10 +60,11 @@ describe('test ExposureSlider', () => {
       <ExposureSlider
         className="test-class"
         exposureSetting={mockExposureSetting}
-        setExposureSetting={mockSetExposureSetting}
         onChanged={mockOnChanged}
+        setExposureSetting={mockSetExposureSetting}
       />,
     );
+
     expect(container).toMatchSnapshot();
   });
 
@@ -70,10 +73,11 @@ describe('test ExposureSlider', () => {
       <ExposureSlider
         className="test-class"
         exposureSetting={mockExposureSetting}
-        setExposureSetting={mockSetExposureSetting}
         onChanged={mockOnChanged}
+        setExposureSetting={mockSetExposureSetting}
       />,
     );
+
     expect(mockOpenNonstopProgress).not.toBeCalled();
     expect(mockSetDeviceSetting).not.toBeCalled();
     expect(mockOnChanged).not.toBeCalled();
@@ -90,11 +94,12 @@ describe('test ExposureSlider', () => {
       <ExposureSlider
         className="test-class"
         exposureSetting={mockExposureSetting}
-        setExposureSetting={mockSetExposureSetting}
         onChanged={mockOnChanged}
+        setExposureSetting={mockSetExposureSetting}
       />,
     );
     const input = container.querySelector('input');
+
     expect(input).not.toBeNull();
     expect(input).toHaveProperty('value', '300');
     await act(() => fireEvent.change(input as Element, { target: { value: '87' } }));

@@ -1,4 +1,5 @@
-import { IDeviceInfo } from '@core/interfaces/IDevice';
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
+
 import getHeight from './getHeight';
 
 jest.mock('@core/app/constants/device-constants', () => ({
@@ -9,11 +10,13 @@ jest.mock('@core/app/constants/device-constants', () => ({
 }));
 
 const mockRawGetProbePos = jest.fn();
+
 jest.mock('@core/helpers/device-master', () => ({
   rawGetProbePos: () => mockRawGetProbePos(),
 }));
 
 const mockGetPreviewHeight = jest.fn();
+
 jest.mock('@core/app/actions/dialog-caller', () => ({
   getPreviewHeight: (...args) => mockGetPreviewHeight(...args),
 }));
@@ -21,10 +24,11 @@ jest.mock('@core/app/actions/dialog-caller', () => ({
 const mockOpenNonstopProgress = jest.fn();
 const mockUpdate = jest.fn();
 const mockPopById = jest.fn();
+
 jest.mock('@core/app/actions/progress-caller', () => ({
   openNonstopProgress: (...args) => mockOpenNonstopProgress(...args),
-  update: (...args) => mockUpdate(...args),
   popById: (...args) => mockPopById(...args),
+  update: (...args) => mockUpdate(...args),
 }));
 
 const mockDevice = { model: 'ado1' } as IDeviceInfo;
@@ -35,9 +39,11 @@ describe('test getHeight', () => {
   });
 
   it('should return height from device', async () => {
-    mockRawGetProbePos.mockResolvedValue({ z: 10, didAf: true });
+    mockRawGetProbePos.mockResolvedValue({ didAf: true, z: 10 });
     mockGetPreviewHeight.mockResolvedValue(10);
+
     const res = await getHeight(mockDevice);
+
     expect(res).toBe(30.5);
     expect(mockRawGetProbePos).toHaveBeenCalledTimes(1);
     expect(mockGetPreviewHeight).toHaveBeenCalledTimes(0);
@@ -53,7 +59,9 @@ describe('test getHeight', () => {
   it('should return height from dialog', async () => {
     mockRawGetProbePos.mockRejectedValue(new Error('mock error'));
     mockGetPreviewHeight.mockResolvedValue(20);
+
     const res = await getHeight(mockDevice);
+
     expect(res).toBe(20);
     expect(mockRawGetProbePos).toHaveBeenCalledTimes(1);
     expect(mockGetPreviewHeight).toHaveBeenCalledTimes(1);
@@ -71,7 +79,9 @@ describe('test getHeight', () => {
   it('should return height from dialog with initValue', async () => {
     mockRawGetProbePos.mockRejectedValue(new Error('mock error'));
     mockGetPreviewHeight.mockResolvedValue(30);
+
     const res = await getHeight(mockDevice, 'progress-id');
+
     expect(res).toBe(30);
     expect(mockRawGetProbePos).toHaveBeenCalledTimes(1);
     expect(mockGetPreviewHeight).toHaveBeenCalledTimes(1);

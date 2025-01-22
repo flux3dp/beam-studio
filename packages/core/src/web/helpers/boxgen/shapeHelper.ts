@@ -1,9 +1,10 @@
+/* eslint-disable no-undef */
 import Vector2d from './vector2d';
 
 export const Direction = {
-  RIGHT: new Vector2d(1, 0),
   DOWN: new Vector2d(0, 1),
   LEFT: new Vector2d(-1, 0),
+  RIGHT: new Vector2d(1, 0),
   UP: new Vector2d(0, -1),
 };
 

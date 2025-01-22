@@ -1,5 +1,5 @@
-/* eslint-disable import/first */
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 jest.mock(
@@ -35,24 +35,14 @@ jest.mock(
 );
 
 jest.mock('@core/app/views/beambox/Right-Panels/ObjectPanelItem', () => ({
-  Item: function DummyObjectPanelItem({ id, label, onClick }: any) {
-    return (
-      <div id={id}>
-        This is dummy ObjectPanelItem
-        <button type="button" onClick={onClick}>
-          {label}
-        </button>
-      </div>
-    );
-  },
-  ActionList: function DummyObjectPanelActionList({ id, actions }: any) {
+  ActionList: function DummyObjectPanelActionList({ actions, id }: any) {
     return (
       <div id={id}>
         This is dummy ObjectPanelActionList
         {actions.map(({ icon, label, onClick }) => (
           <div key={label}>
             {icon}
-            <button type="button" onClick={onClick}>
+            <button onClick={onClick} type="button">
               {label}
             </button>
           </div>
@@ -63,32 +53,42 @@ jest.mock('@core/app/views/beambox/Right-Panels/ObjectPanelItem', () => ({
   Divider: function DummyObjectPanelDivider() {
     return <div>This is dummy ObjectPanelDivider</div>;
   },
+  Item: function DummyObjectPanelItem({ id, label, onClick }: any) {
+    return (
+      <div id={id}>
+        This is dummy ObjectPanelItem
+        <button onClick={onClick} type="button">
+          {label}
+        </button>
+      </div>
+    );
+  },
 }));
 
 jest.mock('@core/helpers/useI18n', () => () => ({
   beambox: {
     right_panel: {
-      object_panel: {
-        group: 'Group',
-        ungroup: 'Ungroup',
-        distribute: 'Distribute',
-        hdist: 'Horizontal Distribute',
-        vdist: 'Vertical Distribute',
-        align: 'Align',
-        left_align: 'Left Align',
-        center_align: 'Center Align',
-        right_align: 'Right Align',
-        top_align: 'Top Align',
-        middle_align: 'Middle Align',
-        bottom_align: 'Bottom Align',
-        boolean: 'Boolean',
-        union: 'Union',
-        subtract: 'Subtract',
-        intersect: 'Intersect',
-        difference: 'Difference',
-      },
       laser_panel: {
         parameters: 'Parameters',
+      },
+      object_panel: {
+        align: 'Align',
+        boolean: 'Boolean',
+        bottom_align: 'Bottom Align',
+        center_align: 'Center Align',
+        difference: 'Difference',
+        distribute: 'Distribute',
+        group: 'Group',
+        hdist: 'Horizontal Distribute',
+        intersect: 'Intersect',
+        left_align: 'Left Align',
+        middle_align: 'Middle Align',
+        right_align: 'Right Align',
+        subtract: 'Subtract',
+        top_align: 'Top Align',
+        ungroup: 'Ungroup',
+        union: 'Union',
+        vdist: 'Vertical Distribute',
       },
     },
   },
@@ -106,21 +106,24 @@ const alignBottom = jest.fn();
 const alignLeft = jest.fn();
 const alignCenter = jest.fn();
 const alignRight = jest.fn();
+
 jest.mock('@core/app/actions/beambox/svgeditor-function-wrapper', () => ({
-  alignTop,
-  alignMiddle,
   alignBottom,
-  alignLeft,
   alignCenter,
+  alignLeft,
+  alignMiddle,
   alignRight,
+  alignTop,
 }));
 
 const getSVGAsync = jest.fn();
+
 jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync,
 }));
 
 const useIsMobile = jest.fn();
+
 jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => useIsMobile(),
 }));
@@ -133,28 +136,30 @@ const ungroupSelectedElement = jest.fn();
 const booleanOperationSelectedElements = jest.fn();
 const getLayerName = jest.fn();
 const deleteSelected = jest.fn();
+
 getSVGAsync.mockImplementation((callback) => {
   callback({
     Canvas: {
-      isElemFillable,
+      booleanOperationSelectedElements,
       distHori,
       distVert,
-      groupSelectedElements,
-      ungroupSelectedElement,
-      booleanOperationSelectedElements,
       getCurrentDrawing: () => ({ getLayerName }),
+      groupSelectedElements,
+      isElemFillable,
+      ungroupSelectedElement,
     },
     Editor: { deleteSelected },
   });
 });
 
 const addDialogComponent = jest.fn();
+
 jest.mock('@core/app/actions/dialog-caller', () => ({
   addDialogComponent: (...args) => addDialogComponent(...args),
 }));
 
-import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
+import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 
 import ObjectPanel from './ObjectPanel';
 
@@ -165,19 +170,17 @@ describe('should render correctly', () => {
 
   test('no elements', () => {
     const { container } = render(
-      <SelectedElementContext.Provider
-        value={{ selectedElement: document.getElementById('svg_1') }}
-      >
+      <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_1') }}>
         <ObjectPanelContext.Provider
           value={{
             activeKey: null,
-            polygonSides: 5,
             dimensionValues: {
               rx: 1,
             },
+            getDimensionValues: jest.fn(),
+            polygonSides: 5,
             updateActiveKey: jest.fn(),
             updateDimensionValues: jest.fn(),
-            getDimensionValues: jest.fn(),
             updateObjectPanel: jest.fn(),
           }}
         >
@@ -186,6 +189,7 @@ describe('should render correctly', () => {
         ,
       </SelectedElementContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
   });
 
@@ -196,20 +200,19 @@ describe('should render correctly', () => {
 
     test('not g element', () => {
       document.body.innerHTML = '<rect id="svg_1" />';
+
       const { container } = render(
-        <SelectedElementContext.Provider
-          value={{ selectedElement: document.getElementById('svg_1') }}
-        >
+        <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_1') }}>
           <ObjectPanelContext.Provider
             value={{
               activeKey: null,
-              polygonSides: 5,
               dimensionValues: {
                 rx: 1,
               },
+              getDimensionValues: jest.fn(),
+              polygonSides: 5,
               updateActiveKey: jest.fn(),
               updateDimensionValues: jest.fn(),
-              getDimensionValues: jest.fn(),
               updateObjectPanel: jest.fn(),
             }}
           >
@@ -237,20 +240,19 @@ describe('should render correctly', () => {
 
     test('is g element', () => {
       document.body.innerHTML = '<g id="svg_1" />';
+
       const { container } = render(
-        <SelectedElementContext.Provider
-          value={{ selectedElement: document.getElementById('svg_1') }}
-        >
+        <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_1') }}>
           <ObjectPanelContext.Provider
             value={{
               activeKey: null,
-              polygonSides: 5,
               dimensionValues: {
                 rx: 1,
               },
+              getDimensionValues: jest.fn(),
+              polygonSides: 5,
               updateActiveKey: jest.fn(),
               updateDimensionValues: jest.fn(),
-              getDimensionValues: jest.fn(),
               updateObjectPanel: jest.fn(),
             }}
           >
@@ -273,20 +275,19 @@ describe('should render correctly', () => {
     test('contains rect, polygon or ellipse elements', () => {
       document.body.innerHTML =
         '<g id="svg_3" data-tempgroup="true"><rect id="svg_1"></rect><ellipse id="svg_2"></ellipse></g>';
+
       const { container } = render(
-        <SelectedElementContext.Provider
-          value={{ selectedElement: document.getElementById('svg_3') }}
-        >
+        <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_3') }}>
           <ObjectPanelContext.Provider
             value={{
               activeKey: null,
-              polygonSides: 5,
               dimensionValues: {
                 rx: 1,
               },
+              getDimensionValues: jest.fn(),
+              polygonSides: 5,
               updateActiveKey: jest.fn(),
               updateDimensionValues: jest.fn(),
-              getDimensionValues: jest.fn(),
               updateObjectPanel: jest.fn(),
             }}
           >
@@ -329,20 +330,19 @@ describe('should render correctly', () => {
       document.body.innerHTML =
         '<g id="svg_3" data-tempgroup="true"><path id="svg_1"></path><line id="svg_2"></line></g>';
       isElemFillable.mockReturnValue(true);
+
       const { container } = render(
-        <SelectedElementContext.Provider
-          value={{ selectedElement: document.getElementById('svg_3') }}
-        >
+        <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_3') }}>
           <ObjectPanelContext.Provider
             value={{
               activeKey: null,
-              polygonSides: 5,
               dimensionValues: {
                 rx: 1,
               },
+              getDimensionValues: jest.fn(),
+              polygonSides: 5,
               updateActiveKey: jest.fn(),
               updateDimensionValues: jest.fn(),
-              getDimensionValues: jest.fn(),
               updateObjectPanel: jest.fn(),
             }}
           >
@@ -369,19 +369,17 @@ describe('should render correctly in mobile', () => {
 
   test('no elements', () => {
     const { container } = render(
-      <SelectedElementContext.Provider
-        value={{ selectedElement: document.getElementById('svg_1') }}
-      >
+      <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_1') }}>
         <ObjectPanelContext.Provider
           value={{
             activeKey: null,
-            polygonSides: 5,
             dimensionValues: {
               rx: 1,
             },
+            getDimensionValues: jest.fn(),
+            polygonSides: 5,
             updateActiveKey: jest.fn(),
             updateDimensionValues: jest.fn(),
-            getDimensionValues: jest.fn(),
             updateObjectPanel: jest.fn(),
           }}
         >
@@ -389,6 +387,7 @@ describe('should render correctly in mobile', () => {
         </ObjectPanelContext.Provider>
       </SelectedElementContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
   });
 
@@ -400,20 +399,19 @@ describe('should render correctly in mobile', () => {
 
     test('not g element', () => {
       document.body.innerHTML = '<rect id="svg_1" />';
+
       const { container, getByText } = render(
-        <SelectedElementContext.Provider
-          value={{ selectedElement: document.getElementById('svg_1') }}
-        >
+        <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_1') }}>
           <ObjectPanelContext.Provider
             value={{
               activeKey: null,
-              polygonSides: 5,
               dimensionValues: {
                 rx: 1,
               },
+              getDimensionValues: jest.fn(),
+              polygonSides: 5,
               updateActiveKey: jest.fn(),
               updateDimensionValues: jest.fn(),
-              getDimensionValues: jest.fn(),
               updateObjectPanel: jest.fn(),
             }}
           >
@@ -442,20 +440,19 @@ describe('should render correctly in mobile', () => {
 
     test('is g element', () => {
       document.body.innerHTML = '<g id="svg_1" />';
+
       const { container, getByText } = render(
-        <SelectedElementContext.Provider
-          value={{ selectedElement: document.getElementById('svg_1') }}
-        >
+        <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_1') }}>
           <ObjectPanelContext.Provider
             value={{
               activeKey: null,
-              polygonSides: 5,
               dimensionValues: {
                 rx: 1,
               },
+              getDimensionValues: jest.fn(),
+              polygonSides: 5,
               updateActiveKey: jest.fn(),
               updateDimensionValues: jest.fn(),
-              getDimensionValues: jest.fn(),
               updateObjectPanel: jest.fn(),
             }}
           >
@@ -480,20 +477,19 @@ describe('should render correctly in mobile', () => {
     test('contains rect, polygon or ellipse elements', () => {
       document.body.innerHTML =
         '<g id="svg_3" data-tempgroup="true"><rect id="svg_1"></rect><ellipse id="svg_2"></ellipse></g>';
+
       const { container, getByText } = render(
-        <SelectedElementContext.Provider
-          value={{ selectedElement: document.getElementById('svg_3') }}
-        >
+        <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_3') }}>
           <ObjectPanelContext.Provider
             value={{
               activeKey: null,
-              polygonSides: 5,
               dimensionValues: {
                 rx: 1,
               },
+              getDimensionValues: jest.fn(),
+              polygonSides: 5,
               updateActiveKey: jest.fn(),
               updateDimensionValues: jest.fn(),
-              getDimensionValues: jest.fn(),
               updateObjectPanel: jest.fn(),
             }}
           >
@@ -536,20 +532,19 @@ describe('should render correctly in mobile', () => {
       document.body.innerHTML =
         '<g id="svg_3" data-tempgroup="true"><path id="svg_1"></path><line id="svg_2"></line></g>';
       isElemFillable.mockReturnValue(true);
+
       const { container } = render(
-        <SelectedElementContext.Provider
-          value={{ selectedElement: document.getElementById('svg_3') }}
-        >
+        <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_3') }}>
           <ObjectPanelContext.Provider
             value={{
               activeKey: null,
-              polygonSides: 5,
               dimensionValues: {
                 rx: 1,
               },
+              getDimensionValues: jest.fn(),
+              polygonSides: 5,
               updateActiveKey: jest.fn(),
               updateDimensionValues: jest.fn(),
-              getDimensionValues: jest.fn(),
               updateObjectPanel: jest.fn(),
             }}
           >

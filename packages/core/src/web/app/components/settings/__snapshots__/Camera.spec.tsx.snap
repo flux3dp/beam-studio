@@ -14,7 +14,7 @@ exports[`should render correctly 1`] = `
     Preview Movement Speed
     url:
     options:
-    [{"value":1,"label":"Low","selected":true},{"value":2,"label":"Medium","selected":false},{"value":3,"label":"High","selected":false}]
+    [{"label":"Low","selected":true,"value":1},{"label":"Medium","selected":false,"value":2},{"label":"High","selected":false,"value":3}]
     <input
       class="select-control"
     />
@@ -26,7 +26,7 @@ exports[`should render correctly 1`] = `
     Custom Preview Height
     url:
     options:
-    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
     <input
       class="select-control"
     />
@@ -38,7 +38,7 @@ exports[`should render correctly 1`] = `
     Keep Preview Result
     url:
     options:
-    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
     <input
       class="select-control"
     />

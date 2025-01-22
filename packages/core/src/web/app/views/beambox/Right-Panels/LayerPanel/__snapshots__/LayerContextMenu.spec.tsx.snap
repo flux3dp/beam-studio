@@ -92,7 +92,7 @@ exports[`test LayerContextMenu should render correctly when multiselecting 1`] =
   <nav
     class="react-contextmenu"
     role="menu"
-    style="position: fixed; opacity: 0; pointer-events: none;"
+    style="opacity: 0; pointer-events: none; position: fixed;"
     tabindex="-1"
   >
     <div
@@ -167,7 +167,7 @@ exports[`test LayerContextMenu should render correctly when selecting last 1`] =
   <nav
     class="react-contextmenu"
     role="menu"
-    style="position: fixed; opacity: 0; pointer-events: none;"
+    style="opacity: 0; pointer-events: none; position: fixed;"
     tabindex="-1"
   >
     <div
@@ -242,7 +242,7 @@ exports[`test LayerContextMenu should render correctly when selecting printing l
   <nav
     class="react-contextmenu"
     role="menu"
-    style="position: fixed; opacity: 0; pointer-events: none;"
+    style="opacity: 0; pointer-events: none; position: fixed;"
     tabindex="-1"
   >
     <div

@@ -1,14 +1,15 @@
-/* eslint-disable import/first */
 import viewMenu from './view';
 
 const mockRead = jest.fn();
 const mockWrite = jest.fn();
+
 jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read: (...args) => mockRead(...args),
   write: (...args) => mockWrite(...args),
 }));
 
 const resetView = jest.fn();
+
 jest.mock('@core/app/svgedit/workarea', () => ({
   resetView: (...args) => resetView(...args),
 }));
@@ -29,6 +30,7 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
 }));
 
 const updateLayerColor = jest.fn();
+
 jest.mock(
   '@core/helpers/color/updateLayerColor',
   () =>
@@ -37,14 +39,17 @@ jest.mock(
 );
 
 const mockToggleGrids = jest.fn();
+
 jest.mock('@core/app/actions/canvas/grid', () => ({
   toggleGrids: () => mockToggleGrids(),
 }));
 
 const mockCreateEventEmitter = jest.fn();
+
 jest.mock('@core/helpers/eventEmitterFactory', () => ({
   createEventEmitter: (...args) => mockCreateEventEmitter(...args),
 }));
+
 const mockEventEmitter = {
   emit: jest.fn(),
 };
@@ -62,9 +67,7 @@ describe('test view', () => {
     test('svg content is existing', () => {
       document.body.innerHTML = '<div id="svgcontent" />';
       viewMenu.updateAntiAliasing(false);
-      expect(document.body.innerHTML).toBe(
-        '<div id="svgcontent" style="shape-rendering: optimizeSpeed;"></div>',
-      );
+      expect(document.body.innerHTML).toBe('<div id="svgcontent" style="shape-rendering: optimizeSpeed;"></div>');
       viewMenu.updateAntiAliasing(true);
       expect(document.body.innerHTML).toBe('<div id="svgcontent" style=""></div>');
     });
@@ -78,7 +81,9 @@ describe('test view', () => {
 
   test('test toggleLayerColor', () => {
     document.body.innerHTML = '<g class="layer" /><g class="layer" />';
+
     const result = viewMenu.toggleLayerColor();
+
     expect(mockWrite).toHaveBeenCalledTimes(1);
     expect(mockWrite).toHaveBeenNthCalledWith(1, 'use_layer_color', true);
     expect(updateLayerColor).toHaveBeenCalledTimes(2);
@@ -87,7 +92,9 @@ describe('test view', () => {
 
   test('test toggleGrid', () => {
     mockRead.mockReturnValue(true);
+
     const result = viewMenu.toggleGrid();
+
     expect(mockToggleGrids).toBeCalledTimes(1);
     expect(mockRead).toBeCalledTimes(1);
     expect(mockWrite).toBeCalledTimes(1);
@@ -106,7 +113,9 @@ describe('test view', () => {
 
     test('default is false', () => {
       mockRead.mockReturnValue(false);
+
       const result = viewMenu.toggleRulers();
+
       expect(mockCreateEventEmitter).toBeCalledTimes(1);
       expect(mockCreateEventEmitter).toHaveBeenLastCalledWith('canvas');
       expect(mockEventEmitter.emit).toBeCalledTimes(1);
@@ -118,7 +127,9 @@ describe('test view', () => {
 
     test('default is true', () => {
       mockRead.mockReturnValue(true);
+
       const result = viewMenu.toggleRulers();
+
       expect(mockCreateEventEmitter).toBeCalledTimes(1);
       expect(mockCreateEventEmitter).toHaveBeenLastCalledWith('canvas');
       expect(mockEventEmitter.emit).toBeCalledTimes(1);
@@ -138,6 +149,7 @@ describe('test view', () => {
       const addEventListener = jest.spyOn(window, 'addEventListener');
       const removeEventListener = jest.spyOn(window, 'removeEventListener');
       const result = viewMenu.toggleZoomWithWindow();
+
       expect(resetView).toHaveBeenCalledTimes(1);
       expect(removeEventListener).toHaveBeenCalledTimes(1);
       expect(removeEventListener).toHaveBeenNthCalledWith(1, 'resize', expect.any(Function));
@@ -150,9 +162,11 @@ describe('test view', () => {
 
     test('default is true', () => {
       mockRead.mockReturnValue(true);
+
       const addEventListener = jest.spyOn(window, 'addEventListener');
       const removeEventListener = jest.spyOn(window, 'removeEventListener');
       const result = viewMenu.toggleZoomWithWindow();
+
       expect(resetView).toHaveBeenCalledTimes(1);
       expect(removeEventListener).toHaveBeenCalledTimes(1);
       expect(removeEventListener).toHaveBeenNthCalledWith(1, 'resize', expect.any(Function));
@@ -170,7 +184,9 @@ describe('test view', () => {
 
     test('default is false', () => {
       mockRead.mockReturnValue(false);
+
       const result = viewMenu.toggleAntiAliasing();
+
       expect(mockWrite).toHaveBeenCalledTimes(1);
       expect(mockWrite).toHaveBeenNthCalledWith(1, 'anti-aliasing', true);
       expect(result).toBeTruthy();
@@ -178,7 +194,9 @@ describe('test view', () => {
 
     test('default is true', () => {
       mockRead.mockReturnValue(true);
+
       const result = viewMenu.toggleAntiAliasing();
+
       expect(mockWrite).toHaveBeenCalledTimes(1);
       expect(mockWrite).toHaveBeenNthCalledWith(1, 'anti-aliasing', false);
       expect(result).toBeFalsy();

@@ -2,7 +2,7 @@
  * blob segments
  */
 export default (blob: Blob, callback): void => {
-  const fn = callback || function () { };
+  const fn = callback || function () {};
   const CHUNK_PKG_SIZE = 4096;
 
   // split up to pieces

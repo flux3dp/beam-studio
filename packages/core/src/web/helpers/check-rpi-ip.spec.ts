@@ -1,11 +1,13 @@
 import checkRpiIp from './check-rpi-ip';
 
 const mockDnsLookUpAll = jest.fn();
+
 jest.mock('@app/implementations/network', () => ({
   dnsLookUpAll: (...args) => mockDnsLookUpAll(...args),
 }));
 
 const mockConsoleLog = jest.fn();
+
 describe('test check-rpi-ip', () => {
   beforeEach(() => {
     jest.resetAllMocks();
@@ -13,8 +15,10 @@ describe('test check-rpi-ip', () => {
   });
 
   it('should return ip if exists', async () => {
-    mockDnsLookUpAll.mockResolvedValue([{ family: 4, address: '123.123.123.123' }]);
+    mockDnsLookUpAll.mockResolvedValue([{ address: '123.123.123.123', family: 4 }]);
+
     const res = await checkRpiIp();
+
     expect(res).toBe('123.123.123.123');
     expect(mockDnsLookUpAll).toBeCalledTimes(1);
     expect(mockDnsLookUpAll).toHaveBeenLastCalledWith('raspberrypi.local');
@@ -22,7 +26,9 @@ describe('test check-rpi-ip', () => {
 
   it('should return null if no matched result', async () => {
     mockDnsLookUpAll.mockResolvedValue([]);
+
     const res = await checkRpiIp();
+
     expect(res).toBe(null);
     expect(mockDnsLookUpAll).toBeCalledTimes(1);
     expect(mockDnsLookUpAll).toHaveBeenLastCalledWith('raspberrypi.local');
@@ -30,7 +36,9 @@ describe('test check-rpi-ip', () => {
 
   it('should return null when error occur', async () => {
     mockDnsLookUpAll.mockRejectedValue(new Error('ENOTFOUND'));
+
     const res = await checkRpiIp();
+
     expect(res).toBe(null);
     expect(mockDnsLookUpAll).toBeCalledTimes(1);
     expect(mockDnsLookUpAll).toHaveBeenLastCalledWith('raspberrypi.local');

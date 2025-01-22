@@ -14,7 +14,7 @@ exports[`settings/Editor initially no warning 1`] = `
     Default Units
     url:
     options:
-    [{"value":"mm","label":"mm","selected":true},{"value":"inches","label":"Inches","selected":false}]
+    [{"label":"mm","selected":true,"value":"mm"},{"label":"Inches","selected":false,"value":"inches"}]
     <input
       class="select-control"
     />
@@ -26,7 +26,7 @@ exports[`settings/Editor initially no warning 1`] = `
     Default Font
     url:
     options:
-    [{"value":"Arial","label":"Arial","selected":true},{"value":"Courier","label":"Courier","selected":false},{"value":"Apple LiSung","label":"蘋果儷細宋","selected":false}]
+    [{"label":"Arial","selected":true,"value":"Arial"},{"label":"Courier","selected":false,"value":"Courier"},{"label":"蘋果儷細宋","selected":false,"value":"Apple LiSung"}]
     <input
       class="select-control"
     />
@@ -38,7 +38,7 @@ exports[`settings/Editor initially no warning 1`] = `
     Default Font Style
     url:
     options:
-    [{"value":"ArialMT","label":"Regular","selected":true},{"value":"Arial-BoldMT","label":"Bold","selected":false},{"value":"Arial-BoldItalicMT","label":"Bold Italic","selected":false},{"value":"Arial-ItalicMT","label":"Italic","selected":false}]
+    [{"label":"Regular","selected":true,"value":"ArialMT"},{"label":"Bold","selected":false,"value":"Arial-BoldMT"},{"label":"Bold Italic","selected":false,"value":"Arial-BoldItalicMT"},{"label":"Italic","selected":false,"value":"Arial-ItalicMT"}]
     <input
       class="select-control"
     />
@@ -50,7 +50,7 @@ exports[`settings/Editor initially no warning 1`] = `
     Default Document Setting
     url:
     options:
-    [{"value":"fbm1","label":"beamo","selected":false},{"value":"fbb1b","label":"Beambox","selected":true},{"value":"fbb1p","label":"Beambox Pro","selected":false},{"value":"fhexa1","label":"HEXA","selected":false},{"value":"ado1","label":"Ador","selected":false},{"value":"fpm1","label":"Promark","selected":false},{"value":"flv1","label":"Lazervida","selected":false},{"value":"fbb2","label":"Beambox II","selected":false}]
+    [{"label":"beamo","selected":false,"value":"fbm1"},{"label":"Beambox","selected":true,"value":"fbb1b"},{"label":"Beambox Pro","selected":false,"value":"fbb1p"},{"label":"HEXA","selected":false,"value":"fhexa1"},{"label":"Ador","selected":false,"value":"ado1"},{"label":"Promark","selected":false,"value":"fpm1"},{"label":"Lazervida","selected":false,"value":"flv1"},{"label":"Beambox II","selected":false,"value":"fbb2"}]
     <input
       class="select-control"
     />
@@ -62,7 +62,7 @@ exports[`settings/Editor initially no warning 1`] = `
     Guides
     url:
     options:
-    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
     <input
       class="select-control"
     />
@@ -85,7 +85,7 @@ exports[`settings/Editor initially no warning 1`] = `
     >
       <span
         class="font2"
-        style="margin-right: 10px; line-height: 32px;"
+        style="line-height: 32px; margin-right: 10px;"
       >
         X
       </span>
@@ -110,7 +110,7 @@ exports[`settings/Editor initially no warning 1`] = `
       </div>
       <span
         class="font2"
-        style="margin-right: 10px; line-height: 32px;"
+        style="line-height: 32px; margin-right: 10px;"
       >
         Y
       </span>
@@ -143,7 +143,7 @@ exports[`settings/Editor initially no warning 1`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004494995
     options:
-    [{"value":"TRUE","label":"Low","selected":false},{"value":"FALSE","label":"Normal","selected":true}]
+    [{"label":"Low","selected":false,"value":"TRUE"},{"label":"Normal","selected":true,"value":"FALSE"}]
     <input
       class="select-control"
     />
@@ -156,7 +156,7 @@ exports[`settings/Editor initially no warning 1`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004408956
     options:
-    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
     <input
       class="select-control"
     />
@@ -169,7 +169,7 @@ exports[`settings/Editor initially no warning 1`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004406496
     options:
-    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
     <input
       class="select-control"
     />
@@ -182,7 +182,7 @@ exports[`settings/Editor initially no warning 1`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004407276
     options:
-    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
     <input
       class="select-control"
     />
@@ -194,7 +194,7 @@ exports[`settings/Editor initially no warning 1`] = `
     Enable slow speed movement
     url:
     options:
-    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
     <input
       class="select-control"
     />
@@ -206,7 +206,7 @@ exports[`settings/Editor initially no warning 1`] = `
     Auto Switch Layer and Object Panel
     url:
     options:
-    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
     <input
       class="select-control"
     />
@@ -219,7 +219,7 @@ exports[`settings/Editor initially no warning 1`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/11146997425039
     options:
-    [{"value":"swiftray","label":"On","selected":false},{"value":"fluxghost","label":"Off","selected":true}]
+    [{"label":"On","selected":false,"value":"swiftray"},{"label":"Off","selected":true,"value":"fluxghost"}]
     <input
       class="select-control"
     />
@@ -231,7 +231,7 @@ exports[`settings/Editor initially no warning 1`] = `
     Enable Custom Backlash Compensation
     url:
     options:
-    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
     <input
       class="select-control"
     />
@@ -253,7 +253,7 @@ exports[`settings/Editor initially no warning 2`] = `
     Default Units
     url:
     options:
-    [{"value":"mm","label":"mm","selected":true},{"value":"inches","label":"Inches","selected":false}]
+    [{"label":"mm","selected":true,"value":"mm"},{"label":"Inches","selected":false,"value":"inches"}]
     <input
       class="select-control"
     />
@@ -265,7 +265,7 @@ exports[`settings/Editor initially no warning 2`] = `
     Default Font
     url:
     options:
-    [{"value":"Arial","label":"Arial","selected":false},{"value":"Courier","label":"Courier","selected":false},{"value":"Apple LiSung","label":"蘋果儷細宋","selected":true}]
+    [{"label":"Arial","selected":false,"value":"Arial"},{"label":"Courier","selected":false,"value":"Courier"},{"label":"蘋果儷細宋","selected":true,"value":"Apple LiSung"}]
     <input
       class="select-control"
     />
@@ -277,7 +277,7 @@ exports[`settings/Editor initially no warning 2`] = `
     Default Font Style
     url:
     options:
-    [{"value":"LiSungLight","label":"Light","selected":true}]
+    [{"label":"Light","selected":true,"value":"LiSungLight"}]
     <input
       class="select-control"
     />
@@ -289,7 +289,7 @@ exports[`settings/Editor initially no warning 2`] = `
     Default Document Setting
     url:
     options:
-    [{"value":"fbm1","label":"beamo","selected":false},{"value":"fbb1b","label":"Beambox","selected":true},{"value":"fbb1p","label":"Beambox Pro","selected":false},{"value":"fhexa1","label":"HEXA","selected":false},{"value":"ado1","label":"Ador","selected":false},{"value":"fpm1","label":"Promark","selected":false},{"value":"flv1","label":"Lazervida","selected":false},{"value":"fbb2","label":"Beambox II","selected":false}]
+    [{"label":"beamo","selected":false,"value":"fbm1"},{"label":"Beambox","selected":true,"value":"fbb1b"},{"label":"Beambox Pro","selected":false,"value":"fbb1p"},{"label":"HEXA","selected":false,"value":"fhexa1"},{"label":"Ador","selected":false,"value":"ado1"},{"label":"Promark","selected":false,"value":"fpm1"},{"label":"Lazervida","selected":false,"value":"flv1"},{"label":"Beambox II","selected":false,"value":"fbb2"}]
     <input
       class="select-control"
     />
@@ -301,7 +301,7 @@ exports[`settings/Editor initially no warning 2`] = `
     Guides
     url:
     options:
-    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
     <input
       class="select-control"
     />
@@ -324,7 +324,7 @@ exports[`settings/Editor initially no warning 2`] = `
     >
       <span
         class="font2"
-        style="margin-right: 10px; line-height: 32px;"
+        style="line-height: 32px; margin-right: 10px;"
       >
         X
       </span>
@@ -349,7 +349,7 @@ exports[`settings/Editor initially no warning 2`] = `
       </div>
       <span
         class="font2"
-        style="margin-right: 10px; line-height: 32px;"
+        style="line-height: 32px; margin-right: 10px;"
       >
         Y
       </span>
@@ -382,7 +382,7 @@ exports[`settings/Editor initially no warning 2`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004494995
     options:
-    [{"value":"TRUE","label":"Low","selected":false},{"value":"FALSE","label":"Normal","selected":true}]
+    [{"label":"Low","selected":false,"value":"TRUE"},{"label":"Normal","selected":true,"value":"FALSE"}]
     <input
       class="select-control"
     />
@@ -395,7 +395,7 @@ exports[`settings/Editor initially no warning 2`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004408956
     options:
-    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
     <input
       class="select-control"
     />
@@ -408,7 +408,7 @@ exports[`settings/Editor initially no warning 2`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004406496
     options:
-    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
     <input
       class="select-control"
     />
@@ -421,7 +421,7 @@ exports[`settings/Editor initially no warning 2`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004407276
     options:
-    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
     <input
       class="select-control"
     />
@@ -433,7 +433,7 @@ exports[`settings/Editor initially no warning 2`] = `
     Enable slow speed movement
     url:
     options:
-    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
     <input
       class="select-control"
     />
@@ -445,7 +445,7 @@ exports[`settings/Editor initially no warning 2`] = `
     Auto Switch Layer and Object Panel
     url:
     options:
-    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
     <input
       class="select-control"
     />
@@ -458,7 +458,7 @@ exports[`settings/Editor initially no warning 2`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/11146997425039
     options:
-    [{"value":"swiftray","label":"On","selected":false},{"value":"fluxghost","label":"Off","selected":true}]
+    [{"label":"On","selected":false,"value":"swiftray"},{"label":"Off","selected":true,"value":"fluxghost"}]
     <input
       class="select-control"
     />
@@ -470,7 +470,7 @@ exports[`settings/Editor initially no warning 2`] = `
     Enable Custom Backlash Compensation
     url:
     options:
-    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
     <input
       class="select-control"
     />
@@ -492,7 +492,7 @@ exports[`settings/Editor initially no warning 3`] = `
     Default Units
     url:
     options:
-    [{"value":"mm","label":"mm","selected":true},{"value":"inches","label":"Inches","selected":false}]
+    [{"label":"mm","selected":true,"value":"mm"},{"label":"Inches","selected":false,"value":"inches"}]
     <input
       class="select-control"
     />
@@ -504,7 +504,7 @@ exports[`settings/Editor initially no warning 3`] = `
     Default Font
     url:
     options:
-    [{"value":"Arial","label":"Arial","selected":false},{"value":"Courier","label":"Courier","selected":true},{"value":"Apple LiSung","label":"蘋果儷細宋","selected":false}]
+    [{"label":"Arial","selected":false,"value":"Arial"},{"label":"Courier","selected":true,"value":"Courier"},{"label":"蘋果儷細宋","selected":false,"value":"Apple LiSung"}]
     <input
       class="select-control"
     />
@@ -516,7 +516,7 @@ exports[`settings/Editor initially no warning 3`] = `
     Default Font Style
     url:
     options:
-    [{"value":"Regular","label":"Regular","selected":true},{"value":"Courier-Bold","label":"Bold","selected":false},{"value":"Courier-BoldOblique","label":"Bold Oblique","selected":false},{"value":"Courier-Oblique","label":"Oblique","selected":false}]
+    [{"label":"Regular","selected":true,"value":"Regular"},{"label":"Bold","selected":false,"value":"Courier-Bold"},{"label":"Bold Oblique","selected":false,"value":"Courier-BoldOblique"},{"label":"Oblique","selected":false,"value":"Courier-Oblique"}]
     <input
       class="select-control"
     />
@@ -528,7 +528,7 @@ exports[`settings/Editor initially no warning 3`] = `
     Default Document Setting
     url:
     options:
-    [{"value":"fbm1","label":"beamo","selected":false},{"value":"fbb1b","label":"Beambox","selected":true},{"value":"fbb1p","label":"Beambox Pro","selected":false},{"value":"fhexa1","label":"HEXA","selected":false},{"value":"ado1","label":"Ador","selected":false},{"value":"fpm1","label":"Promark","selected":false},{"value":"flv1","label":"Lazervida","selected":false},{"value":"fbb2","label":"Beambox II","selected":false}]
+    [{"label":"beamo","selected":false,"value":"fbm1"},{"label":"Beambox","selected":true,"value":"fbb1b"},{"label":"Beambox Pro","selected":false,"value":"fbb1p"},{"label":"HEXA","selected":false,"value":"fhexa1"},{"label":"Ador","selected":false,"value":"ado1"},{"label":"Promark","selected":false,"value":"fpm1"},{"label":"Lazervida","selected":false,"value":"flv1"},{"label":"Beambox II","selected":false,"value":"fbb2"}]
     <input
       class="select-control"
     />
@@ -540,7 +540,7 @@ exports[`settings/Editor initially no warning 3`] = `
     Guides
     url:
     options:
-    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
     <input
       class="select-control"
     />
@@ -563,7 +563,7 @@ exports[`settings/Editor initially no warning 3`] = `
     >
       <span
         class="font2"
-        style="margin-right: 10px; line-height: 32px;"
+        style="line-height: 32px; margin-right: 10px;"
       >
         X
       </span>
@@ -588,7 +588,7 @@ exports[`settings/Editor initially no warning 3`] = `
       </div>
       <span
         class="font2"
-        style="margin-right: 10px; line-height: 32px;"
+        style="line-height: 32px; margin-right: 10px;"
       >
         Y
       </span>
@@ -621,7 +621,7 @@ exports[`settings/Editor initially no warning 3`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004494995
     options:
-    [{"value":"TRUE","label":"Low","selected":false},{"value":"FALSE","label":"Normal","selected":true}]
+    [{"label":"Low","selected":false,"value":"TRUE"},{"label":"Normal","selected":true,"value":"FALSE"}]
     <input
       class="select-control"
     />
@@ -634,7 +634,7 @@ exports[`settings/Editor initially no warning 3`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004408956
     options:
-    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
     <input
       class="select-control"
     />
@@ -647,7 +647,7 @@ exports[`settings/Editor initially no warning 3`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004406496
     options:
-    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
     <input
       class="select-control"
     />
@@ -660,7 +660,7 @@ exports[`settings/Editor initially no warning 3`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004407276
     options:
-    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
     <input
       class="select-control"
     />
@@ -672,7 +672,7 @@ exports[`settings/Editor initially no warning 3`] = `
     Enable slow speed movement
     url:
     options:
-    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
     <input
       class="select-control"
     />
@@ -684,7 +684,7 @@ exports[`settings/Editor initially no warning 3`] = `
     Auto Switch Layer and Object Panel
     url:
     options:
-    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
     <input
       class="select-control"
     />
@@ -697,7 +697,7 @@ exports[`settings/Editor initially no warning 3`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/11146997425039
     options:
-    [{"value":"swiftray","label":"On","selected":false},{"value":"fluxghost","label":"Off","selected":true}]
+    [{"label":"On","selected":false,"value":"swiftray"},{"label":"Off","selected":true,"value":"fluxghost"}]
     <input
       class="select-control"
     />
@@ -709,7 +709,7 @@ exports[`settings/Editor initially no warning 3`] = `
     Enable Custom Backlash Compensation
     url:
     options:
-    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
     <input
       class="select-control"
     />
@@ -731,7 +731,7 @@ exports[`settings/Editor initially no warning 4`] = `
     Default Units
     url:
     options:
-    [{"value":"mm","label":"mm","selected":true},{"value":"inches","label":"Inches","selected":false}]
+    [{"label":"mm","selected":true,"value":"mm"},{"label":"Inches","selected":false,"value":"inches"}]
     <input
       class="select-control"
     />
@@ -743,7 +743,7 @@ exports[`settings/Editor initially no warning 4`] = `
     Default Font
     url:
     options:
-    [{"value":"Arial","label":"Arial","selected":false},{"value":"Courier","label":"Courier","selected":true},{"value":"Apple LiSung","label":"蘋果儷細宋","selected":false}]
+    [{"label":"Arial","selected":false,"value":"Arial"},{"label":"Courier","selected":true,"value":"Courier"},{"label":"蘋果儷細宋","selected":false,"value":"Apple LiSung"}]
     <input
       class="select-control"
     />
@@ -755,7 +755,7 @@ exports[`settings/Editor initially no warning 4`] = `
     Default Font Style
     url:
     options:
-    [{"value":"Regular","label":"Regular","selected":false},{"value":"Courier-Bold","label":"Bold","selected":true},{"value":"Courier-BoldOblique","label":"Bold Oblique","selected":false},{"value":"Courier-Oblique","label":"Oblique","selected":false}]
+    [{"label":"Regular","selected":false,"value":"Regular"},{"label":"Bold","selected":true,"value":"Courier-Bold"},{"label":"Bold Oblique","selected":false,"value":"Courier-BoldOblique"},{"label":"Oblique","selected":false,"value":"Courier-Oblique"}]
     <input
       class="select-control"
     />
@@ -767,7 +767,7 @@ exports[`settings/Editor initially no warning 4`] = `
     Default Document Setting
     url:
     options:
-    [{"value":"fbm1","label":"beamo","selected":false},{"value":"fbb1b","label":"Beambox","selected":true},{"value":"fbb1p","label":"Beambox Pro","selected":false},{"value":"fhexa1","label":"HEXA","selected":false},{"value":"ado1","label":"Ador","selected":false},{"value":"fpm1","label":"Promark","selected":false},{"value":"flv1","label":"Lazervida","selected":false},{"value":"fbb2","label":"Beambox II","selected":false}]
+    [{"label":"beamo","selected":false,"value":"fbm1"},{"label":"Beambox","selected":true,"value":"fbb1b"},{"label":"Beambox Pro","selected":false,"value":"fbb1p"},{"label":"HEXA","selected":false,"value":"fhexa1"},{"label":"Ador","selected":false,"value":"ado1"},{"label":"Promark","selected":false,"value":"fpm1"},{"label":"Lazervida","selected":false,"value":"flv1"},{"label":"Beambox II","selected":false,"value":"fbb2"}]
     <input
       class="select-control"
     />
@@ -779,7 +779,7 @@ exports[`settings/Editor initially no warning 4`] = `
     Guides
     url:
     options:
-    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
     <input
       class="select-control"
     />
@@ -802,7 +802,7 @@ exports[`settings/Editor initially no warning 4`] = `
     >
       <span
         class="font2"
-        style="margin-right: 10px; line-height: 32px;"
+        style="line-height: 32px; margin-right: 10px;"
       >
         X
       </span>
@@ -827,7 +827,7 @@ exports[`settings/Editor initially no warning 4`] = `
       </div>
       <span
         class="font2"
-        style="margin-right: 10px; line-height: 32px;"
+        style="line-height: 32px; margin-right: 10px;"
       >
         Y
       </span>
@@ -860,7 +860,7 @@ exports[`settings/Editor initially no warning 4`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004494995
     options:
-    [{"value":"TRUE","label":"Low","selected":false},{"value":"FALSE","label":"Normal","selected":true}]
+    [{"label":"Low","selected":false,"value":"TRUE"},{"label":"Normal","selected":true,"value":"FALSE"}]
     <input
       class="select-control"
     />
@@ -873,7 +873,7 @@ exports[`settings/Editor initially no warning 4`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004408956
     options:
-    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
     <input
       class="select-control"
     />
@@ -886,7 +886,7 @@ exports[`settings/Editor initially no warning 4`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004406496
     options:
-    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
     <input
       class="select-control"
     />
@@ -899,7 +899,7 @@ exports[`settings/Editor initially no warning 4`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004407276
     options:
-    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
     <input
       class="select-control"
     />
@@ -911,7 +911,7 @@ exports[`settings/Editor initially no warning 4`] = `
     Enable slow speed movement
     url:
     options:
-    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
     <input
       class="select-control"
     />
@@ -923,7 +923,7 @@ exports[`settings/Editor initially no warning 4`] = `
     Auto Switch Layer and Object Panel
     url:
     options:
-    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
     <input
       class="select-control"
     />
@@ -936,7 +936,7 @@ exports[`settings/Editor initially no warning 4`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/11146997425039
     options:
-    [{"value":"swiftray","label":"On","selected":false},{"value":"fluxghost","label":"Off","selected":true}]
+    [{"label":"On","selected":false,"value":"swiftray"},{"label":"Off","selected":true,"value":"fluxghost"}]
     <input
       class="select-control"
     />
@@ -948,7 +948,7 @@ exports[`settings/Editor initially no warning 4`] = `
     Enable Custom Backlash Compensation
     url:
     options:
-    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
     <input
       class="select-control"
     />

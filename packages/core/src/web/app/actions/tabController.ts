@@ -1,17 +1,18 @@
 import { EventEmitter } from 'eventemitter3';
 
-import communicator from '@app/implementations/communicator';
+import type { CanvasMode } from '@core/app/constants/canvasMode';
+import { TabEvents } from '@core/app/constants/tabConstants';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
-import { CanvasMode } from '@core/app/constants/canvasMode';
-import { Tab } from '@core/interfaces/Tab';
-import { TabEvents } from '@core/app/constants/tabConstants';
+import type { Tab } from '@core/interfaces/Tab';
+
+import communicator from '@app/implementations/communicator';
 
 class TabController extends EventEmitter {
-  private currentInfo: { title: string; isCloud: boolean } = null;
+  private currentInfo: { isCloud: boolean; title: string } = null;
 
-  public currentId: number | null = null;
+  public currentId: null | number = null;
 
   constructor() {
     super();
@@ -21,10 +22,11 @@ class TabController extends EventEmitter {
     communicator.on(TabEvents.TabBlurred, () => {
       this.emit(TabEvents.TabBlurred);
     });
-    communicator.on(TabEvents.TabUpdated, (_, tabs: Array<Tab>) => {
+    communicator.on(TabEvents.TabUpdated, (_, tabs: Tab[]) => {
       this.emit(TabEvents.TabUpdated, tabs);
     });
     this.currentId = communicator.sendSync(TabEvents.GetTabId);
+
     const topBarEventEmitter = eventEmitterFactory.createEventEmitter('top-bar');
     const updateTitleHandler = () => {
       const { isCloudFile } = currentFileManager;
@@ -32,8 +34,9 @@ class TabController extends EventEmitter {
       const hasUnsavedChanges = currentFileManager.getHasUnsavedChanges();
       const title = `${name || i18n.lang.topbar.untitled}${hasUnsavedChanges ? '*' : ''}`;
       const { currentInfo } = this;
+
       if (!currentInfo || currentInfo.title !== title || currentInfo.isCloud !== isCloudFile) {
-        this.currentInfo = { title, isCloud: isCloudFile };
+        this.currentInfo = { isCloud: isCloudFile, title };
         communicator.send(TabEvents.SetTabTitle, title, isCloudFile);
       }
     };
@@ -58,17 +61,17 @@ class TabController extends EventEmitter {
     this.off(TabEvents.TabFocused, handler);
   }
 
-  onTabsUpdated(handler: (tabs: Array<Tab>) => void): void {
+  onTabsUpdated(handler: (tabs: Tab[]) => void): void {
     this.on(TabEvents.TabUpdated, handler);
   }
 
-  offTabsUpdated(handler: (tabs: Array<Tab>) => void): void {
+  offTabsUpdated(handler: (tabs: Tab[]) => void): void {
     this.off(TabEvents.TabUpdated, handler);
   }
 
-  getCurrentId = (): number | null => this.currentId;
+  getCurrentId = (): null | number => this.currentId;
 
-  getAllTabs = (): Array<Tab> => communicator.sendSync(TabEvents.GetAllTabs);
+  getAllTabs = (): Tab[] => communicator.sendSync(TabEvents.GetAllTabs);
 
   addNewTab = (): void => communicator.send(TabEvents.AddNewTab);
 
@@ -79,7 +82,10 @@ class TabController extends EventEmitter {
   };
 
   focusTab = (id: number): void => {
-    if (id === this.currentId) return;
+    if (id === this.currentId) {
+      return;
+    }
+
     communicator.send(TabEvents.FocusTab, id);
   };
 

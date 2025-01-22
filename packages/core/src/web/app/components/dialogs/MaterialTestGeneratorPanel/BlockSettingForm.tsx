@@ -1,30 +1,29 @@
 import React from 'react';
-import UnitInput from '@core/app/widgets/UnitInput';
+
 import { Flex } from 'antd';
+
+import UnitInput from '@core/app/widgets/UnitInput';
 import useI18n from '@core/helpers/useI18n';
-import { BlockSetting, blockSettingParams, blockSettingScopes } from './BlockSetting';
+
+import type { BlockSetting } from './BlockSetting';
+import { blockSettingParams, blockSettingScopes } from './BlockSetting';
 import styles from './Form.module.scss';
 
 interface Props {
-  isInch: boolean;
   blockSetting: BlockSetting;
-  handleChange: (blockSetting: BlockSetting) => void;
   className?: string;
+  handleChange: (blockSetting: BlockSetting) => void;
+  isInch: boolean;
 }
 
 type Scope = (typeof blockSettingScopes)[number];
 type Param = (typeof blockSettingParams)[number];
 
-export default function BlockSettingForm({
-  isInch,
-  blockSetting,
-  handleChange,
-  className,
-}: Props): JSX.Element {
+export default function BlockSettingForm({ blockSetting, className, handleChange, isInch }: Props): React.JSX.Element {
   const t = useI18n();
   const lengthUnit = isInch ? 'in' : 'mm';
   const handleValueChange = (scope: Scope, param: Param, value: number) => {
-    const { min, max } = blockSetting[scope][param];
+    const { max, min } = blockSetting[scope][param];
 
     handleChange({
       ...blockSetting,
@@ -41,40 +40,38 @@ export default function BlockSettingForm({
 
     return (
       <UnitInput
+        addonAfter={param === 'count' ? '' : lengthUnit}
+        className={styles.input}
+        data-testid={`${scope}-${param}`}
         isInch={useInch}
         key={`${scope}-${param}`}
-        data-testid={`${scope}-${param}`}
-        className={styles.input}
-        value={setting.value}
         max={setting.max}
         min={setting.min}
+        onChange={(value) => handleValueChange(scope, param, value)}
         precision={useInch ? 4 : 0}
         step={useInch ? 25.4 : 1}
-        addonAfter={param === 'count' ? '' : lengthUnit}
-        onChange={(value) => handleValueChange(scope, param, value)}
+        value={setting.value}
       />
     );
   };
 
   const renderColumn = (scope: Scope) => (
-    <Flex key={scope} vertical justify="space-between" gap="8px">
-      <div className={styles['sub-title']}>
-        {t.material_test_generator[scope === 'row' ? 'rows' : 'columns']}
-      </div>
+    <Flex gap="8px" justify="space-between" key={scope} vertical>
+      <div className={styles['sub-title']}>{t.material_test_generator[scope === 'row' ? 'rows' : 'columns']}</div>
       {blockSettingParams.map((param) => renderInput(scope, param))}
     </Flex>
   );
 
   return (
     <Flex className={className} justify="space-between">
-      <Flex vertical justify="space-between" gap="8px">
+      <Flex gap="8px" justify="space-between" vertical>
         <div className={styles.title}>{t.material_test_generator.block_settings}</div>
         <div className={styles.label}>{t.material_test_generator.count}</div>
         <div className={styles.label}>{t.material_test_generator.size}</div>
         <div className={styles.label}>{t.material_test_generator.spacing}</div>
       </Flex>
 
-      <Flex className={styles.inputs} justify="flex-end" gap="20px">
+      <Flex className={styles.inputs} gap="20px" justify="flex-end">
         {blockSettingScopes.map(renderColumn)}
       </Flex>
     </Flex>

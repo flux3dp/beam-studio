@@ -1,8 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
+
 import classNames from 'classnames';
-import JsBarcode, { Options } from 'jsbarcode';
+import type { Options } from 'jsbarcode';
+import JsBarcode from 'jsbarcode';
 
 import useI18n from '@core/helpers/useI18n';
+
 import styles from './Barcode.module.scss';
 
 export type Renderer = 'canvas' | 'image' | 'svg';
@@ -32,40 +35,40 @@ export const formats = [
 export type Format = (typeof formats)[number];
 
 export const defaultOptions: Options = {
-  format: 'CODE128',
-  width: 2,
-  height: 100,
-  displayValue: true,
-  fontOptions: '',
-  font: 'Noto Sans',
-  textAlign: 'center',
-  textPosition: 'bottom',
-  textMargin: 2,
-  fontSize: 20,
   background: '#ffffff',
+  displayValue: true,
+  ean128: false,
+  font: 'Noto Sans',
+  fontOptions: '',
+  fontSize: 20,
+  format: 'CODE128',
+  height: 100,
   lineColor: '#000000',
   margin: 10,
-  ean128: false,
+  textAlign: 'center',
+  textMargin: 2,
+  textPosition: 'bottom',
+  width: 2,
 };
 
 export interface BarcodeProps {
+  className?: string;
+  options?: Options;
   renderer?: Renderer;
   value: string;
-  options?: Options;
-  className?: string;
 }
 
 export function Barcode({
   className,
-  value,
   options = defaultOptions,
   renderer = 'svg',
-}: Readonly<BarcodeProps>): JSX.Element {
+  value,
+}: Readonly<BarcodeProps>): React.JSX.Element {
   const {
     barcode_generator: { barcode: t },
   } = useI18n();
   const containerRef = useRef(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<null | string>(null);
 
   useEffect(() => {
     if (containerRef.current) {
@@ -84,23 +87,17 @@ export function Barcode({
   const renderBarcodeElement = () => {
     switch (renderer) {
       case 'canvas':
-        return <canvas id="barcode" ref={containerRef} className={contentClasses} />;
+        return <canvas className={contentClasses} id="barcode" ref={containerRef} />;
       case 'image':
-        return <img id="barcode" ref={containerRef} alt="barcode" className={contentClasses} />;
+        return <img alt="barcode" className={contentClasses} id="barcode" ref={containerRef} />;
       case 'svg':
       default:
-        return (
-          <svg
-            id="barcode"
-            ref={containerRef}
-            className={classNames(contentClasses, styles['barcode-svg'])}
-          />
-        );
+        return <svg className={classNames(contentClasses, styles['barcode-svg'])} id="barcode" ref={containerRef} />;
     }
   };
 
   return (
-    <div id="barcode-container" className={classNames(styles.container, className)}>
+    <div className={classNames(styles.container, className)} id="barcode-container">
       {renderBarcodeElement()}
       <span className={errorClasses}>{error}</span>
     </div>

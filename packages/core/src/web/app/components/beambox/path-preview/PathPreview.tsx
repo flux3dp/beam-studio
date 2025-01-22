@@ -1,4 +1,5 @@
-/* eslint-disable no-unused-vars */
+/* eslint-disable no-prototype-builtins */
+/* eslint-disable ts/no-unused-vars */
 import React from 'react';
 
 import classNames from 'classnames';
@@ -22,6 +23,7 @@ import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import workareaManager from '@core/app/svgedit/workarea';
 import checkDeviceStatus from '@core/helpers/check-device-status';
+import { checkBlockedSerial } from '@core/helpers/device/checkBlockedSerial';
 import getDevice from '@core/helpers/device/get-device';
 import deviceMaster from '@core/helpers/device-master';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
@@ -1864,7 +1866,7 @@ class PathPreview extends React.Component<Props, State> {
     });
   }
 
-  renderDataBlock(label: string, value: string): JSX.Element {
+  renderDataBlock(label: string, value: string): React.JSX.Element {
     return (
       <div className="data-block">
         <div className="item">{label}</div>
@@ -1873,7 +1875,7 @@ class PathPreview extends React.Component<Props, State> {
     );
   }
 
-  render(): JSX.Element {
+  render(): React.JSX.Element {
     const className = classNames({ mac: window.os === 'MacOS' });
     const { togglePathPreview } = this.context;
     const { height, isInverting, playState, speedLevel, width, workspace } = this.state;

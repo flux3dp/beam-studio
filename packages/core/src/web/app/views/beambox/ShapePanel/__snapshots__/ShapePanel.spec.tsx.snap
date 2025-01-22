@@ -93,6 +93,22 @@ exports[`test ShapePanel in mobile should render correctly 1`] = `
               <div
                 class="label"
               >
+                Graphics
+              </div>
+              <div>
+                mock shape icon: activeTab: 
+                basic
+                fileName: 
+                icon-minus
+                <button
+                  type="button"
+                >
+                  Import Icon
+                </button>
+              </div>
+              <div
+                class="label"
+              >
                 Shape
               </div>
               <div>
@@ -111,22 +127,6 @@ exports[`test ShapePanel in mobile should render correctly 1`] = `
                 basic
                 fileName: 
                 icon-triangle
-                <button
-                  type="button"
-                >
-                  Import Icon
-                </button>
-              </div>
-              <div
-                class="label"
-              >
-                Graphics
-              </div>
-              <div>
-                mock shape icon: activeTab: 
-                basic
-                fileName: 
-                icon-minus
                 <button
                   type="button"
                 >
@@ -475,6 +475,22 @@ exports[`test ShapePanel should render correctly 1`] = `
                       <div
                         class="label"
                       >
+                        Graphics
+                      </div>
+                      <div>
+                        mock shape icon: activeTab: 
+                        basic
+                        fileName: 
+                        icon-minus
+                        <button
+                          type="button"
+                        >
+                          Import Icon
+                        </button>
+                      </div>
+                      <div
+                        class="label"
+                      >
                         Shape
                       </div>
                       <div>
@@ -493,22 +509,6 @@ exports[`test ShapePanel should render correctly 1`] = `
                         basic
                         fileName: 
                         icon-triangle
-                        <button
-                          type="button"
-                        >
-                          Import Icon
-                        </button>
-                      </div>
-                      <div
-                        class="label"
-                      >
-                        Graphics
-                      </div>
-                      <div>
-                        mock shape icon: activeTab: 
-                        basic
-                        fileName: 
-                        icon-minus
                         <button
                           type="button"
                         >

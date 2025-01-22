@@ -1,6 +1,6 @@
 interface ConfigOption {
-  value: number;
   label?: string;
+  value: number;
 }
 
 export default ConfigOption;

@@ -1,13 +1,11 @@
-import classNames from 'classnames';
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Divider, Form, Input, InputRef, Space } from 'antd';
+
+import type { InputRef } from 'antd';
+import { Button, Divider, Form, Input, Space } from 'antd';
+import classNames from 'classnames';
 
 import alert from '@core/app/actions/alert-caller';
-import browser from '@app/implementations/browser';
 import dialogCaller from '@core/app/actions/dialog-caller';
-import isFluxPlusActive from '@core/helpers/is-flux-plus-active';
-import storage from '@app/implementations/storage';
-import useI18n from '@core/helpers/useI18n';
 import {
   externalLinkFBSignIn,
   externalLinkGoogleSignIn,
@@ -15,28 +13,32 @@ import {
   signIn,
   signOut,
 } from '@core/helpers/api/flux-id';
+import isFluxPlusActive from '@core/helpers/is-flux-plus-active';
 import { useIsMobile } from '@core/helpers/system-helper';
+import useI18n from '@core/helpers/useI18n';
 
-import FluxPlusModal from './FluxPlusModal';
+import browser from '@app/implementations/browser';
+import storage from '@app/implementations/storage';
+
 import styles from './FluxIdLogin.module.scss';
+import FluxPlusModal from './FluxPlusModal';
 
 interface Props {
-  silent: boolean;
   onClose: () => void;
+  silent: boolean;
 }
 
-const FluxIdLogin = ({ silent, onClose }: Props): JSX.Element => {
+const FluxIdLogin = ({ onClose, silent }: Props): React.JSX.Element => {
   const lang = useI18n().flux_id_login;
 
   const emailInput = useRef<InputRef>(null);
   const passwordInput = useRef<InputRef>(null);
-  const [isRememberMeChecked, setIsRememberMeChecked] = useState(
-    !!storage.get('keep-flux-id-login'),
-  );
+  const [isRememberMeChecked, setIsRememberMeChecked] = useState(!!storage.get('keep-flux-id-login'));
   const isMobile = useIsMobile();
 
   useEffect(() => {
     fluxIDEvents.on('oauth-logged-in', onClose);
+
     return () => {
       fluxIDEvents.removeListener('oauth-logged-in', onClose);
     };
@@ -56,15 +58,19 @@ const FluxIdLogin = ({ silent, onClose }: Props): JSX.Element => {
   const handleLogin = async () => {
     const email = emailInput.current.input.value;
     const password = passwordInput.current.input.value;
+
     await signOut();
+
     const res = await signIn({
       email,
-      password,
       expires_session: !isRememberMeChecked,
+      password,
     });
+
     if (res.error) {
       return;
     }
+
     if (res.status === 'error') {
       if (res.info === 'USER_NOT_FOUND') {
         alert.popUpError({ message: lang.incorrect });
@@ -73,13 +79,15 @@ const FluxIdLogin = ({ silent, onClose }: Props): JSX.Element => {
       } else {
         alert.popUpError({ message: res.message });
       }
+
       return;
     }
+
     if (res.status === 'ok') {
-      // eslint-disable-next-line no-console
       console.log('Log in succeeded', res);
       storage.set('keep-flux-id-login', isRememberMeChecked);
       onClose();
+
       if (!silent) {
         dialogCaller.showFluxCreditDialog();
       }
@@ -87,7 +95,7 @@ const FluxIdLogin = ({ silent, onClose }: Props): JSX.Element => {
   };
 
   return (
-    <FluxPlusModal className={styles['flux-login']} onClose={onClose} hideMobileBanner>
+    <FluxPlusModal className={styles['flux-login']} hideMobileBanner onClose={onClose}>
       <>
         <div className={styles.title}>{lang.login}</div>
         {renderOAuthContent()}
@@ -95,47 +103,39 @@ const FluxIdLogin = ({ silent, onClose }: Props): JSX.Element => {
         <Form className={styles['login-inputs']}>
           <Form.Item name="email-input">
             <Input
-              ref={emailInput}
               onKeyDown={(e: React.KeyboardEvent) => e.stopPropagation()}
               placeholder={lang.email}
+              ref={emailInput}
             />
           </Form.Item>
           <Form.Item name="password-input">
             <Input.Password
-              ref={passwordInput}
               onKeyDown={(e: React.KeyboardEvent) => e.stopPropagation()}
               placeholder={lang.password}
+              ref={passwordInput}
             />
           </Form.Item>
           <div className={styles.options}>
-            <div
-              className={styles['remember-me']}
-              onClick={() => setIsRememberMeChecked(!isRememberMeChecked)}
-            >
-              <input type="checkbox" checked={isRememberMeChecked} onChange={() => {}} />
+            <div className={styles['remember-me']} onClick={() => setIsRememberMeChecked(!isRememberMeChecked)}>
+              <input checked={isRememberMeChecked} onChange={() => {}} type="checkbox" />
               <div>{lang.remember_me}</div>
             </div>
-            <div
-              className={styles['forget-password']}
-              onClick={() => browser.open(lang.lost_password_url)}
-            >
+            <div className={styles['forget-password']} onClick={() => browser.open(lang.lost_password_url)}>
               {lang.forget_password}
             </div>
           </div>
         </Form>
         <Space className={styles.footer} direction="vertical">
-          <Button block type="primary" onClick={handleLogin}>
+          <Button block onClick={handleLogin} type="primary">
             {lang.login}
           </Button>
-          <Button block type="default" onClick={() => browser.open(lang.signup_url)}>
+          <Button block onClick={() => browser.open(lang.signup_url)} type="default">
             {lang.register}
           </Button>
           <div className={styles.text}>
             <div onClick={() => onClose()}>{lang.work_offline}</div>
             {isFluxPlusActive && isMobile && (
-              <div onClick={() => browser.open(lang.flux_plus.website_url)}>
-                {lang.flux_plus.explore_plans}
-              </div>
+              <div onClick={() => browser.open(lang.flux_plus.website_url)}>{lang.flux_plus.explore_plans}</div>
             )}
           </div>
         </Space>

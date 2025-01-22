@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
+
 import { act, fireEvent, render, waitFor } from '@testing-library/react';
 
 import LayerModule from '@core/app/constants/layer-module/layer-modules';
@@ -9,6 +9,7 @@ import LayerContextMenu from './LayerContextMenu';
 
 const mockClearSelection = jest.fn();
 const mockAddCommandToHistory = jest.fn();
+
 jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (cb) =>
     cb({
@@ -28,11 +29,12 @@ const mockGetLayerElementByName = jest.fn();
 const mockGetLayerPosition = jest.fn();
 const mockMergeLayers = jest.fn();
 const mockSetLayersLock = jest.fn();
+
 jest.mock('@core/helpers/layer/layer-helper', () => ({
   cloneLayers: (...args) => mockCloneLayers(...args),
   deleteLayers: (...args) => mockDeleteLayers(...args),
-  getLayerElementByName: (...args) => mockGetLayerElementByName(...args),
   getAllLayerNames: () => mockGetAllLayerNames(),
+  getLayerElementByName: (...args) => mockGetLayerElementByName(...args),
   getLayerPosition: (...args) => mockGetLayerPosition(...args),
   mergeLayers: (...args) => mockMergeLayers(...args),
   setLayersLock: (...args) => mockSetLayersLock(...args),
@@ -43,21 +45,21 @@ jest.mock('@core/helpers/useI18n', () => () => ({
     right_panel: {
       layer_panel: {
         layers: {
-          rename: 'rename',
+          del: 'del',
           dupe: 'dupe',
           lock: 'lock',
-          unlock: 'unlock',
-          del: 'del',
-          merge_down: 'merge_down',
           merge_all: 'merge_all',
+          merge_down: 'merge_down',
           merge_selected: 'merge_selected',
+          rename: 'rename',
           splitFullColor: 'splitFullColor',
-          switchToSingleColor: 'switchToSingleColor',
           switchToFullColor: 'switchToFullColor',
+          switchToSingleColor: 'switchToSingleColor',
+          unlock: 'unlock',
         },
         notification: {
-          splitColorTitle: 'splitColorTitle',
           splitColorMsg: 'splitColorMsg',
+          splitColorTitle: 'splitColorTitle',
         },
       },
     },
@@ -65,11 +67,13 @@ jest.mock('@core/helpers/useI18n', () => () => ({
 }));
 
 const mockGetData = jest.fn();
+
 jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   getData: (...args) => mockGetData(...args),
 }));
 
 const mockSplitFullColorLayer = jest.fn();
+
 jest.mock(
   '@core/helpers/layer/full-color/splitFullColorLayer',
   () =>
@@ -78,6 +82,7 @@ jest.mock(
 );
 
 const mockToggleFullColorLayer = jest.fn();
+
 jest.mock(
   '@core/helpers/layer/full-color/toggleFullColorLayer',
   () =>
@@ -90,24 +95,29 @@ jest.mock('@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext', () 
 }));
 
 const useIsMobile = jest.fn();
+
 jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => useIsMobile(),
 }));
 
 const mockUseWorkarea = jest.fn();
+
 jest.mock('@core/helpers/hooks/useWorkarea', () => () => mockUseWorkarea());
 
 const mockPopUp = jest.fn();
+
 jest.mock('@core/app/actions/alert-caller', () => ({
   popUp: (...args) => mockPopUp(...args),
 }));
 
 const mockTogglePresprayArea = jest.fn();
+
 jest.mock('@core/app/actions/canvas/prespray-area', () => ({
   togglePresprayArea: () => mockTogglePresprayArea(),
 }));
 
 const mockUpdateLayerColor = jest.fn();
+
 jest.mock(
   '@core/helpers/color/updateLayerColor',
   () =>
@@ -116,8 +126,8 @@ jest.mock(
 );
 
 const mockDrawing = {
-  getLayerName: jest.fn(),
   getCurrentLayerName: jest.fn(),
+  getLayerName: jest.fn(),
 } as any;
 
 const mockElem = {
@@ -129,6 +139,7 @@ const mockSelectOnlyLayer = jest.fn();
 const mockForceUpdate = jest.fn();
 const mockRenameLayer = jest.fn();
 const mockForceUpdateSelectedLayers = jest.fn();
+
 describe('test LayerContextMenu', () => {
   beforeEach(() => {
     jest.resetAllMocks();
@@ -138,75 +149,69 @@ describe('test LayerContextMenu', () => {
 
   it('should render correctly when multiselecting', () => {
     mockDrawing.getLayerName.mockReturnValue('layer1');
+
     const { container } = render(
       <LayerPanelContext.Provider
         value={
           {
-            selectedLayers: ['layer1', 'layer2'],
-            setSelectedLayers: mockSetSelectedLayers,
             forceUpdate: mockForceUpdate,
             forceUpdateSelectedLayers: mockForceUpdateSelectedLayers,
             hasVector: false,
+            selectedLayers: ['layer1', 'layer2'],
+            setSelectedLayers: mockSetSelectedLayers,
           } as any
         }
       >
-        <LayerContextMenu
-          drawing={mockDrawing}
-          selectOnlyLayer={mockSelectOnlyLayer}
-          renameLayer={mockRenameLayer}
-        />
+        <LayerContextMenu drawing={mockDrawing} renameLayer={mockRenameLayer} selectOnlyLayer={mockSelectOnlyLayer} />
       </LayerPanelContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
     expect(mockUseWorkarea).toBeCalledTimes(1);
   });
 
   it('should render correctly when selecting last', () => {
     mockDrawing.getLayerName.mockReturnValue('layer1');
+
     const { container } = render(
       <LayerPanelContext.Provider
         value={
           {
-            selectedLayers: ['layer1'],
-            setSelectedLayers: mockSetSelectedLayers,
             forceUpdate: mockForceUpdate,
             forceUpdateSelectedLayers: mockForceUpdateSelectedLayers,
             hasVector: false,
+            selectedLayers: ['layer1'],
+            setSelectedLayers: mockSetSelectedLayers,
           } as any
         }
       >
-        <LayerContextMenu
-          drawing={mockDrawing}
-          selectOnlyLayer={mockSelectOnlyLayer}
-          renameLayer={mockRenameLayer}
-        />
+        <LayerContextMenu drawing={mockDrawing} renameLayer={mockRenameLayer} selectOnlyLayer={mockSelectOnlyLayer} />
       </LayerPanelContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
   });
 
   it('should render correctly in mobile', () => {
     useIsMobile.mockReturnValue(true);
     mockDrawing.getLayerName.mockReturnValue('layer1');
+
     const { container } = render(
       <LayerPanelContext.Provider
         value={
           {
-            selectedLayers: ['layer2'],
-            setSelectedLayers: mockSetSelectedLayers,
             forceUpdate: mockForceUpdate,
             forceUpdateSelectedLayers: mockForceUpdateSelectedLayers,
             hasVector: false,
+            selectedLayers: ['layer2'],
+            setSelectedLayers: mockSetSelectedLayers,
           } as any
         }
       >
-        <LayerContextMenu
-          drawing={mockDrawing}
-          selectOnlyLayer={mockSelectOnlyLayer}
-          renameLayer={mockRenameLayer}
-        />
+        <LayerContextMenu drawing={mockDrawing} renameLayer={mockRenameLayer} selectOnlyLayer={mockSelectOnlyLayer} />
       </LayerPanelContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
   });
 
@@ -215,21 +220,18 @@ describe('test LayerContextMenu', () => {
       <LayerPanelContext.Provider
         value={
           {
-            selectedLayers: ['layer2'],
-            setSelectedLayers: mockSetSelectedLayers,
             forceUpdate: mockForceUpdate,
             forceUpdateSelectedLayers: mockForceUpdateSelectedLayers,
             hasVector: false,
+            selectedLayers: ['layer2'],
+            setSelectedLayers: mockSetSelectedLayers,
           } as any
         }
       >
-        <LayerContextMenu
-          drawing={mockDrawing}
-          selectOnlyLayer={mockSelectOnlyLayer}
-          renameLayer={mockRenameLayer}
-        />
+        <LayerContextMenu drawing={mockDrawing} renameLayer={mockRenameLayer} selectOnlyLayer={mockSelectOnlyLayer} />
       </LayerPanelContext.Provider>,
     );
+
     expect(mockSelectOnlyLayer).not.toBeCalled();
     expect(mockRenameLayer).not.toBeCalled();
     fireEvent.click(getByText('rename'));
@@ -243,21 +245,18 @@ describe('test LayerContextMenu', () => {
       <LayerPanelContext.Provider
         value={
           {
-            selectedLayers: ['layer1', 'layer2'],
-            setSelectedLayers: mockSetSelectedLayers,
             forceUpdate: mockForceUpdate,
             forceUpdateSelectedLayers: mockForceUpdateSelectedLayers,
             hasVector: false,
+            selectedLayers: ['layer1', 'layer2'],
+            setSelectedLayers: mockSetSelectedLayers,
           } as any
         }
       >
-        <LayerContextMenu
-          drawing={mockDrawing}
-          selectOnlyLayer={mockSelectOnlyLayer}
-          renameLayer={mockRenameLayer}
-        />
+        <LayerContextMenu drawing={mockDrawing} renameLayer={mockRenameLayer} selectOnlyLayer={mockSelectOnlyLayer} />
       </LayerPanelContext.Provider>,
     );
+
     expect(mockCloneLayers).not.toBeCalled();
     mockCloneLayers.mockReturnValue(['layer1 copy', 'layer2 copy']);
     expect(mockSetSelectedLayers).not.toBeCalled();
@@ -271,21 +270,18 @@ describe('test LayerContextMenu', () => {
       <LayerPanelContext.Provider
         value={
           {
-            selectedLayers: ['layer1', 'layer2'],
-            setSelectedLayers: mockSetSelectedLayers,
             forceUpdate: mockForceUpdate,
             forceUpdateSelectedLayers: mockForceUpdateSelectedLayers,
             hasVector: false,
+            selectedLayers: ['layer1', 'layer2'],
+            setSelectedLayers: mockSetSelectedLayers,
           } as any
         }
       >
-        <LayerContextMenu
-          drawing={mockDrawing}
-          selectOnlyLayer={mockSelectOnlyLayer}
-          renameLayer={mockRenameLayer}
-        />
+        <LayerContextMenu drawing={mockDrawing} renameLayer={mockRenameLayer} selectOnlyLayer={mockSelectOnlyLayer} />
       </LayerPanelContext.Provider>,
     );
+
     expect(mockClearSelection).not.toBeCalled();
     expect(mockSetLayersLock).not.toBeCalled();
     expect(mockSetSelectedLayers).not.toBeCalled();
@@ -305,21 +301,18 @@ describe('test LayerContextMenu', () => {
       <LayerPanelContext.Provider
         value={
           {
-            selectedLayers: ['layer1'],
-            setSelectedLayers: mockSetSelectedLayers,
             forceUpdate: mockForceUpdate,
             forceUpdateSelectedLayers: mockForceUpdateSelectedLayers,
             hasVector: false,
+            selectedLayers: ['layer1'],
+            setSelectedLayers: mockSetSelectedLayers,
           } as any
         }
       >
-        <LayerContextMenu
-          drawing={mockDrawing}
-          selectOnlyLayer={mockSelectOnlyLayer}
-          renameLayer={mockRenameLayer}
-        />
+        <LayerContextMenu drawing={mockDrawing} renameLayer={mockRenameLayer} selectOnlyLayer={mockSelectOnlyLayer} />
       </LayerPanelContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
     expect(mockClearSelection).not.toBeCalled();
     expect(mockSetLayersLock).not.toBeCalled();
@@ -336,21 +329,18 @@ describe('test LayerContextMenu', () => {
       <LayerPanelContext.Provider
         value={
           {
-            selectedLayers: ['layer1', 'layer2'],
-            setSelectedLayers: mockSetSelectedLayers,
             forceUpdate: mockForceUpdate,
             forceUpdateSelectedLayers: mockForceUpdateSelectedLayers,
             hasVector: false,
+            selectedLayers: ['layer1', 'layer2'],
+            setSelectedLayers: mockSetSelectedLayers,
           } as any
         }
       >
-        <LayerContextMenu
-          drawing={mockDrawing}
-          selectOnlyLayer={mockSelectOnlyLayer}
-          renameLayer={mockRenameLayer}
-        />
+        <LayerContextMenu drawing={mockDrawing} renameLayer={mockRenameLayer} selectOnlyLayer={mockSelectOnlyLayer} />
       </LayerPanelContext.Provider>,
     );
+
     expect(mockDeleteLayers).not.toBeCalled();
     expect(mockSetSelectedLayers).not.toBeCalled();
     expect(mockTogglePresprayArea).not.toBeCalled();
@@ -365,21 +355,18 @@ describe('test LayerContextMenu', () => {
       <LayerPanelContext.Provider
         value={
           {
-            selectedLayers: ['layer1'],
-            setSelectedLayers: mockSetSelectedLayers,
             forceUpdate: mockForceUpdate,
             forceUpdateSelectedLayers: mockForceUpdateSelectedLayers,
             hasVector: false,
+            selectedLayers: ['layer1'],
+            setSelectedLayers: mockSetSelectedLayers,
           } as any
         }
       >
-        <LayerContextMenu
-          drawing={mockDrawing}
-          selectOnlyLayer={mockSelectOnlyLayer}
-          renameLayer={mockRenameLayer}
-        />
+        <LayerContextMenu drawing={mockDrawing} renameLayer={mockRenameLayer} selectOnlyLayer={mockSelectOnlyLayer} />
       </LayerPanelContext.Provider>,
     );
+
     mockGetLayerPosition.mockReturnValue(1);
     mockDrawing.getLayerName.mockReturnValue('layer2');
     expect(mockMergeLayers).not.toBeCalled();
@@ -398,25 +385,23 @@ describe('test LayerContextMenu', () => {
 
   test('merge all should work', async () => {
     mockGetAllLayerNames.mockReturnValue(['layer1', 'layer2', 'layer3']);
+
     const { getByText } = render(
       <LayerPanelContext.Provider
         value={
           {
-            selectedLayers: ['layer2'],
-            setSelectedLayers: mockSetSelectedLayers,
             forceUpdate: mockForceUpdate,
             forceUpdateSelectedLayers: mockForceUpdateSelectedLayers,
             hasVector: false,
+            selectedLayers: ['layer2'],
+            setSelectedLayers: mockSetSelectedLayers,
           } as any
         }
       >
-        <LayerContextMenu
-          drawing={mockDrawing}
-          selectOnlyLayer={mockSelectOnlyLayer}
-          renameLayer={mockRenameLayer}
-        />
+        <LayerContextMenu drawing={mockDrawing} renameLayer={mockRenameLayer} selectOnlyLayer={mockSelectOnlyLayer} />
       </LayerPanelContext.Provider>,
     );
+
     expect(mockMergeLayers).not.toBeCalled();
     mockMergeLayers.mockReturnValue('layer1');
     expect(mockSetSelectedLayers).not.toBeCalled();
@@ -439,21 +424,18 @@ describe('test LayerContextMenu', () => {
       <LayerPanelContext.Provider
         value={
           {
-            selectedLayers: ['layer1', 'layer2'],
-            setSelectedLayers: mockSetSelectedLayers,
             forceUpdate: mockForceUpdate,
             forceUpdateSelectedLayers: mockForceUpdateSelectedLayers,
             hasVector: false,
+            selectedLayers: ['layer1', 'layer2'],
+            setSelectedLayers: mockSetSelectedLayers,
           } as any
         }
       >
-        <LayerContextMenu
-          drawing={mockDrawing}
-          selectOnlyLayer={mockSelectOnlyLayer}
-          renameLayer={mockRenameLayer}
-        />
+        <LayerContextMenu drawing={mockDrawing} renameLayer={mockRenameLayer} selectOnlyLayer={mockSelectOnlyLayer} />
       </LayerPanelContext.Provider>,
     );
+
     mockDrawing.getCurrentLayerName.mockReturnValue('layer2');
     mockMergeLayers.mockReturnValue('layer2');
     expect(mockDrawing.getCurrentLayerName).not.toBeCalled();
@@ -479,25 +461,23 @@ describe('test LayerContextMenu', () => {
     mockDrawing.getLayerName.mockReturnValue('layer1');
     mockGetLayerElementByName.mockReturnValue(mockElem);
     mockGetData.mockReturnValueOnce(LayerModule.PRINTER).mockReturnValueOnce(false);
+
     const { container } = render(
       <LayerPanelContext.Provider
         value={
           {
-            selectedLayers: ['layer1'],
-            setSelectedLayers: mockSetSelectedLayers,
             forceUpdate: mockForceUpdate,
             forceUpdateSelectedLayers: mockForceUpdateSelectedLayers,
             hasVector: false,
+            selectedLayers: ['layer1'],
+            setSelectedLayers: mockSetSelectedLayers,
           } as any
         }
       >
-        <LayerContextMenu
-          drawing={mockDrawing}
-          selectOnlyLayer={mockSelectOnlyLayer}
-          renameLayer={mockRenameLayer}
-        />
+        <LayerContextMenu drawing={mockDrawing} renameLayer={mockRenameLayer} selectOnlyLayer={mockSelectOnlyLayer} />
       </LayerPanelContext.Provider>,
     );
+
     expect(mockGetLayerElementByName).toBeCalledTimes(1);
     expect(mockGetLayerElementByName).toHaveBeenLastCalledWith('layer1');
     expect(mockGetData).toBeCalledTimes(3);
@@ -511,25 +491,23 @@ describe('test LayerContextMenu', () => {
     mockDrawing.getLayerName.mockReturnValue('layer1');
     mockGetLayerElementByName.mockReturnValue(mockElem);
     mockGetData.mockReturnValueOnce(LayerModule.PRINTER).mockReturnValueOnce(true);
+
     const { getByText } = render(
       <LayerPanelContext.Provider
         value={
           {
-            selectedLayers: ['layer1'],
-            setSelectedLayers: mockSetSelectedLayers,
             forceUpdate: mockForceUpdate,
             forceUpdateSelectedLayers: mockForceUpdateSelectedLayers,
             hasVector: false,
+            selectedLayers: ['layer1'],
+            setSelectedLayers: mockSetSelectedLayers,
           } as any
         }
       >
-        <LayerContextMenu
-          drawing={mockDrawing}
-          selectOnlyLayer={mockSelectOnlyLayer}
-          renameLayer={mockRenameLayer}
-        />
+        <LayerContextMenu drawing={mockDrawing} renameLayer={mockRenameLayer} selectOnlyLayer={mockSelectOnlyLayer} />
       </LayerPanelContext.Provider>,
     );
+
     expect(mockSplitFullColorLayer).not.toBeCalled();
     await act(async () => {
       fireEvent.click(getByText('splitFullColor'));
@@ -554,25 +532,24 @@ describe('test LayerContextMenu', () => {
       <LayerPanelContext.Provider
         value={
           {
-            selectedLayers: ['layer1'],
-            setSelectedLayers: mockSetSelectedLayers,
             forceUpdate: mockForceUpdate,
             forceUpdateSelectedLayers: mockForceUpdateSelectedLayers,
             hasVector: false,
+            selectedLayers: ['layer1'],
+            setSelectedLayers: mockSetSelectedLayers,
           } as any
         }
       >
-        <LayerContextMenu
-          drawing={mockDrawing}
-          selectOnlyLayer={mockSelectOnlyLayer}
-          renameLayer={mockRenameLayer}
-        />
+        <LayerContextMenu drawing={mockDrawing} renameLayer={mockRenameLayer} selectOnlyLayer={mockSelectOnlyLayer} />
       </LayerPanelContext.Provider>,
     );
+
     expect(mockSplitFullColorLayer).not.toBeCalled();
+
     const mockCmd = {
       isEmpty: jest.fn(),
     };
+
     mockToggleFullColorLayer.mockReturnValue(mockCmd);
     mockCmd.isEmpty.mockReturnValue(false);
     await act(async () => {

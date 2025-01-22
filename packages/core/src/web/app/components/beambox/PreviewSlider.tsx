@@ -1,18 +1,19 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
+
 import { Slider, Space, Tooltip } from 'antd';
 
 import constant from '@core/app/actions/beambox/constant';
-import deviceMaster from '@core/helpers/device-master';
 import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
-import useI18n from '@core/helpers/useI18n';
-import WorkareaIcons from '@core/app/icons/workarea/WorkareaIcons';
-import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { CanvasMode } from '@core/app/constants/canvasMode';
-import { IConfigSetting } from '@core/interfaces/IDevice';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import WorkareaIcons from '@core/app/icons/workarea/WorkareaIcons';
+import deviceMaster from '@core/helpers/device-master';
+import useI18n from '@core/helpers/useI18n';
+import type { IConfigSetting } from '@core/interfaces/IDevice';
 
 import styles from './PreviewSlider.module.scss';
 
-const PreviewSlider = (): JSX.Element => {
+const PreviewSlider = (): React.JSX.Element => {
   const [opacity, setOpacity] = useState(1);
   const [showOpacity, setShowOpacity] = useState(false);
   const [exposureSetting, setExposureSetting] = useState<IConfigSetting | null>(null);
@@ -21,10 +22,17 @@ const PreviewSlider = (): JSX.Element => {
   const lang = useI18n();
 
   const getSetting = async () => {
-    if (!deviceMaster?.currentDevice?.info) return;
-    if (!constant.adorModels.includes(deviceMaster.currentDevice.info.model)) return;
+    if (!deviceMaster?.currentDevice?.info) {
+      return;
+    }
+
+    if (!constant.adorModels.includes(deviceMaster.currentDevice.info.model)) {
+      return;
+    }
+
     try {
       const exposureRes = await deviceMaster.getDeviceSetting('camera_exposure_absolute');
+
       setExposureSetting(JSON.parse(exposureRes.value));
     } catch (e) {
       console.error('Failed to get exposure setting', e);
@@ -33,6 +41,7 @@ const PreviewSlider = (): JSX.Element => {
 
   const updateBgOpacity = useCallback((val: string) => {
     const bgImg: HTMLElement = document.querySelector('#background_image');
+
     if (bgImg) {
       bgImg.style.opacity = val;
       setShowOpacity(true);
@@ -48,11 +57,16 @@ const PreviewSlider = (): JSX.Element => {
   // this is also triggered by UPDATE_CONTEXT event in PreviewModeController.start
   useEffect(() => {
     setExposureSetting(null);
-    if (isPreviewing && PreviewModeController.isPreviewModeOn) getSetting();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    if (isPreviewing && PreviewModeController.isPreviewModeOn) {
+      getSetting();
+    }
+    // eslint-disable-next-line hooks/exhaustive-deps
   }, [isPreviewing, PreviewModeController.isPreviewModeOn]);
 
-  if (mode === CanvasMode.PathPreview) return null;
+  if (mode === CanvasMode.PathPreview) {
+    return null;
+  }
 
   return (
     <Space className={styles.space} direction="vertical">
@@ -63,12 +77,12 @@ const PreviewSlider = (): JSX.Element => {
           </Tooltip>
           <Slider
             className={styles.slider}
-            min={0}
             max={1}
-            step={0.25}
-            value={opacity}
+            min={0}
             onChange={setOpacity}
+            step={0.25}
             tooltip={{ open: false }}
+            value={opacity}
           />
           <div className={styles.value}>{opacity * 100}%</div>
         </div>
@@ -80,17 +94,17 @@ const PreviewSlider = (): JSX.Element => {
           </Tooltip>
           <Slider
             className={styles.slider}
-            min={Math.max(exposureSetting.min, 250)}
             max={Math.min(exposureSetting.max, 650)}
-            step={exposureSetting.step}
-            value={exposureSetting.value}
-            onChange={(value: number) => setExposureSetting({ ...exposureSetting, value })}
+            min={Math.max(exposureSetting.min, 250)}
             onAfterChange={async (value: number) => {
               setExposureSetting({ ...exposureSetting, value });
               await deviceMaster.setDeviceSetting('camera_exposure_absolute', value.toString());
               await PreviewModeController.previewFullWorkarea();
             }}
+            onChange={(value: number) => setExposureSetting({ ...exposureSetting, value })}
+            step={exposureSetting.step}
             tooltip={{ open: false }}
+            value={exposureSetting.value}
           />
           <div className={styles.value}>{exposureSetting.value}</div>
         </div>

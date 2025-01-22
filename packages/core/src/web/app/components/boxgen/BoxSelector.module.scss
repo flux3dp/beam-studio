@@ -2,12 +2,12 @@
   flex: 1;
   border-bottom: 0;
   @media screen and (max-width: 600px) {
-  width: 250px;
-  flex: none;
+    width: 250px;
+    flex: none;
   }
 }
 
-.container{
+.container {
   display: flex;
   justify-content: center;
 }

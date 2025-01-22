@@ -1,4 +1,5 @@
-import { IDeviceInfo } from '@core/interfaces/IDevice';
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
+
 import getAutoFocusPosition from './getAutoFocusPosition';
 
 jest.mock('@core/app/constants/device-constants', () => ({
@@ -9,11 +10,13 @@ jest.mock('@core/app/constants/device-constants', () => ({
 }));
 
 const mockRawGetLastPos = jest.fn();
+
 jest.mock('@core/helpers/device-master', () => ({
   rawGetLastPos: (...args) => mockRawGetLastPos(...args),
 }));
 
 const mockDevice = { model: 'model-1' };
+
 describe('test getAutoFocusPosition', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -21,7 +24,9 @@ describe('test getAutoFocusPosition', () => {
 
   it('should work', async () => {
     mockRawGetLastPos.mockResolvedValue({ x: 75, y: 50 });
+
     let res = await getAutoFocusPosition(mockDevice as IDeviceInfo);
+
     expect(res).toBe('A');
 
     mockRawGetLastPos.mockResolvedValue({ x: 215, y: 250 });

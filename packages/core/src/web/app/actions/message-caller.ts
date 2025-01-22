@@ -1,5 +1,5 @@
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import { IMessage } from '@core/interfaces/IMessage';
+import type { IMessage } from '@core/interfaces/IMessage';
 
 export enum MessageLevel {
   OPEN,
@@ -12,6 +12,18 @@ export enum MessageLevel {
 
 const eventEmitter = eventEmitterFactory.createEventEmitter('alert-progress');
 const MessageCaller = {
+  checkIdExist: (id: string): boolean => {
+    const response = {
+      result: false,
+    };
+
+    eventEmitter.emit('CHECK_PROGRESS_EXIST', id, response);
+
+    return response.result;
+  },
+  closeMessage: (id: string): void => {
+    eventEmitter.emit('CLOSE_MESSAGE', id);
+  },
   openMessage: (args: IMessage): Promise<void> =>
     new Promise((resolve) => {
       eventEmitter.emit(
@@ -22,16 +34,6 @@ const MessageCaller = {
         resolve,
       );
     }),
-  closeMessage: (id: string): void => {
-    eventEmitter.emit('CLOSE_MESSAGE', id);
-  },
-  checkIdExist: (id: string): boolean => {
-    const response = {
-      result: false,
-    };
-    eventEmitter.emit('CHECK_PROGRESS_EXIST', id, response);
-    return response.result;
-  },
 };
 
 export default MessageCaller;

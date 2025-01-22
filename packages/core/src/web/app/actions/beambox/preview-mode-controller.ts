@@ -1,24 +1,23 @@
-/* eslint-disable no-console */
 import Alert from '@core/app/actions/alert-caller';
-import AlertConstants from '@core/app/constants/alert-constants';
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import Constant, { promarkModels } from '@core/app/actions/beambox/constant';
+import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
+import Progress from '@core/app/actions/progress-caller';
+import AlertConstants from '@core/app/constants/alert-constants';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import checkOldFirmware from '@core/helpers/device/checkOldFirmware';
-import Constant, { promarkModels } from '@core/app/actions/beambox/constant';
 import deviceMaster from '@core/helpers/device-master';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
-import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
-import Progress from '@core/app/actions/progress-caller';
 import VersionChecker from '@core/helpers/version-checker';
-import { CameraConfig, CameraParameters } from '@core/interfaces/Camera';
-import { IDeviceInfo } from '@core/interfaces/IDevice';
-import { PreviewManager } from '@core/interfaces/PreviewManager';
-import { RotationParameters3DCalibration } from '@core/interfaces/FisheyePreview';
+import type { CameraConfig, CameraParameters } from '@core/interfaces/Camera';
+import type { RotationParameters3DCalibration } from '@core/interfaces/FisheyePreview';
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
+import type { PreviewManager } from '@core/interfaces/PreviewManager';
 
 import AdorPreviewManager from '../camera/preview-helper/AdorPreviewManager';
-import BeamPreviewManager from '../camera/preview-helper/BeamPreviewManager';
 import BB2PreviewManager from '../camera/preview-helper/BB2PreviewManager';
+import BeamPreviewManager from '../camera/preview-helper/BeamPreviewManager';
 import PromarkPreviewManager from '../camera/preview-helper/PromarkPreviewManager';
 
 const LANG = i18n.lang;
@@ -62,41 +61,64 @@ class PreviewModeController {
 
   resetFishEyeObjectHeight = async () => {
     const res = (await this.previewManager?.resetObjectHeight?.()) ?? false;
-    if (res && !PreviewModeBackgroundDrawer.isClean()) await this.previewFullWorkarea();
+
+    if (res && !PreviewModeBackgroundDrawer.isClean()) {
+      await this.previewFullWorkarea();
+    }
   };
 
   async checkDevice(device: IDeviceInfo | null) {
-    if (this.isStarting) return false;
+    if (this.isStarting) {
+      return false;
+    }
+
     if (this.currentDevice && this.currentDevice.serial !== device?.serial) {
       await this.end();
       PreviewModeBackgroundDrawer.clear();
     }
-    if (!device) return false;
+
+    if (!device) {
+      return false;
+    }
+
     const deviceStatus = await checkDeviceStatus(device);
-    if (!deviceStatus) return false;
+
+    if (!deviceStatus) {
+      return false;
+    }
+
     const vc = VersionChecker(device.version);
+
     if (!vc.meetRequirement('USABLE_VERSION')) {
       Alert.popUp({
-        type: AlertConstants.SHOW_POPUP_ERROR,
         message: LANG.beambox.popup.should_update_firmware_to_continue,
+        type: AlertConstants.SHOW_POPUP_ERROR,
       });
       Progress.popById('start-preview-controller');
+
       return false;
     }
+
     if (BeamboxPreference.read('borderless') && !vc.meetRequirement('BORDERLESS_MODE')) {
-      // eslint-disable-next-line max-len
       const message = `#814 ${LANG.calibration.update_firmware_msg1} 2.5.1 ${LANG.calibration.update_firmware_msg2} ${LANG.beambox.popup.or_turn_off_borderless_mode}`;
       const caption = LANG.beambox.left_panel.borderless_preview;
+
       Alert.popUp({
-        type: AlertConstants.SHOW_POPUP_ERROR,
-        message,
         caption,
+        message,
+        type: AlertConstants.SHOW_POPUP_ERROR,
       });
       Progress.popById('start-preview-controller');
+
       return false;
     }
+
     const res = await checkOldFirmware(device.version);
-    if (!res) return false;
+
+    if (!res) {
+      return false;
+    }
+
     return true;
   }
 
@@ -105,25 +127,34 @@ class PreviewModeController {
     this.isStarting = true;
 
     const res = await deviceMaster.select(device);
+
     if (!res.success) {
       this.isStarting = false;
+
       return;
     }
 
     try {
       this.currentDevice = device;
+
       if (promarkModels.has(device.model)) {
         this.previewManager = new PromarkPreviewManager(device);
       } else if (Constant.adorModels.includes(device.model)) {
         this.previewManager = new AdorPreviewManager(device);
       } else if (device.model === 'fbb2') {
         this.previewManager = new BB2PreviewManager(device);
-      } else this.previewManager = new BeamPreviewManager(device);
+      } else {
+        this.previewManager = new BeamPreviewManager(device);
+      }
+
       const setupRes = await this.previewManager.setup({ progressId: 'preview-mode-controller' });
+
       if (!setupRes) {
         this.isStarting = false;
+
         return;
       }
+
       PreviewModeBackgroundDrawer.start(this.previewManager.getCameraOffset?.());
       PreviewModeBackgroundDrawer.drawBoundary();
       deviceMaster.setDeviceControlReconnectOnClose(device);
@@ -142,40 +173,63 @@ class PreviewModeController {
   async end({ shouldWaitForEnd = false }: { shouldWaitForEnd?: boolean } = {}) {
     console.log('end of pmc');
     this.isPreviewModeOn = false;
-    if (this.liveModeTimeOut) clearTimeout(this.liveModeTimeOut);
+
+    if (this.liveModeTimeOut) {
+      clearTimeout(this.liveModeTimeOut);
+    }
+
     this.liveModeTimeOut = null;
     PreviewModeBackgroundDrawer.clearBoundary();
     PreviewModeBackgroundDrawer.end();
+
     const { currentDevice } = this;
+
     if (currentDevice) {
       deviceMaster.setDeviceControlDefaultCloseListener(currentDevice);
     }
-    if (shouldWaitForEnd) await this.previewManager?.end();
-    else this.previewManager?.end();
+
+    if (shouldWaitForEnd) {
+      await this.previewManager?.end();
+    } else {
+      this.previewManager?.end();
+    }
+
     this.reset();
   }
 
   isLiveModeOn = () => !!(this.isPreviewModeOn && this.liveModeTimeOut);
 
   toggleFullWorkareaLiveMode() {
-    if (this.liveModeTimeOut) this.stopFullWorkareaLiveMode();
-    else this.startFullWorkareaLiveMode();
+    if (this.liveModeTimeOut) {
+      this.stopFullWorkareaLiveMode();
+    } else {
+      this.startFullWorkareaLiveMode();
+    }
   }
 
   startFullWorkareaLiveMode() {
-    if (!this.isPreviewModeOn || !this.previewManager?.previewFullWorkarea) return;
+    if (!this.isPreviewModeOn || !this.previewManager?.previewFullWorkarea) {
+      return;
+    }
+
     const setNextTimeout = () => {
       this.liveModeTimeOut = setTimeout(() => {
         this.fullWorkareaLiveUpdate(() => {
-          if (this.liveModeTimeOut) setNextTimeout();
+          if (this.liveModeTimeOut) {
+            setNextTimeout();
+          }
         });
       }, 1000);
     };
+
     setNextTimeout();
   }
 
   stopFullWorkareaLiveMode() {
-    if (this.liveModeTimeOut) clearTimeout(this.liveModeTimeOut);
+    if (this.liveModeTimeOut) {
+      clearTimeout(this.liveModeTimeOut);
+    }
+
     this.liveModeTimeOut = null;
   }
 
@@ -186,16 +240,24 @@ class PreviewModeController {
 
   prePreview = (): boolean => {
     const { isPreviewBlocked, isPreviewModeOn } = this;
-    if (isPreviewBlocked || !isPreviewModeOn) return false;
+
+    if (isPreviewBlocked || !isPreviewModeOn) {
+      return false;
+    }
+
     this.isDrawing = true;
     this.isPreviewBlocked = true;
+
     const workarea = document.querySelector('#workarea') as HTMLElement;
+
     workarea.style.cursor = 'wait';
+
     return true;
   };
 
   onPreviewSuccess = (): void => {
     const workarea = document.querySelector('#workarea') as HTMLElement;
+
     workarea.style.cursor = 'url(img/camera-cursor.svg) 9 12, cell';
     this.isPreviewBlocked = false;
     this.isDrawing = false;
@@ -204,27 +266,42 @@ class PreviewModeController {
   onPreviewFail = (error: Error): void => {
     if (this.isPreviewModeOn) {
       console.log(error);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       Alert.popUpError({ message: error.message || (error as any).text });
     }
+
     const workarea = document.querySelector('#workarea') as HTMLElement;
+
     workarea.style.cursor = 'auto';
-    if (!PreviewModeBackgroundDrawer.isClean()) this.isDrawing = false;
+
+    if (!PreviewModeBackgroundDrawer.isClean()) {
+      this.isDrawing = false;
+    }
+
     this.end();
   };
 
   async previewFullWorkarea(callback = () => {}): Promise<boolean> {
     const res = this.prePreview();
-    if (!res) return false;
+
+    if (!res) {
+      return false;
+    }
+
     try {
-      if (!this.previewManager.previewFullWorkarea) return false;
+      if (!this.previewManager.previewFullWorkarea) {
+        return false;
+      }
+
       await this.previewManager.previewFullWorkarea?.();
       this.onPreviewSuccess();
       callback();
+
       return true;
     } catch (error) {
       this.onPreviewFail(error);
       callback();
+
       return false;
     }
   }
@@ -233,38 +310,60 @@ class PreviewModeController {
     x: number,
     y: number,
     opts: {
-      last?: boolean;
       callback?: () => void;
+      last?: boolean;
       overlapRatio?: number;
     } = {},
   ): Promise<boolean> {
     const res = this.prePreview();
-    if (!res) return false;
+
+    if (!res) {
+      return false;
+    }
+
     const { callback } = opts;
+
     try {
       const previewRes = await this.previewManager.preview(x, y);
-      if (previewRes) this.onPreviewSuccess();
+
+      if (previewRes) {
+        this.onPreviewSuccess();
+      }
+
       callback();
+
       return previewRes;
     } catch (error) {
       this.onPreviewFail(error);
       callback();
+
       return false;
     }
   }
 
   async previewRegion(x1, y1, x2, y2, opts: { callback?: () => void; overlapRatio?: number } = {}) {
     const res = this.prePreview();
-    if (!res) return false;
+
+    if (!res) {
+      return false;
+    }
+
     const { callback } = opts;
+
     try {
       const previewRes = await this.previewManager.previewRegion(x1, y1, x2, y2, opts);
-      if (previewRes) this.onPreviewSuccess();
+
+      if (previewRes) {
+        this.onPreviewSuccess();
+      }
+
       callback();
+
       return previewRes;
     } catch (error) {
       this.onPreviewFail(error);
       callback();
+
       return false;
     }
   }
@@ -292,6 +391,7 @@ class PreviewModeController {
   // movementX, movementY in mm
   async getPhotoAfterMoveTo(movementX: number, movementY: number) {
     const imgUrl = await this.previewManager.getPhotoAfterMoveTo?.(movementX, movementY);
+
     return imgUrl;
   }
 }

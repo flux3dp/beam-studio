@@ -1,9 +1,4 @@
-import {
-  calibrateWithDevicePictures,
-  getMaterialHeight,
-  prepareToTakePicture,
-  saveCheckPoint,
-} from './utils';
+import { calibrateWithDevicePictures, getMaterialHeight, prepareToTakePicture, saveCheckPoint } from './utils';
 
 const mockEnterRawMode = jest.fn();
 const mockRawHome = jest.fn();
@@ -19,26 +14,28 @@ const mockRawLooseMotor = jest.fn();
 const mockUploadToDirectory = jest.fn();
 const mockLs = jest.fn();
 const mockDownloadFile = jest.fn();
+
 jest.mock('@core/helpers/device-master', () => ({
-  enterRawMode: (...args) => mockEnterRawMode(...args),
-  rawHome: (...args) => mockRawHome(...args),
-  rawHomeZ: (...args) => mockRawHomeZ(...args),
-  rawStartLineCheckMode: (...args) => mockRawStartLineCheckMode(...args),
-  rawMove: (...args) => mockRawMove(...args),
-  rawEndLineCheckMode: (...args) => mockRawEndLineCheckMode(...args),
-  rawAutoFocus: (...args) => mockRawAutoFocus(...args),
-  rawGetProbePos: (...args) => mockRawGetProbePos(...args),
-  endRawMode: (...args) => mockEndRawMode(...args),
-  rawLooseMotor: (...args) => mockRawLooseMotor(...args),
-  uploadToDirectory: (...args) => mockUploadToDirectory(...args),
-  downloadFile: (...args) => mockDownloadFile(...args),
-  ls: (...args) => mockLs(...args),
   get currentDevice() {
     return mockGetCurrentDevice();
   },
+  downloadFile: (...args) => mockDownloadFile(...args),
+  endRawMode: (...args) => mockEndRawMode(...args),
+  enterRawMode: (...args) => mockEnterRawMode(...args),
+  ls: (...args) => mockLs(...args),
+  rawAutoFocus: (...args) => mockRawAutoFocus(...args),
+  rawEndLineCheckMode: (...args) => mockRawEndLineCheckMode(...args),
+  rawGetProbePos: (...args) => mockRawGetProbePos(...args),
+  rawHome: (...args) => mockRawHome(...args),
+  rawHomeZ: (...args) => mockRawHomeZ(...args),
+  rawLooseMotor: (...args) => mockRawLooseMotor(...args),
+  rawMove: (...args) => mockRawMove(...args),
+  rawStartLineCheckMode: (...args) => mockRawStartLineCheckMode(...args),
+  uploadToDirectory: (...args) => mockUploadToDirectory(...args),
 }));
 
 const mockGetWorkarea = jest.fn();
+
 jest.mock('@core/app/constants/workarea-constants', () => ({
   getWorkarea: (...args) => mockGetWorkarea(...args),
 }));
@@ -46,15 +43,17 @@ jest.mock('@core/app/constants/workarea-constants', () => ({
 const mockOpenSteppingProgress = jest.fn();
 const mockUpdate = jest.fn();
 const mockPopById = jest.fn();
+
 jest.mock('@core/app/actions/progress-caller', () => ({
   openSteppingProgress: (...args) => mockOpenSteppingProgress(...args),
-  update: (...args) => mockUpdate(...args),
   popById: (...args) => mockPopById(...args),
+  update: (...args) => mockUpdate(...args),
 }));
 
 const mockAddFisheyeCalibrateImg = jest.fn();
 const mockDoFishEyeCalibration = jest.fn();
 const mockStartFisheyeCalibrate = jest.fn();
+
 jest.mock('@core/helpers/camera-calibration-helper', () => ({
   addFisheyeCalibrateImg: (...args) => mockAddFisheyeCalibrateImg(...args),
   doFishEyeCalibration: (...args) => mockDoFishEyeCalibration(...args),
@@ -65,8 +64,8 @@ jest.mock('@core/helpers/duration-formatter', () => (time: number) => `${time.to
 jest.mock('@core/helpers/i18n', () => ({
   lang: {
     calibration: {
-      downloading_pictures: 'downloading_pictures',
       calibrating_with_device_pictures: 'calibrating_with_device_pictures',
+      downloading_pictures: 'downloading_pictures',
       failed_to_calibrate_with_pictures: 'failed_to_calibrate_with_pictures',
     },
     camera_data_backup: {
@@ -81,9 +80,12 @@ describe('test AdorCalibrationV2 utils', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     Date.now = mockDateNow;
+
     let t = 0;
+
     mockDateNow.mockImplementation(() => {
       t += 1000;
+
       return t;
     });
   });
@@ -92,15 +94,17 @@ describe('test AdorCalibrationV2 utils', () => {
     mockGetWorkarea.mockReturnValue({ cameraCenter: [100, 100], deep: 100 });
     mockGetCurrentDevice.mockReturnValue({ info: { model: 'model-1' } });
     mockRawGetProbePos.mockResolvedValue({ didAf: true, z: 10 });
+
     const res = await getMaterialHeight();
+
     expect(mockGetWorkarea).toHaveBeenCalledTimes(1);
     expect(mockGetWorkarea).toHaveBeenLastCalledWith('model-1', 'ado1');
     expect(mockEnterRawMode).toHaveBeenCalledTimes(1);
     expect(mockRawHome).toHaveBeenCalledTimes(1);
     expect(mockRawStartLineCheckMode).toHaveBeenCalledTimes(1);
     expect(mockRawMove).toHaveBeenCalledTimes(2);
-    expect(mockRawMove).toHaveBeenNthCalledWith(1, { x: 100, y: 100, f: 7500 });
-    expect(mockRawMove).toHaveBeenNthCalledWith(2, { x: 0, y: 0, f: 7500 });
+    expect(mockRawMove).toHaveBeenNthCalledWith(1, { f: 7500, x: 100, y: 100 });
+    expect(mockRawMove).toHaveBeenNthCalledWith(2, { f: 7500, x: 0, y: 0 });
     expect(mockRawEndLineCheckMode).toHaveBeenCalledTimes(1);
     expect(mockRawAutoFocus).toHaveBeenCalledTimes(1);
     expect(mockRawGetProbePos).toHaveBeenCalledTimes(1);
@@ -118,31 +122,28 @@ describe('test AdorCalibrationV2 utils', () => {
 
   test('saveCheckPoint', async () => {
     const mockStringify = jest.fn();
+
     mockStringify.mockReturnValue('123');
     JSON.stringify = mockStringify;
     await saveCheckPoint({
-      k: [[1]],
       d: [[1]],
+      k: [[1]],
       rvec: [1],
-      tvec: [1],
       rvec_polyfit: [[1]],
+      tvec: [1],
       tvec_polyfit: [[1]],
     });
     expect(mockStringify).toHaveBeenCalledTimes(1);
     expect(mockStringify).toHaveBeenLastCalledWith({
-      k: [[1]],
       d: [[1]],
+      k: [[1]],
       rvec: [1],
-      tvec: [1],
       rvec_polyfit: [[1]],
+      tvec: [1],
       tvec_polyfit: [[1]],
     });
     expect(mockUploadToDirectory).toHaveBeenCalledTimes(1);
-    expect(mockUploadToDirectory).toHaveBeenLastCalledWith(
-      expect.any(Blob),
-      'fisheye',
-      'checkpoint.json',
-    );
+    expect(mockUploadToDirectory).toHaveBeenLastCalledWith(expect.any(Blob), 'fisheye', 'checkpoint.json');
   });
 
   test('calibrateWithDevicePictures', async () => {
@@ -151,17 +152,22 @@ describe('test AdorCalibrationV2 utils', () => {
     });
     mockDownloadFile.mockImplementation(async (dirName: string, name: string, onProgress) => {
       onProgress({ left: 50, size: 100 });
+
       const mockBlob = `${dirName}/${name}`;
+
       return ['info', mockBlob];
     });
     mockAddFisheyeCalibrateImg.mockResolvedValue(true);
     mockDoFishEyeCalibration.mockImplementation((onProgress) => {
       onProgress(0.25);
       onProgress(0.75);
-      return { k: 1, d: 2, rvec: 3, tvec: 4, rvec_polyfit: 5, tvec_polyfit: 6 };
+
+      return { d: 2, k: 1, rvec: 3, rvec_polyfit: 5, tvec: 4, tvec_polyfit: 6 };
     });
+
     const res = await calibrateWithDevicePictures();
-    expect(res).toEqual({ k: 1, d: 2, rvec: 3, tvec: 4, rvec_polyfit: 5, tvec_polyfit: 6 });
+
+    expect(res).toEqual({ d: 2, k: 1, rvec: 3, rvec_polyfit: 5, tvec: 4, tvec_polyfit: 6 });
     expect(mockOpenSteppingProgress).toHaveBeenCalledTimes(1);
     expect(mockOpenSteppingProgress).toHaveBeenLastCalledWith({
       id: 'calibrate-with-device-pictures',
@@ -172,29 +178,11 @@ describe('test AdorCalibrationV2 utils', () => {
     expect(mockLs).toHaveBeenLastCalledWith('camera_calib');
     expect(mockStartFisheyeCalibrate).toBeCalledTimes(1);
     expect(mockDownloadFile).toBeCalledTimes(2);
-    expect(mockDownloadFile).toHaveBeenNthCalledWith(
-      1,
-      'camera_calib',
-      'pic_-10.0_top_left.jpg',
-      expect.any(Function),
-    );
-    expect(mockDownloadFile).toHaveBeenNthCalledWith(
-      2,
-      'camera_calib',
-      'pic_20.0_top_left.jpg',
-      expect.any(Function),
-    );
+    expect(mockDownloadFile).toHaveBeenNthCalledWith(1, 'camera_calib', 'pic_-10.0_top_left.jpg', expect.any(Function));
+    expect(mockDownloadFile).toHaveBeenNthCalledWith(2, 'camera_calib', 'pic_20.0_top_left.jpg', expect.any(Function));
     expect(mockAddFisheyeCalibrateImg).toBeCalledTimes(2);
-    expect(mockAddFisheyeCalibrateImg).toHaveBeenNthCalledWith(
-      1,
-      -10,
-      'camera_calib/pic_-10.0_top_left.jpg',
-    );
-    expect(mockAddFisheyeCalibrateImg).toHaveBeenNthCalledWith(
-      2,
-      20,
-      'camera_calib/pic_20.0_top_left.jpg',
-    );
+    expect(mockAddFisheyeCalibrateImg).toHaveBeenNthCalledWith(1, -10, 'camera_calib/pic_-10.0_top_left.jpg');
+    expect(mockAddFisheyeCalibrateImg).toHaveBeenNthCalledWith(2, 20, 'camera_calib/pic_20.0_top_left.jpg');
     expect(mockDoFishEyeCalibration).toBeCalledTimes(1);
     expect(mockUpdate).toBeCalledTimes(5);
     expect(mockUpdate).toHaveBeenNthCalledWith(1, 'calibrate-with-device-pictures', {

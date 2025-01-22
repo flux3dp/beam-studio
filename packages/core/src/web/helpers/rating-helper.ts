@@ -1,17 +1,16 @@
-/* eslint-disable no-console */
-/* eslint-disable @typescript-eslint/dot-notation */
 import Dialog from '@core/app/actions/dialog-caller';
-import isWeb from '@core/helpers/is-web';
-import storage from '@app/implementations/storage';
 import { getInfo, submitRating } from '@core/helpers/api/flux-id';
+import isWeb from '@core/helpers/is-web';
+
+import storage from '@app/implementations/storage';
 
 interface IRecord {
-  times: number;
-  score: number;
-  version: string;
-  isVoted: boolean;
   isIgnored: boolean;
+  isVoted: boolean;
+  score: number;
+  times: number;
   user?: string;
+  version: string;
 }
 
 const getRecord = (): IRecord => storage.get('rating-record') as IRecord;
@@ -25,8 +24,8 @@ const setNotShowing = (): void => {
 
   setRecord({
     ...record,
-    version: window['FLUX'].version,
     isIgnored: true,
+    version: window['FLUX'].version,
   });
 };
 
@@ -35,24 +34,24 @@ const setVoted = (score: number): void => {
 
   setRecord({
     ...record,
+    isVoted: true,
     score,
     version: window['FLUX'].version,
-    isVoted: true,
   });
 
   getInfo(true).then((response) => {
     if (response && response.status === 'ok') {
       submitRating({
-        user: response.email,
-        score,
-        version: window['FLUX'].version,
         app: 'Beam Studio',
+        score,
+        user: response.email,
+        version: window['FLUX'].version,
       });
     } else {
       submitRating({
+        app: 'Beam Studio',
         score,
         version: window['FLUX'].version,
-        app: 'Beam Studio',
       });
     }
   });
@@ -60,24 +59,31 @@ const setVoted = (score: number): void => {
 
 const setDefaultRatingRecord = (): void => {
   const defaultRecord = {
+    isIgnored: false,
+    isVoted: false,
+    score: 0,
     times: 1,
     version: window['FLUX'].version,
-    score: 0,
-    isVoted: false,
-    isIgnored: false,
   };
+
   storage.set('rating-record', defaultRecord);
 };
 
 const init = (): void => {
-  if (isWeb()) return;
+  if (isWeb()) {
+    return;
+  }
+
   if (!storage.isExisting('rating-record')) {
     setDefaultRatingRecord();
   } else {
     const record = getRecord();
+
     console.log('Rating Record', record);
+
     if (window['FLUX'].version !== record.version) {
       setDefaultRatingRecord();
+
       return;
     }
 

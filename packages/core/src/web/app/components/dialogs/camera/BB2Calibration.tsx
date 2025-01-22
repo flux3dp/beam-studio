@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { useCallback, useRef, useState } from 'react';
 
 import alertCaller from '@core/app/actions/alert-caller';
@@ -35,7 +34,7 @@ interface Props {
 }
 
 const PROGRESS_ID = 'bb2-calibration';
-const BB2Calibration = ({ isAdvanced, onClose }: Props): JSX.Element => {
+const BB2Calibration = ({ isAdvanced, onClose }: Props): React.JSX.Element => {
   const lang = useI18n();
   const tCali = lang.calibration;
   const calibratingParam = useRef<FisheyeCameraParametersV3Cali>({});

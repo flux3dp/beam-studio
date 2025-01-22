@@ -1,13 +1,14 @@
 import React, { useContext, useEffect, useRef } from 'react';
+
 import classNames from 'classnames';
 
+import { handleExportClick } from '@core/app/actions/beambox/export/GoButton/handleExportClick';
+import { CanvasMode } from '@core/app/constants/canvasMode';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
 import promarkButtonHandler from '@core/helpers/device/promark/promark-button-handler';
 import shortcuts from '@core/helpers/shortcuts';
 import useI18n from '@core/helpers/useI18n';
-import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
-import { CanvasContext } from '@core/app/contexts/CanvasContext';
-import { CanvasMode } from '@core/app/constants/canvasMode';
-import { handleExportClick } from '@core/app/actions/beambox/export/GoButton/handleExportClick';
 
 import styles from './GoButton.module.scss';
 
@@ -29,7 +30,7 @@ function throttle(func: () => void, delay: number): () => void {
   };
 }
 
-const GoButton = ({ hasDiscoverdMachine }: Props): JSX.Element => {
+const GoButton = ({ hasDiscoverdMachine }: Props): React.JSX.Element => {
   const lang = useI18n();
   const { mode, selectedDevice } = useContext(CanvasContext);
   const shortcutHandler = useRef<() => void>(null);

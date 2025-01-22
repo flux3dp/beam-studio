@@ -1,21 +1,25 @@
 import webNeedConnectionWrapper from './web-need-connection-helper';
 
 const mockPopUp = jest.fn();
+
 jest.mock('@core/app/actions/alert-caller', () => ({
   popUp: (...args) => mockPopUp(...args),
 }));
 
 const mockToggleUnsavedChangedDialog = jest.fn();
+
 jest.mock('@core/helpers/file-export-helper', () => ({
   toggleUnsavedChangedDialog: (...args) => mockToggleUnsavedChangedDialog(...args),
 }));
 
 const mockUpdateActiveKey = jest.fn();
+
 jest.mock('@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController', () => ({
   updateActiveKey: (...args) => mockUpdateActiveKey(...args),
 }));
 
 const mockCheckConnection = jest.fn();
+
 jest.mock('@core/helpers/api/discover', () => ({
   checkConnection: (...args) => mockCheckConnection(...args),
 }));
@@ -64,7 +68,9 @@ describe('test webNeedConnectionWrapper', () => {
     webNeedConnectionWrapper(mockCallback);
     expect(mockCallback).not.toBeCalled();
     expect(mockPopUp).toBeCalledTimes(1);
+
     const popUpCallback = mockPopUp.mock.calls[0][0].callbacks;
+
     await popUpCallback();
     expect(mockToggleUnsavedChangedDialog).toBeCalledTimes(1);
     expect(mockUpdateActiveKey).toBeCalledTimes(1);

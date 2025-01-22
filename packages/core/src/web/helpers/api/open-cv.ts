@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { EventEmitter } from 'eventemitter3';
 
 import Websocket from '@core/helpers/websocket';
@@ -10,14 +9,14 @@ class OpenCVWebSocket extends EventEmitter {
     super();
     this.ws = Websocket({
       method: 'opencv',
-      onMessage: (data) => {
-        this.emit('message', data);
-      },
       onError: (response) => {
         this.emit('error', response);
       },
       onFatal: (response) => {
         this.emit('fatal', response);
+      },
+      onMessage: (data) => {
+        this.emit('message', data);
       },
     });
   }
@@ -30,7 +29,10 @@ class OpenCVWebSocket extends EventEmitter {
 
   setDefaultErrorResponse(reject: (reason?) => void, timeoutTimer?: NodeJS.Timeout): void {
     this.on('error', (response) => {
-      if (timeoutTimer) clearTimeout(timeoutTimer);
+      if (timeoutTimer) {
+        clearTimeout(timeoutTimer);
+      }
+
       this.removeCommandListeners();
       reject(response);
     });
@@ -38,7 +40,10 @@ class OpenCVWebSocket extends EventEmitter {
 
   setDefaultFatalResponse(reject: (reason?) => void, timeoutTimer?: NodeJS.Timeout): void {
     this.on('fatal', (response) => {
-      if (timeoutTimer) clearTimeout(timeoutTimer);
+      if (timeoutTimer) {
+        clearTimeout(timeoutTimer);
+      }
+
       this.removeCommandListeners();
       reject(response);
     });
@@ -49,6 +54,7 @@ class OpenCVWebSocket extends EventEmitter {
     const blob = await resp.blob();
     const data = await blob.arrayBuffer();
     const res = await this.upload(data, url);
+
     return res;
   }
 
@@ -59,7 +65,8 @@ class OpenCVWebSocket extends EventEmitter {
       this.setDefaultFatalResponse(reject);
       this.on('message', (response: { [key: string]: string }) => {
         const { status } = response;
-        if (['ok', 'fail', 'none'].includes(status)) {
+
+        if (['fail', 'none', 'ok'].includes(status)) {
           this.removeCommandListeners();
           resolve(response);
         } else if (status === 'continue') {
@@ -75,6 +82,7 @@ class OpenCVWebSocket extends EventEmitter {
   sharpen(imgUrl: string, sharpness: number, radius: number): Promise<Blob> {
     return new Promise((resolve, reject) => {
       this.removeCommandListeners();
+
       const setMessageHandler = () => {
         this.setDefaultErrorResponse(reject);
         this.setDefaultFatalResponse(reject);
@@ -90,12 +98,14 @@ class OpenCVWebSocket extends EventEmitter {
             setMessageHandler();
             this.ws.send(`sharpen ${imgUrl} ${sharpness} ${radius}`);
           }
+
           if (response instanceof Blob) {
             this.removeCommandListeners();
             resolve(response);
           }
         });
       };
+
       setMessageHandler();
       this.ws.send(`sharpen ${imgUrl} ${sharpness} ${radius}`);
     });

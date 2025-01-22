@@ -1,30 +1,30 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
+
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
-import { IFile } from '@core/interfaces/IMyCloud';
 import { MyCloudContext } from '@core/app/contexts/MyCloudContext';
+import type { IFile } from '@core/interfaces/IMyCloud';
 
 import MyCloud from './MyCloud';
 
 const mockFiles: IFile[] = [
   {
-    uuid: 'mock-uuid-1111',
+    created_at: '2024-01-09T04:14:36.801586Z',
+    last_modified_at: '2024-01-09T06:42:04.824942Z',
     name: 'File name',
     size: 5788,
     thumbnail_url: 'https://s3/url',
+    uuid: 'mock-uuid-1111',
     workarea: 'fhexa1',
-    created_at: '2024-01-09T04:14:36.801586Z',
-    last_modified_at: '2024-01-09T06:42:04.824942Z',
   },
   {
-    uuid: 'mock-uuid-2222',
+    created_at: '2024-01-12T08:46:54.904853Z',
+    last_modified_at: '2024-01-16T04:11:44.903500Z',
     name: 'Another file',
     size: 5678,
     thumbnail_url: 'https://s3/url2',
+    uuid: 'mock-uuid-2222',
     workarea: 'ado1',
-    created_at: '2024-01-12T08:46:54.904853Z',
-    last_modified_at: '2024-01-16T04:11:44.903500Z',
   },
 ];
 
@@ -35,11 +35,11 @@ jest.mock('@core/helpers/useI18n', () => () => ({
     },
   },
   my_cloud: {
-    title: 'My Cloud',
-    loading_file: 'Loading...',
-    no_file_title: 'Save files to My Cloud to get started.',
-    no_file_subtitle: 'Go to Menu > "File" > "Save to Cloud"',
     file_limit: 'Free file',
+    loading_file: 'Loading...',
+    no_file_subtitle: 'Go to Menu > "File" > "Save to Cloud"',
+    no_file_title: 'Save files to My Cloud to get started.',
+    title: 'My Cloud',
     upgrade: 'Upgrade',
   },
 }));
@@ -54,25 +54,26 @@ const mockUser = {
 };
 
 const getCurrentUser = jest.fn();
+
 jest.mock('@core/helpers/api/flux-id', () => ({
   getCurrentUser: () => getCurrentUser(),
 }));
 
 const open = jest.fn();
+
 jest.mock('@app/implementations/browser', () => ({
   open: (...args) => open(...args),
 }));
 
 jest.mock('@core/app/contexts/MyCloudContext', () => ({
   MyCloudContext: React.createContext({}),
-  MyCloudProvider: ({ onClose, children }: any) => (
-    <MyCloudContext.Provider value={{ onClose, files: mockFiles } as any}>
-      {children}
-    </MyCloudContext.Provider>
+  MyCloudProvider: ({ children, onClose }: any) => (
+    <MyCloudContext.Provider value={{ files: mockFiles, onClose } as any}>{children}</MyCloudContext.Provider>
   ),
 }));
 
 const mockUseIsMobile = jest.fn();
+
 jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => mockUseIsMobile(),
 }));
@@ -91,12 +92,16 @@ describe('test MyCloud', () => {
 
   test('should rendered correctly', () => {
     getCurrentUser.mockReturnValue(mockUser);
+
     const { baseElement, getByText } = render(<MyCloud onClose={mockOnClose} />);
+
     expect(baseElement).toMatchSnapshot();
     fireEvent.click(getByText('Upgrade'));
     expect(open).toBeCalledTimes(1);
     expect(open).toBeCalledWith('https://website_url');
+
     const closeButton = baseElement.querySelector('.ant-modal-close');
+
     fireEvent.click(closeButton);
     expect(mockOnClose).toBeCalledTimes(1);
   });
@@ -110,16 +115,22 @@ describe('test MyCloud', () => {
         },
       },
     });
+
     const { baseElement } = render(<MyCloud onClose={mockOnClose} />);
+
     expect(baseElement).toMatchSnapshot();
   });
 
   test('should rendered correctly in mobile', () => {
     getCurrentUser.mockReturnValue(mockUser);
     mockUseIsMobile.mockReturnValue(true);
+
     const { container } = render(<MyCloud onClose={mockOnClose} />);
+
     expect(container).toMatchSnapshot();
+
     const button = container.querySelector('.close-icon');
+
     fireEvent.click(button);
     waitFor(() => expect(mockOnClose).toBeCalledTimes(1));
   });

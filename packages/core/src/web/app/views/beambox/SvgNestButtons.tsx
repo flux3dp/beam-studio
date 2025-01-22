@@ -1,25 +1,24 @@
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable no-continue */
 import * as React from 'react';
-import classNames from 'classnames';
-import { Button, ConfigProvider } from 'antd';
+
 import { CaretRightOutlined, CloseOutlined, LoadingOutlined } from '@ant-design/icons';
+import { Button, ConfigProvider } from 'antd';
+import classNames from 'classnames';
 
 import Alert from '@core/app/actions/alert-caller';
-import getClipperLib from '@core/helpers/clipper/getClipperLib';
 import history from '@core/app/svgedit/history/history';
+import workareaManager from '@core/app/svgedit/workarea';
+import Modal from '@core/app/widgets/Modal';
+import getClipperLib from '@core/helpers/clipper/getClipperLib';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
-import Modal from '@core/app/widgets/Modal';
 import requirejsHelper from '@core/helpers/requirejs-helper';
-import workareaManager from '@core/app/svgedit/workarea';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 
 import styles from './SvgNestButtons.module.scss';
 
 let svgCanvas;
 let svgedit;
+
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
   svgedit = globalSVG.Edit;
@@ -53,13 +52,16 @@ class SvgNestButtons extends React.Component<Props, State> {
     this.state = {
       isWorking: false,
     };
-    // eslint-disable-next-line @typescript-eslint/dot-notation
-    if (!window['SvgNest']) setUpSvgNest();
+
+    if (!window['SvgNest']) {
+      setUpSvgNest();
+    }
   }
 
   nestElements = (elements: Element[], containerElem?: HTMLElement, config?: any) => {
     let containerPoints;
     const ClipperLib = getClipperLib();
+
     if (containerElem) {
       const containerDpath = svgedit.utilities.getPathDFromElement(containerElem);
       const bbox = svgedit.utilities.getBBox(containerElem);
@@ -68,9 +70,11 @@ class SvgNestButtons extends React.Component<Props, State> {
         cx: bbox.x + bbox.width / 2,
         cy: bbox.y + bbox.height / 2,
       };
+
       containerPoints = ClipperLib.dPathtoPointPathsAndScale(containerDpath, rotation, 1);
     } else {
-      const { width: w, height: h } = workareaManager;
+      const { height: h, width: w } = workareaManager;
+
       containerPoints = [
         { x: 0, y: 0 },
         { x: w, y: 0 },
@@ -80,11 +84,15 @@ class SvgNestButtons extends React.Component<Props, State> {
     }
 
     const elemPoints = [];
+
     this.undoNestChanges = [];
     this.nestedElements = [...elements];
     for (let i = 0; i < elements.length; i += 1) {
       let elem = elements[i];
-      if (!elem) continue;
+
+      if (!elem) {
+        continue;
+      }
 
       let bbox;
       const id = elem.getAttribute('id');
@@ -108,12 +116,15 @@ class SvgNestButtons extends React.Component<Props, State> {
 
       let points;
       const d = svgedit.utilities.getPathDFromElement(elem);
+
       if (d) {
         const pointPaths = ClipperLib.dPathtoPointPathsAndScale(d, rotation, 1);
+
         if (pointPaths.length === 1) {
           [points] = pointPaths;
         }
       }
+
       if (!points) {
         points = [
           { x: bbox.x, y: bbox.y },
@@ -121,13 +132,16 @@ class SvgNestButtons extends React.Component<Props, State> {
           { x: bbox.x + bbox.width, y: bbox.y + bbox.height },
           { x: bbox.x, y: bbox.y + bbox.height },
         ];
+
         if (rotation.angle) {
           const rad = rotation.angle * (Math.PI / 180);
+
           points = points.map((p) => {
             const x = p.x - rotation.cx;
             const y = p.y - rotation.cy;
             const newX = x * Math.cos(rad) - y * Math.sin(rad) + rotation.cx;
             const newY = y * Math.cos(rad) + x * Math.sin(rad) + rotation.cy;
+
             return { x: newX, y: newY };
           });
         }
@@ -144,15 +158,21 @@ class SvgNestButtons extends React.Component<Props, State> {
       elemPoints.push(points);
 
       const elementsToUndo: any[] = [elem];
+
       while (elementsToUndo.length > 0) {
         elem = elementsToUndo.pop();
-        if (elem.nodeType !== 1) continue;
+
+        if (elem.nodeType !== 1) {
+          continue;
+        }
+
         const undoRecord = {
-          element: elem,
           attrs: {
             transform: elem.getAttribute('transform'),
           } as { [key: string]: string },
+          element: elem,
         };
+
         switch (elem.tagName) {
           case 'path':
             undoRecord.attrs.d = elem.getAttribute('d');
@@ -173,111 +193,132 @@ class SvgNestButtons extends React.Component<Props, State> {
         this.undoNestChanges.push(undoRecord);
       }
     }
-    // eslint-disable-next-line prefer-destructuring, @typescript-eslint/dot-notation
+
     const SvgNest = window['SvgNest'];
 
     if (config) {
       SvgNest.config(config);
     }
+
     SvgNest.nestElements(containerPoints, elemPoints);
   };
 
   stopNestElement = (): void => {
-    // eslint-disable-next-line prefer-destructuring, @typescript-eslint/dot-notation
     const SvgNest = window['SvgNest'];
+
     SvgNest.stop();
+
     const batchCmd = new history.BatchCommand('Svg Nest');
+
     for (let i = 0; i < this.undoNestChanges.length; i += 1) {
       const elem = this.undoNestChanges[i].element;
       const subCmd = new history.ChangeElementCommand(elem, this.undoNestChanges[i].attrs);
+
       batchCmd.addSubCommand(subCmd);
     }
+
     if (!batchCmd.isEmpty()) {
       svgCanvas.undoMgr.addCommandToHistory(batchCmd);
     }
+
     svgCanvas.selectOnly(this.nestedElements);
+
     if (this.nestedElements.length > 1) {
       svgCanvas.tempGroupSelectedElements();
     }
+
     this.nestedElements = null;
   };
 
   close = (): void => {
     const { onClose } = this.props;
     const { isWorking } = this.state;
+
     if (isWorking) {
       this.stopNestElement();
     }
+
     onClose();
   };
 
   onStartOrStop = (): void => {
     const { isWorking } = this.state;
+
     if (!isWorking) {
       if (svgCanvas.getTempGroup()) {
         const children = svgCanvas.ungroupTempGroup();
+
         svgCanvas.selectOnly(children, false);
       }
+
       const elems = svgCanvas.getSelectedElems().filter((e) => e);
+
       svgCanvas.clearSelection();
+
       if (elems.length === 0) {
         // Empty use all elements
         const drawing = svgCanvas.getCurrentDrawing();
         const layerNumber = drawing.getNumLayers();
+
         for (let i = 0; i < layerNumber; i += 1) {
           const name = drawing.getLayerName(i);
           const layer = drawing.getLayerByName(name);
-          if (
-            layer.getAttribute('display') === 'none' ||
-            layer.getAttribute('data-lock') === 'true'
-          ) {
+
+          if (layer.getAttribute('display') === 'none' || layer.getAttribute('data-lock') === 'true') {
             continue;
           }
+
           const { childNodes } = layer;
           const children = $(layer).children();
+
           for (let j = 0; j < childNodes.length; j += 1) {
-            if (!['title', 'filter'].includes(children[j].nodeName)) {
+            if (!['filter', 'title'].includes(children[j].nodeName)) {
               elems.push(children[j]);
             }
           }
         }
       }
-      // eslint-disable-next-line no-console
+
       console.log(elems);
+
       if (elems.length === 0) {
         Alert.popUp({
           caption: LANG.nest,
-          // eslint-disable-next-line no-underscore-dangle
+
           message: LANG._nest.no_element,
         });
+
         return;
       }
+
       this.nestElements(elems);
     } else {
       this.stopNestElement();
     }
+
     this.setState({
       isWorking: !isWorking,
     });
   };
 
-  renderStartButton = (): JSX.Element => {
+  renderStartButton = (): React.JSX.Element => {
     const { isWorking } = this.state;
     const icon = isWorking ? <LoadingOutlined /> : <CaretRightOutlined />;
-    // eslint-disable-next-line no-underscore-dangle
+
     const label = isWorking ? LANG._nest.stop_nest : LANG._nest.start_nest;
+
     return (
       <ConfigProvider theme={{ token: { colorPrimary: '#3875F6' } }}>
-        <Button icon={icon} shape="round" type="primary" onClick={this.onStartOrStop}>
+        <Button icon={icon} onClick={this.onStartOrStop} shape="round" type="primary">
           {label}
         </Button>
       </ConfigProvider>
     );
   };
 
-  render(): JSX.Element {
+  render(): React.JSX.Element {
     const { isWorking } = this.state;
-    // eslint-disable-next-line no-underscore-dangle
+
     const endText = LANG._nest.end;
     const isWindows = !isWeb() && window.os === 'Windows';
     const className = classNames(styles.container, { win: isWindows });
@@ -285,7 +326,7 @@ class SvgNestButtons extends React.Component<Props, State> {
     const content = (
       <div className={className}>
         {this.renderStartButton()}
-        <Button icon={<CloseOutlined />} shape="round" onClick={this.close}>
+        <Button icon={<CloseOutlined />} onClick={this.close} shape="round">
           {endText}
         </Button>
       </div>

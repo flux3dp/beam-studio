@@ -1,12 +1,12 @@
 import React from 'react';
 
-import isDev from '@core/helpers/is-dev';
 import SelectControl from '@core/app/components/settings/SelectControl';
-import { OptionValues } from '@core/app/constants/enums';
+import type { OptionValues } from '@core/app/constants/enums';
+import isDev from '@core/helpers/is-dev';
 
 interface Props {
-  multipassCompensationOptions: { value: OptionValues; label: string; selected: boolean }[];
-  oneWayPrintingOptions: { value: OptionValues; label: string; selected: boolean }[];
+  multipassCompensationOptions: Array<{ label: string; selected: boolean; value: OptionValues }>;
+  oneWayPrintingOptions: Array<{ label: string; selected: boolean; value: OptionValues }>;
   updateBeamboxPreferenceChange: (key: string, newVal: any) => void;
 }
 
@@ -14,22 +14,25 @@ function Experimental({
   multipassCompensationOptions,
   oneWayPrintingOptions,
   updateBeamboxPreferenceChange,
-}: Props): JSX.Element {
-  if (!isDev()) return null;
+}: Props): React.JSX.Element {
+  if (!isDev()) {
+    return null;
+  }
+
   return (
     <>
       <div className="subtitle">Experimental Features</div>
       <SelectControl
-        label="Multipass Compensation"
         id="multipass-compensation"
-        options={multipassCompensationOptions}
+        label="Multipass Compensation"
         onChange={(e) => updateBeamboxPreferenceChange('multipass-compensation', e.target.value)}
+        options={multipassCompensationOptions}
       />
       <SelectControl
-        label="One-way Printing"
         id="one-way-printing"
-        options={oneWayPrintingOptions}
+        label="One-way Printing"
         onChange={(e) => updateBeamboxPreferenceChange('one-way-printing', e.target.value)}
+        options={oneWayPrintingOptions}
       />
     </>
   );

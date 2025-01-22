@@ -1,18 +1,19 @@
-/* eslint-disable no-console */
-/* eslint-disable react/sort-comp */
 import React from 'react';
-import { Button, Form, Input, InputRef, Modal } from 'antd';
+
+import type { InputRef } from 'antd';
+import { Button, Form, Input, Modal } from 'antd';
 
 import Alert from '@core/app/actions/alert-caller';
+import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
-import browser from '@app/implementations/browser';
 import Discover from '@core/helpers/api/discover';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
+
+import browser from '@app/implementations/browser';
 import network from '@app/implementations/network';
 import os from '@app/implementations/os';
-import Progress from '@core/app/actions/progress-caller';
-import { IDeviceInfo } from '@core/interfaces/IDevice';
 
 const LANG = i18n.lang.beambox.network_testing_panel;
 const TEST_TIME = 30000;
@@ -33,15 +34,19 @@ class NetworkTestingPanel extends React.Component<Props> {
 
   constructor(props: Props) {
     super(props);
+
     const localIps = [];
     const ifaces = os.networkInterfaces();
+
     Object.keys(ifaces).forEach((ifname) => {
       let alias = 0;
+
       ifaces[ifname].forEach((iface) => {
         if (iface.family !== 'IPv4' || iface.internal !== false) {
           // skip over internal (i.e. 127.0.0.1) and non-ipv4 addresses
           return;
         }
+
         if (alias >= 1) {
           // this single interface has multiple ipv4 addresses
           console.log(`${ifname}:${alias}`, iface.address);
@@ -49,6 +54,7 @@ class NetworkTestingPanel extends React.Component<Props> {
           // this interface has only one ipv4 adress
           console.log(ifname, iface.address);
         }
+
         alias += 1;
         localIps.push(iface.address);
       });
@@ -67,48 +73,55 @@ class NetworkTestingPanel extends React.Component<Props> {
 
   onStart = async (): Promise<void> => {
     const ip = this.getIPValue();
+
     if (!ip) {
       Alert.popUp({
-        type: AlertConstants.SHOW_POPUP_ERROR,
         message: LANG.empty_ip,
+        type: AlertConstants.SHOW_POPUP_ERROR,
       });
+
       return;
     }
+
     if (ip.trim().startsWith('169.254')) {
       Alert.popUp({
-        type: AlertConstants.SHOW_POPUP_ERROR,
         message: LANG.ip_startswith_169,
+        type: AlertConstants.SHOW_POPUP_ERROR,
       });
     }
+
     this.discover.poke(ip);
     this.discover.pokeTcp(ip);
     this.discover.testTcp(ip);
     Progress.openSteppingProgress({
-      id: 'network-testing',
       caption: `${LANG.network_testing}`,
+      id: 'network-testing',
       message: `${LANG.testing}`,
     });
-    const { err, reason, successRate, avgRRT, quality } = await network.networkTest(
-      ip,
-      TEST_TIME,
-      (percentage) => {
-        Progress.update('network-testing', {
-          percentage,
-        });
-      },
-    );
+
+    const { avgRRT, err, quality, reason, successRate } = await network.networkTest(ip, TEST_TIME, (percentage) => {
+      Progress.update('network-testing', {
+        percentage,
+      });
+    });
+
     Progress.popById('network-testing');
+
     if (err === 'CREATE_SESSION_FAILED') {
       let message = `${LANG.fail_to_start_network_test}\n${reason}`;
-      if (window.os === 'Linux') message += `\n${LANG.linux_permission_hint}`;
+
+      if (window.os === 'Linux') {
+        message += `\n${LANG.linux_permission_hint}`;
+      }
+
       Alert.popUp({
-        type: AlertConstants.SHOW_POPUP_ERROR,
         message,
+        type: AlertConstants.SHOW_POPUP_ERROR,
       });
     } else if (err === 'INVALID_IP') {
       Alert.popUp({
-        type: AlertConstants.SHOW_POPUP_ERROR,
         message: `${LANG.invalid_ip}: ${ip}`,
+        type: AlertConstants.SHOW_POPUP_ERROR,
       });
     } else {
       this.handleResult(successRate, avgRRT, quality);
@@ -118,13 +131,16 @@ class NetworkTestingPanel extends React.Component<Props> {
   handleResult(successRate: number, avgRRT: number, quality: number): void {
     const ip = this.getIPValue();
     const { localIps } = this;
+
     console.log(`success rate: ${successRate}`);
     console.log(`average rrt of success: ${Math.round(100 * avgRRT) / 100} ms`);
+
     if (successRate > 0) {
       let message = `${LANG.connection_quality} : ${quality}\n${LANG.average_response} : ${
         Math.round(100 * avgRRT) / 100
       } ms`;
       let children = null;
+
       if (quality < 70 || avgRRT > 100) {
         message = `${LANG.network_unhealthy}\n${message}`;
       } else if (!this.discoveredDevices || !this.discoveredDevices.find((d) => d.ipaddr === ip)) {
@@ -135,10 +151,7 @@ class NetworkTestingPanel extends React.Component<Props> {
             <div className="hint" onClick={() => browser.open(LANG.link_device_often_on_list)}>
               {LANG.hint_device_often_on_list}
             </div>
-            <div
-              className="hint"
-              onClick={() => browser.open(LANG.link_connect_failed_when_sending_job)}
-            >
+            <div className="hint" onClick={() => browser.open(LANG.link_connect_failed_when_sending_job)}>
               {LANG.hint_connect_failed_when_sending_job}
             </div>
             <div className="hint" onClick={() => browser.open(LANG.link_connect_camera_timeout)}>
@@ -147,32 +160,36 @@ class NetworkTestingPanel extends React.Component<Props> {
           </div>
         );
       }
+
       Alert.popUp({
-        type: AlertConstants.SHOW_INFO,
-        message,
         caption: LANG.test_completed,
         children,
+        message,
+        type: AlertConstants.SHOW_INFO,
       });
     } else {
       let match = false;
       const targetIpFirstThree = ip.match(/.*\./)[0];
+
       localIps.forEach((localIP) => {
         const localFirstThree = localIP.match(/.*\./)[0];
+
         if (targetIpFirstThree === localFirstThree) {
           match = true;
         }
       });
+
       if (match) {
         Alert.popUp({
+          caption: LANG.test_completed,
           id: 'network_test_result',
           message: `${LANG.cannot_connect_1}`,
-          caption: LANG.test_completed,
         });
       } else {
         Alert.popUp({
+          caption: LANG.test_completed,
           id: 'network_test_result',
           message: `${LANG.cannot_connect_2}`,
-          caption: LANG.test_completed,
         });
       }
     }
@@ -180,11 +197,13 @@ class NetworkTestingPanel extends React.Component<Props> {
 
   getIPValue = (): string => {
     const { value } = this.textInputRef.current.input;
+
     return value.replace(' ', '');
   };
 
   onInputKeydown = (e: React.KeyboardEvent): void => {
     e.stopPropagation();
+
     if (e.key === 'Enter') {
       this.onStart();
     }
@@ -192,42 +211,37 @@ class NetworkTestingPanel extends React.Component<Props> {
 
   close(): void {
     const { onClose } = this.props;
+
     onClose();
   }
 
-  renderLocalIP(): JSX.Element {
+  renderLocalIP(): React.JSX.Element {
     const { localIps } = this;
-    if (!localIps.length && isWeb()) return null;
+
+    if (!localIps.length && isWeb()) {
+      return null;
+    }
+
     return <Form.Item label={LANG.local_ip}>{localIps.join(', ')}</Form.Item>;
   }
 
-  render(): JSX.Element {
+  render(): React.JSX.Element {
     const { ip, onClose } = this.props;
     const show = true;
 
     const renderModalFooter = () => [
       <Button onClick={onClose}>{LANG.end}</Button>,
-      <Button type="primary" onClick={this.onStart}>
+      <Button onClick={this.onStart} type="primary">
         {LANG.start}
       </Button>,
     ];
 
     return (
-      <Modal
-        open={show}
-        title={LANG.network_testing}
-        onCancel={onClose}
-        centered
-        footer={renderModalFooter()}
-      >
+      <Modal centered footer={renderModalFooter()} onCancel={onClose} open={show} title={LANG.network_testing}>
         <Form>
           {this.renderLocalIP()}
           <Form.Item label={LANG.insert_ip}>
-            <Input
-              ref={this.textInputRef}
-              defaultValue={ip || ''}
-              onKeyDown={this.onInputKeydown}
-            />
+            <Input defaultValue={ip || ''} onKeyDown={this.onInputKeydown} ref={this.textInputRef} />
           </Form.Item>
         </Form>
       </Modal>

@@ -4,9 +4,9 @@ enum LayerModule {
   LASER_10W_DIODE = 1, // or default CO2 laser for BeamSeries
   LASER_20W_DIODE = 2,
   LASER_1064 = 4,
+  LASER_UNIVERSAL = 15,
   PRINTER = 5,
   UNKNOWN = 9,
-  LASER_UNIVERSAL = 15,
 }
 
 export const modelsWithModules = new Set(['fad1', 'ado1']);

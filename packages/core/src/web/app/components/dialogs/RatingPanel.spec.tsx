@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import RatingPanel from './RatingPanel';
@@ -8,7 +9,7 @@ jest.mock('antd', () => ({
     <div>
       Dummy Checkbox
       <p>checked: {String(checked)}</p>
-      <button type="button" onClick={() => onChange({ target: { checked: !checked } })}>
+      <button onClick={() => onChange({ target: { checked: !checked } })} type="button">
         checkbox
       </button>
     </div>
@@ -27,18 +28,20 @@ jest.mock('antd', () => ({
         {children}
       </div>
     );
+
     mockForm.Item = mockFormItem;
+
     return mockForm;
   },
-  Modal: ({ children, onOk, onCancel, ...props }: any) => (
+  Modal: ({ children, onCancel, onOk, ...props }: any) => (
     <div>
       Dummy Modal
       <p>props: {JSON.stringify(props)}</p>
       {children}
-      <button type="button" onClick={onOk}>
+      <button onClick={onOk} type="button">
         ok
       </button>
-      <button type="button" onClick={onCancel}>
+      <button onClick={onCancel} type="button">
         cancel
       </button>
     </div>
@@ -46,7 +49,7 @@ jest.mock('antd', () => ({
   Rate: ({ onChange }: any) => (
     <div>
       Dummy Rate
-      <button type="button" onClick={() => onChange(5)}>
+      <button onClick={() => onChange(5)} type="button">
         change
       </button>
     </div>
@@ -57,23 +60,24 @@ jest.mock('@core/helpers/i18n', () => ({
   lang: {
     beambox: {
       rating_panel: {
-        title: 'Enjoy Beam Studio?',
-        description:
-          'If you like Beam Studio, we would greatly appreciate it if you could rate us.',
+        description: 'If you like Beam Studio, we would greatly appreciate it if you could rate us.',
         dont_show_again: "Don't Show this next time.",
         thank_you: 'Thank You for the feedback!',
+        title: 'Enjoy Beam Studio?',
       },
     },
   },
 }));
 
 const mockSetNotShowing = jest.fn();
+
 jest.mock('@core/helpers/rating-helper', () => ({
   setNotShowing: () => mockSetNotShowing(),
 }));
 
 const onClose = jest.fn();
 const onSubmit = jest.fn();
+
 describe('test RatingPanel', () => {
   beforeEach(() => {
     jest.resetAllMocks();
@@ -81,11 +85,13 @@ describe('test RatingPanel', () => {
 
   it('should render correctly', () => {
     const { container } = render(<RatingPanel onClose={onClose} onSubmit={onSubmit} />);
+
     expect(container).toMatchSnapshot();
   });
 
   test('set star and submit should work', () => {
     const { container, getByText } = render(<RatingPanel onClose={onClose} onSubmit={onSubmit} />);
+
     fireEvent.click(getByText('change'));
     expect(container).toMatchSnapshot();
     expect(onSubmit).not.toBeCalled();
@@ -100,6 +106,7 @@ describe('test RatingPanel', () => {
 
   test('toggle checkbox and cancel should work', () => {
     const { container, getByText } = render(<RatingPanel onClose={onClose} onSubmit={onSubmit} />);
+
     fireEvent.click(getByText('checkbox'));
     expect(container).toMatchSnapshot();
     expect(onClose).not.toBeCalled();

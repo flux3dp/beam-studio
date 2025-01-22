@@ -1,14 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable no-console */
 import { EventEmitter } from 'eventemitter3';
 
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import ExportFuncs from '@core/app/actions/beambox/export-funcs';
-import DeviceMaster from '@core/helpers/device-master';
+import { importBvgString } from '@core/app/svgedit/operations/import/importBvg';
 import Discover from '@core/helpers/api/discover';
 import svgLaserParser from '@core/helpers/api/svg-laser-parser';
-import { IDeviceInfo } from '@core/interfaces/IDevice';
-import { importBvgString } from '@core/app/svgedit/operations/import/importBvg';
+import DeviceMaster from '@core/helpers/device-master';
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 const svgeditorParser = svgLaserParser({ type: 'svgeditor' });
 const MACHINE_STATUS = {
@@ -36,7 +34,6 @@ const MACHINE_STATUS = {
 };
 
 // Core
-// eslint-disable-next-line @typescript-eslint/dot-notation
 export default window['EasyManipulator'] = class EasyManipulator extends EventEmitter {
   private machines: IDeviceInfo[];
 
@@ -54,10 +51,13 @@ export default window['EasyManipulator'] = class EasyManipulator extends EventEm
     this.isWorking = false;
     Discover('easy-manipulator', (machines) => {
       this.machines = Object.values(machines).filter((m) => m.model.startsWith('fb'));
+
       if (this.device) {
         const device = this.machines.filter((m) => m.uuid === this.device.uuid)[0];
+
         if (device) {
           this.device = device;
+
           if (this.isWorking && this.device.st_id === 64) {
             this.emit('DONE');
             this.quit();
@@ -82,11 +82,15 @@ export default window['EasyManipulator'] = class EasyManipulator extends EventEm
       const interval = window.setInterval(async () => {
         const targets = this.machines.filter((m) => m.name === machineName);
         const device = targets[0];
+
         this.device = device;
+
         if (!device) {
           return;
         }
+
         const res = await DeviceMaster.select(device);
+
         if (res.success) {
           this.isWorking = device.st_id === 16;
           isSuccessSelected = true;
@@ -97,9 +101,11 @@ export default window['EasyManipulator'] = class EasyManipulator extends EventEm
           this.emit('ERROR', { detail: { error: res.error } });
         }
       }, 15000);
+
       window.setTimeout(() => {
         if (!isSuccessSelected) {
           const error = `Unable to select device: ${machineName}`;
+
           this.emit('ERROR', { detail: { error } });
           resolve(false);
         }
@@ -118,65 +124,76 @@ export default window['EasyManipulator'] = class EasyManipulator extends EventEm
       </g>
     </svg>`; */
     await importBvgString(this.bvg);
+
     const { uploadFile } = await ExportFuncs.prepareFileWrappedFromSvgStringAndThumbnail();
     const r = await svgeditorParser.uploadToSvgeditorAPI([uploadFile], {
-      model: this.device
-        ? this.device.model
-        : BeamboxPreference.read('workarea') || BeamboxPreference.read('model'),
       engraveDpi: BeamboxPreference.read('engrave_dpi'),
-      onProgressing: () => {},
+      model: this.device ? this.device.model : BeamboxPreference.read('workarea') || BeamboxPreference.read('model'),
       onFinished: () => {
         this.emit('LOAD');
       },
+      onProgressing: () => {},
     });
+
     if (!r) {
       return true;
     }
+
     this.emit('ERROR', { detail: { error: r } });
+
     return false;
   }
 
   async calculate() {
     if (!this.bvg) {
       const error = 'No BVG loaded';
+
       this.emit('ERROR', { detail: { error } });
+
       return { success: false, timeCost: 0 };
     }
 
-    const { taskCodeBlob, fileTimeCost } = await new Promise<{
-      taskCodeBlob: Blob;
+    const { fileTimeCost, taskCodeBlob } = await new Promise<{
       fileTimeCost: number;
+      taskCodeBlob: Blob;
     }>((resolve) => {
       const names = []; // don't know what this is for
       const codeType = 'fcode';
+
       svgeditorParser.getTaskCode(names, {
-        onProgressing: () => {},
-        onFinished: (codeBlob, timeCost) => {
-          resolve({ taskCodeBlob: codeBlob, fileTimeCost: timeCost });
-          this.emit('CALCULATED', { detail: { taskCodeBlob: codeBlob, fileTimeCost: timeCost } });
-        },
-        fileMode: '-f',
         codeType,
-        model: this.device
-          ? this.device.model
-          : BeamboxPreference.read('workarea') || BeamboxPreference.read('model'),
+        fileMode: '-f',
+        model: this.device ? this.device.model : BeamboxPreference.read('workarea') || BeamboxPreference.read('model'),
+        onFinished: (codeBlob, timeCost) => {
+          resolve({ fileTimeCost: timeCost, taskCodeBlob: codeBlob });
+          this.emit('CALCULATED', { detail: { fileTimeCost: timeCost, taskCodeBlob: codeBlob } });
+        },
+        onProgressing: () => {},
       });
     });
+
     this.taskCodeBlob = taskCodeBlob;
+
     return { success: true, timeCost: fileTimeCost };
   }
 
   async start() {
     if (!this.device) {
       const error = 'No Machine Selected';
+
       this.emit('ERROR', { detail: { error } });
+
       return false;
     }
+
     if (!this.taskCodeBlob) {
       const error = 'No Calculated Task';
+
       this.emit('ERROR', { detail: { error } });
+
       return false;
     }
+
     let isSuc = false;
 
     try {
@@ -196,62 +213,86 @@ export default window['EasyManipulator'] = class EasyManipulator extends EventEm
   pause() {
     if (!this.device) {
       const error = 'No Machine Selected';
+
       this.emit('ERROR', { detail: { error } });
+
       return false;
     }
+
     DeviceMaster.pause();
+
     return true;
   }
 
   resume() {
     if (!this.device) {
       const error = 'No Machine Selected';
+
       this.emit('ERROR', { detail: { error } });
+
       return false;
     }
+
     DeviceMaster.resume();
+
     return true;
   }
 
   abort() {
     if (!this.device) {
       const error = 'No Machine Selected';
+
       this.emit('ERROR', { detail: { error } });
+
       return false;
     }
+
     this.isWorking = false;
     DeviceMaster.stop();
     DeviceMaster.quit();
+
     return true;
   }
 
   quit() {
     if (!this.device) {
       const error = 'No Machine Selected';
+
       this.emit('ERROR', { detail: { error } });
+
       return false;
     }
+
     DeviceMaster.quit();
+
     return true;
   }
 
   kick() {
     if (!this.device) {
       const error = 'No Machine Selected';
+
       this.emit('ERROR', { detail: { error } });
+
       return false;
     }
+
     DeviceMaster.kick();
+
     return true;
   }
 
   getStatus() {
     if (!this.device) {
       const error = 'No Machine Selected';
+
       this.emit('ERROR', { detail: { error } });
+
       return false;
     }
+
     const { st_id: id, st_prog: prog } = this.device;
-    return { state: MACHINE_STATUS[id], progress: prog };
+
+    return { progress: prog, state: MACHINE_STATUS[id] };
   }
 };

@@ -1,6 +1,4 @@
-import {
-  showMenu, hideMenu, MENU_SHOW, MENU_HIDE,
-} from './actions';
+import { hideMenu, MENU_HIDE, MENU_SHOW, showMenu } from './actions';
 
 let showCallback = null;
 let hideCallback = null;

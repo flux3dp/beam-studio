@@ -1,8 +1,8 @@
-/* eslint-disable no-console */
+import workareaManager from '@core/app/svgedit/workarea';
 import Logger from '@core/helpers/logger';
 import shortcuts from '@core/helpers/shortcuts';
+
 import storage from '@app/implementations/storage';
-import workareaManager from '@core/app/svgedit/workarea';
 
 const genericLogger = Logger('generic');
 const defaultKeyBehavior = () => {
@@ -39,7 +39,9 @@ export default (callback: () => void): void => {
     } else if (isReady === false && !hash.startsWith('#initialize')) {
       window.location.hash = '#';
     }
+
     callback();
   };
+
   onFinished(storage.get('printer-is-ready'));
 };

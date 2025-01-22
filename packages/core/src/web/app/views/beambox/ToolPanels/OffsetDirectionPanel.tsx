@@ -1,8 +1,9 @@
-import classNames from 'classnames';
 import React from 'react';
 
-import i18n from '@core/helpers/i18n';
+import classNames from 'classnames';
+
 import SelectView from '@core/app/widgets/Select';
+import i18n from '@core/helpers/i18n';
 
 const LANG = i18n.lang.beambox.tool_panels;
 
@@ -11,7 +12,7 @@ interface Props {
   onValueChange: (val: number) => void;
 }
 
-function OffsetDirectionPanel({ dir: dirProps, onValueChange }: Props): JSX.Element {
+function OffsetDirectionPanel({ dir: dirProps, onValueChange }: Props): React.JSX.Element {
   const [dir, updateDir] = React.useState(dirProps);
   const [isCollapsed, updateIsCollapsed] = React.useState(false);
 
@@ -24,25 +25,25 @@ function OffsetDirectionPanel({ dir: dirProps, onValueChange }: Props): JSX.Elem
     ({
       0: LANG._offset.inward,
       1: LANG._offset.outward,
-    }[dir]);
+    })[dir];
 
   const options = [
     {
-      value: 1,
       label: LANG._offset.outward,
       selected: dir === 1,
+      value: 1,
     },
     {
-      value: 0,
       label: LANG._offset.inward,
       selected: dir === 0,
+      value: 0,
     },
   ];
 
   return (
     <div className="tool-panel">
       <label className="controls accordion">
-        <input type="checkbox" className="accordion-switcher" defaultChecked />
+        <input className="accordion-switcher" defaultChecked type="checkbox" />
         <p className="caption" onClick={() => updateIsCollapsed(!isCollapsed)}>
           {LANG._offset.direction}
           <span className="value">{getOffsetDir()}</span>
@@ -51,10 +52,10 @@ function OffsetDirectionPanel({ dir: dirProps, onValueChange }: Props): JSX.Elem
           <div className="control offset-dir">
             <SelectView
               id="select-offset-dir"
-              options={options}
               onChange={(e) => {
-                updateOffsetDir(parseInt(e.target.value, 10));
+                updateOffsetDir(Number.parseInt(e.target.value, 10));
               }}
+              options={options}
             />
           </div>
         </div>

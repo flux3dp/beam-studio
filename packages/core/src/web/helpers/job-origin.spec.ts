@@ -1,16 +1,19 @@
 import getJobOrigin, { getRefModule } from './job-origin';
 
 const mockRead = jest.fn();
+
 jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read: (...args) => mockRead(...args),
 }));
 
 const mockGetAllLayers = jest.fn();
+
 jest.mock('@core/helpers/layer/layer-helper', () => ({
   getAllLayers: (...args) => mockGetAllLayers(...args),
 }));
 
 const mockGetData = jest.fn();
+
 jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   getData: (...args) => mockGetData(...args),
 }));
@@ -18,15 +21,16 @@ jest.mock('@core/helpers/layer/layer-config-helper', () => ({
 const mockWorkareaWidth = jest.fn();
 const mockWorkareaHeight = jest.fn();
 const mockWorkareaExpansion = jest.fn();
+
 jest.mock('@core/app/svgedit/workarea', () => ({
-  get width() {
-    return mockWorkareaWidth();
+  get expansion() {
+    return mockWorkareaExpansion();
   },
   get height() {
     return mockWorkareaHeight();
   },
-  get expansion() {
-    return mockWorkareaExpansion();
+  get width() {
+    return mockWorkareaWidth();
   },
 }));
 
@@ -38,6 +42,7 @@ describe('test job-origin', () => {
   test('getRefModule', () => {
     const mockLayer1 = { getAttribute: () => 'none' };
     const mockLayer2 = { getAttribute: () => 'block' };
+
     mockGetAllLayers.mockReturnValue([mockLayer1, mockLayer2]);
     mockGetData.mockReturnValue(1);
     expect(getRefModule()).toBe(1);
@@ -51,9 +56,11 @@ describe('test job-origin', () => {
       mockWorkareaWidth.mockReturnValue(100);
       mockWorkareaHeight.mockReturnValue(200);
       mockWorkareaExpansion.mockReturnValue([0, 0]);
+
       const mockElem = {
-        getBBox: () => ({ x: 10, y: 20, width: 30, height: 40 }),
+        getBBox: () => ({ height: 40, width: 30, x: 10, y: 20 }),
       };
+
       document.getElementById = jest.fn().mockReturnValue(mockElem);
     });
 
@@ -68,6 +75,7 @@ describe('test job-origin', () => {
       { jobOrigin: 8, px: true, res: { x: 25, y: 60 } },
       { jobOrigin: 9, px: false, res: { x: 4, y: 6 } },
     ];
+
     testCases.forEach(({ jobOrigin, px, res }) => {
       test(`getJobOrigin with value ${jobOrigin}`, () => {
         mockRead.mockReturnValue(jobOrigin);

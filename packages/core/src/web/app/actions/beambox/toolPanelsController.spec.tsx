@@ -1,11 +1,11 @@
-/* eslint-disable import/first */
 import * as React from 'react';
 
 const mockOnObjectFocus = jest.fn();
 const mockOnObjectBlur = jest.fn();
+
 jest.mock('@core/app/actions/beambox/beambox-global-interaction', () => ({
-  onObjectFocus: mockOnObjectFocus,
   onObjectBlur: mockOnObjectBlur,
+  onObjectFocus: mockOnObjectFocus,
 }));
 
 jest.mock(
@@ -22,13 +22,13 @@ test('test render', async () => {
   expect(toolPanelsController.isVisible).toBeFalsy();
   expect(toolPanelsController.type).toBe('unknown');
   expect(toolPanelsController.data).toEqual({
-    rowcolumn: {
-      row: 1,
-      column: 1,
-    },
     distance: {
       dx: 0,
       dy: 0,
+    },
+    rowcolumn: {
+      column: 1,
+      row: 1,
     },
   });
 
@@ -47,9 +47,7 @@ test('test render', async () => {
   document.body.innerHTML = '<div id="tool-panels-placeholder" />';
   toolPanelsController.render();
   await new Promise((r) => setTimeout(r, 0));
-  expect(document.body.innerHTML).toBe(
-    '<div id="tool-panels-placeholder"><div>This is dummy ToolPanels</div></div>',
-  );
+  expect(document.body.innerHTML).toBe('<div id="tool-panels-placeholder"><div>This is dummy ToolPanels</div></div>');
 
   toolPanelsController.setVisibility(false);
   toolPanelsController.render();

@@ -1,7 +1,8 @@
 import React, { act } from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
-import { IDeviceInfo } from '@core/interfaces/IDevice';
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 import PromarkSettings from './PromarkSettings';
 
@@ -11,6 +12,7 @@ jest.mock('./LensBlock', () => () => <div>Mock LensBlock</div>);
 jest.mock('./ParametersBlock', () => () => <div>Mock ParametersBlock</div>);
 
 const mockCheckDeviceStatus = jest.fn();
+
 jest.mock('@core/helpers/check-device-status', () => ({
   checkDeviceStatus: (...args) => mockCheckDeviceStatus(...args),
 }));
@@ -21,26 +23,30 @@ const mockStartFraming = jest.fn();
 const mockStopFraming = jest.fn();
 const mockDoPromarkCalibration = jest.fn();
 const mockSelect = jest.fn();
+
 jest.mock('@core/helpers/device-master', () => ({
-  setGalvoParameters: (...args) => mockSetGalvoParameters(...args),
-  setField: (...args) => mockSetField(...args),
-  startFraming: (...args) => mockStartFraming(...args),
-  stopFraming: (...args) => mockStopFraming(...args),
   doPromarkCalibration: (...args) => mockDoPromarkCalibration(...args),
   select: (...args) => mockSelect(...args),
+  setField: (...args) => mockSetField(...args),
+  setGalvoParameters: (...args) => mockSetGalvoParameters(...args),
+  startFraming: (...args) => mockStartFraming(...args),
+  stopFraming: (...args) => mockStopFraming(...args),
 }));
 
 const mockStorageGet = jest.fn();
+
 jest.mock('@app/implementations/storage', () => ({
   get: (...args) => mockStorageGet(...args),
 }));
 
 const mockPromarkUpdate = jest.fn();
+
 jest.mock('@core/helpers/device/promark/promark-data-store', () => ({
   update: (...args) => mockPromarkUpdate(...args),
 }));
 
 const mockGetWorkarea = jest.fn();
+
 jest.mock('@core/app/constants/workarea-constants', () => ({
   getWorkarea: (...args) => mockGetWorkarea(...args),
 }));
@@ -48,6 +54,7 @@ jest.mock('@core/app/constants/workarea-constants', () => ({
 const mockCalculateRedDotTransform = jest.fn();
 const mockGenerateCalibrationTaskString = jest.fn();
 const mockLoadTaskToSwiftray = jest.fn();
+
 jest.mock('@core/helpers/device/promark/calibration', () => ({
   calculateRedDotTransform: (...args) => mockCalculateRedDotTransform(...args),
   generateCalibrationTaskString: (...args) => mockGenerateCalibrationTaskString(...args),
@@ -55,6 +62,7 @@ jest.mock('@core/helpers/device/promark/calibration', () => ({
 }));
 
 const mockApplyRedDot = jest.fn();
+
 jest.mock(
   '@core/helpers/device/promark/apply-red-dot',
   () =>
@@ -64,10 +72,11 @@ jest.mock(
 
 const mockOn = jest.fn();
 const mockOff = jest.fn();
+
 jest.mock('@core/helpers/api/swiftray-client', () => ({
   swiftrayClient: {
-    on: (...args) => mockOn(...args),
     off: (...args) => mockOff(...args),
+    on: (...args) => mockOn(...args),
   },
 }));
 
@@ -86,18 +95,18 @@ describe('test PromarkSettings', () => {
   });
 
   it('should render correctly', () => {
-    const { baseElement } = render(
-      <PromarkSettings device={mockDevice} initData={{}} onClose={mockOnClose} />,
-    );
+    const { baseElement } = render(<PromarkSettings device={mockDevice} initData={{}} onClose={mockOnClose} />);
+
     expect(baseElement).toMatchSnapshot();
   });
 
   test('Preview button', async () => {
-    const { findByText } = render(
-      <PromarkSettings device={mockDevice} initData={{}} onClose={mockOnClose} />,
-    );
+    const { findByText } = render(<PromarkSettings device={mockDevice} initData={{}} onClose={mockOnClose} />);
+
     mockGenerateCalibrationTaskString.mockReturnValue('task');
+
     const previewBtn = await findByText('Preview');
+
     expect(mockStartFraming).not.toBeCalled();
     expect(mockLoadTaskToSwiftray).not.toBeCalled();
     mockApplyRedDot.mockReturnValue({
@@ -115,13 +124,13 @@ describe('test PromarkSettings', () => {
         scaleY: 1,
       },
       {
+        angle: 0,
         offsetX: 0,
         offsetY: 0,
-        angle: 0,
       },
       {
-        x: { scale: 100, bulge: 1, skew: 1, trapezoid: 1 },
-        y: { scale: 100, bulge: 1, skew: 1, trapezoid: 1 },
+        x: { bulge: 1, scale: 100, skew: 1, trapezoid: 1 },
+        y: { bulge: 1, scale: 100, skew: 1, trapezoid: 1 },
       },
     );
     expect(mockSetGalvoParameters).toBeCalledTimes(1);
@@ -141,19 +150,20 @@ describe('test PromarkSettings', () => {
   });
 
   test('Mark button', async () => {
-    const { findByText } = render(
-      <PromarkSettings device={mockDevice} initData={{}} onClose={mockOnClose} />,
-    );
+    const { findByText } = render(<PromarkSettings device={mockDevice} initData={{}} onClose={mockOnClose} />);
+
     mockGenerateCalibrationTaskString.mockReturnValue('task');
+
     const markBtn = await findByText('Mark');
+
     expect(mockLoadTaskToSwiftray).not.toBeCalled();
     expect(mockDoPromarkCalibration).not.toBeCalled();
     await act(() => fireEvent.click(markBtn));
     expect(mockGenerateCalibrationTaskString).toBeCalledTimes(1);
     expect(mockGenerateCalibrationTaskString).toBeCalledWith({
-      width: 150,
       power: 50,
       speed: 1000,
+      width: 150,
     });
     expect(mockLoadTaskToSwiftray).toBeCalledTimes(1);
     expect(mockLoadTaskToSwiftray).toBeCalledWith('task', 'fpm1');
@@ -162,30 +172,28 @@ describe('test PromarkSettings', () => {
   });
 
   test('Cancel button', async () => {
-    const { findByText } = render(
-      <PromarkSettings device={mockDevice} initData={{}} onClose={mockOnClose} />,
-    );
+    const { findByText } = render(<PromarkSettings device={mockDevice} initData={{}} onClose={mockOnClose} />);
     const cancelBtn = await findByText('Cancel');
+
     expect(mockOnClose).not.toBeCalled();
     fireEvent.click(cancelBtn);
     expect(mockOnClose).toBeCalledTimes(1);
   });
 
   test('Save button', async () => {
-    const { findByText } = render(
-      <PromarkSettings device={mockDevice} initData={{}} onClose={mockOnClose} />,
-    );
+    const { findByText } = render(<PromarkSettings device={mockDevice} initData={{}} onClose={mockOnClose} />);
     const saveBtn = await findByText('Save');
+
     expect(mockPromarkUpdate).not.toBeCalled();
     await act(() => fireEvent.click(saveBtn));
     expect(mockPromarkUpdate).toBeCalledTimes(1);
     expect(mockPromarkUpdate).toBeCalledWith('123', {
-      field: { offsetX: 0, offsetY: 0, angle: 0 },
-      redDot: { offsetX: 0, offsetY: 0, scaleX: 1, scaleY: 1 },
+      field: { angle: 0, offsetX: 0, offsetY: 0 },
       galvoParameters: {
-        x: { scale: 100, bulge: 1, skew: 1, trapezoid: 1 },
-        y: { scale: 100, bulge: 1, skew: 1, trapezoid: 1 },
+        x: { bulge: 1, scale: 100, skew: 1, trapezoid: 1 },
+        y: { bulge: 1, scale: 100, skew: 1, trapezoid: 1 },
       },
+      redDot: { offsetX: 0, offsetY: 0, scaleX: 1, scaleY: 1 },
     });
     expect(mockOnClose).toBeCalledTimes(1);
   });

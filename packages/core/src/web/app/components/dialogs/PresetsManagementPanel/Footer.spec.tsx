@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import Footer from './Footer';
@@ -8,9 +9,8 @@ describe('test Footer', () => {
     const handleSave = jest.fn();
     const handleReset = jest.fn();
     const onClose = jest.fn();
-    const { getByText } = render(
-      <Footer handleSave={handleSave} handleReset={handleReset} onClose={onClose} />,
-    );
+    const { getByText } = render(<Footer handleReset={handleReset} handleSave={handleSave} onClose={onClose} />);
+
     fireEvent.click(getByText('Reset'));
     expect(handleReset).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText('Cancel'));

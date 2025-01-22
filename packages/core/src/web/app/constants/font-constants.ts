@@ -4,35 +4,35 @@
 
 const fontConstants: {
   [lang: string]: {
-    MacOS?: string,
-    Windows?: string,
-    Linux?: string,
-    web?: string,
-  }
+    Linux?: string;
+    MacOS?: string;
+    web?: string;
+    Windows?: string;
+  };
 } = {
-  'zh-CN': {
-    MacOS: 'STHeiti',
-    Windows: 'Microsoft YaHei',
-    Linux: 'Ubuntu',
-    web: 'Noto Sans SC',
-  },
-  'zh-TW': {
-    MacOS: 'Heiti TC',
-    Windows: '微軟正黑體',
-    Linux: 'Ubuntu',
-    web: 'Noto Sans TC',
-  },
   ja: {
-    MacOS: 'Hiragino Maru Gothic ProN',
-    Windows: 'Meiryo',
     Linux: 'Ubuntu',
+    MacOS: 'Hiragino Maru Gothic ProN',
     web: 'Noto Sans JP',
+    Windows: 'Meiryo',
   },
   ko: {
-    MacOS: 'Apple SD Gothic Neo',
-    Windows: 'Malgun Gothic',
     Linux: 'Ubuntu',
+    MacOS: 'Apple SD Gothic Neo',
     web: 'Noto Sans KR',
+    Windows: 'Malgun Gothic',
+  },
+  'zh-CN': {
+    Linux: 'Ubuntu',
+    MacOS: 'STHeiti',
+    web: 'Noto Sans SC',
+    Windows: 'Microsoft YaHei',
+  },
+  'zh-TW': {
+    Linux: 'Ubuntu',
+    MacOS: 'Heiti TC',
+    web: 'Noto Sans TC',
+    Windows: '微軟正黑體',
   },
 };
 

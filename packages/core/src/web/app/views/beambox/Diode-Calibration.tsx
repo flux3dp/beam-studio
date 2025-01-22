@@ -1,23 +1,25 @@
 import React from 'react';
+
 import classNames from 'classnames';
 
 import Alert from '@core/app/actions/alert-caller';
+import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import Constant from '@core/app/actions/beambox/constant';
+import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
+import Dialog from '@core/app/actions/dialog-caller';
+import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
 import AlertDialog from '@core/app/widgets/AlertDialog';
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import browser from '@app/implementations/browser';
+import Modal from '@core/app/widgets/Modal';
+import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import CheckDeviceStatus from '@core/helpers/check-device-status';
-import Constant from '@core/app/actions/beambox/constant';
 import DeviceErrorHandler from '@core/helpers/device-error-handler';
 import DeviceMaster from '@core/helpers/device-master';
-import Dialog from '@core/app/actions/dialog-caller';
 import i18n from '@core/helpers/i18n';
-import Modal from '@core/app/widgets/Modal';
-import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
-import Progress from '@core/app/actions/progress-caller';
-import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import VersionChecker from '@core/helpers/version-checker';
-import { IDeviceInfo } from '@core/interfaces/IDevice';
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
+
+import browser from '@app/implementations/browser';
 
 const LANG = i18n.lang.calibration;
 const LANG_ALERT = i18n.lang.alert;
@@ -41,13 +43,13 @@ interface Props {
 }
 
 interface State {
-  currentStep: symbol;
-  showHint: boolean;
-  dx: number;
-  dy: number;
   cameraMovedX: number;
   cameraMovedY: number;
+  currentStep: symbol;
+  dx: number;
+  dy: number;
   isCutButtonDisabled: boolean;
+  showHint: boolean;
 }
 
 class DiodeCalibration extends React.Component<Props, State> {
@@ -56,29 +58,30 @@ class DiodeCalibration extends React.Component<Props, State> {
   private origFanSpeed: number;
 
   private cameraOffset: {
-    x: number;
-    y: number;
     angle?: number;
     scaleRatioX?: number;
     scaleRatioY?: number;
+    x: number;
+    y: number;
   };
 
   private imageUrl: string;
 
   constructor(props: Props) {
     super(props);
+
     const { device } = props;
     const didCalibrate = calibratedMachineUUIDs.includes(device.uuid);
 
     this.imageScale = 0.5;
     this.state = {
-      currentStep: didCalibrate ? STEP_ASK_READJUST : STEP_ALERT,
-      showHint: false,
-      dx: 0,
-      dy: 0,
       cameraMovedX: 0,
       cameraMovedY: 0,
+      currentStep: didCalibrate ? STEP_ASK_READJUST : STEP_ALERT,
+      dx: 0,
+      dy: 0,
       isCutButtonDisabled: false,
+      showHint: false,
     };
   }
 
@@ -90,8 +93,10 @@ class DiodeCalibration extends React.Component<Props, State> {
 
   onClose = async (): Promise<void> => {
     const { onClose } = this.props;
+
     onClose();
     await PreviewModeController.end({ shouldWaitForEnd: true });
+
     if (this.origFanSpeed) {
       await DeviceMaster.setFan(this.origFanSpeed);
     }
@@ -100,15 +105,19 @@ class DiodeCalibration extends React.Component<Props, State> {
   doCuttingTask = async (): Promise<void> => {
     const { device } = this.props;
     const res = await DeviceMaster.select(device);
+
     if (!res.success) {
-      throw Error('Fail to select device');
+      throw new Error('Fail to select device');
     }
+
     const laserPower = Number((await DeviceMaster.getLaserPower()).value);
     const fanSpeed = Number((await DeviceMaster.getFan()).value);
+
     this.origFanSpeed = fanSpeed;
 
     const vc = VersionChecker(device.version);
     const tempCmdAvailable = vc.meetRequirement('TEMP_I2C_CMD');
+
     if (tempCmdAvailable) {
       await DeviceMaster.setFanTemp(100);
     } else if (fanSpeed > 100) {
@@ -133,10 +142,9 @@ class DiodeCalibration extends React.Component<Props, State> {
   doCaptureTask = async (): Promise<void> => {
     const { device } = this.props;
     let blobUrl;
+
     try {
-      await PreviewModeController.start(device, () =>
-        console.log('camera fail. stop preview mode'),
-      );
+      await PreviewModeController.start(device, () => console.log('camera fail. stop preview mode'));
       Progress.openNonstopProgress({
         id: 'taking-picture',
         message: LANG.taking_picture,
@@ -144,9 +152,11 @@ class DiodeCalibration extends React.Component<Props, State> {
       });
       cameraOffset = PreviewModeController.getCameraOffset();
       this.cameraOffset = cameraOffset;
+
       const { centerX, centerY } = Constant.diode.calibrationPicture;
       const movementX = centerX - this.cameraOffset.x;
       const movementY = centerY - this.cameraOffset.y;
+
       blobUrl = await PreviewModeController.getPhotoAfterMoveTo(movementX, movementY);
     } finally {
       Progress.popById('taking-picture');
@@ -175,6 +185,7 @@ class DiodeCalibration extends React.Component<Props, State> {
     const h = img.height;
 
     const l = (h * scaleRatioY) / (Math.cos(a) + Math.sin(a));
+
     cvs.width = l;
     cvs.height = l;
     this.imageScale = 200 / l; // 200 width of image display div
@@ -186,6 +197,7 @@ class DiodeCalibration extends React.Component<Props, State> {
     return new Promise((resolve) => {
       cvs.toBlob((blob) => {
         const newImageUrl = URL.createObjectURL(blob);
+
         this.imageUrl = newImageUrl;
         resolve(newImageUrl);
       });
@@ -199,7 +211,9 @@ class DiodeCalibration extends React.Component<Props, State> {
         message: LANG.taking_picture,
         timeout: 30000,
       });
+
       let { cameraMovedX, cameraMovedY } = this.state;
+
       switch (dir) {
         case 'up':
           cameraMovedY -= 3;
@@ -216,10 +230,12 @@ class DiodeCalibration extends React.Component<Props, State> {
         default:
           break;
       }
+
       const { centerX, centerY } = Constant.diode.calibrationPicture;
       const movementX = centerX - this.cameraOffset.x + cameraMovedX;
       const movementY = centerY - this.cameraOffset.y + cameraMovedY;
       const blobUrl = await PreviewModeController.getPhotoAfterMoveTo(movementX, movementY);
+
       console.log(movementX, movementY);
       this.imageUrl = blobUrl;
       await this.cropAndRotateImg();
@@ -233,21 +249,20 @@ class DiodeCalibration extends React.Component<Props, State> {
     this.setState({ showHint: show });
   }
 
-  renderStepAskReadjust(): JSX.Element {
+  renderStepAskReadjust(): React.JSX.Element {
     const { device } = this.props;
+
     return (
       <AlertDialog
-        caption={LANG.diode_calibration}
-        message={LANG.ask_for_readjust}
         buttons={[
           {
-            label: LANG.cancel,
             className: 'btn-default pull-left',
+            label: LANG.cancel,
             onClick: () => this.onClose(),
           },
           {
-            label: LANG.skip,
             className: 'btn-default pull-right primary',
+            label: LANG.skip,
             onClick: async () => {
               try {
                 await CheckDeviceStatus(device);
@@ -256,22 +271,24 @@ class DiodeCalibration extends React.Component<Props, State> {
                 this.updateCurrentStep(STEP_ANALYZE);
               } catch (error) {
                 console.log(error);
-                const errorMessage =
-                  error instanceof Error ? error.message : DeviceErrorHandler.translate(error);
+
+                const errorMessage = error instanceof Error ? error.message : DeviceErrorHandler.translate(error);
+
                 Alert.popUp({
-                  id: 'diode-cali-err',
-                  type: AlertConstants.SHOW_POPUP_ERROR,
-                  message: `#815 ${errorMessage || 'Fail to capture'}`,
                   buttonLabels: [LANG_ALERT.ok, LANG_ALERT.learn_more],
                   callbacks: [
                     async () => {
                       const report = await DeviceMaster.getReport();
+
                       device.st_id = report.st_id;
                       await CheckDeviceStatus(device, false, true);
                     },
                     () => browser.open(LANG.zendesk_link),
                   ],
+                  id: 'diode-cali-err',
+                  message: `#815 ${errorMessage || 'Fail to capture'}`,
                   primaryButtonIndex: 0,
+                  type: AlertConstants.SHOW_POPUP_ERROR,
                 });
               } finally {
                 Progress.popById('taking-picture');
@@ -279,101 +296,110 @@ class DiodeCalibration extends React.Component<Props, State> {
             },
           },
           {
-            label: LANG.do_engraving,
             className: 'btn-default pull-right',
+            label: LANG.do_engraving,
             onClick: () => this.updateCurrentStep(STEP_ALERT),
           },
         ]}
+        caption={LANG.diode_calibration}
+        message={LANG.ask_for_readjust}
       />
     );
   }
 
-  renderStepAlert(): JSX.Element {
+  renderStepAlert(): React.JSX.Element {
     const { device } = this.props;
     const model = device.model === 'fbm1' ? 'beamo' : 'beambox';
+
     return (
       <AlertDialog
-        caption={LANG.diode_calibration}
-        message={LANG.please_do_camera_calibration_and_focus[model]}
         buttons={[
           {
-            label: LANG.next,
             className: 'btn-default pull-right primary',
+            label: LANG.next,
             onClick: () => this.updateCurrentStep(STEP_CUT),
           },
           {
-            label: LANG.cancel,
             className: 'btn-default pull-left',
+            label: LANG.cancel,
             onClick: () => this.onClose(),
           },
         ]}
+        caption={LANG.diode_calibration}
+        message={LANG.please_do_camera_calibration_and_focus[model]}
       />
     );
   }
 
   // Cut and Take Picture
-  renderStepCut(): JSX.Element {
+  renderStepCut(): React.JSX.Element {
     const { device } = this.props;
     const { isCutButtonDisabled } = this.state;
+
     return (
       <AlertDialog
-        caption={LANG.diode_calibration}
-        message={LANG.please_place_paper}
         buttons={[
           {
-            label: LANG.start_engrave,
             className: classNames('btn-default pull-right primary', {
               disabled: isCutButtonDisabled,
             }),
+            label: LANG.start_engrave,
             onClick: async () => {
               if (isCutButtonDisabled) {
                 return;
               }
+
               try {
                 this.setState({ isCutButtonDisabled: true });
                 await CheckDeviceStatus(device);
                 await this.doCuttingTask();
                 await this.doCaptureTask();
                 await this.cropAndRotateImg();
+
                 if (!calibratedMachineUUIDs.includes(device.uuid)) {
                   calibratedMachineUUIDs.push(device.uuid);
                 }
+
                 this.updateCurrentStep(STEP_ANALYZE);
               } catch (error) {
                 this.setState({ isCutButtonDisabled: false });
                 console.log(error);
-                const errorMessage =
-                  error instanceof Error ? error.message : DeviceErrorHandler.translate(error);
+
+                const errorMessage = error instanceof Error ? error.message : DeviceErrorHandler.translate(error);
+
                 Alert.popUp({
-                  id: 'diode-cali-err',
-                  type: AlertConstants.SHOW_POPUP_ERROR,
-                  message: `#815 ${errorMessage || 'Fail to cut and capture'}`,
                   buttonLabels: [LANG_ALERT.ok, LANG_ALERT.learn_more],
                   callbacks: [
                     async () => {
                       const report = await DeviceMaster.getReport();
+
                       device.st_id = report.st_id;
                       await CheckDeviceStatus(device, false, true);
                     },
                     () => browser.open(LANG.zendesk_link),
                   ],
+                  id: 'diode-cali-err',
+                  message: `#815 ${errorMessage || 'Fail to cut and capture'}`,
                   primaryButtonIndex: 0,
+                  type: AlertConstants.SHOW_POPUP_ERROR,
                 });
               }
             },
           },
           {
-            label: LANG.cancel,
             className: 'btn-default pull-left',
+            label: LANG.cancel,
             onClick: () => this.onClose(),
           },
         ]}
+        caption={LANG.diode_calibration}
+        message={LANG.please_place_paper}
       />
     );
   }
 
-  renderStepAnalyze(): JSX.Element {
-    const { dx, dy, cameraMovedX, cameraMovedY } = this.state;
+  renderStepAnalyze(): React.JSX.Element {
+    const { cameraMovedX, cameraMovedY, dx, dy } = this.state;
 
     const imgBackground = {
       background: `url(${this.imageUrl})`,
@@ -381,10 +407,10 @@ class DiodeCalibration extends React.Component<Props, State> {
     const squareSize = Constant.camera.calibrationPicture.size * Constant.dpmm * this.imageScale;
 
     const squareStyle = {
-      width: squareSize, // px
       height: squareSize, // px
       left: 100 - squareSize / 2 + (dx - cameraMovedX) * Constant.dpmm * this.imageScale,
       top: 100 - squareSize / 2 + (dy - cameraMovedY) * Constant.dpmm * this.imageScale,
+      width: squareSize, // px
     };
     const manualCalibration = (
       <div>
@@ -393,10 +419,7 @@ class DiodeCalibration extends React.Component<Props, State> {
           <div className="camera-control up" onClick={() => this.moveAndRetakePicture('up')} />
           <div className="camera-control down" onClick={() => this.moveAndRetakePicture('down')} />
           <div className="camera-control left" onClick={() => this.moveAndRetakePicture('left')} />
-          <div
-            className="camera-control right"
-            onClick={() => this.moveAndRetakePicture('right')}
-          />
+          <div className="camera-control right" onClick={() => this.moveAndRetakePicture('right')} />
         </div>
         <div className="hint-icon" onClick={() => this.setState({ showHint: true })}>
           ?
@@ -405,46 +428,46 @@ class DiodeCalibration extends React.Component<Props, State> {
           <div className="control">
             <label>{LANG.dx}</label>
             <UnitInput
-              type="number"
-              min={-20}
-              max={20}
-              unit="mm"
+              decimal={2}
               defaultValue={dx}
               getValue={(val) => this.setState({ dx: val })}
-              decimal={2}
-              step={0.5}
               isDoOnInput
+              max={20}
+              min={-20}
+              step={0.5}
+              type="number"
+              unit="mm"
             />
           </div>
           <div className="control">
             <label>{LANG.dy}</label>
             <UnitInput
-              type="number"
-              min={-10}
-              max={20}
-              unit="mm"
+              decimal={2}
               defaultValue={dy}
               getValue={(val) => this.setState({ dy: val })}
-              decimal={2}
-              step={0.5}
               isDoOnInput
+              max={20}
+              min={-10}
+              step={0.5}
+              type="number"
+              unit="mm"
             />
           </div>
         </div>
         {this.renderHintModal()}
       </div>
     );
+
     return (
       <AlertDialog
-        caption={LANG.diode_calibration}
-        message={manualCalibration}
         buttons={[
           {
-            label: LANG.next,
             className: 'btn-default pull-right primary',
+            label: LANG.next,
             onClick: () => {
               const offsetX = Constant.diode.calibrationPicture.offsetX + dx;
               const offsetY = Constant.diode.calibrationPicture.offsetY + dy;
+
               console.log(offsetX, offsetY);
               BeamboxPreference.write('diode_offset_x', offsetX);
               BeamboxPreference.write('diode_offset_y', offsetY);
@@ -452,27 +475,35 @@ class DiodeCalibration extends React.Component<Props, State> {
             },
           },
           {
-            label: LANG.cancel,
             className: 'btn-default pull-left',
+            label: LANG.cancel,
             onClick: () => this.onClose(),
           },
         ]}
+        caption={LANG.diode_calibration}
+        message={manualCalibration}
       />
     );
   }
 
-  renderHintModal = (): JSX.Element => {
+  renderHintModal = (): React.JSX.Element => {
     const { showHint } = this.state;
+
     if (!showHint) {
       return null;
     }
+
     const virtualSquare = $('.modal-diode-calibration .virtual-square');
     const position1 = virtualSquare.offset();
+
     position1.top += virtualSquare.height() + 5;
+
     const controls = $('.modal-diode-calibration .controls');
     const position2 = controls.offset();
+
     position2.left += 30;
     position2.top -= 45;
+
     return (
       <div className="hint-modal-background" onClick={() => this.setState({ showHint: false })}>
         <div className="hint-box" style={position1}>
@@ -487,25 +518,26 @@ class DiodeCalibration extends React.Component<Props, State> {
     );
   };
 
-  renderStepFinish(): JSX.Element {
+  renderStepFinish(): React.JSX.Element {
     return (
       <AlertDialog
-        caption={LANG.diode_calibration}
-        message={LANG.calibrate_done_diode}
         buttons={[
           {
-            label: LANG.finish,
             className: 'btn-default pull-right primary',
+            label: LANG.finish,
             onClick: () => this.onClose(),
           },
         ]}
+        caption={LANG.diode_calibration}
+        message={LANG.calibrate_done_diode}
       />
     );
   }
 
-  render(): JSX.Element {
+  render(): React.JSX.Element {
     const { currentStep } = this.state;
     let content;
+
     switch (currentStep) {
       case STEP_ASK_READJUST:
         content = this.renderStepAskReadjust();
@@ -525,6 +557,7 @@ class DiodeCalibration extends React.Component<Props, State> {
       default:
         break;
     }
+
     return <div className="modal-diode-calibration">{content}</div>;
   }
 }
@@ -533,7 +566,10 @@ export default DiodeCalibration;
 
 // Not putting this in dialog-caller to avoid circular import because DeviceMaster imports dialog
 export const showDiodeCalibration = (device: IDeviceInfo): void => {
-  if (Dialog.isIdExist('diode-cali')) return;
+  if (Dialog.isIdExist('diode-cali')) {
+    return;
+  }
+
   Dialog.addDialogComponent(
     'diode-cali',
     <Modal>

@@ -1,31 +1,28 @@
 import React from 'react';
 
-import UnitInput from '@core/app/widgets/UnitInput';
-import useI18n from '@core/helpers/useI18n';
 import { Flex } from 'antd';
+
+import { getWorkarea } from '@core/app/constants/workarea-constants';
 import Select from '@core/app/widgets/AntdSelect';
-import presetHelper from '@core/helpers/presets/preset-helper';
+import UnitInput from '@core/app/widgets/UnitInput';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import layerModuleHelper from '@core/helpers/layer-module/layer-module-helper';
-import { getWorkarea } from '@core/app/constants/workarea-constants';
-import { textParams, TextSetting } from './TextSetting';
+import presetHelper from '@core/helpers/presets/preset-helper';
+import useI18n from '@core/helpers/useI18n';
+
 import styles from './Form.module.scss';
+import type { textParams, TextSetting } from './TextSetting';
 
 interface Props {
+  className?: string;
+  handleChange: (textSetting: TextSetting) => void;
   isInch: boolean;
   setting: TextSetting;
-  handleChange: (textSetting: TextSetting) => void;
-  className?: string;
 }
 
 type Param = (typeof textParams)[number];
 
-export default function TextSettingForm({
-  isInch,
-  setting,
-  handleChange,
-  className,
-}: Props): JSX.Element {
+export default function TextSettingForm({ className, handleChange, isInch, setting }: Props): React.JSX.Element {
   const {
     beambox: {
       right_panel: { laser_panel: tLaserPanel },
@@ -34,13 +31,13 @@ export default function TextSettingForm({
   } = useI18n();
   const lengthUnit = isInch ? 'in/s' : 'mm/s';
   const workarea = useWorkarea();
-  const { presetList, maxSpeed, dropdownOptions } = React.useMemo(() => {
+  const { dropdownOptions, maxSpeed, presetList } = React.useMemo(() => {
     const list = presetHelper.getPresetsList(workarea, layerModuleHelper.getDefaultLaserModule());
 
     return {
-      presetList: list,
+      dropdownOptions: list.map(({ key, name }) => ({ label: name, value: key || name })),
       maxSpeed: getWorkarea(workarea).maxSpeed,
-      dropdownOptions: list.map(({ key, name }) => ({ value: key || name, label: name })),
+      presetList: list,
     };
   }, [workarea]);
 
@@ -48,62 +45,62 @@ export default function TextSettingForm({
     const targetPreset = presetList.find(({ key }) => key === value);
 
     handleChange({
-      select: { value, label: targetPreset?.name || value },
       power: targetPreset?.power || 15,
+      select: { label: targetPreset?.name || value, value },
       speed: targetPreset?.speed || 20,
     });
   };
 
   const handleValueChange = (key: Param, value: number) => {
-    const { min, max } = key === 'power' ? { min: 1, max: 100 } : { min: 1, max: maxSpeed };
+    const { max, min } = key === 'power' ? { max: 100, min: 1 } : { max: maxSpeed, min: 1 };
 
     handleChange({
       ...setting,
-      select: { value: 'custom', label: 'Custom' },
       [key]: Math.min(max, Math.max(min, value)),
+      select: { label: 'Custom', value: 'custom' },
     });
   };
 
   return (
-    <Flex vertical className={className} justify="space-between" gap="8px">
-      <Flex justify="space-between" gap="20px">
+    <Flex className={className} gap="8px" justify="space-between" vertical>
+      <Flex gap="20px" justify="space-between">
         <div className={styles.title}>{tMaterial.text_settings}</div>
-        <div style={{ width: '120px' }} className={styles['sub-title']}>
+        <div className={styles['sub-title']} style={{ width: '120px' }}>
           {tLaserPanel.strength}
         </div>
-        <div style={{ width: '120px' }} className={styles['sub-title']}>
+        <div className={styles['sub-title']} style={{ width: '120px' }}>
           {tLaserPanel.speed}
         </div>
       </Flex>
 
-      <Flex justify="space-between" gap="20px">
+      <Flex gap="20px" justify="space-between">
         <Select
-          style={{ width: '160px' }}
-          options={dropdownOptions}
-          value={setting.select.value}
           onChange={handleSelectChange}
+          options={dropdownOptions}
+          style={{ width: '160px' }}
+          value={setting.select.value}
         />
         <UnitInput
-          key="text-power"
-          data-testid="text-power"
+          addonAfter="%"
           className={styles.input}
-          value={setting.power}
+          data-testid="text-power"
+          key="text-power"
           max={100}
           min={1}
-          addonAfter="%"
           onChange={(value) => handleValueChange('power', value)}
+          value={setting.power}
         />
         <UnitInput
-          key="text-speed"
-          data-testid="text-speed"
+          addonAfter={lengthUnit}
           className={styles.input}
-          value={setting.speed}
+          data-testid="text-speed"
+          key="text-speed"
           max={maxSpeed}
           min={1}
+          onChange={(value) => handleValueChange('speed', value)}
           precision={isInch ? 4 : 0}
           step={isInch ? 25.4 : 1}
-          addonAfter={lengthUnit}
-          onChange={(value) => handleValueChange('speed', value)}
+          value={setting.speed}
         />
       </Flex>
     </Flex>

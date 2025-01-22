@@ -1,40 +1,31 @@
-import Konva from 'konva';
-import React, {
-  Dispatch,
-  MutableRefObject,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useMemo,
-} from 'react';
+import type { Dispatch, MutableRefObject, SetStateAction } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
+
 import { Button, Flex } from 'antd';
+import type Konva from 'konva';
 
 import constant from '@core/app/actions/beambox/constant';
+import UnitInput from '@core/app/widgets/UnitInput';
 import round from '@core/helpers/math/round';
 import shortcuts from '@core/helpers/shortcuts';
-import storage from '@app/implementations/storage';
-import UnitInput from '@core/app/widgets/UnitInput';
 import useI18n from '@core/helpers/useI18n';
-import { AutoFitContour } from '@core/interfaces/IAutoFit';
+import type { AutoFitContour } from '@core/interfaces/IAutoFit';
+
+import storage from '@app/implementations/storage';
 
 import styles from './Controls.module.scss';
-import { calculateDimensionCenter, ImageDimension } from './dimension';
+import type { ImageDimension } from './dimension';
+import { calculateDimensionCenter } from './dimension';
 
 interface Props {
-  imageRef: MutableRefObject<Konva.Image>;
   contour: AutoFitContour;
-  initDimension: ImageDimension;
   dimension: ImageDimension;
+  imageRef: MutableRefObject<Konva.Image>;
+  initDimension: ImageDimension;
   setDimension: Dispatch<SetStateAction<ImageDimension>>;
 }
 
-const Controls = ({
-  imageRef,
-  contour,
-  initDimension,
-  dimension,
-  setDimension,
-}: Props): JSX.Element => {
+const Controls = ({ contour, dimension, imageRef, initDimension, setDimension }: Props): React.JSX.Element => {
   const { auto_fit: t } = useI18n();
   const { dpmm } = constant;
   const isInch = useMemo(() => storage.get('default-units') === 'inches', []);
@@ -42,8 +33,9 @@ const Controls = ({
 
   const handleResetPosition = useCallback(() => {
     if (imageRef.current) {
-      const { x, y, width, height, rotation } = initDimension;
+      const { height, rotation, width, x, y } = initDimension;
       const image = imageRef.current;
+
       image.position({ x, y });
       image.width(width);
       image.height(height);
@@ -52,15 +44,13 @@ const Controls = ({
     }
   }, [imageRef, initDimension, setDimension]);
 
-  const { width, height, rotation } = dimension;
+  const { height, rotation, width } = dimension;
   const rad = (rotation * Math.PI) / 180;
-  const { x: centerX, y: centerY } = useMemo(
-    () => calculateDimensionCenter(dimension),
-    [dimension],
-  );
+  const { x: centerX, y: centerY } = useMemo(() => calculateDimensionCenter(dimension), [dimension]);
   const getSizeStr = useCallback(
     (w: number, h: number) => {
       const getDisplayValue = (val: number) => round(val / dpmm / (isInch ? 25.4 : 1), 2);
+
       return `${getDisplayValue(w)} x ${getDisplayValue(h)} ${isInch ? 'in' : 'mm'}`;
     },
     [dpmm, isInch],
@@ -71,11 +61,13 @@ const Controls = ({
   useEffect(() => {
     const handleMoveX = (deltaX: number) => {
       const x = imageRef.current?.x() || 0;
+
       imageRef.current?.x(x + deltaX);
       setDimension((prev) => ({ ...prev, x: x + deltaX }));
     };
     const handleMoveY = (deltaY: number) => {
       const y = imageRef.current?.y() || 0;
+
       imageRef.current?.y(y + deltaY);
       setDimension((prev) => ({ ...prev, y: y + deltaY }));
     };
@@ -86,6 +78,7 @@ const Controls = ({
       shortcuts.on(['ArrowUp'], () => handleMoveY(-step)),
       shortcuts.on(['ArrowDown'], () => handleMoveY(step)),
     ];
+
     return () => unregisters.forEach((unregister) => unregister());
   }, [step, imageRef, setDimension]);
 
@@ -97,63 +90,62 @@ const Controls = ({
         <li>{t.position_step2}</li>
       </ol>
       <div className={styles.controls}>
-        <Flex justify="space-between" align="center">
+        <Flex align="center" justify="space-between">
           <div>{t.offset_x}:</div>
           <UnitInput
+            addonAfter={isInch ? 'in' : 'mm'}
             className={styles.input}
-            size="small"
             isInch={isInch}
-            value={(centerX - initialCenter.x) / dpmm}
             onChange={(val) => {
               const targetCenterX = val * dpmm + initialCenter.x;
-              const targetX =
-                targetCenterX - (width / 2) * Math.cos(rad) + (height / 2) * Math.sin(rad);
+              const targetX = targetCenterX - (width / 2) * Math.cos(rad) + (height / 2) * Math.sin(rad);
+
               imageRef.current?.x(targetX);
               setDimension((prev) => ({ ...prev, x: targetX }));
             }}
-            step={step}
-            addonAfter={isInch ? 'in' : 'mm'}
             precision={isInch ? 4 : 2}
+            size="small"
+            step={step}
+            value={(centerX - initialCenter.x) / dpmm}
           />
         </Flex>
-        <Flex justify="space-between" align="center">
+        <Flex align="center" justify="space-between">
           <div>{t.offset_y}:</div>
           <UnitInput
+            addonAfter={isInch ? 'in' : 'mm'}
             className={styles.input}
-            size="small"
             isInch={isInch}
-            value={(centerY - initialCenter.y) / dpmm}
             onChange={(val) => {
               const targetCenterY = val * dpmm + initialCenter.y;
-              const targetY =
-                targetCenterY - (width / 2) * Math.sin(rad) - (height / 2) * Math.cos(rad);
+              const targetY = targetCenterY - (width / 2) * Math.sin(rad) - (height / 2) * Math.cos(rad);
+
               imageRef.current?.y(targetY);
               setDimension((prev) => ({ ...prev, y: targetY }));
             }}
-            step={step}
-            addonAfter={isInch ? 'in' : 'mm'}
             precision={isInch ? 4 : 2}
+            size="small"
+            step={step}
+            value={(centerY - initialCenter.y) / dpmm}
           />
         </Flex>
-        <Flex justify="space-between" align="center">
+        <Flex align="center" justify="space-between">
           <div>{t.rotation}:</div>
           <UnitInput
+            addonAfter="deg"
             className={styles.input}
-            size="small"
-            value={dimension.rotation}
             onChange={(val) => {
               const newRad = (val * Math.PI) / 180;
-              const newX =
-                centerX - (width / 2) * Math.cos(newRad) + (height / 2) * Math.sin(newRad);
-              const newY =
-                centerY - (width / 2) * Math.sin(newRad) - (height / 2) * Math.cos(newRad);
+              const newX = centerX - (width / 2) * Math.cos(newRad) + (height / 2) * Math.sin(newRad);
+              const newY = centerY - (width / 2) * Math.sin(newRad) - (height / 2) * Math.cos(newRad);
+
               imageRef.current?.rotation(val);
               imageRef.current?.x(newX);
               imageRef.current?.y(newY);
               setDimension((prev) => ({ ...prev, rotation: val, x: newX, y: newY }));
             }}
-            addonAfter="deg"
             precision={0}
+            size="small"
+            value={dimension.rotation}
           />
         </Flex>
       </div>

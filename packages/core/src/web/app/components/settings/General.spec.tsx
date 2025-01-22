@@ -1,32 +1,29 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 jest.mock('@core/helpers/i18n', () => ({
+  getActiveLang: () => 'en',
   lang: {
     settings: {
-      language: 'Language',
-      notifications: 'Desktop Notifications',
       groups: {
         general: 'General',
       },
+      language: 'Language',
+      notifications: 'Desktop Notifications',
     },
   },
-  getActiveLang: () => 'en',
 }));
 
-jest.mock('@core/app/components/settings/SelectControl', () =>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ({ id, label, onChange, options }: any) => (
-    <div>
-      mock-select-control id:{id}
-      label:{label}
-      options:{JSON.stringify(options)}
-      <input className="select-control" onChange={onChange} />
-    </div>
-  ),
-);
+jest.mock('@core/app/components/settings/SelectControl', () => ({ id, label, onChange, options }: any) => (
+  <div>
+    mock-select-control id:{id}
+    label:{label}
+    options:{JSON.stringify(options)}
+    <input className="select-control" onChange={onChange} />
+  </div>
+));
 
-// eslint-disable-next-line import/first
 import General from './General';
 
 describe('should render correctly', () => {
@@ -35,34 +32,36 @@ describe('should render correctly', () => {
     const updateConfigChange = jest.fn();
     const { container } = render(
       <General
+        changeActiveLang={changeActiveLang}
         isWeb={false}
+        notificationOptions={[
+          {
+            label: 'On',
+            selected: true,
+            value: 'TRUE',
+          },
+          {
+            label: 'Off',
+            selected: false,
+            value: 'FALSE',
+          },
+        ]}
         supportedLangs={{
           de: 'Deutsche',
           en: 'English',
           es: 'Español',
-          'zh-tw': '繁體中文',
           ja: '日本語',
           'zh-cn': '简体中文',
+          'zh-tw': '繁體中文',
         }}
-        notificationOptions={[
-          {
-            value: 'TRUE',
-            label: 'On',
-            selected: true,
-          },
-          {
-            value: 'FALSE',
-            label: 'Off',
-            selected: false,
-          },
-        ]}
-        changeActiveLang={changeActiveLang}
         updateConfigChange={updateConfigChange}
       />,
     );
+
     expect(container).toMatchSnapshot();
 
     const controls = container.querySelectorAll('.select-control');
+
     fireEvent.change(controls[0], { target: { value: 'de' } });
     expect(changeActiveLang).toHaveBeenCalledTimes(1);
 
@@ -80,31 +79,32 @@ describe('should render correctly', () => {
     const updateConfigChange = jest.fn();
     const { container } = render(
       <General
+        changeActiveLang={changeActiveLang}
         isWeb
+        notificationOptions={[
+          {
+            label: 'On',
+            selected: true,
+            value: 'TRUE',
+          },
+          {
+            label: 'Off',
+            selected: false,
+            value: 'FALSE',
+          },
+        ]}
         supportedLangs={{
           de: 'Deutsche',
           en: 'English',
           es: 'Español',
-          'zh-tw': '繁體中文',
           ja: '日本語',
           'zh-cn': '简体中文',
+          'zh-tw': '繁體中文',
         }}
-        notificationOptions={[
-          {
-            value: 'TRUE',
-            label: 'On',
-            selected: true,
-          },
-          {
-            value: 'FALSE',
-            label: 'Off',
-            selected: false,
-          },
-        ]}
-        changeActiveLang={changeActiveLang}
         updateConfigChange={updateConfigChange}
       />,
     );
+
     expect(container).toMatchSnapshot();
   });
 });

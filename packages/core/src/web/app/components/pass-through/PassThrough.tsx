@@ -1,21 +1,22 @@
 import React, { useContext } from 'react';
+
 import { Button } from 'antd';
 
+import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
+import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import BackButton from '@core/app/widgets/FullWindowPanel/BackButton';
 import Footer from '@core/app/widgets/FullWindowPanel/Footer';
 import FullWindowPanel from '@core/app/widgets/FullWindowPanel/FullWindowPanel';
 import Header from '@core/app/widgets/FullWindowPanel/Header';
-import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import Sider from '@core/app/widgets/FullWindowPanel/Sider';
-import useI18n from '@core/helpers/useI18n';
-import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import { useIsMobile } from '@core/helpers/system-helper';
+import useI18n from '@core/helpers/useI18n';
 
 import Canvas from './Canvas';
 import Controls from './Controls';
 import { PassThroughContext, PassThroughProvider } from './PassThroughContext';
 
-const PassThrough = ({ onClose }: { onClose?: () => void }): JSX.Element => {
+const PassThrough = ({ onClose }: { onClose?: () => void }): React.JSX.Element => {
   const lang = useI18n();
   const isMobile = useIsMobile();
   const tPassThrough = useI18n().pass_through;
@@ -23,11 +24,11 @@ const PassThrough = ({ onClose }: { onClose?: () => void }): JSX.Element => {
 
   const button = (
     <Button
-      type="primary"
       onClick={async () => {
         await handleExport();
         onClose?.();
       }}
+      type="primary"
     >
       {tPassThrough.export}
     </Button>
@@ -35,15 +36,8 @@ const PassThrough = ({ onClose }: { onClose?: () => void }): JSX.Element => {
 
   return (
     <FullWindowPanel
-      onClose={onClose}
       mobileTitle={tPassThrough.title}
-      renderMobileFixedContent={() => <Canvas />}
-      renderMobileContents={() => (
-        <>
-          <Controls />
-          <Footer>{button}</Footer>
-        </>
-      )}
+      onClose={onClose}
       renderContents={() => (
         <>
           <Sider>
@@ -55,6 +49,13 @@ const PassThrough = ({ onClose }: { onClose?: () => void }): JSX.Element => {
           {!isMobile && <Canvas />}
         </>
       )}
+      renderMobileContents={() => (
+        <>
+          <Controls />
+          <Footer>{button}</Footer>
+        </>
+      )}
+      renderMobileFixedContent={() => <Canvas />}
     />
   );
 };
@@ -63,7 +64,11 @@ export default PassThrough;
 
 export const showPassThrough = (onClose?: () => void): Promise<void> => {
   const dialogId = 'pass-through';
-  if (isIdExist(dialogId)) popDialogById(dialogId);
+
+  if (isIdExist(dialogId)) {
+    popDialogById(dialogId);
+  }
+
   return new Promise<void>((resolve) => {
     addDialogComponent(
       dialogId,

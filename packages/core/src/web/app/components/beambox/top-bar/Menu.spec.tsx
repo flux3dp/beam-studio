@@ -1,18 +1,21 @@
-/* eslint-disable import/first */
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 const read = jest.fn();
+
 jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read,
 }));
 
 const open = jest.fn();
+
 jest.mock('@app/implementations/browser', () => ({
   open,
 }));
 
 const mockDiscoverRemoveListener = jest.fn();
+
 jest.mock('@core/helpers/api/discover', () => () => ({
   removeListener: mockDiscoverRemoveListener,
 }));
@@ -20,6 +23,7 @@ jest.mock('@core/helpers/api/discover', () => () => ({
 const emit = jest.fn();
 const on = jest.fn();
 const removeListener = jest.fn();
+
 jest.mock('@core/helpers/eventEmitterFactory', () => ({
   createEventEmitter: () => ({
     emit,
@@ -35,7 +39,9 @@ import Menu from './Menu';
 describe('should render correctly', () => {
   test('open the browser and reach the correct page', () => {
     read.mockReturnValue(true);
+
     const { container, getByText } = render(<Menu email={undefined} />);
+
     expect(container).toMatchSnapshot();
 
     fireEvent.click(container.querySelector('div.menu-btn-container'));
@@ -51,7 +57,9 @@ describe('should render correctly', () => {
 
   test('test checkbox menu item', () => {
     read.mockReturnValue(false);
+
     const { container, getByText } = render(<Menu email={undefined} />);
+
     expect(container).toMatchSnapshot();
 
     fireEvent.click(container.querySelector('div.menu-btn-container'));
@@ -68,7 +76,9 @@ describe('should render correctly', () => {
 
   test('already signed in', () => {
     read.mockReturnValue(true);
+
     const { container, getByText } = render(<Menu email="tester@flux3dp.com" />);
+
     fireEvent.click(container.querySelector('div.menu-btn-container'));
     fireEvent.click(getByText('Account'));
     expect(container).toMatchSnapshot();

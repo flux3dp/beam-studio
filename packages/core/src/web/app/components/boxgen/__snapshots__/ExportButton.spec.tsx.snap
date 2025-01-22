@@ -100,7 +100,7 @@ exports[`test ExportButton should behave correctly 2`] = `
                 >
                   <rect
                     height="210"
-                    style="stroke: #CCC; fill: none; stroke-width: 1; stroke-dasharray: 4;"
+                    style="fill: none; stroke: #CCC; stroke-dasharray: 4; stroke-width: 1;"
                     width="300"
                     x="0"
                     y="0"

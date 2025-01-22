@@ -1,31 +1,32 @@
-/* eslint-disable @typescript-eslint/no-shadow */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+
 import classNames from 'classnames';
+import { useLocation } from 'react-router-dom';
 
 import dialog from '@core/app/actions/dialog-caller';
+import windowLocationReload from '@core/app/actions/windowLocation';
+import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import InitializeIcons from '@core/app/icons/initialize/InitializeIcons';
 import isDev from '@core/helpers/is-dev';
 import localeHelper from '@core/helpers/locale-helper';
-import storage from '@app/implementations/storage';
-import useI18n from '@core/helpers/useI18n';
-import windowLocationReload from '@core/app/actions/windowLocation';
-import { WorkAreaModel } from '@core/app/constants/workarea-constants';
-
 import { isMobile } from '@core/helpers/system-helper';
-import { useLocation } from 'react-router-dom';
+import useI18n from '@core/helpers/useI18n';
+
+import storage from '@app/implementations/storage';
+
 import styles from './SelectMachineModel.module.scss';
 
 type ModelItem = {
-  model: WorkAreaModel;
-  label: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  btnClass?: string;
+
   Icon?: any;
   imageSrc?: string;
-  btnClass?: string;
+  label: string;
   labelClass?: string;
+  model: WorkAreaModel;
 };
 
-const SelectMachineModel = (): JSX.Element => {
+const SelectMachineModel = (): React.JSX.Element => {
   const t = useI18n().initialize;
   const { search } = useLocation();
   const isNewUser = useMemo(() => !storage.get('printer-is-ready'), []);
@@ -53,6 +54,7 @@ const SelectMachineModel = (): JSX.Element => {
 
     if (isSelectBeambox) {
       window.location.hash = '#initialize/connect/select-machine-model';
+
       return;
     }
 
@@ -80,36 +82,36 @@ const SelectMachineModel = (): JSX.Element => {
     window.location.hash = `#initialize/connect/select-connection-type?model=${model}`;
   };
 
-  const modelList: Array<ModelItem> = [
-    { model: 'ado1', label: 'Ador', Icon: InitializeIcons.Ador } as const,
-    { model: 'fbm1', label: 'beamo', Icon: InitializeIcons.Beamo } as const,
+  const modelList: ModelItem[] = [
+    { Icon: InitializeIcons.Ador, label: 'Ador', model: 'ado1' } as const,
+    { Icon: InitializeIcons.Beamo, label: 'beamo', model: 'fbm1' } as const,
     {
-      model: 'fbb1p',
-      label: 'Beambox Series',
       Icon: InitializeIcons.Beambox,
+      label: 'Beambox Series',
       labelClass: styles.bb,
+      model: 'fbb1p',
     } as const,
-    { model: 'fhexa1', label: 'HEXA', Icon: InitializeIcons.Hexa } as const,
+    { Icon: InitializeIcons.Hexa, label: 'HEXA', model: 'fhexa1' } as const,
     !isMobile() &&
       (localeHelper.isTwOrHk || isDev()) &&
-      ({ model: 'fpm1', label: 'Promark Series', Icon: InitializeIcons.Promark } as const),
+      ({ Icon: InitializeIcons.Promark, label: 'Promark Series', model: 'fpm1' } as const),
   ].filter(Boolean);
 
-  const beamboxModelList: Array<ModelItem> = useMemo(
+  const beamboxModelList: ModelItem[] = useMemo(
     () =>
       [
         {
-          model: 'fbb1p',
-          label: 'Beambox (Pro)',
-          imageSrc: 'core-img/init-panel/beambox-pro-real.png',
           btnClass: styles['btn-real'],
+          imageSrc: 'core-img/init-panel/beambox-pro-real.png',
+          label: 'Beambox (Pro)',
+          model: 'fbb1p',
         } as const,
         (localeHelper.isTwOrHk || localeHelper.isJp || isDev()) &&
           ({
-            model: 'fbb2',
-            label: 'Beambox II',
-            imageSrc: 'core-img/init-panel/beambox-2-real.png',
             btnClass: styles['btn-real'],
+            imageSrc: 'core-img/init-panel/beambox-2-real.png',
+            label: 'Beambox II',
+            model: 'fbb2',
           } as const),
       ].filter(Boolean),
     [],
@@ -117,12 +119,12 @@ const SelectMachineModel = (): JSX.Element => {
 
   const selectTitle = useMemo(
     () => (isSelectBeambox ? t.select_beambox : t.select_machine_type),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line hooks/exhaustive-deps
     [isSelectBeambox],
   );
   const currentList = useMemo(
     () => (isSelectBeambox ? beamboxModelList : modelList),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line hooks/exhaustive-deps
     [isSelectBeambox],
   );
 
@@ -137,14 +139,10 @@ const SelectMachineModel = (): JSX.Element => {
       <div className={styles.main}>
         <h1 className={styles.title}>{selectTitle}</h1>
         <div className={styles.btns}>
-          {currentList.map(({ model, label, Icon, imageSrc, btnClass, labelClass }) => (
-            <div
-              key={model}
-              className={classNames(styles.btn, btnClass)}
-              onClick={() => handleNextClick(model)}
-            >
+          {currentList.map(({ btnClass, Icon, imageSrc, label, labelClass, model }) => (
+            <div className={classNames(styles.btn, btnClass)} key={model} onClick={() => handleNextClick(model)}>
               {Icon && <Icon className={styles.icon} />}
-              {imageSrc && <img className={styles.image} src={imageSrc} draggable="false" />}
+              {imageSrc && <img className={styles.image} draggable="false" src={imageSrc} />}
               <div className={classNames(styles.label, labelClass)}>{label}</div>
             </div>
           ))}

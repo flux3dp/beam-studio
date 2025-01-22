@@ -15,7 +15,7 @@ exports[`should render correctly initially no warning 1`] = `
     label:
     Auto Save
     options:
-    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
     <input
       class="select-control"
     />
@@ -102,7 +102,7 @@ exports[`should render correctly initially with warning 1`] = `
     label:
     Auto Save
     options:
-    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
     <input
       class="select-control"
     />

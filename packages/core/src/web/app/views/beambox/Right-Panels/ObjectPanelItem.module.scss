@@ -4,7 +4,7 @@ $active-color: #0091ff;
   display: flex;
   flex-direction: column;
   align-items: center;
-  &[id='lock'] {
+  &[id="lock"] {
     min-width: auto;
     .main {
       font-size: 14px;
@@ -116,7 +116,7 @@ div.divider {
   .select-options {
     overflow: scroll;
     max-height: 256px;
-    &[id='font_family-options'] {
+    &[id="font_family-options"] {
       > div {
         padding-right: 10px;
         > span {

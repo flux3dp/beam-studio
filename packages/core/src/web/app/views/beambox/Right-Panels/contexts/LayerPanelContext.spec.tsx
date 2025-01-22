@@ -1,14 +1,17 @@
 import React, { useContext } from 'react';
+
 import { act, render } from '@testing-library/react';
 
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
-import { LayerPanelContextProvider, LayerPanelContext } from './LayerPanelContext';
+import { LayerPanelContext, LayerPanelContextProvider } from './LayerPanelContext';
 
 const mockForceUpdate = jest.fn();
+
 jest.mock('@core/helpers/use-force-update', () => () => mockForceUpdate);
 
 const mockDoLayersContainsVector = jest.fn();
+
 jest.mock(
   '@core/helpers/layer/check-vector',
   () =>
@@ -17,12 +20,14 @@ jest.mock(
 );
 
 const mockGetLayerElementByName = jest.fn();
+
 jest.mock('@core/helpers/layer/layer-helper', () => ({
   getLayerElementByName: (...args) => mockGetLayerElementByName(...args),
 }));
 
 const MockChild = () => {
   const { selectedLayers } = useContext(LayerPanelContext);
+
   return <div>{JSON.stringify(selectedLayers)}</div>;
 };
 
@@ -34,6 +39,7 @@ describe('test LayerPanelContext', () => {
         <MockChild />
       </LayerPanelContextProvider>,
     );
+
     expect(layerPanelEventEmitter.eventNames().length).toBe(5);
     expect(mockDoLayersContainsVector).toBeCalledTimes(2);
     expect(mockDoLayersContainsVector).toHaveBeenLastCalledWith([]);
@@ -57,6 +63,7 @@ describe('test LayerPanelContext', () => {
     const response = {
       selectedLayers: [],
     };
+
     layerPanelEventEmitter.emit('GET_SELECTED_LAYERS', response);
     expect(response.selectedLayers).toEqual(['layer1', 'layer3']);
 

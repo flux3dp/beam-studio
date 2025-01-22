@@ -3,7 +3,7 @@
 exports[`test BackButton should render correctly 1`] = `
 <div>
   <button
-    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text enhancer button windows desktop"
+    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text enhancer button desktop windows"
     type="button"
   >
     <span

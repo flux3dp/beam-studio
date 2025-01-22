@@ -17,7 +17,7 @@ exports[`SubMenu tests should render correctly 1`] = `
     <nav
       class="react-contextmenu"
       role="menu"
-      style="position: absolute; top: 0px; left: 100%; white-space: nowrap;"
+      style="left: 100%; position: absolute; top: 0px; white-space: nowrap;"
       tabindex="-1"
     />
   </nav>
@@ -41,7 +41,7 @@ exports[`SubMenu tests should render correctly after onMouseEnter 1`] = `
     <nav
       class="react-contextmenu"
       role="menu"
-      style="position: absolute; top: 0px; left: 100%; white-space: nowrap;"
+      style="left: 100%; position: absolute; top: 0px; white-space: nowrap;"
       tabindex="-1"
     />
   </nav>
@@ -65,7 +65,7 @@ exports[`SubMenu tests should render correctly after onMouseEnter when disabled 
     <nav
       class="react-contextmenu"
       role="menu"
-      style="position: absolute; top: 0px; left: 100%; white-space: nowrap;"
+      style="left: 100%; position: absolute; top: 0px; white-space: nowrap;"
       tabindex="-1"
     />
   </nav>
@@ -89,7 +89,7 @@ exports[`SubMenu tests should render correctly when disabled 1`] = `
     <nav
       class="react-contextmenu"
       role="menu"
-      style="position: absolute; top: 0px; left: 100%; white-space: nowrap;"
+      style="left: 100%; position: absolute; top: 0px; white-space: nowrap;"
       tabindex="-1"
     />
   </nav>

@@ -1,61 +1,65 @@
 import * as React from 'react';
+
 import classNames from 'classnames';
-import { ArrowDirection } from '@core/interfaces/IDialog';
+
+import type { ArrowDirection } from '@core/interfaces/IDialog';
 
 interface Position {
-  top?: number;
-  left?: number;
   bottom?: number;
+  left?: number;
   right?: number;
+  top?: number;
 }
 
 interface Props {
-  children?: JSX.Element;
+  arrowColor: string;
   arrowDirection: ArrowDirection;
   arrowHeight: number;
-  arrowWidth: number;
-  arrowColor: string;
   arrowPadding: number;
-  position: Position;
+  arrowWidth: number;
+  children?: React.JSX.Element;
+  content: React.JSX.Element | string;
   onClose: () => void;
-  content: string | JSX.Element;
+  position: Position;
 }
 
 class DialogBox extends React.PureComponent<Props> {
   renderArrow = () => {
     const {
+      arrowColor = '#0091ff',
       arrowDirection = 'left',
       arrowHeight = 17,
-      arrowWidth = 20,
-      arrowColor = '#0091ff',
       arrowPadding = 15,
+      arrowWidth = 20,
       position = { left: 100, top: 100 },
     } = this.props;
     const arrowStyle = {
-      top: {
-        borderWidth: `0 ${arrowWidth / 2}px ${arrowHeight}px ${arrowWidth / 2}px`,
-        borderColor: `transparent transparent ${arrowColor} transparent`,
+      bottom: {
+        borderColor: `${arrowColor} transparent transparent transparent`,
+        borderWidth: `${arrowHeight}px ${arrowWidth / 2}px 0 ${arrowWidth / 2}px`,
       },
       left: {
-        borderWidth: `${arrowWidth / 2}px ${arrowHeight}px ${arrowWidth / 2}px 0`,
         borderColor: `transparent ${arrowColor} transparent transparent`,
+        borderWidth: `${arrowWidth / 2}px ${arrowHeight}px ${arrowWidth / 2}px 0`,
       },
       right: {
-        borderWidth: `${arrowWidth / 2}px 0 ${arrowWidth / 2}px ${arrowHeight}px`,
         borderColor: `transparent transparent transparent ${arrowColor}`,
+        borderWidth: `${arrowWidth / 2}px 0 ${arrowWidth / 2}px ${arrowHeight}px`,
       },
-      bottom: {
-        borderWidth: `${arrowHeight}px ${arrowWidth / 2}px 0 ${arrowWidth / 2}px`,
-        borderColor: `${arrowColor} transparent transparent transparent`,
+      top: {
+        borderColor: `transparent transparent ${arrowColor} transparent`,
+        borderWidth: `0 ${arrowWidth / 2}px ${arrowHeight}px ${arrowWidth / 2}px`,
       },
     }[arrowDirection];
     const horizontalRef = position.left === undefined ? 'right' : 'left';
     const verticalRef = position.top === undefined ? 'bottom' : 'top';
+
     if (arrowDirection === 'top' || arrowDirection === 'bottom') {
       arrowStyle[horizontalRef] = arrowPadding;
     } else {
       arrowStyle[verticalRef] = arrowPadding;
     }
+
     return <div className={classNames('dialog-box-arrow', arrowDirection)} style={arrowStyle} />;
   };
 
@@ -63,13 +67,14 @@ class DialogBox extends React.PureComponent<Props> {
     const {
       arrowDirection = 'left',
       arrowHeight = 17,
-      arrowWidth = 20,
       arrowPadding = 15,
+      arrowWidth = 20,
       position = { left: 100, top: 100 },
     } = this.props;
     const horizontalRef = position.left === undefined ? 'right' : 'left';
     const verticalRef = position.top === undefined ? 'bottom' : 'top';
     const style = {};
+
     if (arrowDirection === 'top' || arrowDirection === 'bottom') {
       style[horizontalRef] = position[horizontalRef] - arrowPadding - arrowWidth / 2;
       style[verticalRef] = position[verticalRef] + arrowHeight;
@@ -77,14 +82,15 @@ class DialogBox extends React.PureComponent<Props> {
       style[verticalRef] = position[verticalRef] - arrowPadding - arrowWidth / 2;
       style[horizontalRef] = position[horizontalRef] + arrowHeight;
     }
+
     return style;
   };
 
   renderCloseButton = () => {
-    const { position = { left: 100, top: 100 }, onClose } = this.props;
+    const { onClose, position = { left: 100, top: 100 } } = this.props;
     const horizontalRef = position.left === undefined ? 'right' : 'left';
+
     return (
-      // eslint-disable-next-line jsx-a11y/no-static-element-interactions
       <div className={classNames('close-btn', horizontalRef)} onClick={onClose}>
         <div className="cross-wrapper">
           <div className="bars bar1" />
@@ -96,6 +102,7 @@ class DialogBox extends React.PureComponent<Props> {
 
   render() {
     const { children, content } = this.props;
+
     return (
       <div className={classNames('dialog-box-container')} style={this.calculatePositioStyle()}>
         {this.renderArrow()}

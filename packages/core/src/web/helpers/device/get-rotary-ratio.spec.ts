@@ -1,8 +1,10 @@
-import { CHUCK_ROTARY_DIAMETER, RotaryType, SupportInfo } from '@core/app/constants/add-on';
+import type { SupportInfo } from '@core/app/constants/add-on';
+import { CHUCK_ROTARY_DIAMETER, RotaryType } from '@core/app/constants/add-on';
 
 import getRotaryRatio from './get-rotary-ratio';
 
 const mockRead = jest.fn();
+
 jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read: (...args) => mockRead(...args),
 }));
@@ -10,15 +12,15 @@ jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
 const mockSupportInfo: SupportInfo = {
   autoFocus: true,
   hybridLaser: true,
+  lowerFocus: false,
   openBottom: true,
   passThrough: true,
   rotary: {
-    roller: true,
     chuck: true,
     extendWorkarea: false,
     mirror: false,
+    roller: true,
   },
-  lowerFocus: false,
 };
 
 describe('test getRotaryRatio', () => {

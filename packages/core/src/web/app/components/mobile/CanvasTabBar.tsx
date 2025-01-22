@@ -1,47 +1,50 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
+
 import { Badge } from 'antd';
 import { TabBar } from 'antd-mobile';
 
-import beamboxStore from '@core/app/stores/beambox-store';
-import browser from '@app/implementations/browser';
-import createNewText from '@core/app/svgedit/text/createNewText';
-import dialogCaller from '@core/app/actions/dialog-caller';
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import FluxIcons from '@core/app/icons/flux/FluxIcons';
-import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
-import historyUtils from '@core/app/svgedit/history/utils';
-import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
-import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
-import RightPanelController from '@core/app/views/beambox/Right-Panels/contexts/RightPanelController';
+import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
+import dialogCaller from '@core/app/actions/dialog-caller';
+import { showPassThrough } from '@core/app/components/pass-through/PassThrough';
+import { CanvasMode } from '@core/app/constants/canvasMode';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import FluxIcons from '@core/app/icons/flux/FluxIcons';
+import { DmktIcon } from '@core/app/icons/icons';
+import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import TabBarIcons from '@core/app/icons/tab-bar/TabBarIcons';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
-import useI18n from '@core/helpers/useI18n';
+import beamboxStore from '@core/app/stores/beambox-store';
+import historyUtils from '@core/app/svgedit/history/utils';
+import createNewText from '@core/app/svgedit/text/createNewText';
 import workareaManager from '@core/app/svgedit/workarea';
-import { DmktIcon } from '@core/app/icons/icons';
-import { CanvasContext } from '@core/app/contexts/CanvasContext';
-import { CanvasMode } from '@core/app/constants/canvasMode';
+import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
+import RightPanelController from '@core/app/views/beambox/Right-Panels/contexts/RightPanelController';
 import { getCurrentUser } from '@core/helpers/api/flux-id';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import { showPassThrough } from '@core/app/components/pass-through/PassThrough';
 import { useIsMobile } from '@core/helpers/system-helper';
+import useI18n from '@core/helpers/useI18n';
+
+import browser from '@app/implementations/browser';
 
 import styles from './CanvasTabBar.module.scss';
 
 const events = eventEmitterFactory.createEventEmitter('canvas');
 const rightPanelEventEmitter = eventEmitterFactory.createEventEmitter('right-panel');
 let svgCanvas;
+
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
 
-const CanvasTabBar = (): JSX.Element => {
+const CanvasTabBar = (): React.JSX.Element => {
   const isMobile = useIsMobile();
   const lang = useI18n();
   const isSubscribed = getCurrentUser()?.info?.subscription?.is_valid;
 
-  const { mode, endPreviewMode, changeToPreviewMode, setupPreviewMode } = useContext(CanvasContext);
+  const { changeToPreviewMode, endPreviewMode, mode, setupPreviewMode } = useContext(CanvasContext);
   const isPreviewing = mode === CanvasMode.Preview;
   const [activeKey, setActiveKey] = useState('none');
 
@@ -53,50 +56,60 @@ const CanvasTabBar = (): JSX.Element => {
     const handler = (val: boolean) => {
       setActiveKey((cur) => {
         if (val) {
-          if (cur !== 'layer') return 'layer';
+          if (cur !== 'layer') {
+            return 'layer';
+          }
+
           return cur;
         }
-        if (cur === 'layer') return 'none';
+
+        if (cur === 'layer') {
+          return 'none';
+        }
+
         return cur;
       });
     };
+
     rightPanelEventEmitter.on('DISPLAY_LAYER', handler);
+
     return () => {
       rightPanelEventEmitter.off('DISPLAY_LAYER', handler);
     };
   }, []);
-  if (!isMobile) return null;
+
+  if (!isMobile) {
+    return null;
+  }
 
   const tabs = [
     {
+      icon: <TopBarIcons.Camera />,
       key: 'camera',
       title: lang.beambox.left_panel.label.choose_camera,
-      icon: <TopBarIcons.Camera />,
     },
     {
+      icon: <TabBarIcons.Photo />,
       key: 'image',
       title: lang.beambox.left_panel.label.photo,
-      icon: <TabBarIcons.Photo />,
     },
     {
+      badge: isSubscribed,
+      icon: <LeftPanelIcons.Cloud />,
       key: 'cloud',
       title: lang.beambox.left_panel.label.my_cloud,
-      icon: <LeftPanelIcons.Cloud />,
-      badge: isSubscribed,
     },
     {
+      icon: <TabBarIcons.Shape />,
       key: 'shape',
       title: lang.beambox.left_panel.label.shapes,
-      icon: <TabBarIcons.Shape />,
     },
     {
+      icon: <TabBarIcons.Text />,
       key: 'text',
       title: lang.beambox.left_panel.label.text,
-      icon: <TabBarIcons.Text />,
     },
     {
-      key: 'layer',
-      title: lang.topbar.menu.layer_setting,
       icon: (
         <div
           onClick={() => {
@@ -108,63 +121,72 @@ const CanvasTabBar = (): JSX.Element => {
           <TabBarIcons.Layers />
         </div>
       ),
+      key: 'layer',
+      title: lang.topbar.menu.layer_setting,
     },
     {
+      icon: <TabBarIcons.Draw />,
       key: 'pen',
       title: lang.beambox.left_panel.label.pen,
-      icon: <TabBarIcons.Draw />,
     },
     {
+      icon: <TabBarIcons.Boxgen />,
       key: 'boxgen',
       title: lang.beambox.left_panel.label.boxgen,
-      icon: <TabBarIcons.Boxgen />,
     },
     {
+      icon: <TabBarIcons.Document />,
       key: 'document',
       title: lang.topbar.menu.document_setting_short,
-      icon: <TabBarIcons.Document />,
     },
     {
+      icon: <LeftPanelIcons.QRCode />,
       key: 'qrcode',
       title: lang.beambox.left_panel.label.qr_code,
-      icon: <LeftPanelIcons.QRCode />,
     },
     {
+      icon: <DmktIcon style={{ fontSize: 40 }} />,
       key: 'dmkt',
       title: 'DMKT',
-      icon: <DmktIcon style={{ fontSize: 40 }} />,
     },
     {
+      icon: <LeftPanelIcons.PassThrough />,
       key: 'passthrough',
       title: lang.beambox.left_panel.label.pass_through,
-      icon: <LeftPanelIcons.PassThrough />,
     },
     {
+      icon: <div className={styles.sep} />,
       key: '',
       title: '',
-      icon: <div className={styles.sep} />,
     },
     {
+      icon: <TopBarIcons.Undo />,
       key: 'undo',
       title: lang.topbar.menu.undo,
-      icon: <TopBarIcons.Undo />,
     },
     {
+      icon: <TopBarIcons.Redo />,
       key: 'redo',
       title: lang.topbar.menu.redo,
-      icon: <TopBarIcons.Redo />,
     },
   ];
 
   const handleTabClick = (key: string) => {
     svgCanvas.setMode('select');
+
     if (key === 'layer') {
       RightPanelController.setDisplayLayer(true);
-    } else RightPanelController.setDisplayLayer(false);
+    } else {
+      RightPanelController.setDisplayLayer(false);
+    }
 
     if (key === 'camera') {
       changeToPreviewMode();
-      if (!PreviewModeController.isPreviewMode()) setupPreviewMode();
+
+      if (!PreviewModeController.isPreviewMode()) {
+        setupPreviewMode();
+      }
+
       setActiveKey('choose-preview-device');
       setTimeout(resetActiveKey, 300);
     } else if (key === 'image') {
@@ -176,7 +198,7 @@ const CanvasTabBar = (): JSX.Element => {
         newText.scrollIntoView({ block: 'center', inline: 'center' });
         resetActiveKey();
       });
-      createNewText(100, 100, { text: 'Text', addToHistory: true, isToSelect: true });
+      createNewText(100, 100, { addToHistory: true, isToSelect: true, text: 'Text' });
     } else if (key === 'pen') {
       events.once('addPath', resetActiveKey);
       FnWrapper.insertPath();
@@ -203,26 +225,26 @@ const CanvasTabBar = (): JSX.Element => {
 
   const previewTabItems = [
     {
+      icon: <TopBarIcons.Camera />,
       key: 'end-preview',
       title: lang.beambox.left_panel.label.end_preview,
-      icon: <TopBarIcons.Camera />,
     },
     {
+      icon: <TabBarIcons.Shoot />,
       key: 'choose-preview-device',
       title: lang.beambox.left_panel.label.choose_camera,
-      icon: <TabBarIcons.Shoot />,
     },
     {
+      disabled: PreviewModeController.isDrawing || PreviewModeBackgroundDrawer.isClean(),
+      icon: <TabBarIcons.Trace />,
       key: 'image-trace',
       title: lang.beambox.left_panel.label.trace,
-      icon: <TabBarIcons.Trace />,
-      disabled: PreviewModeController.isDrawing || PreviewModeBackgroundDrawer.isClean(),
     },
     {
+      disabled: PreviewModeController.isDrawing || PreviewModeBackgroundDrawer.isClean(),
+      icon: <TabBarIcons.Trash />,
       key: 'clear-preview',
       title: lang.beambox.left_panel.label.clear_preview,
-      icon: <TabBarIcons.Trash />,
-      disabled: PreviewModeController.isDrawing || PreviewModeBackgroundDrawer.isClean(),
     },
   ];
   const handlePreviewTabClick = (key: string) => {
@@ -241,27 +263,28 @@ const CanvasTabBar = (): JSX.Element => {
         PreviewModeBackgroundDrawer.clear();
       }
     }
+
     setTimeout(resetActiveKey, 300);
   };
 
   return (
-    <div
-      id="mobile-tab-bar"
-      className={styles.container}
-      onClick={() => ObjectPanelController.updateActiveKey(null)}
-    >
+    <div className={styles.container} id="mobile-tab-bar" onClick={() => ObjectPanelController.updateActiveKey(null)}>
       <div style={{ width: 'fit-content' }}>
         <TabBar
           activeKey={activeKey}
           onChange={(key) => {
             setActiveKey(key);
-            if (isPreviewing) handlePreviewTabClick(key);
-            else handleTabClick(key);
+
+            if (isPreviewing) {
+              handlePreviewTabClick(key);
+            } else {
+              handleTabClick(key);
+            }
           }}
         >
           {(isPreviewing ? previewTabItems : tabs).map((item) => (
             <TabBar.Item
-              key={item.key}
+              aria-disabled={item.disabled || false}
               icon={
                 <Badge
                   className={styles.badge}
@@ -271,8 +294,8 @@ const CanvasTabBar = (): JSX.Element => {
                   {item.icon}
                 </Badge>
               }
+              key={item.key}
               title={item.title}
-              aria-disabled={item.disabled || false}
             />
           ))}
         </TabBar>

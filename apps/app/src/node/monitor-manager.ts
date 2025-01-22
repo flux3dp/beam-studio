@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars */
+/* eslint-disable ts/no-unused-vars */
 import { exec, execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
@@ -72,16 +72,13 @@ class MonitorManager {
       monitorCmd = `"${path.join(this.backendLocation, 'monitorexe-osx/monitorexe')}"`;
     } else if (process.platform === 'win32' && process.arch === 'x64') {
       monitorCmd = `"${path.join(this.backendLocation, 'monitorexe-win64/monitorexe.exe')}"`;
-      exec(
-        `"${path.join(this.backendLocation, 'monitorexe-win64/cygserver.exe')}"`,
-        (err, stdout) => {
-          if (err) {
-            console.log(err);
-          }
+      exec(`"${path.join(this.backendLocation, 'monitorexe-win64/cygserver.exe')}"`, (err, stdout) => {
+        if (err) {
+          console.log(err);
+        }
 
-          console.log(stdout);
-        },
-      );
+        console.log(stdout);
+      });
 
       if (!fs.existsSync(path.join(this.backendLocation, 'tmp'))) {
         fs.mkdirSync(path.join(this.backendLocation, 'tmp'));

@@ -1,9 +1,11 @@
-import classNames from 'classnames';
-import React, { SyntheticEvent, useContext, useEffect, useState } from 'react';
+import type { SyntheticEvent } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
-import deviceMaster from '@core/helpers/device-master';
+import classNames from 'classnames';
+
 import { ItemType } from '@core/app/constants/monitor-constants';
 import { MonitorContext } from '@core/app/contexts/MonitorContext';
+import deviceMaster from '@core/helpers/device-master';
 
 import styles from './FileItem.module.scss';
 
@@ -11,66 +13,64 @@ const maxFileNameLength = 12;
 const DEFAULT_IMAGE = 'img/ph_s.png';
 
 interface Props {
-  path: string;
   fileName: string;
+  path: string;
 }
 
 interface State {
+  fileInfo?: [string, { [key: string]: number | string }, Blob, { [key: string]: number | string }];
   imgSrc?: string;
-  fileInfo?: [string, { [key: string]: string | number }, Blob, { [key: string]: string | number }];
 }
 
 const onImageError = (evt: SyntheticEvent<HTMLImageElement>) => {
-  // eslint-disable-next-line no-param-reassign
   evt.currentTarget.src = 'img/ph_s.png';
 };
 
-const FileItem = ({ path, fileName }: Props): JSX.Element => {
+const FileItem = ({ fileName, path }: Props): React.JSX.Element => {
   const [state, setState] = useState<State>({});
 
   useEffect(() => {
     const getStates = async () => {
       const res = await deviceMaster.fileInfo(path, fileName);
       let imgSrc: string;
+
       if (res && res[2] instanceof Blob) {
         imgSrc = URL.createObjectURL(res[2]);
       }
-      if (state.imgSrc) URL.revokeObjectURL(state.imgSrc);
+
+      if (state.imgSrc) {
+        URL.revokeObjectURL(state.imgSrc);
+      }
+
       setState({
+        fileInfo: res as [string, { [key: string]: number | string }, Blob, { [key: string]: number | string }],
         imgSrc,
-        fileInfo: res as [
-          string,
-          { [key: string]: string | number },
-          Blob,
-          { [key: string]: string | number },
-        ],
       });
     };
+
     getStates();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line hooks/exhaustive-deps
   }, [path, fileName]);
 
-  const { highlightedItem, onHighlightItem, onSelectFile, onDeleteFile } =
-    useContext(MonitorContext);
-  const { imgSrc, fileInfo } = state;
+  const { highlightedItem, onDeleteFile, onHighlightItem, onSelectFile } = useContext(MonitorContext);
+  const { fileInfo, imgSrc } = state;
   const isSelected = highlightedItem.name === fileName && highlightedItem.type === ItemType.FILE;
+
   return (
     <div
-      title={fileName}
       className={classNames(styles.container)}
-      data-test-key={fileName}
       data-filename={fileName}
+      data-test-key={fileName}
       onClick={() => onHighlightItem({ name: fileName, type: ItemType.FILE })}
       onDoubleClick={() => onSelectFile(fileName, fileInfo)}
+      title={fileName}
     >
       <div className={classNames(styles['img-container'], { [styles.selected]: isSelected })}>
-        <img src={imgSrc || DEFAULT_IMAGE} onError={onImageError} />
+        <img onError={onImageError} src={imgSrc || DEFAULT_IMAGE} />
         <i className={classNames('fa', 'fa-times-circle-o')} onClick={onDeleteFile} />
       </div>
       <div className={classNames(styles.name, { [styles.selected]: isSelected })}>
-        {fileName.length > maxFileNameLength
-          ? `${fileName.substring(0, maxFileNameLength)}...`
-          : fileName}
+        {fileName.length > maxFileNameLength ? `${fileName.substring(0, maxFileNameLength)}...` : fileName}
       </div>
     </div>
   );

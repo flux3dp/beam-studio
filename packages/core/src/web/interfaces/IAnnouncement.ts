@@ -1,7 +1,7 @@
 export interface IAnnouncement {
-  id: number;
-  title: string;
   content: string;
+  id: number;
   link: string;
   link_text: string;
+  title: string;
 }

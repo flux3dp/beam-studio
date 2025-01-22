@@ -1,5 +1,5 @@
-/* eslint-disable import/first */
 import React, { act } from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 jest.mock('@core/app/svgedit/operations/clipboard', () => ({
@@ -7,12 +7,13 @@ jest.mock('@core/app/svgedit/operations/clipboard', () => ({
 }));
 
 jest.mock('@core/app/actions/beambox/svg-editor', () => ({
-  cutSelected: jest.fn(),
   copySelected: jest.fn(),
+  cutSelected: jest.fn(),
   deleteSelected: jest.fn(),
 }));
 
 const getSVGAsync = jest.fn();
+
 jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync,
 }));
@@ -29,15 +30,15 @@ getSVGAsync.mockImplementation((callback) => {
   callback({
     Canvas: {
       cloneSelectedElements,
-      groupSelectedElements,
-      ungroupSelectedElement,
-      moveTopBottomSelected,
-      moveUpSelectedElement,
-      moveDownSelectedElement,
-      getSelectedElems,
       getCurrentDrawing: () => ({
         all_layers: [{ name_: 'Layer 1' }, { name_: 'Layer 2' }],
       }),
+      getSelectedElems,
+      groupSelectedElements,
+      moveDownSelectedElement,
+      moveTopBottomSelected,
+      moveUpSelectedElement,
+      ungroupSelectedElement,
     },
   });
 });
@@ -51,66 +52,65 @@ jest.mock('@core/helpers/react-contextmenu', () => ({
 
 const mockgetObjectLayer = jest.fn().mockReturnValue({ title: 'Layer 1' });
 const mockMoveToOtherLayer = jest.fn();
+
 jest.mock('@core/helpers/layer/layer-helper', () => ({
-  moveToOtherLayer: (...args: any[]) => mockMoveToOtherLayer(...args),
   getObjectLayer: (...args: any[]) => mockgetObjectLayer(...args),
+  moveToOtherLayer: (...args: any[]) => mockMoveToOtherLayer(...args),
 }));
 
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+
 import Workarea from './Workarea';
 
 describe('test workarea', () => {
   test('should render correctly', async () => {
     const eventEmitter = eventEmitterFactory.createEventEmitter('workarea');
     const { container, getByText, unmount } = render(<Workarea className="mac" />);
+
     expect(container).toMatchSnapshot();
 
     const checkState = (state: {
-      menuDisabled: boolean;
-      select: boolean;
-      paste: boolean;
       group: boolean;
+      menuDisabled: boolean;
+      paste: boolean;
+      select: boolean;
       ungroup: boolean;
     }) => {
-      const menuDisabled =
-        container.querySelector('#canvas-contextmenu').getAttribute('disable') === 'true';
+      const menuDisabled = container.querySelector('#canvas-contextmenu').getAttribute('disable') === 'true';
       const select = getByText('Cut').getAttribute('disabled') === 'false';
       const paste = getByText('Paste').getAttribute('disabled') === 'false';
-      const group = select
-        ? getByText('Group').getAttribute('disabled') === 'false'
-        : expect.anything();
-      const ungroup = select
-        ? getByText('Ungroup').getAttribute('disabled') === 'false'
-        : expect.anything();
-      expect(state).toEqual({ menuDisabled, select, paste, group, ungroup });
+      const group = select ? getByText('Group').getAttribute('disabled') === 'false' : expect.anything();
+      const ungroup = select ? getByText('Ungroup').getAttribute('disabled') === 'false' : expect.anything();
+
+      expect(state).toEqual({ group, menuDisabled, paste, select, ungroup });
     };
 
     checkState({
-      menuDisabled: false,
-      select: false,
-      paste: false,
       group: false,
+      menuDisabled: false,
+      paste: false,
+      select: false,
       ungroup: false,
     });
     expect(eventEmitter.eventNames().length).toBe(1);
 
-    act(() => eventEmitter.emit('update-context-menu', { select: true, paste: true }));
+    act(() => eventEmitter.emit('update-context-menu', { paste: true, select: true }));
     await new Promise((resolve) => setTimeout(resolve, 0));
     checkState({
-      menuDisabled: false,
-      select: true,
-      paste: true,
       group: false,
+      menuDisabled: false,
+      paste: true,
+      select: true,
       ungroup: false,
     });
 
     act(() => eventEmitter.emit('update-context-menu', { menuDisabled: true }));
     await new Promise((resolve) => setTimeout(resolve, 0));
     checkState({
-      menuDisabled: true,
-      select: true,
-      paste: true,
       group: false,
+      menuDisabled: true,
+      paste: true,
+      select: true,
       ungroup: false,
     });
     expect(container).toMatchSnapshot();

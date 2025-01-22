@@ -1,7 +1,6 @@
 import type { WebContentsView } from 'electron';
 
-export const getDeeplinkUrl = (argv: string[]): string | undefined =>
-  argv.find((s) => s.startsWith('beam-studio://'));
+export const getDeeplinkUrl = (argv: string[]): string | undefined => argv.find((s) => s.startsWith('beam-studio://'));
 
 export const handleDeepLinkUrl = (views: WebContentsView[], url: string): void => {
   if (url) {

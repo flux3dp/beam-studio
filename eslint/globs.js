@@ -31,7 +31,10 @@ const IGNORES = [
   '**/public/*',
   '**/public/**/*',
   '**/svgedit',
-  '**/svg-editor',
+  '**/beambox/svg-editor.ts',
+  '**/helpers/potrace/*',
+  '**/helpers/potrace/**/*',
+  '**/helpers/clipper/clipper_unminified.js',
 ];
 
 function addPrefix(prefix, globs) {

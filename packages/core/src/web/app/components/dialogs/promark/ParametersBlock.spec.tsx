@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import ParametersBlock from './ParametersBlock';
@@ -13,12 +14,9 @@ describe('test ParametersBlock', () => {
 
   it('should render correctly', () => {
     const { container } = render(
-      <ParametersBlock
-        isInch={false}
-        parameters={mockParameters}
-        setParameters={mockSetParameters}
-      />
+      <ParametersBlock isInch={false} parameters={mockParameters} setParameters={mockSetParameters} />,
     );
+
     expect(container).toMatchSnapshot();
   });
 
@@ -29,16 +27,15 @@ describe('test ParametersBlock', () => {
     ].forEach(({ id, key }) => {
       test(`edit ${key}`, () => {
         const { getByTestId } = render(
-          <ParametersBlock
-            isInch={false}
-            parameters={mockParameters}
-            setParameters={mockSetParameters}
-          />
+          <ParametersBlock isInch={false} parameters={mockParameters} setParameters={mockSetParameters} />,
         );
         const input = getByTestId(id);
+
         fireEvent.change(input, { target: { value: '10' } });
         expect(mockSetParameters).toBeCalledTimes(1);
+
         const [[dispatch]] = mockSetParameters.mock.calls;
+
         expect(dispatch(mockParameters)).toEqual({ ...mockParameters, [key]: 10 });
       });
     });

@@ -1,11 +1,13 @@
 import openFileHelper from './open-file-helper';
 
 const mockSendSync = jest.fn();
+
 jest.mock('@app/implementations/communicator', () => ({
   sendSync: (...args) => mockSendSync(...args),
 }));
 
 const mockHandleFile = jest.fn();
+
 jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) =>
     callback({
@@ -16,6 +18,7 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
 }));
 
 const mockFetch = jest.fn();
+
 describe('test openFileHelper', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -33,9 +36,11 @@ describe('test openFileHelper', () => {
 
   it('should work', async () => {
     mockSendSync.mockReturnValue('mock-path');
+
     const mockResp = {
       blob: jest.fn(),
     };
+
     mockFetch.mockResolvedValue(mockResp);
     mockResp.blob.mockResolvedValue('mock-blob');
     await openFileHelper.loadOpenFile();

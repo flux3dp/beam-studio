@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
+
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
 import { BoxgenContext } from '@core/app/contexts/BoxgenContext';
@@ -7,17 +7,17 @@ import { BoxgenContext } from '@core/app/contexts/BoxgenContext';
 import Boxgen from './Boxgen';
 
 jest.mock('@core/helpers/useI18n', () => () => ({
-  buttons: {
-    back_to_beam_studio: 'Back to Beam Studio',
-  },
   boxgen: {
     title: 'BOXGEN',
+  },
+  buttons: {
+    back_to_beam_studio: 'Back to Beam Studio',
   },
 }));
 
 jest.mock('@core/app/contexts/BoxgenContext', () => ({
   BoxgenContext: React.createContext({ onClose: () => {} }),
-  BoxgenProvider: ({ onClose, children }: any) => (
+  BoxgenProvider: ({ children, onClose }: any) => (
     <BoxgenContext.Provider value={{ onClose } as any}>{children}</BoxgenContext.Provider>
   ),
 }));
@@ -25,58 +25,41 @@ jest.mock('@core/app/contexts/BoxgenContext', () => ({
 jest.mock(
   '@core/app/widgets/FullWindowPanel/FullWindowPanel',
   () =>
-    ({
-      mobileTitle,
-      renderMobileFixedContent,
-      renderMobileContents,
-      renderContents,
-      onClose,
-    }: any) =>
-      (
-        <div>
-          <div>mobileTitle: {mobileTitle}</div>
-          <div>{renderMobileFixedContent?.()}</div>
-          <div>{renderMobileContents?.()}</div>
-          <div>{renderContents?.()}</div>
-          <button type="button" onClick={onClose}>
-            back
-          </button>
-        </div>
-      ),
+    ({ mobileTitle, onClose, renderContents, renderMobileContents, renderMobileFixedContent }: any) => (
+      <div>
+        <div>mobileTitle: {mobileTitle}</div>
+        <div>{renderMobileFixedContent?.()}</div>
+        <div>{renderMobileContents?.()}</div>
+        <div>{renderContents?.()}</div>
+        <button onClick={onClose} type="button">
+          back
+        </button>
+      </div>
+    ),
 );
 
-jest.mock(
-  '@core/app/widgets/FullWindowPanel/BackButton',
-  () =>
-    ({ children }: { children: React.ReactNode }) =>
-      <div className="back button">{children}</div>,
-);
+jest.mock('@core/app/widgets/FullWindowPanel/BackButton', () => ({ children }: { children: React.ReactNode }) => (
+  <div className="back button">{children}</div>
+));
 
-jest.mock(
-  '@core/app/widgets/FullWindowPanel/Footer',
-  () =>
-    ({ children }: { children: React.ReactNode }) =>
-      <div className="footer">{children}</div>,
-);
+jest.mock('@core/app/widgets/FullWindowPanel/Footer', () => ({ children }: { children: React.ReactNode }) => (
+  <div className="footer">{children}</div>
+));
 
 jest.mock(
   '@core/app/widgets/FullWindowPanel/Header',
   () =>
-    ({ title, children }: { title: string; children: React.ReactNode }) =>
-      (
-        <div className="header">
-          <div>title: {title}</div>
-          {children}
-        </div>
-      ),
+    ({ children, title }: { children: React.ReactNode; title: string }) => (
+      <div className="header">
+        <div>title: {title}</div>
+        {children}
+      </div>
+    ),
 );
 
-jest.mock(
-  '@core/app/widgets/FullWindowPanel/Sider',
-  () =>
-    ({ children }: { children: React.ReactNode }) =>
-      <div className="sider">{children}</div>,
-);
+jest.mock('@core/app/widgets/FullWindowPanel/Sider', () => ({ children }: { children: React.ReactNode }) => (
+  <div className="sider">{children}</div>
+));
 
 jest.mock('./BoxCanvas', () => 'mock-canvas');
 jest.mock('./BoxSelector', () => 'mock-box-selector');
@@ -92,8 +75,11 @@ describe('test Boxgen', () => {
 
   test('should rendered correctly', () => {
     const { container } = render(<Boxgen onClose={mockOnClose} />);
+
     expect(container).toMatchSnapshot();
+
     const button = container.querySelector('button');
+
     fireEvent.click(button);
     waitFor(() => expect(mockOnClose).toBeCalledTimes(1));
   });

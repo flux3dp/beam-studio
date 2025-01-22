@@ -8,9 +8,7 @@ const get = <T extends keyof PromarkStore = undefined>(
 ): T extends undefined ? PromarkStore : PromarkStore[NonNullable<T>] => {
   const store: PromarkStore = storage.get('promark-store')?.[serial] || {};
 
-  return (key ? store[key] : store) as T extends undefined
-    ? PromarkStore
-    : PromarkStore[NonNullable<T>];
+  return (key ? store[key] : store) as T extends undefined ? PromarkStore : PromarkStore[NonNullable<T>];
 };
 
 const set = <T extends keyof PromarkStore>(serial: string, key: T, data: PromarkStore[T]): void => {

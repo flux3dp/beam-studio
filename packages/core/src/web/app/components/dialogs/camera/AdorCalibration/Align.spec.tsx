@@ -1,22 +1,20 @@
-/* eslint-disable import/first */
 import React from 'react';
-import { fireEvent, render, waitFor } from '@testing-library/react';
 
-import { FisheyeCameraParametersV1 } from '@core/interfaces/FisheyePreview';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 
 import LayerModule from '@core/app/constants/layer-module/layer-modules';
 import moduleOffsets from '@core/app/constants/layer-module/module-offsets';
+import type { FisheyeCameraParametersV1 } from '@core/interfaces/FisheyePreview';
 
 const mockFisheyePreviewManagerV2 = jest.fn();
-jest.mock(
-  '@core/app/actions/camera/preview-helper/FisheyePreviewManagerV2',
-  () => mockFisheyePreviewManagerV2,
-);
+
+jest.mock('@core/app/actions/camera/preview-helper/FisheyePreviewManagerV2', () => mockFisheyePreviewManagerV2);
 
 import Align from './Align';
 import CalibrationType from './calibrationTypes';
 
 const mockPopUpError = jest.fn();
+
 jest.mock('@core/app/actions/alert-caller', () => ({
   popUpError: (...args) => mockPopUpError(...args),
 }));
@@ -25,26 +23,29 @@ const mockSetFisheyeMatrix = jest.fn();
 const mockTakeOnePicture = jest.fn();
 const mockConnectCamera = jest.fn();
 const mockDisconnectCamera = jest.fn();
+
 jest.mock('@core/helpers/device-master', () => ({
-  setFisheyeMatrix: (...args) => mockSetFisheyeMatrix(...args),
-  takeOnePicture: (...args) => mockTakeOnePicture(...args),
   connectCamera: (...args) => mockConnectCamera(...args),
-  disconnectCamera: (...args) => mockDisconnectCamera(...args),
   currentDevice: {
     info: {
       model: 'ado1',
     },
   },
+  disconnectCamera: (...args) => mockDisconnectCamera(...args),
+  setFisheyeMatrix: (...args) => mockSetFisheyeMatrix(...args),
+  takeOnePicture: (...args) => mockTakeOnePicture(...args),
 }));
 
 const mockRead = jest.fn();
 const mockWrite = jest.fn();
+
 jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read: (...args) => mockRead(...args),
   write: (...args) => mockWrite(...args),
 }));
 
 const mockGetPerspectiveForAlign = jest.fn();
+
 jest.mock(
   './getPerspectiveForAlign',
   () =>
@@ -53,6 +54,7 @@ jest.mock(
 );
 
 const mockSetFisheyeConfig = jest.fn();
+
 jest.mock('@core/helpers/camera-calibration-helper', () => ({
   setFisheyeConfig: (...args) => mockSetFisheyeConfig(...args),
 }));
@@ -63,15 +65,16 @@ jest.mock('@core/helpers/useI18n', () => () => ({
     done: 'done',
   },
   calibration: {
-    taking_picture: 'taking_picture',
-    use_last_config: 'use_last_config',
     retake: 'retake',
     show_last_config: 'show_last_config',
+    taking_picture: 'taking_picture',
+    use_last_config: 'use_last_config',
   },
 }));
 
 const mockOpenNonstopProgress = jest.fn();
 const mockPopById = jest.fn();
+
 jest.mock('@core/app/actions/progress-caller', () => ({
   openNonstopProgress: (...args) => mockOpenNonstopProgress(...args),
   popById: (...args) => mockPopById(...args),
@@ -84,11 +87,11 @@ const mockOnClose = jest.fn();
 const mockOnBack = jest.fn();
 
 const mockFishEyeParam: FisheyeCameraParametersV1 = {
-  k: [[0]],
-  d: [[0]],
-  points: [[[[0, 0]]]],
-  heights: [0],
   center: [1200, 1000],
+  d: [[0]],
+  heights: [0],
+  k: [[0]],
+  points: [[[[0, 0]]]],
   z3regParam: [[[[0, 0]]]],
 };
 
@@ -109,15 +112,17 @@ describe('test Align', () => {
   it('should render correctly', async () => {
     mockTakeOnePicture.mockResolvedValue({ imgBlob: 'blob' });
     mockCreateObjectURL.mockReturnValue('file://url');
+
     const { baseElement, getByText } = render(
       <Align
+        fisheyeParam={mockFishEyeParam}
+        onBack={mockOnBack}
+        onClose={mockOnClose}
         title="title"
         type={CalibrationType.CAMERA}
-        onClose={mockOnClose}
-        onBack={mockOnBack}
-        fisheyeParam={mockFishEyeParam}
       />,
     );
+
     expect(baseElement.querySelector('img').src).toBe('');
     await waitFor(() => {
       expect(baseElement.querySelector('.ant-modal')).not.toHaveClass('ant-zoom-appear');
@@ -137,15 +142,17 @@ describe('test Align', () => {
   test('onBack, onClose', async () => {
     mockTakeOnePicture.mockResolvedValue({ imgBlob: 'blob' });
     mockCreateObjectURL.mockReturnValue('file://url');
+
     const { baseElement, getByText } = render(
       <Align
+        fisheyeParam={mockFishEyeParam}
+        onBack={mockOnBack}
+        onClose={mockOnClose}
         title="title"
         type={CalibrationType.CAMERA}
-        onClose={mockOnClose}
-        onBack={mockOnBack}
-        fisheyeParam={mockFishEyeParam}
       />,
     );
+
     expect(baseElement.querySelector('img').src).toBe('');
     await waitFor(() => {
       expect(baseElement.querySelector('img').src).not.toBe('');
@@ -159,15 +166,17 @@ describe('test Align', () => {
   test('scroll and next should work when type is Camera', async () => {
     mockTakeOnePicture.mockResolvedValue({ imgBlob: 'blob' });
     mockCreateObjectURL.mockReturnValue('file://url');
+
     const { baseElement, getByText } = render(
       <Align
+        fisheyeParam={mockFishEyeParam}
+        onBack={mockOnBack}
+        onClose={mockOnClose}
         title="title"
         type={CalibrationType.CAMERA}
-        onClose={mockOnClose}
-        onBack={mockOnBack}
-        fisheyeParam={mockFishEyeParam}
       />,
     );
+
     expect(baseElement.querySelector('img').src).toBe('');
     await waitFor(() => {
       expect(baseElement.querySelector('.ant-modal')).not.toHaveClass('ant-zoom-appear');
@@ -180,12 +189,16 @@ describe('test Align', () => {
     });
     expect(mockPopById).toBeCalledTimes(2);
     expect(mockPopById).toHaveBeenLastCalledWith('calibration-align');
+
     const img = baseElement.querySelector('img');
+
     fireEvent.load(img);
     expect(baseElement).toMatchSnapshot();
+
     const xInput = baseElement.querySelector('.ant-input-number-input#x');
     const yInput = baseElement.querySelector('.ant-input-number-input#y');
     const imgContainer = baseElement.querySelector('.img-container');
+
     expect(imgContainer.scrollLeft).toBe(1200);
     expect(imgContainer.scrollTop).toBe(1000);
     fireEvent.change(xInput, { target: { value: 100 } });
@@ -210,15 +223,17 @@ describe('test Align', () => {
     mockRead.mockReturnValue(null);
     mockTakeOnePicture.mockResolvedValue({ imgBlob: 'blob' });
     mockCreateObjectURL.mockReturnValue('file://url');
+
     const { baseElement, getByText } = render(
       <Align
+        fisheyeParam={mockFishEyeParam}
+        onBack={mockOnBack}
+        onClose={mockOnClose}
         title="title"
         type={CalibrationType.PRINTER_HEAD}
-        onClose={mockOnClose}
-        onBack={mockOnBack}
-        fisheyeParam={mockFishEyeParam}
       />,
     );
+
     expect(baseElement.querySelector('img').src).toBe('');
     await waitFor(() => {
       expect(baseElement.querySelector('.ant-modal')).not.toHaveClass('ant-zoom-appear');
@@ -231,12 +246,16 @@ describe('test Align', () => {
     });
     expect(mockPopById).toBeCalledTimes(2);
     expect(mockPopById).toHaveBeenLastCalledWith('calibration-align');
+
     const img = baseElement.querySelector('img');
+
     fireEvent.load(img);
     expect(baseElement).toMatchSnapshot();
+
     const xInput = baseElement.querySelector('.ant-input-number-input#x');
     const yInput = baseElement.querySelector('.ant-input-number-input#y');
     const imgContainer = baseElement.querySelector('.img-container');
+
     expect(imgContainer.scrollLeft).toBe(1200);
     expect(imgContainer.scrollTop).toBe(1000);
     fireEvent.change(xInput, { target: { value: 10 } });
@@ -252,10 +271,7 @@ describe('test Align', () => {
     fireEvent.click(getByText('done'));
     expect(mockWrite).toBeCalledTimes(1);
     expect(mockWrite).toHaveBeenLastCalledWith('module-offsets', {
-      [LayerModule.PRINTER]: [
-        moduleOffsets[LayerModule.PRINTER][0] - 20,
-        moduleOffsets[LayerModule.PRINTER][1] + 20,
-      ],
+      [LayerModule.PRINTER]: [moduleOffsets[LayerModule.PRINTER][0] - 20, moduleOffsets[LayerModule.PRINTER][1] + 20],
     });
   });
 });

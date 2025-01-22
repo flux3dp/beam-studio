@@ -1,13 +1,10 @@
-/* eslint-disable no-console */
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable no-param-reassign */
 import imageProcessor from '@app/implementations/imageProcessor';
 
 const urlToImage = async (url: string) => {
   const resp = await fetch(url);
   const arrayBuffer = await resp.arrayBuffer();
   const image = await imageProcessor.read(arrayBuffer as Buffer);
+
   return image;
 };
 
@@ -15,17 +12,22 @@ const imageToUrl = async (image, mimeType: string = imageProcessor.MIME_PNG) => 
   const jimpData = await image.getBufferAsync(mimeType);
   const jimpBlob = new Blob([jimpData]);
   const src = URL.createObjectURL(jimpBlob);
+
   return src;
 };
 
 const colorInvert = async (imgBlobUrl: string): Promise<string> => {
   try {
     const image = await urlToImage(imgBlobUrl);
+
     image.invert();
+
     const newImgUrl = imageToUrl(image);
+
     return await Promise.resolve(newImgUrl);
   } catch (error) {
     console.error('Error when inverting color:', error);
+
     return null;
   }
 };
@@ -33,11 +35,15 @@ const colorInvert = async (imgBlobUrl: string): Promise<string> => {
 const cropImage = async (imgBlobUrl: string, x: number, y: number, w: number, h: number) => {
   try {
     const image = await urlToImage(imgBlobUrl);
+
     image.crop(x, y, w, h);
+
     const newImgUrl = imageToUrl(image);
+
     return await Promise.resolve(newImgUrl);
   } catch (error) {
     console.error('Error when croping image', error);
+
     return null;
   }
 };
@@ -45,15 +51,19 @@ const cropImage = async (imgBlobUrl: string, x: number, y: number, w: number, h:
 const curveOperate = async (imgBlobUrl: string, curveMap: number[]) => {
   try {
     const image = await urlToImage(imgBlobUrl);
+
     for (let i = 0; i < image.bitmap.data.length; i += 1) {
       if (i % 4 !== 3) {
         image.bitmap.data[i] = curveMap[image.bitmap.data[i]];
       }
     }
+
     const newImgUrl = imageToUrl(image);
+
     return await Promise.resolve(newImgUrl);
   } catch (error) {
     console.error('Error when curve operating', error);
+
     return null;
   }
 };
@@ -69,11 +79,15 @@ const sharpImage = async (imgBlobUrl: string, sharpness: number) => {
       [kEdge, kMid, kEdge],
       [kCorner, kEdge, kCorner],
     ];
+
     image.convolute(kernel);
+
     const newImgUrl = imageToUrl(image);
+
     return await Promise.resolve(newImgUrl);
   } catch (error) {
     console.error('Error when sharping image:', error);
+
     return null;
   }
 };
@@ -100,6 +114,7 @@ const oneDirectionalLinearBlur = (image: any, r: number, dir: string): any => {
   let p;
   let iLimit;
   let jLimit;
+
   if (dir === 'left' || dir === 'right') {
     iLimit = h;
     jLimit = w;
@@ -107,10 +122,12 @@ const oneDirectionalLinearBlur = (image: any, r: number, dir: string): any => {
     iLimit = w;
     jLimit = h;
   }
+
   for (let i = 0; i < iLimit; i += 1) {
     for (let j = 0; j < jLimit; j += 1) {
       let x;
       let y;
+
       if (dir === 'left') {
         x = w - 1 - j;
         y = i;
@@ -153,18 +170,21 @@ const oneDirectionalLinearBlur = (image: any, r: number, dir: string): any => {
         windowB.push(image.bitmap.data[p + 2]);
         windowA.push(image.bitmap.data[p + 3]);
       }
+
       image.bitmap.data[p] = Math.floor(curR / denominator);
       image.bitmap.data[p + 1] = Math.floor(curG / denominator);
       image.bitmap.data[p + 2] = Math.floor(curB / denominator);
       image.bitmap.data[p + 3] = 255;
     }
   }
+
   return image;
 };
 
 // Do four directional blur and take max value
 const stampBlur = (image, r: number) => {
   const blurredImages = [];
+
   blurredImages[0] = oneDirectionalLinearBlur(image.clone(), r, 'left');
   blurredImages[1] = oneDirectionalLinearBlur(image.clone(), r, 'right');
   blurredImages[2] = oneDirectionalLinearBlur(image.clone(), r, 'up');
@@ -179,6 +199,7 @@ const stampBlur = (image, r: number) => {
       );
     }
   }
+
   return image;
 };
 
@@ -186,21 +207,28 @@ const regulateBlurredImage = (image): void => {
   const brightness = image.bitmap.data.filter((p, i) => i % 4 === 0);
   let max = brightness[0];
   let min = brightness[0];
+
   brightness.forEach((v) => {
     max = Math.max(v, max);
     min = Math.min(v, min);
   });
+
   const BLACK_CAP = 0;
+
   for (let i = 0; i < image.bitmap.data.length; i += 4) {
     let v = image.bitmap.data[i];
+
     v = (v - min) / (max - min);
+
     if (v < 0.3) {
       v = Math.round(v ** 1.5 * (255 - BLACK_CAP)) + BLACK_CAP;
     } else if (v < 0.7) {
       const power = 1.5 + 2.5 * (v - 0.3);
+
       v = Math.round(v ** power * (255 - BLACK_CAP)) + BLACK_CAP;
     } else {
       const power = 2.5 + 5 * (v - 0.7);
+
       v = Math.round(v ** power * (255 - BLACK_CAP)) + BLACK_CAP;
     }
 
@@ -233,29 +261,35 @@ const generateStampBevel = async (imgBlobUrl: string, threshold: number) => {
     const image = await urlToImage(imgBlobUrl);
     const w = image.bitmap.width;
     const h = image.bitmap.height;
+
     await binarizeImage(image, threshold);
+
     const origImage = image.clone();
+
     await stampBlur(origImage, Math.ceil(Math.min(w, h) / 30));
     regulateBlurredImage(origImage);
     image.composite(origImage, 0, 0, {
       mode: imageProcessor.BLEND_OVERLAY,
-      opacitySource: 1,
       opacityDest: 1,
+      opacitySource: 1,
     });
+
     const newImgUrl = imageToUrl(image);
+
     return await Promise.resolve(newImgUrl);
   } catch (error) {
     console.error('Error when generating stamp bevel:', error);
+
     return null;
   }
 };
 
 export default {
-  urlToImage,
-  imageToUrl,
   colorInvert,
   cropImage,
   curveOperate,
-  sharpImage,
   generateStampBevel,
+  imageToUrl,
+  sharpImage,
+  urlToImage,
 };

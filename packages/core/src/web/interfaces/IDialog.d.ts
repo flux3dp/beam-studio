@@ -1,67 +1,63 @@
-export type ArrowDirection = 'top' | 'left' | 'bottom' | 'right';
+export type ArrowDirection = 'bottom' | 'left' | 'right' | 'top';
 export interface IDialogBoxStyle {
+  arrowColor?: string;
+  arrowDirection?: ArrowDirection;
+  arrowHeight?: number;
+  arrowPadding?: number | undefined;
+  arrowWidth?: number;
   position: {
-    top?: number,
-    bottom?: number,
-    left?: number,
-    right?: number,
-  },
-  arrowDirection?: ArrowDirection,
-  arrowPadding?: number | undefined,
-  arrowHeight?: number,
-  arrowWidth?: number,
-  arrowColor?: string,
+    bottom?: number;
+    left?: number;
+    right?: number;
+    top?: number;
+  };
 }
 
 export interface IPrompt {
-  caption?: string,
-  message?: string,
-  defaultValue?: string,
-  onYes?: (value?: string) => void,
-  onCancel?: () => void,
+  caption?: string;
+  defaultValue?: string;
+  message?: string;
+  onCancel?: () => void;
+  onYes?: (value?: string) => void;
 }
 
 export interface IInputLightBox {
-  isOpen?: boolean,
-  type: string,
-  caption: string,
-  maxLength?: number,
-  inputHeader?: string,
-  defaultValue?: string,
-  confirmText?: string,
-  onSubmit: (value: string, event?: Event) => void | Promise<void>,
-  onCancel?: () => void,
-  onClose?: (from?: string) => void,
+  caption: string;
+  confirmText?: string;
+  defaultValue?: string;
+  inputHeader?: string;
+  isOpen?: boolean;
+  maxLength?: number;
+  onCancel?: () => void;
+  onClose?: (from?: string) => void;
+  onSubmit: (value: string, event?: Event) => Promise<void> | void;
+  type: string;
 }
 
 export interface DialogFilter {
-  name: string;
   extensions: string[];
+  name: string;
 }
-export type OpenDialogProperties = 'openFile' | 'openDirectory' | 'createDirectory' | 'promptToCreate';
+export type OpenDialogProperties = 'createDirectory' | 'openDirectory' | 'openFile' | 'promptToCreate';
 export interface IDialog {
-  showSaveDialog(
-    title?: string,
-    defaultPath?: string,
-    filters?: DialogFilter[],
-  ): Promise<string | null>;
-  writeFileDialog(
-    getContent: () => string | Blob | Promise<string | Blob>,
-    title?: string,
-    defaultPath?: string,
-    filters?: DialogFilter[],
-  ): Promise<string | null>;
-  showOpenDialog(options: {
-    defaultPath?: string,
-    filters?: DialogFilter[],
-    properties?: OpenDialogProperties[],
-  }): Promise<{
-    canceled: boolean,
-    filePaths: string[],
-  }>;
   getFileFromDialog(options: {
+    defaultPath?: string;
+    filters?: DialogFilter[];
+    properties?: OpenDialogProperties[];
+  }): Promise<File>;
+  showOpenDialog(options: {
+    defaultPath?: string;
+    filters?: DialogFilter[];
+    properties?: OpenDialogProperties[];
+  }): Promise<{
+    canceled: boolean;
+    filePaths: string[];
+  }>;
+  showSaveDialog(title?: string, defaultPath?: string, filters?: DialogFilter[]): Promise<null | string>;
+  writeFileDialog(
+    getContent: () => Blob | Promise<Blob | string> | string,
+    title?: string,
     defaultPath?: string,
     filters?: DialogFilter[],
-    properties?: OpenDialogProperties[],
-  }): Promise<File>;
+  ): Promise<null | string>;
 }

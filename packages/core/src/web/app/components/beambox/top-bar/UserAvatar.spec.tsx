@@ -1,9 +1,11 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import UserAvatar from './UserAvatar';
 
 const showFluxCreditDialog = jest.fn();
+
 jest.mock('@core/app/actions/dialog-caller', () => ({
   showFluxCreditDialog: () => showFluxCreditDialog(),
 }));
@@ -11,6 +13,7 @@ jest.mock('@core/app/actions/dialog-caller', () => ({
 describe('test UserAvatar', () => {
   test('no user', () => {
     const { container } = render(<UserAvatar user={null} />);
+
     expect(container).toMatchSnapshot();
 
     fireEvent.click(container.querySelector('.user-avatar'));
@@ -26,6 +29,7 @@ describe('test UserAvatar', () => {
         }}
       />,
     );
+
     expect(container).toMatchSnapshot();
   });
 
@@ -38,6 +42,7 @@ describe('test UserAvatar', () => {
         }}
       />,
     );
+
     expect(container).toMatchSnapshot();
   });
 });

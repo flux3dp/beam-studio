@@ -3,8 +3,13 @@ import { getLayerElementByName } from '@core/helpers/layer/layer-helper';
 const checkPwmImages = (layerNames: string[]): boolean =>
   layerNames.some((layerName: string) => {
     const layer = getLayerElementByName(layerName);
-    if (!layer) return false;
+
+    if (!layer) {
+      return false;
+    }
+
     const images = layer.querySelectorAll('image[data-pwm="1"]');
+
     return images.length > 0;
   });
 

@@ -1,19 +1,20 @@
 import React, { useContext } from 'react';
+
 import classNames from 'classnames';
 
-import * as TutorialController from '@core/app/views/tutorials/tutorialController';
-import TutorialConstants from '@core/app/constants/tutorial-constants';
-import useI18n from '@core/helpers/useI18n';
-import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { PanelType } from '@core/app/constants/right-panel-types';
+import TutorialConstants from '@core/app/constants/tutorial-constants';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
+import * as TutorialController from '@core/app/views/tutorials/tutorialController';
+import useI18n from '@core/helpers/useI18n';
 
 interface Props {
   panelType: PanelType;
   switchPanel: () => void;
 }
 
-function Tab({ panelType, switchPanel }: Props): JSX.Element {
+function Tab({ panelType, switchPanel }: Props): React.JSX.Element {
   const lang = useI18n();
   const langTopBar = lang.topbar;
   const langRightPanel = lang.beambox.right_panel;
@@ -21,6 +22,7 @@ function Tab({ panelType, switchPanel }: Props): JSX.Element {
   const { isPathEditing } = useContext(CanvasContext);
   const isObjectDisabled = !isPathEditing && !selectedElement;
   let objectTitle = langRightPanel.tabs.objects;
+
   if (panelType === PanelType.PathEdit) {
     objectTitle = langRightPanel.tabs.path_edit;
   } else if (selectedElement) {
@@ -42,6 +44,7 @@ function Tab({ panelType, switchPanel }: Props): JSX.Element {
   } else {
     objectTitle = langTopBar.tag_names.no_selection;
   }
+
   return (
     <div className="right-panel-tabs">
       <div
@@ -51,16 +54,15 @@ function Tab({ panelType, switchPanel }: Props): JSX.Element {
             ? null
             : () => {
                 switchPanel();
-                if (
-                  TutorialController.getNextStepRequirement() === TutorialConstants.TO_LAYER_PANEL
-                ) {
+
+                if (TutorialController.getNextStepRequirement() === TutorialConstants.TO_LAYER_PANEL) {
                   TutorialController.handleNextStep();
                 }
               }
         }
         title={`${langRightPanel.tabs.layers} (L)`}
       >
-        <img className="tab-icon" src="img/right-panel/icon-layers.svg" draggable={false} />
+        <img className="tab-icon" draggable={false} src="img/right-panel/icon-layers.svg" />
         <div className="tab-title">{langRightPanel.tabs.layers}</div>
       </div>
       <div
@@ -73,16 +75,15 @@ function Tab({ panelType, switchPanel }: Props): JSX.Element {
             ? null
             : () => {
                 switchPanel();
-                if (
-                  TutorialController.getNextStepRequirement() === TutorialConstants.TO_OBJECT_PANEL
-                ) {
+
+                if (TutorialController.getNextStepRequirement() === TutorialConstants.TO_OBJECT_PANEL) {
                   TutorialController.handleNextStep();
                 }
               }
         }
         title={`${objectTitle} (O)`}
       >
-        <img className="tab-icon object" src="img/right-panel/icon-adjust.svg" draggable={false} />
+        <img className="tab-icon object" draggable={false} src="img/right-panel/icon-adjust.svg" />
         <div className="tab-title">{objectTitle}</div>
       </div>
     </div>

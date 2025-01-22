@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import MediaTutorial from './MediaTutorial';
@@ -6,9 +7,9 @@ import MediaTutorial from './MediaTutorial';
 jest.mock('@core/helpers/i18n', () => ({
   lang: {
     buttons: {
-      next: 'NEXT',
       back: 'BACK',
       done: 'DONE',
+      next: 'NEXT',
     },
   },
 }));
@@ -23,8 +24,8 @@ const data = [
     mediaSources: [{ src: 'img/2.png', type: 'image/png' }],
   },
   {
-    isVideo: true,
     description: '3',
+    isVideo: true,
     mediaSources: [
       { src: 'video/3.webm', type: 'image/webm' },
       { src: 'video/3.mp4', type: 'image/mp4' },
@@ -42,7 +43,9 @@ describe('should MediaTutorial', () => {
 
   test('next step should work', () => {
     window.HTMLMediaElement.prototype.load = mockMediaLoad;
+
     const { baseElement, getByText } = render(<MediaTutorial data={data} onClose={mockOnClose} />);
+
     expect(baseElement).toMatchSnapshot();
     fireEvent.click(getByText('NEXT'));
     expect(mockMediaLoad).toHaveBeenCalledTimes(0);
@@ -63,6 +66,7 @@ describe('should MediaTutorial', () => {
 
   test('cancel button should work', () => {
     const { baseElement } = render(<MediaTutorial data={data} onClose={mockOnClose} />);
+
     expect(baseElement).toMatchSnapshot();
     fireEvent.click(baseElement.querySelector('.ant-modal-close'));
     expect(mockOnClose).toBeCalledTimes(1);

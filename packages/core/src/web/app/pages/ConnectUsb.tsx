@@ -1,47 +1,44 @@
-/* eslint-disable @typescript-eslint/no-shadow */
 import React, { useMemo } from 'react';
-import { useLocation } from 'react-router-dom';
-import classNames from 'classnames';
 
+import classNames from 'classnames';
+import { useLocation } from 'react-router-dom';
+
+import type { SupportUsbModels } from '@core/app/actions/beambox/constant';
 import useI18n from '@core/helpers/useI18n';
 
-import { SupportUsbModels } from '@core/app/actions/beambox/constant';
 import styles from './ConnectUsb.module.scss';
 
-export default function ConnectUsb(): JSX.Element {
+export default function ConnectUsb(): React.JSX.Element {
   const { initialize: t } = useI18n();
   const { search } = useLocation();
-  const model = useMemo(
-    () => new URLSearchParams(search).get('model'),
-    [search],
-  ) as SupportUsbModels;
+  const model = useMemo(() => new URLSearchParams(search).get('model'), [search]) as SupportUsbModels;
 
-  const renderInformation: Record<SupportUsbModels, { title: string; steps: Array<string> }> = {
+  const renderInformation: Record<SupportUsbModels, { steps: string[]; title: string }> = {
     ado1: {
-      title: 'Ador',
       steps: [
         t.connect_usb.turn_off_machine,
         t.connect_usb.tutorial1,
         t.connect_usb.turn_on_machine,
         t.connect_usb.wait_for_turning_on,
       ],
-    },
-    fhexa1: {
-      title: 'HEXA',
-      steps: [t.connect_usb.tutorial1, t.connect_usb.tutorial2],
-    },
-    fpm1: {
-      title: 'Promark Series',
-      steps: [t.connect_usb.tutorial1, t.connect_usb.connect_camera, t.connect_usb.tutorial2],
+      title: 'Ador',
     },
     fbb2: {
-      title: 'Beambox II',
       steps: [
         t.connect_usb.turn_off_machine,
         t.connect_usb.tutorial1,
         t.connect_usb.turn_on_machine,
         t.connect_usb.wait_for_turning_on,
       ],
+      title: 'Beambox II',
+    },
+    fhexa1: {
+      steps: [t.connect_usb.tutorial1, t.connect_usb.tutorial2],
+      title: 'HEXA',
+    },
+    fpm1: {
+      steps: [t.connect_usb.tutorial1, t.connect_usb.connect_camera, t.connect_usb.tutorial2],
+      title: 'Promark Series',
     },
   };
 
@@ -80,7 +77,7 @@ export default function ConnectUsb(): JSX.Element {
       <div className={styles.main}>
         <div className={styles.image}>
           <div className={classNames(styles.circle, styles.c1)} />
-          <img src="img/init-panel/icon-usb-cable.svg" draggable="false" />
+          <img draggable="false" src="img/init-panel/icon-usb-cable.svg" />
           <div className={classNames(styles.circle, styles.c2)} />
         </div>
         <div className={styles.text}>

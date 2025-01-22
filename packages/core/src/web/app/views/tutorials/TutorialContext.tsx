@@ -1,13 +1,14 @@
 import React from 'react';
 
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import RightPanelController from '@core/app/views/beambox/Right-Panels/contexts/RightPanelController';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import { ITutorialDialog } from '@core/interfaces/ITutorial';
 import { PanelType } from '@core/app/constants/right-panel-types';
 import { TutorialCallbacks } from '@core/app/constants/tutorial-constants';
+import RightPanelController from '@core/app/views/beambox/Right-Panels/contexts/RightPanelController';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import type { ITutorialDialog } from '@core/interfaces/ITutorial';
 
 let svgCanvas;
+
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
@@ -17,10 +18,10 @@ export const TutorialContext = React.createContext({});
 export const eventEmitter = eventEmitterFactory.createEventEmitter();
 
 interface Props {
-  hasNextButton: boolean;
-  dialogStylesAndContents: ITutorialDialog[];
-  onClose: () => void;
   children: React.ReactNode;
+  dialogStylesAndContents: ITutorialDialog[];
+  hasNextButton: boolean;
+  onClose: () => void;
 }
 
 interface States {
@@ -46,31 +47,37 @@ export class TutorialContextProvider extends React.Component<Props, States> {
   }
 
   handleCallback = async (callbackId: TutorialCallbacks): Promise<void> => {
-    if (callbackId === TutorialCallbacks.SELECT_DEFAULT_RECT) this.selectDefaultRect();
-    else if (callbackId === TutorialCallbacks.SCROLL_TO_PARAMETER)
+    if (callbackId === TutorialCallbacks.SELECT_DEFAULT_RECT) {
+      this.selectDefaultRect();
+    } else if (callbackId === TutorialCallbacks.SCROLL_TO_PARAMETER) {
       await this.scrollToParameterSelect();
-    else if (callbackId === TutorialCallbacks.SCROLL_TO_ADD_LAYER) this.scrollToAddLayerButton();
-    else console.log('Unknown callback id', callbackId);
+    } else if (callbackId === TutorialCallbacks.SCROLL_TO_ADD_LAYER) {
+      this.scrollToAddLayerButton();
+    } else {
+      console.log('Unknown callback id', callbackId);
+    }
   };
 
   selectDefaultRect = () => {
     if (this.defaultRect) {
       this.clearDefaultRect();
     }
+
     const defaultRect = svgCanvas.addSvgElementFromJson({
-      element: 'rect',
-      curStyles: false,
       attr: {
+        'fill-opacity': 0,
+        height: 100,
+        id: svgCanvas.getNextId(),
+        opacity: 1,
+        stroke: '#000',
+        width: 100,
         x: -1000,
         y: -1000,
-        width: 100,
-        height: 100,
-        stroke: '#000',
-        id: svgCanvas.getNextId(),
-        'fill-opacity': 0,
-        opacity: 1,
       },
+      curStyles: false,
+      element: 'rect',
     });
+
     this.defaultRect = defaultRect;
     svgCanvas.selectOnly([defaultRect], true);
     RightPanelController.setPanelType(PanelType.Object);
@@ -98,10 +105,12 @@ export class TutorialContextProvider extends React.Component<Props, States> {
   handleNextStep = async (): Promise<void> => {
     const { currentStep } = this.state;
     const { dialogStylesAndContents, onClose } = this.props;
+
     if (dialogStylesAndContents[currentStep].callback) {
       console.log(dialogStylesAndContents[currentStep].callback);
       await this.handleCallback(dialogStylesAndContents[currentStep].callback as TutorialCallbacks);
     }
+
     if (currentStep + 1 < dialogStylesAndContents.length) {
       this.setState({ currentStep: currentStep + 1 });
     } else {
@@ -113,20 +122,22 @@ export class TutorialContextProvider extends React.Component<Props, States> {
     const { currentStep } = this.state;
     const { dialogStylesAndContents } = this.props;
     const { nextStepRequirement } = dialogStylesAndContents[currentStep];
+
     response.nextStepRequirement = nextStepRequirement;
   };
 
   render() {
-    const { hasNextButton, dialogStylesAndContents, children } = this.props;
+    const { children, dialogStylesAndContents, hasNextButton } = this.props;
     const { currentStep } = this.state;
     const { handleNextStep } = this;
+
     return (
       <TutorialContext.Provider
         value={{
-          hasNextButton,
-          dialogStylesAndContents,
           currentStep,
+          dialogStylesAndContents,
           handleNextStep,
+          hasNextButton,
         }}
       >
         {children}

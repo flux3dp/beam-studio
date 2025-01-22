@@ -1,33 +1,35 @@
-import classNames from 'classnames';
 import React, { memo, useContext, useMemo } from 'react';
+
 import { Button, Popover } from 'antd-mobile';
+import classNames from 'classnames';
 
 import configOptions from '@core/app/constants/config-options';
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import history from '@core/app/svgedit/history/history';
-import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import objectPanelItemStyles from '@core/app/views/beambox/Right-Panels/ObjectPanelItem.module.scss';
-import useI18n from '@core/helpers/useI18n';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { CUSTOM_PRESET_CONSTANT, writeData } from '@core/helpers/layer/layer-config-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
+import useI18n from '@core/helpers/useI18n';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
+import styles from './Block.module.scss';
 import ConfigPanelContext from './ConfigPanelContext';
 import ConfigSlider from './ConfigSlider';
 import ConfigValueDisplay from './ConfigValueDisplay';
-import styles from './Block.module.scss';
 
 let svgCanvas: ISVGCanvas;
+
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
 
 interface Props {
-  type?: 'default' | 'panel-item' | 'modal';
+  type?: 'default' | 'modal' | 'panel-item';
 }
 
-const MultipassBlock = ({ type = 'default' }: Props): JSX.Element => {
+const MultipassBlock = ({ type = 'default' }: Props): React.JSX.Element => {
   const MIN_VALUE = 1;
   const MAX_VALUE = 10;
   const lang = useI18n();
@@ -35,15 +37,9 @@ const MultipassBlock = ({ type = 'default' }: Props): JSX.Element => {
 
   const { activeKey } = useContext(ObjectPanelContext);
 
-  const {
-    selectedLayers,
-    state,
-    dispatch,
-    simpleMode = true,
-    initState,
-  } = useContext(ConfigPanelContext);
+  const { dispatch, initState, selectedLayers, simpleMode = true, state } = useContext(ConfigPanelContext);
   const { multipass } = state;
-  const { value, hasMultiValue } = multipass;
+  const { hasMultiValue, value } = multipass;
   const timeEstimationButtonEventEmitter = useMemo(
     () => eventEmitterFactory.createEventEmitter('time-estimation-button'),
     [],
@@ -51,12 +47,14 @@ const MultipassBlock = ({ type = 'default' }: Props): JSX.Element => {
 
   const handleChange = (val: number) => {
     dispatch({
+      payload: { configName: CUSTOM_PRESET_CONSTANT, multipass: val },
       type: 'change',
-      payload: { multipass: val, configName: CUSTOM_PRESET_CONSTANT },
     });
     timeEstimationButtonEventEmitter.emit('SET_ESTIMATED_TIME', null);
+
     if (type !== 'modal') {
       const batchCmd = new history.BatchCommand('Change multipass');
+
       selectedLayers.forEach((layerName) => {
         writeData(layerName, 'multipass', val, { batchCmd });
         writeData(layerName, 'configName', CUSTOM_PRESET_CONSTANT, { batchCmd });
@@ -66,53 +64,50 @@ const MultipassBlock = ({ type = 'default' }: Props): JSX.Element => {
     }
   };
 
-  const sliderOptions = useMemo(
-    () => (simpleMode ? configOptions.multipassOptions : null),
-    [simpleMode],
-  );
+  const sliderOptions = useMemo(() => (simpleMode ? configOptions.multipassOptions : null), [simpleMode]);
 
   const content = (
     <div className={classNames(styles.panel, styles[type])}>
       <span className={styles.title}>{t.print_multipass}</span>
       <ConfigValueDisplay
+        hasMultiValue={hasMultiValue}
         inputId="multipass-input"
-        type={type}
         max={MAX_VALUE}
         min={MIN_VALUE}
-        value={value}
-        unit={t.times}
-        hasMultiValue={hasMultiValue}
         onChange={handleChange}
         options={sliderOptions}
+        type={type}
+        unit={t.times}
+        value={value}
       />
       <ConfigSlider
         id="multipass"
-        value={value}
-        onChange={handleChange}
-        min={MIN_VALUE}
         max={MAX_VALUE}
-        step={1}
+        min={MIN_VALUE}
+        onChange={handleChange}
         options={sliderOptions}
+        step={1}
+        value={value}
       />
     </div>
   );
 
   return type === 'panel-item' ? (
-    <Popover visible={activeKey === 'multipass'} content={content}>
+    <Popover content={content} visible={activeKey === 'multipass'}>
       <ObjectPanelItem.Item
-        id="multipass"
+        autoClose={false}
         content={
           <Button
             className={classNames(objectPanelItemStyles['number-item'], styles['display-btn'])}
+            fill="outline"
             shape="rounded"
             size="mini"
-            fill="outline"
           >
             {value}
           </Button>
         }
+        id="multipass"
         label={t.print_multipass}
-        autoClose={false}
       />
     </Popover>
   ) : (

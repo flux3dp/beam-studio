@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
 import { MonitorContext } from '@core/app/contexts/MonitorContext';
@@ -10,27 +11,28 @@ jest.mock('@core/app/contexts/MonitorContext', () => ({
 }));
 
 jest.mock('./widgets/Breadcrumbs', () => () => <div>Dummy Breadcrumbs</div>);
-jest.mock('./widgets/DirectoryItem', () => ({ name }: { name: string }) => (
-  <div className="dir">{name}</div>
-));
-jest.mock('./widgets/FileItem', () => ({ path, fileName }: { path: string; fileName: string }) => (
+jest.mock('./widgets/DirectoryItem', () => ({ name }: { name: string }) => <div className="dir">{name}</div>);
+jest.mock('./widgets/FileItem', () => ({ fileName, path }: { fileName: string; path: string }) => (
   <div className="file">
     {path}/{fileName}
   </div>
 ));
 
 const mockPopUpError = jest.fn();
+
 jest.mock('@core/app/actions/alert-caller', () => ({
   popUpError: (...args) => mockPopUpError(...args),
 }));
 
 const mockLs = jest.fn();
+
 jest.mock('@core/helpers/device-master', () => ({
   ls: (...args) => mockLs(...args),
 }));
 
 const mockSetShouldUpdateFileList = jest.fn();
 const mockUploadFile = jest.fn();
+
 describe('test MonitorFilelist', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -47,6 +49,7 @@ describe('test MonitorFilelist', () => {
         <MonitorFilelist path="path" />
       </MonitorContext.Provider>,
     );
+
     await waitFor(() => {
       expect(mockLs).toBeCalledTimes(1);
       expect(mockLs).toHaveBeenLastCalledWith('path');
@@ -67,6 +70,7 @@ describe('test MonitorFilelist', () => {
         <MonitorFilelist path="" />
       </MonitorContext.Provider>,
     );
+
     await waitFor(() => {
       expect(mockLs).toBeCalledTimes(2);
       expect(mockLs).toHaveBeenNthCalledWith(1, '');
@@ -82,11 +86,12 @@ describe('test MonitorFilelist', () => {
       files: ['fa', 'fb', 'fc'],
     });
 
-    const { rerender, getByText } = render(
+    const { getByText, rerender } = render(
       <MonitorContext.Provider value={{ shouldUpdateFileList: false } as any}>
         <MonitorFilelist path="path" />
       </MonitorContext.Provider>,
     );
+
     await waitFor(() => {
       expect(mockLs).toBeCalledTimes(1);
       expect(mockLs).toHaveBeenLastCalledWith('path');
@@ -116,8 +121,8 @@ describe('test MonitorFilelist', () => {
       <MonitorContext.Provider
         value={
           {
-            shouldUpdateFileList: true,
             setShouldUpdateFileList: mockSetShouldUpdateFileList,
+            shouldUpdateFileList: true,
           } as any
         }
       >
@@ -134,11 +139,13 @@ describe('test MonitorFilelist', () => {
 
   it('should popUpError when ls get error', async () => {
     mockLs.mockResolvedValueOnce({ error: 'error' });
+
     const { container } = render(
       <MonitorContext.Provider value={{ shouldUpdateFileList: false } as any}>
         <MonitorFilelist path="path" />
       </MonitorContext.Provider>,
     );
+
     await waitFor(() => {
       expect(mockLs).toBeCalledTimes(1);
       expect(mockLs).toHaveBeenLastCalledWith('path');
@@ -155,19 +162,20 @@ describe('test MonitorFilelist', () => {
     });
 
     const { container } = render(
-      <MonitorContext.Provider
-        value={{ shouldUpdateFileList: false, uploadFile: mockUploadFile } as any}
-      >
+      <MonitorContext.Provider value={{ shouldUpdateFileList: false, uploadFile: mockUploadFile } as any}>
         <MonitorFilelist path="path" />
       </MonitorContext.Provider>,
     );
+
     await waitFor(() => {
       expect(mockLs).toBeCalledTimes(1);
       expect(mockLs).toHaveBeenLastCalledWith('path');
     });
+
     const mockFile1 = new File(['mock-file-1'], 'mock-file.beam');
     const mockFile2 = new File(['mock-file-2'], 'mock-file.fc');
     const divContainer = container.querySelector('.container');
+
     fireEvent.drop(divContainer, { dataTransfer: { files: [mockFile1] } });
     expect(mockUploadFile).not.toBeCalled();
 

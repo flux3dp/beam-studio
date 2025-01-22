@@ -15,9 +15,10 @@ jest.mock('@core/helpers/version-checker', () => null);
 
 describe('camera-calibration-helper', () => {
   test('interpolatePointsFromHeight', () => {
-    const points: [number, number][][][] = [[[[1, 1]]], [[[2, 2]]], [[[3, 3]]], [[[4, 4]]]];
+    const points: Array<Array<Array<[number, number]>>> = [[[[1, 1]]], [[[2, 2]]], [[[3, 3]]], [[[4, 4]]]];
     const heights = [1, 2, 3, 4];
     let result = interpolatePointsFromHeight(0.5, heights, points);
+
     expect(result).toEqual([[[0.5, 0.5]]]);
     result = interpolatePointsFromHeight(5.5, heights, points);
     expect(result).toEqual([[[5.5, 5.5]]]);

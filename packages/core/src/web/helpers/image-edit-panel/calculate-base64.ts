@@ -1,6 +1,5 @@
 import imageData from '@core/helpers/image-data';
-
-import { IImageDataResult } from '@core/interfaces/IImage';
+import type { IImageDataResult } from '@core/interfaces/IImage';
 
 const calculateBase64 = (
   blobUrl: string,
@@ -15,8 +14,8 @@ const calculateBase64 = (
         : {
             is_rgba: true,
             is_shading: isShading,
-            threshold,
             is_svg: false,
+            threshold,
           },
       isFullResolution: true,
       onComplete: (result: IImageDataResult) => {

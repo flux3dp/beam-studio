@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import DeviceConstants from '@core/app/constants/device-constants';
@@ -12,6 +13,7 @@ jest.mock('@core/app/contexts/MonitorContext', () => ({
 }));
 
 const useIsMobile = jest.fn();
+
 jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => useIsMobile(),
 }));
@@ -32,16 +34,17 @@ describe('test MonitorControl', () => {
           value={
             {
               mode: Mode.PREVIEW,
-              onPlay,
               onPause,
+              onPlay,
               onStop,
               report: { st_id: DeviceConstants.status.IDLE },
             } as any
           }
         >
-          <MonitorControl isPromark={false} isFraming={false} setEstimateTaskTime={() => {}} />
+          <MonitorControl isFraming={false} isPromark={false} setEstimateTaskTime={() => {}} />
         </MonitorContext.Provider>,
       );
+
       expect(container).toMatchSnapshot();
     });
 
@@ -51,16 +54,17 @@ describe('test MonitorControl', () => {
           value={
             {
               mode: Mode.WORKING,
-              onPlay,
               onPause,
+              onPlay,
               onStop,
               report: { st_id: DeviceConstants.status.INIT },
             } as any
           }
         >
-          <MonitorControl isPromark={false} isFraming={false} setEstimateTaskTime={() => {}} />
+          <MonitorControl isFraming={false} isPromark={false} setEstimateTaskTime={() => {}} />
         </MonitorContext.Provider>,
       );
+
       expect(container).toMatchSnapshot();
 
       rerender(
@@ -68,14 +72,14 @@ describe('test MonitorControl', () => {
           value={
             {
               mode: Mode.WORKING,
-              onPlay,
               onPause,
+              onPlay,
               onStop,
               report: { st_id: DeviceConstants.status.RUNNING },
             } as any
           }
         >
-          <MonitorControl isPromark={false} isFraming={false} setEstimateTaskTime={() => {}} />
+          <MonitorControl isFraming={false} isPromark={false} setEstimateTaskTime={() => {}} />
         </MonitorContext.Provider>,
       );
       expect(container).toMatchSnapshot();
@@ -85,14 +89,14 @@ describe('test MonitorControl', () => {
           value={
             {
               mode: Mode.WORKING,
-              onPlay,
               onPause,
+              onPlay,
               onStop,
               report: { st_id: DeviceConstants.status.PAUSED },
             } as any
           }
         >
-          <MonitorControl isPromark={false} isFraming={false} setEstimateTaskTime={() => {}} />
+          <MonitorControl isFraming={false} isPromark={false} setEstimateTaskTime={() => {}} />
         </MonitorContext.Provider>,
       );
       expect(container).toMatchSnapshot();
@@ -107,16 +111,17 @@ describe('test MonitorControl', () => {
           value={
             {
               mode: Mode.PREVIEW,
-              onPlay,
               onPause,
+              onPlay,
               onStop,
               report: { st_id: DeviceConstants.status.IDLE },
             } as any
           }
         >
-          <MonitorControl isPromark={false} isFraming={false} setEstimateTaskTime={() => {}} />
+          <MonitorControl isFraming={false} isPromark={false} setEstimateTaskTime={() => {}} />
         </MonitorContext.Provider>,
       );
+
       expect(container).toMatchSnapshot();
     });
 
@@ -126,16 +131,17 @@ describe('test MonitorControl', () => {
           value={
             {
               mode: Mode.WORKING,
-              onPlay,
               onPause,
+              onPlay,
               onStop,
               report: { st_id: DeviceConstants.status.INIT },
             } as any
           }
         >
-          <MonitorControl isPromark={false} isFraming={false} setEstimateTaskTime={() => {}} />
+          <MonitorControl isFraming={false} isPromark={false} setEstimateTaskTime={() => {}} />
         </MonitorContext.Provider>,
       );
+
       expect(container).toMatchSnapshot();
 
       rerender(
@@ -143,14 +149,14 @@ describe('test MonitorControl', () => {
           value={
             {
               mode: Mode.WORKING,
-              onPlay,
               onPause,
+              onPlay,
               onStop,
               report: { st_id: DeviceConstants.status.RUNNING },
             } as any
           }
         >
-          <MonitorControl isPromark={false} isFraming={false} setEstimateTaskTime={() => {}} />
+          <MonitorControl isFraming={false} isPromark={false} setEstimateTaskTime={() => {}} />
         </MonitorContext.Provider>,
       );
       expect(container).toMatchSnapshot();
@@ -160,14 +166,14 @@ describe('test MonitorControl', () => {
           value={
             {
               mode: Mode.WORKING,
-              onPlay,
               onPause,
+              onPlay,
               onStop,
               report: { st_id: DeviceConstants.status.PAUSED },
             } as any
           }
         >
-          <MonitorControl isPromark={false} isFraming={false} setEstimateTaskTime={() => {}} />
+          <MonitorControl isFraming={false} isPromark={false} setEstimateTaskTime={() => {}} />
         </MonitorContext.Provider>,
       );
       expect(container).toMatchSnapshot();
@@ -180,16 +186,17 @@ describe('test MonitorControl', () => {
         value={
           {
             mode: Mode.PREVIEW,
-            onPlay,
             onPause,
+            onPlay,
             onStop,
             report: { st_id: DeviceConstants.status.IDLE },
           } as any
         }
       >
-        <MonitorControl isPromark={false} isFraming={false} setEstimateTaskTime={() => {}} />
+        <MonitorControl isFraming={false} isPromark={false} setEstimateTaskTime={() => {}} />
       </MonitorContext.Provider>,
     );
+
     expect(onPlay).not.toBeCalled();
     fireEvent.click(getByText('Start'));
     expect(onPlay).toBeCalledTimes(1);
@@ -201,14 +208,14 @@ describe('test MonitorControl', () => {
         value={
           {
             mode: Mode.WORKING,
-            onPlay,
             onPause,
+            onPlay,
             onStop,
             report: { st_id: DeviceConstants.status.RUNNING },
           } as any
         }
       >
-        <MonitorControl isPromark={false} isFraming={false} setEstimateTaskTime={() => {}} />
+        <MonitorControl isFraming={false} isPromark={false} setEstimateTaskTime={() => {}} />
       </MonitorContext.Provider>,
     );
 

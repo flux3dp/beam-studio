@@ -1,36 +1,37 @@
-import classNames from 'classnames';
 import React, { memo, useEffect, useMemo, useRef } from 'react';
 
+import classNames from 'classnames';
+
+import { objectPanelInputTheme } from '@core/app/constants/antd-config';
 import DimensionPanelIcons from '@core/app/icons/dimension-panel/DimensionPanelIcons';
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import UnitInput from '@core/app/widgets/UnitInput';
-import useI18n from '@core/helpers/useI18n';
-import { objectPanelInputTheme } from '@core/app/constants/antd-config';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { useIsMobile } from '@core/helpers/system-helper';
+import useI18n from '@core/helpers/useI18n';
 
 import styles from './DimensionPanel.module.scss';
 
 interface Props {
-  value: number;
   onChange: (value: number, addToHistory?: boolean) => void;
+  value: number;
 }
 
-const Rotation = ({ value, onChange }: Props): JSX.Element => {
+const Rotation = ({ onChange, value }: Props): React.JSX.Element => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const objectPanelEventEmitter = useMemo(
-    () => eventEmitterFactory.createEventEmitter('object-panel'),
-    [],
-  );
+  const objectPanelEventEmitter = useMemo(() => eventEmitterFactory.createEventEmitter('object-panel'), []);
   const isMobile = useIsMobile();
   const t = useI18n().topbar.menu;
+
   useEffect(() => {
     const handler = (newValues?: { rotation?: number }) => {
       if (newValues?.rotation !== undefined && inputRef.current) {
         inputRef.current.value = newValues.rotation.toFixed(2);
       }
     };
+
     objectPanelEventEmitter.on('UPDATE_DIMENSION_VALUES', handler);
+
     return () => {
       objectPanelEventEmitter.removeListener('UPDATE_DIMENSION_VALUES', handler);
     };
@@ -38,13 +39,7 @@ const Rotation = ({ value, onChange }: Props): JSX.Element => {
 
   if (isMobile) {
     return (
-      <ObjectPanelItem.Number
-        id="rotate"
-        value={value || 0}
-        updateValue={onChange}
-        label={t.rotate}
-        unit="degree"
-      />
+      <ObjectPanelItem.Number id="rotate" label={t.rotate} unit="degree" updateValue={onChange} value={value || 0} />
     );
   }
 
@@ -54,19 +49,19 @@ const Rotation = ({ value, onChange }: Props): JSX.Element => {
         <DimensionPanelIcons.Rotate />
       </div>
       <UnitInput
-        ref={inputRef}
-        id="rotate"
         className={styles.input}
+        controls={false}
+        fireOnChange
+        id="rotate"
+        onBlur={() => onChange(value, true)}
+        onChange={onChange}
+        onPressEnter={() => onChange(value, true)}
+        precision={2}
+        ref={inputRef}
         theme={objectPanelInputTheme}
         underline
-        controls={false}
         unit="deg"
         value={value || 0}
-        precision={2}
-        onChange={onChange}
-        fireOnChange
-        onBlur={() => onChange(value, true)}
-        onPressEnter={() => onChange(value, true)}
       />
     </div>
   );

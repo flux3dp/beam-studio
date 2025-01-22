@@ -1,16 +1,16 @@
 export interface IProgress {
-  step: number,
-  total: number
+  step: number;
+  total: number;
 }
 
 export interface IProgressDialog {
-  id?: string,
+  caption?: string;
+  id?: string;
+  isProgress?: boolean;
   key?: number;
-  type?: string,
-  caption?: string,
-  message?: string,
-  onCancel?: () => void,
-  percentage?: number | string,
-  timeout?: number,
-  isProgress?: boolean,
+  message?: string;
+  onCancel?: () => void;
+  percentage?: number | string;
+  timeout?: number;
+  type?: string;
 }

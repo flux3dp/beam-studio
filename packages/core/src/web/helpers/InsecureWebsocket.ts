@@ -1,23 +1,26 @@
 import alertCaller from '@core/app/actions/alert-caller';
 import alertConstants from '@core/app/constants/alert-constants';
-import browser from '@app/implementations/browser';
+import { getBrowser } from '@core/helpers/browser';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import switchProtocol from '@core/helpers/switch-protocol';
-import { getBrowser } from '@core/helpers/browser';
+
+import browser from '@app/implementations/browser';
 
 const wrappedSockets = {};
 
 let fluxTunnelLoaded = false;
+
 window.addEventListener('FluxTunnelLoaded', () => {
   fluxTunnelLoaded = true;
+
   if (isWeb() && window.location.protocol === 'http:') {
     alertCaller.popById('insecure_websocket');
     alertCaller.popUp({
-      id: 'insecure_websocket',
-      caption: i18n.lang.insecure_websocket.extension_detected,
-      message: i18n.lang.insecure_websocket.extension_detected_description,
       buttonType: alertConstants.CONFIRM_CANCEL,
+      caption: i18n.lang.insecure_websocket.extension_detected,
+      id: 'insecure_websocket',
+      message: i18n.lang.insecure_websocket.extension_detected_description,
       onConfirm: () => switchProtocol('https:'),
     });
   }
@@ -29,22 +32,25 @@ let chromeExtensionAlertPopped = false;
 
 export const checkFluxTunnel = (): boolean => {
   window.dispatchEvent(new CustomEvent('CheckFluxTunnel'));
+
   if (!fluxTunnelLoaded && isWeb()) {
     const browserName = getBrowser();
     const isHttps = window.location.protocol === 'https:';
+
     if (browserName !== 'Chrome' && isHttps) {
       switchProtocol('http:');
+
       return false;
     }
+
     failedCount += 1;
+
     if (failedCount > 30 && isHttps && !chromeExtensionAlertPopped) {
       alertCaller.popById('insecure_websocket');
+
       const lang = i18n.lang.insecure_websocket;
+
       alertCaller.popUp({
-        id: 'insecure_websocket',
-        caption: i18n.lang.insecure_websocket.extension_not_deteced,
-        message: `${lang.extension_not_deteced_description}<br/>${lang.unsecure_url_help_center_link}`,
-        primaryButtonIndex: 0,
         buttonLabels: [i18n.lang.alert.confirm],
         callbacks: [
           () => {
@@ -53,10 +59,15 @@ export const checkFluxTunnel = (): boolean => {
             );
           },
         ],
+        caption: i18n.lang.insecure_websocket.extension_not_deteced,
+        id: 'insecure_websocket',
+        message: `${lang.extension_not_deteced_description}<br/>${lang.unsecure_url_help_center_link}`,
+        primaryButtonIndex: 0,
       });
       chromeExtensionAlertPopped = true;
     }
   }
+
   return fluxTunnelLoaded;
 };
 
@@ -79,6 +90,7 @@ class InsecureWebsocket {
 
   constructor(url: string, protocol?: string) {
     const id = Math.random().toString(36).substring(2, 15);
+
     this.id = id;
     wrappedSockets[id] = this;
     this.url = url;
@@ -89,6 +101,7 @@ class InsecureWebsocket {
     this.onerror = () => {};
     this.onmessage = () => {};
     this.onclose = () => {};
+
     if (!checkFluxTunnel()) {
       console.warn('FluxTunnel is not loaded');
       setTimeout(() => {
@@ -97,30 +110,37 @@ class InsecureWebsocket {
       }, 100);
     } else {
       console.log('Creating websocket in insecure websocket', id, 'url:', url, protocol);
-      const event = new CustomEvent('CreateWebsocket', { detail: { id, url, protocol } });
+
+      const event = new CustomEvent('CreateWebsocket', { detail: { id, protocol, url } });
+
       window.dispatchEvent(event);
     }
   }
 
   send(message: unknown): void {
     const event = new CustomEvent('SendMessage', { detail: { id: this.id, message } });
+
     window.dispatchEvent(event);
   }
 
   close(): void {
     this.readyState = 2;
+
     const event = new CustomEvent('CloseWebsocket', { detail: { id: this.id } });
+
     window.dispatchEvent(event);
   }
 }
 
 window.addEventListener('InsecureWebsocket', (e: any) => {
   const { detail } = e;
-  const { id, type, message } = detail;
+  const { id, message, type } = detail;
+
   if (!wrappedSockets[id]) {
     // console.warn('InsecureWebsocket Unknown websocket id', id);
     return;
   }
+
   switch (type) {
     case 'WEBSOCKET_CREATED':
       break;

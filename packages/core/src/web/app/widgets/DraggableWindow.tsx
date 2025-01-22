@@ -1,44 +1,39 @@
-import classNames from 'classnames';
 import React from 'react';
+
+import classNames from 'classnames';
 import Draggable from 'react-draggable';
 
 interface Props {
-  title: string;
-  defaultPosition: { x: number, y: number };
+  children?: React.ReactNode;
   containerClass: string;
+  defaultPosition: { x: number; y: number };
   handleClass?: string;
   onClose?: () => void;
-  children?: React.ReactNode;
+  title: string;
 }
 class DraggableWindow extends React.PureComponent<Props> {
   renderTrafficLight() {
     const { onClose } = this.props;
+
     return (
       <div className={classNames('traffic-lights')}>
-        <div className={classNames('traffic-light', 'traffic-light-close')} onClick={onClose || (() => { })} />
+        <div className={classNames('traffic-light', 'traffic-light-close')} onClick={onClose || (() => {})} />
       </div>
     );
   }
 
-  render(): JSX.Element {
-    const {
-      title,
-      children,
-      defaultPosition,
-      containerClass,
-      handleClass,
-    } = this.props;
+  render(): React.JSX.Element {
+    const { children, containerClass, defaultPosition, handleClass, title } = this.props;
+
     return (
       <Draggable
-        handle=".handle"
+        bounds="body"
         defaultClassName={classNames('react-draggable', containerClass)}
         defaultPosition={defaultPosition}
-        bounds="body"
+        handle=".handle"
       >
         <div>
-          <div className={classNames('handle', handleClass)}>
-            {title}
-          </div>
+          <div className={classNames('handle', handleClass)}>{title}</div>
           {this.renderTrafficLight()}
           {children}
         </div>

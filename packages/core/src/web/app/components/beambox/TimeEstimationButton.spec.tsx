@@ -93,7 +93,6 @@ describe('should render correctly', () => {
         value={
           {
             mode: CanvasMode.PathPreview,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
           } as any
         }
       >

@@ -10,7 +10,9 @@ const getSelectedLayers = (): string[] => {
   const response = {
     selectedLayers: [],
   };
+
   layerPanelEventEmitter.emit('GET_SELECTED_LAYERS', response);
+
   return response.selectedLayers;
 };
 
@@ -27,9 +29,9 @@ const checkGradient = (): void => {
 };
 
 export default {
-  checkVector,
   checkGradient,
-  updateLayerPanel,
+  checkVector,
   getSelectedLayers,
   setSelectedLayers,
+  updateLayerPanel,
 };

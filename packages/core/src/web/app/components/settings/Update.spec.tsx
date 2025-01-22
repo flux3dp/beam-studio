@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 jest.mock('@core/helpers/i18n', () => ({
@@ -12,19 +13,15 @@ jest.mock('@core/helpers/i18n', () => ({
   },
 }));
 
-jest.mock('@core/app/components/settings/SelectControl', () =>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ({ id, label, onChange, options }: any) => (
-    <div>
-      mock-select-control id:{id}
-      label:{label}
-      options:{JSON.stringify(options)}
-      <input className="select-control" onChange={onChange} />
-    </div>
-  ),
-);
+jest.mock('@core/app/components/settings/SelectControl', () => ({ id, label, onChange, options }: any) => (
+  <div>
+    mock-select-control id:{id}
+    label:{label}
+    options:{JSON.stringify(options)}
+    <input className="select-control" onChange={onChange} />
+  </div>
+));
 
-// eslint-disable-next-line import/first
 import Update from './Update';
 
 describe('should render correctly', () => {
@@ -33,21 +30,22 @@ describe('should render correctly', () => {
     const { container } = render(
       <Update
         isWeb={false}
+        updateConfigChange={updateConfigChange}
         updateNotificationOptions={[
           {
-            value: 'TRUE',
             label: 'On',
             selected: true,
+            value: 'TRUE',
           },
           {
-            value: 'FALSE',
             label: 'Off',
             selected: false,
+            value: 'FALSE',
           },
         ]}
-        updateConfigChange={updateConfigChange}
       />,
     );
+
     expect(container).toMatchSnapshot();
 
     fireEvent.change(container.querySelector('.select-control'), {
@@ -64,21 +62,22 @@ describe('should render correctly', () => {
     const { container } = render(
       <Update
         isWeb
+        updateConfigChange={updateConfigChange}
         updateNotificationOptions={[
           {
-            value: 'TRUE',
             label: 'On',
             selected: true,
+            value: 'TRUE',
           },
           {
-            value: 'FALSE',
             label: 'Off',
             selected: false,
+            value: 'FALSE',
           },
         ]}
-        updateConfigChange={updateConfigChange}
       />,
     );
+
     expect(container).toMatchSnapshot();
   });
 });

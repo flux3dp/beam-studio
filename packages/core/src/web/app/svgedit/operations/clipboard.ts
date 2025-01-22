@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-syntax */
-/* eslint-disable @typescript-eslint/no-shadow */
+
 /* eslint-disable no-console */
 import findDefs from '@core/app/svgedit/utils/findDef';
 import history from '@core/app/svgedit/history/history';
@@ -102,10 +102,7 @@ const copyElements = async (elems: Array<Element>): Promise<void> => {
     const layerName = $(elem.parentNode).find('title').text();
     elem.setAttribute('data-origin-layer', layerName);
     if (elem.tagName === 'use') addRefToClipboard(elem as SVGUseElement);
-    else
-      Array.from(elem.querySelectorAll('use')).forEach((use: SVGUseElement) =>
-        addRefToClipboard(use),
-      );
+    else Array.from(elem.querySelectorAll('use')).forEach((use: SVGUseElement) => addRefToClipboard(use));
     if (!layerNames.has(layerName)) {
       layerNames.add(layerName);
       layerCount += 1;
@@ -127,11 +124,7 @@ const copyElements = async (elems: Array<Element>): Promise<void> => {
 
   // save original image data as base64
   const origImageUrls = Array.from(
-    new Set(
-      elems
-        .filter((elem) => elem.tagName === 'image')
-        .map((elem) => elem.getAttribute('origImage')),
-    ),
+    new Set(elems.filter((elem) => elem.tagName === 'image').map((elem) => elem.getAttribute('origImage'))),
   );
   const promises = [];
   for (let i = 0; i < origImageUrls.length; i += 1) {
@@ -284,10 +277,7 @@ const pasteRef = async (
   updateElementColor(useElement);
 };
 
-export const handlePastedRef = async (
-  copy: Element,
-  opts: { parentCmd?: IBatchCommand } = {},
-): Promise<void> => {
+export const handlePastedRef = async (copy: Element, opts: { parentCmd?: IBatchCommand } = {}): Promise<void> => {
   const promises = Array.of<Promise<void>>();
   const uses = Array.from(copy.querySelectorAll('use'));
 
@@ -360,8 +350,7 @@ const pasteElements = (
     pasted.push(copy);
 
     if (copy.getAttribute('data-origin-layer') && clipboard.length > 1) {
-      const layer =
-        drawing.getLayerByName(copy.getAttribute('data-origin-layer')) || drawing.getCurrentLayer();
+      const layer = drawing.getLayerByName(copy.getAttribute('data-origin-layer')) || drawing.getCurrentLayer();
       layer.appendChild(copy);
     } else {
       drawing.getCurrentLayer().appendChild(copy);

@@ -1,54 +1,99 @@
 export interface ColorConfig {
-  color: string,
-  power: number,
-  speed: number,
-  repeat: number,
+  color: string;
+  power: number;
+  repeat: number;
+  speed: number;
 }
 export const DefaultColorConfigs: ColorConfig[] = [
   {
-    color: '#FF0000', power: 15, speed: 50, repeat: 1,
+    color: '#FF0000',
+    power: 15,
+    repeat: 1,
+    speed: 50,
   },
   {
-    color: '#FFFF00', power: 15, speed: 50, repeat: 1,
+    color: '#FFFF00',
+    power: 15,
+    repeat: 1,
+    speed: 50,
   },
   {
-    color: '#00FF00', power: 15, speed: 50, repeat: 1,
+    color: '#00FF00',
+    power: 15,
+    repeat: 1,
+    speed: 50,
   },
   {
-    color: '#00FFFF', power: 15, speed: 50, repeat: 1,
+    color: '#00FFFF',
+    power: 15,
+    repeat: 1,
+    speed: 50,
   },
   {
-    color: '#0000FF', power: 15, speed: 50, repeat: 1,
+    color: '#0000FF',
+    power: 15,
+    repeat: 1,
+    speed: 50,
   },
   {
-    color: '#FF00FF', power: 15, speed: 50, repeat: 1,
+    color: '#FF00FF',
+    power: 15,
+    repeat: 1,
+    speed: 50,
   },
   {
-    color: '#800000', power: 15, speed: 50, repeat: 1,
+    color: '#800000',
+    power: 15,
+    repeat: 1,
+    speed: 50,
   },
   {
-    color: '#808000', power: 15, speed: 50, repeat: 1,
+    color: '#808000',
+    power: 15,
+    repeat: 1,
+    speed: 50,
   },
   {
-    color: '#008000', power: 15, speed: 50, repeat: 1,
+    color: '#008000',
+    power: 15,
+    repeat: 1,
+    speed: 50,
   },
   {
-    color: '#008080', power: 15, speed: 50, repeat: 1,
+    color: '#008080',
+    power: 15,
+    repeat: 1,
+    speed: 50,
   },
   {
-    color: '#000080', power: 15, speed: 50, repeat: 1,
+    color: '#000080',
+    power: 15,
+    repeat: 1,
+    speed: 50,
   },
   {
-    color: '#800080', power: 15, speed: 50, repeat: 1,
+    color: '#800080',
+    power: 15,
+    repeat: 1,
+    speed: 50,
   },
   {
-    color: '#CCCCCC', power: 15, speed: 50, repeat: 1,
+    color: '#CCCCCC',
+    power: 15,
+    repeat: 1,
+    speed: 50,
   },
   {
-    color: '#808080', power: 15, speed: 50, repeat: 1,
+    color: '#808080',
+    power: 15,
+    repeat: 1,
+    speed: 50,
   },
   {
-    color: '#000000', power: 15, speed: 50, repeat: 1,
+    color: '#000000',
+    power: 15,
+    repeat: 1,
+    speed: 50,
   },
 ];
 
@@ -72,7 +117,7 @@ const randomLayerColors = [
   '#9E9E9E',
 ];
 
-export const objectsColorPresets =[
+export const objectsColorPresets = [
   '#F5222D',
   '#FA8C16',
   '#FADB14',
@@ -85,11 +130,11 @@ export const objectsColorPresets =[
 ];
 
 export enum PrintingColors {
+  BLACK = '#1D1D1B',
   CYAN = '#009FE3',
   MAGENTA = '#E6007E',
-  YELLOW = '#FFED00',
-  BLACK = '#1D1D1B',
   WHITE = '#E2E2E2',
+  YELLOW = '#FFED00',
 }
 
 const printingLayerColor = [
@@ -100,14 +145,9 @@ const printingLayerColor = [
   PrintingColors.WHITE,
 ];
 
-export const CMYK = [
-  PrintingColors.CYAN,
-  PrintingColors.MAGENTA,
-  PrintingColors.YELLOW,
-  PrintingColors.BLACK,
-];
+export const CMYK = [PrintingColors.CYAN, PrintingColors.MAGENTA, PrintingColors.YELLOW, PrintingColors.BLACK];
 
 export default {
-  randomLayerColors,
   printingLayerColor,
+  randomLayerColors,
 };

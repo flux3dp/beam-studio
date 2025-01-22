@@ -1,9 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable import/first */
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 const useIsMobile = jest.fn();
+
 jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => useIsMobile(),
 }));
@@ -22,24 +22,19 @@ jest.mock('@core/helpers/i18n', () => ({
   },
 }));
 
-jest.mock(
-  '@core/app/widgets/Unit-Input-v2',
-  () =>
-    ({ min, max, defaultValue, getValue, decimal, className }: any) =>
-      (
-        <div>
-          mock-unit-input min:{min}
-          max:{max}
-          decimal:{decimal}
-          defaultValue:{defaultValue}
-          className:{JSON.stringify(className)}
-          <input className="unit-input" onChange={(e) => getValue(+e.target.value)} />
-        </div>
-      ),
-);
+jest.mock('@core/app/widgets/Unit-Input-v2', () => ({ className, decimal, defaultValue, getValue, max, min }: any) => (
+  <div>
+    mock-unit-input min:{min}
+    max:{max}
+    decimal:{decimal}
+    defaultValue:{defaultValue}
+    className:{JSON.stringify(className)}
+    <input className="unit-input" onChange={(e) => getValue(+e.target.value)} />
+  </div>
+));
 
 jest.mock('@core/app/views/beambox/Right-Panels/ObjectPanelItem', () => ({
-  Number: ({ id, label, min, max, value, updateValue, decimal }: any) => (
+  Number: ({ decimal, id, label, max, min, updateValue, value }: any) => (
     <div>
       mock-number-item id:{id}
       label:{label}
@@ -57,7 +52,8 @@ import StartOffsetBlock from './StartOffsetBlock';
 describe('test StartOffsetBlock', () => {
   test('should render correctly', () => {
     const onValueChange = jest.fn();
-    const { container } = render(<StartOffsetBlock value={0} onValueChange={onValueChange} />);
+    const { container } = render(<StartOffsetBlock onValueChange={onValueChange} value={0} />);
+
     expect(container).toMatchSnapshot();
 
     fireEvent.click(container.querySelector('div.option-block'));
@@ -71,8 +67,10 @@ describe('test StartOffsetBlock', () => {
 
   test('should render correctly in mobile', () => {
     useIsMobile.mockReturnValue(true);
+
     const onValueChange = jest.fn();
-    const { container } = render(<StartOffsetBlock value={0} onValueChange={onValueChange} />);
+    const { container } = render(<StartOffsetBlock onValueChange={onValueChange} value={0} />);
+
     expect(container).toMatchSnapshot();
   });
 });

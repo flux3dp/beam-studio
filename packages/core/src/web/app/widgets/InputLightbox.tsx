@@ -1,33 +1,34 @@
 import * as React from 'react';
-import { Form, Input, InputRef, Modal } from 'antd';
 import { useRef, useState } from 'react';
+
+import type { InputRef } from 'antd';
+import { Form, Input, Modal } from 'antd';
 
 import Constants from '@core/app/constants/input-lightbox-constants';
 import i18n from '@core/helpers/i18n';
 
 interface Props {
-  type: string;
-  confirmText: string;
-  inputHeader: string;
-  defaultValue: string;
-  maxLength: number;
   caption: string;
+  confirmText: string;
+  defaultValue: string;
+  inputHeader: string;
+  maxLength: number;
   onClose: (from: string) => void;
-  onSubmit: (value: string) => void | Promise<void>;
+  onSubmit: (value: string) => Promise<void> | void;
+  type: string;
 }
 
 const INPUT_TYPE_MAP = {
-  [Constants.TYPE_TEXT]: 'text',
+  [Constants.TYPE_FILE]: 'file',
   [Constants.TYPE_NUMBER]: 'number',
   [Constants.TYPE_PASSWORD]: 'password',
-  [Constants.TYPE_FILE]: 'file',
+  [Constants.TYPE_TEXT]: 'text',
 };
 
-const InputLightBox = (props: Props): JSX.Element => {
+const InputLightBox = (props: Props): React.JSX.Element => {
   const inputRef = useRef<InputRef>();
   const [allowSubmit, setAllowSubmit] = useState(false);
-  const { onClose, onSubmit, caption, inputHeader, defaultValue, confirmText, type, maxLength } =
-    props;
+  const { caption, confirmText, defaultValue, inputHeader, maxLength, onClose, onSubmit, type } = props;
 
   const onCancel = (e) => {
     e.preventDefault();
@@ -39,6 +40,7 @@ const InputLightBox = (props: Props): JSX.Element => {
 
     let returnValue;
     const inputElement = inputRef.current.input;
+
     if (Constants.TYPE_FILE === type) {
       returnValue = inputElement.files;
     } else {
@@ -46,6 +48,7 @@ const InputLightBox = (props: Props): JSX.Element => {
     }
 
     const result = onSubmit(returnValue);
+
     console.info('Submit result', result);
     onClose('submit');
   };
@@ -54,9 +57,10 @@ const InputLightBox = (props: Props): JSX.Element => {
     e.stopPropagation();
   };
 
-  const inputKeyUp = (e: React.KeyboardEvent | React.ChangeEvent<HTMLInputElement>) => {
+  const inputKeyUp = (e: React.ChangeEvent<HTMLInputElement> | React.KeyboardEvent) => {
     const target = e.currentTarget as HTMLInputElement;
     const targetFiles = target.files || [];
+
     setAllowSubmit(target.value.length > 0 || (targetFiles.length || 0) > 0);
   };
 
@@ -64,27 +68,27 @@ const InputLightBox = (props: Props): JSX.Element => {
 
   return (
     <Modal
-      open
-      centered
-      title={caption}
       cancelText={i18n.lang.alert.cancel}
-      onCancel={(e) => onCancel(e)}
-      okText={confirmText || i18n.lang.alert.confirm}
-      onOk={(e) => processData(e)}
+      centered
       okButtonProps={{ disabled: !allowSubmit }}
+      okText={confirmText || i18n.lang.alert.confirm}
+      onCancel={(e) => onCancel(e)}
+      onOk={(e) => processData(e)}
+      open
+      title={caption}
     >
       <Form>
         <p>{inputHeader}</p>
         <Form.Item>
           <Input
-            type={inputType}
-            ref={inputRef}
-            defaultValue={defaultValue}
             autoFocus
+            defaultValue={defaultValue}
+            maxLength={maxLength}
+            onChange={inputKeyUp}
             onKeyDown={(e) => handleKeyDown(e)}
             onKeyUp={inputKeyUp}
-            onChange={inputKeyUp}
-            maxLength={maxLength}
+            ref={inputRef}
+            type={inputType}
           />
         </Form.Item>
       </Form>

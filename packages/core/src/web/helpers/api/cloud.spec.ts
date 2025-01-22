@@ -2,6 +2,7 @@ import cloud from './cloud';
 
 const mockGet = jest.fn();
 const mockSet = jest.fn();
+
 jest.mock('@app/implementations/storage', () => ({
   get: (...args) => mockGet(...args),
   set: (...args) => mockSet(...args),
@@ -9,6 +10,7 @@ jest.mock('@app/implementations/storage', () => ({
 
 const mockPost = jest.fn();
 const mockGetCurrentUser = jest.fn();
+
 jest.mock('@core/helpers/api/flux-id', () => ({
   axiosFluxId: {
     post: (...args) => mockPost(...args),

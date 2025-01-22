@@ -1,30 +1,29 @@
-/* eslint-disable @typescript-eslint/no-shadow */
 import React, { memo } from 'react';
 
-import { Button, Flex, TabPaneProps, Tabs } from 'antd';
-import useI18n from '@core/helpers/useI18n';
+import type { TabPaneProps } from 'antd';
+import { Button, Flex, Tabs } from 'antd';
 
 import ImageEditPanelIcons from '@core/app/icons/image-edit-panel/ImageEditPanelIcons';
 import BackButton from '@core/app/widgets/FullWindowPanel/BackButton';
 import Footer from '@core/app/widgets/FullWindowPanel/Footer';
 import Header from '@core/app/widgets/FullWindowPanel/Header';
 import FullWindowPanelSider from '@core/app/widgets/FullWindowPanel/Sider';
+import useI18n from '@core/helpers/useI18n';
 
 import Eraser from './Eraser';
+import styles from './index.module.scss';
 import MagicWand from './MagicWand';
 
-import styles from './index.module.scss';
-
 interface Props {
-  onClose: () => void;
-  handleComplete: () => void;
   brushSize: number;
-  setBrushSize: (size: number) => void;
-  tolerance: number;
-  setTolerance: (tolerance: number) => void;
+  handleComplete: () => void;
   mode: 'eraser' | 'magicWand';
+  onClose: () => void;
+  setBrushSize: (size: number) => void;
   setMode: (mode: 'eraser' | 'magicWand') => void;
-  setOperation: (operation: 'eraser' | 'magicWand' | 'drag' | null) => void;
+  setOperation: (operation: 'drag' | 'eraser' | 'magicWand' | null) => void;
+  setTolerance: (tolerance: number) => void;
+  tolerance: number;
 }
 
 interface Tab extends Omit<TabPaneProps, 'tab'> {
@@ -33,56 +32,56 @@ interface Tab extends Omit<TabPaneProps, 'tab'> {
 }
 
 function Sider({
-  onClose,
-  handleComplete,
   brushSize,
-  setBrushSize,
-  tolerance,
-  setTolerance,
+  handleComplete,
   mode,
+  onClose,
+  setBrushSize,
   setMode,
   setOperation,
-}: Props): JSX.Element {
+  setTolerance,
+  tolerance,
+}: Props): React.JSX.Element {
   const {
     beambox: { photo_edit_panel: langPhoto },
-    image_edit_panel: lang,
     buttons: langButtons,
+    image_edit_panel: lang,
   } = useI18n();
 
-  const tabItems: Array<Tab> = [
+  const tabItems: Tab[] = [
     {
-      key: 'eraser',
-      label: lang.eraser.title,
       children: <Eraser brushSize={brushSize} setBrushSize={setBrushSize} />,
       icon: <ImageEditPanelIcons.Eraser />,
+      key: 'eraser',
+      label: lang.eraser.title,
     },
     {
+      children: <MagicWand setTolerance={setTolerance} tolerance={tolerance} />,
+      icon: <ImageEditPanelIcons.MagicWand />,
       key: 'magicWand',
       label: lang.magic_wand.title,
-      children: <MagicWand tolerance={tolerance} setTolerance={setTolerance} />,
-      icon: <ImageEditPanelIcons.MagicWand />,
     },
   ];
 
   return (
     <FullWindowPanelSider className={styles.sider}>
-      <Flex className={styles['h-100']} vertical justify="space-between">
+      <Flex className={styles['h-100']} justify="space-between" vertical>
         <div>
           <BackButton onClose={onClose}>{langButtons.back_to_beam_studio}</BackButton>
           <Header icon={<ImageEditPanelIcons.EditImage />} title={lang.title} />
           <Tabs
-            centered
-            size="large"
             activeKey={mode}
+            centered
             items={tabItems}
             onChange={(mode: 'eraser' | 'magicWand') => {
               setOperation(null);
               setMode(mode);
             }}
+            size="large"
           />
         </div>
         <Footer>
-          <Button key="ok" type="primary" onClick={handleComplete}>
+          <Button key="ok" onClick={handleComplete} type="primary">
             {langPhoto.okay}
           </Button>
         </Footer>

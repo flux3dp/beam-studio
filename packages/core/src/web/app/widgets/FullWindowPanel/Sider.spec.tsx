@@ -1,8 +1,8 @@
 import React from 'react';
+
 import { render } from '@testing-library/react';
 
 import { FullWindowPanelContext } from './FullWindowPanel';
-
 import Sider from './Sider';
 
 jest.mock('@core/app/widgets/FullWindowPanel/FullWindowPanel', () => ({
@@ -26,6 +26,7 @@ describe('test Sider', () => {
         <Sider className="class">Sider</Sider>
       </FullWindowPanelContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
     rerender(
       <FullWindowPanelContext.Provider

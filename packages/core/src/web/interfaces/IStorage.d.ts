@@ -1,57 +1,57 @@
 export type StorageKey =
-  | 'font-name-map'
-  | 'default-units'
-  | 'default-font'
-  | 'beambox-preference'
-  | 'default-printer'
-  | 'printer-is-ready'
-  | 'laser-defaults'
-  | 'recent_files'
-  | 'notification'
-  | 'auto_check_update'
-  | 'guessing_poke'
-  | 'alert-config'
-  | 'poke-ip-addr'
-  | 'notification'
-  | 'guessing_poke'
-  | 'auto_connect'
-  | 'enable-sentry'
-  | 'loop_compensation'
-  | 'firmware-update-ignore-list'
-  | 'new-user'
-  | 'last-installed-version'
-  | 'questionnaire-version'
-  | 'layer-color-config'
-  | 'rating-record'
-  | 'setting-printer'
-  | 'printers'
-  | 'setting-wifi'
-  | 'customizedLaserConfigs' // For version <= 2.3.9, maybe we can remove this in the future
-  | 'defaultLaserConfigsInUse' // For version <= 2.3.9, maybe we can remove this in the future
-  | 'presets'
-  | 'keep-flux-id-login'
-  | 'noun-project-history'
-  | 'auto-save-config'
   | 'active-lang'
-  | 'flux-rsa-key'
-  | 'sentry-send-devices'
-  | 'black-list'
-  | 'host'
-  | 'did-gesture-tutorial'
-  | 'last-record-activity'
-  | 'selected-device'
-  | 'announcement-record'
   | 'ador-backup-path'
+  | 'alert-config'
+  | 'announcement-record'
+  | 'auto-save-config'
+  | 'auto_check_update'
+  | 'auto_connect'
+  | 'beambox-preference'
+  | 'black-list'
+  | 'customizedLaserConfigs' // For version <= 2.3.9, maybe we can remove this in the future
+  | 'default-font'
+  | 'default-printer'
+  | 'default-units'
+  | 'defaultLaserConfigsInUse' // For version <= 2.3.9, maybe we can remove this in the future
+  | 'did-gesture-tutorial'
+  | 'enable-sentry'
+  | 'firmware-update-ignore-list'
+  | 'flux-rsa-key'
+  | 'font-name-map'
+  | 'guessing_poke'
+  | 'guessing_poke'
+  | 'host'
+  | 'keep-flux-id-login'
+  | 'laser-defaults'
+  | 'last-installed-version'
+  | 'last-promark-serial'
+  | 'last-record-activity'
+  | 'layer-color-config'
   | 'layer-panel-height'
+  | 'loop_compensation'
+  | 'new-user'
+  | 'notification'
+  | 'notification'
+  | 'noun-project-history'
+  | 'poke-ip-addr'
+  | 'presets'
+  | 'printer-is-ready'
+  | 'printers'
   | 'promark-store'
-  | 'last-promark-serial';
+  | 'questionnaire-version'
+  | 'rating-record'
+  | 'recent_files'
+  | 'selected-device'
+  | 'sentry-send-devices'
+  | 'setting-printer'
+  | 'setting-wifi';
 
 export interface IStorage {
-  get(name: StorageKey): any;
-  set(name: StorageKey, val: any): IStorage;
-  removeAt(name: StorageKey): IStorage;
   clearAll(): IStorage;
   clearAllExceptIP(): IStorage;
-  isExisting(key: StorageKey): boolean;
+  get(name: StorageKey): any;
   getStore(): any;
+  isExisting(key: StorageKey): boolean;
+  removeAt(name: StorageKey): IStorage;
+  set(name: StorageKey, val: any): IStorage;
 }

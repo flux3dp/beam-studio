@@ -1,145 +1,145 @@
-import { WorkAreaModel } from './workarea-constants';
+import type { WorkAreaModel } from './workarea-constants';
 
 export enum RotaryType {
-  Roller = 1,
   Chuck = 2,
+  Roller = 1,
 }
 
 export const CHUCK_ROTARY_DIAMETER = 133;
 
 export interface SupportInfo {
   autoFocus: boolean;
+  framingLowLaser?: boolean;
   hybridLaser: boolean;
+  jobOrigin?: boolean;
+  lowerFocus: boolean;
   openBottom: boolean;
   passThrough: boolean;
+  redLight?: boolean;
   rotary?: {
-    roller: boolean;
     chuck: boolean;
+    defaultMirror?: boolean;
     extendWorkarea: boolean;
     mirror: boolean;
-    defaultMirror?: boolean;
+    roller: boolean;
   };
-  lowerFocus: boolean;
-  framingLowLaser?: boolean;
-  redLight?: boolean;
-  jobOrigin?: boolean;
 }
 
 const supportList: Record<WorkAreaModel, SupportInfo> = {
-  fbm1: {
-    autoFocus: true,
-    hybridLaser: true,
-    openBottom: true,
+  ado1: {
+    autoFocus: false,
+    framingLowLaser: true,
+    hybridLaser: false,
+    jobOrigin: true,
+    lowerFocus: true,
+    openBottom: false,
     passThrough: true,
     rotary: {
-      roller: true,
       chuck: true,
-      extendWorkarea: false,
-      mirror: false,
+      defaultMirror: true,
+      extendWorkarea: true,
+      mirror: true,
+      roller: true,
     },
-    lowerFocus: false,
-    jobOrigin: true,
   },
   fbb1b: {
     autoFocus: false,
     hybridLaser: false,
+    jobOrigin: true,
+    lowerFocus: false,
     openBottom: false,
     passThrough: false,
     rotary: {
-      roller: true,
       chuck: false,
       extendWorkarea: false,
       mirror: false,
+      roller: true,
     },
-    lowerFocus: false,
-    jobOrigin: true,
   },
   fbb1p: {
     autoFocus: false,
     hybridLaser: false,
+    jobOrigin: true,
+    lowerFocus: false,
     openBottom: false,
     passThrough: false,
     rotary: {
-      roller: true,
       chuck: false,
       extendWorkarea: false,
       mirror: false,
-    },
-    lowerFocus: false,
-    jobOrigin: true,
-  },
-  fhexa1: {
-    autoFocus: false,
-    hybridLaser: false,
-    openBottom: false,
-    passThrough: false,
-    rotary: {
       roller: true,
-      chuck: true,
-      extendWorkarea: false,
-      mirror: false,
     },
-    lowerFocus: true,
-    jobOrigin: true,
-  },
-  ado1: {
-    autoFocus: false,
-    hybridLaser: false,
-    openBottom: false,
-    passThrough: true,
-    rotary: {
-      roller: true,
-      chuck: true,
-      extendWorkarea: true,
-      mirror: true,
-      defaultMirror: true,
-    },
-    lowerFocus: true,
-    framingLowLaser: true,
-    jobOrigin: true,
   },
   fbb2: {
     autoFocus: false,
     hybridLaser: false,
+    jobOrigin: true,
+    lowerFocus: true,
     openBottom: false,
     passThrough: true,
+    redLight: true,
     rotary: {
-      roller: true,
       chuck: true,
+      defaultMirror: true,
       extendWorkarea: true,
       mirror: true,
-      defaultMirror: true,
+      roller: true,
     },
-    lowerFocus: true,
-    redLight: true,
-    jobOrigin: true,
   },
-  fpm1: {
+  fbm1: {
+    autoFocus: true,
+    hybridLaser: true,
+    jobOrigin: true,
+    lowerFocus: false,
+    openBottom: true,
+    passThrough: true,
+    rotary: {
+      chuck: true,
+      extendWorkarea: false,
+      mirror: false,
+      roller: true,
+    },
+  },
+  fhexa1: {
     autoFocus: false,
     hybridLaser: false,
+    jobOrigin: true,
+    lowerFocus: true,
     openBottom: false,
     passThrough: false,
     rotary: {
-      roller: true,
-      chuck: false,
+      chuck: true,
       extendWorkarea: false,
       mirror: false,
+      roller: true,
     },
-    lowerFocus: true,
   },
   flv1: {
     autoFocus: false,
     hybridLaser: false,
+    jobOrigin: true,
+    lowerFocus: false,
     openBottom: false,
     passThrough: false,
     rotary: {
-      roller: true,
       chuck: false,
       extendWorkarea: false,
       mirror: false,
+      roller: true,
     },
-    lowerFocus: false,
-    jobOrigin: true,
+  },
+  fpm1: {
+    autoFocus: false,
+    hybridLaser: false,
+    lowerFocus: true,
+    openBottom: false,
+    passThrough: false,
+    rotary: {
+      chuck: false,
+      extendWorkarea: false,
+      mirror: false,
+      roller: true,
+    },
   },
 };
 
@@ -147,9 +147,9 @@ export const getSupportInfo = (workarea: WorkAreaModel): SupportInfo =>
   supportList[workarea] || {
     autoFocus: false,
     hybridLaser: false,
+    lowerFocus: false,
     openBottom: false,
     passThrough: false,
-    lowerFocus: false,
   };
 
 export default {

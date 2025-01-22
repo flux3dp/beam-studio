@@ -1,7 +1,7 @@
 import { eventEmitter } from '@core/app/contexts/DialogContext';
 // Trigger some dialog here to avoid dialog caller circular import
 
-export const addDialogComponent = (id: string, component: JSX.Element): void => {
+export const addDialogComponent = (id: string, component: React.JSX.Element): void => {
   eventEmitter.emit('ADD_DIALOG_COMPONENT', id, component);
 };
 
@@ -13,7 +13,9 @@ export const isIdExist = (id: string): boolean => {
   const response = {
     isIdExist: false,
   };
+
   eventEmitter.emit('CHECK_ID_EXIST', id, response);
+
   return response.isIdExist;
 };
 

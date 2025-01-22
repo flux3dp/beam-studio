@@ -10,7 +10,7 @@ exports[`test ConfigSlider should work 1`] = `
       Mock Antd ConfigProvider
       <p>
         theme: 
-        {"token":{"colorPrimaryBorder":"#cecece","colorPrimaryBorderHover":"#494949","colorPrimary":"#494949"},"components":{"Slider":{"handleColor":"#cecece","handleActiveColor":"#494949","dotActiveBorderColor":"#494949","trackBg":"transparent","trackBgDisabled":"transparent","trackHoverBg":"transparent"}}}
+        {"components":{"Slider":{"dotActiveBorderColor":"#494949","handleActiveColor":"#494949","handleColor":"#cecece","trackBg":"transparent","trackBgDisabled":"transparent","trackHoverBg":"transparent"}},"token":{"colorPrimary":"#494949","colorPrimaryBorder":"#cecece","colorPrimaryBorderHover":"#494949"}}
       </p>
       <div>
         Mock Antd Slider
@@ -56,7 +56,7 @@ exports[`test ConfigSlider should work 2`] = `
       Mock Antd ConfigProvider
       <p>
         theme: 
-        {"token":{"colorPrimaryBorder":"#cecece","colorPrimaryBorderHover":"#494949","colorPrimary":"#494949"},"components":{"Slider":{"handleColor":"#cecece","handleActiveColor":"#494949","dotActiveBorderColor":"#494949","trackBg":"transparent","trackBgDisabled":"transparent","trackHoverBg":"transparent"}}}
+        {"components":{"Slider":{"dotActiveBorderColor":"#494949","handleActiveColor":"#494949","handleColor":"#cecece","trackBg":"transparent","trackBgDisabled":"transparent","trackHoverBg":"transparent"}},"token":{"colorPrimary":"#494949","colorPrimaryBorder":"#cecece","colorPrimaryBorderHover":"#494949"}}
       </p>
       <div>
         Mock Antd Slider
@@ -102,7 +102,7 @@ exports[`test ConfigSlider should work 3`] = `
       Mock Antd ConfigProvider
       <p>
         theme: 
-        {"token":{"colorPrimaryBorder":"#cecece","colorPrimaryBorderHover":"#494949","colorPrimary":"#494949"},"components":{"Slider":{"handleColor":"#cecece","handleActiveColor":"#494949","dotActiveBorderColor":"#494949","trackBg":"transparent","trackBgDisabled":"transparent","trackHoverBg":"transparent"}}}
+        {"components":{"Slider":{"dotActiveBorderColor":"#494949","handleActiveColor":"#494949","handleColor":"#cecece","trackBg":"transparent","trackBgDisabled":"transparent","trackHoverBg":"transparent"}},"token":{"colorPrimary":"#494949","colorPrimaryBorder":"#cecece","colorPrimaryBorderHover":"#494949"}}
       </p>
       <div>
         Mock Antd Slider

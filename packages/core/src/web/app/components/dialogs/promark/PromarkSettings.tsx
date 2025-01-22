@@ -1,35 +1,31 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Button, Flex, Modal, Spin } from 'antd';
+
 import { LoadingOutlined } from '@ant-design/icons';
+import { Button, Flex, Modal, Spin } from 'antd';
 
-import applyRedDot from '@core/helpers/device/promark/apply-red-dot';
-import checkDeviceStatus from '@core/helpers/check-device-status';
-import deviceMaster from '@core/helpers/device-master';
-import icons from '@core/app/icons/icons';
-import promarkDataStore from '@core/helpers/device/promark/promark-data-store';
-import storage from '@app/implementations/storage';
-import useI18n from '@core/helpers/useI18n';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
-import {
-  defaultField,
-  defaultGalvoParameters,
-  defaultRedLight,
-} from '@core/app/constants/promark-constants';
-import { Field, GalvoParameters, PromarkStore, RedDot } from '@core/interfaces/Promark';
+import { defaultField, defaultGalvoParameters, defaultRedLight } from '@core/app/constants/promark-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
-import { IDeviceInfo } from '@core/interfaces/IDevice';
-import {
-  generateCalibrationTaskString,
-  loadTaskToSwiftray,
-} from '@core/helpers/device/promark/calibration';
+import icons from '@core/app/icons/icons';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
+import checkDeviceStatus from '@core/helpers/check-device-status';
+import applyRedDot from '@core/helpers/device/promark/apply-red-dot';
+import { generateCalibrationTaskString, loadTaskToSwiftray } from '@core/helpers/device/promark/calibration';
+import promarkDataStore from '@core/helpers/device/promark/promark-data-store';
+import deviceMaster from '@core/helpers/device-master';
+import useI18n from '@core/helpers/useI18n';
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
+import type { Field, GalvoParameters, PromarkStore, RedDot } from '@core/interfaces/Promark';
 
+import storage from '@app/implementations/storage';
+
+import blockStyles from './Block.module.scss';
 import FieldBlock from './FieldBlock';
 import LensBlock from './LensBlock';
-import ParametersBlock, { MarkParameters } from './ParametersBlock';
-import RedDotBlock from './RedDotBlock';
+import type { MarkParameters } from './ParametersBlock';
+import ParametersBlock from './ParametersBlock';
 import styles from './PromarkSettings.module.scss';
-import blockStyles from './Block.module.scss';
+import RedDotBlock from './RedDotBlock';
 
 interface Props {
   device: IDeviceInfo;
@@ -37,7 +33,7 @@ interface Props {
   onClose: () => void;
 }
 
-const PromarkSettings = ({ device, initData, onClose }: Props): JSX.Element => {
+const PromarkSettings = ({ device, initData, onClose }: Props): React.JSX.Element => {
   const { global: tGlobal, promark_settings: t } = useI18n();
   const { model, serial } = device;
   const isInch = useMemo(() => storage.get('default-units') === 'inches', []);
@@ -52,33 +48,35 @@ const PromarkSettings = ({ device, initData, onClose }: Props): JSX.Element => {
   const [isPreviewing, setIsPreviewing] = useState(false);
   const previewTask = useRef<string>('');
   const markTask = useRef<string>('');
+
   useEffect(() => {
     previewTask.current = '';
   }, [redDot, width]);
+
   const uploadPreviewTask = useCallback(async () => {
     if (!previewTask.current) {
       previewTask.current = await generateCalibrationTaskString({ width });
     }
+
     await loadTaskToSwiftray(previewTask.current, model);
   }, [model, width]);
 
   useEffect(() => {
     markTask.current = '';
   }, [width, power, speed]);
+
   const uploadMarkTask = useCallback(async () => {
     if (!markTask.current) {
-      markTask.current = await generateCalibrationTaskString({ width, power, speed });
+      markTask.current = await generateCalibrationTaskString({ power, speed, width });
     }
+
     await loadTaskToSwiftray(markTask.current, model);
   }, [model, width, power, speed]);
 
   const handleUpdateParameter = async (shouldApplyRedDot = false) => {
     if (shouldApplyRedDot) {
-      const { field: newField, galvoParameters: newGalvo } = applyRedDot(
-        redDot,
-        field,
-        galvoParameters,
-      );
+      const { field: newField, galvoParameters: newGalvo } = applyRedDot(redDot, field, galvoParameters);
+
       await deviceMaster.setField(width, newField);
       await deviceMaster.setGalvoParameters(newGalvo);
     } else {
@@ -89,7 +87,9 @@ const PromarkSettings = ({ device, initData, onClose }: Props): JSX.Element => {
 
   useEffect(() => {
     const abortPreview = () => setIsPreviewing(false);
+
     swiftrayClient.on('disconnected', abortPreview);
+
     return () => {
       swiftrayClient.off('disconnected', abortPreview);
     };
@@ -114,15 +114,19 @@ const PromarkSettings = ({ device, initData, onClose }: Props): JSX.Element => {
       // Wait 0.5s to ensure stop before start in swiftray
       await new Promise((resolve) => setTimeout(resolve, 500));
     }
+
     await uploadMarkTask();
     await handleUpdateParameter();
     await deviceMaster.doPromarkCalibration();
   };
 
   const handleSave = async () => {
-    promarkDataStore.update(serial, { field, redDot, galvoParameters });
+    promarkDataStore.update(serial, { field, galvoParameters, redDot });
     try {
-      if (isPreviewing) await deviceMaster.stopFraming();
+      if (isPreviewing) {
+        await deviceMaster.stopFraming();
+      }
+
       await handleUpdateParameter();
     } catch (error) {
       console.error('Failed to apply promark settings state', error);
@@ -133,25 +137,29 @@ const PromarkSettings = ({ device, initData, onClose }: Props): JSX.Element => {
   const handleCancel = () => {
     const restore = async () => {
       try {
-        if (isPreviewing) await deviceMaster.stopFraming();
-        await deviceMaster.setField(width, initData.field || { offsetX: 0, offsetY: 0, angle: 0 });
+        if (isPreviewing) {
+          await deviceMaster.stopFraming();
+        }
+
+        await deviceMaster.setField(width, initData.field || { angle: 0, offsetX: 0, offsetY: 0 });
         await deviceMaster.setGalvoParameters(
           initData.galvoParameters || {
-            x: { scale: 100, bulge: 1, skew: 1, trapezoid: 1 },
-            y: { scale: 100, bulge: 1, skew: 1, trapezoid: 1 },
+            x: { bulge: 1, scale: 100, skew: 1, trapezoid: 1 },
+            y: { bulge: 1, scale: 100, skew: 1, trapezoid: 1 },
           },
         );
       } catch (err) {
         console.error('Failed to restore from promark settings state', err);
       }
     };
+
     restore();
     onClose();
   };
 
   const footer = (
-    <Flex className={styles.footer} justify="space-between" align="center">
-      <Flex gap={8} align="center">
+    <Flex align="center" className={styles.footer} justify="space-between">
+      <Flex align="center" gap={8}>
         <Button className={styles.button} onClick={handlePreview}>
           {t.preview}
           {isPreviewing ? (
@@ -164,11 +172,11 @@ const PromarkSettings = ({ device, initData, onClose }: Props): JSX.Element => {
           {t.mark}
         </Button>
       </Flex>
-      <Flex gap={8} align="center">
+      <Flex align="center" gap={8}>
         <Button className={styles.button} onClick={handleCancel}>
           {tGlobal.cancel}
         </Button>
-        <Button className={styles.button} type="primary" onClick={handleSave}>
+        <Button className={styles.button} onClick={handleSave} type="primary">
           {tGlobal.save}
         </Button>
       </Flex>
@@ -177,20 +185,20 @@ const PromarkSettings = ({ device, initData, onClose }: Props): JSX.Element => {
 
   return (
     <Modal
-      open
       centered
-      maskClosable={false}
-      keyboard={false}
-      width={620}
-      title={t.title}
-      onCancel={handleCancel}
       footer={footer}
+      keyboard={false}
+      maskClosable={false}
+      onCancel={handleCancel}
+      open
+      title={t.title}
+      width={620}
     >
       <div className={styles.container}>
-        <FieldBlock width={width} isInch={isInch} field={field} setField={setField} />
+        <FieldBlock field={field} isInch={isInch} setField={setField} width={width} />
         <RedDotBlock isInch={isInch} redDot={redDot} setRedDot={setRedDot} />
         <LensBlock data={galvoParameters} setData={setGalvoCorrection} />
-        <Flex className={blockStyles['full-row']} justify="space-between" align="center" gap={8}>
+        <Flex align="center" className={blockStyles['full-row']} gap={8} justify="space-between">
           <div className={blockStyles.title}>{t.mark_parameters}</div>
           <ParametersBlock isInch={isInch} parameters={parameters} setParameters={setParameters} />
         </Flex>
@@ -201,16 +209,19 @@ const PromarkSettings = ({ device, initData, onClose }: Props): JSX.Element => {
 
 export const showPromarkSettings = async (device: IDeviceInfo): Promise<void> => {
   await deviceMaster.select(device);
+
   const res = await checkDeviceStatus(device);
-  if (!res) return;
+
+  if (!res) {
+    return;
+  }
+
   const { serial } = device;
   const data = promarkDataStore.get(serial);
   const id = 'promark-settings';
+
   if (!isIdExist(id)) {
-    addDialogComponent(
-      id,
-      <PromarkSettings device={device} initData={data} onClose={() => popDialogById(id)} />,
-    );
+    addDialogComponent(id, <PromarkSettings device={device} initData={data} onClose={() => popDialogById(id)} />);
   }
 };
 

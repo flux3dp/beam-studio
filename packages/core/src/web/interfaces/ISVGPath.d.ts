@@ -1,120 +1,120 @@
-import { NodeLinkType } from '@core/app/constants/link-type-constants';
+import type { NodeLinkType } from '@core/app/constants/link-type-constants';
 
 export interface ISVGPathSeg {
-  x: number;
-  y: number;
-  x1: number;
-  y1: number;
-  x2: number;
-  y2: number;
-  type: number;
+  _asPathString: () => string;
+  angle?: number;
+  clone: () => ISVGPathSeg;
+  largeArcFlag?: boolean;
   pathSegType: number;
   r1?: number;
   r2?: number;
-  angle?: number;
-  largeArcFlag?: boolean;
   sweepFlag?: boolean;
   toString: () => string;
-  _asPathString: () => string;
-  clone: () => ISVGPathSeg;
+  type: number;
+  x: number;
+  x1: number;
+  x2: number;
+  y: number;
+  y1: number;
+  y2: number;
 }
 
 export interface ISegment {
-  startPoint: IPathNodePoint;
+  controlPoints: ISegmentControlPoint[];
   endPoint: IPathNodePoint;
-  next?: ISegment;
-  prev?: ISegment;
-  type: number;
+  getNodePointAndControlPoints: () =>
+    | Record<string, never>
+    | {
+        controlPoints: ISegmentControlPoint[];
+        nodePoint: IPathNodePoint;
+      };
   index: number;
   item: ISVGPathSeg;
-  controlPoints: ISegmentControlPoint[];
-  ptgrip: boolean;
+  next?: ISegment;
   path: ISVGPath;
+  prev?: ISegment;
+  ptgrip: boolean;
   select: (isSelected: boolean) => void;
+  startPoint: IPathNodePoint;
+  type: number;
   update: () => void;
-  getNodePointAndControlPoints: () =>
-    | {
-        nodePoint: IPathNodePoint;
-        controlPoints: ISegmentControlPoint[];
-      }
-    | Record<string, never>;
 }
 
 export interface ISegmentControlPoint {
-  x: number;
-  y: number;
-  index: number;
-  seg: ISegment;
-  nodePoint: IPathNodePoint;
-  elem: SVGElement;
   controlPointsLinkType: number;
-  isSelected: boolean;
-  moveAbs: (x: number, y: number) => any; // Return changes
+  delete: () => any;
+  elem: SVGElement;
   hide: () => void;
+  index: number;
+  isSelected: boolean;
+  move: (dx: number, dy: number) => any;
+  moveAbs: (x: number, y: number) => any; // Return changes
+  moveLinkedControlPoint: () => any;
+  nodePoint: IPathNodePoint;
+  removeFromNodePoint: () => void;
+  seg: ISegment;
+  setSelected: (isSelected: boolean) => void;
   show: () => void;
   update: () => void;
-  delete: () => any;
-  setSelected: (isSelected: boolean) => void;
-  move: (dx: number, dy: number) => any;
-  moveLinkedControlPoint: () => any;
-  removeFromNodePoint: () => void;
+  x: number;
+  y: number;
 }
 
 export interface IPathNodePoint {
+  addControlPoint: (point: ISegmentControlPoint) => void;
+  controlPoints: ISegmentControlPoint[];
+  createControlPoints: () => any;
+  delete: () => void;
+  elem: SVGElement;
+  getDisplayPosition: () => { x: number; y: number };
+  hide: () => void;
+  index: number;
+  isRound: () => boolean;
+  isSelected: boolean;
+  isSharp: () => boolean;
+  linkType: NodeLinkType;
+  move: (dx: number, dy: number) => any;
+  mSeg: ISegment;
+  next: IPathNodePoint | null;
+  nextSeg?: ISegment;
+  path: ISVGPath;
+  prev: IPathNodePoint | null;
+  prevSeg?: ISegment;
+  setHighlight: (highlight: boolean) => void;
+  setMSeg: (prev: ISegment) => void;
+  setNodeType: (type: NodeLinkType) => void;
+  setPrevSeg: (prev: ISegment) => void;
+  setSelected: (isSelected: boolean) => void;
+  show: () => void;
+  update: () => void;
   x: number;
   y: number;
-  mSeg: ISegment;
-  prevSeg?: ISegment;
-  nextSeg?: ISegment;
-  next: IPathNodePoint | null;
-  prev: IPathNodePoint | null;
-  path: ISVGPath;
-  controlPoints: ISegmentControlPoint[];
-  linkType: NodeLinkType;
-  isSelected: boolean;
-  index: number;
-  elem: SVGElement;
-  setSelected: (isSelected: boolean) => void;
-  getDisplayPosition: () => { x: number; y: number };
-  isSharp: () => boolean;
-  isRound: () => boolean;
-  addControlPoint: (point: ISegmentControlPoint) => void;
-  setPrevSeg: (prev: ISegment) => void;
-  setMSeg: (prev: ISegment) => void;
-  setHighlight: (highlight: boolean) => void;
-  update: () => void;
-  show: () => void;
-  hide: () => void;
-  delete: () => void;
-  move: (dx: number, dy: number) => any;
-  createControlPoints: () => any;
-  setNodeType: (type: NodeLinkType) => void;
 }
 
 export interface ISVGPath {
-  elem: SVGPathElement;
-  segs: ISegment[];
-  selected_pts: number[];
-  selectedPointIndex: number;
-  selectedControlPoint?: ISegmentControlPoint;
-  nodePoints: IPathNodePoint[];
-  first_seg: ISegment;
-  matrix: SVGMatrix;
-  dragging: number[] | boolean;
-  dragctrl: boolean;
   addPtsToSelection: (index: number | number[]) => void;
   addSeg: (index: number, interpolation: number) => void;
   clearSelection: () => void;
+  connectNodes: (pt1: number, pt2: number) => number;
   createControlPointsAtGrip: (index: number) => void;
+  disconnectNode: (index: number) => number;
+  dragctrl: boolean;
+  dragging: boolean | number[];
+  elem: SVGPathElement;
   endChanges: (log: string) => void;
+  first_seg: ISegment;
   init: () => ISVGPath;
-  removePtFromSelection: (index: number) => void;
-  storeD: () => void;
-  show: (display: boolean) => ISVGPath;
-  update: () => void;
+  matrix: SVGMatrix;
   moveCtrl: (x: number, y: number) => void;
   movePts: (x: number, y: number) => void;
+  nodePoints: IPathNodePoint[];
+  removePtFromSelection: (index: number) => void;
+  segs: ISegment[];
+  selected_pts: number[];
+  selectedControlPoint?: ISegmentControlPoint;
+  selectedPointIndex: number;
+  show: (display: boolean) => ISVGPath;
+  storeD: () => void;
   stripCurveFromSegment: (index: number) => void;
-  disconnectNode: (index: number) => number;
-  connectNodes: (pt1: number, pt2: number) => number;
+  update: () => void;
 }

@@ -6,6 +6,7 @@ import setElementsColor from './setElementsColor';
 import updateLayerColorFilter from './updateLayerColorFilter';
 
 let svgCanvas;
+
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
@@ -17,11 +18,14 @@ const updateLayerColor = async (layer: SVGGElement): Promise<void> => {
   const isFullColor = layer.getAttribute('data-fullcolor') === '1';
   const elems = Array.from(layer.childNodes);
   const tempGroup = svgCanvas.getTempGroup();
+
   if (tempGroup) {
     const layerName = getLayerName(layer);
     const multiSelectedElems = tempGroup.querySelectorAll(`[data-original-layer="${layerName}"]`);
+
     elems.push(...multiSelectedElems);
   }
+
   await setElementsColor(elems as Element[], color, isFullColor);
   updateLayerColorFilter(layer);
 };

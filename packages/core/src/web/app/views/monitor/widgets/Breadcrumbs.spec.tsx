@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import { MonitorContext } from '@core/app/contexts/MonitorContext';
@@ -10,20 +11,22 @@ jest.mock('@core/app/contexts/MonitorContext', () => ({
 }));
 
 const mockOnSelectFolder = jest.fn();
+
 describe('test Breadcrumbs', () => {
   it('should render correctly', () => {
     const { container } = render(
       <MonitorContext.Provider
         value={
           {
-            onSelectFolder: mockOnSelectFolder,
             currentPath: ['a', 'b', 'c'],
+            onSelectFolder: mockOnSelectFolder,
           } as any
         }
       >
         <Breadcrumbs />
       </MonitorContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
   });
 
@@ -32,8 +35,8 @@ describe('test Breadcrumbs', () => {
       <MonitorContext.Provider
         value={
           {
-            onSelectFolder: mockOnSelectFolder,
             currentPath: ['a', 'b', 'c'],
+            onSelectFolder: mockOnSelectFolder,
           } as any
         }
       >
@@ -41,6 +44,7 @@ describe('test Breadcrumbs', () => {
       </MonitorContext.Provider>,
     );
     const home = container.querySelector('[aria-label="home"]');
+
     expect(mockOnSelectFolder).not.toBeCalled();
     fireEvent.click(home);
     expect(mockOnSelectFolder).toHaveBeenLastCalledWith('', true);

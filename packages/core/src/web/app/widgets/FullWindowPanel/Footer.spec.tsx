@@ -1,9 +1,9 @@
 import React from 'react';
+
 import { render } from '@testing-library/react';
 
-import { FullWindowPanelContext } from './FullWindowPanel';
-
 import Footer from './Footer';
+import { FullWindowPanelContext } from './FullWindowPanel';
 
 jest.mock('@core/app/widgets/FullWindowPanel/FullWindowPanel', () => ({
   FullWindowPanelContext: React.createContext({
@@ -26,6 +26,7 @@ describe('test Footer', () => {
         <Footer className="class">Footer</Footer>
       </FullWindowPanelContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
     rerender(
       <FullWindowPanelContext.Provider

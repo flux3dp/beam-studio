@@ -1,9 +1,9 @@
-/* eslint-disable import/first */
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
 const mockUseSelectTool = jest.fn();
 const mockImportImage = jest.fn();
@@ -13,30 +13,34 @@ const mockInsertEllipse = jest.fn();
 const mockInsertLine = jest.fn();
 const mockInsertPath = jest.fn();
 const mockInsertPolygon = jest.fn();
+
 jest.mock('@core/app/actions/beambox/svgeditor-function-wrapper', () => ({
-  useSelectTool: mockUseSelectTool,
   importImage: mockImportImage,
-  insertText: mockInsertText,
-  insertRectangle: mockInsertRectangle,
   insertEllipse: mockInsertEllipse,
   insertLine: mockInsertLine,
   insertPath: mockInsertPath,
   insertPolygon: mockInsertPolygon,
+  insertRectangle: mockInsertRectangle,
+  insertText: mockInsertText,
+  useSelectTool: mockUseSelectTool,
 }));
 
 const mockOpen = jest.fn();
+
 jest.mock('@app/implementations/browser', () => ({
   open: mockOpen,
 }));
 
 const showShapePanel = jest.fn();
 const showMyCloud = jest.fn();
+
 jest.mock('@core/app/actions/dialog-caller', () => ({
-  showShapePanel: (...args) => showShapePanel(...args),
   showMyCloud: (...args) => showMyCloud(...args),
+  showShapePanel: (...args) => showShapePanel(...args),
 }));
 
 const getCurrentUser = jest.fn();
+
 jest.mock('@core/helpers/api/flux-id', () => ({
   getCurrentUser: () => getCurrentUser(),
 }));
@@ -46,6 +50,7 @@ jest.mock('@core/app/contexts/CanvasContext', () => ({
 }));
 
 const mockShowPassThrough = jest.fn();
+
 jest.mock('@core/app/components/pass-through/PassThrough', () => ({
   showPassThrough: mockShowPassThrough,
 }));
@@ -53,6 +58,7 @@ jest.mock('@core/app/components/pass-through/PassThrough', () => ({
 import DrawingToolButtonGroup from './DrawingToolButtonGroup';
 
 const mockCurveEngravingModeControllerStart = jest.fn();
+
 jest.mock('@core/app/actions/canvas/curveEngravingModeController', () => ({
   start: () => mockCurveEngravingModeControllerStart(),
 }));
@@ -64,6 +70,7 @@ describe('test DrawingToolButtonGroup', () => {
 
   test('should render correctly', () => {
     const { container } = render(<DrawingToolButtonGroup className="flux" />);
+
     expect(container).toMatchSnapshot();
 
     fireEvent.click(container.querySelector('#left-Photo'));
@@ -120,6 +127,7 @@ describe('test DrawingToolButtonGroup', () => {
         <DrawingToolButtonGroup className="flux" />
       </CanvasContext.Provider>,
     );
+
     fireEvent.click(container.querySelector('#left-Preview'));
     expect(contextValue.changeToPreviewMode).toHaveBeenCalledTimes(1);
     expect(contextValue.setupPreviewMode).toHaveBeenCalledTimes(1);
@@ -127,9 +135,11 @@ describe('test DrawingToolButtonGroup', () => {
 
   test('should render flux plus icon correctly', () => {
     getCurrentUser.mockReturnValue({ info: { subscription: { is_valid: true } } });
+
     const { container } = render(<DrawingToolButtonGroup className="flux" />);
 
     const myCloudButton = container.querySelector('#left-MyCloud');
+
     expect(myCloudButton).toMatchSnapshot();
 
     fireEvent.click(myCloudButton);

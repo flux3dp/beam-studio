@@ -1,27 +1,28 @@
 import React, { memo } from 'react';
+
 import { Button } from 'antd';
 
 import DimensionPanelIcons from '@core/app/icons/dimension-panel/DimensionPanelIcons';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
-import useI18n from '@core/helpers/useI18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
+import useI18n from '@core/helpers/useI18n';
 
 import styles from './FlipButtons.module.scss';
 
 let svgCanvas;
+
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
 
-const FlipButtons = (): JSX.Element => {
+const FlipButtons = (): React.JSX.Element => {
   const t = useI18n().beambox.right_panel.object_panel;
   const isMobile = useIsMobile();
 
-  if (isMobile)
+  if (isMobile) {
     return (
       <ObjectPanelItem.ActionList
-        id="flip"
         actions={[
           {
             icon: <DimensionPanelIcons.HFlip />,
@@ -35,24 +36,27 @@ const FlipButtons = (): JSX.Element => {
           },
         ]}
         content={<DimensionPanelIcons.HFlip />}
+        id="flip"
         label={t.flip}
       />
     );
+  }
+
   return (
     <div className={styles.container}>
       <Button
-        id="horizontal_flip"
-        type="text"
         icon={<DimensionPanelIcons.HFlip />}
+        id="horizontal_flip"
         onClick={() => svgCanvas.flipSelectedElements(-1, 1)}
         title={t.hflip}
+        type="text"
       />
       <Button
-        id="vertical_flip"
-        type="text"
         icon={<DimensionPanelIcons.VFlip />}
+        id="vertical_flip"
         onClick={() => svgCanvas.flipSelectedElements(1, -1)}
         title={t.vflip}
+        type="text"
       />
     </div>
   );

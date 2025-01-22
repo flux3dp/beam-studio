@@ -16,9 +16,7 @@ export const getManyMenuItems = (ids: string[]): Electron.MenuItem[] => {
     currentItem = targetItem;
   }
 
-  return ids[ids.length - 1] === '*'
-    ? (currentItem.submenu?.items ?? [])
-    : [getOneMenuItem(ids[ids.length - 1])];
+  return ids[ids.length - 1] === '*' ? (currentItem.submenu?.items ?? []) : [getOneMenuItem(ids[ids.length - 1])];
 };
 
 export const changeMenuItemChecked = (ids: string[], checked = true): void => {

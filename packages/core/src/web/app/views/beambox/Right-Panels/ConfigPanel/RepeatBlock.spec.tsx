@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import ConfigPanelContext from './ConfigPanelContext';
@@ -18,26 +18,25 @@ jest.mock('@core/helpers/useI18n', () => () => ({
 jest.mock(
   '@core/app/widgets/Unit-Input-v2',
   () =>
-    ({ id, min, max, unit, defaultValue, decimal, displayMultiValue, getValue }: any) =>
-      (
-        <div>
-          MockUnitInput
-          <p>id: {id}</p>
-          <p>min: {min}</p>
-          <p>max: {max}</p>
-          <p>unit: {unit}</p>
-          <p>defaultValue: {defaultValue}</p>
-          <p>decimal: {decimal}</p>
-          <p>displayMultiValue: {displayMultiValue}</p>
-          <button type="button" onClick={() => getValue(7)}>
-            change
-          </button>
-        </div>
-      ),
+    ({ decimal, defaultValue, displayMultiValue, getValue, id, max, min, unit }: any) => (
+      <div>
+        MockUnitInput
+        <p>id: {id}</p>
+        <p>min: {min}</p>
+        <p>max: {max}</p>
+        <p>unit: {unit}</p>
+        <p>defaultValue: {defaultValue}</p>
+        <p>decimal: {decimal}</p>
+        <p>displayMultiValue: {displayMultiValue}</p>
+        <button onClick={() => getValue(7)} type="button">
+          change
+        </button>
+      </div>
+    ),
 );
 
 jest.mock('@core/app/views/beambox/Right-Panels/ObjectPanelItem', () => ({
-  Number: ({ id, label, value, unit, decimal }: any) => (
+  Number: ({ decimal, id, label, unit, value }: any) => (
     <div>
       MockObjectPanelNumber
       <div>id: {id}</div>
@@ -50,12 +49,14 @@ jest.mock('@core/app/views/beambox/Right-Panels/ObjectPanelItem', () => ({
 }));
 
 const mockWriteData = jest.fn();
+
 jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   CUSTOM_PRESET_CONSTANT: 'CUSTOM_PRESET_CONSTANT',
   writeData: (...args) => mockWriteData(...args),
 }));
 
 const mockAddCommandToHistory = jest.fn();
+
 jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) =>
     callback({
@@ -65,29 +66,32 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
     }),
 }));
 
-let batchCmd = { onAfter: undefined, count: 0 };
+let batchCmd = { count: 0, onAfter: undefined };
 const mockBatchCommand = jest.fn().mockImplementation(() => {
-  batchCmd = { onAfter: undefined, count: batchCmd.count + 1 };
+  batchCmd = { count: batchCmd.count + 1, onAfter: undefined };
+
   return batchCmd;
 });
+
 jest.mock('@core/app/svgedit/history/history', () => ({
   BatchCommand: mockBatchCommand,
 }));
 
 const mockSelectedLayers = ['layer1', 'layer2'];
 const mockContextState = {
-  repeat: { value: 3, hasMultiValue: false },
+  repeat: { hasMultiValue: false, value: 3 },
 };
 const mockDispatch = jest.fn();
 const mockInitState = jest.fn();
 
 const mockCreateEventEmitter = jest.fn();
+
 jest.mock('@core/helpers/eventEmitterFactory', () => ({
   createEventEmitter: (...args) => mockCreateEventEmitter(...args),
 }));
+
 const mockEmit = jest.fn();
 
-// eslint-disable-next-line import/first
 import RepeatBlock from './RepeatBlock';
 
 describe('test RepeatBlock', () => {
@@ -102,15 +106,16 @@ describe('test RepeatBlock', () => {
     const { container } = render(
       <ConfigPanelContext.Provider
         value={{
-          state: mockContextState as any,
           dispatch: mockDispatch,
-          selectedLayers: mockSelectedLayers,
           initState: mockInitState,
+          selectedLayers: mockSelectedLayers,
+          state: mockContextState as any,
         }}
       >
         <RepeatBlock />
       </ConfigPanelContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
   });
 
@@ -118,15 +123,16 @@ describe('test RepeatBlock', () => {
     const { container } = render(
       <ConfigPanelContext.Provider
         value={{
-          state: mockContextState as any,
           dispatch: mockDispatch,
-          selectedLayers: mockSelectedLayers,
           initState: mockInitState,
+          selectedLayers: mockSelectedLayers,
+          state: mockContextState as any,
         }}
       >
         <RepeatBlock type="panel-item" />
       </ConfigPanelContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
   });
 
@@ -136,15 +142,16 @@ describe('test RepeatBlock', () => {
     const { getByText } = render(
       <ConfigPanelContext.Provider
         value={{
-          state: mockContextState as any,
           dispatch: mockDispatch,
-          selectedLayers: mockSelectedLayers,
           initState: mockInitState,
+          selectedLayers: mockSelectedLayers,
+          state: mockContextState as any,
         }}
       >
         <RepeatBlock />
       </ConfigPanelContext.Provider>,
     );
+
     expect(mockCreateEventEmitter).toBeCalledTimes(1);
     expect(mockCreateEventEmitter).toHaveBeenLastCalledWith('time-estimation-button');
 
@@ -156,29 +163,17 @@ describe('test RepeatBlock', () => {
     fireEvent.click(getByText('change'));
     expect(mockDispatch).toBeCalledTimes(1);
     expect(mockDispatch).toHaveBeenLastCalledWith({
+      payload: { configName: 'CUSTOM_PRESET_CONSTANT', repeat: 7 },
       type: 'change',
-      payload: { repeat: 7, configName: 'CUSTOM_PRESET_CONSTANT' },
     });
     expect(mockBatchCommand).toBeCalledTimes(1);
     expect(mockBatchCommand).lastCalledWith('Change repeat');
     expect(batchCmd.count).toBe(1);
     expect(mockWriteData).toBeCalledTimes(4);
     expect(mockWriteData).toHaveBeenNthCalledWith(1, 'layer1', 'repeat', 7, { batchCmd });
-    expect(mockWriteData).toHaveBeenNthCalledWith(
-      2,
-      'layer1',
-      'configName',
-      'CUSTOM_PRESET_CONSTANT',
-      { batchCmd },
-    );
+    expect(mockWriteData).toHaveBeenNthCalledWith(2, 'layer1', 'configName', 'CUSTOM_PRESET_CONSTANT', { batchCmd });
     expect(mockWriteData).toHaveBeenNthCalledWith(3, 'layer2', 'repeat', 7, { batchCmd });
-    expect(mockWriteData).toHaveBeenNthCalledWith(
-      4,
-      'layer2',
-      'configName',
-      'CUSTOM_PRESET_CONSTANT',
-      { batchCmd },
-    );
+    expect(mockWriteData).toHaveBeenNthCalledWith(4, 'layer2', 'configName', 'CUSTOM_PRESET_CONSTANT', { batchCmd });
     expect(mockEmit).toBeCalledTimes(1);
     expect(mockEmit).toHaveBeenLastCalledWith('SET_ESTIMATED_TIME', null);
     expect(batchCmd.onAfter).toBe(mockInitState);
@@ -192,15 +187,16 @@ describe('test RepeatBlock', () => {
     const { getByText } = render(
       <ConfigPanelContext.Provider
         value={{
-          state: mockContextState as any,
           dispatch: mockDispatch,
-          selectedLayers: mockSelectedLayers,
           initState: mockInitState,
+          selectedLayers: mockSelectedLayers,
+          state: mockContextState as any,
         }}
       >
         <RepeatBlock type="modal" />
       </ConfigPanelContext.Provider>,
     );
+
     expect(mockCreateEventEmitter).toBeCalledTimes(1);
     expect(mockCreateEventEmitter).toHaveBeenLastCalledWith('time-estimation-button');
 
@@ -210,8 +206,8 @@ describe('test RepeatBlock', () => {
     fireEvent.click(getByText('change'));
     expect(mockDispatch).toBeCalledTimes(1);
     expect(mockDispatch).toHaveBeenLastCalledWith({
+      payload: { configName: 'CUSTOM_PRESET_CONSTANT', repeat: 7 },
       type: 'change',
-      payload: { repeat: 7, configName: 'CUSTOM_PRESET_CONSTANT' },
     });
     expect(mockWriteData).not.toBeCalled();
     expect(mockBatchCommand).not.toBeCalled();

@@ -1,86 +1,93 @@
 import React, { useState } from 'react';
-import classNames from 'classnames';
-import { Button, ConfigProvider, Switch } from 'antd';
 
+import { Button, ConfigProvider, Switch } from 'antd';
+import classNames from 'classnames';
+
+import { iconButtonTheme } from '@core/app/constants/antd-config';
+import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
-import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
-import { iconButtonTheme } from '@core/app/constants/antd-config';
 import useDidUpdateEffect from '@core/helpers/hooks/useDidUpdateEffect';
-import useI18n from '@core/helpers/useI18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
+import useI18n from '@core/helpers/useI18n';
 
 import styles from './InFillBlock.module.scss';
 
 let svgCanvas;
+
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
 
 interface Props {
-  label?: string;
   elem: Element;
   id?: string;
+  label?: string;
 }
 
-const InFillBlock = ({ elem, label, id = 'infill' }: Props): JSX.Element => {
+const InFillBlock = ({ elem, id = 'infill', label }: Props): React.JSX.Element => {
   const lang = useI18n().beambox.right_panel.object_panel.option_panel;
   const isMobile = useIsMobile();
   const calculateFillInfo = (element: Element) => {
     const isFillable = svgCanvas.isElemFillable(element);
-    const { isAnyFilled, isAllFilled } = svgCanvas.calcElemFilledInfo(element);
+    const { isAllFilled, isAnyFilled } = svgCanvas.calcElemFilledInfo(element);
+
     return {
-      isFillable,
-      isAnyFilled,
       isAllFilled,
+      isAnyFilled,
+      isFillable,
     };
   };
   const [fillInfo, setFillInfo] = useState(calculateFillInfo(elem));
-  const { isAnyFilled, isAllFilled, isFillable } = fillInfo;
+  const { isAllFilled, isAnyFilled, isFillable } = fillInfo;
 
   useDidUpdateEffect(() => {
     setFillInfo(calculateFillInfo(elem));
   }, [elem]);
 
-  if (!isFillable) return null;
+  if (!isFillable) {
+    return null;
+  }
+
   const onClick = () => {
     if (isAnyFilled) {
       svgCanvas.setElemsUnfill([elem]);
     } else {
       svgCanvas.setElemsFill([elem]);
     }
+
     setFillInfo((prev) => ({
       ...prev,
-      isAnyFilled: !isAnyFilled,
       isAllFilled: !isAnyFilled,
+      isAnyFilled: !isAnyFilled,
     }));
     LayerPanelController.checkVector();
   };
 
   const isPartiallyFilled = elem.tagName === 'g' && isAnyFilled && !isAllFilled;
-  // eslint-disable-next-line no-nested-ternary
+
   return isMobile ? (
     <ObjectPanelItem.Item
-      id={id}
       content={<Switch checked={isAnyFilled} />}
+      id={id}
       label={label || lang.fill}
       onClick={onClick}
     />
   ) : label ? (
     <div className={styles['option-block']} key="infill">
       <div className={styles.label}>{label}</div>
-      <Switch size="small" checked={isAnyFilled} onClick={onClick} />
+      <Switch checked={isAnyFilled} onClick={onClick} size="small" />
     </div>
   ) : (
     <ConfigProvider theme={iconButtonTheme}>
       <Button
-        id={id}
-        type="text"
         className={classNames({ [styles.filled]: isAllFilled })}
-        title={lang.fill}
         icon={isPartiallyFilled ? <OptionPanelIcons.InfillPartial /> : <OptionPanelIcons.Infill />}
+        id={id}
         onClick={onClick}
+        title={lang.fill}
+        type="text"
       />
     </ConfigProvider>
   );

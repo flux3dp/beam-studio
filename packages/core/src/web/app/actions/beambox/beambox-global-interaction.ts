@@ -1,9 +1,10 @@
-/* eslint-disable class-methods-use-this */
-import menu from '@app/implementations/menu';
 import tabController from '@core/app/actions/tabController';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 
+import menu from '@app/implementations/menu';
+
 let svgCanvas;
+
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
@@ -55,10 +56,7 @@ class BeamboxGlobalInteraction {
     } else if (tagName === 'use') {
       menu.enable(['SVG_EDIT']);
 
-      if (
-        firstElement.getAttribute('data-svg') === 'true' ||
-        firstElement.getAttribute('data-dxf') === 'true'
-      ) {
+      if (firstElement.getAttribute('data-svg') === 'true' || firstElement.getAttribute('data-dxf') === 'true') {
         menu.disable(['PATH']);
       }
     } else if (tagName === 'path') {
@@ -76,7 +74,7 @@ class BeamboxGlobalInteraction {
     if (
       selectedElements &&
       selectedElements.length === 1 &&
-      ['g', 'a', 'use'].includes(tagName) &&
+      ['a', 'g', 'use'].includes(tagName) &&
       !firstElement.getAttribute('data-textpath-g') &&
       !firstElement.getAttribute('data-pass-through')
     ) {
@@ -85,16 +83,7 @@ class BeamboxGlobalInteraction {
   }
 
   onObjectBlur() {
-    menu.disable([
-      'GROUP',
-      'UNGROUP',
-      'DUPLICATE',
-      'DELETE',
-      'PATH',
-      'DECOMPOSE_PATH',
-      'PHOTO_EDIT',
-      'SVG_EDIT',
-    ]);
+    menu.disable(['GROUP', 'UNGROUP', 'DUPLICATE', 'DELETE', 'PATH', 'DECOMPOSE_PATH', 'PHOTO_EDIT', 'SVG_EDIT']);
   }
 
   detach() {

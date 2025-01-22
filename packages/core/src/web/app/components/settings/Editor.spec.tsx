@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import { OptionValues } from '@core/app/constants/enums';
@@ -8,75 +9,78 @@ import Editor from './Editor';
 jest.mock('@core/helpers/is-dev', () => () => true);
 
 const getFontOfPostscriptName = jest.fn();
+
 jest.mock('@core/app/actions/beambox/font-funcs', () => ({
-  requestAvailableFontFamilies: () => ['Arial', 'Courier', 'Apple LiSung'],
   fontNameMap: new Map(
     Object.entries({
+      'Apple LiSung': '蘋果儷細宋',
       Arial: 'Arial',
       Courier: 'Courier',
-      'Apple LiSung': '蘋果儷細宋',
     }),
   ),
+  getFontOfPostscriptName: (...args) => getFontOfPostscriptName(...args),
+  requestAvailableFontFamilies: () => ['Arial', 'Courier', 'Apple LiSung'],
   requestFontsOfTheFontFamily: (family) => {
     const fonts = {
+      'Apple LiSung': [
+        {
+          family: 'Apple LiSung',
+          postscriptName: 'LiSungLight',
+          style: 'Light',
+        },
+      ],
       Arial: [
         {
           family: 'Arial',
-          style: 'Regular',
           postscriptName: 'ArialMT',
+          style: 'Regular',
         },
         {
           family: 'Arial',
-          style: 'Bold',
           postscriptName: 'Arial-BoldMT',
+          style: 'Bold',
         },
         {
           family: 'Arial',
-          style: 'Bold Italic',
           postscriptName: 'Arial-BoldItalicMT',
+          style: 'Bold Italic',
         },
         {
           family: 'Arial',
-          style: 'Italic',
           postscriptName: 'Arial-ItalicMT',
+          style: 'Italic',
         },
       ],
       Courier: [
         {
           family: 'Courier',
-          style: 'Regular',
           postscriptName: 'Regular',
+          style: 'Regular',
         },
         {
           family: 'Courier',
-          style: 'Bold',
           postscriptName: 'Courier-Bold',
+          style: 'Bold',
         },
         {
           family: 'Courier',
-          style: 'Bold Oblique',
           postscriptName: 'Courier-BoldOblique',
+          style: 'Bold Oblique',
         },
         {
           family: 'Courier',
-          style: 'Oblique',
           postscriptName: 'Courier-Oblique',
-        },
-      ],
-      'Apple LiSung': [
-        {
-          family: 'Apple LiSung',
-          style: 'Light',
-          postscriptName: 'LiSungLight',
+          style: 'Oblique',
         },
       ],
     };
+
     return fonts[family];
   },
-  getFontOfPostscriptName: (...args) => getFontOfPostscriptName(...args),
 }));
 
 const map = new Map();
+
 map.set('default-font', {
   family: 'Arial',
   style: 'Regular',
@@ -88,49 +92,43 @@ jest.mock('@app/implementations/storage', () => ({
 
 jest.mock('@core/app/constants/workarea-constants', () => ({
   getWorkarea: () => ({
-    label: 'Beambox',
-    width: 400,
-    pxWidth: 4000,
     height: 375,
-    pxHeight: 3750,
+    label: 'Beambox',
     maxSpeed: 300,
-    minSpeed: 0.5,
     minPower: 10,
+    minSpeed: 0.5,
+    pxHeight: 3750,
+    pxWidth: 4000,
     vectorSpeedLimit: 20,
+    width: 400,
   }),
 }));
 
-jest.mock(
-  '@core/app/components/settings/SelectControl',
-  () =>
-    ({ id, label, url, onChange, options }: any) =>
-      (
-        <div>
-          mock-select-control id:{id}
-          label:{label}
-          url:{url}
-          options:{JSON.stringify(options)}
-          <input className="select-control" onChange={onChange} />
-        </div>
-      ),
-);
+jest.mock('@core/app/components/settings/SelectControl', () => ({ id, label, onChange, options, url }: any) => (
+  <div>
+    mock-select-control id:{id}
+    label:{label}
+    url:{url}
+    options:{JSON.stringify(options)}
+    <input className="select-control" onChange={onChange} />
+  </div>
+));
 
 jest.mock(
   '@core/app/widgets/Unit-Input-v2',
   () =>
-    ({ id, unit, min, max, defaultValue, getValue, forceUsePropsUnit, className }: any) =>
-      (
-        <div>
-          mock-unit-input id:{id}
-          unit:{unit}
-          min:{min}
-          max:{max}
-          defaultValue:{defaultValue}
-          forceUsePropsUnit:{forceUsePropsUnit ? 'true' : 'false'}
-          className:{JSON.stringify(className)}
-          <input className="unit-input" onChange={(e) => getValue(+e.target.value)} />
-        </div>
-      ),
+    ({ className, defaultValue, forceUsePropsUnit, getValue, id, max, min, unit }: any) => (
+      <div>
+        mock-unit-input id:{id}
+        unit:{unit}
+        min:{min}
+        max:{max}
+        defaultValue:{defaultValue}
+        forceUsePropsUnit:{forceUsePropsUnit ? 'true' : 'false'}
+        className:{JSON.stringify(className)}
+        <input className="unit-input" onChange={(e) => getValue(+e.target.value)} />
+      </div>
+    ),
 );
 
 jest.mock('@core/helpers/api/swiftray-client', () => ({
@@ -151,22 +149,26 @@ describe('settings/Editor', () => {
     const updateBeamboxPreferenceChange = jest.fn();
     const updateModel = jest.fn();
     const mockGetBeamboxPreferenceEditingValue = jest.fn();
+
     mockGetBeamboxPreferenceEditingValue.mockImplementation((key) => {
       if (key === 'guide_x0' || key === 'guide_y0') {
         return 0;
       }
+
       return false;
     });
+
     const { container } = render(
       <Editor
         defaultUnit="mm"
-        selectedModel="fbb1b"
         getBeamboxPreferenceEditingValue={mockGetBeamboxPreferenceEditingValue}
-        updateConfigChange={updateConfigChange}
+        selectedModel="fbb1b"
         updateBeamboxPreferenceChange={updateBeamboxPreferenceChange}
+        updateConfigChange={updateConfigChange}
         updateModel={updateModel}
       />,
     );
+
     expect(mockGetBeamboxPreferenceEditingValue).toBeCalledTimes(11);
     expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(1, 'guide_x0');
     expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(2, 'guide_y0');
@@ -174,16 +176,10 @@ describe('settings/Editor', () => {
     expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(4, 'image_downsampling');
     expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(5, 'anti-aliasing');
     expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(6, 'continuous_drawing');
-    expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(
-      7,
-      'simplify_clipper_path',
-    );
+    expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(7, 'simplify_clipper_path');
     expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(8, 'enable-low-speed');
     expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(9, 'auto-switch-tab');
-    expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(
-      10,
-      'enable-custom-backlash',
-    );
+    expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(10, 'enable-custom-backlash');
     expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(11, 'path-engine');
     expect(container).toMatchSnapshot();
 
@@ -202,8 +198,8 @@ describe('settings/Editor', () => {
 
     getFontOfPostscriptName.mockReturnValue({
       family: 'Courier',
-      style: 'Bold',
       postscriptName: 'Courier-Bold',
+      style: 'Bold',
     });
     fireEvent.change(SelectControls[2], { target: { value: 'Courier-Bold' } });
     expect(container).toMatchSnapshot();
@@ -232,11 +228,7 @@ describe('settings/Editor', () => {
 
     fireEvent.change(SelectControls[8], { target: { value: OptionValues.TRUE } });
     expect(updateBeamboxPreferenceChange).toHaveBeenCalledTimes(6);
-    expect(updateBeamboxPreferenceChange).toHaveBeenNthCalledWith(
-      6,
-      'simplify_clipper_path',
-      'TRUE',
-    );
+    expect(updateBeamboxPreferenceChange).toHaveBeenNthCalledWith(6, 'simplify_clipper_path', 'TRUE');
 
     fireEvent.change(SelectControls[9], { target: { value: OptionValues.TRUE } });
     expect(updateBeamboxPreferenceChange).toHaveBeenCalledTimes(7);
@@ -260,10 +252,6 @@ describe('settings/Editor', () => {
 
     fireEvent.change(SelectControls[12], { target: { value: OptionValues.TRUE } });
     expect(updateBeamboxPreferenceChange).toHaveBeenCalledTimes(12);
-    expect(updateBeamboxPreferenceChange).toHaveBeenNthCalledWith(
-      12,
-      'enable-custom-backlash',
-      'TRUE',
-    );
+    expect(updateBeamboxPreferenceChange).toHaveBeenNthCalledWith(12, 'enable-custom-backlash', 'TRUE');
   });
 });

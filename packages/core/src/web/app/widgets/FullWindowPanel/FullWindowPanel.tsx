@@ -1,68 +1,70 @@
-import classNames from 'classnames';
 import React, { createContext, useMemo } from 'react';
 
+import classNames from 'classnames';
+
+import layoutConstants from '@core/app/constants/layout-constants';
 import FloatingPanel from '@core/app/widgets/FloatingPanel';
 import isWeb from '@core/helpers/is-web';
-import layoutConstants from '@core/app/constants/layout-constants';
 import { useIsMobile } from '@core/helpers/system-helper';
 
 import styles from './FullWindowPanel.module.scss';
 
 interface Context {
-  isMobile: boolean;
   isDesktop: boolean;
+  isMobile: boolean;
   isWindows: boolean;
 }
 
 export const FullWindowPanelContext = createContext<Context>({
+  isDesktop: true,
   isMobile: false,
   isWindows: false,
-  isDesktop: true,
 });
 
 interface Props {
+  mobileTitle: React.JSX.Element | string;
   onClose: () => void;
-  mobileTitle: string | JSX.Element;
-  renderMobileFixedContent?: () => React.ReactNode;
-  renderMobileContents?: () => React.ReactNode;
   renderContents?: () => React.ReactNode;
+  renderMobileContents?: () => React.ReactNode;
+  renderMobileFixedContent?: () => React.ReactNode;
 }
 
 const FullWindowPanel = ({
-  onClose,
   mobileTitle,
-  renderMobileFixedContent,
-  renderMobileContents,
+  onClose,
   renderContents,
-}: Props): JSX.Element => {
+  renderMobileContents,
+  renderMobileFixedContent,
+}: Props): React.JSX.Element => {
   const isMobile = useIsMobile();
   const isWindows = useMemo(() => window.os === 'Windows', []);
   const web = useMemo(() => isWeb(), []);
 
-  if (isMobile)
+  if (isMobile) {
     return (
-      <FullWindowPanelContext.Provider value={{ isMobile, isWindows, isDesktop: !web }}>
+      <FullWindowPanelContext.Provider value={{ isDesktop: !web, isMobile, isWindows }}>
         <FloatingPanel
-          className={classNames(styles.container, {
-            [styles.windows]: isWindows,
-            [styles.desktop]: !web,
-          })}
           anchors={[0, window.innerHeight - layoutConstants.titlebarHeight]}
-          title={mobileTitle}
+          className={classNames(styles.container, {
+            [styles.desktop]: !web,
+            [styles.windows]: isWindows,
+          })}
           fixedContent={renderMobileFixedContent?.()}
           onClose={onClose}
+          title={mobileTitle}
         >
           {renderMobileContents?.()}
         </FloatingPanel>
       </FullWindowPanelContext.Provider>
     );
+  }
 
   return (
-    <FullWindowPanelContext.Provider value={{ isMobile, isWindows, isDesktop: !web }}>
+    <FullWindowPanelContext.Provider value={{ isDesktop: !web, isMobile, isWindows }}>
       <div
         className={classNames(styles.container, {
-          [styles.windows]: isWindows,
           [styles.desktop]: !web,
+          [styles.windows]: isWindows,
         })}
       >
         {renderContents?.()}

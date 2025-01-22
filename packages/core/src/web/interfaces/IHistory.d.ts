@@ -1,19 +1,19 @@
 export interface ICommand {
+  apply: (handler) => void;
+  doApply: () => void;
+  doUnapply: () => void;
   elem: SVGGraphicsElement;
+  elements: () => Element[];
+  getText: () => string;
+  newParent?: Element | Node;
+  newValues?: { [key: string]: string };
+  oldParent?: Element | Node;
+  oldValues?: { [key: string]: string };
+  onAfter: () => null | void;
+  onBefore: () => null | void;
   text: string;
   type: () => string;
-  getText: () => string;
-  elements: () => Element[];
-  doApply: () => void;
-  apply: (handler) => void;
-  doUnapply: () => void;
   unapply: (handler) => void;
-  newParent?: Node | Element;
-  oldParent?: Node | Element;
-  newValues?: { [key: string]: string };
-  oldValues?: { [key: string]: string };
-  onBefore: () => void | null;
-  onAfter: () => void | null;
 }
 
 export interface IBatchCommand extends ICommand {
@@ -22,20 +22,20 @@ export interface IBatchCommand extends ICommand {
 }
 
 export interface IHistoryHandler {
-  renderText: (elem: SVGTextElement, val: string, showGrips: boolean) => void;
   handleHistoryEvent: (eventType: string, cmd: ICommand) => void;
+  renderText: (elem: SVGTextElement, val: string, showGrips: boolean) => void;
 }
 
 export interface IUndoManager {
-  setHandler: (handler: IHistoryHandler) => void;
-  resetUndoStack: () => void;
-  getUndoStackSize: () => number;
-  getRedoStackSize: () => number;
-  getNextUndoCommandText: () => string;
-  getNextRedoCommandText: () => string;
-  undo: () => boolean;
-  redo: () => boolean;
   addCommandToHistory: (cmd: ICommand) => void;
   beginUndoableChange: (attrName: string, elems: Element[]) => void;
   finishUndoableChange: () => IBatchCommand;
+  getNextRedoCommandText: () => string;
+  getNextUndoCommandText: () => string;
+  getRedoStackSize: () => number;
+  getUndoStackSize: () => number;
+  redo: () => boolean;
+  resetUndoStack: () => void;
+  setHandler: (handler: IHistoryHandler) => void;
+  undo: () => boolean;
 }

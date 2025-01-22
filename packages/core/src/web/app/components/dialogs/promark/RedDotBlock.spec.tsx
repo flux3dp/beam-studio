@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import RedDotBlock from './RedDotBlock';
@@ -12,9 +13,8 @@ describe('test RedDotBlock', () => {
   });
 
   it('should render correctly', () => {
-    const { container } = render(
-      <RedDotBlock isInch={false} redDot={mockRedDot} setRedDot={mockSetRedDot} />
-    );
+    const { container } = render(<RedDotBlock isInch={false} redDot={mockRedDot} setRedDot={mockSetRedDot} />);
+
     expect(container).toMatchSnapshot();
   });
 
@@ -26,17 +26,18 @@ describe('test RedDotBlock', () => {
       { id: 'scale-y', key: 'scaleY' },
     ].forEach(({ id, key }) => {
       test(`edit ${key}`, () => {
-        const { getByTestId } = render(
-          <RedDotBlock isInch={false} redDot={mockRedDot} setRedDot={mockSetRedDot} />
-        );
+        const { getByTestId } = render(<RedDotBlock isInch={false} redDot={mockRedDot} setRedDot={mockSetRedDot} />);
         const input = getByTestId(id);
+
         fireEvent.change(input, {
           target: {
             value: '10',
           },
         });
         expect(mockSetRedDot).toBeCalledTimes(1);
+
         const [[dispatch]] = mockSetRedDot.mock.calls;
+
         expect(dispatch(mockRedDot)).toEqual({ ...mockRedDot, [key]: 10 });
       });
     });

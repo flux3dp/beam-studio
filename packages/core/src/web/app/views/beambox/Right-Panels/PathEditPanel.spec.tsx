@@ -1,10 +1,11 @@
-/* eslint-disable import/first */
 import React from 'react';
+
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
 import PathEditPanel from './PathEditPanel';
 
 const useIsMobile = jest.fn();
+
 jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => useIsMobile(),
 }));
@@ -15,12 +16,12 @@ jest.mock('@core/helpers/i18n', () => ({
       right_panel: {
         object_panel: {
           path_edit_panel: {
-            node_type: 'NODE TYPE',
-            sharp: 'Sharp',
-            round: 'Round',
             connect: 'Connect',
-            disconnect: 'Disconnect',
             delete: 'Delete',
+            disconnect: 'Disconnect',
+            node_type: 'NODE TYPE',
+            round: 'Round',
+            sharp: 'Sharp',
           },
         },
         tabs: {
@@ -37,53 +38,54 @@ const mockSetSharp = jest.fn();
 const mockSetRound = jest.fn();
 const mockDisconnectNode = jest.fn();
 const toSelectMode = jest.fn();
+
 jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) =>
     callback({
+      Canvas: {
+        pathActions: {
+          disconnectNode: (...args) => mockDisconnectNode(...args),
+          setRound: (...args) => mockSetRound(...args),
+          setSharp: (...args) => mockSetSharp(...args),
+          toSelectMode: (...args) => toSelectMode(...args),
+        },
+      },
       Edit: {
         path: {
           path: {
-            setSelectedNodeType: (...args) => setSelectedNodeType(...args),
-            selected_pts: [2],
             nodePoints: [
               {
                 index: 0,
-                linkType: 0,
-                isSharp: () => true,
                 isRound: () => false,
-                prev: 'mock-p2',
+                isSharp: () => true,
+                linkType: 0,
                 next: 'mock-p1',
+                prev: 'mock-p2',
               },
               {
                 index: 1,
-                linkType: 0,
-                isSharp: () => true,
                 isRound: () => false,
-                prev: 'mock-p0',
+                isSharp: () => true,
+                linkType: 0,
                 next: 'mock-p2',
+                prev: 'mock-p0',
               },
               {
                 index: 2,
-                linkType: 0,
-                isSharp: () => true,
                 isRound: () => false,
-                prev: 'mock-p1',
+                isSharp: () => true,
+                linkType: 0,
                 next: 'mock-p0',
+                prev: 'mock-p1',
               },
             ],
+            selected_pts: [2],
+            setSelectedNodeType: (...args) => setSelectedNodeType(...args),
           },
         },
       },
       Editor: {
         deleteSelected: (...args) => deleteSelected(...args),
-      },
-      Canvas: {
-        pathActions: {
-          setSharp: (...args) => mockSetSharp(...args),
-          setRound: (...args) => mockSetRound(...args),
-          disconnectNode: (...args) => mockDisconnectNode(...args),
-          toSelectMode: (...args) => toSelectMode(...args),
-        },
       },
     }),
 }));
@@ -93,6 +95,7 @@ describe('test PathEditPanel', () => {
 
   test('should render correctly', () => {
     const { container, getByText, getByTitle } = render(<PathEditPanel />);
+
     expect(container).toMatchSnapshot();
 
     expect(setSelectedNodeType).not.toBeCalled();
@@ -115,8 +118,10 @@ describe('test PathEditPanel', () => {
 
   test('should render correctly in mobile', async () => {
     useIsMobile.mockReturnValue(true);
+
     const { container, getByText, getByTitle } = render(<PathEditPanel />);
     const panelEl = container.querySelector('.adm-floating-panel') as HTMLElement;
+
     await waitFor(() => expect(panelEl.style.transform).toBe('translateY(calc(100% + (-280px)))'));
     await waitFor(() => expect(panelEl.getAttribute('data-animating')).toBe('false'));
     expect(container).toMatchSnapshot();

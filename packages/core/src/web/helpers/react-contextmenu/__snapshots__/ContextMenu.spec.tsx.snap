@@ -5,7 +5,7 @@ exports[`ContextMenu tests does not shows when event with incorrect "id" is trig
   <nav
     class="react-contextmenu"
     role="menu"
-    style="position: fixed; opacity: 0; pointer-events: none;"
+    style="opacity: 0; pointer-events: none; position: fixed;"
     tabindex="-1"
   />
 </div>
@@ -16,7 +16,7 @@ exports[`ContextMenu tests does not shows when event with incorrect "id" is trig
   <nav
     class="react-contextmenu"
     role="menu"
-    style="position: fixed; opacity: 0; pointer-events: none;"
+    style="opacity: 0; pointer-events: none; position: fixed;"
     tabindex="-1"
   />
 </div>
@@ -27,7 +27,7 @@ exports[`ContextMenu tests shows when event with correct "id" is triggered 1`] =
   <nav
     class="react-contextmenu"
     role="menu"
-    style="position: fixed; opacity: 0; pointer-events: none;"
+    style="opacity: 0; pointer-events: none; position: fixed;"
     tabindex="-1"
   />
 </div>
@@ -38,7 +38,7 @@ exports[`ContextMenu tests shows when event with correct "id" is triggered 2`] =
   <nav
     class="react-contextmenu react-contextmenu--visible"
     role="menu"
-    style="position: fixed; opacity: 0; pointer-events: none;"
+    style="opacity: 0; pointer-events: none; position: fixed;"
     tabindex="-1"
   />
 </div>

@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
 
 import ColorPanel from '@core/app/views/beambox/Right-Panels/ColorPanel';
+import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import ImageOptions from '@core/app/views/beambox/Right-Panels/Options-Blocks/ImageOptions';
 import InFillBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/InFillBlock';
 import MultiColorOptions from '@core/app/views/beambox/Right-Panels/Options-Blocks/MultiColorOptions';
-import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import PolygonOptions from '@core/app/views/beambox/Right-Panels/Options-Blocks/PolygonOptions';
 import RectOptions from '@core/app/views/beambox/Right-Panels/Options-Blocks/RectOptions';
 import TextOptions from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions';
@@ -15,107 +15,84 @@ import styles from './OptionsPanel.module.scss';
 
 interface Props {
   elem: Element;
-  rx: number;
   polygonSides?: number;
-  updateObjectPanel: () => void;
+  rx: number;
   updateDimensionValues: (val: { [key: string]: any }) => void;
+  updateObjectPanel: () => void;
 }
 
-function OptionsPanel({
-  elem,
-  rx,
-  polygonSides,
-  updateObjectPanel,
-  updateDimensionValues,
-}: Props): JSX.Element {
+function OptionsPanel({ elem, polygonSides, rx, updateDimensionValues, updateObjectPanel }: Props): React.JSX.Element {
   const isMobile = useIsMobile();
-  let contents: JSX.Element[];
+  let contents: React.JSX.Element[];
   const showColorPanel = useMemo(() => {
-    if (!elem) return false;
-    if (
-      !['rect', 'ellipse', 'path', 'text', 'polygon', 'g', 'use'].includes(
-        elem?.tagName.toLowerCase(),
-      )
-    )
+    if (!elem) {
       return false;
+    }
+
+    if (!['ellipse', 'g', 'path', 'polygon', 'rect', 'text', 'use'].includes(elem?.tagName.toLowerCase())) {
+      return false;
+    }
+
     return getObjectLayer(elem as SVGElement)?.elem?.getAttribute('data-fullcolor') === '1';
   }, [elem]);
+
   if (elem) {
     const tagName = elem.tagName.toLowerCase();
+
     if (tagName === 'rect') {
       contents = [
-        <RectOptions
-          key="rect"
-          elem={elem}
-          rx={rx}
-          updateDimensionValues={updateDimensionValues}
-        />,
-        showColorPanel ? (
-          <ColorPanel key="color" elem={elem} />
-        ) : (
-          <InFillBlock key="fill" elem={elem} />
-        ),
+        <RectOptions elem={elem} key="rect" rx={rx} updateDimensionValues={updateDimensionValues} />,
+        showColorPanel ? <ColorPanel elem={elem} key="color" /> : <InFillBlock elem={elem} key="fill" />,
       ];
     } else if (tagName === 'polygon') {
       contents = [
-        <PolygonOptions key="polygon" elem={elem} polygonSides={polygonSides} />,
-        showColorPanel ? (
-          <ColorPanel key="color" elem={elem} />
-        ) : (
-          <InFillBlock key="fill" elem={elem} />
-        ),
+        <PolygonOptions elem={elem} key="polygon" polygonSides={polygonSides} />,
+        showColorPanel ? <ColorPanel elem={elem} key="color" /> : <InFillBlock elem={elem} key="fill" />,
       ];
     } else if (tagName === 'text') {
       contents = [
         <TextOptions
-          key="text"
           elem={elem}
-          textElement={elem as SVGTextElement}
-          updateObjectPanel={updateObjectPanel}
-          updateDimensionValues={updateDimensionValues}
+          key="text"
           showColorPanel={showColorPanel}
+          textElement={elem as SVGTextElement}
+          updateDimensionValues={updateDimensionValues}
+          updateObjectPanel={updateObjectPanel}
         />,
-        // eslint-disable-next-line no-nested-ternary
+
         showColorPanel ? (
-          <ColorPanel key="color" elem={elem} />
+          <ColorPanel elem={elem} key="color" />
         ) : isMobile ? (
-          <InFillBlock key="fill" elem={elem} />
+          <InFillBlock elem={elem} key="fill" />
         ) : null,
       ];
     } else if (tagName === 'image' || tagName === 'img') {
-      if (elem.getAttribute('data-fullcolor') === '1') contents = [];
-      else
-        contents = [<ImageOptions key="image" elem={elem} updateObjectPanel={updateObjectPanel} />];
+      if (elem.getAttribute('data-fullcolor') === '1') {
+        contents = [];
+      } else {
+        contents = [<ImageOptions elem={elem} key="image" updateObjectPanel={updateObjectPanel} />];
+      }
     } else if (tagName === 'g' && elem.getAttribute('data-textpath-g')) {
       const textElem = elem.querySelector('text');
+
       contents = [
         <TextOptions
-          key="textpath"
-          isTextPath
           elem={elem}
+          isTextPath
+          key="textpath"
           textElement={textElem}
-          updateObjectPanel={updateObjectPanel}
           updateDimensionValues={updateDimensionValues}
+          updateObjectPanel={updateObjectPanel}
         />,
       ];
     } else if (tagName === 'g') {
       contents = [
-        showColorPanel ? (
-          <MultiColorOptions key="multi-color" elem={elem} />
-        ) : (
-          <InFillBlock key="infill" elem={elem} />
-        ),
+        showColorPanel ? <MultiColorOptions elem={elem} key="multi-color" /> : <InFillBlock elem={elem} key="infill" />,
       ];
     } else if (tagName === 'use') {
-      contents = [showColorPanel ? <MultiColorOptions key="multi-color" elem={elem} /> : null];
+      contents = [showColorPanel ? <MultiColorOptions elem={elem} key="multi-color" /> : null];
     } else {
-      contents = [
-        showColorPanel ? (
-          <ColorPanel key="color" elem={elem} />
-        ) : (
-          <InFillBlock key="infill" elem={elem} />
-        ),
-      ];
+      contents = [showColorPanel ? <ColorPanel elem={elem} key="color" /> : <InFillBlock elem={elem} key="infill" />];
     }
   }
 

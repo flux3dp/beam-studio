@@ -1,15 +1,16 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { forwardRef } from 'react';
+
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
 import LayerModule from '@core/app/constants/layer-module/layer-modules';
 import presetHelper from '@core/helpers/presets/preset-helper';
-import { Preset } from '@core/interfaces/ILayerConfig';
+import type { Preset } from '@core/interfaces/ILayerConfig';
 
 import PresetsManagementPanel from './PresetsManagementPanel';
 
 const mockPopUp = jest.fn();
 const mockPopUpError = jest.fn();
+
 jest.mock('@core/app/actions/alert-caller', () => ({
   popUp: (...args) => mockPopUp(...args),
   popUpError: (...args) => mockPopUpError(...args),
@@ -17,42 +18,45 @@ jest.mock('@core/app/actions/alert-caller', () => ({
 
 const mockShowRadioSelectDialog = jest.fn();
 const mockPromptDialog = jest.fn();
+
 jest.mock('@core/app/actions/dialog-caller', () => ({
-  showRadioSelectDialog: (...args) => mockShowRadioSelectDialog(...args),
   promptDialog: (...args) => mockPromptDialog(...args),
+  showRadioSelectDialog: (...args) => mockShowRadioSelectDialog(...args),
 }));
 
 jest.mock('@core/helpers/useI18n', () => () => ({
   beambox: {
+    popup: {
+      select_import_module: 'select_import_module',
+    },
     right_panel: {
       laser_panel: {
         existing_name: 'existing_name',
         preset_management: {
-          title: 'title',
-          sure_to_reset: 'sure_to_reset',
-          laser: 'laser',
-          print: 'print',
-          new_preset_name: 'new_preset_name',
-          show_all: 'show_all',
           add_new: 'add_new',
-          import: 'import',
-          export: 'export',
           delete: 'delete',
+          export: 'export',
+          import: 'import',
+          laser: 'laser',
+          new_preset_name: 'new_preset_name',
+          print: 'print',
+          show_all: 'show_all',
+          sure_to_reset: 'sure_to_reset',
+          title: 'title',
         },
       },
-    },
-    popup: {
-      select_import_module: 'select_import_module',
     },
   },
 }));
 
 const mockUseWorkarea = jest.fn();
+
 jest.mock('@core/helpers/hooks/useWorkarea', () => () => mockUseWorkarea());
 
 const mockAddDialogComponent = jest.fn();
 const mockIsIdExist = jest.fn();
 const mockPopDialogById = jest.fn();
+
 jest.mock('@core/app/actions/dialog-controller', () => ({
   addDialogComponent: (...args) => mockAddDialogComponent(...args),
   isIdExist: (...args) => mockIsIdExist(...args),
@@ -61,106 +65,95 @@ jest.mock('@core/app/actions/dialog-controller', () => ({
 
 const mockPostPresetChange = jest.fn();
 const mockGetDefaultConfig = jest.fn();
+
 jest.mock('@core/helpers/layer/layer-config-helper', () => ({
-  postPresetChange: (...args) => mockPostPresetChange(...args),
   getDefaultConfig: () => mockGetDefaultConfig(),
+  postPresetChange: (...args) => mockPostPresetChange(...args),
 }));
 
-jest.mock('./Footer', () => ({ handleSave, handleReset, onClose }: any) => (
+jest.mock('./Footer', () => ({ handleReset, handleSave, onClose }: any) => (
   <div>
     MockFooter
-    <button id="footer-save" type="button" onClick={handleSave}>
+    <button id="footer-save" onClick={handleSave} type="button">
       handleSave
     </button>
-    <button id="footer-reset" type="button" onClick={handleReset}>
+    <button id="footer-reset" onClick={handleReset} type="button">
       handleReset
     </button>
-    <button id="footer-close" type="button" onClick={onClose}>
+    <button id="footer-close" onClick={onClose} type="button">
       onClose
     </button>
   </div>
 ));
 
-jest.mock(
-  './LaserInputs',
-  () =>
-    ({ handleChange, preset, isInch, lengthUnit, maxSpeed, minSpeed }: any) =>
-      (
-        <div>
-          MockLaserInputs
-          <p>preset: {JSON.stringify(preset)}</p>
-          <p>maxSpeed: {maxSpeed}</p>
-          <p>minSpeed: {minSpeed}</p>
-          {isInch && <p>isInch</p>}
-          <p>lengthUnit: {lengthUnit}</p>
-          <input
-            data-testid="power"
-            onChange={(e) => handleChange('power', parseInt(e.target.value, 10))}
-            value={preset.power ?? 15}
-          />
-          <input
-            data-testid="speed"
-            onChange={(e) => handleChange('speed', parseInt(e.target.value, 10))}
-            value={preset.speed ?? 30}
-          />
-        </div>
-      ),
-);
+jest.mock('./LaserInputs', () => ({ handleChange, isInch, lengthUnit, maxSpeed, minSpeed, preset }: any) => (
+  <div>
+    MockLaserInputs
+    <p>preset: {JSON.stringify(preset)}</p>
+    <p>maxSpeed: {maxSpeed}</p>
+    <p>minSpeed: {minSpeed}</p>
+    {isInch && <p>isInch</p>}
+    <p>lengthUnit: {lengthUnit}</p>
+    <input
+      data-testid="power"
+      onChange={(e) => handleChange('power', Number.parseInt(e.target.value, 10))}
+      value={preset.power ?? 15}
+    />
+    <input
+      data-testid="speed"
+      onChange={(e) => handleChange('speed', Number.parseInt(e.target.value, 10))}
+      value={preset.speed ?? 30}
+    />
+  </div>
+));
 
-jest.mock(
-  './PrintingInputs',
-  () =>
-    ({ handleChange, preset, isInch, lengthUnit, maxSpeed, minSpeed }: any) =>
-      (
-        <div>
-          MocPrintingInputs
-          <p>preset: {JSON.stringify(preset)}</p>
-          <p>maxSpeed: {maxSpeed}</p>
-          <p>minSpeed: {minSpeed}</p>
-          {isInch && <p>isInch</p>}
-          <p>lengthUnit: {lengthUnit}</p>
-          <input
-            data-testid="ink"
-            onChange={(e) => handleChange('ink', parseInt(e.target.value, 10))}
-            value={preset.ink ?? 3}
-          />
-          <input
-            data-testid="multipass"
-            onChange={(e) => handleChange('multipass', parseInt(e.target.value, 10))}
-            value={preset.multipass ?? 3}
-          />
-        </div>
-      ),
-);
+jest.mock('./PrintingInputs', () => ({ handleChange, isInch, lengthUnit, maxSpeed, minSpeed, preset }: any) => (
+  <div>
+    MocPrintingInputs
+    <p>preset: {JSON.stringify(preset)}</p>
+    <p>maxSpeed: {maxSpeed}</p>
+    <p>minSpeed: {minSpeed}</p>
+    {isInch && <p>isInch</p>}
+    <p>lengthUnit: {lengthUnit}</p>
+    <input
+      data-testid="ink"
+      onChange={(e) => handleChange('ink', Number.parseInt(e.target.value, 10))}
+      value={preset.ink ?? 3}
+    />
+    <input
+      data-testid="multipass"
+      onChange={(e) => handleChange('multipass', Number.parseInt(e.target.value, 10))}
+      value={preset.multipass ?? 3}
+    />
+  </div>
+));
 
 jest.mock('./PresetList', () =>
-  forwardRef<HTMLDivElement, any>(
-    ({ displayList, selected, setSelectedPreset, toggleHidePreset }: any, ref) => (
-      <div ref={ref}>
-        MockPresetList
-        {displayList.map((preset: Preset) => (
-          <div
-            id={preset.key || preset.name}
-            data-selected={preset === selected}
-            onClick={() => setSelectedPreset(preset)}
-            key={preset.key || preset.name}
+  forwardRef<HTMLDivElement, any>(({ displayList, selected, setSelectedPreset, toggleHidePreset }: any, ref) => (
+    <div ref={ref}>
+      MockPresetList
+      {displayList.map((preset: Preset) => (
+        <div
+          data-selected={preset === selected}
+          id={preset.key || preset.name}
+          key={preset.key || preset.name}
+          onClick={() => setSelectedPreset(preset)}
+        >
+          {preset.name}
+          <button
+            id="hide"
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleHidePreset(preset);
+            }}
+            type="button"
           >
-            {preset.name}
-            <button
-              id="hide"
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                toggleHidePreset(preset);
-              }}
-            >
-              hide
-            </button>
-          </div>
-        ))}
-      </div>
-    ),
-  ),
+            hide
+          </button>
+        </div>
+      ))}
+    </div>
+  )),
 );
 
 const mockOnClose = jest.fn();
@@ -172,54 +165,64 @@ describe('test PresetsManagementPanel', () => {
 
   it('should render correctly', () => {
     mockUseWorkarea.mockReturnValue('ado1');
+
     const { baseElement } = render(
       <PresetsManagementPanel currentModule={LayerModule.LASER_20W_DIODE} onClose={mockOnClose} />,
     );
+
     expect(baseElement).toMatchSnapshot();
   });
 
   test('change value', () => {
     mockUseWorkarea.mockReturnValue('ado1');
     jest.spyOn(presetHelper, 'getAllPresets').mockReturnValue([
-      { name: 'name1', module: LayerModule.LASER_20W_DIODE },
-      { key: 'key2', name: 'name2', module: LayerModule.LASER_20W_DIODE, isDefault: true },
+      { module: LayerModule.LASER_20W_DIODE, name: 'name1' },
+      { isDefault: true, key: 'key2', module: LayerModule.LASER_20W_DIODE, name: 'name2' },
     ]);
+
     const { getByTestId } = render(
       <PresetsManagementPanel currentModule={LayerModule.LASER_20W_DIODE} onClose={mockOnClose} />,
     );
 
     const powerInput = getByTestId('power') as HTMLInputElement;
+
     fireEvent.change(powerInput, { target: { value: '10' } });
     expect(powerInput.value).toBe('10');
 
     const speedInput = getByTestId('speed') as HTMLInputElement;
+
     fireEvent.change(speedInput, { target: { value: '20' } });
     expect(speedInput.value).toBe('20');
   });
 
   it('should render correctly with print module', () => {
     mockUseWorkarea.mockReturnValue('ado1');
+
     const { baseElement } = render(
       <PresetsManagementPanel currentModule={LayerModule.PRINTER} onClose={mockOnClose} />,
     );
+
     expect(baseElement).toMatchSnapshot();
   });
 
   test('import', async () => {
     const mockImportPresets = jest.spyOn(presetHelper, 'importPresets');
     const mockGetAllPresets = jest.spyOn(presetHelper, 'getAllPresets').mockReturnValue([
-      { key: 'key1', name: 'name1', module: LayerModule.LASER_20W_DIODE },
-      { key: 'key2', name: 'name2', module: LayerModule.LASER_20W_DIODE },
+      { key: 'key1', module: LayerModule.LASER_20W_DIODE, name: 'name1' },
+      { key: 'key2', module: LayerModule.LASER_20W_DIODE, name: 'name2' },
     ]);
+
     mockUseWorkarea.mockReturnValue('ado1');
+
     const { baseElement } = render(
       <PresetsManagementPanel currentModule={LayerModule.LASER_20W_DIODE} onClose={mockOnClose} />,
     );
+
     mockImportPresets.mockResolvedValue(true);
     mockGetAllPresets.mockReturnValue([
-      { key: 'key1', name: 'name1', module: LayerModule.LASER_20W_DIODE },
-      { key: 'key2', name: 'name2', module: LayerModule.LASER_20W_DIODE },
-      { key: 'key3', name: 'name3', module: LayerModule.LASER_20W_DIODE },
+      { key: 'key1', module: LayerModule.LASER_20W_DIODE, name: 'name1' },
+      { key: 'key2', module: LayerModule.LASER_20W_DIODE, name: 'name2' },
+      { key: 'key3', module: LayerModule.LASER_20W_DIODE, name: 'name3' },
     ]);
     fireEvent.click(baseElement.querySelector('button[title="import"]'));
     expect(mockImportPresets).toBeCalledTimes(1);
@@ -230,57 +233,69 @@ describe('test PresetsManagementPanel', () => {
 
   test('export', () => {
     jest.spyOn(presetHelper, 'getAllPresets').mockReturnValue([
-      { key: 'key1', name: 'name1', module: LayerModule.LASER_20W_DIODE },
-      { key: 'key2', name: 'name2', module: LayerModule.LASER_20W_DIODE },
+      { key: 'key1', module: LayerModule.LASER_20W_DIODE, name: 'name1' },
+      { key: 'key2', module: LayerModule.LASER_20W_DIODE, name: 'name2' },
     ]);
+
     const mockExportPresets = jest.spyOn(presetHelper, 'exportPresets');
+
     mockUseWorkarea.mockReturnValue('ado1');
+
     const { baseElement, getByTestId } = render(
       <PresetsManagementPanel currentModule={LayerModule.LASER_20W_DIODE} onClose={mockOnClose} />,
     );
+
     mockExportPresets.mockReturnValue(null);
+
     const powerInput = getByTestId('power') as HTMLInputElement;
+
     fireEvent.change(powerInput, { target: { value: '10' } });
     expect(powerInput.value).toBe('10');
     fireEvent.click(baseElement.querySelector('button[title="export"]'));
     expect(mockExportPresets).toBeCalledTimes(1);
     expect(mockExportPresets).toHaveBeenLastCalledWith([
-      { key: 'key1', name: 'name1', module: LayerModule.LASER_20W_DIODE, power: 10 },
-      { key: 'key2', name: 'name2', module: LayerModule.LASER_20W_DIODE },
+      { key: 'key1', module: LayerModule.LASER_20W_DIODE, name: 'name1', power: 10 },
+      { key: 'key2', module: LayerModule.LASER_20W_DIODE, name: 'name2' },
     ]);
   });
 
   test('delete', async () => {
     jest.spyOn(presetHelper, 'getAllPresets').mockReturnValue([
-      { key: 'key1', name: 'name1', module: LayerModule.LASER_20W_DIODE },
-      { key: 'key2', name: 'name2', module: LayerModule.LASER_20W_DIODE },
+      { key: 'key1', module: LayerModule.LASER_20W_DIODE, name: 'name1' },
+      { key: 'key2', module: LayerModule.LASER_20W_DIODE, name: 'name2' },
     ]);
     mockUseWorkarea.mockReturnValue('ado1');
+
     const { baseElement, getByText } = render(
       <PresetsManagementPanel currentModule={LayerModule.LASER_20W_DIODE} onClose={mockOnClose} />,
     );
+
     fireEvent.click(getByText('delete'));
     expect(baseElement.querySelector('#key1')).toBeFalsy();
   });
 
   test('save', () => {
     jest.spyOn(presetHelper, 'getAllPresets').mockReturnValue([
-      { key: 'key1', name: 'name1', module: LayerModule.LASER_20W_DIODE },
-      { key: 'key2', name: 'name2', module: LayerModule.LASER_20W_DIODE },
+      { key: 'key1', module: LayerModule.LASER_20W_DIODE, name: 'name1' },
+      { key: 'key2', module: LayerModule.LASER_20W_DIODE, name: 'name2' },
     ]);
+
     const mockSavePresetList = jest.spyOn(presetHelper, 'savePresetList');
+
     mockUseWorkarea.mockReturnValue('ado1');
+
     const { baseElement, getByTestId } = render(
       <PresetsManagementPanel currentModule={LayerModule.LASER_20W_DIODE} onClose={mockOnClose} />,
     );
     const powerInput = getByTestId('power') as HTMLInputElement;
+
     fireEvent.change(powerInput, { target: { value: '10' } });
     expect(powerInput.value).toBe('10');
     fireEvent.click(baseElement.querySelector('#footer-save'));
     expect(mockSavePresetList).toBeCalledTimes(1);
     expect(mockSavePresetList).toHaveBeenLastCalledWith([
-      { key: 'key1', name: 'name1', module: LayerModule.LASER_20W_DIODE, power: 10 },
-      { key: 'key2', name: 'name2', module: LayerModule.LASER_20W_DIODE },
+      { key: 'key1', module: LayerModule.LASER_20W_DIODE, name: 'name1', power: 10 },
+      { key: 'key2', module: LayerModule.LASER_20W_DIODE, name: 'name2' },
     ]);
     expect(mockPostPresetChange).toBeCalledTimes(1);
     expect(mockOnClose).toBeCalledTimes(1);
@@ -288,22 +303,26 @@ describe('test PresetsManagementPanel', () => {
 
   test('reset', () => {
     jest.spyOn(presetHelper, 'getAllPresets').mockReturnValue([
-      { key: 'key1', name: 'name1', module: LayerModule.LASER_20W_DIODE },
-      { key: 'key2', name: 'name2', module: LayerModule.LASER_20W_DIODE },
+      { key: 'key1', module: LayerModule.LASER_20W_DIODE, name: 'name1' },
+      { key: 'key2', module: LayerModule.LASER_20W_DIODE, name: 'name2' },
     ]);
+
     const mockResetPresetList = jest.spyOn(presetHelper, 'resetPresetList');
+
     mockUseWorkarea.mockReturnValue('ado1');
     mockPopUp.mockImplementation(({ onConfirm }) => onConfirm());
+
     const { baseElement } = render(
       <PresetsManagementPanel currentModule={LayerModule.LASER_20W_DIODE} onClose={mockOnClose} />,
     );
+
     fireEvent.click(baseElement.querySelector('#footer-reset'));
     expect(mockPopUp).toBeCalledTimes(1);
     expect(mockPopUp).toHaveBeenLastCalledWith({
-      type: 'WARNING',
       buttonType: 'CONFIRM_CANCEL',
       message: 'sure_to_reset',
       onConfirm: expect.any(Function),
+      type: 'WARNING',
     });
     expect(mockResetPresetList).toBeCalledTimes(1);
     expect(mockPostPresetChange).toBeCalledTimes(1);
@@ -312,9 +331,11 @@ describe('test PresetsManagementPanel', () => {
 
   test('close', () => {
     mockUseWorkarea.mockReturnValue('ado1');
+
     const { baseElement } = render(
       <PresetsManagementPanel currentModule={LayerModule.LASER_20W_DIODE} onClose={mockOnClose} />,
     );
+
     fireEvent.click(baseElement.querySelector('#footer-close'));
     expect(mockPostPresetChange).not.toBeCalled();
     expect(mockOnClose).toBeCalledTimes(1);
@@ -322,13 +343,15 @@ describe('test PresetsManagementPanel', () => {
 
   test('add preset', async () => {
     jest.spyOn(presetHelper, 'getAllPresets').mockReturnValue([
-      { key: 'key1', name: 'name1', module: LayerModule.LASER_20W_DIODE },
-      { key: 'key2', name: 'name2', module: LayerModule.LASER_20W_DIODE },
+      { key: 'key1', module: LayerModule.LASER_20W_DIODE, name: 'name1' },
+      { key: 'key2', module: LayerModule.LASER_20W_DIODE, name: 'name2' },
     ]);
     mockUseWorkarea.mockReturnValue('ado1');
+
     const { baseElement, getByText } = render(
       <PresetsManagementPanel currentModule={LayerModule.LASER_20W_DIODE} onClose={mockOnClose} />,
     );
+
     mockShowRadioSelectDialog.mockImplementation(({ options }) => options[0].value);
     mockPromptDialog.mockImplementation(({ onYes }) => onYes('new_preset_name'));
     fireEvent.click(getByText('add_new'));

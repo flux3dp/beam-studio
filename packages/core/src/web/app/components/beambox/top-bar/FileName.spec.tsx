@@ -1,26 +1,28 @@
-/* eslint-disable import/first */
 import React from 'react';
+
 import { render } from '@testing-library/react';
 
 import FileName from './FileName';
 
 const mockGetName = jest.fn();
 const mockGetIsCloudFile = jest.fn();
+
 jest.mock('@core/app/svgedit/currentFileManager', () => ({
   __esModule: true,
   default: {
+    getName: () => mockGetName(),
     get isCloudFile() {
       return mockGetIsCloudFile();
     },
-    getName: () => mockGetName(),
   },
 }));
 
 const mockOnTitleChange = jest.fn();
 const mockOffTitleChange = jest.fn();
+
 jest.mock('@core/app/views/beambox/TopBar/contexts/TopBarController', () => ({
-  onTitleChange: (...args) => mockOnTitleChange(...args),
   offTitleChange: (...args) => mockOffTitleChange(...args),
+  onTitleChange: (...args) => mockOnTitleChange(...args),
 }));
 
 describe('test FileName', () => {
@@ -31,7 +33,9 @@ describe('test FileName', () => {
   it('should render correctly', () => {
     mockGetIsCloudFile.mockReturnValue(false);
     mockGetName.mockReturnValue('abc');
+
     const { container, rerender } = render(<FileName hasUnsavedChange />);
+
     expect(container).toMatchSnapshot();
 
     mockGetName.mockReturnValue(null);
@@ -46,7 +50,9 @@ describe('test FileName', () => {
   it('should render correctly with cloud file', () => {
     mockGetIsCloudFile.mockReturnValue(true);
     mockGetName.mockReturnValue('abc');
+
     const { container, rerender } = render(<FileName hasUnsavedChange />);
+
     expect(container).toMatchSnapshot();
 
     mockGetName.mockReturnValue(null);

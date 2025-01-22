@@ -1,6 +1,7 @@
-import classNames from 'classnames';
 import React, { memo, useCallback, useState } from 'react';
+
 import { SettingFilled, SettingOutlined } from '@ant-design/icons';
+import classNames from 'classnames';
 
 import FillSettingModal from '@core/app/views/beambox/Right-Panels/ConfigPanel/FillSettingModal';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
@@ -8,11 +9,7 @@ import useI18n from '@core/helpers/useI18n';
 
 import styles from './FillBlock.module.scss';
 
-function FillBlock({
-  type = 'default',
-}: {
-  type?: 'default' | 'panel-item' | 'modal';
-}): JSX.Element {
+function FillBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.JSX.Element {
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
   const [showModal, setShowModal] = useState(false);
@@ -23,8 +20,8 @@ function FillBlock({
     <>
       {type === 'panel-item' ? (
         <ObjectPanelItem.Item
-          id="fill-setting"
           content={<SettingFilled className={styles['panel-icon']} />}
+          id="fill-setting"
           label={t.fill_setting}
           onClick={openModal}
         />
@@ -32,7 +29,7 @@ function FillBlock({
         <div className={classNames(styles.panel, styles[type])}>
           <span className={styles.title}>
             {t.fill_setting}
-            <span className={styles.icon} title={t.fill_setting} onClick={openModal}>
+            <span className={styles.icon} onClick={openModal} title={t.fill_setting}>
               <SettingOutlined className={styles.icon} />
             </span>
           </span>

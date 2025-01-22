@@ -1,16 +1,15 @@
-/* eslint-disable react/no-array-index-key */
-/* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
+
 import classNames from 'classnames';
 
-import { IButton } from '@core/interfaces/IButton';
+import type { IButton } from '@core/interfaces/IButton';
 
 interface Props {
-  className?: string;
   buttons: IButton[];
+  className?: string;
 }
 
-function ButtonGroup({ buttons = [], className = '' }: Props): JSX.Element {
+function ButtonGroup({ buttons = [], className = '' }: Props): React.JSX.Element {
   if (buttons.length <= 0) {
     return <span />;
   }
@@ -19,10 +18,13 @@ function ButtonGroup({ buttons = [], className = '' }: Props): JSX.Element {
     const type = opt.type || 'button';
 
     const attrs = {};
+
     if (opt.dataAttrs) {
       const keys = Object.keys(opt.dataAttrs);
+
       for (let j = 0; j < keys.length; j += 1) {
         const key = keys[i];
+
         if (!attrs[`data-${key}`]) {
           attrs[`data-${key}`] = opt.dataAttrs[key];
         }
@@ -40,36 +42,31 @@ function ButtonGroup({ buttons = [], className = '' }: Props): JSX.Element {
 
     if (type === 'link') {
       return (
-        <a className={btnClassName} key={i} href={opt.href} {...attrs} onClick={opt.onClick}>
+        <a className={btnClassName} href={opt.href} key={i} {...attrs} onClick={opt.onClick}>
           {opt.label}
         </a>
       );
     }
+
     if (type === 'icon') {
       return (
-        <button
-          key={i}
-          title={opt.title}
-          className={btnClassName}
-          type="button"
-          onClick={opt.onClick}
-          {...attrs}
-        >
+        <button className={btnClassName} key={i} onClick={opt.onClick} title={opt.title} type="button" {...attrs}>
           {opt.label}
         </button>
       );
     }
+
     return (
       <button
-        key={i}
-        title={opt.title}
         className={btnClassName}
-        type="button"
+        dangerouslySetInnerHTML={{ __html: opt.label }}
+        key={i}
         onClick={opt.onClick}
         onMouseDown={opt.onMouseDown}
-        onMouseUp={opt.onMouseUp}
         onMouseLeave={opt.onMouseLeave}
-        dangerouslySetInnerHTML={{ __html: opt.label }}
+        onMouseUp={opt.onMouseUp}
+        title={opt.title}
+        type="button"
         {...attrs}
       />
     );
@@ -77,6 +74,7 @@ function ButtonGroup({ buttons = [], className = '' }: Props): JSX.Element {
 
   const hasClassName = typeof className === 'string' && className !== '';
   const groupClassName = classNames('button-group', hasClassName ? className : 'btn-h-group');
+
   return <div className={groupClassName}>{buttonsElems}</div>;
 }
 

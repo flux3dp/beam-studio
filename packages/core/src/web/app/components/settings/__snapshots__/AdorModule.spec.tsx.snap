@@ -70,7 +70,7 @@ exports[`test AdorModule should render correctly 1`] = `
     </div>
     <span
       class="font2"
-      style="margin-right: 10px; line-height: 32px;"
+      style="line-height: 32px; margin-right: 10px;"
     >
       X
     </span>
@@ -84,7 +84,7 @@ exports[`test AdorModule should render correctly 1`] = `
     </div>
     <span
       class="font2"
-      style="margin-right: 10px; line-height: 32px;"
+      style="line-height: 32px; margin-right: 10px;"
     >
       Y
     </span>
@@ -104,7 +104,7 @@ exports[`test AdorModule should render correctly 1`] = `
     </div>
     <span
       class="font2"
-      style="margin-right: 10px; line-height: 32px;"
+      style="line-height: 32px; margin-right: 10px;"
     >
       X
     </span>
@@ -118,7 +118,7 @@ exports[`test AdorModule should render correctly 1`] = `
     </div>
     <span
       class="font2"
-      style="margin-right: 10px; line-height: 32px;"
+      style="line-height: 32px; margin-right: 10px;"
     >
       Y
     </span>
@@ -138,7 +138,7 @@ exports[`test AdorModule should render correctly 1`] = `
     </div>
     <span
       class="font2"
-      style="margin-right: 10px; line-height: 32px;"
+      style="line-height: 32px; margin-right: 10px;"
     >
       X
     </span>
@@ -152,7 +152,7 @@ exports[`test AdorModule should render correctly 1`] = `
     </div>
     <span
       class="font2"
-      style="margin-right: 10px; line-height: 32px;"
+      style="line-height: 32px; margin-right: 10px;"
     >
       Y
     </span>
@@ -172,7 +172,7 @@ exports[`test AdorModule should render correctly 1`] = `
     </div>
     <span
       class="font2"
-      style="margin-right: 10px; line-height: 32px;"
+      style="line-height: 32px; margin-right: 10px;"
     >
       X
     </span>
@@ -186,7 +186,7 @@ exports[`test AdorModule should render correctly 1`] = `
     </div>
     <span
       class="font2"
-      style="margin-right: 10px; line-height: 32px;"
+      style="line-height: 32px; margin-right: 10px;"
     >
       Y
     </span>

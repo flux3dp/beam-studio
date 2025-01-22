@@ -1,36 +1,40 @@
 import React from 'react';
-import { createRoot, Root } from 'react-dom/client';
+
+import type { Root } from 'react-dom/client';
+import { createRoot } from 'react-dom/client';
+
 import BeamboxGlobalInteraction from '@core/app/actions/beambox/beambox-global-interaction';
 import ToolPanels from '@core/app/views/beambox/ToolPanels/ToolPanels';
 
-export type ToolPanelType = 'unknown' | 'gridArray' | 'offset' | 'nest';
+export type ToolPanelType = 'gridArray' | 'nest' | 'offset' | 'unknown';
 
 class ToolPanelsController {
   isVisible: boolean;
 
   type: ToolPanelType;
 
-  data: { rowcolumn: { row: number; column: number }; distance: { dx: number; dy: number } };
+  data: { distance: { dx: number; dy: number }; rowcolumn: { column: number; row: number } };
 
-  root: Root | null;
+  root: null | Root;
 
   constructor() {
     this.isVisible = false;
     this.type = 'unknown';
     this.data = {
-      rowcolumn: {
-        row: 1,
-        column: 1,
-      },
       distance: {
         dx: 0,
         dy: 0,
+      },
+      rowcolumn: {
+        column: 1,
+        row: 1,
       },
     };
   }
 
   setVisibility = (isVisible) => {
     this.isVisible = isVisible;
+
     if (isVisible) {
       BeamboxGlobalInteraction.onObjectFocus();
     } else {
@@ -51,7 +55,7 @@ class ToolPanelsController {
   render = () => {
     if (this.isVisible) {
       this.createRoot();
-      this.root?.render(<ToolPanels type={this.type} data={this.data} unmount={this.unmount} />);
+      this.root?.render(<ToolPanels data={this.data} type={this.type} unmount={this.unmount} />);
     } else {
       this.unmount();
     }

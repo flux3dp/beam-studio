@@ -1,23 +1,21 @@
 import React, { useContext } from 'react';
-import { act } from 'react-dom/test-utils';
+
 import { render } from '@testing-library/react';
+import { act } from 'react-dom/test-utils';
 
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
-import {
-  TimeEstimationButtonContext,
-  TimeEstimationButtonContextProvider,
-} from './TimeEstimationButtonContext';
+import { TimeEstimationButtonContext, TimeEstimationButtonContextProvider } from './TimeEstimationButtonContext';
 
 const Children = () => {
   const { estimatedTime } = useContext(TimeEstimationButtonContext);
+
   return <>{estimatedTime}</>;
 };
 
 test('should render correctly', () => {
   const setStateSpy = jest.spyOn(TimeEstimationButtonContextProvider.prototype, 'setState');
-  const timeEstimationButtonEventEmitter =
-    eventEmitterFactory.createEventEmitter('time-estimation-button');
+  const timeEstimationButtonEventEmitter = eventEmitterFactory.createEventEmitter('time-estimation-button');
   const { container, unmount } = render(
     <TimeEstimationButtonContextProvider>
       <Children />

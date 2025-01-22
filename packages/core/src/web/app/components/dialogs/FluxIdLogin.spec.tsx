@@ -1,21 +1,25 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import FluxIdLogin from './FluxIdLogin';
 
 const popUpError = jest.fn();
 const popUp = jest.fn();
+
 jest.mock('@core/app/actions/alert-caller', () => ({
-  popUpError: (...args) => popUpError(...args),
   popUp: (...args) => popUp(...args),
+  popUpError: (...args) => popUpError(...args),
 }));
 
 const showFluxCreditDialog = jest.fn();
+
 jest.mock('@core/app/actions/dialog-caller', () => ({
   showFluxCreditDialog: () => showFluxCreditDialog(),
 }));
 
 const open = jest.fn();
+
 jest.mock('@app/implementations/browser', () => ({
   open: (...args) => open(...args),
 }));
@@ -23,29 +27,30 @@ jest.mock('@app/implementations/browser', () => ({
 jest.mock('@core/helpers/useI18n', () => () => ({
   flux_id_login: {
     connection_fail: '#847 Failed to connect to FLUX member service.',
-    login_success: 'Successfully logged in.',
-    login: 'Sign In',
     email: 'Email',
-    password: 'Password',
-    remember_me: 'Remember me',
-    forget_password: 'Forgot Password?',
-    register: 'Create Your FLUX Account',
-    offline: 'Work Offline',
-    work_offline: 'Work Offline',
-    incorrect: 'Email address or password is not correct.',
-    not_verified: 'The email address has not been verified yet.',
-    new_to_flux: 'New to FLUX? Create an account.',
-    signup_url: 'signup_url',
-    lost_password_url: 'lost_password_url',
     flux_plus: {
       explore_plans: 'Explore FLUX+ Plans',
       website_url: 'https://website_url',
     },
+    forget_password: 'Forgot Password?',
+    incorrect: 'Email address or password is not correct.',
+    login: 'Sign In',
+    login_success: 'Successfully logged in.',
+    lost_password_url: 'lost_password_url',
+    new_to_flux: 'New to FLUX? Create an account.',
+    not_verified: 'The email address has not been verified yet.',
+    offline: 'Work Offline',
+    password: 'Password',
+    register: 'Create Your FLUX Account',
+    remember_me: 'Remember me',
+    signup_url: 'signup_url',
+    work_offline: 'Work Offline',
   },
 }));
 
 const get = jest.fn();
 const set = jest.fn();
+
 jest.mock('@app/implementations/storage', () => ({
   get: (...args) => get(...args),
   set: (...args) => set(...args),
@@ -57,6 +62,7 @@ const mockFluxIdEventsOn = jest.fn();
 const mockRemoveListener = jest.fn();
 const signIn = jest.fn();
 const signOut = jest.fn();
+
 jest.mock('@core/helpers/api/flux-id', () => ({
   externalLinkFBSignIn: (...args) => externalLinkFBSignIn(...args),
   externalLinkGoogleSignIn: (...args) => externalLinkGoogleSignIn(...args),
@@ -69,6 +75,7 @@ jest.mock('@core/helpers/api/flux-id', () => ({
 }));
 
 const useIsMobile = jest.fn();
+
 jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => useIsMobile(),
 }));
@@ -84,8 +91,10 @@ describe('should render correctly', () => {
 
   test('desktop version', async () => {
     get.mockReturnValue(false);
+
     const onClose = jest.fn();
-    const { baseElement, getByText } = render(<FluxIdLogin silent={false} onClose={onClose} />);
+    const { baseElement, getByText } = render(<FluxIdLogin onClose={onClose} silent={false} />);
+
     expect(baseElement).toMatchSnapshot();
     expect(get).toHaveBeenCalledTimes(1);
     expect(get).toHaveBeenNthCalledWith(1, 'keep-flux-id-login');
@@ -113,15 +122,20 @@ describe('should render correctly', () => {
 
   test('web version', () => {
     window.FLUX.version = 'web';
+
     const onClose = jest.fn();
-    const { baseElement } = render(<FluxIdLogin silent={false} onClose={onClose} />);
+    const { baseElement } = render(<FluxIdLogin onClose={onClose} silent={false} />);
+
     expect(baseElement).toMatchSnapshot();
   });
 
   test('mobile version', () => {
     const onClose = jest.fn();
+
     useIsMobile.mockReturnValue(true);
-    const { baseElement, getByText } = render(<FluxIdLogin silent={false} onClose={onClose} />);
+
+    const { baseElement, getByText } = render(<FluxIdLogin onClose={onClose} silent={false} />);
+
     expect(baseElement).toMatchSnapshot();
 
     fireEvent.click(getByText('Explore FLUX+ Plans'));

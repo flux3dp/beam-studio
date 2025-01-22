@@ -4,23 +4,24 @@ jest.mock('@app/implementations/imageProcessor', () => ({ AUTO: 'AUTO' }));
 
 const mockUrlToImage = jest.fn();
 const mockImageToUrl = jest.fn();
+
 jest.mock('@core/helpers/jimp-helper', () => ({
-  urlToImage: (...args) => mockUrlToImage(...args),
   imageToUrl: (...args) => mockImageToUrl(...args),
+  urlToImage: (...args) => mockUrlToImage(...args),
 }));
 
 const mockGetWidth = jest.fn();
 const mockGetHeight = jest.fn();
 const mockJimpImage = {
-  resize: jest.fn(),
   bitmap: {
-    get width() {
-      return mockGetWidth();
-    },
     get height() {
       return mockGetHeight();
     },
+    get width() {
+      return mockGetWidth();
+    },
   },
+  resize: jest.fn(),
 };
 
 describe('test image-edit-panel/preprocess', () => {
@@ -29,7 +30,9 @@ describe('test image-edit-panel/preprocess', () => {
     mockGetWidth.mockReturnValueOnce(700).mockReturnValueOnce(600);
     mockGetHeight.mockReturnValueOnce(400).mockReturnValueOnce(300);
     mockImageToUrl.mockResolvedValueOnce('mock-url');
+
     const res = await preprocessByUrl('bloburl');
+
     expect(mockUrlToImage).toBeCalledTimes(1);
     expect(mockUrlToImage).toHaveBeenLastCalledWith('bloburl');
     expect(mockJimpImage.resize).toBeCalledTimes(1);
@@ -38,9 +41,9 @@ describe('test image-edit-panel/preprocess', () => {
     expect(mockImageToUrl).toHaveBeenLastCalledWith(mockJimpImage);
     expect(res).toEqual({
       blobUrl: 'mock-url',
-      dimension: { x: 0, y: 0, width: 600, height: 300 },
-      originalWidth: 700,
+      dimension: { height: 300, width: 600, x: 0, y: 0 },
       originalHeight: 400,
+      originalWidth: 700,
     });
   });
 });

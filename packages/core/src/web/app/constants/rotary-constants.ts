@@ -1,4 +1,4 @@
-import { WorkAreaModel } from './workarea-constants';
+import type { WorkAreaModel } from './workarea-constants';
 
 // all unit in mm
 export interface RotaryConstants {

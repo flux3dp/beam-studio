@@ -1,16 +1,17 @@
-import { ObservableInput, Subject, from } from 'rxjs';
+import type { ObservableInput } from 'rxjs';
+import { from, Subject } from 'rxjs';
 import { concatMap } from 'rxjs/operators';
 
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import beamboxStore from '@core/app/stores/beambox-store';
 import Constant from '@core/app/actions/beambox/constant';
+import { getSupportInfo } from '@core/app/constants/add-on';
+import NS from '@core/app/constants/namespaces';
+import beamboxStore from '@core/app/stores/beambox-store';
+import workareaManager from '@core/app/svgedit/workarea';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
-import NS from '@core/app/constants/namespaces';
-import workareaManager from '@core/app/svgedit/workarea';
-import { CameraParameters } from '@core/interfaces/Camera';
-import { getSupportInfo } from '@core/app/constants/add-on';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import type { CameraParameters } from '@core/interfaces/Camera';
 
 let svgCanvas;
 let svgedit;
@@ -49,13 +50,13 @@ class PreviewModeBackgroundDrawer {
   }
 
   private updateRatio() {
-    const { width, height, expansion } = workareaManager;
+    const { expansion, height, width } = workareaManager;
     const canvasHeight = height - expansion[1];
+
     // if is IOS system (web version), set ratio for canvas limit
     if (navigator.maxTouchPoints > 1 && window.os === 'MacOS') {
       if (width * canvasHeight > IOS_CANVAS_LIMIT) {
-        this.canvasRatio =
-          Math.floor(1000 * Math.sqrt(IOS_CANVAS_LIMIT / (width * canvasHeight))) / 1000;
+        this.canvasRatio = Math.floor(1000 * Math.sqrt(IOS_CANVAS_LIMIT / (width * canvasHeight))) / 1000;
       }
     }
   }
@@ -75,9 +76,7 @@ class PreviewModeBackgroundDrawer {
     }
 
     this.backgroundDrawerSubject = new Subject();
-    this.backgroundDrawerSubject
-      .pipe(concatMap((o) => from(o)))
-      .subscribe(this.drawBlobToBackground);
+    this.backgroundDrawerSubject.pipe(concatMap((o) => from(o))).subscribe(this.drawBlobToBackground);
   }
 
   end() {
@@ -102,10 +101,10 @@ class PreviewModeBackgroundDrawer {
     sourceCanvas: HTMLCanvasElement,
     x: number,
     y: number,
-    { opacityMerge = false, callback }: { opacityMerge?: boolean; callback?: () => void } = {},
+    { callback, opacityMerge = false }: { callback?: () => void; opacityMerge?: boolean } = {},
   ): Promise<void> => {
     const promise = new Promise<Blob>((resolve) => {
-      const { width, height } = sourceCanvas;
+      const { height, width } = sourceCanvas;
       const { canvasRatio } = this;
       const minX = (x - width / 2) * canvasRatio;
       const maxX = (x + width / 2) * canvasRatio;
@@ -115,51 +114,51 @@ class PreviewModeBackgroundDrawer {
       if (maxX > this.coordinates.maxX) {
         this.coordinates.maxX = maxX;
       }
+
       if (minX < this.coordinates.minX) {
         this.coordinates.minX = Math.max(minX, 0);
       }
+
       if (maxY > this.coordinates.maxY) {
         this.coordinates.maxY = maxY;
       }
+
       if (minY < this.coordinates.minY) {
         this.coordinates.minY = Math.max(minY, 0);
       }
 
       if (!opacityMerge) {
-        this.canvas
-          .getContext('2d')
-          .drawImage(sourceCanvas, minX, minY, width * canvasRatio, height * canvasRatio);
+        this.canvas.getContext('2d').drawImage(sourceCanvas, minX, minY, width * canvasRatio, height * canvasRatio);
       } else {
         if (canvasRatio < 1) {
           const scaledCanvas = document.createElement('canvas');
+
           scaledCanvas.width = width * canvasRatio;
           scaledCanvas.height = height * canvasRatio;
+
           const scaledContext = scaledCanvas.getContext('2d', { willReadFrequently: true });
+
           scaledContext.drawImage(sourceCanvas, 0, 0, width * canvasRatio, height * canvasRatio);
-          // eslint-disable-next-line no-param-reassign
+
           sourceCanvas = scaledCanvas;
         }
+
         const sourceCtx = sourceCanvas.getContext('2d', { willReadFrequently: true });
         const sourceData = sourceCtx.getImageData(0, 0, width * canvasRatio, height * canvasRatio);
         const mainContext = this.canvas.getContext('2d', { willReadFrequently: true });
-        const mainImageData = mainContext.getImageData(
-          minX,
-          minY,
-          width * canvasRatio,
-          height * canvasRatio,
-        );
+        const mainImageData = mainContext.getImageData(minX, minY, width * canvasRatio, height * canvasRatio);
+
         for (let i = 0; i < mainImageData.data.length; i += 4) {
           const imgA = sourceData.data[i + 3];
           const mainA = Math.min(mainImageData.data[i + 3], 255 - imgA);
           const newA = imgA + mainA;
+
           mainImageData.data[i + 3] = newA;
+
           if (newA > 0) {
-            mainImageData.data[i] =
-              (sourceData.data[i] * imgA + mainImageData.data[i] * mainA) / newA;
-            mainImageData.data[i + 1] =
-              (sourceData.data[i + 1] * imgA + mainImageData.data[i + 1] * mainA) / newA;
-            mainImageData.data[i + 2] =
-              (sourceData.data[i + 2] * imgA + mainImageData.data[i + 2] * mainA) / newA;
+            mainImageData.data[i] = (sourceData.data[i] * imgA + mainImageData.data[i] * mainA) / newA;
+            mainImageData.data[i + 1] = (sourceData.data[i + 1] * imgA + mainImageData.data[i + 1] * mainA) / newA;
+            mainImageData.data[i + 2] = (sourceData.data[i + 2] * imgA + mainImageData.data[i + 2] * mainA) / newA;
           }
         }
         mainContext.putImageData(mainImageData, minX, minY);
@@ -183,7 +182,7 @@ class PreviewModeBackgroundDrawer {
    * change the size of the canvas (which also clear the canvas)
    */
   updateCanvasSize = () => {
-    const { width, height, expansion } = workareaManager;
+    const { expansion, height, width } = workareaManager;
     const canvasHeight = height - expansion[1];
 
     this.clear();
@@ -205,7 +204,6 @@ class PreviewModeBackgroundDrawer {
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   setTextStyle(text: SVGTextElement) {
     text.setAttribute('font-weight', 'bold');
     text.setAttribute('fill', '#fff');
@@ -217,7 +215,7 @@ class PreviewModeBackgroundDrawer {
   drawBoundary() {
     const boundaryGroup = document.createElementNS(NS.SVG, 'g');
     const fixedSizeSvg = document.getElementById('fixedSizeSvg');
-    const { width, height, expansion } = workareaManager;
+    const { expansion, height, width } = workareaManager;
 
     boundaryGroup.id = 'previewBoundary';
     boundaryGroup.setAttribute('style', 'pointer-events:none');
@@ -242,7 +240,7 @@ class PreviewModeBackgroundDrawer {
       this.setTextStyle(rotaryPreveiwBoundaryText);
       boundaryGroup.appendChild(rotaryPreveiwBoundaryText);
 
-      const { width: textW, height: textH } = rotaryPreveiwBoundaryText.getBBox();
+      const { height: textH, width: textW } = rotaryPreveiwBoundaryText.getBBox();
       const x = (width - textW) / 2;
       const y = height - (expansion[1] - textH) / 2;
 
@@ -255,8 +253,7 @@ class PreviewModeBackgroundDrawer {
       const stripeColor = 'rgba(102,102,102,0.8)';
       const stripeWidth = 60;
       const uncapturabledHeight =
-        this.cameraOffset.y * Constant.dpmm -
-        (Constant.camera.imgHeight * this.cameraOffset.scaleRatioY) / 2;
+        this.cameraOffset.y * Constant.dpmm - (Constant.camera.imgHeight * this.cameraOffset.scaleRatioY) / 2;
       const borderTop = document.createElementNS(NS.SVG, 'rect');
       const borderPattern = document.createElementNS(NS.SVG, 'pattern');
       const patternRect = document.createElementNS(NS.SVG, 'rect');
@@ -301,18 +298,13 @@ class PreviewModeBackgroundDrawer {
       borderPattern.appendChild(patternLine);
       boundaryGroup.appendChild(borderTop);
 
-      if (
-        BeamboxPreference.read('enable-diode') &&
-        getSupportInfo(BeamboxPreference.read('workarea')).hybridLaser
-      ) {
-        const { hybridBorder, hybridDescText } =
-          this.getHybridModulePreviewBoundary(uncapturabledHeight);
+      if (BeamboxPreference.read('enable-diode') && getSupportInfo(BeamboxPreference.read('workarea')).hybridLaser) {
+        const { hybridBorder, hybridDescText } = this.getHybridModulePreviewBoundary(uncapturabledHeight);
 
         boundaryGroup.appendChild(hybridBorder);
         boundaryGroup.appendChild(hybridDescText);
       } else if (BeamboxPreference.read('borderless')) {
-        const { openBottomBoundary, openBottomDescText } =
-          this.getOpenBottomModulePreviewBoundary(uncapturabledHeight);
+        const { openBottomBoundary, openBottomDescText } = this.getOpenBottomModulePreviewBoundary(uncapturabledHeight);
 
         boundaryGroup.appendChild(openBottomBoundary);
         boundaryGroup.appendChild(openBottomDescText);
@@ -323,7 +315,6 @@ class PreviewModeBackgroundDrawer {
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   clearBoundary() {
     document.getElementById('previewBoundary')?.remove();
   }
@@ -375,12 +366,15 @@ class PreviewModeBackgroundDrawer {
   preprocessFullWorkareaImg = async (imgUrl: string, callBack = () => {}) =>
     new Promise<Blob>((resolve) => {
       const img = new Image();
+
       img.onload = () => {
         // free unused blob memory
         URL.revokeObjectURL(imgUrl);
+
         const imgDpmm = 5;
         const canvasDpmm = 10;
         const imageRatio = canvasDpmm / imgDpmm;
+
         // assuming the left-top corner of the image is the correct
         this.canvas
           .getContext('2d')
@@ -397,28 +391,27 @@ class PreviewModeBackgroundDrawer {
       img.src = imgUrl;
     });
 
-  // eslint-disable-next-line class-methods-use-this
   getOpenBottomModulePreviewBoundary(uncapturabledHeight) {
     const svgdoc = document.getElementById('svgcanvas').ownerDocument;
     const openBottomBoundary = svgdoc.createElementNS(NS.SVG, 'rect');
     const openBottomDescText = svgdoc.createElementNS(NS.SVG, 'text');
-    const { width, height } = workareaManager;
+    const { height, width } = workareaManager;
 
     svgedit.utilities.assignAttributes(openBottomBoundary, {
-      width: Constant.borderless.safeDistance.X * Constant.dpmm,
+      fill: 'url(#border-pattern)',
       height,
+      style: 'pointer-events:none',
+      width: Constant.borderless.safeDistance.X * Constant.dpmm,
       x: width - Constant.borderless.safeDistance.X * Constant.dpmm,
       y: 0,
-      fill: 'url(#border-pattern)',
-      style: 'pointer-events:none',
     });
 
     this.setTextStyle(openBottomDescText as SVGTextElement);
     svgedit.utilities.assignAttributes(openBottomDescText, {
       'font-size': 60,
+      'text-anchor': 'end',
       x: width - (uncapturabledHeight - 60) / 2,
       y: (uncapturabledHeight + 60) / 2 - 10,
-      'text-anchor': 'end',
     });
 
     const textNode = document.createTextNode(LANG.borderless_blind_area);
@@ -428,27 +421,26 @@ class PreviewModeBackgroundDrawer {
     return { openBottomBoundary, openBottomDescText };
   }
 
-  // eslint-disable-next-line class-methods-use-this
   getHybridModulePreviewBoundary(uncapturabledHeight) {
     const svgdoc = document.getElementById('svgcanvas').ownerDocument;
     const hybridBorder = svgdoc.createElementNS(NS.SVG, 'rect');
     const hybridDescText = svgdoc.createElementNS(NS.SVG, 'text');
-    const { width, height } = workareaManager;
+    const { height, width } = workareaManager;
 
     svgedit.utilities.assignAttributes(hybridBorder, {
-      width: Constant.diode.safeDistance.X * Constant.dpmm,
+      fill: 'url(#border-pattern)',
       height,
+      style: 'pointer-events:none',
+      width: Constant.diode.safeDistance.X * Constant.dpmm,
       x: width - Constant.diode.safeDistance.X * Constant.dpmm,
       y: 0,
-      fill: 'url(#border-pattern)',
-      style: 'pointer-events:none',
     });
     svgedit.utilities.assignAttributes(hybridDescText, {
       'font-size': 60,
+      style: 'pointer-events:none',
+      'text-anchor': 'end',
       x: width - (uncapturabledHeight - 60) / 2,
       y: (uncapturabledHeight + 60) / 2 - 10,
-      'text-anchor': 'end',
-      style: 'pointer-events:none',
     });
     this.setTextStyle(hybridDescText as SVGTextElement);
 

@@ -1,37 +1,34 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import checkDeviceStatus from '@core/helpers/check-device-status';
-import deviceMaster from '@core/helpers/device-master';
-import dialog from '@app/implementations/dialog';
-import progressCaller from '@core/app/actions/progress-caller';
-import promarkDataStore from '@core/helpers/device/promark/promark-data-store';
-import useI18n from '@core/helpers/useI18n';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
-import {
-  FisheyeCameraParametersV3,
-  FisheyeCameraParametersV3Cali,
-} from '@core/interfaces/FisheyePreview';
+import progressCaller from '@core/app/actions/progress-caller';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
-import { IDeviceInfo } from '@core/interfaces/IDevice';
+import checkDeviceStatus from '@core/helpers/check-device-status';
 import { loadCameraCalibrationTask } from '@core/helpers/device/promark/calibration';
+import promarkDataStore from '@core/helpers/device/promark/promark-data-store';
+import deviceMaster from '@core/helpers/device-master';
+import useI18n from '@core/helpers/useI18n';
+import type { FisheyeCameraParametersV3, FisheyeCameraParametersV3Cali } from '@core/interfaces/FisheyePreview';
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
-import CheckpointData from './common/CheckpointData';
-import Chessboard from './Promark/Chessboard';
-import Instruction from './common/Instruction';
-import SolvePnP from './common/SolvePnP';
-import Title from './common/Title';
-import { promarkPnPPoints } from './common/solvePnPConstants';
+import dialog from '@app/implementations/dialog';
 
 import styles from './Calibration.module.scss';
+import CheckpointData from './common/CheckpointData';
+import Instruction from './common/Instruction';
+import SolvePnP from './common/SolvePnP';
+import { promarkPnPPoints } from './common/solvePnPConstants';
+import Title from './common/Title';
+import Chessboard from './Promark/Chessboard';
 
 enum Steps {
   CHECKPOINT_DATA = 0,
-  PRE_CHESSBOARD = 1,
   CHESSBOARD = 2,
+  PRE_CHESSBOARD = 1,
   PUT_PAPER = 3,
-  SOLVE_PNP_INSTRUCTION = 4,
   SOLVE_PNP = 5,
+  SOLVE_PNP_INSTRUCTION = 4,
 }
 
 interface Props {
@@ -40,7 +37,7 @@ interface Props {
 }
 
 const PROGRESS_ID = 'promark-calibration';
-const PromarkCalibration = ({ device: { serial, model }, onClose }: Props): JSX.Element => {
+const PromarkCalibration = ({ device: { model, serial }, onClose }: Props): React.JSX.Element => {
   const lang = useI18n();
   const tCali = lang.calibration;
   const workareaWidth = useMemo(() => getWorkarea(model).width, [model]);
@@ -54,42 +51,49 @@ const PromarkCalibration = ({ device: { serial, model }, onClose }: Props): JSX.
   if (step === Steps.CHECKPOINT_DATA) {
     return (
       <CheckpointData
-        askUser
         allowCheckPoint={false}
-        updateParam={updateParam}
+        askUser
         getData={() => promarkDataStore.get(serial, 'cameraParameters')}
         onClose={onClose}
         onNext={(res: boolean) => {
           if (res) {
             useOldData.current = true;
             setStep(Steps.PUT_PAPER);
-          } else setStep(Steps.PRE_CHESSBOARD);
+          } else {
+            setStep(Steps.PRE_CHESSBOARD);
+          }
         }}
+        updateParam={updateParam}
       />
     );
   }
+
   if (step === Steps.PRE_CHESSBOARD) {
     const handleDownloadChessboard = () => {
       dialog.writeFileDialog(
         async () => {
           const resp = await fetch('assets/promark-chessboard.pdf');
           const blob = await resp.blob();
+
           return blob;
         },
         tCali.download_chessboard_file,
         'Chessboard',
         [
           {
-            name: window.os === 'MacOS' ? 'PDF (*.pdf)' : 'PDF',
             extensions: ['pdf'],
+            name: window.os === 'MacOS' ? 'PDF (*.pdf)' : 'PDF',
           },
         ],
       );
     };
+
     return (
       <Instruction
-        title={<Title title={tCali.put_chessboard} link={tCali.promark_help_link} />}
-        steps={[tCali.put_chessboard_promark_desc_1, tCali.put_chessboard_promark_desc_2]}
+        animationSrcs={[
+          { src: 'video/promark-calibration/1-chessboard.webm', type: 'video/webm' },
+          { src: 'video/promark-calibration/1-chessboard.mp4', type: 'video/mp4' },
+        ]}
         buttons={[
           {
             label: tCali.next,
@@ -98,10 +102,8 @@ const PromarkCalibration = ({ device: { serial, model }, onClose }: Props): JSX.
           },
         ]}
         onClose={onClose}
-        animationSrcs={[
-          { src: 'video/promark-calibration/1-chessboard.webm', type: 'video/webm' },
-          { src: 'video/promark-calibration/1-chessboard.mp4', type: 'video/mp4' },
-        ]}
+        steps={[tCali.put_chessboard_promark_desc_1, tCali.put_chessboard_promark_desc_2]}
+        title={<Title link={tCali.promark_help_link} title={tCali.put_chessboard} />}
       >
         <div className={styles.link} onClick={handleDownloadChessboard}>
           {tCali.download_chessboard_file}
@@ -109,20 +111,26 @@ const PromarkCalibration = ({ device: { serial, model }, onClose }: Props): JSX.
       </Instruction>
     );
   }
+
   if (step === Steps.CHESSBOARD) {
     return (
       <Chessboard
         chessboard={[18, 18]}
-        updateParam={updateParam}
-        onNext={() => setStep(Steps.PUT_PAPER)}
         onClose={onClose}
+        onNext={() => setStep(Steps.PUT_PAPER)}
+        updateParam={updateParam}
       />
     );
   }
+
   if (step === Steps.PUT_PAPER) {
     const handleNext = async () => {
       const deviceStatus = await checkDeviceStatus(deviceMaster.currentDevice.info);
-      if (!deviceStatus) return;
+
+      if (!deviceStatus) {
+        return;
+      }
+
       try {
         progressCaller.openNonstopProgress({
           id: PROGRESS_ID,
@@ -138,11 +146,13 @@ const PromarkCalibration = ({ device: { serial, model }, onClose }: Props): JSX.
         progressCaller.popById(PROGRESS_ID);
       }
     };
+
     return (
       <Instruction
-        onClose={() => onClose(false)}
-        title={<Title title={tCali.put_paper} link={tCali.promark_help_link} />}
-        steps={[tCali.put_paper_promark_1, tCali.put_paper_promark_2]}
+        animationSrcs={[
+          { src: 'video/promark-calibration/2-cut.webm', type: 'video/webm' },
+          { src: 'video/promark-calibration/2-cut.mp4', type: 'video/mp4' },
+        ]}
         buttons={[
           {
             label: tCali.back,
@@ -150,68 +160,76 @@ const PromarkCalibration = ({ device: { serial, model }, onClose }: Props): JSX.
           },
           { label: tCali.start_engrave, onClick: () => handleNext(), type: 'primary' },
         ]}
-        animationSrcs={[
-          { src: 'video/promark-calibration/2-cut.webm', type: 'video/webm' },
-          { src: 'video/promark-calibration/2-cut.mp4', type: 'video/mp4' },
-        ]}
+        onClose={() => onClose(false)}
+        steps={[tCali.put_paper_promark_1, tCali.put_paper_promark_2]}
+        title={<Title link={tCali.promark_help_link} title={tCali.put_paper} />}
       />
     );
   }
+
   if (step === Steps.SOLVE_PNP_INSTRUCTION) {
     return (
       <Instruction
-        onClose={() => onClose(false)}
         animationSrcs={[
           { src: 'video/promark-calibration/3-align.webm', type: 'video/webm' },
           { src: 'video/promark-calibration/3-align.mp4', type: 'video/mp4' },
         ]}
-        title={tCali.solve_pnp_title}
-        steps={[tCali.solve_pnp_step1, tCali.solve_pnp_step2]}
         buttons={[
           { label: tCali.back, onClick: () => setStep(Steps.PUT_PAPER) },
           { label: tCali.next, onClick: () => setStep(Steps.SOLVE_PNP), type: 'primary' },
         ]}
+        onClose={() => onClose(false)}
+        steps={[tCali.solve_pnp_step1, tCali.solve_pnp_step2]}
+        title={tCali.solve_pnp_title}
       />
     );
   }
+
   if (step === Steps.SOLVE_PNP) {
     return (
       <SolvePnP
-        params={calibratingParam.current}
         dh={0}
-        refPoints={promarkPnPPoints[workareaWidth]}
         imgSource="usb"
-        titleLink={tCali.promark_help_link}
-        onClose={onClose}
         onBack={() => setStep(Steps.SOLVE_PNP_INSTRUCTION)}
+        onClose={onClose}
         onNext={async (rvec, tvec) => {
           progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: lang.device.processing });
           updateParam({ rvec, tvec });
           console.log('calibratingParam.current', calibratingParam.current);
           progressCaller.popById(PROGRESS_ID);
+
           const param: FisheyeCameraParametersV3 = {
-            k: calibratingParam.current.k,
             d: calibratingParam.current.d,
+            k: calibratingParam.current.k,
             rvec,
             tvec,
             v: 3,
           };
+
           promarkDataStore.set(serial, 'cameraParameters', param);
           alertCaller.popUp({ message: tCali.camera_parameter_saved_successfully });
           onClose(true);
         }}
+        params={calibratingParam.current}
+        refPoints={promarkPnPPoints[workareaWidth]}
+        titleLink={tCali.promark_help_link}
       />
     );
   }
 
   onClose();
+
   return <></>;
 };
 
 export const showPromarkCalibration = (device: IDeviceInfo): Promise<boolean> => {
   const id = 'promark-calibration';
   const onClose = () => popDialogById(id);
-  if (isIdExist(id)) onClose();
+
+  if (isIdExist(id)) {
+    onClose();
+  }
+
   return new Promise<boolean>((resolve) => {
     addDialogComponent(
       id,

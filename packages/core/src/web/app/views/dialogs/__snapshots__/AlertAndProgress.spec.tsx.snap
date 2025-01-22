@@ -6,7 +6,7 @@ exports[`should render correctly 1`] = `
     <div>
       <div>
         DummyAlert 
-        {"id":"alert","message":"Yes or No","caption":"Hello World","iconUrl":"https://www.flux3dp.com/icon.svg","buttons":[{"title":"Yes","label":"Yes"},{"title":"No","label":"No"}],"checkboxText":"Select"}
+        {"buttons":[{"label":"Yes","title":"Yes"},{"label":"No","title":"No"}],"caption":"Hello World","checkboxText":"Select","iconUrl":"https://www.flux3dp.com/icon.svg","id":"alert","message":"Yes or No"}
       </div>
       <div>
         DummyProgress 

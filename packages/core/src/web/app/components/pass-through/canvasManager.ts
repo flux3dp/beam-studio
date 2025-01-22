@@ -1,6 +1,6 @@
-import EmbeddedCanvasManager from '@core/app/widgets/FullWindowPanel/EmbeddedCanvasManager';
-import findDefs from '@core/app/svgedit/utils/findDef';
 import NS from '@core/app/constants/namespaces';
+import findDefs from '@core/app/svgedit/utils/findDef';
+import EmbeddedCanvasManager from '@core/app/widgets/FullWindowPanel/EmbeddedCanvasManager';
 import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
 
 import styles from './PassThrough.module.scss';
@@ -11,11 +11,13 @@ export class PassThroughCanvasManager extends EmbeddedCanvasManager {
   private passThroughSeparator: SVGGElement;
   private passThroughGuideStart: SVGPathElement;
   private passThroughGuideEnd: SVGPathElement;
-  private currentGuideMark: { show: boolean; x: number; width: number };
+  private currentGuideMark: { show: boolean; width: number; x: number };
 
   override renderContent = (): void => {
     this.initPassThroughContainer();
+
     const svgcontent = document.getElementById('svgcontent') as unknown as SVGSVGElement;
+
     if (svgcontent) {
       this.svgcontent = svgcontent.cloneNode(true) as SVGSVGElement;
       this.svgcontent.id = '#pass-through-svgcontent';
@@ -41,43 +43,50 @@ export class PassThroughCanvasManager extends EmbeddedCanvasManager {
 
   setPassThroughHeight = (val: number): void => {
     this.passThroughHeight = val;
+
     if (this.passThroughSeparator) {
       this.passThroughSeparator.innerHTML = '';
       for (let i = 0; i < Math.ceil(this.height / this.passThroughHeight); i += 1) {
         const start = i * this.passThroughHeight;
         const end = Math.min(start + this.passThroughHeight, this.height);
         const line = document.createElementNS(NS.SVG, 'line');
+
         line.setAttribute('x1', '-50');
         line.setAttribute('x2', (this.width + 50).toString());
         line.setAttribute('y1', end.toString());
         line.setAttribute('y2', end.toString());
         this.passThroughSeparator.appendChild(line);
+
         const text = document.createElementNS(NS.SVG, 'text');
+
         text.setAttribute('x', '-50');
         text.setAttribute('y', ((start + end) / 2).toString());
         text.textContent = `Work Area ${i + 1}`;
         this.passThroughSeparator.appendChild(text);
       }
     }
+
     this.passThroughGuideEnd?.setAttribute('y1', this.passThroughHeight.toString());
     this.passThroughGuideEnd?.setAttribute('y2', this.passThroughHeight.toString());
     this.renderGuideMark();
   };
 
   setGuideMark = (show: boolean, x: number, width: number): void => {
-    this.currentGuideMark = { show, x, width };
+    this.currentGuideMark = { show, width, x };
     this.renderGuideMark();
   };
 
   renderGuideMark = (): void => {
     if (this.currentGuideMark) {
-      const { show, x, width } = this.currentGuideMark;
+      const { show, width, x } = this.currentGuideMark;
+
       if (!show) {
         this.passThroughGuideStart.style.display = 'none';
         this.passThroughGuideEnd.style.display = 'none';
       } else {
         this.passThroughGuideStart.style.display = 'block';
         this.passThroughGuideEnd.style.display = 'block';
+
         const left = (x - width / 2).toFixed(2);
         const right = (x + width / 2).toFixed(2);
         const halfHeight = width / Math.sqrt(3);
@@ -87,6 +96,7 @@ export class PassThroughCanvasManager extends EmbeddedCanvasManager {
         const endMid = this.passThroughHeight;
         const endTop = (endMid - halfHeight).toFixed(2);
         const endBottom = (endMid + halfHeight).toFixed(2);
+
         this.passThroughGuideStart.setAttribute(
           'd',
           `M ${left} ${startMid} L ${right} ${startTop} L ${right} ${startBottom} L ${left} ${startMid} Z`,
@@ -103,17 +113,21 @@ export class PassThroughCanvasManager extends EmbeddedCanvasManager {
    * generateRefImage
    * @param refHeight height of the reference image (px)
    */
-  generateRefImage = async (refHeight: number, downScale = 5): Promise<(string | null)[]> => {
+  generateRefImage = async (refHeight: number, downScale = 5): Promise<Array<null | string>> => {
     const clonedDefs = findDefs()?.cloneNode(true) as SVGDefsElement;
+
     if (clonedDefs) {
       const uses = this.svgcontent.querySelectorAll('use');
-      const promises: Promise<void>[] = [];
+      const promises: Array<Promise<void>> = [];
+
       uses.forEach((use) => {
         const href = use.getAttributeNS(NS.XLINK, 'href');
+
         if (href) {
           const symbol = clonedDefs.querySelector(href);
           const image = symbol?.querySelector('image');
           const imageHref = image?.getAttribute('href');
+
           if (imageHref?.startsWith('blob:file://')) {
             promises.push(
               // eslint-disable-next-line no-async-promise-executor
@@ -121,6 +135,7 @@ export class PassThroughCanvasManager extends EmbeddedCanvasManager {
                 const response = await fetch(imageHref);
                 const blob = await response.blob();
                 const reader = new FileReader();
+
                 reader.onload = () => {
                   image.setAttribute('href', reader.result as string);
                   resolve();
@@ -133,6 +148,7 @@ export class PassThroughCanvasManager extends EmbeddedCanvasManager {
       });
       await Promise.allSettled(promises);
     }
+
     const svgString = `
     <svg
       width="${this.width}"
@@ -150,20 +166,26 @@ export class PassThroughCanvasManager extends EmbeddedCanvasManager {
       Math.round(this.width / downScale),
       Math.round(this.height / downScale),
     );
-    const refImages: (string | null)[] = [];
+    const refImages: Array<null | string> = [];
+
     for (let i = 0; i < Math.ceil(this.height / this.passThroughHeight); i += 1) {
-      if (i === 0) refImages.push(null);
-      else {
+      if (i === 0) {
+        refImages.push(null);
+      } else {
         const y = Math.round((i * this.passThroughHeight - refHeight) / downScale);
         const height = Math.round(refHeight / downScale);
         const refCanvas = document.createElement('canvas');
+
         refCanvas.width = canvas.width;
         refCanvas.height = height;
+
         const refCtx = refCanvas.getContext('2d');
+
         refCtx.drawImage(canvas, 0, y, canvas.width, height, 0, 0, canvas.width, height);
         refImages.push(refCanvas.toDataURL('image/png'));
       }
     }
+
     return refImages;
   };
 }

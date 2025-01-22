@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import AddLayerButton from './AddLayerButton';
@@ -17,6 +18,7 @@ jest.mock('@core/helpers/useI18n', () => () => ({
 
 const mockHasLayer = jest.fn();
 const mockUpdateContextPanel = jest.fn();
+
 jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (cb) =>
     cb({
@@ -32,17 +34,20 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
 }));
 
 const mockCreateLayer = jest.fn();
+
 jest.mock('@core/helpers/layer/layer-helper', () => ({
   createLayer: (name) => mockCreateLayer(name),
 }));
 
 const mockInitLayerConfig = jest.fn();
+
 jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   initLayerConfig: (name) => mockInitLayerConfig(name),
 }));
 
 const mockGetNextStepRequirement = jest.fn();
 const mockHandleNextStep = jest.fn();
+
 jest.mock('@core/app/views/tutorials/tutorialController', () => ({
   getNextStepRequirement: () => mockGetNextStepRequirement(),
   handleNextStep: () => mockHandleNextStep(),
@@ -61,12 +66,15 @@ describe('test AddLayerButton', () => {
 
   it('should render correctly', () => {
     const { container } = render(<AddLayerButton setSelectedLayers={mockSetSelectedLayers} />);
+
     expect(container).toMatchSnapshot();
   });
 
   test('add new layer when name is not used', () => {
     mockHasLayer.mockReturnValue(false);
+
     const { container } = render(<AddLayerButton setSelectedLayers={mockSetSelectedLayers} />);
+
     fireEvent.click(container.querySelector('.btn'));
     expect(mockHasLayer).toBeCalledTimes(1);
     expect(mockCreateLayer).toBeCalledTimes(1);
@@ -80,7 +88,9 @@ describe('test AddLayerButton', () => {
 
   test('add new layer when name is used', () => {
     mockHasLayer.mockReturnValueOnce(true).mockReturnValueOnce(false);
+
     const { container } = render(<AddLayerButton setSelectedLayers={mockSetSelectedLayers} />);
+
     fireEvent.click(container.querySelector('.btn'));
     expect(mockHasLayer).toBeCalledTimes(2);
     expect(mockHasLayer).toHaveBeenNthCalledWith(1, 'Layer 1');

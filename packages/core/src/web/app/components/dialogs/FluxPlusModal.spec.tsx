@@ -1,9 +1,11 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import FluxPlusModal from './FluxPlusModal';
 
 const open = jest.fn();
+
 jest.mock('@app/implementations/browser', () => ({
   open: (...args) => open(...args),
 }));
@@ -11,20 +13,21 @@ jest.mock('@app/implementations/browser', () => ({
 jest.mock('@core/helpers/useI18n', () => () => ({
   flux_id_login: {
     flux_plus: {
-      learn_more: 'Learn More',
-      website_url: 'https://website_url',
       features: {
         ai_bg_removal: 'AI Background Removal',
-        my_cloud: 'Unlimited Cloud Storage',
         boxgen: '3D Box Generator',
         dmkt: '1000+ Design Files',
         monotype: '250+ Premium Fonts',
+        my_cloud: 'Unlimited Cloud Storage',
       },
+      learn_more: 'Learn More',
+      website_url: 'https://website_url',
     },
   },
 }));
 
 const useIsMobile = jest.fn();
+
 jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => useIsMobile(),
 }));
@@ -44,6 +47,7 @@ describe('test FluxPlusModal', () => {
         <div>mock-children</div>
       </FluxPlusModal>,
     );
+
     expect(baseElement).toMatchSnapshot();
 
     fireEvent.click(baseElement.querySelector('.button'));
@@ -56,21 +60,25 @@ describe('test FluxPlusModal', () => {
 
   test('mobile', () => {
     useIsMobile.mockReturnValue(true);
+
     const { baseElement } = render(
       <FluxPlusModal className="mock-class" onClose={onClose}>
         <div>mock-children</div>
       </FluxPlusModal>,
     );
+
     expect(baseElement).toMatchSnapshot();
   });
 
   test('mobile with hideMobileBanner', () => {
     useIsMobile.mockReturnValue(true);
+
     const { baseElement } = render(
-      <FluxPlusModal className="mock-class" onClose={onClose} hideMobileBanner>
+      <FluxPlusModal className="mock-class" hideMobileBanner onClose={onClose}>
         <div>mock-children</div>
       </FluxPlusModal>,
     );
+
     expect(baseElement.querySelector('.banner')).not.toBeInTheDocument();
   });
 });

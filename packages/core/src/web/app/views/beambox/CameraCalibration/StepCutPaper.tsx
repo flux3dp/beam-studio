@@ -1,16 +1,17 @@
 import React, { useContext } from 'react';
+
 import { Modal } from 'antd';
 
-import useI18n from '@core/helpers/useI18n';
-import { CalibrationContext } from '@core/app/contexts/CalibrationContext';
 import { STEP_REFOCUS } from '@core/app/constants/camera-calibration-constants';
+import { CalibrationContext } from '@core/app/contexts/CalibrationContext';
+import useI18n from '@core/helpers/useI18n';
 
-const StepPutPaper = (): JSX.Element => {
+const StepPutPaper = (): React.JSX.Element => {
   const lang = useI18n().calibration;
   const { gotoNextStep, onClose } = useContext(CalibrationContext);
 
   const video = (
-    <video className="video" autoPlay loop muted>
+    <video autoPlay className="video" loop muted>
       <source src="video/put_paper.webm" type="video/webm" />
       <source src="video/put_paper.mp4" type="video/mp4" />
     </video>
@@ -18,15 +19,15 @@ const StepPutPaper = (): JSX.Element => {
 
   return (
     <Modal
-      width={400}
-      open
+      cancelText={lang.cancel}
       centered
       className="modal-camera-calibration"
-      title={lang.camera_calibration}
-      onCancel={() => onClose(false)}
       okText={lang.next}
-      cancelText={lang.cancel}
+      onCancel={() => onClose(false)}
       onOk={() => gotoNextStep(STEP_REFOCUS)}
+      open
+      title={lang.camera_calibration}
+      width={400}
     >
       {lang.please_place_paper}
       {video}

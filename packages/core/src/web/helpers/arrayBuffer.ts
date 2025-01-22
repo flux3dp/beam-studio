@@ -5,8 +5,10 @@ const arrayBuffer = async (blob: Blob): Promise<ArrayBuffer> => {
   if (blob.arrayBuffer) {
     return blob.arrayBuffer();
   }
+
   return new Promise((resolve) => {
     const fileReader = new FileReader();
+
     fileReader.onload = () => {
       resolve(fileReader.result as ArrayBuffer);
     };

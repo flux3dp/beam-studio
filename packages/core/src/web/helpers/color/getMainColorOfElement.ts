@@ -6,11 +6,15 @@
  */
 const getMainColorOfElement = (node: Element): string => {
   let color;
+
   color = node.getAttribute('stroke') || 'none';
+
   if (color === 'none') {
     color = node.getAttribute('fill');
   }
+
   color = color || 'rgb(0%,0%,0%)';
+
   return color;
 };
 

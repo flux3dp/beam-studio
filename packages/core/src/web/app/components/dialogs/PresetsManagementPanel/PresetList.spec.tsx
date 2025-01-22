@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import PresetList from './PresetList';
@@ -19,26 +20,26 @@ describe('test PresetList', () => {
   it('should be rendered correctly', () => {
     const presets = [
       {
+        hide: false,
+        isDefault: false,
         name: 'preset1',
-        isDefault: false,
-        hide: false,
       },
       {
-        name: 'preset2',
-        isDefault: true,
         hide: false,
+        isDefault: true,
         key: 'pre2',
+        name: 'preset2',
       },
       {
-        name: 'preset3',
+        hide: true,
         isDefault: false,
-        hide: true,
+        name: 'preset3',
       },
       {
-        name: 'preset4',
-        isDefault: true,
         hide: true,
+        isDefault: true,
         key: 'pre4',
+        name: 'preset4',
       },
     ];
     const displayList = presets;
@@ -50,19 +51,22 @@ describe('test PresetList', () => {
     const outerRef = { current: null };
     const { container, getByText } = render(
       <PresetList
-        presets={presets}
         displayList={displayList}
         editingValues={editingValues}
+        onReorder={onReorder}
+        presets={presets}
+        ref={outerRef}
         selected={selected}
         setSelectedPreset={setSelectedPreset}
         toggleHidePreset={toggleHidePreset}
-        onReorder={onReorder}
-        ref={outerRef}
       />,
       { container: document.body.appendChild(document.createElement('div')) },
     );
+
     expect(container).toMatchSnapshot();
+
     const preset1 = getByText('preset1');
+
     fireEvent.click(preset1);
     expect(setSelectedPreset).toHaveBeenCalledTimes(1);
     fireEvent.click(container.querySelectorAll('.eye')[1]);

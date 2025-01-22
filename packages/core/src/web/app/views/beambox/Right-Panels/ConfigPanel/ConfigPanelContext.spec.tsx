@@ -1,74 +1,78 @@
-import { Action, getDefaultState, reducer } from './ConfigPanelContext';
+import type { Action } from './ConfigPanelContext';
+import { getDefaultState, reducer } from './ConfigPanelContext';
 
 jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   getDefaultConfig: () => ({
-    speed: 20,
+    configName: '',
     power: 15,
     repeat: 1,
+    speed: 20,
     zStep: 0,
-    configName: '',
   }),
 }));
 
 describe('test ConfigPanelContext', () => {
   test('getDefaultState should work', () => {
     expect(getDefaultState()).toEqual({
-      speed: { value: 20 },
+      configName: { value: '' },
       power: { value: 15 },
       repeat: { value: 1 },
+      speed: { value: 20 },
       zStep: { value: 0 },
-      configName: { value: '' },
     });
   });
 
   test('if update action work', () => {
     const state = getDefaultState();
     const newState = reducer(state, {
-      type: 'update',
       payload: {
-        speed: { value: 2, hasMultiValue: true },
         repeat: { value: 2 },
+        speed: { hasMultiValue: true, value: 2 },
       },
+      type: 'update',
     } as Action);
+
     expect(newState).toEqual({
-      speed: { value: 2, hasMultiValue: true },
+      configName: { value: '' },
       power: { value: 15 },
       repeat: { value: 2 },
+      speed: { hasMultiValue: true, value: 2 },
       zStep: { value: 0 },
-      configName: { value: '' },
     });
   });
 
   test('if change action work', () => {
     const state = getDefaultState();
     const newState = reducer(state, {
-      type: 'change',
       payload: {
-        speed: 2,
         repeat: 2,
+        speed: 2,
       },
+      type: 'change',
     } as Action);
+
     expect(newState).toEqual({
-      speed: { value: 2 },
+      configName: { value: '' },
       power: { value: 15 },
       repeat: { value: 2 },
+      speed: { value: 2 },
       zStep: { value: 0 },
-      configName: { value: '' },
     });
   });
 
   test('if rename action work', () => {
     const state = getDefaultState();
     const newState = reducer(state, {
-      type: 'rename',
       payload: 'test',
+      type: 'rename',
     } as Action);
+
     expect(newState).toEqual({
-      speed: { value: 20 },
+      configName: { value: 'test' },
       power: { value: 15 },
       repeat: { value: 1 },
+      speed: { value: 20 },
       zStep: { value: 0 },
-      configName: { value: 'test' },
     });
   });
 });

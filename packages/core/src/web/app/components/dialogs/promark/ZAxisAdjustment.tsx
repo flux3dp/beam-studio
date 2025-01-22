@@ -1,37 +1,31 @@
-/* eslint-disable @typescript-eslint/no-shadow */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
+import { ArrowDownOutlined, ArrowUpOutlined, LoadingOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Button, Flex, Modal, Spin, Tooltip } from 'antd';
 
-import checkDeviceStatus from '@core/helpers/check-device-status';
-import deviceMaster from '@core/helpers/device-master';
-import storage from '@app/implementations/storage';
-import useI18n from '@core/helpers/useI18n';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
-import { IDeviceInfo } from '@core/interfaces/IDevice';
-
-import UnitInput from '@core/app/widgets/UnitInput';
-import {
-  ArrowDownOutlined,
-  ArrowUpOutlined,
-  LoadingOutlined,
-  QuestionCircleOutlined,
-} from '@ant-design/icons';
-import { swiftrayClient } from '@core/helpers/api/swiftray-client';
-import {
-  generateCalibrationTaskString,
-  loadTaskToSwiftray,
-} from '@core/helpers/device/promark/calibration';
-import Icons from '@core/app/icons/icons';
 import deviceConstants from '@core/app/constants/device-constants';
+import Icons from '@core/app/icons/icons';
+import UnitInput from '@core/app/widgets/UnitInput';
+import { swiftrayClient } from '@core/helpers/api/swiftray-client';
+import checkDeviceStatus from '@core/helpers/check-device-status';
+import { generateCalibrationTaskString, loadTaskToSwiftray } from '@core/helpers/device/promark/calibration';
+import deviceMaster from '@core/helpers/device-master';
+import useI18n from '@core/helpers/useI18n';
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
+
+import storage from '@app/implementations/storage';
+
+import type { MarkParameters } from './ParametersBlock';
+import ParametersBlock from './ParametersBlock';
 import styles from './ZAxisAdjustment.module.scss';
-import ParametersBlock, { MarkParameters } from './ParametersBlock';
 
 interface Props {
   device: IDeviceInfo;
   onClose: () => void;
 }
 
-export const ZAxisAdjustment = ({ device, onClose }: Props): JSX.Element => {
+export const ZAxisAdjustment = ({ device, onClose }: Props): React.JSX.Element => {
   const { global: tGlobal, promark_settings: t } = useI18n();
   const { model } = device;
   const isInch = useMemo(() => storage.get('default-units') === 'inches', []);
@@ -65,7 +59,7 @@ export const ZAxisAdjustment = ({ device, onClose }: Props): JSX.Element => {
     const { power, speed } = parameters;
 
     if (!markTask.current) {
-      markTask.current = await generateCalibrationTaskString({ width: 10, power, speed });
+      markTask.current = await generateCalibrationTaskString({ power, speed, width: 10 });
     }
 
     await loadTaskToSwiftray(markTask.current, model);
@@ -155,9 +149,9 @@ export const ZAxisAdjustment = ({ device, onClose }: Props): JSX.Element => {
   };
 
   const footer = (
-    <Flex className={styles.footer} justify="space-between" align="center">
+    <Flex align="center" className={styles.footer} justify="space-between">
       <div>
-        <Button className={styles.button} onClick={handlePreview} disabled={isMoving}>
+        <Button className={styles.button} disabled={isMoving} onClick={handlePreview}>
           {t.preview}
           {isPreviewing ? (
             <Spin indicator={<LoadingOutlined className={styles.icon} spin />} />
@@ -165,11 +159,11 @@ export const ZAxisAdjustment = ({ device, onClose }: Props): JSX.Element => {
             <Icons.Play className={styles.icon} />
           )}
         </Button>
-        <Button className={styles.button} onClick={handleMark} disabled={isMoving}>
+        <Button className={styles.button} disabled={isMoving} onClick={handleMark}>
           {t.mark}
         </Button>
       </div>
-      <Button className={styles.button} type="primary" onClick={handleClose}>
+      <Button className={styles.button} onClick={handleClose} type="primary">
         {tGlobal.ok}
       </Button>
     </Flex>
@@ -177,43 +171,35 @@ export const ZAxisAdjustment = ({ device, onClose }: Props): JSX.Element => {
 
   return (
     <Modal
-      open
       centered
-      maskClosable={false}
-      width={425}
-      title={t.z_axis_adjustment.title}
-      onCancel={handleClose}
       footer={footer}
+      maskClosable={false}
+      onCancel={handleClose}
+      open
+      title={t.z_axis_adjustment.title}
+      width={425}
     >
       <div className={styles.container}>
         <div className={styles['mb-12']}>{t.z_axis_adjustment.section1}</div>
-        <Flex justify="flex-start" className={styles['mb-28']} gap={8}>
-          <Button
-            icon={<ArrowUpOutlined />}
-            disabled={isMoving}
-            onClick={() => handleMove(zAxis)}
-          />
+        <Flex className={styles['mb-28']} gap={8} justify="flex-start">
+          <Button disabled={isMoving} icon={<ArrowUpOutlined />} onClick={() => handleMove(zAxis)} />
           <UnitInput
-            isInch={isInch}
+            addonAfter={isInch ? 'in' : 'mm'}
             className={styles.input}
-            value={zAxis}
-            min={1}
+            isInch={isInch}
             max={100}
+            min={1}
+            onChange={(value) => setZAxis(Math.min(100, Math.max(1, value)))}
             precision={isInch ? 6 : 2}
             step={isInch ? 25.4 : 1}
-            addonAfter={isInch ? 'in' : 'mm'}
-            onChange={(value) => setZAxis(Math.min(100, Math.max(1, value)))}
+            value={zAxis}
           />
-          <Button
-            icon={<ArrowDownOutlined />}
-            disabled={isMoving}
-            onClick={() => handleMove(-zAxis)}
-          />
-          <Button className={styles.button} danger onClick={handleStop} disabled={!isMoving}>
+          <Button disabled={isMoving} icon={<ArrowDownOutlined />} onClick={() => handleMove(-zAxis)} />
+          <Button className={styles.button} danger disabled={!isMoving} onClick={handleStop}>
             {tGlobal.stop}
           </Button>
         </Flex>
-        <Flex justify="flex-start" className={styles['mb-12']}>
+        <Flex className={styles['mb-12']} justify="flex-start">
           <div className={styles['mark-title']}>{t.mark_parameters}</div>
           <Tooltip title={t.z_axis_adjustment.tooltip1}>
             <QuestionCircleOutlined />

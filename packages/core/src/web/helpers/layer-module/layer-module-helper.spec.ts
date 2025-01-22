@@ -3,6 +3,7 @@ import LayerModule from '@core/app/constants/layer-module/layer-modules';
 import layerModuleHelper from './layer-module-helper';
 
 const mockRead = jest.fn();
+
 jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read: (...args) => mockRead(...args),
 }));
@@ -10,10 +11,10 @@ jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
 jest.mock('@core/helpers/i18n', () => ({
   lang: {
     layer_module: {
-      none: 'none',
+      laser_2w_infrared: 'laser_2w_infrared',
       laser_10w_diode: 'laser_10w_diode',
       laser_20w_diode: 'laser_20w_diode',
-      laser_2w_infrared: 'laser_2w_infrared',
+      none: 'none',
       printing: 'printing',
       unknown: 'unknown',
     },

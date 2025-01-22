@@ -1,37 +1,35 @@
 import * as React from 'react';
+
 import classNames from 'classnames';
 
 import Controls from '@core/app/components/settings/Control';
-import i18n from '@core/helpers/i18n';
-import PathInput, { InputType } from '@core/app/widgets/PathInput';
 import SelectControl from '@core/app/components/settings/SelectControl';
+import PathInput, { InputType } from '@core/app/widgets/PathInput';
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
-import { IConfig } from '@core/interfaces/IAutosave';
+import i18n from '@core/helpers/i18n';
+import type { IConfig } from '@core/interfaces/IAutosave';
 
 interface Props {
-  isWeb: boolean;
-  autoSaveOptions: { value: any; label: string; selected: boolean }[];
+  autoSaveOptions: Array<{ label: string; selected: boolean; value: any }>;
   editingAutosaveConfig: IConfig;
-  warnings: { [key: string]: string };
+  isWeb: boolean;
   updateState: (state: any) => void;
+  warnings: { [key: string]: string };
 }
 
-function AutoSave({
-  isWeb,
-  autoSaveOptions,
-  editingAutosaveConfig,
-  warnings,
-  updateState,
-}: Props): JSX.Element {
-  if (isWeb) return null;
+function AutoSave({ autoSaveOptions, editingAutosaveConfig, isWeb, updateState, warnings }: Props): React.JSX.Element {
+  if (isWeb) {
+    return null;
+  }
+
   const { lang } = i18n;
+
   return (
     <>
       <div className="subtitle">{lang.settings.groups.autosave}</div>
       <SelectControl
         id="set-auto-save"
         label={lang.settings.autosave_enabled}
-        options={autoSaveOptions}
         onChange={(e) => {
           updateState({
             editingAutosaveConfig: {
@@ -40,12 +38,13 @@ function AutoSave({
             },
           });
         }}
+        options={autoSaveOptions}
       />
       <Controls label={lang.settings.autosave_path} warningText={warnings.autosave_directory}>
         <PathInput
-          data-id="location-input"
           buttonTitle={lang.general.choose_folder}
           className={classNames({ 'with-error': !!warnings.autosave_directory })}
+          data-id="location-input"
           defaultValue={editingAutosaveConfig.directory}
           forceValidValue={false}
           getValue={(val: string, isValid: boolean) => {
@@ -54,6 +53,7 @@ function AutoSave({
             } else {
               delete warnings.autosave_directory;
             }
+
             updateState({
               editingAutosaveConfig: {
                 ...editingAutosaveConfig,
@@ -69,10 +69,7 @@ function AutoSave({
       </Controls>
       <Controls label={lang.settings.autosave_interval}>
         <UnitInput
-          id="save-every"
-          unit={lang.monitor.minute}
-          min={1}
-          max={60}
+          className={{ half: true }}
           decimal={0}
           defaultValue={editingAutosaveConfig.timeInterval}
           getValue={(val: number) => {
@@ -83,14 +80,15 @@ function AutoSave({
               },
             });
           }}
-          className={{ half: true }}
+          id="save-every"
+          max={60}
+          min={1}
+          unit={lang.monitor.minute}
         />
       </Controls>
       <Controls label={lang.settings.autosave_number}>
         <UnitInput
-          id="number-of-auto-save"
-          min={1}
-          max={10}
+          className={{ half: true }}
           decimal={0}
           defaultValue={editingAutosaveConfig.fileNumber}
           getValue={(val: number) => {
@@ -101,7 +99,9 @@ function AutoSave({
               },
             });
           }}
-          className={{ half: true }}
+          id="number-of-auto-save"
+          max={10}
+          min={1}
         />
       </Controls>
     </>

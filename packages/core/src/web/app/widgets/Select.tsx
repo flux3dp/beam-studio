@@ -3,28 +3,36 @@
 import * as React from 'react';
 
 interface Props {
-  id?: string;
-  name?: string;
   className?: string;
-  multiple?: boolean;
-  disabled?: boolean;
-  options: {
-    value: string | number,
-    label: string,
-    selected: boolean;
-    data?: any;
-  }[];
   defaultValue?: string | string[];
+  disabled?: boolean;
+  id?: string;
+  multiple?: boolean;
+  name?: string;
   onChange: (e: any) => void;
+  options: Array<{
+    data?: any;
+    label: string;
+    selected: boolean;
+    value: number | string;
+  }>;
 }
 
 function Select({
-  id, name, className, multiple, disabled, options, defaultValue, onChange,
-}: Props): JSX.Element {
+  className,
+  defaultValue,
+  disabled,
+  id,
+  multiple,
+  name,
+  onChange,
+  options,
+}: Props): React.JSX.Element {
   const renderOptions = () => {
     let defaultOptionValue;
     const renderedOptions = options.map((opt, i) => {
       const metadata = JSON.stringify(opt.data);
+
       // if this is the selected option, set the <select>'s defaultValue
       if (opt.selected) {
         // if the <select> is a multiple, push the values
@@ -33,7 +41,8 @@ function Select({
           if (defaultOptionValue === undefined) {
             defaultOptionValue = [];
           }
-          if (defaultOptionValue instanceof Array) {
+
+          if (Array.isArray(defaultOptionValue)) {
             defaultOptionValue.push(opt.value);
           }
         } else {
@@ -41,14 +50,14 @@ function Select({
           // NOTE: this means if you pass in a list of options with
           // multiple 'selected', WITHOUT specifiying 'multiple',
           // properties the last option in the list will be the ONLY item selected.
-          defaultOptionValue = (defaultValue !== undefined ? defaultValue : opt.value);
+          defaultOptionValue = defaultValue !== undefined ? defaultValue : opt.value;
         }
       }
+
       // attribute schema matches <option> spec; http://www.w3.org/TR/REC-html40/interact/forms.html#h-17.6
       // EXCEPT for 'key' attribute which is requested by ReactJS
       return (
-        // eslint-disable-next-line react/no-array-index-key
-        <option key={i} value={opt.value} label={opt.label} data-meta={metadata}>
+        <option data-meta={metadata} key={i} label={opt.label} value={opt.value}>
           {opt.label}
         </option>
       );
@@ -58,16 +67,17 @@ function Select({
   };
 
   const [renderedOptions, defaultOptionValue] = renderOptions();
+
   return (
     <select
-      disabled={disabled}
+      className={className}
       defaultValue={defaultOptionValue}
-      value={defaultOptionValue}
+      disabled={disabled}
+      id={id}
       multiple={multiple}
       name={name}
-      id={id}
-      className={className}
       onChange={onChange}
+      value={defaultOptionValue}
     >
       {renderedOptions}
     </select>

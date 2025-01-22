@@ -1,49 +1,50 @@
-/* eslint-disable react/jsx-props-no-spreading */
+import type { MutableRefObject } from 'react';
+import React, { forwardRef } from 'react';
+
 import classNames from 'classnames';
-import React, { forwardRef, MutableRefObject } from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import useI18n from '@core/helpers/useI18n';
-import { Preset } from '@core/interfaces/ILayerConfig';
+import type { Preset } from '@core/interfaces/ILayerConfig';
 
 import styles from './PresetsManagementPanel.module.scss';
 
 interface Props {
-  presets: Preset[];
   displayList: Preset[];
   editingValues: Record<string, Preset>;
+  onReorder: (newPresets: Preset[]) => void;
+  presets: Preset[];
   selected: Preset;
   setSelectedPreset: (preset: Preset) => void;
   toggleHidePreset: (preset: Preset) => void;
-  onReorder: (newPresets: Preset[]) => void;
 }
 
 const PresetList = forwardRef<HTMLDivElement, Props>(
   (
-    {
-      presets,
-      displayList,
-      editingValues,
-      selected,
-      setSelectedPreset,
-      toggleHidePreset,
-      onReorder,
-    }: Props,
+    { displayList, editingValues, onReorder, presets, selected, setSelectedPreset, toggleHidePreset }: Props,
     outerRef: MutableRefObject<HTMLDivElement>,
-  ): JSX.Element => {
+  ): React.JSX.Element => {
     const t = useI18n().beambox.right_panel.laser_panel.preset_management;
     const handleBeforeDragStart = ({ source }) => {
       setSelectedPreset(displayList[source.index]);
     };
 
     const handleDragEnd = (result) => {
-      if (!result.destination) return;
+      if (!result.destination) {
+        return;
+      }
+
       const sourceIdx = presets.findIndex((p) => p === displayList[result.source.index]);
       const destIdx = presets.findIndex((p) => p === displayList[result.destination.index]);
-      if (sourceIdx === -1 || destIdx === -1) return;
+
+      if (sourceIdx === -1 || destIdx === -1) {
+        return;
+      }
+
       const newPresets = Array.from(presets);
       const [removed] = newPresets.splice(sourceIdx, 1);
+
       newPresets.splice(destIdx, 0, removed);
       onReorder(newPresets);
     };
@@ -57,29 +58,29 @@ const PresetList = forwardRef<HTMLDivElement, Props>(
               className={styles.list}
               ref={(node) => {
                 droppableProvided.innerRef(node);
-                // eslint-disable-next-line no-param-reassign
+
                 outerRef.current = node;
               }}
             >
               {displayList.map((preset, index) => (
                 <Draggable
-                  key={preset.isDefault ? preset.key : preset.name}
                   draggableId={preset.isDefault ? preset.key : preset.name}
                   index={index}
+                  key={preset.isDefault ? preset.key : preset.name}
                 >
                   {(draggalbeProvided, snapshot) => (
                     <div
                       {...draggalbeProvided.draggableProps}
                       {...draggalbeProvided.dragHandleProps}
-                      ref={draggalbeProvided.innerRef}
                       className={classNames(styles.item, {
+                        [styles.dragging]: snapshot.isDragging,
                         [styles.preset]: preset.isDefault,
                         [styles.selected]: preset === selected,
-                        [styles.dragging]: snapshot.isDragging,
                       })}
-                      title={preset.name}
-                      onClick={() => setSelectedPreset(preset)}
                       data-key={preset.isDefault ? preset.key : preset.name}
+                      onClick={() => setSelectedPreset(preset)}
+                      ref={draggalbeProvided.innerRef}
+                      title={preset.name}
                     >
                       <div className={styles.left}>
                         {preset.isDefault && <div className={styles.mark}>{t.preset}</div>}

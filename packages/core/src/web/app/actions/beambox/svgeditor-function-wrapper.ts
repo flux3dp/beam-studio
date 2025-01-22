@@ -1,19 +1,21 @@
+import TutorialConstants from '@core/app/constants/tutorial-constants';
 import * as TutorialController from '@core/app/views/tutorials/tutorialController';
-import clipboard from '@core/app/svgedit/operations/clipboard';
-import dialog from '@app/implementations/dialog';
 import i18n from '@core/helpers/i18n';
 import ImageData from '@core/helpers/image-data';
-import ISVGCanvas from '@core/interfaces/ISVGCanvas';
-import TutorialConstants from '@core/app/constants/tutorial-constants';
 import { createLayer } from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
+
+import dialog from '@app/implementations/dialog';
 
 let svgCanvas: ISVGCanvas;
 let svgEditor;
+
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
   svgEditor = globalSVG.Editor;
 });
+
 const LANG = i18n.lang.beambox;
 
 const setCrosshairCursor = () => {
@@ -24,16 +26,39 @@ const setCrosshairCursor = () => {
 const align = (types) => {
   if (svgCanvas.getTempGroup()) {
     const childeren = svgCanvas.ungroupTempGroup();
+
     svgCanvas.selectOnly(childeren, false);
   }
+
   const selectedElements = svgCanvas.getSelectedElems();
   const len = selectedElements.filter((e) => e).length;
   const mode = len > 1 ? 'selected' : 'page';
+
   svgCanvas.alignSelectedElements(types, mode);
   svgCanvas.tempGroupSelectedElements();
 };
 
 const funcs = {
+  alignBottom(): void {
+    align('b');
+  },
+  alignCenter(): void {
+    align('c');
+  },
+  // align toolbox
+  alignLeft(): void {
+    align('l');
+  },
+
+  alignMiddle(): void {
+    align('m');
+  },
+  alignRight(): void {
+    align('r');
+  },
+  alignTop(): void {
+    align('t');
+  },
   clearSelection(): void {
     svgCanvas.clearSelection();
   },
@@ -42,7 +67,6 @@ const funcs = {
     const file = await dialog.getFileFromDialog({
       filters: [
         {
-          name: 'Images',
           extensions: [
             'png',
             'jpg',
@@ -65,55 +89,72 @@ const funcs = {
             'beam',
             'webp',
           ],
+          name: 'Images',
         },
       ],
     });
-    if (file) svgEditor.handleFile(file);
+
+    if (file) {
+      svgEditor.handleFile(file);
+    }
+
     svgEditor.clickSelect();
+  },
+  insertEllipse(): void {
+    if (TutorialController.getNextStepRequirement() === TutorialConstants.SELECT_CIRCLE) {
+      TutorialController.handleNextStep();
+    }
+
+    svgCanvas.setMode('ellipse');
+    setCrosshairCursor();
   },
   insertImage(
     insertedImageSrc: string,
-    dimension: { x: number; y: number; width: number; height: number },
+    dimension: { height: number; width: number; x: number; y: number },
     threshold = 255,
-    options: { useCurrentLayer?: boolean; ratioFixed?: boolean } = {},
+    options: { ratioFixed?: boolean; useCurrentLayer?: boolean } = {},
   ): void {
     const img = new Image();
     const layerName = LANG.right_panel.layer_panel.layer_bitmap;
-    const { useCurrentLayer = false, ratioFixed = false } = options;
+    const { ratioFixed = false, useCurrentLayer = false } = options;
+
     img.src = insertedImageSrc;
     img.style.opacity = '0';
     img.onload = () => {
-      if (!useCurrentLayer && !svgCanvas.setCurrentLayer(layerName)) createLayer(layerName);
-      const { x, y, width, height } = dimension;
+      if (!useCurrentLayer && !svgCanvas.setCurrentLayer(layerName)) {
+        createLayer(layerName);
+      }
+
+      const { height, width, x, y } = dimension;
       const newImage = svgCanvas.addSvgElementFromJson({
-        element: 'image',
         attr: {
-          x,
-          y,
-          width,
+          'data-ratiofixed': ratioFixed ? 'true' : 'false',
+          'data-shading': false,
+          'data-threshold': threshold,
           height,
           id: svgCanvas.getNextId(),
-          style: 'pointer-events:inherit',
-          preserveAspectRatio: 'none',
-          'data-threshold': threshold,
-          'data-shading': false,
           origImage: img.src,
-          'data-ratiofixed': ratioFixed ? 'true' : 'false',
+          preserveAspectRatio: 'none',
+          style: 'pointer-events:inherit',
+          width,
+          x,
+          y,
         },
+        element: 'image',
       });
 
       ImageData(newImage.getAttribute('origImage'), {
-        height,
-        width,
         grayscale: {
           is_rgba: true,
           is_shading: false,
-          threshold,
           is_svg: false,
+          threshold,
         },
+        height,
         onComplete(result) {
           svgCanvas.setHref(newImage, result.pngBase64);
         },
+        width,
       });
       svgCanvas.updateElementColor(newImage);
       svgCanvas.selectOnly([newImage]);
@@ -122,42 +163,8 @@ const funcs = {
       $('#dialog_box').hide();
     };
   },
-
-  // align toolbox
-  alignLeft(): void {
-    align('l');
-  },
-  alignCenter(): void {
-    align('c');
-  },
-  alignRight(): void {
-    align('r');
-  },
-  alignTop(): void {
-    align('t');
-  },
-  alignMiddle(): void {
-    align('m');
-  },
-  alignBottom(): void {
-    align('b');
-  },
-  // left panel
-  useSelectTool(): void {
-    svgEditor.clickSelect();
-  },
-  insertRectangle(): void {
-    if (TutorialController.getNextStepRequirement() === TutorialConstants.SELECT_RECT) {
-      TutorialController.handleNextStep();
-    }
-    svgCanvas.setMode('rect');
-    setCrosshairCursor();
-  },
-  insertEllipse(): void {
-    if (TutorialController.getNextStepRequirement() === TutorialConstants.SELECT_CIRCLE) {
-      TutorialController.handleNextStep();
-    }
-    svgCanvas.setMode('ellipse');
+  insertLine(): void {
+    svgCanvas.setMode('line');
     setCrosshairCursor();
   },
   insertPath(): void {
@@ -168,13 +175,21 @@ const funcs = {
     svgCanvas.setMode('polygon');
     setCrosshairCursor();
   },
-  insertLine(): void {
-    svgCanvas.setMode('line');
+  insertRectangle(): void {
+    if (TutorialController.getNextStepRequirement() === TutorialConstants.SELECT_RECT) {
+      TutorialController.handleNextStep();
+    }
+
+    svgCanvas.setMode('rect');
     setCrosshairCursor();
   },
   insertText(): void {
     svgCanvas.setMode('text');
     $('#workarea').css('cursor', 'text');
+  },
+  // left panel
+  useSelectTool(): void {
+    svgEditor.clickSelect();
   },
 };
 

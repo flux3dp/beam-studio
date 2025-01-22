@@ -2,6 +2,7 @@ import type { IFont } from '@core/interfaces/IFont';
 
 import storage from '@app/implementations/storage';
 
+// eslint-disable-next-line no-undef
 export default function getDefaultFont(): TextAttribute {
   const { family, postscriptName }: IFont = storage.get('default-font');
 

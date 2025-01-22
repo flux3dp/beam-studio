@@ -1,15 +1,17 @@
 import React, { useContext } from 'react';
-import { act } from 'react-dom/test-utils';
-import { render } from '@testing-library/react';
 
-import { DialogContextProvider, DialogContext, eventEmitter } from './DialogContext';
+import { render } from '@testing-library/react';
+import { act } from 'react-dom/test-utils';
+
+import { DialogContext, DialogContextProvider, eventEmitter } from './DialogContext';
 
 const Children = () => {
   const { dialogComponents } = useContext(DialogContext);
+
   return (
     <>
-      {dialogComponents.map(({ id, component }) => (
-        <div key={id} id={id}>
+      {dialogComponents.map(({ component, id }) => (
+        <div id={id} key={id}>
           {component}
         </div>
       ))}
@@ -26,8 +28,9 @@ describe('should render correctly', () => {
     const { container, unmount } = render(
       <DialogContextProvider>
         <Children />
-      </DialogContextProvider>
+      </DialogContextProvider>,
     );
+
     expect(container).toMatchSnapshot();
     expect(eventEmitter.eventNames().length).toBe(4);
 
@@ -41,6 +44,7 @@ describe('should render correctly', () => {
     const response = {
       isIdExist: false,
     };
+
     eventEmitter.emit('CHECK_ID_EXIST', '12345', response);
     expect(response.isIdExist).toBeTruthy();
     eventEmitter.emit('CHECK_ID_EXIST', '123456', response);
@@ -62,8 +66,9 @@ describe('should render correctly', () => {
     const { container } = render(
       <DialogContextProvider>
         <Children />
-      </DialogContextProvider>
+      </DialogContextProvider>,
     );
+
     act(() => eventEmitter.emit('ADD_DIALOG_COMPONENT', 'flux-id-login', <span>Flux Login</span>));
     expect(container).toMatchSnapshot();
     act(() => window.dispatchEvent(new CustomEvent('DISMISS_FLUX_LOGIN')));

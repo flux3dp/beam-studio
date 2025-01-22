@@ -1,6 +1,6 @@
-/* eslint-disable import/first */
 const mockGet = jest.fn();
 const mockSet = jest.fn();
+
 jest.mock('@app/implementations/storage', () => ({
   get: (...args) => mockGet(...args),
   set: (...args) => mockSet(...args),
@@ -20,6 +20,7 @@ jest.mock('@core/app/actions/beambox/constant', () => ({
 }));
 
 const mockEmit = jest.fn();
+
 jest.mock('@core/helpers/eventEmitterFactory', () => ({
   createEventEmitter: () => ({
     emit: (...args) => mockEmit(...args),
@@ -29,21 +30,21 @@ jest.mock('@core/helpers/eventEmitterFactory', () => ({
 test('test beambox-preference', () => {
   expect(mockGet).toHaveBeenNthCalledWith(1, 'beambox-preference');
   expect(mockSet).toHaveBeenNthCalledWith(1, 'beambox-preference', {
-    should_remind_calibrate_camera: true,
-    mouse_input_device: window.os === 'MacOS' ? 'TOUCHPAD' : 'MOUSE',
-    model: 'fbb1b',
-    show_guides: false,
-    show_grids: true,
-    guide_x0: 0,
-    guide_y0: 0,
-    engrave_dpi: 'medium',
+    abc: '123',
+    'anti-aliasing': true,
     diode_offset_x: 10,
     diode_offset_y: 10,
-    use_layer_color: true,
-    'anti-aliasing': true,
+    engrave_dpi: 'medium',
+    guide_x0: 0,
+    guide_y0: 0,
     low_power: 10,
+    model: 'fbb1b',
+    mouse_input_device: window.os === 'MacOS' ? 'TOUCHPAD' : 'MOUSE',
     rotary_mode: 0,
-    abc: '123',
+    should_remind_calibrate_camera: true,
+    show_grids: true,
+    show_guides: false,
+    use_layer_color: true,
   });
 
   mockGet.mockReturnValue({

@@ -1,10 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable no-param-reassign */
-/* eslint-disable no-console */
 import * as React from 'react';
+import { useContext } from 'react';
 
 import dialog from '@core/app/actions/dialog-caller';
-import { IDeviceInfo } from '@core/interfaces/IDevice';
 import {
   STEP_ASK_READJUST,
   STEP_BEFORE_ANALYZE_PICTURE,
@@ -12,15 +9,16 @@ import {
   STEP_PUT_PAPER,
   STEP_REFOCUS,
 } from '@core/app/constants/camera-calibration-constants';
-import { useContext } from 'react';
 import { CalibrationContext, CalibrationProvider } from '@core/app/contexts/CalibrationContext';
-import StepFinish from './CameraCalibration/StepFinish';
-import StepPutPaper from './CameraCalibration/StepCutPaper';
-import StepAskReadjust from './CameraCalibration/StepAskReadjust';
-import StepRefocus from './CameraCalibration/StepRefocus';
-import StepBeforeAnalyzePicture from './CameraCalibration/StepBeforeAnalyzePicture';
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
-const CameraCalibrationComponent = (): JSX.Element => {
+import StepAskReadjust from './CameraCalibration/StepAskReadjust';
+import StepBeforeAnalyzePicture from './CameraCalibration/StepBeforeAnalyzePicture';
+import StepPutPaper from './CameraCalibration/StepCutPaper';
+import StepFinish from './CameraCalibration/StepFinish';
+import StepRefocus from './CameraCalibration/StepRefocus';
+
+const CameraCalibrationComponent = (): React.JSX.Element => {
   const { currentStep } = useContext(CalibrationContext);
 
   switch (currentStep) {
@@ -42,11 +40,11 @@ const CameraCalibrationComponent = (): JSX.Element => {
 export default CameraCalibrationComponent;
 
 // Not putting this in dialog-caller to avoid circular import because DeviceMaster imports dialog
-export const showCameraCalibration = (
-  device: IDeviceInfo,
-  isBorderless: boolean,
-): Promise<boolean> | boolean => {
-  if (dialog.isIdExist('camera-cali')) return false;
+export const showCameraCalibration = (device: IDeviceInfo, isBorderless: boolean): boolean | Promise<boolean> => {
+  if (dialog.isIdExist('camera-cali')) {
+    return false;
+  }
+
   return new Promise<boolean>((resolve) => {
     console.log(device);
     dialog.addDialogComponent(

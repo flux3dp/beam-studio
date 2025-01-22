@@ -1,27 +1,28 @@
 import * as React from 'react';
 
 import alert from '@core/app/actions/alert-caller';
-import alertConstants from '@core/app/constants/alert-constants';
-import browser from '@app/implementations/browser';
 import Controls from '@core/app/components/settings/Control';
-import i18n from '@core/helpers/i18n';
 import SelectControl from '@core/app/components/settings/SelectControl';
+import alertConstants from '@core/app/constants/alert-constants';
+import i18n from '@core/helpers/i18n';
+import type { StorageKey } from '@core/interfaces/IStorage';
+
+import browser from '@app/implementations/browser';
 import storage from '@app/implementations/storage';
-import { StorageKey } from '@core/interfaces/IStorage';
 
 interface Props {
+  autoConnectOptions: Array<{ label: string; selected: boolean; value: any }>;
+  guessingPokeOptions: Array<{ label: string; selected: boolean; value: any }>;
   originalIP: string;
-  guessingPokeOptions: { value: any; label: string; selected: boolean }[];
-  autoConnectOptions: { value: any; label: string; selected: boolean }[];
   updateConfigChange: (id: StorageKey, newVal: any) => void;
 }
 
 function Connection({
-  originalIP,
-  guessingPokeOptions,
   autoConnectOptions,
+  guessingPokeOptions,
+  originalIP,
   updateConfigChange,
-}: Props): JSX.Element {
+}: Props): React.JSX.Element {
   const lang = i18n.lang;
   const checkIPFormat = (e: React.FocusEvent): void => {
     const me = e.currentTarget as HTMLInputElement;
@@ -30,13 +31,15 @@ function Connection({
 
     for (let i = 0; i < ips.length; i += 1) {
       const ip = ips[i];
+
       if (ip !== '' && typeof ip === 'string' && ipv4Pattern.test(ip) === false) {
         me.value = originalIP;
         alert.popUp({
           id: 'wrong-ip-error',
-          type: alertConstants.SHOW_POPUP_ERROR,
           message: `${lang.settings.wrong_ip_format}\n${ip}`,
+          type: alertConstants.SHOW_POPUP_ERROR,
         });
+
         return;
       }
     }
@@ -48,32 +51,29 @@ function Connection({
       <div className="subtitle">
         {lang.settings.groups.connection}
         <span className="info-icon-medium">
-          <img
-            src="img/info.svg"
-            onClick={() => browser.open(lang.settings.help_center_urls.connection)}
-          />
+          <img onClick={() => browser.open(lang.settings.help_center_urls.connection)} src="img/info.svg" />
         </span>
       </div>
       <Controls label={lang.settings.ip}>
         <input
-          id="ip-input"
-          type="text"
           autoComplete="false"
           defaultValue={storage.get('poke-ip-addr')}
+          id="ip-input"
           onBlur={checkIPFormat}
+          type="text"
         />
       </Controls>
       <SelectControl
         id="set-guessing-poke"
         label={lang.settings.guess_poke}
-        options={guessingPokeOptions}
         onChange={(e) => updateConfigChange('guessing_poke', e.target.value)}
+        options={guessingPokeOptions}
       />
       <SelectControl
         id="set-auto-connect"
         label={lang.settings.auto_connect}
-        options={autoConnectOptions}
         onChange={(e) => updateConfigChange('auto_connect', e.target.value)}
+        options={autoConnectOptions}
       />
     </>
   );

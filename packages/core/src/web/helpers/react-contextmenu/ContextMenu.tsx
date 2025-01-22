@@ -1,25 +1,31 @@
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import React from 'react';
+
 import cx from 'classnames';
 
-import listener from './globalEventListener';
 import AbstractMenu from './AbstractMenu';
-import SubMenu from './SubMenu';
 import { hideMenu } from './actions';
-import { cssClasses, callIfExists, store } from './helpers';
+import listener from './globalEventListener';
+import { callIfExists, cssClasses, store } from './helpers';
+import SubMenu from './SubMenu';
 
 export default class ContextMenu extends AbstractMenu {
   static defaultProps = {
     className: '',
     data: {},
     hideOnLeave: false,
-    rtl: false,
-    onHide(): void { return null; },
-    onMouseLeave(): void { return null; },
-    onShow(): void { return null; },
+    onHide(): void {
+      return null;
+    },
+    onMouseLeave(): void {
+      return null;
+    },
+    onShow(): void {
+      return null;
+    },
     preventHideOnContextMenu: false,
     preventHideOnResize: false,
     preventHideOnScroll: false,
+    rtl: false,
     style: {},
   };
 
@@ -31,9 +37,9 @@ export default class ContextMenu extends AbstractMenu {
     super(props);
     this.state = {
       ...this.state,
+      isVisible: false,
       x: 0,
       y: 0,
-      isVisible: false,
     };
   }
 
@@ -45,16 +51,18 @@ export default class ContextMenu extends AbstractMenu {
 
   componentDidUpdate(): void {
     const wrapper = window.requestAnimationFrame || setTimeout;
+
     if (this.state.isVisible) {
       wrapper(() => {
         const { x, y } = this.state;
 
-        const { top, left } = this.props.rtl
-          ? this.getRTLMenuPosition(x, y)
-          : this.getMenuPosition(x, y);
+        const { left, top } = this.props.rtl ? this.getRTLMenuPosition(x, y) : this.getMenuPosition(x, y);
 
         wrapper(() => {
-          if (!this.menu) return;
+          if (!this.menu) {
+            return;
+          }
+
           this.menu.style.top = `${top}px`;
           this.menu.style.left = `${left}px`;
           this.menu.style.opacity = '1';
@@ -63,7 +71,10 @@ export default class ContextMenu extends AbstractMenu {
       });
     } else {
       wrapper(() => {
-        if (!this.menu) return;
+        if (!this.menu) {
+          return;
+        }
+
         this.menu.style.opacity = '0';
         this.menu.style.pointerEvents = 'none';
       });
@@ -81,10 +92,20 @@ export default class ContextMenu extends AbstractMenu {
   registerHandlers = (): void => {
     document.addEventListener('mousedown', this.handleOutsideClick);
     document.addEventListener('touchstart', this.handleOutsideClick);
-    if (!this.props.preventHideOnScroll) document.addEventListener('scroll', this.handleHide);
-    if (!this.props.preventHideOnContextMenu) document.addEventListener('contextmenu', this.handleHide);
+
+    if (!this.props.preventHideOnScroll) {
+      document.addEventListener('scroll', this.handleHide);
+    }
+
+    if (!this.props.preventHideOnContextMenu) {
+      document.addEventListener('contextmenu', this.handleHide);
+    }
+
     document.addEventListener('keydown', this.handleKeyNavigation);
-    if (!this.props.preventHideOnResize) window.addEventListener('resize', this.handleHide);
+
+    if (!this.props.preventHideOnResize) {
+      window.addEventListener('resize', this.handleHide);
+    }
   };
 
   unregisterHandlers = (): void => {
@@ -97,7 +118,9 @@ export default class ContextMenu extends AbstractMenu {
   };
 
   private handleShow = (e): void => {
-    if (e.detail.id !== this.props.id || this.state.isVisible) return;
+    if (e.detail.id !== this.props.id || this.state.isVisible) {
+      return;
+    }
 
     const { x, y } = e.detail.position;
 
@@ -109,50 +132,53 @@ export default class ContextMenu extends AbstractMenu {
   private handleHide = (e): void => {
     if (this.state.isVisible && (!e.detail || !e.detail.id || e.detail.id === this.props.id)) {
       this.unregisterHandlers();
-      this.setState({ isVisible: false, selectedItem: null, forceSubMenuOpen: false });
+      this.setState({ forceSubMenuOpen: false, isVisible: false, selectedItem: null });
       callIfExists(this.props.onHide, e);
     }
   };
 
   private handleOutsideClick = (e): void => {
-    if (!this.menu.contains(e.target)) hideMenu();
+    if (!this.menu.contains(e.target)) {
+      hideMenu();
+    }
   };
 
   private handleMouseLeave = (event): void => {
     event.preventDefault();
 
-    callIfExists(
-      this.props.onMouseLeave,
-      event,
-      { ...this.props.data, ...store.data },
-      store.target,
-    );
+    callIfExists(this.props.onMouseLeave, event, { ...this.props.data, ...store.data }, store.target);
 
-    if (this.props.hideOnLeave) hideMenu();
+    if (this.props.hideOnLeave) {
+      hideMenu();
+    }
   };
 
   private handleContextMenu = (e) => {
     if (process.env.NODE_ENV === 'production') {
       e.preventDefault();
     }
+
     this.handleHide(e);
   };
 
   hideMenu = (e) => {
-    if (e.keyCode === 27 || e.keyCode === 13) { // ECS or enter
+    if (e.keyCode === 27 || e.keyCode === 13) {
+      // ECS or enter
       hideMenu();
     }
   };
 
   getMenuPosition = (x = 0, y = 0) => {
     const menuStyles = {
-      top: y,
       left: x,
+      top: y,
     };
 
-    if (!this.menu) return menuStyles;
+    if (!this.menu) {
+      return menuStyles;
+    }
 
-    const { innerWidth, innerHeight } = window;
+    const { innerHeight, innerWidth } = window;
     const rect = this.menu.getBoundingClientRect();
 
     if (y + rect.height > innerHeight) {
@@ -176,13 +202,15 @@ export default class ContextMenu extends AbstractMenu {
 
   getRTLMenuPosition = (x = 0, y = 0) => {
     const menuStyles = {
-      top: y,
       left: x,
+      top: y,
     };
 
-    if (!this.menu) return menuStyles;
+    if (!this.menu) {
+      return menuStyles;
+    }
 
-    const { innerWidth, innerHeight } = window;
+    const { innerHeight, innerWidth } = window;
     const rect = this.menu.getBoundingClientRect();
 
     // Try to position the menu on the left side of the cursor
@@ -211,14 +239,14 @@ export default class ContextMenu extends AbstractMenu {
     this.menu = c;
   };
 
-  render(): JSX.Element {
+  render(): React.JSX.Element {
     const { children, className, style } = this.props;
     const { isVisible } = this.state;
     const inlineStyle = {
       ...style,
-      position: 'fixed',
       opacity: 0,
       pointerEvents: 'none',
+      position: 'fixed',
     };
     const menuClassnames = cx(cssClasses.menu, className, {
       [cssClasses.menuVisible]: isVisible,
@@ -226,14 +254,13 @@ export default class ContextMenu extends AbstractMenu {
 
     return (
       <nav
-        // eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
-        role="menu"
-        tabIndex={-1}
-        ref={this.menuRef}
-        style={inlineStyle}
         className={menuClassnames}
         onContextMenu={this.handleContextMenu}
         onMouseLeave={this.handleMouseLeave}
+        ref={this.menuRef}
+        role="menu"
+        style={inlineStyle}
+        tabIndex={-1}
       >
         {this.renderChildren(children)}
       </nav>

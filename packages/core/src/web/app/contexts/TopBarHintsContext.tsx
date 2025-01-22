@@ -42,6 +42,7 @@ export class TopBarHintsContextProvider extends React.Component<any, State> {
   render() {
     const { children } = this.props;
     const { hintType } = this.state;
+
     return (
       <TopBarHintsContext.Provider
         value={{

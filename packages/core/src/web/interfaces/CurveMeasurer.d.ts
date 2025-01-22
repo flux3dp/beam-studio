@@ -1,32 +1,32 @@
-import { MeasureData } from './ICurveEngraving';
+import type { MeasureData } from './ICurveEngraving';
 
 export interface InteractiveOptions {
   checkCancel?: () => boolean;
-  onProgressText?: (text: string) => void;
   onPointFinished?: (finishedCount: number) => void;
+  onProgressText?: (text: string) => void;
 }
 
 export interface CurveMeasurer {
-  setupDevice: () => Promise<boolean>;
-  setup: (onProgressText?: (text: string) => void) => Promise<boolean>;
   end: () => Promise<void>;
+  measureArea: (
+    xRange: number[],
+    yRange: number[],
+    objectHeight: number,
+    opts?: InteractiveOptions,
+  ) => Promise<MeasureData | null>;
   measurePoint: (
     x: number,
     y: number,
     feedrate: number,
     offset?: [number, number, number],
     objectHeight?: number,
-    lowest?: number
-  ) => Promise<number | null>;
+    lowest?: number,
+  ) => Promise<null | number>;
   measurePoints: (
     curData: MeasureData,
-    targetIndices: Array<number>,
-    opts?: InteractiveOptions
+    targetIndices: number[],
+    opts?: InteractiveOptions,
   ) => Promise<MeasureData | null>;
-  measureArea: (
-    xRange: Array<number>,
-    yRange: Array<number>,
-    objectHeight: number,
-    opts?: InteractiveOptions
-  ) => Promise<MeasureData | null>;
+  setup: (onProgressText?: (text: string) => void) => Promise<boolean>;
+  setupDevice: () => Promise<boolean>;
 }

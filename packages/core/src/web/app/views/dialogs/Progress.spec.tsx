@@ -1,11 +1,13 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
-import { IProgressDialog } from '@core/interfaces/IProgress';
+import type { IProgressDialog } from '@core/interfaces/IProgress';
 
 import Progress from './Progress';
 
 const mockPopById = jest.fn();
+
 jest.mock('@core/app/contexts/AlertProgressContext', () => ({
   AlertProgressContext: React.createContext({
     popById: (id: string) => mockPopById(id),
@@ -20,13 +22,13 @@ jest.mock('@core/helpers/useI18n', () => () => ({
 
 const mockOnCancel = jest.fn();
 const mockData = {
-  id: 'progress',
   caption: 'Hello World',
-  message: 'message',
-  percentage: 0,
+  id: 'progress',
   key: 123,
-  timeout: 1000,
+  message: 'message',
   onCancel: mockOnCancel,
+  percentage: 0,
+  timeout: 1000,
 };
 
 describe('test Progress', () => {
@@ -36,8 +38,11 @@ describe('test Progress', () => {
 
   it('should render correctly', () => {
     const { baseElement, getByText } = render(<Progress data={mockData as IProgressDialog} />);
+
     expect(baseElement).toMatchSnapshot();
+
     const cancelButton = getByText('Cancel');
+
     expect(mockPopById).not.toBeCalled();
     expect(mockOnCancel).not.toBeCalled();
     fireEvent.click(cancelButton);

@@ -1,13 +1,13 @@
-export type BBox = { x: number; y: number; width: number; height: number };
-export type Point = [number, number, number | null];
+export type BBox = { height: number; width: number; x: number; y: number };
+export type Point = [number, number, null | number];
 export type Points = Point[][];
 
 export interface MeasureData {
-  points: Points;
   gap: [number, number];
-  lowest: number; // Lowest measured height, accutally the max measured value
   highest: number; // Highest measured height, accutally the min measured value
+  lowest: number; // Lowest measured height, accutally the max measured value
   objectHeight: number;
+  points: Points;
 }
 
 export interface CurveEngraving extends MeasureData {

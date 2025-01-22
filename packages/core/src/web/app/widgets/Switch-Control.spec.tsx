@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import SwitchControl from './Switch-Control';
@@ -8,18 +9,20 @@ describe('test Switch-Control', () => {
     const mockOnChange = jest.fn();
     const { container, getByRole } = render(
       <SwitchControl
-        id="abc"
-        name="rotary_mode"
-        label="Work Area"
-        onText="Enable"
-        offText="Disable"
         default
+        id="abc"
+        label="Work Area"
+        name="rotary_mode"
+        offText="Disable"
         onChange={mockOnChange}
-      />
+        onText="Enable"
+      />,
     );
+
     expect(container).toMatchSnapshot();
 
     const input = container.querySelector('input#abc');
+
     expect(input).toBeChecked();
 
     fireEvent.click(getByRole('checkbox'));
@@ -32,18 +35,13 @@ describe('test Switch-Control', () => {
   test('should render correctly if disabled', () => {
     const mockOnChange = jest.fn();
     const { container } = render(
-      <SwitchControl
-        id="abc"
-        name="rotary_mode"
-        label="Work Area"
-        isDisabled
-        default
-        onChange={mockOnChange}
-      />
+      <SwitchControl default id="abc" isDisabled label="Work Area" name="rotary_mode" onChange={mockOnChange} />,
     );
+
     expect(container).toMatchSnapshot();
 
     const input = container.querySelector('input#abc');
+
     expect(input).toBeChecked();
 
     fireEvent.click(input);

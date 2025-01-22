@@ -1,40 +1,37 @@
-import classNames from 'classnames';
 import React from 'react';
-import { Button, Modal } from 'antd';
 
-import browser from '@app/implementations/browser';
+import { Button, Modal } from 'antd';
+import classNames from 'classnames';
+
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
 import isFluxPlusActive from '@core/helpers/is-flux-plus-active';
-import useI18n from '@core/helpers/useI18n';
 import { useIsMobile } from '@core/helpers/system-helper';
+import useI18n from '@core/helpers/useI18n';
+
+import browser from '@app/implementations/browser';
 
 import styles from './FluxPlusModal.module.scss';
 
 interface Props {
+  children: React.JSX.Element;
   className?: string;
-  onClose: () => void;
   hideMobileBanner?: boolean;
-  children: JSX.Element;
+  onClose: () => void;
 }
 
-const FluxPlusModal = ({
-  className,
-  onClose,
-  hideMobileBanner = false,
-  children,
-}: Props): JSX.Element => {
+const FluxPlusModal = ({ children, className, hideMobileBanner = false, onClose }: Props): React.JSX.Element => {
   const lang = useI18n().flux_id_login.flux_plus;
   const isMobile = useIsMobile();
   const shouldShowBanner = isFluxPlusActive && (!hideMobileBanner || !isMobile);
+
   return (
     <Modal
-      className={classNames(styles['flux-plus'], className)}
-      onCancel={onClose}
-      // eslint-disable-next-line no-nested-ternary
-      width={isMobile ? 320 : isFluxPlusActive ? 726 : 400}
-      footer={null}
       centered
+      className={classNames(styles['flux-plus'], className)}
+      footer={null}
+      onCancel={onClose}
       open
+      width={isMobile ? 320 : isFluxPlusActive ? 726 : 400}
     >
       <div className={styles.body}>
         {shouldShowBanner && (
@@ -44,7 +41,7 @@ const FluxPlusModal = ({
                 <FluxIcons.FluxPlusLogo className={styles.icon} />
                 <div className={styles.features}>
                   {['ai_bg_removal', 'my_cloud', 'boxgen', 'dmkt', 'monotype'].map((key) => (
-                    <div key={key} className={styles.feature}>
+                    <div className={styles.feature} key={key}>
                       <FluxIcons.FluxPlus /> {lang.features[key]}
                     </div>
                   ))}
@@ -52,18 +49,15 @@ const FluxPlusModal = ({
               </>
             )}
             <div className={styles['img-container']}>
-              <img
-                src={`core-img/flux-plus/explore-flux-plus${isMobile ? '-mobile' : ''}.jpg`}
-                alt={lang.learn_more}
-              />
+              <img alt={lang.learn_more} src={`core-img/flux-plus/explore-flux-plus${isMobile ? '-mobile' : ''}.jpg`} />
             </div>
             <Button
-              className={styles.button}
               block
-              type="default"
+              className={styles.button}
               ghost
-              shape="round"
               onClick={() => browser.open(lang.website_url)}
+              shape="round"
+              type="default"
             >
               {lang.learn_more}
             </Button>

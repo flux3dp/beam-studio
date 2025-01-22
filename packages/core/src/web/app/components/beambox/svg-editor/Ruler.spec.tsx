@@ -1,32 +1,38 @@
 // Ruler.test.tsx
 import React from 'react';
+
 import { render } from '@testing-library/react';
 
 import Ruler from './Ruler';
 
 // Mock necessary modules
 const mockRead = jest.fn();
+
 jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read: (...args) => mockRead(...args),
 }));
+
 const mockCreateEventEmitter = jest.fn();
+
 jest.mock('@core/helpers/eventEmitterFactory', () => ({
   createEventEmitter: (...args) => mockCreateEventEmitter(...args),
 }));
+
 const mockGet = jest.fn();
+
 jest.mock('@app/implementations/storage', () => ({
   get: (...args) => mockGet(...args),
 }));
 jest.mock('@core/app/svgedit/workarea', () => ({
   canvasExpansion: 1,
-  width: 800,
   height: 600,
+  width: 800,
   zoomRatio: 1,
 }));
 
 const mockEmitter = {
-  on: jest.fn(),
   off: jest.fn(),
+  on: jest.fn(),
 };
 
 describe('Ruler Component', () => {
@@ -46,7 +52,9 @@ describe('Ruler Component', () => {
 
   test('hides the rulers when show_rulers preference is false', () => {
     mockRead.mockReturnValue(false);
+
     const { container } = render(<Ruler />);
+
     expect(container.querySelector('#rulers')).toHaveStyle('display: none');
   });
 

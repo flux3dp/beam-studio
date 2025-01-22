@@ -1,21 +1,20 @@
-/* eslint-disable no-await-in-loop */
-/* eslint-disable no-underscore-dangle */
 import alertCaller from '@core/app/actions/alert-caller';
-import alertConstants from '@core/app/constants/alert-constants';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import history from '@core/app/svgedit/history/history';
-import ISVGCanvas from '@core/interfaces/ISVGCanvas';
-import i18n from '@core/helpers/i18n';
 import progressCaller from '@core/app/actions/progress-caller';
-import updateElementColor from '@core/helpers/color/updateElementColor';
+import alertConstants from '@core/app/constants/alert-constants';
+import history from '@core/app/svgedit/history/history';
 import { fitPath } from '@core/helpers/bezier-fit-curve';
+import updateElementColor from '@core/helpers/color/updateElementColor';
+import i18n from '@core/helpers/i18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import ClipperBase from './clipper';
 import getClipperLib from './getClipperLib';
 
 let svgCanvas: ISVGCanvas;
 let svgedit;
+
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
   svgedit = globalSVG.Edit;
@@ -41,29 +40,37 @@ const offsetElements = async (
   await new Promise<void>((resolve) => {
     setTimeout(() => resolve(), 100);
   });
+
   const selectedElements = svgCanvas.getSelectedElems(true);
-  // eslint-disable-next-line no-param-reassign
+
   elems = elems || selectedElements;
 
   const batchCmd = new history.BatchCommand('Create Offset Elements');
   let solutionPaths = [];
   const scale = 100;
 
-  // eslint-disable-next-line no-param-reassign
-  if (dir === 0) dist *= -1;
+  if (dir === 0) {
+    dist *= -1;
+  }
+
   let isContainNotSupportTag = false;
   const ClipperLib = getClipperLib();
   const co = new ClipperBase('offset', 5, 0.25);
+
   for (let i = 0; i < elems.length; i += 1) {
     const elem = elems[i];
+
     if (!elem) {
       return;
     }
-    if (['g', 'use', 'image', 'text'].indexOf(elem.tagName) >= 0) {
+
+    if (['g', 'image', 'text', 'use'].includes(elem.tagName)) {
       isContainNotSupportTag = true;
       console.log(elem.tagName);
+
       return;
     }
+
     const dpath = svgedit.utilities.getPathDFromElement(elem);
     const bbox = svgedit.utilities.getBBox(elem);
     const rotation = {
@@ -74,17 +81,14 @@ const offsetElements = async (
 
     const paths = ClipperLib.dPathtoPointPathsAndScale(dpath, rotation, scale);
     let closed = true;
+
     for (let j = 0; j < paths.length; j += 1) {
-      if (
-        !(
-          paths[j][0].X === paths[j][paths[j].length - 1].X &&
-          paths[j][0].Y === paths[j][paths[j].length - 1].Y
-        )
-      ) {
+      if (!(paths[j][0].X === paths[j][paths[j].length - 1].X && paths[j][0].Y === paths[j][paths[j].length - 1].Y)) {
         closed = false;
         break;
       }
     }
+
     if (cornerType === 'round') {
       await co.addPaths(paths, ClipperLib.JoinType.jtRound, ClipperLib.EndType.etOpenRound);
     } else if (cornerType === 'sharp') {
@@ -97,10 +101,12 @@ const offsetElements = async (
   }
   solutionPaths = await co.execute(solutionPaths, Math.abs(dist * scale));
   co.terminate();
+
   if (dir === 1) {
     if (solutionPaths.length > 0) {
       const clipper = new ClipperBase('clipper');
       let res = [solutionPaths[0]];
+
       for (let i = 1; i < solutionPaths.length; i += 1) {
         await clipper.addPaths(res, ClipperLib.PolyType.ptSubject, true);
         await clipper.addPaths([solutionPaths[i]], ClipperLib.PolyType.ptClip, true);
@@ -112,32 +118,39 @@ const offsetElements = async (
   } else {
     solutionPaths = solutionPaths.slice(1);
   }
+
   progressCaller.popById('offset-path');
+
   if (solutionPaths.length === 0 || !solutionPaths[0]) {
     if (isContainNotSupportTag) {
       alertCaller.popUp({
         id: 'Offset',
-        type: alertConstants.SHOW_POPUP_WARNING,
         message: i18n.lang.beambox.tool_panels._offset.not_support_message,
+        type: alertConstants.SHOW_POPUP_WARNING,
       });
     } else {
       alertCaller.popUp({
         id: 'Offset',
-        type: alertConstants.SHOW_POPUP_WARNING,
         message: i18n.lang.beambox.tool_panels._offset.fail_message,
+        type: alertConstants.SHOW_POPUP_WARNING,
       });
     }
+
     console.log('clipper.co failed');
+
     return;
   }
+
   if (isContainNotSupportTag) {
     alertCaller.popUp({
       id: 'Offset',
-      type: alertConstants.SHOW_POPUP_WARNING,
       message: i18n.lang.beambox.tool_panels._offset.not_support_message,
+      type: alertConstants.SHOW_POPUP_WARNING,
     });
   }
+
   let d = '';
+
   for (let i = 0; i < solutionPaths.length; i += 1) {
     if (!beamboxPreference.read('simplify_clipper_path')) {
       d += 'M';
@@ -145,43 +158,52 @@ const offsetElements = async (
       d += ' Z';
     } else {
       d += 'M';
+
       const points = solutionPaths[i].map((p) => ({
         x: Math.floor(100 * (p.X / scale)) / 100,
         y: Math.floor(100 * (p.Y / scale)) / 100,
       }));
       // TODO: use simplifyPath
       const segs = fitPath(points);
+
       for (let j = 0; j < segs.length; j += 1) {
         const seg = segs[j];
+
         if (j === 0) {
           d += `${seg.points[0].x},${seg.points[0].y}`;
         }
+
         const pointsString = seg.points
           .slice(1)
           .map((p) => `${p.x},${p.y}`)
           .join(' ');
+
         d += `${seg.type}${pointsString}`;
       }
       d += 'Z';
     }
   }
+
   const newElem = svgCanvas.addSvgElementFromJson({
-    element: 'path',
-    curStyles: false,
     attr: {
-      id: svgCanvas.getNextId(),
       d,
-      stroke: '#000',
       fill: 'none',
       'fill-opacity': 0,
+      id: svgCanvas.getNextId(),
+      stroke: '#000',
     },
+    curStyles: false,
+    element: 'path',
   });
+
   svgCanvas.pathActions.fixEnd(newElem);
 
   batchCmd.addSubCommand(new history.InsertElementCommand(newElem));
+
   if (svgCanvas.isUsingLayerColor) {
     updateElementColor(newElem);
   }
+
   svgCanvas.selectOnly([newElem], true);
   svgCanvas.addCommandToHistory(batchCmd);
 };

@@ -1,4 +1,4 @@
-@use '../_mixins.scss' as mixins;
+@use "../_mixins.scss" as mixins;
 
 .field {
   display: flex;
@@ -27,7 +27,7 @@
 
     .option-input {
       > input {
-        padding: 1px
+        padding: 1px;
       }
     }
   }

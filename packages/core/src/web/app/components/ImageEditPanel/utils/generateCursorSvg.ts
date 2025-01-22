@@ -1,20 +1,21 @@
-/* eslint-disable no-nested-ternary */
-/* eslint-disable import/prefer-default-export */
-
 export const generateCursorSvg = (brushSize: number): string => {
   const strokeWidth = (() => {
     if (brushSize <= 10) {
       return 2;
     }
+
     if (brushSize <= 20) {
       return 1;
     }
+
     if (brushSize <= 40) {
       return 0.4;
     }
+
     if (brushSize <= 80) {
       return 0.2;
     }
+
     return 0.1;
   })();
   const svg = `

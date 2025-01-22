@@ -1,38 +1,42 @@
-import classNames from 'classnames';
 import React, { useMemo } from 'react';
-import { Switch } from 'antd';
 
-import UnitInput from '@core/app/widgets/UnitInput';
-import useI18n from '@core/helpers/useI18n';
-import { ConfigKey, ConfigKeyTypeMap, Preset } from '@core/interfaces/ILayerConfig';
-import { getDefaultConfig, getPromarkLimit } from '@core/helpers/layer/layer-config-helper';
+import { Switch } from 'antd';
+import classNames from 'classnames';
+
 import { getSupportInfo } from '@core/app/constants/add-on';
+import UnitInput from '@core/app/widgets/UnitInput';
+import { getDefaultConfig, getPromarkLimit } from '@core/helpers/layer/layer-config-helper';
+import useI18n from '@core/helpers/useI18n';
+import type { ConfigKey, ConfigKeyTypeMap, Preset } from '@core/interfaces/ILayerConfig';
 
 import styles from './PresetsManagementPanel.module.scss';
 
 interface Props {
-  preset: Preset;
+  handleChange: <T extends ConfigKey>(key: T, value: ConfigKeyTypeMap[T]) => void;
+  isInch?: boolean;
+  lengthUnit?: 'in' | 'mm';
   maxSpeed: number;
   minSpeed: number;
-  isInch?: boolean;
-  lengthUnit?: 'mm' | 'in';
-  handleChange: <T extends ConfigKey>(key: T, value: ConfigKeyTypeMap[T]) => void;
+  preset: Preset;
 }
 
 const PromarkInputs = ({
-  preset,
-  maxSpeed,
-  minSpeed,
+  handleChange,
   isInch = false,
   lengthUnit = 'mm',
-  handleChange,
-}: Props): JSX.Element => {
+  maxSpeed,
+  minSpeed,
+  preset,
+}: Props): React.JSX.Element => {
   const tLaserPanel = useI18n().beambox.right_panel.laser_panel;
   const t = tLaserPanel.preset_management;
   const supportInfo = useMemo(() => getSupportInfo('fpm1'), []);
   const defaultConfig = useMemo(getDefaultConfig, []);
   const focusStepMax = useMemo(() => {
-    if (preset.repeat <= 1) return 10;
+    if (preset.repeat <= 1) {
+      return 10;
+    }
+
     return 10 / (preset.repeat - 1);
   }, [preset.repeat]);
   const limit = useMemo(getPromarkLimit, []);
@@ -43,62 +47,62 @@ const PromarkInputs = ({
         <div className={styles.field}>
           <div className={styles.label}>{tLaserPanel.strength}</div>
           <UnitInput
-            data-testid="power"
+            addonAfter="%"
             className={styles.input}
+            clipValue
+            data-testid="power"
             disabled={preset.isDefault}
-            value={preset.power ?? defaultConfig.power}
             max={100}
             min={0}
-            precision={0}
-            addonAfter="%"
             onChange={(value) => handleChange('power', value)}
-            clipValue
+            precision={0}
+            value={preset.power ?? defaultConfig.power}
           />
         </div>
         <div className={styles.field}>
           <div className={styles.label}>{tLaserPanel.speed}</div>
           <UnitInput
-            data-testid="speed"
+            addonAfter={`${lengthUnit}/s`}
             className={styles.input}
+            clipValue
+            data-testid="speed"
             disabled={preset.isDefault}
-            value={preset.speed ?? defaultConfig.speed}
+            isInch={isInch}
             max={maxSpeed}
             min={minSpeed}
-            precision={isInch ? 2 : 1}
-            addonAfter={`${lengthUnit}/s`}
-            isInch={isInch}
             onChange={(value) => handleChange('speed', value)}
-            clipValue
+            precision={isInch ? 2 : 1}
+            value={preset.speed ?? defaultConfig.speed}
           />
         </div>
         <div className={styles.field}>
           <div className={styles.label}>{tLaserPanel.repeat}</div>
           <UnitInput
-            data-testid="repeat"
+            addonAfter={tLaserPanel.times}
             className={styles.input}
+            clipValue
+            data-testid="repeat"
             disabled={preset.isDefault}
-            value={preset.repeat ?? defaultConfig.repeat}
             max={100}
             min={0}
-            precision={0}
-            addonAfter={tLaserPanel.times}
             onChange={(value) => handleChange('repeat', value)}
-            clipValue
+            precision={0}
+            value={preset.repeat ?? defaultConfig.repeat}
           />
         </div>
         <div className={styles.field}>
           <div className={styles.label}>{tLaserPanel.dottingTime}</div>
           <UnitInput
-            data-testid="dottingTime"
-            className={styles.input}
-            disabled={preset.isDefault}
-            value={preset.dottingTime ?? defaultConfig.dottingTime}
-            min={1}
-            max={10000}
-            precision={0}
             addonAfter="us"
-            onChange={(value) => handleChange('dottingTime', value)}
+            className={styles.input}
             clipValue
+            data-testid="dottingTime"
+            disabled={preset.isDefault}
+            max={10000}
+            min={1}
+            onChange={(value) => handleChange('dottingTime', value)}
+            precision={0}
+            value={preset.dottingTime ?? defaultConfig.dottingTime}
           />
         </div>
         {supportInfo.lowerFocus && (
@@ -106,33 +110,33 @@ const PromarkInputs = ({
             <div className={styles.field}>
               <div className={styles.label}>{t.lower_focus_by}</div>
               <UnitInput
-                data-testid="focus"
+                addonAfter={lengthUnit}
                 className={styles.input}
+                clipValue
+                data-testid="focus"
                 disabled={preset.isDefault}
-                value={Math.max(preset.focus ?? defaultConfig.focus, 0)}
+                isInch={isInch}
                 max={10}
                 min={0}
-                precision={2}
-                addonAfter={lengthUnit}
-                isInch={isInch}
                 onChange={(value) => handleChange('focus', value > 0 ? value : -0.01)}
-                clipValue
+                precision={2}
+                value={Math.max(preset.focus ?? defaultConfig.focus, 0)}
               />
             </div>
             <div className={styles.field}>
               <div className={styles.label}>{tLaserPanel.z_step}</div>
               <UnitInput
-                data-testid="focusStep"
+                addonAfter={lengthUnit}
                 className={styles.input}
+                clipValue
+                data-testid="focusStep"
                 disabled={preset.isDefault || preset.repeat <= 1}
-                value={Math.max(preset.focusStep ?? defaultConfig.focusStep, 0)}
+                isInch={isInch}
                 max={focusStepMax}
                 min={0}
-                precision={2}
-                addonAfter={lengthUnit}
-                isInch={isInch}
                 onChange={(value) => handleChange('focusStep', value > 0 ? value : -0.01)}
-                clipValue
+                precision={2}
+                value={Math.max(preset.focusStep ?? defaultConfig.focusStep, 0)}
               />
             </div>
           </>
@@ -143,79 +147,79 @@ const PromarkInputs = ({
           <div className={styles.field}>
             <div className={styles.label}>{tLaserPanel.pulse_width}</div>
             <UnitInput
-              data-testid="pulseWidth"
+              addonAfter="ns"
               className={styles.input}
+              clipValue
+              data-testid="pulseWidth"
               disabled={preset.isDefault}
-              value={preset.pulseWidth ?? defaultConfig.pulseWidth}
               max={limit.pulseWidth.max}
               min={limit.pulseWidth.min}
-              precision={0}
-              addonAfter="ns"
               onChange={(value) => handleChange('pulseWidth', value)}
-              clipValue
+              precision={0}
+              value={preset.pulseWidth ?? defaultConfig.pulseWidth}
             />
           </div>
         )}
         <div className={styles.field}>
           <div className={styles.label}>{tLaserPanel.frequency}</div>
           <UnitInput
-            data-testid="frequency"
+            addonAfter="kHz"
             className={styles.input}
+            clipValue
+            data-testid="frequency"
             disabled={preset.isDefault}
-            value={preset.frequency ?? defaultConfig.frequency}
             max={limit.frequency.max}
             min={limit.frequency.min}
-            precision={0}
-            addonAfter="kHz"
             onChange={(value) => handleChange('frequency', value)}
-            clipValue
+            precision={0}
+            value={preset.frequency ?? defaultConfig.frequency}
           />
         </div>
         <div className={styles.field}>
           <div className={styles.label}>{tLaserPanel.fill_interval}</div>
           <UnitInput
-            data-testid="fillInterval"
+            addonAfter="mm"
             className={styles.input}
+            clipValue
+            controls={false}
+            data-testid="fillInterval"
             disabled={preset.isDefault}
-            value={preset.fillInterval ?? defaultConfig.fillInterval}
             max={100}
             min={0.0001}
+            onChange={(value) => handleChange('fillInterval', value)}
             precision={4}
             step={0.0001}
-            addonAfter="mm"
-            onChange={(value) => handleChange('fillInterval', value)}
-            controls={false}
-            clipValue
+            value={preset.fillInterval ?? defaultConfig.fillInterval}
           />
         </div>
         <div className={styles.field}>
           <div className={styles.label}>{tLaserPanel.fill_angle}</div>
           <UnitInput
-            data-testid="fillAngle"
+            addonAfter="deg"
             className={styles.input}
+            clipValue
+            data-testid="fillAngle"
             disabled={preset.isDefault}
-            value={preset.fillAngle ?? defaultConfig.fillAngle}
             max={360}
             min={-360}
-            precision={1}
-            addonAfter="deg"
             onChange={(value) => handleChange('fillAngle', value)}
-            clipValue
+            precision={1}
+            value={preset.fillAngle ?? defaultConfig.fillAngle}
           />
         </div>
         <div className={classNames(styles.field, styles['with-switch'])}>
           <div className={styles.label}>{tLaserPanel.bi_directional}</div>
           <Switch
-            data-testid="biDirectional"
             checked={preset.biDirectional ?? defaultConfig.biDirectional}
+            data-testid="biDirectional"
             onChange={(value) => handleChange('biDirectional', value)}
           />
         </div>
         <div className={classNames(styles.field, styles['with-switch'])}>
           <div className={styles.label}>{tLaserPanel.cross_hatch}</div>
           <Switch
-            data-testid="crossHatch"
             checked={preset.crossHatch ?? defaultConfig.crossHatch}
+            data-testid="crossHatch"
             onChange={(value) => handleChange('crossHatch', value)}
           />
         </div>

@@ -1,17 +1,15 @@
 import React from 'react';
 
 interface Props {
-  status: string,
-  progress: string,
+  progress: string;
+  status: string;
 }
 
-function MonitorInfo({ status, progress }: Props): JSX.Element {
+function MonitorInfo({ progress, status }: Props): React.JSX.Element {
   return (
     <div className="wrapper">
       <div className="row">
-        <div className="status right">
-          {status}
-        </div>
+        <div className="status right">{status}</div>
       </div>
       <div className="row">
         <div className="time-left right">{progress}</div>

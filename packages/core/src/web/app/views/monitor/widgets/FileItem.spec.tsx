@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
 import { MonitorContext } from '@core/app/contexts/MonitorContext';
@@ -10,6 +11,7 @@ jest.mock('@core/app/contexts/MonitorContext', () => ({
 }));
 
 const mockFileInfo = jest.fn();
+
 jest.mock('@core/helpers/device-master', () => ({
   fileInfo: (...args) => mockFileInfo(...args),
 }));
@@ -30,22 +32,25 @@ describe('should render correctly', () => {
 
   it('should render correctly', async () => {
     const mockData = ['mock-file', { author: 'flux' }, new Blob(['123'])];
+
     mockFileInfo.mockResolvedValue(mockData);
     mockCreateObjectURL.mockReturnValue('mock-url');
+
     const { container, rerender } = render(
       <MonitorContext.Provider
         value={
           {
+            highlightedItem: { name: 'file', type: 'FILE' },
+            onDeleteFile: mockOnDeleteFile,
             onHighlightItem: mockOnHighlightItem,
             onSelectFile: mockOnSelectFile,
-            onDeleteFile: mockOnDeleteFile,
-            highlightedItem: { name: 'file', type: 'FILE' },
           } as any
         }
       >
-        <FileItem path="path" fileName="file" />
+        <FileItem fileName="file" path="path" />
       </MonitorContext.Provider>,
     );
+
     await waitFor(() => {
       expect(mockFileInfo).toBeCalledTimes(1);
       expect(mockFileInfo).toHaveBeenLastCalledWith('path', 'file');
@@ -59,18 +64,19 @@ describe('should render correctly', () => {
       <MonitorContext.Provider
         value={
           {
+            highlightedItem: { name: 'file2', type: 'FILE' },
+            onDeleteFile: mockOnDeleteFile,
             onHighlightItem: mockOnHighlightItem,
             onSelectFile: mockOnSelectFile,
-            onDeleteFile: mockOnDeleteFile,
-            highlightedItem: { name: 'file2', type: 'FILE' },
           } as any
         }
       >
-        <FileItem path="path2" fileName="file2" />
+        <FileItem fileName="file2" path="path2" />
       </MonitorContext.Provider>,
     );
 
     const mockData2 = ['mock-file', { author: 'flux' }, new Blob(['456'])];
+
     mockFileInfo.mockResolvedValue(mockData);
     mockCreateObjectURL.mockReturnValue('mock-url2');
     await waitFor(() => {
@@ -87,22 +93,25 @@ describe('should render correctly', () => {
 
   test('context events should work', async () => {
     const mockData = ['mock-file', { author: 'flux' }, new Blob(['123'])];
+
     mockFileInfo.mockResolvedValue(mockData);
     mockCreateObjectURL.mockReturnValue('mock-url');
+
     const { container } = render(
       <MonitorContext.Provider
         value={
           {
+            highlightedItem: { name: 'file', type: 'FILE' },
+            onDeleteFile: mockOnDeleteFile,
             onHighlightItem: mockOnHighlightItem,
             onSelectFile: mockOnSelectFile,
-            onDeleteFile: mockOnDeleteFile,
-            highlightedItem: { name: 'file', type: 'FILE' },
           } as any
         }
       >
-        <FileItem path="path" fileName="file" />
+        <FileItem fileName="file" path="path" />
       </MonitorContext.Provider>,
     );
+
     await waitFor(() => {
       expect(mockFileInfo).toBeCalledTimes(1);
       expect(mockFileInfo).toHaveBeenLastCalledWith('path', 'file');
@@ -111,6 +120,7 @@ describe('should render correctly', () => {
     });
 
     const divContainer = container.querySelector('.container');
+
     expect(mockOnHighlightItem).not.toBeCalled();
     fireEvent.click(divContainer);
     expect(mockOnHighlightItem).toBeCalledTimes(1);
@@ -122,6 +132,7 @@ describe('should render correctly', () => {
     expect(mockOnSelectFile).toHaveBeenLastCalledWith('file', mockData);
 
     const icon = container.querySelector('i');
+
     expect(mockOnDeleteFile).not.toBeCalled();
     fireEvent.click(icon);
     expect(mockOnDeleteFile).toBeCalledTimes(1);

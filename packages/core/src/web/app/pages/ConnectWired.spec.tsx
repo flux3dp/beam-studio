@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { render } from '@testing-library/react';
 
 import ConnectWired from './ConnectWired';
@@ -13,6 +14,7 @@ jest.mock('react-router-dom', () => ({
 
 jest.mock('@core/helpers/useI18n', () => () => ({
   initialize: {
+    back: 'Back',
     connect_wired: {
       title: 'Connecting to Wired Network',
       tutorial1: '1. Connect the machine with your router.',
@@ -24,19 +26,21 @@ jest.mock('@core/helpers/useI18n', () => () => ({
       what_if_2_content: 'what_if_2_content',
     },
     next: 'Next',
-    back: 'Back',
   },
 }));
 
 describe('test ConnectWired', () => {
   it('should render correctly', () => {
     const { container } = render(<ConnectWired />);
+
     expect(container).toMatchSnapshot();
   });
 
   it('should render correctly when is ador', () => {
     window.location.hash = '?model=ado1';
+
     const { container } = render(<ConnectWired />);
+
     expect(container).toMatchSnapshot();
   });
 });

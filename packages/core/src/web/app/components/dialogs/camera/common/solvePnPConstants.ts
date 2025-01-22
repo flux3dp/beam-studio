@@ -1,4 +1,4 @@
-export const adorPnPPoints: [number, number][] = [
+export const adorPnPPoints: Array<[number, number]> = [
   [155, 90],
   [275, 90],
   [155, 210],
@@ -9,7 +9,7 @@ export const adorPnPPoints: [number, number][] = [
   [245, 180],
 ];
 
-export const bb2PnPPoints: [number, number][] = [
+export const bb2PnPPoints: Array<[number, number]> = [
   [-60, 10],
   [60, 10],
   [-60, 90],
@@ -20,7 +20,7 @@ export const bb2PnPPoints: [number, number][] = [
   [30, 70],
 ];
 
-export const promarkPnPPoints: { [size: number]: [number, number][] } = {
+export const promarkPnPPoints: { [size: number]: Array<[number, number]> } = {
   110: [
     [5, 5],
     [105, 5],

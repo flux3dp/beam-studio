@@ -1,12 +1,14 @@
-import customMenuActionProvider from '@app/implementations/customMenuActionProvider';
-import DeviceMaster from '@core/helpers/device-master';
+import { sprintf } from 'sprintf-js';
+
 import menuActions from '@core/app/actions/beambox/menuActions';
 import menuDeviceActions from '@core/app/actions/beambox/menuDeviceActions';
-import menuEventListenerFactory from '@app/implementations/menuEventListenerFactory';
-import { IDeviceInfo } from '@core/interfaces/IDevice';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
+import DeviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
-import { sprintf } from 'sprintf-js';
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
+
+import customMenuActionProvider from '@app/implementations/customMenuActionProvider';
+import menuEventListenerFactory from '@app/implementations/menuEventListenerFactory';
 
 const MENU_ITEMS = [
   'IMPORT',
@@ -41,6 +43,7 @@ export default abstract class AbstractMenu {
   protected initMenuEvents(): void {
     const registerMenuClickEvents = () => {
       this.menuEventRegistered = true;
+
       const menuEventListener = menuEventListenerFactory.createMenuEventListener();
 
       menuEventListener.on('MENU_CLICK', (e, menuItem) => {
@@ -54,35 +57,39 @@ export default abstract class AbstractMenu {
           const menuActionIds = Object.entries(actions)
             .filter((action) => action[1].length === 0)
             .map((action) => action[0]);
+
           if (menuActionIds.includes(menuItem.id)) {
             actions[menuItem.id]();
           } else {
             const callback = {
-              timeout: 20000,
               onSuccess: (device) => {
                 setTimeout(() => MessageCaller.closeMessage('select-device'), 500);
                 actions[menuItem.id](device);
               },
               onTimeout: () => {
                 MessageCaller.openMessage({
-                  key: 'select-device',
                   content: i18n.lang.message.connectionTimeout,
-                  level: MessageLevel.ERROR,
                   duration: 10,
+                  key: 'select-device',
+                  level: MessageLevel.ERROR,
                 });
                 console.log('select device timeout');
               },
+              timeout: 20000,
             };
 
             MessageCaller.openMessage({
-              key: 'select-device',
               content: sprintf(i18n.lang.message.connectingMachine, menuItem.machineName),
-              level: MessageLevel.LOADING,
               duration: 20,
+              key: 'select-device',
+              level: MessageLevel.LOADING,
             });
-            if (menuItem.serial)
+
+            if (menuItem.serial) {
               DeviceMaster.getDiscoveredDevice('serial', menuItem.serial, callback);
-            else DeviceMaster.getDiscoveredDevice('uuid', menuItem.uuid, callback);
+            } else {
+              DeviceMaster.getDiscoveredDevice('uuid', menuItem.uuid, callback);
+            }
           }
         }
       });
@@ -95,9 +102,9 @@ export default abstract class AbstractMenu {
 
   attach(enabledItems: string[]): void {
     const disabledItems = [];
-    // eslint-disable-next-line no-restricted-syntax
+
     for (const item of MENU_ITEMS) {
-      if (enabledItems.indexOf(item) < 0) {
+      if (!enabledItems.includes(item)) {
         disabledItems.push(item);
       }
     }

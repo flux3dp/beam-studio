@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import { ObjectPanelContextProvider } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
@@ -6,6 +7,7 @@ import { ObjectPanelContextProvider } from '@core/app/views/beambox/Right-Panels
 import PolygonOptions from './PolygonOptions';
 
 const useIsMobile = jest.fn();
+
 jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => useIsMobile(),
 }));
@@ -24,6 +26,7 @@ jest.mock('@core/helpers/useI18n', () => () => ({
 
 const mockUpdatePolygonSides = jest.fn((elem, val) => {
   const sides = +elem.getAttribute('sides');
+
   elem.setAttribute('sides', (sides + val).toString());
 });
 
@@ -32,6 +35,7 @@ const mockBatchCmd = {
   addSubCommand: jest.fn(),
   isEmpty: jest.fn(),
 };
+
 jest.mock('@core/app/svgedit/history/HistoryCommandFactory', () => ({
   createBatchCommand: (...args) => mockCreateBatchCommand(...args),
 }));
@@ -39,14 +43,15 @@ jest.mock('@core/app/svgedit/history/HistoryCommandFactory', () => ({
 const mockBeginUndoableChange = jest.fn();
 const mockFinishUndoableChange = jest.fn();
 const mockAddCommandToHistory = jest.fn();
+
 jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (cb) => {
     cb({
       Canvas: {
         undoMgr: {
+          addCommandToHistory: (...args) => mockAddCommandToHistory(...args),
           beginUndoableChange: (...args) => mockBeginUndoableChange(...args),
           finishUndoableChange: (...args) => mockFinishUndoableChange(...args),
-          addCommandToHistory: (...args) => mockAddCommandToHistory(...args),
         },
       },
     });
@@ -62,12 +67,12 @@ describe('test PolygonOptions', () => {
   });
 
   test('should render correctly', () => {
-    const { container, rerender } = render(
-      <PolygonOptions elem={document.getElementById('flux')} polygonSides={0} />,
-    );
+    const { container, rerender } = render(<PolygonOptions elem={document.getElementById('flux')} polygonSides={0} />);
+
     expect(container).toMatchSnapshot();
 
     const elem = document.createElement('polygon');
+
     elem.setAttribute('id', 'flux');
     elem.setAttribute('sides', '5');
     document.body.appendChild(elem);
@@ -76,6 +81,7 @@ describe('test PolygonOptions', () => {
     expect(container).toMatchSnapshot();
 
     const input = container.querySelector('input');
+
     fireEvent.change(input, { target: { value: 8 } });
     fireEvent.blur(input);
 
@@ -115,12 +121,15 @@ describe('test PolygonOptions', () => {
 
   test('should render correctly in mobile', async () => {
     useIsMobile.mockReturnValue(true);
+
     const { baseElement, container, getByText, rerender } = render(
       <PolygonOptions elem={document.getElementById('flux')} polygonSides={0} />,
     );
+
     expect(container).toMatchSnapshot();
 
     const elem = document.createElement('polygon');
+
     elem.setAttribute('id', 'flux');
     elem.setAttribute('sides', '5');
     document.body.appendChild(elem);
@@ -133,6 +142,7 @@ describe('test PolygonOptions', () => {
 
     const objectPanelItem = baseElement.querySelector('div.object-panel-item');
     const displayBtn = baseElement.querySelector('button.number-item');
+
     expect(displayBtn).toHaveTextContent('5');
     expect(objectPanelItem).not.toHaveClass('active');
     fireEvent.click(objectPanelItem);

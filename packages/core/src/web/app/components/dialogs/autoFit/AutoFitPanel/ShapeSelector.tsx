@@ -1,35 +1,35 @@
-import classNames from 'classnames';
-import React, { Dispatch, memo, SetStateAction, useEffect, useMemo, useRef, useState } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
+import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
+
 import { Button, Carousel, ConfigProvider } from 'antd';
+import classNames from 'classnames';
 
 import useI18n from '@core/helpers/useI18n';
-import { AutoFitContour } from '@core/interfaces/IAutoFit';
+import type { AutoFitContour } from '@core/interfaces/IAutoFit';
 
 import styles from './ShapeSelector.module.scss';
 
 interface Props {
   contours: AutoFitContour[];
   focusedIndex: number;
-  setFocusedIndex: Dispatch<SetStateAction<number>>;
   onNext: () => void;
+  setFocusedIndex: Dispatch<SetStateAction<number>>;
 }
 
-const ShapeSelector = ({ contours, focusedIndex, setFocusedIndex, onNext }: Props): JSX.Element => {
+const ShapeSelector = ({ contours, focusedIndex, onNext, setFocusedIndex }: Props): React.JSX.Element => {
   const SHAPE_SIZE = 96;
-  const { buttons: tButtons, auto_fit: tAutoFit } = useI18n();
+  const { auto_fit: tAutoFit, buttons: tButtons } = useI18n();
   const [shouldUpdateCarousel, setShouldUpdateCarousel] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const [shapePerPage, setShapePerPage] = useState(1);
-  const pageCount = useMemo(
-    () => Math.ceil(contours.length / shapePerPage),
-    [contours.length, shapePerPage],
-  );
+  const pageCount = useMemo(() => Math.ceil(contours.length / shapePerPage), [contours.length, shapePerPage]);
   const contourComponents = useMemo(
     () =>
       contours.map((contourObj) => {
-        const { contour, bbox } = contourObj;
+        const { bbox, contour } = contourObj;
+
         return (
-          <svg viewBox={bbox.join(' ')} className={styles.svg}>
+          <svg className={styles.svg} viewBox={bbox.join(' ')}>
             <path d={contour.map(([x, y], k) => `${k === 0 ? 'M' : 'L'} ${x} ${y}`).join(' ')} />
           </svg>
         );
@@ -39,19 +39,26 @@ const ShapeSelector = ({ contours, focusedIndex, setFocusedIndex, onNext }: Prop
 
   const carouselPages = useMemo(() => {
     const pages = [];
+
     for (let i = 0; i < pageCount; i += 1) {
       const shapes = [];
+
       for (let j = 0; j < shapePerPage; j += 1) {
         const index = i * shapePerPage + j;
-        if (index >= contourComponents.length) break;
+
+        if (index >= contourComponents.length) {
+          break;
+        }
+
         const key = `group-${index}`;
+
         shapes.push(
           <button
-            key={key}
             className={classNames(styles.shape, { [styles.selected]: index === focusedIndex })}
-            style={{ width: SHAPE_SIZE, height: SHAPE_SIZE }}
-            type="button"
+            key={key}
             onClick={() => setFocusedIndex(index)}
+            style={{ height: SHAPE_SIZE, width: SHAPE_SIZE }}
+            type="button"
           >
             {contourComponents[index]}
           </button>,
@@ -65,6 +72,7 @@ const ShapeSelector = ({ contours, focusedIndex, setFocusedIndex, onNext }: Prop
         </div>,
       );
     }
+
     return pages;
   }, [pageCount, shapePerPage, contourComponents, focusedIndex, setFocusedIndex]);
 
@@ -75,12 +83,16 @@ const ShapeSelector = ({ contours, focusedIndex, setFocusedIndex, onNext }: Prop
         setShouldUpdateCarousel(true);
       }
     };
+
     window.addEventListener('resize', handler);
     handler();
+
     return () => window.removeEventListener('resize', handler);
   }, []);
   useEffect(() => {
-    if (shouldUpdateCarousel) setShouldUpdateCarousel(false);
+    if (shouldUpdateCarousel) {
+      setShouldUpdateCarousel(false);
+    }
   }, [shouldUpdateCarousel]);
 
   return (
@@ -95,14 +107,14 @@ const ShapeSelector = ({ contours, focusedIndex, setFocusedIndex, onNext }: Prop
               },
             }}
           >
-            <Carousel dotPosition="right" adaptiveHeight>
+            <Carousel adaptiveHeight dotPosition="right">
               {carouselPages}
             </Carousel>
           </ConfigProvider>
         )}
       </div>
       <div className={styles.footer}>
-        <Button className={styles.btn} type="primary" onClick={onNext}>
+        <Button className={styles.btn} onClick={onNext} type="primary">
           {tButtons.next}
         </Button>
       </div>

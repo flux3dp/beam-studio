@@ -1,96 +1,85 @@
-import React, { useRef, useContext } from 'react';
+import React, { useContext, useRef } from 'react';
+
+import { Edges, Stage } from '@react-three/drei';
 import * as THREE from 'three';
-import { Stage, Edges } from '@react-three/drei';
 import { Vector3 } from 'three';
 
-import Canvas from '@core/app/widgets/three/Canvas';
-import {
-  getTopBottomShape,
-  getFrontBackShape,
-  getLeftRightShape,
-} from '@core/app/components/boxgen/Shape';
+import { getFrontBackShape, getLeftRightShape, getTopBottomShape } from '@core/app/components/boxgen/Shape';
 import { BoxgenContext } from '@core/app/contexts/BoxgenContext';
+import Canvas from '@core/app/widgets/three/Canvas';
 
 const BoxFace = ({
   position,
   type,
 }: {
   position: Vector3;
-  type: 'TopBottom' | 'FrontBack' | 'LeftRight';
-}): JSX.Element => {
+  type: 'FrontBack' | 'LeftRight' | 'TopBottom';
+}): React.JSX.Element => {
   const { boxData } = useContext(BoxgenContext);
   const ref = useRef<THREE.Mesh>(null);
   const extrudeRef = useRef<THREE.ExtrudeGeometry>(null);
 
   const extrudeSettings = {
-    steps: 2,
-    depth: boxData.sheetThickness,
     bevelEnabled: false,
+    depth: boxData.sheetThickness,
+    steps: 2,
   };
 
   let rotation: THREE.Euler;
   let shape: { shape: THREE.Shape };
+
   switch (type) {
     case 'TopBottom':
       rotation = new THREE.Euler(Math.PI / 2, 0, 0, 'XYZ');
-      shape = getTopBottomShape({ ...boxData, width: boxData.width, height: boxData.depth });
+      shape = getTopBottomShape({ ...boxData, height: boxData.depth, width: boxData.width });
       break;
     case 'FrontBack':
       rotation = new THREE.Euler(0, 0, Math.PI, 'XYZ');
-      shape = getFrontBackShape({ ...boxData, width: boxData.width, height: boxData.height });
+      shape = getFrontBackShape({ ...boxData, height: boxData.height, width: boxData.width });
       break;
     case 'LeftRight':
     default:
       rotation = new THREE.Euler(0, Math.PI / 2, Math.PI, 'XYZ');
-      shape = getLeftRightShape({ ...boxData, width: boxData.depth, height: boxData.height });
+      shape = getLeftRightShape({ ...boxData, height: boxData.height, width: boxData.depth });
       break;
   }
+
   return (
-    // eslint-disable-next-line react/no-unknown-property
-    <mesh position={position} rotation={rotation} ref={ref}>
-      {/* eslint-disable-next-line react/no-unknown-property */}
-      <extrudeGeometry ref={extrudeRef} args={[shape.shape, extrudeSettings]} />
+    <mesh position={position} ref={ref} rotation={rotation}>
+      {}
+      <extrudeGeometry args={[shape.shape, extrudeSettings]} ref={extrudeRef} />
       <meshNormalMaterial />
       <Edges />
     </mesh>
   );
 };
 
-const BoxCanvas = (): JSX.Element => {
+const BoxCanvas = (): React.JSX.Element => {
   const { boxData } = useContext(BoxgenContext);
 
   return (
     <Canvas
       camera={{
+        far: 1000,
         fov: 55,
         near: 0.1,
-        far: 1000,
         position: [150, 150, 150],
       }}
     >
-      <Stage adjustCamera={1.9} shadows={false} environment={null}>
-        <BoxFace type="TopBottom" position={new Vector3(0, boxData.sheetThickness, 0)} />
-        {boxData.cover ? (
-          <BoxFace type="TopBottom" position={new Vector3(0, boxData.height, 0)} />
-        ) : null}
+      <Stage adjustCamera={1.9} environment={null} shadows={false}>
+        <BoxFace position={new Vector3(0, boxData.sheetThickness, 0)} type="TopBottom" />
+        {boxData.cover ? <BoxFace position={new Vector3(0, boxData.height, 0)} type="TopBottom" /> : null}
+        <BoxFace position={new Vector3(0, boxData.height / 2, -boxData.depth / 2)} type="FrontBack" />
         <BoxFace
-          type="FrontBack"
-          position={new Vector3(0, boxData.height / 2, -boxData.depth / 2)}
-        />
-        <BoxFace
-          type="FrontBack"
           position={new Vector3(0, boxData.height / 2, boxData.depth / 2 - boxData.sheetThickness)}
+          type="FrontBack"
         />
+        <BoxFace position={new Vector3(-boxData.width / 2, boxData.height / 2, 0)} type="LeftRight" />
         <BoxFace
-          type="LeftRight"
-          position={new Vector3(-boxData.width / 2, boxData.height / 2, 0)}
-        />
-        <BoxFace
-          type="LeftRight"
           position={new Vector3(boxData.width / 2 - boxData.sheetThickness, boxData.height / 2, 0)}
+          type="LeftRight"
         />
         <gridHelper
-          // eslint-disable-next-line react/no-unknown-property
           args={[
             Math.max(boxData.width, boxData.height, boxData.depth) + 20,
             (Math.max(boxData.width, boxData.height, boxData.depth) + 20) / 10,
@@ -100,4 +89,5 @@ const BoxCanvas = (): JSX.Element => {
     </Canvas>
   );
 };
+
 export default BoxCanvas;

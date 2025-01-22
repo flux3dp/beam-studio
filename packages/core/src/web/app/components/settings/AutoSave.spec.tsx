@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 jest.mock('@core/helpers/i18n', () => ({
@@ -12,15 +12,15 @@ jest.mock('@core/helpers/i18n', () => ({
     },
     settings: {
       autosave_enabled: 'Auto Save',
-      autosave_path: 'Auto Save Location',
       autosave_interval: 'Save Every',
       autosave_number: 'Number of Auto Save',
+      autosave_path: 'Auto Save Location',
       autosave_path_not_correct: 'Specified path not found.',
-      help_center_urls: {
-        fast_gradient: 'https://support.flux3dp.com/hc/en-us/articles/360004496235',
-      },
       groups: {
         autosave: 'Auto Save',
+      },
+      help_center_urls: {
+        fast_gradient: 'https://support.flux3dp.com/hc/en-us/articles/360004496235',
       },
     },
   },
@@ -30,20 +30,7 @@ jest.mock('@core/app/components/settings/Control', () => 'mock-control');
 
 jest.mock('@core/app/widgets/PathInput', () => ({
   __esModule: true,
-  InputType: {
-    FILE: 0,
-    FOLDER: 1,
-    BOTH: 2,
-  },
-  default: ({
-    'data-id': dataId,
-    buttonTitle,
-    type,
-    defaultValue,
-    getValue,
-    forceValidValue,
-    className,
-  }: any) => (
+  default: ({ buttonTitle, className, 'data-id': dataId, defaultValue, forceValidValue, getValue, type }: any) => (
     <div>
       mock-path-input id:{dataId}
       buttonTitle:{buttonTitle}
@@ -55,46 +42,45 @@ jest.mock('@core/app/widgets/PathInput', () => ({
         className="path-input"
         onChange={(e) => {
           const [val, isValid]: any[] = e.target.value.split(',');
+
           getValue(val, isValid.includes('true'));
         }}
       />
     </div>
   ),
+  InputType: {
+    BOTH: 2,
+    FILE: 0,
+    FOLDER: 1,
+  },
 }));
 
-jest.mock(
-  '@core/app/components/settings/SelectControl',
-  () =>
-    ({ id, label, onChange, options }: any) =>
-      (
-        <div>
-          mock-select-control id:{id}
-          label:{label}
-          options:{JSON.stringify(options)}
-          <input className="select-control" onChange={onChange} />
-        </div>
-      ),
-);
+jest.mock('@core/app/components/settings/SelectControl', () => ({ id, label, onChange, options }: any) => (
+  <div>
+    mock-select-control id:{id}
+    label:{label}
+    options:{JSON.stringify(options)}
+    <input className="select-control" onChange={onChange} />
+  </div>
+));
 
 jest.mock(
   '@core/app/widgets/Unit-Input-v2',
   () =>
-    ({ id, unit, min, max, defaultValue, getValue, forceUsePropsUnit, className }: any) =>
-      (
-        <div>
-          mock-unit-input id:{id}
-          unit:{unit}
-          min:{min}
-          max:{max}
-          defaultValue:{defaultValue}
-          forceUsePropsUnit:{forceUsePropsUnit ? 'true' : 'false'}
-          className:{JSON.stringify(className)}
-          <input className="unit-input" onChange={(e) => getValue(+e.target.value)} />
-        </div>
-      ),
+    ({ className, defaultValue, forceUsePropsUnit, getValue, id, max, min, unit }: any) => (
+      <div>
+        mock-unit-input id:{id}
+        unit:{unit}
+        min:{min}
+        max:{max}
+        defaultValue:{defaultValue}
+        forceUsePropsUnit:{forceUsePropsUnit ? 'true' : 'false'}
+        className:{JSON.stringify(className)}
+        <input className="unit-input" onChange={(e) => getValue(+e.target.value)} />
+      </div>
+    ),
 );
 
-// eslint-disable-next-line import/first
 import AutoSave from './AutoSave';
 
 describe('should render correctly', () => {
@@ -106,29 +92,30 @@ describe('should render correctly', () => {
     const updateState = jest.fn();
     const { container } = render(
       <AutoSave
-        isWeb={false}
         autoSaveOptions={[
           {
-            value: 'TRUE',
             label: 'On',
             selected: false,
+            value: 'TRUE',
           },
           {
-            value: 'FALSE',
             label: 'Off',
             selected: true,
+            value: 'FALSE',
           },
         ]}
         editingAutosaveConfig={{
-          enabled: false,
           directory: '/MyDocuments',
-          timeInterval: 10,
+          enabled: false,
           fileNumber: 5,
+          timeInterval: 10,
         }}
-        warnings={{}}
+        isWeb={false}
         updateState={updateState}
+        warnings={{}}
       />,
     );
+
     expect(container).toMatchSnapshot();
 
     fireEvent.change(container.querySelector('.select-control'), {
@@ -139,10 +126,10 @@ describe('should render correctly', () => {
     expect(updateState).toHaveBeenCalledTimes(1);
     expect(updateState).toHaveBeenNthCalledWith(1, {
       editingAutosaveConfig: {
-        enabled: true,
         directory: '/MyDocuments',
-        timeInterval: 10,
+        enabled: true,
         fileNumber: 5,
+        timeInterval: 10,
       },
     });
 
@@ -152,10 +139,10 @@ describe('should render correctly', () => {
     expect(updateState).toHaveBeenCalledTimes(2);
     expect(updateState).toHaveBeenNthCalledWith(2, {
       editingAutosaveConfig: {
-        enabled: false,
         directory: '/FolderNotExist',
-        timeInterval: 10,
+        enabled: false,
         fileNumber: 5,
+        timeInterval: 10,
       },
       warnings: {
         autosave_directory: 'Specified path not found.',
@@ -166,10 +153,10 @@ describe('should render correctly', () => {
     expect(updateState).toHaveBeenCalledTimes(3);
     expect(updateState).toHaveBeenNthCalledWith(3, {
       editingAutosaveConfig: {
-        enabled: false,
         directory: '/MyDocuments',
-        timeInterval: 5,
+        enabled: false,
         fileNumber: 5,
+        timeInterval: 5,
       },
     });
 
@@ -177,10 +164,10 @@ describe('should render correctly', () => {
     expect(updateState).toHaveBeenCalledTimes(4);
     expect(updateState).toHaveBeenNthCalledWith(4, {
       editingAutosaveConfig: {
-        enabled: false,
         directory: '/MyDocuments',
-        timeInterval: 10,
+        enabled: false,
         fileNumber: 10,
+        timeInterval: 10,
       },
     });
   });
@@ -189,31 +176,32 @@ describe('should render correctly', () => {
     const updateState = jest.fn();
     const { container } = render(
       <AutoSave
-        isWeb={false}
         autoSaveOptions={[
           {
-            value: 'TRUE',
             label: 'On',
             selected: false,
+            value: 'TRUE',
           },
           {
-            value: 'FALSE',
             label: 'Off',
             selected: true,
+            value: 'FALSE',
           },
         ]}
         editingAutosaveConfig={{
-          enabled: false,
           directory: '/FolderNotExist',
-          timeInterval: 10,
+          enabled: false,
           fileNumber: 5,
+          timeInterval: 10,
         }}
+        isWeb={false}
+        updateState={updateState}
         warnings={{
           autosave_directory: 'Specified path not found.',
         }}
-        updateState={updateState}
       />,
     );
+
     expect(container).toMatchSnapshot();
 
     fireEvent.change(container.querySelector('input.path-input'), {
@@ -222,10 +210,10 @@ describe('should render correctly', () => {
     expect(updateState).toHaveBeenCalledTimes(1);
     expect(updateState).toHaveBeenNthCalledWith(1, {
       editingAutosaveConfig: {
-        enabled: false,
         directory: '/MyDocuments',
-        timeInterval: 10,
+        enabled: false,
         fileNumber: 5,
+        timeInterval: 10,
       },
       warnings: {},
     });
@@ -235,29 +223,30 @@ describe('should render correctly', () => {
     const updateState = jest.fn();
     const { container } = render(
       <AutoSave
-        isWeb
         autoSaveOptions={[
           {
-            value: 'TRUE',
             label: 'On',
             selected: false,
+            value: 'TRUE',
           },
           {
-            value: 'FALSE',
             label: 'Off',
             selected: true,
+            value: 'FALSE',
           },
         ]}
         editingAutosaveConfig={{
-          enabled: false,
           directory: '/MyDocuments',
-          timeInterval: 10,
+          enabled: false,
           fileNumber: 5,
+          timeInterval: 10,
         }}
-        warnings={{}}
+        isWeb
         updateState={updateState}
+        warnings={{}}
       />,
     );
+
     expect(container).toMatchSnapshot();
   });
 });

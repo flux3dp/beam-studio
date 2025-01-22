@@ -61,7 +61,7 @@ export default {
 
     return { isExisting: false };
   },
-  // eslint-disable-next-line no-unused-vars
+
   networkTest: async (ip: string, time: number, onProgress: (percentage: number) => void) => {
     const start = Date.now();
     let pingCount = 0;

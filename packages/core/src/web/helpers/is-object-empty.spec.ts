@@ -5,6 +5,7 @@ test('test is-object-empty', () => {
     eat: () => {},
   };
   const rabbit = {};
+
   Object.setPrototypeOf(rabbit, animal);
 
   expect(isObjectEmpty(rabbit)).toBeTruthy();
