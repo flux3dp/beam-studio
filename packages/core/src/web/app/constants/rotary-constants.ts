@@ -11,6 +11,10 @@ const rotaryConstants: { [key in WorkAreaModel]?: RotaryConstants } = {
     boundary: [0, 300],
     maxHeight: 140,
   },
+  fbb2: {
+    boundary: [0, 375],
+    maxHeight: 1625,
+  },
 };
 
 export default rotaryConstants;
