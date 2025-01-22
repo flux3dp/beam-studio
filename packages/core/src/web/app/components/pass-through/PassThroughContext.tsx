@@ -1,7 +1,7 @@
 import React, { createContext, Dispatch, SetStateAction, useMemo, useState } from 'react';
 
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import { GuideMark } from 'interfaces/IPassThrough';
+import { GuideMark } from '@core/interfaces/IPassThrough';
 import { getWorkarea, WorkArea, WorkAreaModel } from '@core/app/constants/workarea-constants';
 
 import sliceWorkarea from './sliceWorkarea';
@@ -42,12 +42,9 @@ export function PassThroughProvider({ children }: Props): JSX.Element {
     x: workareaObj.width - 40,
     width: 40,
   });
-  const [passThroughHeight, setPassThroughHeight] = useState(
-    workareaObj.passThroughMaxHeight ?? workareaObj.height,
-  );
+  const [passThroughHeight, setPassThroughHeight] = useState(workareaObj.passThroughMaxHeight ?? workareaObj.height);
   const [referenceLayer, setReferenceLayer] = useState(false);
-  const handleExport = async () =>
-    sliceWorkarea(passThroughHeight, { refLayers: referenceLayer, guideMark });
+  const handleExport = async () => sliceWorkarea(passThroughHeight, { refLayers: referenceLayer, guideMark });
 
   return (
     <PassThroughContext.Provider

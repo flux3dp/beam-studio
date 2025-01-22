@@ -1,43 +1,41 @@
-/* eslint-disable no-await-in-loop */
-/* eslint-disable no-console */
-/* eslint-disable max-classes-per-file */
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import classNames from 'classnames';
+/* eslint-disable no-unused-vars */
 import React from 'react';
+
+import classNames from 'classnames';
 import { mat4, vec3 } from 'gl-matrix';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import alertConstants from '@core/app/constants/alert-constants';
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import checkDeviceStatus from '@core/helpers/check-device-status';
 import constant, { promarkModels } from '@core/app/actions/beambox/constant';
-import deviceMaster from '@core/helpers/device-master';
-import dialogCaller from '@core/app/actions/dialog-caller';
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import exportFuncs from '@core/app/actions/beambox/export-funcs';
+import { dpiTextMap } from '@core/app/actions/beambox/export-funcs-swiftray';
+import dialogCaller from '@core/app/actions/dialog-caller';
+import progressCaller from '@core/app/actions/progress-caller';
+import Pointable from '@core/app/components/beambox/path-preview/Pointable';
+import SidePanel from '@core/app/components/beambox/path-preview/SidePanel';
+import ZoomBlock from '@core/app/components/beambox/ZoomBlock';
+import { getSupportInfo } from '@core/app/constants/add-on';
+import alertConstants from '@core/app/constants/alert-constants';
+import layoutConstants from '@core/app/constants/layout-constants';
+import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import workareaManager from '@core/app/svgedit/workarea';
+import checkDeviceStatus from '@core/helpers/check-device-status';
 import getDevice from '@core/helpers/device/get-device';
-import getJobOrigin from '@core/helpers/job-origin';
+import deviceMaster from '@core/helpers/device-master';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
-import layoutConstants from '@core/app/constants/layout-constants';
-import Pointable from '@core/app/components/beambox/path-preview/Pointable';
-import progressCaller from '@core/app/actions/progress-caller';
-import SidePanel from '@core/app/components/beambox/path-preview/SidePanel';
-import units from '@core/helpers/units';
-import VersionChecker from '@core/helpers/version-checker';
-import workareaManager from '@core/app/svgedit/workarea';
-import ZoomBlock from '@core/app/components/beambox/ZoomBlock';
-import { CanvasContext } from '@core/app/contexts/CanvasContext';
-import { dpiTextMap } from '@core/app/actions/beambox/export-funcs-swiftray';
+import getJobOrigin from '@core/helpers/job-origin';
 import { DrawCommands } from '@core/helpers/path-preview/draw-commands';
 import { GcodePreview } from '@core/helpers/path-preview/draw-commands/GcodePreview';
-import { getWorkarea, WorkAreaModel } from '@core/app/constants/workarea-constants';
-import { getSupportInfo } from '@core/app/constants/add-on';
+import units from '@core/helpers/units';
+import VersionChecker from '@core/helpers/version-checker';
+
+import { parseGcode } from '../../../views/beambox/tmpParseGcode';
 
 import ProgressBar from './ProgressBar';
-import { parseGcode } from '../../../views/beambox/tmpParseGcode';
 
 const TOOLS_PANEL_HEIGHT = 100;
 const MAJOR_GRID_SPACING = 50;
@@ -56,7 +54,19 @@ const zoomBlockEventEmitter = eventEmitterFactory.createEventEmitter('zoom-block
 // creates a shader of the given type, uploads the source and
 // compiles it.
 //
-function loadShader(gl, type, source) {
+function loadShader(
+  gl: {
+    COMPILE_STATUS: any;
+    compileShader: (arg0: any) => void;
+    createShader: (arg0: any) => any;
+    deleteShader: (arg0: any) => void;
+    getShaderInfoLog: (arg0: any) => any;
+    getShaderParameter: (arg0: any, arg1: any) => any;
+    shaderSource: (arg0: any, arg1: any) => void;
+  },
+  type: any,
+  source: any,
+) {
   const shader = gl.createShader(type);
 
   // Send the source to the shader object
@@ -72,6 +82,7 @@ function loadShader(gl, type, source) {
   if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
     console.error(`An error occurred compiling the shaders: ${gl.getShaderInfoLog(shader)}`);
     gl.deleteShader(shader);
+
     return null;
   }
 
@@ -81,21 +92,34 @@ function loadShader(gl, type, source) {
 //
 // 初始化 shader 來告知WebGL怎麼畫
 //
-function initShaderProgram(gl, vsSource, fsSource) {
+function initShaderProgram(
+  gl: {
+    attachShader: (arg0: any, arg1: any) => void;
+    createProgram: () => any;
+    FRAGMENT_SHADER: any;
+    getProgramInfoLog: (arg0: any) => any;
+    getProgramParameter: (arg0: any, arg1: any) => any;
+    LINK_STATUS: any;
+    linkProgram: (arg0: any) => void;
+    VERTEX_SHADER: any;
+  },
+  vsSource: string,
+  fsSource: string,
+) {
   const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vsSource);
   const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fsSource);
 
   // 建立 shader 程式
   const shaderProgram = gl.createProgram();
+
   gl.attachShader(shaderProgram, vertexShader);
   gl.attachShader(shaderProgram, fragmentShader);
   gl.linkProgram(shaderProgram);
 
   // 錯誤處理
   if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-    console.error(
-      `Unable to initialize the shader program: ${gl.getProgramInfoLog(shaderProgram)}`,
-    );
+    console.error(`Unable to initialize the shader program: ${gl.getProgramInfoLog(shaderProgram)}`);
+
     return null;
   }
 
@@ -125,29 +149,39 @@ const defaultFsSource = `
   }
 `;
 
-const generateProgramInfo = (gl, vsSource = defaultVsSource, fsSource = defaultFsSource) => {
+const generateProgramInfo = (
+  gl: null | WebGLRenderingContext,
+  vsSource = defaultVsSource,
+  fsSource = defaultFsSource,
+) => {
   const shaderProgram = initShaderProgram(gl, vsSource, fsSource);
   const programInfo = {
-    program: shaderProgram,
     attribLocations: {
       vertexPosition: gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
     },
+    program: shaderProgram,
     uniformLocations: {
-      projectionMatrix: gl.getUniformLocation(shaderProgram, 'uProjectionMatrix'),
-      modelViewMatrix: gl.getUniformLocation(shaderProgram, 'uModelViewMatrix'),
       isInverting: gl.getUniformLocation(shaderProgram, 'isInverting'),
-      showTraversal: gl.getUniformLocation(shaderProgram, 'showTraversal'),
+      modelViewMatrix: gl.getUniformLocation(shaderProgram, 'uModelViewMatrix'),
+      projectionMatrix: gl.getUniformLocation(shaderProgram, 'uProjectionMatrix'),
       showRemaining: gl.getUniformLocation(shaderProgram, 'showRemaining'),
+      showTraversal: gl.getUniformLocation(shaderProgram, 'showTraversal'),
     },
   };
+
   return programInfo;
 };
 
-function dist(x1, y1, x2, y2) {
+function dist(x1: number, y1: number, x2: number, y2: number) {
   return Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
 }
 
-function initBuffers(gl, width: number, height: number, offset?: { x: number; y: number }) {
+function initBuffers(
+  gl: null | WebGLRenderingContext,
+  width: number,
+  height: number,
+  offset?: { x: number; y: number },
+) {
   // 建立一個 buffer 來儲存正方形的座標
 
   const positionBuffer = gl.createBuffer();
@@ -173,7 +207,15 @@ function initBuffers(gl, width: number, height: number, offset?: { x: number; y:
 }
 
 // Draw white square
-function drawScene(gl, programInfo, buffers, camera, isInverting, showTraversal, showRemaining) {
+function drawScene(
+  gl: null | WebGLRenderingContext,
+  programInfo: { attribLocations: any; program: any; uniformLocations: any },
+  buffers: { position: any },
+  camera: { fovy?: any; perspective: any; scale?: number; view: any; viewInv?: mat4 },
+  isInverting: boolean,
+  showTraversal: boolean,
+  showRemaining: boolean,
+) {
   gl.enable(gl.DEPTH_TEST); // Enable 深度測試
   gl.depthFunc(gl.ALWAYS); // Near things obscure far things
 
@@ -186,15 +228,9 @@ function drawScene(gl, programInfo, buffers, camera, isInverting, showTraversal,
     const stride = 0; // how many bytes to get from one set of values to the next
     // 0 = use type and numComponents above
     const offset = 0; // how many bytes inside the buffer to start from
+
     gl.bindBuffer(gl.ARRAY_BUFFER, buffers.position);
-    gl.vertexAttribPointer(
-      programInfo.attribLocations.vertexPosition,
-      numComponents,
-      type,
-      normalize,
-      stride,
-      offset,
-    );
+    gl.vertexAttribPointer(programInfo.attribLocations.vertexPosition, numComponents, type, normalize, stride, offset);
     gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition);
   }
 
@@ -211,74 +247,72 @@ function drawScene(gl, programInfo, buffers, camera, isInverting, showTraversal,
   {
     const offset = 0;
     const vertexCount = 4;
+
     gl.drawArrays(gl.TRIANGLE_STRIP, offset, vertexCount);
   }
 }
 
 const settings = {
-  showMachine: false,
-  machineWidth: 300,
-  machineHeight: 200,
   machineBeamDiameter: 0.2,
   machineBottomLeftX: 0,
   machineBottomLeftY: 0,
-  toolGridMinorSpacing: 10,
-  toolGridMajorSpacing: 50,
+  machineHeight: 200,
+  machineWidth: 300,
+  showMachine: false,
   toolDisplayCache: false,
+  toolGridMajorSpacing: 50,
+  toolGridMinorSpacing: 10,
 };
 
 const defaultWorkspace = {
+  cursorPos: [0, 0, 0],
   g0Rate: 7500,
   rotaryDiameter: 10,
-  simTime: 0,
-  cursorPos: [0, 0, 0],
-  showGcode: true,
-  showTraversal: true,
-  showRotary: false,
   showCursor: true,
+  showGcode: true,
+  showRotary: false,
+  showTraversal: true,
+  simTime: 0,
 };
 
 const defaultCamera = {
-  eye: [150, -105, 300],
   center: [150, -105, 0],
-  up: [0, 1, 0],
+  eye: [150, -105, 300],
   fovy: Math.PI / 2.6,
   showPerspective: false,
+  up: [0, 1, 0],
 };
 
 const dimensions = {
-  width: 400,
   height: 400,
+  width: 400,
 };
 
 function calcCamera({
-  viewportWidth,
-  viewportHeight,
-  fovy,
-  near,
-  far,
-  eye,
   center,
-  up,
-  showPerspective,
+  eye,
+  far,
+  fovy,
   machineX,
   machineY,
+  near,
+  showPerspective,
+  up,
+  viewportHeight,
+  viewportWidth,
 }) {
   let perspective;
   // @ts-ignore
   let view = mat4.lookAt([], eye, center, up);
+
   // @ts-ignore
   view = mat4.translate([], view, [-machineX, -machineY, 0]);
+
   const yBound = vec3.distance(eye, center) * Math.tan(fovy / 2);
   const scale = viewportHeight / (2 * yBound);
+
   if (showPerspective) {
-    perspective = mat4.perspective(
-      new Float32Array(),
-      fovy,
-      viewportWidth / viewportHeight,
-      near,
-      far,
-    );
+    perspective = mat4.perspective(new Float32Array(), fovy, viewportWidth / viewportHeight, near, far);
   } else {
     // @ts-ignore
     perspective = mat4.identity([]);
@@ -301,58 +335,106 @@ function calcCamera({
     );
     fovy = 0;
   }
+
   // @ts-ignore
   const viewInv = mat4.invert([], view);
+
   return {
     fovy,
     perspective,
+    scale,
     view,
     viewInv,
-    scale,
   };
 }
 
-function objectHasMatchingFields(obj, fields) {
-  for (const key in fields)
-    if (fields.hasOwnProperty(key) && obj[key] !== fields[key]) return false;
+function objectHasMatchingFields(
+  obj: { [x: string]: any },
+  fields: { [x: string]: any; hasOwnProperty: (arg0: string) => any },
+) {
+  for (const key in fields) {
+    if (fields.hasOwnProperty(key) && obj[key] !== fields[key]) {
+      return false;
+    }
+  }
+
   return true;
 }
 
-function sameArrayContent(a, b) {
-  return a.length === b.length && a.every((v, i) => v === b[i]);
+function sameArrayContent(a: any[], b: any[] | Float32Array<ArrayBufferLike> | string) {
+  return a.length === b.length && a.every((v: any, i: number | string) => v === b[i]);
 }
 
-function cacheDrawing(fn, state, args) {
-  const { drawCommands, width, height } = args;
+function cacheDrawing(
+  fn: { (): void; (arg0: any): void },
+  state: { [x: string]: any; frameBuffer: { resize: (arg0: any, arg1: any) => void; texture: any } },
+  args: {
+    [x: string]: any;
+    arrayVersion?: any;
+    drawCommands?: any;
+    g0Rate?: any;
+    hasOwnProperty?: any;
+    height?: any;
+    isInverting?: boolean;
+    perspective?: any;
+    rotaryDiameter?: any;
+    showRemaining?: boolean;
+    showTraversal?: boolean;
+    simTime?: any;
+    view?: any;
+    width?: any;
+  },
+) {
+  const { drawCommands, height, width } = args;
+
   if (!objectHasMatchingFields(state, args)) {
-    for (const key in args) if (args.hasOwnProperty(key)) state[key] = args[key];
-    if (!state.frameBuffer) state.frameBuffer = drawCommands.createFrameBuffer(width, height);
-    else state.frameBuffer.resize(width, height);
+    for (const key in args) {
+      if (args.hasOwnProperty(key)) {
+        state[key] = args[key];
+      }
+    }
+
+    if (!state.frameBuffer) {
+      state.frameBuffer = drawCommands.createFrameBuffer(width, height);
+    } else {
+      state.frameBuffer.resize(width, height);
+    }
+
     drawCommands.useFrameBuffer(state.frameBuffer, () => {
       drawCommands.gl.clearColor(1, 1, 1, 0);
       drawCommands.gl.clear(drawCommands.gl.COLOR_BUFFER_BIT | drawCommands.gl.DEPTH_BUFFER_BIT);
       fn(args);
     });
   }
+
   drawCommands.image({
     perspective: m4Identity,
-    view: m4Identity,
-    texture: state.frameBuffer.texture,
     selected: false,
+    texture: state.frameBuffer.texture,
     transform2d: [2 / width, 0, 0, -2 / height, -1, 1],
+    view: m4Identity,
   });
 }
 
 const drawTaskPreview = (
   taskPreview: GcodePreview,
-  cachedDrawState,
+  cachedDrawState: {},
   canvas: HTMLCanvasElement,
-  drawCommands,
-  workspace,
-  camera,
-  drawingArgs: { isInverting?: boolean; showTraversal?: boolean; showRemaining?: boolean },
+  drawCommands: any,
+  workspace: {
+    cursorPos?: number[];
+    g0Rate: any;
+    rotaryDiameter: any;
+    showCursor?: boolean;
+    showGcode?: boolean;
+    showRotary?: boolean;
+    showTraversal?: boolean;
+    simTime: any;
+  },
+  camera: { fovy?: any; perspective: any; scale?: number; view: any; viewInv?: mat4 },
+  drawingArgs: { isInverting?: boolean; showRemaining?: boolean; showTraversal?: boolean },
 ) => {
-  const { isInverting = false, showTraversal = false, showRemaining = false } = drawingArgs;
+  const { isInverting = false, showRemaining = false, showTraversal = false } = drawingArgs;
   const draw = () => {
     taskPreview.draw(
       drawCommands,
@@ -366,19 +448,20 @@ const drawTaskPreview = (
       showRemaining,
     );
   };
+
   cacheDrawing(draw, cachedDrawState, {
-    drawCommands,
-    width: canvas.width,
-    height: canvas.height,
-    perspective: camera.perspective,
-    view: camera.view,
-    g0Rate: workspace.g0Rate,
-    simTime: workspace.simTime,
-    rotaryDiameter: workspace.rotaryDiameter,
-    isInverting,
-    showTraversal,
-    showRemaining,
     arrayVersion: taskPreview.arrayVersion,
+    drawCommands,
+    g0Rate: workspace.g0Rate,
+    height: canvas.height,
+    isInverting,
+    perspective: camera.perspective,
+    rotaryDiameter: workspace.rotaryDiameter,
+    showRemaining,
+    showTraversal,
+    simTime: workspace.simTime,
+    view: camera.view,
+    width: canvas.width,
   });
 };
 
@@ -394,15 +477,36 @@ class Grid {
   private origincount: any;
 
   draw(
-    drawCommands,
+    drawCommands: {
+      basic: (arg0: {
+        color: number[];
+        count: any;
+        offset: number;
+        perspective: any;
+        position: any;
+        primitive: any;
+        scale: number[];
+        translate: number[];
+        view: any;
+      }) => void;
+      gl: { LINES: any };
+    },
     {
+      height,
+      major = MAJOR_GRID_SPACING,
+      minor = MINOR_GRID_SPACING,
+      offset = { x: 0, y: 0 },
       perspective,
       view,
       width,
-      height,
-      offset = { x: 0, y: 0 },
-      major = MAJOR_GRID_SPACING,
-      minor = MINOR_GRID_SPACING,
+    }: {
+      height: number;
+      major: number;
+      minor: number;
+      offset: undefined | { x: number; y: number };
+      perspective: any;
+      view: any;
+      width: number;
     },
   ) {
     if (!this.maingrid || !this.origin || this.width !== width || this.height !== height) {
@@ -410,6 +514,7 @@ class Grid {
       this.height = height;
 
       const c = [];
+
       c.push(0, 0, 0, this.width, 0, 0);
       c.push(0, -this.height, 0, this.width, -this.height, 0);
       c.push(0, -this.height, 0, 0, 0, 0);
@@ -418,52 +523,54 @@ class Grid {
       this.origin = new Float32Array(c);
       this.origincount = c.length / 3;
     }
+
     const { x, y } = offset;
+
     drawCommands.basic({
-      perspective,
-      view,
-      position: this.origin,
-      offset: 0,
-      count: this.origincount,
       color: [0, 0, 0, 1],
+      count: this.origincount,
+      offset: 0,
+      perspective,
+      position: this.origin,
+      primitive: drawCommands.gl.LINES,
       scale: [1, 1, 1],
       translate: [-x, y, 0],
-      primitive: drawCommands.gl.LINES,
+      view,
     });
   }
 }
 
 enum PlayState {
-  STOP = 0,
-  PLAY = 1,
   PAUSE = 2,
+  PLAY = 1,
+  STOP = 0,
 }
 
 interface Props {}
 
 interface State {
-  width: number; // width of canvas
-  height: number; // height of canvas
-  speedLevel: number;
-  isInverting: boolean;
   camera: {
-    eye: number[];
     center: number[];
-    up: number[];
+    eye: number[];
     fovy: number;
     showPerspective: boolean;
+    up: number[];
   };
+  height: number; // height of canvas
+  isInverting: boolean;
+  playState: PlayState;
+  speedLevel: number;
+  width: number; // width of canvas
   workspace: {
+    cursorPos: number[];
     g0Rate: number;
     rotaryDiameter: number;
-    simTime: number;
-    cursorPos: number[];
-    showGcode: boolean;
-    showTraversal: boolean;
-    showRotary: boolean;
     showCursor: boolean;
+    showGcode: boolean;
+    showRotary: boolean;
+    showTraversal: boolean;
+    simTime: number;
   };
-  playState: PlayState;
 }
 
 class PathPreview extends React.Component<Props, State> {
@@ -493,31 +600,36 @@ class PathPreview extends React.Component<Props, State> {
     this.canvas = null;
     this.position = [0, 0];
     this.grid = new Grid();
-    let { width, height } = workareaManager;
+
+    let { height, width } = workareaManager;
     const { model } = workareaManager;
     const { dpmm } = constant;
+
     width /= dpmm;
     height /= dpmm;
+
     if (BeamboxPreference.read('enable-job-origin') && getSupportInfo(model).jobOrigin) {
       this.jobOrigin = getJobOrigin();
     }
+
     const { x: jobOriginX = 0, y: jobOriginY = 0 } = this.jobOrigin || {};
+
     defaultCamera.eye = [width / 2 - jobOriginX, height / 2 - jobOriginY, 300];
     defaultCamera.center = [width / 2 - jobOriginX, height / 2 - jobOriginY, 0];
     settings.machineWidth = width;
     settings.machineHeight = height;
     this.camera = calcCamera({
-      viewportWidth: dimensions.width,
-      viewportHeight: dimensions.height,
-      fovy: defaultCamera.fovy,
-      near: 0.1,
-      far: 2000,
-      eye: defaultCamera.eye,
       center: defaultCamera.center,
-      up: defaultCamera.up,
-      showPerspective: defaultCamera.showPerspective,
+      eye: defaultCamera.eye,
+      far: 2000,
+      fovy: defaultCamera.fovy,
       machineX: settings.machineBottomLeftX,
       machineY: settings.machineBottomLeftY,
+      near: 0.1,
+      showPerspective: defaultCamera.showPerspective,
+      up: defaultCamera.up,
+      viewportHeight: dimensions.height,
+      viewportWidth: dimensions.width,
     });
     this.pointers = [];
     this.moveStarted = false;
@@ -529,16 +641,13 @@ class PathPreview extends React.Component<Props, State> {
     this.drawGcodeState = {};
 
     this.state = {
-      width: window.innerWidth - layoutConstants.sidePanelsWidth,
-      height: Math.max(
-        dimensions.height,
-        window.innerHeight - layoutConstants.topBarHeight - TOOLS_PANEL_HEIGHT,
-      ),
       camera: defaultCamera,
-      workspace: defaultWorkspace,
+      height: Math.max(dimensions.height, window.innerHeight - layoutConstants.topBarHeight - TOOLS_PANEL_HEIGHT),
       isInverting: false,
-      speedLevel: 1,
       playState: PlayState.STOP,
+      speedLevel: 1,
+      width: window.innerWidth - layoutConstants.sidePanelsWidth,
+      workspace: defaultWorkspace,
     };
   }
 
@@ -553,7 +662,8 @@ class PathPreview extends React.Component<Props, State> {
   }
 
   shouldComponentUpdate(nextProps: Props, nextState: State): boolean {
-    const { width, height, workspace, camera, speedLevel, isInverting, playState } = this.state;
+    const { camera, height, isInverting, playState, speedLevel, width, workspace } = this.state;
+
     return (
       nextState.width !== width ||
       nextState.height !== height ||
@@ -575,7 +685,13 @@ class PathPreview extends React.Component<Props, State> {
     canvasEventEmitter.off('canvas-change', this.onDeviceChange);
   }
 
-  setCameraAttrs = (attrs) => {
+  setCameraAttrs = (attrs: {
+    center: number[] | number[] | vec3;
+    eye: number[] | number[] | vec3;
+    fovy?: number;
+    showPerspective?: boolean;
+    up?: number[];
+  }) => {
     const { camera } = this.state;
 
     this.setState(
@@ -591,28 +707,30 @@ class PathPreview extends React.Component<Props, State> {
 
   // fixed
   setCamera() {
-    const { width, height, camera } = this.state;
+    const { camera, height, width } = this.state;
     const newCamera = calcCamera({
-      viewportWidth: width,
-      viewportHeight: height,
-      fovy: camera.fovy,
-      near: 0.1,
-      far: 2000,
-      eye: camera.eye,
       center: camera.center,
-      up: camera.up,
-      showPerspective: camera.showPerspective,
+      eye: camera.eye,
+      far: 2000,
+      fovy: camera.fovy,
       machineX: settings.machineBottomLeftX,
       machineY: settings.machineBottomLeftY,
+      near: 0.1,
+      showPerspective: camera.showPerspective,
+      up: camera.up,
+      viewportHeight: height,
+      viewportWidth: width,
     });
 
     if (this.camera) {
       if (sameArrayContent(this.camera.perspective, newCamera.perspective)) {
         newCamera.perspective = this.camera.perspective;
       }
+
       if (sameArrayContent(this.camera.view, newCamera.view)) {
         newCamera.view = this.camera.view;
       }
+
       if (newCamera.scale !== this.camera.scale) {
         zoomBlockEventEmitter.emit('UPDATE_ZOOM_BLOCK');
       }
@@ -624,88 +742,94 @@ class PathPreview extends React.Component<Props, State> {
   updateGcode = async (): Promise<void> => {
     const { togglePathPreview } = this.context;
     const svgEditor = document.getElementById('svg_editor');
-    if (svgEditor) svgEditor.style.display = '';
-    const { gcodeBlob, fileTimeCost, useSwiftray } = await exportFuncs.getGcode();
+
+    if (svgEditor) {
+      svgEditor.style.display = '';
+    }
+
+    const { fileTimeCost, gcodeBlob, useSwiftray } = await exportFuncs.getGcode();
+
     if (!gcodeBlob) {
       togglePathPreview();
     }
-    if (svgEditor) svgEditor.style.display = 'none';
+
+    if (svgEditor) {
+      svgEditor.style.display = 'none';
+    }
+
     progressCaller.openNonstopProgress({
-      id: 'parsing-gcode',
       caption: 'Parsing GCode',
+      id: 'parsing-gcode',
       timeout: 30000,
     });
+
     const fileReader = new FileReader();
+
     fileReader.onloadend = (e) => {
       if (useSwiftray) {
         this.gcodeString = e.target.result as string;
       } else {
         const result = (e.target.result as string).split('\n');
+
         result.splice(5, 0, 'G1 X0 Y0');
         this.gcodeString = result.join('\n');
       }
+
       if (this.gcodeString.length > 83) {
         const workarea = BeamboxPreference.read('workarea') || 'fbm1';
         const isPromark = promarkModels.has(workarea);
         const parsedGcode = parseGcode(this.gcodeString, isPromark);
+
         this.gcodePreview.setParsedGcode(
           parsedGcode,
           isPromark,
           (dpiTextMap[BeamboxPreference.read('engrave_dpi')] || 254) / 25.4,
         );
         this.simTimeMax =
-          Math.ceil((this.gcodePreview.g1Time + this.gcodePreview.g0Time) / SIM_TIME_MINUTE) *
-            SIM_TIME_MINUTE +
+          Math.ceil((this.gcodePreview.g1Time + this.gcodePreview.g0Time) / SIM_TIME_MINUTE) * SIM_TIME_MINUTE +
           SIM_TIME_MINUTE / 2;
         this.timeDisplayRatio = fileTimeCost / (60 * this.simTimeMax);
         this.handleSimTimeChange(this.simTimeMax);
       }
+
       progressCaller.popById('parsing-gcode');
     };
     fileReader.readAsText(gcodeBlob);
   };
 
   private windowKeyDown = (e: KeyboardEvent) => {
-    if (e.key === ' ') this.spaceKey = true;
+    if (e.key === ' ') {
+      this.spaceKey = true;
+    }
   };
 
   private windowKeyUp = (e: KeyboardEvent) => {
-    if (e.key === ' ') this.spaceKey = false;
+    if (e.key === ' ') {
+      this.spaceKey = false;
+    }
   };
 
-  private drawFlat = (canvas, gl) => {
-    const { workspace, isInverting } = this.state;
+  private drawFlat = (canvas: HTMLCanvasElement, gl: null | WebGLRenderingContext) => {
+    const { isInverting, workspace } = this.state;
     const programInfo = generateProgramInfo(gl);
     const showRemaining = false;
     const buffer = initBuffers(gl, settings.machineWidth, settings.machineHeight, this.jobOrigin);
-    drawScene(
-      gl,
-      programInfo,
-      buffer,
-      this.camera,
-      isInverting,
-      workspace.showTraversal,
-      showRemaining,
-    );
+
+    drawScene(gl, programInfo, buffer, this.camera, isInverting, workspace.showTraversal, showRemaining);
 
     this.grid.draw(this.drawCommands, {
+      height: settings.machineHeight,
+      major: Math.max(settings.toolGridMajorSpacing, 1),
+      minor: Math.max(settings.toolGridMinorSpacing, 0.1),
+      offset: this.jobOrigin,
       perspective: this.camera.perspective,
       view: this.camera.view,
       width: settings.machineWidth,
-      height: settings.machineHeight,
-      minor: Math.max(settings.toolGridMinorSpacing, 0.1),
-      major: Math.max(settings.toolGridMajorSpacing, 1),
-      offset: this.jobOrigin,
     });
-    drawTaskPreview(
-      this.gcodePreview,
-      this.drawGcodeState,
-      canvas,
-      this.drawCommands,
-      workspace,
-      this.camera,
-      { isInverting, showTraversal: workspace.showTraversal },
-    );
+    drawTaskPreview(this.gcodePreview, this.drawGcodeState, canvas, this.drawCommands, workspace, this.camera, {
+      isInverting,
+      showTraversal: workspace.showTraversal,
+    });
 
     if (this.position[0] !== 0 && this.position[1] !== 0) {
       const crossPoints = [];
@@ -729,37 +853,35 @@ class PathPreview extends React.Component<Props, State> {
       );
 
       const crossPosition = new Float32Array(crossPoints);
+
       this.drawCommands.basic({
-        perspective: this.camera.perspective,
-        view: this.camera.view,
-        position: crossPosition,
-        offset: 0,
-        count: 4,
         color: [0, 0.7, 0, 1],
+        count: 4,
+        offset: 0,
+        perspective: this.camera.perspective,
+        position: crossPosition,
+        primitive: this.drawCommands.gl.LINES,
         scale: [1, 1, 1],
         translate: [0, 0, 0],
-        primitive: this.drawCommands.gl.LINES,
+        view: this.camera.view,
       });
     }
   };
 
   updateWorkspace = () => {
-    const { width, height } = this.state;
+    const { height, width } = this.state;
+
     if (
       width !== document.getElementById('path-preview-panel').offsetWidth ||
-      height !==
-        Math.max(
-          dimensions.height,
-          document.getElementById('path-preview-panel').offsetHeight - 200,
-        )
+      height !== Math.max(dimensions.height, document.getElementById('path-preview-panel').offsetHeight - 200)
     ) {
       this.setState(
         {
-          width: window.document.getElementById('path-preview-panel').offsetWidth,
           height: Math.max(
             dimensions.height,
             window.document.getElementById('path-preview-panel').offsetHeight - TOOLS_PANEL_HEIGHT,
           ),
+          width: window.document.getElementById('path-preview-panel').offsetWidth,
         },
         this.setCamera,
       );
@@ -767,35 +889,47 @@ class PathPreview extends React.Component<Props, State> {
   };
 
   resetView = (): void => {
-    const { width, height } = this.state;
+    const { height, width } = this.state;
     const { x: jobOriginX = 0, y: jobOriginY = 0 } = this.jobOrigin || {};
-    const { machineWidth, machineHeight } = settings;
+    const { machineHeight, machineWidth } = settings;
     const scale = Math.min(width / machineWidth, height / machineHeight) * 0.95;
     const cameraHeight = 300;
     let newFovy = 2 * Math.atan(height / (2 * cameraHeight * scale));
+
     newFovy = Math.max(0.1, Math.min(Math.PI - 0.1, newFovy));
     this.setCameraAttrs({
-      eye: [machineWidth / 2 - jobOriginX, -machineHeight / 2 + jobOriginY, cameraHeight],
       center: [machineWidth / 2 - jobOriginX, -machineHeight / 2 + jobOriginY, 0],
+      eye: [machineWidth / 2 - jobOriginX, -machineHeight / 2 + jobOriginY, cameraHeight],
       fovy: newFovy,
     });
   };
 
   setCanvas = (canvas: HTMLCanvasElement): void => {
-    if (this.canvas === canvas) return;
+    if (this.canvas === canvas) {
+      return;
+    }
+
     this.canvas = canvas;
+
     if (this.drawCommands) {
       this.drawCommands.destroy();
       this.drawCommands = null;
     }
-    if (!canvas) return;
-    if (!this.camera) return;
+
+    if (!canvas) {
+      return;
+    }
+
+    if (!this.camera) {
+      return;
+    }
 
     const gl = canvas.getContext('webgl', {
       alpha: true,
       depth: true,
       preserveDrawingBuffer: true,
     });
+
     this.drawCommands = new DrawCommands(gl);
 
     const draw = () => {
@@ -808,6 +942,7 @@ class PathPreview extends React.Component<Props, State> {
           this.isUpdating = false;
         } else {
           requestAnimationFrame(draw);
+
           return;
         }
       }
@@ -815,7 +950,6 @@ class PathPreview extends React.Component<Props, State> {
       gl.viewport(0, 0, canvas.width, canvas.height);
       gl.clearColor(0.94, 0.94, 0.94, 1);
 
-      // eslint-disable-next-line no-bitwise
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
       gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
       gl.enable(gl.BLEND);
@@ -824,18 +958,21 @@ class PathPreview extends React.Component<Props, State> {
 
       requestAnimationFrame(draw);
     };
+
     draw();
   };
 
-  private handleSpeedLevelChange = (speedLevel) => {
+  private handleSpeedLevelChange = (speedLevel: string) => {
     this.setState({ speedLevel });
   };
 
   onDeviceChange = (): void => {
     const workarea: WorkAreaModel = BeamboxPreference.read('workarea') || 'fbm1';
-    const { width, height } = getWorkarea(workarea);
+    const { height, width } = getWorkarea(workarea);
+
     settings.machineWidth = width;
     settings.machineHeight = height;
+
     if (promarkModels.has(workarea)) {
       this.setState(({ workspace }) => ({ workspace: { ...workspace, g0Rate: 240000 } }));
     } else {
@@ -843,115 +980,159 @@ class PathPreview extends React.Component<Props, State> {
         workspace: { ...workspace, g0Rate: defaultWorkspace.g0Rate },
       }));
     }
+
     this.updateGcode();
   };
 
-  onPointerCancel = (e) => {
+  onPointerCancel = (e: { pointerId: any; preventDefault: () => void }) => {
     e.preventDefault();
-    this.pointers = this.pointers.filter((x) => x.pointerId !== e.pointerId);
+    this.pointers = this.pointers.filter((x: { pointerId: any }) => x.pointerId !== e.pointerId);
     this.fingers = null;
   };
 
-  onPointerUp = (e) => {
+  onPointerUp = (e: { pointerId: any; pointerType: any; preventDefault: () => void }) => {
     e.preventDefault();
-    if (!this.pointers.length || e.pointerType !== this.pointers[0].pointerType) return;
-    this.pointers = this.pointers.filter((x) => x.pointerId !== e.pointerId);
+
+    if (!this.pointers.length || e.pointerType !== this.pointers[0].pointerType) {
+      return;
+    }
+
+    this.pointers = this.pointers.filter((x: { pointerId: any }) => x.pointerId !== e.pointerId);
     this.fingers = null;
   };
 
-  onPointerDown = (e) => {
+  onPointerDown = (e: {
+    button: number;
+    pageX: number;
+    pageY: number;
+    pointerId: any;
+    pointerType: string;
+    preventDefault: () => void;
+    target: { setPointerCapture: (arg0: any) => void };
+  }) => {
     e.preventDefault();
     e.target.setPointerCapture(e.pointerId);
+
     const pathPreviewPanelElem = document.getElementById('path-preview-panel') as HTMLElement;
     const p = { left: pathPreviewPanelElem.offsetLeft, top: pathPreviewPanelElem.offsetTop };
 
-    if (this.pointers.length && e.pointerType !== this.pointers[0].pointerType) this.pointers = [];
+    if (this.pointers.length && e.pointerType !== this.pointers[0].pointerType) {
+      this.pointers = [];
+    }
 
     if (e.pointerType === 'mouse') {
       this.pointers = [
         {
-          pointerId: e.pointerId,
-          pointerType: e.pointerType,
           button: e.button,
-          pageX: e.pageX - p.left,
-          pageY: e.pageY - p.top,
           origPageX: e.pageX - p.left,
           origPageY: e.pageY - p.top,
+          pageX: e.pageX - p.left,
+          pageY: e.pageY - p.top,
+          pointerId: e.pointerId,
+          pointerType: e.pointerType,
         },
       ];
       this.fingers = null;
       this.adjustingCamera = true;
+
       return;
     }
 
     // Does not enable left key dragging when space is not pressed
-    if (e.pointerType !== 'touch' && e.button === 0 && !this.spaceKey) return;
+    if (e.pointerType !== 'touch' && e.button === 0 && !this.spaceKey) {
+      return;
+    }
 
     this.pointers.push({
-      pointerId: e.pointerId,
-      pointerType: e.pointerType,
       button: e.button,
-      pageX: e.pageX - p.left,
-      pageY: e.pageY - p.top,
       origPageX: e.pageX - p.left,
       origPageY: e.pageY - p.top,
+      pageX: e.pageX - p.left,
+      pageY: e.pageY - p.top,
+      pointerId: e.pointerId,
+      pointerType: e.pointerType,
     });
     this.moveStarted = false;
     this.fingers = null;
     this.adjustingCamera = true;
   };
 
-  onPointerMove = (e) => {
+  onPointerMove = (e: {
+    pageX: number;
+    pageY: number;
+    pointerId: any;
+    pointerType: string;
+    preventDefault: () => void;
+  }) => {
     const p = {
       left: document.getElementById('path-preview-panel').offsetLeft,
       top: document.getElementById('path-preview-panel').offsetTop,
     };
+
     e.preventDefault();
-    const pointer = this.pointers.find((x) => x.pointerId === e.pointerId);
-    if (!pointer) return;
+
+    const pointer = this.pointers.find((x: { pointerId: any }) => x.pointerId === e.pointerId);
+
+    if (!pointer) {
+      return;
+    }
+
     const dx = e.pageX - p.left - pointer.pageX;
     const dy = pointer.pageY - e.pageY + p.top;
+
     if (this.adjustingCamera) {
       pointer.pageX = e.pageX - p.left;
       pointer.pageY = e.pageY - p.top;
+
       if (e.pointerType === 'mouse') {
         this.pan(dx, dy);
       } else if (e.pointerType === 'touch') {
-        if (Math.abs(dx) >= 10 || Math.abs(dy) >= 10) this.moveStarted = true;
-        if (!this.moveStarted) return;
+        if (Math.abs(dx) >= 10 || Math.abs(dy) >= 10) {
+          this.moveStarted = true;
+        }
+
+        if (!this.moveStarted) {
+          return;
+        }
+
         if (this.pointers.length === 1) {
           this.pan(dx, dy);
         } else if (this.pointers.length >= 2) {
-          const centerX = this.pointers.reduce((acc, o) => acc + o.pageX, 0) / this.pointers.length;
-          const centerY = this.pointers.reduce((acc, o) => acc + o.pageY, 0) / this.pointers.length;
+          const centerX =
+            this.pointers.reduce((acc: any, o: { pageX: any }) => acc + o.pageX, 0) / this.pointers.length;
+          const centerY =
+            this.pointers.reduce((acc: any, o: { pageY: any }) => acc + o.pageY, 0) / this.pointers.length;
           const distance = dist(
             this.pointers[0].pageX,
             this.pointers[0].pageY,
             this.pointers[1].pageX,
             this.pointers[1].pageY,
           );
+
           if (this.fingers && this.fingers.num === this.pointers.length) {
             if (this.pointers.length >= 2) {
               const d = distance - this.fingers.distance;
               const origCenterX =
-                this.pointers.reduce((acc, o) => acc + o.origPageX, 0) / this.pointers.length;
+                this.pointers.reduce((acc: any, o: { origPageX: any }) => acc + o.origPageX, 0) / this.pointers.length;
               const origCenterY =
-                this.pointers.reduce((acc, o) => acc + o.origPageY, 0) / this.pointers.length;
+                this.pointers.reduce((acc: any, o: { origPageY: any }) => acc + o.origPageY, 0) / this.pointers.length;
+
               this.zoom(origCenterX, origCenterY, Math.exp(-d / 200), dx, dy);
             }
           }
+
           this.fingers = {
-            num: this.pointers.length,
             centerX,
             centerY,
             distance,
+            num: this.pointers.length,
           };
         }
       }
     }
   };
 
-  wheel = (e) => {
+  wheel = (e: { ctrlKey: any; deltaX: number; deltaY: number; pageX: number; pageY: number }) => {
     // @ts-ignore
     const p = {
       left: document.getElementById('path-preview-panel').offsetLeft,
@@ -959,6 +1140,7 @@ class PathPreview extends React.Component<Props, State> {
     };
     const mouseInputDevice = BeamboxPreference.read('mouse_input_device');
     const isTouchpad = mouseInputDevice === 'TOUCHPAD';
+
     if (isTouchpad) {
       if (e.ctrlKey) {
         this.zoom(e.pageX - p.left, e.pageY - p.top, Math.exp(e.deltaY / 200));
@@ -970,7 +1152,7 @@ class PathPreview extends React.Component<Props, State> {
     }
   };
 
-  transferTime = (time: number, spliter: 'unit' | ':' = 'unit'): string => {
+  transferTime = (time: number, spliter: ':' | 'unit' = 'unit'): string => {
     let h = 0;
     let m = 0;
     let s = 0;
@@ -987,35 +1169,48 @@ class PathPreview extends React.Component<Props, State> {
     } else {
       s = Math.round(restTime * 60);
     }
+
     let str = '';
+
     if (spliter === ':') {
-      if (h) str += `${h}:`;
+      if (h) {
+        str += `${h}:`;
+      }
+
       const padLeftZero = (num: number) => (num >= 10 ? num.toString() : `0${num}`);
+
       str += `${str.length > 0 ? padLeftZero(m) : m}:`;
       str += padLeftZero(s);
+
       return str;
     }
+
     return `${h > 0 ? `${h} h ` : ''}${m > 0 ? `${m} m ` : ''}${s} s`;
   };
 
   private setScale = (scale: number) => {
-    if (!this.canvas) return;
+    if (!this.canvas) {
+      return;
+    }
+
     const { camera } = this.state;
     const r = this.canvas.getBoundingClientRect();
     // @ts-ignore
     const cameraHeight = vec3.distance(camera.eye, camera.center);
     let newFovy = 2 * Math.atan(r.height / (2 * cameraHeight * scale));
+
     newFovy = Math.max(0.1, Math.min(Math.PI - 0.1, newFovy));
 
     this.setCameraAttrs({
-      eye: camera.eye,
       center: camera.center,
+      eye: camera.eye,
       fovy: newFovy,
     });
   };
 
   private playerIntervalHandler = () => {
     const { speedLevel, workspace } = this.state;
+
     if (workspace.simTime >= this.simTimeMax) {
       this.handleSimTimeChange(this.simTimeMax);
       clearInterval(this.simInterval);
@@ -1027,28 +1222,40 @@ class PathPreview extends React.Component<Props, State> {
   };
 
   private handlePlay = () => {
-    if (this.simInterval) clearInterval(this.simInterval);
+    if (this.simInterval) {
+      clearInterval(this.simInterval);
+    }
+
     const { workspace } = this.state;
+
     if (workspace.simTime >= this.simTimeMax) {
       this.handleSimTimeChange(0);
     }
+
     this.simInterval = setInterval(this.playerIntervalHandler, SIM_TIME_MS);
     this.setState({ playState: PlayState.PLAY });
   };
 
   private handleStop = () => {
-    if (this.simInterval) clearInterval(this.simInterval);
+    if (this.simInterval) {
+      clearInterval(this.simInterval);
+    }
+
     this.setState({ playState: PlayState.STOP });
     this.handleSimTimeChange(0);
   };
 
   private handlePause = () => {
-    if (this.simInterval) clearInterval(this.simInterval);
+    if (this.simInterval) {
+      clearInterval(this.simInterval);
+    }
+
     this.setState({ playState: PlayState.PAUSE });
   };
 
-  private handleSimTimeChange = (value) => {
+  private handleSimTimeChange = (value: number) => {
     const { workspace } = this.state;
+
     this.position = this.gcodePreview.getSimTimeInfo(Number(value)).position;
     this.setState({
       workspace: {
@@ -1062,28 +1269,18 @@ class PathPreview extends React.Component<Props, State> {
     const { playState } = this.state;
     const LANG = i18n.lang.beambox.path_preview;
     const controlButtons = [];
+
     if (playState === PlayState.STOP) {
-      controlButtons.push(
-        <img key="play" src="img/Play.svg" title={LANG.play} onClick={this.handlePlay} />,
-      );
-      controlButtons.push(
-        <img key="stop" className="disabled" src="img/Stop.svg" title={LANG.stop} />,
-      );
+      controlButtons.push(<img key="play" onClick={this.handlePlay} src="img/Play.svg" title={LANG.play} />);
+      controlButtons.push(<img className="disabled" key="stop" src="img/Stop.svg" title={LANG.stop} />);
     } else if (playState === PlayState.PLAY) {
-      controlButtons.push(
-        <img key="pause" src="img/Pause.svg" title={LANG.pause} onClick={this.handlePause} />,
-      );
-      controlButtons.push(
-        <img key="stop" src="img/Stop.svg" title={LANG.stop} onClick={this.handleStop} />,
-      );
+      controlButtons.push(<img key="pause" onClick={this.handlePause} src="img/Pause.svg" title={LANG.pause} />);
+      controlButtons.push(<img key="stop" onClick={this.handleStop} src="img/Stop.svg" title={LANG.stop} />);
     } else if (playState === PlayState.PAUSE) {
-      controlButtons.push(
-        <img key="play" src="img/Play.svg" title={LANG.play} onClick={this.handlePlay} />,
-      );
-      controlButtons.push(
-        <img key="stop" src="img/Stop.svg" title={LANG.stop} onClick={this.handleStop} />,
-      );
+      controlButtons.push(<img key="play" onClick={this.handlePlay} src="img/Play.svg" title={LANG.play} />);
+      controlButtons.push(<img key="stop" onClick={this.handleStop} src="img/Stop.svg" title={LANG.stop} />);
     }
+
     return <div className="play-control">{controlButtons}</div>;
   };
 
@@ -1091,6 +1288,7 @@ class PathPreview extends React.Component<Props, State> {
     if (this.position === -1) {
       return '0, 0 mm';
     }
+
     return `${Math.round(this.position[0])}, ${Math.round(this.position[1])} mm`;
   };
 
@@ -1110,10 +1308,11 @@ class PathPreview extends React.Component<Props, State> {
 
   private renderSpeed = () => {
     const { speedLevel } = this.state;
+
     return `x ${speedRatio[speedLevel]}`;
   };
 
-  private searchParams = (gcodeList, target) => {
+  private searchParams = (gcodeList: string[], target: number) => {
     const enableAutofocus = BeamboxPreference.read('enable-autofocus');
     let U = -1;
     let F = -1;
@@ -1124,27 +1323,36 @@ class PathPreview extends React.Component<Props, State> {
     for (let i = target; i > 0; i -= 1) {
       if (U < 0) {
         const match = gcodeList[i].match(/G1 U([-0-9.]*)/);
-        if (match && match[1]) U = parseInt(match[1], 10);
+
+        if (match && match[1]) {
+          U = Number.parseInt(match[1], 10);
+        }
       }
 
       if (F < 0) {
         const match = gcodeList[i].match(/G1 F([-0-9.]*)/);
-        if (match && match[1]) F = parseInt(match[1], 10);
+
+        if (match && match[1]) {
+          F = Number.parseInt(match[1], 10);
+        }
       }
 
       if (!laserDetected) {
-        if (gcodeList[i].indexOf('G1S0') > -1) {
+        if (gcodeList[i].includes('G1S0')) {
           isEngraving = false;
           laserDetected = true;
-        } else if (gcodeList[i].indexOf('G1V0') > -1) {
+        } else if (gcodeList[i].includes('G1V0')) {
           isEngraving = true;
           laserDetected = true;
         }
       }
 
-      if (enableAutofocus && Z < 0 && gcodeList[i].indexOf('Z') > -1) {
+      if (enableAutofocus && Z < 0 && gcodeList[i].includes('Z')) {
         const res = gcodeList[i].match(/Z([-0-9.]*)/);
-        if (res && res[1]) Z = parseInt(res[1], 10);
+
+        if (res && res[1]) {
+          Z = Number.parseInt(res[1], 10);
+        }
       }
 
       if (F > 0 && U > 0 && laserDetected && (!enableAutofocus || (enableAutofocus && Z > -1))) {
@@ -1153,21 +1361,30 @@ class PathPreview extends React.Component<Props, State> {
     }
 
     return {
-      U,
       F,
-      Z,
       isEngraving,
+      U,
+      Z,
     };
   };
 
   private handleStartHere = async (): Promise<void> => {
     const { workspace } = this.state;
     const { device } = await getDevice();
+
     if (!device) {
       return;
     }
+
+    const serialOk = await checkBlockedSerial(device.serial);
+
+    if (!serialOk) {
+      return;
+    }
+
     const currentWorkarea = BeamboxPreference.read('workarea') || BeamboxPreference.read('model');
     const allowedWorkareas = constant.allowedWorkarea[device.model];
+
     if (currentWorkarea && allowedWorkareas) {
       if (!allowedWorkareas.includes(currentWorkarea)) {
         alertCaller.popUp({
@@ -1175,76 +1392,89 @@ class PathPreview extends React.Component<Props, State> {
           message: i18n.lang.message.unavailableWorkarea,
           type: alertConstants.SHOW_POPUP_ERROR,
         });
+
         return;
       }
     }
 
     if (workspace.simTime === 0) {
       const vc = VersionChecker(device.version);
+
       if (!vc.meetRequirement('USABLE_VERSION')) {
         alertCaller.popUp({
           id: 'fatal-occurred',
           message: i18n.lang.beambox.popup.should_update_firmware_to_continue,
           type: alertConstants.SHOW_POPUP_ERROR,
         });
+
         return;
       }
+
       exportFuncs.uploadFcode(device);
+
       return;
     }
 
     const generateTaskThumbnail = async () => {
       const canvas = document.createElement('canvas');
-      const { machineWidth, machineHeight } = settings;
+      const { machineHeight, machineWidth } = settings;
+
       canvas.width = machineWidth;
       canvas.height = machineHeight;
+
       const gl = canvas.getContext('webgl', {
         alpha: true,
         depth: true,
         preserveDrawingBuffer: true,
       });
       const drawCommands = new DrawCommands(gl);
+
       drawCommands.createFrameBuffer(600, 400);
+
       const cameraHeight = 300;
       const fovy = 2 * Math.atan(canvas.height / (2 * cameraHeight));
       const { x, y } = this.jobOrigin ?? { x: 0, y: 0 };
       const camera = calcCamera({
-        viewportWidth: canvas.width,
-        viewportHeight: canvas.height,
-        fovy,
-        near: 0.1,
-        far: 2000,
-        eye: [machineWidth / 2 - x, -machineHeight / 2 + y, cameraHeight],
         center: [machineWidth / 2 - x, -machineHeight / 2 + y, 0],
-        up: [0, 1, 0],
-        showPerspective: false,
+        eye: [machineWidth / 2 - x, -machineHeight / 2 + y, cameraHeight],
+        far: 2000,
+        fovy,
         machineX: 0,
         machineY: 0,
+        near: 0.1,
+        showPerspective: false,
+        up: [0, 1, 0],
+        viewportHeight: canvas.height,
+        viewportWidth: canvas.width,
       });
+
       gl.viewport(0, 0, canvas.width, canvas.height);
       gl.clearColor(0.94, 0.94, 0.94, 1);
-      // eslint-disable-next-line no-bitwise
+
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
       gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
       gl.enable(gl.BLEND);
 
       const programInfo = generateProgramInfo(gl);
       const buffer = initBuffers(gl, settings.machineWidth, settings.machineHeight, this.jobOrigin);
+
       drawScene(gl, programInfo, buffer, camera, false, false, true);
       this.grid.draw(drawCommands, {
+        height: machineHeight,
+        major: Math.max(settings.toolGridMajorSpacing, 1),
+        minor: Math.max(settings.toolGridMinorSpacing, 0.1),
+        offset: this.jobOrigin,
         perspective: camera.perspective,
         view: camera.view,
         width: machineWidth,
-        height: machineHeight,
-        minor: Math.max(settings.toolGridMinorSpacing, 0.1),
-        major: Math.max(settings.toolGridMajorSpacing, 1),
-        offset: this.jobOrigin,
       });
       drawTaskPreview(this.gcodePreview, {}, canvas, drawCommands, workspace, camera, {
         showRemaining: true,
       });
+
       const blob = await new Promise<Blob>((resolve) => canvas.toBlob(resolve));
       const url = URL.createObjectURL(blob);
+
       return {
         base64: canvas.toDataURL(),
         url,
@@ -1255,8 +1485,8 @@ class PathPreview extends React.Component<Props, State> {
 
     if (workspace.simTime > 0 && workspace.simTime < this.simTimeMax - SIM_TIME_MINUTE / 2) {
       progressCaller.openNonstopProgress({
-        id: 'path-preview',
         caption: i18n.lang.beambox.popup.progress.calculating,
+        id: 'path-preview',
       });
       try {
         const simTimeInfo = this.gcodePreview.getSimTimeInfo(Number(workspace.simTime));
@@ -1265,7 +1495,7 @@ class PathPreview extends React.Component<Props, State> {
         let count = -2;
 
         for (let i = 0; i < gcodeList.length; i += 1) {
-          if (gcodeList[i].indexOf('G1') > -1) {
+          if (gcodeList[i].includes('G1')) {
             count += 1;
           }
 
@@ -1276,9 +1506,11 @@ class PathPreview extends React.Component<Props, State> {
         }
 
         const preparation: string[] = [];
+
         for (let i = 0; i < gcodeList.length; i += 1) {
           preparation.push(gcodeList[i]);
-          if (gcodeList[i].indexOf('F7500') > -1) {
+
+          if (gcodeList[i].includes('F7500')) {
             break;
           }
         }
@@ -1286,14 +1518,17 @@ class PathPreview extends React.Component<Props, State> {
         if (BeamboxPreference.read('fast_gradient')) {
           if (!this.fastGradientGcodeString) {
             const fastGradientGcodeBlob = await exportFuncs.getFastGradientGcode();
+
             this.fastGradientGcodeString = await new Promise<string>((resolve) => {
               const fileReader = new FileReader();
+
               fileReader.onloadend = (e) => {
                 resolve(e.target.result as string);
               };
               fileReader.readAsText(fastGradientGcodeBlob as Blob);
             });
           }
+
           let resolution = 0;
           let prefix;
           const fastGradientGcodeList = this.fastGradientGcodeString.split('\n');
@@ -1306,6 +1541,7 @@ class PathPreview extends React.Component<Props, State> {
             const matchY = gcodeList[i].match(/Y(-?[0-9.]*)/);
             const x = matchX ? matchX[1] : '';
             const y = matchY ? matchY[1] : '';
+
             if ((x && !y) || (!x && y)) {
               isFastGradientEngraving = true;
             }
@@ -1328,9 +1564,11 @@ class PathPreview extends React.Component<Props, State> {
             let startBytesIndex = -1;
             let engravingLineCount = 0;
             let resolutionLine = '';
+
             for (let i = 0; i < fastGradientGcodeList.length - 2; i += 1) {
-              if (fastGradientGcodeList[i].indexOf('F16 1') > -1) {
+              if (fastGradientGcodeList[i].includes('F16 1')) {
                 const res = fastGradientGcodeList[i].match(/F16 1 ([H|M|L])/);
+
                 switch (res[1]) {
                   case 'H':
                     resolution = 0.05;
@@ -1346,21 +1584,23 @@ class PathPreview extends React.Component<Props, State> {
                 }
 
                 resolutionLine = fastGradientGcodeList[i];
-              } else if (!prefix && fastGradientGcodeList[i].indexOf('G1 F') > -1) {
+              } else if (!prefix && fastGradientGcodeList[i].includes('G1 F')) {
                 prefix = fastGradientGcodeList.slice(0, i + 1);
               }
 
               if (
                 !yFound &&
-                fastGradientGcodeList[i].indexOf('Y') > -1 &&
+                fastGradientGcodeList[i].includes('Y') &&
                 (fastGradientGcodeList[i + 1]?.indexOf('F16 2') > -1 ||
                   fastGradientGcodeList[i + 2]?.indexOf('F16 2') > -1)
               ) {
                 const matchY = fastGradientGcodeList[i].match(/Y([0-9.]*)/);
                 const y = matchY ? Number(matchY[1]) : null;
+
                 if (y === targetY) {
                   const matchX = fastGradientGcodeList[i].match(/X([0-9.]*)/);
                   const x = Number(matchX[1]);
+
                   cacheIndex = i;
                   startX = x;
                 }
@@ -1368,22 +1608,24 @@ class PathPreview extends React.Component<Props, State> {
                 i += 1;
                 continue;
               }
+
               if (cacheIndex > -1) {
-                if (fastGradientGcodeList[i].indexOf('F16 3') > -1) {
+                if (fastGradientGcodeList[i].includes('F16 3')) {
                   if (startBytesIndex < 0) {
                     startBytesIndex = i;
                   }
+
                   engravingLineCount += 1;
                 }
 
-                if (fastGradientGcodeList[i].indexOf('F16 4') > -1) {
-                  const distBytesCalculation = Math.abs(
-                    (simTimeInfo.position[0] - startX) / (32 * resolution),
-                  );
+                if (fastGradientGcodeList[i].includes('F16 4')) {
+                  const distBytesCalculation = Math.abs((simTimeInfo.position[0] - startX) / (32 * resolution));
                   const paddingEmptyBytes = Math.floor(distBytesCalculation);
+
                   if (engravingLineCount > distBytesCalculation) {
                     modifiedGcodeList = prefix;
-                    const { U, F, Z } = this.searchParams(fastGradientGcodeList, cacheIndex);
+
+                    const { F, U, Z } = this.searchParams(fastGradientGcodeList, cacheIndex);
 
                     if (BeamboxPreference.read('enable-autofocus') && Z > -1) {
                       modifiedGcodeList.push('G1 Z-1.0000');
@@ -1392,10 +1634,8 @@ class PathPreview extends React.Component<Props, State> {
 
                     modifiedGcodeList.push(`G1 U${U}`);
                     modifiedGcodeList.push(`G1 F${F}`);
-                    if (
-                      modifiedGcodeList.lastIndexOf('F16 5') >
-                      modifiedGcodeList.lastIndexOf(resolutionLine)
-                    ) {
+
+                    if (modifiedGcodeList.lastIndexOf('F16 5') > modifiedGcodeList.lastIndexOf(resolutionLine)) {
                       modifiedGcodeList.push(resolutionLine);
                     }
 
@@ -1406,13 +1646,11 @@ class PathPreview extends React.Component<Props, State> {
                     for (let j = 0; j < paddingEmptyBytes; j += 1) {
                       modifiedGcodeList.push('F16 3 0');
                     }
+
                     const fixedIndex = startBytesIndex + paddingEmptyBytes;
-                    const matchByteInfo =
-                      fastGradientGcodeList[fixedIndex].match(/F16 3 ([-0-9]*)/);
-                    const bytesInfo = parseInt(matchByteInfo[1], 10);
-                    const smallDist = Math.floor(
-                      (distBytesCalculation - Math.floor(distBytesCalculation)) * 32,
-                    );
+                    const matchByteInfo = fastGradientGcodeList[fixedIndex].match(/F16 3 ([-0-9]*)/);
+                    const bytesInfo = Number.parseInt(matchByteInfo[1], 10);
+                    const smallDist = Math.floor((distBytesCalculation - Math.floor(distBytesCalculation)) * 32);
                     let bitwiseOperand = '';
 
                     for (let d = 0; d < 32; d += 1) {
@@ -1422,28 +1660,24 @@ class PathPreview extends React.Component<Props, State> {
                         bitwiseOperand += '1';
                       }
                     }
-                    // eslint-disable-next-line no-bitwise
+
                     modifiedGcodeList.push(`F16 3 ${bytesInfo & (bitwiseOperand as any)}`);
-                    modifiedGcodeList = modifiedGcodeList.concat(
-                      fastGradientGcodeList.slice(fixedIndex + 1),
-                    );
+                    modifiedGcodeList = modifiedGcodeList.concat(fastGradientGcodeList.slice(fixedIndex + 1));
 
                     const { fcodeBlob, fileTimeCost } = await exportFuncs.gcodeToFcode(
                       modifiedGcodeList.join('\n'),
                       thumbnail,
                     );
                     let res = await deviceMaster.getReport();
+
                     if (res) {
                       res = await checkDeviceStatus(device);
+
                       if (res) {
-                        exportFuncs.openTaskInDeviceMonitor(
-                          device,
-                          fcodeBlob,
-                          thumbnailUrl,
-                          fileTimeCost,
-                        );
+                        await exportFuncs.openTaskInDeviceMonitor(device, fcodeBlob, thumbnailUrl, fileTimeCost);
                       }
                     }
+
                     break;
                   } else {
                     yFound = false;
@@ -1459,19 +1693,18 @@ class PathPreview extends React.Component<Props, State> {
           } else {
             for (let i = 0; i < fastGradientGcodeList.length - 1; i += 1) {
               if (
-                fastGradientGcodeList[i].indexOf('G1') > -1 &&
-                fastGradientGcodeList[i].indexOf('X') > -1 &&
-                fastGradientGcodeList[i].indexOf('Y') > -1
+                fastGradientGcodeList[i].includes('G1') &&
+                fastGradientGcodeList[i].includes('X') &&
+                fastGradientGcodeList[i].includes('Y')
               ) {
                 const matchX = fastGradientGcodeList[i].match(/X([0-9.]*)/);
                 const matchY = fastGradientGcodeList[i].match(/Y([0-9.]*)/);
+
                 if (matchX && matchY) {
                   const x = Number(matchX[1]);
                   const y = Number(matchY[1]);
-                  if (
-                    Math.abs(x - simTimeInfo.next[0]) < 0.001 &&
-                    Math.abs(y + simTimeInfo.next[1]) < 0.001
-                  ) {
+
+                  if (Math.abs(x - simTimeInfo.next[0]) < 0.001 && Math.abs(y + simTimeInfo.next[1]) < 0.001) {
                     target = i;
                     break;
                   }
@@ -1479,7 +1712,7 @@ class PathPreview extends React.Component<Props, State> {
               }
             }
 
-            const { U, F, Z, isEngraving } = this.searchParams(fastGradientGcodeList, target);
+            const { F, isEngraving, U, Z } = this.searchParams(fastGradientGcodeList, target);
 
             if (BeamboxPreference.read('enable-autofocus') && Z > 0) {
               preparation.push('G1 Z-1.0000');
@@ -1487,50 +1720,46 @@ class PathPreview extends React.Component<Props, State> {
             }
 
             preparation.push(`G1 U${U}`);
-            preparation.push(
-              `G1 X${simTimeInfo.position[0].toFixed(4)} Y${simTimeInfo.position[1].toFixed(4)}`,
-            );
+            preparation.push(`G1 X${simTimeInfo.position[0].toFixed(4)} Y${simTimeInfo.position[1].toFixed(4)}`);
             preparation.push(`G1 F${F}`);
             preparation.push(`G1${isEngraving ? 'V' : 'S'}0`);
 
             modifiedGcodeList = preparation.concat(fastGradientGcodeList.slice(target));
-            const { fcodeBlob, fileTimeCost } = await exportFuncs.gcodeToFcode(
-              modifiedGcodeList.join('\n'),
-              thumbnail,
-            );
+
+            const { fcodeBlob, fileTimeCost } = await exportFuncs.gcodeToFcode(modifiedGcodeList.join('\n'), thumbnail);
             let res = await deviceMaster.getReport();
+
             if (res) {
               res = await checkDeviceStatus(device);
+
               if (res) {
-                exportFuncs.openTaskInDeviceMonitor(device, fcodeBlob, thumbnailUrl, fileTimeCost);
+                await exportFuncs.openTaskInDeviceMonitor(device, fcodeBlob, thumbnailUrl, fileTimeCost);
               }
             }
           }
         } else {
-          const { U, F, Z, isEngraving } = this.searchParams(gcodeList, target);
+          const { F, isEngraving, U, Z } = this.searchParams(gcodeList, target);
 
           if (BeamboxPreference.read('enable-autofocus')) {
             preparation.push('G1 Z-1.0000');
             preparation.push(`G1 Z${Z}`);
           }
+
           preparation.push(`G1 U${U}`);
-          preparation.push(
-            `G1 X${simTimeInfo.position[0].toFixed(4)} Y${simTimeInfo.position[1].toFixed(4)}`,
-          );
+          preparation.push(`G1 X${simTimeInfo.position[0].toFixed(4)} Y${simTimeInfo.position[1].toFixed(4)}`);
           preparation.push(`G1 F${F}`);
           preparation.push(`G1${isEngraving ? 'V' : 'S'}0`);
 
           modifiedGcodeList = preparation.concat(gcodeList.slice(target));
 
-          const { fcodeBlob, fileTimeCost } = await exportFuncs.gcodeToFcode(
-            modifiedGcodeList.join('\n'),
-            thumbnail,
-          );
+          const { fcodeBlob, fileTimeCost } = await exportFuncs.gcodeToFcode(modifiedGcodeList.join('\n'), thumbnail);
           let res = await deviceMaster.getReport();
+
           if (res) {
             res = await checkDeviceStatus(device);
+
             if (res) {
-              exportFuncs.openTaskInDeviceMonitor(device, fcodeBlob, thumbnailUrl, fileTimeCost);
+              await exportFuncs.openTaskInDeviceMonitor(device, fcodeBlob, thumbnailUrl, fileTimeCost);
             }
           }
         }
@@ -1547,25 +1776,28 @@ class PathPreview extends React.Component<Props, State> {
 
   private toggleIsInverting = () => {
     const { isInverting } = this.state;
+
     this.setState({ isInverting: !isInverting });
   };
 
   private toggleTraversalMoves = () => {
     const { workspace } = this.state;
+
     this.setState({ workspace: { ...workspace, showTraversal: !workspace.showTraversal } });
   };
 
   zoom(pageX: number, pageY: number, amount: number, panX = 0, panY = 0): void {
-    if (!this.canvas) return;
+    if (!this.canvas) {
+      return;
+    }
+
     const r = this.canvas.getBoundingClientRect();
     const { camera } = this.state;
     const newFovy = Math.max(0.1, Math.min(Math.PI - 0.1, camera.fovy * amount));
     // @ts-ignore
-    const oldScale =
-      (vec3.distance(camera.eye, camera.center) * Math.tan(camera.fovy / 2)) / (r.height / 2);
+    const oldScale = (vec3.distance(camera.eye, camera.center) * Math.tan(camera.fovy / 2)) / (r.height / 2);
     // @ts-ignore
-    const newScale =
-      (vec3.distance(camera.eye, camera.center) * Math.tan(newFovy / 2)) / (r.height / 2);
+    const newScale = (vec3.distance(camera.eye, camera.center) * Math.tan(newFovy / 2)) / (r.height / 2);
     const dx = Math.round(pageX - (r.left + r.right) / 2) * (newScale - oldScale);
     const dy = Math.round(-pageY + (r.top + r.bottom) / 2) * (newScale - oldScale);
     const scaledPanX = panX * newScale;
@@ -1584,46 +1816,37 @@ class PathPreview extends React.Component<Props, State> {
     const newEye = vec3.add([], camera.eye, adj);
 
     this.setCameraAttrs({
-      eye: newEye,
       // @ts-ignore
       center: vec3.add([], camera.center, adj),
+      eye: newEye,
       fovy: newFovy,
     });
   }
 
-  private pan(dx, dy) {
-    const { camera, width, height } = this.state;
+  private pan(dx: number, dy: number) {
+    const { camera, height, width } = this.state;
     const { view } = calcCamera({
-      viewportWidth: width,
-      viewportHeight: height,
-      fovy: camera.fovy,
-      near: 0.1,
-      far: 2000,
+      center: [0, 0, 0],
       // @ts-ignore
       eye: [0, 0, vec3.distance(camera.eye, camera.center)],
-      center: [0, 0, 0],
-      up: [0, 1, 0],
-      showPerspective: false,
+      far: 2000,
+      fovy: camera.fovy,
       machineX: settings.machineBottomLeftX,
       machineY: settings.machineBottomLeftY,
+      near: 0.1,
+      showPerspective: false,
+      up: [0, 1, 0],
+      viewportHeight: height,
+      viewportWidth: width,
     });
     const scale = 2 / width / view[0];
     const scaledDx = dx * scale;
     const scaledDy = dy * scale;
     // @ts-ignore
-    const n = vec3.normalize(
-      [],
-      vec3.cross([], camera.up, vec3.sub([], camera.eye, camera.center)),
-    );
+    const n = vec3.normalize([], vec3.cross([], camera.up, vec3.sub([], camera.eye, camera.center)));
+
     // console.log(camera);
     this.setCameraAttrs({
-      // @ts-ignore
-      eye: vec3.add(
-        [],
-        camera.eye,
-        // @ts-ignore
-        vec3.add([], vec3.scale([], n, -scaledDx), vec3.scale([], camera.up, -scaledDy)),
-      ),
       // @ts-ignore
       center: vec3.add(
         [],
@@ -1631,10 +1854,16 @@ class PathPreview extends React.Component<Props, State> {
         // @ts-ignore
         vec3.add([], vec3.scale([], n, -scaledDx), vec3.scale([], camera.up, -scaledDy)),
       ),
+      // @ts-ignore
+      eye: vec3.add(
+        [],
+        camera.eye,
+        // @ts-ignore
+        vec3.add([], vec3.scale([], n, -scaledDx), vec3.scale([], camera.up, -scaledDy)),
+      ),
     });
   }
 
-  // eslint-disable-next-line class-methods-use-this
   renderDataBlock(label: string, value: string): JSX.Element {
     return (
       <div className="data-block">
@@ -1647,36 +1876,32 @@ class PathPreview extends React.Component<Props, State> {
   render(): JSX.Element {
     const className = classNames({ mac: window.os === 'MacOS' });
     const { togglePathPreview } = this.context;
-    const { width, height, speedLevel, workspace, isInverting, playState } = this.state;
+    const { height, isInverting, playState, speedLevel, width, workspace } = this.state;
     const LANG = i18n.lang.beambox.path_preview;
 
     return (
-      <div
-        id="path-preview-panel"
-        className={className}
-        style={{ touchAction: 'none', userSelect: 'none' }}
-      >
+      <div className={className} id="path-preview-panel" style={{ touchAction: 'none', userSelect: 'none' }}>
         <Pointable
-          style={{ width, height }}
-          touchAction="none"
-          onWheel={this.wheel}
           onPointerCancel={this.onPointerCancel}
           onPointerDown={this.onPointerDown}
           onPointerMove={this.onPointerMove}
           onPointerUp={this.onPointerUp}
+          onWheel={this.wheel}
+          style={{ height, width }}
+          touchAction="none"
         >
           <canvas
-            style={{ width, height }}
-            width={Math.round(width * window.devicePixelRatio)}
             height={Math.round(height * window.devicePixelRatio)}
             ref={this.setCanvas}
+            style={{ height, width }}
+            width={Math.round(width * window.devicePixelRatio)}
           />
         </Pointable>
         <div className="tools-panel">
           <ProgressBar
+            handleSimTimeChange={this.handleSimTimeChange}
             simTime={workspace.simTime}
             simTimeMax={this.simTimeMax}
-            handleSimTimeChange={this.handleSimTimeChange}
           />
           <div className="options">
             {this.renderPlayButtons()}
@@ -1684,12 +1909,12 @@ class PathPreview extends React.Component<Props, State> {
               <div className="label">{LANG.play_speed}</div>
               <input
                 id="speed"
-                type="range"
-                min={0}
                 max={4}
-                step="1"
-                value={speedLevel}
+                min={0}
                 onChange={(e) => this.handleSpeedLevelChange(e.target.value)}
+                step="1"
+                type="range"
+                value={speedLevel}
               />
               <div>{this.renderSpeed()}</div>
             </div>
@@ -1698,12 +1923,12 @@ class PathPreview extends React.Component<Props, State> {
                 <div className="switch-container">
                   <div className="onoffswitch">
                     <input
-                      type="checkbox"
+                      checked={workspace.showTraversal}
+                      className="onoffswitch-checkbox"
                       id="onoffswitch"
                       name="onoffswitch"
-                      className="onoffswitch-checkbox"
                       onChange={this.toggleTraversalMoves}
-                      checked={workspace.showTraversal}
+                      type="checkbox"
                     />
                     <label className="onoffswitch-label" htmlFor="onoffswitch">
                       <span className="onoffswitch-inner" />
@@ -1719,12 +1944,12 @@ class PathPreview extends React.Component<Props, State> {
                 <div className="switch-container">
                   <div className="onoffswitch">
                     <input
-                      type="checkbox"
+                      checked={isInverting}
+                      className="onoffswitch-checkbox"
                       id="onoffswitch-is-invert"
                       name="onoffswitch-is-invert"
-                      className="onoffswitch-checkbox"
                       onChange={this.toggleIsInverting}
-                      checked={isInverting}
+                      type="checkbox"
                     />
                     <label className="onoffswitch-label" htmlFor="onoffswitch-is-invert">
                       <span className="onoffswitch-inner" />
@@ -1740,25 +1965,21 @@ class PathPreview extends React.Component<Props, State> {
           </div>
         </div>
         <ZoomBlock
-          isPathPreviewing
           getZoom={() => this.camera.scale}
-          setZoom={this.setScale}
+          isPathPreviewing
           resetView={this.resetView}
+          setZoom={this.setScale}
         />
         <SidePanel
-          size={this.renderSize()}
-          estTime={this.transferTime(this.simTimeMax)}
-          lightTime={this.transferTime(this.gcodePreview.g1TimeReal)}
-          rapidTime={this.transferTime(this.gcodePreview.g0TimeReal)}
-          cutDist={`${Math.round(this.gcodePreview.g1DistReal)} mm`}
-          rapidDist={`${Math.round(this.gcodePreview.g0DistReal)} mm`}
           currentPosition={this.renderPosition()}
+          cutDist={`${Math.round(this.gcodePreview.g1DistReal)} mm`}
+          estTime={this.transferTime(this.simTimeMax)}
+          handleStartHere={isWeb() ? () => dialogCaller.forceLoginWrapper(this.handleStartHere) : this.handleStartHere}
           isStartHereEnabled={playState !== PlayState.PLAY}
-          handleStartHere={
-            isWeb()
-              ? () => dialogCaller.forceLoginWrapper(this.handleStartHere)
-              : this.handleStartHere
-          }
+          lightTime={this.transferTime(this.gcodePreview.g1TimeReal)}
+          rapidDist={`${Math.round(this.gcodePreview.g0DistReal)} mm`}
+          rapidTime={this.transferTime(this.gcodePreview.g0TimeReal)}
+          size={this.renderSize()}
           togglePathPreview={togglePathPreview}
         />
       </div>

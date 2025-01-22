@@ -1613,6 +1613,11 @@ const lang: ILang = {
     promark_disconnected: '#850 Sambungan peranti terganggu, sila periksa status sambungan peranti.',
     swiftray_disconnected: 'Tidak dapat menyambung ke backend, mencuba untuk menyambung semula.',
     swiftray_reconnected: 'Backend telah disambung semula, sila cuba hantar kerja semula.',
+    device_blocked: {
+      caption: 'Nombor Siri Tidak Sah',
+      online: 'Nombor siri peranti anda nampaknya telah dinyahaktifkan. Sila berikan nombor siri peranti (terletak di bahagian belakang peranti) kepada penjual anda dan minta mereka menghubungi support@flux3dp.com untuk mengaktifkan kebenaran peranti.',
+      offline: 'Nombor siri peranti anda terhad untuk kegunaan luar talian kerana ia nampaknya telah dinyahaktifkan. Sila berikan nombor siri peranti (terletak di bahagian belakang peranti) kepada penjual anda dan minta mereka menghubungi support@flux3dp.com untuk mengaktifkan kebenaran dalam talian. Jika anda ingin menggunakan peranti secara luar talian, sila hubungi support@flux3dp.com secara langsung.',
+    },
   },
   machine_status: {
     '0': 'Senggang',

@@ -8,7 +8,7 @@
  */
 
 import history from '@core/app/svgedit/history/history';
-import { IBatchCommand, ICommand, IUndoManager } from 'interfaces/IHistory';
+import { IBatchCommand, ICommand, IUndoManager } from '@core/interfaces/IHistory';
 
 const { svgedit } = window;
 
@@ -172,11 +172,7 @@ class HistoryRecordingService {
    * values they had *before* the change
    * @param text - An optional string visible to user related to this change
    */
-  changeElement(
-    elem: Element,
-    attrs: { [key: string]: any },
-    text?: string,
-  ): HistoryRecordingService {
+  changeElement(elem: Element, attrs: { [key: string]: any }, text?: string): HistoryRecordingService {
     if (!this.undoManager) {
       return this;
     }

@@ -1,5 +1,5 @@
 import currentFileManager from '@core/app/svgedit/currentFileManager';
-import { IBatchCommand, IHistoryHandler, IUndoManager } from 'interfaces/IHistory';
+import { IBatchCommand, IHistoryHandler, IUndoManager } from '@core/interfaces/IHistory';
 
 import history, { BaseHistoryCommand } from './history';
 
@@ -51,9 +51,7 @@ export class UndoManager implements IUndoManager {
   }
 
   getNextRedoCommandText(): string {
-    return this.undoStackPointer < this.undoStack.length
-      ? this.undoStack[this.undoStackPointer].getText()
-      : '';
+    return this.undoStackPointer < this.undoStack.length ? this.undoStack[this.undoStackPointer].getText() : '';
   }
 
   undo(): boolean {

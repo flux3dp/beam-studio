@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import { ILang } from '@core/interfaces/ILang';
 
 const lang: ILang = {
@@ -1616,6 +1615,11 @@ Machines > ‘Promark Name’ > Promark Settings`,
     promark_disconnected: "#850 Device connection interrupted, please check the device's connection status.",
     swiftray_disconnected: 'Unable to connect to the backend, attempting to reconnect.',
     swiftray_reconnected: 'Backend reconnected, please try resending the job.',
+    device_blocked: {
+      caption: 'Unauthorized Serial Number',
+      online: 'Your device serial number appears to be deactivated. Please provide the machine serial number (located on the back of the device) to your retailer and have them contact support@flux3dp.com to activate device authorization.',
+      offline: 'Your device serial number is restricted to offline usage as it appears to be deactivated. Please provide the machine serial number (located on the back of the device) to your retailer and have them contact support@flux3dp.com to activate online authorization. If you wish to use the device offline, please contact support@flux3dp.com directly.',
+    },
   },
   machine_status: {
     '-17': 'Cartridge IO Mode',

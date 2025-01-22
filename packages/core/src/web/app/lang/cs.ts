@@ -1616,6 +1616,11 @@ const lang: ILang = {
     promark_disconnected: '#850 Připojení zařízení bylo přerušeno, zkontrolujte stav připojení zařízení.',
     swiftray_disconnected: 'Nelze se připojit k backendu, opakování připojení probíhá.',
     swiftray_reconnected: 'Backend byl znovu připojen, zkuste znovu odeslat úkol.',
+    device_blocked: {
+      caption: 'Neautorizované sériové číslo',
+      online: 'Zdá se, že sériové číslo vašeho zařízení je deaktivováno. Poskytněte sériové číslo zařízení (umístěné na zadní straně zařízení) vašemu prodejci a požádejte jej, aby kontaktoval support@flux3dp.com k aktivaci autorizace zařízení.',
+      offline: 'Sériové číslo vašeho zařízení je omezeno na offline použití, protože se zdá být deaktivováno. Poskytněte sériové číslo zařízení (umístěné na zadní straně zařízení) vašemu prodejci a požádejte jej, aby kontaktoval support@flux3dp.com k aktivaci online autorizace. Pokud chcete zařízení používat offline, kontaktujte přímo support@flux3dp.com.',
+    },
   },
   machine_status: {
     '-17': 'IO mód kazety',

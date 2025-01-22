@@ -1616,6 +1616,11 @@ const lang: ILang = {
     promark_disconnected: '#850 La conexión del dispositivo se ha interrumpido, por favor revise el estado de la conexión.',
     swiftray_disconnected: 'No se pudo conectar al backend, intentando reconectar.',
     swiftray_reconnected: 'El backend se ha reconectado, intente reenviar el trabajo.',
+    device_blocked: {
+      caption: 'Número de serie no autorizado',
+      online: 'El número de serie de su dispositivo parece estar desactivado. Proporcione el número de serie del dispositivo (ubicado en la parte posterior del dispositivo) a su distribuidor y pídale que contacte a support@flux3dp.com para activar la autorización del dispositivo.',
+      offline: 'El número de serie de su dispositivo está restringido al uso fuera de línea ya que parece estar desactivado. Proporcione el número de serie del dispositivo (ubicado en la parte posterior del dispositivo) a su distribuidor y pídale que contacte a support@flux3dp.com para activar la autorización en línea. Si desea utilizar el dispositivo fuera de línea, comuníquese directamente con support@flux3dp.com.',
+    },
   },
   machine_status: {
     '-17': 'Cartridge IO Mode',

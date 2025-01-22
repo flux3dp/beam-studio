@@ -1616,6 +1616,11 @@ const lang: ILang = {
     promark_disconnected: '#850 장치 연결이 중단되었습니다. 장치의 연결 상태를 확인하세요.',
     swiftray_disconnected: '백엔드에 연결할 수 없습니다. 다시 연결을 시도 중입니다.',
     swiftray_reconnected: '백엔드가 다시 연결되었습니다. 작업을 다시 보내세요.',
+    device_blocked: {
+      caption: '허가되지 않은 시리얼 번호',
+      online: '기기의 시리얼 번호가 비활성화된 것으로 보입니다. 기기의 뒷면에 있는 시리얼 번호를 소매업체에 제공하고 support@flux3dp.com에 연락하여 기기 인증을 활성화하도록 요청하세요.',
+      offline: '기기의 시리얼 번호는 비활성화된 것으로 보이며 오프라인 사용으로 제한됩니다. 기기의 뒷면에 있는 시리얼 번호를 소매업체에 제공하고 support@flux3dp.com에 연락하여 온라인 인증을 활성화하세요. 기기를 오프라인으로 사용하려면 support@flux3dp.com에 직접 문의하세요.',
+    },
   },
   machine_status: {
     '-17': 'Cartridge IO Mode',

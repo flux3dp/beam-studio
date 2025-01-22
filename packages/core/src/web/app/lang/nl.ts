@@ -1613,6 +1613,11 @@ const lang: ILang = {
     promark_disconnected: '#850 Apparaatverbinding onderbroken, controleer de verbindingsstatus van het apparaat.',
     swiftray_disconnected: 'Kan geen verbinding maken met de backend, opnieuw verbinden.',
     swiftray_reconnected: 'Backend opnieuw verbonden, probeer de taak opnieuw te verzenden.',
+    device_blocked: {
+      caption: 'Niet-geautoriseerd serienummer',
+      online: 'Het serienummer van uw apparaat lijkt gedeactiveerd te zijn. Geef het serienummer van het apparaat (te vinden aan de achterkant van het apparaat) aan uw verkoper en vraag hem contact op te nemen met support@flux3dp.com om de apparaatautorisatie te activeren.',
+      offline: 'Het serienummer van uw apparaat is beperkt tot offline gebruik omdat het gedeactiveerd lijkt te zijn. Geef het serienummer van het apparaat (te vinden aan de achterkant van het apparaat) aan uw verkoper en vraag hem contact op te nemen met support@flux3dp.com om de online autorisatie te activeren. Als u het apparaat offline wilt gebruiken, neem dan rechtstreeks contact op met support@flux3dp.com.',
+    },
   },
   machine_status: {
     '0': 'Inactief',

@@ -1616,6 +1616,11 @@ const lang: ILang = {
     promark_disconnected: '#850 Die Verbindung zum Gerät wurde unterbrochen, bitte überprüfen Sie den Verbindungsstatus des Geräts.',
     swiftray_disconnected: 'Verbindung zum Backend fehlgeschlagen, erneuter Verbindungsversuch.',
     swiftray_reconnected: 'Das Backend wurde erneut verbunden, versuchen Sie erneut, den Auftrag zu senden.',
+    device_blocked: {
+      caption: 'Nicht autorisierte Seriennummer',
+      online: 'Die Seriennummer Ihres Geräts scheint deaktiviert zu sein. Bitte geben Sie die Seriennummer des Geräts (auf der Rückseite des Geräts) an Ihren Händler weiter und bitten Sie ihn, support@flux3dp.com zu kontaktieren, um die Geräteautorisierung zu aktivieren.',
+      offline: 'Die Seriennummer Ihres Geräts ist auf die Offline-Nutzung beschränkt, da sie deaktiviert zu sein scheint. Bitte geben Sie die Seriennummer des Geräts (auf der Rückseite des Geräts) an Ihren Händler weiter und bitten Sie ihn, support@flux3dp.com zu kontaktieren, um die Online-Autorisierung zu aktivieren. Wenn Sie das Gerät offline verwenden möchten, kontaktieren Sie bitte direkt support@flux3dp.com.',
+    },
   },
   machine_status: {
     '-17': 'Cartridge IO Mode',

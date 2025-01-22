@@ -1613,6 +1613,11 @@ const lang: ILang = {
     promark_disconnected: "#850 Connexion de l'appareil interrompue, veuillez vérifier l'état de connexion de l'appareil.",
     swiftray_disconnected: 'Impossible de se connecter au backend, tentative de reconnexion en cours.',
     swiftray_reconnected: "Backend reconnecté, veuillez réessayer d'envoyer la tâche.",
+    device_blocked: {
+      caption: 'Numéro de série non autorisé',
+      online: "Le numéro de série de votre appareil semble être désactivé. Veuillez fournir le numéro de série de la machine (situé à l'arrière de l'appareil) à votre revendeur et demandez-lui de contacter support@flux3dp.com pour activer l'autorisation de l'appareil.",
+      offline: "Le numéro de série de votre appareil est limité à une utilisation hors ligne car il semble être désactivé. Veuillez fournir le numéro de série de la machine (situé à l'arrière de l'appareil) à votre revendeur et demandez-lui de contacter support@flux3dp.com pour activer l'autorisation en ligne. Si vous souhaitez utiliser l'appareil hors ligne, veuillez contacter directement support@flux3dp.com.",
+    },
   },
   machine_status: {
     '0': 'Inactif',

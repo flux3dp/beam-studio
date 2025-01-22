@@ -1613,6 +1613,11 @@ const lang: ILang = {
     promark_disconnected: '#850 Koneksi perangkat terputus, periksa status koneksi perangkat.',
     swiftray_disconnected: 'Tidak dapat terhubung ke backend, mencoba menghubungkan ulang.',
     swiftray_reconnected: 'Backend telah terhubung kembali, silakan coba kirim ulang pekerjaan.',
+    device_blocked: {
+      caption: 'Nomor Seri Tidak Sah',
+      online: 'Nomor seri perangkat Anda tampaknya dinonaktifkan. Silakan berikan nomor seri perangkat (terletak di bagian belakang perangkat) kepada penjual Anda dan minta mereka menghubungi support@flux3dp.com untuk mengaktifkan otorisasi perangkat.',
+      offline: 'Nomor seri perangkat Anda dibatasi untuk penggunaan offline karena tampaknya dinonaktifkan. Silakan berikan nomor seri perangkat (terletak di bagian belakang perangkat) kepada penjual Anda dan minta mereka menghubungi support@flux3dp.com untuk mengaktifkan otorisasi online. Jika Anda ingin menggunakan perangkat secara offline, silakan hubungi support@flux3dp.com langsung.',
+    },
   },
   machine_status: {
     '0': 'Menganggur',

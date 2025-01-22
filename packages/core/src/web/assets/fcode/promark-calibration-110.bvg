@@ -1,10 +1,13 @@
-<svg id="svgcontent" width="1100" height="1100" viewBox="0 0 1100 1100" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+<svg id="svgcontent" width="1100" height="1100" viewBox="0 0 1100 1100"
+  xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
   <g data-configName="0" display="inline" class="layer" data-color="#3F51B5"
-    clip-path="url(#scene_mask)" data-speed="350" data-printingSpeed="60" data-strength="100"
+    clip-path="url(#scene_mask)"
+    data-speed="%(speed)d"
+    data-strength="%(power)d"
+    data-frequency="%(frequency)d"
+    data-pulseWidth="%(pulseWidth)d"
     data-ink="3" data-repeat="1" data-height="-3" data-zstep="0" data-diode="0" data-module="15"
-    data-backlash="0" data-multipass="3" data-uv="0" data-wSpeed="100" data-wInk="-9"
-    data-wMultipass="3" data-wRepeat="1" data-cRatio="100" data-mRatio="100" data-yRatio="100"
-    data-kRatio="100">
+    data-backlash="0">
     <title>1</title>
     <ellipse cx="50" cy="50" rx="3" ry="3" stroke="#3F51B5" fill="#3F51B5" id="svg_11" />
     <ellipse cx="50" cy="1050" rx="3" ry="3" stroke="#3F51B5" fill="#3F51B5" id="svg_34" />

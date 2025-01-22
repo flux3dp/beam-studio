@@ -1616,6 +1616,11 @@ const lang: ILang = {
     promark_disconnected: '#850 デバイスの接続が中断されました。デバイスの接続状態を確認してください。',
     swiftray_disconnected: 'バックエンドに接続できません。再接続を試みています。',
     swiftray_reconnected: 'バックエンドが再接続されました。ジョブを再送信してください。',
+    device_blocked: {
+      caption: '未承認のシリアル番号',
+      online: 'デバイスのシリアル番号が無効になっているようです。デバイスの背面に記載されているシリアル番号を販売店に提供し、support@flux3dp.comに連絡してデバイス認証を有効にしてもらってください。',
+      offline: 'デバイスのシリアル番号はオフラインでの使用に制限されています。デバイスの背面に記載されているシリアル番号を販売店に提供し、support@flux3dp.comに連絡してオンライン認証を有効にしてください。オフラインでの使用を希望する場合は、直接support@flux3dp.comにお問い合わせください。',
+    },
   },
   machine_status: {
     '-17': 'Cartridge IO Mode',

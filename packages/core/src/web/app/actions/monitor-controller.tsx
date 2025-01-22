@@ -1,25 +1,33 @@
 import * as React from 'react';
+
 import Dialog from '@core/app/actions/dialog-caller';
-import Monitor from '@core/app/views/monitor/Monitor';
-import { IDeviceInfo } from '@core/interfaces/IDevice';
 import { Mode } from '@core/app/constants/monitor-constants';
 import { MonitorContextProvider } from '@core/app/contexts/MonitorContext';
+import Monitor from '@core/app/views/monitor/Monitor';
+import { checkBlockedSerial } from '@core/helpers/device/checkBlockedSerial';
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 const monitorController = {
-  showMonitor: (
+  showMonitor: async (
     device: IDeviceInfo,
     mode: Mode = Mode.FILE,
-    previewTask?: { fcodeBlob: Blob; taskImageURL: string; taskTime: number; fileName: string },
+    previewTask?: { fcodeBlob: Blob; fileName: string; taskImageURL: string; taskTime: number },
     autoStart?: boolean,
-  ): void => {
+  ): Promise<void> => {
+    const res = await checkBlockedSerial(device.serial);
+
+    if (!res) {
+      return;
+    }
+
     Dialog.addDialogComponent(
       'monitor',
       <MonitorContextProvider
+        autoStart={autoStart}
         device={device}
         mode={mode}
-        previewTask={previewTask}
-        autoStart={autoStart}
         onClose={() => Dialog.popDialogById('monitor')}
+        previewTask={previewTask}
       >
         <Monitor device={device} />
       </MonitorContextProvider>,

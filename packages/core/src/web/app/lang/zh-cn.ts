@@ -1616,6 +1616,11 @@ const lang: ILang = {
     promark_disconnected: '#850 设备连接中断，请检查设备的连接状态。',
     swiftray_disconnected: '无法连接到后端，正在尝试重新连接。',
     swiftray_reconnected: '后端已重新连接，请尝试重新发送工作。',
+    device_blocked: {
+      caption: '未授权的序列号',
+      online: '您的设备序列号似乎已被停用。请将设备序列号（位于设备背面）提供给您的经销商，并请他们联系 support@flux3dp.com 以激活设备授权。',
+      offline: '您的设备序列号的离线使用已被限制，因为似乎已被停用。请将设备序列号（位于设备背面）提供给您的经销商，并请他们联系 support@flux3dp.com 以激活在线授权。如果您希望离线使用该设备，请直接联系 support@flux3dp.com。',
+    },
   },
   machine_status: {
     '-17': '墨匣模式',

@@ -1613,6 +1613,11 @@ const lang: ILang = {
     promark_disconnected: '#850 Enhetens anslutning har avbrutits, kontrollera enhetens anslutningsstatus.',
     swiftray_disconnected: 'Kunde inte ansluta till backend, försöker ansluta igen.',
     swiftray_reconnected: 'Backend har återanslutits, försök att skicka jobbet igen.',
+    device_blocked: {
+      caption: 'Otillåtet serienummer',
+      online: 'Enhetens serienummer verkar vara inaktiverat. Vänligen uppge enhetens serienummer (placerat på baksidan av enheten) till din återförsäljare och be dem kontakta support@flux3dp.com för att aktivera enhetsautentisering.',
+      offline: 'Enhetens serienummer är begränsat till offline-användning eftersom det verkar vara inaktiverat. Vänligen uppge enhetens serienummer (placerat på baksidan av enheten) till din återförsäljare och be dem kontakta support@flux3dp.com för att aktivera online-autentisering. Om du vill använda enheten offline, kontakta support@flux3dp.com direkt.',
+    },
   },
   machine_status: {
     '0': 'Inaktiv',

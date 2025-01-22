@@ -1613,6 +1613,11 @@ const lang: ILang = {
     promark_disconnected: '#850 Yhteys laitteeseen katkaistu, tarkista laitteen yhteystila.',
     swiftray_disconnected: 'Yhteyttä backend-palvelimeen ei voitu muodostaa, yritetään uudelleen.',
     swiftray_reconnected: 'Backend on yhdistetty uudelleen, yritä lähettää tehtävä uudelleen.',
+    device_blocked: {
+      caption: 'Luvaton sarjanumero',
+      online: 'Laitteesi sarjanumero näyttää olevan pois käytöstä. Anna laitteen sarjanumero (löytyy laitteen takaa) jälleenmyyjällesi ja pyydä häntä ottamaan yhteyttä osoitteeseen support@flux3dp.com laitteen valtuutuksen aktivoimiseksi.',
+      offline: 'Laitteesi sarjanumero on rajoitettu offline-käyttöön, koska se näyttää olevan pois käytöstä. Anna laitteen sarjanumero (löytyy laitteen takaa) jälleenmyyjällesi ja pyydä häntä ottamaan yhteyttä osoitteeseen support@flux3dp.com online-valtuutuksen aktivoimiseksi. Jos haluat käyttää laitetta offline-tilassa, ota suoraan yhteyttä support@flux3dp.com.',
+    },
   },
   machine_status: {
     '0': 'Käyttämätön',

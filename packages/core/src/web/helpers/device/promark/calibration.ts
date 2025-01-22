@@ -1,8 +1,12 @@
 import { sprintf } from 'sprintf-js';
 
 import constant from '@core/app/actions/beambox/constant';
+import { LaserType } from '@core/app/constants/promark-constants';
+import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
-import { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { getDefaultConfig } from '@core/helpers/layer/layer-config-helper';
+
+import { getPromarkInfo } from './promark-info';
 
 export const loadTaskToSwiftray = async (scene: string, model: WorkAreaModel): Promise<void> => {
   const uploadRes = await swiftrayClient.loadSVG(
@@ -10,51 +14,69 @@ export const loadTaskToSwiftray = async (scene: string, model: WorkAreaModel): P
       data: scene,
       extension: 'svg',
       name: 'calibration.svg',
-      uploadName: 'calibration.svg',
       thumbnail: '',
+      uploadName: 'calibration.svg',
     },
-    { onProgressing: () => {}, onFinished: () => {}, onError: () => {} },
+    { onError: () => {}, onFinished: () => {}, onProgressing: () => {} },
     // use mid dpi (254)
     { engraveDpi: 254, model, rotaryMode: false },
   );
-  if (!uploadRes.success)
-    throw new Error(
-      `Failed to load calibration task: ${uploadRes.error?.message ?? 'Unknown Error'}`,
-    );
+
+  if (!uploadRes.success) {
+    throw new Error(`Failed to load calibration task: ${uploadRes.error?.message ?? 'Unknown Error'}`);
+  }
+
   const convertRes = await swiftrayClient.convert(
     'gcode',
-    { onProgressing: () => {}, onFinished: () => {}, onError: () => {} },
-    { model, travelSpeed: 4000, isPromark: true },
+    { onError: () => {}, onFinished: () => {}, onProgressing: () => {} },
+    { isPromark: true, model, travelSpeed: 4000 },
   );
-  if (!convertRes.success)
-    throw new Error(
-      `Failed to convert calibration task: ${convertRes.error?.message ?? 'Unknown Error'}`,
-    );
+
+  if (!convertRes.success) {
+    throw new Error(`Failed to convert calibration task: ${convertRes.error?.message ?? 'Unknown Error'}`);
+  }
 };
 
 export const generateCalibrationTaskString = async ({
-  width,
   power = 100,
   speed = 350,
+  width,
 }: {
-  width: number;
   power?: number;
   speed?: number;
+  width: number;
 }): Promise<string> => {
   const fileName = 'fcode/promark-calibration.bvg';
   const resp = await fetch(fileName);
   let res = await resp.text();
-  res = sprintf(res, { width: width * constant.dpmm, power, speed });
+
+  res = sprintf(res, { power, speed, width: width * constant.dpmm });
+
   return res;
 };
 
-export const loadCameraCalibrationTask = async (
-  model: WorkAreaModel,
-  width: number,
-): Promise<void> => {
+export const loadCameraCalibrationTask = async (model: WorkAreaModel, width: number): Promise<void> => {
   const fileName = `fcode/promark-calibration-${width}.bvg`;
   const resp = await fetch(fileName);
-  const scene = await resp.text();
+  let scene = await resp.text();
+  const defaultConfig = getDefaultConfig();
+  const params = {
+    frequency: defaultConfig.frequency ?? 27,
+    power: 100,
+    pulseWidth: defaultConfig.pulseWidth ?? 500,
+    speed: 1000,
+  };
+  const { laserType, watt } = getPromarkInfo();
+
+  if (laserType === LaserType.MOPA) {
+    if (watt === 100) {
+      params.power = 20;
+    }
+  } else if (watt === 50) {
+    params.power = 40;
+  }
+
+  scene = sprintf(scene, params);
   await loadTaskToSwiftray(scene, model);
 };
 

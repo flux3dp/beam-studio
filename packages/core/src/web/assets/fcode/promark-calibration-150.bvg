@@ -1,9 +1,13 @@
-<svg id="svgcontent" width="1500" height="1500" viewBox="0 0 1500 1500" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
-  <g data-kRatio="100" data-yRatio="100" data-mRatio="100" data-cRatio="100" data-wRepeat="1"
-    data-wMultipass="3" data-wInk="-9" data-wSpeed="100" data-uv="0" data-multipass="3"
-    data-backlash="0" data-module="15" data-diode="0" data-zstep="0" data-height="-3"
-    data-repeat="1" data-ink="3" data-speed="350" data-printingSpeed="60" data-strength="100"
-    clip-path="url(#scene_mask)" data-color="#3F51B5" class="layer" display="inline">
+<svg id="svgcontent" width="1500" height="1500" viewBox="0 0 1500 1500"
+  xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+  <g data-configName="0" display="inline" class="layer" data-color="#3F51B5"
+    clip-path="url(#scene_mask)"
+    data-speed="%(speed)d"
+    data-strength="%(power)d"
+    data-frequency="%(frequency)d"
+    data-pulseWidth="%(pulseWidth)d"
+    data-ink="3" data-repeat="1" data-height="-3" data-zstep="0" data-diode="0" data-module="15"
+    data-backlash="0">
     <title>1</title>
     <ellipse id="svg_11" fill="#3F51B5" stroke="#3F51B5" ry="3" rx="3" cy="250" cx="250" />
     <ellipse id="svg_34" fill="#3F51B5" stroke="#3F51B5" ry="3" rx="3" cy="1250" cx="250" />

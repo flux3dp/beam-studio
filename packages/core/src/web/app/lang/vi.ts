@@ -1613,6 +1613,11 @@ const lang: ILang = {
     promark_disconnected: '#850 Kết nối thiết bị bị gián đoạn, vui lòng kiểm tra trạng thái kết nối của thiết bị.',
     swiftray_disconnected: 'Không thể kết nối với backend, đang thử kết nối lại.',
     swiftray_reconnected: 'Backend đã được kết nối lại, vui lòng thử gửi lại công việc.',
+    device_blocked: {
+      caption: 'Số Serial Không Hợp Lệ',
+      online: 'Số serial của thiết bị dường như đã bị vô hiệu hóa. Vui lòng cung cấp số serial của thiết bị (nằm ở mặt sau của thiết bị) cho nhà bán lẻ của bạn và yêu cầu họ liên hệ với support@flux3dp.com để kích hoạt quyền sử dụng thiết bị.',
+      offline: 'Số serial của thiết bị bị giới hạn chỉ sử dụng ngoại tuyến vì dường như đã bị vô hiệu hóa. Vui lòng cung cấp số serial của thiết bị (nằm ở mặt sau của thiết bị) cho nhà bán lẻ của bạn và yêu cầu họ liên hệ với support@flux3dp.com để kích hoạt quyền sử dụng trực tuyến. Nếu bạn muốn sử dụng thiết bị ngoại tuyến, vui lòng liên hệ trực tiếp với support@flux3dp.com.',
+    },
   },
   machine_status: {
     '0': 'Nghỉ',

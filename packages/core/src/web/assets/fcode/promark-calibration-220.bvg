@@ -1,18 +1,21 @@
-<svg id="svgcontent" width="2200" height="2200" viewBox="0 0 2200 2200" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
-    <g data-kRatio="100" data-yRatio="100" data-mRatio="100" data-cRatio="100" data-wRepeat="1"
-        data-wMultipass="3" data-wInk="-9" data-wSpeed="100" data-uv="0" data-multipass="3"
-        data-backlash="0" data-module="15" data-diode="0" data-zstep="0" data-height="-3"
-        data-repeat="1" data-ink="3" data-speed="350" data-printingSpeed="60" data-strength="100"
-        clip-path="url(#scene_mask)" data-color="#3F51B5" class="layer" display="inline"
-        data-configName="0">
-        <title>1</title>
-        <ellipse id="svg_11" fill="#3F51B5" stroke="#3F51B5" ry="3" rx="3" cy="400" cx="400" />
-        <ellipse id="svg_34" fill="#3F51B5" stroke="#3F51B5" ry="3" rx="3" cy="1800" cx="400" />
-        <ellipse id="svg_42" fill="#3F51B5" stroke="#3F51B5" ry="3" rx="3" cy="400" cx="1800" />
-        <ellipse id="svg_45" fill="#3F51B5" stroke="#3F51B5" ry="3" rx="3" cy="1800" cx="1800" />
-        <ellipse id="svg_2" fill="#3F51B5" stroke="#3F51B5" ry="3" rx="3" cy="800" cx="800" />
-        <ellipse id="svg_3" fill="#3F51B5" stroke="#3F51B5" ry="3" rx="3" cy="800" cx="1400" />
-        <ellipse id="svg_5" fill="#3F51B5" stroke="#3F51B5" ry="3" rx="3" cy="1400" cx="800" />
-        <ellipse id="svg_13" fill="#3F51B5" stroke="#3F51B5" ry="3" rx="3" cy="1400" cx="1400" />
-    </g>
+<svg id="svgcontent" width="2200" height="2200" viewBox="0 0 2200 2200"
+  xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+  <g data-configName="0" display="inline" class="layer" data-color="#3F51B5"
+    clip-path="url(#scene_mask)"
+    data-speed="%(speed)d"
+    data-strength="%(power)d"
+    data-frequency="%(frequency)d"
+    data-pulseWidth="%(pulseWidth)d"
+    data-ink="3" data-repeat="1" data-height="-3" data-zstep="0" data-diode="0" data-module="15"
+    data-backlash="0">
+    <title>1</title>
+    <ellipse id="svg_11" fill="#3F51B5" stroke="#3F51B5" ry="3" rx="3" cy="400" cx="400" />
+    <ellipse id="svg_34" fill="#3F51B5" stroke="#3F51B5" ry="3" rx="3" cy="1800" cx="400" />
+    <ellipse id="svg_42" fill="#3F51B5" stroke="#3F51B5" ry="3" rx="3" cy="400" cx="1800" />
+    <ellipse id="svg_45" fill="#3F51B5" stroke="#3F51B5" ry="3" rx="3" cy="1800" cx="1800" />
+    <ellipse id="svg_2" fill="#3F51B5" stroke="#3F51B5" ry="3" rx="3" cy="800" cx="800" />
+    <ellipse id="svg_3" fill="#3F51B5" stroke="#3F51B5" ry="3" rx="3" cy="800" cx="1400" />
+    <ellipse id="svg_5" fill="#3F51B5" stroke="#3F51B5" ry="3" rx="3" cy="1400" cx="800" />
+    <ellipse id="svg_13" fill="#3F51B5" stroke="#3F51B5" ry="3" rx="3" cy="1400" cx="1400" />
+  </g>
 </svg>

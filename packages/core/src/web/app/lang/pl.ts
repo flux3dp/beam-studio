@@ -1616,6 +1616,11 @@ const lang: ILang = {
     promark_disconnected: '#850 Połączenie z urządzeniem zostało przerwane, sprawdź status połączenia.',
     swiftray_disconnected: 'Nie można połączyć się z backendem, ponawianie próby połączenia.',
     swiftray_reconnected: 'Backend ponownie połączony, spróbuj ponownie wysłać zadanie.',
+    device_blocked: {
+      caption: 'Nieautoryzowany numer seryjny',
+      online: 'Numer seryjny urządzenia wydaje się być dezaktywowany. Proszę podać numer seryjny urządzenia (znajdujący się z tyłu urządzenia) swojemu sprzedawcy i poprosić go o kontakt z support@flux3dp.com w celu aktywacji autoryzacji urządzenia.',
+      offline: 'Numer seryjny urządzenia jest ograniczony do użytku offline, ponieważ wydaje się być dezaktywowany. Proszę podać numer seryjny urządzenia (znajdujący się z tyłu urządzenia) swojemu sprzedawcy i poprosić go o kontakt z support@flux3dp.com w celu aktywacji autoryzacji online. Jeśli chcesz używać urządzenia offline, skontaktuj się bezpośrednio z support@flux3dp.com.',
+    },
   },
   machine_status: {
     '-17': 'Tryb I/O kasety',
