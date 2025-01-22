@@ -1,0 +1,134 @@
+name: app cd mac
+
+on:
+  push:
+    tags:
+      - "app-*"
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        node-version: [22]
+        python-version: [3.8]
+        os: [macOS-13]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Brew Packages
+        run: |
+          brew install zlib
+
+      - name: Setup Pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Setup Node ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "pnpm"
+
+      - name: Install Python dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          pip3 install -r ./apps/app/requirements.txt --no-binary=lxml
+
+      - name: Checkout Beamify
+        uses: actions/checkout@v4
+        with:
+          repository: flux3dp/beamify
+          ref: 2.0.5
+          token: ${{ secrets.REPO_TOKEN }}
+          path: ./apps/app/.github/actions/beamify
+
+      - name: Install Beamify
+        run: |
+          cd ./apps/app/.github/actions/beamify/python
+          python3 setup.py install --verbose || echo "Failed to install beamify"
+
+      - name: Install Fluxsvg
+        uses: flux3dp/fluxsvg@2.7.7
+
+      - name: Checkout FluxClient
+        uses: actions/checkout@v4
+        with:
+          repository: flux3dp/fluxclient-dev
+          ref: 2.8.9
+          token: ${{ secrets.REPO_TOKEN }}
+          path: ./apps/app/.github/actions/fluxclient
+
+      - name: Install FluxClient
+        run: |
+          cd ./apps/app/.github/actions/fluxclient
+          python3 setup.py install --verbose || echo "Failed to install fluxclient"
+
+      - name: Build Flux Ghost
+        uses: flux3dp/fluxghost@2.3.7
+        env:
+          LC_ALL: en_US.UTF-8
+          LC_CTYPE: en_US.UTF-8
+
+      - name: Create Apple Certs
+        uses: apple-actions/import-codesign-certs@v2
+        with:
+          p12-file-base64: ${{ secrets.CERTIFICATES_P12 }}
+          p12-password: ${{ secrets.CERTIFICATES_P12_PASSWORD }}
+
+      - name: Build Beam Studio
+        run: |
+          pnpm -r install
+          pnpm dlx nx run app:build
+
+      # It is said codesign --deep is not a good practice, but it is the only way to sign Swiftray successfully
+      # https://developer.apple.com/forums/thread/129980
+      - name: Sign and Publish
+        run: |
+          cd ./apps/app
+          mkdir ./backend
+
+          cp -R $HOME/flux_api_swap ./backend/flux_api
+          cp -R lib/monitorexe-osx ./backend/monitorexe-osx
+          ./backend/flux_api/flux_api --test --without_pcl
+
+          curl https://swiftray-daemon.s3.ap-northeast-1.amazonaws.com/mac/swiftray-$SWIFTRAY_DAEMON_VERSION.zip --output swiftray.zip
+          mkdir ./swiftray
+          tar -xf swiftray.zip -C ./swiftray
+          mv ./swiftray/Swiftray.app ./backend
+          rm ./swiftray.zip
+          find ./backend/Swiftray.app -name "*.txt" -delete
+          find ./backend/Swiftray.app -name "*.gcode" -delete
+
+          cp -R ./util/mac ./utils
+
+          sudo bash ./build/clearup-develop-files.sh
+
+          echo "Signing *.so files..."
+          find ./backend -name "*.so" | while read f ; do
+          codesign --force -s "Developer ID Application: FLUX TECHNOLOGY CORP. (4Y92JWKV94)" $f; done
+          echo "Signing Swiftray.app..."
+          codesign --deep --force -s "Developer ID Application: FLUX TECHNOLOGY CORP. (4Y92JWKV94)" ./backend/Swiftray.app
+
+          chmod -R 777 ./node_modules/font-scanner
+
+          pnpm dlx nx run app:dist --publish always
+        env:
+          PUBLISH_BUCKET: beamstudio
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          PUBLISH_PATH: ""
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_ID: ${{ secrets.APPLEID_DEAN }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLEIDPASS_DEAN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SWIFTRAY_DAEMON_VERSION: 1.3.5

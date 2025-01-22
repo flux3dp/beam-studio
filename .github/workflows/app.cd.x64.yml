@@ -1,0 +1,126 @@
+name: app cd x64
+
+on:
+  push:
+    tags:
+      - "app-*"
+
+jobs:
+  build:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        node-version: [22]
+        python-version: [3.8]
+        arch: [64]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Setup Pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Setup Node ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "pnpm"
+
+      - name: Install Python dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          pip3 install -r ./apps/app/requirements.txt
+        env:
+          # env for windows to install pycrypto; MSVC version may change
+          CL: /FI"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\VC\\Tools\\MSVC\\14.24.28314\\INCLUDE\\stdint.h"
+
+      - name: Setup msvs_version config
+        run: |
+          npm config set msvs_version 2019
+          npm config get msvs_version
+
+      - name: Checkout Beamify
+        uses: actions/checkout@v4
+        with:
+          repository: flux3dp/beamify
+          ref: 2.0.5
+          token: ${{ secrets.REPO_TOKEN }}
+          path: ./apps/app/.github/actions/beamify
+
+      - name: Install Beamify
+        uses: ./apps/app/.github/actions/beamify
+
+      - name: Install Fluxsvg
+        uses: flux3dp/fluxsvg@2.7.7
+
+      - name: Checkout FluxClient
+        uses: actions/checkout@v4
+        with:
+          repository: flux3dp/fluxclient-dev
+          ref: 2.8.9
+          token: ${{ secrets.REPO_TOKEN }}
+          path: ./apps/app/.github/actions/fluxclient
+
+      - name: Install FluxClient
+        uses: ./apps/app/.github/actions/fluxclient
+
+      - name: Build Flux Ghost
+        uses: flux3dp/fluxghost@2.3.7
+        env:
+          LC_ALL: en_US.UTF-8
+          LC_CTYPE: en_US.UTF-8
+          WIN_ARCH: x64
+
+      - name: Copy Common Files
+        run: |
+          Remove-Item ./apps/app/public/js/lib
+          cp -R ./packages/core/public/js/lib ./apps/app/public/js/
+
+      - name: Build Beam Studio
+        run: |
+          pnpm -r install
+          pnpm dlx nx run app:build
+
+      - name: Sign and Publish
+        shell: bash
+        run: |
+          cd ./apps/app
+          mkdir ./backend
+
+          cp -R $TMP/flux_api_swap ./backend/flux_api
+          cp -R lib/monitorexe-win64 ./backend/monitorexe-win64
+          cp -R lib/elevate.cmd ./backend/elevate.cmd
+          cp -R lib/elevate.vbs ./backend/elevate.vbs
+          ./backend/flux_api/flux_api --test --without_pcl
+
+          curl.exe https://swiftray-daemon.s3.ap-northeast-1.amazonaws.com/win/swiftray-$SWIFTRAY_DAEMON_VERSION.zip --output swiftray.zip
+          mkdir swiftray
+          unzip swiftray.zip -d swiftray
+          rm -rf swiftray/__MACOSX
+          mv ./swiftray ./backend
+          rm ./swiftray.zip
+
+          cp -R ./util/win64 ./utils
+
+          bash ./build/clearup-develop-files.sh
+
+          pnpm dlx nx run app:dist --win --x64 --publish always
+        env:
+          PUBLISH_BUCKET: beamstudio
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          PUBLISH_PATH: -x${{ matrix.arch }}
+          CERT_THUMBPRINT: ${{ secrets.CERT_THUMBPRINT }}
+          CERT_SUBJECT: ${{ secrets.CERT_SUBJECT }}
+          WIN_CODESIGN_SERVER: ${{ secrets.WIN_CODESIGN_SERVER }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SWIFTRAY_DAEMON_VERSION: 1.3.5

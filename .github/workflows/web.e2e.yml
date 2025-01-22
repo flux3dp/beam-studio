@@ -1,0 +1,62 @@
+name: e2e
+
+on:
+  push:
+    branches:
+      - not/done/yet
+  # pull_request:
+  # workflow_dispatch:
+  #   inputs:
+  #     core_branch:
+  #       description: "Core Branch"
+  #       required: false
+  #       default: "master"
+
+jobs:
+  e2e-test:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # run copies of the current job in parallel
+        containers: [1, 2, 3, 4, 5]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Checkout Beam Studio Core
+        uses: actions/checkout@v4
+        with:
+          repository: flux3dp/beam-studio-core
+          ref: ${{ github.event.inputs.core_branch }}
+          path: .github/actions/beam-studio-core
+      - name: Copy Beam Studio Core
+        run: |
+          cp -R .github/actions/beam-studio-core ../beam-studio-core
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+      - name: Cypress install
+        uses: cypress-io/github-action@v6
+        with:
+          # Disable running of tests within install job
+          runTests: false
+          build: pnpm install --network-timeout 100000
+      - name: Setup web and run e2e tests
+        uses: cypress-io/github-action@v6
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+        with:
+          config-file: cypress.config.ci.ts
+          record: true
+          group: "Actions"
+          install: false
+          parallel: true
+          start: pnpm start
+          wait-on: "http://localhost:8080"
+          wait-on-timeout: 300

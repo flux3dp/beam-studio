@@ -1,0 +1,61 @@
+name: ready-for-deployment
+
+on:
+  push:
+    tags:
+      - "web-*"
+
+jobs:
+  deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "16.19"
+      - name: Checkout Beam Studio Core
+        uses: actions/checkout@v4
+        with:
+          repository: flux3dp/beam-studio-core
+          ref: ${{ github.event.inputs.core_branch }}
+          path: .github/actions/beam-studio-core
+      - name: Copy Beam Studio Core
+        run: |
+          cp -R .github/actions/beam-studio-core ../beam-studio-core
+      - name: Setup web
+        run: |
+          yarn install
+      - name: Build artifact
+        run: |
+          yarn run build
+      - name: Deployment via scp
+        uses: garygrossgarten/github-action-scp@release
+        with:
+          local: dist
+          remote: /var/www/beam-studio-web
+          host: ${{ secrets.HOST }}
+          port: ${{ secrets.PORT }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+  post-deployment-test:
+    needs: deployment
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        containers: [1, 2, 3]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run e2e test against the production environment
+        uses: cypress-io/github-action@v5
+        env:
+          CYPRESS_username: ${{ secrets.CYPRESS_USERNAME }}
+          CYPRESS_password: ${{ secrets.CYPRESS_PASSWORD }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+        with:
+          group: "Group"
+          config-file: cypress.config.prod.ts
+          record: true
+          parallel: true
+          start: |
+            yarn install

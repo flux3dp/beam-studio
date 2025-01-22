@@ -1,0 +1,106 @@
+name: app cd linux
+
+on:
+  push:
+    tags:
+      - "app-*"
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        node-version: [22]
+        python-version: [3.8]
+        os: [ubuntu-20.04, ubuntu-22.04]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Setup Pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Setup Node ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "pnpm"
+
+      - name: Install Python dependencies
+        run: |
+          sudo apt-get install -y python3-setuptools
+          python3 -m pip install --upgrade pip
+          pip3 install -r ./apps/app/requirements.txt
+
+      - name: Checkout Beamify
+        uses: actions/checkout@v4
+        with:
+          repository: flux3dp/beamify
+          ref: 2.0.5
+          token: ${{ secrets.REPO_TOKEN }}
+          path: ./apps/app/.github/actions/beamify
+
+      - name: Install Beamify
+        uses: ./apps/app/.github/actions/beamify
+
+      - name: Install Fluxsvg
+        uses: flux3dp/fluxsvg@2.7.7
+
+      - name: Checkout FluxClient
+        uses: actions/checkout@v4
+        with:
+          repository: flux3dp/fluxclient-dev
+          ref: 2.8.9
+          token: ${{ secrets.REPO_TOKEN }}
+          path: ./apps/app/.github/actions/fluxclient
+
+      - name: Install FluxClient
+        uses: ./apps/app/.github/actions/fluxclient
+
+      - name: Build Flux Ghost
+        uses: flux3dp/fluxghost@2.3.7
+        env:
+          LC_ALL: en_US.UTF-8
+          LC_CTYPE: en_US.UTF-8
+
+      - name: Build Beam Studio
+        run: |
+          pnpm -r install
+          pnpm dlx nx run app:build
+
+      - name: Sign and Publish
+        run: |
+          cd ./apps/app
+          mkdir ./backend
+
+          cp -R $HOME/flux_api_swap ./backend/flux_api
+          ./backend/flux_api/flux_api --test --without_pcl
+
+          sudo bash ./build/clearup-develop-files.sh
+
+          if [ ${{ matrix.os }} = "ubuntu-20.04" ]
+          then
+            export PUBLISH_PATH="-20.04"
+          elif [ ${{ matrix.os }} = "ubuntu-22.04" ]
+          then
+            export PUBLISH_PATH="-22.04"
+          else
+            export PUBLISH_PATH="-24.04"
+          fi
+          echo $PUBLISH_PATH
+
+          pnpm dlx nx run app:dist --publish always
+        env:
+          PUBLISH_BUCKET: beamstudio
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
