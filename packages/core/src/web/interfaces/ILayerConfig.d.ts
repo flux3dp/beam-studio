@@ -1,42 +1,40 @@
 import type { LaserType, mopaWatts, promarkWatts } from '@core/app/constants/promark-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 
-export type ConfigKeyTypeMap = {
-  backlash: number;
-  biDirectional: boolean;
+type MetaConfig = {
   clipRect: string; // x y w h
   color: string;
-  // meta configs
   configName: string;
-  cRatio: number;
-  crossHatch: boolean;
+  module: number;
+  ref: boolean;
+};
+
+type CommonConfig = {
+  backlash: number;
+  repeat: number;
+};
+
+type LaserConfig = {
   diode: number;
-  dottingTime: number;
-  fillAngle: number;
-  fillInterval: number;
   focus: number;
   focusStep: number;
-  // promark configs
-  frequency: number;
-  // printing configs
+  height: number;
+  minPower: number;
+  power: number;
+  speed: number;
+  zStep: number;
+};
+
+type PrintingConfig = {
+  cRatio: number;
   fullcolor: boolean;
   halftone: number;
-  height: number;
   ink: number;
   kRatio: number;
-  minPower: number;
-  module: number;
   mRatio: number;
   multipass: number;
-  power: number;
   printingSpeed: number;
   printingStrength: number;
-  pulseWidth: number; // Mopa only
-  ref: boolean;
-  // common configs
-  repeat: number;
-  // laser configs
-  speed: number;
   split: boolean;
   uv: number;
   wInk: number;
@@ -44,8 +42,21 @@ export type ConfigKeyTypeMap = {
   wRepeat: number;
   wSpeed: number;
   yRatio: number;
-  zStep: number;
 };
+
+type PromarkConfig = {
+  biDirectional: boolean;
+  crossHatch: boolean;
+  dottingTime: number;
+  fillAngle: number;
+  fillInterval: number;
+  frequency: number;
+  pulseWidth: number; // Mopa only
+  wobbleDiameter: number;
+  wobbleStep: number;
+};
+
+export type ConfigKeyTypeMap = CommonConfig & LaserConfig & MetaConfig & PrintingConfig & PromarkConfig;
 
 type ConfigKey = keyof ConfigKeyTypeMap;
 

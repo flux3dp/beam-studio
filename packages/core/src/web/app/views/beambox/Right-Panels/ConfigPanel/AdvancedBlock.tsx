@@ -23,6 +23,7 @@ import FocusBlock from './FocusBlock';
 import FrequencyBlock from './FrequencyBlock';
 import PulseWidthBlock from './PulseWidthBlock';
 import SingleColorBlock from './SingleColorBlock';
+import WobbleBlock from './WobbleBlock';
 
 const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.JSX.Element => {
   const { state } = useContext(ConfigPanelContext);
@@ -73,6 +74,8 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
           type={type}
         />,
       );
+
+      contents.push(<WobbleBlock key="wobble-block" />);
     }
 
     if (supportInfo.lowerFocus) {

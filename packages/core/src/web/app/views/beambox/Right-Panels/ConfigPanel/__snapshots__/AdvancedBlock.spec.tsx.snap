@@ -265,6 +265,9 @@ exports[`test AdvancedBlock should render correctly for promark desktop 1`] = `
               Mock FrequencyBlock
             </div>
             <div>
+              Mock WobbleBlock
+            </div>
+            <div>
               Mock FocusBlock: 
               default
             </div>
@@ -338,6 +341,9 @@ exports[`test AdvancedBlock should render correctly for promark mopa 1`] = `
             </div>
             <div>
               Mock FrequencyBlock
+            </div>
+            <div>
+              Mock WobbleBlock
             </div>
             <div>
               Mock FocusBlock: 

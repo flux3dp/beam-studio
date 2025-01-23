@@ -68,6 +68,7 @@ jest.mock('./FocusBlock', () => ({ type }: { type: string }) => <div>Mock FocusB
 jest.mock('./FrequencyBlock', () => () => <div>Mock FrequencyBlock</div>);
 jest.mock('./PulseWidthBlock', () => () => <div>Mock PulseWidthBlock</div>);
 jest.mock('./SingleColorBlock', () => () => <div>Mock SingleColorBlock</div>);
+jest.mock('./WobbleBlock', () => () => <div>Mock WobbleBlock</div>);
 jest.mock('./ConfigPanelContext', () => createContext(null));
 
 describe('test AdvancedBlock', () => {
