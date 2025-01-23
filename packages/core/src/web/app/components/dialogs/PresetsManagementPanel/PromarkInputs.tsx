@@ -75,6 +75,38 @@ const PromarkInputs = ({
             value={preset.speed ?? defaultConfig.speed}
           />
         </div>
+        {limit.pulseWidth && (
+          <div className={styles.field}>
+            <div className={styles.label}>{tLaserPanel.pulse_width}</div>
+            <UnitInput
+              addonAfter="ns"
+              className={styles.input}
+              clipValue
+              data-testid="pulseWidth"
+              disabled={preset.isDefault}
+              max={limit.pulseWidth.max}
+              min={limit.pulseWidth.min}
+              onChange={(value) => handleChange('pulseWidth', value)}
+              precision={0}
+              value={preset.pulseWidth ?? defaultConfig.pulseWidth}
+            />
+          </div>
+        )}
+        <div className={styles.field}>
+          <div className={styles.label}>{tLaserPanel.frequency}</div>
+          <UnitInput
+            addonAfter="kHz"
+            className={styles.input}
+            clipValue
+            data-testid="frequency"
+            disabled={preset.isDefault}
+            max={limit.frequency.max}
+            min={limit.frequency.min}
+            onChange={(value) => handleChange('frequency', value)}
+            precision={0}
+            value={preset.frequency ?? defaultConfig.frequency}
+          />
+        </div>
         <div className={styles.field}>
           <div className={styles.label}>{tLaserPanel.repeat}</div>
           <UnitInput
@@ -143,36 +175,36 @@ const PromarkInputs = ({
         )}
       </div>
       <div>
-        {limit.pulseWidth && (
-          <div className={styles.field}>
-            <div className={styles.label}>{tLaserPanel.pulse_width}</div>
-            <UnitInput
-              addonAfter="ns"
-              className={styles.input}
-              clipValue
-              data-testid="pulseWidth"
-              disabled={preset.isDefault}
-              max={limit.pulseWidth.max}
-              min={limit.pulseWidth.min}
-              onChange={(value) => handleChange('pulseWidth', value)}
-              precision={0}
-              value={preset.pulseWidth ?? defaultConfig.pulseWidth}
-            />
-          </div>
-        )}
         <div className={styles.field}>
-          <div className={styles.label}>{tLaserPanel.frequency}</div>
+          <div className={styles.label}>{t.wobble_step}</div>
           <UnitInput
-            addonAfter="kHz"
+            addonAfter="mm"
             className={styles.input}
             clipValue
-            data-testid="frequency"
+            data-testid="wobbleStep"
             disabled={preset.isDefault}
-            max={limit.frequency.max}
-            min={limit.frequency.min}
-            onChange={(value) => handleChange('frequency', value)}
-            precision={0}
-            value={preset.frequency ?? defaultConfig.frequency}
+            max={10}
+            min={0}
+            onChange={(value) => handleChange('wobbleStep', value > 0 ? value : -0.05)}
+            precision={3}
+            step={0.001}
+            value={Math.max(preset.wobbleStep ?? defaultConfig.wobbleStep, 0)}
+          />
+        </div>
+        <div className={styles.field}>
+          <div className={styles.label}>{t.wobble_diameter}</div>
+          <UnitInput
+            addonAfter="mm"
+            className={styles.input}
+            clipValue
+            data-testid="wobbleDiameter"
+            disabled={preset.isDefault}
+            max={10}
+            min={0}
+            onChange={(value) => handleChange('wobbleDiameter', value > 0 ? value : -0.1)}
+            precision={2}
+            step={0.01}
+            value={Math.max(preset.wobbleDiameter ?? defaultConfig.wobbleDiameter, 0)}
           />
         </div>
         <div className={styles.field}>

@@ -90,6 +90,8 @@ const defaultLaserConfigs = {
   uv: { value: 0 },
   wInk: { value: -12 },
   wMultipass: { value: 3 },
+  wobbleDiameter: { value: -0.2 },
+  wobbleStep: { value: -0.05 },
   wRepeat: { value: 1 },
   wSpeed: { value: 100 },
   yRatio: { value: 100 },
@@ -137,6 +139,8 @@ const defaultMultiValueLaserConfigs = {
   uv: { hasMultiValue: false, value: 0 },
   wInk: { hasMultiValue: false, value: -12 },
   wMultipass: { hasMultiValue: false, value: 3 },
+  wobbleDiameter: { hasMultiValue: false, value: -0.2 },
+  wobbleStep: { hasMultiValue: false, value: -0.05 },
   wRepeat: { hasMultiValue: false, value: 1 },
   wSpeed: { hasMultiValue: false, value: 100 },
   yRatio: { hasMultiValue: false, value: 100 },
@@ -328,6 +332,8 @@ describe('test layer-config-helper', () => {
       'focus',
       'focusStep',
       'dottingTime',
+      'wobbleStep',
+      'wobbleDiameter',
     ]);
   });
 

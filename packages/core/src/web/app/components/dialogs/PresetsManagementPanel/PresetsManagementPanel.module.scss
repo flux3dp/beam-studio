@@ -148,6 +148,8 @@ div.modal-wrap {
     .inputs {
       display: flex;
       gap: 12%;
+      max-height: 200px;
+      overflow-y: scroll;
 
       > div {
         flex-grow: 1;

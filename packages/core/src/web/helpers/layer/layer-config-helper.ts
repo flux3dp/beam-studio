@@ -64,6 +64,8 @@ const attributeMap: { [key in ConfigKey]: string } = {
   uv: 'data-uv',
   wInk: 'data-wInk',
   wMultipass: 'data-wMultipass',
+  wobbleDiameter: 'data-wobbleDiameter',
+  wobbleStep: 'data-wobbleStep',
   wRepeat: 'data-wRepeat',
   wSpeed: 'data-wSpeed',
   yRatio: 'data-yRatio',
@@ -106,6 +108,8 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   uv: 0,
   wInk: BeamboxPreference.read('multipass-compensation') !== false ? -12 : -4,
   wMultipass: 3,
+  wobbleDiameter: -0.2,
+  wobbleStep: -0.05,
   wRepeat: 1,
   // parameters for white ink
   wSpeed: 100,
@@ -465,6 +469,8 @@ export const promarkConfigKeys: ConfigKey[] = [
   'focus',
   'focusStep',
   'dottingTime',
+  'wobbleStep',
+  'wobbleDiameter',
 ];
 
 // Forced Keys: If not set, use default value
