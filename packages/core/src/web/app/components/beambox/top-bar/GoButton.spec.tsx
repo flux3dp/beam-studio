@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 
 import CanvasMode from '@core/app/constants/canvasMode';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
@@ -138,10 +138,20 @@ jest.mock('@core/helpers/device/promark/promark-button-handler', () => ({
   setStatus: (...args) => mockSetStatus(...args),
 }));
 
+const mockHandleExportClick = jest.fn();
+
+jest.mock('@core/app/actions/beambox/export/GoButton/handleExportClick', () => ({
+  handleExportClick: (...args) => mockHandleExportClick(...args),
+}));
+
 describe('test GoButton', () => {
   test('should render correctly', () => {
     const endPreviewMode = jest.fn();
+    const mockExport = jest.fn();
     const mockDevice = { uuid: 'mock-device' };
+
+    mockHandleExportClick.mockReturnValue(mockExport);
+
     const { container } = render(
       <CanvasContext.Provider value={{ endPreviewMode, mode: CanvasMode.Draw, selectedDevice: mockDevice } as any}>
         <GoButton hasDiscoverdMachine={false} />
@@ -149,9 +159,12 @@ describe('test GoButton', () => {
     );
 
     expect(container).toMatchSnapshot();
-
     expect(mockSetExportFn).toHaveBeenCalledTimes(1);
     expect(mockOnContextChanged).toHaveBeenCalledTimes(1);
     expect(mockOnContextChanged).toBeCalledWith(CanvasMode.Draw, mockDevice);
+
+    expect(mockExport).not.toHaveBeenCalled();
+    fireEvent.click(container.querySelector('.button'));
+    expect(mockExport).toHaveBeenCalledTimes(1);
   });
 });
