@@ -6,7 +6,7 @@ import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import settings from '@core/app/app-settings';
 import AdorModule from '@core/app/components/settings/AdorModule';
 import AutoSave from '@core/app/components/settings/AutoSave';
-import BB2Settings from '@core/app/components/settings/Bb2Settings';
+import BB2Settings from '@core/app/components/settings/BB2Settings';
 import Camera from '@core/app/components/settings/Camera';
 import Connection from '@core/app/components/settings/Connection';
 import Editor from '@core/app/components/settings/Editor';

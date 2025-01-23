@@ -3,7 +3,7 @@ import { fireEvent, render } from '@testing-library/react';
 
 import { OptionValues } from '@core/app/constants/enums';
 
-import BB2Settings from './Bb2Settings';
+import BB2Settings from './BB2Settings';
 
 jest.mock('./SelectControl', () => ({ id, label, onChange, options, url }: any) => (
   <div>
