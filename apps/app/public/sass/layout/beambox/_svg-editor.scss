@@ -1,3 +1,6 @@
+@use "../../abstracts/mixins";
+@use "../../abstracts/variables";
+
 #svg_editor {
   color: #000;
   top: 40px;
@@ -33,7 +36,7 @@
       }
     }
     #svgcanvas {
-      background: $backgroundColor;
+      background: variables.$backgroundColor;
       #rotaryAxis {
         #transparent {
           stroke-width: 5px;
@@ -44,7 +47,7 @@
   #main_button,
   #tools_left,
   #tools_bottom {
-    @include force-hide();
+    @include mixins.force-hide();
   }
   #tools_top {
     position: fixed;
@@ -61,7 +64,7 @@
   #svg_prefs
   //#cmenu_canvas
   {
-    @include force-hide();
+    @include mixins.force-hide();
   }
 
   .react-contextmenu--visible {

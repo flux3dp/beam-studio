@@ -1,3 +1,6 @@
+@use "sass:meta";
+@use "../../../abstracts/mixins";
+
 #right-panel {
   font-size: 10pt;
 
@@ -46,8 +49,8 @@
 
   #sidepanels {
     #sidepanel_handle {
-      @include force-hide();
+      @include mixins.force-hide();
     }
-    @import "layer-panel";
+    @include meta.load-css("layer-panel");
   }
 }

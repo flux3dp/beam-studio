@@ -1,8 +1,10 @@
+@use "../abstracts/variables";
+
 .controls {
   overflow-y: hidden;
 
   .label {
-    color: $primaryColor;
+    color: variables.$primaryColor;
     font-size: 13px;
     line-height: 40px;
     width: 120px;

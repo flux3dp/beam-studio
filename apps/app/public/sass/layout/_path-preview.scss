@@ -1,3 +1,5 @@
+@use "../abstracts/variables";
+
 #path-preview-panel {
   position: absolute;
   top: 40px;
@@ -172,7 +174,7 @@
   border: none;
   position: fixed;
   background-color: #f8f8f8;
-  width: $sidePanelWidth;
+  width: variables.$sidePanelWidth;
   padding: 0px;
   opacity: 1;
   overflow-x: visible;
@@ -191,7 +193,7 @@
   }
 
   &.wide {
-    width: $winSidePanelWidth;
+    width: variables.$winSidePanelWidth;
   }
   &:hover {
     opacity: 1;
