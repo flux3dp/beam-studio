@@ -19,10 +19,6 @@ jest.mock('@core/helpers/eventEmitterFactory', () => ({
   },
 }));
 
-jest.mock('@core/helpers/locale-helper', () => ({
-  isTwOrHk: true,
-}));
-
 jest.mock('@core/helpers/is-dev', () => () => true);
 
 jest.mock('antd', () => ({
@@ -106,6 +102,11 @@ const mockOpen = jest.fn();
 
 jest.mock('@app/implementations/browser', () => ({
   open: (...args) => mockOpen(...args),
+}));
+
+jest.mock('@core/helpers/checkFeature', () => ({
+  checkFbb2: () => true,
+  checkFpm1: () => true,
 }));
 
 const mockUnmount = jest.fn();

@@ -45,8 +45,8 @@ jest.mock('@core/app/actions/dialog-controller', () => ({
   popDialogById: (...args) => mockPopDialogById(...args),
 }));
 
-jest.mock('@core/helpers/locale-helper', () => ({
-  isTwOrHk: true,
+jest.mock('@core/helpers/checkFeature', () => ({
+  checkChuckRotary: () => true,
 }));
 
 const mockOnClose = jest.fn();

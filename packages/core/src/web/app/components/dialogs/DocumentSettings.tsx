@@ -20,10 +20,10 @@ import { getWorkarea } from '@core/app/constants/workarea-constants';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import Select from '@core/app/widgets/AntdSelect';
 import UnitInput from '@core/app/widgets/UnitInput';
+import { checkFbb2, checkFpm1 } from '@core/helpers/checkFeature';
 import { getPromarkInfo, setPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import isDev from '@core/helpers/is-dev';
-import localeHelper from '@core/helpers/locale-helper';
 import useI18n from '@core/helpers/useI18n';
 
 import browser from '@app/implementations/browser';
@@ -37,10 +37,10 @@ const workareaOptions = [
   { label: 'Beambox Pro', value: 'fbb1p' },
   { label: 'HEXA', value: 'fhexa1' },
   { label: 'Ador', value: 'ado1' },
-  (localeHelper.isTwOrHk || isDev()) && { label: 'Promark', value: 'fpm1' },
-  (localeHelper.isTwOrHk || localeHelper.isJp || isDev()) && { label: 'Beambox II', value: 'fbb2' },
+  checkFpm1() && { label: 'Promark', value: 'fpm1' },
+  checkFbb2() && { label: 'Beambox II', value: 'fbb2' },
   isDev() && { label: 'Lazervida', value: 'flv1' },
-].filter(Boolean);
+].filter(Boolean) as Array<{ label: string; value: WorkAreaModel }>;
 
 const promarkLaserOptions = [
   { label: 'Desktop - 20W', value: `${LaserType.Desktop}-20` },
@@ -51,7 +51,7 @@ const promarkLaserOptions = [
   { label: 'MOPA - 100W', value: `${LaserType.MOPA}-100` },
 ];
 
-const dpiOptions = ['low', 'medium', 'high', 'ultra'];
+const dpiOptions = ['low', 'medium', 'high', 'ultra'] as const;
 
 interface Props {
   unmount: () => void;
@@ -152,11 +152,11 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     BeamboxPreference.write('rotary_mode', rotaryMode);
 
     if (rotaryMode > 0) {
-      if (supportInfo.rotary.extendWorkarea) {
+      if (supportInfo.rotary?.extendWorkarea) {
         BeamboxPreference.write('extend-rotary-workarea', extendRotaryWorkarea);
       }
 
-      if (supportInfo.rotary.mirror) {
+      if (supportInfo.rotary?.mirror) {
         BeamboxPreference.write('rotary-mirror', mirrorRotary);
       }
     }
@@ -304,7 +304,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
             </label>
             <Select bordered className={styles.control} id="dpi" onChange={setEngraveDpi} value={engraveDpi}>
               {dpiOptions.map((val) => (
-                <Select.Option key={val} value={val}>
+                <Select.Option key={val} value={val as string}>
                   {tDocu[val]} ({constant.dpiValueMap[val]} DPI)
                 </Select.Option>
               ))}
@@ -510,7 +510,11 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                       id="pass_through_height"
                       isInch={isInch}
                       min={workareaObj.displayHeight ?? workareaObj.height}
-                      onChange={setPassThroughHeight}
+                      onChange={(val) => {
+                        if (val) {
+                          setPassThroughHeight(val);
+                        }
+                      }}
                       precision={isInch ? 2 : 0}
                       size="small"
                       value={passThroughHeight}

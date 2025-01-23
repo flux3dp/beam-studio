@@ -8,8 +8,8 @@ import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import { hasSwiftray } from '@core/helpers/api/swiftray-client';
+import { checkFbb2, checkFpm1 } from '@core/helpers/checkFeature';
 import isDev from '@core/helpers/is-dev';
-import localeHelper from '@core/helpers/locale-helper';
 import useI18n from '@core/helpers/useI18n';
 import type { FontDescriptor } from '@core/interfaces/IFont';
 import type { StorageKey } from '@core/interfaces/IStorage';
@@ -63,7 +63,7 @@ function Editor({
     }),
   );
 
-  const onSelectFont = (family) => {
+  const onSelectFont = (family: string) => {
     const fonts: FontDescriptor[] = FontFuncs.requestFontsOfTheFontFamily(family);
     const newDefaultFont = fonts.filter((font) => font.style === 'Regular')[0] || fonts[0];
 
@@ -78,7 +78,7 @@ function Editor({
       style: newDefaultFont.style,
     });
   };
-  const onSelectFontStyle = (postscriptName) => {
+  const onSelectFontStyle = (postscriptName: string) => {
     const newDefaultFont = FontFuncs.getFontOfPostscriptName(postscriptName);
 
     storage.set('default-font', {
@@ -121,7 +121,7 @@ function Editor({
       selected: selectedModel === 'ado1',
       value: 'ado1',
     },
-    (isDevMode || localeHelper.isTwOrHk) && {
+    checkFpm1() && {
       label: 'Promark',
       selected: selectedModel === 'fpm1',
       value: 'fpm1',
@@ -131,12 +131,12 @@ function Editor({
       selected: selectedModel === 'flv1',
       value: 'flv1',
     },
-    (isDevMode || localeHelper.isTwOrHk || localeHelper.isJp) && {
+    checkFbb2() && {
       label: 'Beambox II',
       selected: selectedModel === 'fbb2',
       value: 'fbb2',
     },
-  ].filter(Boolean);
+  ].filter(Boolean) as SelectOption[];
   const workarea = getWorkarea(selectedModel);
 
   const guideX = getBeamboxPreferenceEditingValue('guide_x0');
@@ -150,7 +150,6 @@ function Editor({
   const antiAliasingOptions = onOffOptionFactory(getBeamboxPreferenceEditingValue('anti-aliasing'), { lang });
   const continuousDrawingOptions = onOffOptionFactory(getBeamboxPreferenceEditingValue('continuous_drawing'), { lang });
   const simplifyClipperPath = onOffOptionFactory(getBeamboxPreferenceEditingValue('simplify_clipper_path'), { lang });
-  const enableLowSpeedOptions = onOffOptionFactory(getBeamboxPreferenceEditingValue('enable-low-speed'), { lang });
   const autoSwitchTab = onOffOptionFactory(getBeamboxPreferenceEditingValue('auto-switch-tab'), {
     lang,
   });
@@ -266,12 +265,6 @@ function Editor({
         onChange={(e) => updateBeamboxPreferenceChange('simplify_clipper_path', e.target.value)}
         options={simplifyClipperPath}
         url={lang.settings.help_center_urls.simplify_clipper_path}
-      />
-      <SelectControl
-        id="set-enable-low-speed"
-        label={lang.settings.enable_low_speed}
-        onChange={(e) => updateBeamboxPreferenceChange('enable-low-speed', e.target.value)}
-        options={enableLowSpeedOptions}
       />
       <SelectControl
         id="auto-switch-tab"

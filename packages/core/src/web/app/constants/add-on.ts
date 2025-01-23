@@ -8,13 +8,14 @@ export enum RotaryType {
 export const CHUCK_ROTARY_DIAMETER = 133;
 
 export interface SupportInfo {
-  autoFocus: boolean;
+  autoFocus?: boolean;
+  curveEngraving?: boolean;
   framingLowLaser?: boolean;
-  hybridLaser: boolean;
+  hybridLaser?: boolean;
   jobOrigin?: boolean;
-  lowerFocus: boolean;
-  openBottom: boolean;
-  passThrough: boolean;
+  lowerFocus?: boolean;
+  openBottom?: boolean;
+  passThrough?: boolean;
   redLight?: boolean;
   rotary?: {
     chuck: boolean;
@@ -27,12 +28,9 @@ export interface SupportInfo {
 
 const supportList: Record<WorkAreaModel, SupportInfo> = {
   ado1: {
-    autoFocus: false,
     framingLowLaser: true,
-    hybridLaser: false,
     jobOrigin: true,
     lowerFocus: true,
-    openBottom: false,
     passThrough: true,
     rotary: {
       chuck: true,
@@ -43,12 +41,7 @@ const supportList: Record<WorkAreaModel, SupportInfo> = {
     },
   },
   fbb1b: {
-    autoFocus: false,
-    hybridLaser: false,
     jobOrigin: true,
-    lowerFocus: false,
-    openBottom: false,
-    passThrough: false,
     rotary: {
       chuck: false,
       extendWorkarea: false,
@@ -57,12 +50,7 @@ const supportList: Record<WorkAreaModel, SupportInfo> = {
     },
   },
   fbb1p: {
-    autoFocus: false,
-    hybridLaser: false,
     jobOrigin: true,
-    lowerFocus: false,
-    openBottom: false,
-    passThrough: false,
     rotary: {
       chuck: false,
       extendWorkarea: false,
@@ -71,11 +59,9 @@ const supportList: Record<WorkAreaModel, SupportInfo> = {
     },
   },
   fbb2: {
-    autoFocus: false,
-    hybridLaser: false,
+    curveEngraving: true,
     jobOrigin: true,
     lowerFocus: true,
-    openBottom: false,
     passThrough: true,
     redLight: true,
     rotary: {
@@ -90,7 +76,6 @@ const supportList: Record<WorkAreaModel, SupportInfo> = {
     autoFocus: true,
     hybridLaser: true,
     jobOrigin: true,
-    lowerFocus: false,
     openBottom: true,
     passThrough: true,
     rotary: {
@@ -101,12 +86,8 @@ const supportList: Record<WorkAreaModel, SupportInfo> = {
     },
   },
   fhexa1: {
-    autoFocus: false,
-    hybridLaser: false,
     jobOrigin: true,
     lowerFocus: true,
-    openBottom: false,
-    passThrough: false,
     rotary: {
       chuck: true,
       extendWorkarea: false,
@@ -115,12 +96,7 @@ const supportList: Record<WorkAreaModel, SupportInfo> = {
     },
   },
   flv1: {
-    autoFocus: false,
-    hybridLaser: false,
     jobOrigin: true,
-    lowerFocus: false,
-    openBottom: false,
-    passThrough: false,
     rotary: {
       chuck: false,
       extendWorkarea: false,
@@ -129,11 +105,7 @@ const supportList: Record<WorkAreaModel, SupportInfo> = {
     },
   },
   fpm1: {
-    autoFocus: false,
-    hybridLaser: false,
     lowerFocus: true,
-    openBottom: false,
-    passThrough: false,
     rotary: {
       chuck: false,
       extendWorkarea: false,
@@ -143,14 +115,7 @@ const supportList: Record<WorkAreaModel, SupportInfo> = {
   },
 };
 
-export const getSupportInfo = (workarea: WorkAreaModel): SupportInfo =>
-  supportList[workarea] || {
-    autoFocus: false,
-    hybridLaser: false,
-    lowerFocus: false,
-    openBottom: false,
-    passThrough: false,
-  };
+export const getSupportInfo = (workarea: WorkAreaModel): SupportInfo => supportList[workarea] || {};
 
 export default {
   getSupportInfo,

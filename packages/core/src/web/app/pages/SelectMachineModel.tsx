@@ -7,8 +7,7 @@ import dialog from '@core/app/actions/dialog-caller';
 import windowLocationReload from '@core/app/actions/windowLocation';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import InitializeIcons from '@core/app/icons/initialize/InitializeIcons';
-import isDev from '@core/helpers/is-dev';
-import localeHelper from '@core/helpers/locale-helper';
+import { checkFbb2, checkFpm1 } from '@core/helpers/checkFeature';
 import { isMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
@@ -92,10 +91,8 @@ const SelectMachineModel = (): React.JSX.Element => {
       model: 'fbb1p',
     } as const,
     { Icon: InitializeIcons.Hexa, label: 'HEXA', model: 'fhexa1' } as const,
-    !isMobile() &&
-      (localeHelper.isTwOrHk || isDev()) &&
-      ({ Icon: InitializeIcons.Promark, label: 'Promark Series', model: 'fpm1' } as const),
-  ].filter(Boolean);
+    !isMobile() && checkFpm1() && ({ Icon: InitializeIcons.Promark, label: 'Promark Series', model: 'fpm1' } as const),
+  ].filter(Boolean) as ModelItem[];
 
   const beamboxModelList: ModelItem[] = useMemo(
     () =>
@@ -106,14 +103,14 @@ const SelectMachineModel = (): React.JSX.Element => {
           label: 'Beambox (Pro)',
           model: 'fbb1p',
         } as const,
-        (localeHelper.isTwOrHk || localeHelper.isJp || isDev()) &&
+        checkFbb2() &&
           ({
             btnClass: styles['btn-real'],
             imageSrc: 'core-img/init-panel/beambox-2-real.png',
             label: 'Beambox II',
             model: 'fbb2',
           } as const),
-      ].filter(Boolean),
+      ].filter(Boolean) as ModelItem[],
     [],
   );
 
