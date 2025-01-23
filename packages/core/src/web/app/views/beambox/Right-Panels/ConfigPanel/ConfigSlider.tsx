@@ -15,7 +15,7 @@ interface Props {
   max: number;
   min: number;
   onChange: (value: number) => void;
-  options?: ConfigOption[];
+  options?: ConfigOption[] | null;
   speedLimit?: boolean;
   step?: number;
   unit?: string;
@@ -120,7 +120,7 @@ const ConfigSlider = ({
             {
               arrow: { pointAtCenter: true },
               formatter: (val: number) =>
-                sliderOptions ? optionLabels[val] : units.convertUnit(val, fakeUnit, 'mm').toFixed(decimal),
+                sliderOptions ? optionLabels?.[val] : units.convertUnit(val, fakeUnit, 'mm').toFixed(decimal),
               // hack because antd tooltip of slider won't autoslide
               placement: displayValue === maxValue ? 'topLeft' : 'top',
             } as TooltipProps as any

@@ -18,7 +18,7 @@ import Plane from './Plane';
 interface Props {
   data: ICurveEngraving;
   onClose: () => void;
-  onRemeasure: (indices: number[]) => Promise<ICurveEngraving>;
+  onRemeasure: (indices: number[]) => Promise<ICurveEngraving | null>;
 }
 
 // TODO: Add unit tests
@@ -82,21 +82,23 @@ const CurveEngraving = ({ data: initData, onClose, onRemeasure }: Props): React.
 
     const ctx = outCanvas.getContext('2d');
 
-    ctx.fillStyle = 'white';
-    ctx.fillRect(0, 0, outCanvas.width, outCanvas.height);
+    if (ctx) {
+      ctx.fillStyle = 'white';
+      ctx.fillRect(0, 0, outCanvas.width, outCanvas.height);
 
-    if (displayCamera) {
-      const cameraImage = await cameraImagePromise;
+      if (displayCamera) {
+        const cameraImage = await cameraImagePromise;
 
-      if (cameraImage) {
-        ctx.drawImage(cameraImage, 0, 0);
+        if (cameraImage) {
+          ctx.drawImage(cameraImage, 0, 0);
+        }
       }
-    }
 
-    if (displayCanvas) {
-      const canvasImage = await canvasImagePromise;
+      if (displayCanvas) {
+        const canvasImage = await canvasImagePromise;
 
-      ctx.drawImage(canvasImage, 0, 0);
+        ctx.drawImage(canvasImage, 0, 0);
+      }
     }
 
     const base64 = outCanvas.toDataURL('image/jpeg', 1);
@@ -197,7 +199,7 @@ export default CurveEngraving;
 
 export const showCurveEngraving = async (
   data: ICurveEngraving,
-  onRemeasure: (indices: number[]) => Promise<ICurveEngraving>,
+  onRemeasure: (indices: number[]) => Promise<ICurveEngraving | null>,
 ): Promise<void> => {
   if (!isIdExist('curve-engraving')) {
     return new Promise<void>((resolve) => {

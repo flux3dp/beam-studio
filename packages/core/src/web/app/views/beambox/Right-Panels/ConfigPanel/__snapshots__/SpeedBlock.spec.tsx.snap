@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`test SpeedBlock should render correctly when has low speed warning 1`] = `
+exports[`test SpeedBlock should render correctly when has curve engraving warning 1`] = `
 <div>
   <div
     class="panel default"
@@ -8,7 +8,7 @@ exports[`test SpeedBlock should render correctly when has low speed warning 1`] 
     <span
       class="title"
     >
-      speed
+      Speed
     </span>
     <div>
       MockConfigValueDisplay
@@ -22,7 +22,87 @@ exports[`test SpeedBlock should render correctly when has low speed warning 1`] 
       </p>
       <p>
         max: 
-        300
+        900
+      </p>
+      <p>
+        min: 
+        0.5
+      </p>
+      <p>
+        value: 
+        87
+      </p>
+      <p>
+        unit: 
+        mm/s
+      </p>
+      <p>
+        hasMultiValue: 
+      </p>
+      <p>
+        decimal: 
+        1
+      </p>
+      <p>
+        options: 
+        null
+      </p>
+      <button
+        type="button"
+      >
+        MockConfigValueDisplayButton
+      </button>
+    </div>
+    <input
+      class="mock-config-slider"
+      id="speed"
+      max="900"
+      min="0.5"
+      step="0.1"
+      type="range"
+      value="87"
+    />
+    <div
+      class="warning"
+    >
+      <div
+        class="warning-icon"
+      >
+        !
+      </div>
+      <div
+        class="warning-text"
+      >
+        The engraving speed of 3D curve objects will be constrained to 50 mm/s. You can remove this limit at Preferences Settings.
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test SpeedBlock should render correctly when has low speed warning 1`] = `
+<div>
+  <div
+    class="panel default"
+  >
+    <span
+      class="title"
+    >
+      Speed
+    </span>
+    <div>
+      MockConfigValueDisplay
+      <p>
+        inputId: 
+        speed-input
+      </p>
+      <p>
+        type: 
+        default
+      </p>
+      <p>
+        max: 
+        900
       </p>
       <p>
         min: 
@@ -56,12 +136,26 @@ exports[`test SpeedBlock should render correctly when has low speed warning 1`] 
     <input
       class="mock-config-slider"
       id="speed"
-      max="300"
+      max="900"
       min="0.5"
       step="0.1"
       type="range"
       value="1"
     />
+    <div
+      class="warning"
+    >
+      <div
+        class="warning-icon"
+      >
+        !
+      </div>
+      <div
+        class="warning-text"
+      >
+        Low speed might cause burning of the material.
+      </div>
+    </div>
   </div>
 </div>
 `;
@@ -74,7 +168,7 @@ exports[`test SpeedBlock should render correctly when has vector warning 1`] = `
     <span
       class="title"
     >
-      speed
+      Speed
     </span>
     <div>
       MockConfigValueDisplay
@@ -139,7 +233,7 @@ exports[`test SpeedBlock should render correctly when has vector warning 1`] = `
       <div
         class="warning-text"
       >
-        speed_contrain_warning
+        The cutting speed of vector path objects will be constrained to 20 mm/s. You can remove this limit at Preferences Settings.
       </div>
     </div>
   </div>
@@ -164,14 +258,14 @@ exports[`test SpeedBlock should render correctly when type is panel-item 1`] = `
           <span
             style="white-space: nowrap;"
           >
-            87
+            3.43
           </span>
         </span>
       </button>
     </div>
     <div>
       label: 
-      speed
+      Speed
     </div>
   </div>
 </div>
@@ -185,7 +279,7 @@ exports[`test SpeedBlock should render correctly when unit is inches 1`] = `
     <span
       class="title"
     >
-      speed
+      Speed
     </span>
     <div>
       MockConfigValueDisplay
@@ -211,14 +305,14 @@ exports[`test SpeedBlock should render correctly when unit is inches 1`] = `
       </p>
       <p>
         unit: 
-        in/s
+        mm/s
       </p>
       <p>
         hasMultiValue: 
       </p>
       <p>
         decimal: 
-        2
+        1
       </p>
       <p>
         options: 
@@ -251,7 +345,7 @@ exports[`test SpeedBlock should render correctly when unit is mm 1`] = `
     <span
       class="title"
     >
-      speed
+      Speed
     </span>
     <div>
       MockConfigValueDisplay

@@ -255,7 +255,6 @@ class SwiftrayClient extends EventEmitter {
       shouldMockFastGradient?: boolean;
       shouldUseFastGradient?: boolean;
       travelSpeed?: number;
-      vectorSpeedConstraint?: boolean;
     },
   ): Promise<{
     error?: ErrorObject;
@@ -465,7 +464,8 @@ const checkSwiftray = (): boolean => {
 };
 const hasSwiftray = checkSwiftray();
 
-const swiftrayClient = new SwiftrayClient('ws://localhost:6611');
+const swiftrayHost = localStorage.getItem('swiftrayHost') || 'localhost';
+const swiftrayClient = new SwiftrayClient(`ws://${swiftrayHost}:6611`);
 
 const getDeviceClient = async (port: string): Promise<SwiftrayClient> => {
   console.log(`Connecting to device on port ${port}`);

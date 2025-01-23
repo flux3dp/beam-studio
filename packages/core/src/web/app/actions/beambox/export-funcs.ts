@@ -289,7 +289,6 @@ const fetchTaskCode = async (
           });
         },
         shouldUseFastGradient,
-        vectorSpeedConstraint: BeamboxPreference.read('vector_speed_contraint') !== false,
         ...getTaskCodeOpts,
         paddingAccel,
         supportJobOrigin,
@@ -388,7 +387,6 @@ const fetchTransferredFcode = async (gcodeString: string, thumbnail: string) => 
             percentage: data.percentage * 100,
           });
         },
-        vectorSpeedConstraint: BeamboxPreference.read('vector_speed_contraint') !== false,
       },
     );
   });

@@ -4,31 +4,32 @@ import alertCaller from '@core/app/actions/alert-caller';
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant, { promarkModels } from '@core/app/actions/beambox/constant';
 import { executeFirmwareUpdate } from '@core/app/actions/beambox/menuDeviceActions';
+import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import Dialog from '@core/app/actions/dialog-caller';
 import { getSupportInfo } from '@core/app/constants/add-on';
 import alertConstants from '@core/app/constants/alert-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import alertConfig from '@core/helpers/api/alert-config';
+import round from '@core/helpers/math/round';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-maker';
 import VersionChecker from '@core/helpers/version-checker';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type { ILang } from '@core/interfaces/ILang';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import storage from '@app/implementations/storage';
 
-let svgCanvas;
+let svgCanvas: ISVGCanvas;
 
 getSVGAsync(({ Canvas }) => {
   svgCanvas = Canvas;
 });
 
-const { $ } = window;
-
 export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Promise<boolean> => {
   const workarea = device.model;
   const isPromark = promarkModels.has(workarea);
-  const { vectorSpeedLimit } = getWorkarea(workarea);
+  const workareaObj = getWorkarea(workarea);
   const layers = [...document.querySelectorAll('#svgcontent > g.layer:not([display="none"])')];
   const supportInfo = getSupportInfo(workarea);
 
@@ -104,69 +105,72 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
 
   SymbolMaker.switchImageSymbolForAll(false);
 
-  let isTooFastForPath = false;
-  const tooFastLayers = [];
+  const { curveSpeedLimit } = workareaObj;
+  const hasCurveSpeedLimit = curveEngravingModeController.hasArea() && supportInfo.curveEngraving && curveSpeedLimit;
+  const handleCurveEngravingSpeedAlert = async (): Promise<void> => {
+    if (!hasCurveSpeedLimit) {
+      return;
+    }
 
-  for (let i = 0; i < layers.length; i += 1) {
-    const layer = layers[i];
+    let isTooFast = false;
 
-    if (
-      vectorSpeedLimit &&
-      Number.parseFloat(layer.getAttribute('data-speed')) > vectorSpeedLimit &&
-      layer.getAttribute('display') !== 'none'
-    ) {
-      const paths = Array.from($(layer).find('path, rect, ellipse, polygon, line'));
-      const uses = $(layer).find('use');
-      let hasWireframe = false;
+    const tooFastLayers: string[] = [];
 
-      Array.from(uses).forEach((use: Element) => {
-        const href = use.getAttribute('xlink:href');
+    for (let i = 0; i < layers.length; i += 1) {
+      const layer = layers[i];
 
-        paths.push(...Array.from($(`${href}`).find('path, rect, ellipse, polygon, line')));
+      if (
+        Number.parseFloat(layer.getAttribute('data-speed') ?? '0') > curveSpeedLimit &&
+        layer.getAttribute('display') !== 'none'
+      ) {
+        isTooFast = true;
 
-        if (use.getAttribute('data-wireframe') === 'true') {
-          isTooFastForPath = true;
-          hasWireframe = true;
-          tooFastLayers.push(svgCanvas.getCurrentDrawing().getLayerName(i));
-        }
-      });
+        const layerName = svgCanvas.getCurrentDrawing().getLayerName(i);
 
-      if (hasWireframe) {
-        break;
-      }
-
-      for (let j = 0; j < paths.length; j += 1) {
-        const path = paths[j];
-        const fill = $(path).attr('fill');
-        const fillOpacity = Number.parseFloat($(path).attr('fill-opacity'));
-
-        if (fill === 'none' || fill === '#FFF' || fill === '#FFFFFF' || fillOpacity === 0) {
-          isTooFastForPath = true;
-          tooFastLayers.push(svgCanvas.getCurrentDrawing().getLayerName(i));
-          break;
+        if (layerName) {
+          tooFastLayers.push();
         }
       }
     }
-  }
-  SymbolMaker.switchImageSymbolForAll(true);
 
-  if (isTooFastForPath) {
-    await new Promise((resolve) => {
-      const limit =
-        storage.get('default-units') === 'inches'
-          ? `${(vectorSpeedLimit / 25.4).toFixed(2)} in/s`
-          : `${vectorSpeedLimit} mm/s`;
+    if (isTooFast) {
+      await new Promise<void>((resolve) => {
+        const limit =
+          storage.get('default-units') === 'inches'
+            ? `${round(curveSpeedLimit / 25.4, 2)} in/s`
+            : `${curveSpeedLimit} mm/s`;
 
-      if (BeamboxPreference.read('vector_speed_contraint') === false) {
-        if (!alertConfig.read('skip_path_speed_warning')) {
-          const message = sprintf(lang.beambox.popup.too_fast_for_path, { limit });
+        if (BeamboxPreference.read('curve_engraving_speed_limit') === false) {
+          if (!alertConfig.read('skip_curve_speed_warning')) {
+            const message = sprintf(lang.beambox.popup.too_fast_for_curve, { limit });
+
+            alertCaller.popUp({
+              callbacks: () => resolve(),
+              checkbox: {
+                callbacks: () => {
+                  alertConfig.write('skip_curve_speed_warning', true);
+                  resolve();
+                },
+                text: lang.beambox.popup.dont_show_again,
+              },
+              message,
+              type: alertConstants.SHOW_POPUP_WARNING,
+            });
+          } else {
+            resolve();
+          }
+        } else if (!alertConfig.read('skip_curve_speed_limit_warning')) {
+          const message = sprintf(lang.beambox.popup.too_fast_for_curve_and_constrain, {
+            layers: tooFastLayers.join(', '),
+            limit,
+          });
 
           alertCaller.popUp({
-            callbacks: () => resolve(null),
+            callbacks: () => resolve(),
             checkbox: {
               callbacks: () => {
-                alertConfig.write('skip_path_speed_warning', true);
-                resolve(null);
+                alertConfig.write('skip_curve_speed_limit_warning', true);
+                resolve();
               },
               text: lang.beambox.popup.dont_show_again,
             },
@@ -174,31 +178,150 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
             type: alertConstants.SHOW_POPUP_WARNING,
           });
         } else {
-          resolve(null);
+          resolve();
         }
-      } else if (!alertConfig.read('skip_path_speed_constraint_warning')) {
-        const message = sprintf(lang.beambox.popup.too_fast_for_path_and_constrain, {
-          layers: tooFastLayers.join(', '),
-          limit,
+      });
+    }
+  };
+
+  await handleCurveEngravingSpeedAlert();
+
+  const handleVectorSpeedAlert = async (): Promise<void> => {
+    const { vectorSpeedLimit } = workareaObj;
+
+    if (!vectorSpeedLimit) {
+      return;
+    }
+
+    if (hasCurveSpeedLimit && vectorSpeedLimit >= curveSpeedLimit) {
+      return;
+    }
+
+    const checkHighSpeed = (layer: Element) => {
+      if (layer.getAttribute('display') === 'none') {
+        return false;
+      }
+
+      const speed = Number.parseFloat(layer.getAttribute('data-speed') ?? '20');
+
+      // already popped by curve speed alert
+      if (hasCurveSpeedLimit && speed > curveSpeedLimit) {
+        return false;
+      }
+
+      return speed > vectorSpeedLimit;
+    };
+
+    let isTooFast = false;
+    const tooFastLayers: string[] = [];
+
+    for (let i = 0; i < layers.length; i += 1) {
+      const layer = layers[i];
+
+      if (checkHighSpeed(layer)) {
+        const paths: SVGElement[] = Array.from(layer.querySelectorAll('path, rect, ellipse, polygon, line'));
+        const uses: SVGUseElement[] = Array.from(layer.querySelectorAll('use'));
+        let hasWireframe = false;
+
+        Array.from(uses).forEach((use: Element) => {
+          const href = use.getAttribute('xlink:href');
+          const elem = document.querySelector(`${href}`);
+
+          if (!elem) {
+            return;
+          }
+
+          paths.push(...(Array.from(elem.querySelectorAll('path, rect, ellipse, polygon, line')) as SVGElement[]));
+
+          if (use.getAttribute('data-wireframe') === 'true') {
+            isTooFast = true;
+            hasWireframe = true;
+
+            const layerName = svgCanvas.getCurrentDrawing().getLayerName(i);
+
+            if (layerName) {
+              tooFastLayers.push(layerName);
+            }
+          }
         });
 
-        alertCaller.popUp({
-          callbacks: () => resolve(null),
-          checkbox: {
-            callbacks: () => {
-              alertConfig.write('skip_path_speed_constraint_warning', true);
-              resolve(null);
-            },
-            text: lang.beambox.popup.dont_show_again,
-          },
-          message,
-          type: alertConstants.SHOW_POPUP_WARNING,
-        });
-      } else {
-        resolve(null);
+        if (hasWireframe) {
+          break;
+        }
+
+        for (let j = 0; j < paths.length; j += 1) {
+          const path = paths[j];
+          const fill = path.getAttribute('fill');
+          const fillOpacity = Number.parseFloat(path.getAttribute('fill-opacity') ?? '1');
+
+          if (fill === 'none' || fill === '#FFF' || fill === '#FFFFFF' || fillOpacity === 0) {
+            isTooFast = true;
+
+            const layerName = svgCanvas.getCurrentDrawing().getLayerName(i);
+
+            if (layerName) {
+              tooFastLayers.push(layerName);
+            }
+
+            break;
+          }
+        }
       }
-    });
-  }
+    }
+    SymbolMaker.switchImageSymbolForAll(true);
+
+    if (isTooFast) {
+      await new Promise<void>((resolve) => {
+        const limit =
+          storage.get('default-units') === 'inches'
+            ? `${round(vectorSpeedLimit / 25.4, 2)} in/s`
+            : `${vectorSpeedLimit} mm/s`;
+
+        if (BeamboxPreference.read('vector_speed_contraint') === false) {
+          if (!alertConfig.read('skip_path_speed_warning')) {
+            const message = sprintf(lang.beambox.popup.too_fast_for_path, { limit });
+
+            alertCaller.popUp({
+              callbacks: () => resolve(),
+              checkbox: {
+                callbacks: () => {
+                  alertConfig.write('skip_path_speed_warning', true);
+                  resolve();
+                },
+                text: lang.beambox.popup.dont_show_again,
+              },
+              message,
+              type: alertConstants.SHOW_POPUP_WARNING,
+            });
+          } else {
+            resolve();
+          }
+        } else if (!alertConfig.read('skip_path_speed_constraint_warning')) {
+          const message = sprintf(lang.beambox.popup.too_fast_for_path_and_constrain, {
+            layers: tooFastLayers.join(', '),
+            limit,
+          });
+
+          alertCaller.popUp({
+            callbacks: () => resolve(),
+            checkbox: {
+              callbacks: () => {
+                alertConfig.write('skip_path_speed_constraint_warning', true);
+                resolve();
+              },
+              text: lang.beambox.popup.dont_show_again,
+            },
+            message,
+            type: alertConstants.SHOW_POPUP_WARNING,
+          });
+        } else {
+          resolve();
+        }
+      });
+    }
+  };
+
+  await handleVectorSpeedAlert();
 
   return true;
 };

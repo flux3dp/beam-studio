@@ -1,9 +1,7 @@
-import React, { useEffect, useMemo } from 'react';
-
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import LeftPanelButton from '@core/app/components/beambox/left-panel/LeftPanelButton';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import useHasCurveEngraving from '@core/helpers/hooks/useHasCurveEngraving';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useForceUpdate from '@core/helpers/use-force-update';
 import useI18n from '@core/helpers/useI18n';
@@ -20,17 +18,9 @@ interface Props {
 }
 
 // TODO add unit tests
-const CurveEngravingTool = ({ className }: Props): React.JSX.Element => {
+const CurveEngravingTool = ({ className }: Props): JSX.Element => {
   const forceUpdate = useForceUpdate();
-  const canvasEventEmitter = useMemo(() => eventEmitterFactory.createEventEmitter('canvas'), []);
-
-  useEffect(() => {
-    canvasEventEmitter.on('CURVE_ENGRAVING_AREA_SET', forceUpdate);
-
-    return () => {
-      canvasEventEmitter.removeListener('CURVE_ENGRAVING_AREA_SET', forceUpdate);
-    };
-  }, [canvasEventEmitter, forceUpdate]);
+  const hasCurveEngraving = useHasCurveEngraving;
 
   const lang = useI18n().beambox.left_panel.label;
   const currentCursorMode = svgCanvas.getMode();
@@ -65,7 +55,7 @@ const CurveEngravingTool = ({ className }: Props): React.JSX.Element => {
         title={lang.curve_engraving.select_area}
       />
       <LeftPanelButton
-        disabled={!curveEngravingModeController.hasArea()}
+        disabled={!hasCurveEngraving}
         icon={<LeftPanelIcons.CuverPreview />}
         id="curve-preview"
         onClick={() => curveEngravingModeController.preview()}
