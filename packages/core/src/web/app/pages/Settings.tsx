@@ -6,6 +6,7 @@ import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import settings from '@core/app/app-settings';
 import AdorModule from '@core/app/components/settings/AdorModule';
 import AutoSave from '@core/app/components/settings/AutoSave';
+import BB2Settings from '@core/app/components/settings/Bb2Settings';
 import Camera from '@core/app/components/settings/Camera';
 import Connection from '@core/app/components/settings/Connection';
 import Editor from '@core/app/components/settings/Editor';
@@ -30,21 +31,23 @@ import type { StorageKey } from '@core/interfaces/IStorage';
 
 import storage from '@app/implementations/storage';
 
+interface Props {}
+
 interface State {
-  editingAutosaveConfig?: IConfig;
-  lang?: ILang;
+  editingAutosaveConfig: IConfig;
+  lang: ILang;
   selectedModel: WorkAreaModel;
-  warnings?: Record<string, string>;
+  warnings: Record<string, string>;
 }
 
-class Settings extends React.PureComponent<null, State> {
+class Settings extends React.PureComponent<Props, State> {
   private origLang: string;
 
   private beamboxPreferenceChanges: Record<string, any>;
 
   private configChanges: Record<StorageKey, any>;
 
-  constructor(props) {
+  constructor(props: Props) {
     super(props);
     this.state = {
       editingAutosaveConfig: autoSaveHelper.getConfig(),
@@ -57,7 +60,7 @@ class Settings extends React.PureComponent<null, State> {
     this.configChanges = {} as Record<StorageKey, any>;
   }
 
-  changeActiveLang = ({ currentTarget: { value } }: React.ChangeEvent<HTMLInputElement>): void => {
+  changeActiveLang = (value: string): void => {
     i18n.setActiveLang(value);
     this.setState({ lang: i18n.lang });
   };
@@ -107,7 +110,7 @@ class Settings extends React.PureComponent<null, State> {
     const { editingAutosaveConfig } = this.state;
 
     Object.keys(this.configChanges).forEach((key) => {
-      storage.set(key as StorageKey, this.configChanges[key]);
+      storage.set(key as StorageKey, this.configChanges[key as StorageKey]);
     });
 
     Object.keys(this.beamboxPreferenceChanges).forEach((key) => {
@@ -184,7 +187,7 @@ class Settings extends React.PureComponent<null, State> {
 
     const autoSaveOptions = this.onOffOptionFactory(editingAutosaveConfig.enabled);
 
-    const isAllValid = !warnings || Object.keys(warnings).length === 0;
+    const isAllValid = Object.keys(warnings).length === 0;
     const web = isWeb();
     const defaultUnit = this.getConfigEditingValue('default-units');
 
@@ -259,6 +262,11 @@ class Settings extends React.PureComponent<null, State> {
           />
           <AdorModule
             defaultUnit={defaultUnit}
+            getBeamboxPreferenceEditingValue={this.getBeamboxPreferenceEditingValue}
+            selectedModel={selectedModel}
+            updateBeamboxPreferenceChange={this.updateBeamboxPreferenceChange}
+          />
+          <BB2Settings
             getBeamboxPreferenceEditingValue={this.getBeamboxPreferenceEditingValue}
             selectedModel={selectedModel}
             updateBeamboxPreferenceChange={this.updateBeamboxPreferenceChange}

@@ -5,7 +5,7 @@ import i18n from '@core/helpers/i18n';
 import type { StorageKey } from '@core/interfaces/IStorage';
 
 interface Props {
-  changeActiveLang: (e: React.ChangeEvent) => void;
+  changeActiveLang: (val: string) => void;
   isWeb: boolean;
   notificationOptions: Array<{ label: string; selected: boolean; value: any }>;
   supportedLangs: { [key: string]: string };
@@ -27,7 +27,7 @@ function General({
       <SelectControl
         id="select-lang"
         label={lang.settings.language}
-        onChange={changeActiveLang}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => changeActiveLang(e.currentTarget.value)}
         options={Object.keys(supportedLangs).map((l) => ({
           label: supportedLangs[l],
           selected: l === i18n.getActiveLang(),

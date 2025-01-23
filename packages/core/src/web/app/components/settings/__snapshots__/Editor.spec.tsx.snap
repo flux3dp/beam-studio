@@ -189,18 +189,6 @@ exports[`settings/Editor initially no warning 1`] = `
   </div>
   <div>
     mock-select-control id:
-    set-enable-low-speed
-    label:
-    Enable slow speed movement
-    url:
-    options:
-    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
-    <input
-      class="select-control"
-    />
-  </div>
-  <div>
-    mock-select-control id:
     auto-switch-tab
     label:
     Auto Switch Layer and Object Panel
@@ -420,18 +408,6 @@ exports[`settings/Editor initially no warning 2`] = `
     Optimize the Calculated Path
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004407276
-    options:
-    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
-    <input
-      class="select-control"
-    />
-  </div>
-  <div>
-    mock-select-control id:
-    set-enable-low-speed
-    label:
-    Enable slow speed movement
-    url:
     options:
     [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
     <input
@@ -667,18 +643,6 @@ exports[`settings/Editor initially no warning 3`] = `
   </div>
   <div>
     mock-select-control id:
-    set-enable-low-speed
-    label:
-    Enable slow speed movement
-    url:
-    options:
-    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
-    <input
-      class="select-control"
-    />
-  </div>
-  <div>
-    mock-select-control id:
     auto-switch-tab
     label:
     Auto Switch Layer and Object Panel
@@ -898,18 +862,6 @@ exports[`settings/Editor initially no warning 4`] = `
     Optimize the Calculated Path
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004407276
-    options:
-    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
-    <input
-      class="select-control"
-    />
-  </div>
-  <div>
-    mock-select-control id:
-    set-enable-low-speed
-    label:
-    Enable slow speed movement
-    url:
     options:
     [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
     <input
