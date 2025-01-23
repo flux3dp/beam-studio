@@ -336,6 +336,8 @@ export interface ILang {
         caption: string;
         message: string;
       };
+      too_fast_for_curve: string;
+      too_fast_for_curve_and_constrain: string;
       too_fast_for_path: string;
       too_fast_for_path_and_constrain: string;
       touchpad: string;
@@ -360,6 +362,7 @@ export interface ILang {
         color_adjustment_short: string;
         color_strength: string;
         cross_hatch: string;
+        curve_engraving_speed_contrain_warning: string;
         custom_preset: string;
         cut: string;
         diode: string;
@@ -1637,6 +1640,7 @@ export interface ILang {
     confirm_remove_default: string;
     confirm_reset: string;
     continuous_drawing: string;
+    curve_engraving_speed_limit: string;
     custom_preview_height: string;
     default_beambox_model: string;
     default_borderless_mode: string;
