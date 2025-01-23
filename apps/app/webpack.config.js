@@ -174,13 +174,13 @@ module.exports = [
         },
         {
           test: /\.(woff(2)?|ttf|eot|svg|png)$/,
-          use: ['file-loader'],
+          type: 'asset/resource',
         },
       ],
     },
     output: {
       path: path.resolve(__dirname, 'public', 'css', 'dist'),
-      uniqueName: 'app-style',
+      uniqueName: 'app-asset',
     },
     plugins: [new MiniCssExtractPlugin()],
   },

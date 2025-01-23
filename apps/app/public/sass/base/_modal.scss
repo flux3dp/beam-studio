@@ -1,8 +1,11 @@
+@use "../abstracts/mixins";
+@use "../abstracts/variables";
+
 /**
  * modal
  */
 .modal-window {
-    @include flexbox();
+    @include mixins.flexbox();
     background: rgba(0, 0, 0, .1);
     bottom: 0;
     height: 100%;
@@ -11,7 +14,7 @@
     right: 0;
     top: 0;
     width: 100%;
-    z-index: $max-z-index;
+    z-index: variables.$max-z-index;
     align-items: center;
     justify-content: center;
     &.no-background {
@@ -43,7 +46,7 @@
     }
 
     .modal-body {
-        @include flexbox();
+        @include mixins.flexbox();
         max-height: 100%;
     }
 
@@ -94,7 +97,7 @@
 
     // TODO: remove this class after deprecated modals are removed
     .modal-alert {
-        @include flexbox();
+        @include mixins.flexbox();
         background: #F8F8F8;
         flex-direction: column;
         min-height: 100px;
@@ -357,7 +360,7 @@
     }
 
     .control {
-        @include flexbox();
+        @include mixins.flexbox();
         justify-content: space-between;
         align-items: center;
 
@@ -427,7 +430,7 @@
     }
 
     .action-button {
-        @include flexbox();
+        @include mixins.flexbox();
         justify-content: space-between;
     }
 

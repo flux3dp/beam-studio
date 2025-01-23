@@ -1,7 +1,8 @@
+@use "sass:meta";
 .beambox-studio {
-  @import "./beambox/right-panel/right-panel";
-  @import "./beambox/svg-editor";
-  @import "./beambox/tool-panels";
+  @include meta.load-css("beambox/right-panel/right-panel");
+  @include meta.load-css("beambox/svg-editor");
+  @include meta.load-css("beambox/tool-panels");
 
   user-select: none;
   position: absolute;

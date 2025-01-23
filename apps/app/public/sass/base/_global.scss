@@ -1,9 +1,12 @@
+@use "../abstracts/mixins";
+@use "../abstracts/variables";
+
 /**
  * global customize styles
  */
 html,
 body {
-  background-color: $backgroundColor;
+  background-color: variables.$backgroundColor;
   font-family: "Helvetica Neue", "HelveticaNeue-Light", "Helvetica Neue Light", "Open Sans", Helvetica, Arial,
     "Lucida Grande", sans-serif, "Microsoft JhengHei", "微軟正黑體";
   font-size: 12px;
@@ -79,7 +82,7 @@ img {
 }
 
 .content {
-  @include flexbox();
+  @include mixins.flexbox();
   height: 100%;
   overflow: hidden;
   width: 100%;
@@ -125,7 +128,7 @@ img {
 
 /* position */
 .absolute-center {
-  @include absolute-center();
+  @include mixins.absolute-center();
 }
 
 /**
@@ -194,7 +197,7 @@ img {
 }
 
 .file-importer input[type="file"] {
-  @include absolute-center();
+  @include mixins.absolute-center();
   cursor: pointer;
   opacity: 0;
   width: 100%;

@@ -1,20 +1,20 @@
 // abstracts font, animations...
-@import "abstracts/__abstracts";
+@use 'abstracts/__abstracts';
 
 // vendor
-@import "vendor/__vendor";
+@use 'vendor/__vendor';
 
 // base styles written for everywhere
-@import "base/__base";
+@use 'base/__base';
 
 // small modules or components
-@import "components/__components";
+@use 'components/__components';
 
 // main layout
-@import "layout/__layout";
+@use 'layout/__layout';
 
 // pages contents
-@import "pages/__pages";
+@use 'pages/__pages';
 
 // langs overide
-@import "lang/__lang";
+@use 'lang/__lang';

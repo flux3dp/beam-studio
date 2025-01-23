@@ -35,6 +35,8 @@ const IGNORES = [
   '**/helpers/potrace/*',
   '**/helpers/potrace/**/*',
   '**/helpers/clipper/clipper_unminified.js',
+  '**/apps/app/backend/*',
+  '**/apps/app/backend/**/*',
 ];
 
 function addPrefix(prefix, globs) {

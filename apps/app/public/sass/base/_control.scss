@@ -1,3 +1,7 @@
+@use "../abstracts/mixins";
+
+@use 'sass:color';
+
 .ui-control-text-toggle {
   cursor: inherit;
   display: block;
@@ -42,7 +46,7 @@
   padding: 0;
 
   .ui-dialog-menu-item {
-    @include flexbox();
+    @include mixins.flexbox();
     height: 48px;
     line-height: 48px;
   }
@@ -56,7 +60,7 @@
     }
 
     &:checked ~ .dialog-window {
-      @include flexbox();
+      @include mixins.flexbox();
     }
   }
 
@@ -81,7 +85,7 @@
 
     &:active .btn,
     &:active {
-      background: darken($primaryColor, 20%);
+      background: color.adjust($primaryColor, $lightness: -20%);
       color: #e0e0df;
     }
 
@@ -127,4 +131,3 @@
     }
   }
 }
-
