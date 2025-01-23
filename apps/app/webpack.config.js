@@ -6,7 +6,8 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const nodeConfig = require('./webpack.node.js');
 
 const app = path.resolve(__dirname, 'src');
-const coreWeb = path.resolve(__dirname, '../../packages/core/src/web');
+const core = path.resolve(__dirname, '../../packages/core');
+const coreWeb = path.resolve(core, 'src/web');
 
 module.exports = [
   ...nodeConfig,
@@ -115,6 +116,7 @@ module.exports = [
         '@core': coreWeb,
       },
       extensions: ['.tsx', '.ts', '.jsx', '.js', '.sass'],
+      modules: ['node_modules', path.resolve(core, 'node_modules')],
     },
     // stats: 'errors-only',
     target: 'electron30-renderer',
