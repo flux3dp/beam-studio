@@ -9,7 +9,7 @@ import { CHUCK_ROTARY_DIAMETER, getSupportInfo, RotaryType } from '@core/app/con
 import RotaryIcons from '@core/app/icons/rotary/RotaryIcons';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import UnitInput from '@core/app/widgets/UnitInput';
-import localeHelper from '@core/helpers/locale-helper';
+import { checkChuckRotary } from '@core/helpers/checkFeature';
 import useI18n from '@core/helpers/useI18n';
 
 import storage from '@app/implementations/storage';
@@ -50,11 +50,11 @@ const RotarySettings = ({ onClose }: Props): React.JSX.Element => {
       beamboxPreference.write('rotary-chuck-obj-d', diameter);
     }
 
-    if (supportInfo.rotary.mirror) {
+    if (supportInfo.rotary?.mirror) {
       beamboxPreference.write('rotary-mirror', mirror);
     }
 
-    if (supportInfo.rotary.extendWorkarea) {
+    if (supportInfo.rotary?.extendWorkarea) {
       beamboxPreference.write('extend-rotary-workarea', extend);
     }
 
@@ -67,7 +67,7 @@ const RotarySettings = ({ onClose }: Props): React.JSX.Element => {
     }
   };
   const rotaryDisabled = rotaryMode === 0;
-  const chuckOptionDisabled = rotaryDisabled || !supportInfo.rotary.chuck || rotaryType !== RotaryType.Chuck;
+  const chuckOptionDisabled = rotaryDisabled || !supportInfo.rotary?.chuck || rotaryType !== RotaryType.Chuck;
 
   return (
     <Modal
@@ -100,7 +100,7 @@ const RotarySettings = ({ onClose }: Props): React.JSX.Element => {
           </div>
           <div className={styles.control}>
             <Segmented
-              disabled={rotaryDisabled || !supportInfo.rotary.chuck}
+              disabled={rotaryDisabled || !supportInfo.rotary?.chuck}
               id="rotary_type"
               onChange={(val: RotaryType) => setRotaryType(val)}
               options={[
@@ -114,17 +114,17 @@ const RotarySettings = ({ onClose }: Props): React.JSX.Element => {
                   value: RotaryType.Roller,
                 },
                 {
-                  disabled: !localeHelper.isTwOrHk,
+                  disabled: !checkChuckRotary(),
                   label: (
                     <div className={styles.seg}>
                       <RotaryIcons.Chuck />
-                      <div>{localeHelper.isTwOrHk ? 'Chuck' : 'Coming Soon'}</div>
+                      <div>{checkChuckRotary() ? 'Chuck' : 'Coming Soon'}</div>
                     </div>
                   ),
                   value: RotaryType.Chuck,
                 },
               ]}
-              value={supportInfo.rotary.chuck ? rotaryType : RotaryType.Roller}
+              value={supportInfo.rotary?.chuck ? rotaryType : RotaryType.Roller}
             />
           </div>
           <div className={styles.title}>
@@ -138,7 +138,11 @@ const RotarySettings = ({ onClose }: Props): React.JSX.Element => {
               id="object_diameter"
               isInch={isInch}
               min={0}
-              onChange={setDiaMeter}
+              onChange={(val) => {
+                if (val) {
+                  setDiaMeter(val);
+                }
+              }}
               precision={isInch ? 4 : 2}
               value={diameter}
             />
@@ -154,12 +158,16 @@ const RotarySettings = ({ onClose }: Props): React.JSX.Element => {
               id="circumference"
               isInch={isInch}
               min={0}
-              onChange={(val) => setDiaMeter(val / Math.PI)}
+              onChange={(val) => {
+                if (val) {
+                  setDiaMeter(val / Math.PI);
+                }
+              }}
               precision={isInch ? 6 : 4}
               value={diameter * Math.PI}
             />
           </div>
-          {(supportInfo.rotary.mirror || supportInfo.rotary.extendWorkarea) && (
+          {(supportInfo.rotary?.mirror || supportInfo.rotary?.extendWorkarea) && (
             <div className={styles.row}>
               {supportInfo.rotary.mirror && (
                 <Checkbox

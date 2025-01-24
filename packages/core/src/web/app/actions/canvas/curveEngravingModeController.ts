@@ -34,19 +34,30 @@ const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 // TODO: add unit tests
 class CurveEngravingModeController {
   started: boolean;
-  data: CurveEngraving;
-  boundarySvg: SVGSVGElement;
-  boundaryPath: SVGPathElement;
-  areaPath: SVGPathElement;
-  measurer: CurveMeasurer;
+  data: CurveEngraving | null;
+  boundarySvg?: SVGSVGElement;
+  boundaryPath?: SVGPathElement;
+  areaPath?: SVGPathElement;
+  measurer: CurveMeasurer | null;
 
   constructor() {
     this.started = false;
     this.data = null;
+    this.measurer = null;
     canvasEventEmitter.on('canvas-change', this.updateContainer);
   }
 
+  checkSupport = () => {
+    const workarea = beamboxPreference.read('workarea');
+
+    return getSupportInfo(workarea).curveEngraving;
+  };
+
   start = () => {
+    if (!this.checkSupport()) {
+      return;
+    }
+
     this.started = true;
     this.updateBoundaryPath();
     this.toAreaSelectMode();
@@ -62,7 +73,7 @@ class CurveEngravingModeController {
     this.end();
     svgCanvas.setMode('select');
 
-    const workarea: HTMLDivElement = document.querySelector('#workarea');
+    const workarea: HTMLDivElement | null = document.querySelector('#workarea');
 
     if (workarea) {
       if (mode === CanvasMode.Preview) {
@@ -95,7 +106,11 @@ class CurveEngravingModeController {
     }
   };
 
-  applyMeasureData = (data: MeasureData) => {
+  applyRemeasureData = (data: MeasureData) => {
+    if (!this.data) {
+      return;
+    }
+
     this.data = { ...this.data, ...data };
   };
 
@@ -164,7 +179,7 @@ class CurveEngravingModeController {
 
     try {
       let completedCount = 0;
-      const res = await this.measurer.measurePoints(this.data, indices, {
+      const res = await this.measurer!.measurePoints(this.data!, indices, {
         checkCancel: () => canceled,
         onPointFinished: (count) => {
           completedCount = count;
@@ -180,7 +195,7 @@ class CurveEngravingModeController {
         return null;
       }
 
-      this.applyMeasureData(res);
+      this.applyRemeasureData(res);
 
       return this.data;
     } catch {
@@ -232,7 +247,7 @@ class CurveEngravingModeController {
         return;
       }
 
-      const res = await showMeasureArea(newBBox, this.measurer);
+      const res = await showMeasureArea(newBBox, this.measurer!);
 
       if (!res) {
         return;
@@ -316,6 +331,7 @@ class CurveEngravingModeController {
 
     this.boundarySvg.setAttribute('viewBox', `0 0 ${width} ${height}`);
     this.updateBoundaryPath();
+    this.updateAreaPath();
   };
 
   updateBoundaryPath = () => {
@@ -333,7 +349,7 @@ class CurveEngravingModeController {
       this.boundaryPath.setAttribute('fill-opacity', '0.4');
       this.boundaryPath.setAttribute('fill-rule', 'evenodd');
       this.boundaryPath.setAttribute('stroke', 'none');
-      this.boundarySvg.appendChild(this.boundaryPath);
+      this.boundarySvg!.appendChild(this.boundaryPath);
     }
 
     const workarea = beamboxPreference.read('workarea');
@@ -366,7 +382,7 @@ class CurveEngravingModeController {
       this.areaPath.setAttribute('fill-rule', 'evenodd');
       this.areaPath.setAttribute('stroke', '#1890ff');
       this.areaPath.setAttribute('stroke-width', '5');
-      this.boundarySvg.appendChild(this.areaPath);
+      this.boundarySvg!.appendChild(this.areaPath);
     }
 
     const { height, width } = workareaManager;
@@ -384,7 +400,11 @@ class CurveEngravingModeController {
     this.areaPath.setAttribute('d', `${d1} ${d2}`);
   };
 
-  loadData = (data: CurveEngraving, opts: { parentCmd?: IBatchCommand } = {}): ICommand => {
+  loadData = (data: CurveEngraving, opts: { parentCmd?: IBatchCommand } = {}): ICommand | null => {
+    if (!this.checkSupport()) {
+      return null;
+    }
+
     const origData = this.data;
     const cmd = new CustomCommand(
       'Load Curve Engraving Data',
@@ -398,6 +418,7 @@ class CurveEngravingModeController {
     const postLoadData = () => {
       this.updateContainer();
       this.updateAreaPath();
+      canvasEventEmitter.emit('CURVE_ENGRAVING_AREA_SET');
     };
 
     cmd.onAfter = postLoadData;

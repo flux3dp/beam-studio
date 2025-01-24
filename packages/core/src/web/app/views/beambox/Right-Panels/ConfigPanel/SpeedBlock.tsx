@@ -10,7 +10,6 @@ import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import configOptions from '@core/app/constants/config-options';
 import LayerModule from '@core/app/constants/layer-module/layer-modules';
-import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import history from '@core/app/svgedit/history/history';
 import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
@@ -18,8 +17,11 @@ import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/context
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import objectPanelItemStyles from '@core/app/views/beambox/Right-Panels/ObjectPanelItem.module.scss';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import useHasCurveEngraving from '@core/helpers/hooks/useHasCurveEngraving';
+import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import doLayersContainsVector from '@core/helpers/layer/check-vector';
 import { CUSTOM_PRESET_CONSTANT, writeData } from '@core/helpers/layer/layer-config-helper';
+import round from '@core/helpers/math/round';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import units from '@core/helpers/units';
 import useI18n from '@core/helpers/useI18n';
@@ -45,6 +47,7 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   const { activeKey } = useContext(ObjectPanelContext);
   const visible = activeKey === 'speed';
   const { hasVector } = useContext(LayerPanelContext);
+  const hasCurveEngraving = useHasCurveEngraving();
   const timeEstimationButtonEventEmitter = useMemo(
     () => eventEmitterFactory.createEventEmitter('time-estimation-button'),
     [],
@@ -66,42 +69,62 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
 
     return { calculateUnit, decimal: d, display };
   }, []);
-  const workarea: WorkAreaModel = BeamboxPreference.read('workarea');
+  const workarea = useWorkarea();
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
   const {
+    curveSpeedLimit,
+    maxSpeed: maxValue,
+    minSpeed: minValue,
+    minSpeedWarning,
     vectorSpeedLimit,
-    workareaMaxSpeed: maxValue,
-    workareaMinSpeed,
   } = useMemo(() => {
     const workareaObj = getWorkarea(workarea);
 
     return {
+      curveSpeedLimit: workareaObj.curveSpeedLimit,
+      maxSpeed: workareaObj.maxSpeed,
+      minSpeed: workareaObj.minSpeed,
+      minSpeedWarning: workareaObj.minSpeedWarning,
       vectorSpeedLimit: workareaObj.vectorSpeedLimit,
-      workareaMaxSpeed: workareaObj.maxSpeed,
-      workareaMinSpeed: workareaObj.minSpeed,
     };
   }, [workarea]);
-  let minValue = workareaMinSpeed;
-  const enableLowSpeed = BeamboxPreference.read('enable-low-speed');
 
-  if (minValue > 1 && enableLowSpeed) {
-    minValue = 1;
-  }
+  const curveEngravingSpeedWarning = useMemo(() => {
+    if (!curveSpeedLimit) {
+      return '';
+    }
+
+    return sprintf(t.curve_engraving_speed_contrain_warning, {
+      limit: fakeUnit === 'mm' ? `${curveSpeedLimit} mm/s` : `${round(curveSpeedLimit / 25.4, 2)} in/s`,
+    });
+  }, [fakeUnit, curveSpeedLimit, t.curve_engraving_speed_contrain_warning]);
+
+  const vectorSpeedWarning = useMemo(() => {
+    if (!vectorSpeedLimit) {
+      return '';
+    }
+
+    return sprintf(t.speed_contrain_warning, {
+      limit: fakeUnit === 'mm' ? `${vectorSpeedLimit} mm/s` : `${round(vectorSpeedLimit / 25.4, 2)} in/s`,
+    });
+  }, [fakeUnit, t.speed_contrain_warning, vectorSpeedLimit]);
+
+  const { curve: hasCurveLimit, vector: hasVectorLimit } = useMemo(
+    () => ({
+      curve: BeamboxPreference.read('curve_engraving_speed_limit') !== false,
+      vector: BeamboxPreference.read('vector_speed_contraint') !== false,
+    }),
+    [],
+  );
 
   let warningText = '';
 
-  const vectorSpeedWarning = useMemo(
-    () =>
-      sprintf(t.speed_contrain_warning, {
-        limit: fakeUnit === 'mm' ? `${vectorSpeedLimit} mm/s` : `${(vectorSpeedLimit / 25.4).toFixed(2)} in/s`,
-      }),
-    [fakeUnit, t.speed_contrain_warning, vectorSpeedLimit],
-  );
-
   if (!isPromark) {
-    if (hasVector && value > vectorSpeedLimit && BeamboxPreference.read('vector_speed_contraint') !== false) {
+    if (hasCurveLimit && hasCurveEngraving && curveSpeedLimit && value > curveSpeedLimit) {
+      warningText = curveEngravingSpeedWarning;
+    } else if (hasVector && hasVectorLimit && vectorSpeedLimit && value > vectorSpeedLimit) {
       warningText = vectorSpeedWarning;
-    } else if (value < workareaMinSpeed && enableLowSpeed) {
+    } else if (minSpeedWarning && value < minSpeedWarning) {
       warningText = t.low_speed_warning;
     }
   }

@@ -169,7 +169,7 @@ describe('settings/Editor', () => {
       />,
     );
 
-    expect(mockGetBeamboxPreferenceEditingValue).toBeCalledTimes(11);
+    expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenCalledTimes(10);
     expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(1, 'guide_x0');
     expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(2, 'guide_y0');
     expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(3, 'show_guides');
@@ -177,10 +177,9 @@ describe('settings/Editor', () => {
     expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(5, 'anti-aliasing');
     expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(6, 'continuous_drawing');
     expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(7, 'simplify_clipper_path');
-    expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(8, 'enable-low-speed');
-    expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(9, 'auto-switch-tab');
-    expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(10, 'enable-custom-backlash');
-    expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(11, 'path-engine');
+    expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(8, 'auto-switch-tab');
+    expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(9, 'enable-custom-backlash');
+    expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(10, 'path-engine');
     expect(container).toMatchSnapshot();
 
     const SelectControls = container.querySelectorAll('.select-control');
@@ -232,26 +231,22 @@ describe('settings/Editor', () => {
 
     fireEvent.change(SelectControls[9], { target: { value: OptionValues.TRUE } });
     expect(updateBeamboxPreferenceChange).toHaveBeenCalledTimes(7);
-    expect(updateBeamboxPreferenceChange).toHaveBeenNthCalledWith(7, 'enable-low-speed', 'TRUE');
-
-    fireEvent.change(SelectControls[10], { target: { value: OptionValues.TRUE } });
-    expect(updateBeamboxPreferenceChange).toHaveBeenCalledTimes(8);
-    expect(updateBeamboxPreferenceChange).toHaveBeenNthCalledWith(8, 'auto-switch-tab', 'TRUE');
+    expect(updateBeamboxPreferenceChange).toHaveBeenNthCalledWith(7, 'auto-switch-tab', 'TRUE');
 
     fireEvent.change(UnitInputs[0], { target: { value: 1 } });
-    expect(updateBeamboxPreferenceChange).toHaveBeenCalledTimes(9);
-    expect(updateBeamboxPreferenceChange).toHaveBeenNthCalledWith(9, 'guide_x0', 1);
+    expect(updateBeamboxPreferenceChange).toHaveBeenCalledTimes(8);
+    expect(updateBeamboxPreferenceChange).toHaveBeenNthCalledWith(8, 'guide_x0', 1);
 
     fireEvent.change(UnitInputs[1], { target: { value: 2 } });
+    expect(updateBeamboxPreferenceChange).toHaveBeenCalledTimes(9);
+    expect(updateBeamboxPreferenceChange).toHaveBeenNthCalledWith(9, 'guide_y0', 2);
+
+    fireEvent.change(SelectControls[10], { target: { value: 'swiftray' } });
     expect(updateBeamboxPreferenceChange).toHaveBeenCalledTimes(10);
-    expect(updateBeamboxPreferenceChange).toHaveBeenNthCalledWith(10, 'guide_y0', 2);
+    expect(updateBeamboxPreferenceChange).toHaveBeenNthCalledWith(10, 'path-engine', 'swiftray');
 
-    fireEvent.change(SelectControls[11], { target: { value: 'swiftray' } });
+    fireEvent.change(SelectControls[11], { target: { value: OptionValues.TRUE } });
     expect(updateBeamboxPreferenceChange).toHaveBeenCalledTimes(11);
-    expect(updateBeamboxPreferenceChange).toHaveBeenNthCalledWith(11, 'path-engine', 'swiftray');
-
-    fireEvent.change(SelectControls[12], { target: { value: OptionValues.TRUE } });
-    expect(updateBeamboxPreferenceChange).toHaveBeenCalledTimes(12);
-    expect(updateBeamboxPreferenceChange).toHaveBeenNthCalledWith(12, 'enable-custom-backlash', 'TRUE');
+    expect(updateBeamboxPreferenceChange).toHaveBeenNthCalledWith(11, 'enable-custom-backlash', 'TRUE');
   });
 });

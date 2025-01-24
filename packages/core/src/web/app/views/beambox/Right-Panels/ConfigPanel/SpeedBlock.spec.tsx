@@ -7,24 +7,6 @@ import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts
 
 import ConfigPanelContext from './ConfigPanelContext';
 
-jest.mock('@core/helpers/useI18n', () => () => ({
-  beambox: {
-    right_panel: {
-      laser_panel: {
-        slider: {
-          high: 'high',
-          low: 'low',
-          regular: 'regular',
-          very_high: 'very_high',
-          very_low: 'very_low',
-        },
-        speed: 'speed',
-        speed_contrain_warning: 'speed_contrain_warning',
-      },
-    },
-  },
-}));
-
 jest.mock('./ConfigSlider', () => ({ id, max, min, onChange, value }: any) => (
   <input
     className="mock-config-slider"
@@ -151,18 +133,27 @@ jest.mock('@core/helpers/layer/check-vector', () => jest.fn());
 
 import SpeedBlock from './SpeedBlock';
 
+const mockUseHasCurveEngraving = jest.fn();
+
+jest.mock('@core/helpers/hooks/useHasCurveEngraving', () => () => mockUseHasCurveEngraving());
+
+const mockUseWorkarea = jest.fn();
+
+jest.mock('@core/helpers/hooks/useWorkarea', () => () => mockUseWorkarea());
+
 describe('test SpeedBlock', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockCreateEventEmitter.mockReturnValueOnce({
       emit: mockEmit,
     });
+    mockUseHasCurveEngraving.mockReturnValue(false);
+    mockStorageGet.mockReturnValue('mm');
+    mockPrefRead.mockReturnValueOnce(true).mockReturnValueOnce(true);
+    mockUseWorkarea.mockReturnValue('fbm1');
   });
 
   it('should render correctly when unit is mm', () => {
-    mockStorageGet.mockReturnValueOnce('mm');
-    mockPrefRead.mockReturnValueOnce('fbm1').mockReturnValueOnce(true).mockReturnValueOnce(true);
-
     const { container } = render(
       <ConfigPanelContext.Provider
         value={{
@@ -176,17 +167,16 @@ describe('test SpeedBlock', () => {
       </ConfigPanelContext.Provider>,
     );
 
-    expect(mockStorageGet).toBeCalledTimes(1);
+    expect(mockStorageGet).toHaveBeenCalledTimes(1);
     expect(mockStorageGet).toHaveBeenLastCalledWith('default-units');
-    expect(mockPrefRead).toBeCalledTimes(2);
-    expect(mockPrefRead).toHaveBeenNthCalledWith(1, 'workarea');
-    expect(mockPrefRead).toHaveBeenNthCalledWith(2, 'enable-low-speed');
+    expect(mockPrefRead).toHaveBeenCalledTimes(2);
+    expect(mockPrefRead).toHaveBeenNthCalledWith(1, 'curve_engraving_speed_limit');
+    expect(mockPrefRead).toHaveBeenNthCalledWith(2, 'vector_speed_contraint');
     expect(container).toMatchSnapshot();
   });
 
   it('should render correctly when unit is inches', () => {
     mockStorageGet.mockReturnValueOnce('inches');
-    mockPrefRead.mockReturnValueOnce('fbm1').mockReturnValueOnce(true).mockReturnValueOnce(true);
 
     const { container } = render(
       <ConfigPanelContext.Provider
@@ -205,9 +195,6 @@ describe('test SpeedBlock', () => {
   });
 
   it('should render correctly when type is panel-item', () => {
-    mockStorageGet.mockReturnValueOnce('mm');
-    mockPrefRead.mockReturnValueOnce('fbm1').mockReturnValueOnce(true).mockReturnValueOnce(true);
-
     const { container } = render(
       <ConfigPanelContext.Provider
         value={{
@@ -221,18 +208,10 @@ describe('test SpeedBlock', () => {
       </ConfigPanelContext.Provider>,
     );
 
-    expect(mockStorageGet).toBeCalledTimes(1);
-    expect(mockStorageGet).toHaveBeenLastCalledWith('default-units');
-    expect(mockPrefRead).toBeCalledTimes(2);
-    expect(mockPrefRead).toHaveBeenNthCalledWith(1, 'workarea');
-    expect(mockPrefRead).toHaveBeenNthCalledWith(2, 'enable-low-speed');
     expect(container).toMatchSnapshot();
   });
 
   it('should render correctly when has vector warning', () => {
-    mockStorageGet.mockReturnValueOnce('mm');
-    mockPrefRead.mockReturnValueOnce('fhex1').mockReturnValueOnce(true).mockReturnValueOnce(true);
-
     const { container } = render(
       <LayerPanelContext.Provider value={{ hasVector: true } as any}>
         <ConfigPanelContext.Provider
@@ -249,15 +228,32 @@ describe('test SpeedBlock', () => {
     );
 
     expect(container).toMatchSnapshot();
-    expect(mockPrefRead).toBeCalledTimes(3);
-    expect(mockPrefRead).toHaveBeenNthCalledWith(1, 'workarea');
-    expect(mockPrefRead).toHaveBeenNthCalledWith(2, 'enable-low-speed');
-    expect(mockPrefRead).toHaveBeenNthCalledWith(3, 'vector_speed_contraint');
+    expect(container.querySelector('.warning')).toBeInTheDocument();
+  });
+
+  it('should render correctly when has curve engraving warning', () => {
+    mockUseWorkarea.mockReturnValue('fbb2');
+    mockUseHasCurveEngraving.mockReturnValue(true);
+
+    const { container } = render(
+      <ConfigPanelContext.Provider
+        value={{
+          dispatch: mockDispatch,
+          initState: mockInitState,
+          selectedLayers: mockSelectedLayers,
+          state: mockContextState as any,
+        }}
+      >
+        <SpeedBlock />
+      </ConfigPanelContext.Provider>,
+    );
+
+    expect(container).toMatchSnapshot();
+    expect(container.querySelector('.warning')).toBeInTheDocument();
   });
 
   it('should render correctly when has low speed warning', () => {
-    mockStorageGet.mockReturnValueOnce('mm');
-    mockPrefRead.mockReturnValueOnce('fhex1').mockReturnValueOnce(true).mockReturnValueOnce(true);
+    mockUseWorkarea.mockReturnValue('fhexa1');
 
     const state = { ...mockContextState, speed: { value: 1 } };
     const { container } = render(
@@ -276,15 +272,10 @@ describe('test SpeedBlock', () => {
     );
 
     expect(container).toMatchSnapshot();
-    expect(mockPrefRead).toBeCalledTimes(2);
-    expect(mockPrefRead).toHaveBeenNthCalledWith(1, 'workarea');
-    expect(mockPrefRead).toHaveBeenNthCalledWith(2, 'enable-low-speed');
+    expect(container.querySelector('.warning')).toBeInTheDocument();
   });
 
   test('onChange should work', () => {
-    mockStorageGet.mockReturnValueOnce('mm');
-    mockPrefRead.mockReturnValueOnce('fbm1').mockReturnValueOnce(true).mockReturnValueOnce(true);
-
     const { container } = render(
       <ConfigPanelContext.Provider
         value={{
@@ -337,9 +328,6 @@ describe('test SpeedBlock', () => {
   });
 
   test('onChange of value display should work correctly', () => {
-    mockStorageGet.mockReturnValueOnce('mm');
-    mockPrefRead.mockReturnValueOnce('fbm1').mockReturnValueOnce(true).mockReturnValueOnce(true);
-
     const { getByText } = render(
       <ConfigPanelContext.Provider
         value={{

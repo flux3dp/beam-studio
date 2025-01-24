@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test BB2Settings should render correctly 1`] = `
+<div>
+  <div
+    class="subtitle"
+  >
+    Beambox II
+  </div>
+  <div>
+    mock-select-control id:
+    set-curve-engraving-speed-contraint
+    label:
+    3D Curve Speed Limit
+    url:
+    options:
+    [{"label":"On","selected":true,"value":"TRUE"},{"label":"Off","selected":false,"value":"FALSE"}]
+    <input
+      class="select-control"
+    />
+  </div>
+</div>
+`;

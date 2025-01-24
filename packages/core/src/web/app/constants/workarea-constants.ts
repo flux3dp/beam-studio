@@ -18,6 +18,7 @@ const { dpmm } = constant;
 export interface WorkArea {
   autoFocusOffset?: number[]; // [mm, mm]
   cameraCenter?: number[]; // [mm, mm]
+  curveSpeedLimit?: number; // mm/s
   deep?: number; // mm
   dismensionCustomizable?: boolean;
   // extra displayHeight for modules
@@ -27,6 +28,7 @@ export interface WorkArea {
   maxSpeed: number; // mm/s
   minPower?: number; // %
   minSpeed: number; // mm/s
+  minSpeedWarning?: number; // mm/s
   passThroughMaxHeight?: number; // mm
   pxDisplayHeight?: number; // px
   pxHeight: number; // px
@@ -59,6 +61,7 @@ const workareaConstants: { [key in WorkAreaModel]: WorkArea } = {
     maxSpeed: 300,
     minPower: 10,
     minSpeed: 0.5,
+    minSpeedWarning: 3,
     pxHeight: 375 * dpmm,
     pxWidth: 400 * dpmm,
     vectorSpeedLimit: 20,
@@ -70,6 +73,7 @@ const workareaConstants: { [key in WorkAreaModel]: WorkArea } = {
     maxSpeed: 300,
     minPower: 10,
     minSpeed: 0.5,
+    minSpeedWarning: 3,
     pxHeight: 375 * dpmm,
     pxWidth: 600 * dpmm,
     vectorSpeedLimit: 20,
@@ -78,6 +82,7 @@ const workareaConstants: { [key in WorkAreaModel]: WorkArea } = {
   fbb2: {
     autoFocusOffset: [28, 0, 0],
     cameraCenter: [300, 150],
+    curveSpeedLimit: 50,
     height: 375,
     label: 'Beambox II',
     maxSpeed: 900,
@@ -94,6 +99,7 @@ const workareaConstants: { [key in WorkAreaModel]: WorkArea } = {
     maxSpeed: 300,
     minPower: 10,
     minSpeed: 0.5,
+    minSpeedWarning: 3,
     pxHeight: 210 * dpmm,
     pxWidth: 300 * dpmm,
     vectorSpeedLimit: 20,
@@ -106,6 +112,7 @@ const workareaConstants: { [key in WorkAreaModel]: WorkArea } = {
     maxSpeed: 900,
     minPower: 10,
     minSpeed: 0.5,
+    minSpeedWarning: 3,
     pxHeight: 410 * dpmm,
     pxWidth: 740 * dpmm,
     vectorSpeedLimit: 20,

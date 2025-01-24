@@ -291,7 +291,6 @@ const fetchTaskCodeSwiftray = async (
     shouldMockFastGradient: isNonFGCode,
     shouldUseFastGradient: shouldUseFastGradient && !isNonFGCode,
     travelSpeed: isPromark ? controlConfig.travelSpeed : 100,
-    vectorSpeedConstraint: !isPromark && BeamboxPreference.read('vector_speed_contraint') !== false,
   };
 
   if (!isPromark) {

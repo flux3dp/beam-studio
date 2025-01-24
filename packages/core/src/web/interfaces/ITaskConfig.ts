@@ -13,7 +13,6 @@ export interface IBaseConfig {
   supportJobOrigin?: boolean;
   supportPwm?: boolean;
   travelSpeed?: number;
-  vectorSpeedConstraint?: boolean;
 }
 
 export type TFcodeOptionalConfig = Partial<{
@@ -22,10 +21,11 @@ export type TFcodeOptionalConfig = Partial<{
   ats: number; // a travel speed
   blade: number; // blade radius
   cbl: boolean; // custom backlash
+  csl: number; // curve speed limit
   curve_engraving: {
     bbox: BBox;
     gap: [number, number];
-    points: Array<[number, number, number]>;
+    points: Array<[number, number, null | number]>;
     safe_height?: number;
   };
   diode: [number, number]; // diode offset

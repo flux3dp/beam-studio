@@ -167,22 +167,23 @@ export const getExportOpt = (
     config.mfg = true;
   }
 
-  if (opt.vectorSpeedConstraint) {
-    if (workareaObj.vectorSpeedLimit) {
-      config.vsc = true; // not used by new backend, keep for web version compatibility
-      config.vsl = workareaObj.vectorSpeedLimit * 60; // convert to mm/min
+  if (curveEngravingModeController.hasArea() && supportInfo.curveEngraving) {
+    if (BeamboxPreference.read('curve_engraving_speed_limit') !== false && workareaObj.curveSpeedLimit) {
+      config.csl = workareaObj.curveSpeedLimit * 60; // convert to mm/min
     }
+  }
+
+  if (BeamboxPreference.read('vector_speed_contraint') !== false && workareaObj.vectorSpeedLimit) {
+    config.vsc = true; // not used by new backend, keep for web version compatibility
+    config.vsl = workareaObj.vectorSpeedLimit * 60; // convert to mm/min
   }
 
   if (!supportPwm) {
     config.no_pwm = true;
   }
 
-  if (workareaObj.minSpeed < 3) {
-    config.min_speed = workareaObj.minSpeed;
-  } else if (BeamboxPreference.read('enable-low-speed')) {
-    config.min_speed = 1;
-  }
+  // default min_speed is 3 if not set
+  config.min_speed = workareaObj.minSpeed;
 
   if (BeamboxPreference.read('reverse-engraving')) {
     config.rev = true;
@@ -192,8 +193,8 @@ export const getExportOpt = (
     config.cbl = true;
   }
 
-  let printingTopPadding: number;
-  let printingBotPadding: number;
+  let printingTopPadding: number | undefined = undefined;
+  let printingBotPadding: number | undefined = undefined;
 
   if (rotaryMode && constant.adorModels.includes(model)) {
     printingTopPadding = 43;
@@ -296,8 +297,8 @@ export const getExportOpt = (
     config.loop_compensation = loopCompensation;
   }
 
-  if (curveEngravingModeController.hasArea()) {
-    const { bbox, gap, highest, lowest, objectHeight, points } = curveEngravingModeController.data;
+  if (curveEngravingModeController.hasArea() && supportInfo.curveEngraving) {
+    const { bbox, gap, highest, lowest, objectHeight, points } = curveEngravingModeController.data!;
     const data = {
       bbox,
       gap,
