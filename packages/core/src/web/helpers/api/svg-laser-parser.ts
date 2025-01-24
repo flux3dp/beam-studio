@@ -173,7 +173,7 @@ export const getExportOpt = (
     }
   }
 
-  if (BeamboxPreference.read('vector_speed_contraint') !== 'false' && workareaObj.vectorSpeedLimit) {
+  if (BeamboxPreference.read('vector_speed_contraint') !== false && workareaObj.vectorSpeedLimit) {
     config.vsc = true; // not used by new backend, keep for web version compatibility
     config.vsl = workareaObj.vectorSpeedLimit * 60; // convert to mm/min
   }
