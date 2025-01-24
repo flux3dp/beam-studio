@@ -19,6 +19,8 @@ const preset = {
   pulseWidth: 100,
   repeat: 1,
   speed: 100,
+  wobbleDiameter: 0.2,
+  wobbleStep: 0.01,
 };
 const maxSpeed = 100;
 const minSpeed = 0.1;
@@ -34,6 +36,8 @@ const inputTests = [
   { key: 'fillInterval', value: 0.2 },
   { key: 'fillAngle', value: 10 },
   { key: 'dottingTime', value: 150 },
+  { key: 'wobbleStep', value: 0.1 },
+  { key: 'wobbleDiameter', value: 2 },
 ];
 
 const switchTests = [
