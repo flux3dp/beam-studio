@@ -1350,27 +1350,18 @@ const svgEditor = (window['svgEditor'] = (function () {
         panning = false;
       });
 
-      $(document)
-        .bind('keydown', 'space', function (evt) {
-          svgCanvas.spaceKey = keypan = true;
-          workarea.css('cursor', 'grab');
-          evt.preventDefault();
-        })
-        .bind('keyup', 'space', function (evt) {
-          evt.preventDefault();
+      Shortcuts.on([' '], () => {
+        svgCanvas.spaceKey = keypan = true;
+        workarea.css('cursor', 'grab');
+      });
+      // FIXME: use document.addEventListener('keyup', (evt) => { ... })
+      // because shortcuts are not providing keyup event now
+      document.addEventListener('keyup', (evt) => {
+        if (evt.key === ' ') {
           workarea.css('cursor', 'auto');
           svgCanvas.spaceKey = keypan = false;
-        })
-        .bind('keydown', 'shift', function (evt) {
-          if (svgCanvas.getMode() === 'zoom') {
-            workarea.css('cursor', zoomOutIcon);
-          }
-        })
-        .bind('keyup', 'shift', function (evt) {
-          if (svgCanvas.getMode() === 'zoom') {
-            workarea.css('cursor', zoomInIcon);
-          }
-        });
+        }
+      });
 
       editor.setPanning = function (active) {
         svgCanvas.spaceKey = keypan = active;
