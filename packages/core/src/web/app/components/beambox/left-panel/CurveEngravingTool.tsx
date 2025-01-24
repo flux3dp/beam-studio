@@ -20,7 +20,7 @@ interface Props {
 // TODO add unit tests
 const CurveEngravingTool = ({ className }: Props): JSX.Element => {
   const forceUpdate = useForceUpdate();
-  const hasCurveEngraving = useHasCurveEngraving;
+  const hasCurveEngraving = useHasCurveEngraving();
 
   const lang = useI18n().beambox.left_panel.label;
   const currentCursorMode = svgCanvas.getMode();
