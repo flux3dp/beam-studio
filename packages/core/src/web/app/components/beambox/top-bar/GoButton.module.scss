@@ -1,9 +1,12 @@
-@use "./_mixins.scss" as mixins;
+@use './_mixins.scss' as mixins;
 
 .button {
   @include mixins.button();
-  display: flex;
-  align-items: center;
+
+  & {
+    display: flex;
+    align-items: center;
+  }
 
   // only exist in white mode
   .text {

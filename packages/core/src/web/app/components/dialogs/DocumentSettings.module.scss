@@ -1,4 +1,4 @@
-@use "@core/styles/variables" as variables;
+@use '@core/styles/variables' as variables;
 
 .container {
   margin-top: 28px;
@@ -36,7 +36,7 @@
         grid-template-rows: 16px 16px 16px;
         height: fit-content;
 
-        input[type="radio"] {
+        input[type='radio'] {
           width: 16px;
           height: 16px;
         }
@@ -149,7 +149,7 @@
 
         label {
           &::after {
-            content: ":";
+            content: ':';
             margin-left: 4px;
           }
         }

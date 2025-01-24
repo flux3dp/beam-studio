@@ -1,4 +1,4 @@
-@use "./item" as item;
+@use './item' as item;
 
 .container {
   @include item.container;

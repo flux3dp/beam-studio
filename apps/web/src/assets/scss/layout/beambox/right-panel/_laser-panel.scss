@@ -1,8 +1,10 @@
+@use "../../../abstracts/variables";
+
 #laser-panel {
   background-color: #f8f8f8;
   height: 100%;
   margin-top: -1px;
-  border: 1px $panelBorderColor solid;
+  border: 1px variables.$panelBorderColor solid;
   border-width: 1px 0 0 0;
   border-radius: 4px;
 
@@ -10,7 +12,7 @@
     line-height: 20px;
     padding: 10px 15px;
     background: #f2f2f2;
-    border-bottom: 1px $panelBorderColor solid;
+    border-bottom: 1px variables.$panelBorderColor solid;
     text-align: left;
     color: #333;
     font-weight: bold;
@@ -190,7 +192,7 @@
       line-height: 20px;
       padding: 10px 15px;
       background: #f2f2f2;
-      border: 1px $panelBorderColor solid;
+      border: 1px variables.$panelBorderColor solid;
       border-width: 1px 0;
       text-align: left;
       color: #333;
@@ -235,7 +237,7 @@
 
       &.more-than-one {
         select {
-          background-image: url("#{$s3}/images/icon-3d-arrow-down.png");
+          background-image: url("#{variables.$s3}/images/icon-3d-arrow-down.png");
           background-position: calc(100% - 4px) center;
           background-repeat: no-repeat;
           background-size: 8px 8px;

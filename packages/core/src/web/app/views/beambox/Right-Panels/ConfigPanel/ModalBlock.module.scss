@@ -1,4 +1,4 @@
-@use "./mixins" as mixins;
+@use './mixins' as mixins;
 
 .block {
   @include mixins.modal-block;

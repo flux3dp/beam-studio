@@ -1,4 +1,4 @@
-@use "@core/styles/variables" as variables;
+@use '@core/styles/variables' as variables;
 
 .flux-login {
   .button {
@@ -33,11 +33,11 @@
         color: #ffffff;
         background-color: #1877f2;
         border-color: #1877f2;
-        background-image: url("#{variables.$s3}/images/facebook-icon.svg");
+        background-image: url('#{variables.$s3}/images/facebook-icon.svg');
       }
 
       &.google {
-        background-image: url("#{variables.$s3}/images/google-icon.svg");
+        background-image: url('#{variables.$s3}/images/google-icon.svg');
       }
     }
   }
@@ -51,7 +51,7 @@
       font-weight: 500;
 
       .remember-me {
-        input[type="checkbox"] {
+        input[type='checkbox'] {
           width: 16px;
           height: 16px;
           margin: 0 5px;

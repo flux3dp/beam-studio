@@ -1,5 +1,5 @@
-@use "@core/styles/variables" as variables;
-@use "./_mixins.scss" as mixins;
+@use '@core/styles/variables' as variables;
+@use './_mixins.scss' as mixins;
 
 .user-avatar {
   cursor: pointer;
@@ -16,7 +16,10 @@
 
   .default-avatar {
     @include mixins.button();
-    height: auto;
-    font-size: 26px;
+
+    & {
+      height: auto;
+      font-size: 26px;
+    }
   }
 }

@@ -1,10 +1,13 @@
-@use "./_mixins.scss" as mixins;
+@use './_mixins.scss' as mixins;
 
 .button {
   @include mixins.button();
-  display: flex;
-  align-items: center;
-  gap: 4px;
+
+  & {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
 
   .text {
     font-size: 12px;

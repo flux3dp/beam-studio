@@ -6,7 +6,7 @@ $gap: 8px;
 $scrollbar-x: 20px;
 
 // clear scroll setting of floating panel
-.panel [class*="scroll-content"]:not(.scroll-content) {
+.panel [class*='scroll-content']:not(.scroll-content) {
   overflow: hidden;
   margin-bottom: 0;
   padding-bottom: 0;

@@ -2,7 +2,7 @@
   overflow: hidden;
 
   &::after {
-    content: "";
+    content: '';
     position: absolute;
     inset-inline-end: 1px;
     top: 0;
@@ -108,7 +108,7 @@
     cursor: pointer;
 
     &::before {
-      content: "";
+      content: '';
       pointer-events: none;
       width: 22px;
       height: 22px;
@@ -140,7 +140,7 @@
         border-inline-start: 0;
         transform: rotate(45deg) scale(0) translate(-50%, -50%);
         opacity: 0;
-        content: "";
+        content: '';
         transition:
           all 0.1s cubic-bezier(0.71, -0.46, 0.88, 0.6),
           opacity 0.1s;

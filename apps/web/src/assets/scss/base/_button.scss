@@ -1,3 +1,5 @@
+@use "../abstracts/mixins";
+
 /**
  * buttons
  */
@@ -147,7 +149,7 @@
 
 /* button group */
 .btn-h-group {
-  @include flexbox();
+  @include mixins.flexbox();
   align-items: center;
   justify-content: center;
 

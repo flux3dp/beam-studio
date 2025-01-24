@@ -57,7 +57,7 @@ module.exports = [
               loader: 'css-loader',
               options: { modules: { localIdentName: '[path][name]__[local]--[hash:base64:5]' } },
             },
-            { loader: 'sass-loader' },
+            { loader: 'sass-loader', options: { api: 'modern-compiler' } },
           ],
         },
         {
@@ -172,7 +172,11 @@ module.exports = [
       rules: [
         {
           test: /\.s[ac]ss$/i,
-          use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
+          use: [
+            MiniCssExtractPlugin.loader,
+            'css-loader',
+            { loader: 'sass-loader', options: { api: 'modern-compiler' } },
+          ],
         },
         {
           test: /\.(woff(2)?|ttf|eot|svg|png)$/,

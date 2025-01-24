@@ -1,9 +1,9 @@
 const { merge } = require('webpack-merge');
 const WorkboxPlugin = require('workbox-webpack-plugin');
 
-const common = require('./webpack.common.js');
+const config = require('./webpack.config.js');
 
-module.exports = merge(common, {
+module.exports = merge(config, {
   mode: 'production',
   plugins: [
     new WorkboxPlugin.GenerateSW({

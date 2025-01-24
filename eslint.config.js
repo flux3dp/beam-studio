@@ -136,11 +136,7 @@ module.exports = [
       'ts/consistent-type-imports': 'error',
       'ts/no-unused-vars': [
         'error',
-        {
-          argsIgnorePattern: '^_',
-          caughtErrorsIgnorePattern: '^_',
-          varsIgnorePattern: '^_',
-        },
+        { argsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_', varsIgnorePattern: '^_' },
       ],
       'unusedImport/no-unused-imports': 'error',
       ...perfectionistRules,
@@ -152,27 +148,19 @@ module.exports = [
     rules: {
       'format/prettier': [
         'error',
-        {
-          parser: 'typescript',
-          printWidth: 10000,
-          semi: true,
-          singleQuote: true,
-          tabWidth: 2,
-        },
+        { parser: 'typescript', printWidth: 10000, semi: true, singleQuote: true, tabWidth: 2 },
       ],
     },
   },
   {
     files: [SRC_GLOB_STYLE],
     languageOptions: { parser: format.parserPlain },
-    rules: { 'format/prettier': ['error', { parser: 'scss', tabWidth: 2 }] },
+    rules: { 'format/prettier': ['error', { parser: 'scss', semi: true, singleQuote: true, singleQuote: true }] },
   },
   {
     files: SRC_GLOB_TESTS,
     languageOptions: { globals: { ...globals.jest } },
-    rules: {
-      'import/order': 'off',
-    },
+    rules: { 'import/order': 'off' },
   },
   {
     files: ['**/webpack.*.js', 'eslint.config.js', './eslint/**/*.js'],
@@ -195,11 +183,7 @@ module.exports = [
           'newlines-between': 'always',
           pathGroups: [
             // place react and react-native imports at the top
-            {
-              group: 'external',
-              pattern: 'react+(|-native)',
-              position: 'before',
-            },
+            { group: 'external', pattern: 'react+(|-native)', position: 'before' },
             { group: 'internal', pattern: '@core/**', position: 'before' },
             { group: 'internal', pattern: '@app/**', position: 'before' },
           ],

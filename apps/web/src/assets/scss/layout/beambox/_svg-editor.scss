@@ -1,3 +1,6 @@
+@use "../../abstracts/mixins";
+@use "../../abstracts/variables";
+
 
 #svg_editor {
   color: #000;
@@ -53,7 +56,7 @@
     }
 
     #svgcanvas {
-      background: $backgroundColor;
+      background: variables.$backgroundColor;
 
       #rotaryAxis {
         #transparent {
@@ -66,7 +69,7 @@
   #main_button,
   #tools_left,
   #tools_bottom {
-    @include force-hide();
+    @include mixins.force-hide();
   }
 
   #tools_top {
@@ -89,7 +92,7 @@
 #svg_prefs //#cmenu_canvas
 
   {
-  @include force-hide();
+  @include mixins.force-hide();
 }
 
 * {

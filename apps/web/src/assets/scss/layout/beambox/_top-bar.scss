@@ -1,9 +1,11 @@
+@use "../../abstracts/variables";
+
 .top-bar {
   position: absolute;
   top: 0px;
   left: 0px;
   width: 100%;
-  height: $topBarHeight;
+  height: variables.$topBarHeight;
   background-color: #333;
   -webkit-app-region: drag;
 

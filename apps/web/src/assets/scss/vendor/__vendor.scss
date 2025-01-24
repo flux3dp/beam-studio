@@ -1,6 +1,6 @@
-@import "./animate.min";
-@import "./cropperjs";
+@use "animate.min";
+@use "cropperjs";
 // @import "./font-awesome";
-@import "./message-growl";
-@import "./top-bar-menu-container";
-@import "./context-menu";
+@use "message-growl";
+@use "top-bar-menu-container";
+@use "context-menu";
