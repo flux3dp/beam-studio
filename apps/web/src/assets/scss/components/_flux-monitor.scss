@@ -1,3 +1,5 @@
+@use "../abstracts/variables";
+
 .flux-monitor {
   $panelWidth: 31rem;
   $white: #fff;
@@ -31,7 +33,7 @@
         position: absolute;
         top: 0px;
         left: 15px;
-        color: $primaryColor;
+        color: variables.$primaryColor;
         cursor: pointer;
 
         img {
@@ -257,7 +259,7 @@
 
       .controls {
         position: absolute;
-        color: $primaryColor;
+        color: variables.$primaryColor;
         text-align: center;
         width: 60px;
         cursor: pointer;
@@ -328,33 +330,33 @@
       }
 
       .btn-cancel {
-        background-image: url("#{$s3}/images/btn-run.svg");
+        background-image: url("#{variables.$s3}/images/btn-run.svg");
         transform: scaleX(-1);
       }
 
       .btn-go {
-        background-image: url("#{$s3}/images/btn-run.svg");
+        background-image: url("#{variables.$s3}/images/btn-run.svg");
       }
 
       .btn-stop {
-        background-image: url("#{$s3}/images/btn-stop.svg");
+        background-image: url("#{variables.$s3}/images/btn-stop.svg");
       }
 
       .btn-pause {
-        background-image: url("#{$s3}/images/btn-pause.svg");
+        background-image: url("#{variables.$s3}/images/btn-pause.svg");
       }
 
       .btn-download {
-        background-image: url("#{$s3}/images/btn-download.svg");
+        background-image: url("#{variables.$s3}/images/btn-download.svg");
       }
 
       .btn-upload {
-        background-image: url("#{$s3}/images/btn-upload.svg");
+        background-image: url("#{variables.$s3}/images/btn-upload.svg");
       }
 
       .btn-camera {
 
-        background-image: url("#{$s3}/images/btn-camera.svg");
+        background-image: url("#{variables.$s3}/images/btn-camera.svg");
         &.on {
           opacity: 1;
 
@@ -437,7 +439,7 @@
     .btn {
       font-size: 1rem;
       color: #fff;
-      background-color: $primaryColor;
+      background-color: variables.$primaryColor;
       border-radius: 0;
       margin: 0 0.25rem;
       padding: 0 12px;
@@ -482,7 +484,7 @@
   height: 400px;
   overflow: scroll;
   .folder, .file {
-    color: $primaryColor;
+    color: variables.$primaryColor;
     width: 150px;
     height: 180px;
     text-align: center;

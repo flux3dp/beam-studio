@@ -51,13 +51,25 @@ module.exports = {
           },
           {
             loader: 'sass-loader',
+            options: {
+              api: 'modern-compiler',
+            },
           },
         ],
       },
       {
         exclude: /\.module\.s[ac]ss$/,
         test: /\.scss$/i,
-        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          {
+            loader: 'sass-loader',
+            options: {
+              api: 'modern-compiler',
+            },
+          },
+        ],
       },
       {
         exclude: /\.module\.css$/,

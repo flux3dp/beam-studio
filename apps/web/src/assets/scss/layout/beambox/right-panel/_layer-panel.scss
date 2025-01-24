@@ -1,7 +1,9 @@
+@use "../../../abstracts/variables";
+
 #drag-image {
   position: fixed;
   z-index: -1;
-  width: $sidePanelWidth;
+  width: variables.$sidePanelWidth;
   background-color: transparent;
 
   .layer-back {

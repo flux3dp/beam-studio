@@ -1,8 +1,10 @@
+@use "../abstracts/variables";
+
 .controls {
   overflow-y: hidden;
 
   .label {
-    color: $primaryColor;
+    color: variables.$primaryColor;
     font-size: 13px;
     line-height: 40px;
     width: 120px;
@@ -58,7 +60,7 @@
     >div {
       width: 15px;
       height: 15px;
-      background-image: url("#{$s3}/images/icon-radio-off.png");
+      background-image: url("#{variables.$s3}/images/icon-radio-off.png");
       background-size: 15px 15px;
       display: inline-block;
       margin-right: 10px;
@@ -66,7 +68,7 @@
     }
 
     .selected {
-      background-image: url("#{$s3}/images/icon-radio-on.png");
+      background-image: url("#{variables.$s3}/images/icon-radio-on.png");
     }
 
     .grey-out {
@@ -84,7 +86,7 @@
     >div {
       width: 15px;
       height: 15px;
-      background-image: url("#{$s3}/images/icon-checkbox-off.png");
+      background-image: url("#{variables.$s3}/images/icon-checkbox-off.png");
       background-size: 15px 15px;
       display: inline-block;
       margin-right: 10px;
@@ -92,7 +94,7 @@
     }
 
     .selected {
-      background-image: url("#{$s3}/images/icon-checkbox-on.png");
+      background-image: url("#{variables.$s3}/images/icon-checkbox-on.png");
     }
 
     .grey-out {
@@ -131,7 +133,7 @@
       -webkit-appearance: none;
       -moz-appearance: none;
       appearance: none;
-      background: url("#{$s3}/images/arrow-down.png") no-repeat;
+      background: url("#{variables.$s3}/images/arrow-down.png") no-repeat;
       background-position: 245px 9px;
       background-size: 16px 10px;
       height: 30px;
@@ -181,7 +183,7 @@
   select {
     border: 1px solid #e2e2e2;
     border-radius: 4px;
-    background-image: url("#{$s3}/images/icon-3d-arrow-down.png");
+    background-image: url("#{variables.$s3}/images/icon-3d-arrow-down.png");
     background-repeat: no-repeat;
     background-size: 8px 8px;
     background-color: transparent;

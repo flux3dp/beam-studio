@@ -1,3 +1,5 @@
+@use "../abstracts/variables";
+
 .cropper {
   &-container {
     direction: ltr;
@@ -258,7 +260,7 @@
   }
 
   &-bg {
-    background-image: url("#{$s3}/images/bg.png");
+    background-image: url("#{variables.$s3}/images/bg.png");
   }
 
   &-hide {

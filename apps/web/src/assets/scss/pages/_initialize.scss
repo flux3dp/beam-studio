@@ -1,3 +1,6 @@
+@use "../abstracts/mixins";
+@use "../abstracts/variables";
+
 .initialization {
   // local varibles
   $primary-font-color: #808080;
@@ -24,7 +27,7 @@
   }
 
   select {
-    background: url("#{$s3}/images/arrow-down.png") #fff no-repeat;
+    background: url("#{variables.$s3}/images/arrow-down.png") #fff no-repeat;
     background-position: calc(100% - 5px) center;
     background-size: 16px 10px;
     border: none;
@@ -479,7 +482,7 @@
       }
 
       .h-control {
-        @include flexbox();
+        @include mixins.flexbox();
         align-items: center;
         margin: 0 0 10px 0;
       }
@@ -558,7 +561,7 @@
       }
 
       .row-fluid {
-        @include flexbox();
+        @include mixins.flexbox();
         cursor: pointer;
         height: 100%;
         margin: 0;
@@ -638,7 +641,7 @@
     width: 416px;
 
     .control {
-      @include flexbox();
+      @include mixins.flexbox();
       margin: 0 0 10px 0;
       justify-content: space-around;
       align-items: center;

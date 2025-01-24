@@ -1,3 +1,5 @@
+@use "../abstracts/variables";
+
 .more-config-panel {
   .config-list-column {
     width: 45%;
@@ -17,7 +19,7 @@
       display: flex;
       justify-content: space-between;
       border-bottom: 1px solid #e0e0df;
-      color: $primaryColor;
+      color: variables.$primaryColor;
       cursor: pointer;
       line-height: 20px;
       overflow-x: scroll;

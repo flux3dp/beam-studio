@@ -1,14 +1,17 @@
-@import "./beambox/top-bar";
+@use 'sass:meta';
+@use 'beambox/top-bar';
 
 .beambox-studio {
-  @import "./beambox/left-toolbar";
-  @import "./beambox/path-preview";
-  @import "./beambox/right-panel/right-panel";
-  @import "./beambox/svg-editor";
-  @import "./beambox/tool-panels";
+  @include meta.load-css('beambox/left-toolbar');
+  @include meta.load-css('beambox/path-preview');
+  @include meta.load-css('beambox/right-panel/right-panel');
+  @include meta.load-css('beambox/svg-editor');
+  @include meta.load-css('beambox/tool-panels');
 
-  user-select: none;
-  position: fixed;
+  & {
+    user-select: none;
+    position: fixed;
+  }
 
   svg:not(:root) {
     overflow: visible;
@@ -19,8 +22,7 @@
   }
 
   #svgcontent {
-    *[data-tempgroup="true"] {
-
+    *[data-tempgroup='true'] {
       rect,
       path,
       ellipse,
@@ -34,7 +36,7 @@
     }
 
     .layer {
-      &[data-lock="true"] {
+      &[data-lock='true'] {
         pointer-events: none !important;
       }
     }
