@@ -11,7 +11,6 @@ requirejs.config({
         cssHome: '../../css/3rd-party-plugins',
         dxf2svg: '../lib/dxf2svg',
         // SVG Editor Libraries Begin
-        jquerybbq: '../lib/svgeditor/jquerybbq/jquery.bbq.min',
         svgicons: '../lib/svgeditor/svgicons/jquery.svgicons',
         touch: '../lib/svgeditor/touch',
         svgedit: '../lib/svgeditor/svgedit',
@@ -55,11 +54,8 @@ requirejs.config({
             exports: '_'
         },
         // SVG Editor Libraries Begin (load in the same order with js/lib/svgeditor/svg-editor.html)
-        jquerybbq: {
-            deps: ['jquery']
-        },
         svgicons: {
-            deps: ['jquerybbq']
+            deps: ['jquery']
         },
         touch: {
             deps: ['svgicons']

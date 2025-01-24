@@ -182,7 +182,6 @@ module.exports = {
       jgraduate: path.resolve(__dirname, 'public/js/lib/svgeditor/jgraduate/jquery.jgraduate.min'),
       jpicker: path.resolve(__dirname, 'public/js/lib/svgeditor/jgraduate/jpicker'),
       jquery: path.resolve(__dirname, 'public/js/lib/svgeditor/jquery'),
-      jquerybbq: path.resolve(__dirname, 'public/js/lib/svgeditor/jquerybbq/jquery.bbq.min'),
       jqueryContextMenu: path.resolve(__dirname, 'public/js/lib/svgeditor/contextmenu/jquery.contextMenu'),
       jqueryGrowl: path.resolve(__dirname, 'public/js/lib/jquery.growl'),
       jquerySvg: path.resolve(__dirname, 'public/js/lib/svgeditor/jquery-svg'),
