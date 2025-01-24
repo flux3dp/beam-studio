@@ -187,7 +187,6 @@ module.exports = {
       jqueryGrowl: path.resolve(__dirname, 'public/js/lib/jquery.growl'),
       jquerySvg: path.resolve(__dirname, 'public/js/lib/svgeditor/jquery-svg'),
       jqueryUi: path.resolve(__dirname, 'public/js/lib/svgeditor/jquery-ui/jquery-ui-1.8.17.custom.min'),
-      jsHotkeys: path.resolve(__dirname, 'public/js/lib/svgeditor/js-hotkeys/jquery.hotkeys.min'),
       layer: path.resolve(__dirname, 'public/js/lib/svgeditor/layer'),
       math: path.resolve(__dirname, 'public/js/lib/svgeditor/math'),
       path: path.resolve(__dirname, 'public/js/lib/svgeditor/path'),

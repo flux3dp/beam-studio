@@ -164,10 +164,6 @@ select {
 	float: left;
 }
 
-#multiselected_panel .selected_tool {
-	vertical-align: 12px;
-}
-
 /*TODO: Adjust position of rulers are not visible*/
 #cur_context_panel {
 	position: absolute;

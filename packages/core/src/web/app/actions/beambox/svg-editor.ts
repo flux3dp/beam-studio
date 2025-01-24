@@ -129,12 +129,9 @@ interface ISVGEditor {
   handleFile: (file: any) => Promise<void>;
   init: () => void;
   isClipboardDataReady: any;
-  langChanged: boolean;
   putLocale(lang: number | string | string[], good_langs: any[]);
   readSVG: (blob: any, type: any, layerName: any) => Promise<unknown>;
-  ready(arg0: () => void);
   replaceBitmap: any;
-  runCallbacks: () => void;
   setConfig: (opts: any, cfgCfg: any) => void;
   setIcon: (elem: any, icon_id: any) => void;
   setImageURL: (url: any) => void;
@@ -194,12 +191,10 @@ const svgEditor = (window['svgEditor'] = (function () {
     handleFile: async (file) => {},
     init: () => {},
     isClipboardDataReady: false,
-    langChanged: false,
     putLocale: (lang: number | string | string[], good_langs: any[]) => {},
     readSVG: async (blob: any, type: any, layerName: any) => {},
     ready: () => {},
     replaceBitmap: null,
-    runCallbacks: () => {},
     setConfig: (opts: any, cfgCfg: any) => {},
     setIcon: (elem: any, icon_id: any) => {},
     setImageURL: (url: any) => {},
@@ -265,10 +260,6 @@ const svgEditor = (window['svgEditor'] = (function () {
   let svgCanvas: ISVGCanvas;
   var urldata,
     Utils = window['svgedit'].utilities,
-    isReady = false,
-    customExportImage = false,
-    customExportPDF = false,
-    callbacks = [],
     /**
      * PREFS AND CONFIG
      */
@@ -609,7 +600,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       extFunc();
     }
 
-    editor.runCallbacks();
     window['svgCanvas'] = editor.canvas = svgCanvas = new $.SvgCanvas(document.getElementById('svgcanvas'), curConfig);
     OpenBottomBoundaryDrawer.update();
 
@@ -994,7 +984,6 @@ const svgEditor = (window['svgEditor'] = (function () {
 
         ObjectPanelController.updateDimensionValues({ isRatioFixed });
       } else if (multiselected) {
-        //$('#multiselected_panel').show();
         workareaEvents.emit('update-context-menu', {
           group: true,
           ungroup: false,
@@ -1206,406 +1195,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       return '';
     })();
 
-    // TODO: Combine this with addDropDown or find other way to optimize
-    var addAltDropDown = function (elem, list, callback, opts) {
-      var button = $(elem);
-
-      list = $(list);
-
-      var on_button = false;
-      var dropUp = opts.dropUp;
-
-      if (dropUp) {
-        $(elem).addClass('dropup');
-      }
-
-      list.find('li').bind('mouseup', function () {
-        if (opts.seticon) {
-          setIcon('#cur_' + button[0].id, $(this).children());
-          $(this).addClass('current').siblings().removeClass('current');
-        }
-
-        callback.apply(this, arguments);
-      });
-
-      $(window).mouseup(function (evt) {
-        if (!on_button) {
-          button.removeClass('down');
-          list.hide();
-          list.css({
-            left: 0,
-            top: 0,
-          });
-        }
-
-        on_button = false;
-      });
-
-      // var height = list.height(); // Currently unused
-      button
-        .bind('mousedown', function () {
-          var off = button.offset();
-
-          if (dropUp) {
-            off.top -= list.height();
-            off.left += 8;
-          } else {
-            off.top += button.height();
-          }
-
-          list.offset(off);
-
-          if (!button.hasClass('down')) {
-            list.show();
-            on_button = true;
-          } else {
-            // CSS position must be reset for Webkit
-            list.hide();
-            list.css({
-              left: 0,
-              top: 0,
-            });
-          }
-
-          button.toggleClass('down');
-        })
-        .hover(function () {
-          on_button = true;
-        })
-        .mouseout(function () {
-          on_button = false;
-        });
-
-      if (opts.multiclick) {
-        list.mousedown(function () {
-          on_button = true;
-        });
-      }
-    };
-
-    var extsPreLang = [];
-    var extAdded = function (win, ext) {
-      if (!ext) {
-        return;
-      }
-
-      var cb_called = false;
-      var resize_done = false;
-      var cb_ready = true; // Set to false to delay callback (e.g. wait for $.svgIcons)
-
-      if (ext.langReady) {
-        if (editor.langChanged) {
-          // We check for this since the "lang" pref could have been set by storage
-          var lang = $.pref('lang');
-
-          ext.langReady({
-            lang: lang,
-            uiStrings: uiStrings,
-          });
-        } else {
-          extsPreLang.push(ext);
-        }
-      }
-
-      var runCallback = function () {
-        if (ext.callback && !cb_called && cb_ready) {
-          cb_called = true;
-          ext.callback();
-        }
-      };
-
-      var btn_selects = [];
-
-      if (ext.context_tools) {
-        $.each(ext.context_tools, function (i, tool) {
-          // Add select tool
-          var html;
-          var cont_id = tool.container_id ? ' id="' + tool.container_id + '"' : '';
-          var panel = $('#' + tool.panel);
-
-          // create the panel if it doesn't exist
-          if (!panel.length) {
-            panel = $('<div>', {
-              id: tool.panel,
-            }).appendTo('#tools_top');
-          }
-
-          // TODO: Allow support for other types, or adding to existing tool
-          switch (tool.type) {
-            case 'tool_button':
-              html = '<div class="tool_button">' + tool.id + '</div>';
-
-              var div = $(html).appendTo(panel);
-
-              if (tool.events) {
-                $.each(tool.events, function (evt: string, func) {
-                  $(div).bind(evt, func);
-                });
-              }
-
-              break;
-            case 'select':
-              html = '<label' + cont_id + '>' + '<select id="' + tool.id + '">';
-              $.each(tool.options, function (val: string, text) {
-                var sel = val == tool.defval ? ' selected' : '';
-
-                html += '<option value="' + val + '"' + sel + '>' + text + '</option>';
-              });
-              html += '</select></label>';
-
-              // Creates the tool, hides & adds it, returns the select element
-              var sel = $(html).appendTo(panel).find('select');
-
-              $.each(tool.events, function (evt: string, func) {
-                $(sel).bind(evt, func);
-              });
-              break;
-            case 'button-select':
-              html =
-                '<div id="' +
-                tool.id +
-                '" class="dropdown toolset" title="' +
-                tool.title +
-                '">' +
-                '<div id="cur_' +
-                tool.id +
-                '" class="icon_label"></div><button></button></div>';
-
-              var list = $('<ul id="' + tool.id + '_opts"></ul>').appendTo('#option_lists');
-
-              if (tool.colnum) {
-                list.addClass('optcols' + tool.colnum);
-              }
-
-              // Creates the tool, hides & adds it, returns the select element
-              var dropdown = $(html).appendTo(panel).children();
-
-              btn_selects.push({
-                callback: tool.events.change,
-                cur: '#cur_' + tool.id,
-                elem: '#' + tool.id,
-                list: '#' + tool.id + '_opts',
-                title: tool.title,
-              });
-
-              break;
-            case 'input':
-              html =
-                '<label' +
-                cont_id +
-                '>' +
-                '<span id="' +
-                tool.id +
-                '_label">' +
-                tool.label +
-                ':</span>' +
-                '<input id="' +
-                tool.id +
-                '" title="' +
-                tool.title +
-                '" size="' +
-                (tool.size || '4') +
-                '" value="' +
-                (tool.defval || '') +
-                '" type="text"/></label>';
-
-              // Creates the tool, hides & adds it, returns the select element
-
-              // Add to given tool.panel
-              var inp = $(html).appendTo(panel).find('input');
-
-              if (tool.events) {
-                $.each(tool.events, function (evt: string, func) {
-                  inp.bind(evt, func);
-                });
-              }
-
-              break;
-
-            default:
-              break;
-          }
-        });
-      }
-
-      if (ext.buttons) {
-        var fallback_obj = {},
-          placement_obj = {},
-          svgicons = ext.svgicons,
-          holders = {};
-
-        // Add buttons given by extension
-        $.each(ext.buttons, function (i: number, btn) {
-          var icon, svgicon, tls_id;
-          var id = btn.id;
-          let num = i;
-
-          // Give button a unique ID
-          while ($('#' + id).length) {
-            id = btn.id + '_' + ++num;
-          }
-
-          if (!svgicons) {
-            icon = $('<img src="' + btn.icon + '">');
-          } else {
-            fallback_obj[id] = btn.icon;
-            svgicon = btn.svgicon || btn.id;
-
-            if (btn.type === 'app_menu') {
-              placement_obj['#' + id + ' > div'] = svgicon;
-            } else {
-              placement_obj['#' + id] = svgicon;
-            }
-          }
-
-          var cls, parent;
-
-          // Set button up according to its type
-          switch (btn.type) {
-            case 'context':
-              cls = 'tool_button';
-              parent = '#' + btn.panel;
-
-              // create the panel if it doesn't exist
-              if (!$(parent).length) {
-                $('<div>', {
-                  id: btn.panel,
-                }).appendTo('#tools_top');
-              }
-
-              break;
-          }
-
-          var flyout_holder, cur_h, show_btn, ref_data, ref_btn;
-          var button = $(btn.list || btn.type === 'app_menu' ? '<li/>' : '<div/>')
-            .attr('id', id)
-            .attr('title', btn.title)
-            .addClass(cls);
-
-          if (!btn.includeWith && !btn.list) {
-            if ('position' in btn) {
-              if ($(parent).children().eq(btn.position).length) {
-                $(parent).children().eq(btn.position).before(button);
-              } else {
-                $(parent).children().last().before(button);
-              }
-            } else {
-              button.appendTo(parent);
-            }
-
-            if (btn.type === 'app_menu') {
-              button.append('<div>').append(btn.title);
-            }
-          } else if (btn.list) {
-            // Add button to list
-            button.addClass('push_button');
-            $('#' + btn.list + '_opts').append(button);
-
-            if (btn.isDefault) {
-              $('#cur_' + btn.list).append(button.children().clone());
-              svgicon = btn.svgicon || btn.id;
-              placement_obj['#cur_' + btn.list] = svgicon;
-            }
-          } else if (btn.includeWith) {
-            // Add to flyout menu / make flyout menu
-            var opts = btn.includeWith;
-
-            // opts.button, default, position
-            ref_btn = $(opts.button);
-
-            flyout_holder = ref_btn.parent();
-
-            // Create a flyout menu if there isn't one already
-            if (!ref_btn.parent().hasClass('tools_flyout')) {
-              // Create flyout placeholder
-              tls_id = ref_btn[0].id.replace('tool_', 'tools_');
-              show_btn = ref_btn
-                .clone()
-                .attr('id', tls_id + '_show')
-                .append(
-                  $('<div>', {
-                    class: 'flyout_arrow_horiz',
-                  }),
-                );
-
-              ref_btn.before(show_btn);
-            }
-
-            if (opts.isDefault) {
-              placement_obj['#' + tls_id + '_show'] = btn.id;
-            }
-            // TODO: Find way to set the current icon using the iconloader if this is not default
-
-            // Include data for extension button as well as ref button
-            cur_h = holders['#' + flyout_holder[0].id] = [
-              {
-                fn: btn.events.click,
-                icon: btn.id,
-                isDefault: btn.includeWith ? btn.includeWith.isDefault : 0,
-                key: btn.key,
-                sel: '#' + id,
-              },
-              ref_data,
-            ];
-
-            var pos = 'position' in opts ? opts.position : 'last';
-            var len = flyout_holder.children().length;
-
-            // Add at given position or end
-            if (!isNaN(pos) && pos >= 0 && pos < len) {
-              flyout_holder.children().eq(pos).before(button);
-            } else {
-              flyout_holder.append(button);
-              cur_h.reverse();
-            }
-          }
-
-          if (!svgicons) {
-            button.append(icon);
-          }
-
-          if (!btn.list) {
-            // Add given events to button
-            $.each(btn.events, function (name: string, func) {
-              if (name === 'click' && btn.type === 'mode') {
-                if (btn.includeWith) {
-                  button.bind(name, func);
-                } else {
-                  button.bind(name, function () {
-                    if (toolButtonClick(button)) {
-                      func();
-                    }
-                  });
-                }
-
-                if (btn.key) {
-                  $(document).bind('keydown', btn.key, func);
-
-                  if (btn.title) {
-                    button.attr('title', btn.title + ' [' + btn.key + ']');
-                  }
-                }
-              } else {
-                button.bind(name, func);
-              }
-            });
-          }
-        });
-
-        $.each(btn_selects, function () {
-          addAltDropDown(this.elem, this.list, this.callback, {
-            seticon: true,
-          });
-        });
-
-        if (svgicons) {
-          cb_ready = false; // Delay callback
-        }
-      }
-
-      runCallback();
-    };
-
     // bind the selected event to our function that handles updates to the UI
     svgCanvas.bind('selected', selectedChanged);
     svgCanvas.bind('transition', elementTransition);
@@ -1622,7 +1211,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       exportWindow.location.href = data.dataurlstring;
     });
     svgCanvas.bind('contextset', contextChanged);
-    svgCanvas.bind('extension_added', extAdded);
     textActions.setInputElem($('#text')[0]);
 
     var changeStrokeWidth = function (ctl) {
@@ -1740,50 +1328,6 @@ const svgEditor = (window['svgEditor'] = (function () {
           evt.preventDefault();
         }
       }
-    });
-
-    $('.attr_changer').change(function (this: HTMLInputElement) {
-      var attr = this.getAttribute('data-attr');
-      var val = Number.parseFloat(this.value);
-      var valid = svgedit.units.isValidUnit(attr, val, selectedElement);
-
-      if (!valid) {
-        Alert.popUp({
-          message: uiStrings.notification.invalidAttrValGiven,
-        });
-        this.value = selectedElement.getAttribute(attr);
-
-        return false;
-      }
-
-      if (attr !== 'id' && attr !== 'class') {
-        if (isNaN(val)) {
-          val = svgCanvas.convertToNum(attr, val);
-        } else if (curConfig.baseUnit !== 'px') {
-          // Convert unitless value to one with given unit
-
-          var unitData = svgedit.units.getTypeMap();
-
-          if (selectedElement[attr] || svgCanvas.getMode() === 'pathedit' || attr === 'x' || attr === 'y') {
-            val = val * unitData[curConfig.baseUnit];
-          }
-        }
-      }
-
-      // if the user is changing the id, then de-select the element first
-      // change the ID, then re-select it with the new ID
-      if (attr === 'id') {
-        var elem = selectedElement;
-
-        svgCanvas.clearSelection();
-        elem.id = val;
-        svgCanvas.addToSelection([elem], true);
-      } else {
-        svgCanvas.changeSelectedAttribute(attr, val);
-      }
-
-      this.blur();
-      updateContextPanel();
     });
 
     (function () {
@@ -2229,34 +1773,6 @@ const svgEditor = (window['svgEditor'] = (function () {
 
     $(window).bind('load resize', centerCanvas);
 
-    function stepFontSize(elem, step) {
-      var orig_val = Number(elem.value);
-      var sug_val = orig_val + step;
-      var increasing = sug_val >= orig_val;
-
-      if (step === 0) {
-        return orig_val;
-      }
-
-      if (orig_val >= 24) {
-        if (increasing) {
-          return Math.round(orig_val * 1.1);
-        }
-
-        return Math.round(orig_val / 1.1);
-      }
-
-      if (orig_val <= 1) {
-        if (increasing) {
-          return orig_val * 2;
-        }
-
-        return orig_val / 2;
-      }
-
-      return sug_val;
-    }
-
     //Prevent browser from erroneously repopulating fields
     $('input,select').attr('autocomplete', 'off');
 
@@ -2362,26 +1878,6 @@ const svgEditor = (window['svgEditor'] = (function () {
             RightPanelController.setPanelType(isPathEdit ? PanelType.PathEdit : PanelType.Object);
           });
           Shortcuts.on(['Escape'], () => clickSelect());
-
-          // Misc additional actions
-
-          // Make 'return' keypress trigger the change event
-          $('.attr_changer').bind('keydown', 'return', function (evt) {
-            $(this).change();
-            evt.preventDefault();
-          });
-
-          // $(window).bind('keydown', 'tab', function(e) {
-          // 	if (ui_context === 'canvas') {
-          // 		e.preventDefault();
-          // 		selectNext();
-          // 	}
-          // }).bind('keydown', 'shift+tab', function(e) {
-          // 	åif (ui_context === 'canvas') {
-          // 		e.preventDefault();
-          // 		selectPrev();
-          // 	}
-          // });
         },
       };
     })();
@@ -2712,11 +2208,9 @@ const svgEditor = (window['svgEditor'] = (function () {
     // For Compatibility with older extensions
     $(function () {
       window['svgCanvas'] = svgCanvas;
-      svgCanvas.ready = editor.ready;
     });
 
     editor.setLang = function (lang, allStrings) {
-      editor.langChanged = true;
       $.pref('lang', lang);
       $('#lang_select').val(lang);
 
@@ -2736,30 +2230,6 @@ const svgEditor = (window['svgEditor'] = (function () {
         svgCanvas.renameCurrentLayer(uiStrings.layers.layer + ' 1');
         LayerPanelController.updateLayerPanel();
       }
-
-      // In case extensions loaded before the locale, now we execute a callback on them
-      if (extsPreLang.length) {
-        while (extsPreLang.length) {
-          var ext = extsPreLang.shift();
-
-          ext.langReady({
-            lang: lang,
-            uiStrings: uiStrings,
-          });
-        }
-      } else {
-        svgCanvas.runExtensions('langReady', {
-          lang: lang,
-          uiStrings: uiStrings,
-        });
-      }
-
-      svgCanvas.runExtensions('langChanged', lang);
-
-      // Copy alignment titles
-      $('#multiselected_panel div[id^=tool_align]').each(function () {
-        $('#tool_pos' + this.id.substr(10))[0].title = this.title;
-      });
     };
 
     //greyscale all svgContent
@@ -2789,21 +2259,7 @@ const svgEditor = (window['svgEditor'] = (function () {
     })();
   };
 
-  editor.ready = function (cb) {
-    if (!isReady) {
-      callbacks.push(cb);
-    } else {
-      cb();
-    }
-  };
-
-  editor.runCallbacks = function () {
-    $.each(callbacks, function () {
-      this();
-    });
-    isReady = true;
-  };
-
+  // TODO: only ext-polygon are used now, once we port ext-polygon to module, we can remove this
   editor.addExtension = function () {
     var args = arguments;
 

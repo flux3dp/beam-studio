@@ -32,23 +32,6 @@ exports[`test svg-editor should render correctly in mac 1`] = `
         />
       </div>
     </div>
-    <div
-      id="dialog_box"
-    >
-      <div
-        class="overlay"
-      />
-      <div
-        id="dialog_container"
-      >
-        <div
-          id="dialog_content"
-        />
-        <div
-          id="dialog_buttons"
-        />
-      </div>
-    </div>
   </div>
   <div>
     MockZoomBlock
@@ -88,23 +71,6 @@ exports[`test svg-editor should render correctly in win 1`] = `
         <div
           class="dropdown"
           id="option_lists"
-        />
-      </div>
-    </div>
-    <div
-      id="dialog_box"
-    >
-      <div
-        class="overlay"
-      />
-      <div
-        id="dialog_container"
-      >
-        <div
-          id="dialog_content"
-        />
-        <div
-          id="dialog_buttons"
         />
       </div>
     </div>
