@@ -4,7 +4,8 @@ const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-const coreWeb = path.resolve(__dirname, '../../packages/core/src/web');
+const core = path.resolve(__dirname, '../../packages/core');
+const coreWeb = path.resolve(core, 'src/web');
 
 module.exports = {
   devtool: 'source-map',
@@ -180,20 +181,17 @@ module.exports = {
       imagetracer: path.resolve(__dirname, 'public/js/lib/svgeditor/imagetracer'),
       jgraduate: path.resolve(__dirname, 'public/js/lib/svgeditor/jgraduate/jquery.jgraduate.min'),
       jpicker: path.resolve(__dirname, 'public/js/lib/svgeditor/jgraduate/jpicker'),
-      /* from beam-studio */
       jquery: path.resolve(__dirname, 'public/js/lib/svgeditor/jquery'),
       jquerybbq: path.resolve(__dirname, 'public/js/lib/svgeditor/jquerybbq/jquery.bbq.min'),
       jqueryContextMenu: path.resolve(__dirname, 'public/js/lib/svgeditor/contextmenu/jquery.contextMenu'),
       jqueryGrowl: path.resolve(__dirname, 'public/js/lib/jquery.growl'),
       jquerySvg: path.resolve(__dirname, 'public/js/lib/svgeditor/jquery-svg'),
       jqueryUi: path.resolve(__dirname, 'public/js/lib/svgeditor/jquery-ui/jquery-ui-1.8.17.custom.min'),
-      // SVG Editor Libraries Begin
       jsHotkeys: path.resolve(__dirname, 'public/js/lib/svgeditor/js-hotkeys/jquery.hotkeys.min'),
       layer: path.resolve(__dirname, 'public/js/lib/svgeditor/layer'),
       math: path.resolve(__dirname, 'public/js/lib/svgeditor/math'),
       path: path.resolve(__dirname, 'public/js/lib/svgeditor/path'),
       pathseg: path.resolve(__dirname, 'public/js/lib/svgeditor/pathseg'),
-      react: path.resolve(__dirname, 'node_modules/react'),
       recalculate: path.resolve(__dirname, 'public/js/lib/svgeditor/recalculate'),
       rgbcolor: path.resolve(__dirname, 'public/js/lib/svgeditor/canvg/rgbcolor'),
       sanitize: path.resolve(__dirname, 'public/js/lib/svgeditor/sanitize'),
@@ -215,6 +213,6 @@ module.exports = {
       stream: false,
       util: false,
     },
-    modules: [path.resolve(__dirname, 'public/js/lib'), 'node_modules'],
+    modules: [path.resolve(__dirname, 'public/js/lib'), 'node_modules', path.resolve(core, 'node_modules')],
   },
 };
