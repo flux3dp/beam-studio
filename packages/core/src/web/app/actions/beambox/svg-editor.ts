@@ -125,7 +125,6 @@ interface ISVGEditor {
   cutSelected: () => void;
   deleteSelected: () => void;
   dimensions: number[];
-  exportWindowCt: number;
   handleFile: (file: any) => Promise<void>;
   init: () => void;
   isClipboardDataReady: any;
@@ -187,7 +186,6 @@ const svgEditor = (window['svgEditor'] = (function () {
     cutSelected: () => {},
     deleteSelected: () => {},
     dimensions: [pxWidth, pxDisplayHeight ?? pxHeight],
-    exportWindowCt: 0,
     handleFile: async (file) => {},
     init: () => {},
     isClipboardDataReady: false,
