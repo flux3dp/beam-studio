@@ -130,7 +130,6 @@ interface ISVGEditor {
   init: () => void;
   isClipboardDataReady: any;
   langChanged: boolean;
-  openPrep(arg0: (ok: any) => void);
   putLocale(lang: number | string | string[], good_langs: any[]);
   readSVG: (blob: any, type: any, layerName: any) => Promise<unknown>;
   ready(arg0: () => void);
@@ -196,7 +195,6 @@ const svgEditor = (window['svgEditor'] = (function () {
     init: () => {},
     isClipboardDataReady: false,
     langChanged: false,
-    openPrep: () => {},
     putLocale: (lang: number | string | string[], good_langs: any[]) => {},
     readSVG: async (blob: any, type: any, layerName: any) => {},
     ready: () => {},
@@ -209,7 +207,6 @@ const svgEditor = (window['svgEditor'] = (function () {
     setPanning: (active: any) => {},
     showSaveWarning: false,
     storage: storage,
-    storagePromptClosed: false, // For use with ext-storage.js
     tool_scale: 1, // Dependent on icon size, so any use to making configurable instead? Used by JQuerySpinBtn.js
     toolButtonClick: (button: any, noHiding: any) => {
       return false;
@@ -311,18 +308,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       //   procedures (we obtain instead from defaultExtensions)
       extensions: [],
     },
-    defaultExtensions = [
-      'ext-markers.js',
-      'ext-connector.js',
-      'ext-imagelib.js',
-      'ext-polygon.js',
-      'ext-star.js',
-      'ext-panning.js',
-      'ext-multiselect.js',
-      // 'ext-storage.js',
-      // 'ext-eyedropper.js',
-      'ext-closepath.js',
-    ],
+    defaultExtensions = ['ext-polygon.js'],
     defaultConfig: ISVGConfig = {
       baseUnit: 'px',
       // Change the following to preferences and add pref controls to the UI (e.g., initTool, wireframe, showlayers)?
@@ -331,10 +317,8 @@ const svgEditor = (window['svgEditor'] = (function () {
       // DOCUMENT PROPERTIES
       // Change the following to a preference (already in the Document Properties dialog)?
       dimensions: editor.dimensions,
-      emptyStorageOnDecline: false, // Used by ext-storage.js; empty any prior storage if the user declines to store
       exportWindowType: 'new', // 'same' (todo: also support 'download')
       extPath: 'js/lib/svgeditor/extensions/',
-      forceStorage: false, // Some interaction with ext-storage.js; strongly discouraged from modification as it bypasses user privacy by preventing them from choosing whether to keep local storage or not
       // EDITOR OPTIONS
       // Change the following to preferences (already in the Editor Options dialog)?
       gridSnapping: false,
@@ -357,8 +341,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       lockExtensions: false, // Disallowed in URL setting
       no_save_warning: true,
       noDefaultExtensions: false, // noDefaultExtensions can only be meaningfully used in config.js or in the URL
-      // EXTENSION-RELATED (STORAGE)
-      noStorageOnLoad: false, // Some interaction with ext-storage.js; prevent even the loading of previously saved local storage
       // URL BEHAVIOR CONFIGURATION
       preventAllURLConfig: true,
       preventURLContentLoading: true,
@@ -659,127 +641,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       }
     })();
 
-    // This sets up alternative dialog boxes. They mostly work the same way as
-    // their UI counterparts, expect instead of returning the result, a callback
-    // needs to be included that returns the result as its first parameter.
-    // In the future we may want to add additional types of dialog boxes, since
-    // they should be easy to handle this way.
-    (function () {
-      $('#dialog_container').draggable({
-        cancel: '#dialog_content, #dialog_buttons *',
-        containment: 'window',
-      });
-
-      var box = $('#dialog_box'),
-        btn_holder = $('#dialog_buttons'),
-        dialog_content = $('#dialog_content'),
-        dbox = function (type, msg?, callback?, defaultVal?, opts?, changeCb?, checkbox?) {
-          var ok, ctrl, chkbx;
-
-          dialog_content.html('<p>' + msg.replace(/\n/g, '</p><p>') + '</p>').toggleClass('prompt', type === 'prompt');
-          btn_holder.empty();
-
-          ok = $('<input type="button" value="' + uiStrings.common.ok + '">').appendTo(btn_holder);
-
-          if (type !== 'alert') {
-            $('<input type="button" value="' + uiStrings.common.cancel + '">')
-              .appendTo(btn_holder)
-              .click(function () {
-                box.hide();
-
-                if (callback) {
-                  callback(false);
-                }
-              });
-          }
-
-          if (type === 'prompt') {
-            ctrl = $('<input type="text">').prependTo(btn_holder);
-            ctrl.val(defaultVal || '');
-            ctrl.bind('keydown', 'return', function () {
-              ok.click();
-            });
-          } else if (type === 'select') {
-            var div = $('<div style="text-align:center;">');
-
-            ctrl = $('<select>').appendTo(div);
-
-            if (checkbox) {
-              var label = $('<label>').text(checkbox.label);
-
-              chkbx = $('<input type="checkbox">').appendTo(label);
-              chkbx.val(checkbox.value);
-
-              if (checkbox.tooltip) {
-                label.attr('title', checkbox.tooltip);
-              }
-
-              chkbx.prop('checked', !!checkbox.checked);
-              div.append($('<div>').append(label));
-            }
-
-            $.each(opts || [], function (opt, val) {
-              if (typeof val === 'object') {
-                ctrl.append($('<option>').val(val.value).html(val.text));
-              } else {
-                ctrl.append($('<option>').html(val));
-              }
-            });
-            dialog_content.append(div);
-
-            if (defaultVal) {
-              ctrl.val(defaultVal);
-            }
-
-            if (changeCb) {
-              ctrl.bind('change', 'return', changeCb);
-            }
-
-            ctrl.bind('keydown', 'return', function () {
-              ok.click();
-            });
-          } else if (type === 'process') {
-            ok.hide();
-          }
-
-          box.show();
-
-          ok.click(function () {
-            box.hide();
-
-            var resp = type === 'prompt' || type === 'select' ? ctrl.val() : true;
-
-            if (callback) {
-              if (chkbx) {
-                callback(resp, chkbx.prop('checked'));
-              } else {
-                callback(resp);
-              }
-            }
-          }).focus();
-
-          if (type === 'prompt' || type === 'select') {
-            ctrl.focus();
-          }
-        };
-
-      $.alert = function (msg, cb) {
-        dbox('alert', msg, cb);
-      };
-      $.confirm = function (msg, cb) {
-        dbox('confirm', msg, cb);
-      };
-      $.process_cancel = function (msg, cb) {
-        dbox('process', msg, cb);
-      };
-      $.prompt = function (msg, txt, cb) {
-        dbox('prompt', msg, cb, txt);
-      };
-      $.select = function (msg, opts, cb, changeCb, txt, checkbox) {
-        dbox('select', msg, cb, txt, opts, changeCb, checkbox);
-      };
-    })();
-
     var setSelectMode = function () {
       svgCanvas.setMode('select');
       workarea.css('cursor', 'auto');
@@ -925,17 +786,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       }
     });
 
-    function promptImgURL() {
-      var curhref = svgCanvas.getHref(selectedElement);
-
-      curhref = curhref.indexOf('data:') === 0 ? '' : curhref;
-      $.prompt(uiStrings.notification.enterNewImgURL, curhref, function (url) {
-        if (url) {
-          setImageURL(url);
-        }
-      });
-    }
-
     // updates the context panel tools based on the selected element
     var updateContextPanel = function () {
       var elem = selectedElement;
@@ -970,18 +820,6 @@ const svgEditor = (window['svgEditor'] = (function () {
         var angle = svgCanvas.getRotationAngle(elem);
 
         ObjectPanelController.updateDimensionValues({ rotation: angle });
-
-        if (svgCanvas.addedNew) {
-          if (elname === 'image' && svgCanvas.getMode() === 'image') {
-            // Prompt for URL if not a data URL
-            if (svgCanvas.getHref(elem).indexOf('data:') !== 0) {
-              promptImgURL();
-            }
-          }
-          /*else if (elname === 'text') {
-                  // TODO: Do something here for new text
-              }*/
-        }
 
         if (!is_node && currentMode !== 'pathedit') {
           //$('#selected_panel').show();
@@ -1367,43 +1205,6 @@ const svgEditor = (window['svgEditor'] = (function () {
 
       return '';
     })();
-
-    var scaleElements = function (elems, scale) {
-      // var prefix = '-' + uaPrefix.toLowerCase() + '-'; // Currently unused
-      var sides = ['top', 'left', 'bottom', 'right'];
-
-      elems.each(function () {
-        // Handled in CSS
-        // this.style[uaPrefix + 'Transform'] = 'scale(' + scale + ')';
-        var i;
-        var el = $(this);
-        var w = el.outerWidth() * (scale - 1);
-        var h = el.outerHeight() * (scale - 1);
-        // var margins = {}; // Currently unused
-
-        for (i = 0; i < 4; i++) {
-          var s = sides[i];
-          var cur = el.data('orig_margin-' + s);
-
-          if (cur == null) {
-            cur = Number.parseInt(el.css('margin-' + s), 10);
-            // Cache the original margin
-            el.data('orig_margin-' + s, cur);
-          }
-
-          var val = cur * scale;
-
-          if (s === 'right') {
-            val += w;
-          } else if (s === 'bottom') {
-            val += h;
-          }
-
-          el.css('margin-' + s, val);
-          // el.css('outline', '1px solid red');
-        }
-      });
-    };
 
     // TODO: Combine this with addDropDown or find other way to optimize
     var addAltDropDown = function (elem, list, callback, opts) {
@@ -2605,14 +2406,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       },
       false,
     );
-
-    editor.openPrep = function (func) {
-      if (undoMgr.getUndoStackSize() === 0) {
-        func(true);
-      } else {
-        $.confirm(uiStrings.notification.QwantToOpen, func);
-      }
-    };
 
     function onDragEnter(e) {
       e.stopPropagation();

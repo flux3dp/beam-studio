@@ -1138,30 +1138,10 @@
   //
   // Parameters:
   // id - String with the element's new ID
-  if (svgedit.browser.supportsSelectors()) {
-    svgedit.utilities.getElem = function (id) {
-      // querySelector lookup
-      return svgroot_.querySelector('#' + id);
-    };
-  } else if (svgedit.browser.supportsXpath()) {
-    svgedit.utilities.getElem = function (id) {
-      // xpath lookup
-      return domdoc_.evaluate(
-        'svg:svg[@id="svgroot"]//svg:*[@id="' + id + '"]',
-        domcontainer_,
-        function () {
-          return svgedit.NS.SVG;
-        },
-        9,
-        null,
-      ).singleNodeValue;
-    };
-  } else {
-    svgedit.utilities.getElem = function (id) {
-      // jQuery lookup: twice as slow as xpath in FF
-      return $(svgroot_).find('[id=' + id + ']')[0];
-    };
-  }
+  svgedit.utilities.getElem = function (id) {
+    // querySelector lookup
+    return svgroot_.querySelector('#' + id);
+  };
 
   // Function: assignAttributes
   // Assigns multiple attributes to an element.
