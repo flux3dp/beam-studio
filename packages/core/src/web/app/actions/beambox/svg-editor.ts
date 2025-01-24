@@ -723,25 +723,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       }
     };
 
-    // This is a common function used when a tool has been clicked (chosen)
-    // It does several common things:
-    // - removes the tool_button_current class from whatever tool currently has it
-    // - hides any flyouts
-    // - adds the tool_button_current class to the button passed in
-    var toolButtonClick = (editor.toolButtonClick = function (button, noHiding?: boolean) {
-      if ($(button).hasClass('disabled')) {
-        return false;
-      }
-
-      var fadeFlyouts = 'normal';
-
-      workarea.css('cursor', 'auto');
-      $('.tool_button_current').removeClass('tool_button_current').addClass('tool_button');
-      $(button).addClass('tool_button_current').removeClass('tool_button');
-
-      return true;
-    });
-
     var clickSelect = (editor.clickSelect = function (clearSelection: boolean = true) {
       if ([TutorialConstants.DRAW_A_CIRCLE, TutorialConstants.DRAW_A_RECT].includes(getNextStepRequirement())) {
         return;
