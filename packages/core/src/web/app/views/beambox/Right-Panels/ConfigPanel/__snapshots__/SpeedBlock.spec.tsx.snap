@@ -258,7 +258,7 @@ exports[`test SpeedBlock should render correctly when type is panel-item 1`] = `
           <span
             style="white-space: nowrap;"
           >
-            3.43
+            87
           </span>
         </span>
       </button>
@@ -305,14 +305,14 @@ exports[`test SpeedBlock should render correctly when unit is inches 1`] = `
       </p>
       <p>
         unit: 
-        mm/s
+        in/s
       </p>
       <p>
         hasMultiValue: 
       </p>
       <p>
         decimal: 
-        1
+        2
       </p>
       <p>
         options: 

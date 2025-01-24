@@ -148,7 +148,7 @@ describe('test SpeedBlock', () => {
       emit: mockEmit,
     });
     mockUseHasCurveEngraving.mockReturnValue(false);
-    mockStorageGet.mockReturnValueOnce('mm');
+    mockStorageGet.mockReturnValue('mm');
     mockPrefRead.mockReturnValueOnce(true).mockReturnValueOnce(true);
     mockUseWorkarea.mockReturnValue('fbm1');
   });

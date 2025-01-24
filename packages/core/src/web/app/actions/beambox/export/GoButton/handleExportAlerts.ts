@@ -128,7 +128,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
         const layerName = svgCanvas.getCurrentDrawing().getLayerName(i);
 
         if (layerName) {
-          tooFastLayers.push();
+          tooFastLayers.push(layerName);
         }
       }
     }
