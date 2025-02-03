@@ -17,10 +17,6 @@
     overflow: visible;
   }
 
-  #svg_editor:not(.color) #svgcontent {
-    filter: saturate(0%);
-  }
-
   #svgcontent {
     *[data-tempgroup='true'] {
       rect,
