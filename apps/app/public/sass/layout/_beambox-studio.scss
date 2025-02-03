@@ -1,19 +1,16 @@
-@use "sass:meta";
+@use 'sass:meta';
 .beambox-studio {
-  @include meta.load-css("beambox/right-panel/right-panel");
-  @include meta.load-css("beambox/svg-editor");
-  @include meta.load-css("beambox/tool-panels");
+  @include meta.load-css('beambox/right-panel/right-panel');
+  @include meta.load-css('beambox/svg-editor');
+  @include meta.load-css('beambox/tool-panels');
 
   user-select: none;
   position: absolute;
   svg:not(:root) {
     overflow: visible;
   }
-  #svg_editor:not(.color) #svgcontent {
-    filter: saturate(0%);
-  }
   #svgcontent {
-    *[data-tempgroup="true"] {
+    *[data-tempgroup='true'] {
       rect,
       path,
       ellipse,
@@ -26,7 +23,7 @@
       }
     }
     .layer {
-      &[data-lock="true"] {
+      &[data-lock='true'] {
         pointer-events: none !important;
       }
     }

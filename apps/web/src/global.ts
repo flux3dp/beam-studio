@@ -16,7 +16,6 @@ declare global {
         isWebkit: () => boolean;
         isWindows: () => boolean;
         supportsEditableText: () => () => boolean;
-        supportsGoodDecimals: () => () => boolean;
         supportsGoodTextCharPos: () => boolean;
         supportsHVLineContainerBBox: () => () => boolean;
         supportsNativeTransformLists: () => () => boolean;
@@ -24,9 +23,7 @@ declare global {
         supportsPathBBox: () => () => boolean;
         supportsPathInsertItemBefore: () => () => boolean;
         supportsPathReplaceItem: () => () => boolean;
-        supportsSelectors: () => () => boolean;
         supportsSvg: () => () => boolean;
-        supportsXpath: () => () => boolean;
       };
       coords: {
         init: any;

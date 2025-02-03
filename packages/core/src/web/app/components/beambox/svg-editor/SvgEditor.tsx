@@ -55,16 +55,7 @@ export default class SvgEditor extends React.Component {
     // HIDE ALMOST ALL TOOLS USING CSS
     return (
       <>
-        <div>
-          {this.renderSvgEditor()}
-          <div id="dialog_box">
-            <div className="overlay" />
-            <div id="dialog_container">
-              <div id="dialog_content" />
-              <div id="dialog_buttons" />
-            </div>
-          </div>
-        </div>
+        <div>{this.renderSvgEditor()}</div>
         {mode === CanvasMode.PathPreview && <PathPreview />}
         {mode !== CanvasMode.PathPreview && (
           <>

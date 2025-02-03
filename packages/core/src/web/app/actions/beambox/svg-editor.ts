@@ -125,17 +125,12 @@ interface ISVGEditor {
   cutSelected: () => void;
   deleteSelected: () => void;
   dimensions: number[];
-  exportWindowCt: number;
   handleFile: (file: any) => Promise<void>;
   init: () => void;
   isClipboardDataReady: any;
-  langChanged: boolean;
-  openPrep(arg0: (ok: any) => void);
   putLocale(lang: number | string | string[], good_langs: any[]);
   readSVG: (blob: any, type: any, layerName: any) => Promise<unknown>;
-  ready(arg0: () => void);
   replaceBitmap: any;
-  runCallbacks: () => void;
   setConfig: (opts: any, cfgCfg: any) => void;
   setIcon: (elem: any, icon_id: any) => void;
   setImageURL: (url: any) => void;
@@ -191,17 +186,13 @@ const svgEditor = (window['svgEditor'] = (function () {
     cutSelected: () => {},
     deleteSelected: () => {},
     dimensions: [pxWidth, pxDisplayHeight ?? pxHeight],
-    exportWindowCt: 0,
     handleFile: async (file) => {},
     init: () => {},
     isClipboardDataReady: false,
-    langChanged: false,
-    openPrep: () => {},
     putLocale: (lang: number | string | string[], good_langs: any[]) => {},
     readSVG: async (blob: any, type: any, layerName: any) => {},
     ready: () => {},
     replaceBitmap: null,
-    runCallbacks: () => {},
     setConfig: (opts: any, cfgCfg: any) => {},
     setIcon: (elem: any, icon_id: any) => {},
     setImageURL: (url: any) => {},
@@ -209,7 +200,6 @@ const svgEditor = (window['svgEditor'] = (function () {
     setPanning: (active: any) => {},
     showSaveWarning: false,
     storage: storage,
-    storagePromptClosed: false, // For use with ext-storage.js
     tool_scale: 1, // Dependent on icon size, so any use to making configurable instead? Used by JQuerySpinBtn.js
     toolButtonClick: (button: any, noHiding: any) => {
       return false;
@@ -268,10 +258,6 @@ const svgEditor = (window['svgEditor'] = (function () {
   let svgCanvas: ISVGCanvas;
   var urldata,
     Utils = window['svgedit'].utilities,
-    isReady = false,
-    customExportImage = false,
-    customExportPDF = false,
-    callbacks = [],
     /**
      * PREFS AND CONFIG
      */
@@ -311,18 +297,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       //   procedures (we obtain instead from defaultExtensions)
       extensions: [],
     },
-    defaultExtensions = [
-      'ext-markers.js',
-      'ext-connector.js',
-      'ext-imagelib.js',
-      'ext-polygon.js',
-      'ext-star.js',
-      'ext-panning.js',
-      'ext-multiselect.js',
-      // 'ext-storage.js',
-      // 'ext-eyedropper.js',
-      'ext-closepath.js',
-    ],
+    defaultExtensions = ['ext-polygon.js'],
     defaultConfig: ISVGConfig = {
       baseUnit: 'px',
       // Change the following to preferences and add pref controls to the UI (e.g., initTool, wireframe, showlayers)?
@@ -331,10 +306,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       // DOCUMENT PROPERTIES
       // Change the following to a preference (already in the Document Properties dialog)?
       dimensions: editor.dimensions,
-      emptyStorageOnDecline: false, // Used by ext-storage.js; empty any prior storage if the user declines to store
-      exportWindowType: 'new', // 'same' (todo: also support 'download')
       extPath: 'js/lib/svgeditor/extensions/',
-      forceStorage: false, // Some interaction with ext-storage.js; strongly discouraged from modification as it bypasses user privacy by preventing them from choosing whether to keep local storage or not
       // EDITOR OPTIONS
       // Change the following to preferences (already in the Editor Options dialog)?
       gridSnapping: false,
@@ -357,8 +329,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       lockExtensions: false, // Disallowed in URL setting
       no_save_warning: true,
       noDefaultExtensions: false, // noDefaultExtensions can only be meaningfully used in config.js or in the URL
-      // EXTENSION-RELATED (STORAGE)
-      noStorageOnLoad: false, // Some interaction with ext-storage.js; prevent even the loading of previously saved local storage
       // URL BEHAVIOR CONFIGURATION
       preventAllURLConfig: true,
       preventURLContentLoading: true,
@@ -627,20 +597,14 @@ const svgEditor = (window['svgEditor'] = (function () {
       extFunc();
     }
 
-    editor.runCallbacks();
     window['svgCanvas'] = editor.canvas = svgCanvas = new $.SvgCanvas(document.getElementById('svgcanvas'), curConfig);
     OpenBottomBoundaryDrawer.update();
 
     var resize_timer,
       Actions,
       path = svgCanvas.pathActions,
-      undoMgr = svgCanvas.undoMgr,
       defaultImageURL = curConfig.imgPath + 'logo.png',
-      workarea = $('#workarea'),
-      // layer_menu = $('#cmenu_layers'), // Unused
-      exportWindow = null,
-      zoomInIcon = 'crosshair',
-      zoomOutIcon = 'crosshair';
+      workarea = $('#workarea');
 
     // For external openers
     (function () {
@@ -657,127 +621,6 @@ const svgEditor = (window['svgEditor'] = (function () {
           console.log(e);
         }
       }
-    })();
-
-    // This sets up alternative dialog boxes. They mostly work the same way as
-    // their UI counterparts, expect instead of returning the result, a callback
-    // needs to be included that returns the result as its first parameter.
-    // In the future we may want to add additional types of dialog boxes, since
-    // they should be easy to handle this way.
-    (function () {
-      $('#dialog_container').draggable({
-        cancel: '#dialog_content, #dialog_buttons *',
-        containment: 'window',
-      });
-
-      var box = $('#dialog_box'),
-        btn_holder = $('#dialog_buttons'),
-        dialog_content = $('#dialog_content'),
-        dbox = function (type, msg?, callback?, defaultVal?, opts?, changeCb?, checkbox?) {
-          var ok, ctrl, chkbx;
-
-          dialog_content.html('<p>' + msg.replace(/\n/g, '</p><p>') + '</p>').toggleClass('prompt', type === 'prompt');
-          btn_holder.empty();
-
-          ok = $('<input type="button" value="' + uiStrings.common.ok + '">').appendTo(btn_holder);
-
-          if (type !== 'alert') {
-            $('<input type="button" value="' + uiStrings.common.cancel + '">')
-              .appendTo(btn_holder)
-              .click(function () {
-                box.hide();
-
-                if (callback) {
-                  callback(false);
-                }
-              });
-          }
-
-          if (type === 'prompt') {
-            ctrl = $('<input type="text">').prependTo(btn_holder);
-            ctrl.val(defaultVal || '');
-            ctrl.bind('keydown', 'return', function () {
-              ok.click();
-            });
-          } else if (type === 'select') {
-            var div = $('<div style="text-align:center;">');
-
-            ctrl = $('<select>').appendTo(div);
-
-            if (checkbox) {
-              var label = $('<label>').text(checkbox.label);
-
-              chkbx = $('<input type="checkbox">').appendTo(label);
-              chkbx.val(checkbox.value);
-
-              if (checkbox.tooltip) {
-                label.attr('title', checkbox.tooltip);
-              }
-
-              chkbx.prop('checked', !!checkbox.checked);
-              div.append($('<div>').append(label));
-            }
-
-            $.each(opts || [], function (opt, val) {
-              if (typeof val === 'object') {
-                ctrl.append($('<option>').val(val.value).html(val.text));
-              } else {
-                ctrl.append($('<option>').html(val));
-              }
-            });
-            dialog_content.append(div);
-
-            if (defaultVal) {
-              ctrl.val(defaultVal);
-            }
-
-            if (changeCb) {
-              ctrl.bind('change', 'return', changeCb);
-            }
-
-            ctrl.bind('keydown', 'return', function () {
-              ok.click();
-            });
-          } else if (type === 'process') {
-            ok.hide();
-          }
-
-          box.show();
-
-          ok.click(function () {
-            box.hide();
-
-            var resp = type === 'prompt' || type === 'select' ? ctrl.val() : true;
-
-            if (callback) {
-              if (chkbx) {
-                callback(resp, chkbx.prop('checked'));
-              } else {
-                callback(resp);
-              }
-            }
-          }).focus();
-
-          if (type === 'prompt' || type === 'select') {
-            ctrl.focus();
-          }
-        };
-
-      $.alert = function (msg, cb) {
-        dbox('alert', msg, cb);
-      };
-      $.confirm = function (msg, cb) {
-        dbox('confirm', msg, cb);
-      };
-      $.process_cancel = function (msg, cb) {
-        dbox('process', msg, cb);
-      };
-      $.prompt = function (msg, txt, cb) {
-        dbox('prompt', msg, cb, txt);
-      };
-      $.select = function (msg, opts, cb, changeCb, txt, checkbox) {
-        dbox('select', msg, cb, txt, opts, changeCb, checkbox);
-      };
     })();
 
     var setSelectMode = function () {
@@ -845,54 +688,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       }
     };
 
-    var exportHandler = function (win, data) {
-      var issues = data.issues,
-        exportWindowName = data.exportWindowName;
-
-      if (exportWindowName) {
-        exportWindow = window.open('', exportWindowName); // A hack to get the window via JSON-able name without opening a new one
-      }
-
-      exportWindow.location.href = data.datauri;
-
-      var done = $.pref('export_notice_done');
-
-      if (done !== 'all') {
-        var note = uiStrings.notification.saveFromBrowser.replace('%s', data.type);
-
-        // Check if there's issues
-        if (issues.length) {
-          var pre = '\n \u2022 ';
-
-          note += '\n\n' + uiStrings.notification.noteTheseIssues + pre + issues.join(pre);
-        }
-
-        // Note that this will also prevent the notice even though new issues may appear later.
-        // May want to find a way to deal with that without annoying the user
-        $.pref('export_notice_done', 'all');
-        exportWindow.alert(note);
-      }
-    };
-
-    // This is a common function used when a tool has been clicked (chosen)
-    // It does several common things:
-    // - removes the tool_button_current class from whatever tool currently has it
-    // - hides any flyouts
-    // - adds the tool_button_current class to the button passed in
-    var toolButtonClick = (editor.toolButtonClick = function (button, noHiding?: boolean) {
-      if ($(button).hasClass('disabled')) {
-        return false;
-      }
-
-      var fadeFlyouts = 'normal';
-
-      workarea.css('cursor', 'auto');
-      $('.tool_button_current').removeClass('tool_button_current').addClass('tool_button');
-      $(button).addClass('tool_button_current').removeClass('tool_button');
-
-      return true;
-    });
-
     var clickSelect = (editor.clickSelect = function (clearSelection: boolean = true) {
       if ([TutorialConstants.DRAW_A_CIRCLE, TutorialConstants.DRAW_A_RECT].includes(getNextStepRequirement())) {
         return;
@@ -918,23 +713,10 @@ const svgEditor = (window['svgEditor'] = (function () {
       } else {
         // regular URL
         svgCanvas.embedImage(url, function (dataURI) {
-          // Couldn't embed, so show warning
-          $('#url_notice').toggle(!dataURI);
           defaultImageURL = url;
         });
       }
     });
-
-    function promptImgURL() {
-      var curhref = svgCanvas.getHref(selectedElement);
-
-      curhref = curhref.indexOf('data:') === 0 ? '' : curhref;
-      $.prompt(uiStrings.notification.enterNewImgURL, curhref, function (url) {
-        if (url) {
-          setImageURL(url);
-        }
-      });
-    }
 
     // updates the context panel tools based on the selected element
     var updateContextPanel = function () {
@@ -970,18 +752,6 @@ const svgEditor = (window['svgEditor'] = (function () {
         var angle = svgCanvas.getRotationAngle(elem);
 
         ObjectPanelController.updateDimensionValues({ rotation: angle });
-
-        if (svgCanvas.addedNew) {
-          if (elname === 'image' && svgCanvas.getMode() === 'image') {
-            // Prompt for URL if not a data URL
-            if (svgCanvas.getHref(elem).indexOf('data:') !== 0) {
-              promptImgURL();
-            }
-          }
-          /*else if (elname === 'text') {
-                  // TODO: Do something here for new text
-              }*/
-        }
 
         if (!is_node && currentMode !== 'pathedit') {
           //$('#selected_panel').show();
@@ -1156,7 +926,6 @@ const svgEditor = (window['svgEditor'] = (function () {
 
         ObjectPanelController.updateDimensionValues({ isRatioFixed });
       } else if (multiselected) {
-        //$('#multiselected_panel').show();
         workareaEvents.emit('update-context-menu', {
           group: true,
           ungroup: false,
@@ -1368,460 +1137,12 @@ const svgEditor = (window['svgEditor'] = (function () {
       return '';
     })();
 
-    var scaleElements = function (elems, scale) {
-      // var prefix = '-' + uaPrefix.toLowerCase() + '-'; // Currently unused
-      var sides = ['top', 'left', 'bottom', 'right'];
-
-      elems.each(function () {
-        // Handled in CSS
-        // this.style[uaPrefix + 'Transform'] = 'scale(' + scale + ')';
-        var i;
-        var el = $(this);
-        var w = el.outerWidth() * (scale - 1);
-        var h = el.outerHeight() * (scale - 1);
-        // var margins = {}; // Currently unused
-
-        for (i = 0; i < 4; i++) {
-          var s = sides[i];
-          var cur = el.data('orig_margin-' + s);
-
-          if (cur == null) {
-            cur = Number.parseInt(el.css('margin-' + s), 10);
-            // Cache the original margin
-            el.data('orig_margin-' + s, cur);
-          }
-
-          var val = cur * scale;
-
-          if (s === 'right') {
-            val += w;
-          } else if (s === 'bottom') {
-            val += h;
-          }
-
-          el.css('margin-' + s, val);
-          // el.css('outline', '1px solid red');
-        }
-      });
-    };
-
-    // TODO: Combine this with addDropDown or find other way to optimize
-    var addAltDropDown = function (elem, list, callback, opts) {
-      var button = $(elem);
-
-      list = $(list);
-
-      var on_button = false;
-      var dropUp = opts.dropUp;
-
-      if (dropUp) {
-        $(elem).addClass('dropup');
-      }
-
-      list.find('li').bind('mouseup', function () {
-        if (opts.seticon) {
-          setIcon('#cur_' + button[0].id, $(this).children());
-          $(this).addClass('current').siblings().removeClass('current');
-        }
-
-        callback.apply(this, arguments);
-      });
-
-      $(window).mouseup(function (evt) {
-        if (!on_button) {
-          button.removeClass('down');
-          list.hide();
-          list.css({
-            left: 0,
-            top: 0,
-          });
-        }
-
-        on_button = false;
-      });
-
-      // var height = list.height(); // Currently unused
-      button
-        .bind('mousedown', function () {
-          var off = button.offset();
-
-          if (dropUp) {
-            off.top -= list.height();
-            off.left += 8;
-          } else {
-            off.top += button.height();
-          }
-
-          list.offset(off);
-
-          if (!button.hasClass('down')) {
-            list.show();
-            on_button = true;
-          } else {
-            // CSS position must be reset for Webkit
-            list.hide();
-            list.css({
-              left: 0,
-              top: 0,
-            });
-          }
-
-          button.toggleClass('down');
-        })
-        .hover(function () {
-          on_button = true;
-        })
-        .mouseout(function () {
-          on_button = false;
-        });
-
-      if (opts.multiclick) {
-        list.mousedown(function () {
-          on_button = true;
-        });
-      }
-    };
-
-    var extsPreLang = [];
-    var extAdded = function (win, ext) {
-      if (!ext) {
-        return;
-      }
-
-      var cb_called = false;
-      var resize_done = false;
-      var cb_ready = true; // Set to false to delay callback (e.g. wait for $.svgIcons)
-
-      if (ext.langReady) {
-        if (editor.langChanged) {
-          // We check for this since the "lang" pref could have been set by storage
-          var lang = $.pref('lang');
-
-          ext.langReady({
-            lang: lang,
-            uiStrings: uiStrings,
-          });
-        } else {
-          extsPreLang.push(ext);
-        }
-      }
-
-      var runCallback = function () {
-        if (ext.callback && !cb_called && cb_ready) {
-          cb_called = true;
-          ext.callback();
-        }
-      };
-
-      var btn_selects = [];
-
-      if (ext.context_tools) {
-        $.each(ext.context_tools, function (i, tool) {
-          // Add select tool
-          var html;
-          var cont_id = tool.container_id ? ' id="' + tool.container_id + '"' : '';
-          var panel = $('#' + tool.panel);
-
-          // create the panel if it doesn't exist
-          if (!panel.length) {
-            panel = $('<div>', {
-              id: tool.panel,
-            }).appendTo('#tools_top');
-          }
-
-          // TODO: Allow support for other types, or adding to existing tool
-          switch (tool.type) {
-            case 'tool_button':
-              html = '<div class="tool_button">' + tool.id + '</div>';
-
-              var div = $(html).appendTo(panel);
-
-              if (tool.events) {
-                $.each(tool.events, function (evt: string, func) {
-                  $(div).bind(evt, func);
-                });
-              }
-
-              break;
-            case 'select':
-              html = '<label' + cont_id + '>' + '<select id="' + tool.id + '">';
-              $.each(tool.options, function (val: string, text) {
-                var sel = val == tool.defval ? ' selected' : '';
-
-                html += '<option value="' + val + '"' + sel + '>' + text + '</option>';
-              });
-              html += '</select></label>';
-
-              // Creates the tool, hides & adds it, returns the select element
-              var sel = $(html).appendTo(panel).find('select');
-
-              $.each(tool.events, function (evt: string, func) {
-                $(sel).bind(evt, func);
-              });
-              break;
-            case 'button-select':
-              html =
-                '<div id="' +
-                tool.id +
-                '" class="dropdown toolset" title="' +
-                tool.title +
-                '">' +
-                '<div id="cur_' +
-                tool.id +
-                '" class="icon_label"></div><button></button></div>';
-
-              var list = $('<ul id="' + tool.id + '_opts"></ul>').appendTo('#option_lists');
-
-              if (tool.colnum) {
-                list.addClass('optcols' + tool.colnum);
-              }
-
-              // Creates the tool, hides & adds it, returns the select element
-              var dropdown = $(html).appendTo(panel).children();
-
-              btn_selects.push({
-                callback: tool.events.change,
-                cur: '#cur_' + tool.id,
-                elem: '#' + tool.id,
-                list: '#' + tool.id + '_opts',
-                title: tool.title,
-              });
-
-              break;
-            case 'input':
-              html =
-                '<label' +
-                cont_id +
-                '>' +
-                '<span id="' +
-                tool.id +
-                '_label">' +
-                tool.label +
-                ':</span>' +
-                '<input id="' +
-                tool.id +
-                '" title="' +
-                tool.title +
-                '" size="' +
-                (tool.size || '4') +
-                '" value="' +
-                (tool.defval || '') +
-                '" type="text"/></label>';
-
-              // Creates the tool, hides & adds it, returns the select element
-
-              // Add to given tool.panel
-              var inp = $(html).appendTo(panel).find('input');
-
-              if (tool.events) {
-                $.each(tool.events, function (evt: string, func) {
-                  inp.bind(evt, func);
-                });
-              }
-
-              break;
-
-            default:
-              break;
-          }
-        });
-      }
-
-      if (ext.buttons) {
-        var fallback_obj = {},
-          placement_obj = {},
-          svgicons = ext.svgicons,
-          holders = {};
-
-        // Add buttons given by extension
-        $.each(ext.buttons, function (i: number, btn) {
-          var icon, svgicon, tls_id;
-          var id = btn.id;
-          let num = i;
-
-          // Give button a unique ID
-          while ($('#' + id).length) {
-            id = btn.id + '_' + ++num;
-          }
-
-          if (!svgicons) {
-            icon = $('<img src="' + btn.icon + '">');
-          } else {
-            fallback_obj[id] = btn.icon;
-            svgicon = btn.svgicon || btn.id;
-
-            if (btn.type === 'app_menu') {
-              placement_obj['#' + id + ' > div'] = svgicon;
-            } else {
-              placement_obj['#' + id] = svgicon;
-            }
-          }
-
-          var cls, parent;
-
-          // Set button up according to its type
-          switch (btn.type) {
-            case 'context':
-              cls = 'tool_button';
-              parent = '#' + btn.panel;
-
-              // create the panel if it doesn't exist
-              if (!$(parent).length) {
-                $('<div>', {
-                  id: btn.panel,
-                }).appendTo('#tools_top');
-              }
-
-              break;
-          }
-
-          var flyout_holder, cur_h, show_btn, ref_data, ref_btn;
-          var button = $(btn.list || btn.type === 'app_menu' ? '<li/>' : '<div/>')
-            .attr('id', id)
-            .attr('title', btn.title)
-            .addClass(cls);
-
-          if (!btn.includeWith && !btn.list) {
-            if ('position' in btn) {
-              if ($(parent).children().eq(btn.position).length) {
-                $(parent).children().eq(btn.position).before(button);
-              } else {
-                $(parent).children().last().before(button);
-              }
-            } else {
-              button.appendTo(parent);
-            }
-
-            if (btn.type === 'app_menu') {
-              button.append('<div>').append(btn.title);
-            }
-          } else if (btn.list) {
-            // Add button to list
-            button.addClass('push_button');
-            $('#' + btn.list + '_opts').append(button);
-
-            if (btn.isDefault) {
-              $('#cur_' + btn.list).append(button.children().clone());
-              svgicon = btn.svgicon || btn.id;
-              placement_obj['#cur_' + btn.list] = svgicon;
-            }
-          } else if (btn.includeWith) {
-            // Add to flyout menu / make flyout menu
-            var opts = btn.includeWith;
-
-            // opts.button, default, position
-            ref_btn = $(opts.button);
-
-            flyout_holder = ref_btn.parent();
-
-            // Create a flyout menu if there isn't one already
-            if (!ref_btn.parent().hasClass('tools_flyout')) {
-              // Create flyout placeholder
-              tls_id = ref_btn[0].id.replace('tool_', 'tools_');
-              show_btn = ref_btn
-                .clone()
-                .attr('id', tls_id + '_show')
-                .append(
-                  $('<div>', {
-                    class: 'flyout_arrow_horiz',
-                  }),
-                );
-
-              ref_btn.before(show_btn);
-            }
-
-            if (opts.isDefault) {
-              placement_obj['#' + tls_id + '_show'] = btn.id;
-            }
-            // TODO: Find way to set the current icon using the iconloader if this is not default
-
-            // Include data for extension button as well as ref button
-            cur_h = holders['#' + flyout_holder[0].id] = [
-              {
-                fn: btn.events.click,
-                icon: btn.id,
-                isDefault: btn.includeWith ? btn.includeWith.isDefault : 0,
-                key: btn.key,
-                sel: '#' + id,
-              },
-              ref_data,
-            ];
-
-            var pos = 'position' in opts ? opts.position : 'last';
-            var len = flyout_holder.children().length;
-
-            // Add at given position or end
-            if (!isNaN(pos) && pos >= 0 && pos < len) {
-              flyout_holder.children().eq(pos).before(button);
-            } else {
-              flyout_holder.append(button);
-              cur_h.reverse();
-            }
-          }
-
-          if (!svgicons) {
-            button.append(icon);
-          }
-
-          if (!btn.list) {
-            // Add given events to button
-            $.each(btn.events, function (name: string, func) {
-              if (name === 'click' && btn.type === 'mode') {
-                if (btn.includeWith) {
-                  button.bind(name, func);
-                } else {
-                  button.bind(name, function () {
-                    if (toolButtonClick(button)) {
-                      func();
-                    }
-                  });
-                }
-
-                if (btn.key) {
-                  $(document).bind('keydown', btn.key, func);
-
-                  if (btn.title) {
-                    button.attr('title', btn.title + ' [' + btn.key + ']');
-                  }
-                }
-              } else {
-                button.bind(name, func);
-              }
-            });
-          }
-        });
-
-        $.each(btn_selects, function () {
-          addAltDropDown(this.elem, this.list, this.callback, {
-            seticon: true,
-          });
-        });
-
-        if (svgicons) {
-          cb_ready = false; // Delay callback
-        }
-      }
-
-      runCallback();
-    };
-
     // bind the selected event to our function that handles updates to the UI
     svgCanvas.bind('selected', selectedChanged);
     svgCanvas.bind('transition', elementTransition);
     svgCanvas.bind('changed', elementChanged);
     svgCanvas.bind('saved', saveHandler);
-    svgCanvas.bind('exported', exportHandler);
-    svgCanvas.bind('exportedPDF', function (win, data) {
-      var exportWindowName = data.exportWindowName;
-
-      if (exportWindowName) {
-        exportWindow = window.open('', exportWindowName); // A hack to get the window via JSON-able name without opening a new one
-      }
-
-      exportWindow.location.href = data.dataurlstring;
-    });
     svgCanvas.bind('contextset', contextChanged);
-    svgCanvas.bind('extension_added', extAdded);
     textActions.setInputElem($('#text')[0]);
 
     var changeStrokeWidth = function (ctl) {
@@ -1941,50 +1262,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       }
     });
 
-    $('.attr_changer').change(function (this: HTMLInputElement) {
-      var attr = this.getAttribute('data-attr');
-      var val = Number.parseFloat(this.value);
-      var valid = svgedit.units.isValidUnit(attr, val, selectedElement);
-
-      if (!valid) {
-        Alert.popUp({
-          message: uiStrings.notification.invalidAttrValGiven,
-        });
-        this.value = selectedElement.getAttribute(attr);
-
-        return false;
-      }
-
-      if (attr !== 'id' && attr !== 'class') {
-        if (isNaN(val)) {
-          val = svgCanvas.convertToNum(attr, val);
-        } else if (curConfig.baseUnit !== 'px') {
-          // Convert unitless value to one with given unit
-
-          var unitData = svgedit.units.getTypeMap();
-
-          if (selectedElement[attr] || svgCanvas.getMode() === 'pathedit' || attr === 'x' || attr === 'y') {
-            val = val * unitData[curConfig.baseUnit];
-          }
-        }
-      }
-
-      // if the user is changing the id, then de-select the element first
-      // change the ID, then re-select it with the new ID
-      if (attr === 'id') {
-        var elem = selectedElement;
-
-        svgCanvas.clearSelection();
-        elem.id = val;
-        svgCanvas.addToSelection([elem], true);
-      } else {
-        svgCanvas.changeSelectedAttribute(attr, val);
-      }
-
-      this.blur();
-      updateContextPanel();
-    });
-
     (function () {
       var last_x = null,
         last_y = null,
@@ -2026,27 +1303,18 @@ const svgEditor = (window['svgEditor'] = (function () {
         panning = false;
       });
 
-      $(document)
-        .bind('keydown', 'space', function (evt) {
-          svgCanvas.spaceKey = keypan = true;
-          workarea.css('cursor', 'grab');
-          evt.preventDefault();
-        })
-        .bind('keyup', 'space', function (evt) {
-          evt.preventDefault();
+      Shortcuts.on([' '], () => {
+        svgCanvas.spaceKey = keypan = true;
+        workarea.css('cursor', 'grab');
+      });
+      // FIXME: use document.addEventListener('keyup', (evt) => { ... })
+      // because shortcuts are not providing keyup event now
+      document.addEventListener('keyup', (evt) => {
+        if (evt.key === ' ') {
           workarea.css('cursor', 'auto');
           svgCanvas.spaceKey = keypan = false;
-        })
-        .bind('keydown', 'shift', function (evt) {
-          if (svgCanvas.getMode() === 'zoom') {
-            workarea.css('cursor', zoomOutIcon);
-          }
-        })
-        .bind('keyup', 'shift', function (evt) {
-          if (svgCanvas.getMode() === 'zoom') {
-            workarea.css('cursor', zoomInIcon);
-          }
-        });
+        }
+      });
 
       editor.setPanning = function (active) {
         svgCanvas.spaceKey = keypan = active;
@@ -2308,18 +1576,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       }
     };
 
-    var addSubPath = function () {
-      var button = $('#tool_add_subpath');
-      var sp = !button.hasClass('push_button_pressed');
-
-      button.toggleClass('push_button_pressed tool_button');
-      path.addSubPath(sp);
-    };
-
-    var opencloseSubPath = function () {
-      path.opencloseSubPath();
-    };
-
     var clearScene = async function () {
       const res = await fileExportHelper.toggleUnsavedChangedDialog();
 
@@ -2352,73 +1608,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       });
     })();
 
-    $('#url_notice').click(function () {
-      Alert.popUp({
-        id: 'url notice',
-        message: this.title,
-      });
-    });
-
-    // added these event handlers for all the push buttons so they
-    // behave more like buttons being pressed-in and not images
-    (function () {
-      var toolnames = [
-        'clear',
-        'open',
-        'save',
-        'source',
-        'delete',
-        'delete_multi',
-        'paste',
-        'clone',
-        'clone_multi',
-        'move_top',
-        'move_bottom',
-      ];
-      var all_tools = '';
-      var cur_class = 'tool_button_current';
-
-      $.each(toolnames, function (i, item) {
-        all_tools += (i ? ',' : '') + '#tool_' + item;
-      });
-
-      $(all_tools)
-        .mousedown(function () {
-          $(this).addClass(cur_class);
-        })
-        .bind('mousedown mouseout', function () {
-          $(this).removeClass(cur_class);
-        });
-    })();
-
-    // Test for zoom icon support
-    (function () {
-      var pre = '-' + uaPrefix.toLowerCase() + '-zoom-';
-      var zoom = pre + 'in';
-
-      workarea.css('cursor', zoom);
-
-      if (workarea.css('cursor') === zoom) {
-        zoomInIcon = zoom;
-        zoomOutIcon = pre + 'out';
-      }
-
-      workarea.css('cursor', 'auto');
-    })();
-
-    $('.push_button')
-      .mousedown(function () {
-        if (!$(this).hasClass('disabled')) {
-          $(this).addClass('push_button_pressed').removeClass('push_button');
-        }
-      })
-      .mouseout(function () {
-        $(this).removeClass('push_button_pressed').addClass('push_button');
-      })
-      .mouseup(function () {
-        $(this).removeClass('push_button_pressed').addClass('push_button');
-      });
-
     LayerPanelController.updateLayerPanel();
 
     var centerCanvas = function () {
@@ -2427,34 +1616,6 @@ const svgEditor = (window['svgEditor'] = (function () {
     };
 
     $(window).bind('load resize', centerCanvas);
-
-    function stepFontSize(elem, step) {
-      var orig_val = Number(elem.value);
-      var sug_val = orig_val + step;
-      var increasing = sug_val >= orig_val;
-
-      if (step === 0) {
-        return orig_val;
-      }
-
-      if (orig_val >= 24) {
-        if (increasing) {
-          return Math.round(orig_val * 1.1);
-        }
-
-        return Math.round(orig_val / 1.1);
-      }
-
-      if (orig_val <= 1) {
-        if (increasing) {
-          return orig_val * 2;
-        }
-
-        return orig_val / 2;
-      }
-
-      return sug_val;
-    }
 
     //Prevent browser from erroneously repopulating fields
     $('input,select').attr('autocomplete', 'off');
@@ -2561,26 +1722,6 @@ const svgEditor = (window['svgEditor'] = (function () {
             RightPanelController.setPanelType(isPathEdit ? PanelType.PathEdit : PanelType.Object);
           });
           Shortcuts.on(['Escape'], () => clickSelect());
-
-          // Misc additional actions
-
-          // Make 'return' keypress trigger the change event
-          $('.attr_changer').bind('keydown', 'return', function (evt) {
-            $(this).change();
-            evt.preventDefault();
-          });
-
-          // $(window).bind('keydown', 'tab', function(e) {
-          // 	if (ui_context === 'canvas') {
-          // 		e.preventDefault();
-          // 		selectNext();
-          // 	}
-          // }).bind('keydown', 'shift+tab', function(e) {
-          // 	åif (ui_context === 'canvas') {
-          // 		e.preventDefault();
-          // 		selectPrev();
-          // 	}
-          // });
         },
       };
     })();
@@ -2605,14 +1746,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       },
       false,
     );
-
-    editor.openPrep = function (func) {
-      if (undoMgr.getUndoStackSize() === 0) {
-        func(true);
-      } else {
-        $.confirm(uiStrings.notification.QwantToOpen, func);
-      }
-    };
 
     function onDragEnter(e) {
       e.stopPropagation();
@@ -2919,11 +2052,9 @@ const svgEditor = (window['svgEditor'] = (function () {
     // For Compatibility with older extensions
     $(function () {
       window['svgCanvas'] = svgCanvas;
-      svgCanvas.ready = editor.ready;
     });
 
     editor.setLang = function (lang, allStrings) {
-      editor.langChanged = true;
       $.pref('lang', lang);
       $('#lang_select').val(lang);
 
@@ -2943,30 +2074,6 @@ const svgEditor = (window['svgEditor'] = (function () {
         svgCanvas.renameCurrentLayer(uiStrings.layers.layer + ' 1');
         LayerPanelController.updateLayerPanel();
       }
-
-      // In case extensions loaded before the locale, now we execute a callback on them
-      if (extsPreLang.length) {
-        while (extsPreLang.length) {
-          var ext = extsPreLang.shift();
-
-          ext.langReady({
-            lang: lang,
-            uiStrings: uiStrings,
-          });
-        }
-      } else {
-        svgCanvas.runExtensions('langReady', {
-          lang: lang,
-          uiStrings: uiStrings,
-        });
-      }
-
-      svgCanvas.runExtensions('langChanged', lang);
-
-      // Copy alignment titles
-      $('#multiselected_panel div[id^=tool_align]').each(function () {
-        $('#tool_pos' + this.id.substr(10))[0].title = this.title;
-      });
     };
 
     //greyscale all svgContent
@@ -2996,21 +2103,7 @@ const svgEditor = (window['svgEditor'] = (function () {
     })();
   };
 
-  editor.ready = function (cb) {
-    if (!isReady) {
-      callbacks.push(cb);
-    } else {
-      cb();
-    }
-  };
-
-  editor.runCallbacks = function () {
-    $.each(callbacks, function () {
-      this();
-    });
-    isReady = true;
-  };
-
+  // TODO: only ext-polygon are used now, once we port ext-polygon to module, we can remove this
   editor.addExtension = function () {
     var args = arguments;
 

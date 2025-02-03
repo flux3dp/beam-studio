@@ -90,10 +90,7 @@ describe('test LeftPanel', () => {
     );
 
     expect(container).toMatchSnapshot();
-    expect(document.getElementById('svg_editor').className.split(' ').includes('color')).toBeTruthy();
-
     unmount();
-    expect(document.getElementById('svg_editor').className.split(' ').indexOf('color')).toBe(-1);
   });
 
   test('not in path previewing', () => {

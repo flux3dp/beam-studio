@@ -4,8 +4,6 @@ import 'rgbcolor';
 import 'canvg';
 import 'svgedit';
 
-import 'jsHotkeys';
-import 'jquerybbq';
 import 'svgicons';
 import 'touch';
 import 'jquerySvg';
@@ -21,4 +19,3 @@ import 'recalculate';
 import 'draw';
 import 'layer';
 import 'path';
-import 'jqueryUi';

@@ -160,7 +160,6 @@ const funcs = {
       svgCanvas.selectOnly([newImage]);
 
       window.updateContextPanel();
-      $('#dialog_box').hide();
     };
   },
   insertLine(): void {

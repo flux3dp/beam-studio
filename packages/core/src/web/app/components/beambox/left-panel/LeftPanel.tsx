@@ -25,9 +25,6 @@ class LeftPanel extends React.PureComponent {
       FnWrapper.clearSelection();
     });
 
-    // Add class color to #svg_editor
-    $('#svg_editor').addClass('color');
-
     shortcuts.on(['v'], () => {
       const { mode } = this.context;
 
@@ -91,10 +88,6 @@ class LeftPanel extends React.PureComponent {
         $('#left-Element').trigger('click');
       }
     });
-  }
-
-  componentWillUnmount(): void {
-    $('#svg_editor').removeClass('color');
   }
 
   render(): React.JSX.Element {

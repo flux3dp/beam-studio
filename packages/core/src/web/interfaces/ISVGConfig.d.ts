@@ -9,15 +9,9 @@ export default interface ISVGConfig {
   // DOCUMENT PROPERTIES
   // Change the following to a preference (already in the Document Properties dialog)?
   dimensions?: number[];
-  // Used by ext-storage.js; empty any prior storage if the user declines to store
-  emptyStorageOnDecline?: boolean;
   exportWindowType?: string; // 'same' (todo: also support 'download')
   extensions?: any[];
   extPath?: string;
-  // Some interaction with ext-storage.js;
-  // strongly discouraged from modification as it bypasses user privacy by preventing them
-  // from choosing whether to keep local storage or not
-  forceStorage?: boolean;
   // EDITOR OPTIONS
   // Change the following to preferences (already in the Editor Options dialog)?
   gridSnapping?: boolean;
@@ -42,10 +36,6 @@ export default interface ISVGConfig {
   no_save_warning?: boolean;
   // noDefaultExtensions can only be meaningfully used in config.js or in the URL
   noDefaultExtensions?: boolean;
-  // EXTENSION-RELATED (STORAGE)
-  // Some interaction with ext-storage.js;
-  // prevent even the loading of previously saved local storage
-  noStorageOnLoad?: boolean;
   // URL BEHAVIOR CONFIGURATION
   preventAllURLConfig?: boolean;
   preventURLContentLoading?: boolean;

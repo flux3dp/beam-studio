@@ -45,14 +45,6 @@ var isMac_ = userAgent.indexOf('Macintosh') >= 0;
 var isTouch_ = 'ontouchstart' in window;
 const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
-var supportsSelectors_ = (function() {
-	return !!svg.querySelector;
-}());
-
-var supportsXpath_ = (function() {
-	return !!document.evaluate;
-}());
-
 // segList functions (for FF1.5 and 2.0)
 var supportsPathReplaceItem_ = (function() {
 	var path = document.createElementNS(NS.SVG, 'path');
@@ -127,19 +119,6 @@ var supportsEditableText_ = (function() {
 	return isOpera_;
 }());
 
-var supportsGoodDecimals_ = (function() {
-	// Correct decimals on clone attributes (Opera < 10.5/win/non-en)
-	var rect = document.createElementNS(NS.SVG, 'rect');
-	rect.setAttribute('x', 0.1);
-	var crect = rect.cloneNode(false);
-	var retValue = (crect.getAttribute('x').indexOf(',') == -1);
-	if(!retValue) {
-		$.alert('NOTE: This version of Opera is known to contain bugs in SVG-edit.\n'+
-		'Please upgrade to the <a href="http://opera.com">latest version</a> in which the problems have been fixed.');
-	}
-	return retValue;
-}());
-
 var supportsNonScalingStroke_ = (function() {
 	var rect = document.createElementNS(NS.SVG, 'rect');
 	rect.setAttribute('style', 'vector-effect:non-scaling-stroke');
@@ -172,16 +151,12 @@ svgedit.browser.isWindows = function() { return isWindows_; };
 svgedit.browser.isMac = function() { return isMac_; };
 svgedit.browser.isTouch = function() { return isTouch_; };
 
-svgedit.browser.supportsSelectors = function() { return supportsSelectors_; };
-svgedit.browser.supportsXpath = function() { return supportsXpath_; };
-
 svgedit.browser.supportsPathReplaceItem = function() { return supportsPathReplaceItem_; };
 svgedit.browser.supportsPathInsertItemBefore = function() { return supportsPathInsertItemBefore_; };
 svgedit.browser.supportsPathBBox = function() { return supportsPathBBox_; };
 svgedit.browser.supportsHVLineContainerBBox = function() { return supportsHVLineContainerBBox_; };
 svgedit.browser.supportsGoodTextCharPos = function() { return supportsGoodTextCharPos_; };
 svgedit.browser.supportsEditableText = function() { return supportsEditableText_; };
-svgedit.browser.supportsGoodDecimals = function() { return supportsGoodDecimals_; };
 svgedit.browser.supportsNonScalingStroke = function() { return supportsNonScalingStroke_; };
 svgedit.browser.supportsNativeTransformLists = function() { return supportsNativeSVGTransformLists_; };
 
