@@ -22,13 +22,6 @@ const logLimit = 100;
 let wsErrorCount = 0;
 let wsCreateFailedCount = 0;
 
-export const readyStates = {
-  CLOSED: 3,
-  CLOSING: 2,
-  CONNECTING: 0,
-  OPEN: 1,
-};
-
 // options:
 //      hostname      - host name (Default: 127.0.0.1)
 //      port          - what protocol uses (Default: 8000)
@@ -116,8 +109,14 @@ export default (options: Option): WrappedWebSocket => {
   };
 
   const createWebSocket = (createWsOpts: Option) => {
-    if (ws && ws.readyState !== readyStates.CLOSED) {
-      ws.close();
+    if (ws) {
+      if (ws.readyState === WebSocket.CONNECTING) {
+        return ws;
+      }
+
+      if (ws.readyState !== WebSocket.CLOSED) {
+        ws.close();
+      }
     }
 
     const hostName = createWsOpts.hostname || defaultOptions.hostname;
@@ -288,7 +287,7 @@ export default (options: Option): WrappedWebSocket => {
     }
 
     timer = setInterval(() => {
-      if (ws?.readyState === readyStates.OPEN) {
+      if (ws?.readyState === WebSocket.OPEN) {
         sender('ping');
       }
     }, 60 * 1000 /* ms */);
@@ -315,7 +314,7 @@ export default (options: Option): WrappedWebSocket => {
 
     if (!ws && socketOptions.autoReconnect) {
       setTimeout(() => {
-        ws = createWebSocket(socketOptions);
+        initWebSocket();
       }, 100);
     }
   };
@@ -328,21 +327,21 @@ export default (options: Option): WrappedWebSocket => {
         socketOptions.autoReconnect = reconnect;
       }
 
-      if (ws !== null && ws.readyState !== readyStates.CLOSED) {
+      if (ws !== null && ws.readyState !== WebSocket.CLOSED) {
         ws.close();
       }
     },
     get currentState() {
-      return ws?.readyState ?? readyStates.CLOSED;
+      return ws?.readyState ?? WebSocket.CLOSED;
     },
     log: wsLog.log,
     options: socketOptions,
     send(data: string) {
-      if (!ws || ws === null || ws?.readyState === readyStates.CLOSING || ws?.readyState === readyStates.CLOSED) {
+      if (!ws || ws === null || ws?.readyState === WebSocket.CLOSING || ws?.readyState === WebSocket.CLOSED) {
         ws = createWebSocket(socketOptions);
       }
 
-      if (ws?.readyState === readyStates.CONNECTING) {
+      if (ws?.readyState === WebSocket.CONNECTING) {
         ws.onopen = (e) => {
           socketOptions.onOpen?.(e);
           sender(data);

@@ -263,7 +263,7 @@ const initSmartUpnp = async () => {
 
 initSmartUpnp();
 
-export const checkConnection = (): boolean => ws?.currentState === readyStates.OPEN;
+export const checkConnection = (): boolean => ws?.currentState === WebSocket.OPEN;
 
 export const getLatestDeviceInfo = (uuid: string): IDeviceInfo => deviceMap[uuid] ?? swiftrayDevices[uuid];
 
