@@ -60,7 +60,7 @@ export default (options: Option): WrappedWebSocket => {
       return isWeb() ? '8000' : window.FLUX.ghostPort;
     },
   };
-  let ws: InsecureWebsocket | WebSocket = null;
+  let ws: InsecureWebsocket | null | WebSocket = null;
   const trimMessage = (origMessage: string): string => {
     const message = origMessage.replace(/"/g, '');
 
@@ -70,8 +70,8 @@ export default (options: Option): WrappedWebSocket => {
 
     return message;
   };
-  const origanizeOptions = (opts) => {
-    const keys = Object.keys(defaultOptions);
+  const origanizeOptions = (opts: Option) => {
+    const keys = Object.keys(defaultOptions) as Array<keyof Option>;
     const newOpts = { ...opts };
 
     for (let i = 0; i < keys.length; i += 1) {
@@ -115,7 +115,7 @@ export default (options: Option): WrappedWebSocket => {
     }
   };
 
-  const createWebSocket = (createWsOpts) => {
+  const createWebSocket = (createWsOpts: Option) => {
     if (ws && ws.readyState !== readyStates.CLOSED) {
       ws.close();
     }
@@ -172,12 +172,12 @@ export default (options: Option): WrappedWebSocket => {
     };
 
     nodeWs.onopen = (e) => {
-      socketOptions.onOpen(e);
+      socketOptions.onOpen?.(e);
       wsErrorCount = 0;
       MessageCaller.closeMessage('backend-error-hint');
     };
 
-    nodeWs.onmessage = (result) => {
+    nodeWs.onmessage = (result: MessageEvent) => {
       let data = isJson(result.data) ? JSON.parse(result.data) : result.data;
       let errorStr = '';
       let skipError = false;
@@ -222,7 +222,7 @@ export default (options: Option): WrappedWebSocket => {
             console.error('WS_ERROR', errorStr);
           }
 
-          socketOptions.onError(data);
+          socketOptions.onError?.(data);
           break;
         case 'fatal':
           errorStr = data instanceof Object ? data.error : '';
@@ -250,31 +250,25 @@ export default (options: Option): WrappedWebSocket => {
             console.error('WS_FATAL', errorStr);
           }
 
-          socketOptions.onFatal(data);
+          socketOptions.onFatal?.(data);
           break;
         // ignore below status
         case 'pong':
           break;
-        case 'debug':
-          if (socketOptions.onDebug) {
-            socketOptions.onDebug(data);
-          }
-
-          break;
         default:
-          socketOptions.onMessage(data);
+          socketOptions.onMessage?.(data);
           break;
       }
     };
 
-    nodeWs.onclose = (result) => {
-      socketOptions.onClose(result);
+    nodeWs.onclose = (result: CloseEvent) => {
+      socketOptions.onClose?.(result);
 
       // The connection was closed abnormally without sending or receving data
       // ref: http://tools.ietf.org/html/rfc6455#section-7.4.1
       if (result.code === 1006) {
         wsLog.log.push('**abnormal disconnection**');
-        socketOptions.onFatal(result);
+        socketOptions.onFatal?.(result);
       }
 
       if (socketOptions.autoReconnect === true) {
@@ -287,7 +281,7 @@ export default (options: Option): WrappedWebSocket => {
     return nodeWs;
   };
 
-  let timer = null;
+  let timer: NodeJS.Timeout;
   const keepAlive = () => {
     if (timer) {
       clearInterval(timer);
@@ -302,21 +296,31 @@ export default (options: Option): WrappedWebSocket => {
 
   keepAlive();
 
-  const sender = (data) => {
+  const sender = (data: Blob | string) => {
     wsLog.log.push(trimMessage(['>', data, typeof data].join(' ')));
 
     if (data instanceof Blob === true) {
       blobSegments(data, (chunk) => {
-        ws.send(chunk);
+        ws?.send(chunk);
       });
     } else {
-      ws.send(data);
+      ws?.send(data);
     }
 
     keepAlive();
   };
 
-  ws = createWebSocket(socketOptions);
+  const initWebSocket = () => {
+    ws = createWebSocket(socketOptions);
+
+    if (!ws && socketOptions.autoReconnect) {
+      setTimeout(() => {
+        ws = createWebSocket(socketOptions);
+      }, 100);
+    }
+  };
+
+  initWebSocket();
 
   const wsobj = {
     close(reconnect?: boolean) {
@@ -329,7 +333,7 @@ export default (options: Option): WrappedWebSocket => {
       }
     },
     get currentState() {
-      return ws.readyState;
+      return ws?.readyState ?? readyStates.CLOSED;
     },
     log: wsLog.log,
     options: socketOptions,
@@ -338,9 +342,9 @@ export default (options: Option): WrappedWebSocket => {
         ws = createWebSocket(socketOptions);
       }
 
-      if (ws.readyState === readyStates.CONNECTING) {
+      if (ws?.readyState === readyStates.CONNECTING) {
         ws.onopen = (e) => {
-          socketOptions.onOpen(e);
+          socketOptions.onOpen?.(e);
           sender(data);
         };
       } else {
@@ -349,7 +353,7 @@ export default (options: Option): WrappedWebSocket => {
 
       return wsobj;
     },
-    setOnMessage(callback) {
+    setOnMessage(callback: (evt: MessageEvent) => void) {
       socketOptions.onMessage = callback;
 
       return wsobj;
