@@ -7,7 +7,7 @@ import isWeb from '@core/helpers/is-web';
 import Logger from '@core/helpers/logger';
 import sentryHelper from '@core/helpers/sentry-helper';
 import SmartUpnp from '@core/helpers/smart-upnp';
-import Websocket, { readyStates } from '@core/helpers/websocket';
+import Websocket from '@core/helpers/websocket';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 import communicator from '@app/implementations/communicator';
@@ -263,7 +263,7 @@ const initSmartUpnp = async () => {
 
 initSmartUpnp();
 
-export const checkConnection = (): boolean => ws?.currentState === readyStates.OPEN;
+export const checkConnection = (): boolean => ws?.currentState === WebSocket.OPEN;
 
 export const getLatestDeviceInfo = (uuid: string): IDeviceInfo => deviceMap[uuid] ?? swiftrayDevices[uuid];
 

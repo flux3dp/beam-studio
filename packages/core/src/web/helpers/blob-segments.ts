@@ -1,7 +1,7 @@
 /**
  * blob segments
  */
-export default (blob: Blob, callback): void => {
+export default (blob: Blob, callback: (seg: Blob) => void): void => {
   const fn = callback || function () {};
   const CHUNK_PKG_SIZE = 4096;
 

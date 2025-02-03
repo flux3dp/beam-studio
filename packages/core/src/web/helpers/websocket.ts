@@ -22,13 +22,6 @@ const logLimit = 100;
 let wsErrorCount = 0;
 let wsCreateFailedCount = 0;
 
-export const readyStates = {
-  CLOSED: 3,
-  CLOSING: 2,
-  CONNECTING: 0,
-  OPEN: 1,
-};
-
 // options:
 //      hostname      - host name (Default: 127.0.0.1)
 //      port          - what protocol uses (Default: 8000)
@@ -60,7 +53,7 @@ export default (options: Option): WrappedWebSocket => {
       return isWeb() ? '8000' : window.FLUX.ghostPort;
     },
   };
-  let ws: InsecureWebsocket | WebSocket = null;
+  let ws: InsecureWebsocket | null | WebSocket = null;
   const trimMessage = (origMessage: string): string => {
     const message = origMessage.replace(/"/g, '');
 
@@ -70,8 +63,8 @@ export default (options: Option): WrappedWebSocket => {
 
     return message;
   };
-  const origanizeOptions = (opts) => {
-    const keys = Object.keys(defaultOptions);
+  const origanizeOptions = (opts: Option) => {
+    const keys = Object.keys(defaultOptions) as Array<keyof Option>;
     const newOpts = { ...opts };
 
     for (let i = 0; i < keys.length; i += 1) {
@@ -115,9 +108,15 @@ export default (options: Option): WrappedWebSocket => {
     }
   };
 
-  const createWebSocket = (createWsOpts) => {
-    if (ws && ws.readyState !== readyStates.CLOSED) {
-      ws.close();
+  const createWebSocket = (createWsOpts: Option) => {
+    if (ws) {
+      if (ws.readyState === WebSocket.CONNECTING) {
+        return ws;
+      }
+
+      if (ws.readyState !== WebSocket.CLOSED) {
+        ws.close();
+      }
     }
 
     const hostName = createWsOpts.hostname || defaultOptions.hostname;
@@ -172,12 +171,12 @@ export default (options: Option): WrappedWebSocket => {
     };
 
     nodeWs.onopen = (e) => {
-      socketOptions.onOpen(e);
+      socketOptions.onOpen?.(e);
       wsErrorCount = 0;
       MessageCaller.closeMessage('backend-error-hint');
     };
 
-    nodeWs.onmessage = (result) => {
+    nodeWs.onmessage = (result: MessageEvent) => {
       let data = isJson(result.data) ? JSON.parse(result.data) : result.data;
       let errorStr = '';
       let skipError = false;
@@ -222,7 +221,7 @@ export default (options: Option): WrappedWebSocket => {
             console.error('WS_ERROR', errorStr);
           }
 
-          socketOptions.onError(data);
+          socketOptions.onError?.(data);
           break;
         case 'fatal':
           errorStr = data instanceof Object ? data.error : '';
@@ -250,31 +249,25 @@ export default (options: Option): WrappedWebSocket => {
             console.error('WS_FATAL', errorStr);
           }
 
-          socketOptions.onFatal(data);
+          socketOptions.onFatal?.(data);
           break;
         // ignore below status
         case 'pong':
           break;
-        case 'debug':
-          if (socketOptions.onDebug) {
-            socketOptions.onDebug(data);
-          }
-
-          break;
         default:
-          socketOptions.onMessage(data);
+          socketOptions.onMessage?.(data);
           break;
       }
     };
 
-    nodeWs.onclose = (result) => {
-      socketOptions.onClose(result);
+    nodeWs.onclose = (result: CloseEvent) => {
+      socketOptions.onClose?.(result);
 
       // The connection was closed abnormally without sending or receving data
       // ref: http://tools.ietf.org/html/rfc6455#section-7.4.1
       if (result.code === 1006) {
         wsLog.log.push('**abnormal disconnection**');
-        socketOptions.onFatal(result);
+        socketOptions.onFatal?.(result);
       }
 
       if (socketOptions.autoReconnect === true) {
@@ -287,14 +280,14 @@ export default (options: Option): WrappedWebSocket => {
     return nodeWs;
   };
 
-  let timer = null;
+  let timer: NodeJS.Timeout;
   const keepAlive = () => {
     if (timer) {
       clearInterval(timer);
     }
 
     timer = setInterval(() => {
-      if (ws?.readyState === readyStates.OPEN) {
+      if (ws?.readyState === WebSocket.OPEN) {
         sender('ping');
       }
     }, 60 * 1000 /* ms */);
@@ -302,21 +295,31 @@ export default (options: Option): WrappedWebSocket => {
 
   keepAlive();
 
-  const sender = (data) => {
+  const sender = (data: Blob | string) => {
     wsLog.log.push(trimMessage(['>', data, typeof data].join(' ')));
 
     if (data instanceof Blob === true) {
       blobSegments(data, (chunk) => {
-        ws.send(chunk);
+        ws?.send(chunk);
       });
     } else {
-      ws.send(data);
+      ws?.send(data);
     }
 
     keepAlive();
   };
 
-  ws = createWebSocket(socketOptions);
+  const initWebSocket = () => {
+    ws = createWebSocket(socketOptions);
+
+    if (!ws && socketOptions.autoReconnect) {
+      setTimeout(() => {
+        initWebSocket();
+      }, 300);
+    }
+  };
+
+  initWebSocket();
 
   const wsobj = {
     close(reconnect?: boolean) {
@@ -324,23 +327,23 @@ export default (options: Option): WrappedWebSocket => {
         socketOptions.autoReconnect = reconnect;
       }
 
-      if (ws !== null && ws.readyState !== readyStates.CLOSED) {
+      if (ws !== null && ws.readyState !== WebSocket.CLOSED) {
         ws.close();
       }
     },
     get currentState() {
-      return ws.readyState;
+      return ws?.readyState ?? WebSocket.CLOSED;
     },
     log: wsLog.log,
     options: socketOptions,
     send(data: string) {
-      if (!ws || ws === null || ws?.readyState === readyStates.CLOSING || ws?.readyState === readyStates.CLOSED) {
+      if (!ws || ws === null || ws?.readyState === WebSocket.CLOSING || ws?.readyState === WebSocket.CLOSED) {
         ws = createWebSocket(socketOptions);
       }
 
-      if (ws.readyState === readyStates.CONNECTING) {
+      if (ws?.readyState === WebSocket.CONNECTING) {
         ws.onopen = (e) => {
-          socketOptions.onOpen(e);
+          socketOptions.onOpen?.(e);
           sender(data);
         };
       } else {
@@ -349,7 +352,7 @@ export default (options: Option): WrappedWebSocket => {
 
       return wsobj;
     },
-    setOnMessage(callback) {
+    setOnMessage(callback: (evt: MessageEvent) => void) {
       socketOptions.onMessage = callback;
 
       return wsobj;
