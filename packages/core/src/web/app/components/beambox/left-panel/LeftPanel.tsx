@@ -90,10 +90,6 @@ class LeftPanel extends React.PureComponent {
     });
   }
 
-  componentWillUnmount(): void {
-    $('#svg_editor').removeClass('color');
-  }
-
   render(): React.JSX.Element {
     const { mode, togglePathPreview } = this.context;
 
