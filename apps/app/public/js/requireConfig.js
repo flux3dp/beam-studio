@@ -32,7 +32,6 @@ requirejs.config({
         svgnestGeoUtil: '../lib/svg-nest/util/geometryutil',
         svgnestParallel: '../lib/svg-nest/util/parallel',
         svgnestEval: '../lib/svg-nest/util/eval',
-        jqueryUi: '../lib/svgeditor/jquery-ui/jquery-ui-1.8.17.custom.min',
         canvg: '../lib/svgeditor/canvg/canvg',
         rgbcolor: '../lib/svgeditor/canvg/rgbcolor'
         // SVG Editor Libraries End
@@ -109,11 +108,8 @@ requirejs.config({
             deps: ['svgnestGeoUtil']
         },
         svgnestEval: {
-            deps: ['svgnestParallel']
-        },
-        jqueryUi: {
             deps: [
-              'svgnestEval',
+              'svgnestParallel',
               'svgedit',
               'css!svgeditor/svg-editor',
               'canvg',
@@ -145,9 +141,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 
-// Load main
+// Load main, add the last item to make sure svgedit is loaded first
 
-requirejs(['jqueryUi', 'jquery'], function (jqueryUi, $) {
+requirejs(['jquery', 'svgnestEval'], function ($) {
   window.$ = $;
   window.jQuery = $;
   const body = document.querySelector('body');

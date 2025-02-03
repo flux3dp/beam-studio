@@ -19,4 +19,3 @@ import 'recalculate';
 import 'draw';
 import 'layer';
 import 'path';
-import 'jqueryUi';

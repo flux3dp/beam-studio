@@ -76,7 +76,7 @@ navigator.keyboard?.getLayoutMap?.().then((map) => {
  * - https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key
  * - https://developer.mozilla.org/en-US/docs/Web/API/KeyboardLayoutMap
  */
-const getKeyFromEvent = (event: KeyboardEvent): string => {
+const getKeyFromEvent = (event: KeyboardEvent): string | undefined => {
   const key = layoutMap?.has(event.code) ? layoutMap.get(event.code) : event.key;
 
   return key?.toLowerCase();
