@@ -315,7 +315,7 @@ export default (options: Option): WrappedWebSocket => {
     if (!ws && socketOptions.autoReconnect) {
       setTimeout(() => {
         initWebSocket();
-      }, 100);
+      }, 300);
     }
   };
 
