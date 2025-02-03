@@ -306,7 +306,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       // DOCUMENT PROPERTIES
       // Change the following to a preference (already in the Document Properties dialog)?
       dimensions: editor.dimensions,
-      exportWindowType: 'new', // 'same' (todo: also support 'download')
       extPath: 'js/lib/svgeditor/extensions/',
       // EDITOR OPTIONS
       // Change the following to preferences (already in the Editor Options dialog)?
@@ -604,13 +603,8 @@ const svgEditor = (window['svgEditor'] = (function () {
     var resize_timer,
       Actions,
       path = svgCanvas.pathActions,
-      undoMgr = svgCanvas.undoMgr,
       defaultImageURL = curConfig.imgPath + 'logo.png',
-      workarea = $('#workarea'),
-      // layer_menu = $('#cmenu_layers'), // Unused
-      exportWindow = null,
-      zoomInIcon = 'crosshair',
-      zoomOutIcon = 'crosshair';
+      workarea = $('#workarea');
 
     // For external openers
     (function () {
@@ -694,35 +688,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       }
     };
 
-    var exportHandler = function (win, data) {
-      var issues = data.issues,
-        exportWindowName = data.exportWindowName;
-
-      if (exportWindowName) {
-        exportWindow = window.open('', exportWindowName); // A hack to get the window via JSON-able name without opening a new one
-      }
-
-      exportWindow.location.href = data.datauri;
-
-      var done = $.pref('export_notice_done');
-
-      if (done !== 'all') {
-        var note = uiStrings.notification.saveFromBrowser.replace('%s', data.type);
-
-        // Check if there's issues
-        if (issues.length) {
-          var pre = '\n \u2022 ';
-
-          note += '\n\n' + uiStrings.notification.noteTheseIssues + pre + issues.join(pre);
-        }
-
-        // Note that this will also prevent the notice even though new issues may appear later.
-        // May want to find a way to deal with that without annoying the user
-        $.pref('export_notice_done', 'all');
-        exportWindow.alert(note);
-      }
-    };
-
     var clickSelect = (editor.clickSelect = function (clearSelection: boolean = true) {
       if ([TutorialConstants.DRAW_A_CIRCLE, TutorialConstants.DRAW_A_RECT].includes(getNextStepRequirement())) {
         return;
@@ -748,8 +713,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       } else {
         // regular URL
         svgCanvas.embedImage(url, function (dataURI) {
-          // Couldn't embed, so show warning
-          $('#url_notice').toggle(!dataURI);
           defaultImageURL = url;
         });
       }
@@ -1179,16 +1142,6 @@ const svgEditor = (window['svgEditor'] = (function () {
     svgCanvas.bind('transition', elementTransition);
     svgCanvas.bind('changed', elementChanged);
     svgCanvas.bind('saved', saveHandler);
-    svgCanvas.bind('exported', exportHandler);
-    svgCanvas.bind('exportedPDF', function (win, data) {
-      var exportWindowName = data.exportWindowName;
-
-      if (exportWindowName) {
-        exportWindow = window.open('', exportWindowName); // A hack to get the window via JSON-able name without opening a new one
-      }
-
-      exportWindow.location.href = data.dataurlstring;
-    });
     svgCanvas.bind('contextset', contextChanged);
     textActions.setInputElem($('#text')[0]);
 
@@ -1623,18 +1576,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       }
     };
 
-    var addSubPath = function () {
-      var button = $('#tool_add_subpath');
-      var sp = !button.hasClass('push_button_pressed');
-
-      button.toggleClass('push_button_pressed tool_button');
-      path.addSubPath(sp);
-    };
-
-    var opencloseSubPath = function () {
-      path.opencloseSubPath();
-    };
-
     var clearScene = async function () {
       const res = await fileExportHelper.toggleUnsavedChangedDialog();
 
@@ -1666,73 +1607,6 @@ const svgEditor = (window['svgEditor'] = (function () {
         }
       });
     })();
-
-    $('#url_notice').click(function () {
-      Alert.popUp({
-        id: 'url notice',
-        message: this.title,
-      });
-    });
-
-    // added these event handlers for all the push buttons so they
-    // behave more like buttons being pressed-in and not images
-    (function () {
-      var toolnames = [
-        'clear',
-        'open',
-        'save',
-        'source',
-        'delete',
-        'delete_multi',
-        'paste',
-        'clone',
-        'clone_multi',
-        'move_top',
-        'move_bottom',
-      ];
-      var all_tools = '';
-      var cur_class = 'tool_button_current';
-
-      $.each(toolnames, function (i, item) {
-        all_tools += (i ? ',' : '') + '#tool_' + item;
-      });
-
-      $(all_tools)
-        .mousedown(function () {
-          $(this).addClass(cur_class);
-        })
-        .bind('mousedown mouseout', function () {
-          $(this).removeClass(cur_class);
-        });
-    })();
-
-    // Test for zoom icon support
-    (function () {
-      var pre = '-' + uaPrefix.toLowerCase() + '-zoom-';
-      var zoom = pre + 'in';
-
-      workarea.css('cursor', zoom);
-
-      if (workarea.css('cursor') === zoom) {
-        zoomInIcon = zoom;
-        zoomOutIcon = pre + 'out';
-      }
-
-      workarea.css('cursor', 'auto');
-    })();
-
-    $('.push_button')
-      .mousedown(function () {
-        if (!$(this).hasClass('disabled')) {
-          $(this).addClass('push_button_pressed').removeClass('push_button');
-        }
-      })
-      .mouseout(function () {
-        $(this).removeClass('push_button_pressed').addClass('push_button');
-      })
-      .mouseup(function () {
-        $(this).removeClass('push_button_pressed').addClass('push_button');
-      });
 
     LayerPanelController.updateLayerPanel();
 
