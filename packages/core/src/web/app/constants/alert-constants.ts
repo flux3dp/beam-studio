@@ -42,7 +42,7 @@ export default {
   YES_NO: 'YES_NO',
 };
 
-export const HELP_CENTER_URLS = {
+export const HELP_CENTER_URLS: Record<string, string> = {
   801: 'https://support.flux3dp.com/hc/en-us/articles/360001809676',
   802: 'https://support.flux3dp.com/hc/en-us/articles/360001809776',
   803: 'https://support.flux3dp.com/hc/en-us/articles/360001791895',

@@ -1,6 +1,7 @@
 /**
  * new Alert Modal using antd Modal
  */
+import type { ReactNode } from 'react';
 import React, { useContext, useState } from 'react';
 
 import { CheckCircleFilled, CloseCircleFilled, ExclamationCircleFilled, InfoCircleFilled } from '@ant-design/icons';
@@ -17,7 +18,7 @@ import type { IAlert, MessageIcon } from '@core/interfaces/IAlert';
 
 import styles from './Alert.module.scss';
 
-const renderIcon = (url?: string): React.JSX.Element => {
+const renderIcon = (url?: string): ReactNode => {
   if (!url) {
     return null;
   }
@@ -25,7 +26,7 @@ const renderIcon = (url?: string): React.JSX.Element => {
   return <img className={styles.icon} src={url} />;
 };
 
-const messageIconMap: Record<MessageIcon, (props: any) => React.JSX.Element> = {
+const messageIconMap: Record<MessageIcon, (props: any) => ReactNode> = {
   error: () => <CloseCircleFilled style={{ color: '#fe4348', fontSize: 28 }} />,
   info: () => <InfoCircleFilled style={{ color: '#1890ff', fontSize: 28 }} />,
   notice: () => <ExclamationCircleFilled style={{ color: '#faa22d', fontSize: 28 }} />,
@@ -33,13 +34,13 @@ const messageIconMap: Record<MessageIcon, (props: any) => React.JSX.Element> = {
   warning: () => <ExclamationCircleFilled style={{ color: '#faa22d', fontSize: 28 }} />,
 };
 
-const renderMessage = (message: React.ReactNode | string, messageIcon = ''): React.JSX.Element => {
+const renderMessage = (message: ReactNode | string, messageIcon?: MessageIcon): ReactNode => {
   if (!message) {
     return null;
   }
 
   let content = null;
-  const IconComponent = messageIconMap[messageIcon];
+  const IconComponent = messageIcon ? messageIconMap[messageIcon] : null;
 
   if (typeof message === 'string') {
     content = (
@@ -71,7 +72,7 @@ const Alert = ({ data }: Props): React.JSX.Element => {
 
   const [checkboxChecked, setCheckboxChecked] = useState(false);
 
-  const renderCheckbox = (): React.JSX.Element => {
+  const renderCheckbox = (): ReactNode => {
     if (!checkbox) {
       return null;
     }
@@ -85,7 +86,7 @@ const Alert = ({ data }: Props): React.JSX.Element => {
     );
   };
 
-  const renderLink = (): React.JSX.Element => {
+  const renderLink = (): ReactNode => {
     if (links) {
       return (
         <div className={styles.links}>
@@ -142,10 +143,10 @@ const Alert = ({ data }: Props): React.JSX.Element => {
           if (checkbox && checkboxChecked) {
             const { callbacks } = checkbox;
 
-            if (callbacks.length > idx) {
-              callbacks[idx]?.();
-            } else if (typeof callbacks === 'function') {
+            if (typeof callbacks === 'function') {
               callbacks?.();
+            } else if (callbacks.length > idx) {
+              callbacks[idx]?.();
             } else {
               button.onClick?.();
             }
