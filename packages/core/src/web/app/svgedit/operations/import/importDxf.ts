@@ -1,23 +1,24 @@
 import alertCaller from '@core/app/actions/alert-caller';
-import alertConfig from '@core/helpers/api/alert-config';
-import alertConstants from '@core/app/constants/alert-constants';
 import dialogCaller from '@core/app/actions/dialog-caller';
-import findDefs from '@core/app/svgedit/utils/findDef';
-import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
+import progressCaller from '@core/app/actions/progress-caller';
+import alertConstants from '@core/app/constants/alert-constants';
+import NS from '@core/app/constants/namespaces';
 import history from '@core/app/svgedit/history/history';
-import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
+import findDefs from '@core/app/svgedit/utils/findDef';
+import workareaManager from '@core/app/svgedit/workarea';
+import alertConfig from '@core/helpers/api/alert-config';
 import i18n from '@core/helpers/i18n';
 import layerConfigHelper from '@core/helpers/layer/layer-config-helper';
-import NS from '@core/app/constants/namespaces';
-import progressCaller from '@core/app/actions/progress-caller';
-import requirejsHelper from '@core/helpers/requirejs-helper';
-import SymbolMaker from '@core/helpers/symbol-maker';
-import workareaManager from '@core/app/svgedit/workarea';
 import { createLayer, removeDefaultLayerIfEmpty } from '@core/helpers/layer/layer-helper';
+import requirejsHelper from '@core/helpers/requirejs-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import SymbolMaker from '@core/helpers/symbol-maker';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 let svgCanvas: ISVGCanvas;
 let svgedit;
+
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
   svgedit = globalSVG.Edit;
@@ -32,29 +33,31 @@ const importDxf = async (file: Blob): Promise<void> => {
     parsed: string;
   }>((resolve) => {
     const reader = new FileReader();
+
     reader.onloadend = (evt) => {
       if (!alertConfig.read('skip_dxf_version_warning')) {
         const autoCadVersionMatch = (evt.target.result as string).match(/AC\d+/);
+
         if (autoCadVersionMatch) {
           const autoCadVersion = autoCadVersionMatch[0].substring(2, autoCadVersionMatch[0].length);
+
           if (autoCadVersion !== '1027') {
             alertCaller.popUp({
+              checkbox: {
+                callbacks: () => alertConfig.write('skip_dxf_version_warning', true),
+                text: lang.popup.dont_show_again,
+              },
               id: 'skip_dxf_version_warning',
               message: lang.popup.dxf_version_waring,
               type: alertConstants.SHOW_POPUP_WARNING,
-              checkbox: {
-                text: lang.popup.dont_show_again,
-                callbacks: () => alertConfig.write('skip_dxf_version_warning', true),
-              },
             });
           }
         }
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-shadow
       const parsed = Dxf2Svg.parseString(evt.target.result);
       const unit = String(parsed.header?.insunits);
-      // eslint-disable-next-line @typescript-eslint/no-shadow
+
       const defaultDpiValue =
         {
           1: 25.4,
@@ -63,63 +66,77 @@ const importDxf = async (file: Blob): Promise<void> => {
           5: 10,
           6: 100,
         }[unit] ?? 1;
-      resolve({ parsed, defaultDpiValue });
+
+      resolve({ defaultDpiValue, parsed });
     };
     reader.readAsText(file);
   });
+
   progressCaller.popById('loading_image');
+
   if (!parsed) {
     alertCaller.popUp({ message: 'DXF Parsing Error' });
+
     return;
   }
+
   const unitLength = await dialogCaller.showDxfDpiSelector(defaultDpiValue);
+
   if (!unitLength) {
     return;
   }
+
   progressCaller.openNonstopProgress({
-    id: 'loading_image',
     // TODO: i18n
     caption: 'Loading image, please wait...',
+    id: 'loading_image',
   });
-  const { outputLayers, bbox } = Dxf2Svg.toSVG(parsed, unitLength * 10);
-  const { width, height } = workareaManager;
-  if (
-    !alertConfig.read('skip_dxf_oversize_warning') &&
-    (bbox.width > width || bbox.height > height)
-  ) {
+
+  const { bbox, outputLayers } = Dxf2Svg.toSVG(parsed, unitLength * 10);
+  const { height, width } = workareaManager;
+
+  if (!alertConfig.read('skip_dxf_oversize_warning') && (bbox.width > width || bbox.height > height)) {
     alertCaller.popUp({
-      id: 'dxf_size_over_workarea',
-      message: lang.popup.dxf_bounding_box_size_over,
-      type: alertConstants.SHOW_POPUP_WARNING,
       checkbox: {
-        text: lang.popup.dont_show_again,
         callbacks: () => {
           alertConfig.write('skip_dxf_oversize_warning', true);
         },
+        text: lang.popup.dont_show_again,
       },
+      id: 'dxf_size_over_workarea',
+      message: lang.popup.dxf_bounding_box_size_over,
+      type: alertConstants.SHOW_POPUP_WARNING,
     });
   }
+
   const batchCmd = HistoryCommandFactory.createBatchCommand('Import DXF');
   const svgdoc = document.getElementById('svgcanvas').ownerDocument;
   const layerNames = Object.keys(outputLayers);
   const promises = [];
+
   for (let i = 0; i < layerNames.length; i += 1) {
     const layerName = layerNames[i];
     const layer = outputLayers[layerName];
     const isLayerExist = svgCanvas.setCurrentLayer(layerName);
+
     if (!isLayerExist) {
       const { cmd } = createLayer(layerName, layer.rgbCode);
+
       if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
+
       layerConfigHelper.initLayerConfig(layerName);
     }
+
     const id = svgCanvas.getNextId();
     const symbol = svgdoc.createElementNS(NS.SVG, 'symbol') as unknown as SVGSymbolElement;
+
     symbol.setAttribute('overflow', 'visible');
     symbol.id = id;
     findDefs().appendChild(symbol);
     symbol.innerHTML = layer.paths.join('');
     for (let j = symbol.childNodes.length - 1; j >= 0; j -= 1) {
       const child = symbol.childNodes[j] as unknown as SVGElement;
+
       if (child.tagName === 'path' && !$(child).attr('d')) {
         child.remove();
       } else {
@@ -127,28 +144,36 @@ const importDxf = async (file: Blob): Promise<void> => {
         child.setAttribute('id', svgCanvas.getNextId());
       }
     }
+
     const useElem = svgdoc.createElementNS(NS.SVG, 'use');
+
     useElem.id = svgCanvas.getNextId();
     svgedit.utilities.setHref(useElem, `#${symbol.id}`);
     svgCanvas.getCurrentDrawing().getCurrentLayer().appendChild(useElem);
     batchCmd.addSubCommand(new history.InsertElementCommand(useElem));
+
     const bb = svgedit.utilities.getBBox(useElem);
 
     const attrs = [];
     const keys = Object.keys(bb);
+
     for (let j = 0; j < keys.length; j += 1) {
       const key = keys[j];
+
       attrs.push(`${key}=${bb[key]}`);
     }
+
     const xform = attrs.join(' ');
+
     useElem.setAttribute('data-dxf', 'true');
     useElem.setAttribute('data-ratiofixed', 'true');
     useElem.setAttribute('data-xform', xform);
 
     promises.push(
-      // eslint-disable-next-line @typescript-eslint/no-loop-func, no-async-promise-executor
+      // eslint-disable-next-line no-async-promise-executor
       new Promise<void>(async (resolve) => {
         const imageSymbol = await SymbolMaker.makeImageSymbol(symbol);
+
         svgedit.utilities.setHref(useElem, `#${imageSymbol.id}`);
         svgCanvas.updateElementColor(useElem);
         resolve();
@@ -156,7 +181,9 @@ const importDxf = async (file: Blob): Promise<void> => {
     );
   }
   await Promise.all(promises);
+
   const cmd = removeDefaultLayerIfEmpty();
+
   if (cmd) batchCmd.addSubCommand(cmd);
 };
 

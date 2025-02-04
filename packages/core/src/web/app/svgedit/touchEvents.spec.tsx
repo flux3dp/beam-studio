@@ -4,8 +4,8 @@ import { render } from '@testing-library/react';
 import touchEvents from './touchEvents';
 
 const Workarea = () => (
-  <div id="workarea" style={{ width: 100, height: 100 }}>
-    <div id="svgcanvas" style={{ width: 300, height: 300 }}>
+  <div id="workarea" style={{ height: 100, width: 100 }}>
+    <div id="svgcanvas" style={{ height: 300, width: 300 }}>
       <svg viewBox="0 0 100 100" />
     </div>
   </div>
@@ -20,12 +20,13 @@ const setZoom = jest.fn();
 const mockGetWidth = jest.fn();
 const mockGetHeight = jest.fn();
 const mockGetZoomRatio = jest.fn();
+
 jest.mock('@core/app/svgedit/workarea', () => ({
-  get width() {
-    return mockGetWidth();
-  },
   get height() {
     return mockGetHeight();
+  },
+  get width() {
+    return mockGetWidth();
   },
   get zoomRatio() {
     return mockGetZoomRatio();
@@ -42,18 +43,13 @@ describe('test touchEvents', () => {
         <Workarea />
       </div>,
     );
+
     container = baseElement.querySelector('#main>div');
     canvas = document.getElementById('svgcanvas');
+
     const workarea = document.getElementById('workarea');
-    touchEvents.setupCanvasTouchEvents(
-      canvas,
-      workarea,
-      mouseDown,
-      mouseMove,
-      mouseUp,
-      doubleClick,
-      setZoom,
-    );
+
+    touchEvents.setupCanvasTouchEvents(canvas, workarea, mouseDown, mouseMove, mouseUp, doubleClick, setZoom);
   });
 
   afterAll(() => {
@@ -76,6 +72,7 @@ describe('test touchEvents', () => {
         } as Touch,
       ],
     });
+
     canvas.dispatchEvent(onePointTouchStart);
     expect(mouseDown).not.toBeCalled();
     jest.runOnlyPendingTimers();
@@ -90,6 +87,7 @@ describe('test touchEvents', () => {
         } as Touch,
       ],
     });
+
     canvas.dispatchEvent(onePointTouchMove);
     expect(mouseDown).toHaveBeenNthCalledWith(1, onePointTouchMove);
 
@@ -102,6 +100,7 @@ describe('test touchEvents', () => {
         } as Touch,
       ],
     });
+
     canvas.dispatchEvent(onePointTouchEnd);
     expect(mouseUp).toHaveBeenNthCalledWith(1, onePointTouchEnd, false);
 
@@ -110,6 +109,8 @@ describe('test touchEvents', () => {
 
   test('test two finger touch', () => {
     const firstPointTouchStart = new TouchEvent('touchstart', {
+      // @ts-expect-error scale is defined in chrome & safari
+      scale: 1,
       touches: [
         {
           identifier: 0,
@@ -117,13 +118,14 @@ describe('test touchEvents', () => {
           pageY: 10,
         } as Touch,
       ],
-      // @ts-expect-error scale is defined in chrome & safari
-      scale: 1,
     });
+
     canvas.dispatchEvent(firstPointTouchStart);
     expect(mouseDown).not.toBeCalled();
 
     const twoPointTouchStart = new TouchEvent('touchstart', {
+      // @ts-expect-error scale is defined in chrome & safari
+      scale: 1,
       touches: [
         {
           identifier: 0,
@@ -136,9 +138,8 @@ describe('test touchEvents', () => {
           pageY: 20,
         } as Touch,
       ],
-      // @ts-expect-error scale is defined in chrome & safari
-      scale: 1,
     });
+
     canvas.dispatchEvent(twoPointTouchStart);
 
     const twoPointTouchMovePan = new TouchEvent('touchmove', {
@@ -155,6 +156,7 @@ describe('test touchEvents', () => {
         } as Touch,
       ],
     });
+
     canvas.dispatchEvent(twoPointTouchMovePan);
     expect(mouseMove).toHaveBeenCalledTimes(0);
     expect(container).toMatchSnapshot();
@@ -173,6 +175,7 @@ describe('test touchEvents', () => {
         } as Touch,
       ],
     });
+
     canvas.dispatchEvent(twoPointTouchEnd);
     expect(mouseUp).toHaveBeenCalledTimes(0);
     expect(container).toMatchSnapshot();

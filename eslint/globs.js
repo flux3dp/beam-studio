@@ -30,7 +30,6 @@ const IGNORES = [
   '**/dist/**/*',
   '**/public/*',
   '**/public/**/*',
-  '**/svgedit',
   '**/beambox/svg-editor.ts',
   '**/helpers/potrace/*',
   '**/helpers/potrace/**/*',

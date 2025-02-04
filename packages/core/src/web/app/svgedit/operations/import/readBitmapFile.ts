@@ -1,13 +1,13 @@
-import getDpmm from '@core/helpers/image/getDpmm';
-import getExifRotationFlag from '@core/helpers/image/getExifRotationFlag';
 import history from '@core/app/svgedit/history/history';
-import ISVGCanvas from '@core/interfaces/ISVGCanvas';
-import imageData from '@core/helpers/image-data';
 import updateElementColor from '@core/helpers/color/updateElementColor';
+import getExifRotationFlag from '@core/helpers/image/getExifRotationFlag';
+import imageData from '@core/helpers/image-data';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import { IBatchCommand } from '@core/interfaces/IHistory';
+import type { IBatchCommand } from '@core/interfaces/IHistory';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 let svgCanvas: ISVGCanvas;
+
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
@@ -16,9 +16,12 @@ getSVGAsync((globalSVG) => {
 const imageToPngBlob = async (image) =>
   new Promise<Blob>((resolve) => {
     const canvas = document.createElement('canvas');
+
     canvas.width = image.width;
     canvas.height = image.height;
+
     const ctx = canvas.getContext('2d');
+
     ctx.drawImage(image, 0, 0);
     canvas.toBlob((blob) => {
       resolve(blob);
@@ -26,15 +29,15 @@ const imageToPngBlob = async (image) =>
   });
 
 const readBitmapFile = async (
-  file: File | Blob,
+  file: Blob | File,
   opts?: {
-    scale?: number;
-    offset?: number[];
     gray?: boolean;
+    offset?: number[];
     parentCmd?: IBatchCommand;
+    scale?: number;
   },
 ): Promise<SVGImageElement> => {
-  const { parentCmd, offset = [0, 0], gray = true } = opts ?? {};
+  const { gray = true, offset = [0, 0], parentCmd } = opts ?? {};
   const reader = new FileReader();
   const arrayBuffer = await new Promise<ArrayBuffer>((resolve) => {
     reader.onloadend = (e) => {
@@ -50,63 +53,72 @@ const readBitmapFile = async (
   const rotationFlag = getExifRotationFlag(arrayBuffer);
   const img = new Image();
   const blob = new Blob([arrayBuffer]);
+
   await new Promise<void>((resolve) => {
     img.onload = () => resolve();
     img.style.opacity = '0';
     img.src = URL.createObjectURL(blob);
   });
 
-  const { width, height } = img;
+  const { height, width } = img;
   const newImage = svgCanvas.addSvgElementFromJson({
-    element: 'image',
     attr: {
-      x: offset[0],
-      y: offset[1],
-      width: (rotationFlag <= 4 ? width : height) * scaleX,
+      'data-ratiofixed': true,
+      'data-shading': true,
+      'data-threshold': 254,
       height: (rotationFlag <= 4 ? height : width) * scaleY,
       id: svgCanvas.getNextId(),
-      style: 'pointer-events:inherit',
-      preserveAspectRatio: 'none',
-      'data-threshold': 254,
-      'data-shading': true,
       origImage: img.src,
-      'data-ratiofixed': true,
+      preserveAspectRatio: 'none',
+      style: 'pointer-events:inherit',
+      width: (rotationFlag <= 4 ? width : height) * scaleX,
+      x: offset[0],
+      y: offset[1],
     },
+    element: 'image',
   });
+
   if (file.type === 'image/webp') {
     const pngBlob = await imageToPngBlob(img);
     const newSrc = URL.createObjectURL(pngBlob);
+
     URL.revokeObjectURL(img.src);
     newImage.setAttribute('origImage', newSrc);
   }
+
   await new Promise<void>((resolve) => {
     imageData(newImage.getAttribute('origImage'), {
-      width,
-      height,
-      rotationFlag,
       grayscale: gray
         ? {
             is_rgba: true,
             is_shading: true,
-            threshold: 254,
             is_svg: false,
+            threshold: 254,
           }
         : undefined,
+      height,
       onComplete: (result) => {
         svgCanvas.setHref(newImage, result.pngBase64);
       },
+      rotationFlag,
+      width,
     });
     updateElementColor(newImage);
     svgCanvas.selectOnly([newImage]);
+
     const cmd = new history.InsertElementCommand(newImage);
+
     if (!parentCmd) svgCanvas.undoMgr.addCommandToHistory(cmd);
     else parentCmd.addSubCommand(cmd);
+
     if (!offset) {
       svgCanvas.alignSelectedElements('l', 'page');
       svgCanvas.alignSelectedElements('t', 'page');
     }
+
     resolve();
   });
+
   return newImage as SVGImageElement;
 };
 

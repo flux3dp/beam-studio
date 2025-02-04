@@ -1,5 +1,3 @@
-/* eslint-disable import/order */
-/* eslint-disable max-classes-per-file */
 /**
  * Package: svedit.history
  *
@@ -12,7 +10,7 @@
 // 1) jQuery
 // 2) svgtransformlist.js
 // 3) svgutils.js
-import { IBatchCommand, ICommand, IHistoryHandler } from '@core/interfaces/IHistory';
+import type { IBatchCommand, ICommand, IHistoryHandler } from '@core/interfaces/IHistory';
 
 const { svgedit } = window;
 
@@ -22,10 +20,10 @@ if (!svgedit.history) {
 
 // Group: Undo/Redo history management
 export const HistoryEventTypes = {
-  BEFORE_APPLY: 'before_apply',
   AFTER_APPLY: 'after_apply',
-  BEFORE_UNAPPLY: 'before_unapply',
   AFTER_UNAPPLY: 'after_unapply',
+  BEFORE_APPLY: 'before_apply',
+  BEFORE_UNAPPLY: 'before_unapply',
 };
 svgedit.history.HistoryEventTypes = HistoryEventTypes;
 
@@ -44,9 +42,8 @@ export class BaseHistoryCommand implements ICommand {
     return [this.elem];
   }
 
-  // eslint-disable-next-line no-unused-vars
-  doApply = (handler?: IHistoryHandler): void => {
-    throw Error('apply not implemented');
+  doApply = (_handler?: IHistoryHandler): void => {
+    throw new Error('apply not implemented');
   };
 
   apply(handler?: IHistoryHandler): void {
@@ -57,9 +54,8 @@ export class BaseHistoryCommand implements ICommand {
     handler?.handleHistoryEvent(HistoryEventTypes.AFTER_APPLY, this);
   }
 
-  // eslint-disable-next-line no-unused-vars
-  doUnapply = (handler?: IHistoryHandler): void => {
-    throw Error('unapply not implemented');
+  doUnapply = (_handler?: IHistoryHandler): void => {
+    throw new Error('unapply not implemented');
   };
 
   unapply(handler?: IHistoryHandler): void {
@@ -76,16 +72,15 @@ export class BaseHistoryCommand implements ICommand {
 }
 
 class MoveElementCommand extends BaseHistoryCommand implements ICommand {
-  private oldNextSibling: Node | Element;
+  private oldNextSibling: Element | Node;
 
-  private newNextSibling: Node | Element;
+  private newNextSibling: Element | Node;
 
-  public oldParent: Node | Element;
+  public oldParent: Element | Node;
 
-  public newParent: Node | Element;
+  public newParent: Element | Node;
 
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  constructor(elem: any, oldNextSibling: Node | Element, oldParent: Element | Node, text?: string) {
+  constructor(elem: any, oldNextSibling: Element | Node, oldParent: Element | Node, text?: string) {
     super();
     this.elem = elem as SVGGraphicsElement;
     this.text = text ? `Move ${elem.tagName} to ${text}` : `Move ${elem.tagName}`;
@@ -113,9 +108,9 @@ svgedit.history.MoveElementCommand = MoveElementCommand;
 
 // History command for an element that was added to the DOM
 class InsertElementCommand extends BaseHistoryCommand implements ICommand {
-  private nextSibling: Node | Element;
+  private nextSibling: Element | Node;
 
-  private parent: Node | Element;
+  private parent: Element | Node;
 
   constructor(elem: Element | SVGGraphicsElement, text?: string) {
     super();
@@ -144,14 +139,14 @@ svgedit.history.InsertElementCommand = InsertElementCommand;
 
 // History command for an element removed from the DOM
 class RemoveElementCommand extends BaseHistoryCommand implements ICommand {
-  private nextSibling: Node | Element;
+  private nextSibling: Element | Node;
 
-  private parent: Node | Element;
+  private parent: Element | Node;
 
   constructor(
     elem: Element | SVGGraphicsElement,
-    oldNextSibling: Node | Element,
-    oldParent: Node | Element,
+    oldNextSibling: Element | Node,
+    oldParent: Element | Node,
     text?: string,
   ) {
     super();
@@ -196,18 +191,24 @@ class ChangeElementCommand extends BaseHistoryCommand implements ICommand {
     this.text = `Change ${elem.tagName}${text ? ` ${text}` : ''}`;
     this.newValues = {};
     this.oldValues = attrs;
+
     const keys = Object.keys(attrs);
+
     for (let i = 0; i < keys.length; i += 1) {
       const attr = keys[i];
+
       if (attr === '#text') {
         this.newValues[attr] = elem.textContent;
       } else if (attr === '#href') {
         this.newValues[attr] = svgedit.utilities.getHref(elem);
       } else {
         const curVal = elem.getAttribute(attr);
+
         if (curVal === attrs[attr] || (!curVal && !attrs[attr])) {
           delete this.oldValues[attr];
-        } else this.newValues[attr] = curVal;
+        } else {
+          this.newValues[attr] = curVal;
+        }
       }
     }
   }
@@ -221,8 +222,10 @@ class ChangeElementCommand extends BaseHistoryCommand implements ICommand {
   doApply = (): void => {
     let bChangedTransform = false;
     const keys = Object.keys(this.newValues);
+
     for (let i = 0; i < keys.length; i += 1) {
       const attr = keys[i];
+
       if (this.newValues[attr]) {
         if (attr === '#text') {
           this.elem.textContent = this.newValues[attr];
@@ -237,6 +240,7 @@ class ChangeElementCommand extends BaseHistoryCommand implements ICommand {
         this.elem.setAttribute(attr, '');
         this.elem.removeAttribute(attr);
       }
+
       if (!bChangedTransform && attr === 'transform') {
         bChangedTransform = true;
       }
@@ -245,6 +249,7 @@ class ChangeElementCommand extends BaseHistoryCommand implements ICommand {
     // relocate rotational transform, if necessary
     if (!bChangedTransform) {
       const angle = svgedit.utilities.getRotationAngle(this.elem);
+
       if (angle) {
         // TODO: These instances of elem either need to be declared as global
         // (which would not be good for conflicts) or declare/use this.elem
@@ -252,6 +257,7 @@ class ChangeElementCommand extends BaseHistoryCommand implements ICommand {
         const cx = bbox.x + bbox.width / 2;
         const cy = bbox.y + bbox.height / 2;
         const rotate = `rotate(${angle} ${cx}, ${cy})`;
+
         if (rotate !== this.elem.getAttribute('transform')) {
           this.elem.setAttribute('transform', rotate);
         }
@@ -262,8 +268,10 @@ class ChangeElementCommand extends BaseHistoryCommand implements ICommand {
   doUnapply = (): void => {
     let bChangedTransform = false;
     const keys = Object.keys(this.oldValues);
+
     for (let i = 0; i < keys.length; i += 1) {
       const attr = keys[i];
+
       if (this.oldValues[attr]) {
         if (attr === '#text') {
           this.elem.textContent = this.oldValues[attr];
@@ -277,18 +285,22 @@ class ChangeElementCommand extends BaseHistoryCommand implements ICommand {
       } else {
         this.elem.removeAttribute(attr);
       }
+
       if (!bChangedTransform && attr === 'transform') {
         bChangedTransform = true;
       }
     }
+
     // relocate rotational transform, if necessary
     if (!bChangedTransform) {
       const angle = svgedit.utilities.getRotationAngle(this.elem);
+
       if (angle) {
         const bbox = this.elem.getBBox();
         const cx = bbox.x + bbox.width / 2;
         const cy = bbox.y + bbox.height / 2;
         const rotate = `rotate(${angle} ${cx}, ${cy})`;
+
         if (rotate !== this.elem.getAttribute('transform')) {
           this.elem.setAttribute('transform', rotate);
         }
@@ -369,13 +381,17 @@ class BatchCommand extends BaseHistoryCommand implements IBatchCommand {
 
   elements(): Element[] {
     const elemSet = new Set<Element>();
+
     for (let i = this.stack.length - 1; i >= 0; i -= 1) {
       const cmd = this.stack[i];
+
       cmd?.elements().forEach((elem) => {
         elemSet.add(elem);
       });
     }
+
     const elems = Array.from(elemSet);
+
     return elems;
   }
 
@@ -390,11 +406,11 @@ class BatchCommand extends BaseHistoryCommand implements IBatchCommand {
 svgedit.history.BatchCommand = BatchCommand;
 
 export default {
-  HistoryEventTypes,
-  MoveElementCommand,
-  ChangeElementCommand,
-  InsertElementCommand,
-  RemoveElementCommand,
-  ChangeTextCommand,
   BatchCommand,
+  ChangeElementCommand,
+  ChangeTextCommand,
+  HistoryEventTypes,
+  InsertElementCommand,
+  MoveElementCommand,
+  RemoveElementCommand,
 };

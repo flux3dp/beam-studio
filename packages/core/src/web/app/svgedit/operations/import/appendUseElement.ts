@@ -1,54 +1,64 @@
-import history from '@core/app/svgedit/history/history';
-import i18n from '@core/helpers/i18n';
 import LayerModule from '@core/app/constants/layer-module/layer-modules';
-import layerConfigHelper, { getData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
-import layerModuleHelper from '@core/helpers/layer-module/layer-module-helper';
 import NS from '@core/app/constants/namespaces';
+import history from '@core/app/svgedit/history/history';
 import rgbToHex from '@core/helpers/color/rgbToHex';
-import storage from '@core/implementations/storage';
+import i18n from '@core/helpers/i18n';
+import layerConfigHelper, { getData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { createLayer, getLayerByName } from '@core/helpers/layer/layer-helper';
+import layerModuleHelper from '@core/helpers/layer-module/layer-module-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import { ICommand } from '@core/interfaces/IHistory';
-import { ImportType } from '@core/interfaces/ImportSvg';
+import storage from '@core/implementations/storage';
+import type { ICommand } from '@core/interfaces/IHistory';
+import type { ImportType } from '@core/interfaces/ImportSvg';
 
 let svgCanvas;
+
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
 
 const checkLayerModule = (layer: Element, targetModule: LayerModule): boolean => {
   if (!layer) return false;
+
   const currentModule = getData(layer, 'module') as LayerModule;
+
   if (currentModule === LayerModule.PRINTER && targetModule !== LayerModule.PRINTER) return false;
+
   if (currentModule !== LayerModule.PRINTER && targetModule === LayerModule.PRINTER) return false;
+
   return true;
 };
 
 const appendUseElement = (
-  symbol: SVGSymbolElement | null,
-  args: { type: ImportType; layerName?: string; targetModule?: LayerModule },
+  symbol: null | SVGSymbolElement,
+  args: { layerName?: string; targetModule?: LayerModule; type: ImportType },
 ): {
-  element: SVGUseElement;
   command: ICommand;
+  element: SVGUseElement;
 } => {
   // create a use element
   if (!symbol) {
     return null;
   }
+
   const batchCmd = new history.BatchCommand('Append Use Element');
-  const { type, layerName, targetModule = layerModuleHelper.getDefaultLaserModule() } = args;
+  const { layerName, targetModule = layerModuleHelper.getDefaultLaserModule(), type } = args;
   const useEl = document.createElementNS(NS.SVG, 'use');
+
   useEl.id = svgCanvas.getNextId();
   useEl.setAttributeNS(NS.XLINK, 'xlink:href', `#${symbol.id}`);
+
   // switch currentLayer, and create layer if necessary
   let targetLayerName = layerName;
   const currentDrawing = svgCanvas.getCurrentDrawing();
+
   if (
     (type === 'layer' && layerName) ||
     (type === 'color' && symbol.getAttribute('data-color')) ||
     type === 'image-trace'
   ) {
     const color = symbol.getAttribute('data-color');
+
     if (type === 'image-trace') {
       targetLayerName = 'Traced Path';
     } else if (type === 'color') {
@@ -56,24 +66,30 @@ const appendUseElement = (
     }
 
     const targetLayer = getLayerByName(targetLayerName);
+
     if (!checkLayerModule(targetLayer, targetModule)) {
-      const { layer: newLayer, name: newLayerName, cmd } = createLayer(targetLayerName, { isSubCmd: true });
+      const { cmd, layer: newLayer, name: newLayerName } = createLayer(targetLayerName, { isSubCmd: true });
+
       if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
+
       layerConfigHelper.initLayerConfig(newLayerName);
 
       if (type === 'layer' && targetLayerName) {
         const matchPara = targetLayerName.match(/#([-SP0-9.]*\b)/i);
+
         if (matchPara) {
           const matchPower = matchPara[1].match(/P([-0-9.]*)/i);
           const matchSpeed = matchPara[1].match(/S([-0-9.]*)/i);
-          let parsePower = matchPower ? parseFloat(matchPower[1]) : NaN;
-          let parseSpeed = matchSpeed ? parseFloat(matchSpeed[1]) : NaN;
+          let parsePower = matchPower ? Number.parseFloat(matchPower[1]) : Number.NaN;
+          let parseSpeed = matchSpeed ? Number.parseFloat(matchSpeed[1]) : Number.NaN;
           const laserConst = i18n.lang.beambox.right_panel.laser_panel;
+
           if (!Number.isNaN(parsePower)) {
             parsePower = Math.round(parsePower * 10) / 10;
             parsePower = Math.max(Math.min(parsePower, laserConst.power.max), laserConst.power.min);
             writeDataLayer(newLayer, 'power', parsePower);
           }
+
           if (!Number.isNaN(parseSpeed)) {
             parseSpeed = Math.round(parseSpeed * 10) / 10;
             parseSpeed = Math.max(Math.min(parseSpeed, laserConst.laser_speed.max), laserConst.laser_speed.min);
@@ -84,6 +100,7 @@ const appendUseElement = (
         const layerColorConfig = storage.get('layer-color-config') || {};
         const index = layerColorConfig.dict ? layerColorConfig.dict[layerName] : undefined;
         const laserConst = i18n.lang.beambox.right_panel.laser_panel;
+
         if (index !== undefined) {
           writeDataLayer(
             newLayer,
@@ -101,6 +118,7 @@ const appendUseElement = (
           writeDataLayer(newLayer, 'repeat', layerColorConfig.array[index].repeat);
         }
       }
+
       if (targetModule === LayerModule.PRINTER) {
         writeDataLayer(newLayer, 'module', LayerModule.PRINTER);
         writeDataLayer(newLayer, 'fullcolor', true);
@@ -110,20 +128,25 @@ const appendUseElement = (
     }
   } else {
     let targetLayer = currentDrawing.getCurrentLayer();
+
     if (!checkLayerModule(targetLayer, targetModule)) {
       const {
+        cmd,
         layer,
         name: newLayerName,
-        cmd,
       } = createLayer(
         targetModule === LayerModule.PRINTER ? i18n.lang.layer_module.printing : i18n.lang.layer_module.general_laser,
         { isSubCmd: true },
       );
+
       targetLayer = layer;
+
       if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
+
       layerConfigHelper.initLayerConfig(newLayerName);
       svgCanvas.setCurrentLayer(newLayerName);
     }
+
     if (targetModule === LayerModule.PRINTER) {
       writeDataLayer(targetLayer, 'module', LayerModule.PRINTER);
       writeDataLayer(targetLayer, 'fullcolor', true);
@@ -137,9 +160,12 @@ const appendUseElement = (
 
   if (type === 'nolayer' && targetModule !== LayerModule.PRINTER) {
     useEl.setAttribute('data-wireframe', 'true');
+
     const iterationStack = [symbol] as Element[];
+
     while (iterationStack.length > 0) {
       const node = iterationStack.pop();
+
       if (node.nodeType === 1 && node.tagName !== 'STYLE') {
         if (!['g', 'tspan'].includes(node.tagName)) {
           node.setAttribute('data-wireframe', 'true');
@@ -147,12 +173,15 @@ const appendUseElement = (
           node.setAttribute('fill-opacity', '0');
           node.setAttribute('fill', 'none');
         }
+
         iterationStack.push(...(Array.from(node.childNodes) as Element[]));
       }
     }
   }
+
   batchCmd.addSubCommand(new history.InsertElementCommand(useEl));
-  return { element: useEl as SVGUseElement, command: batchCmd };
+
+  return { command: batchCmd, element: useEl as SVGUseElement };
 };
 
 export default appendUseElement;

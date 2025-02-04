@@ -1,9 +1,4 @@
-interface BBox {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
+import type { BBox } from '@core/interfaces/ICurveEngraving';
 
 export const rotateBBox = (bbox: BBox, angle: number): BBox => {
   let points = [
@@ -16,9 +11,11 @@ export const rotateBBox = (bbox: BBox, angle: number): BBox => {
   const rad = (angle * Math.PI) / 180;
   const cx = bbox.x + 0.5 * bbox.width;
   const cy = bbox.y + 0.5 * bbox.height;
+
   points = points.map(({ x, y }) => {
     const dx = x - cx;
     const dy = y - cy;
+
     return {
       x: cx + dx * Math.cos(rad) - dy * Math.sin(rad),
       y: cy + dx * Math.sin(rad) + dy * Math.cos(rad),
@@ -26,6 +23,7 @@ export const rotateBBox = (bbox: BBox, angle: number): BBox => {
   });
 
   let [minX, minY, maxX, maxY] = [points[0].x, points[0].y, points[0].x, points[0].y];
+
   points.forEach((p) => {
     minX = Math.min(p.x, minX);
     maxX = Math.max(p.x, maxX);
@@ -33,7 +31,7 @@ export const rotateBBox = (bbox: BBox, angle: number): BBox => {
     maxY = Math.max(p.y, maxY);
   });
 
-  return { x: minX, y: minY, width: maxX - minX, height: maxY - minY };
+  return { height: maxY - minY, width: maxX - minX, x: minX, y: minY };
 };
 
 export default rotateBBox;

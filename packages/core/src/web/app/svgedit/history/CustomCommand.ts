@@ -1,4 +1,4 @@
-import { ICommand } from '@core/interfaces/IHistory';
+import type { ICommand } from '@core/interfaces/IHistory';
 
 import { BaseHistoryCommand } from './history';
 
