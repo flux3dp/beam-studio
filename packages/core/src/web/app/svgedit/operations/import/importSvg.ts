@@ -1,23 +1,23 @@
 import alertCaller from '@core/app/actions/alert-caller';
-import alertConstants from '@core/app/constants/alert-constants';
-import awsHelper from '@core/helpers/aws-helper';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import dialogCaller from '@core/app/actions/dialog-caller';
-import history from '@core/app/svgedit/history/history';
-import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
-import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
-import layerConfigHelper, { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
-import layerModuleHelper from '@core/helpers/layer-module/layer-module-helper';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
+import dialogCaller from '@core/app/actions/dialog-caller';
 import progressCaller from '@core/app/actions/progress-caller';
-import ISVGCanvas from '@core/interfaces/ISVGCanvas';
-import i18n from '@core/helpers/i18n';
+import alertConstants from '@core/app/constants/alert-constants';
+import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
+import history from '@core/app/svgedit/history/history';
 import readBitmapFile from '@core/app/svgedit/operations/import/readBitmapFile';
+import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import svgLaserParser from '@core/helpers/api/svg-laser-parser';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import { IBatchCommand } from '@core/interfaces/IHistory';
-import { ImportType } from '@core/interfaces/ImportSvg';
+import awsHelper from '@core/helpers/aws-helper';
+import i18n from '@core/helpers/i18n';
+import layerConfigHelper, { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { createLayer, removeDefaultLayerIfEmpty } from '@core/helpers/layer/layer-helper';
+import layerModuleHelper from '@core/helpers/layer-module/layer-module-helper';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import type { IBatchCommand } from '@core/interfaces/IHistory';
+import type { ImportType } from '@core/interfaces/ImportSvg';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import importSvgString from './importSvgString';
 
@@ -33,15 +33,15 @@ const getBasename = (path: string) => path.match(/(.+)[/\\].+/)?.[1] ?? '';
 const readSVG = (
   blob: Blob | File,
   {
-    type,
-    targetModule = layerModuleHelper.getDefaultLaserModule(),
     layerName,
     parentCmd = null,
+    targetModule = layerModuleHelper.getDefaultLaserModule(),
+    type,
   }: {
-    type: ImportType;
-    targetModule?: LayerModule;
     layerName?: string;
     parentCmd?: IBatchCommand;
+    targetModule?: LayerModule;
+    type: ImportType;
   },
 ) =>
   new Promise<SVGUseElement>((resolve) => {
@@ -80,10 +80,10 @@ const readSVG = (
         .replace(/fill(: ?#(fff(fff)?|FFF(FFF)?));/g, 'fill: none;')
         .replace(/fill= ?"#(fff(fff)?|FFF(FFF))"/g, 'fill="none"');
       const newElement = await importSvgString(modifiedSvgString, {
-        type,
         layerName: parsedLayerName,
-        targetModule,
         parentCmd,
+        targetModule,
+        type,
       });
 
       // Apply style
@@ -98,10 +98,10 @@ const readSVG = (
 const importSvg = async (
   file: Blob,
   {
-    skipByLayer = false,
-    isFromNounProject,
     isFromAI = false,
-  }: { skipByLayer?: boolean; isFromNounProject?: boolean; isFromAI?: boolean } = {},
+    isFromNounProject,
+    skipByLayer = false,
+  }: { isFromAI?: boolean; isFromNounProject?: boolean; skipByLayer?: boolean } = {},
 ): Promise<void> => {
   const batchCmd = new history.BatchCommand('Import SVG');
   const { lang } = i18n;
@@ -112,8 +112,8 @@ const importSvg = async (
     const id = `import-module`;
 
     targetModule = await dialogCaller.showRadioSelectDialog({
+      defaultValue: beamboxPreference.read(id),
       id,
-      title: lang.beambox.popup.select_import_module,
       options: [
         {
           label: lang.layer_module.general_laser,
@@ -121,7 +121,7 @@ const importSvg = async (
         },
         { label: lang.layer_module.printing, value: LayerModule.PRINTER },
       ],
-      defaultValue: beamboxPreference.read(id),
+      title: lang.beambox.popup.select_import_module,
     });
   } else {
     targetModule = LayerModule.LASER_10W_DIODE;
@@ -156,10 +156,10 @@ const importSvg = async (
     }
 
     return dialogCaller.showRadioSelectDialog({
-      id,
-      title: lang.beambox.popup.select_import_method,
-      options: importTypeOptions,
       defaultValue: beamboxPreference.read(id),
+      id,
+      options: importTypeOptions,
+      title: lang.beambox.popup.select_import_method,
     });
   })();
 
@@ -179,8 +179,7 @@ const importSvg = async (
     return;
   }
 
-  const output =
-    importType === 'layer' ? await svgWebSocket.divideSVGbyLayer() : await svgWebSocket.divideSVG();
+  const output = importType === 'layer' ? await svgWebSocket.divideSVGbyLayer() : await svgWebSocket.divideSVG();
 
   if (!output.res) {
     alertCaller.popUpError({
@@ -205,21 +204,18 @@ const importSvg = async (
 
   const { data: outputData } = output;
   const newElements = Array.of<SVGUseElement>();
-  const elementOptions = { type: importType, targetModule, parentCmd: batchCmd };
+  const elementOptions = { parentCmd: batchCmd, targetModule, type: importType };
 
   if (['color', 'nolayer'].includes(importType)) {
     newElements.push(await readSVG(outputData.strokes, elementOptions));
     newElements.push(await readSVG(outputData.colors, elementOptions));
   } else if (importType === 'layer') {
-    const keys = Object.keys(outputData).filter(
-      (key) => !['bitmap', 'bitmap_offset'].includes(key),
-    );
+    const keys = Object.keys(outputData).filter((key) => !['bitmap', 'bitmap_offset'].includes(key));
 
     for (let i = 0; i < keys.length; i += 1) {
       const key = keys[i];
 
       newElements.push(
-        // eslint-disable-next-line no-await-in-loop
         await readSVG(outputData[key], {
           ...elementOptions,
           layerName: key,
@@ -237,7 +233,7 @@ const importSvg = async (
 
     if (!isPrinting || !filteredNewElements.length) {
       const layerName = lang.beambox.right_panel.layer_panel.layer_bitmap;
-      const { layer: newLayer, name: newLayerName, cmd } = createLayer(layerName);
+      const { cmd, layer: newLayer, name: newLayerName } = createLayer(layerName);
 
       if (cmd && !cmd.isEmpty()) {
         batchCmd.addSubCommand(cmd);
@@ -252,8 +248,8 @@ const importSvg = async (
     }
 
     const img = await readBitmapFile(outputData.bitmap, {
-      offset: outputData.bitmap_offset,
       gray: !isPrinting,
+      offset: outputData.bitmap_offset,
       parentCmd: batchCmd,
     });
 

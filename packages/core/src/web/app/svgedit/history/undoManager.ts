@@ -1,7 +1,8 @@
 import currentFileManager from '@core/app/svgedit/currentFileManager';
-import { IBatchCommand, IHistoryHandler, IUndoManager } from '@core/interfaces/IHistory';
+import type { IBatchCommand, IHistoryHandler, IUndoManager } from '@core/interfaces/IHistory';
 
-import history, { BaseHistoryCommand } from './history';
+import type { BaseHistoryCommand } from './history';
+import history from './history';
 
 export class UndoManager implements IUndoManager {
   private handler: IHistoryHandler;
@@ -12,11 +13,11 @@ export class UndoManager implements IUndoManager {
 
   private undoChangeStackPointer: number;
 
-  private undoableChangeStack: {
+  private undoableChangeStack: Array<{
     attrName: string;
     elements: Element[];
     oldValues: string[];
-  }[];
+  }>;
 
   constructor(historyEventHandler: IHistoryHandler) {
     this.handler = historyEventHandler || null;
@@ -57,20 +58,27 @@ export class UndoManager implements IUndoManager {
   undo(): boolean {
     if (this.undoStackPointer > 0) {
       this.undoStackPointer -= 1;
+
       const cmd = this.undoStack[this.undoStackPointer];
+
       cmd.unapply(this.handler);
+
       return true;
     }
+
     return false;
   }
 
   redo(): boolean {
     if (this.undoStackPointer < this.undoStack.length && this.undoStack.length > 0) {
       const cmd = this.undoStack[this.undoStackPointer];
+
       this.undoStackPointer += 1;
       cmd.apply(this.handler);
+
       return true;
     }
+
     return false;
   }
 
@@ -85,9 +93,12 @@ export class UndoManager implements IUndoManager {
     if (this.undoStackPointer < this.undoStack.length && this.undoStack.length > 0) {
       this.undoStack = this.undoStack.splice(0, this.undoStackPointer);
     }
+
     this.undoStack.push(cmd);
     this.undoStackPointer = this.undoStack.length;
+
     const isInitCommand = this.undoStack.length === 1 && cmd.getText() === 'Create Layer';
+
     if (!isInitCommand) {
       currentFileManager.setHasUnsavedChanges(true);
     }
@@ -96,31 +107,40 @@ export class UndoManager implements IUndoManager {
 
   beginUndoableChange(attrName: string, elems: Element[]): void {
     this.undoChangeStackPointer += 1;
+
     const p = this.undoChangeStackPointer;
     const elements = elems.filter((elem) => !!elem);
     const oldValues = elements.map((elem) => elem.getAttribute(attrName));
-    this.undoableChangeStack[p] = { attrName, oldValues, elements };
+
+    this.undoableChangeStack[p] = { attrName, elements, oldValues };
   }
 
   finishUndoableChange(): IBatchCommand {
     const p = this.undoChangeStackPointer;
+
     this.undoChangeStackPointer -= 1;
+
     const changeset = this.undoableChangeStack[p];
     const { attrName, elements, oldValues } = changeset;
     const batchCmd = new history.BatchCommand(`Change ${attrName}`);
+
     for (let i = elements.length - 1; i >= 0; i -= 1) {
       const elem = elements[i];
+
       if (elem == null) {
-        // eslint-disable-next-line no-continue
         continue;
       }
+
       const changes = {};
+
       changes[attrName] = oldValues[i];
+
       if (changes[attrName] !== elem.getAttribute(attrName)) {
         batchCmd.addSubCommand(new history.ChangeElementCommand(elem, changes, attrName));
       }
     }
     this.undoableChangeStack[p] = null;
+
     return batchCmd;
   }
 }

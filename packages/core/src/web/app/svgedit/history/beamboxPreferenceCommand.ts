@@ -1,7 +1,5 @@
-/* eslint-disable import/order */
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import { IBatchCommand, ICommand } from '@core/interfaces/IHistory';
+import type { IBatchCommand, ICommand } from '@core/interfaces/IHistory';
 
 import { BaseHistoryCommand } from './history';
 
@@ -39,9 +37,13 @@ export const changeBeamboxPreferenceValue = (
 ): BeamboxPreferenceCommand => {
   const { parentCmd } = opts;
   const oldValue = beamboxPreference.read(key);
+
   beamboxPreference.write(key, value);
+
   const cmd = new BeamboxPreferenceCommand(key, oldValue, value);
+
   if (parentCmd) parentCmd.addSubCommand(cmd);
+
   return cmd;
 };
 

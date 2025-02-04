@@ -5,6 +5,7 @@ import undoManager from './undoManager';
 
 const undo = (): void => {
   const res = undoManager.undo();
+
   if (res) {
     LayerPanelController.updateLayerPanel();
     currentFileManager.setHasUnsavedChanges(true);
@@ -13,6 +14,7 @@ const undo = (): void => {
 
 const redo = (): void => {
   const res = undoManager.redo();
+
   if (res) {
     LayerPanelController.updateLayerPanel();
     currentFileManager.setHasUnsavedChanges(true);
@@ -20,6 +22,6 @@ const redo = (): void => {
 };
 
 export default {
-  undo,
   redo,
+  undo,
 };

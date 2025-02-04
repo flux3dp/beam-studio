@@ -1,4 +1,3 @@
-/* eslint-disable import/order */
 /**
  * Package: svgedit.history
  *
@@ -8,7 +7,7 @@
  */
 
 import history from '@core/app/svgedit/history/history';
-import { IBatchCommand, ICommand, IUndoManager } from '@core/interfaces/IHistory';
+import type { IBatchCommand, ICommand, IUndoManager } from '@core/interfaces/IHistory';
 
 const { svgedit } = window;
 
@@ -74,11 +73,13 @@ class HistoryRecordingService {
     if (!this.undoManager) {
       return this;
     }
+
     if (this.currentBatchCommand) {
       this.currentBatchCommand.addSubCommand(cmd);
     } else {
       this.undoManager.addCommandToHistory(cmd);
     }
+
     return this;
   }
 
@@ -90,8 +91,10 @@ class HistoryRecordingService {
     if (!this.undoManager) {
       return this;
     }
+
     this.currentBatchCommand = new history.BatchCommand(text);
     this.batchCommandStack.push(this.currentBatchCommand);
+
     return this;
   }
 
@@ -102,13 +105,18 @@ class HistoryRecordingService {
     if (!this.undoManager) {
       return this;
     }
+
     if (this.currentBatchCommand) {
       const batchCommand = this.currentBatchCommand;
+
       this.batchCommandStack.pop();
+
       const l = this.batchCommandStack.length;
+
       this.currentBatchCommand = l ? this.batchCommandStack[l - 1] : null;
       this.addCommand(batchCommand);
     }
+
     return this;
   }
 
@@ -121,14 +129,16 @@ class HistoryRecordingService {
    */
   moveElement(
     elem: Element,
-    oldNextSibling: Node | Element,
-    oldParent: Node | Element,
+    oldNextSibling: Element | Node,
+    oldParent: Element | Node,
     text?: string,
   ): HistoryRecordingService {
     if (!this.undoManager) {
       return this;
     }
+
     this.addCommand(new history.MoveElementCommand(elem, oldNextSibling, oldParent, text));
+
     return this;
   }
 
@@ -141,7 +151,9 @@ class HistoryRecordingService {
     if (!this.undoManager) {
       return this;
     }
+
     this.addCommand(new history.InsertElementCommand(elem, text));
+
     return this;
   }
 
@@ -154,14 +166,16 @@ class HistoryRecordingService {
    */
   removeElement(
     elem: Element | SVGGraphicsElement,
-    oldNextSibling: Node | Element,
-    oldParent: Node | Element,
+    oldNextSibling: Element | Node,
+    oldParent: Element | Node,
     text?: string,
   ): HistoryRecordingService {
     if (!this.undoManager) {
       return this;
     }
+
     this.addCommand(new history.RemoveElementCommand(elem, oldNextSibling, oldParent, text));
+
     return this;
   }
 
@@ -176,7 +190,9 @@ class HistoryRecordingService {
     if (!this.undoManager) {
       return this;
     }
+
     this.addCommand(new history.ChangeElementCommand(elem, attrs, text));
+
     return this;
   }
 }

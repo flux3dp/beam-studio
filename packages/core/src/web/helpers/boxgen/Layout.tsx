@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import React from 'react';
 
 import Shape from '@doodle3d/clipper-js';
@@ -6,7 +5,6 @@ import Shape from '@doodle3d/clipper-js';
 import { getFrontBackShape, getLeftRightShape, getTopBottomShape } from '@core/app/components/boxgen/Shape';
 import { DEFAULT_LABEL_COLOR, DEFAULT_STROKE_COLOR } from '@core/app/constants/boxgen-constants';
 import type { IController, IExportOptions } from '@core/interfaces/IBoxgen';
-
 interface ShapeDisplayObject {
   shape: THREE.Shape;
   text: string;

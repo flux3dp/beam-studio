@@ -1,4 +1,5 @@
-import { IPathNodePoint, ISegment, ISVGPath, ISVGPathSeg } from '@core/interfaces/ISVGPath';
+import type { IPathNodePoint, ISegment, ISVGPath, ISVGPathSeg } from '@core/interfaces/ISVGPath';
+
 import SegmentControlPoint from './SegmentControlPoint';
 
 const { svgedit } = window;
@@ -40,6 +41,7 @@ export default class Segment implements ISegment {
   update(): void {
     if (this.ptgrip) {
       const pt = svgedit.path.getGripPt(this);
+
       svgedit.utilities.assignAttributes(this.ptgrip, {
         cx: pt.x,
         cy: pt.y,
@@ -50,24 +52,29 @@ export default class Segment implements ISegment {
   }
 
   getNodePointAndControlPoints():
+    | Record<string, never>
     | {
-        nodePoint: IPathNodePoint;
         controlPoints: SegmentControlPoint[];
-      }
-    | Record<string, never> {
+        nodePoint: IPathNodePoint;
+      } {
     const pathSeg = this.item;
+
     if (pathSeg.pathSegType === 1) {
       return {};
     }
+
     const nodePoint = new svgedit.path.PathNodePoint(pathSeg.x, pathSeg.y, this, this.path);
     const controlPoints = [];
+
     if (pathSeg.pathSegType === 6) {
       controlPoints.push(new SegmentControlPoint(pathSeg.x1, pathSeg.y1, this, 1));
       controlPoints.push(new SegmentControlPoint(pathSeg.x2, pathSeg.y2, this, 2));
     } else if (pathSeg.pathSegType === 8) {
       controlPoints.push(new SegmentControlPoint(pathSeg.x1, pathSeg.y1, this, 1));
     }
+
     this.controlPoints = controlPoints;
-    return { nodePoint, controlPoints };
+
+    return { controlPoints, nodePoint };
   }
 }

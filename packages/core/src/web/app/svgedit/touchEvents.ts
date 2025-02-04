@@ -1,10 +1,11 @@
 import Hammer from 'hammerjs';
 
-import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import workareaManager from '@core/app/svgedit/workarea';
+import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 
 const calculateTouchCenter = (touches: TouchList) => {
   const center = { x: 0, y: 0 };
+
   if (touches.length > 0) {
     for (let i = 0; i < touches.length; i += 1) {
       center.x += touches[i].pageX;
@@ -13,6 +14,7 @@ const calculateTouchCenter = (touches: TouchList) => {
     center.x /= touches.length;
     center.y /= touches.length;
   }
+
   return center;
 };
 
@@ -42,6 +44,7 @@ const setupCanvasTouchEvents = (
 
   container.addEventListener('touchstart', (e: TouchEvent) => {
     clearTimeout(touchStartTimeout);
+
     if (e.touches.length === 1) {
       firstTouchID = e.touches[0].identifier;
       touchStartTimestamp = Date.now();
@@ -52,6 +55,7 @@ const setupCanvasTouchEvents = (
         left: workarea.scrollLeft,
         top: workarea.scrollTop,
       };
+
       // @ts-expect-error scale is defined in chrome & safari
       if (e.scale === undefined) {
         startZoom = workareaManager.zoomRatio;
@@ -70,26 +74,26 @@ const setupCanvasTouchEvents = (
 
   container.addEventListener('touchmove', (e: TouchEvent) => {
     e.preventDefault();
+
     if (e.touches.length === 1) {
-      if (
-        e.touches[0].identifier === firstTouchID &&
-        Date.now() > touchStartTimestamp + TOUCH_START_DELAY
-      ) {
+      if (e.touches[0].identifier === firstTouchID && Date.now() > touchStartTimestamp + TOUCH_START_DELAY) {
         onMouseMove(e);
       }
     } else if (e.touches.length >= 2) {
       const center = calculateTouchCenter(e.touches);
+
       requestAnimationFrame(() => {
         const { timeStamp } = e;
+
         if (timeStamp < lastMoveEventTimestamp) return;
+
         const scale =
           // @ts-expect-error scale is defined in chrome & safari
           e.scale ??
-          Math.hypot(
-            e.touches[0].screenX - e.touches[1].screenX,
-            e.touches[0].screenY - e.touches[1].screenY,
-          ) / startDist;
+          Math.hypot(e.touches[0].screenX - e.touches[1].screenX, e.touches[0].screenY - e.touches[1].screenY) /
+            startDist;
         let newZoom = workareaManager.zoomRatio;
+
         if (startZoom && Math.abs(Math.log(currentScale / scale)) >= Math.log(1.05)) {
           newZoom = startZoom * scale ** 0.5;
           setZoom(newZoom, center);
@@ -100,18 +104,18 @@ const setupCanvasTouchEvents = (
           };
           currentScale = scale;
         }
+
         const wOrig = workarea.clientWidth;
         const hOrig = workarea.clientHeight;
-        if (
-          wOrig >= workareaManager.width * newZoom * multi ||
-          hOrig >= workareaManager.height * newZoom * multi
-        ) {
+
+        if (wOrig >= workareaManager.width * newZoom * multi || hOrig >= workareaManager.height * newZoom * multi) {
           lastMoveEventTimestamp = timeStamp;
+
           return;
         }
-        // eslint-disable-next-line no-param-reassign
+
         workarea.scrollLeft = panStartScroll.left + panStartPosition.x - center.x;
-        // eslint-disable-next-line no-param-reassign
+
         workarea.scrollTop = panStartScroll.top + panStartPosition.y - center.y;
         lastMoveEventTimestamp = timeStamp;
       });
@@ -122,6 +126,7 @@ const setupCanvasTouchEvents = (
     for (let i = 0; i < e.changedTouches.length; i += 1) {
       if (e.changedTouches[i].identifier === firstTouchID) {
         firstTouchID = null;
+
         if (Date.now() > touchStartTimestamp + TOUCH_START_DELAY) {
           onMouseUp(e, isDoubleTap);
         } else {
@@ -130,9 +135,11 @@ const setupCanvasTouchEvents = (
           onMouseUp(e, isDoubleTap);
           setTimeout(() => ObjectPanelController.updateActiveKey(null), 100);
         }
+
         isDoubleTap = false;
       }
     }
+
     if (e.touches.length >= 2) {
       panStartPosition = calculateTouchCenter(e.touches);
       panStartScroll = {

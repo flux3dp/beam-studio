@@ -1,28 +1,26 @@
-/* eslint-disable no-restricted-syntax */
-
-/* eslint-disable no-console */
-import findDefs from '@core/app/svgedit/utils/findDef';
 import history from '@core/app/svgedit/history/history';
-import selector from '@core/app/svgedit/selector';
-import symbolMaker from '@core/helpers/symbol-maker';
-import updateElementColor from '@core/helpers/color/updateElementColor';
-import workareaManager from '@core/app/svgedit/workarea';
 import { deleteElements } from '@core/app/svgedit/operations/delete';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { moveElements } from '@core/app/svgedit/operations/move';
-import { IBatchCommand } from '@core/interfaces/IHistory';
+import selector from '@core/app/svgedit/selector';
+import findDefs from '@core/app/svgedit/utils/findDef';
+import workareaManager from '@core/app/svgedit/workarea';
+import updateElementColor from '@core/helpers/color/updateElementColor';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import symbolMaker from '@core/helpers/symbol-maker';
+import type { IBatchCommand } from '@core/interfaces/IHistory';
+
 import undoManager from '../history/undoManager';
 
 interface ClipboardElement {
-  namespaceURI: string;
-  nodeName: string;
-  innerHTML: string;
-  childNodes: Array<ClipboardElement>;
-  nodeType: number;
-  nodeValue: string;
+  attributes: Array<Record<'namespaceURI' | 'nodeName' | 'value', string>>;
+  childNodes: ClipboardElement[];
   dataGSVG?: string;
   dataSymbol?: string;
-  attributes: Array<Record<'namespaceURI' | 'nodeName' | 'value', string>>;
+  innerHTML: string;
+  namespaceURI: string;
+  nodeName: string;
+  nodeType: number;
+  nodeValue: string;
 }
 
 // TODO: decouple with svgcanvas
@@ -49,22 +47,22 @@ export const isValidNativeClipboard = async (): Promise<boolean> => {
 };
 
 const serializeElement = ({
-  namespaceURI,
-  nodeName,
-  innerHTML,
-  nodeType,
-  nodeValue,
   attributes,
   childNodes,
+  innerHTML,
+  namespaceURI,
+  nodeName,
+  nodeType,
+  nodeValue,
 }: Element) => {
   const result: ClipboardElement = {
+    attributes: [],
+    childNodes: [],
+    innerHTML,
     namespaceURI,
     nodeName,
-    innerHTML,
     nodeType,
     nodeValue,
-    childNodes: [],
-    attributes: [],
   };
 
   for (let i = 0; i < attributes?.length; i += 1) {
@@ -91,18 +89,22 @@ export const addRefToClipboard = (useElement: SVGUseElement): void => {
   }
 };
 
-const copyElements = async (elems: Array<Element>): Promise<void> => {
+const copyElements = async (elems: Element[]): Promise<void> => {
   const layerNames = new Set<string>();
-  const serializedData = { elements: [], refs: {}, imageData: {} };
+  const serializedData = { elements: [], imageData: {}, refs: {} };
   let layerCount = 0;
+
   refClipboard = {};
 
   for (let i = 0; i < elems.length; i += 1) {
     const elem = elems[i];
     const layerName = $(elem.parentNode).find('title').text();
+
     elem.setAttribute('data-origin-layer', layerName);
+
     if (elem.tagName === 'use') addRefToClipboard(elem as SVGUseElement);
     else Array.from(elem.querySelectorAll('use')).forEach((use: SVGUseElement) => addRefToClipboard(use));
+
     if (!layerNames.has(layerName)) {
       layerNames.add(layerName);
       layerCount += 1;
@@ -117,8 +119,10 @@ const copyElements = async (elems: Array<Element>): Promise<void> => {
   elems.forEach((elem) => serializedData.elements.push(serializeElement(elem)));
 
   const keys = Object.keys(refClipboard);
+
   for (let i = 0; i < keys.length; i += 1) {
     const key = keys[i];
+
     serializedData.refs[key] = serializeElement(refClipboard[key]);
   }
 
@@ -127,8 +131,10 @@ const copyElements = async (elems: Array<Element>): Promise<void> => {
     new Set(elems.filter((elem) => elem.tagName === 'image').map((elem) => elem.getAttribute('origImage'))),
   );
   const promises = [];
+
   for (let i = 0; i < origImageUrls.length; i += 1) {
     const origImage = origImageUrls[i];
+
     promises.push(
       // eslint-disable-next-line no-async-promise-executor
       new Promise<void>(async (resolve) => {
@@ -137,9 +143,11 @@ const copyElements = async (elems: Array<Element>): Promise<void> => {
           const blob = await resp.blob();
           const base64 = await new Promise<string>((resolve) => {
             const reader = new FileReader();
+
             reader.onload = () => resolve(reader.result as string);
             reader.readAsDataURL(blob);
           });
+
           serializedData.imageData[origImage] = base64;
         } finally {
           resolve();
@@ -158,11 +166,12 @@ const copyElements = async (elems: Array<Element>): Promise<void> => {
 
 const copySelectedElements = async (): Promise<void> => {
   const selectedElems = svgCanvas.getSelectedWithoutTempGroup();
+
   await copyElements(selectedElems);
   svgCanvas.tempGroupSelectedElements();
 };
 
-const cutElements = async (elems: Array<Element>): Promise<void> => {
+const cutElements = async (elems: Element[]): Promise<void> => {
   const batchCmd = new history.BatchCommand('Cut Elements');
 
   await copyElements(elems);
@@ -177,20 +186,23 @@ const cutElements = async (elems: Array<Element>): Promise<void> => {
 
 const cutSelectedElements = async (): Promise<void> => {
   const selectedElems = svgCanvas.getSelectedWithoutTempGroup();
+
   await cutElements(selectedElems);
 };
 
 const updateSymbolStyle = (symbol: SVGSymbolElement, oldId: string) => {
   const styles = symbol.querySelectorAll('style, STYLE');
+
   for (let i = 0; i < styles.length; i += 1) {
     const style = styles[i];
     const { textContent } = style;
     const newContent = textContent.replace(RegExp(oldId, 'g'), symbol.id);
+
     style.textContent = newContent;
   }
 };
 
-async function getElementsFromNativeClipboard(): Promise<Array<Element>> {
+async function getElementsFromNativeClipboard(): Promise<Element[]> {
   const clipboardData = await navigator.clipboard.readText();
 
   if (!clipboardData.startsWith('BX clip:')) {
@@ -199,9 +211,10 @@ async function getElementsFromNativeClipboard(): Promise<Array<Element>> {
 
   const drawing = svgCanvas.getCurrentDrawing();
   const data = JSON.parse(clipboardData.substring(8));
-  const { elements, refs, imageData } = data;
+  const { elements, imageData, refs } = data;
 
   const keys = Object.keys(refs);
+
   refClipboard = {};
   for (const key of keys) {
     const symbolElemData = refs[key];
@@ -220,6 +233,7 @@ async function getElementsFromNativeClipboard(): Promise<Array<Element>> {
         const resp = await fetch(base64);
         const blob = await resp.blob();
         const url = URL.createObjectURL(blob);
+
         imageData[key] = url;
       } catch (error) {
         console.error('Failed to fetch image data', error);
@@ -228,11 +242,13 @@ async function getElementsFromNativeClipboard(): Promise<Array<Element>> {
   );
 
   const newElements = elements.map((element: Element) => drawing.copyElemData(element));
+
   // use clipboard image data if original image is not available
   await Promise.allSettled(
     newElements.map(async (element: Element) => {
       if (element.tagName === 'image') {
         const origImage = element.getAttribute('origImage');
+
         if (imageData[origImage]) {
           try {
             await fetch(origImage);
@@ -243,36 +259,44 @@ async function getElementsFromNativeClipboard(): Promise<Array<Element>> {
       }
     }),
   );
+
   return newElements;
 }
 
 const pasteRef = async (
   useElement: SVGUseElement,
   opts?: {
-    parentCmd?: IBatchCommand;
     addToHistory?: boolean;
+    parentCmd?: IBatchCommand;
   },
 ): Promise<void> => {
-  const { parentCmd, addToHistory = true } = opts || {};
+  const { addToHistory = true, parentCmd } = opts || {};
   const batchCmd = new history.BatchCommand('Paste Ref');
   const drawing = svgCanvas.getCurrentDrawing();
   const symbolId = svgedit.utilities.getHref(useElement);
   const refElement = refClipboard[symbolId];
   const copiedRef = refElement.cloneNode(true) as SVGSymbolElement;
+
   copiedRef.id = drawing.getNextId();
   copiedRef.setAttribute('data-image-symbol', `${copiedRef.id}_image`);
   updateSymbolStyle(copiedRef, refElement.id);
+
   const defs = findDefs();
+
   defs.appendChild(copiedRef);
   batchCmd.addSubCommand(new history.InsertElementCommand(copiedRef));
   svgedit.utilities.setHref(useElement, `#${copiedRef.id}`);
+
   const imageSymbol = symbolMaker.createImageSymbol(copiedRef);
+
   batchCmd.addSubCommand(new history.InsertElementCommand(imageSymbol));
+
   if (parentCmd) {
     parentCmd.addSubCommand(batchCmd);
   } else if (addToHistory) {
     undoManager.addCommandToHistory(batchCmd);
   }
+
   await symbolMaker.reRenderImageSymbol(useElement);
   updateElementColor(useElement);
 };
@@ -291,9 +315,12 @@ export const handlePastedRef = async (copy: Element, opts: { parentCmd?: IBatchC
   });
 
   const passThroughObjects = Array.from(copy.querySelectorAll('[data-pass-through]'));
+
   if (copy.getAttribute('data-pass-through')) passThroughObjects.push(copy);
+
   passThroughObjects.forEach((element: SVGGElement) => {
     const clipPath = element.querySelector(':scope > clipPath');
+
     if (clipPath) {
       element.childNodes.forEach((child: SVGGraphicsElement) => {
         if (child.getAttribute('clip-path')?.startsWith('url')) {
@@ -302,11 +329,15 @@ export const handlePastedRef = async (copy: Element, opts: { parentCmd?: IBatchC
       });
     }
   });
+
   const textPathGroups = Array.from(copy.querySelectorAll('[data-textpath-g="1"]'));
+
   if (copy.getAttribute('data-textpath-g') === '1') textPathGroups.push(copy);
+
   textPathGroups.forEach((element: SVGGElement) => {
     const newTextPath = element.querySelector('textPath');
     const newPath = element.querySelector('path');
+
     newTextPath?.setAttribute('href', `#${newPath?.id}`);
   });
 
@@ -314,16 +345,16 @@ export const handlePastedRef = async (copy: Element, opts: { parentCmd?: IBatchC
 };
 
 const pasteElements = (
-  clipboard: Array<Element>,
+  clipboard: Element[],
   args: {
-    type: 'mouse' | 'in_place' | 'point';
-    x?: number;
-    y?: number;
     isSubCmd: boolean;
     selectElement?: boolean;
+    type: 'in_place' | 'mouse' | 'point';
+    x?: number;
+    y?: number;
   },
-): { cmd: IBatchCommand; elems: Array<Element> } | null => {
-  const { type, x, y, isSubCmd = false, selectElement = true } = args || {};
+): null | { cmd: IBatchCommand; elems: Element[] } => {
+  const { isSubCmd = false, selectElement = true, type, x, y } = args || {};
 
   if (!clipboard?.length) {
     return null;
@@ -336,10 +367,11 @@ const pasteElements = (
   // Move elements to lastClickPoint
   for (let i = 0; i < clipboard.length; i += 1) {
     const elem = clipboard[i];
+
     if (!elem) {
-      // eslint-disable-next-line no-continue
       continue;
     }
+
     const copy = drawing.copyElem(elem);
 
     // See if elem with elem ID is in the DOM already
@@ -351,6 +383,7 @@ const pasteElements = (
 
     if (copy.getAttribute('data-origin-layer') && clipboard.length > 1) {
       const layer = drawing.getLayerByName(copy.getAttribute('data-origin-layer')) || drawing.getCurrentLayer();
+
       layer.appendChild(copy);
     } else {
       drawing.getCurrentLayer().appendChild(copy);
@@ -373,6 +406,7 @@ const pasteElements = (
 
     if (type === 'mouse') {
       const lastClickPoint = svgCanvas.getLastClickPoint();
+
       ctrX = lastClickPoint.x;
       ctrY = lastClickPoint.y;
     } else if (type === 'point') {
@@ -392,6 +426,7 @@ const pasteElements = (
     });
 
     const cmd = moveElements(dx, dy, pasted, false, true);
+
     batchCmd.addSubCommand(cmd);
   }
 
@@ -403,6 +438,7 @@ const pasteElements = (
   if (selectElement) {
     if (pasted.length === 1) {
       const selectorManager = selector.getSelectorManager();
+
       selectorManager.requestSelector(pasted[0]).resize();
     } else {
       svgCanvas.tempGroupSelectedElements();
@@ -418,42 +454,48 @@ const pasteElements = (
  * @param dy dy of the cloned elements
  */
 const cloneElements = async (
-  elements: Array<Element>,
+  elements: Element[],
   dx: number | number[],
   dy: number | number[],
   opts: {
-    parentCmd?: IBatchCommand;
     addToHistory?: boolean;
-    selectElement?: boolean;
     callChangOnMove?: boolean;
+    parentCmd?: IBatchCommand;
+    selectElement?: boolean;
   } = {
     addToHistory: true,
-    selectElement: true,
     callChangOnMove: true,
+    selectElement: true,
   },
-): Promise<{ cmd: IBatchCommand; elems: Array<Element> } | null> => {
-  const { parentCmd, addToHistory = true, selectElement = true, callChangOnMove = true } = opts;
+): Promise<null | { cmd: IBatchCommand; elems: Element[] }> => {
+  const { addToHistory = true, callChangOnMove = true, parentCmd, selectElement = true } = opts;
   const batchCmd = new history.BatchCommand('Clone elements');
 
   await copyElements(elements);
 
   const pasteRes = pasteElements(await getElementsFromNativeClipboard(), {
+    isSubCmd: true,
+    selectElement,
     type: 'in_place',
     x: null,
     y: null,
-    isSubCmd: true,
-    selectElement,
   });
+
   if (!pasteRes) return null;
+
   const { elems } = pasteRes;
   let { cmd } = pasteRes;
+
   if (cmd && !cmd.isEmpty()) {
     batchCmd.addSubCommand(cmd);
   }
+
   cmd = moveElements(dx, dy, elems, false, !callChangOnMove);
+
   if (cmd && !cmd.isEmpty()) {
     batchCmd.addSubCommand(cmd);
   }
+
   if (!batchCmd.isEmpty()) {
     if (parentCmd) parentCmd.addSubCommand(batchCmd);
     else if (addToHistory) undoManager.addCommandToHistory(batchCmd);
@@ -471,44 +513,49 @@ const cloneSelectedElements = async (
   dx: number | number[],
   dy: number | number[],
   opts: {
-    parentCmd?: IBatchCommand;
     addToHistory?: boolean;
-    selectElement?: boolean;
     callChangOnMove?: boolean;
+    parentCmd?: IBatchCommand;
+    selectElement?: boolean;
   } = {
     addToHistory: true,
-    selectElement: true,
     callChangOnMove: true,
+    selectElement: true,
   },
-): Promise<{ cmd: IBatchCommand; elems: Array<Element> } | null> => {
+): Promise<null | { cmd: IBatchCommand; elems: Element[] }> => {
   const selectedElems = svgCanvas.getSelectedWithoutTempGroup();
   const res = await cloneElements(selectedElems, dx, dy, opts);
+
   svgCanvas.tempGroupSelectedElements();
+
   return res;
 };
 
 const pasteFromNativeClipboard = async (
-  type: 'mouse' | 'in_place' | 'point',
+  type: 'in_place' | 'mouse' | 'point',
   x?: number,
   y?: number,
   isSubCmd = false,
-): Promise<{ cmd: IBatchCommand; elems: Array<Element> } | null> =>
-  pasteElements(await getElementsFromNativeClipboard(), { type, x, y, isSubCmd });
+): Promise<null | { cmd: IBatchCommand; elems: Element[] }> =>
+  pasteElements(await getElementsFromNativeClipboard(), { isSubCmd, type, x, y });
 
-const pasteInCenter = async (): Promise<{ cmd: IBatchCommand; elems: Array<Element> } | null> => {
+const pasteInCenter = async (): Promise<null | { cmd: IBatchCommand; elems: Element[] }> => {
   const zoom = workareaManager.zoomRatio;
   const workarea = document.getElementById('workarea');
   const x = (workarea.scrollLeft + workarea.clientWidth / 2) / zoom - workareaManager.width;
   const y = (workarea.scrollTop + workarea.clientHeight / 2) / zoom - workareaManager.height;
+
   return pasteFromNativeClipboard('point', x, y);
 };
 
 const generateSelectedElementArray = async (
   interval: { dx: number; dy: number },
-  { row, column }: { row: number; column: number },
+  { column, row }: { column: number; row: number },
 ): Promise<IBatchCommand> => {
   const batchCmd = new history.BatchCommand('Grid elements');
+
   await copySelectedElements();
+
   const arrayElements = [...svgCanvas.getSelectedWithoutTempGroup()];
   const clipboard = await getElementsFromNativeClipboard();
 
@@ -516,13 +563,12 @@ const generateSelectedElementArray = async (
     for (let j = 0; j < row; j += 1) {
       if (i !== 0 || j !== 0) {
         const pasteRes = pasteElements(clipboard, {
-          type: 'in_place',
           isSubCmd: true,
           selectElement: false,
+          type: 'in_place',
         });
 
         if (!pasteRes) {
-          // eslint-disable-next-line no-continue
           continue;
         }
 
@@ -556,14 +602,14 @@ const generateSelectedElementArray = async (
 
 export default {
   addRefToClipboard,
+  cloneElements,
+  cloneSelectedElements,
   copySelectedElements,
   cutElements,
   cutSelectedElements,
+  generateSelectedElementArray,
+  handlePastedRef,
   pasteElements: pasteFromNativeClipboard,
   pasteInCenter,
   pasteRef,
-  cloneElements,
-  cloneSelectedElements,
-  generateSelectedElementArray,
-  handlePastedRef,
 };

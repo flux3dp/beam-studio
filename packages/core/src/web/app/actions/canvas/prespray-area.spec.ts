@@ -40,12 +40,13 @@ describe('test canvas/prespray-area', () => {
     mockRead.mockReturnValue(0);
     window.requestAnimationFrame = mockRequestAnimationFrame;
     document.body.innerHTML = '<svg id="fixedSizeSvg"><g class="layer" data-module="5"></g></svg>';
-    jest.spyOn(document, 'querySelectorAll').mockReturnValue(
-      Array.from(document.querySelectorAll('g.layer') ?? []).filter(
-        (g) => g.getAttribute('display') !== 'none',
-        // eslint-disable-next-line no-undef
-      ) as any as NodeListOf<SVGGElement>,
-    );
+    jest
+      .spyOn(document, 'querySelectorAll')
+      .mockReturnValue(
+        Array.from(document.querySelectorAll('g.layer') ?? []).filter(
+          (g) => g.getAttribute('display') !== 'none',
+        ) as any as NodeListOf<SVGGElement>,
+      );
   });
 
   test('generate prespray area', () => {

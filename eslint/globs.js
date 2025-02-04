@@ -21,7 +21,13 @@ const GLOB_YAML = '**/*.y?(a)ml';
 const GLOB_XML = '**/*.xml';
 const GLOB_HTML = '**/*.htm?(l)';
 
-const GLOB_TESTS = [`**/*.spec.${GLOB_SRC_EXT}`, `**/*.test.${GLOB_SRC_EXT}`];
+const GLOB_TESTS = [
+  `**/*.spec.${GLOB_SRC_EXT}`,
+  `**/*.test.${GLOB_SRC_EXT}`,
+  `**/__mocks__/*.${GLOB_SRC_EXT}`,
+  `**/__mocks__/**/*.${GLOB_SRC_EXT}`,
+  `**/setupTests.${GLOB_SRC_EXT}`,
+];
 
 const IGNORES = [
   '**/node_modules/*',
@@ -30,7 +36,6 @@ const IGNORES = [
   '**/dist/**/*',
   '**/public/*',
   '**/public/**/*',
-  '**/svgedit',
   '**/beambox/svg-editor.ts',
   '**/helpers/potrace/*',
   '**/helpers/potrace/**/*',

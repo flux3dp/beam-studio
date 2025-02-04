@@ -1,15 +1,15 @@
-import appendUseElement from '@core/app/svgedit/operations/import/appendUseElement';
+import type LayerModule from '@core/app/constants/layer-module/layer-modules';
 import history from '@core/app/svgedit/history/history';
-import ISVGCanvas from '@core/interfaces/ISVGCanvas';
-import LayerModule from '@core/app/constants/layer-module/layer-modules';
-import layerModuleHelper from '@core/helpers/layer-module/layer-module-helper';
+import appendUseElement from '@core/app/svgedit/operations/import/appendUseElement';
 import parseSvg from '@core/app/svgedit/operations/parseSvg';
-import symbolMaker from '@core/helpers/symbol-maker';
 import updateElementColor from '@core/helpers/color/updateElementColor';
-import { IBatchCommand } from '@core/interfaces/IHistory';
-import { ImportType } from '@core/interfaces/ImportSvg';
 import { getObjectLayer, removeDefaultLayerIfEmpty } from '@core/helpers/layer/layer-helper';
+import layerModuleHelper from '@core/helpers/layer-module/layer-module-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import symbolMaker from '@core/helpers/symbol-maker';
+import type { IBatchCommand } from '@core/interfaces/IHistory';
+import type { ImportType } from '@core/interfaces/ImportSvg';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 let svgedit;
 let svgCanvas: ISVGCanvas;
@@ -22,15 +22,15 @@ getSVGAsync((globalSVG) => {
 const importSvgString = async (
   xmlString: string,
   {
-    type = 'nolayer',
     layerName,
     parentCmd,
     targetModule = layerModuleHelper.getDefaultLaserModule(),
+    type = 'nolayer',
   }: {
-    type?: ImportType;
     layerName?: string;
     parentCmd?: IBatchCommand;
     targetModule?: LayerModule;
+    type?: ImportType;
   },
 ): Promise<SVGUseElement> => {
   const batchCmd = new history.BatchCommand('Import Image');
@@ -48,6 +48,7 @@ const importSvgString = async (
     }
 
     use_el.setAttribute('data-xform', dataXform);
+
     return use_el;
   }
 
@@ -59,9 +60,7 @@ const importSvgString = async (
   const { symbols } = parseSvg(batchCmd, svg, type);
 
   const results = (
-    await Promise.all(
-      symbols.map(async (symbol) => appendUseElement(symbol, { type, layerName, targetModule })),
-    )
+    await Promise.all(symbols.map(async (symbol) => appendUseElement(symbol, { layerName, targetModule, type })))
   ).filter((res) => res?.element);
 
   const commands = results.map(({ command }) => command);
@@ -113,6 +112,7 @@ const importSvgString = async (
       svgCanvas.addCommandToHistory(batchCmd);
     }
   }
+
   svgCanvas.call('changed', [document.getElementById('svgcontent')]);
 
   return useElements[useElements.length - 1];

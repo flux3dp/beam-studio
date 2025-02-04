@@ -1,28 +1,30 @@
+import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
 import autoSaveHelper from '@core/helpers/auto-save-helper';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
-import { IFile } from '@core/interfaces/IMyCloud';
+import type { IFile } from '@core/interfaces/IMyCloud';
 
 class CurrentFileManager {
   isCloudFile = false;
-  private name: string | null = null;
-  private path: string | null = null;
+  private name: null | string = null;
+  private path: null | string = null;
   private hasUnsavedChanges = false;
 
-  getName = (): string | null => this.name;
+  getName = (): null | string => this.name;
 
-  getPath = (): string | null => this.path;
+  getPath = (): null | string => this.path;
 
   getHasUnsavedChanges = (): boolean => this.hasUnsavedChanges;
 
   setHasUnsavedChanges = (val: boolean, shouldClearTimeEst = true) => {
     this.hasUnsavedChanges = val;
     TopBarController.setHasUnsavedChange(val);
+
     if (shouldClearTimeEst) {
-      const timeEstimationButtonEventEmitter =
-        eventEmitterFactory.createEventEmitter('time-estimation-button');
+      const timeEstimationButtonEventEmitter = eventEmitterFactory.createEventEmitter('time-estimation-button');
+
       timeEstimationButtonEventEmitter.emit('SET_ESTIMATED_TIME', null);
     }
+
     autoSaveHelper.toggleAutoSave(val);
   };
 
@@ -33,22 +35,24 @@ class CurrentFileManager {
   extractFileName = (filepath: string) => {
     const splitPath = filepath.split(window.os === 'Windows' ? '\\' : '/');
     const fileName = splitPath[splitPath.length - 1];
+
     return fileName.slice(0, fileName.lastIndexOf('.')).replace(':', '/');
   };
 
-  setFileName = (
-    fileName: string,
-    opts: { extractFromPath?: boolean; clearPath?: boolean } = {},
-  ) => {
-    const { extractFromPath = false, clearPath = false } = opts;
+  setFileName = (fileName: string, opts: { clearPath?: boolean; extractFromPath?: boolean } = {}) => {
+    const { clearPath = false, extractFromPath = false } = opts;
     const name = extractFromPath ? this.extractFileName(fileName) : fileName;
+
     this.name = name;
+
     if (clearPath && !this.isCloudFile) this.path = null;
+
     this.updateTitle();
   };
 
   setLocalFile = (filepath: string) => {
     const fileName = this.extractFileName(filepath);
+
     this.name = fileName;
     this.path = filepath;
     this.isCloudFile = false;
@@ -62,7 +66,7 @@ class CurrentFileManager {
     this.updateTitle();
   };
 
-  setCloudUUID = (uuid: string | null) => {
+  setCloudUUID = (uuid: null | string) => {
     this.path = uuid;
     this.isCloudFile = !!uuid;
     // update cloud icon

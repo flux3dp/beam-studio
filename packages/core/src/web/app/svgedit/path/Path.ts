@@ -1,25 +1,25 @@
-/* eslint-disable no-param-reassign */
 /* eslint-disable no-case-declarations */
-import ISVGCanvas from '@core/interfaces/ISVGCanvas';
-import ISVGPathElement, { ISVGPathSegList } from '@core/interfaces/ISVGPathElement';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { LINKTYPE_SMOOTH, LINKTYPE_SYMMETRIC } from '@core/app/constants/link-type-constants';
-import { ICommand } from '@core/interfaces/IHistory';
-import { ISVGPath, ISVGPathSeg } from '@core/interfaces/ISVGPath';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import type { ICommand } from '@core/interfaces/IHistory';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import type { ISVGPath, ISVGPathSeg } from '@core/interfaces/ISVGPath';
+import type ISVGPathElement from '@core/interfaces/ISVGPathElement';
+import type { ISVGPathSegList } from '@core/interfaces/ISVGPathElement';
 
 import PathNodePoint from './PathNodePoint';
 import Segment from './Segment';
-import SegmentControlPoint from './SegmentControlPoint';
+import type SegmentControlPoint from './SegmentControlPoint';
 
 let svgCanvas: ISVGCanvas;
+
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
 
 const { svgedit } = window;
 
-const isCollinear = (x1, y1, x2, y2, x3, y3) =>
-  Math.abs(x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) <= 0.0001;
+const isCollinear = (x1, y1, x2, y2, x3, y3) => Math.abs(x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) <= 0.0001;
 
 export default class Path implements ISVGPath {
   elem: ISVGPathElement;
@@ -38,7 +38,7 @@ export default class Path implements ISVGPath {
 
   matrix: SVGMatrix;
 
-  dragging: number[] | boolean;
+  dragging: boolean | number[];
 
   dragctrl: boolean;
 
@@ -67,11 +67,13 @@ export default class Path implements ISVGPath {
       .each(function () {
         $(this).attr('display', 'none');
       });
+
     const segList = this.elem.pathSegList;
     const segInfo = JSON.parse(this.elem.getAttribute('data-segInfo') || '{}');
     const nodeTypes = JSON.parse(this.elem.getAttribute('data-nodeTypes') || '{}');
 
     const len = segList.numberOfItems;
+
     this.segs = [];
     this.nodePoints = [];
     this.selected_pts = [];
@@ -81,6 +83,7 @@ export default class Path implements ISVGPath {
     for (let i = 0; i < len; i += 1) {
       const item = segList.getItem(i);
       const segment = new Segment(i, item);
+
       segment.path = this;
       this.segs.push(segment);
     }
@@ -94,6 +97,7 @@ export default class Path implements ISVGPath {
       const nextSeg = i + 1 >= len ? null : segs[i + 1];
       const prevSeg = i - 1 < 0 ? null : segs[i - 1];
       let startSeg;
+
       if (seg.type === 2) {
         if (prevSeg && prevSeg.type !== 1) {
           // New sub-path, last one is open,
@@ -102,8 +106,10 @@ export default class Path implements ISVGPath {
           startSeg.next = segs[startIndex + 1];
           startSeg.next.prev = startSeg;
         }
+
         // Remember that this is a starter seg
         const nodePoint = new PathNodePoint(seg.item.x, seg.item.y, seg, this);
+
         nodePoint.index = this.nodePoints.length;
         this.nodePoints.push(nodePoint);
         seg.endPoint = nodePoint;
@@ -117,12 +123,15 @@ export default class Path implements ISVGPath {
         // First seg after "M"'s prev is this
         seg.next.prev = seg;
         seg.mate = segs[startIndex];
+
         const { controlPoints } = seg.getNodePointAndControlPoints();
         // First grip point
         const nodePoint = segs[startIndex].endPoint;
+
         nodePoint.setPrevSeg(seg);
         seg.startPoint = lastGrip;
         seg.endPoint = nodePoint;
+
         if (controlPoints.length === 2) {
           lastGrip.addControlPoint(controlPoints[0]);
           nodePoint.addControlPoint(controlPoints[1]);
@@ -133,6 +142,7 @@ export default class Path implements ISVGPath {
             lastGrip.addControlPoint(controlPoints[0]);
           }
         }
+
         nodePoint.prev = lastGrip;
         lastGrip.next = nodePoint;
         lastGrip.nextSeg = seg;
@@ -148,11 +158,13 @@ export default class Path implements ISVGPath {
           startSeg.next = segs[startIndex + 1];
           startSeg.next.prev = startSeg;
 
-          const { nodePoint, controlPoints } = seg.getNodePointAndControlPoints();
+          const { controlPoints, nodePoint } = seg.getNodePointAndControlPoints();
+
           nodePoint.index = this.nodePoints.length;
           this.nodePoints.push(nodePoint);
           seg.startPoint = lastGrip;
           seg.endPoint = nodePoint;
+
           if (controlPoints.length === 2) {
             lastGrip.addControlPoint(controlPoints[0]);
             nodePoint.addControlPoint(controlPoints[1]);
@@ -163,6 +175,7 @@ export default class Path implements ISVGPath {
               lastGrip.addControlPoint(controlPoints[0]);
             }
           }
+
           nodePoint.prev = lastGrip;
           lastGrip.next = nodePoint;
           lastGrip.nextSeg = seg;
@@ -175,11 +188,13 @@ export default class Path implements ISVGPath {
         }
       } else if (seg.type !== 1) {
         // Regular segment, so add grip and its "next"
-        const { nodePoint, controlPoints } = seg.getNodePointAndControlPoints();
+        const { controlPoints, nodePoint } = seg.getNodePointAndControlPoints();
+
         nodePoint.index = this.nodePoints.length;
         this.nodePoints.push(nodePoint);
         seg.startPoint = lastGrip;
         seg.endPoint = nodePoint;
+
         if (controlPoints.length === 2) {
           lastGrip.addControlPoint(controlPoints[0]);
           nodePoint.addControlPoint(controlPoints[1]);
@@ -190,6 +205,7 @@ export default class Path implements ISVGPath {
             lastGrip.addControlPoint(controlPoints[0]);
           }
         }
+
         nodePoint.prev = lastGrip;
         lastGrip.next = nodePoint;
         lastGrip.nextSeg = seg;
@@ -209,11 +225,14 @@ export default class Path implements ISVGPath {
         const node = this.nodePoints[i];
         const a = node.controlPoints[0];
         const b = node.controlPoints[1];
+
         if (a && b) {
           if (isCollinear(a.x, a.y, node.x, node.y, b.x, b.y)) {
             node.linkType = LINKTYPE_SMOOTH;
+
             const dA = Math.hypot(a.x - node.x, a.y - node.y);
             const dB = Math.hypot(b.x - node.x, b.y - node.y);
+
             if (Math.abs(dA - dB) <= 0.0001) {
               node.linkType = LINKTYPE_SYMMETRIC;
             }
@@ -222,14 +241,17 @@ export default class Path implements ISVGPath {
       }
     }
     this.clearSelection();
+
     return this;
   }
 
   eachSeg(fn: (index: number) => boolean | void): void {
     let i;
     const len = this.segs.length;
+
     for (i = 0; i < len; i += 1) {
       const ret = fn.call(this.segs[i], i);
+
       if (ret === false) {
         break;
       }
@@ -240,12 +262,14 @@ export default class Path implements ISVGPath {
     const t = interpolation;
     // Adds a new segment
     const seg = this.segs[index];
+
     if (!seg.prev) return;
 
     const { prev } = seg;
     let newseg;
     let newX;
     let newY;
+
     switch (seg.item.pathSegType) {
       case 4:
         newX = seg.item.x * (1 - t) + prev.item.x * t;
@@ -259,15 +283,20 @@ export default class Path implements ISVGPath {
         const p2x = seg.item.x2 * t + seg.item.x * (1 - t);
         const p01x = p0x * t + p1x * (1 - t);
         const p12x = p1x * t + p2x * (1 - t);
+
         newX = p01x * t + p12x * (1 - t);
+
         const p0y = prev.item.y * t + seg.item.y1 * (1 - t);
         const p1y = seg.item.y1 * t + seg.item.y2 * (1 - t);
         const p2y = seg.item.y2 * t + seg.item.y * (1 - t);
         const p01y = p0y * t + p1y * (1 - t);
         const p12y = p1y * t + p2y * (1 - t);
+
         newY = p01y * t + p12y * (1 - t);
         newseg = this.elem.createSVGPathSegCurvetoCubicAbs(newX, newY, p0x, p0y, p01x, p01y);
+
         const pts = [seg.item.x, seg.item.y, p12x, p12y, p2x, p2y];
+
         svgedit.path.replacePathSeg(seg.type, index, pts);
         break;
       default:
@@ -279,46 +308,57 @@ export default class Path implements ISVGPath {
 
   stripCurveFromSegment(segIndex: number): void {
     const seg = this.segs[segIndex];
+
     if (!seg.next) {
       return;
     }
 
     const nextSeg = seg.next;
     const segChanges = {};
+
     if ([6, 8].includes(seg.item.pathSegType)) {
       const { x, y } = seg.endPoint;
+
       segChanges[segIndex] = { pathSegType: 4, x, y };
     }
+
     if ([6, 8].includes(nextSeg.item.pathSegType)) {
       const { x, y } = nextSeg.endPoint;
+
       segChanges[nextSeg.index] = { pathSegType: 4, x, y };
     }
+
     this.applySegChanges(segChanges);
   }
 
   findSubpath(segIndex: number): {
-    startingIndex: number;
     closingIndex: number;
-    pathSize: number;
     isHead: boolean;
+    pathSize: number;
+    startingIndex: number;
   } {
     // Starts with a move command and ends without closing command
     let closingIndex = this.segs.length - 1;
+
     for (let i = segIndex + 1; i < this.segs.length; i += 1) {
       closingIndex = i;
+
       if (this.segs[i].item.pathSegType < 4) {
         closingIndex = i - 1;
         break;
       }
     }
+
     // Find subpath starting
     let startingIndex = -1;
+
     for (let i = segIndex; i >= 0; i -= 1) {
       if (this.segs[i].item.pathSegType < 4) {
         startingIndex = i;
         break;
       }
     }
+
     if (startingIndex < 0) {
       throw new Error(`Unable to find starting seg from ${segIndex}`);
     }
@@ -326,56 +366,63 @@ export default class Path implements ISVGPath {
     if (![2, 3].includes(this.segs[startingIndex].item.pathSegType)) {
       throw new Error('The starting segment must be a MoveTo command');
     }
+
     const pathSize = closingIndex - startingIndex;
 
     if (pathSize < 1) {
-      throw new Error(
-        `Cannot find valid subpath from index ${segIndex} ${startingIndex}~${closingIndex}`,
-      );
+      throw new Error(`Cannot find valid subpath from index ${segIndex} ${startingIndex}~${closingIndex}`);
     }
 
     const isHead = startingIndex === segIndex;
 
     return {
-      startingIndex,
       closingIndex,
-      pathSize,
       isHead,
+      pathSize,
+      startingIndex,
     };
   }
 
   buildPathSegs(
     subpath: {
-      startingIndex: number;
       closingIndex: number;
-      pathSize: number;
       isHead: boolean;
+      pathSize: number;
+      startingIndex: number;
     },
     reverse: boolean,
   ): ISVGPathSeg[] {
     const pathSegs: ISVGPathSeg[] = [];
+
     console.log('Build path segs', subpath, reverse);
+
     if (reverse) {
       // Move to segment end point
       for (let i = subpath.startingIndex; i <= subpath.closingIndex; i += 1) {
         pathSegs.push(this.segs[i].item);
       }
       console.log('Raw segs', pathSegs);
+
       const dPath = svgCanvas.pathActions.convertPathSegToDPath(pathSegs);
+
       console.log('Before', dPath);
+
       const reversed = svgCanvas.pathActions.reverseDPath(dPath) as ISVGPathSegList;
 
       const results = [];
+
       for (let i = 0; i < reversed.numberOfItems; i += 1) {
         results.push(reversed.getItem(i));
       }
       console.log('After', results);
+
       return results;
     }
 
     for (let i = subpath.startingIndex; i <= subpath.closingIndex; i += 1) {
       pathSegs.push(this.segs[i].item);
     }
+
     return pathSegs;
   }
 
@@ -388,6 +435,7 @@ export default class Path implements ISVGPath {
     // Build pathseg list of subpath2, with pt2 as head
     const subpath2 = this.findSubpath(pt2);
     let subpath2PathSegs;
+
     if (subpath2.startingIndex === subpath1.startingIndex) {
       // If subpath2 === subpath1, just close the subpath1 at the end
       // todo, check if subpath1 ends with pt1
@@ -395,9 +443,12 @@ export default class Path implements ISVGPath {
     } else {
       // Replace MoveTo subpath2 start into LineTo
       subpath2PathSegs = this.buildPathSegs(subpath2, !subpath2.isHead);
+
       const firstSeg = subpath2PathSegs[0];
+
       subpath2PathSegs[0] = svgedit.path.createPathSeg(4, [firstSeg.x, firstSeg.y], this.elem);
     }
+
     // Get all rest pathsegs
     const restPathSegs = this.segs
       .filter(
@@ -406,6 +457,7 @@ export default class Path implements ISVGPath {
           (i > subpath2.closingIndex || i < subpath2.startingIndex),
       )
       .map((seg) => seg.item);
+
     // Rebuild pathSeg
     segList.clear();
     subpath1PathSegs.forEach((pathSeg) => segList.appendItem(pathSeg));
@@ -413,6 +465,7 @@ export default class Path implements ISVGPath {
     restPathSegs.forEach((pathSeg) => segList.appendItem(pathSeg));
     // Rebuild segment items
     this.init();
+
     return 0;
   }
 
@@ -420,19 +473,15 @@ export default class Path implements ISVGPath {
     // Get subpath starting and closing segment
     // Find subpath closing
     const subpath = this.findSubpath(segIndex);
+
     if (!subpath) return -1;
-    const { startingIndex, closingIndex, pathSize } = subpath;
+
+    const { closingIndex, pathSize, startingIndex } = subpath;
 
     if (this.segs[startingIndex + 1].startPoint.index === this.segs[closingIndex].endPoint?.index) {
       // The subpath is closed, starts from the current node, and then ends at current node
-      console.log(
-        'Disconnecting closed path by',
-        segIndex,
-        'from',
-        startingIndex,
-        'to',
-        closingIndex,
-      );
+      console.log('Disconnecting closed path by', segIndex, 'from', startingIndex, 'to', closingIndex);
+
       const selectedSeg = this.segs[segIndex].item;
 
       const segChanges = {};
@@ -441,33 +490,41 @@ export default class Path implements ISVGPath {
       segChanges[startingIndex] = { pathSegType: 2, x: selectedSeg.x, y: selectedSeg.y };
 
       const tailSize = closingIndex - segIndex + 1;
+
       for (let j = 1; j <= pathSize; j += 1) {
         const srcIndex = j < tailSize ? segIndex + j : startingIndex + 1 + (j - tailSize);
         const src = this.segs[srcIndex].item;
-        const { pathSegType, x, y, x1, y1, x2, y2 } = src;
+        const { pathSegType, x, x1, x2, y, y1, y2 } = src;
+
         p.push(`${startingIndex + j}->${srcIndex}`);
         segChanges[startingIndex + j] = {
           pathSegType,
           x,
-          y,
           x1,
-          y1,
           x2,
+          y,
+          y1,
           y2,
         };
       }
       this.applySegChanges(segChanges);
+
       if (this.segs[closingIndex + 1].item.pathSegType === 1) {
         this.deleteSeg(closingIndex + 1);
       }
+
       return closingIndex;
     }
+
     // The subpath is open, starts from the start node to current node,
     // and move to current node, then ends at the end node
     console.log('Disconnecting open path', startingIndex, closingIndex);
+
     const selectedSeg = this.segs[segIndex].item;
     const newMoveSeg = this.elem.createSVGPathSegMovetoAbs(selectedSeg.x, selectedSeg.y);
+
     svgedit.path.insertItemBefore(this.elem, newMoveSeg, segIndex + 1);
+
     return segIndex;
   }
 
@@ -478,33 +535,42 @@ export default class Path implements ISVGPath {
     } else if (this.selected_pts.length > 0) {
       this.deleteNodePoints(this.selected_pts);
       this.clearSelection();
+
       if (this.segs.length > 0) {
         this.endChanges('Delete Path Node Point(s)');
       } else {
         const batchCmd = new svgedit.history.BatchCommand('Delete Path Node and Delete Path');
         const changeDCmd = this.endChanges('Delete Path Node Point(s)', true);
+
         if (changeDCmd) {
           batchCmd.addSubCommand(changeDCmd);
         }
+
         let parent = this.elem.parentNode;
+
         if (parent) {
           if ((parent as SVGElement).getAttribute('data-textpath-g')) {
             const { cmd, text } = textPathEdit.detachText(parent, true);
+
             if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
+
             textEdit.renderText(text);
             parent = this.elem.parentNode;
           }
+
           if (parent) {
             this.elem.remove();
+
             const { nextSibling } = this.elem;
-            batchCmd.addSubCommand(
-              new svgedit.history.RemoveElementCommand(this.elem, nextSibling, parent),
-            );
+
+            batchCmd.addSubCommand(new svgedit.history.RemoveElementCommand(this.elem, nextSibling, parent));
           }
         }
+
         if (!batchCmd.isEmpty()) {
           svgCanvas.undoMgr.addCommandToHistory(batchCmd);
         }
+
         svgCanvas.setMode('select');
       }
     }
@@ -513,6 +579,7 @@ export default class Path implements ISVGPath {
   deleteCtrlPoint(): void {
     if (this.selectedControlPoint) {
       const segChanges = this.selectedControlPoint.delete();
+
       this.applySegChanges(segChanges);
       this.addPtsToSelection([this.selectedControlPoint.nodePoint.index]);
       this.selectedControlPoint = null;
@@ -522,10 +589,12 @@ export default class Path implements ISVGPath {
   deleteNodePoints(indices: number[]): void {
     // sort in descending order
     const sortedIndices = [...indices].sort((a, b) => b - a);
+
     this.hideAllNodes();
     for (let i = 0; i < sortedIndices.length; i += 1) {
       const nodePoint = this.nodePoints[sortedIndices[i]];
       const { segChanges, segIndexToRemove } = nodePoint.delete();
+
       this.applySegChanges(segChanges);
       this.nodePoints.splice(sortedIndices[i], 1);
       this.deleteSeg(segIndexToRemove);
@@ -539,37 +608,43 @@ export default class Path implements ISVGPath {
 
   private deleteSeg(index: number): void {
     const seg = this.segs[index];
+
     if (!seg) return;
+
     if (seg.endPoint && seg.endPoint.prevSeg === seg) {
       if (seg.prev.type !== 2) seg.endPoint.setPrevSeg(seg.prev);
       else seg.endPoint.setPrevSeg(null);
     }
+
     if (seg.startPoint && seg.startPoint.nextSeg === seg) seg.startPoint.nextSeg = seg.next;
+
     seg.controlPoints.forEach((cp) => {
       if (cp.seg === seg) {
         cp.removeFromNodePoint();
         cp.hide();
       }
     });
+
     if (seg.prev) seg.prev.next = seg.next;
+
     if (seg.next) seg.next.prev = seg.prev;
 
     // Clean Up M or Mz seg
     if (index > 0 && this.segs[index - 1].type === 2) {
       const mSegIndex = index - 1;
-      if (
-        index === this.segs.length - 1 ||
-        this.segs[index + 1].type === 2 ||
-        this.segs[index + 1].type === 1
-      ) {
+
+      if (index === this.segs.length - 1 || this.segs[index + 1].type === 2 || this.segs[index + 1].type === 1) {
         // Delete z seg
         if (this.segs.length - 1 > index && this.segs[index + 1].type === 1) {
           const zSegIndex = index + 1;
+
           this.deleteSeg(zSegIndex);
         }
+
         // Delete M seg
         this.deleteSeg(mSegIndex);
         index -= 1;
+
         if (seg.startPoint && !seg.startPoint.isSelected) {
           seg.startPoint.hide();
         }
@@ -577,6 +652,7 @@ export default class Path implements ISVGPath {
     }
 
     const segList = this.elem.pathSegList;
+
     segList.removeItem(index);
     this.segs.splice(index, 1);
     this.segs.forEach((segment, i) => {
@@ -588,8 +664,10 @@ export default class Path implements ISVGPath {
     // Check if subpath is already open
     for (let i = index; i < this.segs.length; i += 1) {
       if (this.segs[i].type === 2) return false; // Found M first, so open
+
       if (this.segs[i].type === 1) return true; // Found Z first, so closed
     }
+
     return false;
   }
 
@@ -611,6 +689,7 @@ export default class Path implements ISVGPath {
     } else {
       this.hideAllNodes();
     }
+
     return this;
   }
 
@@ -618,6 +697,7 @@ export default class Path implements ISVGPath {
     this.nodePoints.forEach((nodePoint) => {
       nodePoint.show();
     });
+
     return this;
   }
 
@@ -625,6 +705,7 @@ export default class Path implements ISVGPath {
     this.nodePoints.forEach((nodePoint) => {
       nodePoint.hide();
     });
+
     return this;
   }
 
@@ -632,12 +713,15 @@ export default class Path implements ISVGPath {
     this.nodePoints.forEach((nodePoint) => {
       nodePoint.update();
     });
+
     return this;
   }
 
   endChanges(text: string, isSub = false): ICommand | null {
     const { elem, lastD } = this;
+
     elem.setAttribute('d', svgedit.utilities.convertPath(elem));
+
     const cmd = new svgedit.path.ChangeElementCommand(
       elem,
       {
@@ -645,16 +729,20 @@ export default class Path implements ISVGPath {
       },
       text,
     );
+
     if (!isSub) {
       svgCanvas.addCommandToHistory(cmd);
     }
+
     svgCanvas.call('changed', [elem]);
+
     return isSub ? cmd : null;
   }
 
   createControlPointsAtGrip(index: number): void {
     const nodePoint = this.nodePoints[index];
     let segChanges = nodePoint.createControlPoints();
+
     svgedit.path.path.applySegChanges(segChanges);
     segChanges = nodePoint.setNodeType(nodePoint.linkType);
     svgedit.path.path.applySegChanges(segChanges);
@@ -665,8 +753,11 @@ export default class Path implements ISVGPath {
     Object.entries<any>(segChanges).forEach(([index, changes]) => {
       const segItem = this.segs[index].item;
       const pathSegType = changes.pathSegType || segItem.pathSegType;
+
       this.segs[index].type = pathSegType;
+
       let newPoints;
+
       if (pathSegType === 6) {
         // C
         newPoints = [
@@ -689,7 +780,9 @@ export default class Path implements ISVGPath {
         // M or L
         newPoints = [changes.x || segItem.x, changes.y || segItem.y];
       }
+
       const newItem = svgedit.path.replacePathSeg(pathSegType, index, newPoints);
+
       this.segs[index].item = newItem;
     });
   }
@@ -700,6 +793,7 @@ export default class Path implements ISVGPath {
       const index = nodeIndex === this.nodePoints.length ? 0 : nodeIndex;
       const nodePoint = this.nodePoints[index];
       const segChanges = nodePoint.move(d_x, d_y);
+
       this.applySegChanges(segChanges);
     });
   }
@@ -707,6 +801,7 @@ export default class Path implements ISVGPath {
   moveCtrl(d_x: number, d_y: number): void {
     if (this.selectedControlPoint) {
       let segChanges = this.selectedControlPoint.move(d_x, d_y);
+
       this.applySegChanges(segChanges);
       segChanges = this.selectedControlPoint.moveLinkedControlPoint();
       this.applySegChanges(segChanges);
@@ -715,24 +810,26 @@ export default class Path implements ISVGPath {
 
   selectPt(pt: number): void {
     this.clearSelection();
+
     if (pt == null) {
       for (let i = 0; i < this.segs.length; i += 1) {
         if (this.segs[i].prev) pt = i;
       }
     }
+
     this.addPtsToSelection(pt);
   }
 
   selectCtrlPoint(segIndex: number, controlPointIndex: string): void {
     const seg = this.segs[segIndex];
-    const controlPoint = seg.controlPoints.find(
-      (cp) => cp.index === parseInt(controlPointIndex, 10),
-    );
+    const controlPoint = seg.controlPoints.find((cp) => cp.index === Number.parseInt(controlPointIndex, 10));
     const { nodePoint } = controlPoint;
+
     if (this.selected_pts.length > 1 || this.selected_pts.length[0] !== nodePoint.index) {
       this.clearSelection();
       this.addPtsToSelection([nodePoint.index]);
     }
+
     nodePoint.setHighlight(false);
     controlPoint.nodePoint.controlPoints.forEach((cp) => {
       cp.setSelected(cp === controlPoint);
@@ -744,19 +841,24 @@ export default class Path implements ISVGPath {
     if (!Array.isArray(indexes)) {
       indexes = [indexes];
     }
+
     for (let i = 0; i < indexes.length; i += 1) {
       const index = indexes[i];
+
       if (index < this.nodePoints.length) {
-        if (this.selected_pts.indexOf(index) === -1 && index >= 0) {
+        if (!this.selected_pts.includes(index) && index >= 0) {
           this.selected_pts.push(index);
         }
       }
     }
     this.selectedControlPoint = null;
+
     const isSelectingOnePoint = this.selected_pts.length <= 1;
+
     for (let i = 0; i < this.selected_pts.length; i += 1) {
       const index = this.selected_pts[i];
       const nodePoint = this.nodePoints[index];
+
       if (isSelectingOnePoint) {
         nodePoint.setSelected(true);
       } else {
@@ -769,16 +871,22 @@ export default class Path implements ISVGPath {
 
   removePtFromSelection(nodeIndex: number): void {
     const pos = this.selected_pts.indexOf(nodeIndex);
+
     if (pos === -1) {
       return;
     }
+
     const nodePoint = this.nodePoints[nodeIndex];
+
     nodePoint.setSelected(false);
     this.selected_pts.splice(pos, 1);
+
     const isSelectingOnePoint = this.selected_pts.length === 1;
+
     if (isSelectingOnePoint) {
       const i = this.selected_pts[0];
       const np = this.nodePoints[i];
+
       np.setSelected(true);
     }
   }
@@ -786,6 +894,7 @@ export default class Path implements ISVGPath {
   // Update position of all points
   update(): Path {
     const { elem } = this;
+
     if (svgedit.utilities.getRotationAngle(elem)) {
       this.matrix = svgedit.math.getMatrix(elem);
       this.imatrix = this.matrix.inverse();
@@ -800,6 +909,7 @@ export default class Path implements ISVGPath {
     });
 
     this.updateAllNodes();
+
     return this;
   }
 
@@ -808,21 +918,26 @@ export default class Path implements ISVGPath {
       const index = this.selected_pts[i];
       const nodePoint = this.nodePoints[index];
       const segChanges = nodePoint.setNodeType(newNodeType);
+
       this.applySegChanges(segChanges);
     }
     this.endChanges('Set Node Type');
+
     return this;
   }
 
   // Q segments have only one control point, noting which side it belongs to
   saveSegmentControlPointInfo(): Path {
     const segCPInfo = {};
+
     this.segs.forEach((seg) => {
       if (seg.type === 8) {
         const controlPoint = seg.controlPoints[0];
+
         if (!controlPoint) {
           return;
         }
+
         if (controlPoint.nodePoint.index === seg.startPoint.index) {
           segCPInfo[seg.index] = 0;
         } else {
@@ -831,15 +946,18 @@ export default class Path implements ISVGPath {
       }
     });
     this.elem.setAttribute('data-segInfo', JSON.stringify(segCPInfo));
+
     return this;
   }
 
   saveNodeTypeInfo(): Path {
     const nodeTypeInfo = {};
+
     this.nodePoints.forEach((nodePoint) => {
       nodeTypeInfo[nodePoint.index] = nodePoint.linkType || 0;
     });
     this.elem.setAttribute('data-nodeTypes', JSON.stringify(nodeTypeInfo));
+
     return this;
   }
 }

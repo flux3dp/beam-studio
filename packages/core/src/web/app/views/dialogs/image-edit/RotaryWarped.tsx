@@ -31,7 +31,6 @@ interface Props {
   onClose: () => void;
 }
 
-// eslint-disable-next-line no-undef
 const rotateImage = (w: number, h: number, rotation: number, source: CanvasImageSource): HTMLCanvasElement => {
   const canvas = document.createElement('canvas');
   const c = Math.abs(Math.cos(rotation));

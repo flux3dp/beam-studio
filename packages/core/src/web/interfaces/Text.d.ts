@@ -1,4 +1,4 @@
-interface TextAttribute {
+export interface TextAttribute {
   fill?: string;
   fill_opacity?: number | string;
   fill_paint?: string;

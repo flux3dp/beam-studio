@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import Vector2d from './vector2d';
 
 export const Direction = {

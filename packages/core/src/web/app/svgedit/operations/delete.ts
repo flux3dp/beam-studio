@@ -1,12 +1,13 @@
-import findDefs from '@core/app/svgedit/utils/findDef';
 import history from '@core/app/svgedit/history/history';
 import selector from '@core/app/svgedit/selector';
+import findDefs from '@core/app/svgedit/utils/findDef';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import { IBatchCommand } from '@core/interfaces/IHistory';
+import type { IBatchCommand } from '@core/interfaces/IHistory';
 
 const { svgedit } = window;
 
 let svgCanvas;
+
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
@@ -19,37 +20,38 @@ getSVGAsync((globalSVG) => {
  */
 export const deleteUseRef = (
   use: SVGUseElement,
-  opts?: { parentCmd?: IBatchCommand; addToHistory?: boolean },
+  opts?: { addToHistory?: boolean; parentCmd?: IBatchCommand },
 ): { cmd: IBatchCommand } => {
   const refId = svgCanvas.getHref(use);
   const svgcontent = document.getElementById('svgcontent');
   const isReferred = svgcontent.querySelector(`use[*|href="${refId}"]`);
   const batchCmd = new history.BatchCommand(`Delete Use ${use.id} Ref`);
-  const { parentCmd, addToHistory = true } = opts || {};
+  const { addToHistory = true, parentCmd } = opts || {};
+
   if (!isReferred) {
     const defs = findDefs();
     const refElement = defs.querySelector(refId);
+
     if (refElement) {
-      let { parentNode, nextSibling } = refElement;
+      let { nextSibling, parentNode } = refElement;
+
       parentNode.removeChild(refElement);
       batchCmd.addSubCommand(new history.RemoveElementCommand(refElement, nextSibling, parentNode));
 
-      const relatedIds = [
-        refElement.getAttribute('data-image-symbol'),
-        refElement.getAttribute('data-origin-symbol'),
-      ];
+      const relatedIds = [refElement.getAttribute('data-image-symbol'), refElement.getAttribute('data-origin-symbol')];
+
       relatedIds.forEach((id) => {
         const element = id ? document.getElementById(id) : null;
+
         if (element) {
-          ({ parentNode, nextSibling } = element);
+          ({ nextSibling, parentNode } = element);
           parentNode.removeChild(element);
-          batchCmd.addSubCommand(
-            new history.RemoveElementCommand(element, nextSibling, parentNode),
-          );
+          batchCmd.addSubCommand(new history.RemoveElementCommand(element, nextSibling, parentNode));
         }
       });
     }
   }
+
   if (!batchCmd.isEmpty()) {
     if (parentCmd) {
       parentCmd.addSubCommand(batchCmd);
@@ -57,6 +59,7 @@ export const deleteUseRef = (
       svgCanvas.undoMgr.addCommandToHistory(batchCmd);
     }
   }
+
   return { cmd: batchCmd };
 };
 
@@ -64,8 +67,10 @@ export const deleteElements = (elems: Element[], isSub = false): IBatchCommand =
   const selectorManager = selector.getSelectorManager();
   const batchCmd = new history.BatchCommand('Delete Elements');
   const deletedElems = [];
+
   for (let i = 0; i < elems.length; i += 1) {
     const elem = elems[i];
+
     if (!elem) {
       break;
     }
@@ -73,7 +78,7 @@ export const deleteElements = (elems: Element[], isSub = false): IBatchCommand =
     // this will unselect the element and remove the selectedOutline
     selectorManager.releaseSelector(elem);
     // Remove the path if present.
-    // eslint-disable-next-line no-underscore-dangle
+
     svgedit.path.removePath_(elem.id);
 
     let parent = elem.parentNode as Element;
@@ -86,21 +91,24 @@ export const deleteElements = (elems: Element[], isSub = false): IBatchCommand =
     }
 
     const { nextSibling } = elemToRemove;
+
     if (parent == null) {
-      // eslint-disable-next-line no-console
       console.warn('The element has no parent', elem);
     } else {
       parent.removeChild(elemToRemove);
       deletedElems.push(elem); // for the copy
       batchCmd.addSubCommand(new history.RemoveElementCommand(elemToRemove, nextSibling, parent));
     }
+
     if (elem.tagName === 'use') {
       deleteUseRef(elem as SVGUseElement, { parentCmd: batchCmd });
     }
   }
+
   if (!batchCmd.isEmpty() && !isSub) {
     svgCanvas.undoMgr.addCommandToHistory(batchCmd);
   }
+
   svgCanvas.call('changed', deletedElems);
   svgCanvas.clearSelection();
 
@@ -109,6 +117,7 @@ export const deleteElements = (elems: Element[], isSub = false): IBatchCommand =
 
 export const deleteSelectedElements = (isSub = false): IBatchCommand => {
   const selectedElems = svgCanvas.getSelectedWithoutTempGroup();
+
   return deleteElements(selectedElems, isSub);
 };
 

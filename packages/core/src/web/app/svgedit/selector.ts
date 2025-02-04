@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 /**
  * Package: svedit.select
  *
@@ -7,34 +6,37 @@
  * Copyright(c) 2010 Alexis Deveria
  * Copyright(c) 2010 Jeff Schiller
  */
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
-import storage from '@core/implementations/storage';
-import units from '@core/helpers/units';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { isMobile } from '@core/helpers/system-helper';
+import units from '@core/helpers/units';
+import storage from '@core/implementations/storage';
 
-import workareaManager from './workarea';
 import { getRotationAngle } from './transform/rotation';
+import workareaManager from './workarea';
 
 const { svgedit } = window;
 
 if (!svgedit.select) {
   svgedit.select = {};
 }
+
 const { NS } = svgedit;
 
 let svgCanvas;
+
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
+
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 
 type BBox = {
+  height: number;
+  width: number;
   x: number;
   y: number;
-  width: number;
-  height: number;
 };
 
 let svgFactory;
@@ -68,14 +70,14 @@ class Selector {
   private gripsGroup: SVGGElement;
 
   private resizeGrips: {
-    n?: SVGCircleElement;
-    s?: SVGCircleElement;
-    w?: SVGCircleElement;
     e?: SVGCircleElement;
-    nw?: SVGCircleElement;
+    n?: SVGCircleElement;
     ne?: SVGCircleElement;
-    sw?: SVGCircleElement;
+    nw?: SVGCircleElement;
+    s?: SVGCircleElement;
     se?: SVGCircleElement;
+    sw?: SVGCircleElement;
+    w?: SVGCircleElement;
   };
 
   private rotateGripConnector: SVGLineElement;
@@ -90,10 +92,10 @@ class Selector {
 
   private dimension: {
     angle: number;
+    height: number;
+    width: number;
     x: number;
     y: number;
-    width: number;
-    height: number;
   };
 
   private isShowing: boolean;
@@ -107,20 +109,20 @@ class Selector {
     this.elem = elem;
 
     this.selectorGroup = svgFactory.createSVGElement({
-      element: 'g',
       attr: { id: `selectorGroup_${elem.id}` },
+      element: 'g',
     });
     this.selectorRect = svgFactory.createSVGElement({
-      element: 'path',
       attr: {
-        id: `selectedBox_${elem.id}`,
         fill: 'none',
+        id: `selectedBox_${elem.id}`,
         stroke: '#0000FF',
-        'stroke-width': '1',
         'stroke-dasharray': '5,5',
+        'stroke-width': '1',
         // need to specify this so that the rect is not selectable
         style: 'pointer-events:none',
       },
+      element: 'path',
     });
     this.selectorGroup.appendChild(this.selectorRect);
 
@@ -131,20 +133,22 @@ class Selector {
     this.gripsGroup = document.createElementNS(NS.SVG, 'g') as unknown as SVGGElement;
     // this.selectorParentGroup.appendChild(this.gripsGroup);
     this.resizeGrips = {
-      n: null,
-      s: null,
-      w: null,
       e: null,
-      nw: null,
+      n: null,
       ne: null,
-      sw: null,
+      nw: null,
+      s: null,
       se: null,
+      sw: null,
+      w: null,
     };
 
     const dirs = Object.keys(this.resizeGrips);
+
     for (let i = 0; i < dirs.length; i += 1) {
       const dir = dirs[i];
       const grip = document.createElementNS(NS.SVG, 'circle') as unknown as SVGCircleElement;
+
       grip.setAttribute('id', `selectorGrip_resize_${dir}`);
       grip.setAttribute('r', gripRadius.toString());
       grip.setAttribute('fill', '#fff');
@@ -203,10 +207,14 @@ class Selector {
       </defs>`;
     this.rotateGripBottom.setAttribute('class', 'hidden-desktop');
     this.gripsGroup.appendChild(this.rotateGripBottom);
+
     const rotBtn = this.rotateGripBottom.querySelector('circle');
+
     $.data(rotBtn, 'type', 'rotate');
     rotBtn.setAttribute('data-angleOffset', '-90');
+
     const rotIcon = this.rotateGripBottom.querySelector('image');
+
     $.data(rotIcon, 'type', 'rotate');
     rotIcon.setAttribute('data-angleOffset', '-90');
 
@@ -236,6 +244,7 @@ class Selector {
 
   resize(bbox?: BBox) {
     if (!this.isShowing) return;
+
     this.calculateDimesion(bbox);
     this.applyDimensions();
   }
@@ -251,6 +260,7 @@ class Selector {
     const { tagName } = elem;
     // Offset between element and select rect
     let offset = tagName === 'text' ? 3 : 1;
+
     if (elem.getAttribute('stroke') !== 'none' && !Number.isNaN(strokeWidth)) {
       offset += (strokeWidth / 2) * currentZoom;
     }
@@ -264,22 +274,25 @@ class Selector {
     m.f *= currentZoom;
 
     let elemBBox = bbox || svgedit.utilities.getBBox(elem);
+
     if (tagName === 'g' && !$.data(elem, 'gsvg')) {
       // The bbox for a group does not include stroke vals, so we
       // get the bbox based on its children.
       const strokedBBox = svgFactory.getStrokedBBox(elem.childNodes);
+
       if (strokedBBox) {
         elemBBox = strokedBBox;
       }
     }
+
     if (!elemBBox) {
-      // eslint-disable-next-line no-console
       console.warn('Selector Resize without bbox', elem, elemBBox);
       this.dimension = null;
+
       return;
     }
 
-    const { x, y, width, height } = elemBBox;
+    const { height, width, x, y } = elemBBox;
 
     let transformedBBox = svgedit.math.transformBox(
       x * currentZoom,
@@ -291,11 +304,13 @@ class Selector {
     let { aabox } = transformedBBox;
 
     const angle = getRotationAngle(elem as SVGElement);
+
     if (angle) {
       const cx = aabox.x + aabox.width / 2;
       const cy = aabox.y + aabox.height / 2;
       // now if the shape is rotated, un-rotate it
       const rot = svgFactory.svgRoot().createSVGTransform();
+
       rot.setRotate(-angle, cx, cy);
       m = rot.matrix.multiply(m);
       transformedBBox = svgedit.math.transformBox(
@@ -307,29 +322,35 @@ class Selector {
       );
       aabox = transformedBBox.aabox;
     }
+
     this.dimension = {
+      angle,
+      height: aabox.height + 2 * offset,
+      width: aabox.width + 2 * offset,
       x: aabox.x - offset,
       y: aabox.y - offset,
-      width: aabox.width + 2 * offset,
-      height: aabox.height + 2 * offset,
-      angle,
     };
   }
 
   show(show: boolean, showGrips = true) {
     const { elem } = this;
     const display = show && elem ? 'inline' : 'none';
+
     this.selectorGroup.setAttribute('display', display);
+
     if (show && elem) {
       if (!this.gripsGroup) this.generateGripGroup();
+
       if (showGrips) {
         if (this.gripsGroup.parentNode !== this.selectorGroup) {
           this.selectorGroup.appendChild(this.gripsGroup);
         }
+
         this.applyDimensions();
       } else {
         this.gripsGroup.remove();
       }
+
       this.isShowing = true;
     } else if (this.gripsGroup) {
       this.gripsGroup.remove();
@@ -339,38 +360,49 @@ class Selector {
 
   applyDimensions() {
     if (!this.dimension) return;
-    const { x, y, width, height, angle } = this.dimension;
+
+    const { angle, height, width, x, y } = this.dimension;
     const cx = x + width / 2;
     const cy = y + height / 2;
     const dStr = `M${x},${y}L${x + width},${y}L${x + width},${y + height}L${x},${y + height}z`;
+
     this.selectorRect.setAttribute('d', dStr);
+
     if (svgCanvas.getCurrentMode() === 'preview_color') {
       this.gripsGroup.setAttribute('display', 'none');
+
       return;
     }
+
     this.gripsGroup.removeAttribute('display');
+
     const xform = angle ? `rotate(${angle} ${cx} ${cy})` : '';
+
     this.selectorGroup.setAttribute('transform', xform);
 
     const positionMap = {
-      n: [cx, y],
-      s: [cx, y + height],
-      w: [x, cy],
       e: [x + width, cy],
-      nw: [x, y],
+      n: [cx, y],
       ne: [x + width, y],
-      sw: [x, y + height],
+      nw: [x, y],
+      s: [cx, y + height],
       se: [x + width, y + height],
+      sw: [x, y + height],
+      w: [x, cy],
     };
     const dirs = Object.keys(positionMap);
+
     for (let i = 0; i < dirs.length; i += 1) {
       const dir = dirs[i];
+
       this.resizeGrips[dir].setAttribute('cx', positionMap[dir][0].toString());
       this.resizeGrips[dir].setAttribute('cy', positionMap[dir][1].toString());
     }
+
     if (isMobile()) {
       const rotX = cx - btnRadius - btnMargin;
       const rotY = y + height + 2 * gripRadius;
+
       this.rotateGripBottom.setAttribute(
         'transform',
         `translate(${rotX} ${rotY}) rotate(${-angle} ${btnRadius + btnMargin} ${btnRadius})`,
@@ -388,31 +420,39 @@ class Selector {
   }
 
   updateDimensionInfo() {
-    const { x, y, width, height, angle } = this.dimension;
+    const { angle, height, width, x, y } = this.dimension;
     const elemDimension = ObjectPanelController.getDimensionValues();
     let newContent = '';
+
     if (svgCanvas.getCurrentMode() === 'rotate') {
       const elemAngle = +angle.toFixed(1);
+
       newContent = `${elemAngle}&deg;`;
     } else {
       const useInch = storage.get('default-units') === 'inches';
       const unit = useInch ? 'inch' : 'mm';
       const elemW = +units.convertUnit(elemDimension.width / 10 || elemDimension.rx / 5, unit, 'mm').toFixed(1);
       const elemH = +units.convertUnit(elemDimension.height / 10 || elemDimension.ry / 5, unit, 'mm').toFixed(1);
-      if (![elemW, elemH].includes(NaN)) newContent = `${elemW}${unit} x ${elemH}${unit}`;
+
+      if (![elemH, elemW].includes(Number.NaN)) newContent = `${elemW}${unit} x ${elemH}${unit}`;
     }
+
     this.dimensionInfo.innerHTML = newContent;
+
     if (newContent) {
       const cx = x + width / 2;
       const cy = y + height / 2;
       let step = Math.round(angle / 90);
+
       if (step < 0) step += 4;
+
       let rectCx = cx;
       let rectCy = y - rectDist;
       let rotate = 0;
       const textBBox = svgedit.utilities.getBBox(this.dimensionInfo);
       const rectW = textBBox.width + 30;
       const rectH = textBBox.height + 10;
+
       switch (step) {
         case 1:
           rectCx = x - rectDist;
@@ -448,14 +488,16 @@ class Selector {
   updateGripCursors() {
     const { angle } = this.dimension;
     let step = Math.round(angle / 45);
+
     if (step < 0) step += 8;
+
     const directionMap = {
-      nw: 0,
+      e: 3,
       n: 1,
       ne: 2,
-      e: 3,
-      se: 4,
+      nw: 0,
       s: 5,
+      se: 4,
       sw: 6,
       w: 7,
     };
@@ -466,9 +508,11 @@ class Selector {
       3: 'ew',
     };
     const dirs = Object.keys(this.resizeGrips);
+
     for (let i = 0; i < dirs.length; i += 1) {
       const dir = dirs[i];
       const cursorDir = cursorMap[(directionMap[dir] + step) % 4];
+
       this.resizeGrips[dir].setAttribute('style', `cursor:${cursorDir}-resize`);
     }
   }
@@ -495,6 +539,7 @@ export class SelectorManager {
     if (this.selectorParentGroup) {
       this.selectorParentGroup.remove();
     }
+
     this.selectorParentGroup = document.createElementNS(NS.SVG, 'g') as unknown as SVGGElement;
     this.selectorParentGroup.setAttribute('id', 'selectorParentGroup');
 
@@ -513,9 +558,11 @@ export class SelectorManager {
     const svgcontent = document.getElementById('svgcontent');
     const x = svgcontent.getAttribute('x');
     const y = svgcontent.getAttribute('y');
+
     this.selectorParentGroup.setAttribute('transform', `translate(${x},${y})`);
 
     const selectors = Object.values(this.selectorMap);
+
     selectors.forEach((selector) => {
       if (selector.inUse) selector.resize();
     });
@@ -524,6 +571,7 @@ export class SelectorManager {
   resizeSelectors(elems: Element[]): void {
     for (let i = 0; i < elems.length; i += 1) {
       const elem = elems[i];
+
       if (this.selectorMap[elem.id] && this.selectorMap[elem.id].inUse) {
         this.selectorMap[elem.id].resize();
       }
@@ -532,32 +580,43 @@ export class SelectorManager {
 
   requestSelector(elem: Element, bbox?: BBox): Selector {
     if (!elem) return null;
+
     if (this.selectorMap[elem.id] && this.selectorMap[elem.id].inUse) {
       return this.selectorMap[elem.id];
     }
+
     const ids = Object.keys(this.selectorMap);
+
     for (let i = 0; i < ids.length; i += 1) {
       const id = ids[i];
       const selector = this.selectorMap[id];
+
       if (!selector.inUse) {
         delete this.selectorMap[id];
         selector.reset(elem, bbox);
         selector.show(true);
         this.selectorMap[elem.id] = selector;
+
         return selector;
       }
     }
+
     const selector = new Selector(elem, bbox);
+
     this.selectorParentGroup.appendChild(selector.selectorGroup);
     this.selectorMap[elem.id] = selector;
+
     return selector;
   }
 
   releaseSelector(elem: Element): void {
     if (!elem) return;
+
     const selector = this.selectorMap[elem.id];
+
     if (selector && selector.inUse) {
       const selectorMapSize = Object.keys(this.selectorMap).length;
+
       if (selectorMapSize <= SELECTOR_MAP_RESERVE_SIZE) {
         selector.inUse = false;
         selector.elem = null;
@@ -584,6 +643,7 @@ export class SelectorManager {
       );
       this.selectorParentGroup.appendChild(this.rubberBandBox);
     }
+
     return this.rubberBandBox;
   }
 }
@@ -595,11 +655,13 @@ const getSelectorManager = (): SelectorManager => {
   if (!selectorManagerSingleton) {
     selectorManagerSingleton = new SelectorManager();
   }
+
   return selectorManagerSingleton;
 };
+
 svgedit.select.getSelectorManager = getSelectorManager;
 
 export default {
-  init,
   getSelectorManager,
+  init,
 };
