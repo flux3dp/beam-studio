@@ -1648,27 +1648,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       selectOnly([current_group]);
     }
 
-    var naked_svgs = [];
-
-    // Unwrap gsvg if it has no special attributes (only id and style)
-    $(svgcontent)
-      .find('g:data(gsvg)')
-      .each(function () {
-        var attrs = this.attributes;
-        var len = attrs.length;
-        var i;
-        for (i = 0; i < len; i++) {
-          if (attrs[i].nodeName === 'id' || attrs[i].nodeName === 'style') {
-            len--;
-          }
-        }
-        // No significant attributes, so ungroup
-        if (len <= 0) {
-          var svg = this.firstChild as Element;
-          naked_svgs.push(svg);
-          $(this).replaceWith(svg);
-        }
-      });
     const workarea: WorkAreaModel = BeamboxPreference.read('workarea');
     const supportInfo = getSupportInfo(workarea);
     const engraveDpi = BeamboxPreference.read('engrave_dpi');
@@ -1693,12 +1672,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     svgcontent.setAttribute('data-top', Math.round(y).toString());
     var output = this.svgToString(svgcontent, 0, unit);
 
-    // Rewrap gsvg
-    if (naked_svgs.length) {
-      $(naked_svgs).each(function () {
-        groupSvgElem(this);
-      });
-    }
     svgedit.utilities.moveDefsOutfromSvgContent();
     const outputSanitized = sanitizeXmlString(output);
     console.log('Sanitized Result', output.length, outputSanitized.length);
