@@ -16,6 +16,7 @@ globalHelper.setWindowMember();
 
 declare global {
   var requireNode: (_name: string) => any;
+
   interface Window {
     $: any;
     electron?: {
