@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 /* eslint-disable no-case-declarations */
 /* eslint-disable unicorn/no-new-array */
 /* eslint-disable ts/no-unused-vars */

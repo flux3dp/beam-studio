@@ -8,9 +8,7 @@ export default {
   exists(path: string): boolean {
     return false;
   },
-  // @ts-expect-error This line is intentionally invalid.
-  // eslint-disable-next-line no-undef
-  getPath(path: Path): string {
+  getPath(path: string): string {
     return '';
   },
   isDirectory(input: string): boolean {

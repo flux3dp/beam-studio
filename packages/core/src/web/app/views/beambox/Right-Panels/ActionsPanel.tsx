@@ -491,7 +491,6 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
 
   const renderMultiSelectActions = (): React.JSX.Element[] => {
     const children = Array.from(elem.childNodes);
-    // eslint-disable-next-line no-undef
     const supportOffset = children.every((child: ChildNode) => !['g', 'image', 'text', 'use'].includes(child.nodeName));
 
     const appendOptionalButtons = (buttons: React.JSX.Element[]) => {

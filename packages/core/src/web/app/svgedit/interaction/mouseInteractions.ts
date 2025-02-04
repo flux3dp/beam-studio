@@ -476,7 +476,6 @@ const mouseDown = async (evt: MouseEvent) => {
         mouseTarget.style.vectorEffect = 'non-scaling-stroke';
         delayedStroke(mouseTarget);
 
-        // eslint-disable-next-line no-undef
         const all = mouseTarget.getElementsByTagName('*') as HTMLCollectionOf<SVGElement>;
         const len = all.length;
 

@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import type { ICommunicator } from '@core/interfaces/ICommunicator';
 
 const mockCommunicator: ICommunicator = {

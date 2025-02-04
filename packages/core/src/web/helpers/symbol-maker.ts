@@ -202,7 +202,6 @@ const makeSymbol = (
       $(textElem).attr('y', 0);
     }
 
-    // eslint-disable-next-line no-undef
     const texts = Array.from(textElem.childNodes).filter((child: ChildNode) => child.nodeType === 3);
 
     for (let j = texts.length - 1; j >= 0; j -= 1) {
