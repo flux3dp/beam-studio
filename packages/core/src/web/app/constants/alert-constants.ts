@@ -83,4 +83,6 @@ export const HELP_CENTER_URLS: Record<string, string> = {
   847: 'https://support.flux3dp.com/hc/en-us/articles/4402854250127',
   850: 'https://support.flux3dp.com/hc/en-us/articles/11300866366223',
   851: 'https://support.flux3dp.com/hc/en-us/articles/11300854461711',
+  921: 'https://support.flux3dp.com/hc/en-us/articles/11793139410575',
+  922: 'https://support.flux3dp.com/hc/en-us/articles/11765461025679',
 };

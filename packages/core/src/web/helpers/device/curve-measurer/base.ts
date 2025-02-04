@@ -6,7 +6,7 @@ import deviceMaster from '@core/helpers/device-master';
 import durationFormatter from '@core/helpers/duration-formatter';
 import i18n from '@core/helpers/i18n';
 import type { CurveMeasurer, InteractiveOptions } from '@core/interfaces/CurveMeasurer';
-import type { MeasureData, Points } from '@core/interfaces/ICurveEngraving';
+import type { Errors, MeasureData, Points } from '@core/interfaces/ICurveEngraving';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 export default class BaseCurveMeasurer implements CurveMeasurer {
@@ -46,7 +46,7 @@ export default class BaseCurveMeasurer implements CurveMeasurer {
     feedrate: number,
     offset?: [number, number, number],
     objectHeight?: number,
-    lowest?: number,
+    lowest?: null | number,
   ): Promise<null | number> => {
     throw new Error('Not implemented');
   };
@@ -55,26 +55,27 @@ export default class BaseCurveMeasurer implements CurveMeasurer {
     curData: MeasureData,
     targetIndices: number[],
     opts: InteractiveOptions = {},
-  ): Promise<MeasureData> {
-    const { lang } = i18n;
+  ): Promise<MeasureData | null> {
+    const {
+      lang: { curve_engraving: t, message: tMessage },
+    } = i18n;
     const { checkCancel, onPointFinished, onProgressText } = opts;
 
-    onProgressText?.(lang.curve_engraving.starting_measurement);
+    onProgressText?.(t.starting_measurement);
 
     const workarea = getWorkarea(this.device.model);
     const [offsetX, offsetY, offsetZ] = workarea.autoFocusOffset || [0, 0, 0];
     const feedrate = 6000;
-    const { objectHeight, points } = curData;
+    const { errors, objectHeight, points } = curData;
     let { highest = null, lowest = null } = curData;
     // deep copy
     const newPoints = JSON.parse(JSON.stringify(points));
+    const newErrors = [...errors];
     const start = Date.now();
     const columns = newPoints[0].length;
 
     for (let i = 0; i < targetIndices.length; i += 1) {
-      if (checkCancel?.()) {
-        return null;
-      }
+      if (checkCancel?.()) return null;
 
       const idx = targetIndices[i];
       const row = Math.floor(idx / columns);
@@ -84,19 +85,23 @@ export default class BaseCurveMeasurer implements CurveMeasurer {
 
       try {
         const z = await this.measurePoint(x, y, feedrate, [offsetX, offsetY, offsetZ], objectHeight, lowest);
-        const pointZ = typeof z === 'number' ? Math.max(0, z - offsetZ) : null;
 
-        if (lowest === null || z > lowest) {
-          lowest = z;
-        } // actually the max measured value
+        if (typeof z === 'number') {
+          const pointZ = Math.max(0, z - offsetZ);
 
-        // actually the min measured value, use pointZ to display Plane when z is null
-        if (highest === null || z < highest) {
-          highest = pointZ;
+          // actually the max measured value
+          if (lowest === null || z > lowest) lowest = z;
+
+          // actually the min measured value, use pointZ to display Plane when z is null
+          if (highest === null || z < highest) highest = pointZ;
+
+          newPoints[row][column][2] = pointZ;
+          newErrors[row][column] = null;
+        } else {
+          newPoints[row][column][2] = null;
         }
-
-        newPoints[row][column][2] = pointZ;
       } catch (error) {
+        newErrors[row][column] = error instanceof Error ? error.message : 'Unknown error';
         console.error(`Failed to measure height at point ${x}, ${y}`, error);
       }
 
@@ -105,12 +110,13 @@ export default class BaseCurveMeasurer implements CurveMeasurer {
       const finishedRatio = (i + 1) / targetIndices.length;
       const remainingTime = (elapsedTime / finishedRatio - elapsedTime) / 1000;
 
-      onProgressText?.(`${lang.message.time_remaining} ${durationFormatter(remainingTime)}`);
+      onProgressText?.(`${tMessage.time_remaining} ${durationFormatter(remainingTime)}`);
       onPointFinished?.(finished);
     }
 
     return {
       ...curData,
+      errors: newErrors,
       highest,
       lowest,
       points: newPoints,
@@ -125,10 +131,12 @@ export default class BaseCurveMeasurer implements CurveMeasurer {
   ): Promise<MeasureData | null> => {
     try {
       const points: Points = yRange.map((y) => xRange.map((x) => [x, y, null]));
+      const errors: Errors = yRange.map(() => xRange.map(() => null));
       const totalPoints = xRange.length * yRange.length;
       const targetIndices = Array.from({ length: totalPoints }, (_, i) => i);
       const data = await this.measurePoints(
         {
+          errors,
           gap: [xRange[1] - xRange[0], yRange[1] - yRange[0]],
           highest: null,
           lowest: null,
@@ -141,8 +149,8 @@ export default class BaseCurveMeasurer implements CurveMeasurer {
 
       return data;
     } catch (error) {
-      alertCaller.popUpError({ message: `Failed to measure area ${error.message}` });
-      console.log(error);
+      if (error instanceof Error) alertCaller.popUpError({ message: `Failed to measure area ${error.message}` });
+      else alertCaller.popUpError({ message: 'Failed to measure area' });
 
       return null;
     }
