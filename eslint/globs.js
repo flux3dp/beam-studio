@@ -37,6 +37,7 @@ const IGNORES = [
   '**/helpers/clipper/clipper_unminified.js',
   '**/apps/app/backend/*',
   '**/apps/app/backend/**/*',
+  '**/webpack.*.js',
 ];
 
 function addPrefix(prefix, globs) {

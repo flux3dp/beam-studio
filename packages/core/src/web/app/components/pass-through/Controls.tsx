@@ -9,9 +9,8 @@ import constant from '@core/app/actions/beambox/constant';
 import workareaManager from '@core/app/svgedit/workarea';
 import UnitInput from '@core/app/widgets/UnitInput';
 import useI18n from '@core/helpers/useI18n';
-
-import browser from '@app/implementations/browser';
-import storage from '@app/implementations/storage';
+import browser from '@core/implementations/browser';
+import storage from '@core/implementations/storage';
 
 import styles from './PassThrough.module.scss';
 import { PassThroughContext } from './PassThroughContext';

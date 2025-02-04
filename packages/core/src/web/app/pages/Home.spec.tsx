@@ -14,7 +14,7 @@ jest.mock('@core/helpers/i18n', () => ({
   setActiveLang: jest.fn(),
 }));
 
-jest.mock('@app/implementations/menu', () => ({
+jest.mock('@core/implementations/menu', () => ({
   updateLanguage: jest.fn(),
 }));
 

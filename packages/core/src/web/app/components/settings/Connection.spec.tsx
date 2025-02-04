@@ -27,13 +27,13 @@ jest.mock('@core/app/actions/alert-caller', () => ({
 
 const open = jest.fn();
 
-jest.mock('@app/implementations/browser', () => ({
+jest.mock('@core/implementations/browser', () => ({
   open,
 }));
 
 const get = jest.fn();
 
-jest.mock('@app/implementations/storage', () => ({
+jest.mock('@core/implementations/storage', () => ({
   get,
 }));
 

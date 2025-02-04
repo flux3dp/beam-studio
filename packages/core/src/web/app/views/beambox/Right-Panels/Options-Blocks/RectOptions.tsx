@@ -8,8 +8,7 @@ import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import i18n from '@core/helpers/i18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
-
-import storage from '@app/implementations/storage';
+import storage from '@core/implementations/storage';
 
 import styles from './RectOptions.module.scss';
 

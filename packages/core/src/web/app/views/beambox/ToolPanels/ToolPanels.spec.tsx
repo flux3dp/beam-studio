@@ -17,7 +17,7 @@ jest.mock('@core/helpers/i18n', () => ({
 
 const get = jest.fn();
 
-jest.mock('@app/implementations/storage', () => ({
+jest.mock('@core/implementations/storage', () => ({
   get,
 }));
 

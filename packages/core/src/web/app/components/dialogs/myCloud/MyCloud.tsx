@@ -10,8 +10,7 @@ import { getCurrentUser } from '@core/helpers/api/flux-id';
 import isFluxPlusActive from '@core/helpers/is-flux-plus-active';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
-
-import browser from '@app/implementations/browser';
+import browser from '@core/implementations/browser';
 
 import GridFile from './GridFile';
 import Head from './Head';

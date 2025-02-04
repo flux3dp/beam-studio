@@ -25,8 +25,7 @@ import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts
 import Discover from '@core/helpers/api/discover';
 import checkSoftwareForAdor from '@core/helpers/check-software';
 import isWeb from '@core/helpers/is-web';
-
-import storage from '@app/implementations/storage';
+import storage from '@core/implementations/storage';
 
 import Tabs from './tabs/Tabs';
 import styles from './TopBar.module.scss';

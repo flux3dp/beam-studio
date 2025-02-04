@@ -5,9 +5,8 @@ import { Button, Checkbox, Modal } from 'antd';
 
 import AnnouncementHelper from '@core/helpers/announcement-helper';
 import useI18n from '@core/helpers/useI18n';
+import browser from '@core/implementations/browser';
 import type { IAnnouncement } from '@core/interfaces/IAnnouncement';
-
-import browser from '@app/implementations/browser';
 
 import styles from './AnnouncementPanel.module.scss';
 

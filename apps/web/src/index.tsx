@@ -8,7 +8,7 @@ import '@core/helpers/global-helper';
 import './main';
 import './shortcuts';
 
-import storage from '@app/implementations/storage';
+import storage from '@core/implementations/storage';
 import router from '@core/app/router';
 
 if (process.env.NODE_ENV !== 'production') {

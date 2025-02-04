@@ -14,10 +14,9 @@ import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
 import isWeb from '@core/helpers/is-web';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-maker';
-
-import communicator from '@app/implementations/communicator';
-import dialog from '@app/implementations/dialog';
-import fs from '@app/implementations/fileSystem';
+import communicator from '@core/implementations/communicator';
+import dialog from '@core/implementations/dialog';
+import fs from '@core/implementations/fileSystem';
 
 let svgCanvas;
 

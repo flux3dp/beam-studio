@@ -5,9 +5,8 @@ import { TabEvents } from '@core/app/constants/tabConstants';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
+import communicator from '@core/implementations/communicator';
 import type { Tab } from '@core/interfaces/Tab';
-
-import communicator from '@app/implementations/communicator';
 
 class TabController extends EventEmitter {
   private currentInfo: { isCloud: boolean; title: string } = null;

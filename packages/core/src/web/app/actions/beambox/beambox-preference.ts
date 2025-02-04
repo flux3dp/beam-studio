@@ -1,7 +1,6 @@
 import constant from '@core/app/actions/beambox/constant';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-
-import storage from '@app/implementations/storage';
+import storage from '@core/implementations/storage';
 
 const DEFAULT_PREFERENCE = {
   'anti-aliasing': true,

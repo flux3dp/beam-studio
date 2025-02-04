@@ -20,8 +20,7 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { isMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
-
-import dialog from '@app/implementations/dialog';
+import dialog from '@core/implementations/dialog';
 
 import styles from './ActionsPanel.module.scss';
 

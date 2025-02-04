@@ -3,7 +3,7 @@ import cloud from './cloud';
 const mockGet = jest.fn();
 const mockSet = jest.fn();
 
-jest.mock('@app/implementations/storage', () => ({
+jest.mock('@core/implementations/storage', () => ({
   get: (...args) => mockGet(...args),
   set: (...args) => mockSet(...args),
 }));

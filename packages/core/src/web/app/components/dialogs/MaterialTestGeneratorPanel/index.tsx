@@ -18,10 +18,9 @@ import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { createLayer } from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
+import storage from '@core/implementations/storage';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-
-import storage from '@app/implementations/storage';
 
 import type { BlockInfo, BlockSetting } from './BlockSetting';
 import { getBlockSetting } from './BlockSetting';

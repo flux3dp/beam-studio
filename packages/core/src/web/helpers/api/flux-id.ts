@@ -7,12 +7,11 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import parseQueryData from '@core/helpers/query-data-parser';
+import browser from '@core/implementations/browser';
+import communicator from '@core/implementations/communicator';
+import cookies from '@core/implementations/cookies';
+import storage from '@core/implementations/storage';
 import type { IUser } from '@core/interfaces/IUser';
-
-import browser from '@app/implementations/browser';
-import communicator from '@app/implementations/communicator';
-import cookies from '@app/implementations/cookies';
-import storage from '@app/implementations/storage';
 
 export interface ResponseWithError<T = any, D = any> extends AxiosResponse<T, D> {
   error?: AxiosError<T, D>;

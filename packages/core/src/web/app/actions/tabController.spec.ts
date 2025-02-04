@@ -8,7 +8,7 @@ const mockSend = jest.fn();
 const mockSendSync = jest.fn();
 const mockCommunicator = {};
 
-jest.mock('@app/implementations/communicator', () => ({
+jest.mock('@core/implementations/communicator', () => ({
   on: (event, handler) => {
     mockCommunicator[event] = handler;
   },

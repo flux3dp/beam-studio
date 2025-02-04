@@ -3,7 +3,7 @@ import type { IDeviceInfo } from '@core/interfaces/IDevice';
 const initSentry = jest.fn();
 const captureMessage = jest.fn();
 
-jest.mock('@app/implementations/sentry', () => ({
+jest.mock('@core/implementations/sentry', () => ({
   initSentry,
   Sentry: {
     captureMessage,
@@ -13,7 +13,7 @@ jest.mock('@app/implementations/sentry', () => ({
 const get = jest.fn();
 const set = jest.fn();
 
-jest.mock('@app/implementations/storage', () => ({
+jest.mock('@core/implementations/storage', () => ({
   get,
   set,
 }));

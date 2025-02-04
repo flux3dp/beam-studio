@@ -9,9 +9,8 @@ import progressCaller from '@core/app/actions/progress-caller';
 import { calibrateChessboard } from '@core/helpers/camera-calibration-helper';
 import { ContextMenu, ContextMenuTrigger, MenuItem } from '@core/helpers/react-contextmenu';
 import useI18n from '@core/helpers/useI18n';
+import dialog from '@core/implementations/dialog';
 import type { FisheyeCameraParametersV3Cali } from '@core/interfaces/FisheyePreview';
-
-import dialog from '@app/implementations/dialog';
 
 import ExposureSlider from '../common/ExposureSlider';
 import useCamera from '../common/useCamera';

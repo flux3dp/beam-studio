@@ -35,7 +35,7 @@ jest.mock('@core/helpers/device-master', () => ({
 
 const mockStorageGet = jest.fn();
 
-jest.mock('@app/implementations/storage', () => ({
+jest.mock('@core/implementations/storage', () => ({
   get: (...args) => mockStorageGet(...args),
 }));
 

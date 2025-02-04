@@ -1,6 +1,5 @@
 import { axiosFluxId, fluxIDEvents, getCurrentUser } from '@core/helpers/api/flux-id';
-
-import storage from '@app/implementations/storage';
+import storage from '@core/implementations/storage';
 
 const recordActivity = async (): Promise<void> => {
   const user = getCurrentUser();

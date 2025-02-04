@@ -1,7 +1,7 @@
 'use strict';
 const js = require('@eslint/js');
 const pluginNx = require('@nx/eslint-plugin');
-const style = require('@stylistic/eslint-plugin-js'); // stylistic
+const style = require('@stylistic/eslint-plugin'); // stylistic
 const ts = require('@typescript-eslint/eslint-plugin');
 const tsParser = require('@typescript-eslint/parser');
 const format = require('eslint-plugin-format'); // format
@@ -67,7 +67,13 @@ module.exports = [
     rules: {
       // js
       ...js.configs.recommended.rules,
-      curly: ['error', 'all'],
+      // nx
+      // enable following rule if our implementations are ready
+      // '@nx/enforce-module-boundaries': [
+      //   'error',
+      //   { allow: [], depConstraints: [{ onlyDependOnLibsWithTags: ['*'], sourceTag: '*' }] },
+      // ],
+      curly: ['error', 'multi-line', 'consistent'],
       'format/prettier': [
         'error',
         {
@@ -95,7 +101,6 @@ module.exports = [
               position: 'before',
             },
             { group: 'internal', pattern: '@core/**', position: 'before' },
-            { group: 'internal', pattern: '@app/**', position: 'before' },
           ],
           pathGroupsExcludedImportTypes: ['react'],
         },
@@ -108,12 +113,6 @@ module.exports = [
       'n/no-path-concat': 'error',
       'n/process-exit-as-throw': 'error',
       'no-unused-vars': 'off',
-      // nx
-      // enable following rule if our implementations are ready
-      // '@nx/enforce-module-boundaries': [
-      //   'error',
-      //   { allow: [], depConstraints: [{ sourceTag: '*', onlyDependOnLibsWithTags: ['*'] }] },
-      // ],
       'react/react-in-jsx-scope': 'off',
       'reactRefresh/only-export-components': ['warn', { allowConstantExport: true }],
       'style/brace-style': ['error', '1tbs'],
@@ -185,7 +184,6 @@ module.exports = [
             // place react and react-native imports at the top
             { group: 'external', pattern: 'react+(|-native)', position: 'before' },
             { group: 'internal', pattern: '@core/**', position: 'before' },
-            { group: 'internal', pattern: '@app/**', position: 'before' },
           ],
           pathGroupsExcludedImportTypes: ['react'],
         },

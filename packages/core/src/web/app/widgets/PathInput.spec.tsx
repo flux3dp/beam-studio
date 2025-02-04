@@ -4,7 +4,7 @@ import { act, fireEvent, render } from '@testing-library/react';
 
 const mockShowOpenDialog = jest.fn();
 
-jest.mock('@app/implementations/dialog', () => ({
+jest.mock('@core/implementations/dialog', () => ({
   showOpenDialog: mockShowOpenDialog,
 }));
 
@@ -12,7 +12,7 @@ const mockExists = jest.fn();
 const mockIsFile = jest.fn();
 const mockIsDirectory = jest.fn();
 
-jest.mock('@app/implementations/fileSystem', () => ({
+jest.mock('@core/implementations/fileSystem', () => ({
   exists: mockExists,
   isDirectory: mockIsDirectory,
   isFile: mockIsFile,

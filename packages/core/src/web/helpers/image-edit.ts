@@ -18,10 +18,9 @@ import imageData from '@core/helpers/image-data';
 import jimpHelper from '@core/helpers/jimp-helper';
 import requirejsHelper from '@core/helpers/requirejs-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import browser from '@core/implementations/browser';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-
-import browser from '@app/implementations/browser';
 
 import PotraceWorker from './potrace/potrace.worker';
 

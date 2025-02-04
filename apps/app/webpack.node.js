@@ -24,7 +24,7 @@ module.exports = [
     },
     resolve: {
       alias: {
-        '@app': path.resolve(__dirname, 'src'),
+        '@core/implementations': path.resolve(__dirname, 'src/implementations'),
         '@core': path.resolve(__dirname, '../../packages/core/src/web'),
       },
       extensions: ['.ts', '.js'],

@@ -11,8 +11,7 @@ import { getCurrentUser } from '@core/helpers/api/flux-id';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import isDev from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
-
-import browser from '@app/implementations/browser';
+import browser from '@core/implementations/browser';
 
 const eventEmitter = eventEmitterFactory.createEventEmitter('drawing-tool');
 

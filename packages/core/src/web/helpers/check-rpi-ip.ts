@@ -1,4 +1,4 @@
-import network from '@app/implementations/network';
+import network from '@core/implementations/network';
 
 const checkRpiIp = async (): Promise<null | string> => {
   try {

@@ -3,7 +3,7 @@ const mockGet = jest.fn();
 const mockSet = jest.fn();
 
 // Use jest.doMock to mock the modules after defining the mock functions
-jest.mock('@app/implementations/storage', () => ({
+jest.mock('@core/implementations/storage', () => ({
   get: (...args) => mockGet(...args),
   set: (...args) => mockSet(...args),
 }));

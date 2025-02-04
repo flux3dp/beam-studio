@@ -21,7 +21,7 @@ jest.mock('@core/helpers/useI18n', () => () => ({
 
 const mockOpen = jest.fn();
 
-jest.mock('@app/implementations/browser', () => ({
+jest.mock('@core/implementations/browser', () => ({
   open: (...args: any) => mockOpen(...args),
 }));
 

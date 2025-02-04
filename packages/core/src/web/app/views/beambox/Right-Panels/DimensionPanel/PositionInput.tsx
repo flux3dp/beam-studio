@@ -5,8 +5,7 @@ import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelIte
 import UnitInput from '@core/app/widgets/UnitInput';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { useIsMobile } from '@core/helpers/system-helper';
-
-import storage from '@app/implementations/storage';
+import storage from '@core/implementations/storage';
 
 import styles from './DimensionPanel.module.scss';
 import { getValue } from './utils';

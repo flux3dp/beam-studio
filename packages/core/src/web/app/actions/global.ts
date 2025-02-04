@@ -1,8 +1,7 @@
 import workareaManager from '@core/app/svgedit/workarea';
 import Logger from '@core/helpers/logger';
 import shortcuts from '@core/helpers/shortcuts';
-
-import storage from '@app/implementations/storage';
+import storage from '@core/implementations/storage';
 
 const genericLogger = Logger('generic');
 const defaultKeyBehavior = () => {

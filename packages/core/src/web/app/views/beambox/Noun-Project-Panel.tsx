@@ -11,9 +11,8 @@ import Modal from '@core/app/widgets/Modal';
 import { fluxIDEvents, getNPIconByID, getNPIconsByTerm } from '@core/helpers/api/flux-id';
 import i18n from '@core/helpers/i18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import storage from '@core/implementations/storage';
 import type { IIcon } from '@core/interfaces/INoun-Project';
-
-import storage from '@app/implementations/storage';
 
 // eslint-disable-next-line ts/no-unused-vars
 let svgEditor;

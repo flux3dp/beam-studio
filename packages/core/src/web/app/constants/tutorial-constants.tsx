@@ -2,9 +2,8 @@ import * as React from 'react';
 
 import { calculateRight, calculateTop, RightRef, TopRef } from '@core/helpers/absolute-position-helper';
 import i18n from '@core/helpers/i18n';
+import browser from '@core/implementations/browser';
 import type { ITutorial } from '@core/interfaces/ITutorial';
-
-import browser from '@app/implementations/browser';
 
 import layoutConstants from './layout-constants';
 

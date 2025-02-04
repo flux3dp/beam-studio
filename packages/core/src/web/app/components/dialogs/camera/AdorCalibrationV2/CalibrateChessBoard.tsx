@@ -8,9 +8,8 @@ import alertConstants from '@core/app/constants/alert-constants';
 import { calibrateChessboard, startFisheyeCalibrate } from '@core/helpers/camera-calibration-helper';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
+import dialog from '@core/implementations/dialog';
 import type { FisheyeCameraParametersV2Cali } from '@core/interfaces/FisheyePreview';
-
-import dialog from '@app/implementations/dialog';
 
 import styles from './CalibrateChessBoard.module.scss';
 import { getMaterialHeight, prepareToTakePicture } from './utils';

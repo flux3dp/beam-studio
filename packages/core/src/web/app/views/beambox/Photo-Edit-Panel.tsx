@@ -16,8 +16,7 @@ import calculateBase64 from '@core/helpers/image-edit-panel/calculate-base64';
 import jimpHelper from '@core/helpers/jimp-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { isMobile } from '@core/helpers/system-helper';
-
-import imageProcessor from '@app/implementations/imageProcessor';
+import imageProcessor from '@core/implementations/imageProcessor';
 
 import styles from './Photo-Edit-Panel.module.scss';
 

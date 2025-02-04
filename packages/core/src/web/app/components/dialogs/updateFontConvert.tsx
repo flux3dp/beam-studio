@@ -5,8 +5,7 @@ import { Button } from 'antd';
 import Alert from '@core/app/actions/alert-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
 import i18n from '@core/helpers/i18n';
-
-import browser from '@app/implementations/browser';
+import browser from '@core/implementations/browser';
 
 import styles from './updateFontConvert.module.scss';
 

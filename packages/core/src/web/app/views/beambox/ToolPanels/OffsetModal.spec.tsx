@@ -7,7 +7,7 @@ const onOk = jest.fn();
 
 const get = jest.fn();
 
-jest.mock('@app/implementations/storage', () => ({
+jest.mock('@core/implementations/storage', () => ({
   get,
 }));
 

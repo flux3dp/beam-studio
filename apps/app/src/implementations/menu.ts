@@ -4,8 +4,7 @@ import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { TabEvents } from '@core/app/constants/tabConstants';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import AbstractMenu from '@core/helpers/menubar/AbstractMenu';
-
-import communicator from '@app/implementations/communicator';
+import communicator from '@core/implementations/communicator';
 
 import {
   changeMenuItemChecked,

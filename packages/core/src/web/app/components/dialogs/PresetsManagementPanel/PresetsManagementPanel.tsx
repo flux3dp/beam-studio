@@ -19,9 +19,8 @@ import { baseConfig, getDefaultConfig, postPresetChange } from '@core/helpers/la
 import layerModuleHelper from '@core/helpers/layer-module/layer-module-helper';
 import presetHelper from '@core/helpers/presets/preset-helper';
 import useI18n from '@core/helpers/useI18n';
+import storage from '@core/implementations/storage';
 import type { ConfigKey, ConfigKeyTypeMap, Preset } from '@core/interfaces/ILayerConfig';
-
-import storage from '@app/implementations/storage';
 
 import Footer from './Footer';
 import LaserInputs from './LaserInputs';

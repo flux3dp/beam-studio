@@ -5,9 +5,8 @@ import progressCaller from '@core/app/actions/progress-caller';
 import deviceMaster from '@core/helpers/device-master';
 import formatDuration from '@core/helpers/duration-formatter';
 import i18n from '@core/helpers/i18n';
-
-import dialog from '@app/implementations/dialog';
-import storage from '@app/implementations/storage';
+import dialog from '@core/implementations/dialog';
+import storage from '@core/implementations/storage';
 
 export const targetDirs = ['camera_calib', 'auto_leveling', 'fisheye', 'laser_records', 'preference', 'red_laser'];
 

@@ -1,8 +1,7 @@
 import dns from 'dns';
 
+import communicator from '@core/implementations/communicator';
 import type { INetwork } from '@core/interfaces/INetwork';
-
-import communicator from '@app/implementations/communicator';
 
 export default {
   checkIPExist: async (ip: string, trial: number) =>

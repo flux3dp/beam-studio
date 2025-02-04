@@ -21,9 +21,8 @@ import LangTh from '@core/app/lang/th';
 import LangVi from '@core/app/lang/vi';
 import LangZHCN from '@core/app/lang/zh-cn';
 import LangZHTW from '@core/app/lang/zh-tw';
+import storage from '@core/implementations/storage';
 import type { ILang } from '@core/interfaces/ILang';
-
-import storage from '@app/implementations/storage';
 
 const ACTIVE_LANG = 'active-lang';
 const langCache: { [key: string]: ILang } = {

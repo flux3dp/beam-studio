@@ -5,10 +5,9 @@ import menuDeviceActions from '@core/app/actions/beambox/menuDeviceActions';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import DeviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
+import customMenuActionProvider from '@core/implementations/customMenuActionProvider';
+import menuEventListenerFactory from '@core/implementations/menuEventListenerFactory';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
-
-import customMenuActionProvider from '@app/implementations/customMenuActionProvider';
-import menuEventListenerFactory from '@app/implementations/menuEventListenerFactory';
 
 const MENU_ITEMS = [
   'IMPORT',

@@ -3,7 +3,7 @@ import React, { forwardRef, useEffect } from 'react';
 import type { InputProps, InputRef } from 'antd';
 import { Input as AntdInput } from 'antd';
 
-import communicator from '@app/implementations/communicator';
+import communicator from '@core/implementations/communicator';
 
 const setEditingInput = (): void => communicator.send('SET_EDITING_STANDARD_INPUT', true);
 const setStopEditingInput = (): void => communicator.send('SET_EDITING_STANDARD_INPUT', false);

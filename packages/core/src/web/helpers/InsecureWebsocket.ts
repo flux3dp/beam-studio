@@ -4,8 +4,7 @@ import { getBrowser } from '@core/helpers/browser';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import switchProtocol from '@core/helpers/switch-protocol';
-
-import browser from '@app/implementations/browser';
+import browser from '@core/implementations/browser';
 
 const wrappedSockets = {};
 

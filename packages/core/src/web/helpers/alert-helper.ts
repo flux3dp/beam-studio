@@ -1,9 +1,8 @@
 import alertConfig from '@core/helpers/api/alert-config';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
+import browser from '@core/implementations/browser';
 import type { IAlert } from '@core/interfaces/IAlert';
-
-import browser from '@app/implementations/browser';
 
 let isInvitationShowed = false;
 const showFacebookGroupInvitation = (popUp: (args: IAlert) => void) => {

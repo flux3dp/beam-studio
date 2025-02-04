@@ -1,14 +1,11 @@
 import history from '@core/app/svgedit/history/history';
 import i18n from '@core/helpers/i18n';
 import LayerModule from '@core/app/constants/layer-module/layer-modules';
-import layerConfigHelper, {
-  getData,
-  writeDataLayer,
-} from '@core/helpers/layer/layer-config-helper';
+import layerConfigHelper, { getData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import layerModuleHelper from '@core/helpers/layer-module/layer-module-helper';
 import NS from '@core/app/constants/namespaces';
 import rgbToHex from '@core/helpers/color/rgbToHex';
-import storage from '@app/implementations/storage';
+import storage from '@core/implementations/storage';
 import { createLayer, getLayerByName } from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { ICommand } from '@core/interfaces/IHistory';
@@ -60,11 +57,7 @@ const appendUseElement = (
 
     const targetLayer = getLayerByName(targetLayerName);
     if (!checkLayerModule(targetLayer, targetModule)) {
-      const {
-        layer: newLayer,
-        name: newLayerName,
-        cmd,
-      } = createLayer(targetLayerName, { isSubCmd: true });
+      const { layer: newLayer, name: newLayerName, cmd } = createLayer(targetLayerName, { isSubCmd: true });
       if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
       layerConfigHelper.initLayerConfig(newLayerName);
 
@@ -83,10 +76,7 @@ const appendUseElement = (
           }
           if (!Number.isNaN(parseSpeed)) {
             parseSpeed = Math.round(parseSpeed * 10) / 10;
-            parseSpeed = Math.max(
-              Math.min(parseSpeed, laserConst.laser_speed.max),
-              laserConst.laser_speed.min,
-            );
+            parseSpeed = Math.max(Math.min(parseSpeed, laserConst.laser_speed.max), laserConst.laser_speed.min);
             writeDataLayer(newLayer, 'speed', parseSpeed);
           }
         }
@@ -98,10 +88,7 @@ const appendUseElement = (
           writeDataLayer(
             newLayer,
             'power',
-            Math.max(
-              Math.min(layerColorConfig.array[index].power, laserConst.power.max),
-              laserConst.power.min,
-            ),
+            Math.max(Math.min(layerColorConfig.array[index].power, laserConst.power.max), laserConst.power.min),
           );
           writeDataLayer(
             newLayer,
@@ -129,9 +116,7 @@ const appendUseElement = (
         name: newLayerName,
         cmd,
       } = createLayer(
-        targetModule === LayerModule.PRINTER
-          ? i18n.lang.layer_module.printing
-          : i18n.lang.layer_module.general_laser,
+        targetModule === LayerModule.PRINTER ? i18n.lang.layer_module.printing : i18n.lang.layer_module.general_laser,
         { isSubCmd: true },
       );
       targetLayer = layer;

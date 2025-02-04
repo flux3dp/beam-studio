@@ -5,10 +5,9 @@ import Controls from '@core/app/components/settings/Control';
 import SelectControl from '@core/app/components/settings/SelectControl';
 import alertConstants from '@core/app/constants/alert-constants';
 import i18n from '@core/helpers/i18n';
+import browser from '@core/implementations/browser';
+import storage from '@core/implementations/storage';
 import type { StorageKey } from '@core/interfaces/IStorage';
-
-import browser from '@app/implementations/browser';
-import storage from '@app/implementations/storage';
 
 interface Props {
   autoConnectOptions: Array<{ label: string; selected: boolean; value: any }>;

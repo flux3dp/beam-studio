@@ -7,7 +7,7 @@ import FillSettingModal from './FillSettingModal';
 
 const mockGet = jest.fn();
 
-jest.mock('@app/implementations/storage', () => ({
+jest.mock('@core/implementations/storage', () => ({
   get: (...args) => mockGet(...args),
 }));
 

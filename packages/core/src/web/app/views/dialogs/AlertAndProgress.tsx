@@ -5,10 +5,9 @@ import { AlertProgressContext } from '@core/app/contexts/AlertProgressContext';
 import Alert from '@core/app/views/dialogs/Alert';
 import NonStopProgress from '@core/app/views/dialogs/NonStopProgress';
 import Progress from '@core/app/views/dialogs/Progress';
+import browser from '@core/implementations/browser';
 import type { IAlert } from '@core/interfaces/IAlert';
 import type { IProgressDialog } from '@core/interfaces/IProgress';
-
-import browser from '@app/implementations/browser';
 
 const isProgress = (d: IAlert | IProgressDialog): d is IProgressDialog => d.isProgress;
 

@@ -9,9 +9,8 @@ import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarCont
 import checkSoftwareForAdor from '@core/helpers/check-software';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
+import storage from '@core/implementations/storage';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
-
-import storage from '@app/implementations/storage';
 
 import DeviceMaster from '../device-master';
 

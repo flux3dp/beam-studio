@@ -28,7 +28,7 @@ jest.mock('@core/helpers/device-master', () => ({
 const mockWriteFileDialog = jest.fn();
 const mockGetFileFromDialog = jest.fn();
 
-jest.mock('@app/implementations/dialog', () => ({
+jest.mock('@core/implementations/dialog', () => ({
   getFileFromDialog: (...args: any) => mockGetFileFromDialog(...args),
   writeFileDialog: (...args: any) => mockWriteFileDialog(...args),
 }));
@@ -50,7 +50,7 @@ jest.mock('@core/app/actions/progress-caller', () => ({
 const mockGet = jest.fn();
 const mockSet = jest.fn();
 
-jest.mock('@app/implementations/storage', () => ({
+jest.mock('@core/implementations/storage', () => ({
   get: (...args: any) => mockGet(...args),
   set: (...args: any) => mockSet(...args),
 }));

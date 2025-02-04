@@ -4,7 +4,7 @@
 
 import fontHelper from '@core/helpers/fonts/fontHelper';
 import selector from '@core/app/svgedit/selector';
-import storage from '@app/implementations/storage';
+import storage from '@core/implementations/storage';
 import textActions from '@core/app/svgedit/text/textactions';
 import { getRotationAngle } from '@core/app/svgedit/transform/rotation';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -158,8 +158,7 @@ const renderTspan = (text: SVGTextElement, val?: string) => {
   const tspans = Array.from(text.childNodes).filter(
     (child: Element) => child.tagName === 'tspan',
   ) as SVGTextContentElement[];
-  const lines =
-    typeof val === 'string' ? val.split('\u0085') : tspans.map((tspan) => tspan.textContent);
+  const lines = typeof val === 'string' ? val.split('\u0085') : tspans.map((tspan) => tspan.textContent);
   const isVertical = getIsVertical(text);
   const lineSpacing = parseFloat(getLineSpacing(text));
   const charHeight = getFontSize(text);
@@ -192,10 +191,7 @@ const renderTspan = (text: SVGTextElement, val?: string) => {
         tspan.setAttribute('y', y.join(' '));
       } else {
         tspan.setAttribute('x', text.getAttribute('x'));
-        tspan.setAttribute(
-          'y',
-          (Number(text.getAttribute('y')) + i * lineSpacing * charHeight).toFixed(2),
-        );
+        tspan.setAttribute('y', (Number(text.getAttribute('y')) + i * lineSpacing * charHeight).toFixed(2));
         tspan.textContent = lines[i];
         text.appendChild(tspan);
       }
@@ -254,8 +250,7 @@ const setBold = (val: boolean): void => {
 const setFontFamily = (val: string, isSubCmd = false, elems?: Element[]): ICommand => {
   const elemsToChange = elems || svgCanvas.getSelectedElems();
   let cmd = null;
-  if (!fontHelper.usePostscriptAsFamily(curText.font_postscriptName))
-    curText.font_family = `'${val}'`;
+  if (!fontHelper.usePostscriptAsFamily(curText.font_postscriptName)) curText.font_family = `'${val}'`;
   if (isSubCmd) {
     svgCanvas.undoMgr.beginUndoableChange('font-family', elemsToChange);
     svgCanvas.changeSelectedAttributeNoUndo('font-family', `'${val}'`, elemsToChange);
@@ -370,9 +365,7 @@ const setItalic = (val: boolean, isSubCmd = false, elem?: Element): ICommand => 
 const setLetterSpacing = (val: number, elem?: Element): void => {
   const textElem = elem || svgCanvas.getSelectedElems()[0];
   if (textElem?.tagName === 'text') {
-    svgCanvas.changeSelectedAttribute('letter-spacing', val ? `${val.toString()}em` : '0em', [
-      textElem,
-    ]);
+    svgCanvas.changeSelectedAttribute('letter-spacing', val ? `${val.toString()}em` : '0em', [textElem]);
     renderText(textElem);
   }
   if (!textElem.textContent) {

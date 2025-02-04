@@ -31,11 +31,10 @@ import isWeb from '@core/helpers/is-web';
 import ratingHelper from '@core/helpers/rating-helper';
 import sentryHelper from '@core/helpers/sentry-helper';
 import { isMobile } from '@core/helpers/system-helper';
+import browser from '@core/implementations/browser';
+import menu from '@core/implementations/menu';
+import storage from '@core/implementations/storage';
 import type { IFont } from '@core/interfaces/IFont';
-
-import browser from '@app/implementations/browser';
-import menu from '@app/implementations/menu';
-import storage from '@app/implementations/storage';
 
 class BeamboxInit {
   constructor() {

@@ -17,11 +17,10 @@ import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import weldPath from '@core/helpers/weldPath';
+import localFontHelper from '@core/implementations/localFontHelper';
+import storage from '@core/implementations/storage';
 import type { FontDescriptor, IFont, IFontQuery, WebFont } from '@core/interfaces/IFont';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-
-import localFontHelper from '@app/implementations/localFontHelper';
-import storage from '@app/implementations/storage';
 
 let svgCanvas: ISVGCanvas;
 let svgedit;

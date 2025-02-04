@@ -1,6 +1,6 @@
 import { preprocessByUrl } from './preprocess';
 
-jest.mock('@app/implementations/imageProcessor', () => ({ AUTO: 'AUTO' }));
+jest.mock('@core/implementations/imageProcessor', () => ({ AUTO: 'AUTO' }));
 
 const mockUrlToImage = jest.fn();
 const mockImageToUrl = jest.fn();

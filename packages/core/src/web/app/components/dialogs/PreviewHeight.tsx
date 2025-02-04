@@ -10,8 +10,7 @@ import UnitInput from '@core/app/widgets/UnitInput';
 import getDevice from '@core/helpers/device/get-device';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
-
-import storage from '@app/implementations/storage';
+import storage from '@core/implementations/storage';
 
 import styles from './PreviewHeight.module.scss';
 

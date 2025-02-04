@@ -16,9 +16,8 @@ import {
 import isFluxPlusActive from '@core/helpers/is-flux-plus-active';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
-
-import browser from '@app/implementations/browser';
-import storage from '@app/implementations/storage';
+import browser from '@core/implementations/browser';
+import storage from '@core/implementations/storage';
 
 import styles from './FluxIdLogin.module.scss';
 import FluxPlusModal from './FluxPlusModal';

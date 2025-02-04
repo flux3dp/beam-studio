@@ -5,8 +5,7 @@ import configOptions from '@core/app/constants/config-options';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import useI18n from '@core/helpers/useI18n';
-
-import storage from '@app/implementations/storage';
+import storage from '@core/implementations/storage';
 
 import ConfigPanelContext from './ConfigPanelContext';
 import ConfigSlider from './ConfigSlider';

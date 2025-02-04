@@ -9,10 +9,9 @@ import { loadCameraCalibrationTask } from '@core/helpers/device/promark/calibrat
 import promarkDataStore from '@core/helpers/device/promark/promark-data-store';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
+import dialog from '@core/implementations/dialog';
 import type { FisheyeCameraParametersV3, FisheyeCameraParametersV3Cali } from '@core/interfaces/FisheyePreview';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
-
-import dialog from '@app/implementations/dialog';
 
 import styles from './Calibration.module.scss';
 import CheckpointData from './common/CheckpointData';

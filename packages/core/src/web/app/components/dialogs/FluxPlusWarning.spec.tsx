@@ -12,7 +12,7 @@ jest.mock('@core/app/actions/dialog-caller', () => ({
 
 const open = jest.fn();
 
-jest.mock('@app/implementations/browser', () => ({
+jest.mock('@core/implementations/browser', () => ({
   open: (...args) => open(...args),
 }));
 

@@ -4,7 +4,7 @@ import { getPromarkInfo, setPromarkInfo } from './promark-info';
 
 const mockStorageGet = jest.fn();
 
-jest.mock('@app/implementations/storage', () => ({
+jest.mock('@core/implementations/storage', () => ({
   get: (...args) => mockStorageGet(...args),
 }));
 

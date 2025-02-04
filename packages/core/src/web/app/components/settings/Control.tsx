@@ -3,8 +3,7 @@ import * as React from 'react';
 import classNames from 'classnames';
 
 import { useIsMobile } from '@core/helpers/system-helper';
-
-import browser from '@app/implementations/browser';
+import browser from '@core/implementations/browser';
 
 import styles from './Control.module.scss';
 

@@ -6,12 +6,11 @@ import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
 import i18n from '@core/helpers/i18n';
 import Logger from '@core/helpers/logger';
+import dialog from '@core/implementations/dialog';
+import fs from '@core/implementations/fileSystem';
+import os from '@core/implementations/os';
+import store from '@core/implementations/storage';
 import type { StorageKey } from '@core/interfaces/IStorage';
-
-import dialog from '@app/implementations/dialog';
-import fs from '@app/implementations/fileSystem';
-import os from '@app/implementations/os';
-import store from '@app/implementations/storage';
 
 const LANG = i18n.lang.beambox;
 

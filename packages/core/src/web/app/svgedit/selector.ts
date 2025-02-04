@@ -9,7 +9,7 @@
  */
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
-import storage from '@app/implementations/storage';
+import storage from '@core/implementations/storage';
 import units from '@core/helpers/units';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { isMobile } from '@core/helpers/system-helper';
@@ -161,10 +161,7 @@ class Selector {
       this.resizeGrips[dir] = grip;
     }
 
-    this.rotateGripConnector = document.createElementNS(
-      NS.SVG,
-      'line',
-    ) as unknown as SVGLineElement;
+    this.rotateGripConnector = document.createElementNS(NS.SVG, 'line') as unknown as SVGLineElement;
     this.rotateGripConnector.setAttribute('id', 'selectorGrip_rotateconnector');
     this.rotateGripConnector.setAttribute('stroke', '#0000FF');
     this.rotateGripConnector.setAttribute('stroke-width', '1');
@@ -177,10 +174,7 @@ class Selector {
     this.rotateGripTop.setAttribute('fill', '#12B700');
     this.rotateGripTop.setAttribute('stroke', '#0000FF');
     this.rotateGripTop.setAttribute('stroke-width', '2');
-    this.rotateGripTop.setAttribute(
-      'style',
-      `cursor:url(${config.imgPath}rotate.png) 12 12, auto;`,
-    );
+    this.rotateGripTop.setAttribute('style', `cursor:url(${config.imgPath}rotate.png) 12 12, auto;`);
     this.rotateGripTop.setAttribute('class', 'hidden-mobile');
     this.gripsGroup.appendChild(this.rotateGripTop);
     $.data(this.rotateGripTop, 'type', 'rotate');
@@ -403,12 +397,8 @@ class Selector {
     } else {
       const useInch = storage.get('default-units') === 'inches';
       const unit = useInch ? 'inch' : 'mm';
-      const elemW = +units
-        .convertUnit(elemDimension.width / 10 || elemDimension.rx / 5, unit, 'mm')
-        .toFixed(1);
-      const elemH = +units
-        .convertUnit(elemDimension.height / 10 || elemDimension.ry / 5, unit, 'mm')
-        .toFixed(1);
+      const elemW = +units.convertUnit(elemDimension.width / 10 || elemDimension.rx / 5, unit, 'mm').toFixed(1);
+      const elemH = +units.convertUnit(elemDimension.height / 10 || elemDimension.ry / 5, unit, 'mm').toFixed(1);
       if (![elemW, elemH].includes(NaN)) newContent = `${elemW}${unit} x ${elemH}${unit}`;
     }
     this.dimensionInfo.innerHTML = newContent;

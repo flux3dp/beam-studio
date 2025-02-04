@@ -26,9 +26,8 @@ import { highlightLayer, moveLayersToPosition, setLayersLock } from '@core/helpe
 import { ContextMenuTrigger } from '@core/helpers/react-contextmenu';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { isMobile } from '@core/helpers/system-helper';
+import storage from '@core/implementations/storage';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-
-import storage from '@app/implementations/storage';
 
 import styles from './LayerPanel.module.scss';
 

@@ -1,6 +1,5 @@
+import storage from '@core/implementations/storage';
 import type { IFont } from '@core/interfaces/IFont';
-
-import storage from '@app/implementations/storage';
 
 // eslint-disable-next-line no-undef
 export default function getDefaultFont(): TextAttribute {

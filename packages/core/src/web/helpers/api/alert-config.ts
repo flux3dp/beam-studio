@@ -1,4 +1,4 @@
-import storage from '@app/implementations/storage';
+import storage from '@core/implementations/storage';
 
 export type AlertConfigKey =
   | 'done-first-cali'

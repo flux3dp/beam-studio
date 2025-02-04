@@ -2,7 +2,7 @@ import checkRpiIp from './check-rpi-ip';
 
 const mockDnsLookUpAll = jest.fn();
 
-jest.mock('@app/implementations/network', () => ({
+jest.mock('@core/implementations/network', () => ({
   dnsLookUpAll: (...args) => mockDnsLookUpAll(...args),
 }));
 

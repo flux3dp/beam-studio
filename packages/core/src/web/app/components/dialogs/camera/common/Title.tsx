@@ -1,8 +1,7 @@
 import React, { memo, useCallback } from 'react';
 
 import AlertIcons from '@core/app/icons/alerts/AlertIcons';
-
-import browser from '@app/implementations/browser';
+import browser from '@core/implementations/browser';
 
 import styles from './Title.module.scss';
 

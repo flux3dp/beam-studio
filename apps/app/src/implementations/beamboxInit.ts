@@ -5,9 +5,8 @@ import BeamboxInit from '@core/app/actions/beambox/beambox-init';
 import AlertConstants from '@core/app/constants/alert-constants';
 import AlertConfig from '@core/helpers/api/alert-config';
 import i18n from '@core/helpers/i18n';
-
-import type { MacKernelVersionMap } from '@app/implementations/os';
-import os, { macKernelVersionMap } from '@app/implementations/os';
+import type { MacKernelVersionMap } from '@core/implementations/os';
+import os, { macKernelVersionMap } from '@core/implementations/os';
 
 class ElectronBeamboxInit extends BeamboxInit {
   async showStartUpDialogs(): Promise<void> {

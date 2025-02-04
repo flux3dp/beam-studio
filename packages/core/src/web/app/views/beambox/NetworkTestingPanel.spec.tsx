@@ -41,7 +41,7 @@ jest.mock('@core/helpers/i18n', () => ({
 
 const mockNetworkTest = jest.fn();
 
-jest.mock('@app/implementations/network', () => ({
+jest.mock('@core/implementations/network', () => ({
   networkTest: (...args) => mockNetworkTest(...args),
 }));
 
@@ -61,7 +61,7 @@ jest.mock('@core/helpers/api/discover', () => {
   return () => ins;
 });
 
-jest.mock('@app/implementations/os', () => ({
+jest.mock('@core/implementations/os', () => ({
   networkInterfaces: () => ({
     en0: [
       {

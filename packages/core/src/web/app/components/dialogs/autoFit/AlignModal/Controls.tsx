@@ -9,9 +9,8 @@ import UnitInput from '@core/app/widgets/UnitInput';
 import round from '@core/helpers/math/round';
 import shortcuts from '@core/helpers/shortcuts';
 import useI18n from '@core/helpers/useI18n';
+import storage from '@core/implementations/storage';
 import type { AutoFitContour } from '@core/interfaces/IAutoFit';
-
-import storage from '@app/implementations/storage';
 
 import styles from './Controls.module.scss';
 import type { ImageDimension } from './dimension';

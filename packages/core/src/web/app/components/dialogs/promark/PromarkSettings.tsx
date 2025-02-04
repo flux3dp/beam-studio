@@ -14,10 +14,9 @@ import { generateCalibrationTaskString, loadTaskToSwiftray } from '@core/helpers
 import promarkDataStore from '@core/helpers/device/promark/promark-data-store';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
+import storage from '@core/implementations/storage';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type { Field, GalvoParameters, PromarkStore, RedDot } from '@core/interfaces/Promark';
-
-import storage from '@app/implementations/storage';
 
 import blockStyles from './Block.module.scss';
 import FieldBlock from './FieldBlock';

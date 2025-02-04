@@ -25,11 +25,10 @@ import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import autoSaveHelper from '@core/helpers/auto-save-helper';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
+import storage from '@core/implementations/storage';
 import type { IConfig } from '@core/interfaces/IAutosave';
 import type { ILang } from '@core/interfaces/ILang';
 import type { StorageKey } from '@core/interfaces/IStorage';
-
-import storage from '@app/implementations/storage';
 
 interface Props {}
 

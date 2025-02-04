@@ -2,8 +2,7 @@ import React from 'react';
 
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import i18n from '@core/helpers/i18n';
-
-import storage from '@app/implementations/storage';
+import storage from '@core/implementations/storage';
 
 const LANG = i18n.lang.beambox.tool_panels;
 

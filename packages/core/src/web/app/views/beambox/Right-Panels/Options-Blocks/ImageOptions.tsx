@@ -18,10 +18,9 @@ import i18n from '@core/helpers/i18n';
 import ImageData from '@core/helpers/image-data';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { isMobile } from '@core/helpers/system-helper';
+import browser from '@core/implementations/browser';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type { IImageDataResult } from '@core/interfaces/IImage';
-
-import browser from '@app/implementations/browser';
 
 import styles from './ImageOptions.module.scss';
 

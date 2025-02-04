@@ -18,10 +18,9 @@ import i18n from '@core/helpers/i18n';
 import MonitorStatus from '@core/helpers/monitor-status';
 import OutputError from '@core/helpers/output-error';
 import VersionChecker from '@core/helpers/version-checker';
+import dialog from '@core/implementations/dialog';
 import type { IDeviceInfo, IReport } from '@core/interfaces/IDevice';
 import type { IProgress } from '@core/interfaces/IProgress';
-
-import dialog from '@app/implementations/dialog';
 
 const eventEmitter = eventEmitterFactory.createEventEmitter('monitor');
 

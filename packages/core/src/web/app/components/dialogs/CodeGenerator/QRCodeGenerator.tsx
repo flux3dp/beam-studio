@@ -5,8 +5,7 @@ import type { QRCodeProps } from 'antd';
 import { Checkbox, ConfigProvider, Flex, Input, QRCode, Radio } from 'antd';
 
 import useI18n from '@core/helpers/useI18n';
-
-import browser from '@app/implementations/browser';
+import browser from '@core/implementations/browser';
 
 import styles from './QRCodeGenerator.module.scss';
 

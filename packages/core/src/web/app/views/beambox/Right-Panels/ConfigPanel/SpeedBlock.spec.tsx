@@ -73,7 +73,7 @@ jest.mock('@core/helpers/layer/layer-config-helper', () => ({
 
 const mockStorageGet = jest.fn();
 
-jest.mock('@app/implementations/storage', () => ({
+jest.mock('@core/implementations/storage', () => ({
   get: (...args) => mockStorageGet(...args),
 }));
 

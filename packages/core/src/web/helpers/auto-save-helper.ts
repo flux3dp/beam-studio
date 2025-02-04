@@ -1,9 +1,8 @@
 import { generateBeamBuffer } from '@core/helpers/file-export-helper';
 import isWeb from '@core/helpers/is-web';
+import fs from '@core/implementations/fileSystem';
+import storage from '@core/implementations/storage';
 import type { IConfig } from '@core/interfaces/IAutosave';
-
-import fs from '@app/implementations/fileSystem';
-import storage from '@app/implementations/storage';
 
 let autoSaveInterval = null;
 

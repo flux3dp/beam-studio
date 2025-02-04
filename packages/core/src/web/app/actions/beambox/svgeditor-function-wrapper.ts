@@ -4,9 +4,8 @@ import i18n from '@core/helpers/i18n';
 import ImageData from '@core/helpers/image-data';
 import { createLayer } from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import dialog from '@core/implementations/dialog';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-
-import dialog from '@app/implementations/dialog';
 
 let svgCanvas: ISVGCanvas;
 let svgEditor;

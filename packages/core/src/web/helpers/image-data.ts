@@ -4,8 +4,7 @@
 import exifr from 'exifr';
 
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
-
-import imageProcessor from '@app/implementations/imageProcessor';
+import imageProcessor from '@core/implementations/imageProcessor';
 
 import grayScale from './grayscale';
 import getExifRotationFlag from './image/getExifRotationFlag';

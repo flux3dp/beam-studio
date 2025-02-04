@@ -41,7 +41,7 @@ jest.mock('@core/app/actions/beambox/export-funcs', () => ({
 
 const get = jest.fn();
 
-jest.mock('@app/implementations/storage', () => ({
+jest.mock('@core/implementations/storage', () => ({
   get: (...args) => get(...args),
 }));
 
