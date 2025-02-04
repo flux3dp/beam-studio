@@ -1,7 +1,7 @@
 'use strict';
 const js = require('@eslint/js');
 const pluginNx = require('@nx/eslint-plugin');
-const style = require('@stylistic/eslint-plugin-js'); // stylistic
+const style = require('@stylistic/eslint-plugin'); // stylistic
 const ts = require('@typescript-eslint/eslint-plugin');
 const tsParser = require('@typescript-eslint/parser');
 const format = require('eslint-plugin-format'); // format
@@ -67,7 +67,7 @@ module.exports = [
     rules: {
       // js
       ...js.configs.recommended.rules,
-      curly: ['error', 'all'],
+      curly: ['error', 'multi-line', 'consistent'],
       'format/prettier': [
         'error',
         {
