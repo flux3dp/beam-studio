@@ -78,6 +78,9 @@ importers:
       '@testing-library/react':
         specifier: 15.0.6
         version: 15.0.6(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@total-typescript/ts-reset':
+        specifier: ^0.6.1
+        version: 0.6.1
       '@types/jest':
         specifier: ^29.5.12
         version: 29.5.14
@@ -403,7 +406,7 @@ importers:
         version: 3.1.1(webpack@5.96.1)
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@18.16.9)(node-notifier@8.0.2)(ts-node@10.9.1(@swc/core@1.5.29(@swc/helpers@0.5.15))(@types/node@18.16.9)(typescript@5.7.3))
+        version: 29.7.0(@types/node@22.10.7)(node-notifier@8.0.2)(ts-node@10.9.1(@swc/core@1.5.29(@swc/helpers@0.5.15))(@types/node@22.10.7)(typescript@5.7.3))
       mini-css-extract-plugin:
         specifier: ^2.9.2
         version: 2.9.2(webpack@5.96.1)
@@ -421,7 +424,7 @@ importers:
         version: 3.3.4(webpack@5.96.1)
       ts-jest:
         specifier: ^29.1.0
-        version: 29.2.5(@babel/core@7.26.0)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.26.0))(jest@29.7.0(@types/node@18.16.9)(node-notifier@8.0.2)(ts-node@10.9.1(@swc/core@1.5.29(@swc/helpers@0.5.15))(@types/node@18.16.9)(typescript@5.7.3)))(typescript@5.7.3)
+        version: 29.2.5(@babel/core@7.26.0)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.26.0))(jest@29.7.0(@types/node@22.10.7)(node-notifier@8.0.2)(ts-node@10.9.1(@swc/core@1.5.29(@swc/helpers@0.5.15))(@types/node@22.10.7)(typescript@5.7.3)))(typescript@5.7.3)
       ts-loader:
         specifier: ^9.1.2
         version: 9.5.1(typescript@5.7.3)(webpack@5.96.1)
@@ -578,6 +581,9 @@ importers:
       three:
         specifier: ^0.159.0
         version: 0.159.0
+      ts-pattern:
+        specifier: ^5.6.2
+        version: 5.6.2
       use-image:
         specifier: ^1.1.1
         version: 1.1.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -2943,6 +2949,9 @@ packages:
 
   '@tootallnate/quickjs-emscripten@0.23.0':
     resolution: {integrity: sha512-C5Mc6rdnsaJDjO3UpGW/CQTHtCKaYlScZTly4JIu97Jxo/odCiH0ITnDXSJPTOrEKk/ycSZ0AOgTmkDtkOsvIA==}
+
+  '@total-typescript/ts-reset@0.6.1':
+    resolution: {integrity: sha512-cka47fVSo6lfQDIATYqb/vO1nvFfbPw7uWLayIXIhGETj0wcOOlrlkobOMDNQOFr9QOafegUPq13V2+6vtD7yg==}
 
   '@trysound/sax@0.2.0':
     resolution: {integrity: sha512-L7z9BgrNEcYyUYtF+HaEfiS5ebkh9jXqbszz7pC0hRBPaatV0XjSD3+eHrpqFemQfgwiFF0QPIarnIihIDn7OA==}
@@ -9755,6 +9764,9 @@ packages:
       '@swc/wasm':
         optional: true
 
+  ts-pattern@5.6.2:
+    resolution: {integrity: sha512-d4IxJUXROL5NCa3amvMg6VQW2HVtZYmUTPfvVtO7zJWGYLJ+mry9v2OmYm+z67aniQoQ8/yFNadiEwtNS9qQiw==}
+
   tsconfig-paths-webpack-plugin@4.0.0:
     resolution: {integrity: sha512-fw/7265mIWukrSHd0i+wSwx64kYUSAKPfxRDksjKIYTxSAp9W9/xcZVBF4Kl0eqQd5eBpAQ/oQrc5RyM/0c1GQ==}
     engines: {node: '>=10.13.0'}
@@ -13811,6 +13823,8 @@ snapshots:
   '@tootallnate/once@2.0.0': {}
 
   '@tootallnate/quickjs-emscripten@0.23.0': {}
+
+  '@total-typescript/ts-reset@0.6.1': {}
 
   '@trysound/sax@0.2.0': {}
 
@@ -22152,6 +22166,8 @@ snapshots:
       yn: 3.1.1
     optionalDependencies:
       '@swc/core': 1.5.29(@swc/helpers@0.5.15)
+
+  ts-pattern@5.6.2: {}
 
   tsconfig-paths-webpack-plugin@4.0.0:
     dependencies:
