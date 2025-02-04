@@ -2,7 +2,7 @@ import openFileHelper from './open-file-helper';
 
 const mockSendSync = jest.fn();
 
-jest.mock('@app/implementations/communicator', () => ({
+jest.mock('@core/implementations/communicator', () => ({
   sendSync: (...args) => mockSendSync(...args),
 }));
 

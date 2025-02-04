@@ -4,9 +4,8 @@ import { Button, Modal } from 'antd';
 
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
-
-import browser from '@app/implementations/browser';
-import changelog from '@app/implementations/changelog';
+import browser from '@core/implementations/browser';
+import changelog from '@core/implementations/changelog';
 
 const LANG = i18n.lang.change_logs;
 

@@ -12,9 +12,8 @@ import checkDeviceStatus from '@core/helpers/check-device-status';
 import { generateCalibrationTaskString, loadTaskToSwiftray } from '@core/helpers/device/promark/calibration';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
+import storage from '@core/implementations/storage';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
-
-import storage from '@app/implementations/storage';
 
 import type { MarkParameters } from './ParametersBlock';
 import ParametersBlock from './ParametersBlock';

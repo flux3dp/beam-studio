@@ -1,4 +1,4 @@
-import communicator from '@app/implementations/communicator';
+import communicator from '@core/implementations/communicator';
 
 const initBackendEvents = (): void => {
   communicator.on('BACKEND_UP', (_: any, status: { alive: boolean; logfile: any; port: number }) => {

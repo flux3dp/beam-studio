@@ -16,7 +16,7 @@ jest.mock('@core/app/actions/dialog-caller', () => ({
 
 const getFileFromDialog = jest.fn();
 
-jest.mock('@app/implementations/dialog', () => ({
+jest.mock('@core/implementations/dialog', () => ({
   getFileFromDialog,
 }));
 

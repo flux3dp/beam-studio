@@ -11,9 +11,8 @@ import updateElementColor from '@core/helpers/color/updateElementColor';
 import isWeb from '@core/helpers/is-web';
 import { getObjectLayer } from '@core/helpers/layer/layer-helper';
 import ImageSymbolWorker from '@core/helpers/symbol-helper/image-symbol.worker';
+import communicator from '@core/implementations/communicator';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
-
-import communicator from '@app/implementations/communicator';
 
 import { getSVGAsync } from './svg-editor-helper';
 

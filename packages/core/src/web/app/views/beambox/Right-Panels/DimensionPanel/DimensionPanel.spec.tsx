@@ -4,7 +4,7 @@ import { fireEvent, render } from '@testing-library/react';
 
 const get = jest.fn();
 
-jest.mock('@app/implementations/storage', () => ({
+jest.mock('@core/implementations/storage', () => ({
   get: () => get(),
 }));
 

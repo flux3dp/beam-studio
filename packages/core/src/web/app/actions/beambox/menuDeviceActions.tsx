@@ -29,9 +29,8 @@ import firmwareUpdater from '@core/helpers/firmware-updater';
 import i18n from '@core/helpers/i18n';
 import layerModuleHelper from '@core/helpers/layer-module/layer-module-helper';
 import VersionChecker from '@core/helpers/version-checker';
+import dialog from '@core/implementations/dialog';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
-
-import dialog from '@app/implementations/dialog';
 
 const { lang } = i18n;
 

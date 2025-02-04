@@ -11,6 +11,7 @@ import DeviceConstants from '@core/app/constants/device-constants';
 import InputLightBoxConstants from '@core/app/constants/input-lightbox-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import checkSoftwareForAdor from '@core/helpers/check-software';
+import storage from '@core/implementations/storage';
 import type {
   FisheyeCameraParameters,
   FisheyeMatrix,
@@ -21,8 +22,6 @@ import type {
 import type IControlSocket from '@core/interfaces/IControlSocket';
 import type { IDeviceConnection, IDeviceDetailInfo, IDeviceInfo } from '@core/interfaces/IDevice';
 import type { Field, GalvoParameters } from '@core/interfaces/Promark';
-
-import storage from '@app/implementations/storage';
 
 import Camera from './api/camera';
 import Control from './api/control';

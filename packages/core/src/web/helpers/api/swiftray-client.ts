@@ -10,11 +10,10 @@ import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import { booleanConfig, getDefaultConfig } from '@core/helpers/layer/layer-config-helper';
+import communicator from '@core/implementations/communicator';
 import type { IDeviceDetailInfo, IDeviceInfo, IReport } from '@core/interfaces/IDevice';
 import type { IWrappedSwiftrayTaskFile } from '@core/interfaces/IWrappedFile';
 import type { ButtonState } from '@core/interfaces/Promark';
-
-import communicator from '@app/implementations/communicator';
 
 interface ErrorObject {
   code: number;

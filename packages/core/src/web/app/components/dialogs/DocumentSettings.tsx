@@ -25,9 +25,8 @@ import { getPromarkInfo, setPromarkInfo } from '@core/helpers/device/promark/pro
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import isDev from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
-
-import browser from '@app/implementations/browser';
-import storage from '@app/implementations/storage';
+import browser from '@core/implementations/browser';
+import storage from '@core/implementations/storage';
 
 import styles from './DocumentSettings.module.scss';
 

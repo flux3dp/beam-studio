@@ -20,11 +20,11 @@ jest.mock('@core/helpers/i18n', () => ({
 
 const mockOpen = jest.fn();
 
-jest.mock('@app/implementations/browser', () => ({
+jest.mock('@core/implementations/browser', () => ({
   open: (...args) => mockOpen(...args),
 }));
 
-jest.mock('@app/implementations/changelog', () => ({
+jest.mock('@core/implementations/changelog', () => ({
   CHANGES_EN: {
     added: [
       'Enhance the "Sharpen" function. High-quality photo engraving and make photos engrave result more detailed.',

@@ -20,7 +20,7 @@ jest.mock('@core/app/actions/dialog-caller', () => ({
 
 const open = jest.fn();
 
-jest.mock('@app/implementations/browser', () => ({
+jest.mock('@core/implementations/browser', () => ({
   open: (...args) => open(...args),
 }));
 
@@ -51,7 +51,7 @@ jest.mock('@core/helpers/useI18n', () => () => ({
 const get = jest.fn();
 const set = jest.fn();
 
-jest.mock('@app/implementations/storage', () => ({
+jest.mock('@core/implementations/storage', () => ({
   get: (...args) => get(...args),
   set: (...args) => set(...args),
 }));

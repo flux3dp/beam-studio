@@ -8,7 +8,7 @@ const get = jest.fn();
 const set = jest.fn();
 const isExisting = jest.fn();
 
-jest.mock('@app/implementations/storage', () => ({
+jest.mock('@core/implementations/storage', () => ({
   get: (...args) => get(...args),
   isExisting: (...args) => isExisting(...args),
   set: (...args) => set(...args),

@@ -6,9 +6,8 @@ import alertConstants from '@core/app/constants/alert-constants';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import beamFileHelper from '@core/helpers/beam-file-helper';
 import i18n from '@core/helpers/i18n';
+import dialog from '@core/implementations/dialog';
 import type { IFile } from '@core/interfaces/IMyCloud';
-
-import dialog from '@app/implementations/dialog';
 
 import type { ResponseWithError } from './flux-id';
 import { axiosFluxId, getDefaultHeader } from './flux-id';

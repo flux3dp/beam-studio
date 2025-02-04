@@ -4,8 +4,7 @@
  * and then open the file
  */
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-
-import communicator from '@app/implementations/communicator';
+import communicator from '@core/implementations/communicator';
 
 let svgEditor;
 

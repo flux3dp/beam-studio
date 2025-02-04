@@ -57,7 +57,7 @@ jest.mock('@core/helpers/useI18n', () => () => ({
 
 const mockWriteFileDialog = jest.fn();
 
-jest.mock('@app/implementations/dialog', () => ({
+jest.mock('@core/implementations/dialog', () => ({
   writeFileDialog: (...args) => mockWriteFileDialog(...args),
 }));
 

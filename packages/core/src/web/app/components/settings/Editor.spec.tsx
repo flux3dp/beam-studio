@@ -85,7 +85,7 @@ map.set('default-font', {
   family: 'Arial',
   style: 'Regular',
 });
-jest.mock('@app/implementations/storage', () => ({
+jest.mock('@core/implementations/storage', () => ({
   get: (key) => map.get(key),
   set: (key, value) => map.set(key, value),
 }));

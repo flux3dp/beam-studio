@@ -1,4 +1,4 @@
-import storage from '@app/implementations/storage';
+import storage from '@core/implementations/storage';
 
 function socialAuth(result: boolean): void {
   if (result) {

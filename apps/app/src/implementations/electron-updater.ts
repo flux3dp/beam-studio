@@ -5,9 +5,8 @@ import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
 import FileExportHelper from '@core/helpers/file-export-helper';
 import i18n from '@core/helpers/i18n';
-
-import communicator from '@app/implementations/communicator';
-import storage from '@app/implementations/storage';
+import communicator from '@core/implementations/communicator';
+import storage from '@core/implementations/storage';
 
 const { FLUX } = window;
 const LANG = i18n.lang.update.software;

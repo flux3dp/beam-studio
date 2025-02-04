@@ -2,10 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import classNames from 'classnames';
 
+import dialog from '@core/implementations/dialog';
+import fs from '@core/implementations/fileSystem';
 import type { OpenDialogProperties } from '@core/interfaces/IDialog';
-
-import dialog from '@app/implementations/dialog';
-import fs from '@app/implementations/fileSystem';
 
 import styles from './PathInput.module.scss';
 

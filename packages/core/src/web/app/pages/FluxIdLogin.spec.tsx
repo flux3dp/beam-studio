@@ -12,7 +12,7 @@ jest.mock('@core/app/actions/dialog-caller', () => ({
 
 const mockGet = jest.fn();
 
-jest.mock('@app/implementations/storage', () => ({
+jest.mock('@core/implementations/storage', () => ({
   get: (...args) => mockGet(...args),
 }));
 

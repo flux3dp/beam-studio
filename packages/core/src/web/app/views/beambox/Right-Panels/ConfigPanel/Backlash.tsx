@@ -11,9 +11,8 @@ import { writeData } from '@core/helpers/layer/layer-config-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import units from '@core/helpers/units';
 import useI18n from '@core/helpers/useI18n';
+import storage from '@core/implementations/storage';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-
-import storage from '@app/implementations/storage';
 
 import styles from './Block.module.scss';
 import ConfigPanelContext from './ConfigPanelContext';

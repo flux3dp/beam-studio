@@ -8,9 +8,8 @@ import moduleBoundary from '@core/app/constants/layer-module/module-boundary';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import layerModuleHelper from '@core/helpers/layer-module/layer-module-helper';
+import storage from '@core/implementations/storage';
 import type { IController } from '@core/interfaces/IBoxgen';
-
-import storage from '@app/implementations/storage';
 
 interface BoxgenContextType {
   boxData: IController;

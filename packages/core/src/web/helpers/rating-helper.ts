@@ -1,8 +1,7 @@
 import Dialog from '@core/app/actions/dialog-caller';
 import { getInfo, submitRating } from '@core/helpers/api/flux-id';
 import isWeb from '@core/helpers/is-web';
-
-import storage from '@app/implementations/storage';
+import storage from '@core/implementations/storage';
 
 interface IRecord {
   isIgnored: boolean;

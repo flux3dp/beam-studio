@@ -9,7 +9,7 @@ jest.mock('@core/app/actions/alert-caller', () => ({
 const mockGetFileFromDialog = jest.fn();
 const mockWriteFileDialog = jest.fn();
 
-jest.mock('@app/implementations/dialog', () => ({
+jest.mock('@core/implementations/dialog', () => ({
   getFileFromDialog: (...args) => mockGetFileFromDialog(...args),
   writeFileDialog: (...args) => mockWriteFileDialog(...args),
 }));
@@ -44,7 +44,7 @@ const mockGet = jest.fn();
 const mockSet = jest.fn();
 const mockRemoveAt = jest.fn();
 
-jest.mock('@app/implementations/storage', () => ({
+jest.mock('@core/implementations/storage', () => ({
   get: (...args) => mockGet(...args),
   removeAt: (...args) => mockRemoveAt(...args),
   set: (...args) => mockSet(...args),

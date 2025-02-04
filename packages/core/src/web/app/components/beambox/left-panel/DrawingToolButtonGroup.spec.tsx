@@ -27,7 +27,7 @@ jest.mock('@core/app/actions/beambox/svgeditor-function-wrapper', () => ({
 
 const mockOpen = jest.fn();
 
-jest.mock('@app/implementations/browser', () => ({
+jest.mock('@core/implementations/browser', () => ({
   open: mockOpen,
 }));
 

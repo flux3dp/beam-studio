@@ -6,8 +6,7 @@ import dialogCaller from '@core/app/actions/dialog-caller';
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
 import { getCurrentUser } from '@core/helpers/api/flux-id';
 import useI18n from '@core/helpers/useI18n';
-
-import browser from '@app/implementations/browser';
+import browser from '@core/implementations/browser';
 
 import FluxPlusModal from './FluxPlusModal';
 import styles from './FluxPlusWarning.module.scss';

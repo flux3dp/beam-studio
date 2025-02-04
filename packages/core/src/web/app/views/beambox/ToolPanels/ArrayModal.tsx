@@ -7,8 +7,7 @@ import classNames from 'classnames';
 import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
 import i18n from '@core/helpers/i18n';
 import units from '@core/helpers/units';
-
-import storage from '@app/implementations/storage';
+import storage from '@core/implementations/storage';
 
 import styles from './ArrayModal.module.scss';
 

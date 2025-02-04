@@ -15,9 +15,8 @@ import DeviceErrorHandler from '@core/helpers/device-error-handler';
 import DeviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
 import VersionChecker from '@core/helpers/version-checker';
+import Browser from '@core/implementations/browser';
 import type { CameraConfig } from '@core/interfaces/Camera';
-
-import Browser from '@app/implementations/browser';
 
 const StepRefocus = (): React.JSX.Element => {
   const lang = useI18n();

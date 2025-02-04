@@ -1,7 +1,7 @@
 /* eslint-disable no-redeclare */
 
-import os from '@app/implementations/os';
-import storage from '@app/implementations/storage';
+import os from '@core/implementations/os';
+import storage from '@core/implementations/storage';
 
 const AUTO_POKE_INTERVAL = 3000;
 const AUTO_DISCOVER = 1000;

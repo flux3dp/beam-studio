@@ -11,10 +11,9 @@ import { hasSwiftray } from '@core/helpers/api/swiftray-client';
 import { checkFbb2, checkFpm1 } from '@core/helpers/checkFeature';
 import isDev from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
+import storage from '@core/implementations/storage';
 import type { FontDescriptor } from '@core/interfaces/IFont';
 import type { StorageKey } from '@core/interfaces/IStorage';
-
-import storage from '@app/implementations/storage';
 
 const fontFamilies = FontFuncs.requestAvailableFontFamilies(true);
 

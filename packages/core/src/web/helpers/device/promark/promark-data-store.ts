@@ -1,6 +1,5 @@
+import storage from '@core/implementations/storage';
 import type { PromarkStore } from '@core/interfaces/Promark';
-
-import storage from '@app/implementations/storage';
 
 const get = <T extends keyof PromarkStore = undefined>(
   serial: string,

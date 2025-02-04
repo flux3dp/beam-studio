@@ -17,8 +17,7 @@ import CheckDeviceStatus from '@core/helpers/check-device-status';
 import DeviceErrorHandler from '@core/helpers/device-error-handler';
 import DeviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
-
-import Browser from '@app/implementations/browser';
+import Browser from '@core/implementations/browser';
 
 const StepAskReadjust = (): React.JSX.Element => {
   const lang = useI18n();

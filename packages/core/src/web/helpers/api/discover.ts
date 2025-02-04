@@ -8,11 +8,10 @@ import Logger from '@core/helpers/logger';
 import sentryHelper from '@core/helpers/sentry-helper';
 import SmartUpnp from '@core/helpers/smart-upnp';
 import Websocket from '@core/helpers/websocket';
+import communicator from '@core/implementations/communicator';
+import network from '@core/implementations/network';
+import storage from '@core/implementations/storage';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
-
-import communicator from '@app/implementations/communicator';
-import network from '@app/implementations/network';
-import storage from '@app/implementations/storage';
 
 import { swiftrayClient } from './swiftray-client';
 

@@ -4,9 +4,8 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
 import isFluxPlusActive from '@core/helpers/is-flux-plus-active';
 import isWeb from '@core/helpers/is-web';
+import localFontHelper from '@core/implementations/localFontHelper';
 import type { FontDescriptor, FontDescriptorKeys, FontHelper, WebFont } from '@core/interfaces/IFont';
-
-import localFontHelper from '@app/implementations/localFontHelper';
 
 import fontNameMap from './fontNameMap';
 import previewSrcMap from './fontPreviewSrc';

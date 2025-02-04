@@ -5,10 +5,9 @@ import classNames from 'classnames';
 
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import useI18n from '@core/helpers/useI18n';
+import browser from '@core/implementations/browser';
 import type { CurveMeasurer } from '@core/interfaces/CurveMeasurer';
 import type { BBox, MeasureData } from '@core/interfaces/ICurveEngraving';
-
-import browser from '@app/implementations/browser';
 
 import styles from './MeasureArea.module.scss';
 import rangeGenerator from './rangeGenerator';

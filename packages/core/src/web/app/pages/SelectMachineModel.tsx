@@ -10,8 +10,7 @@ import InitializeIcons from '@core/app/icons/initialize/InitializeIcons';
 import { checkFbb2, checkFpm1 } from '@core/helpers/checkFeature';
 import { isMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
-
-import storage from '@app/implementations/storage';
+import storage from '@core/implementations/storage';
 
 import styles from './SelectMachineModel.module.scss';
 

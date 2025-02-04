@@ -1,7 +1,6 @@
+import sentry from '@core/implementations/sentry';
+import storage from '@core/implementations/storage';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
-
-import sentry from '@app/implementations/sentry';
-import storage from '@app/implementations/storage';
 
 let isSentryInited = false;
 const sendDevices: { [uuid: string]: string } = storage.get('sentry-send-devices') || {};

@@ -10,7 +10,7 @@ jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
 
 const open = jest.fn();
 
-jest.mock('@app/implementations/browser', () => ({
+jest.mock('@core/implementations/browser', () => ({
   open,
 }));
 

@@ -4,7 +4,7 @@ import { fireEvent, render } from '@testing-library/react';
 
 const open = jest.fn();
 
-jest.mock('@app/implementations/browser', () => ({
+jest.mock('@core/implementations/browser', () => ({
   open,
 }));
 

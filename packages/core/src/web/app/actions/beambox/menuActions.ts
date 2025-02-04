@@ -24,9 +24,8 @@ import viewMenu from '@core/helpers/menubar/view';
 import OutputError from '@core/helpers/output-error';
 import shortcuts from '@core/helpers/shortcuts';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import browser from '@core/implementations/browser';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
-
-import browser from '@app/implementations/browser';
 
 let svgCanvas;
 let svgEditor;

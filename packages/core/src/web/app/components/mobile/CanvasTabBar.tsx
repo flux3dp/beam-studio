@@ -26,8 +26,7 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
-
-import browser from '@app/implementations/browser';
+import browser from '@core/implementations/browser';
 
 import styles from './CanvasTabBar.module.scss';
 

@@ -3,8 +3,7 @@ import React, { useMemo } from 'react';
 import classNames from 'classnames';
 
 import useI18n from '@core/helpers/useI18n';
-
-import browser from '@app/implementations/browser';
+import browser from '@core/implementations/browser';
 
 import styles from './ConnectEthernet.module.scss';
 

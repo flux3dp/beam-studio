@@ -1,9 +1,8 @@
 import type { FontCollection, Font as FontkitFont } from 'fontkit';
 import { openSync } from 'fontkit';
 
+import communicator from '@core/implementations/communicator';
 import type { FontDescriptor, LocalFontHelper } from '@core/interfaces/IFont';
-
-import communicator from '@app/implementations/communicator';
 
 interface Font extends FontkitFont {
   name?: { records: { fontFamily: Record<string, string> } };

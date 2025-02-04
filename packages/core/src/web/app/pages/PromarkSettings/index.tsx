@@ -13,8 +13,7 @@ import promarkDataStore from '@core/helpers/device/promark/promark-data-store';
 import { getSerial } from '@core/helpers/device/promark/promark-info';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
-
-import storage from '@app/implementations/storage';
+import storage from '@core/implementations/storage';
 
 import styles from './index.module.scss';
 

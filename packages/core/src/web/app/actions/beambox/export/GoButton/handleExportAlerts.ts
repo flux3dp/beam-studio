@@ -14,11 +14,10 @@ import round from '@core/helpers/math/round';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-maker';
 import VersionChecker from '@core/helpers/version-checker';
+import storage from '@core/implementations/storage';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type { ILang } from '@core/interfaces/ILang';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-
-import storage from '@app/implementations/storage';
 
 let svgCanvas: ISVGCanvas;
 

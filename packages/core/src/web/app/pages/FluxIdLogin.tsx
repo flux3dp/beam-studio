@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
 
 import dialog from '@core/app/actions/dialog-caller';
-
-import storage from '@app/implementations/storage';
+import storage from '@core/implementations/storage';
 
 // Empty page to show login dialog
 function FluxIdLogin(): React.JSX.Element {

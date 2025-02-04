@@ -66,7 +66,7 @@ import * as LayerHelper from '@core/helpers/layer/layer-helper';
 import randomColor from '@core/helpers/randomColor';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import sanitizeXmlString from '@core/helpers/sanitize-xml-string';
-import storage from '@app/implementations/storage';
+import storage from '@core/implementations/storage';
 import SymbolMaker from '@core/helpers/symbol-maker';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { getSupportInfo } from '@core/app/constants/add-on';
@@ -74,8 +74,8 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { getWorkarea, WorkAreaModel } from '@core/app/constants/workarea-constants';
 import units, { Units } from '@core/helpers/units';
 import jimpHelper from '@core/helpers/jimp-helper';
-import imageProcessor from '@app/implementations/imageProcessor';
-import recentMenuUpdater from '@app/implementations/recentMenuUpdater';
+import imageProcessor from '@core/implementations/imageProcessor';
+import recentMenuUpdater from '@core/implementations/recentMenuUpdater';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import grid from '@core/app/actions/canvas/grid';
 import updateLayerColorFilter from '@core/helpers/color/updateLayerColorFilter';
@@ -112,8 +112,7 @@ getSVGAsync((globalSVG) => {
 
 const LANG = i18n.lang.beambox;
 
-const timeEstimationButtonEventEmitter =
-  eventEmitterFactory.createEventEmitter('time-estimation-button');
+const timeEstimationButtonEventEmitter = eventEmitterFactory.createEventEmitter('time-estimation-button');
 const drawingToolEventEmitter = eventEmitterFactory.createEventEmitter('drawing-tool');
 
 // Class: SvgCanvas
@@ -337,8 +336,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   var transformPoint = svgedit.math.transformPoint;
   var matrixMultiply = (canvas.matrixMultiply = svgedit.math.matrixMultiply);
   canvas.hasMatrixTransform = svgedit.math.hasMatrixTransform;
-  var transformListToTransform = (canvas.transformListToTransform =
-    svgedit.math.transformListToTransform);
+  var transformListToTransform = (canvas.transformListToTransform = svgedit.math.transformListToTransform);
   const SENSOR_AREA_RADIUS = 10;
 
   // initialize from units.js
@@ -478,10 +476,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
                 updateElementColor(elem);
               }
             });
-          } else if (
-            cmdType === InsertElementCommand.type() ||
-            cmdType === RemoveElementCommand.type()
-          ) {
+          } else if (cmdType === InsertElementCommand.type() || cmdType === RemoveElementCommand.type()) {
             if (cmdType === InsertElementCommand.type()) {
               if (isApply) {
                 restoreRefElems(cmd.elem);
@@ -614,25 +609,12 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     exportNoText: 'Text may not appear as expected',
   };
 
-  var visElems =
-    'a,circle,ellipse,foreignObject,g,image,line,path,polygon,polyline,rect,svg,text,tspan,use';
-  const refAttrs = [
-    'clip-path',
-    'fill',
-    'filter',
-    'marker-end',
-    'marker-mid',
-    'marker-start',
-    'mask',
-    'stroke',
-  ];
+  var visElems = 'a,circle,ellipse,foreignObject,g,image,line,path,polygon,polyline,rect,svg,text,tspan,use';
+  const refAttrs = ['clip-path', 'fill', 'filter', 'marker-end', 'marker-mid', 'marker-start', 'mask', 'stroke'];
 
   var elData = $.data;
   // Animation element to change the opacity of any newly created element
-  this.opacityAnimation = document.createElementNS(
-    NS.SVG,
-    'animate',
-  ) as unknown as SVGAnimateElement;
+  this.opacityAnimation = document.createElementNS(NS.SVG, 'animate') as unknown as SVGAnimateElement;
   $(this.opacityAnimation)
     .attr({
       attributeName: 'opacity',
@@ -1111,9 +1093,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // Function: recalculateAllSelectedDimensions
   // Runs recalculateDimensions on the selected elements,
   // adding the changes to a single batch command
-  var recalculateAllSelectedDimensions = (this.recalculateAllSelectedDimensions = function (
-    isSubCommand = false,
-  ) {
+  var recalculateAllSelectedDimensions = (this.recalculateAllSelectedDimensions = function (isSubCommand = false) {
     var text = current_resize_mode === 'none' ? 'position' : 'size';
     var batchCmd = new history.BatchCommand(text);
 
@@ -1399,10 +1379,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       const layer = LayerHelper.getObjectLayer(elem);
       if (layer && layer.elem) {
         const layerElement = layer.elem;
-        if (
-          layerElement.getAttribute('display') === 'none' ||
-          layerElement.getAttribute('data-lock') === 'true'
-        ) {
+        if (layerElement.getAttribute('display') === 'none' || layerElement.getAttribute('data-lock') === 'true') {
           continue;
         }
       }
@@ -1439,10 +1416,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       const mouseY = pt.y * zoom;
       if (canvas.sensorAreaInfo && !PreviewModeController.isPreviewMode()) {
         if (document.body.contains(canvas.sensorAreaInfo.elem)) {
-          const dist = Math.hypot(
-            canvas.sensorAreaInfo.x - mouseX,
-            canvas.sensorAreaInfo.y - mouseY,
-          );
+          const dist = Math.hypot(canvas.sensorAreaInfo.x - mouseX, canvas.sensorAreaInfo.y - mouseY);
           if (dist < SENSOR_AREA_RADIUS) {
             mouseTarget = canvas.sensorAreaInfo.elem;
           }
@@ -1459,10 +1433,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     // for foreign content, go up until we find the foreignObject
     // WebKit browsers set the mouse target to the svgcanvas div
-    if (
-      [NS.MATH, NS.HTML].indexOf(mouseTarget.namespaceURI) >= 0 &&
-      mouseTarget.id !== 'svgcanvas'
-    ) {
+    if ([NS.MATH, NS.HTML].indexOf(mouseTarget.namespaceURI) >= 0 && mouseTarget.id !== 'svgcanvas') {
       while (mouseTarget.nodeName !== 'foreignObject') {
         mouseTarget = mouseTarget.parentNode;
         if (!mouseTarget) {
@@ -1731,12 +1702,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
           }
           Object.values(el.attributes).forEach((att) => {
             const attrUri = att.namespaceURI;
-            if (
-              attrUri &&
-              !nsuris[attrUri] &&
-              nsMap[attrUri] !== 'xmlns' &&
-              nsMap[attrUri] !== 'xml'
-            ) {
+            if (attrUri && !nsuris[attrUri] && nsMap[attrUri] !== 'xmlns' && nsMap[attrUri] !== 'xml') {
               nsuris[attrUri] = true;
               out.push(` xmlns:${nsMap[attrUri]}="${attrUri}"`);
             }
@@ -1837,10 +1803,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
               break;
             case 3: // text node
               // to keep the spaces before a line
-              const str =
-                elem.tagName === 'tspan'
-                  ? child.nodeValue
-                  : child.nodeValue.replace(/^\s+|\s+$/g, '');
+              const str = elem.tagName === 'tspan' ? child.nodeValue : child.nodeValue.replace(/^\s+|\s+$/g, '');
               if (str) {
                 bOneLine = true;
                 out.push(String(toXml(str)));
@@ -2082,15 +2045,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     //
     // Problem #1: if svg_1 gets renamed, we do not update the polyline's se:connector attribute
     // Problem #2: if the polyline svg_7 gets renamed, we do not update the marker id nor the polyline's marker-end attribute
-    var ref_elems = [
-      'filter',
-      'linearGradient',
-      'pattern',
-      'radialGradient',
-      'symbol',
-      'textPath',
-      'use',
-    ];
+    var ref_elems = ['filter', 'linearGradient', 'pattern', 'radialGradient', 'symbol', 'textPath', 'use'];
 
     svgedit.utilities.walkTree(g, function (n) {
       // if it's an element node
@@ -2169,9 +2124,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       var grad = this as any;
       if ($(grad).attr('gradientUnits') === 'userSpaceOnUse') {
         // TODO: Support more than one element with this ref by duplicating parent grad
-        var elems = $(svgcontent).find(
-          '[fill="url(#' + grad.id + ')"],[stroke="url(#' + grad.id + ')"]',
-        );
+        var elems = $(svgcontent).find('[fill="url(#' + grad.id + ')"],[stroke="url(#' + grad.id + ')"]');
         if (!elems.length) {
           return;
         }
@@ -2396,11 +2349,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     if (!layer) return false;
     presprayArea.togglePresprayArea();
     const oldDisplay = prevVisibility ? 'inline' : 'none';
-    const cmd = new history.ChangeElementCommand(
-      layer,
-      { display: oldDisplay },
-      'Layer Visibility',
-    );
+    const cmd = new history.ChangeElementCommand(layer, { display: oldDisplay }, 'Layer Visibility');
     cmd.onAfter = presprayArea.togglePresprayArea;
     const { parentCmd, addToHistory = true } = opts || {};
     if (parentCmd) parentCmd.addSubCommand(cmd);
@@ -2699,8 +2648,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // Parameters:
   // name - String with the new mode to change to
   this.setMode = function (name) {
-    cur_properties =
-      selectedElements[0] && selectedElements[0].nodeName === 'text' ? cur_text : cur_shape;
+    cur_properties = selectedElements[0] && selectedElements[0].nodeName === 'text' ? cur_text : cur_shape;
     if (current_mode === 'path') {
       pathActions.finishPath(false);
     }
@@ -3451,8 +3399,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       }
       return { isAnyFilled, isAllFilled };
     }
-    const isFilled =
-      Number.parseFloat(elem.getAttribute('fill-opacity')) !== 0 && $(elem).attr('fill') !== 'none';
+    const isFilled = Number.parseFloat(elem.getAttribute('fill-opacity')) !== 0 && $(elem).attr('fill') !== 'none';
     return {
       isAnyFilled: isFilled,
       isAllFilled: isFilled,
@@ -3610,11 +3557,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // attr - String with the attribute name
   // newValue - String or number with the new attribute value
   // elems - The DOM elements to apply the change to
-  var changeSelectedAttributeNoUndo = (this.changeSelectedAttributeNoUndo = function (
-    attr,
-    newValue,
-    elems?,
-  ) {
+  var changeSelectedAttributeNoUndo = (this.changeSelectedAttributeNoUndo = function (attr, newValue, elems?) {
     if (current_mode === 'pathedit') {
       // Editing node
       pathActions.moveNode(attr, newValue);
@@ -3691,11 +3634,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         //				selectedBBoxes[0] = svgedit.utilities.getBBox(elem);
         // Use the Firefox ffClone hack for text elements with gradients or
         // where other text attributes are changed.
-        if (
-          svgedit.browser.isGecko() &&
-          elem.nodeName === 'text' &&
-          /rotate/.test(elem.getAttribute('transform'))
-        ) {
+        if (svgedit.browser.isGecko() && elem.nodeName === 'text' && /rotate/.test(elem.getAttribute('transform'))) {
           if (
             String(newValue).indexOf('url') === 0 ||
             (['font-size', 'font-family', 'x', 'y'].indexOf(attr) >= 0 && elem.textContent)
@@ -4099,9 +4038,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         await new Promise((resolve) => setTimeout(resolve, 50));
       }
       batchCmd.addSubCommand(new history.InsertElementCommand(g));
-      batchCmd.addSubCommand(
-        new history.RemoveElementCommand(elem, elem.nextSibling, elem.parentNode),
-      );
+      batchCmd.addSubCommand(new history.RemoveElementCommand(elem, elem.nextSibling, elem.parentNode));
       elem.parentNode.removeChild(elem);
       const angle = svgedit.utilities.getRotationAngle(g);
       if (angle) canvas.setRotationAngle(0, true, g);
@@ -4173,9 +4110,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       }
       xAlignLine.setAttribute(
         'd',
-        `M ${xMatchPoint.x} ${xMatchPoint.y} L ${xMatchPoint.x} ${
-          yMatchPoint ? yMatchPoint.y : y / zoom
-        }`,
+        `M ${xMatchPoint.x} ${xMatchPoint.y} L ${xMatchPoint.x} ${yMatchPoint ? yMatchPoint.y : y / zoom}`,
       );
       xAlignLine.setAttribute('display', 'inline');
     } else if (xAlignLine) {
@@ -4196,9 +4131,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       }
       yAlignLine.setAttribute(
         'd',
-        `M ${yMatchPoint.x} ${yMatchPoint.y} L ${xMatchPoint ? xMatchPoint.x : x / zoom} ${
-          yMatchPoint.y
-        }`,
+        `M ${yMatchPoint.x} ${yMatchPoint.y} L ${xMatchPoint ? xMatchPoint.x : x / zoom} ${yMatchPoint.y}`,
       );
       yAlignLine.setAttribute('display', 'inline');
     } else if (yAlignLine) {
@@ -4352,10 +4285,8 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       }
 
       points.forEach((p) => {
-        const newX =
-          center.x + (p.x - center.x) * Math.cos(angle) - (p.y - center.y) * Math.sin(angle);
-        const newY =
-          center.y + (p.x - center.x) * Math.sin(angle) + (p.y - center.y) * Math.cos(angle);
+        const newX = center.x + (p.x - center.x) * Math.cos(angle) - (p.y - center.y) * Math.sin(angle);
+        const newY = center.y + (p.x - center.x) * Math.sin(angle) + (p.y - center.y) * Math.cos(angle);
         p.x = newX;
         p.y = newY;
       });
@@ -4547,11 +4478,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
           // get child's old center of rotation
           var cbox = svgedit.utilities.getBBox(elem);
           var ceqm = svgedit.math.transformListToTransform(chtlist).matrix;
-          var coldc = svgedit.math.transformPoint(
-            cbox.x + cbox.width / 2,
-            cbox.y + cbox.height / 2,
-            ceqm,
-          );
+          var coldc = svgedit.math.transformPoint(cbox.x + cbox.width / 2, cbox.y + cbox.height / 2, ceqm);
 
           // sum group and child's angles
           var sangle = (gangle + cangle) % 360;
@@ -4707,11 +4634,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         continue;
       }
 
-      if (
-        elem.parentNode &&
-        elem.parentNode.tagName === 'a' &&
-        elem.parentNode.childNodes.length === 1
-      ) {
+      if (elem.parentNode && elem.parentNode.tagName === 'a' && elem.parentNode.childNodes.length === 1) {
         elem = elem.parentNode;
       }
 
@@ -4778,9 +4701,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     // update selection
     const layers = selectedElements.flatMap((elem) =>
-      elem.getAttribute('data-tempgroup') === 'true'
-        ? selectedLayers
-        : LayerHelper.getObjectLayer(elem)?.title,
+      elem.getAttribute('data-tempgroup') === 'true' ? selectedLayers : LayerHelper.getObjectLayer(elem)?.title,
     );
 
     // set the newst added layer as currentLayer
@@ -4808,9 +4729,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       return;
     }
 
-    const originalLayer = getCurrentDrawing().getLayerByName(
-      elem.getAttribute('data-original-layer'),
-    );
+    const originalLayer = getCurrentDrawing().getLayerByName(elem.getAttribute('data-original-layer'));
     const currentLayer = getCurrentDrawing().getCurrentLayer();
     const targetLayer = originalLayer || currentLayer;
 
@@ -4824,10 +4743,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     this.setCurrentLayer(selectedLayers[0]);
     LayerPanelController.setSelectedLayers([...new Set(selectedLayers)]);
 
-    if (
-      elem.nextSibling &&
-      (elem.nextSibling as Element).getAttribute('data-imageborder') === 'true'
-    ) {
+    if (elem.nextSibling && (elem.nextSibling as Element).getAttribute('data-imageborder') === 'true') {
       elem.nextSibling.remove();
     }
 
@@ -4862,9 +4778,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       this.ungroupTempGroup();
       this.selectOnly([lastElem], true);
     } else {
-      console.warn(
-        'Removing last child from temp group. This should not happen, should find out why',
-      );
+      console.warn('Removing last child from temp group. This should not happen, should find out why');
       this.ungroupTempGroup();
     }
   };
@@ -4911,9 +4825,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
           oldParent.removeChild(elem);
           continue;
         }
-        const originalLayer = getCurrentDrawing().getLayerByName(
-          elem.getAttribute('data-original-layer'),
-        );
+        const originalLayer = getCurrentDrawing().getLayerByName(elem.getAttribute('data-original-layer'));
         const currentLayer = getCurrentDrawing().getCurrentLayer();
         const targetLayer = originalLayer || currentLayer;
         let nextSiblingId = elem.getAttribute('data-next-sibling');
@@ -5031,9 +4943,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     }
 
     if (oldNextSibling !== t.nextSibling) {
-      addCommandToHistory(
-        new history.MoveElementCommand(t, oldNextSibling, oldParent, 'Move ' + dir),
-      );
+      addCommandToHistory(new history.MoveElementCommand(t, oldNextSibling, oldParent, 'Move ' + dir));
       call('changed', [t]);
     }
   };
@@ -5248,11 +5158,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         continue;
       }
       if (i < len) {
-        this.moveElemPosition(
-          startX + dx * j - centerXs[i],
-          startY + dy * j - centerYs[i],
-          realSelectedElements[i],
-        );
+        this.moveElemPosition(startX + dx * j - centerXs[i], startY + dy * j - centerYs[i], realSelectedElements[i]);
       } else {
         this.moveElemPosition(
           startX + dx * j - centerXs[i - len],
@@ -5294,11 +5200,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         const { elem: topElem, originalAngle } = stack.pop();
         if (topElem.tagName !== 'g') {
           // eslint-disable-next-line no-await-in-loop
-          cmd = await this.flipElementWithRespectToCenter(
-            topElem,
-            centers[centers.length - 1],
-            flipPara,
-          );
+          cmd = await this.flipElementWithRespectToCenter(topElem, centers[centers.length - 1], flipPara);
           if (cmd && !cmd.isEmpty()) {
             batchCmd.addSubCommand(cmd);
           }

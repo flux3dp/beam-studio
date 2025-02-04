@@ -67,6 +67,12 @@ module.exports = [
     rules: {
       // js
       ...js.configs.recommended.rules,
+      // nx
+      // enable following rule if our implementations are ready
+      // '@nx/enforce-module-boundaries': [
+      //   'error',
+      //   { allow: [], depConstraints: [{ onlyDependOnLibsWithTags: ['*'], sourceTag: '*' }] },
+      // ],
       curly: ['error', 'multi-line', 'consistent'],
       'format/prettier': [
         'error',
@@ -95,7 +101,6 @@ module.exports = [
               position: 'before',
             },
             { group: 'internal', pattern: '@core/**', position: 'before' },
-            { group: 'internal', pattern: '@app/**', position: 'before' },
           ],
           pathGroupsExcludedImportTypes: ['react'],
         },
@@ -108,12 +113,6 @@ module.exports = [
       'n/no-path-concat': 'error',
       'n/process-exit-as-throw': 'error',
       'no-unused-vars': 'off',
-      // nx
-      // enable following rule if our implementations are ready
-      // '@nx/enforce-module-boundaries': [
-      //   'error',
-      //   { allow: [], depConstraints: [{ sourceTag: '*', onlyDependOnLibsWithTags: ['*'] }] },
-      // ],
       'react/react-in-jsx-scope': 'off',
       'reactRefresh/only-export-components': ['warn', { allowConstantExport: true }],
       'style/brace-style': ['error', '1tbs'],
@@ -185,7 +184,6 @@ module.exports = [
             // place react and react-native imports at the top
             { group: 'external', pattern: 'react+(|-native)', position: 'before' },
             { group: 'internal', pattern: '@core/**', position: 'before' },
-            { group: 'internal', pattern: '@app/**', position: 'before' },
           ],
           pathGroupsExcludedImportTypes: ['react'],
         },

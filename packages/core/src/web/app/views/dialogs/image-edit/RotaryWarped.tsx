@@ -12,10 +12,9 @@ import UnitInput from '@core/app/widgets/UnitInput';
 import imageEdit from '@core/helpers/image-edit';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
+import browser from '@core/implementations/browser';
+import storage from '@core/implementations/storage';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-
-import browser from '@app/implementations/browser';
-import storage from '@app/implementations/storage';
 
 import styles from './RotaryWarped.module.scss';
 

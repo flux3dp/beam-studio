@@ -11,7 +11,7 @@
     "moduleResolution": "bundler",
     "paths": {
       "@core/*": ["packages/core/src/web/*"],
-      "@app/*": ["apps/app/src/*"]
+      "@core/implementations/*": ["packages/core/src/implementations/*"]
     },
     "resolveJsonModule": true,
     "declaration": false,

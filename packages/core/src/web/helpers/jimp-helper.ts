@@ -1,4 +1,4 @@
-import imageProcessor from '@app/implementations/imageProcessor';
+import imageProcessor from '@core/implementations/imageProcessor';
 
 const urlToImage = async (url: string) => {
   const resp = await fetch(url);

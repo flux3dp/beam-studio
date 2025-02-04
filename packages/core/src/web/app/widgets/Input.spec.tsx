@@ -6,7 +6,7 @@ import Input from './Input';
 
 const mockSend = jest.fn();
 
-jest.mock('@app/implementations/communicator', () => ({
+jest.mock('@core/implementations/communicator', () => ({
   send: (...args) => mockSend(...args),
 }));
 

@@ -68,8 +68,8 @@ import type { IStorage } from '@core/interfaces/IStorage';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type ISVGConfig from '@core/interfaces/ISVGConfig';
 
-import pdfHelper from '@app/implementations/pdfHelper';
-import storage from '@app/implementations/storage';
+import pdfHelper from '@core/implementations/pdfHelper';
+import storage from '@core/implementations/storage';
 
 import Alert from '../alert-caller';
 import Progress from '../progress-caller';

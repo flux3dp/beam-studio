@@ -1,8 +1,7 @@
 import { selectUsbDevice } from '@core/app/components/dialogs/UsbDeviceSelector';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
-
-import communicator from '@app/implementations/communicator';
+import communicator from '@core/implementations/communicator';
 
 const askForPermission = async (): Promise<boolean> => {
   if (isWeb()) {

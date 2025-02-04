@@ -13,8 +13,7 @@ import { DefaultColorConfigs } from '@core/app/constants/color-constants';
 import Input from '@core/app/widgets/Input';
 import InputKeyWrapper from '@core/app/widgets/InputKeyWrapper';
 import useI18n from '@core/helpers/useI18n';
-
-import storage from '@app/implementations/storage';
+import storage from '@core/implementations/storage';
 
 import AddColorConfigModal from '../dialogs/AddColorConfigModal';
 

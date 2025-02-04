@@ -112,7 +112,7 @@ module.exports = [
     ],
     resolve: {
       alias: {
-        '@app': app,
+        '@core/implementations': path.resolve(__dirname, 'src/implementations'),
         '@core': coreWeb,
       },
       extensions: ['.tsx', '.ts', '.jsx', '.js', '.sass'],
@@ -156,7 +156,7 @@ module.exports = [
     },
     resolve: {
       alias: {
-        '@app': app,
+        '@core/implementations': path.resolve(__dirname, 'src/implementations'),
         '@core': coreWeb,
       },
       extensions: ['.tsx', '.ts', '.jsx', '.js', '.sass'],

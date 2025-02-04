@@ -12,9 +12,8 @@ import { AlertProgressContext } from '@core/app/contexts/AlertProgressContext';
 import AlertIcons from '@core/app/icons/alerts/AlertIcons';
 import i18n from '@core/helpers/i18n';
 import useI18n from '@core/helpers/useI18n';
+import browser from '@core/implementations/browser';
 import type { IAlert, MessageIcon } from '@core/interfaces/IAlert';
-
-import browser from '@app/implementations/browser';
 
 import styles from './Alert.module.scss';
 

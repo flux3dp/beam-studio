@@ -23,10 +23,9 @@ import deviceMaster from '@core/helpers/device-master';
 import isWeb from '@core/helpers/is-web';
 import useI18n from '@core/helpers/useI18n';
 import versionChecker from '@core/helpers/version-checker';
+import network from '@core/implementations/network';
+import storage from '@core/implementations/storage';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
-
-import network from '@app/implementations/network';
-import storage from '@app/implementations/storage';
 
 import Hint from './Hint';
 import styles from './index.module.scss';

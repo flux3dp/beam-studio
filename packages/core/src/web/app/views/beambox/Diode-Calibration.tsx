@@ -17,9 +17,8 @@ import DeviceErrorHandler from '@core/helpers/device-error-handler';
 import DeviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import VersionChecker from '@core/helpers/version-checker';
+import browser from '@core/implementations/browser';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
-
-import browser from '@app/implementations/browser';
 
 const LANG = i18n.lang.calibration;
 const LANG_ALERT = i18n.lang.alert;

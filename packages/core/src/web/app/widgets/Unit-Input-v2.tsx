@@ -4,8 +4,7 @@ import React from 'react';
 import ClassNames from 'classnames';
 
 import keyCodeConstants from '@core/app/constants/keycode-constants';
-
-import storage from '@app/implementations/storage';
+import storage from '@core/implementations/storage';
 
 interface Props {
   abbr?: boolean;

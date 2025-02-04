@@ -7,9 +7,8 @@ import { setFisheyeConfig } from '@core/helpers/camera-calibration-helper';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
+import dialog from '@core/implementations/dialog';
 import type { FisheyeCameraParametersV3, FisheyeCameraParametersV3Cali } from '@core/interfaces/FisheyePreview';
-
-import dialog from '@app/implementations/dialog';
 
 import Chessboard from './BB2Calibration/Chessboard';
 import moveLaserHead from './BB2Calibration/moveLaserHead';

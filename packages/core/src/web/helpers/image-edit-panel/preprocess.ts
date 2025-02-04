@@ -1,8 +1,7 @@
 import type Jimp from 'jimp';
 
 import jimpHelper from '@core/helpers/jimp-helper';
-
-import imageProcessor from '@app/implementations/imageProcessor';
+import imageProcessor from '@core/implementations/imageProcessor';
 
 export interface CropperDimension {
   height: number;

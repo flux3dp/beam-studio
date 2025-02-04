@@ -7,7 +7,7 @@ const mockOnClick2 = jest.fn();
 const mockUpdateValue = jest.fn();
 const mockStorage = jest.fn();
 
-jest.mock('@app/implementations/storage', () => ({
+jest.mock('@core/implementations/storage', () => ({
   get: (key) => mockStorage(key),
 }));
 

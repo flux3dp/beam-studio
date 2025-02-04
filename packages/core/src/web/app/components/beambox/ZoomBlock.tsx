@@ -9,8 +9,7 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { ContextMenu, ContextMenuTrigger, MenuItem } from '@core/helpers/react-contextmenu';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
-
-import os from '@app/implementations/os';
+import os from '@core/implementations/os';
 
 import styles from './ZoomBlock.module.scss';
 

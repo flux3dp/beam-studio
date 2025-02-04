@@ -22,8 +22,7 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { isMobile } from '@core/helpers/system-helper';
-
-import storage from '@app/implementations/storage';
+import storage from '@core/implementations/storage';
 
 let svgCanvas;
 

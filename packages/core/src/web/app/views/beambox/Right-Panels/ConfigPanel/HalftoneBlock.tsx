@@ -9,9 +9,8 @@ import Select from '@core/app/widgets/AntdSelect';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
+import browser from '@core/implementations/browser';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-
-import browser from '@app/implementations/browser';
 
 import ConfigPanelContext from './ConfigPanelContext';
 import styles from './HalftoneBlock.module.scss';

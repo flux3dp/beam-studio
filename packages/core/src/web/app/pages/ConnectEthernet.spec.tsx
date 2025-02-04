@@ -6,7 +6,7 @@ import ConnectEthernet from './ConnectEthernet';
 
 const mockOpen = jest.fn();
 
-jest.mock('@app/implementations/browser', () => ({
+jest.mock('@core/implementations/browser', () => ({
   open: (url) => mockOpen(url),
 }));
 

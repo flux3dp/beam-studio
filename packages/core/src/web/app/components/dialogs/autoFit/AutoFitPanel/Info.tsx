@@ -5,9 +5,8 @@ import { getRotationAngle } from '@core/app/svgedit/transform/rotation';
 import rotateBBox from '@core/app/svgedit/utils/rotateBBox';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
+import browser from '@core/implementations/browser';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-
-import browser from '@app/implementations/browser';
 
 import styles from './Info.module.scss';
 

@@ -2,7 +2,7 @@ import React from 'react';
 
 import classNames from 'classnames';
 
-import browser from '@app/implementations/browser';
+import browser from '@core/implementations/browser';
 
 import styles from './Hint.module.scss';
 

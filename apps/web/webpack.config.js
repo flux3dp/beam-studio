@@ -171,7 +171,7 @@ module.exports = {
   ],
   resolve: {
     alias: {
-      '@app': path.resolve(__dirname, 'src'),
+      '@core/implementations': path.resolve(__dirname, 'src/implementations'),
       '@core': coreWeb,
       browser: path.resolve(__dirname, 'public/js/lib/svgeditor/browser'),
       canvg: path.resolve(__dirname, 'public/js/lib/svgeditor/canvg/canvg'),

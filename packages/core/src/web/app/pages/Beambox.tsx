@@ -20,9 +20,8 @@ import { LayerPanelContextProvider } from '@core/app/views/beambox/Right-Panels/
 import i18n from '@core/helpers/i18n';
 import openFileHelper from '@core/helpers/open-file-helper';
 import sentryHelper from '@core/helpers/sentry-helper';
-
-import BeamboxInit from '@app/implementations/beamboxInit';
-import communicator from '@app/implementations/communicator';
+import BeamboxInit from '@core/implementations/beamboxInit';
+import communicator from '@core/implementations/communicator';
 
 import styles from './Beambox.module.scss';
 import 'react-resizable/css/styles.css';

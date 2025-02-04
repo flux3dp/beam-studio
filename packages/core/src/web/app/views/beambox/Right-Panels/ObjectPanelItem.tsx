@@ -7,8 +7,7 @@ import classNames from 'classnames';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
 import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 import units from '@core/helpers/units';
-
-import storage from '@app/implementations/storage';
+import storage from '@core/implementations/storage';
 
 import styles from './ObjectPanelItem.module.scss';
 

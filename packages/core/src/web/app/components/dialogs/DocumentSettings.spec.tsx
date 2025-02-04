@@ -100,7 +100,7 @@ jest.mock('@core/helpers/device/promark/promark-info', () => ({
 
 const mockOpen = jest.fn();
 
-jest.mock('@app/implementations/browser', () => ({
+jest.mock('@core/implementations/browser', () => ({
   open: (...args) => mockOpen(...args),
 }));
 

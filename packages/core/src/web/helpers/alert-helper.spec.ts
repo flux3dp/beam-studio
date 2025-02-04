@@ -11,7 +11,7 @@ jest.mock('@core/helpers/eventEmitterFactory', () => ({
 
 const mockOpen = jest.fn();
 
-jest.mock('@app/implementations/browser', () => ({
+jest.mock('@core/implementations/browser', () => ({
   open: (...args) => mockOpen(...args),
 }));
 

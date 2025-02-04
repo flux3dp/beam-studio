@@ -6,10 +6,9 @@ import defaultPresets from '@core/app/constants/presets';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import i18n from '@core/helpers/i18n';
+import dialog from '@core/implementations/dialog';
+import storage from '@core/implementations/storage';
 import type { Preset, PresetModel } from '@core/interfaces/ILayerConfig';
-
-import dialog from '@app/implementations/dialog';
-import storage from '@app/implementations/storage';
 
 const migrateStorage = () => {
   const defaultKeys = Object.keys(defaultPresets);

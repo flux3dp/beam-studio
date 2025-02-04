@@ -11,8 +11,7 @@ import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import UnitInput from '@core/app/widgets/UnitInput';
 import { checkChuckRotary } from '@core/helpers/checkFeature';
 import useI18n from '@core/helpers/useI18n';
-
-import storage from '@app/implementations/storage';
+import storage from '@core/implementations/storage';
 
 import styles from './RotarySettings.module.scss';
 

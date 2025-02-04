@@ -3,8 +3,7 @@ import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import workareaManager from '@core/app/svgedit/workarea';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-
-import storage from '@app/implementations/storage';
+import storage from '@core/implementations/storage';
 
 import styles from './Ruler.module.scss';
 

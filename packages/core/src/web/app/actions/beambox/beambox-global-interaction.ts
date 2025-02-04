@@ -1,7 +1,6 @@
 import tabController from '@core/app/actions/tabController';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-
-import menu from '@app/implementations/menu';
+import menu from '@core/implementations/menu';
 
 let svgCanvas;
 

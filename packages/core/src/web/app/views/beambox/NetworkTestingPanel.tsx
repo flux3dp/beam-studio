@@ -9,11 +9,10 @@ import AlertConstants from '@core/app/constants/alert-constants';
 import Discover from '@core/helpers/api/discover';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
+import browser from '@core/implementations/browser';
+import network from '@core/implementations/network';
+import os from '@core/implementations/os';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
-
-import browser from '@app/implementations/browser';
-import network from '@app/implementations/network';
-import os from '@app/implementations/os';
 
 const LANG = i18n.lang.beambox.network_testing_panel;
 const TEST_TIME = 30000;

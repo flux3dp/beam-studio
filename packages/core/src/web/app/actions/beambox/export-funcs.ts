@@ -22,10 +22,9 @@ import { tempSplitFullColorLayers } from '@core/helpers/layer/full-color/splitFu
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-maker';
 import VersionChecker from '@core/helpers/version-checker';
+import dialog from '@core/implementations/dialog';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-
-import dialog from '@app/implementations/dialog';
 
 let svgCanvas: ISVGCanvas;
 
