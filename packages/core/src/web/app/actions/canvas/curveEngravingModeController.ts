@@ -120,9 +120,7 @@ class CurveEngravingModeController {
 
     const { device } = await getDevice();
 
-    if (!device) {
-      return false;
-    }
+    if (!device) return false;
 
     const { redLight } = getSupportInfo(device.model);
 
@@ -164,7 +162,7 @@ class CurveEngravingModeController {
 
     progressCaller.openSteppingProgress({
       id: progressId,
-      message: lang.message.connectingMachine,
+      message: lang.message.connecting,
       onCancel: () => {
         canceled = true;
       },
