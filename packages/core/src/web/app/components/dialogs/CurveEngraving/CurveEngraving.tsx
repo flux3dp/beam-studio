@@ -143,8 +143,6 @@ const CurveEngraving = ({ data: initData, onClose, onRemeasure }: Props): React.
     return null;
   }, [data, selectedIndices]);
 
-  console.log(measureError);
-
   return (
     <Modal
       centered
