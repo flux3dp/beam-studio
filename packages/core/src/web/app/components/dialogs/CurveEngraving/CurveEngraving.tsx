@@ -165,9 +165,14 @@ const CurveEngraving = ({ data: initData, onClose, onRemeasure }: Props): React.
           <>
             <div className={styles.err}>{measureError.message}</div>
             {measureError.link && (
-              <button className={styles.info} onClick={() => browser.open(measureError.link!)}>
+              <Button
+                className={styles.info}
+                color="default"
+                onClick={() => browser.open(measureError.link!)}
+                variant="link"
+              >
                 <QuestionCircleOutlined className={styles.link} />
-              </button>
+              </Button>
             )}
           </>
         )}
