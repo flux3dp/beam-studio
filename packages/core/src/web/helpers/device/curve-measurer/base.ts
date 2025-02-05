@@ -68,9 +68,9 @@ export default class BaseCurveMeasurer implements CurveMeasurer {
     const feedrate = 6000;
     const { errors, objectHeight, points } = curData;
     let { highest = null, lowest = null } = curData;
-    // deep copy
-    const newPoints = JSON.parse(JSON.stringify(points));
-    const newErrors = [...errors];
+    // create new array to avoid mutation for react to update
+    const newPoints = [...points] as Points;
+    const newErrors = [...errors] as Errors;
     const start = Date.now();
     const columns = newPoints[0].length;
 
@@ -101,6 +101,7 @@ export default class BaseCurveMeasurer implements CurveMeasurer {
           newPoints[row][column][2] = null;
         }
       } catch (error) {
+        newPoints[row][column][2] = null;
         newErrors[row][column] = error instanceof Error ? error.message : 'Unknown error';
         console.error(`Failed to measure height at point ${x}, ${y}`, error);
       }
