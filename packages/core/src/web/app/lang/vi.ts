@@ -84,6 +84,7 @@ const lang: ILang = {
     },
     document_panel: {
       add_on: 'Phụ kiện',
+      auto_feeder: 'Bộ nạp tự động',
       borderless_mode: 'Mở đáy',
       current_position: 'Vị Trí Hiện Tại',
       disable: 'Tắt',

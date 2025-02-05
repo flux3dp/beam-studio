@@ -84,6 +84,7 @@ const lang: ILang = {
     },
     document_panel: {
       add_on: '扩充模组',
+      auto_feeder: '自动送料',
       borderless_mode: '开盖模式',
       current_position: '当前的位置',
       disable: '关闭',

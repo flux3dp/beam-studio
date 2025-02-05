@@ -84,6 +84,7 @@ const lang: ILang = {
     },
     document_panel: {
       add_on: 'アドオン',
+      auto_feeder: 'オートフィーダー',
       borderless_mode: 'ボーダーレスモード',
       current_position: '現在の位置',
       disable: '無効',

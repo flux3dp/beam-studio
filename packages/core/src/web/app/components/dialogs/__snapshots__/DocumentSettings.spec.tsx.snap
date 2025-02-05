@@ -193,11 +193,9 @@ exports[`test DocumentSettings should render correctly 1`] = `
                             </span>
                             <span
                               class="ant-select-selection-item"
+                              title="Medium (250 DPI)"
                             >
-                              Medium
-                               (
-                              250
-                               DPI)
+                              Medium (250 DPI)
                             </span>
                           </span>
                         </div>
@@ -637,11 +635,9 @@ exports[`test DocumentSettings should render correctly 2`] = `
                             </span>
                             <span
                               class="ant-select-selection-item"
+                              title="High (500 DPI)"
                             >
-                              High
-                               (
-                              500
-                               DPI)
+                              High (500 DPI)
                             </span>
                           </span>
                         </div>
@@ -897,6 +893,7 @@ exports[`test DocumentSettings should render correctly 2`] = `
           style="height: 0px; width: 0px; overflow: hidden;"
         >
           <div
+            aria-label="Low (125 DPI)"
             aria-selected="false"
             id="dpi_list_0"
             role="option"
@@ -904,6 +901,7 @@ exports[`test DocumentSettings should render correctly 2`] = `
             low
           </div>
           <div
+            aria-label="Medium (250 DPI)"
             aria-selected="false"
             id="dpi_list_1"
             role="option"
@@ -927,14 +925,12 @@ exports[`test DocumentSettings should render correctly 2`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option ant-select-item-option-active"
+                  title="Low (125 DPI)"
                 >
                   <div
                     class="ant-select-item-option-content"
                   >
-                    Low
-                     (
-                    125
-                     DPI)
+                    Low (125 DPI)
                   </div>
                   <span
                     aria-hidden="true"
@@ -946,14 +942,12 @@ exports[`test DocumentSettings should render correctly 2`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  title="Medium (250 DPI)"
                 >
                   <div
                     class="ant-select-item-option-content"
                   >
-                    Medium
-                     (
-                    250
-                     DPI)
+                    Medium (250 DPI)
                   </div>
                   <span
                     aria-hidden="true"
@@ -965,14 +959,12 @@ exports[`test DocumentSettings should render correctly 2`] = `
                 <div
                   aria-selected="true"
                   class="ant-select-item ant-select-item-option ant-select-item-option-selected"
+                  title="High (500 DPI)"
                 >
                   <div
                     class="ant-select-item-option-content"
                   >
-                    High
-                     (
-                    500
-                     DPI)
+                    High (500 DPI)
                   </div>
                   <span
                     aria-hidden="true"
@@ -984,14 +976,12 @@ exports[`test DocumentSettings should render correctly 2`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  title="Ultra High (1000 DPI)"
                 >
                   <div
                     class="ant-select-item-option-content"
                   >
-                    Ultra High
-                     (
-                    1000
-                     DPI)
+                    Ultra High (1000 DPI)
                   </div>
                   <span
                     aria-hidden="true"
@@ -1203,11 +1193,9 @@ exports[`test DocumentSettings should render correctly 3`] = `
                             </span>
                             <span
                               class="ant-select-selection-item"
+                              title="High (500 DPI)"
                             >
-                              High
-                               (
-                              500
-                               DPI)
+                              High (500 DPI)
                             </span>
                           </span>
                         </div>
@@ -1690,6 +1678,7 @@ exports[`test DocumentSettings should render correctly 3`] = `
           style="height: 0px; width: 0px; overflow: hidden;"
         >
           <div
+            aria-label="Low (125 DPI)"
             aria-selected="false"
             id="dpi_list_0"
             role="option"
@@ -1697,6 +1686,7 @@ exports[`test DocumentSettings should render correctly 3`] = `
             low
           </div>
           <div
+            aria-label="Medium (250 DPI)"
             aria-selected="false"
             id="dpi_list_1"
             role="option"
@@ -1720,14 +1710,12 @@ exports[`test DocumentSettings should render correctly 3`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option ant-select-item-option-active"
+                  title="Low (125 DPI)"
                 >
                   <div
                     class="ant-select-item-option-content"
                   >
-                    Low
-                     (
-                    125
-                     DPI)
+                    Low (125 DPI)
                   </div>
                   <span
                     aria-hidden="true"
@@ -1739,14 +1727,12 @@ exports[`test DocumentSettings should render correctly 3`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  title="Medium (250 DPI)"
                 >
                   <div
                     class="ant-select-item-option-content"
                   >
-                    Medium
-                     (
-                    250
-                     DPI)
+                    Medium (250 DPI)
                   </div>
                   <span
                     aria-hidden="true"
@@ -1758,14 +1744,12 @@ exports[`test DocumentSettings should render correctly 3`] = `
                 <div
                   aria-selected="true"
                   class="ant-select-item ant-select-item-option ant-select-item-option-selected"
+                  title="High (500 DPI)"
                 >
                   <div
                     class="ant-select-item-option-content"
                   >
-                    High
-                     (
-                    500
-                     DPI)
+                    High (500 DPI)
                   </div>
                   <span
                     aria-hidden="true"
@@ -1777,14 +1761,12 @@ exports[`test DocumentSettings should render correctly 3`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  title="Ultra High (1000 DPI)"
                 >
                   <div
                     class="ant-select-item-option-content"
                   >
-                    Ultra High
-                     (
-                    1000
-                     DPI)
+                    Ultra High (1000 DPI)
                   </div>
                   <span
                     aria-hidden="true"
@@ -2262,11 +2244,9 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
                             </span>
                             <span
                               class="ant-select-selection-item"
+                              title="Medium (250 DPI)"
                             >
-                              Medium
-                               (
-                              250
-                               DPI)
+                              Medium (250 DPI)
                             </span>
                           </span>
                         </div>
@@ -2890,11 +2870,9 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
                             </span>
                             <span
                               class="ant-select-selection-item"
+                              title="Medium (250 DPI)"
                             >
-                              Medium
-                               (
-                              250
-                               DPI)
+                              Medium (250 DPI)
                             </span>
                           </span>
                         </div>
@@ -3708,11 +3686,9 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
                             </span>
                             <span
                               class="ant-select-selection-item"
+                              title="High (500 DPI)"
                             >
-                              High
-                               (
-                              500
-                               DPI)
+                              High (500 DPI)
                             </span>
                           </span>
                         </div>

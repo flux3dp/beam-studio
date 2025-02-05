@@ -8,6 +8,7 @@ export enum RotaryType {
 export const CHUCK_ROTARY_DIAMETER = 133;
 
 export interface SupportInfo {
+  autoFeeder?: { maxHeight: number; xRange: [number, number] }; // [x, width] in mm
   autoFocus?: boolean;
   curveEngraving?: boolean;
   framingLowLaser?: boolean;
@@ -59,10 +60,11 @@ const supportList: Record<WorkAreaModel, SupportInfo> = {
     },
   },
   fbb2: {
+    autoFeeder: { maxHeight: 2000, xRange: [100, 400] },
     curveEngraving: true,
     jobOrigin: true,
     lowerFocus: true,
-    passThrough: true,
+    passThrough: false, // TODO: hide until fix job origin for clipped object
     redLight: true,
     rotary: {
       chuck: true,

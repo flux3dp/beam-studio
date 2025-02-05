@@ -84,6 +84,7 @@ const lang: ILang = {
     },
     document_panel: {
       add_on: 'Tillägg',
+      auto_feeder: 'Automatisk matning',
       borderless_mode: 'Öppen botten',
       current_position: 'Nuvarande Position',
       disable: 'Inaktivera',

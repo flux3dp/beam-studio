@@ -84,6 +84,7 @@ const lang: ILang = {
     },
     document_panel: {
       add_on: '애드온',
+      auto_feeder: '자동 공급 장치',
       borderless_mode: '열린 바닥',
       current_position: '현재 위치',
       disable: '비활성화',
