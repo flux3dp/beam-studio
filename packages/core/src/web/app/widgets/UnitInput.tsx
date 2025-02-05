@@ -1,3 +1,4 @@
+import type { FocusEvent } from 'react';
 import React, { forwardRef, useCallback, useImperativeHandle, useRef } from 'react';
 
 import type { InputNumberProps, ThemeConfig } from 'antd';
@@ -21,10 +22,10 @@ interface Props extends InputNumberProps<number> {
  * if isInch is true, the unit will be inch but the value will still be mm,
  * the transfer will be handled by formatter and parser
  */
-const UnitInput = forwardRef<HTMLInputElement, Props>(
+const UnitInput = forwardRef<HTMLInputElement | null, Props>(
   (
     {
-      clipValue = false,
+      clipValue = true,
       fireOnChange = false,
       isInch,
       onBlur,
@@ -37,17 +38,17 @@ const UnitInput = forwardRef<HTMLInputElement, Props>(
     }: Props,
     outerRef,
   ): React.JSX.Element => {
-    const inputRef = useRef<HTMLInputElement>(null);
+    const inputRef = useRef<HTMLInputElement | null>(null);
     const valueRef = useRef<number | undefined>(); // for onChange
 
-    useImperativeHandle(outerRef, () => {
+    useImperativeHandle<HTMLInputElement | null, HTMLInputElement | null>(outerRef, () => {
       const input = inputRef.current;
 
-      return input.parentNode?.querySelector('input') || input;
+      return input?.parentNode?.querySelector('input') || input;
     }, []);
 
     const formatter = useCallback(
-      (value: number | string) => {
+      (value: number | string = '') => {
         let newVal = typeof value === 'string' ? Number.parseFloat(value) : value;
 
         if (isInch) {
@@ -60,20 +61,20 @@ const UnitInput = forwardRef<HTMLInputElement, Props>(
     );
 
     const parser = useCallback(
-      (value: string) => Number.parseFloat(value.trim().replaceAll(',', '.')) * (isInch ? 25.4 : 1),
+      (value: string = '') => Number.parseFloat(value.trim().replaceAll(',', '.')) * (isInch ? 25.4 : 1),
       [isInch],
     );
 
     const handleValueChange = useCallback(
       (value: number | undefined) => {
         // Only trigger onChange if the value has changed
-        if (value !== valueRef.current && !Number.isNaN(value)) {
+        if (value !== valueRef.current && !Number.isNaN(value) && value !== undefined) {
           let val = value;
 
           if (clipValue) {
-            if (val > props.max) {
+            if (props.max && val > props.max) {
               val = props.max;
-            } else if (val < props.min) {
+            } else if (props.min && val < props.min) {
               val = props.min;
             }
           }
@@ -86,12 +87,21 @@ const UnitInput = forwardRef<HTMLInputElement, Props>(
     );
 
     const handlePressEnter = useCallback(() => {
-      handleValueChange(parser(inputRef.current?.value));
+      const value = inputRef.current?.value;
+
+      if (value !== undefined) {
+        handleValueChange(parser(value));
+      }
     }, [handleValueChange, parser]);
 
     const handleBlur = useCallback(
-      (e) => {
-        handleValueChange(parser(inputRef.current?.value));
+      (e: FocusEvent<HTMLInputElement>) => {
+        const value = inputRef.current?.value;
+
+        if (value !== undefined) {
+          handleValueChange(parser(value));
+        }
+
         onBlur?.(e);
       },
       [handleValueChange, parser, onBlur],
