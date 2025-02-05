@@ -7,9 +7,10 @@ import type { CurveMeasurer, InteractiveOptions } from '@core/interfaces/CurveMe
 import type { MeasureData } from '@core/interfaces/ICurveEngraving';
 
 import BaseCurveMeasurer from './base';
+import translateError from './translateError';
 
 export default class RedLightCurveMeasurer extends BaseCurveMeasurer implements CurveMeasurer {
-  private hasTakenReference: boolean;
+  private hasTakenReference: boolean = false;
 
   setup = async (onProgressText?: (text: string) => void): Promise<boolean> => {
     const res = await this.setupDevice();
@@ -39,10 +40,12 @@ export default class RedLightCurveMeasurer extends BaseCurveMeasurer implements 
     }
 
     const res = await new Promise<null | number>((resolve) => {
+      const t = i18n.lang.curve_engraving;
+
       alertCaller.popUp({
         buttonType: alertConstants.CONFIRM_CANCEL,
-        caption: lang.curve_engraving.take_reference,
-        message: lang.curve_engraving.take_reference_desc,
+        caption: t.take_reference,
+        message: t.take_reference_desc,
         onCancel: () => resolve(null),
         onConfirm: async () => {
           try {
@@ -50,7 +53,11 @@ export default class RedLightCurveMeasurer extends BaseCurveMeasurer implements 
 
             resolve(z);
           } catch (error) {
-            alertCaller.popUpError({ message: `Failed to take reference ${error.message}` });
+            const { code, message } = translateError(error instanceof Error ? error.message : null);
+
+            if (code) alertCaller.popUpError({ message });
+            else alertCaller.popUpError({ message: `${t.failed_to_take_reference}: ${message}` });
+
             resolve(null);
           }
         },
@@ -86,13 +93,15 @@ export default class RedLightCurveMeasurer extends BaseCurveMeasurer implements 
     return z;
   };
 
-  async measurePoints(curData: MeasureData, targetIndices: number[], opts?: InteractiveOptions): Promise<MeasureData> {
+  override async measurePoints(
+    curData: MeasureData,
+    targetIndices: number[],
+    opts?: InteractiveOptions,
+  ): Promise<MeasureData | null> {
     if (!this.hasTakenReference) {
       const res = await this.showTakeReferenceDialog();
 
-      if (!res) {
-        return null;
-      }
+      if (!res) return null;
     }
 
     const res = await super.measurePoints(curData, targetIndices, opts);

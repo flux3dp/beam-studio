@@ -3,7 +3,6 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { Button, Col, InputNumber, Modal, Row, Segmented } from 'antd';
 import classNames from 'classnames';
 
-import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 import type { CurveMeasurer } from '@core/interfaces/CurveMeasurer';
@@ -219,27 +218,3 @@ const MeasureArea = ({ bbox: { height, width, x, y }, measurer, onCancel, onFini
 };
 
 export default MeasureArea;
-
-export const showMeasureArea = (bbox: BBox, measurer: CurveMeasurer): Promise<MeasureData | null> => {
-  if (isIdExist('measure-area')) {
-    popDialogById('measure-area');
-  }
-
-  return new Promise<MeasureData | null>((resolve) => {
-    addDialogComponent(
-      'measure-area',
-      <MeasureArea
-        bbox={bbox}
-        measurer={measurer}
-        onCancel={() => {
-          resolve(null);
-          popDialogById('measure-area');
-        }}
-        onFinished={(data) => {
-          resolve(data);
-          popDialogById('measure-area');
-        }}
-      />,
-    );
-  });
-};

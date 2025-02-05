@@ -1018,12 +1018,16 @@ export interface ILang {
     qr_code: string;
   };
   curve_engraving: {
+    '921': string;
+    '922': string;
     amount: string;
     apply_arkwork: string;
     apply_camera: string;
     click_to_select_point: string;
     coloumns: string;
     column_gap: string;
+    err_object_over_range: string;
+    failed_to_take_reference: string;
     gap: string;
     help_center_url: string;
     measure_audofocus_area: string;

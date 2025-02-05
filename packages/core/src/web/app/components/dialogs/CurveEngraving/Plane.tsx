@@ -26,15 +26,17 @@ const Plane = ({
   toggleSelectedIndex,
 }: PlaneProps): React.JSX.Element => {
   const geoMeshRef = useRef<THREE.Mesh>(null);
-  const lineRef = useRef();
+  const lineRef = useRef<THREE.LineSegments>(null);
   const texture = useLoader(THREE.TextureLoader, textureSource);
   const { camera, gl, scene } = useThree();
   const flattened = useMemo(
     // reverse y axis and z axis due to different coordinate system, swift half width and height to keep in the center
     () => points.flat().map((p) => [p[0] - bboxX - 0.5 * width, 0.5 * height - (p[1] - bboxY), p[2] ? -p[2] : p[2]]),
     [points, bboxX, bboxY, width, height],
-  );
-  const filteredPoints = useMemo(() => flattened.filter((p) => p[2] !== null), [flattened]);
+  ) as Array<[number, number, null | number]>;
+  const filteredPoints = useMemo(() => flattened.filter((p) => p[2] !== null), [flattened]) as Array<
+    [number, number, number]
+  >;
 
   const customGeometry = useMemo(() => {
     const vertices = [];

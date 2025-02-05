@@ -2,8 +2,7 @@ import alertCaller from '@core/app/actions/alert-caller';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
 import progressCaller from '@core/app/actions/progress-caller';
-import { showCurveEngraving } from '@core/app/components/dialogs/CurveEngraving/CurveEngraving';
-import { showMeasureArea } from '@core/app/components/dialogs/CurveEngraving/MeasureArea';
+import { showCurveEngraving, showMeasureArea } from '@core/app/components/dialogs/CurveEngraving';
 import { getSupportInfo } from '@core/app/constants/add-on';
 import alertConstants from '@core/app/constants/alert-constants';
 import { CanvasMode } from '@core/app/constants/canvasMode';
@@ -121,9 +120,7 @@ class CurveEngravingModeController {
 
     const { device } = await getDevice();
 
-    if (!device) {
-      return false;
-    }
+    if (!device) return false;
 
     const { redLight } = getSupportInfo(device.model);
 
@@ -165,7 +162,7 @@ class CurveEngravingModeController {
 
     progressCaller.openSteppingProgress({
       id: progressId,
-      message: lang.message.connectingMachine,
+      message: lang.message.connecting,
       onCancel: () => {
         canceled = true;
       },

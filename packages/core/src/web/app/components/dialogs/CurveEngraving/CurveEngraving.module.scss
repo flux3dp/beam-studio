@@ -1,5 +1,30 @@
 @use '@core/styles/variables' as variables;
 
+.err-container {
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+
+  &.gray {
+    background-color: #f7f7f7;
+  }
+
+  .err {
+    color: variables.$status-critical;
+    font-size: 14px;
+  }
+
+  .info {
+    padding: 0;
+
+    .icon {
+      font-size: 14px;
+    }
+  }
+}
+
 .container {
   position: relative;
   width: 100%;

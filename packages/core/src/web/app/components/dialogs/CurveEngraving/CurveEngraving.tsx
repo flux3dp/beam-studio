@@ -1,14 +1,17 @@
 import React, { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Stage } from '@react-three/drei';
 import { Button, Modal } from 'antd';
+import classNames from 'classnames';
 import * as THREE from 'three';
 
 import constant from '@core/app/actions/beambox/constant';
 import previewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
-import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import Canvas from '@core/app/widgets/three/Canvas';
+import translateErrorMessage from '@core/helpers/device/curve-measurer/translateError';
 import useI18n from '@core/helpers/useI18n';
+import browser from '@core/implementations/browser';
 import type { CurveEngraving as ICurveEngraving } from '@core/interfaces/ICurveEngraving';
 
 import styles from './CurveEngraving.module.scss';
@@ -130,6 +133,16 @@ const CurveEngraving = ({ data: initData, onClose, onRemeasure }: Props): React.
     }
   }, [onRemeasure, selectedIndices]);
 
+  const measureError = useMemo(() => {
+    if (selectedIndices.size === 1) {
+      const err = data.errors.flat()[Array.from(selectedIndices)[0]];
+
+      if (err) return translateErrorMessage(err);
+    }
+
+    return null;
+  }, [data, selectedIndices]);
+
   return (
     <Modal
       centered
@@ -147,6 +160,23 @@ const CurveEngraving = ({ data: initData, onClose, onRemeasure }: Props): React.
       title={lang.curve_engraving.preview_3d_curve}
       width={540}
     >
+      <div className={classNames(styles['err-container'], { [styles.gray]: isAntdMotionCompleted })}>
+        {measureError && (
+          <>
+            <div className={styles.err}>{measureError.message}</div>
+            {measureError.link && (
+              <Button
+                className={styles.info}
+                color="default"
+                onClick={() => browser.open(measureError.link!)}
+                variant="link"
+              >
+                <QuestionCircleOutlined className={styles.link} />
+              </Button>
+            )}
+          </>
+        )}
+      </div>
       <div className={styles.container}>
         {isAntdMotionCompleted && (
           <Canvas
@@ -196,26 +226,3 @@ const CurveEngraving = ({ data: initData, onClose, onRemeasure }: Props): React.
 };
 
 export default CurveEngraving;
-
-export const showCurveEngraving = async (
-  data: ICurveEngraving,
-  onRemeasure: (indices: number[]) => Promise<ICurveEngraving | null>,
-): Promise<void> => {
-  if (!isIdExist('curve-engraving')) {
-    return new Promise<void>((resolve) => {
-      addDialogComponent(
-        'curve-engraving',
-        <CurveEngraving
-          data={data}
-          onClose={() => {
-            popDialogById('curve-engraving');
-            resolve();
-          }}
-          onRemeasure={onRemeasure}
-        />,
-      );
-    });
-  }
-
-  return Promise.resolve();
-};

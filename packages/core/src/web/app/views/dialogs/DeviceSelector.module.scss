@@ -1,3 +1,5 @@
+@use '@core/styles/variables' as variables;
+
 .device-list {
   cursor: pointer;
   height: 160px;
@@ -70,24 +72,24 @@
         font-weight: 500;
         line-height: 20px;
         &.blue {
-          border-color: #1890ff;
-          color: #1890ff;
+          border-color: variables.$primary-blue;
+          color: variables.$primary-blue;
         }
         &.grey {
-          border-color: #7c7c7c;
-          color: #7c7c7c;
+          border-color: variables.$secondary-gray;
+          color: variables.$secondary-gray;
         }
         &.orange {
-          border-color: #faa22d;
-          color: #faa22d;
+          border-color: variables.$status-warning;
+          color: variables.$status-warning;
         }
         &.red {
-          border-color: #fe4348;
-          color: #fe4348;
+          border-color: variables.$status-critical;
+          color: variables.$status-critical;
         }
         &.green {
-          border-color: #4fbb30;
-          color: #4fbb30;
+          border-color: variables.$status-normal;
+          color: variables.$status-normal;
         }
       }
       .connection-type {
