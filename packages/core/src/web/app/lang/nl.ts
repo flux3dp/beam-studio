@@ -84,6 +84,7 @@ const lang: ILang = {
     },
     document_panel: {
       add_on: 'Add-ons',
+      auto_feeder: 'Automatische invoer',
       borderless_mode: 'Open onderzijde',
       current_position: 'Huidige Positie',
       disable: 'Uitschakelen',

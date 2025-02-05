@@ -84,6 +84,7 @@ const lang: ILang = {
     },
     document_panel: {
       add_on: 'Tilføjelser',
+      auto_feeder: 'Automatisk føder',
       borderless_mode: 'Åben bund',
       current_position: 'Nuværende Position',
       disable: 'Deaktivér',

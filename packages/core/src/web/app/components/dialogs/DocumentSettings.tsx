@@ -27,6 +27,7 @@ import isDev from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 import storage from '@core/implementations/storage';
+import type { PromarkInfo } from '@core/interfaces/Promark';
 
 import styles from './DocumentSettings.module.scss';
 
@@ -39,7 +40,7 @@ const workareaOptions = [
   checkFpm1() && { label: 'Promark', value: 'fpm1' },
   checkFbb2() && { label: 'Beambox II', value: 'fbb2' },
   isDev() && { label: 'Lazervida', value: 'flv1' },
-].filter(Boolean) as Array<{ label: string; value: WorkAreaModel }>;
+].filter(Boolean);
 
 const promarkLaserOptions = [
   { label: 'Desktop - 20W', value: `${LaserType.Desktop}-20` },
@@ -84,53 +85,67 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const [enableDiode, setEnableDiode] = useState(!!BeamboxPreference.read('enable-diode'));
   const [enableAutofocus, setEnableAutofocus] = useState(!!BeamboxPreference.read('enable-autofocus'));
   const [passThrough, setPassThrough] = useState(!!BeamboxPreference.read('pass-through'));
+  const [autoFeeder, setAutoFeeder] = useState(!!BeamboxPreference.read('auto-feeder'));
 
   const isInch = useMemo(() => storage.get('default-units') === 'inches', []);
   const workareaObj = useMemo(() => getWorkarea(workarea), [workarea]);
   const [passThroughHeight, setPassThroughHeight] = useState<number>(
     BeamboxPreference.read('pass-through-height') || workareaObj.displayHeight || workareaObj.height,
   );
+  const [autoFeederHeight, setAutoFeederHeight] = useState<number>(
+    BeamboxPreference.read('auto-feeder-height') || workareaObj.displayHeight || workareaObj.height,
+  );
 
+  // pass-through, autofeed, rotary mode are exclusive, disable others when one is on
   useEffect(() => {
     if (rotaryMode > 0) {
-      setBorderless(false);
       setPassThrough(false);
+      setAutoFeeder(false);
     }
   }, [rotaryMode]);
   useEffect(() => {
-    if (borderless) {
-      setRotaryMode(0);
-    } else if (supportInfo.openBottom) {
-      setPassThrough(false);
-    }
-  }, [supportInfo, borderless]);
-  useEffect(() => {
     if (passThrough) {
       setRotaryMode(0);
+      setAutoFeeder(false);
     }
   }, [passThrough]);
   useEffect(() => {
-    if (borderless) {
-      setPassThroughHeight((cur) => Math.max(cur, workareaObj.height));
+    if (autoFeeder) {
+      setRotaryMode(0);
+      setPassThrough(false);
     }
-  }, [borderless, workareaObj]);
+  }, [autoFeeder]);
+  // for openBottom machine, disable pass-through when borderless is off
+  useEffect(() => {
+    if (supportInfo.openBottom && !borderless) setPassThrough(false);
+  }, [supportInfo, borderless]);
 
-  const handleRotaryModeChange = (on: boolean) => setRotaryMode(on ? 1 : 0);
-
+  const minHeight = useMemo(() => workareaObj.displayHeight ?? workareaObj.height, [workareaObj]);
   const showPassThrough = supportInfo.passThrough && (supportInfo.openBottom ? borderless : true);
+  const handleRotaryModeChange: (on: boolean) => void = (on: boolean) => setRotaryMode(on ? 1 : 0);
+
+  useEffect(() => {
+    if (showPassThrough) setPassThroughHeight((cur) => Math.max(cur, minHeight));
+  }, [minHeight, showPassThrough]);
+  useEffect(() => {
+    if (supportInfo.autoFeeder) {
+      setAutoFeederHeight((cur) => Math.min(supportInfo.autoFeeder!.maxHeight, Math.max(minHeight, cur)));
+    }
+  }, [minHeight, supportInfo.autoFeeder]);
 
   const handleSave = () => {
-    BeamboxPreference.write('engrave_dpi', engraveDpi);
-
     const dpiEvent = eventEmitterFactory.createEventEmitter('dpi-info');
+    const workareaChanged = workarea !== origWorkarea;
+    let customDimensionChanged = false;
+    const rotaryChanged =
+      rotaryMode !== BeamboxPreference.read('rotary_mode') ||
+      extendRotaryWorkarea !== !!BeamboxPreference.read('extend-rotary-workarea');
 
+    BeamboxPreference.write('engrave_dpi', engraveDpi);
     dpiEvent.emit('UPDATE_DPI', engraveDpi);
     BeamboxPreference.write('borderless', supportInfo.openBottom && borderless);
     BeamboxPreference.write('enable-diode', supportInfo.hybridLaser && enableDiode);
     BeamboxPreference.write('enable-autofocus', supportInfo.autoFocus && enableAutofocus);
-
-    const workareaChanged = workarea !== origWorkarea;
-    let customDimensionChanged = false;
 
     if (workareaObj.dismensionCustomizable) {
       const origVal = BeamboxPreference.read('customized-dimension') ?? {};
@@ -144,34 +159,44 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
       });
     }
 
-    const rotaryChanged =
-      rotaryMode !== BeamboxPreference.read('rotary_mode') ||
-      extendRotaryWorkarea !== !!BeamboxPreference.read('extend-rotary-workarea');
-
     BeamboxPreference.write('rotary_mode', rotaryMode);
 
     if (rotaryMode > 0) {
-      if (supportInfo.rotary?.extendWorkarea) {
-        BeamboxPreference.write('extend-rotary-workarea', extendRotaryWorkarea);
-      }
+      if (supportInfo.rotary?.extendWorkarea) BeamboxPreference.write('extend-rotary-workarea', extendRotaryWorkarea);
 
-      if (supportInfo.rotary?.mirror) {
-        BeamboxPreference.write('rotary-mirror', mirrorRotary);
-      }
+      if (supportInfo.rotary?.mirror) BeamboxPreference.write('rotary-mirror', mirrorRotary);
     }
 
     const newPassThrough = showPassThrough && passThrough;
     const passThroughChanged = newPassThrough !== !!BeamboxPreference.read('pass-through');
+    const passThroughHeightChanged = passThroughHeight !== BeamboxPreference.read('pass-through-height');
+    const autoFeederChanged = autoFeeder !== !!BeamboxPreference.read('auto-feeder');
+    const autoFeederHeightChanged = autoFeederHeight !== BeamboxPreference.read('auto-feeder-height');
 
     BeamboxPreference.write('pass-through', newPassThrough);
 
-    const passThroughHeightChanged = passThroughHeight !== BeamboxPreference.read('pass-through-height');
+    if (showPassThrough) BeamboxPreference.write('pass-through-height', Math.max(passThroughHeight, minHeight));
 
-    BeamboxPreference.write('pass-through-height', passThroughHeight);
+    BeamboxPreference.write('auto-feeder', autoFeeder);
+
+    if (supportInfo.autoFeeder) {
+      const newVal = Math.min(supportInfo.autoFeeder.maxHeight, Math.max(minHeight, autoFeederHeight));
+
+      BeamboxPreference.write('auto-feeder-height', newVal);
+    }
+
     BeamboxPreference.write('enable-job-origin', enableJobOrigin);
     BeamboxPreference.write('job-origin', jobOrigin);
 
-    if (workareaChanged || customDimensionChanged || rotaryChanged || passThroughChanged || passThroughHeightChanged) {
+    if (
+      workareaChanged ||
+      customDimensionChanged ||
+      rotaryChanged ||
+      passThroughChanged ||
+      passThroughHeightChanged ||
+      autoFeederChanged ||
+      autoFeederHeightChanged
+    ) {
       changeWorkarea(workarea, { toggleModule: workareaChanged });
       rotaryAxis.toggleDisplay();
     } else {
@@ -222,9 +247,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
             });
           });
 
-          if (!res) {
-            return;
-          }
+          if (!res) return;
         }
 
         handleSave();
@@ -240,13 +263,14 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
             <label className={styles.title} htmlFor="workareaSelect">
               {tDocu.machine}:
             </label>
-            <Select bordered className={styles.control} id="workareaSelect" onChange={setWorkarea} value={workarea}>
-              {workareaOptions.map((option) => (
-                <Select.Option key={option.value} value={option.value}>
-                  {option.label}
-                </Select.Option>
-              ))}
-            </Select>
+            <Select
+              className={styles.control}
+              id="workareaSelect"
+              onChange={setWorkarea}
+              options={workareaOptions}
+              value={workarea}
+              variant="outlined"
+            />
           </div>
           {workareaObj.dismensionCustomizable && (
             <div className={styles.row}>
@@ -254,23 +278,18 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                 {tDocu.workarea}:
               </label>
               <Select
-                bordered
                 className={styles.control}
                 id="customDimension"
-                onChange={(val) =>
+                onChange={(val) => {
                   setCustomDimension((cur) => ({
                     ...cur,
                     [workarea]: { height: val, width: val },
-                  }))
-                }
+                  }));
+                }}
+                options={pmWorkareaOptions.map((value) => ({ label: `${value} x ${value} mm`, value }))}
                 value={customDimension[workarea]?.width ?? workareaObj.width}
-              >
-                {pmWorkareaOptions.map((val) => (
-                  <Select.Option key={val} value={val}>
-                    {`${val} x ${val} mm`}
-                  </Select.Option>
-                ))}
-              </Select>
+                variant="outlined"
+              />
             </div>
           )}
           {isPromark && (
@@ -279,35 +298,34 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                 {tDocu.laser_source}:
               </label>
               <Select
-                bordered
                 className={styles.control}
                 id="pm-laser-source"
                 onChange={(val) => {
                   const [type, watt] = val.split('-').map(Number);
 
-                  setPmInfo({ laserType: type, watt });
+                  setPmInfo({ laserType: type, watt } as PromarkInfo);
                 }}
+                options={promarkLaserOptions}
                 value={`${pmInfo.laserType}-${pmInfo.watt}`}
-              >
-                {promarkLaserOptions.map(({ label, value }) => (
-                  <Select.Option key={value} value={value}>
-                    {label}
-                  </Select.Option>
-                ))}
-              </Select>
+                variant="outlined"
+              />
             </div>
           )}
           <div className={styles.row}>
             <label className={styles.title} htmlFor="dpi">
               {tDocu.engrave_dpi}:
             </label>
-            <Select bordered className={styles.control} id="dpi" onChange={setEngraveDpi} value={engraveDpi}>
-              {dpiOptions.map((val) => (
-                <Select.Option key={val} value={val as string}>
-                  {tDocu[val]} ({constant.dpiValueMap[val]} DPI)
-                </Select.Option>
-              ))}
-            </Select>
+            <Select
+              className={styles.control}
+              id="dpi"
+              onChange={setEngraveDpi}
+              options={dpiOptions.map((value) => ({
+                label: `${tDocu[value]} (${constant.dpiValueMap[value]} DPI)`,
+                value,
+              }))}
+              value={engraveDpi}
+              variant="outlined"
+            />
           </div>
         </div>
         {supportInfo.jobOrigin && (
@@ -322,15 +340,16 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                   {tDocu.start_from}:
                 </label>
                 <Select
-                  bordered
                   className={styles.control}
                   id="startFrom"
                   onChange={setEnableJobOrigin}
+                  options={[
+                    { label: tDocu.origin, value: 0 },
+                    { label: tDocu.current_position, value: 1 },
+                  ]}
                   value={enableJobOrigin}
-                >
-                  <Select.Option value={0}>{tDocu.origin}</Select.Option>
-                  <Select.Option value={1}>{tDocu.current_position}</Select.Option>
-                </Select>
+                  variant="outlined"
+                />
               </div>
               {enableJobOrigin === 1 && (
                 <div className={styles.row}>
@@ -506,9 +525,10 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                     <UnitInput
                       addonAfter={isInch ? 'in' : 'mm'}
                       className={styles.input}
+                      clipValue
                       id="pass_through_height"
                       isInch={isInch}
-                      min={workareaObj.displayHeight ?? workareaObj.height}
+                      min={minHeight}
                       onChange={(val) => {
                         if (val) {
                           setPassThroughHeight(val);
@@ -522,6 +542,41 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                       <QuestionCircleOutlined className={styles.hint} />
                     </Tooltip>
                   </>
+                )}
+              </div>
+            </div>
+          )}
+          {Boolean(supportInfo.autoFeeder) && (
+            <div className={classNames(styles.row, styles.full)}>
+              <div className={styles.title}>
+                <label htmlFor="auto_feeder">{tDocu.auto_feeder}</label>
+              </div>
+              <div className={styles.control}>
+                <Switch
+                  checked={supportInfo.autoFeeder && autoFeeder}
+                  className={styles.switch}
+                  disabled={!supportInfo.autoFeeder}
+                  id="auto_feeder"
+                  onChange={setAutoFeeder}
+                />
+                {autoFeeder && (
+                  <UnitInput
+                    addonAfter={isInch ? 'in' : 'mm'}
+                    className={styles.input}
+                    clipValue
+                    id="auto_feeder_height"
+                    isInch={isInch}
+                    max={supportInfo.autoFeeder!.maxHeight}
+                    min={minHeight}
+                    onChange={(val) => {
+                      if (val) {
+                        setAutoFeederHeight(val);
+                      }
+                    }}
+                    precision={isInch ? 2 : 0}
+                    size="small"
+                    value={autoFeederHeight}
+                  />
                 )}
               </div>
             </div>

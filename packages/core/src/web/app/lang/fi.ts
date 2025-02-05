@@ -84,6 +84,7 @@ const lang: ILang = {
     },
     document_panel: {
       add_on: 'Lisäosat',
+      auto_feeder: 'Automaattinen syöttölaite',
       borderless_mode: 'Avoin pohja',
       current_position: 'Nykyinen Sijainti',
       disable: 'Poista käytöstä',
