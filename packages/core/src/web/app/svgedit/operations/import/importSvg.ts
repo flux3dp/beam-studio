@@ -208,8 +208,8 @@ const importSvg = async (
   const elementOptions = { parentCmd: batchCmd, targetModule, type: importType };
 
   if (['color', 'nolayer'].includes(importType)) {
-    newElements.push(await readSVG(outputData.strokes as Blob, elementOptions));
-    newElements.push(await readSVG(outputData.colors as Blob, elementOptions));
+    newElements.push(await readSVG(outputData.strokes, elementOptions));
+    newElements.push(await readSVG(outputData.colors, elementOptions));
   } else if (importType === 'layer') {
     const keys = Object.keys(outputData).filter((key) => !['bitmap', 'bitmap_offset'].includes(key));
 
@@ -217,7 +217,7 @@ const importSvg = async (
       const key = keys[i];
 
       newElements.push(
-        await readSVG(outputData[key] as Blob, {
+        await readSVG(outputData[key], {
           ...elementOptions,
           layerName: key,
         }),
