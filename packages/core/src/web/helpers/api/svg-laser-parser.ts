@@ -15,6 +15,7 @@ import { modelsWithModules } from '@core/app/constants/layer-module/layer-module
 import moduleOffsets from '@core/app/constants/layer-module/module-offsets';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import workareaManager from '@core/app/svgedit/workarea';
 import AlertConfig from '@core/helpers/api/alert-config';
 import getRotaryRatio from '@core/helpers/device/get-rotary-ratio';
 import i18n from '@core/helpers/i18n';
@@ -50,9 +51,7 @@ export const getExportOpt = (
   if (model === 'fhexa1') {
     config.hardware_name = 'hexa';
 
-    if (!useDevPaddingAcc) {
-      config.acc = 7500;
-    }
+    if (!useDevPaddingAcc) config.acc = 7500;
   } else if (model === 'fbb1p') {
     config.hardware_name = 'pro';
   } else if (model === 'fbb1b') {
@@ -62,40 +61,22 @@ export const getExportOpt = (
   } else if (model === 'ado1') {
     config.hardware_name = 'ado1';
 
-    if (!useDevPaddingAcc) {
-      config.acc = opt.paddingAccel || 3200;
-    }
+    if (!useDevPaddingAcc) config.acc = opt.paddingAccel || 3200;
   } else if (model === 'fbb2') {
     config.hardware_name = 'fbb2';
 
-    if (!useDevPaddingAcc) {
-      config.acc = 8000;
-    }
+    if (!useDevPaddingAcc) config.acc = 8000;
   } else {
     config.hardware_name = model;
   }
 
-  if (useDevPaddingAcc) {
-    config.acc = paddingAccel;
-  }
+  if (useDevPaddingAcc) config.acc = paddingAccel;
 
-  if (opt.codeType === 'gcode') {
-    config.gc = true;
-  }
+  if (opt.codeType === 'gcode') config.gc = true;
+
+  if (BeamboxPreference.read('reverse-engraving')) config.rev = true;
 
   const supportInfo = getSupportInfo(model);
-  const rotaryMode = BeamboxPreference.read('rotary_mode');
-
-  if (rotaryMode && supportInfo.rotary) {
-    config.spin = rotaryAxis.getPosition();
-
-    const rotaryRatio = getRotaryRatio(supportInfo);
-
-    if (rotaryRatio !== 1) {
-      config.rotary_y_ratio = rotaryRatio;
-    }
-  }
-
   const hasJobOrigin = BeamboxPreference.read('enable-job-origin') && supportInfo.jobOrigin && supportJobOrigin;
 
   if (hasJobOrigin) {
@@ -103,6 +84,28 @@ export const getExportOpt = (
     const { x, y } = getJobOrigin();
 
     config.job_origin = [Math.round(x * 10 ** 3) / 10 ** 3, Math.round(y * 10 ** 3) / 10 ** 3];
+  }
+
+  const rotaryMode = BeamboxPreference.read('rotary_mode') && supportInfo.rotary;
+  const autoFeeder = BeamboxPreference.read('auto-feeder') && supportInfo.autoFeeder;
+
+  //
+  if (rotaryMode) {
+    config.spin = rotaryAxis.getPosition() ?? 0;
+
+    const rotaryRatio = getRotaryRatio(supportInfo);
+
+    if (rotaryRatio !== 1) {
+      config.rotary_y_ratio = rotaryRatio;
+    }
+  } else if (autoFeeder) {
+    config.rotary_y_ratio = autoFeeder.rotaryRatio;
+
+    if (config.job_origin) {
+      config.spin = config.job_origin[1] * constant.dpmm;
+    } else {
+      config.spin = config.rev ? workareaObj.pxHeight : 0;
+    }
   }
 
   if (constant.adorModels.includes(model)) {
@@ -186,13 +189,7 @@ export const getExportOpt = (
   // default min_speed is 3 if not set
   config.min_speed = workareaObj.minSpeed;
 
-  if (BeamboxPreference.read('reverse-engraving')) {
-    config.rev = true;
-  }
-
-  if (BeamboxPreference.read('enable-custom-backlash')) {
-    config.cbl = true;
-  }
+  if (BeamboxPreference.read('enable-custom-backlash')) config.cbl = true;
 
   let printingTopPadding: number | undefined = undefined;
   let printingBotPadding: number | undefined = undefined;
@@ -206,73 +203,49 @@ export const getExportOpt = (
     document.querySelectorAll('#svgcontent > g.layer:not([display="none"]) [data-pass-through="1"]').length > 0 ||
     BeamboxPreference.read('pass-through');
 
-  if (isPassThroughTask && model === 'fbb2') {
-    config.mep = 50;
-  }
+  if (isPassThroughTask && model === 'fbb2') config.mep = 50;
 
   if (isDevMode) {
     let storageValue = localStorage.getItem('min_engraving_padding');
 
-    if (storageValue) {
-      config.mep = Number(storageValue);
-    }
+    if (storageValue) config.mep = Number(storageValue);
 
     storageValue = localStorage.getItem('min_printing_padding');
 
-    if (storageValue) {
-      config.mpp = Number(storageValue);
-    }
+    if (storageValue) config.mpp = Number(storageValue);
 
     storageValue = localStorage.getItem('printing_top_padding');
 
-    if (storageValue && !Number.isNaN(Number(storageValue))) {
-      printingTopPadding = Number(storageValue);
-    }
+    if (storageValue && !Number.isNaN(Number(storageValue))) printingTopPadding = Number(storageValue);
 
     storageValue = localStorage.getItem('printing_bot_padding');
 
-    if (storageValue && !Number.isNaN(Number(storageValue))) {
-      printingBotPadding = Number(storageValue);
-    }
+    if (storageValue && !Number.isNaN(Number(storageValue))) printingBotPadding = Number(storageValue);
 
     storageValue = localStorage.getItem('nozzle_votage');
 
-    if (storageValue) {
-      config.nv = Number(storageValue);
-    }
+    if (storageValue) config.nv = Number(storageValue);
 
     storageValue = localStorage.getItem('nozzle_pulse_width');
 
-    if (storageValue) {
-      config.npw = Number(storageValue);
-    }
+    if (storageValue) config.npw = Number(storageValue);
 
     storageValue = localStorage.getItem('travel_speed');
 
-    if (storageValue && !Number.isNaN(Number(storageValue))) {
-      config.ts = Number(storageValue);
-    }
+    if (storageValue && !Number.isNaN(Number(storageValue))) config.ts = Number(storageValue);
 
     storageValue = localStorage.getItem('path_travel_speed');
 
-    if (storageValue && !Number.isNaN(Number(storageValue))) {
-      config.pts = Number(storageValue);
-    }
+    if (storageValue && !Number.isNaN(Number(storageValue))) config.pts = Number(storageValue);
 
     storageValue = localStorage.getItem('a_travel_speed');
 
-    if (storageValue && !Number.isNaN(Number(storageValue))) {
-      config.ats = Number(storageValue);
-    }
+    if (storageValue && !Number.isNaN(Number(storageValue))) config.ats = Number(storageValue);
   }
 
-  if (printingTopPadding !== undefined) {
-    config.ptp = printingTopPadding;
-  }
+  if (printingTopPadding !== undefined) config.ptp = printingTopPadding;
 
-  if (printingBotPadding !== undefined) {
-    config.pbp = printingBotPadding;
-  }
+  if (printingBotPadding !== undefined) config.pbp = printingBotPadding;
 
   if (modelsWithModules.has(model)) {
     const offsets = { ...moduleOffsets, ...BeamboxPreference.read('module-offsets') };
@@ -741,9 +714,9 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
         onProgressing,
       }: {
         engraveDpi?: string;
-        model?: WorkAreaModel;
+        model: WorkAreaModel;
         onProgressing?: (data: { message: string; percentage: number }) => void;
-      } = {},
+      },
     ) {
       return new Promise<{ message?: string; res: boolean }>((resolve) => {
         const orderName = 'svgeditor_upload';
@@ -789,11 +762,11 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
 
           const args = [orderName, file.uploadName, file.size, file.thumbnailSize];
 
-          const rotaryMode = BeamboxPreference.read('rotary_mode');
-          const extendRotaryWorkarea = BeamboxPreference.read('extend-rotary-workarea');
+          const { expansion, height, width } = workareaManager;
 
-          if (rotaryMode && extendRotaryWorkarea) {
-            args.push('-spin');
+          if (expansion.some((val) => val > 0)) {
+            args.push('-workarea');
+            args.push(JSON.stringify([width / constant.dpmm, height / constant.dpmm]));
           }
 
           if (model === 'fhexa1') {
