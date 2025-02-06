@@ -3,16 +3,14 @@ export function binarySearchIndex(array: number[], target: number): number {
   let [start, end] = [0, length - 1];
 
   if (target <= array[start]) return start;
-
-  if (target >= array[end]) return end;
+  else if (target >= array[end]) return end;
 
   while (start <= end) {
     const mid = ~~(start + ((end - start) >> 1));
     const midVal = array[mid];
 
     if (midVal === target) return mid;
-
-    if (midVal <= target) start = mid + 1;
+    else if (midVal < target) start = mid + 1;
     else end = mid - 1;
   }
 

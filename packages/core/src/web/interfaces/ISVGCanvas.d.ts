@@ -44,6 +44,7 @@ export default interface ISVGCanvas {
   clear: () => void;
   clearBoundingBox: () => void;
   clearSelection: (noCall?: boolean) => void;
+  collectAlignPoints: () => void;
   convertGradients: (elem: Element) => void;
   convertToNum(attr: string, val: number): number;
   convertToPath: (elem: SVGElement, isSubCmd?: boolean) => { cmd: BaseHistoryCommand; path: SVGPathElement };
@@ -54,11 +55,11 @@ export default interface ISVGCanvas {
     addToHistory?: boolean,
     showProgress?: boolean,
   ) => Promise<BaseHistoryCommand>;
-  drawAlignLine: (x: number, y: number, xMatchPoint: IPoint, yMatchPoint: IPoint) => void;
+  drawAlignLine: (x: number, y: number, byX: IPoint, byY: IPoint) => void;
   drawing: ISVGDrawing;
   embedImage(url: string, callback?: (dataURI: string) => void): void;
   events: EventEmitter;
-  findMatchPoint: (x: number, y: number) => { xMatchPoint: IPoint; yMatchPoint: IPoint };
+  findMatchPoint: (x: number, y: number) => { byX: IPoint; byY: IPoint };
   getColor: (key: string) => string;
   getContainer: () => SVGElement;
   getContentElem: () => SVGGElement;

@@ -228,7 +228,7 @@ const toEditMode = (element): void => {
   subpath = false;
 };
 
-const toSelectMode = (elem): void => {
+const toSelectMode = (elem?: Element): void => {
   const selPath = elem === svgedit.path.path.elem;
 
   svgCanvas.unsafeAccess.setCurrentMode(previousMode);
@@ -705,7 +705,7 @@ const mouseMove = (mouseX: number, mouseY: number) => {
 
   if (hasCreatedPoint) {
     // has created a node point
-  } else if (selectedPath.dragging) {
+  } else if (selectedPath?.dragging) {
     // if we are dragging a point, let's move it
     const pt = svgedit.path.getPointFromGrip(
       {
@@ -714,13 +714,7 @@ const mouseMove = (mouseX: number, mouseY: number) => {
       },
       selectedPath,
     );
-    const mpt = svgedit.path.getPointFromGrip(
-      {
-        x: mouseX,
-        y: mouseY,
-      },
-      selectedPath,
-    );
+    const mpt = svgedit.path.getPointFromGrip({ x: mouseX, y: mouseY }, selectedPath);
     const diffX = mpt.x - pt.x;
     const diffY = mpt.y - pt.y;
 
@@ -762,7 +756,7 @@ const mouseMove = (mouseX: number, mouseY: number) => {
   }
 };
 
-const mouseUp = (evt: MouseEvent, element: SVGElement) => {
+const mouseUp = (evt: MouseEvent, element?: SVGElement) => {
   const rubberBox = svgCanvas.getRubberBox();
 
   // Create mode
@@ -1739,7 +1733,7 @@ const pathActions = {
   fixEnd,
   getNodePoint,
   handleHistoryEvent,
-  hasDrawingPath: (): boolean => !!drawnPath,
+  hasDrawingPath: (): boolean => Boolean(drawnPath),
   linkControlPoints,
   mouseDown,
   mouseMove,

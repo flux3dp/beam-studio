@@ -1,34 +1,25 @@
 import currentFileManager from '@core/app/svgedit/currentFileManager';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand, IHistoryHandler, IUndoManager } from '@core/interfaces/IHistory';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import type { BaseHistoryCommand } from './history';
 import history from './history';
 
+let svgCanvas: ISVGCanvas;
+
+getSVGAsync(({ Canvas }) => {
+  svgCanvas = Canvas;
+});
+
 export class UndoManager implements IUndoManager {
-  private handler: IHistoryHandler;
+  private handler: IHistoryHandler | undefined = undefined;
+  private undoStackPointer: number = 0;
+  private undoStack: BaseHistoryCommand[] = [];
+  private undoChangeStackPointer: number = -1;
+  private undoableChangeStack: Array<{ attrName: string; elements: Element[]; oldValues: string[] }> = [];
 
-  private undoStackPointer: number;
-
-  private undoStack: BaseHistoryCommand[];
-
-  private undoChangeStackPointer: number;
-
-  private undoableChangeStack: Array<{
-    attrName: string;
-    elements: Element[];
-    oldValues: string[];
-  }>;
-
-  constructor(historyEventHandler: IHistoryHandler) {
-    this.handler = historyEventHandler || null;
-    this.undoStackPointer = 0;
-    this.undoStack = [];
-
-    // this is the stack that stores the original values, the elements and
-    // the attribute name for begin/finish
-    this.undoChangeStackPointer = -1;
-    this.undoableChangeStack = [];
-  }
+  constructor() {}
 
   setHandler(historyEventHandler: IHistoryHandler): void {
     this.handler = historyEventHandler;
@@ -99,18 +90,20 @@ export class UndoManager implements IUndoManager {
 
     const isInitCommand = this.undoStack.length === 1 && cmd.getText() === 'Create Layer';
 
+    // TODO: if you need to add more function during history change,
+    // try to revise this function that accept plugin
     if (!isInitCommand) {
       currentFileManager.setHasUnsavedChanges(true);
+      svgCanvas.collectAlignPoints();
     }
-    // console.log(this.undoStack);
   }
 
   beginUndoableChange(attrName: string, elems: Element[]): void {
     this.undoChangeStackPointer += 1;
 
     const p = this.undoChangeStackPointer;
-    const elements = elems.filter((elem) => !!elem);
-    const oldValues = elements.map((elem) => elem.getAttribute(attrName));
+    const elements = elems.filter(Boolean);
+    const oldValues = elements.map((elem) => elem.getAttribute(attrName)).filter(Boolean);
 
     this.undoableChangeStack[p] = { attrName, elements, oldValues };
   }
@@ -126,12 +119,9 @@ export class UndoManager implements IUndoManager {
 
     for (let i = elements.length - 1; i >= 0; i -= 1) {
       const elem = elements[i];
+      const changes: any = {};
 
-      if (elem == null) {
-        continue;
-      }
-
-      const changes = {};
+      if (!elem) continue;
 
       changes[attrName] = oldValues[i];
 
@@ -139,13 +129,15 @@ export class UndoManager implements IUndoManager {
         batchCmd.addSubCommand(new history.ChangeElementCommand(elem, changes, attrName));
       }
     }
-    this.undoableChangeStack[p] = null;
+
+    // TODO: don't know why we need to set this to null
+    this.undoableChangeStack[p] = null as any;
 
     return batchCmd;
   }
 }
 
 // singleton
-const undoManager = new UndoManager(null);
+const undoManager = new UndoManager();
 
 export default undoManager;

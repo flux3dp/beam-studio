@@ -113,7 +113,7 @@ declare global {
   }
 }
 
-interface ISVGEditor {
+export interface ISVGEditor {
   addExtension: () => void;
   canvas: any;
   clearScene: () => Promise<void>;
@@ -128,7 +128,7 @@ interface ISVGEditor {
   handleFile: (file: any) => Promise<void>;
   init: () => void;
   isClipboardDataReady: any;
-  putLocale(lang: number | string | string[], good_langs: any[]);
+  putLocale: (lang: number | string | string[], good_langs: any[]) => void;
   readSVG: (blob: any, type: any, layerName: any) => Promise<unknown>;
   replaceBitmap: any;
   setConfig: (opts: any, cfgCfg: any) => void;
