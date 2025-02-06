@@ -98,7 +98,6 @@ const fetchTaskCode = async (
 ) => {
   svgCanvas.removeUnusedDefs();
 
-  let didErrorOccur = false;
   let isCanceled = false;
 
   SymbolMaker.switchImageSymbolForAll(false);
@@ -156,37 +155,12 @@ const fetchTaskCode = async (
       isCanceled = true;
     },
   });
-  await svgeditorParser.uploadToSvgeditorAPI([uploadFile], {
+
+  const uploadRes = await svgeditorParser.uploadToSvgeditorAPI(uploadFile, {
     engraveDpi:
       // (isDev() && BeamboxPreference.read('engrave-dpi-value')) ||
       BeamboxPreference.read('engrave_dpi'),
     model: BeamboxPreference.read('workarea') || BeamboxPreference.read('model'),
-    onError: (message: string) => {
-      if (isCanceled || didErrorOccur) {
-        return;
-      }
-
-      didErrorOccur = true;
-      Progress.popById('upload-scene');
-      Alert.popUp({
-        buttonType: AlertConstants.YES_NO,
-        id: 'get-taskcode-error',
-        message: `#806 ${message}\n${lang.beambox.bottom_right_panel.export_file_error_ask_for_upload}`,
-        onYes: () => {
-          const svgString = svgCanvas.getSvgString();
-
-          AwsHelper.uploadToS3('output.bvg', svgString);
-        },
-        type: AlertConstants.SHOW_POPUP_ERROR,
-      });
-    },
-    onFinished: () => {
-      Progress.update('upload-scene', {
-        caption: i18n.lang.beambox.popup.progress.calculating,
-        message: lang.message.uploading_fcode,
-        percentage: 100,
-      });
-    },
     onProgressing: (data: { message: string; percentage: number }) => {
       // message: Analyzing SVG - 0.0%
       Progress.update('upload-scene', {
@@ -198,9 +172,30 @@ const fetchTaskCode = async (
     rotaryMode: BeamboxPreference.read('rotary_mode'),
   });
 
-  if (isCanceled || didErrorOccur) {
+  if (isCanceled) return {};
+
+  if (!uploadRes.res) {
+    Progress.popById('upload-scene');
+    Alert.popUp({
+      buttonType: AlertConstants.YES_NO,
+      id: 'get-taskcode-error',
+      message: `#806 ${uploadRes.message}\n${lang.beambox.bottom_right_panel.export_file_error_ask_for_upload}`,
+      onYes: () => {
+        const svgString = svgCanvas.getSvgString();
+
+        AwsHelper.uploadToS3('output.bvg', svgString);
+      },
+      type: AlertConstants.SHOW_POPUP_ERROR,
+    });
+
     return {};
   }
+
+  Progress.update('upload-scene', {
+    caption: i18n.lang.beambox.popup.progress.calculating,
+    message: lang.message.uploading_fcode,
+    percentage: 100,
+  });
 
   let doesSupportDiodeAndAF = true;
   let shouldUseFastGradient = BeamboxPreference.read('fast_gradient') !== false;
@@ -227,6 +222,7 @@ const fetchTaskCode = async (
     },
   });
 
+  let didErrorOccur = false;
   const paddingAccel = await getAdorPaddingAccel(device || TopBarController.getSelectedDevice());
   const supportInfo = getSupportInfo(BeamboxPreference.read('workarea'));
   const getTaskCode = (codeType: 'fcode' | 'gcode', getTaskCodeOpts = {}) =>

@@ -126,20 +126,18 @@ export default window['EasyManipulator'] = class EasyManipulator extends EventEm
     await importBvgString(this.bvg);
 
     const { uploadFile } = await ExportFuncs.prepareFileWrappedFromSvgStringAndThumbnail();
-    const r = await svgeditorParser.uploadToSvgeditorAPI([uploadFile], {
+    const { message, res } = await svgeditorParser.uploadToSvgeditorAPI(uploadFile, {
       engraveDpi: BeamboxPreference.read('engrave_dpi'),
       model: this.device ? this.device.model : BeamboxPreference.read('workarea') || BeamboxPreference.read('model'),
-      onFinished: () => {
-        this.emit('LOAD');
-      },
-      onProgressing: () => {},
     });
 
-    if (!r) {
+    if (res) {
+      this.emit('LOAD');
+
       return true;
     }
 
-    this.emit('ERROR', { detail: { error: r } });
+    this.emit('ERROR', { detail: { error: message } });
 
     return false;
   }
