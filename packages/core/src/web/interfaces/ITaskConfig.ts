@@ -52,7 +52,7 @@ export type TFcodeOptionalConfig = Partial<{
   pts: number; // path travel speed
   rev: boolean; // reverse engraving
   rotary_y_ratio: number;
-  spin: number; // rotary position
+  spin: number; // rotary position, px
   ts: number; // travel speed
   vsc: boolean; // with vector speed constraint, used for ghost 2.3.4 and before
   vsl: number; // vector speed limit
