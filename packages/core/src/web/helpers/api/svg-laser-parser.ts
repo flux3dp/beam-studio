@@ -400,105 +400,54 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
     });
 
   return {
-    divideSVG(opts?) {
-      const $deferred = $.Deferred();
+    divideSVG({ byLayer = false, scale, timeout }: { byLayer?: boolean; scale?: number; timeout?: number } = {}) {
+      return new Promise<
+        { data: Record<string, Blob> & { bitmapOffset?: [number, number] }; res: true } | { data: string; res: false }
+      >((resolve) => {
+        const args = [byLayer ? 'divide_svg_by_layer' : 'divide_svg'];
+        const finalBlobs: Record<string, Blob> & { bitmapOffset?: [number, number] } = {};
+        let blobs: Blob[] = [];
+        let currentLength = 0;
+        let currentName = '';
 
-      opts = opts || {};
-      opts.onProgressing = opts.onProgressing || (() => {});
-      opts.onFinished = opts.onFinished || (() => {});
-
-      const args = ['divide_svg'];
-      const finalBlobs: { [key: string]: Blob | number } = {};
-      let blobs = [];
-      let currentLength = 0;
-      let currentName = '';
-
-      if (opts.scale) {
-        args.push('-s');
-        args.push(String(Math.floor(opts.scale * 100) / 100));
-      }
-
-      events.onMessage = (data) => {
-        if (data.name) {
-          currentName = data.name;
-          currentLength = data.length;
-
-          if (currentName === 'bitmap') {
-            finalBlobs.bitmap_offset = data.offset;
-          }
-        } else if (data instanceof Blob) {
-          blobs.push(data);
-
-          const blob = new Blob(blobs);
-
-          if (currentLength === blob.size) {
-            blobs = [];
-            finalBlobs[currentName] = blob;
-          }
-        } else if (data.status === 'ok') {
-          $deferred.resolve({ data: finalBlobs, res: true });
-        } else if (data.status === 'Error') {
-          Progress.popById('loading_image');
-          $deferred.resolve({ data: data.message, res: false });
+        if (scale) {
+          args.push('-s');
+          args.push(String(Math.floor(scale * 100) / 100));
         }
-      };
 
-      ws.send(args.join(' '));
+        events.onMessage = (data) => {
+          if (data.name) {
+            currentName = data.name;
+            currentLength = data.length;
 
-      if (opts.timeout && opts.timeout > 0) {
-        setTimeout(() => {
-          $deferred.resolve({ data: 'timeout', res: false });
-        }, opts.timeout);
-      }
+            if (currentName === 'bitmap') {
+              finalBlobs.bitmap_offset = data.offset;
+            }
+          } else if (data instanceof Blob) {
+            blobs.push(data);
 
-      return $deferred.promise();
-    },
-    divideSVGbyLayer(opts?) {
-      const $deferred = $.Deferred();
+            const blob = new Blob(blobs);
 
-      opts = opts || {};
-      opts.onProgressing = opts.onProgressing || (() => {});
-      opts.onFinished = opts.onFinished || (() => {});
-
-      const args = ['divide_svg_by_layer'];
-      const finalBlobs: { [key: string]: Blob | number } = {};
-      let blobs = [];
-      let currentLength = 0;
-      let currentName = '';
-
-      if (opts.scale) {
-        args.push('-s');
-        args.push(String(Math.floor(opts.scale * 100) / 100));
-      }
-
-      events.onMessage = (data) => {
-        if (data.name) {
-          currentName = data.name;
-          currentLength = data.length;
-
-          if (currentName === 'bitmap') {
-            finalBlobs.bitmap_offset = data.offset;
+            if (currentLength === blob.size) {
+              blobs = [];
+              finalBlobs[currentName] = blob;
+            }
+          } else if (data.status === 'ok') {
+            resolve({ data: finalBlobs, res: true });
+          } else if (data.status === 'Error') {
+            Progress.popById('loading_image');
+            resolve({ data: data.message, res: false });
           }
-        } else if (data instanceof Blob) {
-          blobs.push(data);
+        };
 
-          const blob = new Blob(blobs);
+        ws.send(args.join(' '));
 
-          if (currentLength === blob.size) {
-            blobs = [];
-            finalBlobs[currentName] = blob;
-          }
-        } else if (data.status === 'ok') {
-          $deferred.resolve({ data: finalBlobs, res: true });
-        } else if (data.status === 'Error') {
-          Progress.popById('loading_image');
-          $deferred.resolve({ data: data.message, res: false });
+        if (timeout && timeout > 0) {
+          setTimeout(() => {
+            resolve({ data: 'timeout', res: false });
+          }, timeout);
         }
-      };
-
-      ws.send(args.join(' '));
-
-      return $deferred.promise();
+      });
     },
     gcodeToFcode(taskData: { arrayBuffer: ArrayBuffer; size: number; thumbnailSize: number }, opts) {
       const $deferred = $.Deferred();
