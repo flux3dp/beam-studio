@@ -83,7 +83,7 @@ jobs:
           mkdir ./backend
 
           cp -R $HOME/flux_api_swap ./backend/flux_api
-          ./backend/flux_api/flux_api --test --without_pcl
+          ./backend/flux_api/flux_api --test
 
           sudo bash ./build/clearup-develop-files.sh
 
