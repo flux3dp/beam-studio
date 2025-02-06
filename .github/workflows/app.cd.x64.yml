@@ -100,7 +100,7 @@ jobs:
           cp -R lib/monitorexe-win64 ./backend/monitorexe-win64
           cp -R lib/elevate.cmd ./backend/elevate.cmd
           cp -R lib/elevate.vbs ./backend/elevate.vbs
-          ./backend/flux_api/flux_api --test --without_pcl
+          ./backend/flux_api/flux_api --test
 
           curl.exe https://swiftray-daemon.s3.ap-northeast-1.amazonaws.com/win/swiftray-$SWIFTRAY_DAEMON_VERSION.zip --output swiftray.zip
           mkdir swiftray
