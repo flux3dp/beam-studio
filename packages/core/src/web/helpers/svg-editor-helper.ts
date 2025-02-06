@@ -1,9 +1,10 @@
+import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 interface ISVGGlobal {
   Canvas: ISVGCanvas;
   Edit: any;
-  Editor: any;
+  Editor: ISVGEditor;
 }
 
 export const getSVGCanvas = () => {

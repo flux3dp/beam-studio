@@ -87,7 +87,7 @@ import selector from './selector';
 import textActions from './text/textactions';
 import textEdit from './text/textedit';
 import { setRotationAngle } from './transform/rotation';
-import { binarySearchIndex } from './utils/binarySearch';
+import { binarySearchIndex } from './utils/binarySearchIndex';
 import findDefs from './utils/findDef';
 import { rotateBBox } from './utils/rotateBBox';
 import workareaManager from './workarea';
@@ -114,14 +114,10 @@ const drawingToolEventEmitter = eventEmitterFactory.createEventEmitter('drawing-
 // config - An object that contains configuration data
 export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig) {
   // Alias Namespace constants
-  var NS = svgedit.NS;
+  const NS = svgedit.NS;
 
   // Default configuration options
-  const curConfig: { [key: string]: any } = {
-    dimensions: [640, 480],
-    ...config,
-  };
-
+  const curConfig: { [key: string]: any } = { dimensions: [640, 480], ...config };
   var canvas = this;
   const pathActions = PathActions(this);
 
@@ -163,6 +159,9 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
   // The actual element that represents the final output SVG element
   var svgcontent = svgdoc.createElementNS(NS.SVG, 'svg');
+
+  // CUSTOM VARIABLES
+  const alignPoints: Record<'x' | 'y', Array<Record<'x' | 'y', number>>> = { x: [], y: [] };
 
   // This function resets the svgcontent element while keeping it in the DOM.
   var clearSvgContentElement = (canvas.clearSvgContentElement = function () {
@@ -1032,7 +1031,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   //
   // Parameters:
   // elem - SVG element to wrap
-  var groupSvgElem = (this.groupSvgElem = function (elem) {
+  var groupSvgElem = (this.groupSvgElem = function (elem: any) {
     var g = document.createElementNS(NS.SVG, 'g');
 
     elem.parentNode.replaceChild(g, elem);
@@ -1040,8 +1039,8 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   });
 
   // Set scope for these functions
-  var getId;
-  var getNextId;
+  var getId: any;
+  var getNextId: any;
 
   (function (c) {
     // Object to contain editor event names and callback functions
@@ -1243,7 +1242,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // Parameters:
   // elemsToAdd - an array of DOM elements to add to the selection
   // showGrips - a boolean flag indicating whether the resize grips should be shown
-  var addToSelection = (this.addToSelection = function (elemsToAdd, showGrips?, noCall?) {
+  const addToSelection = (this.addToSelection = (elemsToAdd, showGrips?, noCall?) => {
     if (elemsToAdd.length === 0) {
       return;
     }
@@ -1297,12 +1296,12 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     });
 
     // Make sure first elements are not null
-    selectedElements = selectedElements.filter((elem) => elem);
-    // while (selectedElements[0] == null) {
-    //     selectedElements.shift(0);
-    // }
+    selectedElements = selectedElements.filter(Boolean);
+
     LayerPanelController.updateLayerPanel();
     ToolPanelsController.unmount();
+
+    this.collectAlignPoints();
   });
 
   // Function: selectOnly()
@@ -1310,7 +1309,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   //
   // Parameters:
   // elems - an array of DOM elements to be selected
-  var selectOnly = (this.selectOnly = function (elems, showGrips?) {
+  const selectOnly = (this.selectOnly = function (elems, showGrips?) {
     clearSelection(true);
     addToSelection(elems, showGrips);
   });
@@ -2156,7 +2155,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       var units = 'pt'; // curConfig.baseUnit; // We could use baseUnit, but that is presumably not intended for export purposes
       var doc = (window as any).jsPDF({
         format: [width, height],
-        orientation: orientation,
+        orientation,
         unit: units,
         // , compressPdf: true
       }); // Todo: Give options to use predefined jsPDF formats like "a4", etc. from pull-down (with option to keep customizable)
@@ -2181,8 +2180,8 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       //  options to optionally work in this manner as
       //  opposed to opening a new tab
       var obj = {
-        exportWindowName: exportWindowName,
-        issues: issues,
+        exportWindowName,
+        issues,
         svg: str,
       };
       var method = outputType || 'dataurlstring';
@@ -2921,10 +2920,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     if (name !== 'textedit') {
       textActions.clear();
-    }
-
-    if (name === 'path') {
-      this.collectAlignPoints();
     }
 
     switch (name) {
@@ -4561,30 +4556,28 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     return newVal;
   };
 
-  this.drawAlignLine = function (x, y, xMatchPoint, yMatchPoint) {
+  this.drawAlignLine = function (x, y, byX, byY) {
     // TODO: bounding box
     const zoom = workareaManager.zoomRatio;
     let xAlignLine = svgedit.utilities.getElem('x_align_line');
 
-    if (xMatchPoint) {
+    if (byX) {
       if (!xAlignLine) {
         xAlignLine = document.createElementNS(NS.SVG, 'path');
 
         svgedit.utilities.assignAttributes(xAlignLine, {
           fill: 'none',
           id: 'x_align_line',
-          stroke: '#FA6161',
-          'stroke-width': '0.5',
+          stroke: '#1890FF',
+          'stroke-dasharray': '2',
+          'stroke-width': '2',
           'vector-effect': 'non-scaling-stroke',
         });
 
         svgedit.utilities.getElem('svgcontent').appendChild(xAlignLine);
       }
 
-      xAlignLine.setAttribute(
-        'd',
-        `M ${xMatchPoint.x} ${xMatchPoint.y} L ${xMatchPoint.x} ${yMatchPoint ? yMatchPoint.y : y / zoom}`,
-      );
+      xAlignLine.setAttribute('d', `M ${byX.x} ${byX.y} L ${byX.x} ${byY ? byY.y : y / zoom}`);
 
       xAlignLine.setAttribute('display', 'inline');
     } else if (xAlignLine) {
@@ -4593,23 +4586,21 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     let yAlignLine = svgedit.utilities.getElem('y_align_line');
 
-    if (yMatchPoint) {
+    if (byY) {
       if (!yAlignLine) {
         yAlignLine = document.createElementNS(NS.SVG, 'path');
         svgedit.utilities.assignAttributes(yAlignLine, {
           fill: 'none',
           id: 'y_align_line',
-          stroke: '#FA6161',
-          'stroke-width': '0.5',
+          stroke: '#1890FF',
+          'stroke-dasharray': '2',
+          'stroke-width': '2',
           'vector-effect': 'non-scaling-stroke',
         });
         svgedit.utilities.getElem('svgcontent').appendChild(yAlignLine);
       }
 
-      yAlignLine.setAttribute(
-        'd',
-        `M ${yMatchPoint.x} ${yMatchPoint.y} L ${xMatchPoint ? xMatchPoint.x : x / zoom} ${yMatchPoint.y}`,
-      );
+      yAlignLine.setAttribute('d', `M ${byY.x} ${byY.y} L ${byX ? byX.x : x / zoom} ${byY.y}`);
       yAlignLine.setAttribute('display', 'inline');
     } else if (yAlignLine) {
       yAlignLine.setAttribute('display', 'none');
@@ -4618,32 +4609,32 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
   this.findMatchPoint = function (x: number, y: number) {
     // TODO: bounding box
-    const FUZZY_RANGE = 7;
+    const FUZZY_RANGE = 20;
 
-    if (!this.pathAlignPointsSortByX || !this.pathAlignPointsSortByY) {
+    if (!alignPoints.x.length) {
       return {};
     }
 
     const zoom = workareaManager.zoomRatio;
-    let nearestX = binarySearchIndex(
-      this.pathAlignPointsSortByX.map(({ x }) => x),
-      x / zoom,
-    );
+    const nearestX =
+      alignPoints.x[
+        binarySearchIndex(
+          alignPoints.x.map(({ x }) => x),
+          x / zoom,
+        )
+      ];
+    const byX = nearestX && Math.abs(nearestX.x * zoom - x) < FUZZY_RANGE ? nearestX : null;
 
-    nearestX = this.pathAlignPointsSortByX[nearestX];
+    const nearestY =
+      alignPoints.y[
+        binarySearchIndex(
+          alignPoints.y.map(({ y }) => y),
+          y / zoom,
+        )
+      ];
+    const byY = nearestY && Math.abs(nearestY.y * zoom - y) < FUZZY_RANGE ? nearestY : null;
 
-    const xMatchPoint = nearestX && Math.abs(nearestX.x * zoom - x) < FUZZY_RANGE ? nearestX : null;
-
-    let nearestY = binarySearchIndex(
-      this.pathAlignPointsSortByY.map(({ y }) => y),
-      y / zoom,
-    );
-
-    nearestY = this.pathAlignPointsSortByY[nearestY];
-
-    const yMatchPoint = nearestY && Math.abs(nearestY.y * zoom - y) < FUZZY_RANGE ? nearestY : null;
-
-    return { xMatchPoint, yMatchPoint };
+    return { byX, byY };
   };
 
   this.collectAlignPoints = () => {
@@ -4655,50 +4646,59 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       elems.push(...childNodes);
     });
 
-    const points = elems.map((elem) => this.getElemAlignPoints(elem)).flat();
+    // console.log(elems);
+    // console.log(selectedElements);
 
-    this.pathAlignPointsSortByX = points.toSorted((a, b) => (a.x > b.x ? 1 : -1));
-    this.pathAlignPointsSortByY = points.toSorted((a, b) => (a.y > b.y ? 1 : -1));
+    const points = elems
+      .filter((elem) => !selectedElements.includes(elem as any))
+      .flatMap((elem) => this.getElemAlignPoints(elem));
 
-    console.log(this.pathAlignPointsSortByX, this.pathAlignPointsSortByY);
+    alignPoints.x = points.toSorted((a, b) => (a.x > b.x ? 1 : -1));
+    alignPoints.y = points.toSorted((a, b) => (a.y > b.y ? 1 : -1));
   };
 
   this.addAlignPoint = function (x: number, y: number) {
+    const { length } = alignPoints.x;
     const newPoint = { x, y };
-    let p = 0;
+    let pos = 0;
 
-    for (let i = 0; i < this.pathAlignPointsSortByX.length; ++i) {
-      if (x <= this.pathAlignPointsSortByX[i].x) {
+    for (let i = 0; i < length; i++) {
+      if (x <= alignPoints.x[i].x) {
         break;
       }
 
-      p += 1;
+      pos++;
     }
 
-    this.pathAlignPointsSortByX.splice(p, 0, newPoint);
-    p = 0;
+    alignPoints.x.splice(pos, 0, newPoint);
+    pos = 0;
 
-    for (let i = 0; i < this.pathAlignPointsSortByY.length; ++i) {
-      if (y <= this.pathAlignPointsSortByY[i].y) {
+    for (let i = 0; i < length; i++) {
+      if (y <= alignPoints.y[i].y) {
         break;
       }
 
-      p += 1;
+      pos++;
     }
-    this.pathAlignPointsSortByY.splice(p, 0, newPoint);
+
+    alignPoints.y.splice(pos, 0, newPoint);
   };
 
   this.getElemAlignPoints = function (elem: SVGGraphicsElement): Array<{ x: number; y: number }> {
-    if (['ellipse', 'image', 'path', 'polygon', 'rect', 'use'].includes(elem.tagName)) {
+    if (['ellipse', 'g', 'image', 'path', 'polygon', 'rect', 'use'].includes(elem.tagName)) {
       const bbox = elem.tagName === 'use' ? this.getSvgRealLocation(elem) : elem.getBBox();
       const center: Record<'x' | 'y', number> = { x: bbox.x + 0.5 * bbox.width, y: bbox.y + 0.5 * bbox.height };
       const angle = svgedit.utilities.getRotationAngle(elem, true);
       let points = Array.of<{ x: number; y: number }>();
 
+      console.log(elem, bbox, center, angle);
+
       switch (elem.tagName) {
         case 'rect':
         case 'image':
+        case 'polygon':
         case 'use':
+        case 'g':
           points = [
             { x: bbox.x, y: bbox.y },
             { x: bbox.x + bbox.width, y: bbox.y },
@@ -4728,16 +4728,17 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
           points.push(center);
           break;
-        case 'polygon':
-          const tempPoints = elem.getAttribute('points')?.split(' ') ?? [];
+        // original polygon points
+        // case 'polygon':
+        //   const tempPoints = elem.getAttribute('points')?.split(' ') ?? [];
 
-          points = tempPoints.toSpliced(0).map((i) => {
-            const [x, y] = i.split(',');
+        //   points = tempPoints.toSpliced(0).map((i) => {
+        //     const [x, y] = i.split(',');
 
-            return { x: Number.parseFloat(x), y: Number.parseFloat(y) };
-          });
+        //     return { x: Number.parseFloat(x), y: Number.parseFloat(y) };
+        //   });
 
-          break;
+        //   break;
         case 'path':
           points = [];
 
@@ -4785,7 +4786,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     const layerNames = [];
 
     for (let i = 0; i < selectedElements.length; i++) {
-      let elem = selectedElements[i];
+      let elem = selectedElements[i] as any;
 
       if (elem.parentNode.tagName === 'a' && elem.parentNode.childNodes.length === 1) {
         elem = elem.parentNode;
@@ -4820,7 +4821,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     batchCmd.addSubCommand(new history.InsertElementCommand(group));
 
     for (let i = 0; i < selectedElements.length; i++) {
-      let elem = selectedElements[i];
+      let elem = selectedElements[i] as any;
 
       if (elem.parentNode.tagName === 'a' && elem.parentNode.childNodes.length === 1) {
         elem = elem.parentNode;
@@ -6259,10 +6260,10 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     }
 
     return {
-      height: height,
-      width: width,
-      x: x,
-      y: y,
+      height,
+      width,
+      x,
+      y,
     };
   };
 
