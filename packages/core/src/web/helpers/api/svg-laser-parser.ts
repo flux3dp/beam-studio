@@ -87,7 +87,7 @@ export const getExportOpt = (
   }
 
   const rotaryMode = BeamboxPreference.read('rotary_mode') && supportInfo.rotary;
-  const autoFeeder = BeamboxPreference.read('auto-feeder') && supportInfo.autoFeeder;
+  const autoFeeder = Boolean(BeamboxPreference.read('auto-feeder') && supportInfo.autoFeeder);
 
   if (rotaryMode) {
     config.spin = rotaryAxis.getPosition() ?? 0;
@@ -98,7 +98,7 @@ export const getExportOpt = (
       config.rotary_y_ratio = rotaryRatio;
     }
   } else if (autoFeeder) {
-    config.rotary_y_ratio = autoFeeder.rotaryRatio;
+    config.rotary_y_ratio = supportInfo.autoFeeder!.rotaryRatio;
 
     if (config.job_origin) {
       config.spin = config.job_origin[1] * constant.dpmm;
@@ -202,7 +202,7 @@ export const getExportOpt = (
     document.querySelectorAll('#svgcontent > g.layer:not([display="none"]) [data-pass-through="1"]').length > 0 ||
     BeamboxPreference.read('pass-through');
 
-  if (isPassThroughTask && model === 'fbb2') config.mep = 50;
+  if (model === 'fbb2' && (isPassThroughTask || autoFeeder)) config.mep = 50;
 
   if (isDevMode) {
     let storageValue = localStorage.getItem('min_engraving_padding');
