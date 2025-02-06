@@ -298,14 +298,18 @@ export const getExportOpt = (
 
   if (curveEngravingModeController.hasArea() && supportInfo.curveEngraving) {
     const { bbox, gap, highest, lowest, objectHeight, points } = curveEngravingModeController.data!;
-    const data = {
-      bbox,
-      gap,
-      points: points.flat().filter((p) => p[2] !== null),
-      safe_height: Math.max(Math.min(highest, lowest - objectHeight), 0),
-    };
 
-    config.curve_engraving = data;
+    // if lowest is null, it means no points is measured successfully
+    if (lowest !== null && highest !== null) {
+      const data = {
+        bbox,
+        gap,
+        points: points.flat().filter((p) => p[2] !== null),
+        safe_height: Math.max(Math.min(highest, lowest - objectHeight), 0),
+      };
+
+      config.curve_engraving = data;
+    }
   }
 
   if (args) {
