@@ -25,6 +25,7 @@ import VersionChecker from '@core/helpers/version-checker';
 import dialog from '@core/implementations/dialog';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import type { IWrappedTaskFile } from '@core/interfaces/IWrappedFile';
 
 let svgCanvas: ISVGCanvas;
 
@@ -36,9 +37,7 @@ const { lang } = i18n;
 const svgeditorParser = svgLaserParser({ type: 'svgeditor' });
 
 const getAdorPaddingAccel = async (device: IDeviceInfo | null): Promise<null | number> => {
-  if (!constant.adorModels.includes(device?.model)) {
-    return null;
-  }
+  if (!device || !constant.adorModels.includes(device?.model)) return null;
 
   try {
     await deviceMaster.select(device);
@@ -55,18 +54,6 @@ const getAdorPaddingAccel = async (device: IDeviceInfo | null): Promise<null | n
   }
 };
 
-interface WrappedFile {
-  data: ArrayBuffer | string;
-  extension: string;
-  index: number;
-  name: string;
-  size: number;
-  thumbnailSize: number;
-  totalFiles: number;
-  type: string;
-  uploadName: string;
-}
-
 const generateUploadFile = async (thumbnail: string, thumbnailUrl: string) => {
   Progress.openNonstopProgress({
     id: 'retrieve-image-data',
@@ -81,11 +68,11 @@ const generateUploadFile = async (thumbnail: string, thumbnailUrl: string) => {
 
   const blob = new Blob([thumbnail, svgString], { type: 'application/octet-stream' });
   const reader = new FileReader();
-  const uploadFile = await new Promise<WrappedFile>((resolve) => {
+  const uploadFile = await new Promise<IWrappedTaskFile>((resolve) => {
     reader.onload = () => {
       // not sure whether all para is needed
       const file = {
-        data: reader.result,
+        data: reader.result!,
         extension: 'svg',
         index: 0,
         name: 'svgeditor.svg',
@@ -93,7 +80,7 @@ const generateUploadFile = async (thumbnail: string, thumbnailUrl: string) => {
         thumbnailSize: thumbnail.length,
         totalFiles: 1,
         type: 'application/octet-stream',
-        uploadName: thumbnailUrl.split('/').pop(),
+        uploadName: thumbnailUrl.split('/').pop() ?? 'upload-file',
       };
 
       resolve(file);
@@ -106,7 +93,7 @@ const generateUploadFile = async (thumbnail: string, thumbnailUrl: string) => {
 
 // Send svg string calculate taskcode, output Fcode in default
 const fetchTaskCode = async (
-  device: IDeviceInfo = null,
+  device: IDeviceInfo | null = null,
   opts: { fgGcode?: boolean; output?: 'fcode' | 'gcode' } = {},
 ) => {
   svgCanvas.removeUnusedDefs();
@@ -174,7 +161,7 @@ const fetchTaskCode = async (
       // (isDev() && BeamboxPreference.read('engrave-dpi-value')) ||
       BeamboxPreference.read('engrave_dpi'),
     model: BeamboxPreference.read('workarea') || BeamboxPreference.read('model'),
-    onError: (message) => {
+    onError: (message: string) => {
       if (isCanceled || didErrorOccur) {
         return;
       }
@@ -200,7 +187,7 @@ const fetchTaskCode = async (
         percentage: 100,
       });
     },
-    onProgressing: (data) => {
+    onProgressing: (data: { message: string; percentage: number }) => {
       // message: Analyzing SVG - 0.0%
       Progress.update('upload-scene', {
         caption: i18n.lang.beambox.popup.progress.calculating,
@@ -248,7 +235,7 @@ const fetchTaskCode = async (
       metadata: { [key: string]: string };
       taskCodeBlob: Blob | null;
     }>((resolve) => {
-      const names = [];
+      const names: string[] = [];
 
       svgeditorParser.getTaskCode(names, {
         codeType,
@@ -256,7 +243,7 @@ const fetchTaskCode = async (
         enableDiode: doesSupportDiodeAndAF && BeamboxPreference.read('enable-diode') && supportInfo.hybridLaser,
         fileMode: '-f',
         model: BeamboxPreference.read('workarea') || BeamboxPreference.read('model'),
-        onError: (message) => {
+        onError: (message: string) => {
           Progress.popById('fetch-task');
           Alert.popUp({
             buttonType: AlertConstants.YES_NO,
@@ -446,7 +433,7 @@ export default {
       throw new Error('estimateTime: No task code blob');
     }
 
-    return fileTimeCost;
+    return fileTimeCost ?? 0;
   },
   exportFcode: async (device?: IDeviceInfo): Promise<void> => {
     const { convertEngine } = getConvertEngine();
@@ -477,17 +464,15 @@ export default {
   gcodeToFcode: async (
     gcodeString: string,
     thumbnail: string,
-  ): Promise<{
+  ): Promise<null | {
     fcodeBlob: Blob;
     fileTimeCost: number;
   }> => {
     const { fcodeBlob, fileTimeCost } = await fetchTransferredFcode(gcodeString, thumbnail);
 
-    if (!fcodeBlob) {
-      return null;
-    }
+    if (!fcodeBlob) return null;
 
-    return { fcodeBlob, fileTimeCost };
+    return { fcodeBlob, fileTimeCost: fileTimeCost ?? 0 };
   },
   getCachedPromarkTask: (serial: string): { timeCost: number; url: string } => promarkTaskCache[serial],
   getFastGradientGcode: async (): Promise<Blob> => {
@@ -519,7 +504,7 @@ export default {
   openTaskInDeviceMonitor,
   prepareFileWrappedFromSvgStringAndThumbnail: async (): Promise<{
     thumbnailBlobURL: string;
-    uploadFile: WrappedFile;
+    uploadFile: IWrappedTaskFile;
   }> => {
     await FontFuncs.tempConvertTextToPathAmoungSvgcontent();
 
