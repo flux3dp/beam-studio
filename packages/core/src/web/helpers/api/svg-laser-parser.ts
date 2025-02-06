@@ -13,6 +13,7 @@ import { getSupportInfo } from '@core/app/constants/add-on';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
 import moduleOffsets from '@core/app/constants/layer-module/module-offsets';
+import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import AlertConfig from '@core/helpers/api/alert-config';
 import getRotaryRatio from '@core/helpers/device/get-rotary-ratio';
@@ -23,6 +24,7 @@ import Websocket from '@core/helpers/websocket';
 import fs from '@core/implementations/fileSystem';
 import storage from '@core/implementations/storage';
 import type { IBaseConfig, IFcodeConfig } from '@core/interfaces/ITaskConfig';
+import type { IWrappedTaskFile } from '@core/interfaces/IWrappedFile';
 
 export const getExportOpt = (
   opt: IBaseConfig,
@@ -586,22 +588,14 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
       };
 
       const getBasename = (p?: string) => {
-        if (!p) {
-          return '';
-        }
+        if (!p) return '';
 
-        const pathMatch = p.match(/(.+)[/\\].+/);
-
-        if (pathMatch[1]) {
-          return pathMatch[1];
-        }
-
-        return '';
+        return p.match(/(.+)[/\\].+/)?.[1] || '';
       };
       const reader = new FileReader();
 
       reader.onloadend = (e) => {
-        let svgString = e.target.result as string;
+        let svgString = e.target?.result as string;
         const matchImages = svgString.match(/<image[^>]+>/g);
         let allImageValid = true;
         let hasPath = false;
@@ -739,130 +733,98 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
 
       return $deferred.promise();
     },
-    uploadToSvgeditorAPI(files, opts) {
-      const $deferred = $.Deferred();
-      let currIndex = 0;
-      const orderName = 'svgeditor_upload';
-      const setMessages = (file, isBroken, warningCollection) => {
-        file.status = warningCollection.length > 0 ? 'bad' : 'good';
-        file.messages = warningCollection;
-        file.isBroken = isBroken;
+    uploadToSvgeditorAPI(
+      file: IWrappedTaskFile,
+      {
+        engraveDpi = 'medium',
+        model,
+        onProgressing,
+      }: {
+        engraveDpi?: string;
+        model?: WorkAreaModel;
+        onProgressing?: (data: { message: string; percentage: number }) => void;
+      } = {},
+    ) {
+      return new Promise<{ message?: string; res: boolean }>((resolve) => {
+        const orderName = 'svgeditor_upload';
 
-        return file;
-      };
+        const sendFile = () => {
+          const warningCollection: string[] = [];
+          const CHUNK_SIZE = 128 * 1024; // 128KB
+          const chunkCounts = Math.ceil(file.size / CHUNK_SIZE);
 
-      const sendFile = (file) => {
-        const warningCollection = [];
-        const CHUNK_SIZE = 128 * 1024; // 128KB
-        const chunkCounts = Math.ceil(file.size / CHUNK_SIZE);
-
-        events.onMessage = (data) => {
-          switch (data.status) {
-            case 'computing':
-              opts.onProgressing(data);
-              break;
-            case 'continue':
-              for (let i = 0; i < chunkCounts; i += 1) {
-                const start = i * CHUNK_SIZE;
-                const end = Math.min(file.size, start + CHUNK_SIZE);
-                const chunk = file.data.slice(start, end);
-
-                ws.send(chunk);
-              }
-              break;
-            case 'ok':
-              opts.onFinished();
-              $deferred.resolve();
-              break;
-            case 'warning':
-              warningCollection.push(data.message);
-              break;
-            case 'Error':
-              opts.onError(data.message);
-              $deferred.resolve();
-              break;
-            default:
-              console.warn('Unknown Status:', data.status);
-          }
-        };
-
-        events.onError = (data) => {
-          warningCollection.push(data.message);
-          opts.onError(data.message || data.symbol?.join('_') || String(data) || 'Unknown Error');
-          $deferred.resolve();
-        };
-
-        const args = [orderName, file.uploadName, file.size, file.thumbnailSize];
-
-        const rotaryMode = BeamboxPreference.read('rotary_mode');
-        const extendRotaryWorkarea = BeamboxPreference.read('extend-rotary-workarea');
-
-        if (rotaryMode && extendRotaryWorkarea) {
-          args.push('-spin');
-        }
-
-        if (opts) {
-          if (opts.model === 'fhexa1') {
-            args.push('-hexa');
-          } else if (opts.model === 'fbb1p') {
-            args.push('-pro');
-          } else if (opts.model === 'fbm1') {
-            args.push('-beamo');
-          } else {
-            args.push(`-${opts.model}`);
-          }
-
-          if (typeof opts.engraveDpi === 'number') {
-            args.push(`-dpi ${opts.engraveDpi}`);
-          } else {
-            switch (opts.engraveDpi) {
-              case 'low':
-                args.push('-ldpi');
+          events.onMessage = (data) => {
+            switch (data.status) {
+              case 'computing':
+                onProgressing?.(data);
                 break;
-              case 'medium':
-                args.push('-mdpi');
+              case 'continue':
+                for (let i = 0; i < chunkCounts; i += 1) {
+                  const start = i * CHUNK_SIZE;
+                  const end = Math.min(file.size, start + CHUNK_SIZE);
+                  const chunk = file.data.slice(start, end);
+
+                  ws.send(chunk);
+                }
                 break;
-              case 'high':
-                args.push('-hdpi');
+              case 'ok':
+                resolve({ res: true });
                 break;
-              case 'ultra':
-                args.push('-udpi');
+              case 'warning':
+                warningCollection.push(data.message);
+                break;
+              case 'Error':
+                resolve({ message: `${data.message}\nWarning: ${warningCollection.join('\n')}`, res: false });
                 break;
               default:
-                args.push('-mdpi');
-                break;
+                console.warn('Unknown Status:', data.status);
             }
+          };
+
+          events.onError = (data) => {
+            const errorMessages = `${data.message || data.symbol?.join('_') || String(data) || 'Unknown Error'}\nWarnings: ${warningCollection.join('\n')}`;
+
+            resolve({ message: errorMessages, res: false });
+          };
+
+          const args = [orderName, file.uploadName, file.size, file.thumbnailSize];
+
+          const rotaryMode = BeamboxPreference.read('rotary_mode');
+          const extendRotaryWorkarea = BeamboxPreference.read('extend-rotary-workarea');
+
+          if (rotaryMode && extendRotaryWorkarea) {
+            args.push('-spin');
           }
-        }
 
-        ws.send(args.join(' '));
-      };
-
-      $deferred.progress((action) => {
-        let file;
-        let hasBadFiles = false;
-
-        if (action === 'next') {
-          file = files[currIndex];
-
-          if (typeof file === 'undefined') {
-            hasBadFiles = files.some((f) => f.status === 'bad');
-            $deferred.resolve({ files, hasBadFiles });
-          } else if (file.extension && file.extension.toLowerCase() === 'svg') {
-            sendFile(file);
-            currIndex += 1;
-            console.log('currIndex', currIndex);
+          if (model === 'fhexa1') {
+            args.push('-hexa');
+          } else if (model === 'fbb1p') {
+            args.push('-pro');
+          } else if (model === 'fbm1') {
+            args.push('-beamo');
           } else {
-            setMessages(file, true, ['NOT_SUPPORT']);
-            currIndex += 1;
-            $deferred.notify('next');
+            args.push(`-${model}`);
           }
-        }
+
+          if (typeof engraveDpi === 'number') {
+            args.push(`-dpi ${engraveDpi}`);
+          } else {
+            const dpiArg =
+              {
+                high: '-hdpi',
+                low: '-ldpi',
+                medium: '-mdpi',
+                ultra: '-udpi',
+              }[engraveDpi] || '-mdpi';
+
+            args.push(dpiArg);
+          }
+
+          ws.send(args.join(' '));
+        };
+
+        sendFile();
       });
-
-      $deferred.notify('next');
-
-      return $deferred.promise();
     },
   };
 };
