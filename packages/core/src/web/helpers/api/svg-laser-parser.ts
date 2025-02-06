@@ -453,8 +453,8 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
       const $deferred = $.Deferred();
       const warningCollection = [];
       const args = ['g2f'];
-      const blobs = [];
-      let duration;
+      const blobs: Blob[] = [];
+      let duration: number;
       let totalLength = 0;
       let blob;
 
@@ -506,8 +506,8 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
       opts.onFinished = opts.onFinished || (() => {});
 
       const args = ['go', names.join(' '), opts.fileMode || '-f'];
-      const blobs = [];
-      let duration;
+      const blobs: Blob[] = [];
+      let duration: number;
       let totalLength = 0;
       let blob;
       let metadata;
@@ -699,7 +699,7 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
 
         if (childNode.nodeName === 'textPath') {
           const href = childNode.getAttribute('href');
-          const hrefElem = document.querySelector(href);
+          const hrefElem = href ? document.querySelector(href) : null;
 
           if (hrefElem) {
             defs += hrefElem.outerHTML;
