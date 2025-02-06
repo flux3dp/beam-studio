@@ -89,7 +89,6 @@ export const getExportOpt = (
   const rotaryMode = BeamboxPreference.read('rotary_mode') && supportInfo.rotary;
   const autoFeeder = BeamboxPreference.read('auto-feeder') && supportInfo.autoFeeder;
 
-  //
   if (rotaryMode) {
     config.spin = rotaryAxis.getPosition() ?? 0;
 
@@ -288,12 +287,12 @@ export const getExportOpt = (
   }
 
   if (args) {
-    Object.keys(config).forEach((key) => {
+    Object.keys(config).forEach((key: keyof IFcodeConfig) => {
       if (['curve_engraving', 'loop_compensation', 'model', 'z_offset'].includes(key)) {
         // Skip special keys
       } else if (key === 'hardware_name') {
         args.push(`-${config[key]}`);
-      } else if (key === 'af' && 'z_offset' in config) {
+      } else if (key === 'af' && config.z_offset) {
         // Handle optional -af value
         args.push('-af', config.z_offset.toString());
       } else {
