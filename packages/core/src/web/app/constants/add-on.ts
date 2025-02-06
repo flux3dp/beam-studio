@@ -6,9 +6,10 @@ export enum RotaryType {
 }
 
 export const CHUCK_ROTARY_DIAMETER = 133;
+export const FBB2_FEEDER_DIAMETER = 167.08;
 
 export interface SupportInfo {
-  autoFeeder?: { maxHeight: number; xRange: [number, number] }; // [x, width] in mm
+  autoFeeder?: { maxHeight: number; rotaryRatio: number; xRange: [number, number] }; // [x, width] in mm
   autoFocus?: boolean;
   curveEngraving?: boolean;
   framingLowLaser?: boolean;
@@ -60,7 +61,7 @@ const supportList: Record<WorkAreaModel, SupportInfo> = {
     },
   },
   fbb2: {
-    autoFeeder: { maxHeight: 2000, xRange: [100, 400] },
+    autoFeeder: { maxHeight: 2000, rotaryRatio: CHUCK_ROTARY_DIAMETER / FBB2_FEEDER_DIAMETER, xRange: [100, 400] },
     curveEngraving: true,
     jobOrigin: true,
     lowerFocus: true,
