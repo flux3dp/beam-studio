@@ -204,8 +204,6 @@ const importSvg = async (
 
   const { data: outputData } = output;
 
-  console.log(outputData);
-
   const newElements = Array.of<SVGUseElement>();
   const elementOptions = { parentCmd: batchCmd, targetModule, type: importType };
 
