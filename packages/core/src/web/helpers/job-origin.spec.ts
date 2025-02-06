@@ -20,12 +20,8 @@ jest.mock('@core/helpers/layer/layer-config-helper', () => ({
 
 const mockWorkareaWidth = jest.fn();
 const mockWorkareaHeight = jest.fn();
-const mockWorkareaExpansion = jest.fn();
 
 jest.mock('@core/app/svgedit/workarea', () => ({
-  get expansion() {
-    return mockWorkareaExpansion();
-  },
   get height() {
     return mockWorkareaHeight();
   },
@@ -46,16 +42,15 @@ describe('test job-origin', () => {
     mockGetAllLayers.mockReturnValue([mockLayer1, mockLayer2]);
     mockGetData.mockReturnValue(1);
     expect(getRefModule()).toBe(1);
-    expect(mockGetAllLayers).toBeCalledTimes(1);
-    expect(mockGetData).toBeCalledTimes(1);
-    expect(mockGetData).toBeCalledWith(mockLayer2, 'module');
+    expect(mockGetAllLayers).toHaveBeenCalledTimes(1);
+    expect(mockGetData).toHaveBeenCalledTimes(1);
+    expect(mockGetData).toHaveBeenCalledWith(mockLayer2, 'module');
   });
 
   describe('getJobOrigin', () => {
     beforeEach(() => {
       mockWorkareaWidth.mockReturnValue(100);
       mockWorkareaHeight.mockReturnValue(200);
-      mockWorkareaExpansion.mockReturnValue([0, 0]);
 
       const mockElem = {
         getBBox: () => ({ height: 40, width: 30, x: 10, y: 20 }),
@@ -80,10 +75,9 @@ describe('test job-origin', () => {
       test(`getJobOrigin with value ${jobOrigin}`, () => {
         mockRead.mockReturnValue(jobOrigin);
         expect(getJobOrigin(px)).toEqual(res);
-        expect(document.getElementById).toBeCalledTimes(1);
-        expect(mockWorkareaWidth).toBeCalledTimes(1);
-        expect(mockWorkareaHeight).toBeCalledTimes(1);
-        expect(mockWorkareaExpansion).toBeCalledTimes(1);
+        expect(document.getElementById).toHaveBeenCalledTimes(1);
+        expect(mockWorkareaWidth).toHaveBeenCalledTimes(1);
+        expect(mockWorkareaHeight).toHaveBeenCalledTimes(1);
       });
     });
   });
