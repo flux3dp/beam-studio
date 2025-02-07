@@ -201,9 +201,9 @@ export default {
     keys: string[],
     callback: (event: KeyboardEvent) => void,
     { isBlocking = false, isPreventDefault = true, splitKey = '+' }: RegisterOptions = {},
-  ): (() => void) | null {
+  ): () => void {
     if (isMobile()) {
-      return null;
+      return () => {};
     }
 
     const keySets = keys.map((key) => parseKeySet(key, splitKey));
