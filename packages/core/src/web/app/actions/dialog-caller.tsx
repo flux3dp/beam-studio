@@ -664,14 +664,14 @@ export default {
       />,
     );
   },
-  showSocialMedia: (): void => {
+  showSocialMedia: (autoPopup?: boolean): void => {
     const id = 'social-media';
 
     if (isIdExist(id)) {
       return;
     }
 
-    addDialogComponent(id, <SocialMediaModal onClose={() => popDialogById(id)} />);
+    addDialogComponent(id, <SocialMediaModal autoPopup={autoPopup} onClose={() => popDialogById(id)} />);
   },
   showSvgNestButtons: (): void => {
     if (isIdExist('svg-nest')) {

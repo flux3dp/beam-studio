@@ -1,8 +1,10 @@
-import React, { Fragment, useMemo } from 'react';
+import React, { Fragment, useMemo, useState } from 'react';
 
 import { ExportOutlined } from '@ant-design/icons';
-import { Divider, Modal } from 'antd';
+import { Button, Checkbox, Divider, Modal } from 'antd';
+import classNames from 'classnames';
 
+import alertConfig from '@core/helpers/api/alert-config';
 import i18n from '@core/helpers/i18n';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
@@ -27,14 +29,17 @@ const Item = ({ item }: { item: TItem }) => (
 );
 
 interface Props {
+  autoPopup?: boolean;
   onClose: () => void;
 }
 
-const SocialMediaModal = ({ onClose }: Props): React.JSX.Element => {
+const SocialMediaModal = ({ autoPopup = false, onClose: closeModal }: Props): React.JSX.Element => {
   const {
+    alert: tAlert,
     social_media: t,
     topbar: { menu: tMenu },
   } = useI18n();
+  const [dontShow, setDontShow] = useState(false);
 
   const items: TItem[] = useMemo(() => {
     const isTW = i18n.getActiveLang() === 'zh-tw';
@@ -63,23 +68,33 @@ const SocialMediaModal = ({ onClose }: Props): React.JSX.Element => {
     ];
   }, [t]);
 
+  const onClose = () => {
+    if (dontShow) {
+      alertConfig.write('skip-social-media-invitation', true);
+    }
+
+    closeModal();
+  };
+
   return (
-    <Modal
-      cancelButtonProps={{ className: styles.hide }}
-      centered
-      onCancel={onClose}
-      onOk={onClose}
-      open
-      title={tMenu.follow_us}
-      width={750}
-    >
-      <div className={styles.container}>
+    <Modal centered footer={null} onCancel={onClose} open title={tMenu.follow_us} width={autoPopup ? 550 : 750}>
+      <div className={classNames(styles.container, { [styles.small]: autoPopup })}>
         {items.map((item, index) => (
           <Fragment key={item.name}>
             {index > 0 && <Divider type="vertical" />}
             <Item item={item} />
           </Fragment>
         ))}
+      </div>
+      <div className={styles.footer}>
+        {autoPopup && (
+          <Checkbox onChange={() => setDontShow(!dontShow)} value={dontShow}>
+            {tAlert.dont_show_again}
+          </Checkbox>
+        )}
+        <Button className={styles.button} onClick={onClose}>
+          {tAlert.close}
+        </Button>
       </div>
     </Modal>
   );
