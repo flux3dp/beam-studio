@@ -10,8 +10,16 @@ import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import { getCurrentUser } from '@core/helpers/api/flux-id';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import isDev from '@core/helpers/is-dev';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
+
+let svgCanvas: ISVGCanvas;
+
+getSVGAsync(({ Canvas }) => {
+  svgCanvas = Canvas;
+});
 
 const eventEmitter = eventEmitterFactory.createEventEmitter('drawing-tool');
 
@@ -34,6 +42,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
       id={`left-${id}`}
       onClick={() => {
         setActiveButton(id);
+        svgCanvas.clearSelection();
         onClick();
       }}
       showBadge={showBadge}

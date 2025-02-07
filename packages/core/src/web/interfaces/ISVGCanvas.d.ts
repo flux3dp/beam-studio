@@ -57,6 +57,7 @@ export default interface ISVGCanvas {
   ) => Promise<BaseHistoryCommand>;
   drawAlignLine: (x: number, y: number, byX: IPoint, byY: IPoint) => void;
   drawing: ISVGDrawing;
+  drawTracingLine: (x1: number, y1: number, x2: number, y2: number, index: number, stroke?: string) => void;
   embedImage(url: string, callback?: (dataURI: string) => void): void;
   events: EventEmitter;
   findMatchPoint: (x: number, y: number) => { byX: IPoint; byY: IPoint };
@@ -87,6 +88,7 @@ export default interface ISVGCanvas {
    */
   getRotationAngle(elem: Element): void;
   getRubberBox: () => SVGRectElement;
+  getSelectedElementsAlignPoints: () => IPoint[];
   getSelectedElems: (ungroupTempGroup?: boolean) => SVGElement[];
   getStarted: () => boolean;
   getStartTransform: () => any;
