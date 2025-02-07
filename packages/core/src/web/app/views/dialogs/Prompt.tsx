@@ -34,8 +34,7 @@ function Prompt({
   onYes,
   placeholder,
 }: Props): React.JSX.Element {
-  const lang = useI18n();
-  const langAlert = lang.alert;
+  const t = useI18n().alert;
   const inputRef = React.useRef<InputRef>(null);
   const [checkboxChecked, setCheckboxChecked] = useState(false);
 
@@ -63,9 +62,9 @@ function Prompt({
 
   return (
     <Modal
-      cancelText={langAlert.cancel}
+      cancelText={t.cancel}
       centered
-      okText={langAlert.ok2}
+      okText={t.ok2}
       onCancel={() => {
         const inputElem = inputRef.current;
 
@@ -90,7 +89,7 @@ function Prompt({
       </InputKeyWrapper>
       {alertConfigKey && (
         <Checkbox className={styles.checkbox} onClick={() => setCheckboxChecked(!checkboxChecked)}>
-          {lang.beambox.popup.dont_show_again}
+          {t.dont_show_again}
         </Checkbox>
       )}
     </Modal>

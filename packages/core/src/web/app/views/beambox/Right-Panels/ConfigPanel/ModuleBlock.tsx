@@ -30,10 +30,15 @@ getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
 
-const ModuleBlock = (): React.JSX.Element => {
+const ModuleBlock = (): React.ReactNode => {
   const isMobile = useIsMobile();
-  const lang = useI18n();
-  const t = lang.beambox.right_panel.laser_panel;
+  const {
+    alert: tAlert,
+    beambox: {
+      right_panel: { laser_panel: t },
+    },
+    layer_module: tModule,
+  } = useI18n();
   const { initState, selectedLayers, state } = useContext(ConfigPanelContext);
   const { module } = state;
   const { value } = module;
@@ -66,7 +71,7 @@ const ModuleBlock = (): React.JSX.Element => {
       const res = await new Promise((resolve) => {
         alertCaller.popUp({
           buttonType: alertConstants.CONFIRM_CANCEL,
-          caption: lang.layer_module.notification.convertFromPrintingModuleTitle,
+          caption: tModule.notification.convertFromPrintingModuleTitle,
           checkbox: {
             callbacks: [
               () => {
@@ -75,10 +80,10 @@ const ModuleBlock = (): React.JSX.Element => {
               },
               () => resolve(false),
             ],
-            text: lang.beambox.popup.dont_show_again,
+            text: tAlert.dont_show_again,
           },
           id: 'switch-to-printer-module',
-          message: lang.layer_module.notification.convertFromPrintingModuleMsg,
+          message: tModule.notification.convertFromPrintingModuleMsg,
           messageIcon: 'notice',
           onCancel: () => resolve(false),
           onConfirm: () => resolve(true),
@@ -96,7 +101,7 @@ const ModuleBlock = (): React.JSX.Element => {
       const res = await new Promise((resolve) => {
         alertCaller.popUp({
           buttonType: alertConstants.CONFIRM_CANCEL,
-          caption: lang.layer_module.notification.convertFromLaserModuleTitle,
+          caption: tModule.notification.convertFromLaserModuleTitle,
           checkbox: {
             callbacks: [
               () => {
@@ -105,10 +110,10 @@ const ModuleBlock = (): React.JSX.Element => {
               },
               () => resolve(false),
             ],
-            text: lang.beambox.popup.dont_show_again,
+            text: tAlert.dont_show_again,
           },
           id: 'switch-to-laser-module',
-          message: lang.layer_module.notification.convertFromLaserModuleMsg,
+          message: tModule.notification.convertFromLaserModuleMsg,
           messageIcon: 'notice',
           onCancel: () => resolve(false),
           onConfirm: () => resolve(true),
@@ -162,10 +167,10 @@ const ModuleBlock = (): React.JSX.Element => {
   };
 
   const options = [
-    { label: lang.layer_module.laser_10w_diode, value: LayerModule.LASER_10W_DIODE },
-    { label: lang.layer_module.laser_20w_diode, value: LayerModule.LASER_20W_DIODE },
-    { label: lang.layer_module.printing, value: LayerModule.PRINTER },
-    { label: lang.layer_module.laser_2w_infrared, value: LayerModule.LASER_1064 },
+    { label: tModule.laser_10w_diode, value: LayerModule.LASER_10W_DIODE },
+    { label: tModule.laser_20w_diode, value: LayerModule.LASER_20W_DIODE },
+    { label: tModule.printing, value: LayerModule.PRINTER },
+    { label: tModule.laser_2w_infrared, value: LayerModule.LASER_1064 },
   ];
 
   return isMobile ? (

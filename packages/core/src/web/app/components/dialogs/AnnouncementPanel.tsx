@@ -16,7 +16,10 @@ interface Props {
 }
 
 const AnnouncementPanel = ({ announcement, onClose }: Props): React.JSX.Element => {
-  const lang = useI18n();
+  const {
+    alert: tAlert,
+    beambox: { announcement_panel: t },
+  } = useI18n();
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
 
   const handleClose = () => {
@@ -34,25 +37,25 @@ const AnnouncementPanel = ({ announcement, onClose }: Props): React.JSX.Element 
       footer={
         announcement.link ? (
           <Button onClick={() => browser.open(announcement.link)} type="primary">
-            {announcement.link_text || lang.alert.learn_more} <ExportOutlined />
+            {announcement.link_text || tAlert.learn_more} <ExportOutlined />
           </Button>
         ) : (
           <Button onClick={handleClose} type="primary">
-            {lang.alert.close}
+            {tAlert.close}
           </Button>
         )
       }
       onCancel={handleClose}
       onOk={handleClose}
       open
-      title={announcement.title || lang.beambox.announcement_panel.title}
+      title={announcement.title || t.title}
     >
       <div className="main-content">
         {}
         <div dangerouslySetInnerHTML={{ __html: announcement.content }} />
         <div className={styles.checkbox}>
           <Checkbox checked={isCheckboxChecked} onChange={() => setIsCheckboxChecked(!isCheckboxChecked)}>
-            {lang.beambox.announcement_panel.dont_show_again}
+            {tAlert.dont_show_again}
           </Checkbox>
         </div>
       </div>

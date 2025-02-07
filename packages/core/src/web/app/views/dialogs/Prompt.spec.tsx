@@ -12,27 +12,6 @@ jest.mock('@core/helpers/api/alert-config', () => ({
   write: (...args: any[]) => mockWrite(...args),
 }));
 
-jest.mock('@core/helpers/useI18n', () => () => ({
-  alert: {
-    cancel: 'Cancel',
-    ok2: 'OK',
-  },
-  beambox: {
-    popup: {
-      dont_show_again: 'dont_show_again',
-    },
-  },
-}));
-
-jest.mock('@core/helpers/i18n', () => ({
-  lang: {
-    alert: {
-      cancel: 'Cancel',
-      ok2: 'OK',
-    },
-  },
-}));
-
 const onYes = jest.fn();
 const onCancel = jest.fn();
 const onClose = jest.fn();

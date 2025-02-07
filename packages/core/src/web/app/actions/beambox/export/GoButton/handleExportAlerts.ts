@@ -150,7 +150,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
                   alertConfig.write('skip_curve_speed_warning', true);
                   resolve();
                 },
-                text: lang.beambox.popup.dont_show_again,
+                text: lang.alert.dont_show_again,
               },
               message,
               type: alertConstants.SHOW_POPUP_WARNING,
@@ -171,7 +171,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
                 alertConfig.write('skip_curve_speed_limit_warning', true);
                 resolve();
               },
-              text: lang.beambox.popup.dont_show_again,
+              text: lang.alert.dont_show_again,
             },
             message,
             type: alertConstants.SHOW_POPUP_WARNING,
@@ -287,7 +287,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
                   alertConfig.write('skip_path_speed_warning', true);
                   resolve();
                 },
-                text: lang.beambox.popup.dont_show_again,
+                text: lang.alert.dont_show_again,
               },
               message,
               type: alertConstants.SHOW_POPUP_WARNING,
@@ -308,7 +308,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
                 alertConfig.write('skip_path_speed_constraint_warning', true);
                 resolve();
               },
-              text: lang.beambox.popup.dont_show_again,
+              text: lang.alert.dont_show_again,
             },
             message,
             type: alertConstants.SHOW_POPUP_WARNING,

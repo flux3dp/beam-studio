@@ -26,7 +26,10 @@ getSVGAsync((globalSVG) => {
 
 // TODO: add unit test
 const importDxf = async (file: Blob): Promise<void> => {
-  const lang = i18n.lang.beambox;
+  const {
+    alert: tAlert,
+    beambox: { popup: t },
+  } = i18n.lang;
   const Dxf2Svg = await requirejsHelper('dxf2svg');
   const { defaultDpiValue, parsed } = await new Promise<{
     defaultDpiValue: number;
@@ -45,10 +48,10 @@ const importDxf = async (file: Blob): Promise<void> => {
             alertCaller.popUp({
               checkbox: {
                 callbacks: () => alertConfig.write('skip_dxf_version_warning', true),
-                text: lang.popup.dont_show_again,
+                text: tAlert.dont_show_again,
               },
               id: 'skip_dxf_version_warning',
-              message: lang.popup.dxf_version_waring,
+              message: t.dxf_version_waring,
               type: alertConstants.SHOW_POPUP_WARNING,
             });
           }
@@ -101,10 +104,10 @@ const importDxf = async (file: Blob): Promise<void> => {
         callbacks: () => {
           alertConfig.write('skip_dxf_oversize_warning', true);
         },
-        text: lang.popup.dont_show_again,
+        text: tAlert.dont_show_again,
       },
       id: 'dxf_size_over_workarea',
-      message: lang.popup.dxf_bounding_box_size_over,
+      message: t.dxf_bounding_box_size_over,
       type: alertConstants.SHOW_POPUP_WARNING,
     });
   }

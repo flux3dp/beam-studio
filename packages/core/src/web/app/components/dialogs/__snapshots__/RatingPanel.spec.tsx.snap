@@ -28,7 +28,7 @@ exports[`test RatingPanel set star and submit should work 1`] = `
           Dummy FormItem
           <p>
             label: 
-            Don't Show this next time.
+            Don't show again
           </p>
           <div>
             Dummy Checkbox
@@ -69,7 +69,7 @@ exports[`test RatingPanel set star and submit should work 2`] = `
     </p>
     <strong>
       🙏
-      Thank You for the feedback!
+      Thank You!
     </strong>
     <button
       type="button"
@@ -113,7 +113,7 @@ exports[`test RatingPanel should render correctly 1`] = `
           Dummy FormItem
           <p>
             label: 
-            Don't Show this next time.
+            Don't show again
           </p>
           <div>
             Dummy Checkbox
@@ -172,7 +172,7 @@ exports[`test RatingPanel toggle checkbox and cancel should work 1`] = `
           Dummy FormItem
           <p>
             label: 
-            Don't Show this next time.
+            Don't show again
           </p>
           <div>
             Dummy Checkbox

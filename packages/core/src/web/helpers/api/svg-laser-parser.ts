@@ -709,7 +709,7 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
           Alert.popUp({
             checkbox: {
               callbacks: () => AlertConfig.write('skip_image_path_warning', true),
-              text: i18n.lang.beambox.popup.dont_show_again,
+              text: i18n.lang.alert.dont_show_again,
             },
             message: i18n.lang.beambox.popup.svg_image_path_waring,
             type: AlertConstants.SHOW_POPUP_WARNING,

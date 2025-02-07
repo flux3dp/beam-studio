@@ -205,7 +205,7 @@ exports[`test Prompt should work with alertConfigKey 1`] = `
                     />
                   </span>
                   <span>
-                    dont_show_again
+                    Don't show again
                   </span>
                 </label>
               </div>

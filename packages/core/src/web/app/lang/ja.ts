@@ -8,6 +8,7 @@ const lang: ILang = {
     close: '閉じる',
     confirm: '確認する',
     dont_save: '保存しない',
+    dont_show_again: '次回から表示しない',
     duplicated_preset_name: '重複したプリセット名',
     error: 'おっと',
     info: '情報',
@@ -60,7 +61,6 @@ const lang: ILang = {
   },
   beambox: {
     announcement_panel: {
-      dont_show_again: '次回から表示しない',
       title: 'お知らせ',
     },
     bottom_right_panel: {
@@ -281,12 +281,10 @@ const lang: ILang = {
       bug_report: 'バグ報告',
       change_workarea_before_preview: '%sのワークエリアが、現在設定されているワークエリアと一致しません。現在のワークエリアを切り替えますか？',
       convert_to_path_fail: 'パスへの変換に失敗しました。',
-      dont_show_again: '次回から表示しない',
       dxf_bounding_box_size_over: '図面サイズがワークエリア外です。図面をCADソフトウェアの原点に近づけるか、単位が正しく設定されていることを確認してください。',
       dxf_version_waring: 'このDXFファイルのバージョンは2013ではありません。非互換性の問題が発生する可能性があります。',
       facebook_group_invitation: {
         already_joined: 'すでに参加済み',
-        dont_show_again: '今後、表示しない',
         join_now: '今すぐ参加する',
         later: '後で参加する',
         message: '公式Facebookグループに参加して、他のFLUXレーザーユーザーとつながり、FLUXレーザーについて語り合い、レーザーアート作品を共有し、製品に関する最新情報を入手しませんか？ご参加をお待ちしております！',
@@ -350,7 +348,6 @@ const lang: ILang = {
     },
     rating_panel: {
       description: 'Beam Studio が気に入ったら、評価していただければ幸いです。',
-      dont_show_again: '次回から表示しない',
       thank_you: 'ありがとうございました',
       title: 'Beam Studio は好きですか？',
     },

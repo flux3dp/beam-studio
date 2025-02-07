@@ -806,13 +806,13 @@ const tempConvertTextToPathAmoungSvgcontent = async () => {
   if (isAnyFontUnsupported && !AlertConfig.read('skip_check_thumbnail_warning')) {
     await new Promise<void>((resolve) => {
       Alert.popUp({
-        callbacks: () => resolve(null),
+        callbacks: () => resolve(),
         checkbox: {
           callbacks: () => {
             AlertConfig.write('skip_check_thumbnail_warning', true);
-            resolve(null);
+            resolve();
           },
-          text: i18n.lang.beambox.popup.dont_show_again,
+          text: i18n.lang.alert.dont_show_again,
         },
         message: LANG.text_to_path.check_thumbnail_warning,
         type: AlertConstants.SHOW_POPUP_WARNING,

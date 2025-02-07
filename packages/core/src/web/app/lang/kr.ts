@@ -8,6 +8,7 @@ const lang: ILang = {
     close: '닫기',
     confirm: '확인',
     dont_save: '저장 안 함',
+    dont_show_again: '다시 표시 안 함',
     duplicated_preset_name: '프리셋 이름 중복됨.',
     error: 'UH-OH',
     info: 'INFO',
@@ -60,7 +61,6 @@ const lang: ILang = {
   },
   beambox: {
     announcement_panel: {
-      dont_show_again: '다시 표시 안 함',
       title: '공지사항',
     },
     bottom_right_panel: {
@@ -281,12 +281,10 @@ const lang: ILang = {
       bug_report: '버그 리포트',
       change_workarea_before_preview: '작업 영역(%s)이 현재 설정된 작업 영역과 일치하지 않습니다. 현재 작업 영역을 전환하시겠습니까?',
       convert_to_path_fail: '경로로 변환 실패.',
-      dont_show_again: '다음에는 이 메시지를 표시하지 않습니다.',
       dxf_bounding_box_size_over: '도면 크기가 작업 영역을 벗어났습니다. CAD 소프트웨어에서 도면을 원점에 가깝게 이동하거나, 단위가 올바르게 설정되었는지 확인하세요.',
       dxf_version_waring: '이 DXF 파일의 버전이 2013이 아닌 경우 호환성 문제가 있을 수 있습니다.',
       facebook_group_invitation: {
         already_joined: '이미 가입',
-        dont_show_again: '다시 표시하지 마세요.',
         join_now: '카운트 인',
         later: '어쩌면 나중에',
         message: '공식 Facebook 그룹에 가입하여 다른 FLUX 레이저 사용자들과 교류하고, FLUX 레이저에 대해 토론하고, 레이저 아트웍을 공유하고, 제품에 대한 최신 업데이트를 받아보세요. 여러분을 빨리 만나고 싶습니다!',
@@ -350,7 +348,6 @@ const lang: ILang = {
     },
     rating_panel: {
       description: 'Beam Studio를 좋아하신다면 평가해 주시면 감사하겠습니다.',
-      dont_show_again: '다음에는 이 창을 보지 않기',
       thank_you: '감사합니다!',
       title: 'Beam Studio를 즐기시겠습니까?',
     },

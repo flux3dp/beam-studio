@@ -8,6 +8,7 @@ const lang: ILang = {
     close: 'Sluiten',
     confirm: 'Bevestigen',
     dont_save: 'Niet opslaan',
+    dont_show_again: 'Niet meer weergeven',
     duplicated_preset_name: 'Dubbele voorinstellingsnaam',
     error: 'FOUT',
     info: 'INFO',
@@ -60,7 +61,6 @@ const lang: ILang = {
   },
   beambox: {
     announcement_panel: {
-      dont_show_again: 'Niet meer weergeven',
       title: 'Aankondiging',
     },
     bottom_right_panel: {
@@ -281,12 +281,10 @@ const lang: ILang = {
       bug_report: 'Bugrapportage',
       change_workarea_before_preview: 'Het werkgebied van %s komt niet overeen met het huidige werkgebied. Wilt u overschakelen naar het huidige werkgebied?',
       convert_to_path_fail: 'Converteren naar pad is mislukt.',
-      dont_show_again: 'Niet meer tonen.',
       dxf_bounding_box_size_over: 'De tekeninggrootte is buiten het werkgebied. Verplaats uw tekening dichter bij de oorsprong in uw CAD-software, of zorg dat de eenheid correct is.',
       dxf_version_waring: 'De DXF-versie is niet 2013, er kunnen compatibiliteitsproblemen zijn.',
       facebook_group_invitation: {
         already_joined: 'Al lid',
-        dont_show_again: 'Niet meer weergeven',
         join_now: 'Ik doe mee',
         later: 'Misschien later',
         message: 'Word lid van onze officiële Facebook-groep om in contact te komen met andere FLUX-lasergebruikers, FLUX-lasers te bespreken, laserkunstwerken te delen en op de hoogte te blijven van de nieuwste updates over onze producten. We kijken ernaar uit u daar te zien!',
@@ -350,7 +348,6 @@ const lang: ILang = {
     },
     rating_panel: {
       description: 'Als u van Beam Studio houdt, zouden we het zeer op prijs stellen als u ons kunt beoordelen.',
-      dont_show_again: 'Niet meer weergeven de volgende keer.',
       thank_you: 'Bedankt!',
       title: 'Geniet u van Beam Studio?',
     },

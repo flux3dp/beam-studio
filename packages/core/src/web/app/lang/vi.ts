@@ -8,6 +8,7 @@ const lang: ILang = {
     close: 'Đóng',
     confirm: 'Xác nhận',
     dont_save: 'Không lưu',
+    dont_show_again: 'Không hiển thị lại',
     duplicated_preset_name: 'Tên tiền định đã tồn tại',
     error: 'Ối...',
     info: 'THÔNG TIN',
@@ -60,7 +61,6 @@ const lang: ILang = {
   },
   beambox: {
     announcement_panel: {
-      dont_show_again: 'Không hiển thị lại',
       title: 'Thông báo',
     },
     bottom_right_panel: {
@@ -281,12 +281,10 @@ const lang: ILang = {
       bug_report: 'Báo cáo lỗi',
       change_workarea_before_preview: 'Khu vực làm việc không khớp. Bạn có muốn đổi khu vực làm việc hiện tại?',
       convert_to_path_fail: 'Không thể chuyển thành đường dẫn',
-      dont_show_again: 'Không hiển thị lần sau',
       dxf_bounding_box_size_over: 'Kích thước bản vẽ vượt quá khu vực làm việc. Vui lòng di chuyển gần gốc tọa độ hơn hoặc đảm bảo đơn vị chính xác',
       dxf_version_waring: 'Phiên bản DXF này có thể gặp vấn đề tương thích',
       facebook_group_invitation: {
         already_joined: 'Đã tham gia',
-        dont_show_again: 'Không hiển thị lần sau',
         join_now: 'Tôi tham gia',
         later: 'Có lẽ sau',
         message: 'Tham gia nhóm Facebook chính thức của chúng tôi để kết nối với các người dùng laser FLUX khác, thảo luận về sản phẩm laser FLUX, chia sẻ tác phẩm và cập nhật các bản cập nhật mới nhất. Chúng tôi mong được gặp bạn!',
@@ -350,7 +348,6 @@ const lang: ILang = {
     },
     rating_panel: {
       description: 'Nếu bạn thích Beam Studio, chúng tôi rất đánh giá cao nếu bạn có thể đánh giá ứng dụng của chúng tôi.',
-      dont_show_again: 'Không hiển thị lần sau.',
       thank_you: 'Cảm ơn bạn!',
       title: 'Thích Beam Studio?',
     },

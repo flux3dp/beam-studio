@@ -2,10 +2,8 @@ import React, { useState } from 'react';
 
 import { Checkbox, Form, Modal, Rate } from 'antd';
 
-import i18n from '@core/helpers/i18n';
 import RatingHelper from '@core/helpers/rating-helper';
-
-const LANG = i18n.lang.beambox.rating_panel;
+import useI18n from '@core/helpers/useI18n';
 
 interface Props {
   onClose: () => void;
@@ -13,6 +11,10 @@ interface Props {
 }
 
 const RatingPanel = ({ onClose, onSubmit }: Props): React.JSX.Element => {
+  const {
+    alert: tAlert,
+    beambox: { rating_panel: t },
+  } = useI18n();
   const [star, setStar] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
@@ -36,19 +38,19 @@ const RatingPanel = ({ onClose, onSubmit }: Props): React.JSX.Element => {
       onCancel={handleCancel}
       onOk={() => (isFinished ? handleCancel() : handleSubmit(star))}
       open
-      title={`👨‍🚀 ${LANG.title}`}
+      title={`👨‍🚀 ${t.title}`}
     >
       {isFinished ? (
         <strong>
           🙏
-          {LANG.thank_you}
+          {t.thank_you}
         </strong>
       ) : (
         <div className="main-content">
-          <div>{LANG.description}</div>
+          <div>{t.description}</div>
           <Rate onChange={(val) => setStar(val)} />
           <Form>
-            <Form.Item label={LANG.dont_show_again}>
+            <Form.Item label={tAlert.dont_show_again}>
               <Checkbox checked={isCheckboxChecked} onChange={(e) => setIsCheckboxChecked(e.target.checked)} />
             </Form.Item>
           </Form>

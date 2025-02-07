@@ -21,7 +21,7 @@ const showFacebookGroupInvitation = (popUp: (args: IAlert) => void) => {
       caption: LANG.title,
       checkbox: {
         callbacks: [handleJoinNow, () => alertConfig.write('skip-fb-group-invitation', true), handleAlreadyJoined],
-        text: LANG.dont_show_again,
+        text: i18n.lang.alert.dont_show_again,
       },
       message: LANG.message,
       primaryButtonIndex: 0,

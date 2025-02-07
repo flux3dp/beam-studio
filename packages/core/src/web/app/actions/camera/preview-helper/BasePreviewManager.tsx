@@ -255,7 +255,7 @@ class BasePreviewManager implements PreviewManager {
           callbacks: [() => resolve(false), () => resolve(true)],
           checkbox: {
             callbacks: () => alertConfig.write('skip_camera_cable_alert', true),
-            text: lang.beambox.popup.dont_show_again,
+            text: lang.alert.dont_show_again,
           },
           id: 'camera_cable_alert',
           message: lang.message.camera.camera_cable_unstable,

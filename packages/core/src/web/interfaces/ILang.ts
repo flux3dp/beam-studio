@@ -6,6 +6,7 @@ export interface ILang {
     close: string;
     confirm: string;
     dont_save: string;
+    dont_show_again: string;
     duplicated_preset_name: string;
     error: string;
     info: string;
@@ -58,7 +59,6 @@ export interface ILang {
   };
   beambox: {
     announcement_panel: {
-      dont_show_again: string;
       title: string;
     };
     bottom_right_panel: {
@@ -279,12 +279,10 @@ export interface ILang {
       bug_report: string;
       change_workarea_before_preview: string;
       convert_to_path_fail: string;
-      dont_show_again: string;
       dxf_bounding_box_size_over: string;
       dxf_version_waring: string;
       facebook_group_invitation: {
         already_joined: string;
-        dont_show_again: string;
         join_now: string;
         later: string;
         message: string;
@@ -348,7 +346,6 @@ export interface ILang {
     };
     rating_panel: {
       description: string;
-      dont_show_again: string;
       thank_you: string;
       title: string;
     };

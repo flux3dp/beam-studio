@@ -16,7 +16,7 @@ exports[`test ModuleBlock change to 20w should work with preset change 1`] = `
       <div
         class="title"
       >
-        module
+        Module
       </div>
       <div
         class="ant-select ant-select-outlined select css-dev-only-do-not-override-hash ant-select-single ant-select-show-arrow"
@@ -49,9 +49,9 @@ exports[`test ModuleBlock change to 20w should work with preset change 1`] = `
             </span>
             <span
               class="ant-select-selection-item"
-              title="laser_10w_diode"
+              title="10W Diode Laser"
             >
-              laser_10w_diode
+              10W Diode Laser
             </span>
           </span>
         </div>
@@ -96,7 +96,7 @@ exports[`test ModuleBlock change to 20w should work with preset change 1`] = `
           style="height: 0px; width: 0px; overflow: hidden;"
         >
           <div
-            aria-label="laser_10w_diode"
+            aria-label="10W Diode Laser"
             aria-selected="true"
             id="rc_select_TEST_OR_SSR_list_0"
             role="option"
@@ -104,7 +104,7 @@ exports[`test ModuleBlock change to 20w should work with preset change 1`] = `
             1
           </div>
           <div
-            aria-label="laser_20w_diode"
+            aria-label="20W Diode Laser"
             aria-selected="false"
             id="rc_select_TEST_OR_SSR_list_1"
             role="option"
@@ -128,12 +128,12 @@ exports[`test ModuleBlock change to 20w should work with preset change 1`] = `
                 <div
                   aria-selected="true"
                   class="ant-select-item ant-select-item-option ant-select-item-option-active ant-select-item-option-selected"
-                  title="laser_10w_diode"
+                  title="10W Diode Laser"
                 >
                   <div
                     class="ant-select-item-option-content"
                   >
-                    laser_10w_diode
+                    10W Diode Laser
                   </div>
                   <span
                     aria-hidden="true"
@@ -145,12 +145,12 @@ exports[`test ModuleBlock change to 20w should work with preset change 1`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
-                  title="laser_20w_diode"
+                  title="20W Diode Laser"
                 >
                   <div
                     class="ant-select-item-option-content"
                   >
-                    laser_20w_diode
+                    20W Diode Laser
                   </div>
                   <span
                     aria-hidden="true"
@@ -162,12 +162,12 @@ exports[`test ModuleBlock change to 20w should work with preset change 1`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
-                  title="printing"
+                  title="Printing"
                 >
                   <div
                     class="ant-select-item-option-content"
                   >
-                    printing
+                    Printing
                   </div>
                   <span
                     aria-hidden="true"
@@ -179,12 +179,12 @@ exports[`test ModuleBlock change to 20w should work with preset change 1`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
-                  title="laser_2w_infrared"
+                  title="2W Infrared Laser"
                 >
                   <div
                     class="ant-select-item-option-content"
                   >
-                    laser_2w_infrared
+                    2W Infrared Laser
                   </div>
                   <span
                     aria-hidden="true"
@@ -219,7 +219,7 @@ exports[`test ModuleBlock change to printer should work when selecting 2 layer 1
       <div
         class="title"
       >
-        module
+        Module
       </div>
       <div
         class="ant-select ant-select-outlined select css-dev-only-do-not-override-hash ant-select-single ant-select-show-arrow"
@@ -252,9 +252,9 @@ exports[`test ModuleBlock change to printer should work when selecting 2 layer 1
             </span>
             <span
               class="ant-select-selection-item"
-              title="laser_10w_diode"
+              title="10W Diode Laser"
             >
-              laser_10w_diode
+              10W Diode Laser
             </span>
           </span>
         </div>
@@ -299,7 +299,7 @@ exports[`test ModuleBlock change to printer should work when selecting 2 layer 1
           style="height: 0px; width: 0px; overflow: hidden;"
         >
           <div
-            aria-label="laser_10w_diode"
+            aria-label="10W Diode Laser"
             aria-selected="true"
             id="rc_select_TEST_OR_SSR_list_0"
             role="option"
@@ -307,7 +307,7 @@ exports[`test ModuleBlock change to printer should work when selecting 2 layer 1
             1
           </div>
           <div
-            aria-label="laser_20w_diode"
+            aria-label="20W Diode Laser"
             aria-selected="false"
             id="rc_select_TEST_OR_SSR_list_1"
             role="option"
@@ -331,12 +331,12 @@ exports[`test ModuleBlock change to printer should work when selecting 2 layer 1
                 <div
                   aria-selected="true"
                   class="ant-select-item ant-select-item-option ant-select-item-option-active ant-select-item-option-selected"
-                  title="laser_10w_diode"
+                  title="10W Diode Laser"
                 >
                   <div
                     class="ant-select-item-option-content"
                   >
-                    laser_10w_diode
+                    10W Diode Laser
                   </div>
                   <span
                     aria-hidden="true"
@@ -348,12 +348,12 @@ exports[`test ModuleBlock change to printer should work when selecting 2 layer 1
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
-                  title="laser_20w_diode"
+                  title="20W Diode Laser"
                 >
                   <div
                     class="ant-select-item-option-content"
                   >
-                    laser_20w_diode
+                    20W Diode Laser
                   </div>
                   <span
                     aria-hidden="true"
@@ -365,12 +365,12 @@ exports[`test ModuleBlock change to printer should work when selecting 2 layer 1
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
-                  title="printing"
+                  title="Printing"
                 >
                   <div
                     class="ant-select-item-option-content"
                   >
-                    printing
+                    Printing
                   </div>
                   <span
                     aria-hidden="true"
@@ -382,12 +382,12 @@ exports[`test ModuleBlock change to printer should work when selecting 2 layer 1
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
-                  title="laser_2w_infrared"
+                  title="2W Infrared Laser"
                 >
                   <div
                     class="ant-select-item-option-content"
                   >
-                    laser_2w_infrared
+                    2W Infrared Laser
                   </div>
                   <span
                     aria-hidden="true"
@@ -414,7 +414,7 @@ exports[`test ModuleBlock should render correctly 1`] = `
     <div
       class="title"
     >
-      module
+      Module
     </div>
     <div
       class="ant-select ant-select-outlined select css-dev-only-do-not-override-hash ant-select-single ant-select-show-arrow"
@@ -447,9 +447,9 @@ exports[`test ModuleBlock should render correctly 1`] = `
           </span>
           <span
             class="ant-select-selection-item"
-            title="laser_10w_diode"
+            title="10W Diode Laser"
           >
-            laser_10w_diode
+            10W Diode Laser
           </span>
         </span>
       </div>

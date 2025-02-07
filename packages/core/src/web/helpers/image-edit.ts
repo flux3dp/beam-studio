@@ -354,7 +354,7 @@ const removeBackground = async (elem?: SVGImageElement): Promise<void> => {
             },
             () => resolve(false),
           ],
-          text: i18n.lang.beambox.popup.dont_show_again,
+          text: i18n.lang.alert.dont_show_again,
         },
         message: i18n.lang.beambox.right_panel.object_panel.actions_panel.ai_bg_removal_reminder,
         onCancel: () => resolve(false),
