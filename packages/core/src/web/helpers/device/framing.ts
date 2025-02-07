@@ -29,6 +29,7 @@ import symbolMaker from '@core/helpers/symbol-maker';
 import versionChecker from '@core/helpers/version-checker';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import type { PromarkStore } from '@core/interfaces/Promark';
 
 import applyRedDot from './promark/apply-red-dot';
 import promarkDataStore from './promark/promark-data-store';
@@ -40,19 +41,12 @@ export enum FramingType {
   AreaCheck,
 }
 
-type Coordinates =
-  | {
-      maxX: number;
-      maxY: number;
-      minX: number;
-      minY: number;
-    }
-  | {
-      maxX: undefined;
-      maxY: undefined;
-      minX: undefined;
-      minY: undefined;
-    };
+type Coordinates = {
+  maxX: number;
+  maxY: number;
+  minX: number;
+  minY: number;
+};
 
 let svgCanvas: ISVGCanvas;
 
@@ -61,14 +55,13 @@ getSVGAsync((globalSVG) => {
 });
 
 const getCoords = (mm?: boolean): Coordinates => {
-  const coords: Coordinates = {
+  const coords: Partial<Coordinates> = {
     maxX: undefined,
     maxY: undefined,
     minX: undefined,
     minY: undefined,
   };
-  const { expansion, height: fullHeight, width: workareaWidth } = workareaManager;
-  const workareaHeight = fullHeight - expansion[0] - expansion[1];
+  const { height: workareaHeight, width: workareaWidth } = workareaManager;
   const allLayers = getAllLayers();
   const { dpmm } = constant;
 
@@ -113,13 +106,13 @@ const getCoords = (mm?: boolean): Coordinates => {
   if (coords.minX !== undefined) {
     const ratio = mm ? dpmm : 1;
 
-    coords.minX = Math.max(coords.minX, 0) / ratio;
-    coords.minY = Math.max(coords.minY, 0) / ratio;
-    coords.maxX = Math.min(coords.maxX, workareaWidth) / ratio;
-    coords.maxY = Math.min(coords.maxY, workareaHeight) / ratio;
+    coords.minX = Math.max(coords.minX ?? 0, 0) / ratio;
+    coords.minY = Math.max(coords.minY ?? 0, 0) / ratio;
+    coords.maxX = Math.min(coords.maxX ?? workareaWidth, workareaWidth) / ratio;
+    coords.maxY = Math.min(coords.maxY ?? workareaHeight, workareaHeight) / ratio;
   }
 
-  return coords;
+  return coords as Coordinates;
 };
 
 const getCanvasImage = async (): Promise<Blob> => {
@@ -141,25 +134,15 @@ const getCanvasImage = async (): Promise<Blob> => {
       const transform = image.getAttribute('transform');
       const rect = document.createElementNS(NS.SVG, 'rect');
 
-      if (x) {
-        rect.setAttribute('x', x);
-      }
+      if (x) rect.setAttribute('x', x);
 
-      if (y) {
-        rect.setAttribute('y', y);
-      }
+      if (y) rect.setAttribute('y', y);
 
-      if (width) {
-        rect.setAttribute('width', width);
-      }
+      if (width) rect.setAttribute('width', width);
 
-      if (height) {
-        rect.setAttribute('height', height);
-      }
+      if (height) rect.setAttribute('height', height);
 
-      if (transform) {
-        rect.setAttribute('transform', transform);
-      }
+      if (transform) rect.setAttribute('transform', transform);
 
       image.replaceWith(rect);
     });
@@ -192,8 +175,8 @@ const getCanvasImage = async (): Promise<Blob> => {
 const getConvexHull = async (imgBlob: Blob): Promise<Array<[number, number]>> => getUtilWS().getConvexHull(imgBlob);
 
 const getAreaCheckTask = async (
-  device?: IDeviceInfo,
-  jobOrigin?: { x: number; y: number },
+  device: IDeviceInfo,
+  jobOrigin: null | { x: number; y: number },
 ): Promise<Array<[number, number]>> => {
   try {
     const metadata = await exportFuncs.getMetadata(device);
@@ -225,22 +208,26 @@ const getAreaCheckTask = async (
 };
 
 class FramingTaskManager extends EventEmitter {
-  private device: IDeviceInfo | null = null;
+  private device: IDeviceInfo;
   private supportInfo: SupportInfo;
   private isAdor = false;
   private isFcodeV2 = false;
   private isPromark = false;
   private isWorking = false;
   private interrupted = false;
-  private rotaryInfo: { useAAxis?: boolean; y: number; yRatio: number } = null;
+  private rotaryInfo: null | { useAAxis?: boolean; y: number; yRatio: number } = null; // y in mm
   private enabledInfo: {
     '24v': boolean;
     lineCheckMode: boolean;
     rotary: boolean;
+  } = {
+    '24v': false,
+    lineCheckMode: false,
+    rotary: false,
   };
-  private jobOrigin: { x: number; y: number } = null;
+  private jobOrigin: null | { x: number; y: number } = null; // x, y in mm
   private vc: ReturnType<typeof versionChecker>;
-  private curPos: { a: number; x: number; y: number };
+  private curPos: { a: number; x: number; y: number } = { a: 0, x: 0, y: 0 };
   private movementFeedrate = 6000; // mm/min
   private lowPower = 0;
   private taskCache: { [type in FramingType]?: Array<[number, number]> } = {};
@@ -305,7 +292,7 @@ class FramingTaskManager extends EventEmitter {
     if (!this.hasAppliedRedLight) {
       this.emit('message', i18n.lang.message.connecting);
 
-      const { field, galvoParameters, redDot } = promarkDataStore.get(this.device?.serial);
+      const { field, galvoParameters, redDot } = promarkDataStore.get(this.device?.serial) as PromarkStore;
 
       if (redDot) {
         const { field: newField, galvoParameters: newGalvo } = applyRedDot(redDot, field, galvoParameters);
@@ -361,7 +348,7 @@ class FramingTaskManager extends EventEmitter {
 
     if (moveTarget.y !== undefined) {
       if (this.enabledInfo.rotary) {
-        moveTarget.y = this.rotaryInfo.yRatio * (moveTarget.y - this.rotaryInfo.y) + this.rotaryInfo.y;
+        moveTarget.y = this.rotaryInfo!.yRatio * (moveTarget.y - this.rotaryInfo!.y) + this.rotaryInfo!.y;
       }
 
       if (this.jobOrigin) {
@@ -372,7 +359,7 @@ class FramingTaskManager extends EventEmitter {
       this.curPos.y = moveTarget.y;
     } else if (moveTarget.a !== undefined) {
       if (this.enabledInfo.rotary) {
-        moveTarget.a = this.rotaryInfo.yRatio * (moveTarget.a - this.rotaryInfo.y) + this.rotaryInfo.y;
+        moveTarget.a = this.rotaryInfo!.yRatio * (moveTarget.a - this.rotaryInfo!.y) + this.rotaryInfo!.y;
       }
 
       if (this.jobOrigin) {
@@ -447,15 +434,11 @@ class FramingTaskManager extends EventEmitter {
   private initTask = async () => {
     const selectRes = await deviceMaster.select(this.device);
 
-    if (!selectRes.success) {
-      return;
-    }
+    if (!selectRes.success) return;
 
     const deviceStatus = await checkDeviceStatus(this.device);
 
-    if (!deviceStatus) {
-      return;
-    }
+    if (!deviceStatus) return;
 
     const { lang } = i18n;
 
@@ -465,15 +448,27 @@ class FramingTaskManager extends EventEmitter {
     this.rotaryInfo = null;
 
     const rotaryMode = beamboxPreference.read('rotary_mode');
+    const autoFeeder = beamboxPreference.read('auto-feeder');
 
     if (rotaryMode && this.supportInfo.rotary) {
-      const y = rotaryAxis.getPosition(true);
+      const y = rotaryAxis.getPosition(true) ?? 0;
 
       this.rotaryInfo = { y, yRatio: getRotaryRatio(this.supportInfo) };
 
-      if (this.isFcodeV2) {
-        this.rotaryInfo.useAAxis = true;
+      if (this.isFcodeV2) this.rotaryInfo!.useAAxis = true;
+    } else if (autoFeeder && this.supportInfo.autoFeeder) {
+      let y: number;
+
+      if (this.jobOrigin) {
+        y = this.jobOrigin.y;
+      } else {
+        const reverseEngraving = beamboxPreference.read('reverse-engraving');
+        const workareaObj = getWorkarea(this.device.model);
+
+        y = reverseEngraving ? workareaObj.height : 0;
       }
+
+      this.rotaryInfo = { useAAxis: true, y, yRatio: this.supportInfo.autoFeeder.rotaryRatio };
     }
   };
 
@@ -572,7 +567,7 @@ class FramingTaskManager extends EventEmitter {
         await this.moveTo({ y });
         await deviceMaster.rawMoveZRelToLastHome(0);
       } else if (this.jobOrigin) {
-        await this.moveTo({ x: this.jobOrigin[0], y });
+        await this.moveTo({ x: this.jobOrigin.x, y });
       } else {
         await this.moveTo({ x: 0, y });
       }
