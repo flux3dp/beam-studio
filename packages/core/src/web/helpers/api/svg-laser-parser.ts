@@ -287,7 +287,7 @@ export const getExportOpt = (
   }
 
   if (args) {
-    Object.keys(config).forEach((key: keyof IFcodeConfig) => {
+    (Object.keys(config) as Array<keyof IFcodeConfig>).forEach((key) => {
       if (['curve_engraving', 'loop_compensation', 'model', 'z_offset'].includes(key)) {
         // Skip special keys
       } else if (key === 'hardware_name') {
