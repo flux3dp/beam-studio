@@ -43,6 +43,7 @@ const SocialMediaModal = ({ autoPopup = false, onClose: closeModal }: Props): Re
 
   const items: TItem[] = useMemo(() => {
     const socialMedia = getSocialMedia();
+
     return [
       { ...socialMedia.instagram, description: t.instagram },
       { ...socialMedia.facebook, description: t.facebook },
