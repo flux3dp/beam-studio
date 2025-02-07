@@ -1,10 +1,13 @@
 import React, { memo, useContext, useEffect, useState } from 'react';
 
+import { InstagramOutlined } from '@ant-design/icons';
+
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import LeftPanelButton from '@core/app/components/beambox/left-panel/LeftPanelButton';
 import { showPassThrough } from '@core/app/components/pass-through/PassThrough';
+import { getSocialMedia } from '@core/app/constants/social-media-constants';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import { getCurrentUser } from '@core/helpers/api/flux-id';
@@ -12,6 +15,8 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import isDev from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
+
+import styles from './LeftPanel.module.scss';
 
 const eventEmitter = eventEmitterFactory.createEventEmitter('drawing-tool');
 
@@ -86,6 +91,8 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         renderToolButton('PassThrough', <LeftPanelIcons.PassThrough />, tLeftPanel.label.pass_through, () =>
           showPassThrough(FnWrapper.useSelectTool),
         )}
+      <div className={styles.separator} />
+      {renderToolButton('IG', <InstagramOutlined />, 'Instagram', () => browser.open(getSocialMedia().instagram.link))}
       {renderToolButton('DM', <LeftPanelIcons.DM />, 'Design Market', () =>
         browser.open(lang.topbar.menu.link.design_market),
       )}

@@ -4,8 +4,8 @@ import { ExportOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Divider, Modal } from 'antd';
 import classNames from 'classnames';
 
+import { getSocialMedia } from '@core/app/constants/social-media-constants';
 import alertConfig from '@core/helpers/api/alert-config';
-import i18n from '@core/helpers/i18n';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 
@@ -42,29 +42,11 @@ const SocialMediaModal = ({ autoPopup = false, onClose: closeModal }: Props): Re
   const [dontShow, setDontShow] = useState(false);
 
   const items: TItem[] = useMemo(() => {
-    const isTW = i18n.getActiveLang() === 'zh-tw';
-    const langKey = isTW ? 'taiwan' : 'global';
-
-    // Note: Update qrcode images and links at the same time
+    const socialMedia = getSocialMedia();
     return [
-      {
-        description: t.instagram,
-        link: isTW ? 'https://www.instagram.com/fluxinctaiwan/' : 'https://www.instagram.com/flux_inc/',
-        name: 'Instagram',
-        src: `core-img/social-media/instagram-${langKey}.png`,
-      },
-      {
-        description: t.facebook,
-        link: isTW ? 'https://www.facebook.com/flux3dp.tw' : 'https://www.facebook.com/flux3dp',
-        name: 'Facebook',
-        src: `core-img/social-media/facebook-${langKey}.png`,
-      },
-      {
-        description: t.youtube,
-        link: isTW ? 'https://www.youtube.com/@FLUXIncTaiwan' : 'https://www.youtube.com/@fluxinc',
-        name: 'YouTube',
-        src: `core-img/social-media/youtube-${langKey}.png`,
-      },
+      { ...socialMedia.instagram, description: t.instagram },
+      { ...socialMedia.facebook, description: t.facebook },
+      { ...socialMedia.youtube, description: t.youtube },
     ];
   }, [t]);
 
