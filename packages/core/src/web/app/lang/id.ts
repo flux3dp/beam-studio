@@ -84,6 +84,7 @@ const lang: ILang = {
     },
     document_panel: {
       add_on: 'Add-on',
+      auto_feeder: 'Pengumpan otomatis',
       borderless_mode: 'Buka Bawah',
       current_position: 'Posisi Saat Ini',
       disable: 'Nonaktifkan',

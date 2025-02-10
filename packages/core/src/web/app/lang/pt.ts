@@ -84,6 +84,7 @@ const lang: ILang = {
     },
     document_panel: {
       add_on: 'Complementos',
+      auto_feeder: 'Alimentador automático',
       borderless_mode: 'Abrir parte inferior',
       current_position: 'Posição Atual',
       disable: 'Desabilitar',

@@ -179,7 +179,7 @@ const getTaskCode = (codeType: 'fcode' | 'gcode', taskOptions) =>
 
 // Send svg string calculate taskcode, output Fcode in default
 const fetchTaskCodeSwiftray = async (
-  device: IDeviceInfo = null,
+  device: IDeviceInfo | null = null,
   opts: { fgGcode?: boolean; output?: 'fcode' | 'gcode' } = {},
 ): Promise<
   | Record<string, never>

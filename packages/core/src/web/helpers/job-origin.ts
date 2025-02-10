@@ -1,6 +1,6 @@
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
-import type LayerModule from '@core/app/constants/layer-module/layer-modules';
+import LayerModule from '@core/app/constants/layer-module/layer-modules';
 import workareaManager from '@core/app/svgedit/workarea';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getAllLayers } from '@core/helpers/layer/layer-helper';
@@ -10,12 +10,15 @@ export const getRefModule = (): LayerModule => {
     .reverse()
     .find((layer) => layer.getAttribute('display') !== 'none');
 
+  if (!firstLayer) {
+    return LayerModule.LASER_UNIVERSAL;
+  }
+
   return getData(firstLayer, 'module') as LayerModule;
 };
 
 const getJobOrigin = (px = false): { x: number; y: number } => {
-  const { expansion, height: fullHeight, width: workareaWidth } = workareaManager;
-  const workareaHeight = fullHeight - expansion[0] - expansion[1];
+  const { height: workareaHeight, width: workareaWidth } = workareaManager;
   const svgcontent = document.getElementById('svgcontent') as unknown as SVGSVGElement;
   const boundary = svgcontent.getBBox();
   const left = Math.max(boundary.x, 0);

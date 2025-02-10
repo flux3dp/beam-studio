@@ -84,6 +84,7 @@ const lang: ILang = {
     },
     document_panel: {
       add_on: 'Doplňky',
+      auto_feeder: 'Automatický podavač',
       borderless_mode: 'Otevřít spodní část',
       current_position: 'Aktuální pozice',
       disable: 'Zakázat',

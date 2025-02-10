@@ -12,20 +12,13 @@ const canvasEvents = eventEmitterFactory.createEventEmitter('canvas');
 const zoomBlockEventEmitter = eventEmitterFactory.createEventEmitter('zoom-block');
 
 class WorkareaManager {
-  model: WorkAreaModel;
-
-  rotaryExtended: boolean;
-
-  width: number; // px
-
-  height: number; // px
+  model: WorkAreaModel = 'fbm1';
+  width = 3000; // px
+  height = 2100; // px
 
   zoomRatio = 1;
-
   canvasExpansion = 3; // extra space
-
   expansion: number[] = [0, 0]; // [top, bottom] in pixel
-
   lastZoomIn = 0;
 
   init(model: WorkAreaModel): void {
@@ -38,11 +31,11 @@ class WorkareaManager {
     const borderless = !!beamboxPreference.read('borderless');
     const passThrough = !!beamboxPreference.read('pass-through');
     const passThroughMode = supportInfo.passThrough && passThrough && (supportInfo.openBottom ? borderless : true);
+    const autoFeeder = Boolean(!!beamboxPreference.read('auto-feeder') && supportInfo.autoFeeder);
     const workarea = getWorkarea(model);
     const modelChanged = this.model !== model;
 
     this.model = model;
-    this.rotaryExtended = rotaryExtended;
     this.width = workarea.pxWidth;
     this.height = workarea.pxDisplayHeight ?? workarea.pxHeight;
     this.expansion = [0, 0];
@@ -51,10 +44,12 @@ class WorkareaManager {
 
     if (rotaryExtended && rotaryConstants[model]) {
       const { boundary, maxHeight } = rotaryConstants[model];
-      const [lowerBound, upperBound] = boundary ? [boundary[0] * dpmm, boundary[1] * dpmm] : [0, this.height];
+      const [, upperBound] = boundary ? [boundary[0] * dpmm, boundary[1] * dpmm] : [0, this.height];
       const pxMaxHeight = maxHeight * dpmm;
 
-      this.expansion = [pxMaxHeight - lowerBound, pxMaxHeight - (this.height - upperBound)];
+      // currently only extend in positive direction
+      // this.expansion = [pxMaxHeight - lowerBound, pxMaxHeight - (this.height - upperBound)];
+      this.expansion = [0, pxMaxHeight - (this.height - upperBound)];
       this.height += this.expansion[1];
     } else if (passThroughMode) {
       const passThroughHeight = beamboxPreference.read('pass-through-height');
@@ -65,15 +60,23 @@ class WorkareaManager {
         this.expansion = [0, expansion];
         this.height += expansion;
       }
+    } else if (autoFeeder) {
+      const autoFeederHeight = beamboxPreference.read('auto-feeder-height');
+
+      if (autoFeederHeight && autoFeederHeight * dpmm > this.height) {
+        const expansion = autoFeederHeight * dpmm - this.height;
+
+        this.expansion = [0, expansion];
+        this.height += expansion;
+      }
     }
 
     const svgcontent = document.getElementById('svgcontent');
-
-    svgcontent?.setAttribute('viewBox', `0 0 ${this.width} ${this.height}`);
-
     const fixedSizeSvg = document.getElementById('fixedSizeSvg');
+    const viewBox = `0 0 ${this.width} ${this.height}`;
 
-    fixedSizeSvg?.setAttribute('viewBox', `0 0 ${this.width} ${this.height}`);
+    svgcontent?.setAttribute('viewBox', viewBox);
+    fixedSizeSvg?.setAttribute('viewBox', viewBox);
     this.zoom(this.zoomRatio);
     canvasEvents.emit('canvas-change');
 
@@ -81,6 +84,14 @@ class WorkareaManager {
   }
 
   zoom(zoomRatio: number, staticPoint?: { x: number; y: number }): void {
+    const svgroot = document.getElementById('svgroot');
+    const svgCanvas = document.getElementById('svgcanvas');
+    const workareaElem = document.getElementById('workarea');
+
+    if (!svgroot || !svgCanvas || !workareaElem) {
+      return;
+    }
+
     const targetZoom = Math.max(0.05, zoomRatio);
     const oldZoomRatio = this.zoomRatio;
 
@@ -93,18 +104,16 @@ class WorkareaManager {
     const expansionRatio = (this.canvasExpansion - 1) / 2;
     const x = this.width * targetZoom * expansionRatio;
     const y = this.height * targetZoom * expansionRatio;
-    const svgroot = document.getElementById('svgroot');
 
     svgroot?.setAttribute('x', x.toString());
     svgroot?.setAttribute('y', y.toString());
     svgroot?.setAttribute('width', rootW.toString());
     svgroot?.setAttribute('height', rootH.toString());
 
-    const svgCanvas = document.getElementById('svgcanvas');
-    const workareaElem = document.getElementById('workarea');
-
-    svgCanvas.style.width = `${Math.max(workareaElem.clientWidth, rootW)}px`;
-    svgCanvas.style.height = `${Math.max(workareaElem.clientHeight, rootH)}px`;
+    if (svgCanvas && workareaElem) {
+      svgCanvas.style.width = `${Math.max(workareaElem.clientWidth, rootW)}px`;
+      svgCanvas.style.height = `${Math.max(workareaElem.clientHeight, rootH)}px`;
+    }
 
     const canvasBackground = document.getElementById('canvasBackground');
 
@@ -120,16 +129,18 @@ class WorkareaManager {
     svgcontent?.setAttribute('width', w.toString());
     svgcontent?.setAttribute('height', h.toString());
 
-    staticPoint = staticPoint ?? {
-      x: workareaElem.clientWidth / 2,
-      y: workareaElem.clientHeight / 2,
-    };
+    if (workareaElem) {
+      staticPoint = staticPoint ?? {
+        x: workareaElem.clientWidth / 2,
+        y: workareaElem.clientHeight / 2,
+      };
 
-    const oldScroll = { x: workareaElem.scrollLeft, y: workareaElem.scrollTop };
-    const zoomChanged = targetZoom / oldZoomRatio;
+      const oldScroll = { x: workareaElem.scrollLeft, y: workareaElem.scrollTop };
+      const zoomChanged = targetZoom / oldZoomRatio;
 
-    workareaElem.scrollLeft = (oldScroll.x + staticPoint.x) * zoomChanged - staticPoint.x;
-    workareaElem.scrollTop = (oldScroll.y + staticPoint.y) * zoomChanged - staticPoint.y;
+      workareaElem.scrollLeft = (oldScroll.x + staticPoint.x) * zoomChanged - staticPoint.x;
+      workareaElem.scrollTop = (oldScroll.y + staticPoint.y) * zoomChanged - staticPoint.y;
+    }
 
     canvasEvents.emit('zoom-changed', targetZoom, oldZoomRatio);
     zoomBlockEventEmitter.emit('UPDATE_ZOOM_BLOCK');
@@ -149,9 +160,10 @@ class WorkareaManager {
   };
 
   resetView = () => {
+    const workArea = document.getElementById('workarea');
     const background = document.getElementById('canvasBackground');
 
-    if (!background) {
+    if (!background || !workArea) {
       setTimeout(() => this.resetView(), 100);
 
       return;
@@ -177,16 +189,17 @@ class WorkareaManager {
 
     this.zoom(zoomLevel);
 
-    const x = Number.parseFloat(background.getAttribute('x'));
-    const y = Number.parseFloat(background.getAttribute('y'));
-    const defaultScroll = {
-      x: (x - offsetX) / zoomLevel,
-      y: (y - offsetY) / zoomLevel,
-    };
-    const workArea = document.getElementById('workarea');
+    if (background && workArea) {
+      const x = Number.parseFloat(background.getAttribute('x') ?? '0');
+      const y = Number.parseFloat(background.getAttribute('y') ?? '0');
+      const defaultScroll = {
+        x: (x - offsetX) / zoomLevel,
+        y: (y - offsetY) / zoomLevel,
+      };
 
-    workArea.scrollLeft = defaultScroll.x * zoomLevel;
-    workArea.scrollTop = defaultScroll.y * zoomLevel;
+      workArea.scrollLeft = defaultScroll.x * zoomLevel;
+      workArea.scrollTop = defaultScroll.y * zoomLevel;
+    }
   };
 }
 

@@ -13,7 +13,9 @@ import { getSupportInfo } from '@core/app/constants/add-on';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
 import moduleOffsets from '@core/app/constants/layer-module/module-offsets';
+import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import workareaManager from '@core/app/svgedit/workarea';
 import AlertConfig from '@core/helpers/api/alert-config';
 import getRotaryRatio from '@core/helpers/device/get-rotary-ratio';
 import i18n from '@core/helpers/i18n';
@@ -23,6 +25,7 @@ import Websocket from '@core/helpers/websocket';
 import fs from '@core/implementations/fileSystem';
 import storage from '@core/implementations/storage';
 import type { IBaseConfig, IFcodeConfig } from '@core/interfaces/ITaskConfig';
+import type { IWrappedTaskFile } from '@core/interfaces/IWrappedFile';
 
 export const getExportOpt = (
   opt: IBaseConfig,
@@ -48,9 +51,7 @@ export const getExportOpt = (
   if (model === 'fhexa1') {
     config.hardware_name = 'hexa';
 
-    if (!useDevPaddingAcc) {
-      config.acc = 7500;
-    }
+    if (!useDevPaddingAcc) config.acc = 7500;
   } else if (model === 'fbb1p') {
     config.hardware_name = 'pro';
   } else if (model === 'fbb1b') {
@@ -60,40 +61,22 @@ export const getExportOpt = (
   } else if (model === 'ado1') {
     config.hardware_name = 'ado1';
 
-    if (!useDevPaddingAcc) {
-      config.acc = opt.paddingAccel || 3200;
-    }
+    if (!useDevPaddingAcc) config.acc = opt.paddingAccel || 3200;
   } else if (model === 'fbb2') {
     config.hardware_name = 'fbb2';
 
-    if (!useDevPaddingAcc) {
-      config.acc = 8000;
-    }
+    if (!useDevPaddingAcc) config.acc = 8000;
   } else {
     config.hardware_name = model;
   }
 
-  if (useDevPaddingAcc) {
-    config.acc = paddingAccel;
-  }
+  if (useDevPaddingAcc) config.acc = paddingAccel;
 
-  if (opt.codeType === 'gcode') {
-    config.gc = true;
-  }
+  if (opt.codeType === 'gcode') config.gc = true;
+
+  if (BeamboxPreference.read('reverse-engraving')) config.rev = true;
 
   const supportInfo = getSupportInfo(model);
-  const rotaryMode = BeamboxPreference.read('rotary_mode');
-
-  if (rotaryMode && supportInfo.rotary) {
-    config.spin = rotaryAxis.getPosition();
-
-    const rotaryRatio = getRotaryRatio(supportInfo);
-
-    if (rotaryRatio !== 1) {
-      config.rotary_y_ratio = rotaryRatio;
-    }
-  }
-
   const hasJobOrigin = BeamboxPreference.read('enable-job-origin') && supportInfo.jobOrigin && supportJobOrigin;
 
   if (hasJobOrigin) {
@@ -101,6 +84,27 @@ export const getExportOpt = (
     const { x, y } = getJobOrigin();
 
     config.job_origin = [Math.round(x * 10 ** 3) / 10 ** 3, Math.round(y * 10 ** 3) / 10 ** 3];
+  }
+
+  const rotaryMode = BeamboxPreference.read('rotary_mode') && supportInfo.rotary;
+  const autoFeeder = Boolean(BeamboxPreference.read('auto-feeder') && supportInfo.autoFeeder);
+
+  if (rotaryMode) {
+    config.spin = rotaryAxis.getPosition() ?? 0;
+
+    const rotaryRatio = getRotaryRatio(supportInfo);
+
+    if (rotaryRatio !== 1) {
+      config.rotary_y_ratio = rotaryRatio;
+    }
+  } else if (autoFeeder) {
+    config.rotary_y_ratio = supportInfo.autoFeeder!.rotaryRatio;
+
+    if (config.job_origin) {
+      config.spin = config.job_origin[1] * constant.dpmm;
+    } else {
+      config.spin = config.rev ? workareaObj.pxHeight : 0;
+    }
   }
 
   if (constant.adorModels.includes(model)) {
@@ -184,13 +188,7 @@ export const getExportOpt = (
   // default min_speed is 3 if not set
   config.min_speed = workareaObj.minSpeed;
 
-  if (BeamboxPreference.read('reverse-engraving')) {
-    config.rev = true;
-  }
-
-  if (BeamboxPreference.read('enable-custom-backlash')) {
-    config.cbl = true;
-  }
+  if (BeamboxPreference.read('enable-custom-backlash')) config.cbl = true;
 
   let printingTopPadding: number | undefined = undefined;
   let printingBotPadding: number | undefined = undefined;
@@ -204,73 +202,49 @@ export const getExportOpt = (
     document.querySelectorAll('#svgcontent > g.layer:not([display="none"]) [data-pass-through="1"]').length > 0 ||
     BeamboxPreference.read('pass-through');
 
-  if (isPassThroughTask && model === 'fbb2') {
-    config.mep = 50;
-  }
+  if (model === 'fbb2' && (isPassThroughTask || autoFeeder)) config.mep = 50;
 
   if (isDevMode) {
     let storageValue = localStorage.getItem('min_engraving_padding');
 
-    if (storageValue) {
-      config.mep = Number(storageValue);
-    }
+    if (storageValue) config.mep = Number(storageValue);
 
     storageValue = localStorage.getItem('min_printing_padding');
 
-    if (storageValue) {
-      config.mpp = Number(storageValue);
-    }
+    if (storageValue) config.mpp = Number(storageValue);
 
     storageValue = localStorage.getItem('printing_top_padding');
 
-    if (storageValue && !Number.isNaN(Number(storageValue))) {
-      printingTopPadding = Number(storageValue);
-    }
+    if (storageValue && !Number.isNaN(Number(storageValue))) printingTopPadding = Number(storageValue);
 
     storageValue = localStorage.getItem('printing_bot_padding');
 
-    if (storageValue && !Number.isNaN(Number(storageValue))) {
-      printingBotPadding = Number(storageValue);
-    }
+    if (storageValue && !Number.isNaN(Number(storageValue))) printingBotPadding = Number(storageValue);
 
     storageValue = localStorage.getItem('nozzle_votage');
 
-    if (storageValue) {
-      config.nv = Number(storageValue);
-    }
+    if (storageValue) config.nv = Number(storageValue);
 
     storageValue = localStorage.getItem('nozzle_pulse_width');
 
-    if (storageValue) {
-      config.npw = Number(storageValue);
-    }
+    if (storageValue) config.npw = Number(storageValue);
 
     storageValue = localStorage.getItem('travel_speed');
 
-    if (storageValue && !Number.isNaN(Number(storageValue))) {
-      config.ts = Number(storageValue);
-    }
+    if (storageValue && !Number.isNaN(Number(storageValue))) config.ts = Number(storageValue);
 
     storageValue = localStorage.getItem('path_travel_speed');
 
-    if (storageValue && !Number.isNaN(Number(storageValue))) {
-      config.pts = Number(storageValue);
-    }
+    if (storageValue && !Number.isNaN(Number(storageValue))) config.pts = Number(storageValue);
 
     storageValue = localStorage.getItem('a_travel_speed');
 
-    if (storageValue && !Number.isNaN(Number(storageValue))) {
-      config.ats = Number(storageValue);
-    }
+    if (storageValue && !Number.isNaN(Number(storageValue))) config.ats = Number(storageValue);
   }
 
-  if (printingTopPadding !== undefined) {
-    config.ptp = printingTopPadding;
-  }
+  if (printingTopPadding !== undefined) config.ptp = printingTopPadding;
 
-  if (printingBotPadding !== undefined) {
-    config.pbp = printingBotPadding;
-  }
+  if (printingBotPadding !== undefined) config.pbp = printingBotPadding;
 
   if (modelsWithModules.has(model)) {
     const offsets = { ...moduleOffsets, ...BeamboxPreference.read('module-offsets') };
@@ -298,23 +272,27 @@ export const getExportOpt = (
 
   if (curveEngravingModeController.hasArea() && supportInfo.curveEngraving) {
     const { bbox, gap, highest, lowest, objectHeight, points } = curveEngravingModeController.data!;
-    const data = {
-      bbox,
-      gap,
-      points: points.flat().filter((p) => p[2] !== null),
-      safe_height: Math.max(Math.min(highest, lowest - objectHeight), 0),
-    };
 
-    config.curve_engraving = data;
+    // if lowest is null, it means no points is measured successfully
+    if (lowest !== null && highest !== null) {
+      const data = {
+        bbox,
+        gap,
+        points: points.flat().filter((p) => p[2] !== null),
+        safe_height: Math.max(Math.min(highest, lowest - objectHeight), 0),
+      };
+
+      config.curve_engraving = data;
+    }
   }
 
   if (args) {
-    Object.keys(config).forEach((key) => {
+    (Object.keys(config) as Array<keyof IFcodeConfig>).forEach((key) => {
       if (['curve_engraving', 'loop_compensation', 'model', 'z_offset'].includes(key)) {
         // Skip special keys
       } else if (key === 'hardware_name') {
         args.push(`-${config[key]}`);
-      } else if (key === 'af' && 'z_offset' in config) {
+      } else if (key === 'af' && config.z_offset) {
         // Handle optional -af value
         args.push('-af', config.z_offset.toString());
       } else {
@@ -400,112 +378,61 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
     });
 
   return {
-    divideSVG(opts?) {
-      const $deferred = $.Deferred();
+    divideSVG({ byLayer = false, scale, timeout }: { byLayer?: boolean; scale?: number; timeout?: number } = {}) {
+      return new Promise<
+        { data: Record<string, Blob> & { bitmapOffset?: [number, number] }; res: true } | { data: string; res: false }
+      >((resolve) => {
+        const args = [byLayer ? 'divide_svg_by_layer' : 'divide_svg'];
+        const finalBlobs: Record<string, Blob> & { bitmapOffset?: [number, number] } = {};
+        let blobs: Blob[] = [];
+        let currentLength = 0;
+        let currentName = '';
 
-      opts = opts || {};
-      opts.onProgressing = opts.onProgressing || (() => {});
-      opts.onFinished = opts.onFinished || (() => {});
-
-      const args = ['divide_svg'];
-      const finalBlobs: { [key: string]: Blob | number } = {};
-      let blobs = [];
-      let currentLength = 0;
-      let currentName = '';
-
-      if (opts.scale) {
-        args.push('-s');
-        args.push(String(Math.floor(opts.scale * 100) / 100));
-      }
-
-      events.onMessage = (data) => {
-        if (data.name) {
-          currentName = data.name;
-          currentLength = data.length;
-
-          if (currentName === 'bitmap') {
-            finalBlobs.bitmap_offset = data.offset;
-          }
-        } else if (data instanceof Blob) {
-          blobs.push(data);
-
-          const blob = new Blob(blobs);
-
-          if (currentLength === blob.size) {
-            blobs = [];
-            finalBlobs[currentName] = blob;
-          }
-        } else if (data.status === 'ok') {
-          $deferred.resolve({ data: finalBlobs, res: true });
-        } else if (data.status === 'Error') {
-          Progress.popById('loading_image');
-          $deferred.resolve({ data: data.message, res: false });
+        if (scale) {
+          args.push('-s');
+          args.push(String(Math.floor(scale * 100) / 100));
         }
-      };
 
-      ws.send(args.join(' '));
+        events.onMessage = (data) => {
+          if (data.name) {
+            currentName = data.name;
+            currentLength = data.length;
 
-      if (opts.timeout && opts.timeout > 0) {
-        setTimeout(() => {
-          $deferred.resolve({ data: 'timeout', res: false });
-        }, opts.timeout);
-      }
+            if (currentName === 'bitmap') {
+              finalBlobs.bitmap_offset = data.offset;
+            }
+          } else if (data instanceof Blob) {
+            blobs.push(data);
 
-      return $deferred.promise();
-    },
-    divideSVGbyLayer(opts?) {
-      const $deferred = $.Deferred();
+            const blob = new Blob(blobs);
 
-      opts = opts || {};
-      opts.onProgressing = opts.onProgressing || (() => {});
-      opts.onFinished = opts.onFinished || (() => {});
-
-      const args = ['divide_svg_by_layer'];
-      const finalBlobs: { [key: string]: Blob | number } = {};
-      let blobs = [];
-      let currentLength = 0;
-      let currentName = '';
-
-      if (opts.scale) {
-        args.push('-s');
-        args.push(String(Math.floor(opts.scale * 100) / 100));
-      }
-
-      events.onMessage = (data) => {
-        if (data.name) {
-          currentName = data.name;
-          currentLength = data.length;
-
-          if (currentName === 'bitmap') {
-            finalBlobs.bitmap_offset = data.offset;
+            if (currentLength === blob.size) {
+              blobs = [];
+              finalBlobs[currentName] = blob;
+            }
+          } else if (data.status === 'ok') {
+            resolve({ data: finalBlobs, res: true });
+          } else if (data.status === 'Error') {
+            Progress.popById('loading_image');
+            resolve({ data: data.message, res: false });
           }
-        } else if (data instanceof Blob) {
-          blobs.push(data);
+        };
 
-          const blob = new Blob(blobs);
+        ws.send(args.join(' '));
 
-          if (currentLength === blob.size) {
-            blobs = [];
-            finalBlobs[currentName] = blob;
-          }
-        } else if (data.status === 'ok') {
-          $deferred.resolve({ data: finalBlobs, res: true });
-        } else if (data.status === 'Error') {
-          Progress.popById('loading_image');
-          $deferred.resolve({ data: data.message, res: false });
+        if (timeout && timeout > 0) {
+          setTimeout(() => {
+            resolve({ data: 'timeout', res: false });
+          }, timeout);
         }
-      };
-
-      ws.send(args.join(' '));
-
-      return $deferred.promise();
+      });
     },
     gcodeToFcode(taskData: { arrayBuffer: ArrayBuffer; size: number; thumbnailSize: number }, opts) {
       const $deferred = $.Deferred();
       const warningCollection = [];
       const args = ['g2f'];
-      const blobs = [];
-      let duration;
+      const blobs: Blob[] = [];
+      let duration: number;
       let totalLength = 0;
       let blob;
 
@@ -557,8 +484,8 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
       opts.onFinished = opts.onFinished || (() => {});
 
       const args = ['go', names.join(' '), opts.fileMode || '-f'];
-      const blobs = [];
-      let duration;
+      const blobs: Blob[] = [];
+      let duration: number;
       let totalLength = 0;
       let blob;
       let metadata;
@@ -633,22 +560,14 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
       };
 
       const getBasename = (p?: string) => {
-        if (!p) {
-          return '';
-        }
+        if (!p) return '';
 
-        const pathMatch = p.match(/(.+)[/\\].+/);
-
-        if (pathMatch[1]) {
-          return pathMatch[1];
-        }
-
-        return '';
+        return p.match(/(.+)[/\\].+/)?.[1] || '';
       };
       const reader = new FileReader();
 
       reader.onloadend = (e) => {
-        let svgString = e.target.result as string;
+        let svgString = e.target?.result as string;
         const matchImages = svgString.match(/<image[^>]+>/g);
         let allImageValid = true;
         let hasPath = false;
@@ -750,7 +669,7 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
 
         if (childNode.nodeName === 'textPath') {
           const href = childNode.getAttribute('href');
-          const hrefElem = document.querySelector(href);
+          const hrefElem = href ? document.querySelector(href) : null;
 
           if (hrefElem) {
             defs += hrefElem.outerHTML;
@@ -786,130 +705,98 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
 
       return $deferred.promise();
     },
-    uploadToSvgeditorAPI(files, opts) {
-      const $deferred = $.Deferred();
-      let currIndex = 0;
-      const orderName = 'svgeditor_upload';
-      const setMessages = (file, isBroken, warningCollection) => {
-        file.status = warningCollection.length > 0 ? 'bad' : 'good';
-        file.messages = warningCollection;
-        file.isBroken = isBroken;
+    uploadToSvgeditorAPI(
+      file: IWrappedTaskFile,
+      {
+        engraveDpi = 'medium',
+        model,
+        onProgressing,
+      }: {
+        engraveDpi?: string;
+        model: WorkAreaModel;
+        onProgressing?: (data: { message: string; percentage: number }) => void;
+      },
+    ) {
+      return new Promise<{ message?: string; res: boolean }>((resolve) => {
+        const orderName = 'svgeditor_upload';
 
-        return file;
-      };
+        const sendFile = () => {
+          const warningCollection: string[] = [];
+          const CHUNK_SIZE = 128 * 1024; // 128KB
+          const chunkCounts = Math.ceil(file.size / CHUNK_SIZE);
 
-      const sendFile = (file) => {
-        const warningCollection = [];
-        const CHUNK_SIZE = 128 * 1024; // 128KB
-        const chunkCounts = Math.ceil(file.size / CHUNK_SIZE);
-
-        events.onMessage = (data) => {
-          switch (data.status) {
-            case 'computing':
-              opts.onProgressing(data);
-              break;
-            case 'continue':
-              for (let i = 0; i < chunkCounts; i += 1) {
-                const start = i * CHUNK_SIZE;
-                const end = Math.min(file.size, start + CHUNK_SIZE);
-                const chunk = file.data.slice(start, end);
-
-                ws.send(chunk);
-              }
-              break;
-            case 'ok':
-              opts.onFinished();
-              $deferred.resolve();
-              break;
-            case 'warning':
-              warningCollection.push(data.message);
-              break;
-            case 'Error':
-              opts.onError(data.message);
-              $deferred.resolve();
-              break;
-            default:
-              console.warn('Unknown Status:', data.status);
-          }
-        };
-
-        events.onError = (data) => {
-          warningCollection.push(data.message);
-          opts.onError(data.message || data.symbol?.join('_') || String(data) || 'Unknown Error');
-          $deferred.resolve();
-        };
-
-        const args = [orderName, file.uploadName, file.size, file.thumbnailSize];
-
-        const rotaryMode = BeamboxPreference.read('rotary_mode');
-        const extendRotaryWorkarea = BeamboxPreference.read('extend-rotary-workarea');
-
-        if (rotaryMode && extendRotaryWorkarea) {
-          args.push('-spin');
-        }
-
-        if (opts) {
-          if (opts.model === 'fhexa1') {
-            args.push('-hexa');
-          } else if (opts.model === 'fbb1p') {
-            args.push('-pro');
-          } else if (opts.model === 'fbm1') {
-            args.push('-beamo');
-          } else {
-            args.push(`-${opts.model}`);
-          }
-
-          if (typeof opts.engraveDpi === 'number') {
-            args.push(`-dpi ${opts.engraveDpi}`);
-          } else {
-            switch (opts.engraveDpi) {
-              case 'low':
-                args.push('-ldpi');
+          events.onMessage = (data) => {
+            switch (data.status) {
+              case 'computing':
+                onProgressing?.(data);
                 break;
-              case 'medium':
-                args.push('-mdpi');
+              case 'continue':
+                for (let i = 0; i < chunkCounts; i += 1) {
+                  const start = i * CHUNK_SIZE;
+                  const end = Math.min(file.size, start + CHUNK_SIZE);
+                  const chunk = file.data.slice(start, end);
+
+                  ws.send(chunk);
+                }
                 break;
-              case 'high':
-                args.push('-hdpi');
+              case 'ok':
+                resolve({ res: true });
                 break;
-              case 'ultra':
-                args.push('-udpi');
+              case 'warning':
+                warningCollection.push(data.message);
+                break;
+              case 'Error':
+                resolve({ message: `${data.message}\nWarning: ${warningCollection.join('\n')}`, res: false });
                 break;
               default:
-                args.push('-mdpi');
-                break;
+                console.warn('Unknown Status:', data.status);
             }
+          };
+
+          events.onError = (data) => {
+            const errorMessages = `${data.message || data.symbol?.join('_') || String(data) || 'Unknown Error'}\nWarnings: ${warningCollection.join('\n')}`;
+
+            resolve({ message: errorMessages, res: false });
+          };
+
+          const args = [orderName, file.uploadName, file.size, file.thumbnailSize];
+
+          const { expansion, height, width } = workareaManager;
+
+          if (expansion.some((val) => val > 0)) {
+            args.push('-workarea');
+            args.push(JSON.stringify([width / constant.dpmm, height / constant.dpmm]));
           }
-        }
 
-        ws.send(args.join(' '));
-      };
-
-      $deferred.progress((action) => {
-        let file;
-        let hasBadFiles = false;
-
-        if (action === 'next') {
-          file = files[currIndex];
-
-          if (typeof file === 'undefined') {
-            hasBadFiles = files.some((f) => f.status === 'bad');
-            $deferred.resolve({ files, hasBadFiles });
-          } else if (file.extension && file.extension.toLowerCase() === 'svg') {
-            sendFile(file);
-            currIndex += 1;
-            console.log('currIndex', currIndex);
+          if (model === 'fhexa1') {
+            args.push('-hexa');
+          } else if (model === 'fbb1p') {
+            args.push('-pro');
+          } else if (model === 'fbm1') {
+            args.push('-beamo');
           } else {
-            setMessages(file, true, ['NOT_SUPPORT']);
-            currIndex += 1;
-            $deferred.notify('next');
+            args.push(`-${model}`);
           }
-        }
+
+          if (typeof engraveDpi === 'number') {
+            args.push(`-dpi ${engraveDpi}`);
+          } else {
+            const dpiArg =
+              {
+                high: '-hdpi',
+                low: '-ldpi',
+                medium: '-mdpi',
+                ultra: '-udpi',
+              }[engraveDpi] || '-mdpi';
+
+            args.push(dpiArg);
+          }
+
+          ws.send(args.join(' '));
+        };
+
+        sendFile();
       });
-
-      $deferred.notify('next');
-
-      return $deferred.promise();
     },
   };
 };

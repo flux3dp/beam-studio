@@ -2,7 +2,9 @@ import React, { act } from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
+import alertConstants from '@core/app/constants/alert-constants';
 import { LaserType } from '@core/app/constants/promark-constants';
+import i18n from '@core/helpers/i18n';
 
 import DocumentSettings from './DocumentSettings';
 
@@ -36,21 +38,21 @@ jest.mock('@core/app/constants/alert-constants', () => ({
   CONFIRM_CANCEL: 'CONFIRM_CANCEL',
 }));
 
-const beamboxPreferences = {
+const mockBeamboxPreferences = {
   borderless: false,
   'enable-autofocus': false,
   'enable-diode': false,
   engrave_dpi: 'medium',
   'extend-rotary-workarea': undefined,
   rotary_mode: 0,
-  workarea: 'ado1',
+  workarea: 'fbm1',
 };
 const mockBeamboxPreferenceWrite = jest.fn();
 
 jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
-  read: (key) => beamboxPreferences[key],
+  read: (key) => mockBeamboxPreferences[key],
   write: (key, value) => {
-    beamboxPreferences[key] = value;
+    mockBeamboxPreferences[key] = value;
     mockBeamboxPreferenceWrite(key, value);
   },
 }));
@@ -116,6 +118,8 @@ describe('test DocumentSettings', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockGetPromarkInfo.mockReturnValue({ laserType: LaserType.Desktop, watt: 20 });
+    mockQuerySelectorAll.mockReturnValue([]);
+    mockBeamboxPreferences.workarea = 'fbm1';
   });
 
   it('should render correctly for ador', async () => {
@@ -125,13 +129,14 @@ describe('test DocumentSettings', () => {
     const workareaToggle = baseElement.querySelector('input#workareaSelect');
 
     fireEvent.mouseDown(workareaToggle);
-    fireEvent.click(baseElement.querySelectorAll('.ant-slide-up-appear .ant-select-item-option-content')[4]);
+    fireEvent.click(baseElement.querySelector('.rc-virtual-list [title="Ador"]'));
     expect(baseElement).toMatchSnapshot();
     fireEvent.click(baseElement.querySelector('button#rotary_mode'));
     expect(baseElement).toMatchSnapshot();
   });
 
   it('should render correctly', async () => {
+    mockBeamboxPreferences.workarea = 'ado1';
     document.querySelectorAll = mockQuerySelectorAll;
 
     const { baseElement, getByText } = render(<DocumentSettings unmount={mockUnmount} />);
@@ -144,7 +149,7 @@ describe('test DocumentSettings', () => {
     });
     expect(baseElement).toMatchSnapshot();
     act(() => fireEvent.mouseDown(baseElement.querySelector('input#workareaSelect')));
-    fireEvent.click(baseElement.querySelectorAll('.ant-slide-up-appear .ant-select-item-option-content')[0]);
+    fireEvent.click(baseElement.querySelector('.rc-virtual-list [title="beamo"]'));
     fireEvent.click(baseElement.querySelector('button#rotary_mode'));
     fireEvent.click(baseElement.querySelector('button#borderless_mode'));
     fireEvent.click(baseElement.querySelector('button#autofocus-module'));
@@ -160,17 +165,17 @@ describe('test DocumentSettings', () => {
     });
     expect(baseElement).toMatchSnapshot();
 
-    expect(mockBeamboxPreferenceWrite).not.toBeCalled();
-    expect(update).not.toBeCalled();
-    expect(mockUnmount).not.toBeCalled();
-    expect(mockChangeWorkarea).not.toBeCalled();
+    expect(mockBeamboxPreferenceWrite).not.toHaveBeenCalled();
+    expect(update).not.toHaveBeenCalled();
+    expect(mockUnmount).not.toHaveBeenCalled();
+    expect(mockChangeWorkarea).not.toHaveBeenCalled();
     mockQuerySelectorAll.mockReturnValueOnce([1]);
     fireEvent.click(getByText('Save'));
-    expect(mockPopUp).toBeCalledTimes(1);
+    expect(mockPopUp).toHaveBeenCalledTimes(1);
     expect(mockPopUp).toHaveBeenLastCalledWith({
-      buttonType: 'CONFIRM_CANCEL',
+      buttonType: alertConstants.CONFIRM_CANCEL,
       id: 'save-document-settings',
-      message: 'Do you want to convert the Printing Layers into Laser Layers?',
+      message: i18n.lang.beambox.document_panel.notification.changeFromPrintingWorkareaTitle,
       messageIcon: 'notice',
       onCancel: expect.any(Function),
       onConfirm: expect.any(Function),
@@ -180,7 +185,7 @@ describe('test DocumentSettings', () => {
 
     onConfirm();
     await new Promise((resolve) => setTimeout(resolve, 0));
-    expect(mockBeamboxPreferenceWrite).toBeCalledTimes(9);
+    expect(mockBeamboxPreferenceWrite).toHaveBeenCalledTimes(10);
     expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(1, 'engrave_dpi', 'high');
     expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(2, 'borderless', true);
     expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(3, 'enable-diode', true);
@@ -188,22 +193,23 @@ describe('test DocumentSettings', () => {
     expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(5, 'rotary_mode', 0);
     expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(6, 'pass-through', true);
     expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(7, 'pass-through-height', 500);
-    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(8, 'enable-job-origin', 1);
-    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(9, 'job-origin', 1);
-    expect(mockChangeWorkarea).toBeCalledTimes(1);
+    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(8, 'auto-feeder', false);
+    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(9, 'enable-job-origin', 1);
+    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(10, 'job-origin', 1);
+    expect(mockChangeWorkarea).toHaveBeenCalledTimes(1);
     expect(mockChangeWorkarea).toHaveBeenLastCalledWith('fbm1', { toggleModule: true });
-    expect(mockToggleDisplay).toBeCalledTimes(1);
-    expect(mockTogglePresprayArea).toBeCalledTimes(1);
-    expect(update).not.toBeCalled();
-    expect(mockDiodeBoundaryDrawerShow).toBeCalledTimes(0);
-    expect(mockDiodeBoundaryDrawerHide).toBeCalledTimes(0);
-    expect(mockCreateEventEmitter).toBeCalledTimes(2);
+    expect(mockToggleDisplay).toHaveBeenCalledTimes(1);
+    expect(mockTogglePresprayArea).toHaveBeenCalledTimes(1);
+    expect(update).not.toHaveBeenCalled();
+    expect(mockDiodeBoundaryDrawerShow).toHaveBeenCalledTimes(0);
+    expect(mockDiodeBoundaryDrawerHide).toHaveBeenCalledTimes(0);
+    expect(mockCreateEventEmitter).toHaveBeenCalledTimes(2);
     expect(mockCreateEventEmitter).toHaveBeenNthCalledWith(1, 'dpi-info');
     expect(mockCreateEventEmitter).toHaveBeenNthCalledWith(2, 'canvas');
-    expect(mockEventEmitter.emit).toBeCalledTimes(2);
+    expect(mockEventEmitter.emit).toHaveBeenCalledTimes(2);
     expect(mockEventEmitter.emit).toHaveBeenNthCalledWith(1, 'UPDATE_DPI', 'high');
     expect(mockEventEmitter.emit).toHaveBeenNthCalledWith(2, 'document-settings-saved');
-    expect(mockUnmount).toBeCalledTimes(1);
+    expect(mockUnmount).toHaveBeenCalledTimes(1);
   });
 
   it('should render correctly for promark', async () => {
@@ -212,10 +218,10 @@ describe('test DocumentSettings', () => {
     const { baseElement, getByText } = render(<DocumentSettings unmount={mockUnmount} />);
 
     act(() => fireEvent.mouseDown(baseElement.querySelector('input#workareaSelect')));
-    fireEvent.click(baseElement.querySelectorAll('.ant-slide-up-appear .ant-select-item-option-content')[5]);
+    fireEvent.click(baseElement.querySelector('.rc-virtual-list [title="Promark"]'));
     expect(baseElement.querySelector('input#customDimension')).toBeInTheDocument();
     act(() => fireEvent.mouseDown(baseElement.querySelector('input#customDimension')));
-    fireEvent.click(baseElement.querySelectorAll('.ant-slide-up-appear .ant-select-item-option-content')[0]);
+    fireEvent.click(baseElement.querySelector('.rc-virtual-list [title="110 x 110 mm"]'));
     expect(baseElement.querySelector('input#pm-laser-source')).toBeInTheDocument();
     act(() => fireEvent.mouseDown(baseElement.querySelector('input#pm-laser-source')));
     fireEvent.click(baseElement.querySelectorAll('.ant-slide-up-appear .ant-select-item-option-content')[4]);
@@ -225,32 +231,34 @@ describe('test DocumentSettings', () => {
     expect(baseElement.querySelector('input#frame_before_start')).toBeInTheDocument();
     fireEvent.click(baseElement.querySelector('input#frame_before_start'));
     fireEvent.click(baseElement.querySelector('.anticon-question-circle'));
-    expect(mockOpen).toBeCalledTimes(1);
+    expect(mockOpen).toHaveBeenCalledTimes(1);
 
     expect(baseElement).toMatchSnapshot();
-    mockQuerySelectorAll.mockReturnValueOnce([1]);
     fireEvent.click(getByText('Save'));
-    expect(mockPopUp).toBeCalledTimes(1);
-    expect(mockPopUp).toHaveBeenLastCalledWith({
-      buttonType: 'CONFIRM_CANCEL',
-      id: 'save-document-settings',
-      message: 'Do you want to convert the Printing Layers into Laser Layers?',
-      messageIcon: 'notice',
-      onCancel: expect.any(Function),
-      onConfirm: expect.any(Function),
-    });
-
-    const { onConfirm } = mockPopUp.mock.calls[0][0];
-
-    onConfirm();
-    await new Promise((resolve) => setTimeout(resolve, 0));
-    expect(mockBeamboxPreferenceWrite).toBeCalledTimes(12);
+    expect(mockBeamboxPreferenceWrite).toHaveBeenCalledTimes(12);
     expect(mockBeamboxPreferenceWrite).toHaveBeenCalledWith('customized-dimension', {
       fpm1: { height: 110, width: 110 },
     });
     expect(mockBeamboxPreferenceWrite).toHaveBeenCalledWith('promark-start-button', 1);
     expect(mockBeamboxPreferenceWrite).toHaveBeenCalledWith('frame-before-start', 1);
-    expect(mockSetPromarkInfo).toBeCalledTimes(1);
+    expect(mockSetPromarkInfo).toHaveBeenCalledTimes(1);
     expect(mockSetPromarkInfo).toHaveBeenLastCalledWith({ laserType: LaserType.MOPA, watt: 60 });
+  });
+
+  test('set auto feeder height', async () => {
+    document.querySelectorAll = mockQuerySelectorAll;
+
+    const { baseElement, getByText } = render(<DocumentSettings unmount={mockUnmount} />);
+
+    act(() => fireEvent.mouseDown(baseElement.querySelector('input#workareaSelect')));
+    fireEvent.click(baseElement.querySelector('.rc-virtual-list [title="Beambox II"]'));
+
+    fireEvent.click(baseElement.querySelector('button#auto_feeder'));
+    fireEvent.change(baseElement.querySelector('#auto_feeder_height'), {
+      target: { value: 870 },
+    });
+    fireEvent.click(getByText('Save'));
+    expect(mockBeamboxPreferenceWrite).toHaveBeenCalledWith('auto-feeder', true);
+    expect(mockBeamboxPreferenceWrite).toHaveBeenCalledWith('auto-feeder-height', 870);
   });
 });

@@ -34,7 +34,7 @@ const readSVG = (
   blob: Blob | File,
   {
     layerName,
-    parentCmd = null,
+    parentCmd = undefined,
     targetModule = layerModuleHelper.getDefaultLaserModule(),
     type,
   }: {
@@ -49,7 +49,7 @@ const readSVG = (
     const reader = new FileReader();
 
     reader.onloadend = async (e) => {
-      let svgString = e.target.result as string;
+      let svgString = e.target?.result as string;
 
       if (!['color', 'layer'].includes(type)) {
         svgString = svgString.replace(/<svg[^>]*>/, (svgTagString) =>
@@ -179,7 +179,7 @@ const importSvg = async (
     return;
   }
 
-  const output = importType === 'layer' ? await svgWebSocket.divideSVGbyLayer() : await svgWebSocket.divideSVG();
+  const output = await svgWebSocket.divideSVG({ byLayer: importType === 'layer' });
 
   if (!output.res) {
     alertCaller.popUpError({
@@ -189,7 +189,7 @@ const importSvg = async (
         const fileReader = new FileReader();
 
         fileReader.onloadend = (e) => {
-          const svgString = e.target.result;
+          const svgString = e.target?.result;
 
           // @ts-expect-error the file name is not in the type
           awsHelper.uploadToS3(file.name, svgString);
@@ -203,6 +203,7 @@ const importSvg = async (
   }
 
   const { data: outputData } = output;
+
   const newElements = Array.of<SVGUseElement>();
   const elementOptions = { parentCmd: batchCmd, targetModule, type: importType };
 
@@ -249,7 +250,7 @@ const importSvg = async (
 
     const img = await readBitmapFile(outputData.bitmap, {
       gray: !isPrinting,
-      offset: outputData.bitmap_offset,
+      offset: outputData.bitmapOffset,
       parentCmd: batchCmd,
     });
 

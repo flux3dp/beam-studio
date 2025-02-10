@@ -84,6 +84,7 @@ const lang: ILang = {
     },
     document_panel: {
       add_on: 'Πρόσθετες λειτουργίες',
+      auto_feeder: 'Αυτόματος τροφοδότης',
       borderless_mode: 'Ανοιχτό κάτω μέρος',
       current_position: 'Τρέχουσα Θέση',
       disable: 'Απενεργοποίηση',
