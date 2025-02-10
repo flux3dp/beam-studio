@@ -103,7 +103,7 @@ export const exportTask = async (device: IDeviceInfo, byHandler: boolean, lang: 
             alertConfig.write('skip-job-origin-warning', true);
             resolve(null);
           },
-          text: lang.beambox.popup.dont_show_again,
+          text: lang.alert.dont_show_again,
         },
         message: lang.topbar.alerts.job_origin_warning,
         type: alertConstants.SHOW_POPUP_WARNING,

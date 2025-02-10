@@ -8,6 +8,7 @@ const lang: ILang = {
     close: 'Sulje',
     confirm: 'Vahvista',
     dont_save: 'Älä tallenna',
+    dont_show_again: 'Älä näytä uudelleen',
     duplicated_preset_name: 'Kaksoiskappaleen esiasetuksen nimi',
     error: 'VIRHE',
     info: 'INFO',
@@ -60,7 +61,6 @@ const lang: ILang = {
   },
   beambox: {
     announcement_panel: {
-      dont_show_again: 'Älä näytä uudelleen',
       title: 'Tiedote',
     },
     bottom_right_panel: {
@@ -281,12 +281,10 @@ const lang: ILang = {
       bug_report: 'Vianraportti',
       change_workarea_before_preview: '%s:n työalue ei vastaa nykyistä työaluetta. Haluatko vaihtaa nykyisen työalueen?',
       convert_to_path_fail: 'Muuntaminen poluiksi epäonnistui.',
-      dont_show_again: 'Älä näytä tätä enää',
       dxf_bounding_box_size_over: 'Piirroksen koko ylittää työalueen. Siirrä piirrosta lähemmäs origoa CAD-ohjelmassa tai tarkista mittayksiköt.',
       dxf_version_waring: 'Tämän DXF-tiedoston versio ei ole 2013, mikä voi aiheuttaa yhteensopivuusongelmia.',
       facebook_group_invitation: {
         already_joined: 'Jo liittynyt',
-        dont_show_again: 'Älä näytä uudelleen',
         join_now: 'Liity nyt',
         later: 'Ehkä myöhemmin',
         message: 'Liity viralliseen FLUX Facebook-ryhmäämme yhdistääksesi muiden FLUX-laserkäyttäjien kanssa, keskustellaksesi FLUX-lasereista, jakaaksesi laser-taidetta ja pysyäksesi ajan tasalla tuotteidemme uusimmista päivityksistä. Odotamme sinua innolla!',
@@ -350,7 +348,6 @@ const lang: ILang = {
     },
     rating_panel: {
       description: 'Jos pidät Beam Studiosta, arvostaisimme suuresti, jos voisit arvostella meidät.',
-      dont_show_again: 'Älä näytä tätä seuraavalla kerralla.',
       thank_you: 'Kiitos!',
       title: 'Pidätkö Beam Studio -ohjelmasta?',
     },

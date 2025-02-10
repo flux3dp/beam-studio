@@ -1,9 +1,5 @@
 @use '@core/styles/variables' as variables;
 
-.hide {
-  display: none;
-}
-
 .container {
   display: flex;
   justify-content: space-between;
@@ -33,5 +29,21 @@
 
   :global(.ant-divider) {
     height: auto;
+  }
+
+  &.small {
+    .item img {
+      width: 140px;
+    }
+  }
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .button {
+    margin-left: auto;
   }
 }

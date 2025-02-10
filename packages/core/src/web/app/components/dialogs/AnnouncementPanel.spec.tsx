@@ -14,19 +14,6 @@ const mockAnnouncement: IAnnouncement = {
   title: 'mock title',
 };
 
-jest.mock('@core/helpers/useI18n', () => () => ({
-  alert: {
-    close: 'Close',
-    learn_more: 'Learn More',
-  },
-  beambox: {
-    announcement_panel: {
-      dont_show_again: "Don't show again",
-      title: 'Announcement',
-    },
-  },
-}));
-
 const mockOpen = jest.fn();
 
 jest.mock('@core/implementations/browser', () => ({

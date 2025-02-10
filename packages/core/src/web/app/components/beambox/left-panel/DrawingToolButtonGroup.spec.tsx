@@ -55,6 +55,10 @@ jest.mock('@core/app/components/pass-through/PassThrough', () => ({
   showPassThrough: mockShowPassThrough,
 }));
 
+jest.mock('@core/app/constants/social-media-constants', () => ({
+  getSocialMedia: () => ({ instagram: { link: 'instagram_link' } }),
+}));
+
 import DrawingToolButtonGroup from './DrawingToolButtonGroup';
 
 const mockCurveEngravingModeControllerStart = jest.fn();
@@ -118,6 +122,11 @@ describe('test DrawingToolButtonGroup', () => {
     expect(container).toMatchSnapshot();
     expect(showMyCloud).toHaveBeenCalledTimes(1);
     expect(showMyCloud).toHaveBeenCalledWith(mockUseSelectTool);
+
+    fireEvent.click(container.querySelector('#left-IG'));
+    expect(container).toMatchSnapshot();
+    expect(mockOpen).toHaveBeenCalledTimes(2);
+    expect(mockOpen).toHaveBeenLastCalledWith('instagram_link');
   });
 
   test('preview button should render correctly', () => {

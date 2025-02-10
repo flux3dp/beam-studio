@@ -1,9 +1,11 @@
-import React, { Fragment, useMemo } from 'react';
+import React, { Fragment, useMemo, useState } from 'react';
 
 import { ExportOutlined } from '@ant-design/icons';
-import { Divider, Modal } from 'antd';
+import { Button, Checkbox, Divider, Modal } from 'antd';
+import classNames from 'classnames';
 
-import i18n from '@core/helpers/i18n';
+import { getSocialMedia } from '@core/app/constants/social-media-constants';
+import alertConfig from '@core/helpers/api/alert-config';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 
@@ -27,59 +29,55 @@ const Item = ({ item }: { item: TItem }) => (
 );
 
 interface Props {
+  autoPopup?: boolean;
   onClose: () => void;
 }
 
-const SocialMediaModal = ({ onClose }: Props): React.JSX.Element => {
+const SocialMediaModal = ({ autoPopup = false, onClose: closeModal }: Props): React.JSX.Element => {
   const {
+    alert: tAlert,
     social_media: t,
     topbar: { menu: tMenu },
   } = useI18n();
+  const [dontShowAgain, setDontShowAgain] = useState(false);
 
   const items: TItem[] = useMemo(() => {
-    const isTW = i18n.getActiveLang() === 'zh-tw';
-    const langKey = isTW ? 'taiwan' : 'global';
+    const socialMedia = getSocialMedia();
 
-    // Note: Update qrcode images and links at the same time
     return [
-      {
-        description: t.instagram,
-        link: isTW ? 'https://www.instagram.com/fluxinctaiwan/' : 'https://www.instagram.com/flux_inc/',
-        name: 'Instagram',
-        src: `core-img/social-media/instagram-${langKey}.png`,
-      },
-      {
-        description: t.facebook,
-        link: isTW ? 'https://www.facebook.com/flux3dp.tw' : 'https://www.facebook.com/flux3dp',
-        name: 'Facebook',
-        src: `core-img/social-media/facebook-${langKey}.png`,
-      },
-      {
-        description: t.youtube,
-        link: isTW ? 'https://www.youtube.com/@FLUXIncTaiwan' : 'https://www.youtube.com/@fluxinc',
-        name: 'YouTube',
-        src: `core-img/social-media/youtube-${langKey}.png`,
-      },
+      { ...socialMedia.instagram, description: t.instagram },
+      { ...socialMedia.facebook, description: t.facebook },
+      { ...socialMedia.youtube, description: t.youtube },
     ];
   }, [t]);
 
+  const onClose = () => {
+    if (dontShowAgain) {
+      alertConfig.write('skip-social-media-invitation', true);
+    }
+
+    closeModal();
+  };
+
   return (
-    <Modal
-      cancelButtonProps={{ className: styles.hide }}
-      centered
-      onCancel={onClose}
-      onOk={onClose}
-      open
-      title={tMenu.follow_us}
-      width={750}
-    >
-      <div className={styles.container}>
+    <Modal centered footer={null} onCancel={onClose} open title={tMenu.follow_us} width={autoPopup ? 550 : 750}>
+      <div className={classNames(styles.container, { [styles.small]: autoPopup })}>
         {items.map((item, index) => (
           <Fragment key={item.name}>
             {index > 0 && <Divider type="vertical" />}
             <Item item={item} />
           </Fragment>
         ))}
+      </div>
+      <div className={styles.footer}>
+        {autoPopup && (
+          <Checkbox onChange={() => setDontShowAgain(!dontShowAgain)} value={dontShowAgain}>
+            {tAlert.dont_show_again}
+          </Checkbox>
+        )}
+        <Button className={styles.button} onClick={onClose}>
+          {tAlert.close}
+        </Button>
       </div>
     </Modal>
   );

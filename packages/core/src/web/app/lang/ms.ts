@@ -8,6 +8,7 @@ const lang: ILang = {
     close: 'Tutup',
     confirm: 'Sahkan',
     dont_save: 'Jangan Simpan',
+    dont_show_again: 'Jangan tunjukkan lagi',
     duplicated_preset_name: 'Nama praset sama',
     error: 'UH-OH',
     info: 'INFO',
@@ -60,7 +61,6 @@ const lang: ILang = {
   },
   beambox: {
     announcement_panel: {
-      dont_show_again: 'Jangan tunjukkan lagi',
       title: 'Pengumuman',
     },
     bottom_right_panel: {
@@ -281,12 +281,10 @@ const lang: ILang = {
       bug_report: 'Laporan Pepijat',
       change_workarea_before_preview: 'Kawasan kerja %s tidak sepadan dengan kawasan kerja yang ditetapkan sekarang. Adakah anda mahu menukar kawasan kerja semasa?',
       convert_to_path_fail: 'Gagal menukar ke laluan.',
-      dont_show_again: 'Jangan Tunjuk ini pada masa akan datang.',
       dxf_bounding_box_size_over: 'Saiz lukisan melebihi kawasan kerja. Sila pindahkan lukisan anda lebih dekat kepada asal dalam perisian CAD anda, atau pastikan unit ditetapkan dengan betul.',
       dxf_version_waring: 'Versi fail DXF ini bukan 2013, mungkin terdapat masalah ketidakserasian.',
       facebook_group_invitation: {
         already_joined: 'Sudah Sertai',
-        dont_show_again: 'Jangan tunjuk ini lagi',
         join_now: 'Sertai Sekarang',
         later: 'Mungkin Nanti',
         message: 'Sertai kumpulan Facebook rasmi kami untuk berhubung dengan pengguna laser FLUX yang lain, berkongsi karya laser, dan sentiasa dikemas kini dengan maklumat terkini mengenai produk kami. Kami tidak sabar untuk berjumpa dengan anda di sana!',
@@ -350,7 +348,6 @@ const lang: ILang = {
     },
     rating_panel: {
       description: 'Jika anda suka Beam Studio, kami amat menghargai jika anda boleh menilai kami.',
-      dont_show_again: 'Jangan Tunjukkan ini pada masa akan datang.',
       thank_you: 'Terima kasih!',
       title: 'Suka Beam Studio?',
     },

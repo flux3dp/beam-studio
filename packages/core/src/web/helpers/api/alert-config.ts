@@ -7,6 +7,7 @@ export type AlertConfigKey =
   | 'skip-interface-tutorial'
   | 'skip-job-origin-warning'
   | 'skip-old-firmware-hint-2'
+  | 'skip-social-media-invitation'
   | 'skip-switch-to-laser-module'
   | 'skip-switch-to-printer-module'
   | 'skip_bg_removal_warning'

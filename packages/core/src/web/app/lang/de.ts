@@ -8,6 +8,7 @@ const lang: ILang = {
     close: 'schließen',
     confirm: 'Bestätige',
     dont_save: 'Nicht speichern',
+    dont_show_again: 'Nicht erneut anzeigen',
     duplicated_preset_name: 'Duplizierter Voreinstellungsname',
     error: 'UH-OH',
     info: 'INFO',
@@ -60,7 +61,6 @@ const lang: ILang = {
   },
   beambox: {
     announcement_panel: {
-      dont_show_again: 'Nicht erneut anzeigen',
       title: 'Ankündigung',
     },
     bottom_right_panel: {
@@ -281,12 +281,10 @@ const lang: ILang = {
       bug_report: 'Fehlerbericht',
       change_workarea_before_preview: 'Der Arbeitsbereich von %s stimmt nicht mit dem aktuell festgelegten Arbeitsbereich überein. Möchten Sie den aktuellen Arbeitsbereich wechseln?',
       convert_to_path_fail: 'Konvertierung in Pfad fehlgeschlagen.',
-      dont_show_again: 'Nicht mehr anzeigen',
       dxf_bounding_box_size_over: 'Die Zeichnungsgröße ist außerhalb des Arbeitsbereichs. Bewege bitte deine Zeichnung näher an den Ursprung in Ihrer CAD-Software oder stelle sicher, dass das Gerät richtig eingestellt ist.',
       dxf_version_waring: 'Die Version dieser DXF-Datei ist nicht 2013, möglicherweise treten Inkompatibilitätsprobleme auf.',
       facebook_group_invitation: {
         already_joined: 'Bereits angemeldet',
-        dont_show_again: 'Nicht mehr anzeigen',
         join_now: 'Jetzt beitreten',
         later: 'Vielleicht später',
         message: 'Treten Sie unserer offiziellen Facebook-Gruppe bei, um mit anderen FLUX Laseranwendern in Kontakt zu treten, über FLUX Laser zu diskutieren, Laserkunstwerke auszutauschen und über die neuesten Updates zu unseren Produkten auf dem Laufenden zu bleiben. Wir können es kaum erwarten, Sie dort zu sehen!',
@@ -350,7 +348,6 @@ const lang: ILang = {
     },
     rating_panel: {
       description: 'Wenn Sie Beam Studio mögen, würden wir uns sehr freuen, wenn Sie uns bewerten könnten.',
-      dont_show_again: 'Nicht mehr anzeigen',
       thank_you: 'Danke schön',
       title: 'Gefallen Sie Beam Studio?',
     },

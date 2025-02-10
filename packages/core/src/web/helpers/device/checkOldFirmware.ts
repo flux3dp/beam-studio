@@ -23,7 +23,7 @@ const checkOldFirmware = async (version: string): Promise<boolean> => {
             },
             () => resolve(false),
           ],
-          text: lang.dont_show_again,
+          text: i18n.lang.alert.dont_show_again,
         },
         id: 'old-firmware',
         message: lang.recommend_upgrade_firmware,

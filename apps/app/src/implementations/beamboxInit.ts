@@ -15,7 +15,7 @@ class ElectronBeamboxInit extends BeamboxInit {
   }
 
   private checkOSVersion(): void {
-    const LANG = i18n.lang.beambox;
+    const { alert: tAlert, message: tMessage } = i18n.lang;
 
     if (!AlertConfig.read('skip_os_version_warning')) {
       if (window.os === 'MacOS') {
@@ -29,10 +29,10 @@ class ElectronBeamboxInit extends BeamboxInit {
             Alert.popUp({
               checkbox: {
                 callbacks: () => AlertConfig.write('skip_os_version_warning', true),
-                text: LANG.popup.dont_show_again,
+                text: tAlert.dont_show_again,
               },
               id: 'os_version_warning',
-              message: sprintf(i18n.lang.message.unsupport_osx_version, osVersion),
+              message: sprintf(tMessage.unsupport_osx_version, osVersion),
               type: AlertConstants.SHOW_POPUP_WARNING,
             });
           }
@@ -73,10 +73,10 @@ class ElectronBeamboxInit extends BeamboxInit {
           Alert.popUp({
             checkbox: {
               callbacks: () => AlertConfig.write('skip_os_version_warning', true),
-              text: LANG.popup.dont_show_again,
+              text: tAlert.dont_show_again,
             },
             id: 'os_version_warning',
-            message: sprintf(i18n.lang.message.unsupport_win_version, osVersion),
+            message: sprintf(tMessage.unsupport_win_version, osVersion),
             type: AlertConstants.SHOW_POPUP_WARNING,
           });
         }

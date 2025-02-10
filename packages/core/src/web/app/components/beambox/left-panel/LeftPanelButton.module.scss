@@ -1,9 +1,10 @@
 .container {
   text-align: center;
   line-height: 24px;
-  margin: 13px 6px 13px 7px;
+  margin: 0 6px 0 7px;
   height: 30px;
   width: 36px;
+  font-size: 22px; // for antd icons
   color: #7c7c7c;
 
   &.active {

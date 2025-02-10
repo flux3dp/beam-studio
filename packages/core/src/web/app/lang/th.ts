@@ -8,6 +8,7 @@ const lang: ILang = {
     close: 'ปิด',
     confirm: 'ยืนยัน',
     dont_save: 'ไม่บันทึก',
+    dont_show_again: 'ไม่แสดงซ้ําอีก',
     duplicated_preset_name: 'ชื่อชุดค่าที่ซ้ํากัน',
     error: 'โอ้โห',
     info: 'ข้อมูล',
@@ -60,7 +61,6 @@ const lang: ILang = {
   },
   beambox: {
     announcement_panel: {
-      dont_show_again: 'ไม่แสดงซ้ําอีก',
       title: 'ประกาศ',
     },
     bottom_right_panel: {
@@ -281,12 +281,10 @@ const lang: ILang = {
       bug_report: 'รายงานข้อบกพร่อง',
       change_workarea_before_preview: 'พื้นที่ทํางานไม่ตรงกับที่ตั้งไว้ คุณต้องการสลับเปลี่ยนหรือไม่',
       convert_to_path_fail: 'การแปลงเป็นเส้นทางล้มเหลว',
-      dont_show_again: 'ไม่แสดงอีก',
       dxf_bounding_box_size_over: 'ขนาดการวาดเกินพื้นที่ทํางาน โปรดย้ายการวาดให้อยู่ในบริเวณจุดกําเนิดในโปรแกรม CAD หรือตรวจสอบหน่วยให้ถูกต้อง',
       dxf_version_waring: 'เวอร์ชันของไฟล์ DXF นี้ไม่ใช่ 2013 อาจมีปัญหาด้านความเข้ากันได้ที่อาจเกิดขึ้น',
       facebook_group_invitation: {
         already_joined: 'เข้าร่วมแล้ว',
-        dont_show_again: 'อย่าแสดงอีก',
         join_now: 'เข้าร่วม',
         later: 'ทีหลัง',
         message: 'เชื่อมต่อกับผู้ใช้เลเซอร์ FLUX อื่นๆ แชร์งานศิลปะ และรับข่าวสารผลิตภัณฑ์ใหม่ เรารอต้อนรับคุณ',
@@ -350,7 +348,6 @@ const lang: ILang = {
     },
     rating_panel: {
       description: 'ถ้าคุณชอบ Beam Studio เราจะขอบคุณอย่างยิ่งหากคุณสามารถให้คะแนนเรา',
-      dont_show_again: 'อย่าแสดงอีก',
       thank_you: 'ขอบคุณ!',
       title: 'ชอบ Beam Studio?',
     },

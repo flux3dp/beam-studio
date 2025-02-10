@@ -8,6 +8,7 @@ const lang: ILang = {
     close: 'Zamknij',
     confirm: 'Potwierdź',
     dont_save: 'Nie zapisuj',
+    dont_show_again: 'Nie pokazuj więcej',
     duplicated_preset_name: 'Zduplikowana nazwa ustawienia wstępnego',
     error: 'UH-OH',
     info: 'INFORMACJA',
@@ -60,7 +61,6 @@ const lang: ILang = {
   },
   beambox: {
     announcement_panel: {
-      dont_show_again: 'Nie pokazuj więcej',
       title: 'Ogłoszenie',
     },
     bottom_right_panel: {
@@ -281,12 +281,10 @@ const lang: ILang = {
       bug_report: 'Zgłoszenie błędut',
       change_workarea_before_preview: 'Obszar roboczy %s nie pasuje do aktualnie ustawionego obszaru roboczego. Czy chcesz zmienić bieżący obszar roboczy?',
       convert_to_path_fail: 'Nie udało się przekonwertować na ścieżkę.',
-      dont_show_again: 'Nie pokazuj następnym razem.',
       dxf_bounding_box_size_over: 'Rozmiar rysunku jest poza obszarem roboczym. Przesuń rysunek bliżej punktu początkowego w oprogramowaniu CAD lub upewnij się, że jednostka jest ustawiona prawidłowo.',
       dxf_version_waring: 'Wersja tego pliku DXF jest inna niż 2013, mogą występować potencjalne problemy z kompatybilnością.',
       facebook_group_invitation: {
         already_joined: 'Już dołączyłeś',
-        dont_show_again: 'Nie pokazuj tego więcej',
         join_now: 'Dołączyć',
         later: 'Może później',
         message: 'Dołączyćnasza oficjalna grupa na Facebooku, w której możesz kontaktować się z innymi użytkownikami laserów FLUX, omawiać lasery FLUX, dzielić się grafikami dotyczącymi laserów i być na bieżąco z najnowszymi aktualizacjami naszych produktów. Nie możemy się doczekać, aż Cię tam zobaczymy!',
@@ -350,7 +348,6 @@ const lang: ILang = {
     },
     rating_panel: {
       description: 'Jeśli podoba Ci się Beam Studio, bylibyśmy bardzo wdzięczni za ocenę.',
-      dont_show_again: 'Nie pokazuj tego następnym razem.',
       thank_you: 'Dziękuję!',
       title: 'Lubisz Beam Studio?',
     },

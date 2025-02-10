@@ -8,6 +8,7 @@ const lang: ILang = {
     close: 'Zavřít',
     confirm: 'Potvrdit',
     dont_save: 'Neukládat',
+    dont_show_again: 'Znovu již nezobrazovat',
     duplicated_preset_name: 'Duplikované jméno předvolby',
     error: 'JEJDA',
     info: 'INFO',
@@ -60,7 +61,6 @@ const lang: ILang = {
   },
   beambox: {
     announcement_panel: {
-      dont_show_again: 'Znovu již nezobrazovat',
       title: 'Ohlášení',
     },
     bottom_right_panel: {
@@ -281,12 +281,10 @@ const lang: ILang = {
       bug_report: 'Nahlášení chyby',
       change_workarea_before_preview: 'Pracovní oblast %s nesedí k momentálně nastavené pracovní oblasti. Chcete přepnout na momentální pracovní oblast?',
       convert_to_path_fail: 'Nepodařilo se převést na cestu.',
-      dont_show_again: 'Příště neukazovat.',
       dxf_bounding_box_size_over: 'Velikost kresby je mimo pracovní oblast. Přesuňte prosím svou kresbu blíž k vodítku ve vašem CAD softwaru, nebo se ujistěte, že je jednotka správně nastavena.',
       dxf_version_waring: 'Verze tohoto DFX souboru není 2013, může dojít k problémům s kompatibilitou.',
       facebook_group_invitation: {
         already_joined: 'Už jsem členem',
-        dont_show_again: 'Znovu neukazovat',
         join_now: 'Jdu do toho',
         later: 'Možná později',
         message: 'Přidejte se k naší oficiální facebookové skupině, kde se propojíte s dalšími uživateli FLUX a kde můžete diskutovat o FLUX laserech, sdílet své laserové výtvory a být v obraze ohledně našich produktů. Těšíme se na vás!',
@@ -350,7 +348,6 @@ const lang: ILang = {
     },
     rating_panel: {
       description: 'Pokud se vám Beam Studio líbí, velice bychom ocenili, kdybyste nás ohodnotili.',
-      dont_show_again: 'Příště již nezobrazovat.',
       thank_you: 'Děkujeme!',
       title: 'Užíváte si práci s Beam Studio?',
     },

@@ -25,28 +25,14 @@ jest.mock('@core/helpers/api/alert-config', () => ({
 
 const mockPopUp = jest.fn();
 
-jest.mock('@core/helpers/i18n', () => ({
-  lang: {
-    beambox: {
-      popup: {
-        facebook_group_invitation: {
-          already_joined: 'already_joined',
-          dont_show_again: 'dont_show_again',
-          join_now: 'join_now',
-          later: 'later',
-          message: 'message',
-          title: 'title',
-        },
-      },
-    },
-    topbar: {
-      menu: {
-        link: {
-          forum: 'forum',
-        },
-      },
-    },
-  },
+jest.mock('@core/app/actions/alert-caller', () => ({
+  popUp: (...args) => mockPopUp(...args),
+}));
+
+const mockShowSocialMedia = jest.fn();
+
+jest.mock('@core/app/actions/dialog-caller', () => ({
+  showSocialMedia: (...args) => mockShowSocialMedia(...args),
 }));
 
 describe('test alert helper', () => {
@@ -55,33 +41,35 @@ describe('test alert helper', () => {
   });
 
   test('should register alert events', () => {
-    alertHelper.registerAlertEvents(mockPopUp);
+    alertHelper.registerAlertEvents();
     expect(mockEventEmitter.on).toBeCalledTimes(1);
     expect(mockEventEmitter.on).toHaveBeenLastCalledWith('PLAY', expect.any(Function));
     expect(mockPopUp).not.toBeCalled();
   });
 
-  test('should show facebook group invitation', () => {
-    alertHelper.registerAlertEvents(mockPopUp);
+  test('should show invitation', () => {
+    alertHelper.registerAlertEvents();
 
     const eventHandler = mockEventEmitter.on.mock.calls[0][1];
 
     expect(mockPopUp).not.toBeCalled();
     expect(mockConfigRead).not.toBeCalled();
     mockConfigRead.mockReturnValue(false);
+    // Count = 1, show FB group invitation
     eventHandler();
     expect(mockConfigRead).toBeCalledTimes(1);
     expect(mockConfigRead).toHaveBeenLastCalledWith('skip-fb-group-invitation');
     expect(mockPopUp).toBeCalledTimes(1);
     expect(mockPopUp).toHaveBeenLastCalledWith({
-      buttonLabels: ['join_now', 'later', 'already_joined'],
+      buttonLabels: ['Count Me In', 'Maybe Later', 'Already Joined'],
       callbacks: [expect.any(Function), expect.any(Function), expect.any(Function)],
-      caption: 'title',
+      caption: 'Join FLUX Official User Group',
       checkbox: {
         callbacks: [expect.any(Function), expect.any(Function), expect.any(Function)],
-        text: 'dont_show_again',
+        text: "Don't show again",
       },
-      message: 'message',
+      message:
+        "Join our official Facebook group to connect with other FLUX laser users, discuss FLUX lasers, share laser artwork, and stay up to date with the latest updates on our products. We can't wait to see you there!",
       primaryButtonIndex: 0,
     });
 
@@ -94,11 +82,47 @@ describe('test alert helper', () => {
     expect(mockConfigWrite).toBeCalledTimes(1);
     expect(mockConfigWrite).toBeCalledWith('skip-fb-group-invitation', true);
     expect(mockOpen).toBeCalledTimes(1);
-    expect(mockOpen).toBeCalledWith('forum');
+    expect(mockOpen).toBeCalledWith('https://www.facebook.com/groups/flux.laser/');
 
-    jest.resetAllMocks();
+    jest.clearAllMocks();
+    // Count = 1~4, do nothing
+    eventHandler();
+    eventHandler();
     eventHandler();
     expect(mockConfigRead).not.toBeCalled();
     expect(mockPopUp).not.toBeCalled();
+
+    // Count = 5, show social media invitation
+    eventHandler();
+    expect(mockConfigRead).toHaveBeenCalledTimes(1);
+    expect(mockConfigRead).toHaveBeenLastCalledWith('skip-social-media-invitation');
+    expect(mockShowSocialMedia).toHaveBeenCalledTimes(1);
+    expect(mockShowSocialMedia).toHaveBeenLastCalledWith(true);
+  });
+
+  test('should not show invitation with skip config', () => {
+    alertHelper.registerAlertEvents();
+
+    const eventHandler = mockEventEmitter.on.mock.calls[0][1];
+
+    expect(mockPopUp).not.toHaveBeenCalled();
+    expect(mockConfigRead).not.toHaveBeenCalled();
+    mockConfigRead.mockReturnValue(true);
+    eventHandler();
+    expect(mockConfigRead).toHaveBeenCalledTimes(1);
+    expect(mockConfigRead).toHaveBeenLastCalledWith('skip-fb-group-invitation');
+    expect(mockPopUp).not.toHaveBeenCalled();
+
+    jest.clearAllMocks();
+    eventHandler();
+    eventHandler();
+    eventHandler();
+    expect(mockConfigRead).not.toHaveBeenCalled();
+    expect(mockPopUp).not.toHaveBeenCalled();
+
+    eventHandler();
+    expect(mockConfigRead).toHaveBeenCalledTimes(1);
+    expect(mockConfigRead).toHaveBeenLastCalledWith('skip-social-media-invitation');
+    expect(mockShowSocialMedia).not.toHaveBeenCalled();
   });
 });

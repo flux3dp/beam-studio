@@ -1,5 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
+import { InstagramOutlined } from '@ant-design/icons';
 import { Badge } from 'antd';
 import { TabBar } from 'antd-mobile';
 
@@ -9,6 +10,7 @@ import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import { showPassThrough } from '@core/app/components/pass-through/PassThrough';
 import { CanvasMode } from '@core/app/constants/canvasMode';
+import { getSocialMedia } from '@core/app/constants/social-media-constants';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
 import { DmktIcon } from '@core/app/icons/icons';
@@ -27,18 +29,27 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './CanvasTabBar.module.scss';
 
 const events = eventEmitterFactory.createEventEmitter('canvas');
 const rightPanelEventEmitter = eventEmitterFactory.createEventEmitter('right-panel');
-let svgCanvas;
+let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
 
-const CanvasTabBar = (): React.JSX.Element => {
+interface TabItem {
+  badge?: boolean;
+  disabled?: boolean;
+  icon: React.JSX.Element;
+  key: string;
+  title: string;
+}
+
+const CanvasTabBar = (): React.ReactNode => {
   const isMobile = useIsMobile();
   const lang = useI18n();
   const isSubscribed = getCurrentUser()?.info?.subscription?.is_valid;
@@ -81,7 +92,7 @@ const CanvasTabBar = (): React.JSX.Element => {
     return null;
   }
 
-  const tabs = [
+  const tabs: TabItem[] = [
     {
       icon: <TopBarIcons.Camera />,
       key: 'camera',
@@ -144,14 +155,19 @@ const CanvasTabBar = (): React.JSX.Element => {
       title: lang.beambox.left_panel.label.qr_code,
     },
     {
+      icon: <LeftPanelIcons.PassThrough />,
+      key: 'passthrough',
+      title: lang.beambox.left_panel.label.pass_through,
+    },
+    {
       icon: <DmktIcon style={{ fontSize: 40 }} />,
       key: 'dmkt',
       title: 'DMKT',
     },
     {
-      icon: <LeftPanelIcons.PassThrough />,
-      key: 'passthrough',
-      title: lang.beambox.left_panel.label.pass_through,
+      icon: <InstagramOutlined style={{ fontSize: 24 }} />,
+      key: 'ig',
+      title: 'Instagram',
     },
     {
       icon: <div className={styles.sep} />,
@@ -219,10 +235,13 @@ const CanvasTabBar = (): React.JSX.Element => {
       dialogCaller.showMyCloud(resetActiveKey);
     } else if (key === 'passthrough') {
       showPassThrough(resetActiveKey);
+    } else if (key === 'ig') {
+      browser.open(getSocialMedia().instagram.link);
+      setTimeout(resetActiveKey, 300);
     }
   };
 
-  const previewTabItems = [
+  const previewTabItems: TabItem[] = [
     {
       icon: <TopBarIcons.Camera />,
       key: 'end-preview',
@@ -285,13 +304,17 @@ const CanvasTabBar = (): React.JSX.Element => {
             <TabBar.Item
               aria-disabled={item.disabled || false}
               icon={
-                <Badge
-                  className={styles.badge}
-                  count={item.badge ? <FluxIcons.FluxPlus className={styles['flux-plus']} /> : 0}
-                  offset={[-4, 6]}
-                >
-                  {item.icon}
-                </Badge>
+                item.badge ? (
+                  <Badge
+                    className={styles.badge}
+                    count={item.badge ? <FluxIcons.FluxPlus className={styles['flux-plus']} /> : 0}
+                    offset={[-4, 6]}
+                  >
+                    {item.icon}
+                  </Badge>
+                ) : (
+                  item.icon
+                )
               }
               key={item.key}
               title={item.title}

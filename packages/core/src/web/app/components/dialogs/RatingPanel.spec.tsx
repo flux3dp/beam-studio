@@ -56,19 +56,6 @@ jest.mock('antd', () => ({
   ),
 }));
 
-jest.mock('@core/helpers/i18n', () => ({
-  lang: {
-    beambox: {
-      rating_panel: {
-        description: 'If you like Beam Studio, we would greatly appreciate it if you could rate us.',
-        dont_show_again: "Don't Show this next time.",
-        thank_you: 'Thank You for the feedback!',
-        title: 'Enjoy Beam Studio?',
-      },
-    },
-  },
-}));
-
 const mockSetNotShowing = jest.fn();
 
 jest.mock('@core/helpers/rating-helper', () => ({

@@ -128,7 +128,7 @@ describe('test BasePreviewManager', () => {
         callbacks: [expect.any(Function), expect.any(Function)],
         checkbox: {
           callbacks: expect.any(Function),
-          text: lang.beambox.popup.dont_show_again,
+          text: lang.alert.dont_show_again,
         },
         id: 'camera_cable_alert',
         message: lang.message.camera.camera_cable_unstable,
@@ -160,7 +160,7 @@ describe('test BasePreviewManager', () => {
         callbacks: [expect.any(Function), expect.any(Function)],
         checkbox: {
           callbacks: expect.any(Function),
-          text: lang.beambox.popup.dont_show_again,
+          text: lang.alert.dont_show_again,
         },
         id: 'camera_cable_alert',
         message: lang.message.camera.camera_cable_unstable,

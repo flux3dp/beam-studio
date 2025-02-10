@@ -94,7 +94,7 @@ class BeamboxInit {
     fluxId.init();
     cloud.recordActivity();
     BeamboxStore.onDrawGuideLines(this.displayGuides);
-    alertHelper.registerAlertEvents(Alert.popUp);
+    alertHelper.registerAlertEvents();
 
     // WebSocket for Adobe Illustrator Plug-In
     aiExtension.init();

@@ -8,6 +8,7 @@ const lang: ILang = {
     close: '關閉',
     confirm: '確認',
     dont_save: '不要儲存',
+    dont_show_again: '不再顯示',
     duplicated_preset_name: '重複的預設名稱',
     error: '錯誤',
     info: '訊息',
@@ -60,7 +61,6 @@ const lang: ILang = {
   },
   beambox: {
     announcement_panel: {
-      dont_show_again: '不再顯示',
       title: '公告',
     },
     bottom_right_panel: {
@@ -281,12 +281,10 @@ const lang: ILang = {
       bug_report: '錯誤回報',
       change_workarea_before_preview: '%s 的工作範圍與目前設定的工作範圍不相符，是否要切換目前的工作範圍？',
       convert_to_path_fail: '轉換成路徑失敗。',
-      dont_show_again: '不再顯示此提醒',
       dxf_bounding_box_size_over: '圖像超出工作範圍，請在 CAD 軟體中將圖像放置於原點附近，或確定圖檔單位是否正確設定。',
       dxf_version_waring: '此 DXF 檔版本非 2013 版，可能有潛在的不相容風險。',
       facebook_group_invitation: {
         already_joined: '已加入用戶社群',
-        dont_show_again: '不要再提醒我',
         join_now: '馬上加入',
         later: '稍後加入',
         message: '即刻加入 FLUX 官方用戶社群，與廣大 FLUX 用戶分享使用心得、展示雷雕作品以及獲取最新的產品資訊。',
@@ -350,7 +348,6 @@ const lang: ILang = {
     },
     rating_panel: {
       description: '如果您喜歡 Beam Studio，請給我們評分，我們將不勝感激。',
-      dont_show_again: '不再顯示此提醒',
       thank_you: '謝謝您的回饋',
       title: '喜歡 Beam Studio 嗎？',
     },

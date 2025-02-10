@@ -6,29 +6,6 @@ import LayerModule from '@core/app/constants/layer-module/layer-modules';
 
 import ConfigPanelContext from './ConfigPanelContext';
 
-jest.mock('@core/helpers/useI18n', () => () => ({
-  beambox: {
-    popup: {
-      dont_show_again: 'dont_show_again',
-    },
-    right_panel: {
-      laser_panel: {
-        module: 'module',
-      },
-    },
-  },
-  layer_module: {
-    laser_2w_infrared: 'laser_2w_infrared',
-    laser_10w_diode: 'laser_10w_diode',
-    laser_20w_diode: 'laser_20w_diode',
-    notification: {
-      convertFromPrintingModuleMsg: 'convertFromPrintingModuleMsg',
-      convertFromPrintingModuleTitle: 'convertFromPrintingModuleTitle',
-    },
-    printing: 'printing',
-  },
-}));
-
 const mockAddCommandToHistory = jest.fn();
 
 jest.mock('@core/helpers/svg-editor-helper', () => ({
@@ -226,7 +203,7 @@ describe('test ModuleBlock', () => {
       .mockReturnValueOnce([{ name: 'config1', power: 88, repeat: 89, speed: 87 }])
       .mockReturnValueOnce([{ name: 'config1', power: 78, repeat: 79, speed: 77 }]);
     mockGetData.mockReturnValueOnce('config1');
-    fireEvent.click(getByText('laser_20w_diode'));
+    fireEvent.click(getByText('20W Diode Laser'));
     expect(mockGetData).toBeCalledTimes(1);
     expect(mockGetData).toHaveBeenNthCalledWith(1, mockElem, 'configName');
     expect(mockBatchCommand).toBeCalledTimes(1);
@@ -292,7 +269,7 @@ describe('test ModuleBlock', () => {
 
     mockGetPresetsList.mockReturnValue(mockPresetList);
     mockGetData.mockReturnValueOnce('config1');
-    fireEvent.click(getByText('laser_20w_diode'));
+    fireEvent.click(getByText('20W Diode Laser'));
     expect(mockGetData).toBeCalledTimes(1);
     expect(mockGetData).toHaveBeenNthCalledWith(1, mockElem, 'configName');
     expect(mockBatchCommand).toBeCalledTimes(1);
@@ -350,7 +327,7 @@ describe('test ModuleBlock', () => {
       .mockReturnValueOnce([{ name: 'config1', power: 88, repeat: 89, speed: 87 }])
       .mockReturnValueOnce([]);
     mockGetData.mockReturnValueOnce('config1');
-    fireEvent.click(getByText('laser_20w_diode'));
+    fireEvent.click(getByText('20W Diode Laser'));
     expect(mockGetData).toBeCalledTimes(1);
     expect(mockGetData).toHaveBeenNthCalledWith(1, mockElem, 'configName');
     expect(mockBatchCommand).toBeCalledTimes(1);
@@ -409,7 +386,7 @@ describe('test ModuleBlock', () => {
 
     mockGetLayerElementByName.mockReturnValueOnce(mockElem1).mockReturnValue(mockElem2);
     mockGetPresetsList.mockReturnValueOnce([]);
-    fireEvent.click(getByText('printing'));
+    fireEvent.click(getByText('Printing'));
     expect(mockPopUp).toBeCalledTimes(1);
     await mockPopUp.mock.calls[0][0].onConfirm();
     expect(mockGetLayerElementByName).toBeCalledTimes(2);
