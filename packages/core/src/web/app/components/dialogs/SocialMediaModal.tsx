@@ -39,7 +39,7 @@ const SocialMediaModal = ({ autoPopup = false, onClose: closeModal }: Props): Re
     social_media: t,
     topbar: { menu: tMenu },
   } = useI18n();
-  const [dontShow, setDontShow] = useState(false);
+  const [dontShowAgain, setDontShowAgain] = useState(false);
 
   const items: TItem[] = useMemo(() => {
     const socialMedia = getSocialMedia();
@@ -52,7 +52,7 @@ const SocialMediaModal = ({ autoPopup = false, onClose: closeModal }: Props): Re
   }, [t]);
 
   const onClose = () => {
-    if (dontShow) {
+    if (dontShowAgain) {
       alertConfig.write('skip-social-media-invitation', true);
     }
 
@@ -71,7 +71,7 @@ const SocialMediaModal = ({ autoPopup = false, onClose: closeModal }: Props): Re
       </div>
       <div className={styles.footer}>
         {autoPopup && (
-          <Checkbox onChange={() => setDontShow(!dontShow)} value={dontShow}>
+          <Checkbox onChange={() => setDontShowAgain(!dontShowAgain)} value={dontShowAgain}>
             {tAlert.dont_show_again}
           </Checkbox>
         )}
