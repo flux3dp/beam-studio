@@ -2,11 +2,11 @@ import React, { act } from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
+import alertConstants from '@core/app/constants/alert-constants';
 import { LaserType } from '@core/app/constants/promark-constants';
 import i18n from '@core/helpers/i18n';
 
 import DocumentSettings from './DocumentSettings';
-import alertConstants from '@core/app/constants/alert-constants';
 
 const mockEventEmitter = {
   emit: jest.fn(),
