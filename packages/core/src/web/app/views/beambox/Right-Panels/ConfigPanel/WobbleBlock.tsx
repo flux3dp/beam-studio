@@ -5,20 +5,13 @@ import { Switch, Tooltip } from 'antd';
 import classNames from 'classnames';
 
 import history from '@core/app/svgedit/history/history';
+import undoManager from '@core/app/svgedit/history/undoManager';
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './Block.module.scss';
 import ConfigPanelContext from './ConfigPanelContext';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
 
 const WobbleBlock = (): React.JSX.Element => {
   const lang = useI18n();
@@ -41,7 +34,7 @@ const WobbleBlock = (): React.JSX.Element => {
       writeData(layerName, 'wobbleDiameter', diameter, { batchCmd });
     });
     batchCmd.onAfter = initState;
-    svgCanvas.addCommandToHistory(batchCmd);
+    undoManager.addCommandToHistory(batchCmd);
   };
 
   const handleStepChange = (value: number) => {
@@ -51,7 +44,7 @@ const WobbleBlock = (): React.JSX.Element => {
 
     selectedLayers.forEach((layerName) => writeData(layerName, 'wobbleStep', value, { batchCmd }));
     batchCmd.onAfter = initState;
-    svgCanvas.addCommandToHistory(batchCmd);
+    undoManager.addCommandToHistory(batchCmd);
   };
 
   const handleDiameterChange = (value: number) => {
@@ -61,7 +54,7 @@ const WobbleBlock = (): React.JSX.Element => {
 
     selectedLayers.forEach((layerName) => writeData(layerName, 'wobbleDiameter', value, { batchCmd }));
     batchCmd.onAfter = initState;
-    svgCanvas.addCommandToHistory(batchCmd);
+    undoManager.addCommandToHistory(batchCmd);
   };
 
   return (

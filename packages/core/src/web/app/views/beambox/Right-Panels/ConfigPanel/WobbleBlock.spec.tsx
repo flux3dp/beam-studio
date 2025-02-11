@@ -31,13 +31,8 @@ jest.mock('@core/helpers/layer/layer-config-helper', () => ({
 
 const mockAddCommandToHistory = jest.fn();
 
-jest.mock('@core/helpers/svg-editor-helper', () => ({
-  getSVGAsync: (callback) =>
-    callback({
-      Canvas: {
-        addCommandToHistory: mockAddCommandToHistory,
-      },
-    }),
+jest.mock('@core/app/svgedit/history/undoManager', () => ({
+  addCommandToHistory: mockAddCommandToHistory,
 }));
 
 let batchCmd = { count: 0, onAfter: undefined };
