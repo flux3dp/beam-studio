@@ -20,7 +20,7 @@ const getEvtPageXY = (e: MouseEvent | TouchEvent) => {
 };
 
 export function getEventPoint(evt: MouseEvent | TouchEvent): IPoint {
-  const matrix = svgCanvas.getRootScreenMatrix();
+  const matrix = svgCanvas?.getRootScreenMatrix();
   const { x, y } = getEvtPageXY(evt);
 
   return svgedit.math.transformPoint(x, y, matrix);
