@@ -30,7 +30,7 @@ class ParsedGcode {
       this.chunks.push([item]);
     }
     this.length += 1;
-  }
+  };
 
   getItem = (index) => {
     const chunkId = Math.floor(index / this.maxChunkSize);
@@ -42,12 +42,19 @@ class ParsedGcode {
     const chunkId = Math.floor(index / this.maxChunkSize);
     const i = index % this.maxChunkSize;
     this.chunks[chunkId][i] = item;
-  }
-};
+  };
+}
 
 export function parseGcode(gcode, isPromark = false) {
   const parsedGcode = new ParsedGcode();
-  let lastG = NaN, lastX = NaN, lastY = NaN, lastZ = NaN, lastA = NaN, lastF = NaN, lastS = 0, lastT = 0;
+  let lastG = NaN,
+    lastX = NaN,
+    lastY = NaN,
+    lastZ = NaN,
+    lastA = NaN,
+    lastF = NaN,
+    lastS = 0,
+    lastT = 0;
   let stride = 9;
   let i = 0;
   /*
@@ -58,18 +65,23 @@ export function parseGcode(gcode, isPromark = false) {
 
   let laserEnabled = false;
   let useRelative = false;
+  // calculate task time with wobble by decreasing feedrate instead of calculating real moving distance
+  let wobbleFactor = 1;
 
   while (i < gcode.length) {
     function parse() {
       ++i;
-      while (i < gcode.length && (gcode[i] === ' ' || gcode[i] === '\t'))
-        ++i;
+      while (i < gcode.length && (gcode[i] === ' ' || gcode[i] === '\t')) ++i;
       let begin = i;
-      while (i < gcode.length && "+-.0123456789".indexOf(gcode[i]) != -1)
-        ++i;
+      while (i < gcode.length && '+-.0123456789'.indexOf(gcode[i]) != -1) ++i;
       return Number(gcode.substr(begin, i - begin));
     }
-    let g = NaN, x = NaN, y = NaN, z = NaN, a = NaN, f = NaN;
+    let g = NaN,
+      x = NaN,
+      y = NaN,
+      z = NaN,
+      a = NaN,
+      f = NaN;
     while (i < gcode.length && gcode[i] !== ';' && gcode[i] !== '\r' && gcode[i] !== '\n') {
       if (gcode[i] === 'G' || gcode[i] === 'g') {
         if (gcode[i + 2] === 'S') {
@@ -96,7 +108,7 @@ export function parseGcode(gcode, isPromark = false) {
         if (isPromark) z = lastZ + z;
       } else if (gcode[i] === 'A' || gcode[i] === 'a') a = parse();
       else if (gcode[i] === 'F' || gcode[i] === 'f') {
-        f = parse();
+        f = parse() / wobbleFactor;
       } else if (gcode[i] === 'S' || gcode[i] === 's') {
         lastS = parse();
         g = lastS > 0 ? 1 : 0;
@@ -109,6 +121,12 @@ export function parseGcode(gcode, isPromark = false) {
         z = 0;
         i += 3;
       } else ++i;
+    }
+    if (gcode.slice(i, i + 9) === ';WOBBLE K') {
+      // For Swiftray GCode
+      // ;WOBBLE K[float]\n: Estimated wobble time multiplier
+      i += 9;
+      wobbleFactor = parse();
     }
     if (g === 0 || g === 1 || !isNaN(x) || !isNaN(y) || !isNaN(z) || !isNaN(a) || !isNaN(f)) {
       if (g === 0 || g === 1) lastG = g;
@@ -153,7 +171,7 @@ export function parseGcode(gcode, isPromark = false) {
         lastF = f;
       }
       if (!isNaN(lastG)) {
-        parsedGcode.push((lastG || lastS > 0) ? 1 : 0);
+        parsedGcode.push(lastG || lastS > 0 ? 1 : 0);
         parsedGcode.push(lastX);
         parsedGcode.push(lastY);
         parsedGcode.push(lastZ);
@@ -164,10 +182,8 @@ export function parseGcode(gcode, isPromark = false) {
         parsedGcode.push(lastT);
       }
     }
-    while (i < gcode.length && gcode[i] !== '\r' && gcode[i] !== '\n')
-      ++i;
-    while (i < gcode.length && (gcode[i] === '\r' || gcode[i] === '\n'))
-      ++i;
+    while (i < gcode.length && gcode[i] !== '\r' && gcode[i] !== '\n') ++i;
+    while (i < gcode.length && (gcode[i] === '\r' || gcode[i] === '\n')) ++i;
   }
 
   if (isNaN(lastX)) {
@@ -195,7 +211,7 @@ export function parseGcode(gcode, isPromark = false) {
       parsedGcode.setItem(j, 0);
     }
   }
-  console.log("Parsed GCode", parsedGcode);
+  console.log('Parsed GCode', parsedGcode);
   return parsedGcode;
 }
 

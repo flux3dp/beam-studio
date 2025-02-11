@@ -557,6 +557,8 @@ export interface ILang {
           sure_to_import_presets: string;
           sure_to_reset: string;
           title: string;
+          wobble_diameter: string;
+          wobble_step: string;
         };
         preset_setting: string;
         presets: string;
@@ -589,6 +591,10 @@ export interface ILang {
         various_preset: string;
         white_ink: string;
         white_ink_settings: string;
+        wobble: string;
+        wobble_desc: string;
+        wobble_diameter: string;
+        wobble_step: string;
         z_step: string;
       };
       layer_panel: {

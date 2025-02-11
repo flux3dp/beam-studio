@@ -65,6 +65,56 @@ exports[`PromarkInputs should render correctly 1`] = `
         <div
           class="label"
         >
+          Pulse Width
+        </div>
+        <div
+          class="input"
+        >
+          UnitInput: 
+          <p>
+            addonAfter: 
+            ns
+          </p>
+          0
+          <input
+            data-testid="pulseWidth"
+            max="350"
+            min="2"
+            value="100"
+          />
+        </div>
+      </div>
+      <div
+        class="field"
+      >
+        <div
+          class="label"
+        >
+          Frequency
+        </div>
+        <div
+          class="input"
+        >
+          UnitInput: 
+          <p>
+            addonAfter: 
+            kHz
+          </p>
+          0
+          <input
+            data-testid="frequency"
+            max="4000"
+            min="1"
+            value="30"
+          />
+        </div>
+      </div>
+      <div
+        class="field"
+      >
+        <div
+          class="label"
+        >
           Pass Count
         </div>
         <div
@@ -174,7 +224,7 @@ exports[`PromarkInputs should render correctly 1`] = `
         <div
           class="label"
         >
-          Pulse Width
+          Wobble Step Size
         </div>
         <div
           class="input"
@@ -182,14 +232,17 @@ exports[`PromarkInputs should render correctly 1`] = `
           UnitInput: 
           <p>
             addonAfter: 
-            ns
+            mm
           </p>
-          0
+          <p>
+            precision: 
+            2
+          </p>
           <input
-            data-testid="pulseWidth"
-            max="350"
-            min="2"
-            value="100"
+            data-testid="wobbleStep"
+            max="1"
+            min="0"
+            value="0.01"
           />
         </div>
       </div>
@@ -199,7 +252,7 @@ exports[`PromarkInputs should render correctly 1`] = `
         <div
           class="label"
         >
-          Frequency
+          Wobble Diameter
         </div>
         <div
           class="input"
@@ -207,14 +260,17 @@ exports[`PromarkInputs should render correctly 1`] = `
           UnitInput: 
           <p>
             addonAfter: 
-            kHz
+            mm
           </p>
-          0
+          <p>
+            precision: 
+            1
+          </p>
           <input
-            data-testid="frequency"
-            max="4000"
-            min="1"
-            value="30"
+            data-testid="wobbleDiameter"
+            max="1"
+            min="0"
+            value="0.2"
           />
         </div>
       </div>

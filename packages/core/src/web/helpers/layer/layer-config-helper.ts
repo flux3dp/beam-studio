@@ -64,6 +64,8 @@ const attributeMap: { [key in ConfigKey]: string } = {
   uv: 'data-uv',
   wInk: 'data-wInk',
   wMultipass: 'data-wMultipass',
+  wobbleDiameter: 'data-wobbleDiameter',
+  wobbleStep: 'data-wobbleStep',
   wRepeat: 'data-wRepeat',
   wSpeed: 'data-wSpeed',
   yRatio: 'data-yRatio',
@@ -76,19 +78,15 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   backlash: 0,
   biDirectional: true,
   configName: '',
-  // parameters for split color
   cRatio: 100,
   diode: 0,
   dottingTime: 100,
   fillAngle: 0,
-  // promark parameters
   fillInterval: 0.01,
-  // lower focus parameters
   focus: -2,
   focusStep: -2,
   frequency: 27,
-  // 1 for fm, 2 for am
-  halftone: 1,
+  halftone: 1, // 1 for fm, 2 for am
   height: -3,
   ink: BeamboxPreference.read('multipass-compensation') !== false ? 3 : 1,
   kRatio: 100,
@@ -98,7 +96,6 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   multipass: 3,
   power: 15,
   printingSpeed: 60,
-  // parameters single color printing image processing
   printingStrength: 100,
   pulseWidth: 500,
   repeat: 1,
@@ -106,11 +103,11 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   uv: 0,
   wInk: BeamboxPreference.read('multipass-compensation') !== false ? -12 : -4,
   wMultipass: 3,
+  wobbleDiameter: -0.2,
+  wobbleStep: -0.05,
   wRepeat: 1,
-  // parameters for white ink
   wSpeed: 100,
   yRatio: 100,
-  // explicit for beamo model
   zStep: 0,
 };
 
@@ -465,6 +462,8 @@ export const promarkConfigKeys: ConfigKey[] = [
   'focus',
   'focusStep',
   'dottingTime',
+  'wobbleStep',
+  'wobbleDiameter',
 ];
 
 // Forced Keys: If not set, use default value

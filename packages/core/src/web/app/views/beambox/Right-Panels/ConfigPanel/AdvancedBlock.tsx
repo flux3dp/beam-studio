@@ -23,8 +23,9 @@ import FocusBlock from './FocusBlock';
 import FrequencyBlock from './FrequencyBlock';
 import PulseWidthBlock from './PulseWidthBlock';
 import SingleColorBlock from './SingleColorBlock';
+import WobbleBlock from './WobbleBlock';
 
-const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.JSX.Element => {
+const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.ReactNode => {
   const { state } = useContext(ConfigPanelContext);
   const forceUpdate = useForceUpdate();
   const lang = useI18n().beambox.right_panel.laser_panel;
@@ -51,15 +52,15 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
   const contents = [];
 
   if (state.module.value !== LayerModule.PRINTER) {
-    if (promarkInfo) {
+    if (promarkInfo && promarkLimit) {
       contents.push(<DottingTimeBlock key="dotting-time-block" type={type} />);
 
       if (promarkInfo.laserType === LaserType.MOPA) {
         contents.push(
           <PulseWidthBlock
             key="pulse-width-block"
-            max={promarkLimit.pulseWidth.max}
-            min={promarkLimit.pulseWidth.min}
+            max={promarkLimit.pulseWidth!.max}
+            min={promarkLimit.pulseWidth!.min}
             type={type}
           />,
         );
@@ -68,10 +69,11 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
       contents.push(
         <FrequencyBlock
           key="frequency-block"
-          max={promarkLimit.frequency.max}
-          min={promarkLimit.frequency.min}
+          max={promarkLimit.frequency!.max}
+          min={promarkLimit.frequency!.min}
           type={type}
         />,
+        <WobbleBlock key="wobble-block" />,
       );
     }
 
