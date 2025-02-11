@@ -7,8 +7,10 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import dialog from '@core/implementations/dialog';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
+import type { ISVGEditor } from './svg-editor';
+
 let svgCanvas: ISVGCanvas;
-let svgEditor;
+let svgEditor: ISVGEditor;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
@@ -22,7 +24,7 @@ const setCrosshairCursor = () => {
   $('#svg_editor g').css('cursor', 'crosshair');
 };
 
-const align = (types) => {
+const align = (type: 'b' | 'c' | 'l' | 'm' | 'r' | 't') => {
   if (svgCanvas.getTempGroup()) {
     const childeren = svgCanvas.ungroupTempGroup();
 
@@ -30,10 +32,9 @@ const align = (types) => {
   }
 
   const selectedElements = svgCanvas.getSelectedElems();
-  const len = selectedElements.filter((e) => e).length;
-  const mode = len > 1 ? 'selected' : 'page';
+  const mode = selectedElements.filter(Boolean).length > 1 ? 'selected' : 'page';
 
-  svgCanvas.alignSelectedElements(types, mode);
+  svgCanvas.alignSelectedElements(type, mode);
   svgCanvas.tempGroupSelectedElements();
 };
 
@@ -48,7 +49,6 @@ const funcs = {
   alignLeft(): void {
     align('l');
   },
-
   alignMiddle(): void {
     align('m');
   },
@@ -158,7 +158,7 @@ const funcs = {
       svgCanvas.updateElementColor(newImage);
       svgCanvas.selectOnly([newImage]);
 
-      window.updateContextPanel();
+      (window as any).updateContextPanel();
     };
   },
   insertLine(): void {

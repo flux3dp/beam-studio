@@ -18,10 +18,6 @@
 // 2) browser.js
 // 3) svgcanvas.js
 
-/*
-TODOS
-1. JSDoc
-*/
 import textPathEdit from '@core/app/actions/beambox/textPathEdit';
 import canvasEvents from '@core/app/actions/canvas/canvasEvents';
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
@@ -79,6 +75,7 @@ import OpenBottomBoundaryDrawer from './open-bottom-boundary-drawer';
 import PreviewModeController from './preview-mode-controller';
 import ToolPanelsController from './toolPanelsController';
 
+// @ts-expect-error this line is required to load svgedit
 if (svgCanvasClass) {
   console.log('svgCanvas loaded successfully');
 }
@@ -87,7 +84,6 @@ const LANG = i18n.lang.beambox;
 // TODO: change to require('svgedit')
 const { $, svgedit } = window;
 
-const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 const workareaEvents = eventEmitterFactory.createEventEmitter('workarea');
 
 declare global {
@@ -164,9 +160,7 @@ const svgEditor = (window['svgEditor'] = (function () {
   // set workarea according to default model.
   const defaultModel = BeamboxPreference.read('model');
 
-  if (defaultModel !== undefined) {
-    BeamboxPreference.write('workarea', defaultModel);
-  }
+  if (defaultModel) BeamboxPreference.write('workarea', defaultModel);
 
   // EDITOR PROPERTIES: (defined below)
   //		curPrefs, curConfig, canvas, storage, uiStrings
@@ -181,8 +175,8 @@ const svgEditor = (window['svgEditor'] = (function () {
     clickSelect: () => {},
     clipboardData: null,
     copySelected: () => {},
-    curConfig: null,
-    curPrefs: null,
+    curConfig: null as any,
+    curPrefs: null as any,
     cutSelected: () => {},
     deleteSelected: () => {},
     dimensions: [pxWidth, pxDisplayHeight ?? pxHeight],
@@ -636,7 +630,7 @@ const svgEditor = (window['svgEditor'] = (function () {
 
     // used to make the flyouts stay on the screen longer the very first time
     // var flyoutspeed = 1250; // Currently unused
-    var selectedElement = null;
+    var selectedElement: any = null;
     var multiselected = false;
     var origTitle = $('title:first').text();
 
@@ -689,9 +683,7 @@ const svgEditor = (window['svgEditor'] = (function () {
     };
 
     var clickSelect = (editor.clickSelect = function (clearSelection: boolean = true) {
-      if ([TutorialConstants.DRAW_A_CIRCLE, TutorialConstants.DRAW_A_RECT].includes(getNextStepRequirement())) {
-        return;
-      }
+      if ([TutorialConstants.DRAW_A_CIRCLE, TutorialConstants.DRAW_A_RECT].includes(getNextStepRequirement())) return;
 
       workarea.css('cursor', 'auto');
       svgCanvas.setMode('select');
@@ -1322,7 +1314,7 @@ const svgEditor = (window['svgEditor'] = (function () {
     })();
     // Unfocus text input when workarea is mousedowned.
     (function () {
-      var inp;
+      var inp: any;
       var unfocus = function () {
         $(inp).blur();
       };

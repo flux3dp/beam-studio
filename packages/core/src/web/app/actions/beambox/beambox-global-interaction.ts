@@ -1,8 +1,9 @@
 import tabController from '@core/app/actions/tabController';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import menu from '@core/implementations/menu';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-let svgCanvas;
+let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
@@ -37,8 +38,8 @@ class BeamboxGlobalInteraction {
     ]);
   }
 
-  onObjectFocus(elems?) {
-    let selectedElements = elems || svgCanvas.getSelectedElems().filter(Boolean);
+  onObjectFocus(elems?: Element[]) {
+    let selectedElements = elems || svgCanvas?.getSelectedElems().filter(Boolean);
 
     if (!selectedElements.length) {
       return;

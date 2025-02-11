@@ -1,4 +1,6 @@
 /* eslint-disable no-case-declarations */
+import { match, P } from 'ts-pattern';
+
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
 import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
@@ -28,12 +30,14 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-maker';
 import type { ICommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-import type { IRect } from '@core/interfaces/ISVGCanvas';
+import type { IPoint, IRect } from '@core/interfaces/ISVGCanvas';
 
-import { getEventPoint } from './mouse/getEventPoint';
-import { initResizeTransform } from './mouse/initResizeTransform';
-import { setRubberBoxStart } from './mouse/setRubberBoxStart';
-import wheelEventHandlerGenerator from './wheelEventHandler';
+import wheelEventHandlerGenerator from '../wheelEventHandler';
+
+import { getEventPoint } from './utils/getEventPoint';
+import { getMatchedDiffFromBBox } from './utils/getMatchedDiffFromBBox';
+import { initResizeTransform } from './utils/initResizeTransform';
+import { setRubberBoxStart } from './utils/setRubberBoxStart';
 
 let svgEditor: ISVGEditor;
 let svgCanvas: ISVGCanvas;
@@ -58,6 +62,7 @@ let startMouseY = 0;
 let selectedBBox: IRect | null = null;
 let justSelected: null | SVGElement = null;
 let angleOffset = 90;
+let currentBoundingBox = Array.of<IPoint>();
 
 const checkShouldIgnore = () => ObjectPanelController.getActiveKey() && navigator.maxTouchPoints > 1;
 
@@ -67,7 +72,7 @@ const mouseSelectModeCmds = Array.of<ICommand>();
 // - when we are in select mode, select the element, remember the position
 // and do nothing else
 const mouseDown = async (evt: MouseEvent) => {
-  if (checkShouldIgnore()) return;
+  if (checkShouldIgnore() || svgCanvas.spaceKey || evt.button === MouseButtons.Mid) return;
 
   // Check if the element in the clipboard can be pasted
   isValidNativeClipboard().then((paste) => {
@@ -91,8 +96,6 @@ const mouseDown = async (evt: MouseEvent) => {
   startMouseX = x * zoom;
   startMouseY = y * zoom;
   moved = false;
-
-  if (svgCanvas.spaceKey || evt.button === MouseButtons.Mid) return;
 
   mouseSelectModeCmds.length = 0;
 
@@ -130,7 +133,7 @@ const mouseDown = async (evt: MouseEvent) => {
     mouseTarget = mouseTarget.firstChild as SVGElement;
   }
 
-  if (mouseTarget === svgCanvas.selectorManager.selectorParentGroup && selectedElements[0] != null) {
+  if (mouseTarget === svgCanvas.selectorManager.selectorParentGroup && selectedElements[0]) {
     // if it is a selector grip, then it must be a single element selected,
     // set the mouseTarget to that and update the mode to rotate/resize
     const grip = evt.target as SVGElement;
@@ -147,12 +150,13 @@ const mouseDown = async (evt: MouseEvent) => {
 
       startX = cx / zoom;
       startY = cy / zoom;
-      console.log(startX, startY);
+
       svgCanvas.unsafeAccess.setCurrentMode('resize');
       svgCanvas.setCurrentResizeMode($.data(grip, 'dir'));
     }
 
     [mouseTarget] = selectedElements;
+
     console.log('svgCanvas gripping', svgCanvas.getCurrentMode(), svgCanvas.getCurrentResizeMode());
   } else if (svgCanvas.textActions.isEditing) {
     svgCanvas.unsafeAccess.setCurrentMode('textedit');
@@ -164,7 +168,7 @@ const mouseDown = async (evt: MouseEvent) => {
     let currentStarted = svgCanvas.getStarted();
 
     $.each(extensionResult, (_, r) => {
-      currentStarted = currentStarted || (r && r.started);
+      currentStarted = currentStarted || r?.started;
     });
     svgCanvas.unsafeAccess.setStarted(currentStarted);
 
@@ -188,9 +192,7 @@ const mouseDown = async (evt: MouseEvent) => {
       svgCanvas.unsafeAccess.setStarted(true);
       svgCanvas.setCurrentResizeMode('none');
 
-      if (rightClick) {
-        svgCanvas.unsafeAccess.setStarted(false);
-      }
+      if (rightClick) svgCanvas.unsafeAccess.setStarted(false);
 
       if (
         (PreviewModeController.isPreviewMode() || TopBarController.getTopBarPreviewMode()) &&
@@ -199,12 +201,9 @@ const mouseDown = async (evt: MouseEvent) => {
         // preview mode
         svgCanvas.clearSelection();
 
-        if (PreviewModeController.isPreviewMode()) {
-          svgCanvas.unsafeAccess.setCurrentMode('preview');
-        } else {
-          // i.e. TopBarController.getTopBarPreviewMode()
-          svgCanvas.unsafeAccess.setCurrentMode('pre_preview');
-        }
+        if (PreviewModeController.isPreviewMode()) svgCanvas.unsafeAccess.setCurrentMode('preview');
+        // i.e. TopBarController.getTopBarPreviewMode()
+        else svgCanvas.unsafeAccess.setCurrentMode('pre_preview');
 
         setRubberBoxStart(startMouseX, startMouseY);
       } else {
@@ -218,9 +217,7 @@ const mouseDown = async (evt: MouseEvent) => {
         if (mouseTarget !== svgRoot && (isElemTempGroup || layerSelectable)) {
           // Mouse down on element
           if (!selectedElements.includes(mouseTarget)) {
-            if (!evt.shiftKey) {
-              svgCanvas.clearSelection(true);
-            }
+            if (!evt.shiftKey) svgCanvas.clearSelection(true);
 
             if (navigator.maxTouchPoints > 1 && ['MacOS', 'others'].includes(window.os)) {
               // in touchable mobiles, allow multiselect if click on non selected element
@@ -260,38 +257,31 @@ const mouseDown = async (evt: MouseEvent) => {
               if (cmd && !cmd.isEmpty()) mouseSelectModeCmds.push(cmd);
             }
 
-            for (let i = 0; i < selectedElements.length; i += 1) {
+            for (const element of selectedElements) {
               // insert a dummy transform so if the element(s) are moved it will have
               // a transform to use for its translate
-              if (selectedElements[i] == null) {
-                continue;
-              }
+              if (!element) continue;
 
-              const transforms = svgedit.transformlist.getTransformList(selectedElements[i]);
+              const transforms = svgedit.transformlist.getTransformList(element);
 
-              if (transforms.numberOfItems) {
-                transforms.insertItemBefore(svgRoot.createSVGTransform(), 0);
-              } else {
-                transforms.appendItem(svgRoot.createSVGTransform());
-              }
+              if (transforms.numberOfItems) transforms.insertItemBefore(svgRoot.createSVGTransform(), 0);
+              else transforms.appendItem(svgRoot.createSVGTransform());
             }
           }
 
-          if (layerSelectable && !rightClick && !evt.shiftKey) {
-            // clear layer selection
-            LayerPanelController.setSelectedLayers([]);
-          }
+          // clear layer selection
+          if (layerSelectable && !rightClick && !evt.shiftKey) LayerPanelController.setSelectedLayers([]);
         } else if (mouseTarget === svgRoot && !rightClick) {
           // Mouse down on svg root
           svgCanvas.clearSelection();
           // clear layer selection
           LayerPanelController.setSelectedLayers([]);
-
           svgCanvas.unsafeAccess.setCurrentMode('multiselect');
-
           setRubberBoxStart(startMouseX, startMouseY);
         }
       }
+
+      currentBoundingBox = svgCanvas.getSelectedElementsAlignPoints();
 
       break;
     case 'curve-engraving':
@@ -338,12 +328,11 @@ const mouseDown = async (evt: MouseEvent) => {
         mouseTarget.style.vectorEffect = 'non-scaling-stroke';
         delayedStroke(mouseTarget);
 
-        const all = mouseTarget.getElementsByTagName('*') as HTMLCollectionOf<SVGElement>;
-        const len = all.length;
+        const elements = mouseTarget.getElementsByTagName('*') as HTMLCollectionOf<SVGElement>;
 
-        for (let i = 0; i < len; i += 1) {
-          all[i].style.vectorEffect = 'non-scaling-stroke';
-          delayedStroke(all[i]);
+        for (const element of elements) {
+          element.style.vectorEffect = 'non-scaling-stroke';
+          delayedStroke(element);
         }
       }
 
@@ -397,7 +386,7 @@ const mouseDown = async (evt: MouseEvent) => {
     case 'line':
       svgCanvas.unsafeAccess.setStarted(true);
 
-      const newLine = svgCanvas.addSvgElementFromJson({
+      const newLine = svgCanvas.addSvgElementFromJson<SVGLineElement>({
         attr: {
           fill: 'none',
           id: svgCanvas.getNextId(),
@@ -417,12 +406,10 @@ const mouseDown = async (evt: MouseEvent) => {
         element: 'line',
       });
 
-      if (svgCanvas.isUsingLayerColor) {
-        updateElementColor(newLine);
-      }
+      if (svgCanvas.isUsingLayerColor) updateElementColor(newLine);
 
       svgCanvas.selectOnly([newLine], true);
-      canvasEvents.addLine(newLine as SVGLineElement);
+      canvasEvents.addLine(newLine);
       break;
     case 'ellipse':
       svgCanvas.unsafeAccess.setStarted(true);
@@ -443,9 +430,7 @@ const mouseDown = async (evt: MouseEvent) => {
         element: 'ellipse',
       });
 
-      if (svgCanvas.isUsingLayerColor) {
-        updateElementColor(newEllipse);
-      }
+      if (svgCanvas.isUsingLayerColor) updateElementColor(newEllipse);
 
       svgCanvas.selectOnly([newEllipse], true);
       break;
@@ -461,13 +446,6 @@ const mouseDown = async (evt: MouseEvent) => {
     case 'pathedit':
       startX *= zoom;
       startY *= zoom;
-
-      if (svgCanvas.isBezierPathAlignToEdge) {
-        const { byX, byY } = svgCanvas.findMatchPoint(startMouseX, startMouseY);
-
-        startX = byX ? byX.x * zoom : startX;
-        startY = byY ? byY.y * zoom : startY;
-      }
 
       const res = svgCanvas.pathActions.mouseDown(evt, mouseTarget, startX, startY) as null | { x: number; y: number };
 
@@ -518,16 +496,11 @@ const mouseDown = async (evt: MouseEvent) => {
     true,
   );
 
-  if (selectedElements.length > 0 && selectedElements[0]) {
-    selectedBBox = svgCanvas.getSvgRealLocation(selectedElements[0]);
-  } else {
-    selectedBBox = null;
-  }
+  if (selectedElements?.[0]) selectedBBox = svgCanvas.getSvgRealLocation(selectedElements[0]);
+  else selectedBBox = null;
 
   $.each(extensionResult, (_, r) => {
-    if (r && r.started) {
-      svgCanvas.unsafeAccess.setStarted(true);
-    }
+    if (r?.started) svgCanvas.unsafeAccess.setStarted(true);
   });
 };
 
@@ -537,7 +510,7 @@ const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: 
   const transforms = svgedit.transformlist.getTransformList(selected);
   const hasMatrix = svgedit.math.hasMatrixTransform(transforms);
   const box = hasMatrix ? initBBox : svgedit.utilities.getBBox(selected);
-  const zoom = workareaManager.zoomRatio;
+  const isElementRatioFixed = evt.shiftKey || selected.getAttribute('data-ratiofixed') === 'true';
   let { height, width, x: left, y: top } = box;
 
   if (currentConfig.gridSnapping) {
@@ -547,13 +520,13 @@ const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: 
     width = svgedit.utilities.snapToGrid(width);
   }
 
-  if (svgCanvas.isBezierPathAlignToEdge) {
-    const { byX, byY } = svgCanvas.findMatchPoint(x * zoom, y * zoom);
+  if (svgCanvas.isBezierPathAlignToEdge && !isElementRatioFixed) {
+    const { byX, byY } = svgCanvas.findMatchedAlignPoints(x, y);
 
     x = byX ? byX.x : x;
     y = byY ? byY.y : y;
 
-    svgCanvas.drawAlignLine(x * zoom, y * zoom, byX, byY);
+    svgCanvas.drawAlignLine(x, y, byX, byY);
   }
 
   let dx = x - startX;
@@ -602,8 +575,8 @@ const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: 
 
   if (currentConfig.gridSnapping) {
     left = svgedit.utilities.snapToGrid(left);
-    tx = svgedit.utilities.snapToGrid(tx);
     top = svgedit.utilities.snapToGrid(top);
+    tx = svgedit.utilities.snapToGrid(tx);
     ty = svgedit.utilities.snapToGrid(ty);
   }
 
@@ -633,38 +606,29 @@ const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: 
     transforms.replaceItem(translateOrigin, N - 1);
   }
 
+  const graphs = ['rect', 'path', 'use', 'polygon', 'image', 'ellipse', 'g'] as const;
+
   // Bounding box calculation
-  switch (selected.tagName) {
-    case 'rect':
-    case 'path':
-    case 'use':
-    case 'polygon':
-    case 'image':
-    case 'ellipse':
-    case 'g':
+  match(selected.tagName)
+    .with(P.union(...graphs), (tagName) => {
       const dCx = tx === 0 ? 0.5 * width * (sx - 1) : 0.5 * width * (1 - sx);
       const dCy = ty === 0 ? 0.5 * height * (sy - 1) : 0.5 * height * (1 - sy);
       const theta = angle * (Math.PI / 180);
-      const newCx = left + width / 2 + dCx * Math.cos(theta) - dCy * Math.sin(theta);
-      const newCy = top + height / 2 + dCx * Math.sin(theta) + dCy * Math.cos(theta);
+      const cx = left + width / 2 + dCx * Math.cos(theta) - dCy * Math.sin(theta);
+      const cy = top + height / 2 + dCx * Math.sin(theta) + dCy * Math.cos(theta);
       const newWidth = Math.abs(width * sx);
       const newHeight = Math.abs(height * sy);
-      const newLeft = newCx - 0.5 * newWidth;
-      const newTop = newCy - 0.5 * newHeight;
+      const newLeft = cx - 0.5 * newWidth;
+      const newTop = cy - 0.5 * newHeight;
 
-      if (selected.tagName === 'ellipse') {
-        ObjectPanelController.updateDimensionValues({ cx: newCx, cy: newCy, rx: newWidth / 2, ry: newHeight / 2 });
+      if (tagName === 'ellipse') {
+        ObjectPanelController.updateDimensionValues({ cx, cy, rx: newWidth / 2, ry: newHeight / 2 });
       } else {
         ObjectPanelController.updateDimensionValues({ height: newHeight, width: newWidth, x: newLeft, y: newTop });
       }
-
-      break;
-    case 'text':
-      selected.setAttribute('stroke-width', '2');
-      break;
-    default:
-      break;
-  }
+    })
+    .with('text', () => selected.setAttribute('stroke-width', '2'))
+    .otherwise(() => {});
 
   if (['path, ellipse', 'rect'].includes(selected.tagName)) {
     if ((width < 0.01 && Math.abs(width * sx) >= 0.01) || (height < 0.01 && Math.abs(height * sy) >= 0.01)) {
@@ -672,6 +636,7 @@ const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: 
 
       svgedit.recalculate.recalculateDimensions(selected);
       initResizeTransform(selected);
+
       startX = x;
       startY = y;
     }
@@ -680,14 +645,14 @@ const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: 
   svgCanvas.selectorManager.requestSelector(selected).resize();
   svgCanvas.call('transition', svgCanvas.getSelectedElems());
 
-  if (svgedit.utilities.getElem('text_cursor')) {
-    svgCanvas.textActions.init();
-  }
+  if (svgedit.utilities.getElem('text_cursor')) svgCanvas.textActions.init();
 };
 
 // in this function we do not record any state changes yet (but we do update
 // any elements that are still being created, moved or resized on the svgCanvas)
 const mouseMove = (evt: MouseEvent) => {
+  if (evt.button === MouseButtons.Mid || svgCanvas.spaceKey) return;
+
   const started = svgCanvas.getStarted();
   const currentMode = svgCanvas.getCurrentMode();
   const zoom = workareaManager.zoomRatio;
@@ -696,17 +661,12 @@ const mouseMove = (evt: MouseEvent) => {
   const rubberBox = svgCanvas.getRubberBox();
   const svgRoot = svgCanvas.getRoot();
 
-  if (evt.button === MouseButtons.Mid || svgCanvas.spaceKey) {
-    return;
-  }
-
   svgCanvas.setRootScreenMatrix(($('#svgcontent')[0] as any).getScreenCTM().inverse());
 
   let cx;
   let cy;
-  let dx;
-  let dy;
-  let len;
+  let dx: number;
+  let dy: number;
   let angle;
   let box;
   let selected = selectedElements[0];
@@ -714,16 +674,18 @@ const mouseMove = (evt: MouseEvent) => {
   const mouseX = pt.x * zoom;
   const mouseY = pt.y * zoom;
   const shape = svgedit.utilities.getElem(svgCanvas.getId());
-  const realX = mouseX / zoom;
-  const realY = mouseY / zoom;
+  const realX = pt.x;
+  const realY = pt.y;
   let x = realX;
   let y = realY;
 
+  svgCanvas.clearAlignLines();
+
   if (!started) {
     if (svgCanvas.isBezierPathAlignToEdge && currentMode === 'path') {
-      const { byX, byY } = svgCanvas.findMatchPoint(mouseX, mouseY);
-      const x = byX ? byX.x * zoom : mouseX;
-      const y = byY ? byY.y * zoom : mouseY;
+      const { byX, byY } = svgCanvas.findMatchedAlignPoints(realX, realY);
+      const x = byX ? byX.x : realX;
+      const y = byY ? byY.y : realY;
 
       svgCanvas.drawAlignLine(x, y, byX, byY);
     }
@@ -735,10 +697,9 @@ const mouseMove = (evt: MouseEvent) => {
         if (dist < SENSOR_AREA_RADIUS) {
           $('#workarea').css('cursor', 'move');
         } else if ($('#workarea').css('cursor') === 'move') {
-          if (
-            !curveEngravingModeController.started &&
-            (PreviewModeController.isPreviewMode() || TopBarController.getTopBarPreviewMode())
-          ) {
+          const isPreview = PreviewModeController.isPreviewMode() || TopBarController.getTopBarPreviewMode();
+
+          if (!curveEngravingModeController.started && isPreview) {
             $('#workarea').css('cursor', 'url(img/camera-cursor.svg) 9 12, cell');
           } else {
             $('#workarea').css('cursor', 'auto');
@@ -793,22 +754,17 @@ const mouseMove = (evt: MouseEvent) => {
           dx = xya.x - startX;
           dy = xya.y - startY;
         } else if (svgCanvas.isBezierPathAlignToEdge) {
-          const { byX, byY } = svgCanvas.findMatchPoint(mouseX, mouseY);
+          const diff = getMatchedDiffFromBBox(currentBoundingBox, { x, y }, { x: startX, y: startY });
 
-          dx = byX ? byX.x - startX : dx;
-          dy = byY ? byY.y - startY : dy;
+          dx = diff.x;
+          dy = diff.y;
 
-          svgCanvas.drawAlignLine(mouseX, mouseY, byX, byY);
+          svgCanvas.drawAlignLine(x, y, diff, diff);
         }
 
         if (dx !== 0 || dy !== 0) {
-          len = selectedElements.length;
-          for (let i = 0; i < len; i += 1) {
-            selected = selectedElements[i];
-
-            if (selected == null) {
-              break;
-            }
+          for (const selected of selectedElements) {
+            if (!selected) break;
 
             // update the dummy transform in our transform list
             // to be a translate
@@ -821,11 +777,8 @@ const mouseMove = (evt: MouseEvent) => {
 
             xform.setTranslate(dx, dy);
 
-            if (tlist.numberOfItems) {
-              tlist.replaceItem(xform, 0);
-            } else {
-              tlist.appendItem(xform);
-            }
+            if (tlist.numberOfItems) tlist.replaceItem(xform, 0);
+            else tlist.appendItem(xform);
 
             svgCanvas.selectorManager.requestSelector(selected).resize();
           }
@@ -842,10 +795,7 @@ const mouseMove = (evt: MouseEvent) => {
                 cy: selectedBBox.y + selectedBBox.height / 2 + dy,
               });
             } else {
-              ObjectPanelController.updateDimensionValues({
-                x: selectedBBox.x + dx,
-                y: selectedBBox.y + dy,
-              });
+              ObjectPanelController.updateDimensionValues({ x: selectedBBox.x + dx, y: selectedBBox.y + dy });
             }
           }
 
@@ -871,14 +821,7 @@ const mouseMove = (evt: MouseEvent) => {
       onResizeMouseMove(evt, selected, x, y);
       break;
     case 'text':
-      svgedit.utilities.assignAttributes(
-        shape,
-        {
-          x,
-          y,
-        },
-        1000,
-      );
+      svgedit.utilities.assignAttributes(shape, { x, y }, 1000);
       break;
     case 'line':
       if (currentConfig.gridSnapping) {
@@ -894,6 +837,13 @@ const mouseMove = (evt: MouseEvent) => {
 
         x2 = xya.x;
         y2 = xya.y;
+      } else if (svgCanvas.isBezierPathAlignToEdge) {
+        const { byX, byY } = svgCanvas.findMatchedAlignPoints(x2, y2);
+
+        x2 = byX ? byX.x : x2;
+        y2 = byY ? byY.y : y2;
+
+        svgCanvas.drawAlignLine(x2, y2, byX, byY);
       }
 
       svgCanvas.selectorManager.requestSelector(selected).resize();
@@ -927,8 +877,8 @@ const mouseMove = (evt: MouseEvent) => {
         newY = svgedit.utilities.snapToGrid(newY);
       }
 
-      if (svgCanvas.isBezierPathAlignToEdge) {
-        const { byX, byY } = svgCanvas.findMatchPoint(newX * zoom, newY * zoom);
+      if (!isSquare && svgCanvas.isBezierPathAlignToEdge) {
+        const { byX, byY } = svgCanvas.findMatchedAlignPoints(newX, newY);
 
         newX = byX ? byX.x : newX;
         newY = byY ? byY.y : newY;
@@ -937,7 +887,7 @@ const mouseMove = (evt: MouseEvent) => {
         w = Math.max(Math.abs(newX - startX), Math.abs(newX - x));
         h = Math.max(Math.abs(newY - startY), Math.abs(newY - y));
 
-        svgCanvas.drawAlignLine(newX * zoom, newY * zoom, byX, byY);
+        svgCanvas.drawAlignLine(newX, newY, byX, byY);
       }
 
       svgedit.utilities.assignAttributes(shape, { height: h, width: w, x: newX, y: newY }, 1000);
@@ -952,12 +902,12 @@ const mouseMove = (evt: MouseEvent) => {
       cy = c.cy;
 
       if (!evt.shiftKey && svgCanvas.isBezierPathAlignToEdge) {
-        const { byX, byY } = svgCanvas.findMatchPoint(x * zoom, y * zoom);
+        const { byX, byY } = svgCanvas.findMatchedAlignPoints(x, y);
 
         x = byX ? byX.x : x;
         y = byY ? byY.y : y;
 
-        svgCanvas.drawAlignLine(x * zoom, y * zoom, byX, byY);
+        svgCanvas.drawAlignLine(x, y, byX, byY);
       }
 
       const rx = Math.abs(x - cx);
@@ -972,9 +922,6 @@ const mouseMove = (evt: MouseEvent) => {
     // update path stretch line coordinates
     case 'path':
     case 'pathedit':
-      x *= zoom;
-      y *= zoom;
-
       if (currentConfig.gridSnapping) {
         x = svgedit.utilities.snapToGrid(x);
         y = svgedit.utilities.snapToGrid(y);
@@ -988,19 +935,20 @@ const mouseMove = (evt: MouseEvent) => {
 
         x = xya.x;
         y = xya.y;
+      } else if (svgCanvas.isBezierPathAlignToEdge) {
+        const { byX, byY } = svgCanvas.findMatchedAlignPoints(x, y);
+
+        x = byX ? byX.x : x;
+        y = byY ? byY.y : y;
+
+        svgCanvas.drawAlignLine(x, y, byX, byY);
       }
+
+      x *= zoom;
+      y *= zoom;
 
       if (rubberBox && rubberBox.getAttribute('display') !== 'none') {
         updateRubberBox();
-      }
-
-      if (svgCanvas.isBezierPathAlignToEdge) {
-        const { byX, byY } = svgCanvas.findMatchPoint(mouseX, mouseY);
-
-        x = byX ? byX.x * zoom : x;
-        y = byY ? byY.y * zoom : y;
-
-        svgCanvas.drawAlignLine(x, y, byX, byY);
       }
 
       svgCanvas.pathActions.mouseMove(x, y);
@@ -1072,7 +1020,11 @@ const mouseMove = (evt: MouseEvent) => {
 // this is done in when we recalculate the selected dimensions()
 
 const mouseUp = async (evt: MouseEvent, blocked = false) => {
-  if (checkShouldIgnore()) return;
+  svgCanvas.clearAlignLines();
+
+  const rightClick = evt.button === MouseButtons.Right;
+
+  if (checkShouldIgnore() || rightClick) return;
 
   const started = svgCanvas.getStarted();
   const currentMode = svgCanvas.getCurrentMode();
@@ -1080,23 +1032,14 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
   const zoom = workareaManager.zoomRatio;
   let selectedElements = svgCanvas.getSelectedElems();
   const rubberBox = svgCanvas.getRubberBox();
-  const rightClick = evt.button === MouseButtons.Right;
 
-  if (rightClick) {
-    return;
-  }
-
-  if (blocked) {
-    svgCanvas.unsafeAccess.setStarted(false);
-  }
+  if (blocked) svgCanvas.unsafeAccess.setStarted(false);
 
   const tempJustSelected = justSelected;
 
   justSelected = null;
 
-  if (!started) {
-    return;
-  }
+  if (!started) return;
 
   const pt = getEventPoint(evt);
   const { x, y } = pt;
@@ -1115,8 +1058,6 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
 
   let attrs;
   let t;
-
-  // svgCanvas.unsafeAccess.setSelectedElements(selectedElements.filter(Boolean));
 
   const isContinuousDrawing = BeamboxPreference.read('continuous_drawing');
 
@@ -1139,10 +1080,10 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
   };
 
   const cleanUpRubberBox = () => {
-    if (rubberBox) {
-      rubberBox.setAttribute('display', 'none');
-      svgCanvas.clearBoundingBox();
-    }
+    if (!rubberBox) return;
+
+    rubberBox.setAttribute('display', 'none');
+    svgCanvas.clearBoundingBox();
   };
 
   switch (currentMode) {
@@ -1223,46 +1164,28 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
         if (!selectedElements[1]) {
           // set our current stroke/fill properties to the element's
           const selected = selectedElements[0];
+          const updateCurrentStyle = (attrs: string[]) => {
+            for (const attr of attrs) {
+              const value = selected.getAttribute(attr);
 
-          switch (selected.tagName) {
-            case 'g':
-            case 'use':
-            case 'image':
-            case 'foreignObject':
-              break;
-            default:
-              let val = selected.getAttribute('fill');
+              if (value !== null) svgCanvas.setCurrentStyleProperties(attr, value);
+            }
+          };
 
-              if (val !== null) svgCanvas.setCurrentStyleProperties('fill', val);
-
-              val = selected.getAttribute('fill-opacity');
-
-              if (val !== null) svgCanvas.setCurrentStyleProperties('fill_opacity', val);
-
-              val = selected.getAttribute('stroke');
-
-              if (val !== null) svgCanvas.setCurrentStyleProperties('stroke', val);
-
-              val = selected.getAttribute('stroke-opacity');
-
-              if (val !== null) svgCanvas.setCurrentStyleProperties('stroke_opacity', val);
-
-              val = selected.getAttribute('stroke-width');
-
-              if (val !== null) svgCanvas.setCurrentStyleProperties('stroke_width', val);
-
-              val = selected.getAttribute('stroke-dasharray');
-
-              if (val !== null) svgCanvas.setCurrentStyleProperties('stroke_dasharray', val);
-
-              val = selected.getAttribute('stroke-linejoin');
-
-              if (val !== null) svgCanvas.setCurrentStyleProperties('stroke_linejoin', val);
-
-              val = selected.getAttribute('stroke-linecap');
-
-              if (val !== null) svgCanvas.setCurrentStyleProperties('stroke_linecap', val);
-          }
+          match(selected.tagName)
+            .with(P.union('g', 'use', 'image', 'foreignObject'), () => {})
+            .otherwise(() => {
+              updateCurrentStyle([
+                'fill',
+                'fill-opacity',
+                'stroke',
+                'stroke-opacity',
+                'stroke-width',
+                'stroke-dasharray',
+                'stroke-linejoin',
+                'stroke-linecap',
+              ]);
+            });
 
           if (selected.tagName === 'text') {
             const curText = textEdit.getCurText() as any;
@@ -1296,16 +1219,11 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
         if (cmd && !cmd.isEmpty()) {
           const noRedo = currentMode === 'multiselect' || (currentMode === 'select' && !moved);
 
-          if (!noRedo) {
-            mouseSelectModeCmds.push(cmd);
-          }
+          if (!noRedo) mouseSelectModeCmds.push(cmd);
         }
 
         // if it was being dragged/resized
         if (mouseX !== startMouseX || mouseY !== startMouseY) {
-          let i;
-          const len = selectedElements.length;
-
           if (currentMode === 'resize') {
             const allSelectedUses = Array.of<SVGUseElement>();
 
@@ -1321,14 +1239,10 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
 
           if (currentMode !== 'multiselect') {
             // Not sure if this is necessary, but multiselect does not need this
-            for (i = 0; i < len; i += 1) {
-              if (selectedElements[i] == null) {
-                break;
-              }
-
-              if (!selectedElements[i].firstChild && selectedElements[i].tagName !== 'use') {
+            for (const element of selectedElements) {
+              if (!element?.firstChild && element?.tagName !== 'use') {
                 // Not needed for groups (incorrectly resizes elems), possibly not needed at all?
-                svgCanvas.selectorManager.requestSelector(selectedElements[i]).resize();
+                svgCanvas.selectorManager.requestSelector(element).resize();
               }
             }
           }
@@ -1375,9 +1289,10 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
       if (mouseSelectModeCmds.length > 1) {
         const batchCmd = new history.BatchCommand('Mouse Event');
 
-        for (let i = 0; i < mouseSelectModeCmds.length; i += 1) {
-          batchCmd.addSubCommand(mouseSelectModeCmds[i]);
+        for (const cmd of mouseSelectModeCmds) {
+          batchCmd.addSubCommand(cmd);
         }
+
         svgCanvas.addCommandToHistory(batchCmd);
       } else if (mouseSelectModeCmds.length === 1) {
         svgCanvas.addCommandToHistory(mouseSelectModeCmds[0]);
@@ -1388,9 +1303,7 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
       attrs = $(element).attr(['x1', 'x2', 'y1', 'y2']) as any;
       keep = attrs.x1 !== attrs.x2 || attrs.y1 !== attrs.y2;
 
-      if (!isContinuousDrawing) {
-        svgCanvas.setMode('select');
-      }
+      if (!isContinuousDrawing) svgCanvas.setMode('select');
 
       break;
     case 'foreignObject':
@@ -1438,8 +1351,6 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
       element = null;
       // continue to be set to true so that mouseMove happens
       svgCanvas.unsafeAccess.setStarted(true);
-      $('#x_align_line').remove();
-      $('#y_align_line').remove();
 
       const res = svgCanvas.pathActions.mouseUp(evt, element);
 
@@ -1452,8 +1363,6 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
     case 'pathedit':
       keep = true;
       element = null;
-      $('#x_align_line').remove();
-      $('#y_align_line').remove();
       svgCanvas.pathActions.mouseUp(evt);
       break;
     case 'textedit':
@@ -1509,18 +1418,13 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
 
   const extResult = svgCanvas.runExtensions(
     'mouseUp',
-    {
-      event: evt,
-      isContinuousDrawing,
-      mouse_x: mouseX,
-      mouse_y: mouseY,
-    },
+    { event: evt, isContinuousDrawing, mouse_x: mouseX, mouse_y: mouseY },
     true,
   );
 
   let startedFlag = svgCanvas.getStarted();
 
-  $.each(extResult, (i, r: any) => {
+  $.each(extResult, (_, r: any) => {
     if (r) {
       keep = r.keep || keep;
       element = r.element;
@@ -1530,7 +1434,7 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
 
   svgCanvas.unsafeAccess.setStarted(startedFlag);
 
-  if (!keep && element != null) {
+  if (!keep && element) {
     svgCanvas.getCurrentDrawing().releaseId(svgCanvas.getId());
     svgedit.transformlist.removeElementFromListMap(element);
     svgCanvas.selectorManager.releaseSelector(element);
@@ -1552,25 +1456,24 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
       throw err;
     }
 
-    // if we are not in the middle of creating a path, and we've clicked on some shape,
-    // then go to Select mode.
-    // WebKit returns <div> when the canvas is clicked, Firefox/Opera return <svg>
-    if (
+    const isNeedToSelect =
       (currentMode !== 'path' || !svgCanvas.pathActions.hasDrawingPath()) &&
       t.parentNode.id !== 'selectorParentGroup' &&
       t.id !== 'svgcanvas' &&
-      t.id !== 'svgRoot'
-    ) {
+      t.id !== 'svgRoot';
+
+    // if we are not in the middle of creating a path, and we've clicked on some shape,
+    // then go to Select mode.
+    // WebKit returns <div> when the canvas is clicked, Firefox/Opera return <svg>
+    if (isNeedToSelect) {
       // switch into "select" mode if we've clicked on an element
       svgCanvas.setMode('select');
       svgCanvas.selectOnly([t], true);
     }
-  } else if (element != null) {
+  } else if (element) {
     svgCanvas.addedNew = true;
 
-    if (useUnit) {
-      svgedit.units.convertAttrs(element);
-    }
+    if (useUnit) svgedit.units.convertAttrs(element);
 
     if (element.getAttribute('opacity') !== currentShape.opacity) element.setAttribute('opacity', currentShape.opacity);
 
@@ -1588,17 +1491,13 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
     }
   }
 
-  if (isContinuousDrawing && svgCanvas.getCurrentMode() !== 'textedit') {
-    svgCanvas.clearSelection();
-  }
+  if (isContinuousDrawing && svgCanvas.getCurrentMode() !== 'textedit') svgCanvas.clearSelection();
 
   svgCanvas.unsafeAccess.setStartTransform(null);
 };
 
 const mouseEnter = (evt: MouseEvent) => {
-  if (svgCanvas.getStarted() && (evt.buttons & MouseButtons.Mid) === 0) {
-    mouseUp(evt);
-  }
+  if (svgCanvas.getStarted() && (evt.buttons & MouseButtons.Mid) === 0) mouseUp(evt);
 };
 
 const dblClick = (evt: MouseEvent) => {
@@ -1606,9 +1505,7 @@ const dblClick = (evt: MouseEvent) => {
   const parent = (evt.target as SVGElement).parentNode as SVGElement;
 
   // Do nothing if already in current group
-  if (parent === svgCanvas.getCurrentGroup()) {
-    return;
-  }
+  if (parent === svgCanvas.getCurrentGroup()) return;
 
   const mouseTarget: Element = svgCanvas.getMouseTarget(evt);
   const { tagName } = mouseTarget;
@@ -1645,16 +1542,7 @@ const dblClick = (evt: MouseEvent) => {
   }
 
   // Reset context
-  if (svgCanvas.getCurrentGroup()) {
-    svgCanvas.leaveContext();
-  }
-};
-
-// prevent links from being followed in the canvas
-const handleLinkInCanvas = (e: MouseEvent) => {
-  e.preventDefault();
-
-  return false;
+  if (svgCanvas.getCurrentGroup()) svgCanvas.leaveContext();
 };
 
 const registerEvents = () => {
@@ -1662,7 +1550,8 @@ const registerEvents = () => {
   // TODO(codedread): Figure out why after the Closure compiler, the window mouseup is ignored.
   const container = svgCanvas.getContainer();
 
-  container.addEventListener('click', handleLinkInCanvas);
+  // prevent links from being followed in the canvas
+  container.addEventListener('click', (e) => e.preventDefault());
 
   // iPad or other pads
   if (navigator.maxTouchPoints > 1) {
@@ -1684,11 +1573,11 @@ const registerEvents = () => {
     );
   }
 
-  svgCanvas.getContainer().addEventListener('mousedown', mouseDown);
-  svgCanvas.getContainer().addEventListener('mousemove', mouseMove);
-  svgCanvas.getContainer().addEventListener('mouseup', mouseUp);
-  svgCanvas.getContainer().addEventListener('mouseenter', mouseEnter);
-  svgCanvas.getContainer().addEventListener('dblclick', dblClick);
+  container.addEventListener('mousedown', mouseDown);
+  container.addEventListener('mousemove', mouseMove);
+  container.addEventListener('mouseup', mouseUp);
+  container.addEventListener('mouseenter', mouseEnter);
+  container.addEventListener('dblclick', dblClick);
 
   if (isWeb()) {
     const onWindowScroll = (e: any) => {
@@ -1711,13 +1600,9 @@ const registerEvents = () => {
       startZoom = workareaManager.zoomRatio;
       currentScale = e.scale;
     });
-    container.addEventListener('gesturechange', (e: any) => {
-      const { clientX, clientY, scale } = e;
-
+    container.addEventListener('gesturechange', ({ clientX, clientY, scale }: any) => {
       if (startZoom && Math.abs(Math.log(currentScale / scale)) >= Math.log(1.05)) {
-        const newZoom = startZoom * scale ** 0.5;
-
-        workareaManager.zoom(newZoom, { x: clientX, y: clientY });
+        workareaManager.zoom(startZoom * scale ** 0.5, { x: clientX, y: clientY });
         currentScale = scale;
       }
     });
@@ -1732,11 +1617,9 @@ const registerEvents = () => {
   container.addEventListener('wheel', wheelEventHandler);
 };
 
-const MouseInteractions = {
+export const MouseInteraction = {
   register: (canvas: ISVGCanvas): void => {
     svgCanvas = canvas;
     registerEvents();
   },
 };
-
-export default MouseInteractions;

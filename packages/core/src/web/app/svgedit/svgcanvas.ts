@@ -30,6 +30,8 @@
 // 14) recalculate.js
 // svgedit libs
 
+import { match } from 'ts-pattern';
+
 import Alert from '@core/app/actions/alert-caller';
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import OpenBottomBoundaryDrawer from '@core/app/actions/beambox/open-bottom-boundary-drawer';
@@ -67,6 +69,7 @@ import recentMenuUpdater from '@core/implementations/recentMenuUpdater';
 import storage from '@core/implementations/storage';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import type { IPoint, IRect } from '@core/interfaces/ISVGCanvas';
 import type ISVGConfig from '@core/interfaces/ISVGConfig';
 
 import canvasBackground from './canvasBackground';
@@ -76,7 +79,7 @@ import type { BaseHistoryCommand } from './history/history';
 import history from './history/history';
 import historyRecording from './history/historyrecording';
 import undoManager from './history/undoManager';
-import MouseInteractions from './interaction/mouseInteractions';
+import { MouseInteraction } from './interaction/mouse';
 import clipboard from './operations/clipboard';
 import { deleteSelectedElements } from './operations/delete';
 import importSvgString from './operations/import/importSvgString';
@@ -101,6 +104,8 @@ getSVGAsync(({ Canvas, Editor }) => {
   svgCanvas = Canvas;
   svgEditor = Editor;
 });
+
+let tempN = 0;
 
 const LANG = i18n.lang.beambox;
 
@@ -162,6 +167,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
   // CUSTOM VARIABLES
   const alignPoints: Record<'x' | 'y', Array<Record<'x' | 'y', number>>> = { x: [], y: [] };
+  let alignLineIndex = 0;
 
   // This function resets the svgcontent element while keeping it in the DOM.
   var clearSvgContentElement = (canvas.clearSvgContentElement = function () {
@@ -443,7 +449,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   var RemoveElementCommand = history.RemoveElementCommand;
   var ChangeElementCommand = history.ChangeElementCommand;
   var BatchCommand = history.BatchCommand;
-  var call;
+  var call: any;
 
   const cmdElements = new Set<Element>();
   let cmdDepth = 0;
@@ -1194,7 +1200,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   });
 
   // Debug tool to easily see the current matrix in the browser's console
-  var logMatrix = function (m) {
+  const logMatrix = function (m: SVGMatrix) {
     console.log([m.a, m.b, m.c, m.d, m.e, m.f]);
   };
 
@@ -1204,33 +1210,23 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // Clears the selection. The 'selected' handler is then called.
   // Parameters:
   // noCall - Optional boolean that when true does not call the "selected" handler
-  var clearSelection = (this.clearSelection = function (noCall = false) {
-    if (selectedElements[0] != null) {
-      if (tempGroup) {
-        svgCanvas.ungroupTempGroup();
+  const clearSelection = (this.clearSelection = (noCall = false) => {
+    if (selectedElements[0]) {
+      if (tempGroup) svgCanvas.ungroupTempGroup();
+
+      for (const element of selectedElements) {
+        if (!element) break;
+
+        getElemAlignPoints(element as SVGGraphicsElement).forEach(({ x, y }) => {
+          this.addAlignPoint(x, y);
+        });
+        selectorManager.releaseSelector(element);
       }
 
-      var i;
-      var elem;
-      var len = selectedElements.length;
-
-      for (i = 0; i < len; ++i) {
-        elem = selectedElements[i];
-
-        if (!elem) {
-          break;
-        }
-
-        selectorManager.releaseSelector(elem);
-
-        selectedElements[i] = null;
-      }
       ToolPanelsController.unmount();
-      selectedElements = [];
+      selectedElements.length = 0;
 
-      if (!noCall) {
-        call('selected', selectedElements);
-      }
+      if (!noCall) call('selected', selectedElements);
     }
   });
 
@@ -1617,7 +1613,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     }
   };
 
-  MouseInteractions.register(this);
+  MouseInteraction.register(this);
 
   canvas.textActions = textActions;
 
@@ -4545,100 +4541,156 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     }
   };
 
+  // WARN: TEMP
+  this.clearTracingLines = () => {
+    $('[id^="tracing_line"]').remove();
+  };
+
+  this.clearAlignLines = () => {
+    $('[id^="align_line"]').remove();
+    this.clearTracingLines();
+  };
+
   this.toggleBezierPathAlignToEdge = () => {
-    const newVal = !BeamboxPreference.read('show_align_lines');
+    const value = !BeamboxPreference.read('show_align_lines');
 
-    this.isBezierPathAlignToEdge = true;
-    BeamboxPreference.write('show_align_lines', newVal);
-    $('#x_align_line').remove();
-    $('#y_align_line').remove();
+    this.isBezierPathAlignToEdge = value;
 
-    return newVal;
+    BeamboxPreference.write('show_align_lines', value);
+    this.clearAlignLines();
+
+    return value;
   };
 
-  this.drawAlignLine = function (x, y, byX, byY) {
-    // TODO: bounding box
-    const zoom = workareaManager.zoomRatio;
-    let xAlignLine = svgedit.utilities.getElem('x_align_line');
+  this.drawAlignLine = function (x: number, y: number, byX: IPoint, byY: IPoint, index: number = 0) {
+    const draw = (by: 'x' | 'y') => {
+      let alignLine = svgedit.utilities.getElem(`align_line_${by}_${index}`);
+      const [major, minor] = by === 'x' ? [byX, byY] : [byY, byX];
 
-    if (byX) {
-      if (!xAlignLine) {
-        xAlignLine = document.createElementNS(NS.SVG, 'path');
+      if (major) {
+        if (!alignLine) {
+          alignLine = document.createElementNS(NS.SVG, 'path');
 
-        svgedit.utilities.assignAttributes(xAlignLine, {
-          fill: 'none',
-          id: 'x_align_line',
-          stroke: '#1890FF',
-          'stroke-dasharray': '2',
-          'stroke-width': '2',
-          'vector-effect': 'non-scaling-stroke',
-        });
+          svgedit.utilities.assignAttributes(alignLine, {
+            fill: 'none',
+            id: `align_line_${by}_${index}`,
+            stroke: '#1890FF',
+            'stroke-dasharray': '2',
+            'stroke-width': '2',
+            'vector-effect': 'non-scaling-stroke',
+          });
 
-        svgedit.utilities.getElem('svgcontent').appendChild(xAlignLine);
+          svgedit.utilities.getElem('svgcontent').appendChild(alignLine);
+        }
+
+        const startPoints = by === 'x' ? [major.x, minor ? minor.y : y] : [minor ? minor.x : x, major.y];
+
+        alignLine.setAttribute('d', `M ${major.x} ${major.y} L ${startPoints[0]} ${startPoints[1]}`);
+        alignLine.setAttribute('display', 'inline');
+      } else if (alignLine) {
+        alignLine.setAttribute('display', 'none');
       }
+    };
 
-      xAlignLine.setAttribute('d', `M ${byX.x} ${byX.y} L ${byX.x} ${byY ? byY.y : y / zoom}`);
+    draw('x');
+    draw('y');
+    // // TODO: bounding box
+    // let xAlignLine = svgedit.utilities.getElem(`align_line_x_${index}`);
 
-      xAlignLine.setAttribute('display', 'inline');
-    } else if (xAlignLine) {
-      xAlignLine.setAttribute('display', 'none');
-    }
+    // if (byX) {
+    //   if (!xAlignLine) {
+    //     xAlignLine = document.createElementNS(NS.SVG, 'path');
 
-    let yAlignLine = svgedit.utilities.getElem('y_align_line');
+    //     svgedit.utilities.assignAttributes(xAlignLine, {
+    //       fill: 'none',
+    //       id: `align_line_x_${index}`,
+    //       stroke: '#1890FF',
+    //       'stroke-dasharray': '2',
+    //       'stroke-width': '2',
+    //       'vector-effect': 'non-scaling-stroke',
+    //     });
 
-    if (byY) {
-      if (!yAlignLine) {
-        yAlignLine = document.createElementNS(NS.SVG, 'path');
-        svgedit.utilities.assignAttributes(yAlignLine, {
-          fill: 'none',
-          id: 'y_align_line',
-          stroke: '#1890FF',
-          'stroke-dasharray': '2',
-          'stroke-width': '2',
-          'vector-effect': 'non-scaling-stroke',
-        });
-        svgedit.utilities.getElem('svgcontent').appendChild(yAlignLine);
-      }
+    //     svgedit.utilities.getElem('svgcontent').appendChild(xAlignLine);
+    //   }
 
-      yAlignLine.setAttribute('d', `M ${byY.x} ${byY.y} L ${byX ? byX.x : x / zoom} ${byY.y}`);
-      yAlignLine.setAttribute('display', 'inline');
-    } else if (yAlignLine) {
-      yAlignLine.setAttribute('display', 'none');
-    }
+    //   xAlignLine.setAttribute('d', `M ${byX.x} ${byX.y} L ${byX.x} ${byY ? byY.y : y}`);
+
+    //   xAlignLine.setAttribute('display', 'inline');
+    // } else if (xAlignLine) {
+    //   xAlignLine.setAttribute('display', 'none');
+    // }
+
+    // let yAlignLine = svgedit.utilities.getElem(`align_line_y_${index}`);
+
+    // if (byY) {
+    //   if (!yAlignLine) {
+    //     yAlignLine = document.createElementNS(NS.SVG, 'path');
+    //     svgedit.utilities.assignAttributes(yAlignLine, {
+    //       fill: 'none',
+    //       id: `align_line_y_${index}`,
+    //       stroke: '#1890FF',
+    //       'stroke-dasharray': '2',
+    //       'stroke-width': '2',
+    //       'vector-effect': 'non-scaling-stroke',
+    //     });
+    //     svgedit.utilities.getElem('svgcontent').appendChild(yAlignLine);
+    //   }
+
+    //   yAlignLine.setAttribute('d', `M ${byY.x} ${byY.y} L ${byX ? byX.x : x} ${byY.y}`);
+    //   yAlignLine.setAttribute('display', 'inline');
+    // } else if (yAlignLine) {
+    //   yAlignLine.setAttribute('display', 'none');
+    // }
   };
 
-  this.findMatchPoint = function (x: number, y: number) {
-    // TODO: bounding box
-    const FUZZY_RANGE = 20;
+  // DEBUG: create tracing line to display distance between two points
+  this.drawTracingLine = (x1: number, y1: number, x2: number, y2: number, index: number, stroke = '#0000FF') => {
+    const id = `tracing_line_${index}`;
+    let line = svgedit.utilities.getElem(id);
 
-    if (!alignPoints.x.length) {
-      return {};
+    if (!line) {
+      line = document.createElementNS(NS.SVG, 'path');
+      svgedit.utilities.assignAttributes(line, {
+        id,
+        stroke,
+        'stroke-width': '2',
+        'vector-effect': 'non-scaling-stroke',
+      });
+      svgedit.utilities.getElem('svgcontent').appendChild(line);
     }
 
-    const zoom = workareaManager.zoomRatio;
+    line.setAttribute('d', `M ${x1} ${y1} L ${x2} ${y2}`);
+    line.setAttribute('display', 'inline');
+  };
+
+  this.findMatchedAlignPoints = function (x: number, y: number) {
+    // for consistent align experience
+    const FUZZY_RANGE = 16 / workareaManager.zoomRatio;
+
+    if (!alignPoints.x.length) return {};
+
     const nearestX =
       alignPoints.x[
         binarySearchIndex(
           alignPoints.x.map(({ x }) => x),
-          x / zoom,
+          x,
         )
       ];
-    const byX = nearestX && Math.abs(nearestX.x * zoom - x) < FUZZY_RANGE ? nearestX : null;
+    const byX = nearestX && Math.abs(nearestX.x - x) < FUZZY_RANGE ? nearestX : null;
 
     const nearestY =
       alignPoints.y[
         binarySearchIndex(
           alignPoints.y.map(({ y }) => y),
-          y / zoom,
+          y,
         )
       ];
-    const byY = nearestY && Math.abs(nearestY.y * zoom - y) < FUZZY_RANGE ? nearestY : null;
+    const byY = nearestY && Math.abs(nearestY.y - y) < FUZZY_RANGE ? nearestY : null;
 
     return { byX, byY };
   };
 
   this.collectAlignPoints = () => {
-    // TODO: bouinding box
     const elems = Array.of<ChildNode>();
     const layers: Element[] = $('#svgcontent > g.layer').toArray();
 
@@ -4646,16 +4698,16 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       elems.push(...childNodes);
     });
 
-    // console.log(elems);
-    // console.log(selectedElements);
-
     const points = elems
-      .filter((elem) => !selectedElements.includes(elem as any))
-      .flatMap((elem) => this.getElemAlignPoints(elem));
+      .filter((elem) => !selectedElements.includes(elem as SVGElement))
+      .flatMap((elem) => getElemAlignPoints(elem as SVGGraphicsElement));
 
-    alignPoints.x = points.toSorted((a, b) => (a.x > b.x ? 1 : -1));
-    alignPoints.y = points.toSorted((a, b) => (a.y > b.y ? 1 : -1));
+    alignPoints.x = points.toSorted((a, b) => a.x - b.x);
+    alignPoints.y = points.toSorted((a, b) => a.y - b.y);
   };
+
+  this.getSelectedElementsAlignPoints = () =>
+    selectedElements.flatMap((elem) => getElemAlignPoints(elem as SVGGraphicsElement));
 
   this.addAlignPoint = function (x: number, y: number) {
     const { length } = alignPoints.x;
@@ -4663,9 +4715,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     let pos = 0;
 
     for (let i = 0; i < length; i++) {
-      if (x <= alignPoints.x[i].x) {
-        break;
-      }
+      if (x <= alignPoints.x[i].x) break;
 
       pos++;
     }
@@ -4674,99 +4724,57 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     pos = 0;
 
     for (let i = 0; i < length; i++) {
-      if (y <= alignPoints.y[i].y) {
-        break;
-      }
+      if (y <= alignPoints.y[i].y) break;
 
       pos++;
     }
 
+    // this.addSvgElementFromJson({
+    //   attr: {
+    //     cx: x,
+    //     cy: y,
+    //     fill: '#0AA',
+    //     'fill-opacity': 1,
+    //     id: `align_${tempN++}`,
+    //     opacity: 1,
+    //     rx: 10,
+    //     ry: 10,
+    //     stroke: '#0AA',
+    //   },
+    //   curStyles: false,
+    //   element: 'ellipse',
+    // });
+
     alignPoints.y.splice(pos, 0, newPoint);
   };
 
-  this.getElemAlignPoints = function (elem: SVGGraphicsElement): Array<{ x: number; y: number }> {
-    if (['ellipse', 'g', 'image', 'path', 'polygon', 'rect', 'use'].includes(elem.tagName)) {
-      const bbox = elem.tagName === 'use' ? this.getSvgRealLocation(elem) : elem.getBBox();
-      const center: Record<'x' | 'y', number> = { x: bbox.x + 0.5 * bbox.width, y: bbox.y + 0.5 * bbox.height };
-      const angle = svgedit.utilities.getRotationAngle(elem, true);
-      let points = Array.of<{ x: number; y: number }>();
+  const getElemAlignPoints = (elem: SVGGraphicsElement): Array<{ x: number; y: number }> => {
+    const { tagName } = elem;
+    const validTags = ['ellipse', 'g', 'image', 'line', 'path', 'polygon', 'rect', 'use'] as const;
+    const angle: number = svgedit.utilities.getRotationAngle(elem, true);
 
-      console.log(elem, bbox, center, angle);
+    if (!validTags.includes(tagName) || angle) return [];
 
-      switch (elem.tagName) {
-        case 'rect':
-        case 'image':
-        case 'polygon':
-        case 'use':
-        case 'g':
-          points = [
-            { x: bbox.x, y: bbox.y },
-            { x: bbox.x + bbox.width, y: bbox.y },
-            { x: bbox.x, y: bbox.y + bbox.height },
-            { x: bbox.x + bbox.width, y: bbox.y + bbox.height },
-            { x: bbox.x, y: bbox.y + 0.5 * bbox.height },
-            { x: bbox.x + bbox.width, y: bbox.y + 0.5 * bbox.height },
-            { x: bbox.x + 0.5 * bbox.width, y: bbox.y + bbox.height },
-            { x: bbox.x + 0.5 * bbox.width, y: bbox.y + bbox.height },
-          ];
-          break;
-        case 'ellipse':
-          const a = 0.5 * bbox.width;
-          const b = 0.5 * bbox.height;
-          let theta = Math.atan2(-b * Math.tan(angle), a);
+    const bbox = tagName === 'use' ? this.getSvgRealLocation(elem) : elem.getBBox();
+    const getPoints = (bbox: DOMRect, isEllipse = false) => {
+      const points = Array.of<IPoint>();
+      const levels = [0, 0.5, 1] as const;
 
-          points.push({ x: center.x + a * Math.cos(theta), y: center.y + b * Math.sin(theta) });
+      levels.forEach((level) => {
+        levels.forEach((level2) => {
+          // skip edges for ellipse
+          if (isEllipse && ![level, level2].includes(0.5)) return;
 
-          theta = Math.atan2(b * Math.tan(angle), -a);
-          points.push({ x: center.x + a * Math.cos(theta), y: center.y + b * Math.sin(theta) });
-
-          theta = Math.atan2(b * Math.cos(angle), a * Math.sin(angle));
-          points.push({ x: center.x + a * Math.cos(theta), y: center.y + b * Math.sin(theta) });
-
-          theta = Math.atan2(-b * Math.cos(angle), -a * Math.sin(angle));
-          points.push({ x: center.x + a * Math.cos(theta), y: center.y + b * Math.sin(theta) });
-
-          points.push(center);
-          break;
-        // original polygon points
-        // case 'polygon':
-        //   const tempPoints = elem.getAttribute('points')?.split(' ') ?? [];
-
-        //   points = tempPoints.toSpliced(0).map((i) => {
-        //     const [x, y] = i.split(',');
-
-        //     return { x: Number.parseFloat(x), y: Number.parseFloat(y) };
-        //   });
-
-        //   break;
-        case 'path':
-          points = [];
-
-          const segList: Array<{ x: string; y: string }> = (elem as any).pathSegList._list || (elem as any).pathSegList;
-
-          segList.forEach((seg) => {
-            if (seg.x) {
-              points.push({ x: Number.parseFloat(seg.x), y: Number.parseFloat(seg.y) });
-            }
-          });
-
-          break;
-        default:
-          break;
-      }
-
-      points.forEach((p) => {
-        const newX = center.x + (p.x - center.x) * Math.cos(angle) - (p.y - center.y) * Math.sin(angle);
-        const newY = center.y + (p.x - center.x) * Math.sin(angle) + (p.y - center.y) * Math.cos(angle);
-
-        p.x = newX;
-        p.y = newY;
+          points.push({ x: bbox.x + level * bbox.width, y: bbox.y + level2 * bbox.height });
+        });
       });
 
       return points;
-    }
+    };
 
-    return [];
+    return match(tagName)
+      .with('ellipse', () => getPoints(bbox, true))
+      .otherwise(() => getPoints(bbox));
   };
 
   this.groupSelectedElements = (isSubCmd = false): BaseHistoryCommand | void => {
@@ -4810,13 +4818,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     }
 
     // create and insert the group element
-    const group = addSvgElementFromJson({
-      attr: {
-        'data-ratiofixed': true,
-        id: getNextId(),
-      },
-      element: 'g',
-    });
+    const group = addSvgElementFromJson({ attr: { 'data-ratiofixed': true, id: getNextId() }, element: 'g' });
 
     batchCmd.addSubCommand(new history.InsertElementCommand(group));
 
@@ -6204,7 +6206,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     return obj;
   };
 
-  this.getSvgRealLocation = function (elem) {
+  this.getSvgRealLocation = function (elem: SVGGraphicsElement): IRect {
     if (elem.tagName === 'text') {
       return this.calculateTransformedBBox(elem);
     }
@@ -6221,7 +6223,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     let obj: { [key: string]: number } = {};
 
     if (xform) {
-      xform.split(' ').forEach((pair) => {
+      xform.split(' ').forEach((pair: any) => {
         const [key, value] = pair.split('=');
 
         if (value === undefined) {
@@ -6231,7 +6233,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         obj[key] = Number.parseFloat(value);
       });
     } else {
-      obj = elem.getBBox();
+      obj = elem.getBBox() as any;
       obj.x = 0;
       obj.y = 0;
     }
@@ -6259,12 +6261,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       height *= -1;
     }
 
-    return {
-      height,
-      width,
-      x,
-      y,
-    };
+    return { height, width, x, y };
   };
 
   this.calculateTransformedBBox = function (elem) {

@@ -42,6 +42,7 @@ export default interface ISVGCanvas {
   changeSelectedAttributeNoUndo: (attr: string, val: number | string, elems: Element[]) => void;
   cleanupElement: (elem: SVGElement) => void;
   clear: () => void;
+  clearAlignLines: () => void;
   clearBoundingBox: () => void;
   clearSelection: (noCall?: boolean) => void;
   collectAlignPoints: () => void;
@@ -55,11 +56,12 @@ export default interface ISVGCanvas {
     addToHistory?: boolean,
     showProgress?: boolean,
   ) => Promise<BaseHistoryCommand>;
-  drawAlignLine: (x: number, y: number, byX: IPoint, byY: IPoint) => void;
+  drawAlignLine: (x: number, y: number, byX: IPoint, byY: IPoint, index?: number) => void;
   drawing: ISVGDrawing;
+  drawTracingLine: (x1: number, y1: number, x2: number, y2: number, index: number, stroke?: string) => void;
   embedImage(url: string, callback?: (dataURI: string) => void): void;
   events: EventEmitter;
-  findMatchPoint: (x: number, y: number) => { byX: IPoint; byY: IPoint };
+  findMatchedAlignPoints: (x: number, y: number) => { byX: IPoint; byY: IPoint };
   getColor: (key: string) => string;
   getContainer: () => SVGElement;
   getContentElem: () => SVGGElement;
@@ -87,6 +89,7 @@ export default interface ISVGCanvas {
    */
   getRotationAngle(elem: Element): void;
   getRubberBox: () => SVGRectElement;
+  getSelectedElementsAlignPoints: () => IPoint[];
   getSelectedElems: (ungroupTempGroup?: boolean) => SVGElement[];
   getStarted: () => boolean;
   getStartTransform: () => any;
