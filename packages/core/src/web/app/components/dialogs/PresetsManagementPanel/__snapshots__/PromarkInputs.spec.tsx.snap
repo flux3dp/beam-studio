@@ -236,11 +236,11 @@ exports[`PromarkInputs should render correctly 1`] = `
           </p>
           <p>
             precision: 
-            3
+            2
           </p>
           <input
             data-testid="wobbleStep"
-            max="10"
+            max="1"
             min="0"
             value="0.01"
           />
@@ -264,11 +264,11 @@ exports[`PromarkInputs should render correctly 1`] = `
           </p>
           <p>
             precision: 
-            2
+            1
           </p>
           <input
             data-testid="wobbleDiameter"
-            max="10"
+            max="1"
             min="0"
             value="0.2"
           />

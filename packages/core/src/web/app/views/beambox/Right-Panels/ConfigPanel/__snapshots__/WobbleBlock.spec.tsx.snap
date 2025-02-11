@@ -71,11 +71,11 @@ exports[`test WobbleBlock should render correctly when toggle is on 1`] = `
       </p>
       <p>
         min: 
-        0.001
+        0.01
       </p>
       <p>
         max: 
-        10
+        1
       </p>
       <p>
         unit: 
@@ -87,7 +87,7 @@ exports[`test WobbleBlock should render correctly when toggle is on 1`] = `
       </p>
       <p>
         decimal: 
-        3
+        2
       </p>
       <p>
         displayMultiValue: 
@@ -116,11 +116,11 @@ exports[`test WobbleBlock should render correctly when toggle is on 1`] = `
       </p>
       <p>
         min: 
-        0.01
+        0.1
       </p>
       <p>
         max: 
-        10
+        1
       </p>
       <p>
         unit: 
@@ -132,6 +132,7 @@ exports[`test WobbleBlock should render correctly when toggle is on 1`] = `
       </p>
       <p>
         decimal: 
+        1
       </p>
       <p>
         displayMultiValue: 
