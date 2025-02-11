@@ -33,7 +33,7 @@ const PromarkInputs = ({
   const supportInfo = useMemo(() => getSupportInfo('fpm1'), []);
   const defaultConfig = useMemo(getDefaultConfig, []);
   const focusStepMax = useMemo(() => {
-    if (preset.repeat <= 1) {
+    if (!preset.repeat || preset.repeat <= 1) {
       return 10;
     }
 
@@ -54,7 +54,7 @@ const PromarkInputs = ({
             disabled={preset.isDefault}
             max={100}
             min={0}
-            onChange={(value) => handleChange('power', value)}
+            onChange={(value) => handleChange('power', value!)}
             precision={0}
             value={preset.power ?? defaultConfig.power}
           />
@@ -70,7 +70,7 @@ const PromarkInputs = ({
             isInch={isInch}
             max={maxSpeed}
             min={minSpeed}
-            onChange={(value) => handleChange('speed', value)}
+            onChange={(value) => handleChange('speed', value!)}
             precision={isInch ? 2 : 1}
             value={preset.speed ?? defaultConfig.speed}
           />
@@ -86,7 +86,7 @@ const PromarkInputs = ({
               disabled={preset.isDefault}
               max={limit.pulseWidth.max}
               min={limit.pulseWidth.min}
-              onChange={(value) => handleChange('pulseWidth', value)}
+              onChange={(value) => handleChange('pulseWidth', value!)}
               precision={0}
               value={preset.pulseWidth ?? defaultConfig.pulseWidth}
             />
@@ -100,9 +100,9 @@ const PromarkInputs = ({
             clipValue
             data-testid="frequency"
             disabled={preset.isDefault}
-            max={limit.frequency.max}
-            min={limit.frequency.min}
-            onChange={(value) => handleChange('frequency', value)}
+            max={limit.frequency!.max}
+            min={limit.frequency!.min}
+            onChange={(value) => handleChange('frequency', value!)}
             precision={0}
             value={preset.frequency ?? defaultConfig.frequency}
           />
@@ -117,7 +117,7 @@ const PromarkInputs = ({
             disabled={preset.isDefault}
             max={100}
             min={0}
-            onChange={(value) => handleChange('repeat', value)}
+            onChange={(value) => handleChange('repeat', value!)}
             precision={0}
             value={preset.repeat ?? defaultConfig.repeat}
           />
@@ -132,7 +132,7 @@ const PromarkInputs = ({
             disabled={preset.isDefault}
             max={10000}
             min={1}
-            onChange={(value) => handleChange('dottingTime', value)}
+            onChange={(value) => handleChange('dottingTime', value!)}
             precision={0}
             value={preset.dottingTime ?? defaultConfig.dottingTime}
           />
@@ -150,9 +150,9 @@ const PromarkInputs = ({
                 isInch={isInch}
                 max={10}
                 min={0}
-                onChange={(value) => handleChange('focus', value > 0 ? value : -0.01)}
+                onChange={(value) => handleChange('focus', value && value > 0 ? value : -0.01)}
                 precision={2}
-                value={Math.max(preset.focus ?? defaultConfig.focus, 0)}
+                value={Math.max(preset.focus ?? defaultConfig.focus!, 0)}
               />
             </div>
             <div className={styles.field}>
@@ -162,13 +162,13 @@ const PromarkInputs = ({
                 className={styles.input}
                 clipValue
                 data-testid="focusStep"
-                disabled={preset.isDefault || preset.repeat <= 1}
+                disabled={preset.isDefault || !preset.repeat || preset.repeat <= 1}
                 isInch={isInch}
                 max={focusStepMax}
                 min={0}
-                onChange={(value) => handleChange('focusStep', value > 0 ? value : -0.01)}
+                onChange={(value) => handleChange('focusStep', value && value > 0 ? value : -0.01)}
                 precision={2}
-                value={Math.max(preset.focusStep ?? defaultConfig.focusStep, 0)}
+                value={Math.max(preset.focusStep ?? defaultConfig.focusStep!, 0)}
               />
             </div>
           </>
@@ -183,12 +183,12 @@ const PromarkInputs = ({
             clipValue
             data-testid="wobbleStep"
             disabled={preset.isDefault}
-            max={10}
+            max={1}
             min={0}
-            onChange={(value) => handleChange('wobbleStep', value > 0 ? value : -0.05)}
-            precision={3}
-            step={0.001}
-            value={Math.max(preset.wobbleStep ?? defaultConfig.wobbleStep, 0)}
+            onChange={(value) => handleChange('wobbleStep', value && value > 0 ? value : -0.05)}
+            precision={2}
+            step={0.01}
+            value={Math.max(preset.wobbleStep ?? defaultConfig.wobbleStep!, 0)}
           />
         </div>
         <div className={styles.field}>
@@ -199,12 +199,12 @@ const PromarkInputs = ({
             clipValue
             data-testid="wobbleDiameter"
             disabled={preset.isDefault}
-            max={10}
+            max={1}
             min={0}
-            onChange={(value) => handleChange('wobbleDiameter', value > 0 ? value : -0.1)}
-            precision={2}
-            step={0.01}
-            value={Math.max(preset.wobbleDiameter ?? defaultConfig.wobbleDiameter, 0)}
+            onChange={(value) => handleChange('wobbleDiameter', value && value > 0 ? value : -0.2)}
+            precision={1}
+            step={0.1}
+            value={Math.max(preset.wobbleDiameter ?? defaultConfig.wobbleDiameter!, 0)}
           />
         </div>
         <div className={styles.field}>
@@ -218,7 +218,7 @@ const PromarkInputs = ({
             disabled={preset.isDefault}
             max={100}
             min={0.0001}
-            onChange={(value) => handleChange('fillInterval', value)}
+            onChange={(value) => handleChange('fillInterval', value!)}
             precision={4}
             step={0.0001}
             value={preset.fillInterval ?? defaultConfig.fillInterval}
@@ -234,7 +234,7 @@ const PromarkInputs = ({
             disabled={preset.isDefault}
             max={360}
             min={-360}
-            onChange={(value) => handleChange('fillAngle', value)}
+            onChange={(value) => handleChange('fillAngle', value!)}
             precision={1}
             value={preset.fillAngle ?? defaultConfig.fillAngle}
           />

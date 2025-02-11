@@ -81,15 +81,15 @@ const WobbleBlock = (): React.JSX.Element => {
             <span className={styles.title}>{t.wobble_step}</span>
             <UnitInput
               className={{ [styles.input]: true }}
-              decimal={3}
+              decimal={2}
               defaultValue={wobbleStep.value}
               displayMultiValue={wobbleStep.hasMultiValue}
               forceUsePropsUnit
               getValue={handleStepChange}
               id="wobble_step"
-              max={10}
-              min={0.001}
-              step={0.001}
+              max={1}
+              min={0.01}
+              step={0.01}
               unit="mm"
             />
           </div>
@@ -97,14 +97,15 @@ const WobbleBlock = (): React.JSX.Element => {
             <span className={styles.title}>{t.wobble_diameter}</span>
             <UnitInput
               className={{ [styles.input]: true }}
+              decimal={1}
               defaultValue={wobbleDiameter.value}
               displayMultiValue={wobbleDiameter.hasMultiValue}
               forceUsePropsUnit
               getValue={handleDiameterChange}
               id="wobble_diameter"
-              max={10}
-              min={0.01}
-              step={0.01}
+              max={1}
+              min={0.1}
+              step={0.1}
               unit="mm"
             />
           </div>
