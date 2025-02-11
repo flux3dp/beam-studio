@@ -65,8 +65,6 @@ export function parseGcode(gcode, isPromark = false) {
 
   let laserEnabled = false;
   let useRelative = false;
-  let wobbleStep = 0;
-  let wobbleDiameter = 0;
   // calculate task time with wobble by decreasing feedrate instead of calculating real moving distance
   let wobbleFactor = 1;
 
@@ -122,20 +120,13 @@ export function parseGcode(gcode, isPromark = false) {
         y = 0;
         z = 0;
         i += 3;
-      } else if (gcode[i] === 'W') {
-        if (gcode[i + 1] === 'S') {
-          i += 1;
-          wobbleStep = parse();
-        } else if (gcode[i + 1] === 'D') {
-          i += 1;
-          wobbleDiameter = parse();
-          if (wobbleStep > 0 && wobbleDiameter > 0) wobbleFactor = (Math.PI * wobbleDiameter) / wobbleStep + 1;
-          else wobbleFactor = 1;
-        } else {
-          // Ignore Workarea param
-          parse();
-        }
       } else ++i;
+    }
+    if (gcode.slice(i, i + 9) === ';WOBBLE K') {
+      // For Swiftray GCode
+      // ;WOBBLE K[float]\n: Estimated wobble time multiplier
+      i += 9;
+      wobbleFactor = parse();
     }
     if (g === 0 || g === 1 || !isNaN(x) || !isNaN(y) || !isNaN(z) || !isNaN(a) || !isNaN(f)) {
       if (g === 0 || g === 1) lastG = g;
