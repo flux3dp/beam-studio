@@ -272,6 +272,7 @@ const lang: ILang = {
         insufficient_credit_msg: 'No puede usar %s Vaya al centro de miembros y compre AI Credit.',
         relogin_to_use: 'Por favor, vuelva a iniciar sesión para usar esta función.',
       },
+      auto_feeder_origin: 'Utilice la vista previa de encuadre para verificar la trayectoria y el área del cabezal láser, luego ajuste la ubicación del material o la posición de inicio del grabado según los resultados para evitar colisiones durante el proceso de grabado.',
       auto_switch_tab: {
         message: 'Se ha añadido una nueva opción en Preferencias para cambiar automáticamente entre el panel de Capas y el panel de Objetos. Esta opción está desactivada por defecto. ¿Desea habilitar el cambio automático ahora? <br/>Puede cambiar esta configuración en cualquier momento en Preferencias.',
         title: 'Cambio Automático de Panel de Capas y Objetos',

@@ -1,7 +1,7 @@
 import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant, { promarkModels } from '@core/app/actions/beambox/constant';
 import { executeFirmwareUpdate } from '@core/app/actions/beambox/menuDeviceActions';
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
@@ -77,8 +77,10 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
     }
   }
 
-  if (supportInfo.jobOrigin && !vc.meetRequirement(isAdor ? 'ADOR_JOB_ORIGIN' : 'JOB_ORIGIN')) {
-    if (BeamboxPreference.read('enable-job-origin')) {
+  let hasJobOrigin = false;
+
+  if (supportInfo.jobOrigin && beamboxPreference.read('enable-job-origin')) {
+    if (!vc.meetRequirement(isAdor ? 'ADOR_JOB_ORIGIN' : 'JOB_ORIGIN')) {
       const res = await new Promise((resolve) => {
         alertCaller.popUp({
           buttonType: alertConstants.CONFIRM_CANCEL,
@@ -95,12 +97,51 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
 
       return false;
     }
+
+    hasJobOrigin = true;
+  }
+
+  if (
+    supportInfo.autoFeeder &&
+    beamboxPreference.read('auto-feeder') &&
+    !alertConfig.read('skip-auto-feeder-instruction')
+  ) {
+    let animationSrcs = [
+      { src: 'video/bb2-auto-feeder/top-down.webm', type: 'video/webm' },
+      { src: 'video/bb2-auto-feeder/top-down.mp4', type: 'video/mp4' },
+    ];
+
+    if (hasJobOrigin) {
+      animationSrcs = [
+        { src: 'video/bb2-auto-feeder/job-origin.webm', type: 'video/webm' },
+        { src: 'video/bb2-auto-feeder/job-origin.mp4', type: 'video/mp4' },
+      ];
+    } else if (beamboxPreference.read('reverse-engraving')) {
+      animationSrcs = [
+        { src: 'video/bb2-auto-feeder/bottom-up.webm', type: 'video/webm' },
+        { src: 'video/bb2-auto-feeder/bottom-up.mp4', type: 'video/mp4' },
+      ];
+    }
+
+    await new Promise<void>((resolve) => {
+      alertCaller.popUp({
+        animationSrcs,
+        callbacks: resolve,
+        caption: lang.beambox.document_panel.auto_feeder,
+        checkbox: {
+          callbacks: () => {
+            alertConfig.write('skip-auto-feeder-instruction', true);
+            resolve();
+          },
+          text: lang.alert.dont_show_again,
+        },
+        message: lang.beambox.popup.auto_feeder_origin,
+      });
+    });
   }
 
   // Skip speed check for promark
-  if (isPromark) {
-    return true;
-  }
+  if (isPromark) return true;
 
   SymbolMaker.switchImageSymbolForAll(false);
 
@@ -139,7 +180,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
             ? `${round(curveSpeedLimit / 25.4, 2)} in/s`
             : `${curveSpeedLimit} mm/s`;
 
-        if (BeamboxPreference.read('curve_engraving_speed_limit') === false) {
+        if (beamboxPreference.read('curve_engraving_speed_limit') === false) {
           if (!alertConfig.read('skip_curve_speed_warning')) {
             const message = sprintf(lang.beambox.popup.too_fast_for_curve, { limit });
 
@@ -276,7 +317,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
             ? `${round(vectorSpeedLimit / 25.4, 2)} in/s`
             : `${vectorSpeedLimit} mm/s`;
 
-        if (BeamboxPreference.read('vector_speed_contraint') === false) {
+        if (beamboxPreference.read('vector_speed_contraint') === false) {
           if (!alertConfig.read('skip_path_speed_warning')) {
             const message = sprintf(lang.beambox.popup.too_fast_for_path, { limit });
 

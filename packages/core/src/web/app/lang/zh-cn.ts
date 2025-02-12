@@ -272,6 +272,7 @@ const lang: ILang = {
         insufficient_credit_msg: '您无法使用%s，请前往会员中心充值 AI Credit。',
         relogin_to_use: '请重新登录以使用此功能。',
       },
+      auto_feeder_origin: '请使用框架预览检查激光头的路径和区域，然后根据结果调整材料放置或雕刻起始位置，以避免雕刻过程中发生碰撞。',
       auto_switch_tab: {
         message: '已在首选项中添加了在图层面板和对象面板之间自动切换的新选项。此选项默认情况下处于禁用状态。是否要现在启用自动切换？ <br/>您可以随时在首选项中更改此设置。',
         title: '自动切换图层和物件面板',

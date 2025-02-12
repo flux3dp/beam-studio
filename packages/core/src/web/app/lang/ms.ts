@@ -272,6 +272,7 @@ const lang: ILang = {
         insufficient_credit_msg: 'Anda tidak boleh guna %s. Pergi ke pusat ahli dan beli Kredit AI.',
         relogin_to_use: 'Sila log masuk semula untuk guna fungsi ini.',
       },
+      auto_feeder_origin: 'Gunakan pratonton pembingkaian untuk menyemak laluan dan kawasan kepala laser, kemudian laraskan kedudukan bahan atau kedudukan mula ukiran berdasarkan hasil bagi mengelakkan perlanggaran semasa proses ukiran.',
       auto_switch_tab: {
         message: 'Pilihan baru untuk menukar secara automatik antara panel Lapisan dan panel Objek telah ditambah dalam Keutamaan. Pilihan ini dilumpuhkan secara lalai. Adakah anda ingin mengaktifkan penukaran automatik sekarang? <br/>Anda boleh menukar tetapan ini pada bila-bila masa dalam Keutamaan.',
         title: 'Tukar Automatik Panel Lapisan dan Objek',

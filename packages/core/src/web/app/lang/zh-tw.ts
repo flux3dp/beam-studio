@@ -272,6 +272,7 @@ const lang: ILang = {
         insufficient_credit_msg: '您無法使用%s，請前往會員中心購買 AI Credit。',
         relogin_to_use: '請重新登入以使用此功能。',
       },
+      auto_feeder_origin: '請先使用外框預覽檢查雷射頭的運行路徑與範圍，然後根據結果調整板材位置或雕刻起點，以防止雕刻過程中的碰撞。',
       auto_switch_tab: {
         message: '已在偏好設定中新增在圖層面板和物件面板之間自動切換的新選項。此選項預設為關閉。是否要啟用自動切換？ <br/>您可以隨時在偏好設定中更改此設定。',
         title: '自動切換圖層和物件面板',

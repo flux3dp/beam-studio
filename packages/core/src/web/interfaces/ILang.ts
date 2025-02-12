@@ -270,6 +270,7 @@ export interface ILang {
         insufficient_credit_msg: string;
         relogin_to_use: string;
       };
+      auto_feeder_origin: string;
       auto_switch_tab: {
         message: string;
         title: string;

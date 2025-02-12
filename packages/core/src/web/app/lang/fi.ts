@@ -272,6 +272,7 @@ const lang: ILang = {
         insufficient_credit_msg: 'Et voi käyttää %s. Mene jäsenkeskukseen ja osta AI-credittejä.',
         relogin_to_use: 'Kirjaudu sisään uudelleen käyttääksesi tätä toimintoa',
       },
+      auto_feeder_origin: 'Käytä kehystysesikatselua tarkistaaksesi laserpään reitin ja alueen, ja säädä sitten materiaalin sijoittelua tai kaiverruksen aloituspaikkaa tulosten perusteella törmäysten välttämiseksi kaiverrusprosessin aikana.',
       auto_switch_tab: {
         message: 'Uusi vaihtoehto automaattiselle vaihtamiselle Tasojen ja Objektien paneelien välillä on lisätty Asetuksiin. Tämä vaihtoehto on oletusarvoisesti pois käytöstä. Haluatko ottaa automaattisen vaihtamisen käyttöön nyt? <br/>Voit muuttaa tätä asetusta milloin tahansa Asetuksissa.',
         title: 'Automaattinen Vaihto Tason ja Kohteen Paneelien Välillä',

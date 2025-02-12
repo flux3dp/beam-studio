@@ -272,6 +272,7 @@ const lang: ILang = {
         insufficient_credit_msg: 'Você não pode usar o %s. Vá para o centro de membros e compre Créditos de IA.',
         relogin_to_use: 'Por favor, faça login novamente para usar esta função.',
       },
+      auto_feeder_origin: 'Use a visualização do enquadramento para verificar o trajeto e a área da cabeça do laser, depois ajuste o posicionamento do material ou a posição inicial da gravação com base nos resultados para evitar colisões durante o processo de gravação.',
       auto_switch_tab: {
         message: 'Uma nova opção para alternar automaticamente entre o painel de Camadas e o painel de Objetos foi adicionada às Preferências. Esta opção está desativada por padrão. Gostaria de ativar a troca automática agora? <br/>Você pode alterar esta configuração a qualquer momento nas Preferências.',
         title: 'Alternância Automática Entre o Painel de Camadas e Objetos',

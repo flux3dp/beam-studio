@@ -272,6 +272,7 @@ const lang: ILang = {
         insufficient_credit_msg: 'Du kan inte använda %s. Gå till medlemscentret och köp AI-kredit',
         relogin_to_use: 'Logga in igen för att använda den här funktionen',
       },
+      auto_feeder_origin: 'Använd inramningsförhandsgranskningen för att kontrollera laserhuvudets bana och område, och justera sedan materialets placering eller gravyrens startposition baserat på resultaten för att undvika kollisioner under graveringsprocessen.',
       auto_switch_tab: {
         message: 'Ett nytt alternativ för att automatiskt växla mellan lagpanelen och objektpanelen har lagts till i Inställningar. Detta alternativ är inaktiverat som standard. Vill du aktivera automatisk växling nu? <br/>Du kan ändra denna inställning när som helst i Inställningar.',
         title: 'Automatisk Växling mellan Lager- och Objektpanel',

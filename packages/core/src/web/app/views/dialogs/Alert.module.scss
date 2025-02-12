@@ -18,9 +18,8 @@ $icon-margin: 8px;
   }
 
   .message {
-    font-family: 'Helvetica Neue', 'HelveticaNeue-Light',
-      'Helvetica Neue Light', Helvetica, Arial, 'Lucida Grande', sans-serif,
-      'Microsoft JhengHei', '微軟正黑體';
+    font-family: 'Helvetica Neue', 'HelveticaNeue-Light', 'Helvetica Neue Light', Helvetica, Arial, 'Lucida Grande',
+      sans-serif, 'Microsoft JhengHei', '微軟正黑體';
     margin: 0;
     padding: 0;
     position: relative;
@@ -56,5 +55,10 @@ $icon-margin: 8px;
 
   .checkbox {
     margin-top: 10px;
+  }
+
+  .video {
+    width: 100%;
+    max-height: 50vh;
   }
 }

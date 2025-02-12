@@ -2,7 +2,7 @@
  * new Alert Modal using antd Modal
  */
 import type { ReactNode } from 'react';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useMemo, useState } from 'react';
 
 import { CheckCircleFilled, CloseCircleFilled, ExclamationCircleFilled, InfoCircleFilled } from '@ant-design/icons';
 import { Button, Checkbox, Modal } from 'antd';
@@ -131,6 +131,18 @@ const Alert = ({ data }: Props): React.JSX.Element => {
     );
   };
 
+  const animation = useMemo<ReactNode>(() => {
+    if (!data.animationSrcs) return null;
+
+    return (
+      <video autoPlay className={styles.video} loop muted>
+        {data.animationSrcs.map(({ src, type }) => (
+          <source key={src} src={src} type={type} />
+        ))}
+      </video>
+    );
+  }, [data.animationSrcs]);
+
   const footer = buttons?.map((button, idx) => {
     const buttonType = button.className?.includes('primary') ? 'primary' : 'default';
 
@@ -174,6 +186,7 @@ const Alert = ({ data }: Props): React.JSX.Element => {
     >
       {renderIcon(iconUrl)}
       {renderMessage(message, messageIcon)}
+      {animation}
       {renderLink()}
       {renderCheckbox()}
     </Modal>

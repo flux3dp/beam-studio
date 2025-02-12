@@ -272,6 +272,7 @@ const lang: ILang = {
         insufficient_credit_msg: 'Non puoi utilizzare %s. Vai al centro membri e acquista crediti AI',
         relogin_to_use: "Effettua nuovamente l'accesso per utilizzare questa funzione",
       },
+      auto_feeder_origin: 'Utilizza l’anteprima della cornice per verificare il percorso e l’area della testa laser, quindi regola la posizione del materiale o la posizione di inizio incisione in base ai risultati per evitare collisioni durante il processo di incisione.',
       auto_switch_tab: {
         message: 'Una nuova opzione per passare automaticamente tra il pannello Livelli e il pannello Oggetti è stata aggiunta alle Preferenze. Questa opzione è disabilitata per impostazione predefinita. Vuoi abilitare il cambio automatico ora? <br/>Puoi cambiare questa impostazione in qualsiasi momento nelle Preferenze.',
         title: 'Commutazione Automatica tra il Pannello dei Livelli e degli Oggetti',

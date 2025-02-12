@@ -272,6 +272,7 @@ const lang: ILang = {
         insufficient_credit_msg: 'Bạn không thể sử dụng %s. Vào trung tâm thành viên và mua Tín dụng AI.',
         relogin_to_use: 'Vui lòng đăng nhập lại để sử dụng chức năng này.',
       },
+      auto_feeder_origin: 'Sử dụng chế độ xem trước khung để kiểm tra đường đi và khu vực của đầu laser, sau đó điều chỉnh vị trí vật liệu hoặc vị trí bắt đầu khắc theo kết quả để tránh va chạm trong quá trình khắc.',
       auto_switch_tab: {
         message: 'Một tùy chọn mới để tự động chuyển đổi giữa bảng Lớp và bảng Đối tượng đã được thêm vào Tùy chọn. Tùy chọn này bị tắt theo mặc định. Bạn có muốn bật chuyển đổi tự động ngay bây giờ không? <br/>Bạn có thể thay đổi cài đặt này bất kỳ lúc nào trong Tùy chọn.',
         title: 'Chuyển Đổi Tự Động Giữa Bảng Lớp và Đối Tượng',
