@@ -17,6 +17,7 @@ import tutorialConstants from '@core/app/constants/tutorial-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import history from '@core/app/svgedit/history/history';
+import DottingTimeBlock from '@core/app/views/beambox/Right-Panels/ConfigPanel/DottingTimeBlock';
 import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
@@ -306,6 +307,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
         <WhiteInkCheckbox type={UIType} />
       )}
       {isPromark && <FillBlock type={UIType} />}
+      {isPromark && <DottingTimeBlock type={UIType} />}
     </>
   );
 

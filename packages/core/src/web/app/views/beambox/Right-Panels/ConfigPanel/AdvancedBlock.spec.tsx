@@ -63,7 +63,6 @@ jest.mock('@core/helpers/layer/layer-config-helper', () => ({
 
 jest.mock('./AutoFocus', () => () => <div>Mock AutoFocus</div>);
 jest.mock('./Diode', () => () => <div>Mock Diode</div>);
-jest.mock('./DottingTimeBlock', () => () => <div>Mock DottingTimeBlock</div>);
 jest.mock('./FocusBlock', () => ({ type }: { type: string }) => <div>Mock FocusBlock: {type}</div>);
 jest.mock('./FrequencyBlock', () => () => <div>Mock FrequencyBlock</div>);
 jest.mock('./PulseWidthBlock', () => () => <div>Mock PulseWidthBlock</div>);
