@@ -18,7 +18,6 @@ import styles from './AdvancedBlock.module.scss';
 import AutoFocus from './AutoFocus';
 import ConfigPanelContext from './ConfigPanelContext';
 import Diode from './Diode';
-import DottingTimeBlock from './DottingTimeBlock';
 import FocusBlock from './FocusBlock';
 import FrequencyBlock from './FrequencyBlock';
 import PulseWidthBlock from './PulseWidthBlock';
@@ -53,8 +52,6 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
 
   if (state.module.value !== LayerModule.PRINTER) {
     if (promarkInfo && promarkLimit) {
-      contents.push(<DottingTimeBlock key="dotting-time-block" type={type} />);
-
       if (promarkInfo.laserType === LaserType.MOPA) {
         contents.push(
           <PulseWidthBlock

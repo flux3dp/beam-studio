@@ -221,11 +221,7 @@ class SwiftrayClient extends EventEmitter {
   ): Promise<{ error?: ErrorObject; success: boolean }> {
     const defaultConfig: any = getDefaultConfig();
 
-    booleanConfig.forEach((key) => {
-      if (defaultConfig[key]) {
-        defaultConfig[key] = 1;
-      }
-    });
+    booleanConfig.forEach((key) => delete defaultConfig[key]);
 
     const uploadRes = await this.action<{ error?: ErrorObject; success: boolean }>('/parser', 'loadSVG', {
       defaultConfig,
