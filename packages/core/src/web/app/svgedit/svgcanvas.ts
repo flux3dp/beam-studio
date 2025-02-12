@@ -90,8 +90,9 @@ import selector from './selector';
 import textActions from './text/textactions';
 import textEdit from './text/textedit';
 import { setRotationAngle } from './transform/rotation';
-import { binarySearchIndex } from './utils/binarySearchIndex';
+import { binarySearchLowerBoundIndex } from './utils/binarySearchIndex';
 import findDefs from './utils/findDef';
+import { findNearestAlignPoint } from './utils/findNearestAlignPoint';
 import { rotateBBox } from './utils/rotateBBox';
 import workareaManager from './workarea';
 
@@ -4594,53 +4595,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     draw('x');
     draw('y');
-    // // TODO: bounding box
-    // let xAlignLine = svgedit.utilities.getElem(`align_line_x_${index}`);
-
-    // if (byX) {
-    //   if (!xAlignLine) {
-    //     xAlignLine = document.createElementNS(NS.SVG, 'path');
-
-    //     svgedit.utilities.assignAttributes(xAlignLine, {
-    //       fill: 'none',
-    //       id: `align_line_x_${index}`,
-    //       stroke: '#1890FF',
-    //       'stroke-dasharray': '2',
-    //       'stroke-width': '2',
-    //       'vector-effect': 'non-scaling-stroke',
-    //     });
-
-    //     svgedit.utilities.getElem('svgcontent').appendChild(xAlignLine);
-    //   }
-
-    //   xAlignLine.setAttribute('d', `M ${byX.x} ${byX.y} L ${byX.x} ${byY ? byY.y : y}`);
-
-    //   xAlignLine.setAttribute('display', 'inline');
-    // } else if (xAlignLine) {
-    //   xAlignLine.setAttribute('display', 'none');
-    // }
-
-    // let yAlignLine = svgedit.utilities.getElem(`align_line_y_${index}`);
-
-    // if (byY) {
-    //   if (!yAlignLine) {
-    //     yAlignLine = document.createElementNS(NS.SVG, 'path');
-    //     svgedit.utilities.assignAttributes(yAlignLine, {
-    //       fill: 'none',
-    //       id: `align_line_y_${index}`,
-    //       stroke: '#1890FF',
-    //       'stroke-dasharray': '2',
-    //       'stroke-width': '2',
-    //       'vector-effect': 'non-scaling-stroke',
-    //     });
-    //     svgedit.utilities.getElem('svgcontent').appendChild(yAlignLine);
-    //   }
-
-    //   yAlignLine.setAttribute('d', `M ${byY.x} ${byY.y} L ${byX ? byX.x : x} ${byY.y}`);
-    //   yAlignLine.setAttribute('display', 'inline');
-    // } else if (yAlignLine) {
-    //   yAlignLine.setAttribute('display', 'none');
-    // }
   };
 
   // DEBUG: create tracing line to display distance between two points
@@ -4667,27 +4621,33 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     // for consistent align experience
     const FUZZY_RANGE = 16 / workareaManager.zoomRatio;
 
-    if (!alignPoints.x.length) return {};
+    if (!alignPoints.x.length) return { byX: null, byY: null };
 
-    const nearestX =
-      alignPoints.x[
-        binarySearchIndex(
-          alignPoints.x.map(({ x }) => x),
-          x,
-        )
-      ];
-    const byX = nearestX && Math.abs(nearestX.x - x) < FUZZY_RANGE ? nearestX : null;
+    // const newNearestX = findNearestAlignPoint(alignPoints, { x, y }, 'x', FUZZY_RANGE);
+    // const nearestX =
+    //   alignPoints.x[
+    //     binarySearchIndex(
+    //       alignPoints.x.map(({ x }) => x),
+    //       x,
+    //     )
+    //   ];
 
-    const nearestY =
-      alignPoints.y[
-        binarySearchIndex(
-          alignPoints.y.map(({ y }) => y),
-          y,
-        )
-      ];
-    const byY = nearestY && Math.abs(nearestY.y - y) < FUZZY_RANGE ? nearestY : null;
+    // console.log('nearestX', nearestX, newNearestX);
 
-    return { byX, byY };
+    // const byX = nearestX && Math.abs(nearestX.x - x) < FUZZY_RANGE ? nearestX : null;
+    // const nearestY =
+    //   alignPoints.y[
+    //     binarySearchIndex(
+    //       alignPoints.y.map(({ y }) => y),
+    //       y,
+    //     )
+    //   ];
+    // const byY = nearestY && Math.abs(nearestY.y - y) < FUZZY_RANGE ? nearestY : null;
+
+    return {
+      byX: findNearestAlignPoint(alignPoints, { x, y }, 'x', FUZZY_RANGE),
+      byY: findNearestAlignPoint(alignPoints, { x, y }, 'y', FUZZY_RANGE),
+    };
   };
 
   this.collectAlignPoints = () => {
@@ -4712,23 +4672,36 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   this.addAlignPoint = function (x: number, y: number) {
     const { length } = alignPoints.x;
     const newPoint = { x, y };
-    let pos = 0;
+    const compareArr = (x: IPoint[], y: IPoint[]) =>
+      x.length === y.length && x.every((p, i) => p.x === y[i].x && p.y === y[i].y);
+    const insertToAlignPoints = (points: IPoint[], newPoint: IPoint, dimension: 'x' | 'y') => {
+      const pos = binarySearchLowerBoundIndex(
+        points.map((point) => point[dimension]),
+        newPoint[dimension],
+      );
 
-    for (let i = 0; i < length; i++) {
-      if (x <= alignPoints.x[i].x) break;
+      if (pos === length - 1 && newPoint[dimension] > points[pos]?.[dimension]) {
+        points.push(newPoint);
+      } else {
+        points.splice(pos, 0, newPoint);
+      }
 
-      pos++;
-    }
+      // DEBUG: the following log will alert while the align points are not sorted
+      const sortedPoints = points.toSorted((a, b) => a[dimension] - b[dimension]);
 
-    alignPoints.x.splice(pos, 0, newPoint);
-    pos = 0;
+      if (!compareArr(points, sortedPoints)) {
+        console.error(`${dimension} not sorted`);
+        console.log(
+          points.map((point, i) => `${i}_${point[dimension]}`),
+          sortedPoints.map((point, i) => `${i}_${point[dimension]}`),
+        );
+      }
+    };
 
-    for (let i = 0; i < length; i++) {
-      if (y <= alignPoints.y[i].y) break;
+    insertToAlignPoints(alignPoints.x, newPoint, 'x');
+    insertToAlignPoints(alignPoints.y, newPoint, 'y');
 
-      pos++;
-    }
-
+    // DEBUG: for printing align points
     // this.addSvgElementFromJson({
     //   attr: {
     //     cx: x,
@@ -4744,8 +4717,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     //   curStyles: false,
     //   element: 'ellipse',
     // });
-
-    alignPoints.y.splice(pos, 0, newPoint);
   };
 
   const getElemAlignPoints = (elem: SVGGraphicsElement): Array<{ x: number; y: number }> => {
@@ -4763,7 +4734,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       levels.forEach((level) => {
         levels.forEach((level2) => {
           // skip edges for ellipse
-          if (isEllipse && ![level, level2].includes(0.5)) return;
+          if ((isEllipse && ![level, level2].includes(0.5)) || (level === 0.5 && level2 === 0.5)) return;
 
           points.push({ x: bbox.x + level * bbox.width, y: bbox.y + level2 * bbox.height });
         });
