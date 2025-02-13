@@ -4641,6 +4641,17 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       .filter((elem) => !selectedElements.includes(elem as SVGElement))
       .flatMap((elem) => getElemAlignPoints(elem as SVGGraphicsElement));
 
+    // poins of workarea
+    const levels = [0, 0.5, 1] as const;
+
+    for (const level of levels) {
+      for (const level2 of levels) {
+        if (level === 0.5 && level2 === 0.5) continue;
+
+        points.push({ x: workareaManager.width * level, y: workareaManager.height * level2 });
+      }
+    }
+
     alignPoints.x = points.toSorted((a, b) => a.x - b.x);
     alignPoints.y = points.toSorted((a, b) => a.y - b.y);
   };
@@ -4710,14 +4721,14 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       const points = Array.of<IPoint>();
       const levels = [0, 0.5, 1] as const;
 
-      levels.forEach((level) => {
-        levels.forEach((level2) => {
+      for (const level of levels) {
+        for (const level2 of levels) {
           // skip edges for ellipse, and skip center point
-          if ((isEllipse && ![level, level2].includes(0.5)) || (level === 0.5 && level2 === 0.5)) return;
+          if ((isEllipse && ![level, level2].includes(0.5)) || (level === 0.5 && level2 === 0.5)) continue;
 
           points.push({ x: bbox.x + level * bbox.width, y: bbox.y + level2 * bbox.height });
-        });
-      });
+        }
+      }
 
       return points;
     };
