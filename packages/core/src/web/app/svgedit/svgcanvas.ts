@@ -111,6 +111,7 @@ let tempN = 0;
 const LANG = i18n.lang.beambox;
 
 const drawingToolEventEmitter = eventEmitterFactory.createEventEmitter('drawing-tool');
+const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 
 // Class: SvgCanvas
 // The main SvgCanvas class that manages all SVG-related functions
@@ -168,7 +169,25 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
   // CUSTOM VARIABLES
   const alignPoints: Record<'x' | 'y', Array<Record<'x' | 'y', number>>> = { x: [], y: [] };
-  let alignLineIndex = 0;
+  const WORKAREA_ALIGN_POINTS = Array.of<IPoint>();
+  const updateWorkAreaAlignPoints = () => {
+    const levels = [0, 0.5, 1];
+
+    WORKAREA_ALIGN_POINTS.length = 0;
+
+    for (const level of levels) {
+      for (const level2 of levels) {
+        if (level === 0.5 && level2 === 0.5) continue;
+
+        WORKAREA_ALIGN_POINTS.push({ x: workareaManager.width * level, y: workareaManager.height * level2 });
+      }
+    }
+  };
+
+  canvasEventEmitter.on('document-settings-saved', () => {
+    updateWorkAreaAlignPoints();
+    clearSelection();
+  });
 
   // This function resets the svgcontent element while keeping it in the DOM.
   var clearSvgContentElement = (canvas.clearSvgContentElement = function () {
@@ -613,6 +632,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
   workareaManager.init(model);
   grid.init(workareaManager.zoomRatio);
+  updateWorkAreaAlignPoints();
   presprayArea.generatePresprayArea();
   rotaryAxis.init();
 
@@ -4564,6 +4584,15 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   };
 
   this.drawAlignLine = function (x: number, y: number, byX: IPoint, byY: IPoint, index: number = 0) {
+    const points: [number[], number[]] = [[], []];
+
+    WORKAREA_ALIGN_POINTS.forEach(({ x, y }) => {
+      points[0].push(x);
+      points[1].push(y);
+    });
+
+    const isCanvas = points[0].includes(byX?.x) || points[1].includes(byY?.y);
+
     const draw = (by: 'x' | 'y') => {
       let alignLine = svgedit.utilities.getElem(`align_line_${by}_${index}`);
       const [major, minor] = by === 'x' ? [byX, byY] : [byY, byX];
@@ -4576,7 +4605,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
             fill: 'none',
             id: `align_line_${by}_${index}`,
             stroke: '#1890FF',
-            'stroke-dasharray': '2',
+            'stroke-dasharray': isCanvas ? undefined : '2',
             'stroke-width': '2',
             'vector-effect': 'non-scaling-stroke',
           });
@@ -4641,26 +4670,16 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       .filter((elem) => !selectedElements.includes(elem as SVGElement))
       .flatMap((elem) => getElemAlignPoints(elem as SVGGraphicsElement));
 
-    // poins of workarea
-    const levels = [0, 0.5, 1] as const;
-
-    for (const level of levels) {
-      for (const level2 of levels) {
-        if (level === 0.5 && level2 === 0.5) continue;
-
-        points.push({ x: workareaManager.width * level, y: workareaManager.height * level2 });
-      }
-    }
+    WORKAREA_ALIGN_POINTS.forEach((point) => {
+      points.push(point);
+    });
 
     alignPoints.x = points.toSorted((a, b) => a.x - b.x);
     alignPoints.y = points.toSorted((a, b) => a.y - b.y);
   };
 
-  this.getSelectedElementsAlignPoints = () => {
-    console.log(selectedElements);
-
-    return selectedElements.flatMap((elem) => getElemAlignPoints(elem as SVGGraphicsElement));
-  };
+  this.getSelectedElementsAlignPoints = () =>
+    selectedElements.flatMap((elem) => getElemAlignPoints(elem as SVGGraphicsElement));
 
   this.addAlignPoint = function (x: number, y: number) {
     const { length } = alignPoints.x;
