@@ -153,6 +153,8 @@ const convertClipPath = async (): Promise<() => void> => {
 
         resPath = obj.intersect(clipPath, { trace: isAllFilled });
       } else {
+        let l = obj.children.length;
+
         resPath = new paper.CompoundPath('');
         for (let i = 0; i < obj.children.length; i += 1) {
           const subPath = obj.children[i] as paper.PathItem;
@@ -162,6 +164,12 @@ const convertClipPath = async (): Promise<() => void> => {
           }
 
           resPath.addChild(subPath.intersect(clipPath, { insert: false, trace: isAllFilled }));
+
+          if (obj.children.length > l) {
+            // Sometimes obj.children grows with insert: false, skip added items
+            i += obj.children.length - l;
+            l = obj.children.length;
+          }
         }
       }
 
