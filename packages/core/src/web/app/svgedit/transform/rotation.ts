@@ -73,8 +73,6 @@ export const setRotationAngle = (
   if (parentCmd || addToHistory) {
     let cmd: IBatchCommand | null = null;
 
-    // we need to undo it, then redo it so it can be undo-able! :)
-    // TODO: figure out how to make changes to transform list undo-able cross-browser?
     if (elem.getAttribute('data-tempgroup') === 'true') {
       cmd = svgCanvas.pushGroupProperties(elem as SVGGElement, true);
     } else {
