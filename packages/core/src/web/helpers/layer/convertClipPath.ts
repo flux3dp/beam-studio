@@ -12,7 +12,7 @@ const getElemString = (elem: Element) => {
   if (elem.tagName === 'rect' && elem.getAttribute('rx')) {
     const cloned = elem.cloneNode(true) as Element;
 
-    cloned.setAttribute('ry', elem.getAttribute('rx'));
+    cloned.setAttribute('ry', elem.getAttribute('rx')!);
 
     return cloned.outerHTML;
   }
@@ -20,7 +20,9 @@ const getElemString = (elem: Element) => {
   return elem.outerHTML;
 };
 
-const checkParent = (elem: Element): { parent?: Element; shouldSkip: boolean } => {
+const checkParent = (
+  elem: Element,
+): { parent: Element; shouldSkip: false } | { parent?: Element; shouldSkip: true } => {
   if (!elem.isConnected) {
     return { shouldSkip: true };
   }
@@ -68,13 +70,13 @@ const updateMatrix = (elem: Element, matrix: null | SVGMatrix | undefined, inver
   return matrix;
 };
 
-const matrix2String = (m: SVGMatrix) => `matrix(${m.a},${m.b},${m.c},${m.d},${m.e},${m.f})`;
+const matrix2String = (m: null | SVGMatrix) => (m ? `matrix(${m.a},${m.b},${m.c},${m.d},${m.e},${m.f})` : '');
 
 const getBBoxByAttr = (elem: Element) => {
-  const left = +elem.getAttribute('x');
-  const top = +elem.getAttribute('y');
-  const width = +elem.getAttribute('width');
-  const height = +elem.getAttribute('height');
+  const left = +(elem.getAttribute('x') ?? '');
+  const top = +(elem.getAttribute('y') ?? '');
+  const width = +(elem.getAttribute('width') ?? '');
+  const height = +(elem.getAttribute('height') ?? '');
 
   return { bottom: top + height, height, left, right: left + width, top, width };
 };
@@ -93,9 +95,9 @@ const convertClipPath = async (): Promise<() => void> => {
     return revert;
   }
 
-  const newElems = [];
-  const oldElems = [];
-  const clipPathMap = {};
+  const newElems: Element[] = [];
+  const oldElems: Array<{ elem: Element; nextSibling: ChildNode | null; parentElement: Element | null }> = [];
+  const clipPathMap: { [key: string]: paper.PathItem } = {};
 
   const getClipPathItem = (elem: Element) => {
     const insert = false;
@@ -118,7 +120,7 @@ const convertClipPath = async (): Promise<() => void> => {
   const clip = async (clipPathKey: string, elem: Element, matrix?: null | SVGMatrix) => {
     if (elem.tagName === 'g') {
       const m = updateMatrix(elem, matrix);
-      const promises = [];
+      const promises: Array<Promise<void>> = [];
 
       elem.childNodes.forEach((subElem) => {
         const p = clip(clipPathKey, subElem as Element, m);
@@ -176,7 +178,13 @@ const convertClipPath = async (): Promise<() => void> => {
       resPath.fillColor = items.fillColor;
       elem.replaceWith(resPath.exportSVG());
     } else if (elem.tagName === 'image') {
+      const imgSrc = elem.getAttribute('xlink:href');
       const clipPath = document.querySelector(clipPathKey.split('-')[1]);
+
+      if (!clipPath || !imgSrc) {
+        return;
+      }
+
       const clipRect = clipPath.firstChild as SVGRectElement;
 
       if (clipRect.tagName !== 'rect') {
@@ -239,6 +247,11 @@ const convertClipPath = async (): Promise<() => void> => {
       canvas.height = maxY - minY;
 
       const ctx = canvas.getContext('2d');
+
+      if (!ctx) {
+        return;
+      }
+
       const region = new Path2D();
 
       region.rect(cropLeft - minX, cropTop - minY, cropRight - cropLeft, cropBottom - cropTop);
@@ -248,7 +261,7 @@ const convertClipPath = async (): Promise<() => void> => {
 
       await new Promise<void>((resolve) => {
         img.onload = () => resolve();
-        img.src = elem.getAttribute('xlink:href');
+        img.src = imgSrc;
       });
       ctx.save();
       ctx.translate(-minX, -minY);
@@ -276,7 +289,7 @@ const convertClipPath = async (): Promise<() => void> => {
 
       elem.removeAttribute('origImage');
     } else if (elem.tagName === 'use') {
-      const symbolId = elem.getAttribute('xlink:href').replace('#', '');
+      const symbolId = elem.getAttribute('xlink:href')?.replace('#', '') || '';
       const symbol = document.getElementById(symbolId);
 
       if (!symbol) {
@@ -302,13 +315,13 @@ const convertClipPath = async (): Promise<() => void> => {
 
       const offset = svgCanvas.transformListToTransform(null).matrix;
 
-      offset.e = +elem.getAttribute('x');
+      offset.e = +(elem.getAttribute('x') ?? '');
 
       if (offset.e !== 0) {
         elem.setAttribute('x', '0');
       }
 
-      offset.f = +elem.getAttribute('y');
+      offset.f = +(elem.getAttribute('y') ?? '');
 
       if (offset.f !== 0) {
         elem.setAttribute('y', '0');
@@ -317,7 +330,7 @@ const convertClipPath = async (): Promise<() => void> => {
       m = m ? m.multiply(offset) : offset;
 
       const cloned = symbol.cloneNode(true) as Element;
-      const promises = [];
+      const promises: Array<Promise<void>> = [];
 
       cloned.childNodes.forEach((subElem) => {
         const p = clip(clipPathKey, subElem as Element, m);
@@ -326,17 +339,22 @@ const convertClipPath = async (): Promise<() => void> => {
       });
       await Promise.all(promises);
 
-      const { nextSibling, parentNode } = symbol;
+      const { nextSibling, parentElement } = symbol;
 
-      oldElems.unshift({ elem: symbol, nextSibling, parentNode });
+      oldElems.unshift({ elem: symbol, nextSibling, parentElement });
       newElems.push(cloned);
-      parentNode.insertBefore(cloned, symbol);
+      parentElement?.insertBefore(cloned, symbol);
       symbol.remove();
     }
   };
 
   while (clippedElems.length > 0) {
     const elem = clippedElems.pop();
+
+    if (!elem) {
+      break;
+    }
+
     const { parent, shouldSkip } = checkParent(elem);
 
     if (shouldSkip) {
@@ -374,11 +392,11 @@ const convertClipPath = async (): Promise<() => void> => {
     await clip(clipPathKey, cloned);
     cloned.removeAttribute('clip-path');
 
-    const { nextSibling, parentNode } = elem;
+    const { nextSibling, parentElement } = elem;
 
     newElems.push(cloned);
-    parentNode.insertBefore(cloned, elem);
-    oldElems.unshift({ elem, nextSibling, parentNode });
+    parentElement?.insertBefore(cloned, elem);
+    oldElems.unshift({ elem, nextSibling, parentElement });
     elem.remove();
   }
 
@@ -387,18 +405,22 @@ const convertClipPath = async (): Promise<() => void> => {
 
   for (let i = 0; i < clipPathElems.length; i += 1) {
     const clipPathElem = clipPathElems[i];
-    const { nextSibling, parentNode } = clipPathElem;
+    const { nextSibling, parentElement } = clipPathElem;
 
-    oldElems.unshift({ elem: clipPathElem, nextSibling, parentNode });
+    oldElems.unshift({ elem: clipPathElem, nextSibling, parentElement });
     clipPathElem.remove();
   }
 
   revert = () => {
-    oldElems.forEach(({ elem, nextSibling, parentNode }) => {
-      let p = parentNode;
+    oldElems.forEach(({ elem, nextSibling, parentElement }) => {
+      if (!parentElement) {
+        return;
+      }
+
+      let p = parentElement as Element;
 
       // defs may be removed when generating thumbnail
-      if (!parentNode.isConnected && parentNode.tagName === 'defs') {
+      if (!p.isConnected && p.tagName === 'defs') {
         p = svgCanvas.findDefs();
       }
 
