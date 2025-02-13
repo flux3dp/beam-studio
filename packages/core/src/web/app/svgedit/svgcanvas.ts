@@ -4656,8 +4656,11 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     alignPoints.y = points.toSorted((a, b) => a.y - b.y);
   };
 
-  this.getSelectedElementsAlignPoints = () =>
-    selectedElements.flatMap((elem) => getElemAlignPoints(elem as SVGGraphicsElement));
+  this.getSelectedElementsAlignPoints = () => {
+    console.log(selectedElements);
+
+    return selectedElements.flatMap((elem) => getElemAlignPoints(elem as SVGGraphicsElement));
+  };
 
   this.addAlignPoint = function (x: number, y: number) {
     const { length } = alignPoints.x;
@@ -4717,6 +4720,11 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     if (!validTags.includes(tagName) || angle) return [];
 
     const bbox = tagName === 'use' ? this.getSvgRealLocation(elem) : elem.getBBox();
+
+    if (tagName === 'use') {
+      console.trace(elem, elem.id, bbox);
+    }
+
     const getPoints = (bbox: DOMRect, isEllipse = false) => {
       const points = Array.of<IPoint>();
       const levels = [0, 0.5, 1] as const;
@@ -6168,15 +6176,10 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   };
 
   this.getSvgRealLocation = function (elem: SVGGraphicsElement): IRect {
-    if (elem.tagName === 'text') {
-      return this.calculateTransformedBBox(elem);
-    }
+    if (elem.tagName === 'text') return this.calculateTransformedBBox(elem);
 
-    if (elem.tagName !== 'use') {
-      return elem.getBBox();
-    }
+    if (elem.tagName !== 'use') return elem.getBBox();
 
-    const ts = $(elem).attr('transform') || '';
     const xform = $(elem).attr('data-xform');
     const elemX = Number.parseFloat($(elem).attr('x') || '0');
     const elemY = Number.parseFloat($(elem).attr('y') || '0');
@@ -6199,10 +6202,19 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       obj.y = 0;
     }
 
-    const matrix = ts.match(/matrix\(.*?\)/g);
+    const tlist = svgedit.transformlist.getTransformList(elem);
+    let rotationIndex = -1;
 
-    const matr = matrix ? matrix[0].substring(7, matrix[0].length - 1) : '1,0,0,1,0,0';
-    const [a, b, c, d, e, f] = matr.split(/[, ]+/).map(Number.parseFloat);
+    for (let i = tlist.numberOfItems - 1; i >= 0; i--) {
+      if (tlist.getItem(i).type === 4) {
+        rotationIndex = i;
+        break;
+      }
+    }
+
+    // ignore rotation
+    const { matrix: { a = 1, b = 0, c = 0, d = 1, e = 0, f = 0 } = {} } =
+      rotationIndex === tlist.numberOfItems - 1 ? {} : svgedit.math.transformListToTransform(tlist, rotationIndex + 1);
 
     obj.x += elemX;
     obj.y += elemY;
