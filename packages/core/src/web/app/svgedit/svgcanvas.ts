@@ -4591,11 +4591,10 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       points[1].push(y);
     });
 
-    const isCanvas = points[0].includes(byX?.x) || points[1].includes(byY?.y);
-
     const draw = (by: 'x' | 'y') => {
       let alignLine = svgedit.utilities.getElem(`align_line_${by}_${index}`);
       const [major, minor] = by === 'x' ? [byX, byY] : [byY, byX];
+      const isCanvas = points[0].includes(major?.x) && points[1].includes(major?.y);
 
       if (major) {
         if (!alignLine) {
