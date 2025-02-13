@@ -272,6 +272,7 @@ const lang: ILang = {
         insufficient_credit_msg: 'Anda tidak dapat menggunakan %s. Pergi ke pusat anggota dan beli Kredit AI.',
         relogin_to_use: 'Silakan login ulang untuk menggunakan fitur ini.',
       },
+      auto_feeder_origin: 'Gunakan pratinjau pembingkaian untuk memeriksa jalur dan area kepala laser, lalu sesuaikan posisi material atau posisi mulai ukiran berdasarkan hasil untuk menghindari tabrakan selama proses pengukiran.',
       auto_switch_tab: {
         message: 'Opsi baru untuk beralih secara otomatis antara panel Lapisan dan panel Objek telah ditambahkan ke Preferensi. Opsi ini dinonaktifkan secara default. Apakah Anda ingin mengaktifkan pengalihan otomatis sekarang? <br/>Anda dapat mengubah pengaturan ini kapan saja di Preferensi.',
         title: 'Pengalihan Otomatis Panel Lapisan dan Objek',

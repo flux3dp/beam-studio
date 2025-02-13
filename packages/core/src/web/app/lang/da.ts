@@ -272,6 +272,7 @@ const lang: ILang = {
         insufficient_credit_msg: 'Du kan ikke bruge %s. Gå til medlemscenteret og køb AI-kredit',
         relogin_to_use: 'Log venligst ind igen for at bruge denne funktion',
       },
+      auto_feeder_origin: 'Brug indramningsforhåndsvisningen til at kontrollere laserhovedets bane og område, og justér derefter materialets placering eller graveringens startposition baseret på resultaterne for at undgå kollisioner under graveringsprocessen.',
       auto_switch_tab: {
         message: 'En ny mulighed for automatisk at skifte mellem lagpanelet og objektpanelet er blevet tilføjet i Præferencer. Denne mulighed er deaktiveret som standard. Vil du aktivere automatisk skift nu? <br/>Du kan ændre denne indstilling når som helst i Præferencer.',
         title: 'Automatisk Skift mellem Lag- og Objektpanel',

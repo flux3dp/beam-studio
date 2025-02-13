@@ -272,6 +272,7 @@ const lang: ILang = {
         insufficient_credit_msg: 'Sie können %s nicht verwenden. Gehen Sie zum Mitgliedercenter und kaufen Sie AI Credit.',
         relogin_to_use: 'Bitte erneut einloggen, um diese Funktion zu verwenden.',
       },
+      auto_feeder_origin: 'Bitte verwenden Sie die Rahmenvorschau, um den Pfad und Bereich des Laserkopfs zu überprüfen. Passen Sie dann die Materialplatzierung oder die Startposition der Gravur basierend auf den Ergebnissen an, um Kollisionen während des Gravurprozesses zu vermeiden.',
       auto_switch_tab: {
         message: 'Eine neue Option zum automatischen Umschalten zwischen dem Ebenen- und dem Objekt-Panel wurde zu den Voreinstellungen hinzugefügt. Diese Option ist standardmäßig deaktiviert. Möchten Sie das automatische Umschalten jetzt aktivieren? <br/>Sie können diese Einstellung jederzeit in den Voreinstellungen ändern.',
         title: 'Automatisches Umschalten zwischen Ebenen- und Objektfenster',

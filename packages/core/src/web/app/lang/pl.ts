@@ -272,6 +272,7 @@ const lang: ILang = {
         insufficient_credit_msg: 'Nie możesz użyć %s. Przejdź do centrum członkowskiego i kup kredyt AI.',
         relogin_to_use: 'Aby skorzystać z tej funkcji, zaloguj się ponownie.',
       },
+      auto_feeder_origin: 'Użyj podglądu kadrowania, aby sprawdzić ścieżkę i obszar głowicy laserowej, a następnie dostosuj położenie materiału lub pozycję początkową grawerowania na podstawie wyników, aby uniknąć kolizji podczas procesu grawerowania.',
       auto_switch_tab: {
         message: 'Nowa opcja automatycznego przełączania między panelem warstw a panelem obiektów została dodana do Preferencji. Ta opcja jest domyślnie wyłączona. Czy chcesz teraz włączyć automatyczne przełączanie? <br/>Możesz zmienić to ustawienie w dowolnym momencie w Preferencjach.',
         title: 'Automatyczne Przełączanie Między Panelem Warstw i Obiektów',

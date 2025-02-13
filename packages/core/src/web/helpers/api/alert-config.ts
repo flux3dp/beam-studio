@@ -2,6 +2,7 @@ import storage from '@core/implementations/storage';
 
 export type AlertConfigKey =
   | 'done-first-cali'
+  | 'skip-auto-feeder-instruction'
   | 'skip-fb-group-invitation'
   | 'skip-high-power-confirm'
   | 'skip-interface-tutorial'

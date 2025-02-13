@@ -272,6 +272,7 @@ const lang: ILang = {
         insufficient_credit_msg: 'Vous ne pouvez pas utiliser le %s. Allez au centre des membres et achetez un crédit IA.',
         relogin_to_use: 'Veuillez vous reconnecter pour utiliser cette fonction.',
       },
+      auto_feeder_origin: 'Utilisez l’aperçu du cadrage pour vérifier la trajectoire et la zone de la tête laser, puis ajustez le placement du matériau ou la position de départ de la gravure en fonction des résultats afin d’éviter les collisions lors du processus de gravure.',
       auto_switch_tab: {
         message: 'Une nouvelle option permettant de basculer automatiquement entre le panneau des calques et le panneau des objets a été ajoutée aux Préférences. Cette option est désactivée par défaut. Souhaitez-vous activer la commutation automatique maintenant ? <br/>Vous pouvez modifier ce paramètre à tout moment dans les Préférences.',
         title: 'Commutation Automatique entre le Panneau des Calques et des Objets',

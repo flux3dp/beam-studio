@@ -272,6 +272,7 @@ const lang: ILang = {
         insufficient_credit_msg: 'Je kunt %s niet gebruiken. Ga naar het tegoedcentrum en koop AI-tegoed.',
         relogin_to_use: 'Log opnieuw in om deze functie te gebruiken.',
       },
+      auto_feeder_origin: 'Gebruik de kaderweergave om het pad en gebied van de laserkop te controleren. Pas vervolgens de materiaalplaatsing of de startpositie van de gravure aan op basis van de resultaten om botsingen tijdens het graveerproces te voorkomen.',
       auto_switch_tab: {
         message: 'Een nieuwe optie om automatisch te schakelen tussen het lagenpaneel en het objectenpaneel is toegevoegd aan de Voorkeuren. Deze optie is standaard uitgeschakeld. Wilt u automatische schakeling nu inschakelen? <br/>U kunt deze instelling op elk moment wijzigen in Voorkeuren.',
         title: 'Automatisch Wisselen Tussen Lagen- en Objectenpaneel',

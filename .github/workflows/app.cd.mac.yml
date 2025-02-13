@@ -19,10 +19,24 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
+      # - name: Setup Python ${{ matrix.python-version }}
+      #   uses: actions/setup-python@v4
+      #   with:
+      #     python-version: ${{ matrix.python-version }}
+
+      # github-action setup python with electron-builder 25.1.8 has a bug that causes the app to be unverified
+      # maybe we can use actions/setup-python after new electron-builder is released
+      # ref: https://github.com/electron-userland/electron-builder/issues/7755
+      - name: Download and install Python manually
+        run: |
+          curl -o python.pkg https://www.python.org/ftp/python/3.8.10/python-3.8.10-macosx10.9.pkg
+          sudo installer -pkg python.pkg -target /
+          PYTHON_PATH="/Library/Frameworks/Python.framework/Versions/3.8/bin/python3"
+          sudo chmod +x "$PYTHON_PATH"
+          ls -l "$PYTHON_PATH"  # Verify the permissions
+          echo "/Library/Frameworks/Python.framework/Versions/3.8/bin" >> $GITHUB_PATH
+          echo "PYTHON_BINARY=/Library/Frameworks/Python.framework/Versions/3.8/bin/python3" >> $GITHUB_ENV
+          python3 --version  # Verify that Python is working
 
       - name: Install Brew Packages
         run: |
@@ -101,6 +115,7 @@ jobs:
           cp -R lib/monitorexe-osx ./backend/monitorexe-osx
           ./backend/flux_api/flux_api --test
 
+          echo "Downloading Swiftray..."
           curl https://swiftray-daemon.s3.ap-northeast-1.amazonaws.com/mac/swiftray-$SWIFTRAY_DAEMON_VERSION.zip --output swiftray.zip
           mkdir ./swiftray
           tar -xf swiftray.zip -C ./swiftray

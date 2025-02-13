@@ -202,7 +202,7 @@ export const getExportOpt = (
     document.querySelectorAll('#svgcontent > g.layer:not([display="none"]) [data-pass-through="1"]').length > 0 ||
     BeamboxPreference.read('pass-through');
 
-  if (model === 'fbb2' && (isPassThroughTask || autoFeeder)) config.mep = 50;
+  if (model === 'fbb2' && (isPassThroughTask || autoFeeder)) config.mep = 30;
 
   if (isDevMode) {
     let storageValue = localStorage.getItem('min_engraving_padding');

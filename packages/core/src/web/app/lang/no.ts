@@ -272,6 +272,7 @@ const lang: ILang = {
         insufficient_credit_msg: 'Du kan ikke bruke %s. Gå til medlemssenteret og kjøp AI-kreditt',
         relogin_to_use: 'Logg inn på nytt for å bruke denne funksjonen',
       },
+      auto_feeder_origin: 'Bruk rammeprevisningen for å kontrollere laserhodets bane og område, og juster deretter materialets plassering eller startposisjon for gravering basert på resultatene for å unngå kollisjoner under graveringsprosessen.',
       auto_switch_tab: {
         message: 'Et nytt alternativ for automatisk å bytte mellom lagpanelet og objektpanelet er lagt til i Innstillinger. Dette alternativet er deaktivert som standard. Vil du aktivere automatisk bytting nå? <br/>Du kan endre denne innstillingen når som helst i Innstillinger.',
         title: 'Automatisk Bytte Mellom Lag- og Objektpanel',

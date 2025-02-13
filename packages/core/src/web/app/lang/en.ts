@@ -272,6 +272,7 @@ const lang: ILang = {
         insufficient_credit_msg: 'You can not use the %s. Go to member center and purchase AI Credit.',
         relogin_to_use: 'Please re-login to use this function.',
       },
+      auto_feeder_origin: 'Please use the Framing preview to check the laser head’s path and area, then adjust the material placement or engraving start position based on the results to avoid collisions during the engraving process.',
       auto_switch_tab: {
         message: 'A new option to automatically switch between the Layers panel and the Objects panel has been added to Preferences. This option is disabled by default. Would you like to enable automatic switching now?<br/>You can change this setting anytime in Preferences.',
         title: 'Auto Switching Layer and Object Panel',

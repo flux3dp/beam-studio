@@ -272,6 +272,7 @@ const lang: ILang = {
         insufficient_credit_msg: 'Nemůžete použít %s. Přihlaste se do klientské zóny a zakupte AI kredit.',
         relogin_to_use: 'K použití této funkce se prosím znovu přihlaste.',
       },
+      auto_feeder_origin: 'Použijte náhled rámování k ověření dráhy a oblasti laserové hlavy, poté upravte umístění materiálu nebo počáteční pozici gravírování podle výsledků, abyste předešli kolizím během procesu gravírování.',
       auto_switch_tab: {
         message: 'Do Předvoleb byla přidána nová možnost pro automatické přepínání mezi panelem Vrstvy a panelem Objekty. Tato možnost je ve výchozím nastavení vypnutá. Chcete nyní povolit automatické přepínání?<br/>Toto nastavení můžete kdykoli změnit v Předvolbách.',
         title: 'Automatické přepínání panelu vrstev a objektů',
