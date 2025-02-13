@@ -4619,30 +4619,9 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
   this.findMatchedAlignPoints = function (x: number, y: number) {
     // for consistent align experience
-    const FUZZY_RANGE = 16 / workareaManager.zoomRatio;
+    const FUZZY_RANGE = 8 / workareaManager.zoomRatio;
 
-    if (!alignPoints.x.length) return { byX: null, byY: null };
-
-    // const newNearestX = findNearestAlignPoint(alignPoints, { x, y }, 'x', FUZZY_RANGE);
-    // const nearestX =
-    //   alignPoints.x[
-    //     binarySearchIndex(
-    //       alignPoints.x.map(({ x }) => x),
-    //       x,
-    //     )
-    //   ];
-
-    // console.log('nearestX', nearestX, newNearestX);
-
-    // const byX = nearestX && Math.abs(nearestX.x - x) < FUZZY_RANGE ? nearestX : null;
-    // const nearestY =
-    //   alignPoints.y[
-    //     binarySearchIndex(
-    //       alignPoints.y.map(({ y }) => y),
-    //       y,
-    //     )
-    //   ];
-    // const byY = nearestY && Math.abs(nearestY.y - y) < FUZZY_RANGE ? nearestY : null;
+    if (!alignPoints.x.length) return null;
 
     return {
       byX: findNearestAlignPoint(alignPoints, { x, y }, 'x', FUZZY_RANGE),
@@ -4733,7 +4712,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
       levels.forEach((level) => {
         levels.forEach((level2) => {
-          // skip edges for ellipse
+          // skip edges for ellipse, and skip center point
           if ((isEllipse && ![level, level2].includes(0.5)) || (level === 0.5 && level2 === 0.5)) return;
 
           points.push({ x: bbox.x + level * bbox.width, y: bbox.y + level2 * bbox.height });

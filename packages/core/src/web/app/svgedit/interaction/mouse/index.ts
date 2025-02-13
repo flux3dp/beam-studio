@@ -65,6 +65,19 @@ let angleOffset = 90;
 let currentBoundingBox = Array.of<IPoint>();
 
 const checkShouldIgnore = () => ObjectPanelController.getActiveKey() && navigator.maxTouchPoints > 1;
+const findAndDrawAlignPoints = (x: number, y: number) => {
+  const alignPoints = svgCanvas.findMatchedAlignPoints(x, y);
+
+  if (alignPoints) {
+    const { byX, byY } = alignPoints;
+
+    svgCanvas.drawAlignLine(x, y, byX, byY);
+
+    return [byX ? byX.x : x, byY ? byY.y : y];
+  }
+
+  return [x, y];
+};
 
 const mouseSelectModeCmds = Array.of<ICommand>();
 // - when we are in a create mode, the element is added to the canvas
@@ -521,12 +534,7 @@ const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: 
   }
 
   if (svgCanvas.isBezierPathAlignToEdge && needMatchAlignPoints) {
-    const { byX, byY } = svgCanvas.findMatchedAlignPoints(x, y);
-
-    x = byX ? byX.x : x;
-    y = byY ? byY.y : y;
-
-    svgCanvas.drawAlignLine(x, y, byX, byY);
+    [x, y] = findAndDrawAlignPoints(x, y);
   }
 
   let dx = x - startX;
@@ -683,11 +691,7 @@ const mouseMove = (evt: MouseEvent) => {
 
   if (!started) {
     if (svgCanvas.isBezierPathAlignToEdge && currentMode === 'path') {
-      const { byX, byY } = svgCanvas.findMatchedAlignPoints(realX, realY);
-      const x = byX ? byX.x : realX;
-      const y = byY ? byY.y : realY;
-
-      svgCanvas.drawAlignLine(x, y, byX, byY);
+      findAndDrawAlignPoints(realX, realY);
     }
 
     if (svgCanvas.sensorAreaInfo) {
@@ -758,8 +762,6 @@ const mouseMove = (evt: MouseEvent) => {
 
           dx = diff.x;
           dy = diff.y;
-
-          svgCanvas.drawAlignLine(x, y, diff, diff);
         }
 
         if (dx !== 0 || dy !== 0) {
@@ -838,12 +840,7 @@ const mouseMove = (evt: MouseEvent) => {
         x2 = xya.x;
         y2 = xya.y;
       } else if (svgCanvas.isBezierPathAlignToEdge) {
-        const { byX, byY } = svgCanvas.findMatchedAlignPoints(x2, y2);
-
-        x2 = byX ? byX.x : x2;
-        y2 = byY ? byY.y : y2;
-
-        svgCanvas.drawAlignLine(x2, y2, byX, byY);
+        [x2, y2] = findAndDrawAlignPoints(x2, y2);
       }
 
       svgCanvas.selectorManager.requestSelector(selected).resize();
@@ -878,16 +875,11 @@ const mouseMove = (evt: MouseEvent) => {
       }
 
       if (!isSquare && svgCanvas.isBezierPathAlignToEdge) {
-        const { byX, byY } = svgCanvas.findMatchedAlignPoints(newX, newY);
-
-        newX = byX ? byX.x : newX;
-        newY = byY ? byY.y : newY;
+        [newX, newY] = findAndDrawAlignPoints(newX, newY);
 
         // because we don't want to change the width and height of the element
         w = Math.max(Math.abs(newX - startX), Math.abs(newX - x));
         h = Math.max(Math.abs(newY - startY), Math.abs(newY - y));
-
-        svgCanvas.drawAlignLine(newX, newY, byX, byY);
       }
 
       svgedit.utilities.assignAttributes(shape, { height: h, width: w, x: newX, y: newY }, 1000);
@@ -902,12 +894,7 @@ const mouseMove = (evt: MouseEvent) => {
       cy = c.cy;
 
       if (!evt.shiftKey && svgCanvas.isBezierPathAlignToEdge) {
-        const { byX, byY } = svgCanvas.findMatchedAlignPoints(x, y);
-
-        x = byX ? byX.x : x;
-        y = byY ? byY.y : y;
-
-        svgCanvas.drawAlignLine(x, y, byX, byY);
+        [x, y] = findAndDrawAlignPoints(x, y);
       }
 
       const rx = Math.abs(x - cx);
@@ -936,12 +923,7 @@ const mouseMove = (evt: MouseEvent) => {
         x = xya.x;
         y = xya.y;
       } else if (svgCanvas.isBezierPathAlignToEdge) {
-        const { byX, byY } = svgCanvas.findMatchedAlignPoints(x, y);
-
-        x = byX ? byX.x : x;
-        y = byY ? byY.y : y;
-
-        svgCanvas.drawAlignLine(x, y, byX, byY);
+        [x, y] = findAndDrawAlignPoints(x, y);
       }
 
       x *= zoom;
