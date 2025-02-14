@@ -1,4 +1,4 @@
-/* eslint-disable ts/no-unused-vars */
+import round from '@core/helpers/math/round';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IPoint } from '@core/interfaces/ISVGCanvas';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -12,7 +12,7 @@ getSVGAsync(({ Canvas }) => {
 export function getMatchedDiffFromBBox(currentBoundingBox: IPoint[], current: IPoint, start: IPoint): IPoint {
   const [dx, dy] = [current.x - start.x, current.y - start.y];
   const matchPoints = currentBoundingBox.map(({ x, y }) => svgCanvas.findMatchedAlignPoints(x + dx, y + dy));
-  const target: Record<'x' | 'y', number> = { x: current.x, y: current.y };
+  const target: IPoint = { x: current.x, y: current.y };
   // first map string is the target point,
   // second map string is the matched point and matched by(dimension)
   const potentialPointMap = new Map<string, Map<string, Array<[number, number, { byX: IPoint; byY: IPoint }]>>>();
@@ -60,11 +60,11 @@ export function getMatchedDiffFromBBox(currentBoundingBox: IPoint[], current: IP
       //   point.y + dy,
       //   matchedPoint.x,
       //   matchedPoint.y!,
-      //   index + 5655,
+      //   index + 115655,
       //   '#0000FF',
       // );
 
-      const targetKey = [target.x, target.y].join(',');
+      const targetKey = [round(target.x, 4), round(target.y, 4)].join(',');
 
       if (target.x === current.x) needUpdateTargetList[0].push(targetKey);
       else if (target.y === current.y) needUpdateTargetList[1].push(targetKey);
@@ -73,7 +73,7 @@ export function getMatchedDiffFromBBox(currentBoundingBox: IPoint[], current: IP
       let matched = potentialPointMap.get(targetKey);
 
       if (!matched) {
-        matched = new Map<string, Array<[number, number, { byX: IPoint; byY: IPoint }]>>();
+        matched = new Map();
         potentialPointMap.set(targetKey, matched);
       }
 
@@ -86,12 +86,15 @@ export function getMatchedDiffFromBBox(currentBoundingBox: IPoint[], current: IP
 
     const isUpdateX = index === 0;
 
+    if (isUpdateX && target.x === current.x) continue;
+    else if (!isUpdateX && target.y === current.y) continue;
+
     for (const key of needToUpdate) {
       const [x, y] = key.split(',').map((v) => Number.parseFloat(v));
-      const targetKey = isUpdateX ? [target.x, y].join(',') : [x, target.y].join(',');
+      const targetKey = isUpdateX ? [round(target.x, 4), y].join(',') : [x, round(target.y, 4)].join(',');
       const matched = potentialPointMap.get(key);
 
-      if (key === targetKey || !matched) continue;
+      if (!matched) continue;
 
       const mergedInnerKeys = matched.keys();
       const targetMatched = potentialPointMap.get(targetKey) ?? new Map();
@@ -154,18 +157,18 @@ export function getMatchedDiffFromBBox(currentBoundingBox: IPoint[], current: IP
     for (const [, matched] of matchedMap) {
       matchedCount += matched.length;
 
-      // for (const [index, [x, y]] of matched.entries()) {
-      //   // svgCanvas.drawAlignLine(x + dx, y + dy, matchPoints.byX, matchPoints.byY, index);
-      //   svgCanvas.drawTracingLine(
-      //     //
-      //     x + dx,
-      //     y + dy,
-      //     targetX,
-      //     targetY,
-      //     index + 15655 * (colorIndex + 1),
-      //     colors[colorIndex],
-      //   );
-      // }
+      //   for (const [index, [x, y]] of matched.entries()) {
+      //     // console.log(`matched, ${index}`, dx, dy);
+      //     svgCanvas.drawTracingLine(
+      //       //
+      //       x + dx,
+      //       y + dy,
+      //       targetX,
+      //       targetY,
+      //       index + 15655 * (colorIndex + 1),
+      //       colors[colorIndex],
+      //     );
+      //   }
     }
 
     if (matchedCount > maxMatched) {
@@ -178,11 +181,11 @@ export function getMatchedDiffFromBBox(currentBoundingBox: IPoint[], current: IP
   }
 
   // random magic number to prevent index conflict
-  let outerIndex = 100;
+  let outerIndex = 0;
 
   for (const [_, matched] of needToDrawMap) {
     for (const [index, [x, y, matchPoints]] of matched.entries()) {
-      svgCanvas.drawAlignLine(x + dx, y + dy, matchPoints.byX, matchPoints.byY, outerIndex * 10 + index);
+      svgCanvas.drawAlignLine(x + dx, y + dy, matchPoints.byX, matchPoints.byY, outerIndex * 100 + index);
     }
     outerIndex++;
   }

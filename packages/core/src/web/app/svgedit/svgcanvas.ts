@@ -57,6 +57,7 @@ import i18n from '@core/helpers/i18n';
 import jimpHelper from '@core/helpers/jimp-helper';
 import laserConfigHelper from '@core/helpers/layer/layer-config-helper';
 import * as LayerHelper from '@core/helpers/layer/layer-helper';
+import round from '@core/helpers/math/round';
 import viewMenu from '@core/helpers/menubar/view';
 import randomColor from '@core/helpers/randomColor';
 import sanitizeXmlString from '@core/helpers/sanitize-xml-string';
@@ -4738,11 +4739,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     if (!validTags.includes(tagName) || angle) return [];
 
     const bbox = tagName === 'use' ? this.getSvgRealLocation(elem) : elem.getBBox();
-
-    if (tagName === 'use') {
-      console.trace(elem, elem.id, bbox);
-    }
-
     const getPoints = (bbox: DOMRect, isEllipse = false) => {
       const points = Array.of<IPoint>();
       const levels = [0, 0.5, 1] as const;
@@ -6251,6 +6247,11 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       y += height;
       height *= -1;
     }
+
+    height = round(height, 4);
+    width = round(width, 4);
+    x = round(x, 4);
+    y = round(y, 4);
 
     return { height, width, x, y };
   };
