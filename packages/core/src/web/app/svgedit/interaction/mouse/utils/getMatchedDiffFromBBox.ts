@@ -16,7 +16,7 @@ export function getMatchedDiffFromBBox(currentBoundingBox: IPoint[], current: IP
   const target: IPoint = { x: current.x, y: current.y };
   // first map string is the target point,
   // second map string is the matched point and matched by(dimension)
-  const potentialPointMap = new Map<string, Map<string, Array<[number, number, { byX: IPoint; byY: IPoint }]>>>();
+  const potentialPointMap = new Map<string, Map<string, Array<[number, number, number]>>>();
   const needUpdateTargetList: [string[], string[]] = [[], []];
 
   for (const [index, point] of currentBoundingBox.entries()) {
@@ -78,7 +78,7 @@ export function getMatchedDiffFromBBox(currentBoundingBox: IPoint[], current: IP
         potentialPointMap.set(targetKey, matched);
       }
 
-      matched.set(matchKey, [...(matched.get(matchKey) ?? []), [point.x, point.y, matchPoints[index]]]);
+      matched.set(matchKey, [...(matched.get(matchKey) ?? []), [point.x, point.y, index]]);
     }
   }
 
@@ -109,7 +109,7 @@ export function getMatchedDiffFromBBox(currentBoundingBox: IPoint[], current: IP
   }
 
   let maxMatched = 0;
-  let needToDrawMap: Map<string, Array<[number, number, { byX: IPoint; byY: IPoint }]>> = new Map();
+  let needToDrawMap: Map<string, Array<[number, number, number]>> = new Map();
   const colors = [
     '#00FF00',
     '#FF00FF',
@@ -181,7 +181,6 @@ export function getMatchedDiffFromBBox(currentBoundingBox: IPoint[], current: IP
     colorIndex++;
   }
 
-  // random magic number to prevent index conflict
   let outerIndex = 0;
 
   if (needToDrawMap.size) {
@@ -197,18 +196,19 @@ export function getMatchedDiffFromBBox(currentBoundingBox: IPoint[], current: IP
     let nearest = [0, 0];
     let nearestMatched: { byX: IPoint; byY: IPoint } = { byX: { x: 0, y: 0 }, byY: { x: 0, y: 0 } };
 
-    for (const [index, [x, y, matchPoints]] of matched.entries()) {
+    for (const [x, y, index] of matched.values()) {
+      const matchPoint = matchPoints[index]!;
       const pos = [x + dx, y + dy];
       const currentDiff =
-        Math.abs(pos[0] - (matchPoints.byX?.x ?? pos[0])) + Math.abs(pos[1] - (matchPoints.byY?.y ?? pos[1]));
+        Math.abs(pos[0] - (matchPoint.byX?.x ?? pos[0])) + Math.abs(pos[1] - (matchPoint.byY?.y ?? pos[1]));
 
       if (currentDiff < diff) {
         diff = currentDiff;
         nearest = pos;
-        nearestMatched = matchPoints;
+        nearestMatched = matchPoint;
       }
 
-      svgCanvas.drawAlignLine(pos[0], pos[1], matchPoints.byX, matchPoints.byY, (outerIndex + 1) * 10 + index);
+      svgCanvas.drawAlignLine(pos[0], pos[1], matchPoint.byX, matchPoint.byY, (outerIndex + 1) * 10 + index);
     }
 
     console.log(target, current, nearest);
