@@ -1,0 +1,88 @@
+.container {
+  position: absolute;
+  z-index: 2;
+  top: 40px;
+  left: 50px;
+  width: calc(100% - 50px - 258px);
+  height: calc(100% - 40px);
+  &.mac {
+    width: calc(100% - 50px - 242px);
+  }
+
+  .tools-panel {
+    height: 100px;
+    padding: 40px 20px 0;
+    border-width: 1px 0 0 0;
+    background-color: #f8f8f8;
+    font-size: 13px;
+    .options {
+      display: flex;
+      margin-top: 5px;
+      align-items: center;
+      flex-direction: row;
+      justify-content: space-between;
+      .play-control {
+        display: flex;
+        width: 60px;
+        margin: 0 8px;
+        img {
+          width: 30px;
+          height: 30px;
+          &:not(.disabled) {
+            cursor: pointer;
+          }
+        }
+      }
+      .speed-control {
+        display: flex;
+        align-items: center;
+        line-height: 18px;
+
+        input[type='range'] {
+          width: 75px;
+          height: 10px;
+          margin: 0 10px;
+          background: none;
+
+          &::-webkit-slider-runnable-track {
+            height: 1px;
+          }
+
+          &::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            margin-top: -5px;
+            width: 10px;
+            height: 10px;
+            background-color: #ffffff;
+            border-radius: 5px;
+            border: 1px solid #000;
+          }
+        }
+      }
+      .current-time {
+        min-width: 60px;
+        text-align: right;
+      }
+    }
+  }
+
+  .switch-control {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-left: 2px;
+    padding: 5px 0;
+
+    .label {
+      margin-left: 20px;
+      line-height: 20px;
+    }
+  }
+
+  .control {
+    .label {
+      line-height: 16px;
+      width: 160px;
+    }
+  }
+}

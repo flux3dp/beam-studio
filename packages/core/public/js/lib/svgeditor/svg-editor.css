@@ -29,15 +29,6 @@ html, body, div{
 	cursor: default;
 }
 
-#svg_editor {
-	font-size: 10pt;
-	color: #000000;
-	position: absolute;
-	left: 54px;
-	top: 0px;
-	width: calc(100vw - 60px - 188px);
-	height: 100%;
-}
 
 a {
 	color: #19c;
@@ -72,19 +63,6 @@ select {
 #linkLabel > svg {
 	height: 20px;
 	padding-top: 4px;
-}
-
-#workarea {
-	display: inline-table-cell;
-	position:absolute;
-	top: 40px;
-	left: 40px;
-	bottom: 40px;
-	right: 14px;
-	background-color: #A0A0A0;
-	border: 1px solid #808080;
-	overflow: auto;
-	text-align: center;
 }
 
 #sidepanel_handle {

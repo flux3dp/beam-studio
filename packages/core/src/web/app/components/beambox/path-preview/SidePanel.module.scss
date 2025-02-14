@@ -1,0 +1,91 @@
+@use '@core/styles/variables' as variables;
+
+.container {
+  border: none;
+  position: fixed;
+  background-color: #f8f8f8;
+  width: variables.$sidePanelWidth;
+  padding: 0px;
+  opacity: 1;
+  overflow-x: visible;
+  overflow-y: scroll;
+  z-index: 2;
+  top: 40px;
+  height: calc(100% - 40px);
+  right: 0;
+  transition: opacity 0.3s;
+  border: 1px solid #e0e0e0;
+  border-width: 0 0 0 1px;
+
+  &.short {
+    top: 70px;
+    height: calc(100% - 70px);
+  }
+
+  &.wide {
+    width: variables.$winSidePanelWidth;
+  }
+
+  &:hover {
+    opacity: 1;
+    z-index: 4;
+  }
+
+  .title {
+    height: 40px;
+    line-height: 16px;
+    font-size: 12px;
+    padding: 12px 15px;
+    background: #ffffff;
+    color: #333;
+    font-weight: bold;
+    border: 1px solid #e0e0e0;
+    border-width: 0 0 1px;
+  }
+
+  .datas {
+    margin: 10px 0 0 0;
+  }
+
+  .data-block {
+    display: flex;
+    flex-direction: row;
+    height: 36px;
+
+    div {
+      font-size: 12px;
+      line-height: 12px;
+    }
+
+    .item {
+      flex: 9;
+      padding: 12px;
+    }
+
+    .value {
+      flex: 8;
+      padding: 12px 0;
+    }
+  }
+
+  .data-block:first {
+    margin-top: 5px;
+  }
+
+  .remark {
+    padding: 0 12px;
+    margin: 25px 0;
+    font-size: 12px;
+  }
+
+  .buttons {
+    margin: 5px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    .btn {
+      width: 150px;
+    }
+  }
+}

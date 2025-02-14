@@ -63,6 +63,13 @@ const lang: ILang = {
     announcement_panel: {
       title: 'Ανακοίνωση',
     },
+    banner: {
+      auto_feeder: 'Λειτουργία αυτόματης τροφοδοσίας',
+      camera_preview: 'Προεπισκόπηση',
+      camera_preview_borderless_mode: '(Ανοιχτός πάτος)',
+      curve_engraving: 'Λειτουργία 3D καμπύλης',
+      rotary: 'Λειτουργία περιστροφής',
+    },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Μετατρέψτε το κείμενο σε μονοπάτι πριν από την εξαγωγή',
       export_file_error_ask_for_upload: 'Αποτυχία εξαγωγής εργασίας. Είστε πρόθυμοι να παρέχετε τη σκηνή εργασίας στην ομάδα ανάπτυξης για αναφορά σφαλμάτων;',
