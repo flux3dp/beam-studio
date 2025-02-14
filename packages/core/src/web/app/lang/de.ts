@@ -63,6 +63,13 @@ const lang: ILang = {
     announcement_panel: {
       title: 'Ankündigung',
     },
+    banner: {
+      auto_feeder: 'Automatischer Einzugsmodus',
+      camera_preview: 'Vorschau',
+      camera_preview_borderless_mode: '(Offener Boden)',
+      curve_engraving: '3D-Kurvenmodus',
+      rotary: 'Drehmodus',
+    },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Text in Pfad konvertieren ...',
       export_file_error_ask_for_upload: 'Aufgabe konnte nicht exportiert werden. Bist du bereit, eine Arbeitsszene für die Entwicklung eines Teams für Fehlerberichte bereitzustellen?',

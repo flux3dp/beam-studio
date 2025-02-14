@@ -63,6 +63,13 @@ const lang: ILang = {
     announcement_panel: {
       title: 'Thông báo',
     },
+    banner: {
+      auto_feeder: 'Chế độ nạp tự động',
+      camera_preview: 'Xem trước',
+      camera_preview_borderless_mode: '(Mở đáy)',
+      curve_engraving: 'Chế độ khắc đường cong 3D',
+      rotary: 'Chế độ xoay',
+    },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Đang chuyển đổi chữ thành đường dẫn...',
       export_file_error_ask_for_upload: 'Xuất tệp thất bại. Bạn có muốn cung cấp cảnh làm việc để báo cáo lỗi không?',
