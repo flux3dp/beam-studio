@@ -91,7 +91,7 @@ const App = (): React.JSX.Element => {
             token: { screenMD: 601, screenMDMin: 601, screenSMMax: 600 },
           }}
         >
-          <StyleProvider hashPriority="high">
+          <StyleProvider hashPriority="low">
             <Dialog />
             <AlertsAndProgress />
             {contextHolder}
