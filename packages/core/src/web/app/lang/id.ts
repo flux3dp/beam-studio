@@ -63,6 +63,13 @@ const lang: ILang = {
     announcement_panel: {
       title: 'Pengumuman',
     },
+    banner: {
+      auto_feeder: 'Mode Pengumpan Otomatis',
+      camera_preview: 'Pratinjau',
+      camera_preview_borderless_mode: '(Bawah Terbuka)',
+      curve_engraving: 'Mode Kurva 3D',
+      rotary: 'Mode Rotari',
+    },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Ubah Teks Menjadi Lintasan...',
       export_file_error_ask_for_upload: 'Gagal mengekspor pekerjaan. Apakah Anda bersedia memberikan adegan kerja kepada tim pengembang untuk laporan bug?',

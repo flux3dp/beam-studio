@@ -2,6 +2,7 @@
 /* eslint-disable ts/no-unused-vars */
 import React from 'react';
 
+import { Switch } from 'antd';
 import classNames from 'classnames';
 import { mat4, vec3 } from 'gl-matrix';
 
@@ -37,6 +38,7 @@ import VersionChecker from '@core/helpers/version-checker';
 
 import { parseGcode } from '../../../views/beambox/tmpParseGcode';
 
+import styles from './PathPreview.module.scss';
 import ProgressBar from './ProgressBar';
 
 const TOOLS_PANEL_HEIGHT = 100;
@@ -1285,7 +1287,7 @@ class PathPreview extends React.Component<Props, State> {
       controlButtons.push(<img key="stop" onClick={this.handleStop} src="img/Stop.svg" title={LANG.stop} />);
     }
 
-    return <div className="play-control">{controlButtons}</div>;
+    return <div className={styles['play-control']}>{controlButtons}</div>;
   };
 
   private renderPosition = () => {
@@ -1890,13 +1892,16 @@ class PathPreview extends React.Component<Props, State> {
   }
 
   render(): React.JSX.Element {
-    const className = classNames({ mac: window.os === 'MacOS' });
     const { togglePathPreview } = this.context;
     const { height, isInverting, playState, speedLevel, width, workspace } = this.state;
     const LANG = i18n.lang.beambox.path_preview;
 
     return (
-      <div className={className} id="path-preview-panel" style={{ touchAction: 'none', userSelect: 'none' }}>
+      <div
+        className={classNames(styles.container, { [styles.mac]: window.os === 'MacOS' })}
+        id="path-preview-panel"
+        style={{ touchAction: 'none', userSelect: 'none' }}
+      >
         <Pointable
           onPointerCancel={this.onPointerCancel}
           onPointerDown={this.onPointerDown}
@@ -1913,16 +1918,16 @@ class PathPreview extends React.Component<Props, State> {
             width={Math.round(width * window.devicePixelRatio)}
           />
         </Pointable>
-        <div className="tools-panel">
+        <div className={styles['tools-panel']}>
           <ProgressBar
             handleSimTimeChange={this.handleSimTimeChange}
             simTime={workspace.simTime}
             simTimeMax={this.simTimeMax}
           />
-          <div className="options">
+          <div className={styles.options}>
             {this.renderPlayButtons()}
-            <div className="speed-control">
-              <div className="label">{LANG.play_speed}</div>
+            <div className={styles['speed-control']}>
+              <div className={styles.label}>{LANG.play_speed}</div>
               <input
                 id="speed"
                 max={4}
@@ -1934,49 +1939,35 @@ class PathPreview extends React.Component<Props, State> {
               />
               <div>{this.renderSpeed()}</div>
             </div>
-            <div className="switch-control">
-              <div className="control" style={{ paddingLeft: '5px' }}>
-                <div className="switch-container">
-                  <div className="onoffswitch">
-                    <input
-                      checked={workspace.showTraversal}
-                      className="onoffswitch-checkbox"
-                      id="onoffswitch"
-                      name="onoffswitch"
-                      onChange={this.toggleTraversalMoves}
-                      type="checkbox"
-                    />
-                    <label className="onoffswitch-label" htmlFor="onoffswitch">
-                      <span className="onoffswitch-inner" />
-                      <span className="onoffswitch-switch" />
-                    </label>
-                  </div>
-                </div>
+            <div className={styles['switch-control']}>
+              <div className={styles.control}>
+                <Switch
+                  checked={workspace.showTraversal}
+                  className={styles.switch}
+                  id="show_traversal"
+                  onChange={this.toggleTraversalMoves}
+                  size="small"
+                />
               </div>
-              <div className="label">{LANG.travel_path}</div>
+              <label className={styles.label} htmlFor="show_traversal">
+                {LANG.travel_path}
+              </label>
             </div>
-            <div className="switch-control">
-              <div className="control" style={{ paddingLeft: '5px' }}>
-                <div className="switch-container">
-                  <div className="onoffswitch">
-                    <input
-                      checked={isInverting}
-                      className="onoffswitch-checkbox"
-                      id="onoffswitch-is-invert"
-                      name="onoffswitch-is-invert"
-                      onChange={this.toggleIsInverting}
-                      type="checkbox"
-                    />
-                    <label className="onoffswitch-label" htmlFor="onoffswitch-is-invert">
-                      <span className="onoffswitch-inner" />
-                      <span className="onoffswitch-switch" />
-                    </label>
-                  </div>
-                </div>
+            <div className={styles['switch-control']}>
+              <div className={styles.control}>
+                <Switch
+                  checked={isInverting}
+                  className={styles.switch}
+                  id="invert_color"
+                  onChange={this.toggleIsInverting}
+                  size="small"
+                />
               </div>
-              <div className="label">{LANG.invert}</div>
+              <label className={styles.label} htmlFor="invert_color">
+                {LANG.invert}
+              </label>
             </div>
-            <div className="current-time">{this.transferTime(workspace.simTime, ':')}</div>
+            <div className={styles['current-time']}>{this.transferTime(workspace.simTime, ':')}</div>
             <div />
           </div>
         </div>

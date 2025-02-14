@@ -63,6 +63,13 @@ const lang: ILang = {
     announcement_panel: {
       title: '公告',
     },
+    banner: {
+      auto_feeder: '自动送料模式',
+      camera_preview: '预览',
+      camera_preview_borderless_mode: '（底部打开）',
+      curve_engraving: '3D曲线模式',
+      rotary: '旋转模式',
+    },
     bottom_right_panel: {
       convert_text_to_path_before_export: '部分字体在不同系统间有差异，输出前请将字体转换成路径，以确保文本正确显示。转换文本至路径中...',
       export_file_error_ask_for_upload: '汇出工作时发生错误，是否愿意上传工作场景回报错误给开发团队？',

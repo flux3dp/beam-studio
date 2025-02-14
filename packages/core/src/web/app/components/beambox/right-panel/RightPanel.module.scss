@@ -1,24 +1,16 @@
 @use '@core/styles/variables' as variables;
 
 .sidepanels {
+  flex: 0 0 auto;
   border: none;
-  position: fixed;
   background-color: #f8f8f8;
   width: variables.$sidePanelWidth;
+  height: 100%;
   padding: 0px;
   opacity: 1;
   overflow-x: visible;
   overflow-y: hidden;
-  z-index: 2;
-  top: 40px;
-  height: calc(100% - 40px);
-  right: 0;
   transition: opacity 0.3s;
-
-  &.short {
-    top: 70px;
-    height: calc(100% - 70px);
-  }
 
   &.wide {
     width: variables.$winSidePanelWidth;
@@ -30,6 +22,8 @@
   }
 
   @media screen and (max-width: 600px) {
+    position: fixed;
+    z-index: 2;
     top: unset;
     bottom: 56px;
     left: 0;

@@ -63,6 +63,14 @@ const lang: ILang = {
     announcement_panel: {
       title: 'Ohlášení',
     },
+    banner: {
+      auto_feeder: 'Režim automatického podavače',
+      camera_preview: 'Náhled',
+      camera_preview_borderless_mode: '(Otevřené dno)',
+      curve_engraving: 'Režim 3D křivky',
+      rotary: 'Režim rotačního gravírování',
+    },
+
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Převést text na cestu...',
       export_file_error_ask_for_upload: 'Nepodařilo se exportovat úlohu. Jste ochotni při hlášení chyby poskytnout vývojářům pracovní oblast?',
@@ -1806,8 +1814,6 @@ const lang: ILang = {
       QcleanScene: 'Chcete vymazat kresbu?<br/> Smaže se tím i historie úprav!',
       start_preview_timeout: '#803 Během spuštění náhledu došlo k přerušení. Restartujte prosím své zařízení nebo Beam Studio. Pokud bude tato chyba přetrvávat, přečtěte si prosím <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">tento návod</a>.',
     },
-    borderless: '(OTEVŘÍT SPODNÍ ČÁST)',
-    curve_engrave: '3D křivka',
     frame_task: 'Rámování',
     hint: {
       polygon: 'Pro zvyšování / snižování stran využívejte klávesy + / -.',
@@ -1979,7 +1985,6 @@ const lang: ILang = {
     },
     preview: 'NÁHLED',
     preview_press_esc_to_stop: 'Stisknutím ESC zastavíte náhled kamery.',
-    preview_title: 'Náhled',
     rename_tab: 'Přejmenovat kartu',
     select_machine: 'Vybrat přístroj',
     tag_names: {
