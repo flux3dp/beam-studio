@@ -1,17 +1,16 @@
 import { app, session } from '@electron/remote';
-// This module setup global window variable, Should be put at top
 import { Titlebar, TitlebarColor } from 'custom-electron-titlebar';
+
+// This module setup global window variable when imported, Should be put at top
+import '@core/helpers/global-helper';
 
 import globalEvents from '@core/app/actions/global';
 import router from '@core/app/router';
 import fileExportHelper from '@core/helpers/file-export-helper';
-import globalHelper from '@core/helpers/global-helper';
 import communicator from '@core/implementations/communicator';
 
 import initBackendEvents from './init-backend-events';
 import './loader';
-
-globalHelper.setWindowMember();
 
 declare global {
   var requireNode: (_name: string) => any;
