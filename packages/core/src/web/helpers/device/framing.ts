@@ -76,12 +76,18 @@ const getCoords = (mm?: boolean): Coordinates => {
 
     const bboxs = svgCanvas.getVisibleElementsAndBBoxes([layer]);
 
-    bboxs.forEach(({ bbox }) => {
-      const { x, y } = bbox;
-      const right = x + bbox.width;
-      const bottom = y + bbox.height;
+    bboxs.forEach(({ bbox, elem }) => {
+      const { height, width, x, y } = bbox;
+      const right = x + width;
+      const bottom = y + height;
 
-      if (right < 0 || bottom < 0 || x > workareaWidth || y > workareaHeight) {
+      if (
+        right < 0 ||
+        bottom < 0 ||
+        x > workareaWidth ||
+        y > workareaHeight ||
+        (width === 0 && height === 0 && elem.tagName === 'g')
+      ) {
         return;
       }
 
