@@ -56,7 +56,7 @@ export default interface ISVGCanvas {
     addToHistory?: boolean,
     showProgress?: boolean,
   ) => Promise<BaseHistoryCommand>;
-  drawAlignLine: (x: number, y: number, byX: IPoint, byY: IPoint, index?: number) => void;
+  drawAlignLine: (x: number, y: number, byX: IPoint, byY: IPoint, index?: number, stroke?: string) => void;
   drawing: ISVGDrawing;
   drawTracingLine: (x1: number, y1: number, x2: number, y2: number, index: number, stroke?: string) => void;
   embedImage(url: string, callback?: (dataURI: string) => void): void;

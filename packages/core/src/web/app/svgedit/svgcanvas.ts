@@ -4570,6 +4570,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
   this.clearAlignLines = () => {
     $('[id^="align_line"]').remove();
+    $('[id^="align_text"]').remove();
     this.clearTracingLines();
   };
 
@@ -4584,7 +4585,14 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     return value;
   };
 
-  this.drawAlignLine = function (x: number, y: number, byX: IPoint, byY: IPoint, index: number = 0) {
+  this.drawAlignLine = function (
+    x: number,
+    y: number,
+    byX: IPoint,
+    byY: IPoint,
+    index: number = 0,
+    stroke: string = '#1890FF',
+  ) {
     const points: [number[], number[]] = [[], []];
 
     WORKAREA_ALIGN_POINTS.forEach(({ x, y }) => {
@@ -4594,31 +4602,70 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     const draw = (by: 'x' | 'y') => {
       let alignLine = svgedit.utilities.getElem(`align_line_${by}_${index}`);
+      let alignText = svgedit.utilities.getElem(`align_text_${by}_${index}`);
       const [major, minor] = by === 'x' ? [byX, byY] : [byY, byX];
       const isCanvas = points[0].includes(major?.x) && points[1].includes(major?.y);
 
       if (major) {
         if (!alignLine) {
           alignLine = document.createElementNS(NS.SVG, 'path');
+          alignText = document.createElementNS(NS.SVG, 'text');
 
           svgedit.utilities.assignAttributes(alignLine, {
             fill: 'none',
             id: `align_line_${by}_${index}`,
-            stroke: '#1890FF',
+            stroke: isCanvas ? '#1890FF' : stroke,
             'stroke-dasharray': isCanvas ? undefined : '2',
             'stroke-width': '2',
             'vector-effect': 'non-scaling-stroke',
           });
 
+          //     'data-ratiofixed': true,
+          // fill,
+          // 'fill-opacity': fill === 'none' ? modelText.fill_opacity : 1,
+          // 'font-family': usePostscriptAsFamily ? `'${modelText.font_postscriptName}'` : modelText.font_family,
+          // 'font-postscript': modelText.font_postscriptName,
+          // 'font-size': fontSize ?? modelText.font_size,
+          // id: svgCanvas.getNextId(),
+          // opacity: currentShape.opacity,
+          // 'stroke-width': 2,
+          // 'text-anchor': modelText.text_anchor,
+          // x,
+          // 'xml:space': 'preserve',
+          // y,
+
+          svgedit.utilities.assignAttributes(alignText, {
+            fill: 1,
+            'font-family': 'Arial',
+            'font-size': 72,
+            id: `align_text_${by}_${index}`,
+            stroke: isCanvas ? '#1890FF' : stroke,
+            'stroke-width': '2',
+            'vector-effect': 'non-scaling-stroke',
+          });
+
           svgedit.utilities.getElem('svgcontent').appendChild(alignLine);
+          svgedit.utilities.getElem('svgcontent').appendChild(alignText);
         }
 
         const startPoints = by === 'x' ? [major.x, minor ? minor.y : y] : [minor ? minor.x : x, major.y];
+        const distance = Math.max(Math.abs(major.x - startPoints[0]), Math.abs(major.y - startPoints[1]));
 
         alignLine.setAttribute('d', `M ${major.x} ${major.y} L ${startPoints[0]} ${startPoints[1]}`);
         alignLine.setAttribute('display', 'inline');
+
+        alignText.setAttribute('x', (major.x + startPoints[0]) / 2 + (by === 'x' ? 50 : 0));
+        alignText.setAttribute('y', (major.y + startPoints[1]) / 2 + (by === 'y' ? -80 : 0));
+
+        if (distance > 500) {
+          textEdit.renderText(
+            alignText,
+            round(Math.max(Math.abs(major.x - startPoints[0]), Math.abs(major.y - startPoints[1])) / 10, 2).toString(),
+          );
+        }
       } else if (alignLine) {
         alignLine.setAttribute('display', 'none');
+        alignText.setAttribute('display', 'none');
       }
     };
 

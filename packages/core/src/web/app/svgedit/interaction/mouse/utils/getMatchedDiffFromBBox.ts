@@ -1,3 +1,4 @@
+import workareaManager from '@core/app/svgedit/workarea';
 import round from '@core/helpers/math/round';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IPoint } from '@core/interfaces/ISVGCanvas';
@@ -108,7 +109,7 @@ export function getMatchedDiffFromBBox(currentBoundingBox: IPoint[], current: IP
   }
 
   let maxMatched = 0;
-  let needToDrawMap: [] | Map<string, Array<[number, number, { byX: IPoint; byY: IPoint }]>> = [];
+  let needToDrawMap: Map<string, Array<[number, number, { byX: IPoint; byY: IPoint }]>> = new Map();
   const colors = [
     '#00FF00',
     '#FF00FF',
@@ -183,10 +184,46 @@ export function getMatchedDiffFromBBox(currentBoundingBox: IPoint[], current: IP
   // random magic number to prevent index conflict
   let outerIndex = 0;
 
-  for (const [_, matched] of needToDrawMap) {
+  if (needToDrawMap.size) {
+    console.log(needToDrawMap);
+  }
+
+  const range =
+    // 8 / workareaManager.zoomRatio;
+    Math.sqrt(8 / workareaManager.zoomRatio);
+
+  for (const [, matched] of needToDrawMap) {
+    let diff = Number.MAX_SAFE_INTEGER;
+    let nearest = [0, 0];
+    let nearestMatched: { byX: IPoint; byY: IPoint } = { byX: { x: 0, y: 0 }, byY: { x: 0, y: 0 } };
+
     for (const [index, [x, y, matchPoints]] of matched.entries()) {
-      svgCanvas.drawAlignLine(x + dx, y + dy, matchPoints.byX, matchPoints.byY, outerIndex * 100 + index);
+      const pos = [x + dx, y + dy];
+      const currentDiff =
+        Math.abs(pos[0] - (matchPoints.byX?.x ?? pos[0])) + Math.abs(pos[1] - (matchPoints.byY?.y ?? pos[1]));
+
+      if (currentDiff < diff) {
+        diff = currentDiff;
+        nearest = pos;
+        nearestMatched = matchPoints;
+      }
+
+      svgCanvas.drawAlignLine(pos[0], pos[1], matchPoints.byX, matchPoints.byY, (outerIndex + 1) * 10 + index);
     }
+
+    console.log(target, current, nearest);
+
+    if (Math.abs(target.x - current.x) < range) {
+      console.log('xRange');
+      nearest[1] -= dy;
+    }
+
+    if (Math.abs(target.y - current.y) < range) {
+      console.log('yRange');
+      nearest[0] -= dx;
+    }
+
+    svgCanvas.drawAlignLine(nearest[0], nearest[1], nearestMatched.byX, nearestMatched.byY, outerIndex, '#FF0000');
     outerIndex++;
   }
 
