@@ -63,6 +63,13 @@ const lang: ILang = {
     announcement_panel: {
       title: 'Announcement',
     },
+    banner: {
+      auto_feeder: 'Auto Feeder Mode',
+      camera_preview: 'Preview',
+      camera_preview_borderless_mode: '(Open Bottom)',
+      curve_engraving: '3D Curve Mode',
+      rotary: 'Rotary Mode',
+    },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Convert Text to Path...',
       export_file_error_ask_for_upload: 'Failed to export task. Are you willing to provide working scene to develop team for bug report?',
@@ -1806,8 +1813,6 @@ Machines > ‘Promark Name’ > Promark Settings`,
       QcleanScene: 'Do you want to clear the drawing?<br/>This will also erase your undo history!',
       start_preview_timeout: '#803 Timeout has occurred when starting preview mode. Please Restart your machine or Beam Studio. If this error persists, please follow <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">this guide</a>.',
     },
-    borderless: '(OPEN BOTTOM)',
-    curve_engrave: '3D Curve',
     frame_task: 'Running Frame',
     hint: {
       polygon: 'Press + / - key to increase / decrease sides.',
@@ -1979,7 +1984,6 @@ Machines > ‘Promark Name’ > Promark Settings`,
     },
     preview: 'PREVIEW',
     preview_press_esc_to_stop: 'Press ESC to stop the camera preview.',
-    preview_title: 'Preview',
     rename_tab: 'Rename Tab',
     select_machine: 'Select a machine',
     tag_names: {

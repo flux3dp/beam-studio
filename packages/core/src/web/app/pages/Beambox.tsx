@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { Flex } from 'antd';
 import classNames from 'classnames';
 
 import BeamboxGlobalInteraction from '@core/app/actions/beambox/beambox-global-interaction';
@@ -55,21 +56,23 @@ const Beambox = (): React.JSX.Element => {
     <CanvasProvider>
       <SelectedElementContextProvider>
         <LayerPanelContextProvider>
-          <div className={classNames('studio-container', 'beambox-studio', activeLang)}>
+          <div className={classNames('studio-container', 'beambox-studio', activeLang, styles.container)}>
             <TopBar />
-            <LeftPanel />
-            <RightPanel />
-            <SvgEditor />
-            <div className={classNames(styles.buttons, { [styles.mac]: window.os === 'MacOS' })}>
-              <TimeEstimationButtonContextProvider>
-                <TimeEstimationButton />
-              </TimeEstimationButtonContextProvider>
-              <PreviewSlider />
-            </div>
-            <div id="tool-panels-placeholder" />
-            <ImageTracePanel />
-            <CanvasTabBar />
+            <Flex className={styles.main}>
+              <LeftPanel />
+              <SvgEditor />
+              <RightPanel />
+            </Flex>
           </div>
+          <div className={classNames(styles.buttons, { [styles.mac]: window.os === 'MacOS' })}>
+            <TimeEstimationButtonContextProvider>
+              <TimeEstimationButton />
+            </TimeEstimationButtonContextProvider>
+            <PreviewSlider />
+          </div>
+          <div id="tool-panels-placeholder" />
+          <ImageTracePanel />
+          <CanvasTabBar />
         </LayerPanelContextProvider>
       </SelectedElementContextProvider>
     </CanvasProvider>

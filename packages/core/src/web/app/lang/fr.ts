@@ -63,6 +63,13 @@ const lang: ILang = {
     announcement_panel: {
       title: 'Annonce',
     },
+    banner: {
+      auto_feeder: 'Mode alimentation automatique',
+      camera_preview: 'Aperçu',
+      camera_preview_borderless_mode: '(Fond ouvert)',
+      curve_engraving: 'Mode courbe 3D',
+      rotary: 'Mode rotatif',
+    },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Convertir le texte en tracé...',
       export_file_error_ask_for_upload: "Échec de l'exportation de la tâche. Êtes-vous prêt à fournir la scène de travail à l'équipe de développement pour le rapport de bug ?",

@@ -63,6 +63,13 @@ const lang: ILang = {
     announcement_panel: {
       title: 'Meddelande',
     },
+    banner: {
+      auto_feeder: 'Automatisk matningsläge',
+      camera_preview: 'Förhandsgranskning',
+      camera_preview_borderless_mode: '(Öppen botten)',
+      curve_engraving: '3D-kurvläge',
+      rotary: 'Rotationsläge',
+    },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Konvertera text till bana...',
       export_file_error_ask_for_upload: 'Misslyckades att exportera uppgift. Vill du skicka arbetsytan till utvecklingsteamet för felrapportering?',

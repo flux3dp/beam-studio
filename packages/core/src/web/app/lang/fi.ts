@@ -63,6 +63,13 @@ const lang: ILang = {
     announcement_panel: {
       title: 'Tiedote',
     },
+    banner: {
+      auto_feeder: 'Automaattinen syöttötila',
+      camera_preview: 'Esikatselu',
+      camera_preview_borderless_mode: '(Avoin pohja)',
+      curve_engraving: '3D-käyrätila',
+      rotary: 'Pyörivä tila',
+    },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Muunna teksti poluksi...',
       export_file_error_ask_for_upload: 'Vientitehtävän epäonnistui. Haluatko tarjota toimivan näkymän kehitystiimille vianraportointia varten?',

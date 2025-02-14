@@ -63,6 +63,13 @@ const lang: ILang = {
     announcement_panel: {
       title: 'Pengumuman',
     },
+    banner: {
+      auto_feeder: 'Mod Pemberi Automatik',
+      camera_preview: 'Pratonton',
+      camera_preview_borderless_mode: '(Bawah Terbuka)',
+      curve_engraving: 'Mod Lengkung 3D',
+      rotary: 'Mod Putaran',
+    },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Tukar Teks ke Laluan...',
       export_file_error_ask_for_upload: 'Gagal eksport tugas. Adakah anda bersedia untuk memberikan adegan kerja kepada pasukan pembangunan untuk laporan pepijat?',

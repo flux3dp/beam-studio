@@ -63,6 +63,13 @@ const lang: ILang = {
     announcement_panel: {
       title: 'Ogłoszenie',
     },
+    banner: {
+      auto_feeder: 'Tryb automatycznego podajnika',
+      camera_preview: 'Podgląd',
+      camera_preview_borderless_mode: '(Otwarty spód)',
+      curve_engraving: 'Tryb krzywej 3D',
+      rotary: 'Tryb obrotowy',
+    },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Konwertuj tekst na ścieżkę...',
       export_file_error_ask_for_upload: 'Nie udało się wyeksportować zadania. Czy chcesz udostępnić scenę roboczą do opracowania zespołu do zgłaszania błędów?',

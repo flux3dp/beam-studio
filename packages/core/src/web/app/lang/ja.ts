@@ -63,6 +63,13 @@ const lang: ILang = {
     announcement_panel: {
       title: 'お知らせ',
     },
+    banner: {
+      auto_feeder: 'オートフィーダーモード',
+      camera_preview: 'プレビュー',
+      camera_preview_borderless_mode: '（底面オープン）',
+      curve_engraving: '3Dカーブモード',
+      rotary: '回転モード',
+    },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'テキストをパスに変換…',
       export_file_error_ask_for_upload: 'Failed to export task. Are you willing to provide working scene to develop team for bug report?',

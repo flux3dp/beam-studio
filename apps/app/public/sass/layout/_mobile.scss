@@ -16,19 +16,18 @@
     display: block;
     position: fixed;
     width: 100%;
-    border-top: solid 1px #CCC;
-    background: #FFFFFF;
+    border-top: solid 1px #ccc;
+    background: #ffffff;
     z-index: 998;
     overflow-x: scroll;
     bottom: 0;
   }
 
   #right-panel {
-    width: 100%;
     display: none;
   }
 
-  .adm-tab-bar-item[aria-disabled="true"] {
+  .adm-tab-bar-item[aria-disabled='true'] {
     opacity: 0.5;
     pointer-events: none;
   }
@@ -51,7 +50,6 @@
   }
 
   .beambox-studio #right-panel {
-    width: 100vw;
     overflow-x: hidden;
 
     #sidepanels {

@@ -6,7 +6,6 @@ import rotaryConstants from '@core/app/constants/rotary-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import { isMobile } from '@core/helpers/system-helper';
 
 const canvasEvents = eventEmitterFactory.createEventEmitter('canvas');
 const zoomBlockEventEmitter = eventEmitterFactory.createEventEmitter('zoom-block');
@@ -161,9 +160,10 @@ class WorkareaManager {
 
   resetView = () => {
     const workArea = document.getElementById('workarea');
+    const container = document.getElementById('workarea-container');
     const background = document.getElementById('canvasBackground');
 
-    if (!background || !workArea) {
+    if (!container || !background || !workArea) {
       setTimeout(() => this.resetView(), 100);
 
       return;
@@ -171,21 +171,14 @@ class WorkareaManager {
 
     const { height, width } = this;
     const hasRulers = beamboxPreference.read('show_rulers');
-    const sidePanelsWidth = isMobile()
-      ? 0
-      : layoutConstants.sidePanelsWidth + (hasRulers ? layoutConstants.rulerWidth : 0);
-    const topBarHeight = layoutConstants.topBarHeight + (hasRulers ? layoutConstants.rulerWidth : 0);
-    const workareaToDimensionRatio = Math.min(
-      (window.innerWidth - sidePanelsWidth) / width,
-      (window.innerHeight - topBarHeight) / height,
-    );
+    const containerWidth = container.clientWidth - (hasRulers ? layoutConstants.rulerWidth : 0);
+    const containerHeight = container.clientHeight - (hasRulers ? layoutConstants.rulerWidth : 0);
+    const workareaToDimensionRatio = Math.min(containerWidth / width, containerHeight / height);
     const zoomLevel = workareaToDimensionRatio * 0.95;
     const workAreaWidth = width * zoomLevel;
     const workAreaHeight = height * zoomLevel;
-    const offsetX =
-      (window.innerWidth - sidePanelsWidth - workAreaWidth) / 2 + (hasRulers ? layoutConstants.rulerWidth : 0);
-    const offsetY =
-      (window.innerHeight - topBarHeight - workAreaHeight) / 2 + (hasRulers ? layoutConstants.rulerWidth : 0);
+    const offsetX = (containerWidth - workAreaWidth) / 2 + (hasRulers ? layoutConstants.rulerWidth : 0);
+    const offsetY = (containerHeight - workAreaHeight) / 2 + (hasRulers ? layoutConstants.rulerWidth : 0);
 
     this.zoom(zoomLevel);
 

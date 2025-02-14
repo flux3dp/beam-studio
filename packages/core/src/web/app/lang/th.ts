@@ -63,6 +63,13 @@ const lang: ILang = {
     announcement_panel: {
       title: 'ประกาศ',
     },
+    banner: {
+      auto_feeder: 'โหมดป้อนอัตโนมัติ',
+      camera_preview: 'ดูตัวอย่าง',
+      camera_preview_borderless_mode: '(เปิดด้านล่าง)',
+      curve_engraving: 'โหมดแกะสลักเส้นโค้ง 3D',
+      rotary: 'โหมดหมุน',
+    },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'แปลงข้อความเป็นเส้นทาง...',
       export_file_error_ask_for_upload: 'ส่งออกล้มเหลว ต้องการส่งงานสู่ทีมพัฒนาเพื่อรายงานข้อบกพร่องหรือไม่',
