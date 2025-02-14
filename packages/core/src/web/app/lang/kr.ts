@@ -63,6 +63,13 @@ const lang: ILang = {
     announcement_panel: {
       title: '공지사항',
     },
+    banner: {
+      auto_feeder: '자동 공급 모드',
+      camera_preview: '미리보기',
+      camera_preview_borderless_mode: '(하단 개방)',
+      curve_engraving: '3D 곡선 모드',
+      rotary: '회전 모드',
+    },
     bottom_right_panel: {
       convert_text_to_path_before_export: '텍스트를 패스로 변환...',
       export_file_error_ask_for_upload: '작업 내보내기 실패. 버그 보고를 위해 작업 중인 씬을 개발팀에 제공할 의사가 있으신가요?',

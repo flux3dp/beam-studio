@@ -63,6 +63,13 @@ const lang: ILang = {
     announcement_panel: {
       title: 'Annuncio',
     },
+    banner: {
+      auto_feeder: 'Modalità alimentatore automatico',
+      camera_preview: 'Anteprima',
+      camera_preview_borderless_mode: '(Fondo aperto)',
+      curve_engraving: 'Modalità curva 3D',
+      rotary: 'Modalità rotativa',
+    },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Converti testo in percorso...',
       export_file_error_ask_for_upload: 'Esportazione file non riuscita. Sei disposto a fornire la scena di lavoro al team di sviluppo per la segnalazione di bug?',

@@ -63,6 +63,13 @@ const lang: ILang = {
     announcement_panel: {
       title: 'Kunngjøring',
     },
+    banner: {
+      auto_feeder: 'Automatisk matermodus',
+      camera_preview: 'Forhåndsvisning',
+      camera_preview_borderless_mode: '(Åpen bunn)',
+      curve_engraving: '3D-kurvemodus',
+      rotary: 'Roterende modus',
+    },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Konverter tekst til bane...',
       export_file_error_ask_for_upload: 'Kunne ikke eksportere oppgave. Er du villig til å sende arbeidsscene til utviklingsteamet for feilrapportering?',

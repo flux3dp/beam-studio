@@ -5,7 +5,6 @@ import classNames from 'classnames';
 import tabController from '@core/app/actions/tabController';
 import CommonTools from '@core/app/components/beambox/top-bar/CommonTools';
 import DocumentButton from '@core/app/components/beambox/top-bar/DocumentButton';
-import ElementTitle from '@core/app/components/beambox/top-bar/ElementTitle';
 import FileName, {
   registerWindowUpdateTitle,
   unregisterWindowUpdateTitle,
@@ -19,7 +18,6 @@ import TopBarHints from '@core/app/components/beambox/top-bar/TopBarHints';
 import UserAvatar from '@core/app/components/beambox/top-bar/UserAvatar';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
-import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
 import { TopBarHintsContextProvider } from '@core/app/contexts/TopBarHintsContext';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import Discover from '@core/helpers/api/discover';
@@ -116,9 +114,6 @@ const Topbar = (): React.JSX.Element => {
         </div>
         {isWebMode && <FileName hasUnsavedChange={hasUnsavedChange} />}
       </div>
-      <SelectedElementContext.Consumer>
-        {({ selectedElement }) => <ElementTitle selectedElem={selectedElement} />}
-      </SelectedElementContext.Consumer>
       <TopBarHintsContextProvider>
         <TopBarHints />
       </TopBarHintsContextProvider>

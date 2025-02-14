@@ -63,6 +63,13 @@ const lang: ILang = {
     announcement_panel: {
       title: 'Aankondiging',
     },
+    banner: {
+      auto_feeder: 'Automatische invoermodus',
+      camera_preview: 'Voorbeeld',
+      camera_preview_borderless_mode: '(Open onderkant)',
+      curve_engraving: '3D-curve modus',
+      rotary: 'Rotatiemodus',
+    },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Tekst naar pad omzetten...',
       export_file_error_ask_for_upload: 'Export mislukt. Wilt u de werkende scène naar het ontwikkelteam sturen voor een bugrapport?',
