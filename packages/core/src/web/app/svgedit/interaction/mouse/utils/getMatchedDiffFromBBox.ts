@@ -1,5 +1,3 @@
-import workareaManager from '@core/app/svgedit/workarea';
-import round from '@core/helpers/math/round';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IPoint } from '@core/interfaces/ISVGCanvas';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -14,187 +12,89 @@ export function getMatchedDiffFromBBox(currentBoundingBox: IPoint[], current: IP
   const [dx, dy] = [current.x - start.x, current.y - start.y];
   const matchPoints = currentBoundingBox.map(({ x, y }) => svgCanvas.findMatchedAlignPoints(x + dx, y + dy));
   const target: IPoint = { x: current.x, y: current.y };
-  // first map string is the target point,
-  // second map string is the matched point and matched by(dimension)
-  const potentialPointMap = new Map<string, Map<string, Array<[number, number, number]>>>();
-  const needUpdateTargetList: [string[], string[]] = [[], []];
+  // map string is the matched point and matched by(dimension)
+  const matchedMap = new Map<string, Array<[number, number, number]>>();
+  const targetMap = { x: new Map<string, number>(), y: new Map<string, number>() };
+
+  for (const [index, point] of currentBoundingBox.entries()) {
+    if (!matchPoints[index]) continue;
+
+    if (matchPoints[index].byX) {
+      const x = start.x + matchPoints[index].byX.x - point.x;
+      const prev = targetMap.x.get(String(x)) ?? 0;
+
+      targetMap.x.set(String(x), prev + 1);
+    }
+
+    if (matchPoints[index].byY) {
+      const y = start.y + matchPoints[index].byY.y - point.y;
+      const prev = targetMap.y.get(String(y)) ?? 0;
+
+      targetMap.y.set(String(y), prev + 1);
+    }
+  }
+
+  target.x = Number.parseFloat([...targetMap.x.entries()].sort((a, b) => b[1] - a[1])[0]?.[0]) || current.x;
+  target.y = Number.parseFloat([...targetMap.y.entries()].sort((a, b) => b[1] - a[1])[0]?.[0]) || current.y;
 
   for (const [index, point] of currentBoundingBox.entries()) {
     let matchedPoint: Record<'x' | 'y', null | number> = { x: null, y: null };
 
-    if (!matchPoints[index]) continue;
+    if (!matchPoints[index]?.byX?.x && !matchPoints[index]?.byY?.y) continue;
+
+    console.log(matchPoints[index], index);
 
     if (matchPoints[index].byX) {
+      if (start.x + matchPoints[index].byX.x - point.x !== target.x) continue;
+
       matchedPoint.x = matchPoints[index].byX.x;
-      target.x = start.x + matchPoints[index].byX.x - point.x;
     }
 
     if (matchPoints[index].byY) {
+      if (start.y + matchPoints[index].byY.y - point.y !== target.y) continue;
+
       matchedPoint.y = matchPoints[index].byY.y;
-      target.y = start.y + matchPoints[index].byY.y - point.y;
     }
 
     if (matchedPoint.x || matchedPoint.y) {
       let by = 'xy';
 
-      if (!matchedPoint.x) {
-        matchedPoint.x = matchPoints[index].byY.x;
-        by = 'y';
-      } else if (!matchedPoint.y) {
-        matchedPoint.y = matchPoints[index].byX.y;
-        by = 'x';
+      // only matched x
+      if (!matchedPoint.y) {
+        let matchKey = [matchPoints[index].byX.x, matchPoints[index].byX.y].join(',');
+
+        matchedMap.set(matchKey, [...(matchedMap.get(matchKey) ?? []), [point.x, point.y, index]]);
+        // if ([3, 4].includes(index)) continue;
+
+        // matchedPoint.y = matchPoints[index].byX.y;
+        // by = 'x';
+      } else if (!matchedPoint.x) {
+        let matchKey = [matchPoints[index].byY.x, matchPoints[index].byY.y].join(',');
+
+        matchedMap.set(matchKey, [...(matchedMap.get(matchKey) ?? []), [point.x, point.y, index]]);
+        // if ([1, 6].includes(index)) continue;
+
+        // matchedPoint.x = matchPoints[index].byY.x;
+        // by = 'y';
+      } else {
+        let matchKey = [matchPoints[index].byX.x, matchPoints[index].byY.y].join(',');
+
+        matchedMap.set(matchKey, [...(matchedMap.get(matchKey) ?? []), [point.x, point.y, index]]);
       }
-
-      // svgCanvas.drawTracingLine(
-      //   //
-      //   point.x + dx,
-      //   point.y + dy,
-      //   target.x,
-      //   target.y,
-      //   index + 5655,
-      //   '#FF0000',
-      // );
-
-      // svgCanvas.drawTracingLine(
-      //   //
-      //   point.x + dx,
-      //   point.y + dy,
-      //   matchedPoint.x,
-      //   matchedPoint.y!,
-      //   index + 115655,
-      //   '#0000FF',
-      // );
-
-      const targetKey = [round(target.x, 4), round(target.y, 4)].join(',');
-
-      if (target.x === current.x) needUpdateTargetList[0].push(targetKey);
-      else if (target.y === current.y) needUpdateTargetList[1].push(targetKey);
-
-      const matchKey = [matchedPoint.x, matchedPoint.y, by].join(',');
-      let matched = potentialPointMap.get(targetKey);
-
-      if (!matched) {
-        matched = new Map();
-        potentialPointMap.set(targetKey, matched);
-      }
-
-      matched.set(matchKey, [...(matched.get(matchKey) ?? []), [point.x, point.y, index]]);
     }
-  }
-
-  for (const [index, needToUpdate] of needUpdateTargetList.entries()) {
-    if (!needToUpdate.length) continue;
-
-    const isUpdateX = index === 0;
-
-    if (isUpdateX && target.x === current.x) continue;
-    else if (!isUpdateX && target.y === current.y) continue;
-
-    for (const key of needToUpdate) {
-      const [x, y] = key.split(',').map((v) => Number.parseFloat(v));
-      const targetKey = isUpdateX ? [round(target.x, 4), y].join(',') : [x, round(target.y, 4)].join(',');
-      const matched = potentialPointMap.get(key);
-
-      if (!matched) continue;
-
-      const mergedInnerKeys = matched.keys();
-      const targetMatched = potentialPointMap.get(targetKey) ?? new Map();
-
-      for (const innerKey of mergedInnerKeys) {
-        targetMatched.set(innerKey, [...(matched.get(innerKey) ?? []), ...(targetMatched.get(innerKey) ?? [])]);
-      }
-
-      potentialPointMap.delete(key);
-    }
-  }
-
-  let maxMatched = 0;
-  let needToDrawMap: Map<string, Array<[number, number, number]>> = new Map();
-  const colors = [
-    '#00FF00',
-    '#FF00FF',
-    '#00FFFF',
-    '#FFFF00',
-    '#FF0000',
-    '#0000FF',
-    '#FFA500',
-    '#800080',
-    '#008000',
-    '#800000',
-    '#008080',
-    '#808000',
-    '#808080',
-    '#C0C0C0',
-    '#FFD700',
-    '#FF4500',
-    '#FF6347',
-    '#FF69B4',
-    '#FF7F50',
-    '#FF8C00',
-    '#FFA07A',
-    '#FFA500',
-    '#FFB6C1',
-    '#FFC0CB',
-    '#FFD700',
-    '#FFDAB9',
-    '#FFDEAD',
-    '#FFE4B5',
-    '#FFE4C4',
-    '#FFE4E1',
-    '#FFEBCD',
-    '#FFEFD5',
-    '#FFFAF0',
-    '#FFFAFA',
-    '#FFFF00',
-    '#FFFFE0',
-    '#FFFFF0',
-  ];
-  let colorIndex = 0;
-
-  for (const [targetKey, matchedMap] of potentialPointMap) {
-    const [targetX, targetY] = targetKey.split(',').map((v) => Number.parseFloat(v));
-    let matchedCount = 0;
-
-    for (const [, matched] of matchedMap) {
-      matchedCount += matched.length;
-
-      //   for (const [index, [x, y]] of matched.entries()) {
-      //     // console.log(`matched, ${index}`, dx, dy);
-      //     svgCanvas.drawTracingLine(
-      //       //
-      //       x + dx,
-      //       y + dy,
-      //       targetX,
-      //       targetY,
-      //       index + 15655 * (colorIndex + 1),
-      //       colors[colorIndex],
-      //     );
-      //   }
-    }
-
-    if (matchedCount > maxMatched) {
-      maxMatched = matchedCount;
-      [target.x, target.y] = [targetX, targetY];
-      needToDrawMap = matchedMap;
-    }
-
-    colorIndex++;
   }
 
   let outerIndex = 0;
 
-  if (needToDrawMap.size) {
-    console.log(needToDrawMap);
-  }
+  console.log('matchedMap', matchedMap);
 
-  const range =
-    // 8 / workareaManager.zoomRatio;
-    Math.sqrt(8 / workareaManager.zoomRatio);
-
-  for (const [, matched] of needToDrawMap) {
+  for (const [, matched] of matchedMap) {
     let diff = Number.MAX_SAFE_INTEGER;
     let nearest = [0, 0];
     let nearestMatched: { byX: IPoint; byY: IPoint } = { byX: { x: 0, y: 0 }, byY: { x: 0, y: 0 } };
+    let nearestBboxDiff: [number, number] = [0, 0];
+
+    console.log('matched', matched);
 
     for (const [x, y, index] of matched.values()) {
       const matchPoint = matchPoints[index]!;
@@ -205,25 +105,21 @@ export function getMatchedDiffFromBBox(currentBoundingBox: IPoint[], current: IP
       if (currentDiff < diff) {
         diff = currentDiff;
         nearest = pos;
+        nearestBboxDiff = [x - start.x, y - start.y];
         nearestMatched = matchPoint;
       }
 
+      console.log('i', (outerIndex + 1) * 10 + index);
       svgCanvas.drawAlignLine(pos[0], pos[1], matchPoint.byX, matchPoint.byY, (outerIndex + 1) * 10 + index);
     }
 
-    console.log(target, current, nearest);
+    // if aligned, move the nearest point to the target point by the difference of the bbox
+    if (target.x !== current.x) nearest[0] = target.x + nearestBboxDiff[0];
 
-    if (Math.abs(target.x - current.x) < range) {
-      console.log('xRange');
-      nearest[1] -= dy;
-    }
+    if (target.y !== current.y) nearest[1] = target.y + nearestBboxDiff[1];
 
-    if (Math.abs(target.y - current.y) < range) {
-      console.log('yRange');
-      nearest[0] -= dx;
-    }
-
-    svgCanvas.drawAlignLine(nearest[0], nearest[1], nearestMatched.byX, nearestMatched.byY, outerIndex, '#FF0000');
+    console.log('oi', outerIndex);
+    svgCanvas.drawAlignLine(nearest[0], nearest[1], nearestMatched.byX, nearestMatched.byY, outerIndex);
     outerIndex++;
   }
 

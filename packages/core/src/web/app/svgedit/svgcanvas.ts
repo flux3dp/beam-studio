@@ -4585,15 +4585,12 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     return value;
   };
 
-  this.drawAlignLine = function (
-    x: number,
-    y: number,
-    byX: IPoint,
-    byY: IPoint,
-    index: number = 0,
-    stroke: string = '#1890FF',
-  ) {
+  this.drawAlignLine = function (x: number, y: number, byX: IPoint, byY: IPoint, index: number = 0) {
     const points: [number[], number[]] = [[], []];
+    const stroke: Record<'nearest' | 'normal', string> = {
+      nearest: '#FF0000',
+      normal: '#1890EF',
+    };
 
     WORKAREA_ALIGN_POINTS.forEach(({ x, y }) => {
       points[0].push(x);
@@ -4605,6 +4602,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       let alignText = svgedit.utilities.getElem(`align_text_${by}_${index}`);
       const [major, minor] = by === 'x' ? [byX, byY] : [byY, byX];
       const isCanvas = points[0].includes(major?.x) && points[1].includes(major?.y);
+      const needText = !isCanvas && index < 10;
 
       if (major) {
         if (!alignLine) {
@@ -4614,32 +4612,18 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
           svgedit.utilities.assignAttributes(alignLine, {
             fill: 'none',
             id: `align_line_${by}_${index}`,
-            stroke: isCanvas ? '#1890FF' : stroke,
+            stroke: needText ? stroke.nearest : stroke.normal,
             'stroke-dasharray': isCanvas ? undefined : '2',
             'stroke-width': '2',
             'vector-effect': 'non-scaling-stroke',
           });
-
-          //     'data-ratiofixed': true,
-          // fill,
-          // 'fill-opacity': fill === 'none' ? modelText.fill_opacity : 1,
-          // 'font-family': usePostscriptAsFamily ? `'${modelText.font_postscriptName}'` : modelText.font_family,
-          // 'font-postscript': modelText.font_postscriptName,
-          // 'font-size': fontSize ?? modelText.font_size,
-          // id: svgCanvas.getNextId(),
-          // opacity: currentShape.opacity,
-          // 'stroke-width': 2,
-          // 'text-anchor': modelText.text_anchor,
-          // x,
-          // 'xml:space': 'preserve',
-          // y,
 
           svgedit.utilities.assignAttributes(alignText, {
             fill: 1,
             'font-family': 'Arial',
             'font-size': 72,
             id: `align_text_${by}_${index}`,
-            stroke: isCanvas ? '#1890FF' : stroke,
+            stroke: needText ? stroke.nearest : stroke.normal,
             'stroke-width': '2',
             'vector-effect': 'non-scaling-stroke',
           });
@@ -4654,10 +4638,12 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         alignLine.setAttribute('d', `M ${major.x} ${major.y} L ${startPoints[0]} ${startPoints[1]}`);
         alignLine.setAttribute('display', 'inline');
 
-        alignText.setAttribute('x', (major.x + startPoints[0]) / 2 + (by === 'x' ? 50 : 0));
-        alignText.setAttribute('y', (major.y + startPoints[1]) / 2 + (by === 'y' ? -80 : 0));
+        alignText.setAttribute('x', (major.x + startPoints[0]) / 2 + (by === 'x' ? 40 : 0));
+        alignText.setAttribute('y', (major.y + startPoints[1]) / 2 + (by === 'y' ? -40 : 0));
 
-        if (distance > 500) {
+        if (distance < 500 || !needText) {
+          alignText.setAttribute('display', 'none');
+        } else {
           textEdit.renderText(
             alignText,
             round(Math.max(Math.abs(major.x - startPoints[0]), Math.abs(major.y - startPoints[1])) / 10, 2).toString(),
@@ -4795,7 +4781,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
           // skip edges for ellipse, and skip center point
           if ((isEllipse && ![level, level2].includes(0.5)) || (level === 0.5 && level2 === 0.5)) continue;
 
-          points.push({ x: bbox.x + level * bbox.width, y: bbox.y + level2 * bbox.height });
+          points.push({ x: bbox.x + level2 * bbox.width, y: bbox.y + level * bbox.height });
         }
       }
 
