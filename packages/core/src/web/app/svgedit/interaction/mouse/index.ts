@@ -756,14 +756,19 @@ const mouseMove = (evt: MouseEvent) => {
           dy = svgedit.utilities.snapToGrid(dy);
         }
 
-        // shift and align is conflict, so disable align when shift key is pressed
+        let current = { x, y };
+
         if (evt.shiftKey) {
           const xya = svgedit.math.snapToAngle(startX, startY, x, y);
 
+          // update input coords for getMatchedDiffFromBBox
+          current = xya;
           dx = xya.x - startX;
           dy = xya.y - startY;
-        } else if (svgCanvas.isBezierPathAlignToEdge) {
-          const diff = getMatchedDiffFromBBox(currentBoundingBox, { x, y }, { x: startX, y: startY });
+        }
+
+        if (svgCanvas.isBezierPathAlignToEdge) {
+          const diff = getMatchedDiffFromBBox(currentBoundingBox, current, { x: startX, y: startY });
 
           dx = diff.x;
           dy = diff.y;

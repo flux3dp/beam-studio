@@ -16,6 +16,9 @@ type By = { byX: IPoint; byY: IPoint };
 
 export function getMatchedDiffFromBBox(currentBoundingBox: IPoint[], current: IPoint, start: IPoint): IPoint {
   const [dx, dy] = [current.x - start.x, current.y - start.y];
+
+  if (!currentBoundingBox.length) return { x: dx, y: dy };
+
   const matchPoints = currentBoundingBox.map(({ x, y }) => svgCanvas.findMatchedAlignPoints(x + dx, y + dy));
   const center = { x: currentBoundingBox[1].x + dx, y: currentBoundingBox[3].y + dy };
   const target: IPoint = { x: current.x, y: current.y };
