@@ -1239,14 +1239,13 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       for (const element of selectedElements) {
         if (!element) break;
 
-        getElemAlignPoints(element as SVGGraphicsElement).forEach(({ x, y }) => {
-          this.addAlignPoint(x, y);
-        });
         selectorManager.releaseSelector(element);
       }
 
       ToolPanelsController.unmount();
       selectedElements.length = 0;
+
+      this.collectAlignPoints();
 
       if (!noCall) call('selected', selectedElements);
     }
