@@ -4608,28 +4608,27 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
           alignLine = document.createElementNS(NS.SVG, 'path');
           alignText = document.createElementNS(NS.SVG, 'text');
 
-          svgedit.utilities.assignAttributes(alignLine, {
-            fill: 'none',
-            id: `align_line_${by}_${index}`,
-            stroke: needText ? stroke.nearest : stroke.normal,
-            'stroke-dasharray': isCanvas ? undefined : '2',
-            'stroke-width': '2',
-            'vector-effect': 'non-scaling-stroke',
-          });
-
-          svgedit.utilities.assignAttributes(alignText, {
-            fill: 1,
-            'font-family': 'Arial',
-            'font-size': 72,
-            id: `align_text_${by}_${index}`,
-            stroke: needText ? stroke.nearest : stroke.normal,
-            'stroke-width': '2',
-            'vector-effect': 'non-scaling-stroke',
-          });
-
           svgedit.utilities.getElem('svgcontent').appendChild(alignLine);
           svgedit.utilities.getElem('svgcontent').appendChild(alignText);
         }
+
+        svgedit.utilities.assignAttributes(alignLine, {
+          fill: 'none',
+          id: `align_line_${by}_${index}`,
+          stroke: needText ? stroke.nearest : stroke.normal,
+          'stroke-dasharray': isCanvas ? undefined : '2',
+          'stroke-width': '2',
+          'vector-effect': 'non-scaling-stroke',
+        });
+        svgedit.utilities.assignAttributes(alignText, {
+          fill: 1,
+          'font-family': 'Arial',
+          'font-size': 16 / workareaManager.zoomRatio,
+          id: `align_text_${by}_${index}`,
+          stroke: needText ? stroke.nearest : stroke.normal,
+          'stroke-width': '2',
+          'vector-effect': 'non-scaling-stroke',
+        });
 
         const startPoints = by === 'x' ? [major.x, minor ? minor.y : y] : [minor ? minor.x : x, major.y];
         const distance = Math.max(Math.abs(major.x - startPoints[0]), Math.abs(major.y - startPoints[1]));
@@ -4640,7 +4639,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         alignText.setAttribute('x', (major.x + startPoints[0]) / 2 + (by === 'x' ? 40 : 0));
         alignText.setAttribute('y', (major.y + startPoints[1]) / 2 + (by === 'y' ? -40 : 0));
 
-        if (distance < 500 || !needText) {
+        if (distance < 50 || !needText) {
           alignText.setAttribute('display', 'none');
         } else {
           textEdit.renderText(
