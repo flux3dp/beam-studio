@@ -113,7 +113,8 @@ export function getMatchedDiffFromBBox(currentBoundingBox: IPoint[], current: IP
     matchedMap.set(key, [...(matchedMap.get(key) ?? []), [point, value, index]]);
   }
 
-  let outerIndex = 0;
+  const drewLineSet = new Set<string>();
+  let index = 0;
 
   for (const [, matched] of matchedMap) {
     let diff = Number.MAX_SAFE_INTEGER;
@@ -121,7 +122,7 @@ export function getMatchedDiffFromBBox(currentBoundingBox: IPoint[], current: IP
     let nearestMatched: By = { byX: { x: 0, y: 0 }, byY: { x: 0, y: 0 } };
     let nearestBboxDiff: [number, number] = [0, 0];
 
-    for (const [{ x, y }, { byX, byY }, index] of matched.values()) {
+    for (const [{ x, y }, { byX, byY }, i] of matched.values()) {
       const pos = [x + dx, y + dy];
       const currentDiff = Math.abs(pos[0] - (byX?.x ?? pos[0])) + Math.abs(pos[1] - (byY?.y ?? pos[1]));
 
@@ -132,7 +133,7 @@ export function getMatchedDiffFromBBox(currentBoundingBox: IPoint[], current: IP
         nearestMatched = { byX, byY };
       }
 
-      svgCanvas.drawAlignLine(pos[0], pos[1], byX, byY, (outerIndex + 1) * 10 + index);
+      svgCanvas.drawAlignLine(pos[0], pos[1], byX, byY, (index + 1) * 10 + i);
     }
 
     // if aligned, move the nearest point to the target point by the difference of the bbox
@@ -140,8 +141,18 @@ export function getMatchedDiffFromBBox(currentBoundingBox: IPoint[], current: IP
 
     if (target.y !== current.y) nearest[1] = target.y + nearestBboxDiff[1];
 
-    svgCanvas.drawAlignLine(nearest[0], nearest[1], nearestMatched.byX, nearestMatched.byY, outerIndex);
-    outerIndex++;
+    const xLine = nearestMatched.byY ? `${nearest[0]},${nearestMatched.byY.x}` : '';
+    const yLine = nearestMatched.byX ? `${nearest[1]},${nearestMatched.byX.y}` : '';
+
+    if ((xLine.length && drewLineSet.has(xLine)) || (yLine.length && drewLineSet.has(yLine))) continue;
+
+    svgCanvas.drawAlignLine(nearest[0], nearest[1], nearestMatched.byX, nearestMatched.byY, index);
+
+    if (xLine.length) drewLineSet.add(xLine);
+
+    if (yLine.length) drewLineSet.add(yLine);
+
+    index++;
   }
 
   return { x: target.x - start.x, y: target.y - start.y };
