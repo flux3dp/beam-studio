@@ -7,6 +7,8 @@ import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 import type { IProgressDialog } from '@core/interfaces/IProgress';
 
+import styles from './Progress.module.scss';
+
 const Progress = ({ data }: { data: IProgressDialog }): React.JSX.Element => {
   const lang = useI18n();
   const isMobile = useIsMobile();
@@ -38,7 +40,7 @@ const Progress = ({ data }: { data: IProgressDialog }): React.JSX.Element => {
       okButtonProps={{ style: { display: 'none' } }}
       onCancel={() => {
         popById(id);
-        onCancel();
+        onCancel?.();
       }}
       open
       style={{
@@ -49,6 +51,7 @@ const Progress = ({ data }: { data: IProgressDialog }): React.JSX.Element => {
     >
       {renderMessage()}
       <AntdProgress
+        className={styles.progress}
         percent={Number(Number(percentage).toFixed(2))}
         status="active"
         strokeColor={{ '0%': '#108ee9', '100%': '#87d068' }}
