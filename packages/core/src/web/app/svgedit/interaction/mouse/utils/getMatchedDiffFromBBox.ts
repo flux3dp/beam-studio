@@ -1,3 +1,5 @@
+import { match, P } from 'ts-pattern';
+
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IPoint } from '@core/interfaces/ISVGCanvas';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -8,53 +10,139 @@ getSVGAsync(({ Canvas }) => {
   svgCanvas = Canvas;
 });
 
+/**
+ * 0 1 2
+ * 3   4
+ * 5 6 7
+ */
+
+type By = { byX: IPoint; byY: IPoint };
+
+const isDesiredMatchX = (match: IPoint, center: IPoint, index: number) => {
+  if (!match?.x) return false;
+
+  // center point don't need to match x
+  if ([3, 4].includes(index)) return false;
+
+  if (index < 3 && match.y > center.y) return false;
+
+  if (index > 4 && match.y < center.y) return false;
+
+  return true;
+};
+
+const isDesiredMatchY = (match: IPoint, center: IPoint, index: number) => {
+  if (!match?.y) return false;
+
+  // center point don't need to match y
+  if ([1, 6].includes(index)) return false;
+
+  if ([0, 3, 5].includes(index) && match.x > center.x) return false;
+
+  if ([2, 4, 7].includes(index) && match.x < center.x) return false;
+
+  return true;
+};
+
 export function getMatchedDiffFromBBox(currentBoundingBox: IPoint[], current: IPoint, start: IPoint): IPoint {
   const [dx, dy] = [current.x - start.x, current.y - start.y];
   const matchPoints = currentBoundingBox.map(({ x, y }) => svgCanvas.findMatchedAlignPoints(x + dx, y + dy));
-  const target = { x: current.x, y: current.y };
+  const center = { x: currentBoundingBox[1].x + dx, y: currentBoundingBox[3].y + dy };
+  const target: IPoint = { x: current.x, y: current.y };
+  // map string is the matched point and matched by(dimension)
+  const matchedMap = new Map<string, Array<[IPoint, By, number]>>();
+  const targetMap = { x: new Map<string, number>(), y: new Map<string, number>() };
 
-  currentBoundingBox.forEach((point, index) => {
-    if (matchPoints[index].byX) {
-      target.x = start.x + matchPoints[index].byX.x - point.x;
+  for (const [index, point] of currentBoundingBox.entries()) {
+    const setToTargetMap = (key: 'x' | 'y') => {
+      const targetMatched = matchPoints[index]?.[`by${key.toUpperCase()}` as 'byX' | 'byY'];
+
+      if (!targetMatched) return;
+
+      const value = start[key] + targetMatched?.[key] - point[key];
+      const prev = targetMap[key].get(String(value)) ?? 0;
+
+      targetMap[key].set(String(value), prev + 1);
+    };
+
+    if (!matchPoints[index]) continue;
+
+    if (matchPoints[index].byX) setToTargetMap('x');
+
+    if (matchPoints[index].byY) setToTargetMap('y');
+  }
+
+  target.x = Number.parseFloat([...targetMap.x.entries()].sort((a, b) => b[1] - a[1])[0]?.[0]) || current.x;
+  target.y = Number.parseFloat([...targetMap.y.entries()].sort((a, b) => b[1] - a[1])[0]?.[0]) || current.y;
+
+  for (const [index, point] of currentBoundingBox.entries()) {
+    let matchedPoint: Record<'x' | 'y', null | number> = { x: null, y: null };
+
+    if (!matchPoints[index]?.byX?.x && !matchPoints[index]?.byY?.y) continue;
+
+    if (isDesiredMatchX(matchPoints[index]?.byX, center, index)) {
+      if (start.x + matchPoints[index].byX.x - point.x !== target.x) continue;
+
+      matchedPoint.x = matchPoints[index].byX.x;
     }
 
-    if (matchPoints[index].byY) {
-      target.y = start.y + matchPoints[index].byY.y - point.y;
+    if (isDesiredMatchY(matchPoints[index]?.byY, center, index)) {
+      if (start.y + matchPoints[index].byY.y - point.y !== target.y) continue;
+
+      matchedPoint.y = matchPoints[index].byY.y;
     }
 
-    if (matchPoints[index].byX || matchPoints[index].byY) {
-      svgCanvas.drawAlignLine(point.x + dx, point.y + dy, matchPoints[index].byX, matchPoints[index].byY, index);
+    if (!matchedPoint.x && !matchedPoint.y) continue;
+
+    const [key, value] = match(matchedPoint)
+      .with({ x: P.number, y: P.number }, () => [
+        //
+        [matchedPoint.x, matchedPoint.y].join(','),
+        matchPoints[index],
+      ])
+      .with({ x: P.number }, () => [
+        [matchedPoint.x, matchPoints[index]?.byX.y].join(','),
+        { byX: { x: matchedPoint.x, y: matchPoints[index]?.byX.y }, byY: null },
+      ])
+      .with({ y: P.number }, () => [
+        [matchPoints[index]?.byY.x, matchedPoint.y].join(','),
+        { byX: null, byY: { x: matchPoints[index]?.byY.x, y: matchedPoint.y } },
+      ])
+      .run() as [string, By];
+
+    matchedMap.set(key, [...(matchedMap.get(key) ?? []), [point, value, index]]);
+  }
+
+  let outerIndex = 0;
+
+  for (const [, matched] of matchedMap) {
+    let diff = Number.MAX_SAFE_INTEGER;
+    let nearest = [0, 0];
+    let nearestMatched: By = { byX: { x: 0, y: 0 }, byY: { x: 0, y: 0 } };
+    let nearestBboxDiff: [number, number] = [0, 0];
+
+    for (const [{ x, y }, { byX, byY }, index] of matched.values()) {
+      const pos = [x + dx, y + dy];
+      const currentDiff = Math.abs(pos[0] - (byX?.x ?? pos[0])) + Math.abs(pos[1] - (byY?.y ?? pos[1]));
+
+      if (currentDiff < diff) {
+        diff = currentDiff;
+        nearest = pos;
+        nearestBboxDiff = [x - start.x, y - start.y];
+        nearestMatched = { byX, byY };
+      }
+
+      svgCanvas.drawAlignLine(pos[0], pos[1], byX, byY, (outerIndex + 1) * 10 + index);
     }
 
-    // if (matchPoints[index].byX && matchPoints[index].byY) {
-    //   svgCanvas.drawTracingLine(
-    //     point.x + dx,
-    //     point.y + dy,
-    //     matchPoints[index].byX.x,
-    //     matchPoints[index].byY.y,
-    //     index + 5655,
-    //     '#FF0000',
-    //   );
-    // } else if (matchPoints[index].byX) {
-    //   svgCanvas.drawTracingLine(
-    //     point.x + dx,
-    //     point.y + dy,
-    //     matchPoints[index].byX.x,
-    //     matchPoints[index].byX.y,
-    //     index + 5655,
-    //     '#FF0000',
-    //   );
-    // } else {
-    //   svgCanvas.drawTracingLine(
-    //     point.x + dx,
-    //     point.y + dy,
-    //     matchPoints[index].byY.x,
-    //     matchPoints[index].byY.y,
-    //     index + 5655,
-    //     '#FF0000',
-    //   );
-    // }
-  });
+    // if aligned, move the nearest point to the target point by the difference of the bbox
+    if (target.x !== current.x) nearest[0] = target.x + nearestBboxDiff[0];
+
+    if (target.y !== current.y) nearest[1] = target.y + nearestBboxDiff[1];
+
+    svgCanvas.drawAlignLine(nearest[0], nearest[1], nearestMatched.byX, nearestMatched.byY, outerIndex);
+    outerIndex++;
+  }
 
   return { x: target.x - start.x, y: target.y - start.y };
 }

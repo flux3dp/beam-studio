@@ -57,6 +57,7 @@ import i18n from '@core/helpers/i18n';
 import jimpHelper from '@core/helpers/jimp-helper';
 import laserConfigHelper from '@core/helpers/layer/layer-config-helper';
 import * as LayerHelper from '@core/helpers/layer/layer-helper';
+import round from '@core/helpers/math/round';
 import viewMenu from '@core/helpers/menubar/view';
 import randomColor from '@core/helpers/randomColor';
 import sanitizeXmlString from '@core/helpers/sanitize-xml-string';
@@ -111,6 +112,7 @@ let tempN = 0;
 const LANG = i18n.lang.beambox;
 
 const drawingToolEventEmitter = eventEmitterFactory.createEventEmitter('drawing-tool');
+const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 
 // Class: SvgCanvas
 // The main SvgCanvas class that manages all SVG-related functions
@@ -168,7 +170,25 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
   // CUSTOM VARIABLES
   const alignPoints: Record<'x' | 'y', Array<Record<'x' | 'y', number>>> = { x: [], y: [] };
-  let alignLineIndex = 0;
+  const WORKAREA_ALIGN_POINTS = Array.of<IPoint>();
+  const updateWorkAreaAlignPoints = () => {
+    const levels = [0, 0.5, 1];
+
+    WORKAREA_ALIGN_POINTS.length = 0;
+
+    for (const level of levels) {
+      for (const level2 of levels) {
+        if (level === 0.5 && level2 === 0.5) continue;
+
+        WORKAREA_ALIGN_POINTS.push({ x: workareaManager.width * level, y: workareaManager.height * level2 });
+      }
+    }
+  };
+
+  canvasEventEmitter.on('document-settings-saved', () => {
+    updateWorkAreaAlignPoints();
+    clearSelection();
+  });
 
   // This function resets the svgcontent element while keeping it in the DOM.
   var clearSvgContentElement = (canvas.clearSvgContentElement = function () {
@@ -613,6 +633,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
   workareaManager.init(model);
   grid.init(workareaManager.zoomRatio);
+  updateWorkAreaAlignPoints();
   presprayArea.generatePresprayArea();
   rotaryAxis.init();
 
@@ -1218,14 +1239,13 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       for (const element of selectedElements) {
         if (!element) break;
 
-        getElemAlignPoints(element as SVGGraphicsElement).forEach(({ x, y }) => {
-          this.addAlignPoint(x, y);
-        });
         selectorManager.releaseSelector(element);
       }
 
       ToolPanelsController.unmount();
       selectedElements.length = 0;
+
+      this.collectAlignPoints();
 
       if (!noCall) call('selected', selectedElements);
     }
@@ -4549,6 +4569,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
   this.clearAlignLines = () => {
     $('[id^="align_line"]').remove();
+    $('[id^="align_text"]').remove();
     this.clearTracingLines();
   };
 
@@ -4564,32 +4585,67 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   };
 
   this.drawAlignLine = function (x: number, y: number, byX: IPoint, byY: IPoint, index: number = 0) {
+    const points: [number[], number[]] = [[], []];
+    const stroke: Record<'nearest' | 'normal', string> = {
+      nearest: '#F707F0',
+      normal: '#1890EF',
+    };
+
+    WORKAREA_ALIGN_POINTS.forEach(({ x, y }) => {
+      points[0].push(x);
+      points[1].push(y);
+    });
+
     const draw = (by: 'x' | 'y') => {
       let alignLine = svgedit.utilities.getElem(`align_line_${by}_${index}`);
+      let alignText = svgedit.utilities.getElem(`align_text_${by}_${index}`);
       const [major, minor] = by === 'x' ? [byX, byY] : [byY, byX];
+      const isCanvas = points[0].includes(major?.x) && points[1].includes(major?.y);
+      const needText = !isCanvas && index < 10;
 
       if (major) {
-        if (!alignLine) {
-          alignLine = document.createElementNS(NS.SVG, 'path');
+        alignLine = document.createElementNS(NS.SVG, 'path');
+        alignText = document.createElementNS(NS.SVG, 'text');
 
-          svgedit.utilities.assignAttributes(alignLine, {
-            fill: 'none',
-            id: `align_line_${by}_${index}`,
-            stroke: '#1890FF',
-            'stroke-dasharray': '2',
-            'stroke-width': '2',
-            'vector-effect': 'non-scaling-stroke',
-          });
+        svgedit.utilities.getElem('svgcontent').appendChild(alignLine);
+        svgedit.utilities.getElem('svgcontent').appendChild(alignText);
 
-          svgedit.utilities.getElem('svgcontent').appendChild(alignLine);
-        }
+        svgedit.utilities.assignAttributes(alignLine, {
+          fill: 'none',
+          id: `align_line_${by}_${index}`,
+          stroke: needText ? stroke.nearest : stroke.normal,
+          'stroke-dasharray': isCanvas ? undefined : '2',
+          'stroke-width': '2',
+          'vector-effect': 'non-scaling-stroke',
+        });
+        svgedit.utilities.assignAttributes(alignText, {
+          fill: 1,
+          'font-family': 'Arial',
+          'font-size': 20 / Math.sqrt(workareaManager.zoomRatio),
+          id: `align_text_${by}_${index}`,
+          stroke: needText ? stroke.nearest : stroke.normal,
+          'stroke-width': '2',
+          'vector-effect': 'non-scaling-stroke',
+        });
 
         const startPoints = by === 'x' ? [major.x, minor ? minor.y : y] : [minor ? minor.x : x, major.y];
+        const distance = Math.max(Math.abs(major.x - startPoints[0]), Math.abs(major.y - startPoints[1]));
+        const offset = 5 / workareaManager.zoomRatio;
 
         alignLine.setAttribute('d', `M ${major.x} ${major.y} L ${startPoints[0]} ${startPoints[1]}`);
         alignLine.setAttribute('display', 'inline');
-      } else if (alignLine) {
-        alignLine.setAttribute('display', 'none');
+
+        alignText.setAttribute('x', (major.x + startPoints[0]) / 2 + (by === 'x' ? offset : -2 * offset));
+        alignText.setAttribute('y', (major.y + startPoints[1]) / 2 + (by === 'y' ? -offset : 0));
+
+        if (distance < 10 || !needText) {
+          alignText.setAttribute('display', 'none');
+        } else {
+          textEdit.renderText(
+            alignText,
+            round(Math.max(Math.abs(major.x - startPoints[0]), Math.abs(major.y - startPoints[1])) / 10, 2).toString(),
+          );
+        }
       }
     };
 
@@ -4619,30 +4675,9 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
   this.findMatchedAlignPoints = function (x: number, y: number) {
     // for consistent align experience
-    const FUZZY_RANGE = 16 / workareaManager.zoomRatio;
+    const FUZZY_RANGE = 8 / workareaManager.zoomRatio;
 
-    if (!alignPoints.x.length) return { byX: null, byY: null };
-
-    // const newNearestX = findNearestAlignPoint(alignPoints, { x, y }, 'x', FUZZY_RANGE);
-    // const nearestX =
-    //   alignPoints.x[
-    //     binarySearchIndex(
-    //       alignPoints.x.map(({ x }) => x),
-    //       x,
-    //     )
-    //   ];
-
-    // console.log('nearestX', nearestX, newNearestX);
-
-    // const byX = nearestX && Math.abs(nearestX.x - x) < FUZZY_RANGE ? nearestX : null;
-    // const nearestY =
-    //   alignPoints.y[
-    //     binarySearchIndex(
-    //       alignPoints.y.map(({ y }) => y),
-    //       y,
-    //     )
-    //   ];
-    // const byY = nearestY && Math.abs(nearestY.y - y) < FUZZY_RANGE ? nearestY : null;
+    if (!alignPoints.x.length) return null;
 
     return {
       byX: findNearestAlignPoint(alignPoints, { x, y }, 'x', FUZZY_RANGE),
@@ -4661,6 +4696,10 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     const points = elems
       .filter((elem) => !selectedElements.includes(elem as SVGElement))
       .flatMap((elem) => getElemAlignPoints(elem as SVGGraphicsElement));
+
+    WORKAREA_ALIGN_POINTS.forEach((point) => {
+      points.push(point);
+    });
 
     alignPoints.x = points.toSorted((a, b) => a.x - b.x);
     alignPoints.y = points.toSorted((a, b) => a.y - b.y);
@@ -4731,14 +4770,14 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       const points = Array.of<IPoint>();
       const levels = [0, 0.5, 1] as const;
 
-      levels.forEach((level) => {
-        levels.forEach((level2) => {
-          // skip edges for ellipse
-          if ((isEllipse && ![level, level2].includes(0.5)) || (level === 0.5 && level2 === 0.5)) return;
+      for (const level of levels) {
+        for (const level2 of levels) {
+          // skip edges for ellipse, and skip center point
+          if ((isEllipse && ![level, level2].includes(0.5)) || (level === 0.5 && level2 === 0.5)) continue;
 
-          points.push({ x: bbox.x + level * bbox.width, y: bbox.y + level2 * bbox.height });
-        });
-      });
+          points.push({ x: bbox.x + level2 * bbox.width, y: bbox.y + level * bbox.height });
+        }
+      }
 
       return points;
     };
@@ -6178,15 +6217,10 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   };
 
   this.getSvgRealLocation = function (elem: SVGGraphicsElement): IRect {
-    if (elem.tagName === 'text') {
-      return this.calculateTransformedBBox(elem);
-    }
+    if (elem.tagName === 'text') return this.calculateTransformedBBox(elem);
 
-    if (elem.tagName !== 'use') {
-      return elem.getBBox();
-    }
+    if (elem.tagName !== 'use') return elem.getBBox();
 
-    const ts = $(elem).attr('transform') || '';
     const xform = $(elem).attr('data-xform');
     const elemX = Number.parseFloat($(elem).attr('x') || '0');
     const elemY = Number.parseFloat($(elem).attr('y') || '0');
@@ -6209,10 +6243,19 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       obj.y = 0;
     }
 
-    const matrix = ts.match(/matrix\(.*?\)/g);
+    const tlist = svgedit.transformlist.getTransformList(elem);
+    let rotationIndex = -1;
 
-    const matr = matrix ? matrix[0].substring(7, matrix[0].length - 1) : '1,0,0,1,0,0';
-    const [a, b, c, d, e, f] = matr.split(/[, ]+/).map(Number.parseFloat);
+    for (let i = tlist.numberOfItems - 1; i >= 0; i--) {
+      if (tlist.getItem(i).type === 4) {
+        rotationIndex = i;
+        break;
+      }
+    }
+
+    // ignore rotation
+    const { matrix: { a = 1, b = 0, c = 0, d = 1, e = 0, f = 0 } = {} } =
+      rotationIndex === tlist.numberOfItems - 1 ? {} : svgedit.math.transformListToTransform(tlist, rotationIndex + 1);
 
     obj.x += elemX;
     obj.y += elemY;
@@ -6231,6 +6274,11 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       y += height;
       height *= -1;
     }
+
+    height = round(height, 4);
+    width = round(width, 4);
+    x = round(x, 4);
+    y = round(y, 4);
 
     return { height, width, x, y };
   };
