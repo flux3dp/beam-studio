@@ -1134,6 +1134,7 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
 
         if (selectedElements.length > 1) {
           svgCanvas.tempGroupSelectedElements();
+          svgEditor.updateContextPanel();
         }
       }
 
@@ -1397,6 +1398,11 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
       // This could occur in an extension
       break;
   }
+
+  // if (selectedElements.length > 1) {
+  //   svgCanvas.tempGroupSelectedElements();
+  //   svgEditor.updateContextPanel();
+  // }
 
   const extResult = svgCanvas.runExtensions(
     'mouseUp',
