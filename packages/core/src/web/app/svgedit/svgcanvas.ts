@@ -4587,7 +4587,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   this.drawAlignLine = function (x: number, y: number, byX: IPoint, byY: IPoint, index: number = 0) {
     const points: [number[], number[]] = [[], []];
     const stroke: Record<'nearest' | 'normal', string> = {
-      nearest: '#FF0000',
+      nearest: '#F707F0',
       normal: '#1890EF',
     };
 
@@ -4638,7 +4638,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         alignText.setAttribute('x', (major.x + startPoints[0]) / 2 + (by === 'x' ? offset : -2 * offset));
         alignText.setAttribute('y', (major.y + startPoints[1]) / 2 + (by === 'y' ? -offset : 0));
 
-        if (distance < 50 || !needText) {
+        if (distance < 10 || !needText) {
           alignText.setAttribute('display', 'none');
         } else {
           textEdit.renderText(
