@@ -520,6 +520,7 @@ const mouseDown = async (evt: MouseEvent) => {
 const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: number) => {
   const currentConfig = svgCanvas.getCurrentConfig();
   const svgRoot = svgCanvas.getRoot();
+  const resizeMode = svgCanvas.getCurrentResizeMode();
   const transforms = svgedit.transformlist.getTransformList(selected);
   const hasMatrix = svgedit.math.hasMatrixTransform(transforms);
   const box = hasMatrix ? initBBox : svgedit.utilities.getBBox(selected);
@@ -534,7 +535,13 @@ const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: 
   }
 
   if (svgCanvas.isBezierPathAlignToEdge && needMatchAlignPoints) {
-    [x, y] = findAndDrawAlignPoints(x, y);
+    let [inputX, inputY] = [x, y];
+
+    if (!resizeMode.includes('n') && !resizeMode.includes('s')) inputY = startY;
+
+    if (!resizeMode.includes('e') && !resizeMode.includes('w')) inputX = startX;
+
+    [x, y] = findAndDrawAlignPoints(inputX, inputY);
   }
 
   let dx = x - startX;
@@ -553,8 +560,6 @@ const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: 
 
   // if not stretching in y direction, set dy to 0
   // if not stretching in x direction, set dx to 0
-  const resizeMode = svgCanvas.getCurrentResizeMode();
-
   if (!resizeMode.includes('n') && !resizeMode.includes('s')) dy = 0;
 
   if (!resizeMode.includes('e') && !resizeMode.includes('w')) dx = 0;

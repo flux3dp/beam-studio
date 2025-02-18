@@ -4,45 +4,15 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IPoint } from '@core/interfaces/ISVGCanvas';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
+import { isValidMatch } from './isValidMatch';
+
 let svgCanvas: ISVGCanvas;
 
 getSVGAsync(({ Canvas }) => {
   svgCanvas = Canvas;
 });
 
-/**
- * 0 1 2
- * 3   4
- * 5 6 7
- */
-
 type By = { byX: IPoint; byY: IPoint };
-
-const isDesiredMatchX = (match: IPoint, center: IPoint, index: number) => {
-  if (!match?.x) return false;
-
-  // center point don't need to match x
-  if ([3, 4].includes(index)) return false;
-
-  if (index < 3 && match.y > center.y) return false;
-
-  if (index > 4 && match.y < center.y) return false;
-
-  return true;
-};
-
-const isDesiredMatchY = (match: IPoint, center: IPoint, index: number) => {
-  if (!match?.y) return false;
-
-  // center point don't need to match y
-  if ([1, 6].includes(index)) return false;
-
-  if ([0, 3, 5].includes(index) && match.x > center.x) return false;
-
-  if ([2, 4, 7].includes(index) && match.x < center.x) return false;
-
-  return true;
-};
 
 export function getMatchedDiffFromBBox(currentBoundingBox: IPoint[], current: IPoint, start: IPoint): IPoint {
   const [dx, dy] = [current.x - start.x, current.y - start.y];
@@ -80,13 +50,13 @@ export function getMatchedDiffFromBBox(currentBoundingBox: IPoint[], current: IP
 
     if (!matchPoints[index]?.byX?.x && !matchPoints[index]?.byY?.y) continue;
 
-    if (isDesiredMatchX(matchPoints[index]?.byX, center, index)) {
+    if (isValidMatch(matchPoints[index]?.byX, center, index, 'x')) {
       if (start.x + matchPoints[index].byX.x - point.x !== target.x) continue;
 
       matchedPoint.x = matchPoints[index].byX.x;
     }
 
-    if (isDesiredMatchY(matchPoints[index]?.byY, center, index)) {
+    if (isValidMatch(matchPoints[index]?.byY, center, index, 'y')) {
       if (start.y + matchPoints[index].byY.y - point.y !== target.y) continue;
 
       matchedPoint.y = matchPoints[index].byY.y;
