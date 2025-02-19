@@ -9,6 +9,7 @@ import LayerModule from '@core/app/constants/layer-module/layer-modules';
 import { LaserType } from '@core/app/constants/promark-constants';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import useHasCurveEngraving from '@core/helpers/hooks/useHasCurveEngraving';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import { getPromarkLimit } from '@core/helpers/layer/layer-config-helper';
 import useForceUpdate from '@core/helpers/use-force-update';
@@ -17,6 +18,7 @@ import useI18n from '@core/helpers/useI18n';
 import styles from './AdvancedBlock.module.scss';
 import AutoFocus from './AutoFocus';
 import ConfigPanelContext from './ConfigPanelContext';
+import CurveEngravingZHighSpeed from './CurveEngravingZHighSpeed';
 import Diode from './Diode';
 import FocusBlock from './FocusBlock';
 import FrequencyBlock from './FrequencyBlock';
@@ -29,6 +31,7 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
   const forceUpdate = useForceUpdate();
   const lang = useI18n().beambox.right_panel.laser_panel;
   const workarea = useWorkarea();
+  const hasCurveEngraving = useHasCurveEngraving();
   const supportInfo = useMemo(() => getSupportInfo(workarea), [workarea]);
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
   const promarkInfo = isPromark ? getPromarkInfo() : null;
@@ -87,9 +90,9 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
     contents.push(<SingleColorBlock key="single-color-block" />);
   }
 
-  if (contents.length === 0) {
-    return null;
-  }
+  if (hasCurveEngraving) contents.push(<CurveEngravingZHighSpeed key="curve-engraving-z-high-speed" />);
+
+  if (contents.length === 0) return null;
 
   return (
     <ConfigProvider

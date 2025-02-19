@@ -1,0 +1,54 @@
+import { useContext, useMemo } from 'react';
+
+import { Switch } from 'antd';
+import classNames from 'classnames';
+
+import history from '@core/app/svgedit/history/history';
+import undoManager from '@core/app/svgedit/history/undoManager';
+import { writeData } from '@core/helpers/layer/layer-config-helper';
+import useI18n from '@core/helpers/useI18n';
+
+import styles from './Block.module.scss';
+import ConfigPanelContext from './ConfigPanelContext';
+
+const CurveEngravingZHighSpeed = () => {
+  const {
+    beambox: {
+      right_panel: { laser_panel: t },
+    },
+  } = useI18n();
+  const { dispatch, initState, selectedLayers, state } = useContext(ConfigPanelContext);
+  const {
+    ceZSpeedLimit: { hasMultiValue, value },
+  } = state;
+  const checked = useMemo(() => value !== 140 || hasMultiValue, [value, hasMultiValue]);
+
+  const handleToggle = () => {
+    const newValue = checked ? 140 : 300;
+
+    dispatch({ payload: { ceZSpeedLimit: newValue }, type: 'change' });
+
+    const batchCmd = new history.BatchCommand('Change diode toggle');
+
+    selectedLayers.forEach((layerName) => writeData(layerName, 'ceZSpeedLimit', newValue, { batchCmd }));
+    batchCmd.onAfter = initState;
+    undoManager.addCommandToHistory(batchCmd);
+  };
+
+  return (
+    <div className={classNames(styles.panel, styles.switch)}>
+      <label className={styles.title} htmlFor="diode">
+        tHigh Speed Z axis
+      </label>
+      <Switch
+        checked={checked}
+        className={styles.switch}
+        id="curve-engraving-z-high-speed"
+        onChange={handleToggle}
+        size="small"
+      />
+    </div>
+  );
+};
+
+export default CurveEngravingZHighSpeed;
