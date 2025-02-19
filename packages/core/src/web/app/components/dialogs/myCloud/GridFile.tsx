@@ -7,8 +7,9 @@ import {
   DownloadOutlined,
   EditOutlined,
   EllipsisOutlined,
+  ExclamationCircleFilled,
 } from '@ant-design/icons';
-import { Dropdown, Input, Popconfirm } from 'antd';
+import { Dropdown, Input, Modal } from 'antd';
 import classNames from 'classnames';
 import dayjs from 'dayjs';
 
@@ -43,7 +44,10 @@ const getFileSize = (bytes: number) => {
 };
 
 const GridFile = ({ file }: Props): React.JSX.Element => {
-  const lang = useI18n().my_cloud.action;
+  const {
+    alert: tAlert,
+    my_cloud: { action: lang },
+  } = useI18n();
   const isMobile = useIsMobile();
   const workarea = getWorkarea(file.workarea as WorkAreaModel);
   const [actionDropdownOpen, setActionDropdownOpen] = useState(false);
@@ -113,7 +117,29 @@ const GridFile = ({ file }: Props): React.JSX.Element => {
   }, [isEditing, inputRef]);
 
   return (
-    <div className={classNames(styles.grid, { [styles.selected]: isSelected && !isEditing })}>
+    <div
+      className={classNames(styles.grid, { [styles.selected]: isSelected && !isEditing })}
+      // stop click event from delete modal
+      onClick={(e) => e.stopPropagation()}
+    >
+      <Modal
+        cancelText={tAlert.cancel}
+        centered
+        closeIcon={null}
+        mask={false}
+        okText={tAlert.ok}
+        onCancel={() => setDeleteModalOpen(false)}
+        onOk={() => {
+          fileOperation.delete(file);
+          setDeleteModalOpen(false);
+        }}
+        open={deleteModalOpen}
+        title={
+          <>
+            <ExclamationCircleFilled className={styles.delete} /> {lang.confirmFileDelete}
+          </>
+        }
+      />
       <div className={styles['img-container']}>
         <div
           className={styles['guide-lines']}
@@ -123,7 +149,7 @@ const GridFile = ({ file }: Props): React.JSX.Element => {
         >
           {file.thumbnail_url && <img src={`${file.thumbnail_url}?lastmod=${file.last_modified_at}`} />}
           <Dropdown
-            getPopupContainer={(triggerNode) => triggerNode.parentElement}
+            getPopupContainer={(triggerNode) => triggerNode.parentElement!}
             menu={{ items: actions, onClick: onAction }}
             onOpenChange={setActionDropdownOpen}
             open={actionDropdownOpen}
@@ -135,16 +161,6 @@ const GridFile = ({ file }: Props): React.JSX.Element => {
               <EllipsisOutlined />
             </div>
           </Dropdown>
-          <Popconfirm
-            arrow={false}
-            getPopupContainer={(triggerNode) => triggerNode.parentElement}
-            onConfirm={() => fileOperation.delete(file)}
-            onOpenChange={setDeleteModalOpen}
-            onPopupClick={(e) => e.stopPropagation()}
-            open={deleteModalOpen}
-            overlayClassName={styles.overlay}
-            title={lang.confirmFileDelete}
-          />
         </div>
       </div>
       <div className={styles.name}>

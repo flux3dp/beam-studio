@@ -109,6 +109,7 @@ const ExportDialog = ({
   return (
     <Modal
       cancelText={lang.cancel}
+      centered
       confirmLoading={confirmLoading}
       okButtonProps={{ icon: <DownloadOutlined /> }}
       okText={lang.import}

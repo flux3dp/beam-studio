@@ -321,7 +321,7 @@ class SvgNestButtons extends React.Component<Props, State> {
 
     const endText = LANG._nest.end;
     const isWindows = !isWeb() && window.os === 'Windows';
-    const className = classNames(styles.container, { win: isWindows });
+    const className = classNames(styles.container, { [styles.win]: isWindows });
 
     const content = (
       <div className={className}>

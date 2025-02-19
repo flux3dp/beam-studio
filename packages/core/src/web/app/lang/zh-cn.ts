@@ -1535,7 +1535,7 @@ const lang: ILang = {
   },
   my_cloud: {
     action: {
-      confirmFileDelete: '确定要删除此文件吗?此操作无法撤消。',
+      confirmFileDelete: '确定要删除此文件吗？此操作无法撤消。',
       delete: '删除',
       download: '下载',
       duplicate: '复制',
