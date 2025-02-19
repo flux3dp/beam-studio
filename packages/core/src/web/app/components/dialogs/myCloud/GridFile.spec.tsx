@@ -7,19 +7,6 @@ import type { IFile } from '@core/interfaces/IMyCloud';
 
 import GridFile from './GridFile';
 
-jest.mock('@core/helpers/useI18n', () => () => ({
-  my_cloud: {
-    action: {
-      confirmFileDelete: 'Are you sure you want to delete this file?',
-      delete: 'Delete',
-      download: 'Download',
-      duplicate: 'Duplicate',
-      open: 'Open',
-      rename: 'Rename',
-    },
-  },
-}));
-
 const mockFile: IFile = {
   created_at: '2024-01-09T04:14:36.801586Z',
   last_modified_at: '2024-01-09T06:42:04.824942Z',
@@ -68,7 +55,7 @@ describe('test GridFile', () => {
   });
 
   test('should behave correctly', () => {
-    const { container, getByText, rerender } = render(
+    const { baseElement, container, getByText, rerender } = render(
       <MyCloudContext.Provider value={mockContext}>
         <GridFile file={mockFile} />
       </MyCloudContext.Provider>,
@@ -137,10 +124,10 @@ describe('test GridFile', () => {
 
     fireEvent.click(getByText('Delete'));
 
-    const confirm = container.querySelector('.ant-popconfirm');
+    const confirm = baseElement.querySelector('.ant-modal-root');
 
     expect(confirm).toBeInTheDocument();
-    expect(container).toMatchSnapshot();
+    expect(baseElement).toMatchSnapshot();
     fireEvent.click(getByText('OK'));
     expect(mockDelete).toBeCalledTimes(1);
     expect(mockDelete).toBeCalledWith(mockFile);

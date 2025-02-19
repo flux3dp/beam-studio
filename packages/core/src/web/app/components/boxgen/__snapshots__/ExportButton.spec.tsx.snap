@@ -33,7 +33,7 @@ exports[`test ExportButton should behave correctly 2`] = `
         class="ant-modal-mask"
       />
       <div
-        class="ant-modal-wrap"
+        class="ant-modal-wrap ant-modal-centered"
         tabindex="-1"
       >
         <div
