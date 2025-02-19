@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - "app-*"
+  workflow_dispatch:
 
 jobs:
   build:
