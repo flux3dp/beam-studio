@@ -77,10 +77,14 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
       );
     }
 
-    if (supportInfo.lowerFocus) {
-      contents.push(<FocusBlock key="focus-block" type={type} />);
-    } else if (supportInfo.autoFocus && beamboxPreference.read('enable-autofocus')) {
-      contents.push(<AutoFocus key="auto-focus" />);
+    if (hasCurveEngraving) {
+      contents.push(<CurveEngravingZHighSpeed key="curve-engraving-z-high-speed" />);
+    } else {
+      if (supportInfo.lowerFocus) {
+        contents.push(<FocusBlock key="focus-block" type={type} />);
+      } else if (supportInfo.autoFocus && beamboxPreference.read('enable-autofocus')) {
+        contents.push(<AutoFocus key="auto-focus" />);
+      }
     }
 
     if (supportInfo.hybridLaser && beamboxPreference.read('enable-diode')) {
@@ -89,8 +93,6 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
   } else {
     contents.push(<SingleColorBlock key="single-color-block" />);
   }
-
-  if (hasCurveEngraving) contents.push(<CurveEngravingZHighSpeed key="curve-engraving-z-high-speed" />);
 
   if (contents.length === 0) return null;
 
