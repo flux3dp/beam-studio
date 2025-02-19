@@ -16,7 +16,8 @@ export interface IBaseConfig {
 }
 
 export type TFcodeOptionalConfig = Partial<{
-  acc: number;
+  acc: number; // acceleration to calculate task time, not real acceleration used in machine
+  acc_override: Partial<Record<'fill' | 'path', Partial<{ a: number; x: number; y: number; z: number }>>>; // set acceleration for real task
   af: boolean;
   ats: number; // a travel speed
   blade: number; // blade radius
