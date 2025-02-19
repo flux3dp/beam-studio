@@ -84,6 +84,7 @@ export class TutorialContextProvider extends React.Component<Props, States> {
   };
 
   scrollToParameterSelect = async (): Promise<void> => {
+    await new Promise<void>((resolve) => setTimeout(resolve, 100));
     RightPanelController.setPanelType(PanelType.Layer);
     await new Promise<void>((resolve) => setTimeout(resolve, 100));
     document.querySelector('#layer-parameters')?.scrollIntoView();
