@@ -1,11 +1,15 @@
 import type { IPoint } from '@core/interfaces/ISVGCanvas';
 
-type By = { byX: IPoint; byY: IPoint };
-
-export function isSameTarget(target: IPoint, matched: By, start: IPoint, point: IPoint, dimension: 'x' | 'y'): boolean {
+export function isSameTarget(
+  target: IPoint,
+  matched: Record<'x' | 'y', IPoint | null>,
+  start: IPoint,
+  point: IPoint,
+  dimension: 'x' | 'y',
+): boolean {
   const subDimension = dimension === 'x' ? 'y' : 'x';
-  const mainMatched = matched[`by${dimension.toUpperCase()}` as 'byX' | 'byY'];
-  const subMatched = matched[`by${subDimension.toUpperCase()}` as 'byX' | 'byY'];
+  const mainMatched = matched[dimension];
+  const subMatched = matched[subDimension];
 
   if (!mainMatched) return true;
 

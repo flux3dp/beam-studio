@@ -4562,15 +4562,9 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     }
   };
 
-  // WARN: TEMP
-  this.clearTracingLines = () => {
-    $('[id^="tracing_line"]').remove();
-  };
-
   this.clearAlignLines = () => {
     $('[id^="align_line"]').remove();
     $('[id^="align_text"]').remove();
-    this.clearTracingLines();
   };
 
   this.toggleBezierPathAlignToEdge = () => {
@@ -4584,7 +4578,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     return value;
   };
 
-  this.drawAlignLine = function (x: number, y: number, byX: IPoint, byY: IPoint, index: number = 0) {
+  this.drawAlignLine = function (tx: number, ty: number, x: IPoint | null, y: IPoint | null, index: number = 0) {
     const points: [number[], number[]] = [[], []];
     const stroke: Record<'nearest' | 'normal', string> = {
       nearest: '#F707F0',
@@ -4609,12 +4603,12 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     const draw = (by: 'x' | 'y') => {
       let alignLine = svgedit.utilities.getElem(`align_line_${by}_${index}`);
       let alignText = svgedit.utilities.getElem(`align_text_${by}_${index}`);
-      const [major, minor] = by === 'x' ? [byX, byY] : [byY, byX];
+      const [major, minor] = by === 'x' ? [x, y] : [y, x];
 
       if (!major) return;
 
       const isCanvas = points[0].includes(major.x) && points[1].includes(major.y);
-      const startPoints = by === 'x' ? [major.x, minor ? minor.y : y] : [minor ? minor.x : x, major.y];
+      const startPoints = by === 'x' ? [major.x, minor ? minor.y : ty] : [minor ? minor.x : tx, major.y];
       const line = { x1: startPoints[0], x2: major.x, y1: startPoints[1], y2: major.y };
       const needText = !isCanvas && index < 10 && !detectIfLineCoincide(line);
 
@@ -4665,48 +4659,32 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     draw('y');
   };
 
-  // DEBUG: create tracing line to display distance between two points
-  this.drawTracingLine = (x1: number, y1: number, x2: number, y2: number, index: number, stroke = '#0000FF') => {
-    const id = `tracing_line_${index}`;
-    let line = svgedit.utilities.getElem(id);
-
-    if (!line) {
-      line = document.createElementNS(NS.SVG, 'path');
-      svgedit.utilities.assignAttributes(line, {
-        id,
-        stroke,
-        'stroke-width': '2',
-        'vector-effect': 'non-scaling-stroke',
-      });
-      svgedit.utilities.getElem('svgcontent').appendChild(line);
-    }
-
-    line.setAttribute('d', `M ${x1} ${y1} L ${x2} ${y2}`);
-    line.setAttribute('display', 'inline');
-  };
-
   this.findMatchedAlignPoints = function (x: number, y: number) {
     // for consistent align experience
     const FUZZY_RANGE = 8 / workareaManager.zoomRatio;
 
-    if (!alignPoints.x.length) return null;
+    // if no alignPoints, return null
+    if (!alignPoints.x.length) return { farthest: { x: null, y: null }, nearest: { x: null, y: null } };
+
+    const [nearestX, farthestX] = findNearestAndFarthestAlignPoints(alignPoints, { x, y }, 'x', FUZZY_RANGE);
+    const [nearestY, farthestY] = findNearestAndFarthestAlignPoints(alignPoints, { x, y }, 'y', FUZZY_RANGE);
 
     return {
-      byX: findNearestAndFarthestAlignPoints(alignPoints, { x, y }, 'x', FUZZY_RANGE),
-      byY: findNearestAndFarthestAlignPoints(alignPoints, { x, y }, 'y', FUZZY_RANGE),
+      farthest: { x: farthestX, y: farthestY },
+      nearest: { x: nearestX, y: nearestY },
     };
   };
 
   this.collectAlignPoints = () => {
-    const elements = Array.of<ChildNode>();
+    const elements = Array.of<SVGGraphicsElement>();
     const layers: Element[] = $('#svgcontent > g.layer').toArray();
 
     layers.forEach(({ childNodes }) => {
-      elements.push(...childNodes);
+      elements.push(...(childNodes as unknown as SVGGraphicsElement[]));
     });
 
-    const unSelectedElements = elements.filter((elem) => !selectedElements.includes(elem as SVGElement));
-    const unFlatedPoints = unSelectedElements.map((elem) => getElemAlignPoints(elem as SVGGraphicsElement));
+    const unSelectedElements = elements.filter((elem) => !selectedElements.includes(elem));
+    const unFlatedPoints = unSelectedElements.map((elem) => getElemAlignPoints(elem));
     const edges = unFlatedPoints.flatMap((points) => {
       const xs = Array.of<number>();
       const ys = Array.of<number>();
@@ -4745,8 +4723,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   this.addAlignPoint = function (x: number, y: number) {
     const { length } = alignPoints.x;
     const newPoint = { x, y };
-    const compareArr = (x: IPoint[], y: IPoint[]) =>
-      x.length === y.length && x.every((p, i) => p.x === y[i].x && p.y === y[i].y);
     const insertToAlignPoints = (points: IPoint[], newPoint: IPoint, dimension: 'x' | 'y') => {
       const pos = binarySearchLowerBoundIndex(
         points.map((point) => point[dimension]),
@@ -4758,38 +4734,10 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       } else {
         points.splice(pos, 0, newPoint);
       }
-
-      // DEBUG: the following log will alert while the align points are not sorted
-      const sortedPoints = points.toSorted((a, b) => a[dimension] - b[dimension]);
-
-      if (!compareArr(points, sortedPoints)) {
-        console.error(`${dimension} not sorted`);
-        console.log(
-          points.map((point, i) => `${i}_${point[dimension]}`),
-          sortedPoints.map((point, i) => `${i}_${point[dimension]}`),
-        );
-      }
     };
 
     insertToAlignPoints(alignPoints.x, newPoint, 'x');
     insertToAlignPoints(alignPoints.y, newPoint, 'y');
-
-    // DEBUG: for printing align points
-    // this.addSvgElementFromJson({
-    //   attr: {
-    //     cx: x,
-    //     cy: y,
-    //     fill: '#0AA',
-    //     'fill-opacity': 1,
-    //     id: `align_${tempN++}`,
-    //     opacity: 1,
-    //     rx: 10,
-    //     ry: 10,
-    //     stroke: '#0AA',
-    //   },
-    //   curStyles: false,
-    //   element: 'ellipse',
-    // });
   };
 
   const getElemAlignPoints = (elem: SVGGraphicsElement): Array<{ x: number; y: number }> => {

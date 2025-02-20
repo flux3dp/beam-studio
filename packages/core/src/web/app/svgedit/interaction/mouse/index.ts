@@ -66,21 +66,20 @@ let currentBoundingBox = Array.of<IPoint>();
 
 const checkShouldIgnore = () => ObjectPanelController.getActiveKey() && navigator.maxTouchPoints > 1;
 const findAndDrawAlignPoints = (x: number, y: number) => {
-  const alignPoints = svgCanvas.findMatchedAlignPoints(x, y);
+  const {
+    farthest: { x: fx, y: fy },
+    nearest: { x: nx, y: ny },
+  } = svgCanvas.findMatchedAlignPoints(x, y);
 
-  if (alignPoints) {
-    const { byX, byY } = alignPoints;
+  if (!nx && !ny) return [x, y];
 
-    svgCanvas.drawAlignLine(x, y, byX[0]!, byY[0]!);
+  svgCanvas.drawAlignLine(x, y, nx, ny);
 
-    const startPoint = { x: byX?.[0]?.x ?? byY?.[0]?.x ?? x, y: byY?.[0]?.y ?? byX?.[0]?.y ?? y };
+  const startPoint = { x: nx?.x ?? ny?.x ?? x, y: ny?.y ?? nx?.y ?? y };
 
-    svgCanvas.drawAlignLine(startPoint.x, startPoint.y, byX[1]!, byY[1]!, 10);
+  svgCanvas.drawAlignLine(startPoint.x, startPoint.y, fx, fy, 10);
 
-    return [byX.length ? byX[0].x : x, byY.length ? byY[0].y : y];
-  }
-
-  return [x, y];
+  return [nx?.x ?? x, ny?.y ?? y];
 };
 
 const mouseSelectModeCmds = Array.of<ICommand>();

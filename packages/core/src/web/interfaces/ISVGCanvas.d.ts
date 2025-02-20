@@ -56,12 +56,11 @@ export default interface ISVGCanvas {
     addToHistory?: boolean,
     showProgress?: boolean,
   ) => Promise<BaseHistoryCommand>;
-  drawAlignLine: (x: number, y: number, byX: IPoint, byY: IPoint, index?: number) => void;
+  drawAlignLine: (tx: number, ty: number, x: IPoint | null, y: IPoint | null, index?: number) => void;
   drawing: ISVGDrawing;
-  drawTracingLine: (x1: number, y1: number, x2: number, y2: number, index: number, stroke?: string) => void;
   embedImage(url: string, callback?: (dataURI: string) => void): void;
   events: EventEmitter;
-  findMatchedAlignPoints: (x: number, y: number) => null | { byX: [] | [IPoint, IPoint]; byY: [] | [IPoint, IPoint] };
+  findMatchedAlignPoints: (x: number, y: number) => Record<'farthest' | 'nearest', Record<'x' | 'y', IPoint | null>>;
   getColor: (key: string) => string;
   getContainer: () => SVGElement;
   getContentElem: () => SVGGElement;

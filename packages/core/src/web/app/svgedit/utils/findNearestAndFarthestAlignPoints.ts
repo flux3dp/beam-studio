@@ -5,15 +5,15 @@ export function findNearestAndFarthestAlignPoints(
   target: IPoint,
   dimension: 'x' | 'y',
   fuzzyRange: number,
-): [] | [IPoint, IPoint] {
+): [IPoint, IPoint] | [null, null] {
   const points = alignPoints[dimension];
   const pointsArray = points.map((p) => p[dimension]);
   const { length } = points;
   const subDimension = dimension === 'x' ? 'y' : 'x';
   let [start, end] = [0, length - 1];
 
-  if (target[dimension] < points[start][dimension] - fuzzyRange) return [];
-  else if (target[dimension] > points[end][dimension] + fuzzyRange) return [];
+  if (target[dimension] < points[start][dimension] - fuzzyRange) return [null, null];
+  else if (target[dimension] > points[end][dimension] + fuzzyRange) return [null, null];
 
   const predicate = (num: number) => {
     const diff = num - target[dimension];
@@ -25,7 +25,7 @@ export function findNearestAndFarthestAlignPoints(
 
   const first = BinarySearchOccurrence(pointsArray, predicate, 'first');
 
-  if (first === -1) return [];
+  if (first === -1) return [null, null];
 
   const last = BinarySearchOccurrence(pointsArray, predicate, 'last');
   const nearestPoint = points.slice(first, last + 1).reduce((prev, curr) => {

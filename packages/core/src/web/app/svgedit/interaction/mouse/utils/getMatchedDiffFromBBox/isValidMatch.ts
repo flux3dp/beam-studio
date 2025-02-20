@@ -7,7 +7,7 @@ import type { IPoint } from '@core/interfaces/ISVGCanvas';
 // 3   4
 // 5 6 7
 
-export function isValidMatch(matchPoint: IPoint, center: IPoint, index: number, by: 'x' | 'y') {
+export function isValidMatch(matchPoint: IPoint | null, center: IPoint, index: number, by: 'x' | 'y') {
   return match(by)
     .with('x', () => {
       if (!matchPoint?.x) return false;
