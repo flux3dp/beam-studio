@@ -14,11 +14,8 @@ type CommonConfig = {
   repeat: number;
 };
 
-type CurveEngravingConfig = {
-  ceZSpeedLimit: number;
-};
-
 type LaserConfig = {
+  ceZSpeedLimit: number; // can add CurveEngravingConfig if more ce configs are added
   diode: number;
   focus: number;
   focusStep: number;
@@ -60,12 +57,7 @@ type PromarkConfig = {
   wobbleStep: number;
 };
 
-export type ConfigKeyTypeMap = CommonConfig &
-  CurveEngravingConfig &
-  LaserConfig &
-  MetaConfig &
-  PrintingConfig &
-  PromarkConfig;
+export type ConfigKeyTypeMap = CommonConfig & LaserConfig & MetaConfig & PrintingConfig & PromarkConfig;
 
 type ConfigKey = keyof ConfigKeyTypeMap;
 
