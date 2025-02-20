@@ -70,7 +70,7 @@ describe('test CurveEngravingZHighSpeed', () => {
       </ConfigPanelContext.Provider>,
     );
 
-    expect(container).toMatchSnapshot;
+    expect(container).toMatchSnapshot();
   });
 
   test('onToggle should work', () => {
