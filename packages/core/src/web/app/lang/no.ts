@@ -359,6 +359,7 @@ const lang: ILang = {
         backlash: 'Tilbakeslag',
         bi_directional: 'Toveis',
         by: 'Med',
+        ce_z_high_speed: 'Hogesnelheids-Z-as',
         color_adjustment: 'Kanaljustering',
         color_adjustment_short: 'Kanal',
         color_strength: 'Styrke',

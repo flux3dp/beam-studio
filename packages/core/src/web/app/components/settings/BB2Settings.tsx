@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { checkFbb2 } from '@core/helpers/checkFeature';
 import useI18n from '@core/helpers/useI18n';
 
 import onOffOptionFactory from './onOffOptionFactory';
@@ -9,18 +9,13 @@ import styles from './Settings.module.scss';
 
 interface Props {
   getBeamboxPreferenceEditingValue: <T = string>(key: string) => T;
-  selectedModel: WorkAreaModel;
   updateBeamboxPreferenceChange: (key: string, newVal: any) => void;
 }
 
-const BB2Settings = ({
-  getBeamboxPreferenceEditingValue,
-  selectedModel,
-  updateBeamboxPreferenceChange,
-}: Props): React.ReactNode => {
+const BB2Settings = ({ getBeamboxPreferenceEditingValue, updateBeamboxPreferenceChange }: Props): React.ReactNode => {
   const lang = useI18n();
 
-  if (selectedModel !== 'fbb2') {
+  if (!checkFbb2()) {
     return null;
   }
 

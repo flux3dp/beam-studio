@@ -359,6 +359,7 @@ const lang: ILang = {
         backlash: 'การย้อนกลับ',
         bi_directional: 'สองทิศทาง',
         by: 'ตามค่า',
+        ce_z_high_speed: 'แกน Z ความเร็วสูง',
         color_adjustment: 'การปรับสี',
         color_adjustment_short: 'ช่องสี',
         color_strength: 'ความเข้ม',

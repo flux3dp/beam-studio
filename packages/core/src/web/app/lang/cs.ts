@@ -359,6 +359,7 @@ const lang: ILang = {
         backlash: 'Odpor',
         bi_directional: 'Obousměrný',
         by: 'Podle',
+        ce_z_high_speed: 'Vysokorychlostní osa Z',
         color_adjustment: 'Přizpůsobení kanálu',
         color_adjustment_short: 'Kanál',
         color_strength: 'Síla',

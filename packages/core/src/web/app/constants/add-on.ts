@@ -1,3 +1,5 @@
+import { checkFbb2AutoFeeder } from '@core/helpers/checkFeature';
+
 import type { WorkAreaModel } from './workarea-constants';
 
 export enum RotaryType {
@@ -61,11 +63,13 @@ const supportList: Record<WorkAreaModel, SupportInfo> = {
     },
   },
   fbb2: {
-    autoFeeder: { maxHeight: 2000, rotaryRatio: CHUCK_ROTARY_DIAMETER / FBB2_FEEDER_DIAMETER, xRange: [100, 400] },
+    autoFeeder: checkFbb2AutoFeeder()
+      ? { maxHeight: 2000, rotaryRatio: CHUCK_ROTARY_DIAMETER / FBB2_FEEDER_DIAMETER, xRange: [100, 400] }
+      : undefined,
     curveEngraving: true,
     jobOrigin: true,
     lowerFocus: true,
-    passThrough: false, // TODO: hide until fix job origin for clipped object
+    passThrough: true,
     redLight: true,
     rotary: {
       chuck: true,

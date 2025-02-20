@@ -15,6 +15,7 @@ type CommonConfig = {
 };
 
 type LaserConfig = {
+  ceZSpeedLimit: number; // can add CurveEngravingConfig if more ce configs are added
   diode: number;
   focus: number;
   focusStep: number;

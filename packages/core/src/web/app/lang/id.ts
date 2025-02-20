@@ -359,6 +359,7 @@ const lang: ILang = {
         backlash: 'Backlash',
         bi_directional: 'Dua Arah',
         by: 'Sebesar',
+        ce_z_high_speed: 'Sumbu Z kecepatan tinggi',
         color_adjustment: 'Penyesuaian Saluran',
         color_adjustment_short: 'Saluran',
         color_strength: 'Kekuatan',

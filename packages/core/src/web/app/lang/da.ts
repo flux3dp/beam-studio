@@ -359,6 +359,7 @@ const lang: ILang = {
         backlash: 'Tilbageløb',
         bi_directional: 'Tovejskommunikation',
         by: 'Med',
+        ce_z_high_speed: 'Højhastigheds Z-akse',
         color_adjustment: 'Kanaljustering',
         color_adjustment_short: 'Kanal',
         color_strength: 'Styrke',

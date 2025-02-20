@@ -359,6 +359,7 @@ const lang: ILang = {
         backlash: 'Speling',
         bi_directional: 'Tweerichtingsverkeer',
         by: 'Met',
+        ce_z_high_speed: 'Hogesnelheids-Z-as',
         color_adjustment: 'Kanaal aanpassing',
         color_adjustment_short: 'Kanaal',
         color_strength: 'Kracht',

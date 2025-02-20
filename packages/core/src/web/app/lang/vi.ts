@@ -359,6 +359,7 @@ const lang: ILang = {
         backlash: 'Độ rơ',
         bi_directional: 'Hai Chiều',
         by: 'Bởi',
+        ce_z_high_speed: 'Trục Z tốc độ cao',
         color_adjustment: 'Điều chỉnh kênh màu',
         color_adjustment_short: 'Kênh màu',
         color_strength: 'Sức mạnh',

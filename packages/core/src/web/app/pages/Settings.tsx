@@ -267,7 +267,6 @@ class Settings extends React.PureComponent<Props, State> {
           />
           <BB2Settings
             getBeamboxPreferenceEditingValue={this.getBeamboxPreferenceEditingValue}
-            selectedModel={selectedModel}
             updateBeamboxPreferenceChange={this.updateBeamboxPreferenceChange}
           />
           <Privacy enableSentryOptions={enableSentryOptions} updateConfigChange={this.updateConfigChange} />

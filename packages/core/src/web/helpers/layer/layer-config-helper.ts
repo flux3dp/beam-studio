@@ -32,6 +32,7 @@ const getLayerElementByName = (layerName: string) => {
 const attributeMap: { [key in ConfigKey]: string } = {
   backlash: 'data-backlash',
   biDirectional: 'data-biDirectional',
+  ceZSpeedLimit: 'data-ceZSpeedLimit',
   clipRect: 'data-clipRect',
   color: 'data-color',
   configName: 'data-configName',
@@ -77,6 +78,7 @@ export const CUSTOM_PRESET_CONSTANT = ' ';
 export const baseConfig: Partial<ConfigKeyTypeMap> = {
   backlash: 0,
   biDirectional: true,
+  ceZSpeedLimit: 140,
   configName: '',
   cRatio: 100,
   diode: 0,
@@ -298,6 +300,13 @@ export const initLayerConfig = (layerName: string): void => {
   const defaultConfig = getDefaultConfig();
   const keys = Object.keys(defaultConfig) as ConfigKey[];
   const layer = getLayerElementByName(layerName);
+
+  if (!layer) {
+    console.warn(`initLayerConfig: Layer ${layerName} not found`);
+
+    return;
+  }
+
   const defaultLaserModule = layerModuleHelper.getDefaultLaserModule();
 
   for (let i = 0; i < keys.length; i += 1) {
