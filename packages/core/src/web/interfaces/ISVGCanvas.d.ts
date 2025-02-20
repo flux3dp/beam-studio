@@ -24,6 +24,7 @@ interface IRect {
 }
 
 export default interface ISVGCanvas {
+  addAlignEdges: (edges: Array<{ x1: number; x2: number; y1: number; y2: number }>) => void;
   addAlignPoint: (x: number, y: number) => void;
   addCommandToHistory: (command: ICommand) => void;
   addedNew: boolean;
@@ -128,6 +129,7 @@ export default interface ISVGCanvas {
   randomizeIds(enableRandomization: boolean): string;
   ready: (arg0: () => void) => any;
   recalculateAllSelectedDimensions: (isSubCommand?: boolean) => IBatchCommand;
+  removeAlignEdges: (n: number) => void;
   removeFromSelection: (elems: SVGElement[]) => void;
   removeFromTempGroup: (elem: SVGElement) => void;
   removeUnusedDefs: () => void;

@@ -53,13 +53,7 @@ export function getMatchedDiffFromBBox(currentBoundingBox: IPoint[], current: IP
     const { farthest, nearest } = matchPoints[index];
     let matchedPoint: Record<'x' | 'y', null | number> = { x: null, y: null };
 
-    if (
-      (!nearest.x?.x && !nearest.y?.y) ||
-      !isSameTarget(target, nearest, start, point, 'x') ||
-      !isSameTarget(target, nearest, start, point, 'y')
-    ) {
-      continue;
-    }
+    if ((!nearest.x?.x && !nearest.y?.y) || !isSameTarget(target, nearest, start, point)) continue;
 
     if (isValidMatch(nearest.x, center, index, 'x')) matchedPoint.x = nearest.x!.x;
 
@@ -77,10 +71,7 @@ export function getMatchedDiffFromBBox(currentBoundingBox: IPoint[], current: IP
         [nearest.y?.x, matchedPoint.y].join(','),
         { farthest, nearest: { x: null, y: { x: nearest.y?.x, y: matchedPoint.y } } },
       ])
-      .otherwise(() => ({ farthest: null, nearest: null })) as [
-      string,
-      Record<'farthest' | 'nearest', Record<'x' | 'y', IPoint | null>>,
-    ];
+      .otherwise(() => ({ farthest: null, nearest: null })) as [string, Matched];
 
     matchedMap.set(key, [...(matchedMap.get(key) ?? []), [point, value, index]]);
   }
@@ -91,7 +82,7 @@ export function getMatchedDiffFromBBox(currentBoundingBox: IPoint[], current: IP
 
   for (const [, matched] of matchedMap) {
     let diff = Number.MAX_SAFE_INTEGER;
-    let currentNearest: [number, number] = [0, 0];
+    let mostNearest: [number, number] = [0, 0];
     let nearestMatched: PointSet = { x: { x: 0, y: 0 }, y: { x: 0, y: 0 } };
     let nearestBboxDiff: [number, number] = [0, 0];
 
@@ -101,7 +92,7 @@ export function getMatchedDiffFromBBox(currentBoundingBox: IPoint[], current: IP
 
       if (currentDiff < diff) {
         diff = currentDiff;
-        currentNearest = pos;
+        mostNearest = pos;
         nearestBboxDiff = [x - start.x, y - start.y];
         nearestMatched = nearest;
       }
@@ -114,17 +105,17 @@ export function getMatchedDiffFromBBox(currentBoundingBox: IPoint[], current: IP
     }
 
     // if aligned, move the nearest point to the target point by the difference of the bbox
-    if (target.x !== current.x) currentNearest[0] = target.x + nearestBboxDiff[0];
+    if (target.x !== current.x) mostNearest[0] = target.x + nearestBboxDiff[0];
 
-    if (target.y !== current.y) currentNearest[1] = target.y + nearestBboxDiff[1];
+    if (target.y !== current.y) mostNearest[1] = target.y + nearestBboxDiff[1];
 
-    const xLine = nearestMatched.y ? `${currentNearest[0]},${nearestMatched.y.x}` : '';
-    const yLine = nearestMatched.x ? `${currentNearest[1]},${nearestMatched.x.y}` : '';
+    const xLine = nearestMatched.y ? `${mostNearest[0]},${nearestMatched.y.x}` : '';
+    const yLine = nearestMatched.x ? `${mostNearest[1]},${nearestMatched.x.y}` : '';
 
     if ((xLine.length && drewLineSet.has(xLine)) || (yLine.length && drewLineSet.has(yLine))) continue;
 
     // make sure the line is always on top of the other lines
-    nearestLines.push([currentNearest, nearestMatched, index]);
+    nearestLines.push([mostNearest, nearestMatched, index]);
 
     if (xLine.length) drewLineSet.add(xLine);
 
@@ -133,9 +124,25 @@ export function getMatchedDiffFromBBox(currentBoundingBox: IPoint[], current: IP
     index++;
   }
 
-  nearestLines.forEach(([[px, py], { x, y }, i]) => {
-    svgCanvas.drawAlignLine(px, py, x, y, i);
+  const estimateBboxEdges = () => {
+    const [xs, xe] = [currentBoundingBox[0].x + target.x - start.x, currentBoundingBox[7].x + target.x - start.x];
+    const [ys, ye] = [currentBoundingBox[0].y + target.y - start.y, currentBoundingBox[7].y + target.y - start.y];
+
+    return [
+      { x1: xs, x2: xe, y1: ys, y2: ys },
+      { x1: xs, x2: xe, y1: ye, y2: ye },
+      { x1: xs, x2: xs, y1: ys, y2: ye },
+      { x1: xe, x2: xe, y1: ys, y2: ye },
+    ];
+  };
+
+  svgCanvas.addAlignEdges(estimateBboxEdges());
+
+  nearestLines.forEach(([[tx, ty], { x, y }, i]) => {
+    svgCanvas.drawAlignLine(tx, ty, x, y, i);
   });
+
+  svgCanvas.removeAlignEdges(4);
 
   return { x: target.x - start.x, y: target.y - start.y };
 }

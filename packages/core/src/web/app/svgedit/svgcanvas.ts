@@ -4580,10 +4580,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
   this.drawAlignLine = function (tx: number, ty: number, x: IPoint | null, y: IPoint | null, index: number = 0) {
     const points: [number[], number[]] = [[], []];
-    const stroke: Record<'nearest' | 'normal', string> = {
-      nearest: '#F707F0',
-      normal: '#1890EF',
-    };
+    const stroke: Record<'nearest' | 'normal', string> = { nearest: '#F707F0', normal: '#1890EF' };
 
     WORKAREA_ALIGN_POINTS.forEach(({ x, y }) => {
       points[0].push(x);
@@ -4715,6 +4712,16 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     alignPoints.x = points.toSorted((a, b) => a.x - b.x);
     alignPoints.y = points.toSorted((a, b) => a.y - b.y);
     alignEdges = edges.filter((edge) => edge.x1 && edge.x2 && edge.y1 && edge.y2);
+  };
+
+  this.addAlignEdges = (edges: Array<{ x1: number; x2: number; y1: number; y2: number }>) => {
+    alignEdges.push(...edges);
+  };
+
+  this.removeAlignEdges = (n: number) => {
+    for (let i = 0; i < n; i++) {
+      alignEdges.pop();
+    }
   };
 
   this.getSelectedElementsAlignPoints = () =>

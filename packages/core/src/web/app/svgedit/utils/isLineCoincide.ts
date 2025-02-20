@@ -1,17 +1,15 @@
 import round from '@core/helpers/math/round';
 
+function roundAll(obj: Record<string, number>) {
+  return Object.fromEntries(Object.entries(obj).map(([key, value]) => [key, round(value, 2)]));
+}
+
 export function isLineCoincide(
-  { x1: x11, x2: x12, y1: y11, y2: y12 }: { x1: number; x2: number; y1: number; y2: number },
-  { x1: x21, x2: x22, y1: y21, y2: y22 }: { x1: number; x2: number; y1: number; y2: number },
+  line1: { x1: number; x2: number; y1: number; y2: number },
+  line2: { x1: number; x2: number; y1: number; y2: number },
 ) {
-  x11 = round(x11, 2);
-  x12 = round(x12, 2);
-  y11 = round(y11, 2);
-  y12 = round(y12, 2);
-  x21 = round(x21, 2);
-  x22 = round(x22, 2);
-  y21 = round(y21, 2);
-  y22 = round(y22, 2);
+  const { x1: x11, x2: x12, y1: y11, y2: y12 } = roundAll(line1);
+  const { x1: x21, x2: x22, y1: y21, y2: y22 } = roundAll(line2);
 
   const isXCoincide =
     Math.min(x11, x12) + 5 <= Math.max(x21, x22) - 5 && Math.min(x21, x22) + 5 <= Math.max(x11, x12) - 5;
