@@ -4676,33 +4676,26 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     const elements = Array.of<SVGGraphicsElement>();
     const layers: Element[] = $('#svgcontent > g.layer').toArray();
 
-    layers.forEach(({ childNodes }) => {
-      elements.push(...(childNodes as unknown as SVGGraphicsElement[]));
-    });
+    for (const layer of layers) {
+      if (layer?.getAttribute('display') === 'none' || !layer?.childNodes.length) continue;
+
+      elements.push(...(layer.childNodes as unknown as SVGGraphicsElement[]));
+    }
 
     const unSelectedElements = elements.filter((elem) => !selectedElements.includes(elem));
     const unFlatedPoints = unSelectedElements.map((elem) => getElemAlignPoints(elem));
-    const edges = unFlatedPoints.flatMap((points) => {
-      const xs = Array.of<number>();
-      const ys = Array.of<number>();
+    const edges = unFlatedPoints
+      .filter(({ length }) => length === 8)
+      .flatMap((points) => {
+        const [{ x: sx, y: sy }, { x: ex, y: ey }] = [points[0], points[7]];
 
-      if (points?.[0]) {
-        xs.push(points[0].x);
-        ys.push(points[0].y);
-      }
-
-      if (points?.[7]) {
-        xs.push(points[7].x);
-        ys.push(points[7].y);
-      }
-
-      return [
-        { x1: xs[0], x2: xs[1], y1: ys[0], y2: ys[0] },
-        { x1: xs[0], x2: xs[0], y1: ys[0], y2: ys[1] },
-        { x1: xs[1], x2: xs[1], y1: ys[0], y2: ys[1] },
-        { x1: xs[0], x2: xs[1], y1: ys[1], y2: ys[1] },
-      ];
-    });
+        return [
+          { x1: sx, x2: ex, y1: sy, y2: sy },
+          { x1: sx, x2: sx, y1: sy, y2: ey },
+          { x1: ex, x2: ex, y1: sy, y2: ey },
+          { x1: sx, x2: ex, y1: ey, y2: ey },
+        ];
+      });
     const points = unFlatedPoints.flat();
 
     WORKAREA_ALIGN_POINTS.forEach((point) => {
@@ -4711,7 +4704,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     alignPoints.x = points.toSorted((a, b) => a.x - b.x);
     alignPoints.y = points.toSorted((a, b) => a.y - b.y);
-    alignEdges = edges.filter((edge) => edge.x1 && edge.x2 && edge.y1 && edge.y2);
+    alignEdges = edges;
   };
 
   this.addAlignEdges = (edges: Array<{ x1: number; x2: number; y1: number; y2: number }>) => {
