@@ -357,6 +357,7 @@ export interface ILang {
         backlash: string;
         bi_directional: string;
         by: string;
+        ce_z_high_speed: string;
         color_adjustment: string;
         color_adjustment_short: string;
         color_strength: string;

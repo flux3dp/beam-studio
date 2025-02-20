@@ -359,6 +359,7 @@ const lang: ILang = {
         backlash: 'Backlash',
         bi_directional: 'Bi-directional',
         by: 'By',
+        ce_z_high_speed: 'High-Speed Z Axis',
         color_adjustment: 'Channel Adjustment',
         color_adjustment_short: 'Channel',
         color_strength: 'Strength',

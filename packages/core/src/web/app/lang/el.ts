@@ -359,6 +359,7 @@ const lang: ILang = {
         backlash: 'Οπίσθια κίνηση',
         bi_directional: 'Διπλής Κατεύθυνσης',
         by: 'Κατά',
+        ce_z_high_speed: 'Άξονας Z υψηλής ταχύτητας',
         color_adjustment: 'Ρύθμιση καναλιού',
         color_adjustment_short: 'Κανάλι',
         color_strength: 'Δύναμη',

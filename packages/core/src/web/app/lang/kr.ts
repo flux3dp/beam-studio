@@ -359,6 +359,7 @@ const lang: ILang = {
         backlash: '백래시',
         bi_directional: '양방향',
         by: '', // keep empty on purpose
+        ce_z_high_speed: '고속 Z 축',
         color_adjustment: '컬러 버전 조정',
         color_adjustment_short: '컬러 버전',
         color_strength: '강도',

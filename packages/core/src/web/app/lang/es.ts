@@ -359,6 +359,7 @@ const lang: ILang = {
         backlash: 'Holgura',
         bi_directional: 'Bidireccional',
         by: 'Bajar Enfoque En',
+        ce_z_high_speed: 'Eje Z de alta velocidad',
         color_adjustment: 'Ajuste de canal',
         color_adjustment_short: 'Canal',
         color_strength: 'Intensidad',

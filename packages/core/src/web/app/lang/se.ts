@@ -359,6 +359,7 @@ const lang: ILang = {
         backlash: 'Backlash',
         bi_directional: 'Dubbelriktad',
         by: 'Med',
+        ce_z_high_speed: 'Höghastighets Z-axel',
         color_adjustment: 'Kanaljustering',
         color_adjustment_short: 'Kanal',
         color_strength: 'Styrka',

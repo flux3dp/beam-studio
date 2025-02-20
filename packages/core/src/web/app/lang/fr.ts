@@ -359,6 +359,7 @@ const lang: ILang = {
         backlash: 'Jeu',
         bi_directional: 'Bidirectionnel',
         by: 'de',
+        ce_z_high_speed: 'Axe Z haute vitesse',
         color_adjustment: 'Réglage couleur',
         color_adjustment_short: 'Couleur',
         color_strength: 'Intensité',

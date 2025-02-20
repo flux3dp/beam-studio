@@ -359,6 +359,7 @@ const lang: ILang = {
         backlash: 'Ricih',
         bi_directional: 'Dua Arah',
         by: 'Dengan',
+        ce_z_high_speed: 'Paksi Z berkelajuan tinggi',
         color_adjustment: 'Pelarasan Saluran',
         color_adjustment_short: 'Saluran',
         color_strength: 'Kekuatan',

@@ -359,6 +359,7 @@ const lang: ILang = {
         backlash: 'Takaisinkytkentä',
         bi_directional: 'Kaksisuuntainen',
         by: 'Määrällä',
+        ce_z_high_speed: 'Nopeanopeuksinen Z-akseli',
         color_adjustment: 'Värikanavan säätö',
         color_adjustment_short: 'Värikanava',
         color_strength: 'Voimakkuus',

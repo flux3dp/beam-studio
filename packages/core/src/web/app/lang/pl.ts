@@ -359,6 +359,7 @@ const lang: ILang = {
         backlash: 'Reakcja',
         bi_directional: 'Dwukierunkowy',
         by: 'O',
+        ce_z_high_speed: 'Szybkoobrotowa oś Z',
         color_adjustment: 'Regulacja kanału',
         color_adjustment_short: 'Kanał',
         color_strength: 'Siła',

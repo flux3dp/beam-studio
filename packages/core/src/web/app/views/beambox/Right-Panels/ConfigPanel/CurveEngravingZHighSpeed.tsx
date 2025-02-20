@@ -28,7 +28,7 @@ const CurveEngravingZHighSpeed = () => {
 
     dispatch({ payload: { ceZSpeedLimit: newValue }, type: 'change' });
 
-    const batchCmd = new history.BatchCommand('Change diode toggle');
+    const batchCmd = new history.BatchCommand('Change curve engraving z speed limit');
 
     selectedLayers.forEach((layerName) => writeData(layerName, 'ceZSpeedLimit', newValue, { batchCmd }));
     batchCmd.onAfter = initState;
@@ -37,8 +37,8 @@ const CurveEngravingZHighSpeed = () => {
 
   return (
     <div className={classNames(styles.panel, styles.switch)}>
-      <label className={styles.title} htmlFor="diode">
-        tHigh Speed Z axis
+      <label className={styles.title} htmlFor="curve-engraving-z-high-speed">
+        {t.ce_z_high_speed}
       </label>
       <Switch
         checked={checked}
