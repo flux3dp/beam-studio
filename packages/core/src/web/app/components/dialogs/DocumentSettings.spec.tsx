@@ -106,11 +106,6 @@ jest.mock('@core/implementations/browser', () => ({
   open: (...args) => mockOpen(...args),
 }));
 
-jest.mock('@core/helpers/checkFeature', () => ({
-  checkFbb2: () => true,
-  checkFpm1: () => true,
-}));
-
 const mockUnmount = jest.fn();
 const mockQuerySelectorAll = jest.fn();
 

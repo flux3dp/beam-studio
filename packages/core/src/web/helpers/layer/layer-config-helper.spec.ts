@@ -58,6 +58,7 @@ jest.mock(
 const defaultLaserConfigs = {
   backlash: { value: 0 },
   biDirectional: { value: false },
+  ceZSpeedLimit: { value: 140 },
   clipRect: { value: undefined },
   color: { value: '#333333' },
   configName: { value: '' },
@@ -107,6 +108,7 @@ const trueConfigs = {
 const defaultMultiValueLaserConfigs = {
   backlash: { hasMultiValue: false, value: 0 },
   biDirectional: { hasMultiValue: false, value: false },
+  ceZSpeedLimit: { hasMultiValue: false, value: 140 },
   clipRect: { hasMultiValue: false, value: undefined },
   color: { hasMultiValue: false, value: '#333333' },
   configName: { hasMultiValue: false, value: '' },
