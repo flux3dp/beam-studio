@@ -113,6 +113,8 @@
       'data-biDirectional',
       'data-crossHatch',
       'data-dottingTime',
+      'data-wobbleDiameter',
+      'data-wobbleStep',
       'data-ceZSpeedLimit',
     ],
     "image": ['data-ratiofixed', "data-shading", "data-threshold", "data-original-layer", "data-fullcolor", 'display-fullcolor', "class", "clip-path", "clip-rule", "filter", "height", "id", "mask", "opacity", "requiredFeatures", "style", "systemLanguage", "transform", "width", "x", "xlink:href", "xlink:title", "y", "preserveAspectRatio", "data-pwm"],
