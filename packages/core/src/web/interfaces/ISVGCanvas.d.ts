@@ -61,7 +61,7 @@ export default interface ISVGCanvas {
   drawTracingLine: (x1: number, y1: number, x2: number, y2: number, index: number, stroke?: string) => void;
   embedImage(url: string, callback?: (dataURI: string) => void): void;
   events: EventEmitter;
-  findMatchedAlignPoints: (x: number, y: number) => null | { byX: IPoint; byY: IPoint };
+  findMatchedAlignPoints: (x: number, y: number) => null | { byX: [] | [IPoint, IPoint]; byY: [] | [IPoint, IPoint] };
   getColor: (key: string) => string;
   getContainer: () => SVGElement;
   getContentElem: () => SVGGElement;

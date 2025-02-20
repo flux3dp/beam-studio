@@ -252,7 +252,7 @@ class Selector {
     const currentZoom = workareaManager.zoomRatio;
     const { tagName } = elem;
     // Offset between element and select rect
-    let offset = tagName === 'text' ? 3 : 0;
+    let offset = tagName === 'text' ? 0 : 0;
 
     if (elem.getAttribute('stroke') !== 'none' && !Number.isNaN(strokeWidth)) {
       offset += (strokeWidth / 2) * currentZoom;

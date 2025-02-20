@@ -1,19 +1,19 @@
 import type { IPoint } from '@core/interfaces/ISVGCanvas';
 
-export function findNearestAlignPoint(
+export function findNearestAndFarthestAlignPoints(
   alignPoints: Record<'x' | 'y', IPoint[]>,
   target: IPoint,
   dimension: 'x' | 'y',
   fuzzyRange: number,
-): IPoint | null {
+): [] | [IPoint, IPoint] {
   const points = alignPoints[dimension];
   const pointsArray = points.map((p) => p[dimension]);
   const { length } = points;
   const subDimension = dimension === 'x' ? 'y' : 'x';
   let [start, end] = [0, length - 1];
 
-  if (target[dimension] < points[start][dimension] - fuzzyRange) return null;
-  else if (target[dimension] > points[end][dimension] + fuzzyRange) return null;
+  if (target[dimension] < points[start][dimension] - fuzzyRange) return [];
+  else if (target[dimension] > points[end][dimension] + fuzzyRange) return [];
 
   const predicate = (num: number) => {
     const diff = num - target[dimension];
@@ -25,19 +25,27 @@ export function findNearestAlignPoint(
 
   const first = BinarySearchOccurrence(pointsArray, predicate, 'first');
 
-  if (first === -1) return null;
+  if (first === -1) return [];
 
   const last = BinarySearchOccurrence(pointsArray, predicate, 'last');
-
-  const nearestPoints = points.slice(first, last + 1);
-  const nearestPoint = nearestPoints.reduce((prev, curr) => {
+  const nearestPoint = points.slice(first, last + 1).reduce((prev, curr) => {
     const prevDiff = Math.abs(prev[subDimension] - target[subDimension]);
     const currDiff = Math.abs(curr[subDimension] - target[subDimension]);
 
     return prevDiff < currDiff ? prev : curr;
   });
+  const dir = nearestPoint[subDimension] - target[subDimension];
+  const farthestPoint = points
+    .slice(first, last + 1)
+    .filter((p) => (p[subDimension] - target[subDimension]) * dir > 0 && p[dimension] === nearestPoint[dimension])
+    .reduce((prev, curr) => {
+      const prevDiff = Math.abs(prev[subDimension] - target[subDimension]);
+      const currDiff = Math.abs(curr[subDimension] - target[subDimension]);
 
-  return nearestPoint;
+      return prevDiff > currDiff ? prev : curr;
+    }, nearestPoint);
+
+  return [nearestPoint, farthestPoint];
 }
 
 function BinarySearchOccurrence(array: number[], predicate: (num: number) => number, by: 'first' | 'last'): number {
@@ -54,7 +62,7 @@ function BinarySearchOccurrence(array: number[], predicate: (num: number) => num
         };
 
   while (start <= end) {
-    const mid = Math.floor(start + (end - start) / 2);
+    const mid = ~~(start + ((end - start) >> 1));
     const value = array[mid];
 
     if (predicate(value) === 0) {

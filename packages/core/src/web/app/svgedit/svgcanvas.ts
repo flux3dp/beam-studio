@@ -91,7 +91,7 @@ import textEdit from './text/textedit';
 import { setRotationAngle } from './transform/rotation';
 import { binarySearchLowerBoundIndex } from './utils/binarySearchIndex';
 import findDefs from './utils/findDef';
-import { findNearestAlignPoint } from './utils/findNearestAlignPoint';
+import { findNearestAndFarthestAlignPoints } from './utils/findNearestAndFarthestAlignPoints';
 import { isLineCoincide } from './utils/isLineCoincide';
 import { rotateBBox } from './utils/rotateBBox';
 import workareaManager from './workarea';
@@ -4692,8 +4692,8 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     if (!alignPoints.x.length) return null;
 
     return {
-      byX: findNearestAlignPoint(alignPoints, { x, y }, 'x', FUZZY_RANGE),
-      byY: findNearestAlignPoint(alignPoints, { x, y }, 'y', FUZZY_RANGE),
+      byX: findNearestAndFarthestAlignPoints(alignPoints, { x, y }, 'x', FUZZY_RANGE),
+      byY: findNearestAndFarthestAlignPoints(alignPoints, { x, y }, 'y', FUZZY_RANGE),
     };
   };
 
@@ -4707,7 +4707,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     const unSelectedElements = elements.filter((elem) => !selectedElements.includes(elem as SVGElement));
     const unFlatedPoints = unSelectedElements.map((elem) => getElemAlignPoints(elem as SVGGraphicsElement));
-
     const edges = unFlatedPoints.flatMap((points) => {
       const xs = Array.of<number>();
       const ys = Array.of<number>();
@@ -4729,9 +4728,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         { x1: xs[0], x2: xs[1], y1: ys[1], y2: ys[1] },
       ];
     });
-
-    console.log(edges);
-
     const points = unFlatedPoints.flat();
 
     WORKAREA_ALIGN_POINTS.forEach((point) => {
@@ -4798,12 +4794,12 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
   const getElemAlignPoints = (elem: SVGGraphicsElement): Array<{ x: number; y: number }> => {
     const { tagName } = elem;
-    const validTags = ['ellipse', 'g', 'image', 'line', 'path', 'polygon', 'rect', 'use'] as const;
+    const validTags = ['ellipse', 'g', 'image', 'line', 'path', 'polygon', 'rect', 'use', 'text'] as const;
     const angle: number = svgedit.utilities.getRotationAngle(elem, true);
 
     if (!validTags.includes(tagName) || angle) return [];
 
-    const bbox = tagName === 'use' ? this.getSvgRealLocation(elem) : elem.getBBox();
+    const bbox = ['text', 'use'].includes(elem.tagName) ? this.getSvgRealLocation(elem) : elem.getBBox();
     const getPoints = (bbox: DOMRect) => {
       const points = Array.of<IPoint>();
       const levels = [0, 0.5, 1] as const;

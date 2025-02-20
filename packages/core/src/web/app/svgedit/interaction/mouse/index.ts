@@ -71,9 +71,13 @@ const findAndDrawAlignPoints = (x: number, y: number) => {
   if (alignPoints) {
     const { byX, byY } = alignPoints;
 
-    svgCanvas.drawAlignLine(x, y, byX, byY);
+    svgCanvas.drawAlignLine(x, y, byX[0]!, byY[0]!);
 
-    return [byX ? byX.x : x, byY ? byY.y : y];
+    const startPoint = { x: byX?.[0]?.x ?? byY?.[0]?.x ?? x, y: byY?.[0]?.y ?? byX?.[0]?.y ?? y };
+
+    svgCanvas.drawAlignLine(startPoint.x, startPoint.y, byX[1]!, byY[1]!, 10);
+
+    return [byX.length ? byX[0].x : x, byY.length ? byY[0].y : y];
   }
 
   return [x, y];
