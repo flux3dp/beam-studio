@@ -113,7 +113,7 @@ const fetchTaskCode = async (
     Progress.popById('fetch-task-code');
     SymbolMaker.switchImageSymbolForAll(true);
 
-    return {};
+    return null;
   }
 
   Progress.update('fetch-task-code', {
@@ -169,10 +169,9 @@ const fetchTaskCode = async (
         percentage: data.percentage * 100,
       });
     },
-    rotaryMode: BeamboxPreference.read('rotary_mode'),
   });
 
-  if (isCanceled) return {};
+  if (isCanceled) return null;
 
   if (!uploadRes.res) {
     Progress.popById('upload-scene');
@@ -188,7 +187,7 @@ const fetchTaskCode = async (
       type: AlertConstants.SHOW_POPUP_ERROR,
     });
 
-    return {};
+    return null;
   }
 
   Progress.update('upload-scene', {
@@ -226,10 +225,10 @@ const fetchTaskCode = async (
   const paddingAccel = await getAdorPaddingAccel(device || TopBarController.getSelectedDevice());
   const supportInfo = getSupportInfo(BeamboxPreference.read('workarea'));
   const getTaskCode = (codeType: 'fcode' | 'gcode', getTaskCodeOpts = {}) =>
-    new Promise<{
-      fileTimeCost: null | number;
+    new Promise<null | {
+      fileTimeCost: number;
       metadata: { [key: string]: string };
-      taskCodeBlob: Blob | null;
+      taskCodeBlob: Blob;
     }>((resolve) => {
       const names: string[] = [];
 
@@ -253,17 +252,13 @@ const fetchTaskCode = async (
             type: AlertConstants.SHOW_POPUP_ERROR,
           });
           didErrorOccur = true;
-          resolve({
-            fileTimeCost: null,
-            metadata: {},
-            taskCodeBlob: null,
-          });
+          resolve(null);
         },
-        onFinished: (taskBlob, timeCost, metadata) => {
+        onFinished: (taskBlob: Blob, timeCost: number, metadata: Record<string, string>) => {
           Progress.update('fetch-task', { message: lang.message.uploading_fcode, percentage: 100 });
           resolve({ fileTimeCost: timeCost, metadata, taskCodeBlob: taskBlob });
         },
-        onProgressing: (data) => {
+        onProgressing: (data: { message: string; percentage: number }) => {
           // message: Calculating Toolpath 28.6%
           Progress.update('fetch-task', {
             message: data.message,
@@ -288,20 +283,23 @@ const fetchTaskCode = async (
         }
       : undefined,
   );
+
+  if (!taskCodeRes) return null;
+
   const { metadata, taskCodeBlob } = taskCodeRes;
   let { fileTimeCost } = taskCodeRes;
 
   if (output === 'gcode' && !fgGcode) {
     const fcodeRes = await getTaskCode('fcode');
 
+    if (!fcodeRes) return null;
+
     fileTimeCost = fcodeRes.fileTimeCost;
   }
 
   Progress.popById('fetch-task');
 
-  if (isCanceled || didErrorOccur) {
-    return {};
-  }
+  if (isCanceled || didErrorOccur) return null;
 
   return {
     fileTimeCost,
@@ -359,11 +357,11 @@ const fetchTransferredFcode = async (gcodeString: string, thumbnail: string) => 
             taskCodeBlob: null,
           });
         },
-        onFinished: (taskBlob, fileName, timeCost) => {
+        onFinished: (taskBlob: Blob, fileName: string, timeCost: number) => {
           Progress.update('fetch-task', { message: lang.message.uploading_fcode, percentage: 100 });
           resolve({ fileTimeCost: timeCost, taskCodeBlob: taskBlob });
         },
-        onProgressing: (data) => {
+        onProgressing: (data: { message: string; percentage: number }) => {
           Progress.update('fetch-task', {
             message: data.message,
             percentage: data.percentage * 100,
@@ -423,17 +421,19 @@ const promarkTaskCache: Record<string, { timeCost: number; url: string }> = {};
 export default {
   estimateTime: async (): Promise<number> => {
     const { convertEngine } = getConvertEngine();
-    const { fileTimeCost, taskCodeBlob } = await convertEngine();
+    const res = await convertEngine();
 
-    if (!taskCodeBlob) {
-      throw new Error('estimateTime: No task code blob');
-    }
+    if (!res) throw new Error('estimateTime: No task code blob');
 
-    return fileTimeCost ?? 0;
+    return res.fileTimeCost;
   },
   exportFcode: async (device?: IDeviceInfo): Promise<void> => {
     const { convertEngine } = getConvertEngine();
-    const { taskCodeBlob } = await convertEngine(device);
+    const res = await convertEngine(device);
+
+    if (!res) return;
+
+    const { taskCodeBlob } = res;
 
     if (!taskCodeBlob) {
       throw new Error('exportFCode: No task code blob');
@@ -471,11 +471,13 @@ export default {
     return { fcodeBlob, fileTimeCost: fileTimeCost ?? 0 };
   },
   getCachedPromarkTask: (serial: string): { timeCost: number; url: string } => promarkTaskCache[serial],
-  getFastGradientGcode: async (): Promise<Blob> => {
+  getFastGradientGcode: async (): Promise<Blob | null> => {
     const { convertEngine } = getConvertEngine();
-    const { taskCodeBlob } = await convertEngine(null, { fgGcode: true, output: 'gcode' });
+    const res = await convertEngine(null, { fgGcode: true, output: 'gcode' });
 
-    return taskCodeBlob;
+    if (!res) return null;
+
+    return res.taskCodeBlob;
   },
   getGcode: async (): Promise<{
     fileTimeCost: number;
@@ -483,19 +485,18 @@ export default {
     useSwiftray: boolean;
   }> => {
     const { convertEngine, useSwiftray } = getConvertEngine();
-    const { fileTimeCost, taskCodeBlob } = await convertEngine(null, { output: 'gcode' });
+    const res = await convertEngine(null, { output: 'gcode' });
+    const { fileTimeCost, taskCodeBlob } = res ?? {};
 
     return { fileTimeCost: fileTimeCost || 0, gcodeBlob: taskCodeBlob, useSwiftray };
   },
   getMetadata: async (device?: IDeviceInfo): Promise<{ [key: string]: string }> => {
     const { convertEngine } = getConvertEngine();
-    const { metadata, taskCodeBlob } = await convertEngine(device);
+    const res = await convertEngine(device);
 
-    if (!taskCodeBlob) {
-      throw new Error('getMetadata: No task code blob');
-    }
+    if (!res) throw new Error('getMetadata: No task code blob');
 
-    return metadata;
+    return res.metadata;
   },
   openTaskInDeviceMonitor,
   prepareFileWrappedFromSvgStringAndThumbnail: async (): Promise<{
@@ -513,18 +514,18 @@ export default {
   },
   uploadFcode: async (device: IDeviceInfo, autoStart?: boolean): Promise<void> => {
     const { convertEngine } = getConvertEngine(device);
-    const { fileTimeCost, taskCodeBlob, thumbnail, thumbnailBlobURL } = await convertEngine(device);
+    const res = await convertEngine(device);
 
-    if (!taskCodeBlob && device.model !== 'fpm1') {
-      return;
-    }
+    if (!res) return;
+
+    const { fileTimeCost, metadata, taskCodeBlob, thumbnail, thumbnailBlobURL } = res;
+
+    if (!taskCodeBlob && device.model !== 'fpm1') return;
 
     try {
       const res = await deviceMaster.select(device);
 
-      if (!res) {
-        return;
-      }
+      if (!res) return;
 
       if (promarkModels.has(device.model)) {
         promarkTaskCache[device.serial] = {
