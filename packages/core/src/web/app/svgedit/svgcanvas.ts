@@ -4619,8 +4619,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         fill: 'none',
         id: `align_line_${by}_${index}`,
         stroke: needText ? stroke.nearest : stroke.normal,
-        'stroke-dasharray': isCanvas ? undefined : '2',
-        'stroke-width': '2',
+        'stroke-width': isCanvas ? '2' : '1',
         'vector-effect': 'non-scaling-stroke',
       });
       svgedit.utilities.assignAttributes(alignText, {
