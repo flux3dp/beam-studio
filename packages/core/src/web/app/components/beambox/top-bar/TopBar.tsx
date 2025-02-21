@@ -41,9 +41,7 @@ const Topbar = (): React.JSX.Element => {
   useEffect(() => {
     registerWindowUpdateTitle();
 
-    return () => {
-      unregisterWindowUpdateTitle();
-    };
+    return unregisterWindowUpdateTitle;
   }, []);
 
   const [isTabFocused, setIsTabFocused] = useState(false);
@@ -70,12 +68,12 @@ const Topbar = (): React.JSX.Element => {
       setHasDiscoveredMachine(deviceList.some((device) => device.serial !== 'XXXXXXXXXX'));
       setSelectedDevice((cur) => {
         if (!cur && defaultDeviceUUID.current) {
-          const defauldDevice = deviceList.find((device) => device.uuid === defaultDeviceUUID.current);
+          const defaultDevice = deviceList.find((device) => device.uuid === defaultDeviceUUID.current);
 
-          if (defauldDevice && !checkSoftwareForAdor(defauldDevice, false)) {
+          if (defaultDevice && !checkSoftwareForAdor(defaultDevice, false)) {
             defaultDeviceUUID.current = null;
           } else {
-            return defauldDevice;
+            return defaultDevice || null;
           }
         }
 
