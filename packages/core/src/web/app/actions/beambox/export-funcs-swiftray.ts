@@ -19,6 +19,7 @@ import SymbolMaker from '@core/helpers/symbol-maker';
 import VersionChecker from '@core/helpers/version-checker';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import type { TaskMetaData } from '@core/interfaces/ITask';
 import type { IBaseConfig, IFcodeConfig } from '@core/interfaces/ITaskConfig';
 import type { IWrappedSwiftrayTaskFile } from '@core/interfaces/IWrappedFile';
 
@@ -190,7 +191,7 @@ const fetchTaskCodeSwiftray = async (
   | Record<string, never>
   | {
       fileTimeCost: number;
-      metadata: Record<string, string>;
+      metadata: TaskMetaData;
       taskCodeBlob: Blob;
       thumbnail: string;
       thumbnailBlobURL: string;
