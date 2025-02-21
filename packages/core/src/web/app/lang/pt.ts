@@ -1490,6 +1490,7 @@ const lang: ILang = {
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Superaquecimento. Aguarde alguns minutos.',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Falha ao redefinir eixo Z',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: 'Sem resposta do módulo da impressora.',
+    HARDWARE_ERROR_PROBE_SHOWED: 'Por favor, retraia a sonda.',
     HARDWARE_ERROR_PUMP_ERROR: '#900 Verifique seu tanque de água.',
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: '#914 Nenhum módulo rotativo detectado',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 Erro Crítico: Subsistema sem resposta. Contate o Suporte FLUX.',

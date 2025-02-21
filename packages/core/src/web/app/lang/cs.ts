@@ -1495,6 +1495,7 @@ const lang: ILang = {
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Přehřátí. Vyčkejte prosím několik minut.',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Restart osy Z neúspěšný',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 Tiskový modul neodpovídá.',
+    HARDWARE_ERROR_PROBE_SHOWED: 'Prosím, zatáhněte sondu.',
     HARDWARE_ERROR_PUMP_ERROR: '#900 Zkontrolujte prosím nádržku s vodou.',
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: '#914 Nebyl identifikován rotační modul',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 Kritická chyba: Subsystém neodpovídá. Kontaktujte prosím FLUX podporu.', // Deprecated in FW 3.3.1

@@ -1490,6 +1490,7 @@ const lang: ILang = {
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Terlalu panas. Mohon tunggu beberapa menit.',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Reset sumbu Z gagal',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 Tidak ada respon dari modul printer.',
+    HARDWARE_ERROR_PROBE_SHOWED: 'Harap tarik kembali probe.',
     HARDWARE_ERROR_PUMP_ERROR: '#900 Silakan periksa dengan tangki air Anda.',
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: '#914 Tidak terdeteksi modul putar',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 Kesalahan Kritis: Subsistem tidak merespons. Silakan hubungi Dukungan FLUX.',

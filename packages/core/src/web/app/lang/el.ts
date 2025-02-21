@@ -1490,6 +1490,7 @@ const lang: ILang = {
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Υπερθερμάνθηκε. Παρακαλώ περιμένετε λίγα λεπτά.',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Αποτυχία επαναφοράς άξονα z',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 Καμία απόκριση από τη μονάδα εκτύπωσης.',
+    HARDWARE_ERROR_PROBE_SHOWED: 'Παρακαλώ ανασύρετε τον ανιχνευτή.',
     HARDWARE_ERROR_PUMP_ERROR: '#900 Παρακαλώ ελέγξτε τη δεξαμενή νερού σας.',
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: '#914 Δεν εντοπίστηκε μονάδα περιστροφής',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 Κρίσιμο σφάλμα: Το υποσύστημα δεν απαντά. Παρακαλούμε επικοινωνήστε με την υποστήριξη.',

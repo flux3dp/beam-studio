@@ -1493,6 +1493,7 @@ const lang: ILang = {
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 과열되었습니다. 몇 분 기다려주세요.',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Z축 리셋 실패',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 프린터 모듈 응답 없음.',
+    HARDWARE_ERROR_PROBE_SHOWED: '프로브를 철회해주세요.',
     HARDWARE_ERROR_PUMP_ERROR: '#900 워터탱크를 확인해주세요.',
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: '#914 로터리 모듈이 감지되지 않습니다.',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 치명적인 오류: 하위 시스템 응답 없음. FLUX 지원팀에 문의하세요.', // Deprecated in FW 3.3.1

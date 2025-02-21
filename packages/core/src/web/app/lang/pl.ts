@@ -1493,6 +1493,7 @@ const lang: ILang = {
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Przegrzanie. Poczekaj kilka minut.',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Resetowanie osi Z nie powiodło się',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 Moduł drukarki brak reakcji.',
+    HARDWARE_ERROR_PROBE_SHOWED: 'Proszę cofnąć sondę.',
     HARDWARE_ERROR_PUMP_ERROR: '#900 Sprawdź w swoim zbiorniku na wodę.',
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: '#914 Nie wykryto modułu obrotowego',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 Błąd krytyczny: Brak odpowiedzi podsystemu. Skontaktuj się z pomocą techniczną FLUX.', // Deprecated in FW 3.3.1

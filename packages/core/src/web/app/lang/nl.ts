@@ -1490,6 +1490,7 @@ const lang: ILang = {
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Oververhit. Wacht een paar minuten.',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Z-as reset mislukt',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: 'Geen reactie van printermodule.',
+    HARDWARE_ERROR_PROBE_SHOWED: 'Trek de probe alstublieft in.',
     HARDWARE_ERROR_PUMP_ERROR: '#900 Controleer uw watertank.',
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: '#914 Geen draaitafelmodule gedetecteerd',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 Kritieke fout: Geen reactie van subsysteem. Neem contact op met FLUX-ondersteuning.',
