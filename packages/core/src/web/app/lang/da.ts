@@ -1371,14 +1371,12 @@ const lang: ILang = {
   material_test_generator: {
     block_settings: 'Blokindstillinger',
     columns: 'Kolonner',
-    // block setting form
     count: 'Antal',
     cut: 'Skær',
     engrave: 'Gravér',
     export: 'Eksportér',
     max: 'Max',
     min: 'Min',
-    // table setting form
     parameter: 'Parameter',
     preview: 'Forhåndsvisning',
     rows: 'Rækker',

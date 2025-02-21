@@ -1276,7 +1276,6 @@ const lang: ILang = {
       what_if_2: 'IP が 169 で始まる場合',
       what_if_2_content: '1. IP アドレスが 169.254 で始まる場合は、 DHCP 設定の問題であるはずです。詳細については、ISP（インターネットサービスプロバイダー）にお問い合わせください。\n2. コンピューターが PPPoE を使用して直接インターネットに接続している場合は、ルーターを使用して PPPoE を使用して接続し、ルーターで DHCP 機能を有効にしてください。',
     },
-
     connecting: '接続中…',
     connection_types: {
       ether2ether: '直接接続',
@@ -1284,7 +1283,6 @@ const lang: ILang = {
       wifi: 'Wi-Fi',
       wired: '有線ネットワーク',
     },
-    // generic strings
     next: '次へ',
     no_machine: '私は今マシンを持っていません。',
     promark: {
@@ -1299,7 +1297,6 @@ const lang: ILang = {
     retry: '再試行する',
     select_beambox: 'Beamboxを選択してください',
     select_connection_type: 'どのように接続しますか',
-    // specific caption/content
     select_language: '言語を選択',
     select_machine_type: 'マシンを選択してください',
     setting_completed: {

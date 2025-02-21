@@ -1276,7 +1276,6 @@ const lang: ILang = {
       what_if_2: '機器顯示的 IP 開頭為 169',
       what_if_2_content: '1. IP 地址為 169.254 開頭通常為 DHCP 設定問題，需要聯繫網路服務提供商或是網路設定者來協助。\n2. 如果工作環境的網路是由電腦直接 PPPoE 連網，請改由路由器直接 PPPoE 聯網，並在路由器中開啟DHCP 功能。',
     },
-
     connecting: '連接中',
     connection_types: {
       ether2ether: '網路線直連',
@@ -1284,7 +1283,6 @@ const lang: ILang = {
       wifi: 'Wi-Fi',
       wired: '有線網路',
     },
-    // generic strings
     next: '下一步',
     no_machine: '目前沒有機器或已設定過連線，跳過此步驟',
     promark: {
@@ -1299,7 +1297,6 @@ const lang: ILang = {
     retry: '重試',
     select_beambox: '請選擇您的 Beambox',
     select_connection_type: '請選擇您的連接方式',
-    // specific caption/content
     select_language: '請選擇你想使用的語言',
     select_machine_type: '請選擇您的機種',
     setting_completed: {
@@ -1374,14 +1371,12 @@ const lang: ILang = {
   material_test_generator: {
     block_settings: '區塊設定',
     columns: '行',
-    // block setting form
     count: '數量',
     cut: '切割',
     engrave: '刻印',
     export: '匯出',
     max: '最大值',
     min: '最小值',
-    // table setting form
     parameter: '參數',
     preview: '預覽',
     rows: '列',

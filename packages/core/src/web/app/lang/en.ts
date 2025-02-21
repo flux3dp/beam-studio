@@ -1276,7 +1276,6 @@ const lang: ILang = {
       what_if_2: 'What if the IP starts with 169?',
       what_if_2_content: '1. If the IP address starts with 169.254, it should be a DHCP setting issue, please contact your ISP (internet service provider) for further assistance.\n2. If your computer connects to the internet directly using PPPoE, please change to using the router to connect using PPPoE, and enable DHCP feature in the router.',
     },
-
     connecting: 'Connecting...',
     connection_types: {
       ether2ether: 'Direct Connection',
@@ -1284,7 +1283,6 @@ const lang: ILang = {
       wifi: 'Wi-Fi',
       wired: 'Wired Network',
     },
-    // generic strings
     next: 'Next',
     no_machine: "I don't have a machine now.",
     promark: {
@@ -1299,7 +1297,6 @@ Machines > ‘Promark Name’ > Promark Settings`,
     retry: 'Retry',
     select_beambox: 'Select Your Beambox',
     select_connection_type: 'How do you wish to connect?',
-    // specific caption/content
     select_language: 'Select Language',
     select_machine_type: 'Select Your Machine Type',
     setting_completed: {
@@ -1374,14 +1371,12 @@ Machines > ‘Promark Name’ > Promark Settings`,
   material_test_generator: {
     block_settings: 'Block Settings',
     columns: 'Columns',
-    // block setting form
     count: 'Count',
     cut: 'Cut',
     engrave: 'Engrave',
     export: 'Export',
     max: 'Max',
     min: 'Min',
-    // table setting form
     parameter: 'Parameter',
     preview: 'Preview',
     rows: 'Rows',
