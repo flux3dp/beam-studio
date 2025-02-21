@@ -25,6 +25,7 @@ import VersionChecker from '@core/helpers/version-checker';
 import dialog from '@core/implementations/dialog';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import type { TaskMetaData } from '@core/interfaces/ITask';
 import type { IWrappedTaskFile } from '@core/interfaces/IWrappedFile';
 
 let svgCanvas: ISVGCanvas;
@@ -227,7 +228,7 @@ const fetchTaskCode = async (
   const getTaskCode = (codeType: 'fcode' | 'gcode', getTaskCodeOpts = {}) =>
     new Promise<null | {
       fileTimeCost: number;
-      metadata: { [key: string]: string };
+      metadata: TaskMetaData;
       taskCodeBlob: Blob;
     }>((resolve) => {
       const names: string[] = [];
@@ -254,7 +255,7 @@ const fetchTaskCode = async (
           didErrorOccur = true;
           resolve(null);
         },
-        onFinished: (taskBlob: Blob, timeCost: number, metadata: Record<string, string>) => {
+        onFinished: (taskBlob: Blob, timeCost: number, metadata: TaskMetaData) => {
           Progress.update('fetch-task', { message: lang.message.uploading_fcode, percentage: 100 });
           resolve({ fileTimeCost: timeCost, metadata, taskCodeBlob: taskBlob });
         },
@@ -490,7 +491,7 @@ export default {
 
     return { fileTimeCost: fileTimeCost || 0, gcodeBlob: taskCodeBlob, useSwiftray };
   },
-  getMetadata: async (device?: IDeviceInfo): Promise<{ [key: string]: string }> => {
+  getMetadata: async (device?: IDeviceInfo): Promise<TaskMetaData> => {
     const { convertEngine } = getConvertEngine();
     const res = await convertEngine(device);
 
