@@ -284,7 +284,7 @@ const mouseDown = (evt: MouseEvent, mouseTarget: SVGElement, startX: number, sta
 
     newPoint = [x, y];
 
-    if (svgCanvas.isBezierPathAlignToEdge) {
+    if (svgCanvas.isAutoAlign) {
       svgCanvas.addAlignPoint(x, y);
     }
 

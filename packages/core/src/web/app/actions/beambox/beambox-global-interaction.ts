@@ -28,7 +28,7 @@ class BeamboxGlobalInteraction {
       'CLEAR_SCENE',
       'ZOOM_IN',
       'ZOOM_OUT',
-      'ALIGN_TO_EDGES',
+      'AUTO_ALIGN',
       'FITS_TO_WINDOW',
       'ZOOM_WITH_WINDOW',
       'SHOW_GRIDS',

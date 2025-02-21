@@ -113,7 +113,7 @@ export default interface ISVGCanvas {
       type?: ImportType;
     },
   ): Promise<SVGUseElement>;
-  isBezierPathAlignToEdge: boolean;
+  isAutoAlign: boolean;
   isUsingLayerColor: boolean;
   leaveContext: () => void;
   mergeAllLayers: () => void;
@@ -175,6 +175,7 @@ export default interface ISVGCanvas {
   svgToString(elem: Element, indent: number, units?: Units): string;
   tempGroupSelectedElements: () => SVGElement[];
   textActions: typeof textActions;
+  toggleAutoAlign: () => boolean;
   undoMgr: IUndoManager;
   ungroupSelectedElement(): void;
   ungroupTempGroup(elem?: SVGElement): SVGElement[];

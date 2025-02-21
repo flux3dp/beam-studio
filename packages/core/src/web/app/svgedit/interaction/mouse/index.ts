@@ -537,7 +537,7 @@ const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: 
     width = svgedit.utilities.snapToGrid(width);
   }
 
-  if (svgCanvas.isBezierPathAlignToEdge && needMatchAlignPoints) {
+  if (svgCanvas.isAutoAlign && needMatchAlignPoints) {
     let [inputX, inputY] = [x, y];
 
     if (!resizeMode.includes('n') && !resizeMode.includes('s')) inputY = startY;
@@ -698,7 +698,7 @@ const mouseMove = (evt: MouseEvent) => {
   svgCanvas.clearAlignLines();
 
   if (!started) {
-    if (svgCanvas.isBezierPathAlignToEdge && currentMode === 'path') {
+    if (svgCanvas.isAutoAlign && currentMode === 'path') {
       findAndDrawAlignPoints(realX, realY);
     }
 
@@ -770,7 +770,7 @@ const mouseMove = (evt: MouseEvent) => {
           dy = xya.y - startY;
         }
 
-        if (svgCanvas.isBezierPathAlignToEdge) {
+        if (svgCanvas.isAutoAlign) {
           const diff = getMatchedDiffFromBBox(currentBoundingBox, current, { x: startX, y: startY });
 
           dx = diff.x;
@@ -852,7 +852,7 @@ const mouseMove = (evt: MouseEvent) => {
 
         x2 = xya.x;
         y2 = xya.y;
-      } else if (svgCanvas.isBezierPathAlignToEdge) {
+      } else if (svgCanvas.isAutoAlign) {
         [x2, y2] = findAndDrawAlignPoints(x2, y2);
       }
 
@@ -887,7 +887,7 @@ const mouseMove = (evt: MouseEvent) => {
         newY = svgedit.utilities.snapToGrid(newY);
       }
 
-      if (!isSquare && svgCanvas.isBezierPathAlignToEdge) {
+      if (!isSquare && svgCanvas.isAutoAlign) {
         [newX, newY] = findAndDrawAlignPoints(newX, newY);
 
         // because we don't want to change the width and height of the element
@@ -906,7 +906,7 @@ const mouseMove = (evt: MouseEvent) => {
       cx = c.cx;
       cy = c.cy;
 
-      if (!evt.shiftKey && svgCanvas.isBezierPathAlignToEdge) {
+      if (!evt.shiftKey && svgCanvas.isAutoAlign) {
         [x, y] = findAndDrawAlignPoints(x, y);
       }
 
@@ -935,7 +935,7 @@ const mouseMove = (evt: MouseEvent) => {
 
         x = xya.x;
         y = xya.y;
-      } else if (svgCanvas.isBezierPathAlignToEdge) {
+      } else if (svgCanvas.isAutoAlign) {
         [x, y] = findAndDrawAlignPoints(x, y);
       }
 

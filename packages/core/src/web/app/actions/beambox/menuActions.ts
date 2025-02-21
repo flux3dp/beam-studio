@@ -26,9 +26,12 @@ import shortcuts from '@core/helpers/shortcuts';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import browser from '@core/implementations/browser';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-let svgCanvas;
-let svgEditor;
+import type { ISVGEditor } from './svg-editor';
+
+let svgCanvas: ISVGCanvas;
+let svgEditor: ISVGEditor;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
@@ -63,53 +66,57 @@ type ExampleFileKeys =
   | 'promark_mopa_100w_color_example'
   | 'promark_mopa_100w_color_example_2';
 
-const getExampleFileName = (key: ExampleFileKeys) => {
+const getExampleFileName = (key: ExampleFileKeys): string => {
   const workarea = BeamboxPreference.read('workarea') || 'fbm1';
 
   if (!constant.adorModels.includes(workarea)) {
-    return {
+    return (
+      {
+        beambox_2_example: 'examples/beambox_2_example.bvg',
+        beambox_2_focus_probe: 'examples/beambox_2_focus_probe.bvg',
+        example: 'examples/badge.bvg',
+        focus_probe: 'examples/focus_probe.bvg',
+        hello_beambox: 'examples/hello-beambox.bvg',
+        hexa_example: 'examples/hexa_example.bvg',
+        mat_test_cut: 'examples/mat_test_cut.bvg',
+        mat_test_cut_beambox_2: 'examples/mat_test_cut_beambox_2.bvg',
+        mat_test_engrave: 'examples/mat_test_engrave.bvg',
+        mat_test_engrave_beambox_2: 'examples/mat_test_engrave_beambox_2.bvg',
+        mat_test_line: 'examples/mat_test_line.bvg',
+        mat_test_old: 'examples/mat_test_old.bvg',
+        mat_test_simple_cut: 'examples/mat_test_simple_cut.bvg',
+        promark_example: 'examples/promark_example.bvg',
+        promark_mopa_20w_color_example: 'examples/promark_mopa_20w_color_example.bvg',
+        promark_mopa_60w_color_example: 'examples/promark_mopa_60w_color_example.bvg',
+        promark_mopa_60w_color_example_2: 'examples/promark_mopa_60w_color_example_2.bvg',
+        promark_mopa_100w_color_example: 'examples/promark_mopa_100w_color_example.bvg',
+        promark_mopa_100w_color_example_2: 'examples/promark_mopa_100w_color_example_2.bvg',
+      } as any
+    )[key] as string;
+  }
+
+  return (
+    {
+      ador_example_laser: 'examples/ador_example_laser.bvg',
+      ador_example_printing_full: 'examples/ador_example_printing_full.bvg',
+      ador_example_printing_single: 'examples/ador_example_printing_single.bvg',
       beambox_2_example: 'examples/beambox_2_example.bvg',
-      beambox_2_focus_probe: 'examples/beambox_2_focus_probe.bvg',
       example: 'examples/badge.bvg',
-      focus_probe: 'examples/focus_probe.bvg',
       hello_beambox: 'examples/hello-beambox.bvg',
       hexa_example: 'examples/hexa_example.bvg',
-      mat_test_cut: 'examples/mat_test_cut.bvg',
-      mat_test_cut_beambox_2: 'examples/mat_test_cut_beambox_2.bvg',
-      mat_test_engrave: 'examples/mat_test_engrave.bvg',
-      mat_test_engrave_beambox_2: 'examples/mat_test_engrave_beambox_2.bvg',
-      mat_test_line: 'examples/mat_test_line.bvg',
-      mat_test_old: 'examples/mat_test_old.bvg',
-      mat_test_simple_cut: 'examples/mat_test_simple_cut.bvg',
+      mat_test_cut: 'examples/ador_cutting_test.bvg',
+      mat_test_engrave: 'examples/ador_engraving_test.bvg',
+      mat_test_old: 'examples/ador_engraving_test_classic.bvg',
+      mat_test_printing: 'examples/ador_color_ring.bvg',
+      mat_test_simple_cut: 'examples/ador_cutting_test_simple.bvg',
       promark_example: 'examples/promark_example.bvg',
       promark_mopa_20w_color_example: 'examples/promark_mopa_20w_color_example.bvg',
       promark_mopa_60w_color_example: 'examples/promark_mopa_60w_color_example.bvg',
       promark_mopa_60w_color_example_2: 'examples/promark_mopa_60w_color_example_2.bvg',
       promark_mopa_100w_color_example: 'examples/promark_mopa_100w_color_example.bvg',
       promark_mopa_100w_color_example_2: 'examples/promark_mopa_100w_color_example_2.bvg',
-    }[key];
-  }
-
-  return {
-    ador_example_laser: 'examples/ador_example_laser.bvg',
-    ador_example_printing_full: 'examples/ador_example_printing_full.bvg',
-    ador_example_printing_single: 'examples/ador_example_printing_single.bvg',
-    beambox_2_example: 'examples/beambox_2_example.bvg',
-    example: 'examples/badge.bvg',
-    hello_beambox: 'examples/hello-beambox.bvg',
-    hexa_example: 'examples/hexa_example.bvg',
-    mat_test_cut: 'examples/ador_cutting_test.bvg',
-    mat_test_engrave: 'examples/ador_engraving_test.bvg',
-    mat_test_old: 'examples/ador_engraving_test_classic.bvg',
-    mat_test_printing: 'examples/ador_color_ring.bvg',
-    mat_test_simple_cut: 'examples/ador_cutting_test_simple.bvg',
-    promark_example: 'examples/promark_example.bvg',
-    promark_mopa_20w_color_example: 'examples/promark_mopa_20w_color_example.bvg',
-    promark_mopa_60w_color_example: 'examples/promark_mopa_60w_color_example.bvg',
-    promark_mopa_60w_color_example_2: 'examples/promark_mopa_60w_color_example_2.bvg',
-    promark_mopa_100w_color_example: 'examples/promark_mopa_100w_color_example.bvg',
-    promark_mopa_100w_color_example_2: 'examples/promark_mopa_100w_color_example_2.bvg',
-  }[key];
+    } as any
+  )[key] as string;
 };
 
 const loadExampleFile = async (path: string) => {
@@ -156,8 +163,8 @@ export default {
       window.location.hash = '#initialize/connect/select-machine-model';
     }
   },
-  ALIGN_TO_EDGES: (): Promise<void> => svgCanvas.toggleBezierPathAlignToEdge(),
   ANTI_ALIASING: (): boolean => viewMenu.toggleAntiAliasing(),
+  AUTO_ALIGN: (): void => svgCanvas.toggleAutoAlign(),
   BOX_GEN: (): void => Dialog.showBoxGen(),
   BUG_REPORT: (): void => {
     OutputError.downloadErrorLog();
@@ -165,11 +172,11 @@ export default {
   CHANGE_LOGS: (): void => Dialog.showChangLog(),
   CLEAR_SCENE: (): Promise<void> => svgEditor.clearScene(),
   CODE_GENERATOR: (): void => Dialog.showCodeGenerator(),
-  COPY: (): Promise<void> => svgEditor.copySelected(),
-  CUT: (): Promise<void> => svgEditor.cutSelected(),
-  DECOMPOSE_PATH: (): Promise<void> => svgCanvas.decomposePath(),
-  DELETE: (): Promise<void> => svgEditor.deleteSelected(),
-  DISASSEMBLE_USE: (): Promise<void> => svgCanvas.disassembleUse2Group(),
+  COPY: (): void => svgEditor.copySelected(),
+  CUT: (): void => svgEditor.cutSelected(),
+  DECOMPOSE_PATH: (): Promise<void> => (svgCanvas as any).decomposePath(),
+  DELETE: (): void => svgEditor.deleteSelected(),
+  DISASSEMBLE_USE: () => (svgCanvas as any).disassembleUse2Group(),
   DOCUMENT_SETTING: (): void => Dialog.showDocumentSettings(),
   DUPLICATE: (): Promise<null | {
     cmd: IBatchCommand;
@@ -188,7 +195,7 @@ export default {
   EXPORT_SVG: (): Promise<void> => FileExportHelper.exportAsSVG(),
   FITS_TO_WINDOW: (): void => workareaManager.resetView(),
   FOLLOW_US: (): void => Dialog.showSocialMedia(),
-  GROUP: (): Promise<void> => svgCanvas.groupSelectedElements(),
+  GROUP: () => svgCanvas.groupSelectedElements(),
   IMAGE_CROP: (): void => Dialog.showCropPanel(),
   IMAGE_CURVE: (): void => Dialog.showPhotoEditPanel('curve'),
   IMAGE_INVERT: (): Promise<void> => imageEdit.colorInvert(),
@@ -231,7 +238,7 @@ export default {
   MANAGE_ACCOUNT: (): Promise<void> => externalLinkMemberDashboard(),
   MATERIAL_TEST_GENERATOR: (): void => Dialog.showMaterialTestGenerator(),
   NETWORK_TESTING: (): void => Dialog.showNetworkTestingPanel(),
-  OFFSET: (): Promise<void> => svgEditor.triggerOffsetTool(),
+  OFFSET: () => svgEditor.triggerOffsetTool(),
   OPEN: (): void => {
     FnWrapper.importImage();
   },
@@ -261,13 +268,13 @@ export default {
       return;
     }
 
-    let url: string;
+    let url: string = '';
 
     if (res.version > 0 && res.urls) {
       url = res.urls[i18n.getActiveLang()] || res.urls.en;
     }
 
-    if (!url) {
+    if (!url.length) {
       Alert.popUp({
         message: i18n.lang.beambox.popup.questionnaire.no_questionnaire_available,
       });
@@ -311,7 +318,7 @@ export default {
       historyUtils.undo();
     }
   },
-  UNGROUP: (): Promise<void> => svgCanvas.ungroupSelectedElement(),
+  UNGROUP: () => svgCanvas.ungroupSelectedElement(),
   ZOOM_IN: (): void => workareaManager.zoomIn(),
   ZOOM_OUT: (): void => workareaManager.zoomOut(),
   ZOOM_WITH_WINDOW: (): boolean => viewMenu.toggleZoomWithWindow(),

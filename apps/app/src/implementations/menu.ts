@@ -70,9 +70,9 @@ class Menu extends AbstractMenu {
 
     changeMenuItemChecked(['ANTI_ALIASING'], isUsingAntiAliasing);
 
-    const shouldShowAlignLines = BeamboxPreference.read('show_align_lines');
+    const isUsingAutoAlign = BeamboxPreference.read('auto_align');
 
-    changeMenuItemChecked(['ALIGN_TO_EDGES'], shouldShowAlignLines);
+    changeMenuItemChecked(['AUTO_ALIGN'], isUsingAutoAlign);
 
     // visibility
     canvasEvent.on('model-changed', (model) => {

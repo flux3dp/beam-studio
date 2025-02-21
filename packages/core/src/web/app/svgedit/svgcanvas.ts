@@ -777,7 +777,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   textEdit.useDefaultFont();
 
   this.isUsingLayerColor = BeamboxPreference.read('use_layer_color');
-  this.isBezierPathAlignToEdge = BeamboxPreference.read('show_align_lines');
+  this.isAutoAlign = BeamboxPreference.read('auto_align');
 
   let root_sctm = null;
 
@@ -4567,12 +4567,12 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     $('[id^="align_text"]').remove();
   };
 
-  this.toggleBezierPathAlignToEdge = () => {
-    const value = !BeamboxPreference.read('show_align_lines');
+  this.toggleAutoAlign = () => {
+    const value = !BeamboxPreference.read('auto_align');
 
-    this.isBezierPathAlignToEdge = value;
+    this.isAutoAlign = value;
 
-    BeamboxPreference.write('show_align_lines', value);
+    BeamboxPreference.write('auto_align', value);
     this.clearAlignLines();
 
     return value;
