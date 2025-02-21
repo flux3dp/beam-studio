@@ -12,4 +12,4 @@ ctx.onmessage = async (e) => {
   ctx.postMessage({ sx, sy, svg: svgString }, null);
 };
 
-export default null;
+export default null as any;

@@ -14,7 +14,7 @@ enum Step {
 
 const ImageTracePanel = (): React.JSX.Element => {
   const [step, setStep] = useState(Step.NONE);
-  const [cropResult, setCropResult] = useState<{ data: Cropper.Data; url: string }>(null);
+  const [cropResult, setCropResult] = useState<null | { data: Cropper.Data; url: string }>(null);
 
   useEffect(() => {
     const handleStart = () => setStep((prev) => (prev === Step.NONE ? Step.CROP : prev));
@@ -35,7 +35,7 @@ const ImageTracePanel = (): React.JSX.Element => {
     return <StepCrop onCancel={() => setStep(Step.NONE)} onCropFinish={onFinish} />;
   }
 
-  if (step === Step.TUNE) {
+  if (step === Step.TUNE && cropResult) {
     const { data, url } = cropResult;
     const handleGoBack = () => {
       URL.revokeObjectURL(url);
@@ -45,7 +45,7 @@ const ImageTracePanel = (): React.JSX.Element => {
     return <StepTune cropData={data} imageUrl={url} onClose={() => setStep(Step.NONE)} onGoBack={handleGoBack} />;
   }
 
-  return null;
+  return null as unknown as React.JSX.Element;
 };
 
 export default ImageTracePanel;

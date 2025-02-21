@@ -25,26 +25,22 @@ import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import PotraceWorker from './potrace/potrace.worker';
 
 let svgCanvas: ISVGCanvas;
-let svgedit;
+let svgedit: any;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
   svgedit = globalSVG.Edit;
 });
 
-const getSelectedElem = (): SVGImageElement => {
+const getSelectedElem = (): null | SVGImageElement => {
   const selectedElements = svgCanvas.getSelectedElems();
   const len = selectedElements.length;
 
-  if (len > 1) {
-    return null;
-  }
+  if (len > 1) return null;
 
   const element = selectedElements[0] as SVGImageElement;
 
-  if (element.tagName !== 'image') {
-    return null;
-  }
+  if (element.tagName !== 'image') return null;
 
   return element;
 };
@@ -57,21 +53,13 @@ const getImageAttributes = (
   shading: boolean;
   threshold: number;
 } => {
-  const imgUrl = elem.getAttribute('origImage') || elem.getAttribute('xlink:href');
+  const imgUrl = (elem.getAttribute('origImage') || elem.getAttribute('xlink:href')) as string;
   const isFullColor = elem.getAttribute('data-fullcolor') === '1';
   const shading = elem.getAttribute('data-shading') === 'true';
-  let threshold = Number.parseInt(elem.getAttribute('data-threshold'), 10);
+  const dataThreshold = Number.parseInt(elem?.getAttribute('data-threshold') ?? '128', 10);
+  const threshold = Number.isNaN(dataThreshold) ? 128 : dataThreshold;
 
-  if (Number.isNaN(threshold)) {
-    threshold = 128;
-  }
-
-  return {
-    imgUrl,
-    isFullColor,
-    shading,
-    threshold,
-  };
+  return { imgUrl, isFullColor, shading, threshold };
 };
 
 const generateBase64Image = (
@@ -82,16 +70,9 @@ const generateBase64Image = (
 ): Promise<string> =>
   new Promise<string>((resolve) => {
     imageData(imgSrc, {
-      grayscale: isFullColor
-        ? undefined
-        : {
-            is_rgba: true,
-            is_shading: shading,
-            is_svg: false,
-            threshold,
-          },
+      grayscale: isFullColor ? undefined : { is_rgba: true, is_shading: shading, is_svg: false, threshold },
       isFullResolution: true,
-      onComplete(result) {
+      onComplete(result: any) {
         resolve(result.pngBase64);
       },
     });
@@ -103,7 +84,7 @@ const addBatchCommand = (
   changes: { [key: string]: boolean | number | string | undefined },
 ): IBatchCommand => {
   const batchCommand: IBatchCommand = new history.BatchCommand(commandName);
-  const setAttribute = (key: string, value) => {
+  const setAttribute = (key: string, value: any) => {
     undoManager.beginUndoableChange(key, [elem]);
 
     if (value === undefined) {
@@ -233,12 +214,14 @@ const traceImage = async (img?: SVGImageElement): Promise<void> => {
       },
       height: Number(element.getAttribute('height')),
       isFullResolution: true,
-      onComplete: (result) => resolve(result.pngBase64),
+      onComplete: (result: any) => resolve(result.pngBase64),
       width: Number(element.getAttribute('width')),
     }),
   );
   const svgStr = (
-    await new Promise<string>((resolve) => ImageTracer.imageToSVG(grayScaleUrl, (str) => resolve(str), 'detailed'))
+    await new Promise<string>((resolve) =>
+      ImageTracer.imageToSVG(grayScaleUrl, (str: string) => resolve(str), 'detailed'),
+    )
   ).replace(/<\/?svg[^>]*>/g, '');
   const gId = svgCanvas.getNextId();
   const g = svgCanvas.addSvgElementFromJson<SVGGElement>({ attr: { id: gId }, element: 'g' });
@@ -299,7 +282,7 @@ const traceImage = async (img?: SVGImageElement): Promise<void> => {
   svgCanvas.selectOnly([path], true);
   batchCmd.addSubCommand(new history.InsertElementCommand(path));
 
-  const cmd = deleteElements([img], true);
+  const cmd = deleteElements([img as SVGImageElement], true);
 
   if (cmd && !cmd.isEmpty()) {
     batchCmd.addSubCommand(cmd);
@@ -401,8 +384,8 @@ const removeBackground = async (elem?: SVGImageElement): Promise<void> => {
           const reader = new FileReader();
 
           reader.onloadend = (e) => {
-            const str = e.target.result as string;
-            const d = JSON.parse(str);
+            const str = e.target?.result as string;
+            const d = JSON.parse(str) as any;
 
             resolve(d.detail);
           };
@@ -438,8 +421,8 @@ const removeBackground = async (elem?: SVGImageElement): Promise<void> => {
         const reader = new FileReader();
 
         reader.onloadend = (e) => {
-          const str = e.target.result as string;
-          const d = JSON.parse(str);
+          const str = e.target?.result as string;
+          const d = JSON.parse(str) as any;
 
           resolve(d);
         };
@@ -505,7 +488,7 @@ const potrace = async (elem?: SVGImageElement): Promise<void> => {
     },
   });
 
-  const isTransparentBackground = elem.getAttribute('data-no-bg');
+  const isTransparentBackground = elem?.getAttribute('data-no-bg');
   const imgBBox = element.getBBox();
   const imgRotation = svgedit.utilities.getRotationAngle(element);
   let { imgUrl } = getImageAttributes(element);
@@ -535,7 +518,7 @@ const potrace = async (elem?: SVGImageElement): Promise<void> => {
         method: isTransparentBackground ? 'trace' : 'posterize',
         options: { addZ: true },
       });
-      worker.onerror = (e) => {
+      worker.onerror = (e: any) => {
         console.error(e);
         clearInterval(checkCancelInterval);
         resolve({ success: false });
@@ -544,7 +527,7 @@ const potrace = async (elem?: SVGImageElement): Promise<void> => {
           message: 'Failed to potrace image',
         });
       };
-      worker.onmessage = (e) => {
+      worker.onmessage = (e: any) => {
         clearInterval(checkCancelInterval);
         resolve({ data: e.data, success: true });
         worker.terminate();
@@ -597,7 +580,7 @@ const potrace = async (elem?: SVGImageElement): Promise<void> => {
       if (opacity >= fillOpacity) {
         fillOpacity = opacity;
 
-        const pathD = child.getAttribute('d');
+        const pathD = child.getAttribute('d') as string;
 
         if (isTransparentBackground) {
           const longestPath = pathD.split('M').reduce((a, b) => (a.length > b.length ? a : b));
@@ -652,6 +635,8 @@ const trapezoid = (
   for (let i = 0; i < end; i += 1) {
     const cur = (reverse ? end - i - 1 : i) / (end - 1);
     const lineRatio = factor + (1 - factor) * cur;
+
+    if (!ctx) continue;
 
     if (alongX) {
       const shift = ((1 - lineRatio) * canvas.height) / 2;
