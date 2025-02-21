@@ -284,16 +284,14 @@ const mouseDown = (evt: MouseEvent, mouseTarget: SVGElement, startX: number, sta
 
     newPoint = [x, y];
 
-    if (svgCanvas.isAutoAlign) {
-      svgCanvas.addAlignPoint(x, y);
-    }
-
     if (svgCanvas.getCurrentConfig().gridSnapping) {
       x = svgedit.utilities.snapToGrid(x);
       y = svgedit.utilities.snapToGrid(y);
       mouseX = svgedit.utilities.snapToGrid(mouseX);
       mouseY = svgedit.utilities.snapToGrid(mouseY);
     }
+
+    if (svgCanvas.isAutoAlign) svgCanvas.addAlignPoint(x, y);
 
     if (!stretchy) {
       stretchy = document.createElementNS(NS.SVG, 'path');

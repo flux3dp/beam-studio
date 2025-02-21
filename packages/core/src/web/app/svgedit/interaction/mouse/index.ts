@@ -460,6 +460,10 @@ const mouseDown = async (evt: MouseEvent) => {
       break;
     case 'path':
     case 'pathedit':
+      if (svgCanvas.isAutoAlign) {
+        [startX, startY] = findAndDrawAlignPoints(startX, startY);
+      }
+
       startX *= zoom;
       startY *= zoom;
 
