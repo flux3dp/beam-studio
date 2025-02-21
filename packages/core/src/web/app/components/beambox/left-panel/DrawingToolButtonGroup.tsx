@@ -47,7 +47,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
       id={`left-${id}`}
       onClick={() => {
         setActiveButton(id);
-        svgCanvas.clearSelection();
+        svgCanvas?.clearSelection();
         onClick();
       }}
       showBadge={showBadge}
