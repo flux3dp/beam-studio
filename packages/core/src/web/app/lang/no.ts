@@ -1490,6 +1490,7 @@ const lang: ILang = {
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Overopphetet. Vent noen minutter.',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Z-akse nullstilling mislyktes',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 Ingen respons fra skrivermodul.',
+    HARDWARE_ERROR_PROBE_SHOWED: 'Vennligst trekk sonden tilbake.',
     HARDWARE_ERROR_PUMP_ERROR: '#900 Sjekk vannbeholderen.',
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: '#914 Ingen roterende modul oppdaget',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 Kritisk feil: Undersystem svarer ikke. Kontakt FLUX-støtte.',

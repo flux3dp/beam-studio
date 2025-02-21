@@ -1495,6 +1495,7 @@ Machines > ‘Promark Name’ > Promark Settings`,
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Overheated. Please wait for a few minutes.',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Z-axis reset failed',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 Printer module no response.',
+    HARDWARE_ERROR_PROBE_SHOWED: 'Please retract the probe.',
     HARDWARE_ERROR_PUMP_ERROR: '#900 Please check with your water tank.',
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: '#914 No rotary module detected',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 Critical Error: Subsystem no response. Please contact FLUX Support.', // Deprecated in FW 3.3.1

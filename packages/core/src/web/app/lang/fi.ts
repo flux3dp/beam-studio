@@ -1490,6 +1490,7 @@ const lang: ILang = {
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Ylikuumeneminen. Odota muutama minuutti',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Z-akselin nollaaminen epäonnistui',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 Tulostinmoduuli ei vastaa.',
+    HARDWARE_ERROR_PROBE_SHOWED: 'Vedä anturi takaisin.',
     HARDWARE_ERROR_PUMP_ERROR: '#900 Tarkista vesisäiliö.',
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: '#914 Pyörivää moduulia ei havaittu',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 Kriittinen virhe: Alijärjestelmä ei vastaa. Ota yhteyttä FLUX-tukeen.',

@@ -1490,6 +1490,7 @@ const lang: ILang = {
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Surriscaldamento. Attendere qualche minuto.',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Reset asse Z non riuscito',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 Nessuna risposta dal modulo stampante.',
+    HARDWARE_ERROR_PROBE_SHOWED: 'Si prega di ritrarre la sonda.',
     HARDWARE_ERROR_PUMP_ERROR: '#900 Controllare serbatoio acqua.',
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: '#914 Nessun modulo rotante rilevato',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 Errore critico: Nessuna risposta dal sottosistema. Contattare assistenza FLUX.',

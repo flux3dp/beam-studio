@@ -1493,6 +1493,7 @@ const lang: ILang = {
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 過熱。数分お待ちください。',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Z軸リセットに失敗しました',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 プリンターモジュールが応答しません。',
+    HARDWARE_ERROR_PROBE_SHOWED: 'プローブを格納してください。',
     HARDWARE_ERROR_PUMP_ERROR: '#900 水槽にご確認ください。',
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: '#914 ロータリーモジュールが検出されません',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 重大なエラー：サブシステムが応答しません。 FLUXサポートにお問い合わせください。', // Deprecated in FW 3.3.1
