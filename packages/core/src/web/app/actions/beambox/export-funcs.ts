@@ -9,6 +9,7 @@ import Progress from '@core/app/actions/progress-caller';
 import { getSupportInfo } from '@core/app/constants/add-on';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { Mode } from '@core/app/constants/monitor-constants';
+import type { PreviewTask } from '@core/app/contexts/MonitorContext';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
 import svgLaserParser from '@core/helpers/api/svg-laser-parser';
@@ -386,24 +387,28 @@ const fetchTransferredFcode = async (gcodeString: string, thumbnail: string) => 
 
 const openTaskInDeviceMonitor = async (
   device: IDeviceInfo,
-  fcodeBlob: Blob,
-  taskImageURL: string,
-  taskTime: number,
-  autoStart?: boolean,
+  taskInfo: {
+    blob: Blob;
+    metadata?: TaskMetaData;
+    taskTime: number;
+    thumbnailUrl: string;
+  },
+  {
+    autoStart = false,
+  }: {
+    autoStart?: boolean;
+  } = {},
 ): Promise<void> => {
   const fileName = currentFileManager.getName() || i18n.lang.topbar.untitled;
+  const task: PreviewTask = {
+    fcodeBlob: taskInfo.blob,
+    fileName,
+    metadata: taskInfo.metadata ?? ({} as TaskMetaData),
+    taskImageURL: taskInfo.thumbnailUrl,
+    taskTime: taskInfo.taskTime,
+  };
 
-  await MonitorController.showMonitor(
-    device,
-    Mode.PREVIEW,
-    {
-      fcodeBlob,
-      fileName,
-      taskImageURL,
-      taskTime,
-    },
-    autoStart,
-  );
+  await MonitorController.showMonitor(device, Mode.PREVIEW, task, autoStart);
 };
 
 export const getConvertEngine = (targetDevice?: IDeviceInfo) => {
@@ -535,7 +540,11 @@ export default {
         };
       }
 
-      await openTaskInDeviceMonitor(device, taskCodeBlob, thumbnailBlobURL, fileTimeCost, autoStart);
+      await openTaskInDeviceMonitor(
+        device,
+        { blob: taskCodeBlob, metadata, taskTime: fileTimeCost, thumbnailUrl: thumbnailBlobURL },
+        { autoStart },
+      );
     } catch (errMsg) {
       console.error(errMsg);
       // TODO: handle err message

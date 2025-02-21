@@ -1678,7 +1678,11 @@ class PathPreview extends React.Component<Props, State> {
                       res = await checkDeviceStatus(device);
 
                       if (res) {
-                        await exportFuncs.openTaskInDeviceMonitor(device, fcodeBlob, thumbnailUrl, fileTimeCost);
+                        await exportFuncs.openTaskInDeviceMonitor(device, {
+                          blob: fcodeBlob,
+                          taskTime: fileTimeCost,
+                          thumbnailUrl,
+                        });
                       }
                     }
 
@@ -1737,7 +1741,11 @@ class PathPreview extends React.Component<Props, State> {
               res = await checkDeviceStatus(device);
 
               if (res) {
-                await exportFuncs.openTaskInDeviceMonitor(device, fcodeBlob, thumbnailUrl, fileTimeCost);
+                await exportFuncs.openTaskInDeviceMonitor(device, {
+                  blob: fcodeBlob,
+                  taskTime: fileTimeCost,
+                  thumbnailUrl,
+                });
               }
             }
           }
@@ -1763,7 +1771,11 @@ class PathPreview extends React.Component<Props, State> {
             res = await checkDeviceStatus(device);
 
             if (res) {
-              await exportFuncs.openTaskInDeviceMonitor(device, fcodeBlob, thumbnailUrl, fileTimeCost);
+              await exportFuncs.openTaskInDeviceMonitor(device, {
+                blob: fcodeBlob,
+                taskTime: fileTimeCost,
+                thumbnailUrl,
+              });
             }
           }
         }

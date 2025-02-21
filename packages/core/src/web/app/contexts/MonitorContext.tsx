@@ -21,6 +21,9 @@ import VersionChecker from '@core/helpers/version-checker';
 import dialog from '@core/implementations/dialog';
 import type { IDeviceInfo, IReport } from '@core/interfaces/IDevice';
 import type { IProgress } from '@core/interfaces/IProgress';
+import type { TaskMetaData } from '@core/interfaces/ITask';
+
+import { DEFAULT_CAMERA_OFFSET } from '../constants/camera-calibration-constants';
 
 const eventEmitter = eventEmitterFactory.createEventEmitter('monitor');
 
@@ -74,13 +77,21 @@ const reportStates = new Set([
   COMPLETED,
 ]);
 
+export interface PreviewTask {
+  fcodeBlob: Blob;
+  fileName: string;
+  metadata: TaskMetaData;
+  taskImageURL: string;
+  taskTime: number;
+}
+
 interface Props {
   autoStart?: boolean;
   children?: React.ReactNode;
   device: IDeviceInfo;
   mode: Mode;
   onClose: () => void;
-  previewTask?: { fcodeBlob: Blob; fileName: string; taskImageURL: string; taskTime: number };
+  previewTask?: PreviewTask;
 }
 
 interface State {
@@ -94,14 +105,14 @@ interface State {
   currentPath: string[];
   currentPosition: { x: number; y: number };
   downloadProgress: null | { left: number; size: number };
-  fileInfo: any[];
+  fileInfo: any[] | null;
   highlightedItem: {
     name?: string;
     type?: ItemType;
   };
   isMaintainMoving?: boolean;
   mode: Mode;
-  previewTask: { fcodeBlob: Blob; fileName: string; taskImageURL: string; taskTime: number };
+  previewTask?: PreviewTask;
   relocateOrigin: { x: number; y: number };
   report: IReport;
   shouldUpdateFileList: boolean;
@@ -129,22 +140,22 @@ interface Context extends State {
   uploadFile: (file: File) => Promise<void>;
 }
 
-export const MonitorContext = React.createContext<Context>(null);
+export const MonitorContext = React.createContext<Context>(null as unknown as Context);
 
 export class MonitorContextProvider extends React.Component<Props, State> {
-  lastErrorId: string;
+  lastErrorId: null | string;
 
   modeBeforeCamera: Mode;
 
   modeBeforeRelocate: Mode;
 
-  reporter: NodeJS.Timeout;
+  reporter?: NodeJS.Timeout;
 
   isGettingReport: boolean;
 
   isClosed: boolean; // for swiftray handler
 
-  autoStart: boolean;
+  autoStart?: boolean;
 
   constructor(props: Props) {
     super(props);
@@ -169,8 +180,8 @@ export class MonitorContextProvider extends React.Component<Props, State> {
       relocateOrigin: { x: 0, y: 0 },
       report: {} as IReport,
       shouldUpdateFileList: false,
-      taskImageURL: mode === Mode.PREVIEW ? previewTask.taskImageURL : null,
-      taskTime: mode === Mode.PREVIEW ? previewTask.taskTime : null,
+      taskImageURL: mode === Mode.PREVIEW && previewTask ? previewTask.taskImageURL : null,
+      taskTime: mode === Mode.PREVIEW && previewTask ? previewTask.taskTime : null,
       uploadProgress: null,
       workingTask: null,
     };
@@ -245,7 +256,8 @@ export class MonitorContextProvider extends React.Component<Props, State> {
 
     const { taskImageURL } = this.state;
 
-    URL.revokeObjectURL(taskImageURL);
+    if (taskImageURL) URL.revokeObjectURL(taskImageURL);
+
     swiftrayClient.off('disconnected', this.onSwiftrayDisconnected);
     this.isClosed = true;
   }
@@ -367,7 +379,7 @@ export class MonitorContextProvider extends React.Component<Props, State> {
 
   stopReport(): void {
     clearInterval(this.reporter);
-    this.reporter = null;
+    this.reporter = undefined;
   }
 
   async fetchInitialInfo(): Promise<void> {
@@ -393,7 +405,7 @@ export class MonitorContextProvider extends React.Component<Props, State> {
 
   async processReport(report: IReport): Promise<void> {
     const { mode, report: currentReport } = this.state;
-    const keys = Object.keys(report);
+    const keys = Object.keys(report) as Array<keyof IReport>;
 
     for (let i = 0; i < keys.length; i += 1) {
       const key = keys[i];
@@ -677,11 +689,17 @@ export class MonitorContextProvider extends React.Component<Props, State> {
       resp.value = ` ${resp.value}`;
 
       let cameraOffset = {
-        angle: Number(/R:\s?(-?\d+\.?\d+)/.exec(resp.value)[1]),
-        scaleRatioX: Number((/SX:\s?(-?\d+\.?\d+)/.exec(resp.value) || /S:\s?(-?\d+\.?\d+)/.exec(resp.value))[1]),
-        scaleRatioY: Number((/SY:\s?(-?\d+\.?\d+)/.exec(resp.value) || /S:\s?(-?\d+\.?\d+)/.exec(resp.value))[1]),
-        x: Number(/ X:\s?(-?\d+\.?\d+)/.exec(resp.value)[1]),
-        y: Number(/ Y:\s?(-?\d+\.?\d+)/.exec(resp.value)[1]),
+        angle: Number(/R:\s?(-?\d+\.?\d+)/.exec(resp.value)?.[1] ?? DEFAULT_CAMERA_OFFSET.R),
+        scaleRatioX: Number(
+          (/SX:\s?(-?\d+\.?\d+)/.exec(resp.value) || /S:\s?(-?\d+\.?\d+)/.exec(resp.value))?.[1] ??
+            DEFAULT_CAMERA_OFFSET.SX,
+        ),
+        scaleRatioY: Number(
+          (/SY:\s?(-?\d+\.?\d+)/.exec(resp.value) || /S:\s?(-?\d+\.?\d+)/.exec(resp.value))?.[1] ??
+            DEFAULT_CAMERA_OFFSET.SY,
+        ),
+        x: Number(/ X:\s?(-?\d+\.?\d+)/.exec(resp.value)?.[1] ?? DEFAULT_CAMERA_OFFSET.X),
+        y: Number(/ Y:\s?(-?\d+\.?\d+)/.exec(resp.value)?.[1] ?? DEFAULT_CAMERA_OFFSET.Y),
       };
 
       console.log(`Got ${configName}`, cameraOffset);
@@ -820,7 +838,7 @@ export class MonitorContextProvider extends React.Component<Props, State> {
       return;
     }
 
-    const name = file.name.split(/[\\/]/).at(-1).replace(/ /g, '_');
+    const name = file.name.split(/[\\/]/).at(-1)!.replace(/ /g, '_');
     const fileExist = await this.doesFileExistInDirectory(path, name);
 
     if (fileExist) {
@@ -858,7 +876,7 @@ export class MonitorContextProvider extends React.Component<Props, State> {
       }
 
       if (isValid) {
-        const blob = new Blob([reader.result], type);
+        const blob = new Blob([reader.result as ArrayBuffer], type);
 
         await DeviceMaster.uploadToDirectory(blob, path, name, (progress: IProgress) => {
           const p = Math.floor((progress.step / progress.total) * 100);
@@ -892,8 +910,13 @@ export class MonitorContextProvider extends React.Component<Props, State> {
 
   onDownload = async (): Promise<void> => {
     try {
-      const { currentPath, highlightedItem } = this.state;
-      const { name } = highlightedItem;
+      const {
+        currentPath,
+        highlightedItem: { name },
+      } = this.state;
+
+      if (!name) return;
+
       const path = currentPath.join('/');
       const file = await DeviceMaster.downloadFile(path, name, (p) => {
         this.setState({ downloadProgress: p });
@@ -915,14 +938,19 @@ export class MonitorContextProvider extends React.Component<Props, State> {
   };
 
   onDeleteFile = (): void => {
-    const { currentPath, highlightedItem } = this.state;
+    const {
+      currentPath,
+      highlightedItem: { name },
+    } = this.state;
     const path = currentPath.join('/');
+
+    if (!name) return;
 
     Alert.popUp({
       buttonType: AlertConstants.YES_NO,
       message: LANG.monitor.confirmFileDelete,
       onYes: async () => {
-        await DeviceMaster.deleteFile(path, highlightedItem.name);
+        await DeviceMaster.deleteFile(path, name);
         this.setShouldUpdateFileList(true);
       },
       type: AlertConstants.SHOW_POPUP_INFO,
@@ -948,7 +976,7 @@ export class MonitorContextProvider extends React.Component<Props, State> {
 
       if (mode === Mode.PREVIEW || forceResend) {
         const { previewTask } = this.state;
-        const fCode = previewTask.fcodeBlob;
+        const fCode = previewTask!.fcodeBlob;
 
         try {
           await DeviceMaster.go(fCode, ({ step, total }: IProgress) => {
