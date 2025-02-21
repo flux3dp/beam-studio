@@ -119,6 +119,7 @@ module.exports = [
       'n/no-path-concat': 'error',
       'n/process-exit-as-throw': 'error',
       'no-unused-vars': 'off',
+      'object-shorthand': ['error', 'properties'],
       'react/react-in-jsx-scope': 'off',
       'reactRefresh/only-export-components': ['warn', { allowConstantExport: true }],
       'style/brace-style': ['error', '1tbs'],

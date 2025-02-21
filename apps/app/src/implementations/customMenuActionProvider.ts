@@ -17,16 +17,15 @@ getSVGAsync((globalSVG) => {
 export default {
   getCustomMenuActions() {
     return {
-      ALIGN_TO_EDGES: () => {
-        // @ts-expect-error not set this type yet
-        const isBezierPathAlignToEdge = svgCanvas.toggleBezierPathAlignToEdge();
-
-        changeMenuItemChecked(['ALIGN_TO_EDGES'], isBezierPathAlignToEdge);
-      },
       ANTI_ALIASING: () => {
         const newValue = viewMenu.toggleAntiAliasing();
 
         changeMenuItemChecked(['ANTI_ALIASING'], newValue);
+      },
+      AUTO_ALIGN: () => {
+        const toggleAutoAlign = svgCanvas.toggleAutoAlign();
+
+        changeMenuItemChecked(['AUTO_ALIGN'], toggleAutoAlign);
       },
       RELOAD_APP: () => windowLocationReload(),
       SHOW_GRIDS: () => {

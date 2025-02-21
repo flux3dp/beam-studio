@@ -1276,7 +1276,6 @@ const lang: ILang = {
       what_if_2: 'Co jeśli adres IP zaczyna się od 169?',
       what_if_2_content: '1. Jeśli adres IP zaczyna się od 169.254, powinien to być problem z ustawieniem DHCP, skontaktuj się ze swoim dostawcą usług internetowych w celu uzyskania dalszej pomocy. Jeśli Twój komputer łączy się z Internetem bezpośrednio za pomocą protokołu PPPoE, zmień sposób korzystania z routera na łączenie za pomocą protokołu PPPoE i włącz funkcję DHCP w routerze.',
     },
-
     connecting: 'Łączę......',
     connection_types: {
       ether2ether: 'Połączenie bezpośrednie',
@@ -1284,7 +1283,6 @@ const lang: ILang = {
       wifi: 'Wi-Fi',
       wired: 'Sieć przewoda',
     },
-    // generic strings
     next: 'Następny',
     no_machine: 'Nie mam teraz maszyny.',
     promark: {
@@ -1299,7 +1297,6 @@ const lang: ILang = {
     retry: 'Spróbuj ponownie',
     select_beambox: 'Wybierz swój Beambox',
     select_connection_type: 'Jak chcesz się połączyć?',
-    // specific caption/content
     select_language: 'Wybierz język',
     select_machine_type: 'Wybierz typ swojej maszyny',
     setting_completed: {
@@ -1803,8 +1800,8 @@ const lang: ILang = {
       account: 'Konto',
       add_new_machine: 'Konfiguracja maszyny',
       align_center: 'Wyrównaj do środka',
-      align_to_edges: 'Przyciągaj do wierzchołków',
       anti_aliasing: 'Wygładzanie krawędzi',
+      auto_align: 'Automatyczne Wyrównanie',
       borderless_mode: 'Tryb bez obramowania',
       bug_report: 'Zgłoszenie błędu',
       calibrate_beambox_camera: 'Kalibracja kamery',

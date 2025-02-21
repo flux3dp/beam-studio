@@ -2,6 +2,7 @@
 import * as paper from 'paper';
 
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
 import history from '@core/app/svgedit/history/history';
 import PathNodePoint from '@core/app/svgedit/path/PathNodePoint';
 import SegmentControlPoint from '@core/app/svgedit/path/SegmentControlPoint';
@@ -24,7 +25,7 @@ import Segment from '../path/Segment';
 
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 
-let svgEditor;
+let svgEditor: ISVGEditor;
 let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
@@ -52,7 +53,7 @@ let previousMode = 'select';
 let modeOnMouseDown = '';
 let hasMoved = false;
 let hasCreatedPoint = false;
-let drawnPath = null;
+let drawnPath: null | SVGPathElement = null;
 
 const wrapPrecision = (data: number[]) => data.map((d) => d.toFixed(5));
 
@@ -156,13 +157,7 @@ const getCurveLocationByPaperjs = (x: number, y: number, elem: SVGPathElement) =
 };
 
 const finishPath = (toEditMode = true) => {
-  const xAlignLine = document.getElementById('x_align_line');
-
-  if (xAlignLine) xAlignLine.remove();
-
-  const yAlignLine = document.getElementById('y_align_line');
-
-  if (yAlignLine) yAlignLine.remove();
+  svgCanvas.clearAlignLines();
 
   if (!drawnPath) {
     const pathPointGripContainer = document.getElementById('pathpointgrip_container');
@@ -183,7 +178,7 @@ const finishPath = (toEditMode = true) => {
 
   if (stretchy) stretchy.remove();
 
-  const len = drawnPath.pathSegList.numberOfItems;
+  const len = (drawnPath as any).pathSegList.numberOfItems;
 
   drawnPath = null;
 
@@ -214,7 +209,7 @@ const finishPath = (toEditMode = true) => {
   shortcuts.on(['Escape'], window.svgEditor.clickSelect);
 };
 
-const toEditMode = (element): void => {
+const toEditMode = (element: Element): void => {
   svgedit.path.path = svgedit.path.getPath(element);
 
   const isContinuousDrawing = BeamboxPreference.read('continuous_drawing');
@@ -228,7 +223,7 @@ const toEditMode = (element): void => {
   subpath = false;
 };
 
-const toSelectMode = (elem): void => {
+const toSelectMode = (elem?: Element): void => {
   const selPath = elem === svgedit.path.path.elem;
 
   svgCanvas.unsafeAccess.setCurrentMode(previousMode);
@@ -270,13 +265,8 @@ const toSelectMode = (elem): void => {
 const mouseDown = (evt: MouseEvent, mouseTarget: SVGElement, startX: number, startY: number) => {
   const currentMode = svgCanvas.getCurrentMode();
   const currentZoom = workareaManager.zoomRatio;
-  const xAlignLine = document.getElementById('x_align_line');
 
-  if (xAlignLine) xAlignLine.remove();
-
-  const yAlignLine = document.getElementById('y_align_line');
-
-  if (yAlignLine) yAlignLine.remove();
+  svgCanvas.clearAlignLines();
 
   let x = startX / currentZoom;
   let y = startY / currentZoom;
@@ -294,16 +284,14 @@ const mouseDown = (evt: MouseEvent, mouseTarget: SVGElement, startX: number, sta
 
     newPoint = [x, y];
 
-    if (svgCanvas.isBezierPathAlignToEdge) {
-      svgCanvas.addAlignPoint(x, y);
-    }
-
     if (svgCanvas.getCurrentConfig().gridSnapping) {
       x = svgedit.utilities.snapToGrid(x);
       y = svgedit.utilities.snapToGrid(y);
       mouseX = svgedit.utilities.snapToGrid(mouseX);
       mouseY = svgedit.utilities.snapToGrid(mouseY);
     }
+
+    if (svgCanvas.isAutoAlign) svgCanvas.addAlignPoint(x, y);
 
     if (!stretchy) {
       stretchy = document.createElementNS(NS.SVG, 'path');
@@ -705,7 +693,7 @@ const mouseMove = (mouseX: number, mouseY: number) => {
 
   if (hasCreatedPoint) {
     // has created a node point
-  } else if (selectedPath.dragging) {
+  } else if (selectedPath?.dragging) {
     // if we are dragging a point, let's move it
     const pt = svgedit.path.getPointFromGrip(
       {
@@ -714,13 +702,7 @@ const mouseMove = (mouseX: number, mouseY: number) => {
       },
       selectedPath,
     );
-    const mpt = svgedit.path.getPointFromGrip(
-      {
-        x: mouseX,
-        y: mouseY,
-      },
-      selectedPath,
-    );
+    const mpt = svgedit.path.getPointFromGrip({ x: mouseX, y: mouseY }, selectedPath);
     const diffX = mpt.x - pt.x;
     const diffY = mpt.y - pt.y;
 
@@ -762,7 +744,7 @@ const mouseMove = (mouseX: number, mouseY: number) => {
   }
 };
 
-const mouseUp = (evt: MouseEvent, element: SVGElement) => {
+const mouseUp = (evt: MouseEvent, element?: SVGElement) => {
   const rubberBox = svgCanvas.getRubberBox();
 
   // Create mode
@@ -982,8 +964,7 @@ const clear = () => {
     svgedit.path.path.init().show(false);
   }
 
-  $('#x_align_line').remove();
-  $('#y_align_line').remove();
+  svgCanvas.clearAlignLines();
 };
 
 const resetOrientation = (path) => {
@@ -1519,7 +1500,7 @@ const convertPathSegToDPath = (segList: ISVGPathSeg[], toRel: boolean) => {
 };
 
 const _smoothByPaperjs = (elem: SVGPathElement) => {
-  const originD = elem.getAttribute('d');
+  const originD = elem.getAttribute('d') as string;
   // paper.setup();
   const proj = new paper.Project(document.createElement('canvas'));
   const items = proj.importSVG(`<svg>${elem.outerHTML}</svg>`);
@@ -1531,7 +1512,7 @@ const _smoothByPaperjs = (elem: SVGPathElement) => {
   const group = svg.children[0];
   const group2 = group.children[0];
   const svgPath = group2.children[0];
-  const d = svgPath.getAttribute('d');
+  const d = svgPath.getAttribute('d') as string;
 
   console.log('Compress', ((d.length / originD.length) * 100).toFixed(2));
   elem.setAttribute('d', d);
@@ -1564,9 +1545,9 @@ const smoothByFitPath = (elem: SVGPathElement) => {
     cx: bbox.x + bbox.width / 2,
     cy: bbox.y + bbox.height / 2,
   };
-  const result = [];
+  const result = Array.of<string>();
   const ClipperLib = getClipperLib();
-  const paths = ClipperLib.dPathtoPointPathsAndScale(dpath, rotation, scale);
+  const paths: any[] = ClipperLib.dPathtoPointPathsAndScale(dpath, rotation, scale);
 
   paths.forEach((path) => {
     result.push('M');
@@ -1606,7 +1587,7 @@ const booleanOperation = (pathHTML1: string, pathHTML2: string, clipType: number
   const path1 = obj1 instanceof paper.Shape ? obj1.toPath() : obj1.clone();
   const path2 = obj2 instanceof paper.Shape ? obj2.toPath() : obj2.clone();
 
-  path1[operation](path2);
+  (path1 as any)[operation](path2);
   obj1.remove();
   obj2.remove();
   path1.remove();
@@ -1619,18 +1600,18 @@ const booleanOperation = (pathHTML1: string, pathHTML2: string, clipType: number
   console.log('Output Paths', group2.children.length);
 
   const svgPath = group2.children[0];
-  const d = svgPath.getAttribute('d');
 
-  return d;
+  return svgPath.getAttribute('d');
 };
 
 const booleanOperationByPaperjs = (baseHTML: string, elem2: SVGPathElement, clipType: number) => {
   let elem2HTML = '';
+  const rx = elem2.getAttribute('rx');
 
-  if (elem2.tagName === 'rect' && elem2.getAttribute('rx')) {
+  if (elem2.tagName === 'rect' && rx) {
     const cloned = elem2.cloneNode(true) as Element;
 
-    cloned.setAttribute('ry', elem2.getAttribute('rx'));
+    cloned.setAttribute('ry', rx);
     elem2HTML = cloned.outerHTML;
   } else {
     elem2HTML = elem2.outerHTML;
@@ -1639,11 +1620,7 @@ const booleanOperationByPaperjs = (baseHTML: string, elem2: SVGPathElement, clip
   return booleanOperation(baseHTML, elem2HTML, clipType);
 };
 
-export const simplifyPath = (elem: any | SVGPathElement) => {
-  const d = smoothByFitPath(elem);
-
-  return d;
-};
+export const simplifyPath = (elem: any | SVGPathElement) => smoothByFitPath(elem);
 
 const handleHistoryEvent = (eventType: string, cmd: ICommand) => {
   const EventTypes = history.HistoryEventTypes;
@@ -1739,7 +1716,7 @@ const pathActions = {
   fixEnd,
   getNodePoint,
   handleHistoryEvent,
-  hasDrawingPath: (): boolean => !!drawnPath,
+  hasDrawingPath: (): boolean => Boolean(drawnPath),
   linkControlPoints,
   mouseDown,
   mouseMove,

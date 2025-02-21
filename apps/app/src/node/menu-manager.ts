@@ -40,7 +40,10 @@ function buildOSXAppMenu(callback: (data: MenuData) => void) {
       { type: 'separator' },
       {
         accelerator: 'Cmd+R',
-        click: () => getFocusedView()?.webContents.reload(),
+        click: () => {
+          getFocusedView()?.webContents.reload();
+          Menu.setApplicationMenu(Menu.getApplicationMenu());
+        },
         id: 'RELOAD_APP',
         label: r.reload_app,
       },
@@ -620,8 +623,8 @@ class MenuManager extends EventEmitter {
         {
           click: callback,
           enabled: false,
-          id: 'ALIGN_TO_EDGES',
-          label: r.align_to_edges,
+          id: 'AUTO_ALIGN',
+          label: r.auto_align || 'Auto Align',
           type: 'checkbox',
         },
         {

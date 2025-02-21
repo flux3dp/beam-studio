@@ -1794,8 +1794,8 @@ export interface ILang {
       account: string;
       add_new_machine: string;
       align_center: string;
-      align_to_edges: string;
       anti_aliasing: string;
+      auto_align: string;
       borderless_mode: string;
       bug_report: string;
       calibrate_beambox_camera: string;

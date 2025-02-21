@@ -1276,7 +1276,6 @@ const lang: ILang = {
       what_if_2: 'Co když IP začíná 169?',
       what_if_2_content: '1. Pokud IP adresa začíná 169.254, mělo by se jednat o problém s nastavením DHCP. Kontaktujte prosím svého poskytovatele internetu pro další pomoc.\n2. Pokud se váš počítač připojuje k internetu přímo s pomocí PPPoE, změňte prosím router, aby se připojoval pomocí PPPoE a aktivujte u routeru funkci DHCP.',
     },
-
     connecting: 'Připojuji...',
     connection_types: {
       ether2ether: 'Přímé připojení',
@@ -1284,7 +1283,6 @@ const lang: ILang = {
       wifi: 'Wi-Fi',
       wired: 'Drátové připojení',
     },
-    // generic strings
     next: 'Další',
     no_machine: 'Nemám nyní přístroj.',
     promark: {
@@ -1299,7 +1297,6 @@ const lang: ILang = {
     retry: 'Opakovat',
     select_beambox: 'Vyberte svůj Beambox',
     select_connection_type: 'Jak se přejete připojit?',
-    // specific caption/content
     select_language: 'Vyberte jazyk',
     select_machine_type: 'Vyberte typ vašeho přístroje',
     setting_completed: {
@@ -1374,14 +1371,12 @@ const lang: ILang = {
   material_test_generator: {
     block_settings: 'Nastavení bloků',
     columns: 'Sloupce',
-    // block setting form
     count: 'Počet',
     cut: 'Řez',
     engrave: 'Gravírování',
     export: 'Export',
     max: 'Max',
     min: 'Min',
-    // table setting form
     parameter: 'Parametr',
     preview: 'Náhled',
     rows: 'Řádky',
@@ -1805,8 +1800,8 @@ const lang: ILang = {
       account: 'Účet',
       add_new_machine: 'Nastavení přístroje',
       align_center: 'Zarovnat na střed',
-      align_to_edges: 'Přichytit do vertexů',
       anti_aliasing: 'Vyhlazení',
+      auto_align: 'Automatické Zarovnání',
       borderless_mode: 'Mód bez okrajů',
       bug_report: 'Nahlásit chybu',
       calibrate_beambox_camera: 'Kalibrovat kameru',

@@ -1276,7 +1276,6 @@ const lang: ILang = {
       what_if_2: '机器显示的 IP 开头为 169',
       what_if_2_content: '1. IP 地址为 169.254 开头通常为 DHCP 设定问题，需要联系网路服务提供商或是网路设定者来协助。 \n2. 如果工作环境的网路是由电脑直接 PPPoE 连网，请改由路由器直接 PPPoE 联网，并在路由器中开启DHCP 功能。',
     },
-
     connecting: '连接中',
     connection_types: {
       ether2ether: '网路线直连',
@@ -1284,7 +1283,6 @@ const lang: ILang = {
       wifi: 'Wi-Fi',
       wired: '有线网路',
     },
-    // generic strings
     next: '下一步',
     no_machine: '目前没有机器或已设置过连接，跳过此步骤',
     promark: {
@@ -1299,7 +1297,6 @@ const lang: ILang = {
     retry: '重试',
     select_beambox: '请选择您的 Beambox',
     select_connection_type: '请选择您的连接方式',
-    // specific caption/content
     select_language: '请选择你想使用的语言',
     select_machine_type: '请选择您的机种',
     setting_completed: {
@@ -1374,14 +1371,12 @@ const lang: ILang = {
   material_test_generator: {
     block_settings: '块设置',
     columns: '列',
-    // block setting form
     count: '数量',
     cut: '切割',
     engrave: '雕刻',
     export: '导出',
     max: '最大值',
     min: '最小值',
-    // table setting form
     parameter: '参数',
     preview: '预览',
     rows: '行',
@@ -1805,8 +1800,8 @@ const lang: ILang = {
       account: '帐号',
       add_new_machine: '新增或设定机器',
       align_center: '置中',
-      align_to_edges: '贴齐端点',
       anti_aliasing: '抗锯齿',
+      auto_align: '自动对齐',
       borderless_mode: '开盖模式',
       bug_report: '错误回报',
       calibrate_beambox_camera: '校正相机',

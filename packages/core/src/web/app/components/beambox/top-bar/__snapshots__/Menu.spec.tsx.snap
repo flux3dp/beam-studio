@@ -692,7 +692,7 @@ exports[`should render correctly test checkbox menu item 2`] = `
             role="menuitemcheckbox"
             tabindex="-1"
           >
-            Snap To Vertices
+            Auto Align
           </li>
           <li
             aria-checked="false"
@@ -918,7 +918,7 @@ exports[`should render correctly test checkbox menu item 3`] = `
             role="menuitemcheckbox"
             tabindex="-1"
           >
-            Snap To Vertices
+            Auto Align
           </li>
           <li
             aria-checked="false"

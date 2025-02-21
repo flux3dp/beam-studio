@@ -98,6 +98,7 @@ class TabManager {
       this.updateTabBounds(tabs);
     };
 
+    this.mainWindow.on('resize', handleWindowSizeChanged);
     this.mainWindow.on('resized', handleWindowSizeChanged);
     this.mainWindow.on('enter-full-screen', handleWindowSizeChanged);
     this.mainWindow.on('leave-full-screen', handleWindowSizeChanged);
