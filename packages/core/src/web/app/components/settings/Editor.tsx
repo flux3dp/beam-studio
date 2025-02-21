@@ -116,6 +116,12 @@ function Editor({
       value: 'fhexa1',
     },
     {
+      label: 'HEXA RF',
+      selectedModel: ['fhx2rf3', 'fhx2rf6'].includes(selectedModel),
+      // send to rf3 for now since they don't have different workarea at the moment
+      value: 'fhx2rf3',
+    },
+    {
       label: 'Ador',
       selected: selectedModel === 'ado1',
       value: 'ado1',

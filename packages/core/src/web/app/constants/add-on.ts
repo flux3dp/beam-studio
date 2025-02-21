@@ -102,6 +102,26 @@ const supportList: Record<WorkAreaModel, SupportInfo> = {
       roller: true,
     },
   },
+  fhx2rf3: {
+    jobOrigin: true,
+    lowerFocus: true,
+    rotary: {
+      chuck: true,
+      extendWorkarea: false,
+      mirror: false,
+      roller: true,
+    },
+  },
+  fhx2rf6: {
+    jobOrigin: true,
+    lowerFocus: true,
+    rotary: {
+      chuck: true,
+      extendWorkarea: false,
+      mirror: false,
+      roller: true,
+    },
+  },
   flv1: {
     jobOrigin: true,
     rotary: {

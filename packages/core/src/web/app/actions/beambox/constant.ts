@@ -1,6 +1,6 @@
 const removeReadonly = <T extends string>(arr: ReadonlyArray<T[number]> | T[]) => arr as string[];
 
-export const supportUsbModelsArray = ['ado1', 'fhexa1', 'fpm1', 'fbb2'] as const;
+export const supportUsbModelsArray = ['ado1', 'fhexa1', 'fhx2rf3', 'fhx2rf6', 'fpm1', 'fbb2'] as const;
 export type SupportUsbModels = (typeof supportUsbModelsArray)[number];
 export const supportUsbModelsStrict = new Set(supportUsbModelsArray);
 export const supportUsbModels = new Set(removeReadonly(supportUsbModelsArray));
@@ -28,6 +28,8 @@ export default {
     fbb2: ['fbb2'],
     fbm1: ['fbm1'],
     fhexa1: ['fhexa1', 'fbb1p', 'fbb1b', 'fbm1'],
+    fhx2rf3: ['fhexa1', 'fhx2rf6', 'fbb1p', 'fbb1b', 'fbm1'],
+    fhx2rf6: ['fhexa1', 'fhx2rf3', 'fbb1p', 'fbb1b', 'fbm1'],
     flv1: ['flv1'],
     fpm1: ['fpm1'],
     'laser-b1': ['fhexa1', 'fbb1p', 'fbb1b', 'fbm1'],
@@ -74,5 +76,5 @@ export default {
   },
   dpmm: 10,
   fcodeV2Models: new Set(['ado1', 'fbb2']),
-  highPowerModels: ['fhexa1', 'ado1', 'flv1', 'fpm1'],
+  highPowerModels: ['fhexa1', 'fhx2rf3', 'fhx2rf6', 'ado1', 'flv1', 'fpm1'],
 };
