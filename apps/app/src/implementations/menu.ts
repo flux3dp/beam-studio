@@ -28,13 +28,8 @@ class Menu extends AbstractMenu {
   constructor(aCommunicator: any) {
     super();
     this.communicator = aCommunicator;
-    communicator.on('UPDATE_MENU', () => {
-      updateWindowsMenu();
-    });
-    communicator.on('NEW_APP_MENU', () => {
-      updateWindowsMenu();
-      this.initMenuItemStatus();
-    });
+    communicator.on('UPDATE_MENU', updateWindowsMenu);
+    communicator.on('NEW_APP_MENU', updateWindowsMenu);
     communicator.on(TabEvents.TabFocused, () => {
       this.initMenuItemStatus();
     });
@@ -60,7 +55,7 @@ class Menu extends AbstractMenu {
 
     const shouldShowRulers = BeamboxPreference.read('show_rulers');
 
-    changeMenuItemChecked(['SHOW_RULERS'], shouldShowRulers);
+    changeMenuItemChecked(['SHOW_RULERS'], shouldShowRulers ?? false);
 
     const isUsingLayerColor = BeamboxPreference.read('use_layer_color');
 
@@ -72,7 +67,7 @@ class Menu extends AbstractMenu {
 
     const isUsingAutoAlign = BeamboxPreference.read('auto_align');
 
-    changeMenuItemChecked(['AUTO_ALIGN'], isUsingAutoAlign);
+    changeMenuItemChecked(['AUTO_ALIGN'], isUsingAutoAlign ?? false);
 
     // visibility
     canvasEvent.on('model-changed', (model) => {
