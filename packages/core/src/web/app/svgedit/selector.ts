@@ -248,15 +248,8 @@ class Selector {
    */
   calculateDimension(bbox?: BBox) {
     const { elem } = this;
-    const strokeWidth = Number(elem.getAttribute('stroke-width'));
     const currentZoom = workareaManager.zoomRatio;
     const { tagName } = elem;
-    // Offset between element and select rect
-    let offset = tagName === 'text' ? 0 : 0;
-
-    if (elem.getAttribute('stroke') !== 'none' && !Number.isNaN(strokeWidth)) {
-      offset += (strokeWidth / 2) * currentZoom;
-    }
 
     const tlist = svgedit.transformlist.getTransformList(elem);
     let m = svgedit.math.transformListToTransform(tlist).matrix;
@@ -318,10 +311,10 @@ class Selector {
 
     this.dimension = {
       angle,
-      height: aabox.height + 2 * offset,
-      width: aabox.width + 2 * offset,
-      x: aabox.x - offset,
-      y: aabox.y - offset,
+      height: aabox.height,
+      width: aabox.width,
+      x: aabox.x,
+      y: aabox.y,
     };
   }
 
