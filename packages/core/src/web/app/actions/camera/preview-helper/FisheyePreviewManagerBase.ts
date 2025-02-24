@@ -56,7 +56,7 @@ class FisheyePreviewManagerBase implements FisheyePreviewManager {
       if (deviceMaster.currentControlMode === 'raw') {
         await deviceMaster.rawLooseMotor();
         progressCaller.update(this.progressId, { message: i18n.lang.message.endingRawMode });
-        await deviceMaster.endRawMode();
+        await deviceMaster.endSubTask();
       }
 
       progressCaller.popById(this.progressId);

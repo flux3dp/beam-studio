@@ -79,7 +79,7 @@ const getHeight = async (device: IDeviceInfo) => {
     return 0;
   } finally {
     if (enteredRawMode) {
-      await deviceMaster.endRawMode();
+      await deviceMaster.endSubTask();
     }
   }
 

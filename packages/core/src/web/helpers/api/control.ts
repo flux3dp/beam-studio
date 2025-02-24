@@ -967,6 +967,13 @@ class Control extends EventEmitter implements IControlSocket {
 
   deleteDeviceSetting = (name: string) => this.useWaitAnyResponse(`config del ${name}`);
 
+  endSubTask = () => {
+    this.mode = '';
+    this._cartridgeTaskId = 0;
+
+    return this.useWaitAnyResponse('task quit');
+  };
+
   enterCartridgeIOMode = async () => {
     const res = await this.useWaitAnyResponse('task cartridge_io');
 
@@ -975,13 +982,6 @@ class Control extends EventEmitter implements IControlSocket {
     this._cartridgeTaskId = Math.floor(Math.random() * 2e9);
 
     return res;
-  };
-
-  endCartridgeIOMode = () => {
-    this.mode = '';
-    this._cartridgeTaskId = 0;
-
-    return this.useWaitAnyResponse('task quit');
   };
 
   getCartridgeChipData = async () => {
@@ -1015,12 +1015,6 @@ class Control extends EventEmitter implements IControlSocket {
     this.mode = 'red_laser_measure';
 
     return res;
-  };
-
-  endRedLaserMeasureMode = () => {
-    this.mode = '';
-
-    return this.useWaitAnyResponse('task quit');
   };
 
   /**
@@ -1094,6 +1088,14 @@ class Control extends EventEmitter implements IControlSocket {
     throw new Error(JSON.stringify(resp));
   };
 
+  enterZSpeedLimitTestTask = async () => {
+    const res = await this.useWaitAnyResponse('task z_speed_limit_test');
+
+    this.mode = 'z_speed_limit_test';
+
+    return res;
+  };
+
   enterRawMode = async () => {
     const res = await this.useWaitAnyResponse('task raw');
 
@@ -1101,12 +1103,6 @@ class Control extends EventEmitter implements IControlSocket {
     this.mode = 'raw';
 
     return res;
-  };
-
-  endRawMode = () => {
-    this.mode = '';
-
-    return this.useWaitAnyResponse('task quit');
   };
 
   rawHome = (zAxis = false) => {

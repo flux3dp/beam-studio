@@ -8,7 +8,7 @@ const mockRawMove = jest.fn();
 const mockRawEndLineCheckMode = jest.fn();
 const mockRawAutoFocus = jest.fn();
 const mockRawGetProbePos = jest.fn();
-const mockEndRawMode = jest.fn();
+const mockEndSubTask = jest.fn();
 const mockGetCurrentDevice = jest.fn();
 const mockRawLooseMotor = jest.fn();
 const mockUploadToDirectory = jest.fn();
@@ -20,7 +20,7 @@ jest.mock('@core/helpers/device-master', () => ({
     return mockGetCurrentDevice();
   },
   downloadFile: (...args) => mockDownloadFile(...args),
-  endRawMode: (...args) => mockEndRawMode(...args),
+  endSubTask: (...args) => mockEndSubTask(...args),
   enterRawMode: (...args) => mockEnterRawMode(...args),
   ls: (...args) => mockLs(...args),
   rawAutoFocus: (...args) => mockRawAutoFocus(...args),
@@ -108,7 +108,7 @@ describe('test AdorCalibrationV2 utils', () => {
     expect(mockRawEndLineCheckMode).toHaveBeenCalledTimes(1);
     expect(mockRawAutoFocus).toHaveBeenCalledTimes(1);
     expect(mockRawGetProbePos).toHaveBeenCalledTimes(1);
-    expect(mockEndRawMode).toHaveBeenCalledTimes(1);
+    expect(mockEndSubTask).toHaveBeenCalledTimes(1);
     expect(res).toBe(90);
   });
 
@@ -117,7 +117,7 @@ describe('test AdorCalibrationV2 utils', () => {
     expect(mockEnterRawMode).toHaveBeenCalledTimes(1);
     expect(mockRawHome).toHaveBeenCalledTimes(1);
     expect(mockRawHomeZ).toHaveBeenCalledTimes(1);
-    expect(mockEndRawMode).toHaveBeenCalledTimes(1);
+    expect(mockEndSubTask).toHaveBeenCalledTimes(1);
   });
 
   test('saveCheckPoint', async () => {

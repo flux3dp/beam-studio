@@ -176,7 +176,7 @@ const CartridgeSettingPanel = ({ initData, inkLevel, onClose }: Props): React.JS
   useEffect(
     () => () => {
       if (deviceMaster.currentDevice?.control?.getMode() === 'cartridge_io') {
-        deviceMaster.endCartridgeIOMode();
+        deviceMaster.endSubTask();
       }
     },
     [],

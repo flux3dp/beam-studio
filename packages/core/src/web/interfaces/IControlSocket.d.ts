@@ -28,9 +28,7 @@ interface IControlSocket extends EventEmitter {
   deviceDetailInfo(): Promise<IDeviceDetailInfo>;
   downloadFile(fileNameWithPath: string): Promise<[string, Blob]>;
   downloadLog(logName: string): Promise<Array<Blob | string>>;
-  endCartridgeIOMode?: () => Promise<void>;
-  endRawMode(): Promise<unknown>;
-  endRedLaserMeasureMode?: () => Promise<void>;
+  endSubTask(): Promise<void>;
   enterCartridgeIOMode?: () => Promise<void>;
   enterRawMode(): Promise<unknown>;
   enterRedLaserMeasureMode?: () => Promise<void>;
