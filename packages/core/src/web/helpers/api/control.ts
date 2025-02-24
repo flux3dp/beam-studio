@@ -1023,14 +1023,31 @@ class Control extends EventEmitter implements IControlSocket {
     return this.useWaitAnyResponse('task quit');
   };
 
+  /**
+   * Because the fluxghost websocket wont send message if the control socket is kicked now.
+   * This is a workaround to check if the task is kicked or the web socket is closed to send
+   * an arbitrary message to see if the control socket is kicked.
+   * It is better to replace the websocket of fluxghost to a more modern one though
+   */
+  checkTaskAlive = async () => {
+    try {
+      const resp = await this.useWaitAnyResponse(' ');
+      const { data } = resp;
+
+      return !data.includes('KICKED');
+    } catch {
+      return false;
+    }
+  };
+
   takeReferenceZ = async (args: { F?: number; H?: number; X?: number; Y?: number } = {}): Promise<number> => {
     if (this.mode !== 'red_laser_measure') {
       throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
     }
 
-    const posCommand = Object.keys(args)
+    const posCommand = (Object.keys(args) as Array<keyof typeof args>)
       .filter((key) => args[key] !== undefined)
-      .map((key) => `${key}:${args[key].toFixed(3)}`)
+      .map((key) => `${key}:${args[key]!.toFixed(3)}`)
       .join(',');
     const resp = await this.useWaitAnyResponse(`take_reference_z${posCommand ? `(${posCommand})` : ''}`, 180000);
     const { data } = resp;
@@ -1042,12 +1059,12 @@ class Control extends EventEmitter implements IControlSocket {
         return Number(height);
       }
 
-      if (data.startsWith('fail')) {
+      if (data.startsWith('fail') || data.startsWith('error')) {
         throw new Error(data);
       }
     }
 
-    throw new Error(resp);
+    throw new Error(JSON.stringify(resp));
   };
 
   measureZ = async (args: { F?: number; X?: number; Y?: number } = {}): Promise<number> => {
@@ -1055,9 +1072,9 @@ class Control extends EventEmitter implements IControlSocket {
       throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
     }
 
-    const posCommand = Object.keys(args)
+    const posCommand = (Object.keys(args) as Array<keyof typeof args>)
       .filter((key) => args[key] !== undefined)
-      .map((key) => `${key}:${args[key].toFixed(3)}`)
+      .map((key) => `${key}:${args[key]!.toFixed(3)}`)
       .join(',');
     const resp = await this.useWaitAnyResponse(`measure_z${posCommand ? `(${posCommand})` : ''}`, 60000);
     const { data } = resp;
@@ -1069,12 +1086,12 @@ class Control extends EventEmitter implements IControlSocket {
         return Number(height);
       }
 
-      if (data.startsWith('fail')) {
+      if (data.startsWith('fail') || data.startsWith('error')) {
         throw new Error(data);
       }
     }
 
-    throw new Error(resp);
+    throw new Error(JSON.stringify(resp));
   };
 
   enterRawMode = async () => {

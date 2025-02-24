@@ -346,7 +346,7 @@ class DeviceMaster {
 
         return { success: true };
       } catch {
-        await device.control.killSelf();
+        await device.control?.killSelf();
       }
     }
 
@@ -584,15 +584,11 @@ class DeviceMaster {
   }
 
   async getControl(): Promise<IControlSocket> {
-    if (!this.currentDevice) {
-      return null;
-    }
+    if (!this.currentDevice) return null;
 
     const controlSocket = this.currentDevice.control;
 
-    if (controlSocket) {
-      return controlSocket;
-    }
+    if (controlSocket) return controlSocket;
 
     const res = await this.reconnect();
 
@@ -1061,6 +1057,12 @@ class DeviceMaster {
     const controlSocket = await this.getControl();
 
     return controlSocket.addTask(controlSocket.endRedLaserMeasureMode);
+  }
+
+  async checkTaskAlive() {
+    const controlSocket = await this.getControl();
+
+    return controlSocket.addTask(controlSocket.checkTaskAlive!);
   }
 
   async takeReferenceZ(args: { F?: number; H?: number; X?: number; Y?: number } = {}) {
