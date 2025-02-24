@@ -20,13 +20,13 @@ interface IControlSocket extends EventEmitter {
   ) => Promise<{ data: { result: { hash: string; sign: string } }; status: string }>;
   checkButton: () => Promise<ButtonState>;
 
+  checkTaskAlive?: () => Promise<boolean>;
   connect(): Promise<void>;
   connection: null | SwiftrayClient | WrappedWebSocket;
   deleteDeviceSetting(name: string): Promise<unknown>;
   deleteFile(fileNameWithPath: string): Promise<unknown>;
   deviceDetailInfo(): Promise<IDeviceDetailInfo>;
   downloadFile(fileNameWithPath: string): Promise<[string, Blob]>;
-
   downloadLog(logName: string): Promise<Array<Blob | string>>;
   endCartridgeIOMode?: () => Promise<void>;
   endRawMode(): Promise<unknown>;
@@ -87,7 +87,6 @@ interface IControlSocket extends EventEmitter {
   select(path: string[], fileName: string): Promise<{ status: string }>;
   setDeviceSetting(name: string, value: string): Promise<unknown>;
   setFan(fanSpeed: number): Promise<unknown>;
-
   setFanTemp(fanSpeed: number): Promise<unknown>;
   setField(worksize: number, fieldData: Field): Promise<boolean>;
   setLaserPower(power: number): Promise<unknown>;
