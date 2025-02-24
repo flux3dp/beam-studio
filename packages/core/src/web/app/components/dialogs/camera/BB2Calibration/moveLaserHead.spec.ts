@@ -13,7 +13,7 @@ const mockRawStartLineCheckMod = jest.fn();
 const mockRawMove = jest.fn();
 const mockRawEndLineCheckMode = jest.fn();
 const mockRawLooseMotor = jest.fn();
-const mockEndRawMode = jest.fn();
+const mockEndSubTask = jest.fn();
 
 jest.mock('@core/helpers/device-master', () => ({
   get currentControlMode() {
@@ -24,7 +24,7 @@ jest.mock('@core/helpers/device-master', () => ({
       model: 'fbb2',
     },
   },
-  endRawMode: (...args) => mockEndRawMode(...args),
+  endSubTask: (...args) => mockEndSubTask(...args),
   enterRawMode: (...args) => mockEnterRawMode(...args),
   rawEndLineCheckMode: (...args) => mockRawEndLineCheckMode(...args),
   rawHome: (...args) => mockRawHome(...args),
@@ -88,7 +88,7 @@ describe('moveLaserHead', () => {
     expect(mockRawMove).toBeCalledWith({ f: 7500, x: 50, y: 50 });
     expect(mockRawEndLineCheckMode).toBeCalledTimes(1);
     expect(mockRawLooseMotor).toBeCalledTimes(1);
-    expect(mockEndRawMode).toBeCalledTimes(1);
+    expect(mockEndSubTask).toBeCalledTimes(1);
     expect(mockPopById).toHaveBeenCalledWith('move-laser-head');
     expect(mockPopUpError).not.toHaveBeenCalled();
   });
@@ -110,7 +110,7 @@ describe('moveLaserHead', () => {
     expect(mockRawMove).not.toHaveBeenCalled();
     expect(mockRawEndLineCheckMode).not.toHaveBeenCalled();
     expect(mockRawLooseMotor).toBeCalledTimes(1);
-    expect(mockEndRawMode).toBeCalledTimes(1);
+    expect(mockEndSubTask).toBeCalledTimes(1);
     expect(mockPopById).toHaveBeenCalledWith('move-laser-head');
     expect(mockPopUpError).toHaveBeenCalledWith({ message: 'failed_to_move_laser_head' });
     expect(mockConsoleError).toBeCalledTimes(1);
@@ -136,7 +136,7 @@ describe('moveLaserHead', () => {
     expect(mockRawMove).toBeCalledWith({ f: 7500, x: 50, y: 50 });
     expect(mockRawEndLineCheckMode).toBeCalledTimes(1);
     expect(mockRawLooseMotor).toBeCalledTimes(1);
-    expect(mockEndRawMode).toBeCalledTimes(1);
+    expect(mockEndSubTask).toBeCalledTimes(1);
     expect(mockPopById).toHaveBeenCalledWith('move-laser-head');
     expect(mockPopUpError).toHaveBeenCalledWith({ message: 'failed_to_move_laser_head' });
     expect(mockConsoleError).toBeCalledTimes(1);

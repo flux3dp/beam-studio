@@ -35,7 +35,7 @@ export default class RawModeCurveMeasurer extends BaseCurveMeasurer implements C
     try {
       if (deviceMaster.currentControlMode === 'raw') {
         await deviceMaster.rawLooseMotor();
-        await deviceMaster.endRawMode();
+        await deviceMaster.endSubTask();
       }
     } catch (error) {
       console.error('Failed to end measure mode', error);

@@ -2,13 +2,13 @@ import FisheyePreviewManagerBase from './FisheyePreviewManagerBase';
 
 const mockGetCurrentControlMode = jest.fn();
 const mockRawLooseMotor = jest.fn();
-const mockEndRawMode = jest.fn();
+const mockEndSubTask = jest.fn();
 
 jest.mock('@core/helpers/device-master', () => ({
   get currentControlMode() {
     return mockGetCurrentControlMode();
   },
-  endRawMode: (...args) => mockEndRawMode(...args),
+  endSubTask: (...args) => mockEndSubTask(...args),
   rawLooseMotor: (...args) => mockRawLooseMotor(...args),
 }));
 
@@ -75,7 +75,7 @@ describe('test FisheyePreviewManagerBase', () => {
     expect(mockGetPreviewHeight).toHaveBeenCalledTimes(1);
     expect(mockGetPreviewHeight).toHaveBeenLastCalledWith({ initValue: undefined });
     expect(mockRawLooseMotor).toHaveBeenCalledTimes(1);
-    expect(mockEndRawMode).toHaveBeenCalledTimes(1);
+    expect(mockEndSubTask).toHaveBeenCalledTimes(1);
     expect(manager.objectHeight).toBe(10);
     expect(mockUpdate).toHaveBeenCalledTimes(1);
     expect(mockUpdate).toHaveBeenLastCalledWith('fisheye-preview-manager', {

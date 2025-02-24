@@ -101,7 +101,7 @@ export default class RedLightCurveMeasurer extends BaseCurveMeasurer implements 
 
     try {
       if (deviceMaster.currentControlMode === 'red_laser_measure') {
-        await deviceMaster.endRedLaserMeasureMode();
+        await deviceMaster.endSubTask();
       }
     } catch (error) {
       console.error('Failed to exit red laser measure mode', error);

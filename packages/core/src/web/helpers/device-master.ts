@@ -1023,16 +1023,16 @@ class DeviceMaster {
     return res;
   }
 
+  async endSubTask() {
+    const controlSocket = await this.getControl();
+
+    return controlSocket.addTask(controlSocket.endSubTask);
+  }
+
   async enterCartridgeIOMode() {
     const controlSocket = await this.getControl();
 
     return controlSocket.addTask(controlSocket.enterCartridgeIOMode);
-  }
-
-  async endCartridgeIOMode() {
-    const controlSocket = await this.getControl();
-
-    return controlSocket.addTask(controlSocket.endCartridgeIOMode);
   }
 
   async getCartridgeChipData() {
@@ -1051,12 +1051,6 @@ class DeviceMaster {
     const controlSocket = await this.getControl();
 
     return controlSocket.addTask(controlSocket.enterRedLaserMeasureMode);
-  }
-
-  async endRedLaserMeasureMode() {
-    const controlSocket = await this.getControl();
-
-    return controlSocket.addTask(controlSocket.endRedLaserMeasureMode);
   }
 
   async checkTaskAlive() {
@@ -1082,12 +1076,6 @@ class DeviceMaster {
     const controlSocket = await this.getControl();
 
     return controlSocket.addTask(controlSocket.enterRawMode);
-  }
-
-  async endRawMode() {
-    const controlSocket = await this.getControl();
-
-    return controlSocket.addTask(controlSocket.endRawMode);
   }
 
   async rawHome() {

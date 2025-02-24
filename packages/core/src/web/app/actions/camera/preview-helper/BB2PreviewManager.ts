@@ -138,7 +138,7 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
         }
 
         await deviceMaster.rawLooseMotor();
-        await deviceMaster.endRawMode();
+        await deviceMaster.endSubTask();
 
         if (this.originalSpeed && this.originalSpeed !== 1) {
           await deviceMaster.setLaserSpeed(this.originalSpeed);

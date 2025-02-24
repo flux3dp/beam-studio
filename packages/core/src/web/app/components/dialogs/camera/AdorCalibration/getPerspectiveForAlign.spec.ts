@@ -3,10 +3,10 @@ import getPerspectiveForAlign from './getPerspectiveForAlign';
 const mockFetchAutoLevelingData = jest.fn();
 const mockEnterRawMode = jest.fn();
 const mockRawGetProbePos = jest.fn();
-const mockEndRawMode = jest.fn();
+const mockEndsubTask = jest.fn();
 
 jest.mock('@core/helpers/device-master', () => ({
-  endRawMode: (...args) => mockEndRawMode(...args),
+  endSubTask: (...args) => mockEndsubTask(...args),
   enterRawMode: (...args) => mockEnterRawMode(...args),
   fetchAutoLevelingData: (...args) => mockFetchAutoLevelingData(...args),
   rawGetProbePos: (...args) => mockRawGetProbePos(...args),
@@ -64,7 +64,7 @@ describe('test getPerspectiveForAlign', () => {
       });
     mockEnterRawMode.mockResolvedValueOnce(null);
     mockRawGetProbePos.mockResolvedValueOnce({ didAf: true, z: 1 });
-    mockEndRawMode.mockResolvedValueOnce(null);
+    mockEndsubTask.mockResolvedValueOnce(null);
   });
 
   it('should return correct perspective when using z3regParam', async () => {

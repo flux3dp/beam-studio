@@ -119,7 +119,7 @@ class BeamPreviewManager extends BasePreviewManager implements PreviewManager {
         }
 
         await deviceMaster.rawLooseMotor();
-        await deviceMaster.endRawMode();
+        await deviceMaster.endSubTask();
 
         if (this.originalSpeed && this.originalSpeed !== 1) {
           await deviceMaster.setLaserSpeed(this.originalSpeed);
@@ -156,7 +156,7 @@ class BeamPreviewManager extends BasePreviewManager implements PreviewManager {
     // cannot getDeviceSetting during RawMode. So we force to end it.
     try {
       progressCaller.update(this.progressId, { message: lang.message.endingRawMode });
-      await deviceMaster.endRawMode();
+      await deviceMaster.endSubTask();
     } catch (error) {
       if (error.status === 'error' && error.error && error.error[0] === 'OPERATION_ERROR') {
         console.log('Not in raw mode right now');
