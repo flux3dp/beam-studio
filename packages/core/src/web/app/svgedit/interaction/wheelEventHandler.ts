@@ -24,7 +24,7 @@ const wheelEventHandlerGenerator = (
     const zoomProcess = () => {
       const currentRatio = getCurrentRatio();
 
-      if (targetRatio === currentRatio) {
+      if (targetRatio === currentRatio && timer) {
         clearTimeout(timer);
         timer = null;
 
@@ -53,7 +53,10 @@ const wheelEventHandlerGenerator = (
       if (minZoom) targetRatio = Math.max(targetRatio, minZoom);
 
       if (Date.now() - trigger < zoomInterval) {
-        clearTimeout(timer);
+        if (timer) {
+          clearTimeout(timer);
+        }
+
         timer = setTimeout(zoomProcess, zoomInterval);
       } else {
         zoomProcess();

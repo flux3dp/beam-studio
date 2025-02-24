@@ -32,7 +32,7 @@ export default function (opts) {
     send: function (uuid, password) {
       password = password || 'default';
 
-      var args = JSON.stringify({ key: rsaKey(opts.checkPassword), password: password, uuid: uuid });
+      var args = JSON.stringify({ key: rsaKey(opts.checkPassword), password, uuid });
 
       ws.send(args);
     },

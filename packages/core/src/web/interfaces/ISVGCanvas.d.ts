@@ -24,6 +24,7 @@ interface IRect {
 }
 
 export default interface ISVGCanvas {
+  addAlignEdges: (edges: Array<{ x1: number; x2: number; y1: number; y2: number }>) => void;
   addAlignPoint: (x: number, y: number) => void;
   addCommandToHistory: (command: ICommand) => void;
   addedNew: boolean;
@@ -42,8 +43,10 @@ export default interface ISVGCanvas {
   changeSelectedAttributeNoUndo: (attr: string, val: number | string, elems: Element[]) => void;
   cleanupElement: (elem: SVGElement) => void;
   clear: () => void;
+  clearAlignLines: () => void;
   clearBoundingBox: () => void;
   clearSelection: (noCall?: boolean) => void;
+  collectAlignPoints: () => void;
   convertGradients: (elem: Element) => void;
   convertToNum(attr: string, val: number): number;
   convertToPath: (elem: SVGElement, isSubCmd?: boolean) => { cmd: BaseHistoryCommand; path: SVGPathElement };
@@ -54,11 +57,11 @@ export default interface ISVGCanvas {
     addToHistory?: boolean,
     showProgress?: boolean,
   ) => Promise<BaseHistoryCommand>;
-  drawAlignLine: (x: number, y: number, xMatchPoint: IPoint, yMatchPoint: IPoint) => void;
+  drawAlignLine: (tx: number, ty: number, x: IPoint | null, y: IPoint | null, index?: number) => void;
   drawing: ISVGDrawing;
   embedImage(url: string, callback?: (dataURI: string) => void): void;
   events: EventEmitter;
-  findMatchPoint: (x: number, y: number) => { xMatchPoint: IPoint; yMatchPoint: IPoint };
+  findMatchedAlignPoints: (x: number, y: number) => Record<'farthest' | 'nearest', Record<'x' | 'y', IPoint | null>>;
   getColor: (key: string) => string;
   getContainer: () => SVGElement;
   getContentElem: () => SVGGElement;
@@ -86,6 +89,7 @@ export default interface ISVGCanvas {
    */
   getRotationAngle(elem: Element): void;
   getRubberBox: () => SVGRectElement;
+  getSelectedElementsAlignPoints: () => IPoint[];
   getSelectedElems: (ungroupTempGroup?: boolean) => SVGElement[];
   getStarted: () => boolean;
   getStartTransform: () => any;
@@ -109,7 +113,7 @@ export default interface ISVGCanvas {
       type?: ImportType;
     },
   ): Promise<SVGUseElement>;
-  isBezierPathAlignToEdge: boolean;
+  isAutoAlign: boolean;
   isUsingLayerColor: boolean;
   leaveContext: () => void;
   mergeAllLayers: () => void;
@@ -125,6 +129,7 @@ export default interface ISVGCanvas {
   randomizeIds(enableRandomization: boolean): string;
   ready: (arg0: () => void) => any;
   recalculateAllSelectedDimensions: (isSubCommand?: boolean) => IBatchCommand;
+  removeAlignEdges: (n: number) => void;
   removeFromSelection: (elems: SVGElement[]) => void;
   removeFromTempGroup: (elem: SVGElement) => void;
   removeUnusedDefs: () => void;
@@ -170,6 +175,7 @@ export default interface ISVGCanvas {
   svgToString(elem: Element, indent: number, units?: Units): string;
   tempGroupSelectedElements: () => SVGElement[];
   textActions: typeof textActions;
+  toggleAutoAlign: () => boolean;
   undoMgr: IUndoManager;
   ungroupSelectedElement(): void;
   ungroupTempGroup(elem?: SVGElement): SVGElement[];

@@ -1276,7 +1276,6 @@ const lang: ILang = {
       what_if_2: 'Was ist, wenn die IP mit 169 beginnt??',
       what_if_2_content: '1. Wenn die IP-Adresse mit 169.254 beginnt, sollte es sich um ein Problem mit der DHCP-Einstellung handeln. Wenden Sie sich an Ihren ISP (Internetdienstanbieter), um weitere Unterstützung zu erhalten.\n2. Wenn Ihr Computer über PPPoE eine direkte Verbindung zum Internet herstellt, wechseln Sie zur Verwendung des Routers, um eine Verbindung über PPPoE herzustellen, und aktivieren Sie die DHCP-Funktion im Router.',
     },
-
     connecting: 'Anschließen...',
     connection_types: {
       ether2ether: 'Direkte Verbindung',
@@ -1284,7 +1283,6 @@ const lang: ILang = {
       wifi: 'Wi-Fi',
       wired: 'Kabelgebundenes Netzwerk',
     },
-    // generic strings
     next: 'Nächster',
     no_machine: 'Ich habe jetzt keine Maschine.',
     promark: {
@@ -1299,7 +1297,6 @@ const lang: ILang = {
     retry: 'Wiederholen',
     select_beambox: 'Wählen Sie Ihren Beambox',
     select_connection_type: 'Wie möchten Sie eine Verbindung herstellen?',
-    // specific caption/content
     select_language: 'Sprache auswählen',
     select_machine_type: 'Wählen Sie Ihr Modell',
     setting_completed: {
@@ -1374,14 +1371,12 @@ const lang: ILang = {
   material_test_generator: {
     block_settings: 'Blockeinstellungen',
     columns: 'Spalten',
-    // block setting form
     count: 'Anzahl',
     cut: 'Schneiden',
     engrave: 'Gravieren',
     export: 'Exportieren',
     max: 'Max',
     min: 'Min',
-    // table setting form
     parameter: 'Parameter',
     preview: 'Vorschau',
     rows: 'Zeilen',
@@ -1805,8 +1800,8 @@ const lang: ILang = {
       account: 'Konto',
       add_new_machine: 'Maschineneinrichtung',
       align_center: 'Zentrieren',
-      align_to_edges: 'An Scheitelpunkten ausrichten',
       anti_aliasing: 'Anti-Aliasing',
+      auto_align: 'Automatische Ausrichtung',
       borderless_mode: 'Randloser Modus',
       bug_report: 'Fehlerbericht',
       calibrate_beambox_camera: 'Kamera kalibrieren',

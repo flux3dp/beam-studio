@@ -18,8 +18,6 @@ interface Props {
   email: string;
 }
 
-let discover;
-
 export default function Menu({ email }: Props): React.JSX.Element {
   const eventEmitter = React.useMemo(() => eventEmitterFactory.createEventEmitter('top-bar-menu'), []);
   const [devices, setDevices] = useState(Array<IDeviceInfo>());
@@ -27,7 +25,7 @@ export default function Menu({ email }: Props): React.JSX.Element {
   const [shouldShowGrids, changeShouldShowGrids] = useState(BeamboxPreference.read('show_grids'));
   const [shouldUseLayerColor, changeShouldUseLayerColor] = useState(BeamboxPreference.read('use_layer_color'));
   const [isUsingAntiAliasing, setIsUsingAntiAliasing] = useState(BeamboxPreference.read('anti-aliasing'));
-  const [shouldAlignToEdges, changeShouldAlignToEdges] = useState(BeamboxPreference.read('show_align_lines'));
+  const [isAutoAlign, setIsAutoAlign] = useState(BeamboxPreference.read('auto_align'));
   const [shouldZoomWithWindow, changeShouldZoomWithWindow] = useState(BeamboxPreference.read('zoom_with_window'));
   const [duplicateDisabled, setDuplicateDisabled] = useState(true);
   const [svgEditDisabled, setSvgEditDisabled] = useState(true);
@@ -50,7 +48,7 @@ export default function Menu({ email }: Props): React.JSX.Element {
   React.useEffect(() => {
     eventEmitter.on('ENABLE_MENU_ITEM', (items: string[]) => {
       for (let i = 0; i < items.length; i += 1) {
-        const item = items[i];
+        const item = items[i] as keyof typeof menuItemUpdater;
 
         menuItemUpdater[item]?.(false);
       }
@@ -58,7 +56,7 @@ export default function Menu({ email }: Props): React.JSX.Element {
 
     eventEmitter.on('DISABLE_MENU_ITEM', (items: string[]) => {
       for (let i = 0; i < items.length; i += 1) {
-        const item = items[i];
+        const item = items[i] as keyof typeof menuItemUpdater;
 
         menuItemUpdater[item]?.(true);
       }
@@ -71,7 +69,7 @@ export default function Menu({ email }: Props): React.JSX.Element {
   });
 
   React.useEffect(() => {
-    discover = Discover('top-bar-menu', (newDevices: IDeviceInfo[]) => {
+    const discover = Discover('top-bar-menu', (newDevices: IDeviceInfo[]) => {
       newDevices.sort((a, b) => (a.name >= b.name ? 1 : -1));
 
       if (newDevices.map((d) => d.name).join('') !== devices.map((d) => d.name).join('')) {
@@ -99,7 +97,7 @@ export default function Menu({ email }: Props): React.JSX.Element {
   const openPage = (url: string) => browser.open(url);
   const hotkey = (action: string): React.JSX.Element => (
     <>
-      <span className="action">{menuCms[action]}</span>
+      <span className="action">{(menuCms as any)[action]}</span>
       <span className="hotkey">{menuItems[action].representation}</span>
     </>
   );
@@ -381,14 +379,14 @@ export default function Menu({ email }: Props): React.JSX.Element {
           {menuCms.show_layer_color}
         </MenuItem>
         <MenuItem
-          checked={shouldAlignToEdges}
+          checked={isAutoAlign}
           onClick={() => {
-            callback('ALIGN_TO_EDGES');
-            changeShouldAlignToEdges(!shouldAlignToEdges);
+            callback('AUTO_ALIGN');
+            setIsAutoAlign(!isAutoAlign);
           }}
           type="checkbox"
         >
-          {menuCms.align_to_edges}
+          {menuCms.auto_align}
         </MenuItem>
         <MenuItem
           checked={isUsingAntiAliasing}

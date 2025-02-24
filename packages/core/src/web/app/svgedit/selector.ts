@@ -12,6 +12,7 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { isMobile } from '@core/helpers/system-helper';
 import units from '@core/helpers/units';
 import storage from '@core/implementations/storage';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import { getRotationAngle } from './transform/rotation';
 import workareaManager from './workarea';
@@ -24,23 +25,18 @@ if (!svgedit.select) {
 
 const { NS } = svgedit;
 
-let svgCanvas;
+let svgCanvas: ISVGCanvas;
 
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
+getSVGAsync(({ Canvas }) => {
+  svgCanvas = Canvas;
 });
 
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 
-type BBox = {
-  height: number;
-  width: number;
-  x: number;
-  y: number;
-};
+type BBox = { height: number; width: number; x: number; y: number };
 
-let svgFactory;
-let config;
+let svgFactory: any;
+let config: any;
 const gripRadius = svgedit.browser.isTouch() ? 8 : 4;
 const btnRadius = 12;
 const btnMargin = 6; // for shadow
@@ -108,10 +104,7 @@ class Selector {
   constructor(elem: Element, bbox?: BBox) {
     this.elem = elem;
 
-    this.selectorGroup = svgFactory.createSVGElement({
-      attr: { id: `selectorGroup_${elem.id}` },
-      element: 'g',
-    });
+    this.selectorGroup = svgFactory.createSVGElement({ attr: { id: `selectorGroup_${elem.id}` }, element: 'g' });
     this.selectorRect = svgFactory.createSVGElement({
       attr: {
         fill: 'none',
@@ -237,7 +230,7 @@ class Selector {
   reset(elem: Element, bbox?: BBox) {
     this.inUse = true;
     this.elem = elem;
-    this.calculateDimesion(bbox);
+    this.calculateDimension(bbox);
     this.selectorRect.setAttribute('id', `selectedBox_${elem.id}`);
     this.selectorGroup.setAttribute('id', `selectorGroup_${elem.id}`);
   }
@@ -245,7 +238,7 @@ class Selector {
   resize(bbox?: BBox) {
     if (!this.isShowing) return;
 
-    this.calculateDimesion(bbox);
+    this.calculateDimension(bbox);
     this.applyDimensions();
   }
 
@@ -253,17 +246,10 @@ class Selector {
    * Calculate the selector to match the element's size
    * @param bbox Optional bbox to use for resize (prevents duplicate getBBox call).
    */
-  calculateDimesion(bbox?: BBox) {
+  calculateDimension(bbox?: BBox) {
     const { elem } = this;
-    const strokeWidth = Number(elem.getAttribute('stroke-width'));
     const currentZoom = workareaManager.zoomRatio;
     const { tagName } = elem;
-    // Offset between element and select rect
-    let offset = tagName === 'text' ? 3 : 1;
-
-    if (elem.getAttribute('stroke') !== 'none' && !Number.isNaN(strokeWidth)) {
-      offset += (strokeWidth / 2) * currentZoom;
-    }
 
     const tlist = svgedit.transformlist.getTransformList(elem);
     let m = svgedit.math.transformListToTransform(tlist).matrix;
@@ -325,10 +311,10 @@ class Selector {
 
     this.dimension = {
       angle,
-      height: aabox.height + 2 * offset,
-      width: aabox.width + 2 * offset,
-      x: aabox.x - offset,
-      y: aabox.y - offset,
+      height: aabox.height,
+      width: aabox.width,
+      x: aabox.x,
+      y: aabox.y,
     };
   }
 

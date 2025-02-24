@@ -1371,14 +1371,12 @@ const lang: ILang = {
   material_test_generator: {
     block_settings: 'Blokindstillinger',
     columns: 'Kolonner',
-    // block setting form
     count: 'Antal',
     cut: 'Skær',
     engrave: 'Gravér',
     export: 'Eksportér',
     max: 'Max',
     min: 'Min',
-    // table setting form
     parameter: 'Parameter',
     preview: 'Forhåndsvisning',
     rows: 'Rækker',
@@ -1802,8 +1800,8 @@ const lang: ILang = {
       account: 'Konto',
       add_new_machine: 'Maskinopsætning',
       align_center: 'Centrér',
-      align_to_edges: 'Fastgør til hjørner',
       anti_aliasing: 'Anti-aliasing',
+      auto_align: 'Auto Justering',
       borderless_mode: 'Rammeløs tilstand',
       bug_report: 'Fejlrapport',
       calibrate_beambox_camera: 'Kalibrer kamera',

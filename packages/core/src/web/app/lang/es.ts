@@ -1276,7 +1276,6 @@ const lang: ILang = {
       what_if_2: '¿Qué pasa si la IP comienza con 169?',
       what_if_2_content: '1. Si la dirección IP comienza con 169.254, debería ser un problema de configuración de DHCP, por favor contacta a tu ISP (proveedor de servicios de Internet) para mejor asistencia.',
     },
-
     connecting: 'Conectando...',
     connection_types: {
       ether2ether: 'Conexión directa',
@@ -1284,7 +1283,6 @@ const lang: ILang = {
       wifi: 'Wi-Fi',
       wired: 'Red cableada',
     },
-    // generic strings
     next: 'Siguiente',
     no_machine: 'No tengo una máquina ahora.',
     promark: {
@@ -1299,7 +1297,6 @@ const lang: ILang = {
     retry: 'Reintentar',
     select_beambox: 'Seleccione su Beambox',
     select_connection_type: '¿Cómo deseas conectarte?',
-    // specific caption/content
     select_language: 'Selecciona el idioma',
     select_machine_type: 'Selecciona tu modelo',
     setting_completed: {
@@ -1803,8 +1800,8 @@ const lang: ILang = {
       account: 'Cuenta',
       add_new_machine: 'Configuración de la máquina',
       align_center: 'Alinear el centro',
-      align_to_edges: 'Ajustar a los vértices',
       anti_aliasing: 'Suavizado',
+      auto_align: 'Alineación Automática',
       borderless_mode: 'Modo sin bordes',
       bug_report: 'Informe de errores',
       calibrate_beambox_camera: 'Calibrar la cámara',

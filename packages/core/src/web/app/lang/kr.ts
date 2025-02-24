@@ -1276,7 +1276,6 @@ const lang: ILang = {
       what_if_2: '만약 IP가 169로 시작한다면?',
       what_if_2_content: '1. IP 주소가 169.254로 시작된다면, DHCP 설정 문제일 수 있습니다. 인터넷 서비스 제공자에게 문의하세요. 2. 만약 컴퓨터가 PPPoE를 사용하여 직접 인터넷에 연결되어 있다면, 라우터를 사용하여 PPPoE를 사용하도록 변경하고 라우터에서 DHCP 기능을 사용하도록 설정하세요.',
     },
-
     connecting: '연결 중…',
     connection_types: {
       ether2ether: '직접 연결',
@@ -1284,7 +1283,6 @@ const lang: ILang = {
       wifi: 'Wi-Fi',
       wired: '유선 네트워크',
     },
-    // generic strings
     next: '다음',
     no_machine: '지금 기계가 없습니다.',
     promark: {
@@ -1299,7 +1297,6 @@ const lang: ILang = {
     retry: '재시도',
     select_beambox: 'Beambox를 선택하세요',
     select_connection_type: '어떻게 연결하시겠습니까?',
-    // specific caption/content
     select_language: '언어 선택',
     select_machine_type: '모델 선택',
     setting_completed: {
@@ -1803,8 +1800,8 @@ const lang: ILang = {
       account: '계정',
       add_new_machine: '기계 설정',
       align_center: '중앙 정렬',
-      align_to_edges: '꼭짓점에 맞추기',
       anti_aliasing: '앤티앨리어싱',
+      auto_align: '자동 정렬',
       borderless_mode: '전체 화면 모드',
       bug_report: '버그 신고',
       calibrate_beambox_camera: '카메라 교정',
