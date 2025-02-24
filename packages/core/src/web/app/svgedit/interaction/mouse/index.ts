@@ -1416,11 +1416,6 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
       break;
   }
 
-  // if (selectedElements.length > 1) {
-  //   svgCanvas.tempGroupSelectedElements();
-  //   svgEditor.updateContextPanel();
-  // }
-
   const extResult = svgCanvas.runExtensions(
     'mouseUp',
     { event: evt, isContinuousDrawing, mouse_x: mouseX, mouse_y: mouseY },

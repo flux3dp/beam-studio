@@ -106,8 +106,6 @@ getSVGAsync(({ Canvas, Editor }) => {
   svgEditor = Editor;
 });
 
-let tempN = 0;
-
 const LANG = i18n.lang.beambox;
 
 const drawingToolEventEmitter = eventEmitterFactory.createEventEmitter('drawing-tool');
