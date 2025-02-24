@@ -531,7 +531,7 @@ const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: 
   const transforms = svgedit.transformlist.getTransformList(selected);
   const hasMatrix = svgedit.math.hasMatrixTransform(transforms);
   const box = hasMatrix ? initBBox : svgedit.utilities.getBBox(selected);
-  const needMatchAlignPoints = !evt.shiftKey && selected.getAttribute('data-ratiofixed') !== 'true';
+  const isUnfixedResize = (selected.getAttribute('data-ratiofixed') === 'true') === evt.shiftKey;
   let { height, width, x: left, y: top } = box;
 
   if (currentConfig.gridSnapping) {
@@ -541,7 +541,7 @@ const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: 
     width = svgedit.utilities.snapToGrid(width);
   }
 
-  if (svgCanvas.isAutoAlign && needMatchAlignPoints) {
+  if (svgCanvas.isAutoAlign && isUnfixedResize) {
     let [inputX, inputY] = [x, y];
 
     if (!resizeMode.includes('n') && !resizeMode.includes('s')) inputY = startY;
