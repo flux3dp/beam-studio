@@ -16,7 +16,7 @@
     "@react-three/fiber": "^8.15.12",
     "@sentry/react": "^6.4.1",
     "@szhsin/react-menu": "^1.10.1",
-    "antd": "^5.22.3",
+    "antd": "5.23.2",
     "antd-mobile": "^5.32.2",
     "antd-mobile-icons": "^0.3.0",
     "axios": "^1.7.7",
