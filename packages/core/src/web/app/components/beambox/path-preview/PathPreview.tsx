@@ -751,12 +751,14 @@ class PathPreview extends React.Component<Props, State> {
 
     const { fileTimeCost, gcodeBlob, useSwiftray } = await exportFuncs.getGcode();
 
-    if (!gcodeBlob) {
-      togglePathPreview();
-    }
-
     if (svgEditor) {
       svgEditor.style.display = 'none';
+    }
+
+    if (!gcodeBlob) {
+      togglePathPreview();
+
+      return;
     }
 
     progressCaller.openNonstopProgress({
