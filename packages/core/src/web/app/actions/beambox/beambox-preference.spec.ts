@@ -32,6 +32,7 @@ test('test beambox-preference', () => {
   expect(mockSet).toHaveBeenNthCalledWith(1, 'beambox-preference', {
     abc: '123',
     'anti-aliasing': true,
+    auto_align: true,
     diode_offset_x: 10,
     diode_offset_y: 10,
     engrave_dpi: 'medium',

@@ -4,6 +4,7 @@ import storage from '@core/implementations/storage';
 
 const DEFAULT_PREFERENCE = {
   'anti-aliasing': true,
+  auto_align: true,
   diode_offset_x: constant.diode.defaultOffsetX,
   diode_offset_y: constant.diode.defaultOffsetY,
   engrave_dpi: 'medium', // low, medium, high
@@ -62,6 +63,10 @@ export const migrate = (): void => {
 
   if (beamboxPreference.read('workarea') === 'fad1') {
     beamboxPreference.write('workarea', 'ado1');
+  }
+
+  if (beamboxPreference.read('auto_align') === undefined) {
+    beamboxPreference.write('auto_align', true);
   }
 };
 

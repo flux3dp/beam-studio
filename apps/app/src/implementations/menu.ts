@@ -67,7 +67,7 @@ class Menu extends AbstractMenu {
 
     const isUsingAutoAlign = BeamboxPreference.read('auto_align');
 
-    changeMenuItemChecked(['AUTO_ALIGN'], isUsingAutoAlign ?? false);
+    changeMenuItemChecked(['AUTO_ALIGN'], isUsingAutoAlign);
 
     // visibility
     canvasEvent.on('model-changed', (model) => {
