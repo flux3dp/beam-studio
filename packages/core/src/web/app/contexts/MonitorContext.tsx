@@ -10,6 +10,7 @@ import DeviceConstants from '@core/app/constants/device-constants';
 import type { ItemType } from '@core/app/constants/monitor-constants';
 import { Mode } from '@core/app/constants/monitor-constants';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
+import doZSpeedLimitTest from '@core/helpers/device/doZSpeedLimitTest';
 import promarkButtonHandler from '@core/helpers/device/promark/promark-button-handler';
 import DeviceErrorHandler from '@core/helpers/device-error-handler';
 import DeviceMaster from '@core/helpers/device-master';
@@ -977,6 +978,16 @@ export class MonitorContextProvider extends React.Component<Props, State> {
       if (mode === Mode.PREVIEW || forceResend) {
         const { previewTask } = this.state;
         const fCode = previewTask!.fcodeBlob;
+
+        if (previewTask?.metadata['3D_CURVE_TASK'] === '1') {
+          this.stopReport();
+
+          const res = await doZSpeedLimitTest(device);
+
+          this.startReport();
+
+          if (!res) return;
+        }
 
         try {
           await DeviceMaster.go(fCode, ({ step, total }: IProgress) => {

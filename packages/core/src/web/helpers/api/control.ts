@@ -150,6 +150,7 @@ class Control extends EventEmitter implements IControlSocket {
           this.emit('close', response);
         },
         onError: (response: any) => {
+          console.log(`Control of ${uuid} error:`, response);
           clearTimeout(timeoutTimer);
           this.emit('error', response);
           this.emit(EVENT_COMMAND_ERROR, response);
@@ -967,21 +968,23 @@ class Control extends EventEmitter implements IControlSocket {
 
   deleteDeviceSetting = (name: string) => this.useWaitAnyResponse(`config del ${name}`);
 
+  enterSubTask = async (mode: Mode, timeout = 0) => {
+    const res = await this.useWaitAnyResponse(`task ${mode}`);
+
+    if (timeout) await new Promise((resolve) => setTimeout(resolve, timeout));
+
+    this.mode = mode;
+
+    if (mode === 'cartridge_io') this._cartridgeTaskId = Math.floor(Math.random() * 2e9);
+
+    return res;
+  };
+
   endSubTask = () => {
     this.mode = '';
     this._cartridgeTaskId = 0;
 
     return this.useWaitAnyResponse('task quit');
-  };
-
-  enterCartridgeIOMode = async () => {
-    const res = await this.useWaitAnyResponse('task cartridge_io');
-
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    this.mode = 'cartridge_io';
-    this._cartridgeTaskId = Math.floor(Math.random() * 2e9);
-
-    return res;
   };
 
   getCartridgeChipData = async () => {
@@ -1007,14 +1010,6 @@ class Control extends EventEmitter implements IControlSocket {
     const resp = await this.useWaitAnyResponse(`jsonrpc_req "${command}"`);
 
     return resp;
-  };
-
-  enterRedLaserMeasureMode = async () => {
-    const res = await this.useWaitAnyResponse('task red_laser_measure');
-
-    this.mode = 'red_laser_measure';
-
-    return res;
   };
 
   /**
@@ -1088,12 +1083,24 @@ class Control extends EventEmitter implements IControlSocket {
     throw new Error(JSON.stringify(resp));
   };
 
-  enterZSpeedLimitTestTask = async () => {
-    const res = await this.useWaitAnyResponse('task z_speed_limit_test');
+  zSpeedLimitTestSetSpeed = async (speed: number) => {
+    if (this.mode !== 'z_speed_limit_test') {
+      throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
+    }
 
-    this.mode = 'z_speed_limit_test';
+    const res = await this.useWaitAnyResponse(`set_speed ${speed}`);
 
-    return res;
+    return res?.data === 'ok';
+  };
+
+  zSpeedLimitTestStart = async () => {
+    if (this.mode !== 'z_speed_limit_test') {
+      throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
+    }
+
+    const res = await this.useWaitOKResponse('start', 180000);
+
+    return res?.data.includes('pass');
   };
 
   enterRawMode = async () => {

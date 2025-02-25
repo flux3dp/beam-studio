@@ -1032,25 +1032,25 @@ class DeviceMaster {
   async enterCartridgeIOMode() {
     const controlSocket = await this.getControl();
 
-    return controlSocket.addTask(controlSocket.enterCartridgeIOMode);
+    return controlSocket.addTask(controlSocket.enterSubTask, 'cartridge_io', 1000);
   }
 
   async getCartridgeChipData() {
     const controlSocket = await this.getControl();
 
-    return controlSocket.addTask(controlSocket.getCartridgeChipData);
+    return controlSocket.addTask(controlSocket.getCartridgeChipData!);
   }
 
   async cartridgeIOJsonRpcReq(method: string, params: any[]) {
     const controlSocket = await this.getControl();
 
-    return controlSocket.addTask(controlSocket.cartridgeIOJsonRpcReq, method, params);
+    return controlSocket.addTask(controlSocket.cartridgeIOJsonRpcReq!, method, params);
   }
 
   async enterRedLaserMeasureMode() {
     const controlSocket = await this.getControl();
 
-    return controlSocket.addTask(controlSocket.enterRedLaserMeasureMode);
+    return controlSocket.addTask(controlSocket.enterSubTask, 'red_laser_measure');
   }
 
   async checkTaskAlive() {
@@ -1062,13 +1062,31 @@ class DeviceMaster {
   async takeReferenceZ(args: { F?: number; H?: number; X?: number; Y?: number } = {}) {
     const controlSocket = await this.getControl();
 
-    return controlSocket.addTask(controlSocket.takeReferenceZ, args);
+    return controlSocket.addTask(controlSocket.takeReferenceZ!, args);
   }
 
   async measureZ(args: { F?: number; X?: number; Y?: number } = {}) {
     const controlSocket = await this.getControl();
 
-    return controlSocket.addTask(controlSocket.measureZ, args);
+    return controlSocket.addTask(controlSocket.measureZ!, args);
+  }
+
+  async enterZSpeedLimitTestMode() {
+    const controlSocket = await this.getControl();
+
+    return controlSocket.addTask(controlSocket.enterSubTask, 'z_speed_limit_test');
+  }
+
+  async zSpeedLimitTestSetSpeed(speed: number) {
+    const controlSocket = await this.getControl();
+
+    return controlSocket.addTask(controlSocket.zSpeedLimitTestSetSpeed, speed);
+  }
+
+  async zSpeedLimitTestStart() {
+    const controlSocket = await this.getControl();
+
+    return controlSocket.addTask(controlSocket.zSpeedLimitTestStart);
   }
 
   // Raw mode functions
@@ -1609,6 +1627,4 @@ class DeviceMaster {
 
 const deviceMaster = new DeviceMaster();
 
-// // eslint-disable-next-line @typescript-eslint/dot-notation
-// window['deviceMaster'] = deviceMaster;
 export default deviceMaster;
