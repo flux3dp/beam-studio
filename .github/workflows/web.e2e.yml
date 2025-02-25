@@ -48,6 +48,6 @@ jobs:
           record: true
           group: "Actions"
           parallel: true
-          start: webpack serve --config webpack.dev.js
+          start: pnpm start
           wait-on: "http://localhost:8080"
           wait-on-timeout: 300
