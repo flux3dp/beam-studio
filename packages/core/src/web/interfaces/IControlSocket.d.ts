@@ -8,7 +8,7 @@ import type { IDeviceDetailInfo, IReport } from './IDevice';
 import type { ButtonState, Field, LensCorrection } from './Promark';
 import type { WrappedWebSocket } from './WebSocket';
 
-export type Mode = '' | 'cartridge_io' | 'raw' | 'red_laser_measure';
+export type Mode = '' | 'cartridge_io' | 'raw' | 'red_laser_measure' | 'z_speed_limit_test';
 
 interface IControlSocket extends EventEmitter {
   abort(): Promise<unknown>;
@@ -29,9 +29,8 @@ interface IControlSocket extends EventEmitter {
   downloadFile(fileNameWithPath: string): Promise<[string, Blob]>;
   downloadLog(logName: string): Promise<Array<Blob | string>>;
   endSubTask(): Promise<void>;
-  enterCartridgeIOMode?: () => Promise<void>;
   enterRawMode(): Promise<unknown>;
-  enterRedLaserMeasureMode?: () => Promise<void>;
+  enterSubTask(mode: Mode, timeout?: number): Promise<void>;
   fetchAutoLevelingData?: (dataType: string) => Promise<{ [key: string]: number }>;
   // method not supported by SwiftrayClient
   fetchCameraCalibImage?: (name?: string) => Promise<Blob>;
@@ -100,6 +99,8 @@ interface IControlSocket extends EventEmitter {
   updateFisheye3DRotation?: (data: RotationParameters3D) => Promise<{ status: string }>;
   upload(data: any, path?: string, fileName?: string): Promise<void>;
   uploadFisheyeParams?: (data: string) => Promise<{ status: string }>;
+  zSpeedLimitTestSetSpeed(speed: number): Promise<boolean>;
+  zSpeedLimitTestStart(): Promise<boolean>;
 }
 
 export default IControlSocket;
