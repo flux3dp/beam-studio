@@ -216,8 +216,6 @@ class SwiftrayClient extends EventEmitter {
       };
 
       handlers?.forEach(({ handler, type }) => {
-        if (!handler) return;
-
         const listener = (data: any) => {
           if (data.id === id) {
             handler(data.result);
