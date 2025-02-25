@@ -10,24 +10,28 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        node-version: [22]
         # run copies of the current job in parallel
         containers: [1, 2, 3, 4, 5]
     steps:
-      - name: Setup pnpm
+      - name: Setup Pnpm
         uses: pnpm/action-setup@v4
         with:
           run_install: false
-      - name: Setup Node
+
+      - name: Setup Node ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: ${{ matrix.node-version }}
           cache: "pnpm"
+
       - name: Cypress install
         uses: cypress-io/github-action@v6
         with:
           # Disable running of tests within install job
           runTests: false
           build: pnpm install --network-timeout 100000
+
       - name: Setup web and run e2e tests
         uses: cypress-io/github-action@v6
         env:
