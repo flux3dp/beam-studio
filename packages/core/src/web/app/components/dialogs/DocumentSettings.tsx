@@ -36,6 +36,8 @@ const workareaOptions = [
   { label: 'Beambox', value: 'fbb1b' },
   { label: 'Beambox Pro', value: 'fbb1p' },
   { label: 'HEXA', value: 'fhexa1' },
+  // use HEXA RF 3 as default, due to there is no difference between 3 and 6
+  { label: 'HEXA RF', value: 'fhx2rf3' },
   { label: 'Ador', value: 'ado1' },
   checkFpm1() && { label: 'Promark', value: 'fpm1' },
   { label: 'Beambox II', value: 'fbb2' },
