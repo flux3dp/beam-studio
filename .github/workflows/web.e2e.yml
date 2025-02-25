@@ -29,10 +29,6 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "pnpm"
 
-      - name: Install dependencies
-        run: |
-          pnpm -r install
-
       - name: Setup web and run e2e tests
         uses: cypress-io/github-action@v6
         env:
@@ -41,6 +37,6 @@ jobs:
           config-file: cypress.config.ci.ts
           record: true
           group: "Actions"
-          install: false
+          install: pnpm -r install
           parallel: true
           command: pnpm nx run web:e2e --configuration=ci
