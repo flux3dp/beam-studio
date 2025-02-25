@@ -11,6 +11,21 @@
       "options": {
         "lintFilePatterns": ["apps/web/src/**/*.ts", "apps/web/src/**/*.tsx"]
       }
+    },
+    "e2e": {
+      "executor": "@nx/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/web/cypress.config.ts"
+      },
+      "configurations": {
+        "ci": {
+          "cypressConfig": "apps/web/cypress.config.ci.ts"
+        },
+        "production": {
+          "cypressConfig": "apps/web/cypress.config.prod.ts",
+          "baseUrl": "http://studio.flux3dp.com"
+        }
+      }
     }
   }
 }

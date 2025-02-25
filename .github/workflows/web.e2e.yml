@@ -1,16 +1,8 @@
 name: e2e
 
 on:
-  push:
-    branches:
-      - not/done/yet
-  # pull_request:
-  # workflow_dispatch:
-  #   inputs:
-  #     core_branch:
-  #       description: "Core Branch"
-  #       required: false
-  #       default: "master"
+  pull_request:
+  workflow_dispatch:
 
 jobs:
   e2e-test:
@@ -21,16 +13,6 @@ jobs:
         # run copies of the current job in parallel
         containers: [1, 2, 3, 4, 5]
     steps:
-      - uses: actions/checkout@v4
-      - name: Checkout Beam Studio Core
-        uses: actions/checkout@v4
-        with:
-          repository: flux3dp/beam-studio-core
-          ref: ${{ github.event.inputs.core_branch }}
-          path: .github/actions/beam-studio-core
-      - name: Copy Beam Studio Core
-        run: |
-          cp -R .github/actions/beam-studio-core ../beam-studio-core
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
@@ -57,6 +39,4 @@ jobs:
           group: "Actions"
           install: false
           parallel: true
-          start: pnpm start
-          wait-on: "http://localhost:8080"
-          wait-on-timeout: 300
+          command: pnpm nx run web:e2e --configuration=ci
