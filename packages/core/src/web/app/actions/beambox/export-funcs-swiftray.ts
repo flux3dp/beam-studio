@@ -311,6 +311,10 @@ const fetchTaskCodeSwiftray = async (
   const { metadata, taskCodeBlob } = getTaskCodeResult;
   let { fileTimeCost } = getTaskCodeResult;
 
+  if (isCanceled || taskCodeBlob == null) {
+    return {};
+  }
+
   if (isNonFGCode && !isPromark) {
     if (shouldUseFastGradient) {
       (taskConfig as IFcodeConfig).fg = true;
