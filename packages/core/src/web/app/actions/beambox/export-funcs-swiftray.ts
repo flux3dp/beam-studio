@@ -167,7 +167,7 @@ const getTaskCode = (codeType: 'fcode' | 'gcode' | 'preview', taskOptions) =>
             taskCodeBlob: null,
           });
         },
-        onFinished: (taskBlob, fileName, timeCost, metadata) => {
+        onFinished: (taskBlob, timeCost, metadata) => {
           Progress.update('fetch-task', { message: lang.message.uploading_fcode, percentage: 100 });
           resolve({ fileTimeCost: timeCost, metadata, taskCodeBlob: taskBlob });
         },
