@@ -134,7 +134,7 @@ const uploadToParser = async (uploadFile: IWrappedSwiftrayTaskFile): Promise<boo
   return !isCanceled && !errorMessage;
 };
 
-const getTaskCode = (codeType: 'fcode' | 'gcode', taskOptions) =>
+const getTaskCode = (codeType: 'fcode' | 'gcode' | 'preview', taskOptions) =>
   new Promise<{
     fileTimeCost: null | number;
     metadata: Record<string, string>;
@@ -317,7 +317,7 @@ const fetchTaskCodeSwiftray = async (
       (taskConfig as IFcodeConfig).mfg = false;
     }
 
-    const fcodeRes = await getTaskCode('fcode', taskConfig);
+    const fcodeRes = await getTaskCode('preview', taskConfig);
 
     fileTimeCost = fcodeRes.fileTimeCost;
   }
