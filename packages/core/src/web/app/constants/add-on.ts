@@ -30,6 +30,17 @@ export interface SupportInfo {
   };
 }
 
+const hexaSupportInfo: SupportInfo = {
+  jobOrigin: true,
+  lowerFocus: true,
+  rotary: {
+    chuck: true,
+    extendWorkarea: false,
+    mirror: false,
+    roller: true,
+  },
+};
+
 const supportList: Record<WorkAreaModel, SupportInfo> = {
   ado1: {
     framingLowLaser: true,
@@ -92,16 +103,9 @@ const supportList: Record<WorkAreaModel, SupportInfo> = {
       roller: true,
     },
   },
-  fhexa1: {
-    jobOrigin: true,
-    lowerFocus: true,
-    rotary: {
-      chuck: true,
-      extendWorkarea: false,
-      mirror: false,
-      roller: true,
-    },
-  },
+  fhexa1: hexaSupportInfo,
+  fhx2rf3: hexaSupportInfo,
+  fhx2rf6: hexaSupportInfo,
   flv1: {
     jobOrigin: true,
     rotary: {
