@@ -62,6 +62,31 @@ const generateUploadFile = async (thumbnail: string, thumbnailUrl: string): Prom
   };
 };
 
+const popupError = (message: string): void => {
+  if (message === 'cancel') {
+    // Do nothing
+  } else if (message.includes('busy')) {
+    Alert.popUp({
+      buttonType: AlertConstants.INFO,
+      id: 'get-taskcode-error',
+      message,
+      type: AlertConstants.SHOW_POPUP_ERROR,
+    });
+  } else {
+    Alert.popUp({
+      buttonType: AlertConstants.YES_NO,
+      id: 'get-taskcode-error',
+      message: `#806 ${message}\n${lang.beambox.bottom_right_panel.export_file_error_ask_for_upload}`,
+      onYes: () => {
+        const svgString = svgCanvas.getSvgString();
+
+        AwsHelper.uploadToS3('output.bvg', svgString);
+      },
+      type: AlertConstants.SHOW_POPUP_ERROR,
+    });
+  }
+};
+
 const onUploadProgressing = (data): void => {
   Progress.update('upload-scene', {
     caption: i18n.lang.beambox.popup.progress.calculating,
@@ -79,7 +104,7 @@ const onUploadFinished = (): void => {
 };
 
 const uploadToParser = async (uploadFile: IWrappedSwiftrayTaskFile): Promise<boolean> => {
-  let errorMessage = null;
+  let errorMessage: null | string = null;
   let isCanceled = false;
 
   // Fetching task code
@@ -118,17 +143,7 @@ const uploadToParser = async (uploadFile: IWrappedSwiftrayTaskFile): Promise<boo
 
   if (errorMessage && !isCanceled) {
     Progress.popById('upload-scene');
-    Alert.popUp({
-      buttonType: AlertConstants.YES_NO,
-      id: 'get-taskcode-error',
-      message: `#806 ${errorMessage}\n${lang.beambox.bottom_right_panel.export_file_error_ask_for_upload}`,
-      onYes: () => {
-        const svgString = svgCanvas.getSvgString();
-
-        AwsHelper.uploadToS3('output.bvg', svgString);
-      },
-      type: AlertConstants.SHOW_POPUP_ERROR,
-    });
+    popupError(errorMessage);
   }
 
   return !isCanceled && !errorMessage;
@@ -145,17 +160,7 @@ const getTaskCode = (codeType: 'fcode' | 'gcode' | 'preview', taskOptions) =>
       {
         onError: (message) => {
           Progress.popById('fetch-task');
-          Alert.popUp({
-            buttonType: AlertConstants.YES_NO,
-            id: 'get-taskcode-error',
-            message: `#806 ${message}\n${lang.beambox.bottom_right_panel.export_file_error_ask_for_upload}`,
-            onYes: () => {
-              const svgString = svgCanvas.getSvgString();
-
-              AwsHelper.uploadToS3('output.bvg', svgString);
-            },
-            type: AlertConstants.SHOW_POPUP_ERROR,
-          });
+          popupError(message);
           resolve({
             fileTimeCost: null,
             metadata: {},
@@ -381,15 +386,7 @@ const fetchFraming = async (): Promise<boolean> => {
     {
       onError: (message: string) => {
         Progress.popById('upload-scene');
-        Alert.popUp({
-          buttonType: AlertConstants.YES_NO,
-          id: 'get-taskcode-error',
-          message: `#806 ${message}\n${lang.beambox.bottom_right_panel.export_file_error_ask_for_upload}`,
-          onYes: () => {
-            AwsHelper.uploadToS3('output.bvg', svgString);
-          },
-          type: AlertConstants.SHOW_POPUP_ERROR,
-        });
+        popupError(message);
       },
       onFinished: onUploadFinished,
       onProgressing: onUploadProgressing,
