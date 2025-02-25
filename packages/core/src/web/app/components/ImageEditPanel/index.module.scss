@@ -50,8 +50,20 @@
   width: 100%;
   height: 100%;
   background-image:
-    linear-gradient(45deg, rgba(0, 0, 0, 0.4) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.4) 75%),
-    linear-gradient(45deg, rgba(0, 0, 0, 0.4) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.4) 75%);
+    linear-gradient(
+      45deg,
+      rgba(0, 0, 0, 0.4) 25%,
+      transparent 25%,
+      transparent 75%,
+      rgba(0, 0, 0, 0.4) 75%
+    ),
+    linear-gradient(
+      45deg,
+      rgba(0, 0, 0, 0.4) 25%,
+      transparent 25%,
+      transparent 75%,
+      rgba(0, 0, 0, 0.4) 75%
+    );
   background-position:
     0 0,
     10px 10px;
