@@ -29,12 +29,9 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "pnpm"
 
-      - name: Cypress install
-        uses: cypress-io/github-action@v6
-        with:
-          # Disable running of tests within install job
-          runTests: false
-          build: pnpm install --network-timeout 100000
+      - name: Install dependencies
+        run: |
+          pnpm -r install
 
       - name: Setup web and run e2e tests
         uses: cypress-io/github-action@v6
