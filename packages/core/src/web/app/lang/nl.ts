@@ -2153,6 +2153,12 @@ const lang: ILang = {
     no_device: 'Kan camera-apparaat niet detecteren. Sluit de camera opnieuw aan en probeer het opnieuw.',
     no_permission: 'Beam Studio heeft geen toestemming om toegang te krijgen tot de camera. Zorg ervoor dat de toestemming is verleend aan Beam Studio in de browser- of systeeminstellingen.',
   },
+  z_speed_limit_test: {
+    alert_before: 'Voordat 3D-curvegraveren begint, zal het systeem een belastingstest uitvoeren om verlies van stappen door overmatig gewicht te voorkomen.',
+    alert_failed: 'Het gewicht van het huidige object overschrijdt de belastinglimiet voor de huidige Z-as snelheid. Verlaag de Z-as snelheid op het machinepaneel of vervang het graveerobject voordat u opnieuw test.',
+    ignore: 'Negeren',
+    retest: 'Opnieuw testen',
+  },
 };
 
 export default lang;

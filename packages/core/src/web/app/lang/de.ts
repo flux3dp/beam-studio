@@ -2153,6 +2153,12 @@ const lang: ILang = {
     no_device: 'Kameragerät kann nicht erkannt werden. Bitte schließen Sie die Kamera erneut an und versuchen Sie es erneut.',
     no_permission: 'Beam Studio hat keine Berechtigung, auf die Kamera zuzugreifen. Stellen Sie sicher, dass die Berechtigung für Beam Studio in den Browser- oder Systemeinstellungen erteilt wurde.',
   },
+  z_speed_limit_test: {
+    alert_before: 'Vor dem Start der 3D-Kurvengravur führt das System einen Belastungstest durch, um Schrittverluste aufgrund übermäßigen Gewichts zu vermeiden.',
+    alert_failed: 'Das Gewicht des aktuellen Objekts überschreitet die Belastungsgrenze für die aktuelle Z-Achsen-Geschwindigkeit. Bitte reduzieren Sie die Z-Achsen-Geschwindigkeit im Maschinenpanel oder ersetzen Sie das Gravurobjekt, bevor Sie den Test erneut durchführen.',
+    ignore: 'Ignorieren',
+    retest: 'Erneut testen',
+  },
 };
 
 export default lang;

@@ -2153,6 +2153,12 @@ const lang: ILang = {
     no_device: 'Kan ikke registrere kameranhed. Tilslut kameraet igen og prøv igen.',
     no_permission: 'Beam Studio har ikke tilladelse til at få adgang til kameraet. Sørg for, at tilladelsen er givet til Beam Studio i browserindstillingerne eller systemindstillingerne.',
   },
+  z_speed_limit_test: {
+    alert_before: 'Før start af 3D-kurvgravering vil systemet udføre en belastningstest for at forhindre trintab på grund af overdreven vægt.',
+    alert_failed: 'Den aktuelle genstands vægt overstiger belastningsgrænsen for den nuværende Z-akse hastighed. Reducer venligst Z-akse hastigheden på maskinens panel eller udskift graveringsobjektet, før du tester igen.',
+    ignore: 'Ignorer',
+    retest: 'Test igen',
+  },
 };
 
 export default lang;

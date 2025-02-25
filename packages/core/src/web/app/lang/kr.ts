@@ -2153,6 +2153,12 @@ const lang: ILang = {
     no_device: '카메라 장치를 감지할 수 없습니다. 카메라를 다시 연결하고 다시 시도하십시오.',
     no_permission: 'Beam Studio는 카메라에 액세스할 권한이 없습니다. 브라우저 설정 또는 시스템 설정에서 Beam Studio에 권한이 부여되었는지 확인하십시오.',
   },
+  z_speed_limit_test: {
+    alert_before: '3D 곡선 조각을 시작하기 전에 시스템이 부하 테스트를 수행하여 과도한 무게로 인해 스텝 손실이 발생하지 않도록 합니다.',
+    alert_failed: '현재 객체의 무게가 현재 Z축 속도의 하중 한계를 초과했습니다. 기계 패널에서 Z축 속도를 줄이거나 조각할 객체를 교체한 후 다시 테스트하세요.',
+    ignore: '무시',
+    retest: '재테스트',
+  },
 };
 
 export default lang;

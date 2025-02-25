@@ -2153,6 +2153,12 @@ const lang: ILang = {
     no_device: '无法检测到摄像设备。请重新连接摄像头，然后重试。',
     no_permission: 'Beam Studio 没有权限访问相机。请确保在浏览器设置或系统设置中已授予 Beam Studio 权限。',
   },
+  z_speed_limit_test: {
+    alert_before: '在开始3D曲面雕刻之前，系统将进行负载测试，以防止因过重导致步进丢失。',
+    alert_failed: '当前对象的重量超出了当前Z轴速度的负载限制。请在机器面板中降低Z轴速度，或更换雕刻对象后再重新测试。',
+    ignore: '忽略',
+    retest: '重新测试',
+  },
 };
 
 export default lang;

@@ -2153,6 +2153,12 @@ const lang: ILang = {
     no_device: 'Nelze detekovat kamerové zařízení. Znovu připojte kameru a zkuste to znovu.',
     no_permission: 'Beam Studio nemá oprávnění k přístupu k kameře. Ujistěte se, že je v nastavení prohlížeče nebo systému uděleno oprávnění pro Beam Studio.',
   },
+  z_speed_limit_test: {
+    alert_before: 'Před zahájením 3D gravírování systém provede test zatížení, aby se zabránilo ztrátě kroků v důsledku nadměrné hmotnosti.',
+    alert_failed: 'Hmotnost aktuálního objektu překračuje limit zatížení pro aktuální rychlost osy Z. Snižte prosím rychlost osy Z na ovládacím panelu stroje nebo vyměňte gravírovaný objekt před opětovným testováním.',
+    ignore: 'Ignorovat',
+    retest: 'Otestovat znovu',
+  },
 };
 
 export default lang;
