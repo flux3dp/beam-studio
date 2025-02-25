@@ -33,7 +33,7 @@ const NonStopProgress = ({ data }: { data: IProgressDialog }): React.JSX.Element
       okButtonProps={{ style: { display: 'none' } }}
       onCancel={() => {
         popById(id);
-        onCancel();
+        onCancel?.();
       }}
       open
       style={{

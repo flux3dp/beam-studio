@@ -178,8 +178,15 @@ class SwiftrayClient extends EventEmitter {
     this.emit(data.type, data);
   }
 
-  public async action<T>(path: string, action: string, params?: any): Promise<T> {
-    return new Promise((resolve) => {
+  public async action<T>(
+    path: string,
+    action: string,
+    params?: any,
+    handlers?: Array<{ handler: (data: any) => void; type: string }>,
+  ): Promise<T> {
+    const eventListeners: Array<{ listener: (data: any) => void; type: string }> = [];
+
+    const res: T = await new Promise((resolve) => {
       const id = Math.random().toString(36).substr(2, 9);
       const payload = { action, id, params };
 
@@ -191,7 +198,14 @@ class SwiftrayClient extends EventEmitter {
         });
       }
 
-      this.socket.send(JSON.stringify({ data: payload, path, type: 'action' }));
+      const dataString = JSON.stringify({ data: payload, path, type: 'action' });
+
+      if (dataString.length < 4096) {
+        this.socket.send(dataString);
+      } else {
+        // Change to binary string to avoid non-utf8 characters due to frame size limit
+        this.socket.send(Buffer.from(dataString));
+      }
 
       const callback = (data) => {
         if (data.id === id) {
@@ -201,8 +215,24 @@ class SwiftrayClient extends EventEmitter {
         }
       };
 
+      handlers?.forEach(({ handler, type }) => {
+        const listener = (data: any) => {
+          if (data.id === id) {
+            handler(data.result);
+          }
+        };
+
+        eventListeners.push({ listener, type });
+        this.addListener(type, listener);
+      });
       this.addListener('callback', callback);
     });
+
+    eventListeners.forEach(({ listener, type }) => {
+      this.removeListener(type, listener);
+    });
+
+    return res;
   }
 
   // Parser API
@@ -231,6 +261,10 @@ class SwiftrayClient extends EventEmitter {
       rotaryMode: loadOptions.rotaryMode,
     });
 
+    if (!uploadRes.success) {
+      eventListeners.onError(uploadRes.error?.message ?? 'Unknown error');
+    }
+
     return uploadRes;
   }
 
@@ -238,8 +272,8 @@ class SwiftrayClient extends EventEmitter {
     type: 'fcode' | 'gcode' | 'preview',
     eventListeners: {
       onError: (message: string) => void;
-      onFinished: (taskBlob: Blob, fileName: string, timeCost: number, metadata: Record<string, string>) => void;
-      onProgressing: (progress) => void;
+      onFinished: (taskBlob: Blob, timeCost: number, metadata: Record<string, string>) => void;
+      onProgressing: (progress: { message: string; percentage: number }) => void;
     },
     convertOptions: {
       enableAutoFocus?: boolean;
@@ -257,6 +291,8 @@ class SwiftrayClient extends EventEmitter {
     success: boolean;
   }> {
     const workarea = getWorkarea(convertOptions.model);
+
+    let fullCode = '';
     const convertResult = await this.action<{
       error?: ErrorObject;
       estimatedTime?: number;
@@ -266,19 +302,42 @@ class SwiftrayClient extends EventEmitter {
       metadata?: Record<string, string>;
       success: boolean;
       timeCost?: number;
-    }>('/parser', 'convert', {
-      type,
-      workarea: {
-        height: workarea.displayHeight || workarea.height,
-        width: workarea.width,
+    }>(
+      '/parser',
+      'convert',
+      {
+        type,
+        workarea: {
+          height: workarea.displayHeight || workarea.height,
+          width: workarea.width,
+        },
+        ...convertOptions,
       },
-      ...convertOptions,
-    });
-    const taskBlob = new Blob([type === 'fcode' ? Buffer.from(convertResult.fcode, 'base64') : convertResult.gcode], {
-      type: 'text/plain',
-    });
+      [
+        { handler: eventListeners.onProgressing, type: 'progress' },
+        {
+          handler: (data: { chunk: string }) => {
+            fullCode += data.chunk;
+          },
+          type: 'chunk',
+        },
+      ],
+    );
 
-    eventListeners.onFinished(taskBlob, convertResult.fileName, convertResult.timeCost, convertResult.metadata);
+    if (convertResult.success) {
+      const taskBlob = new Blob(
+        [
+          type === 'fcode'
+            ? Buffer.from(fullCode.length ? fullCode : convertResult.fcode!, 'base64')
+            : convertResult.gcode!,
+        ],
+        { type: 'text/plain' },
+      );
+
+      eventListeners.onFinished(taskBlob, convertResult.timeCost ?? 0, convertResult.metadata ?? {});
+    } else {
+      eventListeners.onError(convertResult.error?.message ?? 'Unknown error');
+    }
 
     return {
       error: convertResult.error,

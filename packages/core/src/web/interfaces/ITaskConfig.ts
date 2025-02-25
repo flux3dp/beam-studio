@@ -2,7 +2,7 @@ import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import type { BBox } from '@core/interfaces/ICurveEngraving';
 
 export interface IBaseConfig {
-  codeType?: 'fcode' | 'gcode';
+  codeType?: 'fcode' | 'gcode' | 'preview';
   enableAutoFocus?: boolean;
   enableDiode?: boolean;
   isPromark?: boolean;
