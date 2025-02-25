@@ -45,4 +45,3 @@ jobs:
           record: true
           group: "Actions"
           parallel: true
-          command: pnpm nx run web:e2e --configuration=ci
