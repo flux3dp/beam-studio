@@ -1100,7 +1100,7 @@ class Control extends EventEmitter implements IControlSocket {
 
     const res = await this.useWaitOKResponse('start', 180000);
 
-    return res?.data.includes('pass');
+    return res?.response.data.includes('pass');
   };
 
   enterRawMode = async () => {
