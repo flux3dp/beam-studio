@@ -1,14 +1,10 @@
-const colorPickerPrefix = 'src-web-app-widgets-ColorPicker-module__';
+const colorPickerPrefix = '_-_-packages-core-src-web-app-widgets-ColorPicker-module__';
 
 const changeAndCheckColor = (hex: string, rgb: string) => {
   cy.get(`.layer-item div[class*="${colorPickerPrefix}color"]`).click({ force: true });
   cy.get(`[style="background-color: ${rgb};"]`).click();
   cy.get('.ant-btn').contains('OK').click();
-  cy.get(`div[class*="${colorPickerPrefix}color"]`).should(
-    'have.attr',
-    'style',
-    `background: ${rgb};`
-  );
+  cy.get(`div[class*="${colorPickerPrefix}color"]`).should('have.attr', 'style', `background: ${rgb};`);
   cy.get('g.layer').should('have.attr', 'data-color', hex);
 };
 
@@ -24,18 +20,14 @@ describe('printing layer color', () => {
 
   it('change color', () => {
     cy.clickToolBtn('Element');
-    cy.get('.anticon[class*="src-web-app-views-beambox-ShapePanel-ShapeIcon-module__icon"]')
-      .eq(0)
-      .click();
+    cy.get('.anticon[class*="src-web-app-views-beambox-ShapePanel-ShapeIcon-module__icon"]').eq(0).click();
     cy.get('#svg_1').should('be.visible').click();
     cy.get('.tab.objects').click();
     cy.get(`div[class*="${colorPickerPrefix}color"]`)
       .eq(0)
       .should('have.css', 'background-color', 'rgb(91, 91, 91)')
       .click();
-    cy.get(
-      `div[class*="${colorPickerPrefix}inner"][style="background-color: rgb(114, 46, 209);"]`
-    ).click();
+    cy.get(`div[class*="${colorPickerPrefix}inner"][style="background-color: rgb(114, 46, 209);"]`).click();
     cy.get('.ant-btn').contains('OK').click();
     cy.get('#svg_1').should('have.attr', 'fill', '#722ED1');
   });
@@ -44,18 +36,14 @@ describe('printing layer color', () => {
   if (!isRunningAtGithub) {
     it('expand layer and change color', () => {
       cy.clickToolBtn('Element');
-      cy.get('.anticon[class*="src-web-app-views-beambox-ShapePanel-ShapeIcon-module__icon"]')
-        .eq(0)
-        .click();
+      cy.get('.anticon[class*="src-web-app-views-beambox-ShapePanel-ShapeIcon-module__icon"]').eq(0).click();
       cy.get('#svg_1').should('be.visible').click();
       cy.get('.tab.objects').click();
       cy.get(`div[class*="${colorPickerPrefix}color"]`)
         .eq(0)
         .should('have.css', 'background-color', 'rgb(91, 91, 91)')
         .click();
-      cy.get(
-        `div[class*="${colorPickerPrefix}inner"][style="background-color: rgb(139, 187, 17);"]`
-      ).click();
+      cy.get(`div[class*="${colorPickerPrefix}inner"][style="background-color: rgb(139, 187, 17);"]`).click();
       cy.get('.ant-btn').contains('OK').click();
       cy.get('.tab.layers').click();
       cy.get('#layerdoubleclick-0').rightclick();
@@ -85,9 +73,7 @@ describe('printing layer color', () => {
 
       cy.get('#presprayArea').should('be.visible');
       cy.clickToolBtn('Element');
-      cy.get('.anticon[class*="src-web-app-views-beambox-ShapePanel-ShapeIcon-module__icon"]')
-        .eq(0)
-        .click();
+      cy.get('.anticon[class*="src-web-app-views-beambox-ShapePanel-ShapeIcon-module__icon"]').eq(0).click();
       cy.get('#svg_6').should('be.visible').should('have.attr', 'fill', '#009FE3');
     });
   }
@@ -96,11 +82,7 @@ describe('printing layer color', () => {
     cy.get('.tab.layers').click();
     cy.get('#layerdoubleclick-0').rightclick();
     cy.get('.react-contextmenu-item').contains('Switch to single color layer').click();
-    cy.get(`div[class*="${colorPickerPrefix}color"]`).should(
-      'have.attr',
-      'style',
-      'background: rgb(0, 159, 227);'
-    );
+    cy.get(`div[class*="${colorPickerPrefix}color"]`).should('have.attr', 'style', 'background: rgb(0, 159, 227);');
     cy.get('g.layer').should('have.attr', 'data-color', '#009FE3');
 
     changeAndCheckColor('#1D1D1B', 'rgb(29, 29, 27)');

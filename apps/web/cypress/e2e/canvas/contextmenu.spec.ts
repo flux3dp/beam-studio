@@ -13,7 +13,7 @@ describe('canvas contextmenu', () => {
 
   it('canvas contextmenu with touchpad', () => {
     cy.landingEditor({
-      onBeforeLoad (win) {
+      onBeforeLoad(win) {
         Object.defineProperty(win.navigator, 'maxTouchPoints', {
           value: 5,
         });
@@ -26,7 +26,7 @@ describe('canvas contextmenu', () => {
       target: {
         dispatchEvent: () => {},
       },
-    }
+    };
 
     cy.get('#svg_editor > div > nav.react-contextmenu').should('not.visible');
 

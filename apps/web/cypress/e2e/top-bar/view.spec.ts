@@ -1,7 +1,7 @@
 describe('manipulate view', () => {
   const isRunningAtGithub = Cypress.env('envType') === 'github';
-  const addLayerBtnPrefix = 'src-web-app-components-beambox-right-panel-AddLayerButton-module__btn';
-  const zoomBlockPrefix = 'src-web-app-components-beambox-ZoomBlock-module_';
+  const addLayerBtnPrefix = '_-_-packages-core-src-web-app-components-beambox-right-panel-AddLayerButton-module__btn';
+  const zoomBlockPrefix = '_-_-packages-core-src-web-app-components-beambox-ZoomBlock-module_';
   const zoomRatio = () => cy.get(`[class*="${zoomBlockPrefix}_ratio"]`);
 
   beforeEach(() => {
@@ -61,7 +61,7 @@ describe('manipulate view', () => {
     cy.get('div[class*="src-web-app-widgets-ColorPicker-module__color"]').should(
       'have.attr',
       'style',
-      'background: rgb(63, 81, 181);'
+      'background: rgb(63, 81, 181);',
     );
     cy.clickToolBtn('Rectangle');
     cy.get('svg#svgcontent').trigger('mousedown', 100, 100, { force: true });

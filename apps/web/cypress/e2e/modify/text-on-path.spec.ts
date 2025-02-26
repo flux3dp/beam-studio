@@ -6,23 +6,23 @@ describe('text on path', () => {
     cy.get('svg#svgcontent').realClick({ x: 100, y: 200 });
     cy.wait(1000);
     cy.inputText('123456789{enter}');
-    cy.get('div.element-title').contains('Layer 1 > Text');
+    cy.getElementTitle().contains('Layer 1 > Text');
     cy.clickToolBtn('Ellipse');
     cy.get('svg#svgcontent')
       .trigger('mousedown', { which: 1, pageX: 100, pageY: 50, force: true })
       .trigger('mousemove', { which: 1, pageX: 250, pageY: 200, shiftKey: true, force: true })
       .trigger('mouseup', { force: true });
-    cy.get('div.element-title').contains('Layer 1 > Oval');
+    cy.getElementTitle().contains('Layer 1 > Oval');
     cy.get('svg#svgcontent').click({ force: true });
     cy.wait(500);
     cy.get('#svgcontent')
       .trigger('mousedown', { pageX: 1000, pageY: 1000, force: true })
       .trigger('mousemove', { pageX: 200, pageY: 100, force: true })
       .trigger('mouseup', { force: true });
-    cy.get('div.element-title').contains('Multiple Objects');
+    cy.getElementTitle().contains('Multiple Objects');
     cy.get('.tab.objects').click();
     cy.get('button#create_textpath').click();
-    cy.get('div.element-title').contains('Layer 1 > Text on Path');
+    cy.getElementTitle().contains('Layer 1 > Text on Path');
     cy.get('#svg_2')
       .should('exist')
       .should('have.attr', 'fill', 'none')
@@ -105,7 +105,7 @@ describe('text on path', () => {
 
   it('decompose', () => {
     cy.get('button#detach_path').click();
-    cy.get('div.element-title').contains('Multiple Objects');
+    cy.getElementTitle().contains('Multiple Objects');
     cy.get('textPath').should('not.exist');
     cy.get('#svg_1').should('exist');
     cy.get('#svg_2').should('exist');

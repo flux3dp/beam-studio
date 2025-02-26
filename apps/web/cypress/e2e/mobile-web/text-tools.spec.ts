@@ -8,12 +8,12 @@ describe('mobile text tools', () => {
     cy.inputText('{backspace}{backspace}{backspace}{backspace}TEST TEXT FONT');
     cy.get('#svg_1').should('exist');
     cy.get('#svg_1').should('have.text', 'TEST TEXT FONT');
-    cy.get('div.top-bar div.element-title').should('have.text', 'Layer 1 > Text');
+    cy.getElementTitle().should('have.text', 'Layer 1 > Text');
     cy.get('div#object-panel').should('exist');
     cy.wait(500);
     cy.get('#font_family').click();
     cy.get(
-      '[class*="src-web-app-views-beambox-Right-Panels-ObjectPanelItem-module__option"] img[alt="Noto Sans"]'
+      '[class*="src-web-app-views-beambox-Right-Panels-ObjectPanelItem-module__option"] img[alt="Noto Sans"]',
     ).click();
   });
 
@@ -29,29 +29,17 @@ describe('mobile text tools', () => {
 
   it('text size', () => {
     cy.get('#font_size').click();
-    cy.get('[class="adm-button adm-button-default adm-button-shape-rounded"]')
-      .contains('1')
-      .click({ force: true });
-    cy.get('[class="adm-button adm-button-default adm-button-shape-rounded"]')
-      .contains('0')
-      .click({ force: true });
-    cy.get('[class="adm-button adm-button-default adm-button-shape-rounded"]')
-      .contains('0')
-      .click({ force: true });
+    cy.get('[class="adm-button adm-button-default adm-button-shape-rounded"]').contains('1').click({ force: true });
+    cy.get('[class="adm-button adm-button-default adm-button-shape-rounded"]').contains('0').click({ force: true });
+    cy.get('[class="adm-button adm-button-default adm-button-shape-rounded"]').contains('0').click({ force: true });
     cy.get('#svg_1').should('have.attr', 'font-size').and('eq', '100');
   });
 
   it('text letter spacing', () => {
     cy.get('#letter_spacing').click();
-    cy.get('[class="adm-button adm-button-default adm-button-shape-rounded"]')
-      .contains('0')
-      .click({ force: true });
-    cy.get('[class="adm-button adm-button-default adm-button-shape-rounded"]')
-      .contains('.')
-      .click({ force: true });
-    cy.get('[class="adm-button adm-button-default adm-button-shape-rounded"]')
-      .contains('1')
-      .click({ force: true });
+    cy.get('[class="adm-button adm-button-default adm-button-shape-rounded"]').contains('0').click({ force: true });
+    cy.get('[class="adm-button adm-button-default adm-button-shape-rounded"]').contains('.').click({ force: true });
+    cy.get('[class="adm-button adm-button-default adm-button-shape-rounded"]').contains('1').click({ force: true });
     cy.get('#svg_1').should('have.attr', 'letter-spacing').and('eq', '0.1em');
   });
 
@@ -61,15 +49,9 @@ describe('mobile text tools', () => {
     cy.inputText('LINE SPACING TEST{enter}');
     cy.get('#svg_1').should('include.text', 'LINE SPACING TEST');
     cy.get('#line_spacing').click();
-    cy.get('[class="adm-button adm-button-default adm-button-shape-rounded"]')
-      .contains('1')
-      .click({ force: true });
-    cy.get('[class="adm-button adm-button-default adm-button-shape-rounded"]')
-      .contains('.')
-      .click({ force: true });
-    cy.get('[class="adm-button adm-button-default adm-button-shape-rounded"]')
-      .contains('5')
-      .click({ force: true });
+    cy.get('[class="adm-button adm-button-default adm-button-shape-rounded"]').contains('1').click({ force: true });
+    cy.get('[class="adm-button adm-button-default adm-button-shape-rounded"]').contains('.').click({ force: true });
+    cy.get('[class="adm-button adm-button-default adm-button-shape-rounded"]').contains('5').click({ force: true });
     cy.get('#svg_1').should('have.attr', 'data-line-spacing').and('eq', '1.5');
   });
 

@@ -29,7 +29,7 @@ describe('disassemable', () => {
       timeout: 10000,
     }).should('not.exist');
     cy.get('#svg_2').should('exist');
-    cy.get('div.element-title').contains('Layer 1 > SVG Object').should('exist');
+    cy.getElementTitle().contains('Layer 1 > SVG Object').should('exist');
     cy.get(
       '[class*="src-web-app-views-beambox-Right-Panels-LayerPanel-LayerList-module__row--"]'
     ).should('have.attr', 'data-layer', 'Layer 1');

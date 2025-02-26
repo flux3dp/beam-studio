@@ -21,7 +21,7 @@ describe('array tools', () => {
     cy.uploadFile('flux.png', 'image/png');
     doAllThing();
     cy.wait(500);
-    cy.get('div.top-bar div.element-title').should('have.text', 'Multiple Objects');
+    cy.getElementTitle().should('have.text', 'Multiple Objects');
     cy.get('g[data-tempgroup="true"]').children('image').should('have.length', '4');
   });
 
@@ -32,7 +32,7 @@ describe('array tools', () => {
     cy.get('svg#svgcontent').trigger('mouseup', { force: true });
     cy.wait(500);
     doAllThing();
-    cy.get('div.top-bar div.element-title').should('have.text', 'Multiple Objects');
+    cy.getElementTitle().should('have.text', 'Multiple Objects');
     cy.get('g[data-tempgroup="true"]').children('polygon').should('have.length', '4');
   });
 
@@ -43,7 +43,7 @@ describe('array tools', () => {
     cy.get('svg#svgcontent').trigger('mouseup', { force: true });
     cy.wait(500);
     doAllThing();
-    cy.get('div.top-bar div.element-title').should('have.text', 'Multiple Objects');
+    cy.getElementTitle().should('have.text', 'Multiple Objects');
     cy.get('g[data-tempgroup="true"]').children('line').should('have.length', '4');
   });
 
@@ -53,7 +53,7 @@ describe('array tools', () => {
     cy.wait(1500);
     cy.inputText('Test Array');
     doAllThing();
-    cy.get('div.top-bar div.element-title').should('have.text', 'Multiple Objects');
+    cy.getElementTitle().should('have.text', 'Multiple Objects');
     cy.get('g[data-tempgroup="true"]').children('text').should('have.length', '4');
   });
 
@@ -72,7 +72,7 @@ describe('array tools', () => {
     cy.get('.tab.objects').click();
     cy.get('#group').click();
     doAllThing();
-    cy.get('div.top-bar div.element-title').should('have.text', 'Multiple Objects');
+    cy.getElementTitle().should('have.text', 'Multiple Objects');
     cy.get('#svg_11').children('image').should('have.length', '1');
     cy.get('ellipse').should('have.length', '4');
   });
@@ -88,12 +88,8 @@ describe('array tools', () => {
     cy.get('svg#svgcontent').trigger('mouseup', { force: true });
     cy.wait(500);
     doAllThing();
-    cy.get('div.top-bar div.element-title').should('have.text', 'Multiple Objects');
-    cy.get('g[data-tempgroup="true"]', { timeout: 3000 })
-      .children('line')
-      .should('have.length', '4');
-    cy.get('g[data-tempgroup="true"]', { timeout: 3000 })
-      .children('polygon')
-      .should('have.length', '4');
+    cy.getElementTitle().should('have.text', 'Multiple Objects');
+    cy.get('g[data-tempgroup="true"]', { timeout: 3000 }).children('line').should('have.length', '4');
+    cy.get('g[data-tempgroup="true"]', { timeout: 3000 }).children('polygon').should('have.length', '4');
   });
 });

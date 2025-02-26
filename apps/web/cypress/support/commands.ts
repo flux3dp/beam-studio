@@ -29,7 +29,7 @@ const setStorage = () => {
   window.localStorage.setItem('announcement-record', '{"times":1,"isIgnored":[], "skip":true}');
 };
 
-Cypress.Commands.add('landingEditor', (opts = {}) => {
+Cypress.Commands.add('landingEditor', (opts: Partial<Cypress.VisitOptions> = {}) => {
   setStorage();
   cy.visit('/#/initialize/connect/flux-id-login', opts);
   cy.on('window:load', (win) => {
@@ -45,7 +45,7 @@ Cypress.Commands.add('landingEditor', (opts = {}) => {
   });
 });
 
-Cypress.Commands.add('loginAndLandingEditor', (opts = {}) => {
+Cypress.Commands.add('loginAndLandingEditor', (opts: Partial<Cypress.VisitOptions> = {}) => {
   setStorage();
   cy.visit('/#/initialize/connect/flux-id-login', opts);
   cy.on('window:load', (win) => {
@@ -113,9 +113,9 @@ Cypress.Commands.add('go2Preference', (handleSave = false) => {
 
 Cypress.Commands.add('checkToolBtnActive', (id: string, active = true) => {
   cy.get(`div#left-${id}`).should('exist');
-  cy.get(`div#left-${id}[class*='src-web-app-components-beambox-left-panel-LeftPanelButton-module__active--']`).should(
-    active ? 'exist' : 'not.exist',
-  );
+  cy.get(
+    `div#left-${id}[class*='_-_-packages-core-src-web-app-components-beambox-left-panel-LeftPanelButton-module__active--']`,
+  ).should(active ? 'exist' : 'not.exist');
 });
 
 Cypress.Commands.add('clickToolBtn', (id: string) => {
@@ -136,7 +136,7 @@ Cypress.Commands.add('changeWorkarea', (workarea: string, save = true) => {
 });
 
 Cypress.Commands.add('selectPreset', (presetName: string) => {
-  const ConfigPanelPrefix = 'src-web-app-views-beambox-Right-Panels-ConfigPanel-ConfigPanel-module__';
+  const ConfigPanelPrefix = '_-_-packages-core-src-web-app-views-beambox-Right-Panels-ConfigPanel-ConfigPanel-module__';
   cy.get(`[class*="${ConfigPanelPrefix}preset-dropdown"] > .ant-select-selector`).click();
   cy.get('.ant-select-item').contains(presetName).click();
 });
@@ -151,6 +151,20 @@ Cypress.Commands.add('inputValueCloseTo', (selector: string, value: number, tole
 
 Cypress.Commands.add('inputText', (value: string) => {
   cy.realType(value);
+});
+
+Cypress.Commands.add('getElementTitle', (childSelector = '') => {
+  const elementTitleModulePrefix = '_-_-packages-core-src-web-app-components-beambox-top-bar-ElementTitle-module__';
+  const selectors = [`[class*="${elementTitleModulePrefix}element-title"]`];
+  if (childSelector) selectors.push(childSelector);
+  return cy.get(selectors.join(' '));
+});
+
+Cypress.Commands.add('getTopBar', (childSelector = '') => {
+  const topbarModulesPrefix = '_-_-packages-core-src-web-app-components-beambox-top-bar-TopBar-module__';
+  const selectors = [`[class*="${topbarModulesPrefix}top-bar"]`];
+  if (childSelector) selectors.push(childSelector);
+  return cy.get(selectors.join(' '));
 });
 
 //

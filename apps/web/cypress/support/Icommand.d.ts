@@ -1,8 +1,8 @@
 declare global {
   namespace Cypress {
     interface Chainable {
-      landingEditor(): Chainable<void>;
-      loginAndLandingEditor(): Chainable<void>;
+      landingEditor(opts?: Partial<Cypress.VisitOptions>): Chainable<void>;
+      loginAndLandingEditor(opts?: Partial<Cypress.VisitOptions>): Chainable<void>;
       uploadFile(fileName: string, fileType?: string): Chainable<JQuery<HTMLElement>>;
       dragTo(targetEl: string): Chainable<JQuery<HTMLElement>>;
       disableImageDownSampling(): Chainable<void>;
@@ -15,6 +15,8 @@ declare global {
       selectPreset: (presetName: string) => Chainable<void>;
       inputValueCloseTo: (selector: string, value: number, tolerance: number) => Chainable<void>;
       inputText: (value: string) => Chainable<void>;
+      getElementTitle: (childSelector?: string) => Chainable<JQuery<HTMLElement>>;
+      getTopBar: (childSelector?: string) => Chainable<JQuery<HTMLElement>>;
     }
   }
 }

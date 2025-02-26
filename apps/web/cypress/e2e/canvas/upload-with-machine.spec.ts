@@ -2,9 +2,9 @@ import { md5 } from '../../support/utils';
 
 const isRunningAtGithub = Cypress.env('envType') === 'github';
 const beamSeriersName = Cypress.env('beamSeriersName');
-const layerListPrefix = 'src-web-app-views-beambox-Right-Panels-LayerPanel-LayerList-module__';
-const colorPickerPrefix = 'src-web-app-widgets-ColorPicker-module__';
-const progressPrefix = 'src-web-app-views-dialogs-AlertAndProgress-module__';
+const layerListPrefix = '_-_-packages-core-src-web-app-views-beambox-Right-Panels-LayerPanel-LayerList-module__';
+const colorPickerPrefix = '_-_-packages-core-src-web-app-widgets-ColorPicker-module__';
+const progressPrefix = '_-_-packages-core-src-web-app-views-dialogs-AlertAndProgress-module__';
 
 function chooseImportOption(module?: string, layering?: string) {
   cy.get(`div[class*="${progressPrefix}nonstop--"`).should('exist');
@@ -40,7 +40,7 @@ describe('upload with machine', () => {
     cy.uploadFile('svg.svg', 'image/svg+xml');
     chooseImportOption('Laser', 'Layer');
     cy.get('#svg_2').should('exist');
-    cy.get('div.element-title').should('have.text', 'Layer 1 > SVG Object');
+    cy.getElementTitle().should('have.text', 'Layer 1 > SVG Object');
     cy.get(`div[class*="${layerListPrefix}row"]`).should('have.attr', 'data-layer', 'Layer 1');
     cy.get(`div[class*="${layerListPrefix}name"]`).should('have.text', 'Layer 1');
     cy.get('symbol#svg_1>g>g')
@@ -58,19 +58,11 @@ describe('upload with machine', () => {
     cy.get(`div[class*="${layerListPrefix}row"]`).should('have.attr', 'data-layer', '#3F51B5');
     cy.get(`div[class*="${layerListPrefix}name"]`).eq(0).should('have.text', '#3F51B5');
     cy.get('#layerdoubleclick-1').should('have.text', '#3F51B5');
-    cy.get('#svg_8').should(
-      'have.attr',
-      'data-xform',
-      'x=122.34765625 y=105.8125 width=200 height=200 '
-    );
+    cy.get('#svg_8').should('have.attr', 'data-xform', 'x=122.34765625 y=105.8125 width=200 height=200 ');
     cy.get('symbol#svg_6_image>image').should('have.attr', 'filter', 'url(#filter#3F51B5)');
     cy.get(`div[class*="${layerListPrefix}name"]`).eq(1).should('have.text', '#333333');
     cy.get('#layerdoubleclick-0').should('have.text', '#333333');
-    cy.get('#svg_7').should(
-      'have.attr',
-      'data-xform',
-      'x=221.6484375 y=105.8125 width=200 height=200 '
-    );
+    cy.get('#svg_7').should('have.attr', 'data-xform', 'x=221.6484375 y=105.8125 width=200 height=200 ');
     cy.get('symbol#svg_5_image>image').should('have.attr', 'filter', 'url(#filter#333333)');
   });
 
@@ -80,7 +72,7 @@ describe('upload with machine', () => {
     cy.uploadFile('svg.svg', 'image/svg+xml');
     chooseImportOption('Laser', 'Single Layer');
     cy.get('#svg_2').should('exist');
-    cy.get('div.element-title').should('have.text', 'Multiple Objects');
+    cy.getElementTitle().should('have.text', 'Multiple Objects');
     cy.get(`div[class*="${layerListPrefix}row"]`).should('have.attr', 'data-layer', 'Layer 1');
     cy.get(`div[class*="${layerListPrefix}name"]`).should('have.text', 'Layer 1');
     cy.get('symbol#svg_1>g>g')
@@ -95,7 +87,7 @@ describe('upload with machine', () => {
     cy.uploadFile('svg.svg', 'image/svg+xml');
     chooseImportOption('Printing', 'Layer');
     cy.get('#svg_2').should('exist');
-    cy.get('div.element-title').contains('Printing > SVG Object');
+    cy.getElementTitle().contains('Printing > SVG Object');
     cy.get(`div[class*="${layerListPrefix}row"]`).should('have.attr', 'data-layer', 'Printing');
     cy.get(`div[class*="${layerListPrefix}name"]`).should('have.text', 'Printing');
     cy.get('symbol#svg_1>g>g')
@@ -121,7 +113,7 @@ describe('upload with machine', () => {
     cy.uploadFile('svg.svg', 'image/svg+xml');
     chooseImportOption('Printing', 'Single Layer');
     cy.get('#svg_2', { timeout: 50000 }).should('exist');
-    cy.get('div.element-title').contains('Multiple Objects');
+    cy.getElementTitle().contains('Multiple Objects');
     cy.get(`div[class*="${layerListPrefix}name"]`).should('have.text', 'Printing');
     cy.get('symbol#svg_1>g>g')
       .invoke('prop', 'innerHTML')
@@ -133,7 +125,7 @@ describe('upload with machine', () => {
     cy.uploadFile('gradient.svg', 'image/svg+xml');
     chooseImportOption(undefined, 'Layer');
     cy.get('#svg_1').should('exist');
-    cy.get('div.element-title').contains('Bitmap > Image');
+    cy.getElementTitle().contains('Bitmap > Image');
     cy.get(`div[class*="${layerListPrefix}name"]`).should('have.text', 'Bitmap');
     cy.get('image#svg_1').should('have.attr', 'xlink:href');
     cy.get('image#svg_1')
@@ -146,7 +138,7 @@ describe('upload with machine', () => {
     cy.uploadFile('bitmap.svg', 'image/svg+xml');
     chooseImportOption(undefined, 'Layer');
     cy.get('#svg_1').should('exist');
-    cy.get('div.element-title').contains('Bitmap > Image');
+    cy.getElementTitle().contains('Bitmap > Image');
     cy.get(`div[class*="${layerListPrefix}name"]`).should('have.text', 'Bitmap');
     cy.get('image#svg_1').should('have.attr', 'xlink:href');
     cy.get('image#svg_1')
@@ -158,7 +150,7 @@ describe('upload with machine', () => {
     cy.uploadFile('PDF.pdf', 'application/pdf');
     chooseImportOption(undefined, 'Color');
     cy.get('#svg_3').should('exist');
-    cy.get('div.element-title').contains('Multiple Objects');
+    cy.getElementTitle().contains('Multiple Objects');
     cy.get(`div[class*="${layerListPrefix}name"]`).eq(0).should('have.text', '#FFFFFF');
     cy.get(`div[class*="${layerListPrefix}name"]`).eq(1).should('have.text', '#000000');
     cy.get('#w_size').should('have.value', '20.00');
@@ -169,7 +161,7 @@ describe('upload with machine', () => {
     cy.uploadFile('PDF.pdf', 'application/pdf');
     chooseImportOption(undefined, 'Single Layer');
     cy.get('#svg_1').should('exist');
-    cy.get('div.element-title').contains('Multiple Objects');
+    cy.getElementTitle().contains('Multiple Objects');
     cy.get(`div[class*="${layerListPrefix}name"]`).should('have.text', 'Layer 1');
     cy.get('#w_size').should('have.value', '20.00');
     cy.get('#h_size').should('have.value', '20.00');
@@ -179,7 +171,7 @@ describe('upload with machine', () => {
     cy.uploadFile('ai.ai', 'application/postscript');
     chooseImportOption(undefined, 'Color');
     cy.get('#svg_4').should('exist');
-    cy.get('div.element-title').contains('Multiple Objects');
+    cy.getElementTitle().contains('Multiple Objects');
     cy.get(`div[class*="${layerListPrefix}name"]`).eq(0).should('have.text', '#020101');
     cy.get(`div[class*="${layerListPrefix}name"]`).eq(1).should('have.text', '#000000');
     cy.get('#w_size').should('have.value', '20.00');
@@ -190,7 +182,7 @@ describe('upload with machine', () => {
     cy.uploadFile('ai.ai', 'application/postscript');
     chooseImportOption(undefined, 'Single Layer');
     cy.get('#svg_4').should('exist');
-    cy.get('div.element-title').contains('Multiple Objects');
+    cy.getElementTitle().contains('Multiple Objects');
     cy.get(`div[class*="${layerListPrefix}name"]`).should('have.text', 'Layer 1');
     cy.get('#w_size').should('have.value', '20.00');
     cy.get('#h_size').should('have.value', '20.00');
