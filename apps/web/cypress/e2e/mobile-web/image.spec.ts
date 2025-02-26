@@ -14,7 +14,7 @@ describe('mobile image tools', () => {
     cy.get('#threshold').should('exist');
     cy.get('#trace').should('exist').click({ force: true });
     cy.get('#svg_3').click({ force: true });
-    cy.get('div.element-title').contains('Layer 1 > Path');
+    cy.getElementTitle().contains('Layer 1 > Path');
     cy.get('#svg_3')
       .invoke('attr', 'd')
       .then((d) => {
@@ -26,9 +26,7 @@ describe('mobile image tools', () => {
   it('change image gradient', () => {
     cy.uploadFile('flux.png', 'image/png');
     cy.get('#gradient').click({ force: true });
-    cy.get('#svg_1')
-      .should('have.attr', 'data-threshold', '128')
-      .should('have.attr', 'data-shading', 'false');
+    cy.get('#svg_1').should('have.attr', 'data-threshold', '128').should('have.attr', 'data-shading', 'false');
     cy.get('#svg_1')
       .invoke('attr', 'xlink:href')
       .then((href) => {
@@ -36,9 +34,7 @@ describe('mobile image tools', () => {
         else expect(md5(href)).equal('599a88f5b1b4ccb5adff20fb6d16a132');
       });
     cy.get('#gradient').click({ force: true });
-    cy.get('#svg_1')
-      .should('have.attr', 'data-threshold', '254')
-      .should('have.attr', 'data-shading', 'true');
+    cy.get('#svg_1').should('have.attr', 'data-threshold', '254').should('have.attr', 'data-shading', 'true');
     cy.get('#svg_1')
       .invoke('attr', 'xlink:href')
       .then((href) => {

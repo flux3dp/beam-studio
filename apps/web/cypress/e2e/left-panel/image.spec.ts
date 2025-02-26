@@ -20,7 +20,7 @@ describe('manipulate image function', () => {
     cy.get('#trace').click();
     cy.wait(1500);
     cy.get('#svg_3').click({ force: true });
-    cy.get('div.element-title').contains('Layer 1 > Path');
+    cy.getElementTitle().contains('Layer 1 > Path');
     cy.get('#svg_3')
       .invoke('attr', 'd')
       .then((d) => {
@@ -32,9 +32,7 @@ describe('manipulate image function', () => {
     cy.uploadFile('flux.png', 'image/png');
     cy.get('.tab.objects').click();
     cy.get('.ant-switch').eq(0).click();
-    cy.get('#svg_1')
-      .should('have.attr', 'data-threshold', '128')
-      .should('have.attr', 'data-shading', 'false');
+    cy.get('#svg_1').should('have.attr', 'data-threshold', '128').should('have.attr', 'data-shading', 'false');
     cy.get('#svg_1').click({ force: true });
     cy.get('.tab.objects').click();
     cy.get('#svg_1')
@@ -45,9 +43,7 @@ describe('manipulate image function', () => {
       });
     cy.get('.ant-switch').eq(0).click();
     cy.get('#svg_1').click({ force: true });
-    cy.get('#svg_1')
-      .should('have.attr', 'data-threshold', '254')
-      .should('have.attr', 'data-shading', 'true');
+    cy.get('#svg_1').should('have.attr', 'data-threshold', '254').should('have.attr', 'data-shading', 'true');
     cy.wait(5000);
     cy.get('#svg_1')
       .invoke('attr', 'xlink:href')

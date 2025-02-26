@@ -11,7 +11,7 @@ const drawText = () => {
   cy.wait(1000);
   cy.inputText('123');
   cy.get('#svg_1').should('exist');
-  cy.get('div.top-bar div.element-title').should('have.text', 'Layer 1 > Text');
+  cy.getElementTitle().should('have.text', 'Layer 1 > Text');
   cy.get('.tab.objects').click();
   cy.get('div#object-panel').should('exist');
   cy.get('.ant-select-selection-item[title="Font"]').click();
@@ -60,7 +60,7 @@ describe('convert to path 1.0', () => {
     cy.get('#convert_to_path').click();
     cy.get('#svg_2').should('exist');
     cy.get('#svg_2').click({ force: true });
-    cy.get('div.top-bar div.element-title').should('have.text', 'Layer 1 > Path');
+    cy.getElementTitle().should('have.text', 'Layer 1 > Path');
     checkConsoleLog();
     cy.get('#svg_2').should('have.attr', 'd');
     cy.get('#svg_2')
@@ -75,14 +75,12 @@ describe('convert to path 1.0', () => {
         $text.children('tspan')[0].innerHTML = 'hello你好';
       });
     cy.get('#convert_to_path').click();
-    cy.contains('Your text contains characters which are not supported by current font.').should(
-      'exist'
-    );
+    cy.contains('Your text contains characters which are not supported by current font.').should('exist');
     cy.contains('strong', '思源黑體 TC').should('exist');
     cy.contains('Confirm').click();
     cy.get('#svg_2').should('exist');
     cy.get('#svg_2').click({ force: true });
-    cy.get('div.top-bar div.element-title').should('have.text', 'Layer 1 > Path');
+    cy.getElementTitle().should('have.text', 'Layer 1 > Path');
     checkConsoleLog();
     cy.get('#svg_2').should('have.attr', 'd');
     cy.get('#svg_2')
@@ -100,7 +98,7 @@ describe('convert to path 1.0', () => {
     cy.get('#weld').click();
     cy.get('#svg_2').should('exist');
     cy.get('#svg_2').click({ force: true });
-    cy.get('div.top-bar div.element-title').should('have.text', 'Layer 1 > Path');
+    cy.getElementTitle().should('have.text', 'Layer 1 > Path');
     checkConsoleLog();
     cy.get('#svg_2').should('have.attr', 'd');
     cy.get('#svg_2')
@@ -120,7 +118,7 @@ describe.only('convert to path 2.0', () => {
     cy.get('#convert_to_path').click();
     cy.get('#svg_2').should('exist');
     cy.get('#svg_2').click({ force: true });
-    cy.get('div.top-bar div.element-title').should('have.text', 'Layer 1 > Path');
+    cy.getElementTitle().should('have.text', 'Layer 1 > Path');
     checkConsoleLog();
     cy.get('#svg_2').should('have.attr', 'd');
     cy.get('#svg_2')
@@ -141,15 +139,14 @@ describe.only('convert to path 2.0', () => {
         $text.children('tspan')[0].innerHTML = 'hello你好';
       });
     cy.get('#convert_to_path').click();
-    cy.contains('Your text contains characters which are not supported by current font.').should(
-      'exist',
-      { timeout: 3000 }
-    );
+    cy.contains('Your text contains characters which are not supported by current font.').should('exist', {
+      timeout: 3000,
+    });
     cy.contains('strong', '思源黑體 TC').should('exist');
     cy.contains('Confirm').click();
     cy.get('#svg_2').should('exist');
     cy.get('#svg_2').click({ force: true });
-    cy.get('div.top-bar div.element-title').should('have.text', 'Layer 1 > Path');
+    cy.getElementTitle().should('have.text', 'Layer 1 > Path');
     checkConsoleLog();
     cy.get('#svg_2').should('have.attr', 'd');
     cy.get('#svg_2')
@@ -169,7 +166,7 @@ describe.only('convert to path 2.0', () => {
     cy.get('#weld').click();
     cy.get('#svg_2').should('exist');
     cy.get('#svg_2').click({ force: true });
-    cy.get('div.top-bar div.element-title').should('have.text', 'Layer 1 > Path');
+    cy.getElementTitle().should('have.text', 'Layer 1 > Path');
     checkConsoleLog();
     cy.get('#svg_2').should('have.attr', 'd');
     cy.get('#svg_2')

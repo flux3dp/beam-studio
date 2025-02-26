@@ -58,7 +58,7 @@ describe('group tools', () => {
     drawingObject();
     selectAll();
     cy.get('button#group').click();
-    cy.get('div.top-bar div.element-title').should('have.text', 'Layer 1 > Group');
+    cy.getElementTitle().should('have.text', 'Layer 1 > Group');
     cy.window().then((win) => {
       const el = win.eval('svgCanvas.getSelectedElems()');
       cy.get(el).should('length', '1');
@@ -70,7 +70,7 @@ describe('group tools', () => {
     drawingObject();
     selectAll();
     cy.get('button#group').click();
-    cy.get('div.top-bar div.element-title').should('have.text', 'Layer 1 > Group');
+    cy.getElementTitle().should('have.text', 'Layer 1 > Group');
     cy.get('button#ungroup').click();
     cy.clickToolBtn('Cursor');
     cy.window().then((win) => {
@@ -86,7 +86,7 @@ describe('group tools', () => {
     drawingObjInDiffLayer();
     selectAll();
     cy.get('button#group').click();
-    cy.get('div.top-bar div.element-title').should('have.text', 'Layer 3 > Group');
+    cy.getElementTitle().should('have.text', 'Layer 3 > Group');
     cy.window().then((win) => {
       const el = win.eval('svgCanvas.getSelectedElems()');
       cy.get(el).should('length', '1');
@@ -98,7 +98,7 @@ describe('group tools', () => {
     drawingObjInDiffLayer();
     selectAll();
     cy.get('button#group').click();
-    cy.get('div.top-bar div.element-title').should('have.text', 'Layer 3 > Group');
+    cy.getElementTitle().should('have.text', 'Layer 3 > Group');
     cy.get('button#ungroup').click();
     cy.clickToolBtn('Cursor');
     cy.window().then((win) => {

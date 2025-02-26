@@ -15,6 +15,7 @@ Jimp.decoders['image/jpeg'] = (data: any) => cachedJpegDecoder(data, { maxMemory
 export default {
   AUTO: Jimp.AUTO,
   BLEND_OVERLAY: Jimp.BLEND_OVERLAY,
+  Jimp,
   MIME_PNG: Jimp.MIME_PNG,
   read(data: Buffer) {
     return Jimp.read(data);

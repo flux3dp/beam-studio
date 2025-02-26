@@ -1,7 +1,5 @@
-/* eslint-disable prefer-rest-params */
-/* eslint-disable no-param-reassign */
 // ***********************************************************
-// This example support/index.js is processed and
+// This example support/e2e.ts is processed and
 // loaded automatically before your test files.
 //
 // This is a great place to put global configuration and
@@ -15,8 +13,7 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
-// Import commands.js using ES2015 syntax:
-/* eslint-disable import/no-extraneous-dependencies */
+// Import commands.ts using ES2015 syntax:
 import './commands';
 import 'cypress-real-events/support';
 import 'cypress-file-upload';

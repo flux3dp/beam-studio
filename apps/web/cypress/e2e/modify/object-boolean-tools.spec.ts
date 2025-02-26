@@ -32,7 +32,7 @@ function selectAll() {
   cy.get('svg#svgcontent').trigger('mousedown', -100, -100, { force: true });
   cy.get('svg#svgcontent').trigger('mousemove', 300, 300, { force: true });
   cy.get('svg#svgcontent').trigger('mouseup', { force: true });
-  cy.get('div.element-title').should('have.text', 'Multiple Objects');
+  cy.getElementTitle().should('have.text', 'Multiple Objects');
 }
 
 function checkDimensions(x: number, y: number, w: number, h: number) {
