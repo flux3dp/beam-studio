@@ -1,16 +1,8 @@
 name: e2e
 
 on:
-  push:
-    branches:
-      - not/done/yet
-  # pull_request:
-  # workflow_dispatch:
-  #   inputs:
-  #     core_branch:
-  #       description: "Core Branch"
-  #       required: false
-  #       default: "master"
+  pull_request:
+  workflow_dispatch:
 
 jobs:
   e2e-test:
@@ -18,44 +10,43 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        node-version: [22]
         # run copies of the current job in parallel
         containers: [1, 2, 3, 4, 5]
     steps:
       - uses: actions/checkout@v4
-      - name: Checkout Beam Studio Core
-        uses: actions/checkout@v4
         with:
-          repository: flux3dp/beam-studio-core
-          ref: ${{ github.event.inputs.core_branch }}
-          path: .github/actions/beam-studio-core
-      - name: Copy Beam Studio Core
-        run: |
-          cp -R .github/actions/beam-studio-core ../beam-studio-core
-      - name: Setup pnpm
+          fetch-depth: 0
+
+      - name: Setup Pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 10
           run_install: false
-      - name: Setup Node
+
+      - name: Setup Node ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ matrix.node-version }}
           cache: "pnpm"
-      - name: Cypress install
+
+      # seperate into 2 step according to https://github.com/cypress-io/github-action/blob/master/README.md#pnpm-workspaces
+      - name: Install dependencies
         uses: cypress-io/github-action@v6
         with:
-          # Disable running of tests within install job
+          working-directory: apps/web
           runTests: false
-          build: pnpm install --network-timeout 100000
+
       - name: Setup web and run e2e tests
         uses: cypress-io/github-action@v6
         env:
+          CYPRESS_username: ${{ secrets.CYPRESS_USERNAME }}
+          CYPRESS_password: ${{ secrets.CYPRESS_PASSWORD }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
         with:
+          working-directory: apps/web
           config-file: cypress.config.ci.ts
           record: true
           group: "Actions"
-          install: false
           parallel: true
           start: pnpm start
           wait-on: "http://localhost:8080"

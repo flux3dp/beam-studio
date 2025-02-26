@@ -15,10 +15,13 @@ const setStorage = () => {
   window.localStorage.setItem('printer-is-ready', 'true');
   window.localStorage.setItem('keep-flux-id-login', 'true');
   window.localStorage.setItem('enable-sentry', '0');
-  window.localStorage.setItem('alert-config', JSON.stringify({
-    'skip-interface-tutorial': true,
-    'done-first-cali': true,
-  }));
+  window.localStorage.setItem(
+    'alert-config',
+    JSON.stringify({
+      'skip-interface-tutorial': true,
+      'done-first-cali': true,
+    }),
+  );
   window.localStorage.setItem('last-installed-version', 'web');
   window.localStorage.setItem('questionnaire-version', '9999');
   window.localStorage.setItem('did-gesture-tutorial', '1');
@@ -37,7 +40,9 @@ Cypress.Commands.add('landingEditor', (opts = {}) => {
   // time for svgcanvas loading
   cy.wait(1000);
   // Use GoButton to detect frontend render
-  cy.get('.top-bar [title="Start Work"]', { timeout: 30000 }).should('exist', { timeout: 30000 });
+  cy.get('[title="Start Work"]', { timeout: 30000 }).should('exist', {
+    timeout: 30000,
+  });
 });
 
 Cypress.Commands.add('loginAndLandingEditor', (opts = {}) => {
@@ -108,9 +113,9 @@ Cypress.Commands.add('go2Preference', (handleSave = false) => {
 
 Cypress.Commands.add('checkToolBtnActive', (id: string, active = true) => {
   cy.get(`div#left-${id}`).should('exist');
-  cy.get(
-    `div#left-${id}[class*='src-web-app-components-beambox-left-panel-LeftPanelButton-module__active--']`
-  ).should(active ? 'exist' : 'not.exist');
+  cy.get(`div#left-${id}[class*='src-web-app-components-beambox-left-panel-LeftPanelButton-module__active--']`).should(
+    active ? 'exist' : 'not.exist',
+  );
 });
 
 Cypress.Commands.add('clickToolBtn', (id: string) => {
@@ -137,9 +142,11 @@ Cypress.Commands.add('selectPreset', (presetName: string) => {
 });
 
 Cypress.Commands.add('inputValueCloseTo', (selector: string, value: number, tolerance: number) => {
-  cy.get(selector).invoke('val').then((val) => {
-    expect(parseFloat(val as string)).to.be.closeTo(value, tolerance);
-  });
+  cy.get(selector)
+    .invoke('val')
+    .then((val) => {
+      expect(parseFloat(val as string)).to.be.closeTo(value, tolerance);
+    });
 });
 
 Cypress.Commands.add('inputText', (value: string) => {

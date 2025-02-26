@@ -1,4 +1,16 @@
-import { defineConfig } from 'cypress'
+import { defineConfig } from 'cypress';
+import { nxE2EPreset } from '@nx/cypress/plugins/cypress-preset';
+
+const preset = nxE2EPreset(__filename, {
+  cypressDir: 'cypress/',
+  webServerCommands: {
+    default: 'nx run web:start',
+  },
+  webServerConfig: {
+    timeout: 300000, // 5min
+  },
+  ciWebServerCommand: 'nx run web:start',
+});
 
 export const envVariables = {
   cypressDownloadPath: './cypress/downloads/download.json',
@@ -21,8 +33,10 @@ export default defineConfig({
   projectId: 'fc84dg',
   env: envVariables,
   e2e: {
-    setupNodeEvents(on, config) {
-      return require('./cypress/plugins/index.ts')(on, config)
+    async setupNodeEvents(on, config) {
+      await preset.setupNodeEvents(on, config);
+
+      return require('./cypress/plugins/index.ts')(on, config);
     },
     baseUrl: 'http://localhost:8080',
     specPattern: 'cypress/e2e/**/*.{js,jsx,ts,tsx}',
@@ -33,4 +47,4 @@ export default defineConfig({
   },
   defaultCommandTimeout: 15000,
   experimentalMemoryManagement: true,
-})
+});
