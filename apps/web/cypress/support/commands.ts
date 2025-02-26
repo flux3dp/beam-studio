@@ -153,14 +153,18 @@ Cypress.Commands.add('inputText', (value: string) => {
   cy.realType(value);
 });
 
-Cypress.Commands.add('getElementTitle', () => {
+Cypress.Commands.add('getElementTitle', (childSelector = '') => {
   const elementTitleModulePrefix = '_-_-packages-core-src-web-app-components-beambox-top-bar-ElementTitle-module__';
-  return cy.get(`[class*="${elementTitleModulePrefix}element-title"]`);
+  const selectors = [`[class*="${elementTitleModulePrefix}element-title"]`];
+  if (childSelector) selectors.push(childSelector);
+  return cy.get(selectors.join(' '));
 });
 
-Cypress.Commands.add('getTopBar', () => {
+Cypress.Commands.add('getTopBar', (childSelector = '') => {
   const topbarModulesPrefix = '_-_-packages-core-src-web-app-components-beambox-top-bar-TopBar-module__';
-  return cy.get(`[class*="${topbarModulesPrefix}top-bar"]`);
+  const selectors = [`[class*="${topbarModulesPrefix}top-bar"]`];
+  if (childSelector) selectors.push(childSelector);
+  return cy.get(selectors.join(' '));
 });
 
 //

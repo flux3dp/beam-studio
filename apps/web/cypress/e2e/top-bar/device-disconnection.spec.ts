@@ -5,8 +5,8 @@ describe('verify top bar behaviors under device disconnection', () => {
   });
 
   it('show #801 while clicking on preview button', () => {
-    cy.getTopBar().get('[title="Preview"]').should('exist');
-    cy.getTopBar().get('[title="Preview"]').click();
+    cy.getTopBar('[title="Preview"]').should('exist');
+    cy.getTopBar('[title="Preview"]').click();
     cy.get('.ant-modal-content').contains('#801').should('exist');
   });
 
@@ -17,24 +17,24 @@ describe('verify top bar behaviors under device disconnection', () => {
   });
 
   it('show #801 while clicking on framing button', () => {
-    cy.getTopBar().get('[title="Running Frame"]').should('exist');
-    cy.getTopBar().get('[title="Running Frame"]').click();
+    cy.getTopBar('[title="Running Frame"]').should('exist');
+    cy.getTopBar('[title="Running Frame"]').click();
     cy.get('.ant-modal-content').contains('#801').should('exist');
   });
 
   if (!isRunningAtGithub) {
     // github does not support webgl
     it('path preview button is disabled', () => {
-      cy.getTopBar().get('[title="Path preview"]').should('exist');
-      cy.getTopBar().get('[title="Path preview"]').invoke('attr', 'class').should('contain', 'disabled');
-      cy.getTopBar().get('[title="Path preview"]').should('have.css', 'pointer-events', 'none');
+      cy.getTopBar('[title="Path preview"]').should('exist');
+      cy.getTopBar('[title="Path preview"]').invoke('attr', 'class').should('contain', 'disabled');
+      cy.getTopBar('[title="Path preview"]').should('have.css', 'pointer-events', 'none');
     });
   }
 
   it('GO button is disabled', () => {
-    cy.getTopBar().get('[title="Start Work"]').should('exist');
-    cy.getTopBar().get('[title="Start Work"]').invoke('attr', 'class').should('contain', 'disabled');
-    cy.getTopBar().get('[title="Start Work"]').should('have.css', 'pointer-events', 'none');
+    cy.getTopBar('[title="Start Work"]').should('exist');
+    cy.getTopBar('[title="Start Work"]').invoke('attr', 'class').should('contain', 'disabled');
+    cy.getTopBar('[title="Start Work"]').should('have.css', 'pointer-events', 'none');
   });
 
   it('toturial is unable to start', () => {

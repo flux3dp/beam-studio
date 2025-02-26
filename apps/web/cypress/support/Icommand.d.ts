@@ -15,8 +15,8 @@ declare global {
       selectPreset: (presetName: string) => Chainable<void>;
       inputValueCloseTo: (selector: string, value: number, tolerance: number) => Chainable<void>;
       inputText: (value: string) => Chainable<void>;
-      getElementTitle: () => Chainable<JQuery<HTMLElement>>;
-      getTopBar: () => Chainable<JQuery<HTMLElement>>;
+      getElementTitle: (childSelector?: string) => Chainable<JQuery<HTMLElement>>;
+      getTopBar: (childSelector?: string) => Chainable<JQuery<HTMLElement>>;
     }
   }
 }

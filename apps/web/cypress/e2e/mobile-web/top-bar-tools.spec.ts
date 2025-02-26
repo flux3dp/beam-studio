@@ -8,7 +8,7 @@ describe('check the existence of the top bar tools on mobile', () => {
   });
 
   it('menu', () => {
-    cy.getTopBar().get('.top-bar-menu-container').should('exist');
+    cy.get(`[class*="${topbarModulesPrefix}TopBar-module__menu`).should('exist');
     cy.get('.menu-btn-container').click();
     cy.get('.rc-menu__item').contains('File').should('exist');
     cy.get('.rc-menu__item').contains('Edit').should('exist');
@@ -24,21 +24,21 @@ describe('check the existence of the top bar tools on mobile', () => {
   });
 
   it('camera preview', () => {
-    cy.getTopBar().get('[title="Preview"]').should('not.exist');
+    cy.getTopBar('[title="Preview"]').should('not.exist');
   });
 
   it('common tools', () => {
     cy.get(`[class*="${topbarModulesPrefix}CommonTools-module__common-tools-container"]`).should('exist');
-    cy.getTopBar().get('[title="Delete"]').should('not.exist');
-    cy.getTopBar().get('[title="Undo"]').should('exist');
-    cy.getTopBar().get('[title="Redo"]').should('exist');
+    cy.getTopBar('[title="Delete"]').should('not.exist');
+    cy.getTopBar('[title="Undo"]').should('exist');
+    cy.getTopBar('[title="Redo"]').should('exist');
   });
 
   it('buttons on right', () => {
     cy.get(`[class*="${topbarModulesPrefix}TopBar-module__right"]`).should('exist');
     cy.get(`[class*="${topbarModulesPrefix}SelectMachineButton-module__button"]`).should('exist');
-    cy.getTopBar().get('title="Running Frame"]').should('exist');
-    cy.getTopBar().get('title="Start Work"]').should('exist');
+    cy.getTopBar('title="Running Frame"]').should('exist');
+    cy.getTopBar('title="Start Work"]').should('exist');
   });
 
   it('file name', () => {

@@ -20,10 +20,10 @@ describe('mobile undo redo', () => {
     cy.get('.adm-tab-bar-item-title').contains('Text').should('exist').click();
     cy.get('#svg_1').should('exist');
     cy.getElementTitle().should('have.text', 'Layer 1 > Text');
-    cy.getTopBar().get('[title="Undo"]').should('exist').click();
+    cy.getTopBar('[title="Undo"]').should('exist').click();
     cy.get('#svg_1').should('not.exist');
     cy.getElementTitle().should('not.exist');
-    cy.getTopBar().get('[title="Redo"]').should('exist').click();
+    cy.getTopBar('[title="Redo"]').should('exist').click();
     cy.get('#svg_1').should('exist').click();
     cy.getElementTitle().should('have.text', 'Layer 1 > Text');
   });
