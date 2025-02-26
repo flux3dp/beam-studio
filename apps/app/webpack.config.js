@@ -13,7 +13,12 @@ module.exports = [
   ...nodeConfig,
   {
     devtool: 'source-map',
-    entry: './src/main.ts',
+    entry: {
+      main: path.resolve(app, 'main.ts'),
+      ['potrace.worker']: path.resolve(coreWeb, 'helpers/potrace/potrace.worker.ts'),
+      ['clipper.worker']: path.resolve(coreWeb, 'helpers/clipper/clipper.worker.ts'),
+      ['image-symbol.worker']: path.resolve(coreWeb, 'helpers/symbol-helper/image-symbol.worker.ts'),
+    },
     externals: {
       '@sentry/electron': 'require("@sentry/electron")',
       'font-scanner': 'require("font-scanner")',
@@ -21,11 +26,6 @@ module.exports = [
     mode: 'development',
     module: {
       rules: [
-        {
-          loader: 'worker-loader',
-          options: { filename: '[name].worker.js' },
-          test: /\.worker\.ts$/,
-        },
         {
           exclude: /node_modules/,
           test: /\.(js|jsx)$/,
@@ -96,8 +96,8 @@ module.exports = [
       __dirname: false,
     },
     output: {
-      filename: 'bundle.js',
-      path: path.resolve(__dirname, 'public', 'js', 'dist'),
+      filename: '[name].bundle.js',
+      path: path.resolve(__dirname, 'public/js/dist'),
       uniqueName: 'app-renderer',
     },
     plugins: [
