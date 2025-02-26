@@ -34,7 +34,7 @@ describe('upload with machine', () => {
     cy.landingEditor();
   });
 
-  it.only('upload svg > Laser > Layer', () => {
+  it('upload svg > Laser > Layer', () => {
     cy.connectMachine(beamSeriersName);
     cy.changeWorkarea('Ador');
     cy.uploadFile('svg.svg', 'image/svg+xml');
