@@ -10,14 +10,14 @@ import workareaManager from '@core/app/svgedit/workarea';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import isWeb from '@core/helpers/is-web';
 import { getObjectLayer } from '@core/helpers/layer/layer-helper';
-import ImageSymbolWorker from '@core/helpers/symbol-helper/image-symbol.worker';
 import communicator from '@core/implementations/communicator';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import { getSVGAsync } from './svg-editor-helper';
 
-let svgCanvas;
-let svgedit;
+let svgCanvas: ISVGCanvas;
+let svgedit: any;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
@@ -295,9 +295,11 @@ const getStrokeWidth = (imageRatio, scale) => {
 
 const stringifyStrokeWidth = (strokeWidth: number) => strokeWidth.toPrecision(6);
 
-const sendTaskToWorker = async (data) =>
+const sendTaskToWorker = async (data: any) =>
   new Promise((resolve) => {
-    const worker = new ImageSymbolWorker('');
+    const worker = new Worker(
+      new URL(/* webpackChunkName: "image-symbol.worker" */ './symbol-helper/image-symbol.worker.ts', import.meta.url),
+    );
 
     worker.postMessage(data);
     worker.onerror = (e) => console.log(e);
@@ -444,7 +446,7 @@ const makeImageSymbol = async (
 ): Promise<SVGSymbolElement> => {
   const { force = false, fullColor = false, scale = 1 } = opts;
   let { imageSymbol } = opts;
-  const svgdoc = document.getElementById('svgcanvas').ownerDocument;
+  const svgdoc = (document.getElementById('svgcanvas') as Element).ownerDocument;
 
   // eslint-disable-next-line no-async-promise-executor
   return new Promise<SVGSymbolElement>(async (resolve) => {
@@ -530,10 +532,11 @@ const makeImageSymbol = async (
     styles.forEach((styleNode) => {
       let styleText = styleNode.textContent;
 
-      styleText = styleText.replace(
-        /stroke-width: 1px !important;/g,
-        fullColor ? '' : `stroke-width: ${strokeWidth}px !important;`,
-      );
+      styleText =
+        styleText?.replace(
+          /stroke-width: 1px !important;/g,
+          fullColor ? '' : `stroke-width: ${strokeWidth}px !important;`,
+        ) || styleNode.textContent;
       styleNode.textContent = styleText;
     });
     tempUse.setAttribute('transform', `translate(${0.5 * strokeWidth}, ${0.5 * strokeWidth}) scale(${imageRatio})`);
@@ -573,7 +576,7 @@ const makeImageSymbol = async (
 
     const defs = findDefs();
 
-    if (!defs.querySelector(`image[href="${oldImageUrl}"]`)) {
+    if (oldImageUrl && !defs.querySelector(`image[href="${oldImageUrl}"]`)) {
       URL.revokeObjectURL(oldImageUrl);
     }
 
@@ -595,7 +598,7 @@ const reRenderImageSymbol = async (useElement: SVGUseElement, opts: { force?: bo
 
   const scale = Math.sqrt((width * height) / (origWidth * origHeight));
   const href = svgCanvas.getHref(useElement);
-  const currentSymbol = document.querySelector(href);
+  const currentSymbol = document.querySelector(href) as SVGSymbolElement;
 
   if (currentSymbol && currentSymbol.tagName === 'symbol') {
     const origSymbolId = currentSymbol.getAttribute('data-origin-symbol');
@@ -642,8 +645,8 @@ const reRenderAllImageSymbol = async (): Promise<void> => {
   await reRenderImageSymbolArray(useElements);
 };
 
-const switchImageSymbol = (elem: SVGUseElement, shouldUseImage: boolean): IBatchCommand => {
-  const href = elem.getAttribute('xlink:href');
+const switchImageSymbol = (elem: SVGUseElement, shouldUseImage: boolean): IBatchCommand | null => {
+  const href = elem.getAttribute('xlink:href') as string;
 
   if (href.endsWith('_image') && shouldUseImage) {
     console.log(`${elem.id} is already using image`);

@@ -9,17 +9,15 @@ const coreWeb = path.resolve(core, 'src/web');
 
 module.exports = {
   devtool: 'source-map',
-  entry: path.resolve(__dirname, 'src/index.tsx'),
+  entry: {
+    main: path.resolve(__dirname, 'src/index.tsx'),
+    ['potrace.worker']: path.resolve(coreWeb, 'helpers/potrace/potrace.worker.ts'),
+    ['clipper.worker']: path.resolve(coreWeb, 'helpers/clipper/clipper.worker.ts'),
+    ['image-symbol.worker']: path.resolve(coreWeb, 'helpers/symbol-helper/image-symbol.worker.ts'),
+  },
   mode: 'development',
   module: {
     rules: [
-      {
-        loader: 'worker-loader',
-        options: {
-          filename: '[name].[contenthash].worker.js',
-        },
-        test: /\.worker\.ts$/,
-      },
       {
         exclude: /node_modules/,
         test: /\.(js|jsx)$/,

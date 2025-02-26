@@ -22,8 +22,6 @@ import browser from '@core/implementations/browser';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import PotraceWorker from './potrace/potrace.worker';
-
 let svgCanvas: ISVGCanvas;
 let svgedit;
 
@@ -493,7 +491,9 @@ const potrace = async (elem?: SVGImageElement): Promise<void> => {
     return;
   }
 
-  const worker = new PotraceWorker();
+  const worker = new Worker(
+    new URL(/* webpackChunkName: "potrace.worker" */ './potrace/potrace.worker.ts', import.meta.url),
+  );
   let canceled = false;
 
   progress.openNonstopProgress({
