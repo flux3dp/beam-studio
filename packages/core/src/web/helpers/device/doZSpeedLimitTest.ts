@@ -53,11 +53,10 @@ const doZSpeedLimitTest = async (device: IDeviceInfo): Promise<boolean> => {
       return new Promise<boolean>((resolve) => {
         alertCaller.popUp({
           buttons: [
-            { onClick: () => resolve(doZSpeedLimitTest(device)), title: t.retest },
-            { onClick: () => resolve(true), title: t.ignore },
+            { label: t.ignore, onClick: () => resolve(true) },
+            { label: t.retest, onClick: () => resolve(doZSpeedLimitTest(device)), type: 'primary' },
           ],
           message: t.alert_failed,
-          primaryButtonIndex: 0,
         });
       });
     }

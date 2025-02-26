@@ -143,12 +143,12 @@ const Alert = ({ data }: Props): React.JSX.Element => {
     );
   }, [data.animationSrcs]);
 
-  const footer = buttons?.map((button, idx) => {
-    const buttonType = button.className?.includes('primary') ? 'primary' : 'default';
+  const footer = buttons?.map(({ className, label, onClick, type }, idx) => {
+    const buttonType = type ?? (className?.includes('primary') ? 'primary' : 'default');
 
     return (
       <Button
-        key={button.label}
+        key={label}
         onClick={() => {
           popFromStack();
 
@@ -160,15 +160,15 @@ const Alert = ({ data }: Props): React.JSX.Element => {
             } else if (callbacks.length > idx) {
               callbacks[idx]?.();
             } else {
-              button.onClick?.();
+              onClick?.();
             }
           } else {
-            button.onClick?.();
+            onClick?.();
           }
         }}
-        type={buttonType}
+        type={buttonType as 'default' | 'primary'}
       >
-        {button.label}
+        {label}
       </Button>
     );
   });
