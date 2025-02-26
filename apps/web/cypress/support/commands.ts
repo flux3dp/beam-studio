@@ -29,7 +29,7 @@ const setStorage = () => {
   window.localStorage.setItem('announcement-record', '{"times":1,"isIgnored":[], "skip":true}');
 };
 
-Cypress.Commands.add('landingEditor', (opts = {}) => {
+Cypress.Commands.add('landingEditor', (opts: Partial<Cypress.VisitOptions> = {}) => {
   setStorage();
   cy.visit('/#/initialize/connect/flux-id-login', opts);
   cy.on('window:load', (win) => {
@@ -45,7 +45,7 @@ Cypress.Commands.add('landingEditor', (opts = {}) => {
   });
 });
 
-Cypress.Commands.add('loginAndLandingEditor', (opts = {}) => {
+Cypress.Commands.add('loginAndLandingEditor', (opts: Partial<Cypress.VisitOptions> = {}) => {
   setStorage();
   cy.visit('/#/initialize/connect/flux-id-login', opts);
   cy.on('window:load', (win) => {
@@ -151,6 +151,11 @@ Cypress.Commands.add('inputValueCloseTo', (selector: string, value: number, tole
 
 Cypress.Commands.add('inputText', (value: string) => {
   cy.realType(value);
+});
+
+Cypress.Commands.add('getElementTitle', () => {
+  const elementTitleModulePrefix = '_-_-packages-core-src-web-app-components-beambox-top-bar-ElementTitle-module__';
+  return cy.get(`[class*="${elementTitleModulePrefix}element-title"]`);
 });
 
 //
