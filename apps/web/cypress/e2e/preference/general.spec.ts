@@ -1,7 +1,7 @@
 import { md5 } from '../../support/utils';
 
 const isRunningAtGithub = Cypress.env('envType') === 'github';
-const laserPanelBlockPrefix = 'src-web-app-views-beambox-Right-Panels-ConfigPanel-Block-module__';
+const laserPanelBlockPrefix = '_-_-packages-core-src-web-app-views-beambox-Right-Panels-ConfigPanel-Block-module__';
 
 function drawingEllipse() {
   cy.clickToolBtn('Ellipse');
@@ -31,17 +31,11 @@ describe('update the preference', () => {
     cy.get('#diode-preview-input').should('have.attr', 'value', '60');
     cy.get('#set-default-units').find('option:selected').should('have.value', 'mm');
     if (window.navigator.language === 'zh-TW') {
-      cy.get('#set-default-font-family')
-        .find('option:selected')
-        .should('have.value', 'Noto Sans TC');
-      cy.get('#set-default-font-style')
-        .find('option:selected')
-        .should('have.value', 'NotoSansTC-Regular');
+      cy.get('#set-default-font-family').find('option:selected').should('have.value', 'Noto Sans TC');
+      cy.get('#set-default-font-style').find('option:selected').should('have.value', 'NotoSansTC-Regular');
     } else {
       cy.get('#set-default-font-family').find('option:selected').should('have.value', 'Noto Sans');
-      cy.get('#set-default-font-style')
-        .find('option:selected')
-        .should('have.value', 'NotoSans-Regular');
+      cy.get('#set-default-font-style').find('option:selected').should('have.value', 'NotoSans-Regular');
     }
     cy.get('#set-default-model').find('option:selected').should('have.value', 'fbb1b');
     cy.get('#set-guide').find('option:selected').should('have.value', 'FALSE');
@@ -118,14 +112,8 @@ describe('update the preference', () => {
     cy.get('#guide-x-input').clear({ force: true }).type('10').blur();
     cy.get('#guide-y-input').clear({ force: true }).type('10').blur();
     applySettings();
-    cy.get('#horizontal_guide')
-      .should('exist')
-      .should('have.attr', 'x1', '0')
-      .should('have.attr', 'y1', '100');
-    cy.get('#vertical_guide')
-      .should('exist')
-      .should('have.attr', 'x1', '100')
-      .should('have.attr', 'y1', '0');
+    cy.get('#horizontal_guide').should('exist').should('have.attr', 'x1', '0').should('have.attr', 'y1', '100');
+    cy.get('#vertical_guide').should('exist').should('have.attr', 'x1', '100').should('have.attr', 'y1', '0');
   });
 
   it('change bitmap preview quality setting and see if home page gets changed ', () => {
@@ -187,7 +175,7 @@ describe('update the preference', () => {
     cy.get(`[class*="${laserPanelBlockPrefix}warning-icon"]`).should('exist');
     cy.get(`[class*="${laserPanelBlockPrefix}warning-text"]`).should(
       'have.text',
-      'The cutting speed of vector path objects will be constrained to 20 mm/s (0.79in/s).You can remove this limit at Preferences Settings.'
+      'The cutting speed of vector path objects will be constrained to 20 mm/s (0.79in/s).You can remove this limit at Preferences Settings.',
     );
     cy.go2Preference(true);
     cy.get('#set-vector-speed-contraint').select('Off');

@@ -1,4 +1,4 @@
-const topbarModulesPrefix = 'src-web-app-components-beambox-top-bar-';
+const topbarModulesPrefix = '_-_-packages-core-src-web-app-components-beambox-top-bar-';
 
 describe('check the existence of the top bar tools on mobile', () => {
   beforeEach(() => {
@@ -19,9 +19,7 @@ describe('check the existence of the top bar tools on mobile', () => {
   });
 
   it('user avatar', () => {
-    cy.get(`.top-bar [class*="${topbarModulesPrefix}UserAvatar-module__user-avatar"]`)
-      .should('exist')
-      .click();
+    cy.get(`.top-bar [class*="${topbarModulesPrefix}UserAvatar-module__user-avatar"]`).should('exist').click();
     cy.get('.ant-modal-content').contains('Sign In').should('exist');
   });
 
@@ -30,9 +28,7 @@ describe('check the existence of the top bar tools on mobile', () => {
   });
 
   it('common tools', () => {
-    cy.get(
-      `.top-bar [class*="${topbarModulesPrefix}CommonTools-module__common-tools-container"]`
-    ).should('exist');
+    cy.get(`.top-bar [class*="${topbarModulesPrefix}CommonTools-module__common-tools-container"]`).should('exist');
     cy.get('.top-bar [title="Delete"]').should('not.exist');
     cy.get('.top-bar [title="Undo"]').should('exist');
     cy.get('.top-bar [title="Redo"]').should('exist');
@@ -40,9 +36,7 @@ describe('check the existence of the top bar tools on mobile', () => {
 
   it('buttons on right', () => {
     cy.get(`.top-bar [class*="${topbarModulesPrefix}TopBar-module__right"]`).should('exist');
-    cy.get(`.top-bar [class*="${topbarModulesPrefix}SelectMachineButton-module__button"]`).should(
-      'exist'
-    );
+    cy.get(`.top-bar [class*="${topbarModulesPrefix}SelectMachineButton-module__button"]`).should('exist');
     cy.get('.top-bar [title="Running Frame"]').should('exist');
     cy.get('.top-bar [title="Start Work"]').should('exist');
   });
@@ -52,9 +46,6 @@ describe('check the existence of the top bar tools on mobile', () => {
       .should('exist')
       .should('have.text', 'Untitled');
     cy.get('.adm-tab-bar-item-title').contains('Text').should('exist').click();
-    cy.get(`.top-bar [class*="${topbarModulesPrefix}FileName-module__file-name"]`).should(
-      'have.text',
-      'Untitled*'
-    );
+    cy.get(`.top-bar [class*="${topbarModulesPrefix}FileName-module__file-name"]`).should('have.text', 'Untitled*');
   });
 });

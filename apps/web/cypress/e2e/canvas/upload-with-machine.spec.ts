@@ -2,9 +2,9 @@ import { md5 } from '../../support/utils';
 
 const isRunningAtGithub = Cypress.env('envType') === 'github';
 const beamSeriersName = Cypress.env('beamSeriersName');
-const layerListPrefix = 'src-web-app-views-beambox-Right-Panels-LayerPanel-LayerList-module__';
-const colorPickerPrefix = 'src-web-app-widgets-ColorPicker-module__';
-const progressPrefix = 'src-web-app-views-dialogs-AlertAndProgress-module__';
+const layerListPrefix = '_-_-packages-core-src-web-app-views-beambox-Right-Panels-LayerPanel-LayerList-module__';
+const colorPickerPrefix = '_-_-packages-core-src-web-app-widgets-ColorPicker-module__';
+const progressPrefix = '_-_-packages-core-src-web-app-views-dialogs-AlertAndProgress-module__';
 
 function chooseImportOption(module?: string, layering?: string) {
   cy.get(`div[class*="${progressPrefix}nonstop--"`).should('exist');
@@ -34,7 +34,7 @@ describe('upload with machine', () => {
     cy.landingEditor();
   });
 
-  it('upload svg > Laser > Layer', () => {
+  it.only('upload svg > Laser > Layer', () => {
     cy.connectMachine(beamSeriersName);
     cy.changeWorkarea('Ador');
     cy.uploadFile('svg.svg', 'image/svg+xml');

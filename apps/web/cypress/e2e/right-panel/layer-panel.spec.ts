@@ -1,7 +1,8 @@
-const layerListClassPrefix = 'src-web-app-views-beambox-Right-Panels-LayerPanel-LayerList-module__';
-const addLayerBtnPrefix = 'src-web-app-components-beambox-right-panel-AddLayerButton-module__btn';
-const layerColorPickerPrefix = 'src-web-app-widgets-ColorPicker-module__';
-const layerNameSelector = 'div[class*="src-web-app-views-beambox-Right-Panels-ConfigPanel-ConfigPanel-module__layername"]';
+const layerListClassPrefix = '_-_-packages-core-src-web-app-views-beambox-Right-Panels-LayerPanel-LayerList-module__';
+const addLayerBtnPrefix = '_-_-packages-core-src-web-app-components-beambox-right-panel-AddLayerButton-module__btn';
+const layerColorPickerPrefix = '_-_-packages-core-src-web-app-widgets-ColorPicker-module__';
+const layerNameSelector =
+  'div[class*="src-web-app-views-beambox-Right-Panels-ConfigPanel-ConfigPanel-module__layername"]';
 
 describe('manipulate layers', () => {
   beforeEach(() => {
@@ -18,29 +19,24 @@ describe('manipulate layers', () => {
   it('there is only one layer by default', () => {
     cy.get(`div[class*="${layerListClassPrefix}item"]`).should('have.length', 1);
     cy.get(`div[class*="${layerListClassPrefix}current"]`).should('have.length', 1);
-    cy.get(
-      `div[class*="${layerListClassPrefix}item"] div[class*="${layerListClassPrefix}name"]`
-    ).should('have.text', 'Layer 1');
-    cy.get(layerNameSelector).should('have.text', 'Parameter Settings (Layer 1)');
-    cy.get(`div[class*="${layerColorPickerPrefix}color"]`).should(
-      'have.attr',
-      'style',
-      'background: rgb(51, 51, 51);'
+    cy.get(`div[class*="${layerListClassPrefix}item"] div[class*="${layerListClassPrefix}name"]`).should(
+      'have.text',
+      'Layer 1',
     );
+    cy.get(layerNameSelector).should('have.text', 'Parameter Settings (Layer 1)');
+    cy.get(`div[class*="${layerColorPickerPrefix}color"]`).should('have.attr', 'style', 'background: rgb(51, 51, 51);');
   });
 
   it('add one new layer', () => {
     cy.get(`button[class*="${addLayerBtnPrefix}"]`).click({ force: true });
     cy.get(`div[class*="${layerListClassPrefix}item"]`).should('have.length', 2);
     cy.get(`div[class*="${layerListClassPrefix}current"]`).should('have.length', 1);
-    cy.get(`div[class*="${layerListClassPrefix}current"]`)
-      .should('have.attr', 'data-layer')
-      .should('eq', 'Layer 2');
+    cy.get(`div[class*="${layerListClassPrefix}current"]`).should('have.attr', 'data-layer').should('eq', 'Layer 2');
     cy.get(layerNameSelector).should('have.text', 'Parameter Settings (Layer 2)');
     cy.get(`div[class*="${layerColorPickerPrefix}color"]`).should(
       'have.attr',
       'style',
-      'background: rgb(63, 81, 181);'
+      'background: rgb(63, 81, 181);',
     );
   });
 
@@ -57,15 +53,13 @@ describe('manipulate layers', () => {
     cy.get(`div[class*="${layerListClassPrefix}item"]`).should('have.length', 1);
     cy.get(`button[class*="${addLayerBtnPrefix}"]`).click({ force: true });
     cy.get(`div[class*="${layerListClassPrefix}item"]`).should('have.length', 2);
-    cy.get(`div[class*="${layerListClassPrefix}item"]`)
-      .eq(1)
-      .click()
-      .trigger('mousedown', { button: 2 });
+    cy.get(`div[class*="${layerListClassPrefix}item"]`).eq(1).click().trigger('mousedown', { button: 2 });
     cy.get('#deletelayer').click({ force: true });
     cy.get(`div[class*="${layerListClassPrefix}item"]`).should('have.length', 1);
-    cy.get(
-      `div[class*="${layerListClassPrefix}item"] div[class*="${layerListClassPrefix}name"]`
-    ).should('have.text', 'Layer 2');
+    cy.get(`div[class*="${layerListClassPrefix}item"] div[class*="${layerListClassPrefix}name"]`).should(
+      'have.text',
+      'Layer 2',
+    );
   });
 
   it('duplicate the layer', () => {
@@ -73,19 +67,13 @@ describe('manipulate layers', () => {
     cy.get('#dupelayer').click({ force: true });
     cy.get(`div[class*="${layerListClassPrefix}item"]`).should('have.length', 2);
     cy.get(`div[class*="${layerListClassPrefix}item"]`).eq(0).should('have.text', 'Layer 1 copy');
-    cy.get(`div[class*="${layerColorPickerPrefix}color"]`).should(
-      'have.attr',
-      'style',
-      'background: rgb(51, 51, 51);'
-    );
+    cy.get(`div[class*="${layerColorPickerPrefix}color"]`).should('have.attr', 'style', 'background: rgb(51, 51, 51);');
   });
 
   it('drag the layer ', () => {
     cy.get(`button[class*="${addLayerBtnPrefix}"]`).click({ force: true });
     cy.get(`div[class*="${layerListClassPrefix}item"][data-testid="Layer 2"]`).trigger('dragstart');
-    cy.get(`div[class*="${layerListClassPrefix}drag-sensor-area"][data-index="0"]`).trigger(
-      'dragenter'
-    );
+    cy.get(`div[class*="${layerListClassPrefix}drag-sensor-area"][data-index="0"]`).trigger('dragenter');
     cy.get(`div[class*="${layerListClassPrefix}item"][data-testid="Layer 2"]`).trigger('dragend');
     cy.get(`div[class*="${layerListClassPrefix}item"]`).eq(1).should('have.text', 'Layer 2');
   });
@@ -151,9 +139,7 @@ describe('manipulate layers', () => {
     cy.get(`div[class*="${layerListClassPrefix}item"]`).should('have.length', 4);
     cy.get(`div[class*="${layerListClassPrefix}item"]`).eq(0).should('have.text', 'Layer 4');
     cy.get(`div[class*="${layerListClassPrefix}item"]`).eq(0).click();
-    cy.get(`div[class*="${layerListClassPrefix}item"]`)
-      .eq(1)
-      .trigger('mousedown', { button: 2, metaKey: true });
+    cy.get(`div[class*="${layerListClassPrefix}item"]`).eq(1).trigger('mousedown', { button: 2, metaKey: true });
     cy.get('#merge_down_layer').click({ force: true });
     cy.get(`div[class*="${layerListClassPrefix}item"]`).should('have.length', 3);
     cy.get(`div[class*="${layerListClassPrefix}item"]`).eq(0).should('have.text', 'Layer 3');
@@ -161,7 +147,7 @@ describe('manipulate layers', () => {
     cy.get(`div[class*="${layerColorPickerPrefix}color"]`).should(
       'have.attr',
       'style',
-      'background: rgb(244, 67, 54);'
+      'background: rgb(244, 67, 54);',
     );
   });
 
@@ -210,9 +196,9 @@ describe('manipulate layers', () => {
     cy.selectPreset('Fabric - 5mm Cutting');
     cy.get('#svg_1').click({ force: true });
     cy.get('div.tab.layers').click({ force: true });
-    cy.get(
-      'select[class*="src-web-app-components-beambox-right-panel-SelLayerBlock-module__select"]'
-    ).select('Layer 2');
+    cy.get('select[class*="src-web-app-components-beambox-right-panel-SelLayerBlock-module__select"]').select(
+      'Layer 2',
+    );
     cy.get('button[class^="ant-btn"]').contains('Yes').click();
     cy.get('#svg_1').should('have.attr', 'stroke', '#3F51B5');
     cy.clickToolBtn('Cursor');

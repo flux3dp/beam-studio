@@ -1,5 +1,5 @@
-const layerListPrefix = 'src-web-app-views-beambox-Right-Panels-LayerPanel-LayerList-module__';
-const moduleBlockPrefix = 'src-web-app-views-beambox-Right-Panels-ConfigPanel-ModuleBlock-module__';
+const layerListPrefix = '_-_-packages-core-src-web-app-views-beambox-Right-Panels-LayerPanel-LayerList-module__';
+const moduleBlockPrefix = '_-_-packages-core-src-web-app-views-beambox-Right-Panels-ConfigPanel-ModuleBlock-module__';
 
 describe('upload tools', () => {
   it('upload png', () => {
@@ -30,10 +30,7 @@ describe('upload tools', () => {
       .contains('OK')
       .should('be.exist')
       .click();
-    cy.contains('.ant-modal-content', 'Drawing size is out of workarea.')
-      .contains('OK')
-      .should('be.exist')
-      .click();
+    cy.contains('.ant-modal-content', 'Drawing size is out of workarea.').contains('OK').should('be.exist').click();
     cy.get('#svg_1').should('exist');
     cy.get('svg#svgcontent').trigger('mousedown', 200, 200, { force: true });
     cy.get('svg#svgcontent').trigger('mousemove', 400, 400, { force: true });

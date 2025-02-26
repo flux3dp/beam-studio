@@ -1,5 +1,5 @@
 describe('manipulate document setting', () => {
-  const moduleBlockPrefix = 'src-web-app-views-beambox-Right-Panels-ConfigPanel-ModuleBlock-module__';
+  const moduleBlockPrefix = '_-_-packages-core-src-web-app-views-beambox-Right-Panels-ConfigPanel-ModuleBlock-module__';
 
   beforeEach(() => {
     cy.landingEditor();
@@ -62,7 +62,7 @@ describe('manipulate document setting', () => {
     cy.get('.ant-modal-content').should('exist');
     cy.get('[class*="src-web-app-views-dialogs-Alert-module__message-container"]').should(
       'have.text',
-      'Do you want to convert the Printing Layers into Laser Layers?'
+      'Do you want to convert the Printing Layers into Laser Layers?',
     );
     cy.get('button.ant-btn').contains('Confirm').should('exist').click({ force: true });
     cy.get('#svgcontent').should('have.attr', 'viewBox', '0 0 3000 2100');
@@ -161,9 +161,7 @@ describe('manipulate document setting', () => {
     cy.changeWorkarea('beamo', false);
     clickAndCheck('diode_module', true);
     cy.get('button[class^="ant-btn"]').contains('Save').click();
-    cy.get('#diode-boundary')
-      .children()
-      .should('have.attr', 'd', 'M3000,2100H0,V2000H2500V0H3000V2100');
+    cy.get('#diode-boundary').children().should('have.attr', 'd', 'M3000,2100H0,V2000H2500V0H3000V2100');
     cy.findAllByText('Advanced').should('exist');
     cy.contains('Advanced').click();
     cy.findAllByText('Diode Laser').should('exist');

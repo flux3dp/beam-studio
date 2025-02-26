@@ -1,9 +1,9 @@
 const configOperationsPrefix =
-  'src-web-app-views-beambox-Right-Panels-ConfigPanel-ConfigOperations-module__';
-const configListPrefix = 'src-web-app-views-beambox-Right-Panels-LaserManage-ConfigList-module__';
-const ConfigPanelPrefix = 'src-web-app-views-beambox-Right-Panels-ConfigPanel-ConfigPanel-module__';
+  '_-_-packages-core-src-web-app-views-beambox-Right-Panels-ConfigPanel-ConfigOperations-module__';
+const configListPrefix = '_-_-packages-core-src-web-app-views-beambox-Right-Panels-LaserManage-ConfigList-module__';
+const ConfigPanelPrefix = '_-_-packages-core-src-web-app-views-beambox-Right-Panels-ConfigPanel-ConfigPanel-module__';
 const presetManagementPrefix =
-  'src-web-app-components-dialogs-PresetsManagementPanel-PresetsManagementPanel-module__';
+  '_-_-packages-core-src-web-app-components-dialogs-PresetsManagementPanel-PresetsManagementPanel-module__';
 describe('manipulate laser panel', () => {
   beforeEach(() => {
     cy.landingEditor();
@@ -37,9 +37,7 @@ describe('manipulate laser panel', () => {
     cy.get('#power-input').clear().type('100').blur();
     cy.get('#speed-input').clear().type('70').blur();
     cy.get('#repeat').clear().type('3').blur();
-    cy.get(
-      'button[class*="src-web-app-views-beambox-Right-Panels-ConfigPanel-SaveConfigButton-module"]'
-    ).click();
+    cy.get('button[class*="src-web-app-views-beambox-Right-Panels-ConfigPanel-SaveConfigButton-module"]').click();
     cy.get('.text-input').type('Hello Flux').blur();
     cy.get('button[class^="ant-btn"]').contains('OK').click();
     cy.get('button[title="Manage Parameters"]').click();
@@ -226,9 +224,7 @@ describe('manipulate laser panel', () => {
     cy.get('#power-input').clear().type('100').blur();
     cy.get('#speed-input').clear().type('70').blur();
     cy.get('#repeat').clear().type('3').blur();
-    cy.get(
-      'button[class*="src-web-app-views-beambox-Right-Panels-ConfigPanel-SaveConfigButton-module"]'
-    ).click();
+    cy.get('button[class*="src-web-app-views-beambox-Right-Panels-ConfigPanel-SaveConfigButton-module"]').click();
     cy.get('.text-input').type('Hi Flux').blur();
     cy.get('button[class^="ant-btn"]').contains('OK').click();
     cy.get('button[title="Manage Parameters"]').click();

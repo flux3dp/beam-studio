@@ -1,6 +1,6 @@
 import { md5 } from '../../support/utils';
 
-const shapeIconPrefix = 'src-web-app-views-beambox-ShapePanel-ShapeIcon-module__';
+const shapeIconPrefix = '_-_-packages-core-src-web-app-views-beambox-ShapePanel-ShapeIcon-module__';
 
 describe('import from element panel', () => {
   beforeEach(() => {

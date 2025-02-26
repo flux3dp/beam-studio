@@ -4,7 +4,7 @@ describe('group tools', () => {
     cy.wait(300);
   });
 
-  const addLayerBtnPrefix = 'src-web-app-components-beambox-right-panel-AddLayerButton-module__btn';
+  const addLayerBtnPrefix = '_-_-packages-core-src-web-app-components-beambox-right-panel-AddLayerButton-module__btn';
 
   const drawingObject = () => {
     cy.clickToolBtn('Rectangle');

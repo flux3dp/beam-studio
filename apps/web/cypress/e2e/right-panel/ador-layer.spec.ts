@@ -1,19 +1,13 @@
 describe('ador layer', () => {
-  const addLayerBtnPrefix = 'src-web-app-components-beambox-right-panel-AddLayerButton-module__';
-  const moduleBlockPrefix = 'src-web-app-views-beambox-Right-Panels-ConfigPanel-ModuleBlock-module__';
+  const addLayerBtnPrefix = '_-_-packages-core-src-web-app-components-beambox-right-panel-AddLayerButton-module__';
+  const moduleBlockPrefix = '_-_-packages-core-src-web-app-views-beambox-Right-Panels-ConfigPanel-ModuleBlock-module__';
 
   const change2PrintingModule = () => {
     cy.get(`div[class*="${moduleBlockPrefix}select"] > .ant-select-selector`).click();
     cy.get('.ant-select-item-option-content').contains('Printing').click();
-    cy.get('.ant-modal-title').should(
-      'have.text',
-      'Do you want to convert the Laser module into Printing module?'
-    );
+    cy.get('.ant-modal-title').should('have.text', 'Do you want to convert the Laser module into Printing module?');
     cy.get('button.ant-btn').contains('Confirm').should('exist').click({ force: true });
-    cy.get(`div[class*="${moduleBlockPrefix}select"] > .ant-select-selector`).should(
-      'have.text',
-      'Printing'
-    );
+    cy.get(`div[class*="${moduleBlockPrefix}select"] > .ant-select-selector`).should('have.text', 'Printing');
   };
 
   const getLayerPanelValue = (label: string) => cy.contains('.layerparams span', label).siblings().eq(0);
@@ -33,10 +27,7 @@ describe('ador layer', () => {
     cy.get('#default-laser-module').select('10W Diode Laser');
     cy.get('.btn.btn-done').contains('Apply').click();
     cy.changeWorkarea('Ador');
-    cy.get(`div[class*="${moduleBlockPrefix}select"] > .ant-select-selector`).should(
-      'have.text',
-      '10W Diode Laser'
-    );
+    cy.get(`div[class*="${moduleBlockPrefix}select"] > .ant-select-selector`).should('have.text', '10W Diode Laser');
   });
 
   it('merge printing and laser layers', () => {
@@ -44,34 +35,19 @@ describe('ador layer', () => {
     cy.get(`button[class*="${addLayerBtnPrefix}btn"]`).click({ force: true });
     change2PrintingModule();
     cy.get(`button[class*="${addLayerBtnPrefix}btn"]`).click({ force: true });
-    cy.get(`div[class*="${moduleBlockPrefix}select"] > .ant-select-selector`).should(
-      'have.text',
-      '20W Diode Laser'
-    );
+    cy.get(`div[class*="${moduleBlockPrefix}select"] > .ant-select-selector`).should('have.text', '20W Diode Laser');
 
     cy.get('div[data-layer="Layer 3"]').eq(1).rightclick();
     cy.get('#merge_down_layer').click();
-    cy.get('.ant-modal-title').should(
-      'have.text',
-      'Do you want to merge these layers into one Printing layer?'
-    );
+    cy.get('.ant-modal-title').should('have.text', 'Do you want to merge these layers into one Printing layer?');
     cy.get('button.ant-btn').contains('Confirm').should('exist').click({ force: true });
-    cy.get(`div[class*="${moduleBlockPrefix}select"] > .ant-select-selector`).should(
-      'have.text',
-      'Printing'
-    );
+    cy.get(`div[class*="${moduleBlockPrefix}select"] > .ant-select-selector`).should('have.text', 'Printing');
 
     cy.get('div[data-layer="Layer 2"]').eq(1).rightclick();
     cy.get('#merge_down_layer').click();
-    cy.get('.ant-modal-title').should(
-      'have.text',
-      'Do you want to merge these layers into one Laser layer?'
-    );
+    cy.get('.ant-modal-title').should('have.text', 'Do you want to merge these layers into one Laser layer?');
     cy.get('button.ant-btn').contains('Confirm').should('exist').click({ force: true });
-    cy.get(`div[class*="${moduleBlockPrefix}select"] > .ant-select-selector`).should(
-      'have.text',
-      '20W Diode Laser'
-    );
+    cy.get(`div[class*="${moduleBlockPrefix}select"] > .ant-select-selector`).should('have.text', '20W Diode Laser');
   });
 
   it.only('move to printing or laser layers', () => {
@@ -79,40 +55,29 @@ describe('ador layer', () => {
     cy.get(`button[class*="${addLayerBtnPrefix}btn"]`).click({ force: true });
     change2PrintingModule();
     cy.clickToolBtn('Element');
-    cy.get('.anticon[class*="src-web-app-views-beambox-ShapePanel-ShapeIcon-module__icon"]')
-      .eq(0)
-      .click();
+    cy.get('.anticon[class*="src-web-app-views-beambox-ShapePanel-ShapeIcon-module__icon"]').eq(0).click();
     cy.get('#svg_1').click();
     cy.get('.tab.layers').click();
-    cy.get(`div[class*="${moduleBlockPrefix}select"] > .ant-select-selector`).should(
-      'have.text',
-      'Printing'
-    );
+    cy.get(`div[class*="${moduleBlockPrefix}select"] > .ant-select-selector`).should('have.text', 'Printing');
 
     cy.contains('Move elements to:').siblings().select('Layer 1');
     cy.get('.ant-modal-title').should(
       'have.text',
-      'Move selected element to Layer 1 and convert it into laser element?'
+      'Move selected element to Layer 1 and convert it into laser element?',
     );
     cy.get('button.ant-btn').contains('Cancel').should('exist');
     cy.get('button.ant-btn').contains('Confirm').should('exist').click({ force: true });
-    cy.get(`div[class*="${moduleBlockPrefix}select"] > .ant-select-selector`).should(
-      'have.text',
-      '20W Diode Laser'
-    );
+    cy.get(`div[class*="${moduleBlockPrefix}select"] > .ant-select-selector`).should('have.text', '20W Diode Laser');
 
     cy.get('#svg_1').click();
     cy.contains('Move elements to:').siblings().select('Layer 2');
     cy.get('.ant-modal-title').should(
       'have.text',
-      'Move selected element to Layer 2 and convert it into printing element?'
+      'Move selected element to Layer 2 and convert it into printing element?',
     );
     cy.get('button.ant-btn').contains('Cancel').should('exist');
     cy.get('button.ant-btn').contains('Confirm').should('exist').click({ force: true });
-    cy.get(`div[class*="${moduleBlockPrefix}select"] > .ant-select-selector`).should(
-      'have.text',
-      'Printing'
-    );
+    cy.get(`div[class*="${moduleBlockPrefix}select"] > .ant-select-selector`).should('have.text', 'Printing');
   });
 
   it('advanced printing parameter off', () => {

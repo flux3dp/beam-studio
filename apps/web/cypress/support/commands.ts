@@ -113,9 +113,9 @@ Cypress.Commands.add('go2Preference', (handleSave = false) => {
 
 Cypress.Commands.add('checkToolBtnActive', (id: string, active = true) => {
   cy.get(`div#left-${id}`).should('exist');
-  cy.get(`div#left-${id}[class*='src-web-app-components-beambox-left-panel-LeftPanelButton-module__active--']`).should(
-    active ? 'exist' : 'not.exist',
-  );
+  cy.get(
+    `div#left-${id}[class*='_-_-packages-core-src-web-app-components-beambox-left-panel-LeftPanelButton-module__active--']`,
+  ).should(active ? 'exist' : 'not.exist');
 });
 
 Cypress.Commands.add('clickToolBtn', (id: string) => {
@@ -136,7 +136,7 @@ Cypress.Commands.add('changeWorkarea', (workarea: string, save = true) => {
 });
 
 Cypress.Commands.add('selectPreset', (presetName: string) => {
-  const ConfigPanelPrefix = 'src-web-app-views-beambox-Right-Panels-ConfigPanel-ConfigPanel-module__';
+  const ConfigPanelPrefix = '_-_-packages-core-src-web-app-views-beambox-Right-Panels-ConfigPanel-ConfigPanel-module__';
   cy.get(`[class*="${ConfigPanelPrefix}preset-dropdown"] > .ant-select-selector`).click();
   cy.get('.ant-select-item').contains(presetName).click();
 });

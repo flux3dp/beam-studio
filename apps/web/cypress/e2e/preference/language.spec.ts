@@ -1,4 +1,4 @@
-const fileNamePrefix = 'src-web-app-components-beambox-top-bar-FileName-module__';
+const fileNamePrefix = '_-_-packages-core-src-web-app-components-beambox-top-bar-FileName-module__';
 
 const i18n = {
   da: { language: 'Sprog', title: 'Untitled' },
