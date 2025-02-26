@@ -10,6 +10,7 @@ import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import { booleanConfig, getDefaultConfig } from '@core/helpers/layer/layer-config-helper';
+import versionChecker from '@core/helpers/version-checker';
 import communicator from '@core/implementations/communicator';
 import type { IDeviceDetailInfo, IDeviceInfo, IReport } from '@core/interfaces/IDevice';
 import type { IWrappedSwiftrayTaskFile } from '@core/interfaces/IWrappedFile';
@@ -71,7 +72,9 @@ class SwiftrayClient extends EventEmitter {
 
   private status: TStatus = 'init';
 
-  private lastPromark: IDeviceInfo = null;
+  private lastPromark: IDeviceInfo | null = null;
+
+  private version: string = '1.0.0';
 
   constructor(private url: string) {
     super();
@@ -147,7 +150,9 @@ class SwiftrayClient extends EventEmitter {
 
     const resp = await this.getSystemInfo();
 
-    console.log(`Swiftray version ${resp?.info?.swiftrayVersion}`);
+    this.version = resp?.info?.swiftrayVersion ?? '1.0.0';
+
+    console.log(`Swiftray version ${this.version}`);
   }
 
   private handleClose() {
@@ -199,8 +204,9 @@ class SwiftrayClient extends EventEmitter {
       }
 
       const dataString = JSON.stringify({ data: payload, path, type: 'action' });
+      const vc = versionChecker(this.version);
 
-      if (dataString.length < 4096) {
+      if (dataString.length < 4096 || !vc.meetRequirement('SWIFTRAY_SUPPORT_BINARY')) {
         this.socket.send(dataString);
       } else {
         // Change to binary string to avoid non-utf8 characters due to frame size limit
@@ -291,6 +297,7 @@ class SwiftrayClient extends EventEmitter {
     success: boolean;
   }> {
     const workarea = getWorkarea(convertOptions.model);
+    const vc = versionChecker(this.version);
 
     let fullCode = '';
     const convertResult = await this.action<{
@@ -306,7 +313,7 @@ class SwiftrayClient extends EventEmitter {
       '/parser',
       'convert',
       {
-        type,
+        type: type === 'preview' && !vc.meetRequirement('SWIFTRAY_CONVERT_PREVIEW') ? 'fcode' : type,
         workarea: {
           height: workarea.displayHeight || workarea.height,
           width: workarea.width,
