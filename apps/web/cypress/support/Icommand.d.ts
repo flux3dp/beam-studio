@@ -16,6 +16,7 @@ declare global {
       inputValueCloseTo: (selector: string, value: number, tolerance: number) => Chainable<void>;
       inputText: (value: string) => Chainable<void>;
       getElementTitle: () => Chainable<JQuery<HTMLElement>>;
+      getTopBar: () => Chainable<JQuery<HTMLElement>>;
     }
   }
 }

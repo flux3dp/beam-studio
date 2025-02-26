@@ -158,6 +158,11 @@ Cypress.Commands.add('getElementTitle', () => {
   return cy.get(`[class*="${elementTitleModulePrefix}element-title"]`);
 });
 
+Cypress.Commands.add('getTopBar', () => {
+  const topbarModulesPrefix = '_-_-packages-core-src-web-app-components-beambox-top-bar-TopBar-module__';
+  return cy.get(`[class*="${topbarModulesPrefix}top-bar"]`);
+});
+
 //
 //
 // -- This is a child command --
