@@ -44,9 +44,9 @@ describe('show tutorial', () => {
     cy.get('.close-btn.left').click();
     cy.contains('Are you sure to end new UI introduction?').should('be.visible');
     cy.get('.ant-btn').contains('No').click();
-    cy.get('.dialog-box-arrow.top')
-      .should('have.css', 'border-width', '0px 10px 17px')
-      .should('have.css', 'left', '15px');
+    cy.get('.dialog-box-arrow.left')
+      .should('have.css', 'border-width', '10px 17px 10px 0px')
+      .should('have.css', 'top', '15px');
     cy.contains('Camera Preview').should('be.visible');
     cy.get('.next-button').should('have.text', 'NEXT');
     cy.get('.close-btn.left').click();
@@ -71,9 +71,7 @@ describe('show tutorial', () => {
     checkInterfaceStep('8/17\nAdd New LayerNEXT');
     checkInterfaceStep('9/17\nRename by double clickNEXT');
     checkInterfaceStep('10/17\nDrag to sortNEXT');
-    checkInterfaceStep(
-      '11/17\nRight Click to select Layer Controls:\nDuplicate / Merge / Lock / Delete LayersNEXT'
-    );
+    checkInterfaceStep('11/17\nRight Click to select Layer Controls:\nDuplicate / Merge / Lock / Delete LayersNEXT');
     checkInterfaceStep('12/17\nSwitch between Layer Panel and Object PanelNEXT');
     checkInterfaceStep('13/17\nAlign ControlsNEXT');
     checkInterfaceStep('14/17\nGroup ControlsNEXT');
@@ -97,18 +95,8 @@ describe('show tutorial', () => {
 
   it('show gesture introduction', () => {
     openTutorial('Hand Gesture Introduction');
-    checkGestureStep(
-      '.media-container > img',
-      'Scroll the canvas with two fingers.',
-      '1/5',
-      'Next'
-    );
-    checkGestureStep(
-      '.media-container > img',
-      'Pinch with two fingers to zoom in/out the canvas.',
-      '2/5',
-      'Next'
-    );
+    checkGestureStep('.media-container > img', 'Scroll the canvas with two fingers.', '1/5', 'Next');
+    checkGestureStep('.media-container > img', 'Pinch with two fingers to zoom in/out the canvas.', '2/5', 'Next');
     checkGestureStep('video', 'Tap to select the object.', '3/5', 'Next');
     checkGestureStep('video', 'Drag to select the multiple objects.', '4/5', 'Next');
     checkGestureStep('video', 'Press and hold to open the context menu.', '5/5', 'Done');

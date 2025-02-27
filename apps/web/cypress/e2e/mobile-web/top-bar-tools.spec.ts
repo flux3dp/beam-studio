@@ -37,8 +37,9 @@ describe('check the existence of the top bar tools on mobile', () => {
   it('buttons on right', () => {
     cy.get(`[class*="${topbarModulesPrefix}TopBar-module__right"]`).should('exist');
     cy.get(`[class*="${topbarModulesPrefix}SelectMachineButton-module__button"]`).should('exist');
-    cy.getTopBar('title="Running Frame"]').should('exist');
-    cy.getTopBar('title="Start Work"]').should('exist');
+    cy.getTopBar('[title="Document Settings"]').should('exist');
+    cy.getTopBar('[title="Running Frame"]').should('exist');
+    cy.getTopBar('[title="Start Work"]').should('exist');
   });
 
   it('file name', () => {

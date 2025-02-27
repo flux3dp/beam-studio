@@ -9,12 +9,9 @@ it('lock', () => {
   cy.get('.tab.objects').click();
   cy.get('button#lock').should('have.attr', 'title', 'Lock Aspect');
   cy.get('button#lock').click();
-  cy.get('button#lock').should('have.attr', 'title', 'Unlock Aspect');
-  cy.get('#selectorGrip_resize_se')
-    .trigger('mousedown', { which: 1, pageX: 0, pageY: 0 })
-    .trigger('mousemove', { which: 1, pageX: 200, pageY: 0 })
-    .trigger('mouseup');
+  cy.get('#w_size').type('{selectall}{backspace}100').blur();
+  cy.inputValueCloseTo('#h_size', 100, 1);
 
-  cy.inputValueCloseTo('#w_size', 195, 1);
-  cy.inputValueCloseTo('#h_size', 195, 1);
+  cy.get('#h_size').type('{selectall}{backspace}150').blur();
+  cy.inputValueCloseTo('#h_size', 150, 1);
 });

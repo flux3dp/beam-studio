@@ -20,7 +20,7 @@ const i18n = {
   se: { language: 'Språk', title: 'Namnlös' },
   th: { language: 'ภาษา', title: 'ไม่มีชื่อ' },
   vi: { language: 'Ngôn ngữ', title: 'Chưa đặt tên' },
-  'zh-tw': { language: '語言', title: '無標題' },
+  'zh-tw': { language: '語言', title: '未命名' },
   'zh-cn': { language: '语言', title: '无标题' },
 };
 

@@ -27,8 +27,7 @@ describe('update the preference', () => {
     cy.get('#ip-input').should('have.attr', 'value', '192.168.1.1');
     cy.get('#set-guessing-poke').find('option:selected').should('have.value', '1');
     cy.get('#set-auto-connect').find('option:selected').should('have.value', '1');
-    cy.get('#preview-input').should('have.attr', 'value', '100');
-    cy.get('#diode-preview-input').should('have.attr', 'value', '60');
+    cy.get('#set-camera-preview-speed-level').find('option:selected').should('have.value', '1');
     cy.get('#set-default-units').find('option:selected').should('have.value', 'mm');
     if (window.navigator.language === 'zh-TW') {
       cy.get('#set-default-font-family').find('option:selected').should('have.value', 'Noto Sans TC');
@@ -62,9 +61,6 @@ describe('update the preference', () => {
   it('change units and see if home page gets changed ', () => {
     cy.go2Preference();
     cy.get('#set-default-units').select('inches');
-    cy.get('#preview-input').should('have.attr', 'value', '3.94');
-    cy.get('#diode-preview-input').should('have.attr', 'value', '2.36');
-    cy.contains('in/s').should('exist');
     cy.contains('in').should('exist');
     applySettings();
     cy.get('#speed-input').should('have.attr', 'value', '0.79');
@@ -175,7 +171,7 @@ describe('update the preference', () => {
     cy.get(`[class*="${laserPanelBlockPrefix}warning-icon"]`).should('exist');
     cy.get(`[class*="${laserPanelBlockPrefix}warning-text"]`).should(
       'have.text',
-      'The cutting speed of vector path objects will be constrained to 20 mm/s (0.79in/s).You can remove this limit at Preferences Settings.',
+      'The cutting speed of vector path objects will be constrained to 20 mm/s. You can remove this limit at Preferences Settings.',
     );
     cy.go2Preference(true);
     cy.get('#set-vector-speed-contraint').select('Off');

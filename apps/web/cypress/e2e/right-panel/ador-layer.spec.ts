@@ -10,7 +10,7 @@ describe('ador layer', () => {
     cy.get(`div[class*="${moduleBlockPrefix}select"] > .ant-select-selector`).should('have.text', 'Printing');
   };
 
-  const getLayerPanelValue = (label: string) => cy.contains('.layerparams span', label).siblings().eq(0);
+  const getLayerPanelValue = (label: string) => cy.contains(label).siblings().eq(0);
 
   const dragSlider = (id: string, dx: number) => {
     cy.get(`#${id} div.ant-slider-handle`).trigger('mousedown');
@@ -50,12 +50,12 @@ describe('ador layer', () => {
     cy.get(`div[class*="${moduleBlockPrefix}select"] > .ant-select-selector`).should('have.text', '20W Diode Laser');
   });
 
-  it.only('move to printing or laser layers', () => {
+  it('move to printing or laser layers', () => {
     cy.changeWorkarea('Ador');
     cy.get(`button[class*="${addLayerBtnPrefix}btn"]`).click({ force: true });
     change2PrintingModule();
     cy.clickToolBtn('Element');
-    cy.get('.anticon[class*="src-web-app-views-beambox-ShapePanel-ShapeIcon-module__icon"]').eq(0).click();
+    cy.get('.anticon[id="basic/icon-circle"]').click();
     cy.get('#svg_1').click();
     cy.get('.tab.layers').click();
     cy.get(`div[class*="${moduleBlockPrefix}select"] > .ant-select-selector`).should('have.text', 'Printing');

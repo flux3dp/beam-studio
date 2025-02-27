@@ -105,9 +105,9 @@ Cypress.Commands.add('connectMachine', (machineName: string) => {
 
 Cypress.Commands.add('go2Preference', (handleSave = false) => {
   cy.get('div.top-bar-menu-container').click();
-  cy.get('ul.rc-menu--dir-bottom>li.rc-menu__submenu').should('have.length', 6);
-  cy.get('li.rc-menu__submenu:nth-child(1)').trigger('mouseover');
-  cy.get('li.rc-menu__submenu:nth-child(1) li.rc-menu__item:last-child').click();
+  cy.get('ul.rc-menu--dir-bottom>li.rc-menu__submenu').should('have.length', 7);
+  cy.get('.rc-menu__submenu').contains('File').click();
+  cy.get('.rc-menu__submenu').contains('Preferences').click();
   if (handleSave) cy.get('button.ant-btn').contains("Don't Save").click();
 });
 
@@ -118,10 +118,10 @@ Cypress.Commands.add('checkToolBtnActive', (id: string, active = true) => {
   ).should(active ? 'exist' : 'not.exist');
 });
 
-Cypress.Commands.add('clickToolBtn', (id: string) => {
+Cypress.Commands.add('clickToolBtn', (id: string, checkActive = true) => {
   cy.get(`div#left-${id}`).should('exist');
   cy.get(`div#left-${id}`).click();
-  cy.checkToolBtnActive(id);
+  if (checkActive) cy.checkToolBtnActive(id);
 });
 
 Cypress.Commands.add('changeWorkarea', (workarea: string, save = true) => {
@@ -135,7 +135,7 @@ Cypress.Commands.add('changeWorkarea', (workarea: string, save = true) => {
   if (save) cy.get('button.ant-btn').contains('Save').click({ force: true });
 });
 
-Cypress.Commands.add('selectPreset', (presetName: string) => {
+Cypress.Commands.add('selectPreset', (presetName: string | RegExp) => {
   const ConfigPanelPrefix = '_-_-packages-core-src-web-app-views-beambox-Right-Panels-ConfigPanel-ConfigPanel-module__';
   cy.get(`[class*="${ConfigPanelPrefix}preset-dropdown"] > .ant-select-selector`).click();
   cy.get('.ant-select-item').contains(presetName).click();

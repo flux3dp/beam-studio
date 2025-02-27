@@ -107,7 +107,7 @@ describe('convert to path 1.0', () => {
   });
 });
 
-describe.only('convert to path 2.0', () => {
+describe('convert to path 2.0', () => {
   beforeEach(() => {
     cy.landingEditor();
     drawText();

@@ -48,9 +48,7 @@ describe('select tools', () => {
     cy.get('[class="ant-modal-header"]').contains('Element').should('exist');
     cy.get('[class="ant-modal-body"]').should('exist');
     cy.get('[class="adm-capsule-tabs-tab adm-capsule-tabs-tab-active"]').should('exist');
-    cy.get('.anticon[class*="src-web-app-views-beambox-ShapePanel-ShapeIcon-module__icon"]')
-      .eq(1)
-      .click();
+    cy.get('.anticon[id="basic/icon-triangle"]').click();
     cy.get('#svg_1').click();
     cy.get('circle#selectorGrip_rotate')
       .trigger('mousedown', { which: 1, force: true })
