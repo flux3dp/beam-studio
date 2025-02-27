@@ -40,7 +40,7 @@ describe('move element to another layer', () => {
     cy.get('#repeat').should('have.attr', 'value', '5');
   });
 
-  it.only('move multiple elements', () => {
+  it('move multiple elements', () => {
     cy.contains('Layer 1').click();
     cy.clickToolBtn('Element');
     cy.get('.ant-modal-header').contains('Element').should('exist');
