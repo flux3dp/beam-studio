@@ -12,7 +12,7 @@ declare global {
       checkToolBtnActive: (id: string, active?: boolean) => Chainable<void>;
       clickToolBtn: (id: string) => Chainable<void>;
       changeWorkarea: (workarea: string, save?: boolean) => Chainable<void>;
-      selectPreset: (presetName: string) => Chainable<void>;
+      selectPreset: (presetName: string | RegExp) => Chainable<void>;
       inputValueCloseTo: (selector: string, value: number, tolerance: number) => Chainable<void>;
       inputText: (value: string) => Chainable<void>;
       getElementTitle: (childSelector?: string) => Chainable<JQuery<HTMLElement>>;

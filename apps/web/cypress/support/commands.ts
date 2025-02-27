@@ -135,7 +135,7 @@ Cypress.Commands.add('changeWorkarea', (workarea: string, save = true) => {
   if (save) cy.get('button.ant-btn').contains('Save').click({ force: true });
 });
 
-Cypress.Commands.add('selectPreset', (presetName: string) => {
+Cypress.Commands.add('selectPreset', (presetName: string | RegExp) => {
   const ConfigPanelPrefix = '_-_-packages-core-src-web-app-views-beambox-Right-Panels-ConfigPanel-ConfigPanel-module__';
   cy.get(`[class*="${ConfigPanelPrefix}preset-dropdown"] > .ant-select-selector`).click();
   cy.get('.ant-select-item').contains(presetName).click();

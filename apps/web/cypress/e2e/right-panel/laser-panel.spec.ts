@@ -46,7 +46,7 @@ describe('manipulate laser panel', () => {
     cy.get('input[data-testid="power"]').should('have.value', '100');
     cy.get('input[data-testid="speed"]').should('have.value', '70');
     cy.get('input[data-testid="repeat"]').should('have.value', '3');
-    cy.get('input[data-testid="zStep"]').should('have.value', '0');
+    cy.get('input[data-testid="focusStep"]').should('have.value', '0');
   });
 
   it('add new parameter at presets management panel', () => {
@@ -58,7 +58,7 @@ describe('manipulate laser panel', () => {
     cy.get('input[data-testid="power"]').clear().type('40').blur();
     cy.get('input[data-testid="speed"]').clear().type('20').blur();
     cy.get('input[data-testid="repeat"]').clear().type('10').blur();
-    cy.get('input[data-testid="zStep"]').clear().type('5').blur();
+    cy.get('input[data-testid="focusStep"]').clear().type('5').blur();
     cy.get('button[class^="ant-btn"]').contains('Save and Exit').click();
     cy.selectPreset('aaa');
     checkValue(40, 20, 10);
@@ -98,7 +98,7 @@ describe('manipulate laser panel', () => {
     checkValue(50, 100, 1);
     cy.selectPreset('Glass - Engraving');
     checkValue(35, 150, 1);
-    cy.selectPreset('Metal - Engraving');
+    cy.selectPreset(/^Metal - Engraving$/);
     checkValue(50, 80, 1);
     cy.selectPreset('Metal - Engraving (Diode Laser)');
     checkValue(100, 10, 1);
@@ -232,8 +232,8 @@ describe('manipulate laser panel', () => {
     cy.wait(5000);
     cy.readFile(cypressDownloadPath)
       .its('presets')
-      .should('have.length', 49)
-      .its('48')
+      .should('have.length', 62)
+      .its('61')
       .its('name')
       .should('eq', 'Hi Flux');
   });
