@@ -14,6 +14,8 @@ describe('reset', () => {
     cy.contains('Work Offline').click();
     cy.contains('Skip').click();
     cy.get('button.ant-btn').contains('No').click();
+    cy.get('button.ant-btn').contains('No').click();
+    cy.get('button.ant-btn').contains('No').click();
     cy.go2Preference();
     cy.get('#set-default-units').contains('mm').should('exist');
   });
@@ -32,6 +34,8 @@ describe('reset', () => {
     cy.contains('Next').click();
     cy.contains('Work Offline').click();
     cy.contains('Skip').click();
+    cy.get('button.ant-btn').contains('No').click();
+    cy.get('button.ant-btn').contains('No').click();
     cy.get('button.ant-btn').contains('No').click();
     cy.go2Preference();
     cy.get('#default-open-bottom').should('have.value', 'FALSE');
