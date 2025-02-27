@@ -171,6 +171,22 @@ export const getExportOpt = (
   }
 
   if (curveEngravingModeController.hasArea() && supportInfo.curveEngraving) {
+    const { bbox, gap, highest, lowest, objectHeight, points } = curveEngravingModeController.data!;
+
+    // if lowest is null, it means no points is measured successfully
+    if (lowest !== null && highest !== null) {
+      const data = {
+        bbox,
+        gap,
+        points: points.flat().filter((p) => p[2] !== null),
+        safe_height: Math.max(Math.min(highest, lowest - objectHeight), 0),
+      };
+
+      config.curve_engraving = data;
+    }
+  }
+
+  if (config.curve_engraving) {
     if (BeamboxPreference.read('curve_engraving_speed_limit') !== false && workareaObj.curveSpeedLimit) {
       config.csl = workareaObj.curveSpeedLimit * 60; // convert to mm/min
     }
@@ -207,6 +223,13 @@ export const getExportOpt = (
     config.acc_override = {
       fill: { a: 100, x: 5000, y: 2000 },
       path: { a: 100, x: 500, y: 500 },
+    };
+  }
+
+  if (config.curve_engraving) {
+    config.acc_override = {
+      fill: { ...config.acc_override?.fill, z: 150 },
+      path: { ...config.acc_override?.path, z: 150 },
     };
   }
 
@@ -274,22 +297,6 @@ export const getExportOpt = (
 
   if (loopCompensation > 0) {
     config.loop_compensation = loopCompensation;
-  }
-
-  if (curveEngravingModeController.hasArea() && supportInfo.curveEngraving) {
-    const { bbox, gap, highest, lowest, objectHeight, points } = curveEngravingModeController.data!;
-
-    // if lowest is null, it means no points is measured successfully
-    if (lowest !== null && highest !== null) {
-      const data = {
-        bbox,
-        gap,
-        points: points.flat().filter((p) => p[2] !== null),
-        safe_height: Math.max(Math.min(highest, lowest - objectHeight), 0),
-      };
-
-      config.curve_engraving = data;
-    }
   }
 
   if (args) {
