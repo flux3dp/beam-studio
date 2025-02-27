@@ -20,7 +20,7 @@ describe('printing layer color', () => {
 
   it('change color', () => {
     cy.clickToolBtn('Element');
-    cy.get('.anticon[class*="src-web-app-views-beambox-ShapePanel-ShapeIcon-module__icon"]').eq(0).click();
+    cy.get('.anticon[id="basic/icon-circle"]').click();
     cy.get('#svg_1').should('be.visible').click();
     cy.get('.tab.objects').click();
     cy.get(`div[class*="${colorPickerPrefix}color"]`)
@@ -36,7 +36,7 @@ describe('printing layer color', () => {
   if (!isRunningAtGithub) {
     it('expand layer and change color', () => {
       cy.clickToolBtn('Element');
-      cy.get('.anticon[class*="src-web-app-views-beambox-ShapePanel-ShapeIcon-module__icon"]').eq(0).click();
+      cy.get('.anticon[id="basic/icon-circle"]').click();
       cy.get('#svg_1').should('be.visible').click();
       cy.get('.tab.objects').click();
       cy.get(`div[class*="${colorPickerPrefix}color"]`)
@@ -73,7 +73,7 @@ describe('printing layer color', () => {
 
       cy.get('#presprayArea').should('be.visible');
       cy.clickToolBtn('Element');
-      cy.get('.anticon[class*="src-web-app-views-beambox-ShapePanel-ShapeIcon-module__icon"]').eq(0).click();
+      cy.get('.anticon[id="basic/icon-circle"]').click();
       cy.get('#svg_6').should('be.visible').should('have.attr', 'fill', '#009FE3');
     });
   }

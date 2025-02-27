@@ -118,10 +118,10 @@ Cypress.Commands.add('checkToolBtnActive', (id: string, active = true) => {
   ).should(active ? 'exist' : 'not.exist');
 });
 
-Cypress.Commands.add('clickToolBtn', (id: string) => {
+Cypress.Commands.add('clickToolBtn', (id: string, checkActive = true) => {
   cy.get(`div#left-${id}`).should('exist');
   cy.get(`div#left-${id}`).click();
-  cy.checkToolBtnActive(id);
+  if (checkActive) cy.checkToolBtnActive(id);
 });
 
 Cypress.Commands.add('changeWorkarea', (workarea: string, save = true) => {
