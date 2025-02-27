@@ -2135,5 +2135,6 @@ export interface ILang {
     alert_failed: string;
     ignore: string;
     retest: string;
+    testing: string;
   };
 }
