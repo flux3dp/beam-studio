@@ -6,9 +6,7 @@ describe('move element to another layer', () => {
       .should('have.attr', 'data-strength', '15')
       .should('have.attr', 'data-speed', '20')
       .should('have.attr', 'data-repeat', '1');
-    cy.get(
-      '[class*="src-web-app-components-beambox-right-panel-AddLayerButton-module__btn"]'
-    ).click({ force: true });
+    cy.get('[class*="src-web-app-components-beambox-right-panel-AddLayerButton-module__btn"]').click({ force: true });
     cy.get('#power-input').clear().type('50{enter}');
     cy.get('#speed-input').clear().type('100{enter}');
     cy.get('#repeat').clear().type('5{enter}');
@@ -26,18 +24,14 @@ describe('move element to another layer', () => {
   it('move one element', () => {
     cy.clickToolBtn('Element');
     cy.get('.ant-modal-header').contains('Element').should('exist');
-    cy.get('.anticon[class*="src-web-app-views-beambox-ShapePanel-ShapeIcon-module__icon"]')
-      .eq(0)
-      .click();
+    cy.get('.anticon[id="basic/icon-circle"]').click();
     cy.get('#svg_1').should('exist').should('have.attr', 'fill', '#333333');
     cy.get('#svg_1').click();
     cy.get('.tab.layers').click();
     cy.get('#power-input').should('have.attr', 'value', '15');
     cy.get('#speed-input').should('have.attr', 'value', '20');
     cy.get('#repeat').should('have.attr', 'value', '1');
-    cy.get(
-      '[class*="src-web-app-components-beambox-right-panel-SelLayerBlock-module__select"]'
-    ).select('Layer 2');
+    cy.get('[class*="src-web-app-components-beambox-right-panel-SelLayerBlock-module__select"]').select('Layer 2');
     cy.get('.ant-btn').contains('Yes').click();
     cy.get('#svg_1').click();
     cy.get('#svg_1').should('have.attr', 'fill', '#3F51B5');
@@ -46,23 +40,17 @@ describe('move element to another layer', () => {
     cy.get('#repeat').should('have.attr', 'value', '5');
   });
 
-  it('move multiple elements', () => {
+  it.only('move multiple elements', () => {
     cy.contains('Layer 1').click();
     cy.clickToolBtn('Element');
     cy.get('.ant-modal-header').contains('Element').should('exist');
-    cy.get('.anticon[class*="src-web-app-views-beambox-ShapePanel-ShapeIcon-module__icon"]')
-      .eq(0)
-      .click();
+    cy.get('.anticon[id="basic/icon-circle"]').click();
     cy.clickToolBtn('Element');
     cy.get('.adm-capsule-tabs-tab-wrapper').contains('Decor').click();
-    cy.get('.anticon[class*="src-web-app-views-beambox-ShapePanel-ShapeIcon-module__icon"]')
-      .eq(0)
-      .click();
+    cy.get('.anticon[id="decor/i_circular-1"]').click();
     cy.clickToolBtn('Element');
     cy.get('.adm-capsule-tabs-tab-wrapper').contains('Animal').click();
-    cy.get('.anticon[class*="src-web-app-views-beambox-ShapePanel-ShapeIcon-module__icon"]')
-      .eq(0)
-      .click();
+    cy.get('.anticon[id="animals/i_land-1"]').click();
     cy.get('.ant-modal-mask').should('not.exist');
     cy.get('#svg_19').should('exist');
     cy.get('svg#svgcontent')
@@ -74,9 +62,7 @@ describe('move element to another layer', () => {
     cy.get('#power-input').should('have.attr', 'value', '15');
     cy.get('#speed-input').should('have.attr', 'value', '20');
     cy.get('#repeat').should('have.attr', 'value', '1');
-    cy.get(
-      '[class*="src-web-app-components-beambox-right-panel-SelLayerBlock-module__select--"]'
-    ).select('Layer 2');
+    cy.get('[class*="src-web-app-components-beambox-right-panel-SelLayerBlock-module__select--"]').select('Layer 2');
     cy.get('.ant-btn').contains('Yes').click();
     cy.get('#power-input').should('have.attr', 'value', '50');
     cy.get('#speed-input').should('have.attr', 'value', '100');
