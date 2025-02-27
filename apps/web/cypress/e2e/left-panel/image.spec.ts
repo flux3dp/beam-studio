@@ -103,7 +103,7 @@ describe('manipulate image function', () => {
     cy.get('#crop').click();
     cy.wait(3000);
     cy.get('.point-se').move({ deltaX: 0, deltaY: -200 });
-    cy.get('button[class^="ant-btn"]').contains('Okay').click();
+    cy.get('button[class^="ant-btn"]').contains('OK').click();
     cy.get('.progress', { timeout: 10000 }).should('not.exist');
     cy.get('.photo-edit-panel', { timeout: 5000 }).should('not.exist');
     cy.wait(10000);
