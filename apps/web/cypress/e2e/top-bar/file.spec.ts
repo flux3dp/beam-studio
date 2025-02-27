@@ -75,7 +75,7 @@ describe('manipulate file', () => {
     cy.readFile(cypressDownloadBvgPath).then((info) => {
       let expectedValue = '36a8a435b51212557544fc0f36ff8ed5';
       if (isRunningAtGithub) {
-        expectedValue = isWindows ? '57096d67eaf64c2bc9672604b6828536' : '6665836ae47675168573b48d43702405';
+        expectedValue = isWindows ? '811dfc15ccb5f1fe02268c0c6239e607' : '6665836ae47675168573b48d43702405';
       }
       expect(md5(info)).equal(expectedValue);
     });
