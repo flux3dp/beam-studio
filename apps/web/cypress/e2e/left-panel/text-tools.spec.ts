@@ -28,7 +28,7 @@ describe('text tools', () => {
     cy.realPress(['Enter']);
   };
 
-  it.only('text font', () => {
+  it('text font', () => {
     drawText1();
     cy.get('div#object-panel').should('exist');
     cy.get('.ant-select[title="Font"]').click();
