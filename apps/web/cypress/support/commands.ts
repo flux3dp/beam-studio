@@ -105,9 +105,9 @@ Cypress.Commands.add('connectMachine', (machineName: string) => {
 
 Cypress.Commands.add('go2Preference', (handleSave = false) => {
   cy.get('div.top-bar-menu-container').click();
-  cy.get('ul.rc-menu--dir-bottom>li.rc-menu__submenu').should('have.length', 6);
-  cy.get('li.rc-menu__submenu:nth-child(1)').trigger('mouseover');
-  cy.get('li.rc-menu__submenu:nth-child(1) li.rc-menu__item:last-child').click();
+  cy.get('ul.rc-menu--dir-bottom>li.rc-menu__submenu').should('have.length', 7);
+  cy.get('.rc-menu__submenu').contains('File').click();
+  cy.get('.rc-menu__submenu').contains('Preferences').click();
   if (handleSave) cy.get('button.ant-btn').contains("Don't Save").click();
 });
 
