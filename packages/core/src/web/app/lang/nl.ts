@@ -2158,6 +2158,7 @@ const lang: ILang = {
     alert_failed: 'Het gewicht van het huidige object overschrijdt de belastinglimiet voor de huidige Z-as snelheid. Verlaag de Z-as snelheid op het machinepaneel of vervang het graveerobject voordat u opnieuw test.',
     ignore: 'Negeren',
     retest: 'Opnieuw testen',
+    testing: 'Bezig met het uitvoeren van de belastingtest...',
   },
 };
 

@@ -2158,6 +2158,7 @@ Machines > ‘Promark Name’ > Promark Settings`,
     alert_failed: "The current object's weight exceeds the load limit for the current Z-axis speed. Please reduce the Z-axis speed on the machine panel or replace the engraving object before retesting.",
     ignore: 'Ignore',
     retest: 'Retest',
+    testing: 'Performing load test...',
   },
 };
 

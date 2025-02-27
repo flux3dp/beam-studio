@@ -2158,6 +2158,7 @@ const lang: ILang = {
     alert_failed: 'Waga obecnego obiektu przekracza limit obciążenia dla bieżącej prędkości osi Z. Zmniejsz prędkość osi Z w panelu maszyny lub zamień obiekt grawerowania przed ponownym testem.',
     ignore: 'Ignoruj',
     retest: 'Przetestuj ponownie',
+    testing: 'Przeprowadzanie testu obciążenia...',
   },
 };
 

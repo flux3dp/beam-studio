@@ -2158,6 +2158,7 @@ const lang: ILang = {
     alert_failed: 'Den aktuelle genstands vægt overstiger belastningsgrænsen for den nuværende Z-akse hastighed. Reducer venligst Z-akse hastigheden på maskinens panel eller udskift graveringsobjektet, før du tester igen.',
     ignore: 'Ignorer',
     retest: 'Test igen',
+    testing: 'Udfører belastningstest...',
   },
 };
 

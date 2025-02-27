@@ -2158,6 +2158,7 @@ const lang: ILang = {
     alert_failed: 'Das Gewicht des aktuellen Objekts überschreitet die Belastungsgrenze für die aktuelle Z-Achsen-Geschwindigkeit. Bitte reduzieren Sie die Z-Achsen-Geschwindigkeit im Maschinenpanel oder ersetzen Sie das Gravurobjekt, bevor Sie den Test erneut durchführen.',
     ignore: 'Ignorieren',
     retest: 'Erneut testen',
+    testing: 'Durchführen des Belastungstests...',
   },
 };
 

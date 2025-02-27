@@ -2158,6 +2158,7 @@ const lang: ILang = {
     alert_failed: "Le poids de l'objet actuel dépasse la limite de charge pour la vitesse actuelle de l'axe Z. Veuillez réduire la vitesse de l'axe Z sur le panneau de la machine ou remplacer l'objet de gravure avant de refaire le test.",
     ignore: 'Ignorer',
     retest: 'Retester',
+    testing: 'Exécution du test de charge...',
   },
 };
 

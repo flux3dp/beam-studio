@@ -2158,6 +2158,7 @@ const lang: ILang = {
     alert_failed: 'Hmotnost aktuálního objektu překračuje limit zatížení pro aktuální rychlost osy Z. Snižte prosím rychlost osy Z na ovládacím panelu stroje nebo vyměňte gravírovaný objekt před opětovným testováním.',
     ignore: 'Ignorovat',
     retest: 'Otestovat znovu',
+    testing: 'Provádí se zátěžový test...',
   },
 };
 

@@ -2158,6 +2158,7 @@ const lang: ILang = {
     alert_failed: 'Berat objek saat ini melebihi batas beban untuk kecepatan sumbu Z saat ini. Kurangi kecepatan sumbu Z pada panel mesin atau ganti objek ukiran sebelum melakukan pengujian ulang.',
     ignore: 'Abaikan',
     retest: 'Uji ulang',
+    testing: 'Melakukan uji beban...',
   },
 };
 

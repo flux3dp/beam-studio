@@ -2158,6 +2158,7 @@ const lang: ILang = {
     alert_failed: '目前物件的重量已超過當前 Z 軸速度的負重上限，請至機器面板降低 Z 軸速度或更換雕刻物件後再重新測試。',
     ignore: '忽略',
     retest: '重新測試',
+    testing: '正在執行負重測試...',
   },
 };
 

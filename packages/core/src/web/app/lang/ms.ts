@@ -2158,6 +2158,7 @@ const lang: ILang = {
     alert_failed: 'Berat objek semasa melebihi had beban untuk kelajuan paksi Z semasa. Kurangkan kelajuan paksi Z pada panel mesin atau gantikan objek ukiran sebelum menguji semula.',
     ignore: 'Abaikan',
     retest: 'Uji semula',
+    testing: 'Melaksanakan ujian beban...',
   },
 };
 

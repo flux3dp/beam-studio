@@ -2158,6 +2158,7 @@ const lang: ILang = {
     alert_failed: 'Nykyisen objektin paino ylittää nykyisen Z-akselin nopeuden kuormitusrajan. Vähennä Z-akselin nopeutta koneen paneelissa tai vaihda kaiverrettava objekti ennen uudelleentestauksia.',
     ignore: 'Ohita',
     retest: 'Testaa uudelleen',
+    testing: 'Suoritetaan kuormitustestiä...',
   },
 };
 

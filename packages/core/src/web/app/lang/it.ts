@@ -2158,6 +2158,7 @@ const lang: ILang = {
     alert_failed: "Il peso dell'oggetto attuale supera il limite di carico per la velocità attuale dell'asse Z. Riduci la velocità dell'asse Z nel pannello della macchina o sostituisci l'oggetto di incisione prima di ripetere il test.",
     ignore: 'Ignora',
     retest: 'Riprova',
+    testing: 'Esecuzione del test di carico...',
   },
 };
 

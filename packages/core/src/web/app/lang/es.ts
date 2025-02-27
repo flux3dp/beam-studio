@@ -2158,6 +2158,7 @@ const lang: ILang = {
     alert_failed: 'El peso del objeto actual supera el límite de carga para la velocidad actual del eje Z. Reduzca la velocidad del eje Z en el panel de la máquina o reemplace el objeto de grabado antes de volver a probar.',
     ignore: 'Ignorar',
     retest: 'Reprobar',
+    testing: 'Realizando prueba de carga...',
   },
 };
 

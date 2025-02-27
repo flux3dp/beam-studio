@@ -2158,6 +2158,7 @@ const lang: ILang = {
     alert_failed: 'Trọng lượng của đối tượng hiện tại vượt quá giới hạn tải cho tốc độ trục Z hiện tại. Vui lòng giảm tốc độ trục Z trên bảng điều khiển máy hoặc thay thế đối tượng khắc trước khi kiểm tra lại.',
     ignore: 'Bỏ qua',
     retest: 'Kiểm tra lại',
+    testing: 'Đang thực hiện kiểm tra tải...',
   },
 };
 

@@ -1,4 +1,5 @@
 import alertCaller from '@core/app/actions/alert-caller';
+import progressCaller from '@core/app/actions/progress-caller';
 import { getSupportInfo } from '@core/app/constants/add-on';
 import alertConfig from '@core/helpers/api/alert-config';
 import deviceMaster from '@core/helpers/device-master';
@@ -43,7 +44,10 @@ const doZSpeedLimitTest = async (device: IDeviceInfo): Promise<boolean> => {
     for (let i = 0; i < layers.length; i++) {
       zSpeed = Math.max(zSpeed, getData(layers[i], 'ceZSpeedLimit'));
     }
-
+    progressCaller.openNonstopProgress({
+      id: 'z-speed-limit-test',
+      message: t.testing,
+    });
     await deviceMaster.enterZSpeedLimitTestMode();
     await deviceMaster.zSpeedLimitTestSetSpeed(zSpeed);
 
@@ -82,6 +86,8 @@ const doZSpeedLimitTest = async (device: IDeviceInfo): Promise<boolean> => {
     return false;
   } finally {
     if (deviceMaster.currentControlMode === 'z_speed_limit_test') await deviceMaster.endSubTask();
+
+    progressCaller.popById('z-speed-limit-test');
   }
 };
 

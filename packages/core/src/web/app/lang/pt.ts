@@ -2158,6 +2158,7 @@ const lang: ILang = {
     alert_failed: 'O peso do objeto atual excede o limite de carga para a velocidade atual do eixo Z. Reduza a velocidade do eixo Z no painel da máquina ou substitua o objeto de gravação antes de refazer o teste.',
     ignore: 'Ignorar',
     retest: 'Testar novamente',
+    testing: 'Executando teste de carga...',
   },
 };
 
