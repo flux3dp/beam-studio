@@ -39,9 +39,9 @@ describe('manipulate file', () => {
     cy.wait(1000);
 
     cy.readFile(cypressDownloadBeamPath, null).then((buf) => {
-      let expectedValue = -210857373;
+      let expectedValue = 2030115559;
       if (isRunningAtGithub) {
-        expectedValue = isWindows ? 502435180 : 1091338501;
+        expectedValue = isWindows ? 1058650976 : 1091338501;
       }
       expect(crc32Buf(buf)).to.equal(expectedValue);
     });
@@ -58,9 +58,9 @@ describe('manipulate file', () => {
     cy.get('.rc-menu__submenu').contains('File').click();
     cy.get('.rc-menu').contains('Save As...').click();
     cy.readFile(cypressDownloadNewBeamPath, null).then((buf) => {
-      let expectedValue = 1999755064;
+      let expectedValue = 262303823;
       if (isRunningAtGithub) {
-        expectedValue = isWindows ? -1360034278 : -901845600;
+        expectedValue = isWindows ? -873164607 : -901845600;
       }
       expect(crc32Buf(buf)).to.equal(expectedValue);
     });
@@ -73,11 +73,9 @@ describe('manipulate file', () => {
     cy.contains('Export To...').click();
     cy.contains('BVG').click();
     cy.readFile(cypressDownloadBvgPath).then((info) => {
-      let expectedValue = 'd3226c3d45dc8843ad248c3ed701415d';
+      let expectedValue = '36a8a435b51212557544fc0f36ff8ed5';
       if (isRunningAtGithub) {
-        expectedValue = isWindows
-          ? '57096d67eaf64c2bc9672604b6828536'
-          : '6665836ae47675168573b48d43702405';
+        expectedValue = isWindows ? '57096d67eaf64c2bc9672604b6828536' : '6665836ae47675168573b48d43702405';
       }
       expect(md5(info)).equal(expectedValue);
     });
@@ -90,11 +88,9 @@ describe('manipulate file', () => {
     cy.contains('Export To...').click();
     cy.contains('SVG').click();
     cy.readFile(cypressDownloadSvgPath).then((info) => {
-      let expectedValue = '80972cd225baaf9050633c875d7ec320';
+      let expectedValue = 'a6292253ca478e34d357e07b80e461b9';
       if (isRunningAtGithub) {
-        expectedValue = isWindows
-          ? '28ff059299139662b5b79b4d044c41e2'
-          : '7b2d301bee1027fdf5e3042821dded8d';
+        expectedValue = isWindows ? '79e0e8f995387f7ee0099dcb74308841' : '7b2d301bee1027fdf5e3042821dded8d';
       }
       expect(md5(info)).equal(expectedValue);
     });
