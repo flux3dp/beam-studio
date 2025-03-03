@@ -226,13 +226,6 @@ export const getExportOpt = (
     };
   }
 
-  if (config.curve_engraving) {
-    config.acc_override = {
-      fill: { ...config.acc_override?.fill, z: 150 },
-      path: { ...config.acc_override?.path, z: 150 },
-    };
-  }
-
   if (isDevMode) {
     let storageValue = localStorage.getItem('min_engraving_padding');
 
