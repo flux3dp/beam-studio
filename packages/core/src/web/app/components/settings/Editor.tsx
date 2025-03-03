@@ -8,7 +8,7 @@ import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import { hasSwiftray } from '@core/helpers/api/swiftray-client';
-import { checkFbb2, checkFpm1 } from '@core/helpers/checkFeature';
+import { checkFpm1 } from '@core/helpers/checkFeature';
 import isDev from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 import storage from '@core/implementations/storage';
@@ -130,7 +130,7 @@ function Editor({
       selected: selectedModel === 'flv1',
       value: 'flv1',
     },
-    checkFbb2() && {
+    {
       label: 'Beambox II',
       selected: selectedModel === 'fbb2',
       value: 'fbb2',

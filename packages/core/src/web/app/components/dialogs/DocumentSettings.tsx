@@ -20,7 +20,7 @@ import { getWorkarea } from '@core/app/constants/workarea-constants';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import Select from '@core/app/widgets/AntdSelect';
 import UnitInput from '@core/app/widgets/UnitInput';
-import { checkFbb2, checkFpm1 } from '@core/helpers/checkFeature';
+import { checkFpm1 } from '@core/helpers/checkFeature';
 import { getPromarkInfo, setPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import isDev from '@core/helpers/is-dev';
@@ -38,7 +38,7 @@ const workareaOptions = [
   { label: 'HEXA', value: 'fhexa1' },
   { label: 'Ador', value: 'ado1' },
   checkFpm1() && { label: 'Promark', value: 'fpm1' },
-  checkFbb2() && { label: 'Beambox II', value: 'fbb2' },
+  { label: 'Beambox II', value: 'fbb2' },
   isDev() && { label: 'Lazervida', value: 'flv1' },
 ].filter(Boolean);
 
