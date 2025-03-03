@@ -7,7 +7,7 @@ import dialog from '@core/app/actions/dialog-caller';
 import windowLocationReload from '@core/app/actions/windowLocation';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import InitializeIcons from '@core/app/icons/initialize/InitializeIcons';
-import { checkFbb2, checkFpm1 } from '@core/helpers/checkFeature';
+import { checkFpm1 } from '@core/helpers/checkFeature';
 import { isMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 import storage from '@core/implementations/storage';
@@ -102,13 +102,12 @@ const SelectMachineModel = (): React.JSX.Element => {
           label: 'Beambox (Pro)',
           model: 'fbb1p',
         } as const,
-        checkFbb2() &&
-          ({
-            btnClass: styles['btn-real'],
-            imageSrc: 'core-img/init-panel/beambox-2-real.png',
-            label: 'Beambox II',
-            model: 'fbb2',
-          } as const),
+        {
+          btnClass: styles['btn-real'],
+          imageSrc: 'core-img/init-panel/beambox-2-real.png',
+          label: 'Beambox II',
+          model: 'fbb2',
+        } as const,
       ].filter(Boolean) as ModelItem[],
     [],
   );

@@ -18,10 +18,6 @@ jest.mock('./SelectControl', () => ({ id, label, onChange, options, url }: any) 
 const mockUpdateBeamboxPreferenceChange = jest.fn();
 const mockGetBeamboxPreferenceEditingValue = jest.fn();
 
-jest.mock('@core/helpers/checkFeature', () => ({
-  checkFbb2: () => true,
-}));
-
 describe('test BB2Settings', () => {
   it('should render correctly', () => {
     const { container } = render(

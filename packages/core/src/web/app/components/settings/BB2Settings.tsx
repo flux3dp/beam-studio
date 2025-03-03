@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { checkFbb2 } from '@core/helpers/checkFeature';
 import useI18n from '@core/helpers/useI18n';
 
 import onOffOptionFactory from './onOffOptionFactory';
@@ -14,10 +13,6 @@ interface Props {
 
 const BB2Settings = ({ getBeamboxPreferenceEditingValue, updateBeamboxPreferenceChange }: Props): React.ReactNode => {
   const lang = useI18n();
-
-  if (!checkFbb2()) {
-    return null;
-  }
 
   const curveEngravingSpeedConstraintOptions = onOffOptionFactory(
     getBeamboxPreferenceEditingValue<boolean>('curve_engraving_speed_limit') !== false,
