@@ -4,7 +4,7 @@ import { fireEvent, render } from '@testing-library/react';
 
 import { OptionValues } from '@core/app/constants/enums';
 
-import Editor from './Editor';
+import { create } from 'zustand';
 
 jest.mock('@core/helpers/is-dev', () => () => true);
 
@@ -104,13 +104,42 @@ jest.mock('@core/app/constants/workarea-constants', () => ({
   }),
 }));
 
-jest.mock('@core/app/components/settings/SelectControl', () => ({ id, label, onChange, options, url }: any) => (
+const mockGetConfig = jest.fn();
+const mockSetConfig = jest.fn();
+const mockGetPreference = jest.fn();
+const mockSetPreference = jest.fn();
+
+const useSettingStore = create(() => ({
+  getConfig: mockGetConfig,
+  getPreference: mockGetPreference,
+  setConfig: mockSetConfig,
+  setPreference: mockSetPreference,
+}));
+
+jest.mock('@core/app/pages/Settings/useSettingStore', () => ({
+  useSettingStore,
+}));
+
+jest.mock('./components/SettingSelect', () => ({ id, label, onChange, options, url }: any) => (
   <div>
     mock-select-control id:{id}
     label:{label}
     url:{url}
     options:{JSON.stringify(options)}
-    <input className="select-control" onChange={onChange} />
+    <input
+      className="select-control"
+      onChange={({ target: { value } }) => onChange(['false', 'true'].includes(value) ? value === 'true' : value)}
+    />
+  </div>
+));
+
+jest.mock('./components/SettingFormItem', () => ({ children, id, label, options, url }: any) => (
+  <div>
+    mock-select-control id:{id}
+    label:{label}
+    url:{url}
+    options:{JSON.stringify(options)}
+    {children}
   </div>
 ));
 
@@ -139,55 +168,48 @@ jest.mock('@core/helpers/locale-helper', () => ({
   isTwOrHk: true,
 }));
 
+import Editor from './Editor';
+
 describe('settings/Editor', () => {
   afterEach(() => {
     jest.resetAllMocks();
   });
 
   test('initially no warning', async () => {
-    const updateConfigChange = jest.fn();
-    const updateBeamboxPreferenceChange = jest.fn();
-    const updateModel = jest.fn();
-    const mockGetBeamboxPreferenceEditingValue = jest.fn();
-
-    mockGetBeamboxPreferenceEditingValue.mockImplementation((key) => {
-      if (key === 'guide_x0' || key === 'guide_y0') {
-        return 0;
-      }
-
-      return false;
-    });
+    mockGetPreference.mockImplementation((key) => (['guide_x0', 'guide_y0'].includes(key) ? 0 : false));
 
     const { container } = render(
       <Editor
-        defaultUnit="mm"
-        getBeamboxPreferenceEditingValue={mockGetBeamboxPreferenceEditingValue}
-        selectedModel="fbb1b"
-        updateBeamboxPreferenceChange={updateBeamboxPreferenceChange}
-        updateConfigChange={updateConfigChange}
-        updateModel={updateModel}
+        options={
+          [
+            { label: 'On', value: true },
+            { label: 'Off', value: false },
+          ] as any
+        }
       />,
     );
 
-    expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenCalledTimes(10);
-    expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(1, 'guide_x0');
-    expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(2, 'guide_y0');
-    expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(3, 'show_guides');
-    expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(4, 'image_downsampling');
-    expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(5, 'anti-aliasing');
-    expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(6, 'continuous_drawing');
-    expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(7, 'simplify_clipper_path');
-    expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(8, 'auto-switch-tab');
-    expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(9, 'enable-custom-backlash');
-    expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(10, 'path-engine');
+    expect(mockGetPreference).toHaveBeenCalledTimes(12);
+    expect(mockGetPreference).toHaveBeenNthCalledWith(1, 'model');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(2, 'model');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(3, 'show_guides');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(4, 'guide_x0');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(5, 'guide_y0');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(6, 'image_downsampling');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(7, 'anti-aliasing');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(8, 'continuous_drawing');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(9, 'simplify_clipper_path');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(10, 'auto-switch-tab');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(11, 'path-engine');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(12, 'enable-custom-backlash');
     expect(container).toMatchSnapshot();
 
     const SelectControls = container.querySelectorAll('.select-control');
     const UnitInputs = container.querySelectorAll('.unit-input');
 
     fireEvent.change(SelectControls[0], { target: { value: 'inches' } });
-    expect(updateConfigChange).toHaveBeenCalledTimes(1);
-    expect(updateConfigChange).toHaveBeenNthCalledWith(1, 'default-units', 'inches');
+    expect(mockSetConfig).toHaveBeenCalledTimes(1);
+    expect(mockSetConfig).toHaveBeenNthCalledWith(1, 'default-units', 'inches');
 
     fireEvent.change(SelectControls[1], { target: { value: 'Apple LiSung' } });
     expect(container).toMatchSnapshot();
@@ -204,49 +226,47 @@ describe('settings/Editor', () => {
     expect(container).toMatchSnapshot();
 
     fireEvent.change(SelectControls[3], { target: { value: 'fbm1' } });
-    expect(updateBeamboxPreferenceChange).toHaveBeenCalledTimes(1);
-    expect(updateBeamboxPreferenceChange).toHaveBeenNthCalledWith(1, 'model', 'fbm1');
-    expect(updateModel).toHaveBeenCalledTimes(1);
-    expect(updateModel).toHaveBeenNthCalledWith(1, 'fbm1');
+    expect(mockSetPreference).toHaveBeenCalledTimes(1);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(1, 'model', 'fbm1');
 
     fireEvent.change(SelectControls[4], { target: { value: OptionValues.TRUE } });
-    expect(updateBeamboxPreferenceChange).toHaveBeenCalledTimes(2);
-    expect(updateBeamboxPreferenceChange).toHaveBeenNthCalledWith(2, 'show_guides', 'TRUE');
+    expect(mockSetPreference).toHaveBeenCalledTimes(2);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(2, 'show_guides', 'TRUE');
 
     fireEvent.change(SelectControls[5], { target: { value: OptionValues.TRUE } });
-    expect(updateBeamboxPreferenceChange).toHaveBeenCalledTimes(3);
-    expect(updateBeamboxPreferenceChange).toHaveBeenNthCalledWith(3, 'image_downsampling', 'TRUE');
+    expect(mockSetPreference).toHaveBeenCalledTimes(3);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(3, 'image_downsampling', 'TRUE');
 
     fireEvent.change(SelectControls[6], { target: { value: OptionValues.TRUE } });
-    expect(updateBeamboxPreferenceChange).toHaveBeenCalledTimes(4);
-    expect(updateBeamboxPreferenceChange).toHaveBeenNthCalledWith(4, 'anti-aliasing', 'TRUE');
+    expect(mockSetPreference).toHaveBeenCalledTimes(4);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(4, 'anti-aliasing', 'TRUE');
 
     fireEvent.change(SelectControls[7], { target: { value: OptionValues.TRUE } });
-    expect(updateBeamboxPreferenceChange).toHaveBeenCalledTimes(5);
-    expect(updateBeamboxPreferenceChange).toHaveBeenNthCalledWith(5, 'continuous_drawing', 'TRUE');
+    expect(mockSetPreference).toHaveBeenCalledTimes(5);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(5, 'continuous_drawing', 'TRUE');
 
     fireEvent.change(SelectControls[8], { target: { value: OptionValues.TRUE } });
-    expect(updateBeamboxPreferenceChange).toHaveBeenCalledTimes(6);
-    expect(updateBeamboxPreferenceChange).toHaveBeenNthCalledWith(6, 'simplify_clipper_path', 'TRUE');
+    expect(mockSetPreference).toHaveBeenCalledTimes(6);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(6, 'simplify_clipper_path', 'TRUE');
 
     fireEvent.change(SelectControls[9], { target: { value: OptionValues.TRUE } });
-    expect(updateBeamboxPreferenceChange).toHaveBeenCalledTimes(7);
-    expect(updateBeamboxPreferenceChange).toHaveBeenNthCalledWith(7, 'auto-switch-tab', 'TRUE');
+    expect(mockSetPreference).toHaveBeenCalledTimes(7);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(7, 'auto-switch-tab', 'TRUE');
 
     fireEvent.change(UnitInputs[0], { target: { value: 1 } });
-    expect(updateBeamboxPreferenceChange).toHaveBeenCalledTimes(8);
-    expect(updateBeamboxPreferenceChange).toHaveBeenNthCalledWith(8, 'guide_x0', 1);
+    expect(mockSetPreference).toHaveBeenCalledTimes(8);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(8, 'guide_x0', 1);
 
     fireEvent.change(UnitInputs[1], { target: { value: 2 } });
-    expect(updateBeamboxPreferenceChange).toHaveBeenCalledTimes(9);
-    expect(updateBeamboxPreferenceChange).toHaveBeenNthCalledWith(9, 'guide_y0', 2);
+    expect(mockSetPreference).toHaveBeenCalledTimes(9);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(9, 'guide_y0', 2);
 
     fireEvent.change(SelectControls[10], { target: { value: 'swiftray' } });
-    expect(updateBeamboxPreferenceChange).toHaveBeenCalledTimes(10);
-    expect(updateBeamboxPreferenceChange).toHaveBeenNthCalledWith(10, 'path-engine', 'swiftray');
+    expect(mockSetPreference).toHaveBeenCalledTimes(10);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(10, 'path-engine', 'swiftray');
 
     fireEvent.change(SelectControls[11], { target: { value: OptionValues.TRUE } });
-    expect(updateBeamboxPreferenceChange).toHaveBeenCalledTimes(11);
-    expect(updateBeamboxPreferenceChange).toHaveBeenNthCalledWith(11, 'enable-custom-backlash', 'TRUE');
+    expect(mockSetPreference).toHaveBeenCalledTimes(11);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(11, 'enable-custom-backlash', 'TRUE');
   });
 });

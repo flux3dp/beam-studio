@@ -63,7 +63,7 @@ const RotarySettings = ({ onClose }: Props): React.JSX.Element => {
       rotaryAxis.toggleDisplay();
     }
   };
-  const rotaryDisabled = rotaryMode === 0;
+  const rotaryDisabled = !rotaryMode;
   const chuckOptionDisabled = rotaryDisabled || !supportInfo.rotary?.chuck || rotaryType !== RotaryType.Chuck;
 
   return (
@@ -86,10 +86,10 @@ const RotarySettings = ({ onClose }: Props): React.JSX.Element => {
           </div>
           <div className={styles.control}>
             <Switch
-              checked={rotaryMode > 0}
+              checked={rotaryMode}
               className={styles.switch}
               id="rotary_mode"
-              onChange={() => setRotaryMode((cur) => (cur > 0 ? 0 : 1))}
+              onChange={() => setRotaryMode((cur) => !cur)}
             />
           </div>
           <div className={styles.title}>

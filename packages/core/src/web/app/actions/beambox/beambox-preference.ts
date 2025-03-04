@@ -147,7 +147,7 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   simplify_clipper_path: false,
   use_layer_color: true,
   vector_speed_constraint: true,
-  workarea: 'fbb1b',
+  workarea: 'fbm1',
   zoom_with_window: false,
 };
 
