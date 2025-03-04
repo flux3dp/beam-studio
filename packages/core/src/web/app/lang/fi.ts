@@ -360,6 +360,7 @@ const lang: ILang = {
         bi_directional: 'Kaksisuuntainen',
         by: 'Määrällä',
         ce_z_high_speed: 'Nopeanopeuksinen Z-akseli',
+        ce_z_high_speed_link: 'https://support.flux3dp.com/hc/en-us/articles/10364060644495',
         color_adjustment: 'Värikanavan säätö',
         color_adjustment_short: 'Värikanava',
         color_strength: 'Voimakkuus',

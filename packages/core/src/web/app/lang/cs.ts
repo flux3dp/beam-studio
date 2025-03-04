@@ -360,6 +360,7 @@ const lang: ILang = {
         bi_directional: 'Obousměrný',
         by: 'Podle',
         ce_z_high_speed: 'Vysokorychlostní osa Z',
+        ce_z_high_speed_link: 'https://support.flux3dp.com/hc/en-us/articles/10364060644495',
         color_adjustment: 'Přizpůsobení kanálu',
         color_adjustment_short: 'Kanál',
         color_strength: 'Síla',

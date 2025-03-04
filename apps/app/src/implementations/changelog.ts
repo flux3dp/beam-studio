@@ -7,6 +7,7 @@ const CHANGES_TW = {
     '新增 Promark 「擺動」參數。',
     '新增 Instagram 圖示至左側功能列。',
     '新增 Beambox II 3D 曲面雕刻的錯誤提示。',
+    '新增 3D 曲面雕刻的高速 Z 軸選項。',
   ],
   changed: [
     '變更 Design Market 圖示的位置。',
@@ -20,16 +21,22 @@ const CHANGES_TW = {
     '修正 Beambox II 3D 曲面雕刻時，當前位置不需歸零。',
     '修正 外框預覽時需省略空白群組。',
     '修正 多選物件時旋轉功能錯誤的問題。',
+    '修正 與 Illustrator 外掛程式的相容性問題。',
   ],
 };
 
 const CHANGES_EN = {
-  added: ['Added "Auto Align" function to the top "View" menu', 'Added Instagram icon to the left sidebar.'],
+  added: [
+    'Added "Auto Align" function to the top "View" menu',
+    'Added Instagram icon to the left sidebar.',
+    'Added support for Beambox II.',
+  ],
   changed: ['Changed the position of the Design Market icon.'],
   fixed: [
     'Fixed an issue where the "Start" button in the dashboard was unresponsive after pausing a job',
     'Fixed an issue where blank groups were not ignored during Framing preview.',
     'Fixed an issue with rotation functionality when selecting multiple objects.',
+    'Fixed compatibility issues with Illustrator plug-ins.',
   ],
 };
 

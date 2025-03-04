@@ -1,5 +1,6 @@
 import React, { useContext, useMemo } from 'react';
 
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Switch } from 'antd';
 import classNames from 'classnames';
 
@@ -7,6 +8,7 @@ import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
 import useI18n from '@core/helpers/useI18n';
+import browser from '@core/implementations/browser';
 
 import styles from './Block.module.scss';
 import ConfigPanelContext from './ConfigPanelContext';
@@ -39,6 +41,15 @@ const CurveEngravingZHighSpeed = () => {
     <div className={classNames(styles.panel, styles.switch)}>
       <label className={styles.title} htmlFor="curve-engraving-z-high-speed">
         {t.ce_z_high_speed}
+        <QuestionCircleOutlined
+          className={classNames(styles.hint, styles.link)}
+          onClick={(e) => {
+            // prevent label from being triggered
+            e.stopPropagation();
+            e.preventDefault();
+            browser.open(t.ce_z_high_speed_link);
+          }}
+        />
       </label>
       <Switch
         checked={checked}

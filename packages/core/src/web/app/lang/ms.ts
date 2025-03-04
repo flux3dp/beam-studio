@@ -360,6 +360,7 @@ const lang: ILang = {
         bi_directional: 'Dua Arah',
         by: 'Dengan',
         ce_z_high_speed: 'Paksi Z berkelajuan tinggi',
+        ce_z_high_speed_link: 'https://support.flux3dp.com/hc/en-us/articles/10364060644495',
         color_adjustment: 'Pelarasan Saluran',
         color_adjustment_short: 'Saluran',
         color_strength: 'Kekuatan',

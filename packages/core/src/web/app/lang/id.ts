@@ -360,6 +360,7 @@ const lang: ILang = {
         bi_directional: 'Dua Arah',
         by: 'Sebesar',
         ce_z_high_speed: 'Sumbu Z kecepatan tinggi',
+        ce_z_high_speed_link: 'https://support.flux3dp.com/hc/en-us/articles/10364060644495',
         color_adjustment: 'Penyesuaian Saluran',
         color_adjustment_short: 'Saluran',
         color_strength: 'Kekuatan',
