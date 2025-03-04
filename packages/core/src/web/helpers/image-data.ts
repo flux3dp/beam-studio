@@ -11,7 +11,7 @@ import getExifRotationFlag from './image/getExifRotationFlag';
 
 const MAX_IMAGE_PIXEL = 1e8;
 
-export default async (source: Blob | string, opts) => {
+export default async (source: Blob | string, opts: any) => {
   opts.onComplete = opts.onComplete || (() => {});
   opts.type = opts.type || 'image/png';
 
@@ -53,7 +53,7 @@ export default async (source: Blob | string, opts) => {
     }
 
     const arrayBuffer = await resp.arrayBuffer();
-    const image = await imageProcessor.read(arrayBuffer as Buffer);
+    const image = await imageProcessor.read(arrayBuffer as unknown as Buffer);
 
     if (typeof source !== 'string') {
       URL.revokeObjectURL(url);
@@ -126,7 +126,7 @@ export default async (source: Blob | string, opts) => {
     const img = new Image();
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-    const onload = async (e) => {
+    const onload = async (e: any) => {
       const size = {
         height: opts.height || e.target.naturalHeight,
         width: opts.width || e.target.naturalWidth,

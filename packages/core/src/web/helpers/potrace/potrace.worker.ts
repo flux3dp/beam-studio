@@ -7,9 +7,9 @@ onmessage = async ({ data: { imgUrl, imgBBox, method, options } }) => {
   const image = await jimpHelper.urlToImage(imgUrl);
   const sx = imgBBox.width / image.bitmap.width;
   const sy = imgBBox.height / image.bitmap.height;
-  const svgString = await (method === 'trace' ? trace : posterize)(image, options);
+  const svg = await (method === 'trace' ? trace : posterize)(image, options);
 
-  postMessage({ sx, sy, svg: svgString });
+  postMessage({ sx, sy, svg });
 
   console.log('potrace.worker.ts operationTime', performance.now() - startTime);
 };

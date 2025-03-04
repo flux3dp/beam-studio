@@ -32,6 +32,7 @@
     "fontkit": "^2.0.4",
     "gl-matrix": "^3.3.0",
     "hammerjs": "^2.0.8",
+    "imagetracerjs": "^1.2.6",
     "immer": "^9.0.19",
     "jimp": "^0.10.3",
     "jquery": "^3.6.0",

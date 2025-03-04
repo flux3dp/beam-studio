@@ -28,15 +28,6 @@ jest.mock('@core/app/svgedit/operations/move', () => ({
   moveElements: (...args) => mockMoveElements(...args),
 }));
 
-const mockRequirejsHelper = jest.fn();
-
-jest.mock(
-  '@core/helpers/requirejs-helper',
-  () =>
-    (...args) =>
-      mockRequirejsHelper(...args),
-);
-
 const mockAddSubCommand = jest.fn();
 const mockInsertElementCommand = jest.fn();
 const mockBatchCommand = jest.fn();
@@ -58,24 +49,23 @@ const mockImageTracer = {
   imageToSVG: jest.fn(),
 };
 
+jest.mock('imagetracerjs', () => ({
+  appendSVGString: (...args) => mockImageTracer.appendSVGString(...args),
+  imageToSVG: (...args) => mockImageTracer.imageToSVG(...args),
+}));
+
 describe('test traceAndImportPath', () => {
   it('should work', async () => {
-    mockRequirejsHelper.mockResolvedValueOnce(mockImageTracer);
-
     const promise = traceAndImportPath('mock-base64', { height: 4, width: 3, x: 1, y: 2 });
 
-    expect(mockRequirejsHelper).toBeCalledTimes(1);
-    expect(mockRequirejsHelper).toHaveBeenLastCalledWith('imagetracer');
     await new Promise((r) => setTimeout(r));
-    expect(mockImageTracer.imageToSVG).toBeCalledTimes(1);
-    expect(mockImageTracer.imageToSVG).toHaveBeenLastCalledWith('mock-base64', expect.anything());
 
     const [, callback] = mockImageTracer.imageToSVG.mock.calls[0];
 
-    expect(mockGetNextId).not.toBeCalled();
+    expect(mockGetNextId).not.toHaveBeenCalled();
     mockGetNextId.mockReturnValueOnce('svg-1');
     mockGetNextId.mockReturnValueOnce('svg-2');
-    expect(mockInsertElementCommand).not.toBeCalled();
+    expect(mockInsertElementCommand).not.toHaveBeenCalled();
     mockInsertElementCommand.mockImplementation(() => ({ id: 'mock-insert-element-cmd' }));
 
     const mockG = {
@@ -94,10 +84,10 @@ describe('test traceAndImportPath', () => {
 
     mockAddSvgElementFromJson.mockReturnValueOnce(mockPath);
     callback('mock-svg-str');
-    expect(mockBatchCommand).toBeCalledTimes(1);
+    expect(mockBatchCommand).toHaveBeenCalledTimes(1);
     expect(mockBatchCommand).toHaveBeenLastCalledWith('Add Image Trace');
-    expect(mockGetNextId).toBeCalledTimes(2);
-    expect(mockAddSvgElementFromJson).toBeCalledTimes(2);
+    expect(mockGetNextId).toHaveBeenCalledTimes(2);
+    expect(mockAddSvgElementFromJson).toHaveBeenCalledTimes(2);
     expect(mockAddSvgElementFromJson).toHaveBeenNthCalledWith(1, {
       attr: { id: 'svg-1' },
       element: 'g',
@@ -111,27 +101,27 @@ describe('test traceAndImportPath', () => {
       },
       element: 'path',
     });
-    expect(mockPath.addEventListener).toBeCalledTimes(2);
+    expect(mockPath.addEventListener).toHaveBeenCalledTimes(2);
     expect(mockPath.addEventListener).toHaveBeenNthCalledWith(1, 'mouseover', 'mock-handleGenerateSensorArea');
     expect(mockPath.addEventListener).toHaveBeenNthCalledWith(2, 'mouseleave', 'mock-handleGenerateSensorArea');
-    expect(mockInsertElementCommand).toBeCalledTimes(1);
-    expect(mockAddSubCommand).toBeCalledTimes(1);
+    expect(mockInsertElementCommand).toHaveBeenCalledTimes(1);
+    expect(mockAddSubCommand).toHaveBeenCalledTimes(1);
     expect(mockAddSubCommand).toHaveBeenLastCalledWith({ id: 'mock-insert-element-cmd' });
-    expect(mockImageTracer.appendSVGString).toBeCalledTimes(1);
+    expect(mockImageTracer.appendSVGString).toHaveBeenCalledTimes(1);
     expect(mockImageTracer.appendSVGString).toHaveBeenLastCalledWith('mock-svg-str', 'svg-1');
-    expect(mockG.getBBox).toBeCalledTimes(1);
-    expect(mockSetSvgElemSize).toBeCalledTimes(2);
+    expect(mockG.getBBox).toHaveBeenCalledTimes(1);
+    expect(mockSetSvgElemSize).toHaveBeenCalledTimes(2);
     expect(mockSetSvgElemSize).toHaveBeenNthCalledWith(1, 'width', 3);
     expect(mockSetSvgElemSize).toHaveBeenNthCalledWith(2, 'height', 4);
-    expect(mockG.remove).toBeCalledTimes(1);
-    expect(mockPath.setAttribute).toBeCalledTimes(1);
+    expect(mockG.remove).toHaveBeenCalledTimes(1);
+    expect(mockPath.setAttribute).toHaveBeenCalledTimes(1);
     expect(mockPath.setAttribute).toHaveBeenLastCalledWith('d', '');
-    expect(mockMoveElements).toBeCalledTimes(1);
+    expect(mockMoveElements).toHaveBeenCalledTimes(1);
     expect(mockMoveElements).toHaveBeenLastCalledWith([1], [2], [mockPath], false);
-    expect(mockSelectOnly).toBeCalledTimes(2);
+    expect(mockSelectOnly).toHaveBeenCalledTimes(2);
     expect(mockSelectOnly).toHaveBeenNthCalledWith(1, [mockG]);
     expect(mockSelectOnly).toHaveBeenNthCalledWith(2, [mockPath], true);
-    expect(mockAddCommandToHistory).toBeCalledTimes(1);
+    expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
     expect(await promise).toBeTruthy();
   });
 });

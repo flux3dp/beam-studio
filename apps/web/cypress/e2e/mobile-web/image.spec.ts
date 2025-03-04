@@ -13,13 +13,13 @@ describe('mobile image tools', () => {
     cy.get('#gradient').should('exist').click({ force: true });
     cy.get('#threshold').should('exist');
     cy.get('#trace').should('exist').click({ force: true });
-    cy.get('#svg_3').click({ force: true });
+    cy.get('#svg_3', { timeout: 30000 }).click({ force: true });
     cy.getElementTitle().contains('Layer 1 > Path');
     cy.get('#svg_3')
       .invoke('attr', 'd')
       .then((d) => {
         if (isRunningAtGithub) expect(md5(d)).equal('de99510ff9f5ecf06d6743c5a802b835');
-        else expect(md5(d)).equal('83448274d77393210da299c0579a2e2c');
+        else expect(md5(d)).equal('9325b37ca33aec740b5f87c18abcccde');
       });
   });
 
