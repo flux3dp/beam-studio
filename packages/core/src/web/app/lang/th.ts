@@ -360,6 +360,7 @@ const lang: ILang = {
         bi_directional: 'สองทิศทาง',
         by: 'ตามค่า',
         ce_z_high_speed: 'แกน Z ความเร็วสูง',
+        ce_z_high_speed_link: 'https://support.flux3dp.com/hc/en-us/articles/10364060644495',
         color_adjustment: 'การปรับสี',
         color_adjustment_short: 'ช่องสี',
         color_strength: 'ความเข้ม',

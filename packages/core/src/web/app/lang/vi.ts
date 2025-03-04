@@ -360,6 +360,7 @@ const lang: ILang = {
         bi_directional: 'Hai Chiều',
         by: 'Bởi',
         ce_z_high_speed: 'Trục Z tốc độ cao',
+        ce_z_high_speed_link: 'https://support.flux3dp.com/hc/en-us/articles/10364060644495',
         color_adjustment: 'Điều chỉnh kênh màu',
         color_adjustment_short: 'Kênh màu',
         color_strength: 'Sức mạnh',

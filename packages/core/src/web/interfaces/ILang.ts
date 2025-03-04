@@ -358,6 +358,7 @@ export interface ILang {
         bi_directional: string;
         by: string;
         ce_z_high_speed: string;
+        ce_z_high_speed_link: string;
         color_adjustment: string;
         color_adjustment_short: string;
         color_strength: string;

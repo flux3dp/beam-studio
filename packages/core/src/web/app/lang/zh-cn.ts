@@ -360,6 +360,7 @@ const lang: ILang = {
         bi_directional: '双向',
         by: '',
         ce_z_high_speed: '高速 Z 轴',
+        ce_z_high_speed_link: 'https://support.flux3dp.com/hc/en-us/articles/10364060644495',
         color_adjustment: '色版调整',
         color_adjustment_short: '色版',
         color_strength: '强度',

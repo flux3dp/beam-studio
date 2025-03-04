@@ -360,6 +360,7 @@ const lang: ILang = {
         bi_directional: 'Bidirecional',
         by: 'Em',
         ce_z_high_speed: 'Eixo Z de alta velocidade',
+        ce_z_high_speed_link: 'https://support.flux3dp.com/hc/en-us/articles/10364060644495',
         color_adjustment: 'Ajuste de canal',
         color_adjustment_short: 'Canal',
         color_strength: 'Intensidade',

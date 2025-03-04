@@ -360,6 +360,7 @@ const lang: ILang = {
         bi_directional: 'Διπλής Κατεύθυνσης',
         by: 'Κατά',
         ce_z_high_speed: 'Άξονας Z υψηλής ταχύτητας',
+        ce_z_high_speed_link: 'https://support.flux3dp.com/hc/en-us/articles/10364060644495',
         color_adjustment: 'Ρύθμιση καναλιού',
         color_adjustment_short: 'Κανάλι',
         color_strength: 'Δύναμη',
