@@ -286,6 +286,9 @@ const ConnectMachineIp = (): React.JSX.Element => {
 
   const onFinish = async () => {
     const { device } = state;
+
+    if (!device) return;
+
     const deviceModel = allWorkareas.has(device.model) ? device.model : 'fbb1b';
 
     BeamboxPreference.write('model', deviceModel);

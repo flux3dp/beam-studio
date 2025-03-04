@@ -55,7 +55,7 @@ class Menu extends AbstractMenu {
 
     const shouldShowRulers = BeamboxPreference.read('show_rulers');
 
-    changeMenuItemChecked(['SHOW_RULERS'], shouldShowRulers ?? false);
+    changeMenuItemChecked(['SHOW_RULERS'], shouldShowRulers);
 
     const isUsingLayerColor = BeamboxPreference.read('use_layer_color');
 

@@ -1,38 +1,38 @@
 import React from 'react';
 
-import SelectControl from '@core/app/components/settings/SelectControl';
-import type { OptionValues } from '@core/app/constants/enums';
+import type { DefaultOptionType } from 'antd/es/select';
+
+import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
 import isDev from '@core/helpers/is-dev';
 
+import SettingSelect from './components/SettingSelect';
+
 interface Props {
-  multipassCompensationOptions: Array<{ label: string; selected: boolean; value: OptionValues }>;
-  oneWayPrintingOptions: Array<{ label: string; selected: boolean; value: OptionValues }>;
-  updateBeamboxPreferenceChange: (key: string, newVal: any) => void;
+  options: DefaultOptionType[];
 }
 
-function Experimental({
-  multipassCompensationOptions,
-  oneWayPrintingOptions,
-  updateBeamboxPreferenceChange,
-}: Props): React.JSX.Element {
-  if (!isDev()) {
-    return null;
-  }
+function Experimental({ options }: Props): React.ReactNode {
+  const getPreference = useSettingStore((state) => state.getPreference);
+  const setPreference = useSettingStore((state) => state.setPreference);
+
+  if (!isDev()) return null;
 
   return (
     <>
       <div className="subtitle">Experimental Features</div>
-      <SelectControl
+      <SettingSelect
+        defaultValue={getPreference('multipass-compensation')}
         id="multipass-compensation"
         label="Multipass Compensation"
-        onChange={(e) => updateBeamboxPreferenceChange('multipass-compensation', e.target.value)}
-        options={multipassCompensationOptions}
+        onChange={(e) => setPreference('multipass-compensation', e)}
+        options={options}
       />
-      <SelectControl
+      <SettingSelect
+        defaultValue={getPreference('one-way-printing')}
         id="one-way-printing"
         label="One-way Printing"
-        onChange={(e) => updateBeamboxPreferenceChange('one-way-printing', e.target.value)}
-        options={oneWayPrintingOptions}
+        onChange={(e) => setPreference('one-way-printing', e)}
+        options={options}
       />
     </>
   );

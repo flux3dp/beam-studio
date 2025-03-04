@@ -5,7 +5,7 @@ import { Checkbox, Modal, Segmented, Switch } from 'antd';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
-import { CHUCK_ROTARY_DIAMETER, getSupportInfo, RotaryType } from '@core/app/constants/add-on';
+import { getSupportInfo, RotaryType } from '@core/app/constants/add-on';
 import RotaryIcons from '@core/app/icons/rotary/RotaryIcons';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import UnitInput from '@core/app/widgets/UnitInput';
@@ -28,18 +28,16 @@ const RotarySettings = ({ onClose }: Props): React.JSX.Element => {
 
   const workarea = useMemo(() => beamboxPreference.read('workarea'), []);
   const supportInfo = useMemo(() => getSupportInfo(workarea), [workarea]);
-  const [rotaryMode, setRotaryMode] = useState<number>(beamboxPreference.read('rotary_mode') ?? 0);
-  const [rotaryType, setRotaryType] = useState<number>(beamboxPreference.read('rotary-type') || RotaryType.Roller);
-  const [diameter, setDiaMeter] = useState<number>(
-    beamboxPreference.read('rotary-chuck-obj-d') ?? CHUCK_ROTARY_DIAMETER,
-  );
+  const [rotaryMode, setRotaryMode] = useState<boolean>(beamboxPreference.read('rotary_mode'));
+  const [rotaryType, setRotaryType] = useState<number>(beamboxPreference.read('rotary-type'));
+  const [diameter, setDiaMeter] = useState(beamboxPreference.read('rotary-chuck-obj-d'));
   const [extend, setExtend] = useState<boolean>(Boolean(beamboxPreference.read('extend-rotary-workarea')));
   const [mirror, setMirror] = useState<boolean>(Boolean(beamboxPreference.read('rotary-mirror')));
   const isInch = useMemo(() => storage.get('default-units') === 'inches', []);
 
   const handleSave = async () => {
     const rotaryChanged = rotaryMode !== beamboxPreference.read('rotary_mode');
-    const extendChanged = extend !== Boolean(beamboxPreference.read('extend-rotary-workarea'));
+    const extendChanged = extend !== beamboxPreference.read('extend-rotary-workarea');
 
     beamboxPreference.write('rotary_mode', rotaryMode);
     beamboxPreference.write('rotary-type', rotaryType);
