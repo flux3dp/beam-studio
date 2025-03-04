@@ -7,7 +7,6 @@ requirejs.config({
     jquery: '../lib/svgeditor/jquery',
     underscore: '../lib/underscore',
     svgeditor: '../lib/svgeditor',
-    imagetracer: '../lib/svgeditor/imagetracer',
     cssHome: '../../css/3rd-party-plugins',
     dxf2svg: '../lib/dxf2svg',
     // SVG Editor Libraries Begin

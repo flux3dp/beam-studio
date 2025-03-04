@@ -17,6 +17,7 @@ module.exports = [
       main: path.resolve(app, 'main.ts'),
       ['potrace.worker']: path.resolve(coreWeb, 'helpers/potrace/potrace.worker.ts'),
       ['clipper.worker']: path.resolve(coreWeb, 'helpers/clipper/clipper.worker.ts'),
+      ['image-tracer.worker']: path.resolve(coreWeb, 'helpers/image-tracer/image-tracer.worker.ts'),
       ['image-symbol.worker']: path.resolve(coreWeb, 'helpers/symbol-helper/image-symbol.worker.ts'),
     },
     externals: {

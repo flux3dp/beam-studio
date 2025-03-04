@@ -1,3 +1,5 @@
+// @ts-expect-error don't has type definition
+import ImageTracer from 'imagetracerjs';
 import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
@@ -16,33 +18,28 @@ import updateElementColor from '@core/helpers/color/updateElementColor';
 import i18n from '@core/helpers/i18n';
 import imageData from '@core/helpers/image-data';
 import jimpHelper from '@core/helpers/jimp-helper';
-import requirejsHelper from '@core/helpers/requirejs-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import browser from '@core/implementations/browser';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 let svgCanvas: ISVGCanvas;
-let svgedit;
+let svgedit: any;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
   svgedit = globalSVG.Edit;
 });
 
-const getSelectedElem = (): SVGImageElement => {
+const getSelectedElem = (): null | SVGImageElement => {
   const selectedElements = svgCanvas.getSelectedElems();
   const len = selectedElements.length;
 
-  if (len > 1) {
-    return null;
-  }
+  if (len > 1) return null;
 
   const element = selectedElements[0] as SVGImageElement;
 
-  if (element.tagName !== 'image') {
-    return null;
-  }
+  if (element.tagName !== 'image') return null;
 
   return element;
 };
@@ -55,10 +52,10 @@ const getImageAttributes = (
   shading: boolean;
   threshold: number;
 } => {
-  const imgUrl = elem.getAttribute('origImage') || elem.getAttribute('xlink:href');
+  const imgUrl = (elem.getAttribute('origImage') || elem.getAttribute('xlink:href')) as string;
   const isFullColor = elem.getAttribute('data-fullcolor') === '1';
   const shading = elem.getAttribute('data-shading') === 'true';
-  let threshold = Number.parseInt(elem.getAttribute('data-threshold'), 10);
+  let threshold = Number.parseInt(elem.getAttribute('data-threshold') || '128', 10);
 
   if (Number.isNaN(threshold)) {
     threshold = 128;
@@ -89,7 +86,7 @@ const generateBase64Image = (
             threshold,
           },
       isFullResolution: true,
-      onComplete(result) {
+      onComplete(result: any) {
         resolve(result.pngBase64);
       },
     });
@@ -101,7 +98,7 @@ const addBatchCommand = (
   changes: { [key: string]: boolean | number | string | undefined },
 ): IBatchCommand => {
   const batchCommand: IBatchCommand = new history.BatchCommand(commandName);
-  const setAttribute = (key: string, value) => {
+  const setAttribute = (key: string, value: any) => {
     undoManager.beginUndoableChange(key, [elem]);
 
     if (value === undefined) {
@@ -195,49 +192,75 @@ const generateStampBevel = async (elem?: SVGImageElement): Promise<void> => {
   progress.popById('photo-edit-processing');
 };
 
-const traceImage = async (img?: SVGImageElement): Promise<void> => {
-  const element = img || getSelectedElem();
+const traceImage = async (img = getSelectedElem()): Promise<void> => {
+  const element = img;
 
-  if (!element) {
-    return;
-  }
+  if (!element) return;
 
   const { imgUrl, shading, threshold } = getImageAttributes(element);
 
   if (shading) {
-    alertCaller.popUp({
-      message: i18n.lang.beambox.popup.vectorize_shading_image,
-    });
+    alertCaller.popUp({ message: i18n.lang.beambox.popup.vectorize_shading_image });
 
     return;
   }
 
+  const worker = new Worker(
+    new URL(/* webpackChunkName: "image-tracer.worker" */ './image-tracer/image-tracer.worker.ts', import.meta.url),
+  );
+  let canceled = false;
+
   progress.openNonstopProgress({
     id: 'vectorize-image',
     message: i18n.lang.beambox.photo_edit_panel.processing,
+    onCancel: () => {
+      worker.terminate();
+      canceled = true;
+    },
   });
 
-  const ImageTracer = await requirejsHelper('imagetracer');
   const batchCmd = new history.BatchCommand('Vectorize Image');
   const imgBBox = element.getBBox();
   const angle = svgedit.utilities.getRotationAngle(element);
-  const grayScaleUrl = await new Promise((resolve) =>
+  const grayScaleImageData = await new Promise<any>((resolve) =>
     imageData(imgUrl, {
-      grayscale: {
-        is_rgba: true,
-        is_shading: false,
-        is_svg: false,
-        threshold: shading ? 128 : threshold,
-      },
+      grayscale: { is_rgba: true, is_shading: false, is_svg: false, threshold: shading ? 128 : threshold },
       height: Number(element.getAttribute('height')),
       isFullResolution: true,
-      onComplete: (result) => resolve(result.pngBase64),
+      onComplete: (result: any) => resolve(result.data),
       width: Number(element.getAttribute('width')),
     }),
   );
-  const svgStr = (
-    await new Promise<string>((resolve) => ImageTracer.imageToSVG(grayScaleUrl, (str) => resolve(str), 'detailed'))
-  ).replace(/<\/?svg[^>]*>/g, '');
+
+  const res = await new Promise<{ data: { svg: string }; success: true } | { success: false }>((resolve) => {
+    const checkCancelInterval = setInterval(() => {
+      if (canceled) {
+        clearInterval(checkCancelInterval);
+        resolve({ success: false });
+      }
+    }, 1000);
+
+    worker.postMessage({ imageData: grayScaleImageData });
+
+    worker.onerror = (e) => {
+      console.error(e);
+
+      clearInterval(checkCancelInterval);
+      resolve({ success: false });
+      worker.terminate();
+      alertCaller.popUpError({ message: 'Failed to trace image' });
+    };
+
+    worker.onmessage = ({ data }) => {
+      clearInterval(checkCancelInterval);
+      resolve({ data, success: true });
+      worker.terminate();
+    };
+  });
+
+  if (!res.success) return;
+
+  const { svg: svgStr } = res.data;
   const gId = svgCanvas.getNextId();
   const g = svgCanvas.addSvgElementFromJson<SVGGElement>({ attr: { id: gId }, element: 'g' });
 
@@ -247,13 +270,9 @@ const traceImage = async (img?: SVGImageElement): Promise<void> => {
 
   let gBBox = g.getBBox();
 
-  if (imgBBox.width !== gBBox.width) {
-    svgCanvas.setSvgElemSize('width', imgBBox.width);
-  }
+  if (imgBBox.width !== gBBox.width) svgCanvas.setSvgElemSize('width', imgBBox.width);
 
-  if (imgBBox.height !== gBBox.height) {
-    svgCanvas.setSvgElemSize('height', imgBBox.height);
-  }
+  if (imgBBox.height !== gBBox.height) svgCanvas.setSvgElemSize('height', imgBBox.height);
 
   gBBox = g.getBBox();
 
@@ -261,16 +280,15 @@ const traceImage = async (img?: SVGImageElement): Promise<void> => {
   const dy = imgBBox.y + 0.5 * imgBBox.height - (gBBox.y + 0.5 * gBBox.height);
   let d = '';
 
-  for (let i = 0; i < g.childNodes.length; i += 1) {
+  for (let i = 0; i < g.childNodes.length; i++) {
     const child = g.childNodes[i] as SVGPathElement;
 
-    if (child.getAttribute('opacity') !== '0') {
-      d += child.getAttribute('d');
-    }
+    if (child.getAttribute('opacity') !== '0') d += child.getAttribute('d');
 
     child.remove();
-    i -= 1;
+    i--;
   }
+
   g.remove();
 
   if (!d) {
@@ -281,12 +299,7 @@ const traceImage = async (img?: SVGImageElement): Promise<void> => {
   }
 
   const path = svgCanvas.addSvgElementFromJson({
-    attr: {
-      fill: '#000000',
-      id: svgCanvas.getNextId(),
-      'stroke-width': 1,
-      'vector-effect': 'non-scaling-stroke',
-    },
+    attr: { fill: '#000000', id: svgCanvas.getNextId(), 'stroke-width': 1, 'vector-effect': 'non-scaling-stroke' },
     element: 'path',
   });
 

@@ -1,6 +1,8 @@
+// @ts-expect-error don't has type definition
+import ImageTracer from 'imagetracerjs';
+
 import history from '@core/app/svgedit/history/history';
 import { moveElements } from '@core/app/svgedit/operations/move';
-import requirejsHelper from '@core/helpers/requirejs-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
@@ -14,7 +16,6 @@ const traceAndImportPath = async (
   imgBase64: string,
   dimension: { height: number; width: number; x: number; y: number },
 ): Promise<boolean> => {
-  const ImageTracer = await requirejsHelper('imagetracer');
   const { height, width, x, y } = dimension;
 
   return new Promise((resolve) => {
