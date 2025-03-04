@@ -74,7 +74,7 @@ class BeamboxInit {
     }
 
     if (!supportInfo.rotary) {
-      BeamboxPreference.write('rotary_mode', 0);
+      BeamboxPreference.write('rotary_mode', false);
     }
 
     if (!storage.get('default-units')) {
@@ -105,7 +105,7 @@ class BeamboxInit {
   async showStartUpDialogs(): Promise<void> {
     await this.askAndInitSentry();
 
-    const isNewUser = !!storage.get('new-user');
+    const isNewUser = Boolean(storage.get('new-user'));
     const defaultFontConvert = BeamboxPreference.read('font-convert');
     const hasMachineConnection = checkConnection();
 
@@ -139,34 +139,8 @@ class BeamboxInit {
       await this.showQuestionnaire();
     }
 
-    if (defaultFontConvert === undefined) {
-      if (isNewUser) {
-        BeamboxPreference.write('font-convert', '2.0');
-      } else {
-        const version = await updateFontConvert();
-
-        BeamboxPreference.write('font-convert', version);
-      }
-    }
-
-    const autoSwitchTab = BeamboxPreference.read('auto-switch-tab');
-
-    if (autoSwitchTab === undefined) {
-      if (isNewUser) {
-        BeamboxPreference.write('auto-switch-tab', false);
-      } else {
-        const res = await new Promise<boolean>((resolve) => {
-          Alert.popUp({
-            buttonType: AlertConstants.YES_NO,
-            caption: i18n.lang.beambox.popup.auto_switch_tab.title,
-            message: i18n.lang.beambox.popup.auto_switch_tab.message,
-            onNo: () => resolve(false),
-            onYes: () => resolve(true),
-          });
-        });
-
-        BeamboxPreference.write('auto-switch-tab', res);
-      }
+    if (!defaultFontConvert && !isNewUser) {
+      BeamboxPreference.write('font-convert', await updateFontConvert());
     }
 
     ratingHelper.init();
@@ -181,7 +155,7 @@ class BeamboxInit {
 
     const { NS, utilities } = window.svgedit;
     const guidesLines = (() => {
-      const svgdoc = document.getElementById('svgcanvas').ownerDocument;
+      const svgdoc = document.getElementById('svgcanvas')!.ownerDocument;
       const linesGroup = svgdoc.createElementNS(NS.SVG, 'svg');
       const lineVertical = svgdoc.createElementNS(NS.SVG, 'line');
       const lineHorizontal = svgdoc.createElementNS(NS.SVG, 'line');
@@ -254,8 +228,8 @@ class BeamboxInit {
     if (FontConstants[lang]) {
       if (web && FontConstants[lang].web) {
         defaultFontFamily = FontConstants[lang].web;
-      } else if (FontConstants[lang][os]) {
-        defaultFontFamily = FontConstants[lang][os];
+      } else if ((FontConstants[lang] as any)[os]) {
+        defaultFontFamily = (FontConstants[lang] as any)[os];
       }
     }
 
@@ -286,11 +260,11 @@ class BeamboxInit {
           id: 'ask-sentry',
           message: LANG.beambox.popup.sentry.message,
           onNo: () => {
-            storage.set('enable-sentry', 0);
+            storage.set('enable-sentry', false);
             resolve();
           },
           onYes: () => {
-            storage.set('enable-sentry', 1);
+            storage.set('enable-sentry', true);
             sentryHelper.initSentry();
             resolve();
           },
@@ -425,7 +399,7 @@ class BeamboxInit {
       });
     }
 
-    return null;
+    return Promise.resolve(false);
   }
 
   private showChangeLog = () =>
@@ -437,23 +411,23 @@ class BeamboxInit {
     const res = await checkQuestionnaire();
 
     if (!res) {
-      return null;
+      return;
     }
 
     const lastQuestionnaireVersion = storage.get('questionnaire-version') || 0;
 
     if (lastQuestionnaireVersion >= res.version) {
-      return null;
+      return;
     }
 
-    let url: string;
+    let url: string = '';
 
     if (res.urls) {
       url = res.urls[i18n.getActiveLang()] || res.urls.en;
     }
 
     if (!url) {
-      return null;
+      return;
     }
 
     storage.set('questionnaire-version', res.version);
