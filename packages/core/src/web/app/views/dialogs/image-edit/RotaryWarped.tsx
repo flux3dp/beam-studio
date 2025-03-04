@@ -5,7 +5,6 @@ import { Button, Modal, Segmented } from 'antd';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import progressCaller from '@core/app/actions/progress-caller';
-import { CHUCK_ROTARY_DIAMETER } from '@core/app/constants/add-on';
 import AlertIcons from '@core/app/icons/alerts/AlertIcons';
 import { getRotationAngle } from '@core/app/svgedit/transform/rotation';
 import UnitInput from '@core/app/widgets/UnitInput';
@@ -94,12 +93,8 @@ const RotaryWarped = ({ elem, onClose }: Props): React.JSX.Element => {
 
     return { ...imageInfo, initA: null, initB: null, rotation: r };
   }, [elem]);
-  const [diameterA, setDiaMeterA] = useState<number>(
-    initA ?? beamboxPreference.read('rotary-chuck-obj-d') ?? CHUCK_ROTARY_DIAMETER,
-  );
-  const [diameterB, setDiaMeterB] = useState<number>(
-    initB ?? beamboxPreference.read('rotary-chuck-obj-d') ?? CHUCK_ROTARY_DIAMETER,
-  );
+  const [diameterA, setDiaMeterA] = useState(initA ?? beamboxPreference.read('rotary-chuck-obj-d'));
+  const [diameterB, setDiaMeterB] = useState(initB ?? beamboxPreference.read('rotary-chuck-obj-d'));
   const img = useRef<HTMLImageElement>(new Image());
   const previewCanvas = useRef<HTMLCanvasElement>(null);
   const imgLoad = useRef<Promise<void>>(null);

@@ -90,7 +90,7 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   frequency: 27,
   halftone: 1, // 1 for fm, 2 for am
   height: -3,
-  ink: BeamboxPreference.read('multipass-compensation') !== false ? 3 : 1,
+  ink: BeamboxPreference.read('multipass-compensation') ? 3 : 1,
   kRatio: 100,
   minPower: 0,
   module: LayerModule.LASER_UNIVERSAL,
@@ -103,7 +103,7 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   repeat: 1,
   speed: 20,
   uv: 0,
-  wInk: BeamboxPreference.read('multipass-compensation') !== false ? -12 : -4,
+  wInk: BeamboxPreference.read('multipass-compensation') ? -12 : -4,
   wMultipass: 3,
   wobbleDiameter: -0.2,
   wobbleStep: -0.05,

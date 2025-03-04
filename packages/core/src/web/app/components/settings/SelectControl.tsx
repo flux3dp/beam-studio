@@ -7,7 +7,6 @@ interface Props {
   id?: string;
   label: string;
   onChange: (e) => void;
-
   options: Array<{ label: string; selected: boolean; value: any }>;
   url?: string;
 }

@@ -666,7 +666,7 @@ export default {
           }}
           onOk={(val) => {
             popDialogById(id);
-            beamboxPreference.write(id, val);
+            beamboxPreference.write(id as any, val);
             resolve(val);
           }}
           options={options}

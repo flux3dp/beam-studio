@@ -79,7 +79,7 @@ const App = (): React.JSX.Element => {
     <AlertProgressContextProvider messageApi={messageApi}>
       <DialogContextProvider>
         <ConfigProvider
-          locale={localeMap[navigator.language]}
+          locale={(localeMap as any)[navigator.language]}
           theme={{
             algorithm: defaultAlgorithm,
             components: {
@@ -127,7 +127,7 @@ const App = (): React.JSX.Element => {
 };
 
 const router = (container: Container): void => {
-  createRoot(container).render(<App />);
+  createRoot(container as any).render(<App />);
 };
 
 export default router;

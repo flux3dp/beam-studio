@@ -1,32 +1,31 @@
 import React from 'react';
 
+import type { DefaultOptionType } from 'antd/es/select';
+
+import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
 import useI18n from '@core/helpers/useI18n';
 
-import onOffOptionFactory from './onOffOptionFactory';
-import SelectControl from './SelectControl';
+import SettingSelect from './components/SettingSelect';
 import styles from './Settings.module.scss';
 
 interface Props {
-  getBeamboxPreferenceEditingValue: <T = string>(key: string) => T;
-  updateBeamboxPreferenceChange: (key: string, newVal: any) => void;
+  options: DefaultOptionType[];
 }
 
-const BB2Settings = ({ getBeamboxPreferenceEditingValue, updateBeamboxPreferenceChange }: Props): React.ReactNode => {
+const BB2Settings = ({ options }: Props): React.ReactNode => {
   const lang = useI18n();
-
-  const curveEngravingSpeedConstraintOptions = onOffOptionFactory(
-    getBeamboxPreferenceEditingValue<boolean>('curve_engraving_speed_limit') !== false,
-    { lang },
-  );
+  const getPreference = useSettingStore((state) => state.getPreference);
+  const setPreference = useSettingStore((state) => state.setPreference);
 
   return (
     <>
       <div className={styles.subtitle}>Beambox II</div>
-      <SelectControl
+      <SettingSelect
+        defaultValue={getPreference('curve_engraving_speed_limit')}
         id="set-curve-engraving-speed-contraint"
         label={lang.settings.curve_engraving_speed_limit}
-        onChange={(e) => updateBeamboxPreferenceChange('curve_engraving_speed_limit', e.target.value)}
-        options={curveEngravingSpeedConstraintOptions}
+        onChange={(e) => setPreference('curve_engraving_speed_limit', e)}
+        options={options}
       />
     </>
   );

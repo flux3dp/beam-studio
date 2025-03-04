@@ -801,7 +801,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   this.getRoot = () => svgroot;
   this.getRootElem = () => svgroot;
   this.getRootScreenMatrix = () => root_sctm;
-  this.getRotaryDisplayCoord = () => BeamboxPreference.read('rotary_y_coord') || 5;
+  this.getRotaryDisplayCoord = () => BeamboxPreference.read('rotary_y_coord');
   this.getRubberBox = () => rubberBox;
   this.getSelectedElems = (ungroupTempGroup = false) => {
     if (ungroupTempGroup && tempGroup) {
@@ -830,7 +830,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   this.setLastClickPoint = (point) => {
     lastClickPoint = point;
   };
-  this.setRotaryDisplayCoord = (val) => BeamboxPreference.write('rotary_y_coord', val);
+  this.setRotaryDisplayCoord = (val: number) => BeamboxPreference.write('rotary_y_coord', val);
 
   this.unsafeAccess = {
     setCurrentMode: (v) => {
@@ -1790,7 +1790,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     svgcontent.setAttribute('data-en_af', String(isUsingAF));
 
     if (supportInfo.passThrough && BeamboxPreference.read('pass-through')) {
-      svgcontent.setAttribute('data-pass_through', BeamboxPreference.read('pass-through-height'));
+      svgcontent.setAttribute('data-pass_through', String(BeamboxPreference.read('pass-through-height')));
     }
 
     const workareaElement = document.getElementById('workarea');

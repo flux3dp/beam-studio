@@ -34,7 +34,7 @@ export interface WorkArea {
   cameraCenter?: number[]; // [mm, mm]
   curveSpeedLimit?: number; // mm/s
   deep?: number; // mm
-  dismensionCustomizable?: boolean;
+  dimensionCustomizable?: boolean;
   // extra displayHeight for modules
   displayHeight?: number; // mm
   height: number; // mm
@@ -159,7 +159,7 @@ const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     width: 400,
   },
   fpm1: {
-    dismensionCustomizable: true,
+    dimensionCustomizable: true,
     height: 150,
     label: 'Promark',
     maxSpeed: 10000,
@@ -173,8 +173,8 @@ const workareaConstants: Record<WorkAreaModel, WorkArea> = {
 export const getWorkarea = (model: WorkAreaModel, fallbackModel: WorkAreaModel = 'fbm1'): WorkArea => {
   const res = workareaConstants[model] || workareaConstants[fallbackModel];
 
-  if (res.dismensionCustomizable) {
-    const customizeDimension = beamboxPreference.read('customized-dimension') ?? {};
+  if (res.dimensionCustomizable) {
+    const customizeDimension = beamboxPreference.read('customized-dimension');
     const { height = res.height, width = res.width } = customizeDimension[model] || {};
 
     return { ...res, height, pxHeight: height * dpmm, pxWidth: width * dpmm, width };

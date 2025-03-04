@@ -16,7 +16,7 @@ export const checkModuleCalibration = async (device: IDeviceInfo, lang: ILang): 
     return;
   }
 
-  const moduleOffsets = BeamboxPreference.read('module-offsets') || {};
+  const moduleOffsets = BeamboxPreference.read('module-offsets');
   const getLayers = (module: LayerModules) =>
     document.querySelectorAll(
       `#svgcontent > g.layer[data-module="${module}"]:not([display="none"]):not([data-repeat="0"])`,

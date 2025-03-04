@@ -1,24 +1,20 @@
+import type { BeamboxPreferenceKey, BeamboxPreferenceValue } from '@core/app/actions/beambox/beambox-preference';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import type { IBatchCommand, ICommand } from '@core/interfaces/IHistory';
 
 import { BaseHistoryCommand } from './history';
 
-class BeamboxPreferenceCommand extends BaseHistoryCommand implements ICommand {
-  private key: string;
-
-  private oldValue: any;
-
-  private newValue: any;
-
+class BeamboxPreferenceCommand<Key extends BeamboxPreferenceKey> extends BaseHistoryCommand implements ICommand {
   elements = () => [];
 
   type = () => 'BeamboxPreferenceCommand';
 
-  constructor(key: string, oldValue: any, newValue: any) {
+  constructor(
+    private key: Key,
+    private oldValue: BeamboxPreferenceValue<Key>,
+    private newValue: BeamboxPreferenceValue<Key>,
+  ) {
     super();
-    this.key = key;
-    this.oldValue = oldValue;
-    this.newValue = newValue;
   }
 
   doApply = (): void => {
@@ -30,11 +26,11 @@ class BeamboxPreferenceCommand extends BaseHistoryCommand implements ICommand {
   };
 }
 
-export const changeBeamboxPreferenceValue = (
-  key: string,
-  value: any,
+export function changeBeamboxPreferenceValue<Key extends BeamboxPreferenceKey>(
+  key: Key,
+  value: BeamboxPreferenceValue<Key>,
   opts: { parentCmd?: IBatchCommand } = {},
-): BeamboxPreferenceCommand => {
+): BeamboxPreferenceCommand<Key> {
   const { parentCmd } = opts;
   const oldValue = beamboxPreference.read(key);
 
@@ -45,6 +41,6 @@ export const changeBeamboxPreferenceValue = (
   if (parentCmd) parentCmd.addSubCommand(cmd);
 
   return cmd;
-};
+}
 
 export default BeamboxPreferenceCommand;
