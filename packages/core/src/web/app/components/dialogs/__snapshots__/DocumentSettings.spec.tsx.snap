@@ -377,7 +377,7 @@ exports[`test DocumentSettings should render correctly 1`] = `
                         <label
                           for="pass_through"
                         >
-                          Pass Through
+                          Passthrough
                         </label>
                       </div>
                       <div
@@ -819,7 +819,7 @@ exports[`test DocumentSettings should render correctly 2`] = `
                         <label
                           for="pass_through"
                         >
-                          Pass Through
+                          Passthrough
                         </label>
                       </div>
                       <div
@@ -1566,7 +1566,7 @@ exports[`test DocumentSettings should render correctly 3`] = `
                         <label
                           for="pass_through"
                         >
-                          Pass Through
+                          Passthrough
                         </label>
                       </div>
                       <div
@@ -2428,7 +2428,7 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
                         <label
                           for="pass_through"
                         >
-                          Pass Through
+                          Passthrough
                         </label>
                       </div>
                       <div
@@ -3094,7 +3094,7 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
                         <label
                           for="pass_through"
                         >
-                          Pass Through
+                          Passthrough
                         </label>
                       </div>
                       <div

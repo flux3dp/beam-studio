@@ -25,7 +25,6 @@ const CurveEngravingTool = ({ className }: Props): JSX.Element => {
   const lang = useI18n().beambox.left_panel.label;
   const currentCursorMode = svgCanvas.getMode();
 
-  // TODO: add i18n
   return (
     <div className={className}>
       <LeftPanelButton
