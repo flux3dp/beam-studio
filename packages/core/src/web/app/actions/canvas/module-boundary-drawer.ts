@@ -3,7 +3,6 @@ import constant from '@core/app/actions/beambox/constant';
 import { getSupportInfo } from '@core/app/constants/add-on';
 import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
 import moduleBoundary from '@core/app/constants/layer-module/module-boundary';
-import moduleOffsets from '@core/app/constants/layer-module/module-offsets';
 import workareaManager from '@core/app/svgedit/workarea';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
@@ -86,7 +85,7 @@ const update = (module: LayerModule): void => {
     right: 0,
     top: 0,
   };
-  const offsets = { ...moduleOffsets, ...BeamboxPreference.read('module-offsets') };
+  const offsets = { ...BeamboxPreference.read('module-offsets') };
   const [offsetX, offsetY] = offsets[module] || [0, 0];
 
   if (module === LayerModule.PRINTER && offsetY < 0) {

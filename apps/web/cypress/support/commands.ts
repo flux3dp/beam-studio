@@ -14,7 +14,7 @@
 const setStorage = () => {
   window.localStorage.setItem('printer-is-ready', 'true');
   window.localStorage.setItem('keep-flux-id-login', 'true');
-  window.localStorage.setItem('enable-sentry', '0');
+  window.localStorage.setItem('enable-sentry', 'false');
   window.localStorage.setItem(
     'alert-config',
     JSON.stringify({

@@ -1,8 +1,7 @@
-import { OptionValues } from '@core/app/constants/enums';
 import i18n from '@core/helpers/i18n';
 import type { ILang } from '@core/interfaces/ILang';
 
-const onOffOptionFactory = <T = OptionValues>(
+const onOffOptionFactory = <T extends boolean | number | string>(
   isOnSelected: boolean,
   opts?: { lang?: ILang; offLabel?: string; offValue?: T; onLabel?: string; onValue?: T },
 ): Array<{ label: string; selected: boolean; value: T }> => {
@@ -12,12 +11,12 @@ const onOffOptionFactory = <T = OptionValues>(
     {
       label: onLabel || lang?.settings.on || 'On',
       selected: isOnSelected,
-      value: (onValue ?? OptionValues.TRUE) as T,
+      value: (onValue ?? true) as T,
     },
     {
       label: offLabel || lang?.settings.off || 'Off',
       selected: !isOnSelected,
-      value: (offValue ?? OptionValues.FALSE) as T,
+      value: (offValue ?? false) as T,
     },
   ];
 };

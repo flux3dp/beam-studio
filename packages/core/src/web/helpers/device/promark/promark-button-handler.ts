@@ -71,8 +71,8 @@ class PromarkButtonHandler {
   };
 
   onDocChanged = (): void => {
-    this.shouldFrameFirst = !!beamboxPreference.read('frame-before-start');
-    this.updateRequirement('enabled', !!beamboxPreference.read('promark-start-button'));
+    this.shouldFrameFirst = beamboxPreference.read('frame-before-start');
+    this.updateRequirement('enabled', beamboxPreference.read('promark-start-button'));
   };
 
   onModelChanged = (): void => {

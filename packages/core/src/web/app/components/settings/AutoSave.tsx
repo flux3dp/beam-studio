@@ -1,109 +1,94 @@
 import * as React from 'react';
 
+import type { DefaultOptionType } from 'antd/es/select';
 import classNames from 'classnames';
 
-import Controls from '@core/app/components/settings/Control';
-import SelectControl from '@core/app/components/settings/SelectControl';
 import PathInput, { InputType } from '@core/app/widgets/PathInput';
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import i18n from '@core/helpers/i18n';
+import isWeb from '@core/helpers/is-web';
 import type { IConfig } from '@core/interfaces/IAutosave';
 
+import SettingFormItem from './components/SettingFormItem';
+import SettingSelect from './components/SettingSelect';
+
 interface Props {
-  autoSaveOptions: Array<{ label: string; selected: boolean; value: any }>;
   editingAutosaveConfig: IConfig;
-  isWeb: boolean;
-  updateState: (state: any) => void;
-  warnings: { [key: string]: string };
+  options: DefaultOptionType[];
+  setEditingAutosaveConfig: (config: IConfig) => void;
+  setWarnings: (warnings: Record<string, string>) => void;
+  warnings: Record<string, string>;
 }
 
-function AutoSave({ autoSaveOptions, editingAutosaveConfig, isWeb, updateState, warnings }: Props): React.JSX.Element {
-  if (isWeb) {
-    return null;
-  }
-
+function AutoSave({
+  editingAutosaveConfig,
+  options,
+  setEditingAutosaveConfig,
+  setWarnings,
+  warnings,
+}: Props): null | React.JSX.Element {
   const { lang } = i18n;
+
+  if (isWeb()) return null;
 
   return (
     <>
       <div className="subtitle">{lang.settings.groups.autosave}</div>
-      <SelectControl
+      <SettingSelect
+        defaultValue={editingAutosaveConfig.enabled}
         id="set-auto-save"
         label={lang.settings.autosave_enabled}
-        onChange={(e) => {
-          updateState({
-            editingAutosaveConfig: {
-              ...editingAutosaveConfig,
-              enabled: e.target.value === 'TRUE',
-            },
-          });
-        }}
-        options={autoSaveOptions}
+        onChange={(enabled) => setEditingAutosaveConfig({ ...editingAutosaveConfig, enabled })}
+        options={options}
       />
-      <Controls label={lang.settings.autosave_path} warningText={warnings.autosave_directory}>
+      <SettingFormItem
+        id="auto-save-directory"
+        label={lang.settings.autosave_path}
+        warning={warnings.autosave_directory}
+      >
         <PathInput
           buttonTitle={lang.general.choose_folder}
-          className={classNames({ 'with-error': !!warnings.autosave_directory })}
+          className={classNames({ 'with-error': Boolean(warnings.autosave_directory) })}
           data-id="location-input"
           defaultValue={editingAutosaveConfig.directory}
           forceValidValue={false}
-          getValue={(val: string, isValid: boolean) => {
+          getValue={(directory: string, isValid: boolean) => {
             if (!isValid) {
               warnings.autosave_directory = lang.settings.autosave_path_not_correct;
+              console.log(warnings);
             } else {
               delete warnings.autosave_directory;
             }
 
-            updateState({
-              editingAutosaveConfig: {
-                ...editingAutosaveConfig,
-                directory: val,
-              },
-              warnings: {
-                ...warnings,
-              },
-            });
+            setEditingAutosaveConfig({ ...editingAutosaveConfig, directory });
+            setWarnings(warnings);
           }}
           type={InputType.FOLDER}
         />
-      </Controls>
-      <Controls label={lang.settings.autosave_interval}>
+      </SettingFormItem>
+      <SettingFormItem id="auto-save-interval" label={lang.settings.autosave_interval}>
         <UnitInput
           className={{ half: true }}
           decimal={0}
           defaultValue={editingAutosaveConfig.timeInterval}
-          getValue={(val: number) => {
-            updateState({
-              editingAutosaveConfig: {
-                ...editingAutosaveConfig,
-                timeInterval: val,
-              },
-            });
-          }}
+          getValue={(timeInterval) => setEditingAutosaveConfig({ ...editingAutosaveConfig, timeInterval })}
           id="save-every"
           max={60}
           min={1}
           unit={lang.monitor.minute}
         />
-      </Controls>
-      <Controls label={lang.settings.autosave_number}>
+      </SettingFormItem>
+      <SettingFormItem id="auto-save-maximum-count" label={lang.settings.autosave_number}>
         <UnitInput
           className={{ half: true }}
           decimal={0}
           defaultValue={editingAutosaveConfig.fileNumber}
-          getValue={(val: number) => {
-            updateState({
-              editingAutosaveConfig: {
-                ...editingAutosaveConfig,
-                fileNumber: val,
-              },
-            });
-          }}
+          getValue={(fileNumber) => setEditingAutosaveConfig({ ...editingAutosaveConfig, fileNumber })}
           id="number-of-auto-save"
           max={10}
           min={1}
         />
-      </Controls>
+      </SettingFormItem>
     </>
   );
 }

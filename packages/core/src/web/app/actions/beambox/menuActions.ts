@@ -164,7 +164,7 @@ export default {
     }
   },
   ANTI_ALIASING: (): boolean => viewMenu.toggleAntiAliasing(),
-  AUTO_ALIGN: (): void => svgCanvas.toggleAutoAlign(),
+  AUTO_ALIGN: (): boolean => svgCanvas.toggleAutoAlign(),
   BOX_GEN: (): void => Dialog.showBoxGen(),
   BUG_REPORT: (): void => {
     OutputError.downloadErrorLog();
@@ -303,6 +303,7 @@ export default {
     const continuousDrawing = BeamboxPreference.read('continuous_drawing');
 
     BeamboxPreference.write('continuous_drawing', false);
+
     Tutorials.startNewUserTutorial(() => {
       BeamboxPreference.write('continuous_drawing', continuousDrawing);
       MessageCaller.openMessage({

@@ -180,7 +180,7 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
 
     const canvasChangeHandler = () =>
       setHasPassthroughExtension(
-        beamboxPreference.read('pass-through') && getSupportInfo(workareaManager.model).passThrough,
+        Boolean(beamboxPreference.read('pass-through') && getSupportInfo(workareaManager.model).passThrough),
       );
 
     canvasChangeHandler();

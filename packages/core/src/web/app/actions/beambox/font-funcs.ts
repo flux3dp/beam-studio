@@ -624,7 +624,7 @@ const convertTextToPath = async (
 
     let hasUnsupportedFont = false;
 
-    if (BeamboxPreference.read('font-substitute') !== false) {
+    if (BeamboxPreference.read('font-substitute')) {
       const { font: newFont, unsupportedChar } = await substitutedFont(font, textElement);
 
       if (newFont.postscriptName !== origFontPostscriptName && unsupportedChar && unsupportedChar.length > 0) {
