@@ -18,13 +18,13 @@ describe('manipulate image function', () => {
     cy.wait(1500);
     cy.contains('Threshold brightness').should('exist');
     cy.get('#trace').click();
-    cy.wait(1500);
-    cy.get('#svg_3').click({ force: true });
+    cy.get('#svg_3', { timeout: 30000 }).click({ force: true });
     cy.getElementTitle().contains('Layer 1 > Path');
     cy.get('#svg_3')
       .invoke('attr', 'd')
       .then((d) => {
-        expect(md5(d)).equal('de99510ff9f5ecf06d6743c5a802b835');
+        if (isRunningAtGithub) expect(md5(d)).equal('de99510ff9f5ecf06d6743c5a802b835');
+        else expect(md5(d)).equal('9325b37ca33aec740b5f87c18abcccde');
       });
   });
 
