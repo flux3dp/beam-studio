@@ -2382,7 +2382,7 @@ exports[`test DrawingToolButtonGroup should render correctly when in pass throug
     <div
       class="container"
       id="left-PassThrough"
-      title="Pass Through"
+      title="Passthrough"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"
@@ -2570,7 +2570,7 @@ exports[`test DrawingToolButtonGroup should render correctly when model is bb2 1
     <div
       class="container"
       id="left-curve-engrave"
-      title="3D Curve"
+      title="Curve Engraving"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"
