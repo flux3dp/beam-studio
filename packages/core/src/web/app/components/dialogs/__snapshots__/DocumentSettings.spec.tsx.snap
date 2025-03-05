@@ -1818,10 +1818,12 @@ exports[`test DocumentSettings should render correctly 3`] = `
             class="rc-virtual-list-holder"
             style="max-height: 256px; overflow-y: hidden;"
           >
-            <div>
+            <div
+              style="height: 288px; position: relative; overflow: hidden;"
+            >
               <div
                 class="rc-virtual-list-holder-inner"
-                style="display: flex; flex-direction: column;"
+                style="display: flex; flex-direction: column; transform: translateY(0px); margin-left: 0px; position: absolute; left: 0px; right: 0px; top: 0px;"
               >
                 <div
                   aria-selected="true"
@@ -1883,6 +1885,23 @@ exports[`test DocumentSettings should render correctly 3`] = `
                     class="ant-select-item-option-content"
                   >
                     HEXA
+                  </div>
+                  <span
+                    aria-hidden="true"
+                    class="ant-select-item-option-state"
+                    style="user-select: none;"
+                    unselectable="on"
+                  />
+                </div>
+                <div
+                  aria-selected="false"
+                  class="ant-select-item ant-select-item-option"
+                  title="HEXA RF"
+                >
+                  <div
+                    class="ant-select-item-option-content"
+                  >
+                    HEXA RF
                   </div>
                   <span
                     aria-hidden="true"
@@ -1961,6 +1980,15 @@ exports[`test DocumentSettings should render correctly 3`] = `
                 </div>
               </div>
             </div>
+          </div>
+          <div
+            class="rc-virtual-list-scrollbar rc-virtual-list-scrollbar-vertical rc-virtual-list-scrollbar-visible"
+            style="position: absolute; width: 8px; top: 0px; bottom: 0px; right: 0px;"
+          >
+            <div
+              class="rc-virtual-list-scrollbar-thumb"
+              style="position: absolute; background: rgba(0, 0, 0, 0.5); border-radius: 99px; cursor: pointer; user-select: none; width: 100%; height: 227px; top: 0px;"
+            />
           </div>
         </div>
       </div>
@@ -2526,10 +2554,12 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
             class="rc-virtual-list-holder"
             style="max-height: 256px; overflow-y: hidden;"
           >
-            <div>
+            <div
+              style="height: 288px; position: relative; overflow: hidden;"
+            >
               <div
                 class="rc-virtual-list-holder-inner"
-                style="display: flex; flex-direction: column;"
+                style="display: flex; flex-direction: column; transform: translateY(0px); margin-left: 0px; position: absolute; left: 0px; right: 0px; top: 0px;"
               >
                 <div
                   aria-selected="false"
@@ -2591,6 +2621,23 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
                     class="ant-select-item-option-content"
                   >
                     HEXA
+                  </div>
+                  <span
+                    aria-hidden="true"
+                    class="ant-select-item-option-state"
+                    style="user-select: none;"
+                    unselectable="on"
+                  />
+                </div>
+                <div
+                  aria-selected="false"
+                  class="ant-select-item ant-select-item-option"
+                  title="HEXA RF"
+                >
+                  <div
+                    class="ant-select-item-option-content"
+                  >
+                    HEXA RF
                   </div>
                   <span
                     aria-hidden="true"
@@ -2669,6 +2716,15 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
                 </div>
               </div>
             </div>
+          </div>
+          <div
+            class="rc-virtual-list-scrollbar rc-virtual-list-scrollbar-vertical rc-virtual-list-scrollbar-visible"
+            style="position: absolute; width: 8px; top: 0px; bottom: 0px; right: 0px;"
+          >
+            <div
+              class="rc-virtual-list-scrollbar-thumb"
+              style="position: absolute; background: rgba(0, 0, 0, 0.5); border-radius: 99px; cursor: pointer; user-select: none; width: 100%; height: 227px; top: 0px;"
+            />
           </div>
         </div>
       </div>
@@ -3192,10 +3248,12 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
             class="rc-virtual-list-holder"
             style="max-height: 256px; overflow-y: hidden;"
           >
-            <div>
+            <div
+              style="height: 288px; position: relative; overflow: hidden;"
+            >
               <div
                 class="rc-virtual-list-holder-inner"
-                style="display: flex; flex-direction: column;"
+                style="display: flex; flex-direction: column; transform: translateY(0px); margin-left: 0px; position: absolute; left: 0px; right: 0px; top: 0px;"
               >
                 <div
                   aria-selected="false"
@@ -3257,6 +3315,23 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
                     class="ant-select-item-option-content"
                   >
                     HEXA
+                  </div>
+                  <span
+                    aria-hidden="true"
+                    class="ant-select-item-option-state"
+                    style="user-select: none;"
+                    unselectable="on"
+                  />
+                </div>
+                <div
+                  aria-selected="false"
+                  class="ant-select-item ant-select-item-option"
+                  title="HEXA RF"
+                >
+                  <div
+                    class="ant-select-item-option-content"
+                  >
+                    HEXA RF
                   </div>
                   <span
                     aria-hidden="true"
@@ -3335,6 +3410,15 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
                 </div>
               </div>
             </div>
+          </div>
+          <div
+            class="rc-virtual-list-scrollbar rc-virtual-list-scrollbar-vertical rc-virtual-list-scrollbar-visible"
+            style="position: absolute; width: 8px; top: 0px; bottom: 0px; right: 0px;"
+          >
+            <div
+              class="rc-virtual-list-scrollbar-thumb"
+              style="position: absolute; background: rgba(0, 0, 0, 0.5); border-radius: 99px; cursor: pointer; user-select: none; width: 100%; height: 227px; top: 0px;"
+            />
           </div>
         </div>
       </div>
@@ -3927,10 +4011,12 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
             class="rc-virtual-list-holder"
             style="max-height: 256px; overflow-y: hidden;"
           >
-            <div>
+            <div
+              style="height: 288px; position: relative; overflow: hidden;"
+            >
               <div
                 class="rc-virtual-list-holder-inner"
-                style="display: flex; flex-direction: column;"
+                style="display: flex; flex-direction: column; transform: translateY(0px); margin-left: 0px; position: absolute; left: 0px; right: 0px; top: 0px;"
               >
                 <div
                   aria-selected="false"
@@ -3992,6 +4078,23 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
                     class="ant-select-item-option-content"
                   >
                     HEXA
+                  </div>
+                  <span
+                    aria-hidden="true"
+                    class="ant-select-item-option-state"
+                    style="user-select: none;"
+                    unselectable="on"
+                  />
+                </div>
+                <div
+                  aria-selected="false"
+                  class="ant-select-item ant-select-item-option"
+                  title="HEXA RF"
+                >
+                  <div
+                    class="ant-select-item-option-content"
+                  >
+                    HEXA RF
                   </div>
                   <span
                     aria-hidden="true"
@@ -4070,6 +4173,15 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
                 </div>
               </div>
             </div>
+          </div>
+          <div
+            class="rc-virtual-list-scrollbar rc-virtual-list-scrollbar-vertical rc-virtual-list-scrollbar-visible"
+            style="position: absolute; width: 8px; top: 0px; bottom: 0px; right: 0px;"
+          >
+            <div
+              class="rc-virtual-list-scrollbar-thumb"
+              style="position: absolute; background: rgba(0, 0, 0, 0.5); border-radius: 99px; cursor: pointer; user-select: none; width: 100%; height: 227px; top: 0px;"
+            />
           </div>
         </div>
       </div>
