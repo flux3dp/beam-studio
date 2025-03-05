@@ -1583,7 +1583,7 @@ Machines > ‘Promark Name’ > Promark Settings`,
     height_desc: "Set each work area section's height.",
     help_links: {
       ado1: 'https://support.flux3dp.com/hc/en-us/articles/10140002160399',
-      // fbb2: 'https://support.flux3dp.com/hc/en-us/articles/11368979290383',
+      fbb2: 'https://support.flux3dp.com/hc/en-us/articles/11570021253263',
     },
     help_text: 'How to setup Passthrough for %(model)s?',
     object_length: 'Object Length',
