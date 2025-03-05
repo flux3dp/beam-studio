@@ -50,7 +50,7 @@ exports[`settings/Editor initially no warning 1`] = `
     Default Document Setting
     url:
     options:
-    [{"label":"beamo","selected":false,"value":"fbm1"},{"label":"Beambox","selected":true,"value":"fbb1b"},{"label":"Beambox Pro","selected":false,"value":"fbb1p"},{"label":"HEXA","selected":false,"value":"fhexa1"},{"label":"Ador","selected":false,"value":"ado1"},{"label":"Promark","selected":false,"value":"fpm1"},{"label":"Lazervida","selected":false,"value":"flv1"},{"label":"Beambox II","selected":false,"value":"fbb2"}]
+    [{"label":"beamo","selected":false,"value":"fbm1"},{"label":"Beambox","selected":true,"value":"fbb1b"},{"label":"Beambox Pro","selected":false,"value":"fbb1p"},{"label":"HEXA","selected":false,"value":"fhexa1"},{"label":"HEXA RF","selectedModel":false,"value":"fhx2rf3"},{"label":"Ador","selected":false,"value":"ado1"},{"label":"Promark","selected":false,"value":"fpm1"},{"label":"Lazervida","selected":false,"value":"flv1"},{"label":"Beambox II","selected":false,"value":"fbb2"}]
     <input
       class="select-control"
     />
@@ -277,7 +277,7 @@ exports[`settings/Editor initially no warning 2`] = `
     Default Document Setting
     url:
     options:
-    [{"label":"beamo","selected":false,"value":"fbm1"},{"label":"Beambox","selected":true,"value":"fbb1b"},{"label":"Beambox Pro","selected":false,"value":"fbb1p"},{"label":"HEXA","selected":false,"value":"fhexa1"},{"label":"Ador","selected":false,"value":"ado1"},{"label":"Promark","selected":false,"value":"fpm1"},{"label":"Lazervida","selected":false,"value":"flv1"},{"label":"Beambox II","selected":false,"value":"fbb2"}]
+    [{"label":"beamo","selected":false,"value":"fbm1"},{"label":"Beambox","selected":true,"value":"fbb1b"},{"label":"Beambox Pro","selected":false,"value":"fbb1p"},{"label":"HEXA","selected":false,"value":"fhexa1"},{"label":"HEXA RF","selectedModel":false,"value":"fhx2rf3"},{"label":"Ador","selected":false,"value":"ado1"},{"label":"Promark","selected":false,"value":"fpm1"},{"label":"Lazervida","selected":false,"value":"flv1"},{"label":"Beambox II","selected":false,"value":"fbb2"}]
     <input
       class="select-control"
     />
@@ -504,7 +504,7 @@ exports[`settings/Editor initially no warning 3`] = `
     Default Document Setting
     url:
     options:
-    [{"label":"beamo","selected":false,"value":"fbm1"},{"label":"Beambox","selected":true,"value":"fbb1b"},{"label":"Beambox Pro","selected":false,"value":"fbb1p"},{"label":"HEXA","selected":false,"value":"fhexa1"},{"label":"Ador","selected":false,"value":"ado1"},{"label":"Promark","selected":false,"value":"fpm1"},{"label":"Lazervida","selected":false,"value":"flv1"},{"label":"Beambox II","selected":false,"value":"fbb2"}]
+    [{"label":"beamo","selected":false,"value":"fbm1"},{"label":"Beambox","selected":true,"value":"fbb1b"},{"label":"Beambox Pro","selected":false,"value":"fbb1p"},{"label":"HEXA","selected":false,"value":"fhexa1"},{"label":"HEXA RF","selectedModel":false,"value":"fhx2rf3"},{"label":"Ador","selected":false,"value":"ado1"},{"label":"Promark","selected":false,"value":"fpm1"},{"label":"Lazervida","selected":false,"value":"flv1"},{"label":"Beambox II","selected":false,"value":"fbb2"}]
     <input
       class="select-control"
     />
@@ -731,7 +731,7 @@ exports[`settings/Editor initially no warning 4`] = `
     Default Document Setting
     url:
     options:
-    [{"label":"beamo","selected":false,"value":"fbm1"},{"label":"Beambox","selected":true,"value":"fbb1b"},{"label":"Beambox Pro","selected":false,"value":"fbb1p"},{"label":"HEXA","selected":false,"value":"fhexa1"},{"label":"Ador","selected":false,"value":"ado1"},{"label":"Promark","selected":false,"value":"fpm1"},{"label":"Lazervida","selected":false,"value":"flv1"},{"label":"Beambox II","selected":false,"value":"fbb2"}]
+    [{"label":"beamo","selected":false,"value":"fbm1"},{"label":"Beambox","selected":true,"value":"fbb1b"},{"label":"Beambox Pro","selected":false,"value":"fbb1p"},{"label":"HEXA","selected":false,"value":"fhexa1"},{"label":"HEXA RF","selectedModel":false,"value":"fhx2rf3"},{"label":"Ador","selected":false,"value":"ado1"},{"label":"Promark","selected":false,"value":"fpm1"},{"label":"Lazervida","selected":false,"value":"flv1"},{"label":"Beambox II","selected":false,"value":"fbb2"}]
     <input
       class="select-control"
     />
