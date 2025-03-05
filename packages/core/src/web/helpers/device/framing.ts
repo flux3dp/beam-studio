@@ -326,6 +326,21 @@ class FramingTaskManager extends EventEmitter {
     this.changeWorkingStatus(false);
   };
 
+  public resetPromarkParams = async (): Promise<void> => {
+    if (this.hasAppliedRedLight) {
+      const { field, galvoParameters, redDot } = promarkDataStore.get(this.device?.serial) as PromarkStore;
+
+      if (redDot) {
+        const { width } = getWorkarea(this.device.model);
+
+        await deviceMaster.setField(width, field);
+        await deviceMaster.setGalvoParameters(galvoParameters);
+      }
+
+      this.hasAppliedRedLight = false;
+    }
+  };
+
   private moveTo = async ({
     a,
     f = this.movementFeedrate,

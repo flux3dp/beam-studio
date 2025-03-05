@@ -54,6 +54,7 @@ const MonitorTask = ({ device }: Props): React.JSX.Element => {
   const handleFramingStop = useCallback(async () => {
     setIsFramingButtonDisabled(true);
     await manager.current?.stopFraming();
+    await manager.current?.resetPromarkParams();
   }, []);
 
   const handleFramingStart = useCallback(
