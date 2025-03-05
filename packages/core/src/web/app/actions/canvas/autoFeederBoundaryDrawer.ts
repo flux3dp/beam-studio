@@ -22,14 +22,18 @@ export class AutoFeederBoundaryDrawer {
   }
 
   registerEvents(): void {
+    const beamboxPreferenceEvents = eventEmitterFactory.createEventEmitter('beambox-preference');
     const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 
+    beamboxPreferenceEvents.on('auto-feeder', this.update);
     canvasEventEmitter.on('canvas-change', this.update);
   }
 
   unregisterEvents(): void {
+    const beamboxPreferenceEvents = eventEmitterFactory.createEventEmitter('beambox-preference');
     const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 
+    beamboxPreferenceEvents.off('auto-feeder', this.update);
     canvasEventEmitter.off('canvas-change', this.update);
   }
 
@@ -67,7 +71,7 @@ export class AutoFeederBoundaryDrawer {
   update = (): void => {
     this.createElements();
 
-    const enabled = !!beamboxPreference.read('auto-feeder');
+    const enabled = Boolean(beamboxPreference.read('auto-feeder'));
     const { height: workareaH, model, width: workareaW } = workareaManager;
     const { autoFeeder } = getSupportInfo(model);
 

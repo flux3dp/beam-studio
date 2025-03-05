@@ -3,7 +3,8 @@ import type { IBatchCommand, ICommand } from '@core/interfaces/IHistory';
 
 import { BaseHistoryCommand } from './history';
 
-class BeamboxPreferenceCommand extends BaseHistoryCommand implements ICommand {
+// TODO: use this command to change beambox preference value
+export class BeamboxPreferenceCommand extends BaseHistoryCommand implements ICommand {
   private key: string;
 
   private oldValue: any;
