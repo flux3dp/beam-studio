@@ -9,7 +9,6 @@ import { CHUCK_ROTARY_DIAMETER, getSupportInfo, RotaryType } from '@core/app/con
 import RotaryIcons from '@core/app/icons/rotary/RotaryIcons';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import UnitInput from '@core/app/widgets/UnitInput';
-import { checkChuckRotary } from '@core/helpers/checkFeature';
 import useI18n from '@core/helpers/useI18n';
 import storage from '@core/implementations/storage';
 
@@ -113,11 +112,10 @@ const RotarySettings = ({ onClose }: Props): React.JSX.Element => {
                   value: RotaryType.Roller,
                 },
                 {
-                  disabled: !checkChuckRotary(),
                   label: (
                     <div className={styles.seg}>
                       <RotaryIcons.Chuck />
-                      <div>{checkChuckRotary() ? 'Chuck' : 'Coming Soon'}</div>
+                      <div>Chuck</div>
                     </div>
                   ),
                   value: RotaryType.Chuck,
