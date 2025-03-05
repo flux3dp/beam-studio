@@ -138,15 +138,15 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
     };
   }, []);
   useEffect(() => {
-    const handler = (response: { isPreviewMode: boolean }): void => {
-      response.isPreviewMode = mode === CanvasMode.Preview;
+    const handler = (response: { mode: CanvasMode }): void => {
+      response.mode = mode;
     };
 
-    topBarEventEmitter.on('GET_TOP_BAR_PREVIEW_MODE', handler);
+    topBarEventEmitter.on('GET_CANVAS_MODE', handler);
     tabController.setMode(mode);
 
     return () => {
-      topBarEventEmitter.removeListener('GET_TOP_BAR_PREVIEW_MODE', handler);
+      topBarEventEmitter.removeListener('GET_CANVAS_MODE', handler);
     };
   }, [mode]);
   useEffect(() => {

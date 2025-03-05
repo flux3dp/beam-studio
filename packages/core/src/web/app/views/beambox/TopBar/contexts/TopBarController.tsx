@@ -1,4 +1,5 @@
 import BeamboxGlobalInteraction from '@core/app/actions/beambox/beambox-global-interaction';
+import CanvasMode from '@core/app/constants/canvasMode';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
@@ -33,12 +34,12 @@ const setHasUnsavedChange = (hasUnsavedChange: boolean): void => {
 
 const getTopBarPreviewMode = (): boolean => {
   const response = {
-    isPreviewMode: false,
+    mode: CanvasMode.Draw,
   };
 
-  topBarEventEmitter.emit('GET_TOP_BAR_PREVIEW_MODE', response);
+  topBarEventEmitter.emit('GET_CANVAS_MODE', response);
 
-  return response.isPreviewMode;
+  return response.mode === CanvasMode.Preview;
 };
 
 const getSelectedDevice = (): IDeviceInfo | null => {
