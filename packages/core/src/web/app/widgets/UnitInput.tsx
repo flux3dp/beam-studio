@@ -1,5 +1,5 @@
 import type { FocusEvent } from 'react';
-import React, { forwardRef, useCallback, useImperativeHandle, useRef } from 'react';
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef } from 'react';
 
 import type { InputNumberProps, ThemeConfig } from 'antd';
 import { ConfigProvider, InputNumber } from 'antd';
@@ -46,6 +46,13 @@ const UnitInput = forwardRef<HTMLInputElement | null, Props>(
 
       return input?.parentNode?.querySelector('input') || input;
     }, []);
+
+    useEffect(() => {
+      // Sync the valueRef if the value can be changed from outside
+      if (valueRef.current !== undefined && typeof props.value === 'number') {
+        valueRef.current = props.value;
+      }
+    }, [props.value]);
 
     const formatter = useCallback(
       (value: number | string = '') => {
