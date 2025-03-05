@@ -8,8 +8,9 @@ import i18n from '@core/helpers/i18n';
 import { getObjectLayer, moveToOtherLayer } from '@core/helpers/layer/layer-helper';
 import { ContextMenu, ContextMenuTrigger, MenuItem, SubMenu } from '@core/helpers/react-contextmenu';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-let svgCanvas;
+let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
@@ -71,11 +72,8 @@ export default class Workarea extends React.PureComponent<{ className: string },
     eventEmitter.removeListener('update-context-menu', this.updateContextMenu);
   }
 
-  private updateContextMenu = (newValues) => {
-    this.setState((prev) => ({
-      ...prev,
-      ...newValues,
-    }));
+  private updateContextMenu = (newValues: any) => {
+    this.setState((prev) => ({ ...prev, ...newValues }));
   };
 
   renderLayerSubMenu = (): React.JSX.Element => {
