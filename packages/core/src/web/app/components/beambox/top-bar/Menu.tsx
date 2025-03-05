@@ -83,6 +83,7 @@ export default function Menu({ email }: Props): React.JSX.Element {
   }, [devices]);
 
   const {
+    promark_connection_test: tPromarkConnectionTest,
     promark_settings: tPromarkSettings,
     topbar: { menu: menuCms },
   } = useI18n();
@@ -123,6 +124,9 @@ export default function Menu({ email }: Props): React.JSX.Element {
             <MenuItem onClick={() => callback('Z_AXIS_ADJUSTMENT', devices[i])}>
               {tPromarkSettings.z_axis_adjustment.title}
             </MenuItem>
+          )}
+          {isPromark && (
+            <MenuItem onClick={() => callback('CONNECTION_TEST', devices[i])}>{tPromarkConnectionTest.title}</MenuItem>
           )}
           <MenuDivider />
           <SubMenu label={menuCms.calibration}>

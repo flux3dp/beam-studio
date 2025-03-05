@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import alertCaller from '@core/app/actions/alert-caller';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import Boxgen from '@core/app/components/boxgen/Boxgen';
 import AboutBeamStudio from '@core/app/components/dialogs/AboutBeamStudio';
@@ -17,10 +18,12 @@ import MediaTutorial from '@core/app/components/dialogs/MediaTutorial';
 import MyCloud from '@core/app/components/dialogs/myCloud/MyCloud';
 import SaveFileModal from '@core/app/components/dialogs/myCloud/SaveFileModal';
 import PreviewHeight from '@core/app/components/dialogs/PreviewHeight';
+import ConnectionTest from '@core/app/components/dialogs/promark/ConnectionTest';
 import RadioSelectDialog from '@core/app/components/dialogs/RadioSelectDialog';
 import RatingPanel from '@core/app/components/dialogs/RatingPanel';
 import SocialMediaModal from '@core/app/components/dialogs/SocialMediaModal';
 import ImageEditPanel from '@core/app/components/ImageEditPanel';
+import alertConstants from '@core/app/constants/alert-constants';
 import { eventEmitter } from '@core/app/contexts/DialogContext';
 import LayerColorConfigPanel from '@core/app/views/beambox/Layer-Color-Config';
 import NetworkTestingPanel from '@core/app/views/beambox/NetworkTestingPanel';
@@ -38,10 +41,14 @@ import DialogBox from '@core/app/widgets/Dialog-Box';
 import InputLightBox from '@core/app/widgets/InputLightbox';
 import type { AlertConfigKey } from '@core/helpers/api/alert-config';
 import { getCurrentUser, getInfo } from '@core/helpers/api/flux-id';
+import { swiftrayClient } from '@core/helpers/api/swiftray-client';
+import checkDeviceStatus from '@core/helpers/check-device-status';
+import deviceMaster from '@core/helpers/device-master';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import versionChecker from '@core/helpers/version-checker';
 import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
 import type { ChipSettings } from '@core/interfaces/Cartridge';
 import type { IAnnouncement } from '@core/interfaces/IAnnouncement';
@@ -327,6 +334,34 @@ export default {
         />,
       );
     }),
+  showConnectionTest: async (device: IDeviceInfo): Promise<void> => {
+    const vc = versionChecker(swiftrayClient.version);
+
+    if (!vc.meetRequirement('SWIFTRAY_CONNECTION_TEST')) {
+      alertCaller.popUp({
+        buttonType: alertConstants.INFO,
+        caption: i18n.lang.message.wrong_swiftray_version_title,
+        id: 'swiftray-version-warning',
+        message: i18n.lang.message.wrong_swiftray_version_message.replace('{version}', swiftrayClient.version),
+      });
+
+      return;
+    }
+
+    await deviceMaster.select(device);
+
+    const res = await checkDeviceStatus(device);
+
+    if (!res) {
+      return;
+    }
+
+    const id = 'promark-connection-test';
+
+    if (!isIdExist(id)) {
+      addDialogComponent(id, <ConnectionTest device={device} onClose={() => popDialogById(id)} />);
+    }
+  },
   showCropPanel: (): void => {
     if (isIdExist('image-crop')) {
       return;

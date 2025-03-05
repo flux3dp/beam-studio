@@ -391,6 +391,9 @@ export default {
       ProgressCaller.popById('fetch-cartridge-data');
     }
   },
+  CONNECTION_TEST: async (device: IDeviceInfo): Promise<void> => {
+    Dialog.showConnectionTest(device);
+  },
   DASHBOARD: async (device: IDeviceInfo): Promise<void> => {
     Dialog.popDialogById('monitor');
 
@@ -433,15 +436,12 @@ export default {
       getLog(device, 'fluxplayerd.log');
     }
   },
-
   LOG_ROBOT: (device: IDeviceInfo): void => {
     getLog(device, 'fluxrobotd.log');
   },
-
   LOG_USB: (device: IDeviceInfo): void => {
     getLog(device, 'fluxusbd.log');
   },
-
   LOG_USBLIST: async (device: IDeviceInfo): Promise<void> => {
     const res = await DeviceMaster.select(device);
 
