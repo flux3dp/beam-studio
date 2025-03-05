@@ -1583,7 +1583,7 @@ const lang: ILang = {
     height_desc: '各作業エリアセクションの高さを設定します。',
     help_links: {
       ado1: 'https://support.flux3dp.com/hc/en-us/articles/10140002160399',
-      // fbb2: 'https://support.flux3dp.com/hc/en-us/articles/11368979290383',
+      fbb2: 'https://support.flux3dp.com/hc/en-us/articles/11368979290383',
     },
     help_text: '%(model)sのパススルーモードの設定方法',
     object_length: 'オブジェクトの長さ',

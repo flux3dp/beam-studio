@@ -1583,7 +1583,7 @@ const lang: ILang = {
     height_desc: 'Tetapkan ketinggian setiap bahagian kawasan kerja.',
     help_links: {
       ado1: 'https://support.flux3dp.com/hc/en-us/articles/10140002160399',
-      // fbb2: 'https://support.flux3dp.com/hc/en-us/articles/11368979290383',
+      fbb2: 'https://support.flux3dp.com/hc/en-us/articles/11368979290383',
     },
     help_text: 'Bagaimana untuk menyediakan laluan terus untuk %(model)s?',
     object_length: 'Panjang Objek',

@@ -1583,7 +1583,7 @@ const lang: ILang = {
     height_desc: 'Sett høyden på hver arbeidsområdeseksjon.',
     help_links: {
       ado1: 'https://support.flux3dp.com/hc/en-us/articles/10140002160399',
-      // fbb2: 'https://support.flux3dp.com/hc/en-us/articles/11368979290383',
+      fbb2: 'https://support.flux3dp.com/hc/en-us/articles/11368979290383',
     },
     help_text: 'Hvordan sette opp gjennomgang for %(model)s?',
     object_length: 'Objekt Lengde',

@@ -1583,7 +1583,7 @@ const lang: ILang = {
     height_desc: 'Cài đặt chiều cao của mỗi phần khu vực làm việc.',
     help_links: {
       ado1: 'https://support.flux3dp.com/hc/en-us/articles/10140002160399',
-      // fbb2: 'https://support.flux3dp.com/hc/en-us/articles/11368979290383',
+      fbb2: 'https://support.flux3dp.com/hc/en-us/articles/11368979290383',
     },
     help_text: 'Làm thế nào để thiết lập truyền qua cho %(model)s?',
     object_length: 'Chiều Dài Đối Tượng',

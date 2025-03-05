@@ -1574,8 +1574,7 @@ export interface ILang {
     height_desc: string;
     help_links: {
       ado1: string;
-      // TODO: hide fbb2 link the article is until ready
-      // fbb2: string;
+      fbb2: string;
     };
     help_text: string;
     object_length: string;

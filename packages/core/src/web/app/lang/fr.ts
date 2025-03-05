@@ -1583,7 +1583,7 @@ const lang: ILang = {
     height_desc: 'Réglez la hauteur de chaque section de la zone de travail.',
     help_links: {
       ado1: 'https://support.flux3dp.com/hc/en-us/articles/10140002160399',
-      // fbb2: 'https://support.flux3dp.com/hc/en-us/articles/11368979290383',
+      fbb2: 'https://support.flux3dp.com/hc/en-us/articles/11368979290383',
     },
     help_text: 'Comment configurer le passage direct pour %(model)s ?',
     object_length: "Longueur de l'Objet",
