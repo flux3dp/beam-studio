@@ -71,7 +71,7 @@ export class BaseHistoryCommand implements ICommand {
   onAfter: () => void = null;
 }
 
-class MoveElementCommand extends BaseHistoryCommand implements ICommand {
+export class MoveElementCommand extends BaseHistoryCommand implements ICommand {
   private oldNextSibling: Element | Node;
 
   private newNextSibling: Element | Node;
@@ -107,7 +107,7 @@ class MoveElementCommand extends BaseHistoryCommand implements ICommand {
 svgedit.history.MoveElementCommand = MoveElementCommand;
 
 // History command for an element that was added to the DOM
-class InsertElementCommand extends BaseHistoryCommand implements ICommand {
+export class InsertElementCommand extends BaseHistoryCommand implements ICommand {
   private nextSibling: Element | Node;
 
   private parent: Element | Node;
@@ -138,7 +138,7 @@ class InsertElementCommand extends BaseHistoryCommand implements ICommand {
 svgedit.history.InsertElementCommand = InsertElementCommand;
 
 // History command for an element removed from the DOM
-class RemoveElementCommand extends BaseHistoryCommand implements ICommand {
+export class RemoveElementCommand extends BaseHistoryCommand implements ICommand {
   private nextSibling: Element | Node;
 
   private parent: Element | Node;
@@ -180,7 +180,7 @@ svgedit.history.RemoveElementCommand = RemoveElementCommand;
 
 // History command to make a change to an element.
 // Usually an attribute change, but can also be textcontent.
-class ChangeElementCommand extends BaseHistoryCommand implements ICommand {
+export class ChangeElementCommand extends BaseHistoryCommand implements ICommand {
   public newValues: { [key: string]: any };
 
   public oldValues: { [key: string]: any };
@@ -313,7 +313,7 @@ class ChangeElementCommand extends BaseHistoryCommand implements ICommand {
 }
 svgedit.history.ChangeElementCommand = ChangeElementCommand;
 
-class ChangeTextCommand extends BaseHistoryCommand implements ICommand {
+export class ChangeTextCommand extends BaseHistoryCommand implements ICommand {
   public oldText: string;
 
   public newText: string;
@@ -352,7 +352,7 @@ svgedit.history.ChangeTextCommand = ChangeTextCommand;
 //
 // Parameters:
 // text - An optional string visible to user related to this change
-class BatchCommand extends BaseHistoryCommand implements IBatchCommand {
+export class BatchCommand extends BaseHistoryCommand implements IBatchCommand {
   private stack: BaseHistoryCommand[];
 
   constructor(text?: string) {

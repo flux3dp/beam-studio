@@ -1789,6 +1789,10 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     svgcontent.setAttribute('data-en_diode', String(isUsingDiode));
     svgcontent.setAttribute('data-en_af', String(isUsingAF));
 
+    if (supportInfo.autoFeeder && BeamboxPreference.read('auto-feeder')) {
+      svgcontent.setAttribute('data-auto-feeder-height', BeamboxPreference.read('auto-feeder-height'));
+    }
+
     if (supportInfo.passThrough && BeamboxPreference.read('pass-through')) {
       svgcontent.setAttribute('data-pass_through', String(BeamboxPreference.read('pass-through-height')));
     }
