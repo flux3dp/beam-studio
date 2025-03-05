@@ -50,12 +50,12 @@ const Tabs = (): React.JSX.Element => {
   }, [currentId]);
 
   const handleDragEnd = ({ destination, source }: DropResult) => {
+    if (!destination) return;
+
     const { index: srcIdx } = source;
     const { index: dstIdx } = destination;
 
-    if (srcIdx === dstIdx) {
-      return;
-    }
+    if (srcIdx === dstIdx) return;
 
     setTabs((cur) => {
       const newTabs = Array.from(cur);
@@ -78,7 +78,7 @@ const Tabs = (): React.JSX.Element => {
     }
 
     if (mode === CanvasMode.CurveEngraving) {
-      return <TopBarIcons.Curve3D className={styles.icon} />;
+      return <TopBarIcons.CurveEngraving className={styles.icon} />;
     }
 
     if (isCloud) {
@@ -92,7 +92,7 @@ const Tabs = (): React.JSX.Element => {
     const currentName = currentFileManager.getName();
     let newName = await dialogCaller.getPromptValue({
       caption: t.rename_tab,
-      defaultValue: currentName,
+      defaultValue: currentName ?? '',
     });
 
     if (!newName || newName === currentName) {
@@ -104,7 +104,7 @@ const Tabs = (): React.JSX.Element => {
     if (currentTabInfo.isCloud) {
       newName = newName.replace(/\//g, '_');
 
-      const { res, status } = await cloudFile.renameFile(currentFileManager.getPath(), newName);
+      const { res, status } = await cloudFile.renameFile(currentFileManager.getPath()!, newName);
 
       if (!res && status === 404) {
         currentFileManager.setCloudUUID(null);
