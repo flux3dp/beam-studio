@@ -29,7 +29,7 @@ const CHANGES_EN = {
   added: [
     'Added "Auto Align" function to the top "View" menu',
     'Added Instagram icon to the left sidebar.',
-    'Added support for Beambox II (need to use firmware 6.0.10 or above).',
+    'Added support for Beambox II.',
     'Added support for Rotary chuck.',
   ],
   changed: ['Changed the position of the Design Market icon.'],
