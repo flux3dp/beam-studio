@@ -1583,7 +1583,7 @@ const lang: ILang = {
     height_desc: '각 작업 영역 섹션의 높이를 설정합니다.',
     help_links: {
       ado1: 'https://support.flux3dp.com/hc/en-us/articles/10140002160399',
-      fbb2: 'https://support.flux3dp.com/hc/en-us/articles/11368979290383',
+      fbb2: 'https://support.flux3dp.com/hc/en-us/articles/11570021253263',
     },
     help_text: '%(model)s의 패스스루 설정 방법은?',
     object_length: '객체 길이',

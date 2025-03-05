@@ -1583,7 +1583,7 @@ const lang: ILang = {
     height_desc: 'ตั้งค่าความสูงของแต่ละส่วนของพื้นที่ทำงาน',
     help_links: {
       ado1: 'https://support.flux3dp.com/hc/en-us/articles/10140002160399',
-      fbb2: 'https://support.flux3dp.com/hc/en-us/articles/11368979290383',
+      fbb2: 'https://support.flux3dp.com/hc/en-us/articles/11570021253263',
     },
     help_text: 'วิธีตั้งค่าการผ่านสำหรับ %(model)s?',
     object_length: 'ความยาวของวัตถุ',

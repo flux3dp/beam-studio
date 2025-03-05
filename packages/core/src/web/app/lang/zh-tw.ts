@@ -1583,7 +1583,7 @@ const lang: ILang = {
     height_desc: '設定每個區域的幅寬。',
     help_links: {
       ado1: 'https://support.flux3dp.com/hc/zh-tw/articles/10140002160399',
-      fbb2: 'https://support.flux3dp.com/hc/zh-tw/articles/11368979290383',
+      fbb2: 'https://support.flux3dp.com/hc/zh-tw/articles/11570021253263',
     },
     help_text: '如何為 %(model)s 設置廣域雕刻？',
     object_length: '物體長度',

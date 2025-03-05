@@ -1583,7 +1583,7 @@ const lang: ILang = {
     height_desc: '设置每次工作区域部分的高度。',
     help_links: {
       ado1: 'https://support.flux3dp.com/hc/en-us/articles/10140002160399',
-      fbb2: 'https://support.flux3dp.com/hc/en-us/articles/11368979290383',
+      fbb2: 'https://support.flux3dp.com/hc/en-us/articles/11570021253263',
     },
     help_text: '如何为%(model)s设置广域雕刻？',
     object_length: '物体长度',

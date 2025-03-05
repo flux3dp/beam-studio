@@ -1583,7 +1583,7 @@ const lang: ILang = {
     height_desc: 'Stel de hoogte van elke werkgebiedsectie in.',
     help_links: {
       ado1: 'https://support.flux3dp.com/hc/en-us/articles/10140002160399',
-      fbb2: 'https://support.flux3dp.com/hc/en-us/articles/11368979290383',
+      fbb2: 'https://support.flux3dp.com/hc/en-us/articles/11570021253263',
     },
     help_text: 'Hoe stel je doorgang in voor %(model)s?',
     object_length: 'Objectlengte',
