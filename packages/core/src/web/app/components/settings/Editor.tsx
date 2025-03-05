@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 
 import FontFuncs from '@core/app/actions/beambox/font-funcs';
 import Controls from '@core/app/components/settings/Control';
@@ -8,7 +8,7 @@ import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import { hasSwiftray } from '@core/helpers/api/swiftray-client';
-import { checkFpm1 } from '@core/helpers/checkFeature';
+import { checkFpm1, checkHxRf } from '@core/helpers/checkFeature';
 import isDev from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 import storage from '@core/implementations/storage';
@@ -92,8 +92,6 @@ function Editor({
     });
   };
 
-  const isDevMode = useMemo(() => isDev(), []);
-
   const modelOptions = [
     {
       label: 'beamo',
@@ -115,7 +113,7 @@ function Editor({
       selected: selectedModel === 'fhexa1',
       value: 'fhexa1',
     },
-    {
+    checkHxRf() && {
       label: 'HEXA RF',
       selectedModel: ['fhx2rf3', 'fhx2rf6'].includes(selectedModel),
       // send to rf3 for now since they don't have different workarea at the moment
@@ -131,7 +129,7 @@ function Editor({
       selected: selectedModel === 'fpm1',
       value: 'fpm1',
     },
-    isDevMode && {
+    isDev() && {
       label: 'Lazervida',
       selected: selectedModel === 'flv1',
       value: 'flv1',
@@ -286,7 +284,7 @@ function Editor({
           url={lang.settings.help_center_urls.calculation_optimization}
         />
       )}
-      {isDevMode && (
+      {isDev() && (
         <SelectControl
           id="set-enable-custom-backlash"
           label={lang.settings.enable_custom_backlash}
