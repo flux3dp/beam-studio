@@ -35,7 +35,7 @@ const Ruler = (): React.JSX.Element => {
         const intervals = [2, 5, 10].map((x) => x * 10 ** (digit - 1));
         const interval = intervals.find((x) => x >= size);
 
-        return interval;
+        return interval ?? 0;
       })() * (isInch ? 25.4 : 1);
     const zoomedStep = (step * zoomRatio) / 10;
 
@@ -72,7 +72,7 @@ const Ruler = (): React.JSX.Element => {
         canvas[mainDimension] = mainLength * ratio;
         canvas[subDimension] = subLength * ratio;
 
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 
         ctx.scale(ratio, ratio);
         ctx.fillStyle = '#333';
@@ -94,7 +94,7 @@ const Ruler = (): React.JSX.Element => {
           continue;
         }
 
-        const ctx = ctxs[canvasIdx];
+        const ctx = ctxs[canvasIdx] as CanvasRenderingContext2D;
         const canvasPos = zoomedPos % canvasLimit;
 
         if (j % 10 === 0) {
@@ -148,7 +148,7 @@ const Ruler = (): React.JSX.Element => {
           }
         }
       }
-      ctxs.forEach((ctx) => ctx.stroke());
+      ctxs.forEach((ctx) => ctx?.stroke());
     }
 
     const workArea = document.getElementById('workarea');
