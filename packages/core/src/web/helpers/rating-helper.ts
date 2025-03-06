@@ -3,6 +3,8 @@ import { getInfo, submitRating } from '@core/helpers/api/flux-id';
 import isWeb from '@core/helpers/is-web';
 import storage from '@core/implementations/storage';
 
+import isDev from './is-dev';
+
 interface IRecord {
   isIgnored: boolean;
   isVoted: boolean;
@@ -58,7 +60,7 @@ const setVoted = (score: number): void => {
 
 const setDefaultRatingRecord = (): void => {
   const defaultRecord = {
-    isIgnored: false,
+    isIgnored: isDev() ? true : false,
     isVoted: false,
     score: 0,
     times: 1,
@@ -94,14 +96,8 @@ const init = (): void => {
       Dialog.showRatingDialog(setVoted);
     }
 
-    setRecord({
-      ...record,
-      times: record.times + 1,
-    });
+    setRecord({ ...record, times: record.times + 1 });
   }
 };
 
-export default {
-  init,
-  setNotShowing,
-};
+export default { init, setNotShowing };
