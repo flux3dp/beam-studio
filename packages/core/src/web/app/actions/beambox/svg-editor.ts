@@ -1899,6 +1899,10 @@ const svgEditor = (window['svgEditor'] = (function () {
             return 'bvg';
           }
 
+          if (file.name.toLowerCase().includes('.dxf')) {
+            return 'dxf';
+          }
+
           if (file.type.toLowerCase().includes('image')) {
             if (file.type.toLowerCase().includes('svg')) {
               return 'svg';
@@ -1907,10 +1911,6 @@ const svgEditor = (window['svgEditor'] = (function () {
             } else {
               return 'bitmap';
             }
-          }
-
-          if (file.name.toLowerCase().includes('.dxf')) {
-            return 'dxf';
           }
 
           if (file.name.toLowerCase().includes('.json')) {
