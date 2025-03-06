@@ -47,7 +47,7 @@ function Engraving({ getBeamboxPreferenceEditingValue, updateBeamboxPreferenceCh
               defaultValue={getBeamboxPreferenceEditingValue('padding_accel') || 5000}
               getValue={(val) => updateBeamboxPreferenceChange('padding_accel', val)}
               id="hardware-acceleration"
-              max={12000}
+              max={40000}
               min={1}
               unit="mm/s^2"
             />

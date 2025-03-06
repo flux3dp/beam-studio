@@ -8,10 +8,24 @@ export type WorkAreaLabel =
   | 'Beambox Pro'
   | 'beamo'
   | 'HEXA'
+  | 'HEXA RF'
   | 'Lazervida'
   | 'Promark';
-export type WorkAreaModel = 'ado1' | 'fbb1b' | 'fbb1p' | 'fbb2' | 'fbm1' | 'fhexa1' | 'flv1' | 'fpm1';
-export const allWorkareas = new Set(['fbm1', 'fbb1b', 'fbb1p', 'fhexa1', 'ado1', 'fpm1', 'flv1', 'fbb2']);
+
+export const workArea = [
+  'fbm1',
+  'fbb1b',
+  'fbb1p',
+  'fhexa1',
+  'fhx2rf3',
+  'fhx2rf6',
+  'ado1',
+  'fpm1',
+  'flv1',
+  'fbb2',
+] as const;
+export type WorkAreaModel = (typeof workArea)[number];
+export const allWorkareas = new Set(workArea);
 
 const { dpmm } = constant;
 
@@ -37,7 +51,21 @@ export interface WorkArea {
   width: number; // mm
 }
 
-const workareaConstants: { [key in WorkAreaModel]: WorkArea } = {
+const hexaRfWorkAreaInfo: WorkArea = {
+  autoFocusOffset: [31.13, 1.2, 6.5],
+  height: 410,
+  label: 'HEXA RF',
+  maxSpeed: 2000,
+  minPower: 10,
+  minSpeed: 0.5,
+  minSpeedWarning: 3,
+  pxHeight: 410 * dpmm,
+  pxWidth: 740 * dpmm,
+  vectorSpeedLimit: 20,
+  width: 740,
+};
+
+const workareaConstants: Record<WorkAreaModel, WorkArea> = {
   ado1: {
     autoFocusOffset: [20.9, -40.38, 7.5],
     cameraCenter: [215, 150],
@@ -118,6 +146,8 @@ const workareaConstants: { [key in WorkAreaModel]: WorkArea } = {
     vectorSpeedLimit: 20,
     width: 740,
   },
+  fhx2rf3: hexaRfWorkAreaInfo,
+  fhx2rf6: hexaRfWorkAreaInfo,
   flv1: {
     height: 400,
     label: 'Lazervida',
