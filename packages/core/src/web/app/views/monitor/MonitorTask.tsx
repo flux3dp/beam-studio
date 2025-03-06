@@ -36,7 +36,7 @@ const MonitorTask = ({ device }: Props): React.JSX.Element => {
   const [estimateTaskTime, setEstimateTaskTime] = useState<number>(taskTime);
   /* for Promark framing */
 
-  const getJobTime = (time = taskTime, byReport = true): string => {
+  const getJobTime = (time = taskTime, byReport = true): null | string => {
     const isWorking = mode === Mode.WORKING;
 
     if (isFraming) {
@@ -82,10 +82,8 @@ const MonitorTask = ({ device }: Props): React.JSX.Element => {
     [isFraming, type],
   );
 
-  const renderPromarkFramingButton = (): React.JSX.Element => {
-    if (!isPromark) {
-      return null;
-    }
+  const renderPromarkFramingButton = (): React.ReactNode => {
+    if (!isPromark) return null;
 
     return (
       <Flex>
@@ -112,7 +110,7 @@ const MonitorTask = ({ device }: Props): React.JSX.Element => {
   };
   /* for Promark framing */
 
-  const renderProgress = (): React.JSX.Element => {
+  const renderProgress = (): React.ReactNode => {
     if (isFraming) {
       return renderPromarkFramingButton();
     }
