@@ -17,9 +17,7 @@ interface Props {
 
 const Module = ({ options }: Props): React.JSX.Element => {
   const lang = useI18n();
-  const getPreference = useSettingStore((state) => state.getPreference);
-  const setPreference = useSettingStore((state) => state.setPreference);
-  const getConfig = useSettingStore((state) => state.getConfig);
+  const { getConfig, getPreference, setPreference } = useSettingStore();
 
   const selectedModel = getPreference('model');
   const defaultUnit = getConfig('default-units');

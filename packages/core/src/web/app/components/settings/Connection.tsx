@@ -17,8 +17,7 @@ interface Props {
 
 function Connection({ options }: Props): React.JSX.Element {
   const lang = i18n.lang;
-  const getConfig = useSettingStore((state) => state.getConfig);
-  const setConfig = useSettingStore((state) => state.setConfig);
+  const { getConfig, setConfig } = useSettingStore();
   const originalIP = getConfig('poke-ip-addr');
   const checkIPFormat = (e: React.FocusEvent): void => {
     const me = e.currentTarget as HTMLInputElement;

@@ -15,10 +15,8 @@ interface Props {
 
 function General({ changeActiveLang, options, supportedLangs }: Props): React.JSX.Element {
   const { lang } = i18n;
+  const { getConfig, setConfig } = useSettingStore();
   const langOptions = Object.keys(supportedLangs).map((value) => ({ label: supportedLangs[value], value }));
-  const getConfig = useSettingStore((state) => state.getConfig);
-  const setConfig = useSettingStore((state) => state.setConfig);
-  // const defaultValue = options.find(({ value }) => value === getConfig('notification'))?.value as string;
 
   return (
     <>

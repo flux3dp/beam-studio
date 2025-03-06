@@ -12,8 +12,7 @@ interface Props {
 }
 
 function Experimental({ options }: Props): React.ReactNode {
-  const getPreference = useSettingStore((state) => state.getPreference);
-  const setPreference = useSettingStore((state) => state.setPreference);
+  const { getPreference, setPreference } = useSettingStore();
 
   if (!isDev()) return null;
 

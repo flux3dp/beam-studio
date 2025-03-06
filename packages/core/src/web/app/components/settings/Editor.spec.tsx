@@ -2,8 +2,6 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-import { OptionValues } from '@core/app/constants/enums';
-
 import { create } from 'zustand';
 
 jest.mock('@core/helpers/is-dev', () => () => true);
@@ -229,29 +227,29 @@ describe('settings/Editor', () => {
     expect(mockSetPreference).toHaveBeenCalledTimes(1);
     expect(mockSetPreference).toHaveBeenNthCalledWith(1, 'model', 'fbm1');
 
-    fireEvent.change(SelectControls[4], { target: { value: OptionValues.TRUE } });
+    fireEvent.change(SelectControls[4], { target: { value: true } });
     expect(mockSetPreference).toHaveBeenCalledTimes(2);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(2, 'show_guides', 'TRUE');
+    expect(mockSetPreference).toHaveBeenNthCalledWith(2, 'show_guides', true);
 
-    fireEvent.change(SelectControls[5], { target: { value: OptionValues.TRUE } });
+    fireEvent.change(SelectControls[5], { target: { value: true } });
     expect(mockSetPreference).toHaveBeenCalledTimes(3);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(3, 'image_downsampling', 'TRUE');
+    expect(mockSetPreference).toHaveBeenNthCalledWith(3, 'image_downsampling', true);
 
-    fireEvent.change(SelectControls[6], { target: { value: OptionValues.TRUE } });
+    fireEvent.change(SelectControls[6], { target: { value: true } });
     expect(mockSetPreference).toHaveBeenCalledTimes(4);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(4, 'anti-aliasing', 'TRUE');
+    expect(mockSetPreference).toHaveBeenNthCalledWith(4, 'anti-aliasing', true);
 
-    fireEvent.change(SelectControls[7], { target: { value: OptionValues.TRUE } });
+    fireEvent.change(SelectControls[7], { target: { value: true } });
     expect(mockSetPreference).toHaveBeenCalledTimes(5);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(5, 'continuous_drawing', 'TRUE');
+    expect(mockSetPreference).toHaveBeenNthCalledWith(5, 'continuous_drawing', true);
 
-    fireEvent.change(SelectControls[8], { target: { value: OptionValues.TRUE } });
+    fireEvent.change(SelectControls[8], { target: { value: true } });
     expect(mockSetPreference).toHaveBeenCalledTimes(6);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(6, 'simplify_clipper_path', 'TRUE');
+    expect(mockSetPreference).toHaveBeenNthCalledWith(6, 'simplify_clipper_path', true);
 
-    fireEvent.change(SelectControls[9], { target: { value: OptionValues.TRUE } });
+    fireEvent.change(SelectControls[9], { target: { value: true } });
     expect(mockSetPreference).toHaveBeenCalledTimes(7);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(7, 'auto-switch-tab', 'TRUE');
+    expect(mockSetPreference).toHaveBeenNthCalledWith(7, 'auto-switch-tab', true);
 
     fireEvent.change(UnitInputs[0], { target: { value: 1 } });
     expect(mockSetPreference).toHaveBeenCalledTimes(8);
@@ -265,8 +263,8 @@ describe('settings/Editor', () => {
     expect(mockSetPreference).toHaveBeenCalledTimes(10);
     expect(mockSetPreference).toHaveBeenNthCalledWith(10, 'path-engine', 'swiftray');
 
-    fireEvent.change(SelectControls[11], { target: { value: OptionValues.TRUE } });
+    fireEvent.change(SelectControls[11], { target: { value: true } });
     expect(mockSetPreference).toHaveBeenCalledTimes(11);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(11, 'enable-custom-backlash', 'TRUE');
+    expect(mockSetPreference).toHaveBeenNthCalledWith(11, 'enable-custom-backlash', true);
   });
 });

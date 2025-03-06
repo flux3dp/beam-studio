@@ -59,8 +59,8 @@ export const useSettingStore = create<Action & State>(
 
         return match(storageValue)
           .with(undefined, () => (DEFAULT_CONFIG as any)[key])
-          .with(P.intersection('true', 'TRUE'), () => true)
-          .with(P.intersection('false', 'FALSE'), () => false)
+          .with(P.union('true', 'TRUE'), () => true)
+          .with(P.union('false', 'FALSE'), () => false)
           .otherwise(() => storageValue);
       },
       getPreference: (key) => {

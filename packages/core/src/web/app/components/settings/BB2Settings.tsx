@@ -14,8 +14,7 @@ interface Props {
 
 const BB2Settings = ({ options }: Props): React.ReactNode => {
   const lang = useI18n();
-  const getPreference = useSettingStore((state) => state.getPreference);
-  const setPreference = useSettingStore((state) => state.setPreference);
+  const { getPreference, setPreference } = useSettingStore();
 
   return (
     <>

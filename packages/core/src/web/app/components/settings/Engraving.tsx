@@ -16,8 +16,7 @@ interface Props {
 
 function Engraving({ options }: Props): React.JSX.Element {
   const lang = useI18n();
-  const getPreference = useSettingStore((state) => state.getPreference);
-  const setPreference = useSettingStore((state) => state.setPreference);
+  const { getPreference, setPreference } = useSettingStore();
   const reverseEngravingOptions = [
     { label: lang.settings.bottom_up, value: true },
     { label: lang.settings.top_down, value: false },
