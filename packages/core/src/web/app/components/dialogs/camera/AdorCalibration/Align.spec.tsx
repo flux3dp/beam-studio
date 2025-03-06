@@ -36,11 +36,16 @@ jest.mock('@core/helpers/device-master', () => ({
   takeOnePicture: (...args) => mockTakeOnePicture(...args),
 }));
 
-const mockRead = jest.fn();
 const mockWrite = jest.fn();
 
+const mockBeamboxPreferences = {
+  'module-offsets': {
+    [LayerModule.PRINTER]: [0, -13.37],
+  },
+};
+
 jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
-  read: (...args) => mockRead(...args),
+  read: (key) => mockBeamboxPreferences[key],
   write: (...args) => mockWrite(...args),
 }));
 
@@ -220,7 +225,6 @@ describe('test Align', () => {
   });
 
   test('scroll and next should work when type is PRINTER_HEAD', async () => {
-    mockRead.mockReturnValue(null);
     mockTakeOnePicture.mockResolvedValue({ imgBlob: 'blob' });
     mockCreateObjectURL.mockReturnValue('file://url');
 

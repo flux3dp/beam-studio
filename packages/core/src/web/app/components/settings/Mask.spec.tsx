@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { create } from 'zustand';
 import { fireEvent, render } from '@testing-library/react';
 
 jest.mock('@core/helpers/useI18n', () => () => ({
@@ -16,34 +16,52 @@ jest.mock('@core/helpers/useI18n', () => () => ({
   },
 }));
 
-jest.mock('@core/app/components/settings/SelectControl', () => ({ id, label, onChange, options, url }: any) => (
+const mockGetPreference = jest.fn();
+const mockSetPreference = jest.fn();
+
+const useSettingStore = create(() => ({
+  getPreference: mockGetPreference,
+  setPreference: mockSetPreference,
+}));
+
+jest.mock('@core/app/pages/Settings/useSettingStore', () => ({
+  useSettingStore,
+}));
+
+jest.mock('./components/SettingSelect', () => ({ id, label, onChange, options, url }: any) => (
   <div>
     mock-select-control id:{id}
     label:{label}
     url:{url}
     options:{JSON.stringify(options)}
-    <input className="select-control" onChange={onChange} />
+    <input
+      className="select-control"
+      onChange={(e) =>
+        onChange(['false', 'true'].includes(e.target.value) ? e.target.value === 'true' : e.target.value)
+      }
+    />
   </div>
 ));
 
 import Mask from './Mask';
 
 test('should render correctly', () => {
-  const getBeamboxPreferenceEditingValue = jest.fn();
-  const updateBeamboxPreferenceChange = jest.fn();
-
-  getBeamboxPreferenceEditingValue.mockReturnValue(true);
+  mockGetPreference.mockReturnValue(true);
 
   const { container } = render(
     <Mask
-      getBeamboxPreferenceEditingValue={getBeamboxPreferenceEditingValue}
-      updateBeamboxPreferenceChange={updateBeamboxPreferenceChange}
+      options={
+        [
+          { label: 'On', value: true },
+          { label: 'Off', value: false },
+        ] as any
+      }
     />,
   );
 
   expect(container).toMatchSnapshot();
 
-  fireEvent.change(container.querySelector('.select-control'), { target: { value: 'FALSE' } });
-  expect(updateBeamboxPreferenceChange).toHaveBeenCalledTimes(1);
-  expect(updateBeamboxPreferenceChange).toHaveBeenNthCalledWith(1, 'enable_mask', 'FALSE');
+  fireEvent.change(container.querySelector('.select-control'), { target: { value: false } });
+  expect(mockSetPreference).toHaveBeenCalledTimes(1);
+  expect(mockSetPreference).toHaveBeenNthCalledWith(1, 'enable_mask', false);
 });

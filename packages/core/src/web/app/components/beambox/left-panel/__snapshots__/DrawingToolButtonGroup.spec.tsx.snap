@@ -127,6 +127,17 @@ exports[`test DrawingToolButtonGroup should render correctly 1`] = `
       </span>
     </div>
     <div
+      class="container"
+      id="left-curve-engrave"
+      title="Curve Engraving"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
       class="separator"
     />
     <div
@@ -292,6 +303,17 @@ exports[`test DrawingToolButtonGroup should render correctly 2`] = `
       class="container"
       id="left-Pen"
       title="Pen (P)"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
+      class="container"
+      id="left-curve-engrave"
+      title="Curve Engraving"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"
@@ -473,6 +495,17 @@ exports[`test DrawingToolButtonGroup should render correctly 3`] = `
       </span>
     </div>
     <div
+      class="container"
+      id="left-curve-engrave"
+      title="Curve Engraving"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
       class="separator"
     />
     <div
@@ -638,6 +671,17 @@ exports[`test DrawingToolButtonGroup should render correctly 4`] = `
       class="container"
       id="left-Pen"
       title="Pen (P)"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
+      class="container"
+      id="left-curve-engrave"
+      title="Curve Engraving"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"
@@ -819,6 +863,17 @@ exports[`test DrawingToolButtonGroup should render correctly 5`] = `
       </span>
     </div>
     <div
+      class="container"
+      id="left-curve-engrave"
+      title="Curve Engraving"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
       class="separator"
     />
     <div
@@ -984,6 +1039,17 @@ exports[`test DrawingToolButtonGroup should render correctly 6`] = `
       class="container"
       id="left-Pen"
       title="Pen (P)"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
+      class="container"
+      id="left-curve-engrave"
+      title="Curve Engraving"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"
@@ -1165,6 +1231,17 @@ exports[`test DrawingToolButtonGroup should render correctly 7`] = `
       </span>
     </div>
     <div
+      class="container"
+      id="left-curve-engrave"
+      title="Curve Engraving"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
       class="separator"
     />
     <div
@@ -1330,6 +1407,17 @@ exports[`test DrawingToolButtonGroup should render correctly 8`] = `
       class="container"
       id="left-Pen"
       title="Pen (P)"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
+      class="container"
+      id="left-curve-engrave"
+      title="Curve Engraving"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"
@@ -1511,6 +1599,17 @@ exports[`test DrawingToolButtonGroup should render correctly 9`] = `
       </span>
     </div>
     <div
+      class="container"
+      id="left-curve-engrave"
+      title="Curve Engraving"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
       class="separator"
     />
     <div
@@ -1676,6 +1775,17 @@ exports[`test DrawingToolButtonGroup should render correctly 10`] = `
       class="container"
       id="left-Pen"
       title="Pen (P)"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
+      class="container"
+      id="left-curve-engrave"
+      title="Curve Engraving"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"
@@ -1857,6 +1967,17 @@ exports[`test DrawingToolButtonGroup should render correctly 11`] = `
       </span>
     </div>
     <div
+      class="container"
+      id="left-curve-engrave"
+      title="Curve Engraving"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
       class="separator"
     />
     <div
@@ -2022,6 +2143,17 @@ exports[`test DrawingToolButtonGroup should render correctly 12`] = `
       class="container"
       id="left-Pen"
       title="Pen (P)"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
+      class="container"
+      id="left-curve-engrave"
+      title="Curve Engraving"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"
@@ -2203,6 +2335,17 @@ exports[`test DrawingToolButtonGroup should render correctly 13`] = `
       </span>
     </div>
     <div
+      class="container"
+      id="left-curve-engrave"
+      title="Curve Engraving"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
       class="separator"
     />
     <div
@@ -2372,6 +2515,17 @@ exports[`test DrawingToolButtonGroup should render correctly when in pass throug
       class="container"
       id="left-Pen"
       title="Pen (P)"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
+      class="container"
+      id="left-curve-engrave"
+      title="Curve Engraving"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"

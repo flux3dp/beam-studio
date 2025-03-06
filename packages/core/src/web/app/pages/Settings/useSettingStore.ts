@@ -1,4 +1,4 @@
-import { match } from 'ts-pattern';
+import { match, P } from 'ts-pattern';
 import { create } from 'zustand';
 import { combine } from 'zustand/middleware';
 
@@ -11,12 +11,12 @@ import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import storage from '@core/implementations/storage';
 import type { StorageKey } from '@core/interfaces/IStorage';
 
-type State = {
+export type State = {
   beamboxPreferenceChanges: Partial<BeamboxPreferenceType>;
   configChanges: Partial<Record<StorageKey, any>>;
 };
 
-type Action = {
+export type Action = {
   getConfig: (key: StorageKey) => any;
   getPreference: <Key extends BeamboxPreferenceKey>(key: Key) => BeamboxPreferenceValue<Key>;
   setConfig: (key: StorageKey, value: any) => void;
@@ -53,16 +53,14 @@ export const useSettingStore = create<Action & State>(
       getConfig: (key) => {
         const { configChanges } = get();
 
-        console.log(key, configChanges[key], storage.get(key));
-
         if (key in configChanges) return configChanges[key];
 
         const storageValue = storage.get(key);
 
         return match(storageValue)
           .with(undefined, () => (DEFAULT_CONFIG as any)[key])
-          .with('true', () => true)
-          .with('false', () => false)
+          .with(P.intersection('true', 'TRUE'), () => true)
+          .with(P.intersection('false', 'FALSE'), () => false)
           .otherwise(() => storageValue);
       },
       getPreference: (key) => {
@@ -101,21 +99,3 @@ export const useSettingStore = create<Action & State>(
     }),
   ),
 );
-
-/**
- (set, get) => ({
-  getPreference: (key) => {
-    const { beamboxPreferenceChanges } = get();
-
-    return key in beamboxPreferenceChanges && beamboxPreferenceChanges[key]
-      ? beamboxPreferenceChanges[key]
-      : beamboxPreference.read(key);
-  },
-  updatePreference: (key, value) =>
-    set(() => {
-      const { beamboxPreferenceChanges } = get();
-
-      return { beamboxPreferenceChanges: { ...beamboxPreferenceChanges, [key]: value } };
-    }),
-})
- */

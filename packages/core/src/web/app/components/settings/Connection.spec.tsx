@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { create } from 'zustand';
 import { fireEvent, render } from '@testing-library/react';
 
 jest.mock('@core/helpers/i18n', () => ({
@@ -21,30 +21,39 @@ jest.mock('@core/helpers/i18n', () => ({
 
 const popUp = jest.fn();
 
-jest.mock('@core/app/actions/alert-caller', () => ({
-  popUp,
-}));
+jest.mock('@core/app/actions/alert-caller', () => ({ popUp }));
 
 const open = jest.fn();
 
-jest.mock('@core/implementations/browser', () => ({
-  open,
-}));
+jest.mock('@core/implementations/browser', () => ({ open }));
 
-const get = jest.fn();
+const mockGetConfig = jest.fn();
+const mockSetConfig = jest.fn();
 
-jest.mock('@core/implementations/storage', () => ({
-  get,
-}));
+const useSettingStore = create(() => ({ getConfig: mockGetConfig, setConfig: mockSetConfig }));
 
-jest.mock('@core/app/components/settings/Control', () => 'mock-control');
-
-jest.mock('@core/app/components/settings/SelectControl', () => ({ id, label, onChange, options }: any) => (
+jest.mock('@core/app/pages/Settings/useSettingStore', () => ({ useSettingStore }));
+jest.mock('./components/SettingSelect', () => ({ id, label, onChange, options, url }: any) => (
   <div>
     mock-select-control id:{id}
     label:{label}
+    url:{url}
     options:{JSON.stringify(options)}
-    <input className="select-control" onChange={onChange} />
+    <input
+      className="select-control"
+      onChange={(e) =>
+        onChange(['false', 'true'].includes(e.target.value) ? e.target.value === 'true' : e.target.value)
+      }
+    />
+  </div>
+));
+jest.mock('./components/SettingFormItem', () => ({ children, id, label, options, url }: any) => (
+  <div>
+    mock-select-control id:{id}
+    label:{label}
+    url:{url}
+    options:{JSON.stringify(options)}
+    {children}
   </div>
 ));
 
@@ -56,59 +65,35 @@ describe('should render correctly', () => {
   });
 
   test('invalid ip address is given', async () => {
-    get.mockReturnValue('192.168.2.2');
+    mockGetConfig.mockReturnValue('192.168.2.2');
 
-    const updateConfigChange = jest.fn();
     const { container } = render(
       <Connection
-        autoConnectOptions={[
-          {
-            label: 'On',
-            selected: false,
-            value: 'TRUE',
-          },
-          {
-            label: 'Off',
-            selected: true,
-            value: 'FALSE',
-          },
-        ]}
-        guessingPokeOptions={[
-          {
-            label: 'On',
-            selected: true,
-            value: 'TRUE',
-          },
-          {
-            label: 'Off',
-            selected: false,
-            value: 'FALSE',
-          },
-        ]}
-        originalIP="192.168.1.1"
-        updateConfigChange={updateConfigChange}
+        options={
+          [
+            { label: 'On', value: true },
+            { label: 'Off', value: false },
+          ] as any
+        }
       />,
     );
 
     expect(container).toMatchSnapshot();
-    expect(get).toHaveBeenCalledTimes(1);
-    expect(get).toHaveBeenNthCalledWith(1, 'poke-ip-addr');
+    expect(mockGetConfig).toHaveBeenCalledTimes(4);
+    expect(mockGetConfig).toHaveBeenNthCalledWith(1, 'poke-ip-addr');
 
     const input = container.querySelector('input');
 
-    fireEvent.change(input, {
-      target: {
-        value: '192.168.3.3;192.168.4.4;192.168.1111.111',
-      },
-    });
+    fireEvent.change(input, { target: { value: '192.168.3.3;192.168.4.4;192.168.1111.111' } });
     fireEvent.blur(input);
+
     expect(popUp).toHaveBeenCalledTimes(1);
     expect(popUp).toHaveBeenNthCalledWith(1, {
       id: 'wrong-ip-error',
       message: 'Wrong IP Formats\n192.168.1111.111',
       type: 'SHOW_POPUP_ERROR',
     });
-    expect(updateConfigChange).not.toHaveBeenCalled();
+    expect(mockSetConfig).not.toHaveBeenCalled();
 
     fireEvent.click(container.querySelector('img'));
     expect(open).toHaveBeenCalledTimes(1);
@@ -116,64 +101,35 @@ describe('should render correctly', () => {
 
     const controls = container.querySelectorAll('.select-control');
 
-    fireEvent.change(controls[0], {
-      target: { value: 'FALSE' },
-    });
-    expect(updateConfigChange).toHaveBeenCalledTimes(1);
-    expect(updateConfigChange).toHaveBeenNthCalledWith(1, 'guessing_poke', 'FALSE');
+    fireEvent.change(controls[0], { target: { value: false } });
+    expect(mockSetConfig).toHaveBeenCalledTimes(1);
+    expect(mockSetConfig).toHaveBeenNthCalledWith(1, 'guessing_poke', false);
 
-    fireEvent.change(controls[1], {
-      target: { value: 'TRUE' },
-    });
-    expect(updateConfigChange).toHaveBeenCalledTimes(2);
-    expect(updateConfigChange).toHaveBeenNthCalledWith(2, 'auto_connect', 'TRUE');
+    fireEvent.change(controls[1], { target: { value: true } });
+    expect(mockSetConfig).toHaveBeenCalledTimes(2);
+    expect(mockSetConfig).toHaveBeenNthCalledWith(2, 'auto_connect', true);
   });
 
   test('valid ip address is given', () => {
-    get.mockReturnValue('192.168.2.2');
+    mockGetConfig.mockReturnValue('192.168.1.1');
 
-    const updateConfigChange = jest.fn();
     const { container } = render(
       <Connection
-        autoConnectOptions={[
-          {
-            label: 'On',
-            selected: false,
-            value: 'TRUE',
-          },
-          {
-            label: 'Off',
-            selected: true,
-            value: 'FALSE',
-          },
-        ]}
-        guessingPokeOptions={[
-          {
-            label: 'On',
-            selected: true,
-            value: 'TRUE',
-          },
-          {
-            label: 'Off',
-            selected: false,
-            value: 'FALSE',
-          },
-        ]}
-        originalIP="192.168.1.1"
-        updateConfigChange={updateConfigChange}
+        options={
+          [
+            { label: 'On', value: true },
+            { label: 'Off', value: false },
+          ] as any
+        }
       />,
     );
 
     const input = container.querySelector('input');
 
-    fireEvent.change(input, {
-      target: {
-        value: '192.168.3.3;192.168.4.4',
-      },
-    });
+    fireEvent.change(input, { target: { value: '192.168.3.3;192.168.4.4' } });
     fireEvent.blur(input);
     expect(popUp).not.toHaveBeenCalled();
-    expect(updateConfigChange).toHaveBeenCalledTimes(1);
-    expect(updateConfigChange).toHaveBeenNthCalledWith(1, 'poke-ip-addr', '192.168.3.3;192.168.4.4');
+    expect(mockSetConfig).toHaveBeenCalledTimes(1);
+    expect(mockSetConfig).toHaveBeenNthCalledWith(1, 'poke-ip-addr', '192.168.3.3;192.168.4.4');
   });
 });

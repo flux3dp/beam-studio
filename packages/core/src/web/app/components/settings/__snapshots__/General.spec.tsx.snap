@@ -12,8 +12,9 @@ exports[`should render correctly desktop version 1`] = `
     select-lang
     label:
     Language
+    url:
     options:
-    [{"label":"Deutsche","selected":false,"value":"de"},{"label":"English","selected":true,"value":"en"},{"label":"Español","selected":false,"value":"es"},{"label":"日本語","selected":false,"value":"ja"},{"label":"简体中文","selected":false,"value":"zh-cn"},{"label":"繁體中文","selected":false,"value":"zh-tw"}]
+    [{"label":"Deutsche","value":"de"},{"label":"English","value":"en"},{"label":"Español","value":"es"},{"label":"日本語","value":"ja"},{"label":"简体中文","value":"zh-cn"},{"label":"繁體中文","value":"zh-tw"}]
     <input
       class="select-control"
     />
@@ -23,8 +24,9 @@ exports[`should render correctly desktop version 1`] = `
     set-notifications
     label:
     Desktop Notifications
+    url:
     options:
-    [{"label":"On","selected":true,"value":"TRUE"},{"label":"Off","selected":false,"value":"FALSE"}]
+    [{"label":"On","value":true},{"label":"Off","selected":false,"value":false}]
     <input
       class="select-control"
     />
@@ -44,8 +46,9 @@ exports[`should render correctly web version 1`] = `
     select-lang
     label:
     Language
+    url:
     options:
-    [{"label":"Deutsche","selected":false,"value":"de"},{"label":"English","selected":true,"value":"en"},{"label":"Español","selected":false,"value":"es"},{"label":"日本語","selected":false,"value":"ja"},{"label":"简体中文","selected":false,"value":"zh-cn"},{"label":"繁體中文","selected":false,"value":"zh-tw"}]
+    [{"label":"Deutsche","value":"de"},{"label":"English","value":"en"},{"label":"Español","value":"es"},{"label":"日本語","value":"ja"},{"label":"简体中文","value":"zh-cn"},{"label":"繁體中文","value":"zh-tw"}]
     <input
       class="select-control"
     />

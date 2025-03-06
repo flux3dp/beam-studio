@@ -281,11 +281,8 @@ exports[`test DocumentSettings should render correctly 1`] = `
                               />
                             </span>
                             <span
-                              class="ant-select-selection-item"
-                              title="Origin"
-                            >
-                              Origin
-                            </span>
+                              class="ant-select-selection-placeholder"
+                            />
                           </span>
                         </div>
                         <span
@@ -346,7 +343,7 @@ exports[`test DocumentSettings should render correctly 1`] = `
                         class="control"
                       >
                         <button
-                          aria-checked="false"
+                          aria-checked="0"
                           class="ant-switch switch css-dev-only-do-not-override-hash"
                           id="rotary_mode"
                           role="switch"
@@ -366,6 +363,7 @@ exports[`test DocumentSettings should render correctly 1`] = `
                             />
                           </span>
                         </button>
+                        0
                       </div>
                     </div>
                     <div
@@ -723,11 +721,8 @@ exports[`test DocumentSettings should render correctly 2`] = `
                               />
                             </span>
                             <span
-                              class="ant-select-selection-item"
-                              title="Origin"
-                            >
-                              Origin
-                            </span>
+                              class="ant-select-selection-placeholder"
+                            />
                           </span>
                         </div>
                         <span
@@ -788,7 +783,7 @@ exports[`test DocumentSettings should render correctly 2`] = `
                         class="control"
                       >
                         <button
-                          aria-checked="false"
+                          aria-checked="0"
                           class="ant-switch switch css-dev-only-do-not-override-hash"
                           id="rotary_mode"
                           role="switch"
@@ -808,6 +803,7 @@ exports[`test DocumentSettings should render correctly 2`] = `
                             />
                           </span>
                         </button>
+                        0
                       </div>
                     </div>
                     <div
@@ -2010,17 +2006,13 @@ exports[`test DocumentSettings should render correctly 3`] = `
             aria-selected="false"
             id="startFrom_list_0"
             role="option"
-          >
-            0
-          </div>
+          />
           <div
             aria-label="Current Position"
             aria-selected="true"
             id="startFrom_list_1"
             role="option"
-          >
-            1
-          </div>
+          />
         </div>
         <div
           class="rc-virtual-list"
@@ -2360,11 +2352,8 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
                               />
                             </span>
                             <span
-                              class="ant-select-selection-item"
-                              title="Origin"
-                            >
-                              Origin
-                            </span>
+                              class="ant-select-selection-placeholder"
+                            />
                           </span>
                         </div>
                         <span
@@ -2425,7 +2414,7 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
                         class="control"
                       >
                         <button
-                          aria-checked="false"
+                          aria-checked="0"
                           class="ant-switch switch css-dev-only-do-not-override-hash"
                           id="rotary_mode"
                           role="switch"
@@ -2445,6 +2434,7 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
                             />
                           </span>
                         </button>
+                        0
                       </div>
                     </div>
                     <div
@@ -3014,11 +3004,8 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
                               />
                             </span>
                             <span
-                              class="ant-select-selection-item"
-                              title="Origin"
-                            >
-                              Origin
-                            </span>
+                              class="ant-select-selection-placeholder"
+                            />
                           </span>
                         </div>
                         <span

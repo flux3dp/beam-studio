@@ -40,10 +40,12 @@ jest.mock('@core/app/constants/alert-constants', () => ({
 
 const mockBeamboxPreferences = {
   borderless: false,
+  'customized-dimension': { fpm1: { height: 150, width: 150 } },
   'enable-autofocus': false,
   'enable-diode': false,
   engrave_dpi: 'medium',
   'extend-rotary-workarea': undefined,
+  'job-origin': 1,
   rotary_mode: 0,
   workarea: 'fbm1',
 };
@@ -185,11 +187,11 @@ describe('test DocumentSettings', () => {
     expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(2, 'borderless', true);
     expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(3, 'enable-diode', true);
     expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(4, 'enable-autofocus', true);
-    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(5, 'rotary_mode', 0);
+    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(5, 'rotary_mode', false);
     expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(6, 'pass-through', true);
     expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(7, 'pass-through-height', 500);
     expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(8, 'auto-feeder', false);
-    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(9, 'enable-job-origin', 1);
+    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(9, 'enable-job-origin', true);
     expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(10, 'job-origin', 1);
     expect(mockChangeWorkarea).toHaveBeenCalledTimes(1);
     expect(mockChangeWorkarea).toHaveBeenLastCalledWith('fbm1', { toggleModule: true });
@@ -234,8 +236,8 @@ describe('test DocumentSettings', () => {
     expect(mockBeamboxPreferenceWrite).toHaveBeenCalledWith('customized-dimension', {
       fpm1: { height: 110, width: 110 },
     });
-    expect(mockBeamboxPreferenceWrite).toHaveBeenCalledWith('promark-start-button', 1);
-    expect(mockBeamboxPreferenceWrite).toHaveBeenCalledWith('frame-before-start', 1);
+    expect(mockBeamboxPreferenceWrite).toHaveBeenCalledWith('promark-start-button', true);
+    expect(mockBeamboxPreferenceWrite).toHaveBeenCalledWith('frame-before-start', true);
     expect(mockSetPromarkInfo).toHaveBeenCalledTimes(1);
     expect(mockSetPromarkInfo).toHaveBeenLastCalledWith({ laserType: LaserType.MOPA, watt: 60 });
   });
