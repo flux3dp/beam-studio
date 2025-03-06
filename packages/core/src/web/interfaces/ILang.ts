@@ -1455,6 +1455,8 @@ export interface ILang {
     unsupported_example_file: string;
     uploading_fcode: string;
     usb_unplugged: string;
+    wrong_swiftray_version_message: string;
+    wrong_swiftray_version_title: string;
   };
   monitor: {
     ask_reconnect: string;
@@ -1583,6 +1585,21 @@ export interface ILang {
     ref_layer_name: string;
     title: string;
     workarea_height: string;
+  };
+  promark_connection_test: {
+    description: string;
+    health: string;
+    healthy_description: string;
+    res_0: string;
+    res_1: string;
+    res_2: string;
+    res_3: string;
+    res_4: string;
+    restart: string;
+    start: string;
+    stop: string;
+    title: string;
+    unhealthy_description: string;
   };
   promark_settings: {
     angle: string;

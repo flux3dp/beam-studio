@@ -74,7 +74,7 @@ class SwiftrayClient extends EventEmitter {
 
   private lastPromark: IDeviceInfo | null = null;
 
-  private version: string = '1.0.0';
+  public version: string = '1.0.0';
 
   constructor(private url: string) {
     super();

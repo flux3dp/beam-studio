@@ -32,6 +32,7 @@ export interface IDeviceConnection {
 
 export interface IReport {
   Beam_Air: number;
+  disconnection?: number; // promark
   error: string[];
   laser_pwr: number;
   prog: number;

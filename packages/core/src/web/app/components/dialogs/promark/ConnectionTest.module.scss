@@ -1,0 +1,31 @@
+@use '@core/styles/variables' as variables;
+
+.container {
+  margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.progress {
+  :global(.ant-progress-text) {
+    min-width: 40px;
+  }
+}
+
+.label {
+  font-weight: bold;
+}
+
+.bad {
+  color: variables.$status-critical;
+}
+
+.good {
+  color: variables.$status-normal;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+}
