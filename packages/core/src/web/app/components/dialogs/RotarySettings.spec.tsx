@@ -50,13 +50,7 @@ const mockOnClose = jest.fn();
 describe('test RotarySettings', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockRead.mockImplementation((key) => {
-      if (key === 'workarea') {
-        return 'ado1';
-      }
-
-      return undefined;
-    });
+    mockRead.mockImplementation((key) => (key === 'workarea' ? 'ado1' : undefined));
   });
 
   it('should render correctly', () => {
@@ -125,7 +119,7 @@ describe('test RotarySettings', () => {
 
     fireEvent.click(saveButton);
     expect(mockWrite).toHaveBeenCalledTimes(5);
-    expect(mockWrite).toHaveBeenNthCalledWith(1, 'rotary_mode', 1);
+    expect(mockWrite).toHaveBeenNthCalledWith(1, 'rotary_mode', true);
     expect(mockWrite).toHaveBeenNthCalledWith(2, 'rotary-type', RotaryType.Chuck);
     expect(mockWrite).toHaveBeenNthCalledWith(3, 'rotary-chuck-obj-d', 10);
     expect(mockWrite).toHaveBeenNthCalledWith(4, 'rotary-mirror', false);

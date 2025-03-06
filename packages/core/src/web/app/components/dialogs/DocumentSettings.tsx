@@ -15,7 +15,6 @@ import { getSupportInfo } from '@core/app/constants/add-on';
 import alertConstants from '@core/app/constants/alert-constants';
 import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType, workareaOptions as pmWorkareaOptions } from '@core/app/constants/promark-constants';
-import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import Select from '@core/app/widgets/AntdSelect';
@@ -68,18 +67,16 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
 
   const origWorkarea = useMemo(() => BeamboxPreference.read('workarea'), []);
   const [pmInfo, setPmInfo] = useState(getPromarkInfo());
-  const [workarea, setWorkarea] = useState<WorkAreaModel>(origWorkarea || 'fbb1b');
+  const [workarea, setWorkarea] = useState(origWorkarea || 'fbb1b');
   const [customDimension, setCustomDimension] = useState(BeamboxPreference.read('customized-dimension'));
   const supportInfo = useMemo(() => getSupportInfo(workarea), [workarea]);
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
   const [rotaryMode, setRotaryMode] = useState(BeamboxPreference.read('rotary_mode'));
   const [enableStartButton, setEnableStartButton] = useState(BeamboxPreference.read('promark-start-button'));
   const [shouldFrame, setShouldFrame] = useState(BeamboxPreference.read('frame-before-start'));
-  const [enableJobOrigin, setEnableJobOrigin] = useState<boolean>(BeamboxPreference.read('enable-job-origin'));
-  const [jobOrigin, setJobOrigin] = useState<number>(BeamboxPreference.read('job-origin'));
-  const [extendRotaryWorkarea, setExtendRotaryWorkarea] = useState<boolean>(
-    BeamboxPreference.read('extend-rotary-workarea'),
-  );
+  const [enableJobOrigin, setEnableJobOrigin] = useState(BeamboxPreference.read('enable-job-origin'));
+  const [jobOrigin, setJobOrigin] = useState(BeamboxPreference.read('job-origin'));
+  const [extendRotaryWorkarea, setExtendRotaryWorkarea] = useState(BeamboxPreference.read('extend-rotary-workarea'));
   const [mirrorRotary, setMirrorRotary] = useState(BeamboxPreference.read('rotary-mirror'));
   const [borderless, setBorderless] = useState(!!BeamboxPreference.read('borderless'));
   const [enableDiode, setEnableDiode] = useState(!!BeamboxPreference.read('enable-diode'));

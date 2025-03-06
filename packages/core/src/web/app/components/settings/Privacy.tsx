@@ -13,8 +13,7 @@ interface Props {
 
 function Privacy({ options }: Props): React.JSX.Element {
   const lang = i18n.lang;
-  const getConfig = useSettingStore((state) => state.getConfig);
-  const setConfig = useSettingStore((state) => state.setConfig);
+  const { getConfig, setConfig } = useSettingStore();
 
   return (
     <>

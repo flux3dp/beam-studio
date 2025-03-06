@@ -77,12 +77,13 @@ const AdorModule = ({ options }: Props): React.JSX.Element => {
         onChange={(e) => setPreference('default-laser-module', e)}
         options={defaultLaserModuleOptions}
       />
-      <SettingFormItem id="low-power" label={lang.settings.low_laser_for_preview}>
+      <SettingFormItem id="set-low-power" label={lang.settings.low_laser_for_preview}>
         <UnitInput
           className={{ half: true }}
           decimal={0}
           defaultValue={getPreference('low_power')}
           getValue={(val) => setPreference('low_power', val)}
+          id="low-power"
           max={20}
           min={0}
           unit="%"

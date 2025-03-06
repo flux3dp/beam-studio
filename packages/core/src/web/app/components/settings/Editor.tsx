@@ -20,19 +20,11 @@ const fontFamilies = FontFuncs.requestAvailableFontFamilies(true);
 
 interface Props {
   options: DefaultOptionType[];
-  // getPreference<Key extends BeamboxPreferenceKey>(key: Key): BeamboxPreferenceValue<Key>;
-  // selectedModel: WorkAreaModel;
-  // updatePreference<Key extends BeamboxPreferenceKey>(key: Key, newVal: BeamboxPreferenceValue<Key>): void;
-  // setConfig: (id: StorageKey, newVal: any) => void;
-  // updateModel: (selectedModel: WorkAreaModel) => void;
 }
 
 function Editor({ options }: Props): React.JSX.Element {
   const lang = useI18n();
-  const getPreference = useSettingStore((state) => state.getPreference);
-  const updatePreference = useSettingStore((state) => state.setPreference);
-  const getConfig = useSettingStore((state) => state.getConfig);
-  const setConfig = useSettingStore((state) => state.setConfig);
+  const { getConfig, getPreference, setConfig, setPreference } = useSettingStore();
 
   const selectedModel = getPreference('model');
   const defaultUnit = getConfig('default-units');
@@ -139,14 +131,14 @@ function Editor({ options }: Props): React.JSX.Element {
         defaultValue={getPreference('model')}
         id="set-default-model"
         label={lang.settings.default_beambox_model}
-        onChange={(e) => updatePreference('model', e)}
+        onChange={(e) => setPreference('model', e)}
         options={modelOptions}
       />
       <SettingSelect
         defaultValue={getPreference('show_guides')}
         id="set-guide"
         label={lang.settings.guides}
-        onChange={(e) => updatePreference('show_guides', e)}
+        onChange={(e) => setPreference('show_guides', e)}
         options={options}
       />
       <SettingFormItem id="set-guide-axis" label={lang.settings.guides_origin}>
@@ -157,7 +149,7 @@ function Editor({ options }: Props): React.JSX.Element {
           className={{ half: true }}
           defaultValue={getPreference('guide_x0')}
           forceUsePropsUnit
-          getValue={(val) => updatePreference('guide_x0', val)}
+          getValue={(val) => setPreference('guide_x0', val)}
           id="guide-x-input"
           max={workarea.width}
           min={0}
@@ -170,7 +162,7 @@ function Editor({ options }: Props): React.JSX.Element {
           className={{ half: true }}
           defaultValue={getPreference('guide_y0')}
           forceUsePropsUnit
-          getValue={(val) => updatePreference('guide_y0', val)}
+          getValue={(val) => setPreference('guide_y0', val)}
           id="guide-y-input"
           max={workarea.displayHeight ?? workarea.height}
           min={0}
@@ -181,7 +173,7 @@ function Editor({ options }: Props): React.JSX.Element {
         defaultValue={getPreference('image_downsampling')}
         id="set-bitmap-quality"
         label={lang.settings.image_downsampling}
-        onChange={(e) => updatePreference('image_downsampling', e)}
+        onChange={(e) => setPreference('image_downsampling', e)}
         options={imageDownSamplingOptions}
         url={lang.settings.help_center_urls.image_downsampling}
       />
@@ -189,7 +181,7 @@ function Editor({ options }: Props): React.JSX.Element {
         defaultValue={getPreference('anti-aliasing')}
         id="set-anti-aliasing"
         label={lang.settings.anti_aliasing}
-        onChange={(e) => updatePreference('anti-aliasing', e)}
+        onChange={(e) => setPreference('anti-aliasing', e)}
         options={options}
         url={lang.settings.help_center_urls.anti_aliasing}
       />
@@ -197,7 +189,7 @@ function Editor({ options }: Props): React.JSX.Element {
         defaultValue={getPreference('continuous_drawing')}
         id="set-continuous-drawing"
         label={lang.settings.continuous_drawing}
-        onChange={(e) => updatePreference('continuous_drawing', e)}
+        onChange={(e) => setPreference('continuous_drawing', e)}
         options={options}
         url={lang.settings.help_center_urls.continuous_drawing}
       />
@@ -205,7 +197,7 @@ function Editor({ options }: Props): React.JSX.Element {
         defaultValue={getPreference('simplify_clipper_path')}
         id="set-simplify-clipper-path"
         label={lang.settings.simplify_clipper_path}
-        onChange={(e) => updatePreference('simplify_clipper_path', e)}
+        onChange={(e) => setPreference('simplify_clipper_path', e)}
         options={options}
         url={lang.settings.help_center_urls.simplify_clipper_path}
       />
@@ -213,7 +205,7 @@ function Editor({ options }: Props): React.JSX.Element {
         defaultValue={getPreference('auto-switch-tab')}
         id="auto-switch-tab"
         label={lang.settings.auto_switch_tab}
-        onChange={(e) => updatePreference('auto-switch-tab', e)}
+        onChange={(e) => setPreference('auto-switch-tab', e)}
         options={options}
       />
       {hasSwiftray && (
@@ -221,7 +213,7 @@ function Editor({ options }: Props): React.JSX.Element {
           defaultValue={getPreference('path-engine')}
           id="path-engine"
           label={`${lang.settings.calculation_optimization} (Beta)`}
-          onChange={(e) => updatePreference('path-engine', e)}
+          onChange={(e) => setPreference('path-engine', e)}
           options={pathEngineOptions}
           url={lang.settings.help_center_urls.calculation_optimization}
         />
@@ -231,7 +223,7 @@ function Editor({ options }: Props): React.JSX.Element {
           defaultValue={getPreference('enable-custom-backlash')}
           id="set-enable-custom-backlash"
           label={lang.settings.enable_custom_backlash}
-          onChange={(e) => updatePreference('enable-custom-backlash', e)}
+          onChange={(e) => setPreference('enable-custom-backlash', e)}
           options={options}
         />
       )}

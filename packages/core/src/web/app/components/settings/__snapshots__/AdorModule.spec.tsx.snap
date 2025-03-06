@@ -8,66 +8,66 @@ exports[`test AdorModule should render correctly 1`] = `
     ador_modules
   </div>
   <div>
-    Mock SelectControl
-    <div>
-      printer_advanced_mode
-    </div>
-    <div>
-      print-advanced-mode
-    </div>
-    <div>
-      <button
-        type="button"
-      >
-        On
-      </button>
-      <button
-        type="button"
-      >
-        Off
-      </button>
-    </div>
+    mock-select-control id:
+    print-advanced-mode
+    label:
+    printer_advanced_mode
+    url:
+    options:
+    [{"label":"On","value":true},{"label":"Off","value":false}]
+    <button
+      type="button"
+    >
+      On
+    </button>
+    <button
+      type="button"
+    >
+      Off
+    </button>
   </div>
   <div>
-    Mock SelectControl
-    <div>
-      default_laser_module
-    </div>
-    <div>
-      default-laser-module
-    </div>
-    <div>
-      <button
-        type="button"
-      >
-        laser_10w_diode
-      </button>
-      <button
-        type="button"
-      >
-        laser_20w_diode
-      </button>
-    </div>
+    mock-select-control id:
+    default-laser-module
+    label:
+    default_laser_module
+    url:
+    options:
+    [{"label":"laser_10w_diode","value":1},{"label":"laser_20w_diode","value":2}]
+    <button
+      type="button"
+    >
+      laser_10w_diode
+    </button>
+    <button
+      type="button"
+    >
+      laser_20w_diode
+    </button>
   </div>
   <div>
-    <div>
-      Mock Control
-      Laser for Running Frame
-    </div>
+    mock-select-control id:
+    set-low-power
+    label:
+    Laser for Running Frame
+    url:
+    options:
     <div>
       <input
         data-testid="low-power"
         id="low-power"
         type="number"
-        value="3"
+        value=""
       />
     </div>
   </div>
   <div>
-    <div>
-      Mock Control
-      module_offset_10w
-    </div>
+    mock-select-control id:
+    10w-laser-offset
+    label:
+    module_offset_10w
+    url:
+    options:
     <span
       class="font2"
       style="line-height: 32px; margin-right: 10px;"
@@ -98,10 +98,12 @@ exports[`test AdorModule should render correctly 1`] = `
     </div>
   </div>
   <div>
-    <div>
-      Mock Control
-      module_offset_20w
-    </div>
+    mock-select-control id:
+    20w-laser-offset
+    label:
+    module_offset_20w
+    url:
+    options:
     <span
       class="font2"
       style="line-height: 32px; margin-right: 10px;"
@@ -132,10 +134,12 @@ exports[`test AdorModule should render correctly 1`] = `
     </div>
   </div>
   <div>
-    <div>
-      Mock Control
-      module_offset_printer
-    </div>
+    mock-select-control id:
+    printer-offset
+    label:
+    module_offset_printer
+    url:
+    options:
     <span
       class="font2"
       style="line-height: 32px; margin-right: 10px;"
@@ -166,10 +170,12 @@ exports[`test AdorModule should render correctly 1`] = `
     </div>
   </div>
   <div>
-    <div>
-      Mock Control
-      module_offset_2w_ir
-    </div>
+    mock-select-control id:
+    2w-ir-laser-offset
+    label:
+    module_offset_2w_ir
+    url:
+    options:
     <span
       class="font2"
       style="line-height: 32px; margin-right: 10px;"
