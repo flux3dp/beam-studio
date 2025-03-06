@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import { ConfigProvider, Form } from 'antd';
 import type { DefaultOptionType } from 'antd/es/select';
@@ -33,7 +33,7 @@ function Settings(): React.JSX.Element {
   const [lang, setLang] = useState<ILang>(i18n.lang);
   const [editingAutosaveConfig, setEditingAutosaveConfig] = useState<IConfig>(autoSaveHelper.getConfig());
   const [warnings, setWarnings] = useState<Record<string, string>>({});
-  const previousActiveLang = i18n.getActiveLang();
+  const previousActiveLang = useMemo(() => i18n.getActiveLang(), []);
   const { updateToStorage } = useSettingStore();
 
   const changeActiveLang = (value: string): void => {
