@@ -119,7 +119,7 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   'job-origin': 1,
   'keep-preview-result': false,
   low_power: 10,
-  model: 'fbm1',
+  model: 'fbb1b',
   'module-offsets': moduleOffsets,
   mouse_input_device: window.os === 'MacOS' ? 'TOUCHPAD' : 'MOUSE',
   'multipass-compensation': true,
@@ -147,7 +147,7 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   simplify_clipper_path: false,
   use_layer_color: true,
   vector_speed_constraint: true,
-  workarea: 'fbm1',
+  workarea: 'fbb1b',
   zoom_with_window: false,
 };
 

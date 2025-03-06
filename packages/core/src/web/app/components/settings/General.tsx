@@ -21,7 +21,6 @@ function General({ changeActiveLang, options, supportedLangs }: Props): React.JS
   return (
     <>
       <div className="subtitle">{lang.settings.groups.general}</div>
-
       <SettingSelect
         defaultValue={i18n.getActiveLang()}
         id="select-lang"

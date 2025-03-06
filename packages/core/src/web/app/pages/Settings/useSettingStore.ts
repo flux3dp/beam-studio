@@ -32,7 +32,7 @@ const DEFAULT_CONFIG = {
   guessing_poke: true,
   loop_compensation: 0,
   notification: false,
-  ['poke-ip-addr']: '192.168.1.1',
+  'poke-ip-addr': '192.168.1.1',
 };
 
 export type DefaultConfig = {
@@ -43,8 +43,16 @@ export type DefaultConfig = {
   guessing_poke: boolean;
   loop_compensation: number;
   notification: boolean;
-  ['poke-ip-addr']: string;
+  'poke-ip-addr': string;
 };
+
+const configMigrateList = [
+  'enable-sentry',
+  'notification',
+  'auto_check_update',
+  'guessing_poke',
+  'auto_connect',
+] as const;
 
 export const useSettingStore = create<Action & State>(
   combine(
@@ -55,13 +63,20 @@ export const useSettingStore = create<Action & State>(
 
         if (key in configChanges) return configChanges[key];
 
-        const storageValue = storage.get(key);
+        const value = storage.get(key) as any;
 
-        return match(storageValue)
-          .with(undefined, () => (DEFAULT_CONFIG as any)[key])
-          .with(P.union('true', 'TRUE'), () => true)
-          .with(P.union('false', 'FALSE'), () => false)
-          .otherwise(() => storageValue);
+        return (
+          match<any>({ key, value })
+            // migrate old config
+            .with(
+              { key: P.union(...configMigrateList), value: P.union(P.number, P.nullish) },
+              ({ value }) => value === 1,
+            )
+            .with({ key: P.string, value: P.nullish }, ({ key }) => (DEFAULT_CONFIG as any)[key])
+            .with({ value: P.union('true', 'TRUE') }, () => true)
+            .with({ value: P.union('false', 'FALSE') }, () => false)
+            .otherwise(({ value }) => value)
+        );
       },
       getPreference: (key) => {
         const { beamboxPreferenceChanges } = get();
