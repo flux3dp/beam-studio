@@ -64,10 +64,11 @@ const lang: ILang = {
       title: 'Aankondiging',
     },
     banner: {
-      auto_feeder: 'Automatische invoermodus',
+      auto_feeder: 'Automatische Voedermodus',
       camera_preview: 'Voorbeeld',
-      camera_preview_borderless_mode: '(Open onderkant)',
-      curve_engraving: '3D-curve modus',
+      camera_preview_borderless_mode: '(Open Onderkant)',
+      curve_engraving: 'Kromme Graveermodus',
+      pass_through: 'Doorvoer Modus',
       rotary: 'Rotatiemodus',
     },
     bottom_right_panel: {
@@ -1813,8 +1814,6 @@ const lang: ILang = {
       QcleanScene: 'Wil je de tekening wissen?<br/>Dit zal ook je undo-geschiedenis wissen!',
       start_preview_timeout: '#803 Time-out opgetreden bij het starten van de voorbeeldmodus. Start uw machine of Beam Studio opnieuw op. Als deze fout zich blijft voordoen, volg dan <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">deze handleiding</a>.',
     },
-    borderless: '(OPEN ONDERKANT)',
-    curve_engrave: '3D Curve',
     frame_task: 'Frame uitvoeren',
     hint: {
       polygon: 'Druk op + / - om het aantal zijden te verhogen / verlagen.',
@@ -1986,7 +1985,6 @@ const lang: ILang = {
     },
     preview: 'Voorbeeld',
     preview_press_esc_to_stop: 'Druk op ESC om de cameravoorvertoning te stoppen.',
-    preview_title: 'Voorbeeld',
     rename_tab: 'Tab hernoemen',
     select_machine: 'Selecteer een machine',
     tag_names: {

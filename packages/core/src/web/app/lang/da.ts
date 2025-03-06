@@ -64,13 +64,13 @@ const lang: ILang = {
       title: 'Meddelelse',
     },
     banner: {
-      auto_feeder: 'Automatisk fødertilstand',
+      auto_feeder: 'Auto Feeder Tilstand',
       camera_preview: 'Forhåndsvisning',
-      camera_preview_borderless_mode: '(Åben bund)',
-      curve_engraving: '3D-kurve tilstand',
-      rotary: 'Rotations-tilstand',
+      camera_preview_borderless_mode: '(Åben Bund)',
+      curve_engraving: 'Kurvegraveringstilstand',
+      pass_through: 'Gennemgangstilstand',
+      rotary: 'Rotationsfunktion',
     },
-
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Konverter tekst til sti...',
       export_file_error_ask_for_upload: 'Kunne ikke eksportere opgave. Er du villig til at dele arbejdsscenen med udviklingsholdet til fejlrapportering?',

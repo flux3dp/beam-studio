@@ -66,6 +66,7 @@ export interface ILang {
       camera_preview: string;
       camera_preview_borderless_mode: string;
       curve_engraving: string;
+      pass_through: string;
       rotary: string;
     };
     bottom_right_panel: {

@@ -64,10 +64,11 @@ const lang: ILang = {
       title: 'Meddelande',
     },
     banner: {
-      auto_feeder: 'Automatisk matningsläge',
+      auto_feeder: 'Auto Matningsläge',
       camera_preview: 'Förhandsgranskning',
-      camera_preview_borderless_mode: '(Öppen botten)',
-      curve_engraving: '3D-kurvläge',
+      camera_preview_borderless_mode: '(Öppen Botten)',
+      curve_engraving: 'Kurvgravyrläge',
+      pass_through: 'Genomgångsläge',
       rotary: 'Rotationsläge',
     },
     bottom_right_panel: {
@@ -1813,8 +1814,6 @@ const lang: ILang = {
       QcleanScene: 'Vill du rensa ritningen?<br/>Detta kommer också att radera din ånghistorik!',
       start_preview_timeout: '#803 Timeout uppstod när förhandsgranskningsläget startades. Starta om din dator eller Beam Studio. Om felet kvarstår, följ <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">denna guide</a>.',
     },
-    borderless: '(ÖPPNA BOTTEN)',
-    curve_engrave: '3D Kurva',
     frame_task: 'Kör ram',
     hint: {
       polygon: 'Tryck på + / - tangenten för att öka / minska sidor.',
@@ -1986,7 +1985,6 @@ const lang: ILang = {
     },
     preview: 'FÖRHANDSVISA',
     preview_press_esc_to_stop: 'Tryck på ESC för att stoppa kameraförhandsvisningen.',
-    preview_title: 'Förhandsgranskning',
     rename_tab: 'Byt namn på flik',
     select_machine: 'Välj en maskin',
     tag_names: {

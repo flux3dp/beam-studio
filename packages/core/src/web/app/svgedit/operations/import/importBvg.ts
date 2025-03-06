@@ -93,7 +93,7 @@ export const importBvgString = async (
         if (rotaryMode === '1') {
           changeBeamboxPreferenceValue('pass-through', false, { parentCmd: batchCmd });
           changeBeamboxPreferenceValue('auto-feeder', false, { parentCmd: batchCmd });
-          curveEngravingModeController.clearArea();
+          curveEngravingModeController.clearArea(false);
         }
       } else {
         cmd = changeBeamboxPreferenceValue('rotary_mode', 0, { parentCmd: batchCmd });
@@ -151,15 +151,13 @@ export const importBvgString = async (
 
           changeBeamboxPreferenceValue('auto-feeder', false, { parentCmd: batchCmd });
           changeBeamboxPreferenceValue('rotary_mode', false, { parentCmd: batchCmd });
-          curveEngravingModeController.clearArea();
+          curveEngravingModeController.clearArea(false);
         }
       }
     }
 
     if (supportInfo.autoFeeder) {
       matched = str.match(/data-auto-feeder-height="([0-9.]+)"/);
-
-      console.log(matched);
 
       if (matched && matched[1]) {
         const height = Number.parseFloat(matched[1]);
@@ -170,7 +168,7 @@ export const importBvgString = async (
 
           changeBeamboxPreferenceValue('rotary_mode', false, { parentCmd: batchCmd });
           changeBeamboxPreferenceValue('pass-through', false, { parentCmd: batchCmd });
-          curveEngravingModeController.clearArea();
+          curveEngravingModeController.clearArea(false);
         }
       }
     }

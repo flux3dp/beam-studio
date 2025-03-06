@@ -66,8 +66,9 @@ const lang: ILang = {
     banner: {
       auto_feeder: '自动送料模式',
       camera_preview: '预览',
-      camera_preview_borderless_mode: '（底部打开）',
-      curve_engraving: '3D曲线模式',
+      camera_preview_borderless_mode: '(打开底部)',
+      curve_engraving: '曲面雕刻模式',
+      pass_through: '透通模式',
       rotary: '旋转模式',
     },
     bottom_right_panel: {
@@ -1813,8 +1814,6 @@ const lang: ILang = {
       QcleanScene: '您要清除绘图吗？<br/>这还将擦除您的撤消历史！',
       start_preview_timeout: '#803 启动相机预览时超时，请重新开启您的机器或是 Beam Studio ，如果此错误持续发生，请参考<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">此则引导</a>。',
     },
-    borderless: '(开盖模式)',
-    curve_engrave: '3D 曲线',
     frame_task: '外框预览',
     hint: {
       polygon: '按下 + / - 键以增加 / 减少边数。',
@@ -1986,7 +1985,6 @@ const lang: ILang = {
     },
     preview: '相机预览',
     preview_press_esc_to_stop: '按下 ESC 以停止相机预览。',
-    preview_title: '相机预览',
     rename_tab: '重命名标签页',
     select_machine: '选择机器',
     tag_names: {

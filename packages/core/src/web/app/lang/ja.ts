@@ -64,11 +64,12 @@ const lang: ILang = {
       title: 'お知らせ',
     },
     banner: {
-      auto_feeder: 'オートフィーダーモード',
+      auto_feeder: '自動供給モード',
       camera_preview: 'プレビュー',
-      camera_preview_borderless_mode: '（底面オープン）',
-      curve_engraving: '3Dカーブモード',
-      rotary: '回転モード',
+      camera_preview_borderless_mode: '(オープンボトム)',
+      curve_engraving: '曲面彫刻モード',
+      pass_through: 'パススルーモード',
+      rotary: 'ロータリーモード',
     },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'テキストをパスに変換…',
@@ -1813,8 +1814,6 @@ const lang: ILang = {
       QcleanScene: '描画をクリアしますか？<br/>これにより、元に戻す履歴も消去されます！',
       start_preview_timeout: '#803 プレビューモードの開始時にタイムアウトが発生しました。マシンまたはBeam Studioを再起動してください。このエラーが続く場合は、この<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">ガイド</a>に従ってください。',
     },
-    borderless: '（ボーダーレス）',
-    curve_engrave: '3D 曲線',
     frame_task: 'フレームプレビュー',
     hint: {
       polygon: '+ / - キーを押して、辺を増減します。',
@@ -1986,7 +1985,6 @@ const lang: ILang = {
     },
     preview: 'プレビュー',
     preview_press_esc_to_stop: 'ESCを押してカメラプレビューを停止します。',
-    preview_title: 'プレビュー',
     rename_tab: 'タブの名前を変更',
     select_machine: 'マシンの選択',
     tag_names: {

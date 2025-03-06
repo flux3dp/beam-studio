@@ -64,11 +64,12 @@ const lang: ILang = {
       title: 'Annuncio',
     },
     banner: {
-      auto_feeder: 'Modalità alimentatore automatico',
+      auto_feeder: 'Modalità Alimentazione Automatica',
       camera_preview: 'Anteprima',
-      camera_preview_borderless_mode: '(Fondo aperto)',
-      curve_engraving: 'Modalità curva 3D',
-      rotary: 'Modalità rotativa',
+      camera_preview_borderless_mode: '(Parte Inferiore Aperta)',
+      curve_engraving: 'Modalità Incisione Curva',
+      pass_through: 'Modalità Passante',
+      rotary: 'Modalità Rotativa',
     },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Converti testo in percorso...',
@@ -1813,8 +1814,6 @@ const lang: ILang = {
       QcleanScene: 'Vuoi cancellare il disegno?<br/>Questo cancellerà anche la tua cronologia di annullamento!',
       start_preview_timeout: '#803 Timeout durante l\'avvio della modalità anteprima. Riavviare la macchina o Beam Studio. Se l\'errore persiste, seguire <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">questa guida</a>.',
     },
-    borderless: '(APRI A SCHERMO INTERO)',
-    curve_engrave: 'Curva 3D',
     frame_task: 'Esecuzione cornice',
     hint: {
       polygon: 'Premere + / - per aumentare / diminuire i lati.',
@@ -1986,7 +1985,6 @@ const lang: ILang = {
     },
     preview: 'ANTEPRIMA',
     preview_press_esc_to_stop: 'Premi ESC per interrompere l’anteprima della fotocamera.',
-    preview_title: 'Anteprima',
     rename_tab: 'Rinomina scheda',
     select_machine: 'Seleziona una macchina',
     tag_names: {
