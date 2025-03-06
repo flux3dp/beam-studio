@@ -67,7 +67,8 @@ const lang: ILang = {
       auto_feeder: 'Auto Feeder Mode',
       camera_preview: 'Preview',
       camera_preview_borderless_mode: '(Open Bottom)',
-      curve_engraving: '3D Curve Mode',
+      curve_engraving: 'Curve Engraving Mode',
+      pass_through: 'Passthrough Mode',
       rotary: 'Rotary Mode',
     },
     bottom_right_panel: {

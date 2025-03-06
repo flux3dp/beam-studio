@@ -64,11 +64,12 @@ const lang: ILang = {
       title: 'Annonce',
     },
     banner: {
-      auto_feeder: 'Mode alimentation automatique',
+      auto_feeder: 'Mode Alimentation Automatique',
       camera_preview: 'Aperçu',
-      camera_preview_borderless_mode: '(Fond ouvert)',
-      curve_engraving: 'Mode courbe 3D',
-      rotary: 'Mode rotatif',
+      camera_preview_borderless_mode: '(Fond Ouvert)',
+      curve_engraving: 'Mode Gravure Courbe',
+      pass_through: 'Mode Traversant',
+      rotary: 'Mode Rotatif',
     },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Convertir le texte en tracé...',
@@ -1813,8 +1814,6 @@ const lang: ILang = {
       QcleanScene: 'Voulez-vous effacer le dessin?<br/>Cela effacera également votre historique des annulations !',
       start_preview_timeout: '#803 Délai d’attente dépassé lors du démarrage du mode aperçu. Veuillez redémarrer votre machine ou Beam Studio. Si cette erreur persiste, veuillez suivre <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">ce guide</a>.',
     },
-    borderless: '(OUVRIR EN BAS)',
-    curve_engrave: 'Courbe 3D',
     frame_task: 'Exécution du cadre',
     hint: {
       polygon: 'Appuyez sur les touches + / - pour augmenter / diminuer les côtés.',
@@ -1986,7 +1985,6 @@ const lang: ILang = {
     },
     preview: 'PRÉVISUALISATION',
     preview_press_esc_to_stop: 'Appuyez sur ESC pour arrêter l’aperçu de la caméra.',
-    preview_title: 'Aperçu',
     rename_tab: "Renommer l'onglet",
     select_machine: 'Sélectionner une machine',
     tag_names: {

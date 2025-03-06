@@ -24,6 +24,7 @@ const Banner = (): React.ReactNode => {
   const supportInfo = useMemo(() => getSupportInfo(workarea), [workarea]);
   const isRotary = useBeamboxPreference('rotary_mode') && supportInfo.rotary;
   const isAutoFeeder = useBeamboxPreference('auto-feeder') && supportInfo.autoFeeder;
+  const isPassThrough = useBeamboxPreference('pass-through') && supportInfo.passThrough;
   const isBorderlessPreview = useMemo(
     () => isBorderless && mode === CanvasMode.Preview && supportInfo.openBottom && selectedDevice?.model === 'fbm1',
     [isBorderless, mode, supportInfo.openBottom, selectedDevice],
@@ -32,21 +33,23 @@ const Banner = (): React.ReactNode => {
     () => hasCurveEngravingData || mode === CanvasMode.CurveEngraving,
     [hasCurveEngravingData, mode],
   );
-  const isNeedBanner = isRotary || isAutoFeeder || isCurveEngraving || isBorderlessPreview;
+  const isNeedBanner = isAutoFeeder || isBorderlessPreview || isCurveEngraving || isPassThrough || isRotary;
   const messageMap = {
     autoFeeder: lang.beambox.banner.auto_feeder,
     curveEngraving: lang.beambox.banner.curve_engraving,
-    fbm1Preview: `${lang.beambox.banner.camera_preview} ${lang.beambox.banner.camera_preview_borderless_mode}`,
+    openBottomPreview: `${lang.beambox.banner.camera_preview} ${lang.beambox.banner.camera_preview_borderless_mode}`,
+    passThrough: lang.beambox.banner.pass_through,
     rotary: lang.beambox.banner.rotary,
   } as const;
 
   const renderBannerMessage = () => {
     const list = Array.of<string>();
 
-    if (isBorderlessPreview) list.push(messageMap.fbm1Preview);
+    if (isBorderlessPreview) list.push(messageMap.openBottomPreview);
 
     // exclusive
     if (isAutoFeeder) list.push(messageMap.autoFeeder);
+    else if (isPassThrough) list.push(messageMap.passThrough);
     else if (isCurveEngraving) list.push(messageMap.curveEngraving);
     else if (isRotary) list.push(messageMap.rotary);
 

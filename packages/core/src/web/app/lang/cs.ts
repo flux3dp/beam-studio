@@ -64,13 +64,13 @@ const lang: ILang = {
       title: 'Ohlášení',
     },
     banner: {
-      auto_feeder: 'Režim automatického podavače',
+      auto_feeder: 'Režim Automatického Podavače',
       camera_preview: 'Náhled',
-      camera_preview_borderless_mode: '(Otevřené dno)',
-      curve_engraving: 'Režim 3D křivky',
-      rotary: 'Režim rotačního gravírování',
+      camera_preview_borderless_mode: '(Otevřené Dno)',
+      curve_engraving: 'Režim Gravírování na Křivkách',
+      pass_through: 'Režim Průchodu',
+      rotary: 'Režim Otočný',
     },
-
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Převést text na cestu...',
       export_file_error_ask_for_upload: 'Nepodařilo se exportovat úlohu. Jste ochotni při hlášení chyby poskytnout vývojářům pracovní oblast?',
