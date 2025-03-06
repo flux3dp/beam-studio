@@ -1899,7 +1899,7 @@ const svgEditor = (window['svgEditor'] = (function () {
             return 'bvg';
           }
 
-          if (file.name.toLowerCase().includes('.dxf')) {
+          if (file.name.toLowerCase().endsWith('.dxf')) {
             return 'dxf';
           }
 
@@ -1913,11 +1913,11 @@ const svgEditor = (window['svgEditor'] = (function () {
             }
           }
 
-          if (file.name.toLowerCase().includes('.json')) {
+          if (file.name.toLowerCase().endsWith('.json')) {
             return 'json';
           }
 
-          if (file.name.toLowerCase().includes('.js')) {
+          if (file.name.toLowerCase().endsWith('.js')) {
             return 'js';
           }
 
