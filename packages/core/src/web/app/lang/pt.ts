@@ -64,11 +64,12 @@ const lang: ILang = {
       title: 'Anúncio',
     },
     banner: {
-      auto_feeder: 'Modo alimentador automático',
+      auto_feeder: 'Modo Alimentador Automático',
       camera_preview: 'Pré-visualização',
-      camera_preview_borderless_mode: '(Fundo aberto)',
-      curve_engraving: 'Modo de curva 3D',
-      rotary: 'Modo rotativo',
+      camera_preview_borderless_mode: '(Fundo Aberto)',
+      curve_engraving: 'Modo de Gravação Curva',
+      pass_through: 'Modo Passagem Direta',
+      rotary: 'Modo Rotativo',
     },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Converter Texto em Caminho...',
@@ -1813,8 +1814,6 @@ const lang: ILang = {
       QcleanScene: 'Quer apagar o desenho?<br/>Isso também apagará seu histórico de desfazer!',
       start_preview_timeout: '#803 O tempo limite ocorreu ao iniciar o modo de visualização. Reinicie seu computador ou o Beam Studio. Se este erro persistir, siga <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">este guia</a>.',
     },
-    borderless: '(ABERTO EM BAIXO)',
-    curve_engrave: 'Curva 3D',
     frame_task: 'Executando quadro',
     hint: {
       polygon: 'Pressione as teclas + / - para aumentar / diminuir os lados.',
@@ -1986,7 +1985,6 @@ const lang: ILang = {
     },
     preview: 'PRÉ-VISUALIZAÇÃO',
     preview_press_esc_to_stop: 'Pressione ESC para parar a pré-visualização da câmera.',
-    preview_title: 'Pré-visualização',
     rename_tab: 'Renomear aba',
     select_machine: 'Selecionar uma máquina',
     tag_names: {

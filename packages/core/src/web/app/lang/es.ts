@@ -64,11 +64,12 @@ const lang: ILang = {
       title: 'Anuncio',
     },
     banner: {
-      auto_feeder: 'Modo de alimentador automático',
-      camera_preview: 'Vista previa',
-      camera_preview_borderless_mode: '(Fondo abierto)',
-      curve_engraving: 'Modo de curva 3D',
-      rotary: 'Modo rotatorio',
+      auto_feeder: 'Modo Alimentador Automático',
+      camera_preview: 'Vista Previa',
+      camera_preview_borderless_mode: '(Fondo Abierto)',
+      curve_engraving: 'Modo de Grabado en Curva',
+      pass_through: 'Modo de Paso',
+      rotary: 'Modo Rotativo',
     },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Convierte el texto en un camino...',
@@ -1813,8 +1814,6 @@ const lang: ILang = {
       QcleanScene: '¿Quieres borrar el dibujo?<br/>¡Esto también borrará tu historial de deshacer!',
       start_preview_timeout: '#803 El tiempo de espera se ha agotado al iniciar el modo de vista previa. Por favor, reinicia tu máquina o Beam Studio. Si este error persiste, por favor sigue <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">esta guía</a>.',
     },
-    borderless: '(SIN BORDES)',
-    curve_engrave: 'Curva 3D',
     frame_task: 'Vista previa del cuadro',
     hint: {
       polygon: 'Presiona la tecla + / - para aumentar / disminuir los lados.',
@@ -1986,7 +1985,6 @@ const lang: ILang = {
     },
     preview: 'VISTA PREVIA',
     preview_press_esc_to_stop: 'Presiona ESC para detener la vista previa de la cámara.',
-    preview_title: 'Vista previa',
     rename_tab: 'Renombrar pestaña',
     select_machine: 'Seleccione una máquina',
     tag_names: {

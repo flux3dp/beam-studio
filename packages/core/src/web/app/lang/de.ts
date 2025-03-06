@@ -64,10 +64,11 @@ const lang: ILang = {
       title: 'Ankündigung',
     },
     banner: {
-      auto_feeder: 'Automatischer Einzugsmodus',
+      auto_feeder: 'Automatischer Zuführmodus',
       camera_preview: 'Vorschau',
       camera_preview_borderless_mode: '(Offener Boden)',
-      curve_engraving: '3D-Kurvenmodus',
+      curve_engraving: 'Kurven-Graviermodus',
+      pass_through: 'Durchlaufmodus',
       rotary: 'Drehmodus',
     },
     bottom_right_panel: {
@@ -1813,8 +1814,6 @@ const lang: ILang = {
       QcleanScene: 'Möchtest du die Zeichnung löschen?<br/>Dies löscht auch deine Rückgängig-Historie!',
       start_preview_timeout: '#803 Beim Starten des Vorschaumodus ist eine Zeitüberschreitung aufgetreten. Bitte starten Sie Ihren Maschinen oder Beam Studio neu. Wenn dieser Fehler weiterhin besteht, befolgen Sie <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">diese Anleitung</a>.',
     },
-    borderless: '(RANDLOS)',
-    curve_engrave: '3D Kurve',
     frame_task: 'Frame-Vorschau',
     hint: {
       polygon: 'Press + / - key to increse / decrease sides.',
@@ -1986,7 +1985,6 @@ const lang: ILang = {
     },
     preview: 'VORSCHAU',
     preview_press_esc_to_stop: 'Drücken Sie ESC, um die Kameravorschau zu stoppen.',
-    preview_title: 'Vorschau',
     rename_tab: 'Tab umbenennen',
     select_machine: 'Wählen Sie eine Maschine aus',
     tag_names: {

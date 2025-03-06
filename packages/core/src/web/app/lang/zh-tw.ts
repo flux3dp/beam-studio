@@ -64,11 +64,12 @@ const lang: ILang = {
       title: '公告',
     },
     banner: {
-      auto_feeder: '自動送料模式',
-      camera_preview: '相機預覽',
-      camera_preview_borderless_mode: '(開蓋模式)',
-      curve_engraving: '3D 曲面模式',
-      rotary: '旋轉軸模式',
+      auto_feeder: '自動進料模式',
+      camera_preview: '預覽',
+      camera_preview_borderless_mode: '(開放底部)',
+      curve_engraving: '曲面雕刻模式',
+      pass_through: '穿透模式',
+      rotary: '旋轉模式',
     },
     bottom_right_panel: {
       convert_text_to_path_before_export: '部分字型在不同系統間有差異，輸出前請將字體轉換成路徑，以確保文字正確顯示。轉換文字至路徑中...',
