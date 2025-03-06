@@ -13,8 +13,7 @@ interface Props {
 
 function Mask({ options }: Props): React.JSX.Element {
   const lang = useI18n();
-  const getPreference = useSettingStore((state) => state.getPreference);
-  const setPreference = useSettingStore((state) => state.setPreference);
+  const { getPreference, setPreference } = useSettingStore();
 
   return (
     <>

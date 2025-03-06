@@ -34,7 +34,7 @@ function Settings(): React.JSX.Element {
   const [editingAutosaveConfig, setEditingAutosaveConfig] = useState<IConfig>(autoSaveHelper.getConfig());
   const [warnings, setWarnings] = useState<Record<string, string>>({});
   const previousActiveLang = i18n.getActiveLang();
-  const updateToStorage = useSettingStore((state) => state.updateToStorage);
+  const { updateToStorage } = useSettingStore();
 
   const changeActiveLang = (value: string): void => {
     i18n.setActiveLang(value);

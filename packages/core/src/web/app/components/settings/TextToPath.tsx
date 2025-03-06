@@ -13,8 +13,7 @@ interface Props {
 
 function TextToPath({ options }: Props): React.JSX.Element {
   const lang = useI18n();
-  const getPreference = useSettingStore((state) => state.getPreference);
-  const setPreference = useSettingStore((state) => state.setPreference);
+  const { getPreference, setPreference } = useSettingStore();
   const defaultLaserModuleOptions = [
     { label: '1.0', value: '1.0' },
     { label: '2.0', value: '2.0' },

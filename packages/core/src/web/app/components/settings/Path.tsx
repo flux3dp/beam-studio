@@ -12,10 +12,7 @@ import SettingSelect from './components/SettingSelect';
 
 const Path = (): React.JSX.Element => {
   const { lang } = i18n;
-  const getPreference = useSettingStore((state) => state.getPreference);
-  const updatePreference = useSettingStore((state) => state.setPreference);
-  const getConfig = useSettingStore((state) => state.getConfig);
-  const setConfig = useSettingStore((state) => state.setConfig);
+  const { getConfig, getPreference, setConfig, setPreference } = useSettingStore();
 
   const selectedModel = getPreference('model');
   const defaultUnit = getConfig('default-units');
@@ -33,7 +30,7 @@ const Path = (): React.JSX.Element => {
         defaultValue={getPreference('vector_speed_constraint')}
         id="set-vector-speed-contraint"
         label={lang.settings.vector_speed_constraint}
-        onChange={(e) => updatePreference('vector_speed_constraint', e)}
+        onChange={(e) => setPreference('vector_speed_constraint', e)}
         options={commonBooleanOptions}
         url={lang.settings.help_center_urls.vector_speed_constraint}
       />
@@ -60,7 +57,7 @@ const Path = (): React.JSX.Element => {
               className={{ half: true }}
               defaultValue={getPreference('blade_radius')}
               forceUsePropsUnit
-              getValue={(val) => updatePreference('blade_radius', val)}
+              getValue={(val) => setPreference('blade_radius', val)}
               id="radius-input"
               max={30}
               min={0}
@@ -72,7 +69,7 @@ const Path = (): React.JSX.Element => {
             defaultValue={getPreference('blade_precut')}
             id="set-blade-precut"
             label={lang.settings.blade_precut_switch}
-            onChange={(e) => updatePreference('blade_precut', e.target.value)}
+            onChange={(e) => setPreference('blade_precut', e.target.value)}
             options={commonBooleanOptions}
           />
           <SettingFormItem id="set_precut_x" label={lang.settings.blade_precut_position}>
@@ -83,7 +80,7 @@ const Path = (): React.JSX.Element => {
               className={{ half: true }}
               defaultValue={getPreference('precut_x')}
               forceUsePropsUnit
-              getValue={(val) => updatePreference('precut_x', val)}
+              getValue={(val) => setPreference('precut_x', val)}
               id="precut-x-input"
               max={workarea.width}
               min={0}
@@ -96,7 +93,7 @@ const Path = (): React.JSX.Element => {
               className={{ half: true }}
               defaultValue={getPreference('precut_y')}
               forceUsePropsUnit
-              getValue={(val) => updatePreference('precut_y', val)}
+              getValue={(val) => setPreference('precut_y', val)}
               id="precut-y-input"
               max={workarea.displayHeight ?? workarea.height}
               min={0}
