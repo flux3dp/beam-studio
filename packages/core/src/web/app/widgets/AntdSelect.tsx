@@ -10,7 +10,7 @@ import isWeb from '@core/helpers/is-web';
 const Select = function <ValueType = any, OptionType extends BaseOptionType | DefaultOptionType = DefaultOptionType>(
   props: SelectProps<ValueType, OptionType>,
 ): React.JSX.Element {
-  return <AntdSelect {...props} dropdownAlign={!isWeb() && { overflow: { adjustY: 0 } }} />;
+  return <AntdSelect {...props} dropdownAlign={(!isWeb() && { overflow: { adjustY: 0 } }) || undefined} />;
 };
 
 Select.Option = AntdSelect.Option;

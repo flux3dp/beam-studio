@@ -8,7 +8,7 @@ import type { IImageDataResult } from '@core/interfaces/IImage';
  * @param fullResolution target resolution: full resolution if true, otherwise low resolution
  */
 const updateImagesResolution = async (fullResolution: boolean, parent?: Element): Promise<void> => {
-  if (beamboxPreference.read('image_downsampling') === false) {
+  if (!beamboxPreference.read('image_downsampling')) {
     return;
   }
 

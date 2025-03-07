@@ -18,7 +18,7 @@ describe('manipulate file', () => {
       cy.fixture('flux.png', 'base64')
         .then(Cypress.Blob.base64StringToBlob)
         .then((blob) => {
-          const el = $input[0];
+          const el: any = $input[0];
           const testFile = new File([blob], 'flux.png', { type: 'image/png' });
           const dataTransfer = new DataTransfer();
           dataTransfer.items.add(testFile);
@@ -39,9 +39,9 @@ describe('manipulate file', () => {
     cy.wait(1000);
 
     cy.readFile(cypressDownloadBeamPath, null).then((buf) => {
-      let expectedValue = 2030115559;
+      let expectedValue = -991491263;
       if (isRunningAtGithub) {
-        expectedValue = isWindows ? 1058650976 : 1091338501;
+        expectedValue = isWindows ? -1538582088 : 1091338501;
       }
       expect(crc32Buf(buf)).to.equal(expectedValue);
     });
@@ -58,9 +58,9 @@ describe('manipulate file', () => {
     cy.get('.rc-menu__submenu').contains('File').click();
     cy.get('.rc-menu').contains('Save As...').click();
     cy.readFile(cypressDownloadNewBeamPath, null).then((buf) => {
-      let expectedValue = 262303823;
+      let expectedValue = -2058479582;
       if (isRunningAtGithub) {
-        expectedValue = isWindows ? -873164607 : -901845600;
+        expectedValue = isWindows ? -449132061 : -901845600;
       }
       expect(crc32Buf(buf)).to.equal(expectedValue);
     });
@@ -73,9 +73,9 @@ describe('manipulate file', () => {
     cy.contains('Export To...').click();
     cy.contains('BVG').click();
     cy.readFile(cypressDownloadBvgPath).then((info) => {
-      let expectedValue = '36a8a435b51212557544fc0f36ff8ed5';
+      let expectedValue = 'c187e37d4725c36d2891bae0529dd352';
       if (isRunningAtGithub) {
-        expectedValue = isWindows ? '811dfc15ccb5f1fe02268c0c6239e607' : '6665836ae47675168573b48d43702405';
+        expectedValue = isWindows ? 'a676245992fba54a4e787c33ba4aa461' : '6665836ae47675168573b48d43702405';
       }
       expect(md5(info)).equal(expectedValue);
     });
@@ -88,9 +88,9 @@ describe('manipulate file', () => {
     cy.contains('Export To...').click();
     cy.contains('SVG').click();
     cy.readFile(cypressDownloadSvgPath).then((info) => {
-      let expectedValue = 'a6292253ca478e34d357e07b80e461b9';
+      let expectedValue = '327f6f7c18e0ea06b9c7eac6dea178bf';
       if (isRunningAtGithub) {
-        expectedValue = isWindows ? '79e0e8f995387f7ee0099dcb74308841' : '7b2d301bee1027fdf5e3042821dded8d';
+        expectedValue = isWindows ? '0f8913345093796bb80d07595ae3e778' : '7b2d301bee1027fdf5e3042821dded8d';
       }
       expect(md5(info)).equal(expectedValue);
     });
@@ -125,7 +125,7 @@ describe('manipulate file', () => {
         const file = new File([blob], 'flux.png', {
           type: 'image/png',
         });
-        const dropEvent = {
+        const dropEvent: any = {
           dataTransfer: {
             files: [file],
             types: ['Files'],

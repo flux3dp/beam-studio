@@ -1,84 +1,71 @@
 import * as React from 'react';
 
+import type { DefaultOptionType } from 'antd/es/select';
+
 import alert from '@core/app/actions/alert-caller';
-import Controls from '@core/app/components/settings/Control';
-import onOffOptionFactory from '@core/app/components/settings/onOffOptionFactory';
-import SelectControl from '@core/app/components/settings/SelectControl';
-import { OptionValues } from '@core/app/constants/enums';
-import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import useI18n from '@core/helpers/useI18n';
 
+import SettingFormItem from './components/SettingFormItem';
+import SettingSelect from './components/SettingSelect';
+
 interface Props {
-  defaultUnit: string;
-  getBeamboxPreferenceEditingValue: (key: string) => any;
-  selectedModel: WorkAreaModel;
-  updateBeamboxPreferenceChange: (item_key: string, newVal: any) => void;
+  options: DefaultOptionType[];
 }
 
-const Module = ({
-  defaultUnit,
-  getBeamboxPreferenceEditingValue,
-  selectedModel,
-  updateBeamboxPreferenceChange,
-}: Props): React.JSX.Element => {
+const Module = ({ options }: Props): React.JSX.Element => {
   const lang = useI18n();
+  const { getConfig, getPreference, setPreference } = useSettingStore();
+
+  const selectedModel = getPreference('model');
+  const defaultUnit = getConfig('default-units');
   const workarea = getWorkarea(selectedModel);
-  const diodeOffsetX = getBeamboxPreferenceEditingValue('diode_offset_x');
-  const diodeOffsetY = getBeamboxPreferenceEditingValue('diode_offset_y');
-  const autofocusOffset = getBeamboxPreferenceEditingValue('af-offset');
-
-  const defaultBorderless = getBeamboxPreferenceEditingValue('default-borderless');
-  const borderlessModeOptions = onOffOptionFactory(defaultBorderless, { lang });
-  const defaultAf = getBeamboxPreferenceEditingValue('default-autofocus');
-  const autofocusModuleOptions = onOffOptionFactory(defaultAf, { lang });
-  const defaultDiode = getBeamboxPreferenceEditingValue('default-diode');
-  const diodeModuleOptions = onOffOptionFactory(defaultDiode, { lang });
-  const diodeOneWay = getBeamboxPreferenceEditingValue('diode-one-way-engraving') !== false;
-  const diodeOneWayEngravingOpts = onOffOptionFactory(diodeOneWay);
-
-  const onDiodeOneWayEngravingChanged = (e) => {
-    if (e.target.value === OptionValues.FALSE) {
+  const onDiodeOneWayEngravingChanged = (e: boolean) => {
+    if (e === false) {
       alert.popUp({ message: lang.settings.diode_two_way_warning });
     }
 
-    updateBeamboxPreferenceChange('diode-one-way-engraving', e.target.value);
+    setPreference('diode-one-way-engraving', e);
   };
 
   return (
     <>
       <div className="subtitle">{lang.settings.groups.modules}</div>
-      <SelectControl
+      <SettingSelect
+        defaultValue={getPreference('default-borderless')}
         id="default-open-bottom"
         label={lang.settings.default_borderless_mode}
-        onChange={(e) => updateBeamboxPreferenceChange('default-borderless', e.target.value)}
-        options={borderlessModeOptions}
+        onChange={(e) => setPreference('default-borderless', e)}
+        options={options}
         url={lang.settings.help_center_urls.default_borderless_mode}
       />
-      <SelectControl
+      <SettingSelect
+        defaultValue={getPreference('default-autofocus')}
         id="default-autofocus"
         label={lang.settings.default_enable_autofocus_module}
-        onChange={(e) => updateBeamboxPreferenceChange('default-autofocus', e.target.value)}
-        options={autofocusModuleOptions}
+        onChange={(e) => setPreference('default-autofocus', e)}
+        options={options}
         url={lang.settings.help_center_urls.default_enable_autofocus_module}
       />
-      <SelectControl
+      <SettingSelect
+        defaultValue={getPreference('default-diode')}
         id="default-diode"
         label={lang.settings.default_enable_diode_module}
-        onChange={(e) => updateBeamboxPreferenceChange('default-diode', e.target.value)}
-        options={diodeModuleOptions}
+        onChange={(e) => setPreference('default-diode', e)}
+        options={options}
         url={lang.settings.help_center_urls.default_enable_diode_module}
       />
-      <Controls label={lang.settings.diode_offset}>
+      <SettingFormItem id="set_diode_offset_x" label={lang.settings.diode_offset}>
         <span className="font2" style={{ lineHeight: '32px', marginRight: '10px' }}>
           X
         </span>
         <UnitInput
           className={{ half: true }}
-          defaultValue={diodeOffsetX || 0}
+          defaultValue={getPreference('diode_offset_x')}
           forceUsePropsUnit
-          getValue={(val) => updateBeamboxPreferenceChange('diode_offset_x', val)}
+          getValue={(val) => setPreference('diode_offset_x', val)}
           id="diode-offset-x-input"
           max={workarea.width}
           min={0}
@@ -89,34 +76,35 @@ const Module = ({
         </span>
         <UnitInput
           className={{ half: true }}
-          defaultValue={diodeOffsetY || 0}
+          defaultValue={getPreference('diode_offset_y')}
           forceUsePropsUnit
-          getValue={(val) => updateBeamboxPreferenceChange('diode_offset_y', val)}
+          getValue={(val) => setPreference('diode_offset_y', val)}
           id="diode-offset-y-input"
           max={workarea.height}
           min={0}
           unit={defaultUnit === 'inches' ? 'in' : 'mm'}
         />
-      </Controls>
-      <SelectControl
+      </SettingFormItem>
+      <SettingSelect
+        defaultValue={getPreference('diode-one-way-engraving')}
         id="default-diode"
         label={lang.settings.diode_one_way_engraving}
         onChange={onDiodeOneWayEngravingChanged}
-        options={diodeOneWayEngravingOpts}
+        options={options}
       />
-      <Controls label={lang.settings.autofocus_offset}>
+      <SettingFormItem id="set_af-offset" label={lang.settings.autofocus_offset}>
         <UnitInput
           className={{ half: true }}
-          defaultValue={autofocusOffset || 0}
+          defaultValue={getPreference('af-offset')}
           forceUsePropsUnit
-          getValue={(val) => updateBeamboxPreferenceChange('af-offset', val)}
+          getValue={(val) => setPreference('af-offset', val)}
           id="autofocus-offset-input"
           max={10}
           min={-10}
           step={defaultUnit === 'inches' ? 0.1 : 1}
           unit={defaultUnit === 'inches' ? 'in' : 'mm'}
         />
-      </Controls>
+      </SettingFormItem>
     </>
   );
 };

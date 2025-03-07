@@ -1,45 +1,40 @@
 import * as React from 'react';
 
-import SelectControl from '@core/app/components/settings/SelectControl';
-import i18n from '@core/helpers/i18n';
-import type { StorageKey } from '@core/interfaces/IStorage';
+import type { DefaultOptionType } from 'antd/es/select';
 
+import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
+import i18n from '@core/helpers/i18n';
+import isWeb from '@core/helpers/is-web';
+
+import SettingSelect from './components/SettingSelect';
 interface Props {
   changeActiveLang: (val: string) => void;
-  isWeb: boolean;
-  notificationOptions: Array<{ label: string; selected: boolean; value: any }>;
-  supportedLangs: { [key: string]: string };
-  updateConfigChange: (id: StorageKey, newVal: any) => void;
+  options: DefaultOptionType[];
+  supportedLangs: Record<string, string>;
 }
 
-function General({
-  changeActiveLang,
-  isWeb,
-  notificationOptions,
-  supportedLangs,
-  updateConfigChange,
-}: Props): React.JSX.Element {
+function General({ changeActiveLang, options, supportedLangs }: Props): React.JSX.Element {
   const { lang } = i18n;
+  const { getConfig, setConfig } = useSettingStore();
+  const langOptions = Object.keys(supportedLangs).map((value) => ({ label: supportedLangs[value], value }));
 
   return (
     <>
       <div className="subtitle">{lang.settings.groups.general}</div>
-      <SelectControl
+      <SettingSelect
+        defaultValue={i18n.getActiveLang()}
         id="select-lang"
         label={lang.settings.language}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => changeActiveLang(e.currentTarget.value)}
-        options={Object.keys(supportedLangs).map((l) => ({
-          label: supportedLangs[l],
-          selected: l === i18n.getActiveLang(),
-          value: l,
-        }))}
+        onChange={changeActiveLang}
+        options={langOptions}
       />
-      {isWeb ? null : (
-        <SelectControl
+      {isWeb() ? null : (
+        <SettingSelect
+          defaultValue={getConfig('notification')}
           id="set-notifications"
           label={lang.settings.notifications}
-          onChange={(e) => updateConfigChange('notification', e.target.value)}
-          options={notificationOptions}
+          onChange={(e) => setConfig('notification', e)}
+          options={options}
         />
       )}
     </>

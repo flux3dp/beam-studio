@@ -82,7 +82,7 @@ class AlertDialog extends React.Component<Props, States> {
     if (this.props.checkbox) {
       return (
         <div className="modal-checkbox">
-          <input onClick={_handleCheckboxClick} type="checkbox"></input>
+          <input onClick={_handleCheckboxClick} type="checkbox" />
           {this.props.checkbox}
         </div>
       );

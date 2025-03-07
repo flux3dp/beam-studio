@@ -109,16 +109,13 @@ const importSvg = async (
   let targetModule: LayerModule;
 
   if (hasModule) {
-    const id = `import-module`;
+    const id = 'import-module';
 
     targetModule = await dialogCaller.showRadioSelectDialog({
       defaultValue: beamboxPreference.read(id),
       id,
       options: [
-        {
-          label: lang.layer_module.general_laser,
-          value: layerModuleHelper.getDefaultLaserModule(),
-        },
+        { label: lang.layer_module.general_laser, value: layerModuleHelper.getDefaultLaserModule() },
         { label: lang.layer_module.printing, value: LayerModule.PRINTER },
       ],
       title: lang.beambox.popup.select_import_module,
@@ -156,7 +153,7 @@ const importSvg = async (
     }
 
     return dialogCaller.showRadioSelectDialog({
-      defaultValue: beamboxPreference.read(id),
+      defaultValue: beamboxPreference.read(id as any),
       id,
       options: importTypeOptions,
       title: lang.beambox.popup.select_import_method,
@@ -191,7 +188,6 @@ const importSvg = async (
         fileReader.onloadend = (e) => {
           const svgString = e.target?.result;
 
-          // @ts-expect-error the file name is not in the type
           awsHelper.uploadToS3(file.name, svgString);
         };
 

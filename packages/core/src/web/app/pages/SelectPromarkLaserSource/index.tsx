@@ -47,7 +47,7 @@ export default function ChoosePromarkLaserSource(): React.JSX.Element {
   const onWorkareaChange = (e: RadioChangeEvent) => setWorkarea(e.target.value);
 
   const handleNext = () => {
-    const customizedDimension = beamboxPreference.read('customized-dimension') ?? {};
+    const customizedDimension = beamboxPreference.read('customized-dimension');
     const [source, watt] = laserSource.split('-');
 
     beamboxPreference.write('customized-dimension', {

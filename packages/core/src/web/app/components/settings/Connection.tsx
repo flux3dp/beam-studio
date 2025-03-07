@@ -1,36 +1,30 @@
 import * as React from 'react';
 
+import type { DefaultOptionType } from 'antd/es/select';
+
 import alert from '@core/app/actions/alert-caller';
-import Controls from '@core/app/components/settings/Control';
-import SelectControl from '@core/app/components/settings/SelectControl';
 import alertConstants from '@core/app/constants/alert-constants';
+import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
 import i18n from '@core/helpers/i18n';
 import browser from '@core/implementations/browser';
-import storage from '@core/implementations/storage';
-import type { StorageKey } from '@core/interfaces/IStorage';
+
+import SettingFormItem from './components/SettingFormItem';
+import SettingSelect from './components/SettingSelect';
 
 interface Props {
-  autoConnectOptions: Array<{ label: string; selected: boolean; value: any }>;
-  guessingPokeOptions: Array<{ label: string; selected: boolean; value: any }>;
-  originalIP: string;
-  updateConfigChange: (id: StorageKey, newVal: any) => void;
+  options: DefaultOptionType[];
 }
 
-function Connection({
-  autoConnectOptions,
-  guessingPokeOptions,
-  originalIP,
-  updateConfigChange,
-}: Props): React.JSX.Element {
+function Connection({ options }: Props): React.JSX.Element {
   const lang = i18n.lang;
+  const { getConfig, setConfig } = useSettingStore();
+  const originalIP = getConfig('poke-ip-addr');
   const checkIPFormat = (e: React.FocusEvent): void => {
     const me = e.currentTarget as HTMLInputElement;
     const ips = me.value.split(/[,;] ?/);
     const ipv4Pattern = /^\d{1,3}[.]\d{1,3}[.]\d{1,3}[.]\d{1,3}$/;
 
-    for (let i = 0; i < ips.length; i += 1) {
-      const ip = ips[i];
-
+    for (const ip of ips) {
       if (ip !== '' && typeof ip === 'string' && ipv4Pattern.test(ip) === false) {
         me.value = originalIP;
         alert.popUp({
@@ -42,7 +36,8 @@ function Connection({
         return;
       }
     }
-    updateConfigChange('poke-ip-addr', me.value);
+
+    setConfig('poke-ip-addr', me.value);
   };
 
   return (
@@ -53,26 +48,28 @@ function Connection({
           <img onClick={() => browser.open(lang.settings.help_center_urls.connection)} src="img/info.svg" />
         </span>
       </div>
-      <Controls label={lang.settings.ip}>
+      <SettingFormItem id="connect-ip-list" label={lang.settings.ip}>
         <input
           autoComplete="false"
-          defaultValue={storage.get('poke-ip-addr')}
+          defaultValue={getConfig('poke-ip-addr')}
           id="ip-input"
           onBlur={checkIPFormat}
           type="text"
         />
-      </Controls>
-      <SelectControl
+      </SettingFormItem>
+      <SettingSelect
+        defaultValue={getConfig('guessing_poke')}
         id="set-guessing-poke"
         label={lang.settings.guess_poke}
-        onChange={(e) => updateConfigChange('guessing_poke', e.target.value)}
-        options={guessingPokeOptions}
+        onChange={(e) => setConfig('guessing_poke', e)}
+        options={options}
       />
-      <SelectControl
+      <SettingSelect
+        defaultValue={getConfig('auto_connect')}
         id="set-auto-connect"
         label={lang.settings.auto_connect}
-        onChange={(e) => updateConfigChange('auto_connect', e.target.value)}
-        options={autoConnectOptions}
+        onChange={(e) => setConfig('auto_connect', e)}
+        options={options}
       />
     </>
   );

@@ -171,7 +171,7 @@ describe('test SpeedBlock', () => {
     expect(mockStorageGet).toHaveBeenLastCalledWith('default-units');
     expect(mockPrefRead).toHaveBeenCalledTimes(2);
     expect(mockPrefRead).toHaveBeenNthCalledWith(1, 'curve_engraving_speed_limit');
-    expect(mockPrefRead).toHaveBeenNthCalledWith(2, 'vector_speed_contraint');
+    expect(mockPrefRead).toHaveBeenNthCalledWith(2, 'vector_speed_constraint');
     expect(container).toMatchSnapshot();
   });
 

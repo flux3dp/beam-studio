@@ -5,13 +5,9 @@ import i18n from '@core/helpers/i18n';
 const LaserModuleSet = new Set([LayerModule.LASER_10W_DIODE, LayerModule.LASER_20W_DIODE]);
 
 const getDefaultLaserModule = (): LayerModule => {
-  const value = beamboxPreference.read('default-laser-module') as LayerModule;
+  const value = beamboxPreference.read('default-laser-module');
 
-  if (LaserModuleSet.has(value)) {
-    return value;
-  }
-
-  return LayerModule.LASER_20W_DIODE;
+  return LaserModuleSet.has(value) ? value : LayerModule.LASER_20W_DIODE;
 };
 
 const getModulesTranslations = (): { [module: number]: string } => {

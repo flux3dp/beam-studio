@@ -137,7 +137,7 @@ export default async (source: Blob | string, opts: any) => {
       const rotationFlag = getExifRotationFlag(arrayBuffer);
 
       // DownSampling
-      if (BeamboxPreference.read('image_downsampling') !== false) {
+      if (BeamboxPreference.read('image_downsampling')) {
         if (!opts.isFullResolution) {
           const longSide = Math.max(size.width, size.height);
           const downRatio = Math.min(1, (1.5 * window.innerWidth) / longSide);

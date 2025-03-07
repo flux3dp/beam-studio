@@ -46,6 +46,11 @@ export type StorageKey =
   | 'setting-printer'
   | 'setting-wifi';
 
+export type StorageMap = {
+  auto_check_update: 0 | 1; // 1
+  notification: 0 | 1; // 0
+};
+
 export interface IStorage {
   clearAll(): IStorage;
   clearAllExceptIP(): IStorage;

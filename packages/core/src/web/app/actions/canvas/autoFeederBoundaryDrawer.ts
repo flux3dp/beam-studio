@@ -67,7 +67,7 @@ export class AutoFeederBoundaryDrawer {
   update = (): void => {
     this.createElements();
 
-    const enabled = !!beamboxPreference.read('auto-feeder');
+    const enabled = beamboxPreference.read('auto-feeder');
     const { height: workareaH, model, width: workareaW } = workareaManager;
     const { autoFeeder } = getSupportInfo(model);
 

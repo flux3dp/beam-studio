@@ -1,26 +1,29 @@
 import React from 'react';
 
-import onOffOptionFactory from '@core/app/components/settings/onOffOptionFactory';
-import SelectControl from '@core/app/components/settings/SelectControl';
+import type { DefaultOptionType } from 'antd/es/select';
+
+import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
 import useI18n from '@core/helpers/useI18n';
 
+import SettingSelect from './components/SettingSelect';
+
 interface Props {
-  getBeamboxPreferenceEditingValue: (key: string) => boolean;
-  updateBeamboxPreferenceChange: (key: string, newVal: boolean) => void;
+  options: DefaultOptionType[];
 }
 
-function Mask({ getBeamboxPreferenceEditingValue, updateBeamboxPreferenceChange }: Props): React.JSX.Element {
+function Mask({ options }: Props): React.JSX.Element {
   const lang = useI18n();
-  const maskOptions = onOffOptionFactory(getBeamboxPreferenceEditingValue('enable_mask'), { lang });
+  const { getPreference, setPreference } = useSettingStore();
 
   return (
     <>
       <div className="subtitle">{lang.settings.groups.mask}</div>
-      <SelectControl
+      <SettingSelect
+        defaultValue={getPreference('enable_mask')}
         id="set-mask"
         label={lang.settings.mask}
-        onChange={(e) => updateBeamboxPreferenceChange('enable_mask', e.target.value)}
-        options={maskOptions}
+        onChange={(e) => setPreference('enable_mask', e)}
+        options={options}
         url={lang.settings.help_center_urls.mask}
       />
     </>

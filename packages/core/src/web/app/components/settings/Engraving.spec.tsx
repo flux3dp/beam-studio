@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
+import { create } from 'zustand';
 
 jest.mock('@core/helpers/useI18n', () => () => ({
   settings: {
@@ -16,15 +17,40 @@ jest.mock('@core/helpers/useI18n', () => () => ({
   },
 }));
 
-jest.mock('@core/app/components/settings/Control', () => 'mock-control');
+const mockGetPreference = jest.fn();
+const mockSetPreference = jest.fn();
 
-jest.mock('@core/app/components/settings/SelectControl', () => ({ id, label, onChange, options, url }: any) => (
+const useSettingStore = create(() => ({
+  getPreference: mockGetPreference,
+  setPreference: mockSetPreference,
+}));
+
+jest.mock('@core/app/pages/Settings/useSettingStore', () => ({
+  useSettingStore,
+}));
+
+jest.mock('./components/SettingSelect', () => ({ id, label, onChange, options, url }: any) => (
   <div>
     mock-select-control id:{id}
     label:{label}
     url:{url}
     options:{JSON.stringify(options)}
-    <input className="select-control" onChange={onChange} />
+    <input
+      className="select-control"
+      onChange={(e) =>
+        onChange(['false', 'true'].includes(e.target.value) ? e.target.value === 'true' : e.target.value)
+      }
+    />
+  </div>
+));
+
+jest.mock('./components/SettingFormItem', () => ({ children, id, label, options, url }: any) => (
+  <div>
+    mock-select-control id:{id}
+    label:{label}
+    url:{url}
+    options:{JSON.stringify(options)}
+    {children}
   </div>
 ));
 
@@ -48,10 +74,7 @@ jest.mock(
 import Engraving from './Engraving';
 
 test('should render correctly', () => {
-  const getBeamboxPreferenceEditingValue = jest.fn();
-  const updateBeamboxPreferenceChange = jest.fn();
-
-  getBeamboxPreferenceEditingValue.mockImplementation((key: string) => {
+  mockGetPreference.mockImplementation((key: string) => {
     if (key.startsWith('padding_accel')) {
       return 4000;
     }
@@ -61,24 +84,28 @@ test('should render correctly', () => {
 
   const { container } = render(
     <Engraving
-      getBeamboxPreferenceEditingValue={getBeamboxPreferenceEditingValue}
-      updateBeamboxPreferenceChange={updateBeamboxPreferenceChange}
+      options={
+        [
+          { label: 'On', value: true },
+          { label: 'Off', value: false },
+        ] as any
+      }
     />,
   );
 
-  expect(getBeamboxPreferenceEditingValue).toHaveBeenCalledTimes(2);
-  expect(getBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(1, 'fast_gradient');
-  expect(getBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(2, 'reverse-engraving');
+  expect(mockGetPreference).toHaveBeenCalledTimes(4);
+  expect(mockGetPreference).toHaveBeenNthCalledWith(1, 'fast_gradient');
+  expect(mockGetPreference).toHaveBeenNthCalledWith(2, 'reverse-engraving');
   expect(container).toMatchSnapshot();
 
   const controls = container.querySelectorAll('.select-control');
 
-  fireEvent.change(controls[0], { target: { value: 'FALSE' } });
-  expect(updateBeamboxPreferenceChange).toHaveBeenCalledTimes(1);
-  expect(updateBeamboxPreferenceChange).toHaveBeenNthCalledWith(1, 'fast_gradient', 'FALSE');
+  fireEvent.change(controls[0], { target: { value: false } });
+  expect(mockSetPreference).toHaveBeenCalledTimes(1);
+  expect(mockSetPreference).toHaveBeenNthCalledWith(1, 'fast_gradient', false);
 
-  fireEvent.change(controls[1], { target: { value: 'FALSE' } });
+  fireEvent.change(controls[1], { target: { value: false } });
 
-  expect(updateBeamboxPreferenceChange).toHaveBeenCalledTimes(2);
-  expect(updateBeamboxPreferenceChange).toHaveBeenNthCalledWith(2, 'reverse-engraving', 'FALSE');
+  expect(mockSetPreference).toHaveBeenCalledTimes(2);
+  expect(mockSetPreference).toHaveBeenNthCalledWith(2, 'reverse-engraving', false);
 });

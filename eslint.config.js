@@ -121,6 +121,7 @@ module.exports = [
       'no-unused-vars': 'off',
       'object-shorthand': ['error', 'properties'],
       'react/react-in-jsx-scope': 'off',
+      'react/self-closing-comp': ['error'],
       'reactRefresh/only-export-components': ['warn', { allowConstantExport: true }],
       'style/brace-style': ['error', '1tbs'],
       'style/no-extra-semi': 'error',
