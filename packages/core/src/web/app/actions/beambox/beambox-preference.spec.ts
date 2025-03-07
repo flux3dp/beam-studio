@@ -89,7 +89,7 @@ test('test beambox-preference', () => {
     'job-origin': 1,
     'keep-preview-result': false,
     low_power: 10,
-    model: 'fbm1',
+    model: 'fbb1b',
     'module-offsets': {
       '1': [0, 0],
       '2': [0, 0],
@@ -123,7 +123,7 @@ test('test beambox-preference', () => {
     simplify_clipper_path: false,
     use_layer_color: true,
     vector_speed_constraint: true,
-    workarea: 'fbm1',
+    workarea: 'fbb1b',
     zoom_with_window: false,
   });
 

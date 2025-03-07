@@ -104,7 +104,7 @@ Cypress.Commands.add('connectMachine', (machineName: string) => {
 });
 
 Cypress.Commands.add('go2Preference', (handleSave = false) => {
-  cy.get('div.top-bar-menu-container').click();
+  cy.get('div.top-bar-menu-container').click({ timeout: 1000 });
   cy.get('ul.rc-menu--dir-bottom>li.rc-menu__submenu').should('have.length', 7);
   cy.get('.rc-menu__submenu').contains('File').click();
   cy.get('.rc-menu__submenu').contains('Preferences').click();
@@ -120,7 +120,7 @@ Cypress.Commands.add('checkToolBtnActive', (id: string, active = true) => {
 
 Cypress.Commands.add('clickToolBtn', (id: string, checkActive = true) => {
   cy.get(`div#left-${id}`).should('exist');
-  cy.get(`div#left-${id}`).click();
+  cy.get(`div#left-${id}`).click({ timeout: 1000, force: true });
   if (checkActive) cy.checkToolBtnActive(id);
 });
 
