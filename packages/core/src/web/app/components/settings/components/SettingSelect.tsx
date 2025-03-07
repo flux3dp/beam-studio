@@ -15,7 +15,7 @@ type Props = {
 
 function SettingSelect({ defaultValue, id, label, onChange, options, url, value }: Props) {
   return (
-    <SettingFormItem label={label} url={url}>
+    <SettingFormItem id={`${id}-label`} label={label} url={url}>
       <Select
         defaultValue={defaultValue}
         id={id}

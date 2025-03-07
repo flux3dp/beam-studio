@@ -33,10 +33,11 @@ function SettingFormItem({ children, id, label, url, warning }: Props) {
   };
 
   return (
-    <Form.Item id={id} style={{ lineHeight: '32px' }}>
+    <Form.Item style={{ lineHeight: '32px' }}>
       <Flex>
         <Form.Item
           className={styles['form-item']}
+          id={id}
           label={
             <>
               {label}

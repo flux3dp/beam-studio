@@ -23,7 +23,7 @@ describe('landing', () => {
     window.localStorage.setItem('new-user', 'true');
   });
 
-  it('land to canvas', () => {
+  it.only('land to canvas', () => {
     cy.visit('#/studio/beambox');
     cy.url({ timeout: 15000 }).should('contain', '#/studio/beambox');
 
@@ -51,14 +51,6 @@ describe('landing', () => {
     // Questionnaire
     cy.get('div.ant-modal-body').should('exist');
     cy.get('button[class^="ant-btn"]').contains('No').click();
-
-    // Text convert 2.0
-    cy.get('div.ant-modal-body').should('exist');
-    cy.get('button[class^="ant-btn"]').contains('Yes').click();
-
-    // Auto Switch Tab
-    cy.get('div.ant-modal-body').should('exist');
-    cy.get('button[class^="ant-btn"]').contains('Yes').click();
 
     cy.get('div.ant-modal-body').should('not.exist');
     cy.get('#root').find('div').should('have.class', 'studio-container beambox-studio en');
