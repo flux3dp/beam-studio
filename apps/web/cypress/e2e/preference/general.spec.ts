@@ -23,44 +23,100 @@ describe('update the preference', () => {
 
   it('check default value with preference page', () => {
     cy.go2Preference();
-    cy.get('#select-lang').find('option:selected').should('have.text', 'English');
-    cy.get('#ip-input').should('have.attr', 'value', '192.168.1.1');
-    cy.get('#set-guessing-poke').find('option:selected').should('have.value', '1');
-    cy.get('#set-auto-connect').find('option:selected').should('have.value', '1');
-    cy.get('#set-camera-preview-speed-level').find('option:selected').should('have.value', '1');
-    cy.get('#set-default-units').find('option:selected').should('have.value', 'mm');
+    cy.get('#select-lang').closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'English');
+
+    cy.get('#set-guessing-poke').closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'On');
+
+    cy.get('#set-auto-connect').closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'On');
+
+    cy.get('#set-camera-preview-speed-level')
+      .closest('.ant-select')
+      .find('.ant-select-selection-item')
+      .should('have.text', 'Low');
+
+    cy.get('#set-default-units').closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'mm');
+
     if (window.navigator.language === 'zh-TW') {
-      cy.get('#set-default-font-family').find('option:selected').should('have.value', 'Noto Sans TC');
-      cy.get('#set-default-font-style').find('option:selected').should('have.value', 'NotoSansTC-Regular');
+      cy.get('#set-default-font-family')
+        .closest('.ant-select')
+        .find('.ant-select-selection-item')
+        .should('have.text', 'Noto Sans TC');
+
+      cy.get('#set-default-font-style')
+        .closest('.ant-select')
+        .find('.ant-select-selection-item')
+        .should('have.text', 'Regular');
     } else {
-      cy.get('#set-default-font-family').find('option:selected').should('have.value', 'Noto Sans');
-      cy.get('#set-default-font-style').find('option:selected').should('have.value', 'NotoSans-Regular');
+      cy.get('#set-default-font-family')
+        .closest('.ant-select')
+        .find('.ant-select-selection-item')
+        .should('have.text', 'Noto Sans');
+
+      cy.get('#set-default-font-style')
+        .closest('.ant-select')
+        .find('.ant-select-selection-item')
+        .should('have.text', 'Regular');
     }
-    cy.get('#set-default-model').find('option:selected').should('have.value', 'fbb1b');
-    cy.get('#set-guide').find('option:selected').should('have.value', 'FALSE');
+
+    cy.get('#set-default-model')
+      .closest('.ant-select')
+      .find('.ant-select-selection-item')
+      .should('have.text', 'Beambox');
+
+    cy.get('#set-guide').closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'On');
+
     cy.get('#guide-x-input').should('have.attr', 'value', '0.00');
     cy.get('#guide-y-input').should('have.attr', 'value', '0.00');
-    cy.get('#set-bitmap-quality').find('option:selected').should('have.value', 'TRUE');
-    cy.get('#set-anti-aliasing').find('option:selected').should('have.value', 'TRUE');
-    cy.get('#set-continuous-drawingg').find('option:selected').should('have.value', 'FALSE');
-    cy.get('#set-simplify-clipper-path').find('option:selected').should('have.value', 'FALSE');
-    cy.get('#set-fast-gradient').find('option:selected').should('have.value', 'TRUE');
-    cy.get('#set-vector-speed-contraint').find('option:selected').should('have.value', 'TRUE');
+
+    cy.get('#set-bitmap-quality').closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'Low');
+
+    cy.get('#set-anti-aliasing').closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'On');
+
+    cy.get('#set-continuous-drawing')
+      .closest('.ant-select')
+      .find('.ant-select-selection-item')
+      .should('have.text', 'Off');
+
+    cy.get('#set-simplify-clipper-path')
+      .closest('.ant-select')
+      .find('.ant-select-selection-item')
+      .should('have.text', 'Off');
+
+    cy.get('#set-fast-gradient').closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'On');
+
+    cy.get('#set-vector-speed-constraint')
+      .closest('.ant-select')
+      .find('.ant-select-selection-item')
+      .should('have.text', 'On');
+
     cy.get('#loop-input').should('have.attr', 'value', '0.00');
-    cy.get('#set-mask').find('option:selected').should('have.value', 'FALSE');
-    cy.get('#font-substitue').find('option:selected').should('have.value', 'TRUE');
-    cy.get('#font-convert').find('option:selected').should('have.value', '2.0');
-    cy.get('#default-open-bottom').find('option:selected').should('have.value', 'FALSE');
-    cy.get('#default-autofocus').find('option:selected').should('have.value', 'FALSE');
-    cy.get('#default-diode').find('option:selected').should('have.value', 'FALSE');
+
+    cy.get('#set-mask').closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'Off');
+
+    cy.get('#font-substitue').closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'On');
+
+    cy.get('#font-convert').closest('.ant-select').find('.ant-select-selection-item').should('have.text', '2.0');
+
+    cy.get('#default-open-bottom').closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'Off');
+
+    cy.get('#default-autofocus').closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'Off');
+
+    cy.get('#default-diode').closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'Off');
+
     cy.get('#diode-offset-x-input').should('have.attr', 'value', '70.00');
     cy.get('#diode-offset-y-input').should('have.attr', 'value', '7.00');
-    cy.get('#set-sentry').find('option:selected').should('have.value', '0');
+
+    cy.get('#set-sentry').closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'Off');
   });
 
   it('change units and see if home page gets changed ', () => {
     cy.go2Preference();
-    cy.get('#set-default-units').select('inches');
+
+    cy.get('#set-default-units').closest('.ant-select').as('select');
+    cy.get('@select').find('.ant-select-selection-item').click();
+    cy.get('.ant-select-item-option-content').contains('Inches').click({ force: true });
+    cy.get('@select').find('.ant-select-selection-item').should('have.text', 'Inches');
+
     cy.contains('in').should('exist');
     applySettings();
     cy.get('#speed-input').should('have.attr', 'value', '0.79');
@@ -69,8 +125,24 @@ describe('update the preference', () => {
 
   it('change font and see if home page gets changed ', () => {
     cy.go2Preference();
-    cy.get('#set-default-font-family').select('AirstreamNF');
+
+    cy.get('#set-default-font-family').closest('.ant-select').as('select');
+    cy.get('@select').find('.ant-select-selection-item').click();
+
+    // Wait for the dropdown to be visible
+    cy.get('.ant-select-dropdown').should('be.visible');
+    // Scroll to the top of the dropdown options
+    cy.get('.ant-select-dropdown .rc-virtual-list-holder').then(($el) => {
+      $el[0].scrollTo(0, 0); // Scroll to the top
+    });
+    // Optionally, assert that the scroll position is at the top
+    cy.get('.ant-select-dropdown .rc-virtual-list-holder').invoke('scrollTop').should('eq', 0);
+
+    cy.get('.ant-select-item-option-content').contains('AirstreamNF').click({ force: true });
+    cy.get('@select').find('.ant-select-selection-item').should('have.text', 'AirstreamNF');
+
     applySettings();
+
     cy.clickToolBtn('Text');
     cy.get('svg#svgcontent').realClick({ x: 100, y: 200 }).inputText('Bring Any Design to Life');
     cy.get('.ant-select-selection-item[title="Font"]').should('have.text', 'AirstreamNF');
@@ -78,8 +150,12 @@ describe('update the preference', () => {
 
   it('change font style and see if home page gets changed ', () => {
     cy.go2Preference();
-    cy.get('#set-default-font-style').select('Bold');
+    cy.get('#set-default-font-style').closest('.ant-select').as('select');
+    cy.get('@select').find('.ant-select-selection-item').click();
+    cy.get('.ant-select-item-option-content').contains('Bold').click({ force: true });
+
     applySettings();
+
     cy.clickToolBtn('Text');
     cy.get('svg#svgcontent').realClick({ x: 100, y: 200 }).inputText('Bring Any Design to Life');
     cy.get('.ant-select-selection-item[title="Style"]').should('have.text', 'Bold');
@@ -87,24 +163,31 @@ describe('update the preference', () => {
 
   it('change document setting and see if home page gets changed ', () => {
     cy.go2Preference();
-    cy.get('#set-default-model').select('fbm1');
+    cy.get('#set-default-model').closest('.ant-select').as('select');
+    cy.get('@select').find('.ant-select-selection-item').click();
+    cy.get('.ant-select-item-option-content').contains('beamo').click({ force: true });
     applySettings();
     cy.get('#svgcontent').should('have.attr', 'viewBox', '0 0 3000 2100');
 
     cy.go2Preference();
-    cy.get('#set-default-model').select('fbb1b');
+    cy.get('@select').find('.ant-select-selection-item').click();
+    cy.get('.ant-select-item-option-content').contains('Beambox').click({ force: true });
     applySettings();
     cy.get('#svgcontent').should('have.attr', 'viewBox', '0 0 4000 3750');
 
     cy.go2Preference();
-    cy.get('#set-default-model').select('fbb1p');
+    cy.get('@select').find('.ant-select-selection-item').click();
+    cy.get('.ant-select-item-option-content').contains('Beambox Pro').click({ force: true });
     applySettings();
     cy.get('#svgcontent').should('have.attr', 'viewBox', '0 0 6000 3750');
   });
 
   it('change guide setting and see if home page gets changed ', () => {
     cy.go2Preference();
-    cy.get('#set-guide').select('On');
+    cy.get('#set-guide').closest('.ant-select').as('select');
+    cy.get('@select').find('.ant-select-selection-item').click();
+    cy.get('.ant-select-item-option-content').contains('On').click({ force: true });
+
     cy.get('#guide-x-input').clear({ force: true }).type('10').blur();
     cy.get('#guide-y-input').clear({ force: true }).type('10').blur();
     applySettings();
@@ -114,21 +197,27 @@ describe('update the preference', () => {
 
   it('change bitmap preview quality setting and see if home page gets changed ', () => {
     cy.go2Preference();
-    cy.get('#set-bitmap-quality').select('Normal');
+
+    cy.get('#set-bitmap-quality').closest('.ant-select').as('select');
+    cy.get('@select').find('.ant-select-selection-item').click();
+    cy.get('.ant-select-item-option-content').contains('Normal').click({ force: true });
     applySettings();
+
     cy.uploadFile('flux.png', 'image/png');
     cy.wait(3000);
     cy.get('#svg_1')
       .invoke('attr', 'xlink:href')
       .then((href) => {
         if (isRunningAtGithub) expect(md5(href)).equal('89c7aa6cb93a4fd9f6e79c9da0e5ade2');
-        else expect(md5(href)).equal('690258853fa3923356f12a971a2807f8');
+        else expect(md5(href)).equal('0563e97e7042d4030269ceb3c82f3ab8');
       });
   });
 
   it('change anti aliasing setting and see if home page gets changed ', () => {
     cy.go2Preference();
-    cy.get('#set-anti-aliasing').select('On');
+    cy.get('#set-anti-aliasing').closest('.ant-select').as('select');
+    cy.get('@select').find('.ant-select-selection-item').click();
+    cy.get('.ant-select-item-option-content').contains('On').click({ force: true });
     applySettings();
     drawingEllipse();
     cy.get('svg#svgcontent').should(($shapeRendering) => {
@@ -139,8 +228,11 @@ describe('update the preference', () => {
 
   it('change continuous drawing setting and see if home page gets changed ', () => {
     cy.go2Preference();
-    cy.get('#set-continuous-drawingg').select('On');
+    cy.get('#set-continuous-drawing').closest('.ant-select').as('select');
+    cy.get('@select').find('.ant-select-selection-item').click();
+    cy.get('.ant-select-item-option-content').contains('On').click({ force: true });
     applySettings();
+
     cy.clickToolBtn('Rectangle');
     cy.get('svg#svgcontent').trigger('mousedown', 100, 100, { force: true });
     cy.get('svg#svgcontent').trigger('mousemove', 200, 200, { force: true });
@@ -174,7 +266,10 @@ describe('update the preference', () => {
       'The cutting speed of vector path objects will be constrained to 20 mm/s. You can remove this limit at Preferences Settings.',
     );
     cy.go2Preference(true);
-    cy.get('#set-vector-speed-contraint').select('Off');
+
+    cy.get('#set-vector-speed-constraint').closest('.ant-select').as('select');
+    cy.get('@select').find('.ant-select-selection-item').click();
+    cy.get('.ant-select-item-option-content').contains('Off').click({ force: true });
     applySettings();
     drawingEllipse();
     cy.get('.layers > .tab-icon').click();

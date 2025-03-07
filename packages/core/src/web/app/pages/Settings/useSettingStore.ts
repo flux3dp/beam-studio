@@ -67,12 +67,12 @@ export const useSettingStore = create<Action & State>(
 
         return (
           match<any>({ key, value })
+            .with({ key: P.string, value: P.nullish }, ({ key }) => (DEFAULT_CONFIG as any)[key])
             // migrate old config
             .with(
               { key: P.union(...configMigrateList), value: P.union(P.number, P.nullish) },
               ({ value }) => value === 1,
             )
-            .with({ key: P.string, value: P.nullish }, ({ key }) => (DEFAULT_CONFIG as any)[key])
             .with({ value: P.union('true', 'TRUE') }, () => true)
             .with({ value: P.union('false', 'FALSE') }, () => false)
             .otherwise(({ value }) => value)

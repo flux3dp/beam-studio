@@ -15,9 +15,10 @@ type Props = {
 
 function SettingSelect({ defaultValue, id, label, onChange, options, url, value }: Props) {
   return (
-    <SettingFormItem id={id} label={label} url={url}>
+    <SettingFormItem label={label} url={url}>
       <Select
         defaultValue={defaultValue}
+        id={id}
         onChange={onChange}
         options={options}
         // must use style instead of className, to prevent being overridden by antd form item

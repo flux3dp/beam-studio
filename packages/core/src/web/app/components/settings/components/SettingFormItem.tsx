@@ -7,7 +7,7 @@ import styles from '../Settings.module.scss';
 
 type Props = {
   children: React.ReactNode;
-  id: string;
+  id?: string;
   label: string;
   url?: string;
   warning?: string;

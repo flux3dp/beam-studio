@@ -28,7 +28,7 @@ const Path = (): React.JSX.Element => {
       <div className="subtitle">{lang.settings.groups.path}</div>
       <SettingSelect
         defaultValue={getPreference('vector_speed_constraint')}
-        id="set-vector-speed-contraint"
+        id="set-vector-speed-constraint"
         label={lang.settings.vector_speed_constraint}
         onChange={(e) => setPreference('vector_speed_constraint', e)}
         options={commonBooleanOptions}

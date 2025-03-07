@@ -43,7 +43,6 @@ export default defineConfig({
   },
   retries: {
     runMode: 3,
-    openMode: 1,
   },
   defaultCommandTimeout: 15000,
   experimentalMemoryManagement: true,
