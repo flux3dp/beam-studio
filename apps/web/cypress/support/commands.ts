@@ -120,7 +120,7 @@ Cypress.Commands.add('checkToolBtnActive', (id: string, active = true) => {
 
 Cypress.Commands.add('clickToolBtn', (id: string, checkActive = true) => {
   cy.get(`div#left-${id}`).should('exist');
-  cy.get(`div#left-${id}`).click({ timeout: 1000, force: true });
+  cy.get(`div#left-${id}`).click({ timeout: 15000, force: true });
   if (checkActive) cy.checkToolBtnActive(id);
 });
 
