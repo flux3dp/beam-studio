@@ -44,7 +44,7 @@ function checkLang(lang: string) {
 
       // Scroll until the desired option is found
       const scrollAndFind = (attempt = 0) => {
-        if (attempt >= 10) {
+        if (attempt >= 20) {
           throw new Error(`Option "${lang}" not found after 10 scroll attempts.`);
         }
 
@@ -53,7 +53,7 @@ function checkLang(lang: string) {
         if (option) {
           cy.wrap(option).click({ force: true });
         } else {
-          $container[0].scrollBy(0, 100); // Scroll down by 100px
+          $container[0].scrollBy(0, attempt <= 10 ? 100 : -100); // Scroll down by 100px
 
           // Wait for the DOM to update after scrolling
           cy.wait(200).then(() => scrollAndFind(attempt + 1));
