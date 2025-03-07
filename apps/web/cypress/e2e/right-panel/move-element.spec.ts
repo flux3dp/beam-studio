@@ -42,15 +42,22 @@ describe('move element to another layer', () => {
 
   it('move multiple elements', () => {
     cy.contains('Layer 1').click();
+
     cy.clickToolBtn('Element');
     cy.get('.ant-modal-header').contains('Element').should('exist');
-    cy.get('.anticon[id="basic/icon-circle"]').click();
+    cy.get('.anticon[id="basic/icon-circle"]').click({ timeout: 1000 });
+    cy.wait(500);
+
     cy.clickToolBtn('Element');
-    cy.get('.adm-capsule-tabs-tab-wrapper').contains('Decor').click();
-    cy.get('.anticon[id="decor/i_circular-1"]').click();
+    cy.get('.adm-capsule-tabs-tab-wrapper').contains('Decor').click({ timeout: 1000 });
+    cy.get('.anticon[id="decor/i_circular-1"]').click({ timeout: 1000 });
+    cy.wait(500);
+
     cy.clickToolBtn('Element');
-    cy.get('.adm-capsule-tabs-tab-wrapper').contains('Animal').click();
-    cy.get('.anticon[id="animals/i_land-1"]').click();
+    cy.get('.adm-capsule-tabs-tab-wrapper').contains('Animal').click({ timeout: 1000 });
+    cy.get('.anticon[id="animals/i_land-1"]').click({ timeout: 1000 });
+    cy.wait(500);
+
     cy.get('.ant-modal-mask').should('not.exist');
     cy.get('#svg_19').should('exist');
     cy.get('svg#svgcontent')

@@ -249,7 +249,7 @@ class BeamboxInit {
   private async askAndInitSentry(): Promise<void> {
     const enableSentry = storage.get('enable-sentry');
 
-    if (enableSentry === undefined || enableSentry === '') {
+    if (enableSentry === null) {
       await new Promise<void>((resolve) => {
         const LANG = i18n.lang;
 
