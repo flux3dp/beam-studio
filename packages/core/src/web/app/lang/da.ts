@@ -2154,7 +2154,7 @@ const lang: ILang = {
     no_permission: 'Beam Studio har ikke tilladelse til at få adgang til kameraet. Sørg for, at tilladelsen er givet til Beam Studio i browserindstillingerne eller systemindstillingerne.',
   },
   z_speed_limit_test: {
-    alert_before: 'Før start af 3D-kurvgravering vil systemet udføre en belastningstest for at forhindre trintab på grund af overdreven vægt.',
+    alert_before: 'Før kurvegravering starter, vil systemet udføre en belastningstest for at forhindre tab af trin på grund af for høj vægt.',
     alert_failed: 'Den aktuelle genstands vægt overstiger belastningsgrænsen for den nuværende Z-akse hastighed. Reducer venligst Z-akse hastigheden på maskinens panel eller udskift graveringsobjektet, før du tester igen.',
     ignore: 'Ignorer',
     retest: 'Test igen',

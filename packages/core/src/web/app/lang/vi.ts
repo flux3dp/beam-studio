@@ -2154,7 +2154,7 @@ const lang: ILang = {
     no_permission: 'Beam Studio không có quyền truy cập vào camera. Vui lòng đảm bảo rằng quyền đã được cấp cho Beam Studio trong cài đặt trình duyệt hoặc hệ thống.',
   },
   z_speed_limit_test: {
-    alert_before: 'Trước khi bắt đầu khắc 3D, hệ thống sẽ thực hiện kiểm tra tải trọng để tránh mất bước do trọng lượng quá mức.',
+    alert_before: 'Trước khi bắt đầu khắc đường cong, hệ thống sẽ thực hiện kiểm tra tải trọng để ngăn chặn mất bước do trọng lượng quá mức.',
     alert_failed: 'Trọng lượng của đối tượng hiện tại vượt quá giới hạn tải cho tốc độ trục Z hiện tại. Vui lòng giảm tốc độ trục Z trên bảng điều khiển máy hoặc thay thế đối tượng khắc trước khi kiểm tra lại.',
     ignore: 'Bỏ qua',
     retest: 'Kiểm tra lại',

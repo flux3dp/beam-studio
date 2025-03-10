@@ -2154,7 +2154,7 @@ const lang: ILang = {
     no_permission: 'Beam Studio no tiene permiso para acceder a la cámara. Asegúrese de que el permiso esté concedido a Beam Studio en la configuración del navegador o del sistema.',
   },
   z_speed_limit_test: {
-    alert_before: 'Antes de comenzar el grabado de curvas 3D, el sistema realizará una prueba de carga para evitar la pérdida de pasos debido al peso excesivo.',
+    alert_before: 'Antes de comenzar el grabado de curvas, el sistema realizará una prueba de carga para evitar la pérdida de pasos debido al peso excesivo.',
     alert_failed: 'El peso del objeto actual supera el límite de carga para la velocidad actual del eje Z. Reduzca la velocidad del eje Z en el panel de la máquina o reemplace el objeto de grabado antes de volver a probar.',
     ignore: 'Ignorar',
     retest: 'Reprobar',

@@ -2154,7 +2154,7 @@ const lang: ILang = {
     no_permission: 'Beam Studio nie ma uprawnień do uzyskania dostępu do kamery. Upewnij się, że uprawnienia są przyznane Beam Studio w ustawieniach przeglądarki lub systemu.',
   },
   z_speed_limit_test: {
-    alert_before: 'Przed rozpoczęciem grawerowania 3D system przeprowadzi test obciążenia, aby zapobiec utracie kroków z powodu nadmiernej wagi.',
+    alert_before: 'Przed rozpoczęciem grawerowania krzywej system przeprowadzi test obciążenia, aby zapobiec utracie kroków z powodu nadmiernej wagi.',
     alert_failed: 'Waga obecnego obiektu przekracza limit obciążenia dla bieżącej prędkości osi Z. Zmniejsz prędkość osi Z w panelu maszyny lub zamień obiekt grawerowania przed ponownym testem.',
     ignore: 'Ignoruj',
     retest: 'Przetestuj ponownie',

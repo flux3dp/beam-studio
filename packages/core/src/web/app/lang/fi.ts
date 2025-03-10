@@ -2154,7 +2154,7 @@ const lang: ILang = {
     no_permission: 'Beam Studiolla ei ole lupaa käyttää kameraa. Varmista, että lupa on myönnetty Beam Studiolle selainasetuksissa tai järjestelmäasetuksissa.',
   },
   z_speed_limit_test: {
-    alert_before: 'Ennen 3D-kaiverruksen aloittamista järjestelmä suorittaa kuormitustestin estääkseen askelten menetyksen liiallisen painon vuoksi.',
+    alert_before: 'Ennen käyrän kaiverruksen aloittamista järjestelmä suorittaa kuormitustestin estääkseen askelhäviön liiallisen painon vuoksi.',
     alert_failed: 'Nykyisen objektin paino ylittää nykyisen Z-akselin nopeuden kuormitusrajan. Vähennä Z-akselin nopeutta koneen paneelissa tai vaihda kaiverrettava objekti ennen uudelleentestauksia.',
     ignore: 'Ohita',
     retest: 'Testaa uudelleen',
