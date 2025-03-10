@@ -1098,7 +1098,7 @@ class Control extends EventEmitter implements IControlSocket {
       throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
     }
 
-    const res = await this.useWaitOKResponse('start', 180000);
+    const res = await this.useWaitOKResponse('start', 90000);
 
     return res?.response.data.includes('pass');
   };
