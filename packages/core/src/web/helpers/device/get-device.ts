@@ -31,12 +31,8 @@ const getDevice = async (showModal = false): Promise<{ device: IDeviceInfo | nul
         !DeviceMaster.currentDevice?.control?.isConnected
       ) {
         selectRes = await DeviceMaster.select(device);
-      } else if (DeviceMaster.currentDevice?.control?.getMode() === 'raw') {
-        await DeviceMaster.endRawMode();
-      } else if (DeviceMaster.currentDevice?.control?.getMode() === 'cartridge_io') {
-        await DeviceMaster.endCartridgeIOMode();
-      } else if (DeviceMaster.currentDevice?.control?.getMode() === 'red_laser_measure') {
-        await DeviceMaster.endRedLaserMeasureMode();
+      } else if (DeviceMaster.currentDevice?.control?.getMode() !== '') {
+        await DeviceMaster.endSubTask();
       }
 
       if (selectRes.success) {

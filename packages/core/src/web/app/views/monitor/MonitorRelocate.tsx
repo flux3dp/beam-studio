@@ -50,7 +50,7 @@ export default class MonitorRelocate extends React.PureComponent<Props, State> {
   }
 
   componentWillUnmount() {
-    DeviceMaster.endRawMode();
+    DeviceMaster.endSubTask();
     DeviceMaster.disconnectCamera();
   }
 

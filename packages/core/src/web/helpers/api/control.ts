@@ -150,6 +150,7 @@ class Control extends EventEmitter implements IControlSocket {
           this.emit('close', response);
         },
         onError: (response: any) => {
+          console.log(`Control of ${uuid} error:`, response);
           clearTimeout(timeoutTimer);
           this.emit('error', response);
           this.emit(EVENT_COMMAND_ERROR, response);
@@ -967,17 +968,19 @@ class Control extends EventEmitter implements IControlSocket {
 
   deleteDeviceSetting = (name: string) => this.useWaitAnyResponse(`config del ${name}`);
 
-  enterCartridgeIOMode = async () => {
-    const res = await this.useWaitAnyResponse('task cartridge_io');
+  enterSubTask = async (mode: Mode, timeout = 0) => {
+    const res = await this.useWaitAnyResponse(`task ${mode}`);
 
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    this.mode = 'cartridge_io';
-    this._cartridgeTaskId = Math.floor(Math.random() * 2e9);
+    if (timeout) await new Promise((resolve) => setTimeout(resolve, timeout));
+
+    this.mode = mode;
+
+    if (mode === 'cartridge_io') this._cartridgeTaskId = Math.floor(Math.random() * 2e9);
 
     return res;
   };
 
-  endCartridgeIOMode = () => {
+  endSubTask = () => {
     this.mode = '';
     this._cartridgeTaskId = 0;
 
@@ -1009,18 +1012,21 @@ class Control extends EventEmitter implements IControlSocket {
     return resp;
   };
 
-  enterRedLaserMeasureMode = async () => {
-    const res = await this.useWaitAnyResponse('task red_laser_measure');
+  /**
+   * Because the fluxghost websocket wont send message if the control socket is kicked now.
+   * This is a workaround to check if the task is kicked or the web socket is closed to send
+   * an arbitrary message to see if the control socket is kicked.
+   * It is better to replace the websocket of fluxghost to a more modern one though
+   */
+  checkTaskAlive = async () => {
+    try {
+      const resp = await this.useWaitAnyResponse(' ');
+      const { data } = resp;
 
-    this.mode = 'red_laser_measure';
-
-    return res;
-  };
-
-  endRedLaserMeasureMode = () => {
-    this.mode = '';
-
-    return this.useWaitAnyResponse('task quit');
+      return !data.includes('KICKED');
+    } catch {
+      return false;
+    }
   };
 
   takeReferenceZ = async (args: { F?: number; H?: number; X?: number; Y?: number } = {}): Promise<number> => {
@@ -1028,9 +1034,9 @@ class Control extends EventEmitter implements IControlSocket {
       throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
     }
 
-    const posCommand = Object.keys(args)
+    const posCommand = (Object.keys(args) as Array<keyof typeof args>)
       .filter((key) => args[key] !== undefined)
-      .map((key) => `${key}:${args[key].toFixed(3)}`)
+      .map((key) => `${key}:${args[key]!.toFixed(3)}`)
       .join(',');
     const resp = await this.useWaitAnyResponse(`take_reference_z${posCommand ? `(${posCommand})` : ''}`, 180000);
     const { data } = resp;
@@ -1042,12 +1048,12 @@ class Control extends EventEmitter implements IControlSocket {
         return Number(height);
       }
 
-      if (data.startsWith('fail')) {
+      if (data.startsWith('fail') || data.startsWith('error')) {
         throw new Error(data);
       }
     }
 
-    throw new Error(resp);
+    throw new Error(JSON.stringify(resp));
   };
 
   measureZ = async (args: { F?: number; X?: number; Y?: number } = {}): Promise<number> => {
@@ -1055,9 +1061,9 @@ class Control extends EventEmitter implements IControlSocket {
       throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
     }
 
-    const posCommand = Object.keys(args)
+    const posCommand = (Object.keys(args) as Array<keyof typeof args>)
       .filter((key) => args[key] !== undefined)
-      .map((key) => `${key}:${args[key].toFixed(3)}`)
+      .map((key) => `${key}:${args[key]!.toFixed(3)}`)
       .join(',');
     const resp = await this.useWaitAnyResponse(`measure_z${posCommand ? `(${posCommand})` : ''}`, 60000);
     const { data } = resp;
@@ -1069,12 +1075,32 @@ class Control extends EventEmitter implements IControlSocket {
         return Number(height);
       }
 
-      if (data.startsWith('fail')) {
+      if (data.startsWith('fail') || data.startsWith('error')) {
         throw new Error(data);
       }
     }
 
-    throw new Error(resp);
+    throw new Error(JSON.stringify(resp));
+  };
+
+  zSpeedLimitTestSetSpeed = async (speed: number) => {
+    if (this.mode !== 'z_speed_limit_test') {
+      throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
+    }
+
+    const res = await this.useWaitAnyResponse(`set_speed ${speed}`);
+
+    return res?.data === 'ok';
+  };
+
+  zSpeedLimitTestStart = async () => {
+    if (this.mode !== 'z_speed_limit_test') {
+      throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
+    }
+
+    const res = await this.useWaitOKResponse('start', 90000);
+
+    return res?.response.data.includes('pass');
   };
 
   enterRawMode = async () => {
@@ -1084,12 +1110,6 @@ class Control extends EventEmitter implements IControlSocket {
     this.mode = 'raw';
 
     return res;
-  };
-
-  endRawMode = () => {
-    this.mode = '';
-
-    return this.useWaitAnyResponse('task quit');
   };
 
   rawHome = (zAxis = false) => {

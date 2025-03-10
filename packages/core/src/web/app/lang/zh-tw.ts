@@ -2153,6 +2153,13 @@ const lang: ILang = {
     no_device: '無法檢測到相機設備。請重新連接相機，然後重試。',
     no_permission: 'Beam Studio 沒有權限存取相機。請確保在系統設定或瀏覽器設定中已授予 Beam Studio 權限。',
   },
+  z_speed_limit_test: {
+    alert_before: '在進行曲面雕刻前，系統將先測試物體的負重，以防止因過重導致雕刻過程中失步。',
+    alert_failed: '目前物件的重量已超過當前 Z 軸速度的負重上限，請至機器面板降低 Z 軸速度或更換雕刻物件後再重新測試。',
+    ignore: '忽略',
+    retest: '重新測試',
+    testing: '正在執行負重測試...',
+  },
 };
 
 export default lang;

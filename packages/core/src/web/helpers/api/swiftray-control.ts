@@ -520,6 +520,19 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
 
   deleteDeviceSetting = async (name: string) => this.sc.deleteDeviceSettings(name);
 
+  enterSubTask = async (mode: Mode, timeout?: number): Promise<void> => {
+    const res = await this.sc.switchMode(mode);
+
+    if (timeout) await new Promise((resolve) => setTimeout(resolve, timeout));
+
+    this.mode = mode;
+  };
+
+  endSubTask = async (): Promise<void> => {
+    this.mode = '';
+    await this.sc.endMode();
+  };
+
   enterRawMode = async () => {
     const res = await this.sc.switchMode('raw');
 
@@ -527,11 +540,6 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
     this.mode = 'raw';
 
     return res;
-  };
-
-  endRawMode = async (): Promise<void> => {
-    this.mode = '';
-    await this.sc.endMode();
   };
 
   rawHome = (zAxis = false) => {

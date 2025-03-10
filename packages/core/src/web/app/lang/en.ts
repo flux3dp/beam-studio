@@ -2153,6 +2153,13 @@ Machines > ‘Promark Name’ > Promark Settings`,
     no_device: 'Unable to detect camera device. Please reconnect the camera and try again.',
     no_permission: 'Beam Studio does not have permission to access the camera. Please make sure the permission is granted to Beam Studio in system settings or browser settings.',
   },
+  z_speed_limit_test: {
+    alert_before: 'Before starting curve engraving, the system will perform a load test to prevent step loss due to excessive weight.',
+    alert_failed: "The current object's weight exceeds the load limit for the current Z-axis speed. Please reduce the Z-axis speed on the machine panel or replace the engraving object before retesting.",
+    ignore: 'Ignore',
+    retest: 'Retest',
+    testing: 'Performing load test...',
+  },
 };
 
 export default lang;

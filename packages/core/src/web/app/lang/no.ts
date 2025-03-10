@@ -2153,6 +2153,13 @@ const lang: ILang = {
     no_device: 'Kan ikke oppdage kameramaskinen. Vennligst koble til kameraet på nytt og prøv igjen.',
     no_permission: 'Beam Studio har ikke tillatelse til å få tilgang til kameraet. Sørg for at tillatelsen er gitt til Beam Studio i nettleserinnstillingene eller systeminnstillingene.',
   },
+  z_speed_limit_test: {
+    alert_before: 'Før du starter kurvegravering, vil systemet utføre en belastningstest for å forhindre trinntap på grunn av for høy vekt.',
+    alert_failed: 'Vekten av det nåværende objektet overskrider belastningsgrensen for den nåværende Z-aksehastigheten. Reduser Z-aksehastigheten på maskinpanelet eller bytt ut graveringsobjektet før du tester på nytt.',
+    ignore: 'Ignorer',
+    retest: 'Test på nytt',
+    testing: 'Utfører belastningstest...',
+  },
 };
 
 export default lang;

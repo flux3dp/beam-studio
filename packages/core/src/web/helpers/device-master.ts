@@ -346,7 +346,7 @@ class DeviceMaster {
 
         return { success: true };
       } catch {
-        await device.control.killSelf();
+        await device.control?.killSelf();
       }
     }
 
@@ -584,15 +584,11 @@ class DeviceMaster {
   }
 
   async getControl(): Promise<IControlSocket> {
-    if (!this.currentDevice) {
-      return null;
-    }
+    if (!this.currentDevice) return null;
 
     const controlSocket = this.currentDevice.control;
 
-    if (controlSocket) {
-      return controlSocket;
-    }
+    if (controlSocket) return controlSocket;
 
     const res = await this.reconnect();
 
@@ -1027,52 +1023,70 @@ class DeviceMaster {
     return res;
   }
 
+  async endSubTask() {
+    const controlSocket = await this.getControl();
+
+    return controlSocket.addTask(controlSocket.endSubTask);
+  }
+
   async enterCartridgeIOMode() {
     const controlSocket = await this.getControl();
 
-    return controlSocket.addTask(controlSocket.enterCartridgeIOMode);
-  }
-
-  async endCartridgeIOMode() {
-    const controlSocket = await this.getControl();
-
-    return controlSocket.addTask(controlSocket.endCartridgeIOMode);
+    return controlSocket.addTask(controlSocket.enterSubTask, 'cartridge_io', 1000);
   }
 
   async getCartridgeChipData() {
     const controlSocket = await this.getControl();
 
-    return controlSocket.addTask(controlSocket.getCartridgeChipData);
+    return controlSocket.addTask(controlSocket.getCartridgeChipData!);
   }
 
   async cartridgeIOJsonRpcReq(method: string, params: any[]) {
     const controlSocket = await this.getControl();
 
-    return controlSocket.addTask(controlSocket.cartridgeIOJsonRpcReq, method, params);
+    return controlSocket.addTask(controlSocket.cartridgeIOJsonRpcReq!, method, params);
   }
 
   async enterRedLaserMeasureMode() {
     const controlSocket = await this.getControl();
 
-    return controlSocket.addTask(controlSocket.enterRedLaserMeasureMode);
+    return controlSocket.addTask(controlSocket.enterSubTask, 'red_laser_measure');
   }
 
-  async endRedLaserMeasureMode() {
+  async checkTaskAlive() {
     const controlSocket = await this.getControl();
 
-    return controlSocket.addTask(controlSocket.endRedLaserMeasureMode);
+    return controlSocket.addTask(controlSocket.checkTaskAlive!);
   }
 
   async takeReferenceZ(args: { F?: number; H?: number; X?: number; Y?: number } = {}) {
     const controlSocket = await this.getControl();
 
-    return controlSocket.addTask(controlSocket.takeReferenceZ, args);
+    return controlSocket.addTask(controlSocket.takeReferenceZ!, args);
   }
 
   async measureZ(args: { F?: number; X?: number; Y?: number } = {}) {
     const controlSocket = await this.getControl();
 
-    return controlSocket.addTask(controlSocket.measureZ, args);
+    return controlSocket.addTask(controlSocket.measureZ!, args);
+  }
+
+  async enterZSpeedLimitTestMode() {
+    const controlSocket = await this.getControl();
+
+    return controlSocket.addTask(controlSocket.enterSubTask, 'z_speed_limit_test');
+  }
+
+  async zSpeedLimitTestSetSpeed(speed: number) {
+    const controlSocket = await this.getControl();
+
+    return controlSocket.addTask(controlSocket.zSpeedLimitTestSetSpeed, speed);
+  }
+
+  async zSpeedLimitTestStart() {
+    const controlSocket = await this.getControl();
+
+    return controlSocket.addTask(controlSocket.zSpeedLimitTestStart);
   }
 
   // Raw mode functions
@@ -1080,12 +1094,6 @@ class DeviceMaster {
     const controlSocket = await this.getControl();
 
     return controlSocket.addTask(controlSocket.enterRawMode);
-  }
-
-  async endRawMode() {
-    const controlSocket = await this.getControl();
-
-    return controlSocket.addTask(controlSocket.endRawMode);
   }
 
   async rawHome() {
@@ -1619,6 +1627,4 @@ class DeviceMaster {
 
 const deviceMaster = new DeviceMaster();
 
-// // eslint-disable-next-line @typescript-eslint/dot-notation
-// window['deviceMaster'] = deviceMaster;
 export default deviceMaster;

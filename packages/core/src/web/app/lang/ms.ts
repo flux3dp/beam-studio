@@ -2153,6 +2153,13 @@ const lang: ILang = {
     no_device: 'Tidak dapat mengesan peranti kamera. Sila sambungkan semula kamera dan cuba lagi.',
     no_permission: 'Beam Studio tidak mempunyai kebenaran untuk mengakses kamera. Pastikan kebenaran diberikan kepada Beam Studio dalam tetapan pelayar atau sistem.',
   },
+  z_speed_limit_test: {
+    alert_before: 'Sebelum memulakan ukiran lengkung, sistem akan melakukan ujian beban untuk mengelakkan kehilangan langkah akibat berat berlebihan.',
+    alert_failed: 'Berat objek semasa melebihi had beban untuk kelajuan paksi Z semasa. Kurangkan kelajuan paksi Z pada panel mesin atau gantikan objek ukiran sebelum menguji semula.',
+    ignore: 'Abaikan',
+    retest: 'Uji semula',
+    testing: 'Melaksanakan ujian beban...',
+  },
 };
 
 export default lang;

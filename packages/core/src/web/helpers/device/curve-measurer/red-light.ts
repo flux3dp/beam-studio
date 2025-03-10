@@ -15,15 +15,32 @@ export default class RedLightCurveMeasurer extends BaseCurveMeasurer implements 
   setup = async (onProgressText?: (text: string) => void): Promise<boolean> => {
     const res = await this.setupDevice();
 
-    if (!res) {
-      return false;
-    }
+    if (!res) return false;
 
     const { lang } = i18n;
 
     if (deviceMaster.currentControlMode !== 'red_laser_measure') {
       onProgressText?.(lang.message.enteringRedLaserMeasureMode);
       await deviceMaster.enterRedLaserMeasureMode();
+    }
+
+    return true;
+  };
+
+  /**
+   * Check if the task is alive, if not, setup the device again,
+   * set hasTakenReference to false if reconnected successfully
+   * @returns {boolean} - Whether the task is alive or successfully reconnect the device
+   */
+  checkTaskAlive = async () => {
+    const isAlive = await deviceMaster.checkTaskAlive();
+
+    if (!isAlive) {
+      const setupRes = await this.setup();
+
+      if (!setupRes) return false;
+
+      this.hasTakenReference = false;
     }
 
     return true;
@@ -49,11 +66,19 @@ export default class RedLightCurveMeasurer extends BaseCurveMeasurer implements 
         onCancel: () => resolve(null),
         onConfirm: async () => {
           try {
+            const isTaskAlive = await this.checkTaskAlive();
+
+            if (!isTaskAlive) return;
+
             const z = await deviceMaster.takeReferenceZ();
 
             resolve(z);
           } catch (error) {
-            const { code, message } = translateError(error instanceof Error ? error.message : null);
+            let errorMsg: null | string = null;
+
+            if (error instanceof Error) errorMsg = error.message;
+
+            const { code, message } = translateError(errorMsg);
 
             if (code) alertCaller.popUpError({ message });
             else alertCaller.popUpError({ message: `${t.failed_to_take_reference}: ${message}` });
@@ -64,9 +89,7 @@ export default class RedLightCurveMeasurer extends BaseCurveMeasurer implements 
       });
     });
 
-    if (res) {
-      this.hasTakenReference = true;
-    }
+    if (res) this.hasTakenReference = true;
 
     progressCaller.popById(progressId);
 
@@ -74,13 +97,11 @@ export default class RedLightCurveMeasurer extends BaseCurveMeasurer implements 
   };
 
   end = async (): Promise<void> => {
-    if (!this.device) {
-      return;
-    }
+    if (!this.device) return;
 
     try {
       if (deviceMaster.currentControlMode === 'red_laser_measure') {
-        await deviceMaster.endRedLaserMeasureMode();
+        await deviceMaster.endSubTask();
       }
     } catch (error) {
       console.error('Failed to exit red laser measure mode', error);
@@ -98,6 +119,12 @@ export default class RedLightCurveMeasurer extends BaseCurveMeasurer implements 
     targetIndices: number[],
     opts?: InteractiveOptions,
   ): Promise<MeasureData | null> {
+    if (this.hasTakenReference) {
+      const res = await this.checkTaskAlive();
+
+      if (!res) return null;
+    }
+
     if (!this.hasTakenReference) {
       const res = await this.showTakeReferenceDialog();
 

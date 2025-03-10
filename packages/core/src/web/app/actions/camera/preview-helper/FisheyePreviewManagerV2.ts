@@ -56,7 +56,7 @@ class FisheyePreviewManagerV2 extends FisheyePreviewManagerBase implements Fishe
     });
     this.autoFocusRefKey = focusPosition ?? (await getAutoFocusPosition(device));
     progressCaller.update(progressId || this.progressId, { message: lang.message.endingRawMode });
-    await deviceMaster.endRawMode();
+    await deviceMaster.endSubTask();
     // V2 calibration use point E as reference
     console.log(params);
     await deviceMaster.setFisheyeParam(params);

@@ -155,7 +155,7 @@ export const getMaterialHeight = async (position: 'A' | 'E' = 'E'): Promise<numb
   }
 
   await deviceMaster.rawLooseMotor();
-  await deviceMaster.endRawMode();
+  await deviceMaster.endSubTask();
 
   if (!didAf) {
     throw new Error('Auto focus failed');
@@ -169,7 +169,7 @@ export const prepareToTakePicture = async (): Promise<void> => {
   await deviceMaster.rawHome();
   await deviceMaster.rawHomeZ();
   await deviceMaster.rawLooseMotor();
-  await deviceMaster.endRawMode();
+  await deviceMaster.endSubTask();
 };
 
 export default {

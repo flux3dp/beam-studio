@@ -2153,6 +2153,13 @@ const lang: ILang = {
     no_device: 'Impossibile rilevare il dispositivo della fotocamera. Ricollega la fotocamera e riprova.',
     no_permission: "Beam Studio non ha l'autorizzazione per accedere alla fotocamera. Assicurati che l'autorizzazione sia concessa a Beam Studio nelle impostazioni del browser o del sistema.",
   },
+  z_speed_limit_test: {
+    alert_before: 'Prima di iniziare l’incisione della curva, il sistema eseguirà un test di carico per evitare la perdita di passi dovuta a un peso eccessivo.',
+    alert_failed: "Il peso dell'oggetto attuale supera il limite di carico per la velocità attuale dell'asse Z. Riduci la velocità dell'asse Z nel pannello della macchina o sostituisci l'oggetto di incisione prima di ripetere il test.",
+    ignore: 'Ignora',
+    retest: 'Riprova',
+    testing: 'Esecuzione del test di carico...',
+  },
 };
 
 export default lang;

@@ -386,7 +386,7 @@ export default {
         });
       }
     } catch {
-      await DeviceMaster.endCartridgeIOMode();
+      await DeviceMaster.endSubTask();
     } finally {
       ProgressCaller.popById('fetch-cartridge-data');
     }
