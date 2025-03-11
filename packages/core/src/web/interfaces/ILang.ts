@@ -1189,7 +1189,7 @@ export interface ILang {
     UNKNOWN_COMMAND: string;
     UNKNOWN_ERROR: string;
   };
-  global: Record<'apply' | 'back' | 'cancel' | 'ok' | 'save' | 'stop', string> & {
+  global: Record<'apply' | 'back' | 'cancel' | 'mode_conflict' | 'ok' | 'save' | 'stop', string> & {
     editing: Record<'redo' | 'reset' | 'undo' | 'zoom_in' | 'zoom_out', string>;
   };
   image_edit_panel: {

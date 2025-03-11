@@ -1202,6 +1202,7 @@ const lang: ILang = {
       zoom_in: 'Přiblížit',
       zoom_out: 'Oddálit',
     },
+    mode_conflict: 'Tato možnost není dostupná v aktuálním režimu.',
     ok: 'OK',
     save: 'Uložit',
     stop: 'Zastavit',

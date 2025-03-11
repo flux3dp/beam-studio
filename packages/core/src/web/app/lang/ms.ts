@@ -1202,6 +1202,7 @@ const lang: ILang = {
       zoom_in: 'Zum Masuk',
       zoom_out: 'Zum Keluar',
     },
+    mode_conflict: 'Pilihan ini tidak tersedia dalam mod semasa.',
     ok: 'OK',
     save: 'Simpan',
     stop: 'Henti',

@@ -110,7 +110,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         renderToolButton(
           'curve-engrave',
           <LeftPanelIcons.CurveEngrave />,
-          isDisableCurveEngraving ? 'Mode conflict' : tLeftPanel.label.curve_engraving.title,
+          isDisableCurveEngraving ? lang.global.mode_conflict : tLeftPanel.label.curve_engraving.title,
           () => curveEngravingModeController.start(),
           false,
           isDisableCurveEngraving,
