@@ -2153,6 +2153,13 @@ const lang: ILang = {
     no_device: "Impossible de détecter l'appareil photo. Veuillez reconnecter la caméra et réessayer.",
     no_permission: "Beam Studio n'a pas l'autorisation d'accéder à la caméra. Assurez-vous que l'autorisation est accordée à Beam Studio dans les paramètres du navigateur ou du système.",
   },
+  z_speed_limit_test: {
+    alert_before: 'Avant de commencer la gravure de courbes, le système effectuera un test de charge pour éviter toute perte de pas due à un poids excessif.',
+    alert_failed: "Le poids de l'objet actuel dépasse la limite de charge pour la vitesse actuelle de l'axe Z. Veuillez réduire la vitesse de l'axe Z sur le panneau de la machine ou remplacer l'objet de gravure avant de refaire le test.",
+    ignore: 'Ignorer',
+    retest: 'Retester',
+    testing: 'Exécution du test de charge...',
+  },
 };
 
 export default lang;

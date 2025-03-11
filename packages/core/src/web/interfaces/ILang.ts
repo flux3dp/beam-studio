@@ -2146,4 +2146,11 @@ export interface ILang {
     no_device: string;
     no_permission: string;
   };
+  z_speed_limit_test: {
+    alert_before: string;
+    alert_failed: string;
+    ignore: string;
+    retest: string;
+    testing: string;
+  };
 }

@@ -1,12 +1,12 @@
 import FisheyePreviewManagerV2 from './FisheyePreviewManagerV2';
 
-const mockEndRawMode = jest.fn();
+const mockEndSubTask = jest.fn();
 const mockSetFisheyeParam = jest.fn();
 const mockSetFisheyeObjectHeight = jest.fn();
 const mockSetFisheyeLevelingData = jest.fn();
 
 jest.mock('@core/helpers/device-master', () => ({
-  endRawMode: (...args) => mockEndRawMode(...args),
+  endSubTask: (...args) => mockEndSubTask(...args),
   setFisheyeLevelingData: (...args) => mockSetFisheyeLevelingData(...args),
   setFisheyeObjectHeight: (...args) => mockSetFisheyeObjectHeight(...args),
   setFisheyeParam: (...args) => mockSetFisheyeParam(...args),
@@ -115,7 +115,7 @@ describe('test FisheyePreviewManagerV2', () => {
     expect(mockRawAndHome).toHaveBeenCalledTimes(1);
     expect(mockGetHeight).toHaveBeenCalledTimes(1);
     expect(mockGetAutoFocusPosition).toHaveBeenCalledTimes(1);
-    expect(mockEndRawMode).toHaveBeenCalledTimes(1);
+    expect(mockEndSubTask).toHaveBeenCalledTimes(1);
     expect(mockSetFisheyeParam).toHaveBeenCalledTimes(1);
     expect(mockSetFisheyeParam).toHaveBeenNthCalledWith(1, 'params');
     expect(mockPopById).toHaveBeenCalledTimes(1);

@@ -73,7 +73,7 @@ class AdorPreviewManager extends BasePreviewManager implements PreviewManager {
       if (deviceMaster.currentControlMode === 'raw') {
         await deviceMaster.rawLooseMotor();
         progressCaller.update(this.progressId, { message: lang.message.endingRawMode });
-        await deviceMaster.endRawMode();
+        await deviceMaster.endSubTask();
       }
 
       progressCaller.popById(this.progressId);

@@ -622,7 +622,7 @@ class FramingTaskManager extends EventEmitter {
       }
 
       await deviceMaster.rawLooseMotor();
-      await deviceMaster.endRawMode();
+      await deviceMaster.endSubTask();
     }
   };
 

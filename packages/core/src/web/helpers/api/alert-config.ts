@@ -11,6 +11,7 @@ export type AlertConfigKey =
   | 'skip-social-media-invitation'
   | 'skip-switch-to-laser-module'
   | 'skip-switch-to-printer-module'
+  | 'skip-z-speed-test-info'
   | 'skip_bg_removal_warning'
   | 'skip_camera_cable_alert'
   | 'skip_check_thumbnail_warning'

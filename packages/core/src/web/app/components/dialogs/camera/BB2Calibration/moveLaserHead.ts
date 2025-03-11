@@ -29,7 +29,7 @@ const moveLaserHead = async (): Promise<boolean> => {
     await deviceMaster.rawEndLineCheckMode();
     isLineCheckMode = false;
     await deviceMaster.rawLooseMotor();
-    await deviceMaster.endRawMode();
+    await deviceMaster.endSubTask();
 
     return true;
   } catch (error) {
@@ -45,7 +45,7 @@ const moveLaserHead = async (): Promise<boolean> => {
         }
 
         await deviceMaster.rawLooseMotor();
-        await deviceMaster.endRawMode();
+        await deviceMaster.endSubTask();
       }
     } finally {
       progressCaller.popById('move-laser-head');

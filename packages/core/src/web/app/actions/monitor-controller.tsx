@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import Dialog from '@core/app/actions/dialog-caller';
 import { Mode } from '@core/app/constants/monitor-constants';
+import type { PreviewTask } from '@core/app/contexts/MonitorContext';
 import { MonitorContextProvider } from '@core/app/contexts/MonitorContext';
 import Monitor from '@core/app/views/monitor/Monitor';
 import { checkBlockedSerial } from '@core/helpers/device/checkBlockedSerial';
@@ -11,7 +12,7 @@ const monitorController = {
   showMonitor: async (
     device: IDeviceInfo,
     mode: Mode = Mode.FILE,
-    previewTask?: { fcodeBlob: Blob; fileName: string; taskImageURL: string; taskTime: number },
+    previewTask?: PreviewTask,
     autoStart?: boolean,
   ): Promise<void> => {
     const res = await checkBlockedSerial(device.serial);

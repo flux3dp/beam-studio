@@ -90,7 +90,7 @@ class FisheyePreviewManagerV1 extends FisheyePreviewManagerBase implements Fishe
     });
     this.levelingData = levelingData;
     progressCaller.update(progressId || this.progressId, { message: lang.message.endingRawMode });
-    await deviceMaster.endRawMode();
+    await deviceMaster.endSubTask();
 
     if (deviceRotationData) {
       await this.update3DRotation(rotationData);

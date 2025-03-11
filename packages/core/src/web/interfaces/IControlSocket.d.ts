@@ -8,7 +8,7 @@ import type { IDeviceDetailInfo, IReport } from './IDevice';
 import type { ButtonState, Field, LensCorrection } from './Promark';
 import type { WrappedWebSocket } from './WebSocket';
 
-export type Mode = '' | 'cartridge_io' | 'raw' | 'red_laser_measure';
+export type Mode = '' | 'cartridge_io' | 'raw' | 'red_laser_measure' | 'z_speed_limit_test';
 
 interface IControlSocket extends EventEmitter {
   abort(): Promise<unknown>;
@@ -20,20 +20,17 @@ interface IControlSocket extends EventEmitter {
   ) => Promise<{ data: { result: { hash: string; sign: string } }; status: string }>;
   checkButton: () => Promise<ButtonState>;
 
+  checkTaskAlive?: () => Promise<boolean>;
   connect(): Promise<void>;
   connection: null | SwiftrayClient | WrappedWebSocket;
   deleteDeviceSetting(name: string): Promise<unknown>;
   deleteFile(fileNameWithPath: string): Promise<unknown>;
   deviceDetailInfo(): Promise<IDeviceDetailInfo>;
   downloadFile(fileNameWithPath: string): Promise<[string, Blob]>;
-
   downloadLog(logName: string): Promise<Array<Blob | string>>;
-  endCartridgeIOMode?: () => Promise<void>;
-  endRawMode(): Promise<unknown>;
-  endRedLaserMeasureMode?: () => Promise<void>;
-  enterCartridgeIOMode?: () => Promise<void>;
+  endSubTask(): Promise<void>;
   enterRawMode(): Promise<unknown>;
-  enterRedLaserMeasureMode?: () => Promise<void>;
+  enterSubTask(mode: Mode, timeout?: number): Promise<void>;
   fetchAutoLevelingData?: (dataType: string) => Promise<{ [key: string]: number }>;
   // method not supported by SwiftrayClient
   fetchCameraCalibImage?: (name?: string) => Promise<Blob>;
@@ -87,7 +84,6 @@ interface IControlSocket extends EventEmitter {
   select(path: string[], fileName: string): Promise<{ status: string }>;
   setDeviceSetting(name: string, value: string): Promise<unknown>;
   setFan(fanSpeed: number): Promise<unknown>;
-
   setFanTemp(fanSpeed: number): Promise<unknown>;
   setField(worksize: number, fieldData: Field): Promise<boolean>;
   setLaserPower(power: number): Promise<unknown>;
@@ -103,6 +99,8 @@ interface IControlSocket extends EventEmitter {
   updateFisheye3DRotation?: (data: RotationParameters3D) => Promise<{ status: string }>;
   upload(data: any, path?: string, fileName?: string): Promise<void>;
   uploadFisheyeParams?: (data: string) => Promise<{ status: string }>;
+  zSpeedLimitTestSetSpeed(speed: number): Promise<boolean>;
+  zSpeedLimitTestStart(): Promise<boolean>;
 }
 
 export default IControlSocket;

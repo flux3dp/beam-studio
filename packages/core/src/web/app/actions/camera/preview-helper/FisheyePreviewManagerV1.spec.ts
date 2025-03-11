@@ -6,12 +6,12 @@ jest.mock('@core/app/constants/workarea-constants', () => ({
   getWorkarea: (...args) => mockGetWorkarea(...args),
 }));
 
-const mockEndRawMode = jest.fn();
+const mockEndSubTask = jest.fn();
 const mockSet3dRotation = jest.fn();
 const mockSetFisheyeMatrix = jest.fn();
 
 jest.mock('@core/helpers/device-master', () => ({
-  endRawMode: (...args) => mockEndRawMode(...args),
+  endSubTask: (...args) => mockEndSubTask(...args),
   set3dRotation: (...args) => mockSet3dRotation(...args),
   setFisheyeMatrix: (...args) => mockSetFisheyeMatrix(...args),
 }));
@@ -148,7 +148,7 @@ describe('test FisheyePreviewManagerV1', () => {
     expect(mockLoadCamera3dRotation).toHaveBeenCalledTimes(1);
     expect(mockRawAndHome).toHaveBeenCalledTimes(1);
     expect(mockRawAndHome).toHaveBeenCalledWith('fisheye-preview-manager');
-    expect(mockEndRawMode).toHaveBeenCalledTimes(1);
+    expect(mockEndSubTask).toHaveBeenCalledTimes(1);
     expect(mockOnObjectHeightChanged).toBeCalledTimes(1);
     expect(mockPopById).toBeCalledTimes(1);
     expect(mockPopById).toBeCalledWith('fisheye-preview-manager');
