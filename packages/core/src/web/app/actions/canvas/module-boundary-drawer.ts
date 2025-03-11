@@ -79,12 +79,7 @@ const update = (module: LayerModule): void => {
 
   const d1 = `M0,0H${w}V${h}H0V0`;
   const { dpmm } = constant;
-  let { bottom, left, right, top } = moduleBoundary[module] || {
-    bottom: 0,
-    left: 0,
-    right: 0,
-    top: 0,
-  };
+  let { bottom, left, right, top } = moduleBoundary[module] || { bottom: 0, left: 0, right: 0, top: 0 };
   const offsets = structuredClone(BeamboxPreference.read('module-offsets'));
   const [offsetX, offsetY] = offsets[module] || [0, 0];
 
@@ -98,7 +93,9 @@ const update = (module: LayerModule): void => {
     right = Math.max(right, -offsetX);
   }
 
-  const rotaryMode = BeamboxPreference.read('rotary_mode');
+  const isRotary = Boolean(BeamboxPreference.read('rotary_mode') && getSupportInfo(model).rotary);
+  const isAutoFeeder = Boolean(BeamboxPreference.read('auto-feeder') && getSupportInfo(model).autoFeeder);
+  const isPassThrough = Boolean(BeamboxPreference.read('pass-through') && getSupportInfo(model).passThrough);
 
   if (offsetY >= 0) {
     top = Math.max(top, offsetY);
@@ -107,11 +104,17 @@ const update = (module: LayerModule): void => {
     bottom = Math.max(bottom, -offsetY);
   }
 
-  if (rotaryMode) {
+  if (isRotary || isAutoFeeder) {
     top = 0;
     bottom = 0;
-  } else if (BeamboxPreference.read('pass-through') && getSupportInfo(model).passThrough) {
-    bottom = 0;
+  } else if (isPassThrough) {
+    if (expansion[0] > 0) {
+      top += expansion[0] / dpmm;
+    }
+
+    if (expansion[1] > 0) {
+      bottom += expansion[1] / dpmm;
+    }
   }
 
   bottom = Math.max(bottom, 0);
