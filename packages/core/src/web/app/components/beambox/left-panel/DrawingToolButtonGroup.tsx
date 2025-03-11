@@ -106,7 +106,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
       {renderToolButton('Polygon', <LeftPanelIcons.Polygon />, tLeftPanel.label.polygon, FnWrapper.insertPolygon)}
       {renderToolButton('Line', <LeftPanelIcons.Line />, `${tLeftPanel.label.line} (\\)`, FnWrapper.insertLine)}
       {renderToolButton('Pen', <LeftPanelIcons.Draw />, `${tLeftPanel.label.pen} (P)`, FnWrapper.insertPath)}
-      {(selectedDevice?.model === 'fbb2' || isDev()) &&
+      {([selectedDevice?.model, workarea].includes('fbb2') || isDev()) &&
         renderToolButton(
           'curve-engrave',
           <LeftPanelIcons.CurveEngrave />,
