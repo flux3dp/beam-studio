@@ -63,7 +63,7 @@ describe('update the preference', () => {
       .find('.ant-select-selection-item')
       .should('have.text', 'Beambox');
 
-    cy.get('#set-guide').closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'On');
+    cy.get('#set-guide').closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'Off');
 
     cy.get('#guide-x-input').should('have.attr', 'value', '0.00');
     cy.get('#guide-y-input').should('have.attr', 'value', '0.00');
