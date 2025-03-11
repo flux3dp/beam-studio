@@ -75,7 +75,7 @@ export class AutoFeederBoundaryDrawer {
     const { height: workareaH, model, width: workareaW } = workareaManager;
     const { autoFeeder } = getSupportInfo(model);
 
-    if (!enabled || !autoFeeder) {
+    if (!enabled || !autoFeeder?.xRange) {
       this.path?.setAttribute('d', '');
       this.container?.setAttribute('display', 'none');
 
