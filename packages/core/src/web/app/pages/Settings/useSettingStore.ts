@@ -24,7 +24,7 @@ export type Action = {
   updateToStorage: () => void;
 };
 
-const DEFAULT_CONFIG = {
+export const DEFAULT_CONFIG = {
   auto_check_update: true,
   auto_connect: true,
   'default-units': 'mm',
@@ -65,9 +65,18 @@ export const useSettingStore = create<Action & State>(
 
         const value = storage.get(key) as any;
 
+        console.log(`getting from storage: ${key}, ${value}`);
+
         return (
           match<any>({ key, value })
-            .with({ key: P.string, value: P.nullish }, ({ key }) => (DEFAULT_CONFIG as any)[key])
+            .with({ key: P.string, value: P.nullish }, ({ key }) => {
+              const defaultValue = (DEFAULT_CONFIG as any)[key];
+
+              storage.set(key as StorageKey, defaultValue);
+              console.log('set default value to storage');
+
+              return defaultValue;
+            })
             // migrate old config
             .with(
               { key: P.union(...configMigrateList), value: P.union(P.number, P.nullish) },

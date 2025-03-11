@@ -1,17 +1,19 @@
 import { Select } from 'antd';
 import type { DefaultOptionType } from 'antd/es/select';
 
+import type { OneOf } from '@core/interfaces/utils';
+
 import SettingFormItem from './SettingFormItem';
 
-type Props = {
-  defaultValue: boolean | number | string;
+type CommonProps = {
   id: string;
   label: string;
   onChange: (value: any) => void;
   options: DefaultOptionType[];
   url?: string;
-  value?: string;
 };
+
+type Props = CommonProps & OneOf<{ defaultValue: boolean | number | string }, { value: string }>;
 
 function SettingSelect({ defaultValue, id, label, onChange, options, url, value }: Props) {
   return (

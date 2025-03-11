@@ -121,7 +121,6 @@ function Editor({ options }: Props): React.JSX.Element {
         options={fontOptions}
       />
       <SettingSelect
-        defaultValue={(defaultFont.postscriptName ?? defaultFont.style) as string}
         id="set-default-font-style"
         label={lang.settings.default_font_style}
         onChange={(e) => setFontStyle(e)}

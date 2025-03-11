@@ -58,7 +58,6 @@ describe('move element to another layer', () => {
     cy.get('.anticon[id="animals/i_land-1"]').click();
     cy.get('.ant-modal-mask', { timeout: 10000 }).should('not.exist');
 
-    cy.get('.ant-modal-mask').should('not.exist');
     cy.get('#svg_19').should('exist');
     cy.get('svg#svgcontent')
       .trigger('mousedown', 100, 100, { force: true })

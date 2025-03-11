@@ -165,15 +165,9 @@ class BeamboxPreferenceClass {
       if (!(key in preference)) {
         // @ts-expect-error key is keyof BeamboxPreference
         preference[key] = DEFAULT_PREFERENCE[key];
-      }
-
-      if (objectKeys.includes(key)) {
-        for (const subKey in DEFAULT_PREFERENCE[key as (typeof objectKeys)[number]]) {
-          if (!(subKey in preference[key as (typeof objectKeys)[number]])) {
-            // @ts-expect-error key is keyof BeamboxPreference
-            preference[key] = { ...preference[key], [subKey]: DEFAULT_PREFERENCE[key][subKey] };
-          }
-        }
+      } else if (objectKeys.includes(key)) {
+        // @ts-expect-error key is keyof BeamboxPreference
+        preference[key] = { ...DEFAULT_PREFERENCE[key], ...preference[key] };
       }
     }
 
