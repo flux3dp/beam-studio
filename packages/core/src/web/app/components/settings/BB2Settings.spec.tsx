@@ -15,15 +15,7 @@ jest.mock('@core/app/pages/Settings/useSettingStore', () => ({
   useSettingStore,
 }));
 
-jest.mock('./components/SettingSelect', () => ({ id, label, onChange, options, url }: any) => (
-  <div>
-    mock-select-control id:{id}
-    label:{label}
-    url:{url}
-    options:{JSON.stringify(options)}
-    <input className="select-control" onChange={(e) => onChange(e.target.value === 'true')} />
-  </div>
-));
+jest.mock('./components/SettingSelect');
 
 import BB2Settings from './BB2Settings';
 

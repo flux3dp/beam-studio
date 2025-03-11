@@ -10,18 +10,17 @@ import i18n from '@core/helpers/i18n';
 import SettingFormItem from './components/SettingFormItem';
 import SettingSelect from './components/SettingSelect';
 
-const Path = (): React.JSX.Element => {
+type Props = {
+  options: DefaultOptionType[];
+};
+
+const Path = ({ options }: Props): React.JSX.Element => {
   const { lang } = i18n;
   const { getConfig, getPreference, setConfig, setPreference } = useSettingStore();
 
   const selectedModel = getPreference('model');
   const defaultUnit = getConfig('default-units');
   const workarea = getWorkarea(selectedModel);
-
-  const commonBooleanOptions = [
-    { label: lang.settings.on, value: true },
-    { label: lang.settings.off, value: false },
-  ] as unknown as DefaultOptionType[];
 
   return (
     <>
@@ -31,7 +30,7 @@ const Path = (): React.JSX.Element => {
         id="set-vector-speed-constraint"
         label={lang.settings.vector_speed_constraint}
         onChange={(e) => setPreference('vector_speed_constraint', e)}
-        options={commonBooleanOptions}
+        options={options}
         url={lang.settings.help_center_urls.vector_speed_constraint}
       />
       <SettingFormItem
@@ -70,7 +69,7 @@ const Path = (): React.JSX.Element => {
             id="set-blade-precut"
             label={lang.settings.blade_precut_switch}
             onChange={(e) => setPreference('blade_precut', e.target.value)}
-            options={commonBooleanOptions}
+            options={options}
           />
           <SettingFormItem id="set_precut_x" label={lang.settings.blade_precut_position}>
             <span className="font2" style={{ marginRight: '10px' }}>

@@ -118,28 +118,8 @@ jest.mock('@core/app/pages/Settings/useSettingStore', () => ({
   useSettingStore,
 }));
 
-jest.mock('./components/SettingSelect', () => ({ id, label, onChange, options, url }: any) => (
-  <div>
-    mock-select-control id:{id}
-    label:{label}
-    url:{url}
-    options:{JSON.stringify(options)}
-    <input
-      className="select-control"
-      onChange={({ target: { value } }) => onChange(['false', 'true'].includes(value) ? value === 'true' : value)}
-    />
-  </div>
-));
-
-jest.mock('./components/SettingFormItem', () => ({ children, id, label, options, url }: any) => (
-  <div>
-    mock-select-control id:{id}
-    label:{label}
-    url:{url}
-    options:{JSON.stringify(options)}
-    {children}
-  </div>
-));
+jest.mock('./components/SettingSelect');
+jest.mock('./components/SettingFormItem');
 
 jest.mock(
   '@core/app/widgets/Unit-Input-v2',

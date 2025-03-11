@@ -18,6 +18,7 @@ exports[`should render correctly 1`] = `
     [{"label":"On","value":true},{"label":"Off","value":false}]
     <input
       class="select-control"
+      id="font-substitue"
     />
   </div>
   <div>
@@ -31,6 +32,7 @@ exports[`should render correctly 1`] = `
     [{"label":"1.0","value":"1.0"},{"label":"2.0","value":"2.0"}]
     <input
       class="select-control"
+      id="font-convert"
     />
   </div>
 </div>

@@ -94,7 +94,7 @@ function Settings(): React.JSX.Element {
             <Camera options={commonBooleanOptions} />
             <Editor options={commonBooleanOptions} />
             <Engraving options={commonBooleanOptions} />
-            <Path />
+            <Path options={commonBooleanOptions} />
             <Mask options={commonBooleanOptions} />
             <TextToPath options={commonBooleanOptions} />
             <Module options={commonBooleanOptions} />

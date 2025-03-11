@@ -17,6 +17,7 @@ exports[`should render correctly desktop version 1`] = `
     [{"label":"Deutsche","value":"de"},{"label":"English","value":"en"},{"label":"Español","value":"es"},{"label":"日本語","value":"ja"},{"label":"简体中文","value":"zh-cn"},{"label":"繁體中文","value":"zh-tw"}]
     <input
       class="select-control"
+      id="select-lang"
     />
   </div>
   <div>
@@ -29,6 +30,7 @@ exports[`should render correctly desktop version 1`] = `
     [{"label":"On","value":true},{"label":"Off","value":false}]
     <input
       class="select-control"
+      id="set-notifications"
     />
   </div>
 </div>
@@ -51,6 +53,7 @@ exports[`should render correctly web version 1`] = `
     [{"label":"Deutsche","value":"de"},{"label":"English","value":"en"},{"label":"Español","value":"es"},{"label":"日本語","value":"ja"},{"label":"简体中文","value":"zh-cn"},{"label":"繁體中文","value":"zh-tw"}]
     <input
       class="select-control"
+      id="select-lang"
     />
   </div>
 </div>

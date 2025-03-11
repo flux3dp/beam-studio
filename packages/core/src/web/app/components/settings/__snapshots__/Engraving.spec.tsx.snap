@@ -18,6 +18,7 @@ exports[`should render correctly 1`] = `
     [{"label":"On","value":true},{"label":"Off","value":false}]
     <input
       class="select-control"
+      id="set-fast-gradient"
     />
   </div>
   <div>
@@ -29,6 +30,7 @@ exports[`should render correctly 1`] = `
     [{"label":"bottom_up","value":true},{"label":"top_down","value":false}]
     <input
       class="select-control"
+      id="set-reverse-engraving"
     />
   </div>
   <div>

@@ -5,38 +5,6 @@ import { fireEvent, render } from '@testing-library/react';
 import LayerModule from '@core/app/constants/layer-module/layer-modules';
 import moduleOffsets from '@core/app/constants/layer-module/module-offsets';
 
-jest.mock('@core/helpers/useI18n', () => () => ({
-  beambox: {
-    right_panel: {
-      laser_panel: {
-        slider: {
-          regular: 'Regular',
-          very_high: 'Max',
-        },
-      },
-    },
-  },
-  layer_module: {
-    laser_2w_infrared: 'laser_2w_infrared',
-    laser_10w_diode: 'laser_10w_diode',
-    laser_20w_diode: 'laser_20w_diode',
-    printing: 'printing',
-  },
-  settings: {
-    default_laser_module: 'default_laser_module',
-    groups: {
-      ador_modules: 'ador_modules',
-    },
-    low_laser_for_preview: 'Laser for Running Frame',
-    module_offset_2w_ir: 'module_offset_2w_ir',
-    module_offset_10w: 'module_offset_10w',
-    module_offset_20w: 'module_offset_20w',
-    module_offset_printer: 'module_offset_printer',
-    none: 'None',
-    printer_advanced_mode: 'printer_advanced_mode',
-  },
-}));
-
 jest.mock(
   '@core/app/widgets/Unit-Input-v2',
   () =>
@@ -66,32 +34,8 @@ const useSettingStore = create(() => ({
 }));
 
 jest.mock('@core/app/pages/Settings/useSettingStore', () => ({ useSettingStore }));
-jest.mock('./components/SettingSelect', () => ({ id, label, onChange, options, url }: any) => (
-  <div>
-    mock-select-control id:{id}
-    label:{label}
-    url:{url}
-    options:{JSON.stringify(options)}
-    {options.map((opt) => (
-      <button
-        key={opt.label}
-        onClick={() => onChange(['false', 'true'].includes(opt.value) ? opt.value === 'true' : opt.value)}
-        type="button"
-      >
-        {opt.label}
-      </button>
-    ))}
-  </div>
-));
-jest.mock('./components/SettingFormItem', () => ({ children, id, label, options, url }: any) => (
-  <div>
-    mock-select-control id:{id}
-    label:{label}
-    url:{url}
-    options:{JSON.stringify(options)}
-    {children}
-  </div>
-));
+jest.mock('./components/SettingSelect');
+jest.mock('./components/SettingFormItem');
 
 const mockOffsetInit: { [m: number]: [number, number] } = {
   [LayerModule.LASER_10W_DIODE]: [10, 10],
@@ -172,7 +116,7 @@ describe('test AdorModule', () => {
   });
 
   test('edit print advanced mode', () => {
-    const { getByText } = render(
+    const { container } = render(
       <AdorModule
         options={
           [
@@ -182,15 +126,15 @@ describe('test AdorModule', () => {
         }
       />,
     );
-    const button = getByText('On');
+    const selectControl = container.querySelector('#print-advanced-mode') as HTMLInputElement;
 
-    fireEvent.click(button);
+    fireEvent.change(selectControl, { target: { value: true } });
     expect(mockSetPreference).toHaveBeenCalledTimes(1);
     expect(mockSetPreference).toHaveBeenLastCalledWith('print-advanced-mode', true);
   });
 
   test('edit default laser module', () => {
-    const { getByText } = render(
+    const { container } = render(
       <AdorModule
         options={
           [
@@ -200,11 +144,11 @@ describe('test AdorModule', () => {
         }
       />,
     );
-    const button = getByText('laser_20w_diode');
+    const selectControl = container.querySelector('#default-laser-module') as HTMLInputElement;
 
-    fireEvent.click(button);
+    fireEvent.change(selectControl, { target: { value: LayerModule.LASER_20W_DIODE } });
     expect(mockSetPreference).toHaveBeenCalledTimes(1);
-    expect(mockSetPreference).toHaveBeenLastCalledWith('default-laser-module', LayerModule.LASER_20W_DIODE);
+    expect(mockSetPreference).toHaveBeenLastCalledWith('default-laser-module', '2');
   });
 
   test('edit low laser power', () => {

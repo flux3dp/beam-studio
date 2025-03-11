@@ -46,17 +46,17 @@ describe('move element to another layer', () => {
     cy.clickToolBtn('Element');
     cy.get('.ant-modal-header').contains('Element').should('exist');
     cy.get('.anticon[id="basic/icon-circle"]').click();
-    cy.wait(3000);
+    cy.get('.ant-modal-mask', { timeout: 10000 }).should('not.exist');
 
     cy.clickToolBtn('Element');
     cy.get('.adm-capsule-tabs-tab-wrapper').contains('Decor').click();
     cy.get('.anticon[id="decor/i_circular-1"]').click();
-    cy.wait(3000);
+    cy.get('.ant-modal-mask', { timeout: 10000 }).should('not.exist');
 
     cy.clickToolBtn('Element');
     cy.get('.adm-capsule-tabs-tab-wrapper').contains('Animal').click();
     cy.get('.anticon[id="animals/i_land-1"]').click();
-    cy.wait(3000);
+    cy.get('.ant-modal-mask', { timeout: 10000 }).should('not.exist');
 
     cy.get('.ant-modal-mask').should('not.exist');
     cy.get('#svg_19').should('exist');

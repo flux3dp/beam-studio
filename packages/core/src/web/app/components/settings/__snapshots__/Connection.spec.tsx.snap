@@ -38,6 +38,7 @@ exports[`should render correctly invalid ip address is given 1`] = `
     [{"label":"On","value":true},{"label":"Off","value":false}]
     <input
       class="select-control"
+      id="set-guessing-poke"
     />
   </div>
   <div>
@@ -50,6 +51,7 @@ exports[`should render correctly invalid ip address is given 1`] = `
     [{"label":"On","value":true},{"label":"Off","value":false}]
     <input
       class="select-control"
+      id="set-auto-connect"
     />
   </div>
 </div>

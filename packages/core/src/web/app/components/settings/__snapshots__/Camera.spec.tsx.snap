@@ -17,6 +17,7 @@ exports[`should render correctly 1`] = `
     [{"label":"Low","value":1},{"label":"Medium","value":2},{"label":"High","value":3}]
     <input
       class="select-control"
+      id="set-camera-preview-speed-level"
     />
   </div>
   <div>
@@ -29,6 +30,7 @@ exports[`should render correctly 1`] = `
     [{"label":"On","value":false},{"label":"Off","value":true}]
     <input
       class="select-control"
+      id="set-enable-custom-preview-height"
     />
   </div>
   <div>
@@ -41,6 +43,7 @@ exports[`should render correctly 1`] = `
     [{"label":"On","value":false},{"label":"Off","value":true}]
     <input
       class="select-control"
+      id="set-keep-preview-result"
     />
   </div>
 </div>
