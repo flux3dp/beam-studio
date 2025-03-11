@@ -98,6 +98,7 @@ export const getExportOpt = (
     }
   } else if (autoFeeder) {
     config.rotary_y_ratio = supportInfo.autoFeeder!.rotaryRatio;
+    config.rotary_z_motion = false;
 
     if (config.job_origin) {
       config.spin = config.job_origin[1] * constant.dpmm;
@@ -291,9 +292,11 @@ export const getExportOpt = (
 
   if (args) {
     (Object.keys(config) as Array<keyof IFcodeConfig>).forEach((key) => {
-      if (['curve_engraving', 'loop_compensation', 'model', 'z_offset'].includes(key)) {
+      if (['curve_engraving', 'loop_compensation', 'z_offset'].includes(key)) {
         // Skip special keys
       } else if (key === 'hardware_name') {
+        // hardware_name is deprecated, replaced with model, keep now for web version ghost
+        // may be removed in the future
         args.push(`-${config[key]}`);
       } else if (key === 'af' && config.z_offset) {
         // Handle optional -af value
@@ -303,6 +306,8 @@ export const getExportOpt = (
 
         if (config[key] === true) {
           args.push(keyArg);
+        } else if (config[key] === false) {
+          args.push(keyArg, 'false');
         } else if (typeof config[key] === 'number') {
           args.push(keyArg, config[key].toString());
         } else if (Array.isArray(config[key])) {
@@ -771,6 +776,8 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
             args.push(JSON.stringify([width / constant.dpmm, height / constant.dpmm]));
           }
 
+          // deprecated, replaced with model, keep now for web version ghost
+          // may be removed in the future
           if (model === 'fhexa1') {
             args.push('-hexa');
           } else if (model === 'fbb1p') {
@@ -780,6 +787,8 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
           } else {
             args.push(`-${model}`);
           }
+
+          args.push('-model', model);
 
           if (typeof engraveDpi === 'number') {
             args.push(`-dpi ${engraveDpi}`);
