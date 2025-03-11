@@ -119,7 +119,6 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
 
   const minHeight = useMemo(() => workareaObj.displayHeight ?? workareaObj.height, [workareaObj]);
   const showPassThrough = supportInfo.passThrough && (supportInfo.openBottom ? borderless : true);
-  const handleRotaryModeChange: (on: boolean) => void = (on: boolean) => setRotaryMode(on);
 
   useEffect(() => {
     if (showPassThrough) setPassThroughHeight((cur) => Math.max(cur, minHeight));
@@ -430,7 +429,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                   className={styles.switch}
                   disabled={!supportInfo.rotary}
                   id="rotary_mode"
-                  onChange={handleRotaryModeChange}
+                  onChange={setRotaryMode}
                 />
                 {(supportInfo.rotary.mirror || supportInfo.rotary.extendWorkarea) && rotaryMode && (
                   <>

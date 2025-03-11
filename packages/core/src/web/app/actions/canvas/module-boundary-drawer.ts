@@ -85,7 +85,7 @@ const update = (module: LayerModule): void => {
     right: 0,
     top: 0,
   };
-  const offsets = { ...BeamboxPreference.read('module-offsets') };
+  const offsets = structuredClone(BeamboxPreference.read('module-offsets'));
   const [offsetX, offsetY] = offsets[module] || [0, 0];
 
   if (module === LayerModule.PRINTER && offsetY < 0) {

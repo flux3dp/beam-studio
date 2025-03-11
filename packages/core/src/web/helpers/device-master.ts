@@ -98,7 +98,7 @@ class DeviceMaster {
 
           this.unnotifiedDeviceUUIDs.splice(index, 1);
 
-          if (storage.get('notification') === 1) {
+          if (storage.get('notification')) {
             Notification.requestPermission((permission) => {
               if (permission === 'granted') {
                 const notification = new Notification(deviceConn.info.name, {

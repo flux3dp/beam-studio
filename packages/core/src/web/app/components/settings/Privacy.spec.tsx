@@ -2,10 +2,6 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 import { create } from 'zustand';
 
-jest.mock('@core/helpers/i18n', () => ({
-  lang: { settings: { groups: { privacy: 'Privacy' }, share_with_flux: 'Share Beam Studio Analytics' } },
-}));
-
 const mockGetConfig = jest.fn();
 const mockSetConfig = jest.fn();
 

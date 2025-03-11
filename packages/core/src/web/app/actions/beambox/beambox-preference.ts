@@ -142,7 +142,7 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   rotary_y_coord: 5,
   should_remind_calibrate_camera: true,
   show_grids: true,
-  show_guides: true,
+  show_guides: false,
   show_rulers: false,
   simplify_clipper_path: false,
   use_layer_color: true,
@@ -153,6 +153,8 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
 
 const eventEmitter = eventEmitterFactory.createEventEmitter('beambox-preference');
 
+const objectKeys = ['customized-dimension', 'module-offsets'] as const;
+
 class BeamboxPreferenceClass {
   constructor() {
     // set default preference if key or even beambox-preference doesn't exist
@@ -161,8 +163,17 @@ class BeamboxPreferenceClass {
     // to migrate preference of old version
     for (const key in DEFAULT_PREFERENCE) {
       if (!(key in preference)) {
-        // @ts-expect-error the key is valid BeamboxPreferenceKey
+        // @ts-expect-error key is keyof BeamboxPreference
         preference[key] = DEFAULT_PREFERENCE[key];
+      }
+
+      if (objectKeys.includes(key)) {
+        for (const subKey in DEFAULT_PREFERENCE[key as (typeof objectKeys)[number]]) {
+          if (!(subKey in preference[key as (typeof objectKeys)[number]])) {
+            // @ts-expect-error key is keyof BeamboxPreference
+            preference[key] = { ...preference[key], [subKey]: DEFAULT_PREFERENCE[key][subKey] };
+          }
+        }
       }
     }
 
@@ -188,7 +199,7 @@ const beamboxPreference = new BeamboxPreferenceClass();
 
 export const migrate = (): void => {
   beamboxPreference.write('rotary_mode', Boolean(beamboxPreference.read('rotary_mode')));
-  beamboxPreference.write('enable-job-origin', Boolean(beamboxPreference.read('rotary_mode')));
+  beamboxPreference.write('enable-job-origin', Boolean(beamboxPreference.read('enable-job-origin')));
 };
 
 export default beamboxPreference;

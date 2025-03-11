@@ -26,7 +26,7 @@ exports[`should render correctly desktop version 1`] = `
     Desktop Notifications
     url:
     options:
-    [{"label":"On","value":true},{"label":"Off","selected":false,"value":false}]
+    [{"label":"On","value":true},{"label":"Off","value":false}]
     <input
       class="select-control"
     />

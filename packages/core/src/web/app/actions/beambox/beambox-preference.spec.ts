@@ -118,7 +118,7 @@ test('test beambox-preference', () => {
     rotary_y_coord: 5,
     should_remind_calibrate_camera: true,
     show_grids: true,
-    show_guides: true,
+    show_guides: false,
     show_rulers: false,
     simplify_clipper_path: false,
     use_layer_color: true,
@@ -137,8 +137,6 @@ test('test beambox-preference', () => {
   expect(mockEmit).not.toHaveBeenCalled();
   beamboxPreference.write('mouse_input_device', 'MOUSE');
   expect(mockGet).toHaveBeenNthCalledWith(3, 'beambox-preference');
-  expect(mockSet).toHaveBeenNthCalledWith(2, 'beambox-preference', {
-    mouse_input_device: 'MOUSE',
-  });
+  expect(mockSet).toHaveBeenNthCalledWith(2, 'beambox-preference', { mouse_input_device: 'MOUSE' });
   expect(mockEmit).toHaveBeenNthCalledWith(1, 'mouse_input_device', 'MOUSE');
 });

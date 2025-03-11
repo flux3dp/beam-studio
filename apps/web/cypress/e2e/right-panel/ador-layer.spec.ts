@@ -22,7 +22,7 @@ describe('ador layer', () => {
     cy.landingEditor();
   });
 
-  it.only('change default laser module', () => {
+  it('change default laser module', () => {
     cy.go2Preference();
     cy.get('#default-laser-module').closest('.ant-select').as('select');
     cy.get('@select').find('.ant-select-selection-item').click();

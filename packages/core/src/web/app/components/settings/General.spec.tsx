@@ -45,10 +45,7 @@ jest.mock('./components/SettingSelect', () => ({ id, label, onChange, options, u
 
 const mockIsWeb = jest.fn();
 
-jest.mock('@core/helpers/is-web', () => ({
-  __esModule: true,
-  default: mockIsWeb,
-}));
+jest.mock('@core/helpers/is-web', () => mockIsWeb);
 
 import General from './General';
 
@@ -63,7 +60,7 @@ describe('should render correctly', () => {
         options={
           [
             { label: 'On', value: true },
-            { label: 'Off', selected: false, value: false },
+            { label: 'Off', value: false },
           ] as any
         }
         supportedLangs={{
@@ -99,7 +96,7 @@ describe('should render correctly', () => {
         options={
           [
             { label: 'On', value: true },
-            { label: 'Off', selected: false, value: false },
+            { label: 'Off', value: false },
           ] as any
         }
         supportedLangs={{

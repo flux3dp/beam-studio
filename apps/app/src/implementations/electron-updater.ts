@@ -179,7 +179,7 @@ const switchVersion = (): void => {
 
 export default {
   autoCheck(): void {
-    const doCheck = storage.get('auto_check_update') !== 0;
+    const doCheck = storage.get('auto_check_update');
 
     if (doCheck) {
       checkForUpdate(true);

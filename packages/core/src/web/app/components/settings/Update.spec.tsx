@@ -37,10 +37,7 @@ jest.mock('./components/SettingSelect', () => ({ id, label, onChange, options, u
 
 const mockIsWeb = jest.fn();
 
-jest.mock('@core/helpers/is-web', () => ({
-  __esModule: true,
-  default: mockIsWeb,
-}));
+jest.mock('@core/helpers/is-web', () => mockIsWeb);
 
 import Update from './Update';
 

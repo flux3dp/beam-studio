@@ -60,7 +60,7 @@ const setVoted = (score: number): void => {
 
 const setDefaultRatingRecord = (): void => {
   const defaultRecord = {
-    isIgnored: isDev() ? true : false,
+    isIgnored: isDev(),
     isVoted: false,
     score: 0,
     times: 1,

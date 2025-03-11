@@ -2,32 +2,6 @@ import React from 'react';
 import { create } from 'zustand';
 import { fireEvent, render } from '@testing-library/react';
 
-jest.mock('@core/helpers/i18n', () => ({
-  lang: {
-    general: {
-      choose_folder: 'Choose Folder',
-    },
-    monitor: {
-      minute: 'm',
-    },
-    settings: {
-      autosave_enabled: 'Auto Save',
-      autosave_interval: 'Save Every',
-      autosave_number: 'Number of Auto Save',
-      autosave_path: 'Auto Save Location',
-      autosave_path_not_correct: 'Specified path not found.',
-      groups: {
-        autosave: 'Auto Save',
-      },
-      help_center_urls: {
-        fast_gradient: 'https://support.flux3dp.com/hc/en-us/articles/360004496235',
-      },
-    },
-  },
-}));
-
-jest.mock('@core/app/components/settings/Control', () => 'mock-control');
-
 jest.mock('@core/app/widgets/PathInput', () => ({
   __esModule: true,
   default: ({ buttonTitle, className, 'data-id': dataId, defaultValue, forceValidValue, getValue, type }: any) => (
@@ -111,10 +85,7 @@ jest.mock(
 
 const mockIsWeb = jest.fn();
 
-jest.mock('@core/helpers/is-web', () => ({
-  __esModule: true,
-  default: mockIsWeb,
-}));
+jest.mock('@core/helpers/is-web', () => mockIsWeb);
 
 import AutoSave from './AutoSave';
 

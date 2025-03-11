@@ -23,7 +23,7 @@ describe('landing', () => {
     window.localStorage.setItem('new-user', 'true');
   });
 
-  it.only('land to canvas', () => {
+  it('land to canvas', () => {
     cy.visit('#/studio/beambox');
     cy.url({ timeout: 15000 }).should('contain', '#/studio/beambox');
 

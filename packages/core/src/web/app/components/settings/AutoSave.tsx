@@ -55,7 +55,6 @@ function AutoSave({
           getValue={(directory: string, isValid: boolean) => {
             if (!isValid) {
               warnings.autosave_directory = lang.settings.autosave_path_not_correct;
-              console.log(warnings);
             } else {
               delete warnings.autosave_directory;
             }
