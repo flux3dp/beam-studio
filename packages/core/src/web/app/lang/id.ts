@@ -1202,6 +1202,7 @@ const lang: ILang = {
       zoom_in: 'Perbesar',
       zoom_out: 'Perkecil',
     },
+    mode_conflict: 'Opsi ini tidak tersedia dalam mode saat ini.',
     ok: 'OK',
     save: 'Simpan',
     stop: 'Berhenti',

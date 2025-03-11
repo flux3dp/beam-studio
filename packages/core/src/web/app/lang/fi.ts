@@ -1202,6 +1202,7 @@ const lang: ILang = {
       zoom_in: 'Lähennä',
       zoom_out: 'Loitonna',
     },
+    mode_conflict: 'Tämä vaihtoehto ei ole käytettävissä nykyisessä tilassa.',
     ok: 'OK',
     save: 'Tallenna',
     stop: 'Pysäytä',

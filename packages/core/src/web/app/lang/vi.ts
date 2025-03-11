@@ -1202,6 +1202,7 @@ const lang: ILang = {
       zoom_in: 'Phóng to',
       zoom_out: 'Thu nhỏ',
     },
+    mode_conflict: 'Tùy chọn này không khả dụng trong chế độ hiện tại.',
     ok: 'OK',
     save: 'Lưu',
     stop: 'Dừng',

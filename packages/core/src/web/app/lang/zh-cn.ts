@@ -68,8 +68,8 @@ const lang: ILang = {
       camera_preview: '预览',
       camera_preview_borderless_mode: '(打开底部)',
       curve_engraving: '曲面雕刻模式',
-      pass_through: '透通模式',
-      rotary: '旋转模式',
+      pass_through: '广域雕刻模式',
+      rotary: '旋转轴模式',
     },
     bottom_right_panel: {
       convert_text_to_path_before_export: '部分字体在不同系统间有差异，输出前请将字体转换成路径，以确保文本正确显示。转换文本至路径中...',
@@ -1202,6 +1202,7 @@ const lang: ILang = {
       zoom_in: '放大',
       zoom_out: '缩小',
     },
+    mode_conflict: '此选项在当前模式下不可用。',
     ok: '确定',
     save: '储存',
     stop: '停止',

@@ -1202,6 +1202,7 @@ const lang: ILang = {
       zoom_in: 'Zoom In',
       zoom_out: 'Zoom Out',
     },
+    mode_conflict: 'This option is not available in the current mode.',
     ok: 'OK',
     save: 'Save',
     stop: 'Stop',

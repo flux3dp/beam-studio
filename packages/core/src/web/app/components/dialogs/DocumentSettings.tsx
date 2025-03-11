@@ -448,7 +448,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                   id="rotary_mode"
                   onChange={setRotaryMode}
                 />
-                {isCurveEngraving && renderWarningIcon('Mode Conflict')}
+                {isCurveEngraving && renderWarningIcon(tGlobal.mode_conflict)}
                 {(supportInfo.rotary.mirror || supportInfo.rotary.extendWorkarea) && rotaryMode && (
                   <>
                     <div className={styles.subCheckbox}>
@@ -532,7 +532,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                   id="pass_through"
                   onChange={setPassThrough}
                 />
-                {isCurveEngraving && renderWarningIcon('Mode Conflict')}
+                {isCurveEngraving && renderWarningIcon(tGlobal.mode_conflict)}
                 {passThrough && (
                   <>
                     <UnitInput
@@ -572,7 +572,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                   id="auto_feeder"
                   onChange={setAutoFeeder}
                 />
-                {isCurveEngraving && renderWarningIcon('Mode Conflict')}
+                {isCurveEngraving && renderWarningIcon(tGlobal.mode_conflict)}
                 {autoFeeder && (
                   <UnitInput
                     addonAfter={isInch ? 'in' : 'mm'}
