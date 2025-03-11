@@ -1,4 +1,4 @@
-import { checkFbb2AutoFeeder } from '@core/helpers/checkFeature';
+import { checkAdo1AutoFeeder, checkFbb2AutoFeeder } from '@core/helpers/checkFeature';
 
 import type { WorkAreaModel } from './workarea-constants';
 
@@ -11,7 +11,7 @@ export const CHUCK_ROTARY_DIAMETER = 133;
 export const FBB2_FEEDER_DIAMETER = 167.08;
 
 export interface SupportInfo {
-  autoFeeder?: { maxHeight: number; rotaryRatio: number; xRange: [number, number] }; // [x, width] in mm
+  autoFeeder?: { maxHeight: number; rotaryRatio: number; xRange?: [number, number] }; // [x, width] in mm, no limit is not set
   autoFocus?: boolean;
   curveEngraving?: boolean;
   framingLowLaser?: boolean;
@@ -43,6 +43,9 @@ const hexaSupportInfo: SupportInfo = {
 
 const supportList: Record<WorkAreaModel, SupportInfo> = {
   ado1: {
+    autoFeeder: checkAdo1AutoFeeder()
+      ? { maxHeight: 2000, rotaryRatio: CHUCK_ROTARY_DIAMETER / FBB2_FEEDER_DIAMETER }
+      : undefined,
     framingLowLaser: true,
     jobOrigin: true,
     lowerFocus: true,
