@@ -5,10 +5,12 @@ import type { IReport } from '@core/interfaces/IDevice';
 export enum ButtonTypes {
   DISABLED_PAUSE = 4,
   DISABLED_PLAY = 2,
+  DISABLED_RESUME = 8,
   DISABLED_STOP = 6,
   NONE = 0,
   PAUSE = 3,
   PLAY = 1,
+  RESUME = 7,
   STOP = 5,
 }
 
@@ -22,11 +24,11 @@ statusButtonTypeMap[DeviceConstants.status.RESUME_TO_STARTING] = [
 ];
 statusButtonTypeMap[DeviceConstants.status.RUNNING] = [ButtonTypes.STOP, ButtonTypes.PAUSE];
 statusButtonTypeMap[DeviceConstants.status.RESUME_TO_RUNNING] = [ButtonTypes.DISABLED_STOP, ButtonTypes.DISABLED_PAUSE];
-statusButtonTypeMap[DeviceConstants.status.PAUSED] = [ButtonTypes.STOP, ButtonTypes.PLAY];
-statusButtonTypeMap[DeviceConstants.status.PAUSED_FROM_STARTING] = [ButtonTypes.STOP, ButtonTypes.PLAY];
-statusButtonTypeMap[DeviceConstants.status.PAUSING_FROM_STARTING] = [ButtonTypes.STOP, ButtonTypes.DISABLED_PLAY];
-statusButtonTypeMap[DeviceConstants.status.PAUSED_FROM_RUNNING] = [ButtonTypes.STOP, ButtonTypes.PLAY];
-statusButtonTypeMap[DeviceConstants.status.PAUSING_FROM_RUNNING] = [ButtonTypes.STOP, ButtonTypes.DISABLED_PLAY];
+statusButtonTypeMap[DeviceConstants.status.PAUSED] = [ButtonTypes.STOP, ButtonTypes.RESUME];
+statusButtonTypeMap[DeviceConstants.status.PAUSED_FROM_STARTING] = [ButtonTypes.STOP, ButtonTypes.RESUME];
+statusButtonTypeMap[DeviceConstants.status.PAUSING_FROM_STARTING] = [ButtonTypes.STOP, ButtonTypes.DISABLED_RESUME];
+statusButtonTypeMap[DeviceConstants.status.PAUSED_FROM_RUNNING] = [ButtonTypes.STOP, ButtonTypes.RESUME];
+statusButtonTypeMap[DeviceConstants.status.PAUSING_FROM_RUNNING] = [ButtonTypes.STOP, ButtonTypes.DISABLED_RESUME];
 statusButtonTypeMap[DeviceConstants.status.COMPLETED] = [ButtonTypes.PLAY];
 statusButtonTypeMap[DeviceConstants.status.COMPLETING] = [ButtonTypes.DISABLED_STOP, ButtonTypes.DISABLED_PAUSE];
 statusButtonTypeMap[DeviceConstants.status.PREPARING] = [ButtonTypes.DISABLED_STOP, ButtonTypes.DISABLED_PLAY];

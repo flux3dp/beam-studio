@@ -45,5 +45,9 @@ describe('test monitor-status', () => {
       ButtonTypes.STOP,
       ButtonTypes.PAUSE,
     ]);
+    expect(MonitorStatus.getControlButtonType({ st_id: DeviceConstants.status.PAUSED } as IReport)).toEqual([
+      ButtonTypes.STOP,
+      ButtonTypes.RESUME,
+    ]);
   });
 });

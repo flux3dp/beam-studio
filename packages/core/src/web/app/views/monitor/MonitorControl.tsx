@@ -26,7 +26,8 @@ const MonitorControl = ({ isFraming, isPromark, setEstimateTaskTime }: Props): R
 
   const triggerOnPlay = () => {
     setIsOnPlaying(true);
-    onPlay(isPromark);
+    // force resend framing and normal task after abortion in Promark
+    onPlay(isPromark && report.st_id !== DeviceConstants.status.PAUSED_FROM_RUNNING);
     clearInterval(estimateTaskTimeTimer.current as NodeJS.Timeout);
     estimateTaskTimeTimer.current = setInterval(() => {
       setEstimateTaskTime((time) => time - 1);
@@ -43,7 +44,15 @@ const MonitorControl = ({ isFraming, isPromark, setEstimateTaskTime }: Props): R
         return (
           <Button disabled={!enabled} key={type} onClick={triggerOnPlay} shape={buttonShape} type="primary">
             <PlayCircleFilled />
-            {report.st_id !== DeviceConstants.status.PAUSED ? tMonitor.go : tMonitor.resume}
+            {tMonitor.go}
+          </Button>
+        );
+      case ButtonTypes.RESUME:
+      case ButtonTypes.DISABLED_RESUME:
+        return (
+          <Button disabled={!enabled} key={type} onClick={triggerOnPlay} shape={buttonShape} type="primary">
+            <PlayCircleFilled />
+            {tMonitor.resume}
           </Button>
         );
       case ButtonTypes.PAUSE:
