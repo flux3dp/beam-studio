@@ -2,17 +2,19 @@ import DeviceConstants from '@core/app/constants/device-constants';
 import i18n from '@core/helpers/i18n';
 import type { IReport } from '@core/interfaces/IDevice';
 
+/* eslint-disable perfectionist/sort-enums */
 export enum ButtonTypes {
-  DISABLED_PAUSE = 4,
-  DISABLED_PLAY = 2,
-  DISABLED_RESUME = 8,
-  DISABLED_STOP = 6,
   NONE = 0,
-  PAUSE = 3,
   PLAY = 1,
-  RESUME = 7,
+  DISABLED_PLAY = 2,
+  PAUSE = 3,
+  DISABLED_PAUSE = 4,
   STOP = 5,
+  DISABLED_STOP = 6,
+  RESUME = 7,
+  DISABLED_RESUME = 8,
 }
+/* eslint-enable perfectionist/sort-enums */
 
 const statusButtonTypeMap: { [status: number]: ButtonTypes[] } = {};
 
