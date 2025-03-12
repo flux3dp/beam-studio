@@ -12,39 +12,9 @@ jest.mock('implementations/storage', () => ({
   get: (...args) => mockGet(...args),
 }));
 
-// jest.mock('@core/helpers/symbol-maker', () => ({
-//   switchImageSymbol: jest.fn(),
-// }));
-
-// jest.mock('delaunator', () => ({
-//   from: jest.fn(),
-// }));
-
-// jest.mock('@core/implementations/localFontHelper', () => ({
-//   getAvailableFonts: jest.fn(() => ['Arial']),
-// }));
-
-jest.mock(
-  './Workarea',
-  () =>
-    function DummyWorkarea() {
-      return <div>This is dummy Workarea</div>;
-    },
-);
-jest.mock(
-  './Ruler',
-  () =>
-    function DummyRuler() {
-      return <div>This is dummy Ruler</div>;
-    },
-);
-jest.mock(
-  './Banner',
-  () =>
-    function DummyBanner() {
-      return <div>This is dummy Banner</div>;
-    },
-);
+jest.mock('./Workarea', () => () => <div>This is dummy Workarea</div>);
+jest.mock('./Ruler', () => () => <div>This is dummy Ruler</div>);
+jest.mock('./Banner', () => () => <div>This is dummy Banner</div>);
 
 jest.mock('@core/app/components/beambox/path-preview/PathPreview', () => () => <div>MockPathPreview</div>);
 jest.mock('@core/app/components/beambox/ZoomBlock', () => () => <div>MockZoomBlock</div>);

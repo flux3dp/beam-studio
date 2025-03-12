@@ -6,11 +6,7 @@ import alertConstants from '@core/app/constants/alert-constants';
 import { LaserType } from '@core/app/constants/promark-constants';
 import i18n from '@core/helpers/i18n';
 
-import DocumentSettings from './DocumentSettings';
-
-const mockEventEmitter = {
-  emit: jest.fn(),
-};
+const mockEventEmitter = { emit: jest.fn(), on: jest.fn() };
 const mockCreateEventEmitter = jest.fn();
 
 jest.mock('@core/helpers/eventEmitterFactory', () => ({
@@ -21,6 +17,7 @@ jest.mock('@core/helpers/eventEmitterFactory', () => ({
   },
 }));
 
+jest.mock('@core/helpers/hooks/useHasCurveEngraving', () => () => false);
 jest.mock('@core/helpers/is-dev', () => () => true);
 
 jest.mock('antd', () => ({
@@ -39,11 +36,13 @@ jest.mock('@core/app/constants/alert-constants', () => ({
 }));
 
 const mockBeamboxPreferences = {
+  auto_feeder: false,
   borderless: false,
   'enable-autofocus': false,
   'enable-diode': false,
   engrave_dpi: 'medium',
   'extend-rotary-workarea': undefined,
+  'path-trough': false,
   rotary_mode: 0,
   workarea: 'fbm1',
 };
@@ -108,6 +107,8 @@ jest.mock('@core/implementations/browser', () => ({
 
 const mockUnmount = jest.fn();
 const mockQuerySelectorAll = jest.fn();
+
+import DocumentSettings from './DocumentSettings';
 
 describe('test DocumentSettings', () => {
   beforeEach(() => {
@@ -201,9 +202,10 @@ describe('test DocumentSettings', () => {
     expect(mockCreateEventEmitter).toHaveBeenCalledTimes(2);
     expect(mockCreateEventEmitter).toHaveBeenNthCalledWith(1, 'dpi-info');
     expect(mockCreateEventEmitter).toHaveBeenNthCalledWith(2, 'canvas');
-    expect(mockEventEmitter.emit).toHaveBeenCalledTimes(2);
-    expect(mockEventEmitter.emit).toHaveBeenNthCalledWith(1, 'UPDATE_DPI', 'high');
-    expect(mockEventEmitter.emit).toHaveBeenNthCalledWith(2, 'document-settings-saved');
+    expect(mockEventEmitter.emit).toHaveBeenCalledTimes(3);
+    expect(mockEventEmitter.emit).toHaveBeenNthCalledWith(1, 'GET_CANVAS_MODE', { mode: 1 });
+    expect(mockEventEmitter.emit).toHaveBeenNthCalledWith(2, 'UPDATE_DPI', 'high');
+    expect(mockEventEmitter.emit).toHaveBeenNthCalledWith(3, 'document-settings-saved');
     expect(mockUnmount).toHaveBeenCalledTimes(1);
   });
 
@@ -249,9 +251,7 @@ describe('test DocumentSettings', () => {
     fireEvent.click(baseElement.querySelector('.rc-virtual-list [title="Beambox II"]'));
 
     fireEvent.click(baseElement.querySelector('button#auto_feeder'));
-    fireEvent.change(baseElement.querySelector('#auto_feeder_height'), {
-      target: { value: 870 },
-    });
+    fireEvent.change(baseElement.querySelector('#auto_feeder_height'), { target: { value: 870 } });
     fireEvent.click(getByText('Save'));
     expect(mockBeamboxPreferenceWrite).toHaveBeenCalledWith('auto-feeder', true);
     expect(mockBeamboxPreferenceWrite).toHaveBeenCalledWith('auto-feeder-height', 870);
