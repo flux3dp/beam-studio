@@ -2,6 +2,7 @@
  * API image tracer
  * Ref: none
  */
+import tabController from '@core/app/actions/tabController';
 import importSvg from '@core/app/svgedit/operations/import/importSvg';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
 import Websocket from '@core/helpers/websocket';
@@ -14,12 +15,15 @@ const init = (): { connection: any } => {
     onFatal: (response: any) => {
       console.log('AI extension fatal error: ', response);
     },
-    onMessage: async (data) => {
+    onMessage: async (data: { layerData: string; svg: string }) => {
       if (data.svg) {
         await importSvg(new Blob([data.svg], { type: 'text/plain' }), { isFromAI: true });
 
         if (data.layerData) {
-          const layerDataJSON = JSON.parse(data.layerData);
+          const layerDataJSON = JSON.parse(data.layerData) as Record<
+            string,
+            { name: string; power: string; speed: string }
+          >;
           const layerNames = Object.keys(layerDataJSON);
 
           for (let i = 0; i < layerNames.length; i += 1) {
@@ -31,9 +35,6 @@ const init = (): { connection: any } => {
           }
         }
       }
-    },
-    onOpen: () => {
-      console.log('AI extension connected');
     },
   };
   const ws = Websocket({
@@ -47,6 +48,15 @@ const init = (): { connection: any } => {
     onMessage: (data) => {
       events.onMessage(data);
     },
+    onOpen: () => {
+      console.log('AI extension connected');
+
+      if (tabController.isFocused) ws?.send('set_handler');
+    },
+  });
+
+  tabController.onFocused(() => {
+    ws?.send('set_handler');
   });
 
   return {

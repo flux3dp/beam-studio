@@ -9,19 +9,22 @@ import communicator from '@core/implementations/communicator';
 import type { Tab } from '@core/interfaces/Tab';
 
 class TabController extends EventEmitter {
-  private currentInfo: { isCloud: boolean; title: string } = null;
+  private currentInfo: null | { isCloud: boolean; title: string } = null;
 
   public currentId: null | number = null;
+  public isFocused = false;
 
   constructor() {
     super();
     communicator.on(TabEvents.TabFocused, () => {
       this.emit(TabEvents.TabFocused);
+      this.isFocused = true;
     });
     communicator.on(TabEvents.TabBlurred, () => {
       this.emit(TabEvents.TabBlurred);
+      this.isFocused = false;
     });
-    communicator.on(TabEvents.TabUpdated, (_, tabs: Tab[]) => {
+    communicator.on(TabEvents.TabUpdated, (_: unknown, tabs: Tab[]) => {
       this.emit(TabEvents.TabUpdated, tabs);
     });
     this.currentId = communicator.sendSync(TabEvents.GetTabId);
