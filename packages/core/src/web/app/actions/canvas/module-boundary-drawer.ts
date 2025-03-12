@@ -44,6 +44,7 @@ const createBoundary = () => {
   boundaryDescText.setAttribute('stroke', 'none');
   boundaryDescText.setAttribute('paint-order', 'stroke');
   boundaryDescText.setAttribute('style', 'pointer-events:none');
+  boundaryDescText.setAttribute('text-anchor', 'middle');
 
   const textNode = document.createTextNode(i18n.lang.layer_module.non_working_area);
 
@@ -60,7 +61,7 @@ const updateCanvasSize = (): void => {
 canvasEventEmitter.on('canvas-change', updateCanvasSize);
 
 const update = (module: LayerModule): void => {
-  const { height: h, model, width: w } = workareaManager;
+  const { expansion, height: h, model, width: w } = workareaManager;
 
   if (!modelsWithModules.has(model)) {
     boundaryPath?.setAttribute('d', '');
@@ -136,12 +137,19 @@ const update = (module: LayerModule): void => {
   boundaryPath?.setAttribute('d', `${d1} ${d2}`);
   boundaryDescText?.removeAttribute('display');
 
-  if (top >= bottom) {
-    boundaryDescText?.setAttribute('x', `${top / 2 - 40}`);
-    boundaryDescText?.setAttribute('y', `${top / 2 + 40} `);
+  const fontSize = Math.max(top / 10, bottom / 10, 80);
+
+  boundaryDescText?.setAttribute('font-size', `${fontSize}`);
+
+  if (top === 0 && bottom === 0) {
+    boundaryDescText?.setAttribute('x', '0');
+    boundaryDescText?.setAttribute('y', '0');
+  } else if (top >= bottom) {
+    boundaryDescText?.setAttribute('x', (w / 2).toString());
+    boundaryDescText?.setAttribute('y', `${(top + fontSize) / 2} `);
   } else {
-    boundaryDescText?.setAttribute('x', `${bottom / 2 - 40}`);
-    boundaryDescText?.setAttribute('y', `${h - bottom / 2 + 40}`);
+    boundaryDescText?.setAttribute('x', (w / 2).toString());
+    boundaryDescText?.setAttribute('y', `${h + (-bottom + fontSize) / 2}`);
   }
 };
 
