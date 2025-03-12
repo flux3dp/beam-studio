@@ -1,3 +1,5 @@
+const isRunningAtGithub = Cypress.env('envType') === 'github';
+
 describe('reset', () => {
   beforeEach(() => {
     cy.landingEditor();
@@ -6,7 +8,11 @@ describe('reset', () => {
   const resetBeamStudio = () => {
     ['Reset Beam Studio', 'Next', 'Work Offline', 'Skip'].forEach((text) => cy.contains(text).click());
 
-    cy.get('button.ant-btn').contains('No').click({ multiple: true });
+    const buttonCount = isRunningAtGithub ? 1 : 3;
+
+    for (let i = 0; i < buttonCount; i++) {
+      cy.get('button.ant-btn').contains('No').click({ multiple: true });
+    }
   };
 
   const selectOption = (selector, optionText) => {
