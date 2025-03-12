@@ -76,7 +76,15 @@ export default {
       return (getFontFromPath as FontCollection).fonts[0];
     } catch {
       // Single Font
-      return openSync(font.path ?? '');
+      const getFontFromPath = openSync(font.path ?? '');
+
+      // @ts-expect-error
+      if (getFontFromPath.namedVariations[font.style]) {
+        // @ts-expect-error
+        return getFontFromPath.getVariation(getFontFromPath.namedVariations[font.style]);
+      }
+
+      return getFontFromPath;
     }
   },
   substituteFont(postscriptName: string, text: string): FontDescriptor[] {
