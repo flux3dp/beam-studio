@@ -65,15 +65,12 @@ export const useSettingStore = create<Action & State>(
 
         const value = storage.get(key) as any;
 
-        console.log(`getting from storage: ${key}, ${value}`);
-
         return (
           match<any>({ key, value })
             .with({ key: P.string, value: P.nullish }, ({ key }) => {
               const defaultValue = (DEFAULT_CONFIG as any)[key];
 
               storage.set(key as StorageKey, defaultValue);
-              console.log('set default value to storage');
 
               return defaultValue;
             })
