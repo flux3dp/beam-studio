@@ -2,7 +2,6 @@ import history from '@core/app/svgedit/history/history';
 import textEdit from '@core/app/svgedit/text/textedit';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import fontHelper from '@core/helpers/fonts/fontHelper';
 import getDefaultFont from '@core/helpers/fonts/getDefaultFont';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -31,14 +30,13 @@ const createNewText = (
 ): SVGElement => {
   const currentShape = svgCanvas.getCurrentShape();
   const modelText = isDefaultFont ? getDefaultFont() : textEdit.getCurText();
-  const usePostscriptAsFamily = fontHelper.usePostscriptAsFamily(modelText.font_postscriptName);
 
   const newText = svgCanvas.addSvgElementFromJson({
     attr: {
       'data-ratiofixed': true,
       fill,
       'fill-opacity': fill === 'none' ? modelText.fill_opacity : 1,
-      'font-family': usePostscriptAsFamily ? `'${modelText.font_postscriptName}'` : modelText.font_family,
+      'font-family': modelText.font_family,
       'font-postscript': modelText.font_postscriptName,
       'font-size': fontSize ?? modelText.font_size,
       id: svgCanvas.getNextId(),
@@ -52,10 +50,6 @@ const createNewText = (
     curStyles: true,
     element: 'text',
   });
-
-  if (usePostscriptAsFamily) {
-    newText.setAttribute('data-font-family', modelText.font_family);
-  }
 
   updateElementColor(newText);
 

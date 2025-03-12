@@ -1191,13 +1191,7 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
             const curText = textEdit.getCurText() as any;
 
             curText.font_size = selected.getAttribute('font-size');
-
-            if (window.os === 'MacOS' && !isWeb()) {
-              curText.font_family = selected.getAttribute('data-font-family');
-            } else {
-              curText.font_family = selected.getAttribute('font-family');
-            }
-
+            curText.font_family = selected.getAttribute('font-family');
             curText.font_postscriptName = selected.getAttribute('font-postscript');
             textEdit.updateCurText(curText);
           }

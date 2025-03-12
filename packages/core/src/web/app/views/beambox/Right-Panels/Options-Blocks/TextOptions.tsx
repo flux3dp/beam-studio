@@ -239,17 +239,8 @@ const TextOptions = ({
     batchCmd.addSubCommand(cmd);
     cmd = textEdit.setFontWeight(newFont.weight, true, textElement);
     batchCmd.addSubCommand(cmd);
-
-    if (fontHelper.usePostscriptAsFamily(newFont)) {
-      cmd = textEdit.setFontFamily(newFont.postscriptName, true, [textElement]);
-      batchCmd.addSubCommand(cmd);
-      cmd = textEdit.setFontFamilyData(family, true, [textElement]);
-      batchCmd.addSubCommand(cmd);
-    } else {
-      cmd = textEdit.setFontFamily(family, true, [textElement]);
-      batchCmd.addSubCommand(cmd);
-    }
-
+    cmd = textEdit.setFontFamily(family, true, [textElement]);
+    batchCmd.addSubCommand(cmd);
     svgCanvas.undoMgr.addCommandToHistory(batchCmd);
 
     if (!isLocalFont(newFont)) {
@@ -357,12 +348,6 @@ const TextOptions = ({
     let cmd = textEdit.setFontPostscriptName(font.postscriptName, true, [textElement]);
 
     batchCmd.addSubCommand(cmd);
-
-    if (fontHelper.usePostscriptAsFamily(font)) {
-      cmd = textEdit.setFontFamily(font.postscriptName, true, [textElement]);
-      batchCmd.addSubCommand(cmd);
-    }
-
     cmd = textEdit.setItalic(font.italic, true, textElement);
     batchCmd.addSubCommand(cmd);
     cmd = textEdit.setFontWeight(font.weight, true, textElement);

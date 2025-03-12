@@ -5,7 +5,6 @@
 import selector from '@core/app/svgedit/selector';
 import textActions from '@core/app/svgedit/text/textactions';
 import { getRotationAngle } from '@core/app/svgedit/transform/rotation';
-import fontHelper from '@core/helpers/fonts/fontHelper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import storage from '@core/implementations/storage';
 import type { ICommand } from '@core/interfaces/IHistory';
@@ -68,6 +67,7 @@ const getFontFamily = (elem: SVGTextElement): string => {
 };
 
 /**
+ * @deprecated
  * Returns the font family data of element
  * Used for mac, because we set font-family to font postscript name
  */
@@ -295,7 +295,7 @@ const setFontFamily = (val: string, isSubCmd = false, elems?: Element[]): IComma
   const elemsToChange = elems || svgCanvas.getSelectedElems();
   let cmd = null;
 
-  if (!fontHelper.usePostscriptAsFamily(curText.font_postscriptName)) curText.font_family = `'${val}'`;
+  curText.font_family = `'${val}'`;
 
   if (isSubCmd) {
     svgCanvas.undoMgr.beginUndoableChange('font-family', elemsToChange);
@@ -307,30 +307,6 @@ const setFontFamily = (val: string, isSubCmd = false, elems?: Element[]): IComma
 
   if (elemsToChange[0] && !elemsToChange[0].textContent) {
     textActions.setCursor();
-  }
-
-  return cmd;
-};
-
-/**
- * Set the data font family (Used for MacOS only)
- * In mac font-family would be set to font-postscript to make sure text would be rendered correctly.
- * So addition attribution is needed to record it's font family data.
- * @param val New font family
- * @param isSubCmd Whether this operation is a sub command or a sole command
- */
-const setFontFamilyData = (val: string, isSubCmd = false, elems?: Element[]): ICommand => {
-  const elemsToChange = elems || svgCanvas.getSelectedElems();
-  let cmd = null;
-
-  curText.font_family = val;
-
-  if (isSubCmd) {
-    svgCanvas.undoMgr.beginUndoableChange('data-font-family', elemsToChange);
-    svgCanvas.changeSelectedAttributeNoUndo('data-font-family', val, elemsToChange);
-    cmd = svgCanvas.undoMgr.finishUndoableChange();
-  } else {
-    svgCanvas.changeSelectedAttribute('data-font-family', val, elemsToChange);
   }
 
   return cmd;
@@ -489,7 +465,6 @@ export default {
   renderText,
   setBold,
   setFontFamily,
-  setFontFamilyData,
   setFontPostscriptName,
   setFontSize,
   setFontWeight,
