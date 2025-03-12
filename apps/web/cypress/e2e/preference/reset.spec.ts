@@ -7,8 +7,6 @@ describe('reset', () => {
     ['Reset Beam Studio', 'Next', 'Work Offline', 'Skip'].forEach((text) => cy.contains(text).click());
 
     cy.get('button.ant-btn').contains('No').click({ multiple: true });
-    cy.get('button.ant-btn').contains('No').click({ multiple: true });
-    cy.get('button.ant-btn').contains('No').click({ multiple: true });
   };
 
   const selectOption = (selector, optionText) => {
