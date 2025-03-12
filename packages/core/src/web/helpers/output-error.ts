@@ -16,12 +16,13 @@ const LANG = i18n.lang.beambox;
 
 const getOutput = (): string[] => {
   const output = [];
-  const logger = Logger('websocket');
+  const logger = Logger('');
   let allLog = logger.getAll();
   const reportInfo = {
     discoverDeviceList: allLog.discover || '',
     general: allLog.generic || '',
     localStorage: {},
+    swiftray: allLog.swiftray || '',
     ws: allLog.websocket || '',
   };
 
@@ -52,6 +53,9 @@ const getOutput = (): string[] => {
 
   output.push('\n\n======::ws::======\n');
   output.push(JSON.stringify(reportInfo.ws, null, 2));
+
+  output.push('\n\n======::swiftray::======\n');
+  output.push(JSON.stringify(reportInfo.swiftray, null, 2));
 
   output.push('\n\n======::storage::======\n');
 
