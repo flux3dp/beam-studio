@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { render } from '@testing-library/react';
+import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
 
 const getSVGAsync = jest.fn();
 
@@ -11,18 +12,18 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
 const getObjectLayer = jest.fn();
 
 getSVGAsync.mockImplementation((callback) => {
-  callback({
-    Canvas: {
-      getObjectLayer,
-    },
-  });
+  callback({ Canvas: { getObjectLayer } });
 });
 
 import ElementTitle from './ElementTitle';
 
 describe('should render correctly', () => {
   test('no selected element', () => {
-    const { container } = render(<ElementTitle selectedElem={null} />);
+    const { container } = render(
+      <SelectedElementContext.Provider value={{ selectedElement: null }}>
+        <ElementTitle />
+      </SelectedElementContext.Provider>,
+    );
 
     expect(container).toMatchSnapshot();
     expect(getObjectLayer).not.toHaveBeenCalled();
@@ -31,7 +32,11 @@ describe('should render correctly', () => {
   test('multiple selections', () => {
     document.body.innerHTML = '<g id="svg_1" data-tempgroup="true" />';
 
-    const { container } = render(<ElementTitle selectedElem={document.getElementById('svg_1')} />);
+    const { container } = render(
+      <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_1') }}>
+        <ElementTitle />
+      </SelectedElementContext.Provider>,
+    );
 
     expect(container).toMatchSnapshot();
     expect(getObjectLayer).not.toHaveBeenCalled();
@@ -48,7 +53,11 @@ describe('should render correctly', () => {
       });
       document.body.innerHTML = '<rect id="svg_1" />';
 
-      const { container } = render(<ElementTitle selectedElem={document.getElementById('svg_1')} />);
+      const { container } = render(
+        <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_1') }}>
+          <ElementTitle />
+        </SelectedElementContext.Provider>,
+      );
 
       expect(container).toMatchSnapshot();
       expect(getObjectLayer).toHaveBeenCalledTimes(1);
@@ -61,7 +70,11 @@ describe('should render correctly', () => {
       });
       document.body.innerHTML = '<use id="svg_1" data-svg="true" />';
 
-      const { container } = render(<ElementTitle selectedElem={document.getElementById('svg_1')} />);
+      const { container } = render(
+        <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_1') }}>
+          <ElementTitle />
+        </SelectedElementContext.Provider>,
+      );
 
       expect(container).toMatchSnapshot();
       expect(getObjectLayer).toHaveBeenCalledTimes(1);
@@ -74,7 +87,11 @@ describe('should render correctly', () => {
       });
       document.body.innerHTML = '<use id="svg_1" data-dxf="true" />';
 
-      const { container } = render(<ElementTitle selectedElem={document.getElementById('svg_1')} />);
+      const { container } = render(
+        <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_1') }}>
+          <ElementTitle />
+        </SelectedElementContext.Provider>,
+      );
 
       expect(container).toMatchSnapshot();
       expect(getObjectLayer).toHaveBeenCalledTimes(1);
@@ -87,7 +104,11 @@ describe('should render correctly', () => {
       });
       document.body.innerHTML = '<use id="svg_1" />';
 
-      const { container } = render(<ElementTitle selectedElem={document.getElementById('svg_1')} />);
+      const { container } = render(
+        <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_1') }}>
+          <ElementTitle />
+        </SelectedElementContext.Provider>,
+      );
 
       expect(container).toMatchSnapshot();
       expect(getObjectLayer).toHaveBeenCalledTimes(1);
@@ -95,10 +116,14 @@ describe('should render correctly', () => {
     });
 
     test('no layer title given', () => {
-      getObjectLayer.mockReturnValue(null);
+      getObjectLayer.mockReturnValue(document.getElementById('svg_1'));
       document.body.innerHTML = '<use id="svg_1" />';
 
-      const { container } = render(<ElementTitle selectedElem={document.getElementById('svg_1')} />);
+      const { container } = render(
+        <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_1') }}>
+          <ElementTitle />
+        </SelectedElementContext.Provider>,
+      );
 
       expect(container).toMatchSnapshot();
       expect(getObjectLayer).toHaveBeenCalledTimes(1);
@@ -106,12 +131,14 @@ describe('should render correctly', () => {
     });
 
     test('data-textpath-g', () => {
-      getObjectLayer.mockReturnValue({
-        title: 'Layer 1',
-      });
+      getObjectLayer.mockReturnValue({ title: 'Layer 1' });
       document.body.innerHTML = '<g id="svg_1" data-textpath-g="true" />';
 
-      const { container } = render(<ElementTitle selectedElem={document.getElementById('svg_1')} />);
+      const { container } = render(
+        <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_1') }}>
+          <ElementTitle />
+        </SelectedElementContext.Provider>,
+      );
 
       expect(container).toMatchSnapshot();
       expect(getObjectLayer).toHaveBeenCalledTimes(1);

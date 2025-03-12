@@ -58,9 +58,7 @@ describe('test TopBarController', () => {
   test('test getTopBarPreviewMode', () => {
     expect(TopBarController.getTopBarPreviewMode()).toBeFalsy();
     expect(mockEmit).toHaveBeenCalledTimes(1);
-    expect(mockEmit).toHaveBeenNthCalledWith(1, 'GET_TOP_BAR_PREVIEW_MODE', {
-      isPreviewMode: false,
-    });
+    expect(mockEmit).toHaveBeenNthCalledWith(1, 'GET_CANVAS_MODE', { mode: 1 });
   });
 
   test('test getSelectedDevice', () => {

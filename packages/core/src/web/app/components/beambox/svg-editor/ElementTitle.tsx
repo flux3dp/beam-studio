@@ -23,7 +23,7 @@ function ElementTitle(): React.ReactNode {
     if (selectedElement.getAttribute('data-tempgroup') === 'true') {
       content = LANG.tag_names.multi_select;
     } else {
-      const layer = svgCanvas.getObjectLayer(selectedElement);
+      const layer = (svgCanvas as any).getObjectLayer(selectedElement);
       const layerName = layer ? layer.title : '';
 
       if (selectedElement.getAttribute('data-textpath-g')) {
@@ -31,7 +31,7 @@ function ElementTitle(): React.ReactNode {
       } else if (selectedElement.getAttribute('data-pass-through')) {
         content = `${layerName} > ${LANG.tag_names.pass_through_object}`;
       } else if (selectedElement.tagName.toLowerCase() !== 'use') {
-        content = `${layerName} > ${LANG.tag_names[selectedElement.tagName.toLowerCase()]}`;
+        content = `${layerName} > ${(LANG.tag_names as any)[selectedElement.tagName.toLowerCase()]}`;
       } else if (selectedElement.getAttribute('data-svg') === 'true') {
         content = `${layerName} > ${LANG.tag_names.svg}`;
       } else if (selectedElement.getAttribute('data-dxf') === 'true') {

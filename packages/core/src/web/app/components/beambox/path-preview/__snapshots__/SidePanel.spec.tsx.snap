@@ -3,7 +3,7 @@
 exports[`side panel test should render correctly when disabled 1`] = `
 <div>
   <div
-    class="wide"
+    class="container wide"
     id="path-preview-side-panel"
   >
     <div
@@ -121,16 +121,23 @@ exports[`side panel test should render correctly when disabled 1`] = `
     <div
       class="buttons"
     >
-      <div
-        class="btn btn-default primary disabled"
+      <button
+        class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-solid btn"
+        disabled=""
+        type="button"
       >
-        Start Here
-      </div>
-      <div
-        class="btn btn-default"
+        <span>
+          Start Here
+        </span>
+      </button>
+      <button
+        class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined btn"
+        type="button"
       >
-        End Preview
-      </div>
+        <span>
+          End Preview
+        </span>
+      </button>
     </div>
   </div>
 </div>
@@ -139,7 +146,7 @@ exports[`side panel test should render correctly when disabled 1`] = `
 exports[`side panel test should render correctly when enabled 1`] = `
 <div>
   <div
-    class="wide"
+    class="container wide"
     id="path-preview-side-panel"
   >
     <div
@@ -257,16 +264,22 @@ exports[`side panel test should render correctly when enabled 1`] = `
     <div
       class="buttons"
     >
-      <div
-        class="btn btn-default primary"
+      <button
+        class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-solid btn"
+        type="button"
       >
-        Start Here
-      </div>
-      <div
-        class="btn btn-default"
+        <span>
+          Start Here
+        </span>
+      </button>
+      <button
+        class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined btn"
+        type="button"
       >
-        End Preview
-      </div>
+        <span>
+          End Preview
+        </span>
+      </button>
     </div>
   </div>
 </div>
@@ -275,7 +288,7 @@ exports[`side panel test should render correctly when enabled 1`] = `
 exports[`side panel test should render correctly with Swiftray engine 1`] = `
 <div>
   <div
-    class="wide"
+    class="container wide"
     id="path-preview-side-panel"
   >
     <div
@@ -393,11 +406,14 @@ exports[`side panel test should render correctly with Swiftray engine 1`] = `
     <div
       class="buttons"
     >
-      <div
-        class="btn btn-default"
+      <button
+        class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined btn"
+        type="button"
       >
-        End Preview
-      </div>
+        <span>
+          End Preview
+        </span>
+      </button>
     </div>
   </div>
 </div>
