@@ -110,6 +110,11 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
       id: 'Z_AXIS_ADJUSTMENT',
       label: i18n.lang.promark_settings?.z_axis_adjustment.title,
     },
+    isPromark && {
+      click: handleClick,
+      id: 'CONNECTION_TEST',
+      label: i18n.lang.promark_connection_test.title,
+    },
     { type: 'separator' },
     {
       id: 'CALIBRATION',

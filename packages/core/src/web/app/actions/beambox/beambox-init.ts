@@ -29,7 +29,6 @@ import getDevice from '@core/helpers/device/get-device';
 import fontHelper from '@core/helpers/fonts/fontHelper';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
-import ratingHelper from '@core/helpers/rating-helper';
 import sentryHelper from '@core/helpers/sentry-helper';
 import { isMobile } from '@core/helpers/system-helper';
 import browser from '@core/implementations/browser';
@@ -143,7 +142,7 @@ class BeamboxInit {
       BeamboxPreference.write('font-convert', await updateFontConvert());
     }
 
-    ratingHelper.init();
+    // ratingHelper.init();
     announcementHelper.init(isNewUser);
     storage.removeAt('new-user');
     storage.set('last-installed-version', window.FLUX.version);

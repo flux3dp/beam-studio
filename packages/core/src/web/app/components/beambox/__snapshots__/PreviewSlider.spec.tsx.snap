@@ -47,7 +47,7 @@ exports[`test PreviewSlider should render correctly when is previewing Ador 1`] 
         </p>
         <p>
           max: 
-          650
+          1000
         </p>
         <p>
           step: 
@@ -111,7 +111,7 @@ exports[`test PreviewSlider should render correctly when is previewing Ador 2`] 
         </p>
         <p>
           max: 
-          650
+          1000
         </p>
         <p>
           step: 

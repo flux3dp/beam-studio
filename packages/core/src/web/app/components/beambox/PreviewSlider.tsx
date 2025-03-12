@@ -8,12 +8,13 @@ import { CanvasMode } from '@core/app/constants/canvasMode';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import WorkareaIcons from '@core/app/icons/workarea/WorkareaIcons';
 import deviceMaster from '@core/helpers/device-master';
+import isDev from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 import type { IConfigSetting } from '@core/interfaces/IDevice';
 
 import styles from './PreviewSlider.module.scss';
 
-const PreviewSlider = (): React.JSX.Element => {
+const PreviewSlider = (): React.ReactNode => {
   const [opacity, setOpacity] = useState(1);
   const [showOpacity, setShowOpacity] = useState(false);
   const [exposureSetting, setExposureSetting] = useState<IConfigSetting | null>(null);
@@ -26,7 +27,9 @@ const PreviewSlider = (): React.JSX.Element => {
       return;
     }
 
-    if (!constant.adorModels.includes(deviceMaster.currentDevice.info.model)) {
+    const { model } = deviceMaster.currentDevice.info;
+
+    if (!(constant.adorModels.includes(model) || (model === 'fbb2' && isDev()))) {
       return;
     }
 
@@ -40,7 +43,7 @@ const PreviewSlider = (): React.JSX.Element => {
   };
 
   const updateBgOpacity = useCallback((val: string) => {
-    const bgImg: HTMLElement = document.querySelector('#background_image');
+    const bgImg: HTMLElement | null = document.querySelector('#background_image');
 
     if (bgImg) {
       bgImg.style.opacity = val;
@@ -94,7 +97,7 @@ const PreviewSlider = (): React.JSX.Element => {
           </Tooltip>
           <Slider
             className={styles.slider}
-            max={Math.min(exposureSetting.max, 650)}
+            max={Math.min(exposureSetting.max, 1000)}
             min={Math.max(exposureSetting.min, 250)}
             onAfterChange={async (value: number) => {
               setExposureSetting({ ...exposureSetting, value });

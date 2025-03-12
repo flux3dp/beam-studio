@@ -369,6 +369,8 @@ const convertTextToPathByGhost = async (
   isFilled: boolean,
   font: FontDescriptor,
 ): Promise<IConvertInfo> => {
+  const origFontFamily = textElem.getAttribute('font-family')!;
+
   try {
     if ('hasLoaded' in font) {
       throw new Error('Monotype');
@@ -392,6 +394,10 @@ const convertTextToPathByGhost = async (
       throw new Error('Error when uploading');
     }
 
+    if (fontHelper.usePostscriptAsFamily(font)) {
+      textElem.setAttribute('font-family', textElem.getAttribute('font-postscript')!);
+    }
+
     await svgWebSocket.uploadPlainTextSVG(textElem, bbox);
 
     const outputs = await svgWebSocket.divideSVG({ scale: 1, timeout: 15000 });
@@ -407,6 +413,10 @@ const convertTextToPathByGhost = async (
     console.log(`Unable to handle font ${textElem.getAttribute('font-postscript')} by ghost, ${err}`);
 
     return null;
+  } finally {
+    if (fontHelper.usePostscriptAsFamily(font)) {
+      textElem.setAttribute('font-family', origFontFamily);
+    }
   }
 };
 
@@ -617,8 +627,8 @@ const convertTextToPath = async (
     setTextPostscriptnameIfNeeded(textElement);
 
     const batchCmd = new history.BatchCommand('Text to Path');
-    const origFontFamily = textElement.getAttribute('font-family');
-    const origFontPostscriptName = textElement.getAttribute('font-postscript');
+    const origFontFamily = textElement.getAttribute('font-family')!;
+    const origFontPostscriptName = textElement.getAttribute('font-postscript')!;
     let font = getFontOfPostscriptName(origFontPostscriptName);
     let fontObj = await getFontObj(font);
 
@@ -647,15 +657,8 @@ const convertTextToPath = async (
       }
     }
 
-    if (fontHelper.usePostscriptAsFamily(font)) {
-      svgCanvas.undoMgr.beginUndoableChange('font-family', [textElement]);
-      textElement.setAttribute('font-family', textElement.getAttribute('font-postscript'));
-      batchCmd.addSubCommand(svgCanvas.undoMgr.finishUndoableChange());
-    }
+    const strokeWidth = textElement.getAttribute('stroke-width');
 
-    const { postscriptName } = font;
-
-    console.log(textElement.getAttribute('font-family'), postscriptName);
     textElement.removeAttribute('stroke-width');
 
     const isFilled = calculateFilled(textElement);
@@ -717,6 +720,11 @@ const convertTextToPath = async (
       path.setAttribute('stroke-opacity', '1');
       path.setAttribute('stroke-dasharray', 'none');
       path.setAttribute('vector-effect', 'non-scaling-stroke');
+
+      if (strokeWidth) {
+        path.setAttribute('stroke-width', (+strokeWidth / 2).toString());
+      }
+
       textElement.parentNode.insertBefore(path, textElement.nextSibling);
       path.addEventListener('mouseover', svgCanvas.handleGenerateSensorArea);
       path.addEventListener('mouseleave', svgCanvas.handleGenerateSensorArea);

@@ -7,13 +7,6 @@ import { CanvasContext } from '@core/app/contexts/CanvasContext';
 
 import PreviewSlider from './PreviewSlider';
 
-jest.mock('@core/helpers/useI18n', () => () => ({
-  editor: {
-    exposure: 'Preview Exposure',
-    opacity: 'Preview Opacity',
-  },
-}));
-
 const mockSetDeviceSetting = jest.fn();
 const mockGetDeviceSetting = jest.fn().mockResolvedValue({
   cmd: 'config get camera_exposure_absolute',

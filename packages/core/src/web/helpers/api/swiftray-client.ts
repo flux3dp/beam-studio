@@ -10,6 +10,7 @@ import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import { booleanConfig, getDefaultConfig } from '@core/helpers/layer/layer-config-helper';
+import Logger from '@core/helpers/logger';
 import versionChecker from '@core/helpers/version-checker';
 import communicator from '@core/implementations/communicator';
 import type { IDeviceDetailInfo, IDeviceInfo, IReport } from '@core/interfaces/IDevice';
@@ -59,6 +60,8 @@ type TStatus = 'connected' | 'disconnected' | 'init';
 
 class SwiftrayClient extends EventEmitter {
   private socket: WebSocket; // The websocket here is the browser websocket, not wrapped FLUX websocket
+
+  private logger = Logger('swiftray', 100);
 
   private retryCount = 0;
 
@@ -181,6 +184,18 @@ class SwiftrayClient extends EventEmitter {
     const data = JSON.parse(event.data);
 
     this.emit(data.type, data);
+
+    if (data.type === 'callback') {
+      let callbackData: any = data;
+
+      if (callbackData.result?.gcode || callbackData.result?.fcode) {
+        callbackData = JSON.parse(event.data);
+        callbackData.result.gcode = `gcode, size: ${callbackData.result.gcode?.length}`;
+        callbackData.result.fcode = `fcode, size: ${callbackData.result.fcode?.length}`;
+      }
+
+      this.logger.append(callbackData);
+    }
   }
 
   public async action<T>(
@@ -205,6 +220,13 @@ class SwiftrayClient extends EventEmitter {
 
       const dataString = JSON.stringify({ data: payload, path, type: 'action' });
       const vc = versionChecker(this.version);
+
+      // Add to logger without large data
+      if (payload.params?.file) {
+        payload.params.file = '[file object]';
+      }
+
+      this.logger.append(payload);
 
       if (dataString.length < 4096 || !vc.meetRequirement('SWIFTRAY_SUPPORT_BINARY')) {
         this.socket.send(dataString);
@@ -330,6 +352,10 @@ class SwiftrayClient extends EventEmitter {
         },
       ],
     );
+
+    if (fullCode) {
+      this.logger.append(`convert fcode chunk size: ${fullCode.length}`);
+    }
 
     if (convertResult.success) {
       const taskBlob = new Blob(
