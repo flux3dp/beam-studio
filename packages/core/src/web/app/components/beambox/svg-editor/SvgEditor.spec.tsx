@@ -12,18 +12,37 @@ jest.mock('implementations/storage', () => ({
   get: (...args) => mockGet(...args),
 }));
 
+// jest.mock('@core/helpers/symbol-maker', () => ({
+//   switchImageSymbol: jest.fn(),
+// }));
+
+// jest.mock('delaunator', () => ({
+//   from: jest.fn(),
+// }));
+
+// jest.mock('@core/implementations/localFontHelper', () => ({
+//   getAvailableFonts: jest.fn(() => ['Arial']),
+// }));
+
 jest.mock(
-  '@core/app/components/beambox/svg-editor/Workarea',
+  './Workarea',
   () =>
     function DummyWorkarea() {
       return <div>This is dummy Workarea</div>;
     },
 );
 jest.mock(
-  '@core/app/components/beambox/svg-editor/Ruler',
+  './Ruler',
   () =>
     function DummyRuler() {
       return <div>This is dummy Ruler</div>;
+    },
+);
+jest.mock(
+  './Banner',
+  () =>
+    function DummyBanner() {
+      return <div>This is dummy Banner</div>;
     },
 );
 
