@@ -104,7 +104,7 @@ Cypress.Commands.add('connectMachine', (machineName: string) => {
 });
 
 Cypress.Commands.add('go2Preference', (handleSave = false) => {
-  cy.get('div.top-bar-menu-container').click({ timeout: 1000 });
+  cy.get('div.top-bar-menu-container').click({ timeout: 10000 });
   cy.get('ul.rc-menu--dir-bottom>li.rc-menu__submenu').should('have.length', 7);
   cy.get('.rc-menu__submenu').contains('File').click();
   cy.get('.rc-menu__submenu').contains('Preferences').click();

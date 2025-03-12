@@ -20,7 +20,11 @@ describe('reset', () => {
     cy.contains('Next').click();
     cy.contains('Work Offline').click();
     cy.contains('Skip').click();
+
     cy.get('button.ant-btn').contains('No').click();
+    cy.get('button.ant-btn').contains('No').click();
+    cy.get('button.ant-btn').contains('No').click();
+
     cy.go2Preference();
 
     cy.get('@select').find('.ant-select-selection-item').should('have.text', 'mm');
@@ -65,6 +69,9 @@ describe('reset', () => {
     cy.contains('Work Offline').click();
     cy.contains('Skip').click();
     cy.get('button.ant-btn').contains('No').click();
+    cy.get('button.ant-btn').contains('No').click();
+    cy.get('button.ant-btn').contains('No').click();
+
     cy.go2Preference();
 
     cy.wait(1000);

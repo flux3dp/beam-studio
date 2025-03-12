@@ -80,6 +80,8 @@ const App = (): React.JSX.Element => {
   const { getConfig } = useSettingStore();
 
   Object.keys(DEFAULT_CONFIG).forEach((key) => {
+    if (key === 'enable-sentry') return;
+
     getConfig(key as StorageKey);
   });
 
