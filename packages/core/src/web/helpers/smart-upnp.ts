@@ -101,7 +101,7 @@ const self = {
   init: (discoverObj) => {
     Discover = discoverObj;
 
-    if (storage.get('guessing_poke') !== 0) {
+    if (storage.get('guessing_poke')) {
       setInterval(function () {
         if (Discover.countDevices() === 0) {
           self.pokeNext();

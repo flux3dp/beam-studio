@@ -59,7 +59,7 @@ const getDevice = async (showModal = false): Promise<{ device: IDeviceInfo | nul
   }
 
   if (!device) {
-    const autoSelect = storage.get('auto_connect') !== 0;
+    const autoSelect = storage.get('auto_connect');
     const devices = DeviceMaster.getAvailableDevices();
 
     device = !showModal && autoSelect && devices.length === 1 ? devices[0] : await dialogCaller.selectDevice();

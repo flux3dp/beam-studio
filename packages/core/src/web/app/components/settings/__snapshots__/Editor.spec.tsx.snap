@@ -14,9 +14,10 @@ exports[`settings/Editor initially no warning 1`] = `
     Default Units
     url:
     options:
-    [{"label":"mm","selected":true,"value":"mm"},{"label":"Inches","selected":false,"value":"inches"}]
+    [{"label":"mm","value":"mm"},{"label":"Inches","value":"inches"}]
     <input
       class="select-control"
+      id="set-default-units"
     />
   </div>
   <div>
@@ -26,9 +27,10 @@ exports[`settings/Editor initially no warning 1`] = `
     Default Font
     url:
     options:
-    [{"label":"Arial","selected":true,"value":"Arial"},{"label":"Courier","selected":false,"value":"Courier"},{"label":"蘋果儷細宋","selected":false,"value":"Apple LiSung"}]
+    [{"label":"Arial","value":"Arial"},{"label":"Courier","value":"Courier"},{"label":"蘋果儷細宋","value":"Apple LiSung"}]
     <input
       class="select-control"
+      id="set-default-font-family"
     />
   </div>
   <div>
@@ -38,9 +40,10 @@ exports[`settings/Editor initially no warning 1`] = `
     Default Font Style
     url:
     options:
-    [{"label":"Regular","selected":true,"value":"ArialMT"},{"label":"Bold","selected":false,"value":"Arial-BoldMT"},{"label":"Bold Italic","selected":false,"value":"Arial-BoldItalicMT"},{"label":"Italic","selected":false,"value":"Arial-ItalicMT"}]
+    [{"label":"Regular","value":"ArialMT"},{"label":"Bold","value":"Arial-BoldMT"},{"label":"Bold Italic","value":"Arial-BoldItalicMT"},{"label":"Italic","value":"Arial-ItalicMT"}]
     <input
       class="select-control"
+      id="set-default-font-style"
     />
   </div>
   <div>
@@ -50,9 +53,10 @@ exports[`settings/Editor initially no warning 1`] = `
     Default Document Setting
     url:
     options:
-    [{"label":"beamo","selected":false,"value":"fbm1"},{"label":"Beambox","selected":true,"value":"fbb1b"},{"label":"Beambox Pro","selected":false,"value":"fbb1p"},{"label":"HEXA","selected":false,"value":"fhexa1"},{"label":"HEXA RF","selectedModel":false,"value":"fhx2rf3"},{"label":"Ador","selected":false,"value":"ado1"},{"label":"Promark","selected":false,"value":"fpm1"},{"label":"Lazervida","selected":false,"value":"flv1"},{"label":"Beambox II","selected":false,"value":"fbb2"}]
+    [{"label":"beamo","value":"fbm1"},{"label":"Beambox","value":"fbb1b"},{"label":"Beambox Pro","value":"fbb1p"},{"label":"HEXA","value":"fhexa1"},{"label":"HEXA RF","value":"fhx2rf3"},{"label":"Ador","value":"ado1"},{"label":"Promark","value":"fpm1"},{"label":"Lazervida","value":"flv1"},{"label":"Beambox II","value":"fbb2"}]
     <input
       class="select-control"
+      id="set-default-model"
     />
   </div>
   <div>
@@ -62,77 +66,68 @@ exports[`settings/Editor initially no warning 1`] = `
     Guides
     url:
     options:
-    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
+    [{"label":"On","value":true},{"label":"Off","value":false}]
     <input
       class="select-control"
+      id="set-guide"
     />
   </div>
-  <div
-    class="row-fluid control"
-    id=""
-  >
-    <div
-      class="no-left-margin span3 label"
+  <div>
+    mock-select-control id:
+    set-guide-axis
+    label:
+    Guides Origin
+    url:
+    options:
+    <span
+      class="font2"
+      style="line-height: 32px; margin-right: 10px;"
     >
-      <label
-        class="font2"
-      >
-        Guides Origin
-      </label>
+      X
+    </span>
+    <div>
+      mock-unit-input id:
+      guide-x-input
+      unit:
+      mm
+      min:
+      0
+      max:
+      400
+      defaultValue:
+      0
+      forceUsePropsUnit:
+      true
+      className:
+      {"half":true}
+      <input
+        class="unit-input"
+      />
     </div>
-    <div
-      class="font3 span8"
+    <span
+      class="font2"
+      style="line-height: 32px; margin-right: 10px;"
     >
-      <span
-        class="font2"
-        style="line-height: 32px; margin-right: 10px;"
-      >
-        X
-      </span>
-      <div>
-        mock-unit-input id:
-        guide-x-input
-        unit:
-        mm
-        min:
-        0
-        max:
-        400
-        defaultValue:
-        0
-        forceUsePropsUnit:
-        true
-        className:
-        {"half":true}
-        <input
-          class="unit-input"
-        />
-      </div>
-      <span
-        class="font2"
-        style="line-height: 32px; margin-right: 10px;"
-      >
-        Y
-      </span>
-      <div>
-        mock-unit-input id:
-        guide-y-input
-        unit:
-        mm
-        min:
-        0
-        max:
-        375
-        defaultValue:
-        0
-        forceUsePropsUnit:
-        true
-        className:
-        {"half":true}
-        <input
-          class="unit-input"
-        />
-      </div>
+      Y
+    </span>
+    <div>
+      mock-unit-input id:
+      guide-y-input
+      unit:
+      mm
+      min:
+      0
+      max:
+      375
+      defaultValue:
+      0
+      forceUsePropsUnit:
+      true
+      className:
+      {"half":true}
+      <input
+        class="unit-input"
+      />
     </div>
   </div>
   <div>
@@ -143,9 +138,10 @@ exports[`settings/Editor initially no warning 1`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004494995
     options:
-    [{"label":"Low","selected":false,"value":"TRUE"},{"label":"Normal","selected":true,"value":"FALSE"}]
+    [{"label":"Low","value":true},{"label":"Normal","value":false}]
     <input
       class="select-control"
+      id="set-bitmap-quality"
     />
   </div>
   <div>
@@ -156,22 +152,24 @@ exports[`settings/Editor initially no warning 1`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004408956
     options:
-    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
+    [{"label":"On","value":true},{"label":"Off","value":false}]
     <input
       class="select-control"
+      id="set-anti-aliasing"
     />
   </div>
   <div>
     mock-select-control id:
-    set-continuous-drawingg
+    set-continuous-drawing
     label:
     Continuous Drawing
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004406496
     options:
-    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
+    [{"label":"On","value":true},{"label":"Off","value":false}]
     <input
       class="select-control"
+      id="set-continuous-drawing"
     />
   </div>
   <div>
@@ -182,9 +180,10 @@ exports[`settings/Editor initially no warning 1`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004407276
     options:
-    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
+    [{"label":"On","value":true},{"label":"Off","value":false}]
     <input
       class="select-control"
+      id="set-simplify-clipper-path"
     />
   </div>
   <div>
@@ -194,9 +193,10 @@ exports[`settings/Editor initially no warning 1`] = `
     Auto Switch Layer and Object Panel
     url:
     options:
-    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
+    [{"label":"On","value":true},{"label":"Off","value":false}]
     <input
       class="select-control"
+      id="auto-switch-tab"
     />
   </div>
   <div>
@@ -207,9 +207,10 @@ exports[`settings/Editor initially no warning 1`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/11146997425039
     options:
-    [{"label":"On","selected":false,"value":"swiftray"},{"label":"Off","selected":true,"value":"fluxghost"}]
+    [{"label":"On","value":"swiftray"},{"label":"Off","value":"fluxghost"}]
     <input
       class="select-control"
+      id="path-engine"
     />
   </div>
   <div>
@@ -219,9 +220,10 @@ exports[`settings/Editor initially no warning 1`] = `
     Enable Custom Backlash Compensation
     url:
     options:
-    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
+    [{"label":"On","value":true},{"label":"Off","value":false}]
     <input
       class="select-control"
+      id="set-enable-custom-backlash"
     />
   </div>
 </div>
@@ -241,9 +243,10 @@ exports[`settings/Editor initially no warning 2`] = `
     Default Units
     url:
     options:
-    [{"label":"mm","selected":true,"value":"mm"},{"label":"Inches","selected":false,"value":"inches"}]
+    [{"label":"mm","value":"mm"},{"label":"Inches","value":"inches"}]
     <input
       class="select-control"
+      id="set-default-units"
     />
   </div>
   <div>
@@ -253,9 +256,10 @@ exports[`settings/Editor initially no warning 2`] = `
     Default Font
     url:
     options:
-    [{"label":"Arial","selected":false,"value":"Arial"},{"label":"Courier","selected":false,"value":"Courier"},{"label":"蘋果儷細宋","selected":true,"value":"Apple LiSung"}]
+    [{"label":"Arial","value":"Arial"},{"label":"Courier","value":"Courier"},{"label":"蘋果儷細宋","value":"Apple LiSung"}]
     <input
       class="select-control"
+      id="set-default-font-family"
     />
   </div>
   <div>
@@ -265,9 +269,10 @@ exports[`settings/Editor initially no warning 2`] = `
     Default Font Style
     url:
     options:
-    [{"label":"Light","selected":true,"value":"LiSungLight"}]
+    [{"label":"Light","value":"LiSungLight"}]
     <input
       class="select-control"
+      id="set-default-font-style"
     />
   </div>
   <div>
@@ -277,9 +282,10 @@ exports[`settings/Editor initially no warning 2`] = `
     Default Document Setting
     url:
     options:
-    [{"label":"beamo","selected":false,"value":"fbm1"},{"label":"Beambox","selected":true,"value":"fbb1b"},{"label":"Beambox Pro","selected":false,"value":"fbb1p"},{"label":"HEXA","selected":false,"value":"fhexa1"},{"label":"HEXA RF","selectedModel":false,"value":"fhx2rf3"},{"label":"Ador","selected":false,"value":"ado1"},{"label":"Promark","selected":false,"value":"fpm1"},{"label":"Lazervida","selected":false,"value":"flv1"},{"label":"Beambox II","selected":false,"value":"fbb2"}]
+    [{"label":"beamo","value":"fbm1"},{"label":"Beambox","value":"fbb1b"},{"label":"Beambox Pro","value":"fbb1p"},{"label":"HEXA","value":"fhexa1"},{"label":"HEXA RF","value":"fhx2rf3"},{"label":"Ador","value":"ado1"},{"label":"Promark","value":"fpm1"},{"label":"Lazervida","value":"flv1"},{"label":"Beambox II","value":"fbb2"}]
     <input
       class="select-control"
+      id="set-default-model"
     />
   </div>
   <div>
@@ -289,77 +295,68 @@ exports[`settings/Editor initially no warning 2`] = `
     Guides
     url:
     options:
-    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
+    [{"label":"On","value":true},{"label":"Off","value":false}]
     <input
       class="select-control"
+      id="set-guide"
     />
   </div>
-  <div
-    class="row-fluid control"
-    id=""
-  >
-    <div
-      class="no-left-margin span3 label"
+  <div>
+    mock-select-control id:
+    set-guide-axis
+    label:
+    Guides Origin
+    url:
+    options:
+    <span
+      class="font2"
+      style="line-height: 32px; margin-right: 10px;"
     >
-      <label
-        class="font2"
-      >
-        Guides Origin
-      </label>
+      X
+    </span>
+    <div>
+      mock-unit-input id:
+      guide-x-input
+      unit:
+      mm
+      min:
+      0
+      max:
+      400
+      defaultValue:
+      0
+      forceUsePropsUnit:
+      true
+      className:
+      {"half":true}
+      <input
+        class="unit-input"
+      />
     </div>
-    <div
-      class="font3 span8"
+    <span
+      class="font2"
+      style="line-height: 32px; margin-right: 10px;"
     >
-      <span
-        class="font2"
-        style="line-height: 32px; margin-right: 10px;"
-      >
-        X
-      </span>
-      <div>
-        mock-unit-input id:
-        guide-x-input
-        unit:
-        mm
-        min:
-        0
-        max:
-        400
-        defaultValue:
-        0
-        forceUsePropsUnit:
-        true
-        className:
-        {"half":true}
-        <input
-          class="unit-input"
-        />
-      </div>
-      <span
-        class="font2"
-        style="line-height: 32px; margin-right: 10px;"
-      >
-        Y
-      </span>
-      <div>
-        mock-unit-input id:
-        guide-y-input
-        unit:
-        mm
-        min:
-        0
-        max:
-        375
-        defaultValue:
-        0
-        forceUsePropsUnit:
-        true
-        className:
-        {"half":true}
-        <input
-          class="unit-input"
-        />
-      </div>
+      Y
+    </span>
+    <div>
+      mock-unit-input id:
+      guide-y-input
+      unit:
+      mm
+      min:
+      0
+      max:
+      375
+      defaultValue:
+      0
+      forceUsePropsUnit:
+      true
+      className:
+      {"half":true}
+      <input
+        class="unit-input"
+      />
     </div>
   </div>
   <div>
@@ -370,9 +367,10 @@ exports[`settings/Editor initially no warning 2`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004494995
     options:
-    [{"label":"Low","selected":false,"value":"TRUE"},{"label":"Normal","selected":true,"value":"FALSE"}]
+    [{"label":"Low","value":true},{"label":"Normal","value":false}]
     <input
       class="select-control"
+      id="set-bitmap-quality"
     />
   </div>
   <div>
@@ -383,22 +381,24 @@ exports[`settings/Editor initially no warning 2`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004408956
     options:
-    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
+    [{"label":"On","value":true},{"label":"Off","value":false}]
     <input
       class="select-control"
+      id="set-anti-aliasing"
     />
   </div>
   <div>
     mock-select-control id:
-    set-continuous-drawingg
+    set-continuous-drawing
     label:
     Continuous Drawing
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004406496
     options:
-    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
+    [{"label":"On","value":true},{"label":"Off","value":false}]
     <input
       class="select-control"
+      id="set-continuous-drawing"
     />
   </div>
   <div>
@@ -409,9 +409,10 @@ exports[`settings/Editor initially no warning 2`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004407276
     options:
-    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
+    [{"label":"On","value":true},{"label":"Off","value":false}]
     <input
       class="select-control"
+      id="set-simplify-clipper-path"
     />
   </div>
   <div>
@@ -421,9 +422,10 @@ exports[`settings/Editor initially no warning 2`] = `
     Auto Switch Layer and Object Panel
     url:
     options:
-    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
+    [{"label":"On","value":true},{"label":"Off","value":false}]
     <input
       class="select-control"
+      id="auto-switch-tab"
     />
   </div>
   <div>
@@ -434,9 +436,10 @@ exports[`settings/Editor initially no warning 2`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/11146997425039
     options:
-    [{"label":"On","selected":false,"value":"swiftray"},{"label":"Off","selected":true,"value":"fluxghost"}]
+    [{"label":"On","value":"swiftray"},{"label":"Off","value":"fluxghost"}]
     <input
       class="select-control"
+      id="path-engine"
     />
   </div>
   <div>
@@ -446,9 +449,10 @@ exports[`settings/Editor initially no warning 2`] = `
     Enable Custom Backlash Compensation
     url:
     options:
-    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
+    [{"label":"On","value":true},{"label":"Off","value":false}]
     <input
       class="select-control"
+      id="set-enable-custom-backlash"
     />
   </div>
 </div>
@@ -468,9 +472,10 @@ exports[`settings/Editor initially no warning 3`] = `
     Default Units
     url:
     options:
-    [{"label":"mm","selected":true,"value":"mm"},{"label":"Inches","selected":false,"value":"inches"}]
+    [{"label":"mm","value":"mm"},{"label":"Inches","value":"inches"}]
     <input
       class="select-control"
+      id="set-default-units"
     />
   </div>
   <div>
@@ -480,9 +485,10 @@ exports[`settings/Editor initially no warning 3`] = `
     Default Font
     url:
     options:
-    [{"label":"Arial","selected":false,"value":"Arial"},{"label":"Courier","selected":true,"value":"Courier"},{"label":"蘋果儷細宋","selected":false,"value":"Apple LiSung"}]
+    [{"label":"Arial","value":"Arial"},{"label":"Courier","value":"Courier"},{"label":"蘋果儷細宋","value":"Apple LiSung"}]
     <input
       class="select-control"
+      id="set-default-font-family"
     />
   </div>
   <div>
@@ -492,9 +498,10 @@ exports[`settings/Editor initially no warning 3`] = `
     Default Font Style
     url:
     options:
-    [{"label":"Regular","selected":true,"value":"Regular"},{"label":"Bold","selected":false,"value":"Courier-Bold"},{"label":"Bold Oblique","selected":false,"value":"Courier-BoldOblique"},{"label":"Oblique","selected":false,"value":"Courier-Oblique"}]
+    [{"label":"Regular","value":"Regular"},{"label":"Bold","value":"Courier-Bold"},{"label":"Bold Oblique","value":"Courier-BoldOblique"},{"label":"Oblique","value":"Courier-Oblique"}]
     <input
       class="select-control"
+      id="set-default-font-style"
     />
   </div>
   <div>
@@ -504,9 +511,10 @@ exports[`settings/Editor initially no warning 3`] = `
     Default Document Setting
     url:
     options:
-    [{"label":"beamo","selected":false,"value":"fbm1"},{"label":"Beambox","selected":true,"value":"fbb1b"},{"label":"Beambox Pro","selected":false,"value":"fbb1p"},{"label":"HEXA","selected":false,"value":"fhexa1"},{"label":"HEXA RF","selectedModel":false,"value":"fhx2rf3"},{"label":"Ador","selected":false,"value":"ado1"},{"label":"Promark","selected":false,"value":"fpm1"},{"label":"Lazervida","selected":false,"value":"flv1"},{"label":"Beambox II","selected":false,"value":"fbb2"}]
+    [{"label":"beamo","value":"fbm1"},{"label":"Beambox","value":"fbb1b"},{"label":"Beambox Pro","value":"fbb1p"},{"label":"HEXA","value":"fhexa1"},{"label":"HEXA RF","value":"fhx2rf3"},{"label":"Ador","value":"ado1"},{"label":"Promark","value":"fpm1"},{"label":"Lazervida","value":"flv1"},{"label":"Beambox II","value":"fbb2"}]
     <input
       class="select-control"
+      id="set-default-model"
     />
   </div>
   <div>
@@ -516,77 +524,68 @@ exports[`settings/Editor initially no warning 3`] = `
     Guides
     url:
     options:
-    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
+    [{"label":"On","value":true},{"label":"Off","value":false}]
     <input
       class="select-control"
+      id="set-guide"
     />
   </div>
-  <div
-    class="row-fluid control"
-    id=""
-  >
-    <div
-      class="no-left-margin span3 label"
+  <div>
+    mock-select-control id:
+    set-guide-axis
+    label:
+    Guides Origin
+    url:
+    options:
+    <span
+      class="font2"
+      style="line-height: 32px; margin-right: 10px;"
     >
-      <label
-        class="font2"
-      >
-        Guides Origin
-      </label>
+      X
+    </span>
+    <div>
+      mock-unit-input id:
+      guide-x-input
+      unit:
+      mm
+      min:
+      0
+      max:
+      400
+      defaultValue:
+      0
+      forceUsePropsUnit:
+      true
+      className:
+      {"half":true}
+      <input
+        class="unit-input"
+      />
     </div>
-    <div
-      class="font3 span8"
+    <span
+      class="font2"
+      style="line-height: 32px; margin-right: 10px;"
     >
-      <span
-        class="font2"
-        style="line-height: 32px; margin-right: 10px;"
-      >
-        X
-      </span>
-      <div>
-        mock-unit-input id:
-        guide-x-input
-        unit:
-        mm
-        min:
-        0
-        max:
-        400
-        defaultValue:
-        0
-        forceUsePropsUnit:
-        true
-        className:
-        {"half":true}
-        <input
-          class="unit-input"
-        />
-      </div>
-      <span
-        class="font2"
-        style="line-height: 32px; margin-right: 10px;"
-      >
-        Y
-      </span>
-      <div>
-        mock-unit-input id:
-        guide-y-input
-        unit:
-        mm
-        min:
-        0
-        max:
-        375
-        defaultValue:
-        0
-        forceUsePropsUnit:
-        true
-        className:
-        {"half":true}
-        <input
-          class="unit-input"
-        />
-      </div>
+      Y
+    </span>
+    <div>
+      mock-unit-input id:
+      guide-y-input
+      unit:
+      mm
+      min:
+      0
+      max:
+      375
+      defaultValue:
+      0
+      forceUsePropsUnit:
+      true
+      className:
+      {"half":true}
+      <input
+        class="unit-input"
+      />
     </div>
   </div>
   <div>
@@ -597,9 +596,10 @@ exports[`settings/Editor initially no warning 3`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004494995
     options:
-    [{"label":"Low","selected":false,"value":"TRUE"},{"label":"Normal","selected":true,"value":"FALSE"}]
+    [{"label":"Low","value":true},{"label":"Normal","value":false}]
     <input
       class="select-control"
+      id="set-bitmap-quality"
     />
   </div>
   <div>
@@ -610,22 +610,24 @@ exports[`settings/Editor initially no warning 3`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004408956
     options:
-    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
+    [{"label":"On","value":true},{"label":"Off","value":false}]
     <input
       class="select-control"
+      id="set-anti-aliasing"
     />
   </div>
   <div>
     mock-select-control id:
-    set-continuous-drawingg
+    set-continuous-drawing
     label:
     Continuous Drawing
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004406496
     options:
-    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
+    [{"label":"On","value":true},{"label":"Off","value":false}]
     <input
       class="select-control"
+      id="set-continuous-drawing"
     />
   </div>
   <div>
@@ -636,9 +638,10 @@ exports[`settings/Editor initially no warning 3`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004407276
     options:
-    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
+    [{"label":"On","value":true},{"label":"Off","value":false}]
     <input
       class="select-control"
+      id="set-simplify-clipper-path"
     />
   </div>
   <div>
@@ -648,9 +651,10 @@ exports[`settings/Editor initially no warning 3`] = `
     Auto Switch Layer and Object Panel
     url:
     options:
-    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
+    [{"label":"On","value":true},{"label":"Off","value":false}]
     <input
       class="select-control"
+      id="auto-switch-tab"
     />
   </div>
   <div>
@@ -661,9 +665,10 @@ exports[`settings/Editor initially no warning 3`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/11146997425039
     options:
-    [{"label":"On","selected":false,"value":"swiftray"},{"label":"Off","selected":true,"value":"fluxghost"}]
+    [{"label":"On","value":"swiftray"},{"label":"Off","value":"fluxghost"}]
     <input
       class="select-control"
+      id="path-engine"
     />
   </div>
   <div>
@@ -673,9 +678,10 @@ exports[`settings/Editor initially no warning 3`] = `
     Enable Custom Backlash Compensation
     url:
     options:
-    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
+    [{"label":"On","value":true},{"label":"Off","value":false}]
     <input
       class="select-control"
+      id="set-enable-custom-backlash"
     />
   </div>
 </div>
@@ -695,9 +701,10 @@ exports[`settings/Editor initially no warning 4`] = `
     Default Units
     url:
     options:
-    [{"label":"mm","selected":true,"value":"mm"},{"label":"Inches","selected":false,"value":"inches"}]
+    [{"label":"mm","value":"mm"},{"label":"Inches","value":"inches"}]
     <input
       class="select-control"
+      id="set-default-units"
     />
   </div>
   <div>
@@ -707,9 +714,10 @@ exports[`settings/Editor initially no warning 4`] = `
     Default Font
     url:
     options:
-    [{"label":"Arial","selected":false,"value":"Arial"},{"label":"Courier","selected":true,"value":"Courier"},{"label":"蘋果儷細宋","selected":false,"value":"Apple LiSung"}]
+    [{"label":"Arial","value":"Arial"},{"label":"Courier","value":"Courier"},{"label":"蘋果儷細宋","value":"Apple LiSung"}]
     <input
       class="select-control"
+      id="set-default-font-family"
     />
   </div>
   <div>
@@ -719,9 +727,10 @@ exports[`settings/Editor initially no warning 4`] = `
     Default Font Style
     url:
     options:
-    [{"label":"Regular","selected":false,"value":"Regular"},{"label":"Bold","selected":true,"value":"Courier-Bold"},{"label":"Bold Oblique","selected":false,"value":"Courier-BoldOblique"},{"label":"Oblique","selected":false,"value":"Courier-Oblique"}]
+    [{"label":"Regular","value":"Regular"},{"label":"Bold","value":"Courier-Bold"},{"label":"Bold Oblique","value":"Courier-BoldOblique"},{"label":"Oblique","value":"Courier-Oblique"}]
     <input
       class="select-control"
+      id="set-default-font-style"
     />
   </div>
   <div>
@@ -731,9 +740,10 @@ exports[`settings/Editor initially no warning 4`] = `
     Default Document Setting
     url:
     options:
-    [{"label":"beamo","selected":false,"value":"fbm1"},{"label":"Beambox","selected":true,"value":"fbb1b"},{"label":"Beambox Pro","selected":false,"value":"fbb1p"},{"label":"HEXA","selected":false,"value":"fhexa1"},{"label":"HEXA RF","selectedModel":false,"value":"fhx2rf3"},{"label":"Ador","selected":false,"value":"ado1"},{"label":"Promark","selected":false,"value":"fpm1"},{"label":"Lazervida","selected":false,"value":"flv1"},{"label":"Beambox II","selected":false,"value":"fbb2"}]
+    [{"label":"beamo","value":"fbm1"},{"label":"Beambox","value":"fbb1b"},{"label":"Beambox Pro","value":"fbb1p"},{"label":"HEXA","value":"fhexa1"},{"label":"HEXA RF","value":"fhx2rf3"},{"label":"Ador","value":"ado1"},{"label":"Promark","value":"fpm1"},{"label":"Lazervida","value":"flv1"},{"label":"Beambox II","value":"fbb2"}]
     <input
       class="select-control"
+      id="set-default-model"
     />
   </div>
   <div>
@@ -743,77 +753,68 @@ exports[`settings/Editor initially no warning 4`] = `
     Guides
     url:
     options:
-    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
+    [{"label":"On","value":true},{"label":"Off","value":false}]
     <input
       class="select-control"
+      id="set-guide"
     />
   </div>
-  <div
-    class="row-fluid control"
-    id=""
-  >
-    <div
-      class="no-left-margin span3 label"
+  <div>
+    mock-select-control id:
+    set-guide-axis
+    label:
+    Guides Origin
+    url:
+    options:
+    <span
+      class="font2"
+      style="line-height: 32px; margin-right: 10px;"
     >
-      <label
-        class="font2"
-      >
-        Guides Origin
-      </label>
+      X
+    </span>
+    <div>
+      mock-unit-input id:
+      guide-x-input
+      unit:
+      mm
+      min:
+      0
+      max:
+      400
+      defaultValue:
+      0
+      forceUsePropsUnit:
+      true
+      className:
+      {"half":true}
+      <input
+        class="unit-input"
+      />
     </div>
-    <div
-      class="font3 span8"
+    <span
+      class="font2"
+      style="line-height: 32px; margin-right: 10px;"
     >
-      <span
-        class="font2"
-        style="line-height: 32px; margin-right: 10px;"
-      >
-        X
-      </span>
-      <div>
-        mock-unit-input id:
-        guide-x-input
-        unit:
-        mm
-        min:
-        0
-        max:
-        400
-        defaultValue:
-        0
-        forceUsePropsUnit:
-        true
-        className:
-        {"half":true}
-        <input
-          class="unit-input"
-        />
-      </div>
-      <span
-        class="font2"
-        style="line-height: 32px; margin-right: 10px;"
-      >
-        Y
-      </span>
-      <div>
-        mock-unit-input id:
-        guide-y-input
-        unit:
-        mm
-        min:
-        0
-        max:
-        375
-        defaultValue:
-        0
-        forceUsePropsUnit:
-        true
-        className:
-        {"half":true}
-        <input
-          class="unit-input"
-        />
-      </div>
+      Y
+    </span>
+    <div>
+      mock-unit-input id:
+      guide-y-input
+      unit:
+      mm
+      min:
+      0
+      max:
+      375
+      defaultValue:
+      0
+      forceUsePropsUnit:
+      true
+      className:
+      {"half":true}
+      <input
+        class="unit-input"
+      />
     </div>
   </div>
   <div>
@@ -824,9 +825,10 @@ exports[`settings/Editor initially no warning 4`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004494995
     options:
-    [{"label":"Low","selected":false,"value":"TRUE"},{"label":"Normal","selected":true,"value":"FALSE"}]
+    [{"label":"Low","value":true},{"label":"Normal","value":false}]
     <input
       class="select-control"
+      id="set-bitmap-quality"
     />
   </div>
   <div>
@@ -837,22 +839,24 @@ exports[`settings/Editor initially no warning 4`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004408956
     options:
-    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
+    [{"label":"On","value":true},{"label":"Off","value":false}]
     <input
       class="select-control"
+      id="set-anti-aliasing"
     />
   </div>
   <div>
     mock-select-control id:
-    set-continuous-drawingg
+    set-continuous-drawing
     label:
     Continuous Drawing
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004406496
     options:
-    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
+    [{"label":"On","value":true},{"label":"Off","value":false}]
     <input
       class="select-control"
+      id="set-continuous-drawing"
     />
   </div>
   <div>
@@ -863,9 +867,10 @@ exports[`settings/Editor initially no warning 4`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004407276
     options:
-    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
+    [{"label":"On","value":true},{"label":"Off","value":false}]
     <input
       class="select-control"
+      id="set-simplify-clipper-path"
     />
   </div>
   <div>
@@ -875,9 +880,10 @@ exports[`settings/Editor initially no warning 4`] = `
     Auto Switch Layer and Object Panel
     url:
     options:
-    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
+    [{"label":"On","value":true},{"label":"Off","value":false}]
     <input
       class="select-control"
+      id="auto-switch-tab"
     />
   </div>
   <div>
@@ -888,9 +894,10 @@ exports[`settings/Editor initially no warning 4`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/11146997425039
     options:
-    [{"label":"On","selected":false,"value":"swiftray"},{"label":"Off","selected":true,"value":"fluxghost"}]
+    [{"label":"On","value":"swiftray"},{"label":"Off","value":"fluxghost"}]
     <input
       class="select-control"
+      id="path-engine"
     />
   </div>
   <div>
@@ -900,9 +907,10 @@ exports[`settings/Editor initially no warning 4`] = `
     Enable Custom Backlash Compensation
     url:
     options:
-    [{"label":"On","selected":false,"value":"TRUE"},{"label":"Off","selected":true,"value":"FALSE"}]
+    [{"label":"On","value":true},{"label":"Off","value":false}]
     <input
       class="select-control"
+      id="set-enable-custom-backlash"
     />
   </div>
 </div>

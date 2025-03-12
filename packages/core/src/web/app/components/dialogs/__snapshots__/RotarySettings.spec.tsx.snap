@@ -211,7 +211,7 @@ exports[`test RotarySettings should render correctly 1`] = `
                           disabled=""
                           id="object_diameter"
                           min="0"
-                          value="133"
+                          value=""
                         />
                       </div>
                     </div>
@@ -244,7 +244,7 @@ exports[`test RotarySettings should render correctly 1`] = `
                           disabled=""
                           id="circumference"
                           min="0"
-                          value="417.8318229274425"
+                          value="NaN"
                         />
                       </div>
                     </div>

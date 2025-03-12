@@ -45,6 +45,9 @@ import SelectPromarkLaserSource from '@core/app/pages/SelectPromarkLaserSource';
 import Settings from '@core/app/pages/Settings';
 import AlertsAndProgress from '@core/app/views/dialogs/AlertAndProgress';
 import Dialog from '@core/app/views/dialogs/Dialog';
+import type { StorageKey } from '@core/interfaces/IStorage';
+
+import { DEFAULT_CONFIG, useSettingStore } from './pages/Settings/useSettingStore';
 
 const { defaultAlgorithm } = theme;
 
@@ -74,12 +77,19 @@ console.log('Loading language', navigator.language);
 
 const App = (): React.JSX.Element => {
   const [messageApi, contextHolder] = message.useMessage();
+  const { getConfig } = useSettingStore();
+
+  Object.keys(DEFAULT_CONFIG).forEach((key) => {
+    if (key === 'enable-sentry') return;
+
+    getConfig(key as StorageKey);
+  });
 
   return (
     <AlertProgressContextProvider messageApi={messageApi}>
       <DialogContextProvider>
         <ConfigProvider
-          locale={localeMap[navigator.language]}
+          locale={(localeMap as any)[navigator.language]}
           theme={{
             algorithm: defaultAlgorithm,
             components: {
@@ -127,7 +137,7 @@ const App = (): React.JSX.Element => {
 };
 
 const router = (container: Container): void => {
-  createRoot(container).render(<App />);
+  createRoot(container as any).render(<App />);
 };
 
 export default router;

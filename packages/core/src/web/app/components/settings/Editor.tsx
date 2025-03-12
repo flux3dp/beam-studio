@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 
+import type { DefaultOptionType } from 'antd/es/select';
+
 import FontFuncs from '@core/app/actions/beambox/font-funcs';
-import Controls from '@core/app/components/settings/Control';
-import onOffOptionFactory from '@core/app/components/settings/onOffOptionFactory';
-import SelectControl from '@core/app/components/settings/SelectControl';
-import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import { hasSwiftray } from '@core/helpers/api/swiftray-client';
 import { checkFpm1, checkHxRf } from '@core/helpers/checkFeature';
@@ -13,58 +12,41 @@ import isDev from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 import storage from '@core/implementations/storage';
 import type { FontDescriptor } from '@core/interfaces/IFont';
-import type { StorageKey } from '@core/interfaces/IStorage';
+
+import SettingFormItem from './components/SettingFormItem';
+import SettingSelect from './components/SettingSelect';
 
 const fontFamilies = FontFuncs.requestAvailableFontFamilies(true);
 
 interface Props {
-  defaultUnit: string;
-  getBeamboxPreferenceEditingValue: (key: string) => any;
-  selectedModel: WorkAreaModel;
-  updateBeamboxPreferenceChange: (item_key: string, newVal: any) => void;
-  updateConfigChange: (id: StorageKey, newVal: any) => void;
-  updateModel: (selectedModel: WorkAreaModel) => void;
+  options: DefaultOptionType[];
 }
 
-type SelectOption = { label: string; selected: boolean; value: string };
-
-function Editor({
-  defaultUnit,
-  getBeamboxPreferenceEditingValue,
-  selectedModel,
-  updateBeamboxPreferenceChange,
-  updateConfigChange,
-  updateModel,
-}: Props): React.JSX.Element {
+function Editor({ options }: Props): React.JSX.Element {
   const lang = useI18n();
-  const [defaultFont, updateDefaultFont] = useState(
-    storage.get('default-font') || {
-      family: 'Arial',
-      style: 'Regular',
-    },
+  const { getConfig, getPreference, setConfig, setPreference } = useSettingStore();
+
+  const selectedModel = getPreference('model');
+  const defaultUnit = getConfig('default-units');
+  const workarea = getWorkarea(selectedModel);
+  const [defaultFont, updateDefaultFont] = useState<FontDescriptor>(
+    storage.get('default-font') || { family: 'Arial', style: 'Regular' },
   );
 
-  const fontOptions: SelectOption[] = fontFamilies.map((family: string) => {
+  const fontOptions = fontFamilies.map((family: string) => {
     const fontName = FontFuncs.fontNameMap.get(family);
     const label = typeof fontName === 'string' ? fontName : family;
 
-    return {
-      label,
-      selected: family === defaultFont.family,
-      value: family,
-    };
+    return { label, value: family };
   });
-  const fontStyleOptions: SelectOption[] = FontFuncs.requestFontsOfTheFontFamily(defaultFont.family).map(
-    (font: FontDescriptor) => ({
-      label: font.style,
-      selected: font.style === defaultFont.style,
-      value: font.postscriptName,
-    }),
-  );
+  const fontStyleOptions = FontFuncs
+    //
+    .requestFontsOfTheFontFamily(defaultFont.family)
+    .map(({ postscriptName, style }: FontDescriptor) => ({ label: style, value: postscriptName }));
 
-  const onSelectFont = (family: string) => {
+  const setFont = (family: string) => {
     const fonts: FontDescriptor[] = FontFuncs.requestFontsOfTheFontFamily(family);
-    const newDefaultFont = fonts.filter((font) => font.style === 'Regular')[0] || fonts[0];
+    const newDefaultFont = fonts.filter(({ style }) => style === 'Regular')[0] || fonts[0];
 
     storage.set('default-font', {
       family: newDefaultFont.family,
@@ -77,7 +59,7 @@ function Editor({
       style: newDefaultFont.style,
     });
   };
-  const onSelectFontStyle = (postscriptName: string) => {
+  const setFontStyle = (postscriptName: string) => {
     const newDefaultFont = FontFuncs.getFontOfPostscriptName(postscriptName);
 
     storage.set('default-font', {
@@ -93,135 +75,81 @@ function Editor({
   };
 
   const modelOptions = [
-    {
-      label: 'beamo',
-      selected: selectedModel === 'fbm1',
-      value: 'fbm1',
-    },
-    {
-      label: 'Beambox',
-      selected: selectedModel === 'fbb1b',
-      value: 'fbb1b',
-    },
-    {
-      label: 'Beambox Pro',
-      selected: selectedModel === 'fbb1p',
-      value: 'fbb1p',
-    },
-    {
-      label: 'HEXA',
-      selected: selectedModel === 'fhexa1',
-      value: 'fhexa1',
-    },
+    { label: 'beamo', value: 'fbm1' },
+    { label: 'Beambox', value: 'fbb1b' },
+    { label: 'Beambox Pro', value: 'fbb1p' },
+    { label: 'HEXA', value: 'fhexa1' },
     checkHxRf() && {
       label: 'HEXA RF',
-      selectedModel: ['fhx2rf3', 'fhx2rf6'].includes(selectedModel),
       // send to rf3 for now since they don't have different workarea at the moment
       value: 'fhx2rf3',
     },
-    {
-      label: 'Ador',
-      selected: selectedModel === 'ado1',
-      value: 'ado1',
-    },
-    checkFpm1() && {
-      label: 'Promark',
-      selected: selectedModel === 'fpm1',
-      value: 'fpm1',
-    },
-    isDev() && {
-      label: 'Lazervida',
-      selected: selectedModel === 'flv1',
-      value: 'flv1',
-    },
-    {
-      label: 'Beambox II',
-      selected: selectedModel === 'fbb2',
-      value: 'fbb2',
-    },
-  ].filter(Boolean) as SelectOption[];
-  const workarea = getWorkarea(selectedModel);
+    { label: 'Ador', value: 'ado1' },
+    checkFpm1() && { label: 'Promark', value: 'fpm1' },
+    isDev() && { label: 'Lazervida', value: 'flv1' },
+    { label: 'Beambox II', value: 'fbb2' },
+  ].filter(Boolean);
 
-  const guideX = getBeamboxPreferenceEditingValue('guide_x0');
-  const guideY = getBeamboxPreferenceEditingValue('guide_y0');
-
-  const guideSelectionOptions = onOffOptionFactory(getBeamboxPreferenceEditingValue('show_guides') !== false, { lang });
-  const imageDownsamplingOptions = onOffOptionFactory(
-    getBeamboxPreferenceEditingValue('image_downsampling') !== false,
-    { offLabel: lang.settings.normal, onLabel: lang.settings.low },
-  );
-  const antiAliasingOptions = onOffOptionFactory(getBeamboxPreferenceEditingValue('anti-aliasing'), { lang });
-  const continuousDrawingOptions = onOffOptionFactory(getBeamboxPreferenceEditingValue('continuous_drawing'), { lang });
-  const simplifyClipperPath = onOffOptionFactory(getBeamboxPreferenceEditingValue('simplify_clipper_path'), { lang });
-  const autoSwitchTab = onOffOptionFactory(getBeamboxPreferenceEditingValue('auto-switch-tab'), {
-    lang,
-  });
-  const enableCustomBacklashOptions = onOffOptionFactory(getBeamboxPreferenceEditingValue('enable-custom-backlash'), {
-    lang,
-  });
-
-  const pathEngine = getBeamboxPreferenceEditingValue('path-engine') || 'fluxghost';
+  const imageDownSamplingOptions = [
+    { label: lang.settings.low, value: true },
+    { label: lang.settings.normal, value: false },
+  ] as unknown as DefaultOptionType[];
   const pathEngineOptions = [
-    { label: lang.settings.on, selected: pathEngine === 'swiftray', value: 'swiftray' },
-    { label: lang.settings.off, selected: pathEngine === 'fluxghost', value: 'fluxghost' },
+    { label: lang.settings.on, value: 'swiftray' },
+    { label: lang.settings.off, value: 'fluxghost' },
+  ];
+  const unitOptions = [
+    { label: lang.menu.mm, value: 'mm' },
+    { label: lang.menu.inches, value: 'inches' },
   ];
 
   return (
     <>
       <div className="subtitle">{lang.settings.groups.editor}</div>
-      <SelectControl
+      <SettingSelect
+        defaultValue={getConfig('default-units')}
         id="set-default-units"
         label={lang.settings.default_units}
-        onChange={(e) => updateConfigChange('default-units', e.target.value)}
-        options={[
-          {
-            label: lang.menu.mm,
-            selected: defaultUnit === 'mm',
-            value: 'mm',
-          },
-          {
-            label: lang.menu.inches,
-            selected: defaultUnit === 'inches',
-            value: 'inches',
-          },
-        ]}
+        onChange={(e) => setConfig('default-units', e)}
+        options={unitOptions}
       />
-      <SelectControl
+      <SettingSelect
+        defaultValue={defaultFont.family as string}
         id="set-default-font-family"
         label={lang.settings.default_font_family}
-        onChange={(e) => onSelectFont(e.target.value)}
+        onChange={(e) => setFont(e)}
         options={fontOptions}
       />
-      <SelectControl
+      <SettingSelect
         id="set-default-font-style"
         label={lang.settings.default_font_style}
-        onChange={(e) => onSelectFontStyle(e.target.value)}
+        onChange={(e) => setFontStyle(e)}
         options={fontStyleOptions}
+        value={(defaultFont.postscriptName ?? defaultFont.style) as string}
       />
-      <SelectControl
+      <SettingSelect
+        defaultValue={getPreference('model')}
         id="set-default-model"
         label={lang.settings.default_beambox_model}
-        onChange={(e) => {
-          updateBeamboxPreferenceChange('model', e.target.value);
-          updateModel(e.target.value);
-        }}
+        onChange={(e) => setPreference('model', e)}
         options={modelOptions}
       />
-      <SelectControl
+      <SettingSelect
+        defaultValue={getPreference('show_guides')}
         id="set-guide"
         label={lang.settings.guides}
-        onChange={(e) => updateBeamboxPreferenceChange('show_guides', e.target.value)}
-        options={guideSelectionOptions}
+        onChange={(e) => setPreference('show_guides', e)}
+        options={options}
       />
-      <Controls label={lang.settings.guides_origin}>
+      <SettingFormItem id="set-guide-axis" label={lang.settings.guides_origin}>
         <span className="font2" style={{ lineHeight: '32px', marginRight: '10px' }}>
           X
         </span>
         <UnitInput
           className={{ half: true }}
-          defaultValue={guideX}
+          defaultValue={getPreference('guide_x0')}
           forceUsePropsUnit
-          getValue={(val) => updateBeamboxPreferenceChange('guide_x0', val)}
+          getValue={(val) => setPreference('guide_x0', val)}
           id="guide-x-input"
           max={workarea.width}
           min={0}
@@ -232,64 +160,71 @@ function Editor({
         </span>
         <UnitInput
           className={{ half: true }}
-          defaultValue={guideY}
+          defaultValue={getPreference('guide_y0')}
           forceUsePropsUnit
-          getValue={(val) => updateBeamboxPreferenceChange('guide_y0', val)}
+          getValue={(val) => setPreference('guide_y0', val)}
           id="guide-y-input"
           max={workarea.displayHeight ?? workarea.height}
           min={0}
           unit={defaultUnit === 'inches' ? 'in' : 'mm'}
         />
-      </Controls>
-      <SelectControl
+      </SettingFormItem>
+      <SettingSelect
+        defaultValue={getPreference('image_downsampling')}
         id="set-bitmap-quality"
         label={lang.settings.image_downsampling}
-        onChange={(e) => updateBeamboxPreferenceChange('image_downsampling', e.target.value)}
-        options={imageDownsamplingOptions}
+        onChange={(e) => setPreference('image_downsampling', e)}
+        options={imageDownSamplingOptions}
         url={lang.settings.help_center_urls.image_downsampling}
       />
-      <SelectControl
+      <SettingSelect
+        defaultValue={getPreference('anti-aliasing')}
         id="set-anti-aliasing"
         label={lang.settings.anti_aliasing}
-        onChange={(e) => updateBeamboxPreferenceChange('anti-aliasing', e.target.value)}
-        options={antiAliasingOptions}
+        onChange={(e) => setPreference('anti-aliasing', e)}
+        options={options}
         url={lang.settings.help_center_urls.anti_aliasing}
       />
-      <SelectControl
-        id="set-continuous-drawingg"
+      <SettingSelect
+        defaultValue={getPreference('continuous_drawing')}
+        id="set-continuous-drawing"
         label={lang.settings.continuous_drawing}
-        onChange={(e) => updateBeamboxPreferenceChange('continuous_drawing', e.target.value)}
-        options={continuousDrawingOptions}
+        onChange={(e) => setPreference('continuous_drawing', e)}
+        options={options}
         url={lang.settings.help_center_urls.continuous_drawing}
       />
-      <SelectControl
+      <SettingSelect
+        defaultValue={getPreference('simplify_clipper_path')}
         id="set-simplify-clipper-path"
         label={lang.settings.simplify_clipper_path}
-        onChange={(e) => updateBeamboxPreferenceChange('simplify_clipper_path', e.target.value)}
-        options={simplifyClipperPath}
+        onChange={(e) => setPreference('simplify_clipper_path', e)}
+        options={options}
         url={lang.settings.help_center_urls.simplify_clipper_path}
       />
-      <SelectControl
+      <SettingSelect
+        defaultValue={getPreference('auto-switch-tab')}
         id="auto-switch-tab"
         label={lang.settings.auto_switch_tab}
-        onChange={(e) => updateBeamboxPreferenceChange('auto-switch-tab', e.target.value)}
-        options={autoSwitchTab}
+        onChange={(e) => setPreference('auto-switch-tab', e)}
+        options={options}
       />
       {hasSwiftray && (
-        <SelectControl
+        <SettingSelect
+          defaultValue={getPreference('path-engine')}
           id="path-engine"
           label={`${lang.settings.calculation_optimization} (Beta)`}
-          onChange={(e) => updateBeamboxPreferenceChange('path-engine', e.target.value)}
+          onChange={(e) => setPreference('path-engine', e)}
           options={pathEngineOptions}
           url={lang.settings.help_center_urls.calculation_optimization}
         />
       )}
       {isDev() && (
-        <SelectControl
+        <SettingSelect
+          defaultValue={getPreference('enable-custom-backlash')}
           id="set-enable-custom-backlash"
           label={lang.settings.enable_custom_backlash}
-          onChange={(e) => updateBeamboxPreferenceChange('enable-custom-backlash', e.target.value)}
-          options={enableCustomBacklashOptions}
+          onChange={(e) => setPreference('enable-custom-backlash', e)}
+          options={options}
         />
       )}
     </>

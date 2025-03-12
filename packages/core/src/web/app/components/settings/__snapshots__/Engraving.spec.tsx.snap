@@ -15,9 +15,10 @@ exports[`should render correctly 1`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004496235
     options:
-    [{"label":"On","selected":true,"value":"TRUE"},{"label":"Off","selected":false,"value":"FALSE"}]
+    [{"label":"On","value":true},{"label":"Off","value":false}]
     <input
       class="select-control"
+      id="set-fast-gradient"
     />
   </div>
   <div>
@@ -26,10 +27,65 @@ exports[`should render correctly 1`] = `
     label:
     url:
     options:
-    [{"label":"bottom_up","selected":true,"value":"TRUE"},{"label":"top_down","selected":false,"value":"FALSE"}]
+    [{"label":"bottom_up","value":true},{"label":"top_down","value":false}]
     <input
       class="select-control"
+      id="set-reverse-engraving"
     />
+  </div>
+  <div>
+    mock-select-control id:
+    set-hardware-acceleration
+    label:
+    Padding Accel
+    url:
+    options:
+    <div>
+      mock-unit-input id:
+      hardware-acceleration
+      unit:
+      mm/s^2
+      min:
+      1
+      max:
+      40000
+      defaultValue:
+      4000
+      forceUsePropsUnit:
+      false
+      className:
+      {"half":true}
+      <input
+        class="unit-input"
+      />
+    </div>
+  </div>
+  <div>
+    mock-select-control id:
+    set-hardware-acceleration-diode
+    label:
+    Padding Accel HL
+    url:
+    options:
+    <div>
+      mock-unit-input id:
+      hardware-acceleration-diode
+      unit:
+      mm/s^2
+      min:
+      1
+      max:
+      12000
+      defaultValue:
+      4000
+      forceUsePropsUnit:
+      false
+      className:
+      {"half":true}
+      <input
+        class="unit-input"
+      />
+    </div>
   </div>
 </div>
 `;

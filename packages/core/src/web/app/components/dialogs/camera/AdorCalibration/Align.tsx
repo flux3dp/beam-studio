@@ -274,7 +274,7 @@ const Align = ({ fisheyeParam, onBack, onClose, title, type }: Props): React.JSX
       }
 
       const defaultVal = defaultModuleOffset[layerModule];
-      const moduleOffsets = beamboxPreference.read('module-offsets') || {};
+      const moduleOffsets = beamboxPreference.read('module-offsets');
 
       moduleOffsets[layerModule] = [x + defaultVal[0], y + defaultVal[1]];
       beamboxPreference.write('module-offsets', moduleOffsets);

@@ -3,39 +3,52 @@ describe('reset', () => {
     cy.landingEditor();
   });
 
-  it('reset unit', () => {
+  const resetBeamStudio = () => {
+    ['Reset Beam Studio', 'Next', 'Work Offline', 'Skip'].forEach((text) => cy.contains(text).click());
+
+    cy.get('button.ant-btn').contains('No').click({ multiple: true });
+  };
+
+  const selectOption = (selector, optionText) => {
+    cy.get(selector).closest('.ant-select').as('select');
+    cy.get('@select').find('.ant-select-selection-item').click();
+    cy.get('.ant-select-dropdown:not(.ant-select-dropdown-hidden) .ant-select-item-option-content', { timeout: 15000 })
+      .contains(optionText)
+      .click();
+  };
+
+  it('resets unit preference', () => {
     cy.go2Preference();
-    cy.get('#set-default-units').select('Inches');
+    selectOption('#set-default-units', 'Inches');
     cy.get('.btn.btn-done').click();
     cy.go2Preference();
-    cy.get('#set-default-units').contains('Inches').should('exist');
-    cy.contains('Reset Beam Studio').click();
-    cy.contains('Next').click();
-    cy.contains('Work Offline').click();
-    cy.contains('Skip').click();
-    cy.get('button.ant-btn').contains('No').click();
+    cy.get('#set-default-units')
+      .closest('.ant-select')
+      .find('.ant-select-selection-item')
+      .should('have.text', 'Inches');
+
+    resetBeamStudio();
+
     cy.go2Preference();
-    cy.get('#set-default-units').contains('mm').should('exist');
+    cy.get('#set-default-units').closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'mm');
   });
 
-  it('reset openbottom / autofocus / diodelaser', () => {
+  it('resets open-bottom, autofocus, and diode preferences', () => {
     cy.go2Preference();
-    cy.get('#default-open-bottom').select('On');
-    cy.get('#default-autofocus').select('On');
-    cy.get('#default-diode').select('On');
+    ['#default-open-bottom', '#default-autofocus', '#default-diode'].forEach((selector) =>
+      selectOption(selector, 'On'),
+    );
     cy.get('.btn.btn-done').click();
     cy.go2Preference();
-    cy.get('#default-open-bottom').should('have.value', 'TRUE');
-    cy.get('#default-autofocus').should('have.value', 'TRUE');
-    cy.get('#default-diode').should('have.value', 'TRUE');
-    cy.contains('Reset Beam Studio').click();
-    cy.contains('Next').click();
-    cy.contains('Work Offline').click();
-    cy.contains('Skip').click();
-    cy.get('button.ant-btn').contains('No').click();
+    ['#default-open-bottom', '#default-autofocus', '#default-diode'].forEach((selector) =>
+      cy.get(selector).closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'On'),
+    );
+
+    resetBeamStudio();
+
     cy.go2Preference();
-    cy.get('#default-open-bottom').should('have.value', 'FALSE');
-    cy.get('#default-autofocus').should('have.value', 'FALSE');
-    cy.get('#default-diode').should('have.value', 'FALSE');
+    ['#default-open-bottom', '#default-autofocus', '#default-diode'].forEach((selector) =>
+      cy.get(selector).closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'Off'),
+    );
   });
 });

@@ -24,7 +24,11 @@ describe('ador layer', () => {
 
   it('change default laser module', () => {
     cy.go2Preference();
-    cy.get('#default-laser-module').select('10W Diode Laser');
+    cy.get('#default-laser-module').closest('.ant-select').as('select');
+    cy.get('@select').find('.ant-select-selection-item').click();
+    cy.get('@select').should('have.class', 'ant-select-open');
+    cy.get('.ant-select-item-option-content').contains('10W Diode Laser').click({ force: true });
+    cy.get('@select').find('.ant-select-selection-item').should('have.text', '10W Diode Laser');
     cy.get('.btn.btn-done').contains('Apply').click();
     cy.changeWorkarea('Ador');
     cy.get(`div[class*="${moduleBlockPrefix}select"] > .ant-select-selector`).should('have.text', '10W Diode Laser');
@@ -82,7 +86,12 @@ describe('ador layer', () => {
 
   it('advanced printing parameter off', () => {
     cy.go2Preference();
-    cy.get('#print-advanced-mode').select('Off');
+
+    cy.get('#print-advanced-mode').closest('.ant-select').as('select');
+    cy.get('@select').find('.ant-select-selection-item').click();
+    cy.get('@select').should('have.class', 'ant-select-open');
+    cy.get('.ant-select-item-option-content').contains('Off').click({ force: true });
+    cy.get('@select').find('.ant-select-selection-item').should('have.text', 'Off');
     cy.get('.btn.btn-done').contains('Apply').click();
     cy.changeWorkarea('Ador');
     change2PrintingModule();
@@ -118,7 +127,12 @@ describe('ador layer', () => {
 
   it('advanced printing parameter on', () => {
     cy.go2Preference();
-    cy.get('#print-advanced-mode').select('On');
+
+    cy.get('#print-advanced-mode').closest('.ant-select').as('select');
+    cy.get('@select').find('.ant-select-selection-item').click();
+    cy.get('@select').should('have.class', 'ant-select-open');
+    cy.get('.ant-select-item-option-content').contains('On').click({ force: true });
+    cy.get('@select').find('.ant-select-selection-item').should('have.text', 'On');
     cy.get('[class="btn btn-done"]').contains('Apply').click();
     cy.changeWorkarea('Ador');
     change2PrintingModule();

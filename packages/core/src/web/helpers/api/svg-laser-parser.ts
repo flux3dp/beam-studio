@@ -12,7 +12,6 @@ import Progress from '@core/app/actions/progress-caller';
 import { getSupportInfo } from '@core/app/constants/add-on';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
-import moduleOffsets from '@core/app/constants/layer-module/module-offsets';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import workareaManager from '@core/app/svgedit/workarea';
@@ -113,24 +112,22 @@ export const getExportOpt = (
 
     config.prespray = rotaryMode && !hasJobOrigin ? [workareaWidth - 12, 45, 12, h] : [x, y, w, h];
 
-    if (!isDevMode || BeamboxPreference.read('multipass-compensation') !== false) {
+    if (!isDevMode || BeamboxPreference.read('multipass-compensation')) {
       config.mpc = true;
     }
 
-    if (!isDevMode || BeamboxPreference.read('one-way-printing') !== false) {
+    if (!isDevMode || BeamboxPreference.read('one-way-printing')) {
       config.owp = true;
     }
   }
 
-  if (
-    i18n.getActiveLang() === 'zh-cn' &&
-    BeamboxPreference.read('blade_radius') &&
-    BeamboxPreference.read('blade_radius') > 0
-  ) {
-    config.blade = BeamboxPreference.read('blade_radius');
+  const bladeRadius = BeamboxPreference.read('blade_radius');
+
+  if (i18n.getActiveLang() === 'zh-cn' && bladeRadius > 0) {
+    config.blade = bladeRadius;
 
     if (BeamboxPreference.read('blade_precut')) {
-      config.precut = [BeamboxPreference.read('precut_x') || 0, BeamboxPreference.read('precut_y') || 0];
+      config.precut = [BeamboxPreference.read('precut_x'), BeamboxPreference.read('precut_y')];
     }
   }
 
@@ -143,9 +140,9 @@ export const getExportOpt = (
   }
 
   if (opt.enableDiode) {
-    config.diode = [BeamboxPreference.read('diode_offset_x') || 0, BeamboxPreference.read('diode_offset_y') || 0];
+    config.diode = [BeamboxPreference.read('diode_offset_x'), BeamboxPreference.read('diode_offset_y')];
 
-    if (BeamboxPreference.read('diode-one-way-engraving') !== false) {
+    if (BeamboxPreference.read('diode-one-way-engraving')) {
       config.diode_owe = true;
     }
   }
@@ -187,12 +184,12 @@ export const getExportOpt = (
   }
 
   if (config.curve_engraving) {
-    if (BeamboxPreference.read('curve_engraving_speed_limit') !== false && workareaObj.curveSpeedLimit) {
+    if (BeamboxPreference.read('curve_engraving_speed_limit') && workareaObj.curveSpeedLimit) {
       config.csl = workareaObj.curveSpeedLimit * 60; // convert to mm/min
     }
   }
 
-  if (BeamboxPreference.read('vector_speed_contraint') !== false && workareaObj.vectorSpeedLimit) {
+  if (BeamboxPreference.read('vector_speed_constraint') && workareaObj.vectorSpeedLimit) {
     config.vsc = true; // not used by new backend, keep for web version compatibility
     config.vsl = workareaObj.vectorSpeedLimit * 60; // convert to mm/min
   }
@@ -269,7 +266,7 @@ export const getExportOpt = (
   if (printingBotPadding !== undefined) config.pbp = printingBotPadding;
 
   if (modelsWithModules.has(model)) {
-    const offsets = { ...moduleOffsets, ...BeamboxPreference.read('module-offsets') };
+    const offsets = { ...BeamboxPreference.read('module-offsets') };
 
     if (hasJobOrigin) {
       const refModule = getRefModule();

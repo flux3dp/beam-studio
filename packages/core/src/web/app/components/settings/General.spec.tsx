@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
+import { create } from 'zustand';
 
 jest.mock('@core/helpers/i18n', () => ({
   getActiveLang: () => 'en',
@@ -15,37 +16,40 @@ jest.mock('@core/helpers/i18n', () => ({
   },
 }));
 
-jest.mock('@core/app/components/settings/SelectControl', () => ({ id, label, onChange, options }: any) => (
-  <div>
-    mock-select-control id:{id}
-    label:{label}
-    options:{JSON.stringify(options)}
-    <input className="select-control" onChange={onChange} />
-  </div>
-));
+const mockGetConfig = jest.fn();
+const mockSetConfig = jest.fn();
+
+const useSettingStore = create(() => ({
+  getConfig: mockGetConfig,
+  setConfig: mockSetConfig,
+}));
+
+jest.mock('@core/app/pages/Settings/useSettingStore', () => ({
+  useSettingStore,
+}));
+
+jest.mock('./components/SettingSelect');
+
+const mockIsWeb = jest.fn();
+
+jest.mock('@core/helpers/is-web', () => mockIsWeb);
 
 import General from './General';
 
 describe('should render correctly', () => {
   test('desktop version', () => {
+    mockIsWeb.mockReturnValue(false);
+
     const changeActiveLang = jest.fn();
-    const updateConfigChange = jest.fn();
     const { container } = render(
       <General
         changeActiveLang={changeActiveLang}
-        isWeb={false}
-        notificationOptions={[
-          {
-            label: 'On',
-            selected: true,
-            value: 'TRUE',
-          },
-          {
-            label: 'Off',
-            selected: false,
-            value: 'FALSE',
-          },
-        ]}
+        options={
+          [
+            { label: 'On', value: true },
+            { label: 'Off', value: false },
+          ] as any
+        }
         supportedLangs={{
           de: 'Deutsche',
           en: 'English',
@@ -54,7 +58,6 @@ describe('should render correctly', () => {
           'zh-cn': '简体中文',
           'zh-tw': '繁體中文',
         }}
-        updateConfigChange={updateConfigChange}
       />,
     );
 
@@ -65,34 +68,24 @@ describe('should render correctly', () => {
     fireEvent.change(controls[0], { target: { value: 'de' } });
     expect(changeActiveLang).toHaveBeenCalledTimes(1);
 
-    fireEvent.change(controls[1], {
-      target: {
-        value: 'FALSE',
-      },
-    });
-    expect(updateConfigChange).toHaveBeenCalledTimes(1);
-    expect(updateConfigChange).toHaveBeenNthCalledWith(1, 'notification', 'FALSE');
+    fireEvent.change(controls[1], { target: { value: false } });
+    expect(mockSetConfig).toHaveBeenCalledTimes(1);
+    expect(mockSetConfig).toHaveBeenNthCalledWith(1, 'notification', false);
   });
 
   test('web version', () => {
+    mockIsWeb.mockReturnValue(true);
+
     const changeActiveLang = jest.fn();
-    const updateConfigChange = jest.fn();
     const { container } = render(
       <General
         changeActiveLang={changeActiveLang}
-        isWeb
-        notificationOptions={[
-          {
-            label: 'On',
-            selected: true,
-            value: 'TRUE',
-          },
-          {
-            label: 'Off',
-            selected: false,
-            value: 'FALSE',
-          },
-        ]}
+        options={
+          [
+            { label: 'On', value: true },
+            { label: 'Off', value: false },
+          ] as any
+        }
         supportedLangs={{
           de: 'Deutsche',
           en: 'English',
@@ -101,7 +94,6 @@ describe('should render correctly', () => {
           'zh-cn': '简体中文',
           'zh-tw': '繁體中文',
         }}
-        updateConfigChange={updateConfigChange}
       />,
     );
 

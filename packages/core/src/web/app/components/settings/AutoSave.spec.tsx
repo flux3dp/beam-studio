@@ -1,32 +1,6 @@
 import React from 'react';
-
+import { create } from 'zustand';
 import { fireEvent, render } from '@testing-library/react';
-
-jest.mock('@core/helpers/i18n', () => ({
-  lang: {
-    general: {
-      choose_folder: 'Choose Folder',
-    },
-    monitor: {
-      minute: 'm',
-    },
-    settings: {
-      autosave_enabled: 'Auto Save',
-      autosave_interval: 'Save Every',
-      autosave_number: 'Number of Auto Save',
-      autosave_path: 'Auto Save Location',
-      autosave_path_not_correct: 'Specified path not found.',
-      groups: {
-        autosave: 'Auto Save',
-      },
-      help_center_urls: {
-        fast_gradient: 'https://support.flux3dp.com/hc/en-us/articles/360004496235',
-      },
-    },
-  },
-}));
-
-jest.mock('@core/app/components/settings/Control', () => 'mock-control');
 
 jest.mock('@core/app/widgets/PathInput', () => ({
   __esModule: true,
@@ -55,14 +29,20 @@ jest.mock('@core/app/widgets/PathInput', () => ({
   },
 }));
 
-jest.mock('@core/app/components/settings/SelectControl', () => ({ id, label, onChange, options }: any) => (
-  <div>
-    mock-select-control id:{id}
-    label:{label}
-    options:{JSON.stringify(options)}
-    <input className="select-control" onChange={onChange} />
-  </div>
-));
+const mockGetPreference = jest.fn();
+const mockSetPreference = jest.fn();
+
+const useSettingStore = create(() => ({
+  getPreference: mockGetPreference,
+  setPreference: mockSetPreference,
+}));
+
+jest.mock('@core/app/pages/Settings/useSettingStore', () => ({
+  useSettingStore,
+}));
+
+jest.mock('./components/SettingSelect');
+jest.mock('./components/SettingFormItem');
 
 jest.mock(
   '@core/app/widgets/Unit-Input-v2',
@@ -81,6 +61,10 @@ jest.mock(
     ),
 );
 
+const mockIsWeb = jest.fn();
+
+jest.mock('@core/helpers/is-web', () => mockIsWeb);
+
 import AutoSave from './AutoSave';
 
 describe('should render correctly', () => {
@@ -89,113 +73,99 @@ describe('should render correctly', () => {
   });
 
   test('initially no warning', () => {
-    const updateState = jest.fn();
+    const setWarnings = jest.fn();
+    const setEditingAutosaveConfig = jest.fn();
     const { container } = render(
       <AutoSave
-        autoSaveOptions={[
-          {
-            label: 'On',
-            selected: false,
-            value: 'TRUE',
-          },
-          {
-            label: 'Off',
-            selected: true,
-            value: 'FALSE',
-          },
-        ]}
         editingAutosaveConfig={{
           directory: '/MyDocuments',
           enabled: false,
           fileNumber: 5,
           timeInterval: 10,
         }}
-        isWeb={false}
-        updateState={updateState}
+        options={
+          [
+            {
+              label: 'On',
+              value: true,
+            },
+            {
+              label: 'Off',
+              value: false,
+            },
+          ] as any
+        }
+        setEditingAutosaveConfig={setEditingAutosaveConfig}
+        setWarnings={setWarnings}
         warnings={{}}
       />,
     );
 
     expect(container).toMatchSnapshot();
 
-    fireEvent.change(container.querySelector('.select-control'), {
-      target: {
-        value: 'TRUE',
-      },
-    });
-    expect(updateState).toHaveBeenCalledTimes(1);
-    expect(updateState).toHaveBeenNthCalledWith(1, {
-      editingAutosaveConfig: {
-        directory: '/MyDocuments',
-        enabled: true,
-        fileNumber: 5,
-        timeInterval: 10,
-      },
+    fireEvent.change(container.querySelector('.select-control'), { target: { value: true } });
+    expect(setEditingAutosaveConfig).toHaveBeenCalledTimes(1);
+    expect(setEditingAutosaveConfig).toHaveBeenNthCalledWith(1, {
+      directory: '/MyDocuments',
+      enabled: true,
+      fileNumber: 5,
+      timeInterval: 10,
     });
 
     fireEvent.change(container.querySelector('input.path-input'), {
       target: { value: '/FolderNotExist, false' },
     });
-    expect(updateState).toHaveBeenCalledTimes(2);
-    expect(updateState).toHaveBeenNthCalledWith(2, {
-      editingAutosaveConfig: {
-        directory: '/FolderNotExist',
-        enabled: false,
-        fileNumber: 5,
-        timeInterval: 10,
-      },
-      warnings: {
-        autosave_directory: 'Specified path not found.',
-      },
+    expect(setEditingAutosaveConfig).toHaveBeenCalledTimes(2);
+    expect(setEditingAutosaveConfig).toHaveBeenNthCalledWith(2, {
+      directory: '/FolderNotExist',
+      enabled: false,
+      fileNumber: 5,
+      timeInterval: 10,
+    });
+
+    expect(setWarnings).toHaveBeenCalledTimes(1);
+    expect(setWarnings).toHaveBeenNthCalledWith(1, {
+      autosave_directory: 'Specified path not found.',
     });
 
     fireEvent.change(container.querySelector('input.unit-input'), { target: { value: 5 } });
-    expect(updateState).toHaveBeenCalledTimes(3);
-    expect(updateState).toHaveBeenNthCalledWith(3, {
-      editingAutosaveConfig: {
-        directory: '/MyDocuments',
-        enabled: false,
-        fileNumber: 5,
-        timeInterval: 5,
-      },
+    expect(setEditingAutosaveConfig).toHaveBeenCalledTimes(3);
+    expect(setEditingAutosaveConfig).toHaveBeenNthCalledWith(3, {
+      directory: '/MyDocuments',
+      enabled: false,
+      fileNumber: 5,
+      timeInterval: 5,
     });
 
     fireEvent.change(container.querySelectorAll('input.unit-input')[1], { target: { value: 10 } });
-    expect(updateState).toHaveBeenCalledTimes(4);
-    expect(updateState).toHaveBeenNthCalledWith(4, {
-      editingAutosaveConfig: {
-        directory: '/MyDocuments',
-        enabled: false,
-        fileNumber: 10,
-        timeInterval: 10,
-      },
+    expect(setEditingAutosaveConfig).toHaveBeenCalledTimes(4);
+    expect(setEditingAutosaveConfig).toHaveBeenNthCalledWith(4, {
+      directory: '/MyDocuments',
+      enabled: false,
+      fileNumber: 10,
+      timeInterval: 10,
     });
   });
 
   test('initially with warning', () => {
-    const updateState = jest.fn();
+    const setEditingAutosaveConfig = jest.fn();
+    const setWarnings = jest.fn();
     const { container } = render(
       <AutoSave
-        autoSaveOptions={[
-          {
-            label: 'On',
-            selected: false,
-            value: 'TRUE',
-          },
-          {
-            label: 'Off',
-            selected: true,
-            value: 'FALSE',
-          },
-        ]}
         editingAutosaveConfig={{
-          directory: '/FolderNotExist',
+          directory: '/MyDocuments',
           enabled: false,
           fileNumber: 5,
           timeInterval: 10,
         }}
-        isWeb={false}
-        updateState={updateState}
+        options={
+          [
+            { label: 'On', value: true },
+            { label: 'Off', value: false },
+          ] as any
+        }
+        setEditingAutosaveConfig={setEditingAutosaveConfig}
+        setWarnings={setWarnings}
         warnings={{
           autosave_directory: 'Specified path not found.',
         }}
@@ -207,42 +177,37 @@ describe('should render correctly', () => {
     fireEvent.change(container.querySelector('input.path-input'), {
       target: { value: '/MyDocuments, true' },
     });
-    expect(updateState).toHaveBeenCalledTimes(1);
-    expect(updateState).toHaveBeenNthCalledWith(1, {
-      editingAutosaveConfig: {
-        directory: '/MyDocuments',
-        enabled: false,
-        fileNumber: 5,
-        timeInterval: 10,
-      },
-      warnings: {},
+    expect(setEditingAutosaveConfig).toHaveBeenCalledTimes(1);
+    expect(setEditingAutosaveConfig).toHaveBeenNthCalledWith(1, {
+      directory: '/MyDocuments',
+      enabled: false,
+      fileNumber: 5,
+      timeInterval: 10,
     });
   });
 
   test('hide in web', () => {
-    const updateState = jest.fn();
+    const setEditingAutosaveConfig = jest.fn();
+    const setWarnings = jest.fn();
+
+    mockIsWeb.mockReturnValue(true);
+
     const { container } = render(
       <AutoSave
-        autoSaveOptions={[
-          {
-            label: 'On',
-            selected: false,
-            value: 'TRUE',
-          },
-          {
-            label: 'Off',
-            selected: true,
-            value: 'FALSE',
-          },
-        ]}
         editingAutosaveConfig={{
           directory: '/MyDocuments',
           enabled: false,
           fileNumber: 5,
           timeInterval: 10,
         }}
-        isWeb
-        updateState={updateState}
+        options={
+          [
+            { label: 'On', value: true },
+            { label: 'Off', value: false },
+          ] as any
+        }
+        setEditingAutosaveConfig={setEditingAutosaveConfig}
+        setWarnings={setWarnings}
         warnings={{}}
       />,
     );

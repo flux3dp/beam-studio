@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
+import { create } from 'zustand';
 
 jest.mock('@core/helpers/i18n', () => ({
   lang: {
@@ -13,68 +14,53 @@ jest.mock('@core/helpers/i18n', () => ({
   },
 }));
 
-jest.mock('@core/app/components/settings/SelectControl', () => ({ id, label, onChange, options }: any) => (
-  <div>
-    mock-select-control id:{id}
-    label:{label}
-    options:{JSON.stringify(options)}
-    <input className="select-control" onChange={onChange} />
-  </div>
-));
+const mockGetConfig = jest.fn();
+const mockSetConfig = jest.fn();
+
+const useSettingStore = create(() => ({ getConfig: mockGetConfig, setConfig: mockSetConfig }));
+
+jest.mock('@core/app/pages/Settings/useSettingStore', () => ({ useSettingStore }));
+jest.mock('./components/SettingSelect');
+
+const mockIsWeb = jest.fn();
+
+jest.mock('@core/helpers/is-web', () => mockIsWeb);
 
 import Update from './Update';
 
 describe('should render correctly', () => {
   test('desktop version', () => {
-    const updateConfigChange = jest.fn();
+    mockIsWeb.mockReturnValue(false);
+
     const { container } = render(
       <Update
-        isWeb={false}
-        updateConfigChange={updateConfigChange}
-        updateNotificationOptions={[
-          {
-            label: 'On',
-            selected: true,
-            value: 'TRUE',
-          },
-          {
-            label: 'Off',
-            selected: false,
-            value: 'FALSE',
-          },
-        ]}
+        options={
+          [
+            { label: 'On', value: true },
+            { label: 'Off', value: false },
+          ] as any
+        }
       />,
     );
 
     expect(container).toMatchSnapshot();
 
-    fireEvent.change(container.querySelector('.select-control'), {
-      target: {
-        value: 'FALSE',
-      },
-    });
-    expect(updateConfigChange).toHaveBeenCalledTimes(1);
-    expect(updateConfigChange).toHaveBeenNthCalledWith(1, 'auto_check_update', 'FALSE');
+    fireEvent.change(container.querySelector('.select-control'), { target: { value: false } });
+    expect(mockSetConfig).toHaveBeenCalledTimes(1);
+    expect(mockSetConfig).toHaveBeenNthCalledWith(1, 'auto_check_update', false);
   });
 
   test('web version', () => {
-    const updateConfigChange = jest.fn();
+    mockIsWeb.mockReturnValue(true);
+
     const { container } = render(
       <Update
-        isWeb
-        updateConfigChange={updateConfigChange}
-        updateNotificationOptions={[
-          {
-            label: 'On',
-            selected: true,
-            value: 'TRUE',
-          },
-          {
-            label: 'Off',
-            selected: false,
-            value: 'FALSE',
-          },
-        ]}
+        options={
+          [
+            { label: 'On', value: true },
+            { label: 'Off', value: false },
+          ] as any
+        }
       />,
     );
 

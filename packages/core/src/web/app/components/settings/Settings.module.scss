@@ -1,4 +1,3 @@
-// TODO: move the stylesheet into core
 .subtitle {
   line-height: 40px;
   font-size: 20px;
@@ -7,4 +6,11 @@
   margin-top: 15px;
   margin-bottom: 15px;
   width: 400px;
+}
+
+.form-item {
+  font-size: 13px;
+  margin-bottom: 0;
+  line-break: auto;
+  width: calc(30%);
 }

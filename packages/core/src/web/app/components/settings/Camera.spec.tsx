@@ -1,55 +1,27 @@
 import React from 'react';
-
+import { create } from 'zustand';
 import { render } from '@testing-library/react';
 
-import { OptionValues } from '@core/app/constants/enums';
+const mockGetPreference = jest.fn();
+const mockSetPreference = jest.fn();
 
-jest.mock('@core/app/components/settings/Control', () => 'mock-control');
+const useSettingStore = create(() => ({ getPreference: mockGetPreference, setPreference: mockSetPreference }));
 
-jest.mock('@core/app/components/settings/SelectControl', () => ({ id, label, onChange, options, url }: any) => (
-  <div>
-    mock-select-control id:{id}
-    label:{label}
-    url:{url}
-    options:{JSON.stringify(options)}
-    <input className="select-control" onChange={onChange} />
-  </div>
-));
+jest.mock('@core/app/pages/Settings/useSettingStore', () => ({ useSettingStore }));
+jest.mock('./components/SettingSelect');
+jest.mock('./components/SettingFormItem');
 
 import Camera from './Camera';
-
-const mockUpdateBeamboxPreferenceChange = jest.fn();
-const mockGetBeamboxPreferenceEditingValue = jest.fn();
 
 test('should render correctly', () => {
   const { container } = render(
     <Camera
-      enableCustomPreviewHeightOptions={[
-        {
-          label: 'On',
-          selected: false,
-          value: OptionValues.TRUE,
-        },
-        {
-          label: 'Off',
-          selected: true,
-          value: OptionValues.FALSE,
-        },
-      ]}
-      getBeamboxPreferenceEditingValue={mockGetBeamboxPreferenceEditingValue}
-      keepPreviewResultOptions={[
-        {
-          label: 'On',
-          selected: false,
-          value: OptionValues.TRUE,
-        },
-        {
-          label: 'Off',
-          selected: true,
-          value: OptionValues.FALSE,
-        },
-      ]}
-      updateBeamboxPreferenceChange={mockUpdateBeamboxPreferenceChange}
+      options={
+        [
+          { label: 'On', value: false },
+          { label: 'Off', value: true },
+        ] as any
+      }
     />,
   );
 

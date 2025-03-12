@@ -26,12 +26,12 @@ class WorkareaManager {
   }
 
   setWorkarea(model: WorkAreaModel): void {
-    const rotaryExtended = !!beamboxPreference.read('rotary_mode') && beamboxPreference.read('extend-rotary-workarea');
+    const rotaryExtended = beamboxPreference.read('rotary_mode') && beamboxPreference.read('extend-rotary-workarea');
     const supportInfo = getSupportInfo(model);
-    const borderless = !!beamboxPreference.read('borderless');
-    const passThrough = !!beamboxPreference.read('pass-through');
+    const borderless = beamboxPreference.read('borderless');
+    const passThrough = beamboxPreference.read('pass-through');
     const passThroughMode = supportInfo.passThrough && passThrough && (supportInfo.openBottom ? borderless : true);
-    const autoFeeder = Boolean(!!beamboxPreference.read('auto-feeder') && supportInfo.autoFeeder);
+    const autoFeeder = Boolean(beamboxPreference.read('auto-feeder') && supportInfo.autoFeeder);
     const workarea = getWorkarea(model);
     const modelChanged = this.model !== model;
 
@@ -170,7 +170,7 @@ class WorkareaManager {
     }
 
     const { height, width } = this;
-    const hasRulers = !!beamboxPreference.read('show_rulers');
+    const hasRulers = beamboxPreference.read('show_rulers');
     const sidePanelsWidth = isMobile()
       ? 0
       : layoutConstants.sidePanelsWidth + (hasRulers ? layoutConstants.rulerWidth : 0);

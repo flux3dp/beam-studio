@@ -15,7 +15,6 @@ import { getSupportInfo } from '@core/app/constants/add-on';
 import alertConstants from '@core/app/constants/alert-constants';
 import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType, workareaOptions as pmWorkareaOptions } from '@core/app/constants/promark-constants';
-import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import Select from '@core/app/widgets/AntdSelect';
@@ -68,26 +67,22 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
 
   const origWorkarea = useMemo(() => BeamboxPreference.read('workarea'), []);
   const [pmInfo, setPmInfo] = useState(getPromarkInfo());
-  const [workarea, setWorkarea] = useState<WorkAreaModel>(origWorkarea || 'fbb1b');
-  const [customDimension, setCustomDimension] = useState<Record<WorkAreaModel, { height: number; width: number }>>(
-    BeamboxPreference.read('customized-dimension') ?? {},
-  );
+  const [workarea, setWorkarea] = useState(origWorkarea || 'fbb1b');
+  const [customDimension, setCustomDimension] = useState(BeamboxPreference.read('customized-dimension'));
   const supportInfo = useMemo(() => getSupportInfo(workarea), [workarea]);
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
-  const [rotaryMode, setRotaryMode] = useState<number>(BeamboxPreference.read('rotary_mode') ?? 0);
-  const [enableStartButton, setEnableStartButton] = useState(!!BeamboxPreference.read('promark-start-button'));
-  const [shouldFrame, setShouldFrame] = useState(!!BeamboxPreference.read('frame-before-start'));
-  const [enableJobOrigin, setEnableJobOrigin] = useState<number>(BeamboxPreference.read('enable-job-origin') ?? 0);
-  const [jobOrigin, setJobOrigin] = useState<number>(BeamboxPreference.read('job-origin') ?? 1);
-  const [extendRotaryWorkarea, setExtendRotaryWorkarea] = useState<boolean>(
-    !!BeamboxPreference.read('extend-rotary-workarea'),
-  );
-  const [mirrorRotary, setMirrorRotary] = useState<boolean>(!!BeamboxPreference.read('rotary-mirror'));
+  const [rotaryMode, setRotaryMode] = useState(BeamboxPreference.read('rotary_mode'));
+  const [enableStartButton, setEnableStartButton] = useState(BeamboxPreference.read('promark-start-button'));
+  const [shouldFrame, setShouldFrame] = useState(BeamboxPreference.read('frame-before-start'));
+  const [enableJobOrigin, setEnableJobOrigin] = useState(BeamboxPreference.read('enable-job-origin'));
+  const [jobOrigin, setJobOrigin] = useState(BeamboxPreference.read('job-origin'));
+  const [extendRotaryWorkarea, setExtendRotaryWorkarea] = useState(BeamboxPreference.read('extend-rotary-workarea'));
+  const [mirrorRotary, setMirrorRotary] = useState(BeamboxPreference.read('rotary-mirror'));
   const [borderless, setBorderless] = useState(!!BeamboxPreference.read('borderless'));
   const [enableDiode, setEnableDiode] = useState(!!BeamboxPreference.read('enable-diode'));
   const [enableAutofocus, setEnableAutofocus] = useState(!!BeamboxPreference.read('enable-autofocus'));
-  const [passThrough, setPassThrough] = useState(!!BeamboxPreference.read('pass-through'));
-  const [autoFeeder, setAutoFeeder] = useState(!!BeamboxPreference.read('auto-feeder'));
+  const [passThrough, setPassThrough] = useState(BeamboxPreference.read('pass-through'));
+  const [autoFeeder, setAutoFeeder] = useState(BeamboxPreference.read('auto-feeder'));
 
   const isInch = useMemo(() => storage.get('default-units') === 'inches', []);
   const workareaObj = useMemo(() => getWorkarea(workarea), [workarea]);
@@ -100,20 +95,20 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
 
   // pass-through, autofeed, rotary mode are exclusive, disable others when one is on
   useEffect(() => {
-    if (rotaryMode > 0) {
+    if (rotaryMode) {
       setPassThrough(false);
       setAutoFeeder(false);
     }
   }, [rotaryMode]);
   useEffect(() => {
     if (passThrough) {
-      setRotaryMode(0);
+      setRotaryMode(false);
       setAutoFeeder(false);
     }
   }, [passThrough]);
   useEffect(() => {
     if (autoFeeder) {
-      setRotaryMode(0);
+      setRotaryMode(false);
       setPassThrough(false);
     }
   }, [autoFeeder]);
@@ -124,7 +119,6 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
 
   const minHeight = useMemo(() => workareaObj.displayHeight ?? workareaObj.height, [workareaObj]);
   const showPassThrough = supportInfo.passThrough && (supportInfo.openBottom ? borderless : true);
-  const handleRotaryModeChange: (on: boolean) => void = (on: boolean) => setRotaryMode(on ? 1 : 0);
 
   useEffect(() => {
     if (showPassThrough) setPassThroughHeight((cur) => Math.max(cur, minHeight));
@@ -141,38 +135,36 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     let customDimensionChanged = false;
     const rotaryChanged =
       rotaryMode !== BeamboxPreference.read('rotary_mode') ||
-      extendRotaryWorkarea !== !!BeamboxPreference.read('extend-rotary-workarea');
+      extendRotaryWorkarea !== BeamboxPreference.read('extend-rotary-workarea');
 
     BeamboxPreference.write('engrave_dpi', engraveDpi);
     dpiEvent.emit('UPDATE_DPI', engraveDpi);
-    BeamboxPreference.write('borderless', supportInfo.openBottom && borderless);
+    BeamboxPreference.write('borderless', Boolean(supportInfo.openBottom && borderless));
     BeamboxPreference.write('enable-diode', supportInfo.hybridLaser && enableDiode);
     BeamboxPreference.write('enable-autofocus', supportInfo.autoFocus && enableAutofocus);
 
-    if (workareaObj.dismensionCustomizable) {
-      const origVal = BeamboxPreference.read('customized-dimension') ?? {};
+    if (workareaObj.dimensionCustomizable) {
+      const origVal = BeamboxPreference.read('customized-dimension');
 
       customDimensionChanged =
         customDimension[workarea]?.width !== origVal[workarea]?.width ||
         customDimension[workarea]?.height !== origVal[workarea]?.height;
-      BeamboxPreference.write('customized-dimension', {
-        ...origVal,
-        [workarea]: customDimension[workarea],
-      });
+
+      BeamboxPreference.write('customized-dimension', { ...origVal, [workarea]: customDimension[workarea] });
     }
 
     BeamboxPreference.write('rotary_mode', rotaryMode);
 
-    if (rotaryMode > 0) {
+    if (rotaryMode) {
       if (supportInfo.rotary?.extendWorkarea) BeamboxPreference.write('extend-rotary-workarea', extendRotaryWorkarea);
 
       if (supportInfo.rotary?.mirror) BeamboxPreference.write('rotary-mirror', mirrorRotary);
     }
 
-    const newPassThrough = showPassThrough && passThrough;
-    const passThroughChanged = newPassThrough !== !!BeamboxPreference.read('pass-through');
+    const newPassThrough = Boolean(showPassThrough && passThrough);
+    const passThroughChanged = newPassThrough !== BeamboxPreference.read('pass-through');
     const passThroughHeightChanged = passThroughHeight !== BeamboxPreference.read('pass-through-height');
-    const autoFeederChanged = autoFeeder !== !!BeamboxPreference.read('auto-feeder');
+    const autoFeederChanged = autoFeeder !== BeamboxPreference.read('auto-feeder');
     const autoFeederHeightChanged = autoFeederHeight !== BeamboxPreference.read('auto-feeder-height');
 
     BeamboxPreference.write('pass-through', newPassThrough);
@@ -214,8 +206,8 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
 
     if (promarkModels.has(workarea)) {
       setPromarkInfo(pmInfo);
-      BeamboxPreference.write('promark-start-button', enableStartButton ? 1 : 0);
-      BeamboxPreference.write('frame-before-start', shouldFrame ? 1 : 0);
+      BeamboxPreference.write('promark-start-button', enableStartButton);
+      BeamboxPreference.write('frame-before-start', shouldFrame);
     }
 
     presprayArea.togglePresprayArea();
@@ -274,7 +266,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
               variant="outlined"
             />
           </div>
-          {workareaObj.dismensionCustomizable && (
+          {workareaObj.dimensionCustomizable && (
             <div className={styles.row}>
               <label className={styles.title} htmlFor="customDimension">
                 {tDocu.workarea}:
@@ -346,14 +338,14 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                   id="startFrom"
                   onChange={setEnableJobOrigin}
                   options={[
-                    { label: tDocu.origin, value: 0 },
-                    { label: tDocu.current_position, value: 1 },
+                    { label: tDocu.origin, value: false },
+                    { label: tDocu.current_position, value: true },
                   ]}
                   value={enableJobOrigin}
                   variant="outlined"
                 />
               </div>
-              {enableJobOrigin === 1 && (
+              {enableJobOrigin && (
                 <div className={styles.row}>
                   <label className={styles.title}>{tDocu.job_origin}:</label>
                   <div className={styles.control}>
@@ -433,13 +425,13 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
               </div>
               <div className={styles.control}>
                 <Switch
-                  checked={rotaryMode > 0}
+                  checked={rotaryMode}
                   className={styles.switch}
                   disabled={!supportInfo.rotary}
                   id="rotary_mode"
-                  onChange={handleRotaryModeChange}
+                  onChange={setRotaryMode}
                 />
-                {(supportInfo.rotary.mirror || supportInfo.rotary.extendWorkarea) && rotaryMode > 0 && (
+                {(supportInfo.rotary.mirror || supportInfo.rotary.extendWorkarea) && rotaryMode && (
                   <>
                     <div className={styles.subCheckbox}>
                       {supportInfo.rotary.extendWorkarea && (

@@ -8,7 +8,7 @@ import storage from '@core/implementations/storage';
 import styles from './Ruler.module.scss';
 
 const Ruler = (): React.JSX.Element => {
-  const showShowRulers = !!beamboxPreference.read('show_rulers');
+  const showShowRulers = beamboxPreference.read('show_rulers');
   const canvasEventEmitter = useMemo(() => eventEmitterFactory.createEventEmitter('canvas'), []);
   const rulersRef = useRef<HTMLDivElement>(null);
   const xContainerRef = useRef<HTMLDivElement>(null);
@@ -166,12 +166,12 @@ const Ruler = (): React.JSX.Element => {
 
   useEffect(() => {
     const handler = () => {
-      const shouldShowRulers = !!beamboxPreference.read('show_rulers');
+      const shouldShowRulers = beamboxPreference.read('show_rulers');
 
       rulersRef.current?.style.setProperty('display', shouldShowRulers ? '' : 'none');
 
       if (shouldShowRulers) {
-        requestAnimationFrame(() => updateRulers());
+        requestAnimationFrame(updateRulers);
       }
     };
 

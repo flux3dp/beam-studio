@@ -180,7 +180,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
             ? `${round(curveSpeedLimit / 25.4, 2)} in/s`
             : `${curveSpeedLimit} mm/s`;
 
-        if (beamboxPreference.read('curve_engraving_speed_limit') === false) {
+        if (!beamboxPreference.read('curve_engraving_speed_limit')) {
           if (!alertConfig.read('skip_curve_speed_warning')) {
             const message = sprintf(lang.beambox.popup.too_fast_for_curve, { limit });
 
@@ -317,7 +317,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
             ? `${round(vectorSpeedLimit / 25.4, 2)} in/s`
             : `${vectorSpeedLimit} mm/s`;
 
-        if (beamboxPreference.read('vector_speed_contraint') === false) {
+        if (!beamboxPreference.read('vector_speed_constraint')) {
           if (!alertConfig.read('skip_path_speed_warning')) {
             const message = sprintf(lang.beambox.popup.too_fast_for_path, { limit });
 

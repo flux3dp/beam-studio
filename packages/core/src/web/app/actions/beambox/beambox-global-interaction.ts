@@ -64,7 +64,7 @@ class BeamboxGlobalInteraction {
     }
 
     if (selectedElements.length > 0 && firstElement.getAttribute('data-tempgroup') === 'true') {
-      selectedElements = Array.from(firstElement.childNodes);
+      selectedElements = Array.from(firstElement.childNodes) as Element[];
     }
 
     if (selectedElements?.length > 1 || (selectedElements?.length === 1 && tagName !== 'g')) {

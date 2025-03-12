@@ -5,12 +5,12 @@ class LocalStorage implements IStorage {
     throw new Error('Method not implemented.');
   }
   get(name: StorageKey): any {
-    let item = window.localStorage.getItem(name || '');
+    let item = window.localStorage.getItem(name || null);
 
-    item = item || '';
+    item = item || null;
 
     if (!item) {
-      return '';
+      return null;
     }
 
     try {

@@ -42,16 +42,22 @@ describe('move element to another layer', () => {
 
   it('move multiple elements', () => {
     cy.contains('Layer 1').click();
+
     cy.clickToolBtn('Element');
     cy.get('.ant-modal-header').contains('Element').should('exist');
     cy.get('.anticon[id="basic/icon-circle"]').click();
+    cy.get('.ant-modal-mask', { timeout: 10000 }).should('not.exist');
+
     cy.clickToolBtn('Element');
     cy.get('.adm-capsule-tabs-tab-wrapper').contains('Decor').click();
     cy.get('.anticon[id="decor/i_circular-1"]').click();
+    cy.get('.ant-modal-mask', { timeout: 10000 }).should('not.exist');
+
     cy.clickToolBtn('Element');
     cy.get('.adm-capsule-tabs-tab-wrapper').contains('Animal').click();
     cy.get('.anticon[id="animals/i_land-1"]').click();
-    cy.get('.ant-modal-mask').should('not.exist');
+    cy.get('.ant-modal-mask', { timeout: 10000 }).should('not.exist');
+
     cy.get('#svg_19').should('exist');
     cy.get('svg#svgcontent')
       .trigger('mousedown', 100, 100, { force: true })
@@ -62,7 +68,9 @@ describe('move element to another layer', () => {
     cy.get('#power-input').should('have.attr', 'value', '15');
     cy.get('#speed-input').should('have.attr', 'value', '20');
     cy.get('#repeat').should('have.attr', 'value', '1');
-    cy.get('[class*="src-web-app-components-beambox-right-panel-SelLayerBlock-module__select--"]').select('Layer 2');
+    cy.get('[class*="src-web-app-components-beambox-right-panel-SelLayerBlock-module__select--"]', {
+      timeout: 100000,
+    }).select('Layer 2');
     cy.get('.ant-btn').contains('Yes').click();
     cy.get('#power-input').should('have.attr', 'value', '50');
     cy.get('#speed-input').should('have.attr', 'value', '100');

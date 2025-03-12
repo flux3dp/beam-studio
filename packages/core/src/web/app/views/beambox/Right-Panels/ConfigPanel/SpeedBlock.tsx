@@ -110,8 +110,8 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
 
   const { curve: hasCurveLimit, vector: hasVectorLimit } = useMemo(
     () => ({
-      curve: BeamboxPreference.read('curve_engraving_speed_limit') !== false,
-      vector: BeamboxPreference.read('vector_speed_contraint') !== false,
+      curve: BeamboxPreference.read('curve_engraving_speed_limit'),
+      vector: BeamboxPreference.read('vector_speed_constraint'),
     }),
     [],
   );
