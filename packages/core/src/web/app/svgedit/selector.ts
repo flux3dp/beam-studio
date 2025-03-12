@@ -542,6 +542,9 @@ export class SelectorManager {
 
   handleZoomChange(): void {
     const svgcontent = document.getElementById('svgcontent');
+
+    if (!svgcontent) return;
+
     const x = svgcontent.getAttribute('x');
     const y = svgcontent.getAttribute('y');
 
