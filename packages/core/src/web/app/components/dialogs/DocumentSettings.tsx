@@ -19,6 +19,7 @@ import { getWorkarea } from '@core/app/constants/workarea-constants';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import Select from '@core/app/widgets/AntdSelect';
 import UnitInput from '@core/app/widgets/UnitInput';
+import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import { checkFpm1, checkHxRf } from '@core/helpers/checkFeature';
 import { getPromarkInfo, setPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
@@ -67,7 +68,18 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     global: tGlobal,
   } = useI18n();
   const [engraveDpi, setEngraveDpi] = useState(BeamboxPreference.read('engrave_dpi'));
-  const origWorkarea = useMemo(() => BeamboxPreference.read('workarea'), []);
+  const {
+    autoFeeder: origAutoFeeder,
+    passThrough: origPassThrough,
+    workarea: origWorkarea,
+  } = useMemo(() => {
+    const workarea = BeamboxPreference.read('workarea');
+    const supportInfo = getSupportInfo(workarea);
+    const autoFeeder = getAutoFeeder(supportInfo);
+    const passThrough = getPassThrough(supportInfo);
+
+    return { autoFeeder, passThrough, workarea };
+  }, []);
   const [pmInfo, setPmInfo] = useState(getPromarkInfo());
   const [workarea, setWorkarea] = useState(origWorkarea || 'fbb1b');
   const [customDimension, setCustomDimension] = useState(BeamboxPreference.read('customized-dimension'));
@@ -184,10 +196,10 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     }
 
     const newPassThrough = Boolean(showPassThrough && passThrough);
-    const passThroughChanged = newPassThrough !== BeamboxPreference.read('pass-through');
+    const passThroughChanged = newPassThrough !== origPassThrough;
     const passThroughHeightChanged = passThroughHeight !== BeamboxPreference.read('pass-through-height');
     const newAutoFeeder = Boolean(showAutoFeeder && autoFeeder);
-    const autoFeederChanged = newAutoFeeder !== BeamboxPreference.read('auto-feeder');
+    const autoFeederChanged = newAutoFeeder !== origAutoFeeder;
     const autoFeederHeightChanged = autoFeederHeight !== BeamboxPreference.read('auto-feeder-height');
 
     BeamboxPreference.write('pass-through', newPassThrough);
