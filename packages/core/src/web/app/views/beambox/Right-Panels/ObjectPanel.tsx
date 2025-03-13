@@ -3,6 +3,7 @@ import React, { memo, useContext } from 'react';
 import { Button, ConfigProvider } from 'antd';
 import classNames from 'classnames';
 
+import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import { iconButtonTheme } from '@core/app/constants/antd-config';
@@ -17,11 +18,12 @@ import OptionsPanel from '@core/app/views/beambox/Right-Panels/OptionsPanel';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './ObjectPanel.module.scss';
 
-let svgCanvas;
-let svgEditor;
+let svgCanvas: ISVGCanvas;
+let svgEditor: ISVGEditor;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
@@ -57,16 +59,17 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
       return e.tagName.toLowerCase() === 'path' && svgCanvas.isElemFillable(e);
     };
     const isSingleGroup = elems?.length === 1 && elems[0].tagName.toLowerCase() === 'g';
+    const isEveryElementAllowBooleanOperations = elems?.every(allowBooleanOperations);
 
     return {
-      boolean: elems?.length > 1 && elems?.every(allowBooleanOperations),
-      difference: elems?.length > 1 && elems?.every(allowBooleanOperations),
+      boolean: elems?.length > 1 && isEveryElementAllowBooleanOperations,
+      difference: elems?.length > 1 && isEveryElementAllowBooleanOperations,
       dist: elems?.length > 2,
       group: !isSingleGroup || elems?.length > 1,
-      intersect: elems?.length > 1 && elems?.every(allowBooleanOperations),
-      subtract: elems?.length === 2 && elems?.every(allowBooleanOperations),
+      intersect: elems?.length > 1 && isEveryElementAllowBooleanOperations,
+      subtract: elems?.length === 2 && isEveryElementAllowBooleanOperations,
       ungroup: isSingleGroup && !elem.getAttribute('data-textpath-g') && !elem.getAttribute('data-pass-through'),
-      union: elems?.length > 1 && elems?.every(allowBooleanOperations),
+      union: elems?.length > 1 && isEveryElementAllowBooleanOperations,
     };
   };
 
@@ -165,16 +168,8 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
         />
         <ObjectPanelItem.ActionList
           actions={[
-            {
-              icon: <ObjectPanelIcons.HDist />,
-              label: tObjectpanel.hdist,
-              onClick: () => svgCanvas.distHori(),
-            },
-            {
-              icon: <ObjectPanelIcons.VDist />,
-              label: tObjectpanel.vdist,
-              onClick: () => svgCanvas.distVert(),
-            },
+            { icon: <ObjectPanelIcons.HDist />, label: tObjectpanel.hdist, onClick: svgCanvas.distHori },
+            { icon: <ObjectPanelIcons.VDist />, label: tObjectpanel.vdist, onClick: svgCanvas.distVert },
           ]}
           content={<ObjectPanelIcons.VDist />}
           disabled={!buttonAvailability.dist}

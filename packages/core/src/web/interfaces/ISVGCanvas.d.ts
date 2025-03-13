@@ -46,6 +46,16 @@ export default interface ISVGCanvas {
   clearAlignLines: () => void;
   clearBoundingBox: () => void;
   clearSelection: (noCall?: boolean) => void;
+  cloneSelectedElements: (
+    dx: number | number[],
+    dy: number | number[],
+    opts?: {
+      addToHistory?: boolean;
+      callChangOnMove?: boolean;
+      parentCmd?: IBatchCommand;
+      selectElement?: boolean;
+    },
+  ) => Promise<null | { cmd: IBatchCommand; elems: Element[] }>;
   collectAlignPoints: () => void;
   convertGradients: (elem: Element) => void;
   convertToNum(attr: string, val: number): number;
@@ -57,6 +67,8 @@ export default interface ISVGCanvas {
     addToHistory?: boolean,
     showProgress?: boolean,
   ) => Promise<BaseHistoryCommand>;
+  distHori: (isSubCmd?: boolean) => BaseHistoryCommand | void;
+  distVert: (isSubCmd?: boolean) => BaseHistoryCommand | void;
   drawAlignLine: (tx: number, ty: number, x: IPoint | null, y: IPoint | null, index?: number) => void;
   drawing: ISVGDrawing;
   embedImage(url: string, callback?: (dataURI: string) => void): void;
@@ -114,6 +126,7 @@ export default interface ISVGCanvas {
     },
   ): Promise<SVGUseElement>;
   isAutoAlign: boolean;
+  isElemFillable: (elem: Element) => boolean;
   isUsingLayerColor: boolean;
   leaveContext: () => void;
   mergeAllLayers: () => void;

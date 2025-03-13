@@ -1,6 +1,7 @@
 import React, { memo, useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 import classNames from 'classnames';
+import { match, P } from 'ts-pattern';
 
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import LayerPanel from '@core/app/components/beambox/right-panel/LayerPanel';
@@ -45,24 +46,14 @@ const RightPanel = (): React.JSX.Element => {
 
   useEffect(() => {
     const handler = (val: boolean) => {
-      if (!isMobile) {
-        return;
-      }
+      if (!isMobile) return;
 
       setPanelType((cur) => {
         if (val) {
-          if (cur !== PanelType.Layer) {
-            return PanelType.Layer;
-          }
-
-          return cur;
+          return cur !== PanelType.Layer ? PanelType.Layer : cur;
         }
 
-        if (cur === PanelType.Layer) {
-          return PanelType.None;
-        }
-
-        return cur;
+        return cur === PanelType.Layer ? PanelType.None : cur;
       });
     };
 
@@ -74,25 +65,17 @@ const RightPanel = (): React.JSX.Element => {
   }, [isMobile]);
 
   useEffect(() => {
-    const hasElement = !!selectedElement;
+    const hasElement = Boolean(selectedElement);
 
     if (!isPathEditing) {
       if (isMobile) {
-        setPanelType((cur) => {
-          if (cur === PanelType.Layer) {
-            return cur;
-          }
-
-          if (!hasElement && cur !== PanelType.None) {
-            return PanelType.None;
-          }
-
-          if (hasElement && cur !== PanelType.Object) {
-            return PanelType.Object;
-          }
-
-          return cur;
-        });
+        setPanelType((prevType) =>
+          match({ hasElement, prevType })
+            .with({ prevType: PanelType.Layer }, () => prevType)
+            .with({ hasElement: false, prevType: P.not(PanelType.None) }, () => PanelType.None)
+            .with({ hasElement: true, prevType: P.not(PanelType.Object) }, () => PanelType.Object)
+            .otherwise(() => prevType),
+        );
       } else {
         setPanelType((cur) => {
           if (cur === PanelType.None || cur === PanelType.PathEdit) {
