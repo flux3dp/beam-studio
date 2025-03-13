@@ -1,7 +1,7 @@
 import { md5 } from '../../support/utils';
 
 const isRunningAtGithub = Cypress.env('envType') === 'github';
-const beamSeriersName = Cypress.env('beamSeriersName');
+const beamSeriesName = Cypress.env('beamSeriesName');
 const layerListPrefix = '_-_-packages-core-src-web-app-views-beambox-Right-Panels-LayerPanel-LayerList-module__';
 const colorPickerPrefix = '_-_-packages-core-src-web-app-widgets-ColorPicker-module__';
 const progressPrefix = '_-_-packages-core-src-web-app-views-dialogs-AlertAndProgress-module__';
@@ -35,7 +35,7 @@ describe('upload with machine', () => {
   });
 
   it('upload svg > Laser > Layer', () => {
-    cy.connectMachine(beamSeriersName);
+    cy.connectMachine(beamSeriesName);
     cy.changeWorkarea('Ador');
     cy.uploadFile('svg.svg', 'image/svg+xml');
     chooseImportOption('Laser', 'Layer');
@@ -50,7 +50,7 @@ describe('upload with machine', () => {
   });
 
   it('upload svg > Laser > Color', () => {
-    cy.connectMachine(beamSeriersName);
+    cy.connectMachine(beamSeriesName);
     cy.changeWorkarea('Ador');
     cy.uploadFile('svg.svg', 'image/svg+xml');
     chooseImportOption('Laser', 'Color');
@@ -67,7 +67,7 @@ describe('upload with machine', () => {
   });
 
   it('upload svg > Laser > Single Layer', () => {
-    cy.connectMachine(beamSeriersName);
+    cy.connectMachine(beamSeriesName);
     cy.changeWorkarea('Ador');
     cy.uploadFile('svg.svg', 'image/svg+xml');
     chooseImportOption('Laser', 'Single Layer');
@@ -82,7 +82,7 @@ describe('upload with machine', () => {
   });
 
   it('upload svg > Printing > Layer and change color', () => {
-    cy.connectMachine(beamSeriersName);
+    cy.connectMachine(beamSeriesName);
     cy.changeWorkarea('Ador');
     cy.uploadFile('svg.svg', 'image/svg+xml');
     chooseImportOption('Printing', 'Layer');
@@ -108,7 +108,7 @@ describe('upload with machine', () => {
   });
 
   it('upload svg > Printing > Single Layer', () => {
-    cy.connectMachine(beamSeriersName);
+    cy.connectMachine(beamSeriesName);
     cy.changeWorkarea('Ador');
     cy.uploadFile('svg.svg', 'image/svg+xml');
     chooseImportOption('Printing', 'Single Layer');
@@ -121,7 +121,7 @@ describe('upload with machine', () => {
   });
 
   it('upload gradient svg', () => {
-    cy.connectMachine(beamSeriersName);
+    cy.connectMachine(beamSeriesName);
     cy.uploadFile('gradient.svg', 'image/svg+xml');
     chooseImportOption(undefined, 'Layer');
     cy.get('#svg_1').should('exist');
@@ -134,7 +134,7 @@ describe('upload with machine', () => {
   });
 
   it('upload bitmap svg', () => {
-    cy.connectMachine(beamSeriersName);
+    cy.connectMachine(beamSeriesName);
     cy.uploadFile('bitmap.svg', 'image/svg+xml');
     chooseImportOption(undefined, 'Layer');
     cy.get('#svg_1').should('exist');

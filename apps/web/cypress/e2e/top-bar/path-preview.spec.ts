@@ -1,7 +1,7 @@
 import { md5 } from '../../support/utils';
 
 const isRunningAtGithub = Cypress.env('envType') === 'github';
-const beamSeriersName = Cypress.env('beamSeriersName');
+const beamSeriesName = Cypress.env('beamSeriesName');
 
 describe('path preview', () => {
   if (isRunningAtGithub) {
@@ -14,7 +14,7 @@ describe('path preview', () => {
   it('path preview with beamseries', () => {
     cy.setUpBackend(Cypress.env('backendIP'));
     cy.landingEditor();
-    cy.connectMachine(beamSeriersName);
+    cy.connectMachine(beamSeriesName);
     cy.uploadFile('flux.png', 'image/png');
     cy.get('#w_size').clear().type('20{enter}');
     cy.uploadFile('svg.svg', 'image/svg+xml');
@@ -35,10 +35,7 @@ describe('path preview', () => {
     cy.get('[title="Redo"]').should('exist');
     cy.get('[title="Delete"]').should('exist');
 
-    cy.get('#svg_1')
-      .should('exist')
-      .should('have.attr', 'width', '200')
-      .should('have.attr', 'height', '140');
+    cy.get('#svg_1').should('exist').should('have.attr', 'width', '200').should('have.attr', 'height', '140');
     cy.get('symbol#svg_2>g>g')
       .invoke('prop', 'innerHTML')
       .then((html) => {

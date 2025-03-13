@@ -1,6 +1,6 @@
-const isRunningAtGithub = Cypress.env('envType') === 'github';
-
 describe('reset', () => {
+  const isRunningAtGithub = Cypress.env('envType') === 'github';
+
   beforeEach(() => {
     cy.landingEditor();
   });

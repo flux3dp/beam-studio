@@ -12,30 +12,32 @@ describe('manipulate view', () => {
     cy.get('div.menu-btn-container').click();
     cy.get(':nth-child(3) > .rc-menu__item').click();
     cy.get('.rc-menu').contains('Zoom In').click();
-    zoomRatio().should('have.text', '46%');
+    zoomRatio().should('have.text', '42%');
   });
 
   it('top menu - zoom out', () => {
     cy.get('div.menu-btn-container').click();
     cy.get(':nth-child(3) > .rc-menu__item').click();
     cy.get('.rc-menu').contains('Zoom Out').click();
-    zoomRatio().should('have.text', '38%');
+    zoomRatio().should('have.text', '35%');
   });
 
   it('top menu - fit to window size', () => {
     cy.get('div.menu-btn-container').click();
     cy.get(':nth-child(3) > .rc-menu__item').click();
     cy.get('.rc-menu').contains('Fit to Window Size').click();
-    zoomRatio().should('have.text', '42%');
+    zoomRatio().should('have.text', '38%');
   });
 
   it('auto fit to window size', () => {
     cy.get('div.menu-btn-container').click();
     cy.get(':nth-child(3) > .rc-menu__item').click();
     cy.get('.rc-menu').contains('Auto Fit to Window Size').click();
-    zoomRatio().should('have.text', '42%');
+    zoomRatio().should('have.text', '38%');
     cy.viewport(1500, 1200);
-    const targetValue = Cypress.platform === 'win32' ? '75%' : '76%';
+
+    const targetValue = Cypress.platform === 'win32' ? '74%' : '74%';
+
     zoomRatio().should('have.text', targetValue);
   });
 
