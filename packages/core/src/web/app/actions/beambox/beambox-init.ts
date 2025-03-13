@@ -2,7 +2,7 @@ import Alert from '@core/app/actions/alert-caller';
 import BeamboxPreference, { migrate } from '@core/app/actions/beambox/beambox-preference';
 import Constant from '@core/app/actions/beambox/constant';
 import Tutorials from '@core/app/actions/beambox/tutorials';
-import autoFeederBoundaryDrawer from '@core/app/actions/canvas/autoFeederBoundaryDrawer';
+import addOnBoundaryDrawer from '@core/app/actions/canvas/addOnBoundaryDrawer';
 import openBottomBoundaryDrawer from '@core/app/actions/canvas/openBottomBoundaryDrawer';
 import Dialog from '@core/app/actions/dialog-caller';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
@@ -96,7 +96,7 @@ class BeamboxInit {
     cloud.recordActivity();
     BeamboxStore.onDrawGuideLines(this.displayGuides);
     alertHelper.registerAlertEvents();
-    autoFeederBoundaryDrawer.registerEvents();
+    addOnBoundaryDrawer.registerEvents();
     openBottomBoundaryDrawer.registerEvents();
 
     // WebSocket for Adobe Illustrator Plug-In

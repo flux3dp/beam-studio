@@ -5,20 +5,21 @@ import NS from '@core/app/constants/namespaces';
 import workareaManager from '@core/app/svgedit/workarea';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
-export class AutoFeederBoundaryDrawer {
-  private static instance: AutoFeederBoundaryDrawer;
+export class AddOnBoundaryDrawer {
+  private static instance: AddOnBoundaryDrawer;
 
   private container?: SVGSVGElement;
-  private path?: SVGPathElement;
+  private autoFeederPath?: SVGPathElement;
+  private passThroughPath?: SVGPathElement;
 
   private constructor() {}
 
-  static getInstance(): AutoFeederBoundaryDrawer {
-    if (!AutoFeederBoundaryDrawer.instance) {
-      AutoFeederBoundaryDrawer.instance = new AutoFeederBoundaryDrawer();
+  static getInstance(): AddOnBoundaryDrawer {
+    if (!AddOnBoundaryDrawer.instance) {
+      AddOnBoundaryDrawer.instance = new AddOnBoundaryDrawer();
     }
 
-    return AutoFeederBoundaryDrawer.instance;
+    return AddOnBoundaryDrawer.instance;
   }
 
   registerEvents(): void {
@@ -44,19 +45,28 @@ export class AutoFeederBoundaryDrawer {
       if (!canvasBackground) return;
 
       this.container = document.createElementNS(NS.SVG, 'svg') as SVGSVGElement;
-      this.container.setAttribute('id', 'auto-feeder-boundary');
+      this.container.setAttribute('id', 'add-on-boundary');
       this.container.setAttribute('x', '0');
       this.container.setAttribute('y', '0');
       this.container.setAttribute('width', '100%');
       this.container.setAttribute('height', '100%');
       this.container.setAttribute('style', 'pointer-events:none');
-      this.path = document.createElementNS(NS.SVG, 'path') as SVGPathElement;
-      this.path.setAttribute('fill', '#CCC');
-      this.path.setAttribute('fill-opacity', '0.4');
-      this.path.setAttribute('fill-rule', 'evenodd');
-      this.path.setAttribute('stroke', 'none');
-      this.path.setAttribute('style', 'pointer-events:none');
-      this.container.appendChild(this.path);
+
+      const generatePath = () => {
+        const path = document.createElementNS(NS.SVG, 'path') as SVGPathElement;
+
+        path.setAttribute('fill', '#CCC');
+        path.setAttribute('fill-opacity', '0.4');
+        path.setAttribute('fill-rule', 'evenodd');
+        path.setAttribute('stroke', 'none');
+        path.setAttribute('style', 'pointer-events:none');
+        this.container!.appendChild(path);
+
+        return path;
+      };
+
+      this.autoFeederPath = generatePath();
+      this.passThroughPath = generatePath();
       canvasBackground.appendChild(this.container);
     }
   }
@@ -68,35 +78,69 @@ export class AutoFeederBoundaryDrawer {
     this.container?.setAttribute('viewBox', viewBox);
   };
 
-  update = (): void => {
-    this.createElements();
-
+  updateAutoFeederPath = (): boolean => {
     const enabled = beamboxPreference.read('auto-feeder');
     const { height: workareaH, model, width: workareaW } = workareaManager;
     const { autoFeeder } = getSupportInfo(model);
 
     if (!enabled || !autoFeeder?.xRange) {
-      this.path?.setAttribute('d', '');
-      this.container?.setAttribute('display', 'none');
+      this.autoFeederPath?.setAttribute('d', '');
 
-      return;
+      return false;
     }
-
-    this.updateContainerSize();
-    this.container?.removeAttribute('display');
 
     let [x, width] = autoFeeder.xRange;
     const { dpmm } = constant;
 
     x *= dpmm;
     width *= dpmm;
-    this.path?.setAttribute(
+    this.autoFeederPath?.setAttribute(
       'd',
       `M0 0 H${x} V${workareaH} H0 Z M${x + width} 0 H${workareaW} V${workareaH} H${x + width} Z`,
     );
+
+    return true;
+  };
+
+  updatePassThroughPath = (): boolean => {
+    const enabled = beamboxPreference.read('pass-through');
+    const { height: workareaH, model, width: workareaW } = workareaManager;
+    const { passThrough } = getSupportInfo(model);
+
+    if (!enabled || !passThrough?.xRange) {
+      this.passThroughPath?.setAttribute('d', '');
+
+      return false;
+    }
+
+    let [x, width] = passThrough.xRange;
+    const { dpmm } = constant;
+
+    x *= dpmm;
+    width *= dpmm;
+    this.passThroughPath?.setAttribute(
+      'd',
+      `M0 0 H${x} V${workareaH} H0 Z M${x + width} 0 H${workareaW} V${workareaH} H${x + width} Z`,
+    );
+
+    return true;
+  };
+
+  update = (): void => {
+    this.createElements();
+
+    const hasAutoFeeder = this.updateAutoFeederPath();
+    const hasPassThrough = this.updatePassThroughPath();
+
+    if (hasAutoFeeder || hasPassThrough) {
+      this.updateContainerSize();
+      this.container?.removeAttribute('display');
+    } else {
+      this.container?.setAttribute('display', 'none');
+    }
   };
 }
 
-export const autoFeederBoundaryDrawer = AutoFeederBoundaryDrawer.getInstance();
+export const addOnBoundaryDrawer = AddOnBoundaryDrawer.getInstance();
 
-export default autoFeederBoundaryDrawer;
+export default addOnBoundaryDrawer;
