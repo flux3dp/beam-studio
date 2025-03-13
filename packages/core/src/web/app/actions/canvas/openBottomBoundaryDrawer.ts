@@ -60,6 +60,8 @@ const update = (): void => {
   const isOpenBottom = BeamboxPreference.read('borderless');
   const supportOpenBottom = getSupportInfo(BeamboxPreference.read('workarea')).openBottom;
 
+  console.log('update', isOpenBottom && supportOpenBottom);
+
   if (isOpenBottom && supportOpenBottom) {
     show();
   } else {
@@ -68,16 +70,14 @@ const update = (): void => {
 };
 
 const updateCanvasSize = (): void => {
-  if (!openBottomBoundarySVG) {
-    update();
+  if (openBottomBoundarySVG) {
+    const { height, width } = workareaManager;
+    const viewBox = `0 0 ${width} ${height}`;
 
-    return;
+    openBottomBoundarySVG.setAttribute('viewBox', viewBox);
   }
 
-  const { height, width } = workareaManager;
-  const viewBox = `0 0 ${width} ${height}`;
-
-  openBottomBoundarySVG.setAttribute('viewBox', viewBox);
+  update();
 };
 
 const registerEvents = (): void => {
