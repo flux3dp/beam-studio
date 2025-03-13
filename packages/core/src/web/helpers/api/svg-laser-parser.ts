@@ -15,6 +15,7 @@ import { modelsWithModules } from '@core/app/constants/layer-module/layer-module
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import workareaManager from '@core/app/svgedit/workarea';
+import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import AlertConfig from '@core/helpers/api/alert-config';
 import getRotaryRatio from '@core/helpers/device/get-rotary-ratio';
 import i18n from '@core/helpers/i18n';
@@ -86,7 +87,7 @@ export const getExportOpt = (
   }
 
   const rotaryMode = BeamboxPreference.read('rotary_mode') && supportInfo.rotary;
-  const autoFeeder = Boolean(BeamboxPreference.read('auto-feeder') && supportInfo.autoFeeder);
+  const autoFeeder = getAutoFeeder(supportInfo);
 
   if (rotaryMode) {
     config.spin = rotaryAxis.getPosition() ?? 0;
@@ -214,7 +215,7 @@ export const getExportOpt = (
 
   const isPassThroughTask =
     document.querySelectorAll('#svgcontent > g.layer:not([display="none"]) [data-pass-through="1"]').length > 0 ||
-    BeamboxPreference.read('pass-through');
+    getPassThrough(supportInfo);
 
   if (model === 'fbb2' && (isPassThroughTask || autoFeeder)) {
     config.mep = 30;
@@ -267,7 +268,7 @@ export const getExportOpt = (
   if (printingBotPadding !== undefined) config.pbp = printingBotPadding;
 
   if (modelsWithModules.has(model)) {
-    const offsets = { ...BeamboxPreference.read('module-offsets') };
+    const offsets = { ...BeamboxPreference.read('module-offsets') } as Record<string, [number, number]>;
 
     if (hasJobOrigin) {
       const refModule = getRefModule();

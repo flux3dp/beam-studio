@@ -1,4 +1,4 @@
-import { checkAdo1AutoFeeder, checkFbb2AutoFeeder } from '@core/helpers/checkFeature';
+import { checkAdo1AutoFeeder, checkFbb2AutoFeeder, checkFbm1AutoFeeder } from '@core/helpers/checkFeature';
 
 import type { WorkAreaModel } from './workarea-constants';
 
@@ -96,6 +96,9 @@ const supportList: Record<WorkAreaModel, SupportInfo> = {
     },
   },
   fbm1: {
+    autoFeeder: checkFbm1AutoFeeder()
+      ? { maxHeight: 2000, rotaryRatio: -CHUCK_ROTARY_DIAMETER / FEEDER_DIAMETER }
+      : undefined,
     autoFocus: true,
     hybridLaser: true,
     jobOrigin: true,

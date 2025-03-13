@@ -2,16 +2,14 @@ import type { Dispatch, SetStateAction } from 'react';
 import React, { createContext, useCallback, useEffect, useRef, useState } from 'react';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import tabController from '@core/app/actions/tabController';
-import { getSupportInfo } from '@core/app/constants/add-on';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import tutorialConstants from '@core/app/constants/tutorial-constants';
-import workareaManager from '@core/app/svgedit/workarea';
 import tutorialController from '@core/app/views/tutorials/tutorialController';
+import { getPassThrough } from '@core/helpers/addOn';
 import { getLatestDeviceInfo } from '@core/helpers/api/discover';
 import showResizeAlert from '@core/helpers/device/fit-device-workarea-alert';
 import getDevice from '@core/helpers/device/get-device';
@@ -178,10 +176,7 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
     canvasEventEmitter.on('SET_PATH_EDITING', setIsPathEditing);
     canvasEventEmitter.on('SET_MODE', setMode);
 
-    const canvasChangeHandler = () =>
-      setHasPassthroughExtension(
-        Boolean(beamboxPreference.read('pass-through') && getSupportInfo(workareaManager.model).passThrough),
-      );
+    const canvasChangeHandler = () => setHasPassthroughExtension(getPassThrough());
 
     canvasChangeHandler();
     canvasEventEmitter.on('canvas-change', canvasChangeHandler);

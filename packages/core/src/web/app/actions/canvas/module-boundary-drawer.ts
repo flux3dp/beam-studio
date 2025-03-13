@@ -4,6 +4,7 @@ import { getSupportInfo } from '@core/app/constants/add-on';
 import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
 import moduleBoundary from '@core/app/constants/layer-module/module-boundary';
 import workareaManager from '@core/app/svgedit/workarea';
+import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
 
@@ -93,9 +94,10 @@ const update = (module: LayerModule): void => {
     right = Math.max(right, -offsetX);
   }
 
-  const isRotary = Boolean(BeamboxPreference.read('rotary_mode') && getSupportInfo(model).rotary);
-  const isAutoFeeder = Boolean(BeamboxPreference.read('auto-feeder') && getSupportInfo(model).autoFeeder);
-  const isPassThrough = Boolean(BeamboxPreference.read('pass-through') && getSupportInfo(model).passThrough);
+  const supportInfo = getSupportInfo(model);
+  const isRotary = Boolean(BeamboxPreference.read('rotary_mode') && supportInfo.rotary);
+  const isAutoFeeder = getAutoFeeder(supportInfo);
+  const isPassThrough = getPassThrough(supportInfo);
 
   if (offsetY >= 0) {
     top = Math.max(top, offsetY);
