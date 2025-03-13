@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useMemo } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo } from 'react';
 
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Switch, Tooltip } from 'antd';
@@ -25,19 +25,22 @@ const Controls = (): React.JSX.Element => {
     setGuideMark,
     setPassThroughHeight,
     setReferenceLayer,
+    supportInfo,
     workarea,
     workareaObj,
   } = useContext(PassThroughContext);
 
   const { max, min } = useMemo(
     () => ({
-      max: workareaObj.passThroughMaxHeight ?? workareaObj.height,
+      max: supportInfo.passThrough?.maxHeight ?? workareaObj.height,
       min: 120,
     }),
-    [workareaObj],
+    [supportInfo, workareaObj],
   );
   const handleWorkareaHeightChange = useCallback(
-    (val) => {
+    (val: null | number) => {
+      if (val === null) return;
+
       setPassThroughHeight(Math.max(min, Math.min(val, max)));
     },
     [max, min, setPassThroughHeight],
@@ -46,14 +49,26 @@ const Controls = (): React.JSX.Element => {
   const { show, width: guideMarkWidth, x: guideMarkX } = guideMark;
   const { widthMax, xMax, xMin } = useMemo(
     () => ({
-      widthMax: (workareaObj.width - guideMarkX) * 2,
+      widthMax: Math.min(
+        (workareaObj.width - guideMarkX) * 2,
+        Math.floor(((workareaObj.height - passThroughHeight) * Math.sqrt(3)) / 2),
+      ),
       xMax: workareaObj.width - guideMarkWidth / 2,
       xMin: guideMarkWidth / 2,
     }),
-    [workareaObj.width, guideMarkX, guideMarkWidth],
+    [workareaObj.width, workareaObj.height, guideMarkX, guideMarkWidth, passThroughHeight],
   );
+
+  useEffect(() => {
+    if (guideMarkWidth > widthMax) {
+      setGuideMark((cur) => ({ ...cur, width: widthMax }));
+    }
+  }, [widthMax, guideMarkWidth, setGuideMark]);
+
   const setX = useCallback(
-    (val) => {
+    (val: null | number) => {
+      if (val === null) return;
+
       setGuideMark((cur) => ({
         ...cur,
         x: Math.max(xMin, Math.min(val, xMax)),
@@ -62,7 +77,9 @@ const Controls = (): React.JSX.Element => {
     [xMax, xMin, setGuideMark],
   );
   const setWidth = useCallback(
-    (val) => {
+    (val: null | number) => {
+      if (val === null) return;
+
       setGuideMark((cur) => ({
         ...cur,
         width: Math.max(0, Math.min(val, widthMax)),
