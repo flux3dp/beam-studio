@@ -8,7 +8,7 @@ import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-
 import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import dialogCaller from '@core/app/actions/dialog-caller';
-import { showPassThrough } from '@core/app/components/pass-through/PassThrough';
+import { showPassThrough } from '@core/app/components/pass-through';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { getSocialMedia } from '@core/app/constants/social-media-constants';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
