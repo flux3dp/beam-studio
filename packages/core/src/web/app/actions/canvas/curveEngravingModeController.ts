@@ -421,12 +421,9 @@ class CurveEngravingModeController {
       this.updateAreaPath();
       canvasEventEmitter.emit('CURVE_ENGRAVING_AREA_SET');
     };
-    const beamboxPreferenceCmds = ['rotary_mode', 'auto-feeder', 'pass-through'].map((key) => {
-      const oldValue = beamboxPreference.read(key);
-      const newValue = key === 'rotary_mode' ? 0 : false;
-
-      return new BeamboxPreferenceCommand(key, oldValue, newValue);
-    });
+    const beamboxPreferenceCmds = (['rotary_mode', 'auto-feeder', 'pass-through'] as const).map(
+      (key) => new BeamboxPreferenceCommand(key, beamboxPreference.read(key), false),
+    );
 
     customCmd.onAfter = postLoadData;
 
