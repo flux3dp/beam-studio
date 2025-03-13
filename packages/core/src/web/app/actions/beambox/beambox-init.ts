@@ -3,7 +3,6 @@ import BeamboxPreference, { migrate } from '@core/app/actions/beambox/beambox-pr
 import Constant from '@core/app/actions/beambox/constant';
 import Tutorials from '@core/app/actions/beambox/tutorials';
 import addOnBoundaryDrawer from '@core/app/actions/canvas/addOnBoundaryDrawer';
-import openBottomBoundaryDrawer from '@core/app/actions/canvas/openBottomBoundaryDrawer';
 import Dialog from '@core/app/actions/dialog-caller';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import { showAdorCalibrationV2 } from '@core/app/components/dialogs/camera/AdorCalibrationV2';
@@ -97,7 +96,6 @@ class BeamboxInit {
     BeamboxStore.onDrawGuideLines(this.displayGuides);
     alertHelper.registerAlertEvents();
     addOnBoundaryDrawer.registerEvents();
-    openBottomBoundaryDrawer.registerEvents();
 
     // WebSocket for Adobe Illustrator Plug-In
     aiExtension.init();
