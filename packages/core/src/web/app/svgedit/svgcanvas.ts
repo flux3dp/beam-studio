@@ -32,7 +32,6 @@
 
 import Alert from '@core/app/actions/alert-caller';
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import OpenBottomBoundaryDrawer from '@core/app/actions/beambox/open-bottom-boundary-drawer';
 import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import ToolPanelsController from '@core/app/actions/beambox/toolPanelsController';
 import grid from '@core/app/actions/canvas/grid';
@@ -2763,25 +2762,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // strs - Object with strings (see uiStrings for examples)
   this.setUiStrings = function (strs) {
     $.extend(uiStrings, strs.notification);
-  };
-
-  // Function: toggleBorderless
-  // switch Borderless mode if no input, set to turnOnBorderless if passed
-  //
-  // Parameters:
-  // turnOnBorderless - turn on borderless mode or not
-  this.toggleBorderless = function (turnOnBorderless) {
-    let borderless;
-
-    if (turnOnBorderless === undefined) {
-      borderless = BeamboxPreference.read('borderless') || false;
-      borderless = !borderless;
-    } else {
-      borderless = turnOnBorderless;
-    }
-
-    BeamboxPreference.write('borderless', borderless);
-    OpenBottomBoundaryDrawer.update();
   };
 
   // Function: setConfig

@@ -14,7 +14,6 @@ const changeWorkarea = (workarea: WorkAreaModel, opts: { toggleModule?: boolean 
 
     workareaManager.setWorkarea(currentValue);
     workareaManager.resetView();
-    openBottomBoundaryDrawer.update();
 
     if (toggleModule) toggleFullColorAfterWorkareaChange();
   };
