@@ -52,7 +52,7 @@ const UnitInput = forwardRef<HTMLInputElement | null, Props>(
       if (valueRef.current !== undefined && typeof props.value === 'number') {
         valueRef.current = props.value;
       }
-    }, [props.value]);
+    }, [props.value, valueRef.current]);
 
     const formatter = useCallback(
       (value: number | string = '') => {
