@@ -4,7 +4,6 @@ import { Modal, Result } from 'antd';
 
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { CalibrationContext } from '@core/app/contexts/CalibrationContext';
-import { getSVGCanvas } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
 
 const StepFinish = (): React.JSX.Element => {
@@ -19,7 +18,7 @@ const StepFinish = (): React.JSX.Element => {
       okText={lang.finish}
       onOk={() => {
         BeamboxPreference.write('should_remind_calibrate_camera', false);
-        getSVGCanvas().toggleBorderless(borderless);
+        BeamboxPreference.write('borderless', borderless);
         onClose(true);
       }}
       open

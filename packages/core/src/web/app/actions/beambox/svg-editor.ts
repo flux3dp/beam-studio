@@ -71,7 +71,6 @@ import Alert from '../alert-caller';
 import Progress from '../progress-caller';
 
 import BeamboxPreference from './beambox-preference';
-import OpenBottomBoundaryDrawer from './open-bottom-boundary-drawer';
 import PreviewModeController from './preview-mode-controller';
 import ToolPanelsController from './toolPanelsController';
 
@@ -592,7 +591,6 @@ const svgEditor = (window['svgEditor'] = (function () {
     }
 
     window['svgCanvas'] = editor.canvas = svgCanvas = new $.SvgCanvas(document.getElementById('svgcanvas'), curConfig);
-    OpenBottomBoundaryDrawer.update();
 
     var resize_timer,
       Actions,

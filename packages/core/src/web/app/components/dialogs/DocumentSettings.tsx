@@ -7,7 +7,6 @@ import classNames from 'classnames';
 import alertCaller from '@core/app/actions/alert-caller';
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant, { promarkModels } from '@core/app/actions/beambox/constant';
-import OpenBottomBoundaryDrawer from '@core/app/actions/beambox/open-bottom-boundary-drawer';
 import diodeBoundaryDrawer from '@core/app/actions/canvas/diode-boundary-drawer';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
@@ -205,9 +204,6 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
       changeWorkarea(workarea, { toggleModule: workareaChanged });
       rotaryAxis.toggleDisplay();
     } else {
-      // this is called in changeWorkarea
-      OpenBottomBoundaryDrawer.update();
-
       if (supportInfo.hybridLaser && enableDiode) {
         diodeBoundaryDrawer.show();
       } else {
