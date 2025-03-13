@@ -11,6 +11,7 @@ export class AddOnBoundaryDrawer {
   private container?: SVGSVGElement;
   private autoFeederPath?: SVGPathElement;
   private passThroughPath?: SVGPathElement;
+  private openBottomRect?: SVGRectElement;
 
   private constructor() {}
 
@@ -25,17 +26,21 @@ export class AddOnBoundaryDrawer {
   registerEvents(): void {
     const beamboxPreferenceEvents = eventEmitterFactory.createEventEmitter('beambox-preference');
     const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
+    const beamboxPreferenceEventEmitter = eventEmitterFactory.createEventEmitter('beambox-preference');
 
     beamboxPreferenceEvents.on('auto-feeder', this.update);
     canvasEventEmitter.on('canvas-change', this.update);
+    beamboxPreferenceEventEmitter.on('borderless', this.updateOpenBottomBoundary);
   }
 
   unregisterEvents(): void {
     const beamboxPreferenceEvents = eventEmitterFactory.createEventEmitter('beambox-preference');
     const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
+    const beamboxPreferenceEventEmitter = eventEmitterFactory.createEventEmitter('beambox-preference');
 
     beamboxPreferenceEvents.off('auto-feeder', this.update);
     canvasEventEmitter.off('canvas-change', this.update);
+    beamboxPreferenceEventEmitter.off('borderless', this.updateOpenBottomBoundary);
   }
 
   private createElements(): void {
@@ -52,8 +57,8 @@ export class AddOnBoundaryDrawer {
       this.container.setAttribute('height', '100%');
       this.container.setAttribute('style', 'pointer-events:none');
 
-      const generatePath = () => {
-        const path = document.createElementNS(NS.SVG, 'path') as SVGPathElement;
+      const generateElement = <T extends SVGElement>(tagName = 'path') => {
+        const path = document.createElementNS(NS.SVG, tagName) as T;
 
         path.setAttribute('fill', '#CCC');
         path.setAttribute('fill-opacity', '0.4');
@@ -65,8 +70,11 @@ export class AddOnBoundaryDrawer {
         return path;
       };
 
-      this.autoFeederPath = generatePath();
-      this.passThroughPath = generatePath();
+      this.autoFeederPath = generateElement();
+      this.passThroughPath = generateElement();
+      this.openBottomRect = generateElement('rect');
+      this.openBottomRect.setAttribute('y', '0');
+      this.openBottomRect.setAttribute('height', '100%');
       canvasBackground.appendChild(this.container);
     }
   }
@@ -126,18 +134,31 @@ export class AddOnBoundaryDrawer {
     return true;
   };
 
+  updateOpenBottomBoundary = (): void => {
+    const enabled = beamboxPreference.read('borderless');
+    const { model, width } = workareaManager;
+    const { openBottom } = getSupportInfo(model);
+
+    if (!enabled || !openBottom) {
+      this.openBottomRect?.setAttribute('display', 'none');
+
+      return;
+    }
+
+    const w = constant.borderless.safeDistance.X * constant.dpmm;
+    const x = width - w;
+
+    this.openBottomRect?.setAttribute('x', x.toString());
+    this.openBottomRect?.setAttribute('width', w.toString());
+    this.openBottomRect?.removeAttribute('display');
+  };
+
   update = (): void => {
     this.createElements();
-
-    const hasAutoFeeder = this.updateAutoFeederPath();
-    const hasPassThrough = this.updatePassThroughPath();
-
-    if (hasAutoFeeder || hasPassThrough) {
-      this.updateContainerSize();
-      this.container?.removeAttribute('display');
-    } else {
-      this.container?.setAttribute('display', 'none');
-    }
+    this.updateContainerSize();
+    this.updateAutoFeederPath();
+    this.updatePassThroughPath();
+    this.updateOpenBottomBoundary();
   };
 }
 
