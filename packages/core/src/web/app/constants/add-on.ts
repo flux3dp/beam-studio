@@ -8,7 +8,8 @@ export enum RotaryType {
 }
 
 export const CHUCK_ROTARY_DIAMETER = 133;
-export const FBB2_FEEDER_DIAMETER = 167.08;
+export const FBB2_FEEDER_DIAMETER = 167.08; // FIXME: This might be wrong due to PCB issue
+export const FEEDER_DIAMETER = 83.54;
 
 export interface SupportInfo {
   autoFeeder?: { maxHeight: number; rotaryRatio: number; xRange?: [number, number] }; // [x, width] in mm, no limit is not set
@@ -44,7 +45,7 @@ const hexaSupportInfo: SupportInfo = {
 const supportList: Record<WorkAreaModel, SupportInfo> = {
   ado1: {
     autoFeeder: checkAdo1AutoFeeder()
-      ? { maxHeight: 2000, rotaryRatio: CHUCK_ROTARY_DIAMETER / FBB2_FEEDER_DIAMETER }
+      ? { maxHeight: 2000, rotaryRatio: CHUCK_ROTARY_DIAMETER / FEEDER_DIAMETER }
       : undefined,
     framingLowLaser: true,
     jobOrigin: true,
