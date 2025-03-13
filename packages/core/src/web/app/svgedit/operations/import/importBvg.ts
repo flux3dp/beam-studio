@@ -83,21 +83,19 @@ export const importBvgString = async (
     if (matched) {
       let rotaryMode: string = matched[1];
 
-      if (rotaryMode === 'true') rotaryMode = '1';
-
       let cmd: ICommand;
 
       if (supportInfo.rotary) {
-        cmd = changeBeamboxPreferenceValue('rotary_mode', Number.parseInt(rotaryMode, 10), { parentCmd: batchCmd });
+        cmd = changeBeamboxPreferenceValue('rotary_mode', rotaryMode === 'true', { parentCmd: batchCmd });
 
-        if (rotaryMode === '1') {
+        if (rotaryMode === 'true') {
           changeBeamboxPreferenceValue('pass-through', false, { parentCmd: batchCmd });
           changeBeamboxPreferenceValue('auto-feeder', false, { parentCmd: batchCmd });
           curveEngravingModeController.clearArea(false);
         }
       } else {
-        cmd = changeBeamboxPreferenceValue('rotary_mode', 0, { parentCmd: batchCmd });
-        beamboxPreference.write('rotary_mode', 0);
+        cmd = changeBeamboxPreferenceValue('rotary_mode', false, { parentCmd: batchCmd });
+        beamboxPreference.write('rotary_mode', false);
       }
 
       cmd.onAfter = () => {
@@ -110,7 +108,7 @@ export const importBvgString = async (
     const engraveDpi = str.match(/data-engrave_dpi="([a-zA-Z]+)"/)?.[1];
 
     if (engraveDpi) {
-      changeBeamboxPreferenceValue('engrave_dpi', engraveDpi, { parentCmd: batchCmd });
+      changeBeamboxPreferenceValue('engrave_dpi', engraveDpi as 'high' | 'low' | 'medium', { parentCmd: batchCmd });
     } else {
       changeBeamboxPreferenceValue('engrave_dpi', 'medium', { parentCmd: batchCmd });
     }

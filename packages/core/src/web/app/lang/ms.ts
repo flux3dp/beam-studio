@@ -64,7 +64,7 @@ const lang: ILang = {
       title: 'Pengumuman',
     },
     banner: {
-      auto_feeder: 'Mod Pemakanan Auto',
+      auto_feeder: 'Mod Pemberi Automatik',
       camera_preview: 'Pratonton',
       camera_preview_borderless_mode: '(Bahagian Bawah Terbuka)',
       curve_engraving: 'Mod Ukiran Lengkung',

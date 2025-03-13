@@ -4,7 +4,6 @@ import { Flex } from 'antd';
 
 import { getSupportInfo } from '@core/app/constants/add-on';
 import CanvasMode from '@core/app/constants/canvasMode';
-import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import useBeamboxPreference from '@core/helpers/hooks/useBeamboxPreference';
 import useHasCurveEngraving from '@core/helpers/hooks/useHasCurveEngraving';
@@ -19,7 +18,7 @@ const Banner = (): React.ReactNode => {
   const lang = useI18n();
   const { mode, selectedDevice } = useContext(CanvasContext);
   const hasCurveEngravingData = useHasCurveEngraving();
-  const workarea = useBeamboxPreference<WorkAreaModel>('workarea');
+  const workarea = useBeamboxPreference('workarea');
   const isBorderless = useBeamboxPreference('borderless');
   const supportInfo = useMemo(() => getSupportInfo(workarea), [workarea]);
   const isRotary = useBeamboxPreference('rotary_mode') && supportInfo.rotary;

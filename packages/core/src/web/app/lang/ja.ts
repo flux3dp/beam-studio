@@ -64,10 +64,10 @@ const lang: ILang = {
       title: 'お知らせ',
     },
     banner: {
-      auto_feeder: '自動供給モード',
+      auto_feeder: 'オートフィーダーモード',
       camera_preview: 'プレビュー',
       camera_preview_borderless_mode: '(オープンボトム)',
-      curve_engraving: '曲面彫刻モード',
+      curve_engraving: 'カーブ彫刻モード',
       pass_through: 'パススルーモード',
       rotary: 'ロータリーモード',
     },

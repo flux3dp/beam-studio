@@ -19,7 +19,7 @@ describe('convert to path 2.0', () => {
     cy.get('#x_position').clear().type('100{enter}');
     cy.get('#svg_1', { timeout: 15000 })
       .invoke('attr', 'x')
-      .should('be.closeTo', isWindows ? 1013 : 1011, 3);
+      .should('be.closeTo', isWindows ? 1019 : 1011, 3);
     cy.get('#y_position').clear().type('50{enter}');
     cy.get('#svg_1', { timeout: 15000 }).invoke('attr', 'y').should('be.closeTo', 703, 3);
   };
@@ -62,8 +62,8 @@ describe('convert to path 2.0', () => {
     checkConsoleLog();
     cy.get('#svg_2').should('have.attr', 'd');
     verifyPathMd5('#svg_2', {
-      default: '432a712ac4b329ecd11be58fdcdde790',
-      githubWindows: '32f74dc5a909f0b3403fcafd1afe2b3d',
+      default: '6fde8da297586452f7561d6dc93299bc',
+      githubWindows: 'a93f7f803e8eea840d61531458838987',
       githubOther: '5951b071eac21549437779d3bb3554bd',
     });
   });
@@ -85,8 +85,8 @@ describe('convert to path 2.0', () => {
     checkConsoleLog();
     cy.get('#svg_2').should('have.attr', 'd');
     verifyPathMd5('#svg_2', {
-      default: '89ef0b6ca302cdb4135cb08e233a5f36',
-      githubWindows: 'e71f052a9de7de57ea304bbccef3404e',
+      default: '0b39368fe65b64e08cd08b9c8ff625b9',
+      githubWindows: '415ea1b80d7fc380646248203bfd10e4',
       githubOther: '9790fb3564249f0952dd1b131b77eba3',
     });
   });
@@ -100,8 +100,8 @@ describe('convert to path 2.0', () => {
     checkConsoleLog();
     cy.get('#svg_2').should('have.attr', 'd');
     verifyPathMd5('#svg_2', {
-      default: '2814055a2f354a9e7d95a5729348ffe7',
-      githubWindows: '83b76573bf6c669403024a000d0dc020',
+      default: 'd828dcc474ad48d26ecb9269cb3844fa',
+      githubWindows: '9f6739e16128b247684722743e8b04a1',
       githubOther: '8ffd98ed29e592cf37182bb6f9190729',
     });
   });

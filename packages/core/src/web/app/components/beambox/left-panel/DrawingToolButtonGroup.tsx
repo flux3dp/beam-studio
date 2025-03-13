@@ -9,7 +9,6 @@ import LeftPanelButton from '@core/app/components/beambox/left-panel/LeftPanelBu
 import { showPassThrough } from '@core/app/components/pass-through/PassThrough';
 import { getSupportInfo } from '@core/app/constants/add-on';
 import { getSocialMedia } from '@core/app/constants/social-media-constants';
-import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import { getCurrentUser } from '@core/helpers/api/flux-id';
@@ -35,12 +34,12 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
   const lang = useI18n();
   const tLeftPanel = lang.beambox.left_panel;
   const { changeToPreviewMode, hasPassthroughExtension, selectedDevice, setupPreviewMode } = useContext(CanvasContext);
-  const workarea = useBeamboxPreference<WorkAreaModel>('workarea');
+  const workarea = useBeamboxPreference('workarea');
   const supportInfo = getSupportInfo(workarea);
-  const isRotary = useBeamboxPreference<boolean>('rotary_mode') && Boolean(supportInfo.rotary);
-  const isAutoFeeder = useBeamboxPreference<boolean>('auto-feeder') && Boolean(supportInfo.autoFeeder);
-  const isPassThrough = useBeamboxPreference<boolean>('pass-through') && supportInfo.passThrough;
-  const isDisableCurveEngraving = useMemo(
+  const isRotary = useBeamboxPreference('rotary_mode') && Boolean(supportInfo.rotary);
+  const isAutoFeeder = useBeamboxPreference('auto-feeder') && Boolean(supportInfo.autoFeeder);
+  const isPassThrough = useBeamboxPreference('pass-through') && supportInfo.passThrough;
+  const isCurveEngravingDisabled = useMemo(
     () => isAutoFeeder || isRotary || isPassThrough,
     [isAutoFeeder, isRotary, isPassThrough],
   );
@@ -110,10 +109,10 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         renderToolButton(
           'curve-engrave',
           <LeftPanelIcons.CurveEngrave />,
-          isDisableCurveEngraving ? lang.global.mode_conflict : tLeftPanel.label.curve_engraving.title,
+          isCurveEngravingDisabled ? lang.global.mode_conflict : tLeftPanel.label.curve_engraving.title,
           () => curveEngravingModeController.start(),
           false,
-          isDisableCurveEngraving,
+          isCurveEngravingDisabled,
         )}
       {hasPassthroughExtension &&
         renderToolButton('PassThrough', <LeftPanelIcons.PassThrough />, tLeftPanel.label.pass_through, () =>

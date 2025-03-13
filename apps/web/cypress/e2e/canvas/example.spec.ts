@@ -23,43 +23,43 @@ const exampleList = [
     label: 'Example of beamo',
     type: 'Example Files',
     ador: ['7c07caadd8e494ad3586a7f773cbac8a', '86cabcae6bf8c83c3f06b4c4db3ddb8b'],
-    beam: '95b1331b843d02427d960a70306d0ba1',
+    beam: 'd4e9154a144a9a742c016f68e8fc879f',
   },
   {
     label: 'Example of Beambox',
     type: 'Example Files',
     ador: ['9c1a31175c421a17392cd3cc05c092b2', 'b2d80ef5c364fe9530a9a4f92df94ab8'],
-    beam: '49dfd3e462f6016e782e000746836d0f',
+    beam: '1e4436aa12db8fb12c9c17d94485fe4f',
   },
   {
     label: 'Material Engraving Test',
     type: 'Material Test',
     ador: ['22f173149936c6013852f36b4c8c7d2c', '595d3c88d037ea2477f2a67fc700b4d0'],
-    beam: '0147483207a6d8366461ee54513e0b77',
+    beam: 'f123c86896564f55eb0a863093df2804',
   },
   {
     label: 'Material Engraving Test - Classic',
     type: 'Material Test',
     ador: ['c8106ce4d8aa62f980bbfc2f67ed218e', '056d39ce285be6d34ec4ad29d4607bab'],
-    beam: 'b969ef63e9c3dc7daaf865cdd7455208',
+    beam: '3b79e4ed6a970d48d7c71e29672acc64',
   },
   {
     label: 'Material Cutting Test',
     type: 'Material Test',
     ador: ['e3282d392ba4b4117d826bc968ce228a', '7eeef206425514a784595d4f92338cc5'],
-    beam: '78cc9788d1454173416b2f82340774cd',
+    beam: 'b4a0f15fe65965e3a45ad68a335129f5',
   },
   {
     label: 'Material Cutting Test - Simple',
     type: 'Material Test',
     ador: ['cb190e98c4a193db5773daebf6a66f4b', 'c4e6034199673f77caed552f49fd293b'],
-    beam: 'f8c85c1949620307fa8f833e39b58c1b',
+    beam: '901273c1ef562f00cb16cf8e1a457c1f',
   },
   {
     label: 'Material Line Test',
     type: 'Material Test',
     ador: [],
-    beam: '905f46c1c4ebf4782a7ee886b385b4b8',
+    beam: '335f2040e868be7883f0390a5aff7a0c',
   },
   {
     label: 'Material Printing Test',
@@ -69,7 +69,7 @@ const exampleList = [
   {
     label: 'Acrylic Focus Probe - 3mm',
     ador: [],
-    beam: 'c0e3309e50c763e25f2c7ce8b0f782e3',
+    beam: 'd5444e1ec2065635296e20af38f71eb7',
   },
 ];
 

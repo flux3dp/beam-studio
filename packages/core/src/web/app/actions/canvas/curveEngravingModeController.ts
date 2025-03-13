@@ -399,7 +399,6 @@ class CurveEngravingModeController {
     this.areaPath.setAttribute('d', `${d1} ${d2}`);
   };
 
-  // TODO: write exclusive here, add beamboxPreferenceCommand.ts
   loadData = (data: CurveEngraving, opts: { parentCmd?: IBatchCommand } = {}): ICommand | null => {
     if (!this.checkSupport() || !data) {
       return null;

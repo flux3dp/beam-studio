@@ -228,13 +228,6 @@ class SwiftrayClient extends EventEmitter {
 
       this.logger.append(payload);
 
-      // Add to logger without large data
-      if (payload.params?.file) {
-        payload.params.file = '[file object]';
-      }
-
-      this.logger.append(payload);
-
       if (this.socket.readyState === WebSocket.OPEN) {
         if (dataString.length < 4096 || !vc.meetRequirement('SWIFTRAY_SUPPORT_BINARY')) {
           this.socket.send(dataString);
