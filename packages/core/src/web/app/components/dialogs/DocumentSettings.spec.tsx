@@ -58,12 +58,6 @@ jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   },
 }));
 
-const update = jest.fn();
-
-jest.mock('@core/app/actions/beambox/open-bottom-boundary-drawer', () => ({
-  update: () => update(),
-}));
-
 const mockToggleDisplay = jest.fn();
 
 jest.mock('@core/app/actions/canvas/rotary-axis', () => ({
@@ -164,7 +158,6 @@ describe('test DocumentSettings', () => {
     expect(baseElement).toMatchSnapshot();
 
     expect(mockBeamboxPreferenceWrite).not.toHaveBeenCalled();
-    expect(update).not.toHaveBeenCalled();
     expect(mockUnmount).not.toHaveBeenCalled();
     expect(mockChangeWorkarea).not.toHaveBeenCalled();
     mockQuerySelectorAll.mockReturnValueOnce([1]);
@@ -198,7 +191,6 @@ describe('test DocumentSettings', () => {
     expect(mockChangeWorkarea).toHaveBeenLastCalledWith('fbm1', { toggleModule: true });
     expect(mockToggleDisplay).toHaveBeenCalledTimes(1);
     expect(mockTogglePresprayArea).toHaveBeenCalledTimes(1);
-    expect(update).not.toHaveBeenCalled();
     expect(mockDiodeBoundaryDrawerShow).toHaveBeenCalledTimes(0);
     expect(mockDiodeBoundaryDrawerHide).toHaveBeenCalledTimes(0);
     expect(mockCreateEventEmitter).toHaveBeenCalledTimes(2);
