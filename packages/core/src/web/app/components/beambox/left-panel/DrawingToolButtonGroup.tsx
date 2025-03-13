@@ -6,7 +6,7 @@ import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import LeftPanelButton from '@core/app/components/beambox/left-panel/LeftPanelButton';
-import { showPassThrough } from '@core/app/components/pass-through/PassThrough';
+import { showPassThrough } from '@core/app/components/pass-through';
 import { getSupportInfo } from '@core/app/constants/add-on';
 import { getSocialMedia } from '@core/app/constants/social-media-constants';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';

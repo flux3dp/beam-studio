@@ -51,7 +51,7 @@ jest.mock('@core/app/contexts/CanvasContext', () => ({
 
 const mockShowPassThrough = jest.fn();
 
-jest.mock('@core/app/components/pass-through/PassThrough', () => ({
+jest.mock('@core/app/components/pass-through', () => ({
   showPassThrough: mockShowPassThrough,
 }));
 
