@@ -58,16 +58,16 @@ export class AddOnBoundaryDrawer {
       this.container.setAttribute('style', 'pointer-events:none');
 
       const generateElement = <T extends SVGElement>(tagName = 'path') => {
-        const path = document.createElementNS(NS.SVG, tagName) as T;
+        const elem = document.createElementNS(NS.SVG, tagName) as T;
 
-        path.setAttribute('fill', '#CCC');
-        path.setAttribute('fill-opacity', '0.4');
-        path.setAttribute('fill-rule', 'evenodd');
-        path.setAttribute('stroke', 'none');
-        path.setAttribute('style', 'pointer-events:none');
-        this.container!.appendChild(path);
+        elem.setAttribute('fill', '#CCC');
+        elem.setAttribute('fill-opacity', '0.4');
+        elem.setAttribute('fill-rule', 'evenodd');
+        elem.setAttribute('stroke', 'none');
+        elem.setAttribute('style', 'pointer-events:none');
+        this.container!.appendChild(elem);
 
-        return path;
+        return elem;
       };
 
       this.autoFeederPath = generateElement();
