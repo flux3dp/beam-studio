@@ -192,7 +192,7 @@ const sliceWorkarea = async (
       svgedit.recalculate.recalculateDimensions(container);
 
       const descendants = Array.from(container.querySelectorAll('*'));
-      const refMap = {}; // id changes
+      const refMap: Record<string, string> = {}; // id changes
 
       descendants.forEach(async (el) => {
         if (el.id) {
@@ -255,7 +255,7 @@ const sliceWorkarea = async (
       image.setAttribute('y', '0');
       image.setAttribute('width', width.toString());
       image.setAttribute('height', topPaddingPx.toString());
-      image.setAttributeNS(NS.XLINK, 'xlink:href', refImageBase64s[i]);
+      image.setAttributeNS(NS.XLINK, 'xlink:href', refImageBase64s![i]!);
       layer.appendChild(image);
     }
   }

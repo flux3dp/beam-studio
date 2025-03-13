@@ -11,6 +11,7 @@ export const CHUCK_ROTARY_DIAMETER = 133;
 export const FBB2_FEEDER_DIAMETER = 167.08; // FIXME: This might be wrong due to PCB issue
 export const FEEDER_DIAMETER = 83.54;
 
+// TODO: rename this to AddOnInfo because it's not only support or not
 export interface SupportInfo {
   autoFeeder?: { maxHeight: number; rotaryRatio: number; xRange?: [number, number] }; // [x, width] in mm, no limit is not set
   autoFocus?: boolean;
@@ -20,7 +21,7 @@ export interface SupportInfo {
   jobOrigin?: boolean;
   lowerFocus?: boolean;
   openBottom?: boolean;
-  passThrough?: boolean;
+  passThrough?: { maxHeight: number; xRange?: [number, number] }; // [x, width] in mm, no limit is not set
   redLight?: boolean;
   rotary?: {
     chuck: boolean;
@@ -50,7 +51,7 @@ const supportList: Record<WorkAreaModel, SupportInfo> = {
     framingLowLaser: true,
     jobOrigin: true,
     lowerFocus: true,
-    passThrough: true,
+    passThrough: { maxHeight: 240 },
     rotary: {
       chuck: true,
       defaultMirror: true,
@@ -84,7 +85,7 @@ const supportList: Record<WorkAreaModel, SupportInfo> = {
     curveEngraving: true,
     jobOrigin: true,
     lowerFocus: true,
-    passThrough: true,
+    passThrough: { maxHeight: 300, xRange: [100, 400] },
     redLight: true,
     rotary: {
       chuck: true,
@@ -99,7 +100,7 @@ const supportList: Record<WorkAreaModel, SupportInfo> = {
     hybridLaser: true,
     jobOrigin: true,
     openBottom: true,
-    passThrough: true,
+    passThrough: { maxHeight: 160 },
     rotary: {
       chuck: true,
       extendWorkarea: false,

@@ -43,7 +43,6 @@ export interface WorkArea {
   minPower?: number; // %
   minSpeed: number; // mm/s
   minSpeedWarning?: number; // mm/s
-  passThroughMaxHeight?: number; // mm
   pxDisplayHeight?: number; // px
   pxHeight: number; // px
   pxWidth: number; // px
@@ -76,7 +75,6 @@ const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     maxSpeed: 400,
     minPower: 10,
     minSpeed: 0.5,
-    passThroughMaxHeight: 240,
     pxDisplayHeight: 320 * dpmm,
     pxHeight: 300 * dpmm,
     pxWidth: 430 * dpmm,
@@ -115,7 +113,6 @@ const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     label: 'Beambox II',
     maxSpeed: 900,
     minSpeed: 0.5,
-    passThroughMaxHeight: 360,
     pxHeight: 375 * dpmm,
     pxWidth: 600 * dpmm,
     vectorSpeedLimit: 50,
