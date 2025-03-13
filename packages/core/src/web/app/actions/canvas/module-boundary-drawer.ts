@@ -60,7 +60,7 @@ const updateCanvasSize = (): void => {
 canvasEventEmitter.on('canvas-change', updateCanvasSize);
 
 const update = (module: LayerModule): void => {
-  const { height: h, model, width: w } = workareaManager;
+  const { expansion, height: h, model, width: w } = workareaManager;
 
   if (!modelsWithModules.has(model)) {
     boundaryPath?.setAttribute('d', '');
