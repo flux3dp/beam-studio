@@ -192,8 +192,17 @@ class BeamboxPreferenceClass {
 const beamboxPreference = new BeamboxPreferenceClass();
 
 export const migrate = (): void => {
-  beamboxPreference.write('rotary_mode', Boolean(beamboxPreference.read('rotary_mode')));
-  beamboxPreference.write('enable-job-origin', Boolean(beamboxPreference.read('enable-job-origin')));
+  // Migrate from 0/1 to boolean
+  (['rotary_mode', 'enable-job-origin', 'frame-before-start', 'promark-start-button'] as const).forEach((key) => {
+    const oldValue = beamboxPreference.read(key);
+
+    if (typeof oldValue === 'number') {
+      beamboxPreference.write(key, Boolean(oldValue));
+    }
+  });
+
+  // Rename
+  beamboxPreference.write('vector_speed_constraint', beamboxPreference.read('vector_speed_contraint' as any));
 };
 
 export default beamboxPreference;
