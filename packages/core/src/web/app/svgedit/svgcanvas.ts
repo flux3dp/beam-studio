@@ -47,6 +47,7 @@ import beamboxStore from '@core/app/stores/beambox-store';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import * as TutorialController from '@core/app/views/tutorials/tutorialController';
+import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import updateLayerColorFilter from '@core/helpers/color/updateLayerColorFilter';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
@@ -1788,15 +1789,15 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     svgcontent.setAttribute('data-en_diode', String(isUsingDiode));
     svgcontent.setAttribute('data-en_af', String(isUsingAF));
 
-    if (supportInfo.autoFeeder && BeamboxPreference.read('auto-feeder')) {
-      svgcontent.setAttribute('data-auto-feeder-height', BeamboxPreference.read('auto-feeder-height'));
+    if (getAutoFeeder(supportInfo)) {
+      svgcontent.setAttribute('data-auto-feeder-height', BeamboxPreference.read('auto-feeder-height')!.toFixed(2));
     }
 
-    if (supportInfo.passThrough && BeamboxPreference.read('pass-through')) {
-      svgcontent.setAttribute('data-pass_through', String(BeamboxPreference.read('pass-through-height')));
+    if (getPassThrough(supportInfo)) {
+      svgcontent.setAttribute('data-pass_through', BeamboxPreference.read('pass-through-height')!.toFixed(2));
     }
 
-    const workareaElement = document.getElementById('workarea');
+    const workareaElement = document.getElementById('workarea')!;
     const workareaObj = getWorkarea(workarea);
     const { pxDisplayHeight, pxHeight, pxWidth } = workareaObj;
     const zoom = workareaManager.zoomRatio;

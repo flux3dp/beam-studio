@@ -9,6 +9,7 @@ import Dialog from '@core/app/actions/dialog-caller';
 import { getSupportInfo } from '@core/app/constants/add-on';
 import alertConstants from '@core/app/constants/alert-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { getAutoFeeder } from '@core/helpers/addOn';
 import alertConfig from '@core/helpers/api/alert-config';
 import round from '@core/helpers/math/round';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -101,11 +102,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
     hasJobOrigin = true;
   }
 
-  if (
-    supportInfo.autoFeeder &&
-    beamboxPreference.read('auto-feeder') &&
-    !alertConfig.read('skip-auto-feeder-instruction')
-  ) {
+  if (getAutoFeeder(supportInfo) && !alertConfig.read('skip-auto-feeder-instruction')) {
     let animationSrcs = [
       { src: 'video/bb2-auto-feeder/top-down.webm', type: 'video/webm' },
       { src: 'video/bb2-auto-feeder/top-down.mp4', type: 'video/mp4' },

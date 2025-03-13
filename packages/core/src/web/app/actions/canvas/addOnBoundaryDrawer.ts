@@ -3,6 +3,7 @@ import constant from '@core/app/actions/beambox/constant';
 import { getSupportInfo } from '@core/app/constants/add-on';
 import NS from '@core/app/constants/namespaces';
 import workareaManager from '@core/app/svgedit/workarea';
+import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
 export class AddOnBoundaryDrawer {
@@ -30,7 +31,7 @@ export class AddOnBoundaryDrawer {
 
     beamboxPreferenceEvents.on('auto-feeder', this.update);
     canvasEventEmitter.on('canvas-change', this.update);
-    beamboxPreferenceEventEmitter.on('borderless', this.updateOpenBottomBoundary);
+    beamboxPreferenceEventEmitter.on('borderless', this.update);
   }
 
   unregisterEvents(): void {
@@ -40,7 +41,7 @@ export class AddOnBoundaryDrawer {
 
     beamboxPreferenceEvents.off('auto-feeder', this.update);
     canvasEventEmitter.off('canvas-change', this.update);
-    beamboxPreferenceEventEmitter.off('borderless', this.updateOpenBottomBoundary);
+    beamboxPreferenceEventEmitter.off('borderless', this.update);
   }
 
   private createElements(): void {
@@ -87,17 +88,17 @@ export class AddOnBoundaryDrawer {
   };
 
   updateAutoFeederPath = (): void => {
-    const enabled = beamboxPreference.read('auto-feeder');
     const { height: workareaH, model, width: workareaW } = workareaManager;
-    const { autoFeeder } = getSupportInfo(model);
+    const supportInfo = getSupportInfo(model);
+    const { autoFeeder } = supportInfo;
 
-    if (!enabled || !autoFeeder?.xRange) {
+    if (!getAutoFeeder(supportInfo) || !autoFeeder?.xRange) {
       this.autoFeederPath?.setAttribute('d', '');
 
       return;
     }
 
-    let [x, width] = autoFeeder.xRange;
+    let [x, width] = autoFeeder.xRange!;
     const { dpmm } = constant;
 
     x *= dpmm;
@@ -111,11 +112,11 @@ export class AddOnBoundaryDrawer {
   };
 
   updatePassThroughPath = (): void => {
-    const enabled = beamboxPreference.read('pass-through');
     const { height: workareaH, model, width: workareaW } = workareaManager;
-    const { passThrough } = getSupportInfo(model);
+    const supportInfo = getSupportInfo(model);
+    const { passThrough } = supportInfo;
 
-    if (!enabled || !passThrough?.xRange) {
+    if (!getPassThrough(supportInfo) || !passThrough?.xRange) {
       this.passThroughPath?.setAttribute('d', '');
 
       return;

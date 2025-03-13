@@ -14,6 +14,7 @@ import NS from '@core/app/constants/namespaces';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
+import { getAutoFeeder } from '@core/helpers/addOn';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 import getUtilWS from '@core/helpers/api/utils-ws';
 import checkDeviceStatus from '@core/helpers/check-device-status';
@@ -469,7 +470,7 @@ class FramingTaskManager extends EventEmitter {
     this.rotaryInfo = null;
 
     const rotaryMode = beamboxPreference.read('rotary_mode');
-    const autoFeeder = beamboxPreference.read('auto-feeder');
+    const autoFeeder = getAutoFeeder(this.supportInfo);
 
     if (rotaryMode && this.supportInfo.rotary) {
       const y = rotaryAxis.getPosition(true) ?? 0;

@@ -122,22 +122,34 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
       setPassThrough(false);
     }
   }, [autoFeeder]);
-  // for openBottom machine, disable pass-through when borderless is off
+
+  // for openBottom machine, path-through and autofeed require open-bottom mode
+  const { showAutoFeeder, showPassThrough } = useMemo(() => {
+    const canUseBorderlessModules = supportInfo.openBottom ? borderless : true;
+
+    return {
+      showAutoFeeder: supportInfo.autoFeeder && canUseBorderlessModules,
+      showPassThrough: supportInfo.passThrough && canUseBorderlessModules,
+    };
+  }, [supportInfo, borderless]);
+
   useEffect(() => {
-    if (supportInfo.openBottom && !borderless) setPassThrough(false);
+    if (supportInfo.openBottom && !borderless) {
+      setPassThrough(false);
+      setAutoFeeder(false);
+    }
   }, [supportInfo, borderless]);
 
   const minHeight = useMemo(() => workareaObj.displayHeight ?? workareaObj.height, [workareaObj]);
-  const showPassThrough = supportInfo.passThrough && (supportInfo.openBottom ? borderless : true);
 
   useEffect(() => {
     if (showPassThrough) setPassThroughHeight((cur) => Math.max(cur, minHeight));
   }, [minHeight, showPassThrough]);
   useEffect(() => {
-    if (supportInfo.autoFeeder) {
+    if (showAutoFeeder) {
       setAutoFeederHeight((cur) => Math.min(supportInfo.autoFeeder!.maxHeight, Math.max(minHeight, cur)));
     }
-  }, [minHeight, supportInfo.autoFeeder]);
+  }, [minHeight, supportInfo.autoFeeder, showAutoFeeder]);
 
   const handleSave = () => {
     const dpiEvent = eventEmitterFactory.createEventEmitter('dpi-info');
@@ -174,17 +186,18 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     const newPassThrough = Boolean(showPassThrough && passThrough);
     const passThroughChanged = newPassThrough !== BeamboxPreference.read('pass-through');
     const passThroughHeightChanged = passThroughHeight !== BeamboxPreference.read('pass-through-height');
-    const autoFeederChanged = autoFeeder !== BeamboxPreference.read('auto-feeder');
+    const newAutoFeeder = Boolean(showAutoFeeder && autoFeeder);
+    const autoFeederChanged = newAutoFeeder !== BeamboxPreference.read('auto-feeder');
     const autoFeederHeightChanged = autoFeederHeight !== BeamboxPreference.read('auto-feeder-height');
 
     BeamboxPreference.write('pass-through', newPassThrough);
 
     if (showPassThrough) BeamboxPreference.write('pass-through-height', Math.max(passThroughHeight, minHeight));
 
-    BeamboxPreference.write('auto-feeder', autoFeeder);
+    BeamboxPreference.write('auto-feeder', newAutoFeeder);
 
-    if (supportInfo.autoFeeder) {
-      const newVal = Math.min(supportInfo.autoFeeder.maxHeight, Math.max(minHeight, autoFeederHeight));
+    if (showAutoFeeder) {
+      const newVal = Math.min(supportInfo.autoFeeder!.maxHeight, Math.max(minHeight, autoFeederHeight));
 
       BeamboxPreference.write('auto-feeder-height', newVal);
     }
@@ -555,7 +568,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
               </div>
             </div>
           )}
-          {Boolean(supportInfo.autoFeeder) && (
+          {showAutoFeeder && (
             <div className={classNames(styles.row, styles.full)}>
               <div className={styles.title}>
                 <label htmlFor="auto_feeder">{tDocu.auto_feeder}</label>
