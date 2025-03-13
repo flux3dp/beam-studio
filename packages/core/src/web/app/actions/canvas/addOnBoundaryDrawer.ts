@@ -86,7 +86,7 @@ export class AddOnBoundaryDrawer {
     this.container?.setAttribute('viewBox', viewBox);
   };
 
-  updateAutoFeederPath = (): boolean => {
+  updateAutoFeederPath = (): void => {
     const enabled = beamboxPreference.read('auto-feeder');
     const { height: workareaH, model, width: workareaW } = workareaManager;
     const { autoFeeder } = getSupportInfo(model);
@@ -94,7 +94,7 @@ export class AddOnBoundaryDrawer {
     if (!enabled || !autoFeeder?.xRange) {
       this.autoFeederPath?.setAttribute('d', '');
 
-      return false;
+      return;
     }
 
     let [x, width] = autoFeeder.xRange;
@@ -107,10 +107,10 @@ export class AddOnBoundaryDrawer {
       `M0 0 H${x} V${workareaH} H0 Z M${x + width} 0 H${workareaW} V${workareaH} H${x + width} Z`,
     );
 
-    return true;
+    return;
   };
 
-  updatePassThroughPath = (): boolean => {
+  updatePassThroughPath = (): void => {
     const enabled = beamboxPreference.read('pass-through');
     const { height: workareaH, model, width: workareaW } = workareaManager;
     const { passThrough } = getSupportInfo(model);
@@ -118,7 +118,7 @@ export class AddOnBoundaryDrawer {
     if (!enabled || !passThrough?.xRange) {
       this.passThroughPath?.setAttribute('d', '');
 
-      return false;
+      return;
     }
 
     let [x, width] = passThrough.xRange;
@@ -131,7 +131,7 @@ export class AddOnBoundaryDrawer {
       `M0 0 H${x} V${workareaH} H0 Z M${x + width} 0 H${workareaW} V${workareaH} H${x + width} Z`,
     );
 
-    return true;
+    return;
   };
 
   updateOpenBottomBoundary = (): void => {
