@@ -325,14 +325,14 @@ const ConnectMachineIp = (): React.JSX.Element => {
 
     // go to select-promark-laser-source for promark devices
     if (isPromark) {
-      window.location.hash = '#initialize/connect/select-promark-laser-source';
+      window.location.hash = '#/initialize/connect/select-promark-laser-source';
 
       return;
     }
 
     dialogCaller.showLoadingWindow();
 
-    window.location.hash = '#studio/beambox';
+    window.location.hash = '#/studio/beambox';
     window.location.reload();
   };
 

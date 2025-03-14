@@ -34,7 +34,7 @@ export default (callback: () => void): void => {
   const { hash } = window.location;
   const onFinished = (isReady: boolean) => {
     if (isReady === true && (hash === '' || hash.startsWith('#initialize'))) {
-      window.location.hash = '#studio/beambox';
+      window.location.hash = '#/studio/beambox';
     } else if (isReady === false && !hash.startsWith('#initialize')) {
       window.location.hash = '#';
     }

@@ -55,13 +55,13 @@ function Settings(): React.JSX.Element {
     updateToStorage();
 
     autoSaveHelper.setConfig(editingAutosaveConfig);
-    window.location.hash = '#studio/beambox';
+    window.location.hash = '#/studio/beambox';
     window.location.reload();
   };
 
   const handleCancel = (): void => {
     i18n.setActiveLang(previousActiveLang);
-    window.location.hash = '#studio/beambox';
+    window.location.hash = '#/studio/beambox';
     window.location.reload();
   };
 

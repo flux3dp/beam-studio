@@ -22,7 +22,7 @@ const SelectConnectionType = (): React.JSX.Element => {
   const model = useMemo(() => new URLSearchParams(search).get('model') as WorkAreaModel, [search]);
 
   const handleBack = () => {
-    window.location.hash = '#initialize/connect/select-machine-model';
+    window.location.hash = '#/initialize/connect/select-machine-model';
   };
 
   const handleConnectionTypeClick = (type: 'ether2ether' | 'usb' | 'wifi' | 'wired') => {

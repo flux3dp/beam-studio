@@ -51,21 +51,21 @@ const SelectMachineModel = (): React.JSX.Element => {
     }
 
     if (isSelectBeambox) {
-      window.location.hash = '#initialize/connect/select-machine-model';
+      window.location.hash = '#/initialize/connect/select-machine-model';
 
       return;
     }
 
     storage.set('printer-is-ready', true);
     dialog.showLoadingWindow();
-    window.location.hash = '#studio/beambox';
+    window.location.hash = '#/studio/beambox';
     windowLocationReload();
   }, [isNewUser, isSelectBeambox]);
 
   const handleNextClick = (model?: WorkAreaModel) => {
     // for beambox series, select different model in the next step
     if (model === 'fbb1p' && !isSelectBeambox) {
-      window.location.hash = '#initialize/connect/select-machine-model?model=fbb1p';
+      window.location.hash = '#/initialize/connect/select-machine-model?model=fbb1p';
 
       return;
     }
