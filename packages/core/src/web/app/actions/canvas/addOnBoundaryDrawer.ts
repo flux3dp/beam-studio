@@ -74,6 +74,7 @@ export class AddOnBoundaryDrawer {
       this.autoFeederPath = generateElement();
       this.passThroughPath = generateElement();
       this.openBottomRect = generateElement('rect');
+      this.openBottomRect.id = 'open-bottom-boundary';
       this.openBottomRect.setAttribute('y', '0');
       this.openBottomRect.setAttribute('height', '100%');
       canvasBackground.appendChild(this.container);

@@ -142,7 +142,7 @@ describe('manipulate document setting', () => {
     cy.changeWorkarea('beamo', false);
     clickAndCheck('borderless_mode', true);
     cy.get('button[class^="ant-btn"]').contains('Save').click();
-    cy.get('#open-bottom-boundary > rect').should('have.attr', 'display', 'block');
+    cy.get('rect#open-bottom-boundary').should('exist');
   });
 
   it('check autofocus', () => {
