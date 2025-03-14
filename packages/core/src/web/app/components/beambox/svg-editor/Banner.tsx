@@ -57,7 +57,9 @@ const Banner = (): React.ReactNode => {
     return (
       <Flex align="center" className={styles.flex} justify="center" vertical>
         {list.map((message) => (
-          <div className={styles.text}>{message}</div>
+          <div className={styles.text} key={`banner-${message}`}>
+            {message}
+          </div>
         ))}
       </Flex>
     );

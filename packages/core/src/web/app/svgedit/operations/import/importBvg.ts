@@ -85,6 +85,10 @@ export const importBvgString = async (
 
       let cmd: ICommand;
 
+      if (['0', '1'].includes(rotaryMode)) {
+        rotaryMode = rotaryMode === '1' ? 'true' : 'false';
+      }
+
       if (supportInfo.rotary) {
         cmd = changeBeamboxPreferenceValue('rotary_mode', rotaryMode === 'true', { parentCmd: batchCmd });
 
