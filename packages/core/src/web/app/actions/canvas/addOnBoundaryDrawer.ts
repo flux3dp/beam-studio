@@ -27,21 +27,21 @@ export class AddOnBoundaryDrawer {
   registerEvents(): void {
     const beamboxPreferenceEvents = eventEmitterFactory.createEventEmitter('beambox-preference');
     const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
-    const beamboxPreferenceEventEmitter = eventEmitterFactory.createEventEmitter('beambox-preference');
 
-    beamboxPreferenceEvents.on('auto-feeder', this.update);
+    beamboxPreferenceEvents.on('auto-feeder', this.updateAutoFeederPath);
+    beamboxPreferenceEvents.on('borderless', this.update);
+    beamboxPreferenceEvents.on('pass-through', this.updatePassThroughPath);
     canvasEventEmitter.on('canvas-change', this.update);
-    beamboxPreferenceEventEmitter.on('borderless', this.update);
   }
 
   unregisterEvents(): void {
     const beamboxPreferenceEvents = eventEmitterFactory.createEventEmitter('beambox-preference');
     const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
-    const beamboxPreferenceEventEmitter = eventEmitterFactory.createEventEmitter('beambox-preference');
 
-    beamboxPreferenceEvents.off('auto-feeder', this.update);
+    beamboxPreferenceEvents.off('auto-feeder', this.updateAutoFeederPath);
+    beamboxPreferenceEvents.off('borderless', this.update);
+    beamboxPreferenceEvents.off('pass-through', this.updatePassThroughPath);
     canvasEventEmitter.off('canvas-change', this.update);
-    beamboxPreferenceEventEmitter.off('borderless', this.update);
   }
 
   private createElements(): void {
