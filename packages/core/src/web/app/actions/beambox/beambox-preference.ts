@@ -160,6 +160,14 @@ class BeamboxPreferenceClass {
     // set default preference if key or even beambox-preference doesn't exist
     const preference: BeamboxPreference = storage.get('beambox-preference') || DEFAULT_PREFERENCE;
 
+    // migrate renamed key
+    const oldValue = preference['vector_speed_contraint' as BeamboxPreferenceKey];
+
+    if (oldValue !== undefined) {
+      preference['vector_speed_constraint'] = oldValue as boolean;
+      delete preference['vector_speed_contraint' as BeamboxPreferenceKey];
+    }
+
     // to migrate preference of old version
     for (const key in DEFAULT_PREFERENCE) {
       if (!(key in preference)) {
@@ -200,9 +208,6 @@ export const migrate = (): void => {
       beamboxPreference.write(key, Boolean(oldValue));
     }
   });
-
-  // Rename
-  beamboxPreference.write('vector_speed_constraint', beamboxPreference.read('vector_speed_contraint' as any));
 };
 
 export default beamboxPreference;
