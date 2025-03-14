@@ -475,9 +475,7 @@ class FramingTaskManager extends EventEmitter {
     if (rotaryMode && this.supportInfo.rotary) {
       const y = rotaryAxis.getPosition(true) ?? 0;
 
-      this.rotaryInfo = { y, yRatio: getRotaryRatio(this.supportInfo) };
-
-      if (this.isFcodeV2) this.rotaryInfo!.useAAxis = true;
+      this.rotaryInfo = { useAAxis: this.isFcodeV2, y, yRatio: getRotaryRatio(this.supportInfo) };
     } else if (autoFeeder && this.supportInfo.autoFeeder) {
       let y: number;
 
@@ -490,7 +488,7 @@ class FramingTaskManager extends EventEmitter {
         y = reverseEngraving ? workareaObj.height : 0;
       }
 
-      this.rotaryInfo = { useAAxis: true, y, yRatio: this.supportInfo.autoFeeder.rotaryRatio };
+      this.rotaryInfo = { useAAxis: this.isFcodeV2, y, yRatio: this.supportInfo.autoFeeder.rotaryRatio };
     }
   };
 
