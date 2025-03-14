@@ -49,6 +49,7 @@
     "react-konva": "^18.2.10",
     "react-resizable": "^3.0.5",
     "react-router-dom": "^5.2.0",
+    "remeda": "^2.21.2",
     "rxjs": "^7.1.0",
     "sprintf-js": "^1.1.2",
     "three": "^0.159.0",
