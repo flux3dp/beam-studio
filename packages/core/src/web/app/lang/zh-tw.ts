@@ -63,6 +63,14 @@ const lang: ILang = {
     announcement_panel: {
       title: '公告',
     },
+    banner: {
+      auto_feeder: '自動送料模式',
+      camera_preview: '預覽',
+      camera_preview_borderless_mode: '(開放底部)',
+      curve_engraving: '曲面雕刻模式',
+      pass_through: '廣域雕刻模式',
+      rotary: '旋轉軸模式',
+    },
     bottom_right_panel: {
       convert_text_to_path_before_export: '部分字型在不同系統間有差異，輸出前請將字體轉換成路徑，以確保文字正確顯示。轉換文字至路徑中...',
       export_file_error_ask_for_upload: '匯出工作時發生錯誤，是否願意上傳工作場景回報錯誤給開發團隊？',
@@ -1194,6 +1202,7 @@ const lang: ILang = {
       zoom_in: '放大',
       zoom_out: '縮小',
     },
+    mode_conflict: '當前模式下無法使用此選項。',
     ok: '確定',
     save: '儲存',
     stop: '停止',
@@ -1806,8 +1815,6 @@ const lang: ILang = {
       QcleanScene: '您確定清除場景嗎？<br/>這同時也會刪除您的操作歷史記錄。',
       start_preview_timeout: '#803 啟動相機預覽時超時，請重新開啟您的機器或是 Beam Studio ，如果此錯誤持續發生，請參考<a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/articles/360001111355">此則引導</a>。',
     },
-    borderless: '(開蓋模式)',
-    curve_engrave: '3D 曲面',
     frame_task: '外框預覽',
     hint: {
       polygon: '按下 + / - 鍵以增加 / 減少邊數。',
@@ -1979,7 +1986,6 @@ const lang: ILang = {
     },
     preview: '相機預覽',
     preview_press_esc_to_stop: '按下 ESC 鍵以停止相機預覽。',
-    preview_title: '相機預覽',
     rename_tab: '重新命名分頁',
     select_machine: '選擇機器',
     tag_names: {

@@ -1,5 +1,6 @@
 import alertCaller from '@core/app/actions/alert-caller';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import { getSupportInfo } from '@core/app/constants/add-on';
@@ -23,7 +24,7 @@ import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import setSvgContent from './setSvgContent';
 
 let svgCanvas: ISVGCanvas;
-let svgedit;
+let svgedit: any;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
@@ -57,13 +58,13 @@ export const importBvgString = async (
   // loadFromString will lose data-xform and data-wireframe of `use` so set it back here
   if (typeof str === 'string') {
     const workarea = document.getElementById('workarea');
-    const tmp = str.substr(str.indexOf('<use')).split('<use');
+    const tmp = str.substring(str.indexOf('<use')).split('<use');
 
-    for (let i = 1; i < tmp.length; i += 1) {
+    for (let i = 1; i < tmp.length; i++) {
       tmp[i] = tmp[i].substring(0, tmp[i].indexOf('/>'));
 
       const id = tmp[i].match(/id="(svg_\d+)"/)?.[1];
-      const elem = document.getElementById(id);
+      const elem = document.getElementById(id!);
 
       if (elem) {
         const xform = tmp[i].match(/data-xform="([^"]*)"/)?.[1];
@@ -76,45 +77,51 @@ export const importBvgString = async (
       }
     }
 
-    let match = str.match(/data-rotary_mode="([^"]*)"/);
+    let matched = str.match(/data-rotary_mode="([^"]*)"/);
     const supportInfo = getSupportInfo(currentWorkarea as WorkAreaModel);
 
-    if (match) {
-      let rotaryMode = match[1];
-
-      if (rotaryMode === 'true') rotaryMode = '1';
+    if (matched) {
+      let rotaryMode: string = matched[1];
 
       let cmd: ICommand;
 
+      if (['0', '1'].includes(rotaryMode)) {
+        rotaryMode = rotaryMode === '1' ? 'true' : 'false';
+      }
+
       if (supportInfo.rotary) {
-        cmd = changeBeamboxPreferenceValue('rotary_mode', Number.parseInt(rotaryMode, 10), {
-          parentCmd: batchCmd,
-        });
+        cmd = changeBeamboxPreferenceValue('rotary_mode', rotaryMode === 'true', { parentCmd: batchCmd });
+
+        if (rotaryMode === 'true') {
+          changeBeamboxPreferenceValue('pass-through', false, { parentCmd: batchCmd });
+          changeBeamboxPreferenceValue('auto-feeder', false, { parentCmd: batchCmd });
+          curveEngravingModeController.clearArea(false);
+        }
       } else {
-        cmd = changeBeamboxPreferenceValue('rotary_mode', 0, { parentCmd: batchCmd });
-        beamboxPreference.write('rotary_mode', 0);
+        cmd = changeBeamboxPreferenceValue('rotary_mode', false, { parentCmd: batchCmd });
+        beamboxPreference.write('rotary_mode', false);
       }
 
       cmd.onAfter = () => {
         rotaryAxis.toggleDisplay();
-        workareaManager.setWorkarea(beamboxPreference.read('workarea'));
       };
+
       rotaryAxis.toggleDisplay();
     }
 
     const engraveDpi = str.match(/data-engrave_dpi="([a-zA-Z]+)"/)?.[1];
 
     if (engraveDpi) {
-      changeBeamboxPreferenceValue('engrave_dpi', engraveDpi, { parentCmd: batchCmd });
+      changeBeamboxPreferenceValue('engrave_dpi', engraveDpi as 'high' | 'low' | 'medium', { parentCmd: batchCmd });
     } else {
       changeBeamboxPreferenceValue('engrave_dpi', 'medium', { parentCmd: batchCmd });
     }
 
     if (supportInfo.hybridLaser) {
-      match = str.match(/data-en_diode="([a-zA-Z]+)"/);
+      matched = str.match(/data-en_diode="([a-zA-Z]+)"/);
 
-      if (match && match[1]) {
-        if (match[1] === 'true') {
+      if (matched && matched[1]) {
+        if (matched[1] === 'true') {
           changeBeamboxPreferenceValue('enable-diode', true, { parentCmd: batchCmd });
         } else {
           changeBeamboxPreferenceValue('enable-diode', false, { parentCmd: batchCmd });
@@ -123,10 +130,10 @@ export const importBvgString = async (
     }
 
     if (supportInfo.autoFocus) {
-      match = str.match(/data-en_af="([a-zA-Z]+)"/);
+      matched = str.match(/data-en_af="([a-zA-Z]+)"/);
 
-      if (match && match[1]) {
-        if (match[1] === 'true') {
+      if (matched && matched[1]) {
+        if (matched[1] === 'true') {
           changeBeamboxPreferenceValue('enable-autofocus', true, { parentCmd: batchCmd });
         } else {
           changeBeamboxPreferenceValue('enable-autofocus', false, { parentCmd: batchCmd });
@@ -135,45 +142,66 @@ export const importBvgString = async (
     }
 
     if (supportInfo.passThrough) {
-      match = str.match(/data-pass_through="([0-9.]+)"/);
+      matched = str.match(/data-pass_through="([0-9.]+)"/);
 
-      if (match && match[1]) {
-        const height = Number.parseFloat(match[1]);
+      if (matched && matched[1]) {
+        const height = Number.parseFloat(matched[1]);
 
         if (!Number.isNaN(height) && height > 0) {
           changeBeamboxPreferenceValue('pass-through', true, { parentCmd: batchCmd });
           changeBeamboxPreferenceValue('pass-through-height', height, { parentCmd: batchCmd });
+
+          changeBeamboxPreferenceValue('auto-feeder', false, { parentCmd: batchCmd });
+          changeBeamboxPreferenceValue('rotary_mode', false, { parentCmd: batchCmd });
+          curveEngravingModeController.clearArea(false);
+        }
+      }
+    }
+
+    if (supportInfo.autoFeeder) {
+      matched = str.match(/data-auto-feeder-height="([0-9.]+)"/);
+
+      if (matched && matched[1]) {
+        const height = Number.parseFloat(matched[1]);
+
+        if (!Number.isNaN(height) && height > 0) {
+          changeBeamboxPreferenceValue('auto-feeder', true, { parentCmd: batchCmd });
+          changeBeamboxPreferenceValue('auto-feeder-height', height, { parentCmd: batchCmd });
+
+          changeBeamboxPreferenceValue('rotary_mode', false, { parentCmd: batchCmd });
+          changeBeamboxPreferenceValue('pass-through', false, { parentCmd: batchCmd });
+          curveEngravingModeController.clearArea(false);
         }
       }
     }
 
     LayerPanelController.updateLayerPanel();
-    match = str.match(/data-zoom="[0-9.]+"/);
+    matched = str.match(/data-zoom="[0-9.]+"/);
 
-    if (match) {
-      const zoom = Number.parseFloat(match[0].substring(11, match[0].length - 1));
+    if (matched) {
+      const zoom = Number.parseFloat(matched[0].substring(11, matched[0].length - 1));
 
       workareaManager.zoom(zoom);
     }
 
-    match = str.match(/data-left="[-0-9]+"/);
+    matched = str.match(/data-left="[-0-9]+"/);
 
     const { height, width, zoomRatio } = workareaManager;
 
-    if (match) {
-      let left = Number.parseInt(match[0].substring(11, match[0].length - 1), 10);
+    if (matched) {
+      let left = Number.parseInt(matched[0].substring(11, matched[0].length - 1), 10);
 
       left = Math.round((left + width) * zoomRatio);
-      workarea.scrollLeft = left;
+      workarea!.scrollLeft = left;
     }
 
-    match = str.match(/data-top="[-0-9]+"/);
+    matched = str.match(/data-top="[-0-9]+"/);
 
-    if (match) {
-      let top = Number.parseInt(match[0].substring(10, match[0].length - 1), 10);
+    if (matched) {
+      let top = Number.parseInt(matched[0].substring(10, matched[0].length - 1), 10);
 
       top = Math.round((top + height) * zoomRatio);
-      workarea.scrollTop = top;
+      workarea!.scrollTop = top;
     }
   }
 
@@ -182,7 +210,7 @@ export const importBvgString = async (
 
   if (!modelsWithModules.has(currentWorkarea)) {
     const hasPrintingLayer =
-      document.getElementById('svgcontent')?.querySelectorAll(`g.layer[data-module="${LayerModule.PRINTER}"]`).length >
+      document.getElementById('svgcontent')?.querySelectorAll(`g.layer[data-module="${LayerModule.PRINTER}"]`).length! >
       0;
 
     if (hasPrintingLayer) {
@@ -219,13 +247,14 @@ export const importBvgString = async (
   const { nextSibling, parentNode } = defs;
 
   defs.remove();
-  batchCmd.addSubCommand(new history.RemoveElementCommand(defs, nextSibling, parentNode));
+  batchCmd.addSubCommand(new history.RemoveElementCommand(defs, nextSibling!, parentNode!));
   svgedit.utilities.moveDefsOutfromSvgContent();
 
   const newDefs = findDefs();
 
   batchCmd.addSubCommand(new history.InsertElementCommand(newDefs));
 
+  const { addToHistory = true, parentCmd } = opts;
   const postImportBvgString = async () => {
     const workarea = beamboxPreference.read('workarea');
 
@@ -236,12 +265,15 @@ export const importBvgString = async (
     await symbolMaker.reRenderAllImageSymbol();
     presprayArea.togglePresprayArea();
     LayerPanelController.setSelectedLayers([]);
+
+    if (!parentCmd) {
+      workareaManager.setWorkarea(workarea);
+      workareaManager.resetView();
+    }
   };
 
   await postImportBvgString();
   batchCmd.onAfter = postImportBvgString;
-
-  const { addToHistory = true, parentCmd } = opts;
 
   if (parentCmd) parentCmd.addSubCommand(batchCmd);
   else if (addToHistory) svgCanvas.addCommandToHistory(batchCmd);
@@ -252,7 +284,7 @@ const importBvg = async (file: Blob): Promise<void> => {
     const reader = new FileReader();
 
     reader.onloadend = async (evt) => {
-      const str = evt.target.result;
+      const str = evt.target?.result;
 
       await importBvgString(str as string);
       resolve();

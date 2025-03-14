@@ -1447,7 +1447,9 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
       }
     } catch (err) {
       console.log(t, t?.id, 'has no g parent');
-      throw err;
+      console.log(err);
+
+      return;
     }
 
     const isNeedToSelect =

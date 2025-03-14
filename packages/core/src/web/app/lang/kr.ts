@@ -63,6 +63,14 @@ const lang: ILang = {
     announcement_panel: {
       title: '공지사항',
     },
+    banner: {
+      auto_feeder: '자동 공급 모드',
+      camera_preview: '미리보기',
+      camera_preview_borderless_mode: '(하단 개방)',
+      curve_engraving: '곡선 조각 모드',
+      pass_through: '패스스루 모드',
+      rotary: '회전 모드',
+    },
     bottom_right_panel: {
       convert_text_to_path_before_export: '텍스트를 패스로 변환...',
       export_file_error_ask_for_upload: '작업 내보내기 실패. 버그 보고를 위해 작업 중인 씬을 개발팀에 제공할 의사가 있으신가요?',
@@ -1194,6 +1202,7 @@ const lang: ILang = {
       zoom_in: '확대',
       zoom_out: '축소',
     },
+    mode_conflict: '이 옵션은 현재 모드에서 사용할 수 없습니다.',
     ok: '확인',
     save: '저장',
     stop: '중지',
@@ -1806,8 +1815,6 @@ const lang: ILang = {
       QcleanScene: '그림을 지우시겠습니까?<br/>이것은 또한 취소 기록을 지울 것입니다!',
       start_preview_timeout: '#803 미리보기 모드로 시작할 때 시간초과가 발생합니다. 기계 또는 빔스튜디오를 다시 시작해 주세요. 이 에러가 지속된다면 다음 가이드를 따라주세요. <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">this guide</a>',
     },
-    borderless: '(하단 열기)',
-    curve_engrave: '3D 곡선',
     frame_task: '프레임 미리보기',
     hint: {
       polygon: '늘리기 / 줄이기를 위해 + /- 키를 누르세요.',
@@ -1979,7 +1986,6 @@ const lang: ILang = {
     },
     preview: '미리보기',
     preview_press_esc_to_stop: 'ESC를 눌러 카메라 미리보기를 중지하세요.',
-    preview_title: '미리보기',
     rename_tab: '탭 이름 변경',
     select_machine: '기계를 선택하세요',
     tag_names: {

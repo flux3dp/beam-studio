@@ -61,6 +61,14 @@ export interface ILang {
     announcement_panel: {
       title: string;
     };
+    banner: {
+      auto_feeder: string;
+      camera_preview: string;
+      camera_preview_borderless_mode: string;
+      curve_engraving: string;
+      pass_through: string;
+      rotary: string;
+    };
     bottom_right_panel: {
       convert_text_to_path_before_export: string;
       export_file_error_ask_for_upload: string;
@@ -1181,7 +1189,7 @@ export interface ILang {
     UNKNOWN_COMMAND: string;
     UNKNOWN_ERROR: string;
   };
-  global: Record<'apply' | 'back' | 'cancel' | 'ok' | 'save' | 'stop', string> & {
+  global: Record<'apply' | 'back' | 'cancel' | 'mode_conflict' | 'ok' | 'save' | 'stop', string> & {
     editing: Record<'redo' | 'reset' | 'undo' | 'zoom_in' | 'zoom_out', string>;
   };
   image_edit_panel: {
@@ -1799,8 +1807,6 @@ export interface ILang {
       QcleanScene: string;
       start_preview_timeout: string;
     };
-    borderless: string;
-    curve_engrave: string;
     frame_task: string;
     hint: {
       polygon: string;
@@ -1972,7 +1978,6 @@ export interface ILang {
     };
     preview: string;
     preview_press_esc_to_stop: string;
-    preview_title: string;
     rename_tab: string;
     select_machine: string;
     tag_names: {

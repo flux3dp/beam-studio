@@ -63,6 +63,14 @@ const lang: ILang = {
     announcement_panel: {
       title: 'Ogłoszenie',
     },
+    banner: {
+      auto_feeder: 'Tryb Automatycznego Podajnika',
+      camera_preview: 'Podgląd',
+      camera_preview_borderless_mode: '(Otwarty Spód)',
+      curve_engraving: 'Tryb Grawerowania Krzywizn',
+      pass_through: 'Tryb Przelotowy',
+      rotary: 'Tryb Obrotowy',
+    },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Konwertuj tekst na ścieżkę...',
       export_file_error_ask_for_upload: 'Nie udało się wyeksportować zadania. Czy chcesz udostępnić scenę roboczą do opracowania zespołu do zgłaszania błędów?',
@@ -1194,6 +1202,7 @@ const lang: ILang = {
       zoom_in: 'Powiększ',
       zoom_out: 'Pomniejsz',
     },
+    mode_conflict: 'Ta opcja nie jest dostępna w bieżącym trybie.',
     ok: 'OK',
     save: 'Zapisz',
     stop: 'Stop',
@@ -1806,8 +1815,6 @@ const lang: ILang = {
       QcleanScene: 'Czy chcesz wyczyścić rysunek?<br/>Spowoduje to także usunięcie historii cofania!',
       start_preview_timeout: '#803 Upłynął limit czasu podczas uruchamiania trybu podglądu. Uruchom ponownie komputer i Beam Studio. Jeśli błąd będzie się powtarzał, postępuj zgodnie z <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">tym przewodnikiem</a>.',
     },
-    borderless: '(OTWARTE DNO)',
-    curve_engrave: 'Krzywa 3D',
     frame_task: 'Rama do biegania',
     hint: {
       polygon: 'Naciśnij klawisz + / -, aby zwiększyć / zmniejszyć ilość boków.',
@@ -1979,7 +1986,6 @@ const lang: ILang = {
     },
     preview: 'PODGLĄD',
     preview_press_esc_to_stop: 'Naciśnij ESC, aby zatrzymać podgląd kamery.',
-    preview_title: 'PODGLĄD',
     rename_tab: 'Zmień nazwę karty',
     select_machine: 'Wybierz maszynę',
     tag_names: {

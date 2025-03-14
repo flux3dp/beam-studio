@@ -228,14 +228,16 @@ class SwiftrayClient extends EventEmitter {
 
       this.logger.append(payload);
 
-      if (dataString.length < 4096 || !vc.meetRequirement('SWIFTRAY_SUPPORT_BINARY')) {
-        this.socket.send(dataString);
-      } else {
-        // Change to binary string to avoid non-utf8 characters due to frame size limit
-        this.socket.send(Buffer.from(dataString));
+      if (this.socket.readyState === WebSocket.OPEN) {
+        if (dataString.length < 4096 || !vc.meetRequirement('SWIFTRAY_SUPPORT_BINARY')) {
+          this.socket.send(dataString);
+        } else {
+          // Change to binary string to avoid non-utf8 characters due to frame size limit
+          this.socket.send(Buffer.from(dataString));
+        }
       }
 
-      const callback = (data) => {
+      const callback = (data: any) => {
         if (data.id === id) {
           this.removeListener('callback', callback);
           // console.log("SR Client Callback", data);

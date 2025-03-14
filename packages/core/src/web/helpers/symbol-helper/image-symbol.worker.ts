@@ -1,5 +1,8 @@
 onmessage = async (e) => {
   const startTime = performance.now();
+
+  if (!e?.data?.type) return;
+
   const { type } = e.data;
 
   if (type === 'svgStringToBlob') {

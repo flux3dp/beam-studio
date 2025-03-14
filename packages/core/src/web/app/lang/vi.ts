@@ -63,6 +63,14 @@ const lang: ILang = {
     announcement_panel: {
       title: 'Thông báo',
     },
+    banner: {
+      auto_feeder: 'Chế Độ Nạp Liệu Tự Động',
+      camera_preview: 'Xem Trước',
+      camera_preview_borderless_mode: '(Mở Dưới)',
+      curve_engraving: 'Chế Độ Khắc Đường Cong',
+      pass_through: 'Chế Độ Xuyên Qua',
+      rotary: 'Chế Độ Quay',
+    },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Đang chuyển đổi chữ thành đường dẫn...',
       export_file_error_ask_for_upload: 'Xuất tệp thất bại. Bạn có muốn cung cấp cảnh làm việc để báo cáo lỗi không?',
@@ -1194,6 +1202,7 @@ const lang: ILang = {
       zoom_in: 'Phóng to',
       zoom_out: 'Thu nhỏ',
     },
+    mode_conflict: 'Tùy chọn này không khả dụng trong chế độ hiện tại.',
     ok: 'OK',
     save: 'Lưu',
     stop: 'Dừng',
@@ -1806,8 +1815,6 @@ const lang: ILang = {
       QcleanScene: 'Bạn có muốn xóa bản vẽ không?<br/>Điều này cũng sẽ xóa lịch sử hoàn tác của bạn!',
       start_preview_timeout: '#803 Đã xảy ra lỗi khi bắt đầu chế độ xem trước. Vui lòng khởi động lại máy hoặc Beam Studio. Nếu lỗi này vẫn xảy ra, vui lòng làm theo <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">hướng dẫn này</a>.',
     },
-    borderless: '(MỞ PHÍA DƯỚI)',
-    curve_engrave: 'Đường cong 3D',
     frame_task: 'Đang chạy khung',
     hint: {
       polygon: 'Nhấn phím + / - để tăng / giảm số cạnh',
@@ -1979,7 +1986,6 @@ const lang: ILang = {
     },
     preview: 'XEM TRƯỚC',
     preview_press_esc_to_stop: 'Nhấn ESC để dừng xem trước camera.',
-    preview_title: 'Xem trước',
     rename_tab: 'Đổi tên tab',
     select_machine: 'Chọn máy',
     tag_names: {

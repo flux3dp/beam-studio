@@ -63,6 +63,14 @@ const lang: ILang = {
     announcement_panel: {
       title: 'Ανακοίνωση',
     },
+    banner: {
+      auto_feeder: 'Λειτουργία Αυτόματης Τροφοδοσίας',
+      camera_preview: 'Προεπισκόπηση',
+      camera_preview_borderless_mode: '(Ανοιχτός Πάτος)',
+      curve_engraving: 'Λειτουργία Χάραξης Καμπύλης',
+      pass_through: 'Λειτουργία Διέλευσης',
+      rotary: 'Λειτουργία Περιστροφής',
+    },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Μετατρέψτε το κείμενο σε μονοπάτι πριν από την εξαγωγή',
       export_file_error_ask_for_upload: 'Αποτυχία εξαγωγής εργασίας. Είστε πρόθυμοι να παρέχετε τη σκηνή εργασίας στην ομάδα ανάπτυξης για αναφορά σφαλμάτων;',
@@ -1194,6 +1202,7 @@ const lang: ILang = {
       zoom_in: 'Μεγέθυνση',
       zoom_out: 'Σμίκρυνση',
     },
+    mode_conflict: 'Αυτή η επιλογή δεν είναι διαθέσιμη στην τρέχουσα λειτουργία.',
     ok: 'Εντάξει',
     save: 'Αποθήκευση',
     stop: 'Σταμάτημα',
@@ -1806,8 +1815,6 @@ const lang: ILang = {
       QcleanScene: 'Θέλετε να διαγράψετε το σχέδιο;<br/>Αυτό θα διαγράψει επίσης το ιστορικό αναίρεσής σας!',
       start_preview_timeout: '#803 Χρονικό όριο κατά την εκκίνηση της προεπισκόπησης. Κάντε επανεκκίνηση του μηχανήματος ή του Beam Studio. Αν το σφάλμα επιμένει, ακολουθήστε <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">αυτόν τον οδηγό</a>.',
     },
-    borderless: '(ΑΝΟΙΧΤΟ ΚΑΤΩ)',
-    curve_engrave: '3D Καμπύλη',
     frame_task: 'Εκτέλεση πλαισίου',
     hint: {
       polygon: 'Πατήστε το πλήκτρο + / - για να αυξήσετε / μειώσετε τις πλευρές.',
@@ -1979,7 +1986,6 @@ const lang: ILang = {
     },
     preview: 'ΠΡΟΕΠΙΣΚΟΠΗΣΗ',
     preview_press_esc_to_stop: 'Πατήστε ESC για να σταματήσετε την προεπισκόπηση της κάμερας.',
-    preview_title: 'Προεπισκόπηση',
     rename_tab: 'Μετονομασία καρτέλας',
     select_machine: 'Επιλέξτε μηχανή',
     tag_names: {

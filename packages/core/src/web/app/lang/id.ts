@@ -63,6 +63,14 @@ const lang: ILang = {
     announcement_panel: {
       title: 'Pengumuman',
     },
+    banner: {
+      auto_feeder: 'Mode Pengumpan Otomatis',
+      camera_preview: 'Pratinjau',
+      camera_preview_borderless_mode: '(Bawah Terbuka)',
+      curve_engraving: 'Mode Ukiran Lengkung',
+      pass_through: 'Mode Lintasan',
+      rotary: 'Mode Putar',
+    },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Ubah Teks Menjadi Lintasan...',
       export_file_error_ask_for_upload: 'Gagal mengekspor pekerjaan. Apakah Anda bersedia memberikan adegan kerja kepada tim pengembang untuk laporan bug?',
@@ -1194,6 +1202,7 @@ const lang: ILang = {
       zoom_in: 'Perbesar',
       zoom_out: 'Perkecil',
     },
+    mode_conflict: 'Opsi ini tidak tersedia dalam mode saat ini.',
     ok: 'OK',
     save: 'Simpan',
     stop: 'Berhenti',
@@ -1806,8 +1815,6 @@ const lang: ILang = {
       QcleanScene: 'Apakah Anda ingin menghapus gambar?<br/>Ini juga akan menghapus riwayat undo Anda!',
       start_preview_timeout: '#803 Timeout telah terjadi saat memulai mode pratinjau. Harap mulai ulang mesin Anda atau Beam Studio. Jika kesalahan ini berlanjut, ikuti <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">panduan ini</a>.',
     },
-    borderless: '(BUKA BAWAH)',
-    curve_engrave: '3D Kurva',
     frame_task: 'Jalankan Bingkai',
     hint: {
       polygon: 'Tekan tombol + / - untuk menambah / mengurangi sisi.',
@@ -1979,7 +1986,6 @@ const lang: ILang = {
     },
     preview: 'PRATINJAU',
     preview_press_esc_to_stop: 'Tekan ESC untuk menghentikan pratinjau kamera.',
-    preview_title: 'Pratinjau',
     rename_tab: 'Ganti nama tab',
     select_machine: 'Pilih mesin',
     tag_names: {

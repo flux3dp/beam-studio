@@ -9,7 +9,9 @@ import { CanvasMode } from '@core/app/constants/canvasMode';
 import NS from '@core/app/constants/namespaces';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import cursorIconUrl from '@core/app/icons/left-panel/curve-select.svg?url';
+import BeamboxPreferenceCommand from '@core/app/svgedit/history/beamboxPreferenceCommand';
 import CustomCommand from '@core/app/svgedit/history/CustomCommand';
+import { BatchCommand } from '@core/app/svgedit/history/history';
 import workareaManager from '@core/app/svgedit/workarea';
 import RawModeCurveMeasurer from '@core/helpers/device/curve-measurer/raw';
 import RedLightCurveMeasurer from '@core/helpers/device/curve-measurer/red-light';
@@ -398,13 +400,14 @@ class CurveEngravingModeController {
   };
 
   loadData = (data: CurveEngraving, opts: { parentCmd?: IBatchCommand } = {}): ICommand | null => {
-    if (!this.checkSupport()) {
+    if (!this.checkSupport() || !data) {
       return null;
     }
 
     const origData = this.data;
-    const cmd = new CustomCommand(
-      'Load Curve Engraving Data',
+    const cmd = new BatchCommand('Curve Engraving Load Data');
+    const customCmd = new CustomCommand(
+      'Curve Engraving Post Load Data',
       () => {
         this.data = data;
       },
@@ -417,8 +420,15 @@ class CurveEngravingModeController {
       this.updateAreaPath();
       canvasEventEmitter.emit('CURVE_ENGRAVING_AREA_SET');
     };
+    const beamboxPreferenceCmds = (['rotary_mode', 'auto-feeder', 'pass-through'] as const).map(
+      (key) => new BeamboxPreferenceCommand(key, beamboxPreference.read(key), false),
+    );
 
-    cmd.onAfter = postLoadData;
+    customCmd.onAfter = postLoadData;
+
+    beamboxPreferenceCmds.forEach((c) => cmd.addSubCommand(c));
+    cmd.addSubCommand(customCmd);
+
     cmd.apply();
     postLoadData();
 

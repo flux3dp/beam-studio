@@ -5,6 +5,8 @@ let instance: any;
 let type: 'clipper' | 'offset';
 
 onmessage = async ({ data: { cmd, data, id } }) => {
+  if (!cmd) return;
+
   const startTime = performance.now();
 
   if (cmd === 'initOffset') {
