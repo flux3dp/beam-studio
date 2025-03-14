@@ -58,12 +58,6 @@ jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   },
 }));
 
-const update = jest.fn();
-
-jest.mock('@core/app/actions/beambox/open-bottom-boundary-drawer', () => ({
-  update: () => update(),
-}));
-
 const mockToggleDisplay = jest.fn();
 
 jest.mock('@core/app/actions/canvas/rotary-axis', () => ({
@@ -164,7 +158,6 @@ describe('test DocumentSettings', () => {
     expect(baseElement).toMatchSnapshot();
 
     expect(mockBeamboxPreferenceWrite).not.toHaveBeenCalled();
-    expect(update).not.toHaveBeenCalled();
     expect(mockUnmount).not.toHaveBeenCalled();
     expect(mockChangeWorkarea).not.toHaveBeenCalled();
     mockQuerySelectorAll.mockReturnValueOnce([1]);
@@ -183,7 +176,7 @@ describe('test DocumentSettings', () => {
 
     onConfirm();
     await new Promise((resolve) => setTimeout(resolve, 0));
-    expect(mockBeamboxPreferenceWrite).toHaveBeenCalledTimes(10);
+    expect(mockBeamboxPreferenceWrite).toHaveBeenCalledTimes(11);
     expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(1, 'engrave_dpi', 'high');
     expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(2, 'borderless', true);
     expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(3, 'enable-diode', true);
@@ -192,13 +185,13 @@ describe('test DocumentSettings', () => {
     expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(6, 'pass-through', true);
     expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(7, 'pass-through-height', 500);
     expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(8, 'auto-feeder', false);
-    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(9, 'enable-job-origin', true);
-    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(10, 'job-origin', 1);
+    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(9, 'auto-feeder-height', 320);
+    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(10, 'enable-job-origin', true);
+    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(11, 'job-origin', 1);
     expect(mockChangeWorkarea).toHaveBeenCalledTimes(1);
     expect(mockChangeWorkarea).toHaveBeenLastCalledWith('fbm1', { toggleModule: true });
     expect(mockToggleDisplay).toHaveBeenCalledTimes(1);
     expect(mockTogglePresprayArea).toHaveBeenCalledTimes(1);
-    expect(update).not.toHaveBeenCalled();
     expect(mockDiodeBoundaryDrawerShow).toHaveBeenCalledTimes(0);
     expect(mockDiodeBoundaryDrawerHide).toHaveBeenCalledTimes(0);
     expect(mockCreateEventEmitter).toHaveBeenCalledTimes(2);

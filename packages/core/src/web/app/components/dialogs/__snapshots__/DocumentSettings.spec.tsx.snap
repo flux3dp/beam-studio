@@ -404,6 +404,44 @@ exports[`test DocumentSettings should render correctly 1`] = `
                         </button>
                       </div>
                     </div>
+                    <div
+                      class="row full"
+                    >
+                      <div
+                        class="title"
+                      >
+                        <label
+                          for="auto_feeder"
+                        >
+                          Auto Feeder
+                        </label>
+                      </div>
+                      <div
+                        class="control"
+                      >
+                        <button
+                          aria-checked="false"
+                          class="ant-switch switch css-dev-only-do-not-override-hash"
+                          id="auto_feeder"
+                          role="switch"
+                          type="button"
+                        >
+                          <div
+                            class="ant-switch-handle"
+                          />
+                          <span
+                            class="ant-switch-inner"
+                          >
+                            <span
+                              class="ant-switch-inner-checked"
+                            />
+                            <span
+                              class="ant-switch-inner-unchecked"
+                            />
+                          </span>
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -825,6 +863,44 @@ exports[`test DocumentSettings should render correctly 2`] = `
                           aria-checked="false"
                           class="ant-switch switch css-dev-only-do-not-override-hash"
                           id="pass_through"
+                          role="switch"
+                          type="button"
+                        >
+                          <div
+                            class="ant-switch-handle"
+                          />
+                          <span
+                            class="ant-switch-inner"
+                          >
+                            <span
+                              class="ant-switch-inner-checked"
+                            />
+                            <span
+                              class="ant-switch-inner-unchecked"
+                            />
+                          </span>
+                        </button>
+                      </div>
+                    </div>
+                    <div
+                      class="row full"
+                    >
+                      <div
+                        class="title"
+                      >
+                        <label
+                          for="auto_feeder"
+                        >
+                          Auto Feeder
+                        </label>
+                      </div>
+                      <div
+                        class="control"
+                      >
+                        <button
+                          aria-checked="false"
+                          class="ant-switch switch css-dev-only-do-not-override-hash"
+                          id="auto_feeder"
                           role="switch"
                           type="button"
                         >
@@ -1627,6 +1703,44 @@ exports[`test DocumentSettings should render correctly 3`] = `
                             />
                           </svg>
                         </span>
+                      </div>
+                    </div>
+                    <div
+                      class="row full"
+                    >
+                      <div
+                        class="title"
+                      >
+                        <label
+                          for="auto_feeder"
+                        >
+                          Auto Feeder
+                        </label>
+                      </div>
+                      <div
+                        class="control"
+                      >
+                        <button
+                          aria-checked="false"
+                          class="ant-switch switch css-dev-only-do-not-override-hash"
+                          id="auto_feeder"
+                          role="switch"
+                          type="button"
+                        >
+                          <div
+                            class="ant-switch-handle"
+                          />
+                          <span
+                            class="ant-switch-inner"
+                          >
+                            <span
+                              class="ant-switch-inner-checked"
+                            />
+                            <span
+                              class="ant-switch-inner-unchecked"
+                            />
+                          </span>
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -2475,6 +2589,44 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
                         </button>
                       </div>
                     </div>
+                    <div
+                      class="row full"
+                    >
+                      <div
+                        class="title"
+                      >
+                        <label
+                          for="auto_feeder"
+                        >
+                          Auto Feeder
+                        </label>
+                      </div>
+                      <div
+                        class="control"
+                      >
+                        <button
+                          aria-checked="false"
+                          class="ant-switch switch css-dev-only-do-not-override-hash"
+                          id="auto_feeder"
+                          role="switch"
+                          type="button"
+                        >
+                          <div
+                            class="ant-switch-handle"
+                          />
+                          <span
+                            class="ant-switch-inner"
+                          >
+                            <span
+                              class="ant-switch-inner-checked"
+                            />
+                            <span
+                              class="ant-switch-inner-unchecked"
+                            />
+                          </span>
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -3147,6 +3299,44 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
                           aria-checked="false"
                           class="ant-switch switch css-dev-only-do-not-override-hash"
                           id="pass_through"
+                          role="switch"
+                          type="button"
+                        >
+                          <div
+                            class="ant-switch-handle"
+                          />
+                          <span
+                            class="ant-switch-inner"
+                          >
+                            <span
+                              class="ant-switch-inner-checked"
+                            />
+                            <span
+                              class="ant-switch-inner-unchecked"
+                            />
+                          </span>
+                        </button>
+                      </div>
+                    </div>
+                    <div
+                      class="row full"
+                    >
+                      <div
+                        class="title"
+                      >
+                        <label
+                          for="auto_feeder"
+                        >
+                          Auto Feeder
+                        </label>
+                      </div>
+                      <div
+                        class="control"
+                      >
+                        <button
+                          aria-checked="false"
+                          class="ant-switch switch css-dev-only-do-not-override-hash"
+                          id="auto_feeder"
                           role="switch"
                           type="button"
                         >

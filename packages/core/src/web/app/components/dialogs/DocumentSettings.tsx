@@ -7,7 +7,6 @@ import classNames from 'classnames';
 import alertCaller from '@core/app/actions/alert-caller';
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant, { promarkModels } from '@core/app/actions/beambox/constant';
-import OpenBottomBoundaryDrawer from '@core/app/actions/beambox/open-bottom-boundary-drawer';
 import diodeBoundaryDrawer from '@core/app/actions/canvas/diode-boundary-drawer';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
@@ -20,6 +19,7 @@ import { getWorkarea } from '@core/app/constants/workarea-constants';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import Select from '@core/app/widgets/AntdSelect';
 import UnitInput from '@core/app/widgets/UnitInput';
+import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import { checkFpm1, checkHxRf } from '@core/helpers/checkFeature';
 import { getPromarkInfo, setPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
@@ -68,7 +68,18 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     global: tGlobal,
   } = useI18n();
   const [engraveDpi, setEngraveDpi] = useState(BeamboxPreference.read('engrave_dpi'));
-  const origWorkarea = useMemo(() => BeamboxPreference.read('workarea'), []);
+  const {
+    autoFeeder: origAutoFeeder,
+    passThrough: origPassThrough,
+    workarea: origWorkarea,
+  } = useMemo(() => {
+    const workarea = BeamboxPreference.read('workarea');
+    const supportInfo = getSupportInfo(workarea);
+    const autoFeeder = getAutoFeeder(supportInfo);
+    const passThrough = getPassThrough(supportInfo);
+
+    return { autoFeeder, passThrough, workarea };
+  }, []);
   const [pmInfo, setPmInfo] = useState(getPromarkInfo());
   const [workarea, setWorkarea] = useState(origWorkarea || 'fbb1b');
   const [customDimension, setCustomDimension] = useState(BeamboxPreference.read('customized-dimension'));
@@ -123,22 +134,34 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
       setPassThrough(false);
     }
   }, [autoFeeder]);
-  // for openBottom machine, disable pass-through when borderless is off
+
+  // for openBottom machine, path-through and autofeed require open-bottom mode
+  const { showAutoFeeder, showPassThrough } = useMemo(() => {
+    const canUseBorderlessModules = supportInfo.openBottom ? borderless : true;
+
+    return {
+      showAutoFeeder: supportInfo.autoFeeder && canUseBorderlessModules,
+      showPassThrough: supportInfo.passThrough && canUseBorderlessModules,
+    };
+  }, [supportInfo, borderless]);
+
   useEffect(() => {
-    if (supportInfo.openBottom && !borderless) setPassThrough(false);
+    if (supportInfo.openBottom && !borderless) {
+      setPassThrough(false);
+      setAutoFeeder(false);
+    }
   }, [supportInfo, borderless]);
 
   const minHeight = useMemo(() => workareaObj.displayHeight ?? workareaObj.height, [workareaObj]);
-  const showPassThrough = supportInfo.passThrough && (supportInfo.openBottom ? borderless : true);
 
   useEffect(() => {
     if (showPassThrough) setPassThroughHeight((cur) => Math.max(cur, minHeight));
   }, [minHeight, showPassThrough]);
   useEffect(() => {
-    if (supportInfo.autoFeeder) {
+    if (showAutoFeeder) {
       setAutoFeederHeight((cur) => Math.min(supportInfo.autoFeeder!.maxHeight, Math.max(minHeight, cur)));
     }
-  }, [minHeight, supportInfo.autoFeeder]);
+  }, [minHeight, supportInfo.autoFeeder, showAutoFeeder]);
 
   const handleSave = () => {
     const dpiEvent = eventEmitterFactory.createEventEmitter('dpi-info');
@@ -173,19 +196,20 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     }
 
     const newPassThrough = Boolean(showPassThrough && passThrough);
-    const passThroughChanged = newPassThrough !== BeamboxPreference.read('pass-through');
+    const passThroughChanged = newPassThrough !== origPassThrough;
     const passThroughHeightChanged = passThroughHeight !== BeamboxPreference.read('pass-through-height');
-    const autoFeederChanged = autoFeeder !== BeamboxPreference.read('auto-feeder');
+    const newAutoFeeder = Boolean(showAutoFeeder && autoFeeder);
+    const autoFeederChanged = newAutoFeeder !== origAutoFeeder;
     const autoFeederHeightChanged = autoFeederHeight !== BeamboxPreference.read('auto-feeder-height');
 
     BeamboxPreference.write('pass-through', newPassThrough);
 
     if (showPassThrough) BeamboxPreference.write('pass-through-height', Math.max(passThroughHeight, minHeight));
 
-    BeamboxPreference.write('auto-feeder', autoFeeder);
+    BeamboxPreference.write('auto-feeder', newAutoFeeder);
 
-    if (supportInfo.autoFeeder) {
-      const newVal = Math.min(supportInfo.autoFeeder.maxHeight, Math.max(minHeight, autoFeederHeight));
+    if (showAutoFeeder) {
+      const newVal = Math.min(supportInfo.autoFeeder!.maxHeight, Math.max(minHeight, autoFeederHeight));
 
       BeamboxPreference.write('auto-feeder-height', newVal);
     }
@@ -205,9 +229,6 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
       changeWorkarea(workarea, { toggleModule: workareaChanged });
       rotaryAxis.toggleDisplay();
     } else {
-      // this is called in changeWorkarea
-      OpenBottomBoundaryDrawer.update();
-
       if (supportInfo.hybridLaser && enableDiode) {
         diodeBoundaryDrawer.show();
       } else {
@@ -559,7 +580,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
               </div>
             </div>
           )}
-          {Boolean(supportInfo.autoFeeder) && (
+          {showAutoFeeder && (
             <div className={classNames(styles.row, styles.full)}>
               <div className={styles.title}>
                 <label htmlFor="auto_feeder">{tDocu.auto_feeder}</label>

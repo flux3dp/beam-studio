@@ -53,6 +53,7 @@ export type TFcodeOptionalConfig = Partial<{
   pts: number; // path travel speed
   rev: boolean; // reverse engraving
   rotary_y_ratio: number;
+  rotary_z_motion?: boolean; // whether to move z axis in rotary task to avoid collision, default is true in backend
   spin: number; // rotary position, px
   ts: number; // travel speed
   vsc: boolean; // with vector speed constraint, used for ghost 2.3.4 and before

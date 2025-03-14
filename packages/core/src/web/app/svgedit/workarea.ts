@@ -5,6 +5,7 @@ import layoutConstants from '@core/app/constants/layout-constants';
 import rotaryConstants from '@core/app/constants/rotary-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
 const canvasEvents = eventEmitterFactory.createEventEmitter('canvas');
@@ -27,10 +28,8 @@ class WorkareaManager {
   setWorkarea(model: WorkAreaModel): void {
     const rotaryExtended = beamboxPreference.read('rotary_mode') && beamboxPreference.read('extend-rotary-workarea');
     const supportInfo = getSupportInfo(model);
-    const borderless = beamboxPreference.read('borderless');
-    const passThrough = beamboxPreference.read('pass-through');
-    const passThroughMode = supportInfo.passThrough && passThrough && (supportInfo.openBottom ? borderless : true);
-    const autoFeeder = Boolean(beamboxPreference.read('auto-feeder') && supportInfo.autoFeeder);
+    const passThroughMode = getPassThrough(supportInfo);
+    const autoFeeder = getAutoFeeder(supportInfo);
     const workarea = getWorkarea(model);
     const modelChanged = this.model !== model;
 
