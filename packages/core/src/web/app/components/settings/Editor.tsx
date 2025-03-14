@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import type { DefaultOptionType } from 'antd/es/select';
+import { pick, pipe } from 'remeda';
 
 import FontFuncs from '@core/app/actions/beambox/font-funcs';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
@@ -45,33 +46,25 @@ function Editor({ options }: Props): React.JSX.Element {
     .map(({ postscriptName, style }: FontDescriptor) => ({ label: style, value: postscriptName }));
 
   const setFont = (family: string) => {
-    const fonts: FontDescriptor[] = FontFuncs.requestFontsOfTheFontFamily(family);
-    const newDefaultFont = fonts.filter(({ style }) => style === 'Regular')[0] || fonts[0];
+    const fontInfo = pipe(
+      family,
+      FontFuncs.requestFontsOfTheFontFamily,
+      (fonts: FontDescriptor[]) => fonts.filter(({ style }) => style === 'Regular')[0] || fonts[0],
+      pick(['family', 'postscriptName', 'style']),
+    );
 
-    storage.set('default-font', {
-      family: newDefaultFont.family,
-      postscriptName: newDefaultFont.postscriptName,
-      style: newDefaultFont.style,
-    });
-    updateDefaultFont({
-      family: newDefaultFont.family,
-      postscriptName: newDefaultFont.postscriptName,
-      style: newDefaultFont.style,
-    });
+    storage.set('default-font', fontInfo);
+    updateDefaultFont(fontInfo);
   };
   const setFontStyle = (postscriptName: string) => {
-    const newDefaultFont = FontFuncs.getFontOfPostscriptName(postscriptName);
+    const fontInfo = pipe(
+      postscriptName,
+      FontFuncs.getFontOfPostscriptName,
+      pick(['family', 'postscriptName', 'style']),
+    );
 
-    storage.set('default-font', {
-      family: newDefaultFont.family,
-      postscriptName: newDefaultFont.postscriptName,
-      style: newDefaultFont.style,
-    });
-    updateDefaultFont({
-      family: newDefaultFont.family,
-      postscriptName: newDefaultFont.postscriptName,
-      style: newDefaultFont.style,
-    });
+    storage.set('default-font', fontInfo);
+    updateDefaultFont(fontInfo);
   };
 
   const modelOptions = [
@@ -224,6 +217,15 @@ function Editor({ options }: Props): React.JSX.Element {
           id="set-enable-custom-backlash"
           label={lang.settings.enable_custom_backlash}
           onChange={(e) => setPreference('enable-custom-backlash', e)}
+          options={options}
+        />
+      )}
+      {isDev() && (
+        <SettingSelect
+          defaultValue={getPreference('enable-uv-export')}
+          id="set-enable-uv-export"
+          label={lang.settings.enable_uv_export}
+          onChange={(e) => setPreference('enable-uv-export', e)}
           options={options}
         />
       )}

@@ -1695,6 +1695,7 @@ export interface ILang {
     done: string;
     enable_custom_backlash: string;
     enable_low_speed: string;
+    enable_uv_export: string;
     enabled: string;
     engraving_direction: string;
     fast_gradient: string;

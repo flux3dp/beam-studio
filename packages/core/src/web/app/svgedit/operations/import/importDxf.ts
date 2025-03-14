@@ -9,7 +9,7 @@ import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
 import alertConfig from '@core/helpers/api/alert-config';
 import i18n from '@core/helpers/i18n';
-import layerConfigHelper from '@core/helpers/layer/layer-config-helper';
+import { initLayerConfig } from '@core/helpers/layer/layer-config-helper';
 import { createLayer, removeDefaultLayerIfEmpty } from '@core/helpers/layer/layer-helper';
 import requirejsHelper from '@core/helpers/requirejs-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -127,7 +127,7 @@ const importDxf = async (file: Blob): Promise<void> => {
 
       if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
 
-      layerConfigHelper.initLayerConfig(layerName);
+      initLayerConfig(layerName);
     }
 
     const id = svgCanvas.getNextId();

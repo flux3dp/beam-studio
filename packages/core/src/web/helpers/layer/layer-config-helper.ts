@@ -1,3 +1,6 @@
+import { pipe } from 'remeda';
+import { match } from 'ts-pattern';
+
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
@@ -14,22 +17,14 @@ import presetHelper from '@core/helpers/presets/preset-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type { ConfigKey, ConfigKeyTypeMap, ILayerConfig, Preset } from '@core/interfaces/ILayerConfig';
 
-const getLayerElementByName = (layerName: string) => {
-  const allLayers = Array.from(document.querySelectorAll('g.layer'));
-  const layer = allLayers.find((l) => {
-    const title = l.querySelector('title');
+const getLayerElementByName = (layerName: string) =>
+  pipe(
+    //
+    Array.from(document.querySelectorAll('g.layer')),
+    (layers) => layers.find((l) => l.querySelector('title')?.textContent === layerName),
+  );
 
-    if (title) {
-      return title.textContent === layerName;
-    }
-
-    return false;
-  });
-
-  return layer;
-};
-
-const attributeMap: { [key in ConfigKey]: string } = {
+const attributeMap: Record<ConfigKey, string> = {
   backlash: 'data-backlash',
   biDirectional: 'data-biDirectional',
   ceZSpeedLimit: 'data-ceZSpeedLimit',
@@ -63,6 +58,7 @@ const attributeMap: { [key in ConfigKey]: string } = {
   speed: 'data-speed',
   split: 'data-split',
   uv: 'data-uv',
+  'uv-export': 'data-uv-export',
   wInk: 'data-wInk',
   wMultipass: 'data-wMultipass',
   wobbleDiameter: 'data-wobbleDiameter',
@@ -118,35 +114,41 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
  */
 export const getDefaultConfig = (): Partial<ConfigKeyTypeMap> => {
   const workarea = BeamboxPreference.read('workarea');
-  const config = { ...baseConfig };
   const isPromark = promarkModels.has(workarea);
+  const config = structuredClone(baseConfig);
 
   if (isPromark) {
-    config.speed = 1000;
-
     const promarkInfo = getPromarkInfo();
 
-    if (promarkInfo.laserType === LaserType.MOPA) {
-      if (promarkInfo.watt >= 100) {
-        config.frequency = 55;
-      } else if (promarkInfo.watt >= 60) {
-        config.frequency = 40;
-      } else {
-        config.frequency = 25;
-      }
-    } else if (promarkInfo.watt >= 50) {
-      config.frequency = 45;
-    } else if (promarkInfo.watt >= 30) {
-      config.frequency = 30;
-    } else {
-      config.frequency = 27;
-    }
+    config.speed = 1000;
+    config.frequency = match(promarkInfo)
+      .when(
+        ({ laserType, watt }) => laserType === LaserType.MOPA && watt >= 100,
+        () => 55,
+      )
+      .when(
+        ({ laserType, watt }) => laserType === LaserType.MOPA && watt >= 60,
+        () => 40,
+      )
+      .when(
+        ({ laserType }) => laserType === LaserType.MOPA,
+        () => 25,
+      )
+      .when(
+        ({ watt }) => watt >= 50,
+        () => 45,
+      )
+      .when(
+        ({ watt }) => watt >= 30,
+        () => 30,
+      )
+      .otherwise(() => 27);
   }
 
   return config;
 };
 
-export const booleanConfig: ConfigKey[] = ['fullcolor', 'ref', 'split', 'biDirectional', 'crossHatch'];
+export const booleanConfig: ConfigKey[] = ['fullcolor', 'ref', 'split', 'biDirectional', 'crossHatch', 'uv-export'];
 
 /**
  * getData from layer element
@@ -155,7 +157,11 @@ export const booleanConfig: ConfigKey[] = ['fullcolor', 'ref', 'split', 'biDirec
  * @param applyPrinting if true, return printingSpeed if module is printer and type is speed
  * @returns data value in type T
  */
-export const getData = <T extends ConfigKey>(layer: Element, key: T, applyPrinting = false): ConfigKeyTypeMap[T] => {
+export const getData = <T extends ConfigKey>(
+  layer: Element,
+  key: T,
+  applyPrinting = false,
+): ConfigKeyTypeMap[T] | undefined => {
   let attr = attributeMap[key];
 
   if (!attr || !layer) {
@@ -246,9 +252,9 @@ export const getMultiSelectData = <T extends ConfigKey>(
   layers: Element[],
   currentLayerIdx: number,
   key: T,
-): { hasMultiValue: boolean; value: ConfigKeyTypeMap[T] } => {
+): { hasMultiValue: boolean; value: ConfigKeyTypeMap[T] | undefined } => {
   const mainIndex = currentLayerIdx > -1 ? currentLayerIdx : 0;
-  const mainLayer = layers[mainIndex] || layers.find((l) => !!l);
+  const mainLayer = layers[mainIndex] || layers.find(Boolean);
 
   if (!mainLayer) {
     return { hasMultiValue: false, value: undefined };
@@ -257,10 +263,8 @@ export const getMultiSelectData = <T extends ConfigKey>(
   let value = getData(mainLayer, key, true);
   let hasMultiValue = false;
 
-  for (let i = 0; i < layers.length; i += 1) {
-    if (i === currentLayerIdx) {
-      continue;
-    }
+  for (let i = 0; i < layers.length; i++) {
+    if (i === currentLayerIdx) continue;
 
     const layer = layers[i];
 
@@ -309,14 +313,12 @@ export const initLayerConfig = (layerName: string): void => {
 
   const defaultLaserModule = layerModuleHelper.getDefaultLaserModule();
 
-  for (let i = 0; i < keys.length; i += 1) {
-    const key = keys[i];
-
+  for (const key of keys) {
     if (defaultConfig[key] !== undefined) {
       if (key === 'module' && modelsWithModules.has(workarea)) {
         writeDataLayer(layer, key, defaultLaserModule);
       } else {
-        writeDataLayer(layer, key, defaultConfig[keys[i]] as number | string);
+        writeDataLayer(layer, key, defaultConfig[key] as number | string);
       }
     }
   }
@@ -332,16 +334,16 @@ export const cloneLayerConfig = (targetLayerName: string, baseLayerName: string)
     const targetLayer = getLayerElementByName(targetLayerName);
 
     if (targetLayer) {
-      for (let i = 0; i < keys.length; i += 1) {
-        if (booleanConfig.includes(keys[i])) {
-          if (getData(baseLayer, keys[i])) {
-            writeDataLayer(targetLayer, keys[i], true);
+      for (const key of keys) {
+        if (booleanConfig.includes(key)) {
+          if (getData(baseLayer, key)) {
+            writeDataLayer(targetLayer, key, true);
           }
         } else {
-          const value = getData(baseLayer, keys[i]);
+          const value = getData(baseLayer, key);
 
           if (value) {
-            writeDataLayer(targetLayer, keys[i], value as number | string);
+            writeDataLayer(targetLayer, key, value);
           }
         }
       }
@@ -350,19 +352,18 @@ export const cloneLayerConfig = (targetLayerName: string, baseLayerName: string)
   }
 };
 
-export const getLayerConfig = (layerName: string): ILayerConfig => {
+export const getLayerConfig = (layerName: string): ILayerConfig | null => {
   const layer = getLayerElementByName(layerName);
 
   if (!layer) {
     return null;
   }
 
-  const data = {};
+  const data: Partial<ILayerConfig> = {};
   const keys = Object.keys(attributeMap) as ConfigKey[];
 
-  for (let i = 0; i < keys.length; i += 1) {
-    const key = keys[i];
-
+  for (const key of keys) {
+    // @ts-expect-error type mismatch
     data[key] = { value: getData(layer, key, true) };
   }
 
@@ -370,14 +371,13 @@ export const getLayerConfig = (layerName: string): ILayerConfig => {
 };
 
 export const getLayersConfig = (layerNames: string[], currentLayerName?: string): ILayerConfig => {
-  const layers = layerNames.map((layerName) => getLayerElementByName(layerName));
-  const currentLayerIdx = layerNames.indexOf(currentLayerName);
+  const layers = layerNames.map((layerName) => getLayerElementByName(layerName)).filter(Boolean);
+  const currentLayerIdx = currentLayerName ? layerNames.indexOf(currentLayerName) : -1;
   const data = {};
   const keys = Object.keys(attributeMap) as ConfigKey[];
 
-  for (let i = 0; i < keys.length; i += 1) {
-    const key = keys[i];
-
+  for (const key of keys) {
+    // @ts-expect-error type mismatch
     data[key] = getMultiSelectData(layers, currentLayerIdx, key);
   }
 
@@ -413,13 +413,10 @@ export const applyDefaultLaserModule = (): void => {
     const layerNames = getAllLayerNames();
     const defaultLaserModule = layerModuleHelper.getDefaultLaserModule();
 
-    for (let i = 0; i < layerNames.length; i += 1) {
-      const layerName = layerNames[i];
+    for (const layerName of layerNames) {
       const layer = getLayerByName(layerName);
 
-      if (!layer) {
-        continue;
-      }
+      if (!layer) continue;
 
       if (getData(layer, 'module') === LayerModule.LASER_UNIVERSAL) {
         writeDataLayer(layer, 'module', defaultLaserModule);
@@ -476,7 +473,7 @@ export const promarkConfigKeys: ConfigKey[] = [
 ];
 
 // Forced Keys: If not set, use default value
-export const forcedKeys = ['speed', 'power', 'ink', 'multipass', 'halftone', 'repeat'];
+export const forcedKeys = ['speed', 'power', 'ink', 'multipass', 'halftone', 'repeat'] as const;
 
 export const getConfigKeys = (module: LayerModule): ConfigKey[] => {
   const workarea = BeamboxPreference.read('workarea');
@@ -531,7 +528,7 @@ export const applyPreset = (
   const { maxSpeed, minSpeed } = getWorkarea(workarea);
   const { applyName = true, batchCmd } = opts;
   const { module } = preset;
-  const keys = getConfigKeys(module);
+  const keys = getConfigKeys(module!);
   const defaultConfig = getDefaultConfig();
 
   for (let i = 0; i < keys.length; i += 1) {
@@ -550,10 +547,7 @@ export const applyPreset = (
       value = Math.max(minSpeed, Math.min(value as number, maxSpeed));
     }
 
-    writeDataLayer(layer, key, value, {
-      applyPrinting: module === LayerModule.PRINTER,
-      batchCmd,
-    });
+    writeDataLayer(layer, key, value, { applyPrinting: module === LayerModule.PRINTER, batchCmd });
   }
 
   if (applyName) {
@@ -573,8 +567,7 @@ export const postPresetChange = (): void => {
   const layerNames = getAllLayerNames();
   const allPresets = presetHelper.getAllPresets();
 
-  for (let i = 0; i < layerNames.length; i += 1) {
-    const layerName = layerNames[i];
+  for (const layerName of layerNames) {
     const layer = getLayerByName(layerName);
 
     if (!layer) {
@@ -586,7 +579,7 @@ export const postPresetChange = (): void => {
 
     if (preset?.isDefault) {
       const layerModule = getData(layer, 'module') as LayerModule;
-      const defaultPreset = presetHelper.getDefaultPreset(preset.key, workarea, layerModule);
+      const defaultPreset = presetHelper.getDefaultPreset(preset.key!, workarea, layerModule);
 
       if (!defaultPreset) {
         // Config exists but preset not found: no preset for module
@@ -600,7 +593,7 @@ export const postPresetChange = (): void => {
       writeDataLayer(layer, 'configName', undefined);
     }
 
-    const speed = getData(layer, 'speed');
+    const speed = getData(layer, 'speed') as number;
 
     if (speed > maxSpeed) {
       writeDataLayer(layer, 'speed', maxSpeed);
@@ -610,7 +603,7 @@ export const postPresetChange = (): void => {
       writeDataLayer(layer, 'speed', minSpeed);
     }
 
-    const printingSpeed = getData(layer, 'printingSpeed');
+    const printingSpeed = getData(layer, 'printingSpeed') as number;
 
     if (printingSpeed > maxSpeed) {
       writeDataLayer(layer, 'printingSpeed', maxSpeed);
@@ -621,8 +614,8 @@ export const postPresetChange = (): void => {
     }
 
     if (isPromark) {
-      if (promarkLimit.frequency) {
-        const frequency = getData(layer, 'frequency');
+      if (promarkLimit?.frequency) {
+        const frequency = getData(layer, 'frequency') as number;
 
         if (frequency < promarkLimit.frequency.min) {
           writeDataLayer(layer, 'frequency', promarkLimit.frequency.min);
@@ -631,8 +624,8 @@ export const postPresetChange = (): void => {
         }
       }
 
-      if (promarkLimit.pulseWidth) {
-        const pulseWidth = getData(layer, 'pulseWidth');
+      if (promarkLimit?.pulseWidth) {
+        const pulseWidth = getData(layer, 'pulseWidth') as number;
 
         if (pulseWidth < promarkLimit.pulseWidth.min) {
           writeDataLayer(layer, 'pulseWidth', promarkLimit.pulseWidth.min);
@@ -642,15 +635,4 @@ export const postPresetChange = (): void => {
       }
     }
   }
-};
-
-export default {
-  applyPreset,
-  cloneLayerConfig,
-  CUSTOM_PRESET_CONSTANT,
-  getLayerConfig,
-  getLayersConfig,
-  getPromarkLimit,
-  initLayerConfig,
-  writeData,
 };
