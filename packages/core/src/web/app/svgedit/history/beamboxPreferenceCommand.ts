@@ -4,7 +4,7 @@ import type { IBatchCommand, ICommand } from '@core/interfaces/IHistory';
 
 import { BaseHistoryCommand } from './history';
 
-class BeamboxPreferenceCommand<Key extends BeamboxPreferenceKey> extends BaseHistoryCommand implements ICommand {
+export class BeamboxPreferenceCommand<Key extends BeamboxPreferenceKey> extends BaseHistoryCommand implements ICommand {
   elements = () => [];
 
   type = () => 'BeamboxPreferenceCommand';

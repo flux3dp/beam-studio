@@ -3,6 +3,8 @@ import jimpHelper from '@core/helpers/jimp-helper';
 import { posterize, trace } from '.';
 
 onmessage = async ({ data: { imgUrl, imgBBox, method, options } }) => {
+  if (!imgUrl || !imgBBox || !method) return;
+
   const startTime = performance.now();
   const image = await jimpHelper.urlToImage(imgUrl);
   const sx = imgBBox.width / image.bitmap.width;

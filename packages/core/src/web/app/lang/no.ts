@@ -63,6 +63,14 @@ const lang: ILang = {
     announcement_panel: {
       title: 'Kunngjøring',
     },
+    banner: {
+      auto_feeder: 'Automatisk Matermodus',
+      camera_preview: 'Forhåndsvisning',
+      camera_preview_borderless_mode: '(Åpen Bunn)',
+      curve_engraving: 'Kurvegravering Modus',
+      pass_through: 'Gjennomgangsmodus',
+      rotary: 'Rotasjonsmodus',
+    },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Konverter tekst til bane...',
       export_file_error_ask_for_upload: 'Kunne ikke eksportere oppgave. Er du villig til å sende arbeidsscene til utviklingsteamet for feilrapportering?',
@@ -1194,6 +1202,7 @@ const lang: ILang = {
       zoom_in: 'Zoom Inn',
       zoom_out: 'Zoom Ut',
     },
+    mode_conflict: 'Dette alternativet er ikke tilgjengelig i gjeldende modus.',
     ok: 'OK',
     save: 'Lagre',
     stop: 'Stopp',
@@ -1806,8 +1815,6 @@ const lang: ILang = {
       QcleanScene: 'Vil du slette tegningen?<br/>Dette vil også slette angrehistorikken din!',
       start_preview_timeout: '#803 Tidsavbrudd ved oppstart av forhåndsvisning. Start maskinen eller Beam Studio på nytt. Hvis feilen vedvarer, følg denne veiledningen',
     },
-    borderless: '(ÅPEN BUNN)',
-    curve_engrave: '3D Kurve',
     frame_task: 'Kjører ramme',
     hint: {
       polygon: 'Trykk + / -tasten for å øke / redusere sider.',
@@ -1979,7 +1986,6 @@ const lang: ILang = {
     },
     preview: 'FORHÅNDSVISNING',
     preview_press_esc_to_stop: 'Trykk ESC for å stoppe kameraforhåndsvisningen.',
-    preview_title: 'Forhåndsvisning',
     rename_tab: 'Gi nytt navn til fane',
     select_machine: 'Velg en maskin',
     tag_names: {

@@ -63,6 +63,14 @@ const lang: ILang = {
     announcement_panel: {
       title: 'Tiedote',
     },
+    banner: {
+      auto_feeder: 'Automaattinen Syöttötila',
+      camera_preview: 'Esikatselu',
+      camera_preview_borderless_mode: '(Avoin Pohja)',
+      curve_engraving: 'Kaiverruksen Käyrätila',
+      pass_through: 'Läpikulku Tila',
+      rotary: 'Pyörivä Tila',
+    },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Muunna teksti poluksi...',
       export_file_error_ask_for_upload: 'Vientitehtävän epäonnistui. Haluatko tarjota toimivan näkymän kehitystiimille vianraportointia varten?',
@@ -1194,6 +1202,7 @@ const lang: ILang = {
       zoom_in: 'Lähennä',
       zoom_out: 'Loitonna',
     },
+    mode_conflict: 'Tämä vaihtoehto ei ole käytettävissä nykyisessä tilassa.',
     ok: 'OK',
     save: 'Tallenna',
     stop: 'Pysäytä',
@@ -1806,8 +1815,6 @@ const lang: ILang = {
       QcleanScene: 'Haluatko tyhjentää piirustuksen?<br/>Tämä poistaa myös kumoamishistoriasi!',
       start_preview_timeout: '#803 Aikakatkaisu esikatselutilan käynnistyksessä. Käynnistä kone tai Beam Studio uudelleen. Jos virhe toistuu, noudata <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">tätä ohjetta</a>.',
     },
-    borderless: '(AVAA ALA)',
-    curve_engrave: '3D Käyrä',
     frame_task: 'Käynnissä oleva kehys',
     hint: {
       polygon: 'Paina +-näppäintä lisätäksesi/vähentääksesi sivuja.',
@@ -1979,7 +1986,6 @@ const lang: ILang = {
     },
     preview: 'ESIKATSELU',
     preview_press_esc_to_stop: 'Paina ESC lopettaaksesi kameran esikatselun.',
-    preview_title: 'Esikatselu',
     rename_tab: 'Nimeä välilehti uudelleen',
     select_machine: 'Valitse kone',
     tag_names: {

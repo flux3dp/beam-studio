@@ -79,11 +79,13 @@
 */
 import { Buffer } from 'buffer';
 
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import Progress from '@core/app/actions/progress-caller';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { importBvgString } from '@core/app/svgedit/operations/import/importBvg';
+import workareaManager from '@core/app/svgedit/workarea';
 import updateImageDisplay from '@core/helpers/image/updateImageDisplay';
 import updateImagesResolution from '@core/helpers/image/updateImagesResolution';
 import type { CurveEngraving } from '@core/interfaces/ICurveEngraving';
@@ -411,6 +413,15 @@ const readBeam = async (file: File): Promise<void> => {
   while (offset > 0) {
     offset = await readBlocks(buf, offset, command);
   }
+
+  const postReadBeam = () => {
+    workareaManager.setWorkarea(beamboxPreference.read('workarea'));
+    workareaManager.resetView();
+  };
+
+  command.onAfter = postReadBeam;
+  postReadBeam();
+
   undoManager.addCommandToHistory(command);
   Progress.popById('loading_image');
 };

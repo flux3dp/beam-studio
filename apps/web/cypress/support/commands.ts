@@ -113,9 +113,7 @@ Cypress.Commands.add('go2Preference', (handleSave = false) => {
 
 Cypress.Commands.add('checkToolBtnActive', (id: string, active = true) => {
   cy.get(`div#left-${id}`).should('exist');
-  cy.get(
-    `div#left-${id}[class*='_-_-packages-core-src-web-app-components-beambox-left-panel-LeftPanelButton-module__active--']`,
-  ).should(active ? 'exist' : 'not.exist');
+  cy.get(`div#left-${id}[class*='LeftPanelButton-module__active']`).should(active ? 'exist' : 'not.exist');
 });
 
 Cypress.Commands.add('clickToolBtn', (id: string, checkActive = true) => {
@@ -136,7 +134,8 @@ Cypress.Commands.add('changeWorkarea', (workarea: string, save = true) => {
 });
 
 Cypress.Commands.add('selectPreset', (presetName: string | RegExp) => {
-  const ConfigPanelPrefix = '_-_-packages-core-src-web-app-views-beambox-Right-Panels-ConfigPanel-ConfigPanel-module__';
+  const ConfigPanelPrefix = 'ConfigPanel-module__';
+
   cy.get(`[class*="${ConfigPanelPrefix}preset-dropdown"] > .ant-select-selector`).click();
   cy.get('.ant-select-item').contains(presetName).click();
 });
@@ -154,16 +153,20 @@ Cypress.Commands.add('inputText', (value: string) => {
 });
 
 Cypress.Commands.add('getElementTitle', (childSelector = '') => {
-  const elementTitleModulePrefix = '_-_-packages-core-src-web-app-components-beambox-top-bar-ElementTitle-module__';
+  const elementTitleModulePrefix = 'ElementTitle-module__';
   const selectors = [`[class*="${elementTitleModulePrefix}element-title"]`];
+
   if (childSelector) selectors.push(childSelector);
+
   return cy.get(selectors.join(' '));
 });
 
 Cypress.Commands.add('getTopBar', (childSelector = '') => {
-  const topbarModulesPrefix = '_-_-packages-core-src-web-app-components-beambox-top-bar-TopBar-module__';
-  const selectors = [`[class*="${topbarModulesPrefix}top-bar"]`];
+  const topBarModulePrefix = 'TopBar-module__';
+  const selectors = [`[class*="${topBarModulePrefix}top-bar"]`];
+
   if (childSelector) selectors.push(childSelector);
+
   return cy.get(selectors.join(' '));
 });
 

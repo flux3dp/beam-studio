@@ -1,5 +1,5 @@
 const isRunningAtGithub = Cypress.env('envType') === 'github';
-const beamSeriersName = Cypress.env('beamSeriersName');
+const beamSeriesName = Cypress.env('beamSeriesName');
 
 describe('test machine connection', () => {
   if (isRunningAtGithub) {
@@ -15,7 +15,7 @@ describe('test machine connection', () => {
   });
 
   it('select connect Beam Seriers machine', () => {
-    cy.connectMachine(beamSeriersName);
+    cy.connectMachine(beamSeriesName);
     cy.get('.top-bar-menu-container').should('exist').click();
     cy.contains('.rc-menu__item', 'Machines').click();
     cy.contains('.rc-menu__item', 'Ador (Cruz)').click();

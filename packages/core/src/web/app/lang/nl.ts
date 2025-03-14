@@ -63,6 +63,14 @@ const lang: ILang = {
     announcement_panel: {
       title: 'Aankondiging',
     },
+    banner: {
+      auto_feeder: 'Automatische Voedermodus',
+      camera_preview: 'Voorbeeld',
+      camera_preview_borderless_mode: '(Open Onderkant)',
+      curve_engraving: 'Kromme Graveermodus',
+      pass_through: 'Doorvoer Modus',
+      rotary: 'Rotatiemodus',
+    },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Tekst naar pad omzetten...',
       export_file_error_ask_for_upload: 'Export mislukt. Wilt u de werkende scène naar het ontwikkelteam sturen voor een bugrapport?',
@@ -84,7 +92,7 @@ const lang: ILang = {
     },
     document_panel: {
       add_on: 'Add-ons',
-      auto_feeder: 'Automatische invoer',
+      auto_feeder: 'Automatische voeder',
       borderless_mode: 'Open onderzijde',
       current_position: 'Huidige Positie',
       disable: 'Uitschakelen',
@@ -1194,6 +1202,7 @@ const lang: ILang = {
       zoom_in: 'Inzoomen',
       zoom_out: 'Uitzoomen',
     },
+    mode_conflict: 'Deze optie is niet beschikbaar in de huidige modus.',
     ok: 'OK',
     save: 'Opslaan',
     stop: 'Stop',
@@ -1806,8 +1815,6 @@ const lang: ILang = {
       QcleanScene: 'Wil je de tekening wissen?<br/>Dit zal ook je undo-geschiedenis wissen!',
       start_preview_timeout: '#803 Time-out opgetreden bij het starten van de voorbeeldmodus. Start uw machine of Beam Studio opnieuw op. Als deze fout zich blijft voordoen, volg dan <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">deze handleiding</a>.',
     },
-    borderless: '(OPEN ONDERKANT)',
-    curve_engrave: '3D Curve',
     frame_task: 'Frame uitvoeren',
     hint: {
       polygon: 'Druk op + / - om het aantal zijden te verhogen / verlagen.',
@@ -1979,7 +1986,6 @@ const lang: ILang = {
     },
     preview: 'Voorbeeld',
     preview_press_esc_to_stop: 'Druk op ESC om de cameravoorvertoning te stoppen.',
-    preview_title: 'Voorbeeld',
     rename_tab: 'Tab hernoemen',
     select_machine: 'Selecteer een machine',
     tag_names: {

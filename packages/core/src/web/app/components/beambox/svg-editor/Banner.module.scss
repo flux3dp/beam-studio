@@ -1,0 +1,28 @@
+.container {
+  flex: 0 0 auto;
+  width: 100%;
+  background-color: #f0f0f0;
+  font-weight: 700;
+  color: #6a5959;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.flex {
+  :first-child {
+    margin-top: 8px;
+  }
+
+  div {
+    margin-bottom: 8px;
+  }
+}
+
+.text {
+  height: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

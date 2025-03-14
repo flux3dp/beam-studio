@@ -1,71 +1,8 @@
-@use "../../abstracts/mixins";
-@use "../../abstracts/variables";
+@use '../../abstracts/mixins';
+@use '../../abstracts/variables';
 
 #svg_editor {
   color: #000;
-  top: 40px;
-  left: 50px;
-  width: calc(100% - 50px - 258px);
-  height: calc(100% - 40px);
-  &.mac {
-    width: calc(100% - 50px - 242px);
-  }
-  #workarea {
-    border: none;
-    top: 0px;
-    left: 0px;
-    right: 0px;
-    bottom: 0px;
-    background-color: #f0f0f0;
-    overflow: overlay;
-    &:not(.mac) {
-      overflow: hidden;
-      &:hover {
-        overflow: overlay;
-      }
-      &::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
-      }
-      &::-webkit-scrollbar-thumb {
-        background-color: rgba(0, 0, 0, 0.5);
-        border-radius: 4px;
-      }
-      &::-webkit-scrollbar-corner {
-        background-color: transparent;
-      }
-    }
-    #svgcanvas {
-      background: variables.$backgroundColor;
-      #rotaryAxis {
-        #transparent {
-          stroke-width: 5px;
-        }
-      }
-    }
-  }
-  #main_button,
-  #tools_left,
-  #tools_bottom {
-    @include mixins.force-hide();
-  }
-  #tools_top {
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    width: 1px;
-    height: 1px;
-    opacity: 0;
-    // if display: none, text mode will break.
-    // this is just a quick workaround. maybe using @include force-hide() is more beautiful.
-  }
-
-  #svg_source_editor,
-  #svg_prefs
-  //#cmenu_canvas
-  {
-    @include mixins.force-hide();
-  }
 
   .react-contextmenu--visible {
     z-index: 5;

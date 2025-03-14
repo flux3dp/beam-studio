@@ -46,4 +46,5 @@ export default defineConfig({
   },
   defaultCommandTimeout: 15000,
   experimentalMemoryManagement: true,
+  numTestsKeptInMemory: 30,
 });

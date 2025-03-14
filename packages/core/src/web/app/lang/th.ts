@@ -63,6 +63,14 @@ const lang: ILang = {
     announcement_panel: {
       title: 'ประกาศ',
     },
+    banner: {
+      auto_feeder: 'โหมดป้อนอัตโนมัติ',
+      camera_preview: 'แสดงตัวอย่าง',
+      camera_preview_borderless_mode: '(เปิดด้านล่าง)',
+      curve_engraving: 'โหมดแกะสลักเส้นโค้ง',
+      pass_through: 'โหมดส่งผ่าน',
+      rotary: 'โหมดหมุน',
+    },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'แปลงข้อความเป็นเส้นทาง...',
       export_file_error_ask_for_upload: 'ส่งออกล้มเหลว ต้องการส่งงานสู่ทีมพัฒนาเพื่อรายงานข้อบกพร่องหรือไม่',
@@ -1194,6 +1202,7 @@ const lang: ILang = {
       zoom_in: 'ขยายเข้า',
       zoom_out: 'ย่อออก',
     },
+    mode_conflict: 'ตัวเลือกนี้ไม่สามารถใช้ได้ในโหมดปัจจุบัน.',
     ok: 'ตกลง',
     save: 'บันทึก',
     stop: 'หยุด',
@@ -1806,8 +1815,6 @@ const lang: ILang = {
       QcleanScene: 'คุณต้องการล้างภาพวาดหรือไม่?<br/>สิ่งนี้ยังจะล้างประวัติการเลิกทำของคุณด้วย!',
       start_preview_timeout: '#803 หมดเวลาในการเริ่มโหมดแสดงตัวอย่าง โปรดรีสตาร์ทเครื่องของคุณหรือ Beam Studio หากยังคงเกิดข้อผิดพลาดนี้ โปรดปฏิบัติตาม <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">คําแนะนํานี้</a>',
     },
-    borderless: '(เปิดด้านล่าง)',
-    curve_engrave: 'เส้นโค้ง 3D',
     frame_task: 'กําลังประมวลผลเฟรม',
     hint: {
       polygon: 'กดปุ่ม + / - เพื่อเพิ่ม / ลดด้าน',
@@ -1979,7 +1986,6 @@ const lang: ILang = {
     },
     preview: 'แสดงตัวอย่าง',
     preview_press_esc_to_stop: 'กด ESC เพื่อหยุดการแสดงตัวอย่างกล้อง.',
-    preview_title: 'ดูตัวอย่าง',
     rename_tab: 'เปลี่ยนชื่อแท็บ',
     select_machine: 'เลือกเครื่อง',
     tag_names: {

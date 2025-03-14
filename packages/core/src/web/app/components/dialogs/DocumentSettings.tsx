@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { QuestionCircleOutlined, WarningOutlined } from '@ant-design/icons';
 import { Checkbox, Modal, Switch, Tooltip } from 'antd';
 import classNames from 'classnames';
 
@@ -13,6 +13,7 @@ import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import { getSupportInfo } from '@core/app/constants/add-on';
 import alertConstants from '@core/app/constants/alert-constants';
+import CanvasMode from '@core/app/constants/canvasMode';
 import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType, workareaOptions as pmWorkareaOptions } from '@core/app/constants/promark-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
@@ -22,6 +23,7 @@ import UnitInput from '@core/app/widgets/UnitInput';
 import { checkFpm1, checkHxRf } from '@core/helpers/checkFeature';
 import { getPromarkInfo, setPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import useHasCurveEngraving from '@core/helpers/hooks/useHasCurveEngraving';
 import isDev from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
@@ -58,13 +60,14 @@ interface Props {
   unmount: () => void;
 }
 
+const topBarEventEmitter = eventEmitterFactory.createEventEmitter('top-bar');
+
 const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const {
     beambox: { document_panel: tDocu },
     global: tGlobal,
   } = useI18n();
   const [engraveDpi, setEngraveDpi] = useState(BeamboxPreference.read('engrave_dpi'));
-
   const origWorkarea = useMemo(() => BeamboxPreference.read('workarea'), []);
   const [pmInfo, setPmInfo] = useState(getPromarkInfo());
   const [workarea, setWorkarea] = useState(origWorkarea || 'fbb1b');
@@ -92,8 +95,16 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const [autoFeederHeight, setAutoFeederHeight] = useState<number>(
     BeamboxPreference.read('auto-feeder-height') || workareaObj.displayHeight || workareaObj.height,
   );
+  const hasCurveEngravingData = useHasCurveEngraving();
+  const isCurveEngraving = useMemo(() => {
+    const response = { mode: CanvasMode.Draw };
 
-  // pass-through, autofeed, rotary mode are exclusive, disable others when one is on
+    topBarEventEmitter.emit('GET_CANVAS_MODE', response);
+
+    return hasCurveEngravingData || response.mode === CanvasMode.CurveEngraving;
+  }, [hasCurveEngravingData]);
+
+  // pass-through, auto-feeder, rotary mode are exclusive, disable others when one is on
   useEffect(() => {
     if (rotaryMode) {
       setPassThrough(false);
@@ -216,6 +227,12 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
 
     canvasEvents.emit('document-settings-saved');
   };
+
+  const renderWarningIcon = (title: string) => (
+    <Tooltip title={title}>
+      <WarningOutlined className={styles.hint} />
+    </Tooltip>
+  );
 
   return (
     <Modal
@@ -427,10 +444,11 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                 <Switch
                   checked={rotaryMode}
                   className={styles.switch}
-                  disabled={!supportInfo.rotary}
+                  disabled={!supportInfo.rotary || isCurveEngraving}
                   id="rotary_mode"
                   onChange={setRotaryMode}
                 />
+                {isCurveEngraving && renderWarningIcon(tGlobal.mode_conflict)}
                 {(supportInfo.rotary.mirror || supportInfo.rotary.extendWorkarea) && rotaryMode && (
                   <>
                     <div className={styles.subCheckbox}>
@@ -510,10 +528,11 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                 <Switch
                   checked={supportInfo.passThrough && passThrough}
                   className={styles.switch}
-                  disabled={!supportInfo.passThrough}
+                  disabled={!supportInfo.passThrough || isCurveEngraving}
                   id="pass_through"
                   onChange={setPassThrough}
                 />
+                {isCurveEngraving && renderWarningIcon(tGlobal.mode_conflict)}
                 {passThrough && (
                   <>
                     <UnitInput
@@ -549,10 +568,11 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                 <Switch
                   checked={supportInfo.autoFeeder && autoFeeder}
                   className={styles.switch}
-                  disabled={!supportInfo.autoFeeder}
+                  disabled={!supportInfo.autoFeeder || isCurveEngraving}
                   id="auto_feeder"
                   onChange={setAutoFeeder}
                 />
+                {isCurveEngraving && renderWarningIcon(tGlobal.mode_conflict)}
                 {autoFeeder && (
                   <UnitInput
                     addonAfter={isInch ? 'in' : 'mm'}

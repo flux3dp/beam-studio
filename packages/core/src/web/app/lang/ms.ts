@@ -63,6 +63,14 @@ const lang: ILang = {
     announcement_panel: {
       title: 'Pengumuman',
     },
+    banner: {
+      auto_feeder: 'Mod Pemberi Automatik',
+      camera_preview: 'Pratonton',
+      camera_preview_borderless_mode: '(Bahagian Bawah Terbuka)',
+      curve_engraving: 'Mod Ukiran Lengkung',
+      pass_through: 'Mod Lintasan',
+      rotary: 'Mod Putaran',
+    },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Tukar Teks ke Laluan...',
       export_file_error_ask_for_upload: 'Gagal eksport tugas. Adakah anda bersedia untuk memberikan adegan kerja kepada pasukan pembangunan untuk laporan pepijat?',
@@ -1194,6 +1202,7 @@ const lang: ILang = {
       zoom_in: 'Zum Masuk',
       zoom_out: 'Zum Keluar',
     },
+    mode_conflict: 'Pilihan ini tidak tersedia dalam mod semasa.',
     ok: 'OK',
     save: 'Simpan',
     stop: 'Henti',
@@ -1806,8 +1815,6 @@ const lang: ILang = {
       QcleanScene: 'Adakah anda mahu padamkan lukisan?<br/>Ini juga akan memadam sejarah undo anda!',
       start_preview_timeout: '#803 Timeout telah berlaku ketika memulakan mod pratonton. Sila mulakan semula mesin atau Beam Studio anda. Jika ralat ini berterusan, sila ikuti <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">panduan ini</a>.',
     },
-    borderless: '(BUKA TANPA SEMPADAN)',
-    curve_engrave: 'Lengkung 3D',
     frame_task: 'Bingkai sedang berjalan',
     hint: {
       polygon: 'Tekan kekunci + / - untuk menambah / mengurangkan sisi.',
@@ -1979,7 +1986,6 @@ const lang: ILang = {
     },
     preview: 'PRATONTON',
     preview_press_esc_to_stop: 'Tekan ESC untuk menghentikan pratonton kamera.',
-    preview_title: 'Pratonton',
     rename_tab: 'Namakan semula tab',
     select_machine: 'Pilih mesin',
     tag_names: {

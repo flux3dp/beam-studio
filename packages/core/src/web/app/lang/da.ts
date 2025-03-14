@@ -63,6 +63,14 @@ const lang: ILang = {
     announcement_panel: {
       title: 'Meddelelse',
     },
+    banner: {
+      auto_feeder: 'Auto Feeder Tilstand',
+      camera_preview: 'Forhåndsvisning',
+      camera_preview_borderless_mode: '(Åben Bund)',
+      curve_engraving: 'Kurvegraveringstilstand',
+      pass_through: 'Gennemgangstilstand',
+      rotary: 'Rotationsfunktion',
+    },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Konverter tekst til sti...',
       export_file_error_ask_for_upload: 'Kunne ikke eksportere opgave. Er du villig til at dele arbejdsscenen med udviklingsholdet til fejlrapportering?',
@@ -1194,6 +1202,7 @@ const lang: ILang = {
       zoom_in: 'Zoom Ind',
       zoom_out: 'Zoom Ud',
     },
+    mode_conflict: 'Denne mulighed er ikke tilgængelig i den aktuelle tilstand.',
     ok: 'OK',
     save: 'Gem',
     stop: 'Stop',
@@ -1806,8 +1815,6 @@ const lang: ILang = {
       QcleanScene: 'Vil du rydde tegningen?<br/>Dette vil også slette din angre-historik!',
       start_preview_timeout: '#803 Timeout opstod ved start af forhåndsvisning. Genstart maskinen eller Beam Studio. Hvis fejlen fortsætter, se <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">denne vejledning</a>.',
     },
-    borderless: '(ÅBEN NEDERST)',
-    curve_engrave: '3D Kurve',
     frame_task: 'Kørende ramme',
     hint: {
       polygon: 'Tryk på + / - tasten for at øge / mindske sider.',
@@ -1979,7 +1986,6 @@ const lang: ILang = {
     },
     preview: 'FORHÅNDSVISNING',
     preview_press_esc_to_stop: 'Tryk på ESC for at stoppe kameraforhåndsvisningen.',
-    preview_title: 'Forhåndsvisning',
     rename_tab: 'Omdøb fane',
     select_machine: 'Vælg en maskine',
     tag_names: {

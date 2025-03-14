@@ -36,7 +36,7 @@ describe('side panel test', () => {
 
     expect(container).toMatchSnapshot();
 
-    const buttons = container.querySelectorAll('div.btn-default');
+    const buttons = container.querySelectorAll('.ant-btn-default');
 
     fireEvent.click(buttons[0]);
     expect(handleStartHere).toHaveBeenCalledTimes(1);
@@ -65,7 +65,7 @@ describe('side panel test', () => {
 
     expect(container).toMatchSnapshot();
 
-    const buttons = container.querySelectorAll('div.btn-default');
+    const buttons = container.querySelectorAll('.ant-btn-default');
 
     fireEvent.click(buttons[0]);
     expect(handleStartHere).toHaveBeenCalledTimes(0);
@@ -96,7 +96,7 @@ describe('side panel test', () => {
 
     expect(container).toMatchSnapshot();
 
-    const button = container.querySelector('div.btn-default');
+    const button = container.querySelector('.ant-btn-default');
 
     fireEvent.click(button);
     expect(togglePathPreview).toHaveBeenCalledTimes(1);
