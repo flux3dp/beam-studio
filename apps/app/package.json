@@ -67,7 +67,7 @@
     "webpack-merge": "^5.10.0",
     "webpack-node-externals": "^3.0.0"
   },
-  "packageManager": "pnpm@10.0.0",
+  "packageManager": "pnpm@10.6.3",
   "build": {
     "appId": "com.flux3dp.beam-studio-flux",
     "extraMetadata": {
