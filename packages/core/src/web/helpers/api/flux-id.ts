@@ -116,7 +116,7 @@ const handleOAuthLoginSuccess = (data) => {
   storage.set('keep-flux-id-login', true);
 
   if (window.location.hash === '#/initialize/connect/flux-id-login') {
-    window.location.hash = '#initialize/connect/select-machine-model';
+    window.location.hash = '#/initialize/connect/select-machine-model';
   }
 };
 

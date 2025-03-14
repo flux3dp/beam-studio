@@ -677,7 +677,7 @@ const convertTextToPath = async (
             const saveRes = await fileExportHelper.toggleUnsavedChangedDialog();
 
             if (saveRes) {
-              window.location.hash = '#initialize/connect/select-machine-model';
+              window.location.hash = '#/initialize/connect/select-machine-model';
             }
           },
           caption: i18n.lang.alert.oops,

@@ -52,7 +52,7 @@ const startNewUserTutorial = async (callback: () => void): Promise<void> => {
         className: 'btn-default primary',
         label: LANG.set_connection,
         onClick: () => {
-          window.location.hash = '#initialize/connect/select-machine-model';
+          window.location.hash = '#/initialize/connect/select-machine-model';
         },
       },
       {

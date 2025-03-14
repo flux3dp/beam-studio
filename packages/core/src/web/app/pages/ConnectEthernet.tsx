@@ -26,7 +26,7 @@ const ConnectEthernet = (): React.JSX.Element => {
     const urlParams = new URLSearchParams({ model, wired: '1' });
     const queryString = urlParams.toString();
 
-    window.location.hash = `#initialize/connect/connect-machine-ip?${queryString}`;
+    window.location.hash = `#/initialize/connect/connect-machine-ip?${queryString}`;
   };
 
   return (

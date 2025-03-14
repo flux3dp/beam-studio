@@ -43,7 +43,7 @@ function Home(): React.JSX.Element {
           <SelectView id="select-lang" onChange={changeActiveLang} options={getLanguageOptions()} />
         </div>
         <div>
-          <a className="btn btn-action btn-large" href="#initialize/connect/flux-id-login">
+          <a className="btn btn-action btn-large" href="#/initialize/connect/flux-id-login">
             {lang.initialize.next}
           </a>
         </div>

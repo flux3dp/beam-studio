@@ -40,10 +40,11 @@ if ('serviceWorker' in navigator) {
 const onFinished = (data: boolean) => {
   const { hash } = window.location;
   const isReady = data;
+  const isInitializePage = Boolean(hash.match(/^#\/?initialize/));
 
-  if (isReady === true && (hash === '' || hash.startsWith('#initialize'))) {
-    window.location.hash = '#studio/beambox';
-  } else if (isReady === false && !hash.startsWith('#initialize')) {
+  if (isReady === true && (hash === '' || isInitializePage)) {
+    window.location.hash = '#/studio/beambox';
+  } else if (isReady === false && !isInitializePage) {
     window.location.hash = '#';
   }
 
