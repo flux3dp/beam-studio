@@ -34,6 +34,12 @@ const PreviewSlider = (): React.ReactNode => {
     }
 
     try {
+      const control = await deviceMaster.getControl();
+
+      if (control.getMode() !== '') {
+        await deviceMaster.endSubTask();
+      }
+
       const exposureRes = await deviceMaster.getDeviceSetting('camera_exposure_absolute');
 
       setExposureSetting(JSON.parse(exposureRes.value));
@@ -99,12 +105,22 @@ const PreviewSlider = (): React.ReactNode => {
             className={styles.slider}
             max={Math.min(exposureSetting.max, 1000)}
             min={Math.max(exposureSetting.min, 250)}
-            onAfterChange={async (value: number) => {
-              setExposureSetting({ ...exposureSetting, value });
-              await deviceMaster.setDeviceSetting('camera_exposure_absolute', value.toString());
-              await PreviewModeController.previewFullWorkarea();
-            }}
             onChange={(value: number) => setExposureSetting({ ...exposureSetting, value })}
+            onChangeComplete={async (value: number) => {
+              setExposureSetting({ ...exposureSetting, value });
+
+              const control = await deviceMaster.getControl();
+
+              if (control.getMode() !== '') {
+                await deviceMaster.endSubTask();
+              }
+
+              await deviceMaster.setDeviceSetting('camera_exposure_absolute', value.toString());
+
+              if (PreviewModeController.isFullScreen) {
+                await PreviewModeController.previewFullWorkarea();
+              }
+            }}
             step={exposureSetting.step}
             tooltip={{ open: false }}
             value={exposureSetting.value}
