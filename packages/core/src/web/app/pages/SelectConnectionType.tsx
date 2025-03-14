@@ -10,10 +10,10 @@ import useI18n from '@core/helpers/useI18n';
 import styles from './SelectConnectionType.module.scss';
 
 const TYPE_URL_MAP = {
-  ether2ether: '#initialize/connect/connect-ethernet',
-  usb: '#initialize/connect/connect-usb',
-  wifi: '#initialize/connect/connect-wi-fi',
-  wired: '#initialize/connect/connect-wired',
+  ether2ether: '#/initialize/connect/connect-ethernet',
+  usb: '#/initialize/connect/connect-usb',
+  wifi: '#/initialize/connect/connect-wi-fi',
+  wired: '#/initialize/connect/connect-wired',
 };
 
 const SelectConnectionType = (): React.JSX.Element => {

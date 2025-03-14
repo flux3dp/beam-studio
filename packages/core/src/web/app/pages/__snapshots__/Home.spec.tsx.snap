@@ -161,7 +161,7 @@ exports[`should render correctly 1`] = `
         <div>
           <a
             class="btn btn-action btn-large"
-            href="#initialize/connect/flux-id-login"
+            href="#/initialize/connect/flux-id-login"
           >
             Next
           </a>
