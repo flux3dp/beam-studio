@@ -15,7 +15,8 @@ export type HexaRfModels = (typeof hexaRfModelsArray)[number];
 export const hexaRfModelsStrict = new Set(hexaRfModelsArray);
 export const hexaRfModels = new Set(removeReadonly(hexaRfModelsArray));
 
-export const adorModels = new Set(['ado1', 'fad1']);
+export const adorModelsArray = ['ado1', 'fad1'] as const;
+export const adorModels = new Set(adorModelsArray);
 export const promarkModels = new Set(['fpm1']);
 export enum PreviewSpeedLevel {
   FAST = 3,
@@ -24,13 +25,13 @@ export enum PreviewSpeedLevel {
 }
 
 export default {
-  adorModels: ['ado1', 'fad1'],
+  adorModels: adorModelsArray,
   allowedWorkarea: {
-    ado1: ['ado1', 'fad1'],
-    fad1: ['ado1', 'fad1'],
+    ado1: adorModelsArray,
+    fad1: adorModelsArray,
     fbb1b: ['fbb1b', 'fbm1'],
     fbb1p: ['fbb1p', 'fbb1b', 'fbm1'],
-    fbb2: ['fbb2'],
+    fbb2: bb2ModelsArray,
     fbm1: ['fbm1'],
     fhexa1: ['fhexa1', 'fbb1p', 'fbb1b', 'fbm1'],
     fhx2rf3: ['fhx2rf3', 'fhx2rf6', 'fhexa1', 'fbb1p', 'fbb1b', 'fbm1'],
@@ -80,6 +81,6 @@ export default {
     ultra: 1000,
   },
   dpmm: 10,
-  fcodeV2Models: new Set(['ado1', 'fbb2']),
+  fcodeV2Models: new Set([...adorModelsArray, ...bb2ModelsArray, ...hexaRfModelsArray]),
   highPowerModels: ['fhx2rf3', 'fhx2rf6', 'fhexa1', 'ado1', 'flv1', 'fpm1'],
 };
