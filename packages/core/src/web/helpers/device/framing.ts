@@ -7,7 +7,7 @@ import constant, { promarkModels } from '@core/app/actions/beambox/constant';
 import exportFuncs from '@core/app/actions/beambox/export-funcs';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
-import type { SupportInfo } from '@core/app/constants/add-on';
+import type { AddOnInfo } from '@core/app/constants/add-on';
 import { getSupportInfo } from '@core/app/constants/add-on';
 import LayerModule from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
@@ -216,7 +216,7 @@ const getAreaCheckTask = async (
 
 class FramingTaskManager extends EventEmitter {
   private device: IDeviceInfo;
-  private supportInfo: SupportInfo;
+  private supportInfo: AddOnInfo;
   private isAdor = false;
   private isFcodeV2 = false;
   private isPromark = false;

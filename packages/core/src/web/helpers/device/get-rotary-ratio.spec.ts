@@ -1,4 +1,4 @@
-import type { SupportInfo } from '@core/app/constants/add-on';
+import type { AddOnInfo } from '@core/app/constants/add-on';
 import { CHUCK_ROTARY_DIAMETER, RotaryType } from '@core/app/constants/add-on';
 
 import getRotaryRatio from './get-rotary-ratio';
@@ -9,7 +9,7 @@ jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read: (...args) => mockRead(...args),
 }));
 
-const mockSupportInfo: SupportInfo = {
+const mockSupportInfo: AddOnInfo = {
   autoFocus: true,
   hybridLaser: true,
   lowerFocus: false,

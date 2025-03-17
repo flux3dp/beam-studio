@@ -2,7 +2,7 @@ import type { Dispatch, SetStateAction } from 'react';
 import React, { createContext, useMemo, useState } from 'react';
 
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import type { SupportInfo } from '@core/app/constants/add-on';
+import type { AddOnInfo } from '@core/app/constants/add-on';
 import { getSupportInfo } from '@core/app/constants/add-on';
 import type { WorkArea, WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
@@ -18,7 +18,7 @@ interface Context {
   setGuideMark: Dispatch<SetStateAction<GuideMark>>;
   setPassThroughHeight: Dispatch<SetStateAction<number>>;
   setReferenceLayer: Dispatch<SetStateAction<boolean>>;
-  supportInfo: SupportInfo;
+  supportInfo: AddOnInfo;
   workarea: WorkAreaModel;
   workareaObj: WorkArea;
 }

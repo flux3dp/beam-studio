@@ -1,8 +1,8 @@
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import type { SupportInfo } from '@core/app/constants/add-on';
+import type { AddOnInfo } from '@core/app/constants/add-on';
 import { CHUCK_ROTARY_DIAMETER, RotaryType } from '@core/app/constants/add-on';
 
-const getRotaryRatio = (supportInfo: SupportInfo): number => {
+const getRotaryRatio = (supportInfo: AddOnInfo): number => {
   let ratio = 1;
 
   if (beamboxPreference.read('rotary-type') === RotaryType.Chuck && supportInfo.rotary?.chuck) {

@@ -1,5 +1,5 @@
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import type { SupportInfo } from '@core/app/constants/add-on';
+import type { AddOnInfo } from '@core/app/constants/add-on';
 import { getSupportInfo } from '@core/app/constants/add-on';
 
 /**
@@ -7,7 +7,7 @@ import { getSupportInfo } from '@core/app/constants/add-on';
  * @param supportInfo support info object for current workarea, if not provided, using beambox preference to get workarea
  * @returns boolean
  */
-export const getAutoFeeder = (supportInfo?: SupportInfo): boolean => {
+export const getAutoFeeder = (supportInfo?: AddOnInfo): boolean => {
   if (!supportInfo) {
     supportInfo = getSupportInfo(beamboxPreference.read('workarea'));
   }
@@ -24,7 +24,7 @@ export const getAutoFeeder = (supportInfo?: SupportInfo): boolean => {
  * @param supportInfo support info object for current workarea, if not provided, using beambox preference to get workarea
  * @returns boolean
  */
-export const getPassThrough = (supportInfo?: SupportInfo): boolean => {
+export const getPassThrough = (supportInfo?: AddOnInfo): boolean => {
   if (!supportInfo) {
     supportInfo = getSupportInfo(beamboxPreference.read('workarea'));
   }

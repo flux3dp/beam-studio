@@ -1,4 +1,4 @@
-import type { SupportInfo } from '@core/app/constants/add-on';
+import type { AddOnInfo } from '@core/app/constants/add-on';
 import { getAutoFeeder, getPassThrough } from '.';
 
 const mockRead = jest.fn();
@@ -19,7 +19,7 @@ describe('test getAutoFeeder', () => {
   });
 
   it('should return false if supportInfo not support', () => {
-    const supportInfo = { autoFeeder: false } as unknown as SupportInfo;
+    const supportInfo = { autoFeeder: false } as unknown as AddOnInfo;
 
     expect(getAutoFeeder(supportInfo)).toBe(false);
     expect(mockRead).not.toHaveBeenCalled();
@@ -27,28 +27,28 @@ describe('test getAutoFeeder', () => {
   });
 
   it('should return false when model supports but preference is false', () => {
-    const supportInfo = { autoFeeder: true } as unknown as SupportInfo;
+    const supportInfo = { autoFeeder: true } as unknown as AddOnInfo;
 
     mockRead.mockReturnValue(false);
     expect(getAutoFeeder(supportInfo)).toBe(false);
   });
 
   it('should return false when model supports but borderless is false', () => {
-    const supportInfo = { autoFeeder: true, openBottom: true } as unknown as SupportInfo;
+    const supportInfo = { autoFeeder: true, openBottom: true } as unknown as AddOnInfo;
 
     mockRead.mockReturnValueOnce(true).mockReturnValueOnce(false);
     expect(getAutoFeeder(supportInfo)).toBe(false);
   });
 
   it('should return true when model supports and preference is true', () => {
-    const supportInfo = { autoFeeder: true } as unknown as SupportInfo;
+    const supportInfo = { autoFeeder: true } as unknown as AddOnInfo;
 
     mockRead.mockReturnValue(true);
     expect(getAutoFeeder(supportInfo)).toBe(true);
   });
 
   it('should return true when model, borderless and preference is true', () => {
-    const supportInfo = { autoFeeder: true, openBottom: true } as unknown as SupportInfo;
+    const supportInfo = { autoFeeder: true, openBottom: true } as unknown as AddOnInfo;
 
     mockRead.mockReturnValue(true);
     expect(getAutoFeeder(supportInfo)).toBe(true);
@@ -71,7 +71,7 @@ describe('test getPassThrough', () => {
   });
 
   it('should return false if supportInfo not support', () => {
-    const supportInfo = { passThrough: false } as unknown as SupportInfo;
+    const supportInfo = { passThrough: false } as unknown as AddOnInfo;
 
     expect(getPassThrough(supportInfo)).toBe(false);
     expect(mockRead).not.toHaveBeenCalled();
@@ -79,28 +79,28 @@ describe('test getPassThrough', () => {
   });
 
   it('should return false when model supports but preference is false', () => {
-    const supportInfo = { passThrough: true } as unknown as SupportInfo;
+    const supportInfo = { passThrough: true } as unknown as AddOnInfo;
 
     mockRead.mockReturnValue(false);
     expect(getPassThrough(supportInfo)).toBe(false);
   });
 
   it('should return false when model supports but borderless is false', () => {
-    const supportInfo = { openBottom: true, passThrough: true } as unknown as SupportInfo;
+    const supportInfo = { openBottom: true, passThrough: true } as unknown as AddOnInfo;
 
     mockRead.mockReturnValueOnce(true).mockReturnValueOnce(false);
     expect(getPassThrough(supportInfo)).toBe(false);
   });
 
   it('should return true when model supports and preference is true', () => {
-    const supportInfo = { passThrough: true } as unknown as SupportInfo;
+    const supportInfo = { passThrough: true } as unknown as AddOnInfo;
 
     mockRead.mockReturnValue(true);
     expect(getPassThrough(supportInfo)).toBe(true);
   });
 
   it('should return true when model, borderless and preference is true', () => {
-    const supportInfo = { openBottom: true, passThrough: true } as unknown as SupportInfo;
+    const supportInfo = { openBottom: true, passThrough: true } as unknown as AddOnInfo;
 
     mockRead.mockReturnValue(true);
     expect(getPassThrough(supportInfo)).toBe(true);
