@@ -11,6 +11,7 @@ import type { GuideMark } from '@core/interfaces/IPassThrough';
 import sliceWorkarea from './sliceWorkarea';
 
 interface Context {
+  addOnInfo: AddOnInfo;
   guideMark: GuideMark;
   handleExport: () => Promise<void>;
   passThroughHeight: number;
@@ -18,12 +19,12 @@ interface Context {
   setGuideMark: Dispatch<SetStateAction<GuideMark>>;
   setPassThroughHeight: Dispatch<SetStateAction<number>>;
   setReferenceLayer: Dispatch<SetStateAction<boolean>>;
-  addOnInfo: AddOnInfo;
   workarea: WorkAreaModel;
   workareaObj: WorkArea;
 }
 
 export const PassThroughContext = createContext<Context>({
+  addOnInfo: getAddOnInfo('ado1'),
   guideMark: { show: false, width: 40, x: 0 },
   handleExport: async () => {},
   passThroughHeight: 120,
@@ -31,7 +32,6 @@ export const PassThroughContext = createContext<Context>({
   setGuideMark: () => {},
   setPassThroughHeight: () => {},
   setReferenceLayer: () => {},
-  addOnInfo: getAddOnInfo('ado1'),
   workarea: 'ado1',
   workareaObj: getWorkarea('ado1'),
 });
@@ -56,6 +56,7 @@ export function PassThroughProvider({ children }: Props): React.JSX.Element {
   return (
     <PassThroughContext.Provider
       value={{
+        addOnInfo,
         guideMark,
         handleExport,
         passThroughHeight,
@@ -63,7 +64,6 @@ export function PassThroughProvider({ children }: Props): React.JSX.Element {
         setGuideMark,
         setPassThroughHeight,
         setReferenceLayer,
-        addOnInfo,
         workarea,
         workareaObj,
       }}

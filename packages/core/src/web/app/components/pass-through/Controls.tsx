@@ -19,13 +19,13 @@ const Controls = (): React.JSX.Element => {
   const lang = useI18n().pass_through;
 
   const {
+    addOnInfo,
     guideMark,
     passThroughHeight,
     referenceLayer,
     setGuideMark,
     setPassThroughHeight,
     setReferenceLayer,
-    addOnInfo,
     workarea,
     workareaObj,
   } = useContext(PassThroughContext);
