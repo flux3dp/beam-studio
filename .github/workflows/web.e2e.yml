@@ -35,6 +35,7 @@ jobs:
         with:
           working-directory: apps/web
           runTests: false
+          install-command: pnpm install
 
       - name: Setup web and run e2e tests
         uses: cypress-io/github-action@v6
