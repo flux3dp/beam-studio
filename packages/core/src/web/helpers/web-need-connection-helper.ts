@@ -17,7 +17,7 @@ const webNeedConnectionWrapper = <T>(callback: () => Promise<T> | T): Promise<T>
         const res = await fileExportHelper.toggleUnsavedChangedDialog();
 
         if (res) {
-          window.location.hash = '#initialize/connect/select-machine-model';
+          window.location.hash = '#/initialize/connect/select-machine-model';
         }
       },
       caption: i18n.lang.alert.oops,

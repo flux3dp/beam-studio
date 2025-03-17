@@ -50,18 +50,18 @@ describe('test SelectConnectionType', () => {
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getByText('Wi-Fi'));
-    expect(window.location.hash).toBe('#initialize/connect/connect-wi-fi?model=ado1');
+    expect(window.location.hash).toBe('#/initialize/connect/connect-wi-fi?model=ado1');
 
     fireEvent.click(getByText('Wired Network'));
-    expect(window.location.hash).toBe('#initialize/connect/connect-wired?model=ado1');
+    expect(window.location.hash).toBe('#/initialize/connect/connect-wired?model=ado1');
 
     fireEvent.click(getByText('Direct Connection'));
-    expect(window.location.hash).toBe('#initialize/connect/connect-ethernet?model=ado1');
+    expect(window.location.hash).toBe('#/initialize/connect/connect-ethernet?model=ado1');
 
     fireEvent.click(getByText('USB Connection'));
-    expect(window.location.hash).toBe('#initialize/connect/connect-usb?model=ado1');
+    expect(window.location.hash).toBe('#/initialize/connect/connect-usb?model=ado1');
 
     fireEvent.click(getByText('back'));
-    expect(window.location.hash).toBe('#initialize/connect/select-machine-model');
+    expect(window.location.hash).toBe('#/initialize/connect/select-machine-model');
   });
 });

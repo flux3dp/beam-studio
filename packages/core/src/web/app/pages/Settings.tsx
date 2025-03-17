@@ -118,14 +118,14 @@ class Settings extends React.PureComponent<Props, State> {
 
     autoSaveHelper.setConfig(editingAutosaveConfig);
 
-    window.location.hash = '#studio/beambox';
+    window.location.hash = '#/studio/beambox';
     window.location.reload();
   };
 
   handleCancel = (): void => {
     i18n.setActiveLang(this.origLang);
 
-    window.location.hash = '#studio/beambox';
+    window.location.hash = '#/studio/beambox';
     window.location.reload();
   };
 

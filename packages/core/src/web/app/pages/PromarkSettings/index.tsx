@@ -55,7 +55,7 @@ export default function PromarkSettings(): React.JSX.Element {
 
     dialogCaller.showLoadingWindow();
 
-    window.location.hash = '#studio/beambox';
+    window.location.hash = '#/studio/beambox';
     window.location.reload();
   };
 

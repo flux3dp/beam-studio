@@ -57,7 +57,7 @@ export default function ChoosePromarkLaserSource(): React.JSX.Element {
 
     setPromarkInfo({ laserType: LaserType[source], watt: Number(watt) } as PromarkInfo);
 
-    window.location.hash = `#initialize/connect/promark-settings`;
+    window.location.hash = `#/initialize/connect/promark-settings`;
   };
 
   return (

@@ -160,7 +160,7 @@ export default {
     const res = await FileExportHelper.toggleUnsavedChangedDialog();
 
     if (res) {
-      window.location.hash = '#initialize/connect/select-machine-model';
+      window.location.hash = '#/initialize/connect/select-machine-model';
     }
   },
   ANTI_ALIASING: (): boolean => viewMenu.toggleAntiAliasing(),
@@ -256,7 +256,7 @@ export default {
     const res = await FileExportHelper.toggleUnsavedChangedDialog();
 
     if (res) {
-      window.location.hash = '#studio/settings';
+      window.location.hash = '#/studio/settings';
     }
   },
   QUESTIONNAIRE: async (): Promise<void> => {
