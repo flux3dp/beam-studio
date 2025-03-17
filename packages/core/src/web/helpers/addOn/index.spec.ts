@@ -18,7 +18,7 @@ describe('test getAutoFeeder', () => {
     jest.resetAllMocks();
   });
 
-  it('should return false if supportInfo is false', () => {
+  it('should return false if supportInfo not support', () => {
     const supportInfo = { autoFeeder: false } as unknown as SupportInfo;
 
     expect(getAutoFeeder(supportInfo)).toBe(false);
@@ -26,35 +26,35 @@ describe('test getAutoFeeder', () => {
     expect(mockGetSupportInfo).not.toHaveBeenCalled();
   });
 
-  it('should return false supportInfo auto feeder but preference is false', () => {
+  it('should return false when model supports but preference is false', () => {
     const supportInfo = { autoFeeder: true } as unknown as SupportInfo;
 
     mockRead.mockReturnValue(false);
     expect(getAutoFeeder(supportInfo)).toBe(false);
   });
 
-  it('should return false supportInfo auto feeder but borderless is false', () => {
+  it('should return false when model supports but borderless is false', () => {
     const supportInfo = { autoFeeder: true, openBottom: true } as unknown as SupportInfo;
 
     mockRead.mockReturnValueOnce(true).mockReturnValueOnce(false);
     expect(getAutoFeeder(supportInfo)).toBe(false);
   });
 
-  it('should return true supportInfo auto feeder and preference is true', () => {
+  it('should return true when model supports and preference is true', () => {
     const supportInfo = { autoFeeder: true } as unknown as SupportInfo;
 
     mockRead.mockReturnValue(true);
     expect(getAutoFeeder(supportInfo)).toBe(true);
   });
 
-  it('should return true supportInfo auto feeder and borderless is true', () => {
+  it('should return true when model, borderless and preference is true', () => {
     const supportInfo = { autoFeeder: true, openBottom: true } as unknown as SupportInfo;
 
     mockRead.mockReturnValue(true);
     expect(getAutoFeeder(supportInfo)).toBe(true);
   });
 
-  it('should get supportInfo if not provided', () => {
+  it('should call getSupportInfo if not provided', () => {
     const supportInfo = { autoFeeder: true };
 
     mockGetSupportInfo.mockReturnValue(supportInfo);
@@ -70,7 +70,7 @@ describe('test getPassThrough', () => {
     jest.resetAllMocks();
   });
 
-  it('should return false if supportInfo is false', () => {
+  it('should return false if supportInfo not support', () => {
     const supportInfo = { passThrough: false } as unknown as SupportInfo;
 
     expect(getPassThrough(supportInfo)).toBe(false);
@@ -78,35 +78,35 @@ describe('test getPassThrough', () => {
     expect(mockGetSupportInfo).not.toHaveBeenCalled();
   });
 
-  it('should return false supportInfo auto feeder but preference is false', () => {
+  it('should return false when model supports but preference is false', () => {
     const supportInfo = { passThrough: true } as unknown as SupportInfo;
 
     mockRead.mockReturnValue(false);
     expect(getPassThrough(supportInfo)).toBe(false);
   });
 
-  it('should return false supportInfo auto feeder but borderless is false', () => {
+  it('should return false when model supports but borderless is false', () => {
     const supportInfo = { openBottom: true, passThrough: true } as unknown as SupportInfo;
 
     mockRead.mockReturnValueOnce(true).mockReturnValueOnce(false);
     expect(getPassThrough(supportInfo)).toBe(false);
   });
 
-  it('should return true supportInfo auto feeder and preference is true', () => {
+  it('should return true when model supports and preference is true', () => {
     const supportInfo = { passThrough: true } as unknown as SupportInfo;
 
     mockRead.mockReturnValue(true);
     expect(getPassThrough(supportInfo)).toBe(true);
   });
 
-  it('should return true supportInfo auto feeder and borderless is true', () => {
+  it('should return true when model, borderless and preference is true', () => {
     const supportInfo = { openBottom: true, passThrough: true } as unknown as SupportInfo;
 
     mockRead.mockReturnValue(true);
     expect(getPassThrough(supportInfo)).toBe(true);
   });
 
-  it('should get supportInfo if not provided', () => {
+  it('should call getSupportInfo if not provided', () => {
     const supportInfo = { passThrough: true };
 
     mockGetSupportInfo.mockReturnValue(supportInfo);
