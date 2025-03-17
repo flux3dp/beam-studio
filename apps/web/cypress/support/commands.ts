@@ -41,6 +41,8 @@ Cypress.Commands.add('landingEditor', (opts: Partial<Cypress.VisitOptions> = {})
     timeout: 30000,
   });
   cy.window().its('svgCanvas', { timeout: 3000 });
+  // timeout 200 in getSVGAsync
+  cy.wait(250);
 });
 
 Cypress.Commands.add('loginAndLandingEditor', (opts: Partial<Cypress.VisitOptions> = {}) => {
