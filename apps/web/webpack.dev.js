@@ -9,6 +9,9 @@ module.exports = merge(config, {
     compress: true,
     static: path.resolve(__dirname, 'dist'),
   },
+  watchOptions: {
+    poll: 1000,
+  },
   mode: 'development',
   output: {
     clean: true,

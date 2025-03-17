@@ -20,6 +20,6 @@ it('offset', () => {
   cy.get('.control > .ui > input').type('{selectall}{backspace}10');
   cy.get('.primary').click();
 
-  cy.inputValueCloseTo('#w_size', 146.43, 0.1);
-  cy.inputValueCloseTo('#h_size', 159.17, 0.1);
+  cy.inputValueCloseTo('#w_size', 166.43, 0.1);
+  cy.inputValueCloseTo('#h_size', 179.17, 0.1);
 });

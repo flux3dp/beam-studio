@@ -265,7 +265,7 @@ export default (options: Option): WrappedWebSocket => {
 
       // The connection was closed abnormally without sending or receving data
       // ref: http://tools.ietf.org/html/rfc6455#section-7.4.1
-      if (result.code === 1006) {
+      if (result?.code === 1006) {
         wsLog.log.push('**abnormal disconnection**');
         socketOptions.onFatal?.(result);
       }

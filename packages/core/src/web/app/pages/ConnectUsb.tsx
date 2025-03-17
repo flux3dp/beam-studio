@@ -46,7 +46,7 @@ export default function ConnectUsb(): React.JSX.Element {
     const urlParams = new URLSearchParams({ model, usb: '1' });
     const queryString = urlParams.toString();
 
-    window.location.hash = `#initialize/connect/connect-machine-ip?${queryString}`;
+    window.location.hash = `#/initialize/connect/connect-machine-ip?${queryString}`;
   };
 
   const renderStep = (model: SupportUsbModels) =>
