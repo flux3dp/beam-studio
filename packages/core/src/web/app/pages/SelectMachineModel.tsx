@@ -72,12 +72,12 @@ const SelectMachineModel = (): React.JSX.Element => {
 
     // for promark, there is no connection type selection, go to connect-usb directly
     if (model === 'fpm1') {
-      window.location.hash = `#initialize/connect/connect-usb?model=${model}`;
+      window.location.hash = `#/initialize/connect/connect-usb?model=${model}`;
 
       return;
     }
 
-    window.location.hash = `#initialize/connect/select-connection-type?model=${model}`;
+    window.location.hash = `#/initialize/connect/select-connection-type?model=${model}`;
   };
 
   const modelList: ModelItem[] = [

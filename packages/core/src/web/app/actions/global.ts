@@ -32,10 +32,11 @@ window.onerror = (message, source, lineno) => {
 
 export default (callback: () => void): void => {
   const { hash } = window.location;
+  const isInitializePage = Boolean(hash.match(/^#\/?initialize/));
   const onFinished = (isReady: boolean) => {
-    if (isReady === true && (hash === '' || hash.startsWith('#initialize'))) {
+    if (isReady === true && (hash === '' || isInitializePage)) {
       window.location.hash = '#/studio/beambox';
-    } else if (isReady === false && !hash.startsWith('#initialize')) {
+    } else if (isReady === false && !isInitializePage) {
       window.location.hash = '#';
     }
 

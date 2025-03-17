@@ -11,7 +11,7 @@ function FluxIdLogin(): React.JSX.Element {
     const isReady = storage.get('printer-is-ready');
 
     dialog.showLoginDialog(() => {
-      window.location.hash = isReady ? '#/studio/beambox' : '#initialize/connect/select-machine-model';
+      window.location.hash = isReady ? '#/studio/beambox' : '#/initialize/connect/select-machine-model';
     }, !isReady);
   }, []);
 
