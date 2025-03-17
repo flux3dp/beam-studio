@@ -31,14 +31,11 @@ const setStorage = () => {
 
 Cypress.Commands.add('landingEditor', (opts: Partial<Cypress.VisitOptions> = {}) => {
   setStorage();
-  cy.visit('/#/initialize/connect/flux-id-login', opts);
+  cy.visit('/#/studio/beambox', opts);
   cy.on('window:load', (win) => {
     // eslint-disable-next-line no-param-reassign
     win.onbeforeunload = null;
   });
-  cy.contains('Work Offline', { timeout: 30000 }).click();
-  // time for svgcanvas loading
-  cy.wait(1000);
   // Use GoButton to detect frontend render
   cy.get('[title="Start Work"]', { timeout: 30000 }).should('exist', {
     timeout: 30000,
@@ -47,6 +44,7 @@ Cypress.Commands.add('landingEditor', (opts: Partial<Cypress.VisitOptions> = {})
 
 Cypress.Commands.add('loginAndLandingEditor', (opts: Partial<Cypress.VisitOptions> = {}) => {
   setStorage();
+  window.localStorage.setItem('printer-is-ready', 'false');
   cy.visit('/#/initialize/connect/flux-id-login', opts);
   cy.on('window:load', (win) => {
     // eslint-disable-next-line no-param-reassign
