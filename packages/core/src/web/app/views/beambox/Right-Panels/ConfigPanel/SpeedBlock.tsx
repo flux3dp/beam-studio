@@ -9,7 +9,7 @@ import { sprintf } from 'sprintf-js';
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import configOptions from '@core/app/constants/config-options';
-import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import history from '@core/app/svgedit/history/history';
 import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
@@ -148,7 +148,7 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   };
 
   const sliderOptions = useMemo(
-    () => (simpleMode && module === LayerModule.PRINTER ? configOptions.getPrintingSpeedOptions(lang) : null),
+    () => (simpleMode && printingModules.has(module) ? configOptions.getPrintingSpeedOptions(lang) : null),
     [simpleMode, module, lang],
   );
 
@@ -182,7 +182,7 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
         onChange={handleChange}
         options={sliderOptions}
         speedLimit={
-          module !== LayerModule.PRINTER && (type === 'modal' ? doLayersContainsVector(selectedLayers) : hasVector)
+          !printingModules.has(module) && (type === 'modal' ? doLayersContainsVector(selectedLayers) : hasVector)
         }
         step={0.1}
         unit={displayUnit}

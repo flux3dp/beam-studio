@@ -1,5 +1,6 @@
 import progressCaller from '@core/app/actions/progress-caller';
 import { PrintingColors } from '@core/app/constants/color-constants';
+import LayerModule from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
 import history from '@core/app/svgedit/history/history';
 import updateLayerColor from '@core/helpers/color/updateLayerColor';
@@ -38,10 +39,10 @@ const splitFullColorLayer = async (
   const layer = getLayerElementByName(layerName);
   const fullColor = getData(layer, 'fullcolor');
   const ref = getData(layer, 'ref');
+  const layerModule = getData(layer, 'module');
+  const split = getData(layer, 'split');
 
-  if (!fullColor || ref) {
-    return null;
-  }
+  if (![LayerModule.PRINTER, LayerModule.PRINTER_4C].includes(layerModule) || !fullColor || ref || split) return null;
 
   progressCaller.openNonstopProgress({
     id: PROGRESS_ID,
@@ -49,6 +50,7 @@ const splitFullColorLayer = async (
     timeout: 120000,
   });
 
+  const is4c = layerModule === LayerModule.PRINTER_4C;
   const uses = [...layer.querySelectorAll('use')];
 
   uses.forEach((use) => symbolMaker.switchImageSymbol(use as SVGUseElement, false));
@@ -66,95 +68,137 @@ const splitFullColorLayer = async (
   }
 
   const whiteInkStaturation = getData(layer, 'wInk');
-  const cRatio = getData(layer, 'cRatio');
-  const mRatio = getData(layer, 'mRatio');
-  const yRatio = getData(layer, 'yRatio');
-  const kRatio = getData(layer, 'kRatio');
-
   const includeWhite = isDev() && whiteInkStaturation > 0;
-  const channelBlobs = await splitColor(rgbBlob, cmykBlob, { includeWhite });
+
+  const colorDatas = await splitColor(rgbBlob, cmykBlob, { includeWhite });
+
+  const createImage = (blob: Blob) => {
+    const imgUrl = URL.createObjectURL(blob);
+    const image = document.createElementNS(NS.SVG, 'image') as unknown as SVGImageElement;
+
+    image.setAttribute('x', bbox.x.toString());
+    image.setAttribute('y', bbox.y.toString());
+    image.setAttribute('width', bbox.width.toString());
+    image.setAttribute('height', bbox.height.toString());
+    image.setAttribute('id', svgCanvas.getNextId());
+    image.setAttribute('style', 'pointer-events:inherit');
+    image.setAttribute('preserveAspectRatio', 'none');
+    image.setAttribute('origImage', imgUrl);
+    image.setAttribute('data-threshold', '254');
+    image.setAttribute('data-shading', 'true');
+    image.setAttribute('data-ratiofixed', 'true');
+    image.removeAttribute('data-fullcolor');
+
+    return image;
+  };
 
   const batchCmd = new history.BatchCommand('Split Full Color Layer');
-  const newLayers: Element[] = [];
-  const nameSuffix = ['W', 'K', 'C', 'M', 'Y'];
-  const params = [null, { strength: kRatio }, { strength: cRatio }, { strength: mRatio }, { strength: yRatio }];
+  const newLayers: Array<Element | null> = [];
+  const promises = [];
+  const colorMap = {
+    [PrintingColors.BLACK]: 'k',
+    [PrintingColors.CYAN]: 'c',
+    [PrintingColors.MAGENTA]: 'm',
+    [PrintingColors.WHITE]: 'w',
+    [PrintingColors.YELLOW]: 'y',
+  };
 
-  for (let i = 0; i < nameSuffix.length; i += 1) {
-    if (i === 0 && !includeWhite) {
-      newLayers.push(null);
-
-      continue;
-    }
-
-    const color = {
-      C: PrintingColors.CYAN,
-      K: PrintingColors.BLACK,
-      M: PrintingColors.MAGENTA,
-      W: PrintingColors.WHITE,
-      Y: PrintingColors.YELLOW,
-    }[nameSuffix[i]];
-    const res = cloneLayer(layerName, {
+  if (is4c) {
+    const cloneRes = cloneLayer(layerName, {
       configOnly: true,
       isSub: true,
-      name: `${layerName} (${nameSuffix[i]})`,
+      name: `${layerName} (4C)`,
     });
 
-    if (res) {
-      const { cmd, elem } = res;
+    if (cloneRes) {
+      const { cmd, elem: newLayer } = cloneRes;
 
       batchCmd.addSubCommand(cmd);
-      writeDataLayer(elem, 'color', color);
-      writeDataLayer(elem, 'fullcolor', false);
-      writeDataLayer(elem, 'split', true);
+      writeDataLayer(newLayer, 'split', true);
 
-      if (i === 0) {
+      for (let i = 0; i < colorDatas.length; i += 1) {
+        const { color, data } = colorDatas[i];
+
+        if (!data || color === PrintingColors.WHITE) continue;
+
+        const newImage = createImage(data);
+
+        newLayer.appendChild(newImage);
+
+        const c = colorMap[color];
+        const promise = updateImageDisplay(newImage);
+
+        newImage.setAttribute('data-color', c);
+        promises.push(promise);
+      }
+
+      layer.parentNode!.insertBefore(newLayer, layer.nextSibling);
+      newLayers.push(newLayer);
+    }
+  } else {
+    // split to 4 / 5 layers
+    const cRatio = getData(layer, 'cRatio');
+    const mRatio = getData(layer, 'mRatio');
+    const yRatio = getData(layer, 'yRatio');
+    const kRatio = getData(layer, 'kRatio');
+    const params = [null, { strength: kRatio }, { strength: cRatio }, { strength: mRatio }, { strength: yRatio }];
+    const promises = [];
+
+    for (let i = 0; i < colorDatas.length; i += 1) {
+      const { color, data } = colorDatas[i];
+
+      if (color === PrintingColors.WHITE && !includeWhite) {
+        newLayers.push(null);
+
+        continue;
+      }
+
+      const nameSuffix = colorMap[color].toUpperCase();
+      const res = cloneLayer(layerName, {
+        configOnly: true,
+        isSub: true,
+        name: `${layerName} (${nameSuffix})`,
+      });
+
+      if (!res) continue;
+
+      const { cmd, elem: newLayer } = res;
+
+      batchCmd.addSubCommand(cmd);
+      writeDataLayer(newLayer, 'color', color);
+      writeDataLayer(newLayer, 'fullcolor', false);
+      writeDataLayer(newLayer, 'split', true);
+
+      if (color === PrintingColors.WHITE) {
         const whiteSpeed = getData(layer, 'wSpeed');
         const whiteMultipass = getData(layer, 'wMultipass');
         const whiteRepeat = getData(layer, 'wRepeat');
 
-        writeDataLayer(elem, 'ink', whiteInkStaturation);
-        writeDataLayer(elem, 'printingSpeed', whiteSpeed);
-        writeDataLayer(elem, 'multipass', whiteMultipass);
-        writeDataLayer(elem, 'repeat', whiteRepeat);
+        writeDataLayer(newLayer, 'ink', whiteInkStaturation);
+        writeDataLayer(newLayer, 'printingSpeed', whiteSpeed);
+        writeDataLayer(newLayer, 'multipass', whiteMultipass);
+        writeDataLayer(newLayer, 'repeat', whiteRepeat);
       } else {
-        const { strength } = params[i];
+        const { strength } = params[i]!;
 
-        writeDataLayer(elem, 'printingStrength', strength);
+        writeDataLayer(newLayer, 'printingStrength', strength);
       }
 
-      layer.parentNode.insertBefore(elem, layer.nextSibling);
-      newLayers.push(elem);
+      layer.parentNode!.insertBefore(newLayer, layer.nextSibling);
+      newLayers.push(newLayer);
+
+      if (!data) continue;
+
+      const newImage = createImage(data);
+
+      newLayer.appendChild(newImage);
+
+      const promise = updateImageDisplay(newImage);
+
+      promises.push(promise);
     }
   }
 
-  const promises = [];
-
-  for (let i = 0; i < newLayers.length; i += 1) {
-    if (!channelBlobs[i]) {
-      continue;
-    }
-
-    const newImgUrl = URL.createObjectURL(channelBlobs[i]);
-    const newImage = document.createElementNS(NS.SVG, 'image') as unknown as SVGImageElement;
-
-    newImage.setAttribute('x', bbox.x.toString());
-    newImage.setAttribute('y', bbox.y.toString());
-    newImage.setAttribute('width', bbox.width.toString());
-    newImage.setAttribute('height', bbox.height.toString());
-    newImage.setAttribute('id', svgCanvas.getNextId());
-    newImage.setAttribute('style', 'pointer-events:inherit');
-    newImage.setAttribute('preserveAspectRatio', 'none');
-    newImage.setAttribute('origImage', newImgUrl);
-    newImage.setAttribute('data-threshold', '254');
-    newImage.setAttribute('data-shading', 'true');
-    newImage.setAttribute('data-ratiofixed', 'true');
-    newImage.removeAttribute('data-fullcolor');
-    newLayers[i].appendChild(newImage);
-
-    const promise = updateImageDisplay(newImage);
-
-    promises.push(promise);
-  }
   await Promise.all(promises);
 
   const cmd = deleteLayerByName(layerName);
@@ -183,8 +227,8 @@ const splitFullColorLayer = async (
 
 export const tempSplitFullColorLayers = async (): Promise<() => void> => {
   const allLayerNames = getAllLayerNames();
-  const addedLayers = [];
-  const removedLayers = [];
+  const addedLayers: Element[] = [];
+  const removedLayers: Array<{ layer: Element; nextSibling: Node | null; parentNode: Node | null }> = [];
   const drawing = svgCanvas.getCurrentDrawing();
   const currentLayerName = drawing.getCurrentLayerName();
 
@@ -217,7 +261,7 @@ export const tempSplitFullColorLayers = async (): Promise<() => void> => {
     for (let i = removedLayers.length - 1; i >= 0; i -= 1) {
       const { layer, nextSibling, parentNode } = removedLayers[i];
 
-      parentNode.insertBefore(layer, nextSibling);
+      parentNode!.insertBefore(layer, nextSibling);
     }
     for (let i = 0; i < addedLayers.length; i += 1) {
       const layer = addedLayers[i];
@@ -225,7 +269,7 @@ export const tempSplitFullColorLayers = async (): Promise<() => void> => {
       layer.remove();
     }
     drawing.identifyLayers();
-    drawing.setCurrentLayer(currentLayerName);
+    drawing.setCurrentLayer(currentLayerName!);
   };
 
   return revert;
