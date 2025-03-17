@@ -32,7 +32,6 @@
 
 import Alert from '@core/app/actions/alert-caller';
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import OpenBottomBoundaryDrawer from '@core/app/actions/beambox/open-bottom-boundary-drawer';
 import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import ToolPanelsController from '@core/app/actions/beambox/toolPanelsController';
 import grid from '@core/app/actions/canvas/grid';
@@ -48,6 +47,7 @@ import beamboxStore from '@core/app/stores/beambox-store';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import * as TutorialController from '@core/app/views/tutorials/tutorialController';
+import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import updateLayerColorFilter from '@core/helpers/color/updateLayerColorFilter';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
@@ -1789,15 +1789,15 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     svgcontent.setAttribute('data-en_diode', String(isUsingDiode));
     svgcontent.setAttribute('data-en_af', String(isUsingAF));
 
-    if (supportInfo.autoFeeder && BeamboxPreference.read('auto-feeder')) {
-      svgcontent.setAttribute('data-auto-feeder-height', BeamboxPreference.read('auto-feeder-height'));
+    if (getAutoFeeder(supportInfo)) {
+      svgcontent.setAttribute('data-auto-feeder-height', BeamboxPreference.read('auto-feeder-height')!.toFixed(2));
     }
 
-    if (supportInfo.passThrough && BeamboxPreference.read('pass-through')) {
-      svgcontent.setAttribute('data-pass_through', String(BeamboxPreference.read('pass-through-height')));
+    if (getPassThrough(supportInfo)) {
+      svgcontent.setAttribute('data-pass_through', BeamboxPreference.read('pass-through-height')!.toFixed(2));
     }
 
-    const workareaElement = document.getElementById('workarea');
+    const workareaElement = document.getElementById('workarea')!;
     const workareaObj = getWorkarea(workarea);
     const { pxDisplayHeight, pxHeight, pxWidth } = workareaObj;
     const zoom = workareaManager.zoomRatio;
@@ -2763,25 +2763,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // strs - Object with strings (see uiStrings for examples)
   this.setUiStrings = function (strs) {
     $.extend(uiStrings, strs.notification);
-  };
-
-  // Function: toggleBorderless
-  // switch Borderless mode if no input, set to turnOnBorderless if passed
-  //
-  // Parameters:
-  // turnOnBorderless - turn on borderless mode or not
-  this.toggleBorderless = function (turnOnBorderless) {
-    let borderless;
-
-    if (turnOnBorderless === undefined) {
-      borderless = BeamboxPreference.read('borderless') || false;
-      borderless = !borderless;
-    } else {
-      borderless = turnOnBorderless;
-    }
-
-    BeamboxPreference.write('borderless', borderless);
-    OpenBottomBoundaryDrawer.update();
   };
 
   // Function: setConfig

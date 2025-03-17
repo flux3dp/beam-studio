@@ -1,4 +1,4 @@
-import { checkFbb2AutoFeeder } from '@core/helpers/checkFeature';
+import { checkAdo1AutoFeeder, checkFbb2AutoFeeder, checkFbm1AutoFeeder } from '@core/helpers/checkFeature';
 
 import type { WorkAreaModel } from './workarea-constants';
 
@@ -8,10 +8,12 @@ export enum RotaryType {
 }
 
 export const CHUCK_ROTARY_DIAMETER = 133;
-export const FBB2_FEEDER_DIAMETER = 167.08;
+export const FBB2_FEEDER_DIAMETER = 167.08; // FIXME: This might be wrong due to PCB issue
+export const FEEDER_DIAMETER = 83.54;
 
+// TODO: rename this to AddOnInfo because it's not only support or not
 export interface SupportInfo {
-  autoFeeder?: { maxHeight: number; rotaryRatio: number; xRange: [number, number] }; // [x, width] in mm
+  autoFeeder?: { maxHeight: number; rotaryRatio: number; xRange?: [number, number] }; // [x, width] in mm, no limit is not set
   autoFocus?: boolean;
   curveEngraving?: boolean;
   framingLowLaser?: boolean;
@@ -19,7 +21,7 @@ export interface SupportInfo {
   jobOrigin?: boolean;
   lowerFocus?: boolean;
   openBottom?: boolean;
-  passThrough?: boolean;
+  passThrough?: { maxHeight: number; xRange?: [number, number] }; // [x, width] in mm, no limit is not set
   redLight?: boolean;
   rotary?: {
     chuck: boolean;
@@ -43,10 +45,13 @@ const hexaSupportInfo: SupportInfo = {
 
 const supportList: Record<WorkAreaModel, SupportInfo> = {
   ado1: {
+    autoFeeder: checkAdo1AutoFeeder()
+      ? { maxHeight: 2000, rotaryRatio: CHUCK_ROTARY_DIAMETER / FEEDER_DIAMETER }
+      : undefined,
     framingLowLaser: true,
     jobOrigin: true,
     lowerFocus: true,
-    passThrough: true,
+    passThrough: { maxHeight: 240 },
     rotary: {
       chuck: true,
       defaultMirror: true,
@@ -80,7 +85,7 @@ const supportList: Record<WorkAreaModel, SupportInfo> = {
     curveEngraving: true,
     jobOrigin: true,
     lowerFocus: true,
-    passThrough: true,
+    passThrough: { maxHeight: 300, xRange: [100, 400] },
     redLight: true,
     rotary: {
       chuck: true,
@@ -91,11 +96,14 @@ const supportList: Record<WorkAreaModel, SupportInfo> = {
     },
   },
   fbm1: {
+    autoFeeder: checkFbm1AutoFeeder()
+      ? { maxHeight: 2000, rotaryRatio: -CHUCK_ROTARY_DIAMETER / FEEDER_DIAMETER }
+      : undefined,
     autoFocus: true,
     hybridLaser: true,
     jobOrigin: true,
     openBottom: true,
-    passThrough: true,
+    passThrough: { maxHeight: 160 },
     rotary: {
       chuck: true,
       extendWorkarea: false,

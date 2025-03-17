@@ -1,5 +1,4 @@
 import beamboxPreferences from '@core/app/actions/beambox/beambox-preference';
-import openBottomBoundaryDrawer from '@core/app/actions/beambox/open-bottom-boundary-drawer';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { changeBeamboxPreferenceValue } from '@core/app/svgedit/history/beamboxPreferenceCommand';
 import workareaManager from '@core/app/svgedit/workarea';
@@ -14,7 +13,6 @@ const changeWorkarea = (workarea: WorkAreaModel, opts: { toggleModule?: boolean 
 
     workareaManager.setWorkarea(currentValue);
     workareaManager.resetView();
-    openBottomBoundaryDrawer.update();
 
     if (toggleModule) toggleFullColorAfterWorkareaChange();
   };
