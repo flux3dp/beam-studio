@@ -4,7 +4,7 @@ import { concatMap } from 'rxjs/operators';
 
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import Constant from '@core/app/actions/beambox/constant';
-import { getAddOnInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/addOn';
 import NS from '@core/app/constants/namespaces';
 import beamboxStore from '@core/app/stores/beambox-store';
 import workareaManager from '@core/app/svgedit/workarea';

@@ -1,6 +1,6 @@
 import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
-import { getAddOnInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConfig from '@core/helpers/api/alert-config';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';

@@ -8,7 +8,7 @@ import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import { showAdorCalibrationV2 } from '@core/app/components/dialogs/camera/AdorCalibrationV2';
 import { showBB2Calibration } from '@core/app/components/dialogs/camera/BB2Calibration';
 import updateFontConvert from '@core/app/components/dialogs/updateFontConvert';
-import { getAddOnInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/addOn';
 import AlertConstants from '@core/app/constants/alert-constants';
 import FontConstants from '@core/app/constants/font-constants';
 import { gestureIntroduction } from '@core/app/constants/media-tutorials';

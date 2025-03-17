@@ -38,7 +38,7 @@ import grid from '@core/app/actions/canvas/grid';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import Progress from '@core/app/actions/progress-caller';
-import { getAddOnInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/addOn';
 import AlertConstants from '@core/app/constants/alert-constants';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';

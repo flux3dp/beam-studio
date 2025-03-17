@@ -3,7 +3,7 @@ import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
 import progressCaller from '@core/app/actions/progress-caller';
 import { showCurveEngraving, showMeasureArea } from '@core/app/components/dialogs/CurveEngraving';
-import { getAddOnInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import NS from '@core/app/constants/namespaces';

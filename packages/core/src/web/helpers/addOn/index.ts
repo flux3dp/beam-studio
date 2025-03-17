@@ -1,6 +1,6 @@
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import type { AddOnInfo } from '@core/app/constants/add-on';
-import { getAddOnInfo } from '@core/app/constants/add-on';
+import type { AddOnInfo } from '@core/app/constants/addOn';
+import { getAddOnInfo } from '@core/app/constants/addOn';
 
 /**
  * get if auto feeder is enabled accroding to beambox preference, support info and borderless setting

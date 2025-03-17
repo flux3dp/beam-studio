@@ -5,7 +5,7 @@ import { Checkbox, Modal, Segmented, Switch } from 'antd';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
-import { getAddOnInfo, RotaryType } from '@core/app/constants/add-on';
+import { getAddOnInfo, RotaryType } from '@core/app/constants/addOn';
 import RotaryIcons from '@core/app/icons/rotary/RotaryIcons';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import UnitInput from '@core/app/widgets/UnitInput';

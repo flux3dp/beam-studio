@@ -6,7 +6,7 @@ import { fetchTaskCodeSwiftray } from '@core/app/actions/beambox/export-funcs-sw
 import FontFuncs from '@core/app/actions/beambox/font-funcs';
 import MonitorController from '@core/app/actions/monitor-controller';
 import Progress from '@core/app/actions/progress-caller';
-import { getAddOnInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/addOn';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { Mode } from '@core/app/constants/monitor-constants';
 import type { PreviewTask } from '@core/app/contexts/MonitorContext';

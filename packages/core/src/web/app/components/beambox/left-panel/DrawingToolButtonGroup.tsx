@@ -7,7 +7,7 @@ import curveEngravingModeController from '@core/app/actions/canvas/curveEngravin
 import dialogCaller from '@core/app/actions/dialog-caller';
 import LeftPanelButton from '@core/app/components/beambox/left-panel/LeftPanelButton';
 import { showPassThrough } from '@core/app/components/pass-through';
-import { getAddOnInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/addOn';
 import { getSocialMedia } from '@core/app/constants/social-media-constants';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';

@@ -10,7 +10,7 @@ import constant, { promarkModels } from '@core/app/actions/beambox/constant';
 import diodeBoundaryDrawer from '@core/app/actions/canvas/diode-boundary-drawer';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
-import { getAddOnInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
 import CanvasMode from '@core/app/constants/canvasMode';
 import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';

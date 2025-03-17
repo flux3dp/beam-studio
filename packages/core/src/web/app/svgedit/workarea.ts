@@ -1,6 +1,6 @@
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
-import { getAddOnInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/addOn';
 import layoutConstants from '@core/app/constants/layout-constants';
 import rotaryConstants from '@core/app/constants/rotary-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';

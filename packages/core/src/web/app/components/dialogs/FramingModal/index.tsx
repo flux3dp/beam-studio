@@ -8,7 +8,7 @@ import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
-import { getAddOnInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/addOn';
 import FramingIcons from '@core/app/icons/framing/FramingIcons';
 import icons from '@core/app/icons/icons';
 import FramingTaskManager, { FramingType } from '@core/helpers/device/framing';

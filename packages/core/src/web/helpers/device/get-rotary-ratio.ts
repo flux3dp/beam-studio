@@ -1,6 +1,6 @@
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import type { AddOnInfo } from '@core/app/constants/add-on';
-import { CHUCK_ROTARY_DIAMETER, RotaryType } from '@core/app/constants/add-on';
+import type { AddOnInfo } from '@core/app/constants/addOn';
+import { CHUCK_ROTARY_DIAMETER, RotaryType } from '@core/app/constants/addOn';
 
 const getRotaryRatio = (addOnInfo: AddOnInfo): number => {
   let ratio = 1;

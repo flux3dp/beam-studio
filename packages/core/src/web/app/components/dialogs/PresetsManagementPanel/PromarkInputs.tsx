@@ -3,7 +3,7 @@ import React, { useMemo } from 'react';
 import { Switch } from 'antd';
 import classNames from 'classnames';
 
-import { getAddOnInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/addOn';
 import UnitInput from '@core/app/widgets/UnitInput';
 import { getDefaultConfig, getPromarkLimit } from '@core/helpers/layer/layer-config-helper';
 import useI18n from '@core/helpers/useI18n';

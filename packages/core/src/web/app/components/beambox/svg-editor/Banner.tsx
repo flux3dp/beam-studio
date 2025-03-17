@@ -2,7 +2,7 @@ import React, { useContext, useMemo } from 'react';
 
 import { Flex } from 'antd';
 
-import { getAddOnInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/addOn';
 import CanvasMode from '@core/app/constants/canvasMode';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import useBeamboxPreference from '@core/helpers/hooks/useBeamboxPreference';

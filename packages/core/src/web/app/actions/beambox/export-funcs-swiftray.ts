@@ -2,7 +2,7 @@ import Alert from '@core/app/actions/alert-caller';
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import FontFuncs from '@core/app/actions/beambox/font-funcs';
 import Progress from '@core/app/actions/progress-caller';
-import { getAddOnInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/addOn';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { controlConfig } from '@core/app/constants/promark-constants';
 import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';

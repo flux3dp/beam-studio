@@ -37,7 +37,7 @@ jest.mock('@core/helpers/device-master', () => ({
 
 const mockGetAddOnInfo = jest.fn();
 
-jest.mock('@core/app/constants/add-on', () => ({
+jest.mock('@core/app/constants/addOn', () => ({
   getAddOnInfo: (...args) => mockGetAddOnInfo(...args),
 }));
 

@@ -1,6 +1,6 @@
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
-import { getAddOnInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/addOn';
 import LayerModule from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
 import presprayIconUrl from '@core/app/icons/prespray.svg?url';

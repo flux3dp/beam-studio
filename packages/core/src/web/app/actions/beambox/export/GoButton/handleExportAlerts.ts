@@ -6,7 +6,7 @@ import constant, { promarkModels } from '@core/app/actions/beambox/constant';
 import { executeFirmwareUpdate } from '@core/app/actions/beambox/menuDeviceActions';
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import Dialog from '@core/app/actions/dialog-caller';
-import { getAddOnInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { getAutoFeeder } from '@core/helpers/addOn';

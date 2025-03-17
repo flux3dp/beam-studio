@@ -44,7 +44,7 @@ jest.mock('@core/helpers/useI18n', () => () => ({
 
 const mockGetAddOnInfo = jest.fn();
 
-jest.mock('@core/app/constants/add-on', () => ({
+jest.mock('@core/app/constants/addOn', () => ({
   getAddOnInfo: (...args) => mockGetAddOnInfo(...args),
 }));
 

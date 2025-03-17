@@ -1,6 +1,6 @@
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
-import { getAddOnInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/addOn';
 import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
 import moduleBoundary from '@core/app/constants/layer-module/module-boundary';
 import workareaManager from '@core/app/svgedit/workarea';

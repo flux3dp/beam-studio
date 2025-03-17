@@ -3,7 +3,7 @@ import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
 import ExportFuncs from '@core/app/actions/beambox/export-funcs';
 import { executeFirmwareUpdate } from '@core/app/actions/beambox/menuDeviceActions';
-import { getAddOnInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
 import alertConfig from '@core/helpers/api/alert-config';
 import checkOldFirmware from '@core/helpers/device/checkOldFirmware';

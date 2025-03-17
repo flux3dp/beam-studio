@@ -2,8 +2,8 @@ import type { Dispatch, SetStateAction } from 'react';
 import React, { createContext, useMemo, useState } from 'react';
 
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import type { AddOnInfo } from '@core/app/constants/add-on';
-import { getAddOnInfo } from '@core/app/constants/add-on';
+import type { AddOnInfo } from '@core/app/constants/addOn';
+import { getAddOnInfo } from '@core/app/constants/addOn';
 import type { WorkArea, WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import type { GuideMark } from '@core/interfaces/IPassThrough';

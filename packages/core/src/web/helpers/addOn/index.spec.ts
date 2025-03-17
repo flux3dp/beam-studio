@@ -1,4 +1,4 @@
-import type { AddOnInfo } from '@core/app/constants/add-on';
+import type { AddOnInfo } from '@core/app/constants/addOn';
 import { getAutoFeeder, getPassThrough } from '.';
 
 const mockRead = jest.fn();
@@ -9,7 +9,7 @@ jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
 
 const mockGetAddOnInfo = jest.fn();
 
-jest.mock('@core/app/constants/add-on', () => ({
+jest.mock('@core/app/constants/addOn', () => ({
   getAddOnInfo: (...args) => mockGetAddOnInfo(...args),
 }));
 

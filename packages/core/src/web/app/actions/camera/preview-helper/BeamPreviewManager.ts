@@ -6,7 +6,7 @@ import constant from '@core/app/actions/beambox/constant';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import MessageCaller from '@core/app/actions/message-caller';
 import progressCaller from '@core/app/actions/progress-caller';
-import { getAddOnInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/addOn';
 import ErrorConstants from '@core/app/constants/error-constants';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';

@@ -1,5 +1,5 @@
-import type { AddOnInfo } from '@core/app/constants/add-on';
-import { CHUCK_ROTARY_DIAMETER, RotaryType } from '@core/app/constants/add-on';
+import type { AddOnInfo } from '@core/app/constants/addOn';
+import { CHUCK_ROTARY_DIAMETER, RotaryType } from '@core/app/constants/addOn';
 
 import getRotaryRatio from './get-rotary-ratio';
 
