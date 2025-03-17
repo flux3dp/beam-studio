@@ -3,8 +3,8 @@ import type { AddOnInfo } from '@core/app/constants/addOn';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 
 /**
- * get if auto feeder is enabled accroding to beambox preference, support info and borderless setting
- * @param addOnInfo support info object for current workarea, if not provided, using beambox preference to get workarea
+ * get if auto feeder is enabled accroding to beambox preference, add-on info and borderless setting
+ * @param addOnInfo add-on info object for current workarea, if not provided, using beambox preference to get workarea
  * @returns boolean
  */
 export const getAutoFeeder = (addOnInfo?: AddOnInfo): boolean => {
@@ -20,8 +20,8 @@ export const getAutoFeeder = (addOnInfo?: AddOnInfo): boolean => {
 };
 
 /**
- * get if pass through is enabled accroding to beambox preference, support info and borderless setting
- * @param addOnInfo support info object for current workarea, if not provided, using beambox preference to get workarea
+ * get if pass through is enabled accroding to beambox preference, add-on info and borderless setting
+ * @param addOnInfo add-on info object for current workarea, if not provided, using beambox preference to get workarea
  * @returns boolean
  */
 export const getPassThrough = (addOnInfo?: AddOnInfo): boolean => {
