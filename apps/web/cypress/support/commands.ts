@@ -40,6 +40,7 @@ Cypress.Commands.add('landingEditor', (opts: Partial<Cypress.VisitOptions> = {})
   cy.get('[title="Start Work"]', { timeout: 30000 }).should('exist', {
     timeout: 30000,
   });
+  cy.window().its('svgCanvas', { timeout: 3000 });
 });
 
 Cypress.Commands.add('loginAndLandingEditor', (opts: Partial<Cypress.VisitOptions> = {}) => {
