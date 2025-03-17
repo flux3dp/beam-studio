@@ -1,6 +1,6 @@
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
-import { getSupportInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/add-on';
 import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
 import moduleBoundary from '@core/app/constants/layer-module/module-boundary';
 import workareaManager from '@core/app/svgedit/workarea';
@@ -94,10 +94,10 @@ const update = (module: LayerModule): void => {
     right = Math.max(right, -offsetX);
   }
 
-  const supportInfo = getSupportInfo(model);
-  const isRotary = Boolean(BeamboxPreference.read('rotary_mode') && supportInfo.rotary);
-  const isAutoFeeder = getAutoFeeder(supportInfo);
-  const isPassThrough = getPassThrough(supportInfo);
+  const addOnInfo = getAddOnInfo(model);
+  const isRotary = Boolean(BeamboxPreference.read('rotary_mode') && addOnInfo.rotary);
+  const isAutoFeeder = getAutoFeeder(addOnInfo);
+  const isPassThrough = getPassThrough(addOnInfo);
 
   if (offsetY >= 0) {
     top = Math.max(top, offsetY);

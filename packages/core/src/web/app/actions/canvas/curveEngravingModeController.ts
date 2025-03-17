@@ -3,7 +3,7 @@ import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
 import progressCaller from '@core/app/actions/progress-caller';
 import { showCurveEngraving, showMeasureArea } from '@core/app/components/dialogs/CurveEngraving';
-import { getSupportInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/add-on';
 import alertConstants from '@core/app/constants/alert-constants';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import NS from '@core/app/constants/namespaces';
@@ -51,7 +51,7 @@ class CurveEngravingModeController {
   checkSupport = () => {
     const workarea = beamboxPreference.read('workarea');
 
-    return getSupportInfo(workarea).curveEngraving;
+    return getAddOnInfo(workarea).curveEngraving;
   };
 
   start = () => {
@@ -124,7 +124,7 @@ class CurveEngravingModeController {
 
     if (!device) return false;
 
-    const { redLight } = getSupportInfo(device.model);
+    const { redLight } = getAddOnInfo(device.model);
 
     if (redLight) {
       this.measurer = new RedLightCurveMeasurer(device);

@@ -7,7 +7,7 @@ import curveEngravingModeController from '@core/app/actions/canvas/curveEngravin
 import dialogCaller from '@core/app/actions/dialog-caller';
 import LeftPanelButton from '@core/app/components/beambox/left-panel/LeftPanelButton';
 import { showPassThrough } from '@core/app/components/pass-through';
-import { getSupportInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/add-on';
 import { getSocialMedia } from '@core/app/constants/social-media-constants';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
@@ -35,10 +35,10 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
   const tLeftPanel = lang.beambox.left_panel;
   const { changeToPreviewMode, hasPassthroughExtension, selectedDevice, setupPreviewMode } = useContext(CanvasContext);
   const workarea = useBeamboxPreference('workarea');
-  const supportInfo = getSupportInfo(workarea);
-  const isRotary = useBeamboxPreference('rotary_mode') && Boolean(supportInfo.rotary);
-  const isAutoFeeder = useBeamboxPreference('auto-feeder') && Boolean(supportInfo.autoFeeder);
-  const isPassThrough = useBeamboxPreference('pass-through') && supportInfo.passThrough;
+  const addOnInfo = getAddOnInfo(workarea);
+  const isRotary = useBeamboxPreference('rotary_mode') && Boolean(addOnInfo.rotary);
+  const isAutoFeeder = useBeamboxPreference('auto-feeder') && Boolean(addOnInfo.autoFeeder);
+  const isPassThrough = useBeamboxPreference('pass-through') && addOnInfo.passThrough;
   const isCurveEngravingDisabled = useMemo(
     () => isAutoFeeder || isRotary || isPassThrough,
     [isAutoFeeder, isRotary, isPassThrough],

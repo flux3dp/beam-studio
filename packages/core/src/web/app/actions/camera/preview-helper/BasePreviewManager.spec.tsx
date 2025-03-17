@@ -35,10 +35,10 @@ jest.mock('@core/helpers/device-master', () => ({
   takeOnePicture: (...args) => mockTakeOnePicture(...args),
 }));
 
-const mockGetSupportInfo = jest.fn();
+const mockGetAddOnInfo = jest.fn();
 
 jest.mock('@core/app/constants/add-on', () => ({
-  getSupportInfo: (...args) => mockGetSupportInfo(...args),
+  getAddOnInfo: (...args) => mockGetAddOnInfo(...args),
 }));
 
 const mockGetWorkarea = jest.fn();
@@ -252,7 +252,7 @@ describe('test BasePreviewManager', () => {
 
         return PreviewSpeedLevel.FAST;
       });
-      mockGetSupportInfo.mockReturnValue({ hybridLaser: true });
+      mockGetAddOnInfo.mockReturnValue({ hybridLaser: true });
 
       const basePreviewManager = new BasePreviewManager(mockDeviceInfo);
 

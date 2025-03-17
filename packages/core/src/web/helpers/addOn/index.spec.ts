@@ -7,10 +7,10 @@ jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read: (...args) => mockRead(...args),
 }));
 
-const mockGetSupportInfo = jest.fn();
+const mockGetAddOnInfo = jest.fn();
 
 jest.mock('@core/app/constants/add-on', () => ({
-  getSupportInfo: (...args) => mockGetSupportInfo(...args),
+  getAddOnInfo: (...args) => mockGetAddOnInfo(...args),
 }));
 
 describe('test getAutoFeeder', () => {
@@ -18,50 +18,50 @@ describe('test getAutoFeeder', () => {
     jest.resetAllMocks();
   });
 
-  it('should return false if supportInfo not support', () => {
-    const supportInfo = { autoFeeder: false } as unknown as AddOnInfo;
+  it('should return false if addOnInfo not support', () => {
+    const addOnInfo = { autoFeeder: false } as unknown as AddOnInfo;
 
-    expect(getAutoFeeder(supportInfo)).toBe(false);
+    expect(getAutoFeeder(addOnInfo)).toBe(false);
     expect(mockRead).not.toHaveBeenCalled();
-    expect(mockGetSupportInfo).not.toHaveBeenCalled();
+    expect(mockGetAddOnInfo).not.toHaveBeenCalled();
   });
 
   it('should return false when model supports but preference is false', () => {
-    const supportInfo = { autoFeeder: true } as unknown as AddOnInfo;
+    const addOnInfo = { autoFeeder: true } as unknown as AddOnInfo;
 
     mockRead.mockReturnValue(false);
-    expect(getAutoFeeder(supportInfo)).toBe(false);
+    expect(getAutoFeeder(addOnInfo)).toBe(false);
   });
 
   it('should return false when model supports but borderless is false', () => {
-    const supportInfo = { autoFeeder: true, openBottom: true } as unknown as AddOnInfo;
+    const addOnInfo = { autoFeeder: true, openBottom: true } as unknown as AddOnInfo;
 
     mockRead.mockReturnValueOnce(true).mockReturnValueOnce(false);
-    expect(getAutoFeeder(supportInfo)).toBe(false);
+    expect(getAutoFeeder(addOnInfo)).toBe(false);
   });
 
   it('should return true when model supports and preference is true', () => {
-    const supportInfo = { autoFeeder: true } as unknown as AddOnInfo;
+    const addOnInfo = { autoFeeder: true } as unknown as AddOnInfo;
 
     mockRead.mockReturnValue(true);
-    expect(getAutoFeeder(supportInfo)).toBe(true);
+    expect(getAutoFeeder(addOnInfo)).toBe(true);
   });
 
   it('should return true when model, borderless and preference is true', () => {
-    const supportInfo = { autoFeeder: true, openBottom: true } as unknown as AddOnInfo;
+    const addOnInfo = { autoFeeder: true, openBottom: true } as unknown as AddOnInfo;
 
     mockRead.mockReturnValue(true);
-    expect(getAutoFeeder(supportInfo)).toBe(true);
+    expect(getAutoFeeder(addOnInfo)).toBe(true);
   });
 
-  it('should call getSupportInfo if not provided', () => {
-    const supportInfo = { autoFeeder: true };
+  it('should call getAddOnInfo if not provided', () => {
+    const addOnInfo = { autoFeeder: true };
 
-    mockGetSupportInfo.mockReturnValue(supportInfo);
+    mockGetAddOnInfo.mockReturnValue(addOnInfo);
     mockRead.mockReturnValueOnce('model').mockReturnValueOnce(true);
     expect(getAutoFeeder()).toBe(true);
-    expect(mockGetSupportInfo).toHaveBeenCalledTimes(1);
-    expect(mockGetSupportInfo).toHaveBeenLastCalledWith('model');
+    expect(mockGetAddOnInfo).toHaveBeenCalledTimes(1);
+    expect(mockGetAddOnInfo).toHaveBeenLastCalledWith('model');
   });
 });
 
@@ -70,49 +70,49 @@ describe('test getPassThrough', () => {
     jest.resetAllMocks();
   });
 
-  it('should return false if supportInfo not support', () => {
-    const supportInfo = { passThrough: false } as unknown as AddOnInfo;
+  it('should return false if addOnInfo not support', () => {
+    const addOnInfo = { passThrough: false } as unknown as AddOnInfo;
 
-    expect(getPassThrough(supportInfo)).toBe(false);
+    expect(getPassThrough(addOnInfo)).toBe(false);
     expect(mockRead).not.toHaveBeenCalled();
-    expect(mockGetSupportInfo).not.toHaveBeenCalled();
+    expect(mockGetAddOnInfo).not.toHaveBeenCalled();
   });
 
   it('should return false when model supports but preference is false', () => {
-    const supportInfo = { passThrough: true } as unknown as AddOnInfo;
+    const addOnInfo = { passThrough: true } as unknown as AddOnInfo;
 
     mockRead.mockReturnValue(false);
-    expect(getPassThrough(supportInfo)).toBe(false);
+    expect(getPassThrough(addOnInfo)).toBe(false);
   });
 
   it('should return false when model supports but borderless is false', () => {
-    const supportInfo = { openBottom: true, passThrough: true } as unknown as AddOnInfo;
+    const addOnInfo = { openBottom: true, passThrough: true } as unknown as AddOnInfo;
 
     mockRead.mockReturnValueOnce(true).mockReturnValueOnce(false);
-    expect(getPassThrough(supportInfo)).toBe(false);
+    expect(getPassThrough(addOnInfo)).toBe(false);
   });
 
   it('should return true when model supports and preference is true', () => {
-    const supportInfo = { passThrough: true } as unknown as AddOnInfo;
+    const addOnInfo = { passThrough: true } as unknown as AddOnInfo;
 
     mockRead.mockReturnValue(true);
-    expect(getPassThrough(supportInfo)).toBe(true);
+    expect(getPassThrough(addOnInfo)).toBe(true);
   });
 
   it('should return true when model, borderless and preference is true', () => {
-    const supportInfo = { openBottom: true, passThrough: true } as unknown as AddOnInfo;
+    const addOnInfo = { openBottom: true, passThrough: true } as unknown as AddOnInfo;
 
     mockRead.mockReturnValue(true);
-    expect(getPassThrough(supportInfo)).toBe(true);
+    expect(getPassThrough(addOnInfo)).toBe(true);
   });
 
-  it('should call getSupportInfo if not provided', () => {
-    const supportInfo = { passThrough: true };
+  it('should call getAddOnInfo if not provided', () => {
+    const addOnInfo = { passThrough: true };
 
-    mockGetSupportInfo.mockReturnValue(supportInfo);
+    mockGetAddOnInfo.mockReturnValue(addOnInfo);
     mockRead.mockReturnValueOnce('model').mockReturnValueOnce(true);
     expect(getPassThrough()).toBe(true);
-    expect(mockGetSupportInfo).toHaveBeenCalledTimes(1);
-    expect(mockGetSupportInfo).toHaveBeenLastCalledWith('model');
+    expect(mockGetAddOnInfo).toHaveBeenCalledTimes(1);
+    expect(mockGetAddOnInfo).toHaveBeenLastCalledWith('model');
   });
 });

@@ -1,6 +1,6 @@
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
-import { getSupportInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/add-on';
 import layoutConstants from '@core/app/constants/layout-constants';
 import rotaryConstants from '@core/app/constants/rotary-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
@@ -27,9 +27,9 @@ class WorkareaManager {
 
   setWorkarea(model: WorkAreaModel): void {
     const rotaryExtended = beamboxPreference.read('rotary_mode') && beamboxPreference.read('extend-rotary-workarea');
-    const supportInfo = getSupportInfo(model);
-    const passThroughMode = getPassThrough(supportInfo);
-    const autoFeeder = getAutoFeeder(supportInfo);
+    const addOnInfo = getAddOnInfo(model);
+    const passThroughMode = getPassThrough(addOnInfo);
+    const autoFeeder = getAutoFeeder(addOnInfo);
     const workarea = getWorkarea(model);
     const modelChanged = this.model !== model;
 

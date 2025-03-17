@@ -1,6 +1,6 @@
 import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
-import { getSupportInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/add-on';
 import alertConfig from '@core/helpers/api/alert-config';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
@@ -9,9 +9,9 @@ import versionChecker from '@core/helpers/version-checker';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 const doZSpeedLimitTest = async (device: IDeviceInfo): Promise<boolean> => {
-  const supportInfo = getSupportInfo(device.model);
+  const addOnInfo = getAddOnInfo(device.model);
 
-  if (!supportInfo.curveEngraving) return true;
+  if (!addOnInfo.curveEngraving) return true;
 
   const versionCheck = versionChecker(device.version);
 

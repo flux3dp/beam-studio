@@ -3,7 +3,7 @@ import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
-import { getSupportInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/add-on';
 import alertConstants from '@core/app/constants/alert-constants';
 import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
@@ -78,7 +78,7 @@ export const importBvgString = async (
     }
 
     let matched = str.match(/data-rotary_mode="([^"]*)"/);
-    const supportInfo = getSupportInfo(currentWorkarea as WorkAreaModel);
+    const addOnInfo = getAddOnInfo(currentWorkarea as WorkAreaModel);
 
     if (matched) {
       let rotaryMode: string = matched[1];
@@ -89,7 +89,7 @@ export const importBvgString = async (
         rotaryMode = rotaryMode === '1' ? 'true' : 'false';
       }
 
-      if (supportInfo.rotary) {
+      if (addOnInfo.rotary) {
         cmd = changeBeamboxPreferenceValue('rotary_mode', rotaryMode === 'true', { parentCmd: batchCmd });
 
         if (rotaryMode === 'true') {
@@ -117,7 +117,7 @@ export const importBvgString = async (
       changeBeamboxPreferenceValue('engrave_dpi', 'medium', { parentCmd: batchCmd });
     }
 
-    if (supportInfo.hybridLaser) {
+    if (addOnInfo.hybridLaser) {
       matched = str.match(/data-en_diode="([a-zA-Z]+)"/);
 
       if (matched && matched[1]) {
@@ -129,7 +129,7 @@ export const importBvgString = async (
       }
     }
 
-    if (supportInfo.autoFocus) {
+    if (addOnInfo.autoFocus) {
       matched = str.match(/data-en_af="([a-zA-Z]+)"/);
 
       if (matched && matched[1]) {
@@ -141,7 +141,7 @@ export const importBvgString = async (
       }
     }
 
-    if (supportInfo.passThrough) {
+    if (addOnInfo.passThrough) {
       matched = str.match(/data-pass_through="([0-9.]+)"/);
 
       if (matched && matched[1]) {
@@ -158,7 +158,7 @@ export const importBvgString = async (
       }
     }
 
-    if (supportInfo.autoFeeder) {
+    if (addOnInfo.autoFeeder) {
       matched = str.match(/data-auto-feeder-height="([0-9.]+)"/);
 
       if (matched && matched[1]) {

@@ -6,7 +6,7 @@ import constant, { promarkModels } from '@core/app/actions/beambox/constant';
 import { executeFirmwareUpdate } from '@core/app/actions/beambox/menuDeviceActions';
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import Dialog from '@core/app/actions/dialog-caller';
-import { getSupportInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/add-on';
 import alertConstants from '@core/app/constants/alert-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { getAutoFeeder } from '@core/helpers/addOn';
@@ -31,7 +31,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
   const isPromark = promarkModels.has(workarea);
   const workareaObj = getWorkarea(workarea);
   const layers = [...document.querySelectorAll('#svgcontent > g.layer:not([display="none"])')];
-  const supportInfo = getSupportInfo(workarea);
+  const addOnInfo = getAddOnInfo(workarea);
 
   if (!constant.highPowerModels.includes(workarea)) {
     const isPowerTooHigh = layers.some((layer) => {
@@ -80,7 +80,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
 
   let hasJobOrigin = false;
 
-  if (supportInfo.jobOrigin && beamboxPreference.read('enable-job-origin')) {
+  if (addOnInfo.jobOrigin && beamboxPreference.read('enable-job-origin')) {
     if (!vc.meetRequirement(isAdor ? 'ADOR_JOB_ORIGIN' : 'JOB_ORIGIN')) {
       const res = await new Promise((resolve) => {
         alertCaller.popUp({
@@ -102,7 +102,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
     hasJobOrigin = true;
   }
 
-  if (getAutoFeeder(supportInfo) && !alertConfig.read('skip-auto-feeder-instruction')) {
+  if (getAutoFeeder(addOnInfo) && !alertConfig.read('skip-auto-feeder-instruction')) {
     let animationSrcs = [
       { src: 'video/bb2-auto-feeder/top-down.webm', type: 'video/webm' },
       { src: 'video/bb2-auto-feeder/top-down.mp4', type: 'video/mp4' },
@@ -143,7 +143,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
   SymbolMaker.switchImageSymbolForAll(false);
 
   const { curveSpeedLimit } = workareaObj;
-  const hasCurveSpeedLimit = curveEngravingModeController.hasArea() && supportInfo.curveEngraving && curveSpeedLimit;
+  const hasCurveSpeedLimit = curveEngravingModeController.hasArea() && addOnInfo.curveEngraving && curveSpeedLimit;
   const handleCurveEngravingSpeedAlert = async (): Promise<void> => {
     if (!hasCurveSpeedLimit) {
       return;

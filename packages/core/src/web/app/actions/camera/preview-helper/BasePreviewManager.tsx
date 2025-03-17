@@ -8,7 +8,7 @@ import alertCaller from '@core/app/actions/alert-caller';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
-import { getSupportInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/add-on';
 import alertConstants from '@core/app/constants/alert-constants';
 import type { WorkArea, WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
@@ -151,7 +151,7 @@ class BasePreviewManager implements PreviewManager {
 
   protected getMovementSpeed = (): number => {
     // fixed to 3600 for diode laser
-    if (beamboxPreference.read('enable-diode') && getSupportInfo(this.workarea).hybridLaser) {
+    if (beamboxPreference.read('enable-diode') && getAddOnInfo(this.workarea).hybridLaser) {
       return 3600;
     }
 

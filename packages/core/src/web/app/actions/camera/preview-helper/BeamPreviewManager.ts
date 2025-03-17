@@ -6,7 +6,7 @@ import constant from '@core/app/actions/beambox/constant';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import MessageCaller from '@core/app/actions/message-caller';
 import progressCaller from '@core/app/actions/progress-caller';
-import { getSupportInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/add-on';
 import ErrorConstants from '@core/app/constants/error-constants';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
@@ -169,7 +169,7 @@ class BeamPreviewManager extends BasePreviewManager implements PreviewManager {
     }
 
     const borderless = beamboxPreference.read('borderless') || false;
-    const supportOpenBottom = getSupportInfo(this.workarea).openBottom;
+    const supportOpenBottom = getAddOnInfo(this.workarea).openBottom;
     const configName = supportOpenBottom && borderless ? 'camera_offset_borderless' : 'camera_offset';
 
     progressCaller.update(this.progressId, { message: lang.message.retrievingCameraOffset });
@@ -212,9 +212,9 @@ class BeamPreviewManager extends BasePreviewManager implements PreviewManager {
   constrainPreviewXY = (x: number, y: number): { x: number; y: number } => {
     const { pxDisplayHeight, pxHeight, pxWidth: width } = this.workareaObj;
     const height = pxDisplayHeight ?? pxHeight;
-    const supportInfo = getSupportInfo(this.workarea);
-    const isDiodeEnabled = beamboxPreference.read('enable-diode') && supportInfo.hybridLaser;
-    const isBorderlessEnabled = beamboxPreference.read('borderless') && supportInfo.openBottom;
+    const addOnInfo = getAddOnInfo(this.workarea);
+    const isDiodeEnabled = beamboxPreference.read('enable-diode') && addOnInfo.hybridLaser;
+    const isBorderlessEnabled = beamboxPreference.read('borderless') && addOnInfo.openBottom;
     let maxWidth = width;
     let maxHeight = height;
 

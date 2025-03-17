@@ -25,17 +25,17 @@ const Controls = (): React.JSX.Element => {
     setGuideMark,
     setPassThroughHeight,
     setReferenceLayer,
-    supportInfo,
+    addOnInfo,
     workarea,
     workareaObj,
   } = useContext(PassThroughContext);
 
   const { max, min } = useMemo(
     () => ({
-      max: supportInfo.passThrough?.maxHeight ?? workareaObj.height,
+      max: addOnInfo.passThrough?.maxHeight ?? workareaObj.height,
       min: 120,
     }),
-    [supportInfo, workareaObj],
+    [addOnInfo, workareaObj],
   );
   const handleWorkareaHeightChange = useCallback(
     (val: null | number) => {

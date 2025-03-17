@@ -4,7 +4,7 @@ import { Collapse, ConfigProvider } from 'antd';
 
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { promarkModels } from '@core/app/actions/beambox/constant';
-import { getSupportInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/add-on';
 import LayerModule from '@core/app/constants/layer-module/layer-modules';
 import { LaserType } from '@core/app/constants/promark-constants';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
@@ -32,7 +32,7 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
   const lang = useI18n().beambox.right_panel.laser_panel;
   const workarea = useWorkarea();
   const hasCurveEngraving = useHasCurveEngraving();
-  const supportInfo = useMemo(() => getSupportInfo(workarea), [workarea]);
+  const addOnInfo = useMemo(() => getAddOnInfo(workarea), [workarea]);
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
   const promarkInfo = isPromark ? getPromarkInfo() : null;
   const promarkLimit = useMemo(
@@ -80,14 +80,14 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
     if (hasCurveEngraving) {
       contents.push(<CurveEngravingZHighSpeed key="curve-engraving-z-high-speed" />);
     } else {
-      if (supportInfo.lowerFocus) {
+      if (addOnInfo.lowerFocus) {
         contents.push(<FocusBlock key="focus-block" type={type} />);
-      } else if (supportInfo.autoFocus && beamboxPreference.read('enable-autofocus')) {
+      } else if (addOnInfo.autoFocus && beamboxPreference.read('enable-autofocus')) {
         contents.push(<AutoFocus key="auto-focus" />);
       }
     }
 
-    if (supportInfo.hybridLaser && beamboxPreference.read('enable-diode')) {
+    if (addOnInfo.hybridLaser && beamboxPreference.read('enable-diode')) {
       contents.push(<Diode key="diode" />);
     }
   } else {

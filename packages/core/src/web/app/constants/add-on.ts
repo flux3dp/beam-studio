@@ -31,7 +31,7 @@ export interface AddOnInfo {
   };
 }
 
-const hexaSupportInfo: AddOnInfo = {
+const hexaAddOnInfo: AddOnInfo = {
   jobOrigin: true,
   lowerFocus: true,
   rotary: {
@@ -42,7 +42,7 @@ const hexaSupportInfo: AddOnInfo = {
   },
 };
 
-const supportList: Record<WorkAreaModel, AddOnInfo> = {
+const addOnData: Record<WorkAreaModel, AddOnInfo> = {
   ado1: {
     autoFeeder: checkAdo1AutoFeeder()
       ? { maxHeight: 2000, rotaryRatio: CHUCK_ROTARY_DIAMETER / FEEDER_DIAMETER }
@@ -110,9 +110,9 @@ const supportList: Record<WorkAreaModel, AddOnInfo> = {
       roller: true,
     },
   },
-  fhexa1: hexaSupportInfo,
-  fhx2rf3: hexaSupportInfo,
-  fhx2rf6: hexaSupportInfo,
+  fhexa1: hexaAddOnInfo,
+  fhx2rf3: hexaAddOnInfo,
+  fhx2rf6: hexaAddOnInfo,
   flv1: {
     jobOrigin: true,
     rotary: {
@@ -133,9 +133,8 @@ const supportList: Record<WorkAreaModel, AddOnInfo> = {
   },
 };
 
-export const getSupportInfo = (workarea: WorkAreaModel): AddOnInfo => supportList[workarea] || {};
+export const getAddOnInfo = (workarea: WorkAreaModel): AddOnInfo => addOnData[workarea] || {};
 
 export default {
-  getSupportInfo,
-  supportList,
+  getAddOnInfo,
 };

@@ -8,7 +8,7 @@ import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import { showAdorCalibrationV2 } from '@core/app/components/dialogs/camera/AdorCalibrationV2';
 import { showBB2Calibration } from '@core/app/components/dialogs/camera/BB2Calibration';
 import updateFontConvert from '@core/app/components/dialogs/updateFontConvert';
-import { getSupportInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/add-on';
 import AlertConstants from '@core/app/constants/alert-constants';
 import FontConstants from '@core/app/constants/font-constants';
 import { gestureIntroduction } from '@core/app/constants/media-tutorials';
@@ -41,9 +41,9 @@ class BeamboxInit {
     migrate();
 
     const workarea = BeamboxPreference.read('workarea');
-    const supportInfo = getSupportInfo(workarea);
+    const addOnInfo = getAddOnInfo(workarea);
 
-    if (supportInfo.autoFocus) {
+    if (addOnInfo.autoFocus) {
       const defaultAutoFocus = BeamboxPreference.read('default-autofocus');
 
       BeamboxPreference.write('enable-autofocus', defaultAutoFocus);
@@ -51,7 +51,7 @@ class BeamboxInit {
       BeamboxPreference.write('enable-autofocus', false);
     }
 
-    if (supportInfo.hybridLaser) {
+    if (addOnInfo.hybridLaser) {
       const defaultDiode = BeamboxPreference.read('default-diode');
 
       BeamboxPreference.write('enable-diode', defaultDiode);
@@ -66,13 +66,13 @@ class BeamboxInit {
       defaultBorderless = BeamboxPreference.read('default-borderless');
     }
 
-    if (supportInfo.openBottom) {
+    if (addOnInfo.openBottom) {
       BeamboxPreference.write('borderless', defaultBorderless);
     } else {
       BeamboxPreference.write('borderless', false);
     }
 
-    if (!supportInfo.rotary) {
+    if (!addOnInfo.rotary) {
       BeamboxPreference.write('rotary_mode', false);
     }
 

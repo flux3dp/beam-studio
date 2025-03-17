@@ -2,7 +2,7 @@ import React, { useContext, useMemo } from 'react';
 
 import { Flex } from 'antd';
 
-import { getSupportInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/add-on';
 import CanvasMode from '@core/app/constants/canvasMode';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import useBeamboxPreference from '@core/helpers/hooks/useBeamboxPreference';
@@ -20,13 +20,13 @@ const Banner = (): React.ReactNode => {
   const hasCurveEngravingData = useHasCurveEngraving();
   const workarea = useBeamboxPreference('workarea');
   const isBorderless = useBeamboxPreference('borderless');
-  const supportInfo = useMemo(() => getSupportInfo(workarea), [workarea]);
-  const isRotary = useBeamboxPreference('rotary_mode') && supportInfo.rotary;
-  const isAutoFeeder = useBeamboxPreference('auto-feeder') && supportInfo.autoFeeder;
-  const isPassThrough = useBeamboxPreference('pass-through') && supportInfo.passThrough;
+  const addOnInfo = useMemo(() => getAddOnInfo(workarea), [workarea]);
+  const isRotary = useBeamboxPreference('rotary_mode') && addOnInfo.rotary;
+  const isAutoFeeder = useBeamboxPreference('auto-feeder') && addOnInfo.autoFeeder;
+  const isPassThrough = useBeamboxPreference('pass-through') && addOnInfo.passThrough;
   const isBorderlessPreview = useMemo(
-    () => isBorderless && mode === CanvasMode.Preview && supportInfo.openBottom && selectedDevice?.model === 'fbm1',
-    [isBorderless, mode, supportInfo.openBottom, selectedDevice],
+    () => isBorderless && mode === CanvasMode.Preview && addOnInfo.openBottom && selectedDevice?.model === 'fbm1',
+    [isBorderless, mode, addOnInfo.openBottom, selectedDevice],
   );
   const isCurveEngraving = useMemo(
     () => hasCurveEngravingData || mode === CanvasMode.CurveEngraving,

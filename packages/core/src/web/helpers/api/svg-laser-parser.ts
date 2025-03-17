@@ -9,7 +9,7 @@ import curveEngravingModeController from '@core/app/actions/canvas/curveEngravin
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import Progress from '@core/app/actions/progress-caller';
-import { getSupportInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/add-on';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
@@ -76,8 +76,8 @@ export const getExportOpt = (
 
   if (BeamboxPreference.read('reverse-engraving')) config.rev = true;
 
-  const supportInfo = getSupportInfo(model);
-  const hasJobOrigin = BeamboxPreference.read('enable-job-origin') && supportInfo.jobOrigin && supportJobOrigin;
+  const addOnInfo = getAddOnInfo(model);
+  const hasJobOrigin = BeamboxPreference.read('enable-job-origin') && addOnInfo.jobOrigin && supportJobOrigin;
 
   if (hasJobOrigin) {
     // firmware version / model check
@@ -86,19 +86,19 @@ export const getExportOpt = (
     config.job_origin = [Math.round(x * 10 ** 3) / 10 ** 3, Math.round(y * 10 ** 3) / 10 ** 3];
   }
 
-  const rotaryMode = BeamboxPreference.read('rotary_mode') && supportInfo.rotary;
-  const autoFeeder = getAutoFeeder(supportInfo);
+  const rotaryMode = BeamboxPreference.read('rotary_mode') && addOnInfo.rotary;
+  const autoFeeder = getAutoFeeder(addOnInfo);
 
   if (rotaryMode) {
     config.spin = rotaryAxis.getPosition() ?? 0;
 
-    const rotaryRatio = getRotaryRatio(supportInfo);
+    const rotaryRatio = getRotaryRatio(addOnInfo);
 
     if (rotaryRatio !== 1) {
       config.rotary_y_ratio = rotaryRatio;
     }
   } else if (autoFeeder) {
-    config.rotary_y_ratio = supportInfo.autoFeeder!.rotaryRatio;
+    config.rotary_y_ratio = addOnInfo.autoFeeder!.rotaryRatio;
     config.rotary_z_motion = false;
 
     if (config.job_origin) {
@@ -133,7 +133,7 @@ export const getExportOpt = (
     }
   }
 
-  if (opt.enableAutoFocus && supportInfo.autoFocus) {
+  if (opt.enableAutoFocus && addOnInfo.autoFocus) {
     config.af = true;
 
     if (BeamboxPreference.read('af-offset')) {
@@ -149,7 +149,7 @@ export const getExportOpt = (
     }
   }
 
-  const isBorderLess = BeamboxPreference.read('borderless') && supportInfo.openBottom;
+  const isBorderLess = BeamboxPreference.read('borderless') && addOnInfo.openBottom;
 
   if (BeamboxPreference.read('enable_mask') || isBorderLess) {
     const clipRect: [number, number, number, number] = [0, 0, 0, 0]; // top right bottom left
@@ -169,7 +169,7 @@ export const getExportOpt = (
     config.mfg = true;
   }
 
-  if (curveEngravingModeController.hasArea() && supportInfo.curveEngraving) {
+  if (curveEngravingModeController.hasArea() && addOnInfo.curveEngraving) {
     const { bbox, gap, highest, lowest, objectHeight, points } = curveEngravingModeController.data!;
 
     // if lowest is null, it means no points is measured successfully
@@ -215,7 +215,7 @@ export const getExportOpt = (
 
   const isPassThroughTask =
     document.querySelectorAll('#svgcontent > g.layer:not([display="none"]) [data-pass-through="1"]').length > 0 ||
-    getPassThrough(supportInfo);
+    getPassThrough(addOnInfo);
 
   if (model === 'fbb2' && (isPassThroughTask || autoFeeder)) {
     config.mep = 30;

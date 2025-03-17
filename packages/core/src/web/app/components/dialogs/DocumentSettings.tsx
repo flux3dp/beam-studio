@@ -10,7 +10,7 @@ import constant, { promarkModels } from '@core/app/actions/beambox/constant';
 import diodeBoundaryDrawer from '@core/app/actions/canvas/diode-boundary-drawer';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
-import { getSupportInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/add-on';
 import alertConstants from '@core/app/constants/alert-constants';
 import CanvasMode from '@core/app/constants/canvasMode';
 import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
@@ -74,16 +74,16 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     workarea: origWorkarea,
   } = useMemo(() => {
     const workarea = BeamboxPreference.read('workarea');
-    const supportInfo = getSupportInfo(workarea);
-    const autoFeeder = getAutoFeeder(supportInfo);
-    const passThrough = getPassThrough(supportInfo);
+    const addOnInfo = getAddOnInfo(workarea);
+    const autoFeeder = getAutoFeeder(addOnInfo);
+    const passThrough = getPassThrough(addOnInfo);
 
     return { autoFeeder, passThrough, workarea };
   }, []);
   const [pmInfo, setPmInfo] = useState(getPromarkInfo());
   const [workarea, setWorkarea] = useState(origWorkarea || 'fbb1b');
   const [customDimension, setCustomDimension] = useState(BeamboxPreference.read('customized-dimension'));
-  const supportInfo = useMemo(() => getSupportInfo(workarea), [workarea]);
+  const addOnInfo = useMemo(() => getAddOnInfo(workarea), [workarea]);
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
   const [rotaryMode, setRotaryMode] = useState(BeamboxPreference.read('rotary_mode'));
   const [enableStartButton, setEnableStartButton] = useState(BeamboxPreference.read('promark-start-button'));
@@ -137,20 +137,20 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
 
   // for openBottom machine, path-through and autofeed require open-bottom mode
   const { showAutoFeeder, showPassThrough } = useMemo(() => {
-    const canUseBorderlessModules = supportInfo.openBottom ? borderless : true;
+    const canUseBorderlessModules = addOnInfo.openBottom ? borderless : true;
 
     return {
-      showAutoFeeder: supportInfo.autoFeeder && canUseBorderlessModules,
-      showPassThrough: supportInfo.passThrough && canUseBorderlessModules,
+      showAutoFeeder: addOnInfo.autoFeeder && canUseBorderlessModules,
+      showPassThrough: addOnInfo.passThrough && canUseBorderlessModules,
     };
-  }, [supportInfo, borderless]);
+  }, [addOnInfo, borderless]);
 
   useEffect(() => {
-    if (supportInfo.openBottom && !borderless) {
+    if (addOnInfo.openBottom && !borderless) {
       setPassThrough(false);
       setAutoFeeder(false);
     }
-  }, [supportInfo, borderless]);
+  }, [addOnInfo, borderless]);
 
   const minHeight = useMemo(() => workareaObj.displayHeight ?? workareaObj.height, [workareaObj]);
 
@@ -159,9 +159,9 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   }, [minHeight, showPassThrough]);
   useEffect(() => {
     if (showAutoFeeder) {
-      setAutoFeederHeight((cur) => Math.min(supportInfo.autoFeeder!.maxHeight, Math.max(minHeight, cur)));
+      setAutoFeederHeight((cur) => Math.min(addOnInfo.autoFeeder!.maxHeight, Math.max(minHeight, cur)));
     }
-  }, [minHeight, supportInfo.autoFeeder, showAutoFeeder]);
+  }, [minHeight, addOnInfo.autoFeeder, showAutoFeeder]);
 
   const handleSave = () => {
     const dpiEvent = eventEmitterFactory.createEventEmitter('dpi-info');
@@ -173,9 +173,9 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
 
     BeamboxPreference.write('engrave_dpi', engraveDpi);
     dpiEvent.emit('UPDATE_DPI', engraveDpi);
-    BeamboxPreference.write('borderless', Boolean(supportInfo.openBottom && borderless));
-    BeamboxPreference.write('enable-diode', supportInfo.hybridLaser && enableDiode);
-    BeamboxPreference.write('enable-autofocus', supportInfo.autoFocus && enableAutofocus);
+    BeamboxPreference.write('borderless', Boolean(addOnInfo.openBottom && borderless));
+    BeamboxPreference.write('enable-diode', addOnInfo.hybridLaser && enableDiode);
+    BeamboxPreference.write('enable-autofocus', addOnInfo.autoFocus && enableAutofocus);
 
     if (workareaObj.dimensionCustomizable) {
       const origVal = BeamboxPreference.read('customized-dimension');
@@ -190,9 +190,9 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     BeamboxPreference.write('rotary_mode', rotaryMode);
 
     if (rotaryMode) {
-      if (supportInfo.rotary?.extendWorkarea) BeamboxPreference.write('extend-rotary-workarea', extendRotaryWorkarea);
+      if (addOnInfo.rotary?.extendWorkarea) BeamboxPreference.write('extend-rotary-workarea', extendRotaryWorkarea);
 
-      if (supportInfo.rotary?.mirror) BeamboxPreference.write('rotary-mirror', mirrorRotary);
+      if (addOnInfo.rotary?.mirror) BeamboxPreference.write('rotary-mirror', mirrorRotary);
     }
 
     const newPassThrough = Boolean(showPassThrough && passThrough);
@@ -209,7 +209,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     BeamboxPreference.write('auto-feeder', newAutoFeeder);
 
     if (showAutoFeeder) {
-      const newVal = Math.min(supportInfo.autoFeeder!.maxHeight, Math.max(minHeight, autoFeederHeight));
+      const newVal = Math.min(addOnInfo.autoFeeder!.maxHeight, Math.max(minHeight, autoFeederHeight));
 
       BeamboxPreference.write('auto-feeder-height', newVal);
     }
@@ -229,7 +229,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
       changeWorkarea(workarea, { toggleModule: workareaChanged });
       rotaryAxis.toggleDisplay();
     } else {
-      if (supportInfo.hybridLaser && enableDiode) {
+      if (addOnInfo.hybridLaser && enableDiode) {
         diodeBoundaryDrawer.show();
       } else {
         diodeBoundaryDrawer.hide();
@@ -360,7 +360,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
             />
           </div>
         </div>
-        {supportInfo.jobOrigin && (
+        {addOnInfo.jobOrigin && (
           <>
             <div className={styles.separator}>
               <div>{tDocu.start_position}</div>
@@ -452,10 +452,10 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
               </div>
             </div>
           )}
-          {supportInfo.rotary && (
+          {addOnInfo.rotary && (
             <div
               className={classNames(styles.row, {
-                [styles.full]: supportInfo.rotary.mirror || supportInfo.rotary.extendWorkarea,
+                [styles.full]: addOnInfo.rotary.mirror || addOnInfo.rotary.extendWorkarea,
               })}
             >
               <div className={styles.title}>
@@ -465,15 +465,15 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                 <Switch
                   checked={rotaryMode}
                   className={styles.switch}
-                  disabled={!supportInfo.rotary || isCurveEngraving}
+                  disabled={!addOnInfo.rotary || isCurveEngraving}
                   id="rotary_mode"
                   onChange={setRotaryMode}
                 />
                 {isCurveEngraving && renderWarningIcon(tGlobal.mode_conflict)}
-                {(supportInfo.rotary.mirror || supportInfo.rotary.extendWorkarea) && rotaryMode && (
+                {(addOnInfo.rotary.mirror || addOnInfo.rotary.extendWorkarea) && rotaryMode && (
                   <>
                     <div className={styles.subCheckbox}>
-                      {supportInfo.rotary.extendWorkarea && (
+                      {addOnInfo.rotary.extendWorkarea && (
                         <Checkbox
                           checked={extendRotaryWorkarea}
                           onChange={(e) => setExtendRotaryWorkarea(e.target.checked)}
@@ -481,7 +481,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                           {tDocu.extend_workarea}
                         </Checkbox>
                       )}
-                      {supportInfo.rotary.mirror && (
+                      {addOnInfo.rotary.mirror && (
                         <Checkbox checked={mirrorRotary} onChange={(e) => setMirrorRotary(e.target.checked)}>
                           {tDocu.mirror}
                         </Checkbox>
@@ -492,48 +492,48 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
               </div>
             </div>
           )}
-          {supportInfo.autoFocus && (
+          {addOnInfo.autoFocus && (
             <div className={styles.row}>
               <div className={styles.title}>
                 <label htmlFor="autofocus-module">{tDocu.enable_autofocus}</label>
               </div>
               <div className={styles.control}>
                 <Switch
-                  checked={supportInfo.autoFocus && enableAutofocus}
+                  checked={addOnInfo.autoFocus && enableAutofocus}
                   className={styles.switch}
-                  disabled={!supportInfo.autoFocus}
+                  disabled={!addOnInfo.autoFocus}
                   id="autofocus-module"
                   onChange={setEnableAutofocus}
                 />
               </div>
             </div>
           )}
-          {supportInfo.openBottom && (
+          {addOnInfo.openBottom && (
             <div className={styles.row}>
               <div className={styles.title}>
                 <label htmlFor="borderless_mode">{tDocu.borderless_mode}</label>
               </div>
               <div className={styles.control}>
                 <Switch
-                  checked={supportInfo.openBottom && borderless}
+                  checked={addOnInfo.openBottom && borderless}
                   className={styles.switch}
-                  disabled={!supportInfo.openBottom}
+                  disabled={!addOnInfo.openBottom}
                   id="borderless_mode"
                   onChange={setBorderless}
                 />
               </div>
             </div>
           )}
-          {supportInfo.hybridLaser && (
+          {addOnInfo.hybridLaser && (
             <div className={styles.row}>
               <div className={styles.title}>
                 <label htmlFor="diode_module">{tDocu.enable_diode}</label>
               </div>
               <div className={styles.control}>
                 <Switch
-                  checked={supportInfo.hybridLaser && enableDiode}
+                  checked={addOnInfo.hybridLaser && enableDiode}
                   className={styles.switch}
-                  disabled={!supportInfo.hybridLaser}
+                  disabled={!addOnInfo.hybridLaser}
                   id="diode_module"
                   onChange={setEnableDiode}
                 />
@@ -547,9 +547,9 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
               </div>
               <div className={styles.control}>
                 <Switch
-                  checked={supportInfo.passThrough && passThrough}
+                  checked={addOnInfo.passThrough && passThrough}
                   className={styles.switch}
-                  disabled={!supportInfo.passThrough || isCurveEngraving}
+                  disabled={!addOnInfo.passThrough || isCurveEngraving}
                   id="pass_through"
                   onChange={setPassThrough}
                 />
@@ -587,9 +587,9 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
               </div>
               <div className={styles.control}>
                 <Switch
-                  checked={supportInfo.autoFeeder && autoFeeder}
+                  checked={addOnInfo.autoFeeder && autoFeeder}
                   className={styles.switch}
-                  disabled={!supportInfo.autoFeeder || isCurveEngraving}
+                  disabled={!addOnInfo.autoFeeder || isCurveEngraving}
                   id="auto_feeder"
                   onChange={setAutoFeeder}
                 />
@@ -601,7 +601,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                     clipValue
                     id="auto_feeder_height"
                     isInch={isInch}
-                    max={supportInfo.autoFeeder!.maxHeight}
+                    max={addOnInfo.autoFeeder!.maxHeight}
                     min={minHeight}
                     onChange={(val) => {
                       if (val) {
