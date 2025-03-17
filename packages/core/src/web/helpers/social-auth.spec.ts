@@ -22,7 +22,7 @@ describe('test social-auth', () => {
       socialAuth(true);
 
       expect(mockGet).toHaveBeenNthCalledWith(1, 'printer-is-ready');
-      expect(window.opener.location.hash).toBe('#initialize/connect/select-machine-model');
+      expect(window.opener.location.hash).toBe('#/initialize/connect/select-machine-model');
       expect(window.opener.dispatchEvent).toHaveBeenCalledTimes(1);
       expect(window.close).toHaveBeenCalledTimes(1);
     });
@@ -35,7 +35,7 @@ describe('test social-auth', () => {
       socialAuth(true);
 
       expect(mockGet).toHaveBeenNthCalledWith(1, 'printer-is-ready');
-      expect(window.opener.location.hash).toBe('#studio/beambox');
+      expect(window.opener.location.hash).toBe('#/studio/beambox');
       expect(window.opener.dispatchEvent).toHaveBeenCalledTimes(1);
       expect(window.close).toHaveBeenCalledTimes(1);
     });
@@ -47,7 +47,7 @@ describe('test social-auth', () => {
       window.close = jest.fn();
       socialAuth(true);
 
-      expect(window.opener.location.hash).toBe('#initialize/connect/select-machine-model');
+      expect(window.opener.location.hash).toBe('#/initialize/connect/select-machine-model');
       expect(window.opener.dispatchEvent).toHaveBeenCalledTimes(1);
       expect(window.close).toHaveBeenCalledTimes(1);
     });
