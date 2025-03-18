@@ -751,6 +751,9 @@ export interface ILang {
         objects: string;
         path_edit: string;
       };
+      uv_export_block: {
+        title: string;
+      };
     };
     shapes_panel: {
       animals: string;
