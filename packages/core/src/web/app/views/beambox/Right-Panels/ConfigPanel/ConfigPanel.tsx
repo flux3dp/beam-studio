@@ -11,7 +11,7 @@ import diodeBoundaryDrawer from '@core/app/actions/canvas/diode-boundary-drawer'
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import ColorBlock from '@core/app/components/beambox/right-panel/ColorBlock';
-import { getSupportInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/addOn';
 import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
 import tutorialConstants from '@core/app/constants/tutorial-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
@@ -114,7 +114,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
   const workarea = useWorkarea();
   const isPromark = promarkModels.has(workarea);
   const updateDiodeBoundary = useCallback(() => {
-    if (beamboxPreference.read('enable-diode') && getSupportInfo(workarea).hybridLaser) {
+    if (beamboxPreference.read('enable-diode') && getAddOnInfo(workarea).hybridLaser) {
       diodeBoundaryDrawer.show(state.diode.value === 1);
     } else {
       diodeBoundaryDrawer.hide();

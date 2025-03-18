@@ -3,7 +3,7 @@ import React, { useMemo } from 'react';
 import { Switch } from 'antd';
 import classNames from 'classnames';
 
-import { getSupportInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/addOn';
 import UnitInput from '@core/app/widgets/UnitInput';
 import { getDefaultConfig, getPromarkLimit } from '@core/helpers/layer/layer-config-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -30,7 +30,7 @@ const PromarkInputs = ({
 }: Props): React.JSX.Element => {
   const tLaserPanel = useI18n().beambox.right_panel.laser_panel;
   const t = tLaserPanel.preset_management;
-  const supportInfo = useMemo(() => getSupportInfo('fpm1'), []);
+  const addOnInfo = useMemo(() => getAddOnInfo('fpm1'), []);
   const defaultConfig = useMemo(getDefaultConfig, []);
   const focusStepMax = useMemo(() => {
     if (!preset.repeat || preset.repeat <= 1) {
@@ -137,7 +137,7 @@ const PromarkInputs = ({
             value={preset.dottingTime ?? defaultConfig.dottingTime}
           />
         </div>
-        {supportInfo.lowerFocus && (
+        {addOnInfo.lowerFocus && (
           <>
             <div className={styles.field}>
               <div className={styles.label}>{t.lower_focus_by}</div>

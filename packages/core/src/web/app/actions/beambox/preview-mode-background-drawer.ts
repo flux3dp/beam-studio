@@ -4,7 +4,7 @@ import { concatMap } from 'rxjs/operators';
 
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import Constant from '@core/app/actions/beambox/constant';
-import { getSupportInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/addOn';
 import NS from '@core/app/constants/namespaces';
 import beamboxStore from '@core/app/stores/beambox-store';
 import workareaManager from '@core/app/svgedit/workarea';
@@ -298,7 +298,7 @@ class PreviewModeBackgroundDrawer {
       borderPattern.appendChild(patternLine);
       boundaryGroup.appendChild(borderTop);
 
-      if (BeamboxPreference.read('enable-diode') && getSupportInfo(BeamboxPreference.read('workarea')).hybridLaser) {
+      if (BeamboxPreference.read('enable-diode') && getAddOnInfo(BeamboxPreference.read('workarea')).hybridLaser) {
         const { hybridBorder, hybridDescText } = this.getHybridModulePreviewBoundary(uncapturabledHeight);
 
         boundaryGroup.appendChild(hybridBorder);

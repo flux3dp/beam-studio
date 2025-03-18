@@ -5,7 +5,7 @@ import { Checkbox, Modal, Segmented, Switch } from 'antd';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
-import { getSupportInfo, RotaryType } from '@core/app/constants/add-on';
+import { getAddOnInfo, RotaryType } from '@core/app/constants/addOn';
 import RotaryIcons from '@core/app/icons/rotary/RotaryIcons';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import UnitInput from '@core/app/widgets/UnitInput';
@@ -27,7 +27,7 @@ const RotarySettings = ({ onClose }: Props): React.JSX.Element => {
   } = useI18n();
 
   const workarea = useMemo(() => beamboxPreference.read('workarea'), []);
-  const supportInfo = useMemo(() => getSupportInfo(workarea), [workarea]);
+  const addOnInfo = useMemo(() => getAddOnInfo(workarea), [workarea]);
   const [rotaryMode, setRotaryMode] = useState<boolean>(beamboxPreference.read('rotary_mode'));
   const [rotaryType, setRotaryType] = useState<number>(beamboxPreference.read('rotary-type'));
   const [diameter, setDiaMeter] = useState(beamboxPreference.read('rotary-chuck-obj-d'));
@@ -46,11 +46,11 @@ const RotarySettings = ({ onClose }: Props): React.JSX.Element => {
       beamboxPreference.write('rotary-chuck-obj-d', diameter);
     }
 
-    if (supportInfo.rotary?.mirror) {
+    if (addOnInfo.rotary?.mirror) {
       beamboxPreference.write('rotary-mirror', mirror);
     }
 
-    if (supportInfo.rotary?.extendWorkarea) {
+    if (addOnInfo.rotary?.extendWorkarea) {
       beamboxPreference.write('extend-rotary-workarea', extend);
     }
 
@@ -63,7 +63,7 @@ const RotarySettings = ({ onClose }: Props): React.JSX.Element => {
     }
   };
   const rotaryDisabled = !rotaryMode;
-  const chuckOptionDisabled = rotaryDisabled || !supportInfo.rotary?.chuck || rotaryType !== RotaryType.Chuck;
+  const chuckOptionDisabled = rotaryDisabled || !addOnInfo.rotary?.chuck || rotaryType !== RotaryType.Chuck;
 
   return (
     <Modal
@@ -96,7 +96,7 @@ const RotarySettings = ({ onClose }: Props): React.JSX.Element => {
           </div>
           <div className={styles.control}>
             <Segmented
-              disabled={rotaryDisabled || !supportInfo.rotary?.chuck}
+              disabled={rotaryDisabled || !addOnInfo.rotary?.chuck}
               id="rotary_type"
               onChange={(val: RotaryType) => setRotaryType(val)}
               options={[
@@ -119,7 +119,7 @@ const RotarySettings = ({ onClose }: Props): React.JSX.Element => {
                   value: RotaryType.Chuck,
                 },
               ]}
-              value={supportInfo.rotary?.chuck ? rotaryType : RotaryType.Roller}
+              value={addOnInfo.rotary?.chuck ? rotaryType : RotaryType.Roller}
             />
           </div>
           <div className={styles.title}>
@@ -162,9 +162,9 @@ const RotarySettings = ({ onClose }: Props): React.JSX.Element => {
               value={diameter * Math.PI}
             />
           </div>
-          {(supportInfo.rotary?.mirror || supportInfo.rotary?.extendWorkarea) && (
+          {(addOnInfo.rotary?.mirror || addOnInfo.rotary?.extendWorkarea) && (
             <div className={styles.row}>
-              {supportInfo.rotary.mirror && (
+              {addOnInfo.rotary.mirror && (
                 <Checkbox
                   checked={mirror}
                   disabled={rotaryDisabled}
@@ -174,7 +174,7 @@ const RotarySettings = ({ onClose }: Props): React.JSX.Element => {
                   {tDocu.mirror}
                 </Checkbox>
               )}
-              {supportInfo.rotary.extendWorkarea && (
+              {addOnInfo.rotary.extendWorkarea && (
                 <Checkbox
                   checked={extend}
                   disabled={rotaryDisabled}

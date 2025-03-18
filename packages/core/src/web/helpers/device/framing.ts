@@ -7,8 +7,8 @@ import constant, { promarkModels } from '@core/app/actions/beambox/constant';
 import exportFuncs from '@core/app/actions/beambox/export-funcs';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
-import type { SupportInfo } from '@core/app/constants/add-on';
-import { getSupportInfo } from '@core/app/constants/add-on';
+import type { AddOnInfo } from '@core/app/constants/addOn';
+import { getAddOnInfo } from '@core/app/constants/addOn';
 import LayerModule from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
@@ -216,7 +216,7 @@ const getAreaCheckTask = async (
 
 class FramingTaskManager extends EventEmitter {
   private device: IDeviceInfo;
-  private supportInfo: SupportInfo;
+  private addOnInfo: AddOnInfo;
   private isAdor = false;
   private isFcodeV2 = false;
   private isPromark = false;
@@ -244,7 +244,7 @@ class FramingTaskManager extends EventEmitter {
   constructor(device: IDeviceInfo) {
     super();
     this.device = device;
-    this.supportInfo = getSupportInfo(this.device.model);
+    this.addOnInfo = getAddOnInfo(this.device.model);
     this.resetEnabledInfo();
     this.vc = versionChecker(device.version);
     this.isAdor = constant.adorModels.includes(device.model);
@@ -253,7 +253,7 @@ class FramingTaskManager extends EventEmitter {
 
     if (
       beamboxPreference.read('enable-job-origin') &&
-      this.supportInfo.jobOrigin &&
+      this.addOnInfo.jobOrigin &&
       this.vc.meetRequirement(this.isAdor ? 'ADOR_JOB_ORIGIN' : 'JOB_ORIGIN')
     ) {
       this.jobOrigin = getJobOrigin();
@@ -470,13 +470,13 @@ class FramingTaskManager extends EventEmitter {
     this.rotaryInfo = null;
 
     const rotaryMode = beamboxPreference.read('rotary_mode');
-    const autoFeeder = getAutoFeeder(this.supportInfo);
+    const autoFeeder = getAutoFeeder(this.addOnInfo);
 
-    if (rotaryMode && this.supportInfo.rotary) {
+    if (rotaryMode && this.addOnInfo.rotary) {
       const y = rotaryAxis.getPosition(true) ?? 0;
 
-      this.rotaryInfo = { useAAxis: this.isFcodeV2, y, yRatio: getRotaryRatio(this.supportInfo) };
-    } else if (autoFeeder && this.supportInfo.autoFeeder) {
+      this.rotaryInfo = { useAAxis: this.isFcodeV2, y, yRatio: getRotaryRatio(this.addOnInfo) };
+    } else if (autoFeeder && this.addOnInfo.autoFeeder) {
       let y: number;
 
       if (this.jobOrigin) {
@@ -488,7 +488,7 @@ class FramingTaskManager extends EventEmitter {
         y = reverseEngraving ? workareaObj.height : 0;
       }
 
-      this.rotaryInfo = { useAAxis: this.isFcodeV2, y, yRatio: this.supportInfo.autoFeeder.rotaryRatio };
+      this.rotaryInfo = { useAAxis: this.isFcodeV2, y, yRatio: this.addOnInfo.autoFeeder.rotaryRatio };
     }
   };
 
@@ -610,7 +610,7 @@ class FramingTaskManager extends EventEmitter {
         await deviceMaster.rawSetRotary(false);
       }
 
-      if (this.supportInfo.redLight) {
+      if (this.addOnInfo.redLight) {
         await deviceMaster.rawSetRedLight(true);
       }
 
@@ -634,7 +634,7 @@ class FramingTaskManager extends EventEmitter {
 
     const yKey = rotaryInfo?.useAAxis ? 'a' : 'y';
 
-    if (this.supportInfo.redLight) {
+    if (this.addOnInfo.redLight) {
       await deviceMaster.rawSetRedLight(false);
     }
 
@@ -644,7 +644,7 @@ class FramingTaskManager extends EventEmitter {
       return;
     }
 
-    if (this.supportInfo.redLight) {
+    if (this.addOnInfo.redLight) {
       await deviceMaster.rawSetRedLight(true);
     } else if (this.lowPower > 0) {
       await deviceMaster.rawSetLaser({ on: true, s: this.lowPower });
@@ -669,7 +669,7 @@ class FramingTaskManager extends EventEmitter {
     }
 
     if (rotaryInfo) {
-      if (this.supportInfo.redLight) {
+      if (this.addOnInfo.redLight) {
         await deviceMaster.rawSetRedLight(false);
       } else if (this.lowPower > 0) {
         await deviceMaster.rawSetLaser({ on: false, s: 0 });

@@ -16,7 +16,7 @@ import progressCaller from '@core/app/actions/progress-caller';
 import Pointable from '@core/app/components/beambox/path-preview/Pointable';
 import SidePanel from '@core/app/components/beambox/path-preview/SidePanel';
 import ZoomBlock from '@core/app/components/beambox/ZoomBlock';
-import { getSupportInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
 import layoutConstants from '@core/app/constants/layout-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
@@ -612,7 +612,7 @@ class PathPreview extends React.Component<Props, State> {
     width /= dpmm;
     height /= dpmm;
 
-    if (BeamboxPreference.read('enable-job-origin') && getSupportInfo(model).jobOrigin) {
+    if (BeamboxPreference.read('enable-job-origin') && getAddOnInfo(model).jobOrigin) {
       this.jobOrigin = getJobOrigin();
     }
 

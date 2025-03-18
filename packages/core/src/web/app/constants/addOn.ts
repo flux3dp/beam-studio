@@ -11,8 +11,7 @@ export const CHUCK_ROTARY_DIAMETER = 133;
 export const FBB2_FEEDER_DIAMETER = 167.08; // FIXME: This might be wrong due to PCB issue
 export const FEEDER_DIAMETER = 83.54;
 
-// TODO: rename this to AddOnInfo because it's not only support or not
-export interface SupportInfo {
+export interface AddOnInfo {
   autoFeeder?: { maxHeight: number; rotaryRatio: number; xRange?: [number, number] }; // [x, width] in mm, no limit is not set
   autoFocus?: boolean;
   curveEngraving?: boolean;
@@ -32,7 +31,7 @@ export interface SupportInfo {
   };
 }
 
-const hexaSupportInfo: SupportInfo = {
+const hexaAddOnInfo: AddOnInfo = {
   jobOrigin: true,
   lowerFocus: true,
   rotary: {
@@ -43,7 +42,7 @@ const hexaSupportInfo: SupportInfo = {
   },
 };
 
-const supportList: Record<WorkAreaModel, SupportInfo> = {
+const addOnData: Record<WorkAreaModel, AddOnInfo> = {
   ado1: {
     autoFeeder: checkAdo1AutoFeeder()
       ? { maxHeight: 2000, rotaryRatio: CHUCK_ROTARY_DIAMETER / FEEDER_DIAMETER }
@@ -111,9 +110,9 @@ const supportList: Record<WorkAreaModel, SupportInfo> = {
       roller: true,
     },
   },
-  fhexa1: hexaSupportInfo,
-  fhx2rf3: hexaSupportInfo,
-  fhx2rf6: hexaSupportInfo,
+  fhexa1: hexaAddOnInfo,
+  fhx2rf3: hexaAddOnInfo,
+  fhx2rf6: hexaAddOnInfo,
   flv1: {
     jobOrigin: true,
     rotary: {
@@ -134,9 +133,8 @@ const supportList: Record<WorkAreaModel, SupportInfo> = {
   },
 };
 
-export const getSupportInfo = (workarea: WorkAreaModel): SupportInfo => supportList[workarea] || {};
+export const getAddOnInfo = (workarea: WorkAreaModel): AddOnInfo => addOnData[workarea] || {};
 
 export default {
-  getSupportInfo,
-  supportList,
+  getAddOnInfo,
 };

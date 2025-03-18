@@ -6,7 +6,7 @@ import { fetchTaskCodeSwiftray } from '@core/app/actions/beambox/export-funcs-sw
 import FontFuncs from '@core/app/actions/beambox/font-funcs';
 import MonitorController from '@core/app/actions/monitor-controller';
 import Progress from '@core/app/actions/progress-caller';
-import { getSupportInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/addOn';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { Mode } from '@core/app/constants/monitor-constants';
 import type { PreviewTask } from '@core/app/contexts/MonitorContext';
@@ -225,7 +225,7 @@ const fetchTaskCode = async (
 
   let didErrorOccur = false;
   const paddingAccel = await getAdorPaddingAccel(device || TopBarController.getSelectedDevice());
-  const supportInfo = getSupportInfo(BeamboxPreference.read('workarea'));
+  const addOnInfo = getAddOnInfo(BeamboxPreference.read('workarea'));
   const getTaskCode = (codeType: 'fcode' | 'gcode', getTaskCodeOpts = {}) =>
     new Promise<null | {
       fileTimeCost: number;
@@ -236,8 +236,8 @@ const fetchTaskCode = async (
 
       svgeditorParser.getTaskCode(names, {
         codeType,
-        enableAutoFocus: doesSupportDiodeAndAF && BeamboxPreference.read('enable-autofocus') && supportInfo.autoFocus,
-        enableDiode: doesSupportDiodeAndAF && BeamboxPreference.read('enable-diode') && supportInfo.hybridLaser,
+        enableAutoFocus: doesSupportDiodeAndAF && BeamboxPreference.read('enable-autofocus') && addOnInfo.autoFocus,
+        enableDiode: doesSupportDiodeAndAF && BeamboxPreference.read('enable-diode') && addOnInfo.hybridLaser,
         fileMode: '-f',
         model: BeamboxPreference.read('workarea') || BeamboxPreference.read('model'),
         onError: (message: string) => {

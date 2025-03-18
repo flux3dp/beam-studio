@@ -2,7 +2,7 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-import { RotaryType } from '@core/app/constants/add-on';
+import { RotaryType } from '@core/app/constants/addOn';
 
 import RotarySettings from './RotarySettings';
 

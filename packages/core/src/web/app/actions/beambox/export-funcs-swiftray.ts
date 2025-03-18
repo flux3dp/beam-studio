@@ -2,7 +2,7 @@ import Alert from '@core/app/actions/alert-caller';
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import FontFuncs from '@core/app/actions/beambox/font-funcs';
 import Progress from '@core/app/actions/progress-caller';
-import { getSupportInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/addOn';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { controlConfig } from '@core/app/constants/promark-constants';
 import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
@@ -277,7 +277,7 @@ const fetchTaskCodeSwiftray = async (
     },
   });
 
-  const supportInfo = getSupportInfo(BeamboxPreference.read('workarea'));
+  const addOnInfo = getAddOnInfo(BeamboxPreference.read('workarea'));
   let codeType = opts.output || 'fcode';
   const { fgGcode = false } = opts;
   const isNonFGCode = codeType === 'gcode' && !fgGcode;
@@ -289,8 +289,8 @@ const fetchTaskCodeSwiftray = async (
   }
 
   let taskConfig: IBaseConfig | IFcodeConfig = {
-    enableAutoFocus: doesSupportDiodeAndAF && BeamboxPreference.read('enable-autofocus') && supportInfo.autoFocus,
-    enableDiode: doesSupportDiodeAndAF && BeamboxPreference.read('enable-diode') && supportInfo.hybridLaser,
+    enableAutoFocus: doesSupportDiodeAndAF && BeamboxPreference.read('enable-autofocus') && addOnInfo.autoFocus,
+    enableDiode: doesSupportDiodeAndAF && BeamboxPreference.read('enable-diode') && addOnInfo.hybridLaser,
     isPromark,
     model,
     paddingAccel: await getAdorPaddingAccel(device || TopBarController.getSelectedDevice()),

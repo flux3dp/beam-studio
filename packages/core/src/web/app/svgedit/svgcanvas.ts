@@ -38,7 +38,7 @@ import grid from '@core/app/actions/canvas/grid';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import Progress from '@core/app/actions/progress-caller';
-import { getSupportInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/addOn';
 import AlertConstants from '@core/app/constants/alert-constants';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
@@ -1779,9 +1779,9 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     }
 
     const workarea: WorkAreaModel = BeamboxPreference.read('workarea');
-    const supportInfo = getSupportInfo(workarea);
+    const addOnInfo = getAddOnInfo(workarea);
     const engraveDpi = BeamboxPreference.read('engrave_dpi');
-    const isUsingDiode = !!(BeamboxPreference.read('enable-diode') && supportInfo.hybridLaser);
+    const isUsingDiode = !!(BeamboxPreference.read('enable-diode') && addOnInfo.hybridLaser);
     const isUsingAF = !!BeamboxPreference.read('enable-autofocus');
 
     svgcontent.setAttribute('data-engrave_dpi', engraveDpi);
@@ -1789,11 +1789,11 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     svgcontent.setAttribute('data-en_diode', String(isUsingDiode));
     svgcontent.setAttribute('data-en_af', String(isUsingAF));
 
-    if (getAutoFeeder(supportInfo)) {
+    if (getAutoFeeder(addOnInfo)) {
       svgcontent.setAttribute('data-auto-feeder-height', BeamboxPreference.read('auto-feeder-height')!.toFixed(2));
     }
 
-    if (getPassThrough(supportInfo)) {
+    if (getPassThrough(addOnInfo)) {
       svgcontent.setAttribute('data-pass_through', BeamboxPreference.read('pass-through-height')!.toFixed(2));
     }
 

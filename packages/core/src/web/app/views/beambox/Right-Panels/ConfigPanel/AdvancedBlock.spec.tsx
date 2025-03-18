@@ -42,10 +42,10 @@ jest.mock('@core/helpers/useI18n', () => () => ({
   },
 }));
 
-const mockGetSupportInfo = jest.fn();
+const mockGetAddOnInfo = jest.fn();
 
-jest.mock('@core/app/constants/add-on', () => ({
-  getSupportInfo: (...args) => mockGetSupportInfo(...args),
+jest.mock('@core/app/constants/addOn', () => ({
+  getAddOnInfo: (...args) => mockGetAddOnInfo(...args),
 }));
 
 const mockGetPromarkInfo = jest.fn();
@@ -78,7 +78,7 @@ jest.mock('./ConfigPanelContext', () => createContext(null));
 describe('test AdvancedBlock', () => {
   beforeEach(() => {
     mockRead.mockReturnValue(true);
-    mockGetSupportInfo.mockReturnValue({ autoFocus: false, hybridLaser: false, lowerFocus: false });
+    mockGetAddOnInfo.mockReturnValue({ autoFocus: false, hybridLaser: false, lowerFocus: false });
     mockUseHasCurveEngraving.mockReturnValue(false);
     mockUseWorkarea.mockReturnValue('fbb1');
     mockGetPromarkInfo.mockReturnValue(null);
@@ -97,7 +97,7 @@ describe('test AdvancedBlock', () => {
   });
 
   it('should render correctly for autofocus, diode', () => {
-    mockGetSupportInfo.mockReturnValue({ autoFocus: true, hybridLaser: true, lowerFocus: false });
+    mockGetAddOnInfo.mockReturnValue({ autoFocus: true, hybridLaser: true, lowerFocus: false });
 
     const { container } = render(
       <ConfigPanelContext.Provider value={{ state: { module: { value: LayerModule.LASER_UNIVERSAL } } } as any}>
@@ -111,7 +111,7 @@ describe('test AdvancedBlock', () => {
   });
 
   it('should render correctly for lower focus, diode', () => {
-    mockGetSupportInfo.mockReturnValue({ autoFocus: true, hybridLaser: true, lowerFocus: true });
+    mockGetAddOnInfo.mockReturnValue({ autoFocus: true, hybridLaser: true, lowerFocus: true });
 
     const { container } = render(
       <ConfigPanelContext.Provider value={{ state: { module: { value: LayerModule.LASER_UNIVERSAL } } } as any}>
@@ -125,7 +125,7 @@ describe('test AdvancedBlock', () => {
   });
 
   it('should render correctly for printer', () => {
-    mockGetSupportInfo.mockReturnValue({ autoFocus: true, hybridLaser: true, lowerFocus: true });
+    mockGetAddOnInfo.mockReturnValue({ autoFocus: true, hybridLaser: true, lowerFocus: true });
 
     const { container } = render(
       <ConfigPanelContext.Provider value={{ state: { module: { value: LayerModule.PRINTER } } } as any}>
@@ -139,7 +139,7 @@ describe('test AdvancedBlock', () => {
   });
 
   it('should render correctly for promark desktop', () => {
-    mockGetSupportInfo.mockReturnValue({ autoFocus: false, hybridLaser: false, lowerFocus: true });
+    mockGetAddOnInfo.mockReturnValue({ autoFocus: false, hybridLaser: false, lowerFocus: true });
     mockUseWorkarea.mockReturnValue('fpm1');
     mockGetPromarkInfo.mockReturnValue({ laserType: LaserType.Desktop, watt: 20 });
 
@@ -155,7 +155,7 @@ describe('test AdvancedBlock', () => {
   });
 
   it('should render correctly for promark mopa', () => {
-    mockGetSupportInfo.mockReturnValue({ autoFocus: false, hybridLaser: false, lowerFocus: true });
+    mockGetAddOnInfo.mockReturnValue({ autoFocus: false, hybridLaser: false, lowerFocus: true });
     mockUseWorkarea.mockReturnValue('fpm1');
     mockGetPromarkInfo.mockReturnValue({ laserType: LaserType.MOPA, watt: 20 });
 
@@ -172,7 +172,7 @@ describe('test AdvancedBlock', () => {
 
   it('should render correctly with curve engraving', () => {
     mockUseHasCurveEngraving.mockReturnValue(true);
-    mockGetSupportInfo.mockReturnValue({ autoFocus: true, hybridLaser: false, lowerFocus: true });
+    mockGetAddOnInfo.mockReturnValue({ autoFocus: true, hybridLaser: false, lowerFocus: true });
 
     const { container } = render(
       <ConfigPanelContext.Provider value={{ state: { module: { value: LayerModule.LASER_UNIVERSAL } } } as any}>

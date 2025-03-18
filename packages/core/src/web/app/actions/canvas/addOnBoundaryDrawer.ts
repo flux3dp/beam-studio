@@ -1,6 +1,6 @@
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
-import { getSupportInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/addOn';
 import NS from '@core/app/constants/namespaces';
 import workareaManager from '@core/app/svgedit/workarea';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
@@ -90,10 +90,10 @@ export class AddOnBoundaryDrawer {
 
   updateAutoFeederPath = (): void => {
     const { height: workareaH, model, width: workareaW } = workareaManager;
-    const supportInfo = getSupportInfo(model);
-    const { autoFeeder } = supportInfo;
+    const addOnInfo = getAddOnInfo(model);
+    const { autoFeeder } = addOnInfo;
 
-    if (!getAutoFeeder(supportInfo) || !autoFeeder?.xRange) {
+    if (!getAutoFeeder(addOnInfo) || !autoFeeder?.xRange) {
       this.autoFeederPath?.setAttribute('d', '');
 
       return;
@@ -114,10 +114,10 @@ export class AddOnBoundaryDrawer {
 
   updatePassThroughPath = (): void => {
     const { height: workareaH, model, width: workareaW } = workareaManager;
-    const supportInfo = getSupportInfo(model);
-    const { passThrough } = supportInfo;
+    const addOnInfo = getAddOnInfo(model);
+    const { passThrough } = addOnInfo;
 
-    if (!getPassThrough(supportInfo) || !passThrough?.xRange) {
+    if (!getPassThrough(addOnInfo) || !passThrough?.xRange) {
       this.passThroughPath?.setAttribute('d', '');
 
       return;
@@ -139,7 +139,7 @@ export class AddOnBoundaryDrawer {
   updateOpenBottomBoundary = (): void => {
     const enabled = beamboxPreference.read('borderless');
     const { model, width } = workareaManager;
-    const { openBottom } = getSupportInfo(model);
+    const { openBottom } = getAddOnInfo(model);
 
     if (!enabled || !openBottom) {
       this.openBottomRect?.setAttribute('display', 'none');

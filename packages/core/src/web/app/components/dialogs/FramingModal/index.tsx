@@ -8,7 +8,7 @@ import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
-import { getSupportInfo } from '@core/app/constants/add-on';
+import { getAddOnInfo } from '@core/app/constants/addOn';
 import FramingIcons from '@core/app/icons/framing/FramingIcons';
 import icons from '@core/app/icons/icons';
 import FramingTaskManager, { FramingType } from '@core/helpers/device/framing';
@@ -37,11 +37,11 @@ const FramingModal = ({ device, onClose, startOnOpen = false }: Props): React.JS
   const manager = useRef<FramingTaskManager>(null);
   const shortcutHandler = useRef<() => void>(null);
 
-  const supportInfo = useMemo(() => getSupportInfo(device.model), [device]);
+  const addOnInfo = useMemo(() => getAddOnInfo(device.model), [device]);
 
   const handleStart = useCallback(() => {
-    manager.current?.startFraming(type, { lowPower: supportInfo.framingLowLaser ? lowLaser : 0 });
-  }, [type, lowLaser, supportInfo.framingLowLaser]);
+    manager.current?.startFraming(type, { lowPower: addOnInfo.framingLowLaser ? lowLaser : 0 });
+  }, [type, lowLaser, addOnInfo.framingLowLaser]);
 
   const handleStop = useCallback(() => {
     manager.current?.stopFraming();
@@ -103,7 +103,7 @@ const FramingModal = ({ device, onClose, startOnOpen = false }: Props): React.JS
       width={360}
     >
       <div className={styles.container}>
-        {supportInfo.framingLowLaser && (
+        {addOnInfo.framingLowLaser && (
           <div className={styles['low-laser']}>
             <div className={styles.left}>
               <Tooltip title={tFraming.low_laser_desc}>
