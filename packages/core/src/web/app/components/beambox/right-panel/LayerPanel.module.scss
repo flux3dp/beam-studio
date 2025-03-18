@@ -21,7 +21,7 @@ $layer-background: white;
 }
 
 .floating-panel [class*='scroll-content'] {
-  // scrolling is handled by layerlist_container
+  // scrolling is handled by layer_list_container
   overflow-y: auto;
   margin-bottom: 120px;
   padding-bottom: 0;
@@ -45,7 +45,7 @@ $layer-background: white;
     height: 100%;
     width: 100%;
 
-    .layerlist-container {
+    .layer-list-container {
       position: relative;
       overflow-x: hidden;
       overflow-y: scroll;

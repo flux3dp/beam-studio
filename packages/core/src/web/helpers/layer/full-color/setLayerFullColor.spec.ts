@@ -1,4 +1,4 @@
-import toggleFullColorLayer from './toggleFullColorLayer';
+import { setLayerFullColor } from './setLayerFullColor';
 
 const mockBeginUndoableChange = jest.fn();
 const mockFinishUndoableChange = jest.fn();
@@ -25,7 +25,7 @@ jest.mock(
       mockUpdateLayerColor(...args),
 );
 
-describe('test toggleFullColorLayer', () => {
+describe('test setLayerFullColor', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -36,12 +36,12 @@ describe('test toggleFullColorLayer', () => {
 
     mockFinishUndoableChange.mockReturnValue(mockCmd);
 
-    const cmd = toggleFullColorLayer(layer, { val: true });
+    const cmd = setLayerFullColor(layer, true);
 
     expect(cmd).toBe(mockCmd);
-    expect(mockBeginUndoableChange).toBeCalledWith('data-fullcolor', [layer]);
-    expect(mockFinishUndoableChange).toBeCalled();
-    expect(mockUpdateLayerColor).toBeCalledWith(layer);
+    expect(mockBeginUndoableChange).toHaveBeenCalledWith('data-fullcolor', [layer]);
+    expect(mockFinishUndoableChange).toHaveBeenCalled();
+    expect(mockUpdateLayerColor).toHaveBeenCalledWith(layer);
   });
 
   it('should work when set to false', () => {
@@ -53,12 +53,12 @@ describe('test toggleFullColorLayer', () => {
 
     mockFinishUndoableChange.mockReturnValue(mockCmd);
 
-    const cmd = toggleFullColorLayer(layer, { val: false });
+    const cmd = setLayerFullColor(layer, false);
 
     expect(cmd).toBe(mockCmd);
-    expect(mockBeginUndoableChange).toBeCalledWith('data-fullcolor', [layer]);
-    expect(mockFinishUndoableChange).toBeCalled();
-    expect(mockUpdateLayerColor).toBeCalledWith(layer);
+    expect(mockBeginUndoableChange).toHaveBeenCalledWith('data-fullcolor', [layer]);
+    expect(mockFinishUndoableChange).toHaveBeenCalled();
+    expect(mockUpdateLayerColor).toHaveBeenCalledWith(layer);
   });
 
   it('should work without val', () => {
@@ -70,12 +70,12 @@ describe('test toggleFullColorLayer', () => {
 
     mockFinishUndoableChange.mockReturnValue(mockCmd);
 
-    const cmd = toggleFullColorLayer(layer);
+    const cmd = setLayerFullColor(layer);
 
     expect(cmd).toBe(mockCmd);
-    expect(mockBeginUndoableChange).toBeCalledWith('data-fullcolor', [layer]);
-    expect(mockFinishUndoableChange).toBeCalled();
-    expect(mockUpdateLayerColor).toBeCalledWith(layer);
+    expect(mockBeginUndoableChange).toHaveBeenCalledWith('data-fullcolor', [layer]);
+    expect(mockFinishUndoableChange).toHaveBeenCalled();
+    expect(mockUpdateLayerColor).toHaveBeenCalledWith(layer);
     expect(layer.getAttribute('data-fullcolor')).toBeNull();
   });
 
@@ -84,9 +84,9 @@ describe('test toggleFullColorLayer', () => {
 
     layer.setAttribute('data-fullcolor', '1');
 
-    const cmd = toggleFullColorLayer(layer, { val: true });
+    const cmd = setLayerFullColor(layer, true);
 
     expect(cmd).toBeNull();
-    expect(mockUpdateLayerColor).not.toBeCalled();
+    expect(mockUpdateLayerColor).not.toHaveBeenCalled();
   });
 });

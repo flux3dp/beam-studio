@@ -2054,7 +2054,7 @@ const svgEditor = (window['svgEditor'] = (function () {
 
       // var notif = allStrings.notification; // Currently unused
       // $.extend will only replace the given strings
-      var oldLayerName = $('#layerlist tr.layersel td.layername').text();
+      var oldLayerName = $('#layer-list tr.layersel td.layername').text();
       var rename_layer = oldLayerName === uiStrings.layers.layer + ' 1';
 
       $.extend(uiStrings, allStrings);

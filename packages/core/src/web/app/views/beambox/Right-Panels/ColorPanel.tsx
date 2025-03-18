@@ -18,12 +18,13 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 import storage from '@core/implementations/storage';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './ColorPanel.module.scss';
 
 const workareaEvents = eventEmitterFactory.createEventEmitter('workarea');
 
-let svgCanvas;
+let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
@@ -315,15 +316,7 @@ const ColorPanel = ({ elem }: Props): React.JSX.Element => {
             onChange={handleStrokeColorChange}
             triggerType="stroke"
           />
-          <ConfigProvider
-            theme={{
-              components: {
-                InputNumber: {
-                  controlWidth: 60,
-                },
-              },
-            }}
-          >
+          <ConfigProvider theme={{ components: { InputNumber: { controlWidth: 60 } } }}>
             <InputNumber
               // addonAfter={isInch ? 'in' : 'mm'}
               formatter={(v, { input, userTyping }) => (userTyping ? input : (v / ratio).toFixed(decimal))}

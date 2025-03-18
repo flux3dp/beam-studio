@@ -16,4 +16,7 @@ export const modelsWithoutModules = new Set(['fpm1']);
 export const fullColorModulesArray = [LayerModule.PRINTER, LayerModule.UV_EXPORT] as const;
 export const fullColorModules = new Set(fullColorModulesArray);
 
+export const fullColorModulesArray = [LayerModule.PRINTER, LayerModule.UV_EXPORT] as const;
+export const fullColorModules = new Set(fullColorModulesArray);
+
 export default LayerModule;

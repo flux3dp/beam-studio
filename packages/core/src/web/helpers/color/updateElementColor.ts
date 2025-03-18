@@ -15,7 +15,7 @@ const updateElementColor = (elem: Element): void => {
   const isFullColor = layer?.getAttribute('data-fullcolor') === '1';
   const color = svgCanvas.isUsingLayerColor ? layer?.getAttribute('data-color') : '#000';
 
-  setElementsColor([elem], color, isFullColor);
+  setElementsColor([elem], color!, isFullColor);
 };
 
 export default updateElementColor;

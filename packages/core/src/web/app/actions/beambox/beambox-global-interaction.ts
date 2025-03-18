@@ -41,7 +41,7 @@ class BeamboxGlobalInteraction {
   onObjectFocus(elems?: Element[]) {
     let selectedElements = elems || svgCanvas?.getSelectedElems().filter(Boolean);
 
-    if (!selectedElements.length) {
+    if (!selectedElements?.length) {
       return;
     }
 

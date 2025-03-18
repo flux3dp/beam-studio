@@ -12,7 +12,7 @@ import workareaManager from '@core/app/svgedit/workarea';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import i18n from '@core/helpers/i18n';
-import layerConfigHelper, { initLayerConfig, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
+import { cloneLayerConfig, initLayerConfig, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { createLayer, getLayerName } from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
@@ -22,7 +22,7 @@ import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import { PassThroughCanvasManager } from './canvasManager';
 
 let svgCanvas: ISVGCanvas;
-let svgedit;
+let svgedit: any;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
@@ -157,7 +157,7 @@ const sliceWorkarea = async (
         batchCmd.addSubCommand(cmd);
       }
 
-      layerConfigHelper.cloneLayerConfig(newLayerName, name);
+      cloneLayerConfig(newLayerName, name);
       layer.setAttribute('data-lock', 'true');
 
       if (i > 0) {
@@ -244,7 +244,7 @@ const sliceWorkarea = async (
         batchCmd.addSubCommand(cmd);
       }
 
-      layerConfigHelper.initLayerConfig(name);
+      initLayerConfig(name);
       writeDataLayer(layer, 'fullcolor', true);
       writeDataLayer(layer, 'ref', true);
       writeDataLayer(layer, 'repeat', 0);
@@ -270,7 +270,10 @@ const sliceWorkarea = async (
       const uses = origLayer.querySelectorAll('use');
 
       uses.forEach((use) => deleteUseRef(use, { parentCmd: batchCmd }));
-      batchCmd.addSubCommand(new history.RemoveElementCommand(origLayer, nextSibling, parent));
+
+      if (nextSibling) {
+        batchCmd.addSubCommand(new history.RemoveElementCommand(origLayer, nextSibling, parent!));
+      }
     }
   });
   generateGuideMark();

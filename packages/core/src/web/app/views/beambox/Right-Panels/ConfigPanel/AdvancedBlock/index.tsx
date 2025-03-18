@@ -15,16 +15,18 @@ import { getPromarkLimit } from '@core/helpers/layer/layer-config-helper';
 import useForceUpdate from '@core/helpers/use-force-update';
 import useI18n from '@core/helpers/useI18n';
 
-import styles from './AdvancedBlock.module.scss';
-import AutoFocus from './AutoFocus';
-import ConfigPanelContext from './ConfigPanelContext';
-import CurveEngravingZHighSpeed from './CurveEngravingZHighSpeed';
-import Diode from './Diode';
-import FocusBlock from './FocusBlock';
-import FrequencyBlock from './FrequencyBlock';
-import PulseWidthBlock from './PulseWidthBlock';
-import SingleColorBlock from './SingleColorBlock';
-import WobbleBlock from './WobbleBlock';
+import AutoFocus from '../AutoFocus';
+import ConfigPanelContext from '../ConfigPanelContext';
+import CurveEngravingZHighSpeed from '../CurveEngravingZHighSpeed';
+import Diode from '../Diode';
+import FocusBlock from '../FocusBlock';
+import FrequencyBlock from '../FrequencyBlock';
+import PulseWidthBlock from '../PulseWidthBlock';
+import SingleColorBlock from '../SingleColorBlock';
+import WobbleBlock from '../WobbleBlock';
+
+import UvExportBlock from './components/UvExportBlock';
+import styles from './index.module.scss';
 
 const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.ReactNode => {
   const { state } = useContext(ConfigPanelContext);
@@ -94,34 +96,20 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
     contents.push(<SingleColorBlock key="single-color-block" />);
   }
 
-  if (contents.length === 0) return null;
+  if (!isPromark) contents.push(<UvExportBlock />);
 
   return (
     <ConfigProvider
       theme={{
-        components: {
-          Collapse: {
-            contentPadding: 0,
-            headerPadding: '0 20px',
-          },
-        },
-        token: {
-          padding: 0,
-          paddingSM: 0,
-        },
+        components: { Collapse: { contentPadding: 0, headerPadding: '0 20px' } },
+        token: { padding: 0, paddingSM: 0 },
       }}
     >
       <Collapse
         className={styles.container}
         defaultActiveKey={[]}
         ghost
-        items={[
-          {
-            children: <div className={styles.panel}>{contents}</div>,
-            key: '1',
-            label: lang.advanced,
-          },
-        ]}
+        items={[{ children: <div className={styles.panel}>{contents}</div>, key: '1', label: lang.advanced }]}
       />
     </ConfigProvider>
   );

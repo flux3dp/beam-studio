@@ -492,15 +492,15 @@ class LayerPanel extends React.PureComponent<Props, State> {
           holdToDisplayMouse={-1}
           id="layer-contextmenu"
         >
-          <div className={styles['layerlist-container']} id="layerlist_container" ref={this.layerListContainerRef}>
+          <div className={styles['layer-list-container']} id="layer_list_container" ref={this.layerListContainerRef}>
             <LayerList
-              draggingDestIndex={draggingDestIndex}
+              draggingDestIndex={draggingDestIndex!}
               highlightLayer={highlightLayer}
               onLayerCenterDragEnter={this.onLayerCenterDragEnter}
               onLayerClick={this.handleLayerClick}
               onLayerColorChange={this.setLayerColor}
               onLayerDoubleClick={this.layerDoubleClick}
-              onlayerDragEnd={this.onLayerDragEnd}
+              onLayerDragEnd={this.onLayerDragEnd}
               onLayerDragStart={this.onLayerDragStart}
               onLayerTouchEnd={this.onLayerTouchEnd}
               onLayerTouchMove={this.onLayerTouchMove}

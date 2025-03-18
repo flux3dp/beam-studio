@@ -1,10 +1,10 @@
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useMemo, useRef } from 'react';
 
 import { SwipeAction } from 'antd-mobile';
 import type { Action, SwipeActionRef } from 'antd-mobile/es/components/swipe-action';
 import classNames from 'classnames';
 
-import constant from '@core/app/actions/beambox/constant';
+import constant, { promarkModels } from '@core/app/actions/beambox/constant';
 import LayerModule from '@core/app/constants/layer-module/layer-modules';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
@@ -20,10 +20,11 @@ import {
 } from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './LayerList.module.scss';
 
-let svgCanvas;
+let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
@@ -36,7 +37,7 @@ interface Props {
   onLayerClick: (e: React.MouseEvent, layerName: string) => void;
   onLayerColorChange: (layerName: string, color: string) => void;
   onLayerDoubleClick: () => void;
-  onlayerDragEnd: (e: React.DragEvent) => void;
+  onLayerDragEnd: (e: React.DragEvent) => void;
   onLayerDragStart: (layerName: string, e: React.DragEvent) => void;
   onLayerTouchEnd: (e: React.TouchEvent) => void;
   onLayerTouchMove: (e: React.TouchEvent) => void;
@@ -55,7 +56,7 @@ const LayerList = ({
   onLayerClick,
   onLayerColorChange,
   onLayerDoubleClick,
-  onlayerDragEnd,
+  onLayerDragEnd,
   onLayerDragStart,
   onLayerTouchEnd,
   onLayerTouchMove,
@@ -69,7 +70,9 @@ const LayerList = ({
   const drawing = svgCanvas.getCurrentDrawing();
   const currentLayerName = drawing.getCurrentLayerName();
   const isMobile = useIsMobile();
+  const workarea = useWorkarea();
   const ref = useRef<SwipeActionRef>(null);
+  const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
 
   useEffect(() => {
     if (ref.current && draggingDestIndex !== null) {
@@ -77,15 +80,7 @@ const LayerList = ({
     }
   }, [ref, draggingDestIndex, selectedLayers]);
 
-  const workarea = useWorkarea();
-
-  const isAnyLayerMissing = drawing.all_layers.some((layer) => {
-    if (!layer.group_.parentNode) {
-      return true;
-    }
-
-    return false;
-  });
+  const isAnyLayerMissing = drawing.all_layers.some((layer: any) => !layer.group_.parentNode);
 
   if (isAnyLayerMissing) {
     drawing.identifyLayers();
@@ -99,7 +94,7 @@ const LayerList = ({
 
   const shouldShowModuleIcon = constant.adorModels.includes(workarea);
 
-  for (let i = allLayerNames.length - 1; i >= 0; i -= 1) {
+  for (let i = allLayerNames.length - 1; i >= 0; i--) {
     const layerName = allLayerNames[i];
     const layer = getLayerElementByName(layerName);
 
@@ -110,9 +105,12 @@ const LayerList = ({
       const isVis = drawing.getLayerVisibility(layerName);
       const module = getData(layer, 'module');
       const isRef = getData(layer, 'ref');
+      const isUvExport = getData(layer, 'uv-export');
       let moduleIcon = null;
 
-      if (isRef) {
+      if (isUvExport && !isPromark) {
+        moduleIcon = <LayerPanelIcons.UvExport />;
+      } else if (isRef) {
         moduleIcon = <LayerPanelIcons.Ref />;
       } else if (shouldShowModuleIcon) {
         moduleIcon = module === LayerModule.PRINTER ? <LayerPanelIcons.Print /> : <LayerPanelIcons.Laser />;
@@ -131,7 +129,7 @@ const LayerList = ({
           key={layerName}
           onBlur={() => {}}
           onClick={(e: React.MouseEvent) => onLayerClick(e, layerName)}
-          onDragEnd={onlayerDragEnd}
+          onDragEnd={onLayerDragEnd}
           onDragStart={(e: React.DragEvent) => onLayerDragStart(layerName, e)}
           onFocus={() => {}}
           onMouseOut={() => highlightLayer()}
@@ -165,7 +163,7 @@ const LayerList = ({
               className={classNames(styles.name, {
                 [styles['with-module']]: shouldShowModuleIcon,
               })}
-              id={`layerdoubleclick-${i}`}
+              id={`layer-double-click-${i}`}
               onDoubleClick={(e: React.MouseEvent) => {
                 if (!isMobile && !e.ctrlKey && !e.shiftKey && !e.metaKey) {
                   onLayerDoubleClick();
@@ -177,7 +175,7 @@ const LayerList = ({
             {isMobile && (
               <div
                 className={styles.lock}
-                id={`layerlock-${i}`}
+                id={`layer-lock-${i}`}
                 onClick={(e: React.MouseEvent) => {
                   if (isLocked) {
                     e.stopPropagation();
@@ -190,7 +188,7 @@ const LayerList = ({
             )}
             <div
               className={styles.vis}
-              id={`layervis-${i}`}
+              id={`layer-vis-${i}`}
               onClick={(e: React.MouseEvent) => {
                 e.stopPropagation();
                 setLayerVisibility(layerName);
@@ -206,7 +204,7 @@ const LayerList = ({
             {!isMobile && (
               <div
                 className={styles.lock}
-                id={`layerlock-${i}`}
+                id={`layer-lock-${i}`}
                 onClick={(e: React.MouseEvent) => {
                   if (isLocked) {
                     e.stopPropagation();
@@ -225,7 +223,7 @@ const LayerList = ({
       if (!isMobile) {
         items.push(layerItem);
       } else {
-        const leftActions: Action[] = isMobile
+        const leftActions: Action[] | undefined = isMobile
           ? [
               {
                 color: 'warning',
@@ -239,7 +237,7 @@ const LayerList = ({
               },
             ]
           : undefined;
-        const rightActions: Action[] = isMobile
+        const rightActions: Action[] | undefined = isMobile
           ? [
               {
                 color: 'danger',
@@ -273,7 +271,7 @@ const LayerList = ({
   }
 
   return (
-    <div className={styles.list} id="layerlist" onDragOver={(e) => e.preventDefault()}>
+    <div className={styles.list} id="layer-list" onDragOver={(e) => e.preventDefault()}>
       {items}
     </div>
   );

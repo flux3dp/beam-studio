@@ -129,10 +129,7 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   }
 
   const handleChange = (val: number) => {
-    dispatch({
-      payload: { configName: CUSTOM_PRESET_CONSTANT, speed: val },
-      type: 'change',
-    });
+    dispatch({ payload: { configName: CUSTOM_PRESET_CONSTANT, speed: val }, type: 'change' });
     timeEstimationButtonEventEmitter.emit('SET_ESTIMATED_TIME', null);
 
     if (type !== 'modal') {
@@ -148,7 +145,7 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   };
 
   const sliderOptions = useMemo(
-    () => (simpleMode && module === LayerModule.PRINTER ? configOptions.getPrintingSpeedOptions(lang) : null),
+    () => (simpleMode && module === LayerModule.PRINTER ? configOptions.getPrintingSpeedOptions(lang) : []),
     [simpleMode, module, lang],
   );
 
@@ -204,7 +201,7 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
       return selectedOption.label;
     }
 
-    return +units.convertUnit(value, fakeUnit, 'mm').toFixed(decimal);
+    return +units.convertUnit(value, fakeUnit, 'mm')?.toFixed(decimal);
   }, [decimal, sliderOptions, value, fakeUnit]);
 
   return type === 'panel-item' ? (

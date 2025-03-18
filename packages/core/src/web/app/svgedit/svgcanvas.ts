@@ -53,7 +53,7 @@ import updateLayerColorFilter from '@core/helpers/color/updateLayerColorFilter';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
 import jimpHelper from '@core/helpers/jimp-helper';
-import laserConfigHelper from '@core/helpers/layer/layer-config-helper';
+import { initLayerConfig } from '@core/helpers/layer/layer-config-helper';
 import * as LayerHelper from '@core/helpers/layer/layer-helper';
 import round from '@core/helpers/math/round';
 import viewMenu from '@core/helpers/menubar/view';
@@ -2704,7 +2704,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     const defaultLayerName = LANG.right_panel.layer_panel.layer1;
 
     canvas.createLayer(defaultLayerName);
-    laserConfigHelper.initLayerConfig(defaultLayerName);
+    initLayerConfig(defaultLayerName);
 
     // force update selected layers
     LayerPanelController.setSelectedLayers([]);

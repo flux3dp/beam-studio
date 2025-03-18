@@ -59,6 +59,7 @@ interface PreferenceSettingsObject {
 type TStatus = 'connected' | 'disconnected' | 'init';
 
 class SwiftrayClient extends EventEmitter {
+  // @ts-expect-error init later
   private socket: WebSocket; // The websocket here is the browser websocket, not wrapped FLUX websocket
 
   private logger = Logger('swiftray', 100);
@@ -96,7 +97,7 @@ class SwiftrayClient extends EventEmitter {
     this.socket = new WebSocket(this.url);
     this.socket.onopen = this.handleOpen.bind(this);
     this.socket.onclose = this.handleClose.bind(this);
-    this.socket.onerror = this.handleError.bind(this);
+    this.socket.onerror = this.handleError.bind(this) as any;
     this.socket.onmessage = this.handleMessage.bind(this);
   }
 
@@ -115,7 +116,7 @@ class SwiftrayClient extends EventEmitter {
 
       const device = TopBarController.getSelectedDevice();
 
-      this.lastPromark = promarkModels.has(device?.model) ? device : null;
+      this.lastPromark = promarkModels.has((device as any)?.model) ? device : null;
     } else if (newStatus === 'connected' && this.status === 'disconnected') {
       // Reconnect to Promark
       let device = TopBarController.getSelectedDevice();
@@ -128,8 +129,8 @@ class SwiftrayClient extends EventEmitter {
         retry -= 1;
       }
 
-      if (promarkModels.has(device?.model)) {
-        const resp = await deviceMaster.select(device);
+      if (promarkModels.has(device!.model)) {
+        const resp = await deviceMaster.select(device!);
 
         reconnect = resp.success;
         console.log('Reconnect to Promark', reconnect);
@@ -181,7 +182,7 @@ class SwiftrayClient extends EventEmitter {
   }
 
   private handleMessage(event: MessageEvent) {
-    const data = JSON.parse(event.data);
+    const data = JSON.parse(event.data) as any;
 
     this.emit(data.type, data);
 
@@ -271,7 +272,7 @@ class SwiftrayClient extends EventEmitter {
     eventListeners: {
       onError: (message: string) => void;
       onFinished: () => void;
-      onProgressing: (progress) => void;
+      onProgressing: (progress: any) => void;
     },
     loadOptions: {
       engraveDpi: number;

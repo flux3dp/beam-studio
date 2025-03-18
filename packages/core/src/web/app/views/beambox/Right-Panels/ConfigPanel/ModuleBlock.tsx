@@ -12,7 +12,7 @@ import Select from '@core/app/widgets/AntdSelect';
 import alertConfig from '@core/helpers/api/alert-config';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
-import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
+import { setLayerFullColor } from '@core/helpers/layer/full-color/setLayerFullColor';
 import { applyPreset, baseConfig, getData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { getLayerElementByName } from '@core/helpers/layer/layer-helper';
 import presetHelper from '@core/helpers/presets/preset-helper';
@@ -153,7 +153,7 @@ const ModuleBlock = (): React.ReactNode => {
         applyPreset(layer, newPreset, { batchCmd });
       }
 
-      batchCmd.addSubCommand(toggleFullColorLayer(layer, { val: newVal === LayerModule.PRINTER }));
+      batchCmd.addSubCommand(setLayerFullColor(layer, newVal === LayerModule.PRINTER));
     });
     initState(selectedLayers);
     LayerPanelController.updateLayerPanel();
@@ -177,9 +177,9 @@ const ModuleBlock = (): React.ReactNode => {
     <ObjectPanelItem.Select
       id="module"
       label={t.module}
-      onChange={handleChange}
+      onChange={handleChange as any}
       options={options}
-      selected={options.find((option) => option.value === value)}
+      selected={options.find((option) => option.value === value)!}
     />
   ) : (
     <div className={styles.panel}>

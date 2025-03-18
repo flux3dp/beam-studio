@@ -8,7 +8,7 @@ import colorConstants, { PrintingColors } from '@core/app/constants/color-consta
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
-import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
+import { setLayerFullColor } from '@core/helpers/layer/full-color/setLayerFullColor';
 import { getData, getMultiSelectData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { getLayerByName } from '@core/helpers/layer/layer-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -40,7 +40,7 @@ const SingleColorBlock = (): React.JSX.Element => {
         writeDataLayer(layer, 'color', PrintingColors.BLACK, { batchCmd });
       }
 
-      const cmd = toggleFullColorLayer(layer, { val: newVal });
+      const cmd = setLayerFullColor(layer, newVal);
 
       if (cmd && !cmd.isEmpty()) {
         batchCmd.addSubCommand(cmd);
@@ -49,9 +49,9 @@ const SingleColorBlock = (): React.JSX.Element => {
 
     if (colorChanged) {
       const selectedIdx = selectedLayers.findIndex((layerName) => layerName === selectedLayer);
-      const config = getMultiSelectData(layers, selectedIdx, 'color');
+      const color = getMultiSelectData(layers, selectedIdx, 'color') as { hasMultiValue: boolean; value: string };
 
-      dispatch({ payload: { color: config }, type: 'update' });
+      dispatch({ payload: { color }, type: 'update' });
     }
 
     LayerPanelController.updateLayerPanel();

@@ -11,34 +11,20 @@ interface State extends ILayerConfig {
 export const getDefaultState = (): State => {
   const defaultConfig = getDefaultConfig();
   const keys = Object.keys(defaultConfig);
-  const initState = {};
+  const initState: Partial<Record<ConfigKey, ILayerConfig[ConfigKey]>> = {};
 
-  keys.forEach((key: ConfigKey) => {
-    initState[key] = { value: defaultConfig[key] } as ILayerConfig[ConfigKey];
+  keys.forEach((key) => {
+    initState[key as ConfigKey] = { value: defaultConfig[key as ConfigKey] } as ILayerConfig[ConfigKey];
   });
 
   return initState as State;
 };
 
 export type Action =
+  | { payload: string; type: 'rename' }
+  | { payload: { [key in ConfigKey]?: ILayerConfig[key] } & { selectedLayer?: string }; type: 'update' }
   | {
-      payload: string;
-      type: 'rename';
-    }
-  | {
-      payload: {
-        [key in ConfigKey]?: ILayerConfig[key];
-      } & {
-        selectedLayer?: string;
-      };
-      type: 'update';
-    }
-  | {
-      payload: {
-        [key in keyof ILayerConfig]?: ILayerConfig[key]['value'];
-      } & {
-        selectedLayer?: string;
-      };
+      payload: { [key in keyof ILayerConfig]?: ILayerConfig[key]['value'] } & { selectedLayer?: string };
       type: 'change';
     };
 
@@ -53,6 +39,7 @@ export const reducer = (state: State, action: Action): State => {
 
     Object.keys(payload).forEach((key) => {
       if (key !== 'selectedLayer') {
+        // @ts-expect-error type mismatch
         newState[key] = { value: payload[key] };
       } else {
         newState[key] = payload[key];
@@ -82,4 +69,6 @@ interface Context {
   state: State;
 }
 
-export default createContext<Context>({} as Context);
+const ConfigPanelContext = createContext<Context>({} as Context);
+
+export default ConfigPanelContext;

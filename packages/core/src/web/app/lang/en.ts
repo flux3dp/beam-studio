@@ -753,6 +753,9 @@ const lang: ILang = {
         objects: 'Objects',
         path_edit: 'Path Edit',
       },
+      uv_export_block: {
+        title: 'UV Export',
+      },
     },
     shapes_panel: {
       animals: 'Animal',
@@ -1703,6 +1706,7 @@ Machines > ‘Promark Name’ > Promark Settings`,
     done: 'Apply',
     enable_custom_backlash: 'Enable Custom Backlash Compensation',
     enable_low_speed: 'Enable slow speed movement',
+    enable_uv_export: 'Enable UV printing',
     enabled: 'Enabled',
     engraving_direction: 'Direction',
     fast_gradient: 'Speed Optimization',

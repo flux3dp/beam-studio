@@ -7,6 +7,7 @@ type MetaConfig = {
   configName: string;
   module: number;
   ref: boolean;
+  'uv-export': boolean;
 };
 
 type CommonConfig = {
@@ -58,7 +59,6 @@ type PromarkConfig = {
 };
 
 export type ConfigKeyTypeMap = CommonConfig & LaserConfig & MetaConfig & PrintingConfig & PromarkConfig;
-
 type ConfigKey = keyof ConfigKeyTypeMap;
 
 export interface ConfigItem<T> {
@@ -68,7 +68,7 @@ export interface ConfigItem<T> {
 
 // Used for ConfigPanel, selected layer(s) config
 export type ILayerConfig = {
-  [key in keyof ConfigKeyTypeMap]: ConfigItem<ConfigKeyTypeMap[key]>;
+  [Key in keyof ConfigKeyTypeMap]: ConfigItem<ConfigKeyTypeMap[Key]>;
 };
 
 // Saved parameters, containing presets and user saved configs

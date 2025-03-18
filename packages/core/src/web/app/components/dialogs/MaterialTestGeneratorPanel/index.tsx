@@ -28,6 +28,7 @@ import BlockSettingForm from './BlockSettingForm';
 import type { SvgInfo } from './generateSvgInfo';
 import generateSvgInfo from './generateSvgInfo';
 import styles from './index.module.scss';
+import type { Detail } from './TableSetting';
 import { getTableSetting } from './TableSetting';
 import TableSettingForm from './TableSettingForm';
 import { getTextSetting } from './TextSetting';
@@ -53,7 +54,7 @@ const paramWidth = {
   repeat: 42.63,
   speed: 81.61,
   strength: 60.66,
-};
+} as const;
 const paramString = {
   fillInterval: 'Fill Interval (mm)',
   frequency: 'Frequency (kHz)',
@@ -61,7 +62,7 @@ const paramString = {
   repeat: 'Passes',
   speed: 'Speed (mm/s)',
   strength: 'Power (%)',
-};
+} as const;
 
 const getTextAdjustment = (rawText: number | string) => (rawText.toString().length * 2.7) / 2;
 const getEnd = (start: number, block: BlockInfo) =>
@@ -73,10 +74,7 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): React.JSX.Element => {
   const { laserType } = getPromarkInfo();
   const workarea = useMemo(() => beamboxPreference.read('workarea'), []);
   const { isMopa, isPromark } = useMemo(
-    () => ({
-      isMopa: laserType === LaserType.MOPA,
-      isPromark: promarkModels.has(workarea),
-    }),
+    () => ({ isMopa: laserType === LaserType.MOPA, isPromark: promarkModels.has(workarea) }),
     [laserType, workarea],
   );
   const [blockOption, setBlockOption] = useState<'cut' | 'engrave'>('cut');
@@ -97,12 +95,11 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): React.JSX.Element => {
       (right + row.size.value + endPadding * 2) * dpmm,
       (bottom + column.size.value + endPadding * 2) * dpmm,
     ];
-    const [colParam, rowParam] = Object.entries(tableSetting).sort(([, { selected: a }], [, { selected: b }]) => a - b);
+    const [colParam, rowParam] = Object.entries(tableSetting).sort(
+      ([, { selected: a }], [, { selected: b }]) => a - b,
+    ) as Array<[keyof typeof tableSetting, Detail]>;
 
-    const { cmd: tableCmd } = createLayer('Material Test - Frame', {
-      hexCode: '#000',
-      isSubCmd: true,
-    });
+    const { cmd: tableCmd } = createLayer('Material Test - Frame', { hexCode: '#000', isSubCmd: true });
 
     if (tableCmd && !tableCmd.isEmpty()) {
       batchCmd.addSubCommand(tableCmd);
@@ -125,10 +122,7 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): React.JSX.Element => {
       element: 'rect',
     });
 
-    const { cmd: infoCmd, layer: infoLayer } = createLayer('Material Test - Info', {
-      hexCode: '#000',
-      isSubCmd: true,
-    });
+    const { cmd: infoCmd, layer: infoLayer } = createLayer('Material Test - Info', { hexCode: '#000', isSubCmd: true });
 
     writeDataLayer(infoLayer, 'power', textSetting.power);
     writeDataLayer(infoLayer, 'speed', textSetting.speed);
@@ -141,24 +135,14 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): React.JSX.Element => {
     createNewText(
       (startPadding + (right - startPadding) / 2 - paramWidth[rowParam[0]] / 2) * dpmm,
       (startPadding / 2) * dpmm,
-      {
-        fill: '#000',
-        fontSize: 130,
-        isDefaultFont: true,
-        text: paramString[rowParam[0]],
-      },
+      { fill: '#000', fontSize: 130, isDefaultFont: true, text: paramString[rowParam[0]] },
     );
 
     const colText = createNewText(
       // magic number to align the text
       (-(paramWidth[colParam[0]] * 0.55) + 13.19) * dpmm,
       (startPadding + (bottom - startPadding) / 2 + paramWidth[colParam[0]] / 10) * dpmm,
-      {
-        fill: '#000',
-        fontSize: 130,
-        isDefaultFont: true,
-        text: paramString[colParam[0]],
-      },
+      { fill: '#000', fontSize: 130, isDefaultFont: true, text: paramString[colParam[0]] },
     );
 
     svgCanvas.setRotationAngle(-90, true, colText);
@@ -168,16 +152,11 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): React.JSX.Element => {
         (startPadding +
           (row.size.value + row.spacing.value) * index +
           row.size.value / 2 -
-          getTextAdjustment(svgInfos[index][rowParam[0]]) +
+          getTextAdjustment(svgInfos[index][rowParam[0]]!) +
           10) *
           dpmm,
         startPadding * dpmm,
-        {
-          fill: '#000',
-          fontSize: 48,
-          isDefaultFont: true,
-          text: svgInfos[index][rowParam[0]].toString(),
-        },
+        { fill: '#000', fontSize: 48, isDefaultFont: true, text: svgInfos[index][rowParam[0]]!.toString() },
       );
 
       svgCanvas.setRotationAngle(90, true, rowText);
@@ -191,7 +170,7 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): React.JSX.Element => {
           fill: '#000',
           fontSize: 48,
           isDefaultFont: true,
-          text: svgInfos[index * row.count.value][colParam[0]].toString(),
+          text: svgInfos[index * row.count.value][colParam[0]]!.toString(),
         },
       );
     });

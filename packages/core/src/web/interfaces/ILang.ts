@@ -751,6 +751,9 @@ export interface ILang {
         objects: string;
         path_edit: string;
       };
+      uv_export_block: {
+        title: string;
+      };
     };
     shapes_panel: {
       animals: string;
@@ -1695,6 +1698,7 @@ export interface ILang {
     done: string;
     enable_custom_backlash: string;
     enable_low_speed: string;
+    enable_uv_export: string;
     enabled: string;
     engraving_direction: string;
     fast_gradient: string;

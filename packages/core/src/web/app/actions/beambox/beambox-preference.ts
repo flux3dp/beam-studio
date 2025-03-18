@@ -33,6 +33,7 @@ export type BeamboxPreference = {
   'enable-custom-preview-height': boolean;
   'enable-diode'?: boolean;
   'enable-job-origin': boolean;
+  'enable-uv-export': boolean;
   enable_mask: boolean;
   engrave_dpi: 'high' | 'low' | 'medium';
   'extend-rotary-workarea': boolean;
@@ -106,6 +107,7 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   'enable-custom-backlash': false,
   'enable-custom-preview-height': false,
   'enable-job-origin': false,
+  'enable-uv-export': true,
   enable_mask: false,
   engrave_dpi: 'medium',
   'extend-rotary-workarea': false,

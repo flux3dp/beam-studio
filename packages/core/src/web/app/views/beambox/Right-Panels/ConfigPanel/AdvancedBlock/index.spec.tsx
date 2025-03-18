@@ -5,8 +5,8 @@ import { fireEvent, render } from '@testing-library/react';
 import LayerModule from '@core/app/constants/layer-module/layer-modules';
 import { LaserType } from '@core/app/constants/promark-constants';
 
-import AdvancedBlock from './AdvancedBlock';
-import ConfigPanelContext from './ConfigPanelContext';
+import AdvancedBlock from '.';
+import ConfigPanelContext from '../ConfigPanelContext';
 
 const mockRead = jest.fn();
 

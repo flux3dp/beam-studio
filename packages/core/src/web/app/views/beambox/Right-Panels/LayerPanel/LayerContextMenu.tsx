@@ -18,8 +18,8 @@ import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelIte
 import colorPickerStyles from '@core/app/widgets/ColorPicker.module.scss';
 import updateLayerColor from '@core/helpers/color/updateLayerColor';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
+import { setLayerFullColor } from '@core/helpers/layer/full-color/setLayerFullColor';
 import splitFullColorLayer from '@core/helpers/layer/full-color/splitFullColorLayer';
-import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import {
   cloneLayers,
@@ -34,11 +34,12 @@ import { ContextMenu, MenuItem } from '@core/helpers/react-contextmenu';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type ISVGDrawing from '@core/interfaces/ISVGDrawing';
 
 import styles from './LayerContextMenu.module.scss';
 
-let svgCanvas;
+let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
@@ -103,6 +104,9 @@ const LayerContextMenu = ({ drawing, renameLayer, selectOnlyLayer }: Props): Rea
     }
 
     const baseLayerName = drawing.getLayerName(layerPosition - 1);
+
+    if (!baseLayerName) return;
+
     const merged = await mergeLayers([layer], baseLayerName);
 
     if (merged) {
@@ -126,6 +130,9 @@ const LayerContextMenu = ({ drawing, renameLayer, selectOnlyLayer }: Props): Rea
 
   const handleMergeSelected = async () => {
     const currentLayerName = drawing.getCurrentLayerName();
+
+    if (!currentLayerName) return;
+
     const baseLayer = await mergeLayers(selectedLayers, currentLayerName);
 
     if (!baseLayer) {
@@ -189,7 +196,7 @@ const LayerContextMenu = ({ drawing, renameLayer, selectOnlyLayer }: Props): Rea
       layerElem.setAttribute('data-color', newColor || colorConstants.printingLayerColor[0]);
     }
 
-    const cmd = toggleFullColorLayer(layerElem);
+    const cmd = setLayerFullColor(layerElem, !isFullColor);
 
     if (cmd && !cmd.isEmpty()) {
       svgCanvas.undoMgr.addCommandToHistory(cmd);
