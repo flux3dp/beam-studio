@@ -7,8 +7,13 @@ enum LayerModule {
   LASER_UNIVERSAL = 15,
   PRINTER = 5,
   UNKNOWN = 9,
+  UV_EXPORT = -1,
 }
 
 export const modelsWithModules = new Set(['fad1', 'ado1']);
+export const modelsWithoutModules = new Set(['fpm1']);
+
+export const fullColorModulesArray = [LayerModule.PRINTER, LayerModule.UV_EXPORT] as const;
+export const fullColorModules = new Set(fullColorModulesArray);
 
 export default LayerModule;
