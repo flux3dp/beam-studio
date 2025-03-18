@@ -8,13 +8,13 @@ import updateImageForSpliting from './full-color/updateImageForSpliting';
 
 const layerToImage = async (
   layer: SVGGElement,
-  opt?: { dpi?: number; isFullColor?: boolean; shapesOnly?: boolean },
+  opt?: { dpmm?: number; isFullColor?: boolean; shapesOnly?: boolean },
 ): Promise<{
   bbox: { height: number; width: number; x: number; y: number };
   cmykBlob?: { c: Blob; k: Blob; m: Blob; y: Blob };
-  rgbBlob: Blob;
+  rgbBlob: Blob | null;
 }> => {
-  const { dpi = 300, isFullColor = false, shapesOnly = false } = opt || {};
+  const { dpmm = 300 / 25.4, isFullColor = false, shapesOnly = false } = opt || {};
   const layerClone = layer.cloneNode(true) as SVGGElement;
 
   if (shapesOnly) {
@@ -38,7 +38,7 @@ const layerToImage = async (
     }
   });
 
-  const ratio = dpi / (constant.dpmm * 25.4);
+  const ratio = dpmm / constant.dpmm;
   const { height, width } = workareaManager;
   const canvasWidth = Math.round(width * ratio);
   const canvasHeight = Math.round(height * ratio);
@@ -61,7 +61,7 @@ const layerToImage = async (
     return canvas;
   };
   const rgbCanvas = await getCanvas(layerClone);
-  let cmykCanvas: { [key: string]: HTMLCanvasElement } = null;
+  let cmykCanvas: Record<'c' | 'k' | 'm' | 'y', HTMLCanvasElement> | undefined = undefined;
 
   if (isFullColor && cmykLayer.querySelector('image[cmyk="1"]')) {
     const utilWS = getUtilWS();
@@ -73,8 +73,7 @@ const layerToImage = async (
 
     for (let i = 0; i < cmykImages.length; i += 1) {
       const base64 = cmykImages[i].getAttribute('origImage') || cmykImages[i].getAttribute('xlink:href');
-
-      const blob = await (await fetch(base64)).blob();
+      const blob = await (await fetch(base64!)).blob();
 
       const { c, k, m, y } = await utilWS.splitColor(blob, { colorType: 'cmyk' });
 
@@ -93,18 +92,18 @@ const layerToImage = async (
   }
 
   const rgbCtx = rgbCanvas.getContext('2d', { willReadFrequently: true });
-  const { data: rgbData } = rgbCtx.getImageData(0, 0, canvasWidth, canvasHeight);
+  const { data: rgbData } = rgbCtx!.getImageData(0, 0, canvasWidth, canvasHeight);
   const cData = cmykCanvas?.c
-    .getContext('2d', { willReadFrequently: true })
+    .getContext('2d', { willReadFrequently: true })!
     .getImageData(0, 0, canvasWidth, canvasHeight).data;
   const mData = cmykCanvas?.m
-    .getContext('2d', { willReadFrequently: true })
+    .getContext('2d', { willReadFrequently: true })!
     .getImageData(0, 0, canvasWidth, canvasHeight).data;
   const yData = cmykCanvas?.y
-    .getContext('2d', { willReadFrequently: true })
+    .getContext('2d', { willReadFrequently: true })!
     .getImageData(0, 0, canvasWidth, canvasHeight).data;
   const kData = cmykCanvas?.k
-    .getContext('2d', { willReadFrequently: true })
+    .getContext('2d', { willReadFrequently: true })!
     .getImageData(0, 0, canvasWidth, canvasHeight).data;
   const bounds = { maxX: 0, maxY: 0, minX: canvasWidth, minY: canvasHeight };
 
@@ -114,7 +113,7 @@ const layerToImage = async (
       let alpha = rgbData[i + 3];
 
       if (cmykCanvas) {
-        alpha = Math.max(alpha, cData[i + 3], mData[i + 3], yData[i + 3], kData[i + 3]);
+        alpha = Math.max(alpha, cData![i + 3], mData![i + 3], yData![i + 3], kData![i + 3]);
       }
 
       if (alpha > 0) {
@@ -159,7 +158,7 @@ const layerToImage = async (
     outCanvas.width = bbox.width;
     outCanvas.height = bbox.height;
 
-    const outCtx = outCanvas.getContext('2d');
+    const outCtx = outCanvas.getContext('2d')!;
 
     if (!isFullColor) {
       outCtx.filter = 'brightness(0%)';
@@ -168,7 +167,7 @@ const layerToImage = async (
     outCtx.drawImage(canvas, bbox.x, bbox.y, bbox.width, bbox.height, 0, 0, outCanvas.width, outCanvas.height);
 
     return new Promise<Blob>((resolve) => {
-      outCanvas.toBlob((b) => resolve(b));
+      outCanvas.toBlob((b) => resolve(b!));
     });
   };
   const rgbBlob = await generateBlob(rgbCanvas);
@@ -184,7 +183,7 @@ const layerToImage = async (
         m: await generateBlob(cmykCanvas.m),
         y: await generateBlob(cmykCanvas.y),
       }
-    : null;
+    : undefined;
 
   return { bbox: outputBbox, cmykBlob, rgbBlob };
 };

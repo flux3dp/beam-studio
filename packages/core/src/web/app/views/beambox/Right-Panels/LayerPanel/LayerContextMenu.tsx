@@ -9,7 +9,7 @@ import presprayArea from '@core/app/actions/canvas/prespray-area';
 import alertConstants from '@core/app/constants/alert-constants';
 import colorConstants from '@core/app/constants/color-constants';
 import type { PrintingColors } from '@core/app/constants/color-constants';
-import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
+import { modelsWithModules, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
 import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
@@ -142,7 +142,7 @@ const LayerContextMenu = ({ drawing, renameLayer, selectOnlyLayer }: Props): Rea
     selectedLayers.length === 1 &&
     layerElem &&
     modelsWithModules.has(workarea) &&
-    getData(layerElem, 'module') === LayerModule.PRINTER;
+    printingModules.has(getData(layerElem, 'module'));
   const isFullColor = getData(layerElem, 'fullcolor');
   const isSplitLayer = getData(layerElem, 'split');
 

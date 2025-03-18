@@ -4,7 +4,7 @@ import alertCaller from '@core/app/actions/alert-caller';
 import moduleBoundaryDrawer from '@core/app/actions/canvas/module-boundary-drawer';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import alertConstants from '@core/app/constants/alert-constants';
-import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
+import LayerModule, { modelsWithModules, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import history from '@core/app/svgedit/history/history';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
@@ -153,7 +153,7 @@ const ModuleBlock = (): React.ReactNode => {
         applyPreset(layer, newPreset, { batchCmd });
       }
 
-      batchCmd.addSubCommand(toggleFullColorLayer(layer, { val: newVal === LayerModule.PRINTER }));
+      batchCmd.addSubCommand(toggleFullColorLayer(layer, { val: printingModules.has(newVal) }));
     });
     initState(selectedLayers);
     LayerPanelController.updateLayerPanel();
@@ -170,6 +170,7 @@ const ModuleBlock = (): React.ReactNode => {
     { label: tModule.laser_10w_diode, value: LayerModule.LASER_10W_DIODE },
     { label: tModule.laser_20w_diode, value: LayerModule.LASER_20W_DIODE },
     { label: tModule.printing, value: LayerModule.PRINTER },
+    { label: '4c', value: LayerModule.PRINTER_4C },
     { label: tModule.laser_2w_infrared, value: LayerModule.LASER_1064 },
   ];
 
@@ -184,13 +185,7 @@ const ModuleBlock = (): React.ReactNode => {
   ) : (
     <div className={styles.panel}>
       <div className={styles.title}>{t.module}</div>
-      <Select className={styles.select} onChange={handleChange} value={value as LayerModule}>
-        {options.map((option) => (
-          <Select.Option key={option.value} value={option.value}>
-            {option.label}
-          </Select.Option>
-        ))}
-      </Select>
+      <Select className={styles.select} onChange={handleChange} options={options} value={value as LayerModule} />
     </div>
   );
 };

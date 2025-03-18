@@ -1,6 +1,6 @@
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { promarkModels } from '@core/app/actions/beambox/constant';
-import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
+import LayerModule, { modelsWithModules, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType } from '@core/app/constants/promark-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
@@ -164,7 +164,11 @@ export const getData = <T extends ConfigKey>(layer: Element, key: T, applyPrinti
 
   const defaultConfig = getDefaultConfig();
 
-  if (key === 'speed' && applyPrinting && layer.getAttribute(attributeMap.module) === String(LayerModule.PRINTER)) {
+  if (
+    key === 'speed' &&
+    applyPrinting &&
+    printingModules.has(Number.parseInt(layer.getAttribute(attributeMap.module) ?? '', 10))
+  ) {
     key = 'printingSpeed' as T;
     attr = attributeMap.printingSpeed;
   }
@@ -203,7 +207,7 @@ export const writeDataLayer = <T extends ConfigKey>(
   if (
     key === 'speed' &&
     opts?.applyPrinting &&
-    layer.getAttribute(attributeMap.module) === String(LayerModule.PRINTER)
+    printingModules.has(Number.parseInt(layer.getAttribute(attributeMap.module) ?? '', 10))
   ) {
     attr = attributeMap.printingSpeed;
   }

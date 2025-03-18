@@ -12,7 +12,8 @@ import presprayArea from '@core/app/actions/canvas/prespray-area';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import ColorBlock from '@core/app/components/beambox/right-panel/ColorBlock';
 import { getAddOnInfo } from '@core/app/constants/addOn';
-import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
+import type LayerModule from '@core/app/constants/layer-module/layer-modules';
+import { modelsWithModules, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import tutorialConstants from '@core/app/constants/tutorial-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
@@ -290,20 +291,19 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
   const displayName = selectedLayers.length === 1 ? selectedLayers[0] : lang.multi_layer;
 
   const isDevMode = isDev();
+  const isPrintingModule = useMemo(() => printingModules.has(module.value), [module.value]);
   const commonContent = (
     <>
-      {isDevMode && module.value === LayerModule.PRINTER && UIType === 'default' && <UVBlock />}
-      {module.value === LayerModule.PRINTER && <HalftoneBlock type={UIType} />}
-      {module.value !== LayerModule.PRINTER && <PowerBlock type={UIType} />}
-      {module.value === LayerModule.PRINTER && <InkBlock type={UIType} />}
+      {isDevMode && isPrintingModule && UIType === 'default' && <UVBlock />}
+      {isPrintingModule && <HalftoneBlock type={UIType} />}
+      {!isPrintingModule && <PowerBlock type={UIType} />}
+      {isPrintingModule && <InkBlock type={UIType} />}
       <SpeedBlock type={UIType} />
-      {module.value === LayerModule.PRINTER && <MultipassBlock type={UIType} />}
-      {isDevMode && module.value === LayerModule.PRINTER && fullcolor.value && UIType === 'default' && (
-        <WhiteInkCheckbox />
-      )}
+      {isPrintingModule && <MultipassBlock type={UIType} />}
+      {isDevMode && isPrintingModule && fullcolor.value && UIType === 'default' && <WhiteInkCheckbox />}
       {isDevMode && isCustomBacklashEnabled && <Backlash type={UIType} />}
       <RepeatBlock type={UIType} />
-      {isDevMode && module.value === LayerModule.PRINTER && fullcolor.value && UIType === 'panel-item' && (
+      {isDevMode && isPrintingModule && fullcolor.value && UIType === 'panel-item' && (
         <WhiteInkCheckbox type={UIType} />
       )}
       {isPromark && <FillBlock type={UIType} />}
@@ -347,7 +347,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
           {modelsWithModules.has(workarea) && (
             <div className={styles['item-group']}>
               <ModuleBlock />
-              {isDevMode && module.value === LayerModule.PRINTER && <UVBlock />}
+              {isDevMode && isPrintingModule && <UVBlock />}
               <ObjectPanelItem.Divider />
             </div>
           )}
@@ -408,7 +408,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     const layerOptions = [];
 
     for (let i = layerCount - 1; i >= 0; i -= 1) {
-      const layerName = drawing.getLayerName(i);
+      const layerName = drawing.getLayerName(i)!;
       const layer = getLayerElementByName(layerName);
       const layerModule: LayerModule = getData(layer, 'module');
       const isFullColor = layer.getAttribute('data-fullcolor') === '1';
@@ -417,7 +417,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
         <Select.Option key={layerName} label={layerName} value={layerName}>
           <div className={styles.option}>
             <ColorBlock color={isFullColor ? 'fullcolor' : drawing.getLayerColor(layerName)} size="mini" />
-            {layerModule === LayerModule.PRINTER ? <LayerPanelIcons.Print /> : <LayerPanelIcons.Laser />}
+            {printingModules.has(layerModule) ? <LayerPanelIcons.Print /> : <LayerPanelIcons.Laser />}
             <span>{layerName}</span>
           </div>
         </Select.Option>,
