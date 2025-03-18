@@ -59,12 +59,40 @@ const detectMy = detectLocale(
 );
 const isMy = detectMy();
 
+const getRegion = () => {
+  if (isNorthAmerica) {
+    return { checkTimezone: true, region: 'na' };
+  } else if (isTwOrHk) {
+    return { checkTimezone: true, region: 'TWHK' };
+  } else if (isJp) {
+    return { checkTimezone: true, region: 'JP' };
+  } else if (isPs) {
+    return { checkTimezone: true, region: 'PS' };
+  } else if (isMy) {
+    return { checkTimezone: true, region: 'MY' };
+  }
+
+  // @ts-expect-error: Support for older browsers with userLanguage
+  const firstLang = (navigator.languages || [navigator.language || (navigator.userLanguage as string)])[0];
+
+  if (firstLang) {
+    const schema = parse(firstLang);
+
+    if (schema.region) {
+      return { checkTimezone: false, region: schema.region.toUpperCase() };
+    }
+  }
+
+  return { checkTimezone: false, region: 'other' };
+};
+
 export default {
   detectJp,
   detectMy,
   detectNorthAmerica,
   detectPs,
   detectTwOrHk,
+  getRegion,
   isJp,
   isMy,
   isNorthAmerica,

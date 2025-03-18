@@ -51,7 +51,6 @@ const AnnouncementPanel = ({ announcement, onClose }: Props): React.JSX.Element 
       title={announcement.title || t.title}
     >
       <div className="main-content">
-        {}
         <div dangerouslySetInnerHTML={{ __html: announcement.content }} />
         <div className={styles.checkbox}>
           <Checkbox checked={isCheckboxChecked} onChange={() => setIsCheckboxChecked(!isCheckboxChecked)}>
