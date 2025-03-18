@@ -43,11 +43,31 @@ const detectJp = detectLocale(
 );
 const isJp = detectJp();
 
+// Palestine
+const detectPs = detectLocale(
+  (schema) => schema.region === 'PS' || schema.language === 'ar',
+  // UTC+2 timezone
+  (timezoneOffset) => timezoneOffset === -120,
+);
+const isPs = detectPs();
+
+// Malaysia
+const detectMy = detectLocale(
+  (schema) => schema.region === 'MY' || schema.language === 'ms',
+  // UTC+8 timezone
+  (timezoneOffset) => timezoneOffset === -480,
+);
+const isMy = detectMy();
+
 export default {
   detectJp,
+  detectMy,
   detectNorthAmerica,
+  detectPs,
   detectTwOrHk,
   isJp,
+  isMy,
   isNorthAmerica,
+  isPs,
   isTwOrHk,
 };
