@@ -73,7 +73,7 @@ const DottingTimeBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | '
     <div className={classNames(styles.panel, styles['without-drag'])}>
       <span className={styles.title}>
         {t.dottingTime}
-        <Tooltip overlayClassName={styles['hint-overlay']} title={t.gradient_only}>
+        <Tooltip className={styles['hint-overlay']} title={t.gradient_only}>
           <QuestionCircleOutlined className={styles.hint} />
         </Tooltip>
       </span>

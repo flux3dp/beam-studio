@@ -3,8 +3,9 @@ import React, { useContext, useEffect, useRef } from 'react';
 import { SwipeAction } from 'antd-mobile';
 import type { Action, SwipeActionRef } from 'antd-mobile/es/components/swipe-action';
 import classNames from 'classnames';
+import { match } from 'ts-pattern';
 
-import constant from '@core/app/actions/beambox/constant';
+import { modelsWithoutUvExport } from '@core/app/actions/beambox/constant';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
@@ -20,10 +21,11 @@ import {
 } from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './LayerList.module.scss';
 
-let svgCanvas;
+let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
@@ -36,7 +38,7 @@ interface Props {
   onLayerClick: (e: React.MouseEvent, layerName: string) => void;
   onLayerColorChange: (layerName: string, color: string) => void;
   onLayerDoubleClick: () => void;
-  onlayerDragEnd: (e: React.DragEvent) => void;
+  onLayerDragEnd: (e: React.DragEvent) => void;
   onLayerDragStart: (layerName: string, e: React.DragEvent) => void;
   onLayerTouchEnd: (e: React.TouchEvent) => void;
   onLayerTouchMove: (e: React.TouchEvent) => void;
@@ -55,7 +57,7 @@ const LayerList = ({
   onLayerClick,
   onLayerColorChange,
   onLayerDoubleClick,
-  onlayerDragEnd,
+  onLayerDragEnd,
   onLayerDragStart,
   onLayerTouchEnd,
   onLayerTouchMove,
@@ -69,6 +71,7 @@ const LayerList = ({
   const drawing = svgCanvas.getCurrentDrawing();
   const currentLayerName = drawing.getCurrentLayerName();
   const isMobile = useIsMobile();
+  const workarea = useWorkarea();
   const ref = useRef<SwipeActionRef>(null);
 
   useEffect(() => {
@@ -77,15 +80,7 @@ const LayerList = ({
     }
   }, [ref, draggingDestIndex, selectedLayers]);
 
-  const workarea = useWorkarea();
-
-  const isAnyLayerMissing = drawing.all_layers.some((layer) => {
-    if (!layer.group_.parentNode) {
-      return true;
-    }
-
-    return false;
-  });
+  const isAnyLayerMissing = drawing.all_layers.some((layer: any) => !layer.group_.parentNode);
 
   if (isAnyLayerMissing) {
     drawing.identifyLayers();
@@ -97,7 +92,7 @@ const LayerList = ({
     items.push(renderDragBar());
   }
 
-  const shouldShowModuleIcon = constant.adorModels.includes(workarea);
+  const shouldShowModuleIcon = !modelsWithoutUvExport.has(workarea);
 
   for (let i = allLayerNames.length - 1; i >= 0; i -= 1) {
     const layerName = allLayerNames[i];
@@ -112,10 +107,15 @@ const LayerList = ({
       const isRef = getData(layer, 'ref');
       let moduleIcon = null;
 
-      if (isRef) {
+      if (module === LayerModule.UV_EXPORT) {
+        moduleIcon = <LayerPanelIcons.UvExport />;
+      } else if (isRef) {
         moduleIcon = <LayerPanelIcons.Ref />;
       } else if (shouldShowModuleIcon) {
-        moduleIcon = module === LayerModule.PRINTER ? <LayerPanelIcons.Print /> : <LayerPanelIcons.Laser />;
+        moduleIcon = match(module)
+          .with(LayerModule.PRINTER, () => <LayerPanelIcons.Print />)
+          .with(LayerModule.UV_EXPORT, () => <LayerPanelIcons.UvExport />)
+          .otherwise(() => <LayerPanelIcons.Laser />);
       }
 
       const layerItem = (
@@ -131,7 +131,7 @@ const LayerList = ({
           key={layerName}
           onBlur={() => {}}
           onClick={(e: React.MouseEvent) => onLayerClick(e, layerName)}
-          onDragEnd={onlayerDragEnd}
+          onDragEnd={onLayerDragEnd}
           onDragStart={(e: React.DragEvent) => onLayerDragStart(layerName, e)}
           onFocus={() => {}}
           onMouseOut={() => highlightLayer()}
@@ -225,7 +225,7 @@ const LayerList = ({
       if (!isMobile) {
         items.push(layerItem);
       } else {
-        const leftActions: Action[] = isMobile
+        const leftActions: Action[] | undefined = isMobile
           ? [
               {
                 color: 'warning',
@@ -239,7 +239,7 @@ const LayerList = ({
               },
             ]
           : undefined;
-        const rightActions: Action[] = isMobile
+        const rightActions: Action[] | undefined = isMobile
           ? [
               {
                 color: 'danger',

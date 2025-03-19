@@ -5,7 +5,7 @@ import { modelsWithModules, modelsWithoutUvExport } from '@core/app/actions/beam
 import moduleBoundaryDrawer from '@core/app/actions/canvas/module-boundary-drawer';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import alertConstants from '@core/app/constants/alert-constants';
-import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
+import { fullColorModules, LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import history from '@core/app/svgedit/history/history';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
@@ -138,6 +138,13 @@ const ModuleBlock = (): React.ReactNode => {
       const configName = getData(layer, 'configName');
       const oldPreset = configName ? presetsList.find((p) => configName === p.key || configName === p.name) : null;
       const newPreset = oldPreset ? newPresetsList.find((p) => configName === p.key || configName === p.name) : null;
+      const repeat = getData(layer, 'repeat');
+
+      if (newVal === LayerModule.UV_EXPORT) {
+        writeDataLayer(layer, 'repeat', 0, { batchCmd });
+      } else if (repeat === 0) {
+        writeDataLayer(layer, 'repeat', 1, { batchCmd });
+      }
 
       if (!newPreset) {
         writeDataLayer(layer, 'configName', undefined, { batchCmd });
@@ -154,7 +161,7 @@ const ModuleBlock = (): React.ReactNode => {
         applyPreset(layer, newPreset, { batchCmd });
       }
 
-      batchCmd.addSubCommand(toggleFullColorLayer(layer, { val: newVal === LayerModule.PRINTER }));
+      batchCmd.addSubCommand(toggleFullColorLayer(layer, { val: fullColorModules.has(newVal) }));
     });
 
     initState(selectedLayers);
@@ -169,7 +176,7 @@ const ModuleBlock = (): React.ReactNode => {
   };
 
   const commonOptions = [{ label: 'UV Export', value: LayerModule.UV_EXPORT }];
-
+  const defaultModelsOptions = [{ label: 'Laser', value: LayerModule.LASER_UNIVERSAL }];
   const adorOptions = [
     { label: tModule.laser_10w_diode, value: LayerModule.LASER_10W_DIODE },
     { label: tModule.laser_20w_diode, value: LayerModule.LASER_20W_DIODE },
@@ -177,7 +184,7 @@ const ModuleBlock = (): React.ReactNode => {
     { label: tModule.laser_2w_infrared, value: LayerModule.LASER_1064 },
   ];
 
-  const options = commonOptions.concat(modelsWithModules.has(workarea) ? adorOptions : []);
+  const options = (modelsWithModules.has(workarea) ? adorOptions : defaultModelsOptions).concat(commonOptions);
 
   return isMobile ? (
     <ObjectPanelItem.Select
