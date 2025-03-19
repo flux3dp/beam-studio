@@ -1,4 +1,4 @@
-import type LayerModule from '@core/app/constants/layer-module/layer-modules';
+import type { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import history from '@core/app/svgedit/history/history';
 import appendUseElement from '@core/app/svgedit/operations/import/appendUseElement';
 import parseSvg from '@core/app/svgedit/operations/parseSvg';
@@ -11,7 +11,7 @@ import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type { ImportType } from '@core/interfaces/ImportSvg';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-let svgedit;
+let svgedit: any;
 let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {

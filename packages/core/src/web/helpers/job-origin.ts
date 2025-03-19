@@ -1,6 +1,6 @@
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
-import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import workareaManager from '@core/app/svgedit/workarea';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getAllLayers } from '@core/helpers/layer/layer-helper';

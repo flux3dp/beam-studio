@@ -3,8 +3,7 @@ import React, { useState } from 'react';
 import { MenuDivider, MenuItem, SubMenu, Menu as TopBarMenu } from '@szhsin/react-menu';
 
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import { promarkModels } from '@core/app/actions/beambox/constant';
-import { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
+import { modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
 import { menuItems } from '@core/app/constants/menuItems';
 import Discover from '@core/helpers/api/discover';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';

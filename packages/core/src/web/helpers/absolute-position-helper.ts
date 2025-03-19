@@ -1,5 +1,5 @@
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
+import { modelsWithModules } from '@core/app/actions/beambox/constant';
 import layoutConstants from '@core/app/constants/layout-constants';
 import isDev from '@core/helpers/is-dev';
 

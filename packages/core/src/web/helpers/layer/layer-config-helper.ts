@@ -2,8 +2,8 @@ import { pipe } from 'remeda';
 import { match } from 'ts-pattern';
 
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import { promarkModels } from '@core/app/actions/beambox/constant';
-import LayerModule, { modelsWithModules, printingModules } from '@core/app/constants/layer-module/layer-modules';
+import { modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
+import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType } from '@core/app/constants/promark-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';

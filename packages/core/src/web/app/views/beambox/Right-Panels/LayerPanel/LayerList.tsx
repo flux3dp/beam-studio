@@ -20,10 +20,11 @@ import {
 } from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './LayerList.module.scss';
 
-let svgCanvas;
+let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;

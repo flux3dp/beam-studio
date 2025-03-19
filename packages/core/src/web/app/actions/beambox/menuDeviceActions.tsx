@@ -16,7 +16,7 @@ import { showPromarkSettings } from '@core/app/components/dialogs/promark/Promar
 import { showZAxisAdjustment } from '@core/app/components/dialogs/promark/ZAxisAdjustment';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { InkDetectionStatus } from '@core/app/constants/layer-module/ink-cartridge';
-import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { Mode } from '@core/app/constants/monitor-constants';
 import { showCameraCalibration } from '@core/app/views/beambox/Camera-Calibration';
 import { showDiodeCalibration } from '@core/app/views/beambox/Diode-Calibration';

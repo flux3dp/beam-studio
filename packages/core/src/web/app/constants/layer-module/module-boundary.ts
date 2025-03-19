@@ -1,4 +1,4 @@
-import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 
 // Module Boundary for ador
 // bottom boundary is added by 20mm for 1064nm laser

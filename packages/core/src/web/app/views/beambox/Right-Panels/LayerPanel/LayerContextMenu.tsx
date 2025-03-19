@@ -5,11 +5,12 @@ import { Popover } from 'antd-mobile';
 import classNames from 'classnames';
 
 import alertCaller from '@core/app/actions/alert-caller';
+import { modelsWithModules } from '@core/app/actions/beambox/constant';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import alertConstants from '@core/app/constants/alert-constants';
 import colorConstants from '@core/app/constants/color-constants';
 import type { PrintingColors } from '@core/app/constants/color-constants';
-import { modelsWithModules, printingModules } from '@core/app/constants/layer-module/layer-modules';
+import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
 import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
@@ -34,11 +35,12 @@ import { ContextMenu, MenuItem } from '@core/helpers/react-contextmenu';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type ISVGDrawing from '@core/interfaces/ISVGDrawing';
 
 import styles from './LayerContextMenu.module.scss';
 
-let svgCanvas;
+let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
@@ -102,7 +104,7 @@ const LayerContextMenu = ({ drawing, renameLayer, selectOnlyLayer }: Props): Rea
       return;
     }
 
-    const baseLayerName = drawing.getLayerName(layerPosition - 1);
+    const baseLayerName = drawing.getLayerName(layerPosition - 1)!;
     const merged = await mergeLayers([layer], baseLayerName);
 
     if (merged) {
@@ -125,7 +127,7 @@ const LayerContextMenu = ({ drawing, renameLayer, selectOnlyLayer }: Props): Rea
   };
 
   const handleMergeSelected = async () => {
-    const currentLayerName = drawing.getCurrentLayerName();
+    const currentLayerName = drawing.getCurrentLayerName()!;
     const baseLayer = await mergeLayers(selectedLayers, currentLayerName);
 
     if (!baseLayer) {
@@ -142,7 +144,7 @@ const LayerContextMenu = ({ drawing, renameLayer, selectOnlyLayer }: Props): Rea
     selectedLayers.length === 1 &&
     layerElem &&
     modelsWithModules.has(workarea) &&
-    printingModules.has(getData(layerElem, 'module'));
+    printingModules.has(getData(layerElem, 'module')!);
   const isFullColor = getData(layerElem, 'fullcolor');
   const isSplitLayer = getData(layerElem, 'split');
 
