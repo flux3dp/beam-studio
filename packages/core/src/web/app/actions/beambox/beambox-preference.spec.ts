@@ -112,6 +112,7 @@ test('test beambox-preference', () => {
     'reverse-engraving': false,
     'rotary-chuck-obj-d': 133,
     'rotary-mirror': false,
+    'rotary-scale': 1,
     'rotary-type': 1,
     'rotary-y': null,
     rotary_mode: false,
