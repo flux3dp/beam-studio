@@ -31,8 +31,6 @@ requirejs.config({
     svgnestGeoUtil: '../lib/svg-nest/util/geometryutil',
     svgnestParallel: '../lib/svg-nest/util/parallel',
     svgnestEval: '../lib/svg-nest/util/eval',
-    canvg: '../lib/svgeditor/canvg/canvg',
-    rgbcolor: '../lib/svgeditor/canvg/rgbcolor',
     // SVG Editor Libraries End
   },
 
@@ -107,7 +105,7 @@ requirejs.config({
       deps: ['svgnestGeoUtil'],
     },
     svgnestEval: {
-      deps: ['svgnestParallel', 'svgedit', 'css!svgeditor/svg-editor', 'canvg', 'rgbcolor'],
+      deps: ['svgnestParallel', 'svgedit', 'css!svgeditor/svg-editor'],
     },
     // SVG Editor Libraries End
   },

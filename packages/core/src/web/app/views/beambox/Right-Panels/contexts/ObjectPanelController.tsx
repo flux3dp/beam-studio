@@ -17,9 +17,11 @@ const getDimensionValues = (key?: string): any => {
 };
 
 const minEventInterval = 50;
-let updateObjectPanelTimeout = null;
-const updateObjectPanel = (): void => {
+let updateObjectPanelTimeout: NodeJS.Timeout | undefined = undefined;
+
+export const updateObjectPanel = (): void => {
   clearTimeout(updateObjectPanelTimeout);
+
   updateObjectPanelTimeout = setTimeout(() => {
     objectPanelEventEmitter.emit('UPDATE_OBJECT_PANEL');
   }, minEventInterval);

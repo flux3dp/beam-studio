@@ -56,6 +56,9 @@ const layerToImage = async (
         ${svgDefs.outerHTML}
         ${element.outerHTML}
       </svg>`;
+
+    console.log(svgString);
+
     const canvas = await svgStringToCanvas(svgString, canvasWidth, canvasHeight);
 
     return canvas;

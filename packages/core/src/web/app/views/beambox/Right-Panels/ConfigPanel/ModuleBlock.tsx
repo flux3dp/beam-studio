@@ -1,5 +1,8 @@
 import React, { memo, useContext, useEffect } from 'react';
 
+import { pipe } from 'remeda';
+import { match } from 'ts-pattern';
+
 import alertCaller from '@core/app/actions/alert-caller';
 import { modelsWithModules, modelsWithoutUvExport } from '@core/app/actions/beambox/constant';
 import moduleBoundaryDrawer from '@core/app/actions/canvas/module-boundary-drawer';
@@ -158,6 +161,7 @@ const ModuleBlock = (): React.ReactNode => {
     initState(selectedLayers);
     LayerPanelController.updateLayerPanel();
     presprayArea.togglePresprayArea();
+
     batchCmd.onAfter = () => {
       initState();
       LayerPanelController.updateLayerPanel();
@@ -166,7 +170,7 @@ const ModuleBlock = (): React.ReactNode => {
     undoManager.addCommandToHistory(batchCmd);
   };
 
-  const commonOptions = [{ label: 'UV Export', value: LayerModule.UV_EXPORT }];
+  const commonOptions = [isDev() && { label: 'UV Export', value: LayerModule.UV_EXPORT }];
   const defaultModelsOptions = [{ label: 'Laser', value: LayerModule.LASER_UNIVERSAL }];
   const adorOptions = [
     { label: tModule.laser_10w_diode, value: LayerModule.LASER_10W_DIODE },
@@ -174,9 +178,19 @@ const ModuleBlock = (): React.ReactNode => {
     { label: tModule.printing, value: LayerModule.PRINTER },
     isDev() && { label: `${tModule.printing} (4C)`, value: LayerModule.PRINTER_4C },
     { label: tModule.laser_2w_infrared, value: LayerModule.LASER_1064 },
-  ].filter(Boolean);
+  ];
 
-  const options = (modelsWithModules.has(workarea) ? adorOptions : defaultModelsOptions).concat(commonOptions);
+  const options = pipe(
+    workarea,
+    modelsWithModules.has,
+    (isWithModules) =>
+      match(isWithModules)
+        .with(true, () => adorOptions)
+        .with(false, () => defaultModelsOptions)
+        .exhaustive(),
+    (options) => options.concat(commonOptions),
+    (options) => options.filter(Boolean),
+  );
 
   return isMobile ? (
     <ObjectPanelItem.Select

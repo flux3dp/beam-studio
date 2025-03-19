@@ -40,6 +40,7 @@ export const LayerPanelContextProvider = ({ children }: Props): React.JSX.Elemen
   const workarea = useWorkarea();
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
 
+  // TODO : emit event to update file export uv export
   const lazySetSelectedLayers = useCallback(
     (newLayers: string[]) => {
       if (newLayers.length === selectedLayers.length && newLayers.every((name, i) => name === selectedLayers[i])) {
