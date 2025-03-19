@@ -118,6 +118,7 @@ const lang: ILang = {
       pass_through: 'ผ่าน',
       pass_through_height_desc: 'ป้อนความยาวของวัตถุเพื่อขยายพื้นที่การทำงาน',
       rotary_mode: 'โหมดหมุน',
+      rotary_scale: 'มาตราส่วนการหมุน',
       start_from: 'เริ่มจาก',
       start_position: 'ตำแหน่งเริ่มต้น',
       start_work_button: 'ปุ่มดำเนินการ',

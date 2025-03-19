@@ -118,6 +118,7 @@ const lang: ILang = {
       pass_through: '패스스루',
       pass_through_height_desc: '작업 영역을 확장하기 위해 객체의 길이를 입력하십시오.',
       rotary_mode: '로터리',
+      rotary_scale: '회전 스케일',
       start_from: '에서 시작',
       start_position: '시작 위치',
       start_work_button: '실행 버튼',

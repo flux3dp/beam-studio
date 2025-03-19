@@ -118,6 +118,7 @@ const lang: ILang = {
       pass_through: 'Passage direct',
       pass_through_height_desc: "Entrez la longueur de l'objet pour étendre la zone de travail.",
       rotary_mode: 'Mode rotatif',
+      rotary_scale: 'Échelle de rotation',
       start_from: 'Commencer À Partir de',
       start_position: 'Position de Départ',
       start_work_button: 'Bouton Exécuter',

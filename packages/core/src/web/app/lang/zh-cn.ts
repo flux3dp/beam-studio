@@ -118,6 +118,7 @@ const lang: ILang = {
       pass_through: '广域雕刻',
       pass_through_height_desc: '输入物体长度以扩展工作区域。',
       rotary_mode: '旋转轴',
+      rotary_scale: '旋转比例',
       start_from: '开始位置',
       start_position: '开始位置',
       start_work_button: '开始工作按钮',

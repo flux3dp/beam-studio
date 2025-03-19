@@ -118,6 +118,7 @@ const lang: ILang = {
       pass_through: 'Gjennomgang',
       pass_through_height_desc: 'Skriv inn lengden på objektet for å utvide arbeidsområdet.',
       rotary_mode: 'Roterende',
+      rotary_scale: 'Rotasjonsskala',
       start_from: 'Start Fra',
       start_position: 'Startposisjon',
       start_work_button: 'Utføre Knapp',

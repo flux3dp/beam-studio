@@ -118,6 +118,7 @@ const lang: ILang = {
       pass_through: 'Laluan terus',
       pass_through_height_desc: 'Masukkan panjang objek untuk melanjutkan kawasan kerja.',
       rotary_mode: 'Rotari',
+      rotary_scale: 'Skala Putaran',
       start_from: 'Mula Dari',
       start_position: 'Kedudukan Mula',
       start_work_button: 'Butang Laksana',
