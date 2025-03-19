@@ -1,10 +1,11 @@
 import React, { memo, useContext, useEffect } from 'react';
 
 import alertCaller from '@core/app/actions/alert-caller';
+import { modelsWithModules, modelsWithoutUvExport } from '@core/app/actions/beambox/constant';
 import moduleBoundaryDrawer from '@core/app/actions/canvas/module-boundary-drawer';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import alertConstants from '@core/app/constants/alert-constants';
-import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import history from '@core/app/svgedit/history/history';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
@@ -58,7 +59,7 @@ const ModuleBlock = (): React.ReactNode => {
     };
   }, [workarea, value]);
 
-  if (!modelsWithModules.has(workarea)) {
+  if (modelsWithoutUvExport.has(workarea)) {
     return null;
   }
 
@@ -155,6 +156,7 @@ const ModuleBlock = (): React.ReactNode => {
 
       batchCmd.addSubCommand(toggleFullColorLayer(layer, { val: newVal === LayerModule.PRINTER }));
     });
+
     initState(selectedLayers);
     LayerPanelController.updateLayerPanel();
     presprayArea.togglePresprayArea();
@@ -166,20 +168,24 @@ const ModuleBlock = (): React.ReactNode => {
     svgCanvas.addCommandToHistory(batchCmd);
   };
 
-  const options = [
+  const commonOptions = [{ label: 'UV Export', value: LayerModule.UV_EXPORT }];
+
+  const adorOptions = [
     { label: tModule.laser_10w_diode, value: LayerModule.LASER_10W_DIODE },
     { label: tModule.laser_20w_diode, value: LayerModule.LASER_20W_DIODE },
     { label: tModule.printing, value: LayerModule.PRINTER },
     { label: tModule.laser_2w_infrared, value: LayerModule.LASER_1064 },
   ];
 
+  const options = commonOptions.concat(modelsWithModules.has(workarea) ? adorOptions : []);
+
   return isMobile ? (
     <ObjectPanelItem.Select
       id="module"
       label={t.module}
-      onChange={handleChange}
+      onChange={handleChange as any}
       options={options}
-      selected={options.find((option) => option.value === value)}
+      selected={options.find((option) => option.value === value) as { label: string; value: number }}
     />
   ) : (
     <div className={styles.panel}>

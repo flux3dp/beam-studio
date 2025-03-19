@@ -1,5 +1,6 @@
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
+import { modelsWithModules } from '@core/app/actions/beambox/constant';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -18,7 +19,7 @@ const importBitmap = async (file: File): Promise<void> => {
 
   if (modelsWithModules.has(workarea)) {
     const drawing = svgCanvas.getCurrentDrawing();
-    const currentLayer = drawing.getCurrentLayer();
+    const currentLayer = drawing.getCurrentLayer()!;
 
     if (getData(currentLayer, 'module') === LayerModule.PRINTER && getData(currentLayer, 'fullcolor')) {
       await readBitmapFile(file, { gray: false });

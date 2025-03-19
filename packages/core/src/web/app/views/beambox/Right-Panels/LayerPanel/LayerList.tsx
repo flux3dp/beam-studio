@@ -5,7 +5,7 @@ import type { Action, SwipeActionRef } from 'antd-mobile/es/components/swipe-act
 import classNames from 'classnames';
 
 import constant from '@core/app/actions/beambox/constant';
-import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
 import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';

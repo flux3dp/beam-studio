@@ -1,8 +1,8 @@
 import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
+import { modelsWithModules } from '@core/app/actions/beambox/constant';
 import alertConstants from '@core/app/constants/alert-constants';
-import { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';

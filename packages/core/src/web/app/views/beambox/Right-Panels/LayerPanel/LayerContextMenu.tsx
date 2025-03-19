@@ -5,11 +5,12 @@ import { Popover } from 'antd-mobile';
 import classNames from 'classnames';
 
 import alertCaller from '@core/app/actions/alert-caller';
+import { modelsWithModules } from '@core/app/actions/beambox/constant';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import alertConstants from '@core/app/constants/alert-constants';
 import colorConstants from '@core/app/constants/color-constants';
 import type { PrintingColors } from '@core/app/constants/color-constants';
-import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
 import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';

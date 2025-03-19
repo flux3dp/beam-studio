@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import alertCaller from '@core/app/actions/alert-caller';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import alertConstants from '@core/app/constants/alert-constants';
-import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';
 import { getConfigKeys, writeData } from '@core/helpers/layer/layer-config-helper';
 import presetHelper from '@core/helpers/presets/preset-helper';
@@ -62,7 +62,7 @@ const SaveConfigButton = (): React.JSX.Element => {
 
         dialogCaller.promptDialog({
           caption: lang.dropdown.save,
-          onYes: (name) => handleSave(name.trim()),
+          onYes: (name) => handleSave((name ?? '').trim()),
         });
       }}
       type="button"

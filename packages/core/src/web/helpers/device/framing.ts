@@ -9,7 +9,7 @@ import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import type { AddOnInfo } from '@core/app/constants/addOn';
 import { getAddOnInfo } from '@core/app/constants/addOn';
-import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import findDefs from '@core/app/svgedit/utils/findDef';

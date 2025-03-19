@@ -17,7 +17,13 @@ export const hexaRfModels = new Set(removeReadonly(hexaRfModelsArray));
 
 export const adorModelsArray = ['ado1', 'fad1'] as const;
 export const adorModels = new Set(adorModelsArray);
-export const promarkModels = new Set(['fpm1']);
+
+export const promarkModelsArray = ['fpm1'] as const;
+export const promarkModels = new Set(promarkModelsArray);
+
+export const modelsWithModules = new Set(adorModelsArray);
+export const modelsWithoutUvExport = new Set(promarkModelsArray);
+
 export enum PreviewSpeedLevel {
   FAST = 3,
   MEDIUM = 2,

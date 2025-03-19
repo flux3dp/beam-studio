@@ -1,5 +1,5 @@
 import { PrintingColors } from '@core/app/constants/color-constants';
-import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import history from '@core/app/svgedit/history/history';
 import updateLayerColor from '@core/helpers/color/updateLayerColor';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';

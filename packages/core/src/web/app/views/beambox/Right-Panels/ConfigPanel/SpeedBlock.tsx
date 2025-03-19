@@ -9,7 +9,7 @@ import { sprintf } from 'sprintf-js';
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import configOptions from '@core/app/constants/config-options';
-import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import history from '@core/app/svgedit/history/history';
 import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
@@ -169,7 +169,7 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
         max={maxValue}
         min={minValue}
         onChange={handleChange}
-        options={sliderOptions}
+        options={sliderOptions!}
         type={type}
         unit={displayUnit}
         value={value}
@@ -204,7 +204,7 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
       return selectedOption.label;
     }
 
-    return +units.convertUnit(value, fakeUnit, 'mm').toFixed(decimal);
+    return +units.convertUnit(value, fakeUnit, 'mm')?.toFixed(decimal);
   }, [decimal, sliderOptions, value, fakeUnit]);
 
   return type === 'panel-item' ? (

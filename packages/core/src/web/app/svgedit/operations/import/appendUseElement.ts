@@ -1,4 +1,4 @@
-import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
 import history from '@core/app/svgedit/history/history';
 import rgbToHex from '@core/helpers/color/rgbToHex';

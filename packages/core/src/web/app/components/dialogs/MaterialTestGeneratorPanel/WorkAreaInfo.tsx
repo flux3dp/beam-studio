@@ -4,7 +4,7 @@ import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import { sprintf } from 'sprintf-js';
 
-import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import moduleBoundary from '@core/app/constants/layer-module/module-boundary';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';

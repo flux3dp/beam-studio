@@ -21,24 +21,10 @@ export const getDefaultState = (): State => {
 };
 
 export type Action =
+  | { payload: string; type: 'rename' }
+  | { payload: { [key in ConfigKey]?: ILayerConfig[key] } & { selectedLayer?: string }; type: 'update' }
   | {
-      payload: string;
-      type: 'rename';
-    }
-  | {
-      payload: {
-        [key in ConfigKey]?: ILayerConfig[key];
-      } & {
-        selectedLayer?: string;
-      };
-      type: 'update';
-    }
-  | {
-      payload: {
-        [key in keyof ILayerConfig]?: ILayerConfig[key]['value'];
-      } & {
-        selectedLayer?: string;
-      };
+      payload: { [key in keyof ILayerConfig]?: ILayerConfig[key]['value'] } & { selectedLayer?: string };
       type: 'change';
     };
 

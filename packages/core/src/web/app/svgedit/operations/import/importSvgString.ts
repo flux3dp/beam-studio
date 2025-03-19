@@ -1,4 +1,4 @@
-import type LayerModule from '@core/app/constants/layer-module/layer-modules';
+import type { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import history from '@core/app/svgedit/history/history';
 import appendUseElement from '@core/app/svgedit/operations/import/appendUseElement';
 import parseSvg from '@core/app/svgedit/operations/parseSvg';
