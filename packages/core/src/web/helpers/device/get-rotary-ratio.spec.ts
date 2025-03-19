@@ -23,18 +23,27 @@ const mockAddOnInfo: AddOnInfo = {
   },
 };
 
+let mockPreference: Record<string, any>;
+
 describe('test getRotaryRatio', () => {
   beforeEach(() => {
     jest.resetAllMocks();
+    mockPreference = {
+      'rotary-chuck-obj-d': CHUCK_ROTARY_DIAMETER,
+      'rotary-mirror': false,
+      'rotary-scale': 1,
+      'rotary-type': RotaryType.Roller,
+    };
+    mockRead.mockImplementation((key) => mockPreference[key]);
   });
 
   test('non chuck rotary', () => {
-    mockRead.mockReturnValue(RotaryType.Roller).mockReturnValueOnce(false);
+    mockPreference = { ...mockPreference, 'rotary-type': RotaryType.Roller };
     expect(getRotaryRatio(mockAddOnInfo)).toBe(1);
   });
 
   test('non chuck rotary with mirror', () => {
-    mockRead.mockReturnValue(RotaryType.Roller).mockReturnValueOnce(true);
+    mockPreference = { ...mockPreference, 'rotary-mirror': true, 'rotary-type': RotaryType.Roller };
     expect(
       getRotaryRatio({
         ...mockAddOnInfo,
@@ -46,19 +55,30 @@ describe('test getRotaryRatio', () => {
     ).toBe(-1);
   });
 
+  test('roller with scale', () => {
+    mockPreference = {
+      ...mockPreference,
+      'rotary-scale': 2,
+    };
+    expect(getRotaryRatio(mockAddOnInfo)).toBe(2);
+  });
+
   test('chuck rotary', () => {
-    mockRead
-      .mockReturnValueOnce(RotaryType.Chuck)
-      .mockReturnValueOnce(CHUCK_ROTARY_DIAMETER * 2)
-      .mockReturnValueOnce(false);
+    mockPreference = {
+      ...mockPreference,
+      'rotary-chuck-obj-d': CHUCK_ROTARY_DIAMETER * 2,
+      'rotary-type': RotaryType.Chuck,
+    };
     expect(getRotaryRatio(mockAddOnInfo)).toBeCloseTo(0.5);
   });
 
   test('chuck rotary with mirror', () => {
-    mockRead
-      .mockReturnValueOnce(RotaryType.Chuck)
-      .mockReturnValueOnce(CHUCK_ROTARY_DIAMETER * 2)
-      .mockReturnValueOnce(true);
+    mockPreference = {
+      ...mockPreference,
+      'rotary-chuck-obj-d': CHUCK_ROTARY_DIAMETER * 2,
+      'rotary-mirror': true,
+      'rotary-type': RotaryType.Chuck,
+    };
     expect(
       getRotaryRatio({
         ...mockAddOnInfo,
@@ -68,5 +88,24 @@ describe('test getRotaryRatio', () => {
         },
       }),
     ).toBeCloseTo(-0.5);
+  });
+
+  test('chuck with mirror and scale', () => {
+    mockPreference = {
+      ...mockPreference,
+      'rotary-chuck-obj-d': CHUCK_ROTARY_DIAMETER * 2,
+      'rotary-mirror': true,
+      'rotary-scale': 2,
+      'rotary-type': RotaryType.Chuck,
+    };
+    expect(
+      getRotaryRatio({
+        ...mockAddOnInfo,
+        rotary: {
+          ...mockAddOnInfo.rotary,
+          mirror: true,
+        },
+      }),
+    ).toBe(-1);
   });
 });
