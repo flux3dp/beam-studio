@@ -8,6 +8,7 @@ import MultiColorOptions from '@core/app/views/beambox/Right-Panels/Options-Bloc
 import PolygonOptions from '@core/app/views/beambox/Right-Panels/Options-Blocks/PolygonOptions';
 import RectOptions from '@core/app/views/beambox/Right-Panels/Options-Blocks/RectOptions';
 import TextOptions from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions';
+import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getObjectLayer } from '@core/helpers/layer/layer-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
 
@@ -24,17 +25,15 @@ interface Props {
 function OptionsPanel({ elem, polygonSides, rx, updateDimensionValues, updateObjectPanel }: Props): React.JSX.Element {
   const isMobile = useIsMobile();
   let contents: React.JSX.Element[];
+  const isFullColor = getData(getObjectLayer(elem as SVGElement)?.elem, 'fullcolor');
+  const elemTagName = elem?.tagName.toLowerCase();
   const showColorPanel = useMemo(() => {
-    if (!elem) {
+    if (!elem || !['ellipse', 'g', 'path', 'polygon', 'rect', 'text', 'use'].includes(elemTagName)) {
       return false;
     }
 
-    if (!['ellipse', 'g', 'path', 'polygon', 'rect', 'text', 'use'].includes(elem?.tagName.toLowerCase())) {
-      return false;
-    }
-
-    return getObjectLayer(elem as SVGElement)?.elem?.getAttribute('data-fullcolor') === '1';
-  }, [elem]);
+    return isFullColor;
+  }, [elem, elemTagName, isFullColor]);
 
   if (elem) {
     const tagName = elem.tagName.toLowerCase();

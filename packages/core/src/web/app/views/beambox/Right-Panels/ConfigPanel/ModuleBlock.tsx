@@ -1,5 +1,8 @@
 import React, { memo, useContext, useEffect } from 'react';
 
+import { Button } from 'antd';
+import { jsPDF } from 'jspdf';
+
 import alertCaller from '@core/app/actions/alert-caller';
 import { modelsWithModules, modelsWithoutUvExport } from '@core/app/actions/beambox/constant';
 import moduleBoundaryDrawer from '@core/app/actions/canvas/module-boundary-drawer';
@@ -16,8 +19,10 @@ import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
 import { applyPreset, baseConfig, getData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { getLayerElementByName } from '@core/helpers/layer/layer-helper';
+import { layersToA4Base64 } from '@core/helpers/layer/layersToA4Base64';
 import presetHelper from '@core/helpers/presets/preset-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import symbolMaker from '@core/helpers/symbol-maker';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -167,6 +172,7 @@ const ModuleBlock = (): React.ReactNode => {
     initState(selectedLayers);
     LayerPanelController.updateLayerPanel();
     presprayArea.togglePresprayArea();
+
     batchCmd.onAfter = () => {
       initState();
       LayerPanelController.updateLayerPanel();
@@ -204,6 +210,29 @@ const ModuleBlock = (): React.ReactNode => {
           </Select.Option>
         ))}
       </Select>
+      <Button
+        onClick={async () => {
+          const layers = selectedLayers.map((layerName) => getLayerElementByName(layerName));
+          const uses = layers.flatMap((layer) => [...layer.querySelectorAll('use')]);
+
+          uses.forEach((use) => symbolMaker.switchImageSymbol(use as SVGUseElement, false));
+
+          let base64 = '';
+
+          for (const layer of layers) {
+            base64 += await layersToA4Base64(layer as any);
+          }
+
+          uses.forEach((use) => symbolMaker.switchImageSymbol(use as SVGUseElement, true));
+
+          const doc = new jsPDF({ format: 'a4', orientation: 'portrait', unit: 'mm' });
+
+          doc.addImage(base64, 'PNG', 0, 0, 210, 297);
+          doc.save();
+        }}
+      >
+        test
+      </Button>
     </div>
   );
 };
