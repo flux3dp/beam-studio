@@ -64,7 +64,7 @@ import type { IStorage } from '@core/interfaces/IStorage';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type ISVGConfig from '@core/interfaces/ISVGConfig';
 
-import pdfHelper from '@core/implementations/pdfHelper';
+import { pdfHelper } from '@core/implementations/pdfHelper';
 import storage from '@core/implementations/storage';
 
 import Alert from '../alert-caller';
@@ -1964,10 +1964,7 @@ const svgEditor = (window['svgEditor'] = (function () {
               Progress.popById('loading_image');
             } else {
               Progress.popById('loading_image');
-              Alert.popUp({
-                message: errorMessage,
-                type: AlertConstants.SHOW_POPUP_ERROR,
-              });
+              Alert.popUp({ message: errorMessage!, type: AlertConstants.SHOW_POPUP_ERROR });
             }
 
             break;

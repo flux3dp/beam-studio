@@ -1,7 +1,5 @@
 import 'jquery';
 
-import 'rgbcolor';
-import 'canvg';
 import 'svgedit';
 
 import 'svgicons';

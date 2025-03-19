@@ -1,3 +1,3 @@
 import type { PdfHelper } from '@core/interfaces/IPdfHelper';
 
-export default {} as PdfHelper;
+export const pdfHelper = {} as PdfHelper;
