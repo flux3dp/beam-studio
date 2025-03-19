@@ -2,18 +2,19 @@ import React, { memo, useCallback, useContext, useEffect, useMemo, useReducer, u
 
 import { ConfigProvider, Modal } from 'antd';
 import classNames from 'classnames';
+import { pipe, piped } from 'remeda';
 import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import { promarkModels } from '@core/app/actions/beambox/constant';
+import { modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
 import diodeBoundaryDrawer from '@core/app/actions/canvas/diode-boundary-drawer';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import ColorBlock from '@core/app/components/beambox/right-panel/ColorBlock';
 import { getAddOnInfo } from '@core/app/constants/addOn';
-import type LayerModule from '@core/app/constants/layer-module/layer-modules';
-import { modelsWithModules, printingModules } from '@core/app/constants/layer-module/layer-modules';
+import type { LayerModule } from '@core/app/constants/layer-module/layer-modules';
+import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import tutorialConstants from '@core/app/constants/tutorial-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
@@ -87,7 +88,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
 
   useEffect(() => {
     const drawing = svgCanvas.getCurrentDrawing();
-    const currentLayerName = drawing.getCurrentLayerName();
+    const currentLayerName = drawing.getCurrentLayerName()!;
 
     if (UIType === 'modal') {
       setSelectedLayers([currentLayerName]);
@@ -102,11 +103,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
   const lang = useI18n().beambox.right_panel.laser_panel;
   const hiddenOptions = useMemo(
     () => [
-      {
-        key: lang.dropdown.parameters,
-        label: lang.dropdown.parameters,
-        value: PARAMETERS_CONSTANT,
-      },
+      { key: lang.dropdown.parameters, label: lang.dropdown.parameters, value: PARAMETERS_CONSTANT },
       { key: lang.custom_preset, label: lang.custom_preset, value: lang.custom_preset },
       { key: lang.various_preset, label: lang.various_preset, value: lang.various_preset },
     ],
@@ -127,18 +124,25 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     updateDiodeBoundary();
   }, [updateDiodeBoundary]);
 
+  useEffect(() => {
+    const canvasEvents = eventEmitterFactory.createEventEmitter('canvas');
+
+    canvasEvents.emit('select-module-changed', state.module.value);
+  }, [state.module.value, workarea]);
+
   const initState = useCallback((layers: string[] = LayerPanelController.getSelectedLayers()) => {
-    if (layers.length > 1) {
-      const drawing = svgCanvas.getCurrentDrawing();
-      const currentLayerName = drawing.getCurrentLayerName();
-      const config = getLayersConfig(layers, currentLayerName);
+    if (layers.length === 1) {
+      pipe(getLayerConfig(layers[0])!, (payload) => dispatch({ payload, type: 'update' }));
 
-      dispatch({ payload: config, type: 'update' });
-    } else if (layers.length === 1) {
-      const config = getLayerConfig(layers[0]);
-
-      dispatch({ payload: config, type: 'update' });
+      return;
     }
+
+    pipe(
+      svgCanvas.getCurrentDrawing(),
+      (drawing) => drawing.getCurrentLayerName(),
+      (currentLayerName) => getLayersConfig(layers, currentLayerName!),
+      (payload) => dispatch({ payload, type: 'update' }),
+    );
   }, []);
 
   useEffect(() => {
@@ -147,10 +151,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     }
 
     const canvasEvents = eventEmitterFactory.createEventEmitter('canvas');
-    const updatePromarkInfo = () => {
-      postPresetChange();
-      initState();
-    };
+    const updatePromarkInfo = piped(postPresetChange, () => initState());
 
     canvasEvents.on('document-settings-saved', updatePromarkInfo);
 
@@ -244,7 +245,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
         val = Math.max(minSpeed, Math.min(val as number, maxSpeed));
       }
 
-      payload[key] = val;
+      payload[key] = val!;
     }
     timeEstimationButtonEventEmitter.emit('SET_ESTIMATED_TIME', null);
     dispatch({
@@ -268,13 +269,13 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     const { SET_PRESET_WOOD_CUTTING, SET_PRESET_WOOD_ENGRAVING } = tutorialConstants;
 
     if (SET_PRESET_WOOD_ENGRAVING === tutorialController.getNextStepRequirement()) {
-      if (isDefault && key.startsWith('wood_engraving')) {
+      if (isDefault && key!.startsWith('wood_engraving')) {
         tutorialController.handleNextStep();
       } else {
         alertCaller.popUp({ message: i18n.lang.tutorial.newUser.please_select_wood_engraving });
       }
     } else if (SET_PRESET_WOOD_CUTTING === tutorialController.getNextStepRequirement()) {
-      if (isDefault && /^wood_[\d]+mm_cutting/.test(key)) {
+      if (isDefault && /^wood_[\d]+mm_cutting/.test(key!)) {
         tutorialController.handleNextStep();
       } else {
         alertCaller.popUp({ message: i18n.lang.tutorial.newUser.please_select_wood_cutting });
@@ -287,7 +288,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     key: e.key || e.name,
     label: e.name,
     value: e.key || e.name,
-  }));
+  })) as Array<{ key: string; label: string; value: string }>;
 
   const displayName = selectedLayers.length === 1 ? selectedLayers[0] : lang.multi_layer;
 
@@ -357,12 +358,12 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
             <ObjectPanelItem.Select
               id="laser-config-dropdown"
               label={lang.presets}
-              onChange={handleSelectPresets}
+              onChange={handleSelectPresets as any}
               options={[...dropdownOptions, ...hiddenOptions.filter((option) => option.value === dropdownValue)]}
               selected={
                 dropdownOptions.find((option) => option.value === dropdownValue) || {
-                  label: dropdownValue,
-                  value: dropdownValue,
+                  label: dropdownValue!,
+                  value: dropdownValue!,
                 }
               }
             />
@@ -412,7 +413,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     for (let i = layerCount - 1; i >= 0; i -= 1) {
       const layerName = drawing.getLayerName(i)!;
       const layer = getLayerElementByName(layerName);
-      const layerModule: LayerModule = getData(layer, 'module');
+      const layerModule: LayerModule = getData(layer, 'module') as LayerModule;
       const isFullColor = layer.getAttribute('data-fullcolor') === '1';
 
       layerOptions.push(

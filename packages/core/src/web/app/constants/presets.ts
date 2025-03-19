@@ -1,13 +1,7 @@
-import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { Preset, PresetModel } from '@core/interfaces/ILayerConfig';
 
-export const presets: {
-  [key: string]: {
-    [model in PresetModel]?: {
-      [module in LayerModule]?: Preset;
-    };
-  };
-} = {
+export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<LayerModule, Preset>>>>> = {
   acrylic_3mm_cutting: {
     fbb1b: {
       [LayerModule.LASER_UNIVERSAL]: {

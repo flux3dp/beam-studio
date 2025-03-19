@@ -1,6 +1,6 @@
 import progressCaller from '@core/app/actions/progress-caller';
 import { PrintingColors } from '@core/app/constants/color-constants';
-import LayerModule, { printingModules } from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
 import history from '@core/app/svgedit/history/history';
 import updateLayerColor from '@core/helpers/color/updateLayerColor';

@@ -1,4 +1,4 @@
-import type LayerModule from '@core/app/constants/layer-module/layer-modules';
+import type { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
 import history from '@core/app/svgedit/history/history';

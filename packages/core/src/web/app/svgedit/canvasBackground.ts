@@ -42,6 +42,7 @@ const setupBackground = (dimension: number[], getRoot: () => Element, getContent
 
   canvasBackground.appendChild(rect);
   canvasBackground.appendChild(generatefixedSizeSvg(dimension));
+
   getRoot().insertBefore(canvasBackground, getContent());
 };
 

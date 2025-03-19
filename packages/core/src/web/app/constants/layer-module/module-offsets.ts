@@ -1,5 +1,5 @@
 // Default value of module offset
-import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 
 // Module Boundary for ador
 const moduleOffsets = {

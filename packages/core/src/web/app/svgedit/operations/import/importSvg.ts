@@ -1,10 +1,11 @@
 import alertCaller from '@core/app/actions/alert-caller';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import { modelsWithModules } from '@core/app/actions/beambox/constant';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import progressCaller from '@core/app/actions/progress-caller';
 import alertConstants from '@core/app/constants/alert-constants';
-import LayerModule, { modelsWithModules, printingModules } from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import history from '@core/app/svgedit/history/history';
 import readBitmapFile from '@core/app/svgedit/operations/import/readBitmapFile';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
@@ -271,7 +272,7 @@ const importSvg = async (
     }
   }
 
-  LayerPanelController.setSelectedLayers([svgCanvas.getCurrentDrawing().getCurrentLayerName()]);
+  LayerPanelController.setSelectedLayers([svgCanvas.getCurrentDrawing().getCurrentLayerName()!]);
 
   if (filteredNewElements.length === 0) {
     svgCanvas.clearSelection();

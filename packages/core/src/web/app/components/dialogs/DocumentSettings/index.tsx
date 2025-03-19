@@ -6,7 +6,7 @@ import classNames from 'classnames';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import constant, { promarkModels } from '@core/app/actions/beambox/constant';
+import constant, { modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
 import diodeBoundaryDrawer from '@core/app/actions/canvas/diode-boundary-drawer';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
@@ -14,7 +14,7 @@ import { showRotarySettings } from '@core/app/components/dialogs/RotarySettings'
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
 import CanvasMode from '@core/app/constants/canvasMode';
-import { modelsWithModules, printingModules } from '@core/app/constants/layer-module/layer-modules';
+import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType, workareaOptions as pmWorkareaOptions } from '@core/app/constants/promark-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
