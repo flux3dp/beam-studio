@@ -140,7 +140,7 @@ const Controls = (): React.JSX.Element => {
             value={passThroughHeight}
           />
           <Tooltip
-            overlayClassName={styles.tooltip}
+            className={styles.tooltip}
             title={`${lang.height_desc}\n(${
               isInch ? `${(min / 25.4).toFixed(2)}' ~ ${(max / 25.4).toFixed(2)}'` : `${min}mm ~ ${max}mm`
             })`}

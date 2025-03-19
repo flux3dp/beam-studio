@@ -494,13 +494,13 @@ class LayerPanel extends React.PureComponent<Props, State> {
         >
           <div className={styles['layerlist-container']} id="layerlist_container" ref={this.layerListContainerRef}>
             <LayerList
-              draggingDestIndex={draggingDestIndex}
+              draggingDestIndex={draggingDestIndex ?? null}
               highlightLayer={highlightLayer}
               onLayerCenterDragEnter={this.onLayerCenterDragEnter}
               onLayerClick={this.handleLayerClick}
               onLayerColorChange={this.setLayerColor}
               onLayerDoubleClick={this.layerDoubleClick}
-              onlayerDragEnd={this.onLayerDragEnd}
+              onLayerDragEnd={this.onLayerDragEnd}
               onLayerDragStart={this.onLayerDragStart}
               onLayerTouchEnd={this.onLayerTouchEnd}
               onLayerTouchMove={this.onLayerTouchMove}
@@ -513,7 +513,7 @@ class LayerPanel extends React.PureComponent<Props, State> {
         </ContextMenuTrigger>
         {!isMobile() && (
           <>
-            <DragImage draggingLayer={draggingLayer} selectedLayers={selectedLayers} />
+            <DragImage draggingLayer={draggingLayer!} selectedLayers={selectedLayers} />
             <LayerContextMenu drawing={drawing} renameLayer={this.renameLayer} selectOnlyLayer={this.selectOnlyLayer} />
             <AddLayerButton setSelectedLayers={setSelectedLayers} />
           </>
