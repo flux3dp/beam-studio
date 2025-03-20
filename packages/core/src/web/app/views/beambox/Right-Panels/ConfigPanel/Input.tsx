@@ -14,6 +14,7 @@ interface Props {
   min?: number;
   onChange: (value: number) => void;
   precision?: number;
+  step?: number;
   theme?: ThemeConfig;
   unit?: string;
   value: number;
@@ -29,6 +30,7 @@ export const Input = ({
   min,
   onChange,
   precision,
+  step,
   theme = configPanelInputTheme,
   unit,
   value,
@@ -49,6 +51,7 @@ export const Input = ({
         if (val !== null) onChange(val);
       }}
       precision={precision}
+      step={step}
       theme={theme}
       underline
       unit={unit}

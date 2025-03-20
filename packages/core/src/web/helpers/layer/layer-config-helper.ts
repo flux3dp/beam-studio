@@ -155,6 +155,36 @@ export const getDefaultConfig = (): Partial<ConfigKeyTypeMap> => {
 };
 
 export const booleanConfig: ConfigKey[] = ['fullcolor', 'ref', 'split', 'biDirectional', 'crossHatch'];
+export const timeRelatedConfigs: Set<ConfigKey> = new Set([
+  'speed',
+  'repeat',
+  // printing
+  'printingSpeed',
+  'multipass',
+  // promark
+  'dottingTime',
+  'fillInterval',
+  'fillAngle',
+  'biDirectional',
+  'crossHatch',
+  'wobbleDiameter',
+  'wobbleStep',
+  // 4c
+  'refreshInterval',
+  'refreshWidth',
+]);
+export const presetRelatedConfigs: Set<ConfigKey> = new Set([
+  'power',
+  'speed',
+  'repeat',
+  'ink',
+  'printingSpeed',
+  'multipass',
+  'zStep',
+  'dottingTime',
+  'frequency',
+  'pulseWidth',
+]);
 
 /**
  * getData from layer element
