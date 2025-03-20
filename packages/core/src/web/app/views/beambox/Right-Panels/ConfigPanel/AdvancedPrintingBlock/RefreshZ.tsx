@@ -36,7 +36,7 @@ const RefreshZBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
 
   return type === 'panel-item' ? (
     <ObjectPanelItem.Number
-      decimal={0}
+      decimal={1}
       id="refresh-interval"
       label="Refresh Interval"
       max={50}
@@ -54,7 +54,7 @@ const RefreshZBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
         max={50}
         min={0}
         onChange={handleChange}
-        precision={0}
+        precision={1}
         unit="mm"
         value={value}
       />
