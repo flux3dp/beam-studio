@@ -124,19 +124,15 @@ const ModuleBlock = (): React.ReactNode => {
 
     selectedLayers.forEach((layerName) => {
       const layer = getLayerElementByName(layerName);
+      const configName = getData(layer, 'configName');
+      const repeat = getData(layer, 'repeat');
+      const oldPreset = configName ? presetsList.find(({ key, name }) => [key, name].includes(configName)) : null;
+      const newPreset = oldPreset ? newPresetsList.find(({ key, name }) => [key, name].includes(configName)) : null;
 
       writeDataLayer(layer, 'module', newVal, { batchCmd });
 
-      const configName = getData(layer, 'configName');
-      const oldPreset = configName ? presetsList.find((p) => configName === p.key || configName === p.name) : null;
-      const newPreset = oldPreset ? newPresetsList.find((p) => configName === p.key || configName === p.name) : null;
-      const repeat = getData(layer, 'repeat');
-
-      if (newVal === LayerModule.UV_EXPORT) {
-        writeDataLayer(layer, 'repeat', 0, { batchCmd });
-      } else if (repeat === 0) {
-        writeDataLayer(layer, 'repeat', 1, { batchCmd });
-      }
+      if (newVal === LayerModule.UV_EXPORT) writeDataLayer(layer, 'repeat', 0, { batchCmd });
+      else if (repeat === 0) writeDataLayer(layer, 'repeat', 1, { batchCmd });
 
       if (!newPreset) {
         writeDataLayer(layer, 'configName', undefined, { batchCmd });

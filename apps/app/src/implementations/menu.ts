@@ -8,6 +8,7 @@ import communicator from '@core/implementations/communicator';
 
 import {
   changeMenuItemChecked,
+  changeMenuItemEnabled,
   changeVisibilityByIsBb2,
   changeVisibilityByIsPromark,
 } from '../electron-menubar-helper';
@@ -21,6 +22,7 @@ const updateWindowsMenu = () => {
 };
 
 const canvasEvent = eventEmitterFactory.createEventEmitter('canvas');
+const layerPanelEventEmitter = eventEmitterFactory.createEventEmitter('layer-panel');
 
 class Menu extends AbstractMenu {
   private communicator;
@@ -45,37 +47,27 @@ class Menu extends AbstractMenu {
 
   initMenuItemStatus = (): void => {
     // checkboxes
-    const shouldZoomWithWindow = BeamboxPreference.read('zoom_with_window');
+    changeMenuItemChecked(['ZOOM_WITH_WINDOW'], BeamboxPreference.read('zoom_with_window'));
+    changeMenuItemChecked(['SHOW_GRIDS'], BeamboxPreference.read('show_grids'));
+    changeMenuItemChecked(['SHOW_RULERS'], BeamboxPreference.read('show_rulers'));
+    changeMenuItemChecked(['SHOW_LAYER_COLOR'], BeamboxPreference.read('use_layer_color'));
+    changeMenuItemChecked(['ANTI_ALIASING'], BeamboxPreference.read('anti-aliasing'));
+    changeMenuItemChecked(['AUTO_ALIGN'], BeamboxPreference.read('auto_align'));
 
-    changeMenuItemChecked(['ZOOM_WITH_WINDOW'], shouldZoomWithWindow);
-
-    const shouldShowGrids = BeamboxPreference.read('show_grids');
-
-    changeMenuItemChecked(['SHOW_GRIDS'], shouldShowGrids);
-
-    const shouldShowRulers = BeamboxPreference.read('show_rulers');
-
-    changeMenuItemChecked(['SHOW_RULERS'], shouldShowRulers);
-
-    const isUsingLayerColor = BeamboxPreference.read('use_layer_color');
-
-    changeMenuItemChecked(['SHOW_LAYER_COLOR'], isUsingLayerColor);
-
-    const isUsingAntiAliasing = BeamboxPreference.read('anti-aliasing');
-
-    changeMenuItemChecked(['ANTI_ALIASING'], isUsingAntiAliasing);
-
-    const isUsingAutoAlign = BeamboxPreference.read('auto_align');
-
-    changeMenuItemChecked(['AUTO_ALIGN'], isUsingAutoAlign);
-
-    // visibility
+    // model related
     canvasEvent.on('model-changed', (model) => {
       const isBb2 = model === 'fbb2';
       const isPromark = model === 'fpm1';
 
       changeVisibilityByIsBb2(isBb2);
       changeVisibilityByIsPromark(isPromark);
+      // force re-render menu
+      ElectronMenu.setApplicationMenu(ElectronMenu.getApplicationMenu());
+    });
+
+    // layer panel related
+    layerPanelEventEmitter.on('updateUvExportStatus', (isUvExportable: boolean) => {
+      changeMenuItemEnabled(['EXPORT_UV_EXPORT'], isUvExportable);
       // force re-render menu
       ElectronMenu.setApplicationMenu(ElectronMenu.getApplicationMenu());
     });

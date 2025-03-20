@@ -3,20 +3,23 @@ import { ipcMain, Menu, MenuItem } from 'electron';
 import ElectronStore from 'electron-store';
 
 import i18n from '@core/helpers/i18n';
+import isDev from '@core/helpers/is-dev';
 import type { ILang } from '@core/interfaces/ILang';
 
 import { getFocusedView, getTabManager } from '../helpers/tabHelper';
 import type { MenuData } from '../interfaces/Menu';
 
+type FileMenu = {
+  id: string;
+  label: string;
+  submenu: MenuItemConstructorOptions[];
+};
+
 export function buildFileMenu(
   fnKey: 'Cmd' | 'Ctrl',
   r: ILang['topbar']['menu'],
   callback: (_data: MenuData) => void,
-): {
-  id: string;
-  label: string;
-  submenu: MenuItemConstructorOptions[];
-} {
+): FileMenu {
   const menuItems: MenuItemConstructorOptions[] = [
     {
       accelerator: `${fnKey}+N`,
@@ -74,21 +77,9 @@ export function buildFileMenu(
           id: 'EXAMPLE_FILES',
           label: r.example_files || 'Example Files',
           submenu: [
-            {
-              click: callback,
-              id: 'IMPORT_EXAMPLE_ADOR_LASER',
-              label: r.import_ador_laser_example,
-            },
-            {
-              click: callback,
-              id: 'IMPORT_EXAMPLE_ADOR_PRINT_SINGLE',
-              label: r.import_ador_printing_example_single,
-            },
-            {
-              click: callback,
-              id: 'IMPORT_EXAMPLE_ADOR_PRINT_FULL',
-              label: r.import_ador_printing_example_full,
-            },
+            { click: callback, id: 'IMPORT_EXAMPLE_ADOR_LASER', label: r.import_ador_laser_example },
+            { click: callback, id: 'IMPORT_EXAMPLE_ADOR_PRINT_SINGLE', label: r.import_ador_printing_example_single },
+            { click: callback, id: 'IMPORT_EXAMPLE_ADOR_PRINT_FULL', label: r.import_ador_printing_example_full },
             { click: callback, id: 'IMPORT_EXAMPLE', label: r.import_hello_beamo },
             { click: callback, id: 'IMPORT_HELLO_BEAMBOX', label: r.import_hello_beambox },
             { click: callback, id: 'IMPORT_EXAMPLE_BEAMBOX_2', label: r.import_beambox_2_example },
@@ -100,72 +91,32 @@ export function buildFileMenu(
           id: 'MATERIAL_TEST',
           label: r.material_test || 'Material Test',
           submenu: [
-            {
-              click: callback,
-              id: 'IMPORT_MATERIAL_TESTING_ENGRAVE',
-              label: r.import_material_testing_engrave,
-            },
+            { click: callback, id: 'IMPORT_MATERIAL_TESTING_ENGRAVE', label: r.import_material_testing_engrave },
             {
               click: callback,
               id: 'IMPORT_MATERIAL_TESTING_ENGRAVE_BEAMBOX_2',
               label: r.import_material_testing_engrave,
             },
-            {
-              click: callback,
-              id: 'IMPORT_MATERIAL_TESTING_OLD',
-              label: r.import_material_testing_old,
-            },
-            {
-              click: callback,
-              id: 'IMPORT_MATERIAL_TESTING_CUT',
-              label: r.import_material_testing_cut,
-            },
-            {
-              click: callback,
-              id: 'IMPORT_MATERIAL_TESTING_CUT_BEAMBOX_2',
-              label: r.import_material_testing_cut,
-            },
-            {
-              click: callback,
-              id: 'IMPORT_MATERIAL_TESTING_SIMPLECUT',
-              label: r.import_material_testing_simple_cut,
-            },
-            {
-              click: callback,
-              id: 'IMPORT_MATERIAL_TESTING_LINE',
-              label: r.import_material_testing_line,
-            },
-            {
-              click: callback,
-              id: 'IMPORT_MATERIAL_TESTING_PRINT',
-              label: r.import_material_printing_test,
-            },
+            { click: callback, id: 'IMPORT_MATERIAL_TESTING_OLD', label: r.import_material_testing_old },
+            { click: callback, id: 'IMPORT_MATERIAL_TESTING_CUT', label: r.import_material_testing_cut },
+            { click: callback, id: 'IMPORT_MATERIAL_TESTING_CUT_BEAMBOX_2', label: r.import_material_testing_cut },
+            { click: callback, id: 'IMPORT_MATERIAL_TESTING_SIMPLECUT', label: r.import_material_testing_simple_cut },
+            { click: callback, id: 'IMPORT_MATERIAL_TESTING_LINE', label: r.import_material_testing_line },
+            { click: callback, id: 'IMPORT_MATERIAL_TESTING_PRINT', label: r.import_material_printing_test },
           ],
         },
         {
           id: 'PROMARK_COLOR_TEST',
           label: r.promark_color_test,
           submenu: [
-            {
-              click: callback,
-              id: 'IMPORT_EXAMPLE_PROMARK_MOPA_20W_COLOR',
-              label: r.import_promark_mopa_20w_color,
-            },
-            {
-              click: callback,
-              id: 'IMPORT_EXAMPLE_PROMARK_MOPA_60W_COLOR',
-              label: r.import_promark_mopa_60w_color,
-            },
+            { click: callback, id: 'IMPORT_EXAMPLE_PROMARK_MOPA_20W_COLOR', label: r.import_promark_mopa_20w_color },
+            { click: callback, id: 'IMPORT_EXAMPLE_PROMARK_MOPA_60W_COLOR', label: r.import_promark_mopa_60w_color },
             {
               click: callback,
               id: 'IMPORT_EXAMPLE_PROMARK_MOPA_60W_COLOR_2',
               label: `${r.import_promark_mopa_60w_color} - 2`,
             },
-            {
-              click: callback,
-              id: 'IMPORT_EXAMPLE_PROMARK_MOPA_100W_COLOR',
-              label: r.import_promark_mopa_100w_color,
-            },
+            { click: callback, id: 'IMPORT_EXAMPLE_PROMARK_MOPA_100W_COLOR', label: r.import_promark_mopa_100w_color },
             {
               click: callback,
               id: 'IMPORT_EXAMPLE_PROMARK_MOPA_100W_COLOR_2',
@@ -191,13 +142,14 @@ export function buildFileMenu(
         { click: callback, id: 'EXPORT_SVG', label: r.export_SVG },
         { click: callback, id: 'EXPORT_PNG', label: 'PNG' },
         { click: callback, id: 'EXPORT_JPG', label: 'JPG' },
+        isDev() && { click: callback, id: 'EXPORT_UV_EXPORT', label: 'UV PDF' },
         {
           accelerator: `${fnKey}+E`,
           click: callback,
           id: 'EXPORT_FLUX_TASK',
           label: r.export_flux_task,
         },
-      ],
+      ].filter(Boolean),
     },
   ];
 
@@ -216,11 +168,7 @@ export function buildFileMenu(
     });
   }
 
-  return {
-    id: '_file',
-    label: r.file,
-    submenu: menuItems,
-  };
+  return { id: '_file', label: r.file, submenu: menuItems };
 }
 
 export const updateRecentMenu = (updateWindowMenu = true): void => {

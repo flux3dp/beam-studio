@@ -1,9 +1,13 @@
 import React, { createContext, useCallback, useEffect, useMemo, useState } from 'react';
 
+import { pipe } from 'remeda';
+
 import { promarkModels } from '@core/app/actions/beambox/constant';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import doLayersContainsVector from '@core/helpers/layer/check-vector';
+import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getLayerElementByName } from '@core/helpers/layer/layer-helper';
 import useForceUpdate from '@core/helpers/use-force-update';
 
@@ -39,13 +43,17 @@ export const LayerPanelContextProvider = ({ children }: Props): React.JSX.Elemen
   const forceUpdateSelectedLayers = useCallback(() => setSelectedLayers([...selectedLayers]), [selectedLayers]);
   const workarea = useWorkarea();
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
-
-  // TODO : emit event to update file export uv export
   const lazySetSelectedLayers = useCallback(
     (newLayers: string[]) => {
       if (newLayers.length === selectedLayers.length && newLayers.every((name, i) => name === selectedLayers[i])) {
         return;
       }
+
+      const isUvExportable = newLayers.every(
+        (layerName) => getData(getLayerElementByName(layerName), 'module') === LayerModule.UV_EXPORT,
+      );
+
+      layerPanelEventEmitter.emit('updateUvExportStatus', isUvExportable);
 
       setSelectedLayers(newLayers);
     },
@@ -85,19 +93,23 @@ export const LayerPanelContextProvider = ({ children }: Props): React.JSX.Elemen
     layerPanelEventEmitter.on('CHECK_VECTOR', checkVector);
 
     return () => {
-      layerPanelEventEmitter.removeListener('GET_SELECTED_LAYERS', getSelectedLayers);
-      layerPanelEventEmitter.removeListener('CHECK_VECTOR', checkVector);
+      layerPanelEventEmitter.off('GET_SELECTED_LAYERS', getSelectedLayers);
+      layerPanelEventEmitter.off('CHECK_VECTOR', checkVector);
     };
   }, [selectedLayers]);
 
   useEffect(() => {
     const checkGradient = () => {
       if (isPromark) {
-        const newVal = selectedLayers.some((layerName: string) => {
-          const layer = getLayerElementByName(layerName);
-
-          return !!layer?.querySelector('image[data-shading="true"]');
-        });
+        const newVal = selectedLayers.some((layerName: string) =>
+          pipe(
+            //
+            layerName,
+            getLayerElementByName,
+            (layer) => layer?.querySelector('image[data-shading="true"]'),
+            Boolean,
+          ),
+        );
 
         setHasGradient(newVal);
       }
@@ -121,11 +133,15 @@ export const LayerPanelContextProvider = ({ children }: Props): React.JSX.Elemen
     }
 
     if (isPromark) {
-      const newGradientVal = selectedLayers.some((layerName: string) => {
-        const layer = getLayerElementByName(layerName);
-
-        return !!layer?.querySelector('image[data-shading="true"]');
-      });
+      const newGradientVal = selectedLayers.some((layerName: string) =>
+        pipe(
+          //
+          layerName,
+          getLayerElementByName,
+          (layer) => layer?.querySelector('image[data-shading="true"]'),
+          Boolean,
+        ),
+      );
 
       if (newGradientVal !== hasGradient) {
         setHasGradient(newGradientVal);
