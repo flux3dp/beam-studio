@@ -8,6 +8,7 @@ import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/
 import { getAddOnInfo, RotaryType } from '@core/app/constants/addOn';
 import RotaryIcons from '@core/app/icons/rotary/RotaryIcons';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
+import Select from '@core/app/widgets/AntdSelect';
 import UnitInput from '@core/app/widgets/UnitInput';
 import useI18n from '@core/helpers/useI18n';
 import storage from '@core/implementations/storage';
@@ -31,6 +32,7 @@ const RotarySettings = ({ onClose }: Props): React.JSX.Element => {
   const [rotaryMode, setRotaryMode] = useState<boolean>(beamboxPreference.read('rotary_mode'));
   const [rotaryType, setRotaryType] = useState<number>(beamboxPreference.read('rotary-type'));
   const [diameter, setDiaMeter] = useState(beamboxPreference.read('rotary-chuck-obj-d'));
+  const [scale, setScale] = useState<number>(beamboxPreference.read('rotary-scale'));
   const [extend, setExtend] = useState<boolean>(Boolean(beamboxPreference.read('extend-rotary-workarea')));
   const [mirror, setMirror] = useState<boolean>(Boolean(beamboxPreference.read('rotary-mirror')));
   const isInch = useMemo(() => storage.get('default-units') === 'inches', []);
@@ -41,6 +43,7 @@ const RotarySettings = ({ onClose }: Props): React.JSX.Element => {
 
     beamboxPreference.write('rotary_mode', rotaryMode);
     beamboxPreference.write('rotary-type', rotaryType);
+    beamboxPreference.write('rotary-scale', scale);
 
     if (rotaryType === RotaryType.Chuck) {
       beamboxPreference.write('rotary-chuck-obj-d', diameter);
@@ -83,7 +86,7 @@ const RotarySettings = ({ onClose }: Props): React.JSX.Element => {
           <div className={styles.title}>
             <label htmlFor="rotary_mode">{tDocu.rotary_mode}</label>
           </div>
-          <div className={styles.control}>
+          <div>
             <Switch
               checked={rotaryMode}
               className={styles.switch}
@@ -94,7 +97,7 @@ const RotarySettings = ({ onClose }: Props): React.JSX.Element => {
           <div className={styles.title}>
             <label htmlFor="rotary_type">{t.type}</label>
           </div>
-          <div className={styles.control}>
+          <div>
             <Segmented
               disabled={rotaryDisabled || !addOnInfo.rotary?.chuck}
               id="rotary_type"
@@ -125,7 +128,7 @@ const RotarySettings = ({ onClose }: Props): React.JSX.Element => {
           <div className={styles.title}>
             <label htmlFor="object_diameter">{t.object_diameter}</label>
           </div>
-          <div className={styles.control}>
+          <div>
             <UnitInput
               addonAfter={isInch ? 'in' : 'mm'}
               className={styles.input}
@@ -145,7 +148,7 @@ const RotarySettings = ({ onClose }: Props): React.JSX.Element => {
           <div className={styles.title}>
             <label htmlFor="circumference">{t.circumference}</label>
           </div>
-          <div className={styles.control}>
+          <div>
             <UnitInput
               addonAfter={isInch ? 'in' : 'mm'}
               className={styles.input}
@@ -162,6 +165,22 @@ const RotarySettings = ({ onClose }: Props): React.JSX.Element => {
               value={diameter * Math.PI}
             />
           </div>
+          <div className={styles.title}>
+            <label htmlFor="scale">{tDocu.rotary_scale}</label>
+          </div>
+          <Select
+            className={styles.select}
+            disabled={rotaryDisabled}
+            id="scale"
+            onChange={(val) => setScale(val)}
+            options={[
+              { label: 0.5, value: 0.5 },
+              { label: 1.0, value: 1.0 },
+              { label: 1.5, value: 1.5 },
+              { label: 2.0, value: 2.0 },
+            ]}
+            value={scale}
+          />
           {(addOnInfo.rotary?.mirror || addOnInfo.rotary?.extendWorkarea) && (
             <div className={styles.row}>
               {addOnInfo.rotary.mirror && (

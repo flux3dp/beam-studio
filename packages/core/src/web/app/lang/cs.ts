@@ -118,6 +118,7 @@ const lang: ILang = {
       pass_through: 'Průchod',
       pass_through_height_desc: 'Zadat délku objektu k rozšíření pracovní oblasti.',
       rotary_mode: 'Rotační',
+      rotary_scale: 'Měřítko rotace',
       start_from: 'Začít od',
       start_position: 'Počáteční pozice',
       start_work_button: 'Tlačítko Spustit',

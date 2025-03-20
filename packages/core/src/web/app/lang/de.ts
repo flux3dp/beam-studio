@@ -118,6 +118,7 @@ const lang: ILang = {
       pass_through: 'Durchlauf',
       pass_through_height_desc: 'Geben Sie die Länge des Objekts ein, um den Arbeitsbereich zu erweitern.',
       rotary_mode: 'Drehtisch',
+      rotary_scale: 'Drehskala',
       start_from: 'Start Von',
       start_position: 'Startposition',
       start_work_button: 'Ausführen-Taste',

@@ -108,35 +108,38 @@
     flex-wrap: wrap;
 
     $row-height: 24px;
+    $select-height: 32px;
 
     .row {
       display: flex;
       flex-wrap: wrap;
       width: 50%;
-      min-height: calc($row-height * 2);
+      height: $row-height;
       line-height: $row-height;
+      margin-bottom: $row-height;
+
+      &.select {
+        height: 32px;
+        line-height: 32px;
+      }
 
       &.full {
         width: 100%;
 
         .title {
           width: 33%;
-          height: $row-height;
         }
 
         .control {
-          display: flex;
           width: 67%;
-          height: $row-height;
-          align-items: flex-start;
 
           .subCheckbox {
-            display: flex;
             flex-direction: column;
             align-items: flex-start;
             width: unset;
             height: calc($row-height * 2);
-            justify-content: start;
+            justify-content: flex-start;
+            margin-top: $row-height;
             margin-left: 20px;
           }
         }
@@ -144,6 +147,7 @@
 
       .title {
         width: 66%;
+        height: 100%;
         text-align: end;
         padding-right: 8px;
 
@@ -156,21 +160,25 @@
       }
 
       .control {
+        display: flex;
         width: 34%;
+        height: 100%;
+        align-items: center;
 
         .input {
           width: 120px;
           margin-left: 20px;
         }
-        .switch {
-          margin: calc(($row-height - 22px) / 2) 0;
-        }
 
         .hint {
           width: 16px;
           height: 16px;
-          margin: calc(($row-height - 16px) / 2) 8px;
+          margin: 0 4px;
           color: #7c7c7c;
+        }
+
+        .select {
+          width: 80px;
         }
       }
 

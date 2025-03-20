@@ -8,7 +8,6 @@ export enum RotaryType {
 }
 
 export const CHUCK_ROTARY_DIAMETER = 133;
-export const FBB2_FEEDER_DIAMETER = 167.08; // FIXME: This might be wrong due to PCB issue
 export const FEEDER_DIAMETER = 83.54;
 
 export interface AddOnInfo {
@@ -79,7 +78,7 @@ const addOnData: Record<WorkAreaModel, AddOnInfo> = {
   },
   fbb2: {
     autoFeeder: checkFbb2AutoFeeder()
-      ? { maxHeight: 2000, rotaryRatio: CHUCK_ROTARY_DIAMETER / FBB2_FEEDER_DIAMETER, xRange: [100, 400] }
+      ? { maxHeight: 2000, rotaryRatio: CHUCK_ROTARY_DIAMETER / FEEDER_DIAMETER, xRange: [100, 400] }
       : undefined,
     curveEngraving: true,
     jobOrigin: true,

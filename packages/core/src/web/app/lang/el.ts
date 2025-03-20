@@ -118,6 +118,7 @@ const lang: ILang = {
       pass_through: 'Διέλευση',
       pass_through_height_desc: 'Εισαγάγετε το μήκος του αντικειμένου για να επεκτείνετε την περιοχή εργασίας.',
       rotary_mode: 'Περιστροφική λειτουργία',
+      rotary_scale: 'Κλίμακα περιστροφής',
       start_from: 'Ξεκινάει Από',
       start_position: 'Θέση Έναρξης',
       start_work_button: 'Κουμπί Εκτέλεσης',

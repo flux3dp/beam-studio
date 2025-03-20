@@ -20,6 +20,10 @@ const getRotaryRatio = (addOnInfo: AddOnInfo): number => {
     }
   }
 
+  if (beamboxPreference.read('rotary-scale') > 0) {
+    ratio *= beamboxPreference.read('rotary-scale');
+  }
+
   return ratio;
 };
 
