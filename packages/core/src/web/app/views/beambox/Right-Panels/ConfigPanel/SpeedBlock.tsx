@@ -148,7 +148,7 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   };
 
   const sliderOptions = useMemo(
-    () => (simpleMode && printingModules.has(module) ? configOptions.getPrintingSpeedOptions(lang) : null),
+    () => (simpleMode && printingModules.has(module) ? configOptions.getPrintingSpeedOptions(lang) : undefined),
     [simpleMode, module, lang],
   );
 
