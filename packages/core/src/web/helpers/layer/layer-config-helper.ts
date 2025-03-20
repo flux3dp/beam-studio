@@ -30,6 +30,7 @@ const getLayerElementByName = (layerName: string) => {
 };
 
 const attributeMap: { [key in ConfigKey]: string } = {
+  amDensity: 'data-amDensity',
   backlash: 'data-backlash',
   biDirectional: 'data-biDirectional',
   ceZSpeedLimit: 'data-ceZSpeedLimit',
@@ -59,6 +60,9 @@ const attributeMap: { [key in ConfigKey]: string } = {
   printingStrength: 'data-printingStrength',
   pulseWidth: 'data-pulseWidth',
   ref: 'data-ref',
+  refreshInterval: 'data-refreshInterval',
+  refreshWidth: 'data-refreshWidth',
+  refreshZ: 'data-refreshZ',
   repeat: 'data-repeat',
   speed: 'data-speed',
   split: 'data-split',
@@ -76,6 +80,7 @@ const attributeMap: { [key in ConfigKey]: string } = {
 export const CUSTOM_PRESET_CONSTANT = ' ';
 
 export const baseConfig: Partial<ConfigKeyTypeMap> = {
+  amDensity: 2,
   backlash: 0,
   biDirectional: true,
   ceZSpeedLimit: 140,
@@ -100,6 +105,9 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   printingSpeed: 60,
   printingStrength: 100,
   pulseWidth: 500,
+  refreshInterval: 20,
+  refreshWidth: 3,
+  refreshZ: 1.5,
   repeat: 1,
   speed: 20,
   uv: 0,

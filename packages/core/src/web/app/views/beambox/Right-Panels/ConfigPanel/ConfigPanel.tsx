@@ -49,6 +49,7 @@ import useI18n from '@core/helpers/useI18n';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import AdvancedBlock from './AdvancedBlock';
+import AdvancedPrintingBlock from './AdvancedPrintingBlock';
 import Backlash from './Backlash';
 import styles from './ConfigPanel.module.scss';
 import ConfigPanelContext, { getDefaultState, reducer } from './ConfigPanelContext';
@@ -308,6 +309,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
       )}
       {isPromark && <FillBlock type={UIType} />}
       {isPromark && <DottingTimeBlock type={UIType} />}
+      {isDevMode && isPrintingModule && <AdvancedPrintingBlock />}
     </>
   );
 
