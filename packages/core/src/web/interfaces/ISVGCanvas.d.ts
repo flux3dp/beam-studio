@@ -90,6 +90,7 @@ export default interface ISVGCanvas {
   getGoodImage: () => string;
   getHref: (elem: SVGElement) => string;
   getId: () => string;
+  getImageSource: () => Promise<Record<string, ArrayBuffer>>;
   getIntersectionList: () => SVGElement[];
   getMode: () => string;
   getMouseTarget: (evt: MouseEvent, allowTempGroup?: boolean) => SVGElement;
