@@ -6,8 +6,8 @@ export const getOneMenuItem = (id: string): Electron.MenuItem =>
 export const getManyMenuItems = (ids: string[]): Electron.MenuItem[] => {
   let currentItem: Electron.MenuItem = getOneMenuItem('_file');
 
-  for (let i = 0; i < ids.length - 1; i += 1) {
-    const targetItem = getOneMenuItem(ids[i]);
+  for (const id of ids) {
+    const targetItem = getOneMenuItem(id);
 
     if (!targetItem) {
       return [];
@@ -35,6 +35,16 @@ export const changeMenuItemVisible = (ids: string[], visible = true): void => {
   if (menuItems.length) {
     menuItems.forEach((item) => {
       item.visible = visible;
+    });
+  }
+};
+
+export const changeMenuItemEnabled = (ids: string[], enabled = true): void => {
+  const menuItems = getManyMenuItems(ids);
+
+  if (menuItems.length) {
+    menuItems.forEach((item) => {
+      item.enabled = enabled;
     });
   }
 };

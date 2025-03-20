@@ -1,8 +1,5 @@
 import React, { memo, useContext, useEffect } from 'react';
 
-import { Button } from 'antd';
-import { jsPDF } from 'jspdf';
-
 import alertCaller from '@core/app/actions/alert-caller';
 import { modelsWithModules, modelsWithoutUvExport } from '@core/app/actions/beambox/constant';
 import moduleBoundaryDrawer from '@core/app/actions/canvas/module-boundary-drawer';
@@ -19,10 +16,8 @@ import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
 import { applyPreset, baseConfig, getData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { getLayerElementByName } from '@core/helpers/layer/layer-helper';
-import { layersToA4Base64 } from '@core/helpers/layer/layersToA4Base64';
 import presetHelper from '@core/helpers/presets/preset-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import symbolMaker from '@core/helpers/symbol-maker';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -137,19 +132,15 @@ const ModuleBlock = (): React.ReactNode => {
 
     selectedLayers.forEach((layerName) => {
       const layer = getLayerElementByName(layerName);
+      const configName = getData(layer, 'configName');
+      const repeat = getData(layer, 'repeat');
+      const oldPreset = configName ? presetsList.find(({ key, name }) => [key, name].includes(configName)) : null;
+      const newPreset = oldPreset ? newPresetsList.find(({ key, name }) => [key, name].includes(configName)) : null;
 
       writeDataLayer(layer, 'module', newVal, { batchCmd });
 
-      const configName = getData(layer, 'configName');
-      const oldPreset = configName ? presetsList.find((p) => configName === p.key || configName === p.name) : null;
-      const newPreset = oldPreset ? newPresetsList.find((p) => configName === p.key || configName === p.name) : null;
-      const repeat = getData(layer, 'repeat');
-
-      if (newVal === LayerModule.UV_EXPORT) {
-        writeDataLayer(layer, 'repeat', 0, { batchCmd });
-      } else if (repeat === 0) {
-        writeDataLayer(layer, 'repeat', 1, { batchCmd });
-      }
+      if (newVal === LayerModule.UV_EXPORT) writeDataLayer(layer, 'repeat', 0, { batchCmd });
+      else if (repeat === 0) writeDataLayer(layer, 'repeat', 1, { batchCmd });
 
       if (!newPreset) {
         writeDataLayer(layer, 'configName', undefined, { batchCmd });
@@ -178,6 +169,7 @@ const ModuleBlock = (): React.ReactNode => {
       LayerPanelController.updateLayerPanel();
       presprayArea.togglePresprayArea();
     };
+
     svgCanvas.addCommandToHistory(batchCmd);
   };
 
@@ -204,35 +196,12 @@ const ModuleBlock = (): React.ReactNode => {
     <div className={styles.panel}>
       <div className={styles.title}>{t.module}</div>
       <Select className={styles.select} onChange={handleChange} value={value as LayerModule}>
-        {options.map((option) => (
-          <Select.Option key={option.value} value={option.value}>
-            {option.label}
+        {options.map(({ label, value }) => (
+          <Select.Option key={value} value={value}>
+            {label}
           </Select.Option>
         ))}
       </Select>
-      <Button
-        onClick={async () => {
-          const layers = selectedLayers.map((layerName) => getLayerElementByName(layerName));
-          const uses = layers.flatMap((layer) => [...layer.querySelectorAll('use')]);
-
-          uses.forEach((use) => symbolMaker.switchImageSymbol(use as SVGUseElement, false));
-
-          let base64 = '';
-
-          for (const layer of layers) {
-            base64 += await layersToA4Base64(layer as any);
-          }
-
-          uses.forEach((use) => symbolMaker.switchImageSymbol(use as SVGUseElement, true));
-
-          const doc = new jsPDF({ format: 'a4', orientation: 'portrait', unit: 'mm' });
-
-          doc.addImage(base64, 'PNG', 0, 0, 210, 297);
-          doc.save();
-        }}
-      >
-        test
-      </Button>
     </div>
   );
 };
