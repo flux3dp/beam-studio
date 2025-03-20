@@ -1,10 +1,7 @@
 import isDev from './is-dev';
-import isWeb from './is-web';
-import localeHelper from './locale-helper';
 
-export const checkAdo1AutoFeeder = (): boolean => isDev();
-export const checkFbm1AutoFeeder = (): boolean => isDev();
-export const checkFbb2AutoFeeder = (): boolean => isDev();
-export const checkFpm1 = (): boolean =>
-  (localeHelper.isTwOrHk || localeHelper.isMy || localeHelper.isPs || isDev()) && !isWeb();
+export const checkAdo1AutoFeeder = (): boolean => true;
+export const checkFbm1AutoFeeder = (): boolean => true;
+export const checkFbb2AutoFeeder = (): boolean => true;
+export const checkFpm1 = (): boolean => true;
 export const checkHxRf = (): boolean => isDev();
