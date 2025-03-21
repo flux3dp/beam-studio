@@ -1,5 +1,5 @@
 import { PrintingColors } from '@core/app/constants/color-constants';
-import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import history from '@core/app/svgedit/history/history';
 import updateLayerColor from '@core/helpers/color/updateLayerColor';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -23,7 +23,7 @@ const changeLayersColor = (layerNames: string[], color: string): IBatchCommand =
   layers.forEach((layer) => {
     writeDataLayer(layer, 'color', color, { batchCmd });
 
-    if (toWhite && getData(layer, 'module') === LayerModule.PRINTER) {
+    if (toWhite && printingModules.has(getData(layer, 'module'))) {
       writeDataLayer(layer, 'ink', 4, { batchCmd });
     }
   });

@@ -26,10 +26,10 @@ const isWebClient = isWeb();
 let lastSendMessage = 0;
 let notifyTimeout: NodeJS.Timeout;
 let devices: IDeviceInfo[] = [];
-const dispatchers = [];
-const idList = [];
-const deviceMap = {};
-let swiftrayDevices = {};
+const dispatchers: Array<{ id: string; sender: (devices: IDeviceInfo[]) => void }> = [];
+const idList: string[] = [];
+const deviceMap: Record<string, IDeviceInfo> = {};
+let swiftrayDevices: Record<string, IDeviceInfo> = {};
 
 // Open up FLUX wrapped websocket
 const ws = Websocket({
@@ -125,7 +125,9 @@ const startIntervals = () => {
   const updateDeviceFromSwiftray = async () => {
     const res = await swiftrayClient.listDevices();
 
-    swiftrayDevices = res.devices.reduce((acc, device) => {
+    if (!res.devices) return;
+
+    swiftrayDevices = res.devices.reduce<Record<string, IDeviceInfo>>((acc, device) => {
       device.lastAlive = Date.now();
       acc[device.uuid] = device;
 
@@ -226,7 +228,7 @@ const Discover = (id: string, getDevices: (devices: IDeviceInfo[]) => void) => {
     },
     poke, // UDP poke
     pokeTcp, // Add to tcp poke list
-    removeListener(listenerId) {
+    removeListener(listenerId: string) {
       const listenerIndex = idList.indexOf(listenerId);
 
       idList.splice(listenerIndex, 1);
@@ -247,7 +249,7 @@ const initSmartUpnp = async () => {
       }
     });
   } catch (e) {
-    if (e.toString().includes('ENOTFOUND')) {
+    if (e instanceof Error && e.toString().includes('ENOTFOUND')) {
       console.log('raspberrypi.local not found by DNS server.');
     } else {
       console.log(`Error when dns looking up raspberrypi:\n${e}`);

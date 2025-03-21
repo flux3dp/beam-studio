@@ -45,7 +45,6 @@ exports[`test SpeedBlock should render correctly when has curve engraving warnin
       </p>
       <p>
         options: 
-        null
       </p>
       <button
         type="button"
@@ -125,7 +124,6 @@ exports[`test SpeedBlock should render correctly when has low speed warning 1`] 
       </p>
       <p>
         options: 
-        null
       </p>
       <button
         type="button"
@@ -205,7 +203,6 @@ exports[`test SpeedBlock should render correctly when has vector warning 1`] = `
       </p>
       <p>
         options: 
-        null
       </p>
       <button
         type="button"
@@ -316,7 +313,6 @@ exports[`test SpeedBlock should render correctly when unit is inches 1`] = `
       </p>
       <p>
         options: 
-        null
       </p>
       <button
         type="button"
@@ -382,7 +378,6 @@ exports[`test SpeedBlock should render correctly when unit is mm 1`] = `
       </p>
       <p>
         options: 
-        null
       </p>
       <button
         type="button"

@@ -8,14 +8,8 @@ import ConfigPanelContext from './ConfigPanelContext';
 
 const mockAddCommandToHistory = jest.fn();
 
-jest.mock('@core/helpers/svg-editor-helper', () => ({
-  getSVGAsync: (callback) => {
-    callback({
-      Canvas: {
-        addCommandToHistory: mockAddCommandToHistory,
-      },
-    });
-  },
+jest.mock('@core/app/svgedit/history/undoManager', () => ({
+  addCommandToHistory: (...args) => mockAddCommandToHistory(...args),
 }));
 
 const mockUseWorkarea = jest.fn();
@@ -130,6 +124,10 @@ describe('test ModuleBlock', () => {
     jest.clearAllMocks();
     mockUseWorkarea.mockReturnValue('ado1');
     mockAlertConfigRead.mockReturnValue(false);
+
+    const mockToggleFullColorLayerCmd = { isEmpty: () => false };
+
+    mockToggleFullColorLayer.mockReturnValue(mockToggleFullColorLayerCmd);
   });
 
   it('should render correctly', () => {
@@ -147,14 +145,14 @@ describe('test ModuleBlock', () => {
     );
 
     expect(container).toMatchSnapshot();
-    expect(mockUseWorkarea).toBeCalledTimes(1);
-    expect(mockUpdate).toBeCalledTimes(1);
+    expect(mockUseWorkarea).toHaveBeenCalledTimes(1);
+    expect(mockUpdate).toHaveBeenCalledTimes(1);
     expect(mockUpdate).toHaveBeenLastCalledWith(LayerModule.LASER_10W_DIODE);
-    expect(mockOn).toBeCalledTimes(1);
+    expect(mockOn).toHaveBeenCalledTimes(1);
     expect(mockOn).toHaveBeenLastCalledWith('canvas-change', expect.any(Function));
     expect(mockOff).not.toBeCalled();
     unmount();
-    expect(mockOff).toBeCalledTimes(1);
+    expect(mockOff).toHaveBeenCalledTimes(1);
     expect(mockOff).toHaveBeenLastCalledWith('canvas-change', expect.any(Function));
   });
 
@@ -191,9 +189,9 @@ describe('test ModuleBlock', () => {
       </ConfigPanelContext.Provider>,
     );
 
-    expect(mockUpdate).toBeCalledTimes(1);
+    expect(mockUpdate).toHaveBeenCalledTimes(1);
     expect(mockUpdate).toHaveBeenLastCalledWith(LayerModule.LASER_10W_DIODE);
-    expect(mockOn).toBeCalledTimes(1);
+    expect(mockOn).toHaveBeenCalledTimes(1);
     fireEvent.mouseDown(baseElement.querySelector('.ant-select-selector'));
 
     const mockElem = {};
@@ -204,41 +202,41 @@ describe('test ModuleBlock', () => {
       .mockReturnValueOnce([{ name: 'config1', power: 78, repeat: 79, speed: 77 }]);
     mockGetData.mockReturnValueOnce('config1');
     fireEvent.click(getByText('20W Diode Laser'));
-    expect(mockGetData).toBeCalledTimes(1);
+    expect(mockGetData).toHaveBeenCalledTimes(1);
     expect(mockGetData).toHaveBeenNthCalledWith(1, mockElem, 'configName');
-    expect(mockBatchCommand).toBeCalledTimes(1);
+    expect(mockBatchCommand).toHaveBeenCalledTimes(1);
     expect(mockBatchCommand).lastCalledWith('Change layer module');
-    expect(mockGetLayerElementByName).toBeCalledTimes(1);
+    expect(mockGetLayerElementByName).toHaveBeenCalledTimes(1);
     expect(mockGetLayerElementByName).toHaveBeenNthCalledWith(1, 'layer1');
-    expect(mockGetPresetsList).toBeCalledTimes(2);
+    expect(mockGetPresetsList).toHaveBeenCalledTimes(2);
     expect(mockGetPresetsList).toHaveBeenNthCalledWith(1, 'ado1', LayerModule.LASER_10W_DIODE);
     expect(mockGetPresetsList).toHaveBeenNthCalledWith(2, 'ado1', LayerModule.LASER_20W_DIODE);
-    expect(mockWriteDataLayer).toBeCalledTimes(1);
+    expect(mockWriteDataLayer).toHaveBeenCalledTimes(1);
     expect(mockWriteDataLayer).toHaveBeenNthCalledWith(1, mockElem, 'module', LayerModule.LASER_20W_DIODE, {
       batchCmd,
     });
-    expect(mockApplyPreset).toBeCalledTimes(1);
+    expect(mockApplyPreset).toHaveBeenCalledTimes(1);
     expect(mockApplyPreset).toHaveBeenNthCalledWith(
       1,
       mockElem,
       { name: 'config1', power: 78, repeat: 79, speed: 77 },
       { batchCmd },
     );
-    expect(mockToggleFullColorLayer).toBeCalledTimes(1);
+    expect(mockToggleFullColorLayer).toHaveBeenCalledTimes(1);
     expect(mockToggleFullColorLayer).toHaveBeenNthCalledWith(1, mockElem, { val: false });
-    expect(batchCmd.addSubCommand).toBeCalledTimes(1);
-    expect(mockInitState).toBeCalledTimes(1);
+    expect(batchCmd.addSubCommand).toHaveBeenCalledTimes(1);
+    expect(mockInitState).toHaveBeenCalledTimes(1);
     expect(mockInitState).toHaveBeenNthCalledWith(1, ['layer1']);
-    expect(mockUpdateLayerPanel).toBeCalledTimes(1);
-    expect(mockTogglePresprayArea).toBeCalledTimes(1);
-    expect(mockAddCommandToHistory).toBeCalledTimes(1);
+    expect(mockUpdateLayerPanel).toHaveBeenCalledTimes(1);
+    expect(mockTogglePresprayArea).toHaveBeenCalledTimes(1);
+    expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
     expect(mockAddCommandToHistory).toHaveBeenNthCalledWith(1, batchCmd);
     expect(baseElement).toMatchSnapshot();
 
     batchCmd.onAfter();
-    expect(mockInitState).toBeCalledTimes(2);
-    expect(mockUpdateLayerPanel).toBeCalledTimes(2);
-    expect(mockTogglePresprayArea).toBeCalledTimes(2);
+    expect(mockInitState).toHaveBeenCalledTimes(2);
+    expect(mockUpdateLayerPanel).toHaveBeenCalledTimes(2);
+    expect(mockTogglePresprayArea).toHaveBeenCalledTimes(2);
     expect(mockDispatch).not.toBeCalled();
   });
 
@@ -256,9 +254,9 @@ describe('test ModuleBlock', () => {
       </ConfigPanelContext.Provider>,
     );
 
-    expect(mockUpdate).toBeCalledTimes(1);
+    expect(mockUpdate).toHaveBeenCalledTimes(1);
     expect(mockUpdate).toHaveBeenLastCalledWith(LayerModule.LASER_10W_DIODE);
-    expect(mockOn).toBeCalledTimes(1);
+    expect(mockOn).toHaveBeenCalledTimes(1);
     fireEvent.mouseDown(baseElement.querySelector('.ant-select-selector'));
 
     const mockElem = {};
@@ -270,34 +268,34 @@ describe('test ModuleBlock', () => {
     mockGetPresetsList.mockReturnValue(mockPresetList);
     mockGetData.mockReturnValueOnce('config1');
     fireEvent.click(getByText('20W Diode Laser'));
-    expect(mockGetData).toBeCalledTimes(1);
+    expect(mockGetData).toHaveBeenCalledTimes(1);
     expect(mockGetData).toHaveBeenNthCalledWith(1, mockElem, 'configName');
-    expect(mockBatchCommand).toBeCalledTimes(1);
+    expect(mockBatchCommand).toHaveBeenCalledTimes(1);
     expect(mockBatchCommand).lastCalledWith('Change layer module');
-    expect(mockGetLayerElementByName).toBeCalledTimes(1);
+    expect(mockGetLayerElementByName).toHaveBeenCalledTimes(1);
     expect(mockGetLayerElementByName).toHaveBeenNthCalledWith(1, 'layer1');
-    expect(mockGetPresetsList).toBeCalledTimes(2);
+    expect(mockGetPresetsList).toHaveBeenCalledTimes(2);
     expect(mockGetPresetsList).toHaveBeenNthCalledWith(1, 'ado1', LayerModule.LASER_10W_DIODE);
     expect(mockGetPresetsList).toHaveBeenNthCalledWith(2, 'ado1', LayerModule.LASER_20W_DIODE);
-    expect(mockWriteDataLayer).toBeCalledTimes(1);
+    expect(mockWriteDataLayer).toHaveBeenCalledTimes(1);
     expect(mockWriteDataLayer).toHaveBeenNthCalledWith(1, mockElem, 'module', LayerModule.LASER_20W_DIODE, {
       batchCmd,
     });
     expect(mockApplyPreset).not.toBeCalled();
-    expect(mockToggleFullColorLayer).toBeCalledTimes(1);
+    expect(mockToggleFullColorLayer).toHaveBeenCalledTimes(1);
     expect(mockToggleFullColorLayer).toHaveBeenNthCalledWith(1, mockElem, { val: false });
-    expect(batchCmd.addSubCommand).toBeCalledTimes(1);
-    expect(mockInitState).toBeCalledTimes(1);
+    expect(batchCmd.addSubCommand).toHaveBeenCalledTimes(1);
+    expect(mockInitState).toHaveBeenCalledTimes(1);
     expect(mockInitState).toHaveBeenNthCalledWith(1, ['layer1']);
-    expect(mockUpdateLayerPanel).toBeCalledTimes(1);
-    expect(mockTogglePresprayArea).toBeCalledTimes(1);
-    expect(mockAddCommandToHistory).toBeCalledTimes(1);
+    expect(mockUpdateLayerPanel).toHaveBeenCalledTimes(1);
+    expect(mockTogglePresprayArea).toHaveBeenCalledTimes(1);
+    expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
     expect(mockAddCommandToHistory).toHaveBeenNthCalledWith(1, batchCmd);
 
     batchCmd.onAfter();
-    expect(mockInitState).toBeCalledTimes(2);
-    expect(mockUpdateLayerPanel).toBeCalledTimes(2);
-    expect(mockTogglePresprayArea).toBeCalledTimes(2);
+    expect(mockInitState).toHaveBeenCalledTimes(2);
+    expect(mockUpdateLayerPanel).toHaveBeenCalledTimes(2);
+    expect(mockTogglePresprayArea).toHaveBeenCalledTimes(2);
     expect(mockDispatch).not.toBeCalled();
   });
 
@@ -315,9 +313,9 @@ describe('test ModuleBlock', () => {
       </ConfigPanelContext.Provider>,
     );
 
-    expect(mockUpdate).toBeCalledTimes(1);
+    expect(mockUpdate).toHaveBeenCalledTimes(1);
     expect(mockUpdate).toHaveBeenLastCalledWith(LayerModule.LASER_10W_DIODE);
-    expect(mockOn).toBeCalledTimes(1);
+    expect(mockOn).toHaveBeenCalledTimes(1);
     fireEvent.mouseDown(baseElement.querySelector('.ant-select-selector'));
 
     const mockElem = {};
@@ -328,16 +326,16 @@ describe('test ModuleBlock', () => {
       .mockReturnValueOnce([]);
     mockGetData.mockReturnValueOnce('config1');
     fireEvent.click(getByText('20W Diode Laser'));
-    expect(mockGetData).toBeCalledTimes(1);
+    expect(mockGetData).toHaveBeenCalledTimes(1);
     expect(mockGetData).toHaveBeenNthCalledWith(1, mockElem, 'configName');
-    expect(mockBatchCommand).toBeCalledTimes(1);
+    expect(mockBatchCommand).toHaveBeenCalledTimes(1);
     expect(mockBatchCommand).lastCalledWith('Change layer module');
-    expect(mockGetLayerElementByName).toBeCalledTimes(1);
+    expect(mockGetLayerElementByName).toHaveBeenCalledTimes(1);
     expect(mockGetLayerElementByName).toHaveBeenNthCalledWith(1, 'layer1');
-    expect(mockGetPresetsList).toBeCalledTimes(2);
+    expect(mockGetPresetsList).toHaveBeenCalledTimes(2);
     expect(mockGetPresetsList).toHaveBeenNthCalledWith(1, 'ado1', LayerModule.LASER_10W_DIODE);
     expect(mockGetPresetsList).toHaveBeenNthCalledWith(2, 'ado1', LayerModule.LASER_20W_DIODE);
-    expect(mockWriteDataLayer).toBeCalledTimes(2);
+    expect(mockWriteDataLayer).toHaveBeenCalledTimes(2);
     expect(mockWriteDataLayer).toHaveBeenNthCalledWith(1, mockElem, 'module', LayerModule.LASER_20W_DIODE, {
       batchCmd,
     });
@@ -345,20 +343,20 @@ describe('test ModuleBlock', () => {
       batchCmd,
     });
     expect(mockApplyPreset).not.toBeCalled();
-    expect(mockToggleFullColorLayer).toBeCalledTimes(1);
+    expect(mockToggleFullColorLayer).toHaveBeenCalledTimes(1);
     expect(mockToggleFullColorLayer).toHaveBeenNthCalledWith(1, mockElem, { val: false });
-    expect(batchCmd.addSubCommand).toBeCalledTimes(1);
-    expect(mockInitState).toBeCalledTimes(1);
+    expect(batchCmd.addSubCommand).toHaveBeenCalledTimes(1);
+    expect(mockInitState).toHaveBeenCalledTimes(1);
     expect(mockInitState).toHaveBeenNthCalledWith(1, ['layer1']);
-    expect(mockUpdateLayerPanel).toBeCalledTimes(1);
-    expect(mockTogglePresprayArea).toBeCalledTimes(1);
-    expect(mockAddCommandToHistory).toBeCalledTimes(1);
+    expect(mockUpdateLayerPanel).toHaveBeenCalledTimes(1);
+    expect(mockTogglePresprayArea).toHaveBeenCalledTimes(1);
+    expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
     expect(mockAddCommandToHistory).toHaveBeenNthCalledWith(1, batchCmd);
 
     batchCmd.onAfter();
-    expect(mockInitState).toBeCalledTimes(2);
-    expect(mockUpdateLayerPanel).toBeCalledTimes(2);
-    expect(mockTogglePresprayArea).toBeCalledTimes(2);
+    expect(mockInitState).toHaveBeenCalledTimes(2);
+    expect(mockUpdateLayerPanel).toHaveBeenCalledTimes(2);
+    expect(mockTogglePresprayArea).toHaveBeenCalledTimes(2);
     expect(mockDispatch).not.toBeCalled();
   });
 
@@ -376,9 +374,9 @@ describe('test ModuleBlock', () => {
       </ConfigPanelContext.Provider>,
     );
 
-    expect(mockUpdate).toBeCalledTimes(1);
+    expect(mockUpdate).toHaveBeenCalledTimes(1);
     expect(mockUpdate).toHaveBeenLastCalledWith(LayerModule.LASER_10W_DIODE);
-    expect(mockOn).toBeCalledTimes(1);
+    expect(mockOn).toHaveBeenCalledTimes(1);
     fireEvent.mouseDown(baseElement.querySelector('.ant-select-selector'));
 
     const mockElem1 = { name: 'layer1' };
@@ -387,15 +385,15 @@ describe('test ModuleBlock', () => {
     mockGetLayerElementByName.mockReturnValueOnce(mockElem1).mockReturnValue(mockElem2);
     mockGetPresetsList.mockReturnValueOnce([]);
     fireEvent.click(getByText('Printing'));
-    expect(mockPopUp).toBeCalledTimes(1);
+    expect(mockPopUp).toHaveBeenCalledTimes(1);
     await mockPopUp.mock.calls[0][0].onConfirm();
-    expect(mockGetLayerElementByName).toBeCalledTimes(2);
+    expect(mockGetLayerElementByName).toHaveBeenCalledTimes(2);
     expect(mockGetLayerElementByName).toHaveBeenNthCalledWith(1, 'layer1');
     expect(mockGetLayerElementByName).toHaveBeenNthCalledWith(2, 'layer2');
-    expect(mockGetData).toBeCalledTimes(2);
+    expect(mockGetData).toHaveBeenCalledTimes(2);
     expect(mockGetData).toHaveBeenNthCalledWith(1, mockElem1, 'configName');
     expect(mockGetData).toHaveBeenNthCalledWith(2, mockElem2, 'configName');
-    expect(mockBatchCommand).toBeCalledTimes(1);
+    expect(mockBatchCommand).toHaveBeenCalledTimes(1);
     expect(mockBatchCommand).lastCalledWith('Change layer module');
     expect(mockWriteDataLayer).toHaveBeenNthCalledWith(1, mockElem1, 'module', LayerModule.PRINTER, { batchCmd });
     expect(mockWriteDataLayer).toHaveBeenNthCalledWith(2, mockElem1, 'configName', undefined, {
@@ -415,22 +413,22 @@ describe('test ModuleBlock', () => {
     });
     expect(mockWriteDataLayer).toHaveBeenNthCalledWith(9, mockElem2, 'ink', 3, { batchCmd });
     expect(mockWriteDataLayer).toHaveBeenNthCalledWith(10, mockElem2, 'multipass', 3, { batchCmd });
-    expect(mockToggleFullColorLayer).toBeCalledTimes(2);
+    expect(mockToggleFullColorLayer).toHaveBeenCalledTimes(2);
     expect(mockToggleFullColorLayer).toHaveBeenNthCalledWith(1, mockElem1, { val: true });
     expect(mockToggleFullColorLayer).toHaveBeenNthCalledWith(2, mockElem2, { val: true });
-    expect(batchCmd.addSubCommand).toBeCalledTimes(2);
-    expect(mockInitState).toBeCalledTimes(1);
+    expect(batchCmd.addSubCommand).toHaveBeenCalledTimes(2);
+    expect(mockInitState).toHaveBeenCalledTimes(1);
     expect(mockInitState).toHaveBeenNthCalledWith(1, ['layer1', 'layer2']);
-    expect(mockUpdateLayerPanel).toBeCalledTimes(1);
-    expect(mockTogglePresprayArea).toBeCalledTimes(1);
-    expect(mockAddCommandToHistory).toBeCalledTimes(1);
+    expect(mockUpdateLayerPanel).toHaveBeenCalledTimes(1);
+    expect(mockTogglePresprayArea).toHaveBeenCalledTimes(1);
+    expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
     expect(mockAddCommandToHistory).toHaveBeenNthCalledWith(1, batchCmd);
     expect(baseElement).toMatchSnapshot();
 
     batchCmd.onAfter();
-    expect(mockInitState).toBeCalledTimes(2);
-    expect(mockUpdateLayerPanel).toBeCalledTimes(2);
-    expect(mockTogglePresprayArea).toBeCalledTimes(2);
+    expect(mockInitState).toHaveBeenCalledTimes(2);
+    expect(mockUpdateLayerPanel).toHaveBeenCalledTimes(2);
+    expect(mockTogglePresprayArea).toHaveBeenCalledTimes(2);
     expect(mockDispatch).not.toBeCalled();
   });
 });

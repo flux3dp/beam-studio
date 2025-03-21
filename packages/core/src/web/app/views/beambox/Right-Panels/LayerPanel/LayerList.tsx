@@ -5,7 +5,7 @@ import type { Action, SwipeActionRef } from 'antd-mobile/es/components/swipe-act
 import classNames from 'classnames';
 
 import constant from '@core/app/actions/beambox/constant';
-import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
 import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
@@ -108,14 +108,15 @@ const LayerList = ({
       const isFullColor = layer.getAttribute('data-fullcolor') === '1';
       const isSelected = selectedLayers.includes(layerName);
       const isVis = drawing.getLayerVisibility(layerName);
-      const module = getData(layer, 'module');
+      const layerModule = getData(layer, 'module');
+      const isPrinting = printingModules.has(layerModule);
       const isRef = getData(layer, 'ref');
       let moduleIcon = null;
 
       if (isRef) {
         moduleIcon = <LayerPanelIcons.Ref />;
       } else if (shouldShowModuleIcon) {
-        moduleIcon = module === LayerModule.PRINTER ? <LayerPanelIcons.Print /> : <LayerPanelIcons.Laser />;
+        moduleIcon = isPrinting ? <LayerPanelIcons.Print /> : <LayerPanelIcons.Laser />;
       }
 
       const layerItem = (
@@ -153,7 +154,7 @@ const LayerList = ({
                 <LayerPanelIcons.FullColor />
               ) : (
                 <ColorPicker
-                  forPrinter={module === LayerModule.PRINTER}
+                  forPrinter={isPrinting}
                   initColor={drawing.getLayerColor(layerName)}
                   onChange={(color) => onLayerColorChange(layerName, color)}
                   triggerSize="small"

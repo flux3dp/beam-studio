@@ -2,7 +2,8 @@ import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import alertConstants from '@core/app/constants/alert-constants';
-import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import type LayerModule from '@core/app/constants/layer-module/layer-modules';
+import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import history from '@core/app/svgedit/history/history';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
 import clipboard from '@core/app/svgedit/operations/clipboard';
@@ -353,25 +354,24 @@ export const setLayersLock = (layerNames: string[], isLocked: boolean): IBatchCo
 
 export const showMergeAlert = async (baseLayerName: string, layerNames: string[]): Promise<boolean> => {
   const targetModule: LayerModule = getData(getLayerElementByName(baseLayerName), 'module');
-  const modules = new Set<LayerModule>(
-    layerNames.map((layerName) => getData(getLayerElementByName(layerName), 'module')),
-  );
+  const isPrinting = printingModules.has(targetModule);
+  const shouldShowAlert = layerNames.some((layerName) => {
+    const module = getData(getLayerElementByName(layerName), 'module');
 
-  modules.add(targetModule);
+    return printingModules.has(module) !== isPrinting;
+  });
 
-  if (modules.has(LayerModule.PRINTER) && modules.size > 1) {
+  if (shouldShowAlert) {
     return new Promise<boolean>((resolve) => {
       alertCaller.popUp({
         buttonType: alertConstants.CONFIRM_CANCEL,
-        caption:
-          targetModule === LayerModule.PRINTER
-            ? LANG.notification.mergeLaserLayerToPrintingLayerTitle
-            : LANG.notification.mergePrintingLayerToLaserLayerTitle,
+        caption: isPrinting
+          ? LANG.notification.mergeLaserLayerToPrintingLayerTitle
+          : LANG.notification.mergePrintingLayerToLaserLayerTitle,
         id: 'merge-layers',
-        message:
-          targetModule === LayerModule.PRINTER
-            ? LANG.notification.mergeLaserLayerToPrintingLayerMsg
-            : LANG.notification.mergePrintingLayerToLaserLayerMsg,
+        message: isPrinting
+          ? LANG.notification.mergeLaserLayerToPrintingLayerMsg
+          : LANG.notification.mergePrintingLayerToLaserLayerMsg,
         messageIcon: 'notice',
         onCancel: () => resolve(false),
         onConfirm: () => resolve(true),
@@ -604,7 +604,7 @@ export const getLayerByName = (layerName: string): SVGGElement => {
 };
 
 export const moveToOtherLayer = (destLayer: string, callback: () => void, showAlert = true): void => {
-  const moveToLayer = (ok) => {
+  const moveToLayer = (ok: boolean) => {
     if (!ok) {
       return;
     }
@@ -616,8 +616,8 @@ export const moveToOtherLayer = (destLayer: string, callback: () => void, showAl
   };
   const selectedElements = svgCanvas.getSelectedElems();
   const origLayer = getObjectLayer(selectedElements[0])?.elem;
-  const isPrintingLayer = origLayer && getData(origLayer, 'module') === LayerModule.PRINTER;
-  const isDestPrintingLayer = getData(getLayerByName(destLayer), 'module') === LayerModule.PRINTER;
+  const isPrintingLayer = origLayer && printingModules.has(getData(origLayer, 'module'));
+  const isDestPrintingLayer = printingModules.has(getData(getLayerByName(destLayer), 'module'));
   const moveOutFromFullColorLayer = isPrintingLayer && !isDestPrintingLayer;
   const moveInToFullColorLayer = !isPrintingLayer && isDestPrintingLayer;
 
@@ -656,7 +656,7 @@ export const removeDefaultLayerIfEmpty = (): ICommand | null => {
 
   if (layer && layerCount > 1) {
     const childNodes = Array.from(layer.childNodes);
-    const isEmpty = childNodes.every((node: Element) => ['filter', 'title'].includes(node.tagName));
+    const isEmpty = childNodes.every((node) => ['filter', 'title'].includes((node as Element).tagName));
 
     if (isEmpty) {
       console.log('default layer is empty. delete it!');

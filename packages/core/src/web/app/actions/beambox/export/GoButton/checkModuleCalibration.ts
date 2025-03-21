@@ -3,7 +3,7 @@ import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { showAdorCalibration } from '@core/app/components/dialogs/camera/AdorCalibration';
 import CalibrationType from '@core/app/components/dialogs/camera/AdorCalibration/calibrationTypes';
 import alertConstants from '@core/app/constants/alert-constants';
-import LayerModules, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
+import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
 import type { AlertConfigKey } from '@core/helpers/api/alert-config';
 import alertConfig from '@core/helpers/api/alert-config';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
@@ -17,13 +17,13 @@ export const checkModuleCalibration = async (device: IDeviceInfo, lang: ILang): 
   }
 
   const moduleOffsets = BeamboxPreference.read('module-offsets');
-  const getLayers = (module: LayerModules) =>
+  const getLayers = (module: LayerModule) =>
     document.querySelectorAll(
       `#svgcontent > g.layer[data-module="${module}"]:not([display="none"]):not([data-repeat="0"])`,
     );
 
   const checkCalibration = async (
-    layerModule: LayerModules,
+    layerModule: LayerModule,
     calibrationType: CalibrationType,
     alertTitle: string,
     alertMsg: string,
@@ -54,14 +54,14 @@ export const checkModuleCalibration = async (device: IDeviceInfo, lang: ILang): 
   const langNotification = lang.layer_module.notification;
 
   await checkCalibration(
-    LayerModules.PRINTER,
+    LayerModule.PRINTER,
     CalibrationType.PRINTER_HEAD,
     langNotification.performPrintingCaliTitle,
     langNotification.performPrintingCaliMsg,
   );
 
   await checkCalibration(
-    LayerModules.LASER_1064,
+    LayerModule.LASER_1064,
     CalibrationType.IR_LASER,
     langNotification.performIRCaliTitle,
     langNotification.performIRCaliMsg,

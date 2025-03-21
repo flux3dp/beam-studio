@@ -1,37 +1,28 @@
+import history from '@core/app/svgedit/history/history';
+import undoManager from '@core/app/svgedit/history/undoManager';
 import updateLayerColor from '@core/helpers/color/updateLayerColor';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-let svgCanvas: ISVGCanvas;
+import { getData, writeDataLayer } from '../layer-config-helper';
 
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
-
-const toggleFullColorLayer = (layer: Element, opts: { val?: boolean } = {}): IBatchCommand => {
+const toggleFullColorLayer = (layer: Element, opts: { val?: boolean } = {}): IBatchCommand | null => {
   const { val } = opts;
-  const origVal = layer.getAttribute('data-fullcolor') === '1';
+  const origVal = getData(layer, 'fullcolor');
   const targetVal = val ?? !origVal;
 
   console.log('Toggle Full Color Layer', layer, 'from', origVal, 'to', targetVal);
 
-  if (targetVal === origVal) {
-    return null;
-  }
+  if (targetVal === origVal) return null;
 
-  svgCanvas.undoMgr.beginUndoableChange('data-fullcolor', [layer]);
+  const cmd = new history.BatchCommand('Toggle Full Color Layer');
 
-  if (targetVal) {
-    layer.setAttribute('data-fullcolor', '1');
-  } else {
-    layer.removeAttribute('data-fullcolor');
-  }
-
-  const cmd = svgCanvas.undoMgr.finishUndoableChange();
+  writeDataLayer(layer, 'fullcolor', targetVal, { batchCmd: cmd });
 
   updateLayerColor(layer as SVGGElement);
-  cmd.onAfter = () => updateLayerColor(layer as SVGGElement);
+  cmd.onAfter = () => {
+    updateLayerColor(layer as SVGGElement);
+  };
+  undoManager.addCommandToHistory(cmd);
 
   return cmd;
 };

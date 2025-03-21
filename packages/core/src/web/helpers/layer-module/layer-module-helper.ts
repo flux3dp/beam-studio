@@ -19,6 +19,7 @@ const getModulesTranslations = (): { [module: number]: string } => {
     [LayerModule.LASER_20W_DIODE]: t.laser_20w_diode,
     [LayerModule.LASER_1064]: t.laser_2w_infrared,
     [LayerModule.PRINTER]: t.printing,
+    [LayerModule.PRINTER_4C]: `${t.printing} (4C)`,
     [LayerModule.UNKNOWN]: t.unknown,
   };
 };

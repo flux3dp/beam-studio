@@ -1,7 +1,7 @@
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
-import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
 import presprayIconUrl from '@core/app/icons/prespray.svg?url';
 import history from '@core/app/svgedit/history/history';
@@ -23,7 +23,12 @@ const round = (num: number, decimal: number): number => {
 const togglePresprayArea = (): void => {
   const { model } = workareaManager;
   const shouldShow =
-    document.querySelectorAll(`g.layer[data-module="${LayerModule.PRINTER}"]:not([display="none"]`).length > 0;
+    document.querySelectorAll(
+      Array.from(printingModules)
+        .map((module) => `g.layer[data-module="${module}"]:not([display="none"])`)
+        .join(', '),
+    ).length > 0;
+
   const rotaryMode = beamboxPreference.read('rotary_mode');
   const hasJobOrigin = beamboxPreference.read('enable-job-origin') && getAddOnInfo(model).jobOrigin;
 
@@ -35,8 +40,8 @@ const togglePresprayArea = (): void => {
 };
 
 const getPosition = (mm = false): { h: number; w: number; x: number; y: number } => {
-  const pxX = Number.parseInt(presprayAreaBlock?.getAttribute('x'), 10);
-  const pxY = Number.parseInt(presprayAreaBlock?.getAttribute('y'), 10);
+  const pxX = Number.parseInt(presprayAreaBlock?.getAttribute('x')!, 10);
+  const pxY = Number.parseInt(presprayAreaBlock?.getAttribute('y')!, 10);
   const pxW = areaWidth;
   const pxH = areaHeight;
 
@@ -57,7 +62,7 @@ const getPosition = (mm = false): { h: number; w: number; x: number; y: number }
 const generatePresprayArea = (): void => {
   const fixedSizeSvg = document.getElementById('fixedSizeSvg');
 
-  if (!fixedSizeSvg.querySelector('#presprayArea')) {
+  if (!fixedSizeSvg!.querySelector('#presprayArea')) {
     presprayAreaBlock = document.createElementNS(NS.SVG, 'image') as unknown as SVGImageElement;
     presprayAreaBlock.setAttribute('id', 'presprayArea');
     presprayAreaBlock.setAttribute('x', '4000');

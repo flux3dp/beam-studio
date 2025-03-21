@@ -129,7 +129,7 @@ export const objectsColorPresets = [
   '#722ED1',
 ];
 
-export enum PrintingColors {
+export const enum PrintingColors {
   BLACK = '#1D1D1B',
   CYAN = '#009FE3',
   MAGENTA = '#E6007E',

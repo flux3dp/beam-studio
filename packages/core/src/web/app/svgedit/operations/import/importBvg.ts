@@ -262,7 +262,6 @@ export const importBvgString = async (
       toggleFullColorAfterWorkareaChange();
     }
 
-    await symbolMaker.reRenderAllImageSymbol();
     presprayArea.togglePresprayArea();
     LayerPanelController.setSelectedLayers([]);
 
@@ -270,6 +269,8 @@ export const importBvgString = async (
       workareaManager.setWorkarea(workarea);
       workareaManager.resetView();
     }
+
+    await symbolMaker.reRenderAllImageSymbol();
   };
 
   await postImportBvgString();

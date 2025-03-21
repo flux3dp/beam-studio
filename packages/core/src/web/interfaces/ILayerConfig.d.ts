@@ -27,6 +27,7 @@ type LaserConfig = {
 };
 
 type PrintingConfig = {
+  amDensity: number;
   cRatio: number;
   fullcolor: boolean;
   halftone: number;
@@ -45,6 +46,12 @@ type PrintingConfig = {
   yRatio: number;
 };
 
+type Printing4CConfig = {
+  refreshInterval: number; // refresh to cartridge for # blocks
+  refreshWidth: number; // refresh spray width
+  refreshZ: number; // refresh z move
+};
+
 type PromarkConfig = {
   biDirectional: boolean;
   crossHatch: boolean;
@@ -57,9 +64,14 @@ type PromarkConfig = {
   wobbleStep: number;
 };
 
-export type ConfigKeyTypeMap = CommonConfig & LaserConfig & MetaConfig & PrintingConfig & PromarkConfig;
+export type ConfigKeyTypeMap = CommonConfig &
+  LaserConfig &
+  MetaConfig &
+  Printing4CConfig &
+  PrintingConfig &
+  PromarkConfig;
 
-type ConfigKey = keyof ConfigKeyTypeMap;
+export type ConfigKey = keyof ConfigKeyTypeMap;
 
 export interface ConfigItem<T> {
   hasMultiValue?: boolean;

@@ -1,4 +1,5 @@
-import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import type LayerModule from '@core/app/constants/layer-module/layer-modules';
+import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
 import history from '@core/app/svgedit/history/history';
 import rgbToHex from '@core/helpers/color/rgbToHex';
@@ -10,8 +11,9 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import storage from '@core/implementations/storage';
 import type { ICommand } from '@core/interfaces/IHistory';
 import type { ImportType } from '@core/interfaces/ImportSvg';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-let svgCanvas;
+let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
@@ -21,10 +23,10 @@ const checkLayerModule = (layer: Element, targetModule: LayerModule): boolean =>
   if (!layer) return false;
 
   const currentModule = getData(layer, 'module') as LayerModule;
+  const isCurrentPrinting = printingModules.has(currentModule);
+  const isTargetPrinting = printingModules.has(targetModule);
 
-  if (currentModule === LayerModule.PRINTER && targetModule !== LayerModule.PRINTER) return false;
-
-  if (currentModule !== LayerModule.PRINTER && targetModule === LayerModule.PRINTER) return false;
+  if (isCurrentPrinting !== isTargetPrinting) return false;
 
   return true;
 };
@@ -32,7 +34,7 @@ const checkLayerModule = (layer: Element, targetModule: LayerModule): boolean =>
 const appendUseElement = (
   symbol: null | SVGSymbolElement,
   args: { layerName?: string; targetModule?: LayerModule; type: ImportType },
-): {
+): null | {
   command: ICommand;
   element: SVGUseElement;
 } => {
@@ -119,8 +121,9 @@ const appendUseElement = (
         }
       }
 
-      if (targetModule === LayerModule.PRINTER) {
-        writeDataLayer(newLayer, 'module', LayerModule.PRINTER);
+      if (printingModules.has(targetModule)) {
+        // TODO: make sure if the targetModule is always suitable for workarea
+        writeDataLayer(newLayer, 'module', targetModule);
         writeDataLayer(newLayer, 'fullcolor', true);
       }
     } else if (currentDrawing.getCurrentLayer() !== targetLayer) {
@@ -135,7 +138,7 @@ const appendUseElement = (
         layer,
         name: newLayerName,
       } = createLayer(
-        targetModule === LayerModule.PRINTER ? i18n.lang.layer_module.printing : i18n.lang.layer_module.general_laser,
+        printingModules.has(targetModule) ? i18n.lang.layer_module.printing : i18n.lang.layer_module.general_laser,
         { isSubCmd: true },
       );
 
@@ -147,18 +150,19 @@ const appendUseElement = (
       svgCanvas.setCurrentLayer(newLayerName);
     }
 
-    if (targetModule === LayerModule.PRINTER) {
-      writeDataLayer(targetLayer, 'module', LayerModule.PRINTER);
+    if (printingModules.has(targetModule)) {
+      // TODO: make sure if the targetModule is always suitable for workarea
+      writeDataLayer(targetLayer, 'module', targetModule);
       writeDataLayer(targetLayer, 'fullcolor', true);
     }
   }
 
-  currentDrawing.getCurrentLayer().appendChild(useEl);
+  currentDrawing.getCurrentLayer()!.appendChild(useEl);
 
   useEl.setAttribute('data-svg', 'true');
   useEl.setAttribute('data-ratiofixed', 'true');
 
-  if (type === 'nolayer' && targetModule !== LayerModule.PRINTER) {
+  if (type === 'nolayer' && !printingModules.has(targetModule)) {
     useEl.setAttribute('data-wireframe', 'true');
 
     const iterationStack = [symbol] as Element[];
@@ -166,7 +170,7 @@ const appendUseElement = (
     while (iterationStack.length > 0) {
       const node = iterationStack.pop();
 
-      if (node.nodeType === 1 && node.tagName !== 'STYLE') {
+      if (node?.nodeType === 1 && node.tagName !== 'STYLE') {
         if (!['g', 'tspan'].includes(node.tagName)) {
           node.setAttribute('data-wireframe', 'true');
           node.setAttribute('stroke', '#000');

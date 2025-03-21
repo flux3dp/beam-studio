@@ -4,7 +4,7 @@ import presprayArea from '@core/app/actions/canvas/prespray-area';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import progressCaller from '@core/app/actions/progress-caller';
 import alertConstants from '@core/app/constants/alert-constants';
-import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
+import LayerModule, { modelsWithModules, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import history from '@core/app/svgedit/history/history';
 import readBitmapFile from '@core/app/svgedit/operations/import/readBitmapFile';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
@@ -116,6 +116,7 @@ const importSvg = async (
       id,
       options: [
         { label: lang.layer_module.general_laser, value: layerModuleHelper.getDefaultLaserModule() },
+        // TODO: should this check workarea for 4c?
         { label: lang.layer_module.printing, value: LayerModule.PRINTER },
       ],
       title: lang.beambox.popup.select_import_module,
@@ -134,7 +135,7 @@ const importSvg = async (
     importTypeOptions.push({ label: lang.beambox.popup.layer_by_layer, value: 'layer' });
   }
 
-  if (targetModule !== LayerModule.PRINTER) {
+  if (!printingModules.has(targetModule)) {
     importTypeOptions.push({ label: lang.beambox.popup.layer_by_color, value: 'color' });
   }
 
@@ -226,7 +227,7 @@ const importSvg = async (
   const filteredNewElements = newElements.filter(Boolean);
 
   if (outputData.bitmap.size > 0) {
-    const isPrinting = targetModule === LayerModule.PRINTER;
+    const isPrinting = printingModules.has(targetModule);
 
     if (!isPrinting || !filteredNewElements.length) {
       const layerName = lang.beambox.right_panel.layer_panel.layer_bitmap;
@@ -239,7 +240,7 @@ const importSvg = async (
       layerConfigHelper.initLayerConfig(newLayerName);
 
       if (isPrinting) {
-        writeDataLayer(newLayer, 'module', LayerModule.PRINTER);
+        writeDataLayer(newLayer, 'module', targetModule);
         writeDataLayer(newLayer, 'fullcolor', true);
       }
     }

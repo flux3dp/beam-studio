@@ -1,6 +1,6 @@
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { promarkModels } from '@core/app/actions/beambox/constant';
-import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
+import LayerModule, { modelsWithModules, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType } from '@core/app/constants/promark-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
@@ -30,6 +30,7 @@ const getLayerElementByName = (layerName: string) => {
 };
 
 const attributeMap: { [key in ConfigKey]: string } = {
+  amDensity: 'data-amDensity',
   backlash: 'data-backlash',
   biDirectional: 'data-biDirectional',
   ceZSpeedLimit: 'data-ceZSpeedLimit',
@@ -59,6 +60,9 @@ const attributeMap: { [key in ConfigKey]: string } = {
   printingStrength: 'data-printingStrength',
   pulseWidth: 'data-pulseWidth',
   ref: 'data-ref',
+  refreshInterval: 'data-refreshInterval',
+  refreshWidth: 'data-refreshWidth',
+  refreshZ: 'data-refreshZ',
   repeat: 'data-repeat',
   speed: 'data-speed',
   split: 'data-split',
@@ -76,6 +80,7 @@ const attributeMap: { [key in ConfigKey]: string } = {
 export const CUSTOM_PRESET_CONSTANT = ' ';
 
 export const baseConfig: Partial<ConfigKeyTypeMap> = {
+  amDensity: 2,
   backlash: 0,
   biDirectional: true,
   ceZSpeedLimit: 140,
@@ -100,6 +105,9 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   printingSpeed: 60,
   printingStrength: 100,
   pulseWidth: 500,
+  refreshInterval: 20,
+  refreshWidth: 3,
+  refreshZ: 1.5,
   repeat: 1,
   speed: 20,
   uv: 0,
@@ -147,6 +155,36 @@ export const getDefaultConfig = (): Partial<ConfigKeyTypeMap> => {
 };
 
 export const booleanConfig: ConfigKey[] = ['fullcolor', 'ref', 'split', 'biDirectional', 'crossHatch'];
+export const timeRelatedConfigs: Set<ConfigKey> = new Set([
+  'speed',
+  'repeat',
+  // printing
+  'printingSpeed',
+  'multipass',
+  // promark
+  'dottingTime',
+  'fillInterval',
+  'fillAngle',
+  'biDirectional',
+  'crossHatch',
+  'wobbleDiameter',
+  'wobbleStep',
+  // 4c
+  'refreshInterval',
+  'refreshWidth',
+]);
+export const presetRelatedConfigs: Set<ConfigKey> = new Set([
+  'power',
+  'speed',
+  'repeat',
+  'ink',
+  'printingSpeed',
+  'multipass',
+  'zStep',
+  'dottingTime',
+  'frequency',
+  'pulseWidth',
+]);
 
 /**
  * getData from layer element
@@ -164,7 +202,11 @@ export const getData = <T extends ConfigKey>(layer: Element, key: T, applyPrinti
 
   const defaultConfig = getDefaultConfig();
 
-  if (key === 'speed' && applyPrinting && layer.getAttribute(attributeMap.module) === String(LayerModule.PRINTER)) {
+  if (
+    key === 'speed' &&
+    applyPrinting &&
+    printingModules.has(Number.parseInt(layer.getAttribute(attributeMap.module) ?? '', 10))
+  ) {
     key = 'printingSpeed' as T;
     attr = attributeMap.printingSpeed;
   }
@@ -203,7 +245,7 @@ export const writeDataLayer = <T extends ConfigKey>(
   if (
     key === 'speed' &&
     opts?.applyPrinting &&
-    layer.getAttribute(attributeMap.module) === String(LayerModule.PRINTER)
+    printingModules.has(Number.parseInt(layer.getAttribute(attributeMap.module) ?? '', 10))
   ) {
     attr = attributeMap.printingSpeed;
   }
@@ -485,7 +527,7 @@ export const getConfigKeys = (module: LayerModule): ConfigKey[] => {
     return promarkConfigKeys;
   }
 
-  if (module === LayerModule.PRINTER) {
+  if (printingModules.has(module)) {
     return printerConfigKeys;
   }
 
@@ -530,7 +572,7 @@ export const applyPreset = (
   const workarea: WorkAreaModel = BeamboxPreference.read('workarea');
   const { maxSpeed, minSpeed } = getWorkarea(workarea);
   const { applyName = true, batchCmd } = opts;
-  const { module } = preset;
+  const { module = LayerModule.LASER_UNIVERSAL } = preset;
   const keys = getConfigKeys(module);
   const defaultConfig = getDefaultConfig();
 
@@ -551,7 +593,7 @@ export const applyPreset = (
     }
 
     writeDataLayer(layer, key, value, {
-      applyPrinting: module === LayerModule.PRINTER,
+      applyPrinting: printingModules.has(module),
       batchCmd,
     });
   }

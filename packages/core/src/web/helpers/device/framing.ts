@@ -505,7 +505,7 @@ class FramingTaskManager extends EventEmitter {
         this.lowPower = settingValue * 10; // mapping 0~100 to 0~1000
       } else if (headType === 0) {
         warningMessage = t.headtype_none + t.install_correct_headtype;
-      } else if ([LayerModule.LASER_1064, LayerModule.PRINTER].includes(headType)) {
+      } else if (LayerModule[headType]) {
         warningMessage = t.headtype_mismatch + t.install_correct_headtype;
       } else {
         warningMessage = t.headtype_unknown + t.install_correct_headtype;

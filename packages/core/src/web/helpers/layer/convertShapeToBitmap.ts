@@ -2,7 +2,7 @@
  * Convert shape to bitmap for printing
  * using for single-color printing layer only
  */
-import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
 import updateImageDisplay from '@core/helpers/image/updateImageDisplay';
 
@@ -19,8 +19,8 @@ import layerToImage from './layerToImage';
 const convertShapeToBitmap = async (): Promise<() => void> => {
   const allLayerNames = getAllLayerNames();
   const promises = [];
-  const newImages = [];
-  const elementsToKeep = [];
+  const newImages: SVGImageElement[] = [];
+  const elementsToKeep: Array<{ elem: Element; nextSibling: Node | null; parentNode: Node | null }> = [];
   // clean element unrelated to image
   const selector = ['g', 'image', 'title', 'filter', 'clipPath', 'clipPath > *']
     .map((tagName) => `:not(${tagName})`)
@@ -30,7 +30,7 @@ const convertShapeToBitmap = async (): Promise<() => void> => {
     const layerName = allLayerNames[i];
     const layer = getLayerElementByName(layerName);
 
-    if (!getData(layer, 'fullcolor') && getData(layer, 'module') === LayerModule.PRINTER) {
+    if (!getData(layer, 'fullcolor') && printingModules.has(getData(layer, 'module'))) {
       // eslint-disable-next-line no-async-promise-executor
       const promise = new Promise<void>(async (resolve) => {
         const { bbox, rgbBlob: blob } = await layerToImage(layer as SVGGElement, {
@@ -80,9 +80,9 @@ const convertShapeToBitmap = async (): Promise<() => void> => {
     newImages.forEach((image) => image.remove());
     elementsToKeep.forEach(({ elem, nextSibling, parentNode }) => {
       if (nextSibling) {
-        parentNode.insertBefore(elem, nextSibling);
+        parentNode!.insertBefore(elem, nextSibling);
       } else {
-        parentNode.appendChild(elem);
+        parentNode!.appendChild(elem);
       }
     });
   };
