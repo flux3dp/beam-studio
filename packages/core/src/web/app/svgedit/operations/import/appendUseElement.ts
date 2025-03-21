@@ -122,7 +122,7 @@ const appendUseElement = (
       }
 
       if (printingModules.has(targetModule)) {
-        // TODO: make sure if the targetModule is always sutiable for workarea
+        // TODO: make sure if the targetModule is always suitable for workarea
         writeDataLayer(newLayer, 'module', targetModule);
         writeDataLayer(newLayer, 'fullcolor', true);
       }
