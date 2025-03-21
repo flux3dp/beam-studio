@@ -77,9 +77,11 @@ const NumberBlock = ({
     return null;
   }
 
-  const handleChange = (value: number) => {
+  const handleChange = (newVal: number) => {
+    const noHistory = value > max || value < min;
+
     dispatch({
-      payload: { configName: isPresetRelated ? CUSTOM_PRESET_CONSTANT : undefined, [key]: value },
+      payload: { configName: isPresetRelated ? CUSTOM_PRESET_CONSTANT : undefined, [key]: newVal },
       type: 'change',
     });
 
@@ -89,14 +91,17 @@ const NumberBlock = ({
       const batchCmd = new history.BatchCommand('Change AM Density');
 
       selectedLayers.forEach((layerName) => {
-        writeData(layerName, key, value, { batchCmd });
+        writeData(layerName, key, newVal, { batchCmd });
 
         if (isPresetRelated) {
           writeData(layerName, 'configName', CUSTOM_PRESET_CONSTANT, { batchCmd });
         }
       });
-      batchCmd.onAfter = initState;
-      undoManager.addCommandToHistory(batchCmd);
+
+      if (!noHistory) {
+        batchCmd.onAfter = initState;
+        undoManager.addCommandToHistory(batchCmd);
+      }
     }
   };
 
