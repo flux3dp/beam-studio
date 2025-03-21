@@ -527,7 +527,7 @@ export const getConfigKeys = (module: LayerModule): ConfigKey[] => {
     return promarkConfigKeys;
   }
 
-  if (module === LayerModule.PRINTER) {
+  if (printingModules.has(module)) {
     return printerConfigKeys;
   }
 
@@ -572,7 +572,7 @@ export const applyPreset = (
   const workarea: WorkAreaModel = BeamboxPreference.read('workarea');
   const { maxSpeed, minSpeed } = getWorkarea(workarea);
   const { applyName = true, batchCmd } = opts;
-  const { module } = preset;
+  const { module = LayerModule.LASER_UNIVERSAL } = preset;
   const keys = getConfigKeys(module);
   const defaultConfig = getDefaultConfig();
 
@@ -593,7 +593,7 @@ export const applyPreset = (
     }
 
     writeDataLayer(layer, key, value, {
-      applyPrinting: module === LayerModule.PRINTER,
+      applyPrinting: printingModules.has(module),
       batchCmd,
     });
   }

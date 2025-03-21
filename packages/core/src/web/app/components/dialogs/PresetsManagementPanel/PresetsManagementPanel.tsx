@@ -186,10 +186,10 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
     preset.hide = !preset.hide;
     setEditingPresets([...editingPresets]);
   };
-  const isPrinting = useMemo(() => displayPreset.module === LayerModule.PRINTER, [displayPreset]);
+  const isPrinting = useMemo(() => printingModules.has(displayPreset.module), [displayPreset]);
 
   const handleDelete = () => {
-    if (selectedPreset.isDefault) {
+    if (!selectedPreset || selectedPreset?.isDefault) {
       return;
     }
 

@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import alertCaller from '@core/app/actions/alert-caller';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import alertConstants from '@core/app/constants/alert-constants';
-import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';
 import { getConfigKeys, writeData } from '@core/helpers/layer/layer-config-helper';
 import presetHelper from '@core/helpers/presets/preset-helper';
@@ -40,8 +40,9 @@ const SaveConfigButton = (): React.JSX.Element => {
     const keys = getConfigKeys(module.value);
     const newConfig: Preset = { name };
 
-    if (module.value === LayerModule.PRINTER) {
-      newConfig.module = LayerModule.PRINTER;
+    if (printingModules.has(module.value)) {
+      // TODO: should Printer & Printer_4C share configs?
+      newConfig.module = module.value;
     }
 
     keys.forEach((key: ConfigKey) => {
@@ -62,7 +63,7 @@ const SaveConfigButton = (): React.JSX.Element => {
 
         dialogCaller.promptDialog({
           caption: lang.dropdown.save,
-          onYes: (name) => handleSave(name.trim()),
+          onYes: (name) => handleSave(name?.trim() ?? ''),
         });
       }}
       type="button"

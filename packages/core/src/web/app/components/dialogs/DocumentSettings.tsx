@@ -268,7 +268,11 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
           origWorkarea !== workarea &&
           modelsWithModules.has(origWorkarea) &&
           !modelsWithModules.has(workarea) &&
-          document.querySelectorAll(`g.layer[data-module="${LayerModule.PRINTER}"]`).length
+          document.querySelectorAll(
+            [LayerModule.PRINTER, LayerModule.PRINTER_4C]
+              .map((module) => `g.layer[data-module="${module}"]`)
+              .join(', '),
+          ).length
         ) {
           const res = await new Promise((resolve) => {
             alertCaller.popUp({
