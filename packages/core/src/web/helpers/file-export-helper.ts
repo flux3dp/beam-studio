@@ -1,5 +1,5 @@
 import jsPDF from 'jspdf';
-import { pipe } from 'remeda';
+import { map, pipe, prop } from 'remeda';
 
 import Alert from '@core/app/actions/alert-caller';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
@@ -139,7 +139,8 @@ const saveToCloud = async (uuid?: string): Promise<boolean> => {
   try {
     const blob = pipe(
       await generateBeamBuffer(),
-      (buffer) => Uint8Array.from(buffer).buffer,
+      Uint8Array.from,
+      prop('buffer'),
       (arrayBuffer) => new Blob([arrayBuffer]),
     );
     const workarea = beamboxPreference.read('workarea');
@@ -326,7 +327,7 @@ const checkNounProjectElements = () => {
 const removeNPElementsWrapper = <T = string>(fn: () => T) => {
   const svgContent = document.getElementById('svgcontent')!;
   const npElements = svgContent.querySelectorAll('[data-np="1"]');
-  const removedElements = [] as Array<{ elem: Element; nextSibling: Element; parentNode: Element }>;
+  const removedElements = Array.of<{ elem: Element; nextSibling: Element; parentNode: Element }>();
 
   for (const elem of npElements) {
     const parentNode = elem.parentNode as Element;
@@ -341,7 +342,7 @@ const removeNPElementsWrapper = <T = string>(fn: () => T) => {
 
   const res = fn();
 
-  for (let i = removedElements.length - 1; i >= 0; i -= 1) {
+  for (let i = removedElements.length - 1; i >= 0; i--) {
     const { elem, nextSibling, parentNode } = removedElements[i];
 
     try {
@@ -474,15 +475,11 @@ export const exportUvExportAsPdf = async (): Promise<void> => {
   svgCanvas.clearSelection();
   svgCanvas.removeUnusedDefs();
 
-  const layers = LayerPanelController.getSelectedLayers().map((layerName) =>
-    getLayerElementByName(layerName),
-  ) as SVGGElement[];
+  const layers = pipe(LayerPanelController.getSelectedLayers(), map(getLayerElementByName)) as SVGGElement[];
   const base64 = await switchSymbolWrapper(() => layersToA4Base64(layers, { dpi: 300, orientation: 'portrait' }));
-  const doc = new jsPDF({ format: 'a4', orientation: 'portrait', unit: 'mm' });
   const defaultFileName = getDefaultFileName();
 
-  doc.addImage(base64, 'PNG', 0, 0, 210, 297);
-  doc.save(defaultFileName);
+  new jsPDF().addImage(base64, 'PNG', 0, 0, 210, 297).save(defaultFileName);
 };
 
 export default {
