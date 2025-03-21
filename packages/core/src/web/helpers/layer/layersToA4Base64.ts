@@ -1,4 +1,5 @@
 import { map, pipe, prop } from 'remeda';
+import { match } from 'ts-pattern';
 
 import constant from '@core/app/actions/beambox/constant';
 import findDefs from '@core/app/svgedit/utils/findDef';
@@ -9,7 +10,13 @@ type Options = {
   orientation?: 'landscape' | 'portrait';
 };
 
-export const layersToA4Base64 = async (layers: SVGGElement[], options?: Options): Promise<string> => {
+type LayerToA4Base64 = {
+  normal: string;
+  varnish: string;
+  white: string;
+};
+
+export const layersToA4Base64 = async (layers: SVGGElement[], options?: Options): Promise<LayerToA4Base64> => {
   const { dpi = 300, orientation = 'portrait' } = options || {};
   const { height, width } = orientation === 'portrait' ? { height: 2970, width: 2100 } : { height: 2100, width: 2970 };
   const ratio = dpi / (constant.dpmm * 25.4);
@@ -40,9 +47,31 @@ export const layersToA4Base64 = async (layers: SVGGElement[], options?: Options)
 
   const canvas = await pipe(
     layers,
-    map(({ cloneNode }) => cloneNode(true) as SVGGElement),
-    getCanvas,
+    (layers) => layers.map((layer) => layer.cloneNode(true) as SVGGElement),
+    (elements) => getCanvas(elements),
   );
 
-  return canvas.toDataURL();
+  const rewriteProcess = (mode: 'Normal' | 'Varnish' | 'White') => {
+    const rewriteCanvas = document.createElement('canvas');
+
+    rewriteCanvas.width = canvasWidth;
+    rewriteCanvas.height = canvasHeight;
+
+    const rewriteCtx = rewriteCanvas.getContext('2d')!;
+
+    rewriteCtx.filter = match(mode)
+      .with('Normal', () => 'none')
+      .with('Varnish', () => 'brightness(0%) invert(1) brightness(87%)')
+      .with('White', () => 'brightness(0%) invert(1) brightness(99%)')
+      .exhaustive();
+    rewriteCtx.drawImage(canvas, 0, 0);
+
+    return rewriteCanvas.toDataURL();
+  };
+
+  return {
+    normal: rewriteProcess('Normal'),
+    varnish: rewriteProcess('Varnish'),
+    white: rewriteProcess('White'),
+  };
 };

@@ -80,6 +80,7 @@ export default {
         const arrBuf = await content.arrayBuffer();
         const buf = Buffer.from(arrBuf);
 
+        // @ts-expect-error it just works
         fs.writeFileSync(targetPath, buf);
       }
 

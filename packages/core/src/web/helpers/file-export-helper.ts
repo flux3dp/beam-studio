@@ -1,3 +1,5 @@
+import path from 'path';
+
 import jsPDF from 'jspdf';
 import { map, pipe, prop } from 'remeda';
 
@@ -476,10 +478,25 @@ export const exportUvExportAsPdf = async (): Promise<void> => {
   svgCanvas.removeUnusedDefs();
 
   const layers = pipe(LayerPanelController.getSelectedLayers(), map(getLayerElementByName)) as SVGGElement[];
-  const base64 = await switchSymbolWrapper(() => layersToA4Base64(layers, { dpi: 300, orientation: 'portrait' }));
-  const defaultFileName = getDefaultFileName();
+  const { normal, varnish, white } = await switchSymbolWrapper(() => layersToA4Base64(layers));
+  const {
+    filePaths: [folderPath],
+  } = await dialog.showOpenDialog({ properties: ['openDirectory'] });
 
-  new jsPDF().addImage(base64, 'PNG', 0, 0, 210, 297).save(defaultFileName);
+  if (!folderPath) return;
+
+  const writePdf = (base64: string, name: string) =>
+    pipe(
+      new jsPDF().addImage(base64, 'PNG', 0, 0, 210, 297),
+      (pdf) => pdf.output('arraybuffer'),
+      (arrayBuffer) => fs.writeStream(path.resolve(folderPath, `${name}.pdf`), 'w', [Buffer.from(arrayBuffer)]),
+    );
+
+  await fs.mkdir(folderPath, true);
+
+  writePdf(normal, 'normal');
+  writePdf(varnish, 'varnish');
+  writePdf(white, 'white');
 };
 
 export default {
