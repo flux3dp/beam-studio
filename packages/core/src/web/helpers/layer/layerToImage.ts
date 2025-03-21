@@ -57,14 +57,10 @@ const layerToImage = async (
         ${element.outerHTML}
       </svg>`;
 
-    console.log(svgString);
-
-    const canvas = await svgStringToCanvas(svgString, canvasWidth, canvasHeight);
-
-    return canvas;
+    return svgStringToCanvas(svgString, canvasWidth, canvasHeight);
   };
   const rgbCanvas = await getCanvas(layerClone);
-  let cmykCanvas: { [key: string]: HTMLCanvasElement } = null;
+  let cmykCanvas: Record<'c' | 'k' | 'm' | 'y', HTMLCanvasElement> | undefined = undefined;
 
   if (isFullColor && cmykLayer.querySelector('image[cmyk="1"]')) {
     const utilWS = getUtilWS();
@@ -74,8 +70,8 @@ const layerToImage = async (
     const kLayer = cmykLayer.cloneNode(true) as SVGGElement;
     const cmykImages = cmykLayer.querySelectorAll('image[cmyk="1"]');
 
-    for (let i = 0; i < cmykImages.length; i += 1) {
-      const base64 = cmykImages[i].getAttribute('origImage') || cmykImages[i].getAttribute('xlink:href');
+    for (let i = 0; i < cmykImages.length; i++) {
+      const base64 = (cmykImages[i].getAttribute('origImage') || cmykImages[i].getAttribute('xlink:href')) as string;
 
       const blob = await (await fetch(base64)).blob();
 
@@ -95,24 +91,24 @@ const layerToImage = async (
     cmykCanvas = { c: cCanvas, k: kCanvas, m: mCanvas, y: yCanvas };
   }
 
-  const rgbCtx = rgbCanvas.getContext('2d', { willReadFrequently: true });
+  const rgbCtx = rgbCanvas.getContext('2d', { willReadFrequently: true })!;
   const { data: rgbData } = rgbCtx.getImageData(0, 0, canvasWidth, canvasHeight);
   const cData = cmykCanvas?.c
     .getContext('2d', { willReadFrequently: true })
-    .getImageData(0, 0, canvasWidth, canvasHeight).data;
+    ?.getImageData(0, 0, canvasWidth, canvasHeight).data!;
   const mData = cmykCanvas?.m
     .getContext('2d', { willReadFrequently: true })
-    .getImageData(0, 0, canvasWidth, canvasHeight).data;
+    ?.getImageData(0, 0, canvasWidth, canvasHeight).data!;
   const yData = cmykCanvas?.y
     .getContext('2d', { willReadFrequently: true })
-    .getImageData(0, 0, canvasWidth, canvasHeight).data;
+    ?.getImageData(0, 0, canvasWidth, canvasHeight).data!;
   const kData = cmykCanvas?.k
     .getContext('2d', { willReadFrequently: true })
-    .getImageData(0, 0, canvasWidth, canvasHeight).data;
+    ?.getImageData(0, 0, canvasWidth, canvasHeight).data!;
   const bounds = { maxX: 0, maxY: 0, minX: canvasWidth, minY: canvasHeight };
 
-  for (let y = 0; y < canvasHeight; y += 1) {
-    for (let x = 0; x < canvasWidth; x += 1) {
+  for (let y = 0; y < canvasHeight; y++) {
+    for (let x = 0; x < canvasWidth; x++) {
       const i = (y * canvasWidth + x) * 4;
       let alpha = rgbData[i + 3];
 
@@ -141,7 +137,7 @@ const layerToImage = async (
   }
 
   if (bounds.minX > bounds.maxX || bounds.minY > bounds.maxY) {
-    return { bbox: { height: 0, width: 0, x: 0, y: 0 }, rgbBlob: null };
+    return { bbox: { height: 0, width: 0, x: 0, y: 0 }, rgbBlob: null } as any;
   }
 
   const bbox = {
@@ -162,7 +158,7 @@ const layerToImage = async (
     outCanvas.width = bbox.width;
     outCanvas.height = bbox.height;
 
-    const outCtx = outCanvas.getContext('2d');
+    const outCtx = outCanvas.getContext('2d')!;
 
     if (!isFullColor) {
       outCtx.filter = 'brightness(0%)';
@@ -171,7 +167,7 @@ const layerToImage = async (
     outCtx.drawImage(canvas, bbox.x, bbox.y, bbox.width, bbox.height, 0, 0, outCanvas.width, outCanvas.height);
 
     return new Promise<Blob>((resolve) => {
-      outCanvas.toBlob((b) => resolve(b));
+      outCanvas.toBlob((b) => resolve(b!));
     });
   };
   const rgbBlob = await generateBlob(rgbCanvas);
@@ -187,7 +183,7 @@ const layerToImage = async (
         m: await generateBlob(cmykCanvas.m),
         y: await generateBlob(cmykCanvas.y),
       }
-    : null;
+    : undefined;
 
   return { bbox: outputBbox, cmykBlob, rgbBlob };
 };

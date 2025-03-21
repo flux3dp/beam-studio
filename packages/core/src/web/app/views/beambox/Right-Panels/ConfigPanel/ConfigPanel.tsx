@@ -7,7 +7,7 @@ import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import { modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
+import { modelsWithoutUvExport, promarkModels } from '@core/app/actions/beambox/constant';
 import diodeBoundaryDrawer from '@core/app/actions/canvas/diode-boundary-drawer';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import dialogCaller from '@core/app/actions/dialog-caller';
@@ -81,24 +81,11 @@ interface Props {
 // TODO: add test
 const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
   const { selectedLayers: initLayers } = useContext(LayerPanelContext);
-  const [selectedLayers, setSelectedLayers] = useState(initLayers);
-  const [state, dispatch] = useReducer(reducer, null, () => getDefaultState());
-
-  useEffect(() => {
-    const drawing = svgCanvas.getCurrentDrawing();
-    const currentLayerName = drawing.getCurrentLayerName()!;
-
-    if (UIType === 'modal') {
-      setSelectedLayers([currentLayerName]);
-    } else {
-      setSelectedLayers(initLayers);
-    }
-
-    dispatch({ payload: { selectedLayer: currentLayerName }, type: 'change' });
-  }, [initLayers, UIType]);
-
-  const forceUpdate = useForceUpdate();
   const lang = useI18n().beambox.right_panel.laser_panel;
+  const workarea = useWorkarea();
+  const forceUpdate = useForceUpdate();
+  const isDevMode = isDev();
+  const [selectedLayers, setSelectedLayers] = useState(initLayers);
   const hiddenOptions = useMemo(
     () => [
       { key: lang.dropdown.parameters, label: lang.dropdown.parameters, value: PARAMETERS_CONSTANT },
@@ -107,9 +94,9 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     ],
     [lang.dropdown.parameters, lang.custom_preset, lang.various_preset],
   );
+  const [state, dispatch] = useReducer(reducer, null, () => getDefaultState());
+  const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
 
-  const workarea = useWorkarea();
-  const isPromark = promarkModels.has(workarea);
   const updateDiodeBoundary = useCallback(() => {
     if (beamboxPreference.read('enable-diode') && getAddOnInfo(workarea).hybridLaser) {
       diodeBoundaryDrawer.show(state.diode.value === 1);
@@ -121,6 +108,16 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
   useEffect(() => {
     updateDiodeBoundary();
   }, [updateDiodeBoundary]);
+
+  useEffect(() => {
+    const drawing = svgCanvas.getCurrentDrawing();
+    const currentLayerName = drawing.getCurrentLayerName()!;
+
+    if (UIType === 'modal') setSelectedLayers([currentLayerName]);
+    else setSelectedLayers(initLayers);
+
+    dispatch({ payload: { selectedLayer: currentLayerName }, type: 'change' });
+  }, [initLayers, UIType]);
 
   useEffect(() => {
     const canvasEvents = eventEmitterFactory.createEventEmitter('canvas');
@@ -171,18 +168,10 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
   const presetList = presetHelper.getPresetsList(workarea, state.module.value);
   const dropdownValue = useMemo(() => {
     const { configName: name, diode, ink, multipass, power, repeat, speed, zStep } = state;
+    const hasMultiValueList = [speed, power, ink, repeat, diode, zStep, name, multipass];
 
     // multi select
-    if (
-      speed.hasMultiValue ||
-      power.hasMultiValue ||
-      ink.hasMultiValue ||
-      repeat.hasMultiValue ||
-      diode.hasMultiValue ||
-      zStep.hasMultiValue ||
-      name.hasMultiValue ||
-      multipass.hasMultiValue
-    ) {
+    if (hasMultiValueList.some((item) => item.hasMultiValue)) {
       return lang.various_preset;
     }
 
@@ -221,22 +210,19 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
 
     const changedKeys = getConfigKeys(module.value);
     const defaultConfig = getDefaultConfig();
-    const payload: { [key: string]: boolean | number | string } = {};
+    const payload: Record<string, boolean | number | string> = {};
 
     payload.configName = value;
 
     const { maxSpeed, minSpeed } = getWorkarea(workarea);
 
-    for (let i = 0; i < changedKeys.length; i += 1) {
-      const key = changedKeys[i];
+    for (const key of changedKeys) {
       let val = preset[key];
 
       if (val === undefined) {
-        if (forcedKeys.includes(key)) {
-          val = defaultConfig[key];
-        } else {
-          continue;
-        }
+        if (!forcedKeys.includes(key)) continue;
+
+        val = defaultConfig[key];
       }
 
       if (key === 'speed') {
@@ -245,11 +231,9 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
 
       payload[key] = val!;
     }
+
     timeEstimationButtonEventEmitter.emit('SET_ESTIMATED_TIME', null);
-    dispatch({
-      payload,
-      type: 'change',
-    });
+    dispatch({ payload, type: 'change' });
 
     if (UIType !== 'modal') {
       const batchCmd = new history.BatchCommand('Change layer preset');
@@ -287,10 +271,8 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     label: e.name,
     value: e.key || e.name,
   })) as Array<{ key: string; label: string; value: string }>;
-
   const displayName = selectedLayers.length === 1 ? selectedLayers[0] : lang.multi_layer;
 
-  const isDevMode = isDev();
   const commonContent = (
     <>
       {isDevMode && module.value === LayerModule.PRINTER && UIType === 'default' && <UVBlock />}
@@ -320,24 +302,31 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
             {sprintf(lang.preset_setting, displayName)}
           </div>
           <ModuleBlock />
-          <div className={styles.container} id="layer-parameters">
-            <div>
-              <ParameterTitle />
-              <div className={styles['preset-dropdown-container']}>
-                <Select
-                  className={styles['preset-dropdown']}
-                  id="laser-config-dropdown"
-                  onChange={handleSelectPresets}
-                  options={[...hiddenOptions.filter((option) => option.value === dropdownValue), ...dropdownOptions]}
-                  placement="bottomRight"
-                  popupMatchSelectWidth={false}
-                  value={dropdownValue}
-                />
+          {module.value !== LayerModule.UV_EXPORT && (
+            <>
+              <div className={styles.container} id="layer-parameters">
+                <div>
+                  <ParameterTitle />
+                  <div className={styles['preset-dropdown-container']}>
+                    <Select
+                      className={styles['preset-dropdown']}
+                      id="laser-config-dropdown"
+                      onChange={handleSelectPresets}
+                      options={[
+                        ...hiddenOptions.filter((option) => option.value === dropdownValue),
+                        ...dropdownOptions,
+                      ]}
+                      placement="bottomRight"
+                      popupMatchSelectWidth={false}
+                      value={dropdownValue}
+                    />
+                  </div>
+                </div>
+                {commonContent}
               </div>
-            </div>
-            {commonContent}
-          </div>
-          <AdvancedBlock type={UIType} />
+              <AdvancedBlock type={UIType} />
+            </>
+          )}
         </div>
       );
     }
@@ -345,28 +334,30 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     if (UIType === 'panel-item') {
       return (
         <>
-          {modelsWithModules.has(workarea) && (
+          {!modelsWithoutUvExport.has(workarea) && (
             <div className={styles['item-group']}>
               <ModuleBlock />
               {isDevMode && module.value === LayerModule.PRINTER && <UVBlock />}
               <ObjectPanelItem.Divider />
             </div>
           )}
-          <div className={styles['item-group']}>
-            <ObjectPanelItem.Select
-              id="laser-config-dropdown"
-              label={lang.presets}
-              onChange={handleSelectPresets as any}
-              options={[...dropdownOptions, ...hiddenOptions.filter((option) => option.value === dropdownValue)]}
-              selected={
-                dropdownOptions.find((option) => option.value === dropdownValue) || {
-                  label: dropdownValue!,
-                  value: dropdownValue!,
+          {module.value !== LayerModule.UV_EXPORT && (
+            <div className={styles['item-group']}>
+              <ObjectPanelItem.Select
+                id="laser-config-dropdown"
+                label={lang.presets}
+                onChange={handleSelectPresets as any}
+                options={[...dropdownOptions, ...hiddenOptions.filter((option) => option.value === dropdownValue)]}
+                selected={
+                  dropdownOptions.find((option) => option.value === dropdownValue) || {
+                    label: dropdownValue!,
+                    value: dropdownValue!,
+                  }
                 }
-              }
-            />
-            {commonContent}
-          </div>
+              />
+              {commonContent}
+            </div>
+          )}
         </>
       );
     }
@@ -383,10 +374,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
         const batchCmd = new history.BatchCommand('Change layer parameter');
 
         selectedLayers.forEach((layerName: string) => {
-          writeData(layerName, 'speed', state.speed.value, {
-            applyPrinting: true,
-            batchCmd,
-          });
+          writeData(layerName, 'speed', state.speed.value, { applyPrinting: true, batchCmd });
           writeData(layerName, 'power', state.power.value, { batchCmd });
           writeData(layerName, 'repeat', state.repeat.value, { batchCmd });
           writeData(layerName, 'zStep', state.zStep.value, { batchCmd });
@@ -426,11 +414,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     }
 
     return (
-      <ConfigProvider
-        theme={{
-          components: { Button: { borderRadius: 100, controlHeight: 30 } },
-        }}
-      >
+      <ConfigProvider theme={{ components: { Button: { borderRadius: 100, controlHeight: 30 } } }}>
         <Modal
           cancelText={i18n.lang.beambox.tool_panels.cancel}
           centered
@@ -462,19 +446,23 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
               </Select>
             </div>
           )}
-          <div className={styles.params}>
-            <ConfigProvider theme={{ components: { Select: { borderRadius: 100, controlHeight: 30 } } }}>
-              <Select
-                className={styles.select}
-                id="laser-config-dropdown"
-                onChange={handleSelectPresets}
-                options={[...dropdownOptions, ...hiddenOptions.filter((option) => option.value === dropdownValue)]}
-                value={dropdownValue}
-              />
-            </ConfigProvider>
-            {commonContent}
-          </div>
-          <AdvancedBlock type={UIType} />
+          {module.value !== LayerModule.UV_EXPORT && (
+            <>
+              <div className={styles.params}>
+                <ConfigProvider theme={{ components: { Select: { borderRadius: 100, controlHeight: 30 } } }}>
+                  <Select
+                    className={styles.select}
+                    id="laser-config-dropdown"
+                    onChange={handleSelectPresets}
+                    options={[...dropdownOptions, ...hiddenOptions.filter((option) => option.value === dropdownValue)]}
+                    value={dropdownValue}
+                  />
+                </ConfigProvider>
+                {commonContent}
+              </div>
+              <AdvancedBlock type={UIType} />
+            </>
+          )}
         </Modal>
       </ConfigProvider>
     );
@@ -482,13 +470,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
 
   return (
     <ConfigPanelContext.Provider
-      value={{
-        dispatch,
-        initState,
-        selectedLayers,
-        simpleMode: !beamboxPreference.read('print-advanced-mode'),
-        state,
-      }}
+      value={{ dispatch, initState, selectedLayers, simpleMode: !beamboxPreference.read('print-advanced-mode'), state }}
     >
       {getContent()}
     </ConfigPanelContext.Provider>
