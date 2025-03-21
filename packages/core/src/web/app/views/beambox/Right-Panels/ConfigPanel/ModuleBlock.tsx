@@ -6,6 +6,7 @@ import presprayArea from '@core/app/actions/canvas/prespray-area';
 import alertConstants from '@core/app/constants/alert-constants';
 import LayerModule, { modelsWithModules, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import history from '@core/app/svgedit/history/history';
+import undoManager from '@core/app/svgedit/history/undoManager';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import Select from '@core/app/widgets/AntdSelect';
@@ -17,19 +18,11 @@ import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColor
 import { applyPreset, baseConfig, getData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { getLayerElementByName } from '@core/helpers/layer/layer-helper';
 import presetHelper from '@core/helpers/presets/preset-helper';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import ConfigPanelContext from './ConfigPanelContext';
 import styles from './ModuleBlock.module.scss';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
 
 const ModuleBlock = (): React.ReactNode => {
   const isMobile = useIsMobile();
@@ -161,7 +154,7 @@ const ModuleBlock = (): React.ReactNode => {
       LayerPanelController.updateLayerPanel();
       presprayArea.togglePresprayArea();
     };
-    svgCanvas.addCommandToHistory(batchCmd);
+    undoManager.addCommandToHistory(batchCmd);
   };
 
   const options = [
