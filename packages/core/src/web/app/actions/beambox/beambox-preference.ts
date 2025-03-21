@@ -66,7 +66,9 @@ export type BeamboxPreference = {
   'reverse-engraving': boolean;
   'rotary-chuck-obj-d': number;
   'rotary-mirror': boolean;
+  'rotary-overlap': number;
   'rotary-scale': number; // extra rotary scale when exporting
+  'rotary-split': number;
   'rotary-type': RotaryType;
   'rotary-y': null | number;
   rotary_mode: boolean;
@@ -137,7 +139,9 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   'reverse-engraving': false,
   'rotary-chuck-obj-d': CHUCK_ROTARY_DIAMETER,
   'rotary-mirror': false,
+  'rotary-overlap': 0.1,
   'rotary-scale': 1,
+  'rotary-split': 5,
   'rotary-type': RotaryType.Roller,
   'rotary-y': null,
   rotary_mode: false,

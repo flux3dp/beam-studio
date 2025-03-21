@@ -29,5 +29,18 @@
       align-items: center;
       gap: 40px;
     }
+
+    .sub-item-title {
+      font-weight: bold;
+      height: 100%;
+    }
+
+    .sub-items {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      grid-auto-rows: minmax(22px, auto);
+      column-gap: 12px;
+      row-gap: 8px;
+    }
   }
 }

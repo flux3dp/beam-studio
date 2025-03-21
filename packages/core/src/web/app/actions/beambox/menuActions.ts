@@ -289,7 +289,7 @@ export default {
       historyUtils.redo();
     }
   },
-  ROTARY_SETUP: showRotarySettings,
+  ROTARY_SETUP: () => showRotarySettings(),
   SAVE_AS: (): Promise<boolean> => FileExportHelper.saveAsFile(),
   SAVE_SCENE: (): Promise<boolean> => FileExportHelper.saveFile(),
   SAVE_TO_CLOUD: (): Promise<boolean> => FileExportHelper.saveToCloud(),

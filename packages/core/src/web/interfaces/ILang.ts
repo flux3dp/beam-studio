@@ -116,7 +116,11 @@ export interface ILang {
       pass_through: string;
       pass_through_height_desc: string;
       rotary_mode: string;
+      rotary_overlap_size: string;
       rotary_scale: string;
+      rotary_split_setting: string;
+      rotary_split_setting_url: string;
+      rotary_split_size: string;
       start_from: string;
       start_position: string;
       start_work_button: string;
@@ -1177,6 +1181,8 @@ export interface ILang {
     hull_desc: string;
     low_laser: string;
     low_laser_desc: string;
+    rotate_axis: string;
+    rotateaxis_desc: string;
     start_task: string;
     start_task_description: string;
   };

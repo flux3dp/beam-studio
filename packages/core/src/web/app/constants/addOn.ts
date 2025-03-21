@@ -27,6 +27,7 @@ export interface AddOnInfo {
     extendWorkarea: boolean;
     mirror: boolean;
     roller: boolean;
+    split?: boolean;
   };
 }
 
@@ -124,10 +125,11 @@ const addOnData: Record<WorkAreaModel, AddOnInfo> = {
   fpm1: {
     lowerFocus: true,
     rotary: {
-      chuck: false,
+      chuck: true,
       extendWorkarea: false,
-      mirror: false,
+      mirror: true,
       roller: true,
+      split: true,
     },
   },
 };
