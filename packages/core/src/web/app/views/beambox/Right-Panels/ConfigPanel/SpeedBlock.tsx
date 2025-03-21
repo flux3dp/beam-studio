@@ -53,7 +53,8 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   );
 
   const { hasMultiValue, value } = state.speed;
-  const module = state.module.value;
+  const layerModule = state.module.value;
+  const isPrinting = useMemo(() => printingModules.has(layerModule), [layerModule]);
 
   const {
     calculateUnit: fakeUnit,
@@ -148,8 +149,8 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   };
 
   const sliderOptions = useMemo(
-    () => (simpleMode && printingModules.has(module) ? configOptions.getPrintingSpeedOptions(lang) : undefined),
-    [simpleMode, module, lang],
+    () => (simpleMode && isPrinting ? configOptions.getPrintingSpeedOptions(lang) : undefined),
+    [simpleMode, isPrinting, lang],
   );
 
   const content = (
@@ -181,9 +182,7 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
         min={minValue}
         onChange={handleChange}
         options={sliderOptions}
-        speedLimit={
-          !printingModules.has(module) && (type === 'modal' ? doLayersContainsVector(selectedLayers) : hasVector)
-        }
+        speedLimit={!isPrinting && (type === 'modal' ? doLayersContainsVector(selectedLayers) : hasVector)}
         step={0.1}
         unit={displayUnit}
         value={value}
