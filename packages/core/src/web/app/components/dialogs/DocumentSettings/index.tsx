@@ -31,6 +31,7 @@ import storage from '@core/implementations/storage';
 import type { PromarkInfo } from '@core/interfaces/Promark';
 
 import styles from './index.module.scss';
+import RotaryScaleSelect from './RotaryScaleSelect';
 
 const workareaOptions = [
   { label: 'beamo', value: 'fbm1' },
@@ -499,25 +500,12 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
             </div>
           )}
           {addOnInfo.rotary && rotaryMode && (
-            <div className={classNames(styles.row, styles.full, styles.select)}>
-              <div className={styles.title}>
-                <label htmlFor="rotary_scale">{tDocu.rotary_scale}</label>
-              </div>
-              <div className={styles.control}>
-                <Select
-                  className={styles.select}
-                  id="rotary_scale"
-                  onChange={(val) => setRotaryScale(val)}
-                  options={[
-                    { label: 0.5, value: 0.5 },
-                    { label: 1.0, value: 1.0 },
-                    { label: 1.5, value: 1.5 },
-                    { label: 2.0, value: 2.0 },
-                  ]}
-                  value={rotaryScale}
-                />
-              </div>
-            </div>
+            <RotaryScaleSelect
+              id="rotary_scale"
+              onChange={setRotaryScale}
+              title={tDocu.rotary_scale}
+              value={rotaryScale}
+            />
           )}
           {addOnInfo.autoFocus && (
             <div className={styles.row}>
