@@ -93,6 +93,7 @@ const lang: ILang = {
     document_panel: {
       add_on: 'Add-ons',
       auto_feeder: 'Auto Feeder',
+      auto_feeder_scale: 'Auto Feeder Scale',
       borderless_mode: 'Open Bottom',
       current_position: 'Current Position',
       disable: 'Disable',
@@ -118,7 +119,7 @@ const lang: ILang = {
       pass_through: 'Passthrough',
       pass_through_height_desc: 'Enter the length of the object to extend work area.',
       rotary_mode: 'Rotary',
-      rotary_scale: 'Rotation Scale',
+      scale: 'Scale',
       start_from: 'Start From',
       start_position: 'Start Position',
       start_work_button: 'Execute Button',
@@ -1656,6 +1657,7 @@ Machines > ‘Promark Name’ > Promark Settings`,
   rotary_settings: {
     circumference: 'Circumference',
     object_diameter: 'Object Diameter',
+    rotary_scale: 'Rotation Scale',
     type: 'Type',
   },
   select_device: {

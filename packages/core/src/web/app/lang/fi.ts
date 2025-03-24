@@ -93,6 +93,7 @@ const lang: ILang = {
     document_panel: {
       add_on: 'Lisäosat',
       auto_feeder: 'Automaattinen syöttölaite',
+      auto_feeder_scale: 'Automaattisen syöttölaitteen mittakaava',
       borderless_mode: 'Avoin pohja',
       current_position: 'Nykyinen Sijainti',
       disable: 'Poista käytöstä',
@@ -118,7 +119,7 @@ const lang: ILang = {
       pass_through: 'Läpivienti',
       pass_through_height_desc: 'Syötä objektin pituus työalueen laajentamiseksi.',
       rotary_mode: 'Pyörivä',
-      rotary_scale: 'Pyörimisen mittakaava',
+      scale: 'Mittakaava',
       start_from: 'Aloita Mistä',
       start_position: 'Aloituspaikka',
       start_work_button: 'Suorita Painike',
@@ -1656,6 +1657,7 @@ const lang: ILang = {
   rotary_settings: {
     circumference: 'Ympärysmitta',
     object_diameter: 'Kohteen Halkaisija',
+    rotary_scale: 'Pyörimisen mittakaava',
     type: 'Tyyppi',
   },
   select_device: {

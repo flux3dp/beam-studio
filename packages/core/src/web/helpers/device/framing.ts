@@ -488,7 +488,11 @@ class FramingTaskManager extends EventEmitter {
         y = reverseEngraving ? workareaObj.height : 0;
       }
 
-      this.rotaryInfo = { useAAxis: this.isFcodeV2, y, yRatio: this.addOnInfo.autoFeeder.rotaryRatio };
+      this.rotaryInfo = {
+        useAAxis: this.isFcodeV2,
+        y,
+        yRatio: this.addOnInfo.autoFeeder.rotaryRatio * beamboxPreference.read('auto-feeder-scale'),
+      };
     }
   };
 

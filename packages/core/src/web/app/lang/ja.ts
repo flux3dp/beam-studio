@@ -93,6 +93,7 @@ const lang: ILang = {
     document_panel: {
       add_on: 'アドオン',
       auto_feeder: 'オートフィーダー',
+      auto_feeder_scale: 'オートフィーダースケール',
       borderless_mode: 'ボーダーレスモード',
       current_position: '現在の位置',
       disable: '無効',
@@ -118,7 +119,7 @@ const lang: ILang = {
       pass_through: 'パススルー',
       pass_through_height_desc: '作業エリアを拡張するためにオブジェクトの長さを入力してください。',
       rotary_mode: 'ロータリー',
-      rotary_scale: '回転スケール',
+      scale: 'スケール',
       start_from: '開始位置',
       start_position: '開始位置',
       start_work_button: '実行ボタン',
@@ -1656,6 +1657,7 @@ const lang: ILang = {
   rotary_settings: {
     circumference: '円周',
     object_diameter: 'オブジェクトの直径',
+    rotary_scale: 'ロータリースケール',
     type: '種類',
   },
   select_device: {

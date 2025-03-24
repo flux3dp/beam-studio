@@ -93,6 +93,7 @@ const lang: ILang = {
     document_panel: {
       add_on: 'Modules complémentaires',
       auto_feeder: 'Chargeur automatique',
+      auto_feeder_scale: 'Échelle du chargeur automatique',
       borderless_mode: 'Mode sans bordure',
       current_position: 'Position Actuelle',
       disable: 'Désactiver',
@@ -118,7 +119,7 @@ const lang: ILang = {
       pass_through: 'Passage direct',
       pass_through_height_desc: "Entrez la longueur de l'objet pour étendre la zone de travail.",
       rotary_mode: 'Mode rotatif',
-      rotary_scale: 'Échelle de rotation',
+      scale: 'Échelle',
       start_from: 'Commencer À Partir de',
       start_position: 'Position de Départ',
       start_work_button: 'Bouton Exécuter',
@@ -1656,6 +1657,7 @@ const lang: ILang = {
   rotary_settings: {
     circumference: 'Circonférence',
     object_diameter: "Diamètre de l'Objet",
+    rotary_scale: 'Échelle de rotation',
     type: 'Type',
   },
   select_device: {

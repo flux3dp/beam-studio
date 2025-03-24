@@ -93,6 +93,7 @@ const lang: ILang = {
     document_panel: {
       add_on: '애드온',
       auto_feeder: '자동 공급 장치',
+      auto_feeder_scale: '자동 공급기 스케일',
       borderless_mode: '열린 바닥',
       current_position: '현재 위치',
       disable: '비활성화',
@@ -118,7 +119,7 @@ const lang: ILang = {
       pass_through: '패스스루',
       pass_through_height_desc: '작업 영역을 확장하기 위해 객체의 길이를 입력하십시오.',
       rotary_mode: '로터리',
-      rotary_scale: '회전 스케일',
+      scale: '스케일',
       start_from: '에서 시작',
       start_position: '시작 위치',
       start_work_button: '실행 버튼',
@@ -1656,6 +1657,7 @@ const lang: ILang = {
   rotary_settings: {
     circumference: '원주',
     object_diameter: '물체 직경',
+    rotary_scale: '회전 스케일',
     type: '유형',
   },
   select_device: {

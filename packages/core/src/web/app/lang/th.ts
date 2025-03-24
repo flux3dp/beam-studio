@@ -93,6 +93,7 @@ const lang: ILang = {
     document_panel: {
       add_on: 'เพิ่มเติม',
       auto_feeder: 'ตัวป้อนอัตโนมัติ',
+      auto_feeder_scale: 'มาตราส่วนตัวป้อนอัตโนมัติ',
       borderless_mode: 'โหมดเปิดก้น',
       current_position: 'ตำแหน่งปัจจุบัน',
       disable: 'ปิดใช้งาน',
@@ -118,7 +119,7 @@ const lang: ILang = {
       pass_through: 'ผ่าน',
       pass_through_height_desc: 'ป้อนความยาวของวัตถุเพื่อขยายพื้นที่การทำงาน',
       rotary_mode: 'โหมดหมุน',
-      rotary_scale: 'มาตราส่วนการหมุน',
+      scale: 'มาตราส่วน',
       start_from: 'เริ่มจาก',
       start_position: 'ตำแหน่งเริ่มต้น',
       start_work_button: 'ปุ่มดำเนินการ',
@@ -1656,6 +1657,7 @@ const lang: ILang = {
   rotary_settings: {
     circumference: 'เส้นรอบวง',
     object_diameter: 'เส้นผ่านศูนย์กลางของวัตถุ',
+    rotary_scale: 'มาตราส่วนการหมุน',
     type: 'ประเภท',
   },
   select_device: {

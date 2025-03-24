@@ -93,6 +93,7 @@ const lang: ILang = {
     document_panel: {
       add_on: 'Tillägg',
       auto_feeder: 'Automatisk matning',
+      auto_feeder_scale: 'Skala för automatisk matning',
       borderless_mode: 'Öppen botten',
       current_position: 'Nuvarande Position',
       disable: 'Inaktivera',
@@ -118,7 +119,7 @@ const lang: ILang = {
       pass_through: 'Genomgång',
       pass_through_height_desc: 'Ange längden på objektet för att utöka arbetsområdet.',
       rotary_mode: 'Roterande',
-      rotary_scale: 'Rotationsskala',
+      scale: 'Skala',
       start_from: 'Starta Från',
       start_position: 'Startposition',
       start_work_button: 'Kör Knapp',
@@ -1656,6 +1657,7 @@ const lang: ILang = {
   rotary_settings: {
     circumference: 'Omkrets',
     object_diameter: 'Objekt Diameter',
+    rotary_scale: 'Rotationsskala',
     type: 'Typ',
   },
   select_device: {

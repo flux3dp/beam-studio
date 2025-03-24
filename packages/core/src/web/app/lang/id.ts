@@ -93,6 +93,7 @@ const lang: ILang = {
     document_panel: {
       add_on: 'Add-on',
       auto_feeder: 'Pengumpan otomatis',
+      auto_feeder_scale: 'Skala Pengumpan Otomatis',
       borderless_mode: 'Buka Bawah',
       current_position: 'Posisi Saat Ini',
       disable: 'Nonaktifkan',
@@ -118,7 +119,7 @@ const lang: ILang = {
       pass_through: 'Lewat langsung',
       pass_through_height_desc: 'Masukkan panjang objek untuk memperluas area kerja.',
       rotary_mode: 'Putar',
-      rotary_scale: 'Skala Rotasi',
+      scale: 'Skala',
       start_from: 'Mulai Dari',
       start_position: 'Posisi Awal',
       start_work_button: 'Tombol Eksekusi',
@@ -1656,6 +1657,7 @@ const lang: ILang = {
   rotary_settings: {
     circumference: 'Keliling',
     object_diameter: 'Diameter Objek',
+    rotary_scale: 'Skala Rotasi',
     type: 'Jenis',
   },
   select_device: {

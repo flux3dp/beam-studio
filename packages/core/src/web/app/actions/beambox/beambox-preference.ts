@@ -13,6 +13,7 @@ export type BeamboxPreference = {
   'anti-aliasing': boolean;
   'auto-feeder': boolean;
   'auto-feeder-height'?: number;
+  'auto-feeder-scale': number;
   'auto-switch-tab': boolean;
   auto_align: boolean;
   blade_precut: boolean;
@@ -89,6 +90,7 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   'af-offset': 0,
   'anti-aliasing': true,
   'auto-feeder': false,
+  'auto-feeder-scale': 1,
   'auto-switch-tab': false,
   auto_align: true,
   blade_precut: false,

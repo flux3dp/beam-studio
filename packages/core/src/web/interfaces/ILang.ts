@@ -91,6 +91,7 @@ export interface ILang {
     document_panel: {
       add_on: string;
       auto_feeder: string;
+      auto_feeder_scale: string;
       borderless_mode: string;
       current_position: string;
       disable: string;
@@ -116,7 +117,7 @@ export interface ILang {
       pass_through: string;
       pass_through_height_desc: string;
       rotary_mode: string;
-      rotary_scale: string;
+      scale: string;
       start_from: string;
       start_position: string;
       start_work_button: string;
@@ -1648,6 +1649,7 @@ export interface ILang {
     // roller: string;
     // chuck: string;
     object_diameter: string;
+    rotary_scale: string;
     type: string;
   };
   select_device: {

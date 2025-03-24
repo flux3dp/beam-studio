@@ -30,7 +30,8 @@ import browser from '@core/implementations/browser';
 import storage from '@core/implementations/storage';
 import type { PromarkInfo } from '@core/interfaces/Promark';
 
-import styles from './DocumentSettings.module.scss';
+import AddOnSelect from './AddOnSelect';
+import styles from './index.module.scss';
 
 const workareaOptions = [
   { label: 'beamo', value: 'fbm1' },
@@ -86,7 +87,6 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const addOnInfo = useMemo(() => getAddOnInfo(workarea), [workarea]);
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
   const [rotaryMode, setRotaryMode] = useState(BeamboxPreference.read('rotary_mode'));
-  const [rotaryScale, setRotaryScale] = useState(BeamboxPreference.read('rotary-scale'));
   const [enableStartButton, setEnableStartButton] = useState(BeamboxPreference.read('promark-start-button'));
   const [shouldFrame, setShouldFrame] = useState(BeamboxPreference.read('frame-before-start'));
   const [enableJobOrigin, setEnableJobOrigin] = useState(BeamboxPreference.read('enable-job-origin'));
@@ -98,6 +98,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const [enableAutofocus, setEnableAutofocus] = useState(!!BeamboxPreference.read('enable-autofocus'));
   const [passThrough, setPassThrough] = useState(BeamboxPreference.read('pass-through'));
   const [autoFeeder, setAutoFeeder] = useState(BeamboxPreference.read('auto-feeder'));
+  const [autoFeederScale, setAutoFeederScale] = useState(BeamboxPreference.read('auto-feeder-scale'));
 
   const isInch = useMemo(() => storage.get('default-units') === 'inches', []);
   const workareaObj = useMemo(() => getWorkarea(workarea), [workarea]);
@@ -189,7 +190,6 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     }
 
     BeamboxPreference.write('rotary_mode', rotaryMode);
-    BeamboxPreference.write('rotary-scale', rotaryScale);
 
     if (rotaryMode) {
       if (addOnInfo.rotary?.extendWorkarea) BeamboxPreference.write('extend-rotary-workarea', extendRotaryWorkarea);
@@ -214,6 +214,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
       const newVal = Math.min(addOnInfo.autoFeeder!.maxHeight, Math.max(minHeight, autoFeederHeight));
 
       BeamboxPreference.write('auto-feeder-height', newVal);
+      BeamboxPreference.write('auto-feeder-scale', autoFeederScale);
     }
 
     BeamboxPreference.write('enable-job-origin', enableJobOrigin);
@@ -587,61 +588,51 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
             </div>
           )}
           {showAutoFeeder && (
-            <div className={classNames(styles.row, styles.full)}>
-              <div className={styles.title}>
-                <label htmlFor="auto_feeder">{tDocu.auto_feeder}</label>
-              </div>
-              <div className={styles.control}>
-                <Switch
-                  checked={addOnInfo.autoFeeder && autoFeeder}
-                  className={styles.switch}
-                  disabled={!addOnInfo.autoFeeder || isCurveEngraving}
-                  id="auto_feeder"
-                  onChange={setAutoFeeder}
-                />
-                {isCurveEngraving && renderWarningIcon(tGlobal.mode_conflict)}
-                {autoFeeder && (
-                  <UnitInput
-                    addonAfter={isInch ? 'in' : 'mm'}
-                    className={styles.input}
-                    clipValue
-                    id="auto_feeder_height"
-                    isInch={isInch}
-                    max={addOnInfo.autoFeeder!.maxHeight}
-                    min={minHeight}
-                    onChange={(val) => {
-                      if (val) {
-                        setAutoFeederHeight(val);
-                      }
-                    }}
-                    precision={isInch ? 2 : 0}
-                    size="small"
-                    value={autoFeederHeight}
+            <>
+              <div className={classNames(styles.row, styles.full)}>
+                <div className={styles.title}>
+                  <label htmlFor="auto_feeder">{tDocu.auto_feeder}</label>
+                </div>
+                <div className={styles.control}>
+                  <Switch
+                    checked={addOnInfo.autoFeeder && autoFeeder}
+                    className={styles.switch}
+                    disabled={!addOnInfo.autoFeeder || isCurveEngraving}
+                    id="auto_feeder"
+                    onChange={setAutoFeeder}
                   />
-                )}
+                  {isCurveEngraving && renderWarningIcon(tGlobal.mode_conflict)}
+                  {autoFeeder && (
+                    <UnitInput
+                      addonAfter={isInch ? 'in' : 'mm'}
+                      className={styles.input}
+                      clipValue
+                      id="auto_feeder_height"
+                      isInch={isInch}
+                      max={addOnInfo.autoFeeder!.maxHeight}
+                      min={minHeight}
+                      onChange={(val) => {
+                        if (val) {
+                          setAutoFeederHeight(val);
+                        }
+                      }}
+                      precision={isInch ? 2 : 0}
+                      size="small"
+                      value={autoFeederHeight}
+                    />
+                  )}
+                </div>
               </div>
-            </div>
-          )}
-          {(addOnInfo.rotary || showAutoFeeder) && (
-            <div className={classNames(styles.row, styles.full, styles.select)}>
-              <div className={styles.title}>
-                <label htmlFor="rotary_scale">{tDocu.rotary_scale}</label>
-              </div>
-              <div className={styles.control}>
-                <Select
-                  className={styles.select}
-                  id="rotary_scale"
-                  onChange={(val) => setRotaryScale(val)}
-                  options={[
-                    { label: 0.5, value: 0.5 },
-                    { label: 1.0, value: 1.0 },
-                    { label: 1.5, value: 1.5 },
-                    { label: 2.0, value: 2.0 },
-                  ]}
-                  value={rotaryScale}
+              {autoFeeder && (
+                <AddOnSelect
+                  id="auto_feeder_scale"
+                  onChange={setAutoFeederScale}
+                  title={tDocu.scale}
+                  tooltip={tDocu.auto_feeder_scale}
+                  value={autoFeederScale}
                 />
-              </div>
-            </div>
+              )}
+            </>
           )}
         </div>
       </div>

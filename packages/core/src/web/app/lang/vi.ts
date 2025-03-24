@@ -93,6 +93,7 @@ const lang: ILang = {
     document_panel: {
       add_on: 'Phụ kiện',
       auto_feeder: 'Bộ nạp tự động',
+      auto_feeder_scale: 'Tỷ lệ Bộ nạp Tự động',
       borderless_mode: 'Mở đáy',
       current_position: 'Vị Trí Hiện Tại',
       disable: 'Tắt',
@@ -118,7 +119,7 @@ const lang: ILang = {
       pass_through: 'Truyền qua',
       pass_through_height_desc: 'Nhập chiều dài của đối tượng để mở rộng khu vực làm việc.',
       rotary_mode: 'Chế độ xoay',
-      rotary_scale: 'Tỷ lệ xoay',
+      scale: 'Tỷ lệ',
       start_from: 'Bắt Đầu Từ',
       start_position: 'Vị Trí Bắt Đầu',
       start_work_button: 'Nút Thực Hiện',
@@ -1656,6 +1657,7 @@ const lang: ILang = {
   rotary_settings: {
     circumference: 'Chu Vi',
     object_diameter: 'Đường Kính Vật Thể',
+    rotary_scale: 'Tỷ lệ xoay',
     type: 'loại',
   },
   select_device: {
