@@ -166,7 +166,7 @@ const RotarySettings = ({ onClose }: Props): React.JSX.Element => {
             />
           </div>
           <div className={styles.title}>
-            <label htmlFor="scale">{tDocu.rotary_scale}</label>
+            <label htmlFor="scale">{t.rotary_scale}</label>
           </div>
           <Select
             className={styles.select}

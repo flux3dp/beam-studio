@@ -119,7 +119,7 @@ const lang: ILang = {
       pass_through: 'Gennemgang',
       pass_through_height_desc: 'Indtast længden på objektet for at udvide arbejdsområdet.',
       rotary_mode: 'Roterende',
-      rotary_scale: 'Rotationsskala',
+      scale: 'Skala',
       start_from: 'Start Fra',
       start_position: 'Startposition',
       start_work_button: 'Udfør Knap',
@@ -1657,6 +1657,7 @@ const lang: ILang = {
   rotary_settings: {
     circumference: 'Omkreds',
     object_diameter: 'Objekt Diameter',
+    rotary_scale: 'Rotationsskala',
     type: 'Type',
   },
   select_device: {

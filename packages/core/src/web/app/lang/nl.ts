@@ -119,7 +119,7 @@ const lang: ILang = {
       pass_through: 'Doorgang',
       pass_through_height_desc: 'Voer de lengte van het object in om het werkgebied uit te breiden.',
       rotary_mode: 'Roterend',
-      rotary_scale: 'Rotatieschaal',
+      scale: 'Schaal',
       start_from: 'Start Vanaf',
       start_position: 'Startpositie',
       start_work_button: 'Uitvoeren Knop',
@@ -1657,6 +1657,7 @@ const lang: ILang = {
   rotary_settings: {
     circumference: 'Omtrek',
     object_diameter: 'Objectdiameter',
+    rotary_scale: 'Rotatieschaal',
     type: 'Type',
   },
   select_device: {

@@ -119,7 +119,7 @@ const lang: ILang = {
       pass_through: 'Passaggio',
       pass_through_height_desc: "Inserisci la lunghezza dell'oggetto per estendere l'area di lavoro.",
       rotary_mode: 'Rotativo',
-      rotary_scale: 'Scala di rotazione',
+      scale: 'Scala',
       start_from: 'Inizia Da',
       start_position: 'Posizione di Partenza',
       start_work_button: 'Pulsante Esegui',
@@ -1657,6 +1657,7 @@ const lang: ILang = {
   rotary_settings: {
     circumference: 'Circonferenza',
     object_diameter: "Diametro dell'Oggetto",
+    rotary_scale: 'Scala di rotazione',
     type: 'Tipo',
   },
   select_device: {

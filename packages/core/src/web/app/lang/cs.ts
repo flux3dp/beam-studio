@@ -119,7 +119,7 @@ const lang: ILang = {
       pass_through: 'Průchod',
       pass_through_height_desc: 'Zadat délku objektu k rozšíření pracovní oblasti.',
       rotary_mode: 'Rotační',
-      rotary_scale: 'Měřítko rotace',
+      scale: 'Měřítko',
       start_from: 'Začít od',
       start_position: 'Počáteční pozice',
       start_work_button: 'Tlačítko Spustit',
@@ -1657,6 +1657,7 @@ const lang: ILang = {
   rotary_settings: {
     circumference: 'Obvod',
     object_diameter: 'Průměr objektu',
+    rotary_scale: 'Měřítko rotace',
     type: 'Typ',
   },
   select_device: {

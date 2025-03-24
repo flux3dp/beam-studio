@@ -119,7 +119,7 @@ const lang: ILang = {
       pass_through: 'Przepust',
       pass_through_height_desc: 'Wprowadź długość obiektu, aby rozszerzyć obszar roboczy.',
       rotary_mode: 'Moduł obrotowy',
-      rotary_scale: 'Skala obrotu',
+      scale: 'Skala',
       start_from: 'Rozpocznij Od',
       start_position: 'Pozycja Startowa',
       start_work_button: 'Przycisk Wykonaj',
@@ -1657,6 +1657,7 @@ const lang: ILang = {
   rotary_settings: {
     circumference: 'Obwód',
     object_diameter: 'Średnica Obiektu',
+    rotary_scale: 'Skala obrotu',
     type: 'Typ',
   },
   select_device: {

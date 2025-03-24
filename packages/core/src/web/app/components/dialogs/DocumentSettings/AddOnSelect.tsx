@@ -1,8 +1,11 @@
 import React from 'react';
 
+import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Tooltip } from 'antd';
 import classNames from 'classnames';
 
 import Select from '@core/app/widgets/AntdSelect';
+import browser from '@core/implementations/browser';
 
 import styles from './index.module.scss';
 
@@ -10,10 +13,12 @@ interface Props {
   id?: string;
   onChange: (val: number) => void;
   title: string;
+  tooltip?: string;
+  tooltipLink?: string;
   value: number;
 }
 
-const RotaryScaleSelect = ({ id, onChange, title, value }: Props): React.ReactNode => {
+const AddOnSelect = ({ id, onChange, title, tooltip, tooltipLink, value }: Props): React.ReactNode => {
   return (
     <div className={classNames(styles.row, styles.full, styles.select)}>
       <div className={styles.title}>
@@ -32,9 +37,17 @@ const RotaryScaleSelect = ({ id, onChange, title, value }: Props): React.ReactNo
           ]}
           value={value}
         />
+        {tooltip && (
+          <Tooltip title={tooltip}>
+            <QuestionCircleOutlined
+              className={styles.hint}
+              onClick={tooltipLink ? () => browser.open(tooltipLink) : undefined}
+            />
+          </Tooltip>
+        )}
       </div>
     </div>
   );
 };
 
-export default RotaryScaleSelect;
+export default AddOnSelect;

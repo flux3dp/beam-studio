@@ -93,7 +93,7 @@ const lang: ILang = {
     document_panel: {
       add_on: '扩充模组',
       auto_feeder: '自动送料',
-      auto_feeder_scale: '自动送料倍例',
+      auto_feeder_scale: '自动送料倍率',
       borderless_mode: '开盖模式',
       current_position: '当前的位置',
       disable: '关闭',
@@ -119,7 +119,7 @@ const lang: ILang = {
       pass_through: '广域雕刻',
       pass_through_height_desc: '输入物体长度以扩展工作区域。',
       rotary_mode: '旋转轴',
-      rotary_scale: '旋转比例',
+      scale: '倍率',
       start_from: '开始位置',
       start_position: '开始位置',
       start_work_button: '开始工作按钮',
@@ -1657,6 +1657,7 @@ const lang: ILang = {
   rotary_settings: {
     circumference: '周长',
     object_diameter: '对象直径',
+    rotary_scale: '旋转倍率',
     type: '类型',
   },
   select_device: {

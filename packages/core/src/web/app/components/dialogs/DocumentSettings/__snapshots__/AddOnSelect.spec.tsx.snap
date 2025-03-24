@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`test RotaryScaleSelect should render correctly 1`] = `
+exports[`test AddOnSelect should render correctly 1`] = `
 <div>
   <div
     class="row full select"

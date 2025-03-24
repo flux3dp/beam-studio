@@ -119,7 +119,7 @@ const lang: ILang = {
       pass_through: 'Truyền qua',
       pass_through_height_desc: 'Nhập chiều dài của đối tượng để mở rộng khu vực làm việc.',
       rotary_mode: 'Chế độ xoay',
-      rotary_scale: 'Tỷ lệ xoay',
+      scale: 'Tỷ lệ',
       start_from: 'Bắt Đầu Từ',
       start_position: 'Vị Trí Bắt Đầu',
       start_work_button: 'Nút Thực Hiện',
@@ -1657,6 +1657,7 @@ const lang: ILang = {
   rotary_settings: {
     circumference: 'Chu Vi',
     object_diameter: 'Đường Kính Vật Thể',
+    rotary_scale: 'Tỷ lệ xoay',
     type: 'loại',
   },
   select_device: {

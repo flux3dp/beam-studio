@@ -144,8 +144,6 @@ describe('test DocumentSettings', () => {
     act(() => fireEvent.mouseDown(baseElement.querySelector('input#workareaSelect')));
     fireEvent.click(baseElement.querySelector('.rc-virtual-list [title="beamo"]'));
     fireEvent.click(baseElement.querySelector('button#rotary_mode'));
-    act(() => fireEvent.mouseDown(baseElement.querySelector('input#rotary_scale')));
-    fireEvent.click(baseElement.querySelector('.rc-virtual-list [title="2"]'));
     fireEvent.click(baseElement.querySelector('button#borderless_mode'));
     fireEvent.click(baseElement.querySelector('button#autofocus-module'));
     fireEvent.click(baseElement.querySelector('button#diode_module'));
@@ -179,20 +177,19 @@ describe('test DocumentSettings', () => {
 
     onConfirm();
     await new Promise((resolve) => setTimeout(resolve, 0));
-    expect(mockBeamboxPreferenceWrite).toHaveBeenCalledTimes(13);
+    expect(mockBeamboxPreferenceWrite).toHaveBeenCalledTimes(12);
     expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(1, 'engrave_dpi', 'high');
     expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(2, 'borderless', true);
     expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(3, 'enable-diode', true);
     expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(4, 'enable-autofocus', true);
     expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(5, 'rotary_mode', false);
-    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(6, 'rotary-scale', 2);
-    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(7, 'pass-through', true);
-    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(8, 'pass-through-height', 500);
-    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(9, 'auto-feeder', false);
-    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(10, 'auto-feeder-height', 320);
-    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(11, 'auto-feeder-scale', 1);
-    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(12, 'enable-job-origin', true);
-    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(13, 'job-origin', 1);
+    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(6, 'pass-through', true);
+    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(7, 'pass-through-height', 500);
+    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(8, 'auto-feeder', false);
+    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(9, 'auto-feeder-height', 320);
+    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(10, 'auto-feeder-scale', 1);
+    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(11, 'enable-job-origin', true);
+    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(12, 'job-origin', 1);
     expect(mockChangeWorkarea).toHaveBeenCalledTimes(1);
     expect(mockChangeWorkarea).toHaveBeenLastCalledWith('fbm1', { toggleModule: true });
     expect(mockToggleDisplay).toHaveBeenCalledTimes(1);
@@ -232,7 +229,7 @@ describe('test DocumentSettings', () => {
 
     expect(baseElement).toMatchSnapshot();
     fireEvent.click(getByText('Save'));
-    expect(mockBeamboxPreferenceWrite).toHaveBeenCalledTimes(13);
+    expect(mockBeamboxPreferenceWrite).toHaveBeenCalledTimes(12);
     expect(mockBeamboxPreferenceWrite).toHaveBeenCalledWith('customized-dimension', {
       fpm1: { height: 110, width: 110 },
     });

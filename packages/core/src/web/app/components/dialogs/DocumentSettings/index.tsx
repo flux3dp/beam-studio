@@ -30,8 +30,8 @@ import browser from '@core/implementations/browser';
 import storage from '@core/implementations/storage';
 import type { PromarkInfo } from '@core/interfaces/Promark';
 
+import AddOnSelect from './AddOnSelect';
 import styles from './index.module.scss';
-import RotaryScaleSelect from './RotaryScaleSelect';
 
 const workareaOptions = [
   { label: 'beamo', value: 'fbm1' },
@@ -87,7 +87,6 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const addOnInfo = useMemo(() => getAddOnInfo(workarea), [workarea]);
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
   const [rotaryMode, setRotaryMode] = useState(BeamboxPreference.read('rotary_mode'));
-  const [rotaryScale, setRotaryScale] = useState(BeamboxPreference.read('rotary-scale'));
   const [enableStartButton, setEnableStartButton] = useState(BeamboxPreference.read('promark-start-button'));
   const [shouldFrame, setShouldFrame] = useState(BeamboxPreference.read('frame-before-start'));
   const [enableJobOrigin, setEnableJobOrigin] = useState(BeamboxPreference.read('enable-job-origin'));
@@ -191,7 +190,6 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     }
 
     BeamboxPreference.write('rotary_mode', rotaryMode);
-    BeamboxPreference.write('rotary-scale', rotaryScale);
 
     if (rotaryMode) {
       if (addOnInfo.rotary?.extendWorkarea) BeamboxPreference.write('extend-rotary-workarea', extendRotaryWorkarea);
@@ -462,54 +460,44 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
             </div>
           )}
           {addOnInfo.rotary && (
-            <>
-              <div
-                className={classNames(styles.row, {
-                  [styles.full]: addOnInfo.rotary.mirror || addOnInfo.rotary.extendWorkarea,
-                })}
-              >
-                <div className={styles.title}>
-                  <label htmlFor="rotary_mode">{tDocu.rotary_mode}</label>
-                </div>
-                <div className={styles.control}>
-                  <Switch
-                    checked={rotaryMode}
-                    className={styles.switch}
-                    disabled={!addOnInfo.rotary || isCurveEngraving}
-                    id="rotary_mode"
-                    onChange={setRotaryMode}
-                  />
-                  {isCurveEngraving && renderWarningIcon(tGlobal.mode_conflict)}
-                  {(addOnInfo.rotary.mirror || addOnInfo.rotary.extendWorkarea) && rotaryMode && (
-                    <>
-                      <div className={styles.subCheckbox}>
-                        {addOnInfo.rotary.extendWorkarea && (
-                          <Checkbox
-                            checked={extendRotaryWorkarea}
-                            onChange={(e) => setExtendRotaryWorkarea(e.target.checked)}
-                          >
-                            {tDocu.extend_workarea}
-                          </Checkbox>
-                        )}
-                        {addOnInfo.rotary.mirror && (
-                          <Checkbox checked={mirrorRotary} onChange={(e) => setMirrorRotary(e.target.checked)}>
-                            {tDocu.mirror}
-                          </Checkbox>
-                        )}
-                      </div>
-                    </>
-                  )}
-                </div>
+            <div
+              className={classNames(styles.row, {
+                [styles.full]: addOnInfo.rotary.mirror || addOnInfo.rotary.extendWorkarea,
+              })}
+            >
+              <div className={styles.title}>
+                <label htmlFor="rotary_mode">{tDocu.rotary_mode}</label>
               </div>
-              {rotaryMode && (
-                <RotaryScaleSelect
-                  id="rotary_scale"
-                  onChange={setRotaryScale}
-                  title={tDocu.rotary_scale}
-                  value={rotaryScale}
+              <div className={styles.control}>
+                <Switch
+                  checked={rotaryMode}
+                  className={styles.switch}
+                  disabled={!addOnInfo.rotary || isCurveEngraving}
+                  id="rotary_mode"
+                  onChange={setRotaryMode}
                 />
-              )}
-            </>
+                {isCurveEngraving && renderWarningIcon(tGlobal.mode_conflict)}
+                {(addOnInfo.rotary.mirror || addOnInfo.rotary.extendWorkarea) && rotaryMode && (
+                  <>
+                    <div className={styles.subCheckbox}>
+                      {addOnInfo.rotary.extendWorkarea && (
+                        <Checkbox
+                          checked={extendRotaryWorkarea}
+                          onChange={(e) => setExtendRotaryWorkarea(e.target.checked)}
+                        >
+                          {tDocu.extend_workarea}
+                        </Checkbox>
+                      )}
+                      {addOnInfo.rotary.mirror && (
+                        <Checkbox checked={mirrorRotary} onChange={(e) => setMirrorRotary(e.target.checked)}>
+                          {tDocu.mirror}
+                        </Checkbox>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
           )}
           {addOnInfo.autoFocus && (
             <div className={styles.row}>
@@ -636,10 +624,11 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                 </div>
               </div>
               {autoFeeder && (
-                <RotaryScaleSelect
+                <AddOnSelect
                   id="auto_feeder_scale"
                   onChange={setAutoFeederScale}
-                  title={tDocu.auto_feeder_scale}
+                  title={tDocu.scale}
+                  tooltip={tDocu.auto_feeder_scale}
                   value={autoFeederScale}
                 />
               )}
