@@ -40,7 +40,7 @@ const SolvePnP = ({
   refPoints = adorPnPPoints,
   titleLink,
 }: Props): React.JSX.Element => {
-  const [img, setImg] = useState<{ blob: Blob; success: boolean; url: string }>(null);
+  const [img, setImg] = useState<null | { blob: Blob; success: boolean; url: string }>(null);
   const [imgLoaded, setImgLoaded] = useState(false);
   const [points, setPoints] = useState<Array<[number, number]>>([]);
   const [selectedPointIdx, setSelectedPointIdx] = useState<number>(-1);
@@ -56,13 +56,13 @@ const SolvePnP = ({
   const imageSizeRef = useRef<{ height: number; width: number }>({ height: 0, width: 0 });
   const imgContainerRef = useRef<HTMLDivElement>(null);
   const zoomDelta = useRef<number>(0);
-  const zoomProcess = useRef<NodeJS.Timeout>(null);
-  const zoomCenter = useRef<{ x: number; y: number }>(null);
+  const zoomProcess = useRef<NodeJS.Timeout | null>(null);
+  const zoomCenter = useRef<null | { x: number; y: number }>(null);
   const lang = useI18n();
 
   useEffect(
     () => () => {
-      URL.revokeObjectURL(img?.url);
+      if (img) URL.revokeObjectURL(img.url);
     },
     [img],
   );
@@ -77,7 +77,7 @@ const SolvePnP = ({
   }, []);
 
   const updateScale = useCallback(
-    (newValue, scrollToCenter = false) => {
+    (newValue: number, scrollToCenter = false) => {
       if (scrollToCenter && imgContainerRef.current) {
         const currentCenter = {
           x: imgContainerRef.current.scrollLeft + imgContainerRef.current.clientWidth / 2,
@@ -87,7 +87,7 @@ const SolvePnP = ({
         zoomCenter.current = {
           x: currentCenter.x / scaleRef.current,
           y: currentCenter.y / scaleRef.current,
-        };
+        } as { x: number; y: number };
       }
 
       scaleRef.current = newValue;
@@ -148,9 +148,9 @@ const SolvePnP = ({
   const handleImg = useCallback(
     async (imgBlob: Blob) => {
       try {
-        let interestArea: { height: number; width: number; x: number; y: number };
+        let interestArea: undefined | { height: number; width: number; x: number; y: number } = undefined;
 
-        if (svgRef.current) {
+        if (svgRef.current && imgContainerRef.current) {
           const { clientHeight, clientWidth, scrollLeft, scrollTop } = imgContainerRef.current;
           const scale = scaleRef.current;
 
@@ -191,7 +191,7 @@ const SolvePnP = ({
           return false;
         }
       } catch (err) {
-        alertCaller.popUpError({ message: err.message });
+        alertCaller.popUpError({ message: err instanceof Error ? err.message : 'Unknown error' });
       }
 
       return true;
@@ -232,8 +232,8 @@ const SolvePnP = ({
       const dy = e.screenY - y;
 
       if (pointIdx !== undefined) {
-        imgContainerRef.current
-          .querySelectorAll('svg > g')
+        imgContainerRef
+          .current!.querySelectorAll('svg > g')
           // eslint-disable-next-line no-unexpected-multiline
           [pointIdx]?.querySelectorAll('circle')
           .forEach((c) => {
@@ -252,9 +252,9 @@ const SolvePnP = ({
       const { pointIdx } = dragStartPos.current;
 
       if (pointIdx !== undefined) {
-        const circle = imgContainerRef.current.querySelectorAll('svg > g')[pointIdx].querySelector('circle');
-        const x = Number.parseInt(circle.getAttribute('cx'), 10);
-        const y = Number.parseInt(circle.getAttribute('cy'), 10);
+        const circle = imgContainerRef.current!.querySelectorAll('svg > g')[pointIdx].querySelector('circle')!;
+        const x = Number.parseInt(circle.getAttribute('cx')!, 10);
+        const y = Number.parseInt(circle.getAttribute('cy')!, 10);
 
         setPoints((prev) => prev.map((p, i) => (i === pointIdx ? [x, y] : p)));
       }
@@ -264,7 +264,7 @@ const SolvePnP = ({
   }, []);
 
   const handleZoom = useCallback(
-    (delta) => {
+    (delta: number) => {
       const cur = scaleRef.current;
       const newScale = Math.round(Math.max(Math.min(2, cur + delta), 0.2) * 100) / 100;
 
@@ -314,7 +314,7 @@ const SolvePnP = ({
 
           zoomDelta.current = 0;
           zoomProcess.current = null;
-        }, 20);
+        }, 20) as NodeJS.Timeout;
       }
     },
     [handleZoom],
@@ -451,9 +451,9 @@ const SolvePnP = ({
               <Col span={4}>X</Col>
               <Col span={20}>
                 <InputNumber<number>
-                  onChange={(val) =>
-                    setPoints((prev) => prev.map((p, i) => (i === selectedPointIdx ? [val, p[1]] : p)))
-                  }
+                  onChange={(val) => {
+                    if (val) setPoints((prev) => prev.map((p, i) => (i === selectedPointIdx ? [val, p[1]] : p)));
+                  }}
                   onKeyDown={(e) => e.stopPropagation()}
                   onKeyUp={(e) => e.stopPropagation()}
                   precision={0}
@@ -465,9 +465,9 @@ const SolvePnP = ({
               <Col span={4}>Y</Col>
               <Col span={20}>
                 <InputNumber<number>
-                  onChange={(val) =>
-                    setPoints((prev) => prev.map((p, i) => (i === selectedPointIdx ? [p[0], val] : p)))
-                  }
+                  onChange={(val) => {
+                    if (val) setPoints((prev) => prev.map((p, i) => (i === selectedPointIdx ? [p[0], val] : p)));
+                  }}
                   onKeyDown={(e) => e.stopPropagation()}
                   onKeyUp={(e) => e.stopPropagation()}
                   precision={0}

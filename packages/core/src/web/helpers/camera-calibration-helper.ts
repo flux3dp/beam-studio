@@ -463,7 +463,7 @@ export const solvePnPFindCorners = async (
 ): Promise<
   | {
       blob: Blob;
-      data?: { points: Array<[number, number]> };
+      data: { points: Array<[number, number]> };
       success: true;
     }
   | {
@@ -482,7 +482,7 @@ export const solvePnPCalculate = async (
   points: Array<[number, number]>,
   refPoints: Array<[number, number]>,
 ): Promise<{
-  data?: { rvec: number[]; tvec: number[] };
+  data: { rvec: number[]; tvec: number[] };
   success: boolean;
 }> => {
   const resp = await api.solvePnPCalculate(dh, points, refPoints);
