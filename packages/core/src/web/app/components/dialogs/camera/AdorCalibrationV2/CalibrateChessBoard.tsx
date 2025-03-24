@@ -225,7 +225,7 @@ const CalibrateChessBoard = ({ onBack, onClose, onNext, updateParam }: Props): R
             <div>
               <div>
                 <span>Ret: </span>
-                <span>{res.data.ret.toFixed(2)}</span>
+                <span>{res!.data.ret!.toFixed(2)}</span>
               </div>
             </div>
           )}
