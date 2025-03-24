@@ -1,12 +1,18 @@
+import { PrintingColors } from '@core/app/constants/color-constants';
 import getUtilWS from '@core/helpers/api/utils-ws';
 
-const handleRgb = async (rgbBlob: Blob): Promise<{ c: string; k: string; m: string; y: string }> => {
+const handleRgb = async (rgbBlob: Blob): Promise<Partial<Record<PrintingColors, string>>> => {
   const utilWS = getUtilWS();
 
   try {
     const { c, k, m, y } = await utilWS.splitColor(rgbBlob, { colorType: 'rgb' });
 
-    return { c, k, m, y };
+    return {
+      [PrintingColors.BLACK]: k,
+      [PrintingColors.CYAN]: c,
+      [PrintingColors.MAGENTA]: m,
+      [PrintingColors.YELLOW]: y,
+    };
   } catch (error) {
     console.error('Failed to split color', error);
   }
@@ -15,7 +21,7 @@ const handleRgb = async (rgbBlob: Blob): Promise<{ c: string; k: string; m: stri
   // Can remove this if make sure firmware is updated
   const blob = (await utilWS.transformRgbImageToCmyk(rgbBlob, { resultType: 'binary' })) as Blob;
   const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext('2d')!;
 
   await new Promise<void>((resolve) => {
     const img = new Image();
@@ -61,20 +67,25 @@ const handleRgb = async (rgbBlob: Blob): Promise<{ c: string; k: string; m: stri
     }
   }
 
-  const result = { c: '', k: '', m: '', y: '' };
+  const result = {
+    [PrintingColors.BLACK]: '',
+    [PrintingColors.CYAN]: '',
+    [PrintingColors.MAGENTA]: '',
+    [PrintingColors.YELLOW]: '',
+  };
 
   imageData.data.set(channelDatas[0]);
   ctx.putImageData(imageData, 0, 0);
-  [, result.k] = canvas.toDataURL('image/jpeg', 1).split(',');
+  [, result[PrintingColors.BLACK]] = canvas.toDataURL('image/jpeg', 1).split(',');
   imageData.data.set(channelDatas[1]);
   ctx.putImageData(imageData, 0, 0);
-  [, result.c] = canvas.toDataURL('image/jpeg', 1).split(',');
+  [, result[PrintingColors.CYAN]] = canvas.toDataURL('image/jpeg', 1).split(',');
   imageData.data.set(channelDatas[2]);
   ctx.putImageData(imageData, 0, 0);
-  [, result.m] = canvas.toDataURL('image/jpeg', 1).split(',');
+  [, result[PrintingColors.MAGENTA]] = canvas.toDataURL('image/jpeg', 1).split(',');
   imageData.data.set(channelDatas[3]);
   ctx.putImageData(imageData, 0, 0);
-  [, result.y] = canvas.toDataURL('image/jpeg', 1).split(',');
+  [, result[PrintingColors.YELLOW]] = canvas.toDataURL('image/jpeg', 1).split(',');
 
   return result;
 };
@@ -85,17 +96,19 @@ const handleRgb = async (rgbBlob: Blob): Promise<{ c: string; k: string; m: stri
 // TODO: add unit test
 const splitColor = async (
   rgbBlob: Blob,
-  cmykBlob: null | { c: Blob; k: Blob; m: Blob; y: Blob },
+  cmykBlob?: { c: Blob; k: Blob; m: Blob; y: Blob },
   opts: {
     includeWhite?: boolean;
   } = {},
-): Promise<Array<Blob | null>> => {
+): Promise<Array<{ color: PrintingColors; data: Blob | null }>> => {
   const { includeWhite = false } = opts;
-  const { c, k, m, y } = await handleRgb(rgbBlob);
-  const channelDatas = [null, null, null, null];
-  let width: number;
-  let height: number;
-  const promises = [k, c, m, y].map((base64, i) => {
+  const rgbRes = await handleRgb(rgbBlob);
+  const channelDatas: Uint8ClampedArray[] = [null, null, null, null] as any; // null as placeholder
+  let width: number = 0;
+  let height: number = 0;
+  const colorOrder = [PrintingColors.BLACK, PrintingColors.CYAN, PrintingColors.MAGENTA, PrintingColors.YELLOW];
+  const promises = colorOrder.map((color, i) => {
+    const base64 = rgbRes[color];
     const img = new Image();
 
     return new Promise<Blob | null>((resolve) => {
@@ -107,7 +120,7 @@ const splitColor = async (
         width = img.width;
         height = img.height;
 
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d')!;
 
         ctx.drawImage(img, 0, 0);
         canvas.toBlob((blob) => resolve(blob));
@@ -154,7 +167,7 @@ const splitColor = async (
   if (cmykBlob) {
     const readBlob = async (blob: Blob): Promise<Uint8ClampedArray> => {
       const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
+      const ctx = canvas.getContext('2d')!;
 
       await new Promise<void>((resolve) => {
         const img = new Image();
@@ -214,7 +227,7 @@ const splitColor = async (
   canvas.width = width;
   canvas.height = height;
 
-  const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext('2d')!;
   const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
   const channelToBlob = async (channelData: null | Uint8ClampedArray): Promise<Blob | null> => {
@@ -225,24 +238,24 @@ const splitColor = async (
     imageData.data.set(channelData);
     ctx.putImageData(imageData, 0, 0);
 
-    const blob = await new Promise<Blob>((resolve) => {
+    const blob = await new Promise<Blob | null>((resolve) => {
       canvas.toBlob((b) => resolve(b));
     });
 
     return blob;
   };
-  const resultBlobs = [];
+  const res: Array<{ color: PrintingColors; data: Blob | null }> = [];
 
-  resultBlobs.push(await channelToBlob(whiteChannel));
+  res.push({ color: PrintingColors.WHITE, data: await channelToBlob(whiteChannel) });
   for (let i = 0; i < channelDatas.length; i += 1) {
     if (!empty[i]) {
-      resultBlobs.push(await channelToBlob(channelDatas[i]));
+      res.push({ color: colorOrder[i], data: await channelToBlob(channelDatas[i]) });
     } else {
-      resultBlobs.push(null);
+      res.push({ color: colorOrder[i], data: null });
     }
   }
 
-  return resultBlobs;
+  return res;
 };
 
 export default splitColor;

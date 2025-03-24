@@ -1,4 +1,5 @@
 import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import lang from '@core/app/lang/en';
 
 import layerModuleHelper from './layer-module-helper';
 
@@ -6,19 +7,6 @@ const mockRead = jest.fn();
 
 jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read: (...args) => mockRead(...args),
-}));
-
-jest.mock('@core/helpers/i18n', () => ({
-  lang: {
-    layer_module: {
-      laser_2w_infrared: 'laser_2w_infrared',
-      laser_10w_diode: 'laser_10w_diode',
-      laser_20w_diode: 'laser_20w_diode',
-      none: 'none',
-      printing: 'printing',
-      unknown: 'unknown',
-    },
-  },
 }));
 
 describe('test layer-module-helper', () => {
@@ -35,12 +23,13 @@ describe('test layer-module-helper', () => {
 
   test('getModulesTranslations', () => {
     expect(layerModuleHelper.getModulesTranslations()).toEqual({
-      0: 'none',
-      [LayerModule.LASER_10W_DIODE]: 'laser_10w_diode',
-      [LayerModule.LASER_20W_DIODE]: 'laser_20w_diode',
-      [LayerModule.LASER_1064]: 'laser_2w_infrared',
-      [LayerModule.PRINTER]: 'printing',
-      [LayerModule.UNKNOWN]: 'unknown',
+      0: lang.layer_module.none,
+      [LayerModule.LASER_10W_DIODE]: lang.layer_module.laser_10w_diode,
+      [LayerModule.LASER_20W_DIODE]: lang.layer_module.laser_20w_diode,
+      [LayerModule.LASER_1064]: lang.layer_module.laser_2w_infrared,
+      [LayerModule.PRINTER]: lang.layer_module.printing,
+      [LayerModule.PRINTER_4C]: `${lang.layer_module.printing} (4C)`,
+      [LayerModule.UNKNOWN]: lang.layer_module.unknown,
     });
   });
 });

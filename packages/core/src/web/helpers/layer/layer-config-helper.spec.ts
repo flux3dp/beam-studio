@@ -20,6 +20,8 @@ jest.mock('@core/helpers/device/promark/promark-info', () => ({
 }));
 
 import {
+  baseConfig,
+  booleanConfig,
   cloneLayerConfig,
   getConfigKeys,
   getLayerConfig,
@@ -55,49 +57,20 @@ jest.mock(
       mockToggleFullColorLayer(...args),
 );
 
-const defaultLaserConfigs = {
-  backlash: { value: 0 },
-  biDirectional: { value: false },
-  ceZSpeedLimit: { value: 140 },
+const defaultLaserConfigs = Object.keys(baseConfig).reduce((acc, key) => {
+  acc[key] = { value: baseConfig[key] };
+
+  return acc;
+}, {});
+
+booleanConfig.forEach((key) => {
+  defaultLaserConfigs[key] = { value: false };
+});
+
+Object.assign(defaultLaserConfigs, {
   clipRect: { value: undefined },
   color: { value: '#333333' },
-  configName: { value: '' },
-  cRatio: { value: 100 },
-  crossHatch: { value: false },
-  diode: { value: 0 },
-  dottingTime: { value: 100 },
-  fillAngle: { value: 0 },
-  fillInterval: { value: 0.01 },
-  focus: { value: -2 },
-  focusStep: { value: -2 },
-  frequency: { value: 27 },
-  fullcolor: { value: false },
-  halftone: { value: 1 },
-  height: { value: -3 },
-  ink: { value: 1 },
-  kRatio: { value: 100 },
-  minPower: { value: 0 },
-  module: { value: 15 },
-  mRatio: { value: 100 },
-  multipass: { value: 3 },
-  power: { value: 15 },
-  printingSpeed: { value: 60 },
-  printingStrength: { value: 100 },
-  pulseWidth: { value: 500 },
-  ref: { value: false },
-  repeat: { value: 1 },
-  speed: { value: 20 },
-  split: { value: false },
-  uv: { value: 0 },
-  wInk: { value: -4 },
-  wMultipass: { value: 3 },
-  wobbleDiameter: { value: -0.2 },
-  wobbleStep: { value: -0.05 },
-  wRepeat: { value: 1 },
-  wSpeed: { value: 100 },
-  yRatio: { value: 100 },
-  zStep: { value: 0 },
-};
+});
 
 // Boolean without initLayerConfig will be false
 // Update expected value when initLayerConfig is called
@@ -105,49 +78,11 @@ const trueConfigs = {
   biDirectional: { value: true },
 };
 
-const defaultMultiValueLaserConfigs = {
-  backlash: { hasMultiValue: false, value: 0 },
-  biDirectional: { hasMultiValue: false, value: false },
-  ceZSpeedLimit: { hasMultiValue: false, value: 140 },
-  clipRect: { hasMultiValue: false, value: undefined },
-  color: { hasMultiValue: false, value: '#333333' },
-  configName: { hasMultiValue: false, value: '' },
-  cRatio: { hasMultiValue: false, value: 100 },
-  crossHatch: { hasMultiValue: false, value: false },
-  diode: { hasMultiValue: false, value: 0 },
-  dottingTime: { hasMultiValue: false, value: 100 },
-  fillAngle: { hasMultiValue: false, value: 0 },
-  fillInterval: { hasMultiValue: false, value: 0.01 },
-  focus: { hasMultiValue: false, value: -2 },
-  focusStep: { hasMultiValue: false, value: -2 },
-  frequency: { hasMultiValue: false, value: 27 },
-  fullcolor: { hasMultiValue: false, value: false },
-  halftone: { hasMultiValue: false, value: 1 },
-  height: { hasMultiValue: false, value: -3 },
-  ink: { hasMultiValue: false, value: 1 },
-  kRatio: { hasMultiValue: false, value: 100 },
-  minPower: { hasMultiValue: false, value: 0 },
-  module: { hasMultiValue: false, value: 15 },
-  mRatio: { hasMultiValue: false, value: 100 },
-  multipass: { hasMultiValue: false, value: 3 },
-  power: { hasMultiValue: false, value: 15 },
-  printingSpeed: { hasMultiValue: false, value: 60 },
-  printingStrength: { hasMultiValue: false, value: 100 },
-  pulseWidth: { hasMultiValue: false, value: 500 },
-  ref: { hasMultiValue: false, value: false },
-  repeat: { hasMultiValue: false, value: 1 },
-  speed: { hasMultiValue: false, value: 20 },
-  split: { hasMultiValue: false, value: false },
-  uv: { hasMultiValue: false, value: 0 },
-  wInk: { hasMultiValue: false, value: -4 },
-  wMultipass: { hasMultiValue: false, value: 3 },
-  wobbleDiameter: { hasMultiValue: false, value: -0.2 },
-  wobbleStep: { hasMultiValue: false, value: -0.05 },
-  wRepeat: { hasMultiValue: false, value: 1 },
-  wSpeed: { hasMultiValue: false, value: 100 },
-  yRatio: { hasMultiValue: false, value: 100 },
-  zStep: { hasMultiValue: false, value: 0 },
-};
+const defaultMultiValueLaserConfigs = Object.keys(defaultLaserConfigs).reduce((acc, key) => {
+  acc[key] = { hasMultiValue: false, value: defaultLaserConfigs[key].value };
+
+  return acc;
+}, {});
 
 describe('test layer-config-helper', () => {
   beforeEach(() => {

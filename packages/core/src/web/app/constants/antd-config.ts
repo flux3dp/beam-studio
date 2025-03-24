@@ -88,6 +88,21 @@ export const objectPanelInputTheme: ThemeConfig = {
   },
 };
 
+export const configPanelInputTheme: ThemeConfig = {
+  components: {
+    InputNumber: {
+      activeShadow: 'none',
+      controlWidth: 80,
+    },
+  },
+  token: {
+    colorBgContainer: 'transparent',
+    colorBgContainerDisabled: 'transparent',
+    fontSize: 13,
+    lineWidth: 0,
+  },
+};
+
 export const ConfigModalBlock: ThemeConfig = {
   components: {
     InputNumber: {

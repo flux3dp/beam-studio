@@ -9,7 +9,7 @@ import { promarkModels } from '@core/app/actions/beambox/constant';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import alertConstants from '@core/app/constants/alert-constants';
-import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
+import LayerModule, { modelsWithModules, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import presets from '@core/app/constants/presets';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';
@@ -64,7 +64,7 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
             return true;
           }
 
-          return c.module === LayerModule.PRINTER ? filter === Filter.PRINT : filter === Filter.LASER;
+          return printingModules.has(c.module ?? 0) ? filter === Filter.PRINT : filter === Filter.LASER;
         }
 
         const hasPreset = presetHelper.modelHasPreset(workarea, c.key);
@@ -186,10 +186,10 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
     preset.hide = !preset.hide;
     setEditingPresets([...editingPresets]);
   };
-  const isPrinting = useMemo(() => displayPreset.module === LayerModule.PRINTER, [displayPreset]);
+  const isPrinting = useMemo(() => printingModules.has(displayPreset.module), [displayPreset]);
 
   const handleDelete = () => {
-    if (selectedPreset.isDefault) {
+    if (!selectedPreset || selectedPreset?.isDefault) {
       return;
     }
 

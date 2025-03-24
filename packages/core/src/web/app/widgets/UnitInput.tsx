@@ -9,11 +9,14 @@ import styles from './UnitInput.module.scss';
 
 interface Props extends InputNumberProps<number> {
   clipValue?: boolean;
+  containerClassName?: string;
+  displayMultiValue?: boolean;
   fireOnChange?: boolean;
   isInch?: boolean;
   theme?: ThemeConfig;
   underline?: boolean;
   unit?: string;
+  unitClassName?: string;
 }
 
 /**
@@ -26,6 +29,8 @@ const UnitInput = forwardRef<HTMLInputElement | null, Props>(
   (
     {
       clipValue = true,
+      containerClassName,
+      displayMultiValue = false,
       fireOnChange = false,
       isInch,
       onBlur,
@@ -34,6 +39,7 @@ const UnitInput = forwardRef<HTMLInputElement | null, Props>(
       theme,
       underline,
       unit,
+      unitClassName,
       ...props
     }: Props,
     outerRef,
@@ -56,15 +62,15 @@ const UnitInput = forwardRef<HTMLInputElement | null, Props>(
 
     const formatter = useCallback(
       (value: number | string = '') => {
+        if (displayMultiValue) return '-';
+
         let newVal = typeof value === 'string' ? Number.parseFloat(value) : value;
 
-        if (isInch) {
-          newVal /= 25.4;
-        }
+        if (isInch) newVal /= 25.4;
 
         return String(Math.round(newVal * 10 ** precision) / 10 ** precision);
       },
-      [isInch, precision],
+      [isInch, displayMultiValue, precision],
     );
 
     const parser = useCallback(
@@ -122,7 +128,7 @@ const UnitInput = forwardRef<HTMLInputElement | null, Props>(
     );
 
     return (
-      <div className={classNames(styles.input, { [styles.underline]: underline })}>
+      <div className={classNames(styles.input, { [styles.underline]: underline }, containerClassName)}>
         <ConfigProvider theme={theme}>
           <InputNumber
             onPressEnter={handlePressEnter}
@@ -134,7 +140,7 @@ const UnitInput = forwardRef<HTMLInputElement | null, Props>(
             onStep={handleStep}
             parser={parser}
           />
-          {unit && <span className={styles.unit}>{unit}</span>}
+          {unit && <span className={classNames(styles.unit, unitClassName)}>{unit}</span>}
         </ConfigProvider>
       </div>
     );

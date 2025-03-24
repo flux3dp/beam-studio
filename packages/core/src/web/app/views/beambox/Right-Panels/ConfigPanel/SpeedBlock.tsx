@@ -9,7 +9,7 @@ import { sprintf } from 'sprintf-js';
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import configOptions from '@core/app/constants/config-options';
-import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import history from '@core/app/svgedit/history/history';
 import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
@@ -53,7 +53,8 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   );
 
   const { hasMultiValue, value } = state.speed;
-  const module = state.module.value;
+  const layerModule = state.module.value;
+  const isPrinting = useMemo(() => printingModules.has(layerModule), [layerModule]);
 
   const {
     calculateUnit: fakeUnit,
@@ -148,8 +149,8 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   };
 
   const sliderOptions = useMemo(
-    () => (simpleMode && module === LayerModule.PRINTER ? configOptions.getPrintingSpeedOptions(lang) : null),
-    [simpleMode, module, lang],
+    () => (simpleMode && isPrinting ? configOptions.getPrintingSpeedOptions(lang) : undefined),
+    [simpleMode, isPrinting, lang],
   );
 
   const content = (
@@ -181,9 +182,7 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
         min={minValue}
         onChange={handleChange}
         options={sliderOptions}
-        speedLimit={
-          module !== LayerModule.PRINTER && (type === 'modal' ? doLayersContainsVector(selectedLayers) : hasVector)
-        }
+        speedLimit={!isPrinting && (type === 'modal' ? doLayersContainsVector(selectedLayers) : hasVector)}
         step={0.1}
         unit={displayUnit}
         value={value}

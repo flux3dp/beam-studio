@@ -13,7 +13,7 @@ import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
 import CanvasMode from '@core/app/constants/canvasMode';
-import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
+import { modelsWithModules, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType, workareaOptions as pmWorkareaOptions } from '@core/app/constants/promark-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
@@ -268,7 +268,11 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
           origWorkarea !== workarea &&
           modelsWithModules.has(origWorkarea) &&
           !modelsWithModules.has(workarea) &&
-          document.querySelectorAll(`g.layer[data-module="${LayerModule.PRINTER}"]`).length
+          document.querySelectorAll(
+            Array.from(printingModules)
+              .map((module) => `g.layer[data-module="${module}"]`)
+              .join(', '),
+          ).length
         ) {
           const res = await new Promise((resolve) => {
             alertCaller.popUp({

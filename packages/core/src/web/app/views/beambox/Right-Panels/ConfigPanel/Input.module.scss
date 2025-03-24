@@ -1,0 +1,12 @@
+.input {
+  width: 80px;
+  float: right;
+
+  :global(.ant-input-number-input) {
+    padding: 5px 24px 5px 4px;
+  }
+
+  .unit {
+    font-size: 9px;
+  }
+}
