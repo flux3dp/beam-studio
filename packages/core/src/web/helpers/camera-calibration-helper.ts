@@ -455,25 +455,6 @@ export const calibrateChessboard = async (
   return resp;
 };
 
-export const findCorners = async (
-  imgBlob: Blob,
-  withPitch = false,
-): Promise<{
-  blob: Blob;
-  data?: {
-    d: number[][];
-    k: number[][];
-    ret: number;
-    rvec: number[];
-    tvec: number[];
-  };
-  success: boolean;
-}> => {
-  const resp = await api.findCorners(imgBlob, withPitch);
-
-  return resp;
-};
-
 export const solvePnPFindCorners = async (
   img: ArrayBuffer | Blob,
   dh: number,
