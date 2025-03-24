@@ -93,6 +93,7 @@ const lang: ILang = {
     document_panel: {
       add_on: 'Zusatz-Module',
       auto_feeder: 'Automatischer Einzug',
+      auto_feeder_scale: 'Skala für den automatischen Einzug',
       borderless_mode: 'Öffnen Sie den Boden',
       current_position: 'Aktuelle Position',
       disable: 'Deaktivieren',

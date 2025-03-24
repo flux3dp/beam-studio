@@ -93,6 +93,7 @@ const lang: ILang = {
     document_panel: {
       add_on: 'Tillägg',
       auto_feeder: 'Automatisk matning',
+      auto_feeder_scale: 'Skala för automatisk matning',
       borderless_mode: 'Öppen botten',
       current_position: 'Nuvarande Position',
       disable: 'Inaktivera',

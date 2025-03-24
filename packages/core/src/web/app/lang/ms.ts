@@ -93,6 +93,7 @@ const lang: ILang = {
     document_panel: {
       add_on: 'Tambahan',
       auto_feeder: 'Pemberi automatik',
+      auto_feeder_scale: 'Skala Pemakan automatik',
       borderless_mode: 'Buka Bawah',
       current_position: 'Kedudukan Semasa',
       disable: 'Lumpuhkan',

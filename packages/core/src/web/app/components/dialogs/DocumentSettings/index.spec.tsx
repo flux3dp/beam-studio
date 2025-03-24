@@ -36,7 +36,8 @@ jest.mock('@core/app/constants/alert-constants', () => ({
 }));
 
 const mockBeamboxPreferences = {
-  auto_feeder: false,
+  'auto-feeder': false,
+  'auto-feeder-scale': 1,
   borderless: false,
   'customized-dimension': { fpm1: { height: 150, width: 150 } },
   'enable-autofocus': false,
@@ -178,7 +179,7 @@ describe('test DocumentSettings', () => {
 
     onConfirm();
     await new Promise((resolve) => setTimeout(resolve, 0));
-    expect(mockBeamboxPreferenceWrite).toHaveBeenCalledTimes(12);
+    expect(mockBeamboxPreferenceWrite).toHaveBeenCalledTimes(13);
     expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(1, 'engrave_dpi', 'high');
     expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(2, 'borderless', true);
     expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(3, 'enable-diode', true);
@@ -189,8 +190,9 @@ describe('test DocumentSettings', () => {
     expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(8, 'pass-through-height', 500);
     expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(9, 'auto-feeder', false);
     expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(10, 'auto-feeder-height', 320);
-    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(11, 'enable-job-origin', true);
-    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(12, 'job-origin', 1);
+    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(11, 'auto-feeder-scale', 1);
+    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(12, 'enable-job-origin', true);
+    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(13, 'job-origin', 1);
     expect(mockChangeWorkarea).toHaveBeenCalledTimes(1);
     expect(mockChangeWorkarea).toHaveBeenLastCalledWith('fbm1', { toggleModule: true });
     expect(mockToggleDisplay).toHaveBeenCalledTimes(1);

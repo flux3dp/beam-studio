@@ -93,6 +93,7 @@ const lang: ILang = {
     document_panel: {
       add_on: 'Add-ons',
       auto_feeder: 'Automatische voeder',
+      auto_feeder_scale: 'Schaal voor automatische voeder',
       borderless_mode: 'Open onderzijde',
       current_position: 'Huidige Positie',
       disable: 'Uitschakelen',

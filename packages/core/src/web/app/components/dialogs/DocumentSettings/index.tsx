@@ -99,6 +99,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const [enableAutofocus, setEnableAutofocus] = useState(!!BeamboxPreference.read('enable-autofocus'));
   const [passThrough, setPassThrough] = useState(BeamboxPreference.read('pass-through'));
   const [autoFeeder, setAutoFeeder] = useState(BeamboxPreference.read('auto-feeder'));
+  const [autoFeederScale, setAutoFeederScale] = useState(BeamboxPreference.read('auto-feeder-scale'));
 
   const isInch = useMemo(() => storage.get('default-units') === 'inches', []);
   const workareaObj = useMemo(() => getWorkarea(workarea), [workarea]);
@@ -215,6 +216,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
       const newVal = Math.min(addOnInfo.autoFeeder!.maxHeight, Math.max(minHeight, autoFeederHeight));
 
       BeamboxPreference.write('auto-feeder-height', newVal);
+      BeamboxPreference.write('auto-feeder-scale', autoFeederScale);
     }
 
     BeamboxPreference.write('enable-job-origin', enableJobOrigin);
@@ -460,52 +462,54 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
             </div>
           )}
           {addOnInfo.rotary && (
-            <div
-              className={classNames(styles.row, {
-                [styles.full]: addOnInfo.rotary.mirror || addOnInfo.rotary.extendWorkarea,
-              })}
-            >
-              <div className={styles.title}>
-                <label htmlFor="rotary_mode">{tDocu.rotary_mode}</label>
+            <>
+              <div
+                className={classNames(styles.row, {
+                  [styles.full]: addOnInfo.rotary.mirror || addOnInfo.rotary.extendWorkarea,
+                })}
+              >
+                <div className={styles.title}>
+                  <label htmlFor="rotary_mode">{tDocu.rotary_mode}</label>
+                </div>
+                <div className={styles.control}>
+                  <Switch
+                    checked={rotaryMode}
+                    className={styles.switch}
+                    disabled={!addOnInfo.rotary || isCurveEngraving}
+                    id="rotary_mode"
+                    onChange={setRotaryMode}
+                  />
+                  {isCurveEngraving && renderWarningIcon(tGlobal.mode_conflict)}
+                  {(addOnInfo.rotary.mirror || addOnInfo.rotary.extendWorkarea) && rotaryMode && (
+                    <>
+                      <div className={styles.subCheckbox}>
+                        {addOnInfo.rotary.extendWorkarea && (
+                          <Checkbox
+                            checked={extendRotaryWorkarea}
+                            onChange={(e) => setExtendRotaryWorkarea(e.target.checked)}
+                          >
+                            {tDocu.extend_workarea}
+                          </Checkbox>
+                        )}
+                        {addOnInfo.rotary.mirror && (
+                          <Checkbox checked={mirrorRotary} onChange={(e) => setMirrorRotary(e.target.checked)}>
+                            {tDocu.mirror}
+                          </Checkbox>
+                        )}
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
-              <div className={styles.control}>
-                <Switch
-                  checked={rotaryMode}
-                  className={styles.switch}
-                  disabled={!addOnInfo.rotary || isCurveEngraving}
-                  id="rotary_mode"
-                  onChange={setRotaryMode}
+              {rotaryMode && (
+                <RotaryScaleSelect
+                  id="rotary_scale"
+                  onChange={setRotaryScale}
+                  title={tDocu.rotary_scale}
+                  value={rotaryScale}
                 />
-                {isCurveEngraving && renderWarningIcon(tGlobal.mode_conflict)}
-                {(addOnInfo.rotary.mirror || addOnInfo.rotary.extendWorkarea) && rotaryMode && (
-                  <>
-                    <div className={styles.subCheckbox}>
-                      {addOnInfo.rotary.extendWorkarea && (
-                        <Checkbox
-                          checked={extendRotaryWorkarea}
-                          onChange={(e) => setExtendRotaryWorkarea(e.target.checked)}
-                        >
-                          {tDocu.extend_workarea}
-                        </Checkbox>
-                      )}
-                      {addOnInfo.rotary.mirror && (
-                        <Checkbox checked={mirrorRotary} onChange={(e) => setMirrorRotary(e.target.checked)}>
-                          {tDocu.mirror}
-                        </Checkbox>
-                      )}
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-          )}
-          {addOnInfo.rotary && rotaryMode && (
-            <RotaryScaleSelect
-              id="rotary_scale"
-              onChange={setRotaryScale}
-              title={tDocu.rotary_scale}
-              value={rotaryScale}
-            />
+              )}
+            </>
           )}
           {addOnInfo.autoFocus && (
             <div className={styles.row}>
@@ -596,40 +600,50 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
             </div>
           )}
           {showAutoFeeder && (
-            <div className={classNames(styles.row, styles.full)}>
-              <div className={styles.title}>
-                <label htmlFor="auto_feeder">{tDocu.auto_feeder}</label>
-              </div>
-              <div className={styles.control}>
-                <Switch
-                  checked={addOnInfo.autoFeeder && autoFeeder}
-                  className={styles.switch}
-                  disabled={!addOnInfo.autoFeeder || isCurveEngraving}
-                  id="auto_feeder"
-                  onChange={setAutoFeeder}
-                />
-                {isCurveEngraving && renderWarningIcon(tGlobal.mode_conflict)}
-                {autoFeeder && (
-                  <UnitInput
-                    addonAfter={isInch ? 'in' : 'mm'}
-                    className={styles.input}
-                    clipValue
-                    id="auto_feeder_height"
-                    isInch={isInch}
-                    max={addOnInfo.autoFeeder!.maxHeight}
-                    min={minHeight}
-                    onChange={(val) => {
-                      if (val) {
-                        setAutoFeederHeight(val);
-                      }
-                    }}
-                    precision={isInch ? 2 : 0}
-                    size="small"
-                    value={autoFeederHeight}
+            <>
+              <div className={classNames(styles.row, styles.full)}>
+                <div className={styles.title}>
+                  <label htmlFor="auto_feeder">{tDocu.auto_feeder}</label>
+                </div>
+                <div className={styles.control}>
+                  <Switch
+                    checked={addOnInfo.autoFeeder && autoFeeder}
+                    className={styles.switch}
+                    disabled={!addOnInfo.autoFeeder || isCurveEngraving}
+                    id="auto_feeder"
+                    onChange={setAutoFeeder}
                   />
-                )}
+                  {isCurveEngraving && renderWarningIcon(tGlobal.mode_conflict)}
+                  {autoFeeder && (
+                    <UnitInput
+                      addonAfter={isInch ? 'in' : 'mm'}
+                      className={styles.input}
+                      clipValue
+                      id="auto_feeder_height"
+                      isInch={isInch}
+                      max={addOnInfo.autoFeeder!.maxHeight}
+                      min={minHeight}
+                      onChange={(val) => {
+                        if (val) {
+                          setAutoFeederHeight(val);
+                        }
+                      }}
+                      precision={isInch ? 2 : 0}
+                      size="small"
+                      value={autoFeederHeight}
+                    />
+                  )}
+                </div>
               </div>
-            </div>
+              {autoFeeder && (
+                <RotaryScaleSelect
+                  id="auto_feeder_scale"
+                  onChange={setAutoFeederScale}
+                  title={tDocu.auto_feeder_scale}
+                  value={autoFeederScale}
+                />
+              )}
+            </>
           )}
         </div>
       </div>

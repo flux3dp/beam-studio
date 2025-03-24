@@ -93,6 +93,7 @@ const lang: ILang = {
     document_panel: {
       add_on: 'Tillegg',
       auto_feeder: 'Automatisk mater',
+      auto_feeder_scale: 'Skala for automatisk mater',
       borderless_mode: 'Åpen bunn',
       current_position: 'Gjeldende Posisjon',
       disable: 'Deaktiver',

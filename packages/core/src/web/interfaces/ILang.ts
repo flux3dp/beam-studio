@@ -91,6 +91,7 @@ export interface ILang {
     document_panel: {
       add_on: string;
       auto_feeder: string;
+      auto_feeder_scale: string;
       borderless_mode: string;
       current_position: string;
       disable: string;

@@ -93,6 +93,7 @@ const lang: ILang = {
     document_panel: {
       add_on: 'เพิ่มเติม',
       auto_feeder: 'ตัวป้อนอัตโนมัติ',
+      auto_feeder_scale: 'มาตราส่วนตัวป้อนอัตโนมัติ',
       borderless_mode: 'โหมดเปิดก้น',
       current_position: 'ตำแหน่งปัจจุบัน',
       disable: 'ปิดใช้งาน',

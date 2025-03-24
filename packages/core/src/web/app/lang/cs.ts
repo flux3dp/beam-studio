@@ -93,6 +93,7 @@ const lang: ILang = {
     document_panel: {
       add_on: 'Doplňky',
       auto_feeder: 'Automatický podavač',
+      auto_feeder_scale: 'Měřítko automatického podavače',
       borderless_mode: 'Otevřít spodní část',
       current_position: 'Aktuální pozice',
       disable: 'Zakázat',

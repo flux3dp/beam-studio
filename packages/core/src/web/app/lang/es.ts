@@ -93,6 +93,7 @@ const lang: ILang = {
     document_panel: {
       add_on: 'Complementos',
       auto_feeder: 'Alimentador automático',
+      auto_feeder_scale: 'Escala de alimentador automático',
       borderless_mode: 'Fondo abierto',
       current_position: 'Posición Actual',
       disable: 'Deshabilitar',

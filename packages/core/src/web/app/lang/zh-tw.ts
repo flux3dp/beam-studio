@@ -93,6 +93,7 @@ const lang: ILang = {
     document_panel: {
       add_on: '擴充模組',
       auto_feeder: '自動送料',
+      auto_feeder_scale: '自動送料倍率',
       borderless_mode: '開蓋模式',
       current_position: '當前位置',
       disable: '關閉',
