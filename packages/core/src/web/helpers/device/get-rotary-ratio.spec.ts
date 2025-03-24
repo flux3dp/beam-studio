@@ -90,6 +90,24 @@ describe('test getRotaryRatio', () => {
     ).toBeCloseTo(-0.5);
   });
 
+  test('chuck rotary with non-default diameter', () => {
+    mockPreference = {
+      ...mockPreference,
+      'rotary-chuck-obj-d': CHUCK_ROTARY_DIAMETER * 2,
+      'rotary-mirror': true,
+      'rotary-type': RotaryType.Chuck,
+    };
+    expect(
+      getRotaryRatio({
+        ...mockAddOnInfo,
+        rotary: {
+          ...mockAddOnInfo.rotary,
+          chuckDiameter: CHUCK_ROTARY_DIAMETER / 2,
+        },
+      }),
+    ).toBeCloseTo(0.25);
+  });
+
   test('chuck with mirror and scale', () => {
     mockPreference = {
       ...mockPreference,

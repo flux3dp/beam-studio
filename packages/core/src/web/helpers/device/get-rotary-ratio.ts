@@ -2,18 +2,18 @@ import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import type { AddOnInfo } from '@core/app/constants/addOn';
 import { CHUCK_ROTARY_DIAMETER, RotaryType } from '@core/app/constants/addOn';
 
-const getRotaryRatio = (addOnInfo: AddOnInfo): number => {
+const getRotaryRatio = ({ rotary: rotaryInfo }: AddOnInfo): number => {
   let ratio = 1;
 
-  if (beamboxPreference.read('rotary-type') === RotaryType.Chuck && addOnInfo.rotary?.chuck) {
+  if (beamboxPreference.read('rotary-type') === RotaryType.Chuck && rotaryInfo?.chuck) {
     const objectDiameter = beamboxPreference.read('rotary-chuck-obj-d');
 
-    ratio = CHUCK_ROTARY_DIAMETER / objectDiameter;
+    ratio = (rotaryInfo.chuckDiameter ?? CHUCK_ROTARY_DIAMETER) / objectDiameter;
   }
 
-  if (addOnInfo.rotary?.mirror) {
+  if (rotaryInfo?.mirror) {
     const mirror = beamboxPreference.read('rotary-mirror');
-    const { defaultMirror } = addOnInfo.rotary;
+    const { defaultMirror } = rotaryInfo;
 
     if (mirror !== Boolean(defaultMirror)) {
       ratio *= -1;

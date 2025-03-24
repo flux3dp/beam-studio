@@ -23,6 +23,7 @@ export interface AddOnInfo {
   redLight?: boolean;
   rotary?: {
     chuck: boolean;
+    chuckDiameter?: number;
     defaultMirror?: boolean;
     extendWorkarea: boolean;
     mirror: boolean;
@@ -87,6 +88,7 @@ const addOnData: Record<WorkAreaModel, AddOnInfo> = {
     redLight: true,
     rotary: {
       chuck: true,
+      chuckDiameter: CHUCK_ROTARY_DIAMETER / 2,
       defaultMirror: true,
       extendWorkarea: true,
       mirror: true,
