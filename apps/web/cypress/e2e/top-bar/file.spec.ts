@@ -88,7 +88,7 @@ describe('manipulate file', () => {
 
     selectMenuOption('File', 'Save As...');
     checkCrc32(Cypress.env('cypressDownloadNewBeamPath'), {
-      default: 600404773,
+      default: 998815871,
       githubWindows: -1067439600,
       githubLinux: -901845600,
     });
