@@ -218,61 +218,6 @@ class CameraCalibrationApi {
     });
   }
 
-  findCorners(
-    img: ArrayBuffer | Blob,
-    withPitch = false,
-  ): Promise<{
-    blob: Blob;
-    data?: {
-      d: number[][];
-      k: number[][];
-      ret: number;
-      rvec: number[];
-      tvec: number[];
-    };
-    success: boolean;
-  }> {
-    return new Promise((resolve, reject) => {
-      let success = true;
-      let data = {} as {
-        d: number[][];
-        k: number[][];
-        ret: number;
-        rvec: number[];
-        tvec: number[];
-      };
-
-      this.events.onMessage = (response) => {
-        if (response instanceof Blob) {
-          resolve({ blob: response, data, success });
-        } else if (response.status === 'continue') {
-          this.ws.send(img);
-        } else if (response.status === 'fail') {
-          success = false;
-          console.log('fail', response);
-        } else if (response.status === 'ok') {
-          const { status, ...rest } = response;
-
-          data = rest;
-        }
-      };
-
-      this.events.onError = (response) => {
-        reject(response);
-        console.log('on error', response);
-      };
-      this.events.onFatal = (response) => {
-        reject(response);
-        console.log('on fatal', response);
-      };
-
-      const size = img instanceof Blob ? img.size : img.byteLength;
-
-      // corner_detection [camera_pitch] [file_length] [calibration_version]
-      this.ws.send(`corner_detection ${withPitch ? 20 : 0} ${size} 2`);
-    });
-  }
-
   solvePnPFindCorners = (
     img: ArrayBuffer | Blob,
     dh: number,
