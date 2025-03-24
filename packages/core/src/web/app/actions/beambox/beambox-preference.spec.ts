@@ -58,6 +58,7 @@ test('test beambox-preference', () => {
     'af-offset': 0,
     'anti-aliasing': true,
     'auto-feeder': false,
+    'auto-feeder-scale': 1,
     'auto-switch-tab': false,
     auto_align: true,
     blade_precut: false,
