@@ -99,6 +99,7 @@ export const getExportOpt = (
     }
   } else if (autoFeeder) {
     config.rotary_y_ratio = addOnInfo.autoFeeder!.rotaryRatio;
+    config.rotary_y_ratio *= BeamboxPreference.read('auto-feeder-scale');
     config.rotary_z_motion = false;
 
     if (config.job_origin) {
