@@ -88,7 +88,7 @@ const NumberBlock = ({
     if (isTimeRelated) timeEstimationButtonEventEmitter.emit('SET_ESTIMATED_TIME', null);
 
     if (type !== 'modal') {
-      const batchCmd = noHistory ? undefined : new history.BatchCommand('Change AM Density');
+      const batchCmd = noHistory ? undefined : new history.BatchCommand(`Change ${key}`);
 
       selectedLayers.forEach((layerName) => {
         writeData(layerName, key, newVal, { batchCmd });
