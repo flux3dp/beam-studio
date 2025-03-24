@@ -104,7 +104,7 @@ jest.mock('@core/implementations/browser', () => ({
 const mockUnmount = jest.fn();
 const mockQuerySelectorAll = jest.fn();
 
-import DocumentSettings from './DocumentSettings';
+import DocumentSettings from './index';
 
 describe('test DocumentSettings', () => {
   beforeEach(() => {
