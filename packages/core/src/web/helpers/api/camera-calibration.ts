@@ -226,7 +226,7 @@ class CameraCalibrationApi {
   ): Promise<
     | {
         blob: Blob;
-        data?: { points: Array<[number, number]> };
+        data: { points: Array<[number, number]> };
         success: true;
       }
     | {
@@ -279,7 +279,7 @@ class CameraCalibrationApi {
     points: Array<[number, number]>,
     refPoints: Array<[number, number]>,
   ): Promise<{
-    data?: { rvec: number[]; tvec: number[] };
+    data: { rvec: number[]; tvec: number[] };
     success: boolean;
   }> =>
     new Promise((resolve, reject) => {
