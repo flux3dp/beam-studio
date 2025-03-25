@@ -66,7 +66,7 @@ const MonitorTask = ({ device }: Props): React.JSX.Element => {
   const renderIcon = useCallback(
     (parentType: FramingType) => {
       if (isFraming && parentType === type) {
-        return <Spin indicator={<LoadingOutlined spin />} />;
+        return <Spin className={styles['icon-framing']} indicator={<LoadingOutlined spin />} />;
       }
 
       return renderFramingIcon(parentType, styles['icon-framing']);
