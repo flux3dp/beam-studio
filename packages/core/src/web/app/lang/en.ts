@@ -757,6 +757,9 @@ const lang: ILang = {
         objects: 'Objects',
         path_edit: 'Path Edit',
       },
+      uv_export_block: {
+        title: 'UV Export',
+      },
     },
     shapes_panel: {
       animals: 'Animal',

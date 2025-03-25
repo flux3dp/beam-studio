@@ -2,7 +2,7 @@ import Alert from '@core/app/actions/alert-caller';
 import BeamboxPreference, { migrate } from '@core/app/actions/beambox/beambox-preference';
 import Constant from '@core/app/actions/beambox/constant';
 import Tutorials from '@core/app/actions/beambox/tutorials';
-import addOnBoundaryDrawer from '@core/app/actions/canvas/addOnBoundaryDrawer';
+import { addOnBoundaryDrawer } from '@core/app/actions/canvas/addOnBoundaryDrawer';
 import Dialog from '@core/app/actions/dialog-caller';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import { showAdorCalibrationV2 } from '@core/app/components/dialogs/camera/AdorCalibrationV2';
