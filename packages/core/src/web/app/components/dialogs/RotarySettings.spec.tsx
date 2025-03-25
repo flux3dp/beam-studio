@@ -122,4 +122,45 @@ describe('test RotarySettings', () => {
     expect(mockToggleDisplay).toHaveBeenCalledTimes(1);
     expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
+
+  test('promark rotary settings', () => {
+    mockRead.mockImplementation((key) => (key === 'workarea' ? 'fpm1' : undefined));
+
+    const { baseElement, getByText } = render(<RotarySettings onClose={mockOnClose} />);
+
+    expect(baseElement).toMatchSnapshot();
+
+    const rotaryMode = baseElement.querySelector('#rotary_mode');
+    const chuckSegmentSelector = getByText('Chuck');
+    const chuckDiameter = baseElement.querySelector('#object_diameter');
+    const splitSize = baseElement.querySelector('#split');
+    const overlapSize = baseElement.querySelector('#overlap');
+    const mirrorCheckbox = baseElement.querySelector('#mirror');
+    const scaleSelect = baseElement.querySelector('#scale');
+
+    fireEvent.click(rotaryMode);
+    fireEvent.click(chuckSegmentSelector);
+    fireEvent.change(chuckDiameter, { target: { value: 10 } });
+    fireEvent.change(splitSize, { target: { value: 2 } });
+    fireEvent.change(overlapSize, { target: { value: 1 } });
+    fireEvent.click(mirrorCheckbox);
+    act(() => fireEvent.mouseDown(scaleSelect));
+    fireEvent.click(baseElement.querySelector('.rc-virtual-list [title="2"]'));
+
+    const saveButton = baseElement.querySelector('.ant-btn-primary');
+
+    fireEvent.click(saveButton);
+    expect(mockWrite).toHaveBeenCalledTimes(7);
+    expect(mockWrite).toHaveBeenNthCalledWith(1, 'rotary_mode', true);
+    expect(mockWrite).toHaveBeenNthCalledWith(2, 'rotary-type', RotaryType.Chuck);
+    expect(mockWrite).toHaveBeenNthCalledWith(3, 'rotary-scale', 2);
+    expect(mockWrite).toHaveBeenNthCalledWith(4, 'rotary-chuck-obj-d', 10);
+    expect(mockWrite).toHaveBeenNthCalledWith(5, 'rotary-mirror', true);
+    expect(mockWrite).toHaveBeenNthCalledWith(6, 'rotary-split', 2);
+    expect(mockWrite).toHaveBeenNthCalledWith(7, 'rotary-overlap', 1);
+    expect(mockChangeWorkarea).toHaveBeenCalledTimes(1);
+    expect(mockChangeWorkarea).toHaveBeenLastCalledWith('fpm1', { toggleModule: false });
+    expect(mockToggleDisplay).toHaveBeenCalledTimes(1);
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
+  });
 });
