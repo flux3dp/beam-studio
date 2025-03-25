@@ -3,72 +3,44 @@
 exports[`test ConfigValueDisplay when type is not panel-item should render correctly 1`] = `
 <div>
   <div>
-    MockUnitInput
+    UnitInput: 
+    mock-input-id
     <p>
-      id: 
-      mock-input-id
+      precision: 
+      2
     </p>
     <p>
-      min: 
-      0
-    </p>
-    <p>
-      max: 
-      100
+      underline
     </p>
     <p>
       unit: 
       mm
     </p>
-    <p>
-      defaultValue: 
-      5
-    </p>
-    <p>
-      decimal: 
-      2
-    </p>
-    <p>
-      displayMultiValue: 
-    </p>
-    <p>
-      disabled: 
-      n
-    </p>
-    <button
-      type="button"
-    >
-      change
-    </button>
+    <input
+      id="mock-input-id"
+      max="100"
+      min="0"
+      value="5"
+    />
   </div>
 </div>
 `;
 
 exports[`test ConfigValueDisplay when type is panel-item should render correctly 1`] = `
 <div>
-  <div>
+  <div
+    class="input"
+  >
+    UnitInput: 
     <p>
-      Props: 
-      {"theme":{"token":{"borderRadius":100}}}
+      precision: 
+      2
     </p>
-    <div>
-      Mock InputNumber
-      <p>
-        precision: 
-        2
-      </p>
-      <p>
-        controls: 
-        n
-      </p>
-      <input
-        class="input"
-        max="100"
-        min="0"
-        type="number"
-        value="5"
-      />
-    </div>
+    <input
+      max="100"
+      min="0"
+      value="5"
+    />
   </div>
 </div>
 `;
