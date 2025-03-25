@@ -1,27 +1,24 @@
 const mockRead = jest.fn();
 
 jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
-  read: (...args) => mockRead(...args),
+  read: mockRead,
 }));
 
 const mockGetPosition = jest.fn();
 
 jest.mock('@core/app/actions/canvas/rotary-axis', () => ({
-  getPosition: (...args) => mockGetPosition(...args),
+  getPosition: mockGetPosition,
 }));
 
 const mockGetAddOnInfo = jest.fn();
 
 jest.mock('@core/app/constants/addOn', () => ({
-  getAddOnInfo: (...args) => mockGetAddOnInfo(...args),
+  getAddOnInfo: mockGetAddOnInfo,
 }));
 
 const mockGetRotaryRatio = jest.fn();
 
-jest.mock('@core/helpers/device/get-rotary-ratio', () => ({
-  __esModule: true,
-  default: mockGetRotaryRatio,
-}));
+jest.mock('@core/helpers/device/get-rotary-ratio', () => mockGetRotaryRatio);
 
 import { getRotaryInfo } from './rotary';
 
