@@ -1174,6 +1174,7 @@ const lang: ILang = {
     area_check: 'Semakan Kawasan',
     areacheck_desc: 'Memastikan kawasan kerja selamat dengan memaparkan kotak sempadan objek dan zon pecutan kepala laser.',
     calculating_task: 'Mengira tugas...',
+    frame_preview_warning: 'Pratonton bingkai akan berputar sekali. Elakkan berhenti di tengah jalan untuk mengelakkan penyimpangan kedudukan tanda. Untuk pratonton semula, tunggu sehingga putaran selesai sebelum mengklik lagi.',
     framing: 'Pembingkaian',
     framing_desc: 'Pratonton kotak sempadan objek.',
     hull: 'Kerangka',

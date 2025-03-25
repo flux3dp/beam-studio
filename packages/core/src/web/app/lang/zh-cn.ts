@@ -1174,6 +1174,7 @@ const lang: ILang = {
     area_check: '区域检查',
     areacheck_desc: '通过预览对象的边界框和激光头的加速区，确保工作区的安全。',
     calculating_task: '正在计算任务...',
+    frame_preview_warning: '外框预览会旋转一圈，请避免中途停止，以免导致打点位置偏移。若需再次预览，请等待旋转结束后再次点击。',
     framing: '外框',
     framing_desc: '预览对象的边界框。',
     hull: '凸包',

@@ -1174,6 +1174,7 @@ const lang: ILang = {
     area_check: 'Verificação da Área',
     areacheck_desc: 'Garante a segurança da área de trabalho exibindo a caixa delimitadora do objeto e a zona de aceleração da cabeça do laser.',
     calculating_task: 'Calculando tarefa...',
+    frame_preview_warning: 'A pré-visualização da moldura girará uma vez. Evite parar no meio do processo para evitar desalinhamento da posição da marcação. Para visualizar novamente, aguarde a rotação terminar antes de clicar novamente.',
     framing: 'Moldura',
     framing_desc: 'Visualiza a caixa delimitadora do objeto.',
     hull: 'Casco',

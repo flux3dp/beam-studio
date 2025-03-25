@@ -1174,6 +1174,7 @@ const lang: ILang = {
     area_check: 'Områdeskontroll',
     areacheck_desc: 'Säkerställer att arbetsområdet är säkert genom att förhandsgranska objektets begränsningsram och laserns accelerationszon.',
     calculating_task: 'Beräknar uppgift...',
+    frame_preview_warning: 'Ramförhandsgranskningen kommer att rotera en gång. Undvik att stoppa halvvägs för att förhindra att markeringspositionen förskjuts. För att förhandsgranska igen, vänta tills rotationen är klar innan du klickar igen.',
     framing: 'Inramning',
     framing_desc: 'Förhandsgranskar objektets avgränsningsruta.',
     hull: 'Skrov',

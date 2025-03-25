@@ -1174,6 +1174,7 @@ const lang: ILang = {
     area_check: 'Sprawdzenie obszaru',
     areacheck_desc: 'Zapewnia bezpieczeństwo obszaru roboczego poprzez podgląd ramki ograniczającej obiekt i strefy przyspieszenia głowicy lasera.',
     calculating_task: 'Obliczanie zadania...',
+    frame_preview_warning: 'Podgląd ramki obróci się raz. Unikaj zatrzymywania się w połowie, aby zapobiec przesunięciu pozycji znakowania. Aby ponownie wyświetlić podgląd, poczekaj na zakończenie obrotu, a następnie kliknij ponownie.',
     framing: 'Ramowanie',
     framing_desc: 'Podgląd ramki ograniczającej obiekt.',
     hull: 'Kadłub',

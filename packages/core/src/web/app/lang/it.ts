@@ -1174,6 +1174,7 @@ const lang: ILang = {
     area_check: 'Controllo Area',
     areacheck_desc: "Garantisce la sicurezza dell'area di lavoro visualizzando il riquadro di delimitazione dell'oggetto e la zona di accelerazione della testa laser.",
     calculating_task: 'Calcolo del compito...',
+    frame_preview_warning: "L'anteprima della cornice ruoterà una volta. Evita di fermarti a metà per evitare disallineamenti della posizione del marcatore. Per visualizzare nuovamente l'anteprima, attendi che la rotazione sia completata prima di fare nuovamente clic.",
     framing: 'Inquadratura',
     framing_desc: "Anteprima del riquadro di delimitazione dell'oggetto.",
     hull: 'Involucro',

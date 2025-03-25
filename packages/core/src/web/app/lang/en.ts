@@ -1174,6 +1174,7 @@ const lang: ILang = {
     area_check: 'Area Check',
     areacheck_desc: "Ensures the work area is safe by previewing the object's bounding box and the laser head's acceleration zone.",
     calculating_task: 'Calculating task...',
+    frame_preview_warning: 'The frame preview will rotate once. Avoid stopping midway to prevent marking position misalignment. To preview again, wait for the rotation to finish before clicking again.',
     framing: 'Framing',
     framing_desc: "Previews the object's bounding box.",
     hull: 'Hull',

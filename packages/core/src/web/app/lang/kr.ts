@@ -1174,6 +1174,7 @@ const lang: ILang = {
     area_check: '영역 확인',
     areacheck_desc: '작업 영역이 안전한지 객체의 경계 상자와 레이저 헤드의 가속 영역을 미리 보아 확인합니다.',
     calculating_task: '작업 계산 중...',
+    frame_preview_warning: '프레임 미리보기는 한 바퀴 회전합니다. 중간에 멈추면 타점 위치가 어긋날 수 있으므로 멈추지 마세요. 다시 미리 보려면 회전이 끝난 후 다시 클릭하세요.',
     framing: '프레이밍',
     framing_desc: '객체의 경계 상자를 미리 봅니다.',
     hull: '외형',

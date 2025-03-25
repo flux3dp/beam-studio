@@ -1174,6 +1174,7 @@ const lang: ILang = {
     area_check: '區域檢查',
     areacheck_desc: '藉由預覽物件的邊界框與雷射頭的加速區，確保工作區的安全。',
     calculating_task: '正在計算外框工作...',
+    frame_preview_warning: '外框預覽會旋轉一圈，請避免中途停止，以免導致打點位置偏移。若需再次預覽，請等待旋轉結束後再次點擊。',
     framing: '外框',
     framing_desc: '預覽物件的邊界框。',
     hull: '凸包',

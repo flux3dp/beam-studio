@@ -1174,6 +1174,7 @@ const lang: ILang = {
     area_check: 'Områdekontrol',
     areacheck_desc: 'Sikrer arbejdsområdet ved at vise objektets afgrænsningsboks og laserhovedets accelerationszone.',
     calculating_task: 'Beregner opgave...',
+    frame_preview_warning: 'Rammeforhåndsvisningen vil rotere én gang. Undgå at stoppe midtvejs for at forhindre skæv markering. For at forhåndsvise igen, vent til rotationen er færdig, før du klikker igen.',
     framing: 'Indramning',
     framing_desc: 'Forhåndsviser objektets afgrænsningsboks.',
     hull: 'Krop',

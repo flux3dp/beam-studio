@@ -1172,6 +1172,7 @@ export interface ILang {
     area_check: string;
     areacheck_desc: string;
     calculating_task: string;
+    frame_preview_warning: string;
     framing: string;
     framing_desc: string;
     hull: string;

@@ -1174,6 +1174,7 @@ const lang: ILang = {
     area_check: 'Pemeriksaan Area',
     areacheck_desc: 'Memastikan area kerja aman dengan menampilkan kotak pembatas objek dan zona akselerasi kepala laser.',
     calculating_task: 'Menghitung tugas...',
+    frame_preview_warning: 'Pratinjau bingkai akan berputar sekali. Hindari berhenti di tengah jalan untuk mencegah ketidaksesuaian posisi penandaan. Untuk melihat pratinjau lagi, tunggu hingga rotasi selesai sebelum mengklik lagi.',
     framing: 'Pembingkaian',
     framing_desc: 'Pratinjau kotak pembatas objek.',
     hull: 'Kerangka',

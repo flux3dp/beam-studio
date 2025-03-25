@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { LoadingOutlined } from '@ant-design/icons';
+import { InfoCircleOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Button, Divider, Flex, Modal, Spin } from 'antd';
 import classNames from 'classnames';
 
@@ -8,7 +8,7 @@ import { handleExportClick } from '@core/app/actions/beambox/export/GoButton/han
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import { renderFramingIcon } from '@core/app/icons/framing/FramingIcons';
 import icons from '@core/app/icons/icons';
-import type { FramingType } from '@core/helpers/device/framing';
+import { FramingType } from '@core/helpers/device/framing';
 import FramingTaskManager, { framingOptions, getFramingOptions } from '@core/helpers/device/framing';
 import shortcuts from '@core/helpers/shortcuts';
 import useI18n from '@core/helpers/useI18n';
@@ -27,6 +27,7 @@ const PromarkFramingModal = ({ device, onClose, startOnOpen = false }: Props): R
   const lang = useI18n();
   const { framing: tFraming } = lang;
   const options = useMemo(() => getFramingOptions(device), [device]);
+  const withRotary = useMemo(() => options.includes(FramingType.RotateAxis), [options]);
   const [isFraming, setIsFraming] = useState<boolean>(false);
   const [type, setType] = useState<FramingType>(options[0]);
   const manager = useRef<FramingTaskManager>(null);
@@ -111,7 +112,7 @@ const PromarkFramingModal = ({ device, onClose, startOnOpen = false }: Props): R
       onCancel={onClose}
       open
       title={tFraming.framing}
-      width={360}
+      width={options.length > 1 ? 480 : 360}
     >
       <div className={styles.container}>
         <Flex gap={16}>
@@ -140,6 +141,12 @@ const PromarkFramingModal = ({ device, onClose, startOnOpen = false }: Props): R
         </Flex>
         <div className={styles.desc}>
           <div className={styles.content}>{tFraming[framingOptions[type].description]}</div>
+          {withRotary && type === FramingType.Framing && (
+            <div className={styles.hint}>
+              <InfoCircleOutlined />
+              <span>{tFraming.frame_preview_warning}</span>
+            </div>
+          )}
           <Divider />
           <div className={styles.content}>{tFraming.start_task_description}</div>
         </div>

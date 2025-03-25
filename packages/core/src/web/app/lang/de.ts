@@ -1174,6 +1174,7 @@ const lang: ILang = {
     area_check: 'Bereichsprüfung',
     areacheck_desc: 'Stellt die Sicherheit des Arbeitsbereichs sicher, indem der Begrenzungsrahmen des Objekts und die Beschleunigungszone des Laserkopfs angezeigt werden.',
     calculating_task: 'Aufgabe wird berechnet...',
+    frame_preview_warning: 'Die Rahmenvorschau dreht sich einmal. Bitte nicht währenddessen stoppen, um eine Verschiebung der Markierung zu vermeiden. Wenn Sie die Vorschau erneut anzeigen möchten, warten Sie, bis die Drehung abgeschlossen ist, und klicken Sie dann erneut.',
     framing: 'Rahmung',
     framing_desc: 'Zeigt die Begrenzungsbox des Objekts in der Vorschau an.',
     hull: 'Hülle',

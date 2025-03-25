@@ -1174,6 +1174,7 @@ const lang: ILang = {
     area_check: 'Alueen tarkistus',
     areacheck_desc: 'Varmistaa työalueen turvallisuuden näyttämällä objektin rajauslaatikon ja laserpään kiihdytysvyöhykkeen.',
     calculating_task: 'Lasketaan tehtävää...',
+    frame_preview_warning: 'Kehyksen esikatselu pyörii kerran. Älä keskeytä kesken, jotta merkintäpaikka ei siirry. Esikatsele uudelleen vasta, kun pyöriminen on päättynyt.',
     framing: 'Kehystys',
     framing_desc: 'Esikatselee objektin raja-laatikon.',
     hull: 'Runko',

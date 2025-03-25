@@ -1174,6 +1174,7 @@ const lang: ILang = {
     area_check: 'Kiểm tra khu vực',
     areacheck_desc: 'Đảm bảo khu vực làm việc an toàn bằng cách xem trước hộp giới hạn của đối tượng và vùng gia tốc của đầu laser.',
     calculating_task: 'Đang tính toán nhiệm vụ...',
+    frame_preview_warning: 'Bản xem trước khung sẽ xoay một vòng. Tránh dừng giữa chừng để tránh lệch vị trí đánh dấu. Để xem trước lại, vui lòng đợi vòng quay kết thúc trước khi nhấp lại.',
     framing: 'Đóng khung',
     framing_desc: 'Xem trước hộp giới hạn của đối tượng.',
     hull: 'Vỏ',

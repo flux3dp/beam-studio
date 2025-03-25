@@ -1174,6 +1174,7 @@ const lang: ILang = {
     area_check: 'Vérification de la zone',
     areacheck_desc: "Assure la sécurité de la zone de travail en prévisualisant la boîte englobante de l'objet et la zone d'accélération de la tête laser.",
     calculating_task: 'Calcul de la tâche...',
+    frame_preview_warning: "L'aperçu du cadre effectuera une rotation complète. Évitez de l'interrompre en cours de route afin de ne pas provoquer un décalage de la position du marquage. Pour prévisualiser à nouveau, attendez la fin de la rotation avant de cliquer à nouveau.",
     framing: 'Cadrage',
     framing_desc: "Aperçu de la boîte englobante de l'objet.",
     hull: 'Coque',

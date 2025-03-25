@@ -1174,6 +1174,7 @@ const lang: ILang = {
     area_check: 'Kontrola oblasti',
     areacheck_desc: 'Zajišťuje bezpečnost pracovní oblasti náhledem na ohraničující rámeček objektu a zónu akcelerace laserové hlavy.',
     calculating_task: 'Výpočet úlohy...',
+    frame_preview_warning: 'Náhled rámečku se otočí o jednu otáčku. Nepřerušujte jej, aby nedošlo k posunutí polohy bodu. Chcete-li zobrazit náhled znovu, počkejte, až se otočení dokončí, a poté znovu klikněte.',
     framing: 'Rámování',
     framing_desc: 'Náhled ohraničujícího rámečku objektu.',
     hull: 'Obrys',

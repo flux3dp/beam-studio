@@ -1174,6 +1174,7 @@ const lang: ILang = {
     area_check: 'Comprobación de Área',
     areacheck_desc: 'Asegura que el área de trabajo sea segura mostrando la caja delimitadora del objeto y la zona de aceleración del cabezal láser.',
     calculating_task: 'Calculando tarea...',
+    frame_preview_warning: 'La vista previa del marco girará una vez. Evite detenerse a mitad de camino para evitar el desalineamiento de la posición de marcado. Para previsualizar nuevamente, espere a que termine la rotación antes de hacer clic otra vez.',
     framing: 'Enmarcado',
     framing_desc: 'Previsualiza el cuadro delimitador del objeto.',
     hull: 'Envoltura',

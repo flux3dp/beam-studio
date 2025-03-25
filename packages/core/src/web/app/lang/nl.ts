@@ -1174,6 +1174,7 @@ const lang: ILang = {
     area_check: 'Gebied Controle',
     areacheck_desc: 'Zorgt voor een veilige werkruimte door het begrenzingsvak van het object en de versnellingszone van de laserkop te tonen.',
     calculating_task: 'Taak berekenen...',
+    frame_preview_warning: 'De framevoorbeeld zal één keer roteren. Stop niet halverwege om verkeerde markeerposities te voorkomen. Om opnieuw te bekijken, wacht tot de rotatie is voltooid en klik dan opnieuw.',
     framing: 'Inlijsten',
     framing_desc: 'Geeft een voorbeeld van de begrenzingsbox van het object.',
     hull: 'Omhulsel',
