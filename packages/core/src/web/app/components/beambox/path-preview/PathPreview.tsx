@@ -26,6 +26,7 @@ import workareaManager from '@core/app/svgedit/workarea';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import { checkBlockedSerial } from '@core/helpers/device/checkBlockedSerial';
 import getDevice from '@core/helpers/device/get-device';
+import getRotaryRatio from '@core/helpers/device/get-rotary-ratio';
 import deviceMaster from '@core/helpers/device-master';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
@@ -785,11 +786,14 @@ class PathPreview extends React.Component<Props, State> {
         const workarea = BeamboxPreference.read('workarea') || 'fbm1';
         const isPromark = promarkModels.has(workarea);
         const parsedGcode = parseGcode(this.gcodeString, isPromark);
+        // For Promark rotary display
+        const rotaryRatio = getRotaryRatio(getAddOnInfo('fpm1'));
 
         this.gcodePreview.setParsedGcode(
           parsedGcode,
           isPromark,
           (dpiTextMap[BeamboxPreference.read('engrave_dpi')] || 254) / 25.4,
+          rotaryRatio,
         );
         this.simTimeMax =
           Math.ceil((this.gcodePreview.g1Time + this.gcodePreview.g0Time) / SIM_TIME_MINUTE) * SIM_TIME_MINUTE +

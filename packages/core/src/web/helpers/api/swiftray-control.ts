@@ -2,6 +2,7 @@
 import { EventEmitter } from 'eventemitter3';
 
 import ErrorConstants from '@core/app/constants/error-constants';
+import type { RotaryInfo } from '@core/helpers/addOn/rotary';
 import type { Mode } from '@core/interfaces/IControlSocket';
 import type IControlSocket from '@core/interfaces/IControlSocket';
 import type { IDeviceDetailInfo } from '@core/interfaces/IDevice';
@@ -397,10 +398,10 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
     return [{}, await this.sc.getPreview()];
   };
 
-  startFraming = async (points?: Array<[number, number]>) => {
+  startFraming = async (points?: Array<[number, number]>, rotaryInfo?: RotaryInfo) => {
     console.log('SwiftrayControl.startFraming');
 
-    return this.sc.startFraming(points);
+    return this.sc.startFraming(points, rotaryInfo);
   };
 
   stopFraming = async () => {

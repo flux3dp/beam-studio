@@ -5,7 +5,6 @@ import alertCaller from '@core/app/actions/alert-caller';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant, { promarkModels } from '@core/app/actions/beambox/constant';
 import exportFuncs from '@core/app/actions/beambox/export-funcs';
-import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import type { AddOnInfo } from '@core/app/constants/addOn';
 import { getAddOnInfo } from '@core/app/constants/addOn';
@@ -15,16 +14,18 @@ import { getWorkarea } from '@core/app/constants/workarea-constants';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
 import { getAutoFeeder } from '@core/helpers/addOn';
+import type { RotaryInfo } from '@core/helpers/addOn/rotary';
+import { getRotaryInfo } from '@core/helpers/addOn/rotary';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 import getUtilWS from '@core/helpers/api/utils-ws';
 import checkDeviceStatus from '@core/helpers/check-device-status';
-import getRotaryRatio from '@core/helpers/device/get-rotary-ratio';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
 import getJobOrigin from '@core/helpers/job-origin';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getAllLayers } from '@core/helpers/layer/layer-helper';
+import monitorStatus from '@core/helpers/monitor-status';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import symbolMaker from '@core/helpers/symbol-maker';
 import versionChecker from '@core/helpers/version-checker';
@@ -38,8 +39,10 @@ import promarkDataStore from './promark/promark-data-store';
 // TODO: add unit test
 export enum FramingType {
   Framing,
+  RotateFraming,
   Hull,
   AreaCheck,
+  RotateAxis,
 }
 
 type Coordinates = {
@@ -54,6 +57,41 @@ let svgCanvas: ISVGCanvas;
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
+
+export const framingOptions = {
+  [FramingType.AreaCheck]: {
+    description: 'areacheck_desc',
+    title: 'area_check',
+  },
+  [FramingType.Framing]: {
+    description: 'framing_desc',
+    title: 'framing',
+  },
+  [FramingType.Hull]: {
+    description: 'hull_desc',
+    title: 'hull',
+  },
+  [FramingType.RotateAxis]: {
+    description: 'rotateaxis_desc',
+    title: 'rotate_axis',
+  },
+  [FramingType.RotateFraming]: {
+    description: 'rotation_framing_desc',
+    title: 'framing',
+  },
+} as const;
+
+export const getFramingOptions = (device: IDeviceInfo) => {
+  if (promarkModels.has(device.model)) {
+    const withRotary = Boolean(beamboxPreference.read('rotary_mode') && getAddOnInfo(device.model).rotary);
+
+    if (withRotary) return [FramingType.RotateAxis, FramingType.RotateFraming];
+
+    return [FramingType.Framing];
+  }
+
+  return [FramingType.Framing, FramingType.Hull, FramingType.AreaCheck];
+};
 
 const getCoords = (mm?: boolean): Coordinates => {
   const coords: Partial<Coordinates> = {
@@ -222,7 +260,7 @@ class FramingTaskManager extends EventEmitter {
   private isPromark = false;
   private isWorking = false;
   private interrupted = false;
-  private rotaryInfo: null | { useAAxis?: boolean; y: number; yRatio: number } = null; // y in mm
+  private rotaryInfo: RotaryInfo = null;
   private enabledInfo: {
     '24v': boolean;
     lineCheckMode: boolean;
@@ -250,6 +288,7 @@ class FramingTaskManager extends EventEmitter {
     this.isAdor = constant.adorModels.includes(device.model);
     this.isPromark = promarkModels.has(device.model);
     this.isFcodeV2 = constant.fcodeV2Models.has(device.model);
+    this.rotaryInfo = getRotaryInfo(this.device.model, true);
 
     if (
       beamboxPreference.read('enable-job-origin') &&
@@ -279,7 +318,7 @@ class FramingTaskManager extends EventEmitter {
     this.changeWorkingStatus(false);
   };
 
-  public startPromarkFraming = async (): Promise<void> => {
+  public startPromarkFraming = async (noRotation: boolean): Promise<void> => {
     swiftrayClient.on('disconnected', this.onSwiftrayDisconnected);
 
     if (this.isWorking) {
@@ -312,8 +351,25 @@ class FramingTaskManager extends EventEmitter {
       this.hasAppliedRedLight = true;
     }
 
-    await deviceMaster.startFraming([this.taskPoints[0], this.taskPoints[2]]);
+    await deviceMaster.startFraming([this.taskPoints[0], this.taskPoints[2]], noRotation ? null : this.rotaryInfo);
+
     setTimeout(() => this.emit('close-message'), 1000);
+
+    if (this.rotaryInfo && !noRotation) {
+      // No loop, need check finish status
+      const timer = setInterval(async () => {
+        if (this.isWorking) {
+          const report = await deviceMaster.getReport();
+
+          if (monitorStatus.isAbortedOrCompleted(report)) {
+            this.changeWorkingStatus(false);
+            clearInterval(timer);
+          }
+        } else {
+          clearInterval(timer);
+        }
+      }, 1000);
+    }
   };
 
   public stopPromarkFraming = async (): Promise<void> => {
@@ -409,7 +465,7 @@ class FramingTaskManager extends EventEmitter {
 
     svgCanvas.clearSelection();
 
-    if (type === FramingType.Framing) {
+    if (type === FramingType.Framing || type === FramingType.RotateFraming) {
       const coords = getCoords(true);
 
       if (coords.minX === undefined) {
@@ -450,6 +506,26 @@ class FramingTaskManager extends EventEmitter {
       return res;
     }
 
+    if (type === FramingType.RotateAxis) {
+      if (this.rotaryInfo?.y === undefined) {
+        return [];
+      }
+
+      const { width } = workareaManager;
+
+      const res: Array<[number, number]> = [
+        [0, this.rotaryInfo.y],
+        [width / constant.dpmm, this.rotaryInfo.y],
+        [width / constant.dpmm, this.rotaryInfo.y],
+        [0, this.rotaryInfo.y],
+        [0, this.rotaryInfo.y],
+      ];
+
+      this.taskCache[type] = res;
+
+      return res;
+    }
+
     throw new Error('Not implemented');
   };
 
@@ -467,16 +543,11 @@ class FramingTaskManager extends EventEmitter {
     this.emit('message', sprintf(lang.message.connectingMachine, this.device.name));
     this.resetEnabledInfo();
     this.curPos = { a: 0, x: 0, y: 0 };
-    this.rotaryInfo = null;
+    this.rotaryInfo = getRotaryInfo(this.device.model, true);
 
-    const rotaryMode = beamboxPreference.read('rotary_mode');
     const autoFeeder = getAutoFeeder(this.addOnInfo);
 
-    if (rotaryMode && this.addOnInfo.rotary) {
-      const y = rotaryAxis.getPosition(true) ?? 0;
-
-      this.rotaryInfo = { useAAxis: this.isFcodeV2, y, yRatio: getRotaryRatio(this.addOnInfo) };
-    } else if (autoFeeder && this.addOnInfo.autoFeeder) {
+    if (!this.rotaryInfo && autoFeeder && this.addOnInfo.autoFeeder) {
       let y: number;
 
       if (this.jobOrigin) {
@@ -715,7 +786,7 @@ class FramingTaskManager extends EventEmitter {
     }
 
     if (this.isPromark) {
-      await this.startPromarkFraming();
+      await this.startPromarkFraming(type === FramingType.RotateAxis);
 
       return;
     }

@@ -100,7 +100,6 @@ export interface ILang {
       enable_autofocus: string;
       enable_diode: string;
       engrave_dpi: string;
-      extend_workarea: string;
       frame_before_start: string;
       frame_before_start_url: string;
       high: string;
@@ -109,7 +108,6 @@ export interface ILang {
       low: string;
       machine: string;
       medium: string;
-      mirror: string;
       notification: {
         changeFromPrintingWorkareaTitle: string;
       };
@@ -1178,6 +1176,10 @@ export interface ILang {
     hull_desc: string;
     low_laser: string;
     low_laser_desc: string;
+    rotate_axis: string;
+    rotateaxis_desc: string;
+    rotation_frame_warning: string;
+    rotation_framing_desc: string;
     start_task: string;
     start_task_description: string;
   };
@@ -1646,10 +1648,16 @@ export interface ILang {
   };
   rotary_settings: {
     circumference: string;
+    extend_workarea: string;
+    mirror: string;
     // roller: string;
     // chuck: string;
     object_diameter: string;
+    overlap_size: string;
     rotary_scale: string;
+    split_setting: string;
+    split_setting_url: string;
+    split_size: string;
     type: string;
   };
   select_device: {

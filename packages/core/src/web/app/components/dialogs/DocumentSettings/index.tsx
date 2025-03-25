@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { QuestionCircleOutlined, WarningOutlined } from '@ant-design/icons';
+import { QuestionCircleOutlined, SettingFilled, WarningOutlined } from '@ant-design/icons';
 import { Checkbox, Modal, Switch, Tooltip } from 'antd';
 import classNames from 'classnames';
 
@@ -10,6 +10,7 @@ import constant, { promarkModels } from '@core/app/actions/beambox/constant';
 import diodeBoundaryDrawer from '@core/app/actions/canvas/diode-boundary-drawer';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
+import { showRotarySettings } from '@core/app/components/dialogs/RotarySettings';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
 import CanvasMode from '@core/app/constants/canvasMode';
@@ -91,8 +92,6 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const [shouldFrame, setShouldFrame] = useState(BeamboxPreference.read('frame-before-start'));
   const [enableJobOrigin, setEnableJobOrigin] = useState(BeamboxPreference.read('enable-job-origin'));
   const [jobOrigin, setJobOrigin] = useState(BeamboxPreference.read('job-origin'));
-  const [extendRotaryWorkarea, setExtendRotaryWorkarea] = useState(BeamboxPreference.read('extend-rotary-workarea'));
-  const [mirrorRotary, setMirrorRotary] = useState(BeamboxPreference.read('rotary-mirror'));
   const [borderless, setBorderless] = useState(!!BeamboxPreference.read('borderless'));
   const [enableDiode, setEnableDiode] = useState(!!BeamboxPreference.read('enable-diode'));
   const [enableAutofocus, setEnableAutofocus] = useState(!!BeamboxPreference.read('enable-autofocus'));
@@ -169,9 +168,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     const dpiEvent = eventEmitterFactory.createEventEmitter('dpi-info');
     const workareaChanged = workarea !== origWorkarea;
     let customDimensionChanged = false;
-    const rotaryChanged =
-      rotaryMode !== BeamboxPreference.read('rotary_mode') ||
-      extendRotaryWorkarea !== BeamboxPreference.read('extend-rotary-workarea');
+    const rotaryChanged = rotaryMode !== BeamboxPreference.read('rotary_mode');
 
     BeamboxPreference.write('engrave_dpi', engraveDpi);
     dpiEvent.emit('UPDATE_DPI', engraveDpi);
@@ -190,12 +187,6 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     }
 
     BeamboxPreference.write('rotary_mode', rotaryMode);
-
-    if (rotaryMode) {
-      if (addOnInfo.rotary?.extendWorkarea) BeamboxPreference.write('extend-rotary-workarea', extendRotaryWorkarea);
-
-      if (addOnInfo.rotary?.mirror) BeamboxPreference.write('rotary-mirror', mirrorRotary);
-    }
 
     const newPassThrough = Boolean(showPassThrough && passThrough);
     const passThroughChanged = newPassThrough !== origPassThrough;
@@ -460,11 +451,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
             </div>
           )}
           {addOnInfo.rotary && (
-            <div
-              className={classNames(styles.row, {
-                [styles.full]: addOnInfo.rotary.mirror || addOnInfo.rotary.extendWorkarea,
-              })}
-            >
+            <div className={classNames(styles.row, styles.full)}>
               <div className={styles.title}>
                 <label htmlFor="rotary_mode">{tDocu.rotary_mode}</label>
               </div>
@@ -476,26 +463,14 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                   id="rotary_mode"
                   onChange={setRotaryMode}
                 />
+                <SettingFilled
+                  onClick={() =>
+                    showRotarySettings({ rotaryMode, workarea }, () => {
+                      setRotaryMode(BeamboxPreference.read('rotary_mode'));
+                    })
+                  }
+                />
                 {isCurveEngraving && renderWarningIcon(tGlobal.mode_conflict)}
-                {(addOnInfo.rotary.mirror || addOnInfo.rotary.extendWorkarea) && rotaryMode && (
-                  <>
-                    <div className={styles.subCheckbox}>
-                      {addOnInfo.rotary.extendWorkarea && (
-                        <Checkbox
-                          checked={extendRotaryWorkarea}
-                          onChange={(e) => setExtendRotaryWorkarea(e.target.checked)}
-                        >
-                          {tDocu.extend_workarea}
-                        </Checkbox>
-                      )}
-                      {addOnInfo.rotary.mirror && (
-                        <Checkbox checked={mirrorRotary} onChange={(e) => setMirrorRotary(e.target.checked)}>
-                          {tDocu.mirror}
-                        </Checkbox>
-                      )}
-                    </div>
-                  </>
-                )}
               </div>
             </div>
           )}

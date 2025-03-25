@@ -46,7 +46,7 @@ const mockBeamboxPreferences = {
   'extend-rotary-workarea': undefined,
   'job-origin': 1,
   'path-trough': false,
-  rotary_mode: 0,
+  rotary_mode: false,
   workarea: 'fbm1',
 };
 const mockBeamboxPreferenceWrite = jest.fn();

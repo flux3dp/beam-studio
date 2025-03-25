@@ -27,25 +27,13 @@ jest.mock('@core/helpers/device/framing', () => ({
   FramingType: {
     Framing: 'Framing',
   },
+  getFramingOptions: () => ['Framing'],
 }));
 
 // Mock MessageCaller
 jest.mock('@core/app/actions/message-caller', () => ({
   closeMessage: jest.fn(),
   openMessage: jest.fn(),
-}));
-
-// Mock useI18n
-jest.mock('@core/helpers/useI18n', () => () => ({
-  framing: {
-    framing: 'Framing',
-  },
-  monitor: {
-    left: 'left',
-    task: {
-      BEAMBOX: 'BEAMBOX',
-    },
-  },
 }));
 
 describe('should render correctly', () => {

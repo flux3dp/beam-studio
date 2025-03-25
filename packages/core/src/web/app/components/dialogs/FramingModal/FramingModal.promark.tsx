@@ -1,14 +1,15 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { LoadingOutlined } from '@ant-design/icons';
+import { InfoCircleOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Button, Divider, Flex, Modal, Spin } from 'antd';
 import classNames from 'classnames';
 
 import { handleExportClick } from '@core/app/actions/beambox/export/GoButton/handleExportClick';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
-import FramingIcons from '@core/app/icons/framing/FramingIcons';
+import { renderFramingIcon } from '@core/app/icons/framing/FramingIcons';
 import icons from '@core/app/icons/icons';
-import FramingTaskManager, { FramingType } from '@core/helpers/device/framing';
+import { FramingType } from '@core/helpers/device/framing';
+import FramingTaskManager, { framingOptions, getFramingOptions } from '@core/helpers/device/framing';
 import shortcuts from '@core/helpers/shortcuts';
 import useI18n from '@core/helpers/useI18n';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
@@ -25,7 +26,7 @@ interface Props {
 const PromarkFramingModal = ({ device, onClose, startOnOpen = false }: Props): React.JSX.Element => {
   const lang = useI18n();
   const { framing: tFraming } = lang;
-  const options = [FramingType.Framing] as const;
+  const options = useMemo(() => getFramingOptions(device), [device]);
   const [isFraming, setIsFraming] = useState<boolean>(false);
   const [type, setType] = useState<FramingType>(options[0]);
   const manager = useRef<FramingTaskManager>(null);
@@ -36,8 +37,8 @@ const PromarkFramingModal = ({ device, onClose, startOnOpen = false }: Props): R
     [type],
   );
 
-  const handleStop = useCallback(() => {
-    manager.current?.stopFraming();
+  const handleStop = useCallback(async () => {
+    await manager.current?.stopFraming();
   }, []);
 
   const renderIcon = useCallback(
@@ -46,16 +47,7 @@ const PromarkFramingModal = ({ device, onClose, startOnOpen = false }: Props): R
         return <Spin className={styles['icon-spin']} indicator={<LoadingOutlined spin />} />;
       }
 
-      switch (parentType) {
-        case FramingType.Framing:
-          return <FramingIcons.Framing className={styles['icon-framing']} />;
-        case FramingType.Hull:
-          return <FramingIcons.Hull className={styles['icon-framing']} />;
-        case FramingType.AreaCheck:
-          return <FramingIcons.AreaCheck className={styles['icon-framing']} />;
-        default:
-          return null;
-      }
+      return renderFramingIcon(parentType, styles['icon-framing']);
     },
     [isFraming, type],
   );
@@ -119,32 +111,41 @@ const PromarkFramingModal = ({ device, onClose, startOnOpen = false }: Props): R
       onCancel={onClose}
       open
       title={tFraming.framing}
-      width={360}
+      width={options.length > 1 ? 480 : 360}
     >
       <div className={styles.container}>
-        <Flex>
+        <Flex gap={16}>
           {options.map((option) => (
             <Button
               className={styles['icon-text-button']}
               key={`framing-${option}`}
-              onClick={
-                isFraming
-                  ? handleStop
-                  : () => {
-                      setType(option);
-                      handleStart(option);
-                    }
-              }
+              onClick={async () => {
+                if (isFraming) {
+                  await handleStop();
+                  await new Promise((resolve) => setTimeout(resolve, 500));
+                }
+
+                if (!isFraming || option !== type) {
+                  setType(option);
+                  handleStart(option);
+                }
+              }}
             >
               <div className={styles['icon-text-container']}>
                 {renderIcon(option)}
-                <span className={styles.text}>{tFraming.framing}</span>
+                <span className={styles.text}>{tFraming[framingOptions[option].title]}</span>
               </div>
             </Button>
           ))}
         </Flex>
         <div className={styles.desc}>
-          <div className={styles.content}>{tFraming.framing_desc}</div>
+          <div className={styles.content}>{tFraming[framingOptions[type].description]}</div>
+          {type === FramingType.RotateFraming && (
+            <div className={styles.hint}>
+              <InfoCircleOutlined />
+              <span>{tFraming.rotation_frame_warning}</span>
+            </div>
+          )}
           <Divider />
           <div className={styles.content}>{tFraming.start_task_description}</div>
         </div>

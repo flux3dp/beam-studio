@@ -6,6 +6,7 @@ import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
+import type { RotaryInfo } from '@core/helpers/addOn/rotary';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
@@ -501,10 +502,10 @@ class SwiftrayClient extends EventEmitter {
     return this.action(`/devices/${this.port}`, 'getPreview');
   }
 
-  public async startFraming(points?: Array<[number, number]>): Promise<void> {
+  public async startFraming(points?: Array<[number, number]>, rotaryInfo?: RotaryInfo): Promise<void> {
     const { width } = getWorkarea('fpm1');
 
-    return this.action(`/devices/${this.port}`, 'startFraming', { points, width });
+    return this.action(`/devices/${this.port}`, 'startFraming', { points, rotaryInfo, width });
   }
 
   public async stopFraming(): Promise<void> {
