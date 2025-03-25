@@ -9,9 +9,9 @@ import { promarkModels } from '@core/app/actions/beambox/constant';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import { getAddOnInfo } from '@core/app/constants/addOn';
-import FramingIcons from '@core/app/icons/framing/FramingIcons';
+import { renderFramingIcon } from '@core/app/icons/framing/FramingIcons';
 import icons from '@core/app/icons/icons';
-import FramingTaskManager, { FramingType } from '@core/helpers/device/framing';
+import FramingTaskManager, { framingOptions, FramingType, getFramingOptions } from '@core/helpers/device/framing';
 import getDevice from '@core/helpers/device/get-device';
 import shortcuts from '@core/helpers/shortcuts';
 import useI18n from '@core/helpers/useI18n';
@@ -30,7 +30,7 @@ interface Props {
 const FramingModal = ({ device, onClose, startOnOpen = false }: Props): React.JSX.Element => {
   const lang = useI18n();
   const { framing: tFraming } = lang;
-  const options = [FramingType.Framing, FramingType.Hull, FramingType.AreaCheck];
+  const options = useMemo(() => getFramingOptions(device), [device]);
   const [isFraming, setIsFraming] = useState<boolean>(false);
   const [lowLaser, setLowLaser] = useState<number>(beamboxPreference.read('low_power') ?? 10);
   const [type, setType] = useState<FramingType>(FramingType.Framing);
@@ -129,22 +129,8 @@ const FramingModal = ({ device, onClose, startOnOpen = false }: Props): React.JS
           options={options.map((opt) => ({
             label: (
               <div className={styles.seg}>
-                {
-                  {
-                    [FramingType.AreaCheck]: <FramingIcons.AreaCheck />,
-                    [FramingType.Framing]: <FramingIcons.Framing />,
-                    [FramingType.Hull]: <FramingIcons.Hull />,
-                  }[opt]
-                }
-                <div>
-                  {
-                    {
-                      [FramingType.AreaCheck]: tFraming.area_check,
-                      [FramingType.Framing]: tFraming.framing,
-                      [FramingType.Hull]: tFraming.hull,
-                    }[opt]
-                  }
-                </div>
+                {renderFramingIcon(opt)}
+                <div>{tFraming[framingOptions[opt].title]}</div>
               </div>
             ),
             value: opt,
@@ -152,20 +138,8 @@ const FramingModal = ({ device, onClose, startOnOpen = false }: Props): React.JS
           value={type}
         />
         <div className={styles.desc}>
-          <div className={styles.title}>
-            {{
-              [FramingType.AreaCheck]: tFraming.area_check,
-              [FramingType.Framing]: tFraming.framing,
-              [FramingType.Hull]: tFraming.hull,
-            }[type] ?? tFraming.framing}
-          </div>
-          <div className={styles.content}>
-            {{
-              [FramingType.AreaCheck]: tFraming.areacheck_desc,
-              [FramingType.Framing]: tFraming.framing_desc,
-              [FramingType.Hull]: tFraming.hull_desc,
-            }[type] ?? tFraming.framing_desc}
-          </div>
+          <div className={styles.title}>{tFraming[framingOptions[type].title]}</div>
+          <div className={styles.content}>{tFraming[framingOptions[type].description]}</div>
         </div>
       </div>
     </Modal>

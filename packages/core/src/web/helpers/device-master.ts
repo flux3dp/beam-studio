@@ -10,6 +10,7 @@ import { ConnectionError } from '@core/app/constants/connection-constants';
 import DeviceConstants from '@core/app/constants/device-constants';
 import InputLightBoxConstants from '@core/app/constants/input-lightbox-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import type { RotaryInfo } from '@core/helpers/addOn/rotary';
 import checkSoftwareForAdor from '@core/helpers/check-software';
 import storage from '@core/implementations/storage';
 import type {
@@ -700,10 +701,10 @@ class DeviceMaster {
     return controlSocket.addTask(controlSocket.kick);
   }
 
-  async startFraming(points?: Array<[number, number]>) {
+  async startFraming(points?: Array<[number, number]>, rotaryInfo?: RotaryInfo) {
     const controlSocket = (await this.getControl()) as SwiftrayControl;
 
-    return controlSocket.addTask(controlSocket.startFraming, points);
+    return controlSocket.addTask(controlSocket.startFraming, points, rotaryInfo);
   }
 
   async stopFraming() {

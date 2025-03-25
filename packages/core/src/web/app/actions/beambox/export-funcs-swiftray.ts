@@ -299,12 +299,10 @@ const fetchTaskCodeSwiftray = async (
     travelSpeed: isPromark ? controlConfig.travelSpeed : 100,
   };
 
-  if (!isPromark) {
-    taskConfig = {
-      ...taskConfig,
-      ...getExportOpt(taskConfig).config,
-    };
-  }
+  taskConfig = {
+    ...taskConfig,
+    ...getExportOpt(taskConfig).config,
+  };
 
   console.log('fetchTaskCodeSwiftray', codeType, 'taskConfig', taskConfig);
 

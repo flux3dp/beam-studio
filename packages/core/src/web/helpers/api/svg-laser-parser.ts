@@ -7,7 +7,6 @@ import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
-import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import Progress from '@core/app/actions/progress-caller';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import AlertConstants from '@core/app/constants/alert-constants';
@@ -16,8 +15,8 @@ import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import workareaManager from '@core/app/svgedit/workarea';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
+import { getRotaryInfo } from '@core/helpers/addOn/rotary';
 import AlertConfig from '@core/helpers/api/alert-config';
-import getRotaryRatio from '@core/helpers/device/get-rotary-ratio';
 import i18n from '@core/helpers/i18n';
 import isDev from '@core/helpers/is-dev';
 import getJobOrigin, { getRefModule } from '@core/helpers/job-origin';
@@ -86,13 +85,16 @@ export const getExportOpt = (
     config.job_origin = [Math.round(x * 10 ** 3) / 10 ** 3, Math.round(y * 10 ** 3) / 10 ** 3];
   }
 
-  const rotaryMode = BeamboxPreference.read('rotary_mode') && addOnInfo.rotary;
+  const rotaryInfo = getRotaryInfo(model);
+  const rotaryMode = Boolean(rotaryInfo);
   const autoFeeder = getAutoFeeder(addOnInfo);
 
-  if (rotaryMode) {
-    config.spin = rotaryAxis.getPosition() ?? 0;
+  if (rotaryInfo) {
+    config.spin = rotaryInfo.y;
+    config.rotary_split = rotaryInfo.ySplit;
+    config.rotary_overlap = rotaryInfo.yOverlap;
 
-    const rotaryRatio = getRotaryRatio(addOnInfo);
+    const rotaryRatio = rotaryInfo.yRatio;
 
     if (rotaryRatio !== 1) {
       config.rotary_y_ratio = rotaryRatio;

@@ -1178,6 +1178,8 @@ export interface ILang {
     hull_desc: string;
     low_laser: string;
     low_laser_desc: string;
+    rotate_axis: string;
+    rotateaxis_desc: string;
     start_task: string;
     start_task_description: string;
   };
@@ -1649,7 +1651,11 @@ export interface ILang {
     // roller: string;
     // chuck: string;
     object_diameter: string;
+    overlap_size: string;
     rotary_scale: string;
+    split_setting: string;
+    split_setting_url: string;
+    split_size: string;
     type: string;
   };
   select_device: {

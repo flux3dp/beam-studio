@@ -19,6 +19,7 @@ export const defaultGalvoParameters: GalvoParameters = {
 export const defaultRedLight: RedDot = { offsetX: 0, offsetY: 0, scaleX: 1, scaleY: 1 };
 
 export const controlConfig = {
+  aSpeed: 19.6875, // mm/ms
   jumpDelay: 300, // us ((MaxJumpDelay+MinJumpDelay)/2)
   laserDelay: 200, // us (LaserOffDelay-LaserOnDelay)
   travelSpeed: 4000, // mm/s

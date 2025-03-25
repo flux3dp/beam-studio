@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Checkbox, Modal, Segmented, Switch } from 'antd';
 
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
@@ -11,15 +12,23 @@ import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import Select from '@core/app/widgets/AntdSelect';
 import UnitInput from '@core/app/widgets/UnitInput';
 import useI18n from '@core/helpers/useI18n';
+import browser from '@core/implementations/browser';
 import storage from '@core/implementations/storage';
 
 import styles from './RotarySettings.module.scss';
 
+interface OverwrittrnData {
+  rotaryMode: boolean;
+  rotaryScale: number;
+}
+
 interface Props {
+  afterSave?: () => void;
+  initData?: OverwrittrnData;
   onClose: () => void;
 }
 
-const RotarySettings = ({ onClose }: Props): React.JSX.Element => {
+const RotarySettings = ({ afterSave, initData, onClose }: Props): React.JSX.Element => {
   const {
     beambox: { document_panel: tDocu },
     global: tGlobal,
@@ -29,10 +38,12 @@ const RotarySettings = ({ onClose }: Props): React.JSX.Element => {
 
   const workarea = useMemo(() => beamboxPreference.read('workarea'), []);
   const addOnInfo = useMemo(() => getAddOnInfo(workarea), [workarea]);
-  const [rotaryMode, setRotaryMode] = useState<boolean>(beamboxPreference.read('rotary_mode'));
+  const [rotaryMode, setRotaryMode] = useState<boolean>(initData?.rotaryMode ?? beamboxPreference.read('rotary_mode'));
   const [rotaryType, setRotaryType] = useState<number>(beamboxPreference.read('rotary-type'));
   const [diameter, setDiaMeter] = useState(beamboxPreference.read('rotary-chuck-obj-d'));
-  const [scale, setScale] = useState<number>(beamboxPreference.read('rotary-scale'));
+  const [scale, setScale] = useState<number>(initData?.rotaryScale ?? beamboxPreference.read('rotary-scale'));
+  const [split, setSplit] = useState(beamboxPreference.read('rotary-split'));
+  const [overlap, setOverlap] = useState(beamboxPreference.read('rotary-overlap'));
   const [extend, setExtend] = useState<boolean>(Boolean(beamboxPreference.read('extend-rotary-workarea')));
   const [mirror, setMirror] = useState<boolean>(Boolean(beamboxPreference.read('rotary-mirror')));
   const isInch = useMemo(() => storage.get('default-units') === 'inches', []);
@@ -57,6 +68,11 @@ const RotarySettings = ({ onClose }: Props): React.JSX.Element => {
       beamboxPreference.write('extend-rotary-workarea', extend);
     }
 
+    if (addOnInfo.rotary?.split) {
+      beamboxPreference.write('rotary-split', split);
+      beamboxPreference.write('rotary-overlap', overlap);
+    }
+
     if (rotaryChanged || extendChanged) {
       changeWorkarea(workarea, { toggleModule: false });
     }
@@ -76,6 +92,7 @@ const RotarySettings = ({ onClose }: Props): React.JSX.Element => {
       onCancel={onClose}
       onOk={() => {
         handleSave();
+        afterSave?.();
         onClose();
       }}
       open
@@ -181,6 +198,55 @@ const RotarySettings = ({ onClose }: Props): React.JSX.Element => {
             ]}
             value={scale}
           />
+          {addOnInfo.rotary?.split && (
+            <>
+              <div className={styles['sub-item-title']}>
+                {t.split_setting} <QuestionCircleOutlined onClick={() => browser.open(t.split_setting_url)} />
+              </div>
+              <div className={styles['sub-items']}>
+                <div className={styles.title}>
+                  <label htmlFor="split">{t.split_size}</label>
+                </div>
+                <div className={styles.control}>
+                  <UnitInput
+                    addonAfter={isInch ? 'in' : 'mm'}
+                    className={styles.input}
+                    disabled={rotaryDisabled}
+                    id="split"
+                    isInch={isInch}
+                    max={100}
+                    min={0.1}
+                    onChange={(val) => {
+                      if (val) setSplit(val);
+                    }}
+                    precision={isInch ? 4 : 1}
+                    size="small"
+                    value={split}
+                  />
+                </div>
+                <div className={styles.title}>
+                  <label htmlFor="overlap">{t.overlap_size}</label>
+                </div>
+                <div className={styles.control}>
+                  <UnitInput
+                    addonAfter={isInch ? 'in' : 'mm'}
+                    className={styles.input}
+                    disabled={rotaryDisabled}
+                    id="overlap"
+                    isInch={isInch}
+                    max={5}
+                    min={0}
+                    onChange={(val) => {
+                      if (typeof val === 'number') setOverlap(val);
+                    }}
+                    precision={isInch ? 4 : 1}
+                    size="small"
+                    value={overlap}
+                  />
+                </div>
+              </div>
+            </>
+          )}
           {(addOnInfo.rotary?.mirror || addOnInfo.rotary?.extendWorkarea) && (
             <div className={styles.row}>
               {addOnInfo.rotary.mirror && (
@@ -213,8 +279,11 @@ const RotarySettings = ({ onClose }: Props): React.JSX.Element => {
 
 export default RotarySettings;
 
-export const showRotarySettings = (): void => {
+export const showRotarySettings = (initData?: OverwrittrnData, afterSave?: () => void): void => {
   if (!isIdExist('rotary-settings')) {
-    addDialogComponent('rotary-settings', <RotarySettings onClose={() => popDialogById('rotary-settings')} />);
+    addDialogComponent(
+      'rotary-settings',
+      <RotarySettings afterSave={afterSave} initData={initData} onClose={() => popDialogById('rotary-settings')} />,
+    );
   }
 };

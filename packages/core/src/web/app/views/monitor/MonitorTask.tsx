@@ -8,8 +8,9 @@ import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import DeviceConstants from '@core/app/constants/device-constants';
 import { Mode } from '@core/app/constants/monitor-constants';
 import { MonitorContext } from '@core/app/contexts/MonitorContext';
-import FramingIcons from '@core/app/icons/framing/FramingIcons';
-import FramingTaskManager, { FramingType } from '@core/helpers/device/framing';
+import { renderFramingIcon } from '@core/app/icons/framing/FramingIcons';
+import type { FramingType } from '@core/helpers/device/framing';
+import FramingTaskManager, { framingOptions, getFramingOptions } from '@core/helpers/device/framing';
 import FormatDuration from '@core/helpers/duration-formatter';
 import useI18n from '@core/helpers/useI18n';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
@@ -28,7 +29,7 @@ const MonitorTask = ({ device }: Props): React.JSX.Element => {
   const { fileInfo, mode, previewTask, report, taskImageURL, taskTime, uploadProgress } = useContext(MonitorContext);
   const isPromark = useMemo(() => promarkModels.has(device.model), [device.model]);
   /* for Promark framing */
-  const options = [FramingType.Framing] as const;
+  const options = useMemo(() => getFramingOptions(device), [device]);
   const manager = useRef<FramingTaskManager>(null);
   const [isFraming, setIsFraming] = useState<boolean>(false);
   const [isFramingButtonDisabled, setIsFramingButtonDisabled] = useState<boolean>(false);
@@ -68,16 +69,7 @@ const MonitorTask = ({ device }: Props): React.JSX.Element => {
         return <Spin indicator={<LoadingOutlined spin />} />;
       }
 
-      switch (parentType) {
-        case FramingType.Framing:
-          return <FramingIcons.Framing className={styles['icon-framing']} />;
-        case FramingType.Hull:
-          return <FramingIcons.Hull className={styles['icon-framing']} />;
-        case FramingType.AreaCheck:
-          return <FramingIcons.AreaCheck className={styles['icon-framing']} />;
-        default:
-          return null;
-      }
+      return renderFramingIcon(parentType, styles['icon-framing']);
     },
     [isFraming, type],
   );
@@ -86,23 +78,26 @@ const MonitorTask = ({ device }: Props): React.JSX.Element => {
     if (!isPromark) return null;
 
     return (
-      <Flex>
+      <Flex gap={8}>
         {options.map((option) => (
           <Button
             disabled={isFramingButtonDisabled}
             icon={renderIcon(option)}
             key={`monitor-framing-${option}`}
-            onClick={
-              isFraming
-                ? handleFramingStop
-                : () => {
-                    setType(option);
-                    setIsFraming(true);
-                    handleFramingStart(option);
-                  }
-            }
+            onClick={async () => {
+              if (isFraming) {
+                await handleFramingStop();
+                await new Promise((resolve) => setTimeout(resolve, 500));
+              }
+
+              if (!isFraming || option !== type) {
+                setType(option);
+                setIsFraming(true);
+                handleFramingStart(option);
+              }
+            }}
           >
-            {tFraming.framing}
+            {options.length === 1 && tFraming[framingOptions[option].title]}
           </Button>
         ))}
       </Flex>
@@ -175,14 +170,17 @@ const MonitorTask = ({ device }: Props): React.JSX.Element => {
 
   useEffect(() => {
     const key = 'monitor.framing';
+    let managerIsFraming = false;
 
     manager.current = new FramingTaskManager(device);
     manager.current.on('status-change', (status: boolean) => {
       if (status) {
+        managerIsFraming = true;
         setIsFraming(true);
       } else {
+        managerIsFraming = false;
         setTimeout(() => {
-          setIsFraming(false);
+          setIsFraming(managerIsFraming);
           setIsFramingButtonDisabled(false);
         }, 1500);
       }

@@ -125,7 +125,7 @@ export class GcodePreview {
     this.timeInterval = [];
   }
 
-  setParsedGcode(parsed, isPromark = false, dpmm = 10) {
+  setParsedGcode(parsed, isPromark = false, dpmm = 10, rotaryRatio = 1) {
     this.arrayChanged = true;
     this.timeInterval = [];
     this.arrayVersion += 1;
@@ -195,9 +195,9 @@ export class GcodePreview {
 
         array[i * drawStride * 2 + 0] = g;
         array[i * drawStride * 2 + 1] = x1;
-        array[i * drawStride * 2 + 2] = y1;
+        array[i * drawStride * 2 + 2] = isPromark ? y1 - a1 / rotaryRatio : y1;
         array[i * drawStride * 2 + 3] = z1;
-        array[i * drawStride * 2 + 4] = a1;
+        array[i * drawStride * 2 + 4] = isPromark ? 0 : a1;
         array[i * drawStride * 2 + 5] = t;
         array[i * drawStride * 2 + 6] = g0Time;
         array[i * drawStride * 2 + 7] = g1Time;
@@ -207,8 +207,10 @@ export class GcodePreview {
           if (z2 !== z1) {
             // Z move
             tc = Math.abs(z2 - z1) / controlConfig.zSpeed / 60;
-          }
-          if (dist !== 0) {
+          } else if (a2 !== a1) {
+            // A move
+            tc = Math.abs(a2 - a1) / controlConfig.aSpeed / 60000;
+          } else if (dist !== 0) {
             // XY move
             if (g === 0) {
               // Jump (No laser)
@@ -258,9 +260,9 @@ export class GcodePreview {
 
         array[i * drawStride * 2 + 8] = g;
         array[i * drawStride * 2 + 9] = x2;
-        array[i * drawStride * 2 + 10] = y2;
+        array[i * drawStride * 2 + 10] = isPromark ? y2 - a2 / rotaryRatio : y2;
         array[i * drawStride * 2 + 11] = z2;
-        array[i * drawStride * 2 + 12] = a2;
+        array[i * drawStride * 2 + 12] = isPromark ? 0 : a2;
         array[i * drawStride * 2 + 13] = t;
         array[i * drawStride * 2 + 14] = g0Time;
         array[i * drawStride * 2 + 15] = g1Time;
