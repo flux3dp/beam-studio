@@ -27,7 +27,6 @@ const PromarkFramingModal = ({ device, onClose, startOnOpen = false }: Props): R
   const lang = useI18n();
   const { framing: tFraming } = lang;
   const options = useMemo(() => getFramingOptions(device), [device]);
-  const withRotary = useMemo(() => options.includes(FramingType.RotateAxis), [options]);
   const [isFraming, setIsFraming] = useState<boolean>(false);
   const [type, setType] = useState<FramingType>(options[0]);
   const manager = useRef<FramingTaskManager>(null);
@@ -141,10 +140,10 @@ const PromarkFramingModal = ({ device, onClose, startOnOpen = false }: Props): R
         </Flex>
         <div className={styles.desc}>
           <div className={styles.content}>{tFraming[framingOptions[type].description]}</div>
-          {withRotary && type === FramingType.Framing && (
+          {type === FramingType.RotateFraming && (
             <div className={styles.hint}>
               <InfoCircleOutlined />
-              <span>{tFraming.frame_preview_warning}</span>
+              <span>{tFraming.rotation_frame_warning}</span>
             </div>
           )}
           <Divider />

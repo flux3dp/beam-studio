@@ -11,6 +11,7 @@ import RotateAxis from './rotateAxis.svg';
 export const renderFramingIcon = (type: FramingType, className?: string): ReactNode => {
   switch (type) {
     case FramingType.Framing:
+    case FramingType.RotateFraming:
       return <Framing className={className} />;
     case FramingType.Hull:
       return <Hull className={className} />;

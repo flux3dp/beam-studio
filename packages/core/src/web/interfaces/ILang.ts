@@ -1172,7 +1172,6 @@ export interface ILang {
     area_check: string;
     areacheck_desc: string;
     calculating_task: string;
-    frame_preview_warning: string;
     framing: string;
     framing_desc: string;
     hull: string;
@@ -1181,6 +1180,8 @@ export interface ILang {
     low_laser_desc: string;
     rotate_axis: string;
     rotateaxis_desc: string;
+    rotation_frame_warning: string;
+    rotation_framing_desc: string;
     start_task: string;
     start_task_description: string;
   };

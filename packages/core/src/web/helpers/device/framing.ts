@@ -39,6 +39,7 @@ import promarkDataStore from './promark/promark-data-store';
 // TODO: add unit test
 export enum FramingType {
   Framing,
+  RotateFraming,
   Hull,
   AreaCheck,
   RotateAxis,
@@ -74,13 +75,17 @@ export const framingOptions = {
     description: 'rotateaxis_desc',
     title: 'rotate_axis',
   },
+  [FramingType.RotateFraming]: {
+    description: 'rotation_framing_desc',
+    title: 'framing',
+  },
 } as const;
 
 export const getFramingOptions = (device: IDeviceInfo) => {
   if (promarkModels.has(device.model)) {
     const withRotary = Boolean(beamboxPreference.read('rotary_mode') && getAddOnInfo(device.model).rotary);
 
-    if (withRotary) return [FramingType.RotateAxis, FramingType.Framing];
+    if (withRotary) return [FramingType.RotateAxis, FramingType.RotateFraming];
 
     return [FramingType.Framing];
   }
@@ -460,7 +465,7 @@ class FramingTaskManager extends EventEmitter {
 
     svgCanvas.clearSelection();
 
-    if (type === FramingType.Framing) {
+    if (type === FramingType.Framing || type === FramingType.RotateFraming) {
       const coords = getCoords(true);
 
       if (coords.minX === undefined) {
