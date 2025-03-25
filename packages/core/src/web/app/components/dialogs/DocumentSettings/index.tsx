@@ -465,9 +465,8 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                 />
                 <SettingFilled
                   onClick={() =>
-                    showRotarySettings({ rotaryMode, rotaryScale }, () => {
+                    showRotarySettings({ rotaryMode, workarea }, () => {
                       setRotaryMode(BeamboxPreference.read('rotary_mode'));
-                      setRotaryScale(BeamboxPreference.read('rotary-scale'));
                     })
                   }
                 />

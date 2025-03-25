@@ -7,6 +7,7 @@ import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import { getAddOnInfo, RotaryType } from '@core/app/constants/addOn';
+import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import RotaryIcons from '@core/app/icons/rotary/RotaryIcons';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import Select from '@core/app/widgets/AntdSelect';
@@ -19,7 +20,7 @@ import styles from './RotarySettings.module.scss';
 
 interface OverwrittrnData {
   rotaryMode: boolean;
-  rotaryScale: number;
+  workarea: WorkAreaModel;
 }
 
 interface Props {
@@ -36,12 +37,12 @@ const RotarySettings = ({ afterSave, initData, onClose }: Props): React.JSX.Elem
     topbar: { menu: tMenu },
   } = useI18n();
 
-  const workarea = useMemo(() => beamboxPreference.read('workarea'), []);
+  const workarea = useMemo(() => initData?.workarea ?? beamboxPreference.read('workarea'), [initData?.workarea]);
   const addOnInfo = useMemo(() => getAddOnInfo(workarea), [workarea]);
   const [rotaryMode, setRotaryMode] = useState<boolean>(initData?.rotaryMode ?? beamboxPreference.read('rotary_mode'));
   const [rotaryType, setRotaryType] = useState<number>(beamboxPreference.read('rotary-type'));
   const [diameter, setDiaMeter] = useState(beamboxPreference.read('rotary-chuck-obj-d'));
-  const [scale, setScale] = useState<number>(initData?.rotaryScale ?? beamboxPreference.read('rotary-scale'));
+  const [scale, setScale] = useState<number>(beamboxPreference.read('rotary-scale'));
   const [split, setSplit] = useState(beamboxPreference.read('rotary-split'));
   const [overlap, setOverlap] = useState(beamboxPreference.read('rotary-overlap'));
   const [extend, setExtend] = useState<boolean>(Boolean(beamboxPreference.read('extend-rotary-workarea')));
