@@ -17,11 +17,7 @@ export class AddOnBoundaryDrawer {
   private constructor() {}
 
   static getInstance(): AddOnBoundaryDrawer {
-    if (!AddOnBoundaryDrawer.instance) {
-      AddOnBoundaryDrawer.instance = new AddOnBoundaryDrawer();
-    }
-
-    return AddOnBoundaryDrawer.instance;
+    return (AddOnBoundaryDrawer.instance ??= new AddOnBoundaryDrawer());
   }
 
   registerEvents(): void {
@@ -165,5 +161,3 @@ export class AddOnBoundaryDrawer {
 }
 
 export const addOnBoundaryDrawer = AddOnBoundaryDrawer.getInstance();
-
-export default addOnBoundaryDrawer;

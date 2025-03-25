@@ -11,7 +11,7 @@ import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/
 import svgLaserParser from '@core/helpers/api/svg-laser-parser';
 import awsHelper from '@core/helpers/aws-helper';
 import i18n from '@core/helpers/i18n';
-import layerConfigHelper, { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
+import { initLayerConfig, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { createLayer, removeDefaultLayerIfEmpty } from '@core/helpers/layer/layer-helper';
 import layerModuleHelper from '@core/helpers/layer-module/layer-module-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -237,7 +237,7 @@ const importSvg = async (
         batchCmd.addSubCommand(cmd);
       }
 
-      layerConfigHelper.initLayerConfig(newLayerName);
+      initLayerConfig(newLayerName);
 
       if (isPrinting) {
         writeDataLayer(newLayer, 'module', targetModule);
