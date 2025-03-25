@@ -63,6 +63,7 @@ const Beambox = (): React.JSX.Element => {
               <SvgEditor />
               <RightPanel />
             </Flex>
+            <div id="tool-panels-placeholder" />
           </div>
           <div className={classNames(styles.buttons, { [styles.mac]: window.os === 'MacOS' })}>
             <TimeEstimationButtonContextProvider>
@@ -70,7 +71,6 @@ const Beambox = (): React.JSX.Element => {
             </TimeEstimationButtonContextProvider>
             <PreviewSlider />
           </div>
-          <div id="tool-panels-placeholder" />
           <ImageTracePanel />
           <CanvasTabBar />
         </LayerPanelContextProvider>
