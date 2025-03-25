@@ -102,7 +102,6 @@ const lang: ILang = {
       enable_autofocus: 'オートフォーカス',
       enable_diode: 'ダイオードレーザー',
       engrave_dpi: '解像度',
-      extend_workarea: '作業エリアを拡張する',
       frame_before_start: '実行前にフレーム',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',
       high: '高',
@@ -111,7 +110,6 @@ const lang: ILang = {
       low: '低',
       machine: '機械',
       medium: '中',
-      mirror: 'ミラー',
       notification: {
         changeFromPrintingWorkareaTitle: '印刷レイヤーをレーザーレイヤーに変換しますか？',
       },
@@ -1660,6 +1658,8 @@ const lang: ILang = {
   },
   rotary_settings: {
     circumference: '円周',
+    extend_workarea: '作業エリアを拡張する',
+    mirror: 'ミラー',
     object_diameter: 'オブジェクトの直径',
     overlap_size: 'オーバーラップサイズ',
     rotary_scale: 'ロータリースケール',

@@ -100,7 +100,6 @@ export interface ILang {
       enable_autofocus: string;
       enable_diode: string;
       engrave_dpi: string;
-      extend_workarea: string;
       frame_before_start: string;
       frame_before_start_url: string;
       high: string;
@@ -109,7 +108,6 @@ export interface ILang {
       low: string;
       machine: string;
       medium: string;
-      mirror: string;
       notification: {
         changeFromPrintingWorkareaTitle: string;
       };
@@ -1650,6 +1648,8 @@ export interface ILang {
   };
   rotary_settings: {
     circumference: string;
+    extend_workarea: string;
+    mirror: string;
     // roller: string;
     // chuck: string;
     object_diameter: string;

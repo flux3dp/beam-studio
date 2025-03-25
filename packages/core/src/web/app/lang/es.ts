@@ -102,7 +102,6 @@ const lang: ILang = {
       enable_autofocus: 'Autoenfoque',
       enable_diode: 'Láser diodo',
       engrave_dpi: 'Resolución',
-      extend_workarea: 'Ampliar área de trabajo',
       frame_before_start: 'Marco antes de ejecutar',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',
       high: 'Alto',
@@ -111,7 +110,6 @@ const lang: ILang = {
       low: 'Bajo',
       machine: 'Máquina',
       medium: 'Medio',
-      mirror: 'Espejo',
       notification: {
         changeFromPrintingWorkareaTitle: '¿Desea convertir las capas de impresión en capas láser?',
       },
@@ -1660,6 +1658,8 @@ const lang: ILang = {
   },
   rotary_settings: {
     circumference: 'Circunferencia',
+    extend_workarea: 'Ampliar área de trabajo',
+    mirror: 'Espejo',
     object_diameter: 'Diámetro del Objeto',
     overlap_size: 'Tamaño de superposición',
     rotary_scale: 'Escala de rotación',

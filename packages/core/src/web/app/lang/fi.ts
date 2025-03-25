@@ -102,7 +102,6 @@ const lang: ILang = {
       enable_autofocus: 'Autofokus',
       enable_diode: 'Diodilaser',
       engrave_dpi: 'Resoluutio',
-      extend_workarea: 'Laajenna työaluetta',
       frame_before_start: 'Ruutu ennen suoritusta',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',
       high: 'Korkea',
@@ -111,7 +110,6 @@ const lang: ILang = {
       low: 'Matala',
       machine: 'Kone',
       medium: 'Keskitaso',
-      mirror: 'Peilaus',
       notification: {
         changeFromPrintingWorkareaTitle: 'Haluatko muuntaa tulostuskerrokset laserkerroksiksi?',
       },
@@ -1660,6 +1658,8 @@ const lang: ILang = {
   },
   rotary_settings: {
     circumference: 'Ympärysmitta',
+    extend_workarea: 'Laajenna työaluetta',
+    mirror: 'Peilaus',
     object_diameter: 'Kohteen Halkaisija',
     overlap_size: 'Päällekkäisyyden koko',
     rotary_scale: 'Pyörimisen mittakaava',

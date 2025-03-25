@@ -102,7 +102,6 @@ const lang: ILang = {
       enable_autofocus: 'Autofokus',
       enable_diode: 'Laser diodowy',
       engrave_dpi: 'Jakość',
-      extend_workarea: 'Rozszerz obszar roboczy',
       frame_before_start: 'Ramka przed wykonaniem',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',
       high: 'Wysoka',
@@ -111,7 +110,6 @@ const lang: ILang = {
       low: 'Niska',
       machine: 'Maszyna',
       medium: 'Średna',
-      mirror: 'Lustro',
       notification: {
         changeFromPrintingWorkareaTitle: 'Czy chcesz przekonwertować warstwy druku na warstwy lasera?',
       },
@@ -1660,6 +1658,8 @@ const lang: ILang = {
   },
   rotary_settings: {
     circumference: 'Obwód',
+    extend_workarea: 'Rozszerz obszar roboczy',
+    mirror: 'Lustro',
     object_diameter: 'Średnica Obiektu',
     overlap_size: 'Rozmiar nakładania',
     rotary_scale: 'Skala obrotu',

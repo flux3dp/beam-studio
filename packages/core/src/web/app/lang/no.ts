@@ -102,7 +102,6 @@ const lang: ILang = {
       enable_autofocus: 'Autofokus',
       enable_diode: 'Diode-laser',
       engrave_dpi: 'Oppløsning',
-      extend_workarea: 'Utvid arbeidsområdet',
       frame_before_start: 'Ramme før utførelse',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',
       high: 'Høy',
@@ -111,7 +110,6 @@ const lang: ILang = {
       low: 'Lav',
       machine: 'Maskin',
       medium: 'Medium',
-      mirror: 'Speiling',
       notification: {
         changeFromPrintingWorkareaTitle: 'Vil du konvertere Utskriftslag til Laserlag?',
       },
@@ -1660,6 +1658,8 @@ const lang: ILang = {
   },
   rotary_settings: {
     circumference: 'Omkrets',
+    extend_workarea: 'Utvid arbeidsområdet',
+    mirror: 'Speiling',
     object_diameter: 'Objekt Diameter',
     overlap_size: 'Overlappingsstørrelse',
     rotary_scale: 'Rotasjonsskala',

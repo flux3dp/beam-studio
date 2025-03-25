@@ -102,7 +102,6 @@ const lang: ILang = {
       enable_autofocus: 'Autofocus',
       enable_diode: 'Diode laser',
       engrave_dpi: 'Resolutie',
-      extend_workarea: 'Werkgebied uitbreiden',
       frame_before_start: 'Frame voordat uitgevoerd wordt',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',
       high: 'Hoog',
@@ -111,7 +110,6 @@ const lang: ILang = {
       low: 'Laag',
       machine: 'Machine',
       medium: 'Gemiddeld',
-      mirror: 'Spiegel',
       notification: {
         changeFromPrintingWorkareaTitle: 'Wilt u de printlagen converteren naar laslagen?',
       },
@@ -1660,6 +1658,8 @@ const lang: ILang = {
   },
   rotary_settings: {
     circumference: 'Omtrek',
+    extend_workarea: 'Werkgebied uitbreiden',
+    mirror: 'Spiegel',
     object_diameter: 'Objectdiameter',
     overlap_size: 'Overlapgrootte',
     rotary_scale: 'Rotatieschaal',

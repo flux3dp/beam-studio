@@ -102,7 +102,6 @@ const lang: ILang = {
       enable_autofocus: '오토포커스',
       enable_diode: '다이오드 레이저',
       engrave_dpi: '해상도',
-      extend_workarea: '작업 영역 확장',
       frame_before_start: '실행 전에 프레임',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',
       high: '높음',
@@ -111,7 +110,6 @@ const lang: ILang = {
       low: '낮음',
       machine: '기계',
       medium: '보통',
-      mirror: '미러',
       notification: {
         changeFromPrintingWorkareaTitle: '인쇄 레이어를 레이저 레이어로 변환하시겠습니까?',
       },
@@ -1660,6 +1658,8 @@ const lang: ILang = {
   },
   rotary_settings: {
     circumference: '원주',
+    extend_workarea: '작업 영역 확장',
+    mirror: '미러',
     object_diameter: '물체 직경',
     overlap_size: '겹침 크기',
     rotary_scale: '회전 스케일',

@@ -102,7 +102,6 @@ const lang: ILang = {
       enable_autofocus: 'Αυτόματη εστίαση',
       enable_diode: 'Λέιζερ διόδου',
       engrave_dpi: 'Ανάλυση',
-      extend_workarea: 'Επέκταση περιοχής εργασίας',
       frame_before_start: 'Πλαίσιο πριν από την εκτέλεση',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',
       high: 'Υψηλή',
@@ -111,7 +110,6 @@ const lang: ILang = {
       low: 'Χαμηλή',
       machine: 'Μηχανή',
       medium: 'Μέτρια',
-      mirror: 'Κατοπτρισμός',
       notification: {
         changeFromPrintingWorkareaTitle: 'Θέλετε να μετατρέψετε τα επίπεδα εκτύπωσης σε επίπεδα λέιζερ;',
       },
@@ -1660,6 +1658,8 @@ const lang: ILang = {
   },
   rotary_settings: {
     circumference: 'Περιφέρεια',
+    extend_workarea: 'Επέκταση περιοχής εργασίας',
+    mirror: 'Κατοπτρισμός',
     object_diameter: 'Διάμετρος Αντικειμένου',
     overlap_size: 'Μέγεθος επικάλυψης',
     rotary_scale: 'Κλίμακα περιστροφής',

@@ -102,7 +102,6 @@ const lang: ILang = {
       enable_autofocus: 'Mise au point automatique',
       enable_diode: 'Laser à diode',
       engrave_dpi: 'Résolution',
-      extend_workarea: 'Étendre la zone de travail',
       frame_before_start: "Cadre avant d'exécuter",
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',
       high: 'Élevé',
@@ -111,7 +110,6 @@ const lang: ILang = {
       low: 'Faible',
       machine: 'Machine',
       medium: 'Moyen',
-      mirror: 'Miroir',
       notification: {
         changeFromPrintingWorkareaTitle: "Voulez-vous convertir les calques d'impression en calques laser?",
       },
@@ -1660,6 +1658,8 @@ const lang: ILang = {
   },
   rotary_settings: {
     circumference: 'Circonférence',
+    extend_workarea: 'Étendre la zone de travail',
+    mirror: 'Miroir',
     object_diameter: "Diamètre de l'Objet",
     overlap_size: 'Taille du chevauchement',
     rotary_scale: 'Échelle de rotation',

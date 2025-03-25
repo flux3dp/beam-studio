@@ -102,7 +102,6 @@ const lang: ILang = {
       enable_autofocus: 'Autofokus',
       enable_diode: 'Diodlaser',
       engrave_dpi: 'Upplösning',
-      extend_workarea: 'Utvidga arbetsområdet',
       frame_before_start: 'Ram innan utförande',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',
       high: 'Hög',
@@ -111,7 +110,6 @@ const lang: ILang = {
       low: 'Låg',
       machine: 'Maskin',
       medium: 'Medium',
-      mirror: 'Spegel',
       notification: {
         changeFromPrintingWorkareaTitle: 'Vill du konvertera utskriftslagren till laserskikt?',
       },
@@ -1660,6 +1658,8 @@ const lang: ILang = {
   },
   rotary_settings: {
     circumference: 'Omkrets',
+    extend_workarea: 'Utvidga arbetsområdet',
+    mirror: 'Spegel',
     object_diameter: 'Objekt Diameter',
     overlap_size: 'Överlappningsstorlek',
     rotary_scale: 'Rotationsskala',

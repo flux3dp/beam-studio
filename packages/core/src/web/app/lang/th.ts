@@ -102,7 +102,6 @@ const lang: ILang = {
       enable_autofocus: 'โฟกัสอัตโนมัติ',
       enable_diode: 'เลเซอร์ไดโอด',
       engrave_dpi: 'ความละเอียด',
-      extend_workarea: 'ขยายพื้นที่ทำงาน',
       frame_before_start: 'กรอบก่อนดำเนินการ',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',
       high: 'สูง',
@@ -111,7 +110,6 @@ const lang: ILang = {
       low: 'ต่ํา',
       machine: 'เครื่อง',
       medium: 'ปานกลาง',
-      mirror: 'กระจก',
       notification: {
         changeFromPrintingWorkareaTitle: 'คุณต้องการแปลงชั้นการพิมพ์เป็นชั้นเลเซอร์หรือไม่?',
       },
@@ -1660,6 +1658,8 @@ const lang: ILang = {
   },
   rotary_settings: {
     circumference: 'เส้นรอบวง',
+    extend_workarea: 'ขยายพื้นที่ทำงาน',
+    mirror: 'กระจก',
     object_diameter: 'เส้นผ่านศูนย์กลางของวัตถุ',
     overlap_size: 'ขนาดการทับซ้อน',
     rotary_scale: 'มาตราส่วนการหมุน',

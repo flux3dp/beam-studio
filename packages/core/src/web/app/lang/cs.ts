@@ -102,7 +102,6 @@ const lang: ILang = {
       enable_autofocus: 'Autofokus',
       enable_diode: 'Diodový laser',
       engrave_dpi: 'Rozlišení',
-      extend_workarea: 'Rozšířit pracovní oblast',
       frame_before_start: 'Nejprve rámec, pak provést',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',
       high: 'Vysoké',
@@ -111,7 +110,6 @@ const lang: ILang = {
       low: 'Nízké',
       machine: 'Stroj',
       medium: 'Střední',
-      mirror: 'zrcadlo',
       notification: {
         changeFromPrintingWorkareaTitle: 'Chcete převést Tiskové vrstvy na Laserové vrstvy?',
       },
@@ -1660,6 +1658,8 @@ const lang: ILang = {
   },
   rotary_settings: {
     circumference: 'Obvod',
+    extend_workarea: 'Rozšířit pracovní oblast',
+    mirror: 'Zrcadlo',
     object_diameter: 'Průměr objektu',
     overlap_size: 'Velikost překrytí',
     rotary_scale: 'Měřítko rotace',

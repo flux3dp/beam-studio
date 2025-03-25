@@ -102,7 +102,6 @@ const lang: ILang = {
       enable_autofocus: 'Foco automático',
       enable_diode: 'Laser de diodo',
       engrave_dpi: 'Resolução',
-      extend_workarea: 'Expandir área de trabalho',
       frame_before_start: 'Quadro antes de executar',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',
       high: 'Alto',
@@ -111,7 +110,6 @@ const lang: ILang = {
       low: 'Baixo',
       machine: 'Máquina',
       medium: 'Médio',
-      mirror: 'Espelho',
       notification: {
         changeFromPrintingWorkareaTitle: 'Deseja converter as Camadas de Impressão em Camadas de Laser?',
       },
@@ -1660,6 +1658,8 @@ const lang: ILang = {
   },
   rotary_settings: {
     circumference: 'Circunferência',
+    extend_workarea: 'Expandir área de trabalho',
+    mirror: 'Espelho',
     object_diameter: 'Diâmetro do Objeto',
     overlap_size: 'Tamanho da sobreposição',
     rotary_scale: 'Escala de rotação',

@@ -102,7 +102,6 @@ const lang: ILang = {
       enable_autofocus: 'Messa a fuoco automatica',
       enable_diode: 'Laser a diodi',
       engrave_dpi: 'Risoluzione',
-      extend_workarea: 'Espandi area di lavoro',
       frame_before_start: 'Frame prima di eseguire',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',
       high: 'Alto',
@@ -111,7 +110,6 @@ const lang: ILang = {
       low: 'Basso',
       machine: 'Macchina',
       medium: 'Medio',
-      mirror: 'Specchio',
       notification: {
         changeFromPrintingWorkareaTitle: 'Vuoi convertire gli strati di stampa nelle aree di taglio laser?',
       },
@@ -1660,6 +1658,8 @@ const lang: ILang = {
   },
   rotary_settings: {
     circumference: 'Circonferenza',
+    extend_workarea: 'Espandi area di lavoro',
+    mirror: 'Specchio',
     object_diameter: "Diametro dell'Oggetto",
     overlap_size: 'Dimensione della sovrapposizione',
     rotary_scale: 'Scala di rotazione',

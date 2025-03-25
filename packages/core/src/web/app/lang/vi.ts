@@ -102,7 +102,6 @@ const lang: ILang = {
       enable_autofocus: 'Tự động lấy nét',
       enable_diode: 'Laser điốt',
       engrave_dpi: 'Độ phân giải',
-      extend_workarea: 'Mở rộng khu vực làm việc',
       frame_before_start: 'Khung trước khi thực thi',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',
       high: 'Cao',
@@ -111,7 +110,6 @@ const lang: ILang = {
       low: 'Thấp',
       machine: 'Máy',
       medium: 'Trung bình',
-      mirror: 'Gương',
       notification: {
         changeFromPrintingWorkareaTitle: 'Bạn có muốn chuyển các lớp in sang lớp laser không?',
       },
@@ -1660,6 +1658,8 @@ const lang: ILang = {
   },
   rotary_settings: {
     circumference: 'Chu Vi',
+    extend_workarea: 'Mở rộng khu vực làm việc',
+    mirror: 'Gương',
     object_diameter: 'Đường Kính Vật Thể',
     overlap_size: 'Kích thước chồng lấp',
     rotary_scale: 'Tỷ lệ xoay',

@@ -102,7 +102,6 @@ const lang: ILang = {
       enable_autofocus: 'Autofokus',
       enable_diode: 'Laser Diode',
       engrave_dpi: 'Resolusi',
-      extend_workarea: 'Perluas area kerja',
       frame_before_start: 'Frame sebelum menjalankan',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',
       high: 'Tinggi',
@@ -111,7 +110,6 @@ const lang: ILang = {
       low: 'Rendah',
       machine: 'Mesin',
       medium: 'Sedang',
-      mirror: 'Cermin',
       notification: {
         changeFromPrintingWorkareaTitle: 'Apakah Anda ingin mengubah Lapisan Cetak menjadi Lapisan Laser?',
       },
@@ -1660,6 +1658,8 @@ const lang: ILang = {
   },
   rotary_settings: {
     circumference: 'Keliling',
+    extend_workarea: 'Perluas area kerja',
+    mirror: 'Cermin',
     object_diameter: 'Diameter Objek',
     overlap_size: 'Ukuran tumpang tindih',
     rotary_scale: 'Skala Rotasi',

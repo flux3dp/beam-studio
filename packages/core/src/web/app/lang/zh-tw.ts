@@ -102,7 +102,6 @@ const lang: ILang = {
       enable_autofocus: '自動對焦',
       enable_diode: '二極體雷射',
       engrave_dpi: '雕刻解析度',
-      extend_workarea: '擴展工作區域',
       frame_before_start: '先預覽後執行',
       frame_before_start_url: 'https://support.flux3dp.com/hc/zh-tw/articles/11494925637135',
       high: '高',
@@ -111,7 +110,6 @@ const lang: ILang = {
       low: '低',
       machine: '機器',
       medium: '中',
-      mirror: '鏡像',
       notification: {
         changeFromPrintingWorkareaTitle: '您要將列印圖層轉換至雷射圖層嗎？',
       },
@@ -1660,6 +1658,8 @@ const lang: ILang = {
   },
   rotary_settings: {
     circumference: '圓周',
+    extend_workarea: '擴展工作區域',
+    mirror: '鏡像',
     object_diameter: '物件直徑',
     overlap_size: '重疊大小',
     rotary_scale: '旋轉倍率',

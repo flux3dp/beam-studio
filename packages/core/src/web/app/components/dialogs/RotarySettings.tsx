@@ -257,7 +257,7 @@ const RotarySettings = ({ afterSave, initData, onClose }: Props): React.JSX.Elem
                   id="mirror"
                   onChange={(e) => setMirror(e.target.checked)}
                 >
-                  {tDocu.mirror}
+                  {t.mirror}
                 </Checkbox>
               )}
               {addOnInfo.rotary.extendWorkarea && (
@@ -267,7 +267,7 @@ const RotarySettings = ({ afterSave, initData, onClose }: Props): React.JSX.Elem
                   id="extend"
                   onChange={(e) => setExtend(e.target.checked)}
                 >
-                  {tDocu.extend_workarea}
+                  {t.extend_workarea}
                 </Checkbox>
               )}
             </div>

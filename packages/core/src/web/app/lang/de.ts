@@ -102,7 +102,6 @@ const lang: ILang = {
       enable_autofocus: 'Autofokus',
       enable_diode: 'Diodenlaser',
       engrave_dpi: 'Auflösung',
-      extend_workarea: 'Arbeitsbereich erweitern',
       frame_before_start: 'Zuerst Rahmen, dann ausführen',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',
       high: 'Hoch',
@@ -111,7 +110,6 @@ const lang: ILang = {
       low: 'Niedrig',
       machine: 'Maschine',
       medium: 'Mittel',
-      mirror: 'Spiegeln',
       notification: {
         changeFromPrintingWorkareaTitle: 'Möchten Sie die Druckschichten in Laserschichten umwandeln?',
       },
@@ -1660,6 +1658,8 @@ const lang: ILang = {
   },
   rotary_settings: {
     circumference: 'Umfang',
+    extend_workarea: 'Arbeitsbereich erweitern',
+    mirror: 'Spiegeln',
     object_diameter: 'Objektdurchmesser',
     overlap_size: 'Überlappungsgröße',
     rotary_scale: 'Drehskala',
