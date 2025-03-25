@@ -4,14 +4,14 @@ import { Switch } from 'antd';
 import classNames from 'classnames';
 
 import history from '@core/app/svgedit/history/history';
-import UnitInput from '@core/app/widgets/Unit-Input-v2';
-import { CUSTOM_PRESET_CONSTANT, writeData } from '@core/helpers/layer/layer-config-helper';
+import { writeData } from '@core/helpers/layer/layer-config-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './Block.module.scss';
 import ConfigPanelContext from './ConfigPanelContext';
+import NumberBlock from './NumberBlock';
 
 let svgCanvas: ISVGCanvas;
 
@@ -23,7 +23,7 @@ const AutoFocus = (): React.JSX.Element => {
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
   const { dispatch, initState, selectedLayers, state } = useContext(ConfigPanelContext);
-  const { height, repeat, zStep } = state;
+  const { height, repeat } = state;
 
   const handleToggle = () => {
     const value = -height.value;
@@ -33,29 +33,6 @@ const AutoFocus = (): React.JSX.Element => {
     const batchCmd = new history.BatchCommand('Change auto focus toggle');
 
     selectedLayers.forEach((layerName) => writeData(layerName, 'height', value, { batchCmd }));
-    batchCmd.onAfter = initState;
-    svgCanvas.addCommandToHistory(batchCmd);
-  };
-
-  const handleHeightChange = (value: number) => {
-    dispatch({ payload: { height: value }, type: 'change' });
-
-    const batchCmd = new history.BatchCommand('Change auto focus height');
-
-    selectedLayers.forEach((layerName) => writeData(layerName, 'height', value, { batchCmd }));
-    batchCmd.onAfter = initState;
-    svgCanvas.addCommandToHistory(batchCmd);
-  };
-
-  const handleZStepChange = (value: number) => {
-    dispatch({ payload: { configName: CUSTOM_PRESET_CONSTANT, zStep: value }, type: 'change' });
-
-    const batchCmd = new history.BatchCommand('Change auto focus z step');
-
-    selectedLayers.forEach((layerName) => {
-      writeData(layerName, 'zStep', value, { batchCmd });
-      writeData(layerName, 'configName', CUSTOM_PRESET_CONSTANT, { batchCmd });
-    });
     batchCmd.onAfter = initState;
     svgCanvas.addCommandToHistory(batchCmd);
   };
@@ -75,34 +52,28 @@ const AutoFocus = (): React.JSX.Element => {
         />
       </div>
       {height.value > 0 ? (
-        <div className={classNames(styles.panel, styles['without-drag'])}>
-          <span className={styles.title}>{t.height}</span>
-          <UnitInput
-            className={{ [styles.input]: true }}
-            defaultValue={height.value}
-            displayMultiValue={height.hasMultiValue}
-            getValue={handleHeightChange}
-            id="height"
-            max={20}
-            min={0.01}
-            unit="mm"
-          />
-        </div>
+        <NumberBlock
+          configKey="height"
+          id="height"
+          max={20}
+          min={0.01}
+          precision={2}
+          step={0.01}
+          title={t.height}
+          unit="mm"
+        />
       ) : null}
       {repeat.value > 1 && height.value > 0 ? (
-        <div className={classNames(styles.panel, styles['without-drag'])}>
-          <span className={styles.title}>{t.z_step}</span>
-          <UnitInput
-            className={{ [styles.input]: true }}
-            defaultValue={zStep.value}
-            displayMultiValue={zStep.hasMultiValue}
-            getValue={handleZStepChange}
-            id="z_step"
-            max={20}
-            min={0}
-            unit="mm"
-          />
-        </div>
+        <NumberBlock
+          configKey="zStep"
+          id="zStep"
+          max={20}
+          min={0}
+          precision={2}
+          step={0.01}
+          title={t.z_step}
+          unit="mm"
+        />
       ) : null}
     </>
   );

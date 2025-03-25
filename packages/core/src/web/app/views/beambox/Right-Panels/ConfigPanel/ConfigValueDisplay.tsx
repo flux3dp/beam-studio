@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import UnitInput from '@core/app/widgets/UnitInput';
 import type ConfigOption from '@core/interfaces/ConfigOption';
@@ -15,6 +15,7 @@ interface Props {
   min: number;
   onChange: (value: number) => void;
   options?: ConfigOption[];
+  step?: number;
   type?: 'default' | 'modal' | 'panel-item';
   unit?: string;
   value: number;
@@ -29,11 +30,12 @@ const ConfigValueDisplay = ({
   min,
   onChange,
   options,
+  step = 1,
   type = 'default',
   unit,
   value,
 }: Props): React.JSX.Element => {
-  const selectedOption = options?.find((opt) => opt.value === value);
+  const selectedOption = useMemo(() => options?.find((opt) => opt.value === value), [options, value]);
 
   const handleChange = useCallback(
     (val: null | number) => {
@@ -59,7 +61,7 @@ const ConfigValueDisplay = ({
         min={min}
         onChange={handleChange}
         precision={decimal}
-        step={isInch ? 25.4 : 1}
+        step={step}
         suffix={unit}
         theme={{ token: { borderRadius: 100 } }}
         type="number"
@@ -78,6 +80,7 @@ const ConfigValueDisplay = ({
       min={min}
       onChange={handleChange}
       precision={decimal}
+      step={step}
       unit={unit}
       value={value}
     />
