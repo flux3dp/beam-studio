@@ -1180,6 +1180,8 @@ const lang: ILang = {
     hull_desc: 'Viser en form, der tæt følger designet, som et elastik, der er viklet omkring objektet.',
     low_laser: 'Lav laser',
     low_laser_desc: 'Indstil en lav laserværdi til rammeopgaven.',
+    rotate_axis: 'Roter akse',
+    rotateaxis_desc: 'Forhåndsviser rotationsaksen.',
     start_task: 'Start Opgave',
     start_task_description: 'Når rammeforhåndsvisningen er færdig, skal du klikke på "Start Opgave" for at indsende opgaven.',
   },
@@ -1657,7 +1659,11 @@ const lang: ILang = {
   rotary_settings: {
     circumference: 'Omkreds',
     object_diameter: 'Objekt Diameter',
+    overlap_size: 'Overlapningsstørrelse',
     rotary_scale: 'Rotationsskala',
+    split_setting: 'Delingsindstilling',
+    split_setting_url: 'https://support.flux3dp.com/hc/en-us/articles/12276094010767',
+    split_size: 'Delingsstørrelse',
     type: 'Type',
   },
   select_device: {

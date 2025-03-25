@@ -1180,6 +1180,8 @@ const lang: ILang = {
     hull_desc: 'Viser en form som følger designet tett, som et gummibånd rundt objektet.',
     low_laser: 'Lav laser',
     low_laser_desc: 'Sett en lav effektverdi for laser for innrammingsoppgaven.',
+    rotate_axis: 'Roter akse',
+    rotateaxis_desc: 'Forhåndsviser rotasjonsaksen.',
     start_task: 'Start Oppgave',
     start_task_description: 'Etter å ha fullført rammeforhåndsvisningen, klikk på "Start Oppgave" for å sende inn oppgaven.',
   },
@@ -1657,7 +1659,11 @@ const lang: ILang = {
   rotary_settings: {
     circumference: 'Omkrets',
     object_diameter: 'Objekt Diameter',
+    overlap_size: 'Overlappingsstørrelse',
     rotary_scale: 'Rotasjonsskala',
+    split_setting: 'Delingsinnstilling',
+    split_setting_url: 'https://support.flux3dp.com/hc/en-us/articles/12276094010767',
+    split_size: 'Delingsstørrelse',
     type: 'Type',
   },
   select_device: {

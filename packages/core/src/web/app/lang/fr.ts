@@ -1180,6 +1180,8 @@ const lang: ILang = {
     hull_desc: "Affiche un aperçu d'une forme qui suit étroitement le design, comme un élastique enroulé autour de l'objet.",
     low_laser: 'Laser faible',
     low_laser_desc: 'Définissez une valeur de laser à faible puissance pour la tâche de cadrage.',
+    rotate_axis: 'Axe de rotation',
+    rotateaxis_desc: "Aperçu de l'axe de rotation.",
     start_task: 'Démarrer la Tâche',
     start_task_description: 'Après avoir terminé l’aperçu du cadre, cliquez sur "Démarrer la Tâche" pour soumettre le travail.',
   },
@@ -1657,7 +1659,11 @@ const lang: ILang = {
   rotary_settings: {
     circumference: 'Circonférence',
     object_diameter: "Diamètre de l'Objet",
+    overlap_size: 'Taille du chevauchement',
     rotary_scale: 'Échelle de rotation',
+    split_setting: 'Paramètre de division',
+    split_setting_url: 'https://support.flux3dp.com/hc/en-us/articles/12276094010767',
+    split_size: 'Taille de la division',
     type: 'Type',
   },
   select_device: {

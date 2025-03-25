@@ -1180,6 +1180,8 @@ const lang: ILang = {
     hull_desc: 'Προεπισκοπεί ένα σχήμα που ακολουθεί στενά το σχέδιο, όπως ένα λάστιχο γύρω από το αντικείμενο.',
     low_laser: 'Χαμηλή ισχύς λέιζερ',
     low_laser_desc: 'Ορίστε τιμή χαμηλής ισχύος λέιζερ για την εργασία πλαισίωσης.',
+    rotate_axis: 'Άξονας περιστροφής',
+    rotateaxis_desc: 'Προεπισκόπηση του άξονα περιστροφής.',
     start_task: 'Έναρξη Εργασίας',
     start_task_description: 'Αφού ολοκληρωθεί η προεπισκόπηση καρέ, κάντε κλικ στο "Έναρξη Εργασίας" για να υποβάλετε τη δουλειά.',
   },
@@ -1657,7 +1659,11 @@ const lang: ILang = {
   rotary_settings: {
     circumference: 'Περιφέρεια',
     object_diameter: 'Διάμετρος Αντικειμένου',
+    overlap_size: 'Μέγεθος επικάλυψης',
     rotary_scale: 'Κλίμακα περιστροφής',
+    split_setting: 'Ρύθμιση διαίρεσης',
+    split_setting_url: 'https://support.flux3dp.com/hc/en-us/articles/12276094010767',
+    split_size: 'Μέγεθος διαίρεσης',
     type: 'τύπος',
   },
   select_device: {

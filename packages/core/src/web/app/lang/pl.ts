@@ -1180,6 +1180,8 @@ const lang: ILang = {
     hull_desc: 'Wyświetla podgląd kształtu, który ściśle podąża za projektem, jak gumka owinięta wokół obiektu.',
     low_laser: 'Niski laser',
     low_laser_desc: 'Ustaw niską moc lasera dla zadania ramowania.',
+    rotate_axis: 'Oś obrotu',
+    rotateaxis_desc: 'Podgląd osi obrotu.',
     start_task: 'Rozpocznij Zadanie',
     start_task_description: 'Po zakończeniu podglądu ramki kliknij „Rozpocznij Zadanie”, aby przesłać zadanie.',
   },
@@ -1657,7 +1659,11 @@ const lang: ILang = {
   rotary_settings: {
     circumference: 'Obwód',
     object_diameter: 'Średnica Obiektu',
+    overlap_size: 'Rozmiar nakładania',
     rotary_scale: 'Skala obrotu',
+    split_setting: 'Ustawienie podziału',
+    split_setting_url: 'https://support.flux3dp.com/hc/en-us/articles/12276094010767',
+    split_size: 'Rozmiar podziału',
     type: 'Typ',
   },
   select_device: {

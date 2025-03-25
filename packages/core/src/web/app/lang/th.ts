@@ -1180,6 +1180,8 @@ const lang: ILang = {
     hull_desc: 'แสดงตัวอย่างรูปทรงที่ใกล้เคียงกับการออกแบบ เหมือนยางยืดพันรอบวัตถุ',
     low_laser: 'เลเซอร์กำลังต่ำ',
     low_laser_desc: 'ตั้งค่าเลเซอร์กำลังต่ำสำหรับงานกำหนดกรอบ',
+    rotate_axis: 'แกนหมุน',
+    rotateaxis_desc: 'แสดงตัวอย่างแกนหมุน',
     start_task: 'เริ่มงาน',
     start_task_description: 'หลังจากแสดงตัวอย่างเฟรมเสร็จสิ้น ให้คลิก "เริ่มงาน" เพื่อส่งงาน.',
   },
@@ -1657,7 +1659,11 @@ const lang: ILang = {
   rotary_settings: {
     circumference: 'เส้นรอบวง',
     object_diameter: 'เส้นผ่านศูนย์กลางของวัตถุ',
+    overlap_size: 'ขนาดการทับซ้อน',
     rotary_scale: 'มาตราส่วนการหมุน',
+    split_setting: 'การตั้งค่าการแบ่ง',
+    split_setting_url: 'https://support.flux3dp.com/hc/en-us/articles/12276094010767',
+    split_size: 'ขนาดการแบ่ง',
     type: 'ประเภท',
   },
   select_device: {

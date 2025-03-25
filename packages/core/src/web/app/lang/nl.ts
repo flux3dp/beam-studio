@@ -1180,6 +1180,8 @@ const lang: ILang = {
     hull_desc: 'Voorvertoont een vorm die nauw aansluit bij het ontwerp, zoals een elastiek dat om het object is gewikkeld.',
     low_laser: 'Lage laser',
     low_laser_desc: 'Stel een laag laservermogen in voor de inlijsttaak.',
+    rotate_axis: 'Rotatieas',
+    rotateaxis_desc: 'Geeft een voorbeeld van de rotatieas.',
     start_task: 'Taak Starten',
     start_task_description: 'Klik op "Taak Starten" na het voltooien van de framevoorbeeld om de taak in te dienen.',
   },
@@ -1657,7 +1659,11 @@ const lang: ILang = {
   rotary_settings: {
     circumference: 'Omtrek',
     object_diameter: 'Objectdiameter',
+    overlap_size: 'Overlapgrootte',
     rotary_scale: 'Rotatieschaal',
+    split_setting: 'Splitsinstelling',
+    split_setting_url: 'https://support.flux3dp.com/hc/en-us/articles/12276094010767',
+    split_size: 'Splitsingsgrootte',
     type: 'Type',
   },
   select_device: {

@@ -1180,6 +1180,8 @@ const lang: ILang = {
     hull_desc: "Visualizza in anteprima una forma che segue da vicino il disegno, come un elastico avvolto intorno all'oggetto.",
     low_laser: 'Laser basso',
     low_laser_desc: "Imposta un valore laser a bassa potenza per l'attività di inquadratura.",
+    rotate_axis: 'Asse di rotazione',
+    rotateaxis_desc: "Anteprima dell'asse di rotazione.",
     start_task: 'Avvia Attività',
     start_task_description: 'Dopo aver completato l\'anteprima del frame, clicca su "Avvia Attività" per inviare il lavoro.',
   },
@@ -1657,7 +1659,11 @@ const lang: ILang = {
   rotary_settings: {
     circumference: 'Circonferenza',
     object_diameter: "Diametro dell'Oggetto",
+    overlap_size: 'Dimensione della sovrapposizione',
     rotary_scale: 'Scala di rotazione',
+    split_setting: 'Impostazione di divisione',
+    split_setting_url: 'https://support.flux3dp.com/hc/en-us/articles/12276094010767',
+    split_size: 'Dimensione della divisione',
     type: 'Tipo',
   },
   select_device: {

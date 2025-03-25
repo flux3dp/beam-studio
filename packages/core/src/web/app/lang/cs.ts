@@ -1180,6 +1180,8 @@ const lang: ILang = {
     hull_desc: 'Zobrazuje tvar, který těsně kopíruje návrh, jako gumička obepínající objekt.',
     low_laser: 'Nízký laser',
     low_laser_desc: 'Nastavte hodnotu nízkého výkonu laseru pro úlohu rámování.',
+    rotate_axis: 'Otočit osu',
+    rotateaxis_desc: 'Náhled osy rotace.',
     start_task: 'Spustit Úkol',
     start_task_description: 'Po dokončení náhledu rámce klikněte na „Spustit Úkol“ pro odeslání úlohy.',
   },
@@ -1657,7 +1659,11 @@ const lang: ILang = {
   rotary_settings: {
     circumference: 'Obvod',
     object_diameter: 'Průměr objektu',
+    overlap_size: 'Velikost překrytí',
     rotary_scale: 'Měřítko rotace',
+    split_setting: 'Nastavení dělení',
+    split_setting_url: 'https://support.flux3dp.com/hc/zh-tw/articles/12276094010767',
+    split_size: 'Velikost dělení',
     type: 'Typ',
   },
   select_device: {

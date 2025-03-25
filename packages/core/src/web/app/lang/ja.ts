@@ -1180,6 +1180,8 @@ const lang: ILang = {
     hull_desc: 'オブジェクトの周りに巻かれた輪ゴムのように、デザインに密接に従う形状をプレビューします。',
     low_laser: '低出力レーザー',
     low_laser_desc: 'フレーミング作業用に低出力のレーザー値を設定します。',
+    rotate_axis: '回転軸',
+    rotateaxis_desc: '回転軸をプレビューします。',
     start_task: 'タスクを開始',
     start_task_description: 'フレームプレビューが完了したら、「タスクを開始」をクリックしてジョブを送信します。',
   },
@@ -1657,7 +1659,11 @@ const lang: ILang = {
   rotary_settings: {
     circumference: '円周',
     object_diameter: 'オブジェクトの直径',
+    overlap_size: 'オーバーラップサイズ',
     rotary_scale: 'ロータリースケール',
+    split_setting: '分割設定',
+    split_setting_url: 'https://support.flux3dp.com/hc/en-us/articles/12276094010767',
+    split_size: '分割サイズ',
     type: '種類',
   },
   select_device: {

@@ -1180,6 +1180,8 @@ const lang: ILang = {
     hull_desc: 'Exibe uma pré-visualização de uma forma que segue de perto o design, como um elástico envolvido ao redor do objeto.',
     low_laser: 'Laser baixo',
     low_laser_desc: 'Defina um valor de laser de baixa potência para a tarefa de moldura.',
+    rotate_axis: 'Eixo de rotação',
+    rotateaxis_desc: 'Visualiza o eixo de rotação.',
     start_task: 'Iniciar Tarefa',
     start_task_description: 'Após concluir a pré-visualização do quadro, clique em "Iniciar Tarefa" para enviar o trabalho.',
   },
@@ -1657,7 +1659,11 @@ const lang: ILang = {
   rotary_settings: {
     circumference: 'Circunferência',
     object_diameter: 'Diâmetro do Objeto',
+    overlap_size: 'Tamanho da sobreposição',
     rotary_scale: 'Escala de rotação',
+    split_setting: 'Configuração de divisão',
+    split_setting_url: 'https://support.flux3dp.com/hc/en-us/articles/12276094010767',
+    split_size: 'Tamanho da divisão',
     type: 'Tipo',
   },
   select_device: {

@@ -1180,6 +1180,8 @@ const lang: ILang = {
     hull_desc: 'Förhandsvisar en form som följer designen noggrant, som ett gummiband lindat runt objektet.',
     low_laser: 'Låg laser',
     low_laser_desc: 'Ställ in ett lågeffektslaservärde för inramningsuppgiften.',
+    rotate_axis: 'Rotationsaxel',
+    rotateaxis_desc: 'Förhandsgranskar rotationsaxeln.',
     start_task: 'เริ่มงาน',
     start_task_description: 'หลังจากแสดงตัวอย่างเฟรมเสร็จสิ้น ให้คลิก "เริ่มงาน" เพื่อส่งงาน.',
   },
@@ -1657,7 +1659,11 @@ const lang: ILang = {
   rotary_settings: {
     circumference: 'Omkrets',
     object_diameter: 'Objekt Diameter',
+    overlap_size: 'Överlappningsstorlek',
     rotary_scale: 'Rotationsskala',
+    split_setting: 'Delningsinställning',
+    split_setting_url: 'https://support.flux3dp.com/hc/en-us/articles/12276094010767',
+    split_size: 'Delningsstorlek',
     type: 'Typ',
   },
   select_device: {

@@ -1180,6 +1180,8 @@ const lang: ILang = {
     hull_desc: 'Xem trước hình dạng bám sát thiết kế, giống như dây cao su bao quanh đối tượng.',
     low_laser: 'Laser yếu',
     low_laser_desc: 'Đặt giá trị laser công suất thấp cho nhiệm vụ đóng khung.',
+    rotate_axis: 'Trục xoay',
+    rotateaxis_desc: 'Xem trước trục xoay.',
     start_task: 'Bắt Đầu Nhiệm Vụ',
     start_task_description: 'Sau khi hoàn thành xem trước khung, nhấp vào "Bắt Đầu Nhiệm Vụ" để gửi công việc.',
   },
@@ -1657,7 +1659,11 @@ const lang: ILang = {
   rotary_settings: {
     circumference: 'Chu Vi',
     object_diameter: 'Đường Kính Vật Thể',
+    overlap_size: 'Kích thước chồng lấp',
     rotary_scale: 'Tỷ lệ xoay',
+    split_setting: 'Cài đặt chia',
+    split_setting_url: 'https://support.flux3dp.com/hc/en-us/articles/12276094010767',
+    split_size: 'Kích thước chia',
     type: 'loại',
   },
   select_device: {

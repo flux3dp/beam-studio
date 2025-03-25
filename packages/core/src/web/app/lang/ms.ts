@@ -1180,6 +1180,8 @@ const lang: ILang = {
     hull_desc: 'Memaparkan bentuk yang rapat mengikuti reka bentuk, seperti gelang getah yang dililitkan pada objek.',
     low_laser: 'Laser rendah',
     low_laser_desc: 'Tetapkan nilai laser berkuasa rendah untuk tugas pembingkaian.',
+    rotate_axis: 'Paksi putaran',
+    rotateaxis_desc: 'Pratonton paksi putaran.',
     start_task: 'Mula Tugas',
     start_task_description: 'Selepas melengkapkan pratonton bingkai, klik "Mula Tugas" untuk menghantar kerja.',
   },
@@ -1657,7 +1659,11 @@ const lang: ILang = {
   rotary_settings: {
     circumference: 'Lilitan',
     object_diameter: 'Diameter Objek',
+    overlap_size: 'Saiz pertindihan',
     rotary_scale: 'Skala Putaran',
+    split_setting: 'Tetapan pembahagian',
+    split_setting_url: 'https://support.flux3dp.com/hc/en-us/articles/12276094010767',
+    split_size: 'Saiz pembahagian',
     type: 'Jenis',
   },
   select_device: {

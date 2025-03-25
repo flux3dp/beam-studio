@@ -1180,6 +1180,8 @@ const lang: ILang = {
     hull_desc: '预览一个紧随设计的形状，就像橡皮筋缠绕在对象周围一样。',
     low_laser: '低功率激光',
     low_laser_desc: '为框架任务设置低功率激光值。',
+    rotate_axis: '旋转轴',
+    rotateaxis_desc: '预览旋转轴。',
     start_task: '开始任务',
     start_task_description: '完成外框预览后，点击“开始任务”提交工作。',
   },
@@ -1657,7 +1659,11 @@ const lang: ILang = {
   rotary_settings: {
     circumference: '周长',
     object_diameter: '对象直径',
+    overlap_size: '重叠大小',
     rotary_scale: '旋转倍率',
+    split_setting: '分割设置',
+    split_setting_url: 'https://support.flux3dp.com/hc/en-us/articles/12276094010767',
+    split_size: '分割大小',
     type: '类型',
   },
   select_device: {

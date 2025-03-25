@@ -1180,6 +1180,8 @@ const lang: ILang = {
     hull_desc: 'Memperlihatkan bentuk yang mengikuti desain, seperti karet yang melilit objek.',
     low_laser: 'Laser rendah',
     low_laser_desc: 'Tetapkan nilai laser daya rendah untuk tugas pembingkaian.',
+    rotate_axis: 'Poros rotasi',
+    rotateaxis_desc: 'Pratinjau poros rotasi.',
     start_task: 'Mulai Tugas',
     start_task_description: 'Setelah menyelesaikan pratinjau bingkai, klik "Mulai Tugas" untuk mengirimkan pekerjaan.',
   },
@@ -1657,7 +1659,11 @@ const lang: ILang = {
   rotary_settings: {
     circumference: 'Keliling',
     object_diameter: 'Diameter Objek',
+    overlap_size: 'Ukuran tumpang tindih',
     rotary_scale: 'Skala Rotasi',
+    split_setting: 'Pengaturan pemisahan',
+    split_setting_url: 'https://support.flux3dp.com/hc/en-us/articles/12276094010767',
+    split_size: 'Ukuran pemisahan',
     type: 'Jenis',
   },
   select_device: {

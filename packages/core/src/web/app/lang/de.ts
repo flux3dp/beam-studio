@@ -1180,6 +1180,8 @@ const lang: ILang = {
     hull_desc: 'Zeigt eine Form, die dem Design eng folgt, wie ein Gummiband, das um das Objekt gewickelt ist.',
     low_laser: 'Niedriger Laser',
     low_laser_desc: 'Stellen Sie einen niedrigen Laserwert für die Rahmenaufgabe ein.',
+    rotate_axis: 'Drehachse',
+    rotateaxis_desc: 'Vorschau der Drehachse.',
     start_task: 'Aufgabe Starten',
     start_task_description: 'Nach Abschluss der Rahmenvorschau klicken Sie auf „Aufgabe Starten“, um den Auftrag einzureichen.',
   },
@@ -1657,7 +1659,11 @@ const lang: ILang = {
   rotary_settings: {
     circumference: 'Umfang',
     object_diameter: 'Objektdurchmesser',
+    overlap_size: 'Überlappungsgröße',
     rotary_scale: 'Drehskala',
+    split_setting: 'Teilungseinstellung',
+    split_setting_url: 'https://support.flux3dp.com/hc/en-us/articles/12276094010767',
+    split_size: 'Teilungsgröße',
     type: 'Typ',
   },
   select_device: {

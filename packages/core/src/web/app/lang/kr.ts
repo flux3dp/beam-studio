@@ -1180,6 +1180,8 @@ const lang: ILang = {
     hull_desc: '객체 주위에 고무줄이 감겨 있는 것처럼 디자인을 밀접하게 따르는 모양을 미리 봅니다.',
     low_laser: '저출력 레이저',
     low_laser_desc: '프레임 작업을 위한 저출력 레이저 값을 설정하세요.',
+    rotate_axis: '회전 축',
+    rotateaxis_desc: '회전 축을 미리 봅니다.',
     start_task: '작업 시작',
     start_task_description: '프레임 미리보기가 완료된 후 "작업 시작"을 클릭하여 작업을 제출합니다.',
   },
@@ -1657,7 +1659,11 @@ const lang: ILang = {
   rotary_settings: {
     circumference: '원주',
     object_diameter: '물체 직경',
+    overlap_size: '겹침 크기',
     rotary_scale: '회전 스케일',
+    split_setting: '분할 설정',
+    split_setting_url: 'https://support.flux3dp.com/hc/en-us/articles/12276094010767',
+    split_size: '분할 크기',
     type: '유형',
   },
   select_device: {

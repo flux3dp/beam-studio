@@ -1180,6 +1180,8 @@ const lang: ILang = {
     hull_desc: '預覽緊密貼合設計的形狀，像橡皮筋纏繞著物件一樣。',
     low_laser: '弱出光',
     low_laser_desc: '設定低功率雷射值以進行外框任務。',
+    rotate_axis: '旋轉軸',
+    rotateaxis_desc: '預覽旋轉軸。',
     start_task: '開始任務',
     start_task_description: '完成外框預覽後，點擊「開始任務」提交工作。',
   },
@@ -1657,7 +1659,11 @@ const lang: ILang = {
   rotary_settings: {
     circumference: '圓周',
     object_diameter: '物件直徑',
+    overlap_size: '重疊大小',
     rotary_scale: '旋轉倍率',
+    split_setting: '分割設定',
+    split_setting_url: 'https://support.flux3dp.com/hc/en-us/articles/12276094010767',
+    split_size: '分割大小',
     type: '類型',
   },
   select_device: {

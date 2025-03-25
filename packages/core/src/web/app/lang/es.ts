@@ -1180,6 +1180,8 @@ const lang: ILang = {
     hull_desc: 'Previsualiza una forma que sigue de cerca el diseño, como una banda elástica envuelta alrededor del objeto.',
     low_laser: 'Láser bajo',
     low_laser_desc: 'Establezca un valor de láser de baja potencia para la tarea de enmarcado.',
+    rotate_axis: 'Eje de rotación',
+    rotateaxis_desc: 'Previsualiza el eje de rotación.',
     start_task: 'Iniciar Tarea',
     start_task_description: 'Después de completar la vista previa del marco, haga clic en "Iniciar Tarea" para enviar el trabajo.',
   },
@@ -1657,7 +1659,11 @@ const lang: ILang = {
   rotary_settings: {
     circumference: 'Circunferencia',
     object_diameter: 'Diámetro del Objeto',
+    overlap_size: 'Tamaño de superposición',
     rotary_scale: 'Escala de rotación',
+    split_setting: 'Configuración de división',
+    split_setting_url: 'https://support.flux3dp.com/hc/en-us/articles/12276094010767',
+    split_size: 'Tamaño de división',
     type: 'Tipo',
   },
   select_device: {

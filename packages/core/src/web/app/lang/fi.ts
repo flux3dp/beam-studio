@@ -1180,6 +1180,8 @@ const lang: ILang = {
     hull_desc: 'Esikatselu, joka seuraa tiiviisti muotoilua, kuin kuminauha kietoutuneena objektin ympärille.',
     low_laser: 'Matala laser',
     low_laser_desc: 'Aseta pienitehoinen laserteho kehyksen tehtävää varten.',
+    rotate_axis: 'Kierron akseli',
+    rotateaxis_desc: 'Esikatselee kiertoakselia.',
     start_task: 'Aloita Tehtävä',
     start_task_description: 'Kehyksen esikatselun jälkeen napsauta "Aloita Tehtävä" lähettääksesi työn.',
   },
@@ -1657,7 +1659,11 @@ const lang: ILang = {
   rotary_settings: {
     circumference: 'Ympärysmitta',
     object_diameter: 'Kohteen Halkaisija',
+    overlap_size: 'Päällekkäisyyden koko',
     rotary_scale: 'Pyörimisen mittakaava',
+    split_setting: 'Jakamisasetukset',
+    split_setting_url: 'https://support.flux3dp.com/hc/en-us/articles/12276094010767',
+    split_size: 'Jakamiskoko',
     type: 'Tyyppi',
   },
   select_device: {
