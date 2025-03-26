@@ -84,35 +84,23 @@ exports[`test FillSettingModal should render correctly 1`] = `
                       Fill Interval
                     </span>
                     <div>
-                      MockUnitInput
+                      UnitInput: 
+                      fillInterval
                       <p>
-                        min: 
-                        0.0001
+                        precision: 
+                        4
                       </p>
                       <p>
-                        max: 
-                        100
+                        underline
                       </p>
                       <p>
                         unit: 
                         mm
                       </p>
-                      <p>
-                        defaultValue: 
-                        0.1
-                      </p>
-                      <p>
-                        decimal: 
-                        4
-                      </p>
-                      <p>
-                        displayMultiValue: 
-                        N
-                      </p>
                       <input
-                        data-testid="fillInterval"
                         id="fillInterval"
-                        type="number"
+                        max="100"
+                        min="0.0001"
                         value="0.1"
                       />
                     </div>
@@ -122,35 +110,23 @@ exports[`test FillSettingModal should render correctly 1`] = `
                       Fill Angle
                     </span>
                     <div>
-                      MockUnitInput
+                      UnitInput: 
+                      fillAngle
                       <p>
-                        min: 
-                        -360
+                        precision: 
+                        1
                       </p>
                       <p>
-                        max: 
-                        360
+                        underline
                       </p>
                       <p>
                         unit: 
                         deg
                       </p>
-                      <p>
-                        defaultValue: 
-                        0
-                      </p>
-                      <p>
-                        decimal: 
-                        1
-                      </p>
-                      <p>
-                        displayMultiValue: 
-                        N
-                      </p>
                       <input
-                        data-testid="fillAngle"
                         id="fillAngle"
-                        type="number"
+                        max="360"
+                        min="-360"
                         value="0"
                       />
                     </div>

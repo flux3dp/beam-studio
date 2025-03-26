@@ -9,7 +9,7 @@ exports[`test AutoFocus should render correctly when height is less than 0 1`] =
       class="title"
       for="auto-focus"
     >
-      focus_adjustment
+      Focus Adjustment
     </label>
     <button
       aria-checked="false"
@@ -45,7 +45,7 @@ exports[`test AutoFocus should render correctly when repeat is larger than 1 1`]
       class="title"
       for="auto-focus"
     >
-      focus_adjustment
+      Focus Adjustment
     </label>
     <button
       aria-checked="true"
@@ -69,93 +69,72 @@ exports[`test AutoFocus should render correctly when repeat is larger than 1 1`]
       </span>
     </button>
   </div>
-  <div
-    class="panel without-drag"
-  >
-    <span
-      class="title"
-    >
+  <div>
+    MockNumberBlock
+    <p>
+      configKey: 
       height
-    </span>
-    <div>
-      MockUnitInput
-      <p>
-        id: 
-        height
-      </p>
-      <p>
-        min: 
-        0.01
-      </p>
-      <p>
-        max: 
-        20
-      </p>
-      <p>
-        unit: 
-        mm
-      </p>
-      <p>
-        defaultValue: 
-        3
-      </p>
-      <p>
-        decimal: 
-      </p>
-      <p>
-        displayMultiValue: 
-      </p>
-      <button
-        type="button"
-      >
-        change-
-        height
-      </button>
-    </div>
+    </p>
+    <p>
+      id: 
+      height
+    </p>
+    <p>
+      max: 
+      20
+    </p>
+    <p>
+      min: 
+      0.01
+    </p>
+    <p>
+      precision: 
+      2
+    </p>
+    <p>
+      step: 
+      0.01
+    </p>
+    <p>
+      title: 
+      Object Height
+    </p>
+    <p>
+      unit: 
+      mm
+    </p>
   </div>
-  <div
-    class="panel without-drag"
-  >
-    <span
-      class="title"
-    >
-      z_step
-    </span>
-    <div>
-      MockUnitInput
-      <p>
-        id: 
-        z_step
-      </p>
-      <p>
-        min: 
-        0
-      </p>
-      <p>
-        max: 
-        20
-      </p>
-      <p>
-        unit: 
-        mm
-      </p>
-      <p>
-        defaultValue: 
-        0
-      </p>
-      <p>
-        decimal: 
-      </p>
-      <p>
-        displayMultiValue: 
-      </p>
-      <button
-        type="button"
-      >
-        change-
-        z_step
-      </button>
-    </div>
+  <div>
+    MockNumberBlock
+    <p>
+      configKey: 
+      zStep
+    </p>
+    <p>
+      id: 
+      zStep
+    </p>
+    <p>
+      max: 
+      20
+    </p>
+    0
+    <p>
+      precision: 
+      2
+    </p>
+    <p>
+      step: 
+      0.01
+    </p>
+    <p>
+      title: 
+      Z Step
+    </p>
+    <p>
+      unit: 
+      mm
+    </p>
   </div>
 </div>
 `;
@@ -169,7 +148,7 @@ exports[`test AutoFocus should render correctly when repeat is less than 1 1`] =
       class="title"
       for="auto-focus"
     >
-      focus_adjustment
+      Focus Adjustment
     </label>
     <button
       aria-checked="true"
@@ -193,49 +172,40 @@ exports[`test AutoFocus should render correctly when repeat is less than 1 1`] =
       </span>
     </button>
   </div>
-  <div
-    class="panel without-drag"
-  >
-    <span
-      class="title"
-    >
+  <div>
+    MockNumberBlock
+    <p>
+      configKey: 
       height
-    </span>
-    <div>
-      MockUnitInput
-      <p>
-        id: 
-        height
-      </p>
-      <p>
-        min: 
-        0.01
-      </p>
-      <p>
-        max: 
-        20
-      </p>
-      <p>
-        unit: 
-        mm
-      </p>
-      <p>
-        defaultValue: 
-        3
-      </p>
-      <p>
-        decimal: 
-      </p>
-      <p>
-        displayMultiValue: 
-      </p>
-      <button
-        type="button"
-      >
-        change-
-        height
-      </button>
-    </div>
+    </p>
+    <p>
+      id: 
+      height
+    </p>
+    <p>
+      max: 
+      20
+    </p>
+    <p>
+      min: 
+      0.01
+    </p>
+    <p>
+      precision: 
+      2
+    </p>
+    <p>
+      step: 
+      0.01
+    </p>
+    <p>
+      title: 
+      Object Height
+    </p>
+    <p>
+      unit: 
+      mm
+    </p>
   </div>
 </div>
 `;

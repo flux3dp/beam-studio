@@ -2,77 +2,37 @@
 
 exports[`test RepeatBlock should render correctly 1`] = `
 <div>
-  <div
-    class="panel without-drag"
-  >
-    <span
-      class="title"
-    >
-      repeat
-    </span>
-    <div>
-      MockUnitInput
-      <p>
-        id: 
-        repeat
-      </p>
-      <p>
-        min: 
-        0
-      </p>
-      <p>
-        max: 
-        100
-      </p>
-      <p>
-        unit: 
-        times
-      </p>
-      <p>
-        defaultValue: 
-        3
-      </p>
-      <p>
-        decimal: 
-        0
-      </p>
-      <p>
-        displayMultiValue: 
-      </p>
-      <button
-        type="button"
-      >
-        change
-      </button>
-    </div>
-  </div>
-</div>
-`;
-
-exports[`test RepeatBlock should render correctly when type is panel-item 1`] = `
-<div>
   <div>
-    MockObjectPanelNumber
-    <div>
+    MockNumberBlock
+    <p>
+      configKey: 
+      repeat
+    </p>
+    <p>
       id: 
       repeat
-    </div>
-    <div>
-      value: 
-      3
-    </div>
-    <div>
-      label: 
-      repeat
-    </div>
-    <div>
+    </p>
+    <p>
+      max: 
+      100
+    </p>
+    0
+    <p>
+      panelType: 
+      button
+    </p>
+    <p>
+      title: 
+      Pass Count
+    </p>
+    <p>
+      type: 
+      default
+    </p>
+    <p>
       unit: 
       times
-    </div>
-    <div>
-      decimal: 
-      0
-    </div>
+    </p>
   </div>
 </div>
 `;

@@ -1,5 +1,4 @@
-import type React from 'react';
-import { memo } from 'react';
+import React, { memo } from 'react';
 
 import useI18n from '@core/helpers/useI18n';
 

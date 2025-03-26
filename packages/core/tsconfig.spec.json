@@ -10,7 +10,12 @@
     "removeComments": false,
     "noImplicitAny": false,
     "downlevelIteration": true,
-    "jsx": "react"
+    "jsx": "react",
+    "paths": {
+      "@mocks/*": ["packages/core/src/__mocks__/*"],
+      "@core/*": ["packages/core/src/web/*"],
+      "@core/implementations/*": ["packages/core/src/implementations/*"]
+    }
   },
   "extends": "../../tsconfig.base.json"
 }

@@ -1,27 +1,11 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-import ConfigPanelContext from './ConfigPanelContext';
+import MockNumberBlock from '@mocks/@core/app/views/beambox/Right-Panels/ConfigPanel/NumberBlock';
 
-jest.mock(
-  '@core/app/widgets/Unit-Input-v2',
-  () =>
-    ({ decimal, defaultValue, displayMultiValue, getValue, id, max, min, unit }: any) => (
-      <div>
-        MockUnitInput
-        <p>id: {id}</p>
-        <p>min: {min}</p>
-        <p>max: {max}</p>
-        <p>unit: {unit}</p>
-        <p>defaultValue: {defaultValue}</p>
-        <p>decimal: {decimal}</p>
-        <p>displayMultiValue: {displayMultiValue}</p>
-        <button onClick={() => getValue(7)} type="button">
-          change-{id}
-        </button>
-      </div>
-    ),
-);
+jest.mock('./NumberBlock', () => MockNumberBlock);
+
+import ConfigPanelContext from './ConfigPanelContext';
 
 const mockWriteData = jest.fn();
 
@@ -154,32 +138,6 @@ describe('test WobbleBlock', () => {
     });
     expect(batchCmd.onAfter).toBe(mockInitState);
     expect(mockAddCommandToHistory).toBeCalledTimes(1);
-    expect(mockAddCommandToHistory).lastCalledWith(batchCmd);
-
-    fireEvent.click(getByText('change-wobble_step'));
-    expect(mockDispatch).toBeCalledTimes(2);
-    expect(mockDispatch).lastCalledWith({ payload: { wobbleStep: 7 }, type: 'change' });
-    expect(mockBatchCommand).toBeCalledTimes(2);
-    expect(mockBatchCommand).lastCalledWith('Change wobbleStep');
-    expect(batchCmd.count).toBe(2);
-    expect(mockWriteData).toBeCalledTimes(6);
-    expect(mockWriteData).toHaveBeenNthCalledWith(5, 'layer1', 'wobbleStep', 7, { batchCmd });
-    expect(mockWriteData).toHaveBeenNthCalledWith(6, 'layer2', 'wobbleStep', 7, { batchCmd });
-    expect(batchCmd.onAfter).toBe(mockInitState);
-    expect(mockAddCommandToHistory).toBeCalledTimes(2);
-    expect(mockAddCommandToHistory).lastCalledWith(batchCmd);
-
-    fireEvent.click(getByText('change-wobble_diameter'));
-    expect(mockDispatch).toBeCalledTimes(3);
-    expect(mockDispatch).lastCalledWith({ payload: { wobbleDiameter: 7 }, type: 'change' });
-    expect(mockBatchCommand).toBeCalledTimes(3);
-    expect(mockBatchCommand).lastCalledWith('Change wobbleDiameter');
-    expect(batchCmd.count).toBe(3);
-    expect(mockWriteData).toBeCalledTimes(8);
-    expect(mockWriteData).toHaveBeenNthCalledWith(7, 'layer1', 'wobbleDiameter', 7, { batchCmd });
-    expect(mockWriteData).toHaveBeenNthCalledWith(8, 'layer2', 'wobbleDiameter', 7, { batchCmd });
-    expect(batchCmd.onAfter).toBe(mockInitState);
-    expect(mockAddCommandToHistory).toBeCalledTimes(3);
     expect(mockAddCommandToHistory).lastCalledWith(batchCmd);
   });
 });
