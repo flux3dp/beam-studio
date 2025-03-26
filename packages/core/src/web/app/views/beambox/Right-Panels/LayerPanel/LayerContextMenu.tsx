@@ -147,8 +147,6 @@ const LayerContextMenu = ({ drawing, renameLayer, selectOnlyLayer }: Props): Rea
   const isSplitLayer = getData(layerElem, 'split');
 
   const handleSplitColor = async () => {
-    svgCanvas.clearSelection();
-
     if (!isSelectingPrinterLayer || isSplitLayer) {
       return;
     }
