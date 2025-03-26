@@ -1,10 +1,11 @@
 import ArrayMobile from './array-mobile.svg';
 import Array from './array.svg';
 import AutoFit from './auto-fit.svg';
-import BackgroungRemovalMobile from './background-removal-mobile.svg';
-import BackgroungRemoval from './background-removal.svg';
+import BackgroundRemovalMobile from './background-removal-mobile.svg';
+import BackgroundRemoval from './background-removal.svg';
 import BevelMobile from './bevel-mobile.svg';
 import Bevel from './bevel.svg';
+import Bridge from './bridge.svg';
 import Brightness from './brightness.svg';
 import ConvertToPathMobile from './convert-to-path-mobile.svg';
 import ConvertToPath from './convert-to-path.svg';
@@ -38,10 +39,11 @@ export default {
   Array,
   ArrayMobile,
   AutoFit,
-  BackgroungRemoval,
-  BackgroungRemovalMobile,
+  BackgroundRemoval,
+  BackgroundRemovalMobile,
   Bevel,
   BevelMobile,
+  Bridge,
   Brightness,
   ConvertToPath,
   ConvertToPathMobile,
