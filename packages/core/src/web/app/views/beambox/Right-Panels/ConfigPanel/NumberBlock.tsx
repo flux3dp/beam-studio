@@ -15,8 +15,9 @@ import {
   CUSTOM_PRESET_CONSTANT,
   presetRelatedConfigs,
   timeRelatedConfigs,
-  writeData,
+  writeDataLayer,
 } from '@core/helpers/layer/layer-config-helper';
+import { getLayerByName } from '@core/helpers/layer/layer-helper';
 import units from '@core/helpers/units';
 import storage from '@core/implementations/storage';
 import type { ConfigKey } from '@core/interfaces/ILayerConfig';
@@ -47,7 +48,6 @@ interface Props {
   unit?: string;
 }
 
-// TODO: use this for simple blocks in ConfigPanel, write unit tests
 const NumberBlock = ({
   configKey: key,
   forceUsePropsUnit,
@@ -109,10 +109,12 @@ const NumberBlock = ({
         const batchCmd = noHistory ? undefined : new history.BatchCommand(`Change ${key}`);
 
         selectedLayers.forEach((layerName) => {
-          writeData(layerName, key, newVal, { batchCmd });
+          const layer = getLayerByName(layerName);
+
+          writeDataLayer(layer, key, newVal, { batchCmd });
 
           if (isPresetRelated) {
-            writeData(layerName, 'configName', CUSTOM_PRESET_CONSTANT, { batchCmd });
+            writeDataLayer(layer, 'configName', CUSTOM_PRESET_CONSTANT, { batchCmd });
           }
         });
 
