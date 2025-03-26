@@ -12,25 +12,16 @@ import { useKeyDown } from '@core/helpers/hooks/useKeyDown';
 import { useMouseDown } from '@core/helpers/hooks/useMouseDown';
 import useNewShortcutsScope from '@core/helpers/hooks/useNewShortcutsScope';
 import calculateBase64 from '@core/helpers/image-edit-panel/calculate-base64';
-import handleFinish from '@core/helpers/image-edit-panel/handle-finish';
 import { preprocessByUrl } from '@core/helpers/image-edit-panel/preprocess';
 import shortcuts from '@core/helpers/shortcuts';
 import useForceUpdate from '@core/helpers/use-force-update';
 import useI18n from '@core/helpers/useI18n';
 
-import type { KonvaImageRef } from './components/KonvaImage';
-import KonvaImage from './components/KonvaImage';
-import Sider from './components/Sider';
-import TopBar from './components/TopBar';
-import { useHistory } from './hooks/useHistory';
-import styles from './index.module.scss';
-import { generateCursorSvg } from './utils/generateCursorSvg';
-import { getMagicWandFilter } from './utils/getMagicWandFilter';
+import styles from '../ImageEditPanel/index.module.scss';
 
 interface Props {
-  image: SVGImageElement;
+  element: SVGElement;
   onClose: () => void;
-  src: string;
 }
 
 interface LineItem {
@@ -43,35 +34,18 @@ const EXPORTING = 1;
 
 const IMAGE_PADDING = 30;
 
-function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
+function UnmemorizedBridgePanel({ element, onClose }: Props): React.JSX.Element {
   const {
     beambox: { photo_edit_panel: langPhoto },
     image_edit_panel: lang,
   } = useI18n();
-
-  const { history, push, redo, undo } = useHistory({
-    hasUndid: false,
-    index: 0,
-    items: [{ filters: [], lines: [] }],
-  });
   const forceUpdate = useForceUpdate();
-
-  const { isFullColor, isShading, threshold } = useMemo(
-    () => ({
-      isFullColor: image.getAttribute('data-fullcolor') === '1',
-      isShading: image.getAttribute('data-shading') === 'true',
-      threshold: Number.parseInt(image.getAttribute('data-threshold')!, 10),
-    }),
-    [image],
-  );
   const [imageSize, setImageSize] = useState({ height: 0, width: 0 });
   const [mode, setMode] = useState<'eraser' | 'magicWand'>('eraser');
   const [lines, setLines] = useState<LineItem[]>([]);
   const [filters, setFilters] = useState<Filter[]>([]);
   const [displayImage, setDisplayImage] = useState('');
   const [progress, setProgress] = useState(EDITING);
-  const [brushSize, setBrushSize] = useState(20);
-  const [tolerance, setTolerance] = useState(40);
   // only for display percentage, not for calculation
   const [zoomScale, setZoomScale] = useState(1);
   const [operation, setOperation] = useState<'drag' | 'eraser' | 'magicWand' | null>(null);
@@ -79,8 +53,6 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
   const divRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>(null);
   const layerRef = useRef<Konva.Layer>(null);
-  const imageRef = useRef<KonvaImageRef>(null);
-  const imageData = useRef<ImageData>(null);
 
   const { handleWheel, handleZoom, handleZoomByScale, isDragging } = useKonvaCanvas(stageRef as any, {
     onScaleChanged: setZoomScale,
@@ -101,28 +73,8 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
       return { cursor: 'grab' };
     }
 
-    if (mode === 'eraser') {
-      return {
-        cursor: `url('data:image/svg+xml;utf8,${generateCursorSvg(brushSize)}') ${brushSize / 2} ${
-          brushSize / 2
-        }, auto`,
-      };
-    }
-
     return { cursor: `url('core-img/image-edit-panel/magic-wand.svg') 7 7, auto` };
-  }, [isDragging, mode, brushSize]);
-
-  const handlePushHistory = useCallback(() => push({ filters, lines }), [push, lines, filters]);
-  const handleHistoryChange = useCallback(
-    (action: 'redo' | 'undo') => () => {
-      const { filters, lines } = action === 'undo' ? undo() : redo();
-
-      setLines(lines);
-      setFilters(filters);
-      requestAnimationFrame(() => stageRef.current!.batchDraw());
-    },
-    [undo, redo],
-  );
+  }, [isDragging]);
 
   const getPointerPositionFromStage = useCallback((stage: Konva.Stage) => {
     const scale = stage.scaleX();
@@ -143,21 +95,11 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
       const scale = stage.scaleX();
       const { x, y } = getPointerPositionFromStage(stage);
 
-      if (mode === 'eraser') {
-        setOperation('eraser');
-        setLines((prevLines) =>
-          // add two sets of points to create a initial line
-          prevLines.concat([{ points: [x, y, x, y], strokeWidth: brushSize / scale }]),
-        );
-      } else if (mode === 'magicWand') {
-        setOperation('magicWand');
-
-        const filter = getMagicWandFilter(imageData.current!, { tolerance, x, y });
-
-        setFilters((prevFilters) => prevFilters.concat(filter));
-      }
+      scale;
+      x;
+      y;
     },
-    [isDragging, getPointerPositionFromStage, mode, brushSize, tolerance],
+    [isDragging, getPointerPositionFromStage],
   );
 
   const handleMouseMove = useCallback(
@@ -184,14 +126,6 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
     },
     [isDragging, getPointerPositionFromStage, operation],
   );
-
-  const handleExitDrawing = useCallback(() => {
-    setOperation(null);
-
-    if (operation === 'eraser' || operation === 'magicWand') {
-      handlePushHistory();
-    }
-  }, [handlePushHistory, operation]);
 
   const handleReset = useCallback(() => {
     const stage = stageRef.current!;
@@ -220,42 +154,24 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
   useEffect(() => {
     const updateImages = async () => {
       const url = updateUrl();
-      const display = await calculateBase64(url, isShading, threshold, isFullColor);
+      // const display = await calculateBase64(url, isShading, threshold, isFullColor);
 
-      handleFinish(image, url, display);
+      // handleFinish(image, url, display);
 
+      url;
       progressCaller.popById('image-editing');
       onClose();
     };
 
-    if (progress === EXPORTING && imageRef.current?.isCached()) {
+    if (progress === EXPORTING) {
       updateImages();
     }
-  }, [image, isFullColor, isShading, onClose, progress, threshold, updateUrl]);
-
-  useEffect(() => {
-    const image = imageRef.current;
-
-    if (!image) {
-      return;
-    }
-
-    if (progress === EDITING) {
-      if (image.isCached()) {
-        (imageData as any).current = image
-          ._getCachedSceneCanvas()
-          .context._context.getImageData(0, 0, imageSize.width, imageSize.height);
-      } else {
-        // force re-render until image is cached
-        requestAnimationFrame(forceUpdate);
-      }
-    }
-    // depends useImageStatus to force re-render
-  }, [progress, imageSize, imageRef.current?.useImageStatus, forceUpdate]);
+  }, [onClose, progress, updateUrl]);
 
   useEffect(() => {
     const initialize = async () => {
       const { clientHeight, clientWidth } = divRef.current!;
+      const src = '';
       const {
         blobUrl,
         originalHeight: height,
@@ -313,8 +229,8 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
   useEffect(() => {
     const subscribedShortcuts = [
       shortcuts.on(['Escape'], onClose, { isBlocking: true }),
-      shortcuts.on(['Fnkey+z'], handleHistoryChange('undo'), { isBlocking: true }),
-      shortcuts.on(['Shift+Fnkey+z'], handleHistoryChange('redo'), { isBlocking: true }),
+      // shortcuts.on(['Fnkey+z'], handleHistoryChange('undo'), { isBlocking: true }),
+      // shortcuts.on(['Shift+Fnkey+z'], handleHistoryChange('redo'), { isBlocking: true }),
       shortcuts.on(['Fnkey-+', 'Fnkey-='], () => handleZoomByScale(1.2), {
         isBlocking: true,
         splitKey: '-',
@@ -325,7 +241,7 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
     return () => {
       subscribedShortcuts.forEach((unsubscribe) => unsubscribe());
     };
-  }, [handleHistoryChange, handleZoomByScale, onClose]);
+  }, [handleZoomByScale, onClose]);
 
   return (
     <FullWindowPanel
@@ -333,7 +249,7 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
       onClose={onClose}
       renderContents={() => (
         <>
-          <Sider
+          {/* <Sider
             brushSize={brushSize}
             handleComplete={handleComplete}
             mode={mode}
@@ -343,29 +259,29 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
             setOperation={setOperation}
             setTolerance={setTolerance}
             tolerance={tolerance}
-          />
+          /> */}
           <Flex className={styles['w-100']} vertical>
-            <TopBar
+            {/* <TopBar
               handleHistoryChange={handleHistoryChange}
               handleReset={handleReset}
               handleZoomByScale={handleZoomByScale}
               history={history}
               zoomScale={zoomScale}
-            />
+            /> */}
             <div className={styles['outer-container']}>
               <div className={styles.container} ref={divRef} style={cursorStyle}>
                 <Stage
                   draggable={isDragging}
                   onMouseDown={handleMouseDown}
-                  onMouseLeave={handleExitDrawing}
+                  // onMouseLeave={handleExitDrawing}
                   onMousemove={handleMouseMove}
-                  onMouseup={handleExitDrawing}
+                  // onMouseup={handleExitDrawing}
                   onWheel={handleWheel}
                   pixelRatio={1}
                   ref={stageRef}
                 >
                   <Layer pixelRatio={1} ref={layerRef}>
-                    <KonvaImage filters={filters} ref={imageRef} src={displayImage} />
+                    {/* <KonvaImage filters={filters} ref={imageRef} src={displayImage} /> */}
                     {lines.map((line, i) => (
                       <Line
                         globalCompositeOperation="destination-out"
@@ -391,6 +307,6 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
   );
 }
 
-const MemorizedImageEditPanel = memo(ImageEditPanel);
+const BridgePanel = memo(UnmemorizedBridgePanel);
 
-export default MemorizedImageEditPanel;
+export default BridgePanel;
