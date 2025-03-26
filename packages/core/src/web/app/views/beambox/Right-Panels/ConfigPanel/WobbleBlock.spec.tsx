@@ -101,7 +101,7 @@ describe('test WobbleBlock', () => {
   });
 
   test('handlers should work', () => {
-    const { container, getByText } = render(
+    const { container } = render(
       <ConfigPanelContext.Provider
         value={{
           dispatch: mockDispatch,
