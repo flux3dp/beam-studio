@@ -2,7 +2,6 @@ import React, { useContext, useState } from 'react';
 
 import { Modal, Switch } from 'antd';
 
-import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { getLayerByName } from '@core/helpers/layer/layer-helper';
@@ -11,6 +10,7 @@ import type { ConfigKey, ConfigKeyTypeMap } from '@core/interfaces/ILayerConfig'
 
 import ConfigPanelContext from './ConfigPanelContext';
 import styles from './FillSettingModal.module.scss';
+import Input from './Input';
 
 interface Props {
   onClose: () => void;
@@ -68,32 +68,31 @@ const FillSettingModal = ({ onClose }: Props): React.JSX.Element => {
       <div className={styles.container}>
         <div>
           <span>{t.fill_interval}</span>
-          <UnitInput
-            className={{ [styles.input]: true }}
-            decimal={4}
-            defaultValue={draftValue.fillInterval.value}
-            displayMultiValue={draftValue.fillInterval.hasMultiValue}
-            forceUsePropsUnit
-            getValue={(value) => handleValueChange('fillInterval', value)}
+          <Input
+            hasMultiValue={draftValue.fillInterval.hasMultiValue}
             id="fillInterval"
+            isInch={false}
             max={100}
             min={0.0001}
+            onChange={(value) => handleValueChange('fillInterval', value)}
+            precision={4}
             step={0.0001}
             unit="mm"
+            value={draftValue.fillInterval.value}
           />
         </div>
         <div>
           <span>{t.fill_angle}</span>
-          <UnitInput
-            className={{ [styles.input]: true }}
-            decimal={1}
-            defaultValue={draftValue.fillAngle.value}
-            displayMultiValue={draftValue.fillAngle.hasMultiValue}
-            getValue={(value) => handleValueChange('fillAngle', value)}
+          <Input
+            hasMultiValue={draftValue.fillAngle.hasMultiValue}
             id="fillAngle"
+            isInch={false}
             max={360}
             min={-360}
+            onChange={(value) => handleValueChange('fillAngle', value)}
+            precision={1}
             unit="deg"
+            value={draftValue.fillAngle.value}
           />
         </div>
         <div onClick={() => handleValueChange('biDirectional', !draftValue.biDirectional.value)}>

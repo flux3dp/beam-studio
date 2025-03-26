@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useContext, useEffect, useMemo } from 'react';
+import React, { memo, useContext, useMemo } from 'react';
 
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Switch, Tooltip } from 'antd';
@@ -6,13 +6,12 @@ import classNames from 'classnames';
 
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
-import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
-import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './Block.module.scss';
 import ConfigPanelContext from './ConfigPanelContext';
+import NumberBlock from './NumberBlock';
 
 // TODO: add tests
 const FocusBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.JSX.Element => {
@@ -41,20 +40,6 @@ const FocusBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
     undoManager.addCommandToHistory(batchCmd);
   };
 
-  const handleFocusChange = (value: number) => {
-    if (value < 0.01 || value > 10) {
-      return;
-    }
-
-    dispatch({ payload: { focus: value }, type: 'change' });
-
-    const batchCmd = new history.BatchCommand('Change focus adjustment height');
-
-    selectedLayers.forEach((layerName) => writeData(layerName, 'focus', value, { batchCmd }));
-    batchCmd.onAfter = initState;
-    undoManager.addCommandToHistory(batchCmd);
-  };
-
   const toggleFocusStep = () => {
     const value = -focusStep.value;
 
@@ -66,58 +51,6 @@ const FocusBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
     batchCmd.onAfter = initState;
     undoManager.addCommandToHistory(batchCmd);
   };
-
-  const handleFocusStepChange = useCallback(
-    (value: number) => {
-      if (value < 0.01 || value > focusStepMax) {
-        return;
-      }
-
-      dispatch({ payload: { focusStep: value }, type: 'change' });
-
-      const batchCmd = new history.BatchCommand('Change auto focus z step');
-
-      selectedLayers.forEach((layerName) => {
-        writeData(layerName, 'focusStep', value, { batchCmd });
-      });
-      batchCmd.onAfter = initState;
-      undoManager.addCommandToHistory(batchCmd);
-    },
-    [focusStepMax, dispatch, selectedLayers, initState],
-  );
-
-  useEffect(() => {
-    if (focusStepMax < focusStep.value) {
-      handleFocusStepChange(focusStepMax);
-    }
-  }, [handleFocusStepChange, focusStep, focusStepMax]);
-
-  if (type === 'panel-item') {
-    return (
-      <>
-        <ObjectPanelItem.Number
-          decimal={2}
-          id="focus-adjustment"
-          label={t.focus_adjustment}
-          max={10}
-          min={0.01}
-          unit="mm"
-          updateValue={handleFocusChange}
-          value={focus.value}
-        />
-        <ObjectPanelItem.Number
-          decimal={2}
-          id="focus-step"
-          label={t.z_step}
-          max={focusStepMax}
-          min={0.01}
-          unit="mm"
-          updateValue={handleFocusChange}
-          value={focusStep.value}
-        />
-      </>
-    );
-  }
 
   return (
     <>
@@ -138,19 +71,17 @@ const FocusBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
           />
         </div>
         {focus.value >= 0 && (
-          <div className={classNames(styles.panel, styles['without-drag'])}>
-            <span className={classNames(styles.title, styles.light)}>{t.by}</span>
-            <UnitInput
-              className={{ [styles.input]: true }}
-              defaultValue={focus.value}
-              displayMultiValue={focus.hasMultiValue}
-              getValue={handleFocusChange}
-              id="focus-adjustment"
-              max={10}
-              min={0.01}
-              unit="mm"
-            />
-          </div>
+          <NumberBlock
+            configKey="focus"
+            id="focus-adjustment"
+            lightTitle
+            max={10}
+            min={0.01}
+            precision={2}
+            title={t.by}
+            type={type}
+            unit="mm"
+          />
         )}
       </div>
       {repeat.value > 1 && (
@@ -171,19 +102,16 @@ const FocusBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
             />
           </div>
           {focusStep.value >= 0 && (
-            <div className={classNames(styles.panel, styles['without-drag'])}>
-              <span className={classNames(styles.title, styles.light)}>{t.z_step}</span>
-              <UnitInput
-                className={{ [styles.input]: true }}
-                defaultValue={focusStep.value}
-                displayMultiValue={focusStep.hasMultiValue}
-                getValue={handleFocusStepChange}
-                id="focus-step"
-                max={focusStepMax}
-                min={0.01}
-                unit="mm"
-              />
-            </div>
+            <NumberBlock
+              configKey="focusStep"
+              id="focus-step"
+              lightTitle
+              max={focusStepMax}
+              min={0.01}
+              precision={2}
+              title={t.z_step}
+              unit="mm"
+            />
           )}
         </div>
       )}

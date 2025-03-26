@@ -6,12 +6,12 @@ import classNames from 'classnames';
 
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
-import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './Block.module.scss';
 import ConfigPanelContext from './ConfigPanelContext';
+import NumberBlock from './NumberBlock';
 
 const WobbleBlock = (): React.JSX.Element => {
   const lang = useI18n();
@@ -37,26 +37,6 @@ const WobbleBlock = (): React.JSX.Element => {
     undoManager.addCommandToHistory(batchCmd);
   };
 
-  const handleStepChange = (value: number) => {
-    dispatch({ payload: { wobbleStep: value }, type: 'change' });
-
-    const batchCmd = new history.BatchCommand('Change wobbleStep');
-
-    selectedLayers.forEach((layerName) => writeData(layerName, 'wobbleStep', value, { batchCmd }));
-    batchCmd.onAfter = initState;
-    undoManager.addCommandToHistory(batchCmd);
-  };
-
-  const handleDiameterChange = (value: number) => {
-    dispatch({ payload: { wobbleDiameter: value }, type: 'change' });
-
-    const batchCmd = new history.BatchCommand('Change wobbleDiameter');
-
-    selectedLayers.forEach((layerName) => writeData(layerName, 'wobbleDiameter', value, { batchCmd }));
-    batchCmd.onAfter = initState;
-    undoManager.addCommandToHistory(batchCmd);
-  };
-
   return (
     <>
       <div className={classNames(styles.panel, styles.switch)}>
@@ -70,38 +50,28 @@ const WobbleBlock = (): React.JSX.Element => {
       </div>
       {wobbleOn && (
         <>
-          <div className={classNames(styles.panel, styles['without-drag'])}>
-            <span className={styles.title}>{t.wobble_step}</span>
-            <UnitInput
-              className={{ [styles.input]: true }}
-              decimal={2}
-              defaultValue={wobbleStep.value}
-              displayMultiValue={wobbleStep.hasMultiValue}
-              forceUsePropsUnit
-              getValue={handleStepChange}
-              id="wobble_step"
-              max={1}
-              min={0.01}
-              step={0.01}
-              unit="mm"
-            />
-          </div>
-          <div className={classNames(styles.panel, styles['without-drag'])}>
-            <span className={styles.title}>{t.wobble_diameter}</span>
-            <UnitInput
-              className={{ [styles.input]: true }}
-              decimal={1}
-              defaultValue={wobbleDiameter.value}
-              displayMultiValue={wobbleDiameter.hasMultiValue}
-              forceUsePropsUnit
-              getValue={handleDiameterChange}
-              id="wobble_diameter"
-              max={1}
-              min={0.1}
-              step={0.1}
-              unit="mm"
-            />
-          </div>
+          <NumberBlock
+            configKey="wobbleStep"
+            forceUsePropsUnit
+            id="wobble_step"
+            max={1}
+            min={0.01}
+            precision={2}
+            step={0.01}
+            title={t.wobble_step}
+            unit="mm"
+          />
+          <NumberBlock
+            configKey="wobbleDiameter"
+            forceUsePropsUnit
+            id="wobble_diameter"
+            max={1}
+            min={0.1}
+            precision={1}
+            step={0.1}
+            title={t.wobble_diameter}
+            unit="mm"
+          />
         </>
       )}
     </>

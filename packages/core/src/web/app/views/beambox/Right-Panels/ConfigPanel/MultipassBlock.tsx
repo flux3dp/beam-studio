@@ -64,7 +64,7 @@ const MultipassBlock = ({ type = 'default' }: Props): React.JSX.Element => {
     }
   };
 
-  const sliderOptions = useMemo(() => (simpleMode ? configOptions.multipassOptions : null), [simpleMode]);
+  const sliderOptions = useMemo(() => (simpleMode ? configOptions.multipassOptions : undefined), [simpleMode]);
 
   const content = (
     <div className={classNames(styles.panel, styles[type])}>
