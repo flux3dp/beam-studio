@@ -165,10 +165,6 @@ const ModuleBlock = (): React.ReactNode => {
     { label: tModule.laser_2w_infrared, value: LayerModule.LASER_1064 },
   ].filter(Boolean);
 
-  if (value === LayerModule.LASER_UNIVERSAL) {
-    options.push({ label: 'Laser', value: LayerModule.LASER_UNIVERSAL });
-  }
-
   return isMobile ? (
     <ObjectPanelItem.Select
       id="module"
