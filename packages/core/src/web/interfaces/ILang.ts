@@ -670,6 +670,7 @@ export interface ILang {
           array: string;
           auto_fit: string;
           bevel: string;
+          bridge: string;
           brightness: string;
           convert_to_path: string;
           create_textpath: string;

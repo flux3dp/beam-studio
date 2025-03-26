@@ -672,6 +672,7 @@ const lang: ILang = {
           array: 'Array',
           auto_fit: 'Auto Fit',
           bevel: 'Bevel',
+          bridge: 'Bridge',
           brightness: 'Brightness',
           convert_to_path: 'Convert to Path',
           create_textpath: 'Create Text on Path',
