@@ -20,7 +20,10 @@ exports[`test PulseWidthBlock should render correctly 1`] = `
       min: 
       2
     </p>
-    0
+    <p>
+      precision: 
+      0
+    </p>
     <p>
       title: 
       Pulse Width

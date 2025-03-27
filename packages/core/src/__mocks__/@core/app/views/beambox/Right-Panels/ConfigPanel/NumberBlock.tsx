@@ -47,13 +47,13 @@ const MockNumberBlock = ({
       {hasSlider && <p>hasSlider</p>}
       {id && <p>id: {id}</p>}
       {lightTitle && <p>lightTitle</p>}
-      {max && <p>max: {max}</p>}
-      {min && <p>min: {min}</p>}
+      {max !== undefined && <p>max: {max}</p>}
+      {min !== undefined && <p>min: {min}</p>}
       {panelType && <p>panelType: {panelType}</p>}
-      {precision && <p>precision: {precision}</p>}
-      {precisionInch && <p>precisionInch: {precisionInch}</p>}
-      {sliderStep && <p>sliderStep: {sliderStep}</p>}
-      {step && <p>step: {step}</p>}
+      {precision !== undefined && <p>precision: {precision}</p>}
+      {precisionInch !== undefined && <p>precisionInch: {precisionInch}</p>}
+      {sliderStep !== undefined && <p>sliderStep: {sliderStep}</p>}
+      {step !== undefined && <p>step: {step}</p>}
       {title && <p>title: {title}</p>}
       {tooltip && <p>tooltip: {tooltip}</p>}
       {type && <p>type: {type}</p>}

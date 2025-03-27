@@ -20,7 +20,10 @@ exports[`test DottingTimeBlock should render correctly when type is default 1`] 
       min: 
       1
     </p>
-    0
+    <p>
+      precision: 
+      0
+    </p>
     <p>
       title: 
       Dotting Time

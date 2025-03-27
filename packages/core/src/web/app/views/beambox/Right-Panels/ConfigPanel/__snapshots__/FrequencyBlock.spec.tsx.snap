@@ -20,7 +20,10 @@ exports[`test FrequencyBlock should render correctly 1`] = `
       min: 
       27
     </p>
-    0
+    <p>
+      precision: 
+      0
+    </p>
     <p>
       title: 
       Frequency

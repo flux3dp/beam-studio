@@ -16,7 +16,10 @@ exports[`test RepeatBlock should render correctly 1`] = `
       max: 
       100
     </p>
-    0
+    <p>
+      min: 
+      0
+    </p>
     <p>
       panelType: 
       button

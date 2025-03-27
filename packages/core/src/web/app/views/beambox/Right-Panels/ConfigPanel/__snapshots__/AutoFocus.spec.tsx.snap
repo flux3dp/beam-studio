@@ -118,7 +118,10 @@ exports[`test AutoFocus should render correctly when repeat is larger than 1 1`]
       max: 
       20
     </p>
-    0
+    <p>
+      min: 
+      0
+    </p>
     <p>
       precision: 
       2
