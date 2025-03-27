@@ -179,7 +179,7 @@ const getTaskCode = (codeType: 'fcode' | 'gcode' | 'preview', taskOptions) =>
           });
         },
       },
-      taskOptions,
+      { ...taskOptions, useActualWorkarea: true },
     );
   });
 

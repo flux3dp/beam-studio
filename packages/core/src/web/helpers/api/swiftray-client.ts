@@ -7,6 +7,7 @@ import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import workareaManager from '@core/app/svgedit/workarea';
 import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
 import type { RotaryInfo } from '@core/helpers/addOn/rotary';
 import deviceMaster from '@core/helpers/device-master';
@@ -335,13 +336,26 @@ class SwiftrayClient extends EventEmitter {
       shouldMockFastGradient?: boolean;
       shouldUseFastGradient?: boolean;
       travelSpeed?: number;
+      useActualWorkarea?: boolean;
     },
   ): Promise<{
     error?: ErrorObject;
     estimatedTime?: number;
     success: boolean;
   }> {
-    const workarea = getWorkarea(convertOptions.model);
+    let height: number;
+    let width: number;
+
+    if (convertOptions.useActualWorkarea) {
+      height = workareaManager.height;
+      width = workareaManager.width;
+    } else {
+      const workarea = getWorkarea(convertOptions.model);
+
+      height = workarea.displayHeight || workarea.height;
+      width = workarea.width;
+    }
+
     const vc = versionChecker(this.version);
 
     let fullCode = '';
@@ -360,8 +374,8 @@ class SwiftrayClient extends EventEmitter {
       {
         type: type === 'preview' && !vc.meetRequirement('SWIFTRAY_CONVERT_PREVIEW') ? 'fcode' : type,
         workarea: {
-          height: workarea.displayHeight || workarea.height,
-          width: workarea.width,
+          height,
+          width,
         },
         ...convertOptions,
       },
