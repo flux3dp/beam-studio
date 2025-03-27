@@ -1180,7 +1180,7 @@ const lang: ILang = {
     low_laser_desc: 'Stel een laag laservermogen in voor de inlijsttaak.',
     rotate_axis: 'Rotatieas',
     rotateaxis_desc: 'Preview het rotatie-as centrum, de as zelf beweegt niet.',
-    rotation_frame_warning: 'De framevoorbeeld zal één keer roteren. Stop niet halverwege om verkeerde markeerposities te voorkomen. Om opnieuw te bekijken, wacht tot de rotatie is voltooid en klik dan opnieuw.',
+    rotation_frame_warning: 'De framevoorbeeld zal één keer roteren. Stop niet halverwege om verkeerde markeerposities te voorkomen.',
     rotation_framing_desc: 'Preview het volledige rotatiebereik, de as draait volgens de preview.',
     start_task: 'Taak Starten',
     start_task_description: 'Klik op "Taak Starten" na het voltooien van de framevoorbeeld om de taak in te dienen.',

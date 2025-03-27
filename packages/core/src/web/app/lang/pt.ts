@@ -1180,7 +1180,7 @@ const lang: ILang = {
     low_laser_desc: 'Defina um valor de laser de baixa potência para a tarefa de moldura.',
     rotate_axis: 'Eixo de rotação',
     rotateaxis_desc: 'Pré-visualização do centro do eixo de rotação, o próprio eixo não se move.',
-    rotation_frame_warning: 'A pré-visualização da moldura girará uma vez. Evite parar no meio do processo para evitar desalinhamento da posição da marcação. Para visualizar novamente, aguarde a rotação terminar antes de clicar novamente.',
+    rotation_frame_warning: 'A pré-visualização da moldura girará uma vez. Evite parar no meio do processo para evitar desalinhamento da posição da marcação.',
     rotation_framing_desc: 'Pré-visualização do alcance completo da rotação, o eixo gira de acordo com a pré-visualização.',
     start_task: 'Iniciar Tarefa',
     start_task_description: 'Após concluir a pré-visualização do quadro, clique em "Iniciar Tarefa" para enviar o trabalho.',

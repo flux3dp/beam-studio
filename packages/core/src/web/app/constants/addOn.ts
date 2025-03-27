@@ -128,7 +128,7 @@ const addOnData: Record<WorkAreaModel, AddOnInfo> = {
     lowerFocus: true,
     rotary: {
       chuck: true,
-      extendWorkarea: false,
+      extendWorkarea: true,
       mirror: true,
       roller: true,
       split: true,

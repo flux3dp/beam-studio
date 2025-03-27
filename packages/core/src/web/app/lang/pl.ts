@@ -1180,7 +1180,7 @@ const lang: ILang = {
     low_laser_desc: 'Ustaw niską moc lasera dla zadania ramowania.',
     rotate_axis: 'Oś obrotu',
     rotateaxis_desc: 'Podgląd osi obrotu, sama oś się nie porusza.',
-    rotation_frame_warning: 'Podgląd ramki obróci się raz. Unikaj zatrzymywania się w połowie, aby zapobiec przesunięciu pozycji znakowania. Aby ponownie wyświetlić podgląd, poczekaj na zakończenie obrotu, a następnie kliknij ponownie.',
+    rotation_frame_warning: 'Podgląd ramki obróci się raz. Unikaj zatrzymywania się w połowie, aby zapobiec przesunięciu pozycji znakowania.',
     rotation_framing_desc: 'Podgląd pełnego zakresu obrotu, oś obraca się zgodnie z podglądem.',
     start_task: 'Rozpocznij Zadanie',
     start_task_description: 'Po zakończeniu podglądu ramki kliknij „Rozpocznij Zadanie”, aby przesłać zadanie.',

@@ -1180,7 +1180,7 @@ const lang: ILang = {
     low_laser_desc: 'Establezca un valor de láser de baja potencia para la tarea de enmarcado.',
     rotate_axis: 'Eje de rotación',
     rotateaxis_desc: 'Previsualiza el centro del eje de rotación, el eje en sí no se mueve.',
-    rotation_frame_warning: 'La vista previa del marco girará una vez. Evite detenerse a mitad de camino para evitar el desalineamiento de la posición de marcado. Para previsualizar nuevamente, espere a que termine la rotación antes de hacer clic otra vez.',
+    rotation_frame_warning: 'La vista previa del marco girará una vez. Evite detenerse a mitad de camino para evitar el desalineamiento de la posición de marcado.',
     rotation_framing_desc: 'Previsualiza el rango completo de rotación, el eje gira según la vista previa.',
     start_task: 'Iniciar Tarea',
     start_task_description: 'Después de completar la vista previa del marco, haga clic en "Iniciar Tarea" para enviar el trabajo.',

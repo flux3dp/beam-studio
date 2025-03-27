@@ -11,6 +11,7 @@ import alertConstants from '@core/app/constants/alert-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { getAutoFeeder } from '@core/helpers/addOn';
 import alertConfig from '@core/helpers/api/alert-config';
+import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 import round from '@core/helpers/math/round';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-maker';
@@ -137,8 +138,14 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
     });
   }
 
-  // Skip speed check for promark
-  if (isPromark) return true;
+  if (isPromark) {
+    if (beamboxPreference.read('rotary_mode') && !swiftrayClient.checkVersion('PROMARK_RPTARY')) {
+      return false;
+    }
+
+    // Skip speed check for promark
+    return true;
+  }
 
   SymbolMaker.switchImageSymbolForAll(false);
 

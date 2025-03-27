@@ -1180,7 +1180,7 @@ const lang: ILang = {
     low_laser_desc: 'Set a low-power laser value for the framing task.',
     rotate_axis: 'Rotate Axis',
     rotateaxis_desc: 'Preview the rotation axis center, the axis itself does not move.',
-    rotation_frame_warning: 'The frame preview will rotate once. Avoid stopping midway to prevent marking position misalignment. To preview again, wait for the rotation to finish before clicking again.',
+    rotation_frame_warning: 'The frame preview will rotate once. Avoid stopping midway to prevent marking position misalignment.',
     rotation_framing_desc: 'Preview the full rotation range, the axis rotates according to the preview.',
     start_task: 'Start Task',
     start_task_description: 'After completing the frame preview, click "Start Task" to submit the job.',

@@ -1180,7 +1180,7 @@ const lang: ILang = {
     low_laser_desc: 'Sett en lav effektverdi for laser for innrammingsoppgaven.',
     rotate_axis: 'Roter akse',
     rotateaxis_desc: 'Forhåndsvisning av rotasjonsakslens sentrum, akselen selv beveger seg ikke.',
-    rotation_frame_warning: 'Rammeforhåndsvisningen vil rotere én gang. Unngå å stoppe midtveis for å forhindre feiljustering av markeringsposisjonen. For å forhåndsvise på nytt, vent til rotasjonen er ferdig før du klikker igjen.',
+    rotation_frame_warning: 'Rammeforhåndsvisningen vil rotere én gang. Unngå å stoppe midtveis for å forhindre feiljustering av markeringsposisjonen.',
     rotation_framing_desc: 'Forhåndsvisning av det fullstendige rotasjonsområdet, akselen roterer i henhold til forhåndsvisningen.',
     start_task: 'Start Oppgave',
     start_task_description: 'Etter å ha fullført rammeforhåndsvisningen, klikk på "Start Oppgave" for å sende inn oppgaven.',

@@ -1180,7 +1180,7 @@ const lang: ILang = {
     low_laser_desc: 'Nastavte hodnotu nízkého výkonu laseru pro úlohu rámování.',
     rotate_axis: 'Otočit osu',
     rotateaxis_desc: 'Náhled osy rotace, osa se nepohybuje.',
-    rotation_frame_warning: 'Náhled rámečku se otočí o jednu otáčku. Nepřerušujte jej, aby nedošlo k posunutí polohy bodu. Chcete-li zobrazit náhled znovu, počkejte, až se otočení dokončí, a poté znovu klikněte.',
+    rotation_frame_warning: 'Náhled rámečku se otočí o jednu otáčku. Nepřerušujte jej, aby nedošlo k posunutí polohy bodu.',
     rotation_framing_desc: 'Náhled celého rozsahu rotace, osa se pohybuje podle náhledu.',
     start_task: 'Spustit Úkol',
     start_task_description: 'Po dokončení náhledu rámce klikněte na „Spustit Úkol“ pro odeslání úlohy.',

@@ -1,8 +1,10 @@
 // Swiftray Client Typescript API Client
 import { EventEmitter } from 'eventemitter3';
 
+import alertCaller from '@core/app/actions/alert-caller';
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
+import alertConstants from '@core/app/constants/alert-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
@@ -12,6 +14,7 @@ import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import { booleanConfig, getDefaultConfig } from '@core/helpers/layer/layer-config-helper';
 import Logger from '@core/helpers/logger';
+import type { RequirementKey } from '@core/helpers/version-checker';
 import versionChecker from '@core/helpers/version-checker';
 import communicator from '@core/implementations/communicator';
 import type { IDeviceDetailInfo, IDeviceInfo, IReport } from '@core/interfaces/IDevice';
@@ -91,6 +94,23 @@ class SwiftrayClient extends EventEmitter {
   public get readyState(): number {
     // Defaults to CLOSED if socket is not initialized
     return this.socket?.readyState ?? WebSocket.CLOSED;
+  }
+
+  public checkVersion(key: RequirementKey): boolean {
+    const vc = versionChecker(this.version);
+
+    if (!vc.meetRequirement(key)) {
+      alertCaller.popUp({
+        buttonType: alertConstants.INFO,
+        caption: i18n.lang.message.wrong_swiftray_version_title,
+        id: 'swiftray-version-warning',
+        message: i18n.lang.message.wrong_swiftray_version_message.replace('{version}', this.version),
+      });
+
+      return false;
+    }
+
+    return true;
   }
 
   private connect() {

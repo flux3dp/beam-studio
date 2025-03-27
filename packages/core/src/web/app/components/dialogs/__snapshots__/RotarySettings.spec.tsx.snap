@@ -366,14 +366,14 @@ exports[`test RotarySettings promark rotary settings 1`] = `
                           </p>
                           <p>
                             precision: 
-                            1
+                            2
                           </p>
                           <input
                             disabled=""
                             id="split"
                             max="100"
-                            min="0.1"
-                            value=""
+                            min="0.01"
+                            value="3.45"
                           />
                         </div>
                       </div>
@@ -400,12 +400,12 @@ exports[`test RotarySettings promark rotary settings 1`] = `
                           </p>
                           <p>
                             precision: 
-                            1
+                            2
                           </p>
                           <input
                             disabled=""
                             id="overlap"
-                            max="5"
+                            max="3.45"
                             min="0"
                             value=""
                           />
@@ -433,6 +433,26 @@ exports[`test RotarySettings promark rotary settings 1`] = `
                         </span>
                         <span>
                           Mirror
+                        </span>
+                      </label>
+                      <label
+                        class="ant-checkbox-wrapper ant-checkbox-wrapper-disabled css-dev-only-do-not-override-hash"
+                      >
+                        <span
+                          class="ant-checkbox ant-wave-target css-dev-only-do-not-override-hash ant-checkbox-disabled"
+                        >
+                          <input
+                            class="ant-checkbox-input"
+                            disabled=""
+                            id="extend"
+                            type="checkbox"
+                          />
+                          <span
+                            class="ant-checkbox-inner"
+                          />
+                        </span>
+                        <span>
+                          Extend Workarea
                         </span>
                       </label>
                     </div>

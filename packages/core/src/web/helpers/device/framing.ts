@@ -325,6 +325,10 @@ class FramingTaskManager extends EventEmitter {
       return;
     }
 
+    if (this.rotaryInfo && !noRotation && !swiftrayClient.checkVersion('PROMARK_RPTARY')) {
+      return;
+    }
+
     this.changeWorkingStatus(true);
 
     const deviceStatus = await checkDeviceStatus(this.device);

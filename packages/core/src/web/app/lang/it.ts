@@ -1180,7 +1180,7 @@ const lang: ILang = {
     low_laser_desc: "Imposta un valore laser a bassa potenza per l'attività di inquadratura.",
     rotate_axis: 'Asse di rotazione',
     rotateaxis_desc: "Anteprima del centro dell'asse di rotazione, l'asse stesso non si muove.",
-    rotation_frame_warning: "L'anteprima della cornice ruoterà una volta. Evita di fermarti a metà per evitare disallineamenti della posizione del marcatore. Per visualizzare nuovamente l'anteprima, attendi che la rotazione sia completata prima di fare nuovamente clic.",
+    rotation_frame_warning: "L'anteprima della cornice ruoterà una volta. Evita di fermarti a metà per evitare disallineamenti della posizione del marcatore.",
     rotation_framing_desc: "Anteprima dell'intero range di rotazione, l'asse ruota secondo l'anteprima.",
     start_task: 'Avvia Attività',
     start_task_description: 'Dopo aver completato l\'anteprima del frame, clicca su "Avvia Attività" per inviare il lavoro.',

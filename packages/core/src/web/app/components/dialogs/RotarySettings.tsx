@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Checkbox, Modal, Segmented, Switch } from 'antd';
@@ -48,6 +48,10 @@ const RotarySettings = ({ afterSave, initData, onClose }: Props): React.JSX.Elem
   const [extend, setExtend] = useState<boolean>(Boolean(beamboxPreference.read('extend-rotary-workarea')));
   const [mirror, setMirror] = useState<boolean>(Boolean(beamboxPreference.read('rotary-mirror')));
   const isInch = useMemo(() => storage.get('default-units') === 'inches', []);
+
+  useEffect(() => {
+    if (overlap > split) setOverlap(split);
+  }, [split, overlap]);
 
   const handleSave = async () => {
     const rotaryChanged = rotaryMode !== beamboxPreference.read('rotary_mode');
@@ -210,17 +214,16 @@ const RotarySettings = ({ afterSave, initData, onClose }: Props): React.JSX.Elem
                 </div>
                 <div className={styles.control}>
                   <UnitInput
-                    addonAfter={isInch ? 'in' : 'mm'}
+                    addonAfter="mm"
                     className={styles.input}
                     disabled={rotaryDisabled}
                     id="split"
-                    isInch={isInch}
                     max={100}
-                    min={0.1}
+                    min={0.01}
                     onChange={(val) => {
                       if (val) setSplit(val);
                     }}
-                    precision={isInch ? 4 : 1}
+                    precision={2}
                     size="small"
                     value={split}
                   />
@@ -230,17 +233,16 @@ const RotarySettings = ({ afterSave, initData, onClose }: Props): React.JSX.Elem
                 </div>
                 <div className={styles.control}>
                   <UnitInput
-                    addonAfter={isInch ? 'in' : 'mm'}
+                    addonAfter="mm"
                     className={styles.input}
                     disabled={rotaryDisabled}
                     id="overlap"
-                    isInch={isInch}
-                    max={5}
+                    max={Math.min(5, split)}
                     min={0}
                     onChange={(val) => {
                       if (typeof val === 'number') setOverlap(val);
                     }}
-                    precision={isInch ? 4 : 1}
+                    precision={2}
                     size="small"
                     value={overlap}
                   />

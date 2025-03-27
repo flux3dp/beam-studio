@@ -124,7 +124,7 @@ describe('test RotarySettings', () => {
   });
 
   test('promark rotary settings', () => {
-    mockRead.mockImplementation((key) => (key === 'workarea' ? 'fpm1' : undefined));
+    mockRead.mockImplementation((key) => ({ 'rotary-split': 3.45, workarea: 'fpm1' })[key]);
 
     const { baseElement, getByText } = render(<RotarySettings onClose={mockOnClose} />);
 
@@ -136,6 +136,7 @@ describe('test RotarySettings', () => {
     const splitSize = baseElement.querySelector('#split');
     const overlapSize = baseElement.querySelector('#overlap');
     const mirrorCheckbox = baseElement.querySelector('#mirror');
+    const extendCheckbox = baseElement.querySelector('#extend');
     const scaleSelect = baseElement.querySelector('#scale');
 
     fireEvent.click(rotaryMode);
@@ -144,20 +145,22 @@ describe('test RotarySettings', () => {
     fireEvent.change(splitSize, { target: { value: 2 } });
     fireEvent.change(overlapSize, { target: { value: 1 } });
     fireEvent.click(mirrorCheckbox);
+    fireEvent.click(extendCheckbox);
     act(() => fireEvent.mouseDown(scaleSelect));
     fireEvent.click(baseElement.querySelector('.rc-virtual-list [title="2"]'));
 
     const saveButton = baseElement.querySelector('.ant-btn-primary');
 
     fireEvent.click(saveButton);
-    expect(mockWrite).toHaveBeenCalledTimes(7);
+    expect(mockWrite).toHaveBeenCalledTimes(8);
     expect(mockWrite).toHaveBeenNthCalledWith(1, 'rotary_mode', true);
     expect(mockWrite).toHaveBeenNthCalledWith(2, 'rotary-type', RotaryType.Chuck);
     expect(mockWrite).toHaveBeenNthCalledWith(3, 'rotary-scale', 2);
     expect(mockWrite).toHaveBeenNthCalledWith(4, 'rotary-chuck-obj-d', 10);
     expect(mockWrite).toHaveBeenNthCalledWith(5, 'rotary-mirror', true);
-    expect(mockWrite).toHaveBeenNthCalledWith(6, 'rotary-split', 2);
-    expect(mockWrite).toHaveBeenNthCalledWith(7, 'rotary-overlap', 1);
+    expect(mockWrite).toHaveBeenNthCalledWith(6, 'extend-rotary-workarea', true);
+    expect(mockWrite).toHaveBeenNthCalledWith(7, 'rotary-split', 2);
+    expect(mockWrite).toHaveBeenNthCalledWith(8, 'rotary-overlap', 1);
     expect(mockChangeWorkarea).toHaveBeenCalledTimes(1);
     expect(mockChangeWorkarea).toHaveBeenLastCalledWith('fpm1', { toggleModule: false });
     expect(mockToggleDisplay).toHaveBeenCalledTimes(1);

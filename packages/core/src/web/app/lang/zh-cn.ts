@@ -1180,7 +1180,7 @@ const lang: ILang = {
     low_laser_desc: '为框架任务设置低功率激光值。',
     rotate_axis: '旋转轴',
     rotateaxis_desc: '预览旋转轴中心，旋转轴本身不移动。',
-    rotation_frame_warning: '外框预览会旋转一圈，请避免中途停止，以免导致打点位置偏移。若需再次预览，请等待旋转结束后再次点击。',
+    rotation_frame_warning: '外框预览会旋转一圈，请避免中途停止，以免导致打点位置偏移。',
     rotation_framing_desc: '预览完整旋转范围，旋转轴会随着预览旋转。',
     start_task: '开始任务',
     start_task_description: '完成外框预览后，点击“开始任务”提交工作。',
