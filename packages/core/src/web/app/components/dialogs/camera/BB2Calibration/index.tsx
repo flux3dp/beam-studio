@@ -10,22 +10,25 @@ import useI18n from '@core/helpers/useI18n';
 import dialog from '@core/implementations/dialog';
 import type { FisheyeCameraParametersV3, FisheyeCameraParametersV3Cali } from '@core/interfaces/FisheyePreview';
 
-import Chessboard from './BB2Calibration/Chessboard';
-import moveLaserHead from './BB2Calibration/moveLaserHead';
-import styles from './Calibration.module.scss';
-import CheckpointData from './common/CheckpointData';
-import Instruction from './common/Instruction';
-import SolvePnP from './common/SolvePnP';
-import { bb2PnPPoints } from './common/solvePnPConstants';
+import CheckpointData from '../common/CheckpointData';
+import Instruction from '../common/Instruction';
+import SolvePnP from '../common/SolvePnP';
+import { bb2PnPPoints } from '../common/solvePnPConstants';
 
+import styles from './Calibration.module.scss';
+import Chessboard from './Chessboard';
+import moveLaserHead from './moveLaserHead';
+
+/* eslint-disable perfectionist/sort-enums */
 enum Steps {
-  CHECKPOINT_DATA = 0, // For non-advanced users
-  CHESSBOARD = 2, // For advanced users
-  PRE_CHESSBOARD = 1, // For advanced users
+  CHECKPOINT_DATA = 0, // For non-advanced usages
+  PRE_CHESSBOARD = 1, // For advanced usages
+  CHESSBOARD = 2, // For advanced usages
   PUT_PAPER = 3,
-  SOLVE_PNP = 5,
   SOLVE_PNP_INSTRUCTION = 4,
+  SOLVE_PNP = 5,
 }
+/* eslint-enable perfectionist/sort-enums */
 
 interface Props {
   isAdvanced: boolean;
