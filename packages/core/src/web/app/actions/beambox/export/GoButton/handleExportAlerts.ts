@@ -139,7 +139,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
   }
 
   if (isPromark) {
-    if (beamboxPreference.read('rotary_mode') && !swiftrayClient.checkVersion('PROMARK_RPTARY')) {
+    if (beamboxPreference.read('rotary_mode') && !swiftrayClient.checkVersion('PROMARK_ROTARY')) {
       return false;
     }
 
