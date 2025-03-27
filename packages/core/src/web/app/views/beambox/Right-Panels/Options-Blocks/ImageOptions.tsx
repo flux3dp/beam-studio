@@ -44,7 +44,8 @@ const ImageOptions = ({ elem, updateObjectPanel }: Props): React.JSX.Element => 
   // FIXME: Swiftray Gcode converter(Promark) treat transparent pixel as white pixel
   // This is a temporary workaround to prevent engraving of transparent pixels when threshold is set to 255
   const workarea = useWorkarea();
-  const maxThreshold = useMemo(() => (promarkModels.has(workarea) ? 254 : 255), [workarea]);
+  const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
+  const maxThreshold = useMemo(() => (isPromark ? 254 : 255), [isPromark]);
 
   const changeAttribute = useCallback(
     (changes: { [key: string]: boolean | number | string }): void => {
@@ -160,6 +161,7 @@ const ImageOptions = ({ elem, updateObjectPanel }: Props): React.JSX.Element => 
   const isPwm = elem.getAttribute('data-pwm') === '1';
   const activeKey = ObjectPanelController.getActiveKey();
   const thresholdVisible = useMemo(() => activeKey === 'threshold', [activeKey]);
+  const shouldShowPwm = useMemo(() => !isPromark && isGradient, [isPromark, isGradient]);
   const gradientBlock = isMobile() ? (
     <>
       <ObjectPanelItem.Item
@@ -168,7 +170,7 @@ const ImageOptions = ({ elem, updateObjectPanel }: Props): React.JSX.Element => 
         label={LANG.shading}
         onClick={handleGradientClick}
       />
-      {isGradient && (
+      {shouldShowPwm && (
         <ObjectPanelItem.Item
           content={<Switch checked={isPwm} />}
           id="pwm"
@@ -183,7 +185,7 @@ const ImageOptions = ({ elem, updateObjectPanel }: Props): React.JSX.Element => 
         <div className={styles.label}>{LANG.shading}</div>
         <Switch checked={isGradient} onChange={handleGradientClick} size="small" />
       </div>
-      {isGradient && (
+      {shouldShowPwm && (
         <div className={styles['option-block']} key="pwm">
           <div className={styles.label}>
             {LANG.pwm_engraving}
