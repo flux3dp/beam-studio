@@ -141,7 +141,7 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   'reverse-engraving': false,
   'rotary-chuck-obj-d': CHUCK_ROTARY_DIAMETER,
   'rotary-mirror': false,
-  'rotary-overlap': 0.1,
+  'rotary-overlap': 0,
   'rotary-scale': 1,
   'rotary-split': 5,
   'rotary-type': RotaryType.Roller,
