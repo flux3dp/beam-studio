@@ -15,6 +15,7 @@ export default {
     '^.+.css$': 'identity-obj-proxy',
     '^@core/implementations/(.*)$': resolve(__dirname, 'src/implementations/$1'),
     '^@core/(.*)$': resolve(__dirname, 'src/web/$1'),
+    '^@mocks/(.*)$': resolve(__dirname, 'src/__mocks__/$1'),
   },
   globalSetup: './jest.global-setup.ts',
   setupFilesAfterEnv: ['./src/web/setupTests.ts', 'jest-canvas-mock'],

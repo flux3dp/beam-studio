@@ -154,7 +154,7 @@ describe('manipulate document setting', () => {
     cy.findAllByText('Focus Adjustment').should('exist');
     cy.get('#auto-focus').should('have.attr', 'aria-checked', 'false').click();
     cy.findAllByText('Object Height').should('exist');
-    cy.get('#height').should('have.value', '3.00');
+    cy.get('#height').should('have.value', '3');
   });
 
   it('check diode laser', () => {

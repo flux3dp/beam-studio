@@ -37,29 +37,6 @@ jest.mock('@core/helpers/layer/layer-helper', () => ({
   getLayerByName: (...args) => mockGetLayerByName(...args),
 }));
 
-jest.mock(
-  '@core/app/widgets/Unit-Input-v2',
-  () =>
-    ({ decimal, defaultValue, displayMultiValue, getValue, id, max, min, unit }: any) => (
-      <div>
-        MockUnitInput
-        <p>min: {min}</p>
-        <p>max: {max}</p>
-        <p>unit: {unit}</p>
-        <p>defaultValue: {defaultValue}</p>
-        <p>decimal: {decimal}</p>
-        <p>displayMultiValue: {displayMultiValue ? 'Y' : 'N'}</p>
-        <input
-          data-testid={id}
-          id={id}
-          onChange={(e) => getValue(Number.parseFloat(e.target.value))}
-          type="number"
-          value={defaultValue}
-        />
-      </div>
-    ),
-);
-
 const mockCreateEventEmitter = jest.fn();
 
 jest.mock('@core/helpers/eventEmitterFactory', () => ({
@@ -74,12 +51,12 @@ const changeValue = (baseElement: HTMLElement) => {
   const fillIntervalInput = baseElement.querySelector('#fillInterval');
 
   fireEvent.change(fillIntervalInput, { target: { value: '0.2' } });
-  expect(fillIntervalInput).toHaveValue(0.2);
+  expect(fillIntervalInput).toHaveValue('0.2');
 
   const fillAngleInput = baseElement.querySelector('#fillAngle');
 
   fireEvent.change(fillAngleInput, { target: { value: '22.5' } });
-  expect(fillAngleInput).toHaveValue(22.5);
+  expect(fillAngleInput).toHaveValue('22.5');
 
   const biDirectionalSwitch = baseElement.querySelector('#biDirectional');
 

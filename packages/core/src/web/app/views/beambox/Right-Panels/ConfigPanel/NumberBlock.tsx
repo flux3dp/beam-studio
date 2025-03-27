@@ -1,53 +1,73 @@
-import React, { memo, useContext, useMemo } from 'react';
+import React, { memo, useCallback, useContext, useEffect, useMemo } from 'react';
 
+import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Tooltip } from 'antd';
+import { Button, Popover } from 'antd-mobile';
 import classNames from 'classnames';
 
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
+import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
+import objectPanelItemStyles from '@core/app/views/beambox/Right-Panels/ObjectPanelItem.module.scss';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import {
   CUSTOM_PRESET_CONSTANT,
   presetRelatedConfigs,
   timeRelatedConfigs,
-  writeData,
+  writeDataLayer,
 } from '@core/helpers/layer/layer-config-helper';
+import { getLayerByName } from '@core/helpers/layer/layer-helper';
+import units from '@core/helpers/units';
 import storage from '@core/implementations/storage';
 import type { ConfigKey } from '@core/interfaces/ILayerConfig';
 
 import styles from './Block.module.scss';
 import ConfigPanelContext from './ConfigPanelContext';
 import ConfigSlider from './ConfigSlider';
-import Input from './Input';
+import ConfigValueDisplay from './ConfigValueDisplay';
 
 interface Props {
   configKey: ConfigKey;
+  /** not detect inch or mm, always use props unit */
+  forceUsePropsUnit?: boolean;
   hasSlider?: boolean;
   id?: string;
+  lightTitle?: boolean;
   max?: number;
   min?: number;
+  /**  Number input or button for panel-item */
+  panelType?: 'button' | 'input';
   precision?: number;
+  precisionInch?: number;
   sliderStep?: number;
   step?: number;
   title: string;
+  tooltip?: string;
   type?: 'default' | 'modal' | 'panel-item';
   unit?: string;
 }
 
-// TODO: use this for simple blocks in ConfigPanel, write unit tests
 const NumberBlock = ({
   configKey: key,
+  forceUsePropsUnit,
   hasSlider,
   id,
+  lightTitle,
   max = 100,
   min = 0,
+  panelType = 'input',
   precision = 0,
+  precisionInch = precision + 2,
   sliderStep,
   step = 1,
   title,
+  tooltip,
   type = 'default',
   unit,
 }: Props): React.ReactNode => {
+  const isPanelType = useMemo(() => type === 'panel-item', [type]);
+  const { activeKey } = useContext(ObjectPanelContext);
   const { dispatch, initState, selectedLayers, state } = useContext(ConfigPanelContext);
   const { isPresetRelated, isTimeRelated } = useMemo(
     () => ({
@@ -56,20 +76,64 @@ const NumberBlock = ({
     }),
     [key],
   );
-  const timeEstimationButtonEventEmitter = useMemo(
-    () => eventEmitterFactory.createEventEmitter('time-estimation-button'),
-    [],
-  );
   const { isInch, unit: displayUnit } = useMemo(() => {
-    if (!unit?.includes('mm') || storage.get('default-units') !== 'inches') {
+    if (forceUsePropsUnit || !unit?.includes('mm') || storage.get('default-units') !== 'inches') {
       return { isInch: false, unit };
     }
 
     return { isInch: true, unit: unit.replace('mm', 'in') };
-  }, [unit]);
+  }, [unit, forceUsePropsUnit]);
   const {
     [key]: { hasMultiValue, value },
   } = state;
+  const displayPrecision = useMemo(
+    () => (isInch ? (precisionInch ?? precision) : precision),
+    [isInch, precision, precisionInch],
+  );
+
+  const handleChange = useCallback(
+    (newVal: number) => {
+      if (newVal === value || typeof value !== 'number') return;
+
+      const noHistory = value > max || value < min;
+      const payload: Record<string, number | string> = { [key]: newVal };
+      const timeEstimationButtonEventEmitter = eventEmitterFactory.createEventEmitter('time-estimation-button');
+
+      if (isPresetRelated) payload.configName = CUSTOM_PRESET_CONSTANT;
+
+      dispatch({ payload, type: 'change' });
+
+      if (isTimeRelated) timeEstimationButtonEventEmitter.emit('SET_ESTIMATED_TIME', null);
+
+      if (type !== 'modal') {
+        const batchCmd = noHistory ? undefined : new history.BatchCommand(`Change ${key}`);
+
+        selectedLayers.forEach((layerName) => {
+          const layer = getLayerByName(layerName);
+
+          writeDataLayer(layer, key, newVal, { batchCmd });
+
+          if (isPresetRelated) {
+            writeDataLayer(layer, 'configName', CUSTOM_PRESET_CONSTANT, { batchCmd });
+          }
+        });
+
+        if (batchCmd) {
+          batchCmd.onAfter = initState;
+          undoManager.addCommandToHistory(batchCmd);
+        }
+      }
+    },
+    [value, key, max, min, isPresetRelated, isTimeRelated, dispatch, selectedLayers, initState, type],
+  );
+
+  useEffect(() => {
+    if (typeof value !== 'number') return;
+
+    if (value > max) handleChange(max);
+
+    if (value < min) handleChange(min);
+  }, [value, max, min, handleChange]);
 
   if (typeof value !== 'number') {
     console.warn(`NumberBlock: Config ${key}: ${value} type is not number`);
@@ -77,56 +141,41 @@ const NumberBlock = ({
     return null;
   }
 
-  const handleChange = (newVal: number) => {
-    const noHistory = value > max || value < min;
+  if (isPanelType && panelType === 'button') {
+    return (
+      <ObjectPanelItem.Number
+        decimal={displayPrecision}
+        id={id ?? key}
+        label={title}
+        max={max}
+        min={min}
+        unit={unit}
+        updateValue={handleChange}
+        value={value}
+      />
+    );
+  }
 
-    dispatch({
-      payload: { configName: isPresetRelated ? CUSTOM_PRESET_CONSTANT : undefined, [key]: newVal },
-      type: 'change',
-    });
-
-    if (isTimeRelated) timeEstimationButtonEventEmitter.emit('SET_ESTIMATED_TIME', null);
-
-    if (type !== 'modal') {
-      const batchCmd = noHistory ? undefined : new history.BatchCommand(`Change ${key}`);
-
-      selectedLayers.forEach((layerName) => {
-        writeData(layerName, key, newVal, { batchCmd });
-
-        if (isPresetRelated) {
-          writeData(layerName, 'configName', CUSTOM_PRESET_CONSTANT, { batchCmd });
-        }
-      });
-
-      if (batchCmd) {
-        batchCmd.onAfter = initState;
-        undoManager.addCommandToHistory(batchCmd);
-      }
-    }
-  };
-
-  return type === 'panel-item' ? (
-    <ObjectPanelItem.Number
-      decimal={precision}
-      id={id ?? key}
-      label={title}
-      max={max}
-      min={min}
-      updateValue={handleChange}
-      value={value}
-    />
-  ) : (
+  const content = (
     <div className={classNames(styles.panel, { [styles['without-drag']]: !hasSlider })}>
-      <span className={styles.title}>{title}</span>
-      <Input
+      <span className={classNames(styles.title, { [styles.light]: lightTitle })}>
+        {title}
+        {tooltip && (
+          <Tooltip classNames={{ root: styles['hint-overlay'] }} title={tooltip}>
+            <QuestionCircleOutlined className={styles.hint} />
+          </Tooltip>
+        )}
+      </span>
+      <ConfigValueDisplay
+        decimal={displayPrecision}
         hasMultiValue={hasMultiValue}
-        id={id}
+        inputId={id}
         isInch={isInch}
         max={max}
         min={min}
         onChange={handleChange}
-        precision={precision}
         step={step * (isInch ? 1.27 : 1)}
+        type={type}
         unit={displayUnit}
         value={value}
       />
@@ -141,6 +190,23 @@ const NumberBlock = ({
         />
       )}
     </div>
+  );
+
+  return isPanelType ? (
+    <Popover content={content} visible={activeKey === key}>
+      <ObjectPanelItem.Item
+        autoClose={false}
+        content={
+          <Button className={objectPanelItemStyles['number-item']} fill="outline" shape="rounded" size="mini">
+            {isInch ? units.convertUnit(value, 'inch', 'mm').toFixed(precision) : value}
+          </Button>
+        }
+        id={key}
+        label={title}
+      />
+    </Popover>
+  ) : (
+    content
   );
 };
 

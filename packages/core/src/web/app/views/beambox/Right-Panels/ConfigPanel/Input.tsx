@@ -1,3 +1,5 @@
+import React from 'react';
+
 import type { ThemeConfig } from 'antd';
 
 import { configPanelInputTheme } from '@core/app/constants/antd-config';

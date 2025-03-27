@@ -44,6 +44,8 @@ const splitFullColorLayer = async (
 
   if (!printingModules.has(layerModule) || !fullColor || ref || split) return null;
 
+  svgCanvas.clearSelection();
+
   progressCaller.openNonstopProgress({
     id: PROGRESS_ID,
     message: 'Splitting Full Color Layer',
