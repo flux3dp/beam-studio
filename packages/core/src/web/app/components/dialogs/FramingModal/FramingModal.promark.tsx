@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { InfoCircleOutlined, LoadingOutlined } from '@ant-design/icons';
-import { Button, Divider, Flex, Modal, Spin } from 'antd';
+import { Button, Divider, Flex, Modal, Spin, Tooltip } from 'antd';
 import classNames from 'classnames';
 
 import { handleExportClick } from '@core/app/actions/beambox/export/GoButton/handleExportClick';
@@ -139,13 +139,14 @@ const PromarkFramingModal = ({ device, onClose, startOnOpen = false }: Props): R
           ))}
         </Flex>
         <div className={styles.desc}>
-          <div className={styles.content}>{tFraming[framingOptions[type].description]}</div>
-          {type === FramingType.RotateFraming && (
-            <div className={styles.hint}>
-              <InfoCircleOutlined />
-              <span>{tFraming.rotation_frame_warning}</span>
-            </div>
-          )}
+          <div className={styles.content}>
+            {tFraming[framingOptions[type].description]}
+            {type === FramingType.RotateFraming && (
+              <Tooltip title={tFraming.rotation_frame_warning}>
+                <InfoCircleOutlined className={styles.hint} />
+              </Tooltip>
+            )}
+          </div>
           <Divider />
           <div className={styles.content}>{tFraming.start_task_description}</div>
         </div>

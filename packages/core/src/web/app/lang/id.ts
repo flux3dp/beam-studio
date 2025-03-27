@@ -1180,7 +1180,7 @@ const lang: ILang = {
     low_laser_desc: 'Tetapkan nilai laser daya rendah untuk tugas pembingkaian.',
     rotate_axis: 'Poros rotasi',
     rotateaxis_desc: 'Pratinjau pusat poros rotasi, poros itu sendiri tidak bergerak.',
-    rotation_frame_warning: 'Pratinjau bingkai akan berputar sekali. Hindari berhenti di tengah jalan untuk mencegah ketidaksesuaian posisi penandaan. Untuk melihat pratinjau lagi, tunggu hingga rotasi selesai sebelum mengklik lagi.',
+    rotation_frame_warning: 'Pratinjau bingkai akan berputar sekali. Hindari berhenti di tengah jalan untuk mencegah ketidaksesuaian posisi penandaan.',
     rotation_framing_desc: 'Pratinjau jangkauan rotasi penuh, poros berputar sesuai dengan pratinjau.',
     start_task: 'Mulai Tugas',
     start_task_description: 'Setelah menyelesaikan pratinjau bingkai, klik "Mulai Tugas" untuk mengirimkan pekerjaan.',

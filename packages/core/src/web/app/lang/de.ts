@@ -1180,7 +1180,7 @@ const lang: ILang = {
     low_laser_desc: 'Stellen Sie einen niedrigen Laserwert für die Rahmenaufgabe ein.',
     rotate_axis: 'Drehachse',
     rotateaxis_desc: 'Vorschau der Rotationsachse, die Achse selbst bewegt sich nicht.',
-    rotation_frame_warning: 'Die Rahmenvorschau dreht sich einmal. Bitte nicht währenddessen stoppen, um eine Verschiebung der Markierung zu vermeiden. Wenn Sie die Vorschau erneut anzeigen möchten, warten Sie, bis die Drehung abgeschlossen ist, und klicken Sie dann erneut.',
+    rotation_frame_warning: 'Die Rahmenvorschau dreht sich einmal. Bitte nicht währenddessen stoppen, um eine Verschiebung der Markierung zu vermeiden.',
     rotation_framing_desc: 'Vorschau des gesamten Drehbereichs, die Achse dreht sich gemäß der Vorschau.',
     start_task: 'Aufgabe Starten',
     start_task_description: 'Nach Abschluss der Rahmenvorschau klicken Sie auf „Aufgabe Starten“, um den Auftrag einzureichen.',

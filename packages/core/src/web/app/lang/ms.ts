@@ -1180,7 +1180,7 @@ const lang: ILang = {
     low_laser_desc: 'Tetapkan nilai laser berkuasa rendah untuk tugas pembingkaian.',
     rotate_axis: 'Paksi putaran',
     rotateaxis_desc: 'Pratonton pusat paksi putaran, paksi itu sendiri tidak bergerak.',
-    rotation_frame_warning: 'Pratonton bingkai akan berputar sekali. Elakkan berhenti di tengah jalan untuk mengelakkan penyimpangan kedudukan tanda. Untuk pratonton semula, tunggu sehingga putaran selesai sebelum mengklik lagi.',
+    rotation_frame_warning: 'Pratonton bingkai akan berputar sekali. Elakkan berhenti di tengah jalan untuk mengelakkan penyimpangan kedudukan tanda.',
     rotation_framing_desc: 'Pratonton keseluruhan julat putaran, paksi berputar mengikut pratonton.',
     start_task: 'Mula Tugas',
     start_task_description: 'Selepas melengkapkan pratonton bingkai, klik "Mula Tugas" untuk menghantar kerja.',

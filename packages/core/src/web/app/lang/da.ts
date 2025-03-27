@@ -1180,7 +1180,7 @@ const lang: ILang = {
     low_laser_desc: 'Indstil en lav laserværdi til rammeopgaven.',
     rotate_axis: 'Roter akse',
     rotateaxis_desc: 'Forhåndsvisning af rotationsaksens centrum, aksen selv bevæger sig ikke.',
-    rotation_frame_warning: 'Rammeforhåndsvisningen vil rotere én gang. Undgå at stoppe midtvejs for at forhindre skæv markering. For at forhåndsvise igen, vent til rotationen er færdig, før du klikker igen.',
+    rotation_frame_warning: 'Rammeforhåndsvisningen vil rotere én gang. Undgå at stoppe midtvejs for at forhindre skæv markering.',
     rotation_framing_desc: 'Forhåndsvisning af det fulde rotationsområde, aksen roterer i henhold til forhåndsvisningen.',
     start_task: 'Start Opgave',
     start_task_description: 'Når rammeforhåndsvisningen er færdig, skal du klikke på "Start Opgave" for at indsende opgaven.',

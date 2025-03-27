@@ -1180,7 +1180,7 @@ const lang: ILang = {
     low_laser_desc: '設定低功率雷射值以進行外框任務。',
     rotate_axis: '旋轉軸',
     rotateaxis_desc: '預覽旋轉軸中心，旋轉軸本身不移動。',
-    rotation_frame_warning: '外框預覽會旋轉一圈，請避免中途停止，以免導致打點位置偏移。若需再次預覽，請等待旋轉結束後再次點擊。',
+    rotation_frame_warning: '外框預覽會旋轉一圈，請避免中途停止，以免導致打點位置偏移。',
     rotation_framing_desc: '預覽完整旋轉範圍，旋轉軸會隨著預覽旋轉。',
     start_task: '開始任務',
     start_task_description: '完成外框預覽後，點擊「開始任務」提交工作。',

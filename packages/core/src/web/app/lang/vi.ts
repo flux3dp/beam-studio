@@ -1180,7 +1180,7 @@ const lang: ILang = {
     low_laser_desc: 'Đặt giá trị laser công suất thấp cho nhiệm vụ đóng khung.',
     rotate_axis: 'Trục xoay',
     rotateaxis_desc: 'Xem trước trung tâm trục xoay, trục không di chuyển.',
-    rotation_frame_warning: 'Bản xem trước khung sẽ xoay một vòng. Tránh dừng giữa chừng để tránh lệch vị trí đánh dấu. Để xem trước lại, vui lòng đợi vòng quay kết thúc trước khi nhấp lại.',
+    rotation_frame_warning: 'Bản xem trước khung sẽ xoay một vòng. Tránh dừng giữa chừng để tránh lệch vị trí đánh dấu.',
     rotation_framing_desc: 'Xem trước phạm vi xoay đầy đủ, trục xoay theo xem trước.',
     start_task: 'Bắt Đầu Nhiệm Vụ',
     start_task_description: 'Sau khi hoàn thành xem trước khung, nhấp vào "Bắt Đầu Nhiệm Vụ" để gửi công việc.',

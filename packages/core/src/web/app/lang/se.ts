@@ -1180,7 +1180,7 @@ const lang: ILang = {
     low_laser_desc: 'Ställ in ett lågeffektslaservärde för inramningsuppgiften.',
     rotate_axis: 'Rotationsaxel',
     rotateaxis_desc: 'Förhandsgranskar rotationens axelcenter, själva axeln rör sig inte.',
-    rotation_frame_warning: 'Ramförhandsgranskningen kommer att rotera en gång. Undvik att stoppa halvvägs för att förhindra att markeringspositionen förskjuts. För att förhandsgranska igen, vänta tills rotationen är klar innan du klickar igen.',
+    rotation_frame_warning: 'Ramförhandsgranskningen kommer att rotera en gång. Undvik att stoppa halvvägs för att förhindra att markeringspositionen förskjuts.',
     rotation_framing_desc: 'Förhandsgranskar hela rotationsområdet, axeln roterar enligt förhandsgranskningen.',
     start_task: 'เริ่มงาน',
     start_task_description: 'หลังจากแสดงตัวอย่างเฟรมเสร็จสิ้น ให้คลิก "เริ่มงาน" เพื่อส่งงาน.',

@@ -1180,7 +1180,7 @@ const lang: ILang = {
     low_laser_desc: '프레임 작업을 위한 저출력 레이저 값을 설정하세요.',
     rotate_axis: '회전 축',
     rotateaxis_desc: '로타리 축 중심을 미리 봅니다. 로타리 자체는 움직이지 않습니다.',
-    rotation_frame_warning: '프레임 미리보기는 한 바퀴 회전합니다. 중간에 멈추면 타점 위치가 어긋날 수 있으므로 멈추지 마세요. 다시 미리 보려면 회전이 끝난 후 다시 클릭하세요.',
+    rotation_frame_warning: '프레임 미리보기는 한 바퀴 회전합니다. 중간에 멈추면 타점 위치가 어긋날 수 있으므로 멈추지 마세요.',
     rotation_framing_desc: '전체 회전 범위를 미리 봅니다. 로타리는 미리보기대로 회전합니다.',
     start_task: '작업 시작',
     start_task_description: '프레임 미리보기가 완료된 후 "작업 시작"을 클릭하여 작업을 제출합니다.',

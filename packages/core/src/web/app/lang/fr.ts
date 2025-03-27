@@ -1180,7 +1180,7 @@ const lang: ILang = {
     low_laser_desc: 'Définissez une valeur de laser à faible puissance pour la tâche de cadrage.',
     rotate_axis: 'Axe de rotation',
     rotateaxis_desc: "Aperçu du centre de l'axe de rotation, l'axe lui-même ne bouge pas.",
-    rotation_frame_warning: "L'aperçu du cadre effectuera une rotation complète. Évitez de l'interrompre en cours de route afin de ne pas provoquer un décalage de la position du marquage. Pour prévisualiser à nouveau, attendez la fin de la rotation avant de cliquer à nouveau.",
+    rotation_frame_warning: "L'aperçu du cadre effectuera une rotation complète. Évitez de l'interrompre en cours de route afin de ne pas provoquer un décalage de la position du marquage.",
     rotation_framing_desc: "Aperçu de la gamme complète de rotation, l'axe tourne selon l'aperçu.",
     start_task: 'Démarrer la Tâche',
     start_task_description: 'Après avoir terminé l’aperçu du cadre, cliquez sur "Démarrer la Tâche" pour soumettre le travail.',

@@ -1180,7 +1180,7 @@ const lang: ILang = {
     low_laser_desc: 'Aseta pienitehoinen laserteho kehyksen tehtävää varten.',
     rotate_axis: 'Kierron akseli',
     rotateaxis_desc: 'Esikatselee kierron akselikeskusta, itse akseli ei liiku.',
-    rotation_frame_warning: 'Kehyksen esikatselu pyörii kerran. Älä keskeytä kesken, jotta merkintäpaikka ei siirry. Esikatsele uudelleen vasta, kun pyöriminen on päättynyt.',
+    rotation_frame_warning: 'Kehyksen esikatselu pyörii kerran. Älä keskeytä kesken, jotta merkintäpaikka ei siirry.',
     rotation_framing_desc: 'Esikatselee koko kierron alueen, akseli pyörii esikatselun mukaan.',
     start_task: 'Aloita Tehtävä',
     start_task_description: 'Kehyksen esikatselun jälkeen napsauta "Aloita Tehtävä" lähettääksesi työn.',

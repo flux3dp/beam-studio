@@ -23,6 +23,7 @@ const requirement = {
   MAINTAIN_WITH_LINECHECK: '3.2.6',
   NEW_PLAYER: '3.3.0',
   OPERATE_DURING_PAUSE: '1.6.20',
+  PROMARK_ROTARY: '1.3.8',
   PWM: '4.3.4',
   RELOCATE_ORIGIN: '3.2.2',
   SCAN_CALIBRATION: '1.6.9',
@@ -35,8 +36,10 @@ const requirement = {
   USABLE_VERSION: '1.4.9',
 };
 
+export type RequirementKey = keyof typeof requirement;
+
 // 1.7.0 > 1.5.0 > 1.5b12 > 1.5a12
-export default (sourceVersion: string): { meetRequirement: (key: keyof typeof requirement) => boolean } => {
+export default (sourceVersion: string): { meetRequirement: (key: RequirementKey) => boolean } => {
   const currentVersion = sourceVersion.split('.');
   const meetVersion = (targetVersion) => {
     targetVersion = targetVersion.split('.');
