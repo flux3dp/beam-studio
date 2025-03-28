@@ -4,7 +4,7 @@ import { getAddOnInfo } from '@core/app/constants/addOn';
 import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
 import moduleBoundary from '@core/app/constants/layer-module/module-boundary';
 import workareaManager from '@core/app/svgedit/workarea';
-import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
+import { getAutoFeeder } from '@core/helpers/addOn';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
 
@@ -78,7 +78,9 @@ const update = (module: LayerModule): void => {
 
   boundarySvg?.setAttribute('viewBox', viewBox);
 
-  const d1 = `M0,0H${w}V${h}H0V0`;
+  const [workareaTop, workareaBottom] = [expansion[0], h - expansion[1]];
+
+  const d1 = `M0,${workareaTop}H${w}V${workareaBottom}H0V${workareaTop}`;
   const { dpmm } = constant;
   let { bottom, left, right, top } = moduleBoundary[module] || { bottom: 0, left: 0, right: 0, top: 0 };
   const offsets = structuredClone(BeamboxPreference.read('module-offsets'));
@@ -97,7 +99,6 @@ const update = (module: LayerModule): void => {
   const addOnInfo = getAddOnInfo(model);
   const isRotary = Boolean(BeamboxPreference.read('rotary_mode') && addOnInfo.rotary);
   const isAutoFeeder = getAutoFeeder(addOnInfo);
-  const isPassThrough = getPassThrough(addOnInfo);
 
   if (offsetY >= 0) {
     top = Math.max(top, offsetY);
@@ -109,14 +110,6 @@ const update = (module: LayerModule): void => {
   if (isRotary || isAutoFeeder) {
     top = 0;
     bottom = 0;
-  } else if (isPassThrough) {
-    if (expansion[0] > 0) {
-      top += expansion[0] / dpmm;
-    }
-
-    if (expansion[1] > 0) {
-      bottom += expansion[1] / dpmm;
-    }
   }
 
   bottom = Math.max(bottom, 0);
@@ -133,17 +126,20 @@ const update = (module: LayerModule): void => {
   bottom *= dpmm;
   right *= dpmm;
 
-  const d2 = `M${left},${top}H${w - right}V${h - bottom}H${left}V${top}`;
+  const d2 = `M${left},${workareaTop + top}H${w - right}V${workareaBottom - bottom}H${left}V${workareaTop + top}`;
+
+  console.log('d1', d1);
+  console.log('d2', d2);
 
   boundaryPath?.setAttribute('d', `${d1} ${d2}`);
   boundaryDescText?.removeAttribute('display');
 
   if (top >= bottom) {
     boundaryDescText?.setAttribute('x', `${top / 2 - 40}`);
-    boundaryDescText?.setAttribute('y', `${top / 2 + 40} `);
+    boundaryDescText?.setAttribute('y', `${workareaTop + top / 2 + 40} `);
   } else {
     boundaryDescText?.setAttribute('x', `${bottom / 2 - 40}`);
-    boundaryDescText?.setAttribute('y', `${h - bottom / 2 + 40}`);
+    boundaryDescText?.setAttribute('y', `${workareaBottom - bottom / 2 + 40}`);
   }
 };
 

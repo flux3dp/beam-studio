@@ -1,4 +1,4 @@
-import { checkAdo1AutoFeeder, checkFbb2AutoFeeder, checkFbm1AutoFeeder } from '@core/helpers/checkFeature';
+import { checkAdo1AutoFeeder, checkFbm1AutoFeeder } from '@core/helpers/checkFeature';
 
 import type { WorkAreaModel } from './workarea-constants';
 
@@ -11,7 +11,12 @@ export const CHUCK_ROTARY_DIAMETER = 133;
 export const FEEDER_DIAMETER = 83.54;
 
 export interface AddOnInfo {
-  autoFeeder?: { maxHeight: number; rotaryRatio: number; xRange?: [number, number] }; // [x, width] in mm, no limit is not set
+  /**
+   * autoFeeder
+   * range: [x, width] in mm, no limit is not set
+   * vectorSpeedLimit: override vector speed in workarea constant when autoFeeder is enabled
+   */
+  autoFeeder?: { maxHeight: number; rotaryRatio: number; vectorSpeedLimit?: number; xRange?: [number, number] };
   autoFocus?: boolean;
   curveEngraving?: boolean;
   framingLowLaser?: boolean;
@@ -79,9 +84,12 @@ const addOnData: Record<WorkAreaModel, AddOnInfo> = {
     },
   },
   fbb2: {
-    autoFeeder: checkFbb2AutoFeeder()
-      ? { maxHeight: 2000, rotaryRatio: CHUCK_ROTARY_DIAMETER / FEEDER_DIAMETER, xRange: [100, 400] }
-      : undefined,
+    autoFeeder: {
+      maxHeight: 3000,
+      rotaryRatio: CHUCK_ROTARY_DIAMETER / FEEDER_DIAMETER,
+      vectorSpeedLimit: 30,
+      xRange: [100, 400],
+    },
     curveEngraving: true,
     jobOrigin: true,
     lowerFocus: true,

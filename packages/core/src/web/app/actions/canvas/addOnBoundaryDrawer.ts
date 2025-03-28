@@ -113,24 +113,29 @@ export class AddOnBoundaryDrawer {
   };
 
   updatePassThroughPath = (): void => {
-    const { height: workareaH, model, width: workareaW } = workareaManager;
+    const { expansion, height: workareaH, model, width: workareaW } = workareaManager;
     const addOnInfo = getAddOnInfo(model);
     const { passThrough } = addOnInfo;
 
-    if (!getPassThrough(addOnInfo) || !passThrough?.xRange) {
+    if (!getPassThrough(addOnInfo)) {
       this.passThroughPath?.setAttribute('d', '');
 
       return;
     }
 
-    let [x, width] = passThrough.xRange;
-    const { dpmm } = constant;
+    let [x, width] = [0, workareaW];
 
-    x *= dpmm;
-    width *= dpmm;
+    if (passThrough?.xRange) {
+      const { dpmm } = constant;
+
+      [x, width] = passThrough.xRange;
+      x *= dpmm;
+      width *= dpmm;
+    }
+
     this.passThroughPath?.setAttribute(
       'd',
-      `M0 0 H${x} V${workareaH} H0 Z M${x + width} 0 H${workareaW} V${workareaH} H${x + width} Z`,
+      `M0 0 H${workareaW} V${workareaH} H0 Z M${x} ${expansion[0]} H${x + width} V${workareaH - expansion[1]} H${x} Z`,
     );
 
     return;

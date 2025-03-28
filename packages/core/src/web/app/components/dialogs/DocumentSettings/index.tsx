@@ -596,6 +596,12 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                       value={autoFeederHeight}
                     />
                   )}
+                  <Tooltip title={tDocu.auto_feeder_url}>
+                    <QuestionCircleOutlined
+                      className={styles.hint}
+                      onClick={() => browser.open(tDocu.auto_feeder_url)}
+                    />
+                  </Tooltip>
                 </div>
               </div>
               {autoFeeder && (
