@@ -94,6 +94,7 @@ const lang: ILang = {
       add_on: 'Modules complémentaires',
       auto_feeder: 'Chargeur automatique',
       auto_feeder_scale: 'Échelle du chargeur automatique',
+      auto_feeder_url: 'https://support.flux3dp.com/hc/en-us/articles/11688230498575',
       borderless_mode: 'Mode sans bordure',
       current_position: 'Position Actuelle',
       disable: 'Désactiver',

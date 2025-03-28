@@ -94,6 +94,7 @@ const lang: ILang = {
       add_on: '애드온',
       auto_feeder: '자동 공급 장치',
       auto_feeder_scale: '자동 공급기 스케일',
+      auto_feeder_url: 'https://support.flux3dp.com/hc/en-us/articles/11688230498575',
       borderless_mode: '열린 바닥',
       current_position: '현재 위치',
       disable: '비활성화',

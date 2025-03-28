@@ -94,6 +94,7 @@ const lang: ILang = {
       add_on: 'Componenti aggiuntivi',
       auto_feeder: 'Alimentatore automatico',
       auto_feeder_scale: 'Scala del alimentatore automatico',
+      auto_feeder_url: 'https://support.flux3dp.com/hc/en-us/articles/11688230498575',
       borderless_mode: 'Aperto in basso',
       current_position: 'Posizione Attuale',
       disable: 'Disabilita',

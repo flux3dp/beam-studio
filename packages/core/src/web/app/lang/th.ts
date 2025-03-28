@@ -94,6 +94,7 @@ const lang: ILang = {
       add_on: 'เพิ่มเติม',
       auto_feeder: 'ตัวป้อนอัตโนมัติ',
       auto_feeder_scale: 'มาตราส่วนตัวป้อนอัตโนมัติ',
+      auto_feeder_url: 'https://support.flux3dp.com/hc/en-us/articles/11688230498575',
       borderless_mode: 'โหมดเปิดก้น',
       current_position: 'ตำแหน่งปัจจุบัน',
       disable: 'ปิดใช้งาน',

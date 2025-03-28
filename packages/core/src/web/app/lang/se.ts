@@ -94,6 +94,7 @@ const lang: ILang = {
       add_on: 'Tillägg',
       auto_feeder: 'Automatisk matning',
       auto_feeder_scale: 'Skala för automatisk matning',
+      auto_feeder_url: 'https://support.flux3dp.com/hc/en-us/articles/11688230498575',
       borderless_mode: 'Öppen botten',
       current_position: 'Nuvarande Position',
       disable: 'Inaktivera',

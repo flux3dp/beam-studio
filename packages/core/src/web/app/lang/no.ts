@@ -94,6 +94,7 @@ const lang: ILang = {
       add_on: 'Tillegg',
       auto_feeder: 'Automatisk mater',
       auto_feeder_scale: 'Skala for automatisk mater',
+      auto_feeder_url: 'https://support.flux3dp.com/hc/en-us/articles/11688230498575',
       borderless_mode: 'Åpen bunn',
       current_position: 'Gjeldende Posisjon',
       disable: 'Deaktiver',

@@ -94,6 +94,7 @@ const lang: ILang = {
       add_on: '擴充模組',
       auto_feeder: '自動送料',
       auto_feeder_scale: '自動送料倍率',
+      auto_feeder_url: 'https://support.flux3dp.com/hc/zh-tw/articles/11688230498575',
       borderless_mode: '開蓋模式',
       current_position: '當前位置',
       disable: '關閉',

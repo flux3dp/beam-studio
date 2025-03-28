@@ -94,6 +94,7 @@ const lang: ILang = {
       add_on: 'Doplňky',
       auto_feeder: 'Automatický podavač',
       auto_feeder_scale: 'Měřítko automatického podavače',
+      auto_feeder_url: 'https://support.flux3dp.com/hc/en-us/articles/11688230498575',
       borderless_mode: 'Otevřít spodní část',
       current_position: 'Aktuální pozice',
       disable: 'Zakázat',

@@ -94,6 +94,7 @@ const lang: ILang = {
       add_on: 'Add-on',
       auto_feeder: 'Pengumpan otomatis',
       auto_feeder_scale: 'Skala Pengumpan Otomatis',
+      auto_feeder_url: 'https://support.flux3dp.com/hc/en-us/articles/11688230498575',
       borderless_mode: 'Buka Bawah',
       current_position: 'Posisi Saat Ini',
       disable: 'Nonaktifkan',

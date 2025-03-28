@@ -94,6 +94,7 @@ const lang: ILang = {
       add_on: 'Dodatki',
       auto_feeder: 'Automatyczny podajnik',
       auto_feeder_scale: 'Skala automatyczny podajnik',
+      auto_feeder_url: 'https://support.flux3dp.com/hc/en-us/articles/11688230498575',
       borderless_mode: 'Otwarte dno',
       current_position: 'Aktualna Pozycja',
       disable: 'Wyłącz',

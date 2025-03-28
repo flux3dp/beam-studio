@@ -94,6 +94,7 @@ const lang: ILang = {
       add_on: 'アドオン',
       auto_feeder: 'オートフィーダー',
       auto_feeder_scale: 'オートフィーダースケール',
+      auto_feeder_url: 'https://support.flux3dp.com/hc/en-us/articles/11688230498575',
       borderless_mode: 'ボーダーレスモード',
       current_position: '現在の位置',
       disable: '無効',

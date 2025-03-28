@@ -94,6 +94,7 @@ const lang: ILang = {
       add_on: 'Add-ons',
       auto_feeder: 'Automatische voeder',
       auto_feeder_scale: 'Schaal voor automatische voeder',
+      auto_feeder_url: 'https://support.flux3dp.com/hc/en-us/articles/11688230498575',
       borderless_mode: 'Open onderzijde',
       current_position: 'Huidige Positie',
       disable: 'Uitschakelen',

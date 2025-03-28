@@ -94,6 +94,7 @@ const lang: ILang = {
       add_on: 'Πρόσθετες λειτουργίες',
       auto_feeder: 'Αυτόματος τροφοδότης',
       auto_feeder_scale: 'Κλίμακα αυτόματου τροφοδότη',
+      auto_feeder_url: 'https://support.flux3dp.com/hc/en-us/articles/11688230498575',
       borderless_mode: 'Ανοιχτό κάτω μέρος',
       current_position: 'Τρέχουσα Θέση',
       disable: 'Απενεργοποίηση',
