@@ -120,6 +120,7 @@ test('test beambox-preference', () => {
     'rotary-y': null,
     rotary_mode: false,
     rotary_y_coord: 5,
+    'segmented-engraving': true,
     should_remind_calibrate_camera: true,
     show_grids: true,
     show_guides: false,

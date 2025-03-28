@@ -3,20 +3,6 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 import { create } from 'zustand';
 
-jest.mock('@core/helpers/useI18n', () => () => ({
-  settings: {
-    bottom_up: 'bottom_up',
-    fast_gradient: 'Speed Optimization',
-    groups: {
-      engraving: 'Rastering (Scanning)',
-    },
-    help_center_urls: {
-      fast_gradient: 'https://support.flux3dp.com/hc/en-us/articles/360004496235',
-    },
-    top_down: 'top_down',
-  },
-}));
-
 const mockGetPreference = jest.fn();
 const mockSetPreference = jest.fn();
 
@@ -71,9 +57,10 @@ test('should render correctly', () => {
     />,
   );
 
-  expect(mockGetPreference).toHaveBeenCalledTimes(4);
+  expect(mockGetPreference).toHaveBeenCalledTimes(5);
   expect(mockGetPreference).toHaveBeenNthCalledWith(1, 'fast_gradient');
   expect(mockGetPreference).toHaveBeenNthCalledWith(2, 'reverse-engraving');
+  expect(mockGetPreference).toHaveBeenNthCalledWith(3, 'segmented-engraving');
   expect(container).toMatchSnapshot();
 
   const controls = container.querySelectorAll('.select-control');
@@ -86,4 +73,9 @@ test('should render correctly', () => {
 
   expect(mockSetPreference).toHaveBeenCalledTimes(2);
   expect(mockSetPreference).toHaveBeenNthCalledWith(2, 'reverse-engraving', false);
+
+  fireEvent.change(controls[2], { target: { value: false } });
+
+  expect(mockSetPreference).toHaveBeenCalledTimes(3);
+  expect(mockSetPreference).toHaveBeenNthCalledWith(3, 'segmented-engraving', false);
 });
