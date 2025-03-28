@@ -461,7 +461,7 @@ const toggleUnsavedChangedDialog = async (): Promise<boolean> =>
     }
   });
 
-export const exportUvExportAsPdf = async (): Promise<void> => {
+export const exportUvPrintAsPdf = async (): Promise<void> => {
   svgCanvas.clearSelection();
   svgCanvas.removeUnusedDefs();
 
@@ -476,7 +476,7 @@ export default {
   exportAsBVG,
   exportAsImage,
   exportAsSVG,
-  exportUvExportAsPdf,
+  exportUvPrintAsPdf,
   saveAsFile,
   saveFile,
   saveToCloud,

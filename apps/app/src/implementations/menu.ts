@@ -9,6 +9,7 @@ import communicator from '@core/implementations/communicator';
 import {
   changeMenuItemChecked,
   changeMenuItemEnabled,
+  changeMenuItemVisible,
   changeVisibilityByIsBb2,
   changeVisibilityByIsPromark,
 } from '../electron-menubar-helper';
@@ -53,6 +54,7 @@ class Menu extends AbstractMenu {
     changeMenuItemChecked(['SHOW_LAYER_COLOR'], BeamboxPreference.read('use_layer_color'));
     changeMenuItemChecked(['ANTI_ALIASING'], BeamboxPreference.read('anti-aliasing'));
     changeMenuItemChecked(['AUTO_ALIGN'], BeamboxPreference.read('auto_align'));
+    changeMenuItemVisible(['EXPORT_UV_PRINT'], BeamboxPreference.read('enable-uv-print-file'));
 
     // model related
     canvasEvent.on('model-changed', (model) => {
@@ -66,8 +68,8 @@ class Menu extends AbstractMenu {
     });
 
     // layer panel related
-    layerPanelEventEmitter.on('updateUvExportStatus', (isUvExportable: boolean) => {
-      changeMenuItemEnabled(['EXPORT_UV_EXPORT'], isUvExportable);
+    layerPanelEventEmitter.on('updateUvPrintStatus', (isUvPrintable: boolean) => {
+      changeMenuItemEnabled(['EXPORT_UV_PRINT'], isUvPrintable);
       // force re-render menu
       ElectronMenu.setApplicationMenu(ElectronMenu.getApplicationMenu());
     });

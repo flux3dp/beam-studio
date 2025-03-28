@@ -9,11 +9,11 @@ export enum LayerModule {
   PRINTER_4C = 6, // temp
   UNKNOWN = 9,
   LASER_UNIVERSAL = 15,
-  UV_EXPORT = -1,
+  UV_PRINT = -1,
 }
 /* eslint-enable perfectionist/sort-enums */
 
 export const printingModules = new Set([LayerModule.PRINTER, LayerModule.PRINTER_4C]);
 
-export const fullColorModulesArray = [LayerModule.PRINTER, LayerModule.PRINTER_4C, LayerModule.UV_EXPORT] as const;
+export const fullColorModulesArray = [LayerModule.PRINTER, LayerModule.PRINTER_4C, LayerModule.UV_PRINT] as const;
 export const fullColorModules = new Set(fullColorModulesArray);

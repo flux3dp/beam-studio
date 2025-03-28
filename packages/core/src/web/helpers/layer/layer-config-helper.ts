@@ -381,8 +381,8 @@ export const getMultiSelectData = <T extends ConfigKey>(
         break;
       } else if (key === 'module') {
         // Always use the UV module if there is any
-        if ([layerValue, value].includes(LayerModule.UV_EXPORT as any)) {
-          value = LayerModule.UV_EXPORT as ConfigKeyTypeMap[T];
+        if ([layerValue, value].includes(LayerModule.UV_PRINT as any)) {
+          value = LayerModule.UV_PRINT as ConfigKeyTypeMap[T];
         }
 
         break;

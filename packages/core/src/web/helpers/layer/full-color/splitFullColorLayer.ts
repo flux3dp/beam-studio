@@ -49,7 +49,7 @@ const splitFullColorLayer = async (
   const layerModule = getData(layer, 'module');
   const split = getData(layer, 'split');
 
-  if (!printingModules.has(layerModule) || !fullColor || ref || split || layerModule === LayerModule.UV_EXPORT) {
+  if (!printingModules.has(layerModule) || !fullColor || ref || split || layerModule === LayerModule.UV_PRINT) {
     return null;
   }
 

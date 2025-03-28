@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { MenuDivider, MenuItem, SubMenu, Menu as TopBarMenu } from '@szhsin/react-menu';
 
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
 import { menuItems } from '@core/app/constants/menuItems';
 import Discover from '@core/helpers/api/discover';
@@ -283,7 +284,9 @@ export default function Menu({ email }: Props): React.JSX.Element {
           <MenuItem onClick={() => callback('EXPORT_PNG')}>{menuCms.export_PNG}</MenuItem>
           <MenuItem onClick={() => callback('EXPORT_JPG')}>{menuCms.export_JPG}</MenuItem>
           <MenuItem onClick={() => callback('EXPORT_FLUX_TASK')}>{hotkey('export_flux_task')}</MenuItem>
-          <MenuItem onClick={() => callback('EXPORT_UV_EXPORT')}>{'UV PDF'}</MenuItem>
+          {beamboxPreference.read('enable-uv-print-file') && (
+            <MenuItem onClick={() => callback('EXPORT_UV_PRINT')}>{menuCms.export_UV_print}</MenuItem>
+          )}
         </SubMenu>
         <MenuDivider />
         <MenuItem onClick={() => callback('PREFERENCE')}>{hotkey('preferences')}</MenuItem>

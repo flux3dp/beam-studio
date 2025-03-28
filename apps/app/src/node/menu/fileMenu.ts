@@ -3,6 +3,7 @@ import { ipcMain, Menu, MenuItem } from 'electron';
 import ElectronStore from 'electron-store';
 
 import i18n from '@core/helpers/i18n';
+import storage from '@core/implementations/storage';
 import type { ILang } from '@core/interfaces/ILang';
 
 import { getFocusedView, getTabManager } from '../helpers/tabHelper';
@@ -143,7 +144,11 @@ export function buildFileMenu(
         { click: callback, id: 'EXPORT_SVG', label: r.export_SVG },
         { click: callback, id: 'EXPORT_PNG', label: 'PNG' },
         { click: callback, id: 'EXPORT_JPG', label: 'JPG' },
-        { click: callback, id: 'EXPORT_UV_EXPORT', label: 'UV PDF' },
+        storage.get('beambox-preference')['enable-uv-print-file'] && {
+          click: callback,
+          id: 'EXPORT_UV_PRINT',
+          label: r.export_UV_print,
+        },
         {
           accelerator: `${fnKey}+E`,
           click: callback,

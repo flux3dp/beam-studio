@@ -49,11 +49,11 @@ export const LayerPanelContextProvider = ({ children }: Props): React.JSX.Elemen
         return;
       }
 
-      const isUvExportable = newLayers.every(
-        (layerName) => getData(getLayerElementByName(layerName), 'module') === LayerModule.UV_EXPORT,
+      const isUvPrintable = newLayers.every(
+        (layerName) => getData(getLayerElementByName(layerName), 'module') === LayerModule.UV_PRINT,
       );
 
-      layerPanelEventEmitter.emit('updateUvExportStatus', isUvExportable);
+      layerPanelEventEmitter.emit('updateUvPrintStatus', isUvPrintable);
 
       setSelectedLayers(newLayers);
     },
