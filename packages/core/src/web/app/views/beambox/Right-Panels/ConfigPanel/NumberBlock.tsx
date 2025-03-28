@@ -84,7 +84,7 @@ const NumberBlock = ({
     return { isInch: true, unit: unit.replace('mm', 'in') };
   }, [unit, forceUsePropsUnit]);
   const {
-    [key]: { hasMultiValue, value },
+    [key]: { hasMultiValue, value = 0 },
   } = state;
   const displayPrecision = useMemo(
     () => (isInch ? (precisionInch ?? precision) : precision),

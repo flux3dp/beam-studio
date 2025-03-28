@@ -186,9 +186,14 @@ export class AddOnBoundaryDrawer {
     const { height, model, width } = workareaManager;
     const { dpmm } = constant;
 
+    console.log('yaya');
+
     if (module !== LayerModule.UV_EXPORT || promarkModels.has(model)) {
       this.boundary.uvExport.setAttribute('d', '');
       this.container.setAttribute('display', 'none');
+
+      console.log(module, model);
+      console.log('wtf');
 
       return;
     }
@@ -199,6 +204,7 @@ export class AddOnBoundaryDrawer {
     const x = 297 * dpmm;
     const y = 210 * dpmm;
 
+    console.log('haha');
     this.boundary.uvExport.setAttribute('d', `M${width},${height}H0,V${y}H${x}V0H${width}V${height}`);
   };
 

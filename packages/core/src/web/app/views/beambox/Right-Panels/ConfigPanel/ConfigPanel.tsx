@@ -126,7 +126,9 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
   useEffect(() => {
     const canvasEvents = eventEmitterFactory.createEventEmitter('canvas');
 
-    canvasEvents.emit('select-module-changed', state.module.value);
+    if (state.module.value !== undefined) {
+      canvasEvents.emit('select-module-changed', state.module.value);
+    }
   }, [state.module.value, workarea]);
 
   const initState = useCallback((layers: string[] = LayerPanelController.getSelectedLayers()) => {
