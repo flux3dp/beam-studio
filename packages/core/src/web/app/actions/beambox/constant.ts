@@ -30,6 +30,8 @@ export enum PreviewSpeedLevel {
   SLOW = 1,
 }
 
+export const dpmm = 10;
+
 export default {
   adorModels: adorModelsArray,
   allowedWorkarea: {
@@ -86,7 +88,7 @@ export default {
     medium: 250,
     ultra: 1000,
   },
-  dpmm: 10,
+  dpmm,
   fcodeV2Models: new Set([...adorModelsArray, ...bb2ModelsArray, ...hexaRfModelsArray]),
   highPowerModels: ['fhx2rf3', 'fhx2rf6', 'fhexa1', 'ado1', 'flv1', 'fpm1'],
 };

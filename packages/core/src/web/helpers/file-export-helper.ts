@@ -39,21 +39,9 @@ const switchSymbolWrapper = <T>(fn: () => T): T => {
   SymbolMaker.switchImageSymbolForAll(false);
 
   try {
-    const result = fn();
-
-    if (result instanceof Promise) {
-      // If the result is a Promise, handle it asynchronously
-      return result.finally(() => {
-        SymbolMaker.switchImageSymbolForAll(true);
-      }) as T;
-    }
-
-    // If the result is not a Promise, handle it synchronously
-    return result;
+    return fn();
   } finally {
-    if (!(fn() instanceof Promise)) {
-      SymbolMaker.switchImageSymbolForAll(true);
-    }
+    SymbolMaker.switchImageSymbolForAll(true);
   }
 };
 
@@ -324,7 +312,7 @@ const checkNounProjectElements = () => {
   });
 };
 
-const removeNPElementsWrapper = <T = string>(fn: () => T) => {
+const removeNPElementsWrapper = <T>(fn: () => T) => {
   const svgContent = document.getElementById('svgcontent')!;
   const npElements = svgContent.querySelectorAll('[data-np="1"]');
   const removedElements = Array.of<{ elem: Element; nextSibling: Element; parentNode: Element }>();
@@ -392,12 +380,14 @@ const exportAsSVG = async (): Promise<void> => {
   svgCanvas.clearSelection();
 
   const getContent = () => {
-    document.querySelectorAll('g.layer').forEach((layer) => layer.removeAttribute('clip-path'));
+    const allLayers = document.querySelectorAll('g.layer');
+
+    allLayers.forEach((layer) => layer.removeAttribute('clip-path'));
     svgCanvas.removeUnusedDefs();
 
     const res = removeNPElementsWrapper(() => switchSymbolWrapper(() => svgCanvas.getSvgString({ unit: 'mm' })));
 
-    document.querySelectorAll('g.layer').forEach((layer) => layer.setAttribute('clip-path', 'url(#scene_mask)'));
+    allLayers.forEach((layer) => layer.setAttribute('clip-path', 'url(#scene_mask)'));
 
     return res;
   };
@@ -476,7 +466,7 @@ export const exportUvExportAsPdf = async (): Promise<void> => {
   svgCanvas.removeUnusedDefs();
 
   const layers = pipe(LayerPanelController.getSelectedLayers(), map(getLayerElementByName)) as SVGGElement[];
-  const base64 = await switchSymbolWrapper(() => layersToA4Base64(layers, { dpi: 300, orientation: 'portrait' }));
+  const base64 = await switchSymbolWrapper(() => layersToA4Base64(layers));
   const defaultFileName = getDefaultFileName();
 
   new jsPDF().addImage(base64, 'PNG', 0, 0, 210, 297).save(defaultFileName);

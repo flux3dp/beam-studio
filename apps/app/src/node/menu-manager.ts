@@ -465,7 +465,7 @@ class MenuManager extends EventEmitter {
       menuItems.push(buildOSXAppMenu(callback));
     }
 
-    menuItems.push(buildFileMenu(fnKey, r, callback));
+    menuItems.push(buildFileMenu(fnKey, r, callback, this.isDevMode));
     menuItems.push({
       id: '_edit',
       label: r.edit,

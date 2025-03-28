@@ -2,7 +2,7 @@ import React from 'react';
 import { create } from 'zustand';
 import { fireEvent, render } from '@testing-library/react';
 
-import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import moduleOffsets from '@core/app/constants/layer-module/module-offsets';
 
 jest.mock(

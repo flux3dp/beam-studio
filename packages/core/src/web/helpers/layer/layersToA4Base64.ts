@@ -1,8 +1,8 @@
 import { map, pipe, prop } from 'remeda';
 
-import constant from '@core/app/actions/beambox/constant';
-import findDefs from '@core/app/svgedit/utils/findDef';
-import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
+import { dpmm } from '@core/app/actions/beambox/constant';
+import { findDefs } from '@core/app/svgedit/utils/findDef';
+import { svgStringToCanvas } from '@core/helpers/image/svgStringToCanvas';
 
 type Options = {
   dpi?: number;
@@ -12,7 +12,7 @@ type Options = {
 export const layersToA4Base64 = async (layers: SVGGElement[], options?: Options): Promise<string> => {
   const { dpi = 300, orientation = 'portrait' } = options || {};
   const { height, width } = orientation === 'portrait' ? { height: 2970, width: 2100 } : { height: 2100, width: 2970 };
-  const ratio = dpi / (constant.dpmm * 25.4);
+  const ratio = dpi / (dpmm * 25.4);
   const canvasWidth = Math.round(width * ratio);
   const canvasHeight = Math.round(height * ratio);
   const svgDefs = findDefs();
@@ -40,7 +40,7 @@ export const layersToA4Base64 = async (layers: SVGGElement[], options?: Options)
 
   const canvas = await pipe(
     layers,
-    map(({ cloneNode }) => cloneNode(true) as SVGGElement),
+    map((layer) => layer?.cloneNode(true) as SVGGElement),
     getCanvas,
   );
 
