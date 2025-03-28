@@ -249,9 +249,13 @@ const parseSvg = (
     });
     defChildren = defChildren.concat(styleNodes);
 
-    const layerNodes = Array.from(svg.childNodes).filter(
-      (node: Element) => !['defs', 'metadata', 'sodipodi:namedview', 'style', 'title'].includes(node.tagName),
-    );
+    const layerNodes = Array.from(svg.childNodes).filter((node: Element) => {
+      if (['defs', 'metadata', 'sodipodi:namedview', 'style', 'title'].includes(node.tagName)) return false;
+
+      if (node.tagName === 'g' && node.childNodes.length === 0) return false;
+
+      return true;
+    });
 
     if (layerNodes.length === 0) return [];
 
@@ -306,7 +310,10 @@ const parseSvg = (
       break;
   }
 
-  return null;
+  return {
+    confirmedType: 'unknown',
+    symbols: [],
+  };
 };
 
 export default parseSvg;
