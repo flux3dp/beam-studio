@@ -144,7 +144,7 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   'rotary-mirror': false,
   'rotary-overlap': 0,
   'rotary-scale': 1,
-  'rotary-split': 5,
+  'rotary-split': 0.5,
   'rotary-type': RotaryType.Roller,
   'rotary-y': null,
   rotary_mode: false,
