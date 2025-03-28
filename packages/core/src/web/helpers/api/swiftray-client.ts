@@ -2,7 +2,7 @@
 import { EventEmitter } from 'eventemitter3';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import { promarkModels } from '@core/app/actions/beambox/constant';
+import constant, { promarkModels } from '@core/app/actions/beambox/constant';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
@@ -347,8 +347,8 @@ class SwiftrayClient extends EventEmitter {
     let width: number;
 
     if (convertOptions.useActualWorkarea) {
-      height = workareaManager.height;
-      width = workareaManager.width;
+      height = workareaManager.height / constant.dpmm;
+      width = workareaManager.width / constant.dpmm;
     } else {
       const workarea = getWorkarea(convertOptions.model);
 
