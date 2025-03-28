@@ -11,7 +11,7 @@ import Print from './print.svg';
 import Ref from './ref.svg';
 import Rename from './rename.svg';
 import Unlock from './unlock.svg';
-import UvExport from './uvExport.svg';
+import UvPrint from './uvPrint.svg';
 import Visible from './visible.svg';
 
 export default {
@@ -28,6 +28,6 @@ export default {
   Ref,
   Rename,
   Unlock,
-  UvExport,
+  UvPrint,
   Visible,
 };

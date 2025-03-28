@@ -755,7 +755,7 @@ export interface ILang {
         objects: string;
         path_edit: string;
       };
-      uv_export_block: {
+      uv_print_block: {
         title: string;
       };
     };
@@ -1350,6 +1350,7 @@ export interface ILang {
     };
     printing: string;
     unknown: string;
+    uv_print: string;
   };
   machine_status: {
     '-17': string;
@@ -1713,6 +1714,7 @@ export interface ILang {
     done: string;
     enable_custom_backlash: string;
     enable_low_speed: string;
+    enable_uv_print_file: string;
     enabled: string;
     engraving_direction: string;
     fast_gradient: string;
@@ -1877,6 +1879,7 @@ export interface ILang {
       export_PNG: string;
       export_SVG: string;
       export_to: string;
+      export_UV_print: string;
       file: string;
       fit_to_window: string;
       follow_us: string;

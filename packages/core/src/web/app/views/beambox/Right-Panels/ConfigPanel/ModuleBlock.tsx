@@ -3,7 +3,8 @@ import React, { memo, useContext, useEffect } from 'react';
 import { pipe } from 'remeda';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import { modelsWithModules, modelsWithoutUvExport } from '@core/app/actions/beambox/constant';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import { modelsWithModules, modelsWithoutUvPrint } from '@core/app/actions/beambox/constant';
 import moduleBoundaryDrawer from '@core/app/actions/canvas/module-boundary-drawer';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import alertConstants from '@core/app/constants/alert-constants';
@@ -55,7 +56,7 @@ const ModuleBlock = (): React.ReactNode => {
     };
   }, [workarea, value]);
 
-  if (modelsWithoutUvExport.has(workarea)) {
+  if (modelsWithoutUvPrint.has(workarea)) {
     return null;
   }
 
@@ -130,7 +131,7 @@ const ModuleBlock = (): React.ReactNode => {
 
       writeDataLayer(layer, 'module', newVal, { batchCmd });
 
-      if (newVal === LayerModule.UV_EXPORT) writeDataLayer(layer, 'repeat', 0, { batchCmd });
+      if (newVal === LayerModule.UV_PRINT) writeDataLayer(layer, 'repeat', 0, { batchCmd });
       else if (repeat === 0) writeDataLayer(layer, 'repeat', 1, { batchCmd });
 
       if (!newPreset) {
@@ -165,7 +166,9 @@ const ModuleBlock = (): React.ReactNode => {
     undoManager.addCommandToHistory(batchCmd);
   };
 
-  const commonOptions = [{ label: 'UV Export', value: LayerModule.UV_EXPORT }];
+  const commonOptions = [
+    beamboxPreference.read('enable-uv-print-file') && { label: tModule.uv_print, value: LayerModule.UV_PRINT },
+  ];
   const defaultModelsOptions = [{ label: 'Laser', value: LayerModule.LASER_UNIVERSAL }];
   const adorOptions = [
     { label: tModule.laser_10w_diode, value: LayerModule.LASER_10W_DIODE },

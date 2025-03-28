@@ -193,7 +193,7 @@ export default {
   EXPORT_JPG: (): Promise<void> => FileExportHelper.exportAsImage('jpg'),
   EXPORT_PNG: (): Promise<void> => FileExportHelper.exportAsImage('png'),
   EXPORT_SVG: (): Promise<void> => FileExportHelper.exportAsSVG(),
-  EXPORT_UV_EXPORT: (): Promise<void> => FileExportHelper.exportUvExportAsPdf(),
+  EXPORT_UV_PRINT: (): Promise<void> => FileExportHelper.exportUvPrintAsPdf(),
   FITS_TO_WINDOW: (): void => workareaManager.resetView(),
   FOLLOW_US: (): void => Dialog.showSocialMedia(),
   GROUP: () => svgCanvas.groupSelectedElements(),

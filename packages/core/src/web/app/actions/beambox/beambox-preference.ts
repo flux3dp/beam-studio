@@ -34,6 +34,7 @@ export type BeamboxPreference = {
   'enable-custom-preview-height': boolean;
   'enable-diode'?: boolean;
   'enable-job-origin': boolean;
+  'enable-uv-print-file': boolean;
   enable_mask: boolean;
   engrave_dpi: 'high' | 'low' | 'medium';
   'extend-rotary-workarea': boolean;
@@ -81,7 +82,7 @@ export type BeamboxPreference = {
   show_rulers: boolean;
   simplify_clipper_path: boolean;
   use_layer_color: boolean;
-  vector_speed_constraint: boolean;
+  vector_speed_constraint?: boolean;
   workarea: WorkAreaModel;
   zoom_with_window: boolean;
 };
@@ -112,6 +113,7 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   'enable-custom-backlash': false,
   'enable-custom-preview-height': false,
   'enable-job-origin': false,
+  'enable-uv-print-file': false,
   enable_mask: false,
   engrave_dpi: 'medium',
   'extend-rotary-workarea': false,
@@ -175,7 +177,7 @@ class BeamboxPreferenceClass {
 
     if (oldValue !== undefined) {
       preference['vector_speed_constraint'] = oldValue as boolean;
-      delete preference['vector_speed_contraint' as BeamboxPreferenceKey];
+      delete preference['vector_speed_constraint'];
     }
 
     // to migrate preference of old version

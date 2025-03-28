@@ -18,7 +18,7 @@ export class AddOnBoundaryDrawer {
     autoFeeder: SVGPathElement;
     openBottom: SVGRectElement;
     passThrough: SVGPathElement;
-    uvExport: SVGPathElement;
+    uvPrint: SVGPathElement;
   };
 
   private constructor() {
@@ -28,7 +28,7 @@ export class AddOnBoundaryDrawer {
       autoFeeder: this.generateElement('path'),
       openBottom: this.generateElement('rect', 'open-bottom-boundary'),
       passThrough: this.generateElement('path'),
-      uvExport: this.generateElement('path'),
+      uvPrint: this.generateElement('path'),
     };
   }
 
@@ -186,14 +186,9 @@ export class AddOnBoundaryDrawer {
     const { height, model, width } = workareaManager;
     const { dpmm } = constant;
 
-    console.log('yaya');
-
-    if (module !== LayerModule.UV_EXPORT || promarkModels.has(model)) {
-      this.boundary.uvExport.setAttribute('d', '');
+    if (module !== LayerModule.UV_PRINT || promarkModels.has(model)) {
+      this.boundary.uvPrint.setAttribute('d', '');
       this.container.setAttribute('display', 'none');
-
-      console.log(module, model);
-      console.log('wtf');
 
       return;
     }
@@ -204,13 +199,11 @@ export class AddOnBoundaryDrawer {
     const x = 297 * dpmm;
     const y = 210 * dpmm;
 
-    console.log('haha');
-    this.boundary.uvExport.setAttribute('d', `M${width},${height}H0,V${y}H${x}V0H${width}V${height}`);
+    this.boundary.uvPrint.setAttribute('d', `M${width},${height}H0,V${y}H${x}V0H${width}V${height}`);
   };
 
   update = (): void => {
     this.appendToCanvasBackground();
-
     this.updateContainerSize();
     this.updateAutoFeederPath();
     this.updatePassThroughPath();

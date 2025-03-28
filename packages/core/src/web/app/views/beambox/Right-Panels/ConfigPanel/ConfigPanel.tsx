@@ -7,7 +7,7 @@ import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import { modelsWithoutUvExport, promarkModels } from '@core/app/actions/beambox/constant';
+import { modelsWithoutUvPrint, promarkModels } from '@core/app/actions/beambox/constant';
 import diodeBoundaryDrawer from '@core/app/actions/canvas/diode-boundary-drawer';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import dialogCaller from '@core/app/actions/dialog-caller';
@@ -306,7 +306,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
             {sprintf(lang.preset_setting, displayName)}
           </div>
           <ModuleBlock />
-          {module.value !== LayerModule.UV_EXPORT && (
+          {module.value !== LayerModule.UV_PRINT && (
             <>
               <div className={styles.container} id="layer-parameters">
                 <div>
@@ -338,14 +338,14 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     if (UIType === 'panel-item') {
       return (
         <>
-          {!modelsWithoutUvExport.has(workarea) && (
+          {!modelsWithoutUvPrint.has(workarea) && (
             <div className={styles['item-group']}>
               <ModuleBlock />
               {isDevMode && isPrintingModule && <UVBlock />}
               <ObjectPanelItem.Divider />
             </div>
           )}
-          {module.value !== LayerModule.UV_EXPORT && (
+          {module.value !== LayerModule.UV_PRINT && (
             <div className={styles['item-group']}>
               <ObjectPanelItem.Select
                 id="laser-config-dropdown"
@@ -450,7 +450,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
               </Select>
             </div>
           )}
-          {module.value !== LayerModule.UV_EXPORT && (
+          {module.value !== LayerModule.UV_PRINT && (
             <>
               <div className={styles.params}>
                 <ConfigProvider theme={{ components: { Select: { borderRadius: 100, controlHeight: 30 } } }}>

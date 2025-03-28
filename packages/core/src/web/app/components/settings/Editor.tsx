@@ -227,6 +227,13 @@ function Editor({ options }: Props): React.JSX.Element {
           options={options}
         />
       )}
+      <SettingSelect
+        defaultValue={getPreference('enable-uv-print-file')}
+        id="set-enable-uv-print-file"
+        label={lang.settings.enable_uv_print_file}
+        onChange={(e) => setPreference('enable-uv-print-file', e)}
+        options={options}
+      />
     </>
   );
 }
