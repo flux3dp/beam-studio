@@ -294,6 +294,10 @@ export const getExportOpt = (
     config.loop_compensation = loopCompensation;
   }
 
+  if (rotaryMode || autoFeeder || !BeamboxPreference.read('segmented-engraving')) {
+    config.segment = false;
+  }
+
   if (args) {
     (Object.keys(config) as Array<keyof IFcodeConfig>).forEach((key) => {
       if (['curve_engraving', 'loop_compensation', 'z_offset'].includes(key)) {

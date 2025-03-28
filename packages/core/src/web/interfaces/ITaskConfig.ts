@@ -56,6 +56,7 @@ export type TFcodeOptionalConfig = Partial<{
   rotary_split?: number; // rotary split height, mm
   rotary_y_ratio: number;
   rotary_z_motion?: boolean; // whether to move z axis in rotary task to avoid collision, default is true in backend
+  segment?: boolean; // whether to split bitmap into segments, default is true in backend
   spin: number; // rotary position, px
   ts: number; // travel speed
   vsc: boolean; // with vector speed constraint, used for ghost 2.3.4 and before

@@ -1745,6 +1745,7 @@ export interface ILang {
       loop_compensation: string;
       mask: string;
       reverse_engraving: string;
+      segmented_engraving: string;
       simplify_clipper_path: string;
       vector_speed_constraint: string;
     };
@@ -1774,6 +1775,7 @@ export interface ILang {
     remove_default_machine_button: string;
     reset: string;
     reset_now: string;
+    segmented_engraving: string;
     share_with_flux: string;
     simplify_clipper_path: string;
     single_object: string;

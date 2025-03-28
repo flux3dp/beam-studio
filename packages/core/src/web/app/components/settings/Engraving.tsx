@@ -40,6 +40,14 @@ function Engraving({ options }: Props): React.JSX.Element {
         onChange={(e) => setPreference('reverse-engraving', e)}
         options={reverseEngravingOptions}
       />
+      <SettingSelect
+        defaultValue={getPreference('segmented-engraving')}
+        id="set-segmented-engraving"
+        label={lang.settings.segmented_engraving}
+        onChange={(e) => setPreference('segmented-engraving', e)}
+        options={options}
+        url={lang.settings.help_center_urls.segmented_engraving}
+      />
       {isDev() && (
         <>
           <SettingFormItem id="set-hardware-acceleration" label="Padding Accel">

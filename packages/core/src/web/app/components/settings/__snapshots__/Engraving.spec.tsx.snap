@@ -25,12 +25,27 @@ exports[`should render correctly 1`] = `
     mock-select-control id:
     set-reverse-engraving
     label:
+    Direction
     url:
     options:
-    [{"label":"bottom_up","value":true},{"label":"top_down","value":false}]
+    [{"label":"Bottom-up","value":true},{"label":"Top-down","value":false}]
     <input
       class="select-control"
       id="set-reverse-engraving"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-segmented-engraving
+    label:
+    Segmented Engraving
+    url:
+    https://support.flux3dp.com/hc/en-us/articles/12306366019215
+    options:
+    [{"label":"On","value":true},{"label":"Off","value":false}]
+    <input
+      class="select-control"
+      id="set-segmented-engraving"
     />
   </div>
   <div>
