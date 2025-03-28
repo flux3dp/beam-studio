@@ -286,7 +286,19 @@ const mouseDown = async (evt: MouseEvent) => {
           }
 
           // clear layer selection
-          if (layerSelectable && !rightClick && !evt.shiftKey) LayerPanelController.setSelectedLayers([]);
+          if (layerSelectable && !rightClick && !evt.shiftKey) {
+            if (selectedElements.length && currentMode === 'select') {
+              const targetLayer = LayerHelper.getObjectLayer(selectedElements[0]);
+              const currentLayer = svgCanvas.getCurrentDrawing().getCurrentLayer();
+
+              if (targetLayer && !selectedElements.includes(targetLayer.elem) && targetLayer.elem !== currentLayer) {
+                svgCanvas.setCurrentLayer(targetLayer.title);
+                LayerPanelController.setSelectedLayers([targetLayer.title]);
+              } else {
+                LayerPanelController.setSelectedLayers([]);
+              }
+            }
+          }
         } else if (mouseTarget === svgRoot && !rightClick) {
           // Mouse down on svg root
           svgCanvas.clearSelection();
@@ -1157,6 +1169,16 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
 
       cleanUpRubberBox();
       drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
+
+      if (selectedElements.length) {
+        const targetLayer = LayerHelper.getObjectLayer(selectedElements[0]);
+        const currentLayer = svgCanvas.getCurrentDrawing().getCurrentLayer();
+
+        if (targetLayer && !selectedElements.includes(targetLayer.elem) && targetLayer.elem !== currentLayer) {
+          svgCanvas.setCurrentLayer(targetLayer.title);
+          LayerPanelController.setSelectedLayers([targetLayer.title]);
+        }
+      }
     // eslint-disable-next-line no-fallthrough
     case 'select':
       if (selectedElements[0]) {
@@ -1197,14 +1219,6 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
           }
 
           svgCanvas.selectorManager.requestSelector(selected).show(true);
-
-          const targetLayer = LayerHelper.getObjectLayer(selected);
-          const currentLayer = svgCanvas.getCurrentDrawing().getCurrentLayer();
-
-          if (targetLayer && !selectedElements.includes(targetLayer.elem) && targetLayer.elem !== currentLayer) {
-            svgCanvas.setCurrentLayer(targetLayer.title);
-            LayerPanelController.setSelectedLayers([targetLayer.title]);
-          }
         }
 
         // always recalculate dimensions to strip off stray identity transforms
