@@ -5083,7 +5083,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
   this.tempGroupSelectedElements = function () {
     if (selectedElements.length <= 1) {
-      return;
+      return selectedElements;
     }
 
     const hasAlreadyTempGroup = selectedElements[0].getAttribute('data-tempgroup');
