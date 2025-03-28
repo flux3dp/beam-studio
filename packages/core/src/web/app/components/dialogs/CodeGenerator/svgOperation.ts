@@ -206,6 +206,9 @@ function handleQrCodeInvertColor(svgElement: SVGElement): string {
 }
 
 export async function importQrCodeSvgElement(svgElement: SVGElement, isInvert = false): Promise<void> {
+  // Remove transparent background in normal QR code
+  svgElement.querySelector('[fill="transparent"]')?.remove();
+
   const svgString = isInvert ? handleQrCodeInvertColor(svgElement) : new XMLSerializer().serializeToString(svgElement);
 
   await importSvgString(svgString, { type: 'layer' });
