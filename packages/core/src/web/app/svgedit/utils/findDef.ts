@@ -1,6 +1,6 @@
 import NS from '@core/app/constants/namespaces';
 
-const findDefs = (): SVGDefsElement => {
+export const findDefs = (): SVGDefsElement => {
   let svgElement = document.getElementById('svg_defs') as unknown as SVGSVGElement;
 
   if (!svgElement) {

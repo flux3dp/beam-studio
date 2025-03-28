@@ -2,7 +2,7 @@ import React from 'react';
 
 import { act, fireEvent, render, waitFor } from '@testing-library/react';
 
-import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
 
 import LayerContextMenu from './LayerContextMenu';

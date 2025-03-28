@@ -78,7 +78,7 @@ exports[`should render correctly in mobile polygon desktop version 1`] = `
       class="adm-divider adm-divider-vertical adm-divider-center divider"
     />
     <div>
-      This is dummy InFillBlock
+      This is dummy ColorPanel
     </div>
     <div>
       This is dummy PolygonOptions
@@ -96,7 +96,7 @@ exports[`should render correctly in mobile polygon web version 1`] = `
       class="adm-divider adm-divider-vertical adm-divider-center divider"
     />
     <div>
-      This is dummy InFillBlock
+      This is dummy ColorPanel
     </div>
     <div>
       This is dummy PolygonOptions
@@ -114,7 +114,7 @@ exports[`should render correctly in mobile rect 1`] = `
       class="adm-divider adm-divider-vertical adm-divider-center divider"
     />
     <div>
-      This is dummy InFillBlock
+      This is dummy ColorPanel
     </div>
     <div>
       This is dummy RectOptions
@@ -137,7 +137,7 @@ exports[`should render correctly in mobile text 1`] = `
       class="adm-divider adm-divider-vertical adm-divider-center divider"
     />
     <div>
-      This is dummy InFillBlock
+      This is dummy ColorPanel
     </div>
     <div>
       This is dummy TextOptions
@@ -189,7 +189,7 @@ exports[`should render correctly polygon desktop version 1`] = `
       This is dummy PolygonOptions
     </div>
     <div>
-      This is dummy InFillBlock
+      This is dummy ColorPanel
     </div>
   </div>
 </div>
@@ -209,7 +209,7 @@ exports[`should render correctly polygon web version 1`] = `
       This is dummy PolygonOptions
     </div>
     <div>
-      This is dummy InFillBlock
+      This is dummy ColorPanel
     </div>
   </div>
 </div>
@@ -234,7 +234,7 @@ exports[`should render correctly rect 1`] = `
       </button>
     </div>
     <div>
-      This is dummy InFillBlock
+      This is dummy ColorPanel
     </div>
   </div>
 </div>
@@ -287,6 +287,9 @@ exports[`should render correctly text 1`] = `
       >
         updateObjectPanel
       </button>
+    </div>
+    <div>
+      This is dummy ColorPanel
     </div>
   </div>
 </div>

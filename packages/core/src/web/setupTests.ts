@@ -97,3 +97,5 @@ expect.addSnapshotSerializer({
   print: (val) => `"${(val as string).replace(/ transform-origin: NaNpx NaNpx;/g, '')}"`,
   test: (val) => typeof val === 'string' && !!val.match(/ transform-origin: NaNpx NaNpx;/g),
 });
+
+global.structuredClone = (v) => JSON.parse(JSON.stringify(v));

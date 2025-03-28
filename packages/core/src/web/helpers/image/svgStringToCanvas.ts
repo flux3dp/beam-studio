@@ -1,4 +1,4 @@
-const svgStringToCanvas = (svgString: string, width: number, height: number): Promise<HTMLCanvasElement> => {
+export const svgStringToCanvas = (svgString: string, width: number, height: number): Promise<HTMLCanvasElement> => {
   const tempCanvas = document.createElement('canvas');
 
   tempCanvas.width = width;
@@ -11,7 +11,7 @@ const svgStringToCanvas = (svgString: string, width: number, height: number): Pr
   return new Promise((resolve, reject) => {
     try {
       img.onload = () => {
-        ctx.drawImage(img, 0, 0, width, height);
+        ctx?.drawImage(img, 0, 0, width, height);
         resolve(tempCanvas);
       };
     } catch (error) {

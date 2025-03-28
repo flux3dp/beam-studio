@@ -1,4 +1,4 @@
-import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType } from '@core/app/constants/promark-constants';
 
 const mockGetDefaultLaserModule = jest.fn();

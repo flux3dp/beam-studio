@@ -3,7 +3,6 @@ import { ipcMain, Menu, MenuItem } from 'electron';
 import ElectronStore from 'electron-store';
 
 import i18n from '@core/helpers/i18n';
-import isDev from '@core/helpers/is-dev';
 import type { ILang } from '@core/interfaces/ILang';
 
 import { getFocusedView, getTabManager } from '../helpers/tabHelper';
@@ -19,6 +18,8 @@ export function buildFileMenu(
   fnKey: 'Cmd' | 'Ctrl',
   r: ILang['topbar']['menu'],
   callback: (_data: MenuData) => void,
+  // eslint-disable-next-line ts/no-unused-vars
+  isDevMode: boolean = false,
 ): FileMenu {
   const menuItems: MenuItemConstructorOptions[] = [
     {
@@ -142,7 +143,7 @@ export function buildFileMenu(
         { click: callback, id: 'EXPORT_SVG', label: r.export_SVG },
         { click: callback, id: 'EXPORT_PNG', label: 'PNG' },
         { click: callback, id: 'EXPORT_JPG', label: 'JPG' },
-        isDev() && { click: callback, id: 'EXPORT_UV_EXPORT', label: 'UV PDF' },
+        { click: callback, id: 'EXPORT_UV_EXPORT', label: 'UV PDF' },
         {
           accelerator: `${fnKey}+E`,
           click: callback,

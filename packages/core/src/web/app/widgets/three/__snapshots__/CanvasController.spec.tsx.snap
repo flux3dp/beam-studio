@@ -110,7 +110,7 @@ exports[`test CanvasController should behave correctly 1`] = `
     <div>
       <span
         aria-label="question-circle"
-        class="anticon anticon-question-circle tooltip"
+        class="anticon anticon-question-circle tooltip tooltip-text"
         role="img"
       >
         <svg

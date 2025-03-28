@@ -1,7 +1,6 @@
 import React, { memo, useContext, useEffect } from 'react';
 
 import { pipe } from 'remeda';
-import { match } from 'ts-pattern';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import { modelsWithModules, modelsWithoutUvExport } from '@core/app/actions/beambox/constant';
@@ -166,7 +165,7 @@ const ModuleBlock = (): React.ReactNode => {
     undoManager.addCommandToHistory(batchCmd);
   };
 
-  const commonOptions = [isDev() && { label: 'UV Export', value: LayerModule.UV_EXPORT }];
+  const commonOptions = [{ label: 'UV Export', value: LayerModule.UV_EXPORT }];
   const defaultModelsOptions = [{ label: 'Laser', value: LayerModule.LASER_UNIVERSAL }];
   const adorOptions = [
     { label: tModule.laser_10w_diode, value: LayerModule.LASER_10W_DIODE },
@@ -177,15 +176,9 @@ const ModuleBlock = (): React.ReactNode => {
   ];
 
   const options = pipe(
-    workarea,
-    modelsWithModules.has,
-    (isWithModules) =>
-      match(isWithModules)
-        .with(true, () => adorOptions)
-        .with(false, () => defaultModelsOptions)
-        .exhaustive(),
-    (options) => options.concat(commonOptions),
-    (options) => options.filter(Boolean),
+    modelsWithModules.has(workarea),
+    (isWithModules) => (isWithModules ? adorOptions : defaultModelsOptions),
+    (options) => options.concat(commonOptions).filter(Boolean),
   );
 
   return isMobile ? (

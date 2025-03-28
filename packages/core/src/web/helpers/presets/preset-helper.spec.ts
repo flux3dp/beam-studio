@@ -1,4 +1,4 @@
-import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 
 const mockPopUp = jest.fn();
 

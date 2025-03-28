@@ -1,4 +1,4 @@
-import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import lang from '@core/app/lang/en';
 
 import layerModuleHelper from './layer-module-helper';

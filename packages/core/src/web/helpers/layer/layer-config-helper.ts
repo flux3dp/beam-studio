@@ -558,10 +558,7 @@ export const applyPreset = (
       value = Math.max(minSpeed, Math.min(value as number, maxSpeed));
     }
 
-    writeDataLayer(layer, key, value, {
-      applyPrinting: printingModules.has(module),
-      batchCmd,
-    });
+    writeDataLayer(layer, key, value, { applyPrinting: printingModules.has(module), batchCmd });
   }
 
   if (applyName) {

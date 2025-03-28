@@ -7,7 +7,6 @@ import { modelsWithModules, promarkModels } from '@core/app/actions/beambox/cons
 import { menuItems } from '@core/app/constants/menuItems';
 import Discover from '@core/helpers/api/discover';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import isDev from '@core/helpers/is-dev';
 import isWeb from '@core/helpers/is-web';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -284,7 +283,7 @@ export default function Menu({ email }: Props): React.JSX.Element {
           <MenuItem onClick={() => callback('EXPORT_PNG')}>{menuCms.export_PNG}</MenuItem>
           <MenuItem onClick={() => callback('EXPORT_JPG')}>{menuCms.export_JPG}</MenuItem>
           <MenuItem onClick={() => callback('EXPORT_FLUX_TASK')}>{hotkey('export_flux_task')}</MenuItem>
-          {isDev() && <MenuItem onClick={() => callback('EXPORT_UV_EXPORT')}>{'UV PDF'}</MenuItem>}
+          <MenuItem onClick={() => callback('EXPORT_UV_EXPORT')}>{'UV PDF'}</MenuItem>
         </SubMenu>
         <MenuDivider />
         <MenuItem onClick={() => callback('PREFERENCE')}>{hotkey('preferences')}</MenuItem>
