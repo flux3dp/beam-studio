@@ -141,6 +141,12 @@ const mockUseWorkarea = jest.fn();
 
 jest.mock('@core/helpers/hooks/useWorkarea', () => () => mockUseWorkarea());
 
+const mockUseAutoFeeder = jest.fn();
+
+jest.mock('@core/helpers/addOn', () => ({
+  useAutoFeeder: (...args) => mockUseAutoFeeder(...args),
+}));
+
 describe('test SpeedBlock', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -151,6 +157,7 @@ describe('test SpeedBlock', () => {
     mockStorageGet.mockReturnValue('mm');
     mockPrefRead.mockReturnValueOnce(true).mockReturnValueOnce(true);
     mockUseWorkarea.mockReturnValue('fbm1');
+    mockUseAutoFeeder.mockReturnValue(false);
   });
 
   it('should render correctly when unit is mm', () => {
@@ -246,6 +253,29 @@ describe('test SpeedBlock', () => {
       >
         <SpeedBlock />
       </ConfigPanelContext.Provider>,
+    );
+
+    expect(container).toMatchSnapshot();
+    expect(container.querySelector('.warning')).toBeInTheDocument();
+  });
+
+  it('should render correctly when has auto feeder vector speed warning', () => {
+    mockUseWorkarea.mockReturnValue('fbb2');
+    mockUseAutoFeeder.mockReturnValue(true);
+
+    const { container } = render(
+      <LayerPanelContext.Provider value={{ hasVector: true } as any}>
+        <ConfigPanelContext.Provider
+          value={{
+            dispatch: mockDispatch,
+            initState: mockInitState,
+            selectedLayers: mockSelectedLayers,
+            state: mockContextState as any,
+          }}
+        >
+          <SpeedBlock />
+        </ConfigPanelContext.Provider>
+      </LayerPanelContext.Provider>,
     );
 
     expect(container).toMatchSnapshot();

@@ -194,9 +194,13 @@ export const getExportOpt = (
     }
   }
 
-  if (BeamboxPreference.read('vector_speed_constraint') && workareaObj.vectorSpeedLimit) {
-    config.vsc = true; // not used by new backend, keep for web version compatibility
-    config.vsl = workareaObj.vectorSpeedLimit * 60; // convert to mm/min
+  if (BeamboxPreference.read('vector_speed_constraint')) {
+    const vectorSpeedLimit = (config.af && addOnInfo.autoFeeder?.vectorSpeedLimit) || workareaObj.vectorSpeedLimit;
+
+    if (vectorSpeedLimit) {
+      config.vsc = true; // not used by new backend, keep for web version compatibility
+      config.vsl = vectorSpeedLimit * 60; // convert to mm/min
+    }
   }
 
   if (!supportPwm) {
@@ -245,7 +249,7 @@ export const getExportOpt = (
 
     if (storageValue && !Number.isNaN(Number(storageValue))) printingBotPadding = Number(storageValue);
 
-    storageValue = localStorage.getItem('nozzle_votage');
+    storageValue = localStorage.getItem('nozzle_voltage');
 
     if (storageValue) config.nv = Number(storageValue);
 

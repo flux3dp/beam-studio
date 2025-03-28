@@ -8,6 +8,7 @@ import { sprintf } from 'sprintf-js';
 
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { promarkModels } from '@core/app/actions/beambox/constant';
+import { getAddOnInfo } from '@core/app/constants/addOn';
 import configOptions from '@core/app/constants/config-options';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
@@ -16,6 +17,7 @@ import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts
 import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import objectPanelItemStyles from '@core/app/views/beambox/Right-Panels/ObjectPanelItem.module.scss';
+import { useAutoFeeder } from '@core/helpers/addOn';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import useHasCurveEngraving from '@core/helpers/hooks/useHasCurveEngraving';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
@@ -71,6 +73,8 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   }, []);
   const workarea = useWorkarea();
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
+  const addOnInfo = useMemo(() => getAddOnInfo(workarea), [workarea]);
+  const isAutoFeederOn = useAutoFeeder(addOnInfo);
   const {
     curveSpeedLimit,
     maxSpeed: maxValue,
@@ -85,29 +89,29 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
       maxSpeed: workareaObj.maxSpeed,
       minSpeed: workareaObj.minSpeed,
       minSpeedWarning: workareaObj.minSpeedWarning,
-      vectorSpeedLimit: workareaObj.vectorSpeedLimit,
+      vectorSpeedLimit: (isAutoFeederOn && addOnInfo.autoFeeder?.vectorSpeedLimit) || workareaObj.vectorSpeedLimit,
     };
-  }, [workarea]);
+  }, [workarea, addOnInfo, isAutoFeederOn]);
 
   const curveEngravingSpeedWarning = useMemo(() => {
     if (!curveSpeedLimit) {
       return '';
     }
 
-    return sprintf(t.curve_engraving_speed_contrain_warning, {
+    return sprintf(t.speed_constrain_warning_curve_engraving, {
       limit: fakeUnit === 'mm' ? `${curveSpeedLimit} mm/s` : `${round(curveSpeedLimit / 25.4, 2)} in/s`,
     });
-  }, [fakeUnit, curveSpeedLimit, t.curve_engraving_speed_contrain_warning]);
+  }, [fakeUnit, curveSpeedLimit, t.speed_constrain_warning_curve_engraving]);
 
   const vectorSpeedWarning = useMemo(() => {
     if (!vectorSpeedLimit) {
       return '';
     }
 
-    return sprintf(t.speed_contrain_warning, {
+    return sprintf(isAutoFeederOn ? t.speed_constrain_warning_auto_feeder : t.speed_constrain_warning, {
       limit: fakeUnit === 'mm' ? `${vectorSpeedLimit} mm/s` : `${round(vectorSpeedLimit / 25.4, 2)} in/s`,
     });
-  }, [fakeUnit, t.speed_contrain_warning, vectorSpeedLimit]);
+  }, [fakeUnit, t, vectorSpeedLimit, isAutoFeederOn]);
 
   const { curve: hasCurveLimit, vector: hasVectorLimit } = useMemo(
     () => ({
