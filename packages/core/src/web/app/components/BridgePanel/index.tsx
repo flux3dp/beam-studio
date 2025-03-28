@@ -31,7 +31,7 @@ function UnmemorizedBridgePanel({ element, onClose }: Props): React.JSX.Element 
   const [mode, setMode] = useState<'auto' | 'manual'>('manual');
   const [pathData, setPathData] = useState('');
   const [offset, setOffset] = useState({ x: 0, y: 0 });
-  const [bridgeWidth, setBridgeWidth] = useState(0.5);
+  const [bridgeWidth, setBridgeWidth] = useState(10); // 0.5
   const [bridgeGap, setBridgeGap] = useState(10);
   // only for display percentage, not for calculation
   const [zoomScale, setZoomScale] = useState(1);
@@ -56,49 +56,71 @@ function UnmemorizedBridgePanel({ element, onClose }: Props): React.JSX.Element 
     return point;
   }, []);
 
-  const handleMouseDown = useCallback((event: paper.MouseEvent) => {
-    const { point } = event;
-    const hit = paper.project.hitTest(point, { fill: false, segments: true, stroke: true, tolerance: 30 });
+  const handleMouseDown = useCallback(
+    (event: paper.MouseEvent) => {
+      const { point } = event;
 
-    console.log(hit);
+      paper.project.hitTest(point, {
+        fill: false,
+        match: (hit: paper.HitResult) => {
+          console.log(hit);
 
-    if (hit && hit.item.name === 'normalizedPath' && hit.item instanceof paper.Path) {
-      const path = hit.item;
-      const splitResult = path.splitAt(hit.location);
+          if (hit.item.parent?.name === 'parentPath') {
+            const path = hit.item.parent as paper.CompoundPath;
 
-      if (splitResult) {
-        path.strokeColor = new paper.Color('blue');
-        splitResult.strokeColor = new paper.Color('red');
+            console.log(path);
 
-        console.log(splitResult);
+            const nearestPoint = path.getNearestPoint(point);
+            const circle = new paper.Path.Circle(nearestPoint, bridgeWidth);
+            const sub = path.subtract(circle, { insert: true, trace: true });
 
-        const subtractedPath = path.subtract(splitResult, { trace: false });
+            sub.strokeColor = new paper.Color('green');
+            sub.strokeWidth = 1;
 
-        subtractedPath.strokeColor = new paper.Color('green');
-        subtractedPath.strokeWidth = 1;
-        console.log(subtractedPath);
+            circle.remove();
+            console.log(sub.pathData);
 
-        // path.remove();
-        // splitResult.remove();
+            console.log(paper.project.activeLayer.children.filter((item) => item));
 
-        console.log(paper.project.activeLayer.children.filter((item) => item instanceof paper.Path));
+            // if (splitResult) {
+            //   path.strokeColor = new paper.Color('blue');
+            //   splitResult.strokeColor = new paper.Color('red');
 
-        // const newPathData = splitResult.children
-        //   .filter((item) => item instanceof paper.Path)
-        //   .map((path) => (path.exportSVG() as SVGAElement).getAttribute('d'));
+            //   console.log(splitResult);
 
-        // console.log(newPathData);
-        // setPathData(newPathData[0]!);
-      }
-    }
+            //   const subtractedPath = path.subtract(splitResult, { trace: false });
 
-    const hitResult = paper.project.hitTest(point);
-    const circle = new paper.Path.Circle(point, 3);
+            //   subtractedPath.strokeColor = new paper.Color('green');
+            //   subtractedPath.strokeWidth = 1;
+            //   console.log(subtractedPath);
 
-    circle.fillColor = new paper.Color('red');
+            //   // path.remove();
+            //   // splitResult.remove();
 
-    console.log(point, hitResult);
-  }, []);
+            //   console.log(paper.project.activeLayer.children.filter((item) => item instanceof paper.Path));
+
+            //   // const newPathData = splitResult.children
+            //   //   .filter((item) => item instanceof paper.Path)
+            //   //   .map((path) => (path.exportSVG() as SVGAElement).getAttribute('d'));
+
+            //   // console.log(newPathData);
+            //   // setPathData(newPathData[0]!);
+            // }
+          }
+
+          return true;
+        },
+        segments: false,
+        stroke: true,
+        tolerance: 30,
+      });
+
+      const circle = new paper.Path.Circle(point, 3);
+
+      circle.fillColor = new paper.Color('red');
+    },
+    [bridgeWidth],
+  );
 
   const handleMouseMove = useCallback((event: paper.MouseEvent) => {
     // console.log(event.point);
@@ -115,7 +137,7 @@ function UnmemorizedBridgePanel({ element, onClose }: Props): React.JSX.Element 
       paper.setup(canvasRef.current!);
       paper.project.clear();
 
-      const originalPath = new paper.Path(inputPathData);
+      const originalPath = new paper.CompoundPath(inputPathData);
       const {
         bounds: { center, height, width },
       } = originalPath;
@@ -140,10 +162,15 @@ function UnmemorizedBridgePanel({ element, onClose }: Props): React.JSX.Element 
       normalizedPath.scale(scaleFactor, new paper.Point(paper.view.center.x, paper.view.center.y));
       normalizedPath.strokeColor = new paper.Color('black');
       normalizedPath.strokeWidth = 1;
-      normalizedPath.name = 'normalizedPath';
+      normalizedPath.name = 'parentPath';
+
+      console.log('o', originalPath);
+      console.log('n', normalizedPath);
 
       // Store normalized path data
-      setPathData((normalizedPath.exportSVG({ asString: false }) as SVGElement).getAttribute('d')!);
+      setPathData(normalizedPath.pathData);
+
+      originalPath.remove();
 
       // Set up interaction
       const tool = new paper.Tool();
@@ -153,7 +180,7 @@ function UnmemorizedBridgePanel({ element, onClose }: Props): React.JSX.Element 
 
       // Zoom to fit
       console.log(center, paper.view.center);
-      // paper.view.zoom = 1;
+      paper.view.zoom = 1;
     };
 
     initialize();
@@ -163,7 +190,6 @@ function UnmemorizedBridgePanel({ element, onClose }: Props): React.JSX.Element 
       if (!paper.view.isInserted()) return;
 
       elements.forEach(({ contentRect: { height, width } }) => {
-        console.log('resize', width, height);
         paper.view.viewSize = new paper.Size(width, height);
         paper.view.requestUpdate();
       });
@@ -173,9 +199,12 @@ function UnmemorizedBridgePanel({ element, onClose }: Props): React.JSX.Element 
 
     return () => {
       observer.disconnect();
-      paper.project.clear();
     };
   }, [element, handleMouseDown, handleMouseMove]);
+
+  useEffect(() => {
+    return () => paper.project.clear();
+  }, []);
 
   useNewShortcutsScope();
   useEffect(() => {
