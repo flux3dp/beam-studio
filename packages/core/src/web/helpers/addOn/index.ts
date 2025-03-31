@@ -1,12 +1,6 @@
-import { useEffect, useState } from 'react';
-
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import type { AddOnInfo } from '@core/app/constants/addOn';
 import { getAddOnInfo } from '@core/app/constants/addOn';
-import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
-
-import eventEmitterFactory from '../eventEmitterFactory';
-import useBeamboxPreference from '../hooks/useBeamboxPreference';
 
 /**
  * get if auto feeder is enabled according to beambox preference, add-on info and borderless setting
@@ -29,26 +23,6 @@ export const getAutoFeeder = (
   if (!(autoFeeder ?? beamboxPreference.read('auto-feeder'))) return false;
 
   return addOnInfo.openBottom ? (borderless ?? beamboxPreference.read('borderless')) : true;
-};
-
-export const useAutoFeeder = (addOnInfo?: AddOnInfo): boolean => {
-  const [stateAddOnInfo, setStateAddOnInfo] = useState(addOnInfo ?? getAddOnInfo(beamboxPreference.read('workarea')));
-
-  useEffect(() => {
-    const eventEmitter = eventEmitterFactory.createEventEmitter('beambox-preference');
-    const handler = (workarea: WorkAreaModel) => setStateAddOnInfo(getAddOnInfo(workarea));
-
-    if (!addOnInfo) eventEmitter.on('workarea', handler);
-
-    return () => {
-      if (!addOnInfo) eventEmitter.removeListener('workarea', handler);
-    };
-  }, [addOnInfo]);
-
-  const autoFeeder = useBeamboxPreference('auto-feeder');
-  const borderless = useBeamboxPreference('borderless');
-
-  return getAutoFeeder(stateAddOnInfo, { autoFeeder, borderless });
 };
 
 /**

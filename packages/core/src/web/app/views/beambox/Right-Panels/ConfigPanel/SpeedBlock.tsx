@@ -17,8 +17,9 @@ import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts
 import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import objectPanelItemStyles from '@core/app/views/beambox/Right-Panels/ObjectPanelItem.module.scss';
-import { useAutoFeeder } from '@core/helpers/addOn';
+import { getAutoFeeder } from '@core/helpers/addOn';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import useBeamboxPreference from '@core/helpers/hooks/useBeamboxPreference';
 import useHasCurveEngraving from '@core/helpers/hooks/useHasCurveEngraving';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import doLayersContainsVector from '@core/helpers/layer/check-vector';
@@ -74,7 +75,12 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   const workarea = useWorkarea();
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
   const addOnInfo = useMemo(() => getAddOnInfo(workarea), [workarea]);
-  const isAutoFeederOn = useAutoFeeder(addOnInfo);
+  const autoFeeder = useBeamboxPreference('auto-feeder');
+  const borderless = useBeamboxPreference('borderless');
+  const isAutoFeederOn = useMemo(
+    () => getAutoFeeder(addOnInfo, { autoFeeder, borderless }),
+    [addOnInfo, autoFeeder, borderless],
+  );
   const {
     curveSpeedLimit,
     maxSpeed: maxValue,
