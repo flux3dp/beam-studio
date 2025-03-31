@@ -195,7 +195,7 @@ export const getExportOpt = (
   }
 
   if (BeamboxPreference.read('vector_speed_constraint')) {
-    const vectorSpeedLimit = (config.af && addOnInfo.autoFeeder?.vectorSpeedLimit) || workareaObj.vectorSpeedLimit;
+    const vectorSpeedLimit = (autoFeeder && addOnInfo.autoFeeder?.vectorSpeedLimit) || workareaObj.vectorSpeedLimit;
 
     if (vectorSpeedLimit) {
       config.vsc = true; // not used by new backend, keep for web version compatibility
