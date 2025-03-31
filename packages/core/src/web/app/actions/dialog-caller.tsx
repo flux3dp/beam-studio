@@ -181,7 +181,7 @@ export default {
   addDialogComponent,
   clearAllDialogComponents,
   forceLoginWrapper,
-  getPreviewHeight: (args: { initValue: number }): Promise<null | number> =>
+  getPreviewHeight: (args: { initValue: number | undefined }): Promise<null | number> =>
     new Promise((resolve) => {
       const id = 'get-preview-height';
 

@@ -9,7 +9,10 @@ import ProgressCaller from '@core/app/actions/progress-caller';
 import { showAdorCalibration } from '@core/app/components/dialogs/camera/AdorCalibration';
 import CalibrationType from '@core/app/components/dialogs/camera/AdorCalibration/calibrationTypes';
 import { showAdorCalibrationV2 } from '@core/app/components/dialogs/camera/AdorCalibrationV2';
-import { showBB2Calibration } from '@core/app/components/dialogs/camera/BB2Calibration';
+import {
+  showBB2Calibration,
+  showBB2FullViewCameraCalibration,
+} from '@core/app/components/dialogs/camera/BB2Calibration';
 import { showPromarkCalibration } from '@core/app/components/dialogs/camera/PromarkCalibration';
 import { parsingChipData } from '@core/app/components/dialogs/CartridgeSettingPanel';
 import { showPromarkSettings } from '@core/app/components/dialogs/promark/PromarkSettings';
@@ -37,10 +40,13 @@ const { lang } = i18n;
 
 const calibrateCamera = async (
   device: IDeviceInfo,
-  args: { factoryMode?: boolean; isAdvanced?: boolean; isBorderless?: boolean } = {},
+  {
+    factoryMode = false,
+    isAdvanced = false,
+    isBorderless = false,
+    isFullView = false,
+  }: { factoryMode?: boolean; isAdvanced?: boolean; isBorderless?: boolean; isFullView?: boolean } = {},
 ) => {
-  const { factoryMode = false, isAdvanced = false, isBorderless = false } = args;
-
   try {
     const deviceStatus = await checkDeviceStatus(device);
 
@@ -54,7 +60,8 @@ const calibrateCamera = async (
       if (constant.adorModels.includes(device.model)) {
         showAdorCalibrationV2(factoryMode);
       } else if (device.model === 'fbb2') {
-        showBB2Calibration(isAdvanced);
+        if (isFullView) showBB2FullViewCameraCalibration(device);
+        else showBB2Calibration(isAdvanced);
       } else if (promarkModels.has(device.model)) {
         showPromarkCalibration(device);
       } else {
@@ -229,28 +236,27 @@ const backUpCalibrationData = async (device: IDeviceInfo, type: 'download' | 'up
   }
 };
 
+const checkHash = () => {
+  if (window.location.hash === '#/studio/beambox') {
+    return true;
+  }
+
+  Alert.popUp({
+    message: lang.calibration.please_goto_beambox_first,
+    type: AlertConstants.SHOW_POPUP_INFO,
+  });
+
+  return false;
+};
+
 export default {
   CALIBRATE_BEAMBOX_CAMERA: async (device: IDeviceInfo): Promise<void> => {
-    if (window.location.hash !== '#/studio/beambox') {
-      Alert.popUp({
-        message: lang.calibration.please_goto_beambox_first,
-        type: AlertConstants.SHOW_POPUP_INFO,
-      });
-
-      return;
-    }
+    if (!checkHash()) return;
 
     calibrateCamera(device);
   },
   CALIBRATE_BEAMBOX_CAMERA_BORDERLESS: async (device: IDeviceInfo): Promise<void> => {
-    if (window.location.hash !== '#/studio/beambox') {
-      Alert.popUp({
-        message: lang.calibration.please_goto_beambox_first,
-        type: AlertConstants.SHOW_POPUP_INFO,
-      });
-
-      return;
-    }
+    if (!checkHash()) return;
 
     const vc = VersionChecker(device.version);
     const isAvailableVersion = vc.meetRequirement('BORDERLESS_MODE');
@@ -268,38 +274,22 @@ export default {
     }
   },
   CALIBRATE_CAMERA_ADVANCED: async (device: IDeviceInfo): Promise<void> => {
-    if (window.location.hash !== '#/studio/beambox') {
-      Alert.popUp({
-        message: lang.calibration.please_goto_beambox_first,
-        type: AlertConstants.SHOW_POPUP_INFO,
-      });
-
-      return;
-    }
+    if (!checkHash()) return;
 
     calibrateCamera(device, { isAdvanced: true });
   },
-  CALIBRATE_CAMERA_V2_FACTORY: async (device: IDeviceInfo): Promise<void> => {
-    if (window.location.hash !== '#/studio/beambox') {
-      Alert.popUp({
-        message: lang.calibration.please_goto_beambox_first,
-        type: AlertConstants.SHOW_POPUP_INFO,
-      });
+  CALIBRATE_CAMERA_FULL_VIEW: async (device: IDeviceInfo): Promise<void> => {
+    if (!checkHash()) return;
 
-      return;
-    }
+    calibrateCamera(device, { isFullView: true });
+  },
+  CALIBRATE_CAMERA_V2_FACTORY: async (device: IDeviceInfo): Promise<void> => {
+    if (!checkHash()) return;
 
     calibrateCamera(device, { factoryMode: true });
   },
   CALIBRATE_DIODE_MODULE: async (device: IDeviceInfo): Promise<void> => {
-    if (window.location.hash !== '#/studio/beambox') {
-      Alert.popUp({
-        message: lang.calibration.please_goto_beambox_first,
-        type: AlertConstants.SHOW_POPUP_INFO,
-      });
-
-      return;
-    }
+    if (!checkHash()) return;
 
     const vc = VersionChecker(device.version);
     const diodeAvailable = vc.meetRequirement('DIODE_AND_AUTOFOCUS');
@@ -325,26 +315,12 @@ export default {
     }
   },
   CALIBRATE_IR_MODULE: async (device: IDeviceInfo): Promise<void> => {
-    if (window.location.hash !== '#/studio/beambox') {
-      Alert.popUp({
-        message: lang.calibration.please_goto_beambox_first,
-        type: AlertConstants.SHOW_POPUP_INFO,
-      });
-
-      return;
-    }
+    if (!checkHash()) return;
 
     calibrateModule(device, CalibrationType.IR_LASER);
   },
   CALIBRATE_PRINTER_MODULE: async (device: IDeviceInfo): Promise<void> => {
-    if (window.location.hash !== '#/studio/beambox') {
-      Alert.popUp({
-        message: lang.calibration.please_goto_beambox_first,
-        type: AlertConstants.SHOW_POPUP_INFO,
-      });
-
-      return;
-    }
+    if (!checkHash()) return;
 
     calibrateModule(device, CalibrationType.PRINTER_HEAD);
   },
@@ -354,6 +330,8 @@ export default {
     if (!res.success) {
       return;
     }
+
+    if (!(await checkDeviceStatus(device))) return;
 
     ProgressCaller.openNonstopProgress({
       id: 'fetch-cartridge-data',

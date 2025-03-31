@@ -18,6 +18,7 @@ import Title from './Title';
 import useCamera from './useCamera';
 
 interface Props {
+  cameraIndex?: number;
   dh: number;
   hasNext?: boolean;
   imgSource?: 'usb' | 'wifi';
@@ -30,6 +31,7 @@ interface Props {
 }
 
 const SolvePnP = ({
+  cameraIndex,
   dh,
   hasNext = false,
   imgSource = 'wifi',
@@ -199,7 +201,10 @@ const SolvePnP = ({
     [dh, params, refPoints, zoomToAllPoints],
   );
 
-  const { exposureSetting, handleTakePicture, setExposureSetting } = useCamera(handleImg, imgSource);
+  const { exposureSetting, handleTakePicture, setExposureSetting } = useCamera(handleImg, {
+    index: cameraIndex,
+    source: imgSource,
+  });
 
   const handleContainerDragStart = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     dragStartPos.current = {

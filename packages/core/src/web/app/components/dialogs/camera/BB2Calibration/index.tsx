@@ -1,5 +1,10 @@
+import alertCaller from '@core/app/actions/alert-caller';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
+import deviceMaster from '@core/helpers/device-master';
+import versionChecker from '@core/helpers/version-checker';
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
+import FullViewCamera from './FullViewCamera';
 import LaserHead from './LaserHead';
 
 export const showBB2Calibration = (isAdvanced = false): Promise<boolean> => {
@@ -24,6 +29,40 @@ export const showBB2Calibration = (isAdvanced = false): Promise<boolean> => {
   });
 };
 
+export const showBB2FullViewCameraCalibration = async (device: IDeviceInfo): Promise<boolean> => {
+  const id = 'bb2-full-view-camera-calibration';
+  const onClose = () => popDialogById(id);
+
+  if (isIdExist(id)) onClose();
+
+  const vc = versionChecker(device.version);
+
+  if (!vc.meetRequirement('BB2_FULL_VIEW_CAMERA')) return false;
+
+  await deviceMaster.connectCamera();
+
+  const { data, success } = await deviceMaster.getCameraCount();
+
+  if (!success) {
+    alertCaller.popUpError({ message: 'Failed to get camera count' });
+  } else if (data < 2) {
+    alertCaller.popUpError({ message: 'Failed to find cameras 2' });
+  }
+
+  return new Promise<boolean>((resolve) => {
+    addDialogComponent(
+      id,
+      <FullViewCamera
+        onClose={(completed = false) => {
+          onClose();
+          resolve(completed);
+        }}
+      />,
+    );
+  });
+};
+
 export default {
   showBB2Calibration,
+  showBB2FullViewCameraCalibration,
 };

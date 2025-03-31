@@ -19,7 +19,7 @@ import showResizeAlert from './fit-device-workarea-alert';
 const getDevice = async (showModal = false): Promise<{ device: IDeviceInfo | null; isWorkareaMatched?: boolean }> => {
   const currentDevice = TopBarController.getSelectedDevice();
   let device = showModal ? null : currentDevice;
-  let isWorkareaMatched = null;
+  let isWorkareaMatched = undefined;
 
   if (device) {
     let selectRes: SelectionResult = { success: true };

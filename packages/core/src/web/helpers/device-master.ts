@@ -915,10 +915,10 @@ class DeviceMaster {
     await this.doCalibration('fcode/ador-ir.fc');
   }
 
-  async doBB2Calibration(type: '' | 'field' = '') {
+  async doBB2Calibration(type: '' | 'full-view' = '') {
     const fileName = match(type)
       .with('', () => 'fcode/bb2-calibration.fc')
-      .with('field', () => 'fcode/bb2-calibration-field.fc')
+      .with('full-view', () => 'fcode/bb2-calibration-full-view.fc')
       .exhaustive();
 
     await this.doCalibration(fileName);
