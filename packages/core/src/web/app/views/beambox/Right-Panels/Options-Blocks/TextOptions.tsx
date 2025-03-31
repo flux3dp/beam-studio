@@ -172,7 +172,7 @@ const TextOptions = ({
 
       setState({
         fontFamily: sanitizedDefaultFontFamily,
-        fontSize: Number(textElement.getAttribute('font-size')),
+        fontSize: textEdit.getFontSize(textElement),
         fontStyle: font.style,
         id: elemId,
         isVerti: textElement.getAttribute('data-verti') === 'true',

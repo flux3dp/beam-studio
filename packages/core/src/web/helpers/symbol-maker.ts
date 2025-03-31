@@ -166,7 +166,7 @@ const makeSymbol = (
     px: 1,
   };
   const getFontSizeInPixel = (fontSizeCss) => {
-    if (!Number.isNaN(fontSizeCss)) {
+    if (!Number.isNaN(Number(fontSizeCss))) {
       return fontSizeCss;
     }
 
