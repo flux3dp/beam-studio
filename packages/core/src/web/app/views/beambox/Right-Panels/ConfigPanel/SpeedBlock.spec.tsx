@@ -141,6 +141,10 @@ const mockUseWorkarea = jest.fn();
 
 jest.mock('@core/helpers/hooks/useWorkarea', () => () => mockUseWorkarea());
 
+const mockUseBeamboxPreference = jest.fn();
+
+jest.mock('@core/helpers/hooks/useBeamboxPreference', () => (key) => mockUseBeamboxPreference(key));
+
 const mockGetAutoFeeder = jest.fn();
 
 jest.mock('@core/helpers/addOn', () => ({
@@ -158,6 +162,7 @@ describe('test SpeedBlock', () => {
     mockPrefRead.mockReturnValueOnce(true).mockReturnValueOnce(true);
     mockUseWorkarea.mockReturnValue('fbm1');
     mockGetAutoFeeder.mockReturnValue(false);
+    mockUseBeamboxPreference.mockReturnValue(false);
   });
 
   it('should render correctly when unit is mm', () => {
@@ -262,6 +267,7 @@ describe('test SpeedBlock', () => {
   it('should render correctly when has auto feeder vector speed warning', () => {
     mockUseWorkarea.mockReturnValue('fbb2');
     mockGetAutoFeeder.mockReturnValue(true);
+    mockUseBeamboxPreference.mockReturnValue(true);
 
     const { container } = render(
       <LayerPanelContext.Provider value={{ hasVector: true } as any}>
