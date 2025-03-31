@@ -46,10 +46,9 @@ class WorkareaManager {
     this.width = workarea.pxWidth;
     this.height = workarea.pxDisplayHeight ?? workarea.pxHeight;
     this.expansion = [0, 0];
+    this.expansionType = undefined;
 
     const { dpmm } = constant;
-
-    this.expansionType = undefined;
 
     if (rotaryExtended && rotaryConstants[model]) {
       const { boundary, maxHeight } = rotaryConstants[model];
