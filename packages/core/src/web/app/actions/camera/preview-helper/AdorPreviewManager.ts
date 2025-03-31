@@ -15,7 +15,7 @@ import FisheyePreviewManagerV2 from './FisheyePreviewManagerV2';
 // TODO: Add tests
 class AdorPreviewManager extends BasePreviewManager implements PreviewManager {
   public isFullScreen = true;
-  private fisheyeManager: FisheyePreviewManager;
+  private fisheyeManager?: FisheyePreviewManager;
 
   constructor(device: IDeviceInfo) {
     super(device);
@@ -42,7 +42,7 @@ class AdorPreviewManager extends BasePreviewManager implements PreviewManager {
       try {
         params = await deviceMaster.fetchFisheyeParams();
       } catch (err) {
-        console.log('Fail to fetchFisheyeParams', err?.message);
+        console.log('Fail to fetchFisheyeParams', err instanceof Error ? err?.message : err);
         throw new Error('Unable to get fisheye parameters, please make sure you have calibrated the camera');
       }
 

@@ -236,7 +236,9 @@ class Camera {
 
     if (!success) return false;
 
-    return data?.toLowerCase() === 'ok';
+    const res = data?.split(':').at(-1);
+
+    return res?.toLowerCase().endsWith('ok') || false;
   };
 
   setFisheyeMatrix = async (mat: FisheyeMatrix, setCrop = false): Promise<boolean> => {
