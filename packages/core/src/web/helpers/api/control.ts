@@ -1196,6 +1196,20 @@ class Control extends EventEmitter implements IControlSocket {
     return this.useRawWaitOKResponse('$X');
   };
 
+  rawMoveZRel = (z: number) => {
+    if (this.mode !== 'raw') {
+      throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
+    }
+
+    const cmd = `M137P184Q${z}`;
+
+    if (!this._isLineCheckMode) {
+      return this.useWaitAnyResponse(cmd);
+    }
+
+    return this.useRawLineCheckCommand(cmd);
+  };
+
   rawMoveZRelToLastHome = (z: number) => {
     if (this.mode !== 'raw') {
       throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
@@ -1620,7 +1634,7 @@ class Control extends EventEmitter implements IControlSocket {
       let responseString = '';
       const command = 'M136P254';
       let retryTimes = 0;
-      let timeoutTimer: NodeJS.Timeout | null;
+      let timeoutTimer: NodeJS.Timeout | undefined;
 
       this.on(EVENT_COMMAND_MESSAGE, (response) => {
         clearTimeout(timeoutTimer);
@@ -1638,7 +1652,7 @@ class Control extends EventEmitter implements IControlSocket {
 
           if (resIdx >= 0) {
             const resStr = resps[resIdx];
-            const match = resStr.match(/\[PRB:([-\d.]+),([-\d.]+),([-\d.]+),([-\d.]+):(\d)\]/);
+            const match = resStr.match(/\[PRB:([-\d.]+),([-\d.]+),([-\d.]+),([-\d.]+):(\d)\]/)!;
             const [, x, y, z, a, didAf] = match;
 
             this.removeCommandListeners();
@@ -1700,7 +1714,7 @@ class Control extends EventEmitter implements IControlSocket {
       const command = 'M136P255';
       let retryTimes = 0;
       let isCmdResent = false;
-      let timeoutTimer: NodeJS.Timeout | null;
+      let timeoutTimer: NodeJS.Timeout | undefined;
 
       this.on(EVENT_COMMAND_MESSAGE, (response) => {
         clearTimeout(timeoutTimer);
@@ -1722,7 +1736,7 @@ class Control extends EventEmitter implements IControlSocket {
 
           if (resIdx >= 0) {
             const resStr = resps[resIdx];
-            const match = resStr.match(/\[LAST_POS:([-\d.]+),([-\d.]+),([-\d.]+),([-\d.]+)/);
+            const match = resStr.match(/\[LAST_POS:([-\d.]+),([-\d.]+),([-\d.]+),([-\d.]+)/)!;
             const [, x, y, z, a] = match;
 
             this.removeCommandListeners();
@@ -1765,6 +1779,80 @@ class Control extends EventEmitter implements IControlSocket {
       timeoutTimer = this.setTimeoutTimer(reject, 10000);
 
       this.ws.send(command);
+    });
+  };
+
+  rawGetStatePos = (): Promise<{ a: number; x: number; y: number; z: number }> => {
+    if (this.mode !== 'raw') {
+      throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
+    }
+
+    return new Promise((resolve, reject) => {
+      let isCmdResent = false;
+      let responseString = '';
+      const command = '?';
+      let retryTimes = 0;
+      let timeoutTimer: NodeJS.Timeout | undefined;
+
+      this.on(EVENT_COMMAND_MESSAGE, (response) => {
+        clearTimeout(timeoutTimer);
+
+        if (response && response.status === 'raw') {
+          console.log('raw get state position:\t', response.text);
+          responseString += response.text;
+        }
+
+        const resps = responseString.split(/\r?\n/);
+        const i = resps.findIndex((r) => r === 'ok');
+
+        if (i >= 0) {
+          const resIdx = resps.findIndex((r) => r.match(/[MW]Pos:([-\d.]+),([-\d.]+),([-\d.]+),([-\d.]+)\|/));
+
+          if (resIdx >= 0) {
+            const resStr = resps[resIdx];
+            const match = resStr.match(/[MW]Pos:([-\d.]+),([-\d.]+),([-\d.]+),([-\d.]+)\|/);
+            const [, x, y, z, a] = match!;
+
+            this.removeCommandListeners();
+            resolve({ a: Number(a), x: Number(x), y: Number(y), z: Number(z) });
+          } else {
+            this.removeCommandListeners();
+            reject(response);
+          }
+
+          return;
+        }
+
+        if (
+          response.text.includes('ER:RESET') ||
+          resps.some((resp) => resp.includes('ER:RESET')) ||
+          response.text.includes('error:')
+        ) {
+          if (retryTimes >= 5) {
+            this.removeCommandListeners();
+            reject(response);
+
+            return;
+          }
+
+          if (!isCmdResent) {
+            isCmdResent = true;
+            setTimeout(() => {
+              isCmdResent = false;
+              responseString = '';
+              this.ws!.send(command);
+              retryTimes += 1;
+            }, 200);
+          }
+        } else {
+          timeoutTimer = this.setTimeoutTimer(reject, 10000);
+        }
+      });
+      this.setDefaultErrorResponse(reject, timeoutTimer);
+      this.setDefaultFatalResponse(reject, timeoutTimer);
+      timeoutTimer = this.setTimeoutTimer(reject, 10000);
+
+      this.ws!.send(command);
     });
   };
 
