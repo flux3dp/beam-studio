@@ -4,8 +4,8 @@ import deviceMaster from '@core/helpers/device-master';
 import versionChecker from '@core/helpers/version-checker';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
-import FullViewCamera from './FullViewCamera';
 import LaserHead from './LaserHead';
+import WideAngleCamera from './WideAngleCamera';
 
 export const showBB2Calibration = (isAdvanced = false): Promise<boolean> => {
   const id = 'bb2-calibration';
@@ -29,15 +29,15 @@ export const showBB2Calibration = (isAdvanced = false): Promise<boolean> => {
   });
 };
 
-export const showBB2FullViewCameraCalibration = async (device: IDeviceInfo): Promise<boolean> => {
-  const id = 'bb2-full-view-camera-calibration';
+export const showBB2WideAngleCameraCalibration = async (device: IDeviceInfo): Promise<boolean> => {
+  const id = 'bb2-wide-angle-camera-calibration';
   const onClose = () => popDialogById(id);
 
   if (isIdExist(id)) onClose();
 
   const vc = versionChecker(device.version);
 
-  if (!vc.meetRequirement('BB2_FULL_VIEW_CAMERA')) return false;
+  if (!vc.meetRequirement('BB2_WIDE_ANGLE_CAMERA')) return false;
 
   await deviceMaster.connectCamera();
 
@@ -52,7 +52,7 @@ export const showBB2FullViewCameraCalibration = async (device: IDeviceInfo): Pro
   return new Promise<boolean>((resolve) => {
     addDialogComponent(
       id,
-      <FullViewCamera
+      <WideAngleCamera
         onClose={(completed = false) => {
           onClose();
           resolve(completed);
@@ -64,5 +64,5 @@ export const showBB2FullViewCameraCalibration = async (device: IDeviceInfo): Pro
 
 export default {
   showBB2Calibration,
-  showBB2FullViewCameraCalibration,
+  showBB2WideAngleCameraCalibration,
 };

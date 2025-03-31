@@ -14,10 +14,10 @@ import type { FisheyeCameraParametersV2, FisheyeCameraParametersV2Cali } from '@
 
 import Instruction from '../common/Instruction';
 import SolvePnP from '../common/SolvePnP';
-import { bb2FullViewCameraPnPPoints } from '../common/solvePnPConstants';
+import { bb2WideAngleCameraPnPPoints } from '../common/solvePnPConstants';
 
 import movePlatformRel from './movePlatformRel';
-import saveFullViewCameraData from './saveFullViewCameraData';
+import saveWideAngleCameraData from './saveWideAngleCameraData';
 import SolvePnPInstruction from './SolvePnPInstruction';
 
 /* eslint-disable perfectionist/sort-enums */
@@ -62,7 +62,7 @@ interface Props {
   onClose: (completed?: boolean) => void;
 }
 
-const FullViewCamera = ({ onClose }: Props): ReactNode => {
+const WideAngleCamera = ({ onClose }: Props): ReactNode => {
   const PROGRESS_ID = 'bb2-calibration';
   const { calibration: tCali, device: tDevice } = useI18n();
   const { next, prev, step } = useStepStore();
@@ -91,7 +91,7 @@ const FullViewCamera = ({ onClose }: Props): ReactNode => {
           progressCaller.update(PROGRESS_ID, { message: tCali.drawing_calibration_image });
 
           if (doEngraving) {
-            await deviceMaster.doBB2Calibration('full-view');
+            await deviceMaster.doBB2Calibration('wide-angle');
           } else {
             await deviceMaster.enterRawMode();
             await deviceMaster.rawHome();
@@ -153,7 +153,7 @@ const FullViewCamera = ({ onClose }: Props): ReactNode => {
             next();
           }}
           params={calibratingParam.current}
-          refPoints={bb2FullViewCameraPnPPoints}
+          refPoints={bb2WideAngleCameraPnPPoints}
         />
       );
     })
@@ -190,7 +190,7 @@ const FullViewCamera = ({ onClose }: Props): ReactNode => {
                 v: 2,
               };
 
-              await saveFullViewCameraData(param);
+              await saveWideAngleCameraData(param);
               alertCaller.popUp({ message: tCali.camera_parameter_saved_successfully });
               console.log('calibratingParam.current', calibratingParam.current);
               onClose(true);
@@ -199,11 +199,11 @@ const FullViewCamera = ({ onClose }: Props): ReactNode => {
             }
           }}
           params={calibratingParam.current}
-          refPoints={bb2FullViewCameraPnPPoints}
+          refPoints={bb2WideAngleCameraPnPPoints}
         />
       );
     })
     .otherwise(() => null);
 };
 
-export default FullViewCamera;
+export default WideAngleCamera;

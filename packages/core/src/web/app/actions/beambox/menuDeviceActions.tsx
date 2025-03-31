@@ -11,7 +11,7 @@ import CalibrationType from '@core/app/components/dialogs/camera/AdorCalibration
 import { showAdorCalibrationV2 } from '@core/app/components/dialogs/camera/AdorCalibrationV2';
 import {
   showBB2Calibration,
-  showBB2FullViewCameraCalibration,
+  showBB2WideAngleCameraCalibration,
 } from '@core/app/components/dialogs/camera/BB2Calibration';
 import { showPromarkCalibration } from '@core/app/components/dialogs/camera/PromarkCalibration';
 import { parsingChipData } from '@core/app/components/dialogs/CartridgeSettingPanel';
@@ -44,8 +44,8 @@ const calibrateCamera = async (
     factoryMode = false,
     isAdvanced = false,
     isBorderless = false,
-    isFullView = false,
-  }: { factoryMode?: boolean; isAdvanced?: boolean; isBorderless?: boolean; isFullView?: boolean } = {},
+    isWideAngle = false,
+  }: { factoryMode?: boolean; isAdvanced?: boolean; isBorderless?: boolean; isWideAngle?: boolean } = {},
 ) => {
   try {
     const deviceStatus = await checkDeviceStatus(device);
@@ -60,7 +60,7 @@ const calibrateCamera = async (
       if (constant.adorModels.includes(device.model)) {
         showAdorCalibrationV2(factoryMode);
       } else if (device.model === 'fbb2') {
-        if (isFullView) showBB2FullViewCameraCalibration(device);
+        if (isWideAngle) showBB2WideAngleCameraCalibration(device);
         else showBB2Calibration(isAdvanced);
       } else if (promarkModels.has(device.model)) {
         showPromarkCalibration(device);
@@ -281,7 +281,7 @@ export default {
   CALIBRATE_CAMERA_FULL_VIEW: async (device: IDeviceInfo): Promise<void> => {
     if (!checkHash()) return;
 
-    calibrateCamera(device, { isFullView: true });
+    calibrateCamera(device, { isWideAngle: true });
   },
   CALIBRATE_CAMERA_V2_FACTORY: async (device: IDeviceInfo): Promise<void> => {
     if (!checkHash()) return;
