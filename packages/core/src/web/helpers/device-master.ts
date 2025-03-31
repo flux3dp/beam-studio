@@ -1,4 +1,5 @@
 import { sprintf } from 'sprintf-js';
+import { match } from 'ts-pattern';
 
 import Alert from '@core/app/actions/alert-caller';
 import constant, { promarkModels } from '@core/app/actions/beambox/constant';
@@ -914,8 +915,13 @@ class DeviceMaster {
     await this.doCalibration('fcode/ador-ir.fc');
   }
 
-  async doBB2Calibration() {
-    await this.doCalibration('fcode/bb2-calibration.fc');
+  async doBB2Calibration(type: '' | 'field' = '') {
+    const fileName = match(type)
+      .with('', () => 'fcode/bb2-calibration.fc')
+      .with('field', () => 'fcode/bb2-calibration-field.fc')
+      .exhaustive();
+
+    await this.doCalibration(fileName);
   }
 
   async doPromarkCalibration() {
@@ -1120,6 +1126,12 @@ class DeviceMaster {
     return controlSocket.addTask(controlSocket.rawUnlock);
   }
 
+  rawMoveZRel = async (z: number) => {
+    const controlSocket = await this.getControl();
+
+    return controlSocket.addTask(controlSocket.rawMoveZRel, z);
+  };
+
   async rawMoveZRelToLastHome(z = 0) {
     const controlSocket = await this.getControl();
 
@@ -1224,6 +1236,12 @@ class DeviceMaster {
     const controlSocket = await this.getControl();
 
     return controlSocket.addTask(controlSocket.rawGetLastPos);
+  }
+
+  async rawGetStatePos(): Promise<{ a: number; x: number; y: number; z: number }> {
+    const controlSocket = await this.getControl();
+
+    return controlSocket.addTask(controlSocket.rawGetStatePos);
   }
 
   async rawMeasureHeight({
@@ -1587,6 +1605,14 @@ class DeviceMaster {
       this.currentDevice.camera.closeWs();
       this.currentDevice.camera = null;
     }
+  }
+
+  getCameraCount() {
+    return this.currentDevice?.camera?.getCameraCount() || 0;
+  }
+
+  setCamera(index: number) {
+    return this.currentDevice?.camera?.setCamera(index) ?? false;
   }
 
   getDiscoveredDevice<T extends keyof IDeviceInfo>(key: T, value: IDeviceInfo[T], callback) {

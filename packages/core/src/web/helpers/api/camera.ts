@@ -214,6 +214,31 @@ class Camera {
 
   getRotationAngles = (): RotationParameters3DGhostApi => this.rotationAngles;
 
+  getCameraCount = async (): Promise<{ data: number; success: true } | { data: string; success: false }> => {
+    this.ws.send('get_camera_count');
+
+    const { data, error, success }: { data?: string; error?: string; status: string; success?: boolean } =
+      await lastValueFrom(this.nonBinarySource.pipe(take(1)).pipe(timeout(TIMEOUT)));
+
+    if (!success) return { data: data ?? error ?? 'Unknown Error', success: false };
+
+    const count = Number(data!.split(':').at(-1));
+
+    return { data: count, success };
+  };
+
+  setCamera = async (index: number): Promise<boolean> => {
+    this.ws.send(`set_camera ${index}`);
+
+    const { data, success }: { data?: string; error?: string; status: string; success?: boolean } = await lastValueFrom(
+      this.nonBinarySource.pipe(take(1)).pipe(timeout(TIMEOUT)),
+    );
+
+    if (!success) return false;
+
+    return data?.toLowerCase() === 'ok';
+  };
+
   setFisheyeMatrix = async (mat: FisheyeMatrix, setCrop = false): Promise<boolean> => {
     this.fishEyeSetting = { matrix: mat, shouldCrop: setCrop };
 

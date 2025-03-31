@@ -11,14 +11,14 @@ import type { IConfigSetting } from '@core/interfaces/IDevice';
 
 const useCamera = (
   handleImg?: (blob: Blob) => boolean | Promise<boolean>,
-  source: 'usb' | 'wifi' = 'wifi',
+  { index = 0, source = 'wifi' }: { index?: number; source?: 'usb' | 'wifi' } = {},
 ): {
   exposureSetting: IConfigSetting | null;
   handleTakePicture: (opts?: { retryTimes?: number; silent?: boolean }) => void;
   setExposureSetting: Dispatch<IConfigSetting | null>;
 } => {
   const [exposureSetting, setExposureSetting] = useState<IConfigSetting | null>(null);
-  const webCamConnection = useRef<WebCamConnection>(null);
+  const webCamConnection = useRef<null | WebCamConnection>(null);
   const connectWebCam = useCallback(async () => {
     if (webCamConnection.current) {
       return;
@@ -27,7 +27,8 @@ const useCamera = (
     try {
       webCamConnection.current = await webcamHelper.connectWebcam();
     } catch (error) {
-      alertCaller.popUpError({ message: `Failed to connect to ${error.message}` });
+      console.error('Failed to connect to webcam', error);
+      alertCaller.popUpError({ message: `Failed to connect to webcam ${error instanceof Error ? error.message : ''}` });
     }
   }, []);
 
@@ -42,7 +43,7 @@ const useCamera = (
         });
       }
 
-      let imgBlob: Blob;
+      let imgBlob: Blob | undefined = undefined;
 
       if (source === 'wifi') {
         imgBlob = (await deviceMaster.takeOnePicture())?.imgBlob;
@@ -94,10 +95,22 @@ const useCamera = (
       try {
         if (source === 'wifi') {
           await deviceMaster.connectCamera();
+
+          if (index > 0) {
+            try {
+              const res = await deviceMaster.setCamera(index);
+
+              if (!res) alertCaller.popUpError({ message: 'Failed to set camera' });
+            } catch (e) {
+              console.log('Failed to set camera', e);
+              alertCaller.popUpError({ message: 'Failed to set camera' });
+            }
+          }
+
           try {
             const exposureRes = await deviceMaster.getDeviceSetting('camera_exposure_absolute');
 
-            setExposureSetting(JSON.parse(exposureRes.value));
+            setExposureSetting(JSON.parse(exposureRes.value) as IConfigSetting);
           } catch (e) {
             console.log('Failed to get exposure setting', e);
           }

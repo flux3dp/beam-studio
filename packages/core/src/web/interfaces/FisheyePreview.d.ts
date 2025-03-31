@@ -47,7 +47,7 @@ export interface FisheyeCameraParametersV2Cali {
 export interface FisheyeCameraParametersV2 {
   d: number[][];
   k: number[][];
-  levelingData: Record<string, number>;
+  levelingData?: Record<string, number>;
   refHeight: number;
   rvec: number[];
   rvec_polyfit: number[][];
