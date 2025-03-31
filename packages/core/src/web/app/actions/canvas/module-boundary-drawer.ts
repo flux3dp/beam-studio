@@ -128,9 +128,6 @@ const update = (module: LayerModule): void => {
 
   const d2 = `M${left},${workareaTop + top}H${w - right}V${workareaBottom - bottom}H${left}V${workareaTop + top}`;
 
-  console.log('d1', d1);
-  console.log('d2', d2);
-
   boundaryPath?.setAttribute('d', `${d1} ${d2}`);
   boundaryDescText?.removeAttribute('display');
 
