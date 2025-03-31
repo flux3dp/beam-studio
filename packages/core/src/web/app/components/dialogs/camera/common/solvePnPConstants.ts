@@ -20,7 +20,7 @@ export const bb2PnPPoints: Array<[number, number]> = [
   [30, 70],
 ];
 
-export const bb2FullViewCameraPnPPoints: Array<[number, number]> = [
+export const bb2WideAngleCameraPnPPoints: Array<[number, number]> = [
   [180, 120],
   [420, 120],
   [180, 280],
@@ -66,7 +66,7 @@ export const promarkPnPPoints: { [size: number]: Array<[number, number]> } = {
 
 export default {
   adorPnPPoints,
-  bb2FullViewCameraPnPPoints,
   bb2PnPPoints,
+  bb2WideAngleCameraPnPPoints,
   promarkPnPPoints,
 };
