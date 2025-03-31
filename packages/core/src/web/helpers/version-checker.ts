@@ -7,8 +7,8 @@ const requirement = {
   ADOR_STATIC_FILE_ENTRY: '5.1.17',
   B34_LOOSE_MOTOR: '3.3.0',
   BACKLASH: '1.5b12',
-  BB2_FULL_VIEW_CAMERA: '6.0.10',
   BB2_SEPARATE_EXPOSURE: '6.0.11',
+  BB2_WIDE_ANGLE_CAMERA: '6.0.10',
   BB2_Z_SPEED_TEST: '6.0.10',
   BEAM_STUDIO_2: '3.5.1',
   BEAMBOX_CAMERA_CALIBRATION_XY_RATIO: '1.6.0',
@@ -42,8 +42,8 @@ export type RequirementKey = keyof typeof requirement;
 // 1.7.0 > 1.5.0 > 1.5b12 > 1.5a12
 export default (sourceVersion: string): { meetRequirement: (key: RequirementKey) => boolean } => {
   const currentVersion = sourceVersion.split('.');
-  const meetVersion = (targetVersion) => {
-    targetVersion = targetVersion.split('.');
+  const meetVersion = (targetVersion: string | string[]) => {
+    targetVersion = typeof targetVersion === 'string' ? targetVersion.split('.') : targetVersion;
 
     // Compare first version number
     if (Number.parseInt(targetVersion[0], 10) !== Number.parseInt(currentVersion[0], 10)) {
@@ -55,7 +55,7 @@ export default (sourceVersion: string): { meetRequirement: (key: RequirementKey)
 
     // Compare second version number - Adapt with 1.5b12 style.
     // Crashes when beta / alpha version number exceed 40000
-    if (Number.parseInt(targetVersion[1] || 0, 10) >= 40000) {
+    if (Number.parseInt(targetVersion[1] || '0', 10) >= 40000) {
       throw new Error('Second version number overflow, should be < 40000');
     }
 
@@ -64,7 +64,7 @@ export default (sourceVersion: string): { meetRequirement: (key: RequirementKey)
     }
 
     let targetMinorScore =
-      Number.parseInt(targetMinorVersion[0], 10) * 120000 - Number.parseInt(targetMinorVersion[1] || 0, 10);
+      Number.parseInt(targetMinorVersion[0], 10) * 120000 - Number.parseInt(targetMinorVersion[1] || '0', 10);
     let currentMinorScore =
       Number.parseInt(currentMinorVersion[0], 10) * 120000 - Number.parseInt(currentMinorVersion[1] || '0', 10);
 
@@ -85,13 +85,13 @@ export default (sourceVersion: string): { meetRequirement: (key: RequirementKey)
     }
 
     if (targetMinorScore === currentMinorScore) {
-      return Number.parseInt(targetVersion[2] || 0, 10) <= Number.parseInt(currentVersion[2] || '0', 10);
+      return Number.parseInt(targetVersion[2] || '0', 10) <= Number.parseInt(currentVersion[2] || '0', 10);
     }
 
     return targetMinorScore < currentMinorScore;
   };
 
-  const meetRequirement = (key: string) => meetVersion(requirement[key]);
+  const meetRequirement = (key: RequirementKey) => meetVersion(requirement[key]);
 
   return {
     meetRequirement,
