@@ -1727,10 +1727,6 @@ class Control extends EventEmitter implements IControlSocket {
         const resps = responseString.split(/\r?\n/);
         const i = resps.findIndex((r) => r === 'ok');
 
-        if (i < 0) {
-          responseString = resps[resps.length - 1] || '';
-        }
-
         if (i >= 0) {
           const resIdx = resps.findIndex((r) => r.match(/\[LAST_POS:([-\d.]+),([-\d.]+),([-\d.]+),([-\d.]+)/));
 

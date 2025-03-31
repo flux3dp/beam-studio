@@ -910,10 +910,10 @@ class DeviceMaster {
     await this.doCalibration('fcode/ador-ir.fc');
   }
 
-  async doBB2Calibration(type: '' | 'full-view' = '') {
+  async doBB2Calibration(type: '' | 'wide-angle' = '') {
     const fileName = match(type)
       .with('', () => 'fcode/bb2-calibration.fc')
-      .with('full-view', () => 'fcode/bb2-calibration-full-view.fc')
+      .with('wide-angle', () => 'fcode/bb2-calibration-wide-angle.fc')
       .exhaustive();
 
     await this.doCalibration(fileName);
@@ -951,6 +951,8 @@ class DeviceMaster {
 
     return controlSocket.addTask(controlSocket.deleteFile, `${path}/${fileName}`);
   }
+
+  async uploadAsJson() {}
 
   async uploadToDirectory(data, path: string, fileName: string, onProgress?: (...args: any[]) => void) {
     const controlSocket = await this.getControl();
@@ -1653,5 +1655,7 @@ class DeviceMaster {
 }
 
 const deviceMaster = new DeviceMaster();
+
+window.deviceMaster = deviceMaster;
 
 export default deviceMaster;
