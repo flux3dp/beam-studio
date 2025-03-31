@@ -66,6 +66,7 @@ interface IControlSocket extends EventEmitter {
   rawLooseMotorOld: () => Promise<string>;
   rawMeasureHeight: (baseZ: number | undefined, timeout?: number) => Promise<number>;
   rawMove(args: { f?: number; x?: number; y?: number; z?: number }): Promise<unknown>;
+  rawMoveZRel(z: number): Promise<unknown>;
   rawMoveZRelToLastHome(z: number): Promise<unknown>;
   rawSet24V(on: boolean): Promise<unknown>;
   rawSetAirPump(on: boolean, fcodeVersion?: number): Promise<unknown>;
