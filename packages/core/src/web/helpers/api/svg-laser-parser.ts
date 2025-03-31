@@ -13,7 +13,7 @@ import AlertConstants from '@core/app/constants/alert-constants';
 import { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
-import workareaManager from '@core/app/svgedit/workarea';
+import workareaManager, { ExpansionType } from '@core/app/svgedit/workarea';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import { getRotaryInfo } from '@core/helpers/addOn/rotary';
 import AlertConfig from '@core/helpers/api/alert-config';
@@ -194,9 +194,13 @@ export const getExportOpt = (
     }
   }
 
-  if (BeamboxPreference.read('vector_speed_constraint') && workareaObj.vectorSpeedLimit) {
-    config.vsc = true; // not used by new backend, keep for web version compatibility
-    config.vsl = workareaObj.vectorSpeedLimit * 60; // convert to mm/min
+  if (BeamboxPreference.read('vector_speed_constraint')) {
+    const vectorSpeedLimit = (autoFeeder && addOnInfo.autoFeeder?.vectorSpeedLimit) || workareaObj.vectorSpeedLimit;
+
+    if (vectorSpeedLimit) {
+      config.vsc = true; // not used by new backend, keep for web version compatibility
+      config.vsl = vectorSpeedLimit * 60; // convert to mm/min
+    }
   }
 
   if (!supportPwm) {
@@ -245,7 +249,7 @@ export const getExportOpt = (
 
     if (storageValue && !Number.isNaN(Number(storageValue))) printingBotPadding = Number(storageValue);
 
-    storageValue = localStorage.getItem('nozzle_votage');
+    storageValue = localStorage.getItem('nozzle_voltage');
 
     if (storageValue) config.nv = Number(storageValue);
 
@@ -777,9 +781,9 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
 
           const args = [orderName, file.uploadName, file.size, file.thumbnailSize];
 
-          const { expansion, height, width } = workareaManager;
+          const { expansion, expansionType, height, width } = workareaManager;
 
-          if (expansion.some((val) => val > 0)) {
+          if (expansion.some((val) => val > 0) && expansionType !== ExpansionType.PASS_THROUGH) {
             args.push('-workarea');
             args.push(JSON.stringify([width / constant.dpmm, height / constant.dpmm]));
           }

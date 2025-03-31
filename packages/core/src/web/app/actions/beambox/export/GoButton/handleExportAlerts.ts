@@ -33,6 +33,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
   const workareaObj = getWorkarea(workarea);
   const layers = [...document.querySelectorAll('#svgcontent > g.layer:not([display="none"])')];
   const addOnInfo = getAddOnInfo(workarea);
+  const isAutoFeederTask = getAutoFeeder(addOnInfo);
 
   if (!constant.highPowerModels.includes(workarea)) {
     const isPowerTooHigh = layers.some((layer) => {
@@ -103,7 +104,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
     hasJobOrigin = true;
   }
 
-  if (getAutoFeeder(addOnInfo) && !alertConfig.read('skip-auto-feeder-instruction')) {
+  if (isAutoFeederTask && !alertConfig.read('skip-auto-feeder-instruction')) {
     let animationSrcs = [
       { src: 'video/bb2-auto-feeder/top-down.webm', type: 'video/webm' },
       { src: 'video/bb2-auto-feeder/top-down.mp4', type: 'video/mp4' },
@@ -231,15 +232,12 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
   await handleCurveEngravingSpeedAlert();
 
   const handleVectorSpeedAlert = async (): Promise<void> => {
-    const { vectorSpeedLimit } = workareaObj;
+    const vectorSpeedLimit =
+      (isAutoFeederTask && addOnInfo.autoFeeder?.vectorSpeedLimit) || workareaObj.vectorSpeedLimit;
 
-    if (!vectorSpeedLimit) {
-      return;
-    }
+    if (!vectorSpeedLimit) return;
 
-    if (hasCurveSpeedLimit && vectorSpeedLimit >= curveSpeedLimit) {
-      return;
-    }
+    if (hasCurveSpeedLimit && vectorSpeedLimit >= curveSpeedLimit) return;
 
     const checkHighSpeed = (layer: Element) => {
       if (layer.getAttribute('display') === 'none') {
@@ -323,7 +321,10 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
 
         if (!beamboxPreference.read('vector_speed_constraint')) {
           if (!alertConfig.read('skip_path_speed_warning')) {
-            const message = sprintf(lang.beambox.popup.too_fast_for_path, { limit });
+            const message = sprintf(
+              isAutoFeederTask ? lang.beambox.popup.too_fast_for_auto_feeder : lang.beambox.popup.too_fast_for_path,
+              { limit },
+            );
 
             alertCaller.popUp({
               callbacks: () => resolve(),
@@ -341,10 +342,15 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
             resolve();
           }
         } else if (!alertConfig.read('skip_path_speed_constraint_warning')) {
-          const message = sprintf(lang.beambox.popup.too_fast_for_path_and_constrain, {
-            layers: tooFastLayers.join(', '),
-            limit,
-          });
+          const message = sprintf(
+            isAutoFeederTask
+              ? lang.beambox.popup.too_fast_for_auto_feeder_and_constrain
+              : lang.beambox.popup.too_fast_for_path_and_constrain,
+            {
+              layers: tooFastLayers.join(', '),
+              limit,
+            },
+          );
 
           alertCaller.popUp({
             callbacks: () => resolve(),

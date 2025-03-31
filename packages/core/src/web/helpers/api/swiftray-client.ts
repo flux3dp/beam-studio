@@ -7,7 +7,7 @@ import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
-import workareaManager from '@core/app/svgedit/workarea';
+import workareaManager, { ExpansionType } from '@core/app/svgedit/workarea';
 import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
 import type { RotaryInfo } from '@core/helpers/addOn/rotary';
 import deviceMaster from '@core/helpers/device-master';
@@ -346,13 +346,17 @@ class SwiftrayClient extends EventEmitter {
     let height: number;
     let width: number;
 
-    if (convertOptions.useActualWorkarea) {
-      height = workareaManager.height / constant.dpmm;
-      width = workareaManager.width / constant.dpmm;
-    } else {
-      const workarea = getWorkarea(convertOptions.model);
+    const workarea = getWorkarea(convertOptions.model);
+    const deviceHeight = workarea.displayHeight || workarea.height;
 
-      height = workarea.displayHeight || workarea.height;
+    if (convertOptions.useActualWorkarea) {
+      width = workareaManager.width / constant.dpmm;
+      height =
+        workareaManager.expansionType === ExpansionType.PASS_THROUGH
+          ? deviceHeight
+          : workareaManager.height / constant.dpmm;
+    } else {
+      height = deviceHeight;
       width = workarea.width;
     }
 

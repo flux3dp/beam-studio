@@ -11,6 +11,14 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 const canvasEvents = eventEmitterFactory.createEventEmitter('canvas');
 const zoomBlockEventEmitter = eventEmitterFactory.createEventEmitter('zoom-block');
 
+/* eslint-disable perfectionist/sort-enums */
+export const enum ExpansionType {
+  ROTARY = 1,
+  PASS_THROUGH = 2,
+  AUTO_FEEDER = 3,
+}
+/* eslint-enable perfectionist/sort-enums */
+
 class WorkareaManager {
   model: WorkAreaModel = 'fbm1';
   width = 3000; // px
@@ -19,6 +27,7 @@ class WorkareaManager {
   zoomRatio = 1;
   canvasExpansion = 3; // extra space
   expansion: number[] = [0, 0]; // [top, bottom] in pixel
+  expansionType?: ExpansionType;
   lastZoomIn = 0;
 
   init(model: WorkAreaModel): void {
@@ -37,6 +46,7 @@ class WorkareaManager {
     this.width = workarea.pxWidth;
     this.height = workarea.pxDisplayHeight ?? workarea.pxHeight;
     this.expansion = [0, 0];
+    this.expansionType = undefined;
 
     const { dpmm } = constant;
 
@@ -49,6 +59,7 @@ class WorkareaManager {
       // this.expansion = [pxMaxHeight - lowerBound, pxMaxHeight - (this.height - upperBound)];
       this.expansion = [0, pxMaxHeight - (this.height - upperBound)];
       this.height += this.expansion[1];
+      this.expansionType = ExpansionType.ROTARY;
     } else if (passThroughMode) {
       const passThroughHeight = beamboxPreference.read('pass-through-height');
 
@@ -57,6 +68,7 @@ class WorkareaManager {
 
         this.expansion = [0, expansion];
         this.height += expansion;
+        this.expansionType = ExpansionType.PASS_THROUGH;
       }
     } else if (autoFeeder) {
       const autoFeederHeight = beamboxPreference.read('auto-feeder-height');
@@ -66,6 +78,7 @@ class WorkareaManager {
 
         this.expansion = [0, expansion];
         this.height += expansion;
+        this.expansionType = ExpansionType.AUTO_FEEDER;
       }
     }
 

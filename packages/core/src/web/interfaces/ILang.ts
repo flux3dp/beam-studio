@@ -92,6 +92,7 @@ export interface ILang {
       add_on: string;
       auto_feeder: string;
       auto_feeder_scale: string;
+      auto_feeder_url: string;
       borderless_mode: string;
       current_position: string;
       disable: string;
@@ -344,6 +345,8 @@ export interface ILang {
         caption: string;
         message: string;
       };
+      too_fast_for_auto_feeder: string;
+      too_fast_for_auto_feeder_and_constrain: string;
       too_fast_for_curve: string;
       too_fast_for_curve_and_constrain: string;
       too_fast_for_path: string;
@@ -371,7 +374,6 @@ export interface ILang {
         color_adjustment_short: string;
         color_strength: string;
         cross_hatch: string;
-        curve_engraving_speed_contrain_warning: string;
         custom_preset: string;
         cut: string;
         diode: string;
@@ -594,7 +596,9 @@ export interface ILang {
           very_slow: string;
         };
         speed: string;
-        speed_contrain_warning: string;
+        speed_constrain_warning: string;
+        speed_constrain_warning_auto_feeder: string;
+        speed_constrain_warning_curve_engraving: string;
         stepwise_focusing: string;
         stepwise_focusing_desc: string;
         strength: string;

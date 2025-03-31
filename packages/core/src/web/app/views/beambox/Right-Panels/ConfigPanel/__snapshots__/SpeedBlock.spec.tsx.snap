@@ -1,5 +1,84 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`test SpeedBlock should render correctly when has auto feeder vector speed warning 1`] = `
+<div>
+  <div
+    class="panel default"
+  >
+    <span
+      class="title"
+    >
+      Speed
+    </span>
+    <div>
+      MockConfigValueDisplay
+      <p>
+        inputId: 
+        speed-input
+      </p>
+      <p>
+        type: 
+        default
+      </p>
+      <p>
+        max: 
+        900
+      </p>
+      <p>
+        min: 
+        0.5
+      </p>
+      <p>
+        value: 
+        87
+      </p>
+      <p>
+        unit: 
+        mm/s
+      </p>
+      <p>
+        hasMultiValue: 
+      </p>
+      <p>
+        decimal: 
+        1
+      </p>
+      <p>
+        options: 
+      </p>
+      <button
+        type="button"
+      >
+        MockConfigValueDisplayButton
+      </button>
+    </div>
+    <input
+      class="mock-config-slider"
+      id="speed"
+      max="900"
+      min="0.5"
+      step="0.1"
+      type="range"
+      value="87"
+    />
+    <div
+      class="warning"
+    >
+      <div
+        class="warning-icon"
+      >
+        !
+      </div>
+      <div
+        class="warning-text"
+      >
+        The cutting speed of Auto Feeder objects will be constrained to 30 mm/s. You can remove this limit at Preferences Settings.
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`test SpeedBlock should render correctly when has curve engraving warning 1`] = `
 <div>
   <div
@@ -72,7 +151,7 @@ exports[`test SpeedBlock should render correctly when has curve engraving warnin
       <div
         class="warning-text"
       >
-        The engraving speed of 3D curve objects will be constrained to 50 mm/s. You can remove this limit at Preferences Settings.
+        The speed of curve engraving objects will be constrained to 50 mm/s. You can remove this limit at Preferences Settings.
       </div>
     </div>
   </div>
