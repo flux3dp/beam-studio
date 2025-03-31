@@ -8,6 +8,7 @@ import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
 import history from '@core/app/svgedit/history/history';
 import { moveElements } from '@core/app/svgedit/operations/move';
+import textedit from '@core/app/svgedit/text/textedit';
 import AlertConfig from '@core/helpers/api/alert-config';
 import { checkConnection } from '@core/helpers/api/discover';
 import SvgLaserParser from '@core/helpers/api/svg-laser-parser';
@@ -237,7 +238,7 @@ export const getFontObj = async (font: FontDescriptor | WebFont): Promise<fontki
 export const convertTextToPathByFontkit = (textElem: Element, fontObj: fontkit.Font): IConvertInfo => {
   try {
     const maxChar = 0xffff;
-    const fontSize = +textElem.getAttribute('font-size');
+    const fontSize = textedit.getFontSize(textElem as SVGTextElement);
     const sizeRatio = fontSize / fontObj.unitsPerEm;
 
     let d = '';
