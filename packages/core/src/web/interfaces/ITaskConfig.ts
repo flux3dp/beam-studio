@@ -106,6 +106,14 @@ export type TFcodeOptionalConfig = Partial<{
   precut: [number, number];
   prespray: [number, number, number, number];
   /**
+   * printing slice height
+   */
+  psh: number;
+  /**
+   * printing slice width
+   */
+  psw: number;
+  /**
    *  printing top padding
    */
   ptp: number;

@@ -268,6 +268,18 @@ export const getExportOpt = (
 
     if (storageValue && !Number.isNaN(Number(storageValue))) printingBotPadding = Number(storageValue);
 
+    storageValue = localStorage.getItem('printing_slice_width');
+
+    if (storageValue && !Number.isNaN(Number(storageValue))) {
+      config.psw = Number(storageValue);
+    }
+
+    storageValue = localStorage.getItem('printing_slice_height');
+
+    if (storageValue && !Number.isNaN(Number(storageValue))) {
+      config.psh = Number(storageValue);
+    }
+
     storageValue = localStorage.getItem('nozzle_voltage');
 
     if (storageValue) config.nv = Number(storageValue);
