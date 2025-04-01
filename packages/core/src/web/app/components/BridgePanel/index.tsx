@@ -1,38 +1,26 @@
-import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 
 import { Flex } from 'antd';
-import type Konva from 'konva';
-import type { Filter } from 'konva/lib/Node';
-import { Layer, Line, Stage } from 'react-konva';
+import paper from 'paper';
 
 import progressCaller from '@core/app/actions/progress-caller';
 import FullWindowPanel from '@core/app/widgets/FullWindowPanel/FullWindowPanel';
-import useKonvaCanvas from '@core/helpers/hooks/konva/useKonvaCanvas';
-import { useKeyDown } from '@core/helpers/hooks/useKeyDown';
-import { useMouseDown } from '@core/helpers/hooks/useMouseDown';
 import useNewShortcutsScope from '@core/helpers/hooks/useNewShortcutsScope';
-import calculateBase64 from '@core/helpers/image-edit-panel/calculate-base64';
-import { preprocessByUrl } from '@core/helpers/image-edit-panel/preprocess';
 import shortcuts from '@core/helpers/shortcuts';
 import useForceUpdate from '@core/helpers/use-force-update';
 import useI18n from '@core/helpers/useI18n';
 
-import styles from '../ImageEditPanel/index.module.scss';
+import styles from './index.module.scss';
+import Sider from './Sider';
+import TopBar from './TopBar';
+import { cutPathAtDistance } from './utils/cutPathAtDistance';
 
 interface Props {
   element: SVGElement;
   onClose: () => void;
 }
 
-interface LineItem {
-  points: number[];
-  strokeWidth: number;
-}
-
-const EDITING = 0;
-const EXPORTING = 1;
-
-const IMAGE_PADDING = 30;
+const PADDING = 30;
 
 function UnmemorizedBridgePanel({ element, onClose }: Props): React.JSX.Element {
   const {
@@ -40,180 +28,141 @@ function UnmemorizedBridgePanel({ element, onClose }: Props): React.JSX.Element 
     image_edit_panel: lang,
   } = useI18n();
   const forceUpdate = useForceUpdate();
-  const [imageSize, setImageSize] = useState({ height: 0, width: 0 });
-  const [mode, setMode] = useState<'eraser' | 'magicWand'>('eraser');
-  const [lines, setLines] = useState<LineItem[]>([]);
-  const [filters, setFilters] = useState<Filter[]>([]);
-  const [displayImage, setDisplayImage] = useState('');
-  const [progress, setProgress] = useState(EDITING);
+  const [mode, setMode] = useState<'auto' | 'manual'>('manual');
+  const [pathData, setPathData] = useState('');
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const [bridgeWidth, setBridgeWidth] = useState(10); // 0.5
+  const [bridgeGap, setBridgeGap] = useState(10);
   // only for display percentage, not for calculation
   const [zoomScale, setZoomScale] = useState(1);
-  const [operation, setOperation] = useState<'drag' | 'eraser' | 'magicWand' | null>(null);
   const [fitScreenDimension, setFitScreenDimension] = useState({ scale: 1, x: 0, y: 0 });
   const divRef = useRef<HTMLDivElement>(null);
-  const stageRef = useRef<Konva.Stage>(null);
-  const layerRef = useRef<Konva.Layer>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const { handleWheel, handleZoom, handleZoomByScale, isDragging } = useKonvaCanvas(stageRef as any, {
-    onScaleChanged: setZoomScale,
-  });
+  const handleReset = useCallback(() => {
+    // handleZoom(fitScreenDimension.scale);
+  }, [fitScreenDimension]);
 
-  useKeyDown({
-    keyUp: useCallback(() => setOperation(null), []),
-    predicate: useCallback(({ key }) => key === ' ', []),
-  });
+  const handleComplete = useCallback(() => {
+    progressCaller.openNonstopProgress({ id: 'bridge-editing', message: langPhoto.processing });
 
-  useMouseDown({
-    mouseUp: useCallback(() => setOperation(null), []),
-    predicate: useCallback(({ button }) => button === 1, []),
-  });
+    // add a frame to wait for re-render, otherwise the image might be blank or not updated
+    requestAnimationFrame(() => {});
+  }, [langPhoto]);
 
-  const cursorStyle = useMemo(() => {
-    if (isDragging) {
-      return { cursor: 'grab' };
-    }
+  const getPointerPosition = useCallback((event: paper.Event) => {
+    const point = paper.view.getEventPoint(event);
 
-    return { cursor: `url('core-img/image-edit-panel/magic-wand.svg') 7 7, auto` };
-  }, [isDragging]);
-
-  const getPointerPositionFromStage = useCallback((stage: Konva.Stage) => {
-    const scale = stage.scaleX();
-    const { x, y } = stage.getPointerPosition()!;
-    const { x: stageX, y: stageY } = stage.position();
-
-    return { x: (x - stageX) / scale, y: (y - stageY) / scale };
+    return point;
   }, []);
 
   const handleMouseDown = useCallback(
-    ({ evt, target }: Konva.KonvaEventObject<MouseEvent>) => {
-      const stage = target.getStage();
+    (event: paper.MouseEvent) => {
+      const { point } = event;
 
-      if (isDragging || evt.button !== 0 || !stage) {
-        return;
-      }
+      paper.project.hitTest(point, {
+        fill: false,
+        match: (hit: paper.HitResult) => {
+          console.log(hit.item.parent?.name);
 
-      const scale = stage.scaleX();
-      const { x, y } = getPointerPositionFromStage(stage);
+          const circle = new paper.Path.Circle(point, 3);
 
-      scale;
-      x;
-      y;
-    },
-    [isDragging, getPointerPositionFromStage],
-  );
+          circle.fillColor = new paper.Color('red');
 
-  const handleMouseMove = useCallback(
-    ({ target }: Konva.KonvaEventObject<MouseEvent>) => {
-      if (isDragging || operation !== 'eraser') {
-        return;
-      }
+          if (hit.item.parent?.name === 'parentPath') {
+            const path = hit.item as paper.Path;
+            const newCompoundPath = cutPathAtDistance(path, point, bridgeWidth);
 
-      const { x, y } = getPointerPositionFromStage(target.getStage()!);
+            console.log(newCompoundPath.pathData);
 
-      setLines((prevLines) => {
-        const updatedLines = [...prevLines];
-        const lastLine = { ...updatedLines[updatedLines.length - 1] };
+            setPathData(newCompoundPath.pathData);
+          }
 
-        if (lastLine.points[lastLine.points.length - 2] === x && lastLine.points[lastLine.points.length - 1] === y) {
-          return updatedLines;
-        }
-
-        lastLine.points = lastLine.points.concat([x, y]);
-        updatedLines[updatedLines.length - 1] = lastLine;
-
-        return updatedLines;
+          return true;
+        },
+        stroke: true,
+        tolerance: 30,
       });
     },
-    [isDragging, getPointerPositionFromStage, operation],
+    [bridgeWidth],
   );
 
-  const handleReset = useCallback(() => {
-    const stage = stageRef.current!;
-
-    handleZoom(fitScreenDimension.scale);
-    stage.position(fitScreenDimension);
-  }, [fitScreenDimension, handleZoom]);
-
-  const handleComplete = useCallback(() => {
-    progressCaller.openNonstopProgress({ id: 'image-editing', message: langPhoto.processing });
-
-    const stage = stageRef.current!;
-
-    stage.scale({ x: 1, y: 1 });
-    stage.position({ x: 0, y: 0 });
-
-    // add a frame to wait for re-render, otherwise the image might be blank or not updated
-    requestAnimationFrame(() => {
-      stage.batchDraw();
-      requestAnimationFrame(() => setProgress(EXPORTING));
-    });
-  }, [langPhoto]);
-
-  const updateUrl = useCallback(() => stageRef.current!.toDataURL(imageSize), [imageSize]);
+  const handleMouseMove = useCallback((event: paper.MouseEvent) => {
+    // console.log(event.point);
+  }, []);
 
   useEffect(() => {
-    const updateImages = async () => {
-      const url = updateUrl();
-      // const display = await calculateBase64(url, isShading, threshold, isFullColor);
+    const inputPathData = element.getAttribute('d');
 
-      // handleFinish(image, url, display);
+    if (!inputPathData?.trim()) return;
 
-      url;
-      progressCaller.popById('image-editing');
-      onClose();
-    };
-
-    if (progress === EXPORTING) {
-      updateImages();
-    }
-  }, [onClose, progress, updateUrl]);
-
-  useEffect(() => {
     const initialize = async () => {
       const { clientHeight, clientWidth } = divRef.current!;
-      const src = '';
+
+      paper.setup(canvasRef.current!);
+      paper.project.activate();
+      paper.view.size.set(new paper.Size(clientWidth, clientHeight));
+
+      const originalPath = new paper.CompoundPath(inputPathData);
       const {
-        blobUrl,
-        originalHeight: height,
-        originalWidth: width,
-      } = await preprocessByUrl(src, { isFullResolution: true });
-      const fullColorImage = await calculateBase64(blobUrl, true, 255, true);
-      const initScale = Math.min(
-        1,
-        (clientWidth - IMAGE_PADDING * 2) / width,
-        (clientHeight - IMAGE_PADDING * 2) / height,
+        bounds: { center, height, width },
+      } = originalPath;
+      const scaleFactor = Math.min(1, (clientWidth - PADDING * 2) / width, (clientHeight - PADDING * 2) / height);
+
+      console.log(center, height, width, scaleFactor);
+
+      const newCenter = new paper.Point(
+        Math.max(PADDING, width * scaleFactor),
+        Math.max(PADDING, height * scaleFactor),
       );
 
-      const imageX = Math.max(IMAGE_PADDING, (clientWidth - width * initScale) / 2);
-      const imageY = Math.max(IMAGE_PADDING, (clientHeight - height * initScale) / 2);
+      // paper.view.center = newCenter;
 
-      setFitScreenDimension({ scale: initScale, x: imageX, y: imageY });
-      setZoomScale(initScale);
+      // console.log(newCenter, paper.view.center);
+      // paper.view.translate(newCenter);
+      // const canvasSize = Math.min(paper.view.size.width, paper.view.size.height);
+      // const targetSize = canvasSize * 0.8;
+      // const scaleFactor = Math.min(targetSize / size.width, targetSize / size.height);
 
-      stageRef.current!.position({ x: imageX, y: imageY });
-      stageRef.current!.scale({ x: initScale, y: initScale });
+      // Store offset and scale for later
+      setOffset({ x: center.x, y: center.y });
+      setZoomScale(scaleFactor);
 
-      setImageSize({ height, width });
-      setDisplayImage(fullColorImage);
+      // Create normalized path
+      const normalizedPath = originalPath.clone();
 
-      progressCaller.popById('image-editing-init');
+      originalPath.remove();
+
+      normalizedPath.scale(scaleFactor, center);
+      normalizedPath.position = newCenter;
+      normalizedPath.strokeColor = new paper.Color('black');
+      normalizedPath.strokeWidth = 1;
+      normalizedPath.name = 'parentPath';
+
+      const circle = new paper.Path.Circle(newCenter, 3);
+
+      circle.fillColor = new paper.Color('red');
+
+      paper.view.center = newCenter;
+
+      // Store normalized path data
+      setPathData(normalizedPath.pathData);
+
+      originalPath.remove();
+
+      // Zoom to fit
+      paper.view.zoom = 1;
     };
 
-    progressCaller.openNonstopProgress({ id: 'image-editing-init', message: langPhoto.processing });
-
-    setTimeout(initialize, 1000);
+    initialize();
 
     // update stage dimensions according parent div
-    const stage = stageRef.current;
     const observer = new ResizeObserver((elements) => {
-      if (!stage) {
-        return;
-      }
+      if (!paper.view.isInserted()) return;
 
       elements.forEach(({ contentRect: { height, width } }) => {
-        stage.width(width);
-        stage.height(height);
-        stage.batchDraw();
+        paper.project.view.size.set(new paper.Size(width, height));
+        paper.project.view.requestUpdate();
       });
     });
 
@@ -221,9 +170,21 @@ function UnmemorizedBridgePanel({ element, onClose }: Props): React.JSX.Element 
 
     return () => {
       observer.disconnect();
+      paper.project.clear();
     };
     // eslint-disable-next-line hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (!paper.tool) {
+      new paper.Tool();
+    }
+
+    const { tool } = paper;
+
+    tool.onMouseDown = handleMouseDown;
+    tool.onMouseMove = handleMouseMove;
+  }, [handleMouseDown, handleMouseMove]);
 
   useNewShortcutsScope();
   useEffect(() => {
@@ -231,17 +192,17 @@ function UnmemorizedBridgePanel({ element, onClose }: Props): React.JSX.Element 
       shortcuts.on(['Escape'], onClose, { isBlocking: true }),
       // shortcuts.on(['Fnkey+z'], handleHistoryChange('undo'), { isBlocking: true }),
       // shortcuts.on(['Shift+Fnkey+z'], handleHistoryChange('redo'), { isBlocking: true }),
-      shortcuts.on(['Fnkey-+', 'Fnkey-='], () => handleZoomByScale(1.2), {
-        isBlocking: true,
-        splitKey: '-',
-      }),
-      shortcuts.on(['Fnkey+-'], () => handleZoomByScale(0.8), { isBlocking: true }),
+      // shortcuts.on(['Fnkey-+', 'Fnkey-='], () => handleZoomByScale(1.2), {
+      //   isBlocking: true,
+      //   splitKey: '-',
+      // }),
+      // shortcuts.on(['Fnkey+-'], () => handleZoomByScale(0.8), { isBlocking: true }),
     ];
 
     return () => {
       subscribedShortcuts.forEach((unsubscribe) => unsubscribe());
     };
-  }, [handleZoomByScale, onClose]);
+  }, [onClose]);
 
   return (
     <FullWindowPanel
@@ -249,53 +210,27 @@ function UnmemorizedBridgePanel({ element, onClose }: Props): React.JSX.Element 
       onClose={onClose}
       renderContents={() => (
         <>
-          {/* <Sider
-            brushSize={brushSize}
-            handleComplete={handleComplete}
+          <Sider
+            bridgeGap={bridgeGap}
+            bridgeWidth={bridgeWidth}
             mode={mode}
             onClose={onClose}
-            setBrushSize={setBrushSize}
+            onComplete={handleComplete}
+            setBridgeGap={setBridgeGap}
+            setBridgeWidth={setBridgeWidth}
             setMode={setMode}
-            setOperation={setOperation}
-            setTolerance={setTolerance}
-            tolerance={tolerance}
-          /> */}
+          />
           <Flex className={styles['w-100']} vertical>
-            {/* <TopBar
-              handleHistoryChange={handleHistoryChange}
+            <TopBar
+              handleHistoryChange={(() => {}) as any}
               handleReset={handleReset}
-              handleZoomByScale={handleZoomByScale}
-              history={history}
+              handleZoomByScale={(() => {}) as any}
+              history={{ index: 0, items: [] }}
               zoomScale={zoomScale}
-            /> */}
+            />
             <div className={styles['outer-container']}>
-              <div className={styles.container} ref={divRef} style={cursorStyle}>
-                <Stage
-                  draggable={isDragging}
-                  onMouseDown={handleMouseDown}
-                  // onMouseLeave={handleExitDrawing}
-                  onMousemove={handleMouseMove}
-                  // onMouseup={handleExitDrawing}
-                  onWheel={handleWheel}
-                  pixelRatio={1}
-                  ref={stageRef}
-                >
-                  <Layer pixelRatio={1} ref={layerRef}>
-                    {/* <KonvaImage filters={filters} ref={imageRef} src={displayImage} /> */}
-                    {lines.map((line, i) => (
-                      <Line
-                        globalCompositeOperation="destination-out"
-                        key={`line-${i}`}
-                        lineCap="round"
-                        lineJoin="round"
-                        points={line.points}
-                        stroke="#df4b26"
-                        strokeWidth={line.strokeWidth}
-                        tension={0.5}
-                      />
-                    ))}
-                  </Layer>
-                </Stage>
+              <div className={styles.container} ref={divRef} style={{ cursor: 'crosshair' }}>
+                <canvas className={styles.canvas} ref={canvasRef} />
               </div>
             </div>
           </Flex>

@@ -268,7 +268,17 @@ export default {
 
     const element = selectedElements[0];
 
-    addDialogComponent('bridge-panel', <BridgePanel element={element} onClose={onClose} />);
+    addDialogComponent(
+      'bridge-panel',
+      <BridgePanel
+        element={element}
+        onClose={() => {
+          onClose();
+          ObjectPanelController.updateActiveKey(null);
+          popDialogById('bridge-panel');
+        }}
+      />,
+    );
   },
   showCartridgeSettingPanel: (initData: ChipSettings, inkLevel: number): void => {
     if (isIdExist('cartridge-setting')) {
