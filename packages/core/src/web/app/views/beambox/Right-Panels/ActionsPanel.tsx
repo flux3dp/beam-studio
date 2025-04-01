@@ -175,7 +175,14 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     renderButtons(
       'bridge',
       lang.bridge,
-      () => Dialog.showBridgePanel(),
+      () => {
+        // Convert to path if it's not a path
+        if (!(elem instanceof SVGPathElement)) {
+          svgCanvas.convertToPath(elem as SVGElement);
+        }
+
+        Dialog.showBridgePanel();
+      },
       <ActionPanelIcons.Bridge />,
       <ActionPanelIcons.Bridge />,
       { isFullLine: true, ...opts },

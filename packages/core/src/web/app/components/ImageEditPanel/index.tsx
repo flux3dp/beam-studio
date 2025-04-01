@@ -315,10 +315,7 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
       shortcuts.on(['Escape'], onClose, { isBlocking: true }),
       shortcuts.on(['Fnkey+z'], handleHistoryChange('undo'), { isBlocking: true }),
       shortcuts.on(['Shift+Fnkey+z'], handleHistoryChange('redo'), { isBlocking: true }),
-      shortcuts.on(['Fnkey-+', 'Fnkey-='], () => handleZoomByScale(1.2), {
-        isBlocking: true,
-        splitKey: '-',
-      }),
+      shortcuts.on(['Fnkey-+', 'Fnkey-='], () => handleZoomByScale(1.2), { isBlocking: true, splitKey: '-' }),
       shortcuts.on(['Fnkey+-'], () => handleZoomByScale(0.8), { isBlocking: true }),
     ];
 
