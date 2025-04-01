@@ -49,6 +49,8 @@ export type TFcodeOptionalConfig = Partial<{
   pbp: number; // printing bottom padding
   precut: [number, number]; // precut position
   prespray: [number, number, number, number];
+  psh: number; // printing slice height
+  psw: number; // printing slice width
   ptp: number; // printing top padding
   pts: number; // path travel speed
   rev: boolean; // reverse engraving
