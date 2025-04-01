@@ -1,6 +1,6 @@
 import isWeb from './is-web';
 
-const switchProtocol = (protocol?: string): void => {
+const switchProtocol = (protocol?: 'http:' | 'https:'): void => {
   if (!isWeb()) {
     return;
   }
@@ -13,6 +13,11 @@ const switchProtocol = (protocol?: string): void => {
 
   urlObj.protocol = protocol ?? (urlObj.protocol === 'http:' ? 'https:' : 'http:');
   urlObj.hash = '';
+
+  if (protocol === 'https:' && urlObj.host.startsWith('http.')) {
+    urlObj.host = urlObj.host.substring(5);
+  }
+
   window.location.href = urlObj.href;
 };
 
