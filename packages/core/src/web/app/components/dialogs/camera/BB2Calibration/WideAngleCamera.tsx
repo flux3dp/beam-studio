@@ -1,4 +1,4 @@
-import { type ReactNode, useCallback, useRef } from 'react';
+import { type ReactNode, useCallback, useEffect, useRef } from 'react';
 
 import { match } from 'ts-pattern';
 import { create } from 'zustand';
@@ -8,6 +8,7 @@ import progressCaller from '@core/app/actions/progress-caller';
 import { extrinsicRegression } from '@core/helpers/camera-calibration-helper';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import getFocalDistance from '@core/helpers/device/camera/getFocalDistance';
+import { uploadJson } from '@core/helpers/device/jsonDataHelper';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
 import type { FisheyeCameraParametersV2, FisheyeCameraParametersV2Cali } from '@core/interfaces/FisheyePreview';
@@ -17,7 +18,6 @@ import SolvePnP from '../common/SolvePnP';
 import { bb2WideAngleCameraPnPPoints } from '../common/solvePnPConstants';
 
 import movePlatformRel from './movePlatformRel';
-import saveWideAngleCameraData from './saveWideAngleCameraData';
 import SolvePnPInstruction from './SolvePnPInstruction';
 
 /* eslint-disable perfectionist/sort-enums */
@@ -54,8 +54,8 @@ const DEFAULT_CAMERA_PARAMETER = {
     [0, 0, 1],
   ],
   refHeight: 0,
-  rvec: [0.66006278, -0.14174316, 0.0604464],
-  tvec: [-264.27980408, -70.06600659, 44.35713459],
+  rvec: [0.60922574, 0.02610074, 0.00409914],
+  tvec: [-298.4291727, -102.1573162, 134.44077385],
 };
 
 interface Props {
@@ -65,7 +65,10 @@ interface Props {
 const WideAngleCamera = ({ onClose }: Props): ReactNode => {
   const PROGRESS_ID = 'bb2-calibration';
   const { calibration: tCali, device: tDevice } = useI18n();
-  const { next, prev, step } = useStepStore();
+  const { next, prev, setStep, step } = useStepStore();
+
+  useEffect(() => setStep(Step.PUT_PAPER), []);
+
   const calibratingParam = useRef<FisheyeCameraParametersV2Cali>({ ...DEFAULT_CAMERA_PARAMETER });
 
   const updateParam = useCallback((param: FisheyeCameraParametersV2Cali) => {
@@ -186,11 +189,11 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
                 rvec: rvec1,
                 rvec_polyfit: data!.rvec_polyfit!,
                 tvec: tvec1,
-                tvec_polyfit: data!.rvec_polyfit!,
+                tvec_polyfit: data!.tvec_polyfit!,
                 v: 2,
               };
 
-              await saveWideAngleCameraData(param);
+              await uploadJson(param, 'fisheye', 'wide-angle.json');
               alertCaller.popUp({ message: tCali.camera_parameter_saved_successfully });
               console.log('calibratingParam.current', calibratingParam.current);
               onClose(true);
