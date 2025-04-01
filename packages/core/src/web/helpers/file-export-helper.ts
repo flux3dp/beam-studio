@@ -1,15 +1,15 @@
 import jsPDF from 'jspdf';
-import { map, pipe, prop } from 'remeda';
+import { filter, map, pipe, prop } from 'remeda';
 
 import Alert from '@core/app/actions/alert-caller';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
-import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import type { ResponseWithError } from '@core/helpers/api/flux-id';
 import { axiosFluxId, getCurrentUser, getDefaultHeader } from '@core/helpers/api/flux-id';
 import beamFileHelper from '@core/helpers/beam-file-helper';
@@ -23,7 +23,8 @@ import dialog from '@core/implementations/dialog';
 import fs from '@core/implementations/fileSystem';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import { getLayerElementByName } from './layer/layer-helper';
+import { getData } from './layer/layer-config-helper';
+import { getAllLayerNames, getLayerElementByName } from './layer/layer-helper';
 import { layersToA4Base64 } from './layer/layersToA4Base64';
 
 let svgCanvas: ISVGCanvas;
@@ -465,7 +466,11 @@ export const exportUvPrintAsPdf = async (): Promise<void> => {
   svgCanvas.clearSelection();
   svgCanvas.removeUnusedDefs();
 
-  const layers = pipe(LayerPanelController.getSelectedLayers(), map(getLayerElementByName)) as SVGGElement[];
+  const layers = pipe(
+    getAllLayerNames(),
+    filter((layerName) => getData(getLayerElementByName(layerName), 'module') === LayerModule.UV_PRINT),
+    map(getLayerElementByName),
+  ) as SVGGElement[];
   const base64 = await switchSymbolWrapper(() => layersToA4Base64(layers));
   const defaultFileName = getDefaultFileName();
 

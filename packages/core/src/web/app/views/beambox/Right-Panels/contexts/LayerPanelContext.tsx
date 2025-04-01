@@ -8,7 +8,7 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import doLayersContainsVector from '@core/helpers/layer/check-vector';
 import { getData } from '@core/helpers/layer/layer-config-helper';
-import { getLayerElementByName } from '@core/helpers/layer/layer-helper';
+import { getAllLayerNames, getLayerElementByName } from '@core/helpers/layer/layer-helper';
 import useForceUpdate from '@core/helpers/use-force-update';
 
 interface ILayerPanelContext {
@@ -49,12 +49,6 @@ export const LayerPanelContextProvider = ({ children }: Props): React.JSX.Elemen
         return;
       }
 
-      const isUvPrintable = newLayers.every(
-        (layerName) => getData(getLayerElementByName(layerName), 'module') === LayerModule.UV_PRINT,
-      );
-
-      layerPanelEventEmitter.emit('updateUvPrintStatus', isUvPrintable);
-
       setSelectedLayers(newLayers);
     },
     [selectedLayers, setSelectedLayers],
@@ -68,6 +62,14 @@ export const LayerPanelContextProvider = ({ children }: Props): React.JSX.Elemen
     };
     // eslint-disable-next-line hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    const isUvPrintable = getAllLayerNames().some(
+      (layerName) => getData(getLayerElementByName(layerName), 'module') === LayerModule.UV_PRINT,
+    );
+
+    layerPanelEventEmitter.emit('updateUvPrintStatus', isUvPrintable);
+  });
 
   useEffect(() => {
     layerPanelEventEmitter.on('SET_SELECTED_LAYERS', lazySetSelectedLayers);

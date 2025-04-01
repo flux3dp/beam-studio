@@ -55,6 +55,7 @@ class Menu extends AbstractMenu {
     changeMenuItemChecked(['ANTI_ALIASING'], BeamboxPreference.read('anti-aliasing'));
     changeMenuItemChecked(['AUTO_ALIGN'], BeamboxPreference.read('auto_align'));
     changeMenuItemVisible(['EXPORT_UV_PRINT'], BeamboxPreference.read('enable-uv-print-file'));
+    changeMenuItemEnabled(['EXPORT_UV_PRINT'], false);
 
     // model related
     canvasEvent.on('model-changed', (model) => {
@@ -68,7 +69,7 @@ class Menu extends AbstractMenu {
     });
 
     // layer panel related
-    layerPanelEventEmitter.on('updateUvPrintStatus', (isUvPrintable: boolean) => {
+    layerPanelEventEmitter.on('updateUvPrintStatus', (isUvPrintable = false) => {
       changeMenuItemEnabled(['EXPORT_UV_PRINT'], isUvPrintable);
       // force re-render menu
       ElectronMenu.setApplicationMenu(ElectronMenu.getApplicationMenu());
