@@ -77,6 +77,7 @@ test('test beambox-preference', () => {
     'enable-custom-backlash': false,
     'enable-custom-preview-height': false,
     'enable-job-origin': false,
+    'enable-uv-print-file': false,
     enable_mask: false,
     engrave_dpi: 'medium',
     'extend-rotary-workarea': false,

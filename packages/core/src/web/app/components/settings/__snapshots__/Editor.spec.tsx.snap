@@ -226,6 +226,20 @@ exports[`settings/Editor initially no warning 1`] = `
       id="set-enable-custom-backlash"
     />
   </div>
+  <div>
+    mock-select-control id:
+    set-enable-uv-print-file
+    label:
+    Enable UV Print File
+    url:
+    https://support.flux3dp.com/hc/en-us/articles/12320887477135
+    options:
+    [{"label":"On","value":true},{"label":"Off","value":false}]
+    <input
+      class="select-control"
+      id="set-enable-uv-print-file"
+    />
+  </div>
 </div>
 `;
 
@@ -453,6 +467,20 @@ exports[`settings/Editor initially no warning 2`] = `
     <input
       class="select-control"
       id="set-enable-custom-backlash"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-enable-uv-print-file
+    label:
+    Enable UV Print File
+    url:
+    https://support.flux3dp.com/hc/en-us/articles/12320887477135
+    options:
+    [{"label":"On","value":true},{"label":"Off","value":false}]
+    <input
+      class="select-control"
+      id="set-enable-uv-print-file"
     />
   </div>
 </div>
@@ -684,6 +712,20 @@ exports[`settings/Editor initially no warning 3`] = `
       id="set-enable-custom-backlash"
     />
   </div>
+  <div>
+    mock-select-control id:
+    set-enable-uv-print-file
+    label:
+    Enable UV Print File
+    url:
+    https://support.flux3dp.com/hc/en-us/articles/12320887477135
+    options:
+    [{"label":"On","value":true},{"label":"Off","value":false}]
+    <input
+      class="select-control"
+      id="set-enable-uv-print-file"
+    />
+  </div>
 </div>
 `;
 
@@ -911,6 +953,20 @@ exports[`settings/Editor initially no warning 4`] = `
     <input
       class="select-control"
       id="set-enable-custom-backlash"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-enable-uv-print-file
+    label:
+    Enable UV Print File
+    url:
+    https://support.flux3dp.com/hc/en-us/articles/12320887477135
+    options:
+    [{"label":"On","value":true},{"label":"Off","value":false}]
+    <input
+      class="select-control"
+      id="set-enable-uv-print-file"
     />
   </div>
 </div>

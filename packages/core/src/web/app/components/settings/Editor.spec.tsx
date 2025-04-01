@@ -167,7 +167,7 @@ describe('settings/Editor', () => {
       />,
     );
 
-    expect(mockGetPreference).toHaveBeenCalledTimes(12);
+    expect(mockGetPreference).toHaveBeenCalledTimes(13);
     expect(mockGetPreference).toHaveBeenNthCalledWith(1, 'model');
     expect(mockGetPreference).toHaveBeenNthCalledWith(2, 'model');
     expect(mockGetPreference).toHaveBeenNthCalledWith(3, 'show_guides');

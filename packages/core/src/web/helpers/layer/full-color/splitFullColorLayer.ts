@@ -29,13 +29,6 @@ getSVGAsync((globalSVG) => {
 });
 
 const PROGRESS_ID = 'split-full-color';
-const colorSet = {
-  C: PrintingColors.CYAN,
-  K: PrintingColors.BLACK,
-  M: PrintingColors.MAGENTA,
-  W: PrintingColors.WHITE,
-  Y: PrintingColors.YELLOW,
-} as const;
 
 // TODO: add unit test
 const splitFullColorLayer = async (
