@@ -144,8 +144,8 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
         />
         <ObjectPanelItem.ActionList
           actions={[
-            { icon: <ObjectPanelIcons.HDist />, label: tObjectPanel.hdist, onClick: svgCanvas.distHori },
-            { icon: <ObjectPanelIcons.VDist />, label: tObjectPanel.vdist, onClick: svgCanvas.distVert },
+            { icon: <ObjectPanelIcons.HDist />, label: tObjectPanel.hdist, onClick: svgCanvas?.distHori },
+            { icon: <ObjectPanelIcons.VDist />, label: tObjectPanel.vdist, onClick: svgCanvas?.distVert },
           ]}
           content={<ObjectPanelIcons.VDist />}
           disabled={!buttonAvailability.dist}
