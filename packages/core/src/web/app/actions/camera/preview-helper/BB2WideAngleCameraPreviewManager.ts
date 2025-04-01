@@ -2,6 +2,7 @@ import alertCaller from '@core/app/actions/alert-caller';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import progressCaller from '@core/app/actions/progress-caller';
+import { loadJson } from '@core/helpers/device/jsonDataHelper';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import type { FisheyeCameraParametersV2, FisheyePreviewManager } from '@core/interfaces/FisheyePreview';
@@ -49,13 +50,8 @@ class BB2WideAngleCameraPreviewManager extends BasePreviewManager implements Pre
       let params: FisheyeCameraParametersV2;
 
       try {
-        const data = await deviceMaster.downloadFile('fisheye', 'wide-angle.json');
-        const [, blob] = data;
-        const dataString = await (blob as Blob).text();
-
-        params = JSON.parse(dataString) as FisheyeCameraParametersV2;
-      } catch (err) {
-        console.log('Fail to fetchFisheyeParams', err instanceof Error ? err?.message : err);
+        params = (await loadJson('fisheye', 'wide-angle.json')) as FisheyeCameraParametersV2;
+      } catch {
         throw new Error('Unable to get fisheye parameters, please make sure you have calibrated the camera');
       }
       console.log('params', params);
@@ -102,7 +98,7 @@ class BB2WideAngleCameraPreviewManager extends BasePreviewManager implements Pre
       MessageCaller.openMessage({
         content: i18n.lang.topbar.preview,
         duration: 20,
-        key: 'full-area-preview',
+        key: 'wide-angle-preview',
         level: MessageLevel.LOADING,
       });
 
@@ -114,13 +110,13 @@ class BB2WideAngleCameraPreviewManager extends BasePreviewManager implements Pre
       MessageCaller.openMessage({
         content: 'Successfully previewed',
         duration: 3,
-        key: 'full-area-preview',
+        key: 'wide-angle-preview',
         level: MessageLevel.SUCCESS,
       });
 
       return true;
     } catch (error) {
-      MessageCaller.closeMessage('full-area-preview');
+      MessageCaller.closeMessage('wide-angle-preview');
       throw error;
     }
   };
