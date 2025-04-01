@@ -1346,7 +1346,7 @@ export interface ILang {
       performIRCaliTitle: string;
       performPrintingCaliMsg: string;
       performPrintingCaliTitle: string;
-      printingLayersCoverted: string;
+      printingLayersConverted: string;
     };
     printing: string;
     unknown: string;
@@ -1688,6 +1688,7 @@ export interface ILang {
     blade_radius: string;
     bottom_up: string;
     calculation_optimization: string;
+
     cancel: string;
     caption: string;
     check_updates: string;
@@ -1756,6 +1757,7 @@ export interface ILang {
       reverse_engraving: string;
       segmented_engraving: string;
       simplify_clipper_path: string;
+      uv_print_export: string;
       vector_speed_constraint: string;
     };
     high: string;

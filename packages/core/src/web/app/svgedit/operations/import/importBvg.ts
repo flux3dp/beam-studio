@@ -229,7 +229,7 @@ export const importBvgString = async (
         newWorkarea = 'ado1';
       } else {
         alertCaller.popUp({
-          message: lang.layer_module.notification.printingLayersCoverted,
+          message: lang.layer_module.notification.printingLayersConverted,
           type: alertConstants.SHOW_POPUP_INFO,
         });
       }
