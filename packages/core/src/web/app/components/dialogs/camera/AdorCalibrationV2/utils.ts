@@ -7,6 +7,7 @@ import {
   doFishEyeCalibration,
   startFisheyeCalibrate,
 } from '@core/helpers/camera-calibration-helper';
+import { uploadJson } from '@core/helpers/device/jsonDataHelper';
 import deviceMaster from '@core/helpers/device-master';
 import durationFormatter from '@core/helpers/duration-formatter';
 import i18n from '@core/helpers/i18n';
@@ -125,10 +126,7 @@ export const calibrateWithDevicePictures = async (): Promise<FisheyeCameraParame
 };
 
 export const saveCheckPoint = async (param: FisheyeCameraParametersV2Cali): Promise<void> => {
-  const dataString = JSON.stringify(param);
-  const dataBlob = new Blob([dataString], { type: 'application/json' });
-
-  await deviceMaster.uploadToDirectory(dataBlob, 'fisheye', 'checkpoint.json');
+  await uploadJson(param, 'fisheye', 'checkpoint.json');
 };
 
 export const getMaterialHeight = async (position: 'A' | 'E' = 'E'): Promise<number> => {

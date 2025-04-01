@@ -6,6 +6,7 @@ import { SpinLoading } from 'antd-mobile';
 import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
 import { updateData } from '@core/helpers/camera-calibration-helper';
+import { loadJson } from '@core/helpers/device/jsonDataHelper';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
 import type { FisheyeCaliParameters } from '@core/interfaces/FisheyePreview';
@@ -94,15 +95,11 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
 
     if (allowCheckPoint) {
       try {
-        const data = await deviceMaster.downloadFile('fisheye', 'checkpoint.json');
-        const [, blob] = data;
-        const dataString = await (blob as Blob).text();
+        const data = (await loadJson('fisheye', 'checkpoint.json')) as T;
 
-        res = JSON.parse(dataString);
-
-        if (res) {
+        if (data) {
           setCheckpointData({
-            data: res,
+            data,
             file: 'checkpoint.json',
           });
           progressCaller.popById(progressId);
