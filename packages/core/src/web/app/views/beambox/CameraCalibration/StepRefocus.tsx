@@ -73,7 +73,7 @@ const StepRefocus = (): React.JSX.Element => {
     let blobUrl;
 
     try {
-      await PreviewModeController.start(device, () => console.log('camera fail. stop preview mode'));
+      await PreviewModeController.start(device);
       setLastConfig(PreviewModeController.getCameraOffsetStandard());
       Progress.openNonstopProgress({
         id: 'taking-picture',
