@@ -14,8 +14,10 @@ const switchProtocol = (protocol?: 'http:' | 'https:'): void => {
   urlObj.protocol = protocol ?? (urlObj.protocol === 'http:' ? 'https:' : 'http:');
   urlObj.hash = '';
 
-  if (protocol === 'https:' && urlObj.host.startsWith('http.')) {
-    urlObj.host = urlObj.host.substring(5);
+  if (urlObj.protocol === 'https:' && urlObj.host === 'http.studio.flux3dp.com') {
+    urlObj.host = 'studio.flux3dp.com';
+  } else if (urlObj.protocol === 'http:' && urlObj.host === 'studio.flux3dp.com') {
+    urlObj.host = 'http.studio.flux3dp.com';
   }
 
   window.location.href = urlObj.href;
