@@ -8,7 +8,11 @@ function socialAuth(result: boolean): void {
       window.opener.location.hash = isReady ? '#/studio/beambox' : '#/initialize/connect/select-machine-model';
     }
 
-    window.opener?.dispatchEvent(new CustomEvent('DISMISS_FLUX_LOGIN'));
+    try {
+      window.opener?.dispatchEvent(new CustomEvent('DISMISS_FLUX_LOGIN'));
+    } catch (e) {
+      console.error('Failed to dispatch event to opener', e);
+    }
     window.close();
   }
 }
