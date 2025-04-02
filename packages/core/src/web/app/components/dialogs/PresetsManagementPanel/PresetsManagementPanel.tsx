@@ -5,11 +5,11 @@ import { Button, Dropdown, Modal } from 'antd';
 import classNames from 'classnames';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import { promarkModels } from '@core/app/actions/beambox/constant';
+import { modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import alertConstants from '@core/app/constants/alert-constants';
-import LayerModule, { modelsWithModules, printingModules } from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import presets from '@core/app/constants/presets';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';

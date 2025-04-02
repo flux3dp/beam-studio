@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import Icon from '@ant-design/icons';
 import ReactDomServer from 'react-dom/server';
 
-import type LayerModule from '@core/app/constants/layer-module/layer-modules';
+import type { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { builtInElements } from '@core/app/constants/shape-panel-constants';
 import history from '@core/app/svgedit/history/history';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
@@ -13,10 +13,11 @@ import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getLayerByName } from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useForceUpdate from '@core/helpers/use-force-update';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './ShapeIcon.module.scss';
 
-let svgCanvas;
+let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;

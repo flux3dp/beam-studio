@@ -1,10 +1,10 @@
-import type LayerModule from '@core/app/constants/layer-module/layer-modules';
+import type { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
 import history from '@core/app/svgedit/history/history';
 import rgbToHex from '@core/helpers/color/rgbToHex';
 import i18n from '@core/helpers/i18n';
-import layerConfigHelper, { getData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
+import { getData, initLayerConfig, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { createLayer, getLayerByName } from '@core/helpers/layer/layer-helper';
 import layerModuleHelper from '@core/helpers/layer-module/layer-module-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -74,7 +74,7 @@ const appendUseElement = (
 
       if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
 
-      layerConfigHelper.initLayerConfig(newLayerName);
+      initLayerConfig(newLayerName);
 
       if (type === 'layer' && targetLayerName) {
         const matchPara = targetLayerName.match(/#([-SP0-9.]*\b)/i);
@@ -146,7 +146,7 @@ const appendUseElement = (
 
       if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
 
-      layerConfigHelper.initLayerConfig(newLayerName);
+      initLayerConfig(newLayerName);
       svgCanvas.setCurrentLayer(newLayerName);
     }
 

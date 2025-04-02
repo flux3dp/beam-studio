@@ -213,7 +213,7 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
       return selectedOption.label;
     }
 
-    return +units.convertUnit(value, fakeUnit, 'mm').toFixed(decimal);
+    return +units.convertUnit(value, fakeUnit, 'mm')?.toFixed(decimal);
   }, [decimal, sliderOptions, value, fakeUnit]);
 
   return type === 'panel-item' ? (

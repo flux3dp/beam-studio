@@ -2,7 +2,7 @@ import React, { forwardRef } from 'react';
 
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
-import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import presetHelper from '@core/helpers/presets/preset-helper';
 import type { Preset } from '@core/interfaces/ILayerConfig';
 

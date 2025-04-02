@@ -1,9 +1,10 @@
 import alertCaller from '@core/app/actions/alert-caller';
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import { modelsWithModules } from '@core/app/actions/beambox/constant';
 import { showAdorCalibration } from '@core/app/components/dialogs/camera/AdorCalibration';
 import CalibrationType from '@core/app/components/dialogs/camera/AdorCalibration/calibrationTypes';
 import alertConstants from '@core/app/constants/alert-constants';
-import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { AlertConfigKey } from '@core/helpers/api/alert-config';
 import alertConfig from '@core/helpers/api/alert-config';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';

@@ -1,7 +1,7 @@
 import alertCaller from '@core/app/actions/alert-caller';
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import alertConstants from '@core/app/constants/alert-constants';
-import LayerModule, { printingModules } from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import defaultPresets from '@core/app/constants/presets';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';

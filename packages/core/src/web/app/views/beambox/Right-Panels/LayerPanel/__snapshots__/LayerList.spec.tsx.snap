@@ -26,7 +26,12 @@ exports[`test LayerList should render correctly 1`] = `
           <svgr-url />
         </div>
         <div
-          class="name"
+          class="module"
+        >
+          <svgr-url />
+        </div>
+        <div
+          class="name with-module"
           id="layerdoubleclick-1"
         >
           layer2
@@ -95,7 +100,12 @@ exports[`test LayerList should render correctly 1`] = `
           </div>
         </div>
         <div
-          class="name"
+          class="module"
+        >
+          <svgr-url />
+        </div>
+        <div
+          class="name with-module"
           id="layerdoubleclick-0"
         >
           layer1
@@ -200,7 +210,12 @@ exports[`test LayerList should render correctly on mobile 1`] = `
                   </div>
                 </div>
                 <div
-                  class="name"
+                  class="module"
+                >
+                  <svgr-url />
+                </div>
+                <div
+                  class="name with-module"
                   id="layerdoubleclick-1"
                 >
                   layer2
@@ -315,7 +330,12 @@ exports[`test LayerList should render correctly on mobile 1`] = `
                   </div>
                 </div>
                 <div
-                  class="name"
+                  class="module"
+                >
+                  <svgr-url />
+                </div>
+                <div
+                  class="name with-module"
                   id="layerdoubleclick-0"
                 >
                   layer1

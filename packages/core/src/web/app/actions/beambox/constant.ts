@@ -17,12 +17,20 @@ export const hexaRfModels = new Set(removeReadonly(hexaRfModelsArray));
 
 export const adorModelsArray = ['ado1', 'fad1'] as const;
 export const adorModels = new Set(adorModelsArray);
-export const promarkModels = new Set(['fpm1']);
+
+export const promarkModelsArray = ['fpm1'] as const;
+export const promarkModels = new Set(promarkModelsArray);
+
+export const modelsWithModules = new Set(adorModelsArray);
+export const modelsWithoutUvPrint = new Set(promarkModelsArray);
+
 export enum PreviewSpeedLevel {
   FAST = 3,
   MEDIUM = 2,
   SLOW = 1,
 }
+
+export const dpmm = 10;
 
 export default {
   adorModels: adorModelsArray,
@@ -80,7 +88,7 @@ export default {
     medium: 250,
     ultra: 1000,
   },
-  dpmm: 10,
+  dpmm,
   fcodeV2Models: new Set([...adorModelsArray, ...bb2ModelsArray, ...hexaRfModelsArray]),
   highPowerModels: ['fhx2rf3', 'fhx2rf6', 'fhexa1', 'ado1', 'flv1', 'fpm1'],
 };

@@ -54,7 +54,7 @@ const CanvasController = ({ setResetKey, setZoomKey }: Props): React.JSX.Element
       <div>
         <Tooltip
           arrow={{ pointAtCenter: true }}
-          overlayClassName={styles['tooltip-text']}
+          className={styles['tooltip-text']}
           placement="topRight"
           title={navigator.maxTouchPoints >= 1 ? lang.control_tooltip_touch : lang.control_tooltip}
         >

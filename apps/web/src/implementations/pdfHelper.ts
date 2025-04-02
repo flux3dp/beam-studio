@@ -16,6 +16,4 @@ const pdfToSvgBlob = async (file: File) => {
   }
 };
 
-export default {
-  pdfToSvgBlob,
-} as PdfHelper;
+export const pdfHelper: PdfHelper = { pdfToSvgBlob };

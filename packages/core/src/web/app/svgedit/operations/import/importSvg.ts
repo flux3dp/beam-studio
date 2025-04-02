@@ -1,17 +1,18 @@
 import alertCaller from '@core/app/actions/alert-caller';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import { modelsWithModules } from '@core/app/actions/beambox/constant';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import progressCaller from '@core/app/actions/progress-caller';
 import alertConstants from '@core/app/constants/alert-constants';
-import LayerModule, { modelsWithModules, printingModules } from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import history from '@core/app/svgedit/history/history';
 import readBitmapFile from '@core/app/svgedit/operations/import/readBitmapFile';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import svgLaserParser from '@core/helpers/api/svg-laser-parser';
 import awsHelper from '@core/helpers/aws-helper';
 import i18n from '@core/helpers/i18n';
-import layerConfigHelper, { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
+import { initLayerConfig, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { createLayer, removeDefaultLayerIfEmpty } from '@core/helpers/layer/layer-helper';
 import layerModuleHelper from '@core/helpers/layer-module/layer-module-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -237,7 +238,7 @@ const importSvg = async (
         batchCmd.addSubCommand(cmd);
       }
 
-      layerConfigHelper.initLayerConfig(newLayerName);
+      initLayerConfig(newLayerName);
 
       if (isPrinting) {
         writeDataLayer(newLayer, 'module', targetModule);
@@ -271,7 +272,7 @@ const importSvg = async (
     }
   }
 
-  LayerPanelController.setSelectedLayers([svgCanvas.getCurrentDrawing().getCurrentLayerName()]);
+  LayerPanelController.setSelectedLayers([svgCanvas.getCurrentDrawing().getCurrentLayerName()!]);
 
   if (filteredNewElements.length === 0) {
     svgCanvas.clearSelection();

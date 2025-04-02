@@ -9,6 +9,8 @@
  * Copyright(c) 2010 Jeff Schiller
  */
 
+const path = require('path');
+
 // Dependencies:
 // 1) jQuery
 // 2) pathseg.js
@@ -30,8 +32,7 @@
   var NS = svgedit.NS;
 
   // Much faster than running getBBox() every time
-  var visElems =
-    'a,circle,ellipse,foreignObject,g,image,line,path,polygon,polyline,rect,svg,text,tspan,use';
+  var visElems = 'a,circle,ellipse,foreignObject,g,image,line,path,polygon,polyline,rect,svg,text,tspan,use';
   var visElems_arr = visElems.split(',');
   //var hidElems = 'clipPath,defs,desc,feGaussianBlur,filter,linearGradient,marker,mask,metadata,pattern,radialGradient,stop,switch,symbol,title,textPath';
 
@@ -839,13 +840,7 @@
   //
   // Returns:
   // The converted path element or null if the DOM element was not recognized.
-  svgedit.utilities.convertToPath = function (
-    elem,
-    attrs,
-    addSvgElementFromJson,
-    pathActions,
-    history,
-  ) {
+  svgedit.utilities.convertToPath = function (elem, attrs, addSvgElementFromJson, pathActions, history) {
     var batchCmd = new history.BatchCommand('Convert element to Path');
 
     // Any attribute on the element not covered by the passed-in attributes
@@ -963,22 +958,14 @@
           const isPathTooComplecated =
             elem.tagName === 'path' && (!elem.pathSegList || elem.pathSegList._list.length > 700);
           if (!isPathTooComplecated) {
-            bb = good_bb = svgedit.utilities.getBBoxOfElementAsPath(
-              elem,
-              addSvgElementFromJson,
-              pathActions,
-            );
+            bb = good_bb = svgedit.utilities.getBBoxOfElementAsPath(elem, addSvgElementFromJson, pathActions);
           }
         } else if (elem.tagName == 'rect') {
           // Look for radius
           var rx = elem.getAttribute('rx');
           var ry = elem.getAttribute('ry');
           if (rx || ry) {
-            bb = good_bb = svgedit.utilities.getBBoxOfElementAsPath(
-              elem,
-              addSvgElementFromJson,
-              pathActions,
-            );
+            bb = good_bb = svgedit.utilities.getBBoxOfElementAsPath(elem, addSvgElementFromJson, pathActions);
           }
         }
       }
@@ -1059,11 +1046,7 @@
       max_y += offset;
     } else {
       $.each(elems, function (i, elem) {
-        var cur_bb = svgedit.utilities.getBBoxWithTransform(
-          elem,
-          addSvgElementFromJson,
-          pathActions,
-        );
+        var cur_bb = svgedit.utilities.getBBoxWithTransform(elem, addSvgElementFromJson, pathActions);
         if (cur_bb) {
           var offset = getStrokeOffsetForBBox(elem);
           min_x = Math.min(min_x, cur_bb.x - offset);
@@ -1166,16 +1149,7 @@
     }
   };
 
-  const shapeElementsTags = [
-    'circle',
-    'ellipse',
-    'line',
-    'mesh',
-    'path',
-    'polygon',
-    'polyline',
-    'rect',
-  ];
+  const shapeElementsTags = ['circle', 'ellipse', 'line', 'mesh', 'path', 'polygon', 'polyline', 'rect'];
 
   /**
    * cleanUpElement
@@ -1233,10 +1207,7 @@
 
   svgedit.utilities.preg_quote = function (str, delimiter) {
     // From: http://phpjs.org/functions
-    return String(str).replace(
-      new RegExp('[.\\\\+*?\\[\\^\\]$(){}=!<>|:\\' + (delimiter || '') + '-]', 'g'),
-      '\\$&',
-    );
+    return String(str).replace(new RegExp('[.\\\\+*?\\[\\^\\]$(){}=!<>|:\\' + (delimiter || '') + '-]', 'g'), '\\$&');
   };
 
   /**
@@ -1260,33 +1231,6 @@
         }, endCallback)();
       }
     };
-  };
-
-  svgedit.utilities.buildCanvgCallback = function (callCanvg) {
-    return svgedit.utilities.executeAfterLoads(
-      'canvg',
-      ['canvg/rgbcolor.js', 'canvg/canvg.js'],
-      callCanvg,
-    );
-  };
-
-  svgedit.utilities.buildJSPDFCallback = function (callJSPDF) {
-    return svgedit.utilities.executeAfterLoads('RGBColor', ['canvg/rgbcolor.js'], function () {
-      var arr = [];
-      if (!RGBColor || RGBColor.ok === undef) {
-        // It's not our RGBColor, so we'll need to load it
-        arr.push('canvg/rgbcolor.js');
-      }
-      svgedit.utilities.executeAfterLoads(
-        'jsPDF',
-        arr.concat(
-          'jspdf/underscore-min.js',
-          'jspdf/jspdf.min.js',
-          'jspdf/jspdf.plugin.svgToPdf.js',
-        ),
-        callJSPDF,
-      )();
-    });
   };
 
   /**
@@ -1418,28 +1362,7 @@
   }
 
   // this is how we map paths to our preferred relative segment types
-  var pathMap = [
-    0,
-    'z',
-    'M',
-    'm',
-    'L',
-    'l',
-    'C',
-    'c',
-    'Q',
-    'q',
-    'A',
-    'a',
-    'H',
-    'h',
-    'V',
-    'v',
-    'S',
-    's',
-    'T',
-    't',
-  ];
+  var pathMap = [0, 'z', 'M', 'm', 'L', 'l', 'C', 'c', 'Q', 'q', 'A', 'a', 'H', 'h', 'V', 'v', 'S', 's', 'T', 't'];
 
   /**
    * TODO: move to pathActions.js when migrating rest of pathActions out of svgcanvas.js

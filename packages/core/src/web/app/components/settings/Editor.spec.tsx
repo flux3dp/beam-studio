@@ -167,7 +167,7 @@ describe('settings/Editor', () => {
       />,
     );
 
-    expect(mockGetPreference).toHaveBeenCalledTimes(12);
+    expect(mockGetPreference).toHaveBeenCalledTimes(13);
     expect(mockGetPreference).toHaveBeenNthCalledWith(1, 'model');
     expect(mockGetPreference).toHaveBeenNthCalledWith(2, 'model');
     expect(mockGetPreference).toHaveBeenNthCalledWith(3, 'show_guides');
@@ -180,6 +180,7 @@ describe('settings/Editor', () => {
     expect(mockGetPreference).toHaveBeenNthCalledWith(10, 'auto-switch-tab');
     expect(mockGetPreference).toHaveBeenNthCalledWith(11, 'path-engine');
     expect(mockGetPreference).toHaveBeenNthCalledWith(12, 'enable-custom-backlash');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(13, 'enable-uv-print-file');
     expect(container).toMatchSnapshot();
 
     const SelectControls = container.querySelectorAll('.select-control');

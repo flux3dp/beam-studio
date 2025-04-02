@@ -1,11 +1,12 @@
 import alertCaller from '@core/app/actions/alert-caller';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import { modelsWithModules } from '@core/app/actions/beambox/constant';
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
-import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import { changeBeamboxPreferenceValue } from '@core/app/svgedit/history/beamboxPreferenceCommand';
@@ -228,7 +229,7 @@ export const importBvgString = async (
         newWorkarea = 'ado1';
       } else {
         alertCaller.popUp({
-          message: lang.layer_module.notification.printingLayersCoverted,
+          message: lang.layer_module.notification.printingLayersConverted,
           type: alertConstants.SHOW_POPUP_INFO,
         });
       }

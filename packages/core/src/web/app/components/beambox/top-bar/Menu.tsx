@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 import { MenuDivider, MenuItem, SubMenu, Menu as TopBarMenu } from '@szhsin/react-menu';
 
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import { promarkModels } from '@core/app/actions/beambox/constant';
-import { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import { modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
 import { menuItems } from '@core/app/constants/menuItems';
 import Discover from '@core/helpers/api/discover';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
@@ -106,8 +106,8 @@ export default function Menu({ email }: Props): React.JSX.Element {
   const deviceMenus = () => {
     const submenus = [];
 
-    for (let i = 0; i < devices.length; i += 1) {
-      const { model, name, serial } = devices[i];
+    for (const device of devices) {
+      const { model, name, serial } = device;
       const hasModules = modelsWithModules.has(model);
       const isPromark = promarkModels.has(model);
       const isBb2 = model === 'fbb2';
@@ -115,62 +115,62 @@ export default function Menu({ email }: Props): React.JSX.Element {
       // Note: SubMenu doesn't support a React.Fragment wrapper (<>...</>) as a child.
       submenus.push(
         <SubMenu key={serial} label={name}>
-          <MenuItem onClick={() => callback('DASHBOARD', devices[i])}>{menuCms.dashboard}</MenuItem>
-          <MenuItem onClick={() => callback('MACHINE_INFO', devices[i])}>{menuCms.machine_info}</MenuItem>
+          <MenuItem onClick={() => callback('DASHBOARD', device)}>{menuCms.dashboard}</MenuItem>
+          <MenuItem onClick={() => callback('MACHINE_INFO', device)}>{menuCms.machine_info}</MenuItem>
           {isPromark && (
-            <MenuItem onClick={() => callback('PROMARK_SETTINGS', devices[i])}>{tPromarkSettings.title}</MenuItem>
+            <MenuItem onClick={() => callback('PROMARK_SETTINGS', device)}>{tPromarkSettings.title}</MenuItem>
           )}
           {isPromark && (
-            <MenuItem onClick={() => callback('Z_AXIS_ADJUSTMENT', devices[i])}>
+            <MenuItem onClick={() => callback('Z_AXIS_ADJUSTMENT', device)}>
               {tPromarkSettings.z_axis_adjustment.title}
             </MenuItem>
           )}
           {isPromark && (
-            <MenuItem onClick={() => callback('CONNECTION_TEST', devices[i])}>{tPromarkConnectionTest.title}</MenuItem>
+            <MenuItem onClick={() => callback('CONNECTION_TEST', device)}>{tPromarkConnectionTest.title}</MenuItem>
           )}
           <MenuDivider />
           <SubMenu label={menuCms.calibration}>
-            <MenuItem disabled={isMobile} onClick={() => callback('CALIBRATE_BEAMBOX_CAMERA', devices[i])}>
+            <MenuItem disabled={isMobile} onClick={() => callback('CALIBRATE_BEAMBOX_CAMERA', device)}>
               {menuCms.calibrate_beambox_camera} {isMobile && '(PC Only)'}
             </MenuItem>
             {isBb2 && (
-              <MenuItem disabled={isMobile} onClick={() => callback('CALIBRATE_CAMERA_ADVANCED', devices[i])}>
+              <MenuItem disabled={isMobile} onClick={() => callback('CALIBRATE_CAMERA_ADVANCED', device)}>
                 {menuCms.calibrate_camera_advanced} {isMobile && '(PC Only)'}
               </MenuItem>
             )}
             {hasModules && (
-              <MenuItem disabled={isMobile} onClick={() => callback('CALIBRATE_PRINTER_MODULE', devices[i])}>
+              <MenuItem disabled={isMobile} onClick={() => callback('CALIBRATE_PRINTER_MODULE', device)}>
                 {menuCms.calibrate_printer_module}
               </MenuItem>
             )}
             {hasModules && (
-              <MenuItem disabled={isMobile} onClick={() => callback('CALIBRATE_IR_MODULE', devices[i])}>
+              <MenuItem disabled={isMobile} onClick={() => callback('CALIBRATE_IR_MODULE', device)}>
                 {menuCms.calibrate_ir_module}
               </MenuItem>
             )}
             {model === 'fbm1' && (
-              <MenuItem disabled={isMobile} onClick={() => callback('CALIBRATE_BEAMBOX_CAMERA_BORDERLESS', devices[i])}>
+              <MenuItem disabled={isMobile} onClick={() => callback('CALIBRATE_BEAMBOX_CAMERA_BORDERLESS', device)}>
                 {menuCms.calibrate_beambox_camera_borderless} {isMobile && '(PC Only)'}
               </MenuItem>
             )}
             {model === 'fbm1' && (
-              <MenuItem disabled={isMobile} onClick={() => callback('CALIBRATE_DIODE_MODULE', devices[i])}>
+              <MenuItem disabled={isMobile} onClick={() => callback('CALIBRATE_DIODE_MODULE', device)}>
                 {menuCms.calibrate_diode_module} {isMobile && '(PC Only)'}
               </MenuItem>
             )}
           </SubMenu>
           <MenuDivider />
-          <MenuItem onClick={() => callback('UPDATE_FIRMWARE', devices[i])}>{menuCms.update_firmware}</MenuItem>
+          <MenuItem onClick={() => callback('UPDATE_FIRMWARE', device)}>{menuCms.update_firmware}</MenuItem>
           <SubMenu label={menuCms.download_log}>
-            <MenuItem onClick={() => callback('LOG_NETWORK', devices[i])}>{menuCms.log.network}</MenuItem>
-            <MenuItem onClick={() => callback('LOG_HARDWARE', devices[i])}>{menuCms.log.hardware}</MenuItem>
-            <MenuItem onClick={() => callback('LOG_DISCOVER', devices[i])}>{menuCms.log.discover}</MenuItem>
-            <MenuItem onClick={() => callback('LOG_USB', devices[i])}>{menuCms.log.usb}</MenuItem>
-            <MenuItem onClick={() => callback('LOG_USBLIST', devices[i])}>{menuCms.log.usblist}</MenuItem>
-            <MenuItem onClick={() => callback('LOG_CAMERA', devices[i])}>{menuCms.log.camera}</MenuItem>
-            <MenuItem onClick={() => callback('LOG_CLOUD', devices[i])}>{menuCms.log.cloud}</MenuItem>
-            <MenuItem onClick={() => callback('LOG_PLAYER', devices[i])}>{menuCms.log.player}</MenuItem>
-            <MenuItem onClick={() => callback('LOG_ROBOT', devices[i])}>{menuCms.log.robot}</MenuItem>
+            <MenuItem onClick={() => callback('LOG_NETWORK', device)}>{menuCms.log.network}</MenuItem>
+            <MenuItem onClick={() => callback('LOG_HARDWARE', device)}>{menuCms.log.hardware}</MenuItem>
+            <MenuItem onClick={() => callback('LOG_DISCOVER', device)}>{menuCms.log.discover}</MenuItem>
+            <MenuItem onClick={() => callback('LOG_USB', device)}>{menuCms.log.usb}</MenuItem>
+            <MenuItem onClick={() => callback('LOG_USBLIST', device)}>{menuCms.log.usblist}</MenuItem>
+            <MenuItem onClick={() => callback('LOG_CAMERA', device)}>{menuCms.log.camera}</MenuItem>
+            <MenuItem onClick={() => callback('LOG_CLOUD', device)}>{menuCms.log.cloud}</MenuItem>
+            <MenuItem onClick={() => callback('LOG_PLAYER', device)}>{menuCms.log.player}</MenuItem>
+            <MenuItem onClick={() => callback('LOG_ROBOT', device)}>{menuCms.log.robot}</MenuItem>
           </SubMenu>
         </SubMenu>,
       );
@@ -284,6 +284,9 @@ export default function Menu({ email }: Props): React.JSX.Element {
           <MenuItem onClick={() => callback('EXPORT_PNG')}>{menuCms.export_PNG}</MenuItem>
           <MenuItem onClick={() => callback('EXPORT_JPG')}>{menuCms.export_JPG}</MenuItem>
           <MenuItem onClick={() => callback('EXPORT_FLUX_TASK')}>{hotkey('export_flux_task')}</MenuItem>
+          {beamboxPreference.read('enable-uv-print-file') && (
+            <MenuItem onClick={() => callback('EXPORT_UV_PRINT')}>{menuCms.export_UV_print}</MenuItem>
+          )}
         </SubMenu>
         <MenuDivider />
         <MenuItem onClick={() => callback('PREFERENCE')}>{hotkey('preferences')}</MenuItem>

@@ -1,6 +1,7 @@
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import constant from '@core/app/actions/beambox/constant';
+import constant, { modelsWithoutUvPrint } from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
 import workareaManager from '@core/app/svgedit/workarea';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
@@ -9,19 +10,30 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 export class AddOnBoundaryDrawer {
   private static instance: AddOnBoundaryDrawer;
 
-  private container?: SVGSVGElement;
-  private autoFeederPath?: SVGPathElement;
-  private passThroughPath?: SVGPathElement;
-  private openBottomRect?: SVGRectElement;
+  private container: SVGSVGElement;
 
-  private constructor() {}
+  private appended = false;
+
+  private boundary: {
+    autoFeeder: SVGPathElement;
+    openBottom: SVGRectElement;
+    passThrough: SVGPathElement;
+    uvPrint: SVGPathElement;
+  };
+
+  private constructor() {
+    this.container = this.generateContainer();
+
+    this.boundary = {
+      autoFeeder: this.generateElement('path'),
+      openBottom: this.generateElement('rect', 'open-bottom-boundary'),
+      passThrough: this.generateElement('path'),
+      uvPrint: this.generateElement('path'),
+    };
+  }
 
   static getInstance(): AddOnBoundaryDrawer {
-    if (!AddOnBoundaryDrawer.instance) {
-      AddOnBoundaryDrawer.instance = new AddOnBoundaryDrawer();
-    }
-
-    return AddOnBoundaryDrawer.instance;
+    return (AddOnBoundaryDrawer.instance ??= new AddOnBoundaryDrawer());
   }
 
   registerEvents(): void {
@@ -32,6 +44,7 @@ export class AddOnBoundaryDrawer {
     beamboxPreferenceEvents.on('borderless', this.update);
     beamboxPreferenceEvents.on('pass-through', this.updatePassThroughPath);
     canvasEventEmitter.on('canvas-change', this.update);
+    canvasEventEmitter.on('select-module-changed', this.updateUvPath);
   }
 
   unregisterEvents(): void {
@@ -42,50 +55,59 @@ export class AddOnBoundaryDrawer {
     beamboxPreferenceEvents.off('borderless', this.update);
     beamboxPreferenceEvents.off('pass-through', this.updatePassThroughPath);
     canvasEventEmitter.off('canvas-change', this.update);
+    canvasEventEmitter.off('select-module-changed', this.updateUvPath);
   }
 
-  private createElements(): void {
-    if (!this.container) {
-      const canvasBackground = document.getElementById('canvasBackground');
+  private generateContainer = (): SVGSVGElement => {
+    const container = document.createElementNS(NS.SVG, 'svg') as SVGSVGElement;
 
-      if (!canvasBackground) return;
+    container.setAttribute('id', 'add-on-boundary');
+    container.setAttribute('x', '0');
+    container.setAttribute('y', '0');
+    container.setAttribute('width', '100%');
+    container.setAttribute('height', '100%');
+    container.setAttribute('style', 'pointer-events:none');
 
-      this.container = document.createElementNS(NS.SVG, 'svg') as SVGSVGElement;
-      this.container.setAttribute('id', 'add-on-boundary');
-      this.container.setAttribute('x', '0');
-      this.container.setAttribute('y', '0');
-      this.container.setAttribute('width', '100%');
-      this.container.setAttribute('height', '100%');
-      this.container.setAttribute('style', 'pointer-events:none');
+    return container;
+  };
 
-      const generateElement = <T extends SVGElement>(tagName = 'path') => {
-        const elem = document.createElementNS(NS.SVG, tagName) as T;
+  private generateElement = <T extends SVGElement>(tagName = 'path', id?: string) => {
+    const elem = document.createElementNS(NS.SVG, tagName) as T;
 
-        elem.setAttribute('fill', '#CCC');
-        elem.setAttribute('fill-opacity', '0.4');
-        elem.setAttribute('fill-rule', 'evenodd');
-        elem.setAttribute('stroke', 'none');
-        elem.setAttribute('style', 'pointer-events:none');
-        this.container!.appendChild(elem);
+    if (id) elem.id = id;
 
-        return elem;
-      };
+    elem.setAttribute('fill', '#CCC');
+    elem.setAttribute('fill-opacity', '0.4');
+    elem.setAttribute('fill-rule', 'evenodd');
+    elem.setAttribute('stroke', 'none');
+    elem.setAttribute('style', 'pointer-events:none');
 
-      this.autoFeederPath = generateElement();
-      this.passThroughPath = generateElement();
-      this.openBottomRect = generateElement('rect');
-      this.openBottomRect.id = 'open-bottom-boundary';
-      this.openBottomRect.setAttribute('y', '0');
-      this.openBottomRect.setAttribute('height', '100%');
-      canvasBackground.appendChild(this.container);
+    if (tagName === 'rect') {
+      elem.setAttribute('y', '0');
+      elem.setAttribute('height', '100%');
     }
-  }
 
-  updateContainerSize = (): void => {
+    this.container.appendChild(elem);
+
+    return elem;
+  };
+
+  private appendToCanvasBackground = (): void => {
+    if (this.appended) return;
+
+    const canvasBackground = document.getElementById('canvasBackground');
+
+    if (canvasBackground && !canvasBackground.contains(this.container)) {
+      canvasBackground.append(this.container);
+      this.appended = true;
+    }
+  };
+
+  private updateContainerSize = (): void => {
     const { height, width } = workareaManager;
     const viewBox = `0 0 ${width} ${height}`;
 
-    this.container?.setAttribute('viewBox', viewBox);
+    this.container.setAttribute('viewBox', viewBox);
   };
 
   updateAutoFeederPath = (): void => {
@@ -94,7 +116,7 @@ export class AddOnBoundaryDrawer {
     const { autoFeeder } = addOnInfo;
 
     if (!getAutoFeeder(addOnInfo) || !autoFeeder?.xRange) {
-      this.autoFeederPath?.setAttribute('d', '');
+      this.boundary.autoFeeder.setAttribute('d', '');
 
       return;
     }
@@ -104,7 +126,7 @@ export class AddOnBoundaryDrawer {
 
     x *= dpmm;
     width *= dpmm;
-    this.autoFeederPath?.setAttribute(
+    this.boundary.autoFeeder.setAttribute(
       'd',
       `M0 0 H${x} V${workareaH} H0 Z M${x + width} 0 H${workareaW} V${workareaH} H${x + width} Z`,
     );
@@ -118,7 +140,7 @@ export class AddOnBoundaryDrawer {
     const { passThrough } = addOnInfo;
 
     if (!getPassThrough(addOnInfo)) {
-      this.passThroughPath?.setAttribute('d', '');
+      this.boundary.passThrough.setAttribute('d', '');
 
       return;
     }
@@ -133,7 +155,7 @@ export class AddOnBoundaryDrawer {
       width *= dpmm;
     }
 
-    this.passThroughPath?.setAttribute(
+    this.boundary.passThrough.setAttribute(
       'd',
       `M0 0 H${workareaW} V${workareaH} H0 Z M${x} ${expansion[0]} H${x + width} V${workareaH - expansion[1]} H${x} Z`,
     );
@@ -147,7 +169,7 @@ export class AddOnBoundaryDrawer {
     const { openBottom } = getAddOnInfo(model);
 
     if (!enabled || !openBottom) {
-      this.openBottomRect?.setAttribute('display', 'none');
+      this.boundary.openBottom.setAttribute('display', 'none');
 
       return;
     }
@@ -155,13 +177,32 @@ export class AddOnBoundaryDrawer {
     const w = constant.borderless.safeDistance.X * constant.dpmm;
     const x = width - w;
 
-    this.openBottomRect?.setAttribute('x', x.toString());
-    this.openBottomRect?.setAttribute('width', w.toString());
-    this.openBottomRect?.removeAttribute('display');
+    this.boundary.openBottom.setAttribute('x', x.toString());
+    this.boundary.openBottom.setAttribute('width', w.toString());
+    this.boundary.openBottom.removeAttribute('display');
+  };
+
+  updateUvPath = (module: LayerModule): void => {
+    const { height, model, width } = workareaManager;
+    const { dpmm } = constant;
+
+    if (module !== LayerModule.UV_PRINT || modelsWithoutUvPrint.has(model)) {
+      this.boundary.uvPrint.setAttribute('d', '');
+
+      return;
+    }
+
+    this.container.removeAttribute('display');
+
+    // A4 paper size: 297mm x 210mm
+    const x = 297 * dpmm;
+    const y = 210 * dpmm;
+
+    this.boundary.uvPrint.setAttribute('d', `M${width},${height}H0,V${y}H${x}V0H${width}V${height}`);
   };
 
   update = (): void => {
-    this.createElements();
+    this.appendToCanvasBackground();
     this.updateContainerSize();
     this.updateAutoFeederPath();
     this.updatePassThroughPath();
@@ -170,5 +211,3 @@ export class AddOnBoundaryDrawer {
 }
 
 export const addOnBoundaryDrawer = AddOnBoundaryDrawer.getInstance();
-
-export default addOnBoundaryDrawer;

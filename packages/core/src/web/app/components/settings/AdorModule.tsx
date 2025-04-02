@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 
 import type { DefaultOptionType } from 'antd/es/select';
 
-import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import moduleOffsets from '@core/app/constants/layer-module/module-offsets';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';

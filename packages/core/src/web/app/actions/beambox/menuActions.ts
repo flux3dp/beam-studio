@@ -142,7 +142,7 @@ const loadExampleFile = async (path: string) => {
     const buf = Buffer.from(await new Response(resp).arrayBuffer());
     let string = buf.toString();
 
-    if (i18n.getActiveLang() && i18n.getActiveLang() !== 'en') {
+    if (i18n.getActiveLang() !== 'en') {
       const LANG = i18n.lang.beambox.right_panel.layer_panel;
 
       string = string.replace(/Engraving/g, LANG.layer_engraving).replace(/Cutting/g, LANG.layer_cutting);
@@ -193,6 +193,7 @@ export default {
   EXPORT_JPG: (): Promise<void> => FileExportHelper.exportAsImage('jpg'),
   EXPORT_PNG: (): Promise<void> => FileExportHelper.exportAsImage('png'),
   EXPORT_SVG: (): Promise<void> => FileExportHelper.exportAsSVG(),
+  EXPORT_UV_PRINT: (): Promise<void> => FileExportHelper.exportUvPrintAsPdf(),
   FITS_TO_WINDOW: (): void => workareaManager.resetView(),
   FOLLOW_US: (): void => Dialog.showSocialMedia(),
   GROUP: () => svgCanvas.groupSelectedElements(),

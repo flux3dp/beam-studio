@@ -53,7 +53,7 @@ import updateLayerColorFilter from '@core/helpers/color/updateLayerColorFilter';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
 import jimpHelper from '@core/helpers/jimp-helper';
-import laserConfigHelper from '@core/helpers/layer/layer-config-helper';
+import { initLayerConfig } from '@core/helpers/layer/layer-config-helper';
 import * as LayerHelper from '@core/helpers/layer/layer-helper';
 import round from '@core/helpers/math/round';
 import viewMenu from '@core/helpers/menubar/view';
@@ -1763,7 +1763,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     const { unit } = opts;
 
     svgedit.utilities.moveDefsIntoSvgContent();
-    pathActions.clear(true);
+    pathActions.clear();
 
     // Keep SVG-Edit comment on top
     $.each(svgcontent.childNodes, function (i, node) {
@@ -1785,7 +1785,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     const isUsingAF = !!BeamboxPreference.read('enable-autofocus');
 
     svgcontent.setAttribute('data-engrave_dpi', engraveDpi);
-    svgcontent.setAttribute('data-rotary_mode', BeamboxPreference.read('rotary_mode'));
+    svgcontent.setAttribute('data-rotary_mode', BeamboxPreference.read('rotary_mode') ? 'true' : 'false');
     svgcontent.setAttribute('data-en_diode', String(isUsingDiode));
     svgcontent.setAttribute('data-en_af', String(isUsingAF));
 
@@ -2134,80 +2134,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     var str = this.svgCanvasToString();
 
     call('saved', str);
-  };
-
-  function getIssues() {
-    // remove the selected outline before serializing
-    clearSelection();
-
-    // Check for known CanVG issues
-    var issues = [];
-
-    // Selector and notice
-    var issue_list: { [key: string]: any } = {
-      '[stroke-dasharray]': uiStrings.exportNoDashArray,
-      feGaussianBlur: uiStrings.exportNoBlur,
-      foreignObject: uiStrings.exportNoforeignObject,
-    };
-    var content: any = $(svgcontent);
-
-    // Add font/text check if Canvas Text API is not implemented
-    if (!('font' in ($('<canvas>')[0] as HTMLCanvasElement).getContext('2d'))) {
-      issue_list.text = uiStrings.exportNoText;
-    }
-
-    $.each(issue_list, function (sel, descr) {
-      if (content.find(sel).length) {
-        issues.push(descr);
-      }
-    });
-
-    return issues;
-  }
-
-  this.exportPDF = function (exportWindowName, outputType) {
-    var that = this;
-
-    svgedit.utilities.buildJSPDFCallback(function () {
-      const { height, width } = workareaManager;
-      var orientation = width > height ? 'landscape' : 'portrait';
-      var units = 'pt'; // curConfig.baseUnit; // We could use baseUnit, but that is presumably not intended for export purposes
-      var doc = (window as any).jsPDF({
-        format: [width, height],
-        orientation,
-        unit: units,
-        // , compressPdf: true
-      }); // Todo: Give options to use predefined jsPDF formats like "a4", etc. from pull-down (with option to keep customizable)
-      var docTitle = getDocumentTitle();
-
-      doc.setProperties({
-        title: docTitle,
-        /* ,
-              subject: '',
-              author: '',
-              keywords: '',
-              creator: '' */
-      });
-
-      var issues = getIssues();
-      var str = that.svgCanvasToString();
-
-      doc.addSVG(str, 0, 0);
-
-      // doc.output('save'); // Works to open in a new
-      //  window; todo: configure this and other export
-      //  options to optionally work in this manner as
-      //  opposed to opening a new tab
-      var obj = {
-        exportWindowName,
-        issues,
-        svg: str,
-      };
-      var method = outputType || 'dataurlstring';
-
-      obj[method] = doc.output(method);
-      call('exportedPDF', obj);
-    })();
   };
 
   this.removeUnusedDefs = () => {
@@ -2704,7 +2630,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     const defaultLayerName = LANG.right_panel.layer_panel.layer1;
 
     canvas.createLayer(defaultLayerName);
-    laserConfigHelper.initLayerConfig(defaultLayerName);
+    initLayerConfig(defaultLayerName);
 
     // force update selected layers
     LayerPanelController.setSelectedLayers([]);

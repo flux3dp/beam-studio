@@ -1,7 +1,7 @@
 import { PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
 import constant from '@core/app/actions/beambox/constant';
 import { CHUCK_ROTARY_DIAMETER, RotaryType } from '@core/app/constants/addOn';
-import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import moduleOffsets from '@core/app/constants/layer-module/module-offsets';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
@@ -34,6 +34,7 @@ export type BeamboxPreference = {
   'enable-custom-preview-height': boolean;
   'enable-diode'?: boolean;
   'enable-job-origin': boolean;
+  'enable-uv-print-file': boolean;
   enable_mask: boolean;
   engrave_dpi: 'high' | 'low' | 'medium';
   'extend-rotary-workarea': boolean;
@@ -81,7 +82,7 @@ export type BeamboxPreference = {
   show_rulers: boolean;
   simplify_clipper_path: boolean;
   use_layer_color: boolean;
-  vector_speed_constraint: boolean;
+  vector_speed_constraint?: boolean;
   workarea: WorkAreaModel;
   zoom_with_window: boolean;
 };
@@ -112,6 +113,7 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   'enable-custom-backlash': false,
   'enable-custom-preview-height': false,
   'enable-job-origin': false,
+  'enable-uv-print-file': false,
   enable_mask: false,
   engrave_dpi: 'medium',
   'extend-rotary-workarea': false,
@@ -175,7 +177,8 @@ class BeamboxPreferenceClass {
 
     if (oldValue !== undefined) {
       preference['vector_speed_constraint'] = oldValue as boolean;
-      delete preference['vector_speed_contraint' as BeamboxPreferenceKey];
+      // @ts-expect-error key is former keyof BeamboxPreference
+      delete preference['vector_speed_contraint'];
     }
 
     // to migrate preference of old version

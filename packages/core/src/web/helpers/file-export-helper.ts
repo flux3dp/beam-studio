@@ -1,8 +1,12 @@
+import jsPDF from 'jspdf';
+import { filter, map, pipe, prop } from 'remeda';
+
 import Alert from '@core/app/actions/alert-caller';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
@@ -17,23 +21,29 @@ import SymbolMaker from '@core/helpers/symbol-maker';
 import communicator from '@core/implementations/communicator';
 import dialog from '@core/implementations/dialog';
 import fs from '@core/implementations/fileSystem';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-let svgCanvas;
+import { getData } from './layer/layer-config-helper';
+import { getAllLayerNames, getLayerElementByName } from './layer/layer-helper';
+import { layersToA4Base64 } from './layer/layersToA4Base64';
+
+let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
 
 const LANG = i18n.lang;
+const getDefaultFileName = () => (currentFileManager.getName() || 'untitled').replace('/', ':');
 
-const switchSymbolWrapper = <T = string>(fn: () => T) => {
+const switchSymbolWrapper = <T>(fn: () => T): T => {
   SymbolMaker.switchImageSymbolForAll(false);
 
-  const res = fn();
-
-  SymbolMaker.switchImageSymbolForAll(true);
-
-  return res;
+  try {
+    return fn();
+  } finally {
+    SymbolMaker.switchImageSymbolForAll(true);
+  }
 };
 
 const generateBeamThumbnail = async (): Promise<ArrayBuffer | null> => {
@@ -58,9 +68,12 @@ const generateBeamThumbnail = async (): Promise<ArrayBuffer | null> => {
   bbox.width = Math.min(bbox.width, width);
   bbox.height = Math.min(bbox.height, height);
 
-  const downRatio = 300 / Math.max(bbox.width, bbox.height);
-  const imageWidth = Math.ceil(bbox.width * downRatio);
-  const imageHeight = Math.ceil(bbox.height * downRatio);
+  const [imageWidth, imageHeight] = pipe(
+    // calculate down ratio
+    300 / Math.max(bbox.width, bbox.height),
+    // calculate image width and height
+    (downRatio) => [Math.ceil(bbox.width * downRatio), Math.ceil(bbox.height * downRatio)],
+  );
   const svgDefs = findDefs();
   const clonedSvgContent = svgContent.cloneNode(true) as SVGSVGElement;
   const useElements = clonedSvgContent.querySelectorAll('use');
@@ -81,21 +94,22 @@ const generateBeamThumbnail = async (): Promise<ArrayBuffer | null> => {
     </svg>`;
   const canvas = await svgStringToCanvas(svgString, imageWidth, imageHeight);
   const blob = await new Promise<Blob>((resolve) => {
-    canvas.toBlob((b) => resolve(b), 'image/png', 1.0);
+    canvas.toBlob((b) => resolve(b!), 'image/png', 1.0);
   });
-  const arrayBuffer = await blob.arrayBuffer();
 
-  return arrayBuffer;
+  return blob.arrayBuffer();
 };
 
-export const generateBeamBuffer = async (): Promise<Buffer> => {
-  const svgCanvasString = svgCanvas.getSvgString();
-  const imageSource = await svgCanvas.getImageSource();
-  const thumbnail = await generateBeamThumbnail();
-  const buffer = beamFileHelper.generateBeamBuffer(svgCanvasString, imageSource, thumbnail);
-
-  return buffer;
-};
+export const generateBeamBuffer = async (): Promise<Buffer> =>
+  pipe(
+    {
+      imageSource: await svgCanvas.getImageSource(),
+      svgString: svgCanvas.getSvgString(),
+      thumbnail: await generateBeamThumbnail(),
+    },
+    ({ imageSource, svgString, thumbnail }) =>
+      beamFileHelper.generateBeamBuffer(svgString, imageSource, thumbnail ?? undefined),
+  );
 
 const saveToCloud = async (uuid?: string): Promise<boolean> => {
   const id = 'upload-cloud-file';
@@ -110,10 +124,14 @@ const saveToCloud = async (uuid?: string): Promise<boolean> => {
   svgCanvas.clearSelection();
   svgCanvas.removeUnusedDefs();
   await Progress.openNonstopProgress({ id });
+
   try {
-    const buffer = await generateBeamBuffer();
-    const arrayBuffer = Uint8Array.from(buffer).buffer;
-    const blob = new Blob([arrayBuffer]);
+    const blob = pipe(
+      await generateBeamBuffer(),
+      Uint8Array.from,
+      prop('buffer'),
+      (arrayBuffer) => new Blob([arrayBuffer]),
+    );
     const workarea = beamboxPreference.read('workarea');
     const form = new FormData();
 
@@ -187,9 +205,7 @@ const saveToCloud = async (uuid?: string): Promise<boolean> => {
       return true;
     }
 
-    Alert.popUpError({
-      message: `Server Error: ${respStatus} ${info}`,
-    });
+    Alert.popUpError({ message: `Server Error: ${respStatus} ${info}` });
 
     return false;
   } catch (e) {
@@ -206,28 +222,23 @@ const saveAsFile = async (): Promise<boolean> => {
   svgCanvas.clearSelection();
   svgCanvas.removeUnusedDefs();
 
-  const defaultFileName = (currentFileManager.getName() || 'untitled').replace('/', ':');
+  const defaultFileName = getDefaultFileName();
   const langFile = LANG.topmenu.file;
-  const getContent = async () => {
-    const buffer = await generateBeamBuffer();
-    const arrayBuffer = Uint8Array.from(buffer).buffer;
-    const blob = new Blob([arrayBuffer]);
+  const getContent = async () =>
+    pipe(
+      await generateBeamBuffer(),
+      (buffer) => Uint8Array.from(buffer),
+      prop('buffer'),
+      (arrayBuffer) => new Blob([arrayBuffer]),
+    );
 
-    return blob;
-  };
   const newFilePath = await dialog.writeFileDialog(
     getContent,
     langFile.save_scene,
     window.os === 'Linux' ? `${defaultFileName}.beam` : defaultFileName,
     [
-      {
-        extensions: ['beam'],
-        name: window.os === 'MacOS' ? `${langFile.scene_files} (*.beam)` : langFile.scene_files,
-      },
-      {
-        extensions: ['*'],
-        name: i18n.lang.topmenu.file.all_files,
-      },
+      { extensions: ['beam'], name: window.os === 'MacOS' ? `${langFile.scene_files} (*.beam)` : langFile.scene_files },
+      { extensions: ['*'], name: i18n.lang.topmenu.file.all_files },
     ],
   );
 
@@ -252,9 +263,7 @@ const saveFile = async (): Promise<boolean> => {
   const path = currentFileManager.getPath();
 
   if (!path) {
-    const result = await saveAsFile();
-
-    return result;
+    return saveAsFile();
   }
 
   svgCanvas.clearSelection();
@@ -263,9 +272,7 @@ const saveFile = async (): Promise<boolean> => {
   const output = svgCanvas.getSvgString();
 
   if (currentFileManager.isCloudFile) {
-    const result = await saveToCloud(path);
-
-    return result;
+    return saveToCloud(path);
   }
 
   if (path.endsWith('.bvg')) {
@@ -288,7 +295,7 @@ const saveFile = async (): Promise<boolean> => {
 };
 
 const checkNounProjectElements = () => {
-  const svgContent = document.getElementById('svgcontent');
+  const svgContent = document.getElementById('svgcontent')!;
   const npElements = svgContent.querySelectorAll('[data-np="1"]');
 
   if (npElements.length === 0) {
@@ -307,13 +314,12 @@ const checkNounProjectElements = () => {
   });
 };
 
-const removeNPElementsWrapper = <T = string>(fn: () => T) => {
-  const svgContent = document.getElementById('svgcontent');
+const removeNPElementsWrapper = <T>(fn: () => T) => {
+  const svgContent = document.getElementById('svgcontent')!;
   const npElements = svgContent.querySelectorAll('[data-np="1"]');
-  const removedElements = [] as Array<{ elem: Element; nextSibling: Element; parentNode: Element }>;
+  const removedElements = Array.of<{ elem: Element; nextSibling: Element; parentNode: Element }>();
 
-  for (let i = 0; i < npElements.length; i += 1) {
-    const elem = npElements[i];
+  for (const elem of npElements) {
     const parentNode = elem.parentNode as Element;
 
     if (parentNode && parentNode.getAttribute('data-np') === '1') {
@@ -326,7 +332,7 @@ const removeNPElementsWrapper = <T = string>(fn: () => T) => {
 
   const res = fn();
 
-  for (let i = removedElements.length - 1; i >= 0; i -= 1) {
+  for (let i = removedElements.length - 1; i >= 0; i--) {
     const { elem, nextSibling, parentNode } = removedElements[i];
 
     try {
@@ -346,17 +352,14 @@ const exportAsBVG = async (): Promise<boolean> => {
 
   svgCanvas.clearSelection();
 
-  const defaultFileName = (currentFileManager.getName() || 'untitled').replace('/', ':');
+  const defaultFileName = getDefaultFileName();
   const langFile = LANG.topmenu.file;
 
   svgCanvas.removeUnusedDefs();
 
-  const getContent = () => removeNPElementsWrapper(() => switchSymbolWrapper<string>(() => svgCanvas.getSvgString()));
+  const getContent = () => removeNPElementsWrapper(() => switchSymbolWrapper(() => svgCanvas.getSvgString()));
   const newFilePath = await dialog.writeFileDialog(getContent, langFile.save_scene, defaultFileName, [
-    {
-      extensions: ['bvg'],
-      name: window.os === 'MacOS' ? `${langFile.scene_files} (*.bvg)` : langFile.scene_files,
-    },
+    { extensions: ['bvg'], name: window.os === 'MacOS' ? `${langFile.scene_files} (*.bvg)` : langFile.scene_files },
     { extensions: ['*'], name: langFile.all_files },
   ]);
 
@@ -379,25 +382,22 @@ const exportAsSVG = async (): Promise<void> => {
   svgCanvas.clearSelection();
 
   const getContent = () => {
-    document.querySelectorAll('g.layer').forEach((layer) => layer.removeAttribute('clip-path'));
+    const allLayers = document.querySelectorAll('g.layer');
+
+    allLayers.forEach((layer) => layer.removeAttribute('clip-path'));
     svgCanvas.removeUnusedDefs();
 
-    const res = removeNPElementsWrapper(() =>
-      switchSymbolWrapper<string>(() => svgCanvas.getSvgString({ unit: 'mm' })),
-    );
+    const res = removeNPElementsWrapper(() => switchSymbolWrapper(() => svgCanvas.getSvgString({ unit: 'mm' })));
 
-    document.querySelectorAll('g.layer').forEach((layer) => layer.setAttribute('clip-path', 'url(#scene_mask)'));
+    allLayers.forEach((layer) => layer.setAttribute('clip-path', 'url(#scene_mask)'));
 
     return res;
   };
-  const defaultFileName = (currentFileManager.getName() || 'untitled').replace('/', ':');
+  const defaultFileName = getDefaultFileName();
   const langFile = LANG.topmenu.file;
 
   await dialog.writeFileDialog(getContent, langFile.save_svg, defaultFileName, [
-    {
-      extensions: ['svg'],
-      name: window.os === 'MacOS' ? `${langFile.svg_files} (*.svg)` : langFile.svg_files,
-    },
+    { extensions: ['svg'], name: window.os === 'MacOS' ? `${langFile.svg_files} (*.svg)` : langFile.svg_files },
     { extensions: ['*'], name: langFile.all_files },
   ]);
 };
@@ -406,12 +406,12 @@ const exportAsImage = async (type: 'jpg' | 'png'): Promise<void> => {
   svgCanvas.clearSelection();
   svgCanvas.removeUnusedDefs();
 
-  const output = switchSymbolWrapper<string>(() => svgCanvas.getSvgString());
+  const output = switchSymbolWrapper(() => svgCanvas.getSvgString());
   const langFile = LANG.topmenu.file;
 
   Progress.openNonstopProgress({ id: 'export_image', message: langFile.converting });
 
-  const defaultFileName = (currentFileManager.getName() || 'untitled').replace('/', ':');
+  const defaultFileName = getDefaultFileName();
   const { height, width } = workareaManager;
   const canvas = await svgStringToCanvas(output, width, height);
   let base64 = '';
@@ -429,32 +429,14 @@ const exportAsImage = async (type: 'jpg' | 'png'): Promise<void> => {
 
   base64 = base64.replace(/^data:image\/\w+;base64,/, '');
 
-  const getContent = () => {
-    const buffer = Buffer.from(base64, 'base64');
-    const blob = new Blob([buffer]);
-
-    return blob;
-  };
+  const getContent = () => new Blob([Buffer.from(base64, 'base64')]);
+  const fileTypeName = `${langFile[`${type}_files`]}`;
 
   Progress.popById('export_image');
-
-  if (type === 'png') {
-    dialog.writeFileDialog(getContent, langFile.save_png, defaultFileName, [
-      {
-        extensions: ['png'],
-        name: window.os === 'MacOS' ? `${langFile.png_files} (*.png)` : langFile.png_files,
-      },
-      { extensions: ['*'], name: langFile.all_files },
-    ]);
-  } else if (type === 'jpg') {
-    dialog.writeFileDialog(getContent, langFile.save_jpg, defaultFileName, [
-      {
-        extensions: ['jpg'],
-        name: window.os === 'MacOS' ? `${langFile.jpg_files} (*.jpg)` : langFile.jpg_files,
-      },
-      { extensions: ['*'], name: langFile.all_files },
-    ]);
-  }
+  await dialog.writeFileDialog(getContent, langFile[`save_${type}`], defaultFileName, [
+    { extensions: [type], name: window.os === 'MacOS' ? `${fileTypeName} (*.${type})` : fileTypeName },
+    { extensions: ['*'], name: langFile.all_files },
+  ]);
 };
 
 const toggleUnsavedChangedDialog = async (): Promise<boolean> =>
@@ -469,16 +451,10 @@ const toggleUnsavedChangedDialog = async (): Promise<boolean> =>
         buttonLabels: [LANG.alert.save, LANG.alert.dont_save, LANG.alert.cancel],
         callbacks: [
           async () => {
-            if (await saveFile()) {
-              resolve(true);
-            }
+            if (await saveFile()) resolve(true);
           },
-          () => {
-            resolve(true);
-          },
-          () => {
-            resolve(false);
-          },
+          () => resolve(true),
+          () => resolve(false),
         ],
         id: 'unsaved_change_dialog',
         message: LANG.beambox.popup.save_unsave_changed,
@@ -487,10 +463,26 @@ const toggleUnsavedChangedDialog = async (): Promise<boolean> =>
     }
   });
 
+export const exportUvPrintAsPdf = async (): Promise<void> => {
+  svgCanvas.clearSelection();
+  svgCanvas.removeUnusedDefs();
+
+  const layers = pipe(
+    getAllLayerNames(),
+    filter((layerName) => getData(getLayerElementByName(layerName), 'module') === LayerModule.UV_PRINT),
+    map(getLayerElementByName),
+  ) as SVGGElement[];
+  const base64 = await switchSymbolWrapper(() => layersToA4Base64(layers));
+  const defaultFileName = getDefaultFileName();
+
+  new jsPDF().addImage(base64, 'PNG', 0, 0, 210, 297).save(defaultFileName);
+};
+
 export default {
   exportAsBVG,
   exportAsImage,
   exportAsSVG,
+  exportUvPrintAsPdf,
   saveAsFile,
   saveFile,
   saveToCloud,

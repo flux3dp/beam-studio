@@ -22,6 +22,7 @@ jest.mock(
 const mockGetLayerElementByName = jest.fn();
 
 jest.mock('@core/helpers/layer/layer-helper', () => ({
+  getAllLayerNames: () => ['layer1', 'layer2', 'layer3'],
   getLayerElementByName: (...args) => mockGetLayerElementByName(...args),
 }));
 
