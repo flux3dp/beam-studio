@@ -20,17 +20,26 @@ export interface ResponseWithError<T = any, D = any> extends AxiosResponse<T, D>
 const OAUTH_REDIRECT_URI = 'https://id.flux3dp.com/api/beam-studio/auth';
 const FB_OAUTH_URI = 'https://www.facebook.com/v10.0/dialog/oauth';
 const FB_APP_ID = '1071530792957137';
-const webState = encodeURIComponent(JSON.stringify({ origin: window.location.origin }));
-const webData = `?isWeb=true&state=${webState}`;
-const FB_REDIRECT_URI = `${OAUTH_REDIRECT_URI}${isWeb() ? webData : ''}`;
 const G_OAUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
 const G_CLIENT_ID = '1071432315622-ekdkc89hdt70sevt6iv9ia4659lg70vi.apps.googleusercontent.com';
 
-export const G_REDIRECT_URI = `${OAUTH_REDIRECT_URI}${isWeb() ? webData : ''}`;
+export const getRedirectUri = (withState = true) => {
+  if (!isWeb()) return OAUTH_REDIRECT_URI;
+
+  const query = ['isWeb=true'];
+
+  if (withState) {
+    const state = { origin: window.location.origin };
+
+    query.push(`state=${encodeURIComponent(JSON.stringify(state))}`);
+  }
+
+  return `${OAUTH_REDIRECT_URI}?${query.join('&')}`;
+};
 
 const OAUTH_TOKEN = new Set<string>();
 
-export const FLUXID_HOST = 'https://id.flux3dp.com';
+export const FLUXID_HOST = 'https://id-test.flux3dp.com';
 
 const FLUXID_DOMAIN = '.flux3dp.com';
 
@@ -333,13 +342,13 @@ export const init = async (): Promise<void> => {
 };
 
 export const externalLinkFBSignIn = (): void => {
-  const fbAuthUrl = `${FB_OAUTH_URI}?client_id=${FB_APP_ID}&redirect_uri=${FB_REDIRECT_URI}&response_type=token&scope=email`;
+  const fbAuthUrl = `${FB_OAUTH_URI}?client_id=${FB_APP_ID}&redirect_uri=${getRedirectUri()}&response_type=token&scope=email`;
 
   browser.open(fbAuthUrl);
 };
 
 export const externalLinkGoogleSignIn = (): void => {
-  const gAuthUrl = `${G_OAUTH_URL}?client_id=${G_CLIENT_ID}&redirect_uri=${G_REDIRECT_URI}&response_type=code&scope=email+profile`;
+  const gAuthUrl = `${G_OAUTH_URL}?client_id=${G_CLIENT_ID}&redirect_uri=${getRedirectUri()}&response_type=code&scope=email+profile`;
 
   browser.open(gAuthUrl);
 };
