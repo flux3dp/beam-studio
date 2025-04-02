@@ -1,4 +1,5 @@
 import { map, pipe, prop } from 'remeda';
+import { match } from 'ts-pattern';
 
 import { dpmm } from '@core/app/actions/beambox/constant';
 import { findDefs } from '@core/app/svgedit/utils/findDef';
@@ -18,9 +19,13 @@ export const layersToA4Base64 = async (layers: SVGGElement[], options?: Options)
   const svgDefs = findDefs();
   const getCanvas = async (elements: SVGElement[]) => {
     const outerHTML = pipe(
+      //
       elements,
       map(prop('outerHTML')),
-      (outerHTML) => `<g transform="translate(${width}, 0) rotate(90)">${outerHTML}</g>`,
+      (outerHTML) =>
+        match(orientation)
+          .with('portrait', () => `<g transform="translate(${width}, 0) rotate(90)">${outerHTML}</g>`)
+          .otherwise(() => `<g>${outerHTML}</g>`),
     );
     const svgString = `
     <svg

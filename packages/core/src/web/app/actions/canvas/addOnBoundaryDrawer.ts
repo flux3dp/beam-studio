@@ -1,5 +1,5 @@
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import constant, { promarkModels } from '@core/app/actions/beambox/constant';
+import constant, { modelsWithoutUvPrint } from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
@@ -186,9 +186,8 @@ export class AddOnBoundaryDrawer {
     const { height, model, width } = workareaManager;
     const { dpmm } = constant;
 
-    if (module !== LayerModule.UV_PRINT || promarkModels.has(model)) {
+    if (module !== LayerModule.UV_PRINT || modelsWithoutUvPrint.has(model)) {
       this.boundary.uvPrint.setAttribute('d', '');
-      this.container.setAttribute('display', 'none');
 
       return;
     }

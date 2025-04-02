@@ -177,7 +177,8 @@ class BeamboxPreferenceClass {
 
     if (oldValue !== undefined) {
       preference['vector_speed_constraint'] = oldValue as boolean;
-      delete preference['vector_speed_constraint'];
+      // @ts-expect-error key is former keyof BeamboxPreference
+      delete preference['vector_speed_contraint'];
     }
 
     // to migrate preference of old version

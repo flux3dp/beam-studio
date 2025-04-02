@@ -180,7 +180,7 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
         max={maxValue}
         min={minValue}
         onChange={handleChange}
-        options={sliderOptions!}
+        options={sliderOptions}
         type={type}
         unit={displayUnit}
         value={value}

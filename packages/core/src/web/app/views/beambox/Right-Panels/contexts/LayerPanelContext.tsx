@@ -105,7 +105,6 @@ export const LayerPanelContextProvider = ({ children }: Props): React.JSX.Elemen
       if (isPromark) {
         const newVal = selectedLayers.some((layerName: string) =>
           pipe(
-            //
             layerName,
             getLayerElementByName,
             (layer) => layer?.querySelector('image[data-shading="true"]'),

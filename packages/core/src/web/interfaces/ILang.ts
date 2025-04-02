@@ -1688,7 +1688,6 @@ export interface ILang {
     blade_radius: string;
     bottom_up: string;
     calculation_optimization: string;
-
     cancel: string;
     caption: string;
     check_updates: string;

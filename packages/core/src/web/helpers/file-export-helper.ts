@@ -227,7 +227,8 @@ const saveAsFile = async (): Promise<boolean> => {
   const getContent = async () =>
     pipe(
       await generateBeamBuffer(),
-      (buffer) => Uint8Array.from(buffer).buffer,
+      (buffer) => Uint8Array.from(buffer),
+      prop('buffer'),
       (arrayBuffer) => new Blob([arrayBuffer]),
     );
 

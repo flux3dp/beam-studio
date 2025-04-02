@@ -137,7 +137,7 @@ const layerToImage = async (
   }
 
   if (bounds.minX > bounds.maxX || bounds.minY > bounds.maxY) {
-    return { bbox: { height: 0, width: 0, x: 0, y: 0 }, rgbBlob: null } as any;
+    return { bbox: { height: 0, width: 0, x: 0, y: 0 }, rgbBlob: null };
   }
 
   const bbox = {
