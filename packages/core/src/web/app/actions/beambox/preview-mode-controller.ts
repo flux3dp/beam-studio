@@ -11,7 +11,6 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
 import VersionChecker from '@core/helpers/version-checker';
 import type { CameraConfig, CameraParameters } from '@core/interfaces/Camera';
-import type { RotationParameters3DCalibration } from '@core/interfaces/FisheyePreview';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type { PreviewManager } from '@core/interfaces/PreviewManager';
 
@@ -26,22 +25,17 @@ const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 class PreviewModeController {
   isDrawing: boolean;
 
-  currentDevice: IDeviceInfo;
+  currentDevice: IDeviceInfo | null = null;
 
-  isStarting: boolean;
+  isStarting: boolean = false;
 
   isPreviewModeOn: boolean;
 
   isPreviewBlocked: boolean;
 
-  previewManager: PreviewManager;
+  previewManager: null | PreviewManager = null;
 
-  liveModeTimeOut: NodeJS.Timeout;
-
-  // is this used?
-  errorCallback: () => void;
-
-  camera3dRotaion: RotationParameters3DCalibration;
+  liveModeTimeOut: NodeJS.Timeout | null = null;
 
   constructor() {
     this.isDrawing = false;
@@ -122,7 +116,7 @@ class PreviewModeController {
     return true;
   }
 
-  async start(device: IDeviceInfo, errCallback) {
+  async start(device: IDeviceInfo) {
     this.reset();
     this.isStarting = true;
 
@@ -158,7 +152,6 @@ class PreviewModeController {
       PreviewModeBackgroundDrawer.start(this.previewManager.getCameraOffset?.());
       PreviewModeBackgroundDrawer.drawBoundary();
       deviceMaster.setDeviceControlReconnectOnClose(device);
-      this.errorCallback = errCallback;
       this.isPreviewModeOn = true;
       canvasEventEmitter.emit('UPDATE_CONTEXT');
     } catch (error) {
@@ -263,11 +256,11 @@ class PreviewModeController {
     this.isDrawing = false;
   };
 
-  onPreviewFail = (error: Error): void => {
+  onPreviewFail = (error: unknown): void => {
     if (this.isPreviewModeOn) {
       console.log(error);
 
-      Alert.popUpError({ message: error.message || (error as any).text });
+      Alert.popUpError({ message: (error as Error).message || (error as any).text });
     }
 
     const workarea = document.querySelector('#workarea') as HTMLElement;
@@ -289,11 +282,11 @@ class PreviewModeController {
     }
 
     try {
-      if (!this.previewManager.previewFullWorkarea) {
+      if (!this.previewManager?.previewFullWorkarea) {
         return false;
       }
 
-      await this.previewManager.previewFullWorkarea?.();
+      await this.previewManager?.previewFullWorkarea?.();
       this.onPreviewSuccess();
       callback();
 
@@ -324,24 +317,30 @@ class PreviewModeController {
     const { callback } = opts;
 
     try {
-      const previewRes = await this.previewManager.preview(x, y);
+      const previewRes = await this.previewManager!.preview(x, y);
 
       if (previewRes) {
         this.onPreviewSuccess();
       }
 
-      callback();
+      callback?.();
 
       return previewRes;
     } catch (error) {
       this.onPreviewFail(error);
-      callback();
+      callback?.();
 
       return false;
     }
   }
 
-  async previewRegion(x1, y1, x2, y2, opts: { callback?: () => void; overlapRatio?: number } = {}) {
+  async previewRegion(
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number,
+    opts: { callback?: () => void; overlapRatio?: number } = {},
+  ) {
     const res = this.prePreview();
 
     if (!res) {
@@ -351,18 +350,18 @@ class PreviewModeController {
     const { callback } = opts;
 
     try {
-      const previewRes = await this.previewManager.previewRegion(x1, y1, x2, y2, opts);
+      const previewRes = await this.previewManager!.previewRegion(x1, y1, x2, y2, opts);
 
       if (previewRes) {
         this.onPreviewSuccess();
       }
 
-      callback();
+      callback?.();
 
       return previewRes;
     } catch (error) {
       this.onPreviewFail(error);
-      callback();
+      callback?.();
 
       return false;
     }
@@ -372,12 +371,12 @@ class PreviewModeController {
     return this.isPreviewModeOn;
   }
 
-  getCameraOffset(): CameraParameters {
-    return this.previewManager.getCameraOffset?.() || null;
+  getCameraOffset(): CameraParameters | null {
+    return this.previewManager?.getCameraOffset?.() || null;
   }
 
-  getCameraOffsetStandard(): CameraConfig {
-    return this.previewManager.getCameraOffsetStandard?.() || null;
+  getCameraOffsetStandard(): CameraConfig | null {
+    return this.previewManager?.getCameraOffsetStandard?.() || null;
   }
 
   async reset() {
@@ -390,7 +389,7 @@ class PreviewModeController {
 
   // movementX, movementY in mm
   async getPhotoAfterMoveTo(movementX: number, movementY: number) {
-    const imgUrl = await this.previewManager.getPhotoAfterMoveTo?.(movementX, movementY);
+    const imgUrl = await this.previewManager!.getPhotoAfterMoveTo?.(movementX, movementY);
 
     return imgUrl;
   }

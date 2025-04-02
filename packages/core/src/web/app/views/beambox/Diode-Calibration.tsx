@@ -143,7 +143,7 @@ class DiodeCalibration extends React.Component<Props, State> {
     let blobUrl;
 
     try {
-      await PreviewModeController.start(device, () => console.log('camera fail. stop preview mode'));
+      await PreviewModeController.start(device);
       Progress.openNonstopProgress({
         id: 'taking-picture',
         message: LANG.taking_picture,

@@ -28,7 +28,7 @@ const StepAskReadjust = (): React.JSX.Element => {
 
   const onSkip = async () => {
     try {
-      await PreviewModeController.start(device, () => console.log('camera fail. stop preview mode'));
+      await PreviewModeController.start(device);
       setLastConfig(PreviewModeController.getCameraOffsetStandard());
       Progress.openNonstopProgress({
         id: 'taking-picture',

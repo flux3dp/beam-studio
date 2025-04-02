@@ -238,23 +238,8 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
       svgCanvas.clearSelection();
       workarea.style.cursor = 'wait';
 
-      const onPreviewError = (errMessage) => {
-        if (errMessage === 'Timeout has occurred') {
-          alertCaller.popUpError({
-            message: t.alerts.start_preview_timeout,
-          });
-        } else {
-          alertCaller.popUpError({
-            message: `${t.alerts.fail_to_start_preview}<br/>${errMessage}`,
-          });
-        }
-
-        setMode(CanvasMode.Draw);
-        workarea.style.cursor = 'auto';
-      };
-
       try {
-        await PreviewModeController.start(device, onPreviewError);
+        await PreviewModeController.start(device!);
 
         if (!PreviewModeController.isPreviewModeOn) {
           workarea.style.cursor = 'auto';
