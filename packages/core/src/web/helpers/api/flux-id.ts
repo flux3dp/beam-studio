@@ -39,7 +39,7 @@ export const getRedirectUri = (withState = true) => {
 
 const OAUTH_TOKEN = new Set<string>();
 
-export const FLUXID_HOST = 'https://id-test.flux3dp.com';
+export const FLUXID_HOST = 'https://id.flux3dp.com';
 
 const FLUXID_DOMAIN = '.flux3dp.com';
 
