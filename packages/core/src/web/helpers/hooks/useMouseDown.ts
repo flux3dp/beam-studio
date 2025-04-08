@@ -11,13 +11,13 @@ export const useMouseDown = ({ mouseDown, mouseUp, predicate }: Props): void => 
     const handleMouseDown = (e: MouseEvent) => {
       if (predicate(e)) {
         e.preventDefault();
-        mouseDown();
+        mouseDown?.();
       }
     };
 
     const handleMouseUp = (e: MouseEvent) => {
       if (predicate(e)) {
-        mouseUp();
+        mouseUp?.();
       }
     };
 

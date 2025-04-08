@@ -11,13 +11,13 @@ export const useKeyDown = ({ keyDown, keyUp, predicate }: Props): void => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (predicate(e)) {
         e.preventDefault();
-        keyDown();
+        keyDown?.();
       }
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
       if (predicate(e)) {
-        keyUp();
+        keyUp?.();
       }
     };
 

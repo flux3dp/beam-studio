@@ -1,15 +1,7 @@
 import { useCallback, useReducer } from 'react';
 
-import type { Filter } from 'konva/lib/Node';
-
-interface LineItem {
-  points: number[];
-  strokeWidth: number;
-}
-
 interface HistoryItem {
-  filters: Filter[];
-  lines: LineItem[];
+  pathData: string[];
 }
 
 export interface HistoryState {
@@ -20,13 +12,14 @@ export interface HistoryState {
 
 interface HistoryAction {
   payload?: HistoryItem;
-  type: 'PUSH' | 'REDO' | 'UNDO';
+  type: 'PUSH' | 'REDO' | 'SET' | 'UNDO';
 }
 
 interface HistoryContext {
   history: HistoryState;
   push: (item: HistoryItem) => void;
   redo: () => HistoryItem;
+  set: (item: HistoryItem) => void;
   undo: () => HistoryItem;
 }
 
@@ -35,11 +28,13 @@ const historyReducer = (state: HistoryState, { payload, type }: HistoryAction) =
 
   switch (type) {
     case 'PUSH':
-      return { index: index + 1, items: items.slice(0, index + 1).concat(payload) };
+      return { index: index + 1, items: items.slice(0, index + 1).concat(payload!) };
     case 'UNDO':
       return index > 0 ? { index: index - 1, items } : state;
     case 'REDO':
       return index < items.length - 1 ? { index: index + 1, items } : state;
+    case 'SET':
+      return { hasUndid: false, index: 0, items: [payload!] };
     default:
       return state;
   }
@@ -73,6 +68,12 @@ export const useHistory = (initialState: HistoryState): HistoryContext => {
 
     return nextItem;
   }, [history]);
+  const set = useCallback(
+    (payload: HistoryItem) => {
+      dispatch({ payload, type: 'SET' });
+    },
+    [dispatch],
+  );
 
-  return { history, push, redo, undo };
+  return { history, push, redo, set, undo };
 };
