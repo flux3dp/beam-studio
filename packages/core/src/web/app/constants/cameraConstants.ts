@@ -20,3 +20,8 @@ export const CALIBRATION_PARAMS = {
   idealScaleRatio: (585 / 720) * 2, // pixel on studio / pixel on beambox machine; 與焦距成正比
   size: 25, // mm
 };
+
+export const enum CameraType {
+  LASER_HEAD = 1,
+  WIDE_ANGLE = 2,
+}
