@@ -275,11 +275,8 @@ class BeamPreviewManager extends BasePreviewManager implements PreviewManager {
       for (let x = 0; x < l; x += 1) {
         for (let y = 0; y < l; y += 1) {
           const tDist = overlapFlag & 1 ? y : overlapWidth;
-
           const rDist = overlapFlag & 2 ? l - x - 1 : overlapWidth;
-
           const bDist = overlapFlag & 4 ? l - y - 1 : overlapWidth;
-
           const lDist = overlapFlag & 8 ? x : overlapWidth;
           const xDist = Math.min((Math.min(lDist, rDist) + 1) / overlapWidth, 1);
           const yDist = Math.min((Math.min(tDist, bDist) + 1) / overlapWidth, 1);
