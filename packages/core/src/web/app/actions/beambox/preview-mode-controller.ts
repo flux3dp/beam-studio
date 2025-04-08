@@ -13,6 +13,7 @@ import VersionChecker from '@core/helpers/version-checker';
 import type { CameraConfig, CameraParameters } from '@core/interfaces/Camera';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type { PreviewManager } from '@core/interfaces/PreviewManager';
+import { useCameraPreviewStore } from '@core/stores/cameraPreview';
 
 import AdorPreviewManager from '../camera/preview-helper/AdorPreviewManager';
 import BB2PreviewManager from '../camera/preview-helper/BB2PreviewManager';
@@ -23,31 +24,29 @@ const LANG = i18n.lang;
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 
 class PreviewModeController {
-  isDrawing: boolean;
-
-  currentDevice: IDeviceInfo | null = null;
-
+  isDrawing: boolean = false;
+  isPreviewMode: boolean = false;
   isStarting: boolean = false;
-
-  isPreviewModeOn: boolean;
-
-  isPreviewBlocked: boolean;
-
+  isPreviewBlocked: boolean = false;
+  currentDevice: IDeviceInfo | null = null;
   previewManager: null | PreviewManager = null;
-
   liveModeTimeOut: NodeJS.Timeout | null = null;
 
-  constructor() {
-    this.isDrawing = false;
-    this.currentDevice = null;
-    this.isPreviewModeOn = false;
-    this.isPreviewBlocked = false;
-    this.errorCallback = () => {};
-  }
+  constructor() {}
 
   get isFullScreen() {
     return this.previewManager?.isFullScreen;
   }
+
+  setIsPreviewMode = (val: boolean) => {
+    this.isPreviewMode = val;
+    useCameraPreviewStore.setState({ isPreviewMode: val });
+  };
+
+  setIsDrawing = (val: boolean) => {
+    this.isDrawing = val;
+    useCameraPreviewStore.setState({ isDrawing: val });
+  };
 
   reloadHeightOffset = async () => {
     this.previewManager?.reloadLevelingOffset?.();
@@ -152,7 +151,7 @@ class PreviewModeController {
       PreviewModeBackgroundDrawer.start(this.previewManager.getCameraOffset?.());
       PreviewModeBackgroundDrawer.drawBoundary();
       deviceMaster.setDeviceControlReconnectOnClose(device);
-      this.isPreviewModeOn = true;
+      this.setIsPreviewMode(true);
       canvasEventEmitter.emit('UPDATE_CONTEXT');
     } catch (error) {
       console.error(error);
@@ -165,7 +164,7 @@ class PreviewModeController {
 
   async end({ shouldWaitForEnd = false }: { shouldWaitForEnd?: boolean } = {}) {
     console.log('end of pmc');
-    this.isPreviewModeOn = false;
+    this.setIsPreviewMode(false);
 
     if (this.liveModeTimeOut) {
       clearTimeout(this.liveModeTimeOut);
@@ -190,7 +189,7 @@ class PreviewModeController {
     this.reset();
   }
 
-  isLiveModeOn = () => !!(this.isPreviewModeOn && this.liveModeTimeOut);
+  isLiveModeOn = () => !!(this.isPreviewMode && this.liveModeTimeOut);
 
   toggleFullWorkareaLiveMode() {
     if (this.liveModeTimeOut) {
@@ -201,7 +200,7 @@ class PreviewModeController {
   }
 
   startFullWorkareaLiveMode() {
-    if (!this.isPreviewModeOn || !this.previewManager?.previewFullWorkarea) {
+    if (!this.isPreviewMode || !this.previewManager?.previewFullWorkarea) {
       return;
     }
 
@@ -213,6 +212,7 @@ class PreviewModeController {
           }
         });
       }, 1000);
+      useCameraPreviewStore.setState({ isLiveMode: true });
     };
 
     setNextTimeout();
@@ -224,6 +224,7 @@ class PreviewModeController {
     }
 
     this.liveModeTimeOut = null;
+    useCameraPreviewStore.setState({ isLiveMode: false });
   }
 
   async fullWorkareaLiveUpdate(callback = () => {}) {
@@ -232,13 +233,13 @@ class PreviewModeController {
   }
 
   prePreview = (): boolean => {
-    const { isPreviewBlocked, isPreviewModeOn } = this;
+    const { isPreviewBlocked, isPreviewMode } = this;
 
-    if (isPreviewBlocked || !isPreviewModeOn) {
+    if (isPreviewBlocked || !isPreviewMode) {
       return false;
     }
 
-    this.isDrawing = true;
+    this.setIsDrawing(true);
     this.isPreviewBlocked = true;
 
     const workarea = document.querySelector('#workarea') as HTMLElement;
@@ -253,11 +254,11 @@ class PreviewModeController {
 
     workarea.style.cursor = 'url(img/camera-cursor.svg) 9 12, cell';
     this.isPreviewBlocked = false;
-    this.isDrawing = false;
+    this.setIsDrawing(false);
   };
 
   onPreviewFail = (error: unknown): void => {
-    if (this.isPreviewModeOn) {
+    if (this.isPreviewMode) {
       console.log(error);
 
       Alert.popUpError({ message: (error as Error).message || (error as any).text });
@@ -268,7 +269,7 @@ class PreviewModeController {
     workarea.style.cursor = 'auto';
 
     if (!PreviewModeBackgroundDrawer.isClean()) {
-      this.isDrawing = false;
+      this.setIsDrawing(false);
     }
 
     this.end();
@@ -367,10 +368,6 @@ class PreviewModeController {
     }
   }
 
-  isPreviewMode() {
-    return this.isPreviewModeOn;
-  }
-
   getCameraOffset(): CameraParameters | null {
     return this.previewManager?.getCameraOffset?.() || null;
   }
@@ -382,7 +379,7 @@ class PreviewModeController {
   async reset() {
     this.previewManager = null;
     this.currentDevice = null;
-    this.isPreviewModeOn = false;
+    this.setIsPreviewMode(false);
     this.isPreviewBlocked = false;
     deviceMaster.disconnectCamera();
   }

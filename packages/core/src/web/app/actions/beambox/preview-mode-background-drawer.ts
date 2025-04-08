@@ -12,6 +12,7 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { CameraParameters } from '@core/interfaces/Camera';
+import { useCameraPreviewStore } from '@core/stores/cameraPreview';
 
 let svgCanvas;
 let svgedit;
@@ -336,6 +337,7 @@ class PreviewModeBackgroundDrawer {
     URL.revokeObjectURL(this.cameraCanvasUrl);
 
     this.cameraCanvasUrl = '';
+    useCameraPreviewStore.setState({ isClean: true });
   }
 
   getCameraCanvasUrl() {
@@ -359,6 +361,7 @@ class PreviewModeBackgroundDrawer {
     }
 
     this.cameraCanvasUrl = URL.createObjectURL(blob);
+    useCameraPreviewStore.setState({ isClean: false });
 
     svgCanvas.setBackground('#fff', this.cameraCanvasUrl);
   };

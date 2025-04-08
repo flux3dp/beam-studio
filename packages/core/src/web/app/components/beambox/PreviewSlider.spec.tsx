@@ -35,7 +35,7 @@ jest.mock('@core/app/actions/beambox/preview-mode-controller', () => ({
   get isFullScreen() {
     return mockIsFullScreen();
   },
-  isPreviewModeOn: true,
+  isPreviewMode: true,
   previewFullWorkarea: () => mockPreviewFullWorkarea(),
 }));
 
