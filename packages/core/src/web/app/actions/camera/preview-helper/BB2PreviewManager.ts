@@ -1,4 +1,5 @@
 import { sprintf } from 'sprintf-js';
+import { match } from 'ts-pattern';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
@@ -6,20 +7,31 @@ import constant, { PreviewSpeedLevel } from '@core/app/actions/beambox/constant'
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import MessageCaller from '@core/app/actions/message-caller';
 import progressCaller from '@core/app/actions/progress-caller';
+import { CameraType } from '@core/app/constants/cameraConstants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { loadJson } from '@core/helpers/device/jsonDataHelper';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
-import type { FisheyeCameraParameters, PerspectiveGrid } from '@core/interfaces/FisheyePreview';
+import type {
+  FisheyeCameraParameters,
+  FisheyeCameraParametersV2,
+  PerspectiveGrid,
+} from '@core/interfaces/FisheyePreview';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
+import { MessageLevel } from '@core/interfaces/IMessage';
 import type { PreviewManager } from '@core/interfaces/PreviewManager';
 
 import BasePreviewManager from './BasePreviewManager';
+import FisheyePreviewManagerV2 from './FisheyePreviewManagerV2';
 
 // TODO: Add tests
 class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
-  private lineCheckEnabled: boolean;
-  private originalSpeed: number;
-  private fisheyeParams: FisheyeCameraParameters;
+  private cameraType: CameraType = CameraType.LASER_HEAD;
+  private lineCheckEnabled: boolean = false;
+  private originalSpeed?: number;
+  private wideAngleFisheyeManager?: FisheyePreviewManagerV2;
+  private wideAngleFisheyeParams?: FisheyeCameraParametersV2;
+  private fisheyeParams?: FisheyeCameraParameters;
   private cameraPpmm = 5;
   private previewPpmm = 10;
   private grid: PerspectiveGrid = {
@@ -28,6 +40,8 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
   };
   private cameraCenterOffset: { x: number; y: number };
   protected maxMovementSpeed: [number, number] = [54000, 6000]; // mm/min, speed cap of machine
+
+  public hasWideAngleCamera: boolean = false;
 
   constructor(device: IDeviceInfo) {
     super(device);
@@ -38,37 +52,102 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
     };
   }
 
+  get isFullScreen(): boolean {
+    return this.cameraType === CameraType.WIDE_ANGLE;
+  }
+
+  get isWideAngleCameraCalibrated(): boolean {
+    return !!this.wideAngleFisheyeParams;
+  }
+
   protected getMovementSpeed = (): number => {
     const previewMovementSpeedLevel = beamboxPreference.read('preview_movement_speed_level');
 
-    if (previewMovementSpeedLevel === PreviewSpeedLevel.FAST) {
-      return 42000;
-    }
-
-    if (previewMovementSpeedLevel === PreviewSpeedLevel.MEDIUM) {
-      return 36000;
-    }
-
-    return 30000;
+    return match(previewMovementSpeedLevel)
+      .with(PreviewSpeedLevel.FAST, () => 42000)
+      .with(PreviewSpeedLevel.MEDIUM, () => 36000)
+      .with(PreviewSpeedLevel.SLOW, () => 30000)
+      .otherwise(() => 30000);
   };
 
-  public setup = async (args?: { progressId?: string }): Promise<boolean> => {
+  private handleSetupError = async (error: unknown): Promise<void> => {
     const { lang } = i18n;
-    const { progressId } = args || {};
 
-    if (progressId) {
-      this.progressId = progressId;
+    await this.end();
+    console.log('Error when setting up BB2 Preview Manager', error);
+
+    if (error instanceof Error && error.message.startsWith('Camera WS')) {
+      alertCaller.popUpError({
+        message: `${lang.topbar.alerts.fail_to_connect_with_camera}<br/>${error.message || ''}`,
+      });
+    } else {
+      alertCaller.popUpError({
+        message: `${lang.topbar.alerts.fail_to_start_preview}<br/>${error instanceof Error ? error.message : ''}`,
+      });
     }
+  };
+
+  private checkWideAngleCamera = async (): Promise<void> => {
+    const cameraCount = await deviceMaster.getCameraCount();
 
     try {
-      progressCaller.openNonstopProgress({
-        id: this.progressId,
-        message: sprintf(lang.message.connectingMachine, this.device.name),
-      });
+      if (!cameraCount.success || cameraCount.data < 2) {
+        this.hasWideAngleCamera = false;
+
+        return;
+      }
+
+      this.wideAngleFisheyeParams = (await loadJson('fisheye', 'wide-angle.json')) as FisheyeCameraParametersV2;
+
+      return;
+    } catch (error) {
+      console.error('Error when checking wide angle camera', error);
+
+      return;
+    }
+  };
+
+  private setupWideAngleCamera = async (): Promise<boolean> => {
+    const { lang } = i18n;
+
+    try {
+      if (!(await deviceMaster.setCamera(1))) {
+        throw new Error('tUnable to connect to wide angle camera.');
+      }
+
+      if (!this.wideAngleFisheyeParams) {
+        throw new Error(
+          'Unable to get wide angle fisheye parameters, please make sure you have calibrated the wide angle camera',
+        );
+      }
+
+      console.log('wide angle params', this.wideAngleFisheyeParams);
+      this.wideAngleFisheyeManager = new FisheyePreviewManagerV2(this.device, this.wideAngleFisheyeParams);
+
+      const res = await this.wideAngleFisheyeManager.setupFisheyePreview({ progressId: this.progressId });
+
+      return res;
+    } catch (error) {
+      this.handleSetupError(error);
+
+      return false;
+    } finally {
+      if (deviceMaster.currentControlMode === 'raw') {
+        await deviceMaster.rawLooseMotor();
+        progressCaller.update(this.progressId, { message: lang.message.endingRawMode });
+        await deviceMaster.endSubTask();
+      }
+    }
+  };
+
+  private setupLaserHeadCamera = async (): Promise<boolean> => {
+    const { lang } = i18n;
+
+    try {
       try {
         this.fisheyeParams = await deviceMaster.fetchFisheyeParams();
       } catch (err) {
-        console.log('Fail to fetchFisheyeParams', err?.message);
+        console.log('Fail to fetchFisheyeParams', err);
         throw new Error('Unable to get fisheye parameters, please make sure you have calibrated the camera');
       }
       progressCaller.update(this.progressId, { message: lang.message.gettingLaserSpeed });
@@ -97,22 +176,45 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
       await deviceMaster.rawSetAirPump(false);
       await deviceMaster.rawSetWaterPump(false);
       progressCaller.update(this.progressId, { message: lang.message.connectingCamera });
-      await this.setupFisheyeCamera();
+
+      if (!(await deviceMaster.setFisheyeParam(this.fisheyeParams!))) {
+        throw new Error('Failed to set fisheye parameters');
+      }
+
+      if (!(await deviceMaster.setFisheyePerspectiveGrid(this.grid))) {
+        throw new Error('Failed to set fisheye perspective grid');
+      }
 
       return true;
     } catch (error) {
-      await this.end();
-      console.log('Error in setup', error);
+      await this.handleSetupError(error);
 
-      if (error.message && error.message.startsWith('Camera WS')) {
-        alertCaller.popUpError({
-          message: `${lang.topbar.alerts.fail_to_connect_with_camera}<br/>${error.message || ''}`,
-        });
-      } else {
-        alertCaller.popUpError({
-          message: `${lang.topbar.alerts.fail_to_start_preview}<br/>${error.message || ''}`,
-        });
-      }
+      return false;
+    }
+  };
+
+  public setup = async ({ progressId }: { progressId?: string } = {}): Promise<boolean> => {
+    if (progressId) this.progressId = progressId;
+
+    const { lang } = i18n;
+
+    try {
+      progressCaller.openNonstopProgress({
+        id: this.progressId,
+        message: sprintf(lang.message.connectingMachine, this.device.name),
+      });
+      await deviceMaster.connectCamera();
+      await this.checkWideAngleCamera();
+      this.cameraType =
+        this.hasWideAngleCamera && this.wideAngleFisheyeParams ? CameraType.WIDE_ANGLE : CameraType.LASER_HEAD;
+
+      const res = await match(this.cameraType)
+        .with(CameraType.WIDE_ANGLE, () => this.setupWideAngleCamera())
+        .otherwise(() => this.setupLaserHeadCamera());
+
+      return res;
+    } catch (error) {
+      await this.handleSetupError(error);
 
       return false;
     } finally {
@@ -123,53 +225,61 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
   end = async (): Promise<void> => {
     this.ended = true;
     MessageCaller.closeMessage('camera-preview');
+
     try {
-      const res = await deviceMaster.select(this.device);
+      if (this.cameraType === CameraType.LASER_HEAD) {
+        const res = await deviceMaster.select(this.device);
 
-      if (res.success) {
-        deviceMaster.disconnectCamera();
+        if (res.success) {
+          deviceMaster.disconnectCamera();
 
-        if (deviceMaster.currentControlMode !== 'raw') {
-          await deviceMaster.enterRawMode();
+          if (deviceMaster.currentControlMode !== 'raw') await deviceMaster.enterRawMode();
+
+          if (this.lineCheckEnabled) await deviceMaster.rawEndLineCheckMode();
+
+          await deviceMaster.rawLooseMotor();
+          await deviceMaster.endSubTask();
+
+          if (this.originalSpeed && this.originalSpeed !== 1) {
+            await deviceMaster.setLaserSpeed(this.originalSpeed);
+            this.originalSpeed = 1;
+          }
+
+          deviceMaster.kick();
         }
-
-        if (this.lineCheckEnabled) {
-          await deviceMaster.rawEndLineCheckMode();
-        }
-
-        await deviceMaster.rawLooseMotor();
-        await deviceMaster.endSubTask();
-
-        if (this.originalSpeed && this.originalSpeed !== 1) {
-          await deviceMaster.setLaserSpeed(this.originalSpeed);
-          this.originalSpeed = 1;
-        }
-
-        deviceMaster.kick();
       }
     } catch (error) {
       console.log('Failed to end BeamPreviewManager', error);
     }
   };
 
-  setupFisheyeCamera = async (): Promise<void> => {
-    await deviceMaster.connectCamera();
-
-    let res = await deviceMaster.setFisheyeParam(this.fisheyeParams);
-
-    if (!res) {
-      throw new Error('Failed to set fisheye parameters');
-    }
-
-    res = await deviceMaster.setFisheyePerspectiveGrid(this.grid);
-
-    if (!res) {
-      throw new Error('Failed to set fisheye perspective grid');
-    }
+  public preview = (x: number, y: number, opts?: { overlapFlag?: number; overlapRatio?: number }): Promise<boolean> => {
+    return match(this.cameraType)
+      .with(CameraType.WIDE_ANGLE, () => this.previewWithWideAngleCamera())
+      .otherwise(() => this.previewWithLaserHeadCamera(x, y, opts));
   };
 
+  public previewRegion = (
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number,
+    opts?: { overlapRatio?: number },
+  ): Promise<boolean> => {
+    return match(this.cameraType)
+      .with(CameraType.WIDE_ANGLE, () => this.previewWithWideAngleCamera())
+      .otherwise(() => this.previewRegionWithLaserHeadCamera(x1, y1, x2, y2, opts));
+  };
+
+  public previewFullWorkarea = (): Promise<boolean> => {
+    return match(this.cameraType)
+      .with(CameraType.WIDE_ANGLE, () => this.previewWithWideAngleCamera())
+      .otherwise(() => Promise.resolve(false));
+  };
+
+  // Methods of Laser Head Camera Preview
   /**
-   *
+   * getPreviewPosition
    * @param x x in px
    * @param y y in px
    * @returns preview camera position x, y in mm
@@ -186,7 +296,7 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
     return { x: newX, y: newY };
   };
 
-  preprocessImage = async (
+  preprocessLaserHeadCameraImage = async (
     imgUrl: string,
     opts: { overlapFlag?: number; overlapRatio?: number } = {},
   ): Promise<HTMLCanvasElement> => {
@@ -248,19 +358,17 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
     return canvas;
   };
 
-  preview = async (
+  previewWithLaserHeadCamera = async (
     x: number,
     y: number,
     opts: { overlapFlag?: number; overlapRatio?: number } = {},
   ): Promise<boolean> => {
-    if (this.ended) {
-      return false;
-    }
+    if (this.ended) return false;
 
     const { overlapFlag, overlapRatio = 0 } = opts;
     const cameraPosition = this.getPreviewPosition(x, y);
     const imgUrl = await this.getPhotoAfterMoveTo(cameraPosition.x, cameraPosition.y);
-    const imgCanvas = await this.preprocessImage(imgUrl, { overlapFlag, overlapRatio });
+    const imgCanvas = await this.preprocessLaserHeadCameraImage(imgUrl, { overlapFlag, overlapRatio });
     const drawCenter = {
       x: (cameraPosition.x + this.cameraCenterOffset.x) * constant.dpmm,
       y: (cameraPosition.y + this.cameraCenterOffset.y) * constant.dpmm,
@@ -273,7 +381,7 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
     return true;
   };
 
-  previewRegion = async (
+  previewRegionWithLaserHeadCamera = async (
     x1: number,
     y1: number,
     x2: number,
@@ -294,35 +402,25 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
 
       for (let j = 0; j < yTotal; j += 1) {
         const y = t + imgH / 2 + j * yStep;
-        const row = [];
+        const row: Array<{ overlapFlag: number; point: [number, number] }> = [];
 
         for (let i = 0; i < xTotal; i += 1) {
           const x = l + imgW / 2 + i * xStep;
           let overlapFlag = 0;
 
           // 1: top, 2: right, 4: bottom, 8: left
-          if (j !== 0) {
-            overlapFlag += 1;
-          }
+          if (j !== 0) overlapFlag += 1;
 
-          if (i !== xTotal - 1) {
-            overlapFlag += 2;
-          }
+          if (i !== xTotal - 1) overlapFlag += 2;
 
-          if (j !== yTotal - 1) {
-            overlapFlag += 4;
-          }
+          if (j !== yTotal - 1) overlapFlag += 4;
 
-          if (i !== 0) {
-            overlapFlag += 8;
-          }
+          if (i !== 0) overlapFlag += 8;
 
           row.push({ overlapFlag, point: [x, y] });
         }
 
-        if (j % 2 !== 0) {
-          row.reverse();
-        }
+        if (j % 2 !== 0) row.reverse();
 
         res.push(...row);
       }
@@ -332,6 +430,52 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
 
     return this.previewRegionFromPoints(x1, y1, x2, y2, { getPoints, overlapRatio });
   };
+
+  // End of Laser Head Camera Preview
+  // Methods of Wide Angle Camera Preview
+
+  previewWithWideAngleCamera = async (): Promise<boolean> => {
+    try {
+      MessageCaller.openMessage({
+        content: i18n.lang.topbar.preview,
+        duration: 20,
+        key: 'wide-angle-preview',
+        level: MessageLevel.LOADING,
+      });
+
+      const imgUrl = await this.getPhotoFromMachine();
+
+      await new Promise<void>((resolve) => {
+        PreviewModeBackgroundDrawer.drawFullWorkarea(imgUrl, resolve);
+      });
+      MessageCaller.openMessage({
+        content: 'Successfully previewed',
+        duration: 3,
+        key: 'wide-angle-preview',
+        level: MessageLevel.SUCCESS,
+      });
+
+      return true;
+    } catch (error) {
+      MessageCaller.closeMessage('wide-angle-preview');
+      throw error;
+    }
+  };
+
+  reloadLevelingOffset = async (): Promise<void> => {
+    if (this.cameraType === CameraType.WIDE_ANGLE) await this.wideAngleFisheyeManager?.reloadLevelingOffset();
+  };
+
+  resetObjectHeight = async (): Promise<boolean> => {
+    if (this.cameraType === CameraType.WIDE_ANGLE && this.wideAngleFisheyeManager) {
+      return this.wideAngleFisheyeManager.resetObjectHeight();
+    }
+
+    return false;
+  };
+  // End of Wide Angle Camera Preview
+
+  getCameraType = (): CameraType => this.cameraType;
 }
 
 export default BB2PreviewManager;
