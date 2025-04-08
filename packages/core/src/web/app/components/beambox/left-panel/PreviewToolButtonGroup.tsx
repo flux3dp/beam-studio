@@ -10,9 +10,9 @@ import beamboxStore from '@core/app/stores/beambox-store';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import localeHelper from '@core/helpers/locale-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import useForceUpdate from '@core/helpers/use-force-update';
 import useI18n from '@core/helpers/useI18n';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import { useCameraPreviewStore } from '@core/stores/cameraPreview';
 
 let svgCanvas: ISVGCanvas;
 
@@ -28,8 +28,8 @@ const PreviewToolButtonGroup = ({ className }: Props): React.JSX.Element => {
   const lang = useI18n().beambox.left_panel;
   const workarea = useWorkarea();
   const isAdorSeries = useMemo(() => constant.adorModels.includes(workarea), [workarea]);
-  const forceUpdate = useForceUpdate();
   const { endPreviewMode, setupPreviewMode } = useContext(CanvasContext);
+  const { isClean, isDrawing, isLiveMode, isPreviewMode } = useCameraPreviewStore();
 
   const startImageTrace = () => {
     endPreviewMode();
@@ -38,15 +38,13 @@ const PreviewToolButtonGroup = ({ className }: Props): React.JSX.Element => {
   };
 
   const clearPreview = () => {
-    if (!PreviewModeBackgroundDrawer.isClean()) {
+    if (!isClean) {
       PreviewModeBackgroundDrawer.resetCoordinates();
       PreviewModeBackgroundDrawer.clear();
     }
   };
 
-  const isCanvasEmpty = PreviewModeController.isDrawing || PreviewModeBackgroundDrawer.isClean();
-  const isLiveMode = PreviewModeController.isLiveModeOn();
-  const isPreviewMode = PreviewModeController.isPreviewMode();
+  const isCanvasEmpty = isDrawing || isClean;
 
   return (
     <div className={className}>
@@ -61,9 +59,7 @@ const PreviewToolButtonGroup = ({ className }: Props): React.JSX.Element => {
         icon={<LeftPanelIcons.Shoot />}
         id="preview-shoot"
         onClick={() => {
-          if (!PreviewModeController.isPreviewMode()) {
-            setupPreviewMode();
-          }
+          if (!isPreviewMode) setupPreviewMode();
         }}
         title={lang.label.preview}
       />
@@ -74,10 +70,7 @@ const PreviewToolButtonGroup = ({ className }: Props): React.JSX.Element => {
           icon={<LeftPanelIcons.Live />}
           id="preview-live"
           onClick={() => {
-            if (PreviewModeController.isPreviewMode()) {
-              PreviewModeController.toggleFullWorkareaLiveMode();
-              forceUpdate();
-            }
+            if (isPreviewMode) PreviewModeController.toggleFullWorkareaLiveMode();
           }}
           title={lang.label.live_feed}
         />
@@ -95,9 +88,7 @@ const PreviewToolButtonGroup = ({ className }: Props): React.JSX.Element => {
           icon={<LeftPanelIcons.AdjustHeight />}
           id="adjust-height"
           onClick={() => {
-            if (PreviewModeController.isPreviewMode()) {
-              PreviewModeController.resetFishEyeObjectHeight();
-            }
+            if (isPreviewMode) PreviewModeController.resetFishEyeObjectHeight();
           }}
           title={lang.label.adjust_height}
         />

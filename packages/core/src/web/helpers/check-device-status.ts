@@ -22,7 +22,7 @@ export default async function (device: IDeviceInfo, allowPause?: boolean, forceA
     const onYes = async (type: 'abort' | 'kick') => {
       let timer: NodeJS.Timeout;
 
-      if (PreviewModeController.isPreviewMode()) {
+      if (PreviewModeController.isPreviewMode) {
         await PreviewModeController.end();
       }
 

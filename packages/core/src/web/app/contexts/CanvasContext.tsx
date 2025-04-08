@@ -87,7 +87,7 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
 
   const endPreviewMode = (): void => {
     try {
-      if (PreviewModeController.isPreviewMode()) {
+      if (PreviewModeController.isPreviewMode) {
         PreviewModeController.end();
       }
     } catch (error) {
@@ -241,7 +241,7 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
       try {
         await PreviewModeController.start(device!);
 
-        if (!PreviewModeController.isPreviewModeOn) {
+        if (!PreviewModeController.isPreviewMode) {
           workarea.style.cursor = 'auto';
           settingUpPreview.current = false;
 
@@ -260,8 +260,6 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
 
         if (PreviewModeController.isFullScreen) {
           PreviewModeController.previewFullWorkarea(() => {
-            updateCanvasContext();
-
             if (tutorialController.getNextStepRequirement() === tutorialConstants.PREVIEW_PLATFORM) {
               tutorialController.handleNextStep();
             }

@@ -5,7 +5,6 @@ import { Badge } from 'antd';
 import { TabBar } from 'antd-mobile';
 
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
-import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import { showPassThrough } from '@core/app/components/pass-through';
@@ -30,6 +29,7 @@ import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import { useCameraPreviewStore } from '@core/stores/cameraPreview';
 
 import styles from './CanvasTabBar.module.scss';
 
@@ -56,6 +56,7 @@ const CanvasTabBar = (): React.ReactNode => {
 
   const { changeToPreviewMode, endPreviewMode, mode, setupPreviewMode } = useContext(CanvasContext);
   const isPreviewing = mode === CanvasMode.Preview;
+  const { isClean, isDrawing, isPreviewMode } = useCameraPreviewStore();
   const [activeKey, setActiveKey] = useState('none');
 
   const resetActiveKey = useCallback(() => {
@@ -198,9 +199,7 @@ const CanvasTabBar = (): React.ReactNode => {
     if (key === 'camera') {
       changeToPreviewMode();
 
-      if (!PreviewModeController.isPreviewMode()) {
-        setupPreviewMode();
-      }
+      if (!isPreviewMode) setupPreviewMode();
 
       setActiveKey('choose-preview-device');
       setTimeout(resetActiveKey, 300);
@@ -253,13 +252,13 @@ const CanvasTabBar = (): React.ReactNode => {
       title: lang.beambox.left_panel.label.choose_camera,
     },
     {
-      disabled: PreviewModeController.isDrawing || PreviewModeBackgroundDrawer.isClean(),
+      disabled: isDrawing || isClean,
       icon: <TabBarIcons.Trace />,
       key: 'image-trace',
       title: lang.beambox.left_panel.label.trace,
     },
     {
-      disabled: PreviewModeController.isDrawing || PreviewModeBackgroundDrawer.isClean(),
+      disabled: isDrawing || isClean,
       icon: <TabBarIcons.Trash />,
       key: 'clear-preview',
       title: lang.beambox.left_panel.label.clear_preview,
@@ -269,14 +268,14 @@ const CanvasTabBar = (): React.ReactNode => {
     if (key === 'end-preview') {
       endPreviewMode();
     } else if (key === 'choose-preview-device') {
-      if (!PreviewModeController.isPreviewMode()) {
+      if (!isPreviewMode) {
         setupPreviewMode();
       }
     } else if (key === 'image-trace') {
       endPreviewMode();
       beamboxStore.emitShowCropper();
     } else if (key === 'clear-preview') {
-      if (!PreviewModeBackgroundDrawer.isClean()) {
+      if (!isClean) {
         PreviewModeBackgroundDrawer.resetCoordinates();
         PreviewModeBackgroundDrawer.clear();
       }
