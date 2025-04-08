@@ -13,7 +13,7 @@ import VersionChecker from '@core/helpers/version-checker';
 import type { CameraConfig, CameraParameters } from '@core/interfaces/Camera';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type { PreviewManager } from '@core/interfaces/PreviewManager';
-import { useCameraPreviewStore } from '@core/stores/cameraPreview';
+import { setCameraPreviewState } from '@core/stores/cameraPreview';
 
 import AdorPreviewManager from '../camera/preview-helper/AdorPreviewManager';
 import BB2PreviewManager from '../camera/preview-helper/BB2PreviewManager';
@@ -40,12 +40,12 @@ class PreviewModeController {
 
   setIsPreviewMode = (val: boolean) => {
     this.isPreviewMode = val;
-    useCameraPreviewStore.setState({ isPreviewMode: val });
+    setCameraPreviewState({ isPreviewMode: val });
   };
 
   setIsDrawing = (val: boolean) => {
     this.isDrawing = val;
-    useCameraPreviewStore.setState({ isDrawing: val });
+    setCameraPreviewState({ isDrawing: val });
   };
 
   reloadHeightOffset = async () => {
@@ -212,7 +212,7 @@ class PreviewModeController {
           }
         });
       }, 1000);
-      useCameraPreviewStore.setState({ isLiveMode: true });
+      setCameraPreviewState({ isLiveMode: true });
     };
 
     setNextTimeout();
@@ -224,7 +224,7 @@ class PreviewModeController {
     }
 
     this.liveModeTimeOut = null;
-    useCameraPreviewStore.setState({ isLiveMode: false });
+    setCameraPreviewState({ isLiveMode: false });
   }
 
   async fullWorkareaLiveUpdate(callback = () => {}) {

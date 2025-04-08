@@ -1,23 +1,28 @@
 import { create } from 'zustand';
 
 type CameraPreviewState = {
+  hasWideAngleCamera?: boolean;
   isClean: boolean;
   isDrawing: boolean;
   isLiveMode: boolean;
   isPreviewMode: boolean;
-  setIsClean: (isClean: boolean) => void;
-  setIsDrawing: (isDrawing: boolean) => void;
-  setIsLiveMode: (isLiveMode: boolean) => void;
-  setIsPreviewMode: (isPreviewMode: boolean) => void;
+  isWideAngleCameraCalibrated?: boolean;
 };
 
-export const useCameraPreviewStore = create<CameraPreviewState>((set) => ({
+export const useCameraPreviewStore = create<CameraPreviewState>(() => ({
+  hasWideAngleCamera: false,
   isClean: true,
   isDrawing: false,
   isLiveMode: false,
   isPreviewMode: false,
-  setIsClean: (isClean: boolean) => set({ isClean }),
-  setIsDrawing: (isDrawing: boolean) => set({ isDrawing }),
-  setIsLiveMode: (isLiveMode: boolean) => set({ isLiveMode }),
-  setIsPreviewMode: (isPreviewMode: boolean) => set({ isPreviewMode }),
+  isWideAngleCameraCalibrated: false,
 }));
+
+/**
+ * for updating the camera preview state outside React components
+ * @param state Partial<CameraPreviewState>
+ * @returns void
+ */
+export const setCameraPreviewState = (state: Partial<CameraPreviewState>) => {
+  useCameraPreviewStore.setState(state);
+};
