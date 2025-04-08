@@ -1,5 +1,5 @@
 import Constant from '@core/app/actions/beambox/constant';
-import { CALIBRATION_PARAMS, DEFAULT_CAMERA_OFFSET } from '@core/app/constants/camera-calibration-constants';
+import { CALIBRATION_PARAMS, DEFAULT_CAMERA_OFFSET } from '@core/app/constants/cameraConstants';
 import CameraCalibrationApi from '@core/helpers/api/camera-calibration';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';

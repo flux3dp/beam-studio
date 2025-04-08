@@ -1,11 +1,7 @@
 import React, { createContext, useState } from 'react';
 
 import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
-import {
-  DEFAULT_CAMERA_OFFSET,
-  STEP_ASK_READJUST,
-  STEP_PUT_PAPER,
-} from '@core/app/constants/camera-calibration-constants';
+import { DEFAULT_CAMERA_OFFSET, STEP_ASK_READJUST, STEP_PUT_PAPER } from '@core/app/constants/cameraConstants';
 import DeviceMaster from '@core/helpers/device-master';
 import versionChecker from '@core/helpers/version-checker';
 import storage from '@core/implementations/storage';

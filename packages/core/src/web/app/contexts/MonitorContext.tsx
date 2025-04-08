@@ -24,7 +24,7 @@ import type { IDeviceInfo, IReport } from '@core/interfaces/IDevice';
 import type { IProgress } from '@core/interfaces/IProgress';
 import type { TaskMetaData } from '@core/interfaces/ITask';
 
-import { DEFAULT_CAMERA_OFFSET } from '../constants/camera-calibration-constants';
+import { DEFAULT_CAMERA_OFFSET } from '../constants/cameraConstants';
 
 const eventEmitter = eventEmitterFactory.createEventEmitter('monitor');
 

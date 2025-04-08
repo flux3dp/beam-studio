@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 
 import { Modal } from 'antd';
 
-import { STEP_REFOCUS } from '@core/app/constants/camera-calibration-constants';
+import { STEP_REFOCUS } from '@core/app/constants/cameraConstants';
 import { CalibrationContext } from '@core/app/contexts/CalibrationContext';
 import useI18n from '@core/helpers/useI18n';
 

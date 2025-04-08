@@ -8,7 +8,7 @@ import {
   STEP_FINISH,
   STEP_PUT_PAPER,
   STEP_REFOCUS,
-} from '@core/app/constants/camera-calibration-constants';
+} from '@core/app/constants/cameraConstants';
 import { CalibrationContext, CalibrationProvider } from '@core/app/contexts/CalibrationContext';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 

@@ -6,11 +6,7 @@ import Alert from '@core/app/actions/alert-caller';
 import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
-import {
-  CALIBRATION_PARAMS,
-  STEP_BEFORE_ANALYZE_PICTURE,
-  STEP_PUT_PAPER,
-} from '@core/app/constants/camera-calibration-constants';
+import { CALIBRATION_PARAMS, STEP_BEFORE_ANALYZE_PICTURE, STEP_PUT_PAPER } from '@core/app/constants/cameraConstants';
 import { CalibrationContext } from '@core/app/contexts/CalibrationContext';
 import { doGetOffsetFromPicture } from '@core/helpers/camera-calibration-helper';
 import CheckDeviceStatus from '@core/helpers/check-device-status';
