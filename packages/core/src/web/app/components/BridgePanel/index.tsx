@@ -2,9 +2,12 @@ import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from '
 
 import { Flex } from 'antd';
 import paper from 'paper';
+import { pipe, tap } from 'remeda';
 import { match } from 'ts-pattern';
 
+import { dpmm } from '@core/app/actions/beambox/constant';
 import FullWindowPanel from '@core/app/widgets/FullWindowPanel/FullWindowPanel';
+import { handleChangePathDataCommand } from '@core/helpers/BridgePanel/handleChangePathDataCommand';
 import { usePaperCanvas } from '@core/helpers/hooks/paperjs/usePaperCanvas';
 import useNewShortcutsScope from '@core/helpers/hooks/useNewShortcutsScope';
 import shortcuts from '@core/helpers/shortcuts';
@@ -17,6 +20,7 @@ import TopBar from './TopBar';
 import { cutPathAtDistance } from './utils/cutPathAtDistance';
 
 interface Props {
+  bbox: DOMRect;
   element: SVGElement;
   onClose: () => void;
 }
@@ -24,7 +28,7 @@ interface Props {
 const PADDING = 30;
 const TARGET_PATH_NAME = 'parentPath';
 
-function UnmemorizedBridgePanel({ element, onClose }: Props): React.JSX.Element {
+function UnmemorizedBridgePanel({ bbox, element, onClose }: Props): React.JSX.Element {
   const { image_edit_panel: lang } = useI18n();
   const { history, push, redo, set, undo } = useHistory({ hasUndid: false, index: 0, items: [{ pathData: [] }] });
   const [mode, setMode] = useState<'auto' | 'manual'>('manual');
@@ -44,12 +48,14 @@ function UnmemorizedBridgePanel({ element, onClose }: Props): React.JSX.Element 
     onScaleChanged: setZoomScale,
   });
 
-  const cursorStyle = useMemo(() => {
-    return match({ isDraggable, isDragging })
-      .with({ isDraggable: true, isDragging: true }, () => ({ cursor: 'grabbing' }))
-      .with({ isDraggable: true, isDragging: false }, () => ({ cursor: 'grab' }))
-      .otherwise(() => ({ cursor: 'crosshair' }));
-  }, [isDragging, isDraggable]);
+  const cursorStyle = useMemo(
+    () =>
+      match({ isDraggable, isDragging })
+        .with({ isDraggable: true, isDragging: true }, () => ({ cursor: 'grabbing' }))
+        .with({ isDraggable: true, isDragging: false }, () => ({ cursor: 'grab' }))
+        .otherwise(() => ({ cursor: 'crosshair' })),
+    [isDragging, isDraggable],
+  );
 
   const handlePushHistory = useCallback(() => {
     if (!isPathDataChanged) return;
@@ -63,7 +69,6 @@ function UnmemorizedBridgePanel({ element, onClose }: Props): React.JSX.Element 
 
       setPathData(pathData);
       setIsPathDataChanged(false);
-      paper.view.requestUpdate();
     },
     [undo, redo],
   );
@@ -72,42 +77,46 @@ function UnmemorizedBridgePanel({ element, onClose }: Props): React.JSX.Element 
     paper.view.center = new paper.Point(fitScreenDimension);
   }, [fitScreenDimension, handleZoom]);
 
-  const handleComplete = useCallback(() => {
-    // progressCaller.openNonstopProgress({ id: 'bridge-editing', message: langPhoto.processing });
-
-    // add a frame to wait for re-render, otherwise the image might be blank or not updated
-    requestAnimationFrame(() => {});
-  }, []);
+  const handleComplete = useCallback(
+    () =>
+      pipe(
+        paper.project.getItem({ name: TARGET_PATH_NAME }) as paper.CompoundPath,
+        tap((item) => item.fitBounds(bbox)),
+        ({ pathData }) => handleChangePathDataCommand(element as unknown as SVGPathElement, pathData),
+        onClose,
+      ),
+    [bbox, element, onClose],
+  );
 
   const handleMouseDown = useCallback(
-    (event: paper.MouseEvent) => {
+    (event: paper.ToolEvent) => {
       const { point } = event;
 
-      if (isDraggable || isDragging) return;
+      if (isDraggable || isDragging || (event as any).event.button !== 0 || mode !== 'manual') return;
 
       paper.project.hitTest(point, {
         fill: false,
         match: (hit: paper.HitResult) => {
-          const circle = new paper.Path.Circle(point, 3);
-
-          circle.fillColor = new paper.Color('red');
-
-          // Ensure the path is the target compound path's child
+          // ensure the path is the target compound path's child
           if (hit.item.parent?.name === TARGET_PATH_NAME) {
             const path = hit.item as paper.Path;
-            const newCompoundPath = cutPathAtDistance(path, point, bridgeWidth);
+            // bridgeWidth is in mm, convert to dpmm
+            // divide by 2 to get radius of the circle to cut path
+            const newCompoundPath = cutPathAtDistance(path, point, (bridgeWidth * dpmm) / 2);
 
             setPathData((prev) => prev.concat(newCompoundPath.pathData) || [newCompoundPath.pathData]);
             setIsPathDataChanged(true);
           }
 
+          // always return true to prevent the hit test keep searching
           return true;
         },
+        segments: true,
         stroke: true,
         tolerance: 30,
       });
     },
-    [bridgeWidth, isDraggable, isDragging],
+    [bridgeWidth, isDraggable, isDragging, mode],
   );
   const handleMouseDrag = useCallback(
     (event: paper.ToolEvent) => {
@@ -165,7 +174,7 @@ function UnmemorizedBridgePanel({ element, onClose }: Props): React.JSX.Element 
         paper.view.size.set(new paper.Size(width, height));
         // to prevent the canvas overlap with the bottom of the screen
         // this is a workaround for the paperjs bug,
-        // 5 is the minimum value to prevent this situation
+        // `5` is the minimum value to prevent this situation
         paper.view.viewSize.set(new paper.Size(width, height - 5));
       });
     });

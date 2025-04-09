@@ -176,12 +176,16 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       'bridge',
       lang.bridge,
       () => {
+        const bbox = (elem as SVGSVGElement).getBBox();
+
         // Convert to path if it's not a path
         if (!(elem instanceof SVGPathElement)) {
-          svgCanvas.convertToPath(elem as SVGElement);
+          const { path } = svgCanvas.convertToPath(elem as SVGElement);
+
+          svgCanvas.selectOnly([path]);
         }
 
-        Dialog.showBridgePanel();
+        Dialog.showBridgePanel({ bbox, onClose: () => {} });
       },
       <ActionPanelIcons.Bridge />,
       <ActionPanelIcons.Bridge />,

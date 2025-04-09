@@ -8,15 +8,15 @@ export function cutPathAtDistance(path: paper.Path, point: paper.Point, distance
     Math.min(path.length, offset + distance),
   ]);
 
-  // Clone the original path so we don't lose the full shape
+  // clone the original path so we don't lose the full shape
   const pathClone = path.clone({ insert: false });
 
-  // If the path is closed, split it at the start to ensure we can cut it
+  // if the path is closed, split it at the start to ensure we can cut it
   if (pathClone.closed) pathClone.splitAt(0);
 
-  // Split at offsetStart and offsetEnd
+  // split at offsetStart and offsetEnd
   const part1 = pathClone.splitAt(offsetStart);
-  // Extracted section
+  // extracted section
   const part2 = part1.splitAt(offsetEnd - offsetStart);
   const compound = path.parent as paper.CompoundPath;
 

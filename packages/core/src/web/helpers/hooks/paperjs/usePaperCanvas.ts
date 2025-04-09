@@ -14,6 +14,7 @@ interface Options {
 
 /**
  * ReturnType
+ * @typedef {Object} ReturnType
  * @property isDragging whether the stage is dragging
  * @property isDraggable whether the stage is draggable
  * @property handleWheel handle wheel event
@@ -34,7 +35,7 @@ type ReturnType = {
  * @param maxScale max scale of the canvas
  * @param minScale min scale of the canvas
  * @param onScaleChanged callback when scale changed
- * @returns ReturnType
+ * @returns {ReturnType} {@link ReturnType}
  */
 export const usePaperCanvas = ({
   maxScale = 20,
@@ -94,15 +95,11 @@ export const usePaperCanvas = ({
   );
 
   const handleWheel = useCallback(
-    (event: WheelEvent) => {
-      // Unable to preventDefault inside passive event listener invocation.
-      // event.preventDefault();
-
+    (event: WheelEvent) =>
       match(event)
         .with({ ctrlKey: true, deltaY: P.number.lt(0) }, () => handleZoomByScale(1.02, event))
         .with({ ctrlKey: true, deltaY: P.number.gte(0) }, () => handleZoomByScale(0.98, event))
-        .otherwise(() => handleMove(event));
-    },
+        .otherwise(() => handleMove(event)),
     [handleMove, handleZoomByScale],
   );
 

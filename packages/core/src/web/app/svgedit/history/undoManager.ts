@@ -26,7 +26,7 @@ export class UndoManager implements IUndoManager {
   }
 
   resetUndoStack(): void {
-    this.undoStack = [];
+    this.undoStack.length = 0;
     this.undoStackPointer = 0;
   }
 

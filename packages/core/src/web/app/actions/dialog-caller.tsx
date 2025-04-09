@@ -255,7 +255,12 @@ export default {
       />,
     );
   },
-  showBridgePanel: (onClose: () => void = () => {}): void => {
+  showBridgePanel: (
+    { bbox, onClose }: { bbox: DOMRect; onClose: () => void } = {
+      bbox: new DOMRect(0, 0, 0, 0),
+      onClose: () => {},
+    },
+  ): void => {
     if (isIdExist('bridge-panel')) {
       return;
     }
@@ -271,6 +276,7 @@ export default {
     addDialogComponent(
       'bridge-panel',
       <BridgePanel
+        bbox={bbox}
         element={element}
         onClose={() => {
           onClose();
