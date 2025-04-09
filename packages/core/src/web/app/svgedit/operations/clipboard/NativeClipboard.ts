@@ -105,7 +105,7 @@ export class NativeClipboard extends BaseClipboardCore implements ClipboardCore 
     try {
       await navigator.clipboard.writeText(`BX clip:${JSON.stringify(serializedData)}`);
     } catch (err) {
-      console.log('🚀 ~ file: clipboard.ts:131 ~ copyElements ~ err:', err);
+      console.log('🚀 ~ file: NativeClipboard:108 ~ writeDataToClipboard ~ err:', err);
     }
   };
 
@@ -177,7 +177,7 @@ export class NativeClipboard extends BaseClipboardCore implements ClipboardCore 
 
       return clipboardData.startsWith('BX clip:');
     } catch (err) {
-      console.log('🚀 ~ file: clipboard.ts:45 ~ isValidNativeClipboard ~ err:', err);
+      console.log('🚀 ~ file: NativeClipboard.ts:180 ~ hasData ~ err:', err);
 
       return false;
     }
