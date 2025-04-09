@@ -1,9 +1,11 @@
 import React, { useContext, useMemo } from 'react';
 
+import alertCaller from '@core/app/actions/alert-caller';
 import constant from '@core/app/actions/beambox/constant';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import LeftPanelButton from '@core/app/components/beambox/left-panel/LeftPanelButton';
+import { CameraType } from '@core/app/constants/cameraConstants';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import beamboxStore from '@core/app/stores/beambox-store';
@@ -13,6 +15,8 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import { useCameraPreviewStore } from '@core/stores/cameraPreview';
+
+import LeftPanelSegmented from './LeftPanelSegmented';
 
 let svgCanvas: ISVGCanvas;
 
@@ -29,7 +33,8 @@ const PreviewToolButtonGroup = ({ className }: Props): React.JSX.Element => {
   const workarea = useWorkarea();
   const isAdorSeries = useMemo(() => constant.adorModels.includes(workarea), [workarea]);
   const { endPreviewMode, setupPreviewMode } = useContext(CanvasContext);
-  const { isClean, isDrawing, isLiveMode, isPreviewMode } = useCameraPreviewStore();
+  const { cameraType, hasWideAngleCamera, isClean, isDrawing, isLiveMode, isPreviewMode, isWideAngleCameraCalibrated } =
+    useCameraPreviewStore();
 
   const startImageTrace = () => {
     endPreviewMode();
@@ -54,15 +59,34 @@ const PreviewToolButtonGroup = ({ className }: Props): React.JSX.Element => {
         onClick={endPreviewMode}
         title={lang.label.end_preview}
       />
-      <LeftPanelButton
-        active
-        icon={<LeftPanelIcons.Shoot />}
-        id="preview-shoot"
-        onClick={() => {
-          if (!isPreviewMode) setupPreviewMode();
-        }}
-        title={lang.label.preview}
-      />
+      {isPreviewMode && hasWideAngleCamera ? (
+        <LeftPanelSegmented
+          onChange={(value) => {
+            if (value === CameraType.WIDE_ANGLE && !isWideAngleCameraCalibrated) {
+              alertCaller.popUpError({ message: 'tPlease calibration wide angle camera first.' });
+
+              return;
+            }
+
+            PreviewModeController.switchCamera(value);
+          }}
+          options={[
+            { label: <LeftPanelIcons.Shoot />, value: CameraType.LASER_HEAD },
+            { label: <LeftPanelIcons.ShootWideAngle />, value: CameraType.WIDE_ANGLE },
+          ]}
+          value={cameraType}
+        />
+      ) : (
+        <LeftPanelButton
+          active
+          icon={<LeftPanelIcons.Shoot />}
+          id="preview-shoot"
+          onClick={() => {
+            if (!isPreviewMode) setupPreviewMode();
+          }}
+          title={lang.label.preview}
+        />
+      )}
       {isAdorSeries && !localeHelper.isNorthAmerica && (
         <LeftPanelButton
           active={isLiveMode}
