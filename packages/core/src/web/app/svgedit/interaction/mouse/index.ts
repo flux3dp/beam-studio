@@ -12,7 +12,7 @@ import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import { MouseButtons } from '@core/app/constants/mouse-constants';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
 import history from '@core/app/svgedit/history/history';
-import clipboard, { isValidNativeClipboard } from '@core/app/svgedit/operations/clipboard';
+import clipboard, { hasClipboardData } from '@core/app/svgedit/operations/clipboard';
 import createNewText from '@core/app/svgedit/text/createNewText';
 import textEdit from '@core/app/svgedit/text/textedit';
 import touchEvents from '@core/app/svgedit/touchEvents';
@@ -91,7 +91,7 @@ const mouseDown = async (evt: MouseEvent) => {
   if (checkShouldIgnore() || svgCanvas.spaceKey || evt.button === MouseButtons.Mid) return;
 
   // Check if the element in the clipboard can be pasted
-  isValidNativeClipboard().then((paste) => {
+  hasClipboardData().then((paste) => {
     workareaEvents.emit('update-context-menu', { paste });
   });
 
