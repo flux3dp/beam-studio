@@ -4,6 +4,7 @@ import Constant, { promarkModels } from '@core/app/actions/beambox/constant';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
+import { CameraType } from '@core/app/constants/cameraConstants';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import checkOldFirmware from '@core/helpers/device/checkOldFirmware';
 import deviceMaster from '@core/helpers/device-master';
@@ -152,6 +153,21 @@ class PreviewModeController {
       PreviewModeBackgroundDrawer.drawBoundary();
       deviceMaster.setDeviceControlReconnectOnClose(device);
       this.setIsPreviewMode(true);
+
+      if (this.previewManager instanceof BB2PreviewManager) {
+        setCameraPreviewState({
+          cameraType: this.previewManager.getCameraType(),
+          hasWideAngleCamera: this.previewManager.hasWideAngleCamera,
+          isWideAngleCameraCalibrated: this.previewManager.isWideAngleCameraCalibrated,
+        });
+      } else {
+        setCameraPreviewState({
+          cameraType: this.previewManager.isFullScreen ? CameraType.WIDE_ANGLE : CameraType.LASER_HEAD,
+          hasWideAngleCamera: false,
+          isWideAngleCameraCalibrated: false,
+        });
+      }
+
       canvasEventEmitter.emit('UPDATE_CONTEXT');
     } catch (error) {
       console.error(error);
@@ -390,6 +406,14 @@ class PreviewModeController {
 
     return imgUrl;
   }
+
+  switchCamera = async (cameraType: CameraType): Promise<void> => {
+    if (!this.previewManager?.switchCamera) return;
+
+    const res = await this.previewManager.switchCamera(cameraType);
+
+    setCameraPreviewState({ cameraType: res });
+  };
 }
 
 const instance = new PreviewModeController();
