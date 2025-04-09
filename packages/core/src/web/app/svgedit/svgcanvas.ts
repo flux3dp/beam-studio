@@ -1548,7 +1548,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       const mouseX = pt.x * zoom;
       const mouseY = pt.y * zoom;
 
-      if (canvas.sensorAreaInfo && !PreviewModeController.isPreviewMode()) {
+      if (canvas.sensorAreaInfo && !PreviewModeController.isPreviewMode) {
         if (document.body.contains(canvas.sensorAreaInfo.elem)) {
           const dist = Math.hypot(canvas.sensorAreaInfo.x - mouseX, canvas.sensorAreaInfo.y - mouseY);
 
