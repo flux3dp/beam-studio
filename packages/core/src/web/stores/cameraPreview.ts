@@ -1,6 +1,9 @@
 import { create } from 'zustand';
 
+import { CameraType } from '@core/app/constants/cameraConstants';
+
 type CameraPreviewState = {
+  cameraType: CameraType;
   hasWideAngleCamera?: boolean;
   isClean: boolean;
   isDrawing: boolean;
@@ -10,6 +13,7 @@ type CameraPreviewState = {
 };
 
 export const useCameraPreviewStore = create<CameraPreviewState>(() => ({
+  cameraType: CameraType.LASER_HEAD,
   hasWideAngleCamera: false,
   isClean: true,
   isDrawing: false,
