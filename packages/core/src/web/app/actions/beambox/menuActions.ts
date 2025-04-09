@@ -250,7 +250,7 @@ export default {
   PASTE_IN_PLACE: (): Promise<null | {
     cmd: IBatchCommand;
     elems: Element[];
-  }> => clipboard.pasteElements('in_place'),
+  }> => clipboard.pasteElements({ type: 'in_place' }),
   PREFERENCE: async (): Promise<void> => {
     Dialog.clearAllDialogComponents();
 

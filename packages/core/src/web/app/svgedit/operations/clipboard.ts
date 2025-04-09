@@ -7,161 +7,39 @@ import workareaManager from '@core/app/svgedit/workarea';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import symbolMaker from '@core/helpers/symbol-maker';
+import type { ClipboardCore } from '@core/interfaces/Clipboard';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import undoManager from '../history/undoManager';
 
-interface ClipboardElement {
-  attributes: Array<Record<'namespaceURI' | 'nodeName' | 'value', string>>;
-  childNodes: ClipboardElement[];
-  dataGSVG?: string;
-  dataSymbol?: string;
-  innerHTML: string;
-  namespaceURI: string;
-  nodeName: string;
-  nodeType: number;
-  nodeValue: string;
-}
+import MemoryClipboard from './clipboard/MemoryClipboard';
+import NativeClipboard, { checkNativeClipboardSupport } from './clipboard/NativeClipboard';
+import { updateSymbolStyle } from './clipboard/utils';
 
 // TODO: decouple with svgcanvas
 const { svgedit } = window;
 
-let svgCanvas;
+let svgCanvas: ISVGCanvas;
 
 getSVGAsync(({ Canvas }) => {
   svgCanvas = Canvas;
 });
 
-let refClipboard: Record<string, Element> = {};
+let clipboardCore: ClipboardCore = new MemoryClipboard();
 
-export const isValidNativeClipboard = async (): Promise<boolean> => {
-  try {
-    const clipboardData = await navigator.clipboard.readText();
+checkNativeClipboardSupport().then((res) => {
+  console.log('checkNativeClipboardSupport', res);
 
-    return clipboardData.startsWith('BX clip:');
-  } catch (err) {
-    console.log('🚀 ~ file: clipboard.ts:45 ~ isValidNativeClipboard ~ err:', err);
+  if (res) clipboardCore = new NativeClipboard();
+});
 
-    return false;
-  }
-};
-
-const serializeElement = ({
-  attributes,
-  childNodes,
-  innerHTML,
-  namespaceURI,
-  nodeName,
-  nodeType,
-  nodeValue,
-}: Element) => {
-  const result: ClipboardElement = {
-    attributes: [],
-    childNodes: [],
-    innerHTML,
-    namespaceURI,
-    nodeName,
-    nodeType,
-    nodeValue,
-  };
-
-  for (let i = 0; i < attributes?.length; i += 1) {
-    const { namespaceURI, nodeName, value } = attributes[i];
-
-    result.attributes.push({ namespaceURI, nodeName, value });
-  }
-
-  childNodes?.forEach((node) => {
-    result.childNodes.push(serializeElement(node as Element));
-  });
-
-  return result;
-};
-
-export const addRefToClipboard = (useElement: SVGUseElement): void => {
-  const symbolId = svgedit.utilities.getHref(useElement);
-  const symbolElement = document.querySelector(symbolId);
-  const originalSymbolElement =
-    document.getElementById(symbolElement?.getAttribute('data-origin-symbol')) || symbolElement;
-
-  if (originalSymbolElement) {
-    refClipboard[symbolId] = originalSymbolElement;
-  }
+export const hasClipboardData = async (): Promise<boolean> => {
+  return clipboardCore.hasData();
 };
 
 const copyElements = async (elems: Element[]): Promise<void> => {
-  const layerNames = new Set<string>();
-  const serializedData = { elements: [], imageData: {}, refs: {} };
-  let layerCount = 0;
-
-  refClipboard = {};
-
-  for (let i = 0; i < elems.length; i += 1) {
-    const elem = elems[i];
-    const layerName = $(elem.parentNode).find('title').text();
-
-    elem.setAttribute('data-origin-layer', layerName);
-
-    if (elem.tagName === 'use') addRefToClipboard(elem as SVGUseElement);
-    else Array.from(elem.querySelectorAll('use')).forEach((use: SVGUseElement) => addRefToClipboard(use));
-
-    if (!layerNames.has(layerName)) {
-      layerNames.add(layerName);
-      layerCount += 1;
-    }
-  }
-
-  // If there is only one layer selected, don't force user to paste on the same layer
-  if (layerCount === 1) {
-    elems.forEach((elem) => elem?.removeAttribute('data-origin-layer'));
-  }
-
-  elems.forEach((elem) => serializedData.elements.push(serializeElement(elem)));
-
-  const keys = Object.keys(refClipboard);
-
-  for (let i = 0; i < keys.length; i += 1) {
-    const key = keys[i];
-
-    serializedData.refs[key] = serializeElement(refClipboard[key]);
-  }
-
-  // save original image data as base64
-  const origImageUrls = Array.from(
-    new Set(elems.filter((elem) => elem.tagName === 'image').map((elem) => elem.getAttribute('origImage'))),
-  );
-  const promises = [];
-
-  for (let i = 0; i < origImageUrls.length; i += 1) {
-    const origImage = origImageUrls[i];
-
-    promises.push(
-      // eslint-disable-next-line no-async-promise-executor
-      new Promise<void>(async (resolve) => {
-        try {
-          const resp = await fetch(origImage);
-          const blob = await resp.blob();
-          const base64 = await new Promise<string>((resolve) => {
-            const reader = new FileReader();
-
-            reader.onload = () => resolve(reader.result as string);
-            reader.readAsDataURL(blob);
-          });
-
-          serializedData.imageData[origImage] = base64;
-        } finally {
-          resolve();
-        }
-      }),
-    );
-  }
-  await Promise.allSettled(promises);
-
-  try {
-    await navigator.clipboard.writeText(`BX clip:${JSON.stringify(serializedData)}`);
-  } catch (err) {
-    console.log('🚀 ~ file: clipboard.ts:131 ~ copyElements ~ err:', err);
-  }
+  await clipboardCore.copyElements(elems);
 };
 
 const copySelectedElements = async (): Promise<void> => {
@@ -190,79 +68,6 @@ const cutSelectedElements = async (): Promise<void> => {
   await cutElements(selectedElems);
 };
 
-const updateSymbolStyle = (symbol: SVGSymbolElement, oldId: string) => {
-  const styles = symbol.querySelectorAll('style, STYLE');
-
-  for (let i = 0; i < styles.length; i += 1) {
-    const style = styles[i];
-    const { textContent } = style;
-    const newContent = textContent.replace(RegExp(oldId, 'g'), symbol.id);
-
-    style.textContent = newContent;
-  }
-};
-
-async function getElementsFromNativeClipboard(): Promise<Element[]> {
-  const clipboardData = await navigator.clipboard.readText();
-
-  if (!clipboardData.startsWith('BX clip:')) {
-    return [];
-  }
-
-  const drawing = svgCanvas.getCurrentDrawing();
-  const data = JSON.parse(clipboardData.substring(8));
-  const { elements, imageData, refs } = data;
-
-  const keys = Object.keys(refs);
-
-  refClipboard = {};
-  for (const key of keys) {
-    const symbolElemData = refs[key];
-    const id = symbolElemData.attributes.find(({ nodeName }) => nodeName === 'id')?.value;
-    const newSymbol = drawing.copyElemData(symbolElemData);
-
-    updateSymbolStyle(newSymbol, id);
-    refClipboard[key] = newSymbol;
-  }
-
-  // retrieve image data and convert to blob url
-  await Promise.allSettled(
-    Object.keys(imageData).map(async (key) => {
-      try {
-        const base64 = imageData[key];
-        const resp = await fetch(base64);
-        const blob = await resp.blob();
-        const url = URL.createObjectURL(blob);
-
-        imageData[key] = url;
-      } catch (error) {
-        console.error('Failed to fetch image data', error);
-      }
-    }),
-  );
-
-  const newElements = elements.map((element: Element) => drawing.copyElemData(element));
-
-  // use clipboard image data if original image is not available
-  await Promise.allSettled(
-    newElements.map(async (element: Element) => {
-      if (element.tagName === 'image') {
-        const origImage = element.getAttribute('origImage');
-
-        if (imageData[origImage]) {
-          try {
-            await fetch(origImage);
-          } catch {
-            element.setAttribute('origImage', imageData[origImage]);
-          }
-        }
-      }
-    }),
-  );
-
-  return newElements;
-}
-
 const pasteRef = async (
   useElement: SVGUseElement,
   opts?: {
@@ -274,7 +79,7 @@ const pasteRef = async (
   const batchCmd = new history.BatchCommand('Paste Ref');
   const drawing = svgCanvas.getCurrentDrawing();
   const symbolId = svgedit.utilities.getHref(useElement);
-  const refElement = refClipboard[symbolId];
+  const refElement = clipboardCore.getRefFromClipboard(symbolId)!;
   const copiedRef = refElement.cloneNode(true) as SVGSymbolElement;
 
   copiedRef.id = drawing.getNextId();
@@ -310,7 +115,7 @@ export const handlePastedRef = async (copy: Element, opts: { parentCmd?: IBatchC
   }
 
   uses.forEach((use: SVGUseElement) => {
-    addRefToClipboard(use);
+    clipboardCore.addRefToClipboard(use);
     promises.push(pasteRef(use, { parentCmd: opts?.parentCmd }));
   });
 
@@ -344,17 +149,15 @@ export const handlePastedRef = async (copy: Element, opts: { parentCmd?: IBatchC
   await Promise.allSettled(promises);
 };
 
-const pasteElements = (
-  clipboard: Element[],
-  args: {
-    isSubCmd: boolean;
-    selectElement?: boolean;
-    type: 'in_place' | 'mouse' | 'point';
-    x?: number;
-    y?: number;
-  },
-): null | { cmd: IBatchCommand; elems: Element[] } => {
+const pasteElements = async (args: {
+  isSubCmd?: boolean;
+  selectElement?: boolean;
+  type: 'in_place' | 'mouse' | 'point';
+  x?: number;
+  y?: number;
+}): Promise<null | { cmd: IBatchCommand; elems: Element[] }> => {
   const { isSubCmd = false, selectElement = true, type, x, y } = args || {};
+  const clipboard = await clipboardCore.getData();
 
   if (!clipboard?.length) {
     return null;
@@ -417,8 +220,8 @@ const pasteElements = (
     const bbox = svgCanvas.getStrokedBBox(pasted);
     const cx = ctrX - (bbox.x + bbox.width / 2);
     const cy = ctrY - (bbox.y + bbox.height / 2);
-    const dx = [];
-    const dy = [];
+    const dx: number[] = [];
+    const dy: number[] = [];
 
     pasted.forEach(() => {
       dx.push(cx);
@@ -473,12 +276,10 @@ const cloneElements = async (
 
   await copyElements(elements);
 
-  const pasteRes = pasteElements(await getElementsFromNativeClipboard(), {
+  const pasteRes = await pasteElements({
     isSubCmd: true,
     selectElement,
     type: 'in_place',
-    x: null,
-    y: null,
   });
 
   if (!pasteRes) return null;
@@ -531,21 +332,13 @@ const cloneSelectedElements = async (
   return res;
 };
 
-const pasteFromNativeClipboard = async (
-  type: 'in_place' | 'mouse' | 'point',
-  x?: number,
-  y?: number,
-  isSubCmd = false,
-): Promise<null | { cmd: IBatchCommand; elems: Element[] }> =>
-  pasteElements(await getElementsFromNativeClipboard(), { isSubCmd, type, x, y });
-
 const pasteInCenter = async (): Promise<null | { cmd: IBatchCommand; elems: Element[] }> => {
   const zoom = workareaManager.zoomRatio;
-  const workarea = document.getElementById('workarea');
+  const workarea = document.getElementById('workarea')!;
   const x = (workarea.scrollLeft + workarea.clientWidth / 2) / zoom - workareaManager.width;
   const y = (workarea.scrollTop + workarea.clientHeight / 2) / zoom - workareaManager.height;
 
-  return pasteFromNativeClipboard('point', x, y);
+  return pasteElements({ type: 'point', x, y });
 };
 
 const generateSelectedElementArray = async (
@@ -557,20 +350,17 @@ const generateSelectedElementArray = async (
   await copySelectedElements();
 
   const arrayElements = [...svgCanvas.getSelectedWithoutTempGroup()];
-  const clipboard = await getElementsFromNativeClipboard();
 
   for (let i = 0; i < column; i += 1) {
     for (let j = 0; j < row; j += 1) {
       if (i !== 0 || j !== 0) {
-        const pasteRes = pasteElements(clipboard, {
+        const pasteRes = await pasteElements({
           isSubCmd: true,
           selectElement: false,
           type: 'in_place',
         });
 
-        if (!pasteRes) {
-          continue;
-        }
+        if (!pasteRes) continue;
 
         const { cmd: pasteCmd, elems } = pasteRes;
 
@@ -601,7 +391,6 @@ const generateSelectedElementArray = async (
 };
 
 export default {
-  addRefToClipboard,
   cloneElements,
   cloneSelectedElements,
   copySelectedElements,
@@ -609,7 +398,6 @@ export default {
   cutSelectedElements,
   generateSelectedElementArray,
   handlePastedRef,
-  pasteElements: pasteFromNativeClipboard,
+  pasteElements,
   pasteInCenter,
-  pasteRef,
 };
