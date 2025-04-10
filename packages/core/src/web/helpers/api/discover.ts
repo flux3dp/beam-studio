@@ -127,8 +127,16 @@ const startIntervals = () => {
 
     if (!res.devices) return;
 
+    if (!isWebClient && res.devices.length === 0) {
+      Object.keys(swiftrayDevices).forEach((uuid) => {
+        swiftrayDevices[uuid].alive = false;
+        communicator.send('DEVICE_UPDATED', swiftrayDevices[uuid]);
+      });
+    }
+
     swiftrayDevices = res.devices.reduce<Record<string, IDeviceInfo>>((acc, device) => {
       device.lastAlive = Date.now();
+      device.alive = true;
       acc[device.uuid] = device;
 
       if (!isWebClient) {
