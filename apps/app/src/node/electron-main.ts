@@ -131,7 +131,7 @@ function onDeviceUpdated(deviceInfo: DeviceInfo) {
 
   tabManager?.sendToFocusedView('device-status', deviceInfo);
 
-  if (alive || source !== 'lan') {
+  if (alive) {
     if (menuManager) {
       if (globalData.devices[deviceID] && globalData.devices[deviceID].serial !== serial) {
         menuManager.removeDevice(uuid, globalData.devices[deviceID]);
