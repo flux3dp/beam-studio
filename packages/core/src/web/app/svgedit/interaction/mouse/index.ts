@@ -161,8 +161,16 @@ const mouseDown = async (evt: MouseEvent) => {
       svgCanvas.unsafeAccess.setCurrentMode('rotate');
     } else if (gripType === 'resize') {
       // resizing
-      const cx = +grip.getAttribute('cx')!;
-      const cy = +grip.getAttribute('cy')!;
+      let cx = +grip.getAttribute('cx')!;
+      let cy = +grip.getAttribute('cy')!;
+
+      const selectorGroup = grip.parentNode?.parentNode;
+
+      if (selectorGroup) {
+        const matrix = svgedit.math.getMatrix(selectorGroup);
+
+        if (!svgedit.math.isIdentity(matrix)) ({ x: cx, y: cy } = svgedit.math.transformPoint(cx, cy, matrix));
+      }
 
       startX = cx / zoom;
       startY = cy / zoom;
