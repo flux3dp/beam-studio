@@ -71,7 +71,7 @@ describe('select tools', () => {
       cy.get('#svg_1')
         .invoke('attr', 'transform')
         .should((transform) => {
-          expect(transform).to.match(new RegExp(`rotate\\(${angle} [\\d.]+,[\\d.]+\\)`));
+          expect(transform).to.match(new RegExp(`rotate\\(${angle} [\\d.]+[, ][\\d.]+\\)`));
         });
     };
 

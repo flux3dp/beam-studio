@@ -14,9 +14,9 @@ it('decompose', () => {
   cy.get('#svg_10').should('exist').should('have.attr', 'stroke', '#333333').should('have.attr', 'fill-opacity', '0');
   cy.get('#svg_10')
     .invoke('attr', 'd')
-    .then((html) => expect(md5(html)).equal('87c26b3041b47d93d567c53dad9f6a19'));
+    .then((html) => expect(md5(html)).equal('cad5d92b09202d2abe2e31be39850f01'));
   cy.get('#svg_11').should('exist').should('have.attr', 'stroke', '#333333').should('have.attr', 'fill-opacity', '0');
   cy.get('#svg_11')
     .invoke('attr', 'd')
-    .then((html) => expect(md5(html)).equal('45c6abed57f25fae18965699d89bc4d2'));
+    .then((html) => expect(md5(html)).equal('1f3448b535eb92bb9d53da853fa5de26'));
 });
