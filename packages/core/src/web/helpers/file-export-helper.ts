@@ -128,7 +128,7 @@ const saveToCloud = async (uuid?: string): Promise<boolean> => {
   try {
     const blob = pipe(
       await generateBeamBuffer(),
-      Uint8Array.from,
+      (val) => Uint8Array.from(val),
       prop('buffer'),
       (arrayBuffer) => new Blob([arrayBuffer]),
     );
