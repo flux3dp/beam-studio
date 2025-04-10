@@ -141,8 +141,7 @@ const startIntervals = () => {
     sendFoundDevices();
   };
 
-  setTimeout(updateDeviceFromSwiftray, 5000);
-  setInterval(updateDeviceFromSwiftray, 15000);
+  setInterval(updateDeviceFromSwiftray, 5000);
 };
 
 startIntervals();
