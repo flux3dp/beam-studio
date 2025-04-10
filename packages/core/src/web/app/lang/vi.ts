@@ -1896,6 +1896,7 @@ const lang: ILang = {
       calibrate_diode_module: 'Hiệu chuẩn mô-đun laser đi-ốt',
       calibrate_ir_module: 'Hiệu chuẩn mô-đun hồng ngoại',
       calibrate_printer_module: 'Hiệu chuẩn mô-đun in ấn',
+      calibrate_wide_angle_camera: 'Hiệu chỉnh camera góc rộng',
       calibration: 'Hiệu Chuẩn',
       camera_calibration_data: 'Dữ Liệu Hiệu Chỉnh Camera',
       change_logs: 'Nhật ký thay đổi',

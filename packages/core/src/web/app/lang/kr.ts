@@ -1896,6 +1896,7 @@ const lang: ILang = {
       calibrate_diode_module: '다이오드 레이저 모듈 교정',
       calibrate_ir_module: '적외선 모듈 보정',
       calibrate_printer_module: '프린팅 모듈 보정',
+      calibrate_wide_angle_camera: '광각 카메라 보정',
       calibration: '캘리브레이션',
       camera_calibration_data: '카메라 보정 데이터',
       change_logs: '변경 로그',

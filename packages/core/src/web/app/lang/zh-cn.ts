@@ -1896,6 +1896,7 @@ const lang: ILang = {
       calibrate_diode_module: '校正二极管激光模组',
       calibrate_ir_module: '校准红外模块',
       calibrate_printer_module: '校准打印模块',
+      calibrate_wide_angle_camera: '校准广角相机',
       calibration: '校准',
       camera_calibration_data: '相机校准数据',
       change_logs: '更新日志',

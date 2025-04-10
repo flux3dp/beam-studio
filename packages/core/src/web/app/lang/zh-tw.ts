@@ -1897,6 +1897,7 @@ const lang: ILang = {
       calibrate_diode_module: '校正二極體雷射模組',
       calibrate_ir_module: '校正紅外線模組',
       calibrate_printer_module: '校正列印模組',
+      calibrate_wide_angle_camera: '校正廣角相機',
       calibration: '校正',
       camera_calibration_data: '相機校正資料',
       change_logs: '更新日誌',

@@ -1896,6 +1896,7 @@ const lang: ILang = {
       calibrate_diode_module: 'Kalibrer diode lasermodul',
       calibrate_ir_module: 'Kalibrer infrarød modul',
       calibrate_printer_module: 'Kalibrer skrivermodul',
+      calibrate_wide_angle_camera: 'Kalibrer vidvinkelkamera',
       calibration: 'Kalibreringer',
       camera_calibration_data: 'Kamera Kalibreringsdata',
       change_logs: 'Endringslogg',

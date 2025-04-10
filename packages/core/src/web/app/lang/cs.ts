@@ -1896,6 +1896,7 @@ const lang: ILang = {
       calibrate_diode_module: 'Kalibrovat modul laserové diody',
       calibrate_ir_module: 'Kalibrovat infračervený modul',
       calibrate_printer_module: 'Kalibrovat tiskový modul',
+      calibrate_wide_angle_camera: 'Kalibrovat širokoúhlou kameru',
       calibration: 'Kalibrace',
       camera_calibration_data: 'Kalibrační data fotoaparátu',
       change_logs: 'Změnit záznamy',

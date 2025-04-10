@@ -1896,6 +1896,7 @@ const lang: ILang = {
       calibrate_diode_module: 'Kalibroi diodilasermoduuli',
       calibrate_ir_module: 'Kalibroi infrapunamoduuli',
       calibrate_printer_module: 'Kalibroi tulostinmoduuli',
+      calibrate_wide_angle_camera: 'Kalibroi laajakulmakamera',
       calibration: 'Kalibroinnit',
       camera_calibration_data: 'Kameran Kalibrointitiedot',
       change_logs: 'Muutosloki',

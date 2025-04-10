@@ -1896,6 +1896,7 @@ const lang: ILang = {
       calibrate_diode_module: 'Calibra modulo laser',
       calibrate_ir_module: 'Calibra modulo a infrarossi',
       calibrate_printer_module: 'Calibra modulo di stampa',
+      calibrate_wide_angle_camera: 'Calibra la fotocamera grandangolare',
       calibration: 'Calibrazioni',
       camera_calibration_data: 'Dati di Calibrazione della Fotocamera',
       change_logs: 'Registro modifiche',

@@ -1896,6 +1896,7 @@ const lang: ILang = {
       calibrate_diode_module: 'ปรับเทียบโมดูลเลเซอร์',
       calibrate_ir_module: 'ปรับเทียบโมดูลอินฟราเรด',
       calibrate_printer_module: 'ปรับเทียบโมดูลการพิมพ์',
+      calibrate_wide_angle_camera: 'ปรับเทียบกล้องมุมกว้าง',
       calibration: 'การปรับเทียบ',
       camera_calibration_data: 'ข้อมูลการปรับเทียบกล้อง',
       change_logs: 'บันทึกการเปลี่ยนแปลง',

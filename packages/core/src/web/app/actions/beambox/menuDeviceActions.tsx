@@ -278,15 +278,15 @@ export default {
 
     calibrateCamera(device, { isAdvanced: true });
   },
-  CALIBRATE_CAMERA_FULL_VIEW: async (device: IDeviceInfo): Promise<void> => {
-    if (!checkHash()) return;
-
-    calibrateCamera(device, { isWideAngle: true });
-  },
   CALIBRATE_CAMERA_V2_FACTORY: async (device: IDeviceInfo): Promise<void> => {
     if (!checkHash()) return;
 
     calibrateCamera(device, { factoryMode: true });
+  },
+  CALIBRATE_CAMERA_WIDE_ANGLE: async (device: IDeviceInfo): Promise<void> => {
+    if (!checkHash()) return;
+
+    calibrateCamera(device, { isWideAngle: true });
   },
   CALIBRATE_DIODE_MODULE: async (device: IDeviceInfo): Promise<void> => {
     if (!checkHash()) return;

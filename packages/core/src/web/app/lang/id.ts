@@ -1896,6 +1896,7 @@ const lang: ILang = {
       calibrate_diode_module: 'Kalibrasi Modul Laser Diode',
       calibrate_ir_module: 'Kalibrasi Modul Inframerah',
       calibrate_printer_module: 'Kalibrasi Modul Pencetakan',
+      calibrate_wide_angle_camera: 'Kalibrasi Kamera Sudut Lebar',
       calibration: 'Kalibrasi',
       camera_calibration_data: 'Data Kalibrasi Kamera',
       change_logs: 'Log Perubahan',
