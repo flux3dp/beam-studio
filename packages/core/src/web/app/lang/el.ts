@@ -1861,6 +1861,7 @@ const lang: ILang = {
       calibrate_diode_module: 'Βαθμονόμηση μονάδας λέιζερ διόδου',
       calibrate_ir_module: 'Βαθμονόμηση υπέρυθρης μονάδας',
       calibrate_printer_module: 'Βαθμονόμηση εκτυπωτικής μονάδας',
+      calibrate_wide_angle_camera: 'Ρύθμιση ευρυγώνιας κάμερας',
       calibration: 'Βαθμονομήσεις',
       camera_calibration_data: 'Δεδομένα Βαθμονόμησης Κάμερας',
       change_logs: 'Καταγραφή αλλαγών',

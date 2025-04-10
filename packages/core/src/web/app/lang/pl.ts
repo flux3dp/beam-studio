@@ -1861,6 +1861,7 @@ const lang: ILang = {
       calibrate_diode_module: 'Skalibruj moduł lasera diodowego',
       calibrate_ir_module: 'Kalibracja modułu podczerwieni',
       calibrate_printer_module: 'Kalibracja modułu drukowania',
+      calibrate_wide_angle_camera: 'Kalibruj kamerę szerokokątną',
       calibration: 'Kalibracje',
       camera_calibration_data: 'Dane Kalibracji Kamery',
       change_logs: 'Dzienniki zmian',

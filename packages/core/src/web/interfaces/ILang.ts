@@ -1853,6 +1853,7 @@ export interface ILang {
       calibrate_diode_module: string;
       calibrate_ir_module: string;
       calibrate_printer_module: string;
+      calibrate_wide_angle_camera: string;
       calibration: string;
       camera_calibration_data: string;
       change_logs: string;
