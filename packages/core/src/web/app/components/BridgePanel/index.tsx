@@ -17,7 +17,9 @@ import { useHistory } from './hooks/useHistory';
 import styles from './index.module.scss';
 import Sider from './Sider';
 import TopBar from './TopBar';
-import { cutPathAtDistance } from './utils/cutPathAtDistance';
+import { TARGET_PATH_NAME } from './utils/constant';
+import { cutPathAtPoint } from './utils/cutPathAtPoint';
+import { cutPathByGap } from './utils/cutPathByGap';
 
 interface Props {
   bbox: DOMRect;
@@ -26,15 +28,14 @@ interface Props {
 }
 
 const PADDING = 30;
-const TARGET_PATH_NAME = 'parentPath';
 
 function UnmemorizedBridgePanel({ bbox, element, onClose }: Props): React.JSX.Element {
   const { image_edit_panel: lang } = useI18n();
   const { history, push, redo, set, undo } = useHistory({ hasUndid: false, index: 0, items: [{ pathData: [] }] });
-  const [mode, setMode] = useState<'auto' | 'manual'>('manual');
+  const [mode, setMode] = useState<'auto' | 'manual'>('auto');
   const [pathData, setPathData] = useState(Array.of<string>());
   const [isPathDataChanged, setIsPathDataChanged] = useState(false);
-  const [bridgeWidth, setBridgeWidth] = useState(10); // 0.5
+  const [bridgeWidth, setBridgeWidth] = useState(0.5);
   const [bridgeGap, setBridgeGap] = useState(10);
   // only for display percentage, not for calculation
   const [zoomScale, setZoomScale] = useState(1);
@@ -57,12 +58,6 @@ function UnmemorizedBridgePanel({ bbox, element, onClose }: Props): React.JSX.El
     [isDragging, isDraggable],
   );
 
-  const handlePushHistory = useCallback(() => {
-    if (!isPathDataChanged) return;
-
-    push({ pathData });
-    setIsPathDataChanged(false);
-  }, [push, pathData, isPathDataChanged]);
   const handleHistoryChange = useCallback(
     (action: 'redo' | 'undo') => () => {
       const { pathData } = action === 'undo' ? undo() : redo();
@@ -72,11 +67,11 @@ function UnmemorizedBridgePanel({ bbox, element, onClose }: Props): React.JSX.El
     },
     [undo, redo],
   );
+
   const handleReset = useCallback(() => {
     handleZoom(fitScreenDimension.scale);
     paper.view.center = new paper.Point(fitScreenDimension);
   }, [fitScreenDimension, handleZoom]);
-
   const handleComplete = useCallback(
     () =>
       pipe(
@@ -87,6 +82,13 @@ function UnmemorizedBridgePanel({ bbox, element, onClose }: Props): React.JSX.El
       ),
     [bbox, element, onClose],
   );
+
+  const handleCutPathByGap = useCallback(() => {
+    const newCompoundPath = cutPathByGap(bridgeGap * dpmm);
+
+    setPathData((prev) => prev.concat(newCompoundPath.pathData));
+    setIsPathDataChanged(true);
+  }, [bridgeGap]);
 
   const handleMouseDown = useCallback(
     (event: paper.ToolEvent) => {
@@ -100,11 +102,9 @@ function UnmemorizedBridgePanel({ bbox, element, onClose }: Props): React.JSX.El
           // ensure the path is the target compound path's child
           if (hit.item.parent?.name === TARGET_PATH_NAME) {
             const path = hit.item as paper.Path;
-            // bridgeWidth is in mm, convert to dpmm
-            // divide by 2 to get radius of the circle to cut path
-            const newCompoundPath = cutPathAtDistance(path, point, (bridgeWidth * dpmm) / 2);
+            const newCompoundPath = cutPathAtPoint(path, point, bridgeWidth * dpmm);
 
-            setPathData((prev) => prev.concat(newCompoundPath.pathData) || [newCompoundPath.pathData]);
+            setPathData((prev) => prev.concat(newCompoundPath.pathData));
             setIsPathDataChanged(true);
           }
 
@@ -195,10 +195,15 @@ function UnmemorizedBridgePanel({ bbox, element, onClose }: Props): React.JSX.El
     const { tool } = paper;
 
     tool.onMouseDown = handleMouseDown;
-    tool.onMouseUp = handlePushHistory;
     tool.onMouseDrag = handleMouseDrag;
-  }, [handleMouseDown, handleMouseDrag, handlePushHistory]);
+  }, [handleMouseDown, handleMouseDrag]);
 
+  useEffect(() => {
+    if (!isPathDataChanged) return;
+
+    push({ pathData });
+    setIsPathDataChanged(false);
+  }, [push, pathData, isPathDataChanged]);
   useEffect(() => {
     if (paper.project.isEmpty()) return;
 
@@ -231,6 +236,7 @@ function UnmemorizedBridgePanel({ bbox, element, onClose }: Props): React.JSX.El
           <Sider
             bridgeGap={bridgeGap}
             bridgeWidth={bridgeWidth}
+            handleCutPathByGap={handleCutPathByGap}
             mode={mode}
             onClose={onClose}
             onComplete={handleComplete}
