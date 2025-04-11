@@ -21,10 +21,10 @@ export function cutPathByGap(gap: number, width?: number) {
 
         while (currentPosition < totalLength) {
           // create dash segment
-          const dashEnd = Math.min(currentPosition + width, totalLength);
+          const dashEnd = Math.min(currentPosition + gap, totalLength);
 
           // only split if it meets minimum length
-          if (dashEnd - currentPosition >= width * 0.1) {
+          if (dashEnd - currentPosition >= Math.min(gap, width) * 0.1) {
             const pathCopy = path.clone({ insert: false });
             // split at the dashStart(currentPosition) to get the rest path
             const dashSegment = pathCopy.splitAt(currentPosition);
@@ -35,7 +35,7 @@ export function cutPathByGap(gap: number, width?: number) {
             pathCopy.remove();
           }
 
-          currentPosition = Math.min(dashEnd + gap, totalLength);
+          currentPosition = Math.min(dashEnd + width, totalLength);
         }
 
         path.remove();
