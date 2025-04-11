@@ -1,14 +1,4 @@
 .container {
-  position: absolute;
-  z-index: 2;
-  top: 40px;
-  left: 50px;
-  width: calc(100% - 50px - 258px);
-  height: calc(100% - 40px);
-  &.mac {
-    width: calc(100% - 50px - 242px);
-  }
-
   .tools-panel {
     height: 100px;
     padding: 40px 20px 0;
