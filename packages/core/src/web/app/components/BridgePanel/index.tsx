@@ -45,6 +45,7 @@ function UnmemorizedBridgePanel({ bbox, element, onClose }: Props): React.JSX.El
   const dragDeltaRef = useRef(new paper.Point(0, 0));
 
   const { handleWheel, handleZoom, handleZoomByScale, isDraggable, isDragging } = usePaperCanvas({
+    element: canvasRef.current ?? (document as unknown as HTMLElement),
     maxScale: 5,
     onScaleChanged: setZoomScale,
   });
