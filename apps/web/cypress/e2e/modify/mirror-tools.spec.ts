@@ -12,7 +12,7 @@ describe('mirror tools', () => {
     cy.get('#horizontal_flip').click();
     cy.get('#svg_1').should(($value) => {
       const str = $value.attr('transform');
-      expect(str.substring(7, 15)).equal('-1,0,0,1');
+      expect(str.substring(7, 15)).equal('-1 0 0 1');
     });
   });
 
@@ -25,7 +25,7 @@ describe('mirror tools', () => {
     cy.get('#vertical_flip').click();
     cy.get('#svg_1').should(($value) => {
       const str = $value.attr('transform');
-      expect(str.substring(7, 15)).equal('1,0,0,-1');
+      expect(str.substring(7, 15)).equal('1 0 0 -1');
     });
   });
 });

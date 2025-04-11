@@ -189,7 +189,7 @@ svgedit.math.transformListToTransform = function (tlist, min, max) {
  * @returns {SVGMatrix} The matrix object associated with the element's transformlist
 */
 svgedit.math.getMatrix = function (elem) {
-	var tlist = svgedit.transformlist.getTransformList(elem);
+	var tlist = svgedit.transformlist.getTransformList(elem, false);
 	return svgedit.math.transformListToTransform(tlist).matrix;
 };
 
