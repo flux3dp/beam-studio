@@ -57,7 +57,7 @@ function UnmemorizedSider({
                   <QuestionCircleOutlined className={styles.icon} />
                 </>
               </Form.Item>
-              <Form.Item hidden={mode !== 'manual'} label={`Width:`}>
+              <Form.Item label={`Width:`}>
                 <UnitInput
                   addonAfter="mm"
                   data-testid="bridge-width"

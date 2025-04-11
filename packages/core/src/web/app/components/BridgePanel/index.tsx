@@ -85,11 +85,11 @@ function UnmemorizedBridgePanel({ bbox, element, onClose }: Props): React.JSX.El
   );
 
   const handleCutPathByGap = useCallback(() => {
-    const newCompoundPath = cutPathByGap(bridgeGap * dpmm);
+    const newCompoundPath = cutPathByGap(bridgeGap * dpmm, bridgeWidth * dpmm);
 
     setPathData((prev) => prev.concat(newCompoundPath.pathData));
     setIsPathDataChanged(true);
-  }, [bridgeGap]);
+  }, [bridgeGap, bridgeWidth]);
 
   const handleMouseDown = useCallback(
     (event: paper.ToolEvent) => {
