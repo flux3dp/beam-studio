@@ -1,11 +1,11 @@
 import type paper from 'paper';
 import { pipe } from 'remeda';
 
-export function cutPathAtDistance(path: paper.Path, point: paper.Point, distance: number) {
+export function cutPathAtPoint(path: paper.Path, point: paper.Point, width: number) {
   const location = path.getNearestLocation(point);
   const [offsetStart, offsetEnd] = pipe(location, ({ offset }) => [
-    Math.max(0, offset - distance),
-    Math.min(path.length, offset + distance),
+    Math.max(0, offset - width / 2),
+    Math.min(path.length, offset + width / 2),
   ]);
 
   // clone the original path so we don't lose the full shape

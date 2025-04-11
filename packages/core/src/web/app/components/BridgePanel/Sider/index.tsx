@@ -1,3 +1,4 @@
+import type { Dispatch, SetStateAction } from 'react';
 import React, { memo } from 'react';
 
 import { QuestionCircleOutlined } from '@ant-design/icons';
@@ -16,17 +17,19 @@ import styles from './index.module.scss';
 interface Props {
   bridgeGap: number;
   bridgeWidth: number;
+  handleCutPathByGap: () => void;
   mode: 'auto' | 'manual';
   onClose: () => void;
   onComplete: () => void;
-  setBridgeGap: (gap: number) => void;
-  setBridgeWidth: (width: number) => void;
-  setMode: (mode: 'auto' | 'manual') => void;
+  setBridgeGap: Dispatch<SetStateAction<number>>;
+  setBridgeWidth: Dispatch<SetStateAction<number>>;
+  setMode: Dispatch<SetStateAction<'auto' | 'manual'>>;
 }
 
 function UnmemorizedSider({
   bridgeGap,
   bridgeWidth,
+  handleCutPathByGap,
   mode = 'manual',
   onClose,
   onComplete,
@@ -47,20 +50,40 @@ function UnmemorizedSider({
               <Form.Item label={`Manual Mode:`}>
                 <Switch
                   className={styles.switch}
-                  onChange={(checked) => (checked ? setMode('manual') : setMode('auto'))}
+                  onChange={(checked) => setMode(checked ? 'manual' : 'auto')}
                   value={mode === 'manual'}
                 />
                 <QuestionCircleOutlined className={styles.icon} />
               </Form.Item>
-              <Form.Item label={`Width:`}>
-                <UnitInput addonAfter="mm" max={10} min={0.1} onChange={setBridgeWidth as any} value={bridgeWidth} />
-              </Form.Item>
+              {mode === 'manual' && (
+                <Form.Item label={`Width:`}>
+                  <UnitInput
+                    addonAfter="mm"
+                    max={10}
+                    min={0.1}
+                    onChange={(value) => setBridgeWidth(value!)}
+                    precision={1}
+                    step={1}
+                    value={bridgeWidth}
+                  />
+                </Form.Item>
+              )}
               {mode === 'auto' && (
                 <>
                   <Form.Item label={`Gap:`}>
-                    <UnitInput addonAfter="mm" max={50} min={1} onChange={setBridgeGap as any} value={bridgeGap} />
+                    <UnitInput
+                      addonAfter="mm"
+                      max={50}
+                      min={1}
+                      onChange={(value) => setBridgeGap(value!)}
+                      precision={1}
+                      step={1}
+                      value={bridgeGap}
+                    />
                   </Form.Item>
-                  <Button type="default">Add Bridge</Button>
+                  <Button onClick={handleCutPathByGap} type="default">
+                    Add Bridge
+                  </Button>
                 </>
               )}
             </Form>
