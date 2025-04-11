@@ -292,6 +292,10 @@ const lang: ILang = {
       bug_report: 'Fehlerbericht',
       change_workarea_before_preview: 'Der Arbeitsbereich von %s stimmt nicht mit dem aktuell festgelegten Arbeitsbereich überein. Möchten Sie den aktuellen Arbeitsbereich wechseln?',
       convert_to_path_fail: 'Konvertierung in Pfad fehlgeschlagen.',
+      disassemble_use: {
+        clip_path_warning: 'Diese Datei enthält eine Schnittmaske und kann nicht zerlegt werden.',
+        execute_time_warning: 'Dadurch wird die Gruppierung von importiertem DXF oder SVG aufgehoben. Da die Datei möglicherweise eine große Anzahl von Elementen enthält, kann das Aufheben der Gruppierung einige Zeit dauern. Sind Sie sicher, fortzufahren?',
+      },
       dxf_bounding_box_size_over: 'Die Zeichnungsgröße ist außerhalb des Arbeitsbereichs. Bewege bitte deine Zeichnung näher an den Ursprung in Ihrer CAD-Software oder stelle sicher, dass das Gerät richtig eingestellt ist.',
       dxf_version_waring: 'Die Version dieser DXF-Datei ist nicht 2013, möglicherweise treten Inkompatibilitätsprobleme auf.',
       facebook_group_invitation: {
@@ -354,7 +358,6 @@ const lang: ILang = {
       too_fast_for_path: 'Die Verwendung einer zu hohen Geschwindigkeit in Ebenen mit Pfadobjekten, kann zu einer geringeren Präzision beim Schneiden führen.\nWir empfehlen, beim Schneiden keine Geschwindigkeit von mehr als %(limit)s zu verwenden.',
       too_fast_for_path_and_constrain: 'Folgende Ebenen: %(layers)s \nenthalten Vektorpfadobjekte und eine Geschwindigkeit von mehr als %(limit)s \nDie Schnittgeschwindigkeit von Vektorpfadobjekten wird auf %(limit)s reduziert.\nDu kannst diese Beschränkung unter Präferenzen-Einstellungen entfernen.',
       touchpad: 'TouchPad',
-      ungroup_use: 'Dadurch wird die Gruppierung von importiertem DXF oder SVG aufgehoben. Da die Datei möglicherweise eine große Anzahl von Elementen enthält, kann das Aufheben der Gruppierung einige Zeit dauern. Sind Sie sicher, fortzufahren?',
       upload_failed: '#819 Datei-Upload fehlgeschlagen.',
       upload_file_too_large: '#819 Datei ist zu groß zum Hochladen.',
       vectorize_shading_image: 'Das Vektorisieren von Schattierungsbildern dauert länger und ist anfällig für Rauschen. Bitte schalten Sie die Bildschattierung aus, bevor Sie sie ausführen.',

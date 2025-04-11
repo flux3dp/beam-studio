@@ -292,6 +292,10 @@ const lang: ILang = {
       bug_report: 'Bugrapportage',
       change_workarea_before_preview: 'Het werkgebied van %s komt niet overeen met het huidige werkgebied. Wilt u overschakelen naar het huidige werkgebied?',
       convert_to_path_fail: 'Converteren naar pad is mislukt.',
+      disassemble_use: {
+        clip_path_warning: 'Dit bestand bevat een afsnijdmasker en kan niet worden ontleed.',
+        execute_time_warning: 'Dit zal geïmporteerde DXF/SVG ontgroeperen. Omdat er veel elementen kunnen zijn, kan het even duren. Weet u zeker dat u wilt doorgaan?',
+      },
       dxf_bounding_box_size_over: 'De tekeninggrootte is buiten het werkgebied. Verplaats uw tekening dichter bij de oorsprong in uw CAD-software, of zorg dat de eenheid correct is.',
       dxf_version_waring: 'De DXF-versie is niet 2013, er kunnen compatibiliteitsproblemen zijn.',
       facebook_group_invitation: {
@@ -354,7 +358,6 @@ const lang: ILang = {
       too_fast_for_path: 'Te hoge snelheid in lagen met padobjecten kan resulteren in lagere precisie bij snijden.\nWe raden geen snelheid hoger dan %(limit)s aan bij snijden.',
       too_fast_for_path_and_constrain: 'De volgende lagen: %(layers)s \nbevatten vector padobjecten, en hebben een snelheid hoger dan %(limit)s.\nDe snijsnelheid van vector padobjecten wordt beperkt tot %(limit)s.\nU kunt deze beperking opheffen bij de voorkeuren.',
       touchpad: 'Touchpad',
-      ungroup_use: 'Dit zal geïmporteerde DXF/SVG ontgroeperen. Omdat er veel elementen kunnen zijn, kan het even duren. Weet u zeker dat u wilt doorgaan?',
       upload_failed: '#819 Uploaden van bestand mislukt.',
       upload_file_too_large: '#819 Bestand is te groot om te uploaden.',
       vectorize_shading_image: 'Gradientafbeeldingen vergen meer verwerkingstijd voor vectorisatie en zijn gevoelig voor ruis. Schakel de afbeeldingsgradiënt uit voordat u verdergaat.',

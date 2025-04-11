@@ -292,6 +292,10 @@ const lang: ILang = {
       bug_report: 'Báo cáo lỗi',
       change_workarea_before_preview: 'Khu vực làm việc không khớp. Bạn có muốn đổi khu vực làm việc hiện tại?',
       convert_to_path_fail: 'Không thể chuyển thành đường dẫn',
+      disassemble_use: {
+        clip_path_warning: 'Tệp này chứa mặt nạ cắt và không thể được tách rời.',
+        execute_time_warning: 'Điều này sẽ bỏ nhóm và có thể mất thời gian. Bạn có chắc tiếp tục?',
+      },
       dxf_bounding_box_size_over: 'Kích thước bản vẽ vượt quá khu vực làm việc. Vui lòng di chuyển gần gốc tọa độ hơn hoặc đảm bảo đơn vị chính xác',
       dxf_version_waring: 'Phiên bản DXF này có thể gặp vấn đề tương thích',
       facebook_group_invitation: {
@@ -354,7 +358,6 @@ const lang: ILang = {
       too_fast_for_path: 'Sử dụng tốc độ quá cao cho đường dẫn có thể làm giảm độ chính xác khi cắt. Chúng tôi không khuyến nghị dùng tốc độ trên %(limit)s khi cắt đường dẫn.',
       too_fast_for_path_and_constrain: 'Các lớp: %(layers)s \nchứa đường dẫn vector và có tốc độ trên %(limit)s.\nTốc độ cắt đường dẫn sẽ bị giới hạn ở %(limit)s.\nBạn có thể bỏ giới hạn này trong Cài đặt.',
       touchpad: 'Bảng cảm ứng',
-      ungroup_use: 'Điều này sẽ bỏ nhóm và có thể mất thời gian. Bạn có chắc tiếp tục?',
       upload_failed: '#819 Tải tệp thất bại.',
       upload_file_too_large: '#819 Tệp quá lớn để tải lên.',
       vectorize_shading_image: 'Ảnh gradient mất nhiều thời gian vector hóa và dễ bị nhiễu. Vui lòng tắt trước khi thực thi',

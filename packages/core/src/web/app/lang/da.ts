@@ -292,6 +292,10 @@ const lang: ILang = {
       bug_report: 'Fejlrapport',
       change_workarea_before_preview: 'Arbejdsområdet for %s matcher ikke det aktuelt indstillede arbejdsområde. Vil du skifte det aktuelle arbejdsområde?',
       convert_to_path_fail: 'Kunne ikke konvertere til sti.',
+      disassemble_use: {
+        clip_path_warning: 'Denne fil indeholder en klippemaske og kan ikke adskilles.',
+        execute_time_warning: 'Dette vil opdele importerede DXF eller SVG filer. Fordi filen kan indeholde et stort antal elementer, kan det tage tid at opdele. Er du sikker på at fortsætte?',
+      },
       dxf_bounding_box_size_over: 'Tegningsstørrelsen er uden for arbejdsområdet. Flyt venligst din tegning tættere på oprindelsen i dit CAD-software, eller sørg for, at enheden er indstillet korrekt.',
       dxf_version_waring: 'Versionen af denne DXF-fil er ikke 2013, der kan være potentielle kompatibilitetsproblemer.',
       facebook_group_invitation: {
@@ -354,7 +358,6 @@ const lang: ILang = {
       too_fast_for_path: 'At bruge for høj hastighed i lag, der indeholder stivektor-objekter, kan resultere i ringere præcision ved skæring. Vi anbefaler ikke at bruge hastigheder over %(limit)s. ved skæring.',
       too_fast_for_path_and_constrain: 'Følgende lag: %(layers)s \nindeholder stivektor-stibaner og har hastigheder over %(limit)s. Skærehastigheden for stivektor-stibaner vil blive begrænset til %(limit)s. Du kan fjerne denne begrænsning under Indstillinger.',
       touchpad: 'Touchpad',
-      ungroup_use: 'Dette vil opdele importerede DXF eller SVG filer. Fordi filen kan indeholde et stort antal elementer, kan det tage tid at opdele. Er du sikker på at fortsætte?',
       upload_failed: '#819 Upload af fil mislykkedes.',
       upload_file_too_large: '#819 Filen er for stor til upload.',
       vectorize_shading_image: 'Gradientbilleder tager længere tid at spore og er tilbøjelige til støj. Slå venligst billedgradienten fra, før du fortsætter.',

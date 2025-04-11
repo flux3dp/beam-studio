@@ -292,6 +292,10 @@ const lang: ILang = {
       bug_report: 'Zgłoszenie błędut',
       change_workarea_before_preview: 'Obszar roboczy %s nie pasuje do aktualnie ustawionego obszaru roboczego. Czy chcesz zmienić bieżący obszar roboczy?',
       convert_to_path_fail: 'Nie udało się przekonwertować na ścieżkę.',
+      disassemble_use: {
+        clip_path_warning: 'Ten plik zawiera maskę przycinania i nie może zostać rozłożony.',
+        execute_time_warning: 'Spowoduje to rozgrupowanie zaimportowanych plików DXF lub SVG. Ponieważ plik może zawierać dużą liczbę elementów, rozgrupowanie może zająć trochę czasu. Czy na pewno chcesz kontynuować?',
+      },
       dxf_bounding_box_size_over: 'Rozmiar rysunku jest poza obszarem roboczym. Przesuń rysunek bliżej punktu początkowego w oprogramowaniu CAD lub upewnij się, że jednostka jest ustawiona prawidłowo.',
       dxf_version_waring: 'Wersja tego pliku DXF jest inna niż 2013, mogą występować potencjalne problemy z kompatybilnością.',
       facebook_group_invitation: {
@@ -354,7 +358,6 @@ const lang: ILang = {
       too_fast_for_path: 'Użycie zbyt dużej prędkości w warstwach zawierających obiekty ścieżki może spowodować niższą precyzję cięcia.\nNie zalecamy używania prędkości większej niż %(limit)s podczas cięcia.',
       too_fast_for_path_and_constrain: 'Następujące warstwy: %(layers)s \nzawierają obiekty wektorowe a ustawiona do nich prędkość przekracza %(limit)s. \nSzybkość cięcia obiektów wektorowych zostanie ograniczona do %(limit)s. \nMożesz usunąć to ograniczenie w Ustawieniach programu.',
       touchpad: 'Panel dotykowy',
-      ungroup_use: 'Spowoduje to rozgrupowanie zaimportowanych plików DXF lub SVG. Ponieważ plik może zawierać dużą liczbę elementów, rozgrupowanie może zająć trochę czasu. Czy na pewno chcesz kontynuować?',
       upload_failed: '#819 Przesyłanie pliku nie powiodło się.',
       upload_file_too_large: '#819 Plik jest za duży do przesłania.',
       vectorize_shading_image: 'Obrysowanie obrazów gradientowych zajmuje więcej czasu i jest podatne na szumy. Uprzejmie prosimy o wyłączenie gradientu obrazu przed kontynuowaniem.',

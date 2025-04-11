@@ -292,6 +292,10 @@ const lang: ILang = {
       bug_report: 'Laporan Pepijat',
       change_workarea_before_preview: 'Kawasan kerja %s tidak sepadan dengan kawasan kerja yang ditetapkan sekarang. Adakah anda mahu menukar kawasan kerja semasa?',
       convert_to_path_fail: 'Gagal menukar ke laluan.',
+      disassemble_use: {
+        clip_path_warning: 'Fail ini mengandungi topeng klip dan tidak boleh dibongkar.',
+        execute_time_warning: 'Ini akan menyahkumpulkan DXF atau SVG yang diimport. Oleh kerana fail itu mungkin mengandungi sejumlah besar elemen, ia mungkin mengambil masa untuk menyahkumpulkan. Adakah anda pasti untuk meneruskan?',
+      },
       dxf_bounding_box_size_over: 'Saiz lukisan melebihi kawasan kerja. Sila pindahkan lukisan anda lebih dekat kepada asal dalam perisian CAD anda, atau pastikan unit ditetapkan dengan betul.',
       dxf_version_waring: 'Versi fail DXF ini bukan 2013, mungkin terdapat masalah ketidakserasian.',
       facebook_group_invitation: {
@@ -354,7 +358,6 @@ const lang: ILang = {
       too_fast_for_path: 'Menggunakan kelajuan yang terlalu tinggi dalam lapisan yang mengandungi objek laluan boleh mengakibatkan ketepatan yang lebih rendah semasa memotong. Kami tidak mengesyorkan menggunakan kelajuan lebih pantas daripada %(limit)s semasa memotong.',
       too_fast_for_path_and_constrain: 'Lapisan berikut: %(layers)s\n mengandungi objek laluan vektor, dan mempunyai kelajuan melebihi %(limit)s. Kelajuan pemotongan objek laluan vektor akan dihadkan kepada %(limit)s. Anda boleh mengalih keluar had ini di Tetapan Keutamaan.',
       touchpad: 'Pad Sentuh',
-      ungroup_use: 'Ini akan menyahkumpulkan DXF atau SVG yang diimport. Oleh kerana fail itu mungkin mengandungi sejumlah besar elemen, ia mungkin mengambil masa untuk menyahkumpulkan. Adakah anda pasti untuk meneruskan?',
       upload_failed: '#819 Gagal memuat naik fail.',
       upload_file_too_large: '#819 Fail terlalu besar untuk dimuat naik.',
       vectorize_shading_image: 'Imej gradien mengambil lebih masa untuk mengesan dan cenderung kepada hingar. Sila matikan gradien imej sebelum melaksanakan.',

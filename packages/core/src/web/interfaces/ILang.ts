@@ -290,6 +290,10 @@ export interface ILang {
       bug_report: string;
       change_workarea_before_preview: string;
       convert_to_path_fail: string;
+      disassemble_use: {
+        clip_path_warning: string;
+        execute_time_warning: string;
+      };
       dxf_bounding_box_size_over: string;
       dxf_version_waring: string;
       facebook_group_invitation: {
@@ -352,7 +356,6 @@ export interface ILang {
       too_fast_for_path: string;
       too_fast_for_path_and_constrain: string;
       touchpad: string;
-      ungroup_use: string;
       upload_failed: string;
       upload_file_too_large: string;
       vectorize_shading_image: string;

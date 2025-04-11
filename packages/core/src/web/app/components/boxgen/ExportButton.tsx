@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import React, { useContext, useMemo, useState } from 'react';
 
 import { DownloadOutlined } from '@ant-design/icons';
@@ -5,6 +6,8 @@ import { Button, Form, InputNumber, Modal, Pagination, Switch } from 'antd';
 
 import { BoxgenContext } from '@core/app/contexts/BoxgenContext';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
+import undoManager from '@core/app/svgedit/history/undoManager';
+import disassembleUse from '@core/app/svgedit/operations/disassembleUse';
 import importSvgString from '@core/app/svgedit/operations/import/importSvgString';
 import { getLayouts } from '@core/helpers/boxgen/Layout';
 import wrapSVG from '@core/helpers/boxgen/wrapSVG';
@@ -27,7 +30,7 @@ const ExportDialog = ({
 }: {
   setVisible: (visible: boolean) => void;
   visible: boolean;
-}): React.JSX.Element => {
+}): ReactNode => {
   const lang = useI18n().boxgen;
   const { boxData, lengthUnit, onClose, workarea } = useContext(BoxgenContext);
   const { decimal, unit, unitRatio } = lengthUnit;
@@ -50,8 +53,8 @@ const ExportDialog = ({
   const handleOk = async () => {
     setConfirmLoading(true);
 
-    const boxLayers = [];
-    const newLayers = [];
+    const boxLayers: string[] = [];
+    const newLayers: string[] = [];
     const drawing = svgCanvas.getCurrentDrawing();
 
     (drawing.all_layers as ISVGLayer[]).forEach((layer) => {
@@ -96,11 +99,13 @@ const ExportDialog = ({
       }
     });
 
-    const elems = (await Promise.allSettled(promises)).map((p) => (p.status === 'fulfilled' ? p.value : null));
+    const elems = (await Promise.allSettled(promises))
+      .map((p) => (p.status === 'fulfilled' ? p.value : null))
+      .filter(Boolean);
 
-    batchCmd.addSubCommand(await svgCanvas.disassembleUse2Group(elems, true, false, false));
-    newLayers.slice(options.textLabel ? 2 : 1).forEach((layername) => drawing.setLayerVisibility(layername, false));
-    svgCanvas.addCommandToHistory(batchCmd);
+    await disassembleUse(elems, { parentCmd: batchCmd, showProgress: false, skipConfirm: true });
+    newLayers.slice(options.textLabel ? 2 : 1).forEach((layerName) => drawing.setLayerVisibility(layerName, false));
+    undoManager.addCommandToHistory(batchCmd);
     setConfirmLoading(false);
     setVisible(false);
     onClose();

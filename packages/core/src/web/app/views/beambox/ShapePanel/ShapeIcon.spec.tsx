@@ -10,7 +10,6 @@ const mockGetSvgRealLocation = jest.fn().mockReturnValue({ height: 25, width: 15
 const mockSelectOnly = jest.fn();
 const mockSetSvgElemPosition = jest.fn();
 const mockSetSvgElemSize = jest.fn();
-const mockDisassembleUse2Group = jest.fn();
 const mockAddCommandToHistory = jest.fn();
 const mockGetCurrentLayerName = jest.fn();
 const mockGetSelectedElems = jest.fn().mockReturnValue(['mock-path-elem']);
@@ -21,7 +20,6 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
       Canvas: {
         addCommandToHistory: (...args: any) => mockAddCommandToHistory(...args),
         addSvgElementFromJson: (...args: any) => mockAddSvgElementFromJson(...args),
-        disassembleUse2Group: (...args: any) => mockDisassembleUse2Group(...args),
         getCurrentDrawing: () => ({ getCurrentLayerName: mockGetCurrentLayerName }),
         getNextId: jest.fn(),
         getSelectedElems: () => mockGetSelectedElems(),
@@ -33,6 +31,15 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
       },
     }),
 }));
+
+const mockDisassembleUse = jest.fn();
+
+jest.mock(
+  '@core/app/svgedit/operations/disassembleUse',
+  () =>
+    (...args) =>
+      mockDisassembleUse(...args),
+);
 
 const mockUpdateElementColor = jest.fn();
 
@@ -82,18 +89,6 @@ jest.mock('@core/app/constants/shape-panel-constants', () => ({
   ShapeTabs: ['basic'],
 }));
 
-jest.mock('@core/helpers/i18n', () => ({
-  lang: {
-    beambox: {
-      shapes_panel: {
-        graphics: 'Graphics',
-        shape: 'Shape',
-        title: 'Elements',
-      },
-    },
-  },
-}));
-
 const mockUseIsMobile = jest.fn();
 
 jest.mock('@core/helpers/system-helper', () => ({
@@ -123,10 +118,10 @@ describe('test ShapeIcon', () => {
     const { container } = render(<ShapeIcon activeTab="basic" fileName="mock-icon" onClose={mockOnClose} />);
 
     expect(container).toBeEmptyDOMElement();
-    await waitFor(() => expect(mockForceUpdate).toBeCalled());
+    await waitFor(() => expect(mockForceUpdate).toHaveBeenCalled());
     expect(container).not.toBeEmptyDOMElement();
     expect(container).toMatchSnapshot();
-    expect(mockOnClose).not.toBeCalled();
+    expect(mockOnClose).not.toHaveBeenCalled();
   });
 
   it('should render null when icon not found', async () => {
@@ -138,63 +133,66 @@ describe('test ShapeIcon', () => {
     const { container } = render(<ShapeIcon activeTab="basic" fileName="mock-null" onClose={mockOnClose} />);
 
     await waitFor(() => {
-      expect(errorLog).toBeCalledTimes(1);
-      expect(errorLog).toBeCalledWith(
+      expect(errorLog).toHaveBeenCalledTimes(1);
+      expect(errorLog).toHaveBeenCalledWith(
         "Fail to load icon from '@core/app/icons/shape/basic/mock-null.svg': Error: Cannot find module './basic/mock-null.svg'",
       );
     });
     expect(container).toBeEmptyDOMElement();
-    expect(mockOnClose).not.toBeCalled();
+    expect(mockOnClose).not.toHaveBeenCalled();
     jest.dontMock('@core/app/icons/shape/basic/mock-null.svg');
   });
 
   it('should import predefined object', async () => {
     const { container } = render(<ShapeIcon activeTab="basic" fileName="mock-circle" onClose={mockOnClose} />);
 
-    await waitFor(() => expect(mockForceUpdate).toBeCalled());
+    await waitFor(() => expect(mockForceUpdate).toHaveBeenCalled());
     fireEvent.click(container.querySelector('.icon'));
-    await waitFor(() => expect(mockOnClose).toBeCalledTimes(1));
-    expect(mockAddSvgElementFromJson).toBeCalledTimes(1);
-    expect(mockGetCurrentLayerName).not.toBeCalled();
-    expect(mockGetLayerByName).not.toBeCalled();
-    expect(mockGetData).not.toBeCalled();
-    expect(mockImportSvgString).not.toBeCalled();
-    expect(mockGetSvgRealLocation).not.toBeCalled();
-    expect(mockSelectOnly).toBeCalledTimes(1);
-    expect(mockSelectOnly).toBeCalledWith([mockElement]);
-    expect(mockSetSvgElemPosition).not.toBeCalled();
-    expect(mockSetSvgElemSize).not.toBeCalled();
-    expect(mockDisassembleUse2Group).not.toBeCalled();
-    expect(mockUpdateElementColor).toBeCalledTimes(1);
-    expect(mockUpdateElementColor).toBeCalledWith(mockElement);
-    expect(mockAddCommandToHistory).toBeCalledTimes(1);
+    await waitFor(() => expect(mockOnClose).toHaveBeenCalledTimes(1));
+    expect(mockAddSvgElementFromJson).toHaveBeenCalledTimes(1);
+    expect(mockGetCurrentLayerName).not.toHaveBeenCalled();
+    expect(mockGetLayerByName).not.toHaveBeenCalled();
+    expect(mockGetData).not.toHaveBeenCalled();
+    expect(mockImportSvgString).not.toHaveBeenCalled();
+    expect(mockGetSvgRealLocation).not.toHaveBeenCalled();
+    expect(mockSelectOnly).toHaveBeenCalledTimes(1);
+    expect(mockSelectOnly).toHaveBeenCalledWith([mockElement]);
+    expect(mockSetSvgElemPosition).not.toHaveBeenCalled();
+    expect(mockSetSvgElemSize).not.toHaveBeenCalled();
+    expect(mockDisassembleUse).not.toHaveBeenCalled();
+    expect(mockUpdateElementColor).toHaveBeenCalledTimes(1);
+    expect(mockUpdateElementColor).toHaveBeenCalledWith(mockElement);
+    expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
   });
 
   it('should import svg object, update location and disassemble', async () => {
     const { container } = render(<ShapeIcon activeTab="basic" fileName="mock-icon" onClose={mockOnClose} />);
 
     fireEvent.click(container.querySelector('.icon'));
-    await waitFor(() => expect(mockOnClose).toBeCalledTimes(1));
-    expect(mockAddSvgElementFromJson).not.toBeCalled();
-    expect(mockGetCurrentLayerName).toBeCalledTimes(1);
-    expect(mockGetLayerByName).toBeCalledTimes(1);
-    expect(mockGetData).toBeCalledTimes(1);
-    expect(mockGetData).toBeCalledWith('mock-layer-elem', 'module');
-    expect(mockImportSvgString).toBeCalledTimes(1);
-    expect(mockGetSvgRealLocation).toBeCalledTimes(1);
-    expect(mockGetSvgRealLocation).toBeCalledWith(mockElement);
-    expect(mockSelectOnly).toBeCalledTimes(1);
-    expect(mockSelectOnly).toBeCalledWith([mockElement]);
-    expect(mockSetSvgElemPosition).toBeCalledTimes(2);
+    await waitFor(() => expect(mockOnClose).toHaveBeenCalledTimes(1));
+    expect(mockAddSvgElementFromJson).not.toHaveBeenCalled();
+    expect(mockGetCurrentLayerName).toHaveBeenCalledTimes(1);
+    expect(mockGetLayerByName).toHaveBeenCalledTimes(1);
+    expect(mockGetData).toHaveBeenCalledTimes(1);
+    expect(mockGetData).toHaveBeenCalledWith('mock-layer-elem', 'module');
+    expect(mockImportSvgString).toHaveBeenCalledTimes(1);
+    expect(mockGetSvgRealLocation).toHaveBeenCalledTimes(1);
+    expect(mockGetSvgRealLocation).toHaveBeenCalledWith(mockElement);
+    expect(mockSelectOnly).toHaveBeenCalledTimes(1);
+    expect(mockSelectOnly).toHaveBeenCalledWith([mockElement]);
+    expect(mockSetSvgElemPosition).toHaveBeenCalledTimes(2);
     expect(mockSetSvgElemPosition).toHaveBeenNthCalledWith(1, 'x', 0, mockElement, false);
     expect(mockSetSvgElemPosition).toHaveBeenNthCalledWith(2, 'y', 0, mockElement, false);
-    expect(mockSetSvgElemSize).toBeCalledTimes(2);
+    expect(mockSetSvgElemSize).toHaveBeenCalledTimes(2);
     expect(mockSetSvgElemSize).toHaveBeenNthCalledWith(1, 'width', 300);
     expect(mockSetSvgElemSize).toHaveBeenNthCalledWith(2, 'height', 500);
-    expect(mockDisassembleUse2Group).toBeCalledTimes(1);
-    expect(mockDisassembleUse2Group).toHaveBeenNthCalledWith(1, [mockElement], true, false);
-    expect(mockUpdateElementColor).toBeCalledTimes(1);
-    expect(mockUpdateElementColor).toBeCalledWith('mock-path-elem');
-    expect(mockAddCommandToHistory).toBeCalledTimes(1);
+    expect(mockDisassembleUse).toHaveBeenCalledTimes(1);
+    expect(mockDisassembleUse).toHaveBeenNthCalledWith(1, [mockElement], {
+      parentCmd: expect.anything(),
+      skipConfirm: true,
+    });
+    expect(mockUpdateElementColor).toHaveBeenCalledTimes(1);
+    expect(mockUpdateElementColor).toHaveBeenCalledWith('mock-path-elem');
+    expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
   });
 });

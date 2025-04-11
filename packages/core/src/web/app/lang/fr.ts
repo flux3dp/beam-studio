@@ -292,6 +292,10 @@ const lang: ILang = {
       bug_report: 'Rapport de bug',
       change_workarea_before_preview: 'La zone de travail de %s ne correspond pas à la zone de travail actuellement définie. Voulez-vous basculer la zone de travail actuelle ?',
       convert_to_path_fail: 'Échec de la conversion en chemin.',
+      disassemble_use: {
+        clip_path_warning: 'Ce fichier contient un masque d’écrêtage et ne peut pas être dissocié.',
+        execute_time_warning: "Cela dégroupera le DXF ou le SVG importé. Comme le fichier pourrait contenir un grand nombre d'éléments, le dégroupage pourrait prendre du temps. Êtes-vous sûr de procéder ?",
+      },
       dxf_bounding_box_size_over: "La taille du dessin dépasse la zone de travail. Veuillez déplacer votre dessin plus près de l'origine dans votre logiciel CAO, ou assurez-vous que l'unité est définie correctement.",
       dxf_version_waring: "La version de ce fichier DXF n'est pas 2013, il pourrait y avoir des problèmes de compatibilité potentiels.",
       facebook_group_invitation: {
@@ -354,7 +358,6 @@ const lang: ILang = {
       too_fast_for_path: "Utiliser une vitesse trop élevée dans les couches contenant des objets de chemin peut entraîner une précision inférieure lors de la découpe.\\nNous ne recommandons pas d'utiliser une vitesse supérieure à %(limit)s lors de la découpe.",
       too_fast_for_path_and_constrain: 'Les couches suivantes : %(layers)s\ncontiennent des objets de chemin vectoriel, et ont une vitesse supérieure à %(limit)s.\\nLa vitesse de découpe des objets de chemin vectoriel sera limitée à %(limit)s.\\nVous pouvez supprimer cette limite dans les paramètres de préférences.',
       touchpad: 'Pavé tactile',
-      ungroup_use: "Cela dégroupera le DXF ou le SVG importé. Comme le fichier pourrait contenir un grand nombre d'éléments, le dégroupage pourrait prendre du temps. Êtes-vous sûr de procéder ?",
       upload_failed: '#819 Échec du téléversement du fichier.',
       upload_file_too_large: '#819 Le fichier est trop volumineux pour être téléversé.',
       vectorize_shading_image: "Les images dégradées prennent plus de temps à tracer et sont sujettes au bruit. Veuillez désactiver le dégradé de l'image avant d'exécuter.",

@@ -292,6 +292,10 @@ const lang: ILang = {
       bug_report: '错误回报',
       change_workarea_before_preview: '%s 的工作范围与目前设定的工作范围不相符，是否要切换目前的工作范围？',
       convert_to_path_fail: '转换成路径失败。',
+      disassemble_use: {
+        clip_path_warning: '该文件包含剪切蒙版，无法拆解。',
+        execute_time_warning: '正要解散外部汇入的 DXF 或是 SVG ，在含有物件较多的情况，可能会需要等一阵子，是否确定解散？',
+      },
       dxf_bounding_box_size_over: '图像超出工作范围，请在 CAD 软体中将图像放置于原点附近，或确定图档单位是否正确设定。',
       dxf_version_waring: '此 DXF 档版本非 2013 版，可能有潜在的不相容风险。',
       facebook_group_invitation: {
@@ -354,7 +358,6 @@ const lang: ILang = {
       too_fast_for_path: '含有路径物件的图层速度过快，可能导致切割时位置误差。\n不建议超过在切割路径时超过 %(limit)s。',
       too_fast_for_path_and_constrain: '以下图层： %(layers)s \n含有向量路径物件且速度超过 %(limit)s，为维持雕刻的精度，向量路径速度将被限制在 %(limit)s，您可以在偏好设定解除此限制。',
       touchpad: '触摸板',
-      ungroup_use: '正要解散外部汇入的 DXF 或是 SVG ，在含有物件较多的情况，可能会需要等一阵子，是否确定解散？',
       upload_failed: '#819 档案上传失败。',
       upload_file_too_large: '#819 档案大小过大，请联络客服。',
       vectorize_shading_image: '渐层影像在向量化时将花费较多时间，且容易有杂点，请将影像渐层关闭后再执行。',

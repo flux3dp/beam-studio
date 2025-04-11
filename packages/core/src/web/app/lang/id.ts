@@ -292,6 +292,10 @@ const lang: ILang = {
       bug_report: 'Laporan Bug',
       change_workarea_before_preview: 'Area kerja %s tidak cocok dengan area kerja yang saat ini diatur. Apakah Anda ingin beralih area kerja saat ini?',
       convert_to_path_fail: 'Gagal mengubah ke jalur.',
+      disassemble_use: {
+        clip_path_warning: 'File ini mengandung clipping mask dan tidak dapat dibongkar.',
+        execute_time_warning: 'Ini akan membatalkan pengelompokan DXF atau SVG yang diimpor. Karena file mungkin berisi sejumlah besar elemen, mungkin memerlukan waktu untuk membatalkan pengelompokan. Apakah Anda yakin untuk melanjutkan?',
+      },
       dxf_bounding_box_size_over: 'Ukuran gambar melebihi area kerja. Harap pindahkan gambar Anda lebih dekat ke asal dalam perangkat lunak CAD Anda, atau pastikan bahwa unit diatur dengan benar.',
       dxf_version_waring: 'Versi file DXF ini bukan 2013, mungkin ada masalah kompatibilitas potensial.',
       facebook_group_invitation: {
@@ -354,7 +358,6 @@ const lang: ILang = {
       too_fast_for_path: 'Menggunakan kecepatan terlalu tinggi pada lapisan yang berisi objek path dapat mengurangi presisi saat pemotongan. Kami tidak menyarankan menggunakan kecepatan lebih dari %(limit)s saat pemotongan.',
       too_fast_for_path_and_constrain: 'Lapisan berikut: %(layers)s \nberisi objek path vektor, dan memiliki kecepatan melebihi %(limit)s. Kecepatan pemotongan objek path vektor akan dibatasi hingga %(limit)s. Anda dapat menghapus batasan ini di Pengaturan Preferensi.',
       touchpad: 'TouchPad',
-      ungroup_use: 'Ini akan membatalkan pengelompokan DXF atau SVG yang diimpor. Karena file mungkin berisi sejumlah besar elemen, mungkin memerlukan waktu untuk membatalkan pengelompokan. Apakah Anda yakin untuk melanjutkan?',
       upload_failed: '#819 Unggah file gagal.',
       upload_file_too_large: '#819 File terlalu besar untuk diunggah.',
       vectorize_shading_image: 'Gambar gradien memerlukan waktu lebih lama untuk melacak dan rentan terhadap noise. Harap matikan gradien gambar sebelum mengeksekusi.',

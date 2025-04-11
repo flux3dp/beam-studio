@@ -292,6 +292,10 @@ const lang: ILang = {
       bug_report: '錯誤回報',
       change_workarea_before_preview: '%s 的工作範圍與目前設定的工作範圍不相符，是否要切換目前的工作範圍？',
       convert_to_path_fail: '轉換成路徑失敗。',
+      disassemble_use: {
+        clip_path_warning: '圖檔中含有剪裁路徑（Clipping Mask），無法解散圖檔。',
+        execute_time_warning: '正要解散外部匯入的 DXF 或是 SVG ，在含有物件較多的情況，可能會需要等一陣子，是否確定解散？',
+      },
       dxf_bounding_box_size_over: '圖像超出工作範圍，請在 CAD 軟體中將圖像放置於原點附近，或確定圖檔單位是否正確設定。',
       dxf_version_waring: '此 DXF 檔版本非 2013 版，可能有潛在的不相容風險。',
       facebook_group_invitation: {
@@ -354,7 +358,6 @@ const lang: ILang = {
       too_fast_for_path: '含有路徑物件的圖層速度過快，可能導致切割時位置誤差。<br/>不建議超過在切割路徑時超過 %(limit)s 。',
       too_fast_for_path_and_constrain: '以下圖層： <strong>%(layers)s</strong><br/>含有向量路徑物件且速度超過 %(limit)s，為維持雕刻的精度，向量路徑速度將被限制在 %(limit)s ，您可以在偏好設定解除此限制。',
       touchpad: '觸控板',
-      ungroup_use: '正要解散外部匯入的 DXF 或是 SVG ，在含有物件較多的情況，可能會需要等一陣子，是否確定解散？',
       upload_failed: '#819 檔案上傳失敗。',
       upload_file_too_large: '#819 檔案大小過大，請聯絡客服。',
       vectorize_shading_image: '漸層影像在向量化時將花費較多時間，且容易有雜點，請將影像漸層關閉後再執行。',

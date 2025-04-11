@@ -292,6 +292,10 @@ const lang: ILang = {
       bug_report: 'Vianraportti',
       change_workarea_before_preview: '%s:n työalue ei vastaa nykyistä työaluetta. Haluatko vaihtaa nykyisen työalueen?',
       convert_to_path_fail: 'Muuntaminen poluiksi epäonnistui.',
+      disassemble_use: {
+        clip_path_warning: 'Tämä tiedosto sisältää leikkausmaskin eikä sitä voi purkaa.',
+        execute_time_warning: 'Tämä purkaa tuodun tiedoston ryhmityksen. Koska tiedosto voi sisältää suuren määrän elementtejä, ryhmityksen purku voi viedä aikaa. Haluatko jatkaa?',
+      },
       dxf_bounding_box_size_over: 'Piirroksen koko ylittää työalueen. Siirrä piirrosta lähemmäs origoa CAD-ohjelmassa tai tarkista mittayksiköt.',
       dxf_version_waring: 'Tämän DXF-tiedoston versio ei ole 2013, mikä voi aiheuttaa yhteensopivuusongelmia.',
       facebook_group_invitation: {
@@ -354,7 +358,6 @@ const lang: ILang = {
       too_fast_for_path: 'Liian korkea nopeus polkuobjekteja sisältävissä kerroksissa voi heikentää leikkaustarkkuutta. Emme suosittele yli %(limit)s nopeutta leikattaessa.',
       too_fast_for_path_and_constrain: 'Seuraavat kerrokset: %(layers)s \nsisältävät vektoripolkuobjekteja yli %(limit)s nopeudella. Polkuobjektien leikkausnopeus rajoitetaan %(limit)s:iin. Voit poistaa rajoituksen asetuksista.',
       touchpad: 'Kosketuslevy',
-      ungroup_use: 'Tämä purkaa tuodun tiedoston ryhmityksen. Koska tiedosto voi sisältää suuren määrän elementtejä, ryhmityksen purku voi viedä aikaa. Haluatko jatkaa?',
       upload_failed: '#819 Tiedoston lataus epäonnistui.',
       upload_file_too_large: '#819 Tiedosto on liian suuri latausta varten.',
       vectorize_shading_image: 'Liukuvärit kuvissa altistuvat kohinalle. Poista kuvan liukuvärit ennen suorittamista.',
