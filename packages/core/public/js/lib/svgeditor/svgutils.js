@@ -307,12 +307,18 @@ const path = require('path');
 
   // Function: svgedit.utilities.getHref
   // Returns the given element's xlink:href value
+  /**
+   * @deprecated Please use import getHref from '@core/app/svgedit/utils/href'; if you want to use this function
+   */
   svgedit.utilities.getHref = function (elem) {
     return elem.getAttributeNS(NS.XLINK, 'href');
   };
 
   // Function: svgedit.utilities.setHref
   // Sets the given element's xlink:href value
+  /**
+   * @deprecated Please use import setHref from '@core/app/svgedit/utils/href'; if you want to use this function
+   */
   svgedit.utilities.setHref = function (elem, val) {
     elem.setAttributeNS(NS.XLINK, 'xlink:href', val);
   };

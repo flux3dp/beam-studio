@@ -19,7 +19,8 @@ import ungroupElement from '../group/ungroup';
 import type { BatchCommand } from '../history/history';
 import history from '../history/history';
 import undoManager from '../history/undoManager';
-import { setRotationAngle } from '../transform/rotation';
+import { getRotationAngle, setRotationAngle } from '../transform/rotation';
+import { getHref } from '../utils/href';
 
 let svgCanvas: ISVGCanvas;
 
@@ -73,9 +74,7 @@ export const disassembleUse = async (
   for (let i = 0; i < elems.length; ++i) {
     const elem = elems[i];
 
-    if (!elem || elem.tagName !== 'use') {
-      continue;
-    }
+    if (!elem || elem.tagName !== 'use') continue;
 
     if (showProgress) {
       progressCaller.openSteppingProgress({
@@ -97,8 +96,8 @@ export const disassembleUse = async (
 
     const color = (useLayerColor ? getData(layer, 'color') : '#000') ?? '#000';
     const drawing = svgCanvas.getCurrentDrawing();
+    const wireframe = elem.getAttribute('data-wireframe') === 'true';
 
-    const wireframe = $(elem).data('wireframe');
     let transform = elem.getAttribute('transform') || '';
     const x = Number.parseFloat(elem.getAttribute('x') || '0');
     const y = Number.parseFloat(elem.getAttribute('y') || '0');
@@ -106,8 +105,14 @@ export const disassembleUse = async (
 
     transform = `${transform} ${translate}`;
 
-    const href = svgedit.utilities.getHref(elem);
-    const svg = $(href).toArray()[0];
+    const href = getHref(elem);
+
+    if (!href) continue;
+
+    const svg = document.querySelector(href);
+
+    if (!svg) continue;
+
     const children = [...Array.from(svg.childNodes).reverse()];
     let g = document.createElementNS(NS.SVG, 'g');
 
@@ -182,7 +187,7 @@ export const disassembleUse = async (
     batchCmd.addSubCommand(new history.RemoveElementCommand(elem, elem.nextSibling!, elem.parentNode!));
     elem.parentNode!.removeChild(elem);
 
-    const angle = svgedit.utilities.getRotationAngle(g);
+    const angle = getRotationAngle(g);
 
     if (angle) setRotationAngle(g, 0, { addToHistory: false });
 
