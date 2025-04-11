@@ -20,6 +20,8 @@ import TopBar from './TopBar';
 import { TARGET_PATH_NAME } from './utils/constant';
 import { cutPathAtPoint } from './utils/cutPathAtPoint';
 import { cutPathByGap } from './utils/cutPathByGap';
+import { drawPerpendicularLineOnPath } from './utils/drawPerpendicularLineOnPath';
+import { removePerpendicularLineIfExist } from './utils/removePerpendicularLineIfExist';
 
 interface Props {
   bbox: DOMRect;
@@ -32,7 +34,7 @@ const PADDING = 30;
 function UnmemorizedBridgePanel({ bbox, element, onClose }: Props): React.JSX.Element {
   const { image_edit_panel: lang } = useI18n();
   const { history, push, redo, set, undo } = useHistory({ hasUndid: false, index: 0, items: [{ pathData: [] }] });
-  const [mode, setMode] = useState<'auto' | 'manual'>('auto');
+  const [mode, setMode] = useState<'auto' | 'manual'>('manual');
   const [pathData, setPathData] = useState(Array.of<string>());
   const [isPathDataChanged, setIsPathDataChanged] = useState(false);
   const [bridgeWidth, setBridgeWidth] = useState(0.5);
@@ -97,6 +99,8 @@ function UnmemorizedBridgePanel({ bbox, element, onClose }: Props): React.JSX.El
 
       if (isDraggable || isDragging || (event as any).event.button !== 0 || mode !== 'manual') return;
 
+      removePerpendicularLineIfExist();
+
       paper.project.hitTest(point, {
         fill: false,
         match: (hit: paper.HitResult) => {
@@ -107,6 +111,36 @@ function UnmemorizedBridgePanel({ bbox, element, onClose }: Props): React.JSX.El
 
             setPathData((prev) => prev.concat(newCompoundPath.pathData));
             setIsPathDataChanged(true);
+          }
+
+          console.log(paper.project.activeLayer.children);
+
+          // always return true to prevent the hit test keep searching
+          return true;
+        },
+        segments: true,
+        stroke: true,
+        tolerance: 30,
+      });
+    },
+    [bridgeWidth, isDraggable, isDragging, mode],
+  );
+  const handleMouseMove = useCallback(
+    (event: paper.ToolEvent) => {
+      const { point } = event;
+
+      if (isDraggable || isDragging || mode !== 'manual') return;
+
+      removePerpendicularLineIfExist();
+
+      paper.project.hitTest(point, {
+        fill: false,
+        match: (hit: paper.HitResult) => {
+          // ensure the path is the target compound path's child
+          if (hit.item.parent?.name === TARGET_PATH_NAME) {
+            const path = hit.item as paper.Path;
+
+            drawPerpendicularLineOnPath(path, point, bridgeWidth * dpmm);
           }
 
           // always return true to prevent the hit test keep searching
@@ -122,6 +156,8 @@ function UnmemorizedBridgePanel({ bbox, element, onClose }: Props): React.JSX.El
   const handleMouseDrag = useCallback(
     (event: paper.ToolEvent) => {
       if (!isDragging || !isDraggable) return;
+
+      removePerpendicularLineIfExist();
 
       paper.view.translate(event.delta.subtract(dragDeltaRef.current));
       dragDeltaRef.current = dragDeltaRef.current.subtract(event.delta);
@@ -197,7 +233,8 @@ function UnmemorizedBridgePanel({ bbox, element, onClose }: Props): React.JSX.El
 
     tool.onMouseDown = handleMouseDown;
     tool.onMouseDrag = handleMouseDrag;
-  }, [handleMouseDown, handleMouseDrag]);
+    tool.onMouseMove = handleMouseMove;
+  }, [handleMouseDown, handleMouseDrag, handleMouseMove]);
 
   useEffect(() => {
     if (!isPathDataChanged) return;

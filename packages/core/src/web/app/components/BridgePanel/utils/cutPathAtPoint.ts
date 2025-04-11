@@ -1,12 +1,17 @@
 import type paper from 'paper';
-import { pipe } from 'remeda';
+
+import { getCuttingRange } from './getCuttingRange';
 
 export function cutPathAtPoint(path: paper.Path, point: paper.Point, width: number) {
   const location = path.getNearestLocation(point);
-  const [offsetStart, offsetEnd] = pipe(location, ({ offset }) => [
-    Math.max(0, offset - width / 2),
-    Math.min(path.length, offset + width / 2),
-  ]);
+
+  if (!location) {
+    console.error('No nearest location found on the path');
+
+    return;
+  }
+
+  const [offsetStart, offsetEnd] = getCuttingRange(path, point, width);
 
   // clone the original path so we don't lose the full shape
   const pathClone = path.clone({ insert: false });
@@ -21,8 +26,11 @@ export function cutPathAtPoint(path: paper.Path, point: paper.Point, width: numb
   const compound = path.parent as paper.CompoundPath;
 
   path.remove();
-  compound.addChild(pathClone);
-  compound.addChild(part2);
+
+  // only add path if it has curves
+  if (pathClone?.curves.length) compound.addChild(pathClone);
+
+  if (part2?.curves.length) compound.addChild(part2);
 
   return compound;
 }
