@@ -1,11 +1,14 @@
 import paper from 'paper';
 
 import { TARGET_PATH_NAME } from './constant';
+import { removePerpendicularLineIfExist } from './removePerpendicularLineIfExist';
 
 export function cutPathByGap(gap: number, width?: number) {
   const compound = paper.project.getItem({ name: TARGET_PATH_NAME }) as paper.CompoundPath;
 
   if (!compound) throw new Error(`No compound path found with name ${TARGET_PATH_NAME}`);
+
+  removePerpendicularLineIfExist();
 
   width ??= gap;
 
