@@ -12,6 +12,7 @@ import { showRotarySettings } from '@core/app/components/dialogs/RotarySettings'
 import { gestureIntroduction } from '@core/app/constants/media-tutorials';
 import historyUtils from '@core/app/svgedit/history/utils';
 import clipboard from '@core/app/svgedit/operations/clipboard';
+import disassembleUse from '@core/app/svgedit/operations/disassembleUse';
 import { importBvgString } from '@core/app/svgedit/operations/import/importBvg';
 import workareaManager from '@core/app/svgedit/workarea';
 import { externalLinkMemberDashboard, signOut } from '@core/helpers/api/flux-id';
@@ -176,7 +177,7 @@ export default {
   CUT: (): void => svgEditor.cutSelected(),
   DECOMPOSE_PATH: (): Promise<void> => (svgCanvas as any).decomposePath(),
   DELETE: (): void => svgEditor.deleteSelected(),
-  DISASSEMBLE_USE: () => (svgCanvas as any).disassembleUse2Group(),
+  DISASSEMBLE_USE: () => disassembleUse(),
   DOCUMENT_SETTING: (): void => Dialog.showDocumentSettings(),
   DUPLICATE: (): Promise<null | {
     cmd: IBatchCommand;

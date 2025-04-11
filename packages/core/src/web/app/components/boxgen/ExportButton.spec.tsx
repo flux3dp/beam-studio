@@ -48,22 +48,33 @@ jest.mock(
       mockImportSvgString(...args),
 );
 
-const mockAddCommandToHistory = jest.fn();
-const mockDisassembleUse2Group = jest.fn();
 const mockSetLayerVisibility = jest.fn();
 
 jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) =>
     callback({
       Canvas: {
-        addCommandToHistory: (...args) => mockAddCommandToHistory(...args),
-        disassembleUse2Group: (...args) => mockDisassembleUse2Group(...args),
         getCurrentDrawing: () => ({
           all_layers: [{ name_: 'Box 1' }, { name_: 'Box 2-1' }],
           setLayerVisibility: (...args) => mockSetLayerVisibility(...args),
         }),
       },
     }),
+}));
+
+const mockDisassembleUse = jest.fn();
+
+jest.mock(
+  '@core/app/svgedit/operations/disassembleUse',
+  () =>
+    (...args) =>
+      mockDisassembleUse(...args),
+);
+
+const mockAddCommandToHistory = jest.fn();
+
+jest.mock('@core/app/svgedit/history/undoManager', () => ({
+  addCommandToHistory: (...args) => mockAddCommandToHistory(...args),
 }));
 
 const mockBatchCommand = { addSubCommand: jest.fn() };
@@ -117,7 +128,7 @@ describe('test ExportButton', () => {
 
     waitFor(() => expect(modal).toBeInTheDocument());
     expect(baseElement).toMatchSnapshot();
-    expect(mockGetLayouts).toBeCalledTimes(1);
+    expect(mockGetLayouts).toHaveBeenCalledTimes(1);
     expect(mockGetLayouts).toBeCalledWith(300, 210, mockData, {
       compRadius: 0.1,
       joinOutput: false,
@@ -136,7 +147,7 @@ describe('test ExportButton', () => {
     const optionButtons = modal.querySelectorAll('button.ant-switch');
 
     fireEvent.click(optionButtons[0]);
-    expect(mockGetLayouts).toBeCalledTimes(3);
+    expect(mockGetLayouts).toHaveBeenCalledTimes(3);
     expect(mockGetLayouts).toHaveBeenLastCalledWith(300, 210, mockData, {
       compRadius: 0.1,
       joinOutput: true,
@@ -146,7 +157,7 @@ describe('test ExportButton', () => {
     expect(paginationButtons[0]).toHaveClass('ant-pagination-item-active');
     expect(paginationButtons[1]).not.toHaveClass('ant-pagination-item-active');
     fireEvent.click(optionButtons[1]);
-    expect(mockGetLayouts).toBeCalledTimes(4);
+    expect(mockGetLayouts).toHaveBeenCalledTimes(4);
     expect(mockGetLayouts).toHaveBeenLastCalledWith(300, 210, mockData, {
       compRadius: 0.1,
       joinOutput: true,
@@ -154,14 +165,14 @@ describe('test ExportButton', () => {
     });
 
     fireEvent.click(modal.querySelector('.ant-btn-primary'));
-    await waitFor(() => expect(mockOnClose).toBeCalledTimes(1));
-    expect(mockCreateBatchCommand).toBeCalledTimes(1);
-    expect(mockWrapSVG).toBeCalledTimes(4);
+    await waitFor(() => expect(mockOnClose).toHaveBeenCalledTimes(1));
+    expect(mockCreateBatchCommand).toHaveBeenCalledTimes(1);
+    expect(mockWrapSVG).toHaveBeenCalledTimes(4);
     expect(mockWrapSVG).toHaveBeenNthCalledWith(1, 300, 210, ['layer1-1', 'layer1-2']);
     expect(mockWrapSVG).toHaveBeenNthCalledWith(2, 300, 210, ['layer1-1 label', 'layer1-2 label']);
     expect(mockWrapSVG).toHaveBeenNthCalledWith(3, 300, 210, ['layer2']);
     expect(mockWrapSVG).toHaveBeenNthCalledWith(4, 300, 210, ['layer2 label']);
-    expect(mockImportSvgString).toBeCalledTimes(4);
+    expect(mockImportSvgString).toHaveBeenCalledTimes(4);
     expect(mockImportSvgString).toHaveBeenNthCalledWith(1, 'mock-svg', {
       layerName: 'Box 3-1',
       parentCmd: mockBatchCommand,
@@ -182,17 +193,19 @@ describe('test ExportButton', () => {
       parentCmd: mockBatchCommand,
       type: 'layer',
     });
-    expect(mockDisassembleUse2Group).toBeCalledTimes(1);
-    expect(mockDisassembleUse2Group).toHaveBeenNthCalledWith(
+    expect(mockDisassembleUse).toHaveBeenCalledTimes(1);
+    expect(mockDisassembleUse).toHaveBeenNthCalledWith(
       1,
       ['mock-svg-object', 'mock-svg-object', 'mock-svg-object', 'mock-svg-object'],
-      true,
-      false,
-      false,
+      {
+        parentCmd: mockBatchCommand,
+        showProgress: false,
+        skipConfirm: true,
+      },
     );
-    expect(mockSetLayerVisibility).toBeCalledTimes(2);
+    expect(mockSetLayerVisibility).toHaveBeenCalledTimes(2);
     expect(mockSetLayerVisibility).toHaveBeenNthCalledWith(1, 'Box 3-2', false);
     expect(mockSetLayerVisibility).toHaveBeenNthCalledWith(2, 'Box 3-2 Label', false);
-    expect(mockAddCommandToHistory).toBeCalledTimes(1);
+    expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
   });
 });

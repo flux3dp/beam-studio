@@ -9,6 +9,7 @@ import Dialog from '@core/app/actions/dialog-caller';
 import { textButtonTheme } from '@core/app/constants/antd-config';
 import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
 import autoFit from '@core/app/svgedit/operations/autoFit';
+import disassembleUse from '@core/app/svgedit/operations/disassembleUse';
 import textActions from '@core/app/svgedit/text/textactions';
 import textEdit from '@core/app/svgedit/text/textedit';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
@@ -471,7 +472,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       renderButtons(
         'disassemble_use',
         lang.disassemble_use,
-        () => svgCanvas.disassembleUse2Group(),
+        () => disassembleUse(),
         <ActionPanelIcons.Disassemble />,
         <ActionPanelIcons.DisassembleMobile />,
         { isFullLine: true },

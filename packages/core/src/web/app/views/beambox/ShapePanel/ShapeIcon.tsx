@@ -7,6 +7,7 @@ import type { LayerModule } from '@core/app/constants/layer-module/layer-modules
 import { builtInElements } from '@core/app/constants/shape-panel-constants';
 import history from '@core/app/svgedit/history/history';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
+import disassembleUse from '@core/app/svgedit/operations/disassembleUse';
 import importSvgString from '@core/app/svgedit/operations/import/importSvgString';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { getData } from '@core/helpers/layer/layer-config-helper';
@@ -63,7 +64,7 @@ const importShape = async (IconComponent, jsonMap) => {
     batchCmd.addSubCommand(svgCanvas.setSvgElemPosition('x', 0, newElementnewElement, false));
     batchCmd.addSubCommand(svgCanvas.setSvgElemPosition('y', 0, newElementnewElement, false));
     newElementnewElement.setAttribute('data-ratiofixed', 'true');
-    batchCmd.addSubCommand(await svgCanvas.disassembleUse2Group([newElementnewElement], true, false));
+    await disassembleUse([newElementnewElement], { parentCmd: batchCmd, skipConfirm: true });
     updateElementColor(svgCanvas.getSelectedElems()[0]);
     svgCanvas.addCommandToHistory(batchCmd);
   }

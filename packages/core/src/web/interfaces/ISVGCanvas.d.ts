@@ -65,12 +65,6 @@ export default interface ISVGCanvas {
   convertToNum(attr: string, val: number): number;
   convertToPath: (elem: SVGElement, isSubCmd?: boolean) => { cmd: BaseHistoryCommand; path: SVGPathElement };
   deleteSelectedElements: () => void;
-  disassembleUse2Group: (
-    elems: SVGElement[],
-    skipConfirm?: boolean,
-    addToHistory?: boolean,
-    showProgress?: boolean,
-  ) => Promise<BaseHistoryCommand>;
   drawAlignLine: (tx: number, ty: number, x: IPoint | null, y: IPoint | null, index?: number) => void;
   drawing: ISVGDrawing;
   embedImage(url: string, callback?: (dataURI: string) => void): void;
