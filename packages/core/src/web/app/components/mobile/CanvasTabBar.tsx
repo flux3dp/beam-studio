@@ -17,6 +17,7 @@ import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import TabBarIcons from '@core/app/icons/tab-bar/TabBarIcons';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
 import beamboxStore from '@core/app/stores/beambox-store';
+import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import historyUtils from '@core/app/svgedit/history/utils';
 import createNewText from '@core/app/svgedit/text/createNewText';
 import workareaManager from '@core/app/svgedit/workarea';
@@ -29,7 +30,6 @@ import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-import { useCameraPreviewStore } from '@core/stores/cameraPreview';
 
 import styles from './CanvasTabBar.module.scss';
 

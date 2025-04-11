@@ -5,6 +5,7 @@ import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-
 import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { CameraType } from '@core/app/constants/cameraConstants';
+import { setCameraPreviewState } from '@core/app/stores/cameraPreview';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import checkOldFirmware from '@core/helpers/device/checkOldFirmware';
 import deviceMaster from '@core/helpers/device-master';
@@ -14,7 +15,6 @@ import VersionChecker from '@core/helpers/version-checker';
 import type { CameraConfig, CameraParameters } from '@core/interfaces/Camera';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type { PreviewManager } from '@core/interfaces/PreviewManager';
-import { setCameraPreviewState } from '@core/stores/cameraPreview';
 
 import AdorPreviewManager from '../camera/preview-helper/AdorPreviewManager';
 import BB2PreviewManager from '../camera/preview-helper/BB2PreviewManager';
