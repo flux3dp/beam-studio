@@ -43,6 +43,12 @@ jest.mock('@core/app/contexts/CanvasContext', () => ({
   CanvasContext: React.createContext({ mode: CanvasMode.Draw }),
 }));
 
+const mockMeetRequirement = jest.fn();
+
+jest.mock('@core/helpers/version-checker', () => () => ({
+  meetRequirement: (...args) => mockMeetRequirement(...args),
+}));
+
 jest.mock('antd', () => ({
   Slider: ({ className, max, min, onChange, onChangeComplete, step, value }: any) => (
     <div className={className}>
@@ -80,6 +86,7 @@ describe('test PreviewSlider', () => {
     jest.clearAllMocks();
     mockGetMode.mockReturnValue('');
     mockIsFullScreen.mockReturnValue(true);
+    mockMeetRequirement.mockReturnValue(true);
     document.body.innerHTML = '<image id="background_image" style="pointer-events:none; opacity: 1;"/>';
   });
 
@@ -139,6 +146,7 @@ describe('test PreviewSlider', () => {
       expect(mockGetDeviceSetting).toHaveBeenCalledTimes(1);
     });
     expect(mockGetDeviceSetting).toHaveBeenNthCalledWith(1, 'camera_exposure_absolute');
+    expect(mockMeetRequirement).not.toHaveBeenCalled();
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getByText('onChange'));
@@ -163,7 +171,7 @@ describe('test PreviewSlider', () => {
     const bgImage: HTMLElement = document.getElementById('background_image');
 
     bgImage.style.opacity = '0.5';
-    mockGetCurrentDevice.mockReturnValue({ info: { model: 'ado1' } });
+    mockGetCurrentDevice.mockReturnValue({ info: { model: 'fbb2' } });
 
     const { container, getByText } = render(
       <CanvasContext.Provider value={{ mode: CanvasMode.Preview } as any}>
@@ -178,6 +186,7 @@ describe('test PreviewSlider', () => {
       expect(mockGetDeviceSetting).toHaveBeenCalledTimes(1);
     });
     expect(mockGetDeviceSetting).toHaveBeenNthCalledWith(1, 'camera_exposure_absolute');
+    expect(mockMeetRequirement).toHaveBeenNthCalledWith(1, 'BB2_SEPARATE_EXPOSURE');
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getByText('onChange'));

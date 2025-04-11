@@ -8,8 +8,8 @@ import { CanvasMode } from '@core/app/constants/canvasMode';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import WorkareaIcons from '@core/app/icons/workarea/WorkareaIcons';
 import deviceMaster from '@core/helpers/device-master';
-import isDev from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
+import versionChecker from '@core/helpers/version-checker';
 import type { IConfigSetting } from '@core/interfaces/IDevice';
 
 import styles from './PreviewSlider.module.scss';
@@ -27,9 +27,10 @@ const PreviewSlider = (): React.ReactNode => {
       return;
     }
 
-    const { model } = deviceMaster.currentDevice.info;
+    const { model, version } = deviceMaster.currentDevice.info;
+    const vc = versionChecker(version);
 
-    if (!(constant.adorModels.includes(model) || (model === 'fbb2' && isDev()))) {
+    if (!(constant.adorModels.includes(model) || (model === 'fbb2' && vc.meetRequirement('BB2_SEPARATE_EXPOSURE')))) {
       return;
     }
 
