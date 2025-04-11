@@ -1,6 +1,7 @@
 @use '@core/styles/variables' as variables;
 
 .container {
+  // TODO: change position to relative and hide original right panel
   border: none;
   position: fixed;
   background-color: #f8f8f8;
