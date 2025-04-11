@@ -7,11 +7,11 @@ import PreviewModeController from '@core/app/actions/beambox/preview-mode-contro
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import WorkareaIcons from '@core/app/icons/workarea/WorkareaIcons';
+import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
 import versionChecker from '@core/helpers/version-checker';
 import type { IConfigSetting } from '@core/interfaces/IDevice';
-import { useCameraPreviewStore } from '@core/stores/cameraPreview';
 
 import styles from './PreviewSlider.module.scss';
 

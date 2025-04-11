@@ -9,12 +9,12 @@ import { CameraType } from '@core/app/constants/cameraConstants';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import beamboxStore from '@core/app/stores/beambox-store';
+import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import localeHelper from '@core/helpers/locale-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-import { useCameraPreviewStore } from '@core/stores/cameraPreview';
 
 import LeftPanelSegmented from './LeftPanelSegmented';
 

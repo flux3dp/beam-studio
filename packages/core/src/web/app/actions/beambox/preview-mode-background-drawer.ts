@@ -7,12 +7,12 @@ import Constant from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import NS from '@core/app/constants/namespaces';
 import beamboxStore from '@core/app/stores/beambox-store';
+import { setCameraPreviewState } from '@core/app/stores/cameraPreview';
 import workareaManager from '@core/app/svgedit/workarea';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { CameraParameters } from '@core/interfaces/Camera';
-import { setCameraPreviewState } from '@core/stores/cameraPreview';
 
 let svgCanvas;
 let svgedit;
