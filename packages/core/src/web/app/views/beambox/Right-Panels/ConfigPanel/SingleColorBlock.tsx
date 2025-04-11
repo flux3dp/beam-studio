@@ -5,6 +5,7 @@ import { Switch, Tooltip } from 'antd';
 import classNames from 'classnames';
 
 import colorConstants, { PrintingColors } from '@core/app/constants/color-constants';
+import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
@@ -12,20 +13,22 @@ import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColor
 import { getData, getMultiSelectData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { getLayerByName } from '@core/helpers/layer/layer-helper';
 import useI18n from '@core/helpers/useI18n';
+import type { ConfigItem } from '@core/interfaces/ILayerConfig';
 
 import styles from './Block.module.scss';
 import ConfigPanelContext from './ConfigPanelContext';
+import initState from './initState';
 
 const SingleColorBlock = (): React.JSX.Element => {
   const t = useI18n().beambox.right_panel.laser_panel;
-  const { dispatch, initState, selectedLayers, state } = useContext(ConfigPanelContext);
-  const { fullcolor, selectedLayer, split } = state;
+  const { change, fullcolor, selectedLayer, split, update } = useConfigPanelStore();
+  const { selectedLayers } = useContext(ConfigPanelContext);
 
   const handleToggleFullColor = () => {
     const batchCmd = new history.BatchCommand('Toggle full color');
     const newVal = !fullcolor.value;
 
-    dispatch({ payload: { fullcolor: newVal }, type: 'change' });
+    change({ fullcolor: newVal });
 
     let colorChanged = false;
     const layers = selectedLayers.map((layerName) => getLayerByName(layerName));
@@ -49,9 +52,9 @@ const SingleColorBlock = (): React.JSX.Element => {
 
     if (colorChanged) {
       const selectedIdx = selectedLayers.findIndex((layerName) => layerName === selectedLayer);
-      const config = getMultiSelectData(layers, selectedIdx, 'color');
+      const config = getMultiSelectData(layers, selectedIdx, 'color') as ConfigItem<string>;
 
-      dispatch({ payload: { color: config }, type: 'update' });
+      update({ color: config });
     }
 
     LayerPanelController.updateLayerPanel();

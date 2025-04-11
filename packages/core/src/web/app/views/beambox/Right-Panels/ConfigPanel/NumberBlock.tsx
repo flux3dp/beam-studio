@@ -5,6 +5,7 @@ import { Tooltip } from 'antd';
 import { Button, Popover } from 'antd-mobile';
 import classNames from 'classnames';
 
+import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
@@ -26,6 +27,7 @@ import styles from './Block.module.scss';
 import ConfigPanelContext from './ConfigPanelContext';
 import ConfigSlider from './ConfigSlider';
 import ConfigValueDisplay from './ConfigValueDisplay';
+import initState from './initState';
 
 interface Props {
   configKey: ConfigKey;
@@ -68,7 +70,11 @@ const NumberBlock = ({
 }: Props): React.ReactNode => {
   const isPanelType = useMemo(() => type === 'panel-item', [type]);
   const { activeKey } = useContext(ObjectPanelContext);
-  const { dispatch, initState, selectedLayers, state } = useContext(ConfigPanelContext);
+  const {
+    change,
+    [key]: { hasMultiValue, value = 0 },
+  } = useConfigPanelStore();
+  const { selectedLayers } = useContext(ConfigPanelContext);
   const { isPresetRelated, isTimeRelated } = useMemo(
     () => ({
       isPresetRelated: presetRelatedConfigs.has(key),
@@ -83,9 +89,6 @@ const NumberBlock = ({
 
     return { isInch: true, unit: unit.replace('mm', 'in') };
   }, [unit, forceUsePropsUnit]);
-  const {
-    [key]: { hasMultiValue, value = 0 },
-  } = state;
   const displayPrecision = useMemo(
     () => (isInch ? (precisionInch ?? precision) : precision),
     [isInch, precision, precisionInch],
@@ -101,7 +104,7 @@ const NumberBlock = ({
 
       if (isPresetRelated) payload.configName = CUSTOM_PRESET_CONSTANT;
 
-      dispatch({ payload, type: 'change' });
+      change(payload);
 
       if (isTimeRelated) timeEstimationButtonEventEmitter.emit('SET_ESTIMATED_TIME', null);
 
@@ -124,7 +127,7 @@ const NumberBlock = ({
         }
       }
     },
-    [value, key, max, min, isPresetRelated, isTimeRelated, dispatch, selectedLayers, initState, type],
+    [change, value, key, max, min, isPresetRelated, isTimeRelated, selectedLayers, type],
   );
 
   useEffect(() => {

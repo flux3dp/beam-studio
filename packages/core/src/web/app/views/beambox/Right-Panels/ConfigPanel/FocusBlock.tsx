@@ -4,6 +4,7 @@ import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Switch, Tooltip } from 'antd';
 import classNames from 'classnames';
 
+import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
@@ -11,14 +12,15 @@ import useI18n from '@core/helpers/useI18n';
 
 import styles from './Block.module.scss';
 import ConfigPanelContext from './ConfigPanelContext';
+import initState from './initState';
 import NumberBlock from './NumberBlock';
 
 // TODO: add tests
 const FocusBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.JSX.Element => {
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
-  const { dispatch, initState, selectedLayers, state } = useContext(ConfigPanelContext);
-  const { focus, focusStep, repeat } = state;
+  const { change, focus, focusStep, repeat } = useConfigPanelStore();
+  const { selectedLayers } = useContext(ConfigPanelContext);
 
   const focusStepMax = useMemo(() => {
     if (repeat.value <= 1) {
@@ -31,7 +33,7 @@ const FocusBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   const toggleFocusAdjust = () => {
     const value = -focus.value;
 
-    dispatch({ payload: { focus: value }, type: 'change' });
+    change({ focus: value });
 
     const batchCmd = new history.BatchCommand('Toggle focus adjustment');
 
@@ -43,7 +45,7 @@ const FocusBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   const toggleFocusStep = () => {
     const value = -focusStep.value;
 
-    dispatch({ payload: { focusStep: value }, type: 'change' });
+    change({ focusStep: value });
 
     const batchCmd = new history.BatchCommand('Toggle focus step');
 

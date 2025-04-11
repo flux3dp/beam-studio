@@ -1,8 +1,8 @@
-import React, { memo, useCallback, useContext, useEffect, useMemo, useReducer, useState } from 'react';
+import React, { memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { ConfigProvider, Modal } from 'antd';
 import classNames from 'classnames';
-import { pipe, piped } from 'remeda';
+import { piped } from 'remeda';
 import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
@@ -18,10 +18,10 @@ import { printingModules } from '@core/app/constants/layer-module/layer-modules'
 import tutorialConstants from '@core/app/constants/tutorial-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
+import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import history from '@core/app/svgedit/history/history';
 import DottingTimeBlock from '@core/app/views/beambox/Right-Panels/ConfigPanel/DottingTimeBlock';
 import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
-import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import tutorialController from '@core/app/views/tutorials/tutorialController';
@@ -37,8 +37,6 @@ import {
   getConfigKeys,
   getData,
   getDefaultConfig,
-  getLayerConfig,
-  getLayersConfig,
   postPresetChange,
   writeData,
 } from '@core/helpers/layer/layer-config-helper';
@@ -53,9 +51,10 @@ import AdvancedBlock from './AdvancedBlock';
 import AdvancedPrintingBlock from './AdvancedPrintingBlock';
 import Backlash from './Backlash';
 import styles from './ConfigPanel.module.scss';
-import ConfigPanelContext, { getDefaultState, reducer } from './ConfigPanelContext';
+import ConfigPanelContext from './ConfigPanelContext';
 import FillBlock from './FillBlock';
 import HalftoneBlock from './HalftoneBlock';
+import initState from './initState';
 import InkBlock from './InkBlock';
 import ModuleBlock from './ModuleBlock';
 import MultipassBlock from './MultipassBlock';
@@ -96,18 +95,19 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     ],
     [lang.dropdown.parameters, lang.custom_preset, lang.various_preset],
   );
-  const [state, dispatch] = useReducer(reducer, null, () => getDefaultState());
-  const { fullcolor, module } = state;
+  const { change, getState } = useConfigPanelStore();
+  const state = getState();
+  const { diode, fullcolor, module } = state;
   const isPrintingModule = useMemo(() => printingModules.has(module.value), [module.value]);
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
 
   const updateDiodeBoundary = useCallback(() => {
     if (beamboxPreference.read('enable-diode') && getAddOnInfo(workarea).hybridLaser) {
-      diodeBoundaryDrawer.show(state.diode.value === 1);
+      diodeBoundaryDrawer.show(diode.value === 1);
     } else {
       diodeBoundaryDrawer.hide();
     }
-  }, [state.diode.value, workarea]);
+  }, [diode.value, workarea]);
 
   useEffect(() => {
     updateDiodeBoundary();
@@ -120,31 +120,16 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     if (UIType === 'modal') setSelectedLayers([currentLayerName]);
     else setSelectedLayers(initLayers);
 
-    dispatch({ payload: { selectedLayer: currentLayerName }, type: 'change' });
-  }, [initLayers, UIType]);
+    change({ selectedLayer: currentLayerName });
+  }, [change, initLayers, UIType]);
 
   useEffect(() => {
     const canvasEvents = eventEmitterFactory.createEventEmitter('canvas');
 
-    if (state.module.value !== undefined) {
-      canvasEvents.emit('select-module-changed', state.module.value);
+    if (module.value !== undefined) {
+      canvasEvents.emit('select-module-changed', module.value);
     }
-  }, [state.module.value, workarea]);
-
-  const initState = useCallback((layers: string[] = LayerPanelController.getSelectedLayers()) => {
-    if (layers.length === 1) {
-      pipe(getLayerConfig(layers[0])!, (payload) => dispatch({ payload, type: 'update' }));
-
-      return;
-    }
-
-    pipe(
-      svgCanvas.getCurrentDrawing(),
-      (drawing) => drawing.getCurrentLayerName(),
-      (currentLayerName) => getLayersConfig(layers, currentLayerName!),
-      (payload) => dispatch({ payload, type: 'update' }),
-    );
-  }, []);
+  }, [module.value, workarea]);
 
   useEffect(() => {
     if (!isPromark) {
@@ -159,7 +144,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     return () => {
       canvasEvents.off('document-settings-saved', updatePromarkInfo);
     };
-  }, [isPromark, initState]);
+  }, [isPromark]);
 
   useEffect(() => {
     postPresetChange();
@@ -169,9 +154,9 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     // eslint-disable-next-line hooks/exhaustive-deps
   }, [workarea, initState]);
 
-  useEffect(() => initState(selectedLayers), [initState, selectedLayers]);
+  useEffect(() => initState(selectedLayers), [selectedLayers]);
 
-  const presetList = presetHelper.getPresetsList(workarea, state.module.value);
+  const presetList = presetHelper.getPresetsList(workarea, module.value);
   const dropdownValue = useMemo(() => {
     const { configName: name, diode, ink, multipass, power, repeat, speed, zStep } = state;
     const hasMultiValueList = [speed, power, ink, repeat, diode, zStep, name, multipass];
@@ -238,7 +223,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     }
 
     timeEstimationButtonEventEmitter.emit('SET_ESTIMATED_TIME', null);
-    dispatch({ payload, type: 'change' });
+    change(payload);
 
     if (UIType !== 'modal') {
       const batchCmd = new history.BatchCommand('Change layer preset');
@@ -473,9 +458,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
   };
 
   return (
-    <ConfigPanelContext.Provider
-      value={{ dispatch, initState, selectedLayers, simpleMode: !beamboxPreference.read('print-advanced-mode'), state }}
-    >
+    <ConfigPanelContext.Provider value={{ selectedLayers, simpleMode: !beamboxPreference.read('print-advanced-mode') }}>
       {getContent()}
     </ConfigPanelContext.Provider>
   );

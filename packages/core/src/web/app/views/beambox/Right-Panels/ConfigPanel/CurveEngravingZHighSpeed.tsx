@@ -4,6 +4,7 @@ import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Switch } from 'antd';
 import classNames from 'classnames';
 
+import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
@@ -12,6 +13,7 @@ import browser from '@core/implementations/browser';
 
 import styles from './Block.module.scss';
 import ConfigPanelContext from './ConfigPanelContext';
+import initState from './initState';
 
 const CurveEngravingZHighSpeed = () => {
   const {
@@ -19,16 +21,17 @@ const CurveEngravingZHighSpeed = () => {
       right_panel: { laser_panel: t },
     },
   } = useI18n();
-  const { dispatch, initState, selectedLayers, state } = useContext(ConfigPanelContext);
+  const { selectedLayers } = useContext(ConfigPanelContext);
   const {
     ceZSpeedLimit: { hasMultiValue, value },
-  } = state;
+    change,
+  } = useConfigPanelStore();
   const checked = useMemo(() => value !== 140 || hasMultiValue, [value, hasMultiValue]);
 
   const handleToggle = () => {
     const newValue = checked ? 140 : 300;
 
-    dispatch({ payload: { ceZSpeedLimit: newValue }, type: 'change' });
+    change({ ceZSpeedLimit: newValue });
 
     const batchCmd = new history.BatchCommand('Change curve engraving z speed limit');
 

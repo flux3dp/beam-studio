@@ -3,6 +3,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { ConfigProvider, InputNumber, Modal, Slider } from 'antd';
 
 import { ConfigModalBlock } from '@core/app/constants/antd-config';
+import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
@@ -12,6 +13,7 @@ import type { ConfigItem } from '@core/interfaces/ILayerConfig';
 
 import styles from './AdvancedPowerPanel.module.scss';
 import ConfigPanelContext from './ConfigPanelContext';
+import initState from './initState';
 
 interface Props {
   onClose: () => void;
@@ -25,7 +27,11 @@ const AdvancedPowerPanel = ({ onClose }: Props): React.JSX.Element => {
     },
     global: tGlobal,
   } = useI18n();
-  const { dispatch, initState, selectedLayers, state } = useContext(ConfigPanelContext);
+
+  const { selectedLayers } = useContext(ConfigPanelContext);
+  const { getState, update } = useConfigPanelStore();
+  const state = getState();
+
   const [draftValue, setDraftValue] = useState<{ minPower: ConfigItem<number> }>({
     minPower: state.minPower,
   });
@@ -51,7 +57,7 @@ const AdvancedPowerPanel = ({ onClose }: Props): React.JSX.Element => {
     });
     batchCmd.onAfter = initState;
     undoManager.addCommandToHistory(batchCmd);
-    dispatch({ payload: newState, type: 'update' });
+    update(newState);
     onClose();
   };
   const handleValueChange = useCallback((key: string, value: number, display = false) => {
@@ -86,7 +92,11 @@ const AdvancedPowerPanel = ({ onClose }: Props): React.JSX.Element => {
                 controls={false}
                 max={power}
                 min={0}
-                onChange={(val) => handleValueChange('minPower', val)}
+                onChange={(val) => {
+                  if (val === null) return;
+
+                  handleValueChange('minPower', val);
+                }}
                 precision={0}
                 size="small"
                 value={draftValue.minPower.value}
@@ -107,7 +117,7 @@ const AdvancedPowerPanel = ({ onClose }: Props): React.JSX.Element => {
             range
             step={1}
             tooltip={{
-              formatter: (v: number) => `${v}%`,
+              formatter: (v?: number) => `${v}%`,
             }}
             value={[displayValue.minPower.value, power]}
           />

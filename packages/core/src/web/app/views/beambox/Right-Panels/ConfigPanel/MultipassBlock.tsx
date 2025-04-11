@@ -4,6 +4,7 @@ import { Button, Popover } from 'antd-mobile';
 import classNames from 'classnames';
 
 import configOptions from '@core/app/constants/config-options';
+import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import history from '@core/app/svgedit/history/history';
 import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
@@ -18,6 +19,7 @@ import styles from './Block.module.scss';
 import ConfigPanelContext from './ConfigPanelContext';
 import ConfigSlider from './ConfigSlider';
 import ConfigValueDisplay from './ConfigValueDisplay';
+import initState from './initState';
 
 let svgCanvas: ISVGCanvas;
 
@@ -37,8 +39,8 @@ const MultipassBlock = ({ type = 'default' }: Props): React.JSX.Element => {
 
   const { activeKey } = useContext(ObjectPanelContext);
 
-  const { dispatch, initState, selectedLayers, simpleMode = true, state } = useContext(ConfigPanelContext);
-  const { multipass } = state;
+  const { change, multipass } = useConfigPanelStore();
+  const { selectedLayers, simpleMode = true } = useContext(ConfigPanelContext);
   const { hasMultiValue, value } = multipass;
   const timeEstimationButtonEventEmitter = useMemo(
     () => eventEmitterFactory.createEventEmitter('time-estimation-button'),
@@ -46,10 +48,7 @@ const MultipassBlock = ({ type = 'default' }: Props): React.JSX.Element => {
   );
 
   const handleChange = (val: number) => {
-    dispatch({
-      payload: { configName: CUSTOM_PRESET_CONSTANT, multipass: val },
-      type: 'change',
-    });
+    change({ configName: CUSTOM_PRESET_CONSTANT, multipass: val });
     timeEstimationButtonEventEmitter.emit('SET_ESTIMATED_TIME', null);
 
     if (type !== 'modal') {

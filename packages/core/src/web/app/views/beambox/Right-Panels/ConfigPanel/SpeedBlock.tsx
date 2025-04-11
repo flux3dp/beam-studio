@@ -12,6 +12,7 @@ import { getAddOnInfo } from '@core/app/constants/addOn';
 import configOptions from '@core/app/constants/config-options';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import history from '@core/app/svgedit/history/history';
 import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
 import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
@@ -35,6 +36,7 @@ import styles from './Block.module.scss';
 import ConfigPanelContext from './ConfigPanelContext';
 import ConfigSlider from './ConfigSlider';
 import ConfigValueDisplay from './ConfigValueDisplay';
+import initState from './initState';
 
 let svgCanvas: ISVGCanvas;
 
@@ -45,7 +47,8 @@ getSVGAsync((globalSVG) => {
 const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.JSX.Element => {
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
-  const { dispatch, initState, selectedLayers, simpleMode = true, state } = useContext(ConfigPanelContext);
+  const { change, module, speed } = useConfigPanelStore();
+  const { selectedLayers, simpleMode = true } = useContext(ConfigPanelContext);
   const { activeKey } = useContext(ObjectPanelContext);
   const visible = activeKey === 'speed';
   const { hasVector } = useContext(LayerPanelContext);
@@ -55,8 +58,8 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
     [],
   );
 
-  const { hasMultiValue, value } = state.speed;
-  const layerModule = state.module.value;
+  const { hasMultiValue, value } = speed;
+  const layerModule = module.value;
   const isPrinting = useMemo(() => printingModules.has(layerModule), [layerModule]);
 
   const {
@@ -140,10 +143,7 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   }
 
   const handleChange = (val: number) => {
-    dispatch({
-      payload: { configName: CUSTOM_PRESET_CONSTANT, speed: val },
-      type: 'change',
-    });
+    change({ configName: CUSTOM_PRESET_CONSTANT, speed: val });
     timeEstimationButtonEventEmitter.emit('SET_ESTIMATED_TIME', null);
 
     if (type !== 'modal') {

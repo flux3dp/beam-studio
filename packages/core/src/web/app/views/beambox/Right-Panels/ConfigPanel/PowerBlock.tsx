@@ -5,6 +5,7 @@ import classNames from 'classnames';
 
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';
+import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
@@ -21,12 +22,14 @@ import {
 } from '@core/helpers/layer/layer-config-helper';
 import { getLayerByName } from '@core/helpers/layer/layer-helper';
 import useI18n from '@core/helpers/useI18n';
+import type { ConfigItem } from '@core/interfaces/ILayerConfig';
 
 import AdvancedPowerPanel from './AdvancedPowerPanel';
 import styles from './Block.module.scss';
 import ConfigPanelContext from './ConfigPanelContext';
 import ConfigSlider from './ConfigSlider';
 import ConfigValueDisplay from './ConfigValueDisplay';
+import initState from './initState';
 
 const MAX_VALUE = 100;
 const MIN_VALUE = 0;
@@ -34,7 +37,8 @@ const MIN_VALUE = 0;
 function PowerBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.JSX.Element {
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
-  const { dispatch, initState, selectedLayers, state } = useContext(ConfigPanelContext);
+  const { change, power, selectedLayer, update } = useConfigPanelStore();
+  const { selectedLayers } = useContext(ConfigPanelContext);
   const { activeKey } = useContext(ObjectPanelContext);
   const [showModal, setShowModal] = useState(false);
   const openModal = useCallback(() => setShowModal(true), []);
@@ -55,12 +59,8 @@ function PowerBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
     setHasPwmImages(checkPwmImages(selectedLayers));
   }, [selectedLayers]);
 
-  const { power, selectedLayer } = state;
   const handleChange = (value: number) => {
-    dispatch({
-      payload: { configName: CUSTOM_PRESET_CONSTANT, power: value },
-      type: 'change',
-    });
+    change({ configName: CUSTOM_PRESET_CONSTANT, power: value });
 
     if (type !== 'modal') {
       const batchCmd = new history.BatchCommand('Change power');
@@ -73,7 +73,7 @@ function PowerBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
 
         const minPower = getData(layer, 'minPower');
 
-        if (value <= minPower) {
+        if (minPower && value <= minPower) {
           writeDataLayer(layer, 'minPower', 0, { batchCmd });
           minPowerChanged = true;
         }
@@ -81,9 +81,9 @@ function PowerBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
 
       if (minPowerChanged) {
         const selectedIdx = selectedLayers.findIndex((layerName) => layerName === selectedLayer);
-        const config = getMultiSelectData(layers, selectedIdx, 'minPower');
+        const config = getMultiSelectData(layers, selectedIdx, 'minPower') as ConfigItem<number>;
 
-        dispatch({ payload: { minPower: config }, type: 'update' });
+        update({ minPower: config });
       }
 
       batchCmd.onAfter = initState;
@@ -122,7 +122,7 @@ function PowerBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
         step={1}
         value={power.value}
       />
-      {power.value < workareaObj.minPower && (
+      {power.value < (workareaObj.minPower ?? -1) && (
         <div className={styles.warning}>
           <div className={styles['warning-icon']}>!</div>
           <div className={styles['warning-text']}>{t.low_power_warning}</div>

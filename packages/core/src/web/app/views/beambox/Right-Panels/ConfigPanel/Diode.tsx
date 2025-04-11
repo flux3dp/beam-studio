@@ -3,6 +3,7 @@ import React, { memo, useContext } from 'react';
 import { Switch } from 'antd';
 import classNames from 'classnames';
 
+import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import history from '@core/app/svgedit/history/history';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -11,6 +12,7 @@ import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './Block.module.scss';
 import ConfigPanelContext from './ConfigPanelContext';
+import initState from './initState';
 
 let svgCanvas: ISVGCanvas;
 
@@ -21,13 +23,13 @@ getSVGAsync((globalSVG) => {
 const Diode = (): React.JSX.Element => {
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
-  const { dispatch, initState, selectedLayers, state } = useContext(ConfigPanelContext);
-  const { diode } = state;
+  const { change, diode } = useConfigPanelStore();
+  const { selectedLayers } = useContext(ConfigPanelContext);
 
   const handleToggle = () => {
     const newValue = diode.value === 1 ? 0 : 1;
 
-    dispatch({ payload: { diode: newValue }, type: 'change' });
+    change({ diode: newValue });
 
     const batchCmd = new history.BatchCommand('Change diode toggle');
 

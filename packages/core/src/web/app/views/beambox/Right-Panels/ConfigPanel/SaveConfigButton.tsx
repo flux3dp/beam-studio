@@ -7,6 +7,7 @@ import dialogCaller from '@core/app/actions/dialog-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';
+import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import { getConfigKeys, writeData } from '@core/helpers/layer/layer-config-helper';
 import presetHelper from '@core/helpers/presets/preset-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -17,7 +18,9 @@ import styles from './SaveConfigButton.module.scss';
 
 const SaveConfigButton = (): React.JSX.Element => {
   const lang = useI18n().beambox.right_panel.laser_panel;
-  const { dispatch, selectedLayers, state } = useContext(ConfigPanelContext);
+  const { getState, rename } = useConfigPanelStore();
+  const state = getState();
+  const { selectedLayers } = useContext(ConfigPanelContext);
   const disabled = selectedLayers.length !== 1;
 
   const handleSave = (name: string) => {
@@ -50,7 +53,7 @@ const SaveConfigButton = (): React.JSX.Element => {
     });
     presetHelper.savePreset(newConfig);
     selectedLayers.forEach((layerName) => writeData(layerName, 'configName', name));
-    dispatch({ payload: name, type: 'rename' });
+    rename(name);
   };
 
   return (
