@@ -7,6 +7,7 @@ import { useKeyDown } from '../useKeyDown';
 import { useMouseDown } from '../useMouseDown';
 
 interface Options {
+  element?: HTMLElement;
   maxScale?: number;
   minScale?: number;
   onScaleChanged?: (scale: number) => void;
@@ -32,12 +33,14 @@ type ReturnType = {
 /**
  * usePaperCanvas
  * hooks that contains paperjs view operations(mainly for zooming and panning)
+ * @param element element to attach the event listener to
  * @param maxScale max scale of the canvas
  * @param minScale min scale of the canvas
  * @param onScaleChanged callback when scale changed
  * @returns {ReturnType} {@link ReturnType}
  */
 export const usePaperCanvas = ({
+  element = document as unknown as HTMLElement,
   maxScale = 20,
   minScale = 0.01,
   onScaleChanged = () => {},
@@ -51,6 +54,7 @@ export const usePaperCanvas = ({
     predicate: useCallback(({ key }) => key === ' ', []),
   });
   useMouseDown({
+    element,
     mouseDown: useCallback(() => {
       setIsDraggable(true);
       setIsDragging(true);
@@ -62,6 +66,7 @@ export const usePaperCanvas = ({
     predicate: useCallback(({ button }) => button === 1, []),
   });
   useMouseDown({
+    element,
     mouseDown: useCallback(() => setIsDragging(isDraggable), [isDraggable]),
     mouseUp: useCallback(() => setIsDragging(false), []),
     predicate: useCallback(({ button }) => button === 0, []),
@@ -103,11 +108,5 @@ export const usePaperCanvas = ({
     [handleMove, handleZoomByScale],
   );
 
-  return {
-    handleWheel,
-    handleZoom,
-    handleZoomByScale,
-    isDraggable,
-    isDragging,
-  };
+  return { handleWheel, handleZoom, handleZoomByScale, isDraggable, isDragging };
 };

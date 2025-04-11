@@ -48,44 +48,47 @@ function UnmemorizedSider({
           <div className={styles.wrapper}>
             <Form>
               <Form.Item label={`Manual Mode:`}>
-                <Switch
-                  className={styles.switch}
-                  onChange={(checked) => setMode(checked ? 'manual' : 'auto')}
-                  value={mode === 'manual'}
-                />
-                <QuestionCircleOutlined className={styles.icon} />
-              </Form.Item>
-              {mode === 'manual' && (
-                <Form.Item label={`Width:`}>
-                  <UnitInput
-                    addonAfter="mm"
-                    max={10}
-                    min={0.1}
-                    onChange={(value) => setBridgeWidth(value!)}
-                    precision={1}
-                    step={1}
-                    value={bridgeWidth}
-                  />
-                </Form.Item>
-              )}
-              {mode === 'auto' && (
                 <>
-                  <Form.Item label={`Gap:`}>
-                    <UnitInput
-                      addonAfter="mm"
-                      max={50}
-                      min={1}
-                      onChange={(value) => setBridgeGap(value!)}
-                      precision={1}
-                      step={1}
-                      value={bridgeGap}
-                    />
-                  </Form.Item>
-                  <Button onClick={handleCutPathByGap} type="default">
-                    Add Bridge
-                  </Button>
+                  <Switch
+                    className={styles.switch}
+                    onChange={(checked) => setMode(checked ? 'manual' : 'auto')}
+                    value={mode === 'manual'}
+                  />
+                  <QuestionCircleOutlined className={styles.icon} />
                 </>
-              )}
+              </Form.Item>
+              <Form.Item hidden={mode !== 'manual'} label={`Width:`}>
+                <UnitInput
+                  addonAfter="mm"
+                  data-testid="bridge-width"
+                  isInch={false}
+                  key="bridge-width"
+                  max={10}
+                  min={0.1}
+                  onChange={(value) => setBridgeWidth(value!)}
+                  precision={1}
+                  step={1}
+                  type="number"
+                  value={bridgeWidth}
+                />
+              </Form.Item>
+              <Form.Item hidden={mode !== 'auto'} label={`Gap:`}>
+                <UnitInput
+                  addonAfter="mm"
+                  data-testid="bridge-gap"
+                  isInch={false}
+                  key="bridge-gap"
+                  max={50}
+                  min={1}
+                  onChange={(value) => setBridgeGap(value!)}
+                  precision={1}
+                  step={1}
+                  value={bridgeGap}
+                />
+              </Form.Item>
+              <Button hidden={mode !== 'auto'} onClick={handleCutPathByGap} type="default">
+                Add Bridge
+              </Button>
             </Form>
           </div>
         </div>
