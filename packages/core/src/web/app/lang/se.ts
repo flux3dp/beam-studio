@@ -292,6 +292,10 @@ const lang: ILang = {
       bug_report: 'Felrapport',
       change_workarea_before_preview: 'Arbetsområdet för %s matchar inte det för närvarande inställda arbetsområdet. Vill du byta nuvarande arbetsområde?',
       convert_to_path_fail: 'Misslyckades med att konvertera till bana.',
+      disassemble_use: {
+        clip_path_warning: 'Denna fil innehåller en klippmask och kan inte delas upp.',
+        execute_time_warning: 'Detta kommer att separera importerad DXF eller SVG. Eftersom filen kan innehålla ett stort antal element kan det ta tid att separera. Är du säker på att du vill fortsätta?',
+      },
       dxf_bounding_box_size_over: 'Ritningens storlek är utanför arbetsområdet. Flytta din ritning närmare origo i ditt CAD-program, eller se till att enheten är korrekt inställd.',
       dxf_version_waring: 'Versionen av denna DXF-fil är inte 2013, det kan finnas potentiella kompatibilitetsproblem.',
       facebook_group_invitation: {
@@ -354,7 +358,6 @@ const lang: ILang = {
       too_fast_for_path: 'För hög hastighet i lager med banobjekt kan ge lägre precision vid skärning.\nVi rekommenderar inte hastigheter över %(limit)s vid skärning.',
       too_fast_for_path_and_constrain: 'Följande lager: %(layers)s \ninnehåller vektorbanaobjekt och har hastighet över %(limit)s.\nSkärhastigheten för vektorbanaobjekt kommer begränsas till %(limit)s.\nDu kan ta bort denna begränsning under inställningar.',
       touchpad: 'Pekplatta',
-      ungroup_use: 'Detta kommer att separera importerad DXF eller SVG. Eftersom filen kan innehålla ett stort antal element kan det ta tid att separera. Är du säker på att du vill fortsätta?',
       upload_failed: '#819 Filuppladdningen misslyckades.',
       upload_file_too_large: '#819 Filen är för stor för uppladdning.',
       vectorize_shading_image: 'Gradientbilder tar längre tid att spåra och är benägna till brus. Vänligen stäng av bildgradienten innan du kör.',

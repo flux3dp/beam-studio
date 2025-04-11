@@ -292,6 +292,10 @@ const lang: ILang = {
       bug_report: 'Nahlášení chyby',
       change_workarea_before_preview: 'Pracovní oblast %s nesedí k momentálně nastavené pracovní oblasti. Chcete přepnout na momentální pracovní oblast?',
       convert_to_path_fail: 'Nepodařilo se převést na cestu.',
+      disassemble_use: {
+        clip_path_warning: 'Tento soubor obsahuje ořezovou masku a nelze jej rozložit.',
+        execute_time_warning: 'Toto odstraní ze skupiny importované DXF nebo SVG. Protože může soubor obsahovat velký počet prvků, může rozdělování skupiny trvat. Opravdu si přejete pokračovat?',
+      },
       dxf_bounding_box_size_over: 'Velikost kresby je mimo pracovní oblast. Přesuňte prosím svou kresbu blíž k vodítku ve vašem CAD softwaru, nebo se ujistěte, že je jednotka správně nastavena.',
       dxf_version_waring: 'Verze tohoto DFX souboru není 2013, může dojít k problémům s kompatibilitou.',
       facebook_group_invitation: {
@@ -354,7 +358,6 @@ const lang: ILang = {
       too_fast_for_path: 'Využívání příliš vysoké rychlosti u vrstev obsahující objekty cest může vyústit v nízkou přesnost při řezání.\nNedoporučujeme při řezání využívat rychlost vyšší než %(limit)s.',
       too_fast_for_path_and_constrain: 'Následující vrstvy: %(layers)s \nobsahují vektorové objekty cest a jejich rychlost převyšuje %(limit)s.\nRychlost řezání vektorových objektů cest bude omezena na %(limit)s.\nTento limit můžete odstranit v Nastavení.',
       touchpad: 'TouchPad',
-      ungroup_use: 'Toto odstraní ze skupiny importované DXF nebo SVG. Protože může soubor obsahovat velký počet prvků, může rozdělování skupiny trvat. Opravdu si přejete pokračovat?',
       upload_failed: '#819 Nepodařilo se nahrát soubor.',
       upload_file_too_large: '#819 Soubor je pro nahrání příliš velký.',
       vectorize_shading_image: 'Obrázky s přechodem trvají delší dobu obkreslit a může dojít k zvýšenému hluku. Vypněte prosím obrázky s přechodem před zahájením.',

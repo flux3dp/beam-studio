@@ -292,6 +292,10 @@ const lang: ILang = {
       bug_report: 'Segnalazione di bug',
       change_workarea_before_preview: "L'area di lavoro di %s non corrisponde all'area di lavoro attualmente impostata. Vuoi passare all'area di lavoro corrente?",
       convert_to_path_fail: 'Impossibile convertire in percorso.',
+      disassemble_use: {
+        clip_path_warning: 'Questo file contiene una maschera di ritaglio e non può essere scomposto.',
+        execute_time_warning: 'Questo separerà il gruppo di file DXF o SVG importati. Poiché il file potrebbe contenere un gran numero di elementi, potrebbe volerci del tempo per separare il gruppo. Sei sicuro di voler procedere?',
+      },
       dxf_bounding_box_size_over: "Le dimensioni del disegno superano l'area di lavoro. Sposta il tuo disegno più vicino all'origine nel tuo software CAD, o assicurati che l'unità sia impostata correttamente.",
       dxf_version_waring: 'La versione di questo file DXF non è 2013, potrebbero esserci potenziali problemi di incompatibilità.',
       facebook_group_invitation: {
@@ -354,7 +358,6 @@ const lang: ILang = {
       too_fast_for_path: 'Una velocità troppo elevata negli strati contenenti oggetti tracciato può comportare una precisione inferiore durante il taglio. Non consigliamo di usare una velocità superiore a %(limit)s durante il taglio.',
       too_fast_for_path_and_constrain: 'I seguenti strati: %(layers)s contengono oggetti tracciato vettoriali e hanno una velocità che supera i %(limit)s. La velocità di taglio degli oggetti tracciato vettoriali sarà limitata a %(limit)s. È possibile rimuovere questo limite nelle impostazioni delle preferenze.',
       touchpad: 'Touchpad',
-      ungroup_use: 'Questo separerà il gruppo di file DXF o SVG importati. Poiché il file potrebbe contenere un gran numero di elementi, potrebbe volerci del tempo per separare il gruppo. Sei sicuro di voler procedere?',
       upload_failed: '#819 Caricamento file non riuscito.',
       upload_file_too_large: '#819 Il file è troppo grande per il caricamento.',
       vectorize_shading_image: "Le immagini sfumate richiedono più tempo per essere tracciate e sono soggette a rumore. Disattiva il gradiente dell'immagine prima di eseguire.",

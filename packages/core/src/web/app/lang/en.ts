@@ -292,6 +292,10 @@ const lang: ILang = {
       bug_report: 'Bug Report',
       change_workarea_before_preview: 'The workarea of %s does not match the currently set workarea. Do you want to switch current workarea?',
       convert_to_path_fail: 'Failed to convert to path.',
+      disassemble_use: {
+        clip_path_warning: 'This file contains a clipping mask and cannot be disassembled.',
+        execute_time_warning: 'This will ungroup imported DXF or SVG. Because the file might contain a great number of elements, it might take time to ungroup. Are you sure to proceed?',
+      },
       dxf_bounding_box_size_over: 'Drawing size is out of workarea. Please move your drawing closer to origin in your CAD software, or make sure that the unit is set correctly.',
       dxf_version_waring: 'The version of this DXF file is not 2013, there might be potential incompatibility problems.',
       facebook_group_invitation: {
@@ -354,7 +358,6 @@ const lang: ILang = {
       too_fast_for_path: "Using too high speed in layers containing path objects may result in lower precision when cutting.\nWe don't recommend using speed faster than %(limit)s when cutting.",
       too_fast_for_path_and_constrain: 'Following layers: %(layers)s \ncontain vector path objects, and have speed exceeding %(limit)s.\nThe cutting speed of vector path objects will be constrained to %(limit)s.\nYou can remove this limit at Preferences Settings.',
       touchpad: 'TouchPad',
-      ungroup_use: 'This will ungroup imported DXF or SVG. Because the file might contain a great number of elements, it might take time to ungroup. Are you sure to proceed?',
       upload_failed: '#819 File upload failed.',
       upload_file_too_large: '#819 File is too large for upload.',
       vectorize_shading_image: 'Gradient images takes more time to trace and are prone to noise. Please kindly turn off the image gradient before executing.',

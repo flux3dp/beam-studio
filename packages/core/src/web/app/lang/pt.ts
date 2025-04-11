@@ -292,6 +292,10 @@ const lang: ILang = {
       bug_report: 'Relatório de erros',
       change_workarea_before_preview: 'A área de trabalho de %s não corresponde à área de trabalho atualmente definida. Deseja alterar a área de trabalho atual?',
       convert_to_path_fail: 'Falha ao converter para caminho.',
+      disassemble_use: {
+        clip_path_warning: 'Este arquivo contém uma máscara de recorte e não pode ser desmontado.',
+        execute_time_warning: 'Isso irá desagrupar DXF ou SVG importados. Como o arquivo pode conter um grande número de elementos, pode demorar para desagrupar. Tem certeza de que deseja continuar?',
+      },
       dxf_bounding_box_size_over: 'O tamanho do desenho está fora da área de trabalho. Por favor, mova seu desenho mais perto da origem no seu software CAD, ou certifique-se de que a unidade está configurada corretamente.',
       dxf_version_waring: 'A versão deste arquivo DXF não é 2013, pode haver problemas potenciais de incompatibilidade.',
       facebook_group_invitation: {
@@ -354,7 +358,6 @@ const lang: ILang = {
       too_fast_for_path: 'Usar velocidade muito alta em camadas contendo objetos de caminho pode resultar em menor precisão ao cortar. Não recomendamos usar velocidade superior a %(limit)s ao cortar.',
       too_fast_for_path_and_constrain: 'As seguintes camadas: %(layers)s \ncontêm objetos de caminho vetorial e têm velocidade superior a %(limit)s. A velocidade de corte dos objetos de caminho vetorial será limitada a %(limit)s. Você pode remover este limite nas Configurações de Preferências.',
       touchpad: 'TouchPad',
-      ungroup_use: 'Isso irá desagrupar DXF ou SVG importados. Como o arquivo pode conter um grande número de elementos, pode demorar para desagrupar. Tem certeza de que deseja continuar?',
       upload_failed: '#819 Falha no upload do arquivo.',
       upload_file_too_large: '#819 O arquivo é muito grande para upload.',
       vectorize_shading_image: 'Imagens com gradiente levam mais tempo para traçar e são propensas a ruído. Por favor, desative o gradiente da imagem antes de executar.',

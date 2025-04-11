@@ -292,6 +292,10 @@ const lang: ILang = {
       bug_report: 'Feilrapport',
       change_workarea_before_preview: 'Arbeidsområdet for %s samsvarer ikke med det gjeldende arbeidsområdet. Vil du bytte gjeldende arbeidsområde?',
       convert_to_path_fail: 'Kunne ikke konvertere til bane.',
+      disassemble_use: {
+        clip_path_warning: 'Denne filen inneholder en klippemaske og kan ikke demonteres.',
+        execute_time_warning: 'Dette vil oppheve grupperingen av importerte DXF eller SVG. Fordi filen kan inneholde et stort antall elementer, kan det ta tid å oppheve grupperingen. Er du sikker på at du vil fortsette?',
+      },
       dxf_bounding_box_size_over: 'Tegnestørrelsen er utenfor arbeidsområdet. Flytt tegningen nærmere opprinnelsen i CAD-programvaren, eller kontroller at enheten er riktig satt.',
       dxf_version_waring: 'Versjonen av denne DXF-filen er ikke 2013, det kan være potensielle kompatibilitetsproblemer.',
       facebook_group_invitation: {
@@ -354,7 +358,6 @@ const lang: ILang = {
       too_fast_for_path: 'For høy hastighet i lag som inneholder baner kan resultere i lavere presisjon ved kutting.\nVi anbefaler ikke å bruke hastigheter over %(limit)s ved kutting.',
       too_fast_for_path_and_constrain: 'Følgende lag: %(layers)s \ninneholder vektorbaner, og har hastighet over %(limit)s.\nKuttehastigheten for vektorbaner vil bli begrenset til %(limit)s.\nDu kan fjerne denne begrensningen under Innstillinger.',
       touchpad: 'Touchpad',
-      ungroup_use: 'Dette vil oppheve grupperingen av importerte DXF eller SVG. Fordi filen kan inneholde et stort antall elementer, kan det ta tid å oppheve grupperingen. Er du sikker på at du vil fortsette?',
       upload_failed: '#819 Filopplasting mislyktes.',
       upload_file_too_large: '#819 Filen er for stor til opplasting.',
       vectorize_shading_image: 'Gradientbilder tar lengre tid å spore og er utsatt for støy. Slå av bildegradienten før du utfører.',

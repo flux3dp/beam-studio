@@ -292,6 +292,10 @@ const lang: ILang = {
       bug_report: '버그 리포트',
       change_workarea_before_preview: '작업 영역(%s)이 현재 설정된 작업 영역과 일치하지 않습니다. 현재 작업 영역을 전환하시겠습니까?',
       convert_to_path_fail: '경로로 변환 실패.',
+      disassemble_use: {
+        clip_path_warning: '이 파일에는 클리핑 마스크가 포함되어 있어 분해할 수 없습니다.',
+        execute_time_warning: '이 작업은 가져온 DXF 또는 SVG를 언그룹화합니다. 파일이 많은 요소를 포함하고 있기 때문에 시간이 걸릴 수 있습니다. 계속 진행하시겠습니까?',
+      },
       dxf_bounding_box_size_over: '도면 크기가 작업 영역을 벗어났습니다. CAD 소프트웨어에서 도면을 원점에 가깝게 이동하거나, 단위가 올바르게 설정되었는지 확인하세요.',
       dxf_version_waring: '이 DXF 파일의 버전이 2013이 아닌 경우 호환성 문제가 있을 수 있습니다.',
       facebook_group_invitation: {
@@ -354,7 +358,6 @@ const lang: ILang = {
       too_fast_for_path: '경로 객체를 포함한 레이어에서 너무 높은 속도를 사용하면 절단 정밀도가 낮아질 수 있습니다. 절단할 때 %(limit)s보다 빠른 속도를 사용하지 않는 것이 좋습니다.',
       too_fast_for_path_and_constrain: '다음 레이어: %(layers)s \n벡터 경로 객체를 포함하고, 속도가 %(limit)s를 초과합니다. 벡터 경로 객체의 절단 속도는 %(limit)s로 제한됩니다. 이 제한을 기본 설정에서 제거할 수 있습니다.',
       touchpad: '터치패드',
-      ungroup_use: '이 작업은 가져온 DXF 또는 SVG를 언그룹화합니다. 파일이 많은 요소를 포함하고 있기 때문에 시간이 걸릴 수 있습니다. 계속 진행하시겠습니까?',
       upload_failed: '#819 파일 업로드 실패.',
       upload_file_too_large: '#819 파일이 업로드하기에 너무 큽니다.',
       vectorize_shading_image: '그라데이션 이미지는 추적하는 데 시간이 더 오래 걸리며, 잡음이 발생하기 쉽습니다. 실행하기 전에 이미지 그라데이션을 꺼주세요.',

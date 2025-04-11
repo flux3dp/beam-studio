@@ -292,6 +292,10 @@ const lang: ILang = {
       bug_report: 'Informe de error',
       change_workarea_before_preview: 'El área de trabajo de %s no coincide con el área de trabajo configurada actualmente. ¿Quiere cambiar el área de trabajo actual?',
       convert_to_path_fail: 'No se ha podido convertir a la ruta.',
+      disassemble_use: {
+        clip_path_warning: 'Este archivo contiene una máscara de recorte y no se puede descomponer.',
+        execute_time_warning: 'Esto desagrupará los DXF o SVG importados. Debido a que el archivo puede contener una gran cantidad de elementos, puede llevar tiempo desagruparlo. ¿Estás seguro de proceder?',
+      },
       dxf_bounding_box_size_over: 'El tamaño del dibujo está fuera del área de trabajo. Por favor, acerca tu dibujo al origen en tu software de CAD, o asegúrate de que la unidad esté ajustada correctamente.',
       dxf_version_waring: 'La versión de este archivo DXF no es la 2013, podría haber potenciales problemas de incompatibilidad.',
       facebook_group_invitation: {
@@ -354,7 +358,6 @@ const lang: ILang = {
       too_fast_for_path: 'El uso de una velocidad demasiado alta en capas que contienen objetos de trayectoria puede resultar en una menor precisión al cortar.\nNo recomendamos utilizar una velocidad superior a %(limit)s al cortar.',
       too_fast_for_path_and_constrain: 'Capas siguientes: %(layers)s \nLa velocidad de corte de los objetos de trayectoria vectorial se limitará a %(limit)s.\nLa velocidad de corte de los objetos de trayectoria vectorial se limitará a %(limit)s.\nPuedes eliminar este límite en la Configuración de las Preferencias.',
       touchpad: 'TouchPad',
-      ungroup_use: 'Esto desagrupará los DXF o SVG importados. Debido a que el archivo puede contener una gran cantidad de elementos, puede llevar tiempo desagruparlo. ¿Estás seguro de proceder?',
       upload_failed: '#819 La carga del archivo falló.',
       upload_file_too_large: '#819 El archivo es demasiado grande para subirlo.',
       vectorize_shading_image: 'Las imágenes con gradientes tardan más tiempo en ser trazadas y son propensas al ruido. Por favor, apaga el gradiente de la imagen antes de ejecutarla.',

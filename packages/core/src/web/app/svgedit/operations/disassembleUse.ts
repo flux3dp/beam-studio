@@ -30,6 +30,30 @@ getSVGAsync(({ Canvas }) => {
 
 const { svgedit } = window;
 
+function hasValidClipPaths(root: SVGElement): boolean {
+  const elementsWithClipPath = root.querySelectorAll('[clip-path]');
+
+  for (let i = 0; i < elementsWithClipPath.length; i++) {
+    const element = elementsWithClipPath[i] as SVGElement;
+    const clipPathAttr = element.getAttribute('clip-path');
+
+    if (!clipPathAttr) continue;
+
+    const match = clipPathAttr.match(/url\(#(.+?)\)/);
+
+    if (match) {
+      const id = match[1];
+      const clipPath = root.querySelector(`clipPath[id="${id}"]`);
+
+      if (clipPath) return true;
+    } else {
+      element.removeAttribute('clip-path');
+    }
+  }
+
+  return false;
+}
+
 export const disassembleUse = async (
   elems: null | SVGElement[] = null,
   {
@@ -44,7 +68,7 @@ export const disassembleUse = async (
     skipConfirm?: boolean;
   } = {},
 ): Promise<BatchCommand | void> => {
-  if (!elems) elems = svgCanvas.getSelectedElems() as SVGElement[];
+  if (!elems) elems = [...svgCanvas.getSelectedElems()] as SVGElement[];
 
   const useLayerColor = beamboxPreference.read('use_layer_color');
 
@@ -56,7 +80,7 @@ export const disassembleUse = async (
     const confirm = await new Promise((resolve) => {
       alertCaller.popUp({
         buttonType: alertConstants.YES_NO,
-        message: t.popup.ungroup_use,
+        message: t.popup.disassemble_use.execute_time_warning,
         onNo: () => resolve(false),
         onYes: () => resolve(true),
         type: alertConstants.SHOW_POPUP_WARNING,
@@ -70,18 +94,33 @@ export const disassembleUse = async (
   }
 
   const batchCmd = new history.BatchCommand('Disassemble Use');
+  const progressId = 'disassemble-use';
+  let isSomeWithClipPath = false;
+
+  if (showProgress) {
+    progressCaller.openSteppingProgress({
+      id: progressId,
+      message: `${t.right_panel.object_panel.actions_panel.disassembling} - 0%`,
+    });
+    // Wait for progress update
+    await new Promise((resolve) => setTimeout(resolve, 50));
+  }
 
   for (let i = 0; i < elems.length; ++i) {
     const elem = elems[i];
-
-    if (!elem || elem.tagName !== 'use') continue;
+    const allElementPercentage = Math.round((100 * i) / elems.length);
 
     if (showProgress) {
-      progressCaller.openSteppingProgress({
-        id: 'disassemble-use',
-        message: `${t.right_panel.object_panel.actions_panel.disassembling} - 0%`,
+      progressCaller.update(progressId, {
+        message: `${t.right_panel.object_panel.actions_panel.ungrouping} - ${allElementPercentage}%`,
+        percentage: allElementPercentage,
       });
+
+      // Wait for progress update
+      await new Promise((resolve) => setTimeout(resolve, 50));
     }
+
+    if (!elem || elem.tagName !== 'use') continue;
 
     const isFromNP = elem.getAttribute('data-np') === '1';
     const ratioFixed = elem.getAttribute('data-ratiofixed');
@@ -109,9 +148,14 @@ export const disassembleUse = async (
 
     if (!href) continue;
 
-    const svg = document.querySelector(href);
+    const svg = document.querySelector<SVGElement>(href);
 
     if (!svg) continue;
+
+    if (hasValidClipPaths(svg)) {
+      isSomeWithClipPath = true;
+      continue;
+    }
 
     const children = [...Array.from(svg.childNodes).reverse()];
     let g = document.createElementNS(NS.SVG, 'g');
@@ -131,12 +175,7 @@ export const disassembleUse = async (
     const descendants = Array.from(g.querySelectorAll('*')) as Element[];
     const nodeNumbers = descendants.length;
 
-    if (showProgress) {
-      // Wait for progress open
-      await new Promise((resolve) => setTimeout(resolve, 50));
-    }
-
-    let currentProgress = 0;
+    let currentElementPercentage = 0;
 
     for (let j = 0; j < descendants.length; j++) {
       const child = descendants[j];
@@ -158,27 +197,30 @@ export const disassembleUse = async (
       svgedit.recalculate.recalculateDimensions(child);
 
       if (showProgress) {
-        const progress = Math.round((200 * j) / nodeNumbers) / 2;
+        const elementPercentage = Math.round((100 * j) / nodeNumbers);
 
-        if (progress > currentProgress) {
-          progressCaller.update('disassemble-use', {
-            message: `${t.right_panel.object_panel.actions_panel.disassembling} - ${
-              Math.round((9000 * j) / nodeNumbers) / 100
-            }%`,
-            percentage: progress * 0.9,
+        if (elementPercentage > currentElementPercentage) {
+          const percentage = Math.round(allElementPercentage + (0.9 * elementPercentage) / elems.length);
+
+          progressCaller.update(progressId, {
+            message: `${t.right_panel.object_panel.actions_panel.disassembling} - ${percentage}%`,
+            percentage,
           });
+
           // Wait for progress update
           await new Promise((resolve) => setTimeout(resolve, 10));
-          currentProgress = progress;
+          currentElementPercentage = elementPercentage;
         }
       }
     }
     layer.appendChild(g);
 
     if (showProgress) {
-      progressCaller.update('disassemble-use', {
-        message: `${t.right_panel.object_panel.actions_panel.ungrouping} - 90%`,
-        percentage: 90,
+      const percentage = Math.round(allElementPercentage + 90 / elems.length);
+
+      progressCaller.update(progressId, {
+        message: `${t.right_panel.object_panel.actions_panel.ungrouping} - ${percentage}%`,
+        percentage,
       });
       await new Promise((resolve) => setTimeout(resolve, 50));
     }
@@ -230,16 +272,23 @@ export const disassembleUse = async (
 
     if (ratioFixed) svgCanvas.getSelectedElems().forEach((elem) => elem.setAttribute('data-ratiofixed', ratioFixed));
 
-    if (showProgress) {
-      progressCaller.update('disassemble-use', {
-        message: `${t.right_panel.object_panel.actions_panel.ungrouping} - 100%`,
-        percentage: 100,
-      });
-      progressCaller.popById('disassemble-use');
-    }
-
     svgCanvas.tempGroupSelectedElements();
     currentFileManager.setHasUnsavedChanges(true);
+  }
+
+  if (showProgress) {
+    progressCaller.update(progressId, {
+      message: `${t.right_panel.object_panel.actions_panel.ungrouping} - 100%`,
+      percentage: 100,
+    });
+    progressCaller.popById(progressId);
+  }
+
+  if (isSomeWithClipPath) {
+    alertCaller.popUp({
+      message: t.popup.disassemble_use.clip_path_warning,
+      type: alertConstants.SHOW_POPUP_WARNING,
+    });
   }
 
   if (batchCmd && !batchCmd.isEmpty()) {
