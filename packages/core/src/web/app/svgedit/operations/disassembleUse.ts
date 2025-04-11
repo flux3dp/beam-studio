@@ -54,6 +54,7 @@ function hasValidClipPaths(root: SVGElement): boolean {
   return false;
 }
 
+// TODO: add unit test
 export const disassembleUse = async (
   elems: null | SVGElement[] = null,
   {
