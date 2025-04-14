@@ -12,6 +12,7 @@ import history from '@core/app/svgedit/history/history';
 import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import objectPanelItemStyles from '@core/app/views/beambox/Right-Panels/ObjectPanelItem.module.scss';
+import useBeamboxPreference from '@core/helpers/hooks/useBeamboxPreference';
 import { CUSTOM_PRESET_CONSTANT, writeData } from '@core/helpers/layer/layer-config-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -37,7 +38,8 @@ function InkBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-it
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
   const { change, color, fullcolor, ink } = useConfigPanelStore();
-  const { selectedLayers, simpleMode = true } = useContext(ConfigPanelContext);
+  const { selectedLayers } = useContext(ConfigPanelContext);
+  const simpleMode = !useBeamboxPreference('print-advanced-mode');
   const { activeKey } = useContext(ObjectPanelContext);
   const [showModal, setShowModal] = useState(false);
   const visible = activeKey === 'power';

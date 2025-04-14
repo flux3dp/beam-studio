@@ -457,11 +457,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     );
   };
 
-  return (
-    <ConfigPanelContext.Provider value={{ selectedLayers, simpleMode: !beamboxPreference.read('print-advanced-mode') }}>
-      {getContent()}
-    </ConfigPanelContext.Provider>
-  );
+  return <ConfigPanelContext.Provider value={{ selectedLayers }}>{getContent()}</ConfigPanelContext.Provider>;
 };
 
 export default memo(ConfigPanel);

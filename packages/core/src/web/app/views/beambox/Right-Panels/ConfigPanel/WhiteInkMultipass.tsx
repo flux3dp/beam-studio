@@ -1,9 +1,9 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 import configOptions from '@core/app/constants/config-options';
+import useBeamboxPreference from '@core/helpers/hooks/useBeamboxPreference';
 import useI18n from '@core/helpers/useI18n';
 
-import ConfigPanelContext from './ConfigPanelContext';
 import ConfigSlider from './ConfigSlider';
 import ConfigValueDisplay from './ConfigValueDisplay';
 import styles from './WhiteInkSettingsModal.module.scss';
@@ -20,9 +20,8 @@ const WhiteInkMultipass = ({ hasMultiValue, onChange, value }: Props): React.JSX
   const MAX_VALUE = 10;
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
-  const { simpleMode = true } = useContext(ConfigPanelContext);
-
-  const sliderOptions = useMemo(() => (simpleMode ? configOptions.whiteMultipassOptions : null), [simpleMode]);
+  const simpleMode = !useBeamboxPreference('print-advanced-mode');
+  const sliderOptions = useMemo(() => (simpleMode ? configOptions.whiteMultipassOptions : undefined), [simpleMode]);
 
   return (
     <div className={styles.panel}>

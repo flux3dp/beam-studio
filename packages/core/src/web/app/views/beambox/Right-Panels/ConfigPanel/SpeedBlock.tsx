@@ -48,7 +48,8 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
   const { change, module, speed } = useConfigPanelStore();
-  const { selectedLayers, simpleMode = true } = useContext(ConfigPanelContext);
+  const { selectedLayers } = useContext(ConfigPanelContext);
+  const simpleMode = !useBeamboxPreference('print-advanced-mode');
   const { activeKey } = useContext(ObjectPanelContext);
   const visible = activeKey === 'speed';
   const { hasVector } = useContext(LayerPanelContext);
