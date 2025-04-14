@@ -34,11 +34,11 @@ const PADDING = 30;
 function UnmemorizedBridgePanel({ bbox, element, onClose }: Props): React.JSX.Element {
   const { image_edit_panel: lang } = useI18n();
   const { history, push, redo, set, undo } = useHistory({ hasUndid: false, index: 0, items: [{ pathData: [] }] });
-  const [mode, setMode] = useState<'auto' | 'manual'>('manual');
+  const [mode, setMode] = useState<'auto' | 'manual'>('auto');
   const [pathData, setPathData] = useState(Array.of<string>());
   const [isPathDataChanged, setIsPathDataChanged] = useState(false);
   const [bridgeWidth, setBridgeWidth] = useState(0.5);
-  const [bridgeGap, setBridgeGap] = useState(10);
+  const [bridgeGap, setBridgeGap] = useState(25);
   // only for display percentage, not for calculation
   const [zoomScale, setZoomScale] = useState(1);
   const [fitScreenDimension, setFitScreenDimension] = useState({ scale: 1, x: 0, y: 0 });
@@ -87,7 +87,7 @@ function UnmemorizedBridgePanel({ bbox, element, onClose }: Props): React.JSX.El
   );
 
   const handleCutPathByGap = useCallback(() => {
-    const newCompoundPath = cutPathByGap(bridgeGap * dpmm, bridgeWidth * dpmm);
+    const newCompoundPath = cutPathByGap({ gap: bridgeGap * dpmm, width: bridgeWidth * dpmm });
 
     setPathData((prev) => prev.concat(newCompoundPath.pathData));
     setIsPathDataChanged(true);
@@ -109,7 +109,8 @@ function UnmemorizedBridgePanel({ bbox, element, onClose }: Props): React.JSX.El
             const path = hit.item as paper.Path;
             const newCompoundPath = cutPathAtPoint(path, point, bridgeWidth * dpmm);
 
-            setPathData((prev) => prev.concat(newCompoundPath.pathData));
+            if (newCompoundPath) setPathData((prev) => prev.concat(newCompoundPath.pathData));
+
             setIsPathDataChanged(true);
           }
 
