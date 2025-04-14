@@ -6,17 +6,6 @@ import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/context
 
 import ConfigPanelContext from './ConfigPanelContext';
 
-jest.mock('@core/helpers/useI18n', () => () => ({
-  beambox: {
-    right_panel: {
-      laser_panel: {
-        print_multipass: 'multipass',
-        times: 'times',
-      },
-    },
-  },
-}));
-
 jest.mock('./ConfigSlider', () => ({ id, max, min, onChange, value }: any) => (
   <input
     className="mock-config-slider"
@@ -87,13 +76,8 @@ jest.mock('@core/helpers/layer/layer-config-helper', () => ({
 
 const mockAddCommandToHistory = jest.fn();
 
-jest.mock('@core/helpers/svg-editor-helper', () => ({
-  getSVGAsync: (callback) =>
-    callback({
-      Canvas: {
-        addCommandToHistory: mockAddCommandToHistory,
-      },
-    }),
+jest.mock('@core/app/svgedit/history/undoManager', () => ({
+  addCommandToHistory: (...args) => mockAddCommandToHistory(...args),
 }));
 
 let batchCmd = { count: 0, onAfter: undefined };
@@ -107,22 +91,35 @@ jest.mock('@core/app/svgedit/history/history', () => ({
   BatchCommand: mockBatchCommand,
 }));
 
-const mockSelectedLayers = ['layer1', 'layer2'];
-const mockContextState = {
-  multipass: { hasMultiValue: false, value: 8 },
-};
-const mockDispatch = jest.fn();
-const mockInitState = jest.fn();
-
 const mockCreateEventEmitter = jest.fn();
+const mockEmit = jest.fn();
 
 jest.mock('@core/helpers/eventEmitterFactory', () => ({
   createEventEmitter: (...args) => mockCreateEventEmitter(...args),
 }));
 
-const mockEmit = jest.fn();
+const mockInitState = jest.fn();
+
+jest.mock('./initState', () => mockInitState);
 
 import MultipassBlock from './MultipassBlock';
+
+const mockSelectedLayers = ['layer1', 'layer2'];
+const mockUseConfigPanelStore = jest.fn();
+const mockChange = jest.fn();
+
+jest.mock('@core/app/stores/configPanel', () => ({
+  useConfigPanelStore: (...args) => mockUseConfigPanelStore(...args),
+}));
+
+const mockUseBeamboxPreference = jest.fn();
+
+jest.mock(
+  '@core/helpers/hooks/useBeamboxPreference',
+  () =>
+    (...args) =>
+      mockUseBeamboxPreference(...args),
+);
 
 describe('test MultipassBlock when type is not panel-item', () => {
   beforeEach(() => {
@@ -131,18 +128,17 @@ describe('test MultipassBlock when type is not panel-item', () => {
       emit: mockEmit,
     });
     batchCmd = { count: 0, onAfter: undefined };
+
+    mockUseConfigPanelStore.mockReturnValue({
+      change: mockChange,
+      multipass: { hasMultiValue: false, value: 8 },
+    });
+    mockUseBeamboxPreference.mockReturnValue(false);
   });
 
   it('should render correctly', () => {
     const { container } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state: mockContextState as any,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <MultipassBlock />
       </ConfigPanelContext.Provider>,
     );
@@ -152,35 +148,25 @@ describe('test MultipassBlock when type is not panel-item', () => {
 
   test('edit value with slider', () => {
     const { container } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state: mockContextState as any,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <MultipassBlock />
       </ConfigPanelContext.Provider>,
     );
 
-    expect(mockDispatch).not.toBeCalled();
-    expect(mockWriteData).not.toBeCalled();
-    expect(mockBatchCommand).not.toBeCalled();
+    expect(mockChange).not.toHaveBeenCalled();
+    expect(mockWriteData).not.toHaveBeenCalled();
+    expect(mockBatchCommand).not.toHaveBeenCalled();
     expect(batchCmd.count).toBe(0);
 
     const slider = container.querySelector('.mock-config-slider');
 
     fireEvent.change(slider, { target: { value: 7 } });
-    expect(mockDispatch).toHaveBeenCalledTimes(1);
-    expect(mockDispatch).toHaveBeenLastCalledWith({
-      payload: { configName: 'CUSTOM_PRESET_CONSTANT', multipass: 7 },
-      type: 'change',
-    });
-    expect(mockBatchCommand).toBeCalledTimes(1);
-    expect(mockBatchCommand).lastCalledWith('Change multipass');
+    expect(mockChange).toHaveBeenCalledTimes(1);
+    expect(mockChange).toHaveBeenLastCalledWith({ configName: 'CUSTOM_PRESET_CONSTANT', multipass: 7 });
+    expect(mockBatchCommand).toHaveBeenCalledTimes(1);
+    expect(mockBatchCommand).toHaveBeenLastCalledWith('Change multipass');
     expect(batchCmd.count).toBe(1);
-    expect(mockEmit).toBeCalledTimes(1);
+    expect(mockEmit).toHaveBeenCalledTimes(1);
     expect(mockEmit).toHaveBeenLastCalledWith('SET_ESTIMATED_TIME', null);
     expect(mockWriteData).toHaveBeenCalledTimes(4);
     expect(mockWriteData).toHaveBeenNthCalledWith(1, 'layer1', 'multipass', 7, { batchCmd });
@@ -188,41 +174,31 @@ describe('test MultipassBlock when type is not panel-item', () => {
     expect(mockWriteData).toHaveBeenNthCalledWith(3, 'layer2', 'multipass', 7, { batchCmd });
     expect(mockWriteData).toHaveBeenNthCalledWith(4, 'layer2', 'configName', 'CUSTOM_PRESET_CONSTANT', { batchCmd });
     expect(batchCmd.onAfter).toBe(mockInitState);
-    expect(mockAddCommandToHistory).toBeCalledTimes(1);
-    expect(mockAddCommandToHistory).lastCalledWith(batchCmd);
+    expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
+    expect(mockAddCommandToHistory).toHaveBeenLastCalledWith(batchCmd);
   });
 
   test('edit value with value display', () => {
     const { getByText } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state: mockContextState as any,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <MultipassBlock />
       </ConfigPanelContext.Provider>,
     );
 
-    expect(mockDispatch).not.toBeCalled();
-    expect(mockWriteData).not.toBeCalled();
-    expect(mockBatchCommand).not.toBeCalled();
+    expect(mockChange).not.toHaveBeenCalled();
+    expect(mockWriteData).not.toHaveBeenCalled();
+    expect(mockBatchCommand).not.toHaveBeenCalled();
     expect(batchCmd.count).toBe(0);
 
     const button = getByText('MockConfigValueDisplayButton');
 
     fireEvent.click(button);
-    expect(mockDispatch).toHaveBeenCalledTimes(1);
-    expect(mockDispatch).toHaveBeenLastCalledWith({
-      payload: { configName: 'CUSTOM_PRESET_CONSTANT', multipass: 10 },
-      type: 'change',
-    });
-    expect(mockEmit).toBeCalledTimes(1);
+    expect(mockChange).toHaveBeenCalledTimes(1);
+    expect(mockChange).toHaveBeenLastCalledWith({ configName: 'CUSTOM_PRESET_CONSTANT', multipass: 10 });
+    expect(mockEmit).toHaveBeenCalledTimes(1);
     expect(mockEmit).toHaveBeenLastCalledWith('SET_ESTIMATED_TIME', null);
-    expect(mockBatchCommand).toBeCalledTimes(1);
-    expect(mockBatchCommand).lastCalledWith('Change multipass');
+    expect(mockBatchCommand).toHaveBeenCalledTimes(1);
+    expect(mockBatchCommand).toHaveBeenLastCalledWith('Change multipass');
     expect(batchCmd.count).toBe(1);
     expect(mockWriteData).toHaveBeenCalledTimes(4);
     expect(mockWriteData).toHaveBeenNthCalledWith(1, 'layer1', 'multipass', 10, { batchCmd });
@@ -230,8 +206,8 @@ describe('test MultipassBlock when type is not panel-item', () => {
     expect(mockWriteData).toHaveBeenNthCalledWith(3, 'layer2', 'multipass', 10, { batchCmd });
     expect(mockWriteData).toHaveBeenNthCalledWith(4, 'layer2', 'configName', 'CUSTOM_PRESET_CONSTANT', { batchCmd });
     expect(batchCmd.onAfter).toBe(mockInitState);
-    expect(mockAddCommandToHistory).toBeCalledTimes(1);
-    expect(mockAddCommandToHistory).lastCalledWith(batchCmd);
+    expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
+    expect(mockAddCommandToHistory).toHaveBeenLastCalledWith(batchCmd);
   });
 });
 
@@ -239,14 +215,7 @@ describe('test MultipassBlock when type is panel-item', () => {
   it('should render correctly when visible', () => {
     const { container } = render(
       <ObjectPanelContext.Provider value={{ activeKey: 'multipass' } as any}>
-        <ConfigPanelContext.Provider
-          value={{
-            dispatch: mockDispatch,
-            initState: mockInitState,
-            selectedLayers: mockSelectedLayers,
-            state: mockContextState as any,
-          }}
-        >
+        <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
           <MultipassBlock type="panel-item" />
         </ConfigPanelContext.Provider>
       </ObjectPanelContext.Provider>,

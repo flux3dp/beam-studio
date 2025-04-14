@@ -1,15 +1,14 @@
-import React, { createContext } from 'react';
+import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-import ConfigPanelContext from './ConfigPanelContext';
-import ParameterTitle from './ParameterTitle';
+import i18n from '@core/helpers/i18n';
 
 const mockInitState = jest.fn();
-const mockState = {
-  configName: { value: 'pre1' },
-  module: { value: 1 },
-};
+
+jest.mock('./initState', () => mockInitState);
+
+import ParameterTitle from './ParameterTitle';
 
 const mockShowPresetsManagementPanel = jest.fn();
 
@@ -17,42 +16,32 @@ jest.mock('@core/app/components/dialogs/PresetsManagementPanel/PresetsManagement
   showPresetsManagementPanel: (...args) => mockShowPresetsManagementPanel(...args),
 }));
 
-jest.mock('@core/helpers/useI18n', () => () => ({
-  beambox: {
-    right_panel: {
-      laser_panel: {
-        parameters: 'parameters',
-        preset_management: {
-          title: 'preset_management_title',
-        },
-      },
-    },
-  },
-}));
-
 jest.mock('./SaveConfigButton', () => () => <div>MockSaveConfigButton</div>);
 
-jest.mock('./ConfigPanelContext', () => createContext({}));
+const mockUseConfigPanelStore = jest.fn();
+
+jest.mock('@core/app/stores/configPanel', () => ({
+  useConfigPanelStore: (...args) => mockUseConfigPanelStore(...args),
+}));
 
 describe('test ParameterTitle', () => {
+  beforeEach(() => {
+    mockUseConfigPanelStore.mockReturnValue({
+      configName: { value: 'pre1' },
+      module: { value: 1 },
+    });
+  });
+
   it('should render correctly', () => {
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ initState: mockInitState, state: mockState } as any}>
-        <ParameterTitle />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<ParameterTitle />);
 
     expect(container).toMatchSnapshot();
   });
 
   it('should call showPresetsManagementPanel when button is clicked', () => {
-    const { getByTitle } = render(
-      <ConfigPanelContext.Provider value={{ initState: mockInitState, state: mockState } as any}>
-        <ParameterTitle />
-      </ConfigPanelContext.Provider>,
-    );
+    const { getByTitle } = render(<ParameterTitle />);
 
-    fireEvent.click(getByTitle('preset_management_title'));
+    fireEvent.click(getByTitle(i18n.lang.beambox.right_panel.laser_panel.preset_management.title));
     expect(mockShowPresetsManagementPanel).toHaveBeenCalledTimes(1);
     expect(mockShowPresetsManagementPanel).toHaveBeenCalledWith({
       currentModule: 1,

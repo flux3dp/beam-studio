@@ -1,13 +1,13 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import configOptions from '@core/app/constants/config-options';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import useBeamboxPreference from '@core/helpers/hooks/useBeamboxPreference';
 import useI18n from '@core/helpers/useI18n';
 import storage from '@core/implementations/storage';
 
-import ConfigPanelContext from './ConfigPanelContext';
 import ConfigSlider from './ConfigSlider';
 import ConfigValueDisplay from './ConfigValueDisplay';
 import styles from './WhiteInkSettingsModal.module.scss';
@@ -22,10 +22,10 @@ interface Props {
 const WhiteInkSpeed = ({ hasMultiValue, onChange, value }: Props): React.JSX.Element => {
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
-  const { simpleMode = true } = useContext(ConfigPanelContext);
+  const simpleMode = !useBeamboxPreference('print-advanced-mode');
 
   const sliderOptions = useMemo(
-    () => (simpleMode ? configOptions.getPrintingSpeedOptions(lang) : null),
+    () => (simpleMode ? configOptions.getPrintingSpeedOptions(lang) : undefined),
     [simpleMode, lang],
   );
 

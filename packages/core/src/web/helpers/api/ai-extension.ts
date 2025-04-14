@@ -4,6 +4,7 @@
  */
 import tabController from '@core/app/actions/tabController';
 import importSvg from '@core/app/svgedit/operations/import/importSvg';
+import initState from '@core/app/views/beambox/Right-Panels/ConfigPanel/initState';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
 import Websocket from '@core/helpers/websocket';
 
@@ -33,6 +34,7 @@ const init = (): { connection: any } => {
             writeData(name, 'speed', Number.parseInt(speed, 10));
             writeData(name, 'power', Number.parseInt(power, 10));
           }
+          initState();
         }
       }
     },

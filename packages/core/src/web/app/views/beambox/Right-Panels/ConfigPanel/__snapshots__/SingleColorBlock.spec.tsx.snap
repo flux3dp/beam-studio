@@ -9,7 +9,7 @@ exports[`test SingleColorBlock should render correctly 1`] = `
       class="title"
       for="single-color"
     >
-      single_color
+      Single Color
     </label>
     <span
       aria-label="question-circle"

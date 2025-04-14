@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react';
 
 import { Modal } from 'antd';
 
+import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { getLayerByName } from '@core/helpers/layer/layer-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -19,7 +20,9 @@ interface Props {
 
 // TODO: add test
 const WhiteInkSettingsModal = ({ onClose }: Props): React.JSX.Element => {
-  const { dispatch, selectedLayers, state } = useContext(ConfigPanelContext);
+  const { getState, update } = useConfigPanelStore();
+  const state = getState();
+  const { selectedLayers } = useContext(ConfigPanelContext);
   const {
     beambox: {
       right_panel: { laser_panel: t },
@@ -58,7 +61,7 @@ const WhiteInkSettingsModal = ({ onClose }: Props): React.JSX.Element => {
         newState.wRepeat = repeat;
       }
     });
-    dispatch({ payload: newState, type: 'update' });
+    update(newState);
     onClose();
   };
 

@@ -6,24 +6,6 @@ import { PrintingColors } from '@core/app/constants/color-constants';
 
 import ConfigPanelContext from './ConfigPanelContext';
 
-jest.mock('@core/helpers/useI18n', () => () => ({
-  beambox: {
-    right_panel: {
-      laser_panel: {
-        color_adjustment: 'color_adjustment',
-        ink_saturation: 'ink_saturation',
-        slider: {
-          high: 'high',
-          low: 'low',
-          regular: 'regular',
-          very_high: 'very_high',
-          very_low: 'very_low',
-        },
-      },
-    },
-  },
-}));
-
 jest.mock('./ConfigSlider', () => ({ id, max, min, onChange, value }: any) => (
   <input
     className="mock-config-slider"
@@ -108,33 +90,45 @@ jest.mock('@core/app/svgedit/history/history', () => ({
   BatchCommand: mockBatchCommand,
 }));
 
-const mockSelectedLayers = ['layer1', 'layer2'];
-const mockContextState = {
-  color: { hasMultiValue: false, value: PrintingColors.CYAN },
-  fullcolor: { hasMultiValue: false, value: true },
-  ink: { hasMultiValue: false, value: 7 },
-};
-const mockDispatch = jest.fn();
 const mockInitState = jest.fn();
 
+jest.mock('./initState', () => mockInitState);
+
 import InkBlock from './InkBlock';
+
+const mockSelectedLayers = ['layer1', 'layer2'];
+const mockUseConfigPanelStore = jest.fn();
+const mockChange = jest.fn();
+
+jest.mock('@core/app/stores/configPanel', () => ({
+  useConfigPanelStore: (...args) => mockUseConfigPanelStore(...args),
+}));
+
+const mockUseBeamboxPreference = jest.fn();
+
+jest.mock(
+  '@core/helpers/hooks/useBeamboxPreference',
+  () =>
+    (...args) =>
+      mockUseBeamboxPreference(...args),
+);
 
 describe('test InkBlock', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     batchCmd = { count: 0, onAfter: undefined };
+    mockUseConfigPanelStore.mockReturnValue({
+      change: mockChange,
+      color: { hasMultiValue: false, value: PrintingColors.CYAN },
+      fullcolor: { hasMultiValue: false, value: true },
+      ink: { hasMultiValue: false, value: 7 },
+    });
+    mockUseBeamboxPreference.mockReturnValue(false);
   });
 
   it('should render correctly', () => {
     const { container } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state: mockContextState as any,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <InkBlock />
       </ConfigPanelContext.Provider>,
     );
@@ -144,91 +138,64 @@ describe('test InkBlock', () => {
 
   test('onChange should work', () => {
     const { container } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state: mockContextState as any,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <InkBlock />
       </ConfigPanelContext.Provider>,
     );
 
-    expect(mockDispatch).not.toBeCalled();
-    expect(mockWriteData).not.toBeCalled();
-    expect(mockBatchCommand).not.toBeCalled();
+    expect(mockChange).not.toHaveBeenCalled();
+    expect(mockWriteData).not.toHaveBeenCalled();
+    expect(mockBatchCommand).not.toHaveBeenCalled();
     expect(batchCmd.count).toBe(0);
 
     const input = container.querySelector('input');
 
     fireEvent.change(input, { target: { value: '8' } });
-    expect(mockDispatch).toBeCalledTimes(1);
-    expect(mockDispatch).toHaveBeenLastCalledWith({
-      payload: { configName: 'CUSTOM_PRESET_CONSTANT', ink: 8 },
-      type: 'change',
-    });
-    expect(mockBatchCommand).toBeCalledTimes(1);
+    expect(mockChange).toHaveBeenCalledTimes(1);
+    expect(mockChange).toHaveBeenLastCalledWith({ configName: 'CUSTOM_PRESET_CONSTANT', ink: 8 });
+    expect(mockBatchCommand).toHaveBeenCalledTimes(1);
     expect(mockBatchCommand).lastCalledWith('Change ink');
     expect(batchCmd.count).toBe(1);
-    expect(mockWriteData).toBeCalledTimes(4);
+    expect(mockWriteData).toHaveBeenCalledTimes(4);
     expect(mockWriteData).toHaveBeenNthCalledWith(1, 'layer1', 'ink', 8, { batchCmd });
     expect(mockWriteData).toHaveBeenNthCalledWith(2, 'layer1', 'configName', 'CUSTOM_PRESET_CONSTANT', { batchCmd });
     expect(mockWriteData).toHaveBeenNthCalledWith(3, 'layer2', 'ink', 8, { batchCmd });
     expect(mockWriteData).toHaveBeenNthCalledWith(4, 'layer2', 'configName', 'CUSTOM_PRESET_CONSTANT', { batchCmd });
     expect(batchCmd.onAfter).toBe(mockInitState);
-    expect(mockAddCommandToHistory).toBeCalledTimes(1);
+    expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
     expect(mockAddCommandToHistory).lastCalledWith(batchCmd);
   });
 
   test('onChange of value display should work', () => {
     const { getByText } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state: mockContextState as any,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <InkBlock />
       </ConfigPanelContext.Provider>,
     );
 
-    expect(mockDispatch).not.toBeCalled();
-    expect(mockWriteData).not.toBeCalled();
-    expect(mockBatchCommand).not.toBeCalled();
+    expect(mockChange).not.toHaveBeenCalled();
+    expect(mockWriteData).not.toHaveBeenCalled();
+    expect(mockBatchCommand).not.toHaveBeenCalled();
     expect(batchCmd.count).toBe(0);
     fireEvent.click(getByText('MockConfigValueDisplayButton'));
-    expect(mockDispatch).toBeCalledTimes(1);
-    expect(mockDispatch).toHaveBeenLastCalledWith({
-      payload: { configName: 'CUSTOM_PRESET_CONSTANT', ink: 8 },
-      type: 'change',
-    });
-    expect(mockBatchCommand).toBeCalledTimes(1);
+    expect(mockChange).toHaveBeenCalledTimes(1);
+    expect(mockChange).toHaveBeenLastCalledWith({ configName: 'CUSTOM_PRESET_CONSTANT', ink: 8 });
+    expect(mockBatchCommand).toHaveBeenCalledTimes(1);
     expect(mockBatchCommand).lastCalledWith('Change ink');
     expect(batchCmd.count).toBe(1);
-    expect(mockWriteData).toBeCalledTimes(4);
+    expect(mockWriteData).toHaveBeenCalledTimes(4);
     expect(mockWriteData).toHaveBeenNthCalledWith(1, 'layer1', 'ink', 8, { batchCmd });
     expect(mockWriteData).toHaveBeenNthCalledWith(2, 'layer1', 'configName', 'CUSTOM_PRESET_CONSTANT', { batchCmd });
     expect(mockWriteData).toHaveBeenNthCalledWith(3, 'layer2', 'ink', 8, { batchCmd });
     expect(mockWriteData).toHaveBeenNthCalledWith(4, 'layer2', 'configName', 'CUSTOM_PRESET_CONSTANT', { batchCmd });
     expect(batchCmd.onAfter).toBe(mockInitState);
-    expect(mockAddCommandToHistory).toBeCalledTimes(1);
+    expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
     expect(mockAddCommandToHistory).lastCalledWith(batchCmd);
   });
 
   test('open and close modal should work', () => {
     const { container, queryByText } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state: mockContextState as any,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <InkBlock />
       </ConfigPanelContext.Provider>,
     );

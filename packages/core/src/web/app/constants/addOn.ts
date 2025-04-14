@@ -1,5 +1,3 @@
-import { checkAdo1AutoFeeder, checkFbm1AutoFeeder } from '@core/helpers/checkFeature';
-
 import type { WorkAreaModel } from './workarea-constants';
 
 export enum RotaryType {
@@ -50,9 +48,7 @@ const hexaAddOnInfo: AddOnInfo = {
 
 const addOnData: Record<WorkAreaModel, AddOnInfo> = {
   ado1: {
-    autoFeeder: checkAdo1AutoFeeder()
-      ? { maxHeight: 2000, rotaryRatio: CHUCK_ROTARY_DIAMETER / FEEDER_DIAMETER }
-      : undefined,
+    autoFeeder: { maxHeight: 2000, rotaryRatio: CHUCK_ROTARY_DIAMETER / FEEDER_DIAMETER },
     framingLowLaser: true,
     jobOrigin: true,
     lowerFocus: true,
@@ -86,7 +82,7 @@ const addOnData: Record<WorkAreaModel, AddOnInfo> = {
   fbb2: {
     autoFeeder: {
       maxHeight: 3000,
-      rotaryRatio: CHUCK_ROTARY_DIAMETER / FEEDER_DIAMETER,
+      rotaryRatio: CHUCK_ROTARY_DIAMETER / FEEDER_DIAMETER / 2,
       vectorSpeedLimit: 30,
       xRange: [100, 400],
     },
@@ -105,9 +101,7 @@ const addOnData: Record<WorkAreaModel, AddOnInfo> = {
     },
   },
   fbm1: {
-    autoFeeder: checkFbm1AutoFeeder()
-      ? { maxHeight: 2000, rotaryRatio: -CHUCK_ROTARY_DIAMETER / FEEDER_DIAMETER }
-      : undefined,
+    autoFeeder: { maxHeight: 2000, rotaryRatio: -CHUCK_ROTARY_DIAMETER / FEEDER_DIAMETER },
     autoFocus: true,
     hybridLaser: true,
     jobOrigin: true,

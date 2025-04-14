@@ -14,6 +14,10 @@ jest.mock('@core/app/svgedit/history/history', () => ({
   BatchCommand: mockBatchCommand,
 }));
 
+const mockInitState = jest.fn();
+
+jest.mock('./initState', () => mockInitState);
+
 import CurveEngravingZHighSpeed from './CurveEngravingZHighSpeed';
 
 const mockWriteData = jest.fn();
@@ -30,23 +34,24 @@ jest.mock('@core/app/svgedit/history/undoManager', () => ({
 }));
 
 const mockSelectedLayers = ['layer1', 'layer2'];
-const mockContextState = {
-  ceZSpeedLimit: { hasMultiValue: false, value: 140 },
-};
-const mockDispatch = jest.fn();
-const mockInitState = jest.fn();
+const mockUseConfigPanelStore = jest.fn();
+const mockChange = jest.fn();
+
+jest.mock('@core/app/stores/configPanel', () => ({
+  useConfigPanelStore: (...args) => mockUseConfigPanelStore(...args),
+}));
 
 describe('test CurveEngravingZHighSpeed', () => {
+  beforeEach(() => {
+    mockUseConfigPanelStore.mockReturnValue({
+      ceZSpeedLimit: { hasMultiValue: false, value: 140 },
+      change: mockChange,
+    });
+  });
+
   it('should render correctly', () => {
     const { container } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state: mockContextState as any,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <CurveEngravingZHighSpeed />
       </ConfigPanelContext.Provider>,
     );
@@ -55,17 +60,13 @@ describe('test CurveEngravingZHighSpeed', () => {
   });
 
   it('should render correctly when high speed is enabled', () => {
+    mockUseConfigPanelStore.mockReturnValue({
+      ceZSpeedLimit: { hasMultiValue: true, value: 300 },
+      change: mockChange,
+    });
+
     const { container } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state: {
-            ceZSpeedLimit: { hasMultiValue: true, value: 300 },
-          } as any,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <CurveEngravingZHighSpeed />
       </ConfigPanelContext.Provider>,
     );
@@ -75,29 +76,19 @@ describe('test CurveEngravingZHighSpeed', () => {
 
   test('onToggle should work', () => {
     const { container } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state: mockContextState as any,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <CurveEngravingZHighSpeed />
       </ConfigPanelContext.Provider>,
     );
     const btn = container.querySelector('button#curve-engraving-z-high-speed');
 
-    expect(mockDispatch).not.toHaveBeenCalled();
+    expect(mockChange).not.toHaveBeenCalled();
     expect(mockWriteData).not.toHaveBeenCalled();
     expect(mockBatchCommand).not.toHaveBeenCalled();
     expect(batchCmd.count).toBe(0);
     fireEvent.click(btn);
-    expect(mockDispatch).toHaveBeenCalledTimes(1);
-    expect(mockDispatch).toHaveBeenLastCalledWith({
-      payload: { ceZSpeedLimit: 300 },
-      type: 'change',
-    });
+    expect(mockChange).toHaveBeenCalledTimes(1);
+    expect(mockChange).toHaveBeenLastCalledWith({ ceZSpeedLimit: 300 });
     expect(mockBatchCommand).toHaveBeenCalledTimes(1);
     expect(mockBatchCommand).toHaveBeenLastCalledWith('Change curve engraving z speed limit');
     expect(batchCmd.count).toBe(1);

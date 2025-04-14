@@ -3,7 +3,6 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
 import ConfigPanelContext from './ConfigPanelContext';
-import FillSettingModal from './FillSettingModal';
 
 const mockGet = jest.fn();
 
@@ -20,16 +19,6 @@ jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   }),
   writeDataLayer: (...args) => mockWriteDataLayer(...args),
 }));
-
-const mockSelectedLayers = ['layer1', 'layer2'];
-const mockContextState = {
-  biDirectional: { hasMultiValue: false, value: true },
-  crossHatch: { hasMultiValue: false, value: false },
-  fillAngle: { hasMultiValue: false, value: 0 },
-  fillInterval: { hasMultiValue: false, value: 0.1 },
-};
-const mockDispatch = jest.fn();
-const mockInitState = jest.fn();
 
 const mockGetLayerByName = jest.fn();
 
@@ -69,24 +58,42 @@ const changeValue = (baseElement: HTMLElement) => {
   expect(crossHatchSwitch).toHaveAttribute('aria-checked', 'true');
 };
 
+const mockInitState = jest.fn();
+
+jest.mock('./initState', () => mockInitState);
+
+const mockUseConfigPanelStore = jest.fn();
+const mockGetState = jest.fn();
+const mockUpdate = jest.fn();
+const mockSelectedLayers = ['layer1', 'layer2'];
+
+jest.mock('@core/app/stores/configPanel', () => ({
+  useConfigPanelStore: mockUseConfigPanelStore,
+}));
+
+import FillSettingModal from './FillSettingModal';
+
 describe('test FillSettingModal', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockGet.mockReturnValue('mm');
     mockGetLayerByName.mockImplementation((layerName: string) => layerName);
     mockCreateEventEmitter.mockReturnValueOnce({ emit: mockEmit });
+    mockUseConfigPanelStore.mockReturnValue({
+      getState: mockGetState,
+      update: mockUpdate,
+    });
+    mockGetState.mockReturnValue({
+      biDirectional: { hasMultiValue: false, value: true },
+      crossHatch: { hasMultiValue: false, value: false },
+      fillAngle: { hasMultiValue: false, value: 0 },
+      fillInterval: { hasMultiValue: false, value: 0.1 },
+    });
   });
 
   it('should render correctly', () => {
     const { baseElement } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state: mockContextState as any,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <FillSettingModal onClose={mockOnClose} />
       </ConfigPanelContext.Provider>,
     );
@@ -96,26 +103,19 @@ describe('test FillSettingModal', () => {
 
   test('save should work', () => {
     const { baseElement, getByText } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state: mockContextState as any,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <FillSettingModal onClose={mockOnClose} />
       </ConfigPanelContext.Provider>,
     );
 
     changeValue(baseElement);
-    expect(mockDispatch).not.toBeCalled();
-    expect(mockWriteDataLayer).not.toBeCalled();
+    expect(mockUpdate).not.toHaveBeenCalled();
+    expect(mockWriteDataLayer).not.toHaveBeenCalled();
 
     const saveButton = getByText('Save');
 
     fireEvent.click(saveButton);
-    expect(mockWriteDataLayer).toBeCalledTimes(8);
+    expect(mockWriteDataLayer).toHaveBeenCalledTimes(8);
     expect(mockWriteDataLayer).toHaveBeenNthCalledWith(1, 'layer1', 'fillInterval', 0.2);
     expect(mockWriteDataLayer).toHaveBeenNthCalledWith(2, 'layer1', 'fillAngle', 22.5);
     expect(mockWriteDataLayer).toHaveBeenNthCalledWith(3, 'layer1', 'biDirectional', false);
@@ -124,47 +124,37 @@ describe('test FillSettingModal', () => {
     expect(mockWriteDataLayer).toHaveBeenNthCalledWith(6, 'layer2', 'fillAngle', 22.5);
     expect(mockWriteDataLayer).toHaveBeenNthCalledWith(7, 'layer2', 'biDirectional', false);
     expect(mockWriteDataLayer).toHaveBeenNthCalledWith(8, 'layer2', 'crossHatch', true);
-    expect(mockDispatch).toBeCalledTimes(1);
-    expect(mockDispatch).toHaveBeenLastCalledWith({
-      payload: {
-        biDirectional: { hasMultiValue: false, value: false },
-        crossHatch: { hasMultiValue: false, value: true },
-        fillAngle: { hasMultiValue: false, value: 22.5 },
-        fillInterval: { hasMultiValue: false, value: 0.2 },
-      },
-      type: 'update',
+    expect(mockUpdate).toHaveBeenCalledTimes(1);
+    expect(mockUpdate).toHaveBeenLastCalledWith({
+      biDirectional: { hasMultiValue: false, value: false },
+      crossHatch: { hasMultiValue: false, value: true },
+      fillAngle: { hasMultiValue: false, value: 22.5 },
+      fillInterval: { hasMultiValue: false, value: 0.2 },
     });
-    expect(mockCreateEventEmitter).toBeCalledTimes(1);
+    expect(mockCreateEventEmitter).toHaveBeenCalledTimes(1);
     expect(mockCreateEventEmitter).toHaveBeenLastCalledWith('time-estimation-button');
-    expect(mockEmit).toBeCalledTimes(1);
+    expect(mockEmit).toHaveBeenCalledTimes(1);
     expect(mockEmit).toHaveBeenLastCalledWith('SET_ESTIMATED_TIME', null);
-    expect(mockOnClose).toBeCalledTimes(1);
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
 
   test('cancel should work', () => {
     const { baseElement, getByText } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state: mockContextState as any,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <FillSettingModal onClose={mockOnClose} />
       </ConfigPanelContext.Provider>,
     );
 
     changeValue(baseElement);
-    expect(mockDispatch).not.toBeCalled();
-    expect(mockWriteDataLayer).not.toBeCalled();
+    expect(mockUpdate).not.toHaveBeenCalled();
+    expect(mockWriteDataLayer).not.toHaveBeenCalled();
 
     const cancelButton = getByText('Cancel');
 
     fireEvent.click(cancelButton);
-    expect(mockOnClose).toBeCalledTimes(1);
-    expect(mockDispatch).not.toBeCalled();
-    expect(mockWriteDataLayer).not.toBeCalled();
-    expect(mockCreateEventEmitter).not.toBeCalled();
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
+    expect(mockUpdate).not.toHaveBeenCalled();
+    expect(mockWriteDataLayer).not.toHaveBeenCalled();
+    expect(mockCreateEventEmitter).not.toHaveBeenCalled();
   });
 });

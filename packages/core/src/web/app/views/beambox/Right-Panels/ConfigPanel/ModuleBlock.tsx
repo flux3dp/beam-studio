@@ -9,6 +9,7 @@ import moduleBoundaryDrawer from '@core/app/actions/canvas/module-boundary-drawe
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import alertConstants from '@core/app/constants/alert-constants';
 import { fullColorModules, LayerModule } from '@core/app/constants/layer-module/layer-modules';
+import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
@@ -26,6 +27,7 @@ import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
 import ConfigPanelContext from './ConfigPanelContext';
+import initState from './initState';
 import styles from './ModuleBlock.module.scss';
 
 const ModuleBlock = (): React.ReactNode => {
@@ -37,8 +39,8 @@ const ModuleBlock = (): React.ReactNode => {
     },
     layer_module: tModule,
   } = useI18n();
-  const { initState, selectedLayers, state } = useContext(ConfigPanelContext);
-  const { module } = state;
+  const { module } = useConfigPanelStore();
+  const { selectedLayers } = useContext(ConfigPanelContext);
   const { value } = module;
   const workarea = useWorkarea();
 

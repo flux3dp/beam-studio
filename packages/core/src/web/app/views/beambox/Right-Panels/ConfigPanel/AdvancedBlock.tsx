@@ -1,4 +1,4 @@
-import React, { memo, useContext, useEffect, useMemo } from 'react';
+import React, { memo, useEffect, useMemo } from 'react';
 
 import { Collapse, ConfigProvider } from 'antd';
 
@@ -7,6 +7,7 @@ import { promarkModels } from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType } from '@core/app/constants/promark-constants';
+import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import useHasCurveEngraving from '@core/helpers/hooks/useHasCurveEngraving';
@@ -17,7 +18,6 @@ import useI18n from '@core/helpers/useI18n';
 
 import styles from './AdvancedBlock.module.scss';
 import AutoFocus from './AutoFocus';
-import ConfigPanelContext from './ConfigPanelContext';
 import CurveEngravingZHighSpeed from './CurveEngravingZHighSpeed';
 import Diode from './Diode';
 import FocusBlock from './FocusBlock';
@@ -27,7 +27,7 @@ import SingleColorBlock from './SingleColorBlock';
 import WobbleBlock from './WobbleBlock';
 
 const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.ReactNode => {
-  const { state } = useContext(ConfigPanelContext);
+  const { module } = useConfigPanelStore();
   const forceUpdate = useForceUpdate();
   const lang = useI18n().beambox.right_panel.laser_panel;
   const workarea = useWorkarea();
@@ -53,7 +53,7 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
 
   const contents = [];
 
-  if (!printingModules.has(state.module.value)) {
+  if (!printingModules.has(module.value)) {
     if (promarkInfo && promarkLimit) {
       if (promarkInfo.laserType === LaserType.MOPA) {
         contents.push(

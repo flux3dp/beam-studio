@@ -4,6 +4,7 @@ import { Col, ConfigProvider, Modal, Row } from 'antd';
 
 import { ColorRatioModalBlock } from '@core/app/constants/antd-config';
 import { PrintingColors } from '@core/app/constants/color-constants';
+import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { getLayerByName } from '@core/helpers/layer/layer-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -25,7 +26,9 @@ const ColorRationModal = ({ fullColor, onClose }: Props): React.JSX.Element => {
     },
     global: tGlobal,
   } = useI18n();
-  const { dispatch, selectedLayers, state } = useContext(ConfigPanelContext);
+  const { getState, update } = useConfigPanelStore();
+  const state = getState();
+  const { selectedLayers } = useContext(ConfigPanelContext);
   const [draftValue, setDraftValue] = useState<{ [key: string]: ConfigItem<number> }>({
     cRatio: state.cRatio,
     kRatio: state.kRatio,
@@ -35,19 +38,21 @@ const ColorRationModal = ({ fullColor, onClose }: Props): React.JSX.Element => {
   });
   const handleSave = () => {
     const newState = { ...state };
-    const keys = fullColor ? ['cRatio', 'mRatio', 'yRatio', 'kRatio'] : ['printingStrength'];
+    const keys: Array<'cRatio' | 'kRatio' | 'mRatio' | 'printingStrength' | 'yRatio'> = fullColor
+      ? ['cRatio', 'mRatio', 'yRatio', 'kRatio']
+      : ['printingStrength'];
 
     selectedLayers.forEach((layerName) => {
       const layer = getLayerByName(layerName);
 
-      keys.forEach((key: 'cRatio' | 'kRatio' | 'mRatio' | 'printingStrength' | 'yRatio') => {
+      keys.forEach((key) => {
         if (state[key].value !== draftValue[key].value || state[key].hasMultiValue !== draftValue[key].hasMultiValue) {
           writeDataLayer(layer, key, draftValue[key].value);
           newState[key] = draftValue[key];
         }
       });
     });
-    dispatch({ payload: newState, type: 'update' });
+    update(newState);
     onClose();
   };
   const handleValueChange = (key: string, value: number) => {

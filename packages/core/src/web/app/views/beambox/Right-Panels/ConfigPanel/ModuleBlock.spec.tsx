@@ -101,11 +101,6 @@ jest.mock('@core/app/svgedit/history/history', () => ({
   BatchCommand: mockBatchCommand,
 }));
 
-const mockSelectedLayers = ['layer1', 'layer2'];
-const mockContextState = {
-  module: { hasMultiValue: false, value: LayerModule.LASER_10W_DIODE },
-};
-
 const mockAlertConfigRead = jest.fn();
 const mockAlertConfigWrite = jest.fn();
 
@@ -114,10 +109,25 @@ jest.mock('@core/helpers/api/alert-config', () => ({
   write: (...args) => mockAlertConfigWrite(...args),
 }));
 
-const mockDispatch = jest.fn();
 const mockInitState = jest.fn();
 
+jest.mock('./initState', () => mockInitState);
+
+const mockPreferenceRead = jest.fn();
+
+jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
+  read: mockPreferenceRead,
+}));
+
 import ModuleBlock from './ModuleBlock';
+
+const mockUseConfigPanelStore = jest.fn();
+
+jest.mock('@core/app/stores/configPanel', () => ({
+  useConfigPanelStore: (...args) => mockUseConfigPanelStore(...args),
+}));
+
+const mockSelectedLayers = ['layer1', 'layer2'];
 
 describe('test ModuleBlock', () => {
   beforeEach(() => {
@@ -128,18 +138,15 @@ describe('test ModuleBlock', () => {
     const mockToggleFullColorLayerCmd = { isEmpty: () => false };
 
     mockToggleFullColorLayer.mockReturnValue(mockToggleFullColorLayerCmd);
+
+    mockUseConfigPanelStore.mockReturnValue({
+      module: { hasMultiValue: false, value: LayerModule.LASER_10W_DIODE },
+    });
   });
 
   it('should render correctly', () => {
     const { container, unmount } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state: mockContextState as any,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <ModuleBlock />
       </ConfigPanelContext.Provider>,
     );
@@ -160,14 +167,7 @@ describe('test ModuleBlock', () => {
     mockUseWorkarea.mockReturnValue('fpm1');
 
     const { container } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state: mockContextState as any,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <ModuleBlock />
       </ConfigPanelContext.Provider>,
     );
@@ -177,14 +177,7 @@ describe('test ModuleBlock', () => {
 
   test('change to 20w should work with preset change', () => {
     const { baseElement, getByText } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: ['layer1'],
-          state: mockContextState as any,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: ['layer1'] }}>
         <ModuleBlock />
       </ConfigPanelContext.Provider>,
     );
@@ -237,19 +230,11 @@ describe('test ModuleBlock', () => {
     expect(mockInitState).toHaveBeenCalledTimes(2);
     expect(mockUpdateLayerPanel).toHaveBeenCalledTimes(2);
     expect(mockTogglePresprayArea).toHaveBeenCalledTimes(2);
-    expect(mockDispatch).not.toHaveBeenCalled();
   });
 
   test('change to 20w should work without preset change', () => {
     const { baseElement, getByText } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: ['layer1'],
-          state: mockContextState as any,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: ['layer1'] }}>
         <ModuleBlock />
       </ConfigPanelContext.Provider>,
     );
@@ -296,19 +281,11 @@ describe('test ModuleBlock', () => {
     expect(mockInitState).toHaveBeenCalledTimes(2);
     expect(mockUpdateLayerPanel).toHaveBeenCalledTimes(2);
     expect(mockTogglePresprayArea).toHaveBeenCalledTimes(2);
-    expect(mockDispatch).not.toHaveBeenCalled();
   });
 
   test('change to 20w should work without corresponding config', () => {
     const { baseElement, getByText } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: ['layer1'],
-          state: mockContextState as any,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: ['layer1'] }}>
         <ModuleBlock />
       </ConfigPanelContext.Provider>,
     );
@@ -357,19 +334,11 @@ describe('test ModuleBlock', () => {
     expect(mockInitState).toHaveBeenCalledTimes(2);
     expect(mockUpdateLayerPanel).toHaveBeenCalledTimes(2);
     expect(mockTogglePresprayArea).toHaveBeenCalledTimes(2);
-    expect(mockDispatch).not.toHaveBeenCalled();
   });
 
   test('change to printer should work when selecting 2 layer', async () => {
     const { baseElement, getByText } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state: mockContextState as any,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <ModuleBlock />
       </ConfigPanelContext.Provider>,
     );
@@ -429,6 +398,5 @@ describe('test ModuleBlock', () => {
     expect(mockInitState).toHaveBeenCalledTimes(2);
     expect(mockUpdateLayerPanel).toHaveBeenCalledTimes(2);
     expect(mockTogglePresprayArea).toHaveBeenCalledTimes(2);
-    expect(mockDispatch).not.toHaveBeenCalled();
   });
 });

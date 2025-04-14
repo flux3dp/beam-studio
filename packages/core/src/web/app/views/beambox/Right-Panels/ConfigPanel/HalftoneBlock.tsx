@@ -3,43 +3,39 @@ import React, { memo, useContext, useMemo } from 'react';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 
+import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import history from '@core/app/svgedit/history/history';
+import undoManager from '@core/app/svgedit/history/undoManager';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import Select from '@core/app/widgets/AntdSelect';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import ConfigPanelContext from './ConfigPanelContext';
 import styles from './HalftoneBlock.module.scss';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
+import initState from './initState';
 
 const HalftoneBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.JSX.Element => {
   const lang = useI18n().beambox.right_panel.laser_panel;
 
-  const { dispatch, initState, selectedLayers, state } = useContext(ConfigPanelContext);
-  const { halftone } = state;
+  const { change, halftone } = useConfigPanelStore();
+
+  const { selectedLayers } = useContext(ConfigPanelContext);
 
   const handleChange = (value: number) => {
     if (value === halftone.value) {
       return;
     }
 
-    dispatch({ payload: { halftone: value }, type: 'change' });
+    change({ halftone: value });
 
     if (type !== 'modal') {
       const batchCmd = new history.BatchCommand('Change Halftone');
 
       selectedLayers.forEach((layerName) => writeData(layerName, 'halftone', value, { batchCmd }));
       batchCmd.onAfter = initState;
-      svgCanvas.addCommandToHistory(batchCmd);
+      undoManager.addCommandToHistory(batchCmd);
     }
   };
 
@@ -48,7 +44,7 @@ const HalftoneBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
   const options = useMemo(
     () =>
       [hasMultiValue ? { label: '-', value: 0 } : null, { label: 'FM', value: 1 }, { label: 'AM', value: 2 }].filter(
-        (option) => option,
+        Boolean,
       ),
     [hasMultiValue],
   );

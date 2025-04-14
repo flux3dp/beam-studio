@@ -12,6 +12,10 @@ jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   writeData: mockWriteData,
 }));
 
+const mockInitState = jest.fn();
+
+jest.mock('@core/app/views/beambox/Right-Panels/ConfigPanel/initState', () => mockInitState);
+
 import aiExtension from './ai-extension';
 
 const mockOnFocused = jest.fn();
@@ -79,5 +83,6 @@ describe('test ai-extension', () => {
     expect(mockWriteData).toHaveBeenCalledTimes(2);
     expect(mockWriteData).toHaveBeenNthCalledWith(1, 'layer1', 'speed', 10);
     expect(mockWriteData).toHaveBeenNthCalledWith(2, 'layer1', 'power', 20);
+    expect(mockInitState).toHaveBeenCalledTimes(1);
   });
 });

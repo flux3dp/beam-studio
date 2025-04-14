@@ -7,10 +7,12 @@ import { PrintingColors } from '@core/app/constants/color-constants';
 import configOptions from '@core/app/constants/config-options';
 import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
+import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import history from '@core/app/svgedit/history/history';
 import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import objectPanelItemStyles from '@core/app/views/beambox/Right-Panels/ObjectPanelItem.module.scss';
+import useBeamboxPreference from '@core/helpers/hooks/useBeamboxPreference';
 import { CUSTOM_PRESET_CONSTANT, writeData } from '@core/helpers/layer/layer-config-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -20,6 +22,7 @@ import ColorRationModal from './ColorRatioModal';
 import ConfigPanelContext from './ConfigPanelContext';
 import ConfigSlider from './ConfigSlider';
 import ConfigValueDisplay from './ConfigValueDisplay';
+import initState from './initState';
 import styles from './InkBlock.module.scss';
 
 let svgCanvas: ISVGCanvas;
@@ -34,16 +37,14 @@ const MIN_VALUE = 1;
 function InkBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.JSX.Element {
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
-  const { dispatch, initState, selectedLayers, simpleMode = true, state } = useContext(ConfigPanelContext);
+  const { change, color, fullcolor, ink } = useConfigPanelStore();
+  const { selectedLayers } = useContext(ConfigPanelContext);
+  const simpleMode = !useBeamboxPreference('print-advanced-mode');
   const { activeKey } = useContext(ObjectPanelContext);
   const [showModal, setShowModal] = useState(false);
   const visible = activeKey === 'power';
-  const { color, fullcolor, ink } = state;
   const handleChange = (value: number) => {
-    dispatch({
-      payload: { configName: CUSTOM_PRESET_CONSTANT, ink: value },
-      type: 'change',
-    });
+    change({ configName: CUSTOM_PRESET_CONSTANT, ink: value });
 
     if (type !== 'modal') {
       const batchCmd = new history.BatchCommand('Change ink');
@@ -57,9 +58,7 @@ function InkBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-it
     }
   };
   const sliderOptions = useMemo(() => {
-    if (!simpleMode) {
-      return null;
-    }
+    if (!simpleMode) return undefined;
 
     if (color.value === PrintingColors.WHITE) {
       return configOptions.getWhiteSaturationOptions(lang);

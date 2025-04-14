@@ -8,10 +8,10 @@ exports[`test InkBlock should render correctly 1`] = `
     <span
       class="title"
     >
-      ink_saturation
+      Saturation
       <span
         class="icon"
-        title="color_adjustment"
+        title="Channel Adjustment"
       >
         <svgr-url />
       </span>
@@ -50,7 +50,7 @@ exports[`test InkBlock should render correctly 1`] = `
       </p>
       <p>
         options: 
-        [{"label":"very_low","value":1},{"label":"low","value":2},{"label":"regular","value":3},{"label":"high","value":4},{"label":"very_high","value":5}]
+        [{"label":"Min","value":1},{"label":"Low","value":2},{"label":"Regular","value":3},{"label":"High","value":4},{"label":"Max","value":5}]
       </p>
       <button
         type="button"

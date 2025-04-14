@@ -61,16 +61,19 @@ jest.mock('@core/implementations/storage', () => ({
   get: (...args) => mockStorageGet(...args),
 }));
 
-const mockDispatch = jest.fn();
+const mockSelectedLayers = ['layer1', 'layer2'];
 const mockInitState = jest.fn();
 
-const mockSelectedLayers = ['layer1', 'layer2'];
-const mockContextState = {
-  selectedLayer: 'layer1',
-  speed: { hasMultiValue: false, value: 87 },
-};
+jest.mock('./initState', () => mockInitState);
 
 import NumberBlock from './NumberBlock';
+
+const mockUseConfigPanelStore = jest.fn();
+const mockChange = jest.fn();
+
+jest.mock('@core/app/stores/configPanel', () => ({
+  useConfigPanelStore: (...args) => mockUseConfigPanelStore(...args),
+}));
 
 describe('test NumberBlock', () => {
   beforeEach(() => {
@@ -79,18 +82,16 @@ describe('test NumberBlock', () => {
       emit: mockEmit,
     });
     mockStorageGet.mockReturnValue('mm');
+    mockUseConfigPanelStore.mockReturnValue({
+      change: mockChange,
+      selectedLayer: 'layer1',
+      speed: { hasMultiValue: false, value: 87 },
+    });
   });
 
   it('should render correctly', () => {
     const { container } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state: mockContextState as any,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <NumberBlock
           configKey="speed"
           hasSlider
@@ -112,14 +113,7 @@ describe('test NumberBlock', () => {
 
   it('should render correctly when type is panel-item', () => {
     const { container, rerender } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state: mockContextState as any,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <NumberBlock
           configKey="speed"
           hasSlider
@@ -139,14 +133,7 @@ describe('test NumberBlock', () => {
     expect(container).toMatchSnapshot();
 
     rerender(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state: mockContextState as any,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <NumberBlock
           configKey="speed"
           hasSlider
@@ -170,14 +157,7 @@ describe('test NumberBlock', () => {
     mockStorageGet.mockReturnValue('inches');
 
     const { getByText } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state: mockContextState as any,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <NumberBlock
           configKey="speed"
           hasSlider
@@ -201,14 +181,7 @@ describe('test NumberBlock', () => {
     mockStorageGet.mockReturnValue('inches');
 
     const { getByText } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state: mockContextState as any,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <NumberBlock
           configKey="speed"
           forceUsePropsUnit
@@ -231,14 +204,7 @@ describe('test NumberBlock', () => {
 
   test('should handle change correctly', () => {
     const { container } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state: mockContextState as any,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <NumberBlock
           configKey="speed"
           hasSlider
@@ -261,11 +227,8 @@ describe('test NumberBlock', () => {
     fireEvent.change(input, { target: { value: '50' } });
     expect(mockEmit).toHaveBeenCalledTimes(1);
     expect(mockEmit).toHaveBeenCalledWith('SET_ESTIMATED_TIME', null);
-    expect(mockDispatch).toHaveBeenCalledTimes(1);
-    expect(mockDispatch).toHaveBeenCalledWith({
-      payload: { configName: 'CUSTOM_PRESET_CONSTANT', speed: 50 },
-      type: 'change',
-    });
+    expect(mockChange).toHaveBeenCalledTimes(1);
+    expect(mockChange).toHaveBeenCalledWith({ configName: 'CUSTOM_PRESET_CONSTANT', speed: 50 });
     expect(mockBatchCommand).toHaveBeenCalledTimes(1);
     expect(mockBatchCommand).toHaveBeenCalledWith('Change speed');
     expect(mockWriteDataLayer).toHaveBeenCalledTimes(4);

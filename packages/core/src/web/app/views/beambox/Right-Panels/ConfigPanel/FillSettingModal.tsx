@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react';
 
 import { Modal, Switch } from 'antd';
 
+import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { getLayerByName } from '@core/helpers/layer/layer-helper';
@@ -23,7 +24,9 @@ const FillSettingModal = ({ onClose }: Props): React.JSX.Element => {
     },
     global: tGlobal,
   } = useI18n();
-  const { dispatch, selectedLayers, state } = useContext(ConfigPanelContext);
+  const { getState, update } = useConfigPanelStore();
+  const state = getState();
+  const { selectedLayers } = useContext(ConfigPanelContext);
   const [draftValue, setDraftValue] = useState({
     biDirectional: state.biDirectional,
     crossHatch: state.crossHatch,
@@ -43,7 +46,7 @@ const FillSettingModal = ({ onClose }: Props): React.JSX.Element => {
         }
       });
     });
-    dispatch({ payload: draftValue, type: 'update' });
+    update(draftValue);
     eventEmitterFactory.createEventEmitter('time-estimation-button').emit('SET_ESTIMATED_TIME', null);
     onClose();
   };
