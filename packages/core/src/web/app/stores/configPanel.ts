@@ -45,7 +45,19 @@ export const useConfigPanelStore = create<ConfigPanelStore>(
         return newState;
       });
     },
-    getState: () => get(),
+
+    getState: () => {
+      const {
+        change: _change,
+        getState: _getState,
+        rename: _rename,
+        reset: _reset,
+        update: _update,
+        ...states
+      } = get() as ConfigPanelStore;
+
+      return states;
+    },
 
     rename: (name: string) => {
       set((state) => ({
