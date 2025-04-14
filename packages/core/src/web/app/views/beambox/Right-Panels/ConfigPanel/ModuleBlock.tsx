@@ -167,9 +167,9 @@ const ModuleBlock = (): React.ReactNode => {
   };
 
   const commonOptions = [
-    beamboxPreference.read('enable-uv-print-file') && { label: 'UV Print', value: LayerModule.UV_PRINT },
+    beamboxPreference.read('enable-uv-print-file') && { label: tModule.uv_print, value: LayerModule.UV_PRINT },
   ];
-  const defaultModelsOptions = [{ label: 'Laser', value: LayerModule.LASER_UNIVERSAL }];
+  const defaultModelsOptions = [{ label: tModule.general_laser, value: LayerModule.LASER_UNIVERSAL }];
   const adorOptions = [
     { label: tModule.laser_10w_diode, value: LayerModule.LASER_10W_DIODE },
     { label: tModule.laser_20w_diode, value: LayerModule.LASER_20W_DIODE },
