@@ -6,27 +6,20 @@ import classNames from 'classnames';
 import configOptions from '@core/app/constants/config-options';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import history from '@core/app/svgedit/history/history';
+import undoManager from '@core/app/svgedit/history/undoManager';
 import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import objectPanelItemStyles from '@core/app/views/beambox/Right-Panels/ObjectPanelItem.module.scss';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import useBeamboxPreference from '@core/helpers/hooks/useBeamboxPreference';
 import { CUSTOM_PRESET_CONSTANT, writeData } from '@core/helpers/layer/layer-config-helper';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './Block.module.scss';
 import ConfigPanelContext from './ConfigPanelContext';
 import ConfigSlider from './ConfigSlider';
 import ConfigValueDisplay from './ConfigValueDisplay';
 import initState from './initState';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
 
 interface Props {
   type?: 'default' | 'modal' | 'panel-item';
@@ -61,7 +54,7 @@ const MultipassBlock = ({ type = 'default' }: Props): React.JSX.Element => {
         writeData(layerName, 'configName', CUSTOM_PRESET_CONSTANT, { batchCmd });
       });
       batchCmd.onAfter = initState;
-      svgCanvas.addCommandToHistory(batchCmd);
+      undoManager.addCommandToHistory(batchCmd);
     }
   };
 

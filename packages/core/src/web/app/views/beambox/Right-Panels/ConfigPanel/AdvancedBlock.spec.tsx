@@ -6,7 +6,6 @@ import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType } from '@core/app/constants/promark-constants';
 
 import AdvancedBlock from './AdvancedBlock';
-import ConfigPanelContext from './ConfigPanelContext';
 
 const mockRead = jest.fn();
 
@@ -31,16 +30,6 @@ jest.mock('@core/helpers/use-force-update', () => () => mockForceUpdate);
 const mockUseWorkarea = jest.fn();
 
 jest.mock('@core/helpers/hooks/useWorkarea', () => () => mockUseWorkarea());
-
-jest.mock('@core/helpers/useI18n', () => () => ({
-  beambox: {
-    right_panel: {
-      laser_panel: {
-        advanced: 'advanced',
-      },
-    },
-  },
-}));
 
 const mockGetAddOnInfo = jest.fn();
 
@@ -75,6 +64,12 @@ jest.mock('./SingleColorBlock', () => () => <div>Mock SingleColorBlock</div>);
 jest.mock('./WobbleBlock', () => () => <div>Mock WobbleBlock</div>);
 jest.mock('./ConfigPanelContext', () => createContext(null));
 
+const mockUseConfigPanelStore = jest.fn();
+
+jest.mock('@core/app/stores/configPanel', () => ({
+  useConfigPanelStore: (...args) => mockUseConfigPanelStore(...args),
+}));
+
 describe('test AdvancedBlock', () => {
   beforeEach(() => {
     mockRead.mockReturnValue(true);
@@ -82,16 +77,13 @@ describe('test AdvancedBlock', () => {
     mockUseHasCurveEngraving.mockReturnValue(false);
     mockUseWorkarea.mockReturnValue('fbb1');
     mockGetPromarkInfo.mockReturnValue(null);
+    mockUseConfigPanelStore.mockReturnValue({ module: { value: LayerModule.LASER_UNIVERSAL } });
   });
 
   it('should render correctly for non-printer, no addon', () => {
     mockRead.mockReturnValue(false);
 
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ state: { module: { value: LayerModule.LASER_UNIVERSAL } } } as any}>
-        <AdvancedBlock />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<AdvancedBlock />);
 
     expect(container).toMatchSnapshot();
   });
@@ -99,11 +91,7 @@ describe('test AdvancedBlock', () => {
   it('should render correctly for autofocus, diode', () => {
     mockGetAddOnInfo.mockReturnValue({ autoFocus: true, hybridLaser: true, lowerFocus: false });
 
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ state: { module: { value: LayerModule.LASER_UNIVERSAL } } } as any}>
-        <AdvancedBlock />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<AdvancedBlock />);
     const collapseHeader = container.querySelector('.ant-collapse-header');
 
     fireEvent.click(collapseHeader);
@@ -113,11 +101,7 @@ describe('test AdvancedBlock', () => {
   it('should render correctly for lower focus, diode', () => {
     mockGetAddOnInfo.mockReturnValue({ autoFocus: true, hybridLaser: true, lowerFocus: true });
 
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ state: { module: { value: LayerModule.LASER_UNIVERSAL } } } as any}>
-        <AdvancedBlock />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<AdvancedBlock />);
     const collapseHeader = container.querySelector('.ant-collapse-header');
 
     fireEvent.click(collapseHeader);
@@ -126,12 +110,9 @@ describe('test AdvancedBlock', () => {
 
   it('should render correctly for printer', () => {
     mockGetAddOnInfo.mockReturnValue({ autoFocus: true, hybridLaser: true, lowerFocus: true });
+    mockUseConfigPanelStore.mockReturnValue({ module: { value: LayerModule.PRINTER } });
 
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ state: { module: { value: LayerModule.PRINTER } } } as any}>
-        <AdvancedBlock />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<AdvancedBlock />);
     const collapseHeader = container.querySelector('.ant-collapse-header');
 
     fireEvent.click(collapseHeader);
@@ -143,11 +124,7 @@ describe('test AdvancedBlock', () => {
     mockUseWorkarea.mockReturnValue('fpm1');
     mockGetPromarkInfo.mockReturnValue({ laserType: LaserType.Desktop, watt: 20 });
 
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ state: { module: { value: LayerModule.LASER_UNIVERSAL } } } as any}>
-        <AdvancedBlock />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<AdvancedBlock />);
     const collapseHeader = container.querySelector('.ant-collapse-header');
 
     fireEvent.click(collapseHeader);
@@ -159,11 +136,7 @@ describe('test AdvancedBlock', () => {
     mockUseWorkarea.mockReturnValue('fpm1');
     mockGetPromarkInfo.mockReturnValue({ laserType: LaserType.MOPA, watt: 20 });
 
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ state: { module: { value: LayerModule.LASER_UNIVERSAL } } } as any}>
-        <AdvancedBlock />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<AdvancedBlock />);
     const collapseHeader = container.querySelector('.ant-collapse-header');
 
     fireEvent.click(collapseHeader);
@@ -174,11 +147,7 @@ describe('test AdvancedBlock', () => {
     mockUseHasCurveEngraving.mockReturnValue(true);
     mockGetAddOnInfo.mockReturnValue({ autoFocus: true, hybridLaser: false, lowerFocus: true });
 
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ state: { module: { value: LayerModule.LASER_UNIVERSAL } } } as any}>
-        <AdvancedBlock />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<AdvancedBlock />);
     const collapseHeader = container.querySelector('.ant-collapse-header');
 
     fireEvent.click(collapseHeader);

@@ -30,31 +30,39 @@ jest.mock('@core/app/svgedit/history/history', () => ({
   BatchCommand: mockBatchCommand,
 }));
 
-const mockSelectedLayers = ['layer1', 'layer2'];
-const mockContextState = {
-  wobbleDiameter: { hasMultiValue: false, value: 0.2 },
-  wobbleStep: { hasMultiValue: false, value: 0.05 },
-};
-const mockDispatch = jest.fn();
 const mockInitState = jest.fn();
+
+jest.mock('./initState', () => mockInitState);
 
 import WobbleBlock from './WobbleBlock';
 
+const mockSelectedLayers = ['layer1', 'layer2'];
+const mockUseConfigPanelStore = jest.fn();
+const mockChange = jest.fn();
+
+jest.mock('@core/app/stores/configPanel', () => ({
+  useConfigPanelStore: (...args) => mockUseConfigPanelStore(...args),
+}));
+
 describe('test WobbleBlock', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockUseConfigPanelStore.mockReturnValue({
+      change: mockChange,
+      wobbleDiameter: { hasMultiValue: false, value: 0.2 },
+      wobbleStep: { hasMultiValue: false, value: 0.05 },
+    });
+  });
+
   it('should render correctly when wobbleDiameter is less than 0', () => {
-    const state = {
-      ...mockContextState,
-      wobbleDiameter: { value: -1 },
-    } as any;
+    mockUseConfigPanelStore.mockReturnValue({
+      change: mockChange,
+      wobbleDiameter: { hasMultiValue: false, value: -1 },
+      wobbleStep: { hasMultiValue: false, value: 0.05 },
+    });
+
     const { container } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <WobbleBlock />
       </ConfigPanelContext.Provider>,
     );
@@ -63,19 +71,14 @@ describe('test WobbleBlock', () => {
   });
 
   it('should render correctly when wobbleStep is less than 0', () => {
-    const state = {
-      ...mockContextState,
-      wobbleStep: { value: -1 },
-    } as any;
+    mockUseConfigPanelStore.mockReturnValue({
+      change: mockChange,
+      wobbleDiameter: { hasMultiValue: false, value: 0.2 },
+      wobbleStep: { hasMultiValue: false, value: -1 },
+    });
+
     const { container } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <WobbleBlock />
       </ConfigPanelContext.Provider>,
     );
@@ -85,14 +88,7 @@ describe('test WobbleBlock', () => {
 
   it('should render correctly when toggle is on', () => {
     const { container } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state: mockContextState as any,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <WobbleBlock />
       </ConfigPanelContext.Provider>,
     );
@@ -102,32 +98,22 @@ describe('test WobbleBlock', () => {
 
   test('handlers should work', () => {
     const { container } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state: mockContextState as any,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <WobbleBlock />
       </ConfigPanelContext.Provider>,
     );
 
-    expect(mockDispatch).not.toBeCalled();
-    expect(mockWriteData).not.toBeCalled();
-    expect(mockBatchCommand).not.toBeCalled();
+    expect(mockChange).not.toHaveBeenCalled();
+    expect(mockWriteData).not.toHaveBeenCalled();
+    expect(mockBatchCommand).not.toHaveBeenCalled();
     expect(batchCmd.count).toBe(0);
     fireEvent.click(container.querySelector('button#wobble'));
-    expect(mockDispatch).toBeCalledTimes(1);
-    expect(mockDispatch).lastCalledWith({
-      payload: { wobbleDiameter: -0.2, wobbleStep: -0.05 },
-      type: 'change',
-    });
-    expect(mockBatchCommand).toBeCalledTimes(1);
-    expect(mockBatchCommand).lastCalledWith('Change wobble toggle');
+    expect(mockChange).toHaveBeenCalledTimes(1);
+    expect(mockChange).toHaveBeenLastCalledWith({ wobbleDiameter: -0.2, wobbleStep: -0.05 });
+    expect(mockBatchCommand).toHaveBeenCalledTimes(1);
+    expect(mockBatchCommand).toHaveBeenLastCalledWith('Change wobble toggle');
     expect(batchCmd.count).toBe(1);
-    expect(mockWriteData).toBeCalledTimes(4);
+    expect(mockWriteData).toHaveBeenCalledTimes(4);
     expect(mockWriteData).toHaveBeenNthCalledWith(1, 'layer1', 'wobbleStep', -0.05, { batchCmd });
     expect(mockWriteData).toHaveBeenNthCalledWith(2, 'layer1', 'wobbleDiameter', -0.2, {
       batchCmd,
@@ -137,7 +123,7 @@ describe('test WobbleBlock', () => {
       batchCmd,
     });
     expect(batchCmd.onAfter).toBe(mockInitState);
-    expect(mockAddCommandToHistory).toBeCalledTimes(1);
-    expect(mockAddCommandToHistory).lastCalledWith(batchCmd);
+    expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
+    expect(mockAddCommandToHistory).toHaveBeenLastCalledWith(batchCmd);
   });
 });

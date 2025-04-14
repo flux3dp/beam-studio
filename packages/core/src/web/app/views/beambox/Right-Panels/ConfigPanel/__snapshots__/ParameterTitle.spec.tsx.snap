@@ -8,14 +8,14 @@ exports[`test ParameterTitle should render correctly 1`] = `
     <div
       class="title"
     >
-      parameters
+      Parameters
     </div>
     <div>
       <div>
         MockSaveConfigButton
       </div>
       <button
-        title="preset_management_title"
+        title="Manage Parameters"
         type="button"
       >
         <svgr-url />

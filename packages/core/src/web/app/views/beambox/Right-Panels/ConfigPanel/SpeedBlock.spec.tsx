@@ -85,13 +85,8 @@ jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
 
 const mockAddCommandToHistory = jest.fn();
 
-jest.mock('@core/helpers/svg-editor-helper', () => ({
-  getSVGAsync: (callback) =>
-    callback({
-      Canvas: {
-        addCommandToHistory: mockAddCommandToHistory,
-      },
-    }),
+jest.mock('@core/app/svgedit/history/undoManager', () => ({
+  addCommandToHistory: mockAddCommandToHistory,
 }));
 
 let batchCmd = { count: 0, onAfter: undefined };
@@ -104,14 +99,6 @@ const mockBatchCommand = jest.fn().mockImplementation(() => {
 jest.mock('@core/app/svgedit/history/history', () => ({
   BatchCommand: mockBatchCommand,
 }));
-
-const mockSelectedLayers = ['layer1', 'layer2'];
-const mockContextState = {
-  module: { hasMultiValue: false, value: LayerModule.LASER_10W_DIODE },
-  speed: { hasMultiValue: false, value: 87 },
-};
-const mockDispatch = jest.fn();
-const mockInitState = jest.fn();
 
 const mockCreateEventEmitter = jest.fn();
 
@@ -130,6 +117,10 @@ jest.mock('@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext', ()
 }));
 
 jest.mock('@core/helpers/layer/check-vector', () => jest.fn());
+
+const mockInitState = jest.fn();
+
+jest.mock('./initState', () => mockInitState);
 
 import SpeedBlock from './SpeedBlock';
 
@@ -151,6 +142,14 @@ jest.mock('@core/helpers/addOn', () => ({
   getAutoFeeder: (...args) => mockGetAutoFeeder(...args),
 }));
 
+const mockSelectedLayers = ['layer1', 'layer2'];
+const mockUseConfigPanelStore = jest.fn();
+const mockChange = jest.fn();
+
+jest.mock('@core/app/stores/configPanel', () => ({
+  useConfigPanelStore: (...args) => mockUseConfigPanelStore(...args),
+}));
+
 describe('test SpeedBlock', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -163,18 +162,16 @@ describe('test SpeedBlock', () => {
     mockUseWorkarea.mockReturnValue('fbm1');
     mockGetAutoFeeder.mockReturnValue(false);
     mockUseBeamboxPreference.mockReturnValue(false);
+    mockUseConfigPanelStore.mockReturnValue({
+      change: mockChange,
+      module: { hasMultiValue: false, value: LayerModule.LASER_10W_DIODE },
+      speed: { hasMultiValue: false, value: 87 },
+    });
   });
 
   it('should render correctly when unit is mm', () => {
     const { container } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state: mockContextState as any,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <SpeedBlock />
       </ConfigPanelContext.Provider>,
     );
@@ -191,14 +188,7 @@ describe('test SpeedBlock', () => {
     mockStorageGet.mockReturnValueOnce('inches');
 
     const { container } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state: mockContextState as any,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <SpeedBlock />
       </ConfigPanelContext.Provider>,
     );
@@ -208,14 +198,7 @@ describe('test SpeedBlock', () => {
 
   it('should render correctly when type is panel-item', () => {
     const { container } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state: mockContextState as any,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <SpeedBlock type="panel-item" />
       </ConfigPanelContext.Provider>,
     );
@@ -226,14 +209,7 @@ describe('test SpeedBlock', () => {
   it('should render correctly when has vector warning', () => {
     const { container } = render(
       <LayerPanelContext.Provider value={{ hasVector: true } as any}>
-        <ConfigPanelContext.Provider
-          value={{
-            dispatch: mockDispatch,
-            initState: mockInitState,
-            selectedLayers: mockSelectedLayers,
-            state: mockContextState as any,
-          }}
-        >
+        <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
           <SpeedBlock />
         </ConfigPanelContext.Provider>
       </LayerPanelContext.Provider>,
@@ -248,14 +224,7 @@ describe('test SpeedBlock', () => {
     mockUseHasCurveEngraving.mockReturnValue(true);
 
     const { container } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state: mockContextState as any,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <SpeedBlock />
       </ConfigPanelContext.Provider>,
     );
@@ -271,14 +240,7 @@ describe('test SpeedBlock', () => {
 
     const { container } = render(
       <LayerPanelContext.Provider value={{ hasVector: true } as any}>
-        <ConfigPanelContext.Provider
-          value={{
-            dispatch: mockDispatch,
-            initState: mockInitState,
-            selectedLayers: mockSelectedLayers,
-            state: mockContextState as any,
-          }}
-        >
+        <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
           <SpeedBlock />
         </ConfigPanelContext.Provider>
       </LayerPanelContext.Provider>,
@@ -291,17 +253,15 @@ describe('test SpeedBlock', () => {
   it('should render correctly when has low speed warning', () => {
     mockUseWorkarea.mockReturnValue('fhexa1');
 
-    const state = { ...mockContextState, speed: { value: 1 } };
+    mockUseConfigPanelStore.mockReturnValue({
+      change: mockChange,
+      module: { hasMultiValue: false, value: LayerModule.LASER_10W_DIODE },
+      speed: { value: 1 },
+    });
+
     const { container } = render(
       <LayerPanelContext.Provider value={{ hasVector: true } as any}>
-        <ConfigPanelContext.Provider
-          value={{
-            dispatch: mockDispatch,
-            initState: mockInitState,
-            selectedLayers: mockSelectedLayers,
-            state: state as any,
-          }}
-        >
+        <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
           <SpeedBlock />
         </ConfigPanelContext.Provider>
       </LayerPanelContext.Provider>,
@@ -313,39 +273,29 @@ describe('test SpeedBlock', () => {
 
   test('onChange should work', () => {
     const { container } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state: mockContextState as any,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <SpeedBlock />
       </ConfigPanelContext.Provider>,
     );
 
-    expect(mockCreateEventEmitter).toBeCalledTimes(1);
+    expect(mockCreateEventEmitter).toHaveBeenCalledTimes(1);
     expect(mockCreateEventEmitter).toHaveBeenLastCalledWith('time-estimation-button');
 
-    expect(mockDispatch).not.toBeCalled();
-    expect(mockWriteData).not.toBeCalled();
-    expect(mockEmit).not.toBeCalled();
-    expect(mockBatchCommand).not.toBeCalled();
+    expect(mockChange).not.toHaveBeenCalled();
+    expect(mockWriteData).not.toHaveBeenCalled();
+    expect(mockEmit).not.toHaveBeenCalled();
+    expect(mockBatchCommand).not.toHaveBeenCalled();
     expect(batchCmd.count).toBe(0);
 
     const input = container.querySelector('input');
 
     fireEvent.change(input, { target: { value: '88' } });
-    expect(mockDispatch).toBeCalledTimes(1);
-    expect(mockDispatch).toHaveBeenLastCalledWith({
-      payload: { configName: 'CUSTOM_PRESET_CONSTANT', speed: 88 },
-      type: 'change',
-    });
-    expect(mockBatchCommand).toBeCalledTimes(1);
+    expect(mockChange).toHaveBeenCalledTimes(1);
+    expect(mockChange).toHaveBeenLastCalledWith({ configName: 'CUSTOM_PRESET_CONSTANT', speed: 88 });
+    expect(mockBatchCommand).toHaveBeenCalledTimes(1);
     expect(mockBatchCommand).lastCalledWith('Change speed');
     expect(batchCmd.count).toBe(1);
-    expect(mockWriteData).toBeCalledTimes(4);
+    expect(mockWriteData).toHaveBeenCalledTimes(4);
     expect(mockWriteData).toHaveBeenNthCalledWith(1, 'layer1', 'speed', 88, {
       applyPrinting: true,
       batchCmd,
@@ -356,41 +306,31 @@ describe('test SpeedBlock', () => {
       batchCmd,
     });
     expect(mockWriteData).toHaveBeenNthCalledWith(4, 'layer2', 'configName', 'CUSTOM_PRESET_CONSTANT', { batchCmd });
-    expect(mockEmit).toBeCalledTimes(1);
+    expect(mockEmit).toHaveBeenCalledTimes(1);
     expect(mockEmit).toHaveBeenLastCalledWith('SET_ESTIMATED_TIME', null);
     expect(batchCmd.onAfter).toBe(mockInitState);
-    expect(mockAddCommandToHistory).toBeCalledTimes(1);
+    expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
     expect(mockAddCommandToHistory).lastCalledWith(batchCmd);
   });
 
   test('onChange of value display should work correctly', () => {
     const { getByText } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state: mockContextState as any,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <SpeedBlock type="modal" />
       </ConfigPanelContext.Provider>,
     );
 
-    expect(mockCreateEventEmitter).toBeCalledTimes(1);
+    expect(mockCreateEventEmitter).toHaveBeenCalledTimes(1);
     expect(mockCreateEventEmitter).toHaveBeenLastCalledWith('time-estimation-button');
     expect(getByText('type: modal')).toBeInTheDocument();
 
-    expect(mockDispatch).not.toBeCalled();
-    expect(mockWriteData).not.toBeCalled();
-    expect(mockEmit).not.toBeCalled();
+    expect(mockChange).not.toHaveBeenCalled();
+    expect(mockWriteData).not.toHaveBeenCalled();
+    expect(mockEmit).not.toHaveBeenCalled();
     fireEvent.click(getByText('MockConfigValueDisplayButton'));
-    expect(mockDispatch).toBeCalledTimes(1);
-    expect(mockDispatch).toHaveBeenLastCalledWith({
-      payload: { configName: 'CUSTOM_PRESET_CONSTANT', speed: 88 },
-      type: 'change',
-    });
-    expect(mockWriteData).not.toBeCalled();
-    expect(mockBatchCommand).not.toBeCalled();
+    expect(mockChange).toHaveBeenCalledTimes(1);
+    expect(mockChange).toHaveBeenLastCalledWith({ configName: 'CUSTOM_PRESET_CONSTANT', speed: 88 });
+    expect(mockWriteData).not.toHaveBeenCalled();
+    expect(mockBatchCommand).not.toHaveBeenCalled();
   });
 });

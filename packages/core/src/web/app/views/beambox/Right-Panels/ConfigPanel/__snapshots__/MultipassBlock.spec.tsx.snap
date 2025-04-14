@@ -8,7 +8,7 @@ exports[`test MultipassBlock when type is not panel-item should render correctly
     <span
       class="title"
     >
-      multipass
+      Multi-pass
     </span>
     <div>
       MockConfigValueDisplay
@@ -87,7 +87,7 @@ exports[`test MultipassBlock when type is panel-item should render correctly whe
     </div>
     <div>
       label: 
-      multipass
+      Multi-pass
     </div>
   </div>
 </div>

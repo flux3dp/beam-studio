@@ -8,7 +8,7 @@ exports[`test PowerBlock should render correctly 1`] = `
     <span
       class="title"
     >
-      strength
+      Power
     </span>
     <div>
       MockConfigValueDisplay
@@ -73,7 +73,7 @@ exports[`test PowerBlock should render correctly whe power is low 1`] = `
     <span
       class="title"
     >
-      strength
+      Power
     </span>
     <div>
       MockConfigValueDisplay
@@ -137,7 +137,7 @@ exports[`test PowerBlock should render correctly whe power is low 1`] = `
       <div
         class="warning-text"
       >
-        low_power_warning
+        Lower laser power (under 10%) might not emit the laser light.
       </div>
     </div>
   </div>
@@ -165,7 +165,7 @@ exports[`test PowerBlock should render correctly when type is panel-item 1`] = `
     <div
       class="label"
     >
-      strength
+      Power
     </div>
   </div>
 </div>

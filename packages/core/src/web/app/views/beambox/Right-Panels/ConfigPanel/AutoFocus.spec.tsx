@@ -17,14 +17,7 @@ jest.mock('@core/helpers/layer/layer-config-helper', () => ({
 
 const mockAddCommandToHistory = jest.fn();
 
-jest.mock('@core/helpers/svg-editor-helper', () => ({
-  getSVGAsync: (callback) =>
-    callback({
-      Canvas: {
-        addCommandToHistory: mockAddCommandToHistory,
-      },
-    }),
-}));
+jest.mock('@core/app/svgedit/history/undoManager', () => ({ addCommandToHistory: mockAddCommandToHistory }));
 
 let batchCmd = { count: 0, onAfter: undefined };
 const mockBatchCommand = jest.fn().mockImplementation(() => {
@@ -37,32 +30,41 @@ jest.mock('@core/app/svgedit/history/history', () => ({
   BatchCommand: mockBatchCommand,
 }));
 
-const mockSelectedLayers = ['layer1', 'layer2'];
-const mockContextState = {
-  height: { hasMultiValue: false, value: 3 },
-  repeat: { hasMultiValue: false, value: 1 },
-  zStep: { hasMultiValue: false, value: 0 },
-};
-const mockDispatch = jest.fn();
 const mockInitState = jest.fn();
+
+jest.mock('./initState', () => mockInitState);
+
+const mockSelectedLayers = ['layer1', 'layer2'];
+const mockUseConfigPanelStore = jest.fn();
+const mockChange = jest.fn();
+
+jest.mock('@core/app/stores/configPanel', () => ({
+  useConfigPanelStore: (...args) => mockUseConfigPanelStore(...args),
+}));
 
 import AutoFocus from './AutoFocus';
 
 describe('test AutoFocus', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockUseConfigPanelStore.mockReturnValue({
+      change: mockChange,
+      height: { hasMultiValue: false, value: 3 },
+      repeat: { hasMultiValue: false, value: 1 },
+      zStep: { hasMultiValue: false, value: 0 },
+    });
+  });
+
   it('should render correctly when height is less than 0', () => {
-    const state = {
-      ...mockContextState,
-      height: { value: -3 },
-    } as any;
+    mockUseConfigPanelStore.mockReturnValue({
+      change: mockChange,
+      height: { hasMultiValue: false, value: -3 },
+      repeat: { hasMultiValue: false, value: 1 },
+      zStep: { hasMultiValue: false, value: 0 },
+    });
+
     const { container, queryByText } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <AutoFocus />
       </ConfigPanelContext.Provider>,
     );
@@ -73,18 +75,8 @@ describe('test AutoFocus', () => {
   });
 
   it('should render correctly when repeat is less than 1', () => {
-    const state = {
-      ...mockContextState,
-    } as any;
     const { container, queryByText } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <AutoFocus />
       </ConfigPanelContext.Provider>,
     );
@@ -95,19 +87,15 @@ describe('test AutoFocus', () => {
   });
 
   it('should render correctly when repeat is larger than 1', () => {
-    const state = {
-      ...mockContextState,
-      repeat: { value: 2 },
-    } as any;
+    mockUseConfigPanelStore.mockReturnValue({
+      change: mockChange,
+      height: { hasMultiValue: false, value: -3 },
+      repeat: { hasMultiValue: false, value: 2 },
+      zStep: { hasMultiValue: false, value: 0 },
+    });
+
     const { container, queryByText } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <AutoFocus />
       </ConfigPanelContext.Provider>,
     );
@@ -118,30 +106,26 @@ describe('test AutoFocus', () => {
   });
 
   test('handlers should work', () => {
-    const state = {
-      ...mockContextState,
-      repeat: { value: 2 },
-    } as any;
+    mockUseConfigPanelStore.mockReturnValue({
+      change: mockChange,
+      height: { hasMultiValue: false, value: -3 },
+      repeat: { hasMultiValue: false, value: 2 },
+      zStep: { hasMultiValue: false, value: 0 },
+    });
+
     const { container } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <AutoFocus />
       </ConfigPanelContext.Provider>,
     );
 
-    expect(mockDispatch).not.toHaveBeenCalled();
+    expect(mockChange).not.toHaveBeenCalled();
     expect(mockWriteData).not.toHaveBeenCalled();
     expect(mockBatchCommand).not.toHaveBeenCalled();
     expect(batchCmd.count).toBe(0);
     fireEvent.click(container.querySelector('button#auto-focus'));
-    expect(mockDispatch).toHaveBeenCalledTimes(1);
-    expect(mockDispatch).toHaveBeenLastCalledWith({ payload: { height: -3 }, type: 'change' });
+    expect(mockChange).toHaveBeenCalledTimes(1);
+    expect(mockChange).toHaveBeenLastCalledWith({ height: -3 });
     expect(mockBatchCommand).toHaveBeenCalledTimes(1);
     expect(mockBatchCommand).toHaveBeenLastCalledWith('Change auto focus toggle');
     expect(batchCmd.count).toBe(1);

@@ -50,41 +50,35 @@ jest.mock('@core/helpers/layer/layer-helper', () => ({
   getLayerByName: (...args) => mockGetLayerByName(...args),
 }));
 
-jest.mock('@core/helpers/useI18n', () => () => ({
-  beambox: {
-    right_panel: {
-      laser_panel: {
-        single_color: 'single_color',
-        single_color_desc: 'single_color_desc',
-      },
-    },
-  },
-}));
+const mockInitState = jest.fn();
+
+jest.mock('./initState', () => () => mockInitState());
 
 const mockSelectedLayers = ['layer1', 'layer2'];
-const mockContextState = {
-  fullcolor: { hasMultiValue: false, value: true },
-  selectedLayer: 'layer1',
-  split: { value: false },
-};
-const mockDispatch = jest.fn();
-const mockInitState = jest.fn();
+
+const mockUseConfigPanelStore = jest.fn();
+const mockChange = jest.fn();
+const mockUpdate = jest.fn();
+
+jest.mock('@core/app/stores/configPanel', () => ({
+  useConfigPanelStore: (...args) => mockUseConfigPanelStore(...args),
+}));
 
 describe('test SingleColorBlock', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockUseConfigPanelStore.mockReturnValue({
+      change: mockChange,
+      fullcolor: { hasMultiValue: false, value: true },
+      selectedLayer: 'layer1',
+      split: { value: false },
+      update: mockUpdate,
+    });
   });
 
   it('should render correctly', () => {
     const { container } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state: mockContextState as any,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <SingleColorBlock />
       </ConfigPanelContext.Provider>,
     );
@@ -111,41 +105,29 @@ describe('test SingleColorBlock', () => {
     mockGetMultiSelectData.mockReturnValue('mock-multi-select-data');
 
     const { container } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state: mockContextState as any,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <SingleColorBlock />
       </ConfigPanelContext.Provider>,
     );
     const btn = container.querySelector('button#single-color');
 
     fireEvent.click(btn);
-    expect(mockBatchCommand).toBeCalledTimes(1);
+    expect(mockBatchCommand).toHaveBeenCalledTimes(1);
     expect(mockBatchCommand).toHaveBeenNthCalledWith(1, 'Toggle full color');
-    expect(mockDispatch).toBeCalledTimes(2);
-    expect(mockDispatch).toHaveBeenNthCalledWith(1, {
-      payload: { fullcolor: false },
-      type: 'change',
-    });
-    expect(mockDispatch).toHaveBeenNthCalledWith(2, {
-      payload: { color: 'mock-multi-select-data' },
-      type: 'update',
-    });
-    expect(mockGetLayerByName).toBeCalledTimes(2);
-    expect(mockGetData).toBeCalledTimes(4);
-    expect(mockToggleFullColorLayer).toBeCalledTimes(2);
+    expect(mockChange).toHaveBeenCalledTimes(1);
+    expect(mockChange).toHaveBeenNthCalledWith(1, { fullcolor: false });
+    expect(mockUpdate).toHaveBeenCalledTimes(1);
+    expect(mockUpdate).toHaveBeenNthCalledWith(1, { color: 'mock-multi-select-data' });
+    expect(mockGetLayerByName).toHaveBeenCalledTimes(2);
+    expect(mockGetData).toHaveBeenCalledTimes(4);
+    expect(mockToggleFullColorLayer).toHaveBeenCalledTimes(2);
     expect(mockToggleFullColorLayer).toHaveBeenNthCalledWith(1, mockLayers.layer1, { val: false });
     expect(mockToggleFullColorLayer).toHaveBeenNthCalledWith(2, mockLayers.layer2, { val: false });
-    expect(mockBatchCommandInstance.addSubCommand).toBeCalledTimes(2);
+    expect(mockBatchCommandInstance.addSubCommand).toHaveBeenCalledTimes(2);
     expect(mockBatchCommandInstance.addSubCommand).toHaveBeenNthCalledWith(1, mockSubCmd);
     expect(mockBatchCommandInstance.addSubCommand).toHaveBeenNthCalledWith(2, mockSubCmd);
-    expect(mockAddCommandToHistory).toBeCalledTimes(1);
+    expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
     expect(mockAddCommandToHistory).toHaveBeenNthCalledWith(1, mockBatchCommandInstance);
-    expect(mockUpdateLayerPanel).toBeCalledTimes(1);
+    expect(mockUpdateLayerPanel).toHaveBeenCalledTimes(1);
   });
 });

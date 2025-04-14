@@ -46,31 +46,35 @@ jest.mock('@core/helpers/presets/preset-helper', () => ({
 }));
 
 const mockSelectedLayers = ['layer1'];
-const mockContextState = {
-  focus: { hasMultiValue: false, value: -2 },
-  focusStep: { hasMultiValue: false, value: -2 },
-  height: { hasMultiValue: false, value: -3 },
-  minPower: { hasMultiValue: false, value: 0 },
-  module: { hasMultiValue: false, value: 15 },
-  power: { hasMultiValue: false, value: 77 },
-  repeat: { hasMultiValue: false, value: 1 },
-  speed: { hasMultiValue: false, value: 87 },
-  zStep: { hasMultiValue: false, value: 0.1 },
-};
-const mockDispatch = jest.fn();
-const mockInitState = jest.fn();
+
+const mockGetState = jest.fn();
+const mockRename = jest.fn();
+
+jest.mock('@core/app/stores/configPanel', () => ({
+  useConfigPanelStore: () => ({
+    getState: () => mockGetState(),
+    rename: (...args) => mockRename(...args),
+  }),
+}));
 
 describe('test SaveConfigButton', () => {
+  beforeEach(() => {
+    mockGetState.mockReturnValue({
+      focus: { hasMultiValue: false, value: -2 },
+      focusStep: { hasMultiValue: false, value: -2 },
+      height: { hasMultiValue: false, value: -3 },
+      minPower: { hasMultiValue: false, value: 0 },
+      module: { hasMultiValue: false, value: 15 },
+      power: { hasMultiValue: false, value: 77 },
+      repeat: { hasMultiValue: false, value: 1 },
+      speed: { hasMultiValue: false, value: 87 },
+      zStep: { hasMultiValue: false, value: 0.1 },
+    });
+  });
+
   it('should render correctly', () => {
     const { container } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state: mockContextState as any,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <SaveConfigButton />
       </ConfigPanelContext.Provider>,
     );
@@ -80,34 +84,26 @@ describe('test SaveConfigButton', () => {
 
   test('button should work when customized config is empty', () => {
     const { container } = render(
-      <ConfigPanelContext.Provider
-        value={{
-          dispatch: mockDispatch,
-          initState: mockInitState,
-          selectedLayers: mockSelectedLayers,
-          state: mockContextState as any,
-        }}
-      >
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <SaveConfigButton />
       </ConfigPanelContext.Provider>,
     );
 
-    expect(mockPromptDialog).not.toBeCalled();
+    expect(mockPromptDialog).not.toHaveBeenCalled();
 
     const btn = container.querySelector('.container');
 
     fireEvent.click(btn);
-    expect(mockPromptDialog).toBeCalledTimes(1);
+    expect(mockPromptDialog).toHaveBeenCalledTimes(1);
 
     const handleSaveConfig = mockPromptDialog.mock.calls[0][0].onYes;
 
-    expect(mockGetAllPresets).not.toBeCalled();
-    expect(mockSavePreset).not.toBeCalled();
-    expect(mockWriteData).not.toBeCalled();
-    expect(mockDispatch).not.toBeCalled();
+    expect(mockGetAllPresets).not.toHaveBeenCalled();
+    expect(mockSavePreset).not.toHaveBeenCalled();
+    expect(mockWriteData).not.toHaveBeenCalled();
     mockGetAllPresets.mockReturnValueOnce([]);
     handleSaveConfig('new_config_name');
-    expect(mockSavePreset).toBeCalledTimes(1);
+    expect(mockSavePreset).toHaveBeenCalledTimes(1);
     expect(mockSavePreset).toHaveBeenLastCalledWith({
       focus: -2,
       focusStep: -2,
@@ -119,9 +115,9 @@ describe('test SaveConfigButton', () => {
       speed: 87,
       zStep: 0.1,
     });
-    expect(mockWriteData).toBeCalledTimes(1);
+    expect(mockWriteData).toHaveBeenCalledTimes(1);
     expect(mockWriteData).toHaveBeenLastCalledWith('layer1', 'configName', 'new_config_name');
-    expect(mockDispatch).toBeCalledTimes(1);
-    expect(mockDispatch).toHaveBeenLastCalledWith({ payload: 'new_config_name', type: 'rename' });
+    expect(mockRename).toHaveBeenCalledTimes(1);
+    expect(mockRename).toHaveBeenLastCalledWith('new_config_name');
   });
 });

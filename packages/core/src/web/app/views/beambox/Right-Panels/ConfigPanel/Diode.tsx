@@ -5,20 +5,13 @@ import classNames from 'classnames';
 
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import history from '@core/app/svgedit/history/history';
+import undoManager from '@core/app/svgedit/history/undoManager';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './Block.module.scss';
 import ConfigPanelContext from './ConfigPanelContext';
 import initState from './initState';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
 
 const Diode = (): React.JSX.Element => {
   const lang = useI18n();
@@ -35,7 +28,7 @@ const Diode = (): React.JSX.Element => {
 
     selectedLayers.forEach((layerName) => writeData(layerName, 'diode', newValue, { batchCmd }));
     batchCmd.onAfter = initState;
-    svgCanvas.addCommandToHistory(batchCmd);
+    undoManager.addCommandToHistory(batchCmd);
   };
 
   return (

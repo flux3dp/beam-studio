@@ -9,7 +9,7 @@ exports[`test Diode should render correctly 1`] = `
       class="title"
       for="diode"
     >
-      diode
+      Diode Laser
     </label>
     <button
       aria-checked="true"

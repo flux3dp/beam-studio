@@ -42,7 +42,7 @@ exports[`test AdvancedBlock should render correctly for autofocus, diode 1`] = `
         <span
           class="ant-collapse-header-text"
         >
-          advanced
+          Advanced
         </span>
       </div>
       <div
@@ -110,7 +110,7 @@ exports[`test AdvancedBlock should render correctly for lower focus, diode 1`] =
         <span
           class="ant-collapse-header-text"
         >
-          advanced
+          Advanced
         </span>
       </div>
       <div
@@ -181,7 +181,7 @@ exports[`test AdvancedBlock should render correctly for printer 1`] = `
         <span
           class="ant-collapse-header-text"
         >
-          advanced
+          Advanced
         </span>
       </div>
       <div
@@ -246,7 +246,7 @@ exports[`test AdvancedBlock should render correctly for promark desktop 1`] = `
         <span
           class="ant-collapse-header-text"
         >
-          advanced
+          Advanced
         </span>
       </div>
       <div
@@ -318,7 +318,7 @@ exports[`test AdvancedBlock should render correctly for promark mopa 1`] = `
         <span
           class="ant-collapse-header-text"
         >
-          advanced
+          Advanced
         </span>
       </div>
       <div
@@ -393,7 +393,7 @@ exports[`test AdvancedBlock should render correctly with curve engraving 1`] = `
         <span
           class="ant-collapse-header-text"
         >
-          advanced
+          Advanced
         </span>
       </div>
       <div
