@@ -175,7 +175,7 @@ describe('test ModuleBlock', () => {
     expect(container).toBeEmptyDOMElement();
   });
 
-  test.only('change to 20w should work with preset change', () => {
+  test('change to 20w should work with preset change', () => {
     const { baseElement, getByText } = render(
       <ConfigPanelContext.Provider value={{ selectedLayers: ['layer1'] }}>
         <ModuleBlock />
