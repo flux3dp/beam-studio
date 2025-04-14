@@ -63,6 +63,7 @@ const mockInitState = jest.fn();
 jest.mock('./initState', () => mockInitState);
 
 const mockUseConfigPanelStore = jest.fn();
+const mockGetState = jest.fn();
 const mockUpdate = jest.fn();
 const mockSelectedLayers = ['layer1', 'layer2'];
 
@@ -79,11 +80,14 @@ describe('test FillSettingModal', () => {
     mockGetLayerByName.mockImplementation((layerName: string) => layerName);
     mockCreateEventEmitter.mockReturnValueOnce({ emit: mockEmit });
     mockUseConfigPanelStore.mockReturnValue({
+      getState: mockGetState,
+      update: mockUpdate,
+    });
+    mockGetState.mockReturnValue({
       biDirectional: { hasMultiValue: false, value: true },
       crossHatch: { hasMultiValue: false, value: false },
       fillAngle: { hasMultiValue: false, value: 0 },
       fillInterval: { hasMultiValue: false, value: 0.1 },
-      update: mockUpdate,
     });
   });
 

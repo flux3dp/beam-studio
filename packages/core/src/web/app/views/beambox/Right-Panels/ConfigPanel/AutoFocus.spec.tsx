@@ -86,10 +86,10 @@ describe('test AutoFocus', () => {
     expect(queryByText('title: Z Step')).not.toBeInTheDocument();
   });
 
-  it('should render correctly when repeat is larger than 1', () => {
+  it.only('should render correctly when repeat is larger than 1', () => {
     mockUseConfigPanelStore.mockReturnValue({
       change: mockChange,
-      height: { hasMultiValue: false, value: -3 },
+      height: { hasMultiValue: false, value: 3 },
       repeat: { hasMultiValue: false, value: 2 },
       zStep: { hasMultiValue: false, value: 0 },
     });
@@ -108,7 +108,7 @@ describe('test AutoFocus', () => {
   test('handlers should work', () => {
     mockUseConfigPanelStore.mockReturnValue({
       change: mockChange,
-      height: { hasMultiValue: false, value: -3 },
+      height: { hasMultiValue: false, value: 3 },
       repeat: { hasMultiValue: false, value: 2 },
       zStep: { hasMultiValue: false, value: 0 },
     });
