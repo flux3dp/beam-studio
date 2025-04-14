@@ -15,7 +15,7 @@ describe('test configPanel store', () => {
     useConfigPanelStore.getState().reset();
   });
 
-  test.only('getDefaultState should work', () => {
+  test('getDefaultState should work', () => {
     const state = useConfigPanelStore.getState().getState();
 
     expect(state).toEqual({
@@ -36,9 +36,9 @@ describe('test configPanel store', () => {
 
     expect(state).toEqual({
       configName: { value: '' },
-      power: { hasMultiValue: true, value: 20 },
+      power: { value: 15 },
       repeat: { value: 1 },
-      speed: { value: 20 },
+      speed: { hasMultiValue: true, value: 2 },
       zStep: { value: 0 },
     });
   });

@@ -86,7 +86,7 @@ describe('test AutoFocus', () => {
     expect(queryByText('title: Z Step')).not.toBeInTheDocument();
   });
 
-  it.only('should render correctly when repeat is larger than 1', () => {
+  it('should render correctly when repeat is larger than 1', () => {
     mockUseConfigPanelStore.mockReturnValue({
       change: mockChange,
       height: { hasMultiValue: false, value: 3 },
