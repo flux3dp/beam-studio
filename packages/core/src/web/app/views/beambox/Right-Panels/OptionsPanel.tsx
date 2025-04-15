@@ -24,9 +24,9 @@ interface Props {
 
 function OptionsPanel({ elem, polygonSides, rx, updateDimensionValues, updateObjectPanel }: Props): React.JSX.Element {
   const isMobile = useIsMobile();
-  let contents: React.JSX.Element[];
+  let contents: Array<null | React.JSX.Element> = [];
   const isFullColor = getData(getObjectLayer(elem as SVGElement)?.elem, 'fullcolor');
-  const elemTagName = elem?.tagName.toLowerCase();
+  const elemTagName = useMemo(() => elem?.tagName.toLowerCase(), [elem]);
   const showColorPanel = useMemo(() => {
     if (!elem || !['ellipse', 'g', 'path', 'polygon', 'rect', 'text', 'use'].includes(elemTagName)) {
       return false;
@@ -45,7 +45,7 @@ function OptionsPanel({ elem, polygonSides, rx, updateDimensionValues, updateObj
       ];
     } else if (tagName === 'polygon') {
       contents = [
-        <PolygonOptions elem={elem} key="polygon" polygonSides={polygonSides} />,
+        <PolygonOptions elem={elem} key="polygon" polygonSides={polygonSides!} />,
         showColorPanel ? <ColorPanel elem={elem} key="color" /> : <InFillBlock elem={elem} key="fill" />,
       ];
     } else if (tagName === 'text') {
@@ -58,7 +58,6 @@ function OptionsPanel({ elem, polygonSides, rx, updateDimensionValues, updateObj
           updateDimensionValues={updateDimensionValues}
           updateObjectPanel={updateObjectPanel}
         />,
-
         showColorPanel ? (
           <ColorPanel elem={elem} key="color" />
         ) : isMobile ? (
@@ -79,7 +78,7 @@ function OptionsPanel({ elem, polygonSides, rx, updateDimensionValues, updateObj
           elem={elem}
           isTextPath
           key="textpath"
-          textElement={textElem}
+          textElement={textElem!}
           updateDimensionValues={updateDimensionValues}
           updateObjectPanel={updateObjectPanel}
         />,

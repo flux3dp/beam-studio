@@ -5,7 +5,6 @@ import BackgroundRemovalMobile from './background-removal-mobile.svg';
 import BackgroundRemoval from './background-removal.svg';
 import BevelMobile from './bevel-mobile.svg';
 import Bevel from './bevel.svg';
-import Bridge from './bridge.svg';
 import Brightness from './brightness.svg';
 import ConvertToPathMobile from './convert-to-path-mobile.svg';
 import ConvertToPath from './convert-to-path.svg';
@@ -32,6 +31,7 @@ import Sharpen from './sharpen.svg';
 import SimplifyMobile from './simplify-mobile.svg';
 import Simplify from './simplify.svg';
 import SmartNest from './smart-nest.svg';
+import Tab from './tab.svg';
 import Trace from './trace.svg';
 import WeldText from './weld-text.svg';
 
@@ -43,7 +43,6 @@ export default {
   BackgroundRemovalMobile,
   Bevel,
   BevelMobile,
-  Bridge,
   Brightness,
   ConvertToPath,
   ConvertToPathMobile,
@@ -70,6 +69,7 @@ export default {
   Simplify,
   SimplifyMobile,
   SmartNest,
+  Tab,
   Trace,
   WeldText,
 };

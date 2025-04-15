@@ -2,39 +2,35 @@ import { useCallback, useReducer } from 'react';
 
 import { match } from 'ts-pattern';
 
-interface HistoryItem {
+type HistoryItem = {
   pathData: string[];
-}
+};
 
-export interface HistoryState {
-  hasUndid?: boolean;
+export type HistoryState = {
   index: number;
   items: HistoryItem[];
-}
+};
 
-interface HistoryAction {
+type HistoryAction = {
   payload?: HistoryItem;
   type: 'PUSH' | 'REDO' | 'SET' | 'UNDO';
-}
+};
 
-interface HistoryContext {
+type HistoryContext = {
   history: HistoryState;
   push: (item: HistoryItem) => void;
   redo: () => HistoryItem;
   set: (item: HistoryItem) => void;
   undo: () => HistoryItem;
-}
+};
 
-const historyReducer = (state: HistoryState, { payload, type }: HistoryAction) => {
-  const { index, items } = state;
-
-  return match(type)
+const historyReducer = ({ index, items }: HistoryState, { payload, type }: HistoryAction) =>
+  match(type)
     .with('PUSH', () => ({ index: index + 1, items: items.slice(0, index + 1).concat(payload!) }))
     .with('SET', () => ({ hasUndid: false, index: 0, items: [payload!] }))
     .with('UNDO', () => ({ index: index - Number(index > 0), items }))
     .with('REDO', () => ({ index: index + Number(index < items.length - 1), items }))
-    .otherwise(() => state);
-};
+    .exhaustive();
 
 // History management
 export const useHistory = (initialState: HistoryState): HistoryContext => {

@@ -3,7 +3,7 @@ import React, { memo } from 'react';
 
 import { Button, Flex, Form, Switch } from 'antd';
 
-import BridgePanelIcons from '@core/app/icons/BridgePanel/BridgePanelIcons';
+import TabPanelIcons from '@core/app/icons/TabPanel/TabPanelIcons';
 import BackButton from '@core/app/widgets/FullWindowPanel/BackButton';
 import Footer from '@core/app/widgets/FullWindowPanel/Footer';
 import Header from '@core/app/widgets/FullWindowPanel/Header';
@@ -15,91 +15,84 @@ import browser from '@core/implementations/browser';
 import styles from './index.module.scss';
 
 interface Props {
-  bridgeGap: number;
-  bridgeWidth: number;
+  gap: number;
   handleCutPathByGap: () => void;
   mode: 'auto' | 'manual';
   onClose: () => void;
   onComplete: () => void;
-  setBridgeGap: Dispatch<SetStateAction<number>>;
-  setBridgeWidth: Dispatch<SetStateAction<number>>;
+  setGap: Dispatch<SetStateAction<number>>;
   setMode: Dispatch<SetStateAction<'auto' | 'manual'>>;
+  setWidth: Dispatch<SetStateAction<number>>;
+  width: number;
 }
 
 function UnmemorizedSider({
-  bridgeGap,
-  bridgeWidth,
+  gap,
   handleCutPathByGap,
   mode = 'manual',
   onClose,
   onComplete,
-  setBridgeGap,
-  setBridgeWidth,
+  setGap,
   setMode,
+  setWidth,
+  width,
 }: Props): React.JSX.Element {
-  const { alert, buttons: langButtons } = useI18n();
+  const { alert, buttons: langButtons, global, tab_panel: tabPanel } = useI18n();
 
   return (
     <FullWindowPanelSider className={styles.sider}>
       <Flex className={styles['h-100']} justify="space-between" vertical>
         <div>
           <BackButton onClose={onClose}>{langButtons.back_to_beam_studio}</BackButton>
-          <Header icon={<BridgePanelIcons.Bridge />} title={'Bridge'} />
+          <Header icon={<TabPanelIcons.Tab />} title={tabPanel.title} />
           <div className={styles.wrapper}>
-            <div
-              className={styles.link}
-              onClick={() =>
-                browser.open(`https://support.flux3dp.com/hc/zh-tw/articles/12441363882511-%E6%A9%8B%E6%8E%A5`)
-              }
-            >
+            <div className={styles.link} onClick={() => browser.open(tabPanel.help_center)}>
               {alert.learn_more}
             </div>
             <Form>
-              <Form.Item label={`Manual Mode:`}>
+              <Form.Item label={`${tabPanel.manual_mode}:`}>
                 <Switch
                   className={styles.switch}
                   onChange={(checked) => setMode(checked ? 'manual' : 'auto')}
                   value={mode === 'manual'}
                 />
               </Form.Item>
-              <Form.Item label={`Width:`}>
+              <Form.Item label={`${tabPanel.width}:`}>
                 <UnitInput
                   addonAfter="mm"
-                  data-testid="bridge-width"
                   isInch={false}
-                  key="bridge-width"
+                  key="width"
                   max={10}
                   min={0.1}
-                  onChange={(value) => setBridgeWidth(value!)}
+                  onChange={(value) => setWidth(value!)}
                   precision={1}
                   step={1}
                   type="number"
-                  value={bridgeWidth}
+                  value={width}
                 />
               </Form.Item>
-              <Form.Item hidden={mode !== 'auto'} label={`Gap:`}>
+              <Form.Item hidden={mode !== 'auto'} label={`${tabPanel.gap}:`}>
                 <UnitInput
                   addonAfter="mm"
-                  data-testid="bridge-gap"
                   isInch={false}
-                  key="bridge-gap"
+                  key="gap"
                   max={50}
                   min={1}
-                  onChange={(value) => setBridgeGap(value!)}
+                  onChange={(value) => setGap(value!)}
                   precision={1}
                   step={1}
-                  value={bridgeGap}
+                  value={gap}
                 />
               </Form.Item>
               <Button hidden={mode !== 'auto'} onClick={handleCutPathByGap} type="default">
-                Apply Bridge
+                {tabPanel.apply}
               </Button>
             </Form>
           </div>
         </div>
         <Footer>
           <Button key="ok" onClick={onComplete} type="primary">
-            {'Save and Exit'}
+            {global.save_and_exit}
           </Button>
         </Footer>
       </Flex>

@@ -3,7 +3,6 @@ import React from 'react';
 import alertCaller from '@core/app/actions/alert-caller';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import Boxgen from '@core/app/components/boxgen/Boxgen';
-import BridgePanel from '@core/app/components/BridgePanel';
 import AboutBeamStudio from '@core/app/components/dialogs/AboutBeamStudio';
 import AnnouncementPanel from '@core/app/components/dialogs/AnnouncementPanel';
 import CartridgeSettingPanel from '@core/app/components/dialogs/CartridgeSettingPanel';
@@ -24,6 +23,7 @@ import RadioSelectDialog from '@core/app/components/dialogs/RadioSelectDialog';
 import RatingPanel from '@core/app/components/dialogs/RatingPanel';
 import SocialMediaModal from '@core/app/components/dialogs/SocialMediaModal';
 import ImageEditPanel from '@core/app/components/ImageEditPanel';
+import TabPanel from '@core/app/components/TabPanel';
 import alertConstants from '@core/app/constants/alert-constants';
 import { eventEmitter } from '@core/app/contexts/DialogContext';
 import LayerColorConfigPanel from '@core/app/views/beambox/Layer-Color-Config';
@@ -251,37 +251,6 @@ export default {
         onClose={() => {
           onClose();
           popDialogById('box-gen');
-        }}
-      />,
-    );
-  },
-  showBridgePanel: (
-    { bbox, onClose }: { bbox: DOMRect; onClose: () => void } = {
-      bbox: new DOMRect(0, 0, 0, 0),
-      onClose: () => {},
-    },
-  ): void => {
-    if (isIdExist('bridge-panel')) {
-      return;
-    }
-
-    const selectedElements = svgCanvas.getSelectedElems();
-
-    if (selectedElements.length !== 1) {
-      return;
-    }
-
-    const element = selectedElements[0];
-
-    addDialogComponent(
-      'bridge-panel',
-      <BridgePanel
-        bbox={bbox}
-        element={element}
-        onClose={() => {
-          onClose();
-          ObjectPanelController.updateActiveKey(null);
-          popDialogById('bridge-panel');
         }}
       />,
     );
@@ -745,6 +714,37 @@ export default {
     }
 
     addDialogComponent('svg-nest', <SvgNestButtons onClose={() => popDialogById('svg-nest')} />);
+  },
+  showTabPanel: (
+    { bbox, onClose }: { bbox: DOMRect; onClose: () => void } = {
+      bbox: new DOMRect(0, 0, 0, 0),
+      onClose: () => {},
+    },
+  ): void => {
+    if (isIdExist('tab-panel')) {
+      return;
+    }
+
+    const selectedElements = svgCanvas.getSelectedElems();
+
+    if (selectedElements.length !== 1) {
+      return;
+    }
+
+    const element = selectedElements[0];
+
+    addDialogComponent(
+      'tab-panel',
+      <TabPanel
+        bbox={bbox}
+        element={element}
+        onClose={() => {
+          onClose();
+          ObjectPanelController.updateActiveKey(null);
+          popDialogById('tab-panel');
+        }}
+      />,
+    );
   },
   showTutorial: (tutorial: ITutorial, callback: () => void): void => {
     const { id } = tutorial;

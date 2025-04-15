@@ -672,7 +672,6 @@ const lang: ILang = {
           array: 'Array',
           auto_fit: 'Auto Fit',
           bevel: 'Bevel',
-          bridge: 'Bridge',
           brightness: 'Brightness',
           convert_to_path: 'Convert to Path',
           create_textpath: 'Create Text on Path',
@@ -1220,6 +1219,7 @@ const lang: ILang = {
     mode_conflict: 'This option is not available in the current mode.',
     ok: 'OK',
     save: 'Save',
+    save_and_exit: 'Save and Exit',
     stop: 'Stop',
   },
   image_edit_panel: {
@@ -1821,6 +1821,14 @@ Machines > ‘Promark Name’ > Promark Settings`,
   support: {
     no_vcredist: 'Please install Visual C++ Redistributable 2015<br/>That can be downloaded on flux3dp.com',
     no_webgl: 'WebGL is not supported. Please use other devices.',
+  },
+  tab_panel: {
+    apply: 'Apply Tabs',
+    gap: 'Gap',
+    help_center: 'https://support.flux3dp.com/hc/en-us/articles/12441363882511',
+    manual_mode: 'Manual Mode',
+    title: 'Tabs',
+    width: 'Width',
   },
   topbar: {
     alerts: {

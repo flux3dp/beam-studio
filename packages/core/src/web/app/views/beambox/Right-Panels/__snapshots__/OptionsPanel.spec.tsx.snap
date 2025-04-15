@@ -156,7 +156,19 @@ exports[`should render correctly in mobile text 1`] = `
 </div>
 `;
 
-exports[`should render correctly no element 1`] = `<div />`;
+exports[`should render correctly no element 1`] = `
+<div>
+  <div
+    class="panel"
+  >
+    <div
+      class="title"
+    >
+      OPTIONS
+    </div>
+  </div>
+</div>
+`;
 
 exports[`should render correctly others 1`] = `
 <div>

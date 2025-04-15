@@ -7,10 +7,10 @@ import { match } from 'ts-pattern';
 
 import { dpmm } from '@core/app/actions/beambox/constant';
 import FullWindowPanel from '@core/app/widgets/FullWindowPanel/FullWindowPanel';
-import { handleChangePathDataCommand } from '@core/helpers/BridgePanel/handleChangePathDataCommand';
 import { usePaperCanvas } from '@core/helpers/hooks/paperjs/usePaperCanvas';
 import useNewShortcutsScope from '@core/helpers/hooks/useNewShortcutsScope';
 import shortcuts from '@core/helpers/shortcuts';
+import { handleChangePathDataCommand } from '@core/helpers/TabPanel/handleChangePathDataCommand';
 import useI18n from '@core/helpers/useI18n';
 
 import { useHistory } from './hooks/useHistory';
@@ -32,14 +32,14 @@ interface Props {
 
 const PADDING = 30;
 
-function UnmemorizedBridgePanel({ bbox, element, onClose }: Props): React.JSX.Element {
-  const { image_edit_panel: lang } = useI18n();
-  const { history, push, redo, set, undo } = useHistory({ hasUndid: false, index: 0, items: [{ pathData: [] }] });
+function UnmemorizedTabPanel({ bbox, element, onClose }: Props): React.JSX.Element {
+  const { tab_panel: lang } = useI18n();
+  const { history, push, redo, set, undo } = useHistory({ index: 0, items: [{ pathData: [] }] });
   const [mode, setMode] = useState<'auto' | 'manual'>('manual');
   const [pathData, setPathData] = useState(Array.of<string>());
   const [isPathDataChanged, setIsPathDataChanged] = useState(false);
-  const [bridgeWidth, setBridgeWidth] = useState(0.5);
-  const [bridgeGap, setBridgeGap] = useState(10);
+  const [width, setWidth] = useState(0.5);
+  const [gap, setGap] = useState(10);
   // only for display percentage, not for calculation
   const [zoomScale, setZoomScale] = useState(1);
   const [fitScreenDimension, setFitScreenDimension] = useState({ scale: 1, x: 0, y: 0 });
@@ -88,11 +88,11 @@ function UnmemorizedBridgePanel({ bbox, element, onClose }: Props): React.JSX.El
   );
 
   const handleCutPathByGap = useCallback(() => {
-    const newCompoundPath = cutPathByGap({ gap: bridgeGap * dpmm, width: bridgeWidth * dpmm });
+    const newCompoundPath = cutPathByGap({ gap: gap * dpmm, width: width * dpmm });
 
     setPathData((prev) => prev.concat(newCompoundPath.pathData));
     setIsPathDataChanged(true);
-  }, [bridgeGap, bridgeWidth]);
+  }, [gap, width]);
 
   const handleMouseDown = useCallback(
     (event: paper.ToolEvent) => {
@@ -106,14 +106,14 @@ function UnmemorizedBridgePanel({ bbox, element, onClose }: Props): React.JSX.El
 
       if (closestHit) {
         const path = closestHit.item as paper.Path;
-        const newCompoundPath = cutPathAtPoint(path, point, bridgeWidth * dpmm);
+        const newCompoundPath = cutPathAtPoint(path, point, width * dpmm);
 
         if (newCompoundPath) setPathData((prev) => prev.concat(newCompoundPath.pathData));
 
         setIsPathDataChanged(true);
       }
     },
-    [bridgeWidth, isDraggable, isDragging, mode],
+    [width, isDraggable, isDragging, mode],
   );
   const handleMouseMove = useCallback(
     (event: paper.ToolEvent) => {
@@ -128,10 +128,10 @@ function UnmemorizedBridgePanel({ bbox, element, onClose }: Props): React.JSX.El
       if (closestHit) {
         const path = closestHit.item as paper.Path;
 
-        drawPerpendicularLineOnPath(path, point, bridgeWidth * dpmm);
+        drawPerpendicularLineOnPath(path, point, width * dpmm);
       }
     },
-    [bridgeWidth, isDraggable, isDragging, mode],
+    [width, isDraggable, isDragging, mode],
   );
   const handleMouseDrag = useCallback(
     (event: paper.ToolEvent) => {
@@ -252,15 +252,15 @@ function UnmemorizedBridgePanel({ bbox, element, onClose }: Props): React.JSX.El
       renderContents={() => (
         <>
           <Sider
-            bridgeGap={bridgeGap}
-            bridgeWidth={bridgeWidth}
+            gap={gap}
             handleCutPathByGap={handleCutPathByGap}
             mode={mode}
             onClose={onClose}
             onComplete={handleComplete}
-            setBridgeGap={setBridgeGap}
-            setBridgeWidth={setBridgeWidth}
+            setGap={setGap}
             setMode={setMode}
+            setWidth={setWidth}
+            width={width}
           />
           <Flex className={styles['w-100']} vertical>
             <TopBar
@@ -284,6 +284,6 @@ function UnmemorizedBridgePanel({ bbox, element, onClose }: Props): React.JSX.El
   );
 }
 
-const BridgePanel = memo(UnmemorizedBridgePanel);
+const TabPanel = memo(UnmemorizedTabPanel);
 
-export default BridgePanel;
+export default TabPanel;

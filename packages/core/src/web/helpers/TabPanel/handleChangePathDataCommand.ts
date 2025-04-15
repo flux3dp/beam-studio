@@ -13,7 +13,7 @@ getSVGAsync(({ Canvas }) => {
 export function handleChangePathDataCommand(
   element: SVGPathElement,
   d: string,
-  batchCommand = new history.BatchCommand('Bridge Panel'),
+  batchCommand = new history.BatchCommand('Tab Panel'),
 ): void {
   element.setAttribute('d', d);
   // to normalize & upperCase the path data

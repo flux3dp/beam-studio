@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 
 import { Button, ConfigProvider } from 'antd';
 import classNames from 'classnames';
@@ -20,6 +20,7 @@ import updateElementColor from '@core/helpers/color/updateElementColor';
 import imageEdit from '@core/helpers/image-edit';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { isMobile } from '@core/helpers/system-helper';
+import useForceUpdate from '@core/helpers/use-force-update';
 import useI18n from '@core/helpers/useI18n';
 import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
 import dialog from '@core/implementations/dialog';
@@ -49,6 +50,8 @@ interface ButtonOpts {
 
 const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
   const i18n = useI18n();
+  const forceUpdate = useForceUpdate();
+  const tab = i18n.tab_panel.title;
   const lang = i18n.beambox.right_panel.object_panel.actions_panel;
   const replaceImage = async (): Promise<void> => {
     setTimeout(() => ObjectPanelController.updateActiveKey(null), 300);
@@ -171,10 +174,10 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       { isFullLine: true, ...opts },
     );
 
-  const renderBridgeButton = (opts: ButtonOpts = {}): React.JSX.Element =>
+  const renderTabButton = (opts: ButtonOpts = {}): React.JSX.Element =>
     renderButtons(
-      'bridge',
-      lang.bridge,
+      'tab',
+      tab,
       () => {
         const bbox = (elem as SVGSVGElement).getBBox();
 
@@ -185,11 +188,11 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
           svgCanvas.selectOnly([path]);
         }
 
-        Dialog.showBridgePanel({ bbox, onClose: () => {} });
+        Dialog.showTabPanel({ bbox, onClose: () => {} });
       },
-      <ActionPanelIcons.Bridge />,
-      <ActionPanelIcons.Bridge />,
-      { isFullLine: true, ...opts },
+      <ActionPanelIcons.Tab />,
+      <ActionPanelIcons.Tab />,
+      { isDisabled: elem.getAttribute('fill') !== 'none', isFullLine: true, ...opts },
     );
 
   const renderImageActions = (): React.JSX.Element[] => {
@@ -389,7 +392,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       <ActionPanelIcons.SimplifyMobile />,
       { isFullLine: true },
     ),
-    renderBridgeButton(),
+    renderTabButton(),
   ];
 
   const renderCommonSvgActions = (): React.JSX.Element[] => [
@@ -398,7 +401,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     renderSmartNestButton(),
     renderOffsetButton(),
     renderArrayButton(),
-    renderBridgeButton(),
+    renderTabButton(),
   ];
 
   const renderUseActions = (): React.JSX.Element[] => [
@@ -481,6 +484,19 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
         .otherwise(renderGroupActions),
     )
     .otherwise(() => null);
+
+  // Watch for changes in the `fill` attribute
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      forceUpdate();
+    });
+
+    if (elem) {
+      observer.observe(elem, { attributeFilter: ['fill'] });
+    }
+
+    return () => observer.disconnect(); // Cleanup
+  }, [elem, forceUpdate]);
 
   return isMobile() ? (
     <div className={styles.container}>
