@@ -193,6 +193,9 @@ export const getWorkarea = (model: WorkAreaModel, fallbackModel: WorkAreaModel =
 
 export const getSupportModules = (model: WorkAreaModel): LayerModuleType[] => {
   const { supportedModules = [LayerModule.UV_PRINT, LayerModule.LASER_UNIVERSAL] } = workareaConstants[model];
+  const isUvPrintEnabled = beamboxPreference.read('enable-uv-print-file');
+
+  if (!isUvPrintEnabled) return supportedModules.filter((module) => module !== LayerModule.UV_PRINT);
 
   return supportedModules;
 };
