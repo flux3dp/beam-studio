@@ -21,6 +21,7 @@ import { TARGET_PATH_NAME } from './utils/constant';
 import { cutPathAtPoint } from './utils/cutPathAtPoint';
 import { cutPathByGap } from './utils/cutPathByGap';
 import { drawPerpendicularLineOnPath } from './utils/drawPerpendicularLineOnPath';
+import { getClosestHit } from './utils/getClosestHit';
 import { removePerpendicularLineIfExist } from './utils/removePerpendicularLineIfExist';
 
 interface Props {
@@ -34,11 +35,11 @@ const PADDING = 30;
 function UnmemorizedBridgePanel({ bbox, element, onClose }: Props): React.JSX.Element {
   const { image_edit_panel: lang } = useI18n();
   const { history, push, redo, set, undo } = useHistory({ hasUndid: false, index: 0, items: [{ pathData: [] }] });
-  const [mode, setMode] = useState<'auto' | 'manual'>('auto');
+  const [mode, setMode] = useState<'auto' | 'manual'>('manual');
   const [pathData, setPathData] = useState(Array.of<string>());
   const [isPathDataChanged, setIsPathDataChanged] = useState(false);
   const [bridgeWidth, setBridgeWidth] = useState(0.5);
-  const [bridgeGap, setBridgeGap] = useState(25);
+  const [bridgeGap, setBridgeGap] = useState(10);
   // only for display percentage, not for calculation
   const [zoomScale, setZoomScale] = useState(1);
   const [fitScreenDimension, setFitScreenDimension] = useState({ scale: 1, x: 0, y: 0 });
@@ -101,28 +102,16 @@ function UnmemorizedBridgePanel({ bbox, element, onClose }: Props): React.JSX.El
 
       removePerpendicularLineIfExist();
 
-      paper.project.hitTest(point, {
-        fill: false,
-        match: (hit: paper.HitResult) => {
-          // ensure the path is the target compound path's child
-          if (hit.item.parent?.name === TARGET_PATH_NAME) {
-            const path = hit.item as paper.Path;
-            const newCompoundPath = cutPathAtPoint(path, point, bridgeWidth * dpmm);
+      const closestHit = getClosestHit(point);
 
-            if (newCompoundPath) setPathData((prev) => prev.concat(newCompoundPath.pathData));
+      if (closestHit) {
+        const path = closestHit.item as paper.Path;
+        const newCompoundPath = cutPathAtPoint(path, point, bridgeWidth * dpmm);
 
-            setIsPathDataChanged(true);
-          }
+        if (newCompoundPath) setPathData((prev) => prev.concat(newCompoundPath.pathData));
 
-          console.log(paper.project.activeLayer.children);
-
-          // always return true to prevent the hit test keep searching
-          return true;
-        },
-        segments: true,
-        stroke: true,
-        tolerance: 30,
-      });
+        setIsPathDataChanged(true);
+      }
     },
     [bridgeWidth, isDraggable, isDragging, mode],
   );
@@ -134,23 +123,13 @@ function UnmemorizedBridgePanel({ bbox, element, onClose }: Props): React.JSX.El
 
       removePerpendicularLineIfExist();
 
-      paper.project.hitTest(point, {
-        fill: false,
-        match: (hit: paper.HitResult) => {
-          // ensure the path is the target compound path's child
-          if (hit.item.parent?.name === TARGET_PATH_NAME) {
-            const path = hit.item as paper.Path;
+      const closestHit = getClosestHit(point);
 
-            drawPerpendicularLineOnPath(path, point, bridgeWidth * dpmm);
-          }
+      if (closestHit) {
+        const path = closestHit.item as paper.Path;
 
-          // always return true to prevent the hit test keep searching
-          return true;
-        },
-        segments: true,
-        stroke: true,
-        tolerance: 30,
-      });
+        drawPerpendicularLineOnPath(path, point, bridgeWidth * dpmm);
+      }
     },
     [bridgeWidth, isDraggable, isDragging, mode],
   );

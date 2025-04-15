@@ -3,7 +3,7 @@ import type paper from 'paper';
 export function getCuttingRange(path: paper.Path, point: paper.Point, desiredWidth: number): [number, number] {
   const location = path.getNearestLocation(point);
 
-  if (!location) return [0, 0];
+  if (!location) return [0, 1];
 
   // Calculate maximum allowed offsets for each side separately
   const maxStartOffset = location.offset; // How much we can go backward

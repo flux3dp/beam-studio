@@ -1,7 +1,6 @@
 import type { Dispatch, SetStateAction } from 'react';
 import React, { memo } from 'react';
 
-import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Button, Flex, Form, Switch } from 'antd';
 
 import BridgePanelIcons from '@core/app/icons/BridgePanel/BridgePanelIcons';
@@ -11,6 +10,7 @@ import Header from '@core/app/widgets/FullWindowPanel/Header';
 import FullWindowPanelSider from '@core/app/widgets/FullWindowPanel/Sider';
 import UnitInput from '@core/app/widgets/UnitInput';
 import useI18n from '@core/helpers/useI18n';
+import browser from '@core/implementations/browser';
 
 import styles from './index.module.scss';
 
@@ -37,7 +37,7 @@ function UnmemorizedSider({
   setBridgeWidth,
   setMode,
 }: Props): React.JSX.Element {
-  const { buttons: langButtons } = useI18n();
+  const { alert, buttons: langButtons } = useI18n();
 
   return (
     <FullWindowPanelSider className={styles.sider}>
@@ -46,16 +46,21 @@ function UnmemorizedSider({
           <BackButton onClose={onClose}>{langButtons.back_to_beam_studio}</BackButton>
           <Header icon={<BridgePanelIcons.Bridge />} title={'Bridge'} />
           <div className={styles.wrapper}>
+            <div
+              className={styles.link}
+              onClick={() =>
+                browser.open(`https://support.flux3dp.com/hc/zh-tw/articles/12441363882511-%E6%A9%8B%E6%8E%A5`)
+              }
+            >
+              {alert.learn_more}
+            </div>
             <Form>
               <Form.Item label={`Manual Mode:`}>
-                <>
-                  <Switch
-                    className={styles.switch}
-                    onChange={(checked) => setMode(checked ? 'manual' : 'auto')}
-                    value={mode === 'manual'}
-                  />
-                  <QuestionCircleOutlined className={styles.icon} />
-                </>
+                <Switch
+                  className={styles.switch}
+                  onChange={(checked) => setMode(checked ? 'manual' : 'auto')}
+                  value={mode === 'manual'}
+                />
               </Form.Item>
               <Form.Item label={`Width:`}>
                 <UnitInput
@@ -87,7 +92,7 @@ function UnmemorizedSider({
                 />
               </Form.Item>
               <Button hidden={mode !== 'auto'} onClick={handleCutPathByGap} type="default">
-                Add Bridge
+                Apply Bridge
               </Button>
             </Form>
           </div>

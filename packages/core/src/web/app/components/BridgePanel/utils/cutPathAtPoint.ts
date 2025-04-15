@@ -11,6 +11,13 @@ export function cutPathAtPoint(path: paper.Path, point: paper.Point, width: numb
     return;
   }
 
+  if (path.length === 0) {
+    console.error('Path length is 0');
+    path.remove();
+
+    return;
+  }
+
   const [offsetStart, offsetEnd] = getCuttingRange(path, point, width);
 
   // clone the original path so we don't lose the full shape
@@ -27,10 +34,10 @@ export function cutPathAtPoint(path: paper.Path, point: paper.Point, width: numb
 
   path.remove();
 
-  // only add path if it has curves
-  if (pathClone?.curves.length) compound.addChild(pathClone);
+  // only add path if it has length
+  if (pathClone?.length) compound.addChild(pathClone);
 
-  if (part2?.curves.length) compound.addChild(part2);
+  if (part2?.length) compound.addChild(part2);
 
   return compound;
 }
