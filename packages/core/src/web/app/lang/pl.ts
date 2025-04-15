@@ -1483,7 +1483,7 @@ const lang: ILang = {
     unavailableWorkarea: '#804 Bieżący obszar roboczy przekracza obszar roboczy tego urządzenia. Sprawdź obszar roboczy wybranej maszyny lub ustaw obszar roboczy w Edycja > Ustawienia dokumentu.',
     unknown_device: '#826 Nie można połączyć się z urządzeniem. Upewnij się, że urządzenie jest podłączone do portu USB',
     unknown_error: '#821 Aplikacja napotkała nieznany błąd, użyj opcji Pomoc > Menu > Raport o błędzie.',
-    unsupport_osx_version: 'Bieżąca wersja systemu MacOS X %s może nie obsługiwać niektórych funkcji. Uprzejmie prosimy o aktualizację do najnowszej wersji.',
+    unsupport_osx_version: 'Obecna wersja macOS %s może nie obsługiwać niektórych funkcji. Proszę zaktualizować do macOS 13 lub nowszego.',
     unsupport_win_version: 'Bieżąca wersja systemu operacyjnego %s może nie obsługiwać niektórych funkcji. Uprzejmie prosimy o aktualizację do najnowszej wersji.',
     unsupported_example_file: 'Wybrany przykładowy plik nie jest obsługiwany przez bieżący obszar roboczy.',
     uploading_fcode: 'Przesyłanie FCode',

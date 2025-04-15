@@ -1483,7 +1483,7 @@ const lang: ILang = {
     unavailableWorkarea: '#804 Area kerja saat ini melebihi area kerja mesin ini. Harap periksa area kerja mesin yang dipilih atau atur area kerja dari Edit > Pengaturan Dokumen.',
     unknown_device: '#826 Tidak dapat terhubung ke mesin, pastikan USB terpasang ke mesin',
     unknown_error: '#821 Aplikasi mengalami kesalahan yang tidak diketahui, harap gunakan Bantuan > Menu > Laporan Bug.',
-    unsupport_osx_version: 'Versi macOS %s saat ini mungkin tidak mendukung beberapa fungsi. Harap perbarui ke macOS 11+.',
+    unsupport_osx_version: 'Versi macOS %s saat ini mungkin tidak mendukung beberapa fungsi. Harap perbarui ke macOS 13+.',
     unsupport_win_version: 'Versi OS %s saat ini mungkin tidak mendukung beberapa fungsi. Harap perbarui ke versi terbaru.',
     unsupported_example_file: 'File contoh yang dipilih tidak didukung oleh area kerja saat ini.',
     uploading_fcode: 'Mengunggah FCode',

@@ -1483,7 +1483,7 @@ const lang: ILang = {
     unavailableWorkarea: '#804 현재 작업 영역이 이 기계의 작업 영역을 초과합니다. 선택한 기계의 작업 영역을 확인하거나 편집 > 문서 설정에서 작업 영역을 설정해주세요.',
     unknown_device: '#826 기계에 연결할 수 없습니다. USB가 기계에 연결되어 있는지 확인해주세요.',
     unknown_error: '#821 알 수 없는 오류가 발생했습니다. 도움말 > 메뉴 > 버그 보고서를 사용해주세요.',
-    unsupport_osx_version: '현재 macOS 버전 %s은(는) 일부 기능을 지원하지 않을 수 있습니다. macOS 11+로 업데이트해 주세요.',
+    unsupport_osx_version: '현재 macOS 버전 %s은(는) 일부 기능을 지원하지 않을 수 있습니다. macOS 13+로 업데이트해 주세요.',
     unsupport_win_version: '현재 OS 버전 %s에서는 일부 기능을 지원하지 않을 수 있습니다. 최신 버전으로 업데이트해주세요.',
     unsupported_example_file: '선택한 예제 파일은 현재 작업 영역에서 지원되지 않습니다.',
     uploading_fcode: 'FCode 업로드 중',

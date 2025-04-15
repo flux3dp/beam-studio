@@ -5,7 +5,6 @@ import BeamboxInit from '@core/app/actions/beambox/beambox-init';
 import AlertConstants from '@core/app/constants/alert-constants';
 import AlertConfig from '@core/helpers/api/alert-config';
 import i18n from '@core/helpers/i18n';
-import type { MacKernelVersionMap } from '@core/implementations/os';
 import os, { macKernelVersionMap } from '@core/implementations/os';
 
 class ElectronBeamboxInit extends BeamboxInit {
@@ -20,10 +19,10 @@ class ElectronBeamboxInit extends BeamboxInit {
     if (!AlertConfig.read('skip_os_version_warning')) {
       if (window.os === 'MacOS') {
         try {
-          const release = os.release() as MacKernelVersionMap;
+          const release = os.release() as string;
           const version = release.split('.').map((v) => Number.parseInt(v, 10));
 
-          if (version[0] < 20) {
+          if (version[0] < 22) {
             const osVersion = macKernelVersionMap[release] || `Kernel Release: ${release}`;
 
             Alert.popUp({

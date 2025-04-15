@@ -1483,7 +1483,7 @@ const lang: ILang = {
     unavailableWorkarea: '#804 目前設定的工作範圍超過目標機器的工作範圍。請確認選擇的機器型號，或從 編輯 > 文件設定 更改工作範圍。',
     unknown_device: '#826 無法與機器建立連線，請確認 USB 有連接於機器',
     unknown_error: '#821 無法與機器建立連線，請使用「功能表 > 說明 > 錯誤回報」',
-    unsupport_osx_version: '目前系統版本 macOS %s 較舊，部分功能可能無法使用，請更新到 macOS 11+。',
+    unsupport_osx_version: '目前系統版本 macOS %s 較舊，部分功能可能無法使用，請更新到 macOS 13+。',
     unsupport_win_version: '目前系統版本 %s 較舊，部分功能可能無法使用，請更新到最新版。',
     unsupported_example_file: '選取範例文件不支援的目前工作範圍。',
     uploading_fcode: '正在上傳 fcode',

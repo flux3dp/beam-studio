@@ -1483,7 +1483,7 @@ const lang: ILang = {
     unavailableWorkarea: '#804 セットした作業領域がマシンの作業領域を超えます。マシンの作業領域を確認や[編集]>[ドキュメント設定]で作業領域をセットくださいい。',
     unknown_device: '#826 マシンに接続できません。USBがマシンに接続されていることを確認してください',
     unknown_error: '#821 アプリケーションで不明なエラーが発生しました。[ヘルプ]>[メニュー]>[バグレポート]を使用してください。',
-    unsupport_osx_version: '現在のmacOSバージョン%sは一部の機能をサポートしていない可能性があります。macOS 11+に更新してください。',
+    unsupport_osx_version: '現在のmacOSバージョン%sは一部の機能をサポートしていない可能性があります。macOS 13+に更新してください。',
     unsupport_win_version: '現在の Windows OSバージョンX ％s は一部の機能をサポートしていない場合があります。最新のバージョンに更新してください。',
     unsupported_example_file: '選択したサンプルファイルは現在の作業領域ではサポートされていません。',
     uploading_fcode: 'FCodeのアップロード中',

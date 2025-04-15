@@ -1483,7 +1483,7 @@ const lang: ILang = {
     unavailableWorkarea: '#804 La zone de travail actuelle dépasse la zone de travail de cette machine. Veuillez vérifier la zone de travail de la machine sélectionnée ou définir la zone de travail à partir de Edition > Paramètres du document.',
     unknown_device: "#826 Impossible de se connecter à la machine, assurez-vous que l'USB est connecté à la machine",
     unknown_error: "#821 L'application a rencontré une erreur inconnue, veuillez utiliser Aide > Menu > Rapport de bug.",
-    unsupport_osx_version: 'La version actuelle de macOS %s peut ne pas prendre en charge certaines fonctions. Veuillez mettre à jour vers macOS 11+.',
+    unsupport_osx_version: 'La version actuelle de macOS %s peut ne pas prendre en charge certaines fonctions. Veuillez mettre à jour vers macOS 13+.',
     unsupport_win_version: 'La version actuelle de %s peut ne pas prendre en charge certaines fonctions. Veuillez mettre à jour vers la dernière version.',
     unsupported_example_file: "Le fichier d'exemple sélectionné n'est pas pris en charge par la zone de travail actuelle.",
     uploading_fcode: 'Téléversement du code F',
