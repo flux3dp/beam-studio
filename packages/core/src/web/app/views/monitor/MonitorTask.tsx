@@ -9,7 +9,7 @@ import DeviceConstants from '@core/app/constants/device-constants';
 import { Mode } from '@core/app/constants/monitor-constants';
 import { MonitorContext } from '@core/app/contexts/MonitorContext';
 import { renderFramingIcon } from '@core/app/icons/framing/FramingIcons';
-import type { FramingType } from '@core/helpers/device/framing';
+import type { TFramingType } from '@core/helpers/device/framing';
 import FramingTaskManager, { framingOptions, getFramingOptions } from '@core/helpers/device/framing';
 import FormatDuration from '@core/helpers/duration-formatter';
 import useI18n from '@core/helpers/useI18n';
@@ -33,7 +33,7 @@ const MonitorTask = ({ device }: Props): React.JSX.Element => {
   const manager = useRef<FramingTaskManager>(null);
   const [isFraming, setIsFraming] = useState<boolean>(false);
   const [isFramingButtonDisabled, setIsFramingButtonDisabled] = useState<boolean>(false);
-  const [type, setType] = useState<FramingType>(options[0]);
+  const [type, setType] = useState<TFramingType>(options[0]);
   const [estimateTaskTime, setEstimateTaskTime] = useState<number>(taskTime);
   /* for Promark framing */
 
@@ -59,12 +59,12 @@ const MonitorTask = ({ device }: Props): React.JSX.Element => {
   }, []);
 
   const handleFramingStart = useCallback(
-    (forceType?: FramingType) => manager.current?.startFraming(forceType ?? type, { lowPower: 0 }),
+    (forceType?: TFramingType) => manager.current?.startFraming(forceType ?? type, { lowPower: 0 }),
     [type],
   );
 
   const renderIcon = useCallback(
-    (parentType: FramingType) => {
+    (parentType: TFramingType) => {
       if (isFraming && parentType === type) {
         return <Spin className={styles['icon-framing']} indicator={<LoadingOutlined spin />} />;
       }
