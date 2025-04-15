@@ -28,16 +28,22 @@ export const getAutoFeeder = (
 /**
  * get if pass through is enabled according to beambox preference, add-on info and borderless setting
  * @param addOnInfo add-on info object for current workarea, if not provided, using beambox preference to get workarea
+ * @param values provided values to avoid reading from beambox preference
  * @returns boolean
  */
-export const getPassThrough = (addOnInfo?: AddOnInfo): boolean => {
+export const getPassThrough = (
+  addOnInfo?: AddOnInfo,
+  values: { borderless?: boolean; passThrough?: boolean } = {},
+): boolean => {
   if (!addOnInfo) {
     addOnInfo = getAddOnInfo(beamboxPreference.read('workarea'));
   }
 
   if (!addOnInfo.passThrough) return false;
 
-  if (!beamboxPreference.read('pass-through')) return false;
+  const { borderless, passThrough } = values;
 
-  return addOnInfo.openBottom ? beamboxPreference.read('borderless') : true;
+  if (!(passThrough ?? beamboxPreference.read('pass-through'))) return false;
+
+  return addOnInfo.openBottom ? (borderless ?? beamboxPreference.read('borderless')) : true;
 };
