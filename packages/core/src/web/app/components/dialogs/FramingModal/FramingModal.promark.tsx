@@ -8,6 +8,7 @@ import { handleExportClick } from '@core/app/actions/beambox/export/GoButton/han
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import { renderFramingIcon } from '@core/app/icons/framing/FramingIcons';
 import icons from '@core/app/icons/icons';
+import type { TFramingType } from '@core/helpers/device/framing';
 import { FramingType } from '@core/helpers/device/framing';
 import FramingTaskManager, { framingOptions, getFramingOptions } from '@core/helpers/device/framing';
 import shortcuts from '@core/helpers/shortcuts';
@@ -28,12 +29,12 @@ const PromarkFramingModal = ({ device, onClose, startOnOpen = false }: Props): R
   const { framing: tFraming } = lang;
   const options = useMemo(() => getFramingOptions(device), [device]);
   const [isFraming, setIsFraming] = useState<boolean>(false);
-  const [type, setType] = useState<FramingType>(options[0]);
-  const manager = useRef<FramingTaskManager>(null);
-  const shortcutHandler = useRef<() => void>(null);
+  const [type, setType] = useState<TFramingType>(options[0]);
+  const manager = useRef<FramingTaskManager | null>(null);
+  const shortcutHandler = useRef<(() => void) | null>(null);
 
   const handleStart = useCallback(
-    (forceType?: FramingType) => manager.current?.startFraming(forceType ?? type, { lowPower: 0 }),
+    (forceType?: TFramingType) => manager.current?.startFraming(forceType ?? type, { lowPower: 0 }),
     [type],
   );
 
@@ -42,7 +43,7 @@ const PromarkFramingModal = ({ device, onClose, startOnOpen = false }: Props): R
   }, []);
 
   const renderIcon = useCallback(
-    (parentType: FramingType) => {
+    (parentType: TFramingType) => {
       if (isFraming && parentType === type) {
         return <Spin className={styles['icon-spin']} indicator={<LoadingOutlined spin />} />;
       }

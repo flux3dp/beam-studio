@@ -11,6 +11,7 @@ import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import { renderFramingIcon } from '@core/app/icons/framing/FramingIcons';
 import icons from '@core/app/icons/icons';
+import type { TFramingType } from '@core/helpers/device/framing';
 import FramingTaskManager, { framingOptions, FramingType, getFramingOptions } from '@core/helpers/device/framing';
 import getDevice from '@core/helpers/device/get-device';
 import shortcuts from '@core/helpers/shortcuts';
@@ -33,9 +34,9 @@ const FramingModal = ({ device, onClose, startOnOpen = false }: Props): React.JS
   const options = useMemo(() => getFramingOptions(device), [device]);
   const [isFraming, setIsFraming] = useState<boolean>(false);
   const [lowLaser, setLowLaser] = useState<number>(beamboxPreference.read('low_power') ?? 10);
-  const [type, setType] = useState<FramingType>(FramingType.Framing);
-  const manager = useRef<FramingTaskManager>(null);
-  const shortcutHandler = useRef<() => void>(null);
+  const [type, setType] = useState<TFramingType>(FramingType.Framing);
+  const manager = useRef<FramingTaskManager | null>(null);
+  const shortcutHandler = useRef<(() => void) | null>(null);
 
   const addOnInfo = useMemo(() => getAddOnInfo(device.model), [device]);
 
@@ -60,7 +61,9 @@ const FramingModal = ({ device, onClose, startOnOpen = false }: Props): React.JS
     });
 
     return () => {
-      manager.current?.stopFraming();
+      manager.current?.stopFraming().then(() => {
+        manager.current?.destroy();
+      });
       MessageCaller.closeMessage(key);
     };
   }, [device]);
@@ -117,7 +120,11 @@ const FramingModal = ({ device, onClose, startOnOpen = false }: Props): React.JS
               controls={false}
               max={20}
               min={0}
-              onChange={(val) => setLowLaser(val)}
+              onChange={(val) => {
+                if (val === null) return;
+
+                setLowLaser(val);
+              }}
               precision={0}
               value={lowLaser}
             />

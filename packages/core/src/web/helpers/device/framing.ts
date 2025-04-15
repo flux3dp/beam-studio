@@ -37,13 +37,15 @@ import applyRedDot from './promark/apply-red-dot';
 import promarkDataStore from './promark/promark-data-store';
 
 // TODO: add unit test
-export enum FramingType {
-  Framing,
-  RotateFraming,
-  Hull,
-  AreaCheck,
-  RotateAxis,
-}
+export const FramingType = {
+  AreaCheck: 1,
+  Framing: 2,
+  Hull: 3,
+  RotateAxis: 4,
+  RotateFraming: 5,
+} as const;
+
+export type TFramingType = (typeof FramingType)[keyof typeof FramingType];
 
 type Coordinates = {
   maxX: number;
@@ -160,11 +162,11 @@ const getCoords = (mm?: boolean): Coordinates => {
   return coords as Coordinates;
 };
 
-const getCanvasImage = async (): Promise<Blob> => {
+const getCanvasImage = async (): Promise<Blob | null> => {
   symbolMaker.switchImageSymbolForAll(false);
 
   const allLayers = getAllLayers()
-    .filter((layer) => getData(layer, 'repeat') > 0)
+    .filter((layer) => getData(layer, 'repeat')! > 0)
     .map((layer) => layer.cloneNode(true) as SVGGElement);
 
   symbolMaker.switchImageSymbolForAll(true);
@@ -214,7 +216,7 @@ const getCanvasImage = async (): Promise<Blob> => {
   ctx.fillStyle = 'white';
   ctx.fillRect(0, 0, width, height);
 
-  return new Promise<Blob>((resolve) => canvas.toBlob(resolve));
+  return new Promise<Blob | null>((resolve) => canvas.toBlob(resolve));
 };
 
 const getConvexHull = async (imgBlob: Blob): Promise<Array<[number, number]>> => getUtilWS().getConvexHull(imgBlob);
@@ -275,9 +277,10 @@ class FramingTaskManager extends EventEmitter {
   private curPos: { a: number; x: number; y: number } = { a: 0, x: 0, y: 0 };
   private movementFeedrate = 6000; // mm/min
   private lowPower = 0;
-  private taskCache: { [type in FramingType]?: Array<[number, number]> } = {};
+  private taskCache: { [type in TFramingType]?: Array<[number, number]> } = {};
   private taskPoints: Array<[number, number]> = [];
   private hasAppliedRedLight = false;
+  private initialized = false;
 
   constructor(device: IDeviceInfo) {
     super();
@@ -345,7 +348,7 @@ class FramingTaskManager extends EventEmitter {
       const { field, galvoParameters, redDot } = promarkDataStore.get(this.device?.serial) as PromarkStore;
 
       if (redDot) {
-        const { field: newField, galvoParameters: newGalvo } = applyRedDot(redDot, field, galvoParameters);
+        const { field: newField, galvoParameters: newGalvo } = applyRedDot(redDot, field!, galvoParameters!);
         const { width } = getWorkarea(this.device.model);
 
         await deviceMaster.setField(width, newField);
@@ -395,7 +398,8 @@ class FramingTaskManager extends EventEmitter {
         const { width } = getWorkarea(this.device.model);
 
         await deviceMaster.setField(width, field);
-        await deviceMaster.setGalvoParameters(galvoParameters);
+
+        if (galvoParameters) await deviceMaster.setGalvoParameters(galvoParameters);
       }
 
       this.hasAppliedRedLight = false;
@@ -462,7 +466,7 @@ class FramingTaskManager extends EventEmitter {
     }
   };
 
-  private generateTaskPoints = async (type: FramingType): Promise<Array<[number, number]>> => {
+  private generateTaskPoints = async (type: TFramingType): Promise<Array<[number, number]>> => {
     if (this.taskCache[type]) {
       return this.taskCache[type];
     }
@@ -491,6 +495,9 @@ class FramingTaskManager extends EventEmitter {
 
     if (type === FramingType.Hull) {
       const image = await getCanvasImage();
+
+      if (!image) return [];
+
       const points = await getConvexHull(image);
       const res: Array<[number, number]> = points.map(([x, y]) => [x / constant.dpmm, y / constant.dpmm]);
 
@@ -575,6 +582,8 @@ class FramingTaskManager extends EventEmitter {
     this.lowPower = 0;
 
     if (constant.adorModels.includes(this.device.model) && settingValue > 0) {
+      if (deviceMaster.currentControlMode !== '') await deviceMaster.endSubTask();
+
       const t = i18n.lang.topbar.alerts;
       let warningMessage = '';
       const deviceDetailInfo = await deviceMaster.getDeviceDetailInfo();
@@ -630,8 +639,9 @@ class FramingTaskManager extends EventEmitter {
     if (this.jobOrigin) {
       await deviceMaster.rawUnlock();
       await deviceMaster.rawSetOrigin();
-    } else {
+    } else if (!this.initialized) {
       await deviceMaster.rawHome();
+      this.initialized = true;
     }
 
     if (
@@ -647,9 +657,7 @@ class FramingTaskManager extends EventEmitter {
     this.emit('message', lang.message.turningOffAirPump);
     await deviceMaster.rawSetAirPump(false);
 
-    if (!this.isAdor) {
-      await deviceMaster.rawSetWaterPump(false);
-    }
+    if (!this.isAdor) await deviceMaster.rawSetWaterPump(false);
 
     this.emit('close-message');
 
@@ -699,6 +707,17 @@ class FramingTaskManager extends EventEmitter {
         await deviceMaster.rawSet24V(false);
       }
 
+      if (this.jobOrigin) {
+        await deviceMaster.rawLooseMotor();
+        await deviceMaster.endSubTask();
+      }
+    }
+  };
+
+  public destroy = async () => {
+    if (!this.jobOrigin && this.initialized) {
+      if (deviceMaster.currentControlMode !== 'raw') await deviceMaster.enterRawMode();
+
       await deviceMaster.rawLooseMotor();
       await deviceMaster.endSubTask();
     }
@@ -736,16 +755,12 @@ class FramingTaskManager extends EventEmitter {
     }
 
     for (let i = 1; i < taskPoints.length; i += 1) {
-      if (this.interrupted) {
-        return;
-      }
+      if (this.interrupted) return;
 
       await this.moveTo({ x: taskPoints[i][0], [yKey]: taskPoints[i][1] });
     }
 
-    if (this.interrupted) {
-      return;
-    }
+    if (this.interrupted) return;
 
     if (rotaryInfo) {
       if (this.addOnInfo.redLight) {
@@ -768,7 +783,7 @@ class FramingTaskManager extends EventEmitter {
     }
   };
 
-  public startFraming = async (type: FramingType, opts: { lowPower?: number }): Promise<void> => {
+  public startFraming = async (type: TFramingType, opts: { lowPower?: number }): Promise<void> => {
     // Go to Promark logic
     if (this.isWorking) {
       return;
@@ -800,23 +815,17 @@ class FramingTaskManager extends EventEmitter {
       this.interrupted = false;
       await this.initTask();
 
-      if (this.interrupted) {
-        return;
-      }
+      if (this.interrupted) return;
 
       const { lowPower = 0 } = opts;
 
       await this.setLowPowerValue(lowPower);
 
-      if (this.interrupted) {
-        return;
-      }
+      if (this.interrupted) return;
 
       await this.setupTask();
 
-      if (this.interrupted) {
-        return;
-      }
+      if (this.interrupted) return;
 
       await this.performTask();
     } catch (error) {
