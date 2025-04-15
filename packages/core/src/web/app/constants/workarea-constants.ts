@@ -1,6 +1,8 @@
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
 
+import { LayerModule, type LayerModuleType } from './layer-module/layer-modules';
+
 export type WorkAreaLabel =
   | 'Ador'
   | 'Beambox'
@@ -25,7 +27,7 @@ export const workArea = [
   'fbb2',
 ] as const;
 export type WorkAreaModel = (typeof workArea)[number];
-export const allWorkareas = new Set(workArea);
+export const workAreaSet = new Set(workArea);
 
 const { dpmm } = constant;
 
@@ -46,6 +48,7 @@ export interface WorkArea {
   pxDisplayHeight?: number; // px
   pxHeight: number; // px
   pxWidth: number; // px
+  supportedModules?: LayerModuleType[];
   vectorSpeedLimit?: number; // mm/s
   width: number; // mm
 }
@@ -78,6 +81,13 @@ const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     pxDisplayHeight: 320 * dpmm,
     pxHeight: 300 * dpmm,
     pxWidth: 430 * dpmm,
+    supportedModules: [
+      LayerModule.LASER_10W_DIODE,
+      LayerModule.LASER_20W_DIODE,
+      LayerModule.LASER_1064,
+      LayerModule.PRINTER,
+      LayerModule.UV_PRINT,
+    ],
     vectorSpeedLimit: 20,
     width: 430,
   },
@@ -163,6 +173,7 @@ const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     minSpeed: 0.5,
     pxHeight: 150 * dpmm,
     pxWidth: 150 * dpmm,
+    supportedModules: [LayerModule.LASER_UNIVERSAL],
     width: 150,
   },
 };
@@ -178,6 +189,12 @@ export const getWorkarea = (model: WorkAreaModel, fallbackModel: WorkAreaModel =
   }
 
   return { ...res };
+};
+
+export const getSupportModules = (model: WorkAreaModel): LayerModuleType[] => {
+  const { supportedModules = [LayerModule.UV_PRINT, LayerModule.LASER_UNIVERSAL] } = workareaConstants[model];
+
+  return supportedModules;
 };
 
 export default workareaConstants;

@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import Icon from '@ant-design/icons';
 import ReactDomServer from 'react-dom/server';
 
-import type { LayerModule } from '@core/app/constants/layer-module/layer-modules';
+import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { builtInElements } from '@core/app/constants/shape-panel-constants';
 import history from '@core/app/svgedit/history/history';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
@@ -47,7 +47,7 @@ const importShape = async (IconComponent, jsonMap) => {
     );
     const drawing = svgCanvas.getCurrentDrawing();
     const layerName = drawing.getCurrentLayerName();
-    const layerModule: LayerModule = getData(getLayerByName(layerName), 'module');
+    const layerModule = getData(getLayerByName(layerName), 'module') as LayerModuleType;
     const batchCmd = HistoryCommandFactory.createBatchCommand('Shape Panel Import SVG');
     const newElementnewElement = await importSvgString(iconString, {
       layerName,

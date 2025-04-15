@@ -1,6 +1,7 @@
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant, { modelsWithoutUvPrint } from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
+import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
 import workareaManager from '@core/app/svgedit/workarea';
@@ -182,7 +183,7 @@ export class AddOnBoundaryDrawer {
     this.boundary.openBottom.removeAttribute('display');
   };
 
-  updateUvPath = (module: LayerModule): void => {
+  updateUvPath = (module: LayerModuleType): void => {
     const { height, model, width } = workareaManager;
     const { dpmm } = constant;
 

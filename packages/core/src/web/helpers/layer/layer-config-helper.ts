@@ -3,10 +3,11 @@ import { match } from 'ts-pattern';
 
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
+import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType } from '@core/app/constants/promark-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
-import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { getSupportModules, getWorkarea } from '@core/app/constants/workarea-constants';
 import history from '@core/app/svgedit/history/history';
 import updateLayerColorFilter from '@core/helpers/color/updateLayerColorFilter';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
@@ -476,6 +477,7 @@ export const getLayersConfig = (layerNames: string[], currentLayerName?: string)
 
 export const toggleFullColorAfterWorkareaChange = (): void => {
   const workarea = BeamboxPreference.read('workarea') || BeamboxPreference.read('model');
+  const supportedModules = getSupportModules(workarea);
   const layerNames = getAllLayerNames();
   const defaultLaserModule = layerModuleHelper.getDefaultLaserModule();
 
@@ -484,11 +486,15 @@ export const toggleFullColorAfterWorkareaChange = (): void => {
 
     if (!layer) continue;
 
-    if (!modelsWithModules.has(workarea)) {
-      writeDataLayer(layer, 'module', LayerModule.LASER_UNIVERSAL);
-      toggleFullColorLayer(layer, { val: false });
-    } else {
-      writeDataLayer(layer, 'module', defaultLaserModule);
+    const module = getData(layer, 'module') as LayerModuleType;
+
+    if (!supportedModules.includes(module)) {
+      if (!modelsWithModules.has(workarea)) {
+        writeDataLayer(layer, 'module', LayerModule.LASER_UNIVERSAL);
+        toggleFullColorLayer(layer, { val: false });
+      } else {
+        writeDataLayer(layer, 'module', defaultLaserModule);
+      }
     }
   }
 };
@@ -512,7 +518,7 @@ export const applyDefaultLaserModule = (): void => {
   }
 };
 
-export const getConfigKeys = (module: LayerModule): ConfigKey[] => {
+export const getConfigKeys = (module: LayerModuleType): ConfigKey[] => {
   const workarea = BeamboxPreference.read('workarea');
 
   if (promarkModels.has(workarea)) {
@@ -596,7 +602,7 @@ export const postPresetChange = (): void => {
     const preset = allPresets.find((c) => !c.hide && (configName === c.key || configName === c.name));
 
     if (preset?.isDefault) {
-      const layerModule = getData(layer, 'module') as LayerModule;
+      const layerModule = getData(layer, 'module') as LayerModuleType;
       const defaultPreset = presetHelper.getDefaultPreset(preset.key!, workarea, layerModule);
 
       if (!defaultPreset) {

@@ -1,6 +1,7 @@
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant, { modelsWithModules } from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
+import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import moduleBoundary from '@core/app/constants/layer-module/module-boundary';
 import workareaManager from '@core/app/svgedit/workarea';
@@ -60,7 +61,7 @@ const updateCanvasSize = (): void => {
 
 canvasEventEmitter.on('canvas-change', updateCanvasSize);
 
-const update = (module: LayerModule): void => {
+const update = (module: LayerModuleType): void => {
   const { expansion, height: h, model, width: w } = workareaManager;
 
   if (!modelsWithModules.has(model)) {

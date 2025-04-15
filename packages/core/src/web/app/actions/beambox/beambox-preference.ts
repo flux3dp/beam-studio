@@ -1,6 +1,8 @@
+import type { PreviewSpeedLevelType } from '@core/app/actions/beambox/constant';
 import { PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
 import constant from '@core/app/actions/beambox/constant';
 import { CHUCK_ROTARY_DIAMETER, RotaryType } from '@core/app/constants/addOn';
+import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import moduleOffsets from '@core/app/constants/layer-module/module-offsets';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
@@ -25,7 +27,7 @@ export type BeamboxPreference = {
   'default-autofocus': boolean;
   'default-borderless': boolean;
   'default-diode': boolean;
-  'default-laser-module': LayerModule;
+  'default-laser-module': LayerModuleType;
   'diode-one-way-engraving': boolean;
   diode_offset_x: number;
   diode_offset_y: number;
@@ -45,13 +47,13 @@ export type BeamboxPreference = {
   guide_x0: number;
   guide_y0: number;
   image_downsampling: boolean;
-  'import-module'?: LayerModule;
+  'import-module'?: LayerModuleType;
   'job-origin': number;
   'keep-preview-result': boolean;
   low_power: number;
   // model is default workarea model
   model: WorkAreaModel;
-  'module-offsets': Record<LayerModule, [number, number]>;
+  'module-offsets': Record<LayerModuleType, [number, number]>;
   mouse_input_device: 'MOUSE' | 'TOUCHPAD';
   'multipass-compensation': boolean;
   'one-way-printing': boolean;
@@ -62,7 +64,7 @@ export type BeamboxPreference = {
   'path-engine': 'fluxghost' | 'swiftray';
   precut_x: number;
   precut_y: number;
-  preview_movement_speed_level: PreviewSpeedLevel;
+  preview_movement_speed_level: PreviewSpeedLevelType;
   'print-advanced-mode': boolean;
   'promark-start-button': boolean;
   'reverse-engraving': boolean;

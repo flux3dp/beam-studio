@@ -1,10 +1,11 @@
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import i18n from '@core/helpers/i18n';
 
 const LaserModuleSet = new Set([LayerModule.LASER_10W_DIODE, LayerModule.LASER_20W_DIODE]);
 
-const getDefaultLaserModule = (): LayerModule => {
+const getDefaultLaserModule = (): LayerModuleType => {
   const value = beamboxPreference.read('default-laser-module');
 
   return LaserModuleSet.has(value) ? value : LayerModule.LASER_20W_DIODE;

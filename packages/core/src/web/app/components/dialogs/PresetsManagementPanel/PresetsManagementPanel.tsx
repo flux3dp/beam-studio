@@ -9,6 +9,7 @@ import { modelsWithModules, promarkModels } from '@core/app/actions/beambox/cons
 import dialogCaller from '@core/app/actions/dialog-caller';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import alertConstants from '@core/app/constants/alert-constants';
+import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import presets from '@core/app/constants/presets';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
@@ -29,14 +30,14 @@ import styles from './PresetsManagementPanel.module.scss';
 import PrintingInputs from './PrintingInputs';
 import PromarkInputs from './PromarkInputs';
 
-enum Filter {
-  ALL = '0',
-  LASER = '1',
-  PRINT = '2',
-}
+const Filter = {
+  ALL: '0',
+  LASER: '1',
+  PRINT: '2',
+} as const;
 
 interface Props {
-  currentModule: LayerModule;
+  currentModule: LayerModuleType;
   initPreset?: string;
   onClose: () => void;
 }
@@ -49,7 +50,7 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
   const workareaObj = useMemo(() => getWorkarea(workarea), [workarea]);
   const hasModule = useMemo(() => modelsWithModules.has(workarea), [workarea]);
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
-  const [filter, setFilter] = useState(hasModule ? Filter.ALL : Filter.LASER);
+  const [filter, setFilter] = useState<(typeof Filter)[keyof typeof Filter]>(hasModule ? Filter.ALL : Filter.LASER);
   const listRef = useRef<HTMLDivElement>(null);
   const isInch = useMemo(() => (storage.get('default-units') || 'mm') === 'inches', []);
   const lengthUnit = useMemo(() => (isInch ? 'in' : 'mm'), [isInch]);
@@ -251,7 +252,7 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
   }, [t, onClose]);
 
   const handleAddPreset = async () => {
-    let presetModule = LayerModule.LASER_UNIVERSAL;
+    let presetModule: LayerModuleType = LayerModule.LASER_UNIVERSAL;
 
     if (hasModule) {
       presetModule = await dialogCaller.showRadioSelectDialog({
@@ -341,20 +342,11 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
                 menu={{
                   defaultSelectedKeys: [filter],
                   items: [
-                    {
-                      key: Filter.ALL,
-                      label: t.show_all,
-                    },
-                    {
-                      key: Filter.LASER,
-                      label: t.laser,
-                    },
-                    {
-                      key: Filter.PRINT,
-                      label: t.print,
-                    },
+                    { key: Filter.ALL, label: t.show_all },
+                    { key: Filter.LASER, label: t.laser },
+                    { key: Filter.PRINT, label: t.print },
                   ],
-                  onClick: ({ key }) => setFilter(key as Filter),
+                  onClick: ({ key }) => setFilter(key as (typeof Filter)[keyof typeof Filter]),
                   selectable: true,
                 }}
               >
@@ -422,7 +414,7 @@ export const showPresetsManagementPanel = ({
   initPreset,
   onClose,
 }: {
-  currentModule: LayerModule;
+  currentModule: LayerModuleType;
   initPreset?: string;
   onClose?: () => void;
 }): void => {

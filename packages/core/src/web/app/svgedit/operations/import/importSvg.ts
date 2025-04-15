@@ -5,6 +5,7 @@ import presprayArea from '@core/app/actions/canvas/prespray-area';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import progressCaller from '@core/app/actions/progress-caller';
 import alertConstants from '@core/app/constants/alert-constants';
+import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import history from '@core/app/svgedit/history/history';
 import readBitmapFile from '@core/app/svgedit/operations/import/readBitmapFile';
@@ -41,7 +42,7 @@ const readSVG = (
   }: {
     layerName?: string;
     parentCmd?: IBatchCommand;
-    targetModule?: LayerModule;
+    targetModule?: LayerModuleType;
     type: ImportType;
   },
 ) =>
@@ -107,7 +108,7 @@ const importSvg = async (
   const batchCmd = new history.BatchCommand('Import SVG');
   const { lang } = i18n;
   const hasModule = modelsWithModules.has(beamboxPreference.read('workarea'));
-  let targetModule: LayerModule;
+  let targetModule: LayerModuleType;
 
   if (hasModule) {
     const id = 'import-module';

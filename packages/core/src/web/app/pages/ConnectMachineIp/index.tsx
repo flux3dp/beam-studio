@@ -11,7 +11,7 @@ import menuDeviceActions from '@core/app/actions/beambox/menuDeviceActions';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import TestInfo from '@core/app/components/settings/connection/TestInfo';
 import TestState, { isTesting } from '@core/app/constants/connection-test';
-import { allWorkareas } from '@core/app/constants/workarea-constants';
+import { workAreaSet } from '@core/app/constants/workarea-constants';
 import alertConfig from '@core/helpers/api/alert-config';
 import Discover from '@core/helpers/api/discover';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
@@ -289,7 +289,7 @@ const ConnectMachineIp = (): React.JSX.Element => {
 
     if (!device) return;
 
-    const deviceModel = allWorkareas.has(device.model) ? device.model : 'fbb1b';
+    const deviceModel = workAreaSet.has(device.model) ? device.model : 'fbb1b';
 
     BeamboxPreference.write('model', deviceModel);
     BeamboxPreference.write('workarea', deviceModel);

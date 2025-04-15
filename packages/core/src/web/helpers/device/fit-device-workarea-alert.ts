@@ -4,7 +4,7 @@ import Alert from '@core/app/actions/alert-caller';
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import AlertConstants from '@core/app/constants/alert-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
-import { allWorkareas } from '@core/app/constants/workarea-constants';
+import { workAreaSet } from '@core/app/constants/workarea-constants';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import i18n from '@core/helpers/i18n';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
@@ -12,7 +12,7 @@ import type { IDeviceInfo } from '@core/interfaces/IDevice';
 const LANG = i18n.lang;
 
 const showResizeAlert = async (device: IDeviceInfo): Promise<boolean> => {
-  if (!allWorkareas.has(device.model)) {
+  if (!workAreaSet.has(device.model)) {
     return true;
   }
 

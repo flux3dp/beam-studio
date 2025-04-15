@@ -13,6 +13,7 @@ import presprayArea from '@core/app/actions/canvas/prespray-area';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import ColorBlock from '@core/app/components/beambox/right-panel/ColorBlock';
 import { getAddOnInfo } from '@core/app/constants/addOn';
+import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import tutorialConstants from '@core/app/constants/tutorial-constants';
@@ -388,7 +389,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     for (let i = layerCount - 1; i >= 0; i -= 1) {
       const layerName = drawing.getLayerName(i)!;
       const layer = getLayerElementByName(layerName);
-      const layerModule: LayerModule = getData(layer, 'module') as LayerModule;
+      const layerModule = getData(layer, 'module') as LayerModuleType;
       const isFullColor = layer.getAttribute('data-fullcolor') === '1';
 
       layerOptions.push(

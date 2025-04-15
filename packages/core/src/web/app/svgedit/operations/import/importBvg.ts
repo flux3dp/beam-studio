@@ -259,10 +259,8 @@ export const importBvgString = async (
   const postImportBvgString = async () => {
     const workarea = beamboxPreference.read('workarea');
 
-    if (!modelsWithModules.has(workarea)) {
-      toggleFullColorAfterWorkareaChange();
-    }
-
+    // toggle full color setting according workarea supported modules
+    toggleFullColorAfterWorkareaChange();
     presprayArea.togglePresprayArea();
     LayerPanelController.setSelectedLayers([]);
 

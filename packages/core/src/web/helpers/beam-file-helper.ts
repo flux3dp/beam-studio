@@ -152,7 +152,7 @@ const localHeaderTypeBuffer = (type: 'imageSource' | 'miscData' | 'svgContent' |
 };
 
 // 1 Byte Type (0x01 for svg content) + ? bytes vint length + length bytes svg string
-const genertateSvgBlockBuffer = (svgString: string) => {
+const generateSvgBlockBuffer = (svgString: string) => {
   const typeBuf = localHeaderTypeBuffer('svgContent');
   const svgStringBuf = Buffer.from(svgString);
   const lengthVintBuf = valueToVIntBuffer(svgStringBuf.length);
@@ -206,7 +206,7 @@ const generateBeamBuffer = (
   thumbnail?: ArrayBuffer,
 ): Buffer => {
   const signatureBuffer = Buffer.from([66, 101, 97, 109, 2]); // Bvg{version in uint} max to 255
-  const svgBlockBuf = genertateSvgBlockBuffer(svgString);
+  const svgBlockBuf = generateSvgBlockBuffer(svgString);
   const imageSourceBlockBuffer = generateImageSourceBlockBuffer(imageSources);
   const thumbnailBlockBuffer = thumbnail ? generateThumbnailBlockBuffer(thumbnail) : null;
   const miscData: MiscData = {};
