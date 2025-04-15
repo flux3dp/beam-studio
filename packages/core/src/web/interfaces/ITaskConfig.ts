@@ -10,57 +10,139 @@ export interface IBaseConfig {
   paddingAccel?: null | number;
   shouldMockFastGradient?: boolean;
   shouldUseFastGradient?: boolean;
+  supportAccOverrideV1?: boolean;
   supportJobOrigin?: boolean;
   supportPwm?: boolean;
   travelSpeed?: number;
 }
 
 export type TFcodeOptionalConfig = Partial<{
-  acc: number; // acceleration to calculate task time, not real acceleration used in machine
-  acc_override: Partial<Record<'fill' | 'path', Partial<{ a: number; x: number; y: number; z: number }>>>; // set acceleration for real task
+  /**
+   * acceleration to calculate task time, not real acceleration used in machine
+   */
+  acc: number;
+  /**
+   * set acceleration for real task
+   */
+  acc_override: Partial<Record<'fill' | 'path', Partial<{ a: number; x: number; y: number; z: number }>>>;
   af: boolean;
-  ats: number; // a travel speed
-  blade: number; // blade radius
-  cbl: boolean; // custom backlash
-  csl: number; // curve speed limit
+  /**
+   * a travel speed
+   */
+  ats: number;
+  /**
+   * blade radius
+   */
+  blade: number;
+  /**
+   * custom backlash
+   */
+  cbl: boolean;
+  /**
+   * curve speed limit
+   */
+  csl: number;
   curve_engraving: {
     bbox: BBox;
     gap: [number, number];
     points: Array<[number, number, null | number]>;
     safe_height?: number;
   };
-  diode: [number, number]; // diode offset
-  diode_owe: boolean; // diode one way engraving
+  /**
+   * diode offset
+   */
+  diode: [number, number];
+  /**
+   * diode one way engraving
+   */
+  diode_owe: boolean;
   fg: boolean;
   gc: boolean; // output gcode
   job_origin: [number, number];
   loop_compensation: number;
-  mask: [number, number, number, number]; // top right bottom left
-  mep: number; // min engraving padding in mm
-  mfg: boolean; // mock fg
+  /**
+   * clipping mask in [top right bottom left]
+   */
+  mask: [number, number, number, number];
+  /**
+   * min engraving padding in mm
+   */
+  mep: number;
+  /**
+   * mock fg, used for generating path preview gcode
+   */
+  mfg: boolean;
   min_speed: number;
-  mof: { [key: number]: [number, number] }; // manual offset
-  mpc: boolean; // multipass compensation
-  mpp: number; // min printing padding in mm
+  /**
+   * module offset
+   */
+  mof: { [key: number]: [number, number] };
+  /**
+   * multipass compensation
+   */
+  mpc: boolean;
+  /**
+   * min printing padding in mm
+   */
+  mpp: number;
   no_pwm: boolean;
   npw: number; // nozzle pulse width
   nv: number; // nozzle votage
-  owp: boolean; // one way printing
-  pbp: number; // printing bottom padding
-  precut: [number, number]; // precut position
+  /**
+   * one way printing
+   */
+  owp: boolean;
+  /**
+   * printing bottom padding
+   */
+  pbp: number;
+  /**
+   * precut position
+   */
+  precut: [number, number];
   prespray: [number, number, number, number];
-  ptp: number; // printing top padding
-  pts: number; // path travel speed
+  /**
+   *  printing top padding
+   */
+  ptp: number;
+  /**
+   * path travel speed
+   */
+  pts: number; //
   rev: boolean; // reverse engraving
-  rotary_overlap?: number; //rotary split overlap, mm
-  rotary_split?: number; // rotary split height, mm
+  /**
+   * rotary split overlap, mm
+   */
+  rotary_overlap?: number;
+  /**
+   * rotary split height, mm
+   */
+  rotary_split?: number;
   rotary_y_ratio: number;
-  rotary_z_motion?: boolean; // whether to move z axis in rotary task to avoid collision, default is true in backend
-  segment?: boolean; // whether to split bitmap into segments, default is true in backend
-  spin: number; // rotary position, px
-  ts: number; // travel speed
-  vsc: boolean; // with vector speed constraint, used for ghost 2.3.4 and before
-  vsl: number; // vector speed limit
+  /**
+   * whether to move z axis in rotary task to avoid collision, default is true in backend
+   */
+  rotary_z_motion?: boolean;
+  /**
+   * whether to split bitmap into segments, default is true in backend
+   */
+  segment?: boolean;
+  /**
+   * rotary position, px
+   */
+  spin: number;
+  /**
+   * travel speed
+   */
+  ts: number;
+  /**
+   * with vector speed constraint, used for ghost 2.3.4 and before
+   */
+  vsc: boolean;
+  /**
+   * vector speed limit
+   */
+  vsl: number;
   z_offset: number;
 }>;
 

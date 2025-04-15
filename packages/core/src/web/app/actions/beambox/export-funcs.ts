@@ -202,6 +202,7 @@ const fetchTaskCode = async (
   let shouldUseFastGradient = BeamboxPreference.read('fast_gradient') !== false;
   let supportPwm: boolean;
   let supportJobOrigin: boolean;
+  let supportAccOverrideV1: boolean;
 
   if (device) {
     const vc = VersionChecker(device.version);
@@ -211,6 +212,7 @@ const fetchTaskCode = async (
     shouldUseFastGradient = shouldUseFastGradient && vc.meetRequirement('FAST_GRADIENT');
     supportPwm = vc.meetRequirement(isAdor ? 'ADOR_PWM' : 'PWM');
     supportJobOrigin = vc.meetRequirement(isAdor ? 'ADOR_JOB_ORIGIN' : 'JOB_ORIGIN');
+    supportAccOverrideV1 = vc.meetRequirement('BEAMO_ACC_OVERRIDE');
   }
 
   Progress.popById('upload-scene');
@@ -270,6 +272,7 @@ const fetchTaskCode = async (
         shouldUseFastGradient,
         ...getTaskCodeOpts,
         paddingAccel,
+        supportAccOverrideV1,
         supportJobOrigin,
         supportPwm,
       });
