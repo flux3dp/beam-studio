@@ -10,7 +10,7 @@ jest.mock('@core/implementations/storage', () => ({
 
 const mockReRenderImageSymbol = jest.fn();
 
-jest.mock('@core/helpers/symbol-maker', () => ({
+jest.mock('@core/helpers/symbol-helper/symbolMaker', () => ({
   reRenderImageSymbol: (...args) => mockReRenderImageSymbol(...args),
 }));
 
