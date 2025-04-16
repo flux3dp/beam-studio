@@ -295,7 +295,7 @@ const getStrokeWidth = (imageRatio: number, scale: number) => {
 const sendTaskToWorker = async (data: any) =>
   new Promise((resolve) => {
     const worker = new Worker(
-      new URL(/* webpackChunkName: "image-symbol.worker" */ './symbol-helper/image-symbol.worker.ts', import.meta.url),
+      new URL(/* webpackChunkName: "image-symbol.worker" */ './image-symbol.worker.ts', import.meta.url),
     );
 
     worker.postMessage(data);
