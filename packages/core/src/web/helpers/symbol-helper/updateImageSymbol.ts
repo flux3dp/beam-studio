@@ -214,9 +214,7 @@ input$
     updateImageUrl(imageSymbol, data, imageUrl);
   });
 
-const updateImageSymbol = async (param: UpdateImageSymbolParams) => {
-  if (!param.strokeWidth) param.strokeWidth = 1;
-
+export const updateImageSymbol = async (param: UpdateImageSymbolParams) => {
   input$.next(param);
 };
 
