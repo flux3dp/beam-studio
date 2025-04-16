@@ -22,7 +22,6 @@ export const promarkModelsArray = ['fpm1'] as const;
 export const promarkModels = new Set(promarkModelsArray);
 
 export const modelsWithModules = new Set(adorModelsArray);
-export const modelsWithoutUvPrint = new Set(promarkModelsArray);
 
 export const PreviewSpeedLevel = {
   FAST: 3,

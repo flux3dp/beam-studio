@@ -1,3 +1,4 @@
+import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import type { LaserType, mopaWatts, promarkWatts } from '@core/app/constants/promark-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 
@@ -5,7 +6,7 @@ type MetaConfig = {
   clipRect: string; // x y w h
   color: string;
   configName: string;
-  module: number;
+  module: LayerModuleType;
   ref: boolean;
 };
 
@@ -88,7 +89,7 @@ export type Preset = Partial<ConfigKeyTypeMap> & {
   hide?: boolean;
   isDefault?: boolean;
   key?: string;
-  module?: number;
+  module?: LayerModuleType;
   name?: string;
 };
 

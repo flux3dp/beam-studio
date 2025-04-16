@@ -6,7 +6,7 @@ import { getWorkarea } from '@core/app/constants/workarea-constants';
 import Select from '@core/app/widgets/AntdSelect';
 import UnitInput from '@core/app/widgets/UnitInput';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
-import layerModuleHelper from '@core/helpers/layer-module/layer-module-helper';
+import { getDefaultLaserModule } from '@core/helpers/layer-module/layer-module-helper';
 import presetHelper from '@core/helpers/presets/preset-helper';
 import useI18n from '@core/helpers/useI18n';
 
@@ -32,7 +32,7 @@ export default function TextSettingForm({ className, handleChange, isInch, setti
   const lengthUnit = isInch ? 'in/s' : 'mm/s';
   const workarea = useWorkarea();
   const { dropdownOptions, maxSpeed, presetList } = React.useMemo(() => {
-    const list = presetHelper.getPresetsList(workarea, layerModuleHelper.getDefaultLaserModule());
+    const list = presetHelper.getPresetsList(workarea, getDefaultLaserModule());
 
     return {
       dropdownOptions: list.map(({ key, name }) => ({ label: name, value: key || name })),

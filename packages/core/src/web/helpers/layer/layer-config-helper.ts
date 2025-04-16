@@ -7,13 +7,13 @@ import type { LayerModuleType } from '@core/app/constants/layer-module/layer-mod
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType } from '@core/app/constants/promark-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
-import { getSupportModules, getWorkarea } from '@core/app/constants/workarea-constants';
+import { getSupportedModules, getWorkarea } from '@core/app/constants/workarea-constants';
 import history from '@core/app/svgedit/history/history';
 import updateLayerColorFilter from '@core/helpers/color/updateLayerColorFilter';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
 import { getAllLayerNames, getLayerByName } from '@core/helpers/layer/layer-helper';
-import layerModuleHelper from '@core/helpers/layer-module/layer-module-helper';
+import { getDefaultLaserModule } from '@core/helpers/layer-module/layer-module-helper';
 import presetHelper from '@core/helpers/presets/preset-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type { ConfigKey, ConfigKeyTypeMap, ILayerConfig, Preset } from '@core/interfaces/ILayerConfig';
@@ -408,7 +408,7 @@ export const initLayerConfig = (layerName: string): void => {
     return;
   }
 
-  const defaultLaserModule = layerModuleHelper.getDefaultLaserModule();
+  const defaultLaserModule = getDefaultLaserModule();
 
   for (const key of keys) {
     if (defaultConfig[key] !== undefined) {
@@ -477,9 +477,9 @@ export const getLayersConfig = (layerNames: string[], currentLayerName?: string)
 
 export const toggleFullColorAfterWorkareaChange = (): void => {
   const workarea = BeamboxPreference.read('workarea') || BeamboxPreference.read('model');
-  const supportedModules = getSupportModules(workarea);
+  const supportedModules = getSupportedModules(workarea);
   const layerNames = getAllLayerNames();
-  const defaultLaserModule = layerModuleHelper.getDefaultLaserModule();
+  const defaultLaserModule = getDefaultLaserModule();
 
   for (const layerName of layerNames) {
     const layer = getLayerByName(layerName);
@@ -504,7 +504,7 @@ export const applyDefaultLaserModule = (): void => {
 
   if (modelsWithModules.has(workarea)) {
     const layerNames = getAllLayerNames();
-    const defaultLaserModule = layerModuleHelper.getDefaultLaserModule();
+    const defaultLaserModule = getDefaultLaserModule();
 
     for (const layerName of layerNames) {
       const layer = getLayerByName(layerName);
@@ -555,7 +555,7 @@ export const applyPreset = (
   const { maxSpeed, minSpeed } = getWorkarea(workarea);
   const { applyName = true, batchCmd } = opts;
   const { module = LayerModule.LASER_UNIVERSAL } = preset;
-  const keys = getConfigKeys(module!);
+  const keys = getConfigKeys(module as LayerModuleType);
   const defaultConfig = getDefaultConfig();
 
   for (const key of keys) {

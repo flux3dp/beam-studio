@@ -67,7 +67,7 @@ const hexaRfWorkAreaInfo: WorkArea = {
   width: 740,
 };
 
-const workareaConstants: Record<WorkAreaModel, WorkArea> = {
+export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
   ado1: {
     autoFocusOffset: [20.9, -40.38, 7.5],
     cameraCenter: [215, 150],
@@ -84,8 +84,8 @@ const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     supportedModules: [
       LayerModule.LASER_10W_DIODE,
       LayerModule.LASER_20W_DIODE,
-      LayerModule.LASER_1064,
       LayerModule.PRINTER,
+      LayerModule.LASER_1064,
       LayerModule.UV_PRINT,
     ],
     vectorSpeedLimit: 20,
@@ -191,8 +191,8 @@ export const getWorkarea = (model: WorkAreaModel, fallbackModel: WorkAreaModel =
   return { ...res };
 };
 
-export const getSupportModules = (model: WorkAreaModel): LayerModuleType[] => {
-  const { supportedModules = [LayerModule.UV_PRINT, LayerModule.LASER_UNIVERSAL] } = workareaConstants[model];
+export const getSupportedModules = (model: WorkAreaModel): LayerModuleType[] => {
+  const { supportedModules = [LayerModule.LASER_UNIVERSAL, LayerModule.UV_PRINT] } = workareaConstants[model];
   const isUvPrintEnabled = beamboxPreference.read('enable-uv-print-file');
 
   if (!isUvPrintEnabled) return supportedModules.filter((module) => module !== LayerModule.UV_PRINT);

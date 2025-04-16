@@ -4,8 +4,6 @@ import { fireEvent, render } from '@testing-library/react';
 
 import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
 
-import LayerList from './LayerList';
-
 const mockDrawing = {
   all_layers: [],
   getCurrentLayerName: jest.fn(),
@@ -13,6 +11,14 @@ const mockDrawing = {
   getLayerVisibility: jest.fn(),
   identifyLayers: jest.fn(),
 };
+
+const mockGetSupportedModules = jest.fn();
+
+jest.mock('@core/app/constants/workarea-constants', () => ({
+  getSupportedModules: mockGetSupportedModules,
+}));
+
+import LayerList from './LayerList';
 
 jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (cb) =>
@@ -91,6 +97,7 @@ describe('test LayerList', () => {
   beforeEach(() => {
     jest.resetAllMocks();
     mockUseIsMobile.mockReturnValue(false);
+    mockGetSupportedModules.mockReturnValue([15]);
   });
 
   it('should render correctly', () => {
@@ -141,21 +148,21 @@ describe('test LayerList', () => {
     );
 
     expect(container).toMatchSnapshot();
-    expect(mockUseWorkarea).toBeCalledTimes(1);
-    expect(mockGetData).toBeCalledTimes(4);
+    expect(mockUseWorkarea).toHaveBeenCalledTimes(1);
+    expect(mockGetData).toHaveBeenCalledTimes(4);
     expect(mockGetData).toHaveBeenNthCalledWith(1, mockLayer, 'module');
     expect(mockGetData).toHaveBeenNthCalledWith(2, mockLayer, 'ref');
     expect(mockGetData).toHaveBeenNthCalledWith(3, mockLayer, 'module');
     expect(mockGetData).toHaveBeenNthCalledWith(4, mockLayer, 'ref');
-    expect(mockLayer.getAttribute).toBeCalledTimes(4);
+    expect(mockLayer.getAttribute).toHaveBeenCalledTimes(4);
     expect(mockLayer.getAttribute).toHaveBeenNthCalledWith(1, 'data-lock');
     expect(mockLayer.getAttribute).toHaveBeenNthCalledWith(2, 'data-fullcolor');
     expect(mockLayer.getAttribute).toHaveBeenNthCalledWith(3, 'data-lock');
     expect(mockLayer.getAttribute).toHaveBeenNthCalledWith(4, 'data-fullcolor');
-    expect(mockDrawing.getLayerVisibility).toBeCalledTimes(2);
+    expect(mockDrawing.getLayerVisibility).toHaveBeenCalledTimes(2);
     expect(mockDrawing.getLayerVisibility).toHaveBeenNthCalledWith(1, 'layer2');
     expect(mockDrawing.getLayerVisibility).toHaveBeenNthCalledWith(2, 'layer1');
-    expect(mockDrawing.getLayerColor).toBeCalledTimes(1);
+    expect(mockDrawing.getLayerColor).toHaveBeenCalledTimes(1);
     expect(mockDrawing.getLayerColor).toHaveBeenNthCalledWith(1, 'layer1');
   });
 
@@ -230,75 +237,75 @@ describe('test LayerList', () => {
     );
     const layer1Item = getByTestId('layer1');
 
-    expect(mockOnLayerClick).not.toBeCalled();
+    expect(mockOnLayerClick).not.toHaveBeenCalled();
     fireEvent.click(layer1Item);
-    expect(mockOnLayerClick).toBeCalledTimes(1);
+    expect(mockOnLayerClick).toHaveBeenCalledTimes(1);
     expect(mockOnLayerClick).toHaveBeenLastCalledWith(expect.anything(), 'layer1');
 
-    expect(mockHighlightLayer).not.toBeCalled();
+    expect(mockHighlightLayer).not.toHaveBeenCalled();
     fireEvent.mouseOver(layer1Item);
-    expect(mockHighlightLayer).toBeCalledTimes(1);
+    expect(mockHighlightLayer).toHaveBeenCalledTimes(1);
     expect(mockHighlightLayer).toHaveBeenLastCalledWith('layer1');
     fireEvent.mouseOut(layer1Item);
-    expect(mockHighlightLayer).toBeCalledTimes(2);
+    expect(mockHighlightLayer).toHaveBeenCalledTimes(2);
     expect(mockHighlightLayer).toHaveBeenLastCalledWith();
 
-    expect(mockOnLayerDragStart).not.toBeCalled();
+    expect(mockOnLayerDragStart).not.toHaveBeenCalled();
     fireEvent.dragStart(layer1Item);
-    expect(mockOnLayerDragStart).toBeCalledTimes(1);
+    expect(mockOnLayerDragStart).toHaveBeenCalledTimes(1);
     expect(mockOnLayerDragStart).toHaveBeenLastCalledWith('layer1', expect.anything());
 
-    expect(mockOnLayerDragEnd).not.toBeCalled();
+    expect(mockOnLayerDragEnd).not.toHaveBeenCalled();
     fireEvent.dragEnd(layer1Item);
-    expect(mockOnLayerDragEnd).toBeCalledTimes(1);
+    expect(mockOnLayerDragEnd).toHaveBeenCalledTimes(1);
 
-    expect(mockOnLayerTouchStart).not.toBeCalled();
+    expect(mockOnLayerTouchStart).not.toHaveBeenCalled();
     fireEvent.touchStart(layer1Item);
-    expect(mockOnLayerTouchStart).toBeCalledTimes(1);
+    expect(mockOnLayerTouchStart).toHaveBeenCalledTimes(1);
     expect(mockOnLayerTouchStart).toHaveBeenLastCalledWith('layer1', expect.anything(), 800);
 
-    expect(mockOnLayerTouchMove).not.toBeCalled();
+    expect(mockOnLayerTouchMove).not.toHaveBeenCalled();
     fireEvent.touchMove(layer1Item);
-    expect(mockOnLayerTouchMove).toBeCalledTimes(1);
+    expect(mockOnLayerTouchMove).toHaveBeenCalledTimes(1);
 
-    expect(mockOnLayerTouchEnd).not.toBeCalled();
+    expect(mockOnLayerTouchEnd).not.toHaveBeenCalled();
     fireEvent.touchEnd(layer1Item);
-    expect(mockOnLayerTouchEnd).toBeCalledTimes(1);
+    expect(mockOnLayerTouchEnd).toHaveBeenCalledTimes(1);
 
     const dragSensorAreas = container.querySelectorAll('.drag-sensor-area');
 
-    expect(mockOnSensorAreaDragEnter).not.toBeCalled();
+    expect(mockOnSensorAreaDragEnter).not.toHaveBeenCalled();
     expect(dragSensorAreas).toHaveLength(4);
     fireEvent.dragEnter(dragSensorAreas[0]);
-    expect(mockOnSensorAreaDragEnter).toBeCalledTimes(1);
+    expect(mockOnSensorAreaDragEnter).toHaveBeenCalledTimes(1);
     expect(mockOnSensorAreaDragEnter).toHaveBeenLastCalledWith(2);
 
     const layer2Center = container.querySelectorAll('.row')[0];
 
-    expect(mockOnLayerCenterDragEnter).not.toBeCalled();
+    expect(mockOnLayerCenterDragEnter).not.toHaveBeenCalled();
     fireEvent.dragEnter(layer2Center);
-    expect(mockOnLayerCenterDragEnter).toBeCalledTimes(1);
+    expect(mockOnLayerCenterDragEnter).toHaveBeenCalledTimes(1);
     expect(mockOnLayerCenterDragEnter).toHaveBeenLastCalledWith('layer2');
 
-    expect(mockOnLayerColorChange).not.toBeCalled();
+    expect(mockOnLayerColorChange).not.toHaveBeenCalled();
     fireEvent.click(getAllByText('changeColor')[0]);
-    expect(mockOnLayerColorChange).toBeCalledTimes(1);
+    expect(mockOnLayerColorChange).toHaveBeenCalledTimes(1);
     expect(mockOnLayerColorChange).toHaveBeenLastCalledWith('layer2', '#000000');
 
     const layer1Vis = container.querySelectorAll('.vis')[1];
 
-    expect(mockSetLayerVisibility).not.toBeCalled();
+    expect(mockSetLayerVisibility).not.toHaveBeenCalled();
     fireEvent.click(layer1Vis);
-    expect(mockSetLayerVisibility).toBeCalledTimes(1);
+    expect(mockSetLayerVisibility).toHaveBeenCalledTimes(1);
     expect(mockSetLayerVisibility).toHaveBeenLastCalledWith('layer1');
 
     const layerLocks = container.querySelectorAll('.lock');
 
-    expect(mockUnLockLayers).not.toBeCalled();
+    expect(mockUnLockLayers).not.toHaveBeenCalled();
     fireEvent.click(layerLocks[1]);
-    expect(mockUnLockLayers).not.toBeCalled();
+    expect(mockUnLockLayers).not.toHaveBeenCalled();
     fireEvent.click(layerLocks[0]);
-    expect(mockUnLockLayers).toBeCalledTimes(1);
+    expect(mockUnLockLayers).toHaveBeenCalledTimes(1);
     expect(mockUnLockLayers).toHaveBeenLastCalledWith('layer2');
   });
 });

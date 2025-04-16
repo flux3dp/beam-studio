@@ -17,7 +17,7 @@ import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';
 import Select from '@core/app/widgets/AntdSelect';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import { baseConfig, getDefaultConfig, postPresetChange } from '@core/helpers/layer/layer-config-helper';
-import layerModuleHelper from '@core/helpers/layer-module/layer-module-helper';
+import { getModulesTranslations } from '@core/helpers/layer-module/layer-module-helper';
 import presetHelper from '@core/helpers/presets/preset-helper';
 import useI18n from '@core/helpers/useI18n';
 import storage from '@core/implementations/storage';
@@ -54,7 +54,7 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
   const listRef = useRef<HTMLDivElement>(null);
   const isInch = useMemo(() => (storage.get('default-units') || 'mm') === 'inches', []);
   const lengthUnit = useMemo(() => (isInch ? 'in' : 'mm'), [isInch]);
-  const moduleTranslations = useMemo(() => layerModuleHelper.getModulesTranslations(), []);
+  const moduleTranslations = useMemo(() => getModulesTranslations(), []);
   const [editingPresets, setEditingPresets] = useState(presetHelper.getAllPresets());
   const [editingValues, setEditingValues] = useState<Record<string, Preset>>({});
   const displayList = useMemo(

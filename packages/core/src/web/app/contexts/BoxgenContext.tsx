@@ -7,7 +7,7 @@ import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import moduleBoundary from '@core/app/constants/layer-module/module-boundary';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
-import layerModuleHelper from '@core/helpers/layer-module/layer-module-helper';
+import { getDefaultLaserModule } from '@core/helpers/layer-module/layer-module-helper';
 import storage from '@core/implementations/storage';
 import type { IController } from '@core/interfaces/IBoxgen';
 
@@ -39,7 +39,7 @@ export function BoxgenProvider({ children, onClose }: BoxgenProviderProps): Reac
     const { displayHeight, height, width } = currentWorkarea;
 
     if (workareaValue === 'ado1') {
-      const laserModule = layerModuleHelper.getDefaultLaserModule();
+      const laserModule = getDefaultLaserModule();
       const boundary = moduleBoundary[laserModule];
 
       return {

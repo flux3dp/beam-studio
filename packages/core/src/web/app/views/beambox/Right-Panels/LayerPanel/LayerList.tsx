@@ -5,8 +5,8 @@ import type { Action, SwipeActionRef } from 'antd-mobile/es/components/swipe-act
 import classNames from 'classnames';
 import { match } from 'ts-pattern';
 
-import { modelsWithoutUvPrint } from '@core/app/actions/beambox/constant';
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
+import { getSupportedModules } from '@core/app/constants/workarea-constants';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
 import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
@@ -72,6 +72,7 @@ const LayerList = ({
   const currentLayerName = drawing.getCurrentLayerName();
   const isMobile = useIsMobile();
   const workarea = useWorkarea();
+  const supportedModules = getSupportedModules(workarea);
   const ref = useRef<SwipeActionRef>(null);
 
   useEffect(() => {
@@ -92,7 +93,7 @@ const LayerList = ({
     items.push(renderDragBar());
   }
 
-  const shouldShowModuleIcon = !modelsWithoutUvPrint.has(workarea);
+  const shouldShowModuleIcon = supportedModules.length > 1;
 
   for (let i = allLayerNames.length - 1; i >= 0; i -= 1) {
     const layerName = allLayerNames[i];

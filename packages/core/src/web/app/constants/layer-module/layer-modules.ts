@@ -2,6 +2,7 @@
 
 /* eslint-disable perfectionist/sort-objects */
 export const LayerModule = {
+  NONE: 0, // placeholder for device info search
   LASER_10W_DIODE: 1, // or default CO2 laser for BeamSeries
   LASER_20W_DIODE: 2,
   LASER_1064: 4,
