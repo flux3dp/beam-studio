@@ -128,10 +128,10 @@ function UnmemorizedTabPanel({ bbox, element, onClose }: Props): React.JSX.Eleme
       if (closestHit) {
         const path = closestHit.item as paper.Path;
 
-        drawPerpendicularLineOnPath(path, point, width * dpmm);
+        drawPerpendicularLineOnPath(path, point, width * dpmm, zoomScale);
       }
     },
-    [width, isDraggable, isDragging, mode],
+    [isDraggable, isDragging, mode, width, zoomScale],
   );
   const handleMouseDrag = useCallback(
     (event: paper.ToolEvent) => {
