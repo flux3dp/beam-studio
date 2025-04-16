@@ -14,7 +14,7 @@ import alertConfig from '@core/helpers/api/alert-config';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 import round from '@core/helpers/math/round';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import SymbolMaker from '@core/helpers/symbol-maker';
+import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import VersionChecker from '@core/helpers/version-checker';
 import storage from '@core/implementations/storage';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';

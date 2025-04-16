@@ -7,7 +7,7 @@ import { iconButtonTheme } from '@core/app/constants/antd-config';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import SymbolMaker from '@core/helpers/symbol-maker';
+import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useForceUpdate from '@core/helpers/use-force-update';
 import type { IBatchCommand } from '@core/interfaces/IHistory';

@@ -17,7 +17,7 @@ import i18n from '@core/helpers/i18n';
 import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
 import isWeb from '@core/helpers/is-web';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import SymbolMaker from '@core/helpers/symbol-maker';
+import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import communicator from '@core/implementations/communicator';
 import dialog from '@core/implementations/dialog';
 import fs from '@core/implementations/fileSystem';

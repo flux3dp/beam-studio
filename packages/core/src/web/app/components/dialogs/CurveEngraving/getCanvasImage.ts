@@ -1,7 +1,7 @@
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
 import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
-import symbolMaker from '@core/helpers/symbol-maker';
+import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 
 // TODO: Add unit tests
 const getCanvasImage = async (x: number, y: number, width: number, height: number): Promise<ImageBitmap> => {

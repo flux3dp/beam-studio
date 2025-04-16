@@ -21,7 +21,7 @@ import updateImagesResolution from '@core/helpers/image/updateImagesResolution';
 import convertShapeToBitmap from '@core/helpers/layer/convertShapeToBitmap';
 import { tempSplitFullColorLayers } from '@core/helpers/layer/full-color/splitFullColorLayer';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import SymbolMaker from '@core/helpers/symbol-maker';
+import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import VersionChecker from '@core/helpers/version-checker';
 import dialog from '@core/implementations/dialog';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';

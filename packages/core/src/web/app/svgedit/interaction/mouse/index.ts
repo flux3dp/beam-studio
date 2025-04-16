@@ -27,7 +27,7 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import isWeb from '@core/helpers/is-web';
 import * as LayerHelper from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import SymbolMaker from '@core/helpers/symbol-maker';
+import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import type { ICommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { IPoint, IRect } from '@core/interfaces/ISVGCanvas';

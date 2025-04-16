@@ -14,7 +14,7 @@ import communicator from '@core/implementations/communicator';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import { getSVGAsync } from './svg-editor-helper';
+import { getSVGAsync } from '../svg-editor-helper';
 
 interface BoundingBox {
   height: number;
