@@ -269,7 +269,7 @@ export const importBvgString = async (
       workareaManager.resetView();
     }
 
-    await symbolMaker.reRenderAllImageSymbol();
+    await symbolMaker.reRenderAllImageSymbols();
   };
 
   await postImportBvgString();

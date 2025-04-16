@@ -8,31 +8,13 @@ import history from '@core/app/svgedit/history/history';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
 import updateElementColor from '@core/helpers/color/updateElementColor';
-import isWeb from '@core/helpers/is-web';
 import { getObjectLayer } from '@core/helpers/layer/layer-helper';
-import communicator from '@core/implementations/communicator';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import { getSVGAsync } from '../svg-editor-helper';
 
-interface BoundingBox {
-  height: number;
-  width: number;
-  x: number;
-  y: number;
-}
-
-interface SvgToImageUrlData {
-  bb: BoundingBox;
-  fullColor: boolean;
-  id: number;
-  imageRatio: number;
-  imgHeight: number;
-  imgWidth: number;
-  strokeWidth: number;
-  svgUrl: string;
-}
+import updateImageSymbol from './updateImageSymbol';
 
 let svgCanvas: ISVGCanvas;
 let svgedit: any;
@@ -310,8 +292,6 @@ const getStrokeWidth = (imageRatio: number, scale: number) => {
   return strokeWidth;
 };
 
-const stringifyStrokeWidth = (strokeWidth: number) => strokeWidth.toPrecision(6);
-
 const sendTaskToWorker = async (data: any) =>
   new Promise((resolve) => {
     const worker = new Worker(
@@ -326,102 +306,7 @@ const sendTaskToWorker = async (data: any) =>
     };
   });
 
-let requestId = 0;
-
-const getRequestID = () => {
-  requestId += 1;
-  requestId %= 10000;
-
-  return requestId;
-};
-
-// For debug, same as svgToImgUrlByShadowWindow
-const svgToImgUrl = async (data: SvgToImageUrlData) =>
-  new Promise<string>((resolve) => {
-    const { fullColor, imgHeight: height, imgWidth: width, strokeWidth, svgUrl } = data;
-    const roundedStrokeWidth = Math.round(strokeWidth);
-    const img = new Image(width + roundedStrokeWidth, height + roundedStrokeWidth);
-
-    img.onload = async () => {
-      const imgCanvas = document.createElement('canvas');
-
-      imgCanvas.width = img.width;
-      imgCanvas.height = img.height;
-
-      const ctx = imgCanvas.getContext('2d')!;
-
-      ctx.imageSmoothingEnabled = false;
-
-      if (svgedit.browser.isSafari()) {
-        ctx.drawImage(
-          img,
-          -roundedStrokeWidth,
-          -roundedStrokeWidth,
-          width + roundedStrokeWidth,
-          height + roundedStrokeWidth,
-          0,
-          0,
-          img.width,
-          img.height,
-        );
-        img.remove();
-      } else {
-        ctx.drawImage(img, 0, 0, img.width, img.height);
-      }
-
-      const outCanvas = document.createElement('canvas');
-
-      outCanvas.width = Math.max(1, width);
-      outCanvas.height = Math.max(1, height);
-
-      const outCtx = outCanvas.getContext('2d')!;
-
-      outCtx.imageSmoothingEnabled = false;
-
-      if (!fullColor) {
-        outCtx.filter = 'brightness(0%)';
-      }
-
-      outCtx.drawImage(imgCanvas, 0, 0, outCanvas.width, outCanvas.height);
-
-      if (svgedit.browser.isSafari()) {
-        // canvas context does not work in safari
-        const imageData = outCtx.getImageData(0, 0, outCanvas.width, outCanvas.height);
-        const d = imageData.data;
-
-        for (let i = 0; i < d.length; i += 4) {
-          if (d[i + 3] !== 0) {
-            d[i] = 0;
-            d[i + 1] = 0;
-            d[i + 2] = 0;
-          }
-        }
-        outCtx.putImageData(imageData, 0, 0);
-      }
-
-      const imageBase64 = outCanvas.toDataURL('image/png');
-      const res = await fetch(imageBase64);
-      const imageBlob = await res.blob();
-      const imageUrl = URL.createObjectURL(imageBlob);
-
-      resolve(imageUrl);
-    };
-    img.src = svgUrl;
-
-    if (svgedit.browser.isSafari()) {
-      document.body.appendChild(img);
-    }
-  });
-
-const svgToImgUrlByShadowWindow = async (data: SvgToImageUrlData) =>
-  new Promise<string>((resolve) => {
-    communicator.once(`SVG_URL_TO_IMG_URL_DONE_${requestId}`, (_: any, url: string) => {
-      resolve(url);
-    });
-    communicator.send('SVG_URL_TO_IMG_URL', data);
-  });
-
-const calculateImageRatio = (bb: BoundingBox) => {
+const calculateImageRatio = (bb: { height: number; width: number; x: number; y: number }) => {
   const zoomRatio = Math.max(1, workareaManager.zoomRatio);
   const widthRatio = Math.min(4096, window.innerWidth * zoomRatio) / bb.width;
   const heightRatio = Math.min(4096, window.innerHeight * zoomRatio) / bb.height;
@@ -482,7 +367,7 @@ const makeImageSymbol = async (
 
     const calculateSVGBBox = () => {
       const bbText = symbol.getAttribute('data-bbox');
-      let bb: BoundingBox;
+      let bb: { height: number; width: number; x: number; y: number };
 
       if (!bbText) {
         // Unable to getBBox if <use> not mounted
@@ -521,7 +406,7 @@ const makeImageSymbol = async (
     const strokeWidth = fullColor ? 1 : getStrokeWidth(imageRatio, scale);
 
     if (
-      imageSymbol?.getAttribute('data-stroke-width') === stringifyStrokeWidth(strokeWidth) &&
+      imageSymbol?.getAttribute('data-stroke-width') === strokeWidth.toPrecision(6) &&
       imageSymbol.getAttribute('data-fullcolor') === (fullColor ? '1' : '0') &&
       !force
     ) {
@@ -561,57 +446,24 @@ const makeImageSymbol = async (
 
     const svgString = new XMLSerializer().serializeToString(tempSvg);
     const svgBlob = (await sendTaskToWorker({ svgString, type: 'svgStringToBlob' })) as Blob;
-    const svgUrl = URL.createObjectURL(svgBlob);
-    const imgWidth = Math.max(bb.width * imageRatio, 1);
-    const imgHeight = Math.max(bb.height * imageRatio, 1);
-    const id = getRequestID();
-    const param = {
-      bb,
-      fullColor,
-      id,
-      imageRatio,
-      imgHeight,
-      imgWidth,
-      strokeWidth,
-      svgUrl,
-    };
-    const imageUrl = isWeb() ? await svgToImgUrl(param) : await svgToImgUrlByShadowWindow(param);
 
-    URL.revokeObjectURL(svgUrl);
+    if (!imageSymbol) imageSymbol = createImageSymbol(symbol);
 
-    if (!imageSymbol) {
-      imageSymbol = createImageSymbol(symbol);
-    }
-
-    const image = imageSymbol.firstChild as SVGElement;
-    const oldImageUrl = image.getAttribute('href');
-
-    image.setAttribute('x', String(bb.x));
-    image.setAttribute('y', String(bb.y));
-    image.setAttribute('width', String(bb.width));
-    image.setAttribute('height', String(bb.height));
-    image.setAttribute('href', imageUrl);
-
-    const defs = findDefs();
-
-    if (oldImageUrl && !defs.querySelector(`image[href="${oldImageUrl}"]`)) {
-      URL.revokeObjectURL(oldImageUrl);
-    }
-
-    imageSymbol.setAttribute('data-stroke-width', stringifyStrokeWidth(strokeWidth));
-    imageSymbol.setAttribute('data-fullcolor', fullColor ? '1' : '0');
     resolve(imageSymbol);
+
+    updateImageSymbol({ bb, fullColor, imageRatio, imageSymbol, strokeWidth, svgBlob });
   });
 };
 
 const reRenderImageSymbol = async (useElement: SVGUseElement, opts: { force?: boolean } = {}): Promise<void> => {
-  if (!useElement.parentNode) {
-    return;
-  }
+  if (!useElement.parentNode) return;
 
   const { force = false } = opts;
   const { height, width } = svgCanvas.getSvgRealLocation(useElement);
   const { height: origHeight, width: origWidth } = useElement.getBBox();
+
+  if (origWidth * origHeight === 0) return;
+
   const fullColor = getObjectLayer(useElement)?.elem?.getAttribute('data-fullcolor') === '1';
 
   const scale = Math.sqrt((width * height) / (origWidth * origHeight));
@@ -651,7 +503,7 @@ const reRenderImageSymbolArray = async (
   await Promise.all(convertAllUses);
 };
 
-const reRenderAllImageSymbol = async (): Promise<void> => {
+const reRenderAllImageSymbols = async (): Promise<void> => {
   const useElements: SVGUseElement[] = [];
   const layers = Array.from(document.querySelectorAll('#svgcontent > g.layer'));
 
@@ -733,7 +585,7 @@ const symbolMaker = {
   createImageSymbol,
   makeImageSymbol,
   makeSymbol,
-  reRenderAllImageSymbol,
+  reRenderAllImageSymbols,
   reRenderImageSymbol,
   reRenderImageSymbolArray,
   switchImageSymbol,

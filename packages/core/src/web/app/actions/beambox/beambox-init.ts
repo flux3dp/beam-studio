@@ -30,6 +30,7 @@ import fontHelper from '@core/helpers/fonts/fontHelper';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import sentryHelper from '@core/helpers/sentry-helper';
+import registerImageSymbolEvents from '@core/helpers/symbol-helper/registerImageSymbolEvents';
 import { isMobile } from '@core/helpers/system-helper';
 import browser from '@core/implementations/browser';
 import menu from '@core/implementations/menu';
@@ -96,6 +97,7 @@ class BeamboxInit {
     BeamboxStore.onDrawGuideLines(this.displayGuides);
     alertHelper.registerAlertEvents();
     addOnBoundaryDrawer.registerEvents();
+    registerImageSymbolEvents();
 
     // WebSocket for Adobe Illustrator Plug-In
     aiExtension.init();
