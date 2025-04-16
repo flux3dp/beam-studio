@@ -1,43 +1,61 @@
-import type paper from 'paper';
+import paper from 'paper';
 
 import { getCuttingRange } from './getCuttingRange';
 
-export function cutPathAtPoint(path: paper.Path, point: paper.Point, width: number) {
+export function cutPathAtPoint(path: paper.Path, point: paper.Point, width: number): null | paper.CompoundPath {
   const location = path.getNearestLocation(point);
 
   if (!location) {
-    console.error('No nearest location found on the path');
+    console.error('cutPathAtPoint failed: No nearest location found on the path for the given point.');
 
-    return;
+    return null;
   }
 
   if (path.length === 0) {
-    console.error('Path length is 0');
+    console.warn('cutPathAtPoint skipped: Path has zero length. Removing path.');
     path.remove();
 
-    return;
+    return null;
   }
+
+  // Ensure the parent is a CompoundPath before proceeding.
+  if (!(path.parent instanceof paper.CompoundPath)) {
+    console.error('Cut operation failed: Path parent is not a CompoundPath.');
+
+    return null;
+  }
+
+  const compound = path.parent;
+
+  // if the path is closed, split it at the start to ensure we can cut it
+  if (path.closed) path.splitAt(0);
 
   const [offsetStart, offsetEnd] = getCuttingRange(path, point, width);
 
-  // clone the original path so we don't lose the full shape
+  // warn if the offsets are invalid
+  if (offsetStart >= offsetEnd) {
+    console.warn(`Cut operation skipped: Invalid cutting range [${offsetStart}, ${offsetEnd}]. No cut performed.`);
+
+    return compound; // Return the parent unmodified
+  }
+
   const pathClone = path.clone({ insert: false });
+  // cut the end of the offset, this will be the rest path we will add to the compound
+  const restPath = pathClone.splitAt(offsetEnd);
 
-  // if the path is closed, split it at the start to ensure we can cut it
-  if (pathClone.closed) pathClone.splitAt(0);
-
-  // split at offsetStart and offsetEnd
-  const part1 = pathClone.splitAt(offsetStart);
-  // extracted section
-  const part2 = part1.splitAt(offsetEnd - offsetStart);
-  const compound = path.parent as paper.CompoundPath;
-
-  path.remove();
+  // then cut the start of the offset, the resulting path will be removed
+  pathClone.splitAt(offsetStart);
 
   // only add path if it has length
   if (pathClone?.length) compound.addChild(pathClone);
+  else pathClone?.remove();
 
-  if (part2?.length) compound.addChild(part2);
+  if (restPath?.length) compound.addChild(restPath);
+  else restPath?.remove();
+
+  // remove original path
+  path.removeSegments();
+  path.remove();
 
   return compound;
 }

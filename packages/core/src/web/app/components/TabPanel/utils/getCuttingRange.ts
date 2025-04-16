@@ -13,8 +13,8 @@ export function getCuttingRange(path: paper.Path, point: paper.Point, desiredWid
   const desiredStartOffset = Math.min(desiredWidth / 2, maxStartOffset);
   const desiredEndOffset = Math.min(desiredWidth / 2, maxEndOffset);
 
-  return [
-    Math.max(0, location.offset - desiredStartOffset), // Start offset (left/before side)
-    Math.min(location.offset + desiredEndOffset, path.length), // End offset (right/after side)
-  ];
+  const offsetStart = Math.max(0, location.offset - desiredStartOffset);
+  const offsetEnd = Math.min(location.offset + desiredEndOffset, path.length);
+
+  return [offsetStart, offsetEnd];
 }

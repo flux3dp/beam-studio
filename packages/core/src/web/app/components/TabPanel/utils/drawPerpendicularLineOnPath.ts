@@ -21,6 +21,44 @@ function drawPerpendicularLineOnGroup(path: paper.Path, group: paper.Group, offs
   return line;
 }
 
+function highlightBetweenOffsets(path: paper.Path, group: paper.Group, offsetStart: number, offsetEnd: number) {
+  if (path.closed) path.splitAt(0);
+
+  const pathClone = path.clone({ insert: false });
+
+  pathClone.splitAt(offsetEnd);
+
+  const lineBetween = pathClone.splitAt(offsetStart);
+
+  if (!lineBetween) {
+    pathClone.remove();
+    path.remove();
+
+    return;
+  }
+
+  if (lineBetween.length) {
+    lineBetween.strokeColor = new paper.Color('red');
+    lineBetween.strokeWidth = 1;
+    group.addChild(lineBetween);
+  } else {
+    lineBetween.remove();
+  }
+
+  pathClone.remove();
+
+  return lineBetween;
+}
+
+/**
+ * Draws perpendicular lines at the start and end of a calculated cutting range
+ * on a path, and highlights the segment between them in red.
+ *
+ * @param path - The path to draw on.
+ * @param point - The reference point to determine the center of the range.
+ * @param width - The desired width of the range.
+ * @param zoomScale - The current zoom scale (affects visual size of perpendicular lines).
+ */
 export function drawPerpendicularLineOnPath(
   path: paper.Path,
   point: paper.Point,
@@ -35,9 +73,12 @@ export function drawPerpendicularLineOnPath(
     return;
   }
 
+  const [offsetStart, offsetEnd] = getCuttingRange(path, point, width);
   const perpendicularGroup = new paper.Group({ name: PERPENDICULAR_LINE_GROUP_NAME });
 
-  getCuttingRange(path, point, width).forEach((offset) => {
+  highlightBetweenOffsets(path, perpendicularGroup, offsetStart, offsetEnd);
+
+  [offsetStart, offsetEnd].forEach((offset) => {
     drawPerpendicularLineOnGroup(path, perpendicularGroup, offset, HEIGHT / zoomScale);
   });
 }
