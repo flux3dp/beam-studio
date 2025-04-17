@@ -239,9 +239,7 @@ export const getExportOpt = (
         fill: { a: 100, x: 5000, y: 2000 },
         path: { a: 100, x: 500, y: 500 },
       };
-    }
-
-    if (constant.fcodeV2Models.has(model)) {
+    } else if (constant.fcodeV2Models.has(model)) {
       config.acc_override = { fill: { a: 100 }, path: { a: 100 } };
     } else if (model === 'fbm1' && supportAccOverrideV1) {
       config.acc_override = { fill: { y: 100 }, path: { y: 100 } };
