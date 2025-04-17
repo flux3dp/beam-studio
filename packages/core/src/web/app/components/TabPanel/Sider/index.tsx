@@ -60,13 +60,15 @@ function UnmemorizedSider({
               <Form.Item label={`${tabPanel.width}:`}>
                 <UnitInput
                   addonAfter="mm"
+                  changeOnWheel
+                  fireOnChange
                   isInch={false}
                   key="width"
                   max={10}
                   min={0.1}
                   onChange={(value) => setWidth(value!)}
                   precision={1}
-                  step={1}
+                  step={0.1}
                   type="number"
                   value={width}
                 />
@@ -74,6 +76,8 @@ function UnmemorizedSider({
               <Form.Item hidden={mode !== 'auto'} label={`${tabPanel.gap}:`}>
                 <UnitInput
                   addonAfter="mm"
+                  changeOnWheel
+                  fireOnChange
                   isInch={false}
                   key="gap"
                   max={50}

@@ -33,6 +33,8 @@ const UnitInput = forwardRef<HTMLInputElement | null, Props>(
       displayMultiValue = false,
       fireOnChange = false,
       isInch,
+      max = Number.MAX_SAFE_INTEGER,
+      min = Number.MIN_SAFE_INTEGER,
       onBlur,
       onChange,
       precision = 4,
@@ -58,6 +60,7 @@ const UnitInput = forwardRef<HTMLInputElement | null, Props>(
       if (valueRef.current !== undefined && typeof props.value === 'number') {
         valueRef.current = props.value;
       }
+      // eslint-disable-next-line hooks/exhaustive-deps
     }, [props.value, valueRef.current]);
 
     const formatter = useCallback(
@@ -74,8 +77,12 @@ const UnitInput = forwardRef<HTMLInputElement | null, Props>(
     );
 
     const parser = useCallback(
-      (value: string = '') => Number.parseFloat(value.trim().replaceAll(',', '.')) * (isInch ? 25.4 : 1),
-      [isInch],
+      (input: string = '') => {
+        const value = Number.parseFloat(input.trim().replaceAll(',', '.')) * (isInch ? 25.4 : 1);
+
+        return Math.max(min, Math.min(max, value));
+      },
+      [isInch, max, min],
     );
 
     const handleValueChange = useCallback(
@@ -85,18 +92,14 @@ const UnitInput = forwardRef<HTMLInputElement | null, Props>(
           let val = value;
 
           if (clipValue) {
-            if (props.max && val > props.max) {
-              val = props.max;
-            } else if (props.min && val < props.min) {
-              val = props.min;
-            }
+            val = Math.max(min, Math.min(max, val));
           }
 
           valueRef.current = val; // Update the previous value
           onChange?.(val);
         }
       },
-      [clipValue, onChange, props.max, props.min],
+      [clipValue, onChange, max, min],
     );
 
     const handlePressEnter = useCallback(() => {
@@ -135,6 +138,8 @@ const UnitInput = forwardRef<HTMLInputElement | null, Props>(
             ref={inputRef}
             {...props}
             formatter={formatter}
+            max={max}
+            min={min}
             onBlur={handleBlur}
             onChange={fireOnChange ? onChange : undefined}
             onStep={handleStep}
