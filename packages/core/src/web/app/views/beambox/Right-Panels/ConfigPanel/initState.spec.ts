@@ -75,4 +75,14 @@ describe('test initState', () => {
     expect(mockGetLayersConfig).toHaveBeenCalledWith(['layer3', 'layer4'], 'layer3');
     expect(mockUpdate).toHaveBeenCalledWith('mock-layers-config');
   });
+
+  test('when layers length is 0', () => {
+    mockGetCurrentLayerName.mockReturnValue('layer3');
+    mockGetLayerConfig.mockReturnValue('mock-layer-config');
+
+    initState([]);
+
+    expect(mockGetLayerConfig).toHaveBeenCalledWith('layer3');
+    expect(mockUpdate).toHaveBeenCalledWith('mock-layer-config');
+  });
 });
