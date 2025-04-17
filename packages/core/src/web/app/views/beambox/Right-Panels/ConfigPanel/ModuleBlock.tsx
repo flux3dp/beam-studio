@@ -1,4 +1,4 @@
-import React, { memo, useContext, useEffect } from 'react';
+import React, { memo, useContext, useEffect, useMemo } from 'react';
 
 import { pipe } from 'remeda';
 
@@ -44,7 +44,7 @@ const ModuleBlock = (): React.ReactNode => {
   const { selectedLayers } = useContext(ConfigPanelContext);
   const { value } = module;
   const workarea = useWorkarea();
-  const supportedModules = getSupportedModules(workarea);
+  const supportedModules = useMemo(() => getSupportedModules(workarea), [workarea]);
 
   useEffect(() => {
     const handler = () => moduleBoundaryDrawer.update(value as LayerModuleType);
@@ -169,7 +169,7 @@ const ModuleBlock = (): React.ReactNode => {
   };
 
   const options = pipe(
-    getSupportedModules(workarea),
+    supportedModules,
     (modules) => {
       const moduleTranslations = getModulesTranslations();
 

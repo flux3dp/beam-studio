@@ -104,10 +104,6 @@ export const useSettingStore = create<Action & State>(
         set(() => {
           const { beamboxPreferenceChanges } = get();
 
-          if (key === 'enable-uv-print-file') {
-            useSettingStoreEventEmitter.emit('changeEnableUvPrintFile', value);
-          }
-
           return { beamboxPreferenceChanges: { ...beamboxPreferenceChanges, [key]: value } };
         }),
       updateToStorage: () =>
@@ -115,6 +111,10 @@ export const useSettingStore = create<Action & State>(
           const { beamboxPreferenceChanges, configChanges } = get();
 
           for (const key in beamboxPreferenceChanges) {
+            if (key === 'enable-uv-print-file') {
+              useSettingStoreEventEmitter.emit('changeEnableUvPrintFile', beamboxPreferenceChanges[key]);
+            }
+
             beamboxPreference.write(key as BeamboxPreferenceKey, beamboxPreferenceChanges[key as BeamboxPreferenceKey]);
           }
 

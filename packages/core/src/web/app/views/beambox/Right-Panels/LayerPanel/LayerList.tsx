@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useMemo, useRef } from 'react';
 
 import { SwipeAction } from 'antd-mobile';
 import type { Action, SwipeActionRef } from 'antd-mobile/es/components/swipe-action';
@@ -72,7 +72,7 @@ const LayerList = ({
   const currentLayerName = drawing.getCurrentLayerName();
   const isMobile = useIsMobile();
   const workarea = useWorkarea();
-  const supportedModules = getSupportedModules(workarea);
+  const supportedModules = useMemo(() => getSupportedModules(workarea), [workarea]);
   const ref = useRef<SwipeActionRef>(null);
 
   useEffect(() => {

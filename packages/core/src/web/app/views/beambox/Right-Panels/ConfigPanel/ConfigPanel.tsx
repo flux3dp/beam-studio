@@ -97,7 +97,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     [lang.dropdown.parameters, lang.custom_preset, lang.various_preset],
   );
   const { change, getState } = useConfigPanelStore();
-  const supportedModules = getSupportedModules(workarea);
+  const supportedModules = useMemo(() => getSupportedModules(workarea), [workarea]);
   const state = getState();
   const { diode, fullcolor, module } = state;
   const isPrintingModule = useMemo(() => printingModules.has(module.value), [module.value]);
