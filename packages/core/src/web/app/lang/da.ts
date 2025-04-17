@@ -1483,7 +1483,7 @@ const lang: ILang = {
     unavailableWorkarea: '#804 Det nuværende arbejdsområde overstiger maskinens arbejdsområde. Kontroller det valgte maskines arbejdsområde eller indstil arbejdsområde fra Rediger > Dokumentindstillinger.',
     unknown_device: '#826 Kan ikke oprette forbindelse til maskinen, sørg for at USB er tilsluttet maskinen',
     unknown_error: '#821 Programmet stødte på en ukendt fejl, brug Hjælp > Menu > Fejlrapportering.',
-    unsupport_osx_version: 'Den nuværende macOS-version %s understøtter muligvis ikke alle funktioner. Opdater venligst til macOS 11+.',
+    unsupport_osx_version: 'Den nuværende macOS-version %s understøtter muligvis ikke alle funktioner. Opdater venligst til macOS 13+.',
     unsupport_win_version: 'Den nuværende OS-version %s understøtter muligvis ikke alle funktioner. Opdater venligst til den nyeste version.',
     unsupported_example_file: 'Det valgte eksempelfil understøttes ikke af det aktuelle arbejdsområde.',
     uploading_fcode: 'Uploader FCode',

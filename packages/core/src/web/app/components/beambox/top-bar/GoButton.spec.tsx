@@ -47,7 +47,7 @@ jest.mock('@core/implementations/storage', () => ({
 
 const switchImageSymbolForAll = jest.fn();
 
-jest.mock('@core/helpers/symbol-maker', () => ({
+jest.mock('@core/helpers/symbol-helper/symbolMaker', () => ({
   switchImageSymbolForAll: (...args) => switchImageSymbolForAll(...args),
 }));
 

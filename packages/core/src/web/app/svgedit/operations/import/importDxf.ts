@@ -13,7 +13,7 @@ import { initLayerConfig } from '@core/helpers/layer/layer-config-helper';
 import { createLayer, removeDefaultLayerIfEmpty } from '@core/helpers/layer/layer-helper';
 import requirejsHelper from '@core/helpers/requirejs-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import SymbolMaker from '@core/helpers/symbol-maker';
+import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 let svgCanvas: ISVGCanvas;

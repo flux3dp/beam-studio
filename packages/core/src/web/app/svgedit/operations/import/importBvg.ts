@@ -18,7 +18,7 @@ import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/
 import i18n from '@core/helpers/i18n';
 import { applyDefaultLaserModule, toggleFullColorAfterWorkareaChange } from '@core/helpers/layer/layer-config-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import symbolMaker from '@core/helpers/symbol-maker';
+import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import type { IBatchCommand, ICommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
@@ -269,7 +269,7 @@ export const importBvgString = async (
       workareaManager.resetView();
     }
 
-    await symbolMaker.reRenderAllImageSymbol();
+    await symbolMaker.reRenderAllImageSymbols();
   };
 
   await postImportBvgString();

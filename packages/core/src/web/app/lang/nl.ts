@@ -1483,7 +1483,7 @@ const lang: ILang = {
     unavailableWorkarea: '#804 Huidige werkgebied overschrijdt het werkgebied van dit apparaat. Controleer het werkgebied van het geselecteerde apparaat of stel het werkgebied in via Bewerken > Documentinstellingen.',
     unknown_device: '#826 Kan geen verbinding maken met het apparaat, zorg ervoor dat de USB is aangesloten op het apparaat',
     unknown_error: '#821 De applicatie heeft een onbekende fout gevonden, gebruik Help > Menu > Fout rapporteren.',
-    unsupport_osx_version: 'De huidige macOS-versie %s ondersteunt mogelijk niet alle functies. Werk alsjeblieft bij naar macOS 11+.',
+    unsupport_osx_version: 'De huidige macOS-versie %s ondersteunt mogelijk niet alle functies. Werk alsjeblieft bij naar macOS 13+.',
     unsupport_win_version: 'De huidige besturingssysteemversie %s ondersteunt mogelijk niet alle functies. Werk alsjeblieft bij naar de nieuwste versie.',
     unsupported_example_file: 'Het geselecteerde voorbeeldbestand wordt niet ondersteund door het huidige werkgebied.',
     uploading_fcode: 'FCode uploaden',

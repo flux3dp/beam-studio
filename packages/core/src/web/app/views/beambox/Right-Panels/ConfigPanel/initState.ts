@@ -14,6 +14,8 @@ getSVGAsync((globalSVG) => {
 });
 
 export const initState = (layers: string[] = LayerPanelController.getSelectedLayers()) => {
+  if (layers.length === 0) layers = [svgCanvas.getCurrentDrawing().getCurrentLayerName()!];
+
   const { update } = useConfigPanelStore.getState();
 
   if (layers.length === 1) {

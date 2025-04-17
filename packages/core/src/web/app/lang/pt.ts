@@ -1483,7 +1483,7 @@ const lang: ILang = {
     unavailableWorkarea: '#804 A área de trabalho atual excede a área de trabalho desta máquina. Verifique a área de trabalho da máquina selecionada ou defina a área de trabalho em Editar > Configurações do Documento.',
     unknown_device: '#826 Não é possível conectar à máquina, verifique se o USB está conectado à máquina',
     unknown_error: '#821 O aplicativo encontrou um erro desconhecido, use Ajuda > Menu > Relatório de erros.',
-    unsupport_osx_version: 'A versão atual do macOS %s pode não suportar algumas funções. Atualize para o macOS 11+.',
+    unsupport_osx_version: 'A versão atual do macOS %s pode não suportar algumas funções. Atualize para o macOS 13+.',
     unsupport_win_version: 'A versão atual do SO %s pode não suportar algumas funções. Atualize para a versão mais recente.',
     unsupported_example_file: 'O arquivo de exemplo selecionado não é suportado por esta área de trabalho.',
     uploading_fcode: 'Enviando FCode',

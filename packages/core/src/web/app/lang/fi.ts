@@ -1483,7 +1483,7 @@ const lang: ILang = {
     unavailableWorkarea: '#804 Nykyinen työalue ylittää koneen työalueen. Tarkista valitun koneen työalue tai aseta työalue valikosta Muokkaa > Asiakirja-asetukset.',
     unknown_device: '#826 Ei voi muodostaa yhteyttä koneeseen, varmista että USB on liitetty koneeseen',
     unknown_error: '#821 Sovelluksessa tapahtui tuntematon virhe, ilmoita virheestä valikossa Apua > Valikko > Virheraportti.',
-    unsupport_osx_version: 'Nykyinen macOS-versio %s ei ehkä tue kaikkia toimintoja. Päivitä macOS 11+ -versioon.',
+    unsupport_osx_version: 'Nykyinen macOS-versio %s ei ehkä tue kaikkia toimintoja. Päivitä macOS 13+ -versioon.',
     unsupport_win_version: 'Nykyinen käyttöjärjestelmäversio %s ei ehkä tue kaikkia toimintoja. Päivitä uusimpaan versioon.',
     unsupported_example_file: 'Valittu esimerkkitiedosto ei ole tuettu tällä työalueella.',
     uploading_fcode: 'Lähetetään FCodea',

@@ -27,7 +27,7 @@ import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getAllLayers } from '@core/helpers/layer/layer-helper';
 import monitorStatus from '@core/helpers/monitor-status';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import symbolMaker from '@core/helpers/symbol-maker';
+import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import versionChecker from '@core/helpers/version-checker';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';

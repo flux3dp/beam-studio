@@ -1483,7 +1483,7 @@ const lang: ILang = {
     unavailableWorkarea: '#804 Kawasan kerja semasa melebihi kawasan kerja mesin ini. Sila semak kawasan kerja mesin yang dipilih atau tetapkan kawasan kerja dari Edit > Tetapan Dokumen.',
     unknown_device: '#826 Tidak dapat disambung ke mesin, pastikan USB disambung ke mesin',
     unknown_error: '#821 Aplikasi telah menghadapi ralat yang tidak diketahui, sila gunakan Bantuan > Menu > Laporan Pepijat.',
-    unsupport_osx_version: 'Versi macOS %s semasa mungkin tidak menyokong beberapa fungsi. Sila kemas kini ke macOS 11+.',
+    unsupport_osx_version: 'Versi macOS %s semasa mungkin tidak menyokong beberapa fungsi. Sila kemas kini ke macOS 13+.',
     unsupport_win_version: 'Versi OS %s semasa mungkin tidak menyokong beberapa fungsi. Sila kemas kini ke versi terkini.',
     unsupported_example_file: 'Contoh fail yang dipilih tidak disokong oleh ruang kerja semasa.',
     uploading_fcode: 'Memuat naik FCode',

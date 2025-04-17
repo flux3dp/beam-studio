@@ -27,7 +27,7 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import isWeb from '@core/helpers/is-web';
 import * as LayerHelper from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import SymbolMaker from '@core/helpers/symbol-maker';
+import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import type { ICommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { IPoint, IRect } from '@core/interfaces/ISVGCanvas';
@@ -552,6 +552,7 @@ const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: 
   const hasMatrix = svgedit.math.hasMatrixTransform(transforms);
   const box = hasMatrix ? initBBox : svgedit.utilities.getBBox(selected);
   const isUnfixedResize = (selected.getAttribute('data-ratiofixed') === 'true') === evt.shiftKey;
+  const angle = svgedit.utilities.getRotationAngle(selected);
   let { height, width, x: left, y: top } = box;
 
   if (currentConfig.gridSnapping) {
@@ -561,7 +562,7 @@ const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: 
     width = svgedit.utilities.snapToGrid(width);
   }
 
-  if (svgCanvas.isAutoAlign && isUnfixedResize) {
+  if (svgCanvas.isAutoAlign && isUnfixedResize && !angle) {
     let [inputX, inputY] = [x, y];
 
     if (!resizeMode.includes('n') && !resizeMode.includes('s')) inputY = startY;
@@ -575,8 +576,6 @@ const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: 
   let dy = y - startY;
 
   // if rotated, adjust the dx,dy values
-  const angle = svgedit.utilities.getRotationAngle(selected);
-
   if (angle) {
     const r = Math.sqrt(dx * dx + dy * dy);
     const theta = Math.atan2(dy, dx) - angle * (Math.PI / 180.0);

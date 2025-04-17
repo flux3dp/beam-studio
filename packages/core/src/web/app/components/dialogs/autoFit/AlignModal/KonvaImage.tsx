@@ -10,7 +10,7 @@ import { setRotationAngle } from '@core/app/svgedit/transform/rotation';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
-import symbolMaker from '@core/helpers/symbol-maker';
+import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 
 import type { ImageDimension } from './dimension';
 

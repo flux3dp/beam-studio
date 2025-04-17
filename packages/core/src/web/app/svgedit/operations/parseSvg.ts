@@ -1,5 +1,5 @@
 import getMainColorOfElement from '@core/helpers/color/getMainColorOfElement';
-import SymbolMaker from '@core/helpers/symbol-maker';
+import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import type { Units } from '@core/helpers/units';
 import units from '@core/helpers/units';
 import type { IBatchCommand } from '@core/interfaces/IHistory';

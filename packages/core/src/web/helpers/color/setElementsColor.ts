@@ -1,5 +1,5 @@
 import updateImageDisplay from '@core/helpers/image/updateImageDisplay';
-import symbolMaker from '@core/helpers/symbol-maker';
+import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 
 const endByLayerSymbol = Symbol('end by_layer');
 const endByColorSymbol = Symbol('end by_color');

@@ -1483,7 +1483,7 @@ const lang: ILang = {
     unavailableWorkarea: '#804 Khu vực làm việc hiện tại vượt quá khu vực làm việc của máy này. Vui lòng kiểm tra khu vực làm việc của máy đã chọn hoặc đặt lại khu vực làm việc.',
     unknown_device: '#826 Không thể kết nối với máy, vui lòng đảm bảo USB được cắm vào máy',
     unknown_error: '#821 Ứng dụng gặp lỗi không xác định, vui lòng sử dụng Trợ giúp > Menu > Báo cáo lỗi.',
-    unsupport_osx_version: 'Phiên bản macOS %s có thể không hỗ trợ một số chức năng. Vui lòng nâng cấp lên macOS 11+.',
+    unsupport_osx_version: 'Phiên bản macOS %s có thể không hỗ trợ một số chức năng. Vui lòng nâng cấp lên macOS 13+.',
     unsupport_win_version: 'Phiên bản HĐH %s có thể không hỗ trợ một số chức năng. Vui lòng nâng cấp lên phiên bản mới nhất.',
     unsupported_example_file: 'Tệp ví dụ đã chọn không được hỗ trợ bởi khu vực làm việc hiện tại.',
     uploading_fcode: 'Đang tải lên FCode',

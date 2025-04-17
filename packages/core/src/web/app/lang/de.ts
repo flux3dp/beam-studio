@@ -1483,7 +1483,7 @@ const lang: ILang = {
     unavailableWorkarea: '#804 Der aktuelle Arbeitsbereich übersteigt den Arbeitsbereich dieser Maschine. Bitte überprüfe den Arbeitsbereich des ausgewählten Geräts oder stelle den Arbeitsbereich über Bearbeiten > Dokumenteinstellung ein.',
     unknown_device: '#826 Die Verbindung zum Gerät kann nicht hergestellt werden, Bitte stelle sicher, dass USB an das Gerät angeschlossen ist.',
     unknown_error: '#821 Die Anwendung ist auf einen unbekannten Fehler gestoßen, bitte benutzen Sie Hilfe > Menü > Fehlerbericht.',
-    unsupport_osx_version: 'Die aktuelle macOS-Version %s unterstützt möglicherweise einige Funktionen nicht. Bitte aktualisieren Sie auf die macOS 11+.',
+    unsupport_osx_version: 'Die aktuelle macOS-Version %s unterstützt möglicherweise einige Funktionen nicht. Bitte aktualisieren Sie auf die macOS 13+.',
     unsupport_win_version: 'Die aktuelle Betriebssystemversion %s unterstützt möglicherweise einige Funktionen nicht. Bitte aktualisieren Sie auf die neueste Version.',
     unsupported_example_file: 'The selected example file is not supported by current workarea.',
     uploading_fcode: 'FCode hochladen',

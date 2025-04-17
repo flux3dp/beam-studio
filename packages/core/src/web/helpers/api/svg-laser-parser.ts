@@ -22,6 +22,7 @@ import getJobOrigin, { getRefModule } from '@core/helpers/job-origin';
 import Websocket from '@core/helpers/websocket';
 import fs from '@core/implementations/fileSystem';
 import storage from '@core/implementations/storage';
+import type { TaskMetaData } from '@core/interfaces/ITask';
 import type { IBaseConfig, IFcodeConfig } from '@core/interfaces/ITaskConfig';
 import type { IWrappedTaskFile } from '@core/interfaces/IWrappedFile';
 
@@ -35,7 +36,7 @@ export const getExportOpt = (
   // with args, push data to original args array and return other data
   loopCompensation?: number;
 } => {
-  const { model, supportJobOrigin = true, supportPwm = true } = opt;
+  const { model, supportAccOverrideV1, supportJobOrigin = true, supportPwm = true } = opt;
   const config: IFcodeConfig = {
     hardware_name: 'beambox',
     model,
@@ -223,12 +224,26 @@ export const getExportOpt = (
     document.querySelectorAll('#svgcontent > g.layer:not([display="none"]) [data-pass-through="1"]').length > 0 ||
     getPassThrough(addOnInfo);
 
-  if (model === 'fbb2' && (isPassThroughTask || autoFeeder)) {
+  if (isPassThroughTask && model === 'fbb2') {
     config.mep = 30;
     config.acc_override = {
-      fill: { a: 100, x: 5000, y: 2000 },
-      path: { a: 100, x: 500, y: 500 },
+      fill: { x: 5000, y: 2000 },
+      path: { x: 500, y: 500 },
     };
+  }
+
+  if (autoFeeder) {
+    if (model === 'fbb2') {
+      config.mep = 30;
+      config.acc_override = {
+        fill: { a: 100, x: 5000, y: 2000 },
+        path: { a: 100, x: 500, y: 500 },
+      };
+    } else if (constant.fcodeV2Models.has(model)) {
+      config.acc_override = { fill: { a: 100 }, path: { a: 100 } };
+    } else if (model === 'fbm1' && supportAccOverrideV1) {
+      config.acc_override = { fill: { y: 100 }, path: { y: 100 } };
+    }
   }
 
   if (isDevMode) {
@@ -497,17 +512,23 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
 
       return $deferred.promise();
     },
-    async getTaskCode(names: string[], opts) {
+    async getTaskCode(
+      names: string[],
+      opts: IBaseConfig & {
+        fileMode?: string;
+        onError?: (message: string) => void;
+        onFinished: (blob: Blob, duration: number, metadata: TaskMetaData) => void;
+        onProgressing?: (data: { message: string; percentage: number }) => void;
+      },
+    ) {
       opts = opts || {};
-      opts.onProgressing = opts.onProgressing || (() => {});
-      opts.onFinished = opts.onFinished || (() => {});
 
       const args = ['go', names.join(' '), opts.fileMode || '-f'];
       const blobs: Blob[] = [];
       let duration: number;
       let totalLength = 0;
       let blob;
-      let metadata;
+      let metadata: TaskMetaData;
 
       const { curveEngravingData, loopCompensation } = getExportOpt(opts, args);
 
@@ -521,7 +542,7 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
 
       events.onMessage = (data) => {
         if (data.status === 'computing') {
-          opts.onProgressing(data);
+          opts.onProgressing?.(data);
         } else if (data.status === 'complete') {
           totalLength = data.length;
           duration = Math.floor(data.time) + 1;
@@ -534,7 +555,7 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
             opts.onFinished(blob, duration, metadata);
           }
         } else if (data.status === 'Error') {
-          opts.onError(data.message);
+          opts.onError?.(data.message);
         }
       };
       ws.send(args.join(' '));

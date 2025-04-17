@@ -79,7 +79,7 @@ const mockBatchCommand = {
 
 const mockReRenderImageSymbolArray = jest.fn();
 
-jest.mock('@core/helpers/symbol-maker', () => ({
+jest.mock('@core/helpers/symbol-helper/symbolMaker', () => ({
   reRenderImageSymbolArray: (...args) => mockReRenderImageSymbolArray(...args),
 }));
 

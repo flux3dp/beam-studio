@@ -10,7 +10,7 @@ import i18n from '@core/helpers/i18n';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getObjectLayer } from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import symbolMaker from '@core/helpers/symbol-maker';
+import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 

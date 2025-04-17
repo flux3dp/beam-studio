@@ -6,7 +6,7 @@ import updateElementColor from '@core/helpers/color/updateElementColor';
 import { getObjectLayer, removeDefaultLayerIfEmpty } from '@core/helpers/layer/layer-helper';
 import { getDefaultLaserModule } from '@core/helpers/layer-module/layer-module-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import symbolMaker from '@core/helpers/symbol-maker';
+import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type { ImportType } from '@core/interfaces/ImportSvg';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';

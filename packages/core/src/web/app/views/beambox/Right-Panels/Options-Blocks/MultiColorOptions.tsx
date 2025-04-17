@@ -12,7 +12,7 @@ import HorizontalScrollContainer from '@core/app/widgets/HorizontalScrollContain
 import colloectColors from '@core/helpers/color/collectColors';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import symbolMaker from '@core/helpers/symbol-maker';
+import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';

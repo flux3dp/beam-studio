@@ -5,6 +5,7 @@ import { Flex } from 'antd';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import CanvasMode from '@core/app/constants/canvasMode';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import useBeamboxPreference from '@core/helpers/hooks/useBeamboxPreference';
 import useHasCurveEngraving from '@core/helpers/hooks/useHasCurveEngraving';
 import useI18n from '@core/helpers/useI18n';
@@ -22,8 +23,16 @@ const Banner = (): React.ReactNode => {
   const isBorderless = useBeamboxPreference('borderless');
   const addOnInfo = useMemo(() => getAddOnInfo(workarea), [workarea]);
   const isRotary = useBeamboxPreference('rotary_mode') && addOnInfo.rotary;
-  const isAutoFeeder = useBeamboxPreference('auto-feeder') && addOnInfo.autoFeeder;
-  const isPassThrough = useBeamboxPreference('pass-through') && addOnInfo.passThrough;
+  const passThrough = useBeamboxPreference('pass-through');
+  const autoFeeder = useBeamboxPreference('auto-feeder');
+  const isAutoFeeder = useMemo(
+    () => getAutoFeeder(addOnInfo, { autoFeeder, borderless: isBorderless }),
+    [addOnInfo, autoFeeder, isBorderless],
+  );
+  const isPassThrough = useMemo(
+    () => getPassThrough(addOnInfo, { borderless: isBorderless, passThrough }),
+    [addOnInfo, passThrough, isBorderless],
+  );
   const isBorderlessPreview = useMemo(
     () => isBorderless && mode === CanvasMode.Preview && addOnInfo.openBottom && selectedDevice?.model === 'fbm1',
     [isBorderless, mode, addOnInfo.openBottom, selectedDevice],
