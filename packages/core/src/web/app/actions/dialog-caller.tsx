@@ -28,7 +28,6 @@ import alertConstants from '@core/app/constants/alert-constants';
 import { eventEmitter } from '@core/app/contexts/DialogContext';
 import LayerColorConfigPanel from '@core/app/views/beambox/Layer-Color-Config';
 import NetworkTestingPanel from '@core/app/views/beambox/NetworkTestingPanel';
-import NounProjectPanel from '@core/app/views/beambox/Noun-Project-Panel';
 import type { PhotoEditMode } from '@core/app/views/beambox/Photo-Edit-Panel';
 import PhotoEditPanel from '@core/app/views/beambox/Photo-Edit-Panel';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
@@ -608,13 +607,6 @@ export default {
     }
 
     addDialogComponent('network-test', <NetworkTestingPanel ip={ip!} onClose={() => popDialogById('network-test')} />);
-  },
-  showNounProjectPanel: (): void => {
-    if (isIdExist('noun-project')) {
-      return;
-    }
-
-    addDialogComponent('noun-project', <NounProjectPanel onClose={() => popDialogById('noun-project')} />);
   },
   showPhotoEditPanel: (mode: PhotoEditMode): void => {
     if (isIdExist('photo-edit')) {

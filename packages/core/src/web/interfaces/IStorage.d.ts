@@ -32,7 +32,6 @@ export type StorageKey =
   | 'new-user'
   | 'notification'
   | 'notification'
-  | 'noun-project-history'
   | 'poke-ip-addr'
   | 'presets'
   | 'printer-is-ready'

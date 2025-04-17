@@ -41,7 +41,6 @@ import svgCanvasClass from '@core/app/svgedit/svgcanvas';
 import textActions from '@core/app/svgedit/text/textactions';
 import textEdit from '@core/app/svgedit/text/textedit';
 import workareaManager from '@core/app/svgedit/workarea';
-import { NounProjectPanelController } from '@core/app/views/beambox/Noun-Project-Panel';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import RightPanelController from '@core/app/views/beambox/Right-Panels/contexts/RightPanelController';
@@ -59,7 +58,6 @@ import Shortcuts from '@core/helpers/shortcuts';
 import { isMobile } from '@core/helpers/system-helper';
 import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
 import type { IFont } from '@core/interfaces/IFont';
-import type { IIcon } from '@core/interfaces/INoun-Project';
 import type { IStorage } from '@core/interfaces/IStorage';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type ISVGConfig from '@core/interfaces/ISVGConfig';
@@ -1845,14 +1843,6 @@ const svgEditor = (window['svgEditor'] = (function () {
         e.preventDefault();
         $('#workarea').removeAttr('style');
 
-        if (e.dataTransfer && e.dataTransfer.types.includes('text/noun-project-icon')) {
-          const nounProjectIcon = JSON.parse(e.dataTransfer.getData('text/noun-project-icon')) as IIcon;
-
-          NounProjectPanelController.emit('insertIcon', nounProjectIcon);
-
-          return;
-        }
-
         const file = e.type === 'drop' ? e.dataTransfer.files[0] : this.files[0];
 
         if (!file) {
@@ -1863,22 +1853,6 @@ const svgEditor = (window['svgEditor'] = (function () {
         // let file input import same file again.
         // Beacause function 'importImage' is triggered by onChange event, so we remove the value to ensure onChange event fire
         $(this).attr('value', '');
-      };
-
-      const importIconFromNounProject = async (icon: IIcon) => {
-        console.log(icon);
-
-        if (icon.icon_url) {
-          const response = await fetch(icon.icon_url);
-          const blob = await response.blob();
-
-          importSvg(blob as File);
-        } else {
-          const response = await fetch(icon.preview_url);
-          const blob = await response.blob();
-
-          readBitmapFile(blob);
-        }
       };
 
       const handleFile = async (file) => {
