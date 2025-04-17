@@ -1,4 +1,4 @@
-import type { LayerModule } from '@core/app/constants/layer-module/layer-modules';
+import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
 import history from '@core/app/svgedit/history/history';
@@ -6,7 +6,7 @@ import rgbToHex from '@core/helpers/color/rgbToHex';
 import i18n from '@core/helpers/i18n';
 import { getData, initLayerConfig, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { createLayer, getLayerByName } from '@core/helpers/layer/layer-helper';
-import layerModuleHelper from '@core/helpers/layer-module/layer-module-helper';
+import { getDefaultLaserModule } from '@core/helpers/layer-module/layer-module-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import storage from '@core/implementations/storage';
 import type { ICommand } from '@core/interfaces/IHistory';
@@ -19,10 +19,10 @@ getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
 
-const checkLayerModule = (layer: Element, targetModule: LayerModule): boolean => {
+const checkLayerModule = (layer: Element, targetModule: LayerModuleType): boolean => {
   if (!layer) return false;
 
-  const currentModule = getData(layer, 'module') as LayerModule;
+  const currentModule = getData(layer, 'module') as LayerModuleType;
   const isCurrentPrinting = printingModules.has(currentModule);
   const isTargetPrinting = printingModules.has(targetModule);
 
@@ -33,7 +33,7 @@ const checkLayerModule = (layer: Element, targetModule: LayerModule): boolean =>
 
 const appendUseElement = (
   symbol: null | SVGSymbolElement,
-  args: { layerName?: string; targetModule?: LayerModule; type: ImportType },
+  args: { layerName?: string; targetModule?: LayerModuleType; type: ImportType },
 ): null | {
   command: ICommand;
   element: SVGUseElement;
@@ -44,7 +44,7 @@ const appendUseElement = (
   }
 
   const batchCmd = new history.BatchCommand('Append Use Element');
-  const { layerName, targetModule = layerModuleHelper.getDefaultLaserModule(), type } = args;
+  const { layerName, targetModule = getDefaultLaserModule(), type } = args;
   const useEl = document.createElementNS(NS.SVG, 'use');
 
   useEl.id = svgCanvas.getNextId();

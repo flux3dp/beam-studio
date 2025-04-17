@@ -4,6 +4,7 @@ import { modelsWithModules } from '@core/app/actions/beambox/constant';
 import { showAdorCalibration } from '@core/app/components/dialogs/camera/AdorCalibration';
 import CalibrationType from '@core/app/components/dialogs/camera/AdorCalibration/calibrationTypes';
 import alertConstants from '@core/app/constants/alert-constants';
+import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { AlertConfigKey } from '@core/helpers/api/alert-config';
 import alertConfig from '@core/helpers/api/alert-config';
@@ -18,13 +19,13 @@ export const checkModuleCalibration = async (device: IDeviceInfo, lang: ILang): 
   }
 
   const moduleOffsets = BeamboxPreference.read('module-offsets');
-  const getLayers = (module: LayerModule) =>
+  const getLayers = (module: LayerModuleType) =>
     document.querySelectorAll(
       `#svgcontent > g.layer[data-module="${module}"]:not([display="none"]):not([data-repeat="0"])`,
     );
 
   const checkCalibration = async (
-    layerModule: LayerModule,
+    layerModule: LayerModuleType,
     calibrationType: CalibrationType,
     alertTitle: string,
     alertMsg: string,

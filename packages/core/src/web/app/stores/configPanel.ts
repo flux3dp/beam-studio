@@ -13,8 +13,8 @@ const getDefaultState = (): State => {
   const keys = Object.keys(defaultConfig);
   const initState: Partial<State> = {};
 
-  keys.forEach((key: ConfigKey) => {
-    initState[key] = { value: defaultConfig[key] } as ILayerConfig[ConfigKey];
+  keys.forEach((key) => {
+    initState[key as ConfigKey] = { value: defaultConfig[key as ConfigKey] } as any;
   });
 
   return initState as State;
@@ -36,7 +36,7 @@ export const useConfigPanelStore = create<ConfigPanelStore>(
 
         Object.keys(payload).forEach((key) => {
           if (key !== 'selectedLayer') {
-            newState[key as keyof State] = { value: payload[key as keyof ILayerConfig] };
+            newState[key as keyof State] = { value: payload[key as keyof ILayerConfig] } as any;
           } else {
             newState.selectedLayer = payload.selectedLayer;
           }
@@ -60,10 +60,7 @@ export const useConfigPanelStore = create<ConfigPanelStore>(
     },
 
     rename: (name: string) => {
-      set((state) => ({
-        ...state,
-        configName: { value: name },
-      }));
+      set((state) => ({ ...state, configName: { value: name } }));
     },
 
     reset: () => {
@@ -71,10 +68,7 @@ export const useConfigPanelStore = create<ConfigPanelStore>(
     },
 
     update: (payload: Partial<ILayerConfig> & { selectedLayer?: string }) => {
-      set((state) => ({
-        ...state,
-        ...payload,
-      }));
+      set((state) => ({ ...state, ...payload }));
     },
   })),
 );

@@ -1,4 +1,5 @@
 // Default value of module offset
+import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 
 // Module Boundary for ador
@@ -8,6 +9,6 @@ const moduleOffsets = {
   [LayerModule.LASER_1064]: [0, 26.95],
   [LayerModule.LASER_UNIVERSAL]: [0, 0],
   [LayerModule.PRINTER]: [0, -13.37],
-} as Record<LayerModule, [number, number]>;
+} as Record<LayerModuleType, [number, number]>;
 
 export default moduleOffsets;

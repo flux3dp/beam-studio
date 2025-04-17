@@ -5,6 +5,7 @@ import presprayArea from '@core/app/actions/canvas/prespray-area';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import progressCaller from '@core/app/actions/progress-caller';
 import alertConstants from '@core/app/constants/alert-constants';
+import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import history from '@core/app/svgedit/history/history';
 import readBitmapFile from '@core/app/svgedit/operations/import/readBitmapFile';
@@ -14,7 +15,7 @@ import awsHelper from '@core/helpers/aws-helper';
 import i18n from '@core/helpers/i18n';
 import { initLayerConfig, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { createLayer, removeDefaultLayerIfEmpty } from '@core/helpers/layer/layer-helper';
-import layerModuleHelper from '@core/helpers/layer-module/layer-module-helper';
+import { getDefaultLaserModule } from '@core/helpers/layer-module/layer-module-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type { ImportType } from '@core/interfaces/ImportSvg';
@@ -36,12 +37,12 @@ const readSVG = (
   {
     layerName,
     parentCmd = undefined,
-    targetModule = layerModuleHelper.getDefaultLaserModule(),
+    targetModule = getDefaultLaserModule(),
     type,
   }: {
     layerName?: string;
     parentCmd?: IBatchCommand;
-    targetModule?: LayerModule;
+    targetModule?: LayerModuleType;
     type: ImportType;
   },
 ) =>
@@ -107,7 +108,7 @@ const importSvg = async (
   const batchCmd = new history.BatchCommand('Import SVG');
   const { lang } = i18n;
   const hasModule = modelsWithModules.has(beamboxPreference.read('workarea'));
-  let targetModule: LayerModule;
+  let targetModule: LayerModuleType;
 
   if (hasModule) {
     const id = 'import-module';
@@ -116,7 +117,7 @@ const importSvg = async (
       defaultValue: beamboxPreference.read(id),
       id,
       options: [
-        { label: lang.layer_module.general_laser, value: layerModuleHelper.getDefaultLaserModule() },
+        { label: lang.layer_module.general_laser, value: getDefaultLaserModule() },
         // TODO: should this check workarea for 4c?
         { label: lang.layer_module.printing, value: LayerModule.PRINTER },
       ],

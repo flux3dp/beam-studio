@@ -1,10 +1,10 @@
-import type { LayerModule } from '@core/app/constants/layer-module/layer-modules';
+import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import history from '@core/app/svgedit/history/history';
 import appendUseElement from '@core/app/svgedit/operations/import/appendUseElement';
 import parseSvg from '@core/app/svgedit/operations/parseSvg';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { getObjectLayer, removeDefaultLayerIfEmpty } from '@core/helpers/layer/layer-helper';
-import layerModuleHelper from '@core/helpers/layer-module/layer-module-helper';
+import { getDefaultLaserModule } from '@core/helpers/layer-module/layer-module-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import symbolMaker from '@core/helpers/symbol-maker';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
@@ -24,12 +24,12 @@ const importSvgString = async (
   {
     layerName,
     parentCmd,
-    targetModule = layerModuleHelper.getDefaultLaserModule(),
+    targetModule = getDefaultLaserModule(),
     type = 'nolayer',
   }: {
     layerName?: string;
     parentCmd?: IBatchCommand;
-    targetModule?: LayerModule;
+    targetModule?: LayerModuleType;
     type?: ImportType;
   },
 ): Promise<SVGUseElement> => {

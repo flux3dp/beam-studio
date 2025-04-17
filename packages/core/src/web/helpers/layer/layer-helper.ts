@@ -2,7 +2,7 @@ import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import alertConstants from '@core/app/constants/alert-constants';
-import type { LayerModule } from '@core/app/constants/layer-module/layer-modules';
+import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import history from '@core/app/svgedit/history/history';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
@@ -353,7 +353,7 @@ export const setLayersLock = (layerNames: string[], isLocked: boolean): IBatchCo
 };
 
 export const showMergeAlert = async (baseLayerName: string, layerNames: string[]): Promise<boolean> => {
-  const targetModule: LayerModule = getData(getLayerElementByName(baseLayerName), 'module');
+  const targetModule = getData(getLayerElementByName(baseLayerName), 'module') as LayerModuleType;
   const isPrinting = printingModules.has(targetModule);
   const shouldShowAlert = layerNames.some((layerName) => {
     const module = getData(getLayerElementByName(layerName), 'module');

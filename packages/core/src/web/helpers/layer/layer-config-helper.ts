@@ -3,16 +3,17 @@ import { match } from 'ts-pattern';
 
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
+import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType } from '@core/app/constants/promark-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
-import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { getSupportedModules, getWorkarea } from '@core/app/constants/workarea-constants';
 import history from '@core/app/svgedit/history/history';
 import updateLayerColorFilter from '@core/helpers/color/updateLayerColorFilter';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
 import { getAllLayerNames, getLayerByName } from '@core/helpers/layer/layer-helper';
-import layerModuleHelper from '@core/helpers/layer-module/layer-module-helper';
+import { getDefaultLaserModule } from '@core/helpers/layer-module/layer-module-helper';
 import presetHelper from '@core/helpers/presets/preset-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type { ConfigKey, ConfigKeyTypeMap, ILayerConfig, Preset } from '@core/interfaces/ILayerConfig';
@@ -407,7 +408,7 @@ export const initLayerConfig = (layerName: string): void => {
     return;
   }
 
-  const defaultLaserModule = layerModuleHelper.getDefaultLaserModule();
+  const defaultLaserModule = getDefaultLaserModule();
 
   for (const key of keys) {
     if (defaultConfig[key] !== undefined) {
@@ -476,19 +477,24 @@ export const getLayersConfig = (layerNames: string[], currentLayerName?: string)
 
 export const toggleFullColorAfterWorkareaChange = (): void => {
   const workarea = BeamboxPreference.read('workarea') || BeamboxPreference.read('model');
+  const supportedModules = getSupportedModules(workarea);
   const layerNames = getAllLayerNames();
-  const defaultLaserModule = layerModuleHelper.getDefaultLaserModule();
+  const defaultLaserModule = getDefaultLaserModule();
 
   for (const layerName of layerNames) {
     const layer = getLayerByName(layerName);
 
     if (!layer) continue;
 
-    if (!modelsWithModules.has(workarea)) {
-      writeDataLayer(layer, 'module', LayerModule.LASER_UNIVERSAL);
-      toggleFullColorLayer(layer, { val: false });
-    } else {
-      writeDataLayer(layer, 'module', defaultLaserModule);
+    const module = getData(layer, 'module') as LayerModuleType;
+
+    if (!supportedModules.includes(module)) {
+      if (!modelsWithModules.has(workarea)) {
+        writeDataLayer(layer, 'module', LayerModule.LASER_UNIVERSAL);
+        toggleFullColorLayer(layer, { val: false });
+      } else {
+        writeDataLayer(layer, 'module', defaultLaserModule);
+      }
     }
   }
 };
@@ -498,7 +504,7 @@ export const applyDefaultLaserModule = (): void => {
 
   if (modelsWithModules.has(workarea)) {
     const layerNames = getAllLayerNames();
-    const defaultLaserModule = layerModuleHelper.getDefaultLaserModule();
+    const defaultLaserModule = getDefaultLaserModule();
 
     for (const layerName of layerNames) {
       const layer = getLayerByName(layerName);
@@ -512,7 +518,7 @@ export const applyDefaultLaserModule = (): void => {
   }
 };
 
-export const getConfigKeys = (module: LayerModule): ConfigKey[] => {
+export const getConfigKeys = (module: LayerModuleType): ConfigKey[] => {
   const workarea = BeamboxPreference.read('workarea');
 
   if (promarkModels.has(workarea)) {
@@ -549,7 +555,7 @@ export const applyPreset = (
   const { maxSpeed, minSpeed } = getWorkarea(workarea);
   const { applyName = true, batchCmd } = opts;
   const { module = LayerModule.LASER_UNIVERSAL } = preset;
-  const keys = getConfigKeys(module!);
+  const keys = getConfigKeys(module as LayerModuleType);
   const defaultConfig = getDefaultConfig();
 
   for (const key of keys) {
@@ -596,7 +602,7 @@ export const postPresetChange = (): void => {
     const preset = allPresets.find((c) => !c.hide && (configName === c.key || configName === c.name));
 
     if (preset?.isDefault) {
-      const layerModule = getData(layer, 'module') as LayerModule;
+      const layerModule = getData(layer, 'module') as LayerModuleType;
       const defaultPreset = presetHelper.getDefaultPreset(preset.key!, workarea, layerModule);
 
       if (!defaultPreset) {

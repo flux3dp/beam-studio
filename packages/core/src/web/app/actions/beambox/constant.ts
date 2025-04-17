@@ -22,13 +22,13 @@ export const promarkModelsArray = ['fpm1'] as const;
 export const promarkModels = new Set(promarkModelsArray);
 
 export const modelsWithModules = new Set(adorModelsArray);
-export const modelsWithoutUvPrint = new Set(promarkModelsArray);
 
-export enum PreviewSpeedLevel {
-  FAST = 3,
-  MEDIUM = 2,
-  SLOW = 1,
-}
+export const PreviewSpeedLevel = {
+  FAST: 3,
+  MEDIUM: 2,
+  SLOW: 1,
+} as const;
+export type PreviewSpeedLevelType = (typeof PreviewSpeedLevel)[keyof typeof PreviewSpeedLevel];
 
 export const dpmm = 10;
 

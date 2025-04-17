@@ -8,7 +8,7 @@ import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import moduleBoundary from '@core/app/constants/layer-module/module-boundary';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
-import layerModuleHelper from '@core/helpers/layer-module/layer-module-helper';
+import { getDefaultLaserModule } from '@core/helpers/layer-module/layer-module-helper';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './WorkAreaInfo.module.scss';
@@ -26,7 +26,7 @@ export default function WorkAreaInfo({ isInch }: Props): React.JSX.Element {
     const { displayHeight, height, label, width } = getWorkarea(workarea);
 
     if (workarea === 'ado1') {
-      const laserModule = layerModuleHelper.getDefaultLaserModule();
+      const laserModule = getDefaultLaserModule();
       const boundary = moduleBoundary[laserModule];
 
       return {

@@ -1,6 +1,7 @@
 import alertCaller from '@core/app/actions/alert-caller';
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import alertConstants from '@core/app/constants/alert-constants';
+import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import defaultPresets from '@core/app/constants/presets';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
@@ -90,7 +91,7 @@ const getAllPresets = (): Preset[] => allPresets;
 
 let presetsCache: {
   [model in PresetModel]?: {
-    [module in LayerModule]?: Preset[];
+    [module in LayerModuleType]?: Preset[];
   };
 } = {};
 const initPresets = (migrate = false) => {
@@ -139,7 +140,7 @@ const getPresetModel = (model: PresetModel): PresetModel => {
 const getDefaultPreset = (
   key: string,
   model: PresetModel,
-  layerModule: LayerModule = LayerModule.LASER_UNIVERSAL,
+  layerModule: LayerModuleType = LayerModule.LASER_UNIVERSAL,
 ): null | Preset => {
   const presetModel = getPresetModel(model);
 
@@ -152,7 +153,7 @@ const getDefaultPreset = (
 
 const modelHasPreset = (model: WorkAreaModel, key: string): boolean => !!defaultPresets[key]?.[getPresetModel(model)];
 
-const getPresetsList = (model: WorkAreaModel, layerModule: LayerModule = LayerModule.LASER_UNIVERSAL): Preset[] => {
+const getPresetsList = (model: WorkAreaModel, layerModule: LayerModuleType = LayerModule.LASER_UNIVERSAL): Preset[] => {
   const presetModel = getPresetModel(model);
 
   if (presetsCache[presetModel]?.[layerModule]) {

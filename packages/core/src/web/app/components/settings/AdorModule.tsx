@@ -2,6 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 
 import type { DefaultOptionType } from 'antd/es/select';
 
+import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import moduleOffsets from '@core/app/constants/layer-module/module-offsets';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
@@ -29,7 +30,7 @@ const AdorModule = ({ options }: Props): React.JSX.Element => {
 
   const currentModuleOffsets = getPreference('module-offsets');
   const getModuleOffset = useCallback(
-    (module: LayerModule) => {
+    (module: LayerModuleType) => {
       const val = currentModuleOffsets?.[module] || moduleOffsets[module];
 
       return [val[0] - moduleOffsets[module][0], val[1] - moduleOffsets[module][1]];
@@ -37,7 +38,7 @@ const AdorModule = ({ options }: Props): React.JSX.Element => {
     [currentModuleOffsets],
   );
   const editModuleOffsets = useCallback(
-    (module: LayerModule, axis: 'x' | 'y', value: number) => {
+    (module: LayerModuleType, axis: 'x' | 'y', value: number) => {
       const index = axis === 'x' ? 0 : 1;
       const curVal = [...getModuleOffset(module)];
 

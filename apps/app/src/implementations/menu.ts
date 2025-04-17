@@ -24,6 +24,7 @@ const updateWindowsMenu = () => {
 
 const canvasEvent = eventEmitterFactory.createEventEmitter('canvas');
 const layerPanelEventEmitter = eventEmitterFactory.createEventEmitter('layer-panel');
+const useSettingStoreEventEmitter = eventEmitterFactory.createEventEmitter('useSettingStore');
 
 class Menu extends AbstractMenu {
   private communicator;
@@ -64,6 +65,13 @@ class Menu extends AbstractMenu {
 
       changeVisibilityByIsBb2(isBb2);
       changeVisibilityByIsPromark(isPromark);
+      // force re-render menu
+      ElectronMenu.setApplicationMenu(ElectronMenu.getApplicationMenu());
+    });
+
+    // setting store related
+    useSettingStoreEventEmitter.on('changeEnableUvPrintFile', (isEnabled) => {
+      changeMenuItemVisible(['EXPORT_UV_PRINT'], isEnabled);
       // force re-render menu
       ElectronMenu.setApplicationMenu(ElectronMenu.getApplicationMenu());
     });

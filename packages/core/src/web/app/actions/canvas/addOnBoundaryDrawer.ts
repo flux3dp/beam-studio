@@ -1,8 +1,10 @@
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import constant, { modelsWithoutUvPrint } from '@core/app/actions/beambox/constant';
+import constant from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
+import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
+import { getSupportedModules } from '@core/app/constants/workarea-constants';
 import workareaManager from '@core/app/svgedit/workarea';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
@@ -182,11 +184,12 @@ export class AddOnBoundaryDrawer {
     this.boundary.openBottom.removeAttribute('display');
   };
 
-  updateUvPath = (module: LayerModule): void => {
+  updateUvPath = (module: LayerModuleType): void => {
     const { height, model, width } = workareaManager;
+    const supportedModules = getSupportedModules(model);
     const { dpmm } = constant;
 
-    if (module !== LayerModule.UV_PRINT || modelsWithoutUvPrint.has(model)) {
+    if (module !== LayerModule.UV_PRINT || !supportedModules.includes(LayerModule.UV_PRINT)) {
       this.boundary.uvPrint.setAttribute('d', '');
 
       return;

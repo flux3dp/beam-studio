@@ -1,11 +1,12 @@
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
+import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import workareaManager from '@core/app/svgedit/workarea';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getAllLayers } from '@core/helpers/layer/layer-helper';
 
-export const getRefModule = (): LayerModule => {
+export const getRefModule = (): LayerModuleType => {
   const firstLayer = getAllLayers()
     .reverse()
     .find((layer) => layer.getAttribute('display') !== 'none');
@@ -14,7 +15,7 @@ export const getRefModule = (): LayerModule => {
     return LayerModule.LASER_UNIVERSAL;
   }
 
-  return getData(firstLayer, 'module') as LayerModule;
+  return getData(firstLayer, 'module') as LayerModuleType;
 };
 
 const getJobOrigin = (px = false): { x: number; y: number } => {

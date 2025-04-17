@@ -1,14 +1,14 @@
-import React, { memo, useContext, useEffect } from 'react';
+import React, { memo, useContext, useEffect, useMemo } from 'react';
 
 import { pipe } from 'remeda';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import { modelsWithModules, modelsWithoutUvPrint } from '@core/app/actions/beambox/constant';
 import moduleBoundaryDrawer from '@core/app/actions/canvas/module-boundary-drawer';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import alertConstants from '@core/app/constants/alert-constants';
+import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { fullColorModules, LayerModule } from '@core/app/constants/layer-module/layer-modules';
+import { getSupportedModules } from '@core/app/constants/workarea-constants';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
@@ -22,6 +22,7 @@ import isDev from '@core/helpers/is-dev';
 import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
 import { applyPreset, baseConfig, getData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { getLayerElementByName } from '@core/helpers/layer/layer-helper';
+import { getModulesTranslations } from '@core/helpers/layer-module/layer-module-helper';
 import presetHelper from '@core/helpers/presets/preset-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -43,9 +44,10 @@ const ModuleBlock = (): React.ReactNode => {
   const { selectedLayers } = useContext(ConfigPanelContext);
   const { value } = module;
   const workarea = useWorkarea();
+  const supportedModules = useMemo(() => getSupportedModules(workarea), [workarea]);
 
   useEffect(() => {
-    const handler = () => moduleBoundaryDrawer.update(value);
+    const handler = () => moduleBoundaryDrawer.update(value as LayerModuleType);
 
     handler();
 
@@ -58,11 +60,9 @@ const ModuleBlock = (): React.ReactNode => {
     };
   }, [workarea, value]);
 
-  if (modelsWithoutUvPrint.has(workarea)) {
-    return null;
-  }
+  if (supportedModules.length <= 1) return null;
 
-  const handleChange = async (newVal: number) => {
+  const handleChange = async (newVal: LayerModuleType) => {
     const isCurrentFullColor = fullColorModules.has(value);
     const isNextFullColor = fullColorModules.has(newVal);
 
@@ -120,8 +120,8 @@ const ModuleBlock = (): React.ReactNode => {
       }
     }
 
-    const presetsList = presetHelper.getPresetsList(workarea, value);
-    const newPresetsList = presetHelper.getPresetsList(workarea, newVal);
+    const presetsList = presetHelper.getPresetsList(workarea, value as LayerModuleType);
+    const newPresetsList = presetHelper.getPresetsList(workarea, newVal as LayerModuleType);
     const batchCmd = new history.BatchCommand('Change layer module');
 
     selectedLayers.forEach((layerName) => {
@@ -168,22 +168,20 @@ const ModuleBlock = (): React.ReactNode => {
     undoManager.addCommandToHistory(batchCmd);
   };
 
-  const commonOptions = [
-    beamboxPreference.read('enable-uv-print-file') && { label: tModule.uv_print, value: LayerModule.UV_PRINT },
-  ];
-  const defaultModelsOptions = [{ label: tModule.general_laser, value: LayerModule.LASER_UNIVERSAL }];
-  const adorOptions = [
-    { label: tModule.laser_10w_diode, value: LayerModule.LASER_10W_DIODE },
-    { label: tModule.laser_20w_diode, value: LayerModule.LASER_20W_DIODE },
-    { label: tModule.printing, value: LayerModule.PRINTER },
-    isDev() && { label: `${tModule.printing} (4C)`, value: LayerModule.PRINTER_4C },
-    { label: tModule.laser_2w_infrared, value: LayerModule.LASER_1064 },
-  ];
-
   const options = pipe(
-    modelsWithModules.has(workarea),
-    (isWithModules) => (isWithModules ? adorOptions : defaultModelsOptions),
-    (options) => options.concat(commonOptions).filter(Boolean),
+    supportedModules,
+    (modules) => {
+      const moduleTranslations = getModulesTranslations();
+
+      return modules.map((value) => {
+        const label = moduleTranslations[value] || tModule.unknown;
+
+        if (!isDev() && value === LayerModule.PRINTER_4C) return null;
+
+        return { label, value };
+      });
+    },
+    (options) => options.filter(Boolean),
   );
 
   return isMobile ? (
@@ -197,7 +195,7 @@ const ModuleBlock = (): React.ReactNode => {
   ) : (
     <div className={styles.panel}>
       <div className={styles.title}>{t.module}</div>
-      <Select className={styles.select} onChange={handleChange} options={options} value={value as LayerModule} />
+      <Select className={styles.select} onChange={handleChange} options={options} value={value as LayerModuleType} />
     </div>
   );
 };

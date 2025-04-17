@@ -7,16 +7,17 @@ import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import { modelsWithoutUvPrint, promarkModels } from '@core/app/actions/beambox/constant';
+import { promarkModels } from '@core/app/actions/beambox/constant';
 import diodeBoundaryDrawer from '@core/app/actions/canvas/diode-boundary-drawer';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import ColorBlock from '@core/app/components/beambox/right-panel/ColorBlock';
 import { getAddOnInfo } from '@core/app/constants/addOn';
+import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import tutorialConstants from '@core/app/constants/tutorial-constants';
-import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { getSupportedModules, getWorkarea } from '@core/app/constants/workarea-constants';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import history from '@core/app/svgedit/history/history';
@@ -96,6 +97,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     [lang.dropdown.parameters, lang.custom_preset, lang.various_preset],
   );
   const { change, getState } = useConfigPanelStore();
+  const supportedModules = useMemo(() => getSupportedModules(workarea), [workarea]);
   const state = getState();
   const { diode, fullcolor, module } = state;
   const isPrintingModule = useMemo(() => printingModules.has(module.value), [module.value]);
@@ -323,7 +325,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     if (UIType === 'panel-item') {
       return (
         <>
-          {!modelsWithoutUvPrint.has(workarea) && (
+          {supportedModules.length > 1 && (
             <div className={styles['item-group']}>
               <ModuleBlock />
               {isDevMode && isPrintingModule && <UVBlock />}
@@ -388,7 +390,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     for (let i = layerCount - 1; i >= 0; i -= 1) {
       const layerName = drawing.getLayerName(i)!;
       const layer = getLayerElementByName(layerName);
-      const layerModule: LayerModule = getData(layer, 'module') as LayerModule;
+      const layerModule = getData(layer, 'module') as LayerModuleType;
       const isFullColor = layer.getAttribute('data-fullcolor') === '1';
 
       layerOptions.push(
