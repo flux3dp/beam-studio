@@ -8,6 +8,7 @@ import type {
   BeamboxPreferenceValue,
 } from '@core/app/actions/beambox/beambox-preference';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import storage from '@core/implementations/storage';
 import type { StorageKey } from '@core/interfaces/IStorage';
 
@@ -53,6 +54,8 @@ const configMigrateList = [
   'guessing_poke',
   'auto_connect',
 ] as const;
+
+const useSettingStoreEventEmitter = eventEmitterFactory.createEventEmitter('useSettingStore');
 
 export const useSettingStore = create<Action & State>(
   combine(
@@ -100,6 +103,10 @@ export const useSettingStore = create<Action & State>(
       setPreference: (key, value) =>
         set(() => {
           const { beamboxPreferenceChanges } = get();
+
+          if (key === 'enable-uv-print-file') {
+            useSettingStoreEventEmitter.emit('changeEnableUvPrintFile', value);
+          }
 
           return { beamboxPreferenceChanges: { ...beamboxPreferenceChanges, [key]: value } };
         }),
