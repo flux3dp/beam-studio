@@ -33,17 +33,17 @@ function createDash(
   width: number,
 ): paper.Path {
   const cloned = path.clone({ insert: false });
-  const dash = cloned.splitAt(start);
 
   // if the dashEnd is near the end of the path, we don't need to split
-  if (totalLength - end >= width + gap) dash.splitAt(end - start);
+  if (totalLength - end > width) cloned.splitAt(end);
 
-  return dash;
+  return cloned.splitAt(start);
 }
 
 function appendDashSegments(path: paper.Path, gap: number, width: number, minSegmentLength: number) {
   const totalLength = path.length;
-  let currentPosition = 0;
+  // initial position is -gap to ensure the first dash starts at 0
+  let currentPosition = -gap;
 
   if (totalLength < minSegmentLength) return;
 
