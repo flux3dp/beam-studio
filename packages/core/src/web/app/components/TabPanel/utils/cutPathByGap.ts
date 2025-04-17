@@ -45,7 +45,7 @@ function appendDashSegments(path: paper.Path, gap: number, width: number, minSeg
   // initial position is -gap to ensure the first dash starts at 0
   let currentPosition = -gap;
 
-  if (totalLength < minSegmentLength) return;
+  if (totalLength < minSegmentLength) return false;
 
   while (currentPosition < totalLength) {
     const dashEnd = Math.min(currentPosition + gap, totalLength);
@@ -61,6 +61,8 @@ function appendDashSegments(path: paper.Path, gap: number, width: number, minSeg
 
     currentPosition = Math.min(dashEnd + width, totalLength);
   }
+
+  return true;
 }
 
 function processPath(path: paper.Path, gap: number, width: number, minSegmentLength: number) {
@@ -68,7 +70,14 @@ function processPath(path: paper.Path, gap: number, width: number, minSegmentLen
     // if the path is closed, split it at the start to ensure we can cut it
     if (path.closed) path.splitAt(0);
 
-    appendDashSegments(path, gap, width, minSegmentLength);
+    const result = appendDashSegments(path, gap, width, minSegmentLength);
+
+    if (!result) {
+      console.log(`Path is too short to be cut: `, path);
+
+      return;
+    }
+
     path.remove();
   } catch (error) {
     console.error('Error processing path:', error);
@@ -84,7 +93,7 @@ function processPath(path: paper.Path, gap: number, width: number, minSegmentLen
  */
 export function cutPathByGap(options: CutPathOptions): paper.CompoundPath {
   const { gap, width = gap } = options;
-  const minSegmentLength = gap * 0.1;
+  const minSegmentLength = gap * 0.1 + width;
   const compound = paper.project.getItem({ name: TARGET_PATH_NAME }) as paper.CompoundPath;
 
   if (!compound) throw new Error(`No compound path found with name ${TARGET_PATH_NAME}`);
