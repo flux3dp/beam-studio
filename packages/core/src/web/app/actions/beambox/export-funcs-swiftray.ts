@@ -23,7 +23,7 @@ import type { TaskMetaData } from '@core/interfaces/ITask';
 import type { IBaseConfig, IFcodeConfig } from '@core/interfaces/ITaskConfig';
 import type { IWrappedSwiftrayTaskFile } from '@core/interfaces/IWrappedFile';
 
-import { promarkModels } from './constant';
+import { adorModelsArray, promarkModels } from './constant';
 import { getAdorPaddingAccel } from './export/ador-utils';
 import generateThumbnail from './export/generate-thumbnail';
 
@@ -259,12 +259,19 @@ const fetchTaskCodeSwiftray = async (
 
   let doesSupportDiodeAndAF = true;
   let shouldUseFastGradient = BeamboxPreference.read('fast_gradient') !== false;
+  let supportPwm: boolean | undefined;
+  let supportJobOrigin: boolean | undefined;
+  let supportAccOverrideV1: boolean | undefined;
 
   if (device) {
     const vc = VersionChecker(device.version);
+    const isAdor = adorModelsArray.includes(device.model);
 
     doesSupportDiodeAndAF = vc.meetRequirement('DIODE_AND_AUTOFOCUS');
     shouldUseFastGradient = shouldUseFastGradient && vc.meetRequirement('FAST_GRADIENT');
+    supportPwm = vc.meetRequirement(isAdor ? 'ADOR_PWM' : 'PWM');
+    supportJobOrigin = vc.meetRequirement(isAdor ? 'ADOR_JOB_ORIGIN' : 'JOB_ORIGIN');
+    supportAccOverrideV1 = vc.meetRequirement('BEAMO_ACC_OVERRIDE');
   }
 
   Progress.popById('upload-scene');
@@ -296,6 +303,9 @@ const fetchTaskCodeSwiftray = async (
     paddingAccel: await getAdorPaddingAccel(device || TopBarController.getSelectedDevice()),
     shouldMockFastGradient: isNonFGCode,
     shouldUseFastGradient: shouldUseFastGradient && !isNonFGCode,
+    supportAccOverrideV1,
+    supportJobOrigin,
+    supportPwm,
     travelSpeed: isPromark ? controlConfig.travelSpeed : 100,
   };
 
