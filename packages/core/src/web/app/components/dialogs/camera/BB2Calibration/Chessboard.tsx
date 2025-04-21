@@ -27,9 +27,9 @@ interface Props {
 const Chessboard = ({ chessboard, onClose, onNext, updateParam }: Props): React.JSX.Element => {
   const t = useI18n();
   const tCali = useI18n().calibration;
-  const [img, setImg] = useState<{ blob: Blob; url: string }>(null);
+  const [img, setImg] = useState<null | { blob: Blob; url: string }>(null);
   const cameraLive = useRef(true);
-  const liveTimeout = useRef(null);
+  const liveTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
   const handleImg = useCallback((imgBlob: Blob) => {
     const url = URL.createObjectURL(imgBlob);
 
@@ -44,7 +44,7 @@ const Chessboard = ({ chessboard, onClose, onNext, updateParam }: Props): React.
     if (cameraLive.current) {
       liveTimeout.current = setTimeout(() => {
         handleTakePicture({ silent: true });
-        liveTimeout.current = null;
+        liveTimeout.current = undefined;
       }, 1000);
     }
   }, [img, handleTakePicture]);
@@ -57,7 +57,7 @@ const Chessboard = ({ chessboard, onClose, onNext, updateParam }: Props): React.
     let success = false;
 
     try {
-      const res = await calibrateChessboard(img.blob, 0, chessboard);
+      const res = await calibrateChessboard(img!.blob, 0, chessboard);
 
       if (res.success === true) {
         const { d, k, ret, rvec, tvec } = res.data;
@@ -113,7 +113,7 @@ const Chessboard = ({ chessboard, onClose, onNext, updateParam }: Props): React.
   };
 
   const handleDownload = useCallback(() => {
-    dialog.writeFileDialog(() => img.blob, 'Save Chessboard Picture', 'chessboard.jpg');
+    dialog.writeFileDialog(() => img!.blob, 'Save Chessboard Picture', 'chessboard.jpg');
   }, [img]);
 
   return (
