@@ -35,7 +35,7 @@ const PADDING = 30;
 function UnmemorizedTabPanel({ bbox, element, onClose }: Props): React.JSX.Element {
   const { tab_panel: lang } = useI18n();
   const { history, push, redo, set, undo } = useHistory({ index: 0, items: [{ pathData: [] }] });
-  const [mode, setMode] = useState<'auto' | 'manual'>('auto');
+  const [mode, setMode] = useState<'auto' | 'manual'>('manual');
   const [pathData, setPathData] = useState(Array.of<string>());
   const [isPathDataChanged, setIsPathDataChanged] = useState(false);
   const [width, setWidth] = useState(0.5);

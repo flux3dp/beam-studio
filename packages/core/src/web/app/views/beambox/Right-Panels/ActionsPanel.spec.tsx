@@ -100,6 +100,7 @@ jest.mock('@core/helpers/system-helper', () => ({
 const clearSelection = jest.fn();
 const convertToPath = jest.fn();
 const decomposePath = jest.fn();
+const disassembleUse2Group = jest.fn();
 const replaceBitmap = jest.fn();
 const triggerGridTool = jest.fn();
 const triggerOffsetTool = jest.fn();
@@ -113,6 +114,7 @@ getSVGAsync.mockImplementation((callback) => {
       clearSelection,
       convertToPath,
       decomposePath,
+      disassembleUse2Group,
       pathActions,
     },
     Editor: {
@@ -122,15 +124,6 @@ getSVGAsync.mockImplementation((callback) => {
     },
   });
 });
-
-const disassembleUse = jest.fn();
-
-jest.mock(
-  '@core/app/svgedit/operations/disassembleUse',
-  () =>
-    (...args) =>
-      disassembleUse(...args),
-);
 
 import ActionsPanel from './ActionsPanel';
 
@@ -365,7 +358,7 @@ describe('should render correctly', () => {
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getByText(tActionPanel.disassemble_use));
-    expect(disassembleUse).toHaveBeenCalledTimes(1);
+    expect(disassembleUse2Group).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.array));
     expect(triggerGridTool).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.smart_nest));
@@ -616,7 +609,7 @@ describe('should render correctly in mobile', () => {
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getByText(tActionPanel.disassemble_use));
-    expect(disassembleUse).toHaveBeenCalledTimes(1);
+    expect(disassembleUse2Group).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.array));
     expect(triggerGridTool).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.smart_nest));
