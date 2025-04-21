@@ -1219,6 +1219,7 @@ const lang: ILang = {
     mode_conflict: 'Ta opcja nie jest dostępna w bieżącym trybie.',
     ok: 'OK',
     save: 'Zapisz',
+    save_and_exit: 'Zapisz i wyjdź',
     stop: 'Stop',
   },
   image_edit_panel: {
@@ -1820,6 +1821,14 @@ const lang: ILang = {
   support: {
     no_vcredist: 'Zainstaluj pakiet redystrybucyjny Visual C++ 2015<br/>, który można pobrać ze strony flux3dp.com',
     no_webgl: 'WebGL nie jest obsługiwany. Użyj innych urządzeń.',
+  },
+  tab_panel: {
+    apply: 'Zastosuj zakładki',
+    gap: 'Odstęp',
+    help_center: 'https://support.flux3dp.com/hc/en-us/articles/12441363882511',
+    manual_mode: 'Tryb ręczny',
+    title: 'Zakładki',
+    width: 'Szerokość',
   },
   topbar: {
     alerts: {

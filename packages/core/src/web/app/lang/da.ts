@@ -1219,6 +1219,7 @@ const lang: ILang = {
     mode_conflict: 'Denne mulighed er ikke tilgængelig i den aktuelle tilstand.',
     ok: 'OK',
     save: 'Gem',
+    save_and_exit: 'Gem og afslut',
     stop: 'Stop',
   },
   image_edit_panel: {
@@ -1820,6 +1821,14 @@ const lang: ILang = {
   support: {
     no_vcredist: 'Installer venligst Visual C++ Redistributable 2015<br/>Det kan downloades på flux3dp.com',
     no_webgl: 'WebGL understøttes ikke. Brug venligst andre enheder.',
+  },
+  tab_panel: {
+    apply: 'Anvend faner',
+    gap: 'Mellemrum',
+    help_center: 'https://support.flux3dp.com/hc/en-us/articles/12441363882511',
+    manual_mode: 'Manuel tilstand',
+    title: 'Faner',
+    width: 'Bredde',
   },
   topbar: {
     alerts: {

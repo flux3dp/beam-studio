@@ -1219,6 +1219,7 @@ const lang: ILang = {
     mode_conflict: 'ตัวเลือกนี้ไม่สามารถใช้ได้ในโหมดปัจจุบัน.',
     ok: 'ตกลง',
     save: 'บันทึก',
+    save_and_exit: 'บันทึกและออก',
     stop: 'หยุด',
   },
   image_edit_panel: {
@@ -1820,6 +1821,14 @@ const lang: ILang = {
   support: {
     no_vcredist: 'โปรดติดตั้ง Visual C++ Redistributable 2015<br/>สามารถดาวน์โหลดได้ที่ flux3dp.com',
     no_webgl: 'WebGL ไม่รองรับ โปรดใช้อุปกรณ์อื่น',
+  },
+  tab_panel: {
+    apply: 'ใช้แท็บ',
+    gap: 'ช่องว่าง',
+    help_center: 'https://support.flux3dp.com/hc/en-us/articles/12441363882511',
+    manual_mode: 'โหมดแมนนวล',
+    title: 'แท็บ',
+    width: 'ความกว้าง',
   },
   topbar: {
     alerts: {

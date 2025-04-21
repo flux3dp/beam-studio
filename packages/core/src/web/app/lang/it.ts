@@ -1219,6 +1219,7 @@ const lang: ILang = {
     mode_conflict: 'Questa opzione non è disponibile nella modalità attuale.',
     ok: 'OK',
     save: 'Salva',
+    save_and_exit: 'Salva ed esci',
     stop: 'Ferma',
   },
   image_edit_panel: {
@@ -1820,6 +1821,14 @@ const lang: ILang = {
   support: {
     no_vcredist: 'Installare Visual C++ Redistributable 2015<br/>Scaricabile da flux3dp.com',
     no_webgl: 'WebGL non è supportato. Utilizzare altri dispositivi.',
+  },
+  tab_panel: {
+    apply: 'Applica linguette',
+    gap: 'Spazio',
+    help_center: 'https://support.flux3dp.com/hc/en-us/articles/12441363882511',
+    manual_mode: 'Modalità manuale',
+    title: 'Linguette',
+    width: 'Larghezza',
   },
   topbar: {
     alerts: {

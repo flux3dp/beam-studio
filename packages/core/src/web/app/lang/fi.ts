@@ -1219,6 +1219,7 @@ const lang: ILang = {
     mode_conflict: 'Tämä vaihtoehto ei ole käytettävissä nykyisessä tilassa.',
     ok: 'OK',
     save: 'Tallenna',
+    save_and_exit: 'Tallenna ja poistu',
     stop: 'Pysäytä',
   },
   image_edit_panel: {
@@ -1820,6 +1821,14 @@ const lang: ILang = {
   support: {
     no_vcredist: 'Asenna Visual C++ Redistributable 2015<br/>Sen voi ladata osoitteesta flux3dp.com',
     no_webgl: 'WebGL ei ole tuettu. Käytä muita laitteita.',
+  },
+  tab_panel: {
+    apply: 'Käytä välilehtiä',
+    gap: 'Väli',
+    help_center: 'https://support.flux3dp.com/hc/en-us/articles/12441363882511',
+    manual_mode: 'Manuaalitila',
+    title: 'Välilehdet',
+    width: 'Leveys',
   },
   topbar: {
     alerts: {

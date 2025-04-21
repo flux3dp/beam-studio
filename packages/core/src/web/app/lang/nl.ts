@@ -1219,6 +1219,7 @@ const lang: ILang = {
     mode_conflict: 'Deze optie is niet beschikbaar in de huidige modus.',
     ok: 'OK',
     save: 'Opslaan',
+    save_and_exit: 'Opslaan en afsluiten',
     stop: 'Stop',
   },
   image_edit_panel: {
@@ -1820,6 +1821,14 @@ const lang: ILang = {
   support: {
     no_vcredist: 'Installeer Visual C++ Redistributable 2015<br/>Downloadbaar op flux3dp.com',
     no_webgl: 'WebGL wordt niet ondersteund. Gebruik een ander apparaat.',
+  },
+  tab_panel: {
+    apply: 'Tabs toepassen',
+    gap: 'Tussenruimte',
+    help_center: 'https://support.flux3dp.com/hc/en-us/articles/12441363882511',
+    manual_mode: 'Handmatige modus',
+    title: 'Tabs',
+    width: 'Breedte',
   },
   topbar: {
     alerts: {
