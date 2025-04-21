@@ -1,17 +1,17 @@
 import { useEffect } from 'react';
 
 interface Props {
-  isPreventDefault?: boolean;
   keyDown?: () => void;
   keyUp?: () => void;
   predicate: (e: KeyboardEvent) => boolean;
+  shouldPreventDefault?: boolean;
 }
 
-export const useKeyDown = ({ isPreventDefault = true, keyDown, keyUp, predicate }: Props): void => {
+export const useKeyDown = ({ keyDown, keyUp, predicate, shouldPreventDefault = true }: Props): void => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (predicate(e)) {
-        if (isPreventDefault) e.preventDefault();
+        if (shouldPreventDefault) e.preventDefault();
 
         keyDown?.();
       }
@@ -30,5 +30,5 @@ export const useKeyDown = ({ isPreventDefault = true, keyDown, keyUp, predicate 
 
       if (keyUp) document.removeEventListener('keyup', handleKeyUp);
     };
-  }, [isPreventDefault, keyDown, keyUp, predicate]);
+  }, [shouldPreventDefault, keyDown, keyUp, predicate]);
 };

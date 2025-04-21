@@ -45,11 +45,7 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
       return {};
     }
 
-    let elems = [elem];
-
-    if (elems[0].getAttribute('data-tempgroup') === 'true') {
-      elems = Array.from(elems[0].childNodes) as Element[];
-    }
+    const elems = elem.getAttribute('data-tempgroup') === 'true' ? (Array.from(elem.childNodes) as Element[]) : [elem];
 
     const allowBooleanOperations = (e: Element) => {
       if (['ellipse', 'polygon', 'rect'].includes(e.tagName.toLowerCase())) {
@@ -226,7 +222,7 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
                 !buttonAvailability.dist,
                 () => svgCanvas.distVert(),
                 'vdist',
-              )}{' '}
+              )}
               {renderToolBtn(
                 tObjectPanel.left_align,
                 <ObjectPanelIcons.HAlignLeft />,

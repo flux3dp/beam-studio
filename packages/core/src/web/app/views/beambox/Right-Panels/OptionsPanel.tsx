@@ -101,7 +101,7 @@ function OptionsPanel({ elem, polygonSides, rx, updateDimensionValues, updateObj
     </div>
   ) : (
     <>
-      {contents && (
+      {contents.filter(Boolean).length && (
         <div className={styles.panel}>
           <div className={styles.title}>OPTIONS</div>
           {contents}

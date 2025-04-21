@@ -24,10 +24,10 @@ type HistoryContext = {
   undo: () => HistoryItem;
 };
 
-const historyReducer = ({ index, items }: HistoryState, { payload, type }: HistoryAction) =>
+const historyReducer = ({ index, items }: HistoryState, { payload, type }: HistoryAction): HistoryState =>
   match(type)
     .with('PUSH', () => ({ index: index + 1, items: items.slice(0, index + 1).concat(payload!) }))
-    .with('SET', () => ({ hasUndid: false, index: 0, items: [payload!] }))
+    .with('SET', () => ({ index: 0, items: [payload!] }))
     .with('UNDO', () => ({ index: index - Number(index > 0), items }))
     .with('REDO', () => ({ index: index + Number(index < items.length - 1), items }))
     .exhaustive();
@@ -36,7 +36,7 @@ const historyReducer = ({ index, items }: HistoryState, { payload, type }: Histo
 export const useHistory = (initialState: HistoryState): HistoryContext => {
   const [history, dispatch] = useReducer(historyReducer, initialState);
   const push = useCallback((payload: HistoryItem) => dispatch({ payload, type: 'PUSH' }), []);
-  const set = useCallback((payload: HistoryItem) => dispatch({ payload, type: 'SET' }), [dispatch]);
+  const set = useCallback((payload: HistoryItem) => dispatch({ payload, type: 'SET' }), []);
   const undo = useCallback(() => {
     // return the initial state if there is no history to undo
     if (history.index === 0) return history.items[history.index];

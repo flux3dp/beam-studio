@@ -1046,7 +1046,6 @@ exports[`should render correctly one element is g element 1`] = `
               <svgr-url />
             </span>
           </button>
-           
           <button
             class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
             id="left_align"
@@ -1271,7 +1270,6 @@ exports[`should render correctly one element not g element 1`] = `
               <svgr-url />
             </span>
           </button>
-           
           <button
             class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
             id="left_align"
@@ -1496,7 +1494,6 @@ exports[`should render correctly two elements contains other types of elements 1
               <svgr-url />
             </span>
           </button>
-           
           <button
             class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
             id="left_align"
@@ -1721,7 +1718,6 @@ exports[`should render correctly two elements contains rect, polygon or ellipse 
               <svgr-url />
             </span>
           </button>
-           
           <button
             class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
             id="left_align"

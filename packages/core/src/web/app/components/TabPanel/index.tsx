@@ -37,7 +37,6 @@ function UnmemorizedTabPanel({ bbox, element, onClose }: Props): React.JSX.Eleme
   const { history, push, redo, set, undo } = useHistory({ index: 0, items: [{ pathData: [] }] });
   const [mode, setMode] = useState<'auto' | 'manual'>('manual');
   const [pathData, setPathData] = useState(Array.of<string>());
-  const [isPathDataChanged, setIsPathDataChanged] = useState(false);
   const [width, setWidth] = useState(0.5);
   const [gap, setGap] = useState(10);
   // only for display percentage, not for calculation
@@ -67,7 +66,6 @@ function UnmemorizedTabPanel({ bbox, element, onClose }: Props): React.JSX.Eleme
       const { pathData } = action === 'undo' ? undo() : redo();
 
       setPathData(pathData);
-      setIsPathDataChanged(false);
     },
     [undo, redo],
   );
@@ -89,10 +87,11 @@ function UnmemorizedTabPanel({ bbox, element, onClose }: Props): React.JSX.Eleme
 
   const handleCutPathByGap = useCallback(() => {
     const newCompoundPath = cutPathByGap({ gap: gap * dpmm, width: width * dpmm });
+    const newPathData = pathData.concat(newCompoundPath.pathData);
 
-    setPathData((prev) => prev.concat(newCompoundPath.pathData));
-    setIsPathDataChanged(true);
-  }, [gap, width]);
+    setPathData(newPathData);
+    push({ pathData: newPathData });
+  }, [gap, pathData, push, width]);
 
   const handleMouseDown = useCallback(
     (event: paper.ToolEvent) => {
@@ -108,12 +107,15 @@ function UnmemorizedTabPanel({ bbox, element, onClose }: Props): React.JSX.Eleme
         const path = closestHit.item as paper.Path;
         const newCompoundPath = cutPathAtPoint(path, point, width * dpmm);
 
-        if (newCompoundPath) setPathData((prev) => prev.concat(newCompoundPath.pathData));
+        if (newCompoundPath) {
+          const newPathData = pathData.concat(newCompoundPath.pathData);
 
-        setIsPathDataChanged(true);
+          setPathData(newPathData);
+          push({ pathData: newPathData });
+        }
       }
     },
-    [width, isDraggable, isDragging, mode],
+    [isDraggable, isDragging, mode, width, push, pathData],
   );
   const handleMouseMove = useCallback(
     (event: paper.ToolEvent) => {
@@ -216,12 +218,6 @@ function UnmemorizedTabPanel({ bbox, element, onClose }: Props): React.JSX.Eleme
     tool.onMouseMove = handleMouseMove;
   }, [handleMouseDown, handleMouseDrag, handleMouseMove]);
 
-  useEffect(() => {
-    if (!isPathDataChanged) return;
-
-    push({ pathData });
-    setIsPathDataChanged(false);
-  }, [push, pathData, isPathDataChanged]);
   useEffect(() => {
     if (paper.project.isEmpty()) return;
 

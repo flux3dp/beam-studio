@@ -80,9 +80,11 @@ const UnitInput = forwardRef<HTMLInputElement | null, Props>(
       (input: string = '') => {
         const value = Number.parseFloat(input.trim().replaceAll(',', '.')) * (isInch ? 25.4 : 1);
 
-        return Math.max(min, Math.min(max, value));
+        const parsedValue = clipValue ? Math.max(min, Math.min(max, value)) : value;
+
+        return parsedValue;
       },
-      [isInch, max, min],
+      [clipValue, isInch, max, min],
     );
 
     const handleValueChange = useCallback(

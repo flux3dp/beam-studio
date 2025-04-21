@@ -77,10 +77,10 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
   const [operation, setOperation] = useState<'drag' | 'eraser' | 'magicWand' | null>(null);
   const [fitScreenDimension, setFitScreenDimension] = useState({ scale: 1, x: 0, y: 0 });
   const divRef = useRef<HTMLDivElement>(null);
-  const stageRef = useRef<Konva.Stage>(null);
+  const stageRef = useRef<Konva.Stage | null>(null);
   const layerRef = useRef<Konva.Layer>(null);
   const imageRef = useRef<KonvaImageRef>(null);
-  const imageData = useRef<ImageData>(null);
+  const imageData = useRef<ImageData | null>(null);
 
   const { handleWheel, handleZoom, handleZoomByScale, isDragging } = useKonvaCanvas(stageRef as any, {
     onScaleChanged: setZoomScale,
@@ -242,7 +242,7 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
 
     if (progress === EDITING) {
       if (image.isCached()) {
-        (imageData as any).current = image
+        imageData.current = image
           ._getCachedSceneCanvas()
           .context._context.getImageData(0, 0, imageSize.width, imageSize.height);
       } else {

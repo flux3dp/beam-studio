@@ -3,7 +3,6 @@ import React, { memo, useCallback, useContext, useEffect, useState } from 'react
 import classNames from 'classnames';
 import { match, P } from 'ts-pattern';
 
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import LayerPanel from '@core/app/components/beambox/right-panel/LayerPanel';
 import Tab from '@core/app/components/beambox/right-panel/Tab';
 import { PanelType } from '@core/app/constants/right-panel-types';
@@ -14,29 +13,26 @@ import ObjectPanel from '@core/app/views/beambox/Right-Panels/ObjectPanel';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import PathEditPanel from '@core/app/views/beambox/Right-Panels/PathEditPanel';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import useBeamboxPreference from '@core/helpers/hooks/useBeamboxPreference';
 import isWeb from '@core/helpers/is-web';
 import { useIsMobile } from '@core/helpers/system-helper';
 
 import styles from './RightPanel.module.scss';
 
 const rightPanelEventEmitter = eventEmitterFactory.createEventEmitter('right-panel');
-const beamboxPreferenceEventEmitter = eventEmitterFactory.createEventEmitter('beambox-preference');
 
 const RightPanel = (): React.JSX.Element => {
   const { isPathEditing } = useContext(CanvasContext);
   const { selectedElement } = useContext(SelectedElementContext);
   const isMobile = useIsMobile();
   const [panelType, setPanelType] = useState(isMobile ? PanelType.None : PanelType.Layer);
-  const [isTabAutoSwitch, setIsTabAutoSwitch] = useState(beamboxPreference.read('auto-switch-tab'));
-  // const autoSwitchTab = useRef<boolean>(beamboxPreference.read('auto-switch-tab'));
+  const isTabAutoSwitch = useBeamboxPreference('auto-switch-tab');
 
   useEffect(() => {
     rightPanelEventEmitter.on('SET_PANEL_TYPE', setPanelType);
-    beamboxPreferenceEventEmitter.on('auto-switch-tab', setIsTabAutoSwitch);
 
     return () => {
       rightPanelEventEmitter.off('SET_PANEL_TYPE', setPanelType);
-      beamboxPreferenceEventEmitter.off('auto-switch-tab', setIsTabAutoSwitch);
     };
   }, []);
 

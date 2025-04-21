@@ -1,4 +1,4 @@
-import Tab from './Tab.svg';
+import Tab from './tab-icon.svg';
 
 export default {
   Tab,
