@@ -12,8 +12,8 @@ import useI18n from '@core/helpers/useI18n';
 import dialog from '@core/implementations/dialog';
 import type { FisheyeCameraParametersV3Cali } from '@core/interfaces/FisheyePreview';
 
-import ExposureSlider from '../common/ExposureSlider';
-import useCamera from '../common/useCamera';
+import ExposureSlider from '../../common/ExposureSlider';
+import useCamera from '../../common/useCamera';
 
 import styles from './Chessboard.module.scss';
 

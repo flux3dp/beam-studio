@@ -5,7 +5,7 @@ import versionChecker from '@core/helpers/version-checker';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 import LaserHead from './LaserHead';
-import WideAngleCamera from './WideAngleCamera';
+import WideAngleCamera from './WideAngle';
 
 export const showBB2Calibration = (isAdvanced = false): Promise<boolean> => {
   const id = 'bb2-calibration';
