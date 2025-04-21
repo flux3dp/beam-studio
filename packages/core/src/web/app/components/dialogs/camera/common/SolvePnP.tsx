@@ -24,7 +24,7 @@ interface Props {
   imgSource?: 'usb' | 'wifi';
   onBack: () => void;
   onClose: (complete: boolean) => void;
-  onNext: (rvec: number[], tvec: number[]) => void;
+  onNext: (rvec: number[], tvec: number[], imgPoints: Array<[number, number]>) => void;
   params: FisheyeCaliParameters;
   refPoints?: Array<[number, number]>;
   titleLink?: string;
@@ -341,7 +341,7 @@ const SolvePnP = ({
     if (res.success) {
       const { rvec, tvec } = res.data;
 
-      onNext(rvec, tvec);
+      onNext(rvec, tvec, points);
     } else {
       alertCaller.popUpError({ message: 'Failed to solvePnP' });
     }
