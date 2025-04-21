@@ -224,25 +224,32 @@ export const getExportOpt = (
     document.querySelectorAll('#svgcontent > g.layer:not([display="none"]) [data-pass-through="1"]').length > 0 ||
     getPassThrough(addOnInfo);
 
-  if (isPassThroughTask && model === 'fbb2') {
+  const updateAccOverride = (
+    value: Partial<Record<'fill' | 'path', Partial<{ a: number; x: number; y: number; z: number }>>>,
+  ) => {
+    if (!config.acc_override) config.acc_override = value;
+
+    const keys = Object.keys(value) as Array<keyof typeof value>;
+
+    for (let i = 0; i < keys.length; i += 1) {
+      config.acc_override[keys[i]] = { ...config.acc_override[keys[i]], ...value[keys[i]] };
+    }
+  };
+
+  if (model === 'fhx2rf3' || model == 'fhx2rf6') {
+    updateAccOverride({ path: { x: 1000, y: 1000 } });
+  }
+
+  if ((isPassThroughTask || autoFeeder) && model === 'fbb2') {
     config.mep = 30;
-    config.acc_override = {
-      fill: { x: 5000, y: 2000 },
-      path: { x: 500, y: 500 },
-    };
+    updateAccOverride({ fill: { x: 5000, y: 2000 }, path: { x: 500, y: 500 } });
   }
 
   if (autoFeeder) {
-    if (model === 'fbb2') {
-      config.mep = 30;
-      config.acc_override = {
-        fill: { a: 100, x: 5000, y: 2000 },
-        path: { a: 100, x: 500, y: 500 },
-      };
-    } else if (constant.fcodeV2Models.has(model)) {
-      config.acc_override = { fill: { a: 100 }, path: { a: 100 } };
+    if (constant.fcodeV2Models.has(model)) {
+      updateAccOverride({ fill: { a: 100 }, path: { a: 100 } });
     } else if (model === 'fbm1' && supportAccOverrideV1) {
-      config.acc_override = { fill: { y: 100 }, path: { y: 100 } };
+      updateAccOverride({ fill: { y: 100 }, path: { y: 100 } });
     }
   }
 
