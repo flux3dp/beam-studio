@@ -1,5 +1,6 @@
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
+import isDev from '@core/helpers/is-dev';
 
 import { LayerModule, type LayerModuleType } from './layer-module/layer-modules';
 
@@ -85,9 +86,10 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
       LayerModule.LASER_10W_DIODE,
       LayerModule.LASER_20W_DIODE,
       LayerModule.PRINTER,
+      isDev() ? LayerModule.PRINTER_4C : null,
       LayerModule.LASER_1064,
       LayerModule.UV_PRINT,
-    ],
+    ].filter(Boolean),
     vectorSpeedLimit: 20,
     width: 430,
   },
