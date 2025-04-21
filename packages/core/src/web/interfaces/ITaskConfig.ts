@@ -16,6 +16,10 @@ export interface IBaseConfig {
   travelSpeed?: number;
 }
 
+export type TAccelerationOverride = Partial<
+  Record<'fill' | 'path', Partial<{ a: number; x: number; y: number; z: number }>>
+>;
+
 export type TFcodeOptionalConfig = Partial<{
   /**
    * acceleration to calculate task time, not real acceleration used in machine
@@ -24,7 +28,7 @@ export type TFcodeOptionalConfig = Partial<{
   /**
    * set acceleration for real task
    */
-  acc_override: Partial<Record<'fill' | 'path', Partial<{ a: number; x: number; y: number; z: number }>>>;
+  acc_override: TAccelerationOverride;
   af: boolean;
   /**
    * a travel speed

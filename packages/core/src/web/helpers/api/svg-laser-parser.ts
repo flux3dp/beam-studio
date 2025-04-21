@@ -23,7 +23,7 @@ import Websocket from '@core/helpers/websocket';
 import fs from '@core/implementations/fileSystem';
 import storage from '@core/implementations/storage';
 import type { TaskMetaData } from '@core/interfaces/ITask';
-import type { IBaseConfig, IFcodeConfig } from '@core/interfaces/ITaskConfig';
+import type { IBaseConfig, IFcodeConfig, TAccelerationOverride } from '@core/interfaces/ITaskConfig';
 import type { IWrappedTaskFile } from '@core/interfaces/IWrappedFile';
 
 export const getExportOpt = (
@@ -224,9 +224,7 @@ export const getExportOpt = (
     document.querySelectorAll('#svgcontent > g.layer:not([display="none"]) [data-pass-through="1"]').length > 0 ||
     getPassThrough(addOnInfo);
 
-  const updateAccOverride = (
-    value: Partial<Record<'fill' | 'path', Partial<{ a: number; x: number; y: number; z: number }>>>,
-  ) => {
+  const updateAccOverride = (value: TAccelerationOverride) => {
     if (!config.acc_override) config.acc_override = value;
 
     const keys = Object.keys(value) as Array<keyof typeof value>;
