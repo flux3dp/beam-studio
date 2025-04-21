@@ -203,6 +203,8 @@ input$
           return { indexMap, res: { data, imageSymbol, imageUrl } };
         }
 
+        URL.revokeObjectURL(imageUrl);
+
         return { indexMap };
       },
       { indexMap: {} },
