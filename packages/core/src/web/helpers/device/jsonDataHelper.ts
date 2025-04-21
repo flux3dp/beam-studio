@@ -1,7 +1,7 @@
 import deviceMaster from '@core/helpers/device-master';
 
 type FileMap = {
-  fisheye: 'checkpoint.json' | 'wide-angle.json';
+  fisheye: 'checkpoint.json' | 'fisheye_params.json' | 'wide-angle.json';
 };
 
 export const uploadJson = async <D extends keyof FileMap, N extends FileMap[D], T>(

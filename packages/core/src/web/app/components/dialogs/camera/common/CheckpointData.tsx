@@ -7,7 +7,6 @@ import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
 import { updateData } from '@core/helpers/camera-calibration-helper';
 import { loadJson } from '@core/helpers/device/jsonDataHelper';
-import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
 import type { FisheyeCaliParameters } from '@core/interfaces/FisheyePreview';
 
@@ -34,7 +33,7 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
   updateParam,
 }: Props<T>): React.JSX.Element => {
   const progressId = useMemo(() => 'camera-check-point', []);
-  const [checkpointData, setCheckpointData] = useState<{
+  const [checkpointData, setCheckpointData] = useState<null | {
     data: T;
     file: string;
   }>(null);
@@ -45,17 +44,13 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
       message: lang.calibration.checking_checkpoint,
     });
 
-    let res = null;
+    let res: T;
 
     try {
       if (getData) {
         res = await getData();
       } else {
-        const data = await deviceMaster.downloadFile('fisheye', 'fisheye_params.json');
-        const [, blob] = data;
-        const dataString = await (blob as Blob).text();
-
-        res = JSON.parse(dataString);
+        res = (await loadJson('fisheye', 'fisheye_params.json')) as T;
       }
 
       if (res.v === 3) {
@@ -121,7 +116,7 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
       message: lang.calibration.downloading_checkpoint,
     });
     try {
-      const { data } = checkpointData;
+      const { data } = checkpointData!;
 
       try {
         await updateData(data);
