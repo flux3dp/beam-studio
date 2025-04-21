@@ -1,3 +1,5 @@
+import isDev from '@core/helpers/is-dev';
+
 import type { WorkAreaModel } from './workarea-constants';
 
 export enum RotaryType {
@@ -44,6 +46,16 @@ const hexaAddOnInfo: AddOnInfo = {
     mirror: false,
     roller: true,
   },
+};
+
+const hexaRfAddOnInfo: AddOnInfo = {
+  ...hexaAddOnInfo,
+  autoFeeder: isDev()
+    ? {
+        maxHeight: 3000,
+        rotaryRatio: CHUCK_ROTARY_DIAMETER / FEEDER_DIAMETER / 2,
+      }
+    : undefined,
 };
 
 const addOnData: Record<WorkAreaModel, AddOnInfo> = {
@@ -115,8 +127,8 @@ const addOnData: Record<WorkAreaModel, AddOnInfo> = {
     },
   },
   fhexa1: hexaAddOnInfo,
-  fhx2rf3: hexaAddOnInfo,
-  fhx2rf6: hexaAddOnInfo,
+  fhx2rf3: hexaRfAddOnInfo,
+  fhx2rf6: hexaRfAddOnInfo,
   flv1: {
     jobOrigin: true,
     rotary: {
