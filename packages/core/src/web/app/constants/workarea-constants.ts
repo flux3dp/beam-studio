@@ -1,5 +1,6 @@
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
+import isDev from '@core/helpers/is-dev';
 
 import { LayerModule, type LayerModuleType } from './layer-module/layer-modules';
 
@@ -48,7 +49,7 @@ export interface WorkArea {
   pxDisplayHeight?: number; // px
   pxHeight: number; // px
   pxWidth: number; // px
-  supportedModules?: LayerModuleType[];
+  supportedModules?: Array<LayerModuleType | null>;
   vectorSpeedLimit?: number; // mm/s
   width: number; // mm
 }
@@ -85,6 +86,7 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
       LayerModule.LASER_10W_DIODE,
       LayerModule.LASER_20W_DIODE,
       LayerModule.PRINTER,
+      isDev() ? LayerModule.PRINTER_4C : null,
       LayerModule.LASER_1064,
       LayerModule.UV_PRINT,
     ],
@@ -195,9 +197,11 @@ export const getSupportedModules = (model: WorkAreaModel): LayerModuleType[] => 
   const { supportedModules = [LayerModule.LASER_UNIVERSAL, LayerModule.UV_PRINT] } = workareaConstants[model];
   const isUvPrintEnabled = beamboxPreference.read('enable-uv-print-file');
 
-  if (!isUvPrintEnabled) return supportedModules.filter((module) => module !== LayerModule.UV_PRINT);
+  if (!isUvPrintEnabled) {
+    return supportedModules.filter((module) => module && module !== LayerModule.UV_PRINT) as LayerModuleType[];
+  }
 
-  return supportedModules;
+  return supportedModules.filter(Boolean);
 };
 
 export default workareaConstants;
