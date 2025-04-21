@@ -2,23 +2,23 @@ import { useEffect } from 'react';
 
 interface Props {
   element?: HTMLElement;
-  isPreventDefault?: boolean;
   mouseDown?: () => void;
   mouseUp?: () => void;
   predicate: (e: MouseEvent) => boolean;
+  shouldPreventDefault?: boolean;
 }
 
 export const useMouseDown = ({
   element = document as unknown as HTMLElement,
-  isPreventDefault = true,
   mouseDown,
   mouseUp,
   predicate,
+  shouldPreventDefault = true,
 }: Props): void => {
   useEffect(() => {
     const handleMouseDown = (e: MouseEvent) => {
       if (predicate(e)) {
-        if (isPreventDefault) e.preventDefault();
+        if (shouldPreventDefault) e.preventDefault();
 
         mouseDown?.();
       }
@@ -37,5 +37,5 @@ export const useMouseDown = ({
 
       if (mouseUp) element.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [element, isPreventDefault, mouseDown, mouseUp, predicate]);
+  }, [element, shouldPreventDefault, mouseDown, mouseUp, predicate]);
 };

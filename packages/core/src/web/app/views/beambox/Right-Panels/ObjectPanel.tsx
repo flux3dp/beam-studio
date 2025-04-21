@@ -229,14 +229,14 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
                 false,
                 FnWrapper.alignLeft,
                 'left_align',
-              )}{' '}
+              )}
               {renderToolBtn(
                 tObjectPanel.center_align,
                 <ObjectPanelIcons.HAlignMid />,
                 false,
                 FnWrapper.alignCenter,
                 'center_align',
-              )}{' '}
+              )}
               {renderToolBtn(
                 tObjectPanel.right_align,
                 <ObjectPanelIcons.HAlignRight />,
