@@ -55,7 +55,7 @@ const CurveEngravingTool = ({ className }: Props): JSX.Element => {
       />
       <LeftPanelButton
         disabled={!hasCurveEngraving}
-        icon={<LeftPanelIcons.CuverPreview />}
+        icon={<LeftPanelIcons.CurvePreview />}
         id="curve-preview"
         onClick={() => curveEngravingModeController.preview()}
         title={lang.curve_engraving.preview_3d_curve}
