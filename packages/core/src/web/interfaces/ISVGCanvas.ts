@@ -37,6 +37,7 @@ export default interface ISVGCanvas {
   ): void;
   assignAttributes(element: HTMLElement, args: any): void;
   bind: (eventName: string, callback: ((win: any, elem: any) => void) | boolean) => void;
+  booleanOperationSelectedElements: (type: 'diff' | 'intersect' | 'union' | 'xor', isSubCmd?: boolean) => void;
   calculateTransformedBBox(elem: Element): IRect;
   call: (eventName: string, args?: any | SVGElement[]) => void;
   changeSelectedAttribute(attr: string, val: number | string): void;
@@ -49,22 +50,27 @@ export default interface ISVGCanvas {
   cloneSelectedElements: (
     dx: number | number[],
     dy: number | number[],
-    opts: {
+    opts?: {
       addToHistory?: boolean;
       callChangOnMove?: boolean;
       parentCmd?: IBatchCommand;
       selectElement?: boolean;
-    } = {
-      addToHistory: true,
-      callChangOnMove: true,
-      selectElement: true,
     },
   ) => Promise<null | { cmd: IBatchCommand; elems: Element[] }>;
   collectAlignPoints: () => void;
   convertGradients: (elem: Element) => void;
   convertToNum(attr: string, val: number): number;
   convertToPath: (elem: SVGElement, isSubCmd?: boolean) => { cmd: BaseHistoryCommand; path: SVGPathElement };
+  decomposePath: (elements?: SVGElement[]) => void;
   deleteSelectedElements: () => void;
+  disassembleUse2Group: (
+    elems?: SVGElement[],
+    skipConfirm?: boolean,
+    addToHistory?: boolean,
+    showProgress?: boolean,
+  ) => Promise<BaseHistoryCommand>;
+  distHori: (isSubCmd?: boolean) => BaseHistoryCommand | void;
+  distVert: (isSubCmd?: boolean) => BaseHistoryCommand | void;
   drawAlignLine: (tx: number, ty: number, x: IPoint | null, y: IPoint | null, index?: number) => void;
   drawing: ISVGDrawing;
   embedImage(url: string, callback?: (dataURI: string) => void): void;
@@ -123,6 +129,7 @@ export default interface ISVGCanvas {
     },
   ): Promise<SVGUseElement>;
   isAutoAlign: boolean;
+  isElemFillable: (elem: Element) => boolean;
   isUsingLayerColor: boolean;
   leaveContext: () => void;
   mergeAllLayers: () => void;
@@ -130,6 +137,7 @@ export default interface ISVGCanvas {
   moveDownSelectedElement(): void;
   moveTopBottomSelected(direction: 'bottom' | 'top'): void;
   moveUpSelectedElement(): void;
+  multiSelect(elements: SVGElement[]): void;
   opacityAnimation: SVGAnimateElement;
   open: () => void;
   pathActions: IPathActions;
@@ -179,6 +187,7 @@ export default interface ISVGCanvas {
   setSvgElemSize: (type: 'height' | 'rx' | 'ry' | 'width', val: number, addToHistory?: boolean) => IBatchCommand | null;
   setSvgString: (content: string) => boolean;
   setUiStrings(allStrings: Record<string, string>): void;
+  simplifyPath: (elements?: SVGAElement[]) => void;
   sortTempGroupByLayer: () => void;
   spaceKey: boolean;
   svgToString(elem: Element, indent: number, units?: Units): string;

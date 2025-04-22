@@ -1219,6 +1219,7 @@ const lang: ILang = {
     mode_conflict: 'Tùy chọn này không khả dụng trong chế độ hiện tại.',
     ok: 'OK',
     save: 'Lưu',
+    save_and_exit: 'Lưu và Thoát',
     stop: 'Dừng',
   },
   image_edit_panel: {
@@ -1820,6 +1821,14 @@ const lang: ILang = {
   support: {
     no_vcredist: 'Vui lòng cài đặt Visual C++ Redistributable 2015\nCó thể tải về tại flux3dp.com',
     no_webgl: 'WebGL không được hỗ trợ. Vui lòng sử dụng thiết bị khác.',
+  },
+  tab_panel: {
+    apply: 'Áp dụng tab',
+    gap: 'Khoảng cách',
+    help_center: 'https://support.flux3dp.com/hc/en-us/articles/12441363882511',
+    manual_mode: 'Chế độ thủ công',
+    title: 'Tab',
+    width: 'Chiều rộng',
   },
   topbar: {
     alerts: {

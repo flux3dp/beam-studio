@@ -1219,6 +1219,7 @@ const lang: ILang = {
     mode_conflict: 'Esta opción no está disponible en el modo actual.',
     ok: 'OK',
     save: 'Guardar',
+    save_and_exit: 'Guardar y salir',
     stop: 'Detener',
   },
   image_edit_panel: {
@@ -1820,6 +1821,14 @@ const lang: ILang = {
   support: {
     no_vcredist: 'Por favor, instala Vitual C++ Redistribuible 2015<br/> que puede ser descargado en flux3dp.com',
     no_webgl: 'WebGL no está disponible. Por favor, utiliza otros dispositivos.',
+  },
+  tab_panel: {
+    apply: 'Aplicar pestañas',
+    gap: 'Espacio',
+    help_center: 'https://support.flux3dp.com/hc/en-us/articles/12441363882511',
+    manual_mode: 'Modo manual',
+    title: 'Pestañas',
+    width: 'Ancho',
   },
   topbar: {
     alerts: {

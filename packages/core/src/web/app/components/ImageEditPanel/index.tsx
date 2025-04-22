@@ -60,7 +60,7 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
     () => ({
       isFullColor: image.getAttribute('data-fullcolor') === '1',
       isShading: image.getAttribute('data-shading') === 'true',
-      threshold: Number.parseInt(image.getAttribute('data-threshold'), 10),
+      threshold: Number.parseInt(image.getAttribute('data-threshold')!, 10),
     }),
     [image],
   );
@@ -77,12 +77,12 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
   const [operation, setOperation] = useState<'drag' | 'eraser' | 'magicWand' | null>(null);
   const [fitScreenDimension, setFitScreenDimension] = useState({ scale: 1, x: 0, y: 0 });
   const divRef = useRef<HTMLDivElement>(null);
-  const stageRef = useRef<Konva.Stage>(null);
+  const stageRef = useRef<Konva.Stage | null>(null);
   const layerRef = useRef<Konva.Layer>(null);
   const imageRef = useRef<KonvaImageRef>(null);
-  const imageData = useRef<ImageData>(null);
+  const imageData = useRef<ImageData | null>(null);
 
-  const { handleWheel, handleZoom, handleZoomByScale, isDragging } = useKonvaCanvas(stageRef, {
+  const { handleWheel, handleZoom, handleZoomByScale, isDragging } = useKonvaCanvas(stageRef as any, {
     onScaleChanged: setZoomScale,
   });
 
@@ -119,14 +119,14 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
 
       setLines(lines);
       setFilters(filters);
-      requestAnimationFrame(() => stageRef.current.batchDraw());
+      requestAnimationFrame(() => stageRef.current!.batchDraw());
     },
     [undo, redo],
   );
 
   const getPointerPositionFromStage = useCallback((stage: Konva.Stage) => {
     const scale = stage.scaleX();
-    const { x, y } = stage.getPointerPosition();
+    const { x, y } = stage.getPointerPosition()!;
     const { x: stageX, y: stageY } = stage.position();
 
     return { x: (x - stageX) / scale, y: (y - stageY) / scale };
@@ -134,11 +134,12 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
 
   const handleMouseDown = useCallback(
     ({ evt, target }: Konva.KonvaEventObject<MouseEvent>) => {
-      if (isDragging || evt.button !== 0) {
+      const stage = target.getStage();
+
+      if (isDragging || evt.button !== 0 || !stage) {
         return;
       }
 
-      const stage = target.getStage();
       const scale = stage.scaleX();
       const { x, y } = getPointerPositionFromStage(stage);
 
@@ -151,7 +152,7 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
       } else if (mode === 'magicWand') {
         setOperation('magicWand');
 
-        const filter = getMagicWandFilter(imageData.current, { tolerance, x, y });
+        const filter = getMagicWandFilter(imageData.current!, { tolerance, x, y });
 
         setFilters((prevFilters) => prevFilters.concat(filter));
       }
@@ -165,7 +166,7 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
         return;
       }
 
-      const { x, y } = getPointerPositionFromStage(target.getStage());
+      const { x, y } = getPointerPositionFromStage(target.getStage()!);
 
       setLines((prevLines) => {
         const updatedLines = [...prevLines];
@@ -193,7 +194,7 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
   }, [handlePushHistory, operation]);
 
   const handleReset = useCallback(() => {
-    const stage = stageRef.current;
+    const stage = stageRef.current!;
 
     handleZoom(fitScreenDimension.scale);
     stage.position(fitScreenDimension);
@@ -202,7 +203,7 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
   const handleComplete = useCallback(() => {
     progressCaller.openNonstopProgress({ id: 'image-editing', message: langPhoto.processing });
 
-    const stage = stageRef.current;
+    const stage = stageRef.current!;
 
     stage.scale({ x: 1, y: 1 });
     stage.position({ x: 0, y: 0 });
@@ -214,7 +215,7 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
     });
   }, [langPhoto]);
 
-  const updateUrl = useCallback(() => stageRef.current.toDataURL(imageSize), [imageSize]);
+  const updateUrl = useCallback(() => stageRef.current!.toDataURL(imageSize), [imageSize]);
 
   useEffect(() => {
     const updateImages = async () => {
@@ -254,7 +255,7 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
 
   useEffect(() => {
     const initialize = async () => {
-      const { clientHeight, clientWidth } = divRef.current;
+      const { clientHeight, clientWidth } = divRef.current!;
       const {
         blobUrl,
         originalHeight: height,
@@ -273,8 +274,8 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
       setFitScreenDimension({ scale: initScale, x: imageX, y: imageY });
       setZoomScale(initScale);
 
-      stageRef.current.position({ x: imageX, y: imageY });
-      stageRef.current.scale({ x: initScale, y: initScale });
+      stageRef.current!.position({ x: imageX, y: imageY });
+      stageRef.current!.scale({ x: initScale, y: initScale });
 
       setImageSize({ height, width });
       setDisplayImage(fullColorImage);
@@ -300,7 +301,7 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
       });
     });
 
-    observer.observe(divRef.current);
+    observer.observe(divRef.current!);
 
     return () => {
       observer.disconnect();
@@ -314,10 +315,7 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
       shortcuts.on(['Escape'], onClose, { isBlocking: true }),
       shortcuts.on(['Fnkey+z'], handleHistoryChange('undo'), { isBlocking: true }),
       shortcuts.on(['Shift+Fnkey+z'], handleHistoryChange('redo'), { isBlocking: true }),
-      shortcuts.on(['Fnkey-+', 'Fnkey-='], () => handleZoomByScale(1.2), {
-        isBlocking: true,
-        splitKey: '-',
-      }),
+      shortcuts.on(['Fnkey-+', 'Fnkey-='], () => handleZoomByScale(1.2), { isBlocking: true, splitKey: '-' }),
       shortcuts.on(['Fnkey+-'], () => handleZoomByScale(0.8), { isBlocking: true }),
     ];
 

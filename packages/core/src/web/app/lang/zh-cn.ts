@@ -1219,6 +1219,7 @@ const lang: ILang = {
     mode_conflict: '此选项在当前模式下不可用。',
     ok: '确定',
     save: '储存',
+    save_and_exit: '保存并退出',
     stop: '停止',
   },
   image_edit_panel: {
@@ -1820,6 +1821,14 @@ const lang: ILang = {
   support: {
     no_vcredist: '请安装 Visual C++ Redistributable 2015<br/>可以在flux3dp.com找到',
     no_webgl: '您的系统不支持 WebGL，建议您使用其他电脑开启 Mozu Studio',
+  },
+  tab_panel: {
+    apply: '应用桥接',
+    gap: '间距',
+    help_center: 'https://support.flux3dp.com/hc/en-us/articles/12441363882511',
+    manual_mode: '手动模式',
+    title: '桥接',
+    width: '宽度',
   },
   topbar: {
     alerts: {

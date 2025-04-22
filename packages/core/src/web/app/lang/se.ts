@@ -1219,6 +1219,7 @@ const lang: ILang = {
     mode_conflict: 'Detta alternativ är inte tillgängligt i aktuellt läge.',
     ok: 'OK',
     save: 'Spara',
+    save_and_exit: 'Spara och avsluta',
     stop: 'Stoppa',
   },
   image_edit_panel: {
@@ -1820,6 +1821,14 @@ const lang: ILang = {
   support: {
     no_vcredist: 'Installera Visual C++ Redistributable 2015<br/>Det kan laddas ner på flux3dp.com',
     no_webgl: 'WebGL stöds inte. Använd en annan enhet.',
+  },
+  tab_panel: {
+    apply: 'Tillämpa flikar',
+    gap: 'Gap',
+    help_center: 'https://support.flux3dp.com/hc/en-us/articles/12441363882511',
+    manual_mode: 'Manuellt läge',
+    title: 'Flikar',
+    width: 'Bredd',
   },
   topbar: {
     alerts: {

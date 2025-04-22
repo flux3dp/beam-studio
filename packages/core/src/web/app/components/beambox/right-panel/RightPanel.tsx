@@ -1,8 +1,8 @@
-import React, { memo, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { memo, useCallback, useContext, useEffect, useState } from 'react';
 
 import classNames from 'classnames';
+import { match, P } from 'ts-pattern';
 
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import LayerPanel from '@core/app/components/beambox/right-panel/LayerPanel';
 import Tab from '@core/app/components/beambox/right-panel/Tab';
 import { PanelType } from '@core/app/constants/right-panel-types';
@@ -13,56 +13,39 @@ import ObjectPanel from '@core/app/views/beambox/Right-Panels/ObjectPanel';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import PathEditPanel from '@core/app/views/beambox/Right-Panels/PathEditPanel';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import useBeamboxPreference from '@core/helpers/hooks/useBeamboxPreference';
 import isWeb from '@core/helpers/is-web';
 import { useIsMobile } from '@core/helpers/system-helper';
 
 import styles from './RightPanel.module.scss';
 
 const rightPanelEventEmitter = eventEmitterFactory.createEventEmitter('right-panel');
-const beamboxPreferenceEventEmitter = eventEmitterFactory.createEventEmitter('beambox-preference');
 
 const RightPanel = (): React.JSX.Element => {
   const { isPathEditing } = useContext(CanvasContext);
   const { selectedElement } = useContext(SelectedElementContext);
   const isMobile = useIsMobile();
-  const [panelType, setPanelType] = useState<PanelType>(isMobile ? PanelType.None : PanelType.Layer);
-  const autoSwitchTab = useRef<boolean>(beamboxPreference.read('auto-switch-tab'));
+  const [panelType, setPanelType] = useState(isMobile ? PanelType.None : PanelType.Layer);
+  const isTabAutoSwitch = useBeamboxPreference('auto-switch-tab');
 
   useEffect(() => {
     rightPanelEventEmitter.on('SET_PANEL_TYPE', setPanelType);
 
-    const handler = (val: boolean) => {
-      autoSwitchTab.current = val;
-    };
-
-    beamboxPreferenceEventEmitter.on('auto-switch-tab', handler);
-
     return () => {
       rightPanelEventEmitter.off('SET_PANEL_TYPE', setPanelType);
-      beamboxPreferenceEventEmitter.off('auto-switch-tab', handler);
     };
   }, []);
 
   useEffect(() => {
-    const handler = (val: boolean) => {
-      if (!isMobile) {
-        return;
-      }
+    const handler = (isDisplayLayer: boolean) => {
+      if (!isMobile) return;
 
-      setPanelType((cur) => {
-        if (val) {
-          if (cur !== PanelType.Layer) {
-            return PanelType.Layer;
-          }
-
-          return cur;
+      setPanelType((prevType) => {
+        if (isDisplayLayer) {
+          return prevType !== PanelType.Layer ? PanelType.Layer : prevType;
         }
 
-        if (cur === PanelType.Layer) {
-          return PanelType.None;
-        }
-
-        return cur;
+        return prevType === PanelType.Layer ? PanelType.None : prevType;
       });
     };
 
@@ -74,46 +57,38 @@ const RightPanel = (): React.JSX.Element => {
   }, [isMobile]);
 
   useEffect(() => {
-    const hasElement = !!selectedElement;
+    const hasElement = Boolean(selectedElement);
 
     if (!isPathEditing) {
       if (isMobile) {
-        setPanelType((cur) => {
-          if (cur === PanelType.Layer) {
-            return cur;
-          }
-
-          if (!hasElement && cur !== PanelType.None) {
-            return PanelType.None;
-          }
-
-          if (hasElement && cur !== PanelType.Object) {
-            return PanelType.Object;
-          }
-
-          return cur;
-        });
+        setPanelType((prevType) =>
+          match({ hasElement, prevType })
+            .with({ prevType: PanelType.Layer }, () => prevType)
+            .with({ hasElement: false, prevType: P.not(PanelType.None) }, () => PanelType.None)
+            .with({ hasElement: true, prevType: P.not(PanelType.Object) }, () => PanelType.Object)
+            .otherwise(() => prevType),
+        );
       } else {
-        setPanelType((cur) => {
-          if (cur === PanelType.None || cur === PanelType.PathEdit) {
+        setPanelType((prevType) => {
+          if ([PanelType.None, PanelType.PathEdit].includes(prevType)) {
             return PanelType.Layer;
           }
 
-          if (autoSwitchTab.current) {
+          if (isTabAutoSwitch) {
             return hasElement ? PanelType.Object : PanelType.Layer;
           }
 
-          return cur;
+          return prevType;
         });
       }
     } else {
       setPanelType(PanelType.PathEdit);
     }
-  }, [isPathEditing, selectedElement, isMobile]);
+  }, [isPathEditing, selectedElement, isMobile, isTabAutoSwitch]);
 
   const switchPanel = useCallback(() => {
-    setPanelType((cur) => {
-      if (cur === PanelType.Layer || cur === PanelType.None) {
+    setPanelType((prevType) => {
+      if ([PanelType.Layer, PanelType.None].includes(prevType)) {
         return isPathEditing ? PanelType.PathEdit : PanelType.Object;
       }
 

@@ -1219,6 +1219,7 @@ const lang: ILang = {
     mode_conflict: '當前模式下無法使用此選項。',
     ok: '確定',
     save: '儲存',
+    save_and_exit: '儲存並離開',
     stop: '停止',
   },
   image_edit_panel: {
@@ -1820,6 +1821,14 @@ const lang: ILang = {
   support: {
     no_vcredist: '請安裝 Visual C++ Redistributable 2015<br/>可以在flux3dp.com找到',
     no_webgl: '您的系統不支援 WebGL，建議您使用其他電腦開啟 Beam Studio',
+  },
+  tab_panel: {
+    apply: '套用橋接',
+    gap: '間距',
+    help_center: 'https://support.flux3dp.com/hc/zh-tw/articles/12441363882511',
+    manual_mode: '手動模式',
+    title: '橋接',
+    width: '寬度',
   },
   topbar: {
     alerts: {

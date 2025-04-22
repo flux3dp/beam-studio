@@ -1219,6 +1219,7 @@ const lang: ILang = {
     mode_conflict: 'Αυτή η επιλογή δεν είναι διαθέσιμη στην τρέχουσα λειτουργία.',
     ok: 'Εντάξει',
     save: 'Αποθήκευση',
+    save_and_exit: 'Αποθήκευση και έξοδος',
     stop: 'Σταμάτημα',
   },
   image_edit_panel: {
@@ -1820,6 +1821,14 @@ const lang: ILang = {
   support: {
     no_vcredist: 'Παρακαλώ εγκαταστήστε το Visual C++ Redistributable 2015<br/>Μπορείτε να το κατεβάσετε από flux3dp.com',
     no_webgl: 'Το WebGL δεν υποστηρίζεται. Παρακαλώ χρησιμοποιήστε άλλη συσκευή.',
+  },
+  tab_panel: {
+    apply: 'Εφαρμογή καρτελών',
+    gap: 'Κενό',
+    help_center: 'https://support.flux3dp.com/hc/en-us/articles/12441363882511',
+    manual_mode: 'Χειροκίνητη λειτουργία',
+    title: 'Καρτέλες',
+    width: 'Πλάτος',
   },
   topbar: {
     alerts: {

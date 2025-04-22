@@ -1219,6 +1219,7 @@ const lang: ILang = {
     mode_conflict: 'Esta opção não está disponível no modo atual.',
     ok: 'OK',
     save: 'Salvar',
+    save_and_exit: 'Salvar e sair',
     stop: 'Parar',
   },
   image_edit_panel: {
@@ -1820,6 +1821,14 @@ const lang: ILang = {
   support: {
     no_vcredist: 'Instale o Visual C++ Redistributable 2015<br/>Que pode ser baixado em flux3dp.com',
     no_webgl: 'WebGL não é suportado. Por favor, use outros dispositivos.',
+  },
+  tab_panel: {
+    apply: 'Aplicar abas',
+    gap: 'Espaçamento',
+    help_center: 'https://support.flux3dp.com/hc/en-us/articles/12441363882511',
+    manual_mode: 'Modo manual',
+    title: 'Abas',
+    width: 'Largura',
   },
   topbar: {
     alerts: {

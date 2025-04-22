@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
@@ -23,6 +23,7 @@ import RadioSelectDialog from '@core/app/components/dialogs/RadioSelectDialog';
 import RatingPanel from '@core/app/components/dialogs/RatingPanel';
 import SocialMediaModal from '@core/app/components/dialogs/SocialMediaModal';
 import ImageEditPanel from '@core/app/components/ImageEditPanel';
+import TabPanel from '@core/app/components/TabPanel';
 import alertConstants from '@core/app/constants/alert-constants';
 import { eventEmitter } from '@core/app/contexts/DialogContext';
 import LayerColorConfigPanel from '@core/app/views/beambox/Layer-Color-Config';
@@ -54,9 +55,10 @@ import type { ChipSettings } from '@core/interfaces/Cartridge';
 import type { IAnnouncement } from '@core/interfaces/IAnnouncement';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type { IDialogBoxStyle, IInputLightBox, IPrompt } from '@core/interfaces/IDialog';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { IMediaTutorial, ITutorial } from '@core/interfaces/ITutorial';
 
-let svgCanvas;
+let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
@@ -73,9 +75,7 @@ const clearAllDialogComponents = (): void => {
 };
 
 const isIdExist = (id: string): boolean => {
-  const response = {
-    isIdExist: false,
-  };
+  const response = { isIdExist: false };
 
   eventEmitter.emit('CHECK_ID_EXIST', id, response);
 
@@ -108,7 +108,7 @@ const showLoginDialog = (callback?: () => void, silent = false): void => {
     'flux-id-login',
     <FluxIdLogin
       onClose={() => {
-        window.removeEventListener('DISMISS_FLUX_LOGIN', callback);
+        (window as any).removeEventListener('DISMISS_FLUX_LOGIN', callback);
         popDialogById('flux-id-login');
 
         if (callback) {
@@ -131,11 +131,8 @@ const forceLoginWrapper = (
     showLoginDialog(() => {
       user = getCurrentUser();
 
-      if (user) {
-        callback();
-      } else {
-        failCallback?.();
-      }
+      if (user) callback();
+      else failCallback?.();
     }, silent);
   } else {
     callback();
@@ -156,7 +153,7 @@ const showFluxPlusWarning = (monotype?: boolean): void => {
 
 eventEmitter.on('SHOW_FLUX_PLUS_WARNING', showFluxPlusWarning);
 
-const showDeviceSelector = (onSelect) => {
+const showDeviceSelector = (onSelect: (device: IDeviceInfo) => void) => {
   addDialogComponent(
     'device-selector',
     <DeviceSelector onClose={() => popDialogById('device-selector')} onSelect={onSelect} />,
@@ -170,12 +167,12 @@ const promptDialog = (args: IPrompt): void => {
   addDialogComponent(
     id,
     <Prompt
-      caption={args.caption}
+      caption={args.caption!}
       defaultValue={args.defaultValue}
       message={args.message}
       onCancel={args.onCancel}
       onClose={() => popDialogById(id)}
-      onYes={args.onYes}
+      onYes={args.onYes!}
     />,
   );
 };
@@ -199,7 +196,7 @@ export default {
     }),
   getPromptValue: (args: IPrompt): Promise<null | string> =>
     new Promise((resolve) => {
-      const onYes = (val?: string) => resolve(val);
+      const onYes = (val?: string) => resolve(val ?? null);
       const onCancel = () => resolve(null);
 
       promptDialog({ ...args, onCancel, onYes });
@@ -258,17 +255,17 @@ export default {
       />,
     );
   },
-  showCatridgeSettingPanel: (initData: ChipSettings, inkLevel: number): void => {
-    if (isIdExist('catridge-setting')) {
+  showCartridgeSettingPanel: (initData: ChipSettings, inkLevel: number): void => {
+    if (isIdExist('cartridge-setting')) {
       return;
     }
 
     addDialogComponent(
-      'catridge-setting',
+      'cartridge-setting',
       <CartridgeSettingPanel
         initData={initData}
         inkLevel={inkLevel}
-        onClose={() => popDialogById('catridge-setting')}
+        onClose={() => popDialogById('cartridge-setting')}
       />,
     );
   },
@@ -284,10 +281,7 @@ export default {
       <ChangeLog
         onClose={() => {
           popDialogById('change-log');
-
-          if (callback) {
-            callback();
-          }
+          callback?.();
         }}
       />,
     );
@@ -320,7 +314,7 @@ export default {
         id,
         <Prompt
           alertConfigKey={args.alertConfigKey}
-          caption={args.caption}
+          caption={args.caption!}
           confirmValue={args.confirmValue}
           message={args.message}
           onCancel={() => resolve(false)}
@@ -379,12 +373,12 @@ export default {
     addDialogComponent(
       'image-crop',
       <CropPanel
-        image={element}
+        image={element as SVGImageElement}
         onClose={() => {
           popDialogById('image-crop');
           ObjectPanelController.updateActiveKey(null);
         }}
-        src={src}
+        src={src!}
       />,
     );
   },
@@ -394,6 +388,7 @@ export default {
     }
 
     console.log(style);
+
     addDialogComponent(
       id,
       <DialogBox
@@ -417,8 +412,8 @@ export default {
 
     addDialogComponent('docu-setting', <DocumentSettings unmount={unmount} />);
   },
-  showDxfDpiSelector: (defaultValue: number): Promise<number> =>
-    new Promise<number>((resolve) => {
+  showDxfDpiSelector: (defaultValue: number): Promise<null | number> =>
+    new Promise<null | number>((resolve) => {
       addDialogComponent(
         'dxf-dpi-select',
         <Prompt
@@ -430,9 +425,9 @@ export default {
             resolve(null);
           }}
           onClose={() => popDialogById('dxf-dpi-select')}
-          onYes={(val: string) => {
+          onYes={(value?: string) => {
             popDialogById('dxf-dpi-select');
-            resolve(Number(val));
+            resolve(Number(value));
           }}
         />,
       );
@@ -500,13 +495,13 @@ export default {
     addDialogComponent(
       'image-edit-panel',
       <ImageEditPanel
-        image={element}
+        image={element as SVGImageElement}
         onClose={() => {
           onClose();
           ObjectPanelController.updateActiveKey(null);
           popDialogById('image-edit-panel');
         }}
-        src={src}
+        src={src!}
       />,
     );
   },
@@ -515,15 +510,15 @@ export default {
       id,
       <InputLightBox
         caption={args.caption}
-        confirmText={args.confirmText}
-        defaultValue={args.defaultValue}
-        inputHeader={args.inputHeader}
-        maxLength={args.maxLength}
+        confirmText={args.confirmText!}
+        defaultValue={args.defaultValue!}
+        inputHeader={args.inputHeader!}
+        maxLength={args.maxLength!}
         onClose={(from: string) => {
           popDialogById(id);
 
           if (from !== 'submit') {
-            args.onCancel();
+            args.onCancel?.();
           }
         }}
         onSubmit={(value) => {
@@ -612,7 +607,7 @@ export default {
       return;
     }
 
-    addDialogComponent('network-test', <NetworkTestingPanel ip={ip} onClose={() => popDialogById('network-test')} />);
+    addDialogComponent('network-test', <NetworkTestingPanel ip={ip!} onClose={() => popDialogById('network-test')} />);
   },
   showNounProjectPanel: (): void => {
     if (isIdExist('noun-project')) {
@@ -637,7 +632,12 @@ export default {
 
     addDialogComponent(
       'photo-edit',
-      <PhotoEditPanel element={element} mode={mode} src={src} unmount={() => popDialogById('photo-edit')} />,
+      <PhotoEditPanel
+        element={element as unknown as HTMLElement}
+        mode={mode}
+        src={src!}
+        unmount={() => popDialogById('photo-edit')}
+      />,
     );
   },
   showRadioSelectDialog: <T,>({
@@ -650,7 +650,7 @@ export default {
     id?: string;
     options: Array<{ label: string; value: T }>;
     title: string;
-  }): Promise<T> =>
+  }): Promise<null | T> =>
     new Promise((resolve) => {
       if (isIdExist(id)) {
         return;
@@ -715,6 +715,37 @@ export default {
 
     addDialogComponent('svg-nest', <SvgNestButtons onClose={() => popDialogById('svg-nest')} />);
   },
+  showTabPanel: (
+    { bbox, onClose }: { bbox: DOMRect; onClose: () => void } = {
+      bbox: new DOMRect(0, 0, 0, 0),
+      onClose: () => {},
+    },
+  ): void => {
+    if (isIdExist('tab-panel')) {
+      return;
+    }
+
+    const selectedElements = svgCanvas.getSelectedElems();
+
+    if (selectedElements.length !== 1) {
+      return;
+    }
+
+    const element = selectedElements[0];
+
+    addDialogComponent(
+      'tab-panel',
+      <TabPanel
+        bbox={bbox}
+        element={element}
+        onClose={() => {
+          onClose();
+          ObjectPanelController.updateActiveKey(null);
+          popDialogById('tab-panel');
+        }}
+      />,
+    );
+  },
   showTutorial: (tutorial: ITutorial, callback: () => void): void => {
     const { id } = tutorial;
 
@@ -728,8 +759,8 @@ export default {
       id,
       <Tutorial
         dialogStylesAndContents={tutorial.dialogStylesAndContents}
-        end_alert={tutorial.end_alert}
-        hasNextButton={tutorial.hasNextButton}
+        end_alert={tutorial.end_alert!}
+        hasNextButton={tutorial.hasNextButton!}
         onClose={() => {
           popDialogById(id);
           layerPanelEventEmitter.emit('endTutorial');

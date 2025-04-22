@@ -12,15 +12,15 @@ interface Position {
 }
 
 interface Props {
-  arrowColor: string;
-  arrowDirection: ArrowDirection;
-  arrowHeight: number;
-  arrowPadding: number;
-  arrowWidth: number;
+  arrowColor?: string;
+  arrowDirection?: ArrowDirection;
+  arrowHeight?: number;
+  arrowPadding?: number;
+  arrowWidth?: number;
   children?: React.JSX.Element;
   content: React.JSX.Element | string;
   onClose: () => void;
-  position: Position;
+  position?: Position;
 }
 
 class DialogBox extends React.PureComponent<Props> {
@@ -33,7 +33,7 @@ class DialogBox extends React.PureComponent<Props> {
       arrowWidth = 20,
       position = { left: 100, top: 100 },
     } = this.props;
-    const arrowStyle = {
+    const arrowStyle: any = {
       bottom: {
         borderColor: `${arrowColor} transparent transparent transparent`,
         borderWidth: `${arrowHeight}px ${arrowWidth / 2}px 0 ${arrowWidth / 2}px`,
@@ -69,11 +69,11 @@ class DialogBox extends React.PureComponent<Props> {
       arrowHeight = 17,
       arrowPadding = 15,
       arrowWidth = 20,
-      position = { left: 100, top: 100 },
+      position = { left: 100, top: 100 } as any,
     } = this.props;
     const horizontalRef = position.left === undefined ? 'right' : 'left';
     const verticalRef = position.top === undefined ? 'bottom' : 'top';
-    const style = {};
+    const style: any = {};
 
     if (arrowDirection === 'top' || arrowDirection === 'bottom') {
       style[horizontalRef] = position[horizontalRef] - arrowPadding - arrowWidth / 2;

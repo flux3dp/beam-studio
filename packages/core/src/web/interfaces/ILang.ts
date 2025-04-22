@@ -1203,7 +1203,7 @@ export interface ILang {
     UNKNOWN_COMMAND: string;
     UNKNOWN_ERROR: string;
   };
-  global: Record<'apply' | 'back' | 'cancel' | 'mode_conflict' | 'ok' | 'save' | 'stop', string> & {
+  global: Record<'apply' | 'back' | 'cancel' | 'mode_conflict' | 'ok' | 'save' | 'save_and_exit' | 'stop', string> & {
     editing: Record<'redo' | 'reset' | 'undo' | 'zoom_in' | 'zoom_out', string>;
   };
   image_edit_panel: {
@@ -1812,6 +1812,14 @@ export interface ILang {
   support: {
     no_vcredist: string;
     no_webgl: string;
+  };
+  tab_panel: {
+    apply: string;
+    gap: string;
+    help_center: string;
+    manual_mode: string;
+    title: string;
+    width: string;
   };
   topbar: {
     alerts: {

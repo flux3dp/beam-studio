@@ -73,9 +73,9 @@ function Sider({
             activeKey={mode}
             centered
             items={tabItems}
-            onChange={(mode: 'eraser' | 'magicWand') => {
+            onChange={(mode) => {
               setOperation(null);
-              setMode(mode);
+              setMode(mode as 'eraser' | 'magicWand');
             }}
             size="large"
           />
