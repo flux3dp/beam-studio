@@ -26,7 +26,7 @@ interface Props {
 
 const Chessboard = ({ chessboard, onClose, onNext, updateParam }: Props): React.JSX.Element => {
   const t = useI18n();
-  const tCali = useI18n().calibration;
+  const tCali = t.calibration;
   const { exposureSetting, handleTakePicture, img, pauseLive, restartLive, setExposureSetting } = useLiveFeed();
 
   const handleCalibrate = async () => {
