@@ -1,13 +1,14 @@
 import AdjustHeight from './adjust-height.svg';
 import Back from './back.svg';
+import Beamy from './beamy.svg';
 import Camera from './camera.svg';
 import Cloud from './cloud.svg';
 import Cursor from './cursor.svg';
 import CurveEngrave from './curve-engrave.svg';
-import CuverPreview from './curve-preview.svg';
+import CurvePreview from './curve-preview.svg';
 import CurveSelect from './curve-select.svg';
 import Delete from './delete.svg';
-import DM from './dm.svg';
+import DesignMarket from './design-market.svg';
 import Draw from './draw.svg';
 import Element from './element.svg';
 import Line from './line.svg';
@@ -26,14 +27,15 @@ import Trace from './trace.svg';
 export default {
   AdjustHeight,
   Back,
+  Beamy,
   Camera,
   Cloud,
   Cursor,
   CurveEngrave,
+  CurvePreview,
   CurveSelect,
-  CuverPreview,
   Delete,
-  DM,
+  DesignMarket,
   Draw,
   Element,
   Line,

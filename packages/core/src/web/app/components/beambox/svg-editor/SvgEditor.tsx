@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react';
-import React from 'react';
+import React, { useState } from 'react';
 import { useContext, useEffect } from 'react';
 
+import { Drawer } from 'antd';
 import classNames from 'classnames';
 
 import constant from '@core/app/actions/beambox/constant';
@@ -12,6 +13,7 @@ import ZoomBlock from '@core/app/components/beambox/ZoomBlock';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import workareaManager from '@core/app/svgedit/workarea';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
 import Banner from './Banner';
 import ElementTitle from './ElementTitle';
@@ -19,8 +21,23 @@ import Ruler from './Ruler';
 import styles from './SvgEditor.module.scss';
 import Workarea from './Workarea';
 
+const beamyEventEmitter = eventEmitterFactory.createEventEmitter('beamy');
+
 export const SvgEditor = (): ReactNode => {
   const { mode } = useContext(CanvasContext);
+  const [isBeamyShown, setIsBeamyShown] = useState(false);
+
+  const onClose = () => {
+    setIsBeamyShown(false);
+  };
+
+  useEffect(() => {
+    beamyEventEmitter.on('SHOW_BEAMY', setIsBeamyShown);
+
+    return () => {
+      beamyEventEmitter.off('SHOW_BEAMY', setIsBeamyShown);
+    };
+  }, []);
 
   useEffect(() => {
     const { $ } = window;
@@ -61,6 +78,18 @@ export const SvgEditor = (): ReactNode => {
             <DpiInfo />
           </>
         )}
+
+        <Drawer
+          closable={false}
+          getContainer={false}
+          mask={false}
+          onClose={onClose}
+          open={isBeamyShown}
+          placement="left"
+          title="Basic Drawer"
+        >
+          <p>Some contents...</p>
+        </Drawer>
       </div>
       {mode === CanvasMode.PathPreview && <PathPreview />}
     </>
