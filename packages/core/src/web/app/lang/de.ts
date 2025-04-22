@@ -1219,6 +1219,7 @@ const lang: ILang = {
     mode_conflict: 'Diese Option ist im aktuellen Modus nicht verfügbar.',
     ok: 'OK',
     save: 'Speichern',
+    save_and_exit: 'Speichern und beenden',
     stop: 'Stopp',
   },
   image_edit_panel: {
@@ -1820,6 +1821,14 @@ const lang: ILang = {
   support: {
     no_vcredist: 'Bitte installieren Sie Visual C ++ Redistributable 2015 <br/> Das kann auf flux3dp.com heruntergeladen werden',
     no_webgl: 'WebGL wird nicht unterstützt. Bitte verwenden Sie andere Geräte.',
+  },
+  tab_panel: {
+    apply: 'Tabs anwenden',
+    gap: 'Abstand',
+    help_center: 'https://support.flux3dp.com/hc/en-us/articles/12441363882511',
+    manual_mode: 'Manueller Modus',
+    title: 'Tabs',
+    width: 'Breite',
   },
   topbar: {
     alerts: {

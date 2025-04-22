@@ -113,6 +113,27 @@ exports[`should render correctly ellipse 1`] = `
           </span>
         </button>
       </div>
+      <div
+        class="btn-container"
+      >
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
+          disabled=""
+          id="tab"
+          type="button"
+        >
+          <span
+            class="ant-btn-icon"
+          >
+            <svgr-url />
+          </span>
+          <span
+            class="label"
+          >
+            Tabs
+          </span>
+        </button>
+      </div>
     </div>
   </div>
 </div>
@@ -1677,6 +1698,27 @@ exports[`should render correctly line 1`] = `
           </span>
         </button>
       </div>
+      <div
+        class="btn-container"
+      >
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
+          disabled=""
+          id="tab"
+          type="button"
+        >
+          <span
+            class="ant-btn-icon"
+          >
+            <svgr-url />
+          </span>
+          <span
+            class="label"
+          >
+            Tabs
+          </span>
+        </button>
+      </div>
     </div>
   </div>
 </div>
@@ -1852,6 +1894,27 @@ exports[`should render correctly path 1`] = `
           </span>
         </button>
       </div>
+      <div
+        class="btn-container"
+      >
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
+          disabled=""
+          id="tab"
+          type="button"
+        >
+          <span
+            class="ant-btn-icon"
+          >
+            <svgr-url />
+          </span>
+          <span
+            class="label"
+          >
+            Tabs
+          </span>
+        </button>
+      </div>
     </div>
   </div>
 </div>
@@ -1970,6 +2033,27 @@ exports[`should render correctly polygon 1`] = `
           </span>
         </button>
       </div>
+      <div
+        class="btn-container"
+      >
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
+          disabled=""
+          id="tab"
+          type="button"
+        >
+          <span
+            class="ant-btn-icon"
+          >
+            <svgr-url />
+          </span>
+          <span
+            class="label"
+          >
+            Tabs
+          </span>
+        </button>
+      </div>
     </div>
   </div>
 </div>
@@ -2085,6 +2169,27 @@ exports[`should render correctly rect 1`] = `
             class="label"
           >
             Array
+          </span>
+        </button>
+      </div>
+      <div
+        class="btn-container"
+      >
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
+          disabled=""
+          id="tab"
+          type="button"
+        >
+          <span
+            class="ant-btn-icon"
+          >
+            <svgr-url />
+          </span>
+          <span
+            class="label"
+          >
+            Tabs
           </span>
         </button>
       </div>

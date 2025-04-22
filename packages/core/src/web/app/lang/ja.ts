@@ -1219,6 +1219,7 @@ const lang: ILang = {
     mode_conflict: 'このオプションは現在のモードでは利用できません。',
     ok: 'OK',
     save: '保存する',
+    save_and_exit: '保存して終了',
     stop: '停止',
   },
   image_edit_panel: {
@@ -1820,6 +1821,14 @@ const lang: ILang = {
   support: {
     no_vcredist: '「Visual C++ Redistributable 2015」をインストールしてください。<br/>それはflux3dp.comでダウンロードできます',
     no_webgl: 'WebGLはサポートされていません。他のデバイスを使用してください。',
+  },
+  tab_panel: {
+    apply: 'タブを適用',
+    gap: '間隔',
+    help_center: 'https://support.flux3dp.com/hc/en-us/articles/12441363882511',
+    manual_mode: '手動モード',
+    title: 'タブ',
+    width: '幅',
   },
   topbar: {
     alerts: {

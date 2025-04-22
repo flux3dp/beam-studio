@@ -378,7 +378,7 @@ export default {
       if (chipDataRes.status === 'ok') {
         const parsed = parsingChipData(chipDataRes.data.result);
 
-        Dialog.showCatridgeSettingPanel(parsed, inkLevel);
+        Dialog.showCartridgeSettingPanel(parsed, inkLevel);
       } else {
         Alert.popUp({
           id: 'cant-get-chip-data',

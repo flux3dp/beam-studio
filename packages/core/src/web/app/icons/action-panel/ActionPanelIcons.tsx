@@ -1,8 +1,8 @@
 import ArrayMobile from './array-mobile.svg';
 import Array from './array.svg';
 import AutoFit from './auto-fit.svg';
-import BackgroungRemovalMobile from './background-removal-mobile.svg';
-import BackgroungRemoval from './background-removal.svg';
+import BackgroundRemovalMobile from './background-removal-mobile.svg';
+import BackgroundRemoval from './background-removal.svg';
 import BevelMobile from './bevel-mobile.svg';
 import Bevel from './bevel.svg';
 import Brightness from './brightness.svg';
@@ -31,6 +31,7 @@ import Sharpen from './sharpen.svg';
 import SimplifyMobile from './simplify-mobile.svg';
 import Simplify from './simplify.svg';
 import SmartNest from './smart-nest.svg';
+import Tab from './tab.svg';
 import Trace from './trace.svg';
 import WeldText from './weld-text.svg';
 
@@ -38,8 +39,8 @@ export default {
   Array,
   ArrayMobile,
   AutoFit,
-  BackgroungRemoval,
-  BackgroungRemovalMobile,
+  BackgroundRemoval,
+  BackgroundRemovalMobile,
   Bevel,
   BevelMobile,
   Brightness,
@@ -68,6 +69,7 @@ export default {
   Simplify,
   SimplifyMobile,
   SmartNest,
+  Tab,
   Trace,
   WeldText,
 };

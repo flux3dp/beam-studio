@@ -1219,6 +1219,7 @@ const lang: ILang = {
     mode_conflict: "Cette option n'est pas disponible dans le mode actuel.",
     ok: 'OK',
     save: 'Enregistrer',
+    save_and_exit: 'Enregistrer et quitter',
     stop: 'Arrêter',
   },
   image_edit_panel: {
@@ -1820,6 +1821,14 @@ const lang: ILang = {
   support: {
     no_vcredist: 'Veuillez installer Visual C++ Redistributable 2015<br/>Cela peut être téléchargé sur flux3dp.com',
     no_webgl: "WebGL n'est pas pris en charge. Veuillez utiliser d'autres appareils.",
+  },
+  tab_panel: {
+    apply: 'Appliquer les onglets',
+    gap: 'Espacement',
+    help_center: 'https://support.flux3dp.com/hc/en-us/articles/12441363882511',
+    manual_mode: 'Mode manuel',
+    title: 'Onglets',
+    width: 'Largeur',
   },
   topbar: {
     alerts: {

@@ -1219,6 +1219,7 @@ const lang: ILang = {
     mode_conflict: 'Tato možnost není dostupná v aktuálním režimu.',
     ok: 'OK',
     save: 'Uložit',
+    save_and_exit: 'Uložit a ukončit',
     stop: 'Zastavit',
   },
   image_edit_panel: {
@@ -1820,6 +1821,14 @@ const lang: ILang = {
   support: {
     no_vcredist: 'Nainstalujte prosím Visual C++ Redistributable 2015<br/> Ke stažení na flux3dp.com',
     no_webgl: 'WebGL není podporován. Použijte prosím jiná zařízení.',
+  },
+  tab_panel: {
+    apply: 'Použít záložky',
+    gap: 'Mezera',
+    help_center: 'https://support.flux3dp.com/hc/en-us/articles/12441363882511',
+    manual_mode: 'Manuální režim',
+    title: 'Záložky',
+    width: 'Šířka',
   },
   topbar: {
     alerts: {

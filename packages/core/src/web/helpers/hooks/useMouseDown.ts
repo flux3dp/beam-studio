@@ -1,42 +1,41 @@
 import { useEffect } from 'react';
 
 interface Props {
+  element?: HTMLElement;
   mouseDown?: () => void;
   mouseUp?: () => void;
   predicate: (e: MouseEvent) => boolean;
+  shouldPreventDefault?: boolean;
 }
 
-export const useMouseDown = ({ mouseDown, mouseUp, predicate }: Props): void => {
+export const useMouseDown = ({
+  element = document as unknown as HTMLElement,
+  mouseDown,
+  mouseUp,
+  predicate,
+  shouldPreventDefault = true,
+}: Props): void => {
   useEffect(() => {
     const handleMouseDown = (e: MouseEvent) => {
       if (predicate(e)) {
-        e.preventDefault();
-        mouseDown();
+        if (shouldPreventDefault) e.preventDefault();
+
+        mouseDown?.();
       }
     };
 
     const handleMouseUp = (e: MouseEvent) => {
-      if (predicate(e)) {
-        mouseUp();
-      }
+      if (predicate(e)) mouseUp?.();
     };
 
-    if (mouseDown) {
-      document.addEventListener('mousedown', handleMouseDown);
-    }
+    if (mouseDown) element.addEventListener('mousedown', handleMouseDown);
 
-    if (mouseUp) {
-      document.addEventListener('mouseup', handleMouseUp);
-    }
+    if (mouseUp) element.addEventListener('mouseup', handleMouseUp);
 
     return () => {
-      if (mouseDown) {
-        document.removeEventListener('mousedown', handleMouseDown);
-      }
+      if (mouseDown) element.removeEventListener('mousedown', handleMouseDown);
 
-      if (mouseUp) {
-        document.removeEventListener('mouseup', handleMouseUp);
-      }
+      if (mouseUp) element.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [mouseDown, mouseUp, predicate]);
+  }, [element, shouldPreventDefault, mouseDown, mouseUp, predicate]);
 };

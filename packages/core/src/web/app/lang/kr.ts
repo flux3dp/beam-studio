@@ -1219,6 +1219,7 @@ const lang: ILang = {
     mode_conflict: '이 옵션은 현재 모드에서 사용할 수 없습니다.',
     ok: '확인',
     save: '저장',
+    save_and_exit: '저장하고 종료',
     stop: '중지',
   },
   image_edit_panel: {
@@ -1820,6 +1821,14 @@ const lang: ILang = {
   support: {
     no_vcredist: 'Visual C++ Redistributable 2015를 설치해 주세요. flux3dp.com에서 다운로드 가능합니다.',
     no_webgl: 'WebGL이 지원되지 않습니다. 다른 기기를 사용해 주세요.',
+  },
+  tab_panel: {
+    apply: '탭 적용',
+    gap: '간격',
+    help_center: 'https://support.flux3dp.com/hc/en-us/articles/12441363882511',
+    manual_mode: '수동 모드',
+    title: '탭',
+    width: '너비',
   },
   topbar: {
     alerts: {

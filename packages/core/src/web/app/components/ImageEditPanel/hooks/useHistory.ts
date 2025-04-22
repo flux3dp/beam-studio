@@ -35,7 +35,7 @@ const historyReducer = (state: HistoryState, { payload, type }: HistoryAction) =
 
   switch (type) {
     case 'PUSH':
-      return { index: index + 1, items: items.slice(0, index + 1).concat(payload) };
+      return { index: index + 1, items: items.slice(0, index + 1).concat(payload!) };
     case 'UNDO':
       return index > 0 ? { index: index - 1, items } : state;
     case 'REDO':

@@ -1219,6 +1219,7 @@ const lang: ILang = {
     mode_conflict: 'Pilihan ini tidak tersedia dalam mod semasa.',
     ok: 'OK',
     save: 'Simpan',
+    save_and_exit: 'Simpan dan Keluar',
     stop: 'Henti',
   },
   image_edit_panel: {
@@ -1820,6 +1821,14 @@ const lang: ILang = {
   support: {
     no_vcredist: 'Sila pasang Visual C++ Redistributable 2015<br/>Ia boleh dimuat turun di flux3dp.com',
     no_webgl: 'WebGL tidak disokong. Sila gunakan peranti lain.',
+  },
+  tab_panel: {
+    apply: 'Guna Tab',
+    gap: 'Jurang',
+    help_center: 'https://support.flux3dp.com/hc/en-us/articles/12441363882511',
+    manual_mode: 'Mod Manual',
+    title: 'Tab',
+    width: 'Lebar',
   },
   topbar: {
     alerts: {

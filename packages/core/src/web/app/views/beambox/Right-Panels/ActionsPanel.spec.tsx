@@ -97,6 +97,10 @@ jest.mock('@core/helpers/system-helper', () => ({
   isMobile: () => isMobile(),
 }));
 
+const disassembleUse = jest.fn();
+
+jest.mock('@core/app/svgedit/operations/disassembleUse', () => disassembleUse);
+
 const clearSelection = jest.fn();
 const convertToPath = jest.fn();
 const decomposePath = jest.fn();
@@ -122,15 +126,6 @@ getSVGAsync.mockImplementation((callback) => {
     },
   });
 });
-
-const disassembleUse = jest.fn();
-
-jest.mock(
-  '@core/app/svgedit/operations/disassembleUse',
-  () =>
-    (...args) =>
-      disassembleUse(...args),
-);
 
 import ActionsPanel from './ActionsPanel';
 

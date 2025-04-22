@@ -30,7 +30,7 @@ export const getMagicWandFilter = (
       markVisited(y * width + x);
 
       while (queue.length) {
-        const pos = queue.pop();
+        const pos = queue.pop()!;
         const x = pos % width;
         const y = (pos / width) >> 0;
         const idx = pos * 4;
