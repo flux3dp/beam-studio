@@ -9,11 +9,11 @@ import useI18n from '@core/helpers/useI18n';
 import dialog from '@core/implementations/dialog';
 import type { FisheyeCameraParametersV3, FisheyeCameraParametersV3Cali } from '@core/interfaces/FisheyePreview';
 
+import styles from '../../Calibration.module.scss';
 import CheckpointData from '../../common/CheckpointData';
 import Instruction from '../../common/Instruction';
 import SolvePnP from '../../common/SolvePnP';
 import { bb2PnPPoints } from '../../common/solvePnPConstants';
-import styles from '../Calibration.module.scss';
 import moveLaserHead from '../moveLaserHead';
 import SolvePnPInstruction from '../SolvePnPInstruction';
 
