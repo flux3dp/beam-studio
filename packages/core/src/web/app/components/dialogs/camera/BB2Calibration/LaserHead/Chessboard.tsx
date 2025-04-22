@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback } from 'react';
 
 import { LoadingOutlined } from '@ant-design/icons';
 import { Modal, Spin } from 'antd';
@@ -13,7 +13,7 @@ import dialog from '@core/implementations/dialog';
 import type { FisheyeCameraParametersV3Cali } from '@core/interfaces/FisheyePreview';
 
 import ExposureSlider from '../../common/ExposureSlider';
-import useCamera from '../../common/useCamera';
+import useLiveFeed from '../../common/useLiveFeed';
 
 import styles from './Chessboard.module.scss';
 
@@ -27,32 +27,11 @@ interface Props {
 const Chessboard = ({ chessboard, onClose, onNext, updateParam }: Props): React.JSX.Element => {
   const t = useI18n();
   const tCali = useI18n().calibration;
-  const [img, setImg] = useState<null | { blob: Blob; url: string }>(null);
-  const cameraLive = useRef(true);
-  const liveTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
-  const handleImg = useCallback((imgBlob: Blob) => {
-    const url = URL.createObjectURL(imgBlob);
-
-    setImg({ blob: imgBlob, url });
-
-    return true;
-  }, []);
-
-  const { exposureSetting, handleTakePicture, setExposureSetting } = useCamera(handleImg);
-
-  useEffect(() => {
-    if (cameraLive.current) {
-      liveTimeout.current = setTimeout(() => {
-        handleTakePicture({ silent: true });
-        liveTimeout.current = undefined;
-      }, 1000);
-    }
-  }, [img, handleTakePicture]);
+  const { exposureSetting, handleTakePicture, img, pauseLive, restartLive, setExposureSetting } = useLiveFeed();
 
   const handleCalibrate = async () => {
     progressCaller.openNonstopProgress({ id: 'calibrate-chessboard', message: tCali.calibrating });
-    clearTimeout(liveTimeout.current);
-    cameraLive.current = false;
+    pauseLive();
 
     let success = false;
 
@@ -64,31 +43,19 @@ const Chessboard = ({ chessboard, onClose, onNext, updateParam }: Props): React.
         const resp = await new Promise<boolean>((resolve) => {
           let rank = tCali.res_excellent;
 
-          if (ret > 2) {
-            rank = tCali.res_poor;
-          } else if (ret > 1) {
-            rank = tCali.res_average;
-          }
+          if (ret > 2) rank = tCali.res_poor;
+          else if (ret > 1) rank = tCali.res_average;
 
           alertCaller.popUp({
             buttons: [
-              {
-                className: 'primary',
-                label: tCali.next,
-                onClick: () => resolve(true),
-              },
-              {
-                label: tCali.cancel,
-                onClick: () => resolve(false),
-              },
+              { className: 'primary', label: tCali.next, onClick: () => resolve(true) },
+              { label: tCali.cancel, onClick: () => resolve(false) },
             ],
             message: sprintf(tCali.calibrate_chessboard_success_msg, rank, ret),
           });
         });
 
-        if (!resp) {
-          return;
-        }
+        if (!resp) return;
 
         updateParam({ d, k, ret, rvec, tvec });
         onNext();
@@ -105,10 +72,7 @@ const Chessboard = ({ chessboard, onClose, onNext, updateParam }: Props): React.
     } finally {
       progressCaller.popById('calibrate-chessboard');
 
-      if (!success) {
-        cameraLive.current = true;
-        handleTakePicture({ silent: true });
-      }
+      if (!success) restartLive();
     }
   };
 

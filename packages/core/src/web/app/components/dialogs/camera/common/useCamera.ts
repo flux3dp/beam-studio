@@ -9,14 +9,17 @@ import type { WebCamConnection } from '@core/helpers/webcam-helper';
 import webcamHelper from '@core/helpers/webcam-helper';
 import type { IConfigSetting } from '@core/interfaces/IDevice';
 
+export type Options = { index?: number; source?: 'usb' | 'wifi' };
+
 const useCamera = (
   handleImg?: (blob: Blob) => boolean | Promise<boolean>,
-  { index = 0, source = 'wifi' }: { index?: number; source?: 'usb' | 'wifi' } = {},
+  { index = 0, source = 'wifi' }: Options = {},
 ): {
   exposureSetting: IConfigSetting | null;
   handleTakePicture: (opts?: { retryTimes?: number; silent?: boolean }) => void;
   setExposureSetting: Dispatch<IConfigSetting | null>;
 } => {
+  const hasEnded = useRef(false);
   const [exposureSetting, setExposureSetting] = useState<IConfigSetting | null>(null);
   const webCamConnection = useRef<null | WebCamConnection>(null);
   const connectWebCam = useCallback(async () => {
@@ -56,15 +59,13 @@ const useCamera = (
       }
 
       if (!imgBlob) {
-        if (retryTimes < 2) {
-          return handleTakePicture({ retryTimes: retryTimes + 1, silent });
-        }
+        if (hasEnded.current) return null;
+
+        if (retryTimes < 2) return handleTakePicture({ retryTimes: retryTimes + 1, silent });
 
         alertCaller.popUpError({ message: 'Unable to get image' });
 
-        if (!silent) {
-          progressCaller.popById('use-camera');
-        }
+        if (!silent) progressCaller.popById('use-camera');
 
         return null;
       }
@@ -130,6 +131,8 @@ const useCamera = (
     initSetup();
 
     return () => {
+      hasEnded.current = true;
+
       if (source === 'wifi') {
         deviceMaster.disconnectCamera();
       } else if (source === 'usb') {

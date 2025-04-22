@@ -3,6 +3,8 @@ import React, { act } from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
 import Chessboard from './Chessboard';
+import i18n from '@mocks/@core/helpers/i18n';
+import { sprintf } from 'sprintf-js';
 
 const mockPopUp = jest.fn();
 const mockPopUpError = jest.fn();
@@ -26,34 +28,14 @@ jest.mock('@core/helpers/camera-calibration-helper', () => ({
   calibrateChessboard: (...args) => mockCalibrateChessboard(...args),
 }));
 
-const mockUseCamera = jest.fn();
+const mockUseLiveFeed = jest.fn();
 
 jest.mock(
-  '../common/useCamera',
+  '../../common/useLiveFeed',
   () =>
     (...args) =>
-      mockUseCamera(...args),
+      mockUseLiveFeed(...args),
 );
-
-jest.mock('@core/helpers/useI18n', () => () => ({
-  calibration: {
-    calibrate_chessboard_success_msg: 'calibrate_chessboard_success_msg %s %f',
-    calibrating: 'calibrating',
-    camera_calibration: 'camera_calibration',
-    cancel: 'cancel',
-    failed_to_calibrate_chessboard: 'failed_to_calibrate_chessboard',
-    next: 'next',
-    put_chessboard_1: 'put_chessboard_1',
-    put_chessboard_2: 'put_chessboard_2',
-    put_chessboard_3: 'put_chessboard_3',
-    res_average: 'res_average',
-    res_excellent: 'res_excellent',
-    res_poor: 'res_poor',
-  },
-  monitor: {
-    download: 'download',
-  },
-}));
 
 const mockWriteFileDialog = jest.fn();
 
@@ -61,7 +43,7 @@ jest.mock('@core/implementations/dialog', () => ({
   writeFileDialog: (...args) => mockWriteFileDialog(...args),
 }));
 
-jest.mock('../common/ExposureSlider', () => ({ exposureSetting, onChange }: any) => (
+jest.mock('../../common/ExposureSlider', () => ({ exposureSetting, onChange }: any) => (
   <div>
     <h1>Mock ExposureSlider</h1>
     <p>min: {exposureSetting.min}</p>
@@ -77,23 +59,26 @@ jest.spyOn(global, 'clearTimeout');
 
 const mockHandleTakePicture = jest.fn();
 const mockSetExposureSetting = jest.fn();
-const mockCreateObjectURL = jest.fn();
-let handleImg: (imgBlob: Blob) => boolean;
 const mockConsoleError = jest.fn();
+const mockPauseLive = jest.fn();
+const mockRestartLive = jest.fn();
+const mockBlob = new Blob();
+
+const tCali = i18n.lang.calibration;
 
 describe('test Chessboard', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseCamera.mockImplementation((fn) => {
-      handleImg = fn;
-
+    mockUseLiveFeed.mockImplementation(() => {
       return {
         exposureSetting: { max: 650, min: 250, step: 1, value: 300 },
         handleTakePicture: mockHandleTakePicture,
+        img: { blob: mockBlob, url: 'mock-url' },
+        pauseLive: mockPauseLive,
+        restartLive: mockRestartLive,
         setExposureSetting: mockSetExposureSetting,
       };
     });
-    global.URL.createObjectURL = mockCreateObjectURL;
     console.error = mockConsoleError;
   });
 
@@ -103,24 +88,8 @@ describe('test Chessboard', () => {
     );
 
     expect(baseElement).toMatchSnapshot();
-    expect(mockUseCamera).toBeCalledTimes(1);
-    mockCreateObjectURL.mockReturnValue('mock-url');
-
-    const mockBlob = new Blob();
-
-    act(() => handleImg(mockBlob));
-    expect(mockCreateObjectURL).toBeCalledTimes(1);
+    expect(mockUseLiveFeed).toHaveBeenCalledTimes(1);
     expect(baseElement).toMatchSnapshot();
-  });
-
-  test('camera live', async () => {
-    render(<Chessboard chessboard={[7, 7]} onClose={jest.fn()} onNext={jest.fn()} updateParam={jest.fn()} />);
-    expect(setTimeout).toBeCalled();
-    expect(mockHandleTakePicture).not.toBeCalled();
-    await act(async () => {
-      jest.runAllTimers();
-    });
-    expect(mockHandleTakePicture).toBeCalled();
   });
 
   test('handleCalibrate success and go next', async () => {
@@ -129,9 +98,6 @@ describe('test Chessboard', () => {
     const { baseElement } = render(
       <Chessboard chessboard={[7, 7]} onClose={jest.fn()} onNext={mockOnNext} updateParam={mockUpdateParam} />,
     );
-    const mockBlob = new Blob();
-
-    act(() => handleImg(mockBlob));
 
     const mockRes = {
       data: { d: 'd', k: 'k', ret: 1, rvec: 'rvec', tvec: 'tvec' },
@@ -140,40 +106,40 @@ describe('test Chessboard', () => {
 
     mockCalibrateChessboard.mockResolvedValue(mockRes);
     await act(() => fireEvent.click(baseElement.querySelector('button.ant-btn-primary')));
-    expect(mockOpenNonstopProgress).toBeCalled();
-    expect(mockOpenNonstopProgress).toBeCalledWith({
+    expect(mockOpenNonstopProgress).toHaveBeenCalled();
+    expect(mockOpenNonstopProgress).toHaveBeenCalledWith({
       id: 'calibrate-chessboard',
-      message: 'calibrating',
+      message: tCali.calibrating,
     });
-    expect(clearTimeout).toBeCalled();
-    expect(mockCalibrateChessboard).toBeCalledTimes(1);
-    expect(mockCalibrateChessboard).toBeCalledWith(mockBlob, 0, [7, 7]);
-    expect(mockPopUp).toBeCalledTimes(1);
-    expect(mockPopUp).toBeCalledWith({
+    expect(mockPauseLive).toHaveBeenCalled();
+    expect(mockCalibrateChessboard).toHaveBeenCalledTimes(1);
+    expect(mockCalibrateChessboard).toHaveBeenCalledWith(mockBlob, 0, [7, 7]);
+    expect(mockPopUp).toHaveBeenCalledTimes(1);
+    expect(mockPopUp).toHaveBeenCalledWith({
       buttons: [
         {
           className: 'primary',
-          label: 'next',
+          label: tCali.next,
           onClick: expect.any(Function),
         },
         {
-          label: 'cancel',
+          label: tCali.cancel,
           onClick: expect.any(Function),
         },
       ],
-      message: 'calibrate_chessboard_success_msg res_excellent 1',
+      message: sprintf(tCali.calibrate_chessboard_success_msg, tCali.res_excellent, 1),
     });
 
     const { buttons } = mockPopUp.mock.calls[0][0];
 
     await act(() => buttons[0].onClick());
-    expect(mockUpdateParam).toBeCalled();
-    expect(mockUpdateParam).toBeCalledWith(mockRes.data);
-    expect(mockOnNext).toBeCalled();
-    expect(mockHandleTakePicture).not.toBeCalled();
-    expect(mockPopUpError).not.toBeCalled();
-    expect(mockPopById).toBeCalledTimes(1);
-    expect(mockPopById).toBeCalledWith('calibrate-chessboard');
+    expect(mockUpdateParam).toHaveBeenCalled();
+    expect(mockUpdateParam).toHaveBeenCalledWith(mockRes.data);
+    expect(mockOnNext).toHaveBeenCalled();
+    expect(mockHandleTakePicture).not.toHaveBeenCalled();
+    expect(mockPopUpError).not.toHaveBeenCalled();
+    expect(mockPopById).toHaveBeenCalledTimes(1);
+    expect(mockPopById).toHaveBeenCalledWith('calibrate-chessboard');
   });
 
   test('handleCalibrate success and cancel', async () => {
@@ -182,9 +148,6 @@ describe('test Chessboard', () => {
     const { baseElement } = render(
       <Chessboard chessboard={[7, 7]} onClose={jest.fn()} onNext={mockOnNext} updateParam={mockUpdateParam} />,
     );
-    const mockBlob = new Blob();
-
-    act(() => handleImg(mockBlob));
 
     const mockRes = {
       data: { d: 'd', k: 'k', ret: 5, rvec: 'rvec', tvec: 'tvec' },
@@ -193,37 +156,37 @@ describe('test Chessboard', () => {
 
     mockCalibrateChessboard.mockResolvedValue(mockRes);
     await act(() => fireEvent.click(baseElement.querySelector('button.ant-btn-primary')));
-    expect(mockOpenNonstopProgress).toBeCalled();
-    expect(mockOpenNonstopProgress).toBeCalledWith({
+    expect(mockOpenNonstopProgress).toHaveBeenCalled();
+    expect(mockOpenNonstopProgress).toHaveBeenCalledWith({
       id: 'calibrate-chessboard',
-      message: 'calibrating',
+      message: tCali.calibrating,
     });
-    expect(clearTimeout).toBeCalled();
-    expect(mockCalibrateChessboard).toBeCalledTimes(1);
-    expect(mockCalibrateChessboard).toBeCalledWith(mockBlob, 0, [7, 7]);
-    expect(mockPopUp).toBeCalledTimes(1);
-    expect(mockPopUp).toBeCalledWith({
+    expect(mockPauseLive).toHaveBeenCalled();
+    expect(mockCalibrateChessboard).toHaveBeenCalledTimes(1);
+    expect(mockCalibrateChessboard).toHaveBeenCalledWith(mockBlob, 0, [7, 7]);
+    expect(mockPopUp).toHaveBeenCalledTimes(1);
+    expect(mockPopUp).toHaveBeenCalledWith({
       buttons: [
         {
           className: 'primary',
-          label: 'next',
+          label: tCali.next,
           onClick: expect.any(Function),
         },
         {
-          label: 'cancel',
+          label: tCali.cancel,
           onClick: expect.any(Function),
         },
       ],
-      message: 'calibrate_chessboard_success_msg res_poor 5',
+      message: sprintf(tCali.calibrate_chessboard_success_msg, tCali.res_poor, 5),
     });
 
     const { buttons } = mockPopUp.mock.calls[0][0];
 
     await act(() => buttons[1].onClick());
-    expect(mockUpdateParam).not.toBeCalled();
-    expect(mockOnNext).not.toBeCalled();
-    expect(mockPopById).toBeCalledTimes(1);
-    expect(mockPopById).toBeCalledWith('calibrate-chessboard');
+    expect(mockUpdateParam).not.toHaveBeenCalled();
+    expect(mockOnNext).not.toHaveBeenCalled();
+    expect(mockPopById).toHaveBeenCalledTimes(1);
+    expect(mockPopById).toHaveBeenCalledWith('calibrate-chessboard');
   });
 
   test('download chessboard img', async () => {
@@ -232,11 +195,9 @@ describe('test Chessboard', () => {
     const { baseElement } = render(
       <Chessboard chessboard={[7, 7]} onClose={jest.fn()} onNext={mockOnNext} updateParam={mockUpdateParam} />,
     );
-    const mockBlob = new Blob();
 
-    act(() => handleImg(mockBlob));
     fireEvent.click(baseElement.querySelector('#download'));
-    expect(mockWriteFileDialog).toBeCalledTimes(1);
+    expect(mockWriteFileDialog).toHaveBeenCalledTimes(1);
   });
 
   test('calibration failed', async () => {
@@ -245,30 +206,24 @@ describe('test Chessboard', () => {
     const { baseElement } = render(
       <Chessboard chessboard={[7, 7]} onClose={jest.fn()} onNext={mockOnNext} updateParam={mockUpdateParam} />,
     );
-    const mockBlob = new Blob();
 
-    act(() => handleImg(mockBlob));
-
-    const mockRes = {
-      data: { reason: 'reason' },
-      success: false,
-    };
+    const mockRes = { data: { reason: 'reason' }, success: false };
 
     mockCalibrateChessboard.mockResolvedValue(mockRes);
     await act(() => fireEvent.click(baseElement.querySelector('button.ant-btn-primary')));
-    expect(mockOpenNonstopProgress).toBeCalled();
-    expect(mockOpenNonstopProgress).toBeCalledWith({
+    expect(mockOpenNonstopProgress).toHaveBeenCalled();
+    expect(mockOpenNonstopProgress).toHaveBeenCalledWith({
       id: 'calibrate-chessboard',
-      message: 'calibrating',
+      message: tCali.calibrating,
     });
-    expect(mockPopById).toBeCalledTimes(1);
-    expect(mockPopById).toBeCalledWith('calibrate-chessboard');
-    expect(mockUpdateParam).not.toBeCalled();
-    expect(mockOnNext).not.toBeCalled();
-    expect(mockPopUpError).toBeCalledTimes(1);
-    expect(mockPopUpError).toBeCalledWith({
-      message: 'failed_to_calibrate_chessboard reason',
+    expect(mockPopById).toHaveBeenCalledTimes(1);
+    expect(mockPopById).toHaveBeenCalledWith('calibrate-chessboard');
+    expect(mockUpdateParam).not.toHaveBeenCalled();
+    expect(mockOnNext).not.toHaveBeenCalled();
+    expect(mockPopUpError).toHaveBeenCalledTimes(1);
+    expect(mockPopUpError).toHaveBeenCalledWith({
+      message: `${tCali.failed_to_calibrate_chessboard} reason`,
     });
-    expect(mockHandleTakePicture).toBeCalledTimes(1);
+    expect(mockRestartLive).toHaveBeenCalledTimes(1);
   });
 });
