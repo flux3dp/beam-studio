@@ -196,12 +196,11 @@ describe('test DocumentSettings', () => {
     expect(mockTogglePresprayArea).toHaveBeenCalledTimes(1);
     expect(mockDiodeBoundaryDrawerShow).toHaveBeenCalledTimes(0);
     expect(mockDiodeBoundaryDrawerHide).toHaveBeenCalledTimes(0);
-    expect(mockCreateEventEmitter).toHaveBeenCalledTimes(2);
-    expect(mockCreateEventEmitter).toHaveBeenNthCalledWith(1, 'dpi-info');
-    expect(mockCreateEventEmitter).toHaveBeenNthCalledWith(2, 'canvas');
+    expect(mockCreateEventEmitter).toHaveBeenCalledTimes(1);
+    expect(mockCreateEventEmitter).toHaveBeenNthCalledWith(1, 'canvas');
     expect(mockEventEmitter.emit).toHaveBeenCalledTimes(3);
     expect(mockEventEmitter.emit).toHaveBeenNthCalledWith(1, 'GET_CANVAS_MODE', { mode: 1 });
-    expect(mockEventEmitter.emit).toHaveBeenNthCalledWith(2, 'UPDATE_DPI', 'high');
+    expect(mockEventEmitter.emit).toHaveBeenNthCalledWith(2, 'engrave_dpi', 'high');
     expect(mockEventEmitter.emit).toHaveBeenNthCalledWith(3, 'document-settings-saved');
     expect(mockUnmount).toHaveBeenCalledTimes(1);
   });
