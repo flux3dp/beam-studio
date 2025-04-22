@@ -63,6 +63,7 @@ interface Props {
 }
 
 const topBarEventEmitter = eventEmitterFactory.createEventEmitter('top-bar');
+const beamboxEventEmitter = eventEmitterFactory.createEventEmitter('beambox-preference');
 
 const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const {
@@ -166,13 +167,12 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   }, [minHeight, addOnInfo.autoFeeder, showAutoFeeder]);
 
   const handleSave = () => {
-    const dpiEvent = eventEmitterFactory.createEventEmitter('dpi-info');
     const workareaChanged = workarea !== origWorkarea;
     let customDimensionChanged = false;
     const rotaryChanged = rotaryMode !== BeamboxPreference.read('rotary_mode');
 
     BeamboxPreference.write('engrave_dpi', engraveDpi);
-    dpiEvent.emit('UPDATE_DPI', engraveDpi);
+    beamboxEventEmitter.emit('engrave_dpi', engraveDpi);
     BeamboxPreference.write('borderless', Boolean(addOnInfo.openBottom && borderless));
     BeamboxPreference.write('enable-diode', addOnInfo.hybridLaser && enableDiode);
     BeamboxPreference.write('enable-autofocus', addOnInfo.autoFocus && enableAutofocus);

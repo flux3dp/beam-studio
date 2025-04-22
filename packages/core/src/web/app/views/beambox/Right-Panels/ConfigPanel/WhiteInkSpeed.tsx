@@ -4,7 +4,7 @@ import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import configOptions from '@core/app/constants/config-options';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
-import useBeamboxPreference from '@core/helpers/hooks/useBeamboxPreference';
+import { useBeamboxPreference } from '@core/helpers/hooks/useBeamboxPreference';
 import useI18n from '@core/helpers/useI18n';
 import storage from '@core/implementations/storage';
 

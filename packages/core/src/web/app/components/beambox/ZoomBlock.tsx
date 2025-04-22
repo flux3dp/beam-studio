@@ -29,7 +29,7 @@ const calculateDpmm = async (): Promise<number> => {
         const match = res.stdout.match(/Model Identifier: (.+\b)/);
 
         if (match) {
-          const modelId = match[1];
+          const modelId = match[1] as keyof typeof macOSWindowSize;
           const monitorSize = macOSWindowSize[modelId];
 
           if (monitorSize) {
@@ -192,13 +192,8 @@ const ZoomBlock = ({ className, getZoom, isPathPreviewing, resetView, setZoom }:
   const zoomIn = useCallback(
     (currentRatio: number) => {
       const ratioInPercent = Math.round(currentRatio * 100);
-      let targetRatio: number;
-
-      if (ratioInPercent < 500) {
-        targetRatio = ratioInPercent + (10 - (ratioInPercent % 10) || 10);
-      } else {
-        targetRatio = ratioInPercent + (100 - (ratioInPercent % 100) || 100);
-      }
+      const factor = ratioInPercent <= 500 ? 10 : 100;
+      const targetRatio = ratioInPercent + (factor - (ratioInPercent % factor || factor));
 
       setRatio(targetRatio);
     },
@@ -208,13 +203,8 @@ const ZoomBlock = ({ className, getZoom, isPathPreviewing, resetView, setZoom }:
   const zoomOut = useCallback(
     (currentRatio: number) => {
       const ratioInPercent = Math.round(currentRatio * 100);
-      let targetRatio: number;
-
-      if (ratioInPercent <= 500) {
-        targetRatio = ratioInPercent - (ratioInPercent % 10 || 10);
-      } else {
-        targetRatio = ratioInPercent - (ratioInPercent % 100 || 100);
-      }
+      const factor = ratioInPercent <= 500 ? 10 : 100;
+      const targetRatio = ratioInPercent - (ratioInPercent % factor || factor);
 
       setRatio(targetRatio);
     },
@@ -225,10 +215,7 @@ const ZoomBlock = ({ className, getZoom, isPathPreviewing, resetView, setZoom }:
     <div
       className={classNames(
         styles.container,
-        {
-          [styles.mobile]: isMobile,
-          [styles['path-preview']]: isPathPreviewing,
-        },
+        { [styles.mobile]: isMobile, [styles['path-preview']]: isPathPreviewing },
         className,
       )}
     >
@@ -247,24 +234,11 @@ const ZoomBlock = ({ className, getZoom, isPathPreviewing, resetView, setZoom }:
         <MenuItem attributes={{ id: 'fit_to_window' }} onClick={resetView}>
           {lang.fit_to_window}
         </MenuItem>
-        <MenuItem attributes={{ id: 'ratio_25%' }} onClick={() => setRatio(25)}>
-          25 %
-        </MenuItem>
-        <MenuItem attributes={{ id: 'ratio_50%' }} onClick={() => setRatio(50)}>
-          50 %
-        </MenuItem>
-        <MenuItem attributes={{ id: 'ratio_75%' }} onClick={() => setRatio(75)}>
-          75 %
-        </MenuItem>
-        <MenuItem attributes={{ id: 'ratio_100%' }} onClick={() => setRatio(100)}>
-          100 %
-        </MenuItem>
-        <MenuItem attributes={{ id: 'ratio_150%' }} onClick={() => setRatio(150)}>
-          150 %
-        </MenuItem>
-        <MenuItem attributes={{ id: 'ratio_200%' }} onClick={() => setRatio(200)}>
-          200 %
-        </MenuItem>
+        {[25, 50, 75, 100, 150, 200].map((ratio) => (
+          <MenuItem attributes={{ id: `ratio_${ratio}%` }} key={ratio} onClick={() => setRatio(ratio)}>
+            {`${ratio} %`}
+          </MenuItem>
+        ))}
       </ContextMenu>
     </div>
   );

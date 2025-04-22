@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 
 import configOptions from '@core/app/constants/config-options';
-import useBeamboxPreference from '@core/helpers/hooks/useBeamboxPreference';
+import { useBeamboxPreference } from '@core/helpers/hooks/useBeamboxPreference';
 import useI18n from '@core/helpers/useI18n';
 
 import ConfigSlider from './ConfigSlider';
