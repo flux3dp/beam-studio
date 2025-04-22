@@ -13,7 +13,7 @@ import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import { getCurrentUser } from '@core/helpers/api/flux-id';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import useBeamboxPreference from '@core/helpers/hooks/useBeamboxPreference';
+import { useBeamboxPreference } from '@core/helpers/hooks/useBeamboxPreference';
 import isDev from '@core/helpers/is-dev';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';

@@ -38,7 +38,7 @@ export type BeamboxPreference = {
   'enable-job-origin': boolean;
   'enable-uv-print-file': boolean;
   enable_mask: boolean;
-  engrave_dpi: 'high' | 'low' | 'medium';
+  engrave_dpi: 'high' | 'low' | 'medium' | 'ultra';
   'extend-rotary-workarea': boolean;
   fast_gradient: boolean;
   'font-convert': '1.0' | '2.0';

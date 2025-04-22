@@ -52,17 +52,17 @@ export const SvgEditor = (): ReactNode => {
           <div id="cur_context_panel" />
           <div className="dropdown" id="option_lists" />
         </div>
+        {mode !== CanvasMode.PathPreview && (
+          <>
+            <ZoomBlock
+              resetView={workareaManager.resetView}
+              setZoom={(zoom) => workareaManager.zoom(zoom / constant.dpmm)}
+            />
+            <DpiInfo />
+          </>
+        )}
       </div>
       {mode === CanvasMode.PathPreview && <PathPreview />}
-      {mode !== CanvasMode.PathPreview && (
-        <>
-          <ZoomBlock
-            resetView={workareaManager.resetView}
-            setZoom={(zoom) => workareaManager.zoom(zoom / constant.dpmm)}
-          />
-          <DpiInfo />
-        </>
-      )}
     </>
   );
 };
