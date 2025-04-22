@@ -1,4 +1,4 @@
-import React, { memo, useContext, useEffect, useMemo, useState } from 'react';
+import React, { memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { InstagramOutlined } from '@ant-design/icons';
 
@@ -28,7 +28,20 @@ getSVGAsync(({ Canvas }) => {
   svgCanvas = Canvas;
 });
 
-const eventEmitter = eventEmitterFactory.createEventEmitter('drawing-tool');
+type ToolButtonProps = {
+  className?: string;
+  disabled?: boolean;
+  icon: React.JSX.Element;
+  id: string;
+  isActive?: boolean;
+  label?: string;
+  onClick: () => void;
+  showBadge?: boolean;
+  style?: React.CSSProperties;
+};
+
+const drawingToolEventEmitter = eventEmitterFactory.createEventEmitter('drawing-tool');
+const beamyEventEmitter = eventEmitterFactory.createEventEmitter('beamy');
 
 const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX.Element => {
   const lang = useI18n();
@@ -38,91 +51,169 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
   const addOnInfo = getAddOnInfo(workarea);
   const isRotary = useBeamboxPreference('rotary_mode') && Boolean(addOnInfo.rotary);
   const isAutoFeeder = useBeamboxPreference('auto-feeder') && Boolean(addOnInfo.autoFeeder);
-  const isPassThrough = useBeamboxPreference('pass-through') && addOnInfo.passThrough;
+  const isPassThrough = useBeamboxPreference('pass-through') && Boolean(addOnInfo.passThrough);
   const isCurveEngravingDisabled = useMemo(
     () => isAutoFeeder || isRotary || isPassThrough,
     [isAutoFeeder, isRotary, isPassThrough],
   );
   const [activeButton, setActiveButton] = useState('Cursor');
   const isSubscribed = getCurrentUser()?.info?.subscription?.is_valid;
-  const renderToolButton = (
-    id: string,
-    icon: React.JSX.Element,
-    label: string,
-    onClick: () => void,
-    showBadge = false,
+  const [isBeamyShown, setIsBeamyShown] = useState(false);
+  const renderToolButton = ({
+    className = undefined,
     disabled = false,
-  ) => (
+    icon,
+    id,
+    isActive = true,
+    label = id,
+    onClick,
+    showBadge = false,
+    style = undefined,
+  }: ToolButtonProps) => (
     <LeftPanelButton
       active={activeButton === id}
+      className={className}
       disabled={disabled}
       icon={icon}
       id={`left-${id}`}
       onClick={() => {
-        setActiveButton(id);
+        if (isActive) setActiveButton(id);
+
         svgCanvas?.clearSelection();
         onClick();
       }}
       showBadge={showBadge}
+      style={style}
       title={label}
     />
   );
 
+  const toggleBeamy = useCallback(() => {
+    beamyEventEmitter.emit('SHOW_BEAMY', !isBeamyShown);
+    setIsBeamyShown(!isBeamyShown);
+
+    if (isBeamyShown) setActiveButton('Cursor');
+  }, [isBeamyShown]);
+
   useEffect(() => {
-    eventEmitter.on('SET_ACTIVE_BUTTON', setActiveButton);
+    drawingToolEventEmitter.on('SET_ACTIVE_BUTTON', setActiveButton);
 
     return () => {
-      eventEmitter.removeListener('SET_ACTIVE_BUTTON');
+      drawingToolEventEmitter.removeListener('SET_ACTIVE_BUTTON');
     };
   }, []);
 
   return (
     <div className={className}>
-      {renderToolButton('Preview', <LeftPanelIcons.Camera />, lang.topbar.preview, () => {
-        changeToPreviewMode();
-        setupPreviewMode();
+      {renderToolButton({
+        icon: <LeftPanelIcons.Camera />,
+        id: 'Preview',
+        label: lang.topbar.preview,
+        onClick: () => {
+          changeToPreviewMode();
+          setupPreviewMode();
+        },
       })}
-      {renderToolButton('Cursor', <LeftPanelIcons.Cursor />, `${tLeftPanel.label.cursor} (V)`, FnWrapper.useSelectTool)}
-      {renderToolButton('Photo', <LeftPanelIcons.Photo />, `${tLeftPanel.label.photo} (I)`, FnWrapper.importImage)}
-      {renderToolButton(
-        'MyCloud',
-        <LeftPanelIcons.Cloud />,
-        tLeftPanel.label.my_cloud,
-        () => dialogCaller.showMyCloud(FnWrapper.useSelectTool),
-        isSubscribed,
-      )}
-      {renderToolButton('Text', <LeftPanelIcons.Text />, `${tLeftPanel.label.text} (T)`, FnWrapper.insertText)}
-      {renderToolButton('Element', <LeftPanelIcons.Element />, `${tLeftPanel.label.elements} (E)`, () =>
-        dialogCaller.showElementPanel(FnWrapper.useSelectTool),
-      )}
-      {renderToolButton(
-        'Rectangle',
-        <LeftPanelIcons.Rect />,
-        `${tLeftPanel.label.rect} (M)`,
-        FnWrapper.insertRectangle,
-      )}
-      {renderToolButton('Ellipse', <LeftPanelIcons.Oval />, `${tLeftPanel.label.oval} (C)`, FnWrapper.insertEllipse)}
-      {renderToolButton('Polygon', <LeftPanelIcons.Polygon />, tLeftPanel.label.polygon, FnWrapper.insertPolygon)}
-      {renderToolButton('Line', <LeftPanelIcons.Line />, `${tLeftPanel.label.line} (\\)`, FnWrapper.insertLine)}
-      {renderToolButton('Pen', <LeftPanelIcons.Draw />, `${tLeftPanel.label.pen} (P)`, FnWrapper.insertPath)}
+      {renderToolButton({
+        icon: <LeftPanelIcons.Cursor />,
+        id: 'Cursor',
+        label: `${tLeftPanel.label.cursor} (V)`,
+        onClick: FnWrapper.useSelectTool,
+      })}
+      {renderToolButton({
+        icon: <LeftPanelIcons.Photo />,
+        id: 'Photo',
+        label: `${tLeftPanel.label.photo} (I)`,
+        onClick: FnWrapper.importImage,
+      })}
+      {renderToolButton({
+        icon: <LeftPanelIcons.Cloud />,
+        id: 'MyCloud',
+        label: tLeftPanel.label.my_cloud,
+        onClick: () => dialogCaller.showMyCloud(FnWrapper.useSelectTool),
+        showBadge: isSubscribed,
+      })}
+      {renderToolButton({
+        icon: <LeftPanelIcons.Text />,
+        id: 'Text',
+        label: `${tLeftPanel.label.text} (T)`,
+        onClick: FnWrapper.insertText,
+      })}
+      {renderToolButton({
+        icon: <LeftPanelIcons.Element />,
+        id: 'Element',
+        label: `${tLeftPanel.label.shapes} (E)`,
+        onClick: () => dialogCaller.showShapePanel(FnWrapper.useSelectTool),
+      })}
+      {renderToolButton({
+        icon: <LeftPanelIcons.Rect />,
+        id: 'Rectangle',
+        label: `${tLeftPanel.label.rect} (M)`,
+        onClick: FnWrapper.insertRectangle,
+      })}
+      {renderToolButton({
+        icon: <LeftPanelIcons.Oval />,
+        id: 'Ellipse',
+        label: `${tLeftPanel.label.oval} (C)`,
+        onClick: FnWrapper.insertEllipse,
+      })}
+      {renderToolButton({
+        icon: <LeftPanelIcons.Polygon />,
+        id: 'Polygon',
+        label: tLeftPanel.label.polygon,
+        onClick: FnWrapper.insertPolygon,
+      })}
+      {renderToolButton({
+        icon: <LeftPanelIcons.Line />,
+        id: 'Line',
+        label: `${tLeftPanel.label.line} (\\)`,
+        onClick: FnWrapper.insertLine,
+      })}
+      {renderToolButton({
+        icon: <LeftPanelIcons.Draw />,
+        id: 'Pen',
+        label: `${tLeftPanel.label.pen} (P)`,
+        onClick: FnWrapper.insertPath,
+      })}
       {([selectedDevice?.model, workarea].includes('fbb2') || isDev()) &&
-        renderToolButton(
-          'curve-engrave',
-          <LeftPanelIcons.CurveEngrave />,
-          isCurveEngravingDisabled ? lang.global.mode_conflict : tLeftPanel.label.curve_engraving.title,
-          () => curveEngravingModeController.start(),
-          false,
-          isCurveEngravingDisabled,
-        )}
+        renderToolButton({
+          disabled: isCurveEngravingDisabled,
+          icon: <LeftPanelIcons.CurveEngrave />,
+          id: 'curve-engrave',
+          label: isCurveEngravingDisabled ? lang.global.mode_conflict : tLeftPanel.label.curve_engraving.title,
+          onClick: () => curveEngravingModeController.start(),
+          showBadge: false,
+        })}
       {hasPassthroughExtension &&
-        renderToolButton('PassThrough', <LeftPanelIcons.PassThrough />, tLeftPanel.label.pass_through, () =>
-          showPassThrough(FnWrapper.useSelectTool),
-        )}
+        renderToolButton({
+          icon: <LeftPanelIcons.PassThrough />,
+          id: 'PassThrough',
+          label: tLeftPanel.label.pass_through,
+          onClick: () => showPassThrough(FnWrapper.useSelectTool),
+        })}
+
       <div className={styles.separator} />
-      {renderToolButton('IG', <InstagramOutlined />, 'Instagram', () => browser.open(getSocialMedia().instagram.link))}
-      {renderToolButton('DM', <LeftPanelIcons.DM />, 'Design Market', () =>
-        browser.open(lang.topbar.menu.link.design_market),
-      )}
+
+      {renderToolButton({
+        className: styles.beamy,
+        icon: <LeftPanelIcons.Beamy />,
+        id: 'Beamy',
+        isActive: false,
+        onClick: toggleBeamy,
+        style: { color: isBeamyShown ? '#1890ff' : undefined },
+      })}
+      {renderToolButton({
+        icon: <InstagramOutlined />,
+        id: 'Instagram',
+        isActive: false,
+        onClick: () => browser.open(getSocialMedia().instagram.link),
+      })}
+      {renderToolButton({
+        icon: <LeftPanelIcons.DesignMarket />,
+        id: 'Design Market',
+        isActive: false,
+        onClick: () => browser.open(lang.topbar.menu.link.design_market),
+      })}
     </div>
   );
 };
