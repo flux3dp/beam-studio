@@ -21,7 +21,7 @@ import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelIte
 import objectPanelItemStyles from '@core/app/views/beambox/Right-Panels/ObjectPanelItem.module.scss';
 import { getAutoFeeder } from '@core/helpers/addOn';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import useBeamboxPreference from '@core/helpers/hooks/useBeamboxPreference';
+import { useBeamboxPreference } from '@core/helpers/hooks/useBeamboxPreference';
 import useHasCurveEngraving from '@core/helpers/hooks/useHasCurveEngraving';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import doLayersContainsVector from '@core/helpers/layer/check-vector';
