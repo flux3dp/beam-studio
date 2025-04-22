@@ -12,7 +12,7 @@ import history from '@core/app/svgedit/history/history';
 import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import objectPanelItemStyles from '@core/app/views/beambox/Right-Panels/ObjectPanelItem.module.scss';
-import useBeamboxPreference from '@core/helpers/hooks/useBeamboxPreference';
+import { useBeamboxPreference } from '@core/helpers/hooks/useBeamboxPreference';
 import { CUSTOM_PRESET_CONSTANT, writeData } from '@core/helpers/layer/layer-config-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';

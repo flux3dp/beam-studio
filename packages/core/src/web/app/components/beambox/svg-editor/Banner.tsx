@@ -6,7 +6,7 @@ import { getAddOnInfo } from '@core/app/constants/addOn';
 import CanvasMode from '@core/app/constants/canvasMode';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
-import useBeamboxPreference from '@core/helpers/hooks/useBeamboxPreference';
+import { useBeamboxPreference } from '@core/helpers/hooks/useBeamboxPreference';
 import useHasCurveEngraving from '@core/helpers/hooks/useHasCurveEngraving';
 import useI18n from '@core/helpers/useI18n';
 
