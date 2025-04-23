@@ -6,12 +6,9 @@ import type { IDeviceInfo } from '@core/interfaces/IDevice';
 const topBarEventEmitter = eventEmitterFactory.createEventEmitter('top-bar');
 
 const setElement = (elem: Element | null): void => {
-  if (!elem) {
-    BeamboxGlobalInteraction.onObjectBlur();
-  } else {
-    BeamboxGlobalInteraction.onObjectBlur();
-    BeamboxGlobalInteraction.onObjectFocus([elem]);
-  }
+  BeamboxGlobalInteraction.onObjectBlur();
+
+  if (elem) BeamboxGlobalInteraction.onObjectFocus([elem]);
 
   topBarEventEmitter.emit('SET_ELEMENT', elem);
 };
@@ -33,9 +30,7 @@ const setHasUnsavedChange = (hasUnsavedChange: boolean): void => {
 };
 
 const getTopBarPreviewMode = (): boolean => {
-  const response = {
-    mode: CanvasMode.Draw,
-  };
+  const response = { mode: CanvasMode.Draw };
 
   topBarEventEmitter.emit('GET_CANVAS_MODE', response);
 
@@ -43,9 +38,7 @@ const getTopBarPreviewMode = (): boolean => {
 };
 
 const getSelectedDevice = (): IDeviceInfo | null => {
-  const response = {
-    selectedDevice: null,
-  };
+  const response = { selectedDevice: null };
 
   topBarEventEmitter.emit('GET_SELECTED_DEVICE', response);
 

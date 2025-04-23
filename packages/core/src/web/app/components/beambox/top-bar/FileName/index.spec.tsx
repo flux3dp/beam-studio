@@ -2,7 +2,7 @@ import React from 'react';
 
 import { render } from '@testing-library/react';
 
-import FileName from './FileName';
+import FileName from './index';
 
 const mockGetName = jest.fn();
 const mockGetIsCloudFile = jest.fn();

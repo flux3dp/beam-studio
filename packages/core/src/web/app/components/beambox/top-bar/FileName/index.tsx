@@ -1,14 +1,12 @@
 import React, { useEffect } from 'react';
 
-import ReactDomServer from 'react-dom/server';
-
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
 import useForceUpdate from '@core/helpers/use-force-update';
 import useI18n from '@core/helpers/useI18n';
 
-import styles from './FileName.module.scss';
+import styles from './index.module.scss';
 
 interface Props {
   hasUnsavedChange: boolean;
@@ -37,23 +35,5 @@ function FileName({ hasUnsavedChange, isTitle = false }: Props): React.JSX.Eleme
     </div>
   );
 }
-
-const updateTitle = () => {
-  if (window.os === 'Windows' && window.titlebar) {
-    const title = ReactDomServer.renderToStaticMarkup(<FileName hasUnsavedChange={false} isTitle />);
-
-    if (window.titlebar?.title) {
-      window.titlebar.title.innerHTML = title;
-    }
-  }
-};
-
-export const registerWindowUpdateTitle = (): void => {
-  TopBarController.onTitleChange(updateTitle);
-};
-
-export const unregisterWindowUpdateTitle = (): void => {
-  TopBarController.offTitleChange(updateTitle);
-};
 
 export default FileName;
