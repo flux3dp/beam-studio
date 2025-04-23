@@ -24,14 +24,23 @@ const useLiveFeed = (opts?: Options) => {
 
   const { exposureSetting, handleTakePicture, setExposureSetting } = useCamera(handleImg, opts);
 
+  const setLiveTimeout = useCallback(() => {
+    if (!cameraLive.current) return;
+
+    if (liveTimeout.current) clearTimeout(liveTimeout.current);
+
+    liveTimeout.current = setTimeout(async () => {
+      liveTimeout.current = undefined;
+
+      const res = await handleTakePicture({ silent: true });
+
+      if (!res) setLiveTimeout();
+    }, 1000);
+  }, [handleTakePicture]);
+
   useEffect(() => {
-    if (cameraLive.current) {
-      liveTimeout.current = setTimeout(() => {
-        handleTakePicture({ silent: true });
-        liveTimeout.current = undefined;
-      }, 1000);
-    }
-  }, [img, handleTakePicture]);
+    setLiveTimeout();
+  }, [img, setLiveTimeout]);
 
   const pauseLive = useCallback(() => {
     cameraLive.current = false;
@@ -42,8 +51,8 @@ const useLiveFeed = (opts?: Options) => {
 
   const restartLive = useCallback(() => {
     cameraLive.current = true;
-    handleTakePicture({ silent: true });
-  }, [handleTakePicture]);
+    setLiveTimeout();
+  }, [setLiveTimeout]);
 
   return { exposureSetting, handleTakePicture, img, pauseLive, restartLive, setExposureSetting };
 };

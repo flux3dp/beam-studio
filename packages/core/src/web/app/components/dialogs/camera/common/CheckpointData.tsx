@@ -35,7 +35,7 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
   const progressId = useMemo(() => 'camera-check-point', []);
   const [checkpointData, setCheckpointData] = useState<null | {
     data: T;
-    file: string;
+    isCheckPointData?: boolean;
   }>(null);
   const lang = useI18n();
   const checkData = useCallback(async () => {
@@ -53,6 +53,20 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
         res = (await loadJson('fisheye', 'fisheye_params.json')) as T;
       }
 
+      if (res.v === 4) {
+        setCheckpointData({
+          data: {
+            d: res.d,
+            k: res.k,
+            rvec: res.rvec,
+            tvec: res.tvec,
+          } as T,
+        });
+        progressCaller.popById(progressId);
+
+        return;
+      }
+
       if (res.v === 3) {
         setCheckpointData({
           data: {
@@ -61,7 +75,6 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
             rvec: res.rvec,
             tvec: res.tvec,
           } as T,
-          file: 'fisheye_params.json',
         });
         progressCaller.popById(progressId);
 
@@ -78,7 +91,6 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
             source: res.source,
             tvec: res.tvec,
           } as T,
-          file: 'fisheye_params.json',
         });
         progressCaller.popById(progressId);
 
@@ -95,7 +107,7 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
         if (data) {
           setCheckpointData({
             data,
-            file: 'checkpoint.json',
+            isCheckPointData: true,
           });
           progressCaller.popById(progressId);
 
@@ -179,7 +191,7 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
     >
       {!checkpointData && lang.calibration.checking_checkpoint}
       {checkpointData?.data &&
-        (checkpointData.file === 'fisheye_params.json'
+        (checkpointData.isCheckPointData
           ? lang.calibration.use_old_camera_parameter
           : lang.calibration.found_checkpoint)}
     </Modal>

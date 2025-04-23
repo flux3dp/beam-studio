@@ -4,13 +4,17 @@ import { match } from 'ts-pattern';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
-import { solvePnPCalculate } from '@core/helpers/camera-calibration-helper';
+import { extrinsicRegression, solvePnPCalculate } from '@core/helpers/camera-calibration-helper';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import getFocalDistance from '@core/helpers/device/camera/getFocalDistance';
-import { loadJson } from '@core/helpers/device/jsonDataHelper';
+import { loadJson, uploadJson } from '@core/helpers/device/jsonDataHelper';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
-import type { FisheyeCameraParametersV4Cali, WideAngleRegion } from '@core/interfaces/FisheyePreview';
+import type {
+  FisheyeCameraParametersV4,
+  FisheyeCameraParametersV4Cali,
+  WideAngleRegion,
+} from '@core/interfaces/FisheyePreview';
 
 import CheckpointData from '../../common/CheckpointData';
 import Instruction from '../../common/Instruction';
@@ -20,8 +24,11 @@ import { bb2WideAngleCameraPnpPoints, getBB2WideAnglePoints } from '../../common
 import movePlatformRel from '../movePlatformRel';
 import SolvePnPInstruction from '../SolvePnPInstruction';
 
+import ChArUco from './ChArUco';
+
 const enum Step {
   CHECK_DATA,
+  CALIBRATE_CHARUCO,
   PUT_PAPER,
   SOLVE_PNP_INSTRUCTION,
   SOLVE_PNP_TL_1,
@@ -29,13 +36,12 @@ const enum Step {
   SOLVE_PNP_BL_1,
   SOLVE_PNP_BR_1,
   SOLVE_OTHER_PNP_1,
-  SOLVE_PNP_INSTRUCTION_2,
   SOLVE_PNP_TL_2,
   SOLVE_PNP_TR_2,
   SOLVE_PNP_BL_2,
   SOLVE_PNP_BR_2,
   SOLVE_OTHER_PNP_2,
-  SOLVE_PNP_2,
+  SOLVE_EXTRINSIC_REGRESSION,
 }
 
 interface Props {
@@ -45,7 +51,7 @@ interface Props {
 const WideAngleCamera = ({ onClose }: Props): ReactNode => {
   const PROGRESS_ID = 'bb2-calibration';
   const { calibration: tCali, device: tDevice } = useI18n();
-  const [step, setStep] = useState(Step.PUT_PAPER);
+  const [step, setStep] = useState(Step.CHECK_DATA);
   const next = useCallback(() => setStep((cur) => cur + 1), []);
   const prev = useCallback(() => setStep((cur) => cur - 1), []);
 
@@ -53,10 +59,7 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
   const handleClose = (res?: boolean) => {
     progressCaller.popById(PROGRESS_ID);
     onClose(res);
-    setStep(Step.CHECK_DATA);
   };
-
-  console.log(calibratingParam.current);
 
   const updateParam = useCallback((param: FisheyeCameraParametersV4Cali) => {
     calibratingParam.current = { ...calibratingParam.current, ...param };
@@ -74,15 +77,15 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
             if (res) {
               setStep(Step.PUT_PAPER);
             } else {
-              alertCaller.popUpError({
-                message: tCali.unable_to_load_camera_parameters,
-              });
-              handleClose(false);
+              setStep(Step.CALIBRATE_CHARUCO);
             }
           }}
           updateParam={updateParam}
         />
       );
+    })
+    .with(Step.CALIBRATE_CHARUCO, () => {
+      return <ChArUco onClose={handleClose} onNext={next} updateParam={updateParam} />;
     })
     .with(Step.PUT_PAPER, () => {
       const handleNext = async (doEngraving = true) => {
@@ -140,9 +143,7 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
         />
       );
     })
-    .with(Step.SOLVE_PNP_INSTRUCTION, Step.SOLVE_PNP_INSTRUCTION_2, () => (
-      <SolvePnPInstruction onClose={handleClose} onNext={next} onPrev={prev} />
-    ))
+    .with(Step.SOLVE_PNP_INSTRUCTION, () => <SolvePnPInstruction onClose={handleClose} onNext={next} onPrev={prev} />)
     .with(
       Step.SOLVE_PNP_TL_1,
       Step.SOLVE_PNP_TR_1,
@@ -258,6 +259,57 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
             }
 
             progressCaller.popById(PROGRESS_ID);
+          }}
+        />
+      );
+    })
+    .with(Step.SOLVE_EXTRINSIC_REGRESSION, () => {
+      return (
+        <ProcessingDialog
+          onClose={handleClose}
+          onNext={() => onClose(true)}
+          process={async () => {
+            try {
+              progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: tDevice.processing });
+
+              const { dh1, dh2, rvecs1, rvecs2, tvecs1, tvecs2 } = calibratingParam.current;
+              const heights = [dh1!, dh2!];
+              const regions = Object.keys(rvecs1!) as WideAngleRegion[];
+              const rvecPolyfits: Partial<Record<WideAngleRegion, number[][]>> = {};
+              const tvecPolyfits: Partial<Record<WideAngleRegion, number[][]>> = {};
+
+              for (let i = 0; i < regions.length; i++) {
+                const region = regions[i];
+                const rvecs = [rvecs1![region]!, rvecs2![region]!];
+                const tvecs = [tvecs1![region]!, tvecs2![region]!];
+                const res = await extrinsicRegression(rvecs, tvecs, heights);
+
+                if (!res.success) throw new Error(`Failed to solve extrinsic regression for ${region}.`);
+
+                const { rvec_polyfit, tvec_polyfit } = res.data!;
+
+                rvecPolyfits[region] = rvec_polyfit;
+                tvecPolyfits[region] = tvec_polyfit;
+              }
+
+              const res: FisheyeCameraParametersV4 = {
+                d: calibratingParam.current.d!,
+                k: calibratingParam.current.k!,
+                ret: calibratingParam.current.ret!,
+                rvec: calibratingParam.current.rvec!,
+                rvec_polyfits: rvecPolyfits as Record<WideAngleRegion, number[][]>,
+                tvec: calibratingParam.current.tvec!,
+                tvec_polyfits: tvecPolyfits as Record<WideAngleRegion, number[][]>,
+                v: 4,
+              };
+
+              await uploadJson(res, 'fisheye', 'wide-angle.json');
+              progressCaller.update(PROGRESS_ID, { message: 'Moving platform' });
+              await movePlatformRel(40);
+              alertCaller.popUp({ message: tCali.camera_parameter_saved_successfully });
+            } finally {
+              progressCaller.popById(PROGRESS_ID);
+            }
           }}
         />
       );

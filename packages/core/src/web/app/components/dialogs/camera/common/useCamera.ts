@@ -16,7 +16,7 @@ const useCamera = (
   { index = 0, source = 'wifi' }: Options = {},
 ): {
   exposureSetting: IConfigSetting | null;
-  handleTakePicture: (opts?: { retryTimes?: number; silent?: boolean }) => void;
+  handleTakePicture: (opts?: { retryTimes?: number; silent?: boolean }) => Promise<Blob | null>;
   setExposureSetting: Dispatch<IConfigSetting | null>;
 } => {
   const hasEnded = useRef(false);

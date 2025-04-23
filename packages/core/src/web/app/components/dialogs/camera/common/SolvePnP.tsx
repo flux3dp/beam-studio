@@ -206,6 +206,15 @@ const SolvePnP = ({
     source: imgSource,
   });
 
+  useEffect(() => {
+    if (svgRef.current) {
+      setImg(null);
+      setImgLoaded(false);
+      setSelectedPointIdx(-1);
+      handleTakePicture();
+    }
+  }, [refPoints, handleTakePicture]);
+
   const handleContainerDragStart = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     dragStartPos.current = {
       startX: e.currentTarget.scrollLeft,

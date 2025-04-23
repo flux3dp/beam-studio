@@ -1,6 +1,6 @@
 import Constant from '@core/app/actions/beambox/constant';
 import { CALIBRATION_PARAMS, DEFAULT_CAMERA_OFFSET } from '@core/app/constants/cameraConstants';
-import CameraCalibrationApi from '@core/helpers/api/camera-calibration';
+import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import VersionChecker from '@core/helpers/version-checker';
@@ -11,8 +11,6 @@ import type {
   FisheyeCameraParametersV2Cali,
 } from '@core/interfaces/FisheyePreview';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
-
-const api = new CameraCalibrationApi();
 
 const doAnalyzeResult = async (
   imgBlobUrl: string,
@@ -81,7 +79,7 @@ export const doSendPictureTask = async (imgBlobUrl: string): Promise<CameraConfi
 
       fileReader.onloadend = async (e) => {
         try {
-          const resp = await api.upload(e.target.result as ArrayBuffer);
+          const resp = await cameraCalibrationApi.upload(e.target!.result as ArrayBuffer);
 
           d.resolve(resp);
         } catch (resp) {
@@ -162,11 +160,11 @@ export const sendPictureThenSetConfig = async (
   }
 };
 
-export const startFisheyeCalibrate = (): Promise<boolean> => api.startFisheyeCalibrate();
+export const startFisheyeCalibrate = (): Promise<boolean> => cameraCalibrationApi.startFisheyeCalibrate();
 export const addFisheyeCalibrateImg = (height: number, imgBlob: Blob): Promise<boolean> =>
-  api.addFisheyeCalibrateImg(height, imgBlob);
+  cameraCalibrationApi.addFisheyeCalibrateImg(height, imgBlob);
 export const doFishEyeCalibration = (onProgress?: (val: number) => void): Promise<FisheyeCameraParametersV2Cali> =>
-  api.doFisheyeCalibration(onProgress);
+  cameraCalibrationApi.doFisheyeCalibration(onProgress);
 
 export const setFisheyeConfig = async (data: FisheyeCameraParameters): Promise<{ status: string }> => {
   const strData = JSON.stringify(data, (key, val) => {
@@ -450,7 +448,7 @@ export const calibrateChessboard = async (
     }
   | { data: { reason: string }; success: false }
 > => {
-  const resp = api.calibrateChessboard(img, height, chessboard);
+  const resp = cameraCalibrationApi.calibrateChessboard(img, height, chessboard);
 
   return resp;
 };
@@ -472,7 +470,7 @@ export const solvePnPFindCorners = async (
       success: false;
     }
 > => {
-  const resp = await api.solvePnPFindCorners(img, dh, refPoints, interestArea);
+  const resp = await cameraCalibrationApi.solvePnPFindCorners(img, dh, refPoints, interestArea);
 
   return resp;
 };
@@ -485,13 +483,13 @@ export const solvePnPCalculate = async (
   data: { rvec: number[]; tvec: number[] };
   success: boolean;
 }> => {
-  const resp = await api.solvePnPCalculate(dh, points, refPoints);
+  const resp = await cameraCalibrationApi.solvePnPCalculate(dh, points, refPoints);
 
   return resp;
 };
 
 export const updateData = async (data: FisheyeCaliParameters): Promise<boolean> => {
-  const resp = await api.updateData(data);
+  const resp = await cameraCalibrationApi.updateData(data);
 
   return resp;
 };
@@ -504,7 +502,7 @@ export const extrinsicRegression = async (
   data?: { rvec_polyfit: number[][]; tvec_polyfit: number[][] };
   success: boolean;
 }> => {
-  const resp = await api.extrinsicRegression(rvecs, tvecs, heights);
+  const resp = await cameraCalibrationApi.extrinsicRegression(rvecs, tvecs, heights);
 
   return resp;
 };

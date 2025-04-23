@@ -14,7 +14,7 @@ import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import type {
   FisheyeCameraParameters,
-  FisheyeCameraParametersV2,
+  FisheyeCameraParametersV4,
   PerspectiveGrid,
 } from '@core/interfaces/FisheyePreview';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
@@ -22,21 +22,25 @@ import { MessageLevel } from '@core/interfaces/IMessage';
 import type { PreviewManager } from '@core/interfaces/PreviewManager';
 
 import BasePreviewManager from './BasePreviewManager';
-import FisheyePreviewManagerV2 from './FisheyePreviewManagerV2';
+import FisheyePreviewManagerV4 from './FisheyePreviewManagerV4';
 
 // TODO: Add tests
 class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
   private cameraType: CameraType = CameraType.LASER_HEAD;
   private lineCheckEnabled: boolean = false;
   private originalSpeed?: number;
-  private wideAngleFisheyeManager?: FisheyePreviewManagerV2;
-  private wideAngleFisheyeParams?: FisheyeCameraParametersV2;
+  private wideAngleFisheyeManager?: FisheyePreviewManagerV4;
+  private wideAngleFisheyeParams?: FisheyeCameraParametersV4;
   private fisheyeParams?: FisheyeCameraParameters;
   private cameraPpmm = 5;
   private previewPpmm = 10;
   private grid: PerspectiveGrid = {
     x: [-80, 80, 10],
     y: [0, 100, 10],
+  };
+  private wideAngleGrid: PerspectiveGrid = {
+    x: [0, 600, 20],
+    y: [0, 375, 15],
   };
   private cameraCenterOffset: { x: number; y: number };
   protected maxMovementSpeed: [number, number] = [54000, 6000]; // mm/min, speed cap of machine
@@ -126,7 +130,7 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
       }
 
       this.hasWideAngleCamera = true;
-      this.wideAngleFisheyeParams = (await loadJson('fisheye', 'wide-angle.json')) as FisheyeCameraParametersV2;
+      this.wideAngleFisheyeParams = (await loadJson('fisheye', 'wide-angle.json')) as FisheyeCameraParametersV4;
 
       return;
     } catch (error) {
@@ -151,7 +155,11 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
       }
 
       console.log('wide angle params', this.wideAngleFisheyeParams);
-      this.wideAngleFisheyeManager = new FisheyePreviewManagerV2(this.device, this.wideAngleFisheyeParams);
+      this.wideAngleFisheyeManager = new FisheyePreviewManagerV4(
+        this.device,
+        this.wideAngleFisheyeParams,
+        this.wideAngleGrid,
+      );
 
       const res = await this.wideAngleFisheyeManager.setupFisheyePreview({ progressId: this.progressId });
 
@@ -499,9 +507,7 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
     }
   };
 
-  reloadLevelingOffset = async (): Promise<void> => {
-    if (this.cameraType === CameraType.WIDE_ANGLE) await this.wideAngleFisheyeManager?.reloadLevelingOffset();
-  };
+  reloadLevelingOffset = async (): Promise<void> => {};
 
   resetObjectHeight = async (): Promise<boolean> => {
     if (this.cameraType === CameraType.WIDE_ANGLE && this.wideAngleFisheyeManager) {
