@@ -33,40 +33,24 @@ export const bb2WideAngleCameraPnpPoints: Record<
     [210, 240],
     [90, 320],
     [210, 320],
-    [120, 260],
-    [180, 260],
-    [120, 300],
-    [180, 300],
   ] as const,
   bottomRight: [
     [390, 240],
     [510, 240],
     [390, 320],
     [510, 320],
-    [420, 260],
-    [480, 260],
-    [420, 300],
-    [480, 300],
   ] as const,
   topLeft: [
     [90, 40],
     [210, 40],
     [90, 120],
     [210, 120],
-    [120, 60],
-    [180, 60],
-    [120, 100],
-    [180, 100],
   ] as const,
   topRight: [
     [390, 40],
     [510, 40],
     [390, 120],
     [510, 120],
-    [420, 60],
-    [480, 60],
-    [420, 100],
-    [480, 100],
   ] as const,
 } as const;
 
@@ -78,56 +62,11 @@ export const getBB2WideAnglePoints = (
   > = bb2WideAngleCameraPnpPoints,
 ): Array<[number, number]> => {
   const res = match(region)
-    .with('top', () => [
-      points.topLeft[1],
-      points.topRight[0],
-      points.topLeft[3],
-      points.topRight[2],
-      points.topLeft[5],
-      points.topRight[4],
-      points.topLeft[7],
-      points.topRight[6],
-    ])
-    .with('bottom', () => [
-      points.bottomLeft[1],
-      points.bottomRight[0],
-      points.bottomLeft[3],
-      points.bottomRight[2],
-      points.bottomLeft[5],
-      points.bottomRight[4],
-      points.bottomLeft[7],
-      points.bottomRight[6],
-    ])
-    .with('left', () => [
-      points.topLeft[6],
-      points.topLeft[7],
-      points.topLeft[2],
-      points.topLeft[3],
-      points.bottomLeft[0],
-      points.bottomLeft[1],
-      points.bottomLeft[4],
-      points.bottomLeft[5],
-    ])
-    .with('right', () => [
-      points.topRight[6],
-      points.topRight[7],
-      points.topRight[2],
-      points.topRight[3],
-      points.bottomRight[0],
-      points.bottomRight[1],
-      points.bottomRight[4],
-      points.bottomRight[5],
-    ])
-    .with('center', () => [
-      points.topLeft[7],
-      points.topRight[6],
-      points.bottomLeft[5],
-      points.bottomRight[4],
-      points.topLeft[3],
-      points.topRight[2],
-      points.bottomLeft[1],
-      points.bottomRight[0],
-    ])
+    .with('top', () => [points.topLeft[1], points.topRight[0], points.topLeft[3], points.topRight[2]])
+    .with('bottom', () => [points.bottomLeft[1], points.bottomRight[0], points.bottomLeft[3], points.bottomRight[2]])
+    .with('left', () => [points.topLeft[2], points.topLeft[3], points.bottomLeft[0], points.bottomLeft[1]])
+    .with('right', () => [points.topRight[2], points.topRight[3], points.bottomRight[0], points.bottomRight[1]])
+    .with('center', () => [points.topLeft[3], points.topRight[2], points.bottomLeft[1], points.bottomRight[0]])
     .otherwise((key) => points[key]);
 
   return res;
