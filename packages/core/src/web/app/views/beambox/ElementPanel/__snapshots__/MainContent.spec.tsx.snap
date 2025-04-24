@@ -130,7 +130,7 @@ exports[`test MainContent should render search hint correctly 1`] = `
       <div
         class="bold"
       >
-        Browse Categories:
+        Browse Categories
       </div>
       <div
         class="categories"
@@ -215,7 +215,7 @@ exports[`test MainContent should render search hint correctly when no result 1`]
       <div
         class="bold"
       >
-        Browse Categories:
+        Browse Categories
       </div>
       <div
         class="categories"

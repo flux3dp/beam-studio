@@ -13,7 +13,7 @@ exports[`test GridContent should render correctly when missing fileNames 1`] = `
     type="button"
   >
     <span>
-      Load 100 more results...
+      Load the next 100 results
     </span>
   </button>
 </div>
@@ -150,7 +150,7 @@ exports[`test GridContent should render search content correctly 1`] = `
     type="button"
   >
     <span>
-      Load 100 more results...
+      Load the next 100 results
     </span>
   </button>
 </div>
@@ -177,7 +177,7 @@ exports[`test GridContent should render subType content correctly 1`] = `
     type="button"
   >
     <span>
-      Load 100 more results...
+      Load the next 100 results
     </span>
   </button>
 </div>
