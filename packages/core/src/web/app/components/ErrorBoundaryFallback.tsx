@@ -7,8 +7,6 @@ interface Props {
 }
 
 const ErrorBoundaryFallback = ({ error }: Props) => {
-  // Call resetErrorBoundary() to reset the error boundary and retry the render.
-
   return (
     <div className={styles.container} role="alert">
       <h2>There is something wrong about Beam Studio:</h2>
