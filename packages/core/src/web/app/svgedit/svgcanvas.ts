@@ -1257,9 +1257,9 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // elemsToAdd - an array of DOM elements to add to the selection
   // showGrips - a boolean flag indicating whether the resize grips should be shown
   const addToSelection = (this.addToSelection = (elemsToAdd, showGrips?, noCall?) => {
-    if (elemsToAdd.length === 0) {
-      return;
-    }
+    elemsToAdd = elemsToAdd.filter(Boolean);
+
+    if (elemsToAdd.length === 0) return;
 
     // now add each element consecutively
     for (let i = elemsToAdd.length - 1; i >= 0; i -= 1) {
