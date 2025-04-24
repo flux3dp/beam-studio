@@ -49,6 +49,10 @@ interface ButtonOpts {
   mobileLabel?: string;
 }
 
+interface TabButtonOptions extends ButtonOpts {
+  convertToPath: (elem: any) => Promise<DOMRect>;
+}
+
 const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
   const i18n = useI18n();
   const forceUpdate = useForceUpdate();
@@ -67,33 +71,22 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     };
     const fileBlob = await dialog.getFileFromDialog(option);
 
-    if (fileBlob) {
-      svgEditor.replaceBitmap(fileBlob, elem);
-    }
+    if (fileBlob) svgEditor.replaceBitmap(fileBlob, elem);
   };
 
-  const convertTextToPath = async (): Promise<void> => {
+  const convertTextToPath = async (weldingTexts = false): Promise<DOMRect> => {
     const isTextPath = elem.getAttribute('data-textpath-g');
     const textElem = isTextPath ? elem.querySelector('text') : elem;
 
-    if (textActions.isEditing) {
-      textActions.toSelectMode();
-    }
+    if (textActions.isEditing) textActions.toSelectMode();
 
     svgCanvas.clearSelection();
-    await FontFuncs.convertTextToPath(textElem!);
-  };
 
-  const weldText = async (): Promise<void> => {
-    const isTextPath = elem.getAttribute('data-textpath-g');
-    const textElem = isTextPath ? elem.querySelector('text') : elem;
+    const { path } = await FontFuncs.convertTextToPath(textElem!, { weldingTexts });
 
-    if (textActions.isEditing) {
-      textActions.toSelectMode();
-    }
+    if (path) svgCanvas.selectOnly([path]);
 
-    svgCanvas.clearSelection();
-    await FontFuncs.convertTextToPath(textElem!, { weldingTexts: true });
+    return path?.getBBox()!;
   };
 
   const renderButtons = useCallback(
@@ -175,18 +168,26 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       { isFullLine: true, ...opts },
     );
 
-  const renderTabButton = (opts: ButtonOpts = {}): React.JSX.Element =>
+  const renderTabButton = (
+    { convertToPath, ...opts }: TabButtonOptions = {
+      convertToPath: ((elem: any) => {
+        const { path } = svgCanvas.convertToPath(elem);
+
+        svgCanvas.selectOnly([path]);
+
+        return path.getBBox();
+      }) as any,
+    },
+  ): React.JSX.Element =>
     renderButtons(
       'tab',
       tab,
-      () => {
-        const bbox = (elem as SVGSVGElement).getBBox();
+      async () => {
+        let bbox = (elem as SVGSVGElement).getBBox();
 
         // Convert to path if it's not a path
         if (!(elem instanceof SVGPathElement)) {
-          const { path } = svgCanvas.convertToPath(elem as SVGElement);
-
-          svgCanvas.selectOnly([path]);
+          bbox = await convertToPath(elem);
         }
 
         Dialog.showTabPanel({ bbox, onClose: () => {} });
@@ -329,11 +330,17 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
   const renderTextActions = (): React.JSX.Element[] => [
     renderAutoFitButton(),
     renderConvertToPathButton({ isText: true }),
-    renderButtons('weld', lang.weld_text, weldText, <ActionPanelIcons.WeldText />, <ActionPanelIcons.WeldText />, {
-      isFullLine: true,
-    }),
+    renderButtons(
+      'weld',
+      lang.weld_text,
+      () => convertTextToPath(true),
+      <ActionPanelIcons.WeldText />,
+      <ActionPanelIcons.WeldText />,
+      { isFullLine: true },
+    ),
     renderSmartNestButton(),
     renderArrayButton({ isFullLine: true }),
+    renderTabButton({ convertToPath: convertTextToPath }),
   ];
 
   const renderTextPathActions = (): React.JSX.Element[] => [

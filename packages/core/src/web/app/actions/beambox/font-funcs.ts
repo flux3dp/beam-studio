@@ -24,33 +24,40 @@ import type { FontDescriptor, IFont, IFontQuery, WebFont } from '@core/interface
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 let svgCanvas: ISVGCanvas;
-let svgedit;
+let svgedit: any;
 
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-  svgedit = globalSVG.Edit;
+getSVGAsync(({ Canvas, Edit }) => {
+  svgCanvas = Canvas;
+  svgedit = Edit;
 });
 
 const { $ } = window;
-
 const svgWebSocket = SvgLaserParser({ type: 'svgeditor' });
 const LANG = i18n.lang.beambox.object_panels;
-
 const fontObjCache = new Map<string, fontkit.Font>();
 
-enum SubstituteResult {
-  CANCEL_OPERATION = 0,
-  DO_SUB = 2,
-  DONT_SUB = 1,
-}
+const SubstituteResult = {
+  CANCEL_OPERATION: 0,
+  DO_NOT_SUB: 1,
+  DO_SUB: 2,
+} as const;
 
-enum ConvertResult {
-  CANCEL_OPERATION = 0,
-  CONTINUE = 2,
-  UNSUPPORT = 1,
-}
+type SubstituteResultType = (typeof SubstituteResult)[keyof typeof SubstituteResult];
 
-let tempPaths = [];
+const ConvertResult = {
+  CANCEL_OPERATION: 0,
+  CONTINUE: 2,
+  UNSUPPORT: 1,
+} as const;
+
+type ConvertResultType = (typeof ConvertResult)[keyof typeof ConvertResult];
+
+type ConvertToTextPathResult = {
+  path: null | SVGPathElement;
+  status: ConvertResultType;
+};
+
+const tempPaths: SVGPathElement[] = [];
 
 type IConvertInfo = null | {
   d: string;
@@ -60,28 +67,24 @@ type IConvertInfo = null | {
 
 // a simple memoize function that takes in a function
 // and returns a memoized function
-const memoize = (fn) => {
-  const cache = {};
+const memoize = <T extends (arg: any) => any>(fn: T): T => {
+  const cache: Record<string, ReturnType<T>> = {};
 
-  return (...args) => {
-    const n = args[0]; // just taking one argument here
+  return ((...args: Parameters<T>): ReturnType<T> => {
+    const n = args[0];
 
-    if (n in cache) {
-      // console.log('Fetching from cache');
-      return cache[n];
-    }
+    if (n in cache) return cache[n];
 
-    // console.log('Calculating result');
     const result = fn(n);
 
     cache[n] = result;
 
     return result;
-  };
+  }) as T;
 };
 
 // TODO: Fix config
-let fontNameMapObj: { [key: string]: string } = storage.get('font-name-map') || {};
+let fontNameMapObj: Record<string, string> = storage.get('font-name-map') || {};
 
 if (fontNameMapObj.navigatorLang !== navigator.language) {
   fontNameMapObj = {};
@@ -93,20 +96,12 @@ const requestAvailableFontFamilies = (withoutMonotype = false) => {
   const fonts = fontHelper.getAvailableFonts(withoutMonotype);
 
   fonts.forEach((font) => {
-    if (!fontNameMap.get(font.family)) {
-      let fontName = font.family;
+    const family = font.family!;
 
-      if (fontNameMapObj[font.family]) {
-        fontName = fontNameMapObj[font.family];
-      } else {
-        fontName = fontHelper.getFontName(font);
-      }
+    if (!fontNameMap.get(family)) {
+      const fontName = fontNameMapObj[family] ? fontNameMapObj[family] : fontHelper.getFontName(font);
 
-      if (typeof fontName === 'string') {
-        fontNameMap.set(font.family, fontName);
-      } else {
-        fontNameMap.set(font.family, font.family);
-      }
+      fontNameMap.set(family, typeof fontName === 'string' ? fontName : family);
     }
   });
 
@@ -119,27 +114,17 @@ const requestAvailableFontFamilies = (withoutMonotype = false) => {
   // make it unique
   const fontFamilySet = new Set<string>();
 
-  fonts.map((font) => fontFamilySet.add(font.family));
+  fonts.map((font) => fontFamilySet.add(font.family!));
 
   // transfer to array and sort!
-  return Array.from(fontFamilySet).sort((a, b) => {
-    if (a?.toLowerCase?.() < b?.toLowerCase?.()) {
-      return -1;
-    }
-
-    if (a?.toLowerCase?.() > b?.toLowerCase?.()) {
-      return 1;
-    }
-
-    return 0;
-  });
+  return Array.from(fontFamilySet).sort((a, b) =>
+    String(a ?? '').localeCompare(String(b ?? ''), undefined, { sensitivity: 'base' }),
+  );
 };
 
 const getFontOfPostscriptName = memoize((postscriptName: string) => {
   if (window.os === 'MacOS') {
-    const font = fontHelper.findFont({ postscriptName });
-
-    return font;
+    return fontHelper.findFont({ postscriptName });
   }
 
   const allFonts = fontHelper.getAvailableFonts();
@@ -147,11 +132,7 @@ const getFontOfPostscriptName = memoize((postscriptName: string) => {
 
   console.log(fit);
 
-  if (fit.length > 0) {
-    return fit[0];
-  }
-
-  return allFonts[0];
+  return (fit.length > 0 ? fit : allFonts)[0];
 });
 
 const init = () => {
@@ -160,27 +141,15 @@ const init = () => {
 
 init();
 
-const requestFontsOfTheFontFamily = memoize((family: string) => {
-  const fonts = fontHelper.findFonts({ family });
+const requestFontsOfTheFontFamily = memoize((family: string) => Array.from(fontHelper.findFonts({ family })));
 
-  return Array.from(fonts);
-});
-
-const requestFontByFamilyAndStyle = (opts: IFontQuery): IFont => {
-  const font = fontHelper.findFont({
-    family: opts.family,
-    italic: opts.italic,
-    style: opts.style,
-    weight: opts.weight,
-  });
-
-  return font;
-};
+const requestFontByFamilyAndStyle = ({ family, italic, style, weight }: IFontQuery): IFont =>
+  fontHelper.findFont({ family, italic, style, weight });
 
 export const getFontObj = async (font: FontDescriptor | WebFont): Promise<fontkit.Font | undefined> => {
   try {
     const { postscriptName } = font;
-    let fontObj = fontObjCache.get(postscriptName);
+    let fontObj = fontObjCache.get(postscriptName!);
 
     if (!fontObj) {
       if ((font as FontDescriptor).path) {
@@ -191,7 +160,7 @@ export const getFontObj = async (font: FontDescriptor | WebFont): Promise<fontki
         let url = `${protocol}//beam-studio-web.s3.ap-northeast-1.amazonaws.com/fonts/${fileName}`;
 
         if ('hasLoaded' in font) {
-          const monotypeUrl = await fontHelper.getMonotypeUrl(postscriptName);
+          const monotypeUrl = await fontHelper.getMonotypeUrl(postscriptName!);
 
           if (monotypeUrl) {
             url = monotypeUrl;
@@ -223,7 +192,7 @@ export const getFontObj = async (font: FontDescriptor | WebFont): Promise<fontki
       }
 
       if (fontObj) {
-        fontObjCache.set(postscriptName, fontObj);
+        fontObjCache.set(postscriptName!, fontObj);
       }
     }
 
@@ -231,7 +200,7 @@ export const getFontObj = async (font: FontDescriptor | WebFont): Promise<fontki
   } catch (err) {
     console.log(`Unable to get fontObj of ${font.postscriptName}, ${err}`);
 
-    return null;
+    return undefined;
   }
 };
 
@@ -240,7 +209,6 @@ export const convertTextToPathByFontkit = (textElem: Element, fontObj: fontkit.F
     const maxChar = 0xffff;
     const fontSize = textedit.getFontSize(textElem as SVGTextElement);
     const sizeRatio = fontSize / fontObj.unitsPerEm;
-
     let d = '';
     const textPaths = textElem.querySelectorAll('textPath');
 
@@ -261,12 +229,12 @@ export const convertTextToPathByFontkit = (textElem: Element, fontObj: fontkit.F
         const { x: x2, y: y2 } = textPath.getBBox();
 
         alignOffset = Math.hypot(x - x2, y - y2);
-        textPath.setAttribute('alignment-baseline', alignmentBaseline);
-        textPath.setAttribute('dominant-baseline', dominantBaseline);
+        textPath.setAttribute('alignment-baseline', alignmentBaseline!);
+        textPath.setAttribute('dominant-baseline', dominantBaseline!);
         textPath.textContent = text;
       }
 
-      const run = fontObj.layout(text);
+      const run = fontObj.layout(text!);
       const { direction, glyphs, positions } = run;
       const isRtl = direction === 'rtl';
 
@@ -305,11 +273,11 @@ export const convertTextToPathByFontkit = (textElem: Element, fontObj: fontkit.F
         .join('');
     });
 
-    const tspans = textElem.querySelectorAll('tspan');
+    const tSpans = textElem.querySelectorAll('tspan');
 
-    tspans.forEach((tspan) => {
+    tSpans.forEach((tspan) => {
       const text = tspan.textContent;
-      const run = fontObj.layout(text);
+      const run = fontObj.layout(text!);
       const { direction, glyphs, positions } = run;
       const isRtl = direction === 'rtl';
 
@@ -349,7 +317,7 @@ const getPathAndTransformFromSvg = async (data: any, isFilled: boolean) =>
     const fileReader = new FileReader();
 
     fileReader.onloadend = (e) => {
-      const svgString = e.target.result as string;
+      const svgString = e.target!.result as string;
       const dRegex = svgString.match(/ d="([^"]+)"/g);
       const transRegex = svgString.match(/transform="([^"]+)/);
       const d = dRegex ? dRegex.map((p) => p.substring(4, p.length - 1))?.join('') : '';
@@ -358,11 +326,7 @@ const getPathAndTransformFromSvg = async (data: any, isFilled: boolean) =>
       resolve({ d, transform });
     };
 
-    if (isFilled) {
-      fileReader.readAsText(data.colors);
-    } else {
-      fileReader.readAsText(data.strokes);
-    }
+    fileReader.readAsText(data[isFilled ? 'colors' : 'strokes']);
   });
 
 const convertTextToPathByGhost = async (
@@ -389,7 +353,7 @@ const convertTextToPathByGhost = async (
 
     const bbox = svgCanvas.calculateTransformedBBox(textElem);
     const { postscriptName } = font;
-    const res = await fontHelper.getWebFontAndUpload(postscriptName);
+    const res = await fontHelper.getWebFontAndUpload(postscriptName!);
 
     if (!res) {
       throw new Error('Error when uploading');
@@ -425,14 +389,14 @@ const getUnsupportedChar = async (font: FontDescriptor | WebFont, textContent: s
   const fontObj = await getFontObj(font);
 
   if (fontObj) {
-    return textContent.filter((c) => !fontObj.hasGlyphForCodePoint(c.codePointAt(0)));
+    return textContent.filter((c) => !fontObj.hasGlyphForCodePoint(c.codePointAt(0)!));
   }
 
   return null;
 };
 
 const substitutedFont = async (font: FontDescriptor | WebFont, textElement: Element) => {
-  const originFont = getFontOfPostscriptName(textElement.getAttribute('font-postscript'));
+  const originFont = getFontOfPostscriptName(textElement.getAttribute('font-postscript')!);
   const fontFamily = textElement.getAttribute('font-family');
   const text = textElement.textContent;
 
@@ -440,13 +404,11 @@ const substitutedFont = async (font: FontDescriptor | WebFont, textElement: Elem
   const whiteList = ['標楷體'];
   const whiteKeyWords = ['華康', 'Adobe', '文鼎'];
 
-  if (whiteList.includes(fontFamily)) {
+  if (whiteList.includes(fontFamily!)) {
     return { font: originFont };
   }
 
-  for (let i = 0; i < whiteKeyWords.length; i += 1) {
-    const keyword = whiteKeyWords[i];
-
+  for (const keyword of whiteKeyWords) {
     if (fontFamily && fontFamily.includes(keyword)) {
       return { font: originFont };
     }
@@ -454,8 +416,8 @@ const substitutedFont = async (font: FontDescriptor | WebFont, textElement: Elem
 
   // if only contain basic character (123abc!@#$...), don't substitute.
   // because my Mac cannot substituteFont properly handing font like 'Windings'
-  // but we have to subsittue text if text contain both English and Chinese
-  const textOnlyContainBasicLatin = Array.from(text).every((char: string) => char.charCodeAt(0) <= 0x007f);
+  // but we have to substitute text if text contain both English and Chinese
+  const textOnlyContainBasicLatin = Array.from(text!).every((char: string) => char.charCodeAt(0) <= 0x007f);
 
   if (textOnlyContainBasicLatin) {
     return { font: originFont };
@@ -463,10 +425,10 @@ const substitutedFont = async (font: FontDescriptor | WebFont, textElement: Elem
   // array of used family which are in the text
 
   const originPostscriptName = originFont.postscriptName;
-  const fontOptions: { [postscriptName: string]: FontDescriptor } = { originPostscriptName: font };
-  const textContent = [...new Set(Array.from(text))];
+  const fontOptions: Record<string, FontDescriptor> = { originPostscriptName: font };
+  const textContent = [...new Set(Array.from(text!))];
   let fontList: FontDescriptor[] = [font];
-  let unsupportedChar = await getUnsupportedChar(originFont, textContent);
+  let unsupportedChar = (await getUnsupportedChar(originFont, textContent)) ?? [];
 
   if (unsupportedChar && unsupportedChar.length === 0) {
     console.log(`Original font ${originFont.postscriptName} fits for all char`);
@@ -477,45 +439,39 @@ const substitutedFont = async (font: FontDescriptor | WebFont, textElement: Elem
   if (!isWeb()) {
     unsupportedChar = [];
     textContent.forEach((char) => {
-      const sub = localFontHelper.substituteFont(originPostscriptName, char);
+      const sub = localFontHelper.substituteFont(originPostscriptName!, char) as FontDescriptor;
 
       if (sub.postscriptName !== originPostscriptName) {
         unsupportedChar.push(char);
       }
 
-      if (!fontOptions[sub.postscriptName]) {
-        fontOptions[sub.postscriptName] = sub;
+      if (!fontOptions[sub.postscriptName!]) {
+        fontOptions[sub.postscriptName!] = sub;
       }
     });
     fontList = Object.values(fontOptions);
 
     if (fontList.length === 1) {
-      return {
-        font: fontList[0],
-        unsupportedChar,
-      };
+      return { font: fontList[0], unsupportedChar };
     }
 
     // Test all found fonts if they contain all
-    for (let i = 0; i < fontList.length; i += 1) {
+    for (const font of fontList) {
       let allFit = true;
 
-      for (let j = 0; j < text.length; j += 1) {
-        const foundfont = localFontHelper.substituteFont(fontList[i].postscriptName, text[j]);
+      for (const char of text ?? '') {
+        const foundFont = localFontHelper.substituteFont(font.postscriptName!, char);
 
-        if (fontList[i].postscriptName !== foundfont.postscriptName) {
+        if (font.postscriptName !== foundFont!.postscriptName) {
           allFit = false;
           break;
         }
       }
 
       if (allFit) {
-        console.log(`Find ${fontList[i].postscriptName} fit for all char`);
+        console.log(`Find ${font.postscriptName} fit for all char`);
 
-        return {
-          font: fontList[i],
-          unsupportedChar,
-        };
+        return { font, unsupportedChar };
       }
     }
     console.log('Cannot find a font fit for all');
@@ -524,8 +480,8 @@ const substitutedFont = async (font: FontDescriptor | WebFont, textElement: Elem
   // Test all found fonts and Noto fonts with fontkit and select the best one
   const NotoFamilySuffixes = ['', ' TC', ' HK', ' SC', ' JP', ' KR'];
 
-  for (let i = 0; i < NotoFamilySuffixes.length; i += 1) {
-    const family = `Noto Sans${NotoFamilySuffixes[i]}`;
+  for (const suffix of NotoFamilySuffixes) {
+    const family = `Noto Sans${suffix}`;
     const res = fontHelper.findFont({ ...font, family, postscriptName: undefined });
 
     fontList.push(res);
@@ -534,8 +490,7 @@ const substitutedFont = async (font: FontDescriptor | WebFont, textElement: Elem
   let minFailure = Number.MIN_VALUE;
   let bestFont = fontList[0];
 
-  for (let i = 0; i < fontList.length; i += 1) {
-    const currentFont = fontList[i];
+  for (const currentFont of fontList) {
     const unsupported = await getUnsupportedChar(currentFont, textContent);
 
     if (unsupported) {
@@ -556,20 +511,16 @@ const substitutedFont = async (font: FontDescriptor | WebFont, textElement: Elem
     }
   }
 
-  /* eslint-ensable no-await-in-loop */
-  return {
-    font: bestFont,
-    unsupportedChar,
-  };
+  return { font: bestFont, unsupportedChar };
 };
 
 const showSubstitutedFamilyPopup = (newFont: string) =>
-  new Promise<SubstituteResult>((resolve) => {
+  new Promise<SubstituteResultType>((resolve) => {
     const message = sprintf(LANG.text_to_path.font_substitute_pop, fontNameMap.get(newFont));
     const buttonLabels = [i18n.lang.alert.confirm, LANG.text_to_path.use_current_font, i18n.lang.alert.cancel];
     const callbacks = [
       () => resolve(SubstituteResult.DO_SUB),
-      () => resolve(SubstituteResult.DONT_SUB),
+      () => resolve(SubstituteResult.DO_NOT_SUB),
       () => resolve(SubstituteResult.CANCEL_OPERATION),
     ];
 
@@ -583,11 +534,11 @@ const showSubstitutedFamilyPopup = (newFont: string) =>
   });
 
 const calculateFilled = (textElement: Element) => {
-  if (Number.parseInt(textElement.getAttribute('fill-opacity'), 10) === 0) {
+  if (Number.parseInt(textElement.getAttribute('fill-opacity')!, 10) === 0) {
     return false;
   }
 
-  const fillAttr = textElement.getAttribute('fill');
+  const fillAttr = textElement.getAttribute('fill')!;
 
   if (['#fff', '#ffffff', 'none'].includes(fillAttr)) {
     return false;
@@ -600,37 +551,46 @@ const calculateFilled = (textElement: Element) => {
   return false;
 };
 
-const setTextPostscriptnameIfNeeded = (textElement: Element) => {
+const setTextPostscriptNameIfNeeded = (textElement: Element) => {
   if (!textElement.getAttribute('font-postscript')) {
     const font = requestFontByFamilyAndStyle({
-      family: textElement.getAttribute('font-family'),
-      italic: textElement.getAttribute('font-style') === 'italic',
-      style: null,
-      weight: Number.parseInt(textElement.getAttribute('font-weight'), 10),
+      family: textElement.getAttribute('font-family')!,
+      italic: textElement.getAttribute('font-style')! === 'italic',
+      style: undefined,
+      weight: Number.parseInt(textElement.getAttribute('font-weight')!, 10),
     });
 
-    textElement.setAttribute('font-postscript', font.postscriptName);
+    textElement.setAttribute('font-postscript', font.postscriptName!);
   }
 };
 
 const convertTextToPath = async (
   textElement: Element,
   opts?: { isTempConvert?: boolean; weldingTexts?: boolean },
-): Promise<ConvertResult> => {
+): Promise<ConvertToTextPathResult> => {
   if (!textElement.textContent) {
-    return ConvertResult.CONTINUE;
+    console.warn('Text element has no content, skipping conversion.');
+
+    return { path: null, status: ConvertResult.CONTINUE };
   }
 
   await Progress.openNonstopProgress({ id: 'parsing-font', message: LANG.wait_for_parsing_font });
+
+  let newPathElement: null | SVGPathElement = null;
+
   try {
     const { isTempConvert, weldingTexts } = opts || { isTempConvert: false, weldingTexts: false };
 
-    setTextPostscriptnameIfNeeded(textElement);
+    setTextPostscriptNameIfNeeded(textElement);
 
+    // Create a batch command for the undo/redo manager. Groups all changes into one undo step.
     const batchCmd = new history.BatchCommand('Text to Path');
+    // Store original font attributes for potential restoration (used in temp convert).
     const origFontFamily = textElement.getAttribute('font-family')!;
     const origFontPostscriptName = textElement.getAttribute('font-postscript')!;
+    // Get the Font object based on the PostScript name.
     let font = getFontOfPostscriptName(origFontPostscriptName);
+    // Asynchronously load the font data object (e.g., using opentype.js or similar).
     let fontObj = await getFontObj(font);
 
     let hasUnsupportedFont = false;
@@ -641,19 +601,23 @@ const convertTextToPath = async (
       if (newFont.postscriptName !== origFontPostscriptName && unsupportedChar && unsupportedChar.length > 0) {
         hasUnsupportedFont = true;
 
-        const doSub = await showSubstitutedFamilyPopup(newFont.family);
+        const doSub = await showSubstitutedFamilyPopup(newFont.family!);
 
         if (doSub === SubstituteResult.DO_SUB) {
           svgCanvas.undoMgr.beginUndoableChange('font-family', [textElement]);
-          textElement.setAttribute('font-family', newFont.family);
+          textElement.setAttribute('font-family', newFont.family!);
           batchCmd.addSubCommand(svgCanvas.undoMgr.finishUndoableChange());
           svgCanvas.undoMgr.beginUndoableChange('font-postscript', [textElement]);
-          textElement.setAttribute('font-postscript', newFont.postscriptName);
+          textElement.setAttribute('font-postscript', newFont.postscriptName!);
           batchCmd.addSubCommand(svgCanvas.undoMgr.finishUndoableChange());
           fontObj = await getFontObj(newFont);
           font = newFont;
         } else if (doSub === SubstituteResult.CANCEL_OPERATION) {
-          return ConvertResult.CANCEL_OPERATION;
+          // User cancelled the entire operation from the popup.
+          console.log('Font substitution cancelled by user.');
+
+          // Return CANCEL status and a null path.
+          return { path: null, status: ConvertResult.CANCEL_OPERATION };
         }
       }
     }
@@ -665,7 +629,7 @@ const convertTextToPath = async (
     const isFilled = calculateFilled(textElement);
     let color = textElement.getAttribute('stroke') || 'none';
 
-    color = color !== 'none' ? color : textElement.getAttribute('fill');
+    color = color !== 'none' ? color : textElement.getAttribute('fill')!;
 
     let res: IConvertInfo = null;
 
@@ -685,15 +649,15 @@ const convertTextToPath = async (
           message: i18n.lang.device_selection.no_device_web,
         });
 
-        return ConvertResult.CONTINUE;
+        return { path: null, status: ConvertResult.CONTINUE };
       }
 
       res =
         (await convertTextToPathByGhost(textElement, isFilled, font)) ||
-        convertTextToPathByFontkit(textElement, fontObj);
+        convertTextToPathByFontkit(textElement, fontObj!);
     } else {
       res =
-        convertTextToPathByFontkit(textElement, fontObj) ||
+        convertTextToPathByFontkit(textElement, fontObj!) ||
         (await convertTextToPathByGhost(textElement, isFilled, font));
     }
 
@@ -706,7 +670,9 @@ const convertTextToPath = async (
       }
 
       const newPathId = svgCanvas.getNextId();
-      const path = document.createElementNS(svgedit.NS.SVG, 'path');
+      const path = document.createElementNS(svgedit.NS.SVG, 'path') as unknown as SVGPathElement;
+
+      newPathElement = path;
 
       path.setAttribute('id', newPathId);
       path.setAttribute('d', d);
@@ -726,7 +692,7 @@ const convertTextToPath = async (
         path.setAttribute('stroke-width', (+strokeWidth / 2).toString());
       }
 
-      textElement.parentNode.insertBefore(path, textElement.nextSibling);
+      textElement.parentNode!.insertBefore(path, textElement.nextSibling);
       path.addEventListener('mouseover', svgCanvas.handleGenerateSensorArea);
       path.addEventListener('mouseleave', svgCanvas.handleGenerateSensorArea);
       svgCanvas.pathActions.fixEnd(path);
@@ -743,7 +709,7 @@ const convertTextToPath = async (
         textElement.setAttribute('font-postscript', origFontPostscriptName);
         textElement.setAttribute('stroke-width', '2');
         textElement.setAttribute('data-path-id', newPathId);
-        tempPaths.push(path);
+        tempPaths.push(path as any);
       }
 
       svgedit.recalculate.recalculateDimensions(path);
@@ -754,15 +720,15 @@ const convertTextToPath = async (
         type: AlertConstants.SHOW_POPUP_ERROR,
       });
 
-      return ConvertResult.CONTINUE;
+      return { path: null, status: ConvertResult.CONTINUE };
     }
 
     if (!isTempConvert) {
-      const parent = textElement.parentNode;
+      const parent = textElement.parentNode!;
       const { nextSibling } = textElement;
       const elem = parent.removeChild(textElement);
 
-      batchCmd.addSubCommand(new history.RemoveElementCommand(elem, nextSibling, parent));
+      batchCmd.addSubCommand(new history.RemoveElementCommand(elem, nextSibling!, parent));
 
       if (textElement.getAttribute('data-textpath')) {
         const cmd = textPathEdit.ungroupTextPath(parent as SVGGElement);
@@ -777,39 +743,35 @@ const convertTextToPath = async (
       }
     }
 
-    return hasUnsupportedFont ? ConvertResult.UNSUPPORT : ConvertResult.CONTINUE;
+    const finalStatus = hasUnsupportedFont ? ConvertResult.UNSUPPORT : ConvertResult.CONTINUE;
+
+    return { path: newPathElement, status: finalStatus };
   } catch (err) {
     Alert.popUp({
       caption: `#846 ${LANG.text_to_path.error_when_parsing_text}`,
-      message: err,
+      message: err as string,
       type: AlertConstants.SHOW_POPUP_ERROR,
     });
 
-    return ConvertResult.CONTINUE;
+    return { path: null, status: ConvertResult.CONTINUE };
   } finally {
     Progress.popById('parsing-font');
   }
 };
 
-const tempConvertTextToPathAmoungSvgcontent = async () => {
+const tempConvertTextToPathAmongSvgContent = async () => {
   let isAnyFontUnsupported = false;
   const texts = [
     ...document.querySelectorAll('#svgcontent g.layer:not([display="none"]) text'),
     ...document.querySelectorAll('#svg_defs text'),
   ];
 
-  for (let i = 0; i < texts.length; i += 1) {
-    const el = texts[i];
+  for (const text of texts) {
+    const { status } = await convertTextToPath(text, { isTempConvert: true });
 
-    const convertRes = await convertTextToPath(el, { isTempConvert: true });
+    if (status === ConvertResult.CANCEL_OPERATION) return false;
 
-    if (convertRes === ConvertResult.CANCEL_OPERATION) {
-      return false;
-    }
-
-    if (convertRes === ConvertResult.UNSUPPORT) {
-      isAnyFontUnsupported = true;
-    }
+    if (status === ConvertResult.UNSUPPORT) isAnyFontUnsupported = true;
   }
 
   if (isAnyFontUnsupported && !AlertConfig.read('skip_check_thumbnail_warning')) {
@@ -838,10 +800,12 @@ const revertTempConvert = async (): Promise<void> => {
   texts.forEach((t) => {
     $(t).removeAttr('display');
   });
-  for (let i = 0; i < tempPaths.length; i += 1) {
-    tempPaths[i].remove();
+
+  for (const tempPath of tempPaths) {
+    tempPath.remove();
   }
-  tempPaths = [];
+
+  tempPaths.length = 0;
 };
 
 export default {
@@ -852,5 +816,5 @@ export default {
   requestFontByFamilyAndStyle,
   requestFontsOfTheFontFamily,
   revertTempConvert,
-  tempConvertTextToPathAmoungSvgcontent,
+  tempConvertTextToPathAmongSvgContent,
 };
