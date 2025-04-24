@@ -14,7 +14,11 @@ $scrollbar-x: 20px;
     left: calc($gap / -2);
     width: calc(100% + $gap);
     height: 27px;
-    background: linear-gradient(0, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
+    background: linear-gradient(
+      0,
+      rgba(0, 0, 0, 0.1) 0%,
+      rgba(0, 0, 0, 0) 100%
+    );
 
     @media screen and (max-width: 600px) {
       left: 0;
@@ -41,7 +45,9 @@ $scrollbar-x: 20px;
 
   @media screen and (max-width: 600px) {
     grid-template-columns: repeat($number-per-row-mobile, 1fr);
-    font-size: calc((100% - $gap * ($number-per-row-mobile - 1)) / $number-per-row-mobile);
+    font-size: calc(
+      (100% - $gap * ($number-per-row-mobile - 1)) / $number-per-row-mobile
+    );
   }
 
   .subtitle {
