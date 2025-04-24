@@ -98,14 +98,27 @@ const SolvePnP = ({
         svgRef.current.style.width = `${imageSizeRef.current.width * newValue}px`;
         svgRef.current.style.height = `${imageSizeRef.current.height * newValue}px`;
 
-        const circles = svgRef.current.querySelectorAll('circle');
+        const groups = svgRef.current.querySelectorAll('g');
 
-        circles.forEach((c) => {
-          if (c.classList.contains('center')) {
-            c.setAttribute('r', `${1 / newValue}`);
-          } else {
-            c.setAttribute('r', `${5 / newValue}`);
-          }
+        groups.forEach((g) => {
+          const text = g.querySelector('text')!;
+          const circles = g.querySelectorAll('circle');
+          let x: number = 0;
+          let y: number = 0;
+
+          circles.forEach((c) => {
+            if (c.classList.contains('center')) {
+              c.setAttribute('r', `${1 / newValue}`);
+              x = Number.parseFloat(c.getAttribute('cx')!);
+              y = Number.parseFloat(c.getAttribute('cy')!);
+            } else {
+              c.setAttribute('r', `${5 / newValue}`);
+            }
+          });
+
+          text.setAttribute('font-size', `${12 / newValue}`);
+          text.setAttribute('x', `${x + 10 / newValue}`);
+          text.setAttribute('y', `${y + 10 / newValue}`);
         });
 
         if (scrollToCenter) {
@@ -246,14 +259,21 @@ const SolvePnP = ({
       const dy = e.screenY - y;
 
       if (pointIdx !== undefined) {
-        imgContainerRef
-          .current!.querySelectorAll('svg > g')
-          // eslint-disable-next-line no-unexpected-multiline
-          [pointIdx]?.querySelectorAll('circle')
-          .forEach((c) => {
-            c.setAttribute('cx', `${startX + dx / scaleRef.current}`);
-            c.setAttribute('cy', `${startY + dy / scaleRef.current}`);
+        const g = imgContainerRef.current!.querySelectorAll('svg > g')[pointIdx];
+
+        if (g) {
+          const newX = startX + dx / scaleRef.current;
+          const newY = startY + dy / scaleRef.current;
+
+          g.querySelectorAll('circle').forEach((c) => {
+            c.setAttribute('cx', newX.toString());
+            c.setAttribute('cy', newY.toString());
           });
+          g.querySelectorAll('text').forEach((t) => {
+            t.setAttribute('x', `${newX + 10 / scaleRef.current}`);
+            t.setAttribute('y', `${newY + 10 / scaleRef.current}`);
+          });
+        }
       } else {
         e.currentTarget.scrollLeft = startX - dx;
         e.currentTarget.scrollTop = startY - dy;
@@ -440,6 +460,14 @@ const SolvePnP = ({
                           cy={p[1]}
                           r={1 / scaleRef.current}
                         />
+                        <text
+                          className={styles.text}
+                          fontSize={12 / scaleRef.current}
+                          x={p[0] + 10 / scaleRef.current}
+                          y={p[1] + 10 / scaleRef.current}
+                        >
+                          {idx}
+                        </text>
                       </g>
                     ))}
                   </svg>

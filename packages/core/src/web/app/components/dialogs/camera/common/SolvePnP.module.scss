@@ -73,6 +73,11 @@
         }
       }
 
+      text {
+        fill: #ff4d4f;
+        stroke: none;
+      }
+
       g.selected {
         circle {
           fill: variables.$primary-blue;
@@ -81,6 +86,11 @@
           &.center {
             stroke: none;
           }
+        }
+
+        text {
+          fill: variables.$primary-blue;
+          stroke: none;
         }
       }
     }
