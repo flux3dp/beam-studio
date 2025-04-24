@@ -11,6 +11,7 @@ import browser from '@core/implementations/browser';
 import communicator from '@core/implementations/communicator';
 import cookies from '@core/implementations/cookies';
 import storage from '@core/implementations/storage';
+import type { IData } from '@core/interfaces/INoun-Project';
 import type { IUser } from '@core/interfaces/IUser';
 
 export interface ResponseWithError<T = any, D = any> extends AxiosResponse<T, D> {
@@ -443,10 +444,10 @@ export const setPreference = async (value: { [key: string]: any }): Promise<bool
   return false;
 };
 
-export const getNPIconsByTerm = async (term: string, offset = 0) => {
+export const getNPIconsByTerm = async (term: string, nextPage?: string): Promise<IData | null> => {
   const response = (await axiosFluxId.get(`/api/np/icons/${term}`, {
     params: {
-      offset,
+      next_page: nextPage,
     },
     withCredentials: true,
   })) as ResponseWithError;
@@ -454,13 +455,13 @@ export const getNPIconsByTerm = async (term: string, offset = 0) => {
   if (response.error) {
     handleErrorMessage(response.error);
 
-    return false;
+    return null;
   }
 
-  return response.data;
+  return response.data.data;
 };
 
-export const getNPIconByID = async (id: string) => {
+export const getNPIconByID = async (id: string): Promise<null | string> => {
   const response = (await axiosFluxId.get(`/api/np/icon/${id}`, {
     withCredentials: true,
   })) as ResponseWithError;
@@ -468,10 +469,10 @@ export const getNPIconByID = async (id: string) => {
   if (response.error) {
     handleErrorMessage(response.error);
 
-    return false;
+    return null;
   }
 
-  return response.data;
+  return response.data.base64;
 };
 
 export const getDefaultHeader = () => {

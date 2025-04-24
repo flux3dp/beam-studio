@@ -100,12 +100,13 @@ const readSVG = (
 const importSvg = async (
   file: Blob,
   {
+    batchCmd: initBatchCmd,
     isFromAI = false,
     isFromNounProject,
     skipByLayer = false,
-  }: { isFromAI?: boolean; isFromNounProject?: boolean; skipByLayer?: boolean } = {},
-): Promise<void> => {
-  const batchCmd = new history.BatchCommand('Import SVG');
+  }: { batchCmd?: IBatchCommand; isFromAI?: boolean; isFromNounProject?: boolean; skipByLayer?: boolean } = {},
+): Promise<SVGUseElement[] | undefined> => {
+  const batchCmd = initBatchCmd ?? new history.BatchCommand('Import SVG');
   const { lang } = i18n;
   const hasModule = modelsWithModules.has(beamboxPreference.read('workarea'));
   let targetModule: LayerModuleType;
@@ -147,7 +148,7 @@ const importSvg = async (
     // use skip-by-layer as a flag to separate the import of .svg and .ai files
     const id = `${targetModule}${skipByLayer ? '-skip-by-layer' : ''}-import-type`;
 
-    if (isFromAI) {
+    if (isFromAI || isFromNounProject) {
       return 'layer';
     }
 
@@ -284,9 +285,11 @@ const importSvg = async (
     svgCanvas.selectOnly(svgCanvas.tempGroupSelectedElements());
   }
 
-  if (!batchCmd.isEmpty()) {
+  if (!initBatchCmd && !batchCmd.isEmpty()) {
     svgCanvas.addCommandToHistory(batchCmd);
   }
+
+  return filteredNewElements;
 };
 
 export default importSvg;

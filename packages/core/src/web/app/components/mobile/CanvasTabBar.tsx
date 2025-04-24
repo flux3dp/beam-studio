@@ -112,7 +112,7 @@ const CanvasTabBar = (): React.ReactNode => {
     {
       icon: <TabBarIcons.Shape />,
       key: 'shape',
-      title: lang.beambox.left_panel.label.shapes,
+      title: lang.beambox.left_panel.label.elements,
     },
     {
       icon: <TabBarIcons.Text />,
@@ -224,7 +224,7 @@ const CanvasTabBar = (): React.ReactNode => {
       historyUtils.redo();
       setTimeout(resetActiveKey, 300);
     } else if (key === 'shape') {
-      dialogCaller.showShapePanel(resetActiveKey);
+      dialogCaller.showElementPanel(resetActiveKey);
     } else if (key === 'document') {
       dialogCaller.showDocumentSettings();
       setTimeout(resetActiveKey, 300);

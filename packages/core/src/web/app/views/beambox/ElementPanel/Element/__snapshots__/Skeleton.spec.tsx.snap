@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test Skeleton should render correctly 1`] = `
+<div>
+  <div
+    class="icon loading"
+  />
+  <div
+    class="icon loading"
+  />
+  <div
+    class="icon loading"
+  />
+  <div
+    class="icon loading"
+  />
+  <div
+    class="icon loading"
+  />
+</div>
+`;
+
+exports[`test Skeleton should render correctly without props 1`] = `
+<div>
+  <div
+    class="icon loading"
+  />
+</div>
+`;

@@ -1,8 +1,9 @@
 it('infill', () => {
   cy.landingEditor();
   cy.clickToolBtn('Element');
-  cy.get('[class="ant-modal-header"]').contains('Element').should('exist');
+  cy.get('.ant-drawer-header').contains('Element').should('exist');
   cy.get('.anticon[id="basic/icon-circle"]').click();
+  cy.get('.ant-drawer-header').should('not.exist');
   cy.get('#svg_1').should('exist');
   cy.get('#svg_1').should('have.attr', 'cx', '250');
   cy.get('#svg_1').should('have.attr', 'cy', '250');

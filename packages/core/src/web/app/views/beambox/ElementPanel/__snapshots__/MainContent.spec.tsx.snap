@@ -1,0 +1,278 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test MainContent should render correctly 1`] = `
+<div>
+  <div
+    class="shadow-container"
+  >
+    <div
+      class="scroll-content"
+    >
+      <div
+        class="icon-list"
+      >
+        <grid-content
+          content="[object Object]"
+        />
+        <grid-content
+          content="[object Object]"
+        />
+      </div>
+    </div>
+    <div
+      class="shadow"
+      style="display: none;"
+    />
+  </div>
+</div>
+`;
+
+exports[`test MainContent should render correctly when not login 1`] = `
+<div>
+  <div
+    class="shadow-container"
+  >
+    <div
+      class="scroll-content"
+    >
+      <button
+        class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid ant-btn-block login yellow"
+        type="button"
+      >
+        <span>
+          Sign in to get 10,000+ free icons
+        </span>
+      </button>
+      <div
+        class="icon-list"
+      >
+        <grid-content
+          content="[object Object]"
+        />
+        <grid-content
+          content="[object Object]"
+        />
+      </div>
+    </div>
+    <div
+      class="shadow"
+      style="display: none;"
+    />
+  </div>
+</div>
+`;
+
+exports[`test MainContent should render history correctly 1`] = `
+<div>
+  <div
+    class="shadow-container"
+  >
+    <div
+      class="scroll-content"
+    >
+      <div
+        class="icon-list"
+      >
+        <div
+          class="subtitle"
+        >
+          Recently Used
+        </div>
+        <builtin-element
+          maintype="basic"
+          path="icon-circle"
+        />
+        <np-element
+          icon="[object Object]"
+        />
+        <builtin-element
+          maintype="decor"
+          path="i_circular-1"
+        />
+        <np-element
+          icon="[object Object]"
+        />
+        <grid-content
+          content="[object Object]"
+        />
+        <grid-content
+          content="[object Object]"
+        />
+      </div>
+    </div>
+    <div
+      class="shadow"
+      style="display: none;"
+    />
+  </div>
+</div>
+`;
+
+exports[`test MainContent should render search hint correctly 1`] = `
+<div>
+  <div
+    class="shadow-container"
+  >
+    <div
+      class="scroll-content"
+    >
+      <ul
+        class="hints"
+      >
+        <li>
+          Please type your search in English.
+        </li>
+        <li>
+          Examples:
+           flower, school building.
+        </li>
+      </ul>
+      <div
+        class="bold"
+      >
+        Browse Categories:
+      </div>
+      <div
+        class="categories"
+      >
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-link ant-btn-color-primary ant-btn-variant-link ant-btn-sm"
+          type="button"
+        >
+          <span>
+            Basic
+          </span>
+        </button>
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-link ant-btn-color-primary ant-btn-variant-link ant-btn-sm"
+          type="button"
+        >
+          <span>
+            Decor
+          </span>
+        </button>
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-link ant-btn-color-primary ant-btn-variant-link ant-btn-sm"
+          type="button"
+        >
+          <span>
+            Animal
+          </span>
+        </button>
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-link ant-btn-color-primary ant-btn-variant-link ant-btn-sm"
+          type="button"
+        >
+          <span>
+            Holiday
+          </span>
+        </button>
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-link ant-btn-color-primary ant-btn-variant-link ant-btn-sm"
+          type="button"
+        >
+          <span>
+            Nature
+          </span>
+        </button>
+      </div>
+      <div
+        class="icon-list"
+      />
+    </div>
+    <div
+      class="shadow"
+      style="display: none;"
+    />
+  </div>
+</div>
+`;
+
+exports[`test MainContent should render search hint correctly when no result 1`] = `
+<div>
+  <div
+    class="shadow-container"
+  >
+    <div
+      class="scroll-content"
+    >
+      <ul
+        class="hints"
+      >
+        <li>
+          Please type your search in English.
+        </li>
+        <li>
+          Examples:
+           flower, school building.
+        </li>
+      </ul>
+      <div
+        class="empty"
+      >
+        No results were found for "search". Please check spelling or try a different keyword.
+      </div>
+      <div
+        class="bold"
+      >
+        Browse Categories:
+      </div>
+      <div
+        class="categories"
+      >
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-link ant-btn-color-primary ant-btn-variant-link ant-btn-sm"
+          type="button"
+        >
+          <span>
+            Basic
+          </span>
+        </button>
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-link ant-btn-color-primary ant-btn-variant-link ant-btn-sm"
+          type="button"
+        >
+          <span>
+            Decor
+          </span>
+        </button>
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-link ant-btn-color-primary ant-btn-variant-link ant-btn-sm"
+          type="button"
+        >
+          <span>
+            Animal
+          </span>
+        </button>
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-link ant-btn-color-primary ant-btn-variant-link ant-btn-sm"
+          type="button"
+        >
+          <span>
+            Holiday
+          </span>
+        </button>
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-link ant-btn-color-primary ant-btn-variant-link ant-btn-sm"
+          type="button"
+        >
+          <span>
+            Nature
+          </span>
+        </button>
+      </div>
+      <div
+        class="icon-list"
+      >
+        <grid-content
+          content="[object Object]"
+        />
+      </div>
+    </div>
+    <div
+      class="shadow"
+      style="display: none;"
+    />
+  </div>
+</div>
+`;

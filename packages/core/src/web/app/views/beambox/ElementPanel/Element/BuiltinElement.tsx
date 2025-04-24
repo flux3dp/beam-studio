@@ -1,14 +1,17 @@
-import React, { useEffect } from 'react';
+import type { ComponentType } from 'react';
+import React, { useContext, useEffect, useMemo } from 'react';
 
 import Icon from '@ant-design/icons';
 import ReactDomServer from 'react-dom/server';
 
+import { builtInElements } from '@core/app/constants/element-panel-constants';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
-import { builtInElements } from '@core/app/constants/shape-panel-constants';
+import { ElementPanelContext } from '@core/app/contexts/ElementPanelContext';
 import history from '@core/app/svgedit/history/history';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
-import disassembleUse from '@core/app/svgedit/operations/disassembleUse';
+import undoManager from '@core/app/svgedit/history/undoManager';
 import importSvgString from '@core/app/svgedit/operations/import/importSvgString';
+import postImportElement from '@core/app/svgedit/operations/import/postImportElement';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getLayerByName } from '@core/helpers/layer/layer-helper';
@@ -16,7 +19,7 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useForceUpdate from '@core/helpers/use-force-update';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import styles from './ShapeIcon.module.scss';
+import styles from './Element.module.scss';
 
 let svgCanvas: ISVGCanvas;
 
@@ -24,16 +27,16 @@ getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
 
-const icons = {};
+const icons: { [key: string]: ComponentType } = {};
 
-const importShape = async (IconComponent, jsonMap) => {
+const importElement = async (IconComponent: ComponentType, jsonMap: any) => {
   if (jsonMap) {
     const newElement = svgCanvas.addSvgElementFromJson({
       ...jsonMap,
       attr: { ...jsonMap.attr, id: svgCanvas.getNextId() },
     });
 
-    svgCanvas.addCommandToHistory(new history.InsertElementCommand(newElement));
+    undoManager.addCommandToHistory(new history.InsertElementCommand(newElement));
 
     if (svgCanvas.isUsingLayerColor) {
       updateElementColor(newElement);
@@ -47,40 +50,35 @@ const importShape = async (IconComponent, jsonMap) => {
     );
     const drawing = svgCanvas.getCurrentDrawing();
     const layerName = drawing.getCurrentLayerName();
+
+    if (!layerName) return;
+
     const layerModule = getData(getLayerByName(layerName), 'module') as LayerModuleType;
-    const batchCmd = HistoryCommandFactory.createBatchCommand('Shape Panel Import SVG');
+    const batchCmd = HistoryCommandFactory.createBatchCommand('Import Element SVG');
     const newElementnewElement = await importSvgString(iconString, {
       layerName,
       parentCmd: batchCmd,
       targetModule: layerModule,
       type: 'layer',
     });
-    const { height, width } = svgCanvas.getSvgRealLocation(newElementnewElement);
-    const [newWidth, newHeight] = width > height ? [500, (height * 500) / width] : [(width * 500) / height, 500];
 
-    svgCanvas.selectOnly([newElementnewElement]);
-    batchCmd.addSubCommand(svgCanvas.setSvgElemSize('width', newWidth));
-    batchCmd.addSubCommand(svgCanvas.setSvgElemSize('height', newHeight));
-    batchCmd.addSubCommand(svgCanvas.setSvgElemPosition('x', 0, newElementnewElement, false));
-    batchCmd.addSubCommand(svgCanvas.setSvgElemPosition('y', 0, newElementnewElement, false));
-    newElementnewElement.setAttribute('data-ratiofixed', 'true');
-    await disassembleUse([newElementnewElement], { parentCmd: batchCmd, skipConfirm: true });
-    updateElementColor(svgCanvas.getSelectedElems()[0]);
-    svgCanvas.addCommandToHistory(batchCmd);
+    await postImportElement(newElementnewElement, batchCmd);
+    undoManager.addCommandToHistory(batchCmd);
   }
 };
 
-const ShapeIcon = ({
-  activeTab,
-  fileName,
-  onClose,
-}: {
-  activeTab: string;
-  fileName: string;
-  onClose: () => void;
-}): React.JSX.Element => {
+const BuiltinElement = ({ mainType, path }: { mainType?: string; path: string }): React.JSX.Element => {
   const forceUpdate = useForceUpdate();
-  const key = `${activeTab}/${fileName}`;
+  const { addToHistory, closeDrawer } = useContext(ElementPanelContext);
+  const [key, folder, fileName] = useMemo(() => {
+    if (mainType) {
+      return [`${mainType}/${path}`, mainType, path];
+    }
+
+    const [subPath1, subPath2] = path.split('/');
+
+    return [path, subPath1, subPath2];
+  }, [path, mainType]);
 
   useEffect(() => {
     if (icons[key]) {
@@ -89,7 +87,7 @@ const ShapeIcon = ({
 
     import(`@core/app/icons/shape/${key}.svg`)
       .then((module) => {
-        const icon = module.default;
+        const icon: ComponentType = module.default;
 
         icons[key] = icon;
         forceUpdate();
@@ -109,12 +107,13 @@ const ShapeIcon = ({
         component={IconComponent}
         id={key}
         onClick={async () => {
-          await importShape(IconComponent, builtInElements[fileName]);
-          onClose();
+          addToHistory({ path: { fileName, folder }, type: 'builtin' });
+          await importElement(IconComponent, builtInElements[fileName]);
+          closeDrawer();
         }}
       />
     )
   );
 };
 
-export default ShapeIcon;
+export default BuiltinElement;

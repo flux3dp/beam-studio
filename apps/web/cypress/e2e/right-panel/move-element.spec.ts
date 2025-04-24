@@ -45,6 +45,7 @@ describe('move element to another layer', () => {
     cy.clickToolBtn('Element');
     cy.get('.anticon[id="basic/icon-circle"]').click();
     cy.get('#svg_1').should('exist').should('have.attr', 'fill', '#333333');
+    cy.get('.ant-drawer', { timeout: 10000 }).should('not.exist');
 
     moveToLayer('#svg_1', 'Layer 2');
 
@@ -61,9 +62,10 @@ describe('move element to another layer', () => {
 
     elements.forEach(({ category, icon }) => {
       cy.clickToolBtn('Element');
-      cy.get('.adm-capsule-tabs-tab-wrapper').contains(category).click();
+      cy.get('.ant-drawer-header .ant-select-selector').click();
+      cy.get('.ant-select-item-option').contains(category).click();
       cy.get(`.anticon[id="${icon}"]`).click();
-      cy.get('.ant-modal-mask', { timeout: 10000 }).should('not.exist');
+      cy.get('.ant-drawer', { timeout: 10000 }).should('not.exist');
     });
 
     cy.get('#svg_19').should('exist');

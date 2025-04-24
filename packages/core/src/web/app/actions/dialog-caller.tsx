@@ -26,12 +26,12 @@ import ImageEditPanel from '@core/app/components/ImageEditPanel';
 import TabPanel from '@core/app/components/TabPanel';
 import alertConstants from '@core/app/constants/alert-constants';
 import { eventEmitter } from '@core/app/contexts/DialogContext';
+import ElementPanel from '@core/app/views/beambox/ElementPanel/ElementPanel';
 import LayerColorConfigPanel from '@core/app/views/beambox/Layer-Color-Config';
 import NetworkTestingPanel from '@core/app/views/beambox/NetworkTestingPanel';
 import type { PhotoEditMode } from '@core/app/views/beambox/Photo-Edit-Panel';
 import PhotoEditPanel from '@core/app/views/beambox/Photo-Edit-Panel';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
-import ShapePanel from '@core/app/views/beambox/ShapePanel/ShapePanel';
 import SvgNestButtons from '@core/app/views/beambox/SvgNestButtons';
 import DeviceSelector from '@core/app/views/dialogs/DeviceSelector';
 import CropPanel from '@core/app/views/dialogs/image-edit/CropPanel';
@@ -431,6 +431,23 @@ export default {
         />,
       );
     }),
+  showElementPanel: (onClose: () => void): void => {
+    const id = 'element-panel';
+
+    if (isIdExist(id)) {
+      return;
+    }
+
+    addDialogComponent(
+      id,
+      <ElementPanel
+        onClose={() => {
+          onClose();
+          popDialogById(id);
+        }}
+      />,
+    );
+  },
   showFirmwareUpdateDialog: (
     device: IDeviceInfo,
     updateInfo: {
@@ -674,21 +691,6 @@ export default {
     addDialogComponent(
       'rating-dialog',
       <RatingPanel onClose={() => popDialogById('rating-dialog')} onSubmit={onSubmit} />,
-    );
-  },
-  showShapePanel: (onClose: () => void): void => {
-    if (isIdExist('shape-panel')) {
-      return;
-    }
-
-    addDialogComponent(
-      'shape-panel',
-      <ShapePanel
-        onClose={() => {
-          onClose();
-          popDialogById('shape-panel');
-        }}
-      />,
     );
   },
   showSocialMedia: (autoPopup?: boolean): void => {

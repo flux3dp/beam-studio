@@ -14,6 +14,7 @@ export type StorageKey =
   | 'default-units'
   | 'defaultLaserConfigsInUse' // For version <= 2.3.9, maybe we can remove this in the future
   | 'did-gesture-tutorial'
+  | 'elements-history'
   | 'enable-sentry'
   | 'firmware-update-ignore-list'
   | 'flux-rsa-key'

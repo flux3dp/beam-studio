@@ -31,12 +31,12 @@ jest.mock('@core/implementations/browser', () => ({
   open: mockOpen,
 }));
 
-const showShapePanel = jest.fn();
+const showElementPanel = jest.fn();
 const showMyCloud = jest.fn();
 
 jest.mock('@core/app/actions/dialog-caller', () => ({
+  showElementPanel: (...args) => showElementPanel(...args),
   showMyCloud: (...args) => showMyCloud(...args),
-  showShapePanel: (...args) => showShapePanel(...args),
 }));
 
 const getCurrentUser = jest.fn();
@@ -103,7 +103,7 @@ describe('test DrawingToolButtonGroup', () => {
 
     fireEvent.click(container.querySelector('#left-Element'));
     expect(container).toMatchSnapshot();
-    expect(showShapePanel).toHaveBeenCalledTimes(1);
+    expect(showElementPanel).toHaveBeenCalledTimes(1);
 
     fireEvent.click(container.querySelector('#left-Pen'));
     expect(container).toMatchSnapshot();

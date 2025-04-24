@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test NPElement should render correctly 1`] = `
+<div>
+  <div
+    class="icon loading"
+    id="1234"
+  >
+    <img
+      src="img_thumbnail_url"
+    />
+  </div>
+</div>
+`;
+
+exports[`test NPElement should render correctly 2`] = `
+<div>
+  <div
+    class="icon"
+    id="1234"
+  >
+    <img
+      src="img_thumbnail_url"
+    />
+  </div>
+</div>
+`;

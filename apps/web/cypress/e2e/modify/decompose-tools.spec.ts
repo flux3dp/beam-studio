@@ -3,9 +3,9 @@ import { md5 } from '../../support/utils';
 it('decompose', () => {
   cy.landingEditor();
   cy.clickToolBtn('Element');
-  cy.get('[class="ant-modal-header"]').contains('Element').should('exist');
+  cy.get('.ant-drawer-header').contains('Element').should('exist');
   cy.get('.anticon[id="basic/icon-tablet"]').click();
-  cy.get('[class="ant-modal-header"]').should('not.exist');
+  cy.get('.ant-drawer-header').should('not.exist');
   cy.get('#svg_9').should('exist').should('have.attr', 'fill', '#333333');
   cy.get('#svg_9').click({ force: true });
   cy.get('.tab.objects').click();
