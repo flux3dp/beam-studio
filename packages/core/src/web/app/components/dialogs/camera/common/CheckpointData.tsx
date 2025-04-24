@@ -8,7 +8,12 @@ import progressCaller from '@core/app/actions/progress-caller';
 import { updateData } from '@core/helpers/camera-calibration-helper';
 import { loadJson } from '@core/helpers/device/jsonDataHelper';
 import useI18n from '@core/helpers/useI18n';
-import type { FisheyeCaliParameters } from '@core/interfaces/FisheyePreview';
+import type {
+  FisheyeCaliParameters,
+  FisheyeCameraParametersV2,
+  FisheyeCameraParametersV3,
+  FisheyeCameraParametersV4,
+} from '@core/interfaces/FisheyePreview';
 
 import styles from './CheckpointData.module.scss';
 import Title from './Title';
@@ -33,7 +38,7 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
   updateParam,
 }: Props<T>): React.JSX.Element => {
   const progressId = useMemo(() => 'camera-check-point', []);
-  const [checkpointData, setCheckpointData] = useState<null | {
+  const [currentData, setCurrentData] = useState<null | {
     data: T;
     isCheckPointData?: boolean;
   }>(null);
@@ -44,7 +49,7 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
       message: lang.calibration.checking_checkpoint,
     });
 
-    let res: T;
+    let res: FisheyeCaliParameters;
 
     try {
       if (getData) {
@@ -53,8 +58,10 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
         res = (await loadJson('fisheye', 'fisheye_params.json')) as T;
       }
 
-      if (res.v === 4) {
-        setCheckpointData({
+      const isV4 = (d: any): d is FisheyeCameraParametersV4 => d.v === 4;
+
+      if (isV4(res)) {
+        setCurrentData({
           data: {
             d: res.d,
             k: res.k,
@@ -67,8 +74,10 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
         return;
       }
 
-      if (res.v === 3) {
-        setCheckpointData({
+      const isV3 = (d: any): d is FisheyeCameraParametersV3 => d.v === 3;
+
+      if (isV3(res)) {
+        setCurrentData({
           data: {
             d: res.d,
             k: res.k,
@@ -81,8 +90,10 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
         return;
       }
 
-      if (res.v === 2) {
-        setCheckpointData({
+      const isV2 = (d: any): d is FisheyeCameraParametersV2 => d.v === 2;
+
+      if (isV2(res)) {
+        setCurrentData({
           data: {
             d: res.d,
             k: res.k,
@@ -105,7 +116,7 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
         const data = (await loadJson('fisheye', 'checkpoint.json')) as T;
 
         if (data) {
-          setCheckpointData({
+          setCurrentData({
             data,
             isCheckPointData: true,
           });
@@ -128,7 +139,7 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
       message: lang.calibration.downloading_checkpoint,
     });
     try {
-      const { data } = checkpointData!;
+      const { data } = currentData!;
 
       try {
         await updateData(data);
@@ -142,7 +153,7 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
     } finally {
       progressCaller.popById(progressId);
     }
-  }, [checkpointData, lang, onNext, progressId, updateParam]);
+  }, [currentData, lang, onNext, progressId, updateParam]);
 
   useEffect(() => {
     checkData();
@@ -150,10 +161,10 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
   }, []);
 
   useEffect(() => {
-    if (checkpointData && !askUser) {
+    if (currentData && !askUser) {
       handleOk();
     }
-  }, [checkpointData, askUser, handleOk]);
+  }, [currentData, askUser, handleOk]);
 
   if (!askUser) {
     return (
@@ -189,11 +200,9 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
       title={<Title link={titleLink} title={lang.calibration.check_checkpoint_data} />}
       width={400}
     >
-      {!checkpointData && lang.calibration.checking_checkpoint}
-      {checkpointData?.data &&
-        (checkpointData.isCheckPointData
-          ? lang.calibration.use_old_camera_parameter
-          : lang.calibration.found_checkpoint)}
+      {!currentData && lang.calibration.checking_checkpoint}
+      {currentData?.data &&
+        (currentData.isCheckPointData ? lang.calibration.found_checkpoint : lang.calibration.use_old_camera_parameter)}
     </Modal>
   );
 };

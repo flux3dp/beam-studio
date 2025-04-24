@@ -70,7 +70,7 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
       return (
         <CheckpointData
           allowCheckPoint={false}
-          askUser={false}
+          askUser
           getData={async () => loadJson('fisheye', 'wide-angle.json') as FisheyeCameraParametersV4Cali}
           onClose={handleClose}
           onNext={(res: boolean) => {
@@ -255,7 +255,10 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
             if (step === Step.SOLVE_OTHER_PNP_1) {
               progressCaller.update(PROGRESS_ID, { message: 'Moving platform' });
               await movePlatformRel(-40);
-              updateParam({ dh2: dh! - 40 });
+
+              const dh2 = await getFocalDistance();
+
+              updateParam({ dh2 });
             }
 
             progressCaller.popById(PROGRESS_ID);
