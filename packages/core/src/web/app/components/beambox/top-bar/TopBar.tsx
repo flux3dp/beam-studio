@@ -28,7 +28,7 @@ import Tabs from './tabs/Tabs';
 import styles from './TopBar.module.scss';
 
 const UnmemorizedTopBar = (): React.JSX.Element => {
-  const { isDragRegion, isWeb: isWeb } = useMemo(
+  const { isDragRegion, isWeb } = useMemo(
     () => pipe(getIsWeb(), (isWeb) => ({ isDragRegion: window.os === 'MacOS' && !isWeb, isWeb })),
     [],
   );

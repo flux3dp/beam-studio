@@ -40,11 +40,11 @@ export const handleExportClick =
 
         if (!device) return;
 
-        const isSerialValid = await checkBlockedSerial(device.serial);
-        const confirmed = await handleExportAlerts(device, lang);
-        const deviceStatus = await checkDeviceStatus(device);
+        if (!(await checkBlockedSerial(device.serial))) return;
 
-        if (!isSerialValid || !confirmed || !deviceStatus) return;
+        if (!(await handleExportAlerts(device, lang))) return;
+
+        if (!(await checkDeviceStatus(device))) return;
 
         await checkModuleCalibration(device, lang);
         await exportTask(device, byHandler, lang);
