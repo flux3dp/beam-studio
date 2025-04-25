@@ -19,7 +19,7 @@ import type { IUser } from '@core/interfaces/IUser';
 export interface Content {
   contentId?: number; // assigned in updateContent, avoid renderind out-dated content after api return
   fileNames?: string[]; // builtin icons
-  loading?: boolean; // show skeleton or not
+  loading?: boolean; // fetching np icons
   mainType?: MainType; // builtin icons folder
   nextPage?: string; // np query
   npIcons?: IIcon[]; // np icons
@@ -152,6 +152,8 @@ export const ElementPanelProvider = ({ children, onClose }: ElementPanelProvider
   };
 
   const getNPIcons = async (contentObj: Content) => {
+    if (!hasLogin) return;
+
     contentObj.loading = true;
     updateContent([contentObj]);
 
@@ -241,16 +243,13 @@ export const ElementPanelProvider = ({ children, onClose }: ElementPanelProvider
 
     content.fileNames = fileNames;
 
-    if (pinnedNP && hasLogin) {
+    if (pinnedNP) {
       content.npIcons = pinnedNP;
     }
 
     cacheRef.current[contentType][activeSubType!] = content;
     updateContent([content]);
-
-    if (hasLogin) {
-      getNPIcons(cacheRef.current[contentType][activeSubType!]!);
-    }
+    getNPIcons(cacheRef.current[contentType][activeSubType!]!);
   };
 
   // eslint-disable-next-line hooks/exhaustive-deps
@@ -313,10 +312,7 @@ export const ElementPanelProvider = ({ children, onClose }: ElementPanelProvider
     // Overwrite cache to clear old search results
     cacheRef.current[contentType][key] = content;
     updateContent([content]);
-
-    if (hasLogin) {
-      getNPIcons(cacheRef.current[contentType][key]);
-    }
+    getNPIcons(cacheRef.current[contentType][key]);
   };
 
   useEffect(() => {

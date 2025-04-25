@@ -15,9 +15,9 @@ import GridContent from './GridContent';
 
 describe('test GridContent', () => {
   it('should render mainType content correctly', () => {
-    // sub type label + builtin icons + np icons
+    // sub type label + builtin icons
     const { container } = render(
-      <ElementPanelContext.Provider value={{ getNPIcons: mockGetNPIcons } as any}>
+      <ElementPanelContext.Provider value={{ getNPIcons: mockGetNPIcons, hasLogin: false } as any}>
         <GridContent
           content={{
             fileNames: ['icon-star1', 'icon-star2'],
@@ -68,7 +68,7 @@ describe('test GridContent', () => {
   it('should render subType content correctly', () => {
     // builtin icons + np icons + load more button
     const { container } = render(
-      <ElementPanelContext.Provider value={{ getNPIcons: mockGetNPIcons } as any}>
+      <ElementPanelContext.Provider value={{ getNPIcons: mockGetNPIcons, hasLogin: true } as any}>
         <GridContent
           content={{
             fileNames: ['icon-star1', 'icon-star2'],
@@ -104,7 +104,7 @@ describe('test GridContent', () => {
   it('should render search content correctly', () => {
     // builtin icons + np icons + load more button
     const { container } = render(
-      <ElementPanelContext.Provider value={{ getNPIcons: mockGetNPIcons } as any}>
+      <ElementPanelContext.Provider value={{ getNPIcons: mockGetNPIcons, hasLogin: true } as any}>
         <GridContent
           content={{
             fileNames: ['basic/icon-star1', 'basic/icon-star2', 'decor/i_circular-1'],
@@ -139,7 +139,7 @@ describe('test GridContent', () => {
   it('should render loading correctly', () => {
     // builtin icons + np icons + 100 skeletons
     const { container } = render(
-      <ElementPanelContext.Provider value={{ getNPIcons: mockGetNPIcons } as any}>
+      <ElementPanelContext.Provider value={{ getNPIcons: mockGetNPIcons, hasLogin: true } as any}>
         <GridContent
           content={{
             fileNames: ['icon-star1', 'icon-star2'],
@@ -162,17 +162,19 @@ describe('test GridContent', () => {
   it('should render correctly when missing fileNames', () => {
     // np icons + load more button
     const { container } = render(
-      <GridContent
-        content={{
-          mainType: 'basic',
-          nextPage: 'next_page_key',
-          npIcons: [
-            { id: '1', thumbnail_url: 'url_1' },
-            { id: '2', thumbnail_url: 'url_2' },
-          ],
-          term: 'graphics',
-        }}
-      />,
+      <ElementPanelContext.Provider value={{ getNPIcons: mockGetNPIcons, hasLogin: true } as any}>
+        <GridContent
+          content={{
+            mainType: 'basic',
+            nextPage: 'next_page_key',
+            npIcons: [
+              { id: '1', thumbnail_url: 'url_1' },
+              { id: '2', thumbnail_url: 'url_2' },
+            ],
+            term: 'graphics',
+          }}
+        />
+      </ElementPanelContext.Provider>,
     );
 
     expect(container).toMatchSnapshot();
@@ -181,13 +183,15 @@ describe('test GridContent', () => {
   it('should render correctly when missing npIcons', () => {
     // builtin icons
     const { container } = render(
-      <GridContent
-        content={{
-          fileNames: ['icon-star1', 'icon-star2'],
-          mainType: 'basic',
-          term: 'graphics',
-        }}
-      />,
+      <ElementPanelContext.Provider value={{ getNPIcons: mockGetNPIcons, hasLogin: true } as any}>
+        <GridContent
+          content={{
+            fileNames: ['icon-star1', 'icon-star2'],
+            mainType: 'basic',
+            term: 'graphics',
+          }}
+        />
+      </ElementPanelContext.Provider>,
     );
 
     expect(container).toMatchSnapshot();

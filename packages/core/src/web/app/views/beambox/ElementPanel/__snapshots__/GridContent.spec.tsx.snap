@@ -69,12 +69,6 @@ exports[`test GridContent should render mainType content correctly 1`] = `
     maintype="basic"
     path="icon-star2"
   />
-  <np-element
-    icon="[object Object]"
-  />
-  <np-element
-    icon="[object Object]"
-  />
 </div>
 `;
 

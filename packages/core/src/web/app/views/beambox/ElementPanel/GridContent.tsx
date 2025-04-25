@@ -40,15 +40,19 @@ const GridContent = ({ content }: Props): ReactNode => {
       {content.fileNames?.map((fileName) => (
         <BuiltinElement key={fileName} mainType={content.mainType} path={fileName} />
       ))}
-      {content.npIcons?.map((icon) => <NPElement icon={icon} key={icon.id} />)}
-      {content.loading ? (
-        <Skeleton count={100} />
-      ) : (
-        content.nextPage && (
-          <Button block className={styles.more} onClick={() => getNPIcons(content)}>
-            {lang.load_more}
-          </Button>
-        )
+      {hasLogin && (
+        <>
+          {content.npIcons?.map((icon) => <NPElement icon={icon} key={icon.id} />)}
+          {content.loading ? (
+            <Skeleton count={100} />
+          ) : (
+            content.nextPage && (
+              <Button block className={styles.more} onClick={() => getNPIcons(content)}>
+                {lang.load_more}
+              </Button>
+            )
+          )}
+        </>
       )}
     </>
   );
