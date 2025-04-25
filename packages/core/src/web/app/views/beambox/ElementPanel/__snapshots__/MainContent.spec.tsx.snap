@@ -120,7 +120,7 @@ exports[`test MainContent should render search hint correctly 1`] = `
         class="hints"
       >
         <li>
-          Please type your search in English.
+          Only English letters, numbers, commas, and spaces are allowed.
         </li>
         <li>
           Examples:
@@ -200,7 +200,7 @@ exports[`test MainContent should render search hint correctly when no result 1`]
         class="hints"
       >
         <li>
-          Please type your search in English.
+          Only English letters, numbers, commas, and spaces are allowed.
         </li>
         <li>
           Examples:

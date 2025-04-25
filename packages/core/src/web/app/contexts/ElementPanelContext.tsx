@@ -9,6 +9,7 @@ import Elements, {
   MainTypes,
   SearchKeyMap,
   SearchMap,
+  SubTypeSearchKeyMap,
 } from '@core/app/constants/element-panel-constants';
 import { getCurrentUser, getNPIconsByTerm } from '@core/helpers/api/flux-id';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
@@ -48,7 +49,6 @@ interface ElementPanelContextType {
   contents: Content[];
   contentType: ContentType;
   getNPIcons: (contentObj: Content) => Promise<void>;
-  handleSearch: (term?: string) => void;
   hasLogin: boolean;
   historyIcons: History[];
   onClose: () => void;
@@ -57,6 +57,7 @@ interface ElementPanelContextType {
   setActiveMainType: React.Dispatch<React.SetStateAction<MainType>>;
   setActiveSubType: React.Dispatch<React.SetStateAction<SubType | undefined>>;
   setSearchKey: React.Dispatch<React.SetStateAction<string | undefined>>;
+  updateSearchContents: (term?: string) => void;
 }
 
 export const ElementPanelContext = createContext<ElementPanelContextType>({
@@ -68,7 +69,6 @@ export const ElementPanelContext = createContext<ElementPanelContextType>({
   contents: [],
   contentType: ContentType.MainType,
   getNPIcons: async () => {},
-  handleSearch: () => {},
   hasLogin: false,
   historyIcons: [],
   onClose: () => {},
@@ -77,6 +77,7 @@ export const ElementPanelContext = createContext<ElementPanelContextType>({
   setActiveMainType: () => {},
   setActiveSubType: () => {},
   setSearchKey: () => {},
+  updateSearchContents: () => {},
 });
 
 interface ElementPanelProviderProps {
@@ -334,7 +335,6 @@ export const ElementPanelProvider = ({ children, onClose }: ElementPanelProvider
         contents,
         contentType,
         getNPIcons,
-        handleSearch: updateSearchContents,
         hasLogin,
         historyIcons,
         onClose,
@@ -343,6 +343,7 @@ export const ElementPanelProvider = ({ children, onClose }: ElementPanelProvider
         setActiveMainType,
         setActiveSubType,
         setSearchKey,
+        updateSearchContents,
       }}
     >
       {children}

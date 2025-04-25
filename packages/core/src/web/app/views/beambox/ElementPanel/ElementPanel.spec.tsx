@@ -18,18 +18,18 @@ jest.mock('./MainContent', () => 'main-content');
 const mockSetActiveMainType = jest.fn();
 const mockSetActiveSubType = jest.fn();
 const mockSetSearchKey = jest.fn();
-const mockHandleSearch = jest.fn();
+const mockUpdateSearchContents = jest.fn();
 const mockContext: any = {
   activeMainType: 'basic',
   activeSubType: undefined,
   contentType: ContentType.MainType,
-  handleSearch: mockHandleSearch,
   hasLogin: true,
   open: true,
   searchKey: undefined,
   setActiveMainType: mockSetActiveMainType,
   setActiveSubType: mockSetActiveSubType,
   setSearchKey: mockSetSearchKey,
+  updateSearchContents: mockUpdateSearchContents,
 };
 
 import { ElementPanelContent } from './ElementPanel';
@@ -107,22 +107,22 @@ describe('test ElementPanel Header', () => {
     const searchButton = baseElement.querySelector('.search-button');
 
     fireEvent.click(searchButton);
-    expect(mockHandleSearch).toHaveBeenCalledTimes(1);
-    expect(mockHandleSearch).toHaveBeenNthCalledWith(1);
+    expect(mockUpdateSearchContents).toHaveBeenCalledTimes(1);
+    expect(mockUpdateSearchContents).toHaveBeenNthCalledWith(1, '123');
 
     // Handle search with enter
     const searchInput = baseElement.querySelector('.search-input input');
 
     fireEvent.keyDown(searchInput, { key: 'Enter' });
-    expect(mockHandleSearch).toHaveBeenCalledTimes(2);
-    expect(mockHandleSearch).toHaveBeenNthCalledWith(2);
+    expect(mockUpdateSearchContents).toHaveBeenCalledTimes(2);
+    expect(mockUpdateSearchContents).toHaveBeenNthCalledWith(2, '123');
 
     // Clear search
     const clearButton = baseElement.querySelector('.ant-input-clear-icon');
 
     fireEvent.click(clearButton);
-    expect(mockHandleSearch).toHaveBeenCalledTimes(3);
-    expect(mockHandleSearch).toHaveBeenNthCalledWith(3, '');
+    expect(mockUpdateSearchContents).toHaveBeenCalledTimes(3);
+    expect(mockUpdateSearchContents).toHaveBeenNthCalledWith(3, '');
   });
 });
 
@@ -215,21 +215,21 @@ describe('test ElementPanel Header in mobile', () => {
     const searchButton = container.querySelector('.search-button');
 
     fireEvent.click(searchButton);
-    expect(mockHandleSearch).toHaveBeenCalledTimes(1);
-    expect(mockHandleSearch).toHaveBeenNthCalledWith(1);
+    expect(mockUpdateSearchContents).toHaveBeenCalledTimes(1);
+    expect(mockUpdateSearchContents).toHaveBeenNthCalledWith(1, '123');
 
     // Handle search with enter
     const searchInput = container.querySelector('.search-input input');
 
     fireEvent.keyDown(searchInput, { key: 'Enter' });
-    expect(mockHandleSearch).toHaveBeenCalledTimes(2);
-    expect(mockHandleSearch).toHaveBeenNthCalledWith(2);
+    expect(mockUpdateSearchContents).toHaveBeenCalledTimes(2);
+    expect(mockUpdateSearchContents).toHaveBeenNthCalledWith(2, '123');
 
     // Clear search
     const clearButton = container.querySelector('.ant-input-clear-icon');
 
     fireEvent.click(clearButton);
-    expect(mockHandleSearch).toHaveBeenCalledTimes(3);
-    expect(mockHandleSearch).toHaveBeenNthCalledWith(3, '');
+    expect(mockUpdateSearchContents).toHaveBeenCalledTimes(3);
+    expect(mockUpdateSearchContents).toHaveBeenNthCalledWith(3, '');
   });
 });

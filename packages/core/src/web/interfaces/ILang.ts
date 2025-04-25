@@ -159,6 +159,7 @@ export interface ILang {
       ribbon: string;
       sea: string;
       search_examples: string;
+      search_invalid_characters: string;
       search_no_results: string;
       search_with_english: string;
       shape: string;

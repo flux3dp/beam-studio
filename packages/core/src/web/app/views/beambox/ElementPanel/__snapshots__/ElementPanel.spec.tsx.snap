@@ -79,6 +79,7 @@ exports[`test ElementPanel Header in mobile should render MainType correctly 1`]
           >
             <input
               class="ant-input ant-input-sm css-dev-only-do-not-override-hash"
+              maxlength="50"
               type="search"
               value=""
             />
@@ -316,6 +317,7 @@ exports[`test ElementPanel Header in mobile should render MainType correctly 2`]
           >
             <input
               class="ant-input ant-input-sm css-dev-only-do-not-override-hash"
+              maxlength="50"
               type="search"
               value=""
             />
@@ -553,6 +555,7 @@ exports[`test ElementPanel Header in mobile should render Search correctly 1`] =
           >
             <input
               class="ant-input ant-input-sm css-dev-only-do-not-override-hash"
+              maxlength="50"
               type="search"
               value="123"
             />
@@ -793,6 +796,7 @@ exports[`test ElementPanel Header in mobile should render SubType correctly 1`] 
           >
             <input
               class="ant-input ant-input-sm css-dev-only-do-not-override-hash"
+              maxlength="50"
               type="search"
               value=""
             />
@@ -1069,6 +1073,7 @@ exports[`test ElementPanel Header should render MainType correctly 1`] = `
                   >
                     <input
                       class="ant-input ant-input-sm css-dev-only-do-not-override-hash"
+                      maxlength="50"
                       type="search"
                       value=""
                     />
@@ -1254,6 +1259,7 @@ exports[`test ElementPanel Header should render Search correctly 1`] = `
                   >
                     <input
                       class="ant-input ant-input-sm css-dev-only-do-not-override-hash"
+                      maxlength="50"
                       type="search"
                       value="123"
                     />
@@ -1442,6 +1448,7 @@ exports[`test ElementPanel Header should render SubType correctly 1`] = `
                   >
                     <input
                       class="ant-input ant-input-sm css-dev-only-do-not-override-hash"
+                      maxlength="50"
                       type="search"
                       value=""
                     />

@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react';
-import React, { useContext, useMemo, useRef } from 'react';
+import React, { useContext, useMemo, useRef, useState } from 'react';
 
 import { LeftOutlined, SearchOutlined } from '@ant-design/icons';
 import type { InputRef } from 'antd';
-import { Button, Drawer, Input } from 'antd';
+import { Button, Drawer, Input, message } from 'antd';
 import { CapsuleTabs } from 'antd-mobile';
 import classNames from 'classnames';
 
@@ -25,7 +25,6 @@ export const ElementPanelContent = (): ReactNode => {
     activeSubType,
     closeDrawer,
     contentType,
-    handleSearch,
     hasLogin,
     onClose,
     open,
@@ -33,7 +32,9 @@ export const ElementPanelContent = (): ReactNode => {
     setActiveMainType,
     setActiveSubType,
     setSearchKey,
+    updateSearchContents,
   } = useContext(ElementPanelContext);
+  const [error, setError] = useState(false);
   const lang = useI18n().beambox.elements_panel;
   const isMobile = useIsMobile();
   const anchors = [0, window.innerHeight - layoutConstants.menuberHeight];
@@ -74,19 +75,32 @@ export const ElementPanelContent = (): ReactNode => {
   }, [contentType, isMobile, setSearchKey, setActiveSubType, activeSubType, lang]);
 
   const searchBar = useMemo(() => {
+    const handleSearch = (key: string) => {
+      if (/^[A-Za-z0-9, ]*$/.test(key || '')) {
+        inputRef.current?.blur();
+        setError(false);
+        updateSearchContents(key);
+      } else {
+        setError(true);
+        message.error(lang.search_invalid_characters);
+      }
+    };
+
     return (
       <div className={styles['search-bar']}>
         <Input
           allowClear
           className={styles['search-input']}
-          onChange={(e) => setSearchKey(e.target.value)}
-          onClear={() => handleSearch('')}
-          onPressEnter={() => {
-            inputRef.current?.blur();
-            handleSearch();
+          maxLength={50}
+          onChange={(e) => {
+            setError(false);
+            setSearchKey(e.target.value);
           }}
+          onClear={() => handleSearch('')}
+          onPressEnter={() => handleSearch(searchKey || '')}
           ref={inputRef}
           size="small"
+          status={error ? 'error' : undefined}
           type="search"
           value={searchKey}
         />
@@ -95,8 +109,7 @@ export const ElementPanelContent = (): ReactNode => {
           icon={<SearchOutlined />}
           onClick={() => {
             if (contentType === ContentType.Search) {
-              inputRef.current?.blur();
-              handleSearch();
+              handleSearch(searchKey || '');
             } else {
               setSearchKey('');
               inputRef.current?.focus();
@@ -107,7 +120,7 @@ export const ElementPanelContent = (): ReactNode => {
         />
       </div>
     );
-  }, [contentType, handleSearch, searchKey, setSearchKey]);
+  }, [error, searchKey, contentType, updateSearchContents, lang.search_invalid_characters, setSearchKey]);
 
   const mainTypeSelector = useMemo(() => {
     return isMobile ? (
