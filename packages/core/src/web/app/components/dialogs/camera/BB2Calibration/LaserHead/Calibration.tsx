@@ -49,8 +49,6 @@ const Calibration = ({ charuco, chessboard, onClose, onNext, updateParam }: Prop
 
           calibrationRes = { d, k, ret, rvec, tvec };
         }
-
-        console.log(chessboardRes);
       } catch (error) {
         console.error('Failed to calibrate with chessboard', error);
       }
@@ -58,14 +56,9 @@ const Calibration = ({ charuco, chessboard, onClose, onNext, updateParam }: Prop
       if (!calibrationRes && charuco) {
         const charucoRes = await cameraCalibrationApi.detectChAruCo(img!.blob, charuco[0], charuco[1]);
 
-        console.log('charucoRes', charucoRes);
-
         if (charucoRes.success) {
           const { imgp, objp } = charucoRes;
           const { naturalHeight: h, naturalWidth: w } = imgRef.current!;
-
-          console.log(w, h);
-
           const calibrateRes = await cameraCalibrationApi.calibrateFisheye([objp], [imgp], [w, h]);
 
           if (calibrateRes.success) {
@@ -81,7 +74,7 @@ const Calibration = ({ charuco, chessboard, onClose, onNext, updateParam }: Prop
         const resp = await new Promise<boolean>((resolve) => {
           let rank = tCali.res_excellent;
 
-          if (ret > 5) rank = tCali.res_poor;
+          if (ret > 2) rank = tCali.res_poor;
           else if (ret > 1) rank = tCali.res_average;
 
           alertCaller.popUp({

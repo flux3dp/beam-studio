@@ -53,6 +53,16 @@ jest.mock('../../common/ExposureSlider', () => ({ exposureSetting, onChange }: a
   </div>
 ));
 
+const mockDetectChAruCo = jest.fn();
+const mockCalibrateFisheye = jest.fn();
+
+jest.mock('@core/helpers/api/camera-calibration', () => ({
+  cameraCalibrationApi: {
+    calibrateFisheye: (...args) => mockCalibrateFisheye(...args),
+    detectChAruCo: (...args) => mockDetectChAruCo(...args),
+  },
+}));
+
 jest.useFakeTimers();
 jest.spyOn(global, 'setTimeout');
 jest.spyOn(global, 'clearTimeout');
@@ -117,15 +127,8 @@ describe('test Calibration', () => {
     expect(mockPopUp).toHaveBeenCalledTimes(1);
     expect(mockPopUp).toHaveBeenCalledWith({
       buttons: [
-        {
-          className: 'primary',
-          label: tCali.next,
-          onClick: expect.any(Function),
-        },
-        {
-          label: tCali.cancel,
-          onClick: expect.any(Function),
-        },
+        { className: 'primary', label: tCali.next, onClick: expect.any(Function) },
+        { label: tCali.cancel, onClick: expect.any(Function) },
       ],
       message: sprintf(tCali.calibrate_chessboard_success_msg, tCali.res_excellent, 1),
     });
@@ -135,6 +138,55 @@ describe('test Calibration', () => {
     await act(() => buttons[0].onClick());
     expect(mockUpdateParam).toHaveBeenCalled();
     expect(mockUpdateParam).toHaveBeenCalledWith(mockRes.data);
+    expect(mockOnNext).toHaveBeenCalled();
+    expect(mockHandleTakePicture).not.toHaveBeenCalled();
+    expect(mockPopUpError).not.toHaveBeenCalled();
+    expect(mockPopById).toHaveBeenCalledTimes(1);
+    expect(mockPopById).toHaveBeenCalledWith('calibrate-chessboard');
+  });
+
+  test('Calibrate with ChArUco', async () => {
+    const mockUpdateParam = jest.fn();
+    const mockOnNext = jest.fn();
+    const { baseElement } = render(
+      <Calibration
+        charuco={[15, 10]}
+        chessboard={[7, 7]}
+        onClose={jest.fn()}
+        onNext={mockOnNext}
+        updateParam={mockUpdateParam}
+      />,
+    );
+
+    const mockRes = { data: { reason: 'reason' }, success: false };
+
+    mockCalibrateChessboard.mockResolvedValue(mockRes);
+    mockDetectChAruCo.mockResolvedValue({ imgp: 'imgp', objp: 'objp', success: true });
+    mockCalibrateFisheye.mockResolvedValue({ d: 'd', k: 'k', ret: 1, rvec: 'rvec', success: true, tvec: 'tvec' });
+    await act(() => fireEvent.click(baseElement.querySelector('button.ant-btn-primary')));
+    expect(mockOpenNonstopProgress).toHaveBeenCalled();
+    expect(mockOpenNonstopProgress).toHaveBeenCalledWith({ id: 'calibrate-chessboard', message: tCali.calibrating });
+    expect(mockPauseLive).toHaveBeenCalled();
+    expect(mockCalibrateChessboard).toHaveBeenCalledTimes(1);
+    expect(mockCalibrateChessboard).toHaveBeenCalledWith(mockBlob, 0, [7, 7]);
+    expect(mockDetectChAruCo).toHaveBeenCalledTimes(1);
+    expect(mockDetectChAruCo).toHaveBeenCalledWith(mockBlob, 15, 10);
+    expect(mockCalibrateFisheye).toHaveBeenCalledTimes(1);
+    expect(mockCalibrateFisheye).toHaveBeenCalledWith(['objp'], ['imgp'], [expect.any(Number), expect.any(Number)]);
+    expect(mockPopUp).toHaveBeenCalledTimes(1);
+    expect(mockPopUp).toHaveBeenCalledWith({
+      buttons: [
+        { className: 'primary', label: tCali.next, onClick: expect.any(Function) },
+        { label: tCali.cancel, onClick: expect.any(Function) },
+      ],
+      message: sprintf(tCali.calibrate_chessboard_success_msg, tCali.res_excellent, 1),
+    });
+
+    const { buttons } = mockPopUp.mock.calls[0][0];
+
+    await act(() => buttons[0].onClick());
+    expect(mockUpdateParam).toHaveBeenCalled();
+    expect(mockUpdateParam).toHaveBeenCalledWith({ d: 'd', k: 'k', ret: 1, rvec: 'rvec', tvec: 'tvec' });
     expect(mockOnNext).toHaveBeenCalled();
     expect(mockHandleTakePicture).not.toHaveBeenCalled();
     expect(mockPopUpError).not.toHaveBeenCalled();
@@ -222,7 +274,7 @@ describe('test Calibration', () => {
     expect(mockOnNext).not.toHaveBeenCalled();
     expect(mockPopUpError).toHaveBeenCalledTimes(1);
     expect(mockPopUpError).toHaveBeenCalledWith({
-      message: `${tCali.failed_to_calibrate_chessboard} reason`,
+      message: tCali.failed_to_calibrate_chessboard,
     });
     expect(mockRestartLive).toHaveBeenCalledTimes(1);
   });
