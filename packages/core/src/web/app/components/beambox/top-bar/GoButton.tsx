@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useRef } from 'react';
 
 import classNames from 'classnames';
+import { funnel } from 'remeda';
 
 import { handleExportClick } from '@core/app/actions/beambox/export/GoButton/handleExportClick';
 import { CanvasMode } from '@core/app/constants/canvasMode';
@@ -16,31 +17,16 @@ interface Props {
   hasDiscoverdMachine: boolean;
 }
 
-function throttle(func: () => void, delay: number): () => void {
-  let timer = null;
-
-  return () => {
-    if (timer === null) {
-      timer = setTimeout(() => {
-        timer = null;
-      }, delay);
-
-      func();
-    }
-  };
-}
-
 const GoButton = ({ hasDiscoverdMachine }: Props): React.JSX.Element => {
   const lang = useI18n();
   const { mode, selectedDevice } = useContext(CanvasContext);
-  const shortcutHandler = useRef<() => void>(null);
+  const shortcutHandler = useRef<() => void>(() => {});
+  const throttledHandleExportClick = funnel(handleExportClick(lang), { minGapMs: 2000, triggerAt: 'start' });
 
-  useEffect(() => shortcuts.on(['F2'], () => shortcutHandler.current?.()), []);
-
-  const throttledHandleExportClick = throttle(handleExportClick(lang), 2000);
+  useEffect(() => shortcuts.on(['F2'], () => shortcutHandler.current()), []);
 
   useEffect(() => {
-    shortcutHandler.current = throttledHandleExportClick;
+    shortcutHandler.current = throttledHandleExportClick.call;
   }, [throttledHandleExportClick]);
 
   useEffect(() => {
@@ -53,10 +39,8 @@ const GoButton = ({ hasDiscoverdMachine }: Props): React.JSX.Element => {
 
   return (
     <div
-      className={classNames(styles.button, {
-        [styles.disabled]: !hasDiscoverdMachine || mode !== CanvasMode.Draw,
-      })}
-      onClick={throttledHandleExportClick}
+      className={classNames(styles.button, { [styles.disabled]: !hasDiscoverdMachine || mode !== CanvasMode.Draw })}
+      onClick={throttledHandleExportClick.call}
       title={lang.tutorial.newInterface.start_work}
     >
       <TopBarIcons.Go />

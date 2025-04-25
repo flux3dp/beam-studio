@@ -43,10 +43,10 @@ describe('check the existence of the top bar tools on mobile', () => {
   });
 
   it('file name', () => {
-    cy.get(`[class*="${topbarModulesPrefix}FileName-module__file-name"]`)
+    cy.get(`[class*="${topbarModulesPrefix}FileName-index-module__file-name"]`)
       .should('exist')
       .should('have.text', 'Untitled');
     cy.get('.adm-tab-bar-item-title').contains('Text').should('exist').click();
-    cy.get(`[class*="${topbarModulesPrefix}FileName-module__file-name"]`).should('have.text', 'Untitled*');
+    cy.get(`[class*="${topbarModulesPrefix}FileName-index-module__file-name"]`).should('have.text', 'Untitled*');
   });
 });

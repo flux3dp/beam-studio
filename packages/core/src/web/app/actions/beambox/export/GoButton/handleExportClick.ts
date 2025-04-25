@@ -7,52 +7,44 @@ import { checkBlockedSerial } from '@core/helpers/device/checkBlockedSerial';
 import getDevice from '@core/helpers/device/get-device';
 import promarkButtonHandler from '@core/helpers/device/promark/promark-button-handler';
 import isWeb from '@core/helpers/is-web';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { ILang } from '@core/interfaces/ILang';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import { checkModuleCalibration } from './checkModuleCalibration';
 import { exportTask } from './exportTask';
 import { handleExportAlerts } from './handleExportAlerts';
 
+let svgCanvas: ISVGCanvas;
+
+getSVGAsync(({ Canvas }) => {
+  svgCanvas = Canvas;
+});
+
 export const handleExportClick =
   (lang: ILang) =>
   async (byHandler = false): Promise<void> => {
-    const progressList = ['retrieve-image-data', 'fetch-task-code', 'fetch-task', 'upload-scene'];
+    const progressList = ['retrieve-image-data', 'fetch-task-code', 'fetch-task', 'upload-scene'] as const;
 
-    if (Dialog.isIdExist('monitor') || progressList.some((id) => progressCaller.checkIdExist(id))) {
-      return;
-    }
+    if (Dialog.isIdExist('monitor') || progressList.some((id) => progressCaller.checkIdExist(id))) return;
 
     promarkButtonHandler.setStatus('preparing');
+    // remove all selected elements, to prevent the svg image resource not found
+    svgCanvas.selectOnly([]);
 
-    if (getNextStepRequirement() === TutorialConstants.SEND_FILE) {
-      handleNextStep();
-    }
+    if (getNextStepRequirement() === TutorialConstants.SEND_FILE) handleNextStep();
 
     const handleExport = async () => {
       try {
         const { device } = await getDevice();
 
-        if (!device) {
-          return;
-        }
+        if (!device) return;
 
-        const isSerialValid = await checkBlockedSerial(device.serial);
+        if (!(await checkBlockedSerial(device.serial))) return;
 
-        if (!isSerialValid) {
-          return;
-        }
+        if (!(await handleExportAlerts(device, lang))) return;
 
-        const confirmed = await handleExportAlerts(device, lang);
-
-        if (!confirmed) {
-          return;
-        }
-
-        const deviceStatus = await checkDeviceStatus(device);
-
-        if (!deviceStatus) {
-          return;
-        }
+        if (!(await checkDeviceStatus(device))) return;
 
         await checkModuleCalibration(device, lang);
         await exportTask(device, byHandler, lang);
