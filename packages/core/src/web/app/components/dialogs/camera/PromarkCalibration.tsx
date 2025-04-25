@@ -22,16 +22,18 @@ import Instruction from './common/Instruction';
 import SolvePnP from './common/SolvePnP';
 import { promarkPnPPoints } from './common/solvePnPConstants';
 import Title from './common/Title';
-import Chessboard from './Promark/Chessboard';
+import Calibration from './Promark/Calibration';
 
+/* eslint-disable perfectionist/sort-enums */
 enum Steps {
   CHECKPOINT_DATA = 0,
-  CHESSBOARD = 2,
   PRE_CHESSBOARD = 1,
+  CALIBRATION = 2,
   PUT_PAPER = 3,
-  SOLVE_PNP = 5,
   SOLVE_PNP_INSTRUCTION = 4,
+  SOLVE_PNP = 5,
 }
+/* eslint-enable perfectionist/sort-enums */
 
 interface Props {
   device: IDeviceInfo;
@@ -99,7 +101,7 @@ const PromarkCalibration = ({ device: { model, serial }, onClose }: Props): Reac
         buttons={[
           {
             label: tCali.next,
-            onClick: () => setStep(Steps.CHESSBOARD),
+            onClick: () => setStep(Steps.CALIBRATION),
             type: 'primary',
           },
         ]}
@@ -114,9 +116,10 @@ const PromarkCalibration = ({ device: { model, serial }, onClose }: Props): Reac
     );
   }
 
-  if (step === Steps.CHESSBOARD) {
+  if (step === Steps.CALIBRATION) {
     return (
-      <Chessboard
+      <Calibration
+        charuco={[15, 10]}
         chessboard={[18, 18]}
         onClose={onClose}
         onNext={() => setStep(Steps.PUT_PAPER)}
@@ -169,7 +172,7 @@ const PromarkCalibration = ({ device: { model, serial }, onClose }: Props): Reac
         buttons={[
           {
             label: tCali.back,
-            onClick: () => setStep(useOldData.current ? Steps.CHECKPOINT_DATA : Steps.CHESSBOARD),
+            onClick: () => setStep(useOldData.current ? Steps.CHECKPOINT_DATA : Steps.CALIBRATION),
           },
           { label: tCali.start_engrave, onClick: () => handleNext(), type: 'primary' },
         ]}

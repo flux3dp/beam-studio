@@ -6,6 +6,7 @@ import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
+import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
 import { calibrateChessboard } from '@core/helpers/camera-calibration-helper';
 import useI18n from '@core/helpers/useI18n';
 import type { WebCamConnection } from '@core/helpers/webcam-helper';
@@ -14,23 +15,24 @@ import type { FisheyeCameraParametersV3Cali } from '@core/interfaces/FisheyePrev
 
 import Title from '../common/Title';
 
-import styles from './Chessboard.module.scss';
+import styles from './Calibration.module.scss';
 
 interface Props {
+  charuco?: [number, number];
   chessboard: [number, number];
   onClose: (complete?: boolean) => void;
   onNext: () => void;
   updateParam: (param: FisheyeCameraParametersV3Cali) => void;
 }
 
-const Chessboard = ({ chessboard, onClose, onNext, updateParam }: Props): React.JSX.Element => {
+const Calibration = ({ charuco, chessboard, onClose, onNext, updateParam }: Props): React.JSX.Element => {
   const lang = useI18n().calibration;
-  const webCamConnection = useRef<WebCamConnection>(null);
+  const webCamConnection = useRef<null | WebCamConnection>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [webcamConnected, setWebcamConnected] = useState(false);
 
   useEffect(() => {
-    const video = videoRef.current;
+    const video = videoRef.current!;
 
     webcamHelper.connectWebcam({ video }).then((conn) => {
       webCamConnection.current = conn;
@@ -44,44 +46,62 @@ const Chessboard = ({ chessboard, onClose, onNext, updateParam }: Props): React.
 
   const handleCalibrate = async () => {
     progressCaller.openNonstopProgress({ id: 'calibrate-chessboard', message: lang.calibrating });
-    videoRef.current.pause();
+    videoRef.current?.pause();
 
     let success = false;
 
     try {
-      const imgBlob = await webCamConnection.current?.getPicture();
-      const res = await calibrateChessboard(imgBlob, 0, chessboard);
+      const imgBlob = await webCamConnection.current?.getPicture()!;
+      let calibrationRes: null | { d: number[][]; k: number[][]; ret: number; rvec: number[]; tvec: number[] } = null;
 
-      if (res.success === true) {
-        const { d, k, ret, rvec, tvec } = res.data;
+      try {
+        const chessboardRes = await calibrateChessboard(imgBlob, 0, chessboard);
+
+        if (chessboardRes.success === true) {
+          const { d, k, ret, rvec, tvec } = chessboardRes.data;
+
+          calibrationRes = { d, k, ret, rvec, tvec };
+        }
+
+        console.log(chessboardRes);
+      } catch (error) {
+        console.error('Failed to calibrate with chessboard', error);
+      }
+
+      if (!calibrationRes && charuco) {
+        const charucoRes = await cameraCalibrationApi.detectChAruCo(imgBlob, charuco[0], charuco[1]);
+
+        if (charucoRes.success) {
+          const { imgp, objp } = charucoRes;
+          const { videoHeight: h, videoWidth: w } = videoRef.current!;
+          const calibrateRes = await cameraCalibrationApi.calibrateFisheye([objp], [imgp], [w, h]);
+
+          if (calibrateRes.success) {
+            const { d, k, ret, rvec, tvec } = calibrateRes;
+
+            calibrationRes = { d, k, ret, rvec, tvec };
+          }
+        }
+      }
+
+      if (calibrationRes) {
+        const { d, k, ret, rvec, tvec } = calibrationRes;
         const resp = await new Promise<boolean>((resolve) => {
           let rank = lang.res_excellent;
 
-          if (ret > 5) {
-            rank = lang.res_poor;
-          } else if (ret > 1) {
-            rank = lang.res_average;
-          }
+          if (ret > 5) rank = lang.res_poor;
+          else if (ret > 1) rank = lang.res_average;
 
           alertCaller.popUp({
             buttons: [
-              {
-                className: 'primary',
-                label: lang.next,
-                onClick: () => resolve(true),
-              },
-              {
-                label: lang.cancel,
-                onClick: () => resolve(false),
-              },
+              { className: 'primary', label: lang.next, onClick: () => resolve(true) },
+              { label: lang.cancel, onClick: () => resolve(false) },
             ],
             message: sprintf(lang.calibrate_chessboard_success_msg, rank, ret),
           });
         });
 
-        if (!resp) {
-          return;
-        }
+        if (!resp) return;
 
         updateParam({ d, k, ret, rvec, tvec });
         onNext();
@@ -90,16 +110,14 @@ const Chessboard = ({ chessboard, onClose, onNext, updateParam }: Props): React.
         return;
       }
 
-      const { reason } = res.data;
-
-      alertCaller.popUpError({ message: `${lang.failed_to_calibrate_chessboard} ${reason}` });
+      alertCaller.popUpError({ message: lang.failed_to_calibrate_chessboard });
     } catch (error) {
       console.error(error);
     } finally {
       progressCaller.popById('calibrate-chessboard');
 
       if (!success) {
-        videoRef.current.play();
+        videoRef.current?.play();
       }
     }
   };
@@ -133,4 +151,4 @@ const Chessboard = ({ chessboard, onClose, onNext, updateParam }: Props): React.
   );
 };
 
-export default Chessboard;
+export default Calibration;
