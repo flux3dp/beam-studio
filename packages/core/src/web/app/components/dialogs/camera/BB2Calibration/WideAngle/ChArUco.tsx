@@ -99,6 +99,8 @@ const ChArUco = ({ onClose, onNext, updateParam }: Props) => {
         return;
       }
 
+      console.log('Calibrate with ChArUco', calibrateRes);
+
       const { d, indices, k, ret, rvec, tvec } = calibrateRes;
 
       if (indices.length !== 5) {
@@ -109,7 +111,6 @@ const ChArUco = ({ onClose, onNext, updateParam }: Props) => {
             failedRegion.push(regions[i]);
           }
         }
-        console.log('failedRegion', failedRegion);
       }
 
       updateParam({ d, k, ret, rvec, tvec });

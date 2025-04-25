@@ -475,10 +475,10 @@ const SolvePnP = ({
             </div>
             <div className={styles['zoom-block']}>
               <button onClick={() => handleZoom(-0.2)} type="button">
-                <ObjectPanelIcons.Minus height="20" width="20" />
+                <ObjectPanelIcons.Minus className={styles.icon} height="24" width="24" />
               </button>
               <button onClick={() => handleZoom(0.2)} type="button">
-                <ObjectPanelIcons.Plus height="20" width="20" />
+                <ObjectPanelIcons.Plus className={styles.icon} height="24" width="24" />
               </button>
             </div>
           </div>

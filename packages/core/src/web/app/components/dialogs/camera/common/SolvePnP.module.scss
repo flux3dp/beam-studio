@@ -106,6 +106,13 @@
       margin-left: 5px;
       background: none;
       border: none;
+
+      .icon {
+        path {
+          stroke: #aaaaaa;
+          stroke-width: 2px;
+        }
+      }
     }
   }
 }

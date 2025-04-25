@@ -2,7 +2,7 @@ import React, { act } from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-import Chessboard from './Chessboard';
+import Calibration from './Calibration';
 import i18n from '@mocks/@core/helpers/i18n';
 import { sprintf } from 'sprintf-js';
 
@@ -66,7 +66,7 @@ const mockBlob = new Blob();
 
 const tCali = i18n.lang.calibration;
 
-describe('test Chessboard', () => {
+describe('test Calibration', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockUseLiveFeed.mockImplementation(() => {
@@ -84,7 +84,7 @@ describe('test Chessboard', () => {
 
   it('should render correctly', () => {
     const { baseElement } = render(
-      <Chessboard chessboard={[7, 7]} onClose={jest.fn()} onNext={jest.fn()} updateParam={jest.fn()} />,
+      <Calibration chessboard={[7, 7]} onClose={jest.fn()} onNext={jest.fn()} updateParam={jest.fn()} />,
     );
 
     expect(baseElement).toMatchSnapshot();
@@ -96,7 +96,7 @@ describe('test Chessboard', () => {
     const mockUpdateParam = jest.fn();
     const mockOnNext = jest.fn();
     const { baseElement } = render(
-      <Chessboard chessboard={[7, 7]} onClose={jest.fn()} onNext={mockOnNext} updateParam={mockUpdateParam} />,
+      <Calibration chessboard={[7, 7]} onClose={jest.fn()} onNext={mockOnNext} updateParam={mockUpdateParam} />,
     );
 
     const mockRes = {
@@ -146,7 +146,7 @@ describe('test Chessboard', () => {
     const mockUpdateParam = jest.fn();
     const mockOnNext = jest.fn();
     const { baseElement } = render(
-      <Chessboard chessboard={[7, 7]} onClose={jest.fn()} onNext={mockOnNext} updateParam={mockUpdateParam} />,
+      <Calibration chessboard={[7, 7]} onClose={jest.fn()} onNext={mockOnNext} updateParam={mockUpdateParam} />,
     );
 
     const mockRes = {
@@ -193,7 +193,7 @@ describe('test Chessboard', () => {
     const mockUpdateParam = jest.fn();
     const mockOnNext = jest.fn();
     const { baseElement } = render(
-      <Chessboard chessboard={[7, 7]} onClose={jest.fn()} onNext={mockOnNext} updateParam={mockUpdateParam} />,
+      <Calibration chessboard={[7, 7]} onClose={jest.fn()} onNext={mockOnNext} updateParam={mockUpdateParam} />,
     );
 
     fireEvent.click(baseElement.querySelector('#download'));
@@ -204,7 +204,7 @@ describe('test Chessboard', () => {
     const mockUpdateParam = jest.fn();
     const mockOnNext = jest.fn();
     const { baseElement } = render(
-      <Chessboard chessboard={[7, 7]} onClose={jest.fn()} onNext={mockOnNext} updateParam={mockUpdateParam} />,
+      <Calibration chessboard={[7, 7]} onClose={jest.fn()} onNext={mockOnNext} updateParam={mockUpdateParam} />,
     );
 
     const mockRes = { data: { reason: 'reason' }, success: false };

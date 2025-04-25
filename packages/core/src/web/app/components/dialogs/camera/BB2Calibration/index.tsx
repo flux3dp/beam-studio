@@ -45,8 +45,12 @@ export const showBB2WideAngleCameraCalibration = async (device: IDeviceInfo): Pr
 
   if (!success) {
     alertCaller.popUpError({ message: 'Failed to get camera count' });
+
+    return false;
   } else if (data < 2) {
-    alertCaller.popUpError({ message: 'Failed to find cameras 2' });
+    alertCaller.popUpError({ message: 'Failed to find camera 2' });
+
+    return false;
   }
 
   return new Promise<boolean>((resolve) => {

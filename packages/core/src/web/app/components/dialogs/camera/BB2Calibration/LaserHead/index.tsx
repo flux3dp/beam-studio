@@ -17,7 +17,7 @@ import { bb2PnPPoints } from '../../common/solvePnPConstants';
 import moveLaserHead from '../moveLaserHead';
 import SolvePnPInstruction from '../SolvePnPInstruction';
 
-import Chessboard from './Chessboard';
+import Calibration from './Calibration';
 
 /* eslint-disable perfectionist/sort-enums */
 enum Steps {
@@ -122,7 +122,8 @@ const LaserHead = ({ isAdvanced, onClose }: Props): React.JSX.Element => {
 
   if (step === Steps.CHESSBOARD) {
     return (
-      <Chessboard
+      <Calibration
+        charuco={[15, 10]}
         chessboard={[24, 14]}
         onClose={onClose}
         onNext={() => setStep(Steps.PUT_PAPER)}
