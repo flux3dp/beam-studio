@@ -59,7 +59,7 @@ exports[`test GridContent should render mainType content correctly 1`] = `
   <div
     class="subtitle"
   >
-    Graphics
+    Shape
   </div>
   <builtin-element
     maintype="basic"
@@ -102,7 +102,7 @@ exports[`test GridContent should render mainType content correctly when login 1`
       </span>
     </span>
     <span>
-      Graphics
+      Shape
     </span>
   </button>
   <builtin-element

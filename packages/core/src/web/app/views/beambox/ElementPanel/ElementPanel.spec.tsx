@@ -65,7 +65,7 @@ describe('test ElementPanel Header', () => {
   it('should render SubType correctly', () => {
     const { baseElement } = render(
       <ElementPanelContext.Provider
-        value={{ ...mockContext, activeSubType: 'graphics', contentType: ContentType.SubType }}
+        value={{ ...mockContext, activeSubType: 'shape', contentType: ContentType.SubType }}
       >
         <ElementPanelContent />
       </ElementPanelContext.Provider>,
@@ -89,7 +89,7 @@ describe('test ElementPanel Header', () => {
   it('should render Search correctly', () => {
     const { baseElement } = render(
       <ElementPanelContext.Provider
-        value={{ ...mockContext, activeSubType: 'graphics', contentType: ContentType.Search, searchKey: '123' }}
+        value={{ ...mockContext, activeSubType: 'shape', contentType: ContentType.Search, searchKey: '123' }}
       >
         <ElementPanelContent />
       </ElementPanelContext.Provider>,
@@ -101,7 +101,7 @@ describe('test ElementPanel Header', () => {
     const backButton = baseElement.querySelector('.back-button');
 
     fireEvent.click(backButton!);
-    expect(mockSetActiveSubType).toHaveBeenCalledWith('graphics');
+    expect(mockSetActiveSubType).toHaveBeenCalledWith('shape');
 
     // Handle search with button
     const searchButton = baseElement.querySelector('.search-button');
@@ -161,7 +161,7 @@ describe('test ElementPanel Header in mobile', () => {
   it('should render SubType correctly', async () => {
     const { container } = render(
       <ElementPanelContext.Provider
-        value={{ ...mockContext, activeSubType: 'graphics', contentType: ContentType.SubType }}
+        value={{ ...mockContext, activeSubType: 'shape', contentType: ContentType.SubType }}
       >
         <ElementPanelContent />
       </ElementPanelContext.Provider>,
@@ -191,7 +191,7 @@ describe('test ElementPanel Header in mobile', () => {
   it('should render Search correctly', async () => {
     const { container } = render(
       <ElementPanelContext.Provider
-        value={{ ...mockContext, activeSubType: 'graphics', contentType: ContentType.Search, searchKey: '123' }}
+        value={{ ...mockContext, activeSubType: 'shape', contentType: ContentType.Search, searchKey: '123' }}
       >
         <ElementPanelContent />
       </ElementPanelContext.Provider>,
@@ -209,7 +209,7 @@ describe('test ElementPanel Header in mobile', () => {
     const backButton = container.querySelector('.back-button');
 
     fireEvent.click(backButton!);
-    expect(mockSetActiveSubType).toHaveBeenCalledWith('graphics');
+    expect(mockSetActiveSubType).toHaveBeenCalledWith('shape');
 
     // Handle search with button
     const searchButton = container.querySelector('.search-button');

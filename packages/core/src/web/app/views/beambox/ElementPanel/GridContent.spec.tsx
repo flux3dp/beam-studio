@@ -26,8 +26,8 @@ describe('test GridContent', () => {
               { id: '1', thumbnail_url: 'url_1' },
               { id: '2', thumbnail_url: 'url_2' },
             ],
-            subType: 'graphics',
-            term: 'graphics',
+            subType: 'shape',
+            term: 'shape',
           }}
         />
       </ElementPanelContext.Provider>,
@@ -50,8 +50,8 @@ describe('test GridContent', () => {
               { id: '1', thumbnail_url: 'url_1' },
               { id: '2', thumbnail_url: 'url_2' },
             ],
-            subType: 'graphics',
-            term: 'graphics',
+            subType: 'shape',
+            term: 'shape',
           }}
         />
       </ElementPanelContext.Provider>,
@@ -62,7 +62,7 @@ describe('test GridContent', () => {
     const subTypeButton = container.querySelector('.subtitle');
 
     fireEvent.click(subTypeButton!);
-    expect(mockSetActiveSubType).toHaveBeenCalledWith('graphics');
+    expect(mockSetActiveSubType).toHaveBeenCalledWith('shape');
   });
 
   it('should render subType content correctly', () => {
@@ -78,7 +78,7 @@ describe('test GridContent', () => {
               { id: '1', thumbnail_url: 'url_1' },
               { id: '2', thumbnail_url: 'url_2' },
             ],
-            term: 'graphics',
+            term: 'shape',
           }}
         />
       </ElementPanelContext.Provider>,
@@ -97,7 +97,7 @@ describe('test GridContent', () => {
         { id: '1', thumbnail_url: 'url_1' },
         { id: '2', thumbnail_url: 'url_2' },
       ],
-      term: 'graphics',
+      term: 'shape',
     });
   });
 
@@ -113,7 +113,7 @@ describe('test GridContent', () => {
               { id: '1', thumbnail_url: 'url_1' },
               { id: '2', thumbnail_url: 'url_2' },
             ],
-            term: 'graphics',
+            term: 'shape',
           }}
         />
       </ElementPanelContext.Provider>,
@@ -132,7 +132,7 @@ describe('test GridContent', () => {
         { id: '1', thumbnail_url: 'url_1' },
         { id: '2', thumbnail_url: 'url_2' },
       ],
-      term: 'graphics',
+      term: 'shape',
     });
   });
 
@@ -150,7 +150,7 @@ describe('test GridContent', () => {
               { id: '1', thumbnail_url: 'url_1' },
               { id: '2', thumbnail_url: 'url_2' },
             ],
-            term: 'graphics',
+            term: 'shape',
           }}
         />
       </ElementPanelContext.Provider>,
@@ -171,7 +171,7 @@ describe('test GridContent', () => {
               { id: '1', thumbnail_url: 'url_1' },
               { id: '2', thumbnail_url: 'url_2' },
             ],
-            term: 'graphics',
+            term: 'shape',
           }}
         />
       </ElementPanelContext.Provider>,
@@ -188,7 +188,7 @@ describe('test GridContent', () => {
           content={{
             fileNames: ['icon-star1', 'icon-star2'],
             mainType: 'basic',
-            term: 'graphics',
+            term: 'shape',
           }}
         />
       </ElementPanelContext.Provider>,

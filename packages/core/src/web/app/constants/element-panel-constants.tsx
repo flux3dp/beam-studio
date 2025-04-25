@@ -16,7 +16,6 @@ export type SubType =
   | 'elements'
   | 'environment'
   | 'gardening_tools'
-  | 'graphics'
   | 'halloween'
   | 'hammer_wrench'
   | 'kitchen_tools'
@@ -33,7 +32,6 @@ export type SubType =
   | 'student'
   | 'study_tools'
   | 'teacher'
-  | 'text'
   | 'valentines'
   | 'weather'
   | 'Xmas';
@@ -207,34 +205,6 @@ const Elements: {
         { id: '5506929', thumbnail_url: 'https://static.thenounproject.com/png/5506929-200.png' },
       ],
     },
-    graphics: {
-      fileNames: [
-        'icon-star1',
-        'icon-star2',
-        'icon-star3',
-        'icon-star4',
-        'icon-heart1',
-        'icon-heart2',
-        'icon-heart3',
-        'icon-heart4',
-        'icon-scallopCircle1',
-        'icon-scallopCircle2',
-        'icon-drop',
-        'icon-diamond',
-        'icon-sparkle',
-        'icon-crescent1',
-        'icon-crescent2',
-        'icon-check',
-        'icon-sun',
-        'icon-lightning',
-        'icon-cloud',
-        'icon-plus',
-        'icon-minus',
-        'icon-multiply',
-        'icon-divide',
-        'icon-equal',
-      ],
-    },
     label: {
       fileNames: [
         'icon-ribbon1',
@@ -271,6 +241,30 @@ const Elements: {
         'icon-tablet',
         'icon-capsule',
         'icon-arch',
+        'icon-star1',
+        'icon-star2',
+        'icon-star3',
+        'icon-star4',
+        'icon-heart1',
+        'icon-heart2',
+        'icon-heart3',
+        'icon-heart4',
+        'icon-scallopCircle1',
+        'icon-scallopCircle2',
+        'icon-drop',
+        'icon-diamond',
+        'icon-sparkle',
+        'icon-crescent1',
+        'icon-crescent2',
+        'icon-check',
+        'icon-sun',
+        'icon-lightning',
+        'icon-cloud',
+        'icon-plus',
+        'icon-minus',
+        'icon-multiply',
+        'icon-divide',
+        'icon-equal',
       ],
     },
   },
@@ -293,17 +287,13 @@ const Elements: {
       setting: { end: 6, reverseIndex: [1, 2] },
     },
     photo: {
-      pinnedNP: [
-        { id: '5195376', thumbnail_url: 'https://static.thenounproject.com/png/5195376-200.png' },
-        { id: '1646391', thumbnail_url: 'https://static.thenounproject.com/png/1646391-200.png' },
-        { id: '5373149', thumbnail_url: 'https://static.thenounproject.com/png/5373149-200.png' },
-        { id: '5243765', thumbnail_url: 'https://static.thenounproject.com/png/5243765-200.png' },
+      fileNames: [
+        ...generateFileNameArray('text', { end: 15, twoVersion: true }),
+        ...generateFileNameArray('photo', { end: 4, twoVersion: true }),
       ],
-      setting: { end: 4, twoVersion: true },
     },
     ribbon: { setting: { end: 8, twoVersion: true } },
     speech: { setting: { end: 8, twoVersion: true } },
-    text: { setting: { end: 15, twoVersion: true } },
   },
   holidays: {
     celebration: {
@@ -330,9 +320,9 @@ const Elements: {
   nature: {
     elements: {
       pinnedNP: [
-        { id: '6078114', thumbnail_url: 'https://static.thenounproject.com/png/6078114-200.png' },
+        { id: '7062177', thumbnail_url: 'https://static.thenounproject.com/png/7062177-200.png' },
         { id: '6448539', thumbnail_url: 'https://static.thenounproject.com/png/6448539-200.png' },
-        { id: '7726400', thumbnail_url: 'https://static.thenounproject.com/png/7726400-200.png' },
+        { id: '1751855', thumbnail_url: 'https://static.thenounproject.com/png/1751855-200.png' },
         { id: '6106399', thumbnail_url: 'https://static.thenounproject.com/png/6106399-200.png' },
       ],
       setting: { end: 8 },
@@ -690,7 +680,7 @@ export const SearchMap: {
     ],
   },
   fox: { path: ['animals/i_land-9'] },
-  frame: { types: [['decor', ['photo', 'corner', 'text']]] },
+  frame: { types: [['decor', ['photo', 'corner']]] },
   frog: { path: ['animals/i_land-19'] },
   ghost: {
     path: ['holidays/i_halloween-1a', 'holidays/i_halloween-1b', 'holidays/i_halloween-2a', 'holidays/i_halloween-2b'],
@@ -920,7 +910,6 @@ export const SearchMap: {
   sunny: { path: ['basic/icon-sun'] },
   swallow: { path: ['animals/i_birds-5'] },
   tablet: { path: ['basic/icon-tablet'] },
-  text: { types: [['decor', ['text']]] },
   ticket: { path: ['basic/icon-ticket'] },
   trapezoid: { path: ['basic/icon-trapezoid'] },
   tree: {
@@ -1000,4 +989,20 @@ export const SearchKeyMap: { [key: string]: string } = {
   wreath: 'circular',
   x: 'cancel',
   xmas: 'christmas',
+};
+
+export const SubTypeSearchKeyMap: { [key in SubType]?: string } = {
+  circular: 'wreath',
+  CNY: 'lunar new year',
+  corner: 'corner decoration',
+  elements: 'natural elements',
+  environment: 'landscape scene',
+  land: 'terrestrial animal',
+  line: 'text divider',
+  photo: 'frame',
+  plants: 'natural plant',
+  ribbon: 'ribbon banner',
+  sea: 'sea animal',
+  speech: 'speech bubble',
+  Xmas: 'christmas',
 };

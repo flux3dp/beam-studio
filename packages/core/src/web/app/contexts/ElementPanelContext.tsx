@@ -232,7 +232,8 @@ export const ElementPanelProvider = ({ children, onClose }: ElementPanelProvider
       return;
     }
 
-    const content: Content = { mainType: activeMainType, term: activeSubType! };
+    const term = (SubTypeSearchKeyMap[activeSubType!] || activeSubType!).replace('_', ' ');
+    const content: Content = { mainType: activeMainType, term };
     const subTypeObj = Elements[activeMainType][activeSubType!]!;
 
     if (!subTypeObj.fileNames) {

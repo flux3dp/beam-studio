@@ -782,7 +782,7 @@ exports[`test ElementPanel Header in mobile should render SubType correctly 1`] 
             </span>
           </span>
           <span>
-            Graphics
+            Shape
           </span>
         </button>
         <div
@@ -1431,7 +1431,7 @@ exports[`test ElementPanel Header should render SubType correctly 1`] = `
                     </span>
                   </span>
                   <span>
-                    Graphics
+                    Shape
                   </span>
                 </button>
                 <div
