@@ -186,11 +186,26 @@ const Elements: {
   animals: {
     birds: { setting: { end: 14 } },
     land: { setting: { end: 47 } },
-    sea: { setting: { end: 9 } },
+    sea: {
+      pinnedNP: [
+        { id: '7696886', thumbnail_url: 'https://static.thenounproject.com/png/7696886-200.png' },
+        { id: '7696888', thumbnail_url: 'https://static.thenounproject.com/png/7696888-200.png' },
+        { id: '4214746', thumbnail_url: 'https://static.thenounproject.com/png/4214746-200.png' },
+      ],
+      setting: { end: 9 },
+    },
   },
   basic: {
     arrow: {
       fileNames: ['icon-chevron', 'icon-navigator', 'icon-arrow1', 'icon-arrow2', 'icon-arrow3', 'icon-doubleArrow'],
+      pinnedNP: [
+        { id: '6004618', thumbnail_url: 'https://static.thenounproject.com/png/6004618-200.png' },
+        { id: '636008', thumbnail_url: 'https://static.thenounproject.com/png/636008-200.png' },
+        { id: '2391351', thumbnail_url: 'https://static.thenounproject.com/png/2391351-200.png' },
+        { id: '2391266', thumbnail_url: 'https://static.thenounproject.com/png/2391266-200.png' },
+        { id: '5506926', thumbnail_url: 'https://static.thenounproject.com/png/5506926-200.png' },
+        { id: '5506929', thumbnail_url: 'https://static.thenounproject.com/png/5506929-200.png' },
+      ],
     },
     graphics: {
       fileNames: [
@@ -230,6 +245,13 @@ const Elements: {
         'icon-label3',
         'icon-ticket',
       ],
+      pinnedNP: [
+        { id: '7630506', thumbnail_url: 'https://static.thenounproject.com/png/7630506-200.png' },
+        { id: '89410', thumbnail_url: 'https://static.thenounproject.com/png/89410-200.png' },
+        { id: '3965389', thumbnail_url: 'https://static.thenounproject.com/png/3965389-200.png' },
+        { id: '4771365', thumbnail_url: 'https://static.thenounproject.com/png/4771365-200.png' },
+        { id: '7817035', thumbnail_url: 'https://static.thenounproject.com/png/7817035-200.png' },
+      ],
     },
     shape: {
       fileNames: [
@@ -254,9 +276,31 @@ const Elements: {
   },
   decor: {
     circular: { setting: { end: 12 } },
-    corner: { setting: { end: 10 } },
-    line: { setting: { end: 6, reverseIndex: [1, 2] } },
-    photo: { setting: { end: 4, twoVersion: true } },
+    corner: {
+      pinnedNP: [
+        { id: '1755966', thumbnail_url: 'https://static.thenounproject.com/png/1755966-200.png' },
+        { id: '1755967', thumbnail_url: 'https://static.thenounproject.com/png/1755967-200.png' },
+      ],
+      setting: { end: 10 },
+    },
+    line: {
+      pinnedNP: [
+        { id: '6245951', thumbnail_url: 'https://static.thenounproject.com/png/6245951-200.png' },
+        { id: '5254140', thumbnail_url: 'https://static.thenounproject.com/png/5254140-200.png' },
+        { id: '5319827', thumbnail_url: 'https://static.thenounproject.com/png/5319827-200.png' },
+        { id: '5180773', thumbnail_url: 'https://static.thenounproject.com/png/5180773-200.png' },
+      ],
+      setting: { end: 6, reverseIndex: [1, 2] },
+    },
+    photo: {
+      pinnedNP: [
+        { id: '5195376', thumbnail_url: 'https://static.thenounproject.com/png/5195376-200.png' },
+        { id: '1646391', thumbnail_url: 'https://static.thenounproject.com/png/1646391-200.png' },
+        { id: '5373149', thumbnail_url: 'https://static.thenounproject.com/png/5373149-200.png' },
+        { id: '5243765', thumbnail_url: 'https://static.thenounproject.com/png/5243765-200.png' },
+      ],
+      setting: { end: 4, twoVersion: true },
+    },
     ribbon: { setting: { end: 8, twoVersion: true } },
     speech: { setting: { end: 8, twoVersion: true } },
     text: { setting: { end: 15, twoVersion: true } },
@@ -266,13 +310,33 @@ const Elements: {
       setting: { end: 20, reverseIndex: [6, 7, 10, 11, 15, 16, 17, 18], twoVersion: true },
     },
     CNY: { setting: { end: 10, reverseIndex: [3, 4, 9, 10], twoVersion: true } },
-    easter: { setting: { end: 2, twoVersion: true } },
+    easter: {
+      pinnedNP: [
+        { id: '885688', thumbnail_url: 'https://static.thenounproject.com/png/885688-200.png' },
+        { id: '7828870', thumbnail_url: 'https://static.thenounproject.com/png/7828870-200.png' },
+        { id: '6670470', thumbnail_url: 'https://static.thenounproject.com/png/6670470-200.png' },
+        { id: '6670477', thumbnail_url: 'https://static.thenounproject.com/png/6670477-200.png' },
+        { id: '6642154', thumbnail_url: 'https://static.thenounproject.com/png/6642154-200.png' },
+        { id: '6642155', thumbnail_url: 'https://static.thenounproject.com/png/6642155-200.png' },
+        { id: '6642156', thumbnail_url: 'https://static.thenounproject.com/png/6642156-200.png' },
+        { id: '5659135', thumbnail_url: 'https://static.thenounproject.com/png/5659135-200.png' },
+      ],
+      setting: { end: 2, twoVersion: true },
+    },
     halloween: { setting: { end: 13, reverseIndex: [8, 9], twoVersion: true } },
     valentines: { setting: { end: 8, twoVersion: true } },
     Xmas: { setting: { end: 15, reverseIndex: [11, 12], twoVersion: true } },
   },
   nature: {
-    elements: { setting: { end: 8 } },
+    elements: {
+      pinnedNP: [
+        { id: '6078114', thumbnail_url: 'https://static.thenounproject.com/png/6078114-200.png' },
+        { id: '6448539', thumbnail_url: 'https://static.thenounproject.com/png/6448539-200.png' },
+        { id: '7726400', thumbnail_url: 'https://static.thenounproject.com/png/7726400-200.png' },
+        { id: '6106399', thumbnail_url: 'https://static.thenounproject.com/png/6106399-200.png' },
+      ],
+      setting: { end: 8 },
+    },
     environment: { setting: { end: 19 } },
     plants: { setting: { end: 29 } },
     weather: { setting: { end: 14 } },
