@@ -319,8 +319,7 @@ export const ElementPanelProvider = ({ children, onClose }: ElementPanelProvider
 
       content.fileNames = fileNames;
     } else if (SearchMap[key]) {
-      const { path, types = [] } = SearchMap[key];
-      const fileNames: string[] = path ? [...path] : [];
+      const { path = [], types = [] } = SearchMap[key];
 
       types.forEach(([mainType, subTypes]) => {
         if (!subTypes) subTypes = Object.keys(Elements[mainType]) as SubType[];
@@ -334,11 +333,11 @@ export const ElementPanelProvider = ({ children, onClose }: ElementPanelProvider
             subTypeObj.fileNames = generateFileNameArray(subType, subTypeObj.setting);
           }
 
-          fileNames.push(...subTypeObj.fileNames.map((fileName) => `${mainType}/${fileName}`));
+          path.push(...subTypeObj.fileNames.map((fileName) => `${mainType}/${fileName}`));
         });
       });
-      SearchMap[key] = { path: fileNames };
-      content.fileNames = fileNames;
+      SearchMap[key] = { path };
+      content.fileNames = path;
     }
 
     // Overwrite cache to clear old search results
