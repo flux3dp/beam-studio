@@ -76,6 +76,7 @@ describe('test NPElement', () => {
       expect(mockCreateBatchCommand).toHaveBeenCalledWith('Import NP SVG');
       expect(mockImportSvg).toHaveBeenCalledWith(expect.any(Blob), {
         batchCmd: mockBatchCommand,
+        importType: 'layer',
         isFromNounProject: true,
       });
       expect(mockPostImportElement).toHaveBeenCalledWith(mockElement, mockBatchCommand);

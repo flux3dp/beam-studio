@@ -78,7 +78,7 @@ describe('test ai-extension', () => {
     });
     expect(mockImportSvg).toHaveBeenCalledTimes(1);
     expect(mockImportSvg).toHaveBeenCalledWith(new Blob(['svg'], { type: 'text/plain' }), {
-      isFromAI: true,
+      importType: 'layer',
     });
     expect(mockWriteData).toHaveBeenCalledTimes(2);
     expect(mockWriteData).toHaveBeenNthCalledWith(1, 'layer1', 'speed', 10);

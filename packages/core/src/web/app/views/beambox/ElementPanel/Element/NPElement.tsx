@@ -28,7 +28,7 @@ const importNPSvg = async (id: string) => {
     const blob = await res.blob();
 
     const batchCmd = HistoryCommandFactory.createBatchCommand('Import NP SVG');
-    const elems = await importSvg(blob, { batchCmd, isFromNounProject: true });
+    const elems = await importSvg(blob, { importType: 'layer', isFromNounProject: true, parentCmd: batchCmd });
 
     if (!elems) return;
 

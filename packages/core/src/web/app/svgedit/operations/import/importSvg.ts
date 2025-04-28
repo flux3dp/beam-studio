@@ -100,16 +100,21 @@ const readSVG = (
 const importSvg = async (
   file: Blob,
   {
-    batchCmd: initBatchCmd,
-    isFromAI = false,
+    importType,
     isFromNounProject,
+    parentCmd,
     skipByLayer = false,
-  }: { batchCmd?: IBatchCommand; isFromAI?: boolean; isFromNounProject?: boolean; skipByLayer?: boolean } = {},
+  }: Partial<{
+    importType: ImportType;
+    isFromNounProject: boolean;
+    parentCmd: IBatchCommand;
+    skipByLayer: boolean;
+  }> = {},
 ): Promise<SVGUseElement[] | undefined> => {
-  const batchCmd = initBatchCmd ?? new history.BatchCommand('Import SVG');
+  const batchCmd = parentCmd ?? new history.BatchCommand('Import SVG');
   const { lang } = i18n;
   const hasModule = modelsWithModules.has(beamboxPreference.read('workarea'));
-  let targetModule: LayerModuleType;
+  let targetModule: LayerModuleType | null;
 
   if (hasModule) {
     const id = 'import-module';
@@ -132,40 +137,38 @@ const importSvg = async (
     return;
   }
 
-  const importTypeOptions = Array.of<{ label: string; value: ImportType }>();
-
-  if (!skipByLayer) {
-    importTypeOptions.push({ label: lang.beambox.popup.layer_by_layer, value: 'layer' });
-  }
-
-  if (!printingModules.has(targetModule)) {
-    importTypeOptions.push({ label: lang.beambox.popup.layer_by_color, value: 'color' });
-  }
-
-  importTypeOptions.push({ label: lang.beambox.popup.nolayer, value: 'nolayer' });
-
-  const importType: ImportType = await (async () => {
-    // use skip-by-layer as a flag to separate the import of .svg and .ai files
-    const id = `${targetModule}${skipByLayer ? '-skip-by-layer' : ''}-import-type`;
-
-    if (isFromAI || isFromNounProject) {
-      return 'layer';
-    }
-
-    if (importTypeOptions.length === 1) {
-      return importTypeOptions[0].value;
-    }
-
-    return dialogCaller.showRadioSelectDialog({
-      defaultValue: beamboxPreference.read(id as any),
-      id,
-      options: importTypeOptions,
-      title: lang.beambox.popup.select_import_method,
-    });
-  })();
-
+  // TODO: check given importType is valid?
   if (!importType) {
-    return;
+    const importTypeOptions = Array.of<{ label: string; value: ImportType }>();
+
+    if (!skipByLayer) {
+      importTypeOptions.push({ label: lang.beambox.popup.layer_by_layer, value: 'layer' });
+    }
+
+    if (!printingModules.has(targetModule)) {
+      importTypeOptions.push({ label: lang.beambox.popup.layer_by_color, value: 'color' });
+    }
+
+    importTypeOptions.push({ label: lang.beambox.popup.nolayer, value: 'nolayer' });
+    importType = await (async () => {
+      // use skip-by-layer as a flag to separate the import of .svg and .ai files
+      const id = `${targetModule}${skipByLayer ? '-skip-by-layer' : ''}-import-type`;
+
+      if (importTypeOptions.length === 1) {
+        return importTypeOptions[0].value;
+      }
+
+      return dialogCaller.showRadioSelectDialog({
+        defaultValue: beamboxPreference.read(id as any),
+        id,
+        options: importTypeOptions,
+        title: lang.beambox.popup.select_import_method,
+      });
+    })();
+
+    if (!importType) {
+      return;
+    }
   }
 
   const result = await svgWebSocket.uploadPlainSVG(file);
@@ -285,7 +288,7 @@ const importSvg = async (
     svgCanvas.selectOnly(svgCanvas.tempGroupSelectedElements());
   }
 
-  if (!initBatchCmd && !batchCmd.isEmpty()) {
+  if (!parentCmd && !batchCmd.isEmpty()) {
     svgCanvas.addCommandToHistory(batchCmd);
   }
 
