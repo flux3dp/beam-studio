@@ -10,7 +10,7 @@ import importSvg from '@core/app/svgedit/operations/import/importSvg';
 import postImportElement from '@core/app/svgedit/operations/import/postImportElement';
 import { getNPIconByID } from '@core/helpers/api/flux-id';
 import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
-import type { IIcon } from '@core/interfaces/INoun-Project';
+import type { IIcon } from '@core/interfaces/INounProject';
 
 import styles from './Element.module.scss';
 

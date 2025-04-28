@@ -11,7 +11,7 @@ import browser from '@core/implementations/browser';
 import communicator from '@core/implementations/communicator';
 import cookies from '@core/implementations/cookies';
 import storage from '@core/implementations/storage';
-import type { IData } from '@core/interfaces/INoun-Project';
+import type { IData } from '@core/interfaces/INounProject';
 import type { IUser } from '@core/interfaces/IUser';
 
 export interface ResponseWithError<T = any, D = any> extends AxiosResponse<T, D> {

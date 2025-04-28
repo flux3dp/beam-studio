@@ -1,5 +1,5 @@
 /* eslint-disable reactRefresh/only-export-components */
-import type { IIcon } from '@core/interfaces/INoun-Project';
+import type { IIcon } from '@core/interfaces/INounProject';
 
 export type MainType = 'animals' | 'basic' | 'decor' | 'holidays' | 'nature' | 'people' | 'tools';
 export type SubType =

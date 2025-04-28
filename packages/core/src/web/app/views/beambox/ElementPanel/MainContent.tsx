@@ -27,21 +27,21 @@ const MainContent = ({ types }: Props): ReactNode => {
 
   const scrollDivRef = useRef<HTMLDivElement>(null);
   const waitFirstAnimation = useRef(isMobile());
-  const shodowRef = useRef<HTMLDivElement>(null);
+  const shadowRef = useRef<HTMLDivElement>(null);
   const handleShadow = () => {
-    if (scrollDivRef.current && shodowRef.current && !waitFirstAnimation.current) {
+    if (scrollDivRef.current && shadowRef.current && !waitFirstAnimation.current) {
       if (
         // add extra 5px to fix windows browser precision
         scrollDivRef.current.scrollTop + scrollDivRef.current.clientHeight + 5 >=
         scrollDivRef.current.scrollHeight
       ) {
-        shodowRef.current.style.display = 'none';
+        shadowRef.current.style.display = 'none';
       } else {
-        shodowRef.current.style.display = 'block';
+        shadowRef.current.style.display = 'block';
       }
     } else {
-      if (shodowRef.current) {
-        shodowRef.current.style.display = 'none';
+      if (shadowRef.current) {
+        shadowRef.current.style.display = 'none';
       }
 
       setTimeout(handleShadow, 500);
@@ -50,7 +50,7 @@ const MainContent = ({ types }: Props): ReactNode => {
 
   useEffect(() => {
     setTimeout(() => {
-      // Display shadow after flaoting panel completly opened
+      // Display shadow after floating panel completely opened
       waitFirstAnimation.current = false;
     }, 500);
   }, []);
@@ -137,7 +137,7 @@ const MainContent = ({ types }: Props): ReactNode => {
           ))}
         </div>
       </div>
-      <div className={styles.shadow} ref={shodowRef} />
+      <div className={styles.shadow} ref={shadowRef} />
     </div>
   );
 };

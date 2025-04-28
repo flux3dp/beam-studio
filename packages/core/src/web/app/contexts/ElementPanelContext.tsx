@@ -14,7 +14,7 @@ import Elements, {
 import { getCurrentUser, getNPIconsByTerm } from '@core/helpers/api/flux-id';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import storage from '@core/implementations/storage';
-import type { IIcon } from '@core/interfaces/INoun-Project';
+import type { IIcon } from '@core/interfaces/INounProject';
 import type { IUser } from '@core/interfaces/IUser';
 
 export interface Content {
