@@ -21,6 +21,7 @@ import weldPath from '@core/helpers/weldPath';
 import localFontHelper from '@core/implementations/localFontHelper';
 import storage from '@core/implementations/storage';
 import type { FontDescriptor, IFont, IFontQuery, WebFont } from '@core/interfaces/IFont';
+import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 let svgCanvas: ISVGCanvas;
@@ -52,10 +53,17 @@ const ConvertResult = {
 
 type ConvertResultType = (typeof ConvertResult)[keyof typeof ConvertResult];
 
-type ConvertToTextPathResult = {
-  path: null | SVGPathElement;
-  status: ConvertResultType;
-};
+type ConvertToTextPathResult =
+  | {
+      command: IBatchCommand;
+      path: SVGPathElement;
+      status: ConvertResultType;
+    }
+  | {
+      command: null;
+      path: null;
+      status: ConvertResultType;
+    };
 
 const tempPaths: SVGPathElement[] = [];
 
@@ -566,12 +574,12 @@ const setTextPostscriptNameIfNeeded = (textElement: Element) => {
 
 const convertTextToPath = async (
   textElement: Element,
-  opts?: { isTempConvert?: boolean; weldingTexts?: boolean },
+  opts?: { isSubCommand?: boolean; isTempConvert?: boolean; weldingTexts?: boolean },
 ): Promise<ConvertToTextPathResult> => {
   if (!textElement.textContent) {
     console.warn('Text element has no content, skipping conversion.');
 
-    return { path: null, status: ConvertResult.CONTINUE };
+    return { command: null, path: null, status: ConvertResult.CONTINUE };
   }
 
   await Progress.openNonstopProgress({ id: 'parsing-font', message: LANG.wait_for_parsing_font });
@@ -579,7 +587,7 @@ const convertTextToPath = async (
   let newPathElement: null | SVGPathElement = null;
 
   try {
-    const { isTempConvert, weldingTexts } = opts || { isTempConvert: false, weldingTexts: false };
+    const { isSubCommand = false, isTempConvert = false, weldingTexts = false } = opts || {};
 
     setTextPostscriptNameIfNeeded(textElement);
 
@@ -617,7 +625,7 @@ const convertTextToPath = async (
           console.log('Font substitution cancelled by user.');
 
           // Return CANCEL status and a null path.
-          return { path: null, status: ConvertResult.CANCEL_OPERATION };
+          return { command: null, path: null, status: ConvertResult.CANCEL_OPERATION };
         }
       }
     }
@@ -649,7 +657,7 @@ const convertTextToPath = async (
           message: i18n.lang.device_selection.no_device_web,
         });
 
-        return { path: null, status: ConvertResult.CONTINUE };
+        return { command: null, path: null, status: ConvertResult.CONTINUE };
       }
 
       res =
@@ -720,7 +728,7 @@ const convertTextToPath = async (
         type: AlertConstants.SHOW_POPUP_ERROR,
       });
 
-      return { path: null, status: ConvertResult.CONTINUE };
+      return { command: null, path: null, status: ConvertResult.CONTINUE };
     }
 
     if (!isTempConvert) {
@@ -738,14 +746,14 @@ const convertTextToPath = async (
         }
       }
 
-      if (!batchCmd.isEmpty()) {
+      if (!batchCmd.isEmpty() && !isSubCommand) {
         svgCanvas.undoMgr.addCommandToHistory(batchCmd);
       }
     }
 
     const finalStatus = hasUnsupportedFont ? ConvertResult.UNSUPPORT : ConvertResult.CONTINUE;
 
-    return { path: newPathElement, status: finalStatus };
+    return { command: batchCmd, path: newPathElement, status: finalStatus };
   } catch (err) {
     Alert.popUp({
       caption: `#846 ${LANG.text_to_path.error_when_parsing_text}`,
@@ -753,7 +761,7 @@ const convertTextToPath = async (
       type: AlertConstants.SHOW_POPUP_ERROR,
     });
 
-    return { path: null, status: ConvertResult.CONTINUE };
+    return { command: null, path: null, status: ConvertResult.CONTINUE };
   } finally {
     Progress.popById('parsing-font');
   }

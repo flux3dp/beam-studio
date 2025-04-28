@@ -82,11 +82,11 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
   };
 
   const convertSvgToPath = async (): Promise<ConvertPathResult> => {
-    const { path } = svgCanvas.convertToPath(elem);
+    const { cmd, path } = svgCanvas.convertToPath(elem, true);
 
     svgCanvas.selectOnly([path]);
 
-    return { bbox: path.getBBox() };
+    return { bbox: path.getBBox(), command: cmd as IBatchCommand };
   };
 
   const convertTextToPath = async (weldingTexts = false): Promise<ConvertPathResult> => {
@@ -97,11 +97,11 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
 
     svgCanvas.clearSelection();
 
-    const { path } = await FontFuncs.convertTextToPath(textElem!, { weldingTexts });
+    const { command, path } = await FontFuncs.convertTextToPath(textElem!, { isSubCommand: true, weldingTexts });
 
     if (path) svgCanvas.selectOnly([path]);
 
-    return { bbox: path?.getBBox()! };
+    return { bbox: path?.getBBox()!, command: command ?? undefined };
   };
 
   const convertUseToPath = async (): Promise<ConvertPathResult> => {
@@ -229,15 +229,17 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       tab,
       async () => {
         let bbox = (elem as SVGSVGElement).getBBox();
+        let command: IBatchCommand | undefined;
 
         // Convert to path if it's not a path
         if (!(elem instanceof SVGPathElement)) {
-          const { bbox: newBbox } = await convertToPath();
+          const { bbox: newBbox, command: subCommand } = await convertToPath();
 
           bbox = newBbox;
+          command = subCommand;
         }
 
-        Dialog.showTabPanel({ bbox, onClose: () => {} });
+        Dialog.showTabPanel({ bbox, command, onClose: () => {} });
       },
       <ActionPanelIcons.Tab />,
       <ActionPanelIcons.Tab />,

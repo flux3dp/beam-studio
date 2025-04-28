@@ -252,7 +252,10 @@ describe('should render correctly', () => {
     expect(toSelectMode).toHaveBeenCalledTimes(1);
     expect(clearSelection).toHaveBeenCalledTimes(1);
     expect(convertTextToPath).toHaveBeenCalledTimes(1);
-    expect(convertTextToPath).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'), { weldingTexts: false });
+    expect(convertTextToPath).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'), {
+      isSubCommand: true,
+      weldingTexts: false,
+    });
 
     convertTextToPath.mockResolvedValueOnce({ path: null });
     fireEvent.click(getByText(tActionPanel.weld_text));
@@ -261,6 +264,7 @@ describe('should render correctly', () => {
     expect(clearSelection).toHaveBeenCalledTimes(2);
     expect(convertTextToPath).toHaveBeenCalledTimes(2);
     expect(convertTextToPath).toHaveBeenNthCalledWith(2, document.getElementById('svg_1'), {
+      isSubCommand: true,
       weldingTexts: true,
     });
 
@@ -524,7 +528,10 @@ describe('should render correctly in mobile', () => {
     expect(toSelectMode).toHaveBeenCalledTimes(1);
     expect(clearSelection).toHaveBeenCalledTimes(1);
     expect(convertTextToPath).toHaveBeenCalledTimes(1);
-    expect(convertTextToPath).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'), { weldingTexts: false });
+    expect(convertTextToPath).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'), {
+      isSubCommand: true,
+      weldingTexts: false,
+    });
 
     convertTextToPath.mockResolvedValueOnce({ path: null });
     fireEvent.click(getByText(tActionPanel.weld_text));
@@ -532,7 +539,10 @@ describe('should render correctly in mobile', () => {
     expect(toSelectMode).toHaveBeenCalledTimes(2);
     expect(clearSelection).toHaveBeenCalledTimes(2);
     expect(convertTextToPath).toHaveBeenCalledTimes(2);
-    expect(convertTextToPath).toHaveBeenNthCalledWith(2, document.getElementById('svg_1'), { weldingTexts: true });
+    expect(convertTextToPath).toHaveBeenNthCalledWith(2, document.getElementById('svg_1'), {
+      isSubCommand: true,
+      weldingTexts: true,
+    });
 
     fireEvent.click(getByText(tActionPanel.array));
     expect(triggerGridTool).toHaveBeenCalledTimes(1);

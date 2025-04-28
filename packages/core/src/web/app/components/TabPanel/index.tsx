@@ -12,6 +12,7 @@ import useNewShortcutsScope from '@core/helpers/hooks/useNewShortcutsScope';
 import shortcuts from '@core/helpers/shortcuts';
 import { handleChangePathDataCommand } from '@core/helpers/TabPanel/handleChangePathDataCommand';
 import useI18n from '@core/helpers/useI18n';
+import type { IBatchCommand } from '@core/interfaces/IHistory';
 
 import { useHistory } from './hooks/useHistory';
 import styles from './index.module.scss';
@@ -26,13 +27,14 @@ import { removePerpendicularLineIfExist } from './utils/removePerpendicularLineI
 
 interface Props {
   bbox: DOMRect;
+  command?: IBatchCommand;
   element: SVGElement;
   onClose: () => void;
 }
 
 const PADDING = 30;
 
-function UnmemorizedTabPanel({ bbox, element, onClose }: Props): React.JSX.Element {
+function UnmemorizedTabPanel({ bbox, command, element, onClose }: Props): React.JSX.Element {
   const { tab_panel: lang } = useI18n();
   const { history, push, redo, set, undo } = useHistory({ index: 0, items: [{ pathData: [] }] });
   const [mode, setMode] = useState<'auto' | 'manual'>('manual');
@@ -79,10 +81,15 @@ function UnmemorizedTabPanel({ bbox, element, onClose }: Props): React.JSX.Eleme
       pipe(
         paper.project.getItem({ name: TARGET_PATH_NAME }) as paper.CompoundPath,
         tap((item) => item.fitBounds(bbox)),
-        ({ pathData }) => handleChangePathDataCommand(element as unknown as SVGPathElement, pathData),
+        ({ pathData }) =>
+          handleChangePathDataCommand({
+            d: pathData,
+            element: element as unknown as SVGPathElement,
+            subCommand: command,
+          }),
         onClose,
       ),
-    [bbox, element, onClose],
+    [bbox, command, element, onClose],
   );
 
   const handleCutPathByGap = useCallback(() => {
