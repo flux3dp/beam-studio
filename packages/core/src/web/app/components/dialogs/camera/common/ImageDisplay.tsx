@@ -9,7 +9,7 @@ import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
 import styles from './ImageDisplay.module.scss';
 
 interface Props {
-  img: null | { blob: Blob; success: boolean; url: string };
+  img: null | { blob: Blob; url: string };
   onDragEnd?: (e: React.MouseEvent<HTMLDivElement>) => void;
   onDragMove?: (e: React.MouseEvent<HTMLDivElement>, scale: number) => boolean;
   onImgLoad?: () => void;
@@ -42,7 +42,7 @@ const ImageDisplay = forwardRef<HTMLDivElement, Props>(
     const minScale = useMemo(() => {
       if (!imgContainerRef.current || !imgLoaded) return 0.2;
 
-      return Math.max(
+      return Math.min(
         imgContainerRef.current.clientWidth / imageSizeRef.current.width,
         imgContainerRef.current.clientHeight / imageSizeRef.current.height,
       );
@@ -146,8 +146,6 @@ const ImageDisplay = forwardRef<HTMLDivElement, Props>(
     );
 
     useEffect(() => {
-      console.log(zoomPoints);
-
       if (zoomPoints?.length) handleZoomToPoints(zoomPoints);
     }, [handleZoomToPoints, zoomPoints]);
 
