@@ -82,6 +82,9 @@ const BuiltinElement = ({ mainType, path }: { mainType?: string; path: string })
 
   useEffect(() => {
     if (icons[key]) {
+      // Force update in case icons[key] is loaded between first render and useEffect
+      forceUpdate();
+
       return;
     }
 
