@@ -9,7 +9,7 @@ interface Props {
 }
 
 const Skeleton = ({ count = 1 }: Props) => {
-  return [...Array(count)].map((_, i) => <div className={classNames(styles.icon, styles.loading)} key={i} />);
+  return Array.from({ length: count }, (_, i) => <div className={classNames(styles.icon, styles.loading)} key={i} />);
 };
 
 export default memo(Skeleton);
