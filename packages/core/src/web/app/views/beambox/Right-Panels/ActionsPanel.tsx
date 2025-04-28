@@ -10,6 +10,7 @@ import textPathEdit from '@core/app/actions/beambox/textPathEdit';
 import Dialog from '@core/app/actions/dialog-caller';
 import { textButtonTheme } from '@core/app/constants/antd-config';
 import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
+import type { BatchCommand } from '@core/app/svgedit/history/history';
 import autoFit from '@core/app/svgedit/operations/autoFit';
 import disassembleUse from '@core/app/svgedit/operations/disassembleUse';
 import textActions from '@core/app/svgedit/text/textactions';
@@ -25,6 +26,7 @@ import useForceUpdate from '@core/helpers/use-force-update';
 import useI18n from '@core/helpers/useI18n';
 import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
 import dialog from '@core/implementations/dialog';
+import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './ActionsPanel.module.scss';
@@ -50,8 +52,13 @@ interface ButtonOpts {
 }
 
 interface TabButtonOptions extends ButtonOpts {
-  convertToPath: (elem: any) => Promise<DOMRect>;
+  convertToPath: () => Promise<ConvertPathResult>;
 }
+
+type ConvertPathResult = {
+  bbox: DOMRect;
+  command?: IBatchCommand;
+};
 
 const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
   const i18n = useI18n();
@@ -74,7 +81,15 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     if (fileBlob) svgEditor.replaceBitmap(fileBlob, elem);
   };
 
-  const convertTextToPath = async (weldingTexts = false): Promise<DOMRect> => {
+  const convertSvgToPath = async (): Promise<ConvertPathResult> => {
+    const { path } = svgCanvas.convertToPath(elem);
+
+    svgCanvas.selectOnly([path]);
+
+    return { bbox: path.getBBox() };
+  };
+
+  const convertTextToPath = async (weldingTexts = false): Promise<ConvertPathResult> => {
     const isTextPath = elem.getAttribute('data-textpath-g');
     const textElem = isTextPath ? elem.querySelector('text') : elem;
 
@@ -86,7 +101,37 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
 
     if (path) svgCanvas.selectOnly([path]);
 
-    return path?.getBBox()!;
+    return { bbox: path?.getBBox()! };
+  };
+
+  const convertUseToPath = async (): Promise<ConvertPathResult> => {
+    const command = (await disassembleUse([elem], {
+      addToHistory: false,
+      showProgress: false,
+      skipConfirm: true,
+    })) as BatchCommand;
+
+    const group = svgCanvas.getSelectedElems()[0] as SVGGElement;
+    const head = group.childNodes[0] as SVGPathElement;
+    const pathData = Array.of<string>();
+    const toRemove = Array.of<SVGElement>();
+
+    group.childNodes.forEach((child, index) => {
+      pathData.push((child as SVGPathElement).getAttribute('d')!);
+
+      if (index !== 0) toRemove.push(child as SVGElement);
+    });
+
+    toRemove.forEach((child) => {
+      child.remove();
+    });
+
+    head.setAttribute('d', pathData.join(' '));
+    head.removeAttribute('data-next-sibling');
+
+    svgCanvas.selectOnly([head]);
+
+    return { bbox: head.getBBox(), command };
   };
 
   const renderButtons = useCallback(
@@ -169,17 +214,17 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     );
 
   const renderTabButton = (
-    { convertToPath, ...opts }: TabButtonOptions = {
-      convertToPath: ((elem: any) => {
-        const { path } = svgCanvas.convertToPath(elem);
-
-        svgCanvas.selectOnly([path]);
-
-        return path.getBBox();
-      }) as any,
+    { convertToPath, ...options }: TabButtonOptions = {
+      convertToPath: convertSvgToPath,
     },
-  ): React.JSX.Element =>
-    renderButtons(
+  ): React.JSX.Element => {
+    const isDisabled = match(elem.getAttribute('fill'))
+      // 'none' for SVG elements
+      // 'nullish' for use elements
+      .with(P.union('none', P.nullish), () => false)
+      .otherwise(() => true);
+
+    return renderButtons(
       'tab',
       tab,
       async () => {
@@ -187,15 +232,18 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
 
         // Convert to path if it's not a path
         if (!(elem instanceof SVGPathElement)) {
-          bbox = await convertToPath(elem);
+          const { bbox: newBbox } = await convertToPath();
+
+          bbox = newBbox;
         }
 
         Dialog.showTabPanel({ bbox, onClose: () => {} });
       },
       <ActionPanelIcons.Tab />,
       <ActionPanelIcons.Tab />,
-      { isDisabled: elem.getAttribute('fill') !== 'none', isFullLine: true, ...opts },
+      { isDisabled, isFullLine: true, ...options },
     );
+  };
 
   const renderImageActions = (): React.JSX.Element[] => {
     const isShading = elem.getAttribute('data-shading') === 'true';
@@ -424,6 +472,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     ),
     renderSmartNestButton(),
     renderArrayButton({ isFullLine: true }),
+    renderTabButton({ convertToPath: convertUseToPath }),
   ];
 
   const renderGroupActions = (): React.JSX.Element[] => [
@@ -499,9 +548,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       forceUpdate();
     });
 
-    if (elem) {
-      observer.observe(elem, { attributeFilter: ['fill'] });
-    }
+    if (elem) observer.observe(elem, { attributeFilter: ['fill'] });
 
     return () => observer.disconnect(); // Cleanup
   }, [elem, forceUpdate]);
