@@ -17,15 +17,45 @@ import storage from '@core/implementations/storage';
 import type { IIcon } from '@core/interfaces/INounProject';
 import type { IUser } from '@core/interfaces/IUser';
 
+/**
+ * Represents the content state, including builtin icons and Noun Project icons.
+ */
 export interface Content {
-  contentId?: number; // assigned in updateContent, avoid renderind out-dated content after api return
-  fileNames?: string[]; // builtin icons
-  loading?: boolean; // fetching np icons
-  mainType?: MainType; // builtin icons folder
-  nextPage?: string; // np query
-  npIcons?: IIcon[]; // np icons
-  subType?: SubType; // subType label
-  term: string; // react key and np query
+  /**
+   * Unique identifier assigned during updateContent.
+   * Used to prevent rendering outdated content after API responses.
+   */
+  contentId?: number;
+  /**
+   * Paths or file names of builtin icons.
+   */
+  fileNames?: string[];
+  /**
+   * Whether Noun Project icons are being fetched and a loading skeleton should be displayed.
+   */
+  loading?: boolean;
+  /**
+   * Folder name of builtin icons.
+   *
+   * When undefined, fileNames should contain full paths including the folder name.
+   */
+  mainType?: MainType;
+  /**
+   * Query token for fetching the next page from the Noun Project API.
+   */
+  nextPage?: string;
+  /**
+   * Retrieved data of Noun Project icons.
+   */
+  npIcons?: IIcon[];
+  /**
+   * Label key for sub type.
+   */
+  subType?: SubType;
+  /**
+   * Term used as the React key and the search query for the Noun Project API.
+   */
+  term: string;
 }
 
 interface History {
