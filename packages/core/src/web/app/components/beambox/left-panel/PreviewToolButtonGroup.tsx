@@ -71,8 +71,12 @@ const PreviewToolButtonGroup = ({ className }: Props): React.JSX.Element => {
             PreviewModeController.switchCamera(value);
           }}
           options={[
-            { label: <LeftPanelIcons.Shoot />, value: CameraType.LASER_HEAD },
-            { label: <LeftPanelIcons.ShootWideAngle />, value: CameraType.WIDE_ANGLE },
+            { label: <LeftPanelIcons.Shoot />, title: lang.label.preview, value: CameraType.LASER_HEAD },
+            {
+              label: <LeftPanelIcons.ShootWideAngle />,
+              title: lang.label.preview_wide_angle,
+              value: CameraType.WIDE_ANGLE,
+            },
           ]}
           value={cameraType}
         />

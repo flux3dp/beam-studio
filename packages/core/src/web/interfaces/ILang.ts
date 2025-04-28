@@ -234,6 +234,7 @@ export interface ILang {
         photo: string;
         polygon: string;
         preview: string;
+        preview_wide_angle: string;
         qr_code: string;
         rect: string;
         text: string;
