@@ -92,8 +92,8 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         isSubscribed,
       )}
       {renderToolButton('Text', <LeftPanelIcons.Text />, `${tLeftPanel.label.text} (T)`, FnWrapper.insertText)}
-      {renderToolButton('Element', <LeftPanelIcons.Element />, `${tLeftPanel.label.shapes} (E)`, () =>
-        dialogCaller.showShapePanel(FnWrapper.useSelectTool),
+      {renderToolButton('Element', <LeftPanelIcons.Element />, `${tLeftPanel.label.elements} (E)`, () =>
+        dialogCaller.showElementPanel(FnWrapper.useSelectTool),
       )}
       {renderToolButton(
         'Rectangle',

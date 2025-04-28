@@ -21,6 +21,7 @@ describe('printing layer color', () => {
   it('change color', () => {
     cy.clickToolBtn('Element');
     cy.get('.anticon[id="basic/icon-circle"]').click();
+    cy.get('.ant-drawer-header').should('not.exist');
     cy.get('#svg_1').should('be.visible').click();
     cy.get('.tab.objects').click();
     cy.get(`div[class*="${colorPickerPrefix}color"]`)
@@ -37,6 +38,7 @@ describe('printing layer color', () => {
     it('expand layer and change color', () => {
       cy.clickToolBtn('Element');
       cy.get('.anticon[id="basic/icon-circle"]').click();
+      cy.get('.ant-drawer-header').should('not.exist');
       cy.get('#svg_1').should('be.visible').click();
       cy.get('.tab.objects').click();
       cy.get(`div[class*="${colorPickerPrefix}color"]`)

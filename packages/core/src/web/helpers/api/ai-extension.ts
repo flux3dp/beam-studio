@@ -18,7 +18,7 @@ const init = (): { connection: any } => {
     },
     onMessage: async (data: { layerData: string; svg: string }) => {
       if (data.svg) {
-        await importSvg(new Blob([data.svg], { type: 'text/plain' }), { isFromAI: true });
+        await importSvg(new Blob([data.svg], { type: 'text/plain' }), { importType: 'layer' });
 
         if (data.layerData) {
           const layerDataJSON = JSON.parse(data.layerData) as Record<

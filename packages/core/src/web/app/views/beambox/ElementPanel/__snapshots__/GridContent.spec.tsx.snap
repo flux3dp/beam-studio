@@ -1,0 +1,178 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test GridContent should render correctly when missing fileNames 1`] = `
+<div>
+  <np-element
+    icon="[object Object]"
+  />
+  <np-element
+    icon="[object Object]"
+  />
+  <button
+    class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block more"
+    type="button"
+  >
+    <span>
+      Load the next 100 results
+    </span>
+  </button>
+</div>
+`;
+
+exports[`test GridContent should render correctly when missing npIcons 1`] = `
+<div>
+  <builtin-element
+    maintype="basic"
+    path="icon-star1"
+  />
+  <builtin-element
+    maintype="basic"
+    path="icon-star2"
+  />
+</div>
+`;
+
+exports[`test GridContent should render loading correctly 1`] = `
+<div>
+  <builtin-element
+    maintype="basic"
+    path="icon-star1"
+  />
+  <builtin-element
+    maintype="basic"
+    path="icon-star2"
+  />
+  <np-element
+    icon="[object Object]"
+  />
+  <np-element
+    icon="[object Object]"
+  />
+  <skeleton
+    count="100"
+  />
+</div>
+`;
+
+exports[`test GridContent should render mainType content correctly 1`] = `
+<div>
+  <div
+    class="subtitle"
+  >
+    Shape
+  </div>
+  <builtin-element
+    maintype="basic"
+    path="icon-star1"
+  />
+  <builtin-element
+    maintype="basic"
+    path="icon-star2"
+  />
+</div>
+`;
+
+exports[`test GridContent should render mainType content correctly when login 1`] = `
+<div>
+  <button
+    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-block ant-btn-icon-end subtitle"
+    type="button"
+  >
+    <span
+      class="ant-btn-icon"
+    >
+      <span
+        aria-label="right"
+        class="anticon anticon-right"
+        role="img"
+      >
+        <svg
+          aria-hidden="true"
+          data-icon="right"
+          fill="currentColor"
+          focusable="false"
+          height="1em"
+          viewBox="64 64 896 896"
+          width="1em"
+        >
+          <path
+            d="M765.7 486.8L314.9 134.7A7.97 7.97 0 00302 141v77.3c0 4.9 2.3 9.6 6.1 12.6l360 281.1-360 281.1c-3.9 3-6.1 7.7-6.1 12.6V883c0 6.7 7.7 10.4 12.9 6.3l450.8-352.1a31.96 31.96 0 000-50.4z"
+          />
+        </svg>
+      </span>
+    </span>
+    <span>
+      Shape
+    </span>
+  </button>
+  <builtin-element
+    maintype="basic"
+    path="icon-star1"
+  />
+  <builtin-element
+    maintype="basic"
+    path="icon-star2"
+  />
+  <np-element
+    icon="[object Object]"
+  />
+  <np-element
+    icon="[object Object]"
+  />
+</div>
+`;
+
+exports[`test GridContent should render search content correctly 1`] = `
+<div>
+  <builtin-element
+    path="basic/icon-star1"
+  />
+  <builtin-element
+    path="basic/icon-star2"
+  />
+  <builtin-element
+    path="decor/i_circular-1"
+  />
+  <np-element
+    icon="[object Object]"
+  />
+  <np-element
+    icon="[object Object]"
+  />
+  <button
+    class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block more"
+    type="button"
+  >
+    <span>
+      Load the next 100 results
+    </span>
+  </button>
+</div>
+`;
+
+exports[`test GridContent should render subType content correctly 1`] = `
+<div>
+  <builtin-element
+    maintype="basic"
+    path="icon-star1"
+  />
+  <builtin-element
+    maintype="basic"
+    path="icon-star2"
+  />
+  <np-element
+    icon="[object Object]"
+  />
+  <np-element
+    icon="[object Object]"
+  />
+  <button
+    class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block more"
+    type="button"
+  >
+    <span>
+      Load the next 100 results
+    </span>
+  </button>
+</div>
+`;

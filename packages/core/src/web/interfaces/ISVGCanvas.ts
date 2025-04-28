@@ -184,6 +184,7 @@ export default interface ISVGCanvas {
   setRotationAngle: (val: number, preventUndo: boolean, elem?: SVGElement) => void;
   setStrokeAttr(attrKey: string, value: string): void;
   setStrokeWidth(width: number): void;
+  setSvgElemPosition: (para: 'x' | 'y', val: number, elem?: SVGElement, addToHistory?: boolean) => IBatchCommand;
   setSvgElemSize: (type: 'height' | 'rx' | 'ry' | 'width', val: number, addToHistory?: boolean) => IBatchCommand | null;
   setSvgString: (content: string) => boolean;
   setUiStrings(allStrings: Record<string, string>): void;
