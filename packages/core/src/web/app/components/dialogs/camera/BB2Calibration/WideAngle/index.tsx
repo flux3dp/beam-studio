@@ -74,11 +74,8 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
           getData={async () => loadJson('fisheye', 'wide-angle.json') as FisheyeCameraParametersV4Cali}
           onClose={handleClose}
           onNext={(res: boolean) => {
-            if (res) {
-              setStep(Step.PUT_PAPER);
-            } else {
-              setStep(Step.CALIBRATE_CHARUCO);
-            }
+            if (res) setStep(Step.PUT_PAPER);
+            else setStep(Step.CALIBRATE_CHARUCO);
           }}
           updateParam={updateParam}
         />
@@ -154,11 +151,26 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
       Step.SOLVE_PNP_BL_2,
       Step.SOLVE_PNP_BR_2,
       (step) => {
-        const region = match<typeof step, keyof typeof bb2WideAngleCameraPnpPoints>(step)
-          .with(Step.SOLVE_PNP_TL_1, Step.SOLVE_PNP_TL_2, () => 'topLeft')
-          .with(Step.SOLVE_PNP_TR_1, Step.SOLVE_PNP_TR_2, () => 'topRight')
-          .with(Step.SOLVE_PNP_BL_1, Step.SOLVE_PNP_BL_2, () => 'bottomLeft')
-          .otherwise(() => 'bottomRight');
+        const { interestArea, region } = match<
+          typeof step,
+          {
+            interestArea?: { height: number; width: number; x: number; y: number };
+            region: keyof typeof bb2WideAngleCameraPnpPoints;
+          }
+        >(step)
+          .with(Step.SOLVE_PNP_TL_1, Step.SOLVE_PNP_TL_2, () => ({
+            interestArea: { height: 1300, width: 2300, x: 500, y: 900 },
+            region: 'topLeft',
+          }))
+          .with(Step.SOLVE_PNP_TR_1, Step.SOLVE_PNP_TR_2, () => ({
+            interestArea: { height: 1300, width: 2300, x: 2800, y: 900 },
+            region: 'topRight',
+          }))
+          .with(Step.SOLVE_PNP_BL_1, Step.SOLVE_PNP_BL_2, () => ({
+            interestArea: { height: 800, width: 1600, x: 1200, y: 2200 },
+            region: 'bottomLeft',
+          }))
+          .otherwise(() => ({ interestArea: { height: 800, width: 1600, x: 2800, y: 2200 }, region: 'bottomRight' }));
 
         const keys = match<
           typeof step,
@@ -182,6 +194,7 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
             cameraIndex={1}
             dh={calibratingParam.current[keys.dh]!}
             hasNext
+            initInterestArea={interestArea}
             onBack={async () => {
               if (step === Step.SOLVE_PNP_TL_2) {
                 progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: 'Moving platform' });

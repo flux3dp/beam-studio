@@ -21,6 +21,7 @@ interface Props {
   dh: number;
   hasNext?: boolean;
   imgSource?: 'usb' | 'wifi';
+  initInterestArea?: { height: number; width: number; x: number; y: number };
   onBack: () => void;
   onClose: (complete: boolean) => void;
   onNext: (rvec: number[], tvec: number[], imgPoints: Array<[number, number]>) => void;
@@ -34,6 +35,7 @@ const SolvePnP = ({
   dh,
   hasNext = false,
   imgSource = 'wifi',
+  initInterestArea,
   onBack,
   onClose,
   onNext,
@@ -85,7 +87,7 @@ const SolvePnP = ({
           };
         }
 
-        const res = await solvePnPFindCorners(imgBlob, dh, refPoints, interestArea);
+        const res = await solvePnPFindCorners(imgBlob, dh, refPoints, interestArea || initInterestArea);
 
         if (res.success) {
           const { blob, data, success } = res;
@@ -118,6 +120,8 @@ const SolvePnP = ({
 
       return true;
     },
+    // omit initInterestArea on purpose
+    // eslint-disable-next-line hooks/exhaustive-deps
     [dh, params, refPoints],
   );
 
