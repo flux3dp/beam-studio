@@ -26,8 +26,8 @@ import importSvgString from './importSvgString';
 const svgWebSocket = svgLaserParser({ type: 'svgeditor' });
 let svgCanvas: ISVGCanvas;
 
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
+getSVGAsync(({ Canvas }) => {
+  svgCanvas = Canvas;
 });
 
 const getBasename = (path: string) => path.match(/(.+)[/\\].+/)?.[1] ?? '';
@@ -39,12 +39,7 @@ const readSVG = (
     parentCmd = undefined,
     targetModule = getDefaultLaserModule(),
     type,
-  }: {
-    layerName?: string;
-    parentCmd?: IBatchCommand;
-    targetModule?: LayerModuleType;
-    type: ImportType;
-  },
+  }: { layerName?: string; parentCmd?: IBatchCommand; targetModule?: LayerModuleType; type: ImportType },
 ) =>
   new Promise<SVGUseElement>((resolve) => {
     const parsedLayerName = layerName === 'nolayer' ? undefined : layerName;
@@ -219,12 +214,7 @@ const importSvg = async (
     for (let i = 0; i < keys.length; i += 1) {
       const key = keys[i];
 
-      newElements.push(
-        await readSVG(outputData[key], {
-          ...elementOptions,
-          layerName: key,
-        }),
-      );
+      newElements.push(await readSVG(outputData[key], { ...elementOptions, layerName: key }));
     }
   } else {
     newElements.push(await readSVG(file, elementOptions));
