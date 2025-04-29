@@ -20,7 +20,7 @@ export const getFocalDistance = async (): Promise<number> => {
 
     const { z: stateZ } = await deviceMaster.rawGetStatePos();
 
-    return round(probeZ - stateZ, 2);
+    return round(stateZ - probeZ, 2);
   } finally {
     if (didEnteredRawMode && deviceMaster.currentControlMode === 'raw') {
       await deviceMaster.endSubTask();
