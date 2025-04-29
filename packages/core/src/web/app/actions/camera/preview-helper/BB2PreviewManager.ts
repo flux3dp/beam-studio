@@ -7,6 +7,7 @@ import constant, { PreviewSpeedLevel } from '@core/app/actions/beambox/constant'
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import MessageCaller from '@core/app/actions/message-caller';
 import progressCaller from '@core/app/actions/progress-caller';
+import { bb2PerspectiveGrid } from '@core/app/components/dialogs/camera/common/solvePnPConstants';
 import { CameraType } from '@core/app/constants/cameraConstants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { loadJson } from '@core/helpers/device/jsonDataHelper';
@@ -34,10 +35,7 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
   private fisheyeParams?: FisheyeCameraParameters;
   private cameraPpmm = 5;
   private previewPpmm = 10;
-  private grid: PerspectiveGrid = {
-    x: [-80, 80, 10],
-    y: [0, 100, 10],
-  };
+  private grid: PerspectiveGrid = bb2PerspectiveGrid;
   private wideAngleGrid: PerspectiveGrid = {
     x: [0, 600, 20],
     y: [0, 375, 15],

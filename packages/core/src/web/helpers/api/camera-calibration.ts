@@ -3,7 +3,11 @@
  * API camera calibration
  * Ref: none
  */
-import type { FisheyeCaliParameters, FisheyeCameraParametersV2Cali } from '@core/interfaces/FisheyePreview';
+import type {
+  FisheyeCaliParameters,
+  FisheyeCameraParametersV2Cali,
+  PerspectiveGrid,
+} from '@core/interfaces/FisheyePreview';
 
 import Websocket from '../websocket';
 
@@ -308,6 +312,41 @@ class CameraCalibrationApi {
       };
       // solve_pnp_calculate [ref_points] [elevated_dh] [points]
       this.ws.send(`solve_pnp_calculate ${JSON.stringify(refPoints)} ${dh.toFixed(3)} ${JSON.stringify(points)}`);
+    });
+
+  checkPnP = (
+    img: ArrayBuffer | Blob,
+    dh: number,
+    params: { d: number[][]; k: number[][]; rvec: number[]; tvec: number[] },
+    grid: PerspectiveGrid,
+  ): Promise<
+    { blob: Blob; success: true } | { data: { info: string; reason: string; status: string }; success: false }
+  > =>
+    new Promise((resolve, reject) => {
+      this.events.onMessage = (response) => {
+        if (response instanceof Blob) {
+          resolve({ blob: response, success: true });
+        } else if (response.status === 'continue') {
+          this.ws.send(img);
+        } else if (response.status === 'fail') {
+          console.log('fail', response);
+          resolve({ data: response, success: false });
+        }
+      };
+
+      this.events.onError = (response) => {
+        reject(response);
+        console.log('on error', response);
+      };
+      this.events.onFatal = (response) => {
+        reject(response);
+        console.log('on fatal', response);
+      };
+
+      const size = img instanceof Blob ? img.size : img.byteLength;
+      const args = JSON.stringify({ dh, grid, params, size });
+
+      this.ws.send(`check_pnp ${args}`);
     });
 
   updateData = (data: FisheyeCaliParameters): Promise<boolean> =>

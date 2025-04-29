@@ -947,6 +947,7 @@ export interface ILang {
     cancel: string;
     check_checkpoint_data: string;
     check_device_pictures: string;
+    check_pnp_desc: string;
     checking_checkpoint: string;
     checking_pictures: string;
     diode_calibration: string;
@@ -1014,6 +1015,7 @@ export interface ILang {
     put_paper_step1: string;
     put_paper_step2: string;
     put_paper_step3: string;
+    recalibrate: string;
     res_average: string;
     res_excellent: string;
     res_poor: string;

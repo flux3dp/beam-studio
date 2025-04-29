@@ -1,6 +1,6 @@
 import { match } from 'ts-pattern';
 
-import type { WideAngleRegion } from '@core/interfaces/FisheyePreview';
+import type { PerspectiveGrid, WideAngleRegion } from '@core/interfaces/FisheyePreview';
 
 export const adorPnPPoints: Array<[number, number]> = [
   [155, 90],
@@ -23,6 +23,11 @@ export const bb2PnPPoints: Array<[number, number]> = [
   [-30, 70],
   [30, 70],
 ];
+
+export const bb2PerspectiveGrid: PerspectiveGrid = {
+  x: [-80, 80, 10],
+  y: [0, 100, 10],
+} as const;
 
 export const bb2WideAngleCameraPnpPoints: Record<
   'bottomLeft' | 'bottomRight' | 'topLeft' | 'topRight',

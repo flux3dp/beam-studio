@@ -73,11 +73,18 @@ const ImageDisplay = forwardRef<HTMLDivElement, Props>(
 
         scaleRef.current = newValue;
 
-        if (svgRef.current) {
-          svgRef.current.style.width = `${imageSizeRef.current.width * newValue}px`;
-          svgRef.current.style.height = `${imageSizeRef.current.height * newValue}px`;
+        if (imageSizeRef.current.width !== 0 && imageSizeRef.current.height !== 0) {
+          const w = imageSizeRef.current.width * newValue;
+          const h = imageSizeRef.current.height * newValue;
 
-          onScaleChange?.(newValue, svgRef.current);
+          if (imgContainerRef.current?.clientWidth! > w) imgContainerRef.current?.classList.add(styles.flex);
+          else imgContainerRef.current?.classList.remove(styles.flex);
+
+          if (svgRef.current) {
+            svgRef.current.style.width = `${w}px`;
+            svgRef.current.style.height = `${h}px`;
+            onScaleChange?.(newValue, svgRef.current);
+          }
 
           if (scrollToCenter) scrollToZoomCenter();
         }
@@ -88,7 +95,7 @@ const ImageDisplay = forwardRef<HTMLDivElement, Props>(
     const handleZoom = useCallback(
       (delta: number) => {
         const cur = scaleRef.current;
-        const newScale = Math.round(Math.max(Math.min(2, cur + delta), minScale) * 100) / 100;
+        const newScale = Math.max(Math.round(Math.max(Math.min(2, cur + delta), minScale) * 10000), 1) / 10000;
 
         if (newScale === cur) return;
 

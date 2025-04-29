@@ -10,10 +10,11 @@ import dialog from '@core/implementations/dialog';
 import type { FisheyeCameraParametersV3, FisheyeCameraParametersV3Cali } from '@core/interfaces/FisheyePreview';
 
 import styles from '../../Calibration.module.scss';
+import CheckPnP from '../../common/CheckPnP';
 import CheckpointData from '../../common/CheckpointData';
 import Instruction from '../../common/Instruction';
 import SolvePnP from '../../common/SolvePnP';
-import { bb2PnPPoints } from '../../common/solvePnPConstants';
+import { bb2PerspectiveGrid, bb2PnPPoints } from '../../common/solvePnPConstants';
 import moveLaserHead from '../moveLaserHead';
 import SolvePnPInstruction from '../SolvePnPInstruction';
 
@@ -27,6 +28,7 @@ enum Steps {
   PUT_PAPER = 3,
   SOLVE_PNP_INSTRUCTION = 4,
   SOLVE_PNP = 5,
+  CHECK_PNP = 6,
 }
 /* eslint-enable perfectionist/sort-enums */
 
@@ -154,9 +156,7 @@ const LaserHead = ({ isAdvanced, onClose }: Props): React.JSX.Element => {
 
         const res = await moveLaserHead();
 
-        if (!res) {
-          return;
-        }
+        if (!res) return;
 
         setStep(Steps.SOLVE_PNP_INSTRUCTION);
       } catch (err) {
@@ -209,6 +209,7 @@ const LaserHead = ({ isAdvanced, onClose }: Props): React.JSX.Element => {
     return (
       <SolvePnP
         dh={0}
+        hasNext
         onBack={() => setStep(Steps.SOLVE_PNP_INSTRUCTION)}
         onClose={onClose}
         onNext={async (rvec, tvec) => {
@@ -216,12 +217,32 @@ const LaserHead = ({ isAdvanced, onClose }: Props): React.JSX.Element => {
           updateParam({ rvec, tvec });
           console.log('calibratingParam.current', calibratingParam.current);
           progressCaller.popById(PROGRESS_ID);
+          setStep(Steps.CHECK_PNP);
+        }}
+        params={calibratingParam.current}
+        refPoints={bb2PnPPoints}
+      />
+    );
+  }
 
+  if (step === Steps.CHECK_PNP) {
+    const points = bb2PnPPoints.map((point) => [
+      point[0] - bb2PerspectiveGrid.x[0],
+      point[1] - bb2PerspectiveGrid.y[0],
+    ]) as Array<[number, number]>;
+
+    return (
+      <CheckPnP
+        dh={0}
+        grid={bb2PerspectiveGrid}
+        onBack={() => setStep(Steps.SOLVE_PNP)}
+        onClose={onClose}
+        onNext={async () => {
           const param: FisheyeCameraParametersV3 = {
             d: calibratingParam.current.d!,
             k: calibratingParam.current.k!,
-            rvec,
-            tvec,
+            rvec: calibratingParam.current.rvec!,
+            tvec: calibratingParam.current.tvec!,
             v: 3,
           };
           const res = await setFisheyeConfig(param);
@@ -235,8 +256,13 @@ const LaserHead = ({ isAdvanced, onClose }: Props): React.JSX.Element => {
             });
           }
         }}
-        params={calibratingParam.current}
-        refPoints={bb2PnPPoints}
+        params={{
+          d: calibratingParam.current.d!,
+          k: calibratingParam.current.k!,
+          rvec: calibratingParam.current.rvec!,
+          tvec: calibratingParam.current.tvec!,
+        }}
+        points={points}
       />
     );
   }

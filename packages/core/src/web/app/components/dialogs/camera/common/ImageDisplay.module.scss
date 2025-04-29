@@ -4,9 +4,6 @@
   height: 50vh;
 
   .img-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
     background: #eeeeee;
     position: relative;
     width: 100%;
@@ -16,6 +13,11 @@
     cursor: grab;
     cursor: -moz-grab;
     cursor: -webkit-grab;
+
+    &.flex {
+      display: flex;
+      justify-content: center;
+    }
 
     &:active {
       cursor: grabbing;
