@@ -10,8 +10,9 @@ import textPathEdit from '@core/app/actions/beambox/textPathEdit';
 import Dialog from '@core/app/actions/dialog-caller';
 import { textButtonTheme } from '@core/app/constants/antd-config';
 import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
-import type { BatchCommand } from '@core/app/svgedit/history/history';
+import { BatchCommand } from '@core/app/svgedit/history/history';
 import autoFit from '@core/app/svgedit/operations/autoFit';
+import { deleteElements } from '@core/app/svgedit/operations/delete';
 import disassembleUse from '@core/app/svgedit/operations/disassembleUse';
 import textActions from '@core/app/svgedit/text/textactions';
 import textEdit from '@core/app/svgedit/text/textedit';
@@ -81,12 +82,16 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     if (fileBlob) svgEditor.replaceBitmap(fileBlob, elem);
   };
 
-  const convertSvgToPath = async (): Promise<ConvertPathResult> => {
-    const { cmd, path } = svgCanvas.convertToPath(elem, true);
+  const convertSvgToPath = async (
+    element: SVGElement = elem,
+    command: IBatchCommand = new BatchCommand('convertSvgToPath'),
+  ): Promise<ConvertPathResult> => {
+    const { cmd, path } = svgCanvas.convertToPath(element, true);
 
     svgCanvas.selectOnly([path]);
+    command.addSubCommand(cmd);
 
-    return { bbox: path.getBBox(), command: cmd as IBatchCommand };
+    return { bbox: path.getBBox(), command };
   };
 
   const convertTextToPath = async (weldingTexts = false): Promise<ConvertPathResult> => {
@@ -111,7 +116,10 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       skipConfirm: true,
     })) as BatchCommand;
 
-    const group = svgCanvas.getSelectedElems()[0] as SVGGElement;
+    const group = svgCanvas.getSelectedElems()[0];
+
+    if (!(group instanceof SVGGElement)) return convertSvgToPath(group, command);
+
     const head = group.childNodes[0] as SVGPathElement;
     const pathData = Array.of<string>();
     const toRemove = Array.of<SVGElement>();
@@ -122,9 +130,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       if (index !== 0) toRemove.push(child as SVGElement);
     });
 
-    toRemove.forEach((child) => {
-      child.remove();
-    });
+    command.addSubCommand(deleteElements(toRemove, true));
 
     head.setAttribute('d', pathData.join(' '));
     head.removeAttribute('data-next-sibling');
@@ -239,7 +245,13 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
           command = subCommand;
         }
 
-        Dialog.showTabPanel({ bbox, command, onClose: () => {} });
+        Dialog.showTabPanel({
+          bbox,
+          command,
+          onClose: () => {
+            svgCanvas.clearSelection();
+          },
+        });
       },
       <ActionPanelIcons.Tab />,
       <ActionPanelIcons.Tab />,

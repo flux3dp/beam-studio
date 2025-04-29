@@ -100,6 +100,7 @@ jest.mock('@core/helpers/system-helper', () => ({
 const disassembleUse = jest.fn();
 
 jest.mock('@core/app/svgedit/operations/disassembleUse', () => disassembleUse);
+jest.mock('@core/app/svgedit/operations/delete', () => ({ deleteElements: jest.fn() }));
 
 const clearSelection = jest.fn();
 const convertToPath = jest.fn();

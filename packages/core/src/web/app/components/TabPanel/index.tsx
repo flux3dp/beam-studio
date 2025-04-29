@@ -76,20 +76,26 @@ function UnmemorizedTabPanel({ bbox, command, element, onClose }: Props): React.
     handleZoom(fitScreenDimension.scale);
     paper.view.center = new paper.Point(fitScreenDimension);
   }, [fitScreenDimension, handleZoom]);
+  const handleOnClose = useCallback(
+    (isCompleted = false) => {
+      if (!isCompleted) {
+        command?.doUnapply();
+      }
+
+      onClose();
+    },
+    [command, onClose],
+  );
   const handleComplete = useCallback(
     () =>
       pipe(
         paper.project.getItem({ name: TARGET_PATH_NAME }) as paper.CompoundPath,
         tap((item) => item.fitBounds(bbox)),
-        ({ pathData }) =>
-          handleChangePathDataCommand({
-            d: pathData,
-            element: element as unknown as SVGPathElement,
-            subCommand: command,
-          }),
-        onClose,
+        ({ pathData: d }) =>
+          handleChangePathDataCommand({ d, element: element as unknown as SVGPathElement, subCommand: command }),
+        () => handleOnClose(true),
       ),
-    [bbox, command, element, onClose],
+    [bbox, command, element, handleOnClose],
   );
 
   const handleCutPathByGap = useCallback(() => {
@@ -236,7 +242,7 @@ function UnmemorizedTabPanel({ bbox, command, element, onClose }: Props): React.
   useNewShortcutsScope();
   useEffect(() => {
     const subscribedShortcuts = [
-      shortcuts.on(['Escape'], onClose, { isBlocking: true }),
+      shortcuts.on(['Escape'], () => handleOnClose(), { isBlocking: true }),
       shortcuts.on(['Fnkey+z'], handleHistoryChange('undo'), { isBlocking: true }),
       shortcuts.on(['Shift+Fnkey+z'], handleHistoryChange('redo'), { isBlocking: true }),
       shortcuts.on(['Fnkey-+', 'Fnkey-='], () => handleZoomByScale(1.2), { isBlocking: true, splitKey: '-' }),
@@ -246,19 +252,19 @@ function UnmemorizedTabPanel({ bbox, command, element, onClose }: Props): React.
     return () => {
       subscribedShortcuts.forEach((unsubscribe) => unsubscribe());
     };
-  }, [handleHistoryChange, handleZoomByScale, onClose]);
+  }, [handleHistoryChange, handleZoomByScale, handleOnClose]);
 
   return (
     <FullWindowPanel
       mobileTitle={lang.title}
-      onClose={onClose}
+      onClose={() => handleOnClose()}
       renderContents={() => (
         <>
           <Sider
             gap={gap}
             handleCutPathByGap={handleCutPathByGap}
             mode={mode}
-            onClose={onClose}
+            onClose={() => handleOnClose()}
             onComplete={handleComplete}
             setGap={setGap}
             setMode={setMode}
