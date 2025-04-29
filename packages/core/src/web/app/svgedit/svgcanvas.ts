@@ -3816,42 +3816,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     return { cmd, path };
   };
 
-  this.convertUseToPath = (elem: SVGUseElement, isSubCmd = false) => {
-    const attrs = {
-      fill: 'none',
-      'fill-opacity': elem.getAttribute('fill-opacity'),
-      opacity: cur_shape.opacity,
-      stroke: elem.getAttribute('stroke'),
-      'stroke-dasharray': cur_shape.stroke_dasharray,
-      'stroke-linecap': cur_shape.stroke_linecap,
-      'stroke-linejoin': cur_shape.stroke_linejoin,
-      'stroke-opacity': cur_shape.stroke_opacity,
-      'stroke-width': elem.getAttribute('stroke-width') || 1,
-    };
-
-    elem.childNodes.forEach((child) => console.log(child.nodeName));
-    // console.log();
-    // const { cmd, path } = svgedit.utilities.convertToPath(
-    //   elem,
-    //   attrs,
-    //   addSvgElementFromJson,
-    //   pathActions,
-    //   svgedit.history,
-    // );
-
-    // if (path) {
-    //   if (selectedElements.includes(elem)) selectOnly([path]);
-
-    //   if (cmd && !cmd.isEmpty() && !isSubCmd) {
-    //     addCommandToHistory(cmd);
-
-    //     return { cmd, path };
-    //   }
-    // }
-
-    // return { cmd, path };
-  };
-
   /**
    * Function: getConvertedPathBBox
    * The BBox of an element-as-path
