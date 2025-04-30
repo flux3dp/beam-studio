@@ -1,4 +1,4 @@
-import type { ReactNode, SyntheticEvent } from 'react';
+import type { MutableRefObject, ReactNode, SyntheticEvent } from 'react';
 import { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { LoadingOutlined } from '@ant-design/icons';
@@ -242,8 +242,7 @@ const ImageDisplay = forwardRef<HTMLDivElement, Props>(
             imgContainerRef.current = node;
 
             if (outRef) {
-              // @ts-expect-error
-              outRef.current = node;
+              (outRef as MutableRefObject<HTMLDivElement>).current = node!;
             }
           }}
         >
