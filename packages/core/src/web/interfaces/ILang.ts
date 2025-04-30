@@ -116,6 +116,7 @@ export interface ILang {
       pass_through: string;
       pass_through_height_desc: string;
       rotary_mode: string;
+      safe_door: string;
       scale: string;
       start_from: string;
       start_position: string;

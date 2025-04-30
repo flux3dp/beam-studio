@@ -98,6 +98,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const [passThrough, setPassThrough] = useState(BeamboxPreference.read('pass-through'));
   const [autoFeeder, setAutoFeeder] = useState(BeamboxPreference.read('auto-feeder'));
   const [autoFeederScale, setAutoFeederScale] = useState(BeamboxPreference.read('auto-feeder-scale'));
+  const [checkSafeDoor, setCheckSafeDoor] = useState(BeamboxPreference.read('promark-safe-door'));
 
   const isInch = useMemo(() => storage.get('default-units') === 'inches', []);
   const workareaObj = useMemo(() => getWorkarea(workarea), [workarea]);
@@ -234,6 +235,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
       setPromarkInfo(pmInfo);
       BeamboxPreference.write('promark-start-button', enableStartButton);
       BeamboxPreference.write('frame-before-start', shouldFrame);
+      BeamboxPreference.write('promark-safe-door', checkSafeDoor);
     }
 
     presprayArea.togglePresprayArea();
@@ -422,33 +424,48 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
         </div>
         <div className={styles.modules}>
           {isPromark && (
-            <div className={classNames(styles.row, styles.full)}>
-              <div className={styles.title}>
-                <label htmlFor="start_button">{tDocu.start_work_button}</label>
-              </div>
-              <div className={styles.control}>
-                <Switch
-                  checked={enableStartButton}
-                  className={styles.switch}
-                  id="start_button"
-                  onChange={setEnableStartButton}
-                />
-                {enableStartButton && (
-                  <div className={styles.subCheckbox}>
-                    <div>
-                      <Checkbox
-                        checked={shouldFrame}
-                        id="frame_before_start"
-                        onChange={(e) => setShouldFrame(e.target.checked)}
-                      >
-                        {tDocu.frame_before_start}
-                      </Checkbox>
-                      <QuestionCircleOutlined onClick={() => browser.open(tDocu.frame_before_start_url)} />
+            <>
+              <div className={classNames(styles.row, styles.full)}>
+                <div className={styles.title}>
+                  <label htmlFor="start_button">{tDocu.start_work_button}</label>
+                </div>
+                <div className={styles.control}>
+                  <Switch
+                    checked={enableStartButton}
+                    className={styles.switch}
+                    id="start_button"
+                    onChange={setEnableStartButton}
+                  />
+                  {enableStartButton && (
+                    <div className={styles.subCheckbox}>
+                      <div>
+                        <Checkbox
+                          checked={shouldFrame}
+                          id="frame_before_start"
+                          onChange={(e) => setShouldFrame(e.target.checked)}
+                        >
+                          {tDocu.frame_before_start}
+                        </Checkbox>
+                        <QuestionCircleOutlined onClick={() => browser.open(tDocu.frame_before_start_url)} />
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
-            </div>
+              <div className={styles.row}>
+                <div className={styles.title}>
+                  <label htmlFor="safe_door">{tDocu.safe_door}</label>
+                </div>
+                <div className={styles.control}>
+                  <Switch
+                    checked={checkSafeDoor}
+                    className={styles.switch}
+                    id="safe_door"
+                    onChange={setCheckSafeDoor}
+                  />
+                </div>
+              </div>
+            </>
           )}
           {addOnInfo.rotary && (
             <div className={classNames(styles.row, styles.full)}>

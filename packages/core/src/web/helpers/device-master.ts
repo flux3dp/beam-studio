@@ -1614,7 +1614,7 @@ class DeviceMaster {
   }
 
   public adjustZAxis = async (z: number) => {
-    const blob: Blob = new Blob([`M3\nM102\nZ${z}\nM2\n`]);
+    const blob: Blob = new Blob([`M103\nM3\nM102\nZ${z}\nM2\n`]);
 
     await this.go(blob);
   };

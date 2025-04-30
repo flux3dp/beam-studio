@@ -2,6 +2,7 @@
 import { EventEmitter } from 'eventemitter3';
 
 import alertCaller from '@core/app/actions/alert-caller';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant, { promarkModels } from '@core/app/actions/beambox/constant';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import alertConstants from '@core/app/constants/alert-constants';
@@ -555,12 +556,14 @@ class SwiftrayClient extends EventEmitter {
   }
 
   public async upload(data: Blob, path?: string): Promise<void> {
+    const checkDoor = beamboxPreference.read('promark-safe-door');
+
     try {
       const text = await data.text();
 
-      return await this.action(`/devices/${this.port}`, 'upload', { data: text, path });
+      return await this.action(`/devices/${this.port}`, 'upload', { checkDoor, data: text, path });
     } catch {
-      return this.action(`/devices/${this.port}`, 'upload', { data, path });
+      return this.action(`/devices/${this.port}`, 'upload', { checkDoor, data, path });
     }
   }
 

@@ -66,6 +66,7 @@ export type BeamboxPreference = {
   precut_y: number;
   preview_movement_speed_level: PreviewSpeedLevelType;
   'print-advanced-mode': boolean;
+  'promark-safe-door': boolean;
   'promark-start-button': boolean;
   'reverse-engraving': boolean;
   'rotary-chuck-obj-d': number;
@@ -142,6 +143,7 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   precut_y: 0,
   preview_movement_speed_level: PreviewSpeedLevel.SLOW,
   'print-advanced-mode': false,
+  'promark-safe-door': false,
   'promark-start-button': false,
   'reverse-engraving': false,
   'rotary-chuck-obj-d': CHUCK_ROTARY_DIAMETER,
