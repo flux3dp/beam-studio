@@ -144,7 +144,9 @@ export interface ILang {
       graphics: string;
       halloween: string;
       hammer_wrench: string;
+      heart: string;
       holidays: string;
+      insect: string;
       kitchen_tools: string;
       label: string;
       land: string;
