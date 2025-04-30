@@ -59,6 +59,11 @@ export const bb2WideAngleCameraPnpPoints: Record<
   ] as const,
 } as const;
 
+export const bb2WideAnglePerspectiveGrid: PerspectiveGrid = {
+  x: [0, 600, 20],
+  y: [0, 375, 15],
+} as const;
+
 export const getBB2WideAnglePoints = (
   region: WideAngleRegion,
   points: Record<

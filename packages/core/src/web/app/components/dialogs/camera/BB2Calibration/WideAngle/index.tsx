@@ -16,11 +16,16 @@ import type {
   WideAngleRegion,
 } from '@core/interfaces/FisheyePreview';
 
+import CheckPnP from '../../common/CheckPnP';
 import CheckpointData from '../../common/CheckpointData';
 import Instruction from '../../common/Instruction';
 import ProcessingDialog from '../../common/ProcessingDialog';
 import SolvePnP from '../../common/SolvePnP';
-import { bb2WideAngleCameraPnpPoints, getBB2WideAnglePoints } from '../../common/solvePnPConstants';
+import {
+  bb2WideAngleCameraPnpPoints,
+  bb2WideAnglePerspectiveGrid,
+  getBB2WideAnglePoints,
+} from '../../common/solvePnPConstants';
 import movePlatformRel from '../movePlatformRel';
 import SolvePnPInstruction from '../SolvePnPInstruction';
 
@@ -36,11 +41,13 @@ const enum Step {
   SOLVE_PNP_BL_1,
   SOLVE_PNP_BR_1,
   SOLVE_OTHER_PNP_1,
+  CHECK_PNP_1,
   SOLVE_PNP_TL_2,
   SOLVE_PNP_TR_2,
   SOLVE_PNP_BL_2,
   SOLVE_PNP_BR_2,
   SOLVE_OTHER_PNP_2,
+  CHECK_PNP_2,
   SOLVE_EXTRINSIC_REGRESSION,
 }
 
@@ -265,17 +272,50 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
             }
             console.log('Finished solving PnP for all regions', calibratingParam.current);
 
-            if (step === Step.SOLVE_OTHER_PNP_1) {
-              progressCaller.update(PROGRESS_ID, { message: 'Moving platform' });
+            progressCaller.popById(PROGRESS_ID);
+          }}
+        />
+      );
+    })
+    .with(Step.CHECK_PNP_1, Step.CHECK_PNP_2, (step) => {
+      const keys: {
+        dh: 'dh1' | 'dh2';
+        rvecs: 'rvecs1' | 'rvecs2';
+        tvecs: 'tvecs1' | 'tvecs2';
+      } =
+        step === Step.CHECK_PNP_1
+          ? { dh: 'dh1', rvecs: 'rvecs1', tvecs: 'tvecs1' }
+          : { dh: 'dh2', rvecs: 'rvecs2', tvecs: 'tvecs2' };
+      const { d, k, [keys.dh]: dh, [keys.rvecs]: rvecs, [keys.tvecs]: tvecs } = calibratingParam.current;
+
+      return (
+        <CheckPnP
+          cameraOptions={{ index: 1 }}
+          dh={dh!}
+          grid={bb2WideAnglePerspectiveGrid}
+          hasNext
+          onBack={() => setStep(step === Step.CHECK_PNP_1 ? Step.SOLVE_PNP_TL_1 : Step.SOLVE_PNP_TL_2)}
+          onClose={onClose}
+          onNext={async () => {
+            if (step === Step.CHECK_PNP_1) {
+              progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: 'Moving platform' });
               await movePlatformRel(-40);
 
               const dh2 = await getFocalDistance();
 
               updateParam({ dh2 });
+              progressCaller.popById(PROGRESS_ID);
             }
 
-            progressCaller.popById(PROGRESS_ID);
+            next();
           }}
+          params={{ d: d!, k: k!, rvecs: rvecs!, tvecs: tvecs! }}
+          points={[
+            ...bb2WideAngleCameraPnpPoints.topLeft,
+            ...bb2WideAngleCameraPnpPoints.topRight,
+            ...bb2WideAngleCameraPnpPoints.bottomLeft,
+            ...bb2WideAngleCameraPnpPoints.bottomRight,
+          ]}
         />
       );
     })

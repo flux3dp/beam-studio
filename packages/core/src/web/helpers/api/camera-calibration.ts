@@ -317,7 +317,10 @@ class CameraCalibrationApi {
   checkPnP = (
     img: ArrayBuffer | Blob,
     dh: number,
-    params: { d: number[][]; k: number[][]; rvec: number[]; tvec: number[] },
+    params: { d: number[][]; k: number[][] } & (
+      | { rvec: number[]; tvec: number[] }
+      | { rvecs: Record<string, number[]>; tvecs: Record<string, number[]> }
+    ),
     grid: PerspectiveGrid,
   ): Promise<
     { blob: Blob; success: true } | { data: { info: string; reason: string; status: string }; success: false }

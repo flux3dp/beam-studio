@@ -7,17 +7,16 @@ import constant, { PreviewSpeedLevel } from '@core/app/actions/beambox/constant'
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import MessageCaller from '@core/app/actions/message-caller';
 import progressCaller from '@core/app/actions/progress-caller';
-import { bb2PerspectiveGrid } from '@core/app/components/dialogs/camera/common/solvePnPConstants';
+import {
+  bb2PerspectiveGrid,
+  bb2WideAnglePerspectiveGrid,
+} from '@core/app/components/dialogs/camera/common/solvePnPConstants';
 import { CameraType } from '@core/app/constants/cameraConstants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { loadJson } from '@core/helpers/device/jsonDataHelper';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
-import type {
-  FisheyeCameraParameters,
-  FisheyeCameraParametersV4,
-  PerspectiveGrid,
-} from '@core/interfaces/FisheyePreview';
+import type { FisheyeCameraParameters, FisheyeCameraParametersV4 } from '@core/interfaces/FisheyePreview';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import { MessageLevel } from '@core/interfaces/IMessage';
 import type { PreviewManager } from '@core/interfaces/PreviewManager';
@@ -35,11 +34,8 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
   private fisheyeParams?: FisheyeCameraParameters;
   private cameraPpmm = 5;
   private previewPpmm = 10;
-  private grid: PerspectiveGrid = bb2PerspectiveGrid;
-  private wideAngleGrid: PerspectiveGrid = {
-    x: [0, 600, 20],
-    y: [0, 375, 15],
-  };
+  private grid = bb2PerspectiveGrid;
+  private wideAngleGrid = bb2WideAnglePerspectiveGrid;
   private cameraCenterOffset: { x: number; y: number };
   protected maxMovementSpeed: [number, number] = [54000, 6000]; // mm/min, speed cap of machine
 

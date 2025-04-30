@@ -226,11 +226,6 @@ const LaserHead = ({ isAdvanced, onClose }: Props): React.JSX.Element => {
   }
 
   if (step === Steps.CHECK_PNP) {
-    const points = bb2PnPPoints.map((point) => [
-      point[0] - bb2PerspectiveGrid.x[0],
-      point[1] - bb2PerspectiveGrid.y[0],
-    ]) as Array<[number, number]>;
-
     return (
       <CheckPnP
         dh={0}
@@ -262,7 +257,7 @@ const LaserHead = ({ isAdvanced, onClose }: Props): React.JSX.Element => {
           rvec: calibratingParam.current.rvec!,
           tvec: calibratingParam.current.tvec!,
         }}
-        points={points}
+        points={bb2PnPPoints}
       />
     );
   }

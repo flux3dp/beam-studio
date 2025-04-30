@@ -21,7 +21,10 @@ interface Props {
   onBack: () => void;
   onClose: (complete?: boolean) => void;
   onNext: () => void;
-  params: { d: number[][]; k: number[][]; rvec: number[]; tvec: number[] };
+  params: { d: number[][]; k: number[][] } & (
+    | { rvec: number[]; tvec: number[] }
+    | { rvecs: Record<string, number[]>; tvecs: Record<string, number[]> }
+  );
   points?: Array<[number, number]>;
 }
 
@@ -53,16 +56,18 @@ const CheckPnP = ({ cameraOptions, dh, grid, hasNext, onBack, onClose, onNext, p
     [dh, grid, params],
   );
   const { exposureSetting, handleTakePicture, setExposureSetting } = useCamera(handleImg, cameraOptions);
-  const scaledPoints = useMemo(() => {
+  const displayPoints = useMemo(() => {
     const dpmm = 5;
+    const [x0] = grid.x;
+    const [y0] = grid.y;
 
     return points?.map((point) => {
-      const x = point[0] * dpmm;
-      const y = point[1] * dpmm;
+      const x = (point[0] - x0) * dpmm;
+      const y = (point[1] - y0) * dpmm;
 
       return [x, y];
     });
-  }, [points]) as Array<[number, number]>;
+  }, [points, grid]) as Array<[number, number]>;
 
   return (
     <Modal
@@ -102,11 +107,11 @@ const CheckPnP = ({ cameraOptions, dh, grid, hasNext, onBack, onClose, onNext, p
               });
             }}
             renderContents={(scale) => {
-              if (!scaledPoints) return null;
+              if (!displayPoints) return null;
 
               return (
                 <g className={styles.group} ref={groupRef}>
-                  {scaledPoints.map(([x, y], index) => {
+                  {displayPoints.map(([x, y], index) => {
                     return (
                       <Fragment key={index}>
                         <circle cx={x} cy={y} r={5 / scale} />
@@ -117,7 +122,7 @@ const CheckPnP = ({ cameraOptions, dh, grid, hasNext, onBack, onClose, onNext, p
                 </g>
               );
             }}
-            zoomPoints={scaledPoints}
+            zoomPoints={displayPoints}
           />
         </Col>
         {exposureSetting && (
