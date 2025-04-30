@@ -110,6 +110,7 @@ test('test beambox-preference', () => {
     precut_y: 0,
     preview_movement_speed_level: 0,
     'print-advanced-mode': false,
+    'promark-safety-door': false,
     'promark-start-button': false,
     'reverse-engraving': false,
     'rotary-chuck-obj-d': 133,

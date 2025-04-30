@@ -4254,6 +4254,44 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
                       </div>
                     </div>
                     <div
+                      class="row"
+                    >
+                      <div
+                        class="title"
+                      >
+                        <label
+                          for="door_protect"
+                        >
+                          Door Protect
+                        </label>
+                      </div>
+                      <div
+                        class="control"
+                      >
+                        <button
+                          aria-checked="true"
+                          class="ant-switch switch css-dev-only-do-not-override-hash ant-switch-checked"
+                          id="door_protect"
+                          role="switch"
+                          type="button"
+                        >
+                          <div
+                            class="ant-switch-handle"
+                          />
+                          <span
+                            class="ant-switch-inner"
+                          >
+                            <span
+                              class="ant-switch-inner-checked"
+                            />
+                            <span
+                              class="ant-switch-inner-unchecked"
+                            />
+                          </span>
+                        </button>
+                      </div>
+                    </div>
+                    <div
                       class="row full"
                     >
                       <div
