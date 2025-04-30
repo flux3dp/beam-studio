@@ -220,4 +220,23 @@ export const updateImageSymbol = async (param: UpdateImageSymbolParams) => {
   input$.next(param);
 };
 
+export const waitForImageSymbolUrl = async (symbol: SVGSymbolElement): Promise<void> => {
+  const image = symbol.querySelector('image') as SVGImageElement;
+
+  if (!image) return;
+
+  if (image.getAttribute('href')) return;
+
+  return new Promise((resolve) => {
+    const observer = new MutationObserver(() => {
+      if (image.getAttribute('href')) {
+        observer.disconnect();
+        resolve();
+      }
+    });
+
+    observer.observe(image, { attributeFilter: ['href'] });
+  });
+};
+
 export default updateImageSymbol;
