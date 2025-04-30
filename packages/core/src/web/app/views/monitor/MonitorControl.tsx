@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 import { PauseCircleFilled, PlayCircleFilled, StopFilled } from '@ant-design/icons';
 import { Button, Space } from 'antd';
@@ -27,6 +27,20 @@ const MonitorControl = ({ handleFramingStop, isFraming, isPromark, setEstimateTa
   const onPlayingTimer = useRef<NodeJS.Timeout | null>(null);
   const [isOnPlaying, setIsOnPlaying] = useState(false);
 
+  const stopCountDown = () => {
+    if (estimateTaskTimeTimer.current) {
+      clearInterval(estimateTaskTimeTimer.current);
+      estimateTaskTimeTimer.current = null;
+    }
+  };
+
+  const startCountDown = useCallback(() => {
+    stopCountDown();
+    estimateTaskTimeTimer.current = setInterval(() => {
+      setEstimateTaskTime((time) => time - 1);
+    }, 1000);
+  }, [setEstimateTaskTime]);
+
   const triggerOnPlay = async () => {
     setIsOnPlaying(true);
 
@@ -37,10 +51,7 @@ const MonitorControl = ({ handleFramingStop, isFraming, isPromark, setEstimateTa
 
     // force resend framing and normal task after abortion in Promark
     await onPlay(isPromark && report.st_id !== DeviceConstants.status.PAUSED_FROM_RUNNING);
-    clearInterval(estimateTaskTimeTimer.current as NodeJS.Timeout);
-    estimateTaskTimeTimer.current = setInterval(() => {
-      setEstimateTaskTime((time) => time - 1);
-    }, 1000);
+    startCountDown();
     onPlayingTimer.current = setTimeout(() => {
       setIsOnPlaying(false);
     }, 5000);
@@ -86,7 +97,7 @@ const MonitorControl = ({ handleFramingStop, isFraming, isPromark, setEstimateTa
             key={type}
             onClick={() => {
               onPause();
-              clearInterval(estimateTaskTimeTimer.current as NodeJS.Timeout);
+              stopCountDown();
             }}
             shape={buttonShape}
             type="primary"
@@ -103,7 +114,7 @@ const MonitorControl = ({ handleFramingStop, isFraming, isPromark, setEstimateTa
             key={type}
             onClick={() => {
               onStop();
-              clearInterval(estimateTaskTimeTimer.current as NodeJS.Timeout);
+              stopCountDown();
               setEstimateTaskTime(taskTime);
             }}
             shape={buttonShape}
@@ -131,11 +142,23 @@ const MonitorControl = ({ handleFramingStop, isFraming, isPromark, setEstimateTa
   }, [isOnPlaying, report, isFraming]);
 
   useEffect(() => {
+    if (!isPromark) return;
+
     if (report?.st_id === DeviceConstants.status.COMPLETED && !isOnPlaying) {
-      clearInterval(estimateTaskTimeTimer.current as NodeJS.Timeout);
+      stopCountDown();
+      setEstimateTaskTime(taskTime);
+    } else if (
+      report?.st_id === DeviceConstants.status.PAUSED_FROM_RUNNING ||
+      report?.st_id === DeviceConstants.status.RECONNECTING
+    ) {
+      stopCountDown();
+    } else if (report?.st_id === DeviceConstants.status.RUNNING && !estimateTaskTimeTimer.current) {
+      startCountDown();
+    } else if (report?.st_id === DeviceConstants.status.ABORTED) {
+      stopCountDown();
       setEstimateTaskTime(taskTime);
     }
-  }, [report, isOnPlaying, setEstimateTaskTime, taskTime]);
+  }, [report, isOnPlaying, setEstimateTaskTime, taskTime, startCountDown, isPromark]);
 
   if (mode === Mode.PREVIEW || mode === Mode.FILE_PREVIEW || isFraming) {
     return (
