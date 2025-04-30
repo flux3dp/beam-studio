@@ -94,7 +94,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     return { bbox: path.getBBox(), command };
   };
 
-  const convertTextToPath = async (weldingTexts = false): Promise<ConvertPathResult> => {
+  const convertTextToPath = async ({ isSubCommand = false, weldingTexts = false }): Promise<ConvertPathResult> => {
     const isTextPath = elem.getAttribute('data-textpath-g');
     const textElem = isTextPath ? elem.querySelector('text') : elem;
 
@@ -102,7 +102,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
 
     svgCanvas.clearSelection();
 
-    const { command, path } = await FontFuncs.convertTextToPath(textElem!, { isSubCommand: true, weldingTexts });
+    const { command, path } = await FontFuncs.convertTextToPath(textElem!, { isSubCommand, weldingTexts });
 
     if (path) svgCanvas.selectOnly([path]);
 
@@ -203,7 +203,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     renderButtons(
       'convert_to_path',
       lang.convert_to_path,
-      () => (isText ? convertTextToPath() : svgCanvas.convertToPath(elem as SVGElement)),
+      () => (isText ? convertTextToPath({ isSubCommand: false }) : svgCanvas.convertToPath(elem as SVGElement)),
       <ActionPanelIcons.ConvertToPath />,
       <ActionPanelIcons.ConvertToPathMobile />,
       { isFullLine: true, mobileLabel: lang.outline, ...opts },
@@ -395,14 +395,14 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     renderButtons(
       'weld',
       lang.weld_text,
-      () => convertTextToPath(true),
+      () => convertTextToPath({ isSubCommand: false, weldingTexts: true }),
       <ActionPanelIcons.WeldText />,
       <ActionPanelIcons.WeldText />,
       { isFullLine: true },
     ),
     renderSmartNestButton(),
     renderArrayButton({ isFullLine: true }),
-    renderTabButton({ convertToPath: convertTextToPath }),
+    renderTabButton({ convertToPath: () => convertTextToPath({ isSubCommand: true }) }),
   ];
 
   const renderTextPathActions = (): React.JSX.Element[] => [

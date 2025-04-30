@@ -254,7 +254,7 @@ describe('should render correctly', () => {
     expect(clearSelection).toHaveBeenCalledTimes(1);
     expect(convertTextToPath).toHaveBeenCalledTimes(1);
     expect(convertTextToPath).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'), {
-      isSubCommand: true,
+      isSubCommand: false,
       weldingTexts: false,
     });
 
@@ -265,7 +265,7 @@ describe('should render correctly', () => {
     expect(clearSelection).toHaveBeenCalledTimes(2);
     expect(convertTextToPath).toHaveBeenCalledTimes(2);
     expect(convertTextToPath).toHaveBeenNthCalledWith(2, document.getElementById('svg_1'), {
-      isSubCommand: true,
+      isSubCommand: false,
       weldingTexts: true,
     });
 
@@ -530,7 +530,7 @@ describe('should render correctly in mobile', () => {
     expect(clearSelection).toHaveBeenCalledTimes(1);
     expect(convertTextToPath).toHaveBeenCalledTimes(1);
     expect(convertTextToPath).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'), {
-      isSubCommand: true,
+      isSubCommand: false,
       weldingTexts: false,
     });
 
@@ -541,7 +541,7 @@ describe('should render correctly in mobile', () => {
     expect(clearSelection).toHaveBeenCalledTimes(2);
     expect(convertTextToPath).toHaveBeenCalledTimes(2);
     expect(convertTextToPath).toHaveBeenNthCalledWith(2, document.getElementById('svg_1'), {
-      isSubCommand: true,
+      isSubCommand: false,
       weldingTexts: true,
     });
 
