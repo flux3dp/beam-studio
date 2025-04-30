@@ -1859,9 +1859,9 @@ const lang: ILang = {
     alerts: {
       add_content_first: 'Por favor agregue objetos primero',
       door_opened: 'Cierre la cubierta de la puerta para habilitar el láser para ejecutar el marco.',
-      fail_to_connect_with_camera: '#803 No se pudo establecer conexión con la cámara de la máquina. Por favor, reinicia tu máquina o Beam Studio. Si este error persiste, por favor sigue <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">esta guía</a>.',
+      fail_to_connect_with_camera: '#803 No se pudo establecer conexión con la cámara de la máquina. Por favor, reinicia tu máquina o Beam Studio. Si este error persiste, por favor sigue <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">esta guía</a>.',
       fail_to_get_door_status: 'Asegúrese de que la cubierta de la puerta esté cerrada para habilitar el láser para ejecutar el marco.',
-      fail_to_start_preview: '#803 No se puede iniciar el modo de vista previa. Por favor, reinicia tu máquina o Beam Studio. Si este error persiste, por favor sigue <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">esta guía</a>.',
+      fail_to_start_preview: '#803 No se puede iniciar el modo de vista previa. Por favor, reinicia tu máquina o Beam Studio. Si este error persiste, por favor sigue <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">esta guía</a>.',
       headtype_mismatch: 'Módulo incorrecto detectado. ',
       headtype_none: 'Módulo no detectado. ',
       headtype_unknown: 'Módulo desconocido detectado. ',
@@ -1873,7 +1873,7 @@ const lang: ILang = {
       power_too_high_msg: 'Usar una potencia de láser menor (menos del 70%) alargará la vida del tubo láser.\nPulsa "ANOTADO" para proceder.',
       pwm_unavailable: 'El Modo Profundidad requiere la versión de firmware 4.3.4 / 5.3.4 o superior. ¿Le gustaría actualizar el firmware ahora?',
       QcleanScene: '¿Quieres borrar el dibujo?<br/>¡Esto también borrará tu historial de deshacer!',
-      start_preview_timeout: '#803 El tiempo de espera se ha agotado al iniciar el modo de vista previa. Por favor, reinicia tu máquina o Beam Studio. Si este error persiste, por favor sigue <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">esta guía</a>.',
+      start_preview_timeout: '#803 El tiempo de espera se ha agotado al iniciar el modo de vista previa. Por favor, reinicia tu máquina o Beam Studio. Si este error persiste, por favor sigue <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">esta guía</a>.',
     },
     frame_task: 'Vista previa del cuadro',
     hint: {

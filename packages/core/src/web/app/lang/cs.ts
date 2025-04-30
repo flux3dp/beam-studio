@@ -1859,9 +1859,9 @@ const lang: ILang = {
     alerts: {
       add_content_first: 'Nejprve prosím přidejte objekty.',
       door_opened: 'Uzavřete prosím dvířka, aby mohl laser nízké intenzity zahájit rámování.',
-      fail_to_connect_with_camera: '#803 Nepodařilo se navázat spojení s kamerou. Restartujte prosím své zařízení nebo Beam Studio. Pokud bude tato chyba přetrvávat, přečtěte si prosím <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">tento návod</a>.',
+      fail_to_connect_with_camera: '#803 Nepodařilo se navázat spojení s kamerou. Restartujte prosím své zařízení nebo Beam Studio. Pokud bude tato chyba přetrvávat, přečtěte si prosím <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">tento návod</a>.',
       fail_to_get_door_status: 'Ujistěte se prosím, že jsou dvířka uzavřená, aby mohl laser nízké intenzity zahájit rámování.',
-      fail_to_start_preview: '#803 Nepodařil se spustit náhled. Restartujte prosím své zařízení nebo Beam Studio. Pokud bude tato chyba přetrvávat, přečtěte si prosím <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">tento návod</a>.',
+      fail_to_start_preview: '#803 Nepodařil se spustit náhled. Restartujte prosím své zařízení nebo Beam Studio. Pokud bude tato chyba přetrvávat, přečtěte si prosím <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">tento návod</a>.',
       headtype_mismatch: 'Nesprávný modul detekován.',
       headtype_none: 'Žádný modul nedetekován.',
       headtype_unknown: 'Neznámý modul detekován.',
@@ -1873,7 +1873,7 @@ const lang: ILang = {
       power_too_high_msg: 'Využívání nižší intenzity laseru (pod 70%) prodlouží životnost laserové trubice.\nStiskněte "ROZUMÍM" pro pokračování.',
       pwm_unavailable: 'Depth mode (režim hloubky) vyžaduje firmware verze 4.3.4 / 5.3.4 nebo vyšší. Chcete nyní aktualizovat firmware?',
       QcleanScene: 'Chcete vymazat kresbu?<br/> Smaže se tím i historie úprav!',
-      start_preview_timeout: '#803 Během spuštění náhledu došlo k přerušení. Restartujte prosím své zařízení nebo Beam Studio. Pokud bude tato chyba přetrvávat, přečtěte si prosím <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">tento návod</a>.',
+      start_preview_timeout: '#803 Během spuštění náhledu došlo k přerušení. Restartujte prosím své zařízení nebo Beam Studio. Pokud bude tato chyba přetrvávat, přečtěte si prosím <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">tento návod</a>.',
     },
     frame_task: 'Rámování',
     hint: {

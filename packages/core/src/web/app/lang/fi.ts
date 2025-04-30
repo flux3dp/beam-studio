@@ -1859,9 +1859,9 @@ const lang: ILang = {
     alerts: {
       add_content_first: 'Lisää ensin kohteita',
       door_opened: 'Sulje ovensuojus, jotta kehys voidaan käynnistää matalalla teholla.',
-      fail_to_connect_with_camera: '#803 Yhteyden muodostaminen kameraan epäonnistui. Käynnistä tietokone tai Beam Studio uudelleen. Jos virhe toistuu, noudata <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">näitä ohjeita</a>.',
+      fail_to_connect_with_camera: '#803 Yhteyden muodostaminen kameraan epäonnistui. Käynnistä tietokone tai Beam Studio uudelleen. Jos virhe toistuu, noudata <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">näitä ohjeita</a>.',
       fail_to_get_door_status: 'Varmista, että ovensuojus on kiinni, jotta kehys voidaan käynnistää matalalla teholla.',
-      fail_to_start_preview: '#803 Esikatselutilan käynnistys epäonnistui. Käynnistä kone tai Beam Studio uudelleen. Jos virhe toistuu, noudata <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">tätä ohjetta</a>.',
+      fail_to_start_preview: '#803 Esikatselutilan käynnistys epäonnistui. Käynnistä kone tai Beam Studio uudelleen. Jos virhe toistuu, noudata <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">tätä ohjetta</a>.',
       headtype_mismatch: 'Väärä moduuli havaittu. ',
       headtype_none: 'Moduulia ei havaittu. ',
       headtype_unknown: 'Tuntematon moduuli havaittu. ',
@@ -1873,7 +1873,7 @@ const lang: ILang = {
       power_too_high_msg: 'Matalampi laserteho (alle 70 %) pidentää laserputken käyttöikää.\nKirjoita "HUOMAUTETTU" jatkaaksesi.',
       pwm_unavailable: 'Syvyystila vaatii laiteohjelmistoversion 4.3.4 / 5.3.4 tai uudemman. Haluatko päivittää laiteohjelmiston nyt?',
       QcleanScene: 'Haluatko tyhjentää piirustuksen?<br/>Tämä poistaa myös kumoamishistoriasi!',
-      start_preview_timeout: '#803 Aikakatkaisu esikatselutilan käynnistyksessä. Käynnistä kone tai Beam Studio uudelleen. Jos virhe toistuu, noudata <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">tätä ohjetta</a>.',
+      start_preview_timeout: '#803 Aikakatkaisu esikatselutilan käynnistyksessä. Käynnistä kone tai Beam Studio uudelleen. Jos virhe toistuu, noudata <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">tätä ohjetta</a>.',
     },
     frame_task: 'Käynnissä oleva kehys',
     hint: {

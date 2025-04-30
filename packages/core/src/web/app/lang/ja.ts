@@ -1859,9 +1859,9 @@ const lang: ILang = {
     alerts: {
       add_content_first: '最初にオブジェクトを追加してください',
       door_opened: 'ドアカバーを閉じて、フレームを実行するための低レーザーを有効にしてください。',
-      fail_to_connect_with_camera: '#803 マシンカメラとの接続を確立できませんでした。マシンまたはBeam Studioを再起動してください。このエラーが続く場合は、この<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">ガイド</a>に従ってください。',
+      fail_to_connect_with_camera: '#803 マシンカメラとの接続を確立できませんでした。マシンまたはBeam Studioを再起動してください。このエラーが続く場合は、この<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">ガイド</a>に従ってください。',
       fail_to_get_door_status: 'ドアカバーが閉まっていることを確認して、フレームを実行するための低レーザーを有効にしてください。',
-      fail_to_start_preview: '#803 プレビューモードを開始できません。マシンまたはBeam Studioを再起動してください。このエラーが続く場合は、この<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">ガイド</a>に従ってください。',
+      fail_to_start_preview: '#803 プレビューモードを開始できません。マシンまたはBeam Studioを再起動してください。このエラーが続く場合は、この<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">ガイド</a>に従ってください。',
       headtype_mismatch: 'モジュールの種類が正しくありません。',
       headtype_none: 'モジュールが検出されませんでした。',
       headtype_unknown: '不明なモジュールが検出されました。',
@@ -1873,7 +1873,7 @@ const lang: ILang = {
       power_too_high_msg: 'より低いレーザー出力（70％未満）を使用すると、レーザー管の寿命が延びます。\n「了解」と入力して続行します。',
       pwm_unavailable: '深度モードは、ファームウェアバージョン 4.3.4 / 5.3.4 以上が必要です。今すぐファームウェアを更新しますか？',
       QcleanScene: '描画をクリアしますか？<br/>これにより、元に戻す履歴も消去されます！',
-      start_preview_timeout: '#803 プレビューモードの開始時にタイムアウトが発生しました。マシンまたはBeam Studioを再起動してください。このエラーが続く場合は、この<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">ガイド</a>に従ってください。',
+      start_preview_timeout: '#803 プレビューモードの開始時にタイムアウトが発生しました。マシンまたはBeam Studioを再起動してください。このエラーが続く場合は、この<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">ガイド</a>に従ってください。',
     },
     frame_task: 'フレームプレビュー',
     hint: {

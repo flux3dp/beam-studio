@@ -1860,9 +1860,9 @@ const lang: ILang = {
     alerts: {
       add_content_first: '請先新增物件',
       door_opened: '請將門蓋關閉以進行弱出光。',
-      fail_to_connect_with_camera: '#803 與機器相機建立連線時失敗，請重新開啟您的機器或是 Beam Studio ，如果此錯誤持續發生，請參考<a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/articles/360001111355">此則引導</a>。',
+      fail_to_connect_with_camera: '#803 與機器相機建立連線時失敗，請重新開啟您的機器或是 Beam Studio ，如果此錯誤持續發生，請參考<a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/articles/360001791895">此則引導</a>。',
       fail_to_get_door_status: '請確保門蓋關閉以進行弱出光。',
-      fail_to_start_preview: '#803 啟動相機預覽失敗，請重新開啟您的機器或是 Beam Studio ，如果此錯誤持續發生，請參考<a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/articles/360001111355">此則引導</a>。',
+      fail_to_start_preview: '#803 啟動相機預覽失敗，請重新開啟您的機器或是 Beam Studio ，如果此錯誤持續發生，請參考<a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/articles/360001791895">此則引導</a>。',
       headtype_mismatch: '偵測到不相符的模組，',
       headtype_none: '未偵測到模組，',
       headtype_unknown: '偵測到未知模組，',
@@ -1874,7 +1874,7 @@ const lang: ILang = {
       power_too_high_msg: '雷射管在高功率（70％ 以上）下耗損較快，使用低功率可以延長雷試管使用壽命。\n輸入「知道了」以繼續。',
       pwm_unavailable: '深度模式需要韌體版本 4.3.4 / 5.3.4 或更高版本。您現在要更新韌體嗎？',
       QcleanScene: '您確定清除場景嗎？<br/>這同時也會刪除您的操作歷史記錄。',
-      start_preview_timeout: '#803 啟動相機預覽時超時，請重新開啟您的機器或是 Beam Studio ，如果此錯誤持續發生，請參考<a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/articles/360001111355">此則引導</a>。',
+      start_preview_timeout: '#803 啟動相機預覽時超時，請重新開啟您的機器或是 Beam Studio ，如果此錯誤持續發生，請參考<a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/articles/360001791895">此則引導</a>。',
     },
     frame_task: '外框預覽',
     hint: {

@@ -1859,9 +1859,9 @@ const lang: ILang = {
     alerts: {
       add_content_first: 'Lägg till objekt först',
       door_opened: 'Stäng luckan för att aktivera lågeffektslaser för skärning.',
-      fail_to_connect_with_camera: '#803 Det gick inte att ansluta till maskinkameran. Starta om din maskin eller Beam Studio. Om felet kvarstår, följ <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">denna guide</a>.',
+      fail_to_connect_with_camera: '#803 Det gick inte att ansluta till maskinkameran. Starta om din maskin eller Beam Studio. Om felet kvarstår, följ <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">denna guide</a>.',
       fail_to_get_door_status: 'Kontrollera att luckan är stängd för att aktivera lågeffektslaser för skärning.',
-      fail_to_start_preview: '#803 Det gick inte att starta förhandsgranskningsläget. Starta om din dator eller Beam Studio. Om felet kvarstår, följ <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">denna guide</a>.',
+      fail_to_start_preview: '#803 Det gick inte att starta förhandsgranskningsläget. Starta om din dator eller Beam Studio. Om felet kvarstår, följ <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">denna guide</a>.',
       headtype_mismatch: 'Fel modultyp upptäckt. ',
       headtype_none: 'Ingen modul upptäckt. ',
       headtype_unknown: 'Okänd modul upptäckt. ',
@@ -1873,7 +1873,7 @@ const lang: ILang = {
       power_too_high_msg: 'Att använda lägre laserstyrka (under 70%) förlänger laserns livslängd.\nSkriv in "NOTERAT" för att fortsätta.',
       pwm_unavailable: 'Djup-läge kräver firmware version 4.3.4 / 5.3.4 eller högre. Vill du uppdatera firmware nu?',
       QcleanScene: 'Vill du rensa ritningen?<br/>Detta kommer också att radera din ånghistorik!',
-      start_preview_timeout: '#803 Timeout uppstod när förhandsgranskningsläget startades. Starta om din dator eller Beam Studio. Om felet kvarstår, följ <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">denna guide</a>.',
+      start_preview_timeout: '#803 Timeout uppstod när förhandsgranskningsläget startades. Starta om din dator eller Beam Studio. Om felet kvarstår, följ <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">denna guide</a>.',
     },
     frame_task: 'Kör ram',
     hint: {

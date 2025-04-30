@@ -1859,9 +1859,9 @@ const lang: ILang = {
     alerts: {
       add_content_first: '먼저 개체를 추가해 주세요.',
       door_opened: '문을 닫아 저전력 레이저를 활성화하고 프레임을 실행하세요.',
-      fail_to_connect_with_camera: '#803 기계의 카메라와의 접속을 설정하지 못했습니다. 기계 또는 빔스튜디오를 다시 시작해 주세요. 이 에러가 지속된다면 다음 가이드를 따라 주세요.<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">this guide</a>',
+      fail_to_connect_with_camera: '#803 기계의 카메라와의 접속을 설정하지 못했습니다. 기계 또는 빔스튜디오를 다시 시작해 주세요. 이 에러가 지속된다면 다음 가이드를 따라 주세요.<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">this guide</a>',
       fail_to_get_door_status: '문이 닫혀 있는지 확인하여 저전력 레이저를 활성화하고 프레임을 실행하세요.',
-      fail_to_start_preview: '#803 미리보기 모드 시작 실패. 기계 또는 빔스튜디오를 다시 시작해 주세요. 이 에러가 지속된다면 다음 가이드를 따라 주세요. <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">this guide</a>',
+      fail_to_start_preview: '#803 미리보기 모드 시작 실패. 기계 또는 빔스튜디오를 다시 시작해 주세요. 이 에러가 지속된다면 다음 가이드를 따라 주세요. <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">this guide</a>',
       headtype_mismatch: '잘못된 모듈이 감지되었습니다.',
       headtype_none: '모듈이 감지되지 않았습니다.',
       headtype_unknown: '알 수 없는 모듈이 감지되었습니다.',
@@ -1873,7 +1873,7 @@ const lang: ILang = {
       power_too_high_msg: '70% 미만의 낮은 레이저 파워를 사용하면 레이저 튜브의 수명이 연장됩니다. 계속하려면 "확인"을 눌러주세요.',
       pwm_unavailable: '깊이 모드는 펌웨어 버전 4.3.4 / 5.3.4 이상이 필요합니다. 지금 펌웨어를 업데이트하시겠습니까?',
       QcleanScene: '그림을 지우시겠습니까?<br/>이것은 또한 취소 기록을 지울 것입니다!',
-      start_preview_timeout: '#803 미리보기 모드로 시작할 때 시간초과가 발생합니다. 기계 또는 빔스튜디오를 다시 시작해 주세요. 이 에러가 지속된다면 다음 가이드를 따라주세요. <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">this guide</a>',
+      start_preview_timeout: '#803 미리보기 모드로 시작할 때 시간초과가 발생합니다. 기계 또는 빔스튜디오를 다시 시작해 주세요. 이 에러가 지속된다면 다음 가이드를 따라주세요. <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">this guide</a>',
     },
     frame_task: '프레임 미리보기',
     hint: {

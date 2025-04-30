@@ -1859,9 +1859,9 @@ const lang: ILang = {
     alerts: {
       add_content_first: '请先新增物件',
       door_opened: '请将门盖关闭以进入低激光模式。',
-      fail_to_connect_with_camera: '#803 与机器相机建立连线时失败，请重新开启您的机器或是 Beam Studio ，如果此错误持续发生，请参考<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">此則引導</a>。',
+      fail_to_connect_with_camera: '#803 与机器相机建立连线时失败，请重新开启您的机器或是 Beam Studio ，如果此错误持续发生，请参考<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">此則引導</a>。',
       fail_to_get_door_status: '请确保门盖关闭以进入低激光模式。',
-      fail_to_start_preview: '#803 启动相机预览失败，请重新开启您的机器或是 Beam Studio，如果此错误持续发生，请参考<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">此则引导</a>。',
+      fail_to_start_preview: '#803 启动相机预览失败，请重新开启您的机器或是 Beam Studio，如果此错误持续发生，请参考<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">此则引导</a>。',
       headtype_mismatch: '检测到错误的模块，',
       headtype_none: '未检测到模块，',
       headtype_unknown: '检测到未知模块，',
@@ -1873,7 +1873,7 @@ const lang: ILang = {
       power_too_high_msg: '激光管在高功率（70％ 以上）下耗损较快，使用低功率可以延长雷试管使用寿命。\n输入「知道了」以继续。',
       pwm_unavailable: '深度模式需要固件版本 4.3.4 / 5.3.4 或更高版本。您要立即更新固件吗？',
       QcleanScene: '您要清除绘图吗？<br/>这还将擦除您的撤消历史！',
-      start_preview_timeout: '#803 启动相机预览时超时，请重新开启您的机器或是 Beam Studio ，如果此错误持续发生，请参考<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">此则引导</a>。',
+      start_preview_timeout: '#803 启动相机预览时超时，请重新开启您的机器或是 Beam Studio ，如果此错误持续发生，请参考<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">此则引导</a>。',
     },
     frame_task: '外框预览',
     hint: {

@@ -1859,9 +1859,9 @@ const lang: ILang = {
     alerts: {
       add_content_first: 'Silakan tambahkan objek terlebih dahulu',
       door_opened: 'Harap tutup pintu penutup untuk mengaktifkan laser rendah agar bingkai dapat berjalan.',
-      fail_to_connect_with_camera: '#803 Gagal membuat koneksi dengan kamera mesin. Harap mulai ulang mesin Anda atau Beam Studio. Jika kesalahan ini berlanjut, ikuti <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">panduan ini</a>.',
+      fail_to_connect_with_camera: '#803 Gagal membuat koneksi dengan kamera mesin. Harap mulai ulang mesin Anda atau Beam Studio. Jika kesalahan ini berlanjut, ikuti <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">panduan ini</a>.',
       fail_to_get_door_status: 'Harap pastikan pintu penutup tertutup untuk mengaktifkan laser rendah agar bingkai dapat berjalan.',
-      fail_to_start_preview: '#803 Gagal memulai mode pratinjau. Harap mulai ulang mesin Anda atau Beam Studio. Jika kesalahan ini berlanjut, ikuti <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">panduan ini</a>.',
+      fail_to_start_preview: '#803 Gagal memulai mode pratinjau. Harap mulai ulang mesin Anda atau Beam Studio. Jika kesalahan ini berlanjut, ikuti <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">panduan ini</a>.',
       headtype_mismatch: 'Modul yang tidak cocok terdeteksi. ',
       headtype_none: 'Modul tidak terdeteksi. ',
       headtype_unknown: 'Modul tidak dikenali terdeteksi. ',
@@ -1873,7 +1873,7 @@ const lang: ILang = {
       power_too_high_msg: 'Menggunakan daya laser yang lebih rendah (di bawah 70%) akan memperpanjang masa pakai tabung laser.\nMasukkan "SAYA MENGERTI" untuk melanjutkan.',
       pwm_unavailable: 'Mode Kedalaman memerlukan versi firmware 4.3.4 / 5.3.4 atau lebih tinggi. Apakah Anda ingin memperbarui firmware sekarang?',
       QcleanScene: 'Apakah Anda ingin menghapus gambar?<br/>Ini juga akan menghapus riwayat undo Anda!',
-      start_preview_timeout: '#803 Timeout telah terjadi saat memulai mode pratinjau. Harap mulai ulang mesin Anda atau Beam Studio. Jika kesalahan ini berlanjut, ikuti <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">panduan ini</a>.',
+      start_preview_timeout: '#803 Timeout telah terjadi saat memulai mode pratinjau. Harap mulai ulang mesin Anda atau Beam Studio. Jika kesalahan ini berlanjut, ikuti <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">panduan ini</a>.',
     },
     frame_task: 'Jalankan Bingkai',
     hint: {

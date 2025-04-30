@@ -1859,9 +1859,9 @@ const lang: ILang = {
     alerts: {
       add_content_first: 'Por favor, adicione objetos primeiro',
       door_opened: 'Feche a tampa da porta para habilitar o laser baixo para executar o quadro.',
-      fail_to_connect_with_camera: '#803 Falha ao conectar com a câmera da máquina. Reinicie seu computador ou o Beam Studio. Se este erro persistir, siga <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">este guia</a>.',
+      fail_to_connect_with_camera: '#803 Falha ao conectar com a câmera da máquina. Reinicie seu computador ou o Beam Studio. Se este erro persistir, siga <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">este guia</a>.',
       fail_to_get_door_status: 'Certifique-se de que a tampa da porta esteja fechada para habilitar o laser baixo para executar o quadro.',
-      fail_to_start_preview: '#803 Falha ao iniciar o modo de visualização. Reinicie seu computador ou o Beam Studio. Se este erro persistir, siga <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">este guia</a>.',
+      fail_to_start_preview: '#803 Falha ao iniciar o modo de visualização. Reinicie seu computador ou o Beam Studio. Se este erro persistir, siga <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">este guia</a>.',
       headtype_mismatch: 'Módulo incorreto detectado. ',
       headtype_none: 'Módulo não detectado. ',
       headtype_unknown: 'Módulo desconhecido detectado. ',
@@ -1873,7 +1873,7 @@ const lang: ILang = {
       power_too_high_msg: 'Usar potência laser mais baixa (abaixo de 70%) estenderá a vida útil do tubo laser.\nDigite "ENTENDI" para continuar.',
       pwm_unavailable: 'O Modo de Profundidade requer a versão 4.3.4 / 5.3.4 ou superior do firmware. Gostaria de atualizar o firmware agora?',
       QcleanScene: 'Quer apagar o desenho?<br/>Isso também apagará seu histórico de desfazer!',
-      start_preview_timeout: '#803 O tempo limite ocorreu ao iniciar o modo de visualização. Reinicie seu computador ou o Beam Studio. Se este erro persistir, siga <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">este guia</a>.',
+      start_preview_timeout: '#803 O tempo limite ocorreu ao iniciar o modo de visualização. Reinicie seu computador ou o Beam Studio. Se este erro persistir, siga <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">este guia</a>.',
     },
     frame_task: 'Executando quadro',
     hint: {

@@ -1859,9 +1859,9 @@ const lang: ILang = {
     alerts: {
       add_content_first: 'Bitte fügen Sie zuerst Objekte hinzu',
       door_opened: 'Bitte schließen Sie die Tür abdeckung, um Niedriglaser zum Ausführen des Rahmens zu aktivieren.',
-      fail_to_connect_with_camera: '#803 Verbindung zur Maschinenkamera konnte nicht hergestellt werden. Bitte starten Sie Ihren Maschinen oder Beam Studio neu. Wenn dieser Fehler weiterhin besteht, befolgen Sie <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">diese Anleitung</a>.',
+      fail_to_connect_with_camera: '#803 Verbindung zur Maschinenkamera konnte nicht hergestellt werden. Bitte starten Sie Ihren Maschinen oder Beam Studio neu. Wenn dieser Fehler weiterhin besteht, befolgen Sie <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">diese Anleitung</a>.',
       fail_to_get_door_status: 'Bitte stellen Sie sicher, dass die Tür abdeckung geschlossen ist, um Niedriglaser zum Ausführen des Rahmens zu aktivieren.',
-      fail_to_start_preview: '#803 Fehler beim Starten des Vorschaumodus. Bitte starten Sie Ihren Maschinen oder Beam Studio neu. Wenn dieser Fehler weiterhin besteht, befolgen Sie <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">diese Anleitung</a>.',
+      fail_to_start_preview: '#803 Fehler beim Starten des Vorschaumodus. Bitte starten Sie Ihren Maschinen oder Beam Studio neu. Wenn dieser Fehler weiterhin besteht, befolgen Sie <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">diese Anleitung</a>.',
       headtype_mismatch: 'Falsches Modul erkannt. ',
       headtype_none: 'Modul nicht erkannt. ',
       headtype_unknown: 'Unbekanntes Modul erkannt. ',
@@ -1873,7 +1873,7 @@ const lang: ILang = {
       power_too_high_msg: 'Die Verwendung einer niedrigeren Laserleistung (unter 70%) verlängert die Lebensdauer der Laserröhre!\nGeben Sie "OK" ein, um fortzufahren.',
       pwm_unavailable: 'Der Tiefenmodus erfordert Firmware-Version 4.3.4 / 5.3.4 oder höher. Möchten Sie die Firmware jetzt aktualisieren?',
       QcleanScene: 'Möchtest du die Zeichnung löschen?<br/>Dies löscht auch deine Rückgängig-Historie!',
-      start_preview_timeout: '#803 Beim Starten des Vorschaumodus ist eine Zeitüberschreitung aufgetreten. Bitte starten Sie Ihren Maschinen oder Beam Studio neu. Wenn dieser Fehler weiterhin besteht, befolgen Sie <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">diese Anleitung</a>.',
+      start_preview_timeout: '#803 Beim Starten des Vorschaumodus ist eine Zeitüberschreitung aufgetreten. Bitte starten Sie Ihren Maschinen oder Beam Studio neu. Wenn dieser Fehler weiterhin besteht, befolgen Sie <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">diese Anleitung</a>.',
     },
     frame_task: 'Frame-Vorschau',
     hint: {

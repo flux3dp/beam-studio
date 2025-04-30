@@ -1859,9 +1859,9 @@ const lang: ILang = {
     alerts: {
       add_content_first: 'Voeg eerst objecten toe',
       door_opened: 'Sluit het deksel om laag laservermogen voor het uitvoeren van frames in te schakelen.',
-      fail_to_connect_with_camera: '#803 Kan geen verbinding maken met machinecamera. Start uw machine of Beam Studio opnieuw op. Als deze fout zich blijft voordoen, volg dan <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">deze handleiding</a>.',
+      fail_to_connect_with_camera: '#803 Kan geen verbinding maken met machinecamera. Start uw machine of Beam Studio opnieuw op. Als deze fout zich blijft voordoen, volg dan <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">deze handleiding</a>.',
       fail_to_get_door_status: 'Zorg ervoor dat het deksel gesloten is om laag laservermogen voor het uitvoeren van frames in te schakelen.',
-      fail_to_start_preview: '#803 Kan voorbeeldmodus niet starten. Start uw machine of Beam Studio opnieuw op. Als deze fout zich blijft voordoen, volg dan <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">deze handleiding</a>.',
+      fail_to_start_preview: '#803 Kan voorbeeldmodus niet starten. Start uw machine of Beam Studio opnieuw op. Als deze fout zich blijft voordoen, volg dan <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">deze handleiding</a>.',
       headtype_mismatch: 'Onjuiste module gedetecteerd. ',
       headtype_none: 'Module niet gedetecteerd. ',
       headtype_unknown: 'Onbekende module gedetecteerd. ',
@@ -1873,7 +1873,7 @@ const lang: ILang = {
       power_too_high_msg: 'Gebruik een lager laservermogen (onder 70%) om de levensduur van de lasertube te verlengen.\nVoer "BEGREPEN" in om door te gaan.',
       pwm_unavailable: 'Dieptemodus vereist firmwareversie 4.3.4 / 5.3.4 of hoger. Wilt u de firmware nu bijwerken?',
       QcleanScene: 'Wil je de tekening wissen?<br/>Dit zal ook je undo-geschiedenis wissen!',
-      start_preview_timeout: '#803 Time-out opgetreden bij het starten van de voorbeeldmodus. Start uw machine of Beam Studio opnieuw op. Als deze fout zich blijft voordoen, volg dan <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">deze handleiding</a>.',
+      start_preview_timeout: '#803 Time-out opgetreden bij het starten van de voorbeeldmodus. Start uw machine of Beam Studio opnieuw op. Als deze fout zich blijft voordoen, volg dan <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">deze handleiding</a>.',
     },
     frame_task: 'Frame uitvoeren',
     hint: {

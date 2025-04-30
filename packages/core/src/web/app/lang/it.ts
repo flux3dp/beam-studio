@@ -1859,9 +1859,9 @@ const lang: ILang = {
     alerts: {
       add_content_first: 'Si prega di aggiungere prima gli oggetti',
       door_opened: "Chiudere lo sportello per abilitare il laser a bassa potenza per l'esecuzione della cornice.",
-      fail_to_connect_with_camera: '#803 Impossibile stabilire la connessione con la videocamera della macchina. Riavviare la macchina o Beam Studio. Se l\'errore persiste, seguire <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">questa guida</a>.',
+      fail_to_connect_with_camera: '#803 Impossibile stabilire la connessione con la videocamera della macchina. Riavviare la macchina o Beam Studio. Se l\'errore persiste, seguire <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">questa guida</a>.',
       fail_to_get_door_status: "Assicurarsi che lo sportello sia chiuso per abilitare il laser a bassa potenza per l'esecuzione della cornice.",
-      fail_to_start_preview: '#803 Impossibile avviare la modalità anteprima. Riavviare la macchina o Beam Studio. Se l\'errore persiste, seguire <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">questa guida</a>.',
+      fail_to_start_preview: '#803 Impossibile avviare la modalità anteprima. Riavviare la macchina o Beam Studio. Se l\'errore persiste, seguire <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">questa guida</a>.',
       headtype_mismatch: 'Modulo non corrispondente rilevato. ',
       headtype_none: 'Modulo non rilevato. ',
       headtype_unknown: 'Modulo sconosciuto rilevato. ',
@@ -1873,7 +1873,7 @@ const lang: ILang = {
       power_too_high_msg: 'Utilizzare una potenza laser inferiore (sotto il 70%) estende la durata del tubo laser.\nInserire "HO CAPITO" per procedere.',
       pwm_unavailable: 'La Modalità Profondità richiede una versione del firmware 4.3.4 / 5.3.4 o successiva. Vuoi aggiornare il firmware adesso?',
       QcleanScene: 'Vuoi cancellare il disegno?<br/>Questo cancellerà anche la tua cronologia di annullamento!',
-      start_preview_timeout: '#803 Timeout durante l\'avvio della modalità anteprima. Riavviare la macchina o Beam Studio. Se l\'errore persiste, seguire <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">questa guida</a>.',
+      start_preview_timeout: '#803 Timeout durante l\'avvio della modalità anteprima. Riavviare la macchina o Beam Studio. Se l\'errore persiste, seguire <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">questa guida</a>.',
     },
     frame_task: 'Esecuzione cornice',
     hint: {

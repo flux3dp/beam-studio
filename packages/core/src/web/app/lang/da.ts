@@ -1859,9 +1859,9 @@ const lang: ILang = {
     alerts: {
       add_content_first: 'Tilføj venligst objekter først',
       door_opened: 'Luk venligst døren for at aktivere lav laser til kørsel af ramme.',
-      fail_to_connect_with_camera: '#803 Kunne ikke oprette forbindelse til maskinkamera. Genstart venligst din maskine eller Beam Studio. Hvis denne fejl fortsætter, skal du følge <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">denne vejledning</a>.',
+      fail_to_connect_with_camera: '#803 Kunne ikke oprette forbindelse til maskinkamera. Genstart venligst din maskine eller Beam Studio. Hvis denne fejl fortsætter, skal du følge <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">denne vejledning</a>.',
       fail_to_get_door_status: 'Sørg venligst for at døren er lukket for at aktivere lav laser til kørsel af ramme.',
-      fail_to_start_preview: '#803 Kunne ikke starte forhåndsvisning. Genstart maskinen eller Beam Studio. Hvis fejlen fortsætter, se <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">denne vejledning</a>.',
+      fail_to_start_preview: '#803 Kunne ikke starte forhåndsvisning. Genstart maskinen eller Beam Studio. Hvis fejlen fortsætter, se <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">denne vejledning</a>.',
       headtype_mismatch: 'Forkert modul registreret. ',
       headtype_none: 'Modul ikke registreret. ',
       headtype_unknown: 'Ukendt modul registreret. ',
@@ -1873,7 +1873,7 @@ const lang: ILang = {
       power_too_high_msg: 'Brug af lavere laserstyrke (under 70%) forlænger laserens levetid.\nIndtast "NOTERET" for at fortsætte.',
       pwm_unavailable: 'Dybde-tilstand kræver firmware version 4.3.4 / 5.3.4 eller nyere. Vil du opdatere firmwaren nu?',
       QcleanScene: 'Vil du rydde tegningen?<br/>Dette vil også slette din angre-historik!',
-      start_preview_timeout: '#803 Timeout opstod ved start af forhåndsvisning. Genstart maskinen eller Beam Studio. Hvis fejlen fortsætter, se <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">denne vejledning</a>.',
+      start_preview_timeout: '#803 Timeout opstod ved start af forhåndsvisning. Genstart maskinen eller Beam Studio. Hvis fejlen fortsætter, se <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">denne vejledning</a>.',
     },
     frame_task: 'Kørende ramme',
     hint: {

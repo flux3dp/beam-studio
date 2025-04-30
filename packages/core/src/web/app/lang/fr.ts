@@ -1859,9 +1859,9 @@ const lang: ILang = {
     alerts: {
       add_content_first: "Veuillez d'abord ajouter des objets",
       door_opened: 'Veuillez fermer le couvercle de protection pour activer le laser de découpe.',
-      fail_to_connect_with_camera: '#803 Échec de la connexion avec la caméra de la machine. Veuillez redémarrer votre machine ou Beam Studio. Si cette erreur persiste, veuillez suivre <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">ce guide</a>.',
+      fail_to_connect_with_camera: '#803 Échec de la connexion avec la caméra de la machine. Veuillez redémarrer votre machine ou Beam Studio. Si cette erreur persiste, veuillez suivre <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">ce guide</a>.',
       fail_to_get_door_status: 'Veuillez vous assurer que le couvercle de protection est fermé pour activer le laser de découpe.',
-      fail_to_start_preview: '#803 Échec du démarrage du mode aperçu. Veuillez redémarrer votre machine ou Beam Studio. Si cette erreur persiste, veuillez suivre <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">ce guide</a>.',
+      fail_to_start_preview: '#803 Échec du démarrage du mode aperçu. Veuillez redémarrer votre machine ou Beam Studio. Si cette erreur persiste, veuillez suivre <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">ce guide</a>.',
       headtype_mismatch: 'Module incorrect détecté. ',
       headtype_none: 'Aucun module détecté. ',
       headtype_unknown: 'Module inconnu détecté. ',
@@ -1873,7 +1873,7 @@ const lang: ILang = {
       power_too_high_msg: 'Utiliser une puissance laser inférieure (moins de 70 %) prolongera la durée de vie du tube laser.\nEntrez "PRIS EN COMPTE" pour continuer.',
       pwm_unavailable: 'Le Mode Profondeur nécessite une version de firmware 4.3.4 / 5.3.4 ou supérieure. Voulez-vous mettre à jour le firmware maintenant ?',
       QcleanScene: 'Voulez-vous effacer le dessin?<br/>Cela effacera également votre historique des annulations !',
-      start_preview_timeout: '#803 Délai d’attente dépassé lors du démarrage du mode aperçu. Veuillez redémarrer votre machine ou Beam Studio. Si cette erreur persiste, veuillez suivre <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">ce guide</a>.',
+      start_preview_timeout: '#803 Délai d’attente dépassé lors du démarrage du mode aperçu. Veuillez redémarrer votre machine ou Beam Studio. Si cette erreur persiste, veuillez suivre <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">ce guide</a>.',
     },
     frame_task: 'Exécution du cadre',
     hint: {

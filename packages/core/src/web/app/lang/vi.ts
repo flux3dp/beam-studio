@@ -1859,9 +1859,9 @@ const lang: ILang = {
     alerts: {
       add_content_first: 'Vui lòng thêm đối tượng trước khi thêm nội dung',
       door_opened: 'Vui lòng đóng nắp để bật laser thấp cho khung chạy.',
-      fail_to_connect_with_camera: '#803 Không thể kết nối với camera máy. Vui lòng khởi động lại máy hoặc Beam Studio. Nếu lỗi này vẫn xảy ra, vui lòng làm theo <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">hướng dẫn này</a>.',
+      fail_to_connect_with_camera: '#803 Không thể kết nối với camera máy. Vui lòng khởi động lại máy hoặc Beam Studio. Nếu lỗi này vẫn xảy ra, vui lòng làm theo <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">hướng dẫn này</a>.',
       fail_to_get_door_status: 'Vui lòng đảm bảo nắp đã đóng để bật laser thấp cho khung chạy.',
-      fail_to_start_preview: '#803 Không thể bắt đầu chế độ xem trước. Vui lòng khởi động lại máy hoặc Beam Studio. Nếu lỗi này vẫn xảy ra, vui lòng làm theo <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">hướng dẫn này</a>.',
+      fail_to_start_preview: '#803 Không thể bắt đầu chế độ xem trước. Vui lòng khởi động lại máy hoặc Beam Studio. Nếu lỗi này vẫn xảy ra, vui lòng làm theo <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">hướng dẫn này</a>.',
       headtype_mismatch: 'Phát hiện mô-đun không chính xác. ',
       headtype_none: 'Không tìm thấy mô-đun. ',
       headtype_unknown: 'Phát hiện mô-đun không xác định. ',
@@ -1873,7 +1873,7 @@ const lang: ILang = {
       power_too_high_msg: 'Sử dụng công suất laser thấp hơn (dưới 70%) sẽ kéo dài tuổi thọ ống laser.\nNhập "ĐÃ GHI NHẬN" để tiếp tục.',
       pwm_unavailable: 'Chế Độ Độ Sâu yêu cầu phiên bản firmware 4.3.4 / 5.3.4 hoặc cao hơn. Bạn có muốn cập nhật firmware bây giờ không?',
       QcleanScene: 'Bạn có muốn xóa bản vẽ không?<br/>Điều này cũng sẽ xóa lịch sử hoàn tác của bạn!',
-      start_preview_timeout: '#803 Đã xảy ra lỗi khi bắt đầu chế độ xem trước. Vui lòng khởi động lại máy hoặc Beam Studio. Nếu lỗi này vẫn xảy ra, vui lòng làm theo <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">hướng dẫn này</a>.',
+      start_preview_timeout: '#803 Đã xảy ra lỗi khi bắt đầu chế độ xem trước. Vui lòng khởi động lại máy hoặc Beam Studio. Nếu lỗi này vẫn xảy ra, vui lòng làm theo <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">hướng dẫn này</a>.',
     },
     frame_task: 'Đang chạy khung',
     hint: {
