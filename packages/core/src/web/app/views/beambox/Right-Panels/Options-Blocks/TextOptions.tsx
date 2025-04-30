@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { Button, ConfigProvider, Switch } from 'antd';
+import type { DefaultOptionType } from 'antd/es/select';
 import classNames from 'classnames';
 
 import FontFuncs from '@core/app/actions/beambox/font-funcs';
@@ -24,11 +25,13 @@ import fontHelper from '@core/helpers/fonts/fontHelper';
 import i18n from '@core/helpers/i18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { isMobile } from '@core/helpers/system-helper';
-import type { FontDescriptor } from '@core/interfaces/IFont';
+import storage from '@core/implementations/storage';
+import type { FontDescriptor, IFont } from '@core/interfaces/IFont';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './TextOptions.module.scss';
 
-let svgCanvas;
+let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
@@ -37,6 +40,7 @@ getSVGAsync((globalSVG) => {
 const eventEmitter = eventEmitterFactory.createEventEmitter('font');
 const LANG = i18n.lang.beambox.right_panel.object_panel.option_panel;
 const isLocalFont = (font: FontDescriptor) => 'path' in font;
+const maxHistory = 5;
 
 // TODO: add tests
 interface Props {
@@ -44,7 +48,7 @@ interface Props {
   isTextPath?: boolean;
   showColorPanel?: boolean;
   textElement: SVGTextElement;
-  updateDimensionValues?: (data: { fontStyle: string }) => void;
+  updateDimensionValues: (data: { fontStyle: string }) => void;
   updateObjectPanel: () => void;
 }
 
@@ -57,9 +61,46 @@ interface State {
   isVerti: boolean;
   letterSpacing: number;
   lineSpacing: number;
-  startOffset?: number;
-  verticalAlign?: VerticalAlign;
+  startOffset: number;
+  verticalAlign: VerticalAlign;
 }
+
+const defaultState: State = {
+  fontFamily: '',
+  fontSize: 200,
+  fontStyle: '',
+  id: '',
+  isVerti: false,
+  letterSpacing: 0,
+  lineSpacing: 1,
+  startOffset: 0,
+  verticalAlign: VerticalAlign.MIDDLE,
+};
+
+type FontOption = {
+  family?: string;
+  label: React.ReactNode;
+  value: string;
+};
+
+const getFontFamilyOption = (family: string, isHistory = false): FontOption => {
+  const fontName = FontFuncs.fontNameMap.get(family);
+  const displayName = fontName ?? family;
+  const src = fontHelper.getWebFontPreviewUrl(family);
+
+  const label = src ? (
+    <div className={styles['family-option']}>
+      <div className={styles['img-container']}>
+        <img alt={displayName} draggable="false" src={src} />
+      </div>
+      {src.includes('monotype') && <FluxIcons.FluxPlus />}
+    </div>
+  ) : (
+    <div style={{ fontFamily: `'${family}'`, maxHeight: 24 }}>{displayName}</div>
+  );
+
+  return isHistory ? { family, label, value: `history-${family}` } : { label, value: family };
+};
 
 const TextOptions = ({
   elem,
@@ -70,24 +111,52 @@ const TextOptions = ({
   updateObjectPanel,
 }: Props) => {
   const [availableFontFamilies, setAvailableFontFamilies] = useState<string[]>([]);
-  const [state, setState] = useState<State>({
-    fontFamily: '',
-    fontSize: 200,
-    fontStyle: '',
-    id: '',
-    isVerti: false,
-    letterSpacing: 0,
-    lineSpacing: 1,
-    startOffset: 0,
-    verticalAlign: VerticalAlign.MIDDLE,
-  });
+  const [historyFontFamilies, setHistoryFontFamilies] = useState<FontOption[]>([]);
+  const [state, setState] = useState(defaultState);
   const { fontFamily } = state;
-  const [styleOptions, setStyleOptions] = useState([]);
+  const [styleOptions, setStyleOptions] = useState<FontOption[]>([]);
+
+  const addToHistory = (font: IFont) => {
+    if (!font.family) return;
+
+    const history: string[] = (storage.get('font-history') || []).filter((name: string) => name !== font.family);
+
+    if (!history.includes(font.family)) {
+      history.unshift(font.family);
+
+      if (history.length > maxHistory) {
+        history.pop();
+      }
+
+      storage.set('font-history', history);
+    }
+
+    const historyOption = getFontFamilyOption(font.family, true);
+    const newHistoryFontFamilies = historyFontFamilies.filter((option) => option.family !== font.family);
+
+    newHistoryFontFamilies.unshift(historyOption);
+
+    if (newHistoryFontFamilies.length > maxHistory) {
+      newHistoryFontFamilies.pop();
+    }
+
+    setHistoryFontFamilies(newHistoryFontFamilies);
+  };
 
   const getFontFamilies = async () => {
     const families = FontFuncs.requestAvailableFontFamilies();
 
     setAvailableFontFamilies(families);
+
+    const history: string[] = storage.get('font-history') || [];
+    const historyOptions: FontOption[] = [];
+
+    history.forEach((family) => {
+      if (families.includes(family)) {
+        historyOptions.push(getFontFamilyOption(family, true));
+      }
+    });
+    setHistoryFontFamilies(historyOptions);
   };
 
   useEffect(() => {
@@ -100,14 +169,14 @@ const TextOptions = ({
 
   useEffect(() => {
     const getStateFromElem = async () => {
-      const elemId = textElement.getAttribute('id');
+      const elemId = textElement.getAttribute('id')!;
 
       if (elemId === state.id) {
         return;
       }
 
       const postscriptName = textEdit.getFontPostscriptName(textElement);
-      let font;
+      let font: IFont;
 
       if (postscriptName) {
         font = FontFuncs.getFontOfPostscriptName(postscriptName);
@@ -117,7 +186,7 @@ const TextOptions = ({
         }
 
         if (!textElement.getAttribute('font-weight')) {
-          textElement.setAttribute('font-weight', font.weight ? font.weight : 'normal');
+          textElement.setAttribute('font-weight', font.weight ? font.weight.toString() : 'normal');
         }
       } else {
         const family = textEdit.getFontFamilyData(textElement);
@@ -148,15 +217,14 @@ const TextOptions = ({
 
       updateDimensionValues({ fontStyle: font.style });
 
-      let startOffset: number;
-      let verticalAlign: VerticalAlign;
+      let { startOffset, verticalAlign } = defaultState;
 
       if (textElement.getAttribute('data-textpath')) {
         const textPath = textElement.querySelector('textPath');
 
         if (textPath) {
           // Use parseInt parse X% to number X
-          startOffset = Number.parseInt(textPath.getAttribute('startOffset'), 10);
+          startOffset = Number.parseInt(textPath.getAttribute('startOffset') || '0', 10);
 
           const alignmentBaseline = textPath.getAttribute('alignment-baseline');
 
@@ -217,14 +285,12 @@ const TextOptions = ({
     progressCaller.popById('load-font');
   };
 
-  const handleFontFamilyChange = async (newFamily) => {
-    let family = newFamily;
-
-    if (typeof newFamily === 'object') {
-      family = newFamily.value;
-    }
-
+  const handleFontFamilyChange = async (newFamily: string, option: FontOption) => {
+    const family = option.family ?? newFamily;
     const newFont = FontFuncs.requestFontsOfTheFontFamily(family)[0];
+
+    addToHistory(newFont);
+
     const { fontLoadedPromise, success } = await fontHelper.applyMonotypeStyle(newFont, getCurrentUser());
 
     if (!success) {
@@ -259,31 +325,7 @@ const TextOptions = ({
   };
 
   const renderFontFamilyBlock = (): React.JSX.Element => {
-    const renderOption = (option) => {
-      const src = fontHelper.getWebFontPreviewUrl(option.value);
-
-      if (src) {
-        return (
-          <div className={styles['family-option']}>
-            <div className={styles['img-container']}>
-              <img alt={option.label} draggable="false" src={src} />
-            </div>
-            {src.includes('monotype') && <FluxIcons.FluxPlus />}
-          </div>
-        );
-      }
-
-      return <div style={{ fontFamily: `'${option.value}'`, maxHeight: 24 }}>{option.label}</div>;
-    };
-    const options = availableFontFamilies.map((option) => {
-      const fontName = FontFuncs.fontNameMap.get(option);
-      const label = renderOption({
-        label: typeof fontName === 'string' ? fontName : option,
-        value: option,
-      });
-
-      return { label, value: option };
-    });
+    const options: FontOption[] = availableFontFamilies.map((option) => getFontFamilyOption(option));
 
     if (isMobile()) {
       return (
@@ -291,7 +333,11 @@ const TextOptions = ({
           id="font_family"
           label={LANG.font_family}
           onChange={handleFontFamilyChange}
-          options={options}
+          options={
+            historyFontFamilies.length > 0
+              ? [{ label: 'Recently Used', type: 'group' }, ...historyFontFamilies, { type: 'divider' }, ...options]
+              : options
+          }
           selected={{ label: fontFamily, value: fontFamily }}
         />
       );
@@ -303,16 +349,19 @@ const TextOptions = ({
       <Select
         className={styles['font-family']}
         disabled={isOnlyOneOption}
-        dropdownMatchSelectWidth={false}
-        filterOption={(input: string, option?: { label: React.JSX.Element; value: string }) => {
+        filterOption={(input: string, option?: DefaultOptionType) => {
+          // Hide history options
+          if (option?.family) return false;
+
           if (option?.value) {
+            const family = option.value as string;
             const searchKey = input.toLowerCase();
 
-            if (option.value.toLowerCase().includes(searchKey)) {
+            if (family.toLowerCase().includes(searchKey)) {
               return true;
             }
 
-            const fontName = FontFuncs.fontNameMap.get(option.value) || '';
+            const fontName = FontFuncs.fontNameMap.get(family) || '';
 
             if (fontName.toLowerCase().includes(searchKey)) {
               return true;
@@ -321,14 +370,21 @@ const TextOptions = ({
 
           return false;
         }}
-        onChange={(value) => handleFontFamilyChange(value)}
+        onChange={(value, option) => handleFontFamilyChange(value, option as FontOption)}
         onKeyDown={(e) => e.stopPropagation()}
-        options={options}
+        options={
+          // Note: title is used as css selector
+          [
+            { label: 'Recently Used', options: historyFontFamilies, title: 'history' },
+            { label: null, options, title: 'normal' },
+          ]
+        }
         placement="bottomRight"
         popupClassName={styles['font-family-dropdown']}
+        popupMatchSelectWidth={false}
         showSearch
         title={LANG.font_family}
-        value={{ value: fontFamily }}
+        value={fontFamily}
       />
     );
   };
@@ -384,10 +440,10 @@ const TextOptions = ({
       <Select
         className={styles['font-style']}
         disabled={isOnlyOneOption}
-        dropdownMatchSelectWidth={false}
         onChange={(value) => handleFontStyleChange(value)}
         onKeyDown={(e) => e.stopPropagation()}
         options={styleOptions}
+        popupMatchSelectWidth={false}
         title={LANG.font_style}
         value={fontStyle}
       />
@@ -548,7 +604,7 @@ const TextOptions = ({
   );
 
   const renderTextPathOptions = (): React.JSX.Element => {
-    const path = elem.querySelector('path');
+    const path = elem.querySelector('path')!;
     const { startOffset, verticalAlign } = state;
 
     return (

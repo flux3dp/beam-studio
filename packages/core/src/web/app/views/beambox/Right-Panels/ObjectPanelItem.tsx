@@ -229,47 +229,69 @@ const ObjectPanelActionList = ({ actions, content, disabled, id, label }: Action
   );
 };
 
-interface SelectProps {
+type SelectProps<T extends number | string> = {
   id: string;
   label?: string;
-  onChange: (val: number | string) => Promise<void> | void;
-  options: Array<{
-    label: React.JSX.Element | string;
-    value: number | string;
-  }>;
-  selected: {
-    label: React.JSX.Element | string;
-    value: number | string;
+  onChange: (val: T, option: any) => Promise<void> | void;
+  options: Array<
+    | {
+        label: React.ReactNode;
+        value: T;
+      }
+    | { label: string; type: 'group' }
+    | { type: 'divider' }
+  >;
+  selected?: {
+    label: React.ReactNode;
+    value: T;
   };
-}
+};
 
-const ObjectPanelSelect = ({
+const ObjectPanelSelect = <T extends number | string>({
   id,
   label,
   onChange,
   options,
-  selected = { label: '', value: '' },
-}: SelectProps): React.JSX.Element => {
+  selected,
+}: SelectProps<T>): React.JSX.Element => {
   const context = useContext(ObjectPanelContext);
   const { activeKey, updateActiveKey } = context;
   const isActive = activeKey === id;
   const ref = useRef(null);
   const SelectOptions = () => (
     <div className={styles['select-options']} id={`${id}-options`}>
-      {options.map((option) => (
-        <div
-          className={classNames(styles.option, {
-            [styles.active]: selected.value === option.value,
-          })}
-          key={option.value}
-          onClick={async () => {
-            await onChange(option.value);
-            updateActiveKey(null);
-          }}
-        >
-          <span>{option.label}</span>
-        </div>
-      ))}
+      {options.map((option, index) => {
+        if ('type' in option) {
+          if (option.type === 'divider') {
+            return <div className={styles['option-divider']} key={index} />;
+          }
+
+          if ('label' in option) {
+            return (
+              <div className={styles['option-label']} key={option.label}>
+                {option.label}
+              </div>
+            );
+          }
+
+          return null;
+        }
+
+        return (
+          <div
+            className={classNames(styles.option, {
+              [styles.active]: selected?.value === option.value,
+            })}
+            key={option.value}
+            onClick={async () => {
+              await onChange(option.value, option);
+              updateActiveKey(null);
+            }}
+          >
+            <span>{option.label}</span>
+          </div>
+        );
+      })}
     </div>
   );
 
@@ -277,7 +299,7 @@ const ObjectPanelSelect = ({
     if (ref.current && isActive) {
       const ele = document.querySelector(`#${id}-options .${styles.active}`) as HTMLElement;
 
-      if (ele) {
+      if (ele && ele.parentElement) {
         ele.parentElement.scrollTop = ele.offsetTop - 20;
       }
     }
@@ -290,7 +312,7 @@ const ObjectPanelSelect = ({
         content={
           <Button className={styles['select-button']} fill="outline" shape="rounded" size="mini">
             <div className={styles['selected-content']}>
-              {selected.label}
+              {selected?.label || ''}
               <DownOutlined />
             </div>
           </Button>
