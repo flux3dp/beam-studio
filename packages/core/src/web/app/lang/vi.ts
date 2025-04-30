@@ -778,6 +778,7 @@ const lang: ILang = {
           path_infill: 'Độ đặc đường',
           pwm_engraving: 'Chế Độ Độ Sâu',
           pwm_engraving_link: 'https://support.flux3dp.com/hc/en-us/articles/10419884701327',
+          recently_used: 'Mới sử dụng',
           rounded_corner: 'Góc bo tròn',
           shading: 'Màu sắc',
           sides: 'Cạnh',

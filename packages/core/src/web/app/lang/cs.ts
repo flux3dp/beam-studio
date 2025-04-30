@@ -778,6 +778,7 @@ const lang: ILang = {
           path_infill: 'Výplň cesty',
           pwm_engraving: 'Depth Mode (režim hloubky)',
           pwm_engraving_link: 'https://support.flux3dp.com/hc/en-us/articles/10419884701327',
+          recently_used: 'Nedávno použité',
           rounded_corner: 'Zaoblený roh',
           shading: 'Barevný přechod',
           sides: 'Strany',

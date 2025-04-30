@@ -778,6 +778,7 @@ const lang: ILang = {
           path_infill: 'Banaifyllnad',
           pwm_engraving: 'Djup-läge',
           pwm_engraving_link: 'https://support.flux3dp.com/hc/en-us/articles/10419884701327',
+          recently_used: 'Nyligen använd',
           rounded_corner: 'Rundade hörn',
           shading: 'Gradient',
           sides: 'Sidor',

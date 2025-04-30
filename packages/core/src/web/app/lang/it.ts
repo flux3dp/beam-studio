@@ -778,6 +778,7 @@ const lang: ILang = {
           path_infill: 'Riempimento percorso',
           pwm_engraving: 'Modalità Profondità',
           pwm_engraving_link: 'https://support.flux3dp.com/hc/en-us/articles/10419884701327',
+          recently_used: 'Usato di recente',
           rounded_corner: 'Angoli arrotondati',
           shading: 'Sfumatura',
           sides: 'Lati',

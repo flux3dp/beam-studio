@@ -335,7 +335,7 @@ const TextOptions = ({
           onChange={handleFontFamilyChange}
           options={
             historyFontFamilies.length > 0
-              ? [{ label: 'Recently Used', type: 'group' }, ...historyFontFamilies, { type: 'divider' }, ...options]
+              ? [{ label: LANG.recently_used, type: 'group' }, ...historyFontFamilies, { type: 'divider' }, ...options]
               : options
           }
           selected={{ label: fontFamily, value: fontFamily }}
@@ -375,7 +375,7 @@ const TextOptions = ({
         options={
           // Note: title is used as css selector
           [
-            { label: 'Recently Used', options: historyFontFamilies, title: 'history' },
+            { label: LANG.recently_used, options: historyFontFamilies, title: 'history' },
             { label: null, options, title: 'normal' },
           ]
         }

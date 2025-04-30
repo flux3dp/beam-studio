@@ -778,6 +778,7 @@ const lang: ILang = {
           path_infill: 'Wypełnienie ścieżki',
           pwm_engraving: 'Tryb Głębokości',
           pwm_engraving_link: 'https://support.flux3dp.com/hc/en-us/articles/10419884701327',
+          recently_used: 'Ostatnio używane',
           rounded_corner: 'Zaokrąglenie narożników',
           shading: 'Gradient',
           sides: 'Boki',

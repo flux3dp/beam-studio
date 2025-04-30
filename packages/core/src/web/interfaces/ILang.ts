@@ -776,6 +776,7 @@ export interface ILang {
           path_infill: string;
           pwm_engraving: string;
           pwm_engraving_link: string;
+          recently_used: string;
           rounded_corner: string;
           shading: string;
           sides: string;

@@ -778,6 +778,7 @@ const lang: ILang = {
           path_infill: 'Remplissage du tracé',
           pwm_engraving: 'Mode Profondeur',
           pwm_engraving_link: 'https://support.flux3dp.com/hc/en-us/articles/10419884701327',
+          recently_used: 'Récemment utilisé',
           rounded_corner: 'Coin arrondi',
           shading: 'Ombrage',
           sides: 'Côtés',

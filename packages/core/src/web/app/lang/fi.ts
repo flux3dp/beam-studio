@@ -778,6 +778,7 @@ const lang: ILang = {
           path_infill: 'Polun täyttö',
           pwm_engraving: 'Syvyystila',
           pwm_engraving_link: 'https://support.flux3dp.com/hc/en-us/articles/10419884701327',
+          recently_used: 'Äskettäin käytetty',
           rounded_corner: 'Pyöristetty kulma',
           shading: 'Liukuväri',
           sides: 'Sivut',

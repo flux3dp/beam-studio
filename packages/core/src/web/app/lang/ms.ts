@@ -778,6 +778,7 @@ const lang: ILang = {
           path_infill: 'Isi laluan',
           pwm_engraving: 'Mod Kedalaman',
           pwm_engraving_link: 'https://support.flux3dp.com/hc/en-us/articles/10419884701327',
+          recently_used: 'Digunakan Baru-baru ini',
           rounded_corner: 'Sudut Bulat',
           shading: 'Cerun',
           sides: 'Sisi',

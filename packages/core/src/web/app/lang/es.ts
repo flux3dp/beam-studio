@@ -778,6 +778,7 @@ const lang: ILang = {
           path_infill: 'Relleno de trayectoria',
           pwm_engraving: 'Modo Profundidad',
           pwm_engraving_link: 'https://support.flux3dp.com/hc/en-us/articles/10419884701327',
+          recently_used: 'Usado recientemente',
           rounded_corner: 'Esquina redondeada',
           shading: 'Gradiente',
           sides: 'Lados',

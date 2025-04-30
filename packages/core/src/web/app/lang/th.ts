@@ -778,6 +778,7 @@ const lang: ILang = {
           path_infill: 'เติมสีในเส้นทาง',
           pwm_engraving: 'โหมดความลึก',
           pwm_engraving_link: 'https://support.flux3dp.com/hc/en-us/articles/10419884701327',
+          recently_used: 'ใช้ล่าสุด',
           rounded_corner: 'มุมมน',
           shading: 'ไล่ระดับสี',
           sides: 'ด้าน',

@@ -778,6 +778,7 @@ const lang: ILang = {
           path_infill: 'パスインフィル',
           pwm_engraving: '深度モード',
           pwm_engraving_link: 'https://support.flux3dp.com/hc/en-us/articles/10419884701327',
+          recently_used: '最近使用した項目',
           rounded_corner: '角丸',
           shading: 'シェーディング',
           sides: '辺の数',

@@ -778,6 +778,7 @@ const lang: ILang = {
           path_infill: '경로 내부 채우기',
           pwm_engraving: '깊이 모드',
           pwm_engraving_link: 'https://support.flux3dp.com/hc/en-us/articles/10419884701327',
+          recently_used: '최근 사용됨:',
           rounded_corner: '둥근 모서리',
           shading: '그라데이션',
           sides: '면의 수',

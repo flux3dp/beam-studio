@@ -778,6 +778,7 @@ const lang: ILang = {
           path_infill: 'Baneutfylling',
           pwm_engraving: 'Dybde-modus',
           pwm_engraving_link: 'https://support.flux3dp.com/hc/en-us/articles/10419884701327',
+          recently_used: 'Nylig brukt',
           rounded_corner: 'Avrundet hjørne',
           shading: 'Gradient',
           sides: 'Sider',
