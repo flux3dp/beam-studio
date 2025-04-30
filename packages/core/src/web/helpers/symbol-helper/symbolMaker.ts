@@ -14,7 +14,7 @@ import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import { getSVGAsync } from '../svg-editor-helper';
 
-import updateImageSymbol from './updateImageSymbol';
+import updateImageSymbol, { waitForImageSymbolUrl } from './updateImageSymbol';
 
 let svgCanvas: ISVGCanvas;
 let svgedit: any;
@@ -446,12 +446,18 @@ const makeImageSymbol = async (
 
     const svgString = new XMLSerializer().serializeToString(tempSvg);
     const svgBlob = (await sendTaskToWorker({ svgString, type: 'svgStringToBlob' })) as Blob;
+    let isNewImageSymbol = false;
 
-    if (!imageSymbol) imageSymbol = createImageSymbol(symbol);
-
-    resolve(imageSymbol);
+    if (!imageSymbol) {
+      imageSymbol = createImageSymbol(symbol);
+      isNewImageSymbol = true;
+    }
 
     updateImageSymbol({ bb, fullColor, imageRatio, imageSymbol, strokeWidth, svgBlob });
+
+    if (isNewImageSymbol) await waitForImageSymbolUrl(imageSymbol);
+
+    resolve(imageSymbol);
   });
 };
 
