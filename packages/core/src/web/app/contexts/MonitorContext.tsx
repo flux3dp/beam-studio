@@ -131,7 +131,7 @@ interface Context extends State {
   onMaintainMoveEnd: (x: number, y: number) => void;
   onMaintainMoveStart: () => void;
   onPause: () => void;
-  onPlay: (forceResend?: boolean) => void;
+  onPlay: (forceResend?: boolean) => Promise<void>;
   onSelectFile: (fileName: string, fileInfo: any) => Promise<void>;
   onSelectFolder: (folderName: string, absolute?: boolean) => void;
   onStop: () => void;

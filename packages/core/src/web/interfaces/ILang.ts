@@ -144,7 +144,9 @@ export interface ILang {
       graphics: string;
       halloween: string;
       hammer_wrench: string;
+      heart: string;
       holidays: string;
+      insect: string;
       kitchen_tools: string;
       label: string;
       land: string;
@@ -774,6 +776,7 @@ export interface ILang {
           path_infill: string;
           pwm_engraving: string;
           pwm_engraving_link: string;
+          recently_used: string;
           rounded_corner: string;
           shading: string;
           sides: string;

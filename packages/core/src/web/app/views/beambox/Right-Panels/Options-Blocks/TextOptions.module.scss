@@ -4,6 +4,18 @@
   :global(.ant-select-item) {
     padding-right: 4px;
   }
+
+  [title='normal'] {
+    display: none;
+    min-height: 0;
+    border-bottom: 1px solid #cecece;
+    border-radius: 0;
+    margin-bottom: 2px;
+  }
+
+  [title='history'] ~ [title='normal'] {
+    display: block;
+  }
 }
 
 .family-option {

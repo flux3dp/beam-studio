@@ -18,6 +18,8 @@ export type SubType =
   | 'gardening_tools'
   | 'halloween'
   | 'hammer_wrench'
+  | 'heart'
+  | 'insect'
   | 'kitchen_tools'
   | 'label'
   | 'land'
@@ -172,6 +174,7 @@ export const generateFileNameArray = (subType: string, opt?: IOpt): string[] => 
   return path;
 };
 
+/* eslint-disable perfectionist/sort-objects */
 const Elements: {
   [key in MainType]: {
     [key in SubType]?: {
@@ -191,6 +194,22 @@ const Elements: {
         { id: '4214746', thumbnail_url: 'https://static.thenounproject.com/png/4214746-200.png' },
       ],
       setting: { end: 9 },
+    },
+    insect: {
+      pinnedNP: [
+        { id: '7448865', thumbnail_url: 'https://static.thenounproject.com/png/7448865-200.png' },
+        { id: '6614430', thumbnail_url: 'https://static.thenounproject.com/png/6614430-200.png' },
+        { id: '7792718', thumbnail_url: 'https://static.thenounproject.com/png/7792718-200.png' },
+        { id: '7725431', thumbnail_url: 'https://static.thenounproject.com/png/7725431-200.png' },
+        { id: '789778', thumbnail_url: 'https://static.thenounproject.com/png/789778-200.png' },
+        { id: '7600690', thumbnail_url: 'https://static.thenounproject.com/png/7600690-200.png' },
+        { id: '7721707', thumbnail_url: 'https://static.thenounproject.com/png/7721707-200.png' },
+        { id: '6983199', thumbnail_url: 'https://static.thenounproject.com/png/6983199-200.png' },
+        { id: '7698423', thumbnail_url: 'https://static.thenounproject.com/png/7698423-200.png' },
+        { id: '6606512', thumbnail_url: 'https://static.thenounproject.com/png/6606512-200.png' },
+        { id: '3411267', thumbnail_url: 'https://static.thenounproject.com/png/3411267-200.png' },
+        { id: '1026145', thumbnail_url: 'https://static.thenounproject.com/png/1026145-200.png' },
+      ],
     },
   },
   basic: {
@@ -265,6 +284,22 @@ const Elements: {
         'icon-multiply',
         'icon-divide',
         'icon-equal',
+      ],
+    },
+    heart: {
+      pinnedNP: [
+        { id: '7714448', thumbnail_url: 'https://static.thenounproject.com/png/7714448-200.png' },
+        { id: '7711805', thumbnail_url: 'https://static.thenounproject.com/png/7711805-200.png' },
+        { id: '7711804', thumbnail_url: 'https://static.thenounproject.com/png/7711804-200.png' },
+        { id: '7711797', thumbnail_url: 'https://static.thenounproject.com/png/7711797-200.png' },
+        { id: '6720887', thumbnail_url: 'https://static.thenounproject.com/png/6720887-200.png' },
+        { id: '7708149', thumbnail_url: 'https://static.thenounproject.com/png/7708149-200.png' },
+        { id: '7706892', thumbnail_url: 'https://static.thenounproject.com/png/7706892-200.png' },
+        { id: '7678933', thumbnail_url: 'https://static.thenounproject.com/png/7678933-200.png' },
+        { id: '7574371', thumbnail_url: 'https://static.thenounproject.com/png/7574371-200.png' },
+        { id: '7508918', thumbnail_url: 'https://static.thenounproject.com/png/7508918-200.png' },
+        { id: '7162897', thumbnail_url: 'https://static.thenounproject.com/png/7162897-200.png' },
+        { id: '6729356', thumbnail_url: 'https://static.thenounproject.com/png/6729356-200.png' },
       ],
     },
   },
@@ -496,6 +531,7 @@ const Elements: {
     },
   },
 };
+/* eslint-enable perfectionist/sort-objects */
 
 export default Elements;
 

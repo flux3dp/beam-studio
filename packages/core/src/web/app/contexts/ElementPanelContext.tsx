@@ -223,6 +223,11 @@ export const ElementPanelProvider = ({ children, onClose }: ElementPanelProvider
       const subTypeObj = Elements[activeMainType][subType]!;
       let subTypeContent: Content = { mainType: activeMainType, subType, term: subType };
 
+      if (!hasLogin && !subTypeObj.fileNames && !subTypeObj.setting) {
+        // Skip sub type with only np icons when not login
+        return;
+      }
+
       if (!subTypeObj.fileNames) {
         subTypeObj.fileNames = generateFileNameArray(subType, subTypeObj.setting);
       }

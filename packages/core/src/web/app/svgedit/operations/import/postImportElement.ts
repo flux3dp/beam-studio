@@ -30,6 +30,15 @@ const postImportElement = async (elem: SVGElement, batchCmd: IBatchCommand) => {
   });
   elem.setAttribute('data-ratiofixed', 'true');
   await disassembleUse([elem], { parentCmd: batchCmd, skipConfirm: true });
+
+  if (svgCanvas.getSelectedElems()[0].getAttribute('data-tempgroup')) {
+    const subCmd = svgCanvas.groupSelectedElements();
+
+    if (subCmd) {
+      batchCmd.addSubCommand(subCmd);
+    }
+  }
+
   updateElementColor(svgCanvas.getSelectedElems()[0]);
 };
 

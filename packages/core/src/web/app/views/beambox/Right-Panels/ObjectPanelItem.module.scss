@@ -143,6 +143,14 @@ div.divider {
       min-height: 16px;
     }
   }
+  .option-label {
+    margin-left: 12px;
+    color: rgba(0, 0, 0, 0.45);
+  }
+  .option-divider {
+    margin: 2px 0;
+    border-bottom: 1px solid #cecece;
+  }
 }
 div.mask {
   width: 100vw;

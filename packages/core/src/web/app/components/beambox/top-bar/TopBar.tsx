@@ -75,7 +75,10 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
   return (
     <>
       <div
-        className={classNames(styles['top-bar'], { [styles.draggable]: isDragRegion && isTabFocused })}
+        className={classNames(styles['top-bar'], {
+          [styles.draggable]: isDragRegion && isTabFocused,
+          [styles.web]: isWeb,
+        })}
         onClick={() => ObjectPanelController.updateActiveKey(null)}
       >
         <div className={classNames(styles.controls, styles.left, { [styles.space]: isDragRegion || isWeb })}>
