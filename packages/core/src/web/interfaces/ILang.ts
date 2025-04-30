@@ -97,6 +97,7 @@ export interface ILang {
       current_position: string;
       disable: string;
       document_settings: string;
+      door_protect: string;
       enable: string;
       enable_autofocus: string;
       enable_diode: string;
@@ -116,7 +117,6 @@ export interface ILang {
       pass_through: string;
       pass_through_height_desc: string;
       rotary_mode: string;
-      safe_door: string;
       scale: string;
       start_from: string;
       start_position: string;

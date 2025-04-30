@@ -556,7 +556,7 @@ class SwiftrayClient extends EventEmitter {
   }
 
   public async upload(data: Blob, path?: string): Promise<void> {
-    const checkDoor = beamboxPreference.read('promark-safe-door');
+    const checkDoor = beamboxPreference.read('promark-safety-door');
 
     try {
       const text = await data.text();

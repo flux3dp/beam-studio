@@ -98,7 +98,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const [passThrough, setPassThrough] = useState(BeamboxPreference.read('pass-through'));
   const [autoFeeder, setAutoFeeder] = useState(BeamboxPreference.read('auto-feeder'));
   const [autoFeederScale, setAutoFeederScale] = useState(BeamboxPreference.read('auto-feeder-scale'));
-  const [checkSafeDoor, setCheckSafeDoor] = useState(BeamboxPreference.read('promark-safe-door'));
+  const [checkSafetyDoor, setCheckSafetyDoor] = useState(BeamboxPreference.read('promark-safety-door'));
 
   const isInch = useMemo(() => storage.get('default-units') === 'inches', []);
   const workareaObj = useMemo(() => getWorkarea(workarea), [workarea]);
@@ -235,7 +235,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
       setPromarkInfo(pmInfo);
       BeamboxPreference.write('promark-start-button', enableStartButton);
       BeamboxPreference.write('frame-before-start', shouldFrame);
-      BeamboxPreference.write('promark-safe-door', checkSafeDoor);
+      BeamboxPreference.write('promark-safety-door', checkSafetyDoor);
     }
 
     presprayArea.togglePresprayArea();
@@ -454,14 +454,14 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
               </div>
               <div className={styles.row}>
                 <div className={styles.title}>
-                  <label htmlFor="safe_door">{tDocu.safe_door}</label>
+                  <label htmlFor="door_protect">{tDocu.door_protect}</label>
                 </div>
                 <div className={styles.control}>
                   <Switch
-                    checked={checkSafeDoor}
+                    checked={checkSafetyDoor}
                     className={styles.switch}
-                    id="safe_door"
-                    onChange={setCheckSafeDoor}
+                    id="door_protect"
+                    onChange={setCheckSafetyDoor}
                   />
                 </div>
               </div>
