@@ -23,7 +23,6 @@ const getHeight = async (device: IDeviceInfo, progressId?: string, defaultValue?
 
       return null;
     } finally {
-      // hide progress for dialogCaller
       progressCaller.popById(progressId || PROGRESS_ID);
     }
   }
