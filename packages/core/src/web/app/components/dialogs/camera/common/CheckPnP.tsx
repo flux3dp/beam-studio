@@ -1,4 +1,5 @@
-import { Fragment, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 
 import { Button, Col, Modal, Row } from 'antd';
 
@@ -74,13 +75,13 @@ const CheckPnP = ({ cameraOptions, dh, grid, hasNext, onBack, onClose, onNext, p
       centered
       closable
       footer={[
-        <Button className={styles['footer-button']} key="back" onClick={onBack}>
+        <Button key="back" onClick={onBack}>
           {lang.calibration.recalibrate}
         </Button>,
-        <Button className={styles['footer-button']} key="retry" onClick={() => handleTakePicture()}>
+        <Button key="retry" onClick={() => handleTakePicture()}>
           {lang.calibration.retake}
         </Button>,
-        <Button className={styles['footer-button']} key="done" onClick={onNext} type="primary">
+        <Button key="done" onClick={onNext} type="primary">
           {hasNext ? lang.buttons.next : lang.buttons.done}
         </Button>,
       ]}

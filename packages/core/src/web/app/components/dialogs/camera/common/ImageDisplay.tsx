@@ -1,5 +1,5 @@
 import type { MutableRefObject, ReactNode, SyntheticEvent } from 'react';
-import { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
@@ -241,9 +241,7 @@ const ImageDisplay = forwardRef<HTMLDivElement, Props>(
           ref={(node) => {
             imgContainerRef.current = node;
 
-            if (outRef) {
-              (outRef as MutableRefObject<HTMLDivElement>).current = node!;
-            }
+            if (outRef) (outRef as MutableRefObject<HTMLDivElement>).current = node!;
           }}
         >
           {!img && <Spin className={styles.spin} indicator={<LoadingOutlined className={styles.spinner} spin />} />}
