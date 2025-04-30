@@ -221,7 +221,12 @@ const MonitorTask = ({ device }: Props): React.JSX.Element => {
         </Col>
         <Col md={12} span={24}>
           <div className={styles['control-buttons']}>
-            <MonitorControl isFraming={isFraming} isPromark={isPromark} setEstimateTaskTime={setEstimateTaskTime} />
+            <MonitorControl
+              handleFramingStop={handleFramingStop}
+              isFraming={isFraming}
+              isPromark={isPromark}
+              setEstimateTaskTime={setEstimateTaskTime}
+            />
           </div>
         </Col>
       </Row>
