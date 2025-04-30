@@ -12,6 +12,13 @@
   font-size: 30px;
   overflow: hidden;
 
+  @media screen and (max-width: 600px) {
+    &.web {
+      // Space for file name
+      margin-bottom: 20px;
+    }
+  }
+
   &.draggable {
     -webkit-app-region: drag;
   }
