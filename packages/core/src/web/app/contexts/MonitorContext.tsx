@@ -464,6 +464,12 @@ export class MonitorContextProvider extends React.Component<Props, State> {
       return;
     }
 
+    const errorId = error.join('_');
+
+    if (this.lastErrorId && this.lastErrorId !== errorId) {
+      this.clearErrorPopup();
+    }
+
     if (error[0] === 'DISCONNECTED') {
       if (this.lastErrorId === 'DISCONNECTED') {
         return;
@@ -473,12 +479,6 @@ export class MonitorContextProvider extends React.Component<Props, State> {
       this.lastErrorId = 'DISCONNECTED';
 
       return;
-    }
-
-    const errorId = error.join('_');
-
-    if (this.lastErrorId && this.lastErrorId !== errorId) {
-      this.clearErrorPopup();
     }
 
     if (reportStates.has(report.st_id)) {

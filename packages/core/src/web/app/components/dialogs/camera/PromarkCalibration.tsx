@@ -3,6 +3,7 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import alertCaller from '@core/app/actions/alert-caller';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import progressCaller from '@core/app/actions/progress-caller';
+import alertConstants from '@core/app/constants/alert-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import { loadCameraCalibrationTask } from '@core/helpers/device/promark/calibration';
@@ -141,6 +142,17 @@ const PromarkCalibration = ({ device: { model, serial }, onClose }: Props): Reac
         setStep(Steps.SOLVE_PNP_INSTRUCTION);
       } catch (err) {
         console.error(err);
+
+        if (err && err[1] === 'DOOR_OPENED') {
+          await deviceMaster.stop();
+          alertCaller.popUp({
+            buttonType: alertConstants.RETRY_CANCEL,
+            id: 'DOOR_OPENED',
+            message: lang.monitor.HARDWARE_ERROR_DOOR_OPENED,
+            onRetry: handleNext,
+            type: alertConstants.SHOW_POPUP_ERROR,
+          });
+        }
       } finally {
         progressCaller.popById(PROGRESS_ID);
       }

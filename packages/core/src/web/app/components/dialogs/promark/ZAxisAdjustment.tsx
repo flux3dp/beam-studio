@@ -3,7 +3,9 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ArrowDownOutlined, ArrowUpOutlined, LoadingOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Button, Flex, Modal, Spin, Tooltip } from 'antd';
 
+import alertCaller from '@core/app/actions/alert-caller';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
+import alertConstants from '@core/app/constants/alert-constants';
 import deviceConstants from '@core/app/constants/device-constants';
 import Icons from '@core/app/icons/icons';
 import UnitInput from '@core/app/widgets/UnitInput';
@@ -25,7 +27,7 @@ interface Props {
 }
 
 export const ZAxisAdjustment = ({ device, onClose }: Props): React.JSX.Element => {
-  const { global: tGlobal, promark_settings: t } = useI18n();
+  const { global: tGlobal, monitor: tMonitor, promark_settings: t } = useI18n();
   const { model } = device;
   const isInch = useMemo(() => storage.get('default-units') === 'inches', []);
   const [zAxis, setZAxis] = useState(1);
@@ -118,7 +120,20 @@ export const ZAxisAdjustment = ({ device, onClose }: Props): React.JSX.Element =
     }
 
     await uploadMarkTask();
-    await deviceMaster.doPromarkCalibration();
+    try {
+      await deviceMaster.doPromarkCalibration();
+    } catch (err) {
+      if (err && err[1] === 'DOOR_OPENED') {
+        await deviceMaster.stop();
+        alertCaller.popUp({
+          buttonType: alertConstants.RETRY_CANCEL,
+          id: 'DOOR_OPENED',
+          message: tMonitor.HARDWARE_ERROR_DOOR_OPENED,
+          onRetry: handleMark,
+          type: alertConstants.SHOW_POPUP_ERROR,
+        });
+      }
+    }
   };
 
   const handleStop = async () => {
