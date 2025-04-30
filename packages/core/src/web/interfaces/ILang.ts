@@ -1127,6 +1127,7 @@ export interface ILang {
     processing: string;
     quit: string;
     ready: string;
+    reconnecting: string;
     reset: string;
     resuming: string;
     retry: string;

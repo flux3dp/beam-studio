@@ -64,6 +64,7 @@ const {
   PAUSED_FROM_STARTING,
   PAUSING_FROM_RUNNING,
   PAUSING_FROM_STARTING,
+  RECONNECTING,
   TOOLHEAD_CHANGE,
 } = DeviceConstants.status;
 const reportStates = new Set([
@@ -76,6 +77,7 @@ const reportStates = new Set([
   FATAL,
   TOOLHEAD_CHANGE,
   COMPLETED,
+  RECONNECTING,
 ]);
 
 export interface PreviewTask {

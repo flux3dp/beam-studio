@@ -39,6 +39,7 @@ statusButtonTypeMap[DeviceConstants.status.ABORTING] = [ButtonTypes.DISABLED_STO
 statusButtonTypeMap[DeviceConstants.status.ALARM] = [ButtonTypes.STOP, ButtonTypes.DISABLED_PLAY];
 statusButtonTypeMap[DeviceConstants.status.FATAL] = [ButtonTypes.STOP, ButtonTypes.DISABLED_PLAY];
 statusButtonTypeMap[DeviceConstants.status.TOOLHEAD_CHANGE] = [ButtonTypes.STOP];
+statusButtonTypeMap[DeviceConstants.status.RECONNECTING] = [ButtonTypes.STOP, ButtonTypes.DISABLED_PAUSE];
 
 const stIdLabelMap: Record<number, string> = (() => {
   const res: Record<number, string> = {};
@@ -90,6 +91,7 @@ export default {
       PAUSED: lang.paused,
       PAUSING: lang.pausing,
       PREPARING: lang.completed,
+      RECONNECTING: lang.reconnecting,
       RESUMING: lang.starting,
       RUNNING: lang.running,
       SCANNING: lang.scanning,

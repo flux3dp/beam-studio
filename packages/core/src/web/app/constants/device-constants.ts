@@ -19,6 +19,7 @@ export default {
     PAUSING_FROM_RUNNING: 50,
     PAUSING_FROM_STARTING: 38,
     PREPARING: 68,
+    RECONNECTING: 516, // Promark special status
     RESUME_TO_RUNNING: 18,
     RESUME_TO_STARTING: 6,
     RUNNING: 16,
