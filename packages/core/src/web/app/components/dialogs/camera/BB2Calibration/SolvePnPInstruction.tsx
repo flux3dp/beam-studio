@@ -1,4 +1,5 @@
-import type React from 'react';
+import type { ReactNode } from 'react';
+import React from 'react';
 
 import useI18n from '@core/helpers/useI18n';
 
@@ -10,7 +11,7 @@ interface Props {
   onPrev: () => Promise<void> | void;
 }
 
-const SolvePnPInstruction = ({ onClose, onNext, onPrev }: Props): React.JSX.Element => {
+const SolvePnPInstruction = ({ onClose, onNext, onPrev }: Props): ReactNode => {
   const { calibration: t } = useI18n();
 
   return (
