@@ -980,6 +980,7 @@ const lang: ILang = {
     module_calibration_2w_ir: 'Infrared Module Calibration',
     module_calibration_printer: 'Printer Module Calibration',
     moving_laser_head: 'Moving the laser head...',
+    moving_platform: 'Moving the platform...',
     next: 'Next',
     no_picutre_found: '#846 Your device does not have any available raw photos for calibration. Please contact FLUX support.',
     perform_autofocus_bb2: 'Please go to the machine control panel and press AF to perform autofocus.',

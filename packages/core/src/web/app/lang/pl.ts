@@ -980,6 +980,7 @@ const lang: ILang = {
     module_calibration_2w_ir: 'Kalibracja modułu podczerwieni',
     module_calibration_printer: 'Kalibracja modułu drukarki',
     moving_laser_head: 'Przemieszczanie głowicy lasera...',
+    moving_platform: 'Przesuwanie platformy...',
     next: 'Dalej',
     no_picutre_found: '#846 Twoje urządzenie nie ma dostępnych zdjęć w formacie raw do kalibracji. Skontaktuj się z obsługą FLUX.',
     perform_autofocus_bb2: 'Proszę przejść do panelu sterowania maszyny i nacisnąć AF, aby wykonać autofokus.',

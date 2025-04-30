@@ -980,6 +980,7 @@ const lang: ILang = {
     module_calibration_2w_ir: '红外模块校准',
     module_calibration_printer: '打印机模块校准',
     moving_laser_head: '正在移动激光头...',
+    moving_platform: '正在移动平台...',
     next: '下一步',
     no_picutre_found: '#846 您的设备没有可用于校准的原始照片。请联系FLUX支持。',
     perform_autofocus_bb2: '请前往机器控制面板，按下AF以执行自动对焦。请前往机器控制面板，按下AF以执行自动对焦。',

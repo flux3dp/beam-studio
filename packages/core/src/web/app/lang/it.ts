@@ -980,6 +980,7 @@ const lang: ILang = {
     module_calibration_2w_ir: 'Calibrazione modulo a infrarossi',
     module_calibration_printer: 'Calibrazione modulo stampante',
     moving_laser_head: 'Spostamento della testa laser...',
+    moving_platform: 'Spostamento della piattaforma...',
     next: 'Avanti',
     no_picutre_found: '#846 Il tuo dispositivo non dispone di foto raw disponibili per la calibrazione. Si prega di contattare il supporto FLUX.',
     perform_autofocus_bb2: "Per favore, vai al pannello di controllo della macchina e premi AF per eseguire l'autofocus.",

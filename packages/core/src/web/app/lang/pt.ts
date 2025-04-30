@@ -980,6 +980,7 @@ const lang: ILang = {
     module_calibration_2w_ir: 'Calibração do Módulo Infravermelho',
     module_calibration_printer: 'Calibração do Módulo da Impressora',
     moving_laser_head: 'Movendo a cabeça do laser...',
+    moving_platform: 'Movendo a plataforma...',
     next: 'Próximo',
     no_picutre_found: '#846 Seu dispositivo não possui fotos brutas disponíveis para calibração. Entre em contato com o suporte da FLUX.',
     perform_autofocus_bb2: 'Por favor, vá ao painel de controle da máquina e pressione AF para realizar o foco automático.',

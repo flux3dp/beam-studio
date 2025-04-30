@@ -980,6 +980,7 @@ const lang: ILang = {
     module_calibration_2w_ir: 'Étalonnage du module infrarouge',
     module_calibration_printer: "Étalonnage du module d'impression",
     moving_laser_head: 'Déplacement de la tête laser...',
+    moving_platform: 'Déplacement de la plateforme...',
     next: 'Suivant',
     no_picutre_found: "#846 Votre appareil n'a pas de photos brutes disponibles pour l'étalonnage. Veuillez contacter le support FLUX.",
     perform_autofocus_bb2: 'Veuillez vous rendre au panneau de commande de la machine et appuyez sur AF pour effectuer la mise au point automatique.',

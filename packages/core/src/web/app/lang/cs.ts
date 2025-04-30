@@ -980,6 +980,7 @@ const lang: ILang = {
     module_calibration_2w_ir: 'Kalibrace infračerveného modulu',
     module_calibration_printer: 'Kalibrace tiskového modulu',
     moving_laser_head: 'Pohybuji laserovou hlavou...',
+    moving_platform: 'Plošina se pohybuje...',
     next: 'Další',
     no_picutre_found: '#846 Vaše zařízení nemá dostupné žádné nezpracované fotky ke kalibraci. Kontaktujte prosím podporu FLUX.',
     perform_autofocus_bb2: 'Přejděte na ovládací panel zařízení a stiskněte tlačítko AF pro automatické zaostření.',

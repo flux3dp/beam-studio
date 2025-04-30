@@ -980,6 +980,7 @@ const lang: ILang = {
     module_calibration_2w_ir: 'Hiệu chỉnh module hồng ngoại',
     module_calibration_printer: 'Hiệu chỉnh module máy in',
     moving_laser_head: 'Đang di chuyển đầu laser...',
+    moving_platform: 'Đang di chuyển bệ...',
     next: 'Tiếp',
     no_picutre_found: '#846 Thiết bị của bạn không có ảnh nguyên bản nào để hiệu chỉnh. Vui lòng liên hệ hỗ trợ FLUX.',
     perform_autofocus_bb2: 'Vui lòng đi tới bảng điều khiển máy và nhấn AF để thực hiện lấy nét tự động.',

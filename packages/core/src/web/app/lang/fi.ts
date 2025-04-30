@@ -980,6 +980,7 @@ const lang: ILang = {
     module_calibration_2w_ir: 'Infrapunamoduulin kalibrointi',
     module_calibration_printer: 'Tulostinmoduulin kalibrointi',
     moving_laser_head: 'Siirtää laserpäätä...',
+    moving_platform: 'Alustaa siirretään...',
     next: 'Seuraava',
     no_picutre_found: '#846 Laitteellasi ei ole saatavilla raakakuvia kalibrointia varten. Ota yhteyttä FLUX-tukeen.',
     perform_autofocus_bb2: 'Mene laitteen ohjauspaneeliin ja paina AF suorittaaksesi automaattitarkennuksen.',

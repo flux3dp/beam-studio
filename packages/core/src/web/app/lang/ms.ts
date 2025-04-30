@@ -980,6 +980,7 @@ const lang: ILang = {
     module_calibration_2w_ir: 'Penentukuran Modul Inframerah',
     module_calibration_printer: 'Penentukuran Modul Pencetak',
     moving_laser_head: 'Menggerakkan kepala laser...',
+    moving_platform: 'Menggerakkan platform...',
     next: 'Seterusnya',
     no_picutre_found: '#846 Peranti anda tidak mempunyai gambar mentah yang tersedia untuk kalibrasi. Sila hubungi sokongan FLUX.',
     perform_autofocus_bb2: 'Sila pergi ke panel kawalan mesin dan tekan AF untuk melakukan autofokus.',

@@ -980,6 +980,7 @@ const lang: ILang = {
     module_calibration_2w_ir: '적외선 모듈 보정',
     module_calibration_printer: '프린터 모듈 보정',
     moving_laser_head: '레이저 헤드를 이동 중...',
+    moving_platform: '플랫폼을 이동 중...',
     next: '다음',
     no_picutre_found: '#846 귀하의 장치에는 보정용으로 사용 가능한 원시 사진이 없습니다. FLUX 지원에 문의하십시오.',
     perform_autofocus_bb2: '기계 제어 패널로 가서 AF를 눌러 자동 초점을 수행하십시오.',

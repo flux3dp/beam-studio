@@ -980,6 +980,7 @@ const lang: ILang = {
     module_calibration_2w_ir: 'Infraroodmodule-calibratie',
     module_calibration_printer: 'Printermodule-calibratie',
     moving_laser_head: 'De laserhoofdkop verplaatsen...',
+    moving_platform: 'Platform wordt verplaatst...',
     next: 'Volgende',
     no_picutre_found: "#846 Uw apparaat heeft geen beschikbare ruwe foto's voor kalibratie. Neem contact op met FLUX-ondersteuning.",
     perform_autofocus_bb2: 'Ga naar het bedieningspaneel van de machine en druk op AF om de autofocus uit te voeren.',

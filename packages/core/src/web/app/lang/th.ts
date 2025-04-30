@@ -980,6 +980,7 @@ const lang: ILang = {
     module_calibration_2w_ir: 'การปรับเทียบโมดูลอินฟราเรด',
     module_calibration_printer: 'การปรับเทียบโมดูลพิมพ์',
     moving_laser_head: 'กำลังย้ายหัวเลเซอร์...',
+    moving_platform: 'กำลังเคลื่อนย้ายแพลตฟอร์ม...',
     next: 'ถัดไป',
     no_picutre_found: '#846 อุปกรณ์ของคุณไม่มีรูปถ่ายดิบที่มีสำหรับการปรับแต่ง กรุณาติดต่อ FLUX support',
     perform_autofocus_bb2: 'กรุณาไปที่แผงควบคุมเครื่องและกด AF เพื่อทำการโฟกัสอัตโนมัติ',

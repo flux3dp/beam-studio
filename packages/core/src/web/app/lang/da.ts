@@ -980,6 +980,7 @@ const lang: ILang = {
     module_calibration_2w_ir: 'Infrarødt modul kalibrering',
     module_calibration_printer: 'Printer modul kalibrering',
     moving_laser_head: 'Flytter laserhovedet...',
+    moving_platform: 'Flytter platformen...',
     next: 'Næste',
     no_picutre_found: '#846 Din enhed har ikke nogen tilgængelige rå fotos til kalibrering. Kontakt venligst FLUX support.',
     perform_autofocus_bb2: 'Gå venligst til maskinens kontrolpanel og tryk på AF for at udføre autofokus.',

@@ -980,6 +980,7 @@ const lang: ILang = {
     module_calibration_2w_ir: '紅外線模組校正',
     module_calibration_printer: '列印模組校正',
     moving_laser_head: '移動雷射頭中...',
+    moving_platform: '移動平台中...',
     next: '下一步',
     no_picutre_found: '#846 您的機器中沒有可使用的照片以用於校正，請聯繫 FLUX 客服。',
     perform_autofocus_bb2: '請前往機器控制面板並按下 AF 以執行自動對焦。',

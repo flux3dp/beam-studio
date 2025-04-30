@@ -978,6 +978,7 @@ export interface ILang {
     module_calibration_2w_ir: string;
     module_calibration_printer: string;
     moving_laser_head: string;
+    moving_platform: string;
     next: string;
     no_picutre_found: string;
     perform_autofocus_bb2: string;

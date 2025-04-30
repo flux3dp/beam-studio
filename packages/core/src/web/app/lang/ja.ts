@@ -980,6 +980,7 @@ const lang: ILang = {
     module_calibration_2w_ir: '赤外線モジュールのキャリブレーション',
     module_calibration_printer: 'プリンターモジュールのキャリブレーション',
     moving_laser_head: 'レーザーヘッドを移動中...',
+    moving_platform: 'プラットフォームを移動中...',
     next: '次へ',
     no_picutre_found: '#846 あなたのデバイスには、キャリブレーション用の利用可能な生の写真がありません。FLUXサポートにお問い合わせください。',
     perform_autofocus_bb2: '機械のコントロールパネルに移動し、AFを押してオートフォーカスを実行してください。',

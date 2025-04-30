@@ -100,7 +100,7 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
         try {
           progressCaller.openNonstopProgress({
             id: PROGRESS_ID,
-            message: 'getting platform height',
+            message: tCali.getting_plane_height,
           });
 
           const height = await getFocalDistance();
@@ -204,7 +204,7 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
             initInterestArea={interestArea}
             onBack={async () => {
               if (step === Step.SOLVE_PNP_TL_2) {
-                progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: 'Moving platform' });
+                progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: tCali.moving_platform });
                 await movePlatformRel(40);
                 progressCaller.popById(PROGRESS_ID);
               }
@@ -298,7 +298,7 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
           onClose={onClose}
           onNext={async () => {
             if (step === Step.CHECK_PNP_1) {
-              progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: 'Moving platform' });
+              progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: tCali.moving_platform });
               await movePlatformRel(-40);
 
               const dh2 = await getFocalDistance();
@@ -360,7 +360,7 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
               };
 
               await uploadJson(res, 'fisheye', 'wide-angle.json');
-              progressCaller.update(PROGRESS_ID, { message: 'Moving platform' });
+              progressCaller.update(PROGRESS_ID, { message: tCali.moving_platform });
               await movePlatformRel(40);
               alertCaller.popUp({ message: tCali.camera_parameter_saved_successfully });
             } finally {
