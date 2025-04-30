@@ -109,7 +109,7 @@ const fetchTaskCode = async (
     message: lang.beambox.bottom_right_panel.convert_text_to_path_before_export,
   });
 
-  const res = await FontFuncs.tempConvertTextToPathAmoungSvgcontent();
+  const res = await FontFuncs.tempConvertTextToPathAmongSvgContent();
 
   if (!res) {
     Progress.popById('fetch-task-code');
@@ -512,7 +512,7 @@ export default {
     thumbnailBlobURL: string;
     uploadFile: IWrappedTaskFile;
   }> => {
-    await FontFuncs.tempConvertTextToPathAmoungSvgcontent();
+    await FontFuncs.tempConvertTextToPathAmongSvgContent();
 
     const { thumbnail, thumbnailBlobURL } = await generateThumbnail();
     const uploadFile = await generateUploadFile(thumbnail, thumbnailBlobURL);

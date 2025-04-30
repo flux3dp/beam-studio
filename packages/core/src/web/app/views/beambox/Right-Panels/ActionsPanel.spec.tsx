@@ -100,6 +100,7 @@ jest.mock('@core/helpers/system-helper', () => ({
 const disassembleUse = jest.fn();
 
 jest.mock('@core/app/svgedit/operations/disassembleUse', () => disassembleUse);
+jest.mock('@core/app/svgedit/operations/delete', () => ({ deleteElements: jest.fn() }));
 
 const clearSelection = jest.fn();
 const convertToPath = jest.fn();
@@ -169,7 +170,9 @@ describe('should render correctly', () => {
   test('image', async () => {
     document.body.innerHTML = '<image id="svg_1" />';
 
-    const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_1')} />);
+    const { container, getByText } = render(
+      <ActionsPanel elem={document.getElementById('svg_1') as unknown as SVGElement} />,
+    );
 
     expect(container).toMatchSnapshot();
 
@@ -238,24 +241,31 @@ describe('should render correctly', () => {
     });
     document.body.innerHTML = '<text id="svg_1" />';
 
-    const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_1')} />);
+    const { container, getByText } = render(
+      <ActionsPanel elem={document.getElementById('svg_1') as unknown as SVGElement} />,
+    );
 
     expect(container).toMatchSnapshot();
 
-    convertTextToPath.mockResolvedValueOnce({});
+    convertTextToPath.mockResolvedValueOnce({ path: null });
     fireEvent.click(getByText(tActionPanel.convert_to_path));
     await tick();
     expect(toSelectMode).toHaveBeenCalledTimes(1);
     expect(clearSelection).toHaveBeenCalledTimes(1);
     expect(convertTextToPath).toHaveBeenCalledTimes(1);
-    expect(convertTextToPath).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'));
+    expect(convertTextToPath).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'), {
+      isSubCommand: true,
+      weldingTexts: false,
+    });
 
+    convertTextToPath.mockResolvedValueOnce({ path: null });
     fireEvent.click(getByText(tActionPanel.weld_text));
     await tick();
     expect(toSelectMode).toHaveBeenCalledTimes(2);
     expect(clearSelection).toHaveBeenCalledTimes(2);
     expect(convertTextToPath).toHaveBeenCalledTimes(2);
     expect(convertTextToPath).toHaveBeenNthCalledWith(2, document.getElementById('svg_1'), {
+      isSubCommand: true,
       weldingTexts: true,
     });
 
@@ -268,7 +278,9 @@ describe('should render correctly', () => {
   test('path', () => {
     document.body.innerHTML = '<path id="svg_1" />';
 
-    const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_1')} />);
+    const { container, getByText } = render(
+      <ActionsPanel elem={document.getElementById('svg_1') as unknown as SVGElement} />,
+    );
 
     expect(container).toMatchSnapshot();
 
@@ -287,7 +299,9 @@ describe('should render correctly', () => {
   test('rect', () => {
     document.body.innerHTML = '<rect id="svg_1" />';
 
-    const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_1')} />);
+    const { container, getByText } = render(
+      <ActionsPanel elem={document.getElementById('svg_1') as unknown as SVGElement} />,
+    );
 
     expect(container).toMatchSnapshot();
 
@@ -304,7 +318,9 @@ describe('should render correctly', () => {
   test('ellipse', () => {
     document.body.innerHTML = '<ellipse id="svg_1" />';
 
-    const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_1')} />);
+    const { container, getByText } = render(
+      <ActionsPanel elem={document.getElementById('svg_1') as unknown as SVGElement} />,
+    );
 
     expect(container).toMatchSnapshot();
 
@@ -321,7 +337,9 @@ describe('should render correctly', () => {
   test('polygon', () => {
     document.body.innerHTML = '<polygon id="svg_1" />';
 
-    const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_1')} />);
+    const { container, getByText } = render(
+      <ActionsPanel elem={document.getElementById('svg_1') as unknown as SVGElement} />,
+    );
 
     expect(container).toMatchSnapshot();
 
@@ -338,7 +356,9 @@ describe('should render correctly', () => {
   test('line', () => {
     document.body.innerHTML = '<line id="svg_1" />';
 
-    const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_1')} />);
+    const { container, getByText } = render(
+      <ActionsPanel elem={document.getElementById('svg_1') as unknown as SVGElement} />,
+    );
 
     expect(container).toMatchSnapshot();
 
@@ -355,7 +375,9 @@ describe('should render correctly', () => {
   test('use', () => {
     document.body.innerHTML = '<use id="svg_1" />';
 
-    const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_1')} />);
+    const { container, getByText } = render(
+      <ActionsPanel elem={document.getElementById('svg_1') as unknown as SVGElement} />,
+    );
 
     expect(container).toMatchSnapshot();
 
@@ -376,7 +398,9 @@ describe('should render correctly', () => {
         </g>
       `;
 
-      const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_3')} />);
+      const { container, getByText } = render(
+        <ActionsPanel elem={document.getElementById('svg_3') as unknown as SVGElement} />,
+      );
 
       expect(container).toMatchSnapshot();
 
@@ -391,7 +415,9 @@ describe('should render correctly', () => {
     test('single selection', () => {
       document.body.innerHTML = '<g id="svg_1" />';
 
-      const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_1')} />);
+      const { container, getByText } = render(
+        <ActionsPanel elem={document.getElementById('svg_1') as unknown as SVGElement} />,
+      );
 
       expect(container).toMatchSnapshot();
 
@@ -418,7 +444,9 @@ describe('should render correctly in mobile', () => {
   test('image', async () => {
     document.body.innerHTML = '<image id="svg_1" />';
 
-    const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_1')} />);
+    const { container, getByText } = render(
+      <ActionsPanel elem={document.getElementById('svg_1') as unknown as SVGElement} />,
+    );
 
     expect(container).toMatchSnapshot();
 
@@ -489,24 +517,31 @@ describe('should render correctly in mobile', () => {
     });
     document.body.innerHTML = '<text id="svg_1" />';
 
-    const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_1')} />);
+    const { container, getByText } = render(
+      <ActionsPanel elem={document.getElementById('svg_1') as unknown as SVGElement} />,
+    );
 
     expect(container).toMatchSnapshot();
 
-    convertTextToPath.mockResolvedValueOnce({});
+    convertTextToPath.mockResolvedValueOnce({ path: null });
     fireEvent.click(getByText(tActionPanel.outline));
     await tick();
     expect(toSelectMode).toHaveBeenCalledTimes(1);
     expect(clearSelection).toHaveBeenCalledTimes(1);
     expect(convertTextToPath).toHaveBeenCalledTimes(1);
-    expect(convertTextToPath).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'));
+    expect(convertTextToPath).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'), {
+      isSubCommand: true,
+      weldingTexts: false,
+    });
 
+    convertTextToPath.mockResolvedValueOnce({ path: null });
     fireEvent.click(getByText(tActionPanel.weld_text));
     await tick();
     expect(toSelectMode).toHaveBeenCalledTimes(2);
     expect(clearSelection).toHaveBeenCalledTimes(2);
     expect(convertTextToPath).toHaveBeenCalledTimes(2);
     expect(convertTextToPath).toHaveBeenNthCalledWith(2, document.getElementById('svg_1'), {
+      isSubCommand: true,
       weldingTexts: true,
     });
 
@@ -519,7 +554,9 @@ describe('should render correctly in mobile', () => {
   test('path', () => {
     document.body.innerHTML = '<path id="svg_1" />';
 
-    const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_1')} />);
+    const { container, getByText } = render(
+      <ActionsPanel elem={document.getElementById('svg_1') as unknown as SVGElement} />,
+    );
 
     expect(container).toMatchSnapshot();
 
@@ -538,7 +575,9 @@ describe('should render correctly in mobile', () => {
   test('rect', () => {
     document.body.innerHTML = '<rect id="svg_1" />';
 
-    const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_1')} />);
+    const { container, getByText } = render(
+      <ActionsPanel elem={document.getElementById('svg_1') as unknown as SVGElement} />,
+    );
 
     expect(container).toMatchSnapshot();
 
@@ -555,7 +594,9 @@ describe('should render correctly in mobile', () => {
   test('ellipse', () => {
     document.body.innerHTML = '<ellipse id="svg_1" />';
 
-    const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_1')} />);
+    const { container, getByText } = render(
+      <ActionsPanel elem={document.getElementById('svg_1') as unknown as SVGElement} />,
+    );
 
     expect(container).toMatchSnapshot();
 
@@ -572,7 +613,9 @@ describe('should render correctly in mobile', () => {
   test('polygon', () => {
     document.body.innerHTML = '<polygon id="svg_1" />';
 
-    const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_1')} />);
+    const { container, getByText } = render(
+      <ActionsPanel elem={document.getElementById('svg_1') as unknown as SVGElement} />,
+    );
 
     expect(container).toMatchSnapshot();
 
@@ -589,7 +632,9 @@ describe('should render correctly in mobile', () => {
   test('line', () => {
     document.body.innerHTML = '<line id="svg_1" />';
 
-    const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_1')} />);
+    const { container, getByText } = render(
+      <ActionsPanel elem={document.getElementById('svg_1') as unknown as SVGElement} />,
+    );
 
     expect(container).toMatchSnapshot();
 
@@ -606,7 +651,9 @@ describe('should render correctly in mobile', () => {
   test('use', () => {
     document.body.innerHTML = '<use id="svg_1" />';
 
-    const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_1')} />);
+    const { container, getByText } = render(
+      <ActionsPanel elem={document.getElementById('svg_1') as unknown as SVGElement} />,
+    );
 
     expect(container).toMatchSnapshot();
 
@@ -627,7 +674,9 @@ describe('should render correctly in mobile', () => {
         </g>
       `;
 
-      const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_3')} />);
+      const { container, getByText } = render(
+        <ActionsPanel elem={document.getElementById('svg_3') as unknown as SVGElement} />,
+      );
 
       expect(container).toMatchSnapshot();
       fireEvent.click(getByText(tActionPanel.offset));
@@ -641,7 +690,9 @@ describe('should render correctly in mobile', () => {
     test('single selection', () => {
       document.body.innerHTML = '<g id="svg_1" />';
 
-      const { container, getByText } = render(<ActionsPanel elem={document.getElementById('svg_1')} />);
+      const { container, getByText } = render(
+        <ActionsPanel elem={document.getElementById('svg_1') as unknown as SVGElement} />,
+      );
 
       expect(container).toMatchSnapshot();
       fireEvent.click(getByText(tActionPanel.array));

@@ -12,6 +12,7 @@ import useNewShortcutsScope from '@core/helpers/hooks/useNewShortcutsScope';
 import shortcuts from '@core/helpers/shortcuts';
 import { handleChangePathDataCommand } from '@core/helpers/TabPanel/handleChangePathDataCommand';
 import useI18n from '@core/helpers/useI18n';
+import type { IBatchCommand } from '@core/interfaces/IHistory';
 
 import { useHistory } from './hooks/useHistory';
 import styles from './index.module.scss';
@@ -26,13 +27,14 @@ import { removePerpendicularLineIfExist } from './utils/removePerpendicularLineI
 
 interface Props {
   bbox: DOMRect;
+  command?: IBatchCommand;
   element: SVGElement;
   onClose: () => void;
 }
 
 const PADDING = 30;
 
-function UnmemorizedTabPanel({ bbox, element, onClose }: Props): React.JSX.Element {
+function UnmemorizedTabPanel({ bbox, command, element, onClose }: Props): React.JSX.Element {
   const { tab_panel: lang } = useI18n();
   const { history, push, redo, set, undo } = useHistory({ index: 0, items: [{ pathData: [] }] });
   const [mode, setMode] = useState<'auto' | 'manual'>('manual');
@@ -74,15 +76,26 @@ function UnmemorizedTabPanel({ bbox, element, onClose }: Props): React.JSX.Eleme
     handleZoom(fitScreenDimension.scale);
     paper.view.center = new paper.Point(fitScreenDimension);
   }, [fitScreenDimension, handleZoom]);
+  const handleOnClose = useCallback(
+    (isCompleted = false) => {
+      if (!isCompleted) {
+        command?.doUnapply();
+      }
+
+      onClose();
+    },
+    [command, onClose],
+  );
   const handleComplete = useCallback(
     () =>
       pipe(
         paper.project.getItem({ name: TARGET_PATH_NAME }) as paper.CompoundPath,
         tap((item) => item.fitBounds(bbox)),
-        ({ pathData }) => handleChangePathDataCommand(element as unknown as SVGPathElement, pathData),
-        onClose,
+        ({ pathData: d }) =>
+          handleChangePathDataCommand({ d, element: element as unknown as SVGPathElement, subCommand: command }),
+        () => handleOnClose(true),
       ),
-    [bbox, element, onClose],
+    [bbox, command, element, handleOnClose],
   );
 
   const handleCutPathByGap = useCallback(() => {
@@ -229,7 +242,7 @@ function UnmemorizedTabPanel({ bbox, element, onClose }: Props): React.JSX.Eleme
   useNewShortcutsScope();
   useEffect(() => {
     const subscribedShortcuts = [
-      shortcuts.on(['Escape'], onClose, { isBlocking: true }),
+      shortcuts.on(['Escape'], () => handleOnClose(), { isBlocking: true }),
       shortcuts.on(['Fnkey+z'], handleHistoryChange('undo'), { isBlocking: true }),
       shortcuts.on(['Shift+Fnkey+z'], handleHistoryChange('redo'), { isBlocking: true }),
       shortcuts.on(['Fnkey-+', 'Fnkey-='], () => handleZoomByScale(1.2), { isBlocking: true, splitKey: '-' }),
@@ -239,19 +252,19 @@ function UnmemorizedTabPanel({ bbox, element, onClose }: Props): React.JSX.Eleme
     return () => {
       subscribedShortcuts.forEach((unsubscribe) => unsubscribe());
     };
-  }, [handleHistoryChange, handleZoomByScale, onClose]);
+  }, [handleHistoryChange, handleZoomByScale, handleOnClose]);
 
   return (
     <FullWindowPanel
       mobileTitle={lang.title}
-      onClose={onClose}
+      onClose={() => handleOnClose()}
       renderContents={() => (
         <>
           <Sider
             gap={gap}
             handleCutPathByGap={handleCutPathByGap}
             mode={mode}
-            onClose={onClose}
+            onClose={() => handleOnClose()}
             onComplete={handleComplete}
             setGap={setGap}
             setMode={setMode}

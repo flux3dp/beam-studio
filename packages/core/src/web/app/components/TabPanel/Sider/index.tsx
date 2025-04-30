@@ -80,7 +80,7 @@ function UnmemorizedSider({
                   fireOnChange
                   isInch={false}
                   key="gap"
-                  max={50}
+                  max={100}
                   min={1}
                   onChange={(value) => setGap(value!)}
                   precision={1}

@@ -10,7 +10,9 @@ import textPathEdit from '@core/app/actions/beambox/textPathEdit';
 import Dialog from '@core/app/actions/dialog-caller';
 import { textButtonTheme } from '@core/app/constants/antd-config';
 import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
+import { BatchCommand } from '@core/app/svgedit/history/history';
 import autoFit from '@core/app/svgedit/operations/autoFit';
+import { deleteElements } from '@core/app/svgedit/operations/delete';
 import disassembleUse from '@core/app/svgedit/operations/disassembleUse';
 import textActions from '@core/app/svgedit/text/textactions';
 import textEdit from '@core/app/svgedit/text/textedit';
@@ -25,6 +27,7 @@ import useForceUpdate from '@core/helpers/use-force-update';
 import useI18n from '@core/helpers/useI18n';
 import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
 import dialog from '@core/implementations/dialog';
+import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './ActionsPanel.module.scss';
@@ -49,6 +52,15 @@ interface ButtonOpts {
   mobileLabel?: string;
 }
 
+interface TabButtonOptions extends ButtonOpts {
+  convertToPath: () => Promise<ConvertPathResult>;
+}
+
+type ConvertPathResult = {
+  bbox: DOMRect;
+  command?: IBatchCommand;
+};
+
 const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
   const i18n = useI18n();
   const forceUpdate = useForceUpdate();
@@ -67,33 +79,65 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     };
     const fileBlob = await dialog.getFileFromDialog(option);
 
-    if (fileBlob) {
-      svgEditor.replaceBitmap(fileBlob, elem);
-    }
+    if (fileBlob) svgEditor.replaceBitmap(fileBlob, elem);
   };
 
-  const convertTextToPath = async (): Promise<void> => {
+  const convertSvgToPath = async (
+    element: SVGElement = elem,
+    command: IBatchCommand = new BatchCommand('convertSvgToPath'),
+  ): Promise<ConvertPathResult> => {
+    const { cmd, path } = svgCanvas.convertToPath(element, true);
+
+    svgCanvas.selectOnly([path]);
+    command.addSubCommand(cmd);
+
+    return { bbox: path.getBBox(), command };
+  };
+
+  const convertTextToPath = async (weldingTexts = false): Promise<ConvertPathResult> => {
     const isTextPath = elem.getAttribute('data-textpath-g');
     const textElem = isTextPath ? elem.querySelector('text') : elem;
 
-    if (textActions.isEditing) {
-      textActions.toSelectMode();
-    }
+    if (textActions.isEditing) textActions.toSelectMode();
 
     svgCanvas.clearSelection();
-    await FontFuncs.convertTextToPath(textElem!);
+
+    const { command, path } = await FontFuncs.convertTextToPath(textElem!, { isSubCommand: true, weldingTexts });
+
+    if (path) svgCanvas.selectOnly([path]);
+
+    return { bbox: path?.getBBox()!, command: command ?? undefined };
   };
 
-  const weldText = async (): Promise<void> => {
-    const isTextPath = elem.getAttribute('data-textpath-g');
-    const textElem = isTextPath ? elem.querySelector('text') : elem;
+  const convertUseToPath = async (): Promise<ConvertPathResult> => {
+    const command = (await disassembleUse([elem], {
+      addToHistory: false,
+      showProgress: false,
+      skipConfirm: true,
+    })) as BatchCommand;
 
-    if (textActions.isEditing) {
-      textActions.toSelectMode();
-    }
+    const group = svgCanvas.getSelectedElems()[0];
 
-    svgCanvas.clearSelection();
-    await FontFuncs.convertTextToPath(textElem!, { weldingTexts: true });
+    if (!(group instanceof SVGGElement)) return convertSvgToPath(group, command);
+
+    const head = group.childNodes[0] as SVGPathElement;
+    const pathData = Array.of<string>();
+    const toRemove = Array.of<SVGElement>();
+
+    group.childNodes.forEach((child, index) => {
+      pathData.push((child as SVGPathElement).getAttribute('d')!);
+
+      if (index !== 0) toRemove.push(child as SVGElement);
+    });
+
+    command.addSubCommand(deleteElements(toRemove, true));
+
+    head.setAttribute('d', pathData.join(' '));
+    head.removeAttribute('data-next-sibling');
+
+    svgCanvas.selectOnly([head]);
+
+    return { bbox: head.getBBox(), command };
   };
 
   const renderButtons = useCallback(
@@ -175,26 +219,45 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       { isFullLine: true, ...opts },
     );
 
-  const renderTabButton = (opts: ButtonOpts = {}): React.JSX.Element =>
-    renderButtons(
+  const renderTabButton = (
+    { convertToPath, ...options }: TabButtonOptions = {
+      convertToPath: convertSvgToPath,
+    },
+  ): React.JSX.Element => {
+    const isDisabled = match(elem.getAttribute('fill'))
+      // 'none' for SVG elements
+      // 'nullish' for use elements
+      .with(P.union('none', P.nullish), () => false)
+      .otherwise(() => true);
+
+    return renderButtons(
       'tab',
       tab,
-      () => {
-        const bbox = (elem as SVGSVGElement).getBBox();
+      async () => {
+        let bbox = (elem as SVGSVGElement).getBBox();
+        let command: IBatchCommand | undefined;
 
         // Convert to path if it's not a path
         if (!(elem instanceof SVGPathElement)) {
-          const { path } = svgCanvas.convertToPath(elem as SVGElement);
+          const { bbox: newBbox, command: subCommand } = await convertToPath();
 
-          svgCanvas.selectOnly([path]);
+          bbox = newBbox;
+          command = subCommand;
         }
 
-        Dialog.showTabPanel({ bbox, onClose: () => {} });
+        Dialog.showTabPanel({
+          bbox,
+          command,
+          onClose: () => {
+            svgCanvas.clearSelection();
+          },
+        });
       },
       <ActionPanelIcons.Tab />,
       <ActionPanelIcons.Tab />,
-      { isDisabled: elem.getAttribute('fill') !== 'none', isFullLine: true, ...opts },
+      { isDisabled, isFullLine: true, ...options },
     );
+  };
 
   const renderImageActions = (): React.JSX.Element[] => {
     const isShading = elem.getAttribute('data-shading') === 'true';
@@ -329,11 +392,17 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
   const renderTextActions = (): React.JSX.Element[] => [
     renderAutoFitButton(),
     renderConvertToPathButton({ isText: true }),
-    renderButtons('weld', lang.weld_text, weldText, <ActionPanelIcons.WeldText />, <ActionPanelIcons.WeldText />, {
-      isFullLine: true,
-    }),
+    renderButtons(
+      'weld',
+      lang.weld_text,
+      () => convertTextToPath(true),
+      <ActionPanelIcons.WeldText />,
+      <ActionPanelIcons.WeldText />,
+      { isFullLine: true },
+    ),
     renderSmartNestButton(),
     renderArrayButton({ isFullLine: true }),
+    renderTabButton({ convertToPath: convertTextToPath }),
   ];
 
   const renderTextPathActions = (): React.JSX.Element[] => [
@@ -417,6 +486,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     ),
     renderSmartNestButton(),
     renderArrayButton({ isFullLine: true }),
+    renderTabButton({ convertToPath: convertUseToPath }),
   ];
 
   const renderGroupActions = (): React.JSX.Element[] => [
@@ -492,9 +562,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       forceUpdate();
     });
 
-    if (elem) {
-      observer.observe(elem, { attributeFilter: ['fill'] });
-    }
+    if (elem) observer.observe(elem, { attributeFilter: ['fill'] });
 
     return () => observer.disconnect(); // Cleanup
   }, [elem, forceUpdate]);

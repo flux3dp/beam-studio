@@ -13,56 +13,88 @@ type CutPathOptions = {
   width?: number;
 };
 
-/**
- * Creates a single dash segment from a cloned path.
- *
- * @param originalPath - The original path to clone from.
- * @param startOffset - The starting offset on the original path for the dash.
- * @param endOffset - The ending offset on the original path for the dash.
- * @param totalLength - The total length of the original path.
- * @param gap - The length of the dash.
- * @param width - The length of the space after the dash.
- * @returns The created dash Path item.
- */
-function createDash(
-  path: paper.Path,
-  start: number,
-  end: number,
-  totalLength: number,
-  gap: number,
-  width: number,
-): paper.Path {
-  const cloned = path.clone({ insert: false });
+function createDash(path: paper.Path, start: number, end: number): null | paper.Path {
+  const tolerance = 1e-9;
 
-  // if the dashEnd is near the end of the path, we don't need to split
-  if (totalLength - end > width) cloned.splitAt(end);
-
-  return cloned.splitAt(start);
-}
-
-function appendDashSegments(path: paper.Path, gap: number, width: number, minSegmentLength: number) {
-  const totalLength = path.length;
-  // initial position is -gap to ensure the first dash starts at 0
-  let currentPosition = -gap;
-
-  if (totalLength < minSegmentLength) return false;
-
-  while (currentPosition < totalLength) {
-    const dashEnd = Math.min(currentPosition + gap, totalLength);
-    const segmentLength = dashEnd - currentPosition;
-
-    // only split if it meets minimum length
-    if (segmentLength >= minSegmentLength) {
-      const dash = createDash(path, currentPosition, dashEnd, totalLength, gap, width);
-
-      if (dash?.length) path.parent?.addChild(dash);
-      else dash?.remove();
-    }
-
-    currentPosition = Math.min(dashEnd + width, totalLength);
+  // Skip if the start/end are out of bounds or the length is too small
+  if (start < -tolerance || end > path.length + tolerance || end - start < tolerance) {
+    return null;
   }
 
-  return true;
+  const validStart = Math.max(0, start);
+  const validEnd = Math.min(path.length, end);
+
+  if (validEnd - validStart < tolerance) return null;
+
+  const cloned = path.clone({ insert: false });
+
+  if (validEnd < path.length - tolerance) cloned.splitAt(validEnd);
+
+  return validStart > tolerance ? cloned.splitAt(validStart) : cloned;
+}
+
+/**
+ * Appends dash segments to the parent of a given path, replacing the original path.
+ *
+ * @param path - The original path to create dashes from.
+ * @param gap - The desired length of the dash segments.
+ * @param width - The desired length of the space between dashes.
+ * @param minSegmentLength - The minimum length a dash segment must have to be created, *unless* it's the final segment reaching the end.
+ * @returns True if dashing was attempted, false otherwise.
+ */
+function appendDashSegments(path: paper.Path, gap: number, width: number, minSegmentLength: number): boolean {
+  const totalLength = path.length;
+  const tolerance = 1e-9; // Small tolerance for floating point comparisons
+  let currentPosition = -gap; // Initialize to -gap to start the first dash at 0
+  let segmentCreated = false; // Flag to track if any segment was added
+
+  // Cannot dash a zero-length path or with zero/negative gap length
+  if (totalLength <= tolerance || gap <= tolerance) return segmentCreated;
+
+  while (currentPosition < totalLength - tolerance) {
+    const dashEnd = Math.min(currentPosition + gap, totalLength);
+    let segmentLength = dashEnd - currentPosition;
+
+    // Avoid issues with tiny negative lengths due to float precision near the end
+    if (segmentLength < tolerance) segmentLength = 0;
+
+    // Determine if this segment reaches the very end of the path
+    const isLastPotentialSegment = Math.abs(dashEnd - totalLength) < tolerance;
+
+    // Create the dash if:
+    // 1. Its length is >= minSegmentLength OR
+    // 2. It's the very last segment reaching the end (and has some length)
+    if (segmentLength >= minSegmentLength || (isLastPotentialSegment && segmentLength > tolerance)) {
+      // Ensure createDash can handle start/end precisely (use the corrected version)
+      const dash = createDash(path, currentPosition, dashEnd);
+
+      // Add the dash only if it's valid and has a length greater than the tolerance
+      if (dash && dash.length > tolerance) {
+        path.parent?.addChild(dash);
+        segmentCreated = true;
+      } else {
+        // Clean up null/empty dash object
+        dash?.remove();
+      }
+    }
+
+    // Update position for the start of the next dash
+    currentPosition = dashEnd + width;
+
+    // Safety break for zero/negative width to prevent infinite loop if no progress
+    if (width <= tolerance && segmentLength <= tolerance) {
+      console.warn('Potential infinite loop detected: gap and width might be too small or zero.');
+      break;
+    }
+  }
+
+  // Only remove if dashes were actually added
+  if (segmentCreated) {
+    path.remove();
+  }
+
+  // Return true if at least one dash was made
+  return segmentCreated;
 }
 
 function processPath(path: paper.Path, gap: number, width: number, minSegmentLength: number) {
@@ -70,15 +102,7 @@ function processPath(path: paper.Path, gap: number, width: number, minSegmentLen
     // if the path is closed, split it at the start to ensure we can cut it
     if (path.closed) path.splitAt(0);
 
-    const result = appendDashSegments(path, gap, width, minSegmentLength);
-
-    if (!result) {
-      console.log(`Path is too short to be cut: `, path);
-
-      return;
-    }
-
-    path.remove();
+    appendDashSegments(path, gap, width, minSegmentLength);
   } catch (error) {
     console.error('Error processing path:', error);
   }

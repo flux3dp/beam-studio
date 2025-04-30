@@ -208,7 +208,7 @@ const fetchTaskCodeSwiftray = async (
   });
 
   // Convert text to path
-  const res = await FontFuncs.tempConvertTextToPathAmoungSvgcontent();
+  const res = await FontFuncs.tempConvertTextToPathAmongSvgContent();
 
   if (!res) {
     Progress.popById('fetch-task-code');
@@ -366,7 +366,7 @@ const fetchFraming = async (): Promise<boolean> => {
   });
 
   // Convert text to path
-  const res = await FontFuncs.tempConvertTextToPathAmoungSvgcontent();
+  const res = await FontFuncs.tempConvertTextToPathAmongSvgContent();
 
   if (!res) {
     Progress.popById('upload-scene');

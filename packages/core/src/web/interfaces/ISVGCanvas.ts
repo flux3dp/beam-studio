@@ -106,6 +106,7 @@ export default interface ISVGCanvas {
   getRubberBox: () => SVGRectElement;
   getSelectedElementsAlignPoints: () => IPoint[];
   getSelectedElems: (ungroupTempGroup?: boolean) => SVGElement[];
+  getSelectedWithoutTempGroup: () => SVGElement[];
   getStarted: () => boolean;
   getStartTransform: () => any;
   getStrokedBBox(elems: Element[]): IRect;

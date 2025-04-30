@@ -3,13 +3,14 @@ import selector from '@core/app/svgedit/selector';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 const { svgedit } = window;
 
-let svgCanvas;
+let svgCanvas: ISVGCanvas;
 
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
+getSVGAsync(({ Canvas }) => {
+  svgCanvas = Canvas;
 });
 
 /**
@@ -23,7 +24,7 @@ export const deleteUseRef = (
   opts?: { addToHistory?: boolean; parentCmd?: IBatchCommand },
 ): { cmd: IBatchCommand } => {
   const refId = svgCanvas.getHref(use);
-  const svgcontent = document.getElementById('svgcontent');
+  const svgcontent = document.getElementById('svgcontent')!;
   const isReferred = svgcontent.querySelector(`use[*|href="${refId}"]`);
   const batchCmd = new history.BatchCommand(`Delete Use ${use.id} Ref`);
   const { addToHistory = true, parentCmd } = opts || {};
@@ -35,8 +36,8 @@ export const deleteUseRef = (
     if (refElement) {
       let { nextSibling, parentNode } = refElement;
 
-      parentNode.removeChild(refElement);
-      batchCmd.addSubCommand(new history.RemoveElementCommand(refElement, nextSibling, parentNode));
+      parentNode?.removeChild(refElement);
+      batchCmd.addSubCommand(new history.RemoveElementCommand(refElement, nextSibling!, parentNode!));
 
       const relatedIds = [refElement.getAttribute('data-image-symbol'), refElement.getAttribute('data-origin-symbol')];
 
@@ -45,8 +46,8 @@ export const deleteUseRef = (
 
         if (element) {
           ({ nextSibling, parentNode } = element);
-          parentNode.removeChild(element);
-          batchCmd.addSubCommand(new history.RemoveElementCommand(element, nextSibling, parentNode));
+          parentNode?.removeChild(element);
+          batchCmd.addSubCommand(new history.RemoveElementCommand(element, nextSibling!, parentNode!));
         }
       });
     }
@@ -68,9 +69,7 @@ export const deleteElements = (elems: Element[], isSub = false): IBatchCommand =
   const batchCmd = new history.BatchCommand('Delete Elements');
   const deletedElems = [];
 
-  for (let i = 0; i < elems.length; i += 1) {
-    const elem = elems[i];
-
+  for (const elem of elems) {
     if (!elem) {
       break;
     }
@@ -78,7 +77,6 @@ export const deleteElements = (elems: Element[], isSub = false): IBatchCommand =
     // this will unselect the element and remove the selectedOutline
     selectorManager.releaseSelector(elem);
     // Remove the path if present.
-
     svgedit.path.removePath_(elem.id);
 
     let parent = elem.parentNode as Element;
@@ -97,7 +95,7 @@ export const deleteElements = (elems: Element[], isSub = false): IBatchCommand =
     } else {
       parent.removeChild(elemToRemove);
       deletedElems.push(elem); // for the copy
-      batchCmd.addSubCommand(new history.RemoveElementCommand(elemToRemove, nextSibling, parent));
+      batchCmd.addSubCommand(new history.RemoveElementCommand(elemToRemove, nextSibling!, parent));
     }
 
     if (elem.tagName === 'use') {

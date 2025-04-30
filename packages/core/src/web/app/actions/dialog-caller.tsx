@@ -54,6 +54,7 @@ import type { ChipSettings } from '@core/interfaces/Cartridge';
 import type { IAnnouncement } from '@core/interfaces/IAnnouncement';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type { IDialogBoxStyle, IInputLightBox, IPrompt } from '@core/interfaces/IDialog';
+import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { IMediaTutorial, ITutorial } from '@core/interfaces/ITutorial';
 
@@ -710,7 +711,7 @@ export default {
     addDialogComponent('svg-nest', <SvgNestButtons onClose={() => popDialogById('svg-nest')} />);
   },
   showTabPanel: (
-    { bbox, onClose }: { bbox: DOMRect; onClose: () => void } = {
+    { bbox, command, onClose }: { bbox: DOMRect; command?: IBatchCommand; onClose: () => void } = {
       bbox: new DOMRect(0, 0, 0, 0),
       onClose: () => {},
     },
@@ -731,6 +732,7 @@ export default {
       'tab-panel',
       <TabPanel
         bbox={bbox}
+        command={command}
         element={element}
         onClose={() => {
           onClose();
