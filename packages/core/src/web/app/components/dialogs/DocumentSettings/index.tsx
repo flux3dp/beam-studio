@@ -98,6 +98,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const [passThrough, setPassThrough] = useState(BeamboxPreference.read('pass-through'));
   const [autoFeeder, setAutoFeeder] = useState(BeamboxPreference.read('auto-feeder'));
   const [autoFeederScale, setAutoFeederScale] = useState(BeamboxPreference.read('auto-feeder-scale'));
+  const [checkSafetyDoor, setCheckSafetyDoor] = useState(BeamboxPreference.read('promark-safety-door'));
 
   const isInch = useMemo(() => storage.get('default-units') === 'inches', []);
   const workareaObj = useMemo(() => getWorkarea(workarea), [workarea]);
@@ -234,6 +235,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
       setPromarkInfo(pmInfo);
       BeamboxPreference.write('promark-start-button', enableStartButton);
       BeamboxPreference.write('frame-before-start', shouldFrame);
+      BeamboxPreference.write('promark-safety-door', checkSafetyDoor);
     }
 
     presprayArea.togglePresprayArea();
@@ -422,33 +424,51 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
         </div>
         <div className={styles.modules}>
           {isPromark && (
-            <div className={classNames(styles.row, styles.full)}>
-              <div className={styles.title}>
-                <label htmlFor="start_button">{tDocu.start_work_button}</label>
-              </div>
-              <div className={styles.control}>
-                <Switch
-                  checked={enableStartButton}
-                  className={styles.switch}
-                  id="start_button"
-                  onChange={setEnableStartButton}
-                />
-                {enableStartButton && (
-                  <div className={styles.subCheckbox}>
-                    <div>
-                      <Checkbox
-                        checked={shouldFrame}
-                        id="frame_before_start"
-                        onChange={(e) => setShouldFrame(e.target.checked)}
-                      >
-                        {tDocu.frame_before_start}
-                      </Checkbox>
-                      <QuestionCircleOutlined onClick={() => browser.open(tDocu.frame_before_start_url)} />
+            <>
+              <div className={classNames(styles.row, styles.full)}>
+                <div className={styles.title}>
+                  <label htmlFor="start_button">{tDocu.start_work_button}</label>
+                </div>
+                <div className={styles.control}>
+                  <Switch
+                    checked={enableStartButton}
+                    className={styles.switch}
+                    id="start_button"
+                    onChange={setEnableStartButton}
+                  />
+                  {enableStartButton && (
+                    <div className={styles.subCheckbox}>
+                      <div>
+                        <Checkbox
+                          checked={shouldFrame}
+                          id="frame_before_start"
+                          onChange={(e) => setShouldFrame(e.target.checked)}
+                        >
+                          {tDocu.frame_before_start}
+                        </Checkbox>
+                        <QuestionCircleOutlined onClick={() => browser.open(tDocu.frame_before_start_url)} />
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
-            </div>
+              <div className={styles.row}>
+                <div className={styles.title}>
+                  <label htmlFor="door_protect">{tDocu.door_protect}</label>
+                </div>
+                <div className={styles.control}>
+                  <Switch
+                    checked={checkSafetyDoor}
+                    className={styles.switch}
+                    id="door_protect"
+                    onChange={setCheckSafetyDoor}
+                  />
+                  <Tooltip title={tDocu.door_protect_desc}>
+                    <QuestionCircleOutlined />
+                  </Tooltip>
+                </div>
+              </div>
+            </>
           )}
           {addOnInfo.rotary && (
             <div className={classNames(styles.row, styles.full)}>

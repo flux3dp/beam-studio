@@ -97,6 +97,8 @@ export interface ILang {
       current_position: string;
       disable: string;
       document_settings: string;
+      door_protect: string;
+      door_protect_desc: string;
       enable: string;
       enable_autofocus: string;
       enable_diode: string;
@@ -1127,6 +1129,7 @@ export interface ILang {
     processing: string;
     quit: string;
     ready: string;
+    reconnecting: string;
     reset: string;
     resuming: string;
     retry: string;

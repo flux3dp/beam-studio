@@ -226,15 +226,18 @@ describe('test DocumentSettings', () => {
     fireEvent.click(baseElement.querySelector('input#frame_before_start'));
     fireEvent.click(baseElement.querySelector('.anticon-question-circle'));
     expect(mockOpen).toHaveBeenCalledTimes(1);
+    expect(baseElement.querySelector('button#door_protect')).toBeInTheDocument();
+    act(() => fireEvent.click(baseElement.querySelector('button#door_protect')));
 
     expect(baseElement).toMatchSnapshot();
     fireEvent.click(getByText('Save'));
-    expect(mockBeamboxPreferenceWrite).toHaveBeenCalledTimes(12);
+    expect(mockBeamboxPreferenceWrite).toHaveBeenCalledTimes(13);
     expect(mockBeamboxPreferenceWrite).toHaveBeenCalledWith('customized-dimension', {
       fpm1: { height: 110, width: 110 },
     });
     expect(mockBeamboxPreferenceWrite).toHaveBeenCalledWith('promark-start-button', true);
     expect(mockBeamboxPreferenceWrite).toHaveBeenCalledWith('frame-before-start', true);
+    expect(mockBeamboxPreferenceWrite).toHaveBeenCalledWith('promark-safety-door', true);
     expect(mockSetPromarkInfo).toHaveBeenCalledTimes(1);
     expect(mockSetPromarkInfo).toHaveBeenLastCalledWith({ laserType: LaserType.MOPA, watt: 60 });
   });

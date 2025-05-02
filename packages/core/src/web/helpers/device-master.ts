@@ -716,13 +716,18 @@ class DeviceMaster {
   // Calibration and Machine test functions
   async waitTillStatusPredicate({
     onProgress,
-    predicate = (status) => status === 64,
+    predicate = (status) => status === DeviceConstants.status.COMPLETED,
   }: {
     onProgress?: (progress: number) => void;
     predicate?: (status: number) => boolean;
   }) {
     return new Promise((resolve, reject) => {
-      const otherStatus = [36, 48, 64, 128].filter((s) => predicate(s));
+      const otherStatus = [
+        DeviceConstants.status.ABORTED,
+        DeviceConstants.status.COMPLETED,
+        DeviceConstants.status.PAUSED_FROM_RUNNING,
+        DeviceConstants.status.PAUSED_FROM_STARTING,
+      ].filter((s) => !predicate(s));
       let statusChanged = false;
 
       const statusCheckInterval = setInterval(async () => {
@@ -744,10 +749,10 @@ class DeviceMaster {
           // Error occurred
           clearInterval(statusCheckInterval);
           reject(error);
-        } else if (stId === 128) {
+        } else if (stId === DeviceConstants.status.ABORTED) {
           clearInterval(statusCheckInterval);
           reject(error);
-        } else if (stId === 0) {
+        } else if (stId === DeviceConstants.status.IDLE) {
           // Resolve if the status was running and some how skipped the completed part
           if (statusChanged) {
             clearInterval(statusCheckInterval);
@@ -1614,7 +1619,7 @@ class DeviceMaster {
   }
 
   public adjustZAxis = async (z: number) => {
-    const blob: Blob = new Blob([`M3\nM102\nZ${z}\nM2\n`]);
+    const blob: Blob = new Blob([`M103\nM3\nM102\nZ${z}\nM2\n`]);
 
     await this.go(blob);
   };

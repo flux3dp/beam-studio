@@ -3,7 +3,9 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { LoadingOutlined } from '@ant-design/icons';
 import { Button, Flex, Modal, Spin } from 'antd';
 
+import alertCaller from '@core/app/actions/alert-caller';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
+import alertConstants from '@core/app/constants/alert-constants';
 import { defaultField, defaultGalvoParameters, defaultRedLight } from '@core/app/constants/promark-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import icons from '@core/app/icons/icons';
@@ -33,7 +35,7 @@ interface Props {
 }
 
 const PromarkSettings = ({ device, initData, onClose }: Props): React.JSX.Element => {
-  const { global: tGlobal, promark_settings: t } = useI18n();
+  const { global: tGlobal, monitor: tMonitor, promark_settings: t } = useI18n();
   const { model, serial } = device;
   const isInch = useMemo(() => storage.get('default-units') === 'inches', []);
   const [field, setField] = useState<Field>(initData.field || defaultField);
@@ -116,7 +118,20 @@ const PromarkSettings = ({ device, initData, onClose }: Props): React.JSX.Elemen
 
     await uploadMarkTask();
     await handleUpdateParameter();
-    await deviceMaster.doPromarkCalibration();
+    try {
+      await deviceMaster.doPromarkCalibration();
+    } catch (err) {
+      if (err && err[1] === 'DOOR_OPENED') {
+        await deviceMaster.stop();
+        alertCaller.popUp({
+          buttonType: alertConstants.RETRY_CANCEL,
+          id: 'DOOR_OPENED',
+          message: tMonitor.HARDWARE_ERROR_DOOR_OPENED,
+          onRetry: handleMark,
+          type: alertConstants.SHOW_POPUP_ERROR,
+        });
+      }
+    }
   };
 
   const handleSave = async () => {

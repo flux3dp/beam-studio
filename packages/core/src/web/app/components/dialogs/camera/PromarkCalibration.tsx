@@ -3,11 +3,14 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import alertCaller from '@core/app/actions/alert-caller';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import progressCaller from '@core/app/actions/progress-caller';
+import alertConstants from '@core/app/constants/alert-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import checkDeviceStatus from '@core/helpers/check-device-status';
+import checkCamera from '@core/helpers/device/check-camera';
 import { loadCameraCalibrationTask } from '@core/helpers/device/promark/calibration';
 import promarkDataStore from '@core/helpers/device/promark/promark-data-store';
 import deviceMaster from '@core/helpers/device-master';
+import i18n from '@core/helpers/i18n';
 import useI18n from '@core/helpers/useI18n';
 import dialog from '@core/implementations/dialog';
 import type { FisheyeCameraParametersV3, FisheyeCameraParametersV3Cali } from '@core/interfaces/FisheyePreview';
@@ -141,6 +144,17 @@ const PromarkCalibration = ({ device: { model, serial }, onClose }: Props): Reac
         setStep(Steps.SOLVE_PNP_INSTRUCTION);
       } catch (err) {
         console.error(err);
+
+        if (err && err[1] === 'DOOR_OPENED') {
+          await deviceMaster.stop();
+          alertCaller.popUp({
+            buttonType: alertConstants.RETRY_CANCEL,
+            id: 'DOOR_OPENED',
+            message: lang.monitor.HARDWARE_ERROR_DOOR_OPENED,
+            onRetry: handleNext,
+            type: alertConstants.SHOW_POPUP_ERROR,
+          });
+        }
       } finally {
         progressCaller.popById(PROGRESS_ID);
       }
@@ -221,12 +235,24 @@ const PromarkCalibration = ({ device: { model, serial }, onClose }: Props): Reac
   return <></>;
 };
 
-export const showPromarkCalibration = (device: IDeviceInfo): Promise<boolean> => {
+export const showPromarkCalibration = async (device: IDeviceInfo): Promise<boolean> => {
   const id = 'promark-calibration';
   const onClose = () => popDialogById(id);
 
   if (isIdExist(id)) {
     onClose();
+  }
+
+  const cameraStatus = await checkCamera(device);
+
+  if (!cameraStatus) {
+    alertCaller.popUp({
+      caption: i18n.lang.alert.oops,
+      message: i18n.lang.web_cam.no_device,
+      messageIcon: 'warning',
+    });
+
+    return false;
   }
 
   return new Promise<boolean>((resolve) => {

@@ -13,7 +13,7 @@ const Progress = ({ data }: { data: IProgressDialog }): React.JSX.Element => {
   const lang = useI18n();
   const isMobile = useIsMobile();
   const { popById } = useContext(AlertProgressContext);
-  const { caption, id, key, message, onCancel, percentage, timeout } = data;
+  const { caption, id, key, message, onCancel, percentage, progressKey, timeout } = data;
 
   useEffect(() => {
     if (timeout) {
@@ -52,6 +52,7 @@ const Progress = ({ data }: { data: IProgressDialog }): React.JSX.Element => {
       {renderMessage()}
       <AntdProgress
         className={styles.progress}
+        key={progressKey}
         percent={Number(Number(percentage).toFixed(2))}
         status="active"
         strokeColor={{ '0%': '#108ee9', '100%': '#87d068' }}
