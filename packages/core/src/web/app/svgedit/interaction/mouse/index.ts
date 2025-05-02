@@ -1142,7 +1142,7 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
           Math.hypot(mouseX - startMouseX, mouseY - startMouseY) < 1
         ) {
           // in touchable mobile, if almost not moved, select mousedown element
-          selectedElements = [tempJustSelected!];
+          selectedElements = [tempJustSelected].filter(Boolean);
         } else {
           const intersectedElements = svgCanvas.getIntersectionList().filter((elem) => {
             const layer = LayerHelper.getObjectLayer(elem);
