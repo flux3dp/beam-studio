@@ -100,6 +100,7 @@ const lang: ILang = {
       disable: 'Απενεργοποίηση',
       document_settings: 'Ρυθμίσεις εγγράφου',
       door_protect: 'Προστασία πόρτας',
+      door_protect_desc: 'Διαθέσιμο μόνο με το Promark Safe+.',
       enable: 'Ενεργοποίηση',
       enable_autofocus: 'Αυτόματη εστίαση',
       enable_diode: 'Λέιζερ διόδου',

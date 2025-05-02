@@ -100,6 +100,7 @@ const lang: ILang = {
       disable: 'Zakázat',
       document_settings: 'Nastavení dokumentu',
       door_protect: 'Ochrana dveří',
+      door_protect_desc: 'Dostupné pouze s Promark Safe+.',
       enable: 'Povolit',
       enable_autofocus: 'Autofokus',
       enable_diode: 'Diodový laser',

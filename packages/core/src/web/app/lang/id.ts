@@ -100,6 +100,7 @@ const lang: ILang = {
       disable: 'Nonaktifkan',
       document_settings: 'Pengaturan Dokumen',
       door_protect: 'Perlindungan pintu',
+      door_protect_desc: 'Tersedia hanya dengan Promark Safe+.',
       enable: 'Aktifkan',
       enable_autofocus: 'Autofokus',
       enable_diode: 'Laser Diode',

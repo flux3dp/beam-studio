@@ -100,6 +100,7 @@ const lang: ILang = {
       disable: '無効',
       document_settings: 'ドキュメント設定',
       door_protect: '安全ドア保護',
+      door_protect_desc: 'Promark Safe+ のみで利用可能です。',
       enable: '有効',
       enable_autofocus: 'オートフォーカス',
       enable_diode: 'ダイオードレーザー',

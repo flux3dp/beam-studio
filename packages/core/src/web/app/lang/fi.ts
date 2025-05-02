@@ -100,6 +100,7 @@ const lang: ILang = {
       disable: 'Poista käytöstä',
       document_settings: 'Asiakirjan asetukset',
       door_protect: 'Oven suojaus',
+      door_protect_desc: 'Saatavilla vain Promark Safe+:n kanssa.',
       enable: 'Ota käyttöön',
       enable_autofocus: 'Autofokus',
       enable_diode: 'Diodilaser',

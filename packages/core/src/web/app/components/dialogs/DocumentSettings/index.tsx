@@ -463,6 +463,9 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                     id="door_protect"
                     onChange={setCheckSafetyDoor}
                   />
+                  <Tooltip title={tDocu.door_protect_desc}>
+                    <QuestionCircleOutlined />
+                  </Tooltip>
                 </div>
               </div>
             </>

@@ -100,6 +100,7 @@ const lang: ILang = {
       disable: 'Tắt',
       document_settings: 'Cài đặt tài liệu',
       door_protect: 'Bảo vệ cửa',
+      door_protect_desc: 'Chỉ có sẵn với Promark Safe+.',
       enable: 'Bật',
       enable_autofocus: 'Tự động lấy nét',
       enable_diode: 'Laser điốt',

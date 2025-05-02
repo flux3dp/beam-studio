@@ -100,6 +100,7 @@ const lang: ILang = {
       disable: 'ปิดใช้งาน',
       document_settings: 'การตั้งค่าเอกสาร',
       door_protect: 'การป้องกันประตู',
+      door_protect_desc: 'สามารถใช้งานได้เฉพาะกับ Promark Safe+ เท่านั้น',
       enable: 'เปิดใช้งาน',
       enable_autofocus: 'โฟกัสอัตโนมัติ',
       enable_diode: 'เลเซอร์ไดโอด',

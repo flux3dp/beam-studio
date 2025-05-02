@@ -100,6 +100,7 @@ const lang: ILang = {
       disable: 'Deaktiver',
       document_settings: 'Dokumentinnstillinger',
       door_protect: 'Dørbeskyttelse',
+      door_protect_desc: 'Kun tilgjengelig med Promark Safe+.',
       enable: 'Aktiver',
       enable_autofocus: 'Autofokus',
       enable_diode: 'Diode-laser',

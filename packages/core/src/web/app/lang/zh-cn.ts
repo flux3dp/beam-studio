@@ -100,6 +100,7 @@ const lang: ILang = {
       disable: '关闭',
       document_settings: '文件设定',
       door_protect: '安全保护门',
+      door_protect_desc: '仅适用于 Promark Safe+。',
       enable: '啟用',
       enable_autofocus: '自动对焦',
       enable_diode: '二极管激光',
