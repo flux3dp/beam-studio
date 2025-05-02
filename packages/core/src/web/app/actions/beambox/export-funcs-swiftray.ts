@@ -176,6 +176,7 @@ const getTaskCode = (codeType: 'fcode' | 'gcode' | 'preview', taskOptions) =>
           Progress.update('fetch-task', {
             message: data.message,
             percentage: data.percentage * 100,
+            progressKey: data.message,
           });
         },
       },
