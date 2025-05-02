@@ -1,7 +1,12 @@
 .container {
-  .step {
+  .steps {
     margin: none;
     white-space: pre-line;
+
+    .sub {
+      list-style-type: disc;
+      padding-left: 1em;
+    }
   }
 
   .video {

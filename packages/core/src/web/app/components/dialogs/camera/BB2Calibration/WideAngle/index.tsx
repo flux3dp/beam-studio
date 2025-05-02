@@ -10,12 +10,14 @@ import getFocalDistance from '@core/helpers/device/camera/getFocalDistance';
 import { loadJson, uploadJson } from '@core/helpers/device/jsonDataHelper';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
+import dialog from '@core/implementations/dialog';
 import type {
   FisheyeCameraParametersV4,
   FisheyeCameraParametersV4Cali,
   WideAngleRegion,
 } from '@core/interfaces/FisheyePreview';
 
+import styles from '../../Calibration.module.scss';
 import CheckPnP from '../../common/CheckPnP';
 import CheckpointData from '../../common/CheckpointData';
 import Instruction from '../../common/Instruction';
@@ -33,6 +35,7 @@ import ChArUco from './ChArUco';
 
 const enum Step {
   CHECK_DATA,
+  PREPARE_MATERIALS,
   CALIBRATE_CHARUCO,
   PUT_PAPER,
   SOLVE_PNP_INSTRUCTION,
@@ -82,14 +85,54 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
           onClose={handleClose}
           onNext={(res: boolean) => {
             if (res) setStep(Step.PUT_PAPER);
-            else setStep(Step.CALIBRATE_CHARUCO);
+            else setStep(Step.PREPARE_MATERIALS);
           }}
           updateParam={updateParam}
         />
       );
     })
+    .with(Step.PREPARE_MATERIALS, () => {
+      const handleDownload = () => {
+        dialog.writeFileDialog(
+          async () => {
+            const resp = await fetch('assets/charuco-15-10.pdf');
+            const blob = await resp.blob();
+
+            return blob;
+          },
+          tCali.download_calibration_pattern,
+          'Calibration Pattern',
+          [
+            {
+              extensions: ['pdf'],
+              name: window.os === 'MacOS' ? 'PDF (*.pdf)' : 'PDF',
+            },
+          ],
+        );
+      };
+
+      return (
+        <Instruction
+          buttons={[
+            { label: tCali.cancel, onClick: () => handleClose(false) },
+            { label: tCali.next, onClick: next, type: 'primary' },
+          ]}
+          onClose={() => handleClose(false)}
+          steps={[
+            tCali.materials_required,
+            [tCali.material_a4_calibration_pattern, tCali.material_4_a4_paper],
+            tCali.download_and_print_calibration_pattern,
+          ]}
+          title={tCali.prepare_materials}
+        >
+          <div className={styles.link} onClick={handleDownload}>
+            {tCali.download_calibration_pattern}
+          </div>
+        </Instruction>
+      );
+    })
     .with(Step.CALIBRATE_CHARUCO, () => {
-      return <ChArUco onClose={handleClose} onNext={next} updateParam={updateParam} />;
+      return <ChArUco onClose={handleClose} onNext={next} onPrev={prev} updateParam={updateParam} />;
     })
     .with(Step.PUT_PAPER, () => {
       const handleNext = async (doEngraving = true) => {

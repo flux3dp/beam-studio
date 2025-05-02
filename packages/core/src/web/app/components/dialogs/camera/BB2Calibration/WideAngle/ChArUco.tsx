@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 
 import { LoadingOutlined } from '@ant-design/icons';
-import { Modal, Spin } from 'antd';
+import { Button, Modal, Spin } from 'antd';
 import { match } from 'ts-pattern';
 
 import alertCaller from '@core/app/actions/alert-caller';
@@ -31,11 +31,12 @@ type Step = (typeof Steps)[keyof typeof Steps];
 interface Props {
   onClose: (complete?: boolean) => void;
   onNext: () => void;
+  onPrev: () => void;
   updateParam: (param: FisheyeCameraParametersV4Cali) => void;
 }
 
 // TODO: how to handle the case when some pictures are not detected or points are too less?
-const ChArUco = ({ onClose, onNext, updateParam }: Props) => {
+const ChArUco = ({ onClose, onNext, onPrev, updateParam }: Props) => {
   const [step, setStep] = useState<Step>(Steps.TopLeft);
   const tCali = useI18n().calibration;
   const { exposureSetting, handleTakePicture, img, pauseLive, restartLive, setExposureSetting } = useLiveFeed({
@@ -122,11 +123,16 @@ const ChArUco = ({ onClose, onNext, updateParam }: Props) => {
     <Modal
       cancelText={step > 0 ? tCali.back : tCali.cancel}
       centered
+      footer={[
+        <Button key="back" onClick={step > 0 ? () => setStep((s) => (s - 1) as Step) : () => onPrev()}>
+          {tCali.back}
+        </Button>,
+        <Button disabled={!img} key="next" onClick={handleNext} type="primary">
+          {tCali.next}
+        </Button>,
+      ]}
       maskClosable={false}
-      okButtonProps={{ disabled: !img }}
-      okText={tCali.next}
-      onCancel={step > 0 ? () => setStep((s) => (s - 1) as Step) : () => onClose(false)}
-      onOk={handleNext}
+      onCancel={() => onClose(false)}
       open
       title={tCali.camera_calibration}
       width="80vw"

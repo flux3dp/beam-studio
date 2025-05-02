@@ -952,6 +952,8 @@ export interface ILang {
     checking_pictures: string;
     diode_calibration: string;
     do_engraving: string;
+    download_and_print_calibration_pattern: string;
+    download_calibration_pattern: string;
     download_chessboard_file: string;
     downloading_checkpoint: string;
     downloading_pictures: string;
@@ -975,6 +977,9 @@ export interface ILang {
     getting_plane_height: string;
     hint_adjust_parameters: string;
     hint_red_square: string;
+    material_4_a4_paper: string;
+    material_a4_calibration_pattern: string;
+    materials_required: string;
     module_calibration_2w_ir: string;
     module_calibration_printer: string;
     moving_laser_head: string;
@@ -996,6 +1001,7 @@ export interface ILang {
       beamo_af: string;
       hexa: string;
     };
+    prepare_materials: string;
     preparing_to_take_picture: string;
     promark_help_link: string;
     put_chessboard: string;
