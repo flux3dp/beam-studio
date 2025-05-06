@@ -1,7 +1,8 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 
 import { LoadingOutlined } from '@ant-design/icons';
-import { Button, Modal, Spin } from 'antd';
+import { Button, Flex, Modal, Progress, Spin } from 'antd';
+import { sprintf } from 'sprintf-js';
 import { match } from 'ts-pattern';
 
 import alertCaller from '@core/app/actions/alert-caller';
@@ -49,16 +50,16 @@ const ChArUco = ({ onClose, onNext, onPrev, updateParam }: Props) => {
     dialog.writeFileDialog(() => img!.blob, 'Save Picture', 'wide-angle.jpg');
   }, [img]);
 
-  const key = useMemo(
+  const { key, positionText } = useMemo(
     () =>
-      match<Step, WideAngleRegion>(step)
-        .with(Steps.TopLeft, () => 'topLeft')
-        .with(Steps.TopRight, () => 'topRight')
-        .with(Steps.BottomLeft, () => 'bottomLeft')
-        .with(Steps.BottomRight, () => 'bottomRight')
-        .with(Steps.Center, () => 'center')
+      match<Step, { key: WideAngleRegion; positionText: string }>(step)
+        .with(Steps.TopLeft, () => ({ key: 'topLeft', positionText: tCali.charuco_position_top_left }))
+        .with(Steps.TopRight, () => ({ key: 'topRight', positionText: tCali.charuco_position_top_right }))
+        .with(Steps.BottomLeft, () => ({ key: 'bottomLeft', positionText: tCali.charuco_position_bottom_left }))
+        .with(Steps.BottomRight, () => ({ key: 'bottomRight', positionText: tCali.charuco_position_bottom_right }))
+        .with(Steps.Center, () => ({ key: 'center', positionText: tCali.charuco_position_center }))
         .exhaustive(),
-    [step],
+    [step, tCali],
   );
 
   const handleNext = useCallback(async () => {
@@ -138,36 +139,47 @@ const ChArUco = ({ onClose, onNext, onPrev, updateParam }: Props) => {
       width="80vw"
     >
       <div className={styles.container}>
-        <div className={styles.desc}>
-          <div>{`${step + 1}. Put the calibration image at the ${key}`}</div>
-        </div>
-        <div className={styles.imgContainer}>
-          {img ? (
-            <>
-              <ContextMenuTrigger
-                hideOnLeaveHoldPosition
-                holdToDisplay={-1}
-                holdToDisplayMouse={-1}
-                id="live-feed-context-menu"
-              >
-                <img alt="wide-angle-camera" ref={imgRef} src={img?.url} />
-              </ContextMenuTrigger>
-              <ContextMenu id="live-feed-context-menu">
-                <MenuItem attributes={{ id: 'download' }} onClick={handleDownload}>
-                  Download
-                </MenuItem>
-              </ContextMenu>
-            </>
-          ) : (
-            <Spin indicator={<LoadingOutlined className={styles.spinner} spin />} />
-          )}
-        </div>
-        <ExposureSlider
-          className={styles.slider}
-          exposureSetting={exposureSetting}
-          onChanged={handleTakePicture}
-          setExposureSetting={setExposureSetting}
-        />
+        <ol className={styles.desc}>
+          <li>{tCali.charuco_open_the_machine_lid}</li>
+          <li dangerouslySetInnerHTML={{ __html: sprintf(tCali.charuco_place_charuco, positionText) }} />
+          {step === Steps.TopLeft && <li dangerouslySetInnerHTML={{ __html: tCali.charuco_auto_focus }} />}
+          <li>{tCali.charuco_capture}</li>
+        </ol>
+        <Progress className={styles.progress} percent={step * 20} />
+        <Flex align="center" className={styles.content} justify="space-between">
+          <div className={styles.left}>
+            <div className={styles.imgContainer}>
+              {img ? (
+                <>
+                  <ContextMenuTrigger
+                    hideOnLeaveHoldPosition
+                    holdToDisplay={-1}
+                    holdToDisplayMouse={-1}
+                    id="live-feed-context-menu"
+                  >
+                    <img alt="wide-angle-camera" ref={imgRef} src={img?.url} />
+                  </ContextMenuTrigger>
+                  <ContextMenu id="live-feed-context-menu">
+                    <MenuItem attributes={{ id: 'download' }} onClick={handleDownload}>
+                      Download
+                    </MenuItem>
+                  </ContextMenu>
+                </>
+              ) : (
+                <Spin indicator={<LoadingOutlined className={styles.spinner} spin />} />
+              )}
+            </div>
+            <ExposureSlider
+              className={styles.slider}
+              exposureSetting={exposureSetting}
+              onChanged={handleTakePicture}
+              setExposureSetting={setExposureSetting}
+            />
+          </div>
+          <div className={styles.right}>
+            <img src={`core-img/calibration/bb2-charuco-${key}.jpg`} />
+          </div>
+        </Flex>
       </div>
     </Modal>
   );

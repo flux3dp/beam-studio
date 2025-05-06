@@ -945,6 +945,15 @@ export interface ILang {
     camera_calibration: string;
     camera_parameter_saved_successfully: string;
     cancel: string;
+    charuco_auto_focus: string;
+    charuco_capture: string;
+    charuco_open_the_machine_lid: string;
+    charuco_place_charuco: string;
+    charuco_position_bottom_left: string;
+    charuco_position_bottom_right: string;
+    charuco_position_center: string;
+    charuco_position_top_left: string;
+    charuco_position_top_right: string;
     check_checkpoint_data: string;
     check_device_pictures: string;
     check_pnp_desc: string;
@@ -1022,6 +1031,8 @@ export interface ILang {
     put_paper_step1: string;
     put_paper_step2: string;
     put_paper_step3: string;
+    put_paper_wide_angle_1: string;
+    put_paper_wide_angle_2: string;
     recalibrate: string;
     res_average: string;
     res_excellent: string;
@@ -1030,6 +1041,8 @@ export interface ILang {
     rotation_angle: string;
     show_last_config: string;
     skip: string;
+    solve_pnp_move_platform: string;
+    solve_pnp_open_the_lid: string;
     solve_pnp_step1: string;
     solve_pnp_step2: string;
     solve_pnp_step3: string;

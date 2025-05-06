@@ -29,7 +29,6 @@ import {
   getBB2WideAnglePoints,
 } from '../../common/solvePnPConstants';
 import movePlatformRel from '../movePlatformRel';
-import SolvePnPInstruction from '../SolvePnPInstruction';
 
 import ChArUco from './ChArUco';
 
@@ -38,13 +37,14 @@ const enum Step {
   PREPARE_MATERIALS,
   CALIBRATE_CHARUCO,
   PUT_PAPER,
-  SOLVE_PNP_INSTRUCTION,
+  SOLVE_PNP_INSTRUCTION_1,
   SOLVE_PNP_TL_1,
   SOLVE_PNP_TR_1,
   SOLVE_PNP_BL_1,
   SOLVE_PNP_BR_1,
   SOLVE_OTHER_PNP_1,
   CHECK_PNP_1,
+  SOLVE_PNP_INSTRUCTION_2,
   SOLVE_PNP_TL_2,
   SOLVE_PNP_TR_2,
   SOLVE_PNP_BL_2,
@@ -113,6 +113,10 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
 
       return (
         <Instruction
+          animationSrcs={[
+            { src: 'video/bb2-calibration/wide-angle-1-prepare-materials.webm', type: 'video/webm' },
+            { src: 'video/bb2-calibration/wide-angle-1-prepare-materials.mp4', type: 'video/mp4' },
+          ]}
           buttons={[
             { label: tCali.cancel, onClick: () => handleClose(false) },
             { label: tCali.next, onClick: next, type: 'primary' },
@@ -170,8 +174,8 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
       return (
         <Instruction
           animationSrcs={[
-            { src: 'video/bb2-calibration/2-cut.webm', type: 'video/webm' },
-            { src: 'video/bb2-calibration/2-cut.mp4', type: 'video/mp4' },
+            { src: 'video/bb2-calibration/wide-angle-2-cut.webm', type: 'video/webm' },
+            { src: 'video/bb2-calibration/wide-angle-2-cut.mp4', type: 'video/mp4' },
           ]}
           buttons={[
             { label: tCali.cancel, onClick: () => handleClose(false) },
@@ -180,8 +184,8 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
           ]}
           onClose={() => handleClose(false)}
           steps={[
-            tCali.put_paper_step1,
-            tCali.put_paper_step2,
+            tCali.put_paper_wide_angle_1,
+            tCali.put_paper_wide_angle_2,
             tCali.perform_autofocus_bb2,
             tCali.put_paper_step3,
             tCali.put_paper_skip,
@@ -190,7 +194,25 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
         />
       );
     })
-    .with(Step.SOLVE_PNP_INSTRUCTION, () => <SolvePnPInstruction onClose={handleClose} onNext={next} onPrev={prev} />)
+    .with(Step.SOLVE_PNP_INSTRUCTION_1, Step.SOLVE_PNP_INSTRUCTION_2, (step) => (
+      <Instruction
+        animationSrcs={[
+          { src: 'video/bb2-calibration/wide-angle-3-align.webm', type: 'video/webm' },
+          { src: 'video/bb2-calibration/wide-angle-3-align.mp4', type: 'video/mp4' },
+        ]}
+        buttons={[
+          { label: tCali.back, onClick: prev },
+          { label: tCali.next, onClick: next, type: 'primary' },
+        ]}
+        onClose={() => onClose(false)}
+        steps={[
+          step === Step.SOLVE_PNP_INSTRUCTION_1 ? tCali.solve_pnp_open_the_lid : tCali.solve_pnp_move_platform,
+          tCali.solve_pnp_step1,
+          tCali.solve_pnp_step2,
+        ].filter(Boolean)}
+        title={tCali.solve_pnp_title}
+      />
+    ))
     .with(
       Step.SOLVE_PNP_TL_1,
       Step.SOLVE_PNP_TR_1,

@@ -215,8 +215,8 @@ const PromarkCalibration = ({ device: { model, serial }, onClose }: Props): Reac
           progressCaller.popById(PROGRESS_ID);
 
           const param: FisheyeCameraParametersV3 = {
-            d: calibratingParam.current.d,
-            k: calibratingParam.current.k,
+            d: calibratingParam.current.d!,
+            k: calibratingParam.current.k!,
             rvec,
             tvec,
             v: 3,

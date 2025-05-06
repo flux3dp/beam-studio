@@ -16,7 +16,6 @@ import Instruction from '../../common/Instruction';
 import SolvePnP from '../../common/SolvePnP';
 import { bb2PerspectiveGrid, bb2PnPPoints } from '../../common/solvePnPConstants';
 import moveLaserHead from '../moveLaserHead';
-import SolvePnPInstruction from '../SolvePnPInstruction';
 
 import Calibration from './Calibration';
 
@@ -197,10 +196,18 @@ const LaserHead = ({ isAdvanced, onClose }: Props): React.JSX.Element => {
 
   if (step === Steps.SOLVE_PNP_INSTRUCTION) {
     return (
-      <SolvePnPInstruction
-        onClose={onClose}
-        onNext={() => setStep(Steps.SOLVE_PNP)}
-        onPrev={() => setStep(Steps.PUT_PAPER)}
+      <Instruction
+        animationSrcs={[
+          { src: 'video/bb2-calibration/3-align.webm', type: 'video/webm' },
+          { src: 'video/bb2-calibration/3-align.mp4', type: 'video/mp4' },
+        ]}
+        buttons={[
+          { label: tCali.back, onClick: () => setStep(Steps.PUT_PAPER) },
+          { label: tCali.next, onClick: () => setStep(Steps.SOLVE_PNP), type: 'primary' },
+        ]}
+        onClose={() => onClose(false)}
+        steps={[tCali.solve_pnp_step1, tCali.solve_pnp_step2]}
+        title={tCali.solve_pnp_title}
       />
     );
   }

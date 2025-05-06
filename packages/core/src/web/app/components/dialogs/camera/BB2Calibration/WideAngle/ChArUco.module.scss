@@ -5,21 +5,39 @@
 
   .desc {
     width: 100%;
+    margin: 0;
+    padding: 0 2em;
     text-align: start;
+  }
+
+  .progress {
+    padding: 0 1em;
+  }
+
+  .content {
+    min-height: 40vh;
+  }
+
+  .left {
+    width: 70%;
+  }
+
+  .right {
+    width: 27%;
+    height: fit-content;
+
+    img {
+      border: 1px solid #000;
+    }
   }
 
   .imgContainer {
     position: relative;
     width: fit-content;
     height: fit-content;
-    min-height: 55vh;
     display: flex;
     justify-content: center;
     align-items: center;
-
-    img {
-      max-height: 55vh;
-    }
 
     .spinner {
       font-size: 48px;
