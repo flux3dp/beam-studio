@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import { LoadingOutlined } from '@ant-design/icons';
 import { Modal, Spin } from 'antd';
-import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
@@ -13,6 +12,7 @@ import type { WebCamConnection } from '@core/helpers/webcam-helper';
 import webcamHelper from '@core/helpers/webcam-helper';
 import type { FisheyeCameraParametersV3Cali } from '@core/interfaces/FisheyePreview';
 
+import handleCalibrationResult from '../common/handleCalibrationResult';
 import Title from '../common/Title';
 
 import styles from './Calibration.module.scss';
@@ -86,22 +86,9 @@ const Calibration = ({ charuco, chessboard, onClose, onNext, updateParam }: Prop
 
       if (calibrationRes) {
         const { d, k, ret, rvec, tvec } = calibrationRes;
-        const resp = await new Promise<boolean>((resolve) => {
-          let rank = lang.res_excellent;
+        const shouldProceed = await handleCalibrationResult(ret, 1, 5);
 
-          if (ret > 5) rank = lang.res_poor;
-          else if (ret > 1) rank = lang.res_average;
-
-          alertCaller.popUp({
-            buttons: [
-              { className: 'primary', label: lang.next, onClick: () => resolve(true) },
-              { label: lang.cancel, onClick: () => resolve(false) },
-            ],
-            message: sprintf(lang.calibrate_chessboard_success_msg, rank, ret),
-          });
-        });
-
-        if (!resp) return;
+        if (!shouldProceed) return;
 
         updateParam({ d, k, ret, rvec, tvec });
         onNext();

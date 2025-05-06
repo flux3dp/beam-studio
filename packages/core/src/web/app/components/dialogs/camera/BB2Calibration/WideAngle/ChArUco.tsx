@@ -13,6 +13,7 @@ import dialog from '@core/implementations/dialog';
 import type { FisheyeCameraParametersV4Cali, WideAngleRegion } from '@core/interfaces/FisheyePreview';
 
 import ExposureSlider from '../../common/ExposureSlider';
+import handleCalibrationResult from '../../common/handleCalibrationResult';
 import useLiveFeed from '../../common/useLiveFeed';
 
 import styles from './ChArUco.module.scss';
@@ -67,8 +68,10 @@ const ChArUco = ({ onClose, onNext, onPrev, updateParam }: Props) => {
 
     const res = await cameraCalibrationApi.detectChAruCo(img!.blob, 15, 10);
 
-    if (!res.success) {
-      alertCaller.popUp({ message: `Failed to detect image ${res.reason}` });
+    console.log(`Detect ChArUco at ${step}:`, res);
+
+    if (!res.success || res.ratio < 0.5) {
+      alertCaller.popUp({ message: tCali.failed_to_detect_calibration_pattern });
       restartLive();
 
       return;
@@ -104,6 +107,13 @@ const ChArUco = ({ onClose, onNext, onPrev, updateParam }: Props) => {
       console.log('Calibrate with ChArUco', calibrateRes);
 
       const { d, indices, k, ret, rvec, tvec } = calibrateRes;
+      const shouldProceed = await handleCalibrationResult(ret, 1.5, 2);
+
+      if (!shouldProceed) {
+        restartLive();
+
+        return;
+      }
 
       if (indices.length !== 5) {
         const failedRegion = [];
@@ -118,7 +128,7 @@ const ChArUco = ({ onClose, onNext, onPrev, updateParam }: Props) => {
       updateParam({ d, k, ret, rvec, tvec });
       onNext();
     }
-  }, [step, key, img, pauseLive, restartLive, onNext, updateParam]);
+  }, [tCali, step, key, img, pauseLive, restartLive, onNext, updateParam]);
 
   return (
     <Modal

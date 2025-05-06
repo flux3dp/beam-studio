@@ -2,7 +2,6 @@ import React, { useCallback, useRef } from 'react';
 
 import { LoadingOutlined } from '@ant-design/icons';
 import { Modal, Spin } from 'antd';
-import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
@@ -14,6 +13,7 @@ import dialog from '@core/implementations/dialog';
 import type { FisheyeCameraParametersV3Cali } from '@core/interfaces/FisheyePreview';
 
 import ExposureSlider from '../../common/ExposureSlider';
+import handleCalibrationResult from '../../common/handleCalibrationResult';
 import useLiveFeed from '../../common/useLiveFeed';
 
 import styles from './Calibration.module.scss';
@@ -71,22 +71,9 @@ const Calibration = ({ charuco, chessboard, onClose, onNext, updateParam }: Prop
 
       if (calibrationRes) {
         const { d, k, ret, rvec, tvec } = calibrationRes;
-        const resp = await new Promise<boolean>((resolve) => {
-          let rank = tCali.res_excellent;
+        const shouldProceed = await handleCalibrationResult(ret);
 
-          if (ret > 2) rank = tCali.res_poor;
-          else if (ret > 1) rank = tCali.res_average;
-
-          alertCaller.popUp({
-            buttons: [
-              { className: 'primary', label: tCali.next, onClick: () => resolve(true) },
-              { label: tCali.cancel, onClick: () => resolve(false) },
-            ],
-            message: sprintf(tCali.calibrate_chessboard_success_msg, rank, ret),
-          });
-        });
-
-        if (!resp) return;
+        if (!shouldProceed) return;
 
         updateParam({ d, k, ret, rvec, tvec });
         onNext();

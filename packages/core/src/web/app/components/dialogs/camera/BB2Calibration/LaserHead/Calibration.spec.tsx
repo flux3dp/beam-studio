@@ -4,7 +4,6 @@ import { fireEvent, render } from '@testing-library/react';
 
 import Calibration from './Calibration';
 import i18n from '@mocks/@core/helpers/i18n';
-import { sprintf } from 'sprintf-js';
 
 const mockPopUp = jest.fn();
 const mockPopUpError = jest.fn();
@@ -63,6 +62,15 @@ jest.mock('@core/helpers/api/camera-calibration', () => ({
   },
 }));
 
+const mockHandleCalibrationResult = jest.fn();
+
+jest.mock(
+  '../../common/handleCalibrationResult',
+  () =>
+    (...args) =>
+      mockHandleCalibrationResult(...args),
+);
+
 jest.useFakeTimers();
 jest.spyOn(global, 'setTimeout');
 jest.spyOn(global, 'clearTimeout');
@@ -115,6 +123,7 @@ describe('test Calibration', () => {
     };
 
     mockCalibrateChessboard.mockResolvedValue(mockRes);
+    mockHandleCalibrationResult.mockResolvedValue(true);
     await act(() => fireEvent.click(baseElement.querySelector('button.ant-btn-primary')));
     expect(mockOpenNonstopProgress).toHaveBeenCalled();
     expect(mockOpenNonstopProgress).toHaveBeenCalledWith({
@@ -124,18 +133,8 @@ describe('test Calibration', () => {
     expect(mockPauseLive).toHaveBeenCalled();
     expect(mockCalibrateChessboard).toHaveBeenCalledTimes(1);
     expect(mockCalibrateChessboard).toHaveBeenCalledWith(mockBlob, 0, [7, 7]);
-    expect(mockPopUp).toHaveBeenCalledTimes(1);
-    expect(mockPopUp).toHaveBeenCalledWith({
-      buttons: [
-        { className: 'primary', label: tCali.next, onClick: expect.any(Function) },
-        { label: tCali.cancel, onClick: expect.any(Function) },
-      ],
-      message: sprintf(tCali.calibrate_chessboard_success_msg, tCali.res_excellent, 1),
-    });
-
-    const { buttons } = mockPopUp.mock.calls[0][0];
-
-    await act(() => buttons[0].onClick());
+    expect(mockHandleCalibrationResult).toHaveBeenCalledTimes(1);
+    expect(mockHandleCalibrationResult).toHaveBeenLastCalledWith(1);
     expect(mockUpdateParam).toHaveBeenCalled();
     expect(mockUpdateParam).toHaveBeenCalledWith(mockRes.data);
     expect(mockOnNext).toHaveBeenCalled();
@@ -163,6 +162,7 @@ describe('test Calibration', () => {
     mockCalibrateChessboard.mockResolvedValue(mockRes);
     mockDetectChAruCo.mockResolvedValue({ imgp: 'imgp', objp: 'objp', success: true });
     mockCalibrateFisheye.mockResolvedValue({ d: 'd', k: 'k', ret: 1, rvec: 'rvec', success: true, tvec: 'tvec' });
+    mockHandleCalibrationResult.mockResolvedValue(true);
     await act(() => fireEvent.click(baseElement.querySelector('button.ant-btn-primary')));
     expect(mockOpenNonstopProgress).toHaveBeenCalled();
     expect(mockOpenNonstopProgress).toHaveBeenCalledWith({ id: 'calibrate-chessboard', message: tCali.calibrating });
@@ -173,18 +173,8 @@ describe('test Calibration', () => {
     expect(mockDetectChAruCo).toHaveBeenCalledWith(mockBlob, 15, 10);
     expect(mockCalibrateFisheye).toHaveBeenCalledTimes(1);
     expect(mockCalibrateFisheye).toHaveBeenCalledWith(['objp'], ['imgp'], [expect.any(Number), expect.any(Number)]);
-    expect(mockPopUp).toHaveBeenCalledTimes(1);
-    expect(mockPopUp).toHaveBeenCalledWith({
-      buttons: [
-        { className: 'primary', label: tCali.next, onClick: expect.any(Function) },
-        { label: tCali.cancel, onClick: expect.any(Function) },
-      ],
-      message: sprintf(tCali.calibrate_chessboard_success_msg, tCali.res_excellent, 1),
-    });
-
-    const { buttons } = mockPopUp.mock.calls[0][0];
-
-    await act(() => buttons[0].onClick());
+    expect(mockHandleCalibrationResult).toHaveBeenCalledTimes(1);
+    expect(mockHandleCalibrationResult).toHaveBeenLastCalledWith(1);
     expect(mockUpdateParam).toHaveBeenCalled();
     expect(mockUpdateParam).toHaveBeenCalledWith({ d: 'd', k: 'k', ret: 1, rvec: 'rvec', tvec: 'tvec' });
     expect(mockOnNext).toHaveBeenCalled();
@@ -207,6 +197,7 @@ describe('test Calibration', () => {
     };
 
     mockCalibrateChessboard.mockResolvedValue(mockRes);
+    mockHandleCalibrationResult.mockResolvedValue(false);
     await act(() => fireEvent.click(baseElement.querySelector('button.ant-btn-primary')));
     expect(mockOpenNonstopProgress).toHaveBeenCalled();
     expect(mockOpenNonstopProgress).toHaveBeenCalledWith({
@@ -216,25 +207,8 @@ describe('test Calibration', () => {
     expect(mockPauseLive).toHaveBeenCalled();
     expect(mockCalibrateChessboard).toHaveBeenCalledTimes(1);
     expect(mockCalibrateChessboard).toHaveBeenCalledWith(mockBlob, 0, [7, 7]);
-    expect(mockPopUp).toHaveBeenCalledTimes(1);
-    expect(mockPopUp).toHaveBeenCalledWith({
-      buttons: [
-        {
-          className: 'primary',
-          label: tCali.next,
-          onClick: expect.any(Function),
-        },
-        {
-          label: tCali.cancel,
-          onClick: expect.any(Function),
-        },
-      ],
-      message: sprintf(tCali.calibrate_chessboard_success_msg, tCali.res_poor, 5),
-    });
-
-    const { buttons } = mockPopUp.mock.calls[0][0];
-
-    await act(() => buttons[1].onClick());
+    expect(mockHandleCalibrationResult).toHaveBeenCalledTimes(1);
+    expect(mockHandleCalibrationResult).toHaveBeenLastCalledWith(5);
     expect(mockUpdateParam).not.toHaveBeenCalled();
     expect(mockOnNext).not.toHaveBeenCalled();
     expect(mockPopById).toHaveBeenCalledTimes(1);

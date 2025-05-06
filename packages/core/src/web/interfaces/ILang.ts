@@ -937,9 +937,9 @@ export interface ILang {
     calculating_camera_matrix: string;
     calculating_regression_parameters: string;
     calibrate_camera_before_calibrate_modules: string;
-    calibrate_chessboard_success_msg: string;
     calibrate_done: string;
     calibrate_done_diode: string;
+    calibrate_success_msg: string;
     calibrating: string;
     calibrating_with_device_pictures: string;
     camera_calibration: string;
@@ -975,6 +975,7 @@ export interface ILang {
     failed_to_calibrate_camera: string;
     failed_to_calibrate_chessboard: string;
     failed_to_calibrate_with_pictures: string;
+    failed_to_detect_calibration_pattern: string;
     failed_to_download_pictures: string;
     failed_to_move_laser_head: string;
     failed_to_parse_checkpoint: string;
