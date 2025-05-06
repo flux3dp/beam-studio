@@ -52,6 +52,15 @@
   color: #ff4d4f;
 }
 
+.info {
+  height: 100%;
+
+  img {
+    width: 100%;
+    border: 1px solid #000;
+  }
+}
+
 .value {
   height: 100%;
   display: flex;

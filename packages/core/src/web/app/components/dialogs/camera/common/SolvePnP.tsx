@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { Button, Col, InputNumber, Modal, Row } from 'antd';
+import { Button, Col, Flex, InputNumber, Modal, Row } from 'antd';
 import classNames from 'classnames';
 
 import alertCaller from '@core/app/actions/alert-caller';
@@ -308,40 +308,45 @@ const SolvePnP = ({
         </Col>
         <Col span={8}>
           {selectedPointIdx >= 0 && points[selectedPointIdx] && (
-            <Row align="middle" gutter={[0, 12]}>
-              <Col className={styles['point-id']} span={24}>
-                Point #{selectedPointIdx}
-              </Col>
-              <Col span={24}>{positionText}</Col>
-              <Col span={4}>X</Col>
-              <Col span={20}>
-                <InputNumber<number>
-                  onChange={(val) => {
-                    if (val) setPoints((prev) => prev.map((p, i) => (i === selectedPointIdx ? [val, p[1]] : p)));
-                  }}
-                  onKeyDown={(e) => e.stopPropagation()}
-                  onKeyUp={(e) => e.stopPropagation()}
-                  precision={0}
-                  step={1}
-                  type="number"
-                  value={points[selectedPointIdx][0]}
-                />
-              </Col>
-              <Col span={4}>Y</Col>
-              <Col span={20}>
-                <InputNumber<number>
-                  onChange={(val) => {
-                    if (val) setPoints((prev) => prev.map((p, i) => (i === selectedPointIdx ? [p[0], val] : p)));
-                  }}
-                  onKeyDown={(e) => e.stopPropagation()}
-                  onKeyUp={(e) => e.stopPropagation()}
-                  precision={0}
-                  step={1}
-                  type="number"
-                  value={points[selectedPointIdx][1]}
-                />
-              </Col>
-            </Row>
+            <Flex className={styles.info} justify="space-between" vertical>
+              <div>
+                <Row align="middle" gutter={[0, 12]}>
+                  <Col className={styles['point-id']} span={24}>
+                    Point #{selectedPointIdx}
+                  </Col>
+                  <Col span={24}>{positionText}</Col>
+                  <Col span={4}>X</Col>
+                  <Col span={20}>
+                    <InputNumber<number>
+                      onChange={(val) => {
+                        if (val) setPoints((prev) => prev.map((p, i) => (i === selectedPointIdx ? [val, p[1]] : p)));
+                      }}
+                      onKeyDown={(e) => e.stopPropagation()}
+                      onKeyUp={(e) => e.stopPropagation()}
+                      precision={0}
+                      step={1}
+                      type="number"
+                      value={points[selectedPointIdx][0]}
+                    />
+                  </Col>
+                  <Col span={4}>Y</Col>
+                  <Col span={20}>
+                    <InputNumber<number>
+                      onChange={(val) => {
+                        if (val) setPoints((prev) => prev.map((p, i) => (i === selectedPointIdx ? [p[0], val] : p)));
+                      }}
+                      onKeyDown={(e) => e.stopPropagation()}
+                      onKeyUp={(e) => e.stopPropagation()}
+                      precision={0}
+                      step={1}
+                      type="number"
+                      value={points[selectedPointIdx][1]}
+                    />
+                  </Col>
+                </Row>
+              </div>
+              <img src={`core-img/calibration/solve-pnp-${points.length}-${selectedPointIdx}.jpg`} />
+            </Flex>
           )}
         </Col>
         {exposureSetting && (
