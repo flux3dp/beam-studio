@@ -9,12 +9,21 @@ import undoManager from '@core/app/svgedit/history/undoManager';
 import importSvg from '@core/app/svgedit/operations/import/importSvg';
 import postImportElement from '@core/app/svgedit/operations/import/postImportElement';
 import { getNPIconByID } from '@core/helpers/api/flux-id';
+import { getData } from '@core/helpers/layer/layer-config-helper';
+import { getLayerByName } from '@core/helpers/layer/layer-helper';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
 import type { IIcon } from '@core/interfaces/INounProject';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './Element.module.scss';
 
 const progressId = 'import-noun-project-svg';
+let svgCanvas: ISVGCanvas;
+
+getSVGAsync((globalSVG) => {
+  svgCanvas = globalSVG.Canvas;
+});
 
 const importNPSvg = async (id: string) => {
   progressCaller.openNonstopProgress({ id: progressId });
@@ -28,7 +37,15 @@ const importNPSvg = async (id: string) => {
     const blob = await res.blob();
 
     const batchCmd = HistoryCommandFactory.createBatchCommand('Import NP SVG');
-    const elems = await importSvg(blob, { importType: 'layer', isFromNounProject: true, parentCmd: batchCmd });
+    const drawing = svgCanvas.getCurrentDrawing();
+    const layerName = drawing.getCurrentLayerName();
+    const layerModule = layerName ? getData(getLayerByName(layerName), 'module') : null;
+    const elems = await importSvg(blob, {
+      importType: 'layer',
+      isFromNounProject: true,
+      parentCmd: batchCmd,
+      targetModule: layerModule,
+    });
 
     if (!elems) return;
 

@@ -37,6 +37,29 @@ jest.mock('@core/helpers/api/flux-id', () => ({
   getNPIconByID: mockGetNPIconByID,
 }));
 
+const mockGetData = jest.fn().mockReturnValue(5);
+
+jest.mock('@core/helpers/layer/layer-config-helper', () => ({
+  getData: mockGetData,
+}));
+
+const mockGetLayerByName = jest.fn().mockReturnValue('mock-layer-elem');
+
+jest.mock('@core/helpers/layer/layer-helper', () => ({
+  getLayerByName: mockGetLayerByName,
+}));
+
+const mockGetCurrentLayerName = jest.fn().mockReturnValue('mock-layer-name');
+
+jest.mock('@core/helpers/svg-editor-helper', () => ({
+  getSVGAsync: (callback) =>
+    callback({
+      Canvas: {
+        getCurrentDrawing: () => ({ getCurrentLayerName: mockGetCurrentLayerName }),
+      },
+    }),
+}));
+
 jest.mock('@core/helpers/web-need-connection-helper', () => (callback) => callback());
 
 const mockFetch = jest.fn().mockResolvedValue({ blob: () => Promise.resolve(new Blob()) });
@@ -74,10 +97,14 @@ describe('test NPElement', () => {
       expect(mockGetNPIconByID).toHaveBeenCalledWith('1234');
       expect(mockFetch).toHaveBeenCalledWith('data:image/svg+xml;base64,1234');
       expect(mockCreateBatchCommand).toHaveBeenCalledWith('Import NP SVG');
+      expect(mockGetCurrentLayerName).toHaveBeenCalled();
+      expect(mockGetLayerByName).toHaveBeenCalled();
+      expect(mockGetData).toHaveBeenCalled();
       expect(mockImportSvg).toHaveBeenCalledWith(expect.any(Blob), {
         batchCmd: mockBatchCommand,
         importType: 'layer',
         isFromNounProject: true,
+        targetModule: 5,
       });
       expect(mockPostImportElement).toHaveBeenCalledWith(mockElement, mockBatchCommand);
       expect(mockAddCommandToHistory).toHaveBeenCalledWith(mockBatchCommand);

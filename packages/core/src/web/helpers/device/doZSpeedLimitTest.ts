@@ -54,15 +54,21 @@ const doZSpeedLimitTest = async (device: IDeviceInfo): Promise<boolean> => {
     const res = await deviceMaster.zSpeedLimitTestStart();
 
     if (!res) {
-      return new Promise<boolean>((resolve) => {
+      const ignore = await new Promise<boolean>((resolve) => {
         alertCaller.popUp({
           buttons: [
             { label: t.ignore, onClick: () => resolve(true) },
-            { label: t.retest, onClick: () => resolve(doZSpeedLimitTest(device)), type: 'primary' },
+            { label: t.retest, onClick: () => resolve(false), type: 'primary' },
           ],
           message: t.alert_failed,
         });
       });
+
+      if (!ignore) {
+        return doZSpeedLimitTest(device);
+      }
+
+      return ignore;
     }
 
     return true;
