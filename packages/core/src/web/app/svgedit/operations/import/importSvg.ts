@@ -104,37 +104,40 @@ const importSvg = async (
     isFromNounProject,
     parentCmd,
     skipByLayer = false,
+    targetModule,
   }: Partial<{
     importType: ImportType;
     isFromNounProject: boolean;
     parentCmd: IBatchCommand;
     skipByLayer: boolean;
+    targetModule: LayerModuleType | null;
   }> = {},
 ): Promise<SVGUseElement[] | undefined> => {
   const batchCmd = parentCmd ?? new history.BatchCommand('Import SVG');
   const { lang } = i18n;
   const hasModule = modelsWithModules.has(beamboxPreference.read('workarea'));
-  let targetModule: LayerModuleType | null;
-
-  if (hasModule) {
-    const id = 'import-module';
-
-    targetModule = await dialogCaller.showRadioSelectDialog({
-      defaultValue: beamboxPreference.read(id),
-      id,
-      options: [
-        { label: lang.layer_module.general_laser, value: getDefaultLaserModule() },
-        // TODO: should this check workarea for 4c?
-        { label: lang.layer_module.printing, value: LayerModule.PRINTER },
-      ],
-      title: lang.beambox.popup.select_import_module,
-    });
-  } else {
-    targetModule = LayerModule.LASER_10W_DIODE;
-  }
 
   if (!targetModule) {
-    return;
+    if (hasModule) {
+      const id = 'import-module';
+
+      targetModule = await dialogCaller.showRadioSelectDialog({
+        defaultValue: beamboxPreference.read(id),
+        id,
+        options: [
+          { label: lang.layer_module.general_laser, value: getDefaultLaserModule() },
+          // TODO: should this check workarea for 4c?
+          { label: lang.layer_module.printing, value: LayerModule.PRINTER },
+        ],
+        title: lang.beambox.popup.select_import_module,
+      });
+    } else {
+      targetModule = LayerModule.LASER_10W_DIODE;
+    }
+
+    if (!targetModule) {
+      return;
+    }
   }
 
   // TODO: check given importType is valid?
