@@ -14,12 +14,13 @@ import * as electronRemote from '@electron/remote/main';
 import { captureMessage, init as SentryInit } from '@sentry/electron';
 import { setupTitlebar } from 'custom-electron-titlebar/main';
 
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
+
 import BackendManager from './backend-manager';
 import bootstrap from './bootstrap';
 import { getDeeplinkUrl, handleDeepLinkUrl } from './deep-link-helper';
 import fontHelper from './font-helper';
 import { setTabManager } from './helpers/tabHelper';
-import type DeviceInfo from './interfaces/DeviceInfo';
 import events from './ipc-events';
 import MenuManager from './menu-manager';
 import MonitorManager from './monitor-manager';
@@ -50,7 +51,7 @@ const globalData: {
     logfile?: string;
     port?: number;
   };
-  devices: { [key: string]: DeviceInfo };
+  devices: { [key: string]: IDeviceInfo };
 } = {
   backend: {
     alive: false,
@@ -125,7 +126,7 @@ function onGhostDown() {
   globalData.backend.port = undefined;
 }
 
-function onDeviceUpdated(deviceInfo: DeviceInfo) {
+function onDeviceUpdated(deviceInfo: IDeviceInfo) {
   const { alive, serial, source, uuid } = deviceInfo;
   const deviceID = `${source}:${uuid}`;
 
@@ -133,7 +134,10 @@ function onDeviceUpdated(deviceInfo: DeviceInfo) {
 
   if (alive) {
     if (menuManager) {
-      if (globalData.devices[deviceID] && globalData.devices[deviceID].serial !== serial) {
+      if (
+        globalData.devices[deviceID] &&
+        (globalData.devices[deviceID].serial !== serial || globalData.devices[deviceID].version !== deviceInfo.version)
+      ) {
         menuManager.removeDevice(uuid, globalData.devices[deviceID]);
       }
 
@@ -371,7 +375,7 @@ ipcMain.on('ASK_FOR_PERMISSION', async (event, key: 'camera' | 'microphone') => 
   event.returnValue = true;
 });
 
-ipcMain.on('DEVICE_UPDATED', (event, deviceInfo: DeviceInfo) => {
+ipcMain.on('DEVICE_UPDATED', (event, deviceInfo: IDeviceInfo) => {
   onDeviceUpdated(deviceInfo);
 });
 

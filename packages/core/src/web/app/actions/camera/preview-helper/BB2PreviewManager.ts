@@ -16,6 +16,7 @@ import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { loadJson } from '@core/helpers/device/jsonDataHelper';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
+import versionChecker from '@core/helpers/version-checker';
 import type { FisheyeCameraParameters, FisheyeCameraParametersV4 } from '@core/interfaces/FisheyePreview';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import { MessageLevel } from '@core/interfaces/IMessage';
@@ -114,6 +115,14 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
   };
 
   private checkWideAngleCamera = async (): Promise<void> => {
+    const vc = versionChecker(this.device.version);
+
+    if (!vc.meetRequirement('BB2_WIDE_ANGLE_CAMERA')) {
+      this.hasWideAngleCamera = false;
+
+      return;
+    }
+
     const cameraCount = await deviceMaster.getCameraCount();
 
     try {
