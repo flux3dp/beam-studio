@@ -65,7 +65,7 @@ exports[`test CheckPnP should render correctly 1`] = `
                   class="ant-modal-title"
                   id="test-id"
                 >
-                  Camera Calibration
+                  Confirm Calibration Result
                 </div>
               </div>
               <div
@@ -228,7 +228,7 @@ exports[`test CheckPnP should render correctly 2`] = `
                   class="ant-modal-title"
                   id="test-id"
                 >
-                  Camera Calibration
+                  Confirm Calibration Result
                 </div>
               </div>
               <div
