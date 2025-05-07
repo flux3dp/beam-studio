@@ -130,7 +130,7 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
           label: r.calibrate_camera_advanced,
         },
         isBb2 &&
-          vc.meetRequirement('BB2_WIDE_ANGLE_CAMERA') && {
+          (vc.meetRequirement('BB2_WIDE_ANGLE_CAMERA') || isDevMode) && {
             click: handleClick,
             id: 'CALIBRATE_CAMERA_WIDE_ANGLE',
             label: r.calibrate_wide_angle_camera,
