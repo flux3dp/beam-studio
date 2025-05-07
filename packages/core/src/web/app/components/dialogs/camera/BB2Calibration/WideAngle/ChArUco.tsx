@@ -159,7 +159,7 @@ const ChArUco = ({ onClose, onNext, onPrev, title, updateParam }: Props) => {
           {step === Steps.TopLeft && <li dangerouslySetInnerHTML={{ __html: tCali.charuco_auto_focus }} />}
           <li>{tCali.charuco_capture}</li>
         </ol>
-        <Progress className={styles.progress} percent={(step + 1) * 20} />
+        <Progress className={styles.progress} percent={(step + 1) * 20} status="normal" />
         <Flex align="center" className={styles.content} justify="space-between">
           <div className={styles.left}>
             <div className={styles.imgContainer}>

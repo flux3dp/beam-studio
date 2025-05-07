@@ -283,7 +283,7 @@ const SolvePnP = ({
         <li>{lang.calibration.solve_pnp_step2}</li>
         <li>{lang.calibration.solve_pnp_step3}</li>
       </ol>
-      {percent !== undefined && <Progress className={styles.progress} percent={percent} />}
+      {percent !== undefined && <Progress className={styles.progress} percent={percent} status="normal" />}
       <Row gutter={[16, 12]}>
         <Col span={16}>
           <ImageDisplay
