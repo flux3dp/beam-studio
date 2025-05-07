@@ -62,6 +62,7 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
   const PROGRESS_ID = 'bb2-calibration';
   const { calibration: tCali, device: tDevice } = useI18n();
   const [step, setStep] = useState(Step.CHECK_DATA);
+  const [skipChArUco, setSkipChArUco] = useState(false);
   const next = useCallback(() => setStep((cur) => cur + 1), []);
   const prev = useCallback(() => setStep((cur) => cur - 1), []);
 
@@ -114,10 +115,13 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
 
     if (!res) return undefined;
 
-    const { displayStep, text } = res;
+    let { displayStep, text } = res;
+    const totalSteps = skipChArUco ? 5 : 7;
 
-    return `${tCali.step} ${displayStep}/7 - ${text}`;
-  }, [step, tCali]);
+    if (skipChArUco) displayStep -= 2;
+
+    return `${tCali.step} ${displayStep}/${totalSteps} - ${text}`;
+  }, [step, tCali, skipChArUco]);
 
   return match<Step, ReactNode>(step)
     .with(Step.CHECK_DATA, () => {
@@ -128,8 +132,13 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
           getData={async () => loadJson('fisheye', 'wide-angle.json') as FisheyeCameraParametersV4Cali}
           onClose={handleClose}
           onNext={(res: boolean) => {
-            if (res) setStep(Step.PUT_PAPER);
-            else setStep(Step.PREPARE_MATERIALS);
+            if (res) {
+              setSkipChArUco(true);
+              setStep(Step.PUT_PAPER);
+            } else {
+              setSkipChArUco(false);
+              setStep(Step.PREPARE_MATERIALS);
+            }
           }}
           updateParam={updateParam}
         />

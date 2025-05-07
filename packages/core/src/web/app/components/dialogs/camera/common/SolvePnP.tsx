@@ -213,17 +213,10 @@ const SolvePnP = ({
 
   const positionText = useMemo(
     () =>
-      [
-        lang.calibration.align_olt,
-        lang.calibration.align_ort,
-        lang.calibration.align_olb,
-        lang.calibration.align_orb,
-        lang.calibration.align_ilt,
-        lang.calibration.align_irt,
-        lang.calibration.align_ilb,
-        lang.calibration.align_irb,
-      ][selectedPointIdx],
-    [lang, selectedPointIdx],
+      selectedPointIdx >= 0
+        ? (lang.calibration[`align_${points.length}_${selectedPointIdx}` as keyof typeof lang.calibration] as string)
+        : null,
+    [lang, selectedPointIdx, points.length],
   );
 
   const onScaleChange = useCallback((scale: number, svg: SVGSVGElement) => {
@@ -319,7 +312,7 @@ const SolvePnP = ({
                   <Col className={styles['point-id']} span={24}>
                     Point #{selectedPointIdx}
                   </Col>
-                  <Col span={24}>{positionText}</Col>
+                  {positionText && <Col span={24}>{positionText}</Col>}
                   <Col span={4}>X</Col>
                   <Col span={20}>
                     <InputNumber<number>

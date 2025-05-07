@@ -1,6 +1,7 @@
 import alertCaller from '@core/app/actions/alert-caller';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import deviceMaster from '@core/helpers/device-master';
+import isDev from '@core/helpers/is-dev';
 import versionChecker from '@core/helpers/version-checker';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
@@ -37,7 +38,7 @@ export const showBB2WideAngleCameraCalibration = async (device: IDeviceInfo): Pr
 
   const vc = versionChecker(device.version);
 
-  if (!vc.meetRequirement('BB2_WIDE_ANGLE_CAMERA')) return false;
+  if (!vc.meetRequirement('BB2_WIDE_ANGLE_CAMERA') && !isDev()) return false;
 
   await deviceMaster.connectCamera();
 

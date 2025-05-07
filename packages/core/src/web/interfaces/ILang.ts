@@ -921,14 +921,20 @@ export interface ILang {
   calibration: {
     ador_autofocus_focusing_block: string;
     ador_autofocus_material: string;
-    align_ilb: string;
-    align_ilt: string;
-    align_irb: string;
-    align_irt: string;
-    align_olb: string;
-    align_olt: string;
-    align_orb: string;
-    align_ort: string;
+    // used in SolvePnP.tsx with Template literals
+    align_4_0: string;
+    align_4_1: string;
+    align_4_2: string;
+    align_4_3: string;
+    align_8_0: string;
+    align_8_1: string;
+    align_8_2: string;
+    align_8_3: string;
+    align_8_4: string;
+    align_8_5: string;
+    align_8_6: string;
+    align_8_7: string;
+    //
     align_red_cross_cut: string;
     align_red_cross_print: string;
     analyze_result_fail: string;
