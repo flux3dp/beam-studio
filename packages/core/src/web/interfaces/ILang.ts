@@ -933,6 +933,8 @@ export interface ILang {
     align_red_cross_print: string;
     analyze_result_fail: string;
     ask_for_readjust: string;
+    at_focus_height: string;
+    at_lower_height: string;
     back: string;
     calculating_camera_matrix: string;
     calculating_regression_parameters: string;
@@ -1011,7 +1013,6 @@ export interface ILang {
       beamo_af: string;
       hexa: string;
     };
-    prepare_materials: string;
     preparing_to_take_picture: string;
     promark_help_link: string;
     put_chessboard: string;
@@ -1050,7 +1051,13 @@ export interface ILang {
     solve_pnp_title: string;
     start_engrave: string;
     start_printing: string;
+    step: string;
     taking_picture: string;
+    title_align_marker_points: string;
+    title_capture_calibration_pattern: string;
+    title_confirm_calibration_result: string;
+    title_engrave_marker_points: string;
+    title_prepare_materials: string;
     unable_to_load_camera_parameters: string;
     update_firmware_msg1: string;
     update_firmware_msg2: string;

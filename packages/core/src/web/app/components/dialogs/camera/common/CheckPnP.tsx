@@ -27,9 +27,21 @@ interface Props {
     | { rvecs: Record<string, number[]>; tvecs: Record<string, number[]> }
   );
   points?: Array<[number, number]>;
+  title?: string;
 }
 
-const CheckPnP = ({ cameraOptions, dh, grid, hasNext, onBack, onClose, onNext, params, points }: Props): ReactNode => {
+const CheckPnP = ({
+  cameraOptions,
+  dh,
+  grid,
+  hasNext,
+  onBack,
+  onClose,
+  onNext,
+  params,
+  points,
+  title,
+}: Props): ReactNode => {
   const lang = useI18n();
   const tCali = lang.calibration;
   const [img, setImg] = useState<null | { blob: Blob; url: string }>(null);
@@ -88,7 +100,7 @@ const CheckPnP = ({ cameraOptions, dh, grid, hasNext, onBack, onClose, onNext, p
       maskClosable={false}
       onCancel={() => onClose(false)}
       open
-      title={<Title title={tCali.camera_calibration} />}
+      title={<Title title={title ?? tCali.title_confirm_calibration_result} />}
       width="80vw"
     >
       <Row gutter={[16, 12]}>

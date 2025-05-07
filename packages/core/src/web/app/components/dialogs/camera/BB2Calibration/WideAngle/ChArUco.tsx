@@ -6,6 +6,7 @@ import { sprintf } from 'sprintf-js';
 import { match } from 'ts-pattern';
 
 import alertCaller from '@core/app/actions/alert-caller';
+import progressCaller from '@core/app/actions/progress-caller';
 import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
 import { ContextMenu, ContextMenuTrigger, MenuItem } from '@core/helpers/react-contextmenu';
 import useI18n from '@core/helpers/useI18n';
@@ -34,11 +35,12 @@ interface Props {
   onClose: (complete?: boolean) => void;
   onNext: () => void;
   onPrev: () => void;
+  title?: string;
   updateParam: (param: FisheyeCameraParametersV4Cali) => void;
 }
 
 // TODO: how to handle the case when some pictures are not detected or points are too less?
-const ChArUco = ({ onClose, onNext, onPrev, updateParam }: Props) => {
+const ChArUco = ({ onClose, onNext, onPrev, title, updateParam }: Props) => {
   const [step, setStep] = useState<Step>(Steps.TopLeft);
   const tCali = useI18n().calibration;
   const { exposureSetting, handleTakePicture, img, pauseLive, restartLive, setExposureSetting } = useLiveFeed({
@@ -65,9 +67,11 @@ const ChArUco = ({ onClose, onNext, onPrev, updateParam }: Props) => {
 
   const handleNext = useCallback(async () => {
     pauseLive();
+    progressCaller.openNonstopProgress({ id: 'detect-charuco' });
 
     const res = await cameraCalibrationApi.detectChAruCo(img!.blob, 15, 10);
 
+    progressCaller.popById('detect-charuco');
     console.log(`Detect ChArUco at ${step}:`, res);
 
     if (!res.success || res.ratio < 0.5) {
@@ -145,7 +149,7 @@ const ChArUco = ({ onClose, onNext, onPrev, updateParam }: Props) => {
       maskClosable={false}
       onCancel={() => onClose(false)}
       open
-      title={tCali.camera_calibration}
+      title={title ?? tCali.title_capture_calibration_pattern}
       width="80vw"
     >
       <div className={styles.container}>
@@ -155,7 +159,7 @@ const ChArUco = ({ onClose, onNext, onPrev, updateParam }: Props) => {
           {step === Steps.TopLeft && <li dangerouslySetInnerHTML={{ __html: tCali.charuco_auto_focus }} />}
           <li>{tCali.charuco_capture}</li>
         </ol>
-        <Progress className={styles.progress} percent={step * 20} />
+        <Progress className={styles.progress} percent={(step + 1) * 20} />
         <Flex align="center" className={styles.content} justify="space-between">
           <div className={styles.left}>
             <div className={styles.imgContainer}>

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { Button, Col, Flex, InputNumber, Modal, Row } from 'antd';
+import { Button, Col, Flex, InputNumber, Modal, Progress, Row } from 'antd';
 import classNames from 'classnames';
 
 import alertCaller from '@core/app/actions/alert-caller';
@@ -26,7 +26,9 @@ interface Props {
   onClose: (complete: boolean) => void;
   onNext: (rvec: number[], tvec: number[], imgPoints: Array<[number, number]>) => void;
   params: FisheyeCaliParameters;
+  percent?: number;
   refPoints?: Array<[number, number]>;
+  title?: string;
   titleLink?: string;
 }
 
@@ -40,7 +42,9 @@ const SolvePnP = ({
   onClose,
   onNext,
   params,
+  percent,
   refPoints = adorPnPPoints,
+  title,
   titleLink,
 }: Props): React.JSX.Element => {
   const [img, setImg] = useState<null | { blob: Blob; success: boolean; url: string }>(null);
@@ -271,7 +275,7 @@ const SolvePnP = ({
       maskClosable={false}
       onCancel={() => onClose(false)}
       open
-      title={<Title link={titleLink} title={lang.calibration.camera_calibration} />}
+      title={<Title link={titleLink} title={title ?? lang.calibration.camera_calibration} />}
       width="80vw"
     >
       <ol className={styles.steps}>
@@ -279,6 +283,7 @@ const SolvePnP = ({
         <li>{lang.calibration.solve_pnp_step2}</li>
         <li>{lang.calibration.solve_pnp_step3}</li>
       </ol>
+      {percent !== undefined && <Progress className={styles.progress} percent={percent} />}
       <Row gutter={[16, 12]}>
         <Col span={16}>
           <ImageDisplay

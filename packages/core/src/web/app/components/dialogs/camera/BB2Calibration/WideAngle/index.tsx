@@ -1,4 +1,4 @@
-import { type ReactNode, useCallback, useRef, useState } from 'react';
+import { type ReactNode, useCallback, useMemo, useRef, useState } from 'react';
 
 import { match } from 'ts-pattern';
 
@@ -75,6 +75,50 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
     calibratingParam.current = { ...calibratingParam.current, ...param };
   }, []);
 
+  const title = useMemo(() => {
+    const res = match<Step, null | { displayStep: number; text: string }>(step)
+      .with(Step.PREPARE_MATERIALS, () => ({ displayStep: 1, text: tCali.title_prepare_materials }))
+      .with(Step.CALIBRATE_CHARUCO, () => ({ displayStep: 2, text: tCali.title_capture_calibration_pattern }))
+      .with(Step.PUT_PAPER, () => ({ displayStep: 3, text: tCali.title_engrave_marker_points }))
+      .with(
+        Step.SOLVE_PNP_INSTRUCTION_1,
+        Step.SOLVE_PNP_TL_1,
+        Step.SOLVE_PNP_TR_1,
+        Step.SOLVE_PNP_BL_1,
+        Step.SOLVE_PNP_BR_1,
+        () => ({
+          displayStep: 4,
+          text: `${tCali.title_align_marker_points} (${tCali.at_focus_height})`,
+        }),
+      )
+      .with(Step.CHECK_PNP_1, () => ({
+        displayStep: 5,
+        text: `${tCali.title_confirm_calibration_result} (${tCali.at_focus_height})`,
+      }))
+      .with(
+        Step.SOLVE_PNP_INSTRUCTION_2,
+        Step.SOLVE_PNP_TL_2,
+        Step.SOLVE_PNP_TR_2,
+        Step.SOLVE_PNP_BL_2,
+        Step.SOLVE_PNP_BR_2,
+        () => ({
+          displayStep: 6,
+          text: `${tCali.title_align_marker_points} (${tCali.at_lower_height})`,
+        }),
+      )
+      .with(Step.CHECK_PNP_2, () => ({
+        displayStep: 7,
+        text: `${tCali.title_confirm_calibration_result} (${tCali.at_lower_height})`,
+      }))
+      .otherwise(() => null);
+
+    if (!res) return undefined;
+
+    const { displayStep, text } = res;
+
+    return `${tCali.step} ${displayStep}/7 - ${text}`;
+  }, [step, tCali]);
+
   return match<Step, ReactNode>(step)
     .with(Step.CHECK_DATA, () => {
       return (
@@ -127,7 +171,7 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
             [tCali.material_a4_calibration_pattern, tCali.material_4_a4_paper],
             tCali.download_and_print_calibration_pattern,
           ]}
-          title={tCali.prepare_materials}
+          title={title}
         >
           <div className={styles.link} onClick={handleDownload}>
             {tCali.download_calibration_pattern}
@@ -136,7 +180,7 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
       );
     })
     .with(Step.CALIBRATE_CHARUCO, () => {
-      return <ChArUco onClose={handleClose} onNext={next} onPrev={prev} updateParam={updateParam} />;
+      return <ChArUco onClose={handleClose} onNext={next} onPrev={prev} title={title} updateParam={updateParam} />;
     })
     .with(Step.PUT_PAPER, () => {
       const handleNext = async (doEngraving = true) => {
@@ -190,7 +234,7 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
             tCali.put_paper_step3,
             tCali.put_paper_skip,
           ]}
-          title={tCali.put_paper}
+          title={title}
         />
       );
     })
@@ -202,7 +246,23 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
         ]}
         buttons={[
           { label: tCali.back, onClick: prev },
-          { label: tCali.next, onClick: next, type: 'primary' },
+          {
+            label: tCali.next,
+            onClick: async () => {
+              if (step === Step.SOLVE_PNP_INSTRUCTION_2) {
+                progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: tCali.moving_platform });
+                await movePlatformRel(-40);
+
+                const dh2 = await getFocalDistance();
+
+                updateParam({ dh2 });
+                progressCaller.popById(PROGRESS_ID);
+              }
+
+              next();
+            },
+            type: 'primary',
+          },
         ]}
         onClose={() => onClose(false)}
         steps={[
@@ -210,7 +270,7 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
           tCali.solve_pnp_step1,
           tCali.solve_pnp_step2,
         ].filter(Boolean)}
-        title={tCali.solve_pnp_title}
+        title={title}
       />
     ))
     .with(
@@ -223,26 +283,34 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
       Step.SOLVE_PNP_BL_2,
       Step.SOLVE_PNP_BR_2,
       (step) => {
-        const { interestArea, region } = match<
+        const { interestArea, percent, region } = match<
           typeof step,
           {
             interestArea?: { height: number; width: number; x: number; y: number };
+            percent: number;
             region: keyof typeof bb2WideAngleCameraPnpPoints;
           }
         >(step)
           .with(Step.SOLVE_PNP_TL_1, Step.SOLVE_PNP_TL_2, () => ({
             interestArea: { height: 1300, width: 2300, x: 500, y: 900 },
+            percent: 25,
             region: 'topLeft',
           }))
           .with(Step.SOLVE_PNP_TR_1, Step.SOLVE_PNP_TR_2, () => ({
             interestArea: { height: 1300, width: 2300, x: 2800, y: 900 },
+            percent: 50,
             region: 'topRight',
           }))
           .with(Step.SOLVE_PNP_BL_1, Step.SOLVE_PNP_BL_2, () => ({
             interestArea: { height: 800, width: 1600, x: 1200, y: 2200 },
+            percent: 75,
             region: 'bottomLeft',
           }))
-          .otherwise(() => ({ interestArea: { height: 800, width: 1600, x: 2800, y: 2200 }, region: 'bottomRight' }));
+          .otherwise(() => ({
+            interestArea: { height: 800, width: 1600, x: 2800, y: 2200 },
+            percent: 100,
+            region: 'bottomRight',
+          }));
 
         const keys = match<
           typeof step,
@@ -291,7 +359,9 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
               next();
             }}
             params={calibratingParam.current}
+            percent={percent}
             refPoints={bb2WideAngleCameraPnpPoints[region]}
+            title={title}
           />
         );
       },
@@ -361,19 +431,7 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
           hasNext
           onBack={() => setStep(step === Step.CHECK_PNP_1 ? Step.SOLVE_PNP_TL_1 : Step.SOLVE_PNP_TL_2)}
           onClose={onClose}
-          onNext={async () => {
-            if (step === Step.CHECK_PNP_1) {
-              progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: tCali.moving_platform });
-              await movePlatformRel(-40);
-
-              const dh2 = await getFocalDistance();
-
-              updateParam({ dh2 });
-              progressCaller.popById(PROGRESS_ID);
-            }
-
-            next();
-          }}
+          onNext={next}
           params={{ d: d!, k: k!, rvecs: rvecs!, tvecs: tvecs! }}
           points={[
             ...bb2WideAngleCameraPnpPoints.topLeft,
@@ -381,6 +439,7 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
             ...bb2WideAngleCameraPnpPoints.bottomLeft,
             ...bb2WideAngleCameraPnpPoints.bottomRight,
           ]}
+          title={title}
         />
       );
     })
