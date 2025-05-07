@@ -142,7 +142,6 @@ const splitFullColorLayer = async (
     const yRatio = getData(layer, 'yRatio');
     const kRatio = getData(layer, 'kRatio');
     const params = [null, { strength: kRatio }, { strength: cRatio }, { strength: mRatio }, { strength: yRatio }];
-    const promises = [];
 
     for (let i = 0; i < colorData.length; i++) {
       const { color, data } = colorData[i];
