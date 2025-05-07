@@ -122,7 +122,7 @@ const AdorCalibrationV2 = ({ factoryMode = false, onClose }: Props): React.JSX.E
         progressCaller.update(PROGRESS_ID, { message: tCali.drawing_calibration_image });
 
         if (doCutting) {
-          await deviceMaster.doAdorCalibrationV2(2);
+          await deviceMaster.doAdorCalibrationV2();
         }
 
         progressCaller.update(PROGRESS_ID, { message: tCali.preparing_to_take_picture });
@@ -221,7 +221,7 @@ const AdorCalibrationV2 = ({ factoryMode = false, onClose }: Props): React.JSX.E
         console.log('dh', dh);
         calibratingParam.current.dh2 = dh;
         progressCaller.update(PROGRESS_ID, { message: tCali.drawing_calibration_image });
-        await deviceMaster.doAdorCalibrationV2(2);
+        await deviceMaster.doAdorCalibrationV2();
         progressCaller.update(PROGRESS_ID, { message: tCali.preparing_to_take_picture });
         await prepareToTakePicture();
         onNext();

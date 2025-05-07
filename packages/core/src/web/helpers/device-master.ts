@@ -901,8 +901,8 @@ class DeviceMaster {
     await this.doCalibration('fcode/ador-camera-v1.fc');
   }
 
-  async doAdorCalibrationV2(step = 1, withPitch = false) {
-    await this.doCalibration(`fcode/ador-camera-v2-${step}${withPitch && step === 1 ? '-p' : ''}.fc`);
+  async doAdorCalibrationV2() {
+    await this.doCalibration(`fcode/ador-camera-v2.fc`);
   }
 
   async doAdorPrinterCalibration() {
