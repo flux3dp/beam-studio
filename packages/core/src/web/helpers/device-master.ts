@@ -957,8 +957,6 @@ class DeviceMaster {
     return controlSocket.addTask(controlSocket.deleteFile, `${path}/${fileName}`);
   }
 
-  async uploadAsJson() {}
-
   async uploadToDirectory(data, path: string, fileName: string, onProgress?: (...args: any[]) => void) {
     const controlSocket = await this.getControl();
 
