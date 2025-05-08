@@ -98,13 +98,48 @@ https://support.flux3dp.com/hc/en-us/articles/8722287935247`,
   const [isLoading, setIsLoading] = useState(false);
   const [conversationId, setConversationId] = useState<null | string>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const floatingAreaRef = useRef<HTMLDivElement>(null);
   const currentBotMessageId = useRef<null | string>(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+  // Dynamically adjust messagesArea padding-bottom based on floatingArea height
+  useEffect(() => {
+    const messagesAreaDiv = messagesEndRef.current?.parentElement; // This should be .messagesArea
+
+    if (!messagesAreaDiv || !floatingAreaRef.current) return;
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        const height = entry.contentRect.height;
+        const basePadding = 16; // Or parse from existing style if needed
+
+        messagesAreaDiv.style.paddingBottom = `${Math.max(height + basePadding, 52)}px`;
+      }
+    });
+
+    resizeObserver.observe(floatingAreaRef.current);
+
+    // Set initial padding
+    const initialHeight = floatingAreaRef.current.offsetHeight;
+    const basePadding = 16;
+
+    if (messagesAreaDiv) {
+      messagesAreaDiv.style.paddingBottom = `${Math.max(initialHeight + basePadding, 52)}px`;
+    }
+
+    return () => {
+      resizeObserver.disconnect();
+
+      if (messagesAreaDiv) {
+        messagesAreaDiv.style.paddingBottom = ''; // Reset to CSS defined value on unmount
+      }
+    };
+  }, []); // Ensure this runs after floatingAreaRef is attached
+
+  const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setInputValue(e.target.value);
   };
 
@@ -138,6 +173,14 @@ https://support.flux3dp.com/hc/en-us/articles/8722287935247`,
     }
 
     callFetchDifyResponse(text);
+  };
+
+  const handleInputKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault(); // Prevent newline if only Enter is pressed
+      handleSend();
+    }
+    // If Shift + Enter, default behavior (insert newline) is allowed.
   };
 
   const handleOptionClick = (optionText: string) => {
@@ -221,15 +264,17 @@ https://support.flux3dp.com/hc/en-us/articles/8722287935247`,
         <div ref={messagesEndRef} />
       </div>
 
-      <Flex align="center" className={styles.floatingArea} vertical>
+      <Flex align="center" className={styles.floatingArea} ref={floatingAreaRef} vertical>
         <div className={styles.inputAreaContainer}>
-          <Input
+          <Input.TextArea
+            autoSize={{ maxRows: 9, minRows: 2 }}
             className={styles.inputArea}
             disabled={isLoading}
             onChange={handleInputChange}
-            onPressEnter={() => handleSend()}
-            placeholder="Ask Beamy any questions"
+            onPressEnter={handleInputKeyPress}
+            placeholder="Ask Beamy a question."
             value={inputValue}
+            variant="borderless"
           />
           <Button className={styles.floatingSendButton} loading={isLoading} onClick={() => handleSend()} type="primary">
             {isLoading ? '' : <LeftPanelIcons.Send />}

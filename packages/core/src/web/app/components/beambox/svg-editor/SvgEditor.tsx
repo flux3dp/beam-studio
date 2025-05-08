@@ -115,8 +115,8 @@ export const SvgEditor = (): ReactNode => {
             <Resizable
               enable={{ right: true }}
               handleStyles={{ right: { right: '0px', width: '10px' } }}
-              maxWidth={800}
-              minWidth={250}
+              maxWidth={960}
+              minWidth={360}
               onResize={(_event, _direction, elementRef) => {
                 setWidth(elementRef.offsetWidth);
               }}
