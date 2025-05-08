@@ -8,6 +8,7 @@ export const LayerModule = {
   LASER_1064: 4,
   PRINTER: 5,
   PRINTER_4C: 6, // temp
+  WHITE_INK: 7,
   UNKNOWN: 9,
   LASER_UNIVERSAL: 15,
   UV_PRINT: -1,
