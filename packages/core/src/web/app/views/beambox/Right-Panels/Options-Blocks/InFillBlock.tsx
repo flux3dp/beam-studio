@@ -11,27 +11,40 @@ import useDidUpdateEffect from '@core/helpers/hooks/useDidUpdateEffect';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './InFillBlock.module.scss';
 
-let svgCanvas;
+let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
 
 interface Props {
-  elem: Element;
+  elems: Element[];
   id?: string;
   label?: string;
 }
 
-const InFillBlock = ({ elem, id = 'infill', label }: Props): React.JSX.Element => {
+const InFillBlock = ({ elems, id = 'infill', label }: Props): React.ReactNode => {
   const lang = useI18n().beambox.right_panel.object_panel.option_panel;
   const isMobile = useIsMobile();
-  const calculateFillInfo = (element: Element) => {
-    const isFillable = svgCanvas.isElemFillable(element);
-    const { isAllFilled, isAnyFilled } = svgCanvas.calcElemFilledInfo(element);
+  const calculateFillInfo = (elements: Element[]) => {
+    let isFillable = elements.length > 0;
+    let isAllFilled = true;
+    let isAnyFilled = false;
+
+    for (const element of elements) {
+      isFillable = svgCanvas.isElemFillable(element);
+
+      if (!isFillable) break;
+
+      const { isAllFilled: subIsAllFilled, isAnyFilled: subIsAnyFilled } = svgCanvas.calcElemFilledInfo(element);
+
+      isAllFilled = isAllFilled && subIsAllFilled;
+      isAnyFilled = isAnyFilled || subIsAnyFilled;
+    }
 
     return {
       isAllFilled,
@@ -39,12 +52,12 @@ const InFillBlock = ({ elem, id = 'infill', label }: Props): React.JSX.Element =
       isFillable,
     };
   };
-  const [fillInfo, setFillInfo] = useState(calculateFillInfo(elem));
+  const [fillInfo, setFillInfo] = useState(calculateFillInfo(elems));
   const { isAllFilled, isAnyFilled, isFillable } = fillInfo;
 
   useDidUpdateEffect(() => {
-    setFillInfo(calculateFillInfo(elem));
-  }, [elem]);
+    setFillInfo(calculateFillInfo(elems));
+  }, [elems]);
 
   if (!isFillable) {
     return null;
@@ -52,9 +65,9 @@ const InFillBlock = ({ elem, id = 'infill', label }: Props): React.JSX.Element =
 
   const onClick = () => {
     if (isAnyFilled) {
-      svgCanvas.setElemsUnfill([elem]);
+      svgCanvas.setElemsUnfill(elems);
     } else {
-      svgCanvas.setElemsFill([elem]);
+      svgCanvas.setElemsFill(elems);
     }
 
     setFillInfo((prev) => ({
@@ -65,7 +78,7 @@ const InFillBlock = ({ elem, id = 'infill', label }: Props): React.JSX.Element =
     LayerPanelController.checkVector();
   };
 
-  const isPartiallyFilled = elem.tagName === 'g' && isAnyFilled && !isAllFilled;
+  const isPartiallyFilled = elems[0].tagName === 'g' && isAnyFilled && !isAllFilled;
 
   return isMobile ? (
     <ObjectPanelItem.Item

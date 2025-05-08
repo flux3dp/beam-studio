@@ -10,11 +10,12 @@ import i18n from '@core/helpers/i18n';
 import { useIsMobile } from '@core/helpers/system-helper';
 
 interface Props {
+  hasMultiValue?: boolean;
   onValueChange: (val: VerticalAlign) => void;
   value: VerticalAlign;
 }
 
-export default function VerticalAlignBlock({ onValueChange, value }: Props): React.JSX.Element {
+export default function VerticalAlignBlock({ hasMultiValue, onValueChange, value }: Props): React.JSX.Element {
   const LANG = i18n.lang.beambox.right_panel.object_panel;
   const label = LANG.option_panel.vertical_align;
   const isMobile = useIsMobile();
@@ -31,7 +32,11 @@ export default function VerticalAlignBlock({ onValueChange, value }: Props): Rea
         label={label}
         onChange={onValueChange}
         options={options}
-        selected={options.find((option) => option.value === value)}
+        selected={
+          hasMultiValue
+            ? { label: '-', value: undefined as unknown as VerticalAlign }
+            : options.find((option) => option.value === value)
+        }
       />
     );
   }
@@ -40,11 +45,11 @@ export default function VerticalAlignBlock({ onValueChange, value }: Props): Rea
     <div className={classNames(styles['option-block'], styles['with-select'])}>
       <div className={styles.label}>{label}</div>
       <Select
-        dropdownMatchSelectWidth={false}
         onChange={(val) => onValueChange(val)}
         onKeyDown={(e) => e.stopPropagation()}
         options={options}
-        value={value}
+        popupMatchSelectWidth={false}
+        value={hasMultiValue ? '-' : value}
       />
     </div>
   );

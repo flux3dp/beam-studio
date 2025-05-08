@@ -1,3 +1,6 @@
+import type { VerticalAlign } from '@core/app/actions/beambox/textPathEdit';
+import type { ConfigItem } from '@core/interfaces/ILayerConfig';
+
 // Dimensions
 export type PositionKey = 'cx' | 'cy' | 'x1' | 'x2' | 'x' | 'y1' | 'y2' | 'y';
 export const positionKeys = new Set<PositionKey>(['x', 'y', 'x1', 'y1', 'x2', 'y2', 'cx', 'cy']);
@@ -23,4 +26,22 @@ export type DimensionValues = { [key in DimensionKeyBoolean]?: boolean } & { [ke
  */
 export type DimensionOrderMap = {
   [key: string]: Array<'lock' | 'rot' | DimensionKeyShort>;
+};
+
+// Text Options
+
+export interface TextOption {
+  fontFamily: string;
+  fontSize: number;
+  fontStyle: any;
+  id: string;
+  isVerti: boolean;
+  letterSpacing: number;
+  lineSpacing: number;
+  startOffset: number;
+  verticalAlign: VerticalAlign;
+}
+
+export type TextConfig = {
+  [key in keyof TextOption]: ConfigItem<TextOption[key]>;
 };

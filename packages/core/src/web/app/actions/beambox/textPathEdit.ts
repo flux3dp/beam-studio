@@ -1,11 +1,12 @@
 import history from '@core/app/svgedit/history/history';
-import selector from '@core/app/svgedit/selector';
+import undoManager from '@core/app/svgedit/history/undoManager';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand, ICommand } from '@core/interfaces/IHistory';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 const { svgedit } = window;
 
-let svgCanvas;
+let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
@@ -182,50 +183,61 @@ function editPath(element: SVGGElement): void {
   svgCanvas.pathActions.toEditMode(path);
 }
 
-const setStartOffset = (val: number, elem: SVGTextElement): void => {
-  const textPath = elem.querySelector('textPath');
-
-  svgCanvas.changeSelectedAttribute('startOffset', `${val}%`, [textPath]);
-
-  const selectorManager = selector.getSelectorManager();
-
-  selectorManager.requestSelector(elem.parentElement).resize();
+const getStartOffset = (elem: SVGTextPathElement): number => {
+  return Number.parseInt(elem.getAttribute('startOffset') || '0', 10);
 };
 
-function setVerticalAlign(textElement: Element, position: VerticalAlign): ICommand {
-  const textPath = textElement.querySelector('textPath');
-  const originalDominantBaseline = textPath.getAttribute('dominant-baseline');
-  const originalAlignmentBaseline = textPath.getAttribute('alignment-baseline');
+const getVerticalAlign = (elem: SVGTextPathElement): VerticalAlign => {
+  const alignmentBaseline = elem.getAttribute('alignment-baseline');
 
-  if (position === VerticalAlign.BOTTOM) {
-    textPath.removeAttribute('dominant-baseline');
-    textPath.removeAttribute('alignment-baseline');
-  } else if (position === VerticalAlign.MIDDLE) {
-    textPath.setAttribute('dominant-baseline', 'middle');
-    textPath.setAttribute('alignment-baseline', 'middle');
-  } else if (position === VerticalAlign.TOP) {
-    textPath.setAttribute('dominant-baseline', 'hanging');
-    textPath.setAttribute('alignment-baseline', 'top');
-  } else {
-    throw new Error('Bad_Parameter');
-  }
+  if (alignmentBaseline === 'middle') return VerticalAlign.MIDDLE;
 
-  const selectorManager = selector.getSelectorManager();
+  if (alignmentBaseline === 'top') return VerticalAlign.TOP;
 
-  selectorManager.resizeSelectors([textElement, textElement.parentElement]);
+  return VerticalAlign.BOTTOM;
+};
 
-  const cmd = new history.ChangeElementCommand(textPath, {
-    'alignment-baseline': originalAlignmentBaseline,
-    'dominant-baseline': originalDominantBaseline,
+const setStartOffset = (val: number, elem: SVGGElement): void => {
+  const textPaths = Array.from(elem.querySelectorAll('textPath'));
+
+  svgCanvas.changeSelectedAttribute('startOffset', `${val}%`, textPaths);
+};
+
+const setVerticalAlign = (position: VerticalAlign, elem: SVGGElement): void => {
+  const textPaths = Array.from(elem.querySelectorAll('textPath'));
+  const batchCmd = new history.BatchCommand('Change Vertical Align');
+  const attrMap = {
+    [VerticalAlign.BOTTOM]: {
+      'alignment-baseline': 'auto',
+      'dominant-baseline': 'auto',
+    },
+    [VerticalAlign.MIDDLE]: {
+      'alignment-baseline': 'middle',
+      'dominant-baseline': 'middle',
+    },
+    [VerticalAlign.TOP]: {
+      'alignment-baseline': 'top',
+      'dominant-baseline': 'hanging',
+    },
+  }[position];
+  let cmd: ICommand | null;
+
+  Object.keys(attrMap).forEach((attr) => {
+    svgCanvas.undoMgr.beginUndoableChange(attr, textPaths);
+    svgCanvas.changeSelectedAttributeNoUndo(attr, attrMap[attr as keyof typeof attrMap], textPaths);
+    cmd = svgCanvas.undoMgr.finishUndoableChange();
+
+    if (cmd) batchCmd.addSubCommand(cmd);
   });
-
-  return cmd;
-}
+  undoManager.addCommandToHistory(batchCmd);
+};
 
 export default {
   attachTextToPath,
   detachText,
   editPath,
+  getStartOffset,
+  getVerticalAlign,
   setStartOffset,
   setVerticalAlign,
   ungroupTextPath,

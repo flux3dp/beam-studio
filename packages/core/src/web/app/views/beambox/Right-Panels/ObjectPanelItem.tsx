@@ -52,6 +52,7 @@ const ObjectPanelItem = ({ autoClose = true, content, disabled, id, label, onCli
 
 interface NumberItemProps {
   decimal?: number;
+  hasMultiValue?: boolean;
   id: string;
   label?: React.ReactNode;
   max?: number;
@@ -63,6 +64,7 @@ interface NumberItemProps {
 
 const ObjectPanelNumber = ({
   decimal,
+  hasMultiValue = false,
   id,
   label,
   max = Number.MAX_SAFE_INTEGER,
@@ -80,7 +82,7 @@ const ObjectPanelNumber = ({
   const defaultPrecision = shouldConvert2Inch ? 4 : 2;
   const precision = decimal === undefined ? defaultPrecision : decimal;
   const valueInUnit = (+units.convertUnit(value, fakeUnit, 'mm').toFixed(precision)).toString();
-  const [displayValue, setDisplayValue] = React.useState(valueInUnit);
+  const [displayValue, setDisplayValue] = React.useState(hasMultiValue ? '-' : valueInUnit);
   const [hasInput, setHasInput] = React.useState(false);
   const onChange = (newValue: string) => {
     setDisplayValue(newValue);

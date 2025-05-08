@@ -865,8 +865,8 @@ const svgEditor = (window['svgEditor'] = (function () {
                 }, 100);
               }
 
-              textActions.setFontSize(textEdit.getFontSize());
-              textActions.setIsVertical(elem.getAttribute('data-verti') === 'true');
+              textActions.setFontSize(textEdit.getFontSize(elem));
+              textActions.setIsVertical(textEdit.getIsVertical(elem));
               break;
             case 'image':
               if (svgCanvas.getMode() === 'image') {
