@@ -3,7 +3,6 @@ import { ipcMain, Menu, MenuItem } from 'electron';
 import ElectronStore from 'electron-store';
 
 import i18n from '@core/helpers/i18n';
-import storage from '@core/implementations/storage';
 import type { ILang } from '@core/interfaces/ILang';
 
 import { getFocusedView, getTabManager } from '../helpers/tabHelper';
@@ -19,8 +18,7 @@ export function buildFileMenu(
   fnKey: 'Cmd' | 'Ctrl',
   r: ILang['topbar']['menu'],
   callback: (_data: MenuData) => void,
-  // eslint-disable-next-line ts/no-unused-vars
-  isDevMode: boolean = false,
+  _isDevMode: boolean = false,
 ): FileMenu {
   const menuItems: MenuItemConstructorOptions[] = [
     {
@@ -144,7 +142,7 @@ export function buildFileMenu(
         { click: callback, id: 'EXPORT_SVG', label: r.export_SVG },
         { click: callback, id: 'EXPORT_PNG', label: 'PNG' },
         { click: callback, id: 'EXPORT_JPG', label: 'JPG' },
-        storage.get('beambox-preference')['enable-uv-print-file'] && {
+        {
           click: callback,
           id: 'EXPORT_UV_PRINT',
           label: r.export_UV_print,
