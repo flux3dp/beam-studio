@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useMemo, useRef } from 'react';
+import React, { Fragment, useCallback, useContext, useMemo, useRef } from 'react';
 
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { ConfigProvider, InputNumber, Slider, Switch } from 'antd';
@@ -10,6 +10,7 @@ import { sliderTheme } from '@core/app/constants/antd-config';
 import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
 import history from '@core/app/svgedit/history/history';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
+import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
@@ -34,10 +35,10 @@ const LANG = i18n.lang.beambox.right_panel.object_panel.option_panel;
 
 interface Props {
   elem: Element;
-  updateObjectPanel: () => void;
 }
 
-const ImageOptions = ({ elem, updateObjectPanel }: Props): React.JSX.Element => {
+const ImageOptions = ({ elem }: Props): React.JSX.Element => {
+  const { updateObjectPanel } = useContext(ObjectPanelContext);
   const thresholdCache = useRef(Array.from({ length: 256 }).fill(null));
   const curCallID = useRef(0);
   const nextCallID = useRef(1);

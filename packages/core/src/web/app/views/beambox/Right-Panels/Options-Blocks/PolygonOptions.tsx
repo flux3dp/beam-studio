@@ -1,16 +1,18 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 
 import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
+import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './PolygonOptions.module.scss';
 
-let svgCanvas;
+let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
@@ -18,10 +20,10 @@ getSVGAsync((globalSVG) => {
 
 interface Props {
   elem: Element;
-  polygonSides: number;
 }
 
-function PolygonOptions({ elem, polygonSides }: Props): React.JSX.Element {
+function PolygonOptions({ elem }: Props): React.JSX.Element {
+  const { polygonSides } = useContext(ObjectPanelContext);
   const [sides, setSides] = React.useState(polygonSides || 5);
   const isMobile = useIsMobile();
   const lang = useI18n().beambox.right_panel.object_panel.option_panel;
@@ -32,7 +34,7 @@ function PolygonOptions({ elem, polygonSides }: Props): React.JSX.Element {
     }
   }, [polygonSides]);
 
-  const handleSideChanage = (val) => {
+  const handleSideChanage = (val: number) => {
     if (val === sides) {
       return;
     }
@@ -59,7 +61,7 @@ function PolygonOptions({ elem, polygonSides }: Props): React.JSX.Element {
       svgCanvas.undoMgr.addCommandToHistory(batchCmd);
     }
 
-    setSides(Number.parseInt(elem.getAttribute('sides'), 10));
+    setSides(Number.parseInt(elem.getAttribute('sides') || `${val}`, 10));
   };
 
   const renderSides = () =>

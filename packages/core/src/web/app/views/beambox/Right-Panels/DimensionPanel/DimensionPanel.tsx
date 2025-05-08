@@ -1,10 +1,11 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useContext } from 'react';
 
 import { ConfigProvider } from 'antd';
 
 import Constant from '@core/app/actions/beambox/constant';
 import { iconButtonTheme } from '@core/app/constants/antd-config';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
+import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
@@ -64,11 +65,11 @@ const fixedSizeMapping: { [key in SizeKey]: SizeKey } = {
 
 interface Props {
   elem: SVGElement;
-  getDimensionValues: (response: { dimensionValues: DimensionValues }) => void;
-  updateDimensionValues: (newDimensionValue: DimensionValues) => void;
 }
 
-const DimensionPanel = ({ elem, getDimensionValues, updateDimensionValues }: Props): React.JSX.Element => {
+const DimensionPanel = ({ elem }: Props): React.JSX.Element => {
+  const { getDimensionValues, updateDimensionValues } = useContext(ObjectPanelContext);
+
   const isMobile = useIsMobile();
 
   const forceUpdate = useForceUpdate();

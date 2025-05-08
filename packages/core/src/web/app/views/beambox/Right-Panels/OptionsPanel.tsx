@@ -16,13 +16,9 @@ import styles from './OptionsPanel.module.scss';
 
 interface Props {
   elem: Element;
-  polygonSides?: number;
-  rx: number;
-  updateDimensionValues: (val: { [key: string]: any }) => void;
-  updateObjectPanel: () => void;
 }
 
-function OptionsPanel({ elem, polygonSides, rx, updateDimensionValues, updateObjectPanel }: Props): React.JSX.Element {
+function OptionsPanel({ elem }: Props): React.JSX.Element {
   const isMobile = useIsMobile();
   let contents: Array<null | React.JSX.Element> = [];
   const isFullColor = getData(getObjectLayer(elem as SVGElement)?.elem, 'fullcolor');
@@ -40,12 +36,12 @@ function OptionsPanel({ elem, polygonSides, rx, updateDimensionValues, updateObj
 
     if (tagName === 'rect') {
       contents = [
-        <RectOptions elem={elem} key="rect" rx={rx} updateDimensionValues={updateDimensionValues} />,
+        <RectOptions elem={elem} key="rect" />,
         showColorPanel ? <ColorPanel elem={elem} key="color" /> : <InFillBlock elems={[elem]} key="fill" />,
       ];
     } else if (tagName === 'polygon') {
       contents = [
-        <PolygonOptions elem={elem} key="polygon" polygonSides={polygonSides!} />,
+        <PolygonOptions elem={elem} key="polygon" />,
         showColorPanel ? <ColorPanel elem={elem} key="color" /> : <InFillBlock elems={[elem]} key="fill" />,
       ];
     } else if (tagName === 'text') {
@@ -61,7 +57,7 @@ function OptionsPanel({ elem, polygonSides, rx, updateDimensionValues, updateObj
       if (elem.getAttribute('data-fullcolor') === '1') {
         contents = [];
       } else {
-        contents = [<ImageOptions elem={elem} key="image" updateObjectPanel={updateObjectPanel} />];
+        contents = [<ImageOptions elem={elem} key="image" />];
       }
     } else if (tagName === 'g') {
       if (elem.getAttribute('data-textpath-g')) {
