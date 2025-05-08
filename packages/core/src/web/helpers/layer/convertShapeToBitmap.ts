@@ -2,7 +2,7 @@
  * Convert shape to bitmap for printing
  * using for single-color printing layer only
  */
-import { printingModules } from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
 import updateImageDisplay from '@core/helpers/image/updateImageDisplay';
 
@@ -29,8 +29,9 @@ const convertShapeToBitmap = async (): Promise<() => void> => {
   for (let i = 0; i < allLayerNames.length; i += 1) {
     const layerName = allLayerNames[i];
     const layer = getLayerElementByName(layerName);
+    const module = getData(layer, 'module')!;
 
-    if (!getData(layer, 'fullcolor') && printingModules.has(getData(layer, 'module'))) {
+    if (!getData(layer, 'fullcolor') && (printingModules.has(module) || module === LayerModule.WHITE_INK)) {
       // eslint-disable-next-line no-async-promise-executor
       const promise = new Promise<void>(async (resolve) => {
         const { bbox, rgbBlob: blob } = await layerToImage(layer as SVGGElement, {
