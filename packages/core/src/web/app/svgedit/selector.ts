@@ -7,10 +7,10 @@
  * Copyright(c) 2010 Jeff Schiller
  */
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
+import { getValue } from '@core/app/views/beambox/Right-Panels/DimensionPanel/utils';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { isMobile } from '@core/helpers/system-helper';
-import units from '@core/helpers/units';
 import storage from '@core/implementations/storage';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
@@ -416,11 +416,16 @@ class Selector {
       newContent = `${elemAngle}&deg;`;
     } else {
       const useInch = storage.get('default-units') === 'inches';
-      const unit = useInch ? 'inch' : 'mm';
-      const elemW = +units.convertUnit(elemDimension.width / 10 || elemDimension.rx / 5, unit, 'mm').toFixed(1);
-      const elemH = +units.convertUnit(elemDimension.height / 10 || elemDimension.ry / 5, unit, 'mm').toFixed(1);
+      const unit = useInch ? 'in' : 'mm';
+      const displayUnit = useInch ? 'inch' : 'mm';
+      const elemW =
+        getValue(elemDimension, 'w', { allowUndefined: true, unit }) ??
+        getValue(elemDimension, 'rx', { allowUndefined: true, unit });
+      const elemH =
+        getValue(elemDimension, 'h', { allowUndefined: true, unit }) ??
+        getValue(elemDimension, 'ry', { allowUndefined: true, unit });
 
-      if (![elemH, elemW].includes(Number.NaN)) newContent = `${elemW}${unit} x ${elemH}${unit}`;
+      if (!!elemH && !!elemW) newContent = `${elemW.toFixed(1)}${displayUnit} x ${elemH.toFixed(1)}${displayUnit}`;
     }
 
     this.dimensionInfo.innerHTML = newContent;

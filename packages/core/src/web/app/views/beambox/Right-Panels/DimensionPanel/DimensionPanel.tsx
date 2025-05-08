@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 
 import { ConfigProvider } from 'antd';
 
@@ -11,6 +11,9 @@ import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useForceUpdate from '@core/helpers/use-force-update';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import type { DimensionOrderMap, DimensionValues, SizeKey } from '@core/interfaces/ObjectPanel';
+import { isPositionKey, isSizeKeyShort } from '@core/interfaces/ObjectPanel';
 
 import styles from './DimensionPanel.module.scss';
 import FlipButtons from './FlipButtons';
@@ -20,13 +23,13 @@ import Rotation from './Rotation';
 import SizeInput from './SizeInput';
 import { getValue } from './utils';
 
-let svgCanvas;
+let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
 
-const panelMap = {
+const panelMap: DimensionOrderMap = {
   ellipse: ['cx', 'cy', 'rx', 'ry'],
   g: ['x', 'y', 'w', 'h'],
   image: ['x', 'y', 'w', 'h'],
@@ -39,7 +42,7 @@ const panelMap = {
   use: ['x', 'y', 'w', 'h'],
 };
 
-const panelMapMobile = {
+const panelMapMobile: DimensionOrderMap = {
   ellipse: ['rx', 'lock', 'ry', 'rot', 'cx', 'cy'],
   g: ['w', 'lock', 'h', 'rot', 'x', 'y'],
   image: ['w', 'lock', 'h', 'rot', 'x', 'y'],
@@ -52,7 +55,7 @@ const panelMapMobile = {
   use: ['w', 'lock', 'h', 'rot', 'x', 'y'],
 };
 
-const fixedSizeMapping = {
+const fixedSizeMapping: { [key in SizeKey]: SizeKey } = {
   height: 'width',
   rx: 'ry',
   ry: 'rx',
@@ -60,15 +63,13 @@ const fixedSizeMapping = {
 };
 
 interface Props {
-  elem: Element;
-  getDimensionValues: (response: { dimensionValues: { [key: string]: number } }) => void;
-  updateDimensionValues: (newDimensionValue: { [key: string]: any }) => void;
+  elem: SVGElement;
+  getDimensionValues: (response: { dimensionValues: DimensionValues }) => void;
+  updateDimensionValues: (newDimensionValue: DimensionValues) => void;
 }
 
 const DimensionPanel = ({ elem, getDimensionValues, updateDimensionValues }: Props): React.JSX.Element => {
   const isMobile = useIsMobile();
-  const positionKeys = useMemo(() => new Set(['x', 'y', 'x1', 'y1', 'x2', 'y2', 'cx', 'cy']), []);
-  const sizeKeys = useMemo(() => new Set(['w', 'h', 'rx', 'ry']), []);
 
   const forceUpdate = useForceUpdate();
 
@@ -89,7 +90,7 @@ const DimensionPanel = ({ elem, getDimensionValues, updateDimensionValues }: Pro
       if (!['text', 'use'].includes(elem?.tagName)) {
         svgCanvas.changeSelectedAttribute(type, posVal, [elem]);
       } else {
-        svgCanvas.setSvgElemPosition(type, posVal, elem);
+        svgCanvas.setSvgElemPosition(type as 'x' | 'y', posVal, elem);
       }
 
       updateDimensionValues({ [type]: posVal });
@@ -119,9 +120,9 @@ const DimensionPanel = ({ elem, getDimensionValues, updateDimensionValues }: Pro
   );
 
   const changeSize = useCallback(
-    (type: string, val: number): IBatchCommand => {
+    (type: SizeKey, val: number): IBatchCommand | null => {
       const elemSize = val > 0.1 ? val : 0.1;
-      let cmd = null;
+      let cmd: IBatchCommand | null = null;
 
       switch (elem?.tagName) {
         case 'ellipse':
@@ -152,10 +153,10 @@ const DimensionPanel = ({ elem, getDimensionValues, updateDimensionValues }: Pro
   );
 
   const handleSizeChange = useCallback(
-    (type: 'height' | 'rx' | 'ry' | 'width', val: number): void => {
+    (type: SizeKey, val: number): void => {
       const batchCmd = HistoryCommandFactory.createBatchCommand('Object Panel Size Change');
       const response = {
-        dimensionValues: {} as { [key: string]: number },
+        dimensionValues: {} as DimensionValues,
       };
 
       getDimensionValues(response);
@@ -173,9 +174,9 @@ const DimensionPanel = ({ elem, getDimensionValues, updateDimensionValues }: Pro
       const newValues = { [type]: sizeVal };
 
       if (isRatioFixed) {
-        const ratio = sizeVal / dimensionValues[type];
+        const ratio = sizeVal / dimensionValues[type]!;
         const counterPart = fixedSizeMapping[type];
-        const newCounterPartVal = ratio * dimensionValues[counterPart];
+        const newCounterPartVal = ratio * dimensionValues[counterPart]!;
 
         cmd = changeSize(counterPart, newCounterPartVal);
 
@@ -208,38 +209,38 @@ const DimensionPanel = ({ elem, getDimensionValues, updateDimensionValues }: Pro
     forceUpdate();
   }, [elem, updateDimensionValues, forceUpdate]);
 
-  const response = { dimensionValues: {} as any };
+  const response = { dimensionValues: {} as DimensionValues };
 
   getDimensionValues(response);
 
   const { dimensionValues } = response;
 
-  const renderBlock = (type: string): React.JSX.Element => {
-    if (positionKeys.has(type)) {
+  const renderBlock = (type: string): React.ReactNode => {
+    if (isPositionKey(type)) {
       return (
         <PositionInput
           key={type}
           onChange={handlePositionChange}
-          type={type as 'cx' | 'cy' | 'x1' | 'x2' | 'x' | 'y1' | 'y2' | 'y'}
+          type={type}
           value={getValue(dimensionValues, type, { unit: 'mm' })}
         />
       );
     }
 
-    if (sizeKeys.has(type)) {
+    if (isSizeKeyShort(type)) {
       return (
         <SizeInput
           key={type}
           onBlur={handleSizeBlur}
           onChange={handleSizeChange}
-          type={type as 'h' | 'rx' | 'ry' | 'w'}
+          type={type}
           value={getValue(dimensionValues, type, { unit: 'mm' })}
         />
       );
     }
 
     if (type === 'rot') {
-      return <Rotation key="rot" onChange={handleRotationChange} value={dimensionValues.rotation} />;
+      return <Rotation key="rot" onChange={handleRotationChange} value={dimensionValues.rotation || 0} />;
     }
 
     if (type === 'lock') {
@@ -249,7 +250,7 @@ const DimensionPanel = ({ elem, getDimensionValues, updateDimensionValues }: Pro
     return null;
   };
   const panels: string[] = (isMobile ? panelMapMobile : panelMap)[elem?.tagName.toLowerCase()] || ['x', 'y', 'w', 'h'];
-  const contents = [];
+  const contents: React.ReactNode[] = [];
 
   panels.forEach((type) => {
     contents.push(renderBlock(type));

@@ -6,13 +6,14 @@ import UnitInput from '@core/app/widgets/UnitInput';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { useIsMobile } from '@core/helpers/system-helper';
 import storage from '@core/implementations/storage';
+import type { DimensionValues, PositionKey } from '@core/interfaces/ObjectPanel';
 
 import styles from './DimensionPanel.module.scss';
 import { getValue } from './utils';
 
 interface Props {
-  onChange: (type: string, value: number) => void;
-  type: 'cx' | 'cy' | 'x1' | 'x2' | 'x' | 'y1' | 'y2' | 'y';
+  onChange: (type: PositionKey, value: number) => void;
+  type: PositionKey;
   value: number;
 }
 
@@ -25,7 +26,7 @@ const PositionInput = ({ onChange, type, value }: Props): React.JSX.Element => {
   const precision = useMemo(() => (isInch ? 4 : 2), [isInch]);
 
   useEffect(() => {
-    const handler = (newValues?: { [type: string]: number }) => {
+    const handler = (newValues: DimensionValues) => {
       if (inputRef.current) {
         const newVal = getValue(newValues, type, { allowUndefined: true, unit });
 
@@ -44,7 +45,7 @@ const PositionInput = ({ onChange, type, value }: Props): React.JSX.Element => {
     };
   }, [type, unit, precision, objectPanelEventEmitter]);
 
-  const label = useMemo<JSX.Element | string>(() => {
+  const label = useMemo<React.ReactNode>(() => {
     if (type === 'x') {
       return 'X';
     }
@@ -104,7 +105,12 @@ const PositionInput = ({ onChange, type, value }: Props): React.JSX.Element => {
     return null;
   }, [type]);
   const inputId = useMemo(() => `${type}_position`, [type]);
-  const handleChange = useCallback((val: number) => onChange(type, val), [type, onChange]);
+  const handleChange = useCallback(
+    (val: null | number) => {
+      if (val !== null) onChange(type, val);
+    },
+    [type, onChange],
+  );
 
   if (isMobile) {
     return <ObjectPanelItem.Number id={inputId} label={label} updateValue={handleChange} value={value} />;

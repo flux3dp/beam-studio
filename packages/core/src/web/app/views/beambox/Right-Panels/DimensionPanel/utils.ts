@@ -1,15 +1,16 @@
 import constant from '@core/app/actions/beambox/constant';
+import type { DimensionKeyShort, DimensionValues } from '@core/interfaces/ObjectPanel';
 
 export const getValue = (
-  dimensionValues: { [key: string]: number },
-  type: string,
+  dimensionValues: DimensionValues,
+  type: DimensionKeyShort,
   opts: {
     allowUndefined?: boolean;
     unit?: 'in' | 'mm' | 'px';
   } = {},
 ): number => {
   const { allowUndefined = false, unit = 'px' } = opts;
-  let val: number;
+  let val: number | undefined;
 
   if (type === 'w') {
     val = dimensionValues?.width;

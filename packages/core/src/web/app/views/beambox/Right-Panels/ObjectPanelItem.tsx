@@ -1,3 +1,4 @@
+/* eslint-disable reactRefresh/only-export-components */
 import React, { useContext, useEffect, useMemo, useRef } from 'react';
 
 import Icon, { DownOutlined } from '@ant-design/icons';
@@ -16,11 +17,11 @@ interface Props {
   content: React.JSX.Element;
   disabled?: boolean;
   id: string;
-  label?: React.JSX.Element | string;
+  label?: React.ReactNode;
   onClick?: () => void;
 }
 
-const ObjectPanelItem = ({ autoClose = true, content, disabled, id, label, onClick }: Props): React.JSX.Element => {
+const ObjectPanelItem = ({ autoClose = true, content, disabled, id, label, onClick }: Props): React.ReactNode => {
   const context = useContext(ObjectPanelContext);
   const { activeKey, updateActiveKey } = context;
 
@@ -52,7 +53,7 @@ const ObjectPanelItem = ({ autoClose = true, content, disabled, id, label, onCli
 interface NumberItemProps {
   decimal?: number;
   id: string;
-  label?: React.JSX.Element | string;
+  label?: React.ReactNode;
   max?: number;
   min?: number;
   unit?: string;
@@ -83,7 +84,7 @@ const ObjectPanelNumber = ({
   const [hasInput, setHasInput] = React.useState(false);
   const onChange = (newValue: string) => {
     setDisplayValue(newValue);
-    updateValue(units.convertUnit(+newValue || 0, 'mm', fakeUnit));
+    updateValue?.(units.convertUnit(+newValue || 0, 'mm', fakeUnit));
 
     if (!hasInput) {
       setHasInput(true);
@@ -99,7 +100,7 @@ const ObjectPanelNumber = ({
       safeValue = Math.max(safeValue, min);
 
       if (safeValue !== value) {
-        updateValue(safeValue);
+        updateValue?.(safeValue);
       } else if (!displayValue) {
         setDisplayValue('0');
       }

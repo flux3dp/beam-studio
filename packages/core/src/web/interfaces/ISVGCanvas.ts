@@ -103,7 +103,7 @@ export default interface ISVGCanvas {
   /**
    * @deprecated use svgedit/transfrom/rotation.ts#getRotationAngle instead
    */
-  getRotationAngle(elem: Element): void;
+  getRotationAngle(elem: Element): number;
   getRubberBox: () => SVGRectElement;
   getSelectedElementsAlignPoints: () => IPoint[];
   getSelectedElems: (ungroupTempGroup?: boolean) => SVGElement[];
