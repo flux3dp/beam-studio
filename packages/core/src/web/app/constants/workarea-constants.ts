@@ -87,6 +87,7 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
       LayerModule.LASER_20W_DIODE,
       LayerModule.PRINTER,
       isDev() ? LayerModule.PRINTER_4C : null,
+      isDev() ? LayerModule.WHITE_INK : null,
       LayerModule.LASER_1064,
       LayerModule.UV_PRINT,
     ].filter(Boolean),
