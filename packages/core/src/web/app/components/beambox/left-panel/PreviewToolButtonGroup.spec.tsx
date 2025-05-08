@@ -2,6 +2,7 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
+import { CameraType } from '@core/app/constants/cameraConstants';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 
 const emitShowCropper = jest.fn();
@@ -20,13 +21,20 @@ jest.mock('@core/app/actions/beambox/preview-mode-background-drawer', () => ({
   resetCoordinates,
 }));
 
-const isPreviewMode = jest.fn();
-const mockIsLiveModeOn = jest.fn();
+const mockUseCameraPreviewStore = jest.fn();
+
+jest.mock('@core/app/stores/cameraPreview', () => ({
+  useCameraPreviewStore: (...args) => mockUseCameraPreviewStore(...args),
+}));
+
+const mockSwitchCamera = jest.fn();
+const mockToggleFullWorkareaLiveMode = jest.fn();
+const mockResetFishEyeObjectHeight = jest.fn();
 
 jest.mock('@core/app/actions/beambox/preview-mode-controller', () => ({
-  isDrawing: false,
-  isLiveModeOn: () => mockIsLiveModeOn(),
-  isPreviewMode,
+  resetFishEyeObjectHeight: (...args) => mockResetFishEyeObjectHeight(...args),
+  switchCamera: (...args) => mockSwitchCamera(...args),
+  toggleFullWorkareaLiveMode: (...args) => mockToggleFullWorkareaLiveMode(...args),
 }));
 
 const getSVGAsync = jest.fn();
@@ -49,22 +57,6 @@ const useWorkarea = jest.fn();
 
 jest.mock('@core/helpers/hooks/useWorkarea', () => useWorkarea);
 
-jest.mock('@core/helpers/useI18n', () => () => ({
-  beambox: {
-    left_panel: {
-      label: {
-        clear_preview: 'Clear Preview',
-        curve_engraving: {
-          title: 'Curve Engraving',
-        },
-        end_preview: 'End Preview',
-        preview: 'Camera Preview',
-        trace: 'Trace Image',
-      },
-    },
-  },
-}));
-
 const mockStartCurveEngraving = jest.fn();
 
 jest.mock('@core/app/actions/canvas/curveEngravingModeController', () => ({
@@ -86,6 +78,12 @@ jest.mock('@core/helpers/locale-helper', () => ({
 }));
 
 describe('test PreviewToolButtonGroup', () => {
+  beforeEach(() => {
+    mockUseCameraPreviewStore.mockReturnValue({
+      isPreviewMode: false,
+    });
+  });
+
   it('should render correctly', () => {
     const endPreviewMode = jest.fn();
     const setupPreviewMode = jest.fn();
@@ -103,14 +101,14 @@ describe('test PreviewToolButtonGroup', () => {
     );
 
     expect(container).toMatchSnapshot();
-    expect(endPreviewMode).not.toBeCalled();
+    expect(endPreviewMode).not.toHaveBeenCalled();
 
     const back = container.querySelector('#preview-back');
 
     fireEvent.click(back);
     expect(endPreviewMode).toHaveBeenCalledTimes(1);
 
-    expect(setupPreviewMode).not.toBeCalled();
+    expect(setupPreviewMode).not.toHaveBeenCalled();
 
     const shoot = container.querySelector('#preview-shoot');
 
@@ -137,5 +135,24 @@ describe('test PreviewToolButtonGroup', () => {
     );
 
     expect(container).toMatchSnapshot();
+  });
+
+  it('should render correctly when with wide angle camera', () => {
+    mockUseCameraPreviewStore.mockReturnValue({
+      hasWideAngleCamera: true,
+      isPreviewMode: true,
+      isWideAngleCameraCalibrated: true,
+    });
+
+    const { container } = render(
+      <CanvasContext.Provider value={{} as any}>
+        <PreviewToolButtonGroup className="left-toolbar" />
+      </CanvasContext.Provider>,
+    );
+
+    expect(container).toMatchSnapshot();
+    fireEvent.click(container.querySelectorAll('.option')[1]);
+    expect(mockSwitchCamera).toHaveBeenCalled();
+    expect(mockSwitchCamera).toHaveBeenCalledWith(CameraType.WIDE_ANGLE);
   });
 });

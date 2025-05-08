@@ -42,12 +42,12 @@ export interface FisheyeCameraParametersV2Cali {
 }
 
 /**
- * FisheyeCameraParametersV2 is used for Ador or other variable focal disatance fisheye camera
+ * FisheyeCameraParametersV2 is used for Ador or other variable focal distance fisheye camera
  */
 export interface FisheyeCameraParametersV2 {
   d: number[][];
   k: number[][];
-  levelingData: Record<string, number>;
+  levelingData?: Record<string, number>;
   refHeight: number;
   rvec: number[];
   rvec_polyfit: number[][];
@@ -58,7 +58,7 @@ export interface FisheyeCameraParametersV2 {
 }
 
 /**
- * FisheyeCameraParametersV3 is used for BB2 or other fixed focal disatance fisheye camera
+ * FisheyeCameraParametersV3 is used for BB2 or other fixed focal distance fisheye camera
  */
 export interface FisheyeCameraParametersV3 {
   d: number[][];
@@ -78,14 +78,95 @@ export interface FisheyeCameraParametersV3Cali {
   tvec?: number[];
 }
 
-export interface PerspectiveGrid {
-  x: [number, number, number]; // start, end, step
-  y: [number, number, number]; // start, end, step
+export type WideAngleRegion =
+  | 'bottom'
+  | 'bottomLeft'
+  | 'bottomRight'
+  | 'center'
+  | 'left'
+  | 'right'
+  | 'top'
+  | 'topLeft'
+  | 'topRight';
+
+/**
+ * FisheyeCameraParametersV4
+ * pretty like V2 that requires 2 different heights and use polyfit to calculate the rvec and tvec
+ * but V4 is used for larger region, so we need to calibrate and save the polyfit for each region
+ * when previewing, we need to calculate the rvec and tvec for each region and splice the image of different region
+ * and then combine them to a single image
+ */
+export interface FisheyeCameraParametersV4<Region = WideAngleRegion> {
+  d: number[][];
+  grids?: PerspectiveGrid;
+  k: number[][];
+  ret?: number;
+  rvec: number[];
+  rvec_polyfits: Record<Region, number[][]>;
+  tvec: number[];
+  tvec_polyfits: Record<Region, number[][]>;
+  v: 4;
 }
 
-export type FisheyeCameraParameters = FisheyeCameraParametersV1 | FisheyeCameraParametersV2 | FisheyeCameraParametersV3;
+export interface FisheyeCameraParametersV4Cali<Region = WideAngleRegion> {
+  d?: number[][];
+  dh1?: number;
+  dh2?: number;
+  /**
+   * imgPoints1 saved region image points during solvepnp in 1st height
+   */
+  imgPoints1?: Partial<Record<Region, Array<[number, number]>>>;
+  /**
+   * imgPoints2 saved region image points during solvepnp in 2nd height
+   */
+  imgPoints2?: Partial<Record<Region, Array<[number, number]>>>;
+  k?: number[][];
+  ret?: number;
+  /**
+   * rvec and tvec are used for solvepnp to guess the initial points
+   */
+  rvec?: number[];
+  /**
+   * rvecs1: saved region rvec for each region in 1st height
+   */
+  rvecs1?: Partial<Record<Region, number[]>>;
+  /**
+   * rvecs2: saved region rvec for each region in 2nd height
+   */
+  rvecs2?: Partial<Record<Region, number[]>>;
+  /**
+   * rvec and tvec are used for solvepnp to guess the initial points
+   */
+  tvec?: number[];
+  /**
+   * tvecs1: saved region tvec for each region in 1st height
+   */
+  tvecs1?: Partial<Record<Region, number[]>>;
+  /**
+   * rvecs2: saved region rvec for each region in 2nd height
+   */
+  tvecs2?: Partial<Record<Region, number[]>>;
+}
+/**
+ * PerspectiveGrid is used the generate grid points for perspective transformation
+ * x: [start, end, step]
+ * y: [start, end, step]
+ */
+export interface PerspectiveGrid {
+  x: [number, number, number];
+  y: [number, number, number];
+}
 
-export type FisheyeCaliParameters = FisheyeCameraParametersV2Cali | FisheyeCameraParametersV3Cali;
+export type FisheyeCameraParameters =
+  | FisheyeCameraParametersV1
+  | FisheyeCameraParametersV2
+  | FisheyeCameraParametersV3
+  | FisheyeCameraParametersV4;
+
+export type FisheyeCaliParameters =
+  | FisheyeCameraParametersV2Cali
+  | FisheyeCameraParametersV3Cali
+  | FisheyeCameraParametersV4Cali;
 
 /**
  * @deprecated only used for V1, should be removed after all V1 camera is updated to V2

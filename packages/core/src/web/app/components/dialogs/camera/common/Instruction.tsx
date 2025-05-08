@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import React, { useRef } from 'react';
 
 import { Button, Modal } from 'antd';
@@ -11,7 +12,7 @@ interface Props {
   buttons: Array<{ label: string; onClick: () => void; type?: 'default' | 'primary' }>;
   children?: React.ReactNode;
   onClose?: (done?: boolean) => void;
-  steps?: string[];
+  steps?: Array<ReactNode | ReactNode[]>;
   text?: string;
   title: React.ReactNode;
 }
@@ -42,9 +43,19 @@ const Instruction = ({ animationSrcs, buttons, children, onClose, steps, text, t
       {text}
       {steps && (
         <ol className={styles.steps}>
-          {steps.map((step, i) => (
-            <li key={i}>{step}</li>
-          ))}
+          {steps.map((step, i) => {
+            if (Array.isArray(step)) {
+              return (
+                <ol className={styles.sub} key={i}>
+                  {step.map((subStep, j) => (
+                    <li key={j}>{subStep}</li>
+                  ))}
+                </ol>
+              );
+            }
+
+            return <li key={i}>{step}</li>;
+          })}
         </ol>
       )}
       {children}

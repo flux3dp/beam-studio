@@ -2,14 +2,29 @@ import dialogCaller from '@core/app/actions/dialog-caller';
 import progressCaller from '@core/app/actions/progress-caller';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import getFocalDistance from '@core/helpers/device/camera/getFocalDistance';
 import deviceMaster from '@core/helpers/device-master';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 const PROGRESS_ID = 'get-height';
 
-const getHeight = async (device: IDeviceInfo, progressId?: string, defaultValue?: number): Promise<number> => {
+const getHeight = async (device: IDeviceInfo, progressId?: string, defaultValue?: number): Promise<null | number> => {
   if (!progressId) {
     progressCaller.openNonstopProgress({ id: PROGRESS_ID });
+  }
+
+  if (device.model === 'fbb2') {
+    try {
+      const height = await getFocalDistance();
+
+      return height;
+    } catch (e) {
+      console.error('Fail to get focal distance', e);
+
+      return null;
+    } finally {
+      progressCaller.popById(progressId || PROGRESS_ID);
+    }
   }
 
   try {

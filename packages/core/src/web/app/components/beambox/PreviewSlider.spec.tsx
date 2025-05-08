@@ -28,6 +28,12 @@ jest.mock('@core/helpers/device-master', () => ({
   setDeviceSetting: (...args: any) => mockSetDeviceSetting(...args),
 }));
 
+const mockUseCameraPreviewStore = jest.fn();
+
+jest.mock('@core/app/stores/cameraPreview', () => ({
+  useCameraPreviewStore: () => mockUseCameraPreviewStore(),
+}));
+
 const mockPreviewFullWorkarea = jest.fn();
 const mockIsFullScreen = jest.fn();
 
@@ -35,7 +41,6 @@ jest.mock('@core/app/actions/beambox/preview-mode-controller', () => ({
   get isFullScreen() {
     return mockIsFullScreen();
   },
-  isPreviewModeOn: true,
   previewFullWorkarea: () => mockPreviewFullWorkarea(),
 }));
 
@@ -88,6 +93,9 @@ describe('test PreviewSlider', () => {
     mockIsFullScreen.mockReturnValue(true);
     mockMeetRequirement.mockReturnValue(true);
     document.body.innerHTML = '<image id="background_image" style="pointer-events:none; opacity: 1;"/>';
+    mockUseCameraPreviewStore.mockReturnValue({
+      isPreviewMode: true,
+    });
   });
 
   it('should render correctly with preview image', async () => {

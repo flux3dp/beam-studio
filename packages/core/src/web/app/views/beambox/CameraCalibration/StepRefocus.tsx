@@ -7,7 +7,7 @@ import Constant from '@core/app/actions/beambox/constant';
 import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
-import { STEP_BEFORE_ANALYZE_PICTURE } from '@core/app/constants/camera-calibration-constants';
+import { STEP_BEFORE_ANALYZE_PICTURE } from '@core/app/constants/cameraConstants';
 import { CalibrationContext } from '@core/app/contexts/CalibrationContext';
 import { doGetOffsetFromPicture } from '@core/helpers/camera-calibration-helper';
 import CheckDeviceStatus from '@core/helpers/check-device-status';
@@ -73,7 +73,7 @@ const StepRefocus = (): React.JSX.Element => {
     let blobUrl;
 
     try {
-      await PreviewModeController.start(device, () => console.log('camera fail. stop preview mode'));
+      await PreviewModeController.start(device);
       setLastConfig(PreviewModeController.getCameraOffsetStandard());
       Progress.openNonstopProgress({
         id: 'taking-picture',

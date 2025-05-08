@@ -1,7 +1,6 @@
 import React, { useCallback, useRef, useState } from 'react';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import getLevelingData from '@core/app/actions/camera/preview-helper/getLevelingData';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import progressCaller from '@core/app/actions/progress-caller';
 import { extrinsicRegression, setFisheyeConfig, updateData } from '@core/helpers/camera-calibration-helper';
@@ -12,7 +11,6 @@ import type { FisheyeCameraParametersV2, FisheyeCameraParametersV2Cali } from '@
 
 import CalibrateChessBoard from './AdorCalibrationV2/CalibrateChessBoard';
 import CheckPictures from './AdorCalibrationV2/CheckPictures';
-import FindCorner from './AdorCalibrationV2/FindCorner';
 import StepElevate from './AdorCalibrationV2/StepElevate';
 import { getMaterialHeight, prepareToTakePicture, saveCheckPoint } from './AdorCalibrationV2/utils';
 import CheckpointData from './common/CheckpointData';
@@ -20,19 +18,19 @@ import Instruction from './common/Instruction';
 import SolvePnP from './common/SolvePnP';
 import { adorPnPPoints } from './common/solvePnPConstants';
 
-enum Step {
-  ASK_CAMERA_TYPE = 3,
-  CALIBRATE_CHESSBOARD = 2,
-  CHECK_PICTURE = 1,
+/* eslint-disable perfectionist/sort-enums */
+const enum Step {
   CHECKPOINT_DATA = 0,
-  ELEVATED_CUT = 8,
-  FIND_CORNER = 5,
-  FINISH = 10,
-  PUT_PAPER = 4,
-  SOLVE_PNP_1 = 7,
-  SOLVE_PNP_2 = 9,
-  SOLVE_PNP_INSTRUCTION_1 = 6,
+  CHECK_PICTURE = 1,
+  CALIBRATE_CHESSBOARD = 2,
+  PUT_PAPER = 3,
+  SOLVE_PNP_INSTRUCTION_1 = 4,
+  SOLVE_PNP_1 = 5,
+  ELEVATED_CUT = 6,
+  SOLVE_PNP_2 = 7,
+  FINISH = 8,
 }
+/* eslint-enable perfectionist/sort-enums */
 
 const PROGRESS_ID = 'fisheye-calibration-v2';
 const DIALOG_ID = 'fisheye-calibration-v2';
@@ -46,9 +44,7 @@ const AdorCalibrationV2 = ({ factoryMode = false, onClose }: Props): React.JSX.E
   const calibratingParam = useRef<FisheyeCameraParametersV2Cali>({});
   const lang = useI18n();
   const tCali = lang.calibration;
-  const [withPitch, setWithPitch] = useState(false);
   const [step, setStep] = useState<Step>(Step.CHECKPOINT_DATA);
-  const [usePreviousData, setUsePreviousData] = useState(false);
   const onBack = useCallback(() => setStep((prev) => prev - 1), []);
   const onNext = useCallback(() => setStep((prev) => prev + 1), []);
   const updateParam = useCallback((param: FisheyeCameraParametersV2Cali) => {
@@ -62,16 +58,8 @@ const AdorCalibrationV2 = ({ factoryMode = false, onClose }: Props): React.JSX.E
         onClose={onClose}
         onNext={(res) => {
           if (res) {
-            setUsePreviousData(true);
             console.log('calibratingParam.current', calibratingParam.current);
-
-            const { heights, source } = calibratingParam.current;
-
-            if (heights?.length > 0 && source === 'user') {
-              setStep(Step.ELEVATED_CUT);
-            } else {
-              setStep(Step.PUT_PAPER);
-            }
+            setStep(Step.PUT_PAPER);
           } else {
             setStep(factoryMode ? Step.CALIBRATE_CHESSBOARD : Step.CHECK_PICTURE);
           }
@@ -88,7 +76,6 @@ const AdorCalibrationV2 = ({ factoryMode = false, onClose }: Props): React.JSX.E
         onNext={async () => {
           progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: lang.device.processing });
           await saveCheckPoint(calibratingParam.current);
-          setUsePreviousData(true);
           progressCaller.popById(PROGRESS_ID);
           setStep(Step.PUT_PAPER);
         }}
@@ -105,30 +92,10 @@ const AdorCalibrationV2 = ({ factoryMode = false, onClose }: Props): React.JSX.E
         onNext={async () => {
           progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: lang.device.processing });
           await saveCheckPoint(calibratingParam.current);
-          setUsePreviousData(true);
           progressCaller.popById(PROGRESS_ID);
           setStep(Step.PUT_PAPER);
         }}
         updateParam={updateParam}
-      />
-    );
-  }
-
-  if (step === Step.ASK_CAMERA_TYPE) {
-    const onClick = (val: boolean) => {
-      setWithPitch(val);
-      onNext();
-    };
-
-    return (
-      <Instruction
-        animationSrcs={[]}
-        buttons={[
-          { label: '正拍', onClick: () => onClick(false), type: 'primary' },
-          { label: '斜拍', onClick: () => onClick(true), type: 'primary' },
-        ]}
-        onClose={() => onClose(false)}
-        title="Please Select your camera type"
       />
     );
   }
@@ -147,30 +114,20 @@ const AdorCalibrationV2 = ({ factoryMode = false, onClose }: Props): React.JSX.E
       });
       try {
         const height = await getMaterialHeight();
+        const dh = height - calibratingParam.current.refHeight!;
 
         console.log('height', height);
-
-        if (usePreviousData) {
-          const dh = height - calibratingParam.current.refHeight;
-
-          calibratingParam.current.dh1 = dh;
-        } else {
-          calibratingParam.current.refHeight = height;
-        }
+        calibratingParam.current.dh1 = dh;
 
         progressCaller.update(PROGRESS_ID, { message: tCali.drawing_calibration_image });
 
         if (doCutting) {
-          if (usePreviousData) {
-            await deviceMaster.doAdorCalibrationV2(2);
-          } else {
-            await deviceMaster.doAdorCalibrationV2(1, withPitch);
-          }
+          await deviceMaster.doAdorCalibrationV2();
         }
 
         progressCaller.update(PROGRESS_ID, { message: tCali.preparing_to_take_picture });
         await prepareToTakePicture();
-        setStep(usePreviousData ? Step.SOLVE_PNP_INSTRUCTION_1 : Step.FIND_CORNER);
+        setStep(Step.SOLVE_PNP_INSTRUCTION_1);
       } catch (err) {
         console.error(err);
       } finally {
@@ -196,31 +153,6 @@ const AdorCalibrationV2 = ({ factoryMode = false, onClose }: Props): React.JSX.E
     );
   }
 
-  if (step === Step.FIND_CORNER) {
-    return (
-      <FindCorner
-        onBack={() => setStep(Step.PUT_PAPER)}
-        onClose={onClose}
-        onNext={async () => {
-          progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: lang.device.processing });
-
-          const levelingData = await getLevelingData('hexa_platform');
-          const refHeight = levelingData.E;
-
-          Object.keys(levelingData).forEach((key) => {
-            levelingData[key] = refHeight - levelingData[key];
-          });
-          updateParam({ levelingData });
-          await saveCheckPoint(calibratingParam.current);
-          progressCaller.popById(PROGRESS_ID);
-          setStep(Step.ELEVATED_CUT);
-        }}
-        updateParam={updateParam}
-        withPitch={withPitch}
-      />
-    );
-  }
-
   if (step === Step.SOLVE_PNP_INSTRUCTION_1) {
     return (
       <Instruction
@@ -242,14 +174,14 @@ const AdorCalibrationV2 = ({ factoryMode = false, onClose }: Props): React.JSX.E
   if (step === Step.SOLVE_PNP_1) {
     return (
       <SolvePnP
-        dh={calibratingParam.current.dh1}
+        dh={calibratingParam.current.dh1!}
         hasNext
         onBack={() => setStep(Step.SOLVE_PNP_INSTRUCTION_1)}
         onClose={onClose}
         onNext={async (rvec, tvec) => {
           progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: lang.device.processing });
           updateParam({
-            heights: [calibratingParam.current.dh1],
+            heights: [calibratingParam.current.dh1!],
             rvec,
             rvecs: [rvec],
             tvec,
@@ -284,12 +216,12 @@ const AdorCalibrationV2 = ({ factoryMode = false, onClose }: Props): React.JSX.E
 
         console.log('height', height);
 
-        const dh = height - calibratingParam.current.refHeight;
+        const dh = height - calibratingParam.current.refHeight!;
 
         console.log('dh', dh);
         calibratingParam.current.dh2 = dh;
         progressCaller.update(PROGRESS_ID, { message: tCali.drawing_calibration_image });
-        await deviceMaster.doAdorCalibrationV2(2);
+        await deviceMaster.doAdorCalibrationV2();
         progressCaller.update(PROGRESS_ID, { message: tCali.preparing_to_take_picture });
         await prepareToTakePicture();
         onNext();
@@ -305,18 +237,18 @@ const AdorCalibrationV2 = ({ factoryMode = false, onClose }: Props): React.JSX.E
 
   return (
     <SolvePnP
-      dh={calibratingParam.current.dh2}
+      dh={calibratingParam.current.dh2!}
       onBack={onBack}
       onClose={onClose}
       onNext={async (rvec, tvec) => {
         const { heights, rvecs, tvecs } = calibratingParam.current;
 
-        rvecs.push(rvec);
-        tvecs.push(tvec);
-        heights.push(calibratingParam.current.dh2);
+        rvecs!.push(rvec);
+        tvecs!.push(tvec);
+        heights!.push(calibratingParam.current.dh2!);
         updateParam({ heights, rvecs, tvecs });
 
-        const { data, success } = await extrinsicRegression(rvecs, tvecs, heights);
+        const { data, success } = await extrinsicRegression(rvecs!, tvecs!, heights!);
 
         if (!success) {
           alertCaller.popUpError({ message: 'Failed to do extrinsic regression.' });
@@ -324,19 +256,19 @@ const AdorCalibrationV2 = ({ factoryMode = false, onClose }: Props): React.JSX.E
           return;
         }
 
-        updateParam(data);
+        updateParam(data!);
         console.log('calibratingParam.current', calibratingParam.current);
 
         const param: FisheyeCameraParametersV2 = {
-          d: calibratingParam.current.d,
-          k: calibratingParam.current.k,
-          levelingData: calibratingParam.current.levelingData,
-          refHeight: calibratingParam.current.refHeight,
-          rvec: calibratingParam.current.rvec,
-          rvec_polyfit: calibratingParam.current.rvec_polyfit,
+          d: calibratingParam.current.d!,
+          k: calibratingParam.current.k!,
+          levelingData: calibratingParam.current.levelingData!,
+          refHeight: calibratingParam.current.refHeight!,
+          rvec: calibratingParam.current.rvec!,
+          rvec_polyfit: calibratingParam.current.rvec_polyfit!,
           source: calibratingParam.current.source,
-          tvec: calibratingParam.current.tvec,
-          tvec_polyfit: calibratingParam.current.tvec_polyfit,
+          tvec: calibratingParam.current.tvec!,
+          tvec_polyfit: calibratingParam.current.tvec_polyfit!,
           v: 2,
         };
         const res = await setFisheyeConfig(param);

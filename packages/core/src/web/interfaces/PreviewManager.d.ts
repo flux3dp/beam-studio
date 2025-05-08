@@ -1,5 +1,6 @@
+import type { CameraType } from '@core/app/constants/cameraConstants';
+
 import type { CameraConfig, CameraParameters } from './Camera';
-// import { IDeviceInfo } from './IDevice';
 
 export interface PreviewManager {
   end(): Promise<void>;
@@ -37,4 +38,6 @@ export interface PreviewManager {
   resetObjectHeight?: () => Promise<boolean>;
 
   setup(args?: { progressId?: string }): Promise<boolean>;
+
+  switchCamera?: (cameraType: CameraType) => Promise<CameraType>;
 }

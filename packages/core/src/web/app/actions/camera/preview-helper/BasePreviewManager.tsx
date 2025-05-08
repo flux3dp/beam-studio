@@ -22,15 +22,19 @@ import type { PreviewManager } from '@core/interfaces/PreviewManager';
 import styles from './BasePreviewManager.module.scss';
 
 class BasePreviewManager implements PreviewManager {
-  public isFullScreen = false;
   protected device: IDeviceInfo;
-  protected progressId: string;
+  protected progressId: string = 'base-preview-manager';
   protected workarea: WorkAreaModel;
   protected workareaObj: WorkArea;
   protected ended = false;
   protected lastPosition: [number, number] = [0, 0];
   protected movementSpeed: number; // mm/min
   protected maxMovementSpeed: [number, number] = [18000, 6000]; // mm/min, speed cap of machine
+  protected _isFullScreen = false;
+
+  public get isFullScreen() {
+    return this._isFullScreen;
+  }
 
   constructor(device: IDeviceInfo) {
     this.device = device;

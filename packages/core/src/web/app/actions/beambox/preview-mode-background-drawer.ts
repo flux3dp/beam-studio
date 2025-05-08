@@ -7,6 +7,7 @@ import Constant from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import NS from '@core/app/constants/namespaces';
 import beamboxStore from '@core/app/stores/beambox-store';
+import { setCameraPreviewState } from '@core/app/stores/cameraPreview';
 import workareaManager from '@core/app/svgedit/workarea';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
@@ -336,6 +337,7 @@ class PreviewModeBackgroundDrawer {
     URL.revokeObjectURL(this.cameraCanvasUrl);
 
     this.cameraCanvasUrl = '';
+    setCameraPreviewState({ isClean: true });
   }
 
   getCameraCanvasUrl() {
@@ -359,6 +361,7 @@ class PreviewModeBackgroundDrawer {
     }
 
     this.cameraCanvasUrl = URL.createObjectURL(blob);
+    setCameraPreviewState({ isClean: false });
 
     svgCanvas.setBackground('#fff', this.cameraCanvasUrl);
   };

@@ -219,13 +219,13 @@ const mouseDown = async (evt: MouseEvent) => {
       if (rightClick) svgCanvas.unsafeAccess.setStarted(false);
 
       if (
-        (PreviewModeController.isPreviewMode() || TopBarController.getTopBarPreviewMode()) &&
+        (PreviewModeController.isPreviewMode || TopBarController.getTopBarPreviewMode()) &&
         !curveEngravingModeController.started
       ) {
         // preview mode
         svgCanvas.clearSelection();
 
-        if (PreviewModeController.isPreviewMode()) svgCanvas.unsafeAccess.setCurrentMode('preview');
+        if (PreviewModeController.isPreviewMode) svgCanvas.unsafeAccess.setCurrentMode('preview');
         // i.e. TopBarController.getTopBarPreviewMode()
         else svgCanvas.unsafeAccess.setCurrentMode('pre_preview');
 
@@ -726,13 +726,13 @@ const mouseMove = (evt: MouseEvent) => {
     }
 
     if (svgCanvas.sensorAreaInfo) {
-      if (currentMode === 'select' && !PreviewModeController.isPreviewMode()) {
+      if (currentMode === 'select' && !PreviewModeController.isPreviewMode) {
         const dist = Math.hypot(svgCanvas.sensorAreaInfo.x - mouseX, svgCanvas.sensorAreaInfo.y - mouseY);
 
         if (dist < SENSOR_AREA_RADIUS) {
           $('#workarea').css('cursor', 'move');
         } else if ($('#workarea').css('cursor') === 'move') {
-          const isPreview = PreviewModeController.isPreviewMode() || TopBarController.getTopBarPreviewMode();
+          const isPreview = PreviewModeController.isPreviewMode || TopBarController.getTopBarPreviewMode();
 
           if (!curveEngravingModeController.started && isPreview) {
             $('#workarea').css('cursor', 'url(img/camera-cursor.svg) 9 12, cell');
@@ -1081,14 +1081,12 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
 
   const doPreview = () => {
     const callback = () => {
-      canvasEvents.updateContext();
-
       if (TutorialController.getNextStepRequirement() === TutorialConstants.PREVIEW_PLATFORM) {
         TutorialController.handleNextStep();
       }
     };
 
-    if (PreviewModeController.isPreviewMode()) {
+    if (PreviewModeController.isPreviewMode) {
       if (startX === realX && startY === realY) {
         PreviewModeController.preview(realX, realY, { callback, last: true });
       } else {

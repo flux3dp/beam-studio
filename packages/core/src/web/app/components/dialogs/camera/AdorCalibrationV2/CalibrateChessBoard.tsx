@@ -24,15 +24,21 @@ interface Props {
 const CalibrateChessBoard = ({ onBack, onClose, onNext, updateParam }: Props): React.JSX.Element => {
   const lang = useI18n();
   const progressId = useMemo(() => 'ador-calibration-v2', []);
-  const [res, setRes] = useState<{
-    data: FisheyeCameraParametersV2Cali;
-    imgblob: Blob;
-    imgUrl: string;
-    origBlob: Blob;
-    success: boolean;
-  }>(null);
+  const [res, setRes] = useState<
+    | (({ data: FisheyeCameraParametersV2Cali; success: true } | { data: null; success: false }) & {
+        imgblob: Blob;
+        imgUrl: string;
+        origBlob: Blob;
+      })
+    | null
+  >(null);
 
-  useEffect(() => () => URL.revokeObjectURL(res?.imgUrl), [res]);
+  useEffect(
+    () => () => {
+      if (res?.imgUrl) URL.revokeObjectURL(res.imgUrl);
+    },
+    [res],
+  );
 
   const objectHeight = useRef<number>(0);
 
@@ -101,12 +107,12 @@ const CalibrateChessBoard = ({ onBack, onClose, onNext, updateParam }: Props): R
         }
 
         setRes({
-          data: calibrateRes.success ? calibrateRes.data : null,
+          data: calibrateRes?.success ? calibrateRes.data : null,
           imgblob: displayBlob,
           imgUrl: URL.createObjectURL(displayBlob),
           origBlob: imgBlob,
           success: calibrateRes.success,
-        });
+        } as typeof res);
       } catch (err) {
         alertCaller.popUpError({ message: err.message || 'Fail to find corners' });
       }
@@ -125,7 +131,7 @@ const CalibrateChessBoard = ({ onBack, onClose, onNext, updateParam }: Props): R
   }, []);
 
   const handleNext = useCallback(async () => {
-    if (!res.success) {
+    if (!res?.success) {
       return;
     }
 
@@ -175,7 +181,7 @@ const CalibrateChessBoard = ({ onBack, onClose, onNext, updateParam }: Props): R
   const handleDownloadImage = useCallback(async () => {
     const tFile = lang.topmenu.file;
 
-    dialog.writeFileDialog(() => res.imgblob, 'Download Image', 'chessboard.jpg', [
+    dialog.writeFileDialog(() => res!.imgblob, 'Download Image', 'chessboard.jpg', [
       {
         extensions: ['jpg'],
         name: window.os === 'MacOS' ? `${tFile.jpg_files} (*.jpg)` : tFile.jpg_files,
@@ -225,7 +231,7 @@ const CalibrateChessBoard = ({ onBack, onClose, onNext, updateParam }: Props): R
             <div>
               <div>
                 <span>Ret: </span>
-                <span>{res.data.ret.toFixed(2)}</span>
+                <span>{res!.data.ret!.toFixed(2)}</span>
               </div>
             </div>
           )}

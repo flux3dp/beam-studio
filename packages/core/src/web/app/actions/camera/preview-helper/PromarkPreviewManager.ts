@@ -17,7 +17,7 @@ import BasePreviewManager from './BasePreviewManager';
 
 // TODO: Add tests
 class PromarkPreviewManager extends BasePreviewManager implements PreviewManager {
-  public isFullScreen = true;
+  protected _isFullScreen = true;
   private fisheyeParams: FisheyeCameraParameters;
   private cameraTransformAPI: CameraTransformAPI;
   private webCamConnection: WebCamConnection;

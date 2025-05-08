@@ -1,3 +1,7 @@
+import { match } from 'ts-pattern';
+
+import type { PerspectiveGrid, WideAngleRegion } from '@core/interfaces/FisheyePreview';
+
 export const adorPnPPoints: Array<[number, number]> = [
   [155, 90],
   [275, 90],
@@ -19,6 +23,64 @@ export const bb2PnPPoints: Array<[number, number]> = [
   [-30, 70],
   [30, 70],
 ];
+
+export const bb2PerspectiveGrid: PerspectiveGrid = {
+  x: [-80, 80, 10],
+  y: [0, 100, 10],
+} as const;
+
+export const bb2WideAngleCameraPnpPoints: Record<
+  'bottomLeft' | 'bottomRight' | 'topLeft' | 'topRight',
+  Array<[number, number]>
+> = {
+  bottomLeft: [
+    [90, 240],
+    [210, 240],
+    [90, 320],
+    [210, 320],
+  ] as const,
+  bottomRight: [
+    [390, 240],
+    [510, 240],
+    [390, 320],
+    [510, 320],
+  ] as const,
+  topLeft: [
+    [90, 40],
+    [210, 40],
+    [90, 120],
+    [210, 120],
+  ] as const,
+  topRight: [
+    [390, 40],
+    [510, 40],
+    [390, 120],
+    [510, 120],
+  ] as const,
+} as const;
+
+export const bb2WideAnglePerspectiveGrid: PerspectiveGrid = {
+  x: [0, 600, 20],
+  y: [0, 375, 15],
+} as const;
+
+export const getBB2WideAnglePoints = (
+  region: WideAngleRegion,
+  points: Record<
+    'bottomLeft' | 'bottomRight' | 'topLeft' | 'topRight',
+    Array<[number, number]>
+  > = bb2WideAngleCameraPnpPoints,
+): Array<[number, number]> => {
+  const res = match(region)
+    .with('top', () => [points.topLeft[1], points.topRight[0], points.topLeft[3], points.topRight[2]])
+    .with('bottom', () => [points.bottomLeft[1], points.bottomRight[0], points.bottomLeft[3], points.bottomRight[2]])
+    .with('left', () => [points.topLeft[2], points.topLeft[3], points.bottomLeft[0], points.bottomLeft[1]])
+    .with('right', () => [points.topRight[2], points.topRight[3], points.bottomRight[0], points.bottomRight[1]])
+    .with('center', () => [points.topLeft[3], points.topRight[2], points.bottomLeft[1], points.bottomRight[0]])
+    .otherwise((key) => points[key]);
+
+  return res;
+};
 
 export const promarkPnPPoints: { [size: number]: Array<[number, number]> } = {
   110: [

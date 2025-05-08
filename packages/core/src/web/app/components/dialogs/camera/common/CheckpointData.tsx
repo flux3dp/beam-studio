@@ -6,9 +6,14 @@ import { SpinLoading } from 'antd-mobile';
 import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
 import { updateData } from '@core/helpers/camera-calibration-helper';
-import deviceMaster from '@core/helpers/device-master';
+import { loadJson } from '@core/helpers/device/jsonDataHelper';
 import useI18n from '@core/helpers/useI18n';
-import type { FisheyeCaliParameters } from '@core/interfaces/FisheyePreview';
+import type {
+  FisheyeCaliParameters,
+  FisheyeCameraParametersV2,
+  FisheyeCameraParametersV3,
+  FisheyeCameraParametersV4,
+} from '@core/interfaces/FisheyePreview';
 
 import styles from './CheckpointData.module.scss';
 import Title from './Title';
@@ -33,9 +38,9 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
   updateParam,
 }: Props<T>): React.JSX.Element => {
   const progressId = useMemo(() => 'camera-check-point', []);
-  const [checkpointData, setCheckpointData] = useState<{
+  const [currentData, setCurrentData] = useState<null | {
     data: T;
-    file: string;
+    isCheckPointData?: boolean;
   }>(null);
   const lang = useI18n();
   const checkData = useCallback(async () => {
@@ -44,36 +49,51 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
       message: lang.calibration.checking_checkpoint,
     });
 
-    let res = null;
+    let res: FisheyeCaliParameters;
 
     try {
       if (getData) {
         res = await getData();
       } else {
-        const data = await deviceMaster.downloadFile('fisheye', 'fisheye_params.json');
-        const [, blob] = data;
-        const dataString = await (blob as Blob).text();
-
-        res = JSON.parse(dataString);
+        res = (await loadJson('fisheye', 'fisheye_params.json')) as T;
       }
 
-      if (res.v === 3) {
-        setCheckpointData({
+      const isV4 = (d: any): d is FisheyeCameraParametersV4 => d.v === 4;
+
+      if (isV4(res)) {
+        setCurrentData({
           data: {
             d: res.d,
             k: res.k,
             rvec: res.rvec,
             tvec: res.tvec,
           } as T,
-          file: 'fisheye_params.json',
         });
         progressCaller.popById(progressId);
 
         return;
       }
 
-      if (res.v === 2) {
-        setCheckpointData({
+      const isV3 = (d: any): d is FisheyeCameraParametersV3 => d.v === 3;
+
+      if (isV3(res)) {
+        setCurrentData({
+          data: {
+            d: res.d,
+            k: res.k,
+            rvec: res.rvec,
+            tvec: res.tvec,
+          } as T,
+        });
+        progressCaller.popById(progressId);
+
+        return;
+      }
+
+      const isV2 = (d: any): d is FisheyeCameraParametersV2 => d.v === 2;
+
+      if (isV2(res)) {
+        setCurrentData({
           data: {
             d: res.d,
             k: res.k,
@@ -82,7 +102,6 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
             source: res.source,
             tvec: res.tvec,
           } as T,
-          file: 'fisheye_params.json',
         });
         progressCaller.popById(progressId);
 
@@ -94,16 +113,12 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
 
     if (allowCheckPoint) {
       try {
-        const data = await deviceMaster.downloadFile('fisheye', 'checkpoint.json');
-        const [, blob] = data;
-        const dataString = await (blob as Blob).text();
+        const data = (await loadJson('fisheye', 'checkpoint.json')) as T;
 
-        res = JSON.parse(dataString);
-
-        if (res) {
-          setCheckpointData({
-            data: res,
-            file: 'checkpoint.json',
+        if (data) {
+          setCurrentData({
+            data,
+            isCheckPointData: true,
           });
           progressCaller.popById(progressId);
 
@@ -124,7 +139,7 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
       message: lang.calibration.downloading_checkpoint,
     });
     try {
-      const { data } = checkpointData;
+      const { data } = currentData!;
 
       try {
         await updateData(data);
@@ -138,7 +153,7 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
     } finally {
       progressCaller.popById(progressId);
     }
-  }, [checkpointData, lang, onNext, progressId, updateParam]);
+  }, [currentData, lang, onNext, progressId, updateParam]);
 
   useEffect(() => {
     checkData();
@@ -146,10 +161,10 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
   }, []);
 
   useEffect(() => {
-    if (checkpointData && !askUser) {
+    if (currentData && !askUser) {
       handleOk();
     }
-  }, [checkpointData, askUser, handleOk]);
+  }, [currentData, askUser, handleOk]);
 
   if (!askUser) {
     return (
@@ -185,11 +200,9 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
       title={<Title link={titleLink} title={lang.calibration.check_checkpoint_data} />}
       width={400}
     >
-      {!checkpointData && lang.calibration.checking_checkpoint}
-      {checkpointData?.data &&
-        (checkpointData.file === 'fisheye_params.json'
-          ? lang.calibration.use_old_camera_parameter
-          : lang.calibration.found_checkpoint)}
+      {!currentData && lang.calibration.checking_checkpoint}
+      {currentData?.data &&
+        (currentData.isCheckPointData ? lang.calibration.found_checkpoint : lang.calibration.use_old_camera_parameter)}
     </Modal>
   );
 };

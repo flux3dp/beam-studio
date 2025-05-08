@@ -8,7 +8,7 @@ import Constant from '@core/app/actions/beambox/constant';
 import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
-import { STEP_FINISH, STEP_REFOCUS } from '@core/app/constants/camera-calibration-constants';
+import { STEP_FINISH, STEP_REFOCUS } from '@core/app/constants/cameraConstants';
 import { CalibrationContext } from '@core/app/contexts/CalibrationContext';
 import { sendPictureThenSetConfig } from '@core/helpers/camera-calibration-helper';
 import useI18n from '@core/helpers/useI18n';

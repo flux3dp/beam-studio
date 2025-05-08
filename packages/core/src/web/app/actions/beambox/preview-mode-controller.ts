@@ -4,6 +4,8 @@ import Constant, { promarkModels } from '@core/app/actions/beambox/constant';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
+import { CameraType } from '@core/app/constants/cameraConstants';
+import { setCameraPreviewState } from '@core/app/stores/cameraPreview';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import checkOldFirmware from '@core/helpers/device/checkOldFirmware';
 import deviceMaster from '@core/helpers/device-master';
@@ -11,7 +13,6 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
 import VersionChecker from '@core/helpers/version-checker';
 import type { CameraConfig, CameraParameters } from '@core/interfaces/Camera';
-import type { RotationParameters3DCalibration } from '@core/interfaces/FisheyePreview';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type { PreviewManager } from '@core/interfaces/PreviewManager';
 
@@ -24,36 +25,29 @@ const LANG = i18n.lang;
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 
 class PreviewModeController {
-  isDrawing: boolean;
+  isDrawing: boolean = false;
+  isPreviewMode: boolean = false;
+  isStarting: boolean = false;
+  isPreviewBlocked: boolean = false;
+  currentDevice: IDeviceInfo | null = null;
+  previewManager: null | PreviewManager = null;
+  liveModeTimeOut: NodeJS.Timeout | null = null;
 
-  currentDevice: IDeviceInfo;
-
-  isStarting: boolean;
-
-  isPreviewModeOn: boolean;
-
-  isPreviewBlocked: boolean;
-
-  previewManager: PreviewManager;
-
-  liveModeTimeOut: NodeJS.Timeout;
-
-  // is this used?
-  errorCallback: () => void;
-
-  camera3dRotaion: RotationParameters3DCalibration;
-
-  constructor() {
-    this.isDrawing = false;
-    this.currentDevice = null;
-    this.isPreviewModeOn = false;
-    this.isPreviewBlocked = false;
-    this.errorCallback = () => {};
-  }
+  constructor() {}
 
   get isFullScreen() {
     return this.previewManager?.isFullScreen;
   }
+
+  setIsPreviewMode = (val: boolean) => {
+    this.isPreviewMode = val;
+    setCameraPreviewState({ isPreviewMode: val });
+  };
+
+  setIsDrawing = (val: boolean) => {
+    this.isDrawing = val;
+    setCameraPreviewState({ isDrawing: val });
+  };
 
   reloadHeightOffset = async () => {
     this.previewManager?.reloadLevelingOffset?.();
@@ -122,7 +116,7 @@ class PreviewModeController {
     return true;
   }
 
-  async start(device: IDeviceInfo, errCallback) {
+  async start(device: IDeviceInfo) {
     this.reset();
     this.isStarting = true;
 
@@ -158,8 +152,22 @@ class PreviewModeController {
       PreviewModeBackgroundDrawer.start(this.previewManager.getCameraOffset?.());
       PreviewModeBackgroundDrawer.drawBoundary();
       deviceMaster.setDeviceControlReconnectOnClose(device);
-      this.errorCallback = errCallback;
-      this.isPreviewModeOn = true;
+      this.setIsPreviewMode(true);
+
+      if (this.previewManager instanceof BB2PreviewManager) {
+        setCameraPreviewState({
+          cameraType: this.previewManager.getCameraType(),
+          hasWideAngleCamera: this.previewManager.hasWideAngleCamera,
+          isWideAngleCameraCalibrated: this.previewManager.isWideAngleCameraCalibrated,
+        });
+      } else {
+        setCameraPreviewState({
+          cameraType: this.previewManager.isFullScreen ? CameraType.WIDE_ANGLE : CameraType.LASER_HEAD,
+          hasWideAngleCamera: false,
+          isWideAngleCameraCalibrated: false,
+        });
+      }
+
       canvasEventEmitter.emit('UPDATE_CONTEXT');
     } catch (error) {
       console.error(error);
@@ -172,7 +180,7 @@ class PreviewModeController {
 
   async end({ shouldWaitForEnd = false }: { shouldWaitForEnd?: boolean } = {}) {
     console.log('end of pmc');
-    this.isPreviewModeOn = false;
+    this.setIsPreviewMode(false);
 
     if (this.liveModeTimeOut) {
       clearTimeout(this.liveModeTimeOut);
@@ -197,7 +205,7 @@ class PreviewModeController {
     this.reset();
   }
 
-  isLiveModeOn = () => !!(this.isPreviewModeOn && this.liveModeTimeOut);
+  isLiveModeOn = () => !!(this.isPreviewMode && this.liveModeTimeOut);
 
   toggleFullWorkareaLiveMode() {
     if (this.liveModeTimeOut) {
@@ -208,7 +216,7 @@ class PreviewModeController {
   }
 
   startFullWorkareaLiveMode() {
-    if (!this.isPreviewModeOn || !this.previewManager?.previewFullWorkarea) {
+    if (!this.isPreviewMode || !this.previewManager?.previewFullWorkarea) {
       return;
     }
 
@@ -220,6 +228,7 @@ class PreviewModeController {
           }
         });
       }, 1000);
+      setCameraPreviewState({ isLiveMode: true });
     };
 
     setNextTimeout();
@@ -231,6 +240,7 @@ class PreviewModeController {
     }
 
     this.liveModeTimeOut = null;
+    setCameraPreviewState({ isLiveMode: false });
   }
 
   async fullWorkareaLiveUpdate(callback = () => {}) {
@@ -239,13 +249,13 @@ class PreviewModeController {
   }
 
   prePreview = (): boolean => {
-    const { isPreviewBlocked, isPreviewModeOn } = this;
+    const { isPreviewBlocked, isPreviewMode } = this;
 
-    if (isPreviewBlocked || !isPreviewModeOn) {
+    if (isPreviewBlocked || !isPreviewMode) {
       return false;
     }
 
-    this.isDrawing = true;
+    this.setIsDrawing(true);
     this.isPreviewBlocked = true;
 
     const workarea = document.querySelector('#workarea') as HTMLElement;
@@ -260,14 +270,14 @@ class PreviewModeController {
 
     workarea.style.cursor = 'url(img/camera-cursor.svg) 9 12, cell';
     this.isPreviewBlocked = false;
-    this.isDrawing = false;
+    this.setIsDrawing(false);
   };
 
-  onPreviewFail = (error: Error): void => {
-    if (this.isPreviewModeOn) {
+  onPreviewFail = (error: unknown): void => {
+    if (this.isPreviewMode) {
       console.log(error);
 
-      Alert.popUpError({ message: error.message || (error as any).text });
+      Alert.popUpError({ message: (error as Error).message || (error as any).text });
     }
 
     const workarea = document.querySelector('#workarea') as HTMLElement;
@@ -275,7 +285,7 @@ class PreviewModeController {
     workarea.style.cursor = 'auto';
 
     if (!PreviewModeBackgroundDrawer.isClean()) {
-      this.isDrawing = false;
+      this.setIsDrawing(false);
     }
 
     this.end();
@@ -289,11 +299,11 @@ class PreviewModeController {
     }
 
     try {
-      if (!this.previewManager.previewFullWorkarea) {
+      if (!this.previewManager?.previewFullWorkarea) {
         return false;
       }
 
-      await this.previewManager.previewFullWorkarea?.();
+      await this.previewManager?.previewFullWorkarea?.();
       this.onPreviewSuccess();
       callback();
 
@@ -324,24 +334,30 @@ class PreviewModeController {
     const { callback } = opts;
 
     try {
-      const previewRes = await this.previewManager.preview(x, y);
+      const previewRes = await this.previewManager!.preview(x, y);
 
       if (previewRes) {
         this.onPreviewSuccess();
       }
 
-      callback();
+      callback?.();
 
       return previewRes;
     } catch (error) {
       this.onPreviewFail(error);
-      callback();
+      callback?.();
 
       return false;
     }
   }
 
-  async previewRegion(x1, y1, x2, y2, opts: { callback?: () => void; overlapRatio?: number } = {}) {
+  async previewRegion(
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number,
+    opts: { callback?: () => void; overlapRatio?: number } = {},
+  ) {
     const res = this.prePreview();
 
     if (!res) {
@@ -351,49 +367,53 @@ class PreviewModeController {
     const { callback } = opts;
 
     try {
-      const previewRes = await this.previewManager.previewRegion(x1, y1, x2, y2, opts);
+      const previewRes = await this.previewManager!.previewRegion(x1, y1, x2, y2, opts);
 
       if (previewRes) {
         this.onPreviewSuccess();
       }
 
-      callback();
+      callback?.();
 
       return previewRes;
     } catch (error) {
       this.onPreviewFail(error);
-      callback();
+      callback?.();
 
       return false;
     }
   }
 
-  isPreviewMode() {
-    return this.isPreviewModeOn;
+  getCameraOffset(): CameraParameters | null {
+    return this.previewManager?.getCameraOffset?.() || null;
   }
 
-  getCameraOffset(): CameraParameters {
-    return this.previewManager.getCameraOffset?.() || null;
-  }
-
-  getCameraOffsetStandard(): CameraConfig {
-    return this.previewManager.getCameraOffsetStandard?.() || null;
+  getCameraOffsetStandard(): CameraConfig | null {
+    return this.previewManager?.getCameraOffsetStandard?.() || null;
   }
 
   async reset() {
     this.previewManager = null;
     this.currentDevice = null;
-    this.isPreviewModeOn = false;
+    this.setIsPreviewMode(false);
     this.isPreviewBlocked = false;
     deviceMaster.disconnectCamera();
   }
 
   // movementX, movementY in mm
   async getPhotoAfterMoveTo(movementX: number, movementY: number) {
-    const imgUrl = await this.previewManager.getPhotoAfterMoveTo?.(movementX, movementY);
+    const imgUrl = await this.previewManager!.getPhotoAfterMoveTo?.(movementX, movementY);
 
     return imgUrl;
   }
+
+  switchCamera = async (cameraType: CameraType): Promise<void> => {
+    if (!this.previewManager?.switchCamera) return;
+
+    const res = await this.previewManager.switchCamera(cameraType);
+
+    setCameraPreviewState({ cameraType: res });
+  };
 }
 
 const instance = new PreviewModeController();

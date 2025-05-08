@@ -1,0 +1,54 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .desc {
+    width: 100%;
+    margin: 0;
+    padding: 0 2em;
+    text-align: start;
+  }
+
+  .progress {
+    padding: 0 1em;
+  }
+
+  .content {
+    min-height: 40vh;
+  }
+
+  .left {
+    width: 68%;
+  }
+
+  .right {
+    width: 30%;
+    height: fit-content;
+
+    img {
+      border: 1px solid #000;
+    }
+  }
+
+  .imgContainer {
+    position: relative;
+    width: fit-content;
+    height: fit-content;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .spinner {
+      font-size: 48px;
+    }
+
+    margin: 12px 0;
+  }
+
+  .slider {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+}

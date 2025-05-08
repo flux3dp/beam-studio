@@ -1,0 +1,76 @@
+.container {
+  position: relative;
+  box-shadow: 0 0 0 1px #000000;
+  height: 50vh;
+
+  .img-container {
+    background: #eeeeee;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: scroll;
+    cursor: move;
+    cursor: grab;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
+
+    &.flex {
+      display: flex;
+      justify-content: center;
+    }
+
+    &:active {
+      cursor: grabbing;
+      cursor: -moz-grabbing;
+      cursor: -webkit-grabbing;
+    }
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    .spin {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+
+      .spinner {
+        font-size: 48px;
+      }
+    }
+
+    > img {
+      max-width: unset;
+      top: 0;
+      position: absolute;
+    }
+
+    > svg {
+      max-width: unset;
+      top: 0;
+      position: absolute;
+    }
+  }
+
+  .zoom-block {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    padding: 0 0 5px;
+
+    button {
+      margin-left: 5px;
+      background: none;
+      border: none;
+
+      .icon {
+        path {
+          stroke: #aaaaaa;
+          stroke-width: 2px;
+        }
+      }
+    }
+  }
+}

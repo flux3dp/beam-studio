@@ -13,7 +13,7 @@ import rawAndHome from './rawAndHome';
 class FisheyePreviewManagerV2 extends FisheyePreviewManagerBase implements FisheyePreviewManager {
   declare params: FisheyeCameraParametersV2;
 
-  autoFocusRefKey: string;
+  autoFocusRefKey: string = 'A';
 
   version = 2;
 

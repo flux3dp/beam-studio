@@ -1,0 +1,23 @@
+.desc {
+  white-space: pre-wrap;
+}
+
+.value {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.group {
+  circle {
+    fill: #ff4d4f;
+    stroke: #ff4d4f;
+    fill-opacity: 0;
+
+    &.center {
+      fill-opacity: 1;
+      stroke: none;
+      pointer-events: none;
+    }
+  }
+}

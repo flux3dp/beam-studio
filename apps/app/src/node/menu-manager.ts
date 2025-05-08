@@ -6,9 +6,10 @@ import Store from 'electron-store';
 
 import { adorModels, promarkModels } from '@core/app/actions/beambox/constant';
 import i18n from '@core/helpers/i18n';
+import versionChecker from '@core/helpers/version-checker';
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 import { getFocusedView } from './helpers/tabHelper';
-import type DeviceInfo from './interfaces/DeviceInfo';
 import type { MenuData } from './interfaces/Menu';
 import events from './ipc-events';
 import { buildFileMenu, updateRecentMenu } from './menu/fileMenu';
@@ -88,14 +89,16 @@ function getDeviceMenuId(uuid: string, data: { source: string }): string {
   return `device:${data.source}:${uuid}`;
 }
 
-function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data: DeviceInfo, isDevMode = false) {
-  const { model, name, serial, source } = data;
+function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data: IDeviceInfo, isDevMode = false) {
+  const { model, name, serial, source, version } = data;
+
   const menuLabel = source === 'lan' ? name : `${name} (USB)`;
   const machineName = name;
   const isAdor = adorModels.has(model);
   const isPromark = promarkModels.has(model);
   const isBeamo = model === 'fbm1';
   const isBb2 = model === 'fbb2';
+  const vc = versionChecker(version);
   const handleClick = (item: MenuItem) => callback({ ...item, machineName, serial, source, uuid });
   const submenu = [
     { click: handleClick, id: 'DASHBOARD', label: r.dashboard },
@@ -126,6 +129,12 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
           id: 'CALIBRATE_CAMERA_ADVANCED',
           label: r.calibrate_camera_advanced,
         },
+        isBb2 &&
+          (vc.meetRequirement('BB2_WIDE_ANGLE_CAMERA') || isDevMode) && {
+            click: handleClick,
+            id: 'CALIBRATE_CAMERA_WIDE_ANGLE',
+            label: r.calibrate_wide_angle_camera,
+          },
         isBeamo && {
           click: handleClick,
           id: 'CALIBRATE_BEAMBOX_CAMERA_BORDERLESS',
@@ -241,7 +250,7 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
 class MenuManager extends EventEmitter {
   public appmenu: Menu | null = null;
   private deviceMenu?: MenuItem;
-  private deviceList: { [uuid: string]: DeviceInfo };
+  private deviceList: { [uuid: string]: IDeviceInfo };
   private isDevMode: boolean;
 
   constructor() {
@@ -387,7 +396,7 @@ class MenuManager extends EventEmitter {
     }
   }
 
-  appendDevice(uuid: string, data: DeviceInfo): void {
+  appendDevice(uuid: string, data: IDeviceInfo): void {
     const menuId = getDeviceMenuId(uuid, data);
 
     this.deviceList[menuId] = data;
@@ -407,7 +416,7 @@ class MenuManager extends EventEmitter {
     }
   }
 
-  updateDevice(uuid: string, data: DeviceInfo): boolean {
+  updateDevice(uuid: string, data: IDeviceInfo): boolean {
     const menuId = getDeviceMenuId(uuid, data);
 
     this.deviceList[menuId] = data;
@@ -432,7 +441,7 @@ class MenuManager extends EventEmitter {
     return true;
   }
 
-  removeDevice(uuid: string, data: DeviceInfo): void {
+  removeDevice(uuid: string, data: IDeviceInfo): void {
     const menuId = getDeviceMenuId(uuid, data);
 
     delete this.deviceList[menuId];

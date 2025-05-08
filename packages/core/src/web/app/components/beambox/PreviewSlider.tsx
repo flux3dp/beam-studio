@@ -7,6 +7,7 @@ import PreviewModeController from '@core/app/actions/beambox/preview-mode-contro
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import WorkareaIcons from '@core/app/icons/workarea/WorkareaIcons';
+import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
 import versionChecker from '@core/helpers/version-checker';
@@ -20,6 +21,7 @@ const PreviewSlider = (): React.ReactNode => {
   const [exposureSetting, setExposureSetting] = useState<IConfigSetting | null>(null);
   const { mode } = useContext(CanvasContext);
   const isPreviewing = mode === CanvasMode.Preview;
+  const { isPreviewMode } = useCameraPreviewStore();
   const lang = useI18n();
 
   const getSetting = async () => {
@@ -43,7 +45,7 @@ const PreviewSlider = (): React.ReactNode => {
 
       const exposureRes = await deviceMaster.getDeviceSetting('camera_exposure_absolute');
 
-      setExposureSetting(JSON.parse(exposureRes.value));
+      setExposureSetting(JSON.parse(exposureRes.value) as IConfigSetting);
     } catch (e) {
       console.error('Failed to get exposure setting', e);
     }
@@ -68,11 +70,8 @@ const PreviewSlider = (): React.ReactNode => {
   useEffect(() => {
     setExposureSetting(null);
 
-    if (isPreviewing && PreviewModeController.isPreviewModeOn) {
-      getSetting();
-    }
-    // eslint-disable-next-line hooks/exhaustive-deps
-  }, [isPreviewing, PreviewModeController.isPreviewModeOn]);
+    if (isPreviewing && isPreviewMode) getSetting();
+  }, [isPreviewing, isPreviewMode]);
 
   if (mode === CanvasMode.PathPreview) {
     return null;
