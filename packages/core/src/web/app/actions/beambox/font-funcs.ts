@@ -20,7 +20,7 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import weldPath from '@core/helpers/weldPath';
 import localFontHelper from '@core/implementations/localFontHelper';
 import storage from '@core/implementations/storage';
-import type { FontDescriptor, IFont, IFontQuery, WebFont } from '@core/interfaces/IFont';
+import type { FontDescriptor, GeneralFont, IFontQuery, WebFont } from '@core/interfaces/IFont';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
@@ -151,16 +151,16 @@ init();
 
 const requestFontsOfTheFontFamily = memoize((family: string) => Array.from(fontHelper.findFonts({ family })));
 
-const requestFontByFamilyAndStyle = ({ family, italic, style, weight }: IFontQuery): IFont =>
+const requestFontByFamilyAndStyle = ({ family, italic, style, weight }: IFontQuery): GeneralFont =>
   fontHelper.findFont({ family, italic, style, weight });
 
-export const getFontObj = async (font: FontDescriptor | WebFont): Promise<fontkit.Font | undefined> => {
+export const getFontObj = async (font: GeneralFont): Promise<fontkit.Font | undefined> => {
   try {
     const { postscriptName } = font;
     let fontObj = fontObjCache.get(postscriptName!);
 
     if (!fontObj) {
-      if ((font as FontDescriptor).path) {
+      if ('path' in font) {
         fontObj = localFontHelper.getLocalFont(font);
       } else {
         const { collectionIdx = 0, fileName = `${postscriptName}.ttf` } = font as WebFont;
@@ -212,8 +212,12 @@ export const getFontObj = async (font: FontDescriptor | WebFont): Promise<fontki
   }
 };
 
-export const convertTextToPathByFontkit = (textElem: Element, fontObj: fontkit.Font): IConvertInfo => {
+export const convertTextToPathByFontkit = (textElem: Element, fontObj: fontkit.Font | undefined): IConvertInfo => {
   try {
+    if (!fontObj) {
+      throw new Error('Unable to get fontObj');
+    }
+
     const maxChar = 0xffff;
     const fontSize = textedit.getFontSize(textElem as SVGTextElement);
     const sizeRatio = fontSize / fontObj.unitsPerEm;
@@ -340,7 +344,7 @@ const getPathAndTransformFromSvg = async (data: any, isFilled: boolean) =>
 const convertTextToPathByGhost = async (
   textElem: Element,
   isFilled: boolean,
-  font: FontDescriptor,
+  font: GeneralFont,
 ): Promise<IConvertInfo> => {
   const origFontFamily = textElem.getAttribute('font-family')!;
 
@@ -393,7 +397,7 @@ const convertTextToPathByGhost = async (
   }
 };
 
-const getUnsupportedChar = async (font: FontDescriptor | WebFont, textContent: string[]): Promise<null | string[]> => {
+const getUnsupportedChar = async (font: GeneralFont, textContent: string[]): Promise<null | string[]> => {
   const fontObj = await getFontObj(font);
 
   if (fontObj) {
@@ -403,7 +407,7 @@ const getUnsupportedChar = async (font: FontDescriptor | WebFont, textContent: s
   return null;
 };
 
-const substitutedFont = async (font: FontDescriptor | WebFont, textElement: Element) => {
+const substitutedFont = async (font: GeneralFont, textElement: Element) => {
   const originFont = getFontOfPostscriptName(textElement.getAttribute('font-postscript')!);
   const fontFamily = textElement.getAttribute('font-family');
   const text = textElement.textContent;
@@ -433,9 +437,9 @@ const substitutedFont = async (font: FontDescriptor | WebFont, textElement: Elem
   // array of used family which are in the text
 
   const originPostscriptName = originFont.postscriptName;
-  const fontOptions: Record<string, FontDescriptor> = { originPostscriptName: font };
+  const fontOptions: Record<string, GeneralFont> = { originPostscriptName: font };
   const textContent = [...new Set(Array.from(text!))];
-  let fontList: FontDescriptor[] = [font];
+  let fontList: GeneralFont[] = [font];
   let unsupportedChar = (await getUnsupportedChar(originFont, textContent)) ?? [];
 
   if (unsupportedChar && unsupportedChar.length === 0) {
@@ -662,10 +666,10 @@ const convertTextToPath = async (
 
       res =
         (await convertTextToPathByGhost(textElement, isFilled, font)) ||
-        convertTextToPathByFontkit(textElement, fontObj!);
+        convertTextToPathByFontkit(textElement, fontObj);
     } else {
       res =
-        convertTextToPathByFontkit(textElement, fontObj!) ||
+        convertTextToPathByFontkit(textElement, fontObj) ||
         (await convertTextToPathByGhost(textElement, isFilled, font));
     }
 

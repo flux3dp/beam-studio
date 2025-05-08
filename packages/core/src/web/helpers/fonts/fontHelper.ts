@@ -5,7 +5,7 @@ import i18n from '@core/helpers/i18n';
 import isFluxPlusActive from '@core/helpers/is-flux-plus-active';
 import isWeb from '@core/helpers/is-web';
 import localFontHelper from '@core/implementations/localFontHelper';
-import type { FontDescriptor, FontDescriptorKeys, FontHelper, WebFont } from '@core/interfaces/IFont';
+import type { FontDescriptor, FontDescriptorKeys, FontHelper, GeneralFont, WebFont } from '@core/interfaces/IFont';
 
 import fontNameMap from './fontNameMap';
 import previewSrcMap from './fontPreviewSrc';
@@ -33,7 +33,7 @@ const getFonts = () => {
 };
 const fontsWithoutMonotype = getFonts();
 
-let availableFonts: FontDescriptor[] = fontsWithoutMonotype;
+let availableFonts: GeneralFont[] = fontsWithoutMonotype;
 let monotypeLoaded = false;
 const getMonotypeFonts = async (): Promise<boolean> => {
   if (!isFluxPlusActive) {
@@ -59,7 +59,7 @@ const getMonotypeFonts = async (): Promise<boolean> => {
   return monotypeLoaded;
 };
 
-const findFont = (fontDescriptor: FontDescriptor): FontDescriptor => {
+const findFont = (fontDescriptor: FontDescriptor): GeneralFont => {
   const localRes = localFontHelper.findFont(fontDescriptor);
 
   if (
@@ -127,7 +127,7 @@ const findFont = (fontDescriptor: FontDescriptor): FontDescriptor => {
   return font;
 };
 
-const findFonts = (fontDescriptor: FontDescriptor): FontDescriptor[] => {
+const findFonts = (fontDescriptor: FontDescriptor): GeneralFont[] => {
   const localRes = localFontHelper.findFonts(fontDescriptor);
 
   if (localRes.length > 0) {
@@ -166,12 +166,12 @@ export default {
 
     return availableFonts;
   },
-  getFontName(font: FontDescriptor): string {
+  getFontName(font: GeneralFont): string {
     if (font.family && font.family in fontNameMap) {
       return fontNameMap[font.family] || font.family;
     }
 
-    if (!font.path) {
+    if (!('path' in font)) {
       return font.family;
     }
 

@@ -11,7 +11,7 @@ import { checkFpm1, checkHxRf } from '@core/helpers/checkFeature';
 import isDev from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 import storage from '@core/implementations/storage';
-import type { FontDescriptor } from '@core/interfaces/IFont';
+import type { GeneralFont, IDefaultFont } from '@core/interfaces/IFont';
 
 import SettingFormItem from './components/SettingFormItem';
 import SettingSelect from './components/SettingSelect';
@@ -29,7 +29,7 @@ function Editor({ options }: Props): React.JSX.Element {
   const selectedModel = getPreference('model');
   const defaultUnit = getConfig('default-units');
   const workarea = getWorkarea(selectedModel);
-  const [defaultFont, updateDefaultFont] = useState<FontDescriptor>(
+  const [defaultFont, updateDefaultFont] = useState<IDefaultFont>(
     storage.get('default-font') || { family: 'Arial', style: 'Regular' },
   );
 
@@ -42,11 +42,11 @@ function Editor({ options }: Props): React.JSX.Element {
   const fontStyleOptions = FontFuncs
     //
     .requestFontsOfTheFontFamily(defaultFont.family)
-    .map(({ postscriptName, style }: FontDescriptor) => ({ label: style, value: postscriptName }));
+    .map(({ postscriptName, style }) => ({ label: style, value: postscriptName }));
 
   const setFont = (family: string) => {
-    const fonts: FontDescriptor[] = FontFuncs.requestFontsOfTheFontFamily(family);
-    const newDefaultFont = fonts.filter(({ style }) => style === 'Regular')[0] || fonts[0];
+    const fonts: GeneralFont[] = FontFuncs.requestFontsOfTheFontFamily(family);
+    const newDefaultFont: IDefaultFont = fonts.filter(({ style }) => style === 'Regular')[0] || fonts[0];
 
     storage.set('default-font', {
       family: newDefaultFont.family,

@@ -43,7 +43,7 @@ class TextActions {
 
   private textinput: HTMLInputElement;
 
-  private cursor: Element;
+  private cursor: Element | null = null;
 
   private selblock;
 
@@ -1033,7 +1033,7 @@ class TextActions {
     this.fontSize = val;
   };
 
-  setIsVertical = (val) => {
+  setIsVertical = (val: boolean) => {
     this.isVertical = val;
   };
 

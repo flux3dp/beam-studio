@@ -35,7 +35,7 @@ import { isMobile } from '@core/helpers/system-helper';
 import browser from '@core/implementations/browser';
 import menu from '@core/implementations/menu';
 import storage from '@core/implementations/storage';
-import type { IFont } from '@core/interfaces/IFont';
+import type { IDefaultFont } from '@core/interfaces/IFont';
 
 class BeamboxInit {
   constructor() {
@@ -235,16 +235,19 @@ class BeamboxInit {
     }
 
     const fonts = fontHelper.findFonts({ family: defaultFontFamily });
+    let defaultFont: IDefaultFont;
 
     if (fonts.length > 0) {
-      const defaultFont: IFont = fonts.filter((font) => font.style === 'Regular')[0] || fonts[0];
-
-      storage.set('default-font', {
-        family: defaultFont.family,
-        postscriptName: defaultFont.postscriptName,
-        style: defaultFont.style,
-      });
+      defaultFont = fonts.filter((font) => font.style === 'Regular')[0] || fonts[0];
+    } else {
+      defaultFont = fontHelper.getAvailableFonts()[0];
     }
+
+    storage.set('default-font', {
+      family: defaultFont.family,
+      postscriptName: defaultFont.postscriptName,
+      style: defaultFont.style,
+    });
   }
 
   private async askAndInitSentry(): Promise<void> {
