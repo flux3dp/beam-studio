@@ -3,7 +3,6 @@ import type { IChangeLog } from '@core/interfaces/IChangeLog';
 // 2.5.4 beta
 const CHANGES_TW = {
   added: [
-    '新增 支援 BB2 廣角相機（需搭配韌體 6.0.12 或以上）。',
     '新增 更多元素圖庫。',
     '新增 路徑橋接功能。',
     '新增 支援 Promark 安全保護門。',
@@ -21,7 +20,6 @@ const CHANGES_TW = {
 
 const CHANGES_EN = {
   added: [
-    'Added support for Beambox II wide-angle camera (requires firmware 6.0.12 or later).',
     'Added more elements to the element library.',
     'Added Tabs feature for path',
     'Added display of recently used fonts in the font menu.',
