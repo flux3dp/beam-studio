@@ -1,0 +1,39 @@
+$primary-color: #1890ff;
+$messages-area-bg: #daedff;
+
+.chat-container {
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  height: 100%;
+  width: 100%;
+}
+
+.chat-iframe {
+  border: none;
+  border-radius: 0;
+  height: 100%;
+  min-height: 700px;
+  width: 100%;
+}
+
+.floating-area {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 10;
+  padding: 4px 24px 60px 16px;
+  box-sizing: border-box;
+}
+
+.chat-disclaimer {
+  padding: 4px 16px 0;
+  font-size: 12px;
+  color: $primary-color;
+  text-align: center;
+  line-height: 1.5;
+  width: 100%;
+  box-sizing: border-box;
+}
