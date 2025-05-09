@@ -12,6 +12,6 @@ export interface TextAttribute {
   stroke_linejoin?: string;
   stroke_opacity?: number | string;
   stroke_paint?: string;
-  stroke_width: number | string;
+  stroke_width?: number | string;
   text_anchor: string;
 }

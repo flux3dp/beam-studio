@@ -11,7 +11,6 @@ export default function getDefaultFont(): TextAttribute {
     font_family: family,
     font_postscriptName: postscriptName,
     font_size: 14,
-    stroke_width: 1,
     text_anchor: 'start',
   };
 }
