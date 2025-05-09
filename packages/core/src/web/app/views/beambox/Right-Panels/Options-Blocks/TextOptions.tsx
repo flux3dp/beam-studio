@@ -27,6 +27,7 @@ import fontHelper from '@core/helpers/fonts/fontHelper';
 import i18n from '@core/helpers/i18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
+import { updateConfigs } from '@core/helpers/update-configs';
 import storage from '@core/implementations/storage';
 import type { GeneralFont } from '@core/interfaces/IFont';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -208,80 +209,19 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
         }
 
         // Update configs
-        if (!newConfigs.fontFamily?.hasMultiValue) {
-          if (!newConfigs.fontFamily) {
-            newConfigs.fontFamily = { hasMultiValue: false, value: sanitizedFamily };
-            newConfigs.fontStyle = { hasMultiValue: false, value: font.style };
-          } else if (newConfigs.fontFamily.value !== sanitizedFamily) {
-            newConfigs.fontFamily.hasMultiValue = true;
-          } else if (!newConfigs.fontStyle!.hasMultiValue && newConfigs.fontStyle!.value !== font.style) {
-            newConfigs.fontStyle!.hasMultiValue = true;
-          }
-        }
-
-        if (!newConfigs.fontSize?.hasMultiValue) {
-          const fontSize = textEdit.getFontSize(textElement);
-
-          if (!newConfigs.fontSize) {
-            newConfigs.fontSize = { hasMultiValue: false, value: fontSize };
-          } else if (newConfigs.fontSize.value !== fontSize) {
-            newConfigs.fontSize.hasMultiValue = true;
-          }
-        }
-
-        if (!newConfigs.letterSpacing?.hasMultiValue) {
-          const letterSpacing = textEdit.getLetterSpacing(textElement);
-
-          if (!newConfigs.letterSpacing) {
-            newConfigs.letterSpacing = { hasMultiValue: false, value: letterSpacing };
-          } else if (newConfigs.letterSpacing.value !== letterSpacing) {
-            newConfigs.letterSpacing.hasMultiValue = true;
-          }
-        }
-
-        if (!newConfigs.lineSpacing?.hasMultiValue) {
-          const lineSpacing = textEdit.getLineSpacing(textElement);
-
-          if (!newConfigs.lineSpacing) {
-            newConfigs.lineSpacing = { hasMultiValue: false, value: lineSpacing };
-          } else if (newConfigs.lineSpacing.value !== lineSpacing) {
-            newConfigs.lineSpacing.hasMultiValue = true;
-          }
-        }
-
-        if (!newConfigs.isVerti?.hasMultiValue) {
-          const isVerti = textEdit.getIsVertical(textElement);
-
-          if (!newConfigs.isVerti) {
-            newConfigs.isVerti = { hasMultiValue: false, value: isVerti };
-          } else if (newConfigs.isVerti.value !== isVerti) {
-            newConfigs.isVerti.hasMultiValue = true;
-          }
-        }
+        updateConfigs(newConfigs, 'fontFamily', () => sanitizedFamily);
+        updateConfigs(newConfigs, 'fontStyle', () => font.style);
+        updateConfigs(newConfigs, 'fontSize', () => textEdit.getFontSize(textElement));
+        updateConfigs(newConfigs, 'letterSpacing', () => textEdit.getLetterSpacing(textElement));
+        updateConfigs(newConfigs, 'lineSpacing', () => textEdit.getLineSpacing(textElement));
+        updateConfigs(newConfigs, 'isVerti', () => textEdit.getIsVertical(textElement));
 
         if (textElement.getAttribute('data-textpath')) {
           const textPath = textElement.querySelector('textPath');
 
           if (textPath) {
-            if (!newConfigs.startOffset?.hasMultiValue) {
-              const startOffset = textPathEdit.getStartOffset(textPath);
-
-              if (!newConfigs.startOffset) {
-                newConfigs.startOffset = { hasMultiValue: false, value: startOffset };
-              } else if (newConfigs.startOffset.value !== startOffset) {
-                newConfigs.startOffset.hasMultiValue = true;
-              }
-            }
-
-            if (!newConfigs.verticalAlign?.hasMultiValue) {
-              const verticalAlign = textPathEdit.getVerticalAlign(textPath);
-
-              if (!newConfigs.verticalAlign) {
-                newConfigs.verticalAlign = { hasMultiValue: false, value: verticalAlign };
-              } else if (newConfigs.verticalAlign.value !== verticalAlign) {
-                newConfigs.verticalAlign.hasMultiValue = true;
-              }
-            }
+            updateConfigs(newConfigs, 'startOffset', () => textPathEdit.getStartOffset(textPath));
+            updateConfigs(newConfigs, 'verticalAlign', () => textPathEdit.getVerticalAlign(textPath));
           }
         }
       }
