@@ -93,9 +93,7 @@ const getFontFamilyOption = (family: string, isHistory = false): FontOption => {
 const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) => {
   const isMobile = useIsMobile();
   const { updateObjectPanel } = useContext(ObjectPanelContext);
-  const [availableFontFamilies, setAvailableFontFamilies] = useState<string[]>(
-    FontFuncs.requestAvailableFontFamilies(),
-  );
+  const [availableFontFamilies, setAvailableFontFamilies] = useState<string[]>([]);
   const [historyFontFamilies, setHistoryFontFamilies] = useState<FontOption[]>([]);
   const [configs, setConfigs] = useState(defaultTextConfigs);
   const { fontFamily } = configs;
