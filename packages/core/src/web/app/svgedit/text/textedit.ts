@@ -123,8 +123,6 @@ const renderTspan = (text: SVGTextElement, val?: string) => {
 
   textActions.setIsVertical(isVertical);
 
-  console.log('renderTspan', text, lines, lineSpacing, charHeight, letterSpacing);
-
   for (let i = 0; i < Math.max(lines.length, tspans.length); i += 1) {
     if (i < lines.length) {
       let tspan: SVGTextContentElement;
