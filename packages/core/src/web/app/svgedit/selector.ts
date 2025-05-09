@@ -425,7 +425,7 @@ class Selector {
         getValue(elemDimension, 'h', { allowUndefined: true, unit }) ??
         getValue(elemDimension, 'ry', { allowUndefined: true, unit });
 
-      if (!!elemH && !!elemW) newContent = `${elemW.toFixed(1)}${displayUnit} x ${elemH.toFixed(1)}${displayUnit}`;
+      if (!!elemH && !!elemW) newContent = `${+elemW.toFixed(1)}${displayUnit} x ${+elemH.toFixed(1)}${displayUnit}`;
     }
 
     this.dimensionInfo.innerHTML = newContent;

@@ -69,10 +69,10 @@ describe('text on path', () => {
       .should('exist')
       .should('have.attr', 'vector-effect', 'non-scaling-stroke')
       .should('have.attr', 'startOffset', '0%')
+      .should('have.attr', 'alignment-baseline', 'auto')
+      .should('have.attr', 'dominant-baseline', 'auto')
       .should('have.attr', 'href', '#svg_2')
       .should('have.text', '123456789');
-    cy.get('textPath').should('not.have.attr', 'alignment-baseline');
-    cy.get('textPath').should('not.have.attr', 'dominant-baseline');
   });
 
   it('offset', () => {
