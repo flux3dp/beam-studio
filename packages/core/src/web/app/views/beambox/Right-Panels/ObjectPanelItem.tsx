@@ -94,7 +94,9 @@ const ObjectPanelNumber = ({
   };
 
   React.useEffect(() => {
-    if (+displayValue !== +valueInUnit) {
+    if (hasMultiValue) {
+      setDisplayValue('-');
+    } else if (+displayValue !== +valueInUnit) {
       setDisplayValue(valueInUnit);
     } else if (!isActive) {
       let safeValue = Math.min(value, max);
@@ -108,7 +110,7 @@ const ObjectPanelNumber = ({
       }
     }
     // eslint-disable-next-line hooks/exhaustive-deps
-  }, [displayValue, value, valueInUnit, isActive]);
+  }, [hasMultiValue, displayValue, value, valueInUnit, isActive]);
 
   const isKeyDisabled = (key: string) => {
     if (key === '.') {
