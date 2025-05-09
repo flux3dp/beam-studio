@@ -17,7 +17,7 @@ export class UndoManager implements IUndoManager {
   private undoStackPointer: number = 0;
   private undoStack: BaseHistoryCommand[] = [];
   private undoChangeStackPointer: number = -1;
-  private undoableChangeStack: Array<{ attrName: string; elements: Element[]; oldValues: string[] }> = [];
+  private undoableChangeStack: Array<{ attrName: string; elements: Element[]; oldValues: Array<null | string> }> = [];
 
   constructor() {}
 
@@ -103,7 +103,7 @@ export class UndoManager implements IUndoManager {
 
     const p = this.undoChangeStackPointer;
     const elements = elems.filter(Boolean);
-    const oldValues = elements.map((elem) => elem.getAttribute(attrName)).filter(Boolean);
+    const oldValues = elements.map((elem) => elem.getAttribute(attrName));
 
     this.undoableChangeStack[p] = { attrName, elements, oldValues };
   }
@@ -119,7 +119,7 @@ export class UndoManager implements IUndoManager {
 
     for (let i = elements.length - 1; i >= 0; i -= 1) {
       const elem = elements[i];
-      const changes: any = {};
+      const changes: { [key: string]: null | string } = {};
 
       if (!elem) continue;
 

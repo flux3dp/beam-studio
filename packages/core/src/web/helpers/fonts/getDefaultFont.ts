@@ -1,9 +1,9 @@
 import storage from '@core/implementations/storage';
-import type { IFont } from '@core/interfaces/IFont';
+import type { IDefaultFont } from '@core/interfaces/IFont';
 import type { TextAttribute } from '@core/interfaces/Text';
 
 export default function getDefaultFont(): TextAttribute {
-  const { family, postscriptName }: IFont = storage.get('default-font');
+  const { family, postscriptName }: IDefaultFont = storage.get('default-font');
 
   return {
     fill: '#000000',

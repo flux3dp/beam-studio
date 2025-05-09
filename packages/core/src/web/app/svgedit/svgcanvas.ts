@@ -3617,7 +3617,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     return isClosed;
   };
 
-  this.calcElemFilledInfo = (elem) => {
+  this.calcElemFilledInfo = (elem: Element) => {
     const fillableTags = ['rect', 'ellipse', 'path', 'text', 'polygon', 'g'];
 
     if (!fillableTags.includes(elem.tagName)) {
@@ -3659,7 +3659,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     };
   };
 
-  this.setElemsFill = function (elems) {
+  this.setElemsFill = function (elems: Element[]) {
     const batchCmd = new history.BatchCommand('set elems fill');
 
     for (let i = 0; i < elems.length; ++i) {
@@ -3713,7 +3713,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     return batchCmd;
   };
 
-  this.setElemsUnfill = function (elems) {
+  this.setElemsUnfill = function (elems: Element[]) {
     const batchCmd = new history.BatchCommand('set elems unfill');
 
     for (let i = 0; i < elems.length; ++i) {

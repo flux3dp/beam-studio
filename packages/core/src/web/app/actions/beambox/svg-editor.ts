@@ -57,7 +57,7 @@ import { importPresets } from '@core/helpers/presets/preset-helper';
 import Shortcuts from '@core/helpers/shortcuts';
 import { isMobile } from '@core/helpers/system-helper';
 import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
-import type { IFont } from '@core/interfaces/IFont';
+import type { IDefaultFont } from '@core/interfaces/IFont';
 import type { IStorage } from '@core/interfaces/IStorage';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type ISVGConfig from '@core/interfaces/ISVGConfig';
@@ -225,7 +225,7 @@ const svgEditor = (window['svgEditor'] = (function () {
     'zh-cn': 'zh-CN',
     'zh-tw': 'zh-TW',
   };
-  const defaultFont = storage.get('default-font') as IFont;
+  const defaultFont: IDefaultFont = storage.get('default-font');
   let pressedKey = [];
 
   document.addEventListener('keydown', (e) => {
@@ -865,8 +865,8 @@ const svgEditor = (window['svgEditor'] = (function () {
                 }, 100);
               }
 
-              textActions.setFontSize(textEdit.getFontSize());
-              textActions.setIsVertical(elem.getAttribute('data-verti') === 'true');
+              textActions.setFontSize(textEdit.getFontSize(elem));
+              textActions.setIsVertical(textEdit.getIsVertical(elem));
               break;
             case 'image':
               if (svgCanvas.getMode() === 'image') {

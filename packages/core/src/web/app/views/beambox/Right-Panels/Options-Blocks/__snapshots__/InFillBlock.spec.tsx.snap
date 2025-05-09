@@ -160,118 +160,52 @@ exports[`should render correctly in mobile is not fillable 1`] = `<div />`;
 
 exports[`should render correctly is fillable 1`] = `
 <div>
-  <div
-    class="object-panel-item"
+  <button
+    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
     id="infill"
+    title="Infill"
+    type="button"
   >
-    <div
-      class="main"
+    <span
+      class="ant-btn-icon"
     >
-      <button
-        aria-checked="false"
-        class="ant-switch css-dev-only-do-not-override-hash"
-        role="switch"
-        type="button"
-      >
-        <div
-          class="ant-switch-handle"
-        />
-        <span
-          class="ant-switch-inner"
-        >
-          <span
-            class="ant-switch-inner-checked"
-          />
-          <span
-            class="ant-switch-inner-unchecked"
-          />
-        </span>
-      </button>
-    </div>
-    <div
-      class="label"
-    >
-      Infill
-    </div>
-  </div>
+      <svgr-url />
+    </span>
+  </button>
 </div>
 `;
 
 exports[`should render correctly is fillable 2`] = `
 <div>
-  <div
-    class="object-panel-item"
+  <button
+    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only filled"
     id="infill"
+    title="Infill"
+    type="button"
   >
-    <div
-      class="main"
+    <span
+      class="ant-btn-icon"
     >
-      <button
-        aria-checked="true"
-        class="ant-switch css-dev-only-do-not-override-hash ant-switch-checked"
-        role="switch"
-        type="button"
-      >
-        <div
-          class="ant-switch-handle"
-        />
-        <span
-          class="ant-switch-inner"
-        >
-          <span
-            class="ant-switch-inner-checked"
-          />
-          <span
-            class="ant-switch-inner-unchecked"
-          />
-        </span>
-      </button>
-    </div>
-    <div
-      class="label"
-    >
-      Infill
-    </div>
-  </div>
+      <svgr-url />
+    </span>
+  </button>
 </div>
 `;
 
 exports[`should render correctly is fillable 3`] = `
 <div>
-  <div
-    class="object-panel-item"
+  <button
+    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
     id="infill"
+    title="Infill"
+    type="button"
   >
-    <div
-      class="main"
+    <span
+      class="ant-btn-icon"
     >
-      <button
-        aria-checked="false"
-        class="ant-switch css-dev-only-do-not-override-hash"
-        role="switch"
-        type="button"
-      >
-        <div
-          class="ant-switch-handle"
-        />
-        <span
-          class="ant-switch-inner"
-        >
-          <span
-            class="ant-switch-inner-checked"
-          />
-          <span
-            class="ant-switch-inner-unchecked"
-          />
-        </span>
-      </button>
-    </div>
-    <div
-      class="label"
-    >
-      Infill
-    </div>
-  </div>
+      <svgr-url />
+    </span>
+  </button>
 </div>
 `;
 
@@ -280,38 +214,33 @@ exports[`should render correctly is not fillable 1`] = `<div />`;
 exports[`should render correctly with label 1`] = `
 <div>
   <div
-    class="object-panel-item"
-    id="infill"
+    class="option-block"
   >
-    <div
-      class="main"
-    >
-      <button
-        aria-checked="false"
-        class="ant-switch css-dev-only-do-not-override-hash"
-        role="switch"
-        type="button"
-      >
-        <div
-          class="ant-switch-handle"
-        />
-        <span
-          class="ant-switch-inner"
-        >
-          <span
-            class="ant-switch-inner-checked"
-          />
-          <span
-            class="ant-switch-inner-unchecked"
-          />
-        </span>
-      </button>
-    </div>
     <div
       class="label"
     >
       Infill
     </div>
+    <button
+      aria-checked="false"
+      class="ant-switch ant-switch-small css-dev-only-do-not-override-hash"
+      role="switch"
+      type="button"
+    >
+      <div
+        class="ant-switch-handle"
+      />
+      <span
+        class="ant-switch-inner"
+      >
+        <span
+          class="ant-switch-inner-checked"
+        />
+        <span
+          class="ant-switch-inner-unchecked"
+        />
+      </span>
+    </button>
   </div>
 </div>
 `;
@@ -319,38 +248,33 @@ exports[`should render correctly with label 1`] = `
 exports[`should render correctly with label 2`] = `
 <div>
   <div
-    class="object-panel-item"
-    id="infill"
+    class="option-block"
   >
-    <div
-      class="main"
-    >
-      <button
-        aria-checked="true"
-        class="ant-switch css-dev-only-do-not-override-hash ant-switch-checked"
-        role="switch"
-        type="button"
-      >
-        <div
-          class="ant-switch-handle"
-        />
-        <span
-          class="ant-switch-inner"
-        >
-          <span
-            class="ant-switch-inner-checked"
-          />
-          <span
-            class="ant-switch-inner-unchecked"
-          />
-        </span>
-      </button>
-    </div>
     <div
       class="label"
     >
       Infill
     </div>
+    <button
+      aria-checked="true"
+      class="ant-switch ant-switch-small css-dev-only-do-not-override-hash ant-switch-checked"
+      role="switch"
+      type="button"
+    >
+      <div
+        class="ant-switch-handle"
+      />
+      <span
+        class="ant-switch-inner"
+      >
+        <span
+          class="ant-switch-inner-checked"
+        />
+        <span
+          class="ant-switch-inner-unchecked"
+        />
+      </span>
+    </button>
   </div>
 </div>
 `;
@@ -358,38 +282,52 @@ exports[`should render correctly with label 2`] = `
 exports[`should render correctly with label 3`] = `
 <div>
   <div
-    class="object-panel-item"
-    id="infill"
+    class="option-block"
   >
-    <div
-      class="main"
-    >
-      <button
-        aria-checked="false"
-        class="ant-switch css-dev-only-do-not-override-hash"
-        role="switch"
-        type="button"
-      >
-        <div
-          class="ant-switch-handle"
-        />
-        <span
-          class="ant-switch-inner"
-        >
-          <span
-            class="ant-switch-inner-checked"
-          />
-          <span
-            class="ant-switch-inner-unchecked"
-          />
-        </span>
-      </button>
-    </div>
     <div
       class="label"
     >
       Infill
     </div>
+    <button
+      aria-checked="false"
+      class="ant-switch ant-switch-small css-dev-only-do-not-override-hash"
+      role="switch"
+      type="button"
+    >
+      <div
+        class="ant-switch-handle"
+      />
+      <span
+        class="ant-switch-inner"
+      >
+        <span
+          class="ant-switch-inner-checked"
+        />
+        <span
+          class="ant-switch-inner-unchecked"
+        />
+      </span>
+    </button>
   </div>
 </div>
 `;
+
+exports[`should render correctly with multiple elements (fillable) 1`] = `
+<div>
+  <button
+    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+    id="infill"
+    title="Infill"
+    type="button"
+  >
+    <span
+      class="ant-btn-icon"
+    >
+      <svgr-url />
+    </span>
+  </button>
+</div>
+`;
+
+exports[`should render correctly with multiple elements (not fillable) 1`] = `<div />`;

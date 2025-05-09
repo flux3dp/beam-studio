@@ -11,7 +11,6 @@ import { SelectedElementContext } from '@core/app/contexts/SelectedElementContex
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
 import ActionsPanel from '@core/app/views/beambox/Right-Panels/ActionsPanel';
 import ConfigPanel from '@core/app/views/beambox/Right-Panels/ConfigPanel/ConfigPanel';
-import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 import DimensionPanel from '@core/app/views/beambox/Right-Panels/DimensionPanel/DimensionPanel';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import OptionsPanel from '@core/app/views/beambox/Right-Panels/OptionsPanel';
@@ -38,7 +37,6 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
   const lang = useI18n();
   const tObjectPanel = lang.beambox.right_panel.object_panel;
   const isMobile = useIsMobile();
-  const context = useContext(ObjectPanelContext);
   const { selectedElement: elem } = useContext(SelectedElementContext);
   const getAvailableFunctions = () => {
     if (!elem) {
@@ -300,29 +298,11 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
   };
 
   const renderDimensionPanel = (): React.JSX.Element => {
-    const { getDimensionValues, updateDimensionValues } = context;
-
-    return (
-      <DimensionPanel
-        elem={elem!}
-        getDimensionValues={getDimensionValues}
-        updateDimensionValues={updateDimensionValues}
-      />
-    );
+    return <DimensionPanel elem={elem as SVGElement} />;
   };
 
   const renderOptionPanel = (): React.JSX.Element => {
-    const { dimensionValues, polygonSides, updateDimensionValues, updateObjectPanel } = context;
-
-    return (
-      <OptionsPanel
-        elem={elem!}
-        polygonSides={polygonSides}
-        rx={dimensionValues.rx}
-        updateDimensionValues={updateDimensionValues}
-        updateObjectPanel={updateObjectPanel}
-      />
-    );
+    return <OptionsPanel elem={elem!} />;
   };
 
   const renderActionPanel = (): React.JSX.Element => <ActionsPanel elem={elem as SVGElement} />;

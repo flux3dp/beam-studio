@@ -556,13 +556,13 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     )
     .otherwise(() => null);
 
-  // Watch for changes in the `fill` attribute
+  // Watch for changes in the `fill` attribute for path and `data-shading` attribute for image
   useEffect(() => {
     const observer = new MutationObserver(() => {
       forceUpdate();
     });
 
-    if (elem) observer.observe(elem, { attributeFilter: ['fill'] });
+    if (elem) observer.observe(elem, { attributeFilter: ['fill', 'data-shading'] });
 
     return () => observer.disconnect(); // Cleanup
   }, [elem, forceUpdate]);

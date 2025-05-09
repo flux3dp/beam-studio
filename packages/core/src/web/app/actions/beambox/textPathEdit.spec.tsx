@@ -17,30 +17,25 @@ jest.mock('@core/app/svgedit/history/history', () => ({
   RemoveElementCommand: mockRemoveElementCommand,
 }));
 
-const mockResize = jest.fn();
-const mockSelector = {
-  resize: mockResize,
-};
-const mockSelectManager = {
-  requestSelector: () => mockSelector,
-  resizeSelectors: jest.fn(),
-};
+const mockAddCommandToHistory = jest.fn();
+const mockBeginUndoableChange = jest.fn();
+const mockFinishUndoableChange = jest.fn();
 
-jest.mock('@core/app/svgedit/selector', () => ({
-  getSelectorManager: () => mockSelectManager,
+jest.mock('@core/app/svgedit/history/undoManager', () => ({
+  addCommandToHistory: mockAddCommandToHistory,
+  beginUndoableChange: mockBeginUndoableChange,
+  finishUndoableChange: mockFinishUndoableChange,
 }));
 
 const mockSvgCanvas = {
   changeSelectedAttribute: jest.fn(),
+  changeSelectedAttributeNoUndo: jest.fn(),
   getNextId: jest.fn(),
   pathActions: {
     toEditMode: jest.fn(),
   },
   pushGroupProperties: jest.fn(),
   selectOnly: jest.fn(),
-  undoMgr: {
-    addCommandToHistory: jest.fn(),
-  },
 };
 
 jest.mock('@core/helpers/svg-editor-helper', () => ({
@@ -64,7 +59,10 @@ const textPathHtml = `
     <g>
       <path id="path" d="M50,50 L50,70 L70,70" fill="none" stroke="black" />
       <text id="text" data-origX="20" data-origY="20">
-        <textPath href="#path">abc</textPath>
+        <textPath href="#path" startOffset="10%" alignment-baseline="middle" dominant-baseline="middle">abc</textPath>
+      </text>
+      <text id="text2" data-origX="20" data-origY="20">
+        <textPath href="#path" startOffset="15%" alignment-baseline="top" dominant-baseline="hanging">abc</textPath>
       </text>
     </g>
   </svg>
@@ -74,17 +72,10 @@ import textPathEdit, { VerticalAlign } from './textPathEdit';
 
 describe('test textPathEdit', () => {
   beforeEach(() => {
-    mockMoveElementCommand.mockClear();
-    mockChangeElementCommand.mockClear();
-    mockInsertElementCommand.mockClear();
-    mockRemoveElementCommand.mockClear();
-    mockAddSubCommand.mockClear();
-    mockIsEmpty.mockClear();
-    mockAddSubCommand.mockClear();
-    mockSvgCanvas.undoMgr.addCommandToHistory.mockClear();
+    jest.clearAllMocks();
   });
 
-  test('test ungroupTextPath', () => {
+  test('ungroupTextPath', () => {
     document.body.innerHTML = textPathHtml;
 
     const g = document.getElementsByTagName('g')[0];
@@ -98,7 +89,7 @@ describe('test textPathEdit', () => {
     expect(document.getElementById('text').parentElement).toBe(svg);
   });
 
-  test('test attachTextToPath', () => {
+  test('attachTextToPath', () => {
     document.body.innerHTML = textAndPathHtml;
 
     const path = document.getElementById('path');
@@ -111,11 +102,11 @@ describe('test textPathEdit', () => {
     expect(textPath.length).toBe(1);
     expect(textPath[0].parentElement).toBe(text);
     expect(textPath[0].getAttribute('href')).toBe('#path');
-    expect(mockSvgCanvas.selectOnly).toBeCalledTimes(1);
-    expect(mockSvgCanvas.undoMgr.addCommandToHistory).toBeCalledTimes(1);
+    expect(mockSvgCanvas.selectOnly).toHaveBeenCalledTimes(1);
+    expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
   });
 
-  test('test detachText', () => {
+  test('detachText', () => {
     document.body.innerHTML = textPathHtml;
 
     const g = document.getElementsByTagName('g')[0];
@@ -124,30 +115,87 @@ describe('test textPathEdit', () => {
 
     textPathEdit.detachText(g, false);
     expect(text.textContent.trim()).toBe(textContent.trim());
-    expect(mockSvgCanvas.undoMgr.addCommandToHistory).toBeCalledTimes(1);
+    expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
   });
 
-  test('test setStartOffset', () => {
+  test('editPath', () => {
     document.body.innerHTML = textPathHtml;
 
-    const text = document.getElementById('text') as unknown as SVGTextElement;
-    const textPath = document.getElementsByTagName('textPath')[0];
+    const g = document.getElementsByTagName('g')[0];
+    const path = document.getElementById('path');
 
-    textPathEdit.setStartOffset(20, text);
-    expect(mockSvgCanvas.changeSelectedAttribute).toBeCalledWith('startOffset', '20%', [textPath]);
+    textPathEdit.editPath(g);
+    expect(mockSvgCanvas.pathActions.toEditMode).toHaveBeenCalledTimes(1);
+    expect(mockSvgCanvas.pathActions.toEditMode).toHaveBeenCalledWith(path);
   });
 
-  test('test setVerticalAlign', () => {
+  test('getStartOffset', () => {
     document.body.innerHTML = textPathHtml;
 
-    const text = document.getElementById('text') as unknown as SVGTextElement;
     const textPath = document.getElementsByTagName('textPath')[0];
 
-    textPathEdit.setVerticalAlign(text, VerticalAlign.MIDDLE);
-    expect(textPath.getAttribute('dominant-baseline')).toBe('middle');
-    expect(textPath.getAttribute('alignment-baseline')).toBe('middle');
-    textPathEdit.setVerticalAlign(text, VerticalAlign.TOP);
-    expect(textPath.getAttribute('dominant-baseline')).toBe('hanging');
-    expect(textPath.getAttribute('alignment-baseline')).toBe('top');
+    expect(textPathEdit.getStartOffset(textPath)).toBe(10);
+  });
+
+  test('getVerticalAlign', () => {
+    document.body.innerHTML = textPathHtml;
+
+    const textPath = document.getElementsByTagName('textPath')[0];
+
+    expect(textPathEdit.getVerticalAlign(textPath)).toBe(VerticalAlign.MIDDLE);
+  });
+
+  test('setStartOffset', () => {
+    document.body.innerHTML = textPathHtml;
+
+    const g = document.getElementsByTagName('g')[0];
+    const textPath = Array.from(document.getElementsByTagName('textPath'));
+
+    textPathEdit.setStartOffset(20, g);
+    expect(mockSvgCanvas.changeSelectedAttribute).toHaveBeenCalledWith('startOffset', '20%', textPath);
+  });
+
+  test('setVerticalAlign', () => {
+    document.body.innerHTML = textPathHtml;
+
+    const g = document.getElementsByTagName('g')[0];
+    const textPath = Array.from(document.getElementsByTagName('textPath'));
+
+    textPathEdit.setVerticalAlign(VerticalAlign.MIDDLE, g);
+    expect(mockBeginUndoableChange).toHaveBeenNthCalledWith(1, 'alignment-baseline', textPath);
+    expect(mockBeginUndoableChange).toHaveBeenNthCalledWith(2, 'dominant-baseline', textPath);
+    expect(mockSvgCanvas.changeSelectedAttributeNoUndo).toHaveBeenNthCalledWith(
+      1,
+      'alignment-baseline',
+      'middle',
+      textPath,
+    );
+    expect(mockSvgCanvas.changeSelectedAttributeNoUndo).toHaveBeenNthCalledWith(
+      2,
+      'dominant-baseline',
+      'middle',
+      textPath,
+    );
+    expect(mockFinishUndoableChange).toHaveBeenCalledTimes(2);
+    expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
+
+    jest.clearAllMocks();
+    textPathEdit.setVerticalAlign(VerticalAlign.TOP, g);
+    expect(mockBeginUndoableChange).toHaveBeenNthCalledWith(1, 'alignment-baseline', textPath);
+    expect(mockBeginUndoableChange).toHaveBeenNthCalledWith(2, 'dominant-baseline', textPath);
+    expect(mockSvgCanvas.changeSelectedAttributeNoUndo).toHaveBeenNthCalledWith(
+      1,
+      'alignment-baseline',
+      'top',
+      textPath,
+    );
+    expect(mockSvgCanvas.changeSelectedAttributeNoUndo).toHaveBeenNthCalledWith(
+      2,
+      'dominant-baseline',
+      'hanging',
+      textPath,
+    );
+    expect(mockFinishUndoableChange).toHaveBeenCalledTimes(2);
+    expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
   });
 });

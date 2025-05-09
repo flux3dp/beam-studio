@@ -1,7 +1,9 @@
+/* eslint-disable reactRefresh/only-export-components */
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import useForceUpdate from '@core/helpers/use-force-update';
+import type { DimensionKey, DimensionValues } from '@core/interfaces/ObjectPanel';
 
 interface IObjectPanelContext {
   activeKey: null | string;
@@ -10,11 +12,11 @@ interface IObjectPanelContext {
     response: {
       dimensionValues: any;
     },
-    key?: string,
-  ) => any;
+    key?: DimensionKey,
+  ) => void;
   polygonSides: number;
   updateActiveKey: (activeKey: null | string) => void;
-  updateDimensionValues: (newValues: any) => void;
+  updateDimensionValues: (newValues: DimensionValues) => void;
   updateObjectPanel: () => void;
 }
 
@@ -39,9 +41,9 @@ export const ObjectPanelContextProvider = ({ children }: Props): React.JSX.Eleme
   const forceUpdate = useForceUpdate();
   const [polygonSides, setPolygonSides] = useState(5);
   const [activeKey, setActiveKey] = useState<null | string>(null);
-  const dimensionValues = useRef<{ [key: string]: number | string }>({});
+  const dimensionValues = useRef<DimensionValues>({});
   const lastUpdateTime = useRef(Date.now());
-  const updateTimeout = useRef<NodeJS.Timeout>(null);
+  const updateTimeout = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     objectPanelEventEmitter.on('UPDATE_POLYGON_SIDES', setPolygonSides);
@@ -53,7 +55,7 @@ export const ObjectPanelContextProvider = ({ children }: Props): React.JSX.Eleme
     };
   }, []);
 
-  const getDimensionValues = useCallback((response: { dimensionValues: any }, key?: string) => {
+  const getDimensionValues = useCallback((response: { dimensionValues: any }, key?: DimensionKey) => {
     response.dimensionValues = key ? dimensionValues.current[key] : dimensionValues.current;
   }, []);
 
@@ -65,7 +67,7 @@ export const ObjectPanelContextProvider = ({ children }: Props): React.JSX.Eleme
     };
   }, [getDimensionValues]);
 
-  const updateDimensionValues = useCallback((newValues: { [key: string]: number | string }) => {
+  const updateDimensionValues = useCallback((newValues: DimensionValues) => {
     dimensionValues.current = {
       ...dimensionValues.current,
       ...newValues,
@@ -96,7 +98,7 @@ export const ObjectPanelContextProvider = ({ children }: Props): React.JSX.Eleme
   }, [getActiveKey]);
 
   const updateObjectPanel = useCallback(() => {
-    clearTimeout(updateTimeout.current);
+    if (updateTimeout.current) clearTimeout(updateTimeout.current);
 
     const time = Date.now();
 

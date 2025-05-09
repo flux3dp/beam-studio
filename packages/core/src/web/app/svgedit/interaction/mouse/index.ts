@@ -1215,12 +1215,13 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
             });
 
           if (selected.tagName === 'text') {
-            const curText = textEdit.getCurText() as any;
+            const elem = selected as SVGTextElement;
 
-            curText.font_size = selected.getAttribute('font-size');
-            curText.font_family = selected.getAttribute('font-family');
-            curText.font_postscriptName = selected.getAttribute('font-postscript');
-            textEdit.updateCurText(curText);
+            textEdit.updateCurText({
+              font_family: textEdit.getFontFamily(elem),
+              font_postscriptName: textEdit.getFontPostscriptName(elem),
+              font_size: textEdit.getFontSize(elem),
+            });
           }
 
           svgCanvas.selectorManager.requestSelector(selected).show(true);

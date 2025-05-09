@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import { Button, ConfigProvider, Switch } from 'antd';
 import type { DefaultOptionType } from 'antd/es/select';
 import classNames from 'classnames';
 
 import FontFuncs from '@core/app/actions/beambox/font-funcs';
-import textPathEdit, { VerticalAlign } from '@core/app/actions/beambox/textPathEdit';
+import { VerticalAlign } from '@core/app/actions/beambox/textPathEdit';
+import textPathEdit from '@core/app/actions/beambox/textPathEdit';
 import progressCaller from '@core/app/actions/progress-caller';
 import { iconButtonTheme, selectTheme } from '@core/app/constants/antd-config';
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
@@ -13,6 +14,7 @@ import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
 import history from '@core/app/svgedit/history/history';
 import selector from '@core/app/svgedit/selector';
 import textEdit from '@core/app/svgedit/text/textedit';
+import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import InFillBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/InFillBlock';
 import StartOffsetBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/StartOffsetBlock';
@@ -24,10 +26,12 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import fontHelper from '@core/helpers/fonts/fontHelper';
 import i18n from '@core/helpers/i18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import { isMobile } from '@core/helpers/system-helper';
+import { useIsMobile } from '@core/helpers/system-helper';
+import { updateConfigs } from '@core/helpers/update-configs';
 import storage from '@core/implementations/storage';
-import type { FontDescriptor, IFont } from '@core/interfaces/IFont';
+import type { GeneralFont } from '@core/interfaces/IFont';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import type { TextConfig, TextOption } from '@core/interfaces/ObjectPanel';
 
 import styles from './TextOptions.module.scss';
 
@@ -39,7 +43,7 @@ getSVGAsync((globalSVG) => {
 
 const eventEmitter = eventEmitterFactory.createEventEmitter('font');
 const LANG = i18n.lang.beambox.right_panel.object_panel.option_panel;
-const isLocalFont = (font: FontDescriptor) => 'path' in font;
+const isLocalFont = (font: GeneralFont) => 'path' in font;
 const maxHistory = 5;
 
 // TODO: add tests
@@ -47,34 +51,19 @@ interface Props {
   elem: Element;
   isTextPath?: boolean;
   showColorPanel?: boolean;
-  textElement: SVGTextElement;
-  updateDimensionValues: (data: { fontStyle: string }) => void;
-  updateObjectPanel: () => void;
+  textElements: SVGTextElement[];
 }
 
-interface State {
-  fontFamily: string;
-  fontSize: number;
-
-  fontStyle: any;
-  id: string;
-  isVerti: boolean;
-  letterSpacing: number;
-  lineSpacing: number;
-  startOffset: number;
-  verticalAlign: VerticalAlign;
-}
-
-const defaultState: State = {
-  fontFamily: '',
-  fontSize: 200,
-  fontStyle: '',
-  id: '',
-  isVerti: false,
-  letterSpacing: 0,
-  lineSpacing: 1,
-  startOffset: 0,
-  verticalAlign: VerticalAlign.MIDDLE,
+const defaultTextConfigs: TextConfig = {
+  fontFamily: { hasMultiValue: false, value: '' },
+  fontSize: { hasMultiValue: false, value: 200 },
+  fontStyle: { hasMultiValue: false, value: '' },
+  id: { hasMultiValue: false, value: '' },
+  isVerti: { hasMultiValue: false, value: false },
+  letterSpacing: { hasMultiValue: false, value: 0 },
+  lineSpacing: { hasMultiValue: false, value: 1 },
+  startOffset: { hasMultiValue: false, value: 0 },
+  verticalAlign: { hasMultiValue: false, value: VerticalAlign.MIDDLE },
 };
 
 type FontOption = {
@@ -102,21 +91,27 @@ const getFontFamilyOption = (family: string, isHistory = false): FontOption => {
   return isHistory ? { family, label, value: `history-${family}` } : { label, value: family };
 };
 
-const TextOptions = ({
-  elem,
-  isTextPath,
-  showColorPanel,
-  textElement,
-  updateDimensionValues,
-  updateObjectPanel,
-}: Props) => {
+const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) => {
+  const isMobile = useIsMobile();
+  const { updateObjectPanel } = useContext(ObjectPanelContext);
   const [availableFontFamilies, setAvailableFontFamilies] = useState<string[]>([]);
   const [historyFontFamilies, setHistoryFontFamilies] = useState<FontOption[]>([]);
-  const [state, setState] = useState(defaultState);
-  const { fontFamily } = state;
+  const [configs, setConfigs] = useState(defaultTextConfigs);
+  const { fontFamily } = configs;
   const [styleOptions, setStyleOptions] = useState<FontOption[]>([]);
+  const selectorRef = useRef(selector.getSelectorManager().requestSelector(elem));
 
-  const addToHistory = (font: IFont) => {
+  useEffect(() => {
+    selectorRef.current = selector.getSelectorManager().requestSelector(elem);
+  }, [elem]);
+
+  const onConfigChange = <T extends keyof TextOption>(key: T, value: TextOption[T]) => {
+    setConfigs((prev) => ({ ...prev, [key]: { hasMultiValue: false, value } }));
+    selectorRef.current.resize();
+    updateObjectPanel();
+  };
+
+  const addToHistory = (font: GeneralFont) => {
     if (!font.family) return;
 
     const history: string[] = (storage.get('font-history') || []).filter((name: string) => name !== font.family);
@@ -168,87 +163,71 @@ const TextOptions = ({
   }, []);
 
   useEffect(() => {
-    const getStateFromElem = async () => {
-      const elemId = textElement.getAttribute('id')!;
+    const getStateFromElem = () => {
+      const elemId = elem.getAttribute('id')!;
+      const newConfigs: Partial<TextConfig> = { id: { hasMultiValue: false, value: elemId } };
 
-      if (elemId === state.id) {
+      if (elemId === configs.id.value) {
         return;
       }
 
-      const postscriptName = textEdit.getFontPostscriptName(textElement);
-      let font: IFont;
+      for (const textElement of textElements) {
+        // Sanitize font family
+        const postscriptName = textEdit.getFontPostscriptName(textElement);
+        let font: GeneralFont;
 
-      if (postscriptName) {
-        font = FontFuncs.getFontOfPostscriptName(postscriptName);
+        if (postscriptName) {
+          font = FontFuncs.getFontOfPostscriptName(postscriptName);
 
-        if (!textElement.getAttribute('font-style')) {
-          textElement.setAttribute('font-style', font.italic ? 'italic' : 'normal');
+          if (!textElement.getAttribute('font-style')) {
+            textElement.setAttribute('font-style', font.italic ? 'italic' : 'normal');
+          }
+
+          if (!textElement.getAttribute('font-weight')) {
+            textElement.setAttribute('font-weight', font.weight ? font.weight.toString() : 'normal');
+          }
+        } else {
+          const family = textEdit.getFontFamilyData(textElement);
+          const weight = textEdit.getFontWeight(textElement);
+          const italic = textEdit.getItalic(textElement);
+
+          font = FontFuncs.requestFontByFamilyAndStyle({ family, italic, weight });
         }
 
-        if (!textElement.getAttribute('font-weight')) {
-          textElement.setAttribute('font-weight', font.weight ? font.weight.toString() : 'normal');
-        }
-      } else {
-        const family = textEdit.getFontFamilyData(textElement);
-        const weight = textEdit.getFontWeight(textElement);
-        const italic = textEdit.getItalic(textElement);
+        console.log(font);
 
-        font = FontFuncs.requestFontByFamilyAndStyle({ family, italic, weight });
-      }
-
-      console.log(font);
-
-      const sanitizedDefaultFontFamily = (() => {
         // use these font if postscriptName cannot find in user PC
         const fontFamilyFallback = ['PingFang TC', 'Arial', 'Times New Roman', 'Ubuntu', 'Noto Sans'];
-        const sanitizedFontFamily = [font.family, ...fontFamilyFallback].find((f) => availableFontFamilies.includes(f));
+        const sanitizedFamily = [font.family, ...fontFamilyFallback].find((f) => availableFontFamilies.includes(f))!;
 
-        return sanitizedFontFamily;
-      })();
+        if (sanitizedFamily !== font.family) {
+          const newFont = FontFuncs.requestFontsOfTheFontFamily(sanitizedFamily)[0];
 
-      if (sanitizedDefaultFontFamily !== font.family) {
-        console.log(`unsupported font ${font.family}, fallback to ${sanitizedDefaultFontFamily}`);
-        textEdit.setFontFamily(sanitizedDefaultFontFamily, true);
+          console.warn(`unsupported font ${font.family}, fallback to ${sanitizedFamily}`);
+          textEdit.setFontFamily(sanitizedFamily, true, [textElement]);
+          textEdit.setFontPostscriptName(newFont.postscriptName, true, [textElement]);
+        }
 
-        const newFont = FontFuncs.requestFontsOfTheFontFamily(sanitizedDefaultFontFamily)[0];
+        // Update configs
+        updateConfigs(newConfigs, 'fontFamily', () => sanitizedFamily);
+        updateConfigs(newConfigs, 'fontStyle', () => font.style);
+        updateConfigs(newConfigs, 'fontSize', () => textEdit.getFontSize(textElement));
+        updateConfigs(newConfigs, 'letterSpacing', () => textEdit.getLetterSpacing(textElement));
+        updateConfigs(newConfigs, 'lineSpacing', () => textEdit.getLineSpacing(textElement));
+        updateConfigs(newConfigs, 'isVerti', () => textEdit.getIsVertical(textElement));
 
-        textEdit.setFontPostscriptName(newFont.postscriptName, true);
-      }
+        if (textElement.getAttribute('data-textpath')) {
+          const textPath = textElement.querySelector('textPath');
 
-      updateDimensionValues({ fontStyle: font.style });
-
-      let { startOffset, verticalAlign } = defaultState;
-
-      if (textElement.getAttribute('data-textpath')) {
-        const textPath = textElement.querySelector('textPath');
-
-        if (textPath) {
-          // Use parseInt parse X% to number X
-          startOffset = Number.parseInt(textPath.getAttribute('startOffset') || '0', 10);
-
-          const alignmentBaseline = textPath.getAttribute('alignment-baseline');
-
-          if (alignmentBaseline === 'middle') {
-            verticalAlign = VerticalAlign.MIDDLE;
-          } else if (alignmentBaseline === 'top') {
-            verticalAlign = VerticalAlign.TOP;
-          } else {
-            verticalAlign = VerticalAlign.BOTTOM;
+          if (textPath) {
+            updateConfigs(newConfigs, 'startOffset', () => textPathEdit.getStartOffset(textPath));
+            updateConfigs(newConfigs, 'verticalAlign', () => textPathEdit.getVerticalAlign(textPath));
           }
         }
       }
 
-      setState({
-        fontFamily: sanitizedDefaultFontFamily,
-        fontSize: textEdit.getFontSize(textElement),
-        fontStyle: font.style,
-        id: elemId,
-        isVerti: textElement.getAttribute('data-verti') === 'true',
-        letterSpacing: textEdit.getLetterSpacing(textElement),
-        lineSpacing: Number.parseFloat(textElement.getAttribute('data-line-spacing') || '1'),
-        startOffset,
-        verticalAlign,
-      });
+      setConfigs({ ...defaultTextConfigs, ...newConfigs });
+      selectorRef.current.resize();
     };
 
     if (availableFontFamilies.length > 0) {
@@ -256,8 +235,7 @@ const TextOptions = ({
     } else {
       getFontFamilies();
     }
-    // eslint-disable-next-line hooks/exhaustive-deps
-  }, [textElement, availableFontFamilies]);
+  }, [elem, textElements, availableFontFamilies, configs.id.value]);
 
   useEffect(() => {
     const getStyleOptions = (family: string) => {
@@ -267,7 +245,8 @@ const TextOptions = ({
       setStyleOptions(options);
     };
 
-    getStyleOptions(fontFamily);
+    if (fontFamily.hasMultiValue) setStyleOptions([]);
+    else getStyleOptions(fontFamily.value);
   }, [fontFamily]);
 
   const waitForWebFont = async (fontLoadedPromise?: Promise<void>) => {
@@ -298,15 +277,15 @@ const TextOptions = ({
     }
 
     const batchCmd = new history.BatchCommand('Change Font family');
-    let cmd = textEdit.setFontPostscriptName(newFont.postscriptName, true, [textElement]);
 
-    batchCmd.addSubCommand(cmd);
-    cmd = textEdit.setItalic(newFont.italic, true, textElement);
-    batchCmd.addSubCommand(cmd);
-    cmd = textEdit.setFontWeight(newFont.weight, true, textElement);
-    batchCmd.addSubCommand(cmd);
-    cmd = textEdit.setFontFamily(family, true, [textElement]);
-    batchCmd.addSubCommand(cmd);
+    [
+      textEdit.setFontPostscriptName(newFont.postscriptName, true, textElements),
+      textEdit.setItalic(newFont.italic, true, textElements),
+      textEdit.setFontWeight(newFont.weight, true, textElements),
+      textEdit.setFontFamily(family, true, textElements),
+    ].forEach((cmd) => {
+      if (cmd) batchCmd.addSubCommand(cmd);
+    });
     svgCanvas.undoMgr.addCommandToHistory(batchCmd);
 
     if (!isLocalFont(newFont)) {
@@ -315,19 +294,14 @@ const TextOptions = ({
 
     const newStyle = newFont.style;
 
-    updateDimensionValues({ fontStyle: newStyle });
-    setState({
-      ...state,
-      fontFamily: family,
-      fontStyle: newStyle,
-    });
-    updateObjectPanel();
+    onConfigChange('fontFamily', family);
+    onConfigChange('fontStyle', newStyle);
   };
 
   const renderFontFamilyBlock = (): React.JSX.Element => {
     const options: FontOption[] = availableFontFamilies.map((option) => getFontFamilyOption(option));
 
-    if (isMobile()) {
+    if (isMobile) {
       return (
         <ObjectPanelItem.Select
           id="font_family"
@@ -338,7 +312,9 @@ const TextOptions = ({
               ? [{ label: LANG.recently_used, type: 'group' }, ...historyFontFamilies, { type: 'divider' }, ...options]
               : options
           }
-          selected={{ label: fontFamily, value: fontFamily }}
+          selected={
+            fontFamily.hasMultiValue ? { label: '-', value: '' } : { label: fontFamily.value, value: fontFamily.value }
+          }
         />
       );
     }
@@ -384,14 +360,14 @@ const TextOptions = ({
         popupMatchSelectWidth={false}
         showSearch
         title={LANG.font_family}
-        value={fontFamily}
+        value={fontFamily.hasMultiValue ? '-' : fontFamily.value}
       />
     );
   };
 
   const handleFontStyleChange = async (val: string) => {
     const font = FontFuncs.requestFontByFamilyAndStyle({
-      family: fontFamily,
+      family: fontFamily.value,
       style: val,
     });
     const { fontLoadedPromise, success } = await fontHelper.applyMonotypeStyle(font, getCurrentUser());
@@ -401,79 +377,84 @@ const TextOptions = ({
     }
 
     const batchCmd = new history.BatchCommand('Change Font Style');
-    let cmd = textEdit.setFontPostscriptName(font.postscriptName, true, [textElement]);
 
-    batchCmd.addSubCommand(cmd);
-    cmd = textEdit.setItalic(font.italic, true, textElement);
-    batchCmd.addSubCommand(cmd);
-    cmd = textEdit.setFontWeight(font.weight, true, textElement);
-    batchCmd.addSubCommand(cmd);
+    [
+      textEdit.setFontPostscriptName(font.postscriptName, true, textElements),
+      textEdit.setItalic(font.italic, true, textElements),
+      textEdit.setFontWeight(font.weight, true, textElements),
+    ].forEach((cmd) => {
+      if (cmd) batchCmd.addSubCommand(cmd);
+    });
     svgCanvas.undoMgr.addCommandToHistory(batchCmd);
 
     if (!isLocalFont(font)) {
       await waitForWebFont(fontLoadedPromise);
     }
 
-    updateDimensionValues({ fontStyle: val });
-    setState({ ...state, fontStyle: val });
-    updateObjectPanel();
+    onConfigChange('fontStyle', val);
   };
 
   const renderFontStyleBlock = (): React.JSX.Element => {
-    const { fontStyle } = state;
+    const { fontStyle } = configs;
 
-    if (isMobile()) {
+    if (isMobile) {
       return (
         <ObjectPanelItem.Select
           id="font_style"
           label={LANG.font_style}
           onChange={handleFontStyleChange}
           options={styleOptions}
-          selected={{ label: fontStyle, value: fontStyle }}
+          selected={
+            fontFamily.hasMultiValue || fontStyle.hasMultiValue
+              ? { label: '-', value: '' }
+              : { label: fontStyle.value, value: fontStyle.value }
+          }
         />
       );
     }
 
-    const isOnlyOneOption = styleOptions.length === 1;
+    const disabled = styleOptions.length <= 1;
 
     return (
       <Select
         className={styles['font-style']}
-        disabled={isOnlyOneOption}
+        disabled={disabled}
         onChange={(value) => handleFontStyleChange(value)}
         onKeyDown={(e) => e.stopPropagation()}
         options={styleOptions}
         popupMatchSelectWidth={false}
         title={LANG.font_style}
-        value={fontStyle}
+        value={fontFamily.hasMultiValue || fontStyle.hasMultiValue ? '-' : fontStyle.value}
       />
     );
   };
 
   const handleFontSizeChange = (val: number): void => {
-    textEdit.setFontSize(val, [textElement]);
-    setState({ ...state, fontSize: val });
+    textEdit.setFontSize(val, textElements);
+    onConfigChange('fontSize', val);
   };
 
   const renderFontSizeBlock = (): React.JSX.Element => {
-    const { fontSize } = state;
+    const { fontSize } = configs;
 
-    return isMobile() ? (
+    return isMobile ? (
       <ObjectPanelItem.Number
         decimal={0}
+        hasMultiValue={fontSize.hasMultiValue}
         id="font_size"
         label={LANG.font_size}
         min={1}
         unit="px"
         updateValue={handleFontSizeChange}
-        value={fontSize}
+        value={fontSize.value}
       />
     ) : (
       <div className={styles['font-size']} title={LANG.font_size}>
         <UnitInput
           className={{ 'option-input': true }}
           decimal={0}
-          defaultValue={fontSize}
+          defaultValue={fontSize.value}
+          displayMultiValue={fontSize.hasMultiValue}
           getValue={(val) => handleFontSizeChange(val)}
           id="font_size"
           min={1}
@@ -484,20 +465,21 @@ const TextOptions = ({
   };
 
   const handleLetterSpacingChange = (val: number): void => {
-    textEdit.setLetterSpacing(val, textElement);
-    setState({ ...state, letterSpacing: val });
+    textEdit.setLetterSpacing(val, textElements);
+    onConfigChange('letterSpacing', val);
   };
 
   const renderLetterSpacingBlock = (): React.JSX.Element => {
-    const { letterSpacing } = state;
+    const { letterSpacing } = configs;
 
-    return isMobile() ? (
+    return isMobile ? (
       <ObjectPanelItem.Number
+        hasMultiValue={letterSpacing.hasMultiValue}
         id="letter_spacing"
         label={LANG.letter_spacing}
         unit="em"
         updateValue={handleLetterSpacingChange}
-        value={letterSpacing}
+        value={letterSpacing.value}
       />
     ) : (
       <div className={styles.spacing}>
@@ -506,7 +488,8 @@ const TextOptions = ({
         </div>
         <UnitInput
           className={{ 'option-input': true }}
-          defaultValue={letterSpacing}
+          defaultValue={letterSpacing.value}
+          displayMultiValue={letterSpacing.hasMultiValue}
           getValue={(val) => handleLetterSpacingChange(val)}
           id="letter_spacing"
           step={0.05}
@@ -517,22 +500,23 @@ const TextOptions = ({
   };
 
   const handleLineSpacingChange = (val: number): void => {
-    textEdit.setLineSpacing(val);
-    setState({ ...state, lineSpacing: val });
+    textEdit.setLineSpacing(val, textElements);
+    onConfigChange('lineSpacing', val);
   };
 
   const renderLineSpacingBlock = (): React.JSX.Element => {
-    const { lineSpacing } = state;
+    const { lineSpacing } = configs;
 
-    return isMobile() ? (
+    return isMobile ? (
       <ObjectPanelItem.Number
         decimal={1}
+        hasMultiValue={lineSpacing.hasMultiValue}
         id="line_spacing"
         label={LANG.line_spacing}
         min={0.8}
         unit=""
         updateValue={handleLineSpacingChange}
-        value={lineSpacing}
+        value={lineSpacing.value}
       />
     ) : (
       <div className={styles.spacing}>
@@ -542,7 +526,8 @@ const TextOptions = ({
         <UnitInput
           className={{ 'option-input': true }}
           decimal={1}
-          defaultValue={lineSpacing}
+          defaultValue={lineSpacing.value}
+          displayMultiValue={lineSpacing.hasMultiValue}
           getValue={(val) => handleLineSpacingChange(val)}
           id="line_spacing"
           min={0.8}
@@ -553,19 +538,18 @@ const TextOptions = ({
     );
   };
 
-  const handleVerticalTextClick = (): void => {
-    const { isVerti } = state;
-
-    textEdit.setIsVertical(!isVerti);
-    setState({ ...state, isVerti: !isVerti });
-  };
-
   const renderVerticalTextSwitch = (): React.JSX.Element => {
-    const { isVerti } = state;
+    const { isVerti } = configs;
+    const checked = !isVerti.hasMultiValue && isVerti.value;
 
-    return isMobile() ? (
+    const handleVerticalTextClick = (): void => {
+      textEdit.setIsVertical(!checked, textElements);
+      onConfigChange('isVerti', !checked);
+    };
+
+    return isMobile ? (
       <ObjectPanelItem.Item
-        content={<Switch checked={isVerti} />}
+        content={<Switch checked={checked} />}
         id="vertical-text"
         label={LANG.vertical_text}
         onClick={handleVerticalTextClick}
@@ -573,7 +557,7 @@ const TextOptions = ({
     ) : (
       <ConfigProvider theme={iconButtonTheme}>
         <Button
-          className={classNames(styles['vertical-text'], { [styles.active]: isVerti })}
+          className={classNames(styles['vertical-text'], { [styles.active]: checked })}
           icon={<OptionPanelIcons.VerticalText />}
           id="vertical-text"
           onClick={handleVerticalTextClick}
@@ -585,13 +569,13 @@ const TextOptions = ({
   };
 
   const handleStartOffsetChange = (val: number): void => {
-    textPathEdit.setStartOffset(val, textElement);
-    setState({ ...state, startOffset: val });
+    textPathEdit.setStartOffset(val, elem as SVGGElement);
+    onConfigChange('startOffset', val);
   };
 
   const handleVerticalAlignChange = (val: VerticalAlign): void => {
-    textPathEdit.setVerticalAlign(textElement, val);
-    setState({ ...state, verticalAlign: val });
+    textPathEdit.setVerticalAlign(val, elem as SVGGElement);
+    onConfigChange('verticalAlign', val);
   };
 
   const renderMultiLineTextOptions = (): React.JSX.Element => (
@@ -599,26 +583,34 @@ const TextOptions = ({
       {renderLineSpacingBlock()}
       {renderLetterSpacingBlock()}
       {renderVerticalTextSwitch()}
-      {!showColorPanel && !isMobile() && <InFillBlock elem={elem} />}
+      {!showColorPanel && !isMobile && <InFillBlock elems={[elem]} />}
     </>
   );
 
   const renderTextPathOptions = (): React.JSX.Element => {
-    const path = elem.querySelector('path')!;
-    const { startOffset, verticalAlign } = state;
+    const path = Array.from(elem.querySelectorAll('path'));
+    const { startOffset, verticalAlign } = configs;
 
     return (
       <>
         {renderLetterSpacingBlock()}
-        <StartOffsetBlock onValueChange={handleStartOffsetChange} value={startOffset} />
-        <VerticalAlignBlock onValueChange={handleVerticalAlignChange} value={verticalAlign} />
-        <InFillBlock elem={textElement} label={LANG.text_infill} />
-        <InFillBlock elem={path} id="path_infill" label={LANG.path_infill} />
+        <StartOffsetBlock
+          hasMultiValue={startOffset.hasMultiValue}
+          onValueChange={handleStartOffsetChange}
+          value={startOffset.value}
+        />
+        <VerticalAlignBlock
+          hasMultiValue={verticalAlign.hasMultiValue}
+          onValueChange={handleVerticalAlignChange}
+          value={verticalAlign.value}
+        />
+        <InFillBlock elems={textElements} label={LANG.text_infill} />
+        <InFillBlock elems={path} id="path_infill" label={LANG.path_infill} />
       </>
     );
   };
 
-  return isMobile() ? (
+  return isMobile ? (
     <>
       {renderFontFamilyBlock()}
       {renderFontStyleBlock()}

@@ -2,32 +2,37 @@
  * Editing text element attribute
  */
 
+import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
 import selector from '@core/app/svgedit/selector';
 import textActions from '@core/app/svgedit/text/textactions';
 import { getRotationAngle } from '@core/app/svgedit/transform/rotation';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import storage from '@core/implementations/storage';
+import type { IDefaultFont } from '@core/interfaces/IFont';
 import type { ICommand } from '@core/interfaces/IHistory';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { TextAttribute } from '@core/interfaces/Text';
 
 const { svgedit } = window;
 const { NS } = svgedit;
 
-let curText: TextAttribute = {};
-let svgCanvas;
-let svgEditor;
+// Note: curText is initialized when svgCanvas is ready
+// Initial value is defined in svg-editor.ts defaultConfig.text
+let curText = {} as unknown as TextAttribute;
+let svgCanvas: ISVGCanvas;
+let svgEditor: ISVGEditor;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
   svgEditor = globalSVG.Editor;
 });
 
-const updateCurText = (newValue: TextAttribute): void => {
+const updateCurText = (newValue: Partial<TextAttribute>): void => {
   curText = { ...curText, ...newValue };
 };
 
 const useDefaultFont = (): void => {
-  const defaultFont = storage.get('default-font');
+  const defaultFont: IDefaultFont = storage.get('default-font');
 
   if (defaultFont) {
     curText.font_family = defaultFont.family;
@@ -37,33 +42,8 @@ const useDefaultFont = (): void => {
 
 const getCurText = (): TextAttribute => curText;
 
-const getTextElement = (elem: SVGTextElement): SVGTextElement => {
-  const selectedElements = svgCanvas.getSelectedElems();
-  const textElem = elem || selectedElements[0];
-
-  return textElem;
-};
-
-const getBold = (): boolean => {
-  // should only have one element selected
-  const selectedElements = svgCanvas.getSelectedElems();
-  const textElem = selectedElements[0];
-
-  if (textElem != null && textElem.tagName === 'text' && selectedElements[1] == null) {
-    return textElem.getAttribute('font-weight') === 'bold';
-  }
-
-  return false;
-};
-
 const getFontFamily = (elem: SVGTextElement): string => {
-  const textElem = getTextElement(elem);
-
-  if (textElem) {
-    return textElem.getAttribute('font-family');
-  }
-
-  return curText.font_family;
+  return elem.getAttribute('font-family') ?? curText.font_family;
 };
 
 /**
@@ -72,129 +52,76 @@ const getFontFamily = (elem: SVGTextElement): string => {
  * Used for mac, because we set font-family to font postscript name
  */
 const getFontFamilyData = (elem: SVGTextElement): string => {
-  const textElem = getTextElement(elem);
+  const dataFontFamily = elem.getAttribute('data-font-family');
 
-  if (textElem) {
-    if (!textElem.getAttribute('data-font-family')) {
-      return getFontFamily(elem);
-    }
+  if (!dataFontFamily) return getFontFamily(elem);
 
-    return textElem.getAttribute('data-font-family');
-  }
-
-  return curText.font_family;
+  return dataFontFamily;
 };
 
 const getFontPostscriptName = (elem: SVGTextElement): string => {
-  const textElem = getTextElement(elem);
-
-  if (textElem) {
-    return textElem.getAttribute('font-postscript');
-  }
-
-  return curText.font_postscriptName;
+  return elem.getAttribute('font-postscript') ?? curText.font_postscriptName;
 };
 
-const getFontSize = (elem?: SVGTextElement): number => {
-  const textElem = getTextElement(elem);
+const getFontSize = (elem: SVGTextElement): number => {
+  const fontSize = elem.getAttribute('font-size');
 
-  if (textElem) {
-    return Number.parseFloat(textElem.getAttribute('font-size'));
-  }
+  if (!fontSize) return Number(curText.font_size);
 
-  return Number(curText.font_size);
+  return Number.parseFloat(fontSize);
 };
 
 const getFontWeight = (elem: SVGTextElement): number => {
-  const selectedElements = svgCanvas.getSelectedElems();
-  const textElem = getTextElement(elem);
-
-  if (textElem != null && textElem.tagName === 'text' && selectedElements[1] == null) {
-    return Number(textElem.getAttribute('font-weight'));
-  }
-
-  return null;
+  return Number(elem.getAttribute('font-weight'));
 };
 
 const getIsVertical = (elem: SVGTextElement): boolean => {
-  const selectedElements = svgCanvas.getSelectedElems();
-  const textElem = getTextElement(elem);
-
-  if (textElem != null && textElem.tagName === 'text' && selectedElements[1] == null) {
-    const val = textElem.getAttribute('data-verti') === 'true';
-
-    textActions.setIsVertical(val);
-
-    return val;
-  }
-
-  return false;
+  return elem.getAttribute('data-verti') === 'true';
 };
 
-const getItalic = (elem?: SVGTextElement): boolean => {
-  const selectedElements = svgCanvas.getSelectedElems();
-  const textElem = getTextElement(elem);
-
-  if (textElem != null && textElem.tagName === 'text' && selectedElements[1] == null) {
-    return textElem.getAttribute('font-style') === 'italic';
-  }
-
-  return false;
+const getItalic = (elem: SVGTextElement): boolean => {
+  return elem.getAttribute('font-style') === 'italic';
 };
 
-const getLetterSpacing = (elem?: SVGTextElement): number => {
-  const selectedElements = svgCanvas.getSelectedElems();
-  const textElem = getTextElement(elem);
+const getLetterSpacing = (elem: SVGTextElement): number => {
+  const val = elem.getAttribute('letter-spacing');
 
-  if (textElem != null && textElem.tagName === 'text' && selectedElements[1] == null) {
-    const val = textElem.getAttribute('letter-spacing');
-
-    if (val) {
-      if (val.toLowerCase().endsWith('em')) {
-        return Number.parseFloat(val.slice(0, -2));
-      }
-
-      console.warn('letter-spacing should be em!');
-
-      return 0;
+  if (val) {
+    if (val.toLowerCase().endsWith('em')) {
+      return Number.parseFloat(val.slice(0, -2));
     }
 
-    return 0;
+    console.warn('letter-spacing should be em!');
   }
 
   return 0;
 };
 
-const getLineSpacing = (elem: SVGTextElement): string => {
-  const selectedElements = svgCanvas.getSelectedElems();
-  const textElem = getTextElement(elem);
-
-  if (textElem != null && textElem.tagName === 'text' && selectedElements[1] == null) {
-    const val = textElem.getAttribute('data-line-spacing') || '1';
-
-    return val;
-  }
-
-  return '1';
+const getLineSpacing = (elem: SVGTextElement): number => {
+  return Number.parseFloat(elem.getAttribute('data-line-spacing') || '1');
 };
 
 const renderTextPath = (text: SVGTextElement, val?: string) => {
   if (typeof val === 'string') {
     const textPath = text.querySelector('textPath');
 
-    textPath.textContent = val;
+    if (textPath) {
+      textPath.textContent = val;
+    }
   }
 };
 
 const renderTspan = (text: SVGTextElement, val?: string) => {
-  const tspans = Array.from(text.childNodes).filter(
-    (child: Element) => child.tagName === 'tspan',
+  const tspans = (Array.from(text.childNodes) as Element[]).filter(
+    (child) => child.tagName === 'tspan',
   ) as SVGTextContentElement[];
-  const lines = typeof val === 'string' ? val.split('\u0085') : tspans.map((tspan) => tspan.textContent);
+  const lines = typeof val === 'string' ? val.split('\u0085') : tspans.map((tspan) => tspan.textContent ?? '');
   const isVertical = getIsVertical(text);
-  const lineSpacing = Number.parseFloat(getLineSpacing(text));
+  const lineSpacing = getLineSpacing(text);
   const charHeight = getFontSize(text);
   const letterSpacing = getLetterSpacing(text);
+
+  textActions.setIsVertical(isVertical);
 
   for (let i = 0; i < Math.max(lines.length, tspans.length); i += 1) {
     if (i < lines.length) {
@@ -226,7 +153,7 @@ const renderTspan = (text: SVGTextElement, val?: string) => {
         tspan.setAttribute('x', x.join(' '));
         tspan.setAttribute('y', y.join(' '));
       } else {
-        tspan.setAttribute('x', text.getAttribute('x'));
+        tspan.setAttribute('x', text.getAttribute('x')!);
         tspan.setAttribute('y', (Number(text.getAttribute('y')) + i * lineSpacing * charHeight).toFixed(2));
         tspan.textContent = lines[i];
         text.appendChild(tspan);
@@ -273,55 +200,53 @@ const renderText = (elem: Element, val?: string, showGrips?: boolean): void => {
   }
 };
 
-const setBold = (val: boolean): void => {
-  const selectedElements = svgCanvas.getSelectedElems();
-  const selected = selectedElements[0];
+const renderAll = (elems: SVGElement[]): void => {
+  elems.forEach((elem) => renderText(elem));
+};
 
-  if (selected != null && selected.tagName === 'text' && selectedElements[1] == null) {
-    svgCanvas.changeSelectedAttribute('font-weight', val ? 'bold' : 'normal');
-  }
-
-  if (!selectedElements[0].textContent) {
+const initCursor = (elems: SVGElement[]): void => {
+  if (elems.length === 1 && !elems[0].textContent) {
     textActions.setCursor();
   }
 };
 
-/**
- * Set the new font family, in macOS value will be postscript to make text correctly rendered
- * @param val New font family
- * @param isSubCmd Whether this operation is a sub command or a sole command
- */
-const setFontFamily = (val: string, isSubCmd = false, elems?: Element[]): ICommand => {
-  const elemsToChange = elems || svgCanvas.getSelectedElems();
-  let cmd = null;
+const updateRotation = (elems: SVGElement[]): void => {
+  elems.forEach((elem) => {
+    const angle = getRotationAngle(elem);
 
-  curText.font_family = `'${val}'`;
+    svgCanvas.setRotationAngle(0, true, elem);
+    renderText(elem);
+    svgCanvas.setRotationAngle(angle, true, elem);
+  });
+};
+
+const setFontFamily = (val: string, isSubCmd = false, elems: SVGTextElement[]): ICommand | null => {
+  let cmd: ICommand | null = null;
+  const quotedVal = `'${val}'`;
+
+  curText.font_family = quotedVal;
 
   if (isSubCmd) {
-    svgCanvas.undoMgr.beginUndoableChange('font-family', elemsToChange);
-    svgCanvas.changeSelectedAttributeNoUndo('font-family', `'${val}'`, elemsToChange);
+    svgCanvas.undoMgr.beginUndoableChange('font-family', elems);
+    svgCanvas.changeSelectedAttributeNoUndo('font-family', quotedVal, elems);
     cmd = svgCanvas.undoMgr.finishUndoableChange();
   } else {
-    svgCanvas.changeSelectedAttribute('font-family', `'${val}'`);
+    svgCanvas.changeSelectedAttribute('font-family', quotedVal);
   }
 
-  if (elemsToChange[0] && !elemsToChange[0].textContent) {
-    textActions.setCursor();
-  }
+  initCursor(elems);
 
   return cmd;
 };
 
-const setFontPostscriptName = (val: string, isSubCmd: boolean, elems?: Element[]): ICommand => {
-  let cmd = null;
+const setFontPostscriptName = (val: string, isSubCmd: boolean, elems: SVGTextElement[]): ICommand | null => {
+  let cmd: ICommand | null = null;
 
   curText.font_postscriptName = val;
 
   if (isSubCmd) {
-    const elemsToChange = elems || svgCanvas.getSelectedElems();
-
-    svgCanvas.undoMgr.beginUndoableChange('font-postscript', elemsToChange);
-    svgCanvas.changeSelectedAttributeNoUndo('font-postscript', val, elemsToChange);
+    svgCanvas.undoMgr.beginUndoableChange('font-postscript', elems);
+    svgCanvas.changeSelectedAttributeNoUndo('font-postscript', val, elems);
     cmd = svgCanvas.undoMgr.finishUndoableChange();
   } else {
     svgCanvas.changeSelectedAttribute('font-postscript', val, elems);
@@ -330,111 +255,64 @@ const setFontPostscriptName = (val: string, isSubCmd: boolean, elems?: Element[]
   return cmd;
 };
 
-const setFontSize = (val: number, elems?: Element[]): void => {
-  const elemsToChange = elems || svgCanvas.getSelectedElems();
-  const textElem = elemsToChange[0];
-
+const setFontSize = (val: number, textElems: SVGTextElement[]): void => {
   curText.font_size = val;
-  svgCanvas.changeSelectedAttribute('font-size', val, [textElem]);
+  svgCanvas.changeSelectedAttribute('font-size', val, textElems);
   textActions.setFontSize(val);
-
-  if (!textElem.textContent) {
-    textActions.setCursor();
-  }
-
-  renderText(textElem);
+  initCursor(textElems);
+  renderAll(textElems);
 };
 
-const setFontWeight = (fontWeight: number, isSubCmd: boolean, elem?: Element): ICommand => {
-  const textElem = elem || svgCanvas.getSelectedElems()[0];
+const setFontWeight = (fontWeight: number, isSubCmd: boolean, textElems: SVGTextElement[]): ICommand | null => {
   let cmd = null;
 
-  if (textElem?.tagName === 'text') {
-    if (isSubCmd) {
-      svgCanvas.undoMgr.beginUndoableChange('font-weight', [textElem]);
-      svgCanvas.changeSelectedAttributeNoUndo('font-weight', fontWeight || 'normal', [textElem]);
-      cmd = svgCanvas.undoMgr.finishUndoableChange();
-    } else {
-      svgCanvas.changeSelectedAttribute('font-weight', fontWeight || 'normal', [textElem]);
-    }
+  if (isSubCmd) {
+    svgCanvas.undoMgr.beginUndoableChange('font-weight', textElems);
+    svgCanvas.changeSelectedAttributeNoUndo('font-weight', fontWeight || 'normal', textElems);
+    cmd = svgCanvas.undoMgr.finishUndoableChange();
+  } else {
+    svgCanvas.changeSelectedAttribute('font-weight', fontWeight || 'normal', textElems);
   }
 
-  if (!textElem.textContent) {
-    textActions.setCursor();
-  }
+  initCursor(textElems);
 
   return cmd;
 };
 
-const setIsVertical = (val: boolean): void => {
-  const selectedElements = svgCanvas.getSelectedElems();
-  const elem = selectedElements[0];
-
-  svgCanvas.changeSelectedAttribute('data-verti', val);
-
-  if (!elem.textContent) {
-    textActions.setCursor();
-  }
-
+const setIsVertical = (val: boolean, textElems: SVGTextElement[]): void => {
+  svgCanvas.changeSelectedAttribute('data-verti', val.toString(), textElems);
+  initCursor(textElems);
   textActions.setIsVertical(val);
-
-  const angle = getRotationAngle(elem);
-
-  svgCanvas.setRotationAngle(0, true, elem);
-  renderText(elem);
-  svgCanvas.setRotationAngle(angle, true, elem);
+  updateRotation(textElems);
   svgEditor.updateContextPanel();
 };
 
-const setItalic = (val: boolean, isSubCmd = false, elem?: Element): ICommand => {
-  const textElem = elem || svgCanvas.getSelectedElems()[0];
+const setItalic = (val: boolean, isSubCmd = false, textElems: SVGTextElement[]): ICommand | null => {
   let cmd = null;
 
-  if (textElem?.tagName === 'text') {
-    if (isSubCmd) {
-      svgCanvas.undoMgr.beginUndoableChange('font-style', [textElem]);
-      svgCanvas.changeSelectedAttributeNoUndo('font-style', val ? 'italic' : 'normal', [textElem]);
-      cmd = svgCanvas.undoMgr.finishUndoableChange();
-    } else {
-      svgCanvas.changeSelectedAttribute('font-style', val ? 'italic' : 'normal', [textElem]);
-    }
+  if (isSubCmd) {
+    svgCanvas.undoMgr.beginUndoableChange('font-style', textElems);
+    svgCanvas.changeSelectedAttributeNoUndo('font-style', val ? 'italic' : 'normal', textElems);
+    cmd = svgCanvas.undoMgr.finishUndoableChange();
+  } else {
+    svgCanvas.changeSelectedAttribute('font-style', val ? 'italic' : 'normal', textElems);
   }
 
-  if (!textElem.textContent) {
-    textActions.setCursor();
-  }
+  initCursor(textElems);
 
   return cmd;
 };
 
-const setLetterSpacing = (val: number, elem?: Element): void => {
-  const textElem = elem || svgCanvas.getSelectedElems()[0];
-
-  if (textElem?.tagName === 'text') {
-    svgCanvas.changeSelectedAttribute('letter-spacing', val ? `${val.toString()}em` : '0em', [textElem]);
-    renderText(textElem);
-  }
-
-  if (!textElem.textContent) {
-    textActions.setCursor();
-  }
+const setLetterSpacing = (val: number, textElems: SVGTextElement[]): void => {
+  svgCanvas.changeSelectedAttribute('letter-spacing', val ? `${val.toString()}em` : '0em', textElems);
+  renderAll(textElems);
+  initCursor(textElems);
 };
 
-const setLineSpacing = (val: number): void => {
-  const selectedElements = svgCanvas.getSelectedElems();
-  const elem = selectedElements[0];
-
-  svgCanvas.changeSelectedAttribute('data-line-spacing', val);
-
-  if (!elem || !elem.textContent) {
-    textActions.setCursor();
-  }
-
-  const angle = getRotationAngle(elem);
-
-  svgCanvas.setRotationAngle(0, true, elem);
-  renderText(elem);
-  svgCanvas.setRotationAngle(angle, true, elem);
+const setLineSpacing = (val: number, textElems: SVGTextElement[]): void => {
+  svgCanvas.changeSelectedAttribute('data-line-spacing', val, textElems);
+  initCursor(textElems);
+  updateRotation(textElems);
 };
 
 /**
@@ -451,7 +329,6 @@ const setTextContent = (val: string): void => {
 };
 
 export default {
-  getBold,
   getCurText,
   getFontFamily,
   getFontFamilyData,
@@ -463,7 +340,6 @@ export default {
   getLetterSpacing,
   getLineSpacing,
   renderText,
-  setBold,
   setFontFamily,
   setFontPostscriptName,
   setFontSize,

@@ -19,8 +19,10 @@ exports[`test StartOffsetBlock should render correctly 1`] = `
       0
       defaultValue:
       0
+      displayMultiValue:
+      false
       className:
-      {"option-input":true}
+      {"no-unit":true,"option-input":true}
       <input
         class="unit-input"
       />
@@ -48,8 +50,10 @@ exports[`test StartOffsetBlock should render correctly 2`] = `
       0
       defaultValue:
       0
+      displayMultiValue:
+      false
       className:
-      {"option-input":true}
+      {"no-unit":true,"option-input":true}
       <input
         class="unit-input"
       />
@@ -77,8 +81,10 @@ exports[`test StartOffsetBlock should render correctly 3`] = `
       0
       defaultValue:
       0
+      displayMultiValue:
+      false
       className:
-      {"option-input":true}
+      {"no-unit":true,"option-input":true}
       <input
         class="unit-input"
       />
@@ -90,7 +96,9 @@ exports[`test StartOffsetBlock should render correctly 3`] = `
 exports[`test StartOffsetBlock should render correctly in mobile 1`] = `
 <div>
   <div>
-    mock-number-item id:
+    mock-object-panel-number-item
+    <br />
+    id:
     start_offset
     label:
     Text Offset
@@ -102,9 +110,66 @@ exports[`test StartOffsetBlock should render correctly in mobile 1`] = `
     0
     value:
     0
-    <input
-      class="unit-input"
-    />
+    unit:
+    hasMultiValue:
+    false
+    <input />
+  </div>
+</div>
+`;
+
+exports[`test StartOffsetBlock should render correctly with multiple values 1`] = `
+<div>
+  <div
+    class="option-block"
+  >
+    <div
+      class="label"
+    >
+      Text Offset
+    </div>
+    <div>
+      mock-unit-input min:
+      0
+      max:
+      100
+      decimal:
+      0
+      defaultValue:
+      0
+      displayMultiValue:
+      true
+      className:
+      {"no-unit":true,"option-input":true}
+      <input
+        class="unit-input"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test StartOffsetBlock should render correctly with multiple values in mobile 1`] = `
+<div>
+  <div>
+    mock-object-panel-number-item
+    <br />
+    id:
+    start_offset
+    label:
+    Text Offset
+    min:
+    0
+    max:
+    100
+    decimal:
+    0
+    value:
+    0
+    unit:
+    hasMultiValue:
+    true
+    <input />
   </div>
 </div>
 `;

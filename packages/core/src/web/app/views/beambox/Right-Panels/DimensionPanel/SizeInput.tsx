@@ -6,18 +6,19 @@ import UnitInput from '@core/app/widgets/UnitInput';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { useIsMobile } from '@core/helpers/system-helper';
 import storage from '@core/implementations/storage';
+import type { DimensionValues, SizeKey, SizeKeyShort } from '@core/interfaces/ObjectPanel';
 
 import styles from './DimensionPanel.module.scss';
 import { getValue } from './utils';
 
 interface Props {
   onBlur?: () => void;
-  onChange: (type: string, value: number) => void;
-  type: 'h' | 'rx' | 'ry' | 'w';
+  onChange: (type: SizeKey, value: number) => void;
+  type: SizeKeyShort;
   value: number;
 }
 
-const typeKeyMap = {
+const typeKeyMap: { [key in SizeKeyShort]: SizeKey } = {
   h: 'height',
   rx: 'rx',
   ry: 'ry',
@@ -33,7 +34,7 @@ const SizeInput = ({ onBlur, onChange, type, value }: Props): React.JSX.Element 
   const precision = useMemo(() => (isInch ? 4 : 2), [isInch]);
 
   useEffect(() => {
-    const handler = (newValues?: { [type: string]: number }) => {
+    const handler = (newValues: DimensionValues) => {
       if (inputRef.current) {
         const newVal = getValue(newValues, type, { allowUndefined: true, unit });
 
@@ -52,7 +53,7 @@ const SizeInput = ({ onBlur, onChange, type, value }: Props): React.JSX.Element 
     };
   }, [type, unit, precision, objectPanelEventEmitter]);
 
-  const label = useMemo<JSX.Element | string>(() => {
+  const label = useMemo<React.ReactNode>(() => {
     if (type === 'w') {
       return 'W';
     }
@@ -72,7 +73,9 @@ const SizeInput = ({ onBlur, onChange, type, value }: Props): React.JSX.Element 
     return null;
   }, [type]);
   const handleChange = useCallback(
-    (val: number) => {
+    (val: null | number) => {
+      if (val === null) return;
+
       const changeKey = typeKeyMap[type];
       const newVal = type === 'rx' || type === 'ry' ? val / 2 : val;
 

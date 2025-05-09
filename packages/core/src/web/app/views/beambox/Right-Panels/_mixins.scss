@@ -86,6 +86,12 @@
     input {
       height: 20px;
     }
+
+    &.no-unit {
+      input {
+        padding: 1px;
+      }
+    }
   }
 
   &.with-select {

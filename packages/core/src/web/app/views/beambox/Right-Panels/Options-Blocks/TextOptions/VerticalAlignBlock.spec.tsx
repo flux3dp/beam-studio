@@ -8,7 +8,7 @@ enum VerticalAlign {
   TOP = 2,
 }
 
-jest.mock('@core/app/actions/beambox/textPathEdit', () => ({ VerticalAlign: { BOTTOM: 0, MIDDLE: 1, TOP: 2 } }));
+jest.mock('@core/app/actions/beambox/textPathEdit', () => ({ VerticalAlign }));
 
 const useIsMobile = jest.fn();
 
@@ -16,22 +16,7 @@ jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => useIsMobile(),
 }));
 
-jest.mock('@core/helpers/i18n', () => ({
-  lang: {
-    beambox: {
-      right_panel: {
-        object_panel: {
-          bottom_align: 'Bottom Align',
-          middle_align: 'Middle Align',
-          option_panel: {
-            vertical_align: 'Vertical Align',
-          },
-          top_align: 'Top Align',
-        },
-      },
-    },
-  },
-}));
+jest.mock('@core/app/views/beambox/Right-Panels/ObjectPanelItem');
 
 import VerticalAlignBlock from './VerticalAlignBlock';
 
@@ -52,11 +37,39 @@ describe('test VerticalAlignBlock', () => {
     expect(onValueChange).toHaveBeenNthCalledWith(1, VerticalAlign.TOP);
   });
 
+  test('should render correctly with multiple values', () => {
+    const onValueChange = jest.fn();
+    const { baseElement } = render(
+      <VerticalAlignBlock hasMultiValue onValueChange={onValueChange} value={VerticalAlign.BOTTOM} />,
+    );
+
+    expect(baseElement).toMatchSnapshot();
+  });
+
   test('should render correctly in mobile', () => {
     useIsMobile.mockReturnValue(true);
 
     const onValueChange = jest.fn();
-    const { container } = render(<VerticalAlignBlock onValueChange={onValueChange} value={VerticalAlign.BOTTOM} />);
+    const { container, getByText } = render(
+      <VerticalAlignBlock onValueChange={onValueChange} value={VerticalAlign.BOTTOM} />,
+    );
+
+    expect(container).toMatchSnapshot();
+    fireEvent.click(getByText('Top Align'));
+    expect(onValueChange).toHaveBeenCalledTimes(1);
+    expect(onValueChange).toHaveBeenNthCalledWith(1, VerticalAlign.TOP, {
+      label: 'Top Align',
+      value: VerticalAlign.TOP,
+    });
+  });
+
+  test('should render correctly with multiple values in mobile', () => {
+    useIsMobile.mockReturnValue(true);
+
+    const onValueChange = jest.fn();
+    const { container } = render(
+      <VerticalAlignBlock hasMultiValue onValueChange={onValueChange} value={VerticalAlign.BOTTOM} />,
+    );
 
     expect(container).toMatchSnapshot();
   });

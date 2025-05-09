@@ -2,13 +2,6 @@
 
 exports[`test VerticalAlignBlock should render correctly 1`] = `
 <body>
-  <div
-    class="adm-px-tester"
-    style="--size: 10;"
-  />
-  <div
-    class="adm-px-tester"
-  />
   <div>
     <div
       class="option-block with-select"
@@ -16,7 +9,7 @@ exports[`test VerticalAlignBlock should render correctly 1`] = `
       <div
         class="label"
       >
-        Vertical Align
+        Alignment
       </div>
       <div
         class="ant-select ant-select-outlined css-dev-only-do-not-override-hash ant-select-single ant-select-show-arrow"
@@ -89,13 +82,6 @@ exports[`test VerticalAlignBlock should render correctly 1`] = `
 
 exports[`test VerticalAlignBlock should render correctly 2`] = `
 <body>
-  <div
-    class="adm-px-tester"
-    style="--size: 10;"
-  />
-  <div
-    class="adm-px-tester"
-  />
   <div>
     <div
       class="option-block with-select"
@@ -103,7 +89,7 @@ exports[`test VerticalAlignBlock should render correctly 2`] = `
       <div
         class="label"
       >
-        Vertical Align
+        Alignment
       </div>
       <div
         class="ant-select ant-select-outlined css-dev-only-do-not-override-hash ant-select-single ant-select-show-arrow ant-select-open"
@@ -262,49 +248,180 @@ exports[`test VerticalAlignBlock should render correctly 2`] = `
 
 exports[`test VerticalAlignBlock should render correctly in mobile 1`] = `
 <div>
-  <div
-    class="object-panel-item"
-    id="vertical_align"
-  >
-    <div
-      class="main"
-    >
-      <button
-        class="adm-button adm-button-default adm-button-fill-outline adm-button-mini adm-button-shape-rounded select-button"
-        type="button"
-      >
-        <span>
-          <div
-            class="selected-content"
-          >
-            Bottom Align
-            <span
-              aria-label="down"
-              class="anticon anticon-down"
-              role="img"
-            >
-              <svg
-                aria-hidden="true"
-                data-icon="down"
-                fill="currentColor"
-                focusable="false"
-                height="1em"
-                viewBox="64 64 896 896"
-                width="1em"
-              >
-                <path
-                  d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"
-                />
-              </svg>
-            </span>
-          </div>
-        </span>
+  <div>
+    mock-object-panel-select
+    <br />
+    id:
+    vertical_align
+    label:
+    Alignment
+    selected:
+    <div>
+      label:
+      Bottom Align
+      value:
+      0
+    </div>
+    options:
+    <div>
+      type:
+      label:
+      Bottom Align
+      value:
+      0
+      <button>
+        Bottom Align
       </button>
     </div>
+    <div>
+      type:
+      label:
+      Middle Align
+      value:
+      1
+      <button>
+        Middle Align
+      </button>
+    </div>
+    <div>
+      type:
+      label:
+      Top Align
+      value:
+      2
+      <button>
+        Top Align
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test VerticalAlignBlock should render correctly with multiple values 1`] = `
+<body>
+  <div>
     <div
-      class="label"
+      class="option-block with-select"
     >
-      Vertical Align
+      <div
+        class="label"
+      >
+        Alignment
+      </div>
+      <div
+        class="ant-select ant-select-outlined css-dev-only-do-not-override-hash ant-select-single ant-select-show-arrow"
+      >
+        <div
+          class="ant-select-selector"
+        >
+          <span
+            class="ant-select-selection-wrap"
+          >
+            <span
+              class="ant-select-selection-search"
+            >
+              <input
+                aria-autocomplete="list"
+                aria-controls="rc_select_TEST_OR_SSR_list"
+                aria-expanded="false"
+                aria-haspopup="listbox"
+                aria-owns="rc_select_TEST_OR_SSR_list"
+                autocomplete="off"
+                class="ant-select-selection-search-input"
+                id="rc_select_TEST_OR_SSR"
+                readonly=""
+                role="combobox"
+                style="opacity: 0;"
+                type="search"
+                unselectable="on"
+                value=""
+              />
+            </span>
+            <span
+              class="ant-select-selection-item"
+              title="-"
+            >
+              -
+            </span>
+          </span>
+        </div>
+        <span
+          aria-hidden="true"
+          class="ant-select-arrow"
+          style="user-select: none;"
+          unselectable="on"
+        >
+          <span
+            aria-label="down"
+            class="anticon anticon-down ant-select-suffix"
+            role="img"
+          >
+            <svg
+              aria-hidden="true"
+              data-icon="down"
+              fill="currentColor"
+              focusable="false"
+              height="1em"
+              viewBox="64 64 896 896"
+              width="1em"
+            >
+              <path
+                d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"
+              />
+            </svg>
+          </span>
+        </span>
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`test VerticalAlignBlock should render correctly with multiple values in mobile 1`] = `
+<div>
+  <div>
+    mock-object-panel-select
+    <br />
+    id:
+    vertical_align
+    label:
+    Alignment
+    selected:
+    <div>
+      label:
+      -
+      value:
+    </div>
+    options:
+    <div>
+      type:
+      label:
+      Bottom Align
+      value:
+      0
+      <button>
+        Bottom Align
+      </button>
+    </div>
+    <div>
+      type:
+      label:
+      Middle Align
+      value:
+      1
+      <button>
+        Middle Align
+      </button>
+    </div>
+    <div>
+      type:
+      label:
+      Top Align
+      value:
+      2
+      <button>
+        Top Align
+      </button>
     </div>
   </div>
 </div>

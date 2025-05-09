@@ -38,10 +38,11 @@ export default interface ISVGCanvas {
   assignAttributes(element: HTMLElement, args: any): void;
   bind: (eventName: string, callback: ((win: any, elem: any) => void) | boolean) => void;
   booleanOperationSelectedElements: (type: 'diff' | 'intersect' | 'union' | 'xor', isSubCmd?: boolean) => void;
+  calcElemFilledInfo: (elem: Element) => { isAllFilled: boolean; isAnyFilled: boolean };
   calculateTransformedBBox(elem: Element): IRect;
   call: (eventName: string, args?: any | SVGElement[]) => void;
-  changeSelectedAttribute(attr: string, val: number | string): void;
-  changeSelectedAttributeNoUndo: (attr: string, val: number | string, elems: Element[]) => void;
+  changeSelectedAttribute(attr: string, val: number | string, elems?: Element[]): void;
+  changeSelectedAttributeNoUndo: (attr: string, val: number | string, elems?: Element[]) => void;
   cleanupElement: (elem: SVGElement) => void;
   clear: () => void;
   clearAlignLines: () => void;
@@ -102,7 +103,7 @@ export default interface ISVGCanvas {
   /**
    * @deprecated use svgedit/transfrom/rotation.ts#getRotationAngle instead
    */
-  getRotationAngle(elem: Element): void;
+  getRotationAngle(elem: Element): number;
   getRubberBox: () => SVGRectElement;
   getSelectedElementsAlignPoints: () => IPoint[];
   getSelectedElems: (ungroupTempGroup?: boolean) => SVGElement[];
@@ -170,6 +171,8 @@ export default interface ISVGCanvas {
   setCurrentLayer: (layerName: string) => boolean;
   setCurrentResizeMode: (mode: string) => void;
   setCurrentStyleProperties: (key: string, val: number | string) => void;
+  setElemsFill: (elems: Element[]) => void;
+  setElemsUnfill: (elems: Element[]) => void;
   setHref: (elem: SVGElement | SVGImageElement, href: string) => void;
   setImageURL: (url: string) => void;
   setLastClickPoint: (point: { x: number; y: number }) => void;
