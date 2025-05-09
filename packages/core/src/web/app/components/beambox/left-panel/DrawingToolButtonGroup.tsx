@@ -142,8 +142,8 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
       {renderToolButton({
         icon: <LeftPanelIcons.Element />,
         id: 'Element',
-        label: `${tLeftPanel.label.shapes} (E)`,
-        onClick: () => dialogCaller.showShapePanel(FnWrapper.useSelectTool),
+        label: `${tLeftPanel.label.elements} (E)`,
+        onClick: () => dialogCaller.showElementPanel(FnWrapper.useSelectTool),
       })}
       {renderToolButton({
         icon: <LeftPanelIcons.Rect />,

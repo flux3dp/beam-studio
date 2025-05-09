@@ -1,3 +1,4 @@
+import AddChat from './add-chat.svg';
 import AdjustHeight from './adjust-height.svg';
 import Back from './back.svg';
 import Beamy from './beamy.svg';
@@ -19,12 +20,14 @@ import Photo from './photo.svg';
 import Polygon from './polygon.svg';
 import QRCode from './qr-code.svg';
 import Rect from './rect.svg';
+import Send from './send.svg';
 import ShootWideAngle from './shoot-wide-angle.svg';
 import Shoot from './shoot.svg';
 import Text from './text.svg';
 import Trace from './trace.svg';
 
 export default {
+  AddChat,
   AdjustHeight,
   Back,
   Beamy,
@@ -46,6 +49,7 @@ export default {
   Polygon,
   QRCode,
   Rect,
+  Send,
   Shoot,
   ShootWideAngle,
   Text,

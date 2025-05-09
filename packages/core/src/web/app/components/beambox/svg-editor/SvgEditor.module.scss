@@ -59,3 +59,18 @@
   left: -9999px;
   top: -9999px;
 }
+
+.resizable-drawer-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  width: 100%;
+  height: calc(100% + 60px);
+  border-radius: 1rem;
+}
+
+.resizable-handle {
+  right: 0;
+  width: 10px;
+}
