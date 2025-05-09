@@ -110,7 +110,7 @@ function attachTextToPath(textElement: Element, pathElement: Element, isSubCmd =
 
   if (!isSubCmd) {
     if (!batchCmd.isEmpty()) {
-      svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+      undoManager.addCommandToHistory(batchCmd);
     }
 
     return null;
@@ -168,7 +168,7 @@ function detachText(
 
   if (!isSubCmd) {
     if (!batchCmd.isEmpty()) {
-      svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+      undoManager.addCommandToHistory(batchCmd);
     }
 
     return { path, text };
@@ -223,9 +223,9 @@ const setVerticalAlign = (position: VerticalAlign, elem: SVGGElement): void => {
   let cmd: ICommand | null;
 
   Object.keys(attrMap).forEach((attr) => {
-    svgCanvas.undoMgr.beginUndoableChange(attr, textPaths);
+    undoManager.beginUndoableChange(attr, textPaths);
     svgCanvas.changeSelectedAttributeNoUndo(attr, attrMap[attr as keyof typeof attrMap], textPaths);
-    cmd = svgCanvas.undoMgr.finishUndoableChange();
+    cmd = undoManager.finishUndoableChange();
 
     if (cmd) batchCmd.addSubCommand(cmd);
   });

@@ -7,19 +7,7 @@ import InFillBlock from './InFillBlock';
 const mockIsMobile = jest.fn();
 
 jest.mock('@core/helpers/system-helper', () => ({
-  useIsMobile: () => () => mockIsMobile(),
-}));
-
-jest.mock('@core/helpers/useI18n', () => () => ({
-  beambox: {
-    right_panel: {
-      object_panel: {
-        option_panel: {
-          fill: 'Infill',
-        },
-      },
-    },
-  },
+  useIsMobile: () => mockIsMobile(),
 }));
 
 const isElemFillable = jest.fn();
@@ -53,13 +41,12 @@ describe('should render correctly', () => {
     });
     document.body.innerHTML = '<div id="flux" />';
 
-    const { container } = render(<InFillBlock elem={document.getElementById('flux')} />);
+    const { container } = render(<InFillBlock elems={[document.getElementById('flux')]} />);
 
     expect(container).toMatchSnapshot();
     expect(isElemFillable).toHaveBeenCalledTimes(1);
     expect(isElemFillable).toHaveBeenNthCalledWith(1, document.getElementById('flux'));
-    expect(calcElemFilledInfo).toHaveBeenCalledTimes(1);
-    expect(calcElemFilledInfo).toHaveBeenNthCalledWith(1, document.getElementById('flux'));
+    expect(calcElemFilledInfo).not.toHaveBeenCalled();
   });
 
   test('is fillable', () => {
@@ -70,11 +57,11 @@ describe('should render correctly', () => {
     });
     document.body.innerHTML = '<div id="flux" />';
 
-    const { container } = render(<InFillBlock elem={document.getElementById('flux')} />);
+    const { container } = render(<InFillBlock elems={[document.getElementById('flux')]} />);
 
     expect(container).toMatchSnapshot();
 
-    const switchBtn = container.querySelector('button.ant-switch');
+    const switchBtn = container.querySelector('button');
 
     fireEvent.click(switchBtn);
     expect(container).toMatchSnapshot();
@@ -89,6 +76,63 @@ describe('should render correctly', () => {
     expect(setElemsFill).toHaveBeenCalledTimes(1);
   });
 
+  test('with multiple elements (not fillable)', () => {
+    isElemFillable.mockImplementation(({ id }) => id === 'flux2');
+    calcElemFilledInfo.mockImplementation(({ id }) => ({
+      isAllFilled: id === 'flux1',
+      isAnyFilled: true,
+    }));
+    document.body.innerHTML = '<div id="flux1" /><div id="flux2" />';
+
+    const elem1 = document.getElementById('flux1');
+    const elem2 = document.getElementById('flux2');
+    const { container } = render(<InFillBlock elems={[elem1, elem2]} />);
+
+    expect(container).toMatchSnapshot();
+    expect(isElemFillable).toHaveBeenCalledTimes(1);
+    expect(isElemFillable).toHaveBeenNthCalledWith(1, elem1);
+    expect(calcElemFilledInfo).not.toHaveBeenCalled();
+  });
+
+  test('with multiple elements (fillable)', () => {
+    isElemFillable.mockReturnValue(true);
+    calcElemFilledInfo.mockImplementation(({ id }) => ({
+      isAllFilled: id === 'flux',
+      isAnyFilled: true,
+    }));
+    document.body.innerHTML = '<div id="flux" /><div id="flux2" />';
+
+    const elem1 = document.getElementById('flux');
+    const elem2 = document.getElementById('flux2');
+    const { container } = render(<InFillBlock elems={[elem1, elem2]} />);
+
+    expect(container).toMatchSnapshot();
+    expect(isElemFillable).toHaveBeenCalledTimes(2);
+    expect(isElemFillable).toHaveBeenNthCalledWith(1, elem1);
+    expect(isElemFillable).toHaveBeenNthCalledWith(2, elem2);
+    expect(calcElemFilledInfo).toHaveBeenCalledTimes(2);
+    expect(calcElemFilledInfo).toHaveBeenNthCalledWith(1, elem1);
+    expect(calcElemFilledInfo).toHaveBeenNthCalledWith(2, elem2);
+
+    const switchBtn = container.querySelector('button');
+
+    expect(switchBtn).not.toHaveClass('filled');
+
+    // partial -> unfill
+    fireEvent.click(switchBtn);
+    expect(switchBtn).not.toHaveClass('filled');
+    expect(setElemsUnfill).toHaveBeenCalledTimes(1);
+    expect(setElemsUnfill).toHaveBeenNthCalledWith(1, [elem1, elem2]);
+    expect(setElemsFill).not.toHaveBeenCalled();
+
+    // unfill -> fill
+    fireEvent.click(switchBtn);
+    expect(switchBtn).toHaveClass('filled');
+    expect(setElemsUnfill).toHaveBeenCalledTimes(1);
+    expect(setElemsFill).toHaveBeenCalledTimes(1);
+    expect(setElemsFill).toHaveBeenNthCalledWith(1, [elem1, elem2]);
+  });
+
   test('with label', () => {
     isElemFillable.mockReturnValue(true);
     calcElemFilledInfo.mockReturnValue({
@@ -97,11 +141,11 @@ describe('should render correctly', () => {
     });
     document.body.innerHTML = '<div id="flux" />';
 
-    const { container } = render(<InFillBlock elem={document.getElementById('flux')} label="Infill" />);
+    const { container } = render(<InFillBlock elems={[document.getElementById('flux')]} label="Infill" />);
 
     expect(container).toMatchSnapshot();
 
-    const switchBtn = container.querySelector('button.ant-switch');
+    const switchBtn = container.querySelector('button');
 
     fireEvent.click(switchBtn);
     expect(container).toMatchSnapshot();
@@ -131,7 +175,7 @@ describe('should render correctly in mobile', () => {
     });
     document.body.innerHTML = '<div id="flux" />';
 
-    const { container } = render(<InFillBlock elem={document.getElementById('flux')} id="mock-infill-id" />);
+    const { container } = render(<InFillBlock elems={[document.getElementById('flux')]} id="mock-infill-id" />);
 
     expect(container).toMatchSnapshot();
   });
@@ -144,14 +188,13 @@ describe('should render correctly in mobile', () => {
     });
     document.body.innerHTML = '<div id="flux" />';
 
-    const { container } = render(<InFillBlock elem={document.getElementById('flux')} />);
+    const { container } = render(<InFillBlock elems={[document.getElementById('flux')]} />);
 
     expect(container).toMatchSnapshot();
-    expect(mockIsMobile).toHaveBeenCalledTimes(0);
+    expect(mockIsMobile).toHaveBeenCalledTimes(1);
     expect(isElemFillable).toHaveBeenCalledTimes(1);
     expect(isElemFillable).toHaveBeenNthCalledWith(1, document.getElementById('flux'));
-    expect(calcElemFilledInfo).toHaveBeenCalledTimes(1);
-    expect(calcElemFilledInfo).toHaveBeenNthCalledWith(1, document.getElementById('flux'));
+    expect(calcElemFilledInfo).not.toHaveBeenCalled();
   });
 
   test('is fillable', () => {
@@ -162,7 +205,7 @@ describe('should render correctly in mobile', () => {
     });
     document.body.innerHTML = '<div id="flux" />';
 
-    const { container } = render(<InFillBlock elem={document.getElementById('flux')} />);
+    const { container } = render(<InFillBlock elems={[document.getElementById('flux')]} />);
 
     expect(container).toMatchSnapshot();
 

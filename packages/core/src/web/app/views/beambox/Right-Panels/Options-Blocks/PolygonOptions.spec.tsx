@@ -2,7 +2,7 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-import { ObjectPanelContextProvider } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
+import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 
 import PolygonOptions from './PolygonOptions';
 
@@ -10,18 +10,6 @@ const useIsMobile = jest.fn();
 
 jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => useIsMobile(),
-}));
-
-jest.mock('@core/helpers/useI18n', () => () => ({
-  beambox: {
-    right_panel: {
-      object_panel: {
-        option_panel: {
-          sides: 'Sides',
-        },
-      },
-    },
-  },
 }));
 
 const mockUpdatePolygonSides = jest.fn((elem, val) => {
@@ -58,6 +46,8 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
   },
 }));
 
+jest.mock('@core/app/views/beambox/Right-Panels/ObjectPanelItem');
+
 describe('test PolygonOptions', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -67,7 +57,11 @@ describe('test PolygonOptions', () => {
   });
 
   test('should render correctly', () => {
-    const { container, rerender } = render(<PolygonOptions elem={document.getElementById('flux')} polygonSides={0} />);
+    const { container, rerender } = render(
+      <ObjectPanelContext.Provider value={{ polygonSides: 0 } as any}>
+        <PolygonOptions elem={document.getElementById('flux')} />
+      </ObjectPanelContext.Provider>,
+    );
 
     expect(container).toMatchSnapshot();
 
@@ -76,7 +70,11 @@ describe('test PolygonOptions', () => {
     elem.setAttribute('id', 'flux');
     elem.setAttribute('sides', '5');
     document.body.appendChild(elem);
-    rerender(<PolygonOptions elem={document.getElementById('flux')} polygonSides={5} />);
+    rerender(
+      <ObjectPanelContext.Provider value={{ polygonSides: 5 } as any}>
+        <PolygonOptions elem={document.getElementById('flux')} />
+      </ObjectPanelContext.Provider>,
+    );
 
     expect(container).toMatchSnapshot();
 
@@ -122,8 +120,10 @@ describe('test PolygonOptions', () => {
   test('should render correctly in mobile', async () => {
     useIsMobile.mockReturnValue(true);
 
-    const { baseElement, container, getByText, rerender } = render(
-      <PolygonOptions elem={document.getElementById('flux')} polygonSides={0} />,
+    const { container, rerender } = render(
+      <ObjectPanelContext.Provider value={{ polygonSides: 0 } as any}>
+        <PolygonOptions elem={document.getElementById('flux')} />
+      </ObjectPanelContext.Provider>,
     );
 
     expect(container).toMatchSnapshot();
@@ -134,25 +134,16 @@ describe('test PolygonOptions', () => {
     elem.setAttribute('sides', '5');
     document.body.appendChild(elem);
     rerender(
-      <ObjectPanelContextProvider>
-        <PolygonOptions elem={document.getElementById('flux')} polygonSides={5} />
-      </ObjectPanelContextProvider>,
+      <ObjectPanelContext.Provider value={{ polygonSides: 5 } as any}>
+        <PolygonOptions elem={document.getElementById('flux')} />
+      </ObjectPanelContext.Provider>,
     );
     expect(container).toMatchSnapshot();
 
-    const objectPanelItem = baseElement.querySelector('div.object-panel-item');
-    const displayBtn = baseElement.querySelector('button.number-item');
-
-    expect(displayBtn).toHaveTextContent('5');
-    expect(objectPanelItem).not.toHaveClass('active');
-    fireEvent.click(objectPanelItem);
-    expect(objectPanelItem).toHaveClass('active');
-    expect(getByText('.').parentElement).toHaveClass('adm-button-disabled');
     expect(mockUpdatePolygonSides).not.toHaveBeenCalled();
-    fireEvent.click(baseElement.querySelectorAll('.input-keys button')[2]);
+    fireEvent.change(container.querySelector('input'), { target: { value: 3 } });
 
     expect(mockUpdatePolygonSides).toHaveBeenCalledTimes(1);
     expect(mockUpdatePolygonSides).toHaveBeenLastCalledWith(expect.anything(), -2);
-    expect(expect(displayBtn).toHaveTextContent('3'));
   });
 });

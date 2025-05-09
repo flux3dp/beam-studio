@@ -10,14 +10,9 @@ exports[`should render correctly image 1`] = `
     >
       OPTIONS
     </div>
-    <div>
-      This is dummy ImageOptions
-      <button
-        type="button"
-      >
-        updateObjectPanel
-      </button>
-    </div>
+    <dummy-image-options
+      elem="[object HTMLImageElement]"
+    />
   </div>
 </div>
 `;
@@ -27,17 +22,10 @@ exports[`should render correctly in mobile image 1`] = `
   <div
     class="container"
   >
-    <div
-      class="adm-divider adm-divider-vertical adm-divider-center divider"
+    <mock-object-panel-divider />
+    <dummy-image-options
+      elem="[object HTMLImageElement]"
     />
-    <div>
-      This is dummy ImageOptions
-      <button
-        type="button"
-      >
-        updateObjectPanel
-      </button>
-    </div>
   </div>
 </div>
 `;
@@ -47,9 +35,7 @@ exports[`should render correctly in mobile no element 1`] = `
   <div
     class="container"
   >
-    <div
-      class="adm-divider adm-divider-vertical adm-divider-center divider"
-    />
+    <mock-object-panel-divider />
   </div>
 </div>
 `;
@@ -59,12 +45,10 @@ exports[`should render correctly in mobile others 1`] = `
   <div
     class="container"
   >
-    <div
-      class="adm-divider adm-divider-vertical adm-divider-center divider"
+    <mock-object-panel-divider />
+    <dummy-infill-block
+      elems="[object HTMLUnknownElement]"
     />
-    <div>
-      This is dummy InFillBlock
-    </div>
   </div>
 </div>
 `;
@@ -74,15 +58,13 @@ exports[`should render correctly in mobile polygon desktop version 1`] = `
   <div
     class="container"
   >
-    <div
-      class="adm-divider adm-divider-vertical adm-divider-center divider"
+    <mock-object-panel-divider />
+    <dummy-color-panel
+      elem="[object HTMLUnknownElement]"
     />
-    <div>
-      This is dummy ColorPanel
-    </div>
-    <div>
-      This is dummy PolygonOptions
-    </div>
+    <dummy-polygon-options
+      elem="[object HTMLUnknownElement]"
+    />
   </div>
 </div>
 `;
@@ -92,15 +74,13 @@ exports[`should render correctly in mobile polygon web version 1`] = `
   <div
     class="container"
   >
-    <div
-      class="adm-divider adm-divider-vertical adm-divider-center divider"
+    <mock-object-panel-divider />
+    <dummy-color-panel
+      elem="[object HTMLUnknownElement]"
     />
-    <div>
-      This is dummy ColorPanel
-    </div>
-    <div>
-      This is dummy PolygonOptions
-    </div>
+    <dummy-polygon-options
+      elem="[object HTMLUnknownElement]"
+    />
   </div>
 </div>
 `;
@@ -110,20 +90,13 @@ exports[`should render correctly in mobile rect 1`] = `
   <div
     class="container"
   >
-    <div
-      class="adm-divider adm-divider-vertical adm-divider-center divider"
+    <mock-object-panel-divider />
+    <dummy-color-panel
+      elem="[object HTMLUnknownElement]"
     />
-    <div>
-      This is dummy ColorPanel
-    </div>
-    <div>
-      This is dummy RectOptions
-      <button
-        type="button"
-      >
-        updateDimensionValues
-      </button>
-    </div>
+    <dummy-rect-options
+      elem="[object HTMLUnknownElement]"
+    />
   </div>
 </div>
 `;
@@ -133,25 +106,15 @@ exports[`should render correctly in mobile text 1`] = `
   <div
     class="container"
   >
-    <div
-      class="adm-divider adm-divider-vertical adm-divider-center divider"
+    <mock-object-panel-divider />
+    <dummy-color-panel
+      elem="[object HTMLUnknownElement]"
     />
-    <div>
-      This is dummy ColorPanel
-    </div>
-    <div>
-      This is dummy TextOptions
-      <button
-        type="button"
-      >
-        updateDimensionValues
-      </button>
-      <button
-        type="button"
-      >
-        updateObjectPanel
-      </button>
-    </div>
+    <dummy-text-options
+      elem="[object HTMLUnknownElement]"
+      showcolorpanel="configName"
+      textelements="[object HTMLUnknownElement]"
+    />
   </div>
 </div>
 `;
@@ -168,9 +131,9 @@ exports[`should render correctly others 1`] = `
     >
       OPTIONS
     </div>
-    <div>
-      This is dummy InFillBlock
-    </div>
+    <dummy-infill-block
+      elems="[object HTMLUnknownElement]"
+    />
   </div>
 </div>
 `;
@@ -185,12 +148,12 @@ exports[`should render correctly polygon desktop version 1`] = `
     >
       OPTIONS
     </div>
-    <div>
-      This is dummy PolygonOptions
-    </div>
-    <div>
-      This is dummy ColorPanel
-    </div>
+    <dummy-polygon-options
+      elem="[object HTMLUnknownElement]"
+    />
+    <dummy-color-panel
+      elem="[object HTMLUnknownElement]"
+    />
   </div>
 </div>
 `;
@@ -205,12 +168,12 @@ exports[`should render correctly polygon web version 1`] = `
     >
       OPTIONS
     </div>
-    <div>
-      This is dummy PolygonOptions
-    </div>
-    <div>
-      This is dummy ColorPanel
-    </div>
+    <dummy-polygon-options
+      elem="[object HTMLUnknownElement]"
+    />
+    <dummy-color-panel
+      elem="[object HTMLUnknownElement]"
+    />
   </div>
 </div>
 `;
@@ -225,17 +188,12 @@ exports[`should render correctly rect 1`] = `
     >
       OPTIONS
     </div>
-    <div>
-      This is dummy RectOptions
-      <button
-        type="button"
-      >
-        updateDimensionValues
-      </button>
-    </div>
-    <div>
-      This is dummy ColorPanel
-    </div>
+    <dummy-rect-options
+      elem="[object HTMLUnknownElement]"
+    />
+    <dummy-color-panel
+      elem="[object HTMLUnknownElement]"
+    />
   </div>
 </div>
 `;
@@ -250,17 +208,12 @@ exports[`should render correctly rect in full color layer 1`] = `
     >
       OPTIONS
     </div>
-    <div>
-      This is dummy RectOptions
-      <button
-        type="button"
-      >
-        updateDimensionValues
-      </button>
-    </div>
-    <div>
-      This is dummy ColorPanel
-    </div>
+    <dummy-rect-options
+      elem="[object HTMLUnknownElement]"
+    />
+    <dummy-color-panel
+      elem="[object HTMLUnknownElement]"
+    />
   </div>
 </div>
 `;
@@ -275,22 +228,14 @@ exports[`should render correctly text 1`] = `
     >
       OPTIONS
     </div>
-    <div>
-      This is dummy TextOptions
-      <button
-        type="button"
-      >
-        updateDimensionValues
-      </button>
-      <button
-        type="button"
-      >
-        updateObjectPanel
-      </button>
-    </div>
-    <div>
-      This is dummy ColorPanel
-    </div>
+    <dummy-text-options
+      elem="[object HTMLUnknownElement]"
+      showcolorpanel="configName"
+      textelements="[object HTMLUnknownElement]"
+    />
+    <dummy-color-panel
+      elem="[object HTMLUnknownElement]"
+    />
   </div>
 </div>
 `;

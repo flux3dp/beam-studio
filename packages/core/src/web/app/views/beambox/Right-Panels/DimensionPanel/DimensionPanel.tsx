@@ -64,7 +64,7 @@ const fixedSizeMapping: { [key in SizeKey]: SizeKey } = {
 };
 
 interface Props {
-  elem: SVGElement;
+  elem: null | SVGElement;
 }
 
 const DimensionPanel = ({ elem }: Props): React.JSX.Element => {
@@ -86,9 +86,11 @@ const DimensionPanel = ({ elem }: Props): React.JSX.Element => {
 
   const handlePositionChange = useCallback(
     (type: string, val: number): void => {
+      if (!elem) return;
+
       const posVal = val * Constant.dpmm;
 
-      if (!['text', 'use'].includes(elem?.tagName)) {
+      if (!['text', 'use'].includes(elem.tagName)) {
         svgCanvas.changeSelectedAttribute(type, posVal, [elem]);
       } else {
         svgCanvas.setSvgElemPosition(type as 'x' | 'y', posVal, elem);
@@ -102,6 +104,8 @@ const DimensionPanel = ({ elem }: Props): React.JSX.Element => {
 
   const handleRotationChange = useCallback(
     (val: number, addToHistory = false): void => {
+      if (!elem) return;
+
       let rotationDeg = val % 360;
 
       if (rotationDeg > 180) {
@@ -250,7 +254,8 @@ const DimensionPanel = ({ elem }: Props): React.JSX.Element => {
 
     return null;
   };
-  const panels: string[] = (isMobile ? panelMapMobile : panelMap)[elem?.tagName.toLowerCase()] || ['x', 'y', 'w', 'h'];
+  const tagName = elem?.tagName.toLowerCase() ?? '';
+  const panels: string[] = (isMobile ? panelMapMobile : panelMap)[tagName] || ['x', 'y', 'w', 'h'];
   const contents: React.ReactNode[] = [];
 
   panels.forEach((type) => {

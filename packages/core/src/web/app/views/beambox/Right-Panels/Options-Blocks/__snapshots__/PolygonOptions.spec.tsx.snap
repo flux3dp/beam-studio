@@ -106,54 +106,50 @@ exports[`test PolygonOptions should render correctly 4`] = `
 
 exports[`test PolygonOptions should render correctly in mobile 1`] = `
 <div>
-  <div
-    class="object-panel-item"
-    id="polygon-sides"
-  >
-    <div
-      class="main"
-    >
-      <button
-        class="adm-button adm-button-default adm-button-fill-outline adm-button-mini adm-button-shape-rounded number-item"
-        type="button"
-      >
-        <span>
-          5
-        </span>
-      </button>
-    </div>
-    <div
-      class="label"
-    >
-      Sides
-    </div>
+  <div>
+    mock-object-panel-number-item
+    <br />
+    id:
+    polygon-sides
+    label:
+    Sides
+    min:
+    3
+    max:
+    9007199254740991
+    decimal:
+    0
+    value:
+    5
+    unit:
+    hasMultiValue:
+    false
+    <input />
   </div>
 </div>
 `;
 
 exports[`test PolygonOptions should render correctly in mobile 2`] = `
 <div>
-  <div
-    class="object-panel-item"
-    id="polygon-sides"
-  >
-    <div
-      class="main"
-    >
-      <button
-        class="adm-button adm-button-default adm-button-fill-outline adm-button-mini adm-button-shape-rounded number-item"
-        type="button"
-      >
-        <span>
-          5
-        </span>
-      </button>
-    </div>
-    <div
-      class="label"
-    >
-      Sides
-    </div>
+  <div>
+    mock-object-panel-number-item
+    <br />
+    id:
+    polygon-sides
+    label:
+    Sides
+    min:
+    3
+    max:
+    9007199254740991
+    decimal:
+    0
+    value:
+    5
+    unit:
+    hasMultiValue:
+    false
+    <input />
   </div>
 </div>
 `;

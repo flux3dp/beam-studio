@@ -2,25 +2,11 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-import { ObjectPanelContextProvider } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
+import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 
 import RectOptions from './RectOptions';
 
 jest.mock('@core/app/views/beambox/Right-Panels/Options-Blocks/InFillBlock', () => () => <div>DummyInFillBlock</div>);
-
-jest.mock('@core/helpers/i18n', () => ({
-  lang: {
-    beambox: {
-      right_panel: {
-        object_panel: {
-          option_panel: {
-            rounded_corner: 'Rounded corner',
-          },
-        },
-      },
-    },
-  },
-}));
 
 const get = jest.fn();
 
@@ -46,6 +32,8 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
   },
 }));
 
+jest.mock('@core/app/views/beambox/Right-Panels/ObjectPanelItem');
+
 describe('should render correctly', () => {
   afterEach(() => {
     jest.resetAllMocks();
@@ -56,7 +44,9 @@ describe('should render correctly', () => {
 
     const updateDimensionValues = jest.fn();
     const { container } = render(
-      <RectOptions elem={document.getElementById('flux')} rx={0} updateDimensionValues={updateDimensionValues} />,
+      <ObjectPanelContext.Provider value={{ dimensionValues: { rx: 0 }, updateDimensionValues } as any}>
+        <RectOptions elem={document.getElementById('flux')} />
+      </ObjectPanelContext.Provider>,
     );
 
     expect(container).toMatchSnapshot();
@@ -73,7 +63,9 @@ describe('should render correctly', () => {
     get.mockReturnValue(null);
 
     const { container } = render(
-      <RectOptions elem={document.getElementById('flux')} rx={10} updateDimensionValues={jest.fn()} />,
+      <ObjectPanelContext.Provider value={{ dimensionValues: { rx: 10 }, updateDimensionValues: jest.fn() } as any}>
+        <RectOptions elem={document.getElementById('flux')} />
+      </ObjectPanelContext.Provider>,
     );
 
     expect(container).toMatchSnapshot();
@@ -85,37 +77,22 @@ describe('should render correctly in mobile', () => {
     jest.resetAllMocks();
   });
 
-  test('unit is inches', () => {
-    useIsMobile.mockReturnValue(true);
-    get.mockReturnValue('inches');
-
-    const updateDimensionValues = jest.fn();
-    const { baseElement, container } = render(
-      <ObjectPanelContextProvider>
-        <RectOptions elem={document.getElementById('flux')} rx={0} updateDimensionValues={updateDimensionValues} />
-      </ObjectPanelContextProvider>,
-    );
-
-    expect(container).toMatchSnapshot();
-
-    const objectPanelItem = baseElement.querySelector('div.object-panel-item');
-
-    fireEvent.click(objectPanelItem);
-    fireEvent.click(baseElement.querySelectorAll('.step-buttons button')[1]);
-    expect(changeSelectedAttribute).toHaveBeenCalledTimes(1);
-    expect(changeSelectedAttribute).toHaveBeenNthCalledWith(1, 'rx', 254, [document.getElementById('flux')]);
-    expect(updateDimensionValues).toHaveBeenCalledTimes(1);
-    expect(updateDimensionValues).toHaveBeenNthCalledWith(1, { rx: 254 });
-  });
-
   test('unit is not inches', () => {
     useIsMobile.mockReturnValue(true);
     get.mockReturnValue(null);
 
+    const updateDimensionValues = jest.fn();
     const { container } = render(
-      <RectOptions elem={document.getElementById('flux')} rx={10} updateDimensionValues={jest.fn()} />,
+      <ObjectPanelContext.Provider value={{ dimensionValues: { rx: 10 }, updateDimensionValues } as any}>
+        <RectOptions elem={document.getElementById('flux')} />
+      </ObjectPanelContext.Provider>,
     );
 
     expect(container).toMatchSnapshot();
+    fireEvent.change(container.querySelector('input'), { target: { value: 2 } });
+    expect(changeSelectedAttribute).toHaveBeenCalledTimes(1);
+    expect(changeSelectedAttribute).toHaveBeenNthCalledWith(1, 'rx', 20, [document.getElementById('flux')]);
+    expect(updateDimensionValues).toHaveBeenCalledTimes(1);
+    expect(updateDimensionValues).toHaveBeenNthCalledWith(1, { rx: 20 });
   });
 });
