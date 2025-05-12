@@ -8,7 +8,7 @@ app.commandLine.appendSwitch('--no-sandbox');
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
-import url from 'url';
+import { pathToFileURL } from 'url';
 
 import * as electronRemote from '@electron/remote/main';
 import { captureMessage, init as SentryInit } from '@sentry/electron';
@@ -192,12 +192,7 @@ let shadowWindow: BrowserWindow;
 let shouldCloseShadowWindow = false;
 
 const loadShadowWindow = () => {
-  shadowWindow?.loadURL(
-    url.format({
-      pathname: path.join(__dirname, '../../shadow-index.html'),
-      protocol: 'file:',
-    }),
-  );
+  shadowWindow?.loadURL(pathToFileURL(path.join(__dirname, '../../shadow-index.html')).toString());
 };
 
 const createShadowWindow = () => {
@@ -284,13 +279,9 @@ function createWindow() {
   });
 
   menuManager?.on('DEBUG-RELOAD', () => {
-    tabManager?.getFocusedView()?.webContents.loadURL(
-      url.format({
-        pathname: path.join(__dirname, '../../index.html'),
-        protocol: 'file:',
-        slashes: true,
-      }),
-    );
+    tabManager
+      ?.getFocusedView()
+      ?.webContents.loadURL(pathToFileURL(path.join(__dirname, '../../index.html')).toString());
   });
 
   mainWindow.on('new-window-for-tab', () => {
