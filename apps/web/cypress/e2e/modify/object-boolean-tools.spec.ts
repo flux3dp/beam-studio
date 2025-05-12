@@ -53,7 +53,7 @@ describe('object boolean tools', () => {
     cy.get('#union').click();
     cy.get('#svg_4')
       .invoke('attr', 'd')
-      .then((d) => expect(md5(d)).equal('94bd53facadff95eb34e2e87dc42202f'));
+      .then((d) => expect(md5(d)).equal('912e2860d13f9628cda3a6d6772f2f4c'));
     checkDimensions(-75, -75, 150, 150);
   });
 
@@ -61,7 +61,7 @@ describe('object boolean tools', () => {
     cy.get('#subtract').click();
     cy.get('#svg_4')
       .invoke('attr', 'd')
-      .then((d) => expect(md5(d)).equal('763450f76bc0d3fbb482d17e9e3b78d4'));
+      .then((d) => expect(md5(d)).equal('5cdceb1e2f74d60a431465fc7f1cf605'));
     checkDimensions(0, 0, 75, 75);
   });
 
@@ -69,7 +69,7 @@ describe('object boolean tools', () => {
     cy.get('#intersect').click();
     cy.get('#svg_4')
       .invoke('attr', 'd')
-      .then((d) => expect(md5(d)).equal('efa5f71b4793ddbd4802fb2e010485dd'));
+      .then((d) => expect(md5(d)).equal('5c625cfbecc7ac0aae927cb7db4e85ea'));
     checkDimensions(0, 0, 75, 75);
   });
 
@@ -77,7 +77,7 @@ describe('object boolean tools', () => {
     cy.get('#difference').click();
     cy.get('#svg_4')
       .invoke('attr', 'd')
-      .then((d) => expect(md5(d)).equal('eb43eadf648392c529704d08d6ac01f1'));
+      .then((d) => expect(md5(d)).equal('c6ad6181d778be740f9fde2d8bd650cf'));
     checkDimensions(-75, -75, 150, 150);
   });
 });

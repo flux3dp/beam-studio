@@ -12,6 +12,7 @@ import * as BezierFitCurve from '@core/helpers/bezier-fit-curve';
 import getClipperLib from '@core/helpers/clipper/getClipperLib';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import round from '@core/helpers/math/round';
 import shortcuts from '@core/helpers/shortcuts';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { isMobile } from '@core/helpers/system-helper';
@@ -1578,7 +1579,23 @@ const smoothByFitPath = (elem: SVGPathElement) => {
   return result.join('');
 };
 
-const booleanOperation = (pathHTML1: string, pathHTML2: string, clipType: number) => {
+const roundPoint = (point: paper.Point, precision = 4) => {
+  return new paper.Point(round(point.x, precision), round(point.y, precision));
+};
+
+const roundPath = (path: paper.CompoundPath | paper.Path, precision = 4) => {
+  if (path instanceof paper.CompoundPath) {
+    path.children.forEach((child) => roundPath(child as paper.CompoundPath | paper.Path, precision));
+  } else {
+    path.segments.forEach((segment) => {
+      segment.point = roundPoint(segment.point, precision);
+      segment.handleIn = roundPoint(segment.handleIn, precision);
+      segment.handleOut = roundPoint(segment.handleOut, precision);
+    });
+  }
+};
+
+const booleanOperation = (pathHTML1: string, pathHTML2: string, clipType: number, precision = 3) => {
   const operation = ['intersect', 'unite', 'subtract', 'exclude'][clipType];
   const proj = new paper.Project(document.createElement('canvas'));
   const items = proj.importSVG(`<svg>${pathHTML1}${pathHTML2}</svg>`);
@@ -1586,6 +1603,10 @@ const booleanOperation = (pathHTML1: string, pathHTML2: string, clipType: number
   const obj2 = items.children[1] as paper.CompoundPath | paper.Path | paper.Shape;
   const path1 = obj1 instanceof paper.Shape ? obj1.toPath() : obj1.clone();
   const path2 = obj2 instanceof paper.Shape ? obj2.toPath() : obj2.clone();
+
+  // Round coordinates to reduce float precision issues
+  roundPath(path1, precision);
+  roundPath(path2, precision);
 
   (path1 as any)[operation](path2);
   obj1.remove();
