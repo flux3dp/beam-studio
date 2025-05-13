@@ -131,6 +131,36 @@ describe('test locale-helper', () => {
     });
   });
 
+  describe('test isKr', () => {
+    test('when locale is ko', () => {
+      const navigator = { language: 'ko' };
+
+      Object.defineProperty(global, 'navigator', { value: navigator });
+      jest.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(-540);
+      mockParse.mockReturnValue({ language: 'ko' });
+      expect(localeHelper.detectKr()).toBe(true);
+      expect(mockConsoleError).not.toHaveBeenCalled();
+    });
+    test('when locale is ko-KR', () => {
+      const navigator = { language: 'ko-KR' };
+
+      Object.defineProperty(global, 'navigator', { value: navigator });
+      jest.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(-540);
+      mockParse.mockReturnValue({ region: 'KR' });
+      expect(localeHelper.detectKr()).toBe(true);
+      expect(mockConsoleError).not.toHaveBeenCalled();
+    });
+    test('when locale is en-US', () => {
+      const navigator = { language: 'en-US' };
+
+      Object.defineProperty(global, 'navigator', { value: navigator });
+      jest.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(-540);
+      mockParse.mockReturnValue({ region: 'US' });
+      expect(localeHelper.detectKr()).toBe(false);
+      expect(mockConsoleError).not.toHaveBeenCalled();
+    });
+  });
+
   describe('test isPs', () => {
     test('when locale is ar', () => {
       const navigator = { language: 'ar' };
