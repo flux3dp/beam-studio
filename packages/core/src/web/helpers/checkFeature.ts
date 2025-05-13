@@ -3,5 +3,11 @@ import isWeb from './is-web';
 import localeHelper from './locale-helper';
 
 export const checkFpm1 = (): boolean =>
-  (localeHelper.isTwOrHk || localeHelper.isMy || localeHelper.isPs || localeHelper.isJp || isDev()) && !isWeb();
+  (localeHelper.isTwOrHk ||
+    localeHelper.isMy ||
+    localeHelper.isPs ||
+    localeHelper.isJp ||
+    localeHelper.isKr ||
+    isDev()) &&
+  !isWeb();
 export const checkHxRf = (): boolean => isDev();
