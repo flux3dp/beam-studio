@@ -21,6 +21,7 @@ export type BeamboxPreference = {
   blade_precut: boolean;
   blade_radius: number;
   borderless: boolean;
+  'chat-user-id'?: string;
   continuous_drawing: boolean;
   curve_engraving_speed_limit: boolean;
   'customized-dimension': Partial<Record<WorkAreaModel, { height: number; width: number }>>;

@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import React, { useState } from 'react';
 import { useContext, useEffect } from 'react';
 
-import { ConfigProvider, Drawer, Flex } from 'antd';
+import { Button, ConfigProvider, Drawer, Flex } from 'antd';
 import classNames from 'classnames';
 import { Resizable } from 're-resizable';
 
@@ -19,6 +19,7 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
 import Banner from './Banner';
 import Chat from './Chat';
+import { useChatStore } from './Chat/store/useChatStore';
 import ElementTitle from './ElementTitle';
 import Ruler from './Ruler';
 import styles from './SvgEditor.module.scss';
@@ -30,6 +31,7 @@ export const SvgEditor = (): ReactNode => {
   const { mode } = useContext(CanvasContext);
   const [isBeamyShown, setIsBeamyShown] = useState(false);
   const [width, setWidth] = useState(400);
+  const { resetMessages, setConversationId } = useChatStore();
   // default motion duration for the drawer
   // this is used to disable the animation when resizing the drawer
   const [motionDurationSlow, setMotionDurationSlow] = useState('0.3s');
@@ -107,7 +109,14 @@ export const SvgEditor = (): ReactNode => {
                   <LeftPanelIcons.Beamy />
                   <div className={styles['beamy-title']}>{'Beamy (Beta)'}</div>
                 </Flex>
-                <LeftPanelIcons.AddChat />
+                <Button
+                  icon={<LeftPanelIcons.AddChat />}
+                  onClick={() => {
+                    setConversationId();
+                    resetMessages();
+                  }}
+                  type="text"
+                />
               </Flex>
             }
             width={width}
@@ -115,8 +124,8 @@ export const SvgEditor = (): ReactNode => {
             <Resizable
               enable={{ right: true }}
               handleStyles={{ right: { right: '0px', width: '10px' } }}
-              maxWidth={800}
-              minWidth={250}
+              maxWidth={960}
+              minWidth={360}
               onResize={(_event, _direction, elementRef) => {
                 setWidth(elementRef.offsetWidth);
               }}

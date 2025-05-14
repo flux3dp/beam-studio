@@ -105,6 +105,7 @@ const isFocusingOnInputs = () => {
 
   return (
     document.activeElement.tagName.toLowerCase() === 'input' ||
+    document.activeElement.tagName.toLowerCase() === 'textarea' ||
     document.activeElement?.getAttribute('role') === 'slider'
   );
 };
