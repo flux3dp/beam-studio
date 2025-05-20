@@ -22,7 +22,7 @@ const MonitorControl = ({ handleFramingStop, isFraming, isPromark, setEstimateTa
   const { monitor: tMonitor } = useI18n();
   const isMobile = useIsMobile();
   const buttonShape = isMobile ? 'round' : 'default';
-  const { mode, onPause, onPlay, onStop, report, taskTime } = useContext(MonitorContext);
+  const { mode, onPause, onPlay, onStop, report, totalTaskTime } = useContext(MonitorContext);
   const estimateTaskTimeTimer = useRef<NodeJS.Timeout | null>(null);
   const onPlayingTimer = useRef<NodeJS.Timeout | null>(null);
   const [isOnPlaying, setIsOnPlaying] = useState(false);
@@ -50,7 +50,13 @@ const MonitorControl = ({ handleFramingStop, isFraming, isPromark, setEstimateTa
     }
 
     // force resend framing and normal task after abortion in Promark
-    await onPlay(isPromark && report.st_id !== DeviceConstants.status.PAUSED_FROM_RUNNING);
+    const resend = isPromark && report.st_id !== DeviceConstants.status.PAUSED_FROM_RUNNING;
+    const actualTaskTime = await onPlay(resend);
+
+    if (resend && actualTaskTime !== null) {
+      setEstimateTaskTime(actualTaskTime);
+    }
+
     startCountDown();
     onPlayingTimer.current = setTimeout(() => {
       setIsOnPlaying(false);
@@ -115,7 +121,7 @@ const MonitorControl = ({ handleFramingStop, isFraming, isPromark, setEstimateTa
             onClick={() => {
               onStop();
               stopCountDown();
-              setEstimateTaskTime(taskTime);
+              setEstimateTaskTime(totalTaskTime);
             }}
             shape={buttonShape}
           >
@@ -146,7 +152,7 @@ const MonitorControl = ({ handleFramingStop, isFraming, isPromark, setEstimateTa
 
     if (report?.st_id === DeviceConstants.status.COMPLETED && !isOnPlaying) {
       stopCountDown();
-      setEstimateTaskTime(taskTime);
+      setEstimateTaskTime(totalTaskTime);
     } else if (
       report?.st_id === DeviceConstants.status.PAUSED_FROM_RUNNING ||
       report?.st_id === DeviceConstants.status.RECONNECTING
@@ -156,9 +162,9 @@ const MonitorControl = ({ handleFramingStop, isFraming, isPromark, setEstimateTa
       startCountDown();
     } else if (report?.st_id === DeviceConstants.status.ABORTED) {
       stopCountDown();
-      setEstimateTaskTime(taskTime);
+      setEstimateTaskTime(totalTaskTime);
     }
-  }, [report, isOnPlaying, setEstimateTaskTime, taskTime, startCountDown, isPromark]);
+  }, [report, isOnPlaying, setEstimateTaskTime, totalTaskTime, startCountDown, isPromark]);
 
   if (mode === Mode.PREVIEW || mode === Mode.FILE_PREVIEW || isFraming) {
     return (

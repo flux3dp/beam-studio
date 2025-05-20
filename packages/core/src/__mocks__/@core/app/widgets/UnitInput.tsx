@@ -43,7 +43,7 @@ const mockComponent = forwardRef<HTMLInputElement, Props>(
       UnitInput: {id}
       {addonAfter && <p>addonAfter: {addonAfter}</p>}
       {isInch && <p>isInch</p>}
-      {precision && <p>precision: {precision}</p>}
+      {precision !== undefined && <p>precision: {precision}</p>}
       {underline && <p>underline</p>}
       {unit && <p>unit: {unit}</p>}
       {fireOnChange && <p>fireOnChange</p>}

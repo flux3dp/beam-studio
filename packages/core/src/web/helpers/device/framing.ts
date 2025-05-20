@@ -28,6 +28,7 @@ import { getAllLayers } from '@core/helpers/layer/layer-helper';
 import monitorStatus from '@core/helpers/monitor-status';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
+import { convertVariableText } from '@core/helpers/variableText';
 import versionChecker from '@core/helpers/version-checker';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -95,7 +96,8 @@ export const getFramingOptions = (device: IDeviceInfo) => {
   return [FramingType.Framing, FramingType.Hull, FramingType.AreaCheck];
 };
 
-const getCoords = (mm?: boolean): Coordinates => {
+const getCoords = async (mm?: boolean): Promise<Coordinates> => {
+  const revertVariableText = await convertVariableText();
   const coords: Partial<Coordinates> = {
     maxX: undefined,
     maxY: undefined,
@@ -158,6 +160,8 @@ const getCoords = (mm?: boolean): Coordinates => {
     coords.maxX = Math.min(coords.maxX ?? workareaWidth, workareaWidth) / ratio;
     coords.maxY = Math.min(coords.maxY ?? workareaHeight, workareaHeight) / ratio;
   }
+
+  revertVariableText?.();
 
   return coords as Coordinates;
 };
@@ -474,7 +478,7 @@ class FramingTaskManager extends EventEmitter {
     svgCanvas.clearSelection();
 
     if (type === FramingType.Framing || type === FramingType.RotateFraming) {
-      const coords = getCoords(true);
+      const coords = await getCoords(true);
 
       if (coords.minX === undefined) {
         return [];

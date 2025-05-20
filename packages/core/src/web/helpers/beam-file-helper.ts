@@ -82,17 +82,20 @@ import { Buffer } from 'buffer';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import Progress from '@core/app/actions/progress-caller';
+import { useVariableTextState, type VariableTextState } from '@core/app/stores/variableText';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { importBvgString } from '@core/app/svgedit/operations/import/importBvg';
 import workareaManager from '@core/app/svgedit/workarea';
 import updateImageDisplay from '@core/helpers/image/updateImageDisplay';
 import updateImagesResolution from '@core/helpers/image/updateImagesResolution';
+import { hasVariableText } from '@core/helpers/variableText';
 import type { CurveEngraving } from '@core/interfaces/ICurveEngraving';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 
 interface MiscData {
   ce?: CurveEngraving;
+  vt?: VariableTextState;
 }
 
 // Create VInt Buffer, first bit indicate continue or not, other 7 bits represent value
@@ -213,6 +216,10 @@ const generateBeamBuffer = (
 
   if (curveEngravingModeController.data) {
     miscData.ce = curveEngravingModeController.data;
+  }
+
+  if (hasVariableText()) {
+    miscData.vt = useVariableTextState.getState();
   }
 
   const miscDataBuffer = generateMiscDataBlockBuffer(miscData);
@@ -365,6 +372,10 @@ const readBlocks = async (buf: Buffer, offset: number, command?: IBatchCommand) 
       }
 
       curveEngravingModeController.loadData(data.ce, { parentCmd: command });
+
+      if (data.vt) {
+        useVariableTextState.setState(data.vt);
+      }
     } catch (e) {
       console.error('Failed to parse misc data', e);
     }

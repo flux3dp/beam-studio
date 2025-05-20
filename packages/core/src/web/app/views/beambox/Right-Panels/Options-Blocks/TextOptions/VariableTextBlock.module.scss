@@ -1,0 +1,22 @@
+@use '../../_mixins.scss' as mixins;
+
+.options {
+  margin-top: 8px;
+  border-top: 1px solid #e0e0e0;
+  padding-top: 8px;
+
+  .option-block {
+    @include mixins.option-block();
+
+    .select {
+      flex: 1;
+      margin-right: 4px;
+    }
+
+    .input {
+      :global(.ant-input-number-input) {
+        padding: 1px 4px;
+      }
+    }
+  }
+}
