@@ -22,7 +22,10 @@ exports[`LaserInputs should render correctly 1`] = `
             addonAfter: 
             %
           </p>
-          0
+          <p>
+            precision: 
+            0
+          </p>
           <input
             data-testid="power"
             max="100"
@@ -75,7 +78,10 @@ exports[`LaserInputs should render correctly 1`] = `
             addonAfter: 
             times
           </p>
-          0
+          <p>
+            precision: 
+            0
+          </p>
           <input
             data-testid="repeat"
             max="100"

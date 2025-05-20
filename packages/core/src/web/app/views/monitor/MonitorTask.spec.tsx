@@ -55,7 +55,7 @@ describe('should render correctly', () => {
               st_id: 1,
             },
             taskImageURL: 'img/flux.svg',
-            taskTime: 90,
+            totalTaskTime: 90,
             uploadProgress: null,
           } as any
         }
@@ -81,7 +81,7 @@ describe('should render correctly', () => {
               st_id: 64,
             },
             taskImageURL: 'img/flux.svg',
-            taskTime: 0,
+            totalTaskTime: 0,
             uploadProgress: null,
           } as any
         }

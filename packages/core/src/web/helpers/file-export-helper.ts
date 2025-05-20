@@ -18,6 +18,7 @@ import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
 import isWeb from '@core/helpers/is-web';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
+import { convertVariableText } from '@core/helpers/variableText';
 import communicator from '@core/implementations/communicator';
 import dialog from '@core/implementations/dialog';
 import fs from '@core/implementations/fileSystem';
@@ -269,13 +270,15 @@ const saveFile = async (): Promise<boolean> => {
   svgCanvas.clearSelection();
   svgCanvas.removeUnusedDefs();
 
-  const output = svgCanvas.getSvgString();
-
   if (currentFileManager.isCloudFile) {
     return saveToCloud(path);
   }
 
   if (path.endsWith('.bvg')) {
+    const revert = await convertVariableText();
+    const output = svgCanvas.getSvgString();
+
+    revert?.();
     fs.writeFile(path, output);
     currentFileManager.setHasUnsavedChanges(false, false);
 
@@ -357,7 +360,17 @@ const exportAsBVG = async (): Promise<boolean> => {
 
   svgCanvas.removeUnusedDefs();
 
-  const getContent = () => removeNPElementsWrapper(() => switchSymbolWrapper(() => svgCanvas.getSvgString()));
+  const getContent = () =>
+    removeNPElementsWrapper(() =>
+      switchSymbolWrapper(async () => {
+        const revert = await convertVariableText();
+        const content = svgCanvas.getSvgString();
+
+        revert?.();
+
+        return content;
+      }),
+    );
   const newFilePath = await dialog.writeFileDialog(getContent, langFile.save_scene, defaultFileName, [
     { extensions: ['bvg'], name: window.os === 'MacOS' ? `${langFile.scene_files} (*.bvg)` : langFile.scene_files },
     { extensions: ['*'], name: langFile.all_files },
@@ -381,7 +394,8 @@ const exportAsSVG = async (): Promise<void> => {
 
   svgCanvas.clearSelection();
 
-  const getContent = () => {
+  const getContent = async () => {
+    const revert = await convertVariableText();
     const allLayers = document.querySelectorAll('g.layer');
 
     allLayers.forEach((layer) => layer.removeAttribute('clip-path'));
@@ -390,6 +404,7 @@ const exportAsSVG = async (): Promise<void> => {
     const res = removeNPElementsWrapper(() => switchSymbolWrapper(() => svgCanvas.getSvgString({ unit: 'mm' })));
 
     allLayers.forEach((layer) => layer.setAttribute('clip-path', 'url(#scene_mask)'));
+    revert?.();
 
     return res;
   };
@@ -406,9 +421,11 @@ const exportAsImage = async (type: 'jpg' | 'png'): Promise<void> => {
   svgCanvas.clearSelection();
   svgCanvas.removeUnusedDefs();
 
+  const revert = await convertVariableText();
   const output = switchSymbolWrapper(() => svgCanvas.getSvgString());
   const langFile = LANG.topmenu.file;
 
+  revert?.();
   Progress.openNonstopProgress({ id: 'export_image', message: langFile.converting });
 
   const defaultFileName = getDefaultFileName();
@@ -467,6 +484,7 @@ export const exportUvPrintAsPdf = async (): Promise<void> => {
   svgCanvas.clearSelection();
   svgCanvas.removeUnusedDefs();
 
+  const revert = await convertVariableText();
   const layers = pipe(
     getAllLayerNames(),
     filter((layerName) => getData(getLayerElementByName(layerName), 'module') === LayerModule.UV_PRINT),
@@ -475,6 +493,7 @@ export const exportUvPrintAsPdf = async (): Promise<void> => {
   const base64 = await switchSymbolWrapper(() => layersToA4Base64(layers));
   const defaultFileName = getDefaultFileName();
 
+  revert?.();
   new jsPDF().addImage(base64, 'PNG', 0, 0, 210, 297).save(defaultFileName);
 };
 

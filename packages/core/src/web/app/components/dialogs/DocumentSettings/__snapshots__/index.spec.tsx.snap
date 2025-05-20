@@ -1778,7 +1778,10 @@ exports[`test DocumentSettings should render correctly 3`] = `
                             addonAfter: 
                             mm
                           </p>
-                          0
+                          <p>
+                            precision: 
+                            0
+                          </p>
                           <input
                             id="pass_through_height"
                             min="210"

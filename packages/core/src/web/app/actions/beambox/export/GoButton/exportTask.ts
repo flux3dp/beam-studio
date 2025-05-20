@@ -9,6 +9,7 @@ import alertConfig from '@core/helpers/api/alert-config';
 import checkOldFirmware from '@core/helpers/device/checkOldFirmware';
 import promarkButtonHandler from '@core/helpers/device/promark/promark-button-handler';
 import isDev from '@core/helpers/is-dev';
+import { isVariableTextExist } from '@core/helpers/variableText';
 import VersionChecker from '@core/helpers/version-checker';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type { ILang } from '@core/interfaces/ILang';
@@ -106,6 +107,23 @@ export const exportTask = async (device: IDeviceInfo, byHandler: boolean, lang: 
           text: lang.alert.dont_show_again,
         },
         message: lang.topbar.alerts.job_origin_warning,
+        type: alertConstants.SHOW_POPUP_WARNING,
+      });
+    });
+  }
+
+  if (isVariableTextExist({ visibleOnly: true }) && !alertConfig.read('skip_variable_text_warning')) {
+    await new Promise((resolve) => {
+      alertCaller.popUp({
+        callbacks: () => resolve(null),
+        checkbox: {
+          callbacks: () => {
+            alertConfig.write('skip_variable_text_warning', true);
+            resolve(null);
+          },
+          text: lang.alert.dont_show_again,
+        },
+        message: lang.topbar.alerts.variable_text_warning,
         type: alertConstants.SHOW_POPUP_WARNING,
       });
     });
