@@ -23,7 +23,7 @@ import { tempSplitFullColorLayers } from '@core/helpers/layer/full-color/splitFu
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import type { VariableTextElemHandler } from '@core/helpers/variableText';
-import { extractVariableText, isVariableTextExist, removeVariableText } from '@core/helpers/variableText';
+import { extractVariableText, hasVariableText, removeVariableText } from '@core/helpers/variableText';
 import VersionChecker from '@core/helpers/version-checker';
 import dialog from '@core/implementations/dialog';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
@@ -543,7 +543,7 @@ export default {
     let vtTaskTinfo: undefined | VariableTextTask;
     let vtElemHandler: undefined | VariableTextElemHandler;
 
-    if (isVariableTextExist({ visibleOnly: true })) {
+    if (hasVariableText({ visibleOnly: true })) {
       // Update thumbnail with variable text placeholder
       await FontFuncs.tempConvertTextToPathAmongSvgContent();
       ({ thumbnail, thumbnailBlobURL } = await generateThumbnail());

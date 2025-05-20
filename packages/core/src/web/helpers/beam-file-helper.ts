@@ -89,7 +89,7 @@ import { importBvgString } from '@core/app/svgedit/operations/import/importBvg';
 import workareaManager from '@core/app/svgedit/workarea';
 import updateImageDisplay from '@core/helpers/image/updateImageDisplay';
 import updateImagesResolution from '@core/helpers/image/updateImagesResolution';
-import { isVariableTextExist } from '@core/helpers/variableText';
+import { hasVariableText } from '@core/helpers/variableText';
 import type { CurveEngraving } from '@core/interfaces/ICurveEngraving';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 
@@ -218,7 +218,7 @@ const generateBeamBuffer = (
     miscData.ce = curveEngravingModeController.data;
   }
 
-  if (isVariableTextExist()) {
+  if (hasVariableText()) {
     miscData.vt = useVariableTextState.getState();
   }
 

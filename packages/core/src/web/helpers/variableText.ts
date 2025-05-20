@@ -65,7 +65,7 @@ export const getVariableTexts = (opt?: {
   return document.querySelectorAll(`${prefix}[data-vt-type="${opt.type}"]`);
 };
 
-export const isVariableTextExist = (opt?: { root?: Element; visibleOnly?: boolean }): boolean => {
+export const hasVariableText = (opt?: { root?: Element; visibleOnly?: boolean }): boolean => {
   if (!isVariableTextSupported()) return false;
 
   const selector = [VariableTextType.NUMBER, VariableTextType.TIME, VariableTextType.CSV]
@@ -254,7 +254,7 @@ export const removeVariableText = (): (() => void) | null => {
 export type VariableTextElemHandler = { extract: () => void; revert: () => void };
 
 export const extractVariableText = (): null | VariableTextElemHandler => {
-  if (!isVariableTextExist()) return null;
+  if (!hasVariableText()) return null;
 
   const svgcontent = document.getElementById('svgcontent');
 
@@ -272,7 +272,7 @@ export const extractVariableText = (): null | VariableTextElemHandler => {
       }
     } else if (getVariableTextType(node as SVGTextElement)) {
       // Keep element
-    } else if (node.getAttribute('display') === 'none' || !isVariableTextExist({ root: node })) {
+    } else if (node.getAttribute('display') === 'none' || !hasVariableText({ root: node })) {
       node.remove();
     } else {
       for (let i = childNodes.length - 1; i >= 0; i -= 1) {

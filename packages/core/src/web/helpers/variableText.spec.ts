@@ -131,7 +131,7 @@ import {
   getVariableTextOffset,
   getVariableTexts,
   getVariableTextType,
-  isVariableTextExist,
+  hasVariableText,
   isVariableTextSupported,
   removeVariableText,
 } from './variableText';
@@ -205,14 +205,14 @@ describe('test variableText helper', () => {
 
   test('isVariableTextExist', () => {
     document.body.innerHTML = '<text data-vt-type="0"></text>';
-    expect(isVariableTextExist()).toBe(false);
+    expect(hasVariableText()).toBe(false);
 
     document.body.innerHTML = '<g class="layer" display="none"><text data-vt-type="1"></text></g>';
-    expect(isVariableTextExist()).toBe(true);
-    expect(isVariableTextExist({ visibleOnly: true })).toBe(false);
+    expect(hasVariableText()).toBe(true);
+    expect(hasVariableText({ visibleOnly: true })).toBe(false);
 
     document.body.innerHTML = '<text data-vt-type="1"></text><g></g>';
-    expect(isVariableTextExist({ root: document.querySelector('g') })).toBe(false);
+    expect(hasVariableText({ root: document.querySelector('g') })).toBe(false);
   });
 
   test('getRealCurrent', () => {
@@ -230,7 +230,7 @@ describe('test variableText helper', () => {
     let expectedResult: HTMLElement;
     const mockState: any = {
       csvContent: [
-        ['Name 1', 'Key 1', 'Not improtant', 'Type 1'],
+        ['Name 1', 'Key 1', 'Not important', 'Type 1'],
         ['Name 2', 'Key 2'],
       ],
       current: 0,
@@ -353,7 +353,7 @@ describe('test variableText helper when not supported', () => {
 
   test('isVariableTextExist', () => {
     document.body.innerHTML = '<text data-vt-type="1"></text>';
-    expect(isVariableTextExist()).toBe(false);
+    expect(hasVariableText()).toBe(false);
   });
 
   test('convertVariableText', async () => {

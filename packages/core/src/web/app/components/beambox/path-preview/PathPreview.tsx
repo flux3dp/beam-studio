@@ -38,7 +38,7 @@ import units from '@core/helpers/units';
 import {
   convertVariableText,
   extractVariableText,
-  isVariableTextExist,
+  hasVariableText,
   removeVariableText,
 } from '@core/helpers/variableText';
 import VersionChecker from '@core/helpers/version-checker';
@@ -762,7 +762,7 @@ class PathPreview extends React.Component<Props, State> {
     let gcodeBlob: Blob | undefined;
     let useSwiftray: boolean;
 
-    if (isVariableTextExist({ visibleOnly: true })) {
+    if (hasVariableText({ visibleOnly: true })) {
       const extractFn = extractVariableText();
       const revertConvert = await convertVariableText();
       const vtTask = await exportFuncs.getGcode();

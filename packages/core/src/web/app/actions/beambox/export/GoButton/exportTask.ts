@@ -9,7 +9,7 @@ import alertConfig from '@core/helpers/api/alert-config';
 import checkOldFirmware from '@core/helpers/device/checkOldFirmware';
 import promarkButtonHandler from '@core/helpers/device/promark/promark-button-handler';
 import isDev from '@core/helpers/is-dev';
-import { isVariableTextExist } from '@core/helpers/variableText';
+import { hasVariableText } from '@core/helpers/variableText';
 import VersionChecker from '@core/helpers/version-checker';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type { ILang } from '@core/interfaces/ILang';
@@ -112,7 +112,7 @@ export const exportTask = async (device: IDeviceInfo, byHandler: boolean, lang: 
     });
   }
 
-  if (isVariableTextExist({ visibleOnly: true }) && !alertConfig.read('skip_variable_text_warning')) {
+  if (hasVariableText({ visibleOnly: true }) && !alertConfig.read('skip_variable_text_warning')) {
     await new Promise((resolve) => {
       alertCaller.popUp({
         callbacks: () => resolve(null),
