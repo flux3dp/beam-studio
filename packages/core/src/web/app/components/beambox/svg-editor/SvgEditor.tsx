@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import React, { useState } from 'react';
 import { useContext, useEffect } from 'react';
 
+import { LeftOutlined } from '@ant-design/icons';
 import { ConfigProvider, Drawer } from 'antd';
 import classNames from 'classnames';
 import { Resizable } from 're-resizable';
@@ -14,40 +15,27 @@ import ZoomBlock from '@core/app/components/beambox/ZoomBlock';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import workareaManager from '@core/app/svgedit/workarea';
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
 import Banner from './Banner';
 import Chat from './Chat';
+import { useChatStore } from './Chat/useChatStore';
 import ElementTitle from './ElementTitle';
 import Ruler from './Ruler';
 import styles from './SvgEditor.module.scss';
 import Workarea from './Workarea';
 
-const beamyEventEmitter = eventEmitterFactory.createEventEmitter('beamy');
-
 export const SvgEditor = (): ReactNode => {
   const { mode } = useContext(CanvasContext);
-  const [isBeamyShown, setIsBeamyShown] = useState(false);
+  const { isChatShown, setIsChatShown } = useChatStore();
+  // const [isBeamyShown, setIsBeamyShown] = useState(false);
   const [width, setWidth] = useState(400);
   // default motion duration for the drawer
   // this is used to disable the animation when resizing the drawer
   const [motionDurationSlow, setMotionDurationSlow] = useState('0.3s');
 
   const onClose = () => {
-    setIsBeamyShown(false);
+    setIsChatShown(false);
   };
-
-  useEffect(() => {
-    const showBeamyHandler = (showState: boolean | undefined) => {
-      setIsBeamyShown(typeof showState === 'boolean' ? showState : true);
-    };
-
-    beamyEventEmitter.on('SHOW_BEAMY', showBeamyHandler);
-
-    return () => {
-      beamyEventEmitter.off('SHOW_BEAMY', showBeamyHandler);
-    };
-  }, []);
 
   useEffect(() => {
     if (window.$) {
@@ -94,11 +82,10 @@ export const SvgEditor = (): ReactNode => {
             getContainer={false}
             mask={false}
             onClose={onClose}
-            open={isBeamyShown}
+            open={isChatShown}
             placement="left"
             // use style to override :where
             style={{
-              backgroundColor: 'transparent',
               borderRadius: '1rem',
               boxShadow: 'none',
             }}
@@ -111,10 +98,13 @@ export const SvgEditor = (): ReactNode => {
                 overflow: 'hidden',
                 padding: '0px',
               },
-              wrapper: { boxShadow: 'none' },
+              wrapper: { backgroundColor: '#1890FF', boxShadow: 'none' },
             }}
             width={width}
           >
+            <div className={styles.handle} onClick={onClose}>
+              <LeftOutlined />
+            </div>
             <Resizable
               enable={{ right: true }}
               handleClasses={{ right: styles['resizable-handle'] }}

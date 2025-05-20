@@ -20,6 +20,8 @@ import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
+import { useChatStore } from '../svg-editor/Chat/useChatStore';
+
 import styles from './LeftPanel.module.scss';
 
 let svgCanvas: ISVGCanvas;
@@ -41,12 +43,12 @@ type ToolButtonProps = {
 };
 
 const drawingToolEventEmitter = eventEmitterFactory.createEventEmitter('drawing-tool');
-const beamyEventEmitter = eventEmitterFactory.createEventEmitter('beamy');
 
 const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX.Element => {
   const lang = useI18n();
   const tLeftPanel = lang.beambox.left_panel;
   const { changeToPreviewMode, hasPassthroughExtension, selectedDevice, setupPreviewMode } = useContext(CanvasContext);
+  const { isChatShown, setIsChatShown } = useChatStore();
   const workarea = useBeamboxPreference('workarea');
   const addOnInfo = getAddOnInfo(workarea);
   const isRotary = useBeamboxPreference('rotary_mode') && Boolean(addOnInfo.rotary);
@@ -58,7 +60,6 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
   );
   const [activeButton, setActiveButton] = useState('Cursor');
   const isSubscribed = getCurrentUser()?.info?.subscription?.is_valid;
-  const [isBeamyShown, setIsBeamyShown] = useState(false);
   const renderToolButton = ({
     className = undefined,
     disabled = false,
@@ -89,11 +90,10 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
   );
 
   const toggleBeamy = useCallback(() => {
-    beamyEventEmitter.emit('SHOW_BEAMY', !isBeamyShown);
-    setIsBeamyShown(!isBeamyShown);
+    setIsChatShown(!isChatShown);
 
-    if (isBeamyShown) setActiveButton('Cursor');
-  }, [isBeamyShown]);
+    if (isChatShown) setActiveButton('Cursor');
+  }, [isChatShown, setIsChatShown]);
 
   useEffect(() => {
     drawingToolEventEmitter.on('SET_ACTIVE_BUTTON', setActiveButton);
@@ -200,7 +200,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         id: 'Beamy',
         isActive: false,
         onClick: toggleBeamy,
-        style: { color: isBeamyShown ? '#1890ff' : undefined },
+        style: { color: isChatShown ? '#1890ff' : undefined },
       })}
       {renderToolButton({
         icon: <InstagramOutlined />,
@@ -210,7 +210,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
       })}
       {renderToolButton({
         icon: <LeftPanelIcons.DesignMarket />,
-        id: 'Design Market',
+        id: 'DesignMarket',
         isActive: false,
         onClick: () => browser.open(lang.topbar.menu.link.design_market),
       })}
