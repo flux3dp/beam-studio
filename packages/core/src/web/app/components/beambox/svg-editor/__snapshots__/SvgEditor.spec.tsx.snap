@@ -29,7 +29,7 @@ exports[`test svg-editor should render correctly in mac 1`] = `
       />
       <input
         id="text"
-        size="35"
+        size="32"
         type="text"
       />
       <div
@@ -79,7 +79,7 @@ exports[`test svg-editor should render correctly in win 1`] = `
       />
       <input
         id="text"
-        size="35"
+        size="32"
         type="text"
       />
       <div

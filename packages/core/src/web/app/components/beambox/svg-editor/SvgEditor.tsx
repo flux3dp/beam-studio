@@ -27,7 +27,6 @@ import Workarea from './Workarea';
 export const SvgEditor = (): ReactNode => {
   const { mode } = useContext(CanvasContext);
   const { isChatShown, setIsChatShown } = useChatStore();
-  // const [isBeamyShown, setIsBeamyShown] = useState(false);
   const [width, setWidth] = useState(400);
   // default motion duration for the drawer
   // this is used to disable the animation when resizing the drawer

@@ -8,29 +8,14 @@ jest.mock('@core/app/actions/beambox/beambox-global-interaction', () => ({
   onObjectFocus: mockOnObjectFocus,
 }));
 
-jest.mock(
-  '@core/app/views/beambox/ToolPanels/ToolPanels',
-  () =>
-    function DummyToolPanels() {
-      return <div>This is dummy ToolPanels</div>;
-    },
-);
+jest.mock('@core/app/views/beambox/ToolPanels/ToolPanels', () => () => <div>This is dummy ToolPanels</div>);
 
 import toolPanelsController from './toolPanelsController';
 
 test('test render', async () => {
   expect(toolPanelsController.isVisible).toBeFalsy();
   expect(toolPanelsController.type).toBe('unknown');
-  expect(toolPanelsController.data).toEqual({
-    distance: {
-      dx: 0,
-      dy: 0,
-    },
-    rowcolumn: {
-      column: 1,
-      row: 1,
-    },
-  });
+  expect(toolPanelsController.data).toEqual({ distance: { dx: 0, dy: 0 }, rowcolumn: { column: 1, row: 1 } });
 
   toolPanelsController.setVisibility(true);
   expect(toolPanelsController.isVisible).toBeTruthy();

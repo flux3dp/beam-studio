@@ -113,7 +113,7 @@ describe('test DrawingToolButtonGroup', () => {
     expect(container).toMatchSnapshot();
     expect(mockUseSelectTool).toHaveBeenCalledTimes(1);
 
-    fireEvent.click(container.querySelector('#left-DM'));
+    fireEvent.click(container.querySelector('#left-DesignMarket'));
     expect(container).toMatchSnapshot();
     expect(mockOpen).toHaveBeenCalledTimes(1);
     expect(mockOpen).toHaveBeenLastCalledWith('https://dmkt.io');
@@ -123,7 +123,7 @@ describe('test DrawingToolButtonGroup', () => {
     expect(showMyCloud).toHaveBeenCalledTimes(1);
     expect(showMyCloud).toHaveBeenCalledWith(mockUseSelectTool);
 
-    fireEvent.click(container.querySelector('#left-IG'));
+    fireEvent.click(container.querySelector('#left-Instagram'));
     expect(container).toMatchSnapshot();
     expect(mockOpen).toHaveBeenCalledTimes(2);
     expect(mockOpen).toHaveBeenLastCalledWith('instagram_link');
@@ -166,9 +166,9 @@ describe('test DrawingToolButtonGroup', () => {
     );
 
     expect(container).toMatchSnapshot();
-    expect(mockShowPassThrough).not.toBeCalled();
+    expect(mockShowPassThrough).not.toHaveBeenCalled();
     fireEvent.click(container.querySelector('#left-PassThrough'));
-    expect(mockShowPassThrough).toBeCalledTimes(1);
+    expect(mockShowPassThrough).toHaveBeenCalledTimes(1);
     expect(mockShowPassThrough).toHaveBeenCalledWith(mockUseSelectTool);
   });
 
@@ -181,9 +181,9 @@ describe('test DrawingToolButtonGroup', () => {
     );
 
     expect(container).toMatchSnapshot();
-    expect(mockCurveEngravingModeControllerStart).not.toBeCalled();
+    expect(mockCurveEngravingModeControllerStart).not.toHaveBeenCalled();
     fireEvent.click(container.querySelector('#left-curve-engrave'));
-    expect(mockCurveEngravingModeControllerStart).toBeCalledTimes(1);
+    expect(mockCurveEngravingModeControllerStart).toHaveBeenCalledTimes(1);
     expect(mockCurveEngravingModeControllerStart).toHaveBeenCalledWith();
   });
 
