@@ -4,7 +4,6 @@ import { ClockCircleOutlined, FileOutlined, LoadingOutlined } from '@ant-design/
 import { Button, Col, Flex, Progress, Row, Spin } from 'antd';
 
 import { promarkModels } from '@core/app/actions/beambox/constant';
-import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import DeviceConstants from '@core/app/constants/device-constants';
 import { Mode } from '@core/app/constants/monitor-constants';
 import { MonitorContext } from '@core/app/contexts/MonitorContext';
@@ -170,10 +169,9 @@ const MonitorTask = ({ device }: Props): React.JSX.Element => {
   };
 
   useEffect(() => {
-    const key = 'monitor.framing';
     let managerIsFraming = false;
 
-    manager.current = new FramingTaskManager(device);
+    manager.current = new FramingTaskManager(device, 'monitor.framing');
     manager.current.on('status-change', (status: boolean) => {
       if (status) {
         managerIsFraming = true;
@@ -186,14 +184,9 @@ const MonitorTask = ({ device }: Props): React.JSX.Element => {
         }, 1500);
       }
     });
-    manager.current.on('close-message', () => MessageCaller.closeMessage(key));
-    manager.current.on('message', (content: string) => {
-      MessageCaller.openMessage({ content, key, level: MessageLevel.LOADING });
-    });
 
     return () => {
-      manager.current?.stopFraming();
-      MessageCaller.closeMessage(key);
+      manager.current?.destroy();
     };
   }, [device, manager, setIsFraming]);
 
