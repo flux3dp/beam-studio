@@ -114,12 +114,9 @@ jest.mock('@core/app/stores/configPanel', () => ({
 
 const mockUseBeamboxPreference = jest.fn();
 
-jest.mock(
-  '@core/helpers/hooks/useBeamboxPreference',
-  () =>
-    (...args) =>
-      mockUseBeamboxPreference(...args),
-);
+jest.mock('@core/helpers/hooks/useBeamboxPreference', () => ({
+  useBeamboxPreference: (...args) => mockUseBeamboxPreference(...args),
+}));
 
 describe('test MultipassBlock when type is not panel-item', () => {
   beforeEach(() => {

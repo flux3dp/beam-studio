@@ -7,18 +7,16 @@ import eventEmitterFactory from '../eventEmitterFactory';
 
 const eventEmitter = eventEmitterFactory.createEventEmitter('beambox-preference');
 
-export const useBeamboxPreference = <Key extends BeamboxPreferenceKey>(key: Key) => {
+export const useBeamboxPreference = <Key extends BeamboxPreferenceKey>(key: Key, event: string = key) => {
   const [value, setValue] = useState(beamboxPreference.read(key));
 
   useEffect(() => {
-    eventEmitter.on(key, setValue);
+    eventEmitter.on(event, setValue);
 
     return () => {
-      eventEmitter.removeListener(key, setValue);
+      eventEmitter.removeListener(event, setValue);
     };
-  }, [key]);
+  }, [event]);
 
   return value;
 };
-
-export default useBeamboxPreference;

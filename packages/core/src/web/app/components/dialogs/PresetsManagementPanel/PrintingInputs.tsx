@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import configOptions from '@core/app/constants/config-options';
 import Select from '@core/app/widgets/AntdSelect';
 import UnitInput from '@core/app/widgets/UnitInput';
-import useBeamboxPreference from '@core/helpers/hooks/useBeamboxPreference';
+import { useBeamboxPreference } from '@core/helpers/hooks/useBeamboxPreference';
 import { baseConfig } from '@core/helpers/layer/layer-config-helper';
 import useI18n from '@core/helpers/useI18n';
 import type { ConfigKey, ConfigKeyTypeMap, Preset } from '@core/interfaces/ILayerConfig';

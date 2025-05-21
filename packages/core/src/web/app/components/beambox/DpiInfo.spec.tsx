@@ -6,14 +6,6 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
 import DpiInfo from './DpiInfo';
 
-jest.mock('@core/helpers/useI18n', () => () => ({
-  beambox: {
-    document_panel: {
-      engrave_dpi: 'Resolution',
-    },
-  },
-}));
-
 const mockRead = jest.fn();
 
 jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
@@ -32,7 +24,7 @@ describe('test DpiInfo', () => {
   });
 
   it('should render correctly', async () => {
-    const eventEmitter = eventEmitterFactory.createEventEmitter('dpi-info');
+    const eventEmitter = eventEmitterFactory.createEventEmitter('beambox-preference');
 
     mockRead.mockReturnValue('low');
 
@@ -40,7 +32,7 @@ describe('test DpiInfo', () => {
 
     expect(container).toMatchSnapshot();
 
-    eventEmitter.emit('UPDATE_DPI', 'high');
+    eventEmitter.emit('engrave_dpi', 'high');
     await new Promise((resolve) => setTimeout(resolve));
     expect(container).toMatchSnapshot();
   });
