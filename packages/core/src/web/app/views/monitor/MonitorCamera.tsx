@@ -2,11 +2,10 @@ import React from 'react';
 
 import classNames from 'classnames';
 
-import { MonitorContext } from '@core/app/contexts/MonitorContext';
 import DeviceMaster from '@core/helpers/device-master';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
-const hdChecked = {};
+const hdChecked: { [key: string]: number } = {};
 
 const getImageSize = (url: string, onSize: (size: number[]) => void) => {
   const img = new Image();
@@ -30,9 +29,7 @@ export default class MonitorCamera extends React.PureComponent<Props, State> {
 
   private cameraStream: any;
 
-  private previewBlob: Blob;
-
-  constructor(props) {
+  constructor(props: Props) {
     super(props);
 
     const { device } = this.props;
@@ -81,8 +78,6 @@ export default class MonitorCamera extends React.PureComponent<Props, State> {
       this.setState({ isHd: hdChecked[device.serial] !== 1 });
     }
 
-    this.previewBlob = imgBlob;
-
     const originalUrl = cameraImage.getAttribute('src');
 
     if (originalUrl) {
@@ -106,5 +101,3 @@ export default class MonitorCamera extends React.PureComponent<Props, State> {
     );
   }
 }
-
-MonitorCamera.contextType = MonitorContext;
