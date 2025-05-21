@@ -3,12 +3,13 @@ import * as React from 'react';
 import Alert from '@core/app/actions/alert-caller';
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import Constant, { promarkModels } from '@core/app/actions/beambox/constant';
-import exportFuncs from '@core/app/actions/beambox/export-funcs';
+import exportFuncs, { getConvertEngine } from '@core/app/actions/beambox/export-funcs';
 import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
 import DeviceConstants from '@core/app/constants/device-constants';
 import type { ItemType } from '@core/app/constants/monitor-constants';
 import { Mode } from '@core/app/constants/monitor-constants';
+import { setVariableTextState, useVariableTextState } from '@core/app/stores/variableText';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 import doZSpeedLimitTest from '@core/helpers/device/doZSpeedLimitTest';
 import promarkButtonHandler from '@core/helpers/device/promark/promark-button-handler';
@@ -18,6 +19,8 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
 import MonitorStatus from '@core/helpers/monitor-status';
 import OutputError from '@core/helpers/output-error';
+import type { VariableTextElemHandler } from '@core/helpers/variableText';
+import { convertVariableText } from '@core/helpers/variableText';
 import VersionChecker from '@core/helpers/version-checker';
 import dialog from '@core/implementations/dialog';
 import type { IDeviceInfo, IReport } from '@core/interfaces/IDevice';
@@ -88,6 +91,11 @@ export interface PreviewTask {
   taskTime: number;
 }
 
+export interface VariableTextTask {
+  fileTimeCost: number;
+  taskCodeBlob: Blob;
+}
+
 interface Props {
   autoStart?: boolean;
   children?: React.ReactNode;
@@ -95,6 +103,8 @@ interface Props {
   mode: Mode;
   onClose: () => void;
   previewTask?: PreviewTask;
+  vtElemHandler?: VariableTextElemHandler;
+  vtTaskTinfo?: VariableTextTask;
 }
 
 interface State {
@@ -121,6 +131,7 @@ interface State {
   shouldUpdateFileList: boolean;
   taskImageURL: null | string;
   taskTime: null | number;
+  totalTaskTime: number;
   uploadProgress: null | number;
   workingTask: any;
 }
@@ -133,7 +144,7 @@ interface Context extends State {
   onMaintainMoveEnd: (x: number, y: number) => void;
   onMaintainMoveStart: () => void;
   onPause: () => void;
-  onPlay: (forceResend?: boolean) => Promise<void>;
+  onPlay: (forceResend?: boolean) => Promise<null | number>;
   onSelectFile: (fileName: string, fileInfo: any) => Promise<void>;
   onSelectFolder: (folderName: string, absolute?: boolean) => void;
   onStop: () => void;
@@ -163,7 +174,8 @@ export class MonitorContextProvider extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
-    const { autoStart, mode, previewTask } = props;
+    const { autoStart, mode, previewTask, vtTaskTinfo } = props;
+    const isPreviewingTask = mode === Mode.PREVIEW && previewTask;
 
     updateLang();
     this.isGettingReport = false;
@@ -183,12 +195,49 @@ export class MonitorContextProvider extends React.Component<Props, State> {
       relocateOrigin: { x: 0, y: 0 },
       report: {} as IReport,
       shouldUpdateFileList: false,
-      taskImageURL: mode === Mode.PREVIEW && previewTask ? previewTask.taskImageURL : null,
-      taskTime: mode === Mode.PREVIEW && previewTask ? previewTask.taskTime : null,
+      taskImageURL: isPreviewingTask ? previewTask.taskImageURL : null,
+      taskTime: isPreviewingTask ? previewTask.taskTime : null,
+      totalTaskTime: isPreviewingTask
+        ? vtTaskTinfo?.fileTimeCost === undefined
+          ? previewTask.taskTime
+          : previewTask.taskTime + 4 + vtTaskTinfo.fileTimeCost
+        : 0,
       uploadProgress: null,
       workingTask: null,
     };
   }
+
+  getVariableTextTask = async (): Promise<null | VariableTextTask> => {
+    if (!this.props.vtElemHandler) return null;
+
+    this.props.vtElemHandler.extract();
+
+    const revert = await convertVariableText();
+    const { device } = this.props;
+    const { convertEngine } = getConvertEngine(device);
+    const res = await convertEngine(device);
+
+    revert?.();
+    this.props.vtElemHandler.revert();
+
+    if (res) return { fileTimeCost: res.fileTimeCost, taskCodeBlob: res.taskCodeBlob };
+
+    return null;
+  };
+
+  getTaskWithVariableText = async () => {
+    const variableTextTask = await this.getVariableTextTask();
+
+    if (variableTextTask?.taskCodeBlob) {
+      return {
+        // Note: this only works for Promark
+        taskBlob: new Blob([variableTextTask.taskCodeBlob, this.state.previewTask!.fcodeBlob]),
+        taskTime: variableTextTask.fileTimeCost + 4 + this.state.previewTask!.taskTime,
+      };
+    }
+
+    return { taskBlob: this.state.previewTask!.fcodeBlob, taskTime: this.state.previewTask!.taskTime };
+  };
 
   // Use arrow function to bind 'this'
   onSwiftrayDisconnected = (): void => {
@@ -960,9 +1009,10 @@ export class MonitorContextProvider extends React.Component<Props, State> {
     });
   };
 
-  onPlay = async (forceResend = false): Promise<void> => {
+  onPlay = async (forceResend = false): Promise<null | number> => {
     const { device } = this.props;
     const { currentPath, fileInfo, mode, relocateOrigin, report } = this.state;
+    let { totalTaskTime } = this.state;
 
     this.clearErrorPopup();
 
@@ -979,7 +1029,7 @@ export class MonitorContextProvider extends React.Component<Props, State> {
 
       if (mode === Mode.PREVIEW || forceResend) {
         const { previewTask } = this.state;
-        const fCode = previewTask!.fcodeBlob;
+        const { taskBlob, taskTime } = await this.getTaskWithVariableText();
 
         if (previewTask?.metadata['3D_CURVE_TASK'] === '1') {
           this.stopReport();
@@ -988,13 +1038,20 @@ export class MonitorContextProvider extends React.Component<Props, State> {
 
           this.startReport();
 
-          if (!res) return;
+          if (!res) return null;
         }
 
+        totalTaskTime = taskTime;
+        this.setState({ totalTaskTime });
         try {
-          await DeviceMaster.go(fCode, ({ step, total }: IProgress) => {
+          await DeviceMaster.go(taskBlob, ({ step, total }: IProgress) => {
             this.setState({ uploadProgress: Math.floor((step / total) * 100) });
           });
+
+          const { advanceBy, autoAdvance, current } = useVariableTextState.getState();
+
+          if (autoAdvance) setVariableTextState({ current: current + advanceBy });
+
           this.setState({ uploadProgress: null });
           setTimeout(() => promarkButtonHandler.setStatus('listening'), 1000);
         } catch (error) {
@@ -1016,6 +1073,8 @@ export class MonitorContextProvider extends React.Component<Props, State> {
     }
 
     eventEmitter.emit('PLAY');
+
+    return totalTaskTime;
   };
 
   onPause = (): void => {

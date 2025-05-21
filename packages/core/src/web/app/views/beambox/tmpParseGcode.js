@@ -113,7 +113,13 @@ export function parseGcode(gcode, isPromark = false) {
         lastS = parse();
         g = lastS > 0 ? 1 : 0;
       } else if (gcode[i] === 'T' || gcode[i] === 't') lastT = parse();
-      else if (gcode[i] === '$' && gcode[i + 1] === 'H') {
+      else if (gcode[i] === 'M' && gcode[i + 1] === '2') {
+        // For Swiftray GCode
+        // M2: End of program
+        g = 0;
+        lastS = 0;
+        i += 3;
+      } else if (gcode[i] === '$' && gcode[i + 1] === 'H') {
         // For Swiftray GCode
         // $H: Home
         x = 0;

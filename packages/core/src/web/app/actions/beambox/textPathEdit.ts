@@ -67,13 +67,17 @@ function attachTextToPath(textElement: Element, pathElement: Element, isSubCmd =
   textElement.appendChild(textPath);
   batchCmd.addSubCommand(new history.InsertElementCommand(textPath));
 
-  const originalX = textElement.getAttribute('x');
-  const originalY = textElement.getAttribute('y');
+  const originalX = textElement.getAttribute('x') || '0';
+  const originalY = textElement.getAttribute('y') || '0';
   const originalTransform = textElement.getAttribute('transform');
+  const originalType = textElement.getAttribute('data-vt-type');
+  const originalOffset = textElement.getAttribute('data-vt-offset');
 
   textElement.removeAttribute('x');
   textElement.removeAttribute('y');
   textElement.removeAttribute('transform');
+  textElement.removeAttribute('data-vt-type');
+  textElement.removeAttribute('data-vt-offset');
   textElement.setAttribute('data-textpath', '1');
   textElement.setAttribute('data-origx', originalX);
   textElement.setAttribute('data-origy', originalY);
@@ -82,6 +86,8 @@ function attachTextToPath(textElement: Element, pathElement: Element, isSubCmd =
       'data-origx': null,
       'data-origy': null,
       'data-textpath': null,
+      'data-vt-offset': originalOffset,
+      'data-vt-type': originalType,
       transform: originalTransform,
       x: originalX,
       y: originalY,

@@ -192,6 +192,10 @@ class WorkareaManager {
     const offsetX = (containerWidth - workAreaWidth) / 2 + (hasRulers ? layoutConstants.rulerWidth : 0);
     const offsetY = (containerHeight - workAreaHeight) / 2 + (hasRulers ? layoutConstants.rulerWidth : 0);
 
+    if (zoomLevel <= 0) {
+      return;
+    }
+
     this.zoom(zoomLevel);
 
     if (background && workArea) {

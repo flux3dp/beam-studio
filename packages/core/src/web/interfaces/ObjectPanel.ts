@@ -44,3 +44,23 @@ export interface TextOption {
 export type TextConfig = {
   [key in keyof TextOption]: ConfigItem<TextOption[key]>;
 };
+
+// Variable Text
+/* eslint-disable perfectionist/sort-enums */
+export const enum VariableTextType {
+  NONE = 0,
+  NUMBER = 1,
+  TIME = 2,
+  CSV = 3,
+}
+/* eslint-enable perfectionist/sort-enums */
+
+export interface VariableTextOption {
+  id: string;
+  offset: number;
+  type: VariableTextType;
+}
+
+export type VariableTextConfig = {
+  [key in keyof VariableTextOption]: ConfigItem<VariableTextOption[key]>;
+};

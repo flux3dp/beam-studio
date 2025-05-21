@@ -770,12 +770,15 @@ export interface ILang {
         middle_align: string;
         option_panel: {
           color: string;
+          current_time: string;
           fill: string;
           font_family: string;
           font_size: string;
           font_style: string;
           letter_spacing: string;
           line_spacing: string;
+          number: string;
+          offset: string;
           path_infill: string;
           pwm_engraving: string;
           pwm_engraving_link: string;
@@ -790,6 +793,8 @@ export interface ILang {
           text_infill: string;
           threshold: string;
           threshold_short: string;
+          variable_text: string;
+          variable_text_link: string;
           vertical_align: string;
           vertical_text: string;
         };
@@ -1903,6 +1908,7 @@ export interface ILang {
       pwm_unavailable: string;
       QcleanScene: string;
       start_preview_timeout: string;
+      variable_text_warning: string;
     };
     frame_task: string;
     hint: {
@@ -2245,6 +2251,25 @@ export interface ILang {
     update: string;
     updating: string;
     upload: string;
+  };
+  variable_text_settings: {
+    advance_by: string;
+    auto_advance: string;
+    auto_advance_hint: string;
+    bake: string;
+    browse: string;
+    clear: string;
+    csv_file: string;
+    current: string;
+    end: string;
+    file_error: string;
+    file_size_exceeded: string;
+    next: string;
+    note: string;
+    previous: string;
+    start: string;
+    test: string;
+    title: string;
   };
   web_cam: {
     no_device: string;

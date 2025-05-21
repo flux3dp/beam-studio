@@ -9,31 +9,33 @@ import styles from './LeftPanelButton.module.scss';
 
 interface Props {
   active?: boolean;
+  className?: string;
   disabled?: boolean;
   icon: React.ReactNode;
   id: string;
   onClick: () => void;
   showBadge?: boolean;
+  style?: React.CSSProperties;
   title: string;
 }
 
 function LeftPanelButton({
   active = false,
+  className = undefined,
   disabled = false,
   icon,
   id,
   onClick,
   showBadge = false,
+  style,
   title,
 }: Props): React.JSX.Element {
   return (
     <div
-      className={classNames(styles.container, {
-        [styles.active]: active,
-        [styles.disabled]: disabled,
-      })}
+      className={classNames(styles.container, { [styles.active]: active, [styles.disabled]: disabled }, className)}
       id={id}
       onClick={disabled ? undefined : onClick}
+      style={style}
       title={title}
     >
       <Badge

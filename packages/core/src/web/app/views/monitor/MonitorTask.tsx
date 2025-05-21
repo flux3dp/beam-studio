@@ -26,22 +26,23 @@ interface Props {
 
 const MonitorTask = ({ device }: Props): React.JSX.Element => {
   const { framing: tFraming, monitor: tMonitor } = useI18n();
-  const { fileInfo, mode, previewTask, report, taskImageURL, taskTime, uploadProgress } = useContext(MonitorContext);
+  const { fileInfo, mode, previewTask, report, taskImageURL, totalTaskTime, uploadProgress } =
+    useContext(MonitorContext);
   const isPromark = useMemo(() => promarkModels.has(device.model), [device.model]);
   /* for Promark framing */
   const options = useMemo(() => getFramingOptions(device), [device]);
-  const manager = useRef<FramingTaskManager>(null);
+  const manager = useRef<FramingTaskManager | null>(null);
   const [isFraming, setIsFraming] = useState<boolean>(false);
   const [isFramingButtonDisabled, setIsFramingButtonDisabled] = useState<boolean>(false);
   const [type, setType] = useState<TFramingType>(options[0]);
-  const [estimateTaskTime, setEstimateTaskTime] = useState<number>(taskTime);
+  const [estimateTaskTime, setEstimateTaskTime] = useState<number>(totalTaskTime);
   /* for Promark framing */
 
-  const getJobTime = (time = taskTime, byReport = true): null | string => {
+  const getJobTime = (time = totalTaskTime, byReport = true): null | string => {
     const isWorking = mode === Mode.WORKING;
 
     if (isFraming) {
-      return `${FormatDuration(Math.max(taskTime, 1))}` || null;
+      return `${FormatDuration(Math.max(totalTaskTime, 1))}` || null;
     }
 
     if (isWorking && byReport && report?.prog) {
@@ -142,7 +143,7 @@ const MonitorTask = ({ device }: Props): React.JSX.Element => {
 
     // for task prog is below 1, for framing prog a big number
     const percentage = Number.parseInt((report.prog * 100).toFixed(1), 10);
-    const estimatePercentage = Math.round(((taskTime - estimateTaskTime) / taskTime) * 100);
+    const estimatePercentage = Math.round(((totalTaskTime - estimateTaskTime) / totalTaskTime) * 100);
     const displayPercentage = Math.min(isPromark ? estimatePercentage : percentage, 99);
 
     if (report.st_id === DeviceConstants.status.ABORTED) {

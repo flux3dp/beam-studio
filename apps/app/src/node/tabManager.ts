@@ -104,7 +104,6 @@ class TabManager {
     this.mainWindow.on('leave-full-screen', handleWindowSizeChanged);
     this.mainWindow.on('maximize', handleWindowSizeChanged);
     this.mainWindow.on('unmaximize', handleWindowSizeChanged);
-
     this.mainWindow.on('closed', () => {
       this.tabsList.forEach((id) => {
         this.tabsMap[id].view.webContents.close();
@@ -164,6 +163,19 @@ class TabManager {
     this.mainWindow.contentView.addChildView(tabView);
 
     const { webContents } = tabView;
+
+    // to access the iframe in the webview
+    webContents.session.webRequest.onHeadersReceived({ urls: ['https://udify.app/*'] }, (details, callback) => {
+      if (details && details.responseHeaders) {
+        if (details.responseHeaders['Content-Security-Policy']) {
+          delete details.responseHeaders['Content-Security-Policy'];
+        } else if (details.responseHeaders['content-security-policy']) {
+          delete details.responseHeaders['content-security-policy'];
+        }
+      }
+
+      callback({ cancel: false, responseHeaders: details.responseHeaders });
+    });
 
     enableRemote(webContents);
     webContents.setWindowOpenHandler(({ url: openUrl }) => {

@@ -141,8 +141,19 @@ exports[`test DrawingToolButtonGroup should render correctly 1`] = `
       class="separator"
     />
     <div
+      class="container beamy"
+      id="left-Beamy"
+      title="Beamy"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
       class="container"
-      id="left-IG"
+      id="left-Instagram"
       title="Instagram"
     >
       <span
@@ -171,8 +182,8 @@ exports[`test DrawingToolButtonGroup should render correctly 1`] = `
     </div>
     <div
       class="container"
-      id="left-DM"
-      title="Design Market"
+      id="left-DesignMarket"
+      title="DesignMarket"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"
@@ -325,8 +336,19 @@ exports[`test DrawingToolButtonGroup should render correctly 2`] = `
       class="separator"
     />
     <div
+      class="container beamy"
+      id="left-Beamy"
+      title="Beamy"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
       class="container"
-      id="left-IG"
+      id="left-Instagram"
       title="Instagram"
     >
       <span
@@ -355,8 +377,8 @@ exports[`test DrawingToolButtonGroup should render correctly 2`] = `
     </div>
     <div
       class="container"
-      id="left-DM"
-      title="Design Market"
+      id="left-DesignMarket"
+      title="DesignMarket"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"
@@ -509,8 +531,19 @@ exports[`test DrawingToolButtonGroup should render correctly 3`] = `
       class="separator"
     />
     <div
+      class="container beamy"
+      id="left-Beamy"
+      title="Beamy"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
       class="container"
-      id="left-IG"
+      id="left-Instagram"
       title="Instagram"
     >
       <span
@@ -539,8 +572,8 @@ exports[`test DrawingToolButtonGroup should render correctly 3`] = `
     </div>
     <div
       class="container"
-      id="left-DM"
-      title="Design Market"
+      id="left-DesignMarket"
+      title="DesignMarket"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"
@@ -693,8 +726,19 @@ exports[`test DrawingToolButtonGroup should render correctly 4`] = `
       class="separator"
     />
     <div
+      class="container beamy"
+      id="left-Beamy"
+      title="Beamy"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
       class="container"
-      id="left-IG"
+      id="left-Instagram"
       title="Instagram"
     >
       <span
@@ -723,8 +767,8 @@ exports[`test DrawingToolButtonGroup should render correctly 4`] = `
     </div>
     <div
       class="container"
-      id="left-DM"
-      title="Design Market"
+      id="left-DesignMarket"
+      title="DesignMarket"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"
@@ -877,8 +921,19 @@ exports[`test DrawingToolButtonGroup should render correctly 5`] = `
       class="separator"
     />
     <div
+      class="container beamy"
+      id="left-Beamy"
+      title="Beamy"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
       class="container"
-      id="left-IG"
+      id="left-Instagram"
       title="Instagram"
     >
       <span
@@ -907,8 +962,8 @@ exports[`test DrawingToolButtonGroup should render correctly 5`] = `
     </div>
     <div
       class="container"
-      id="left-DM"
-      title="Design Market"
+      id="left-DesignMarket"
+      title="DesignMarket"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"
@@ -1061,8 +1116,19 @@ exports[`test DrawingToolButtonGroup should render correctly 6`] = `
       class="separator"
     />
     <div
+      class="container beamy"
+      id="left-Beamy"
+      title="Beamy"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
       class="container"
-      id="left-IG"
+      id="left-Instagram"
       title="Instagram"
     >
       <span
@@ -1091,8 +1157,8 @@ exports[`test DrawingToolButtonGroup should render correctly 6`] = `
     </div>
     <div
       class="container"
-      id="left-DM"
-      title="Design Market"
+      id="left-DesignMarket"
+      title="DesignMarket"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"
@@ -1245,8 +1311,19 @@ exports[`test DrawingToolButtonGroup should render correctly 7`] = `
       class="separator"
     />
     <div
+      class="container beamy"
+      id="left-Beamy"
+      title="Beamy"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
       class="container"
-      id="left-IG"
+      id="left-Instagram"
       title="Instagram"
     >
       <span
@@ -1275,8 +1352,8 @@ exports[`test DrawingToolButtonGroup should render correctly 7`] = `
     </div>
     <div
       class="container"
-      id="left-DM"
-      title="Design Market"
+      id="left-DesignMarket"
+      title="DesignMarket"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"
@@ -1429,8 +1506,19 @@ exports[`test DrawingToolButtonGroup should render correctly 8`] = `
       class="separator"
     />
     <div
+      class="container beamy"
+      id="left-Beamy"
+      title="Beamy"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
       class="container"
-      id="left-IG"
+      id="left-Instagram"
       title="Instagram"
     >
       <span
@@ -1459,8 +1547,8 @@ exports[`test DrawingToolButtonGroup should render correctly 8`] = `
     </div>
     <div
       class="container"
-      id="left-DM"
-      title="Design Market"
+      id="left-DesignMarket"
+      title="DesignMarket"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"
@@ -1613,8 +1701,19 @@ exports[`test DrawingToolButtonGroup should render correctly 9`] = `
       class="separator"
     />
     <div
+      class="container beamy"
+      id="left-Beamy"
+      title="Beamy"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
       class="container"
-      id="left-IG"
+      id="left-Instagram"
       title="Instagram"
     >
       <span
@@ -1643,8 +1742,8 @@ exports[`test DrawingToolButtonGroup should render correctly 9`] = `
     </div>
     <div
       class="container"
-      id="left-DM"
-      title="Design Market"
+      id="left-DesignMarket"
+      title="DesignMarket"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"
@@ -1797,8 +1896,19 @@ exports[`test DrawingToolButtonGroup should render correctly 10`] = `
       class="separator"
     />
     <div
+      class="container beamy"
+      id="left-Beamy"
+      title="Beamy"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
       class="container"
-      id="left-IG"
+      id="left-Instagram"
       title="Instagram"
     >
       <span
@@ -1827,8 +1937,8 @@ exports[`test DrawingToolButtonGroup should render correctly 10`] = `
     </div>
     <div
       class="container"
-      id="left-DM"
-      title="Design Market"
+      id="left-DesignMarket"
+      title="DesignMarket"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"
@@ -1857,7 +1967,7 @@ exports[`test DrawingToolButtonGroup should render correctly 11`] = `
       </span>
     </div>
     <div
-      class="container"
+      class="container active"
       id="left-Cursor"
       title="Select (V)"
     >
@@ -1981,8 +2091,19 @@ exports[`test DrawingToolButtonGroup should render correctly 11`] = `
       class="separator"
     />
     <div
+      class="container beamy"
+      id="left-Beamy"
+      title="Beamy"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
       class="container"
-      id="left-IG"
+      id="left-Instagram"
       title="Instagram"
     >
       <span
@@ -2010,9 +2131,9 @@ exports[`test DrawingToolButtonGroup should render correctly 11`] = `
       </span>
     </div>
     <div
-      class="container active"
-      id="left-DM"
-      title="Design Market"
+      class="container"
+      id="left-DesignMarket"
+      title="DesignMarket"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"
@@ -2165,8 +2286,19 @@ exports[`test DrawingToolButtonGroup should render correctly 12`] = `
       class="separator"
     />
     <div
+      class="container beamy"
+      id="left-Beamy"
+      title="Beamy"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
       class="container"
-      id="left-IG"
+      id="left-Instagram"
       title="Instagram"
     >
       <span
@@ -2195,8 +2327,8 @@ exports[`test DrawingToolButtonGroup should render correctly 12`] = `
     </div>
     <div
       class="container"
-      id="left-DM"
-      title="Design Market"
+      id="left-DesignMarket"
+      title="DesignMarket"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"
@@ -2247,7 +2379,7 @@ exports[`test DrawingToolButtonGroup should render correctly 13`] = `
       </span>
     </div>
     <div
-      class="container"
+      class="container active"
       id="left-MyCloud"
       title="My Cloud"
     >
@@ -2349,8 +2481,19 @@ exports[`test DrawingToolButtonGroup should render correctly 13`] = `
       class="separator"
     />
     <div
-      class="container active"
-      id="left-IG"
+      class="container beamy"
+      id="left-Beamy"
+      title="Beamy"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
+      class="container"
+      id="left-Instagram"
       title="Instagram"
     >
       <span
@@ -2379,8 +2522,8 @@ exports[`test DrawingToolButtonGroup should render correctly 13`] = `
     </div>
     <div
       class="container"
-      id="left-DM"
-      title="Design Market"
+      id="left-DesignMarket"
+      title="DesignMarket"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"
@@ -2548,8 +2691,19 @@ exports[`test DrawingToolButtonGroup should render correctly when in pass throug
       class="separator"
     />
     <div
+      class="container beamy"
+      id="left-Beamy"
+      title="Beamy"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
       class="container"
-      id="left-IG"
+      id="left-Instagram"
       title="Instagram"
     >
       <span
@@ -2578,8 +2732,8 @@ exports[`test DrawingToolButtonGroup should render correctly when in pass throug
     </div>
     <div
       class="container"
-      id="left-DM"
-      title="Design Market"
+      id="left-DesignMarket"
+      title="DesignMarket"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"
@@ -2736,8 +2890,19 @@ exports[`test DrawingToolButtonGroup should render correctly when model is bb2 1
       class="separator"
     />
     <div
+      class="container beamy"
+      id="left-Beamy"
+      title="Beamy"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
       class="container"
-      id="left-IG"
+      id="left-Instagram"
       title="Instagram"
     >
       <span
@@ -2766,8 +2931,8 @@ exports[`test DrawingToolButtonGroup should render correctly when model is bb2 1
     </div>
     <div
       class="container"
-      id="left-DM"
-      title="Design Market"
+      id="left-DesignMarket"
+      title="DesignMarket"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"

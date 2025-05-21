@@ -9,7 +9,7 @@ import Progress from '@core/app/actions/progress-caller';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { Mode } from '@core/app/constants/monitor-constants';
-import type { PreviewTask } from '@core/app/contexts/MonitorContext';
+import type { PreviewTask, VariableTextTask } from '@core/app/contexts/MonitorContext';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
 import svgLaserParser from '@core/helpers/api/svg-laser-parser';
@@ -22,6 +22,8 @@ import convertShapeToBitmap from '@core/helpers/layer/convertShapeToBitmap';
 import { tempSplitFullColorLayers } from '@core/helpers/layer/full-color/splitFullColorLayer';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
+import type { VariableTextElemHandler } from '@core/helpers/variableText';
+import { extractVariableText, hasVariableText, removeVariableText } from '@core/helpers/variableText';
 import VersionChecker from '@core/helpers/version-checker';
 import dialog from '@core/implementations/dialog';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
@@ -398,8 +400,12 @@ const openTaskInDeviceMonitor = async (
   },
   {
     autoStart = false,
+    vtElemHandler,
+    vtTaskTinfo,
   }: {
     autoStart?: boolean;
+    vtElemHandler?: VariableTextElemHandler;
+    vtTaskTinfo?: VariableTextTask;
   } = {},
 ): Promise<void> => {
   const fileName = currentFileManager.getName() || i18n.lang.topbar.untitled;
@@ -411,7 +417,7 @@ const openTaskInDeviceMonitor = async (
     taskTime: taskInfo.taskTime,
   };
 
-  await MonitorController.showMonitor(device, Mode.PREVIEW, task, autoStart);
+  await MonitorController.showMonitor(device, Mode.PREVIEW, task, autoStart, vtTaskTinfo, vtElemHandler);
 };
 
 export const getConvertEngine = (targetDevice?: IDeviceInfo) => {
@@ -523,13 +529,30 @@ export default {
   },
   uploadFcode: async (device: IDeviceInfo, autoStart?: boolean): Promise<void> => {
     const { convertEngine } = getConvertEngine(device);
+    const revertVT = removeVariableText();
     const res = await convertEngine(device);
+
+    revertVT?.();
 
     if (!res) return;
 
-    const { fileTimeCost, metadata, taskCodeBlob, thumbnail, thumbnailBlobURL } = res;
+    let { fileTimeCost, metadata, taskCodeBlob, thumbnail, thumbnailBlobURL } = res;
 
-    if (!taskCodeBlob && device.model !== 'fpm1') return;
+    if (!taskCodeBlob) return;
+
+    let vtTaskTinfo: undefined | VariableTextTask;
+    let vtElemHandler: undefined | VariableTextElemHandler;
+
+    if (hasVariableText({ visibleOnly: true })) {
+      // Update thumbnail with variable text placeholder
+      await FontFuncs.tempConvertTextToPathAmongSvgContent();
+      ({ thumbnail, thumbnailBlobURL } = await generateThumbnail());
+      await FontFuncs.revertTempConvert();
+      // Get variable text task info for initial total time estimation
+      vtElemHandler = extractVariableText() ?? undefined;
+      vtTaskTinfo = ((await convertEngine(device)) as null | VariableTextTask) ?? undefined;
+      vtElemHandler?.revert();
+    }
 
     try {
       const res = await deviceMaster.select(device);
@@ -546,7 +569,7 @@ export default {
       await openTaskInDeviceMonitor(
         device,
         { blob: taskCodeBlob, metadata, taskTime: fileTimeCost, thumbnailUrl: thumbnailBlobURL },
-        { autoStart },
+        { autoStart, vtElemHandler, vtTaskTinfo },
       );
     } catch (errMsg) {
       console.error(errMsg);

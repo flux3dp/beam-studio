@@ -134,7 +134,9 @@ jest.mock('@core/helpers/hooks/useWorkarea', () => () => mockUseWorkarea());
 
 const mockUseBeamboxPreference = jest.fn();
 
-jest.mock('@core/helpers/hooks/useBeamboxPreference', () => (key) => mockUseBeamboxPreference(key));
+jest.mock('@core/helpers/hooks/useBeamboxPreference', () => ({
+  useBeamboxPreference: (key) => mockUseBeamboxPreference(key),
+}));
 
 const mockGetAutoFeeder = jest.fn();
 

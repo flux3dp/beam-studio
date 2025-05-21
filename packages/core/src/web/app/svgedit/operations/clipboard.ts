@@ -366,6 +366,21 @@ const generateSelectedElementArray = async (
 
         arrayElements.push(...elems);
 
+        elems.forEach((elem) => {
+          if (elem.getAttribute('data-vt-offset')) {
+            elem.setAttribute('data-vt-offset', `${Number(elem.getAttribute('data-vt-offset')) + i + j * column}`);
+          } else {
+            const subElems = Array.from(elem.querySelectorAll('[data-vt-offset]'));
+
+            subElems.forEach((subElem) => {
+              subElem.setAttribute(
+                'data-vt-offset',
+                `${Number(subElem.getAttribute('data-vt-offset')) + i + j * column}`,
+              );
+            });
+          }
+        });
+
         if (pasteCmd && !pasteCmd.isEmpty()) {
           batchCmd.addSubCommand(pasteCmd);
         }

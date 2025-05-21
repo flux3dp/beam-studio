@@ -35,6 +35,12 @@ import getJobOrigin from '@core/helpers/job-origin';
 import { DrawCommands } from '@core/helpers/path-preview/draw-commands';
 import { GcodePreview } from '@core/helpers/path-preview/draw-commands/GcodePreview';
 import units from '@core/helpers/units';
+import {
+  convertVariableText,
+  extractVariableText,
+  hasVariableText,
+  removeVariableText,
+} from '@core/helpers/variableText';
 import VersionChecker from '@core/helpers/version-checker';
 
 import { parseGcode } from '../../../views/beambox/tmpParseGcode';
@@ -752,7 +758,31 @@ class PathPreview extends React.Component<Props, State> {
       svgEditor.style.display = '';
     }
 
-    const { fileTimeCost, gcodeBlob, useSwiftray } = await exportFuncs.getGcode();
+    let fileTimeCost: number;
+    let gcodeBlob: Blob | undefined;
+    let useSwiftray: boolean;
+
+    if (hasVariableText({ visibleOnly: true })) {
+      const extractFn = extractVariableText();
+      const revertConvert = await convertVariableText();
+      const vtTask = await exportFuncs.getGcode();
+
+      revertConvert?.();
+      extractFn?.revert();
+
+      const revertRemove = removeVariableText();
+      const normalTask = await exportFuncs.getGcode();
+
+      revertRemove?.();
+      fileTimeCost = vtTask.fileTimeCost + normalTask.fileTimeCost;
+      gcodeBlob =
+        vtTask.gcodeBlob && normalTask.gcodeBlob
+          ? new Blob([vtTask.gcodeBlob, normalTask.gcodeBlob])
+          : vtTask.gcodeBlob || normalTask.gcodeBlob;
+      useSwiftray = vtTask.useSwiftray || normalTask.useSwiftray;
+    } else {
+      ({ fileTimeCost, gcodeBlob, useSwiftray } = await exportFuncs.getGcode());
+    }
 
     if (svgEditor) {
       svgEditor.style.display = 'none';

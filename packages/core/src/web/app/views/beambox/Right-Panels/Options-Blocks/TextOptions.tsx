@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Button, ConfigProvider, Switch } from 'antd';
 import type { DefaultOptionType } from 'antd/es/select';
@@ -18,16 +18,19 @@ import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/context
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import InFillBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/InFillBlock';
 import StartOffsetBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/StartOffsetBlock';
+import VariableTextBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/VariableTextBlock';
 import VerticalAlignBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/VerticalAlignBlock';
 import Select from '@core/app/widgets/AntdSelect';
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import { getCurrentUser } from '@core/helpers/api/flux-id';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import fontHelper from '@core/helpers/fonts/fontHelper';
+import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import i18n from '@core/helpers/i18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
 import { updateConfigs } from '@core/helpers/update-configs';
+import { isVariableTextSupported } from '@core/helpers/variableText';
 import storage from '@core/implementations/storage';
 import type { GeneralFont } from '@core/interfaces/IFont';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -100,6 +103,8 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
   const { fontFamily } = configs;
   const [styleOptions, setStyleOptions] = useState<FontOption[]>([]);
   const selectorRef = useRef(selector.getSelectorManager().requestSelector(elem));
+  const workarea = useWorkarea();
+  const showVariableText = useMemo(isVariableTextSupported, [workarea]);
 
   useEffect(() => {
     selectorRef.current = selector.getSelectorManager().requestSelector(elem);
@@ -626,6 +631,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
           {renderFontStyleBlock()}
         </div>
         {isTextPath ? renderTextPathOptions() : <div className={styles.row}>{renderMultiLineTextOptions()}</div>}
+        {!isTextPath && showVariableText && <VariableTextBlock elems={textElements} id={configs.id.value} />}
       </div>
     </ConfigProvider>
   );

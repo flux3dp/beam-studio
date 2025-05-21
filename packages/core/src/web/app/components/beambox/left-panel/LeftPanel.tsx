@@ -21,7 +21,7 @@ class LeftPanel extends React.PureComponent {
   componentDidMount(): void {
     // Selection Management
     // TODO: move to layer panel
-    $('#layerpanel').mouseup(() => {
+    $('#layerpanel').on('mouseup', () => {
       FnWrapper.clearSelection();
     });
 

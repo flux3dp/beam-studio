@@ -22,7 +22,10 @@ exports[`PromarkInputs should render correctly 1`] = `
             addonAfter: 
             %
           </p>
-          0
+          <p>
+            precision: 
+            0
+          </p>
           <input
             data-testid="power"
             max="100"
@@ -75,7 +78,10 @@ exports[`PromarkInputs should render correctly 1`] = `
             addonAfter: 
             ns
           </p>
-          0
+          <p>
+            precision: 
+            0
+          </p>
           <input
             data-testid="pulseWidth"
             max="350"
@@ -100,7 +106,10 @@ exports[`PromarkInputs should render correctly 1`] = `
             addonAfter: 
             kHz
           </p>
-          0
+          <p>
+            precision: 
+            0
+          </p>
           <input
             data-testid="frequency"
             max="4000"
@@ -125,7 +134,10 @@ exports[`PromarkInputs should render correctly 1`] = `
             addonAfter: 
             times
           </p>
-          0
+          <p>
+            precision: 
+            0
+          </p>
           <input
             data-testid="repeat"
             max="100"
@@ -150,7 +162,10 @@ exports[`PromarkInputs should render correctly 1`] = `
             addonAfter: 
             us
           </p>
-          0
+          <p>
+            precision: 
+            0
+          </p>
           <input
             data-testid="dottingTime"
             max="10000"
