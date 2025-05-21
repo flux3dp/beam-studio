@@ -84,7 +84,7 @@ export const framingOptions = {
   },
 } as const;
 
-export const getFramingOptions = (device: IDeviceInfo) => {
+export const getFramingOptions = (device: IDeviceInfo): TFramingType[] => {
   if (promarkModels.has(device.model)) {
     const withRotary = Boolean(beamboxPreference.read('rotary_mode') && getAddOnInfo(device.model).rotary);
 
@@ -260,6 +260,7 @@ const getAreaCheckTask = async (
 
 class FramingTaskManager extends EventEmitter {
   private device: IDeviceInfo;
+  private messageKey: string;
   private addOnInfo: AddOnInfo;
   private isAdor = false;
   private isFcodeV2 = false;
@@ -286,9 +287,10 @@ class FramingTaskManager extends EventEmitter {
   private hasAppliedRedLight = false;
   private initialized = false;
 
-  constructor(device: IDeviceInfo) {
+  constructor(device: IDeviceInfo, messageKey = 'framing-task') {
     super();
     this.device = device;
+    this.messageKey = messageKey;
     this.addOnInfo = getAddOnInfo(this.device.model);
     this.resetEnabledInfo();
     this.vc = versionChecker(device.version);
@@ -347,7 +349,7 @@ class FramingTaskManager extends EventEmitter {
     }
 
     if (!this.hasAppliedRedLight) {
-      this.emit('message', i18n.lang.message.connecting);
+      this.showMessage(i18n.lang.message.connecting);
 
       const { field, galvoParameters, redDot } = promarkDataStore.get(this.device?.serial) as PromarkStore;
 
@@ -364,7 +366,7 @@ class FramingTaskManager extends EventEmitter {
 
     await deviceMaster.startFraming([this.taskPoints[0], this.taskPoints[2]], noRotation ? null : this.rotaryInfo);
 
-    setTimeout(() => this.emit('close-message'), 1000);
+    setTimeout(() => this.closeMessage(), 1000);
 
     if (this.rotaryInfo && !noRotation) {
       // No loop, need check finish status
@@ -555,7 +557,7 @@ class FramingTaskManager extends EventEmitter {
 
     const { lang } = i18n;
 
-    this.emit('message', sprintf(lang.message.connectingMachine, this.device.name));
+    this.showMessage(sprintf(lang.message.connectingMachine, this.device.name));
     this.resetEnabledInfo();
     this.curPos = { a: 0, x: 0, y: 0 };
     this.rotaryInfo = getRotaryInfo(this.device.model, true);
@@ -630,11 +632,11 @@ class FramingTaskManager extends EventEmitter {
   private setupTask = async () => {
     const { lang } = i18n;
 
-    this.emit('message', lang.message.enteringRawMode);
+    this.showMessage(lang.message.enteringRawMode);
     await deviceMaster.enterRawMode();
-    this.emit('message', lang.message.exitingRotaryMode);
+    this.showMessage(lang.message.exitingRotaryMode);
     await deviceMaster.rawSetRotary(false);
-    this.emit('message', lang.message.homing);
+    this.showMessage(lang.message.homing);
 
     if (this.isAdor && this.rotaryInfo) {
       await deviceMaster.rawHomeZ();
@@ -656,14 +658,14 @@ class FramingTaskManager extends EventEmitter {
       this.enabledInfo.lineCheckMode = true;
     }
 
-    this.emit('message', lang.message.turningOffFan);
+    this.showMessage(lang.message.turningOffFan);
     await deviceMaster.rawSetFan(false);
-    this.emit('message', lang.message.turningOffAirPump);
+    this.showMessage(lang.message.turningOffAirPump);
     await deviceMaster.rawSetAirPump(false);
 
     if (!this.isAdor) await deviceMaster.rawSetWaterPump(false);
 
-    this.emit('close-message');
+    this.closeMessage();
 
     if (this.rotaryInfo) {
       const { y } = this.rotaryInfo;
@@ -719,12 +721,17 @@ class FramingTaskManager extends EventEmitter {
   };
 
   public destroy = async () => {
-    if (!this.jobOrigin && this.initialized) {
+    await this.stopFraming();
+
+    if (!this.jobOrigin && this.initialized && !this.isPromark) {
       if (deviceMaster.currentControlMode !== 'raw') await deviceMaster.enterRawMode();
 
       await deviceMaster.rawLooseMotor();
       await deviceMaster.endSubTask();
     }
+
+    this.closeMessage();
+    this.removeAllListeners();
   };
 
   private performTask = async () => {
@@ -793,11 +800,11 @@ class FramingTaskManager extends EventEmitter {
       return;
     }
 
-    this.emit('message', i18n.lang.framing.calculating_task);
+    this.showMessage(i18n.lang.framing.calculating_task);
     this.taskPoints = await this.generateTaskPoints(type);
 
     if (this.taskPoints.length === 0) {
-      this.emit('close-message');
+      this.closeMessage();
       MessageCaller.openMessage({
         content: i18n.lang.topbar.alerts.add_content_first,
         duration: 3,
@@ -837,7 +844,7 @@ class FramingTaskManager extends EventEmitter {
       alertCaller.popUp({ message: `Failed to start framing: ${error}` });
     } finally {
       await this.endTask();
-      this.emit('close-message');
+      this.closeMessage();
       this.changeWorkingStatus(false);
     }
   };
@@ -854,6 +861,15 @@ class FramingTaskManager extends EventEmitter {
     }
 
     this.interrupted = true;
+  };
+
+  private showMessage = (message: string): void => {
+    MessageCaller.closeMessage(this.messageKey);
+    MessageCaller.openMessage({ content: message, key: this.messageKey, level: MessageLevel.LOADING });
+  };
+
+  private closeMessage = (): void => {
+    MessageCaller.closeMessage(this.messageKey);
   };
 }
 

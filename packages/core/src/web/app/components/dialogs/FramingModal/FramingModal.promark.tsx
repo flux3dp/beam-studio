@@ -5,7 +5,6 @@ import { Button, Divider, Flex, Modal, Spin, Tooltip } from 'antd';
 import classNames from 'classnames';
 
 import { handleExportClick } from '@core/app/actions/beambox/export/GoButton/handleExportClick';
-import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import { renderFramingIcon } from '@core/app/icons/framing/FramingIcons';
 import icons from '@core/app/icons/icons';
 import type { TFramingType } from '@core/helpers/device/framing';
@@ -54,19 +53,11 @@ const PromarkFramingModal = ({ device, onClose, startOnOpen = false }: Props): R
   );
 
   useEffect(() => {
-    const key = 'framing.promark';
-
-    manager.current = new FramingTaskManager(device);
-
+    manager.current = new FramingTaskManager(device, 'framing.promark');
     manager.current.on('status-change', setIsFraming);
-    manager.current.on('close-message', () => MessageCaller.closeMessage(key));
-    manager.current.on('message', (content: string) => {
-      MessageCaller.openMessage({ content, key, level: MessageLevel.LOADING });
-    });
 
     return () => {
-      manager.current?.stopFraming();
-      MessageCaller.closeMessage(key);
+      manager.current?.destroy();
     };
   }, [device, manager, setIsFraming]);
 
