@@ -198,10 +198,9 @@ describe('test DocumentSettings', () => {
     expect(mockDiodeBoundaryDrawerHide).toHaveBeenCalledTimes(0);
     expect(mockCreateEventEmitter).toHaveBeenCalledTimes(1);
     expect(mockCreateEventEmitter).toHaveBeenNthCalledWith(1, 'canvas');
-    expect(mockEventEmitter.emit).toHaveBeenCalledTimes(3);
+    expect(mockEventEmitter.emit).toHaveBeenCalledTimes(2);
     expect(mockEventEmitter.emit).toHaveBeenNthCalledWith(1, 'GET_CANVAS_MODE', { mode: 1 });
-    expect(mockEventEmitter.emit).toHaveBeenNthCalledWith(2, 'engrave_dpi', 'high');
-    expect(mockEventEmitter.emit).toHaveBeenNthCalledWith(3, 'document-settings-saved');
+    expect(mockEventEmitter.emit).toHaveBeenNthCalledWith(2, 'document-settings-saved');
     expect(mockUnmount).toHaveBeenCalledTimes(1);
   });
 

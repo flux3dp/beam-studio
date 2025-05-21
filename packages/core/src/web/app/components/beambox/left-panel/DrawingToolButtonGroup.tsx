@@ -35,9 +35,9 @@ type ToolButtonProps = {
   disabled?: boolean;
   icon: React.JSX.Element;
   id: string;
-  isActive?: boolean;
   label?: string;
   onClick: () => void;
+  shouldSetActive?: boolean;
   showBadge?: boolean;
   style?: React.CSSProperties;
 };
@@ -65,9 +65,9 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
     disabled = false,
     icon,
     id,
-    isActive = true,
     label = id,
     onClick,
+    shouldSetActive = true,
     showBadge = false,
     style = undefined,
   }: ToolButtonProps) => (
@@ -78,7 +78,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
       icon={icon}
       id={`left-${id}`}
       onClick={() => {
-        if (isActive) setActiveButton(id);
+        if (shouldSetActive) setActiveButton(id);
 
         svgCanvas?.clearSelection();
         onClick();
@@ -182,7 +182,6 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
           id: 'curve-engrave',
           label: isCurveEngravingDisabled ? lang.global.mode_conflict : tLeftPanel.label.curve_engraving.title,
           onClick: () => curveEngravingModeController.start(),
-          showBadge: false,
         })}
       {hasPassthroughExtension &&
         renderToolButton({
@@ -198,21 +197,21 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         className: styles.beamy,
         icon: <LeftPanelIcons.Beamy />,
         id: 'Beamy',
-        isActive: false,
         onClick: toggleBeamy,
+        shouldSetActive: false,
         style: { color: isChatShown ? '#1890ff' : undefined },
       })}
       {renderToolButton({
         icon: <InstagramOutlined />,
         id: 'Instagram',
-        isActive: false,
         onClick: () => browser.open(getSocialMedia().instagram.link),
+        shouldSetActive: false,
       })}
       {renderToolButton({
         icon: <LeftPanelIcons.DesignMarket />,
         id: 'DesignMarket',
-        isActive: false,
         onClick: () => browser.open(lang.topbar.menu.link.design_market),
+        shouldSetActive: false,
       })}
     </div>
   );

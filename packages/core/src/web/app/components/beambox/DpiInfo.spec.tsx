@@ -6,8 +6,6 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
 import DpiInfo from './DpiInfo';
 
-jest.mock('@core/helpers/useI18n', () => () => ({ beambox: { document_panel: { engrave_dpi: 'Resolution' } } }));
-
 const mockRead = jest.fn();
 
 jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
