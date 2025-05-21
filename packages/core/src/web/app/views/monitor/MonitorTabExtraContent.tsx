@@ -7,7 +7,7 @@ import { MonitorContext } from '@core/app/contexts/MonitorContext';
 
 import styles from './MonitorTabExtraContent.module.scss';
 
-const MonitorTabExtraContent = (): React.JSX.Element => {
+const MonitorTabExtraContent = (): React.ReactNode => {
   const { currentPath, highlightedItem, mode, onDownload, showUploadDialog } = useContext(MonitorContext);
 
   if (mode !== Mode.FILE) {
