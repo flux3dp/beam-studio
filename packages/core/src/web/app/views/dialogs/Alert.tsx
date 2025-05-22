@@ -116,13 +116,13 @@ const Alert = ({ data }: Props): React.JSX.Element => {
       return null;
     }
 
-    const isZHTW = i18n.getActiveLang() === 'zh-tw';
+    const isZhTw = i18n.getActiveLang() === 'zh-tw';
 
     return (
       <div className={styles.links}>
         <Button
           className={styles.link}
-          onClick={() => browser.open(isZHTW ? link.replace('en-us', 'zh-tw') : link)}
+          onClick={() => browser.open(isZhTw ? link.replace('en-us', 'zh-tw') : link)}
           type="link"
         >
           {lang.learn_more}
