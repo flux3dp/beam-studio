@@ -148,7 +148,7 @@ const LaserHead = ({ isAdvanced, onClose }: Props): React.JSX.Element => {
         });
 
         if (doEngraving) {
-          await deviceMaster.doBB2Calibration();
+          await deviceMaster.doBM2Calibration();
         }
 
         progressCaller.update(PROGRESS_ID, { message: tCali.preparing_to_take_picture });
