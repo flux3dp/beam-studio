@@ -253,6 +253,7 @@ class MenuManager extends EventEmitter {
   private deviceMenu?: MenuItem;
   private deviceList: { [uuid: string]: IDeviceInfo };
   private isDevMode: boolean;
+  private reconstructMenu: () => void;
 
   constructor() {
     super();
@@ -290,16 +291,14 @@ class MenuManager extends EventEmitter {
       accountInfo = info;
       this.reconstructMenu();
     });
-  }
 
-  reconstructMenu = () => {
-    const handler = funnel(() => this.constructMenu(), {
+    const reconstructMenuHandler = funnel(() => this.reconstructMenu(), {
       minQuietPeriodMs: 300,
       triggerAt: 'end',
     });
 
-    handler.call();
-  };
+    this.reconstructMenu = () => reconstructMenuHandler.call();
+  }
 
   constructMenu(): void {
     this.appmenu = Menu.buildFromTemplate(this.buildMenuItems(this.onMenuClick));
