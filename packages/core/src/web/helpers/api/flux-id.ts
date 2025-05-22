@@ -74,11 +74,11 @@ const handleErrorMessage = (error: AxiosError) => {
   }
 };
 
-const updateMenu = (info?) => {
+const updateMenu = (info?: { email: string }) => {
   communicator.send('UPDATE_ACCOUNT', info);
 };
 
-const updateUser = (info?, isWebSocialSignIn = false) => {
+const updateUser = (info?: { email: string }, isWebSocialSignIn = false) => {
   if (info) {
     if (!currentUser) {
       updateMenu(info);
@@ -316,8 +316,6 @@ export const init = async (): Promise<void> => {
     signInWithGoogleCode(data);
   });
 
-  if (isWeb() || storage.get('keep-flux-id-login') || storage.get('new-user')) {
-    // If user is new, keep login status after setting machines.
     if (!isWeb()) {
       // Init csrftoken for electron
       const csrfcookies = await cookies.get({
@@ -334,10 +332,6 @@ export const init = async (): Promise<void> => {
     const res = await getInfo(true);
 
     if (res && res.status !== 'ok') {
-      updateMenu();
-    }
-  } else {
-    signOut();
     updateMenu();
   }
 };
