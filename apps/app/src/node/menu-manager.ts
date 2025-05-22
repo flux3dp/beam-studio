@@ -3,6 +3,7 @@ import { EventEmitter } from 'events';
 import type { MenuItemConstructorOptions } from 'electron';
 import { app, ipcMain, Menu, MenuItem, shell } from 'electron';
 import Store from 'electron-store';
+import { Subject } from 'rxjs';
 
 import { adorModels, promarkModels } from '@core/app/actions/beambox/constant';
 import i18n from '@core/helpers/i18n';
@@ -285,41 +286,15 @@ class MenuManager extends EventEmitter {
       }
     });
 
-    ipcMain.on(events.UPDATE_ACCOUNT, (e, info) => {
+    const updateAccountInput$ = new Subject<null | { email: string }>();
+
+    updateAccountInput$.pipe().subscribe((info) => {
       accountInfo = info;
+      this.constructMenu();
+    });
 
-      const item = Menu.getApplicationMenu()?.items.find((i) => i.id === '_account');
-      const accountSubmenu = item?.submenu;
-
-      if (accountSubmenu) {
-        const newMenu = Menu.buildFromTemplate([]);
-        const signoutLabel = info ? `${r.sign_out} (${info.email})` : r.sign_out;
-
-        accountSubmenu.items.forEach((menuitem) => {
-          if (menuitem.id === 'SIGN_IN') {
-            menuitem.visible = !info;
-            newMenu.append(menuitem);
-          } else if (menuitem.id === 'SIGN_OUT') {
-            const newSignOut = new MenuItem({
-              click: menuitem.click as () => void,
-              id: 'SIGN_OUT',
-              label: signoutLabel,
-              visible: !!info,
-            });
-
-            newMenu.append(newSignOut);
-          } else if (menuitem.id === 'MANAGE_ACCOUNT') {
-            menuitem.enabled = !!info;
-            newMenu.append(menuitem);
-          } else {
-            newMenu.append(menuitem);
-          }
-        });
-        delete item.submenu;
-        item.submenu = newMenu;
-      }
-
-      Menu.setApplicationMenu(Menu.getApplicationMenu());
+    ipcMain.on(events.UPDATE_ACCOUNT, (e, info) => {
+      updateAccountInput$.next(info);
     });
   }
 
