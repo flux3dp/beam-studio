@@ -66,9 +66,13 @@ const MonitorControl = ({
 
     const actualTaskTime = await onPlay(isPromark);
 
-    if (isPromark && actualTaskTime !== null) {
-      setUseEstTime(true);
-      setEstimateTaskTime(actualTaskTime);
+    if (isPromark) {
+      if (actualTaskTime) {
+        setUseEstTime(true);
+        setEstimateTaskTime(actualTaskTime);
+      } else {
+        setUseEstTime(false);
+      }
     }
 
     startCountDown();
