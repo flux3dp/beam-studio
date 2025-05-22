@@ -135,12 +135,12 @@ const MonitorTask = ({ device }: Props): React.JSX.Element => {
   /* for Promark framing */
 
   const renderProgress = (): React.ReactNode => {
-    if (isFramingTask || isOnPlaying) return null;
-
     let percent: ProgressProps['percent'] = undefined;
     let status: ProgressProps['status'] = undefined;
 
-    if (uploadProgress !== null) {
+    if (isFramingTask || isOnPlaying) {
+      // Show empty progress bar
+    } else if (uploadProgress !== null) {
       percent = Number(uploadProgress);
     } else if (report && report.st_id !== DeviceConstants.status.IDLE) {
       percent = Math.min(
@@ -158,7 +158,9 @@ const MonitorTask = ({ device }: Props): React.JSX.Element => {
       }
     }
 
-    return percent === undefined ? null : (
+    return percent === undefined ? (
+      <Progress showInfo={false} />
+    ) : (
       <Progress
         percent={percent}
         status={status ?? 'active'}
