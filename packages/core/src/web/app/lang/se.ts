@@ -1595,6 +1595,7 @@ const lang: ILang = {
     minute: 'm',
     monitor: 'ÖVERVAKA',
     NO_RESPONSE: '#905 Fel vid anslutning till huvudkortet. Starta om maskinen.',
+    no_task_info: 'Det finns för närvarande inga uppgifter att visa.',
     pause: 'Pausa',
     prepareRelocate: 'Förbereder flytt',
     processing: 'Bearbetar',

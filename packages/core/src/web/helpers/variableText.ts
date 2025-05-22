@@ -253,7 +253,7 @@ export const removeVariableText = (): (() => void) | null => {
 
 export type VariableTextElemHandler = { extract: () => void; revert: () => void };
 
-export const extractVariableText = (): null | VariableTextElemHandler => {
+export const extractVariableText = (doExtract = true): null | VariableTextElemHandler => {
   if (!hasVariableText()) return null;
 
   const svgcontent = document.getElementById('svgcontent');
@@ -294,7 +294,9 @@ export const extractVariableText = (): null | VariableTextElemHandler => {
     setSvgContent(oldContent);
   };
 
-  extract();
+  if (doExtract) {
+    extract();
+  }
 
   return { extract, revert };
 };

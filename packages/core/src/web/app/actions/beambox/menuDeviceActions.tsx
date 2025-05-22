@@ -2,6 +2,7 @@ import React from 'react';
 
 import Alert from '@core/app/actions/alert-caller';
 import constant, { promarkModels } from '@core/app/actions/beambox/constant';
+import exportFuncs from '@core/app/actions/beambox/export-funcs';
 import Dialog from '@core/app/actions/dialog-caller';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import MonitorController from '@core/app/actions/monitor-controller';
@@ -32,6 +33,7 @@ import DeviceMaster from '@core/helpers/device-master';
 import firmwareUpdater from '@core/helpers/firmware-updater';
 import i18n from '@core/helpers/i18n';
 import { getModulesTranslations } from '@core/helpers/layer-module/layer-module-helper';
+import { extractVariableText } from '@core/helpers/variableText';
 import VersionChecker from '@core/helpers/version-checker';
 import dialog from '@core/implementations/dialog';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
@@ -385,7 +387,19 @@ export default {
     const res = await DeviceMaster.select(device);
 
     if (res.success) {
-      await MonitorController.showMonitor(device, device.st_id <= 0 ? Mode.FILE : Mode.WORKING);
+      const vtElemHandler = extractVariableText(false) ?? undefined;
+      const isPromark = promarkModels.has(device.model);
+      const isIdle = device.st_id <= 0;
+      const previewTask = isIdle && isPromark ? exportFuncs.getCachedPromarkTask(device.serial) : undefined;
+
+      await MonitorController.showMonitor(
+        device,
+        previewTask ? Mode.PREVIEW : isIdle && !isPromark ? Mode.FILE : Mode.WORKING,
+        previewTask,
+        undefined,
+        undefined,
+        vtElemHandler,
+      );
     }
   },
   DOWNLOAD_CALIBRATION_DATA: async (device: IDeviceInfo): Promise<void> => {

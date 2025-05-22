@@ -1595,6 +1595,7 @@ const lang: ILang = {
     minute: 'm',
     monitor: 'MONITOR',
     NO_RESPONSE: '#905 Errore di connessione alla scheda madre.\nRiavvia la macchina.',
+    no_task_info: 'Attualmente non ci sono attività da visualizzare.',
     pause: 'Pausa',
     prepareRelocate: 'Preparazione spostamento',
     processing: 'Elaborazione in corso',

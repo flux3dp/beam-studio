@@ -1595,6 +1595,7 @@ const lang: ILang = {
     minute: 'm',
     monitor: 'MONITOR',
     NO_RESPONSE: 'Erro ao conectar à placa principal. Por favor, reinicie a máquina.',
+    no_task_info: 'Atualmente não há tarefas para exibir.',
     pause: 'Pausar',
     prepareRelocate: 'Preparando para mover localização',
     processing: 'Processando',

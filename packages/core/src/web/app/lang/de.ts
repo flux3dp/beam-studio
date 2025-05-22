@@ -1595,6 +1595,7 @@ const lang: ILang = {
     minute: 'm',
     monitor: 'MONITOR',
     NO_RESPONSE: '#905 Fehler beim Verbinden mit dem Mainboard.\nBitte starte die Maschine neu.',
+    no_task_info: 'Derzeit gibt es keine anzuzeigenden Aufgaben.',
     pause: 'Pause',
     prepareRelocate: 'Vorbereitung für den Umzug',
     processing: 'wird bearbeitet',

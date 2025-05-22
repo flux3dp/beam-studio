@@ -89,6 +89,7 @@ export interface PreviewTask {
   metadata: TaskMetaData;
   taskImageURL: string;
   taskTime: number;
+  vtTaskTime?: number;
 }
 
 export interface VariableTextTask {
@@ -169,12 +170,14 @@ export class MonitorContextProvider extends React.Component<Props, State> {
 
   isClosed: boolean; // for swiftray handler
 
+  isPromark: boolean;
+
   autoStart?: boolean;
 
   constructor(props: Props) {
     super(props);
 
-    const { autoStart, mode, previewTask, vtTaskTinfo } = props;
+    const { autoStart, device, mode, previewTask, vtTaskTinfo } = props;
     const isPreviewingTask = mode === Mode.PREVIEW && previewTask;
 
     updateLang();
@@ -184,6 +187,7 @@ export class MonitorContextProvider extends React.Component<Props, State> {
     this.modeBeforeRelocate = mode;
     this.isClosed = false;
     this.autoStart = autoStart;
+    this.isPromark = promarkModels.has(device.model);
     this.state = {
       currentPath: [],
       currentPosition: { x: 0, y: 0 },
@@ -256,7 +260,7 @@ export class MonitorContextProvider extends React.Component<Props, State> {
     const { mode } = this.state;
     const { device } = this.props;
 
-    if (promarkModels.has(device.model)) {
+    if (this.isPromark) {
       swiftrayClient.on('disconnected', this.onSwiftrayDisconnected);
     }
 
@@ -266,8 +270,12 @@ export class MonitorContextProvider extends React.Component<Props, State> {
 
         if (cachedTask) {
           this.setState({
-            taskImageURL: cachedTask.url,
-            taskTime: cachedTask.timeCost,
+            previewTask: cachedTask,
+            taskImageURL: cachedTask.taskImageURL,
+            taskTime: cachedTask.taskTime,
+            totalTaskTime: cachedTask.vtTaskTime
+              ? cachedTask.vtTaskTime + 4 + cachedTask.taskTime
+              : cachedTask.taskTime,
           });
         }
       } else {
@@ -282,6 +290,7 @@ export class MonitorContextProvider extends React.Component<Props, State> {
         this.setState({
           taskImageURL,
           taskTime,
+          totalTaskTime: taskTime,
           workingTask: taskInfo,
         });
       }
@@ -472,7 +481,7 @@ export class MonitorContextProvider extends React.Component<Props, State> {
             console.log('to work mode');
             this.enterWorkingMode();
           }
-        } else if (report.st_id === IDLE) {
+        } else if (report.st_id === IDLE && !this.isPromark) {
           if (mode === Mode.WORKING || (mode === Mode.CAMERA && this.modeBeforeCamera === Mode.WORKING)) {
             this.exitWorkingMode();
           }
@@ -683,12 +692,14 @@ export class MonitorContextProvider extends React.Component<Props, State> {
         mode: Mode.WORKING,
         taskImageURL,
         taskTime,
+        totalTaskTime: taskTime ?? 0,
       });
     } else {
       this.setState({
         mode: Mode.WORKING,
         taskImageURL: task.taskImageURL,
         taskTime: task.taskTime,
+        totalTaskTime: task.taskTime,
       });
     }
   };
@@ -703,6 +714,7 @@ export class MonitorContextProvider extends React.Component<Props, State> {
         mode: mode === Mode.CAMERA ? Mode.CAMERA : Mode.PREVIEW,
         taskImageURL: previewTask.taskImageURL,
         taskTime: previewTask.taskTime,
+        totalTaskTime: previewTask.taskTime,
       });
       this.modeBeforeCamera = Mode.PREVIEW;
     } else if (fileInfo) {
@@ -713,6 +725,7 @@ export class MonitorContextProvider extends React.Component<Props, State> {
         mode: mode === Mode.CAMERA ? Mode.CAMERA : Mode.FILE_PREVIEW,
         taskImageURL,
         taskTime,
+        totalTaskTime: taskTime,
       });
       this.modeBeforeCamera = Mode.FILE_PREVIEW;
     } else {
@@ -857,6 +870,7 @@ export class MonitorContextProvider extends React.Component<Props, State> {
       mode: Mode.FILE_PREVIEW,
       taskImageURL,
       taskTime,
+      totalTaskTime: taskTime,
     });
   };
 

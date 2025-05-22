@@ -1595,6 +1595,7 @@ const lang: ILang = {
     minute: 'm',
     monitor: 'MONITOR',
     NO_RESPONSE: '#905 Error al conectarse a la placa principal.\nPor favor, reinicia la máquina.',
+    no_task_info: 'Actualmente no hay tareas para mostrar.',
     pause: 'Pausar',
     prepareRelocate: 'Preparándose para la reubicación',
     processing: 'Procesando',

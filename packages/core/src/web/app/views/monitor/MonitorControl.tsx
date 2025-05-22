@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef } from 'react';
 
-import { PauseCircleFilled, PlayCircleFilled, StopFilled } from '@ant-design/icons';
+import { LoadingOutlined, PauseCircleFilled, PlayCircleFilled, StopFilled } from '@ant-design/icons';
 import { Button, Space } from 'antd';
 
 import DeviceConstants from '@core/app/constants/device-constants';
@@ -14,18 +14,32 @@ import useI18n from '@core/helpers/useI18n';
 interface Props {
   handleFramingStop?: () => Promise<void>;
   isFraming: boolean;
+  isFramingTask: boolean;
+  isOnPlaying: boolean;
   isPromark: boolean;
   setEstimateTaskTime: React.Dispatch<React.SetStateAction<number>>;
+  setIsFramingTask: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsOnPlaying: React.Dispatch<React.SetStateAction<boolean>>;
+  setUseEstTime: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const MonitorControl = ({ handleFramingStop, isFraming, isPromark, setEstimateTaskTime }: Props): ReactNode => {
+const MonitorControl = ({
+  handleFramingStop,
+  isFraming,
+  isFramingTask,
+  isOnPlaying,
+  isPromark,
+  setEstimateTaskTime,
+  setIsFramingTask,
+  setIsOnPlaying,
+  setUseEstTime,
+}: Props): ReactNode => {
   const { monitor: tMonitor } = useI18n();
   const isMobile = useIsMobile();
   const buttonShape = isMobile ? 'round' : 'default';
   const { mode, onPause, onPlay, onStop, report, totalTaskTime } = useContext(MonitorContext);
   const estimateTaskTimeTimer = useRef<NodeJS.Timeout | null>(null);
   const onPlayingTimer = useRef<NodeJS.Timeout | null>(null);
-  const [isOnPlaying, setIsOnPlaying] = useState(false);
 
   const stopCountDown = () => {
     if (estimateTaskTimeTimer.current) {
@@ -43,17 +57,17 @@ const MonitorControl = ({ handleFramingStop, isFraming, isPromark, setEstimateTa
 
   const triggerOnPlay = async () => {
     setIsOnPlaying(true);
+    setIsFramingTask(false);
 
     if (isFraming) {
       await handleFramingStop?.();
       await new Promise((resolve) => setTimeout(resolve, 500));
     }
 
-    // force resend framing and normal task after abortion in Promark
-    const resend = isPromark && report.st_id !== DeviceConstants.status.PAUSED_FROM_RUNNING;
-    const actualTaskTime = await onPlay(resend);
+    const actualTaskTime = await onPlay(isPromark);
 
-    if (resend && actualTaskTime !== null) {
+    if (isPromark && actualTaskTime !== null) {
+      setUseEstTime(true);
       setEstimateTaskTime(actualTaskTime);
     }
 
@@ -61,6 +75,11 @@ const MonitorControl = ({ handleFramingStop, isFraming, isPromark, setEstimateTa
     onPlayingTimer.current = setTimeout(() => {
       setIsOnPlaying(false);
     }, 5000);
+  };
+
+  const triggerResume = async () => {
+    await onPlay();
+    startCountDown();
   };
 
   const mapButtonTypeToElement = (type: ButtonTypes): ReactNode => {
@@ -87,7 +106,7 @@ const MonitorControl = ({ handleFramingStop, isFraming, isPromark, setEstimateTa
           <Button
             disabled={!enabled || isOnPlaying}
             key={type}
-            onClick={triggerOnPlay}
+            onClick={triggerResume}
             shape={buttonShape}
             type="primary"
           >
@@ -134,7 +153,7 @@ const MonitorControl = ({ handleFramingStop, isFraming, isPromark, setEstimateTa
     }
   };
 
-  const canStart = report?.st_id === DeviceConstants.status.IDLE || isFraming;
+  const canStart = report?.st_id === DeviceConstants.status.IDLE || isFramingTask;
 
   useEffect(() => {
     // Fixme: when task code is too long, Promark working status may not updated in time
@@ -145,7 +164,7 @@ const MonitorControl = ({ handleFramingStop, isFraming, isPromark, setEstimateTa
         clearTimeout(onPlayingTimer.current);
       }
     }
-  }, [isOnPlaying, report, isFraming]);
+  }, [isOnPlaying, report, isFraming, setIsOnPlaying]);
 
   useEffect(() => {
     if (!isPromark) return;
@@ -166,11 +185,11 @@ const MonitorControl = ({ handleFramingStop, isFraming, isPromark, setEstimateTa
     }
   }, [report, isOnPlaying, setEstimateTaskTime, totalTaskTime, startCountDown, isPromark]);
 
-  if (mode === Mode.PREVIEW || mode === Mode.FILE_PREVIEW || isFraming) {
+  if (mode === Mode.PREVIEW || mode === Mode.FILE_PREVIEW || isFramingTask || isOnPlaying) {
     return (
       <Space>
         <Button disabled={!canStart || isOnPlaying} onClick={triggerOnPlay} shape={buttonShape} type="primary">
-          <PlayCircleFilled />
+          {isOnPlaying ? <LoadingOutlined spin /> : <PlayCircleFilled />}
           {tMonitor.go}
         </Button>
       </Space>

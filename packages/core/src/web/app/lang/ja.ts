@@ -1595,6 +1595,7 @@ const lang: ILang = {
     minute: 'm',
     monitor: 'モニター',
     NO_RESPONSE: '#905 メインボードへの接続中にエラーが発生しました。\nマシンを再起動してください。',
+    no_task_info: '現在表示できるタスクはありません。',
     pause: '一時停止',
     prepareRelocate: '再配置の準備',
     processing: '処理中',

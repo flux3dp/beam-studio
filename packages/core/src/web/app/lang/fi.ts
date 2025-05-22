@@ -1595,6 +1595,7 @@ const lang: ILang = {
     minute: 'min',
     monitor: 'MONITORI',
     NO_RESPONSE: '#905 Virhe yhdistettäessä pääkorttiin.\nKäynnistä uudelleen.',
+    no_task_info: 'Näytettäviä tehtäviä ei tällä hetkellä ole.',
     pause: 'Keskeytä',
     prepareRelocate: 'Valmistaudutaan siirtämään',
     processing: 'Käsitellään',

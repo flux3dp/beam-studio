@@ -1595,6 +1595,7 @@ const lang: ILang = {
     minute: 'm',
     monitor: 'MONITOR',
     NO_RESPONSE: '#905 Błąd podczas łączenia z płytą główną. Proszę ponownie uruchomić maszynę.',
+    no_task_info: 'Obecnie brak zadań do wyświetlenia.',
     pause: 'Wstrzymaj',
     prepareRelocate: 'Przygotowanie do przeniesienia',
     processing: 'Przetwarzanie',

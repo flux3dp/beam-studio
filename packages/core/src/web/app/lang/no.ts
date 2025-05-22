@@ -1595,6 +1595,7 @@ const lang: ILang = {
     minute: 'm',
     monitor: 'OVERVÅK',
     NO_RESPONSE: '#905 Feil ved tilkobling til hovedkort. Vennligst start maskinen på nytt.',
+    no_task_info: 'Ingen oppgaver å vise for øyeblikket.',
     pause: 'Pause',
     prepareRelocate: 'Forbereder for flytting',
     processing: 'Behandler',

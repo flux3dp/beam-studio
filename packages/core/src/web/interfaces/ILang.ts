@@ -1586,6 +1586,7 @@ export interface ILang {
     minute: string;
     monitor: string;
     NO_RESPONSE: string;
+    no_task_info: string;
     pause: string;
     prepareRelocate: string;
     processing: string;

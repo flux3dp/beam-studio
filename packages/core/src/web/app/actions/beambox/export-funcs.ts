@@ -431,7 +431,7 @@ export const getConvertEngine = (targetDevice?: IDeviceInfo) => {
   return { convertEngine, useSwiftray };
 };
 
-const promarkTaskCache: Record<string, { timeCost: number; url: string }> = {};
+const promarkTaskCache: Record<string, PreviewTask> = {};
 
 export default {
   estimateTime: async (): Promise<number> => {
@@ -485,7 +485,7 @@ export default {
 
     return { fcodeBlob, fileTimeCost: fileTimeCost ?? 0 };
   },
-  getCachedPromarkTask: (serial: string): { timeCost: number; url: string } => promarkTaskCache[serial],
+  getCachedPromarkTask: (serial: string): PreviewTask | undefined => promarkTaskCache[serial],
   getFastGradientGcode: async (): Promise<Blob | null> => {
     const { convertEngine } = getConvertEngine();
     const res = await convertEngine(null, { fgGcode: true, output: 'gcode' });
@@ -561,8 +561,12 @@ export default {
 
       if (promarkModels.has(device.model)) {
         promarkTaskCache[device.serial] = {
-          timeCost: fileTimeCost,
-          url: thumbnail,
+          fcodeBlob: taskCodeBlob,
+          fileName: '',
+          metadata,
+          taskImageURL: thumbnail,
+          taskTime: fileTimeCost,
+          vtTaskTime: vtTaskTinfo?.fileTimeCost,
         };
       }
 
