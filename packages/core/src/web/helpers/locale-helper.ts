@@ -43,6 +43,14 @@ const detectJp = detectLocale(
 );
 const isJp = detectJp();
 
+// Korea
+const detectKr = detectLocale(
+  (schema) => schema.region === 'KR' || schema.language === 'ko',
+  // UTC+9 timezone
+  (timezoneOffset) => timezoneOffset === -540,
+);
+const isKr = detectKr();
+
 // Palestine
 const detectPs = detectLocale(
   (schema) => schema.region === 'PS' || schema.language === 'ar',
@@ -66,6 +74,8 @@ const getRegion = () => {
     return { checkTimezone: true, region: 'TWHK' };
   } else if (isJp) {
     return { checkTimezone: true, region: 'JP' };
+  } else if (isKr) {
+    return { checkTimezone: true, region: 'KR' };
   } else if (isPs) {
     return { checkTimezone: true, region: 'PS' };
   } else if (isMy) {
@@ -88,12 +98,14 @@ const getRegion = () => {
 
 export default {
   detectJp,
+  detectKr,
   detectMy,
   detectNorthAmerica,
   detectPs,
   detectTwOrHk,
   getRegion,
   isJp,
+  isKr,
   isMy,
   isNorthAmerica,
   isPs,
