@@ -3,7 +3,7 @@ import { EventEmitter } from 'events';
 import type { MenuItemConstructorOptions } from 'electron';
 import { app, ipcMain, Menu, MenuItem, shell } from 'electron';
 import Store from 'electron-store';
-import { Subject } from 'rxjs';
+import { funnel } from 'remeda';
 
 import { adorModels, promarkModels } from '@core/app/actions/beambox/constant';
 import i18n from '@core/helpers/i18n';
@@ -282,21 +282,24 @@ class MenuManager extends EventEmitter {
       this.isDevMode = isDevMode;
 
       if (hasChanged && this.deviceMenu?.submenu) {
-        this.constructMenu();
+        this.reconstructMenu();
       }
     });
 
-    const updateAccountInput$ = new Subject<null | { email: string }>();
-
-    updateAccountInput$.pipe().subscribe((info) => {
-      accountInfo = info;
-      this.constructMenu();
-    });
-
     ipcMain.on(events.UPDATE_ACCOUNT, (e, info) => {
-      updateAccountInput$.next(info);
+      accountInfo = info;
+      this.reconstructMenu();
     });
   }
+
+  reconstructMenu = () => {
+    const handler = funnel(() => this.constructMenu(), {
+      minQuietPeriodMs: 1000,
+      triggerAt: 'end',
+    });
+
+    handler.call();
+  };
 
   constructMenu(): void {
     this.appmenu = Menu.buildFromTemplate(this.buildMenuItems(this.onMenuClick));
