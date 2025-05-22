@@ -265,7 +265,7 @@ export class MonitorContextProvider extends React.Component<Props, State> {
     }
 
     if (mode === Mode.WORKING) {
-      if (promarkModels.has(device.model)) {
+      if (this.isPromark) {
         const cachedTask = exportFuncs.getCachedPromarkTask(device.serial);
 
         if (cachedTask) {
