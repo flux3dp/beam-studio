@@ -12,7 +12,7 @@ import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
 interface Props {
-  handleFramingStop?: () => Promise<void>;
+  handleFramingStop: () => Promise<void>;
   isFraming: boolean;
   isFramingTask: boolean;
   isOnPlaying: boolean;
@@ -60,7 +60,7 @@ const MonitorControl = ({
     setIsFramingTask(false);
 
     if (isFraming) {
-      await handleFramingStop?.();
+      await handleFramingStop();
       await new Promise((resolve) => setTimeout(resolve, 500));
     }
 

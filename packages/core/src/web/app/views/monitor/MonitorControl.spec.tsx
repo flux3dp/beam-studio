@@ -41,7 +41,17 @@ describe('test MonitorControl', () => {
             } as any
           }
         >
-          <MonitorControl isFraming={false} isPromark={false} setEstimateTaskTime={() => {}} />
+          <MonitorControl
+            handleFramingStop={jest.fn()}
+            isFraming={false}
+            isFramingTask={false}
+            isOnPlaying={false}
+            isPromark={false}
+            setEstimateTaskTime={jest.fn()}
+            setIsFramingTask={jest.fn()}
+            setIsOnPlaying={jest.fn()}
+            setUseEstTime={jest.fn()}
+          />
         </MonitorContext.Provider>,
       );
 
@@ -61,7 +71,17 @@ describe('test MonitorControl', () => {
             } as any
           }
         >
-          <MonitorControl isFraming={false} isPromark={false} setEstimateTaskTime={() => {}} />
+          <MonitorControl
+            handleFramingStop={jest.fn()}
+            isFraming={false}
+            isFramingTask={false}
+            isOnPlaying={false}
+            isPromark={false}
+            setEstimateTaskTime={jest.fn()}
+            setIsFramingTask={jest.fn()}
+            setIsOnPlaying={jest.fn()}
+            setUseEstTime={jest.fn()}
+          />
         </MonitorContext.Provider>,
       );
 
@@ -79,7 +99,17 @@ describe('test MonitorControl', () => {
             } as any
           }
         >
-          <MonitorControl isFraming={false} isPromark={false} setEstimateTaskTime={() => {}} />
+          <MonitorControl
+            handleFramingStop={jest.fn()}
+            isFraming={false}
+            isFramingTask={false}
+            isOnPlaying={false}
+            isPromark={false}
+            setEstimateTaskTime={jest.fn()}
+            setIsFramingTask={jest.fn()}
+            setIsOnPlaying={jest.fn()}
+            setUseEstTime={jest.fn()}
+          />
         </MonitorContext.Provider>,
       );
       expect(container).toMatchSnapshot();
@@ -96,7 +126,17 @@ describe('test MonitorControl', () => {
             } as any
           }
         >
-          <MonitorControl isFraming={false} isPromark={false} setEstimateTaskTime={() => {}} />
+          <MonitorControl
+            handleFramingStop={jest.fn()}
+            isFraming={false}
+            isFramingTask={false}
+            isOnPlaying={false}
+            isPromark={false}
+            setEstimateTaskTime={jest.fn()}
+            setIsFramingTask={jest.fn()}
+            setIsOnPlaying={jest.fn()}
+            setUseEstTime={jest.fn()}
+          />
         </MonitorContext.Provider>,
       );
       expect(container).toMatchSnapshot();
@@ -118,7 +158,17 @@ describe('test MonitorControl', () => {
             } as any
           }
         >
-          <MonitorControl isFraming={false} isPromark={false} setEstimateTaskTime={() => {}} />
+          <MonitorControl
+            handleFramingStop={jest.fn()}
+            isFraming={false}
+            isFramingTask={false}
+            isOnPlaying={false}
+            isPromark={false}
+            setEstimateTaskTime={jest.fn()}
+            setIsFramingTask={jest.fn()}
+            setIsOnPlaying={jest.fn()}
+            setUseEstTime={jest.fn()}
+          />
         </MonitorContext.Provider>,
       );
 
@@ -138,7 +188,17 @@ describe('test MonitorControl', () => {
             } as any
           }
         >
-          <MonitorControl isFraming={false} isPromark={false} setEstimateTaskTime={() => {}} />
+          <MonitorControl
+            handleFramingStop={jest.fn()}
+            isFraming={false}
+            isFramingTask={false}
+            isOnPlaying={false}
+            isPromark={false}
+            setEstimateTaskTime={jest.fn()}
+            setIsFramingTask={jest.fn()}
+            setIsOnPlaying={jest.fn()}
+            setUseEstTime={jest.fn()}
+          />
         </MonitorContext.Provider>,
       );
 
@@ -156,7 +216,17 @@ describe('test MonitorControl', () => {
             } as any
           }
         >
-          <MonitorControl isFraming={false} isPromark={false} setEstimateTaskTime={() => {}} />
+          <MonitorControl
+            handleFramingStop={jest.fn()}
+            isFraming={false}
+            isFramingTask={false}
+            isOnPlaying={false}
+            isPromark={false}
+            setEstimateTaskTime={jest.fn()}
+            setIsFramingTask={jest.fn()}
+            setIsOnPlaying={jest.fn()}
+            setUseEstTime={jest.fn()}
+          />
         </MonitorContext.Provider>,
       );
       expect(container).toMatchSnapshot();
@@ -173,7 +243,17 @@ describe('test MonitorControl', () => {
             } as any
           }
         >
-          <MonitorControl isFraming={false} isPromark={false} setEstimateTaskTime={() => {}} />
+          <MonitorControl
+            handleFramingStop={jest.fn()}
+            isFraming={false}
+            isFramingTask={false}
+            isOnPlaying={false}
+            isPromark={false}
+            setEstimateTaskTime={jest.fn()}
+            setIsFramingTask={jest.fn()}
+            setIsOnPlaying={jest.fn()}
+            setUseEstTime={jest.fn()}
+          />
         </MonitorContext.Provider>,
       );
       expect(container).toMatchSnapshot();
@@ -193,13 +273,23 @@ describe('test MonitorControl', () => {
           } as any
         }
       >
-        <MonitorControl isFraming={false} isPromark={false} setEstimateTaskTime={() => {}} />
+        <MonitorControl
+          handleFramingStop={jest.fn()}
+          isFraming={false}
+          isFramingTask={false}
+          isOnPlaying={false}
+          isPromark={false}
+          setEstimateTaskTime={jest.fn()}
+          setIsFramingTask={jest.fn()}
+          setIsOnPlaying={jest.fn()}
+          setUseEstTime={jest.fn()}
+        />
       </MonitorContext.Provider>,
     );
 
-    expect(onPlay).not.toBeCalled();
+    expect(onPlay).not.toHaveBeenCalled();
     fireEvent.click(getByText('Start'));
-    expect(onPlay).toBeCalledTimes(1);
+    expect(onPlay).toHaveBeenCalledTimes(1);
   });
 
   test('pause and stop in working mode', () => {
@@ -215,16 +305,26 @@ describe('test MonitorControl', () => {
           } as any
         }
       >
-        <MonitorControl isFraming={false} isPromark={false} setEstimateTaskTime={() => {}} />
+        <MonitorControl
+          handleFramingStop={jest.fn()}
+          isFraming={false}
+          isFramingTask={false}
+          isOnPlaying={false}
+          isPromark={false}
+          setEstimateTaskTime={jest.fn()}
+          setIsFramingTask={jest.fn()}
+          setIsOnPlaying={jest.fn()}
+          setUseEstTime={jest.fn()}
+        />
       </MonitorContext.Provider>,
     );
 
-    expect(onPause).not.toBeCalled();
+    expect(onPause).not.toHaveBeenCalled();
     fireEvent.click(getByText('Pause'));
-    expect(onPause).toBeCalledTimes(1);
+    expect(onPause).toHaveBeenCalledTimes(1);
 
-    expect(onStop).not.toBeCalled();
+    expect(onStop).not.toHaveBeenCalled();
     fireEvent.click(getByText('Stop'));
-    expect(onStop).toBeCalledTimes(1);
+    expect(onStop).toHaveBeenCalledTimes(1);
   });
 });
