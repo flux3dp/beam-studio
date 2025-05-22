@@ -335,22 +335,22 @@ export const init = async (): Promise<void> => {
     signInWithGoogleCode(data);
   });
 
-    if (!isWeb()) {
-      // Init csrftoken for electron
-      const csrfcookies = await cookies.get({
-        domain: FLUXID_DOMAIN,
-        name: 'csrftoken',
-      });
+  if (!isWeb()) {
+    // Init csrftoken for electron
+    const csrfcookies = await cookies.get({
+      domain: FLUXID_DOMAIN,
+      name: 'csrftoken',
+    });
 
-      if (csrfcookies.length > 0) {
-        // Should be unique
-        setHeaders(csrfcookies[0].value);
-      }
+    if (csrfcookies.length > 0) {
+      // Should be unique
+      setHeaders(csrfcookies[0].value);
     }
+  }
 
   const res = await getInfo({ sendToOtherTabs: false, silent: true });
 
-    if (res && res.status !== 'ok') {
+  if (res && res.status !== 'ok') {
     updateMenu();
   }
 };
