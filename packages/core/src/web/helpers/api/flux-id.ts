@@ -88,7 +88,8 @@ const updateUser = (
 ) => {
   if (info) {
     if (!currentUser) {
-      updateMenu(info);
+      if (sendToOtherTabs) updateMenu(info);
+
       currentUser = {
         email: info.email,
         info,
@@ -104,7 +105,7 @@ const updateUser = (
         );
       }
     } else {
-      if (currentUser.email !== info.email) {
+      if (currentUser.email !== info.email && sendToOtherTabs) {
         updateMenu(info);
       }
 
@@ -115,7 +116,8 @@ const updateUser = (
   } else {
     if (currentUser) {
       currentUser = null;
-      updateMenu();
+
+      if (sendToOtherTabs) updateMenu();
     }
 
     fluxIDEvents.emit('update-user', null);
