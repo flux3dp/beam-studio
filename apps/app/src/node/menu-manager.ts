@@ -261,6 +261,13 @@ class MenuManager extends EventEmitter {
     this.constructMenu();
     this.isDevMode = false;
 
+    const reconstructMenuHandler = funnel(() => this.constructMenu(), {
+      minQuietPeriodMs: 300,
+      triggerAt: 'end',
+    });
+
+    this.reconstructMenu = () => reconstructMenuHandler.call();
+
     ipcMain.on(events.NOTIFY_LANGUAGE, () => {
       const language = (store.get('active-lang') as string) || 'en';
 
@@ -291,13 +298,6 @@ class MenuManager extends EventEmitter {
       accountInfo = info;
       this.reconstructMenu();
     });
-
-    const reconstructMenuHandler = funnel(() => this.reconstructMenu(), {
-      minQuietPeriodMs: 300,
-      triggerAt: 'end',
-    });
-
-    this.reconstructMenu = () => reconstructMenuHandler.call();
   }
 
   constructMenu(): void {
