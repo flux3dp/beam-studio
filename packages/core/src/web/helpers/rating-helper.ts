@@ -40,7 +40,7 @@ const setVoted = (score: number): void => {
     version: window['FLUX'].version,
   });
 
-  getInfo(true).then((response) => {
+  getInfo({ silent: true }).then((response) => {
     if (response && response.status === 'ok') {
       submitRating({
         app: 'Beam Studio',

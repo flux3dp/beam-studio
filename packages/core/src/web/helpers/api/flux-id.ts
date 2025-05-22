@@ -3,6 +3,7 @@ import axios from 'axios';
 
 import alert from '@core/app/actions/alert-caller';
 import progress from '@core/app/actions/progress-caller';
+import { TabEvents } from '@core/app/constants/tabConstants';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
@@ -49,7 +50,7 @@ export const axiosFluxId = axios.create({
   timeout: 10000,
 });
 
-let currentUser: IUser = null;
+let currentUser: IUser | null = null;
 
 axiosFluxId.interceptors.response.use(
   (response) => response,
@@ -74,11 +75,17 @@ const handleErrorMessage = (error: AxiosError) => {
   }
 };
 
-const updateMenu = (info?: { email: string }) => {
+const updateMenu = (info?: IUser) => {
   communicator.send('UPDATE_ACCOUNT', info);
 };
 
-const updateUser = (info?: { email: string }, isWebSocialSignIn = false) => {
+const updateUser = (
+  info?: IUser,
+  {
+    isWebSocialSignIn = false,
+    sendToOtherTabs = true,
+  }: { isWebSocialSignIn?: boolean; sendToOtherTabs?: boolean } = {},
+) => {
   if (info) {
     if (!currentUser) {
       updateMenu(info);
@@ -113,16 +120,22 @@ const updateUser = (info?: { email: string }, isWebSocialSignIn = false) => {
 
     fluxIDEvents.emit('update-user', null);
   }
+
+  if (sendToOtherTabs) communicator.send(TabEvents.UpdateUser, currentUser);
 };
+
+communicator.on(TabEvents.UpdateUser, (_: Event, user: IUser) => {
+  updateUser(user, { sendToOtherTabs: false });
+});
 
 window.addEventListener('update-user', (e: CustomEvent) => {
   currentUser = e.detail.user;
 });
 
-export const getCurrentUser = (): IUser => currentUser;
+export const getCurrentUser = (): IUser | null => currentUser;
 
-const handleOAuthLoginSuccess = (data) => {
-  updateUser(data, true);
+const handleOAuthLoginSuccess = (data: IUser) => {
+  updateUser(data, { isWebSocialSignIn: true });
   fluxIDEvents.emit('oauth-logged-in');
   storage.set('keep-flux-id-login', true);
 
@@ -131,7 +144,11 @@ const handleOAuthLoginSuccess = (data) => {
   }
 };
 
-export const getInfo = async (silent = false, isWebSocialSignIn = false) => {
+export const getInfo = async ({
+  isWebSocialSignIn = false,
+  sendToOtherTabs = true,
+  silent = false,
+}: { isWebSocialSignIn?: boolean; sendToOtherTabs?: boolean; silent?: boolean } = {}) => {
   const response = (await axiosFluxId.get('/user/info?query=credits', {
     withCredentials: true,
   })) as ResponseWithError;
@@ -148,7 +165,7 @@ export const getInfo = async (silent = false, isWebSocialSignIn = false) => {
 
   if (response.status === 200) {
     if (responseData.status === 'ok') {
-      updateUser(responseData, isWebSocialSignIn);
+      updateUser(responseData, { isWebSocialSignIn, sendToOtherTabs });
     }
 
     return responseData;
@@ -218,7 +235,7 @@ export const signInWithFBToken = async (fb_token: string): Promise<boolean> => {
 
   if (data.status === 'ok') {
     handleOAuthLoginSuccess(data);
-    await getInfo(true, true);
+    await getInfo({ isWebSocialSignIn: true, silent: true });
 
     return true;
   }
@@ -259,7 +276,7 @@ export const signInWithGoogleCode = async (info: { [key: string]: string }): Pro
 
   if (responseData.status === 'ok') {
     handleOAuthLoginSuccess(responseData);
-    await getInfo(true, true);
+    await getInfo({ isWebSocialSignIn: true, silent: true });
 
     return true;
   }
@@ -304,13 +321,13 @@ export const init = async (): Promise<void> => {
     });
   }
 
-  communicator.on('FB_AUTH_TOKEN', (e, dataString: string) => {
+  communicator.on('FB_AUTH_TOKEN', (_: Event, dataString: string) => {
     const data = parseQueryData(dataString);
     const token = data.access_token;
 
     signInWithFBToken(token);
   });
-  communicator.on('GOOGLE_AUTH', (e, dataString: string) => {
+  communicator.on('GOOGLE_AUTH', (e: Event, dataString: string) => {
     const data = parseQueryData(dataString);
 
     signInWithGoogleCode(data);
@@ -329,7 +346,7 @@ export const init = async (): Promise<void> => {
       }
     }
 
-    const res = await getInfo(true);
+  const res = await getInfo({ sendToOtherTabs: false, silent: true });
 
     if (res && res.status !== 'ok') {
     updateMenu();
@@ -373,7 +390,7 @@ export const signIn = async (signInData: { email: string; expires_session?: bool
 
     if (data.status === 'ok') {
       updateUser({ email: data.email });
-      await getInfo(true);
+      await getInfo({ silent: true });
     }
 
     return data;

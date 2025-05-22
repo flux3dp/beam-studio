@@ -10,6 +10,7 @@ export enum TabEvents {
   TabBlurred = 'tab-blurred',
   TabFocused = 'tab-focused',
   TabUpdated = 'tab-updated',
+  UpdateUser = 'update-user',
 }
 
 export default {
