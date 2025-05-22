@@ -97,7 +97,7 @@ export const SvgEditor = (): ReactNode => {
                 overflow: 'hidden',
                 padding: '0px',
               },
-              wrapper: { backgroundColor: '#1890FF', boxShadow: 'none' },
+              wrapper: { backgroundColor: 'transparent', boxShadow: 'none' },
             }}
             width={width}
           >
