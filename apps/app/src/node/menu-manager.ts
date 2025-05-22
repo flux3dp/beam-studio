@@ -294,7 +294,7 @@ class MenuManager extends EventEmitter {
 
   reconstructMenu = () => {
     const handler = funnel(() => this.constructMenu(), {
-      minQuietPeriodMs: 1000,
+      minQuietPeriodMs: 300,
       triggerAt: 'end',
     });
 
