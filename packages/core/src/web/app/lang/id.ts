@@ -1595,6 +1595,7 @@ const lang: ILang = {
     minute: 'm',
     monitor: 'MONITOR',
     NO_RESPONSE: '#905 Kesalahan saat menyambung ke papan utama.\nHarap mulai ulang mesin.',
+    no_task_info: 'Saat ini tidak ada tugas yang dapat ditampilkan.',
     pause: 'Jeda',
     prepareRelocate: 'Persiapan untuk Pindah',
     processing: 'Memproses',

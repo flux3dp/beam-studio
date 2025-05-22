@@ -1595,6 +1595,7 @@ const lang: ILang = {
     minute: 'min',
     monitor: 'SURVEILLER',
     NO_RESPONSE: '#905 Erreur de connexion à la carte mère.\\nVeuillez redémarrer la machine.',
+    no_task_info: 'Aucune tâche à afficher pour le moment.',
     pause: 'Mettre en pause',
     prepareRelocate: 'Préparation pour repositionnement',
     processing: 'Traitement en cours',

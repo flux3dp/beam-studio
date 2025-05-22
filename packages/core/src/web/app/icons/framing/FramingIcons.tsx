@@ -1,5 +1,6 @@
-import type { ReactNode } from 'react';
+import React from 'react';
 
+import type { TFramingType } from '@core/helpers/device/framing';
 import { FramingType } from '@core/helpers/device/framing';
 
 import AreaCheck from './areacheck.svg';
@@ -8,7 +9,7 @@ import Framing from './framing.svg';
 import Hull from './hull.svg';
 import RotateAxis from './rotateAxis.svg';
 
-export const renderFramingIcon = (type: FramingType, className?: string): ReactNode => {
+export const renderFramingIcon = (type: TFramingType, className?: string): React.ReactNode => {
   switch (type) {
     case FramingType.Framing:
     case FramingType.RotateFraming:

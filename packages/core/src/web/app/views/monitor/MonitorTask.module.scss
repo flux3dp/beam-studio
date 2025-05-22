@@ -55,3 +55,14 @@
 .icon-framing {
   font-size: 22px;
 }
+
+.framing-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+
+  .label {
+    font-weight: bold;
+  }
+}

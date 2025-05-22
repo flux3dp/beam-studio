@@ -7,7 +7,6 @@ import classNames from 'classnames';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
-import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import { renderFramingIcon } from '@core/app/icons/framing/FramingIcons';
 import icons from '@core/app/icons/icons';
@@ -49,22 +48,11 @@ const FramingModal = ({ device, onClose, startOnOpen = false }: Props): React.JS
   }, []);
 
   useEffect(() => {
-    const key = 'framing.default';
-
-    manager.current = new FramingTaskManager(device);
-
-    manager.current.on('status-change', (status: boolean) => setIsFraming(status));
-    manager.current.on('close-message', () => MessageCaller.closeMessage(key));
-    manager.current.on('message', (message: string) => {
-      MessageCaller.closeMessage(key);
-      MessageCaller.openMessage({ content: message, key, level: MessageLevel.LOADING });
-    });
+    manager.current = new FramingTaskManager(device, 'framing.default');
+    manager.current.on('status-change', setIsFraming);
 
     return () => {
-      manager.current?.stopFraming().then(() => {
-        manager.current?.destroy();
-      });
-      MessageCaller.closeMessage(key);
+      manager.current?.destroy();
     };
   }, [device]);
 

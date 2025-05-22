@@ -1595,6 +1595,7 @@ const lang: ILang = {
     minute: '分',
     monitor: 'MONITOR',
     NO_RESPONSE: '#905 连接主板时发生错误\n请重新启动机器。',
+    no_task_info: '目前没有可显示的工作项目。',
     pause: '暂停',
     prepareRelocate: '准备重新定位中',
     processing: '处理中',

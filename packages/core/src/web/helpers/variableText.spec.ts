@@ -319,7 +319,7 @@ describe('test variableText helper', () => {
   test('extractVariableText', () => {
     document.body.innerHTML = mockBody.extractVariableText;
 
-    const extractFn = extractVariableText();
+    let extractFn = extractVariableText();
 
     expect(extractFn).not.toBe(null);
     expect(mockClearSelection).toHaveBeenCalledTimes(1);
@@ -338,6 +338,23 @@ describe('test variableText helper', () => {
     expect(mockHideCursor).toHaveBeenCalledTimes(3);
     expect(mockSetSvgContent).toHaveBeenCalledTimes(3);
     expect(mockSetSvgContent.mock.calls[2][0]).toBe(mockSetSvgContent.mock.calls[0][0]);
+
+    jest.clearAllMocks();
+    extractFn = extractVariableText(false);
+    expect(extractFn).not.toBe(null);
+    expect(mockClearSelection).not.toHaveBeenCalled();
+    expect(mockHideCursor).not.toHaveBeenCalled();
+    expect(mockSetSvgContent).not.toHaveBeenCalled();
+
+    extractFn.revert();
+    expect(mockClearSelection).toHaveBeenCalledTimes(1);
+    expect(mockHideCursor).toHaveBeenCalledTimes(1);
+    expect(mockSetSvgContent).toHaveBeenCalledTimes(1);
+
+    extractFn.extract();
+    expect(mockClearSelection).toHaveBeenCalledTimes(2);
+    expect(mockHideCursor).toHaveBeenCalledTimes(2);
+    expect(mockSetSvgContent).toHaveBeenCalledTimes(2);
   });
 });
 

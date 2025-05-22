@@ -1595,6 +1595,7 @@ const lang: ILang = {
     minute: 'm',
     monitor: 'PEMANTAU',
     NO_RESPONSE: '#905 Ralat semasa menyambung ke papan induk.\nSila mulakan semula mesin.',
+    no_task_info: 'Tiada tugasan untuk dipaparkan buat masa ini.',
     pause: 'Jeda',
     prepareRelocate: 'Menyediakan untuk Pindah Lokasi',
     processing: 'Pemprosesan',

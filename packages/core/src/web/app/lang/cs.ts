@@ -1595,6 +1595,7 @@ const lang: ILang = {
     minute: 'm',
     monitor: 'MONITOR',
     NO_RESPONSE: '#905 Chyba při připojování k základní desce.\nRestartujte prosím přístroj.',
+    no_task_info: 'Momentálně nejsou k zobrazení žádné úkoly.',
     pause: 'Pauza',
     prepareRelocate: 'Připravuji k přemístění',
     processing: 'Zpracovávám',

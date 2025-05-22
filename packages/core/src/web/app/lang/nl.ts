@@ -1595,6 +1595,7 @@ const lang: ILang = {
     minute: 'm',
     monitor: 'MONITOR',
     NO_RESPONSE: '#905 Fout bij verbinden met moederbord. Start de machine opnieuw op.',
+    no_task_info: 'Er zijn momenteel geen taken om weer te geven.',
     pause: 'Pauzeren',
     prepareRelocate: 'Voorbereiden op verplaatsen',
     processing: 'Verwerken',

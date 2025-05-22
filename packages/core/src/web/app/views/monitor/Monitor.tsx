@@ -36,7 +36,7 @@ const Monitor = ({ device }: Props): React.JSX.Element => {
   const [isUploadCompleted, setIsUploadCompleted] = React.useState(true);
 
   const tabItems = [
-    taskImageURL || promarkModels.has(device.model)
+    taskImageURL || isPromark
       ? {
           children: <MonitorTask device={device} />,
           key: taskMode,
@@ -48,17 +48,20 @@ const Monitor = ({ device }: Props): React.JSX.Element => {
           ),
         }
       : null,
-    {
-      children: <MonitorFilelist path={currentPath.join('/')} />,
-      key: Mode.FILE,
-      label: (
-        <div>
-          <FolderOutlined className={styles.icon} />
-          {LANG.topmenu.file.label}
-        </div>
-      ),
-    },
-    localeHelper.isNorthAmerica
+    isPromark
+      ? null
+      : {
+          children: <MonitorFilelist path={currentPath.join('/')} />,
+          key: Mode.FILE,
+          label: (
+            <div>
+              <FolderOutlined className={styles.icon} />
+              {LANG.topmenu.file.label}
+            </div>
+          ),
+        },
+    // TODO: Fix Promark camera
+    localeHelper.isNorthAmerica || isPromark
       ? null
       : {
           children: <MonitorCamera device={device} />,
@@ -115,7 +118,7 @@ const Monitor = ({ device }: Props): React.JSX.Element => {
         activeKey={monitorMode}
         items={tabItems}
         onChange={setMonitorMode as any}
-        tabBarExtraContent={<MonitorTabExtraContent />}
+        tabBarExtraContent={isPromark ? null : <MonitorTabExtraContent />}
       />
     </Modal>
   );

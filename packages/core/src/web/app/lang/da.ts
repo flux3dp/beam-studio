@@ -1595,6 +1595,7 @@ const lang: ILang = {
     minute: 'm',
     monitor: 'OVERVÅG',
     NO_RESPONSE: '#905 Fejl ved forbindelse til hovedprintkort. \nGenstart venligst maskinen',
+    no_task_info: 'Der er i øjeblikket ingen opgaver at vise.',
     pause: 'Pause',
     prepareRelocate: 'Forbereder flytning',
     processing: 'Behandler',

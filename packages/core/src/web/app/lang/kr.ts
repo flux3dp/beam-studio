@@ -1595,6 +1595,7 @@ const lang: ILang = {
     minute: '분',
     monitor: 'MONITOR',
     NO_RESPONSE: '#905 메인보드 연결 오류. 기계를 다시 시작하세요.',
+    no_task_info: '현재 표시할 작업 항목이 없습니다.',
     pause: '일시 정지',
     prepareRelocate: '이동 준비 중',
     processing: '처리 중',

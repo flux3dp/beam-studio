@@ -1595,6 +1595,7 @@ const lang: ILang = {
     minute: 'phút',
     monitor: 'GIÁM SÁT',
     NO_RESPONSE: '#905 Lỗi kết nối với bo mạch chủ.\nVui lòng khởi động lại máy.',
+    no_task_info: 'Hiện tại không có tác vụ nào để hiển thị.',
     pause: 'Tạm dừng',
     prepareRelocate: 'Đang chuẩn bị di chuyển',
     processing: 'Đang xử lý',
