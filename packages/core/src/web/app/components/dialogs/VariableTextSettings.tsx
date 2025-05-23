@@ -106,7 +106,7 @@ const VariableTextSettings = ({ onClose }: Props): React.ReactNode => {
                 min={min}
                 parser={(d) => Math.round(+(d || '0'))}
                 precision={0}
-                status={current < start || current > end ? 'warning' : ''}
+                status={current < start || current > end ? 'error' : ''}
               />
             </Form.Item>
             <Form.Item label={t.start} name="start">
