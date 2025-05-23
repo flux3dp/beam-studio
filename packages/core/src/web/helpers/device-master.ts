@@ -11,7 +11,6 @@ import { ConnectionError } from '@core/app/constants/connection-constants';
 import DeviceConstants from '@core/app/constants/device-constants';
 import InputLightBoxConstants from '@core/app/constants/input-lightbox-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
-import type { RotaryInfo } from '@core/helpers/addOn/rotary';
 import checkSoftwareForAdor from '@core/helpers/check-software';
 import storage from '@core/implementations/storage';
 import type {
@@ -22,6 +21,7 @@ import type {
   RotationParameters3DGhostApi,
 } from '@core/interfaces/FisheyePreview';
 import type IControlSocket from '@core/interfaces/IControlSocket';
+import type { TPromarkFramingOpt } from '@core/interfaces/IControlSocket';
 import type { IDeviceConnection, IDeviceDetailInfo, IDeviceInfo } from '@core/interfaces/IDevice';
 import type { Field, GalvoParameters } from '@core/interfaces/Promark';
 
@@ -702,14 +702,14 @@ class DeviceMaster {
     return controlSocket.addTask(controlSocket.kick);
   }
 
-  async startFraming(points?: Array<[number, number]>, rotaryInfo?: RotaryInfo) {
-    const controlSocket = (await this.getControl()) as SwiftrayControl;
+  async startFraming(opt?: TPromarkFramingOpt) {
+    const controlSocket = (await this.getControl()) as unknown as SwiftrayControl;
 
-    return controlSocket.addTask(controlSocket.startFraming, points, rotaryInfo);
+    return controlSocket.addTask(controlSocket.startFraming, opt);
   }
 
   async stopFraming() {
-    const controlSocket = (await this.getControl()) as SwiftrayControl;
+    const controlSocket = (await this.getControl()) as unknown as SwiftrayControl;
 
     return controlSocket.addTask(controlSocket.stopFraming);
   }

@@ -364,7 +364,10 @@ class FramingTaskManager extends EventEmitter {
       this.hasAppliedRedLight = true;
     }
 
-    await deviceMaster.startFraming([this.taskPoints[0], this.taskPoints[2]], noRotation ? null : this.rotaryInfo);
+    await deviceMaster.startFraming({
+      points: [this.taskPoints[0], this.taskPoints[2]],
+      rotaryInfo: noRotation ? null : this.rotaryInfo,
+    });
 
     setTimeout(() => this.closeMessage(), 1000);
 

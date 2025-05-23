@@ -17,6 +17,7 @@ import { tempSplitFullColorLayers } from '@core/helpers/layer/full-color/splitFu
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import VersionChecker from '@core/helpers/version-checker';
+import type { SwiftrayConvertType } from '@core/interfaces/IControlSocket';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { TaskMetaData } from '@core/interfaces/ITask';
@@ -150,7 +151,7 @@ const uploadToParser = async (uploadFile: IWrappedSwiftrayTaskFile): Promise<boo
   return !isCanceled && !errorMessage;
 };
 
-const getTaskCode = (codeType: 'fcode' | 'gcode' | 'preview', taskOptions) =>
+const getTaskCode = (codeType: SwiftrayConvertType, taskOptions) =>
   new Promise<{
     fileTimeCost: null | number;
     metadata: Record<string, string>;

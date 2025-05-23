@@ -1,5 +1,6 @@
 import type { EventEmitter } from 'eventemitter3';
 
+import type { RotaryInfo } from '@core/helpers/addOn/rotary';
 import type { SwiftrayClient } from '@core/helpers/api/swiftray-client';
 
 import type { RawChipSettings } from './Cartridge';
@@ -106,3 +107,16 @@ interface IControlSocket extends EventEmitter {
 }
 
 export default IControlSocket;
+
+// Swiftray
+export type TPromarkFramingOpt =
+  | {
+      // Bounding box
+      points: Array<[number, number]>;
+      rotaryInfo: null | RotaryInfo;
+    }
+  | {
+      // Contour
+      taskCode: string;
+    };
+export type SwiftrayConvertType = 'contour' | 'fcode' | 'gcode' | 'preview';

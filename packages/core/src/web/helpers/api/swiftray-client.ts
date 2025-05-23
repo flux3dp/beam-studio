@@ -10,7 +10,6 @@ import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import workareaManager, { ExpansionType } from '@core/app/svgedit/workarea';
 import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
-import type { RotaryInfo } from '@core/helpers/addOn/rotary';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
@@ -19,6 +18,7 @@ import Logger from '@core/helpers/logger';
 import type { RequirementKey } from '@core/helpers/version-checker';
 import versionChecker from '@core/helpers/version-checker';
 import communicator from '@core/implementations/communicator';
+import type { SwiftrayConvertType, TPromarkFramingOpt } from '@core/interfaces/IControlSocket';
 import type { IDeviceDetailInfo, IDeviceInfo, IReport } from '@core/interfaces/IDevice';
 import type { IWrappedSwiftrayTaskFile } from '@core/interfaces/IWrappedFile';
 import type { ButtonState } from '@core/interfaces/Promark';
@@ -322,7 +322,7 @@ class SwiftrayClient extends EventEmitter {
   }
 
   public async convert(
-    type: 'fcode' | 'gcode' | 'preview',
+    type: SwiftrayConvertType,
     eventListeners: {
       onError: (message: string) => void;
       onFinished: (taskBlob: Blob, timeCost: number, metadata: Record<string, string>) => void;
@@ -541,10 +541,10 @@ class SwiftrayClient extends EventEmitter {
     return this.action(`/devices/${this.port}`, 'getPreview');
   }
 
-  public async startFraming(points?: Array<[number, number]>, rotaryInfo?: RotaryInfo): Promise<void> {
+  public async startFraming(opt?: TPromarkFramingOpt): Promise<void> {
     const { width } = getWorkarea('fpm1');
 
-    return this.action(`/devices/${this.port}`, 'startFraming', { points, rotaryInfo, width });
+    return this.action(`/devices/${this.port}`, 'startFraming', { ...opt, width });
   }
 
   public async stopFraming(): Promise<void> {
