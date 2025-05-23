@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 
 import { DesktopOutlined, FontColorsOutlined, LeftOutlined, RightOutlined, UploadOutlined } from '@ant-design/icons';
-import { Button, Col, Divider, Form, InputNumber, Row, Switch } from 'antd';
+import { Button, Col, Divider, Form, InputNumber, Row, Switch, Typography } from 'antd';
 import Papa from 'papaparse';
 
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
@@ -31,6 +31,7 @@ const VariableTextSettings = ({ onClose }: Props): React.ReactNode => {
   const start = Form.useWatch('start', form);
   const end = Form.useWatch('end', form);
   const advanceBy = Form.useWatch('advanceBy', form);
+  const csvFileName = Form.useWatch('csvFileName', form);
 
   const loadCsv = async (): Promise<void> => {
     const file = await dialog.getFileFromDialog({ filters: [{ extensions: ['csv'], name: 'Comma-separated Values' }] });
@@ -48,7 +49,7 @@ const VariableTextSettings = ({ onClose }: Props): React.ReactNode => {
 
     Papa.parse(file, {
       complete: (results) => {
-        form.setFieldsValue({ csvContent: results.data });
+        form.setFieldsValue({ csvContent: results.data, csvFileName: file.name });
       },
       error: () => {
         MessageCaller.openMessage({
@@ -71,12 +72,13 @@ const VariableTextSettings = ({ onClose }: Props): React.ReactNode => {
       defaultPosition={{ x: window.innerWidth - 28 - 540, y: 80 }}
       footer={
         <div className={styles.footer}>
-          <div>
-            <b>{t.csv_file}: </b>
+          <div className={styles['csv-block']}>
+            <b className={styles.label}>{t.csv_file}: </b>
+            {csvFileName && <Typography.Text ellipsis={{ tooltip: csvFileName }}>{csvFileName}</Typography.Text>}
             <Button icon={<UploadOutlined />} onClick={loadCsv}>
               {t.browse}
             </Button>
-            <Button danger onClick={() => form.setFieldsValue({ csvContent: [] })}>
+            <Button danger onClick={() => form.setFieldsValue({ csvContent: [], csvFileName: '' })}>
               {t.clear}
             </Button>
           </div>
@@ -97,6 +99,7 @@ const VariableTextSettings = ({ onClose }: Props): React.ReactNode => {
         <Row>
           <Col span={11}>
             <Form.Item hidden name="csvContent" />
+            <Form.Item hidden name="csvFileName" />
             <Form.Item label={t.current} name="current">
               <InputNumber
                 max={max}

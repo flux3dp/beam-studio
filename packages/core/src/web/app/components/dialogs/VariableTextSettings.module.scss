@@ -61,11 +61,19 @@
 .footer {
   display: flex;
   justify-content: space-between;
-  gap: 8px;
+  gap: 16px;
 
   > div {
     display: flex;
     gap: 8px;
     align-items: center;
+  }
+
+  .csv-block {
+    min-width: 0; // Make ellipsis work
+
+    .label {
+      white-space: nowrap;
+    }
   }
 }
