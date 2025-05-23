@@ -486,7 +486,7 @@ export default {
     }
 
     forceLoginWrapper(async () => {
-      await getInfo(true);
+      await getInfo({ silent: true });
 
       if (isIdExist('flux-id-credit')) {
         return;

@@ -3,6 +3,7 @@ import { EventEmitter } from 'events';
 import type { MenuItemConstructorOptions } from 'electron';
 import { app, ipcMain, Menu, MenuItem, shell } from 'electron';
 import Store from 'electron-store';
+import { funnel } from 'remeda';
 
 import { adorModels, promarkModels } from '@core/app/actions/beambox/constant';
 import i18n from '@core/helpers/i18n';
@@ -252,12 +253,20 @@ class MenuManager extends EventEmitter {
   private deviceMenu?: MenuItem;
   private deviceList: { [uuid: string]: IDeviceInfo };
   private isDevMode: boolean;
+  private reconstructMenu: () => void;
 
   constructor() {
     super();
     this.deviceList = {};
     this.constructMenu();
     this.isDevMode = false;
+
+    const reconstructMenuHandler = funnel(() => this.constructMenu(), {
+      minQuietPeriodMs: 300,
+      triggerAt: 'end',
+    });
+
+    this.reconstructMenu = () => reconstructMenuHandler.call();
 
     ipcMain.on(events.NOTIFY_LANGUAGE, () => {
       const language = (store.get('active-lang') as string) || 'en';
@@ -281,45 +290,13 @@ class MenuManager extends EventEmitter {
       this.isDevMode = isDevMode;
 
       if (hasChanged && this.deviceMenu?.submenu) {
-        this.constructMenu();
+        this.reconstructMenu();
       }
     });
 
     ipcMain.on(events.UPDATE_ACCOUNT, (e, info) => {
       accountInfo = info;
-
-      const item = Menu.getApplicationMenu()?.items.find((i) => i.id === '_account');
-      const accountSubmenu = item?.submenu;
-
-      if (accountSubmenu) {
-        const newMenu = Menu.buildFromTemplate([]);
-        const signoutLabel = info ? `${r.sign_out} (${info.email})` : r.sign_out;
-
-        accountSubmenu.items.forEach((menuitem) => {
-          if (menuitem.id === 'SIGN_IN') {
-            menuitem.visible = !info;
-            newMenu.append(menuitem);
-          } else if (menuitem.id === 'SIGN_OUT') {
-            const newSignOut = new MenuItem({
-              click: menuitem.click as () => void,
-              id: 'SIGN_OUT',
-              label: signoutLabel,
-              visible: !!info,
-            });
-
-            newMenu.append(newSignOut);
-          } else if (menuitem.id === 'MANAGE_ACCOUNT') {
-            menuitem.enabled = !!info;
-            newMenu.append(menuitem);
-          } else {
-            newMenu.append(menuitem);
-          }
-        });
-        delete item.submenu;
-        item.submenu = newMenu;
-      }
-
-      Menu.setApplicationMenu(Menu.getApplicationMenu());
+      this.reconstructMenu();
     });
   }
 

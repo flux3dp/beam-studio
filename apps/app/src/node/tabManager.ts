@@ -68,6 +68,10 @@ class TabManager {
       e.returnValue = this.serializeTabs();
     });
 
+    ipcMain.on(TabEvents.UpdateUser, (e, data) => {
+      this.sendToOtherViews(e.sender.id, TabEvents.UpdateUser, data);
+    });
+
     ipcMain.on(events.FRONTEND_READY, (e) => {
       const { id } = e.sender;
       let tab: null | Tab = null;
@@ -434,6 +438,16 @@ class TabManager {
     if (this.tabsMap[id]) {
       this.tabsMap[id].view.webContents.send(event, data);
     }
+  };
+
+  sendToOtherViews = (senderId: number, event: string, data?: unknown): void => {
+    const views = this.getAllViews();
+
+    views.forEach((view) => {
+      if (view.webContents.id !== senderId) {
+        view.webContents.send(event, data);
+      }
+    });
   };
 
   sendToAllViews = (event: string, data?: unknown): void => {

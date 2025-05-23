@@ -18,7 +18,7 @@ import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 import BackendManager from './backend-manager';
 import bootstrap from './bootstrap';
-import { getDeeplinkUrl, handleDeepLinkUrl } from './deep-link-helper';
+import { getDeepLinkUrl, handleDeepLinkUrl } from './deep-link-helper';
 import fontHelper from './font-helper';
 import { setTabManager } from './helpers/tabHelper';
 import events from './ipc-events';
@@ -433,7 +433,7 @@ const hasLock = app.requestSingleInstanceLock();
 
 console.log('hasLock', hasLock);
 
-if (process.platform === 'win32' && !hasLock && getDeeplinkUrl(process.argv)) {
+if (process.platform === 'win32' && !hasLock && getDeepLinkUrl(process.argv)) {
   // if primary instance exists and open from deep link, return
   app.quit();
 }
@@ -451,7 +451,7 @@ app.on('second-instance', (e, argv) => {
     mainWindow.focus();
   }
 
-  const linkUrl = getDeeplinkUrl(argv);
+  const linkUrl = getDeepLinkUrl(argv);
 
   if (linkUrl) {
     handleDeepLinkUrl(tabManager?.getAllViews() || [], linkUrl);
