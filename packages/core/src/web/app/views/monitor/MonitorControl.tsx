@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import React, { useCallback, useContext, useEffect, useRef } from 'react';
 
-import { LoadingOutlined, PauseCircleFilled, PlayCircleFilled, StopFilled } from '@ant-design/icons';
+import { CloseCircleFilled, LoadingOutlined, PauseCircleFilled, PlayCircleFilled } from '@ant-design/icons';
 import { Button, Space } from 'antd';
 
 import DeviceConstants from '@core/app/constants/device-constants';
@@ -100,7 +100,7 @@ const MonitorControl = ({
             shape={buttonShape}
             type="primary"
           >
-            <PlayCircleFilled />
+            {isOnPlaying ? <LoadingOutlined spin /> : <PlayCircleFilled />}
             {tMonitor.go}
           </Button>
         );
@@ -148,7 +148,7 @@ const MonitorControl = ({
             }}
             shape={buttonShape}
           >
-            <StopFilled />
+            <CloseCircleFilled />
             {tMonitor.stop}
           </Button>
         );
