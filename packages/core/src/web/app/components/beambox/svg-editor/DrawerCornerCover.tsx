@@ -1,11 +1,8 @@
 import React, { memo, useEffect, useState } from 'react';
 
 type DrawerCornerCoverProps = {
-  cornerRadiusCSS: string; // e.g., '1.5rem'
-  drawerBgColor: string;
   drawerVisible: boolean;
   width: number; // in pixels
-  zIndex: number;
 };
 
 const FADE_IN_DURATION = 0.5;
@@ -14,13 +11,7 @@ const FADE_IN_DURATION = 0.5;
 // linear-gradient(180deg, rgba(34,34,37,0.9), rgba(29,29,32,0.9) 90.48%);
 // linear-gradient(180deg, rgba(249, 250, 251, 0.9), rgba(242, 244, 247, 0.9) 90.48%)
 // rgb(29, 41, 54)
-const UnmemorizedDrawerCornerCover = ({
-  cornerRadiusCSS,
-  drawerBgColor,
-  drawerVisible,
-  width,
-  zIndex,
-}: DrawerCornerCoverProps) => {
+const UnmemorizedDrawerCornerCover = ({ drawerVisible, width }: DrawerCornerCoverProps) => {
   const [shouldRenderInDOM, setShouldRenderInDOM] = useState(false);
   const [isOpacityActive, setIsOpacityActive] = useState(false);
   const [opacityTransitionDuration, setOpacityTransitionDuration] = useState(FADE_IN_DURATION);
@@ -57,14 +48,13 @@ const UnmemorizedDrawerCornerCover = ({
     top: 0,
     transition: `opacity ${opacityTransitionDuration}s ease-in-out`,
     width: `${width}px`, // Updates on resize
-    zIndex,
   } as const;
 
   const cornerPatchBaseStyle = {
-    backgroundColor: drawerBgColor,
-    height: cornerRadiusCSS,
+    // backgroundColor: drawerBgColor,
+    height: '1.3rem',
     position: 'absolute',
-    width: cornerRadiusCSS,
+    width: '100%',
   } as const;
 
   return (
