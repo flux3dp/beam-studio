@@ -19,6 +19,7 @@ import workareaManager from '@core/app/svgedit/workarea';
 import Banner from './Banner';
 import Chat from './Chat';
 import { useChatStore } from './Chat/useChatStore';
+import DrawerCornerCover from './DrawerCornerCover';
 import ElementTitle from './ElementTitle';
 import Ruler from './Ruler';
 import styles from './SvgEditor.module.scss';
@@ -43,6 +44,10 @@ export const SvgEditor = (): ReactNode => {
       console.warn('jQuery ($) is not available for svgEditor.init');
     }
   }, []);
+
+  const drawerBackgroundColor = '#1890FF';
+  const cornerCoverZIndex = 1001;
+  const drawerBorderRadiusCSS = '1.5rem';
 
   return (
     <>
@@ -85,19 +90,19 @@ export const SvgEditor = (): ReactNode => {
             placement="left"
             // use style to override :where
             style={{
-              borderRadius: '1rem',
+              // borderRadius: drawerBorderRadiusCSS,
               boxShadow: 'none',
             }}
             styles={{
               body: {
-                borderRadius: '1rem',
+                // borderRadius: drawerBorderRadiusCSS,
                 display: 'flex',
                 flexDirection: 'column',
                 height: '100%',
                 overflow: 'hidden',
                 padding: '0px',
               },
-              wrapper: { backgroundColor: '#1890FF', boxShadow: 'none' },
+              wrapper: { boxShadow: 'none' },
             }}
             width={width}
           >
@@ -122,6 +127,14 @@ export const SvgEditor = (): ReactNode => {
             </Resizable>
           </Drawer>
         </ConfigProvider>
+
+        <DrawerCornerCover
+          cornerRadiusCSS={drawerBorderRadiusCSS}
+          drawerBgColor={drawerBackgroundColor}
+          drawerVisible={isChatShown}
+          width={width}
+          zIndex={cornerCoverZIndex}
+        />
       </div>
       {mode === CanvasMode.PathPreview && <PathPreview />}
     </>
