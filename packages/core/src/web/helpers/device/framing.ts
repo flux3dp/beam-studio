@@ -5,6 +5,7 @@ import alertCaller from '@core/app/actions/alert-caller';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant, { promarkModels } from '@core/app/actions/beambox/constant';
 import exportFuncs from '@core/app/actions/beambox/export-funcs';
+import { fetchContourTaskCode } from '@core/app/actions/beambox/export-funcs-swiftray';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import type { AddOnInfo } from '@core/app/constants/addOn';
 import { getAddOnInfo } from '@core/app/constants/addOn';
@@ -40,6 +41,7 @@ import promarkDataStore from './promark/promark-data-store';
 // TODO: add unit test
 export const FramingType = {
   AreaCheck: 1,
+  Contour: 6,
   Framing: 2,
   Hull: 3,
   RotateAxis: 4,
@@ -66,6 +68,10 @@ export const framingOptions = {
     description: 'areacheck_desc',
     title: 'area_check',
   },
+  [FramingType.Contour]: {
+    description: 'contour_desc',
+    title: 'contour',
+  },
   [FramingType.Framing]: {
     description: 'framing_desc',
     title: 'framing',
@@ -90,7 +96,7 @@ export const getFramingOptions = (device: IDeviceInfo): TFramingType[] => {
 
     if (withRotary) return [FramingType.RotateAxis, FramingType.RotateFraming];
 
-    return [FramingType.Framing];
+    return [FramingType.Framing, FramingType.Contour];
   }
 
   return [FramingType.Framing, FramingType.Hull, FramingType.AreaCheck];
@@ -283,6 +289,7 @@ class FramingTaskManager extends EventEmitter {
   private movementFeedrate = 6000; // mm/min
   private lowPower = 0;
   private taskCache: { [type in TFramingType]?: Array<[number, number]> } = {};
+  private taskCodeCache: { [type in TFramingType]?: string } = {};
   private taskPoints: Array<[number, number]> = [];
   private hasAppliedRedLight = false;
   private initialized = false;
@@ -329,7 +336,7 @@ class FramingTaskManager extends EventEmitter {
     this.changeWorkingStatus(false);
   };
 
-  public startPromarkFraming = async (noRotation: boolean): Promise<void> => {
+  public startPromarkFraming = async (noRotation: boolean, taskCode?: string): Promise<void> => {
     swiftrayClient.on('disconnected', this.onSwiftrayDisconnected);
 
     if (this.isWorking) {
@@ -366,10 +373,14 @@ class FramingTaskManager extends EventEmitter {
       this.hasAppliedRedLight = true;
     }
 
-    await deviceMaster.startFraming({
-      points: [this.taskPoints[0], this.taskPoints[2]],
-      rotaryInfo: noRotation ? null : this.rotaryInfo,
-    });
+    if (taskCode) {
+      await deviceMaster.startFraming({ taskCode });
+    } else {
+      await deviceMaster.startFraming({
+        points: [this.taskPoints[0], this.taskPoints[2]],
+        rotaryInfo: noRotation ? null : this.rotaryInfo,
+      });
+    }
 
     setTimeout(() => this.closeMessage(), 1000);
 
@@ -475,6 +486,26 @@ class FramingTaskManager extends EventEmitter {
 
       await new Promise((resolve) => setTimeout(resolve, time));
     }
+  };
+
+  private generateTaskCode = async (type: TFramingType): Promise<null | string> => {
+    if (this.taskCodeCache[type] && !this.withVT) {
+      return this.taskCodeCache[type];
+    }
+
+    svgCanvas.clearSelection();
+
+    if (type === FramingType.Contour) {
+      const taskCode = await fetchContourTaskCode();
+
+      if (taskCode) {
+        this.taskCodeCache[type] = taskCode;
+      }
+
+      return taskCode;
+    }
+
+    throw new Error('Not implemented');
   };
 
   private generateTaskPoints = async (type: TFramingType): Promise<Array<[number, number]>> => {
@@ -806,9 +837,23 @@ class FramingTaskManager extends EventEmitter {
     }
 
     this.showMessage(i18n.lang.framing.calculating_task);
-    this.taskPoints = await this.generateTaskPoints(type);
 
-    if (this.taskPoints.length === 0) {
+    let isEmpty = false;
+
+    if (type === FramingType.Contour) {
+      const taskCode = await this.generateTaskCode(type);
+
+      if (taskCode) {
+        await this.startPromarkFraming(false, taskCode);
+      } else {
+        isEmpty = true;
+      }
+    } else {
+      this.taskPoints = await this.generateTaskPoints(type);
+      isEmpty = this.taskPoints.length === 0;
+    }
+
+    if (isEmpty) {
       this.closeMessage();
       MessageCaller.openMessage({
         content: i18n.lang.topbar.alerts.add_content_first,
