@@ -28,7 +28,7 @@ import { getAllLayers } from '@core/helpers/layer/layer-helper';
 import monitorStatus from '@core/helpers/monitor-status';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
-import { convertVariableText } from '@core/helpers/variableText';
+import { convertVariableText, hasVariableText } from '@core/helpers/variableText';
 import versionChecker from '@core/helpers/version-checker';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -286,6 +286,7 @@ class FramingTaskManager extends EventEmitter {
   private taskPoints: Array<[number, number]> = [];
   private hasAppliedRedLight = false;
   private initialized = false;
+  private withVT = false;
 
   constructor(device: IDeviceInfo, messageKey = 'framing-task') {
     super();
@@ -298,6 +299,7 @@ class FramingTaskManager extends EventEmitter {
     this.isPromark = promarkModels.has(device.model);
     this.isFcodeV2 = constant.fcodeV2Models.has(device.model);
     this.rotaryInfo = getRotaryInfo(this.device.model, true);
+    this.withVT = hasVariableText();
 
     if (
       beamboxPreference.read('enable-job-origin') &&
@@ -476,7 +478,7 @@ class FramingTaskManager extends EventEmitter {
   };
 
   private generateTaskPoints = async (type: TFramingType): Promise<Array<[number, number]>> => {
-    if (this.taskCache[type]) {
+    if (this.taskCache[type] && !this.withVT) {
       return this.taskCache[type];
     }
 
