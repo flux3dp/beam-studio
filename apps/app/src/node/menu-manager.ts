@@ -613,7 +613,6 @@ class MenuManager extends EventEmitter {
         },
         {
           click: callback,
-          enabled: false,
           id: 'AUTO_ALIGN',
           label: r.auto_align || 'Auto Align',
           type: 'checkbox',
