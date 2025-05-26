@@ -5,7 +5,7 @@ $messages-area-bg: #daedff;
 .chat-container {
   position: relative;
   background-color: $messages-area-bg;
-  border-radius: 16px;
+  border-radius: 16px; // 1rem for dify iframe document
   display: flex;
   flex-direction: column;
   flex-grow: 1;
