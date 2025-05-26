@@ -2,15 +2,17 @@ import React, { memo, useEffect, useMemo, useState } from 'react';
 
 import { match } from 'ts-pattern';
 
+import styles from './DrawerCornerCover.module.scss';
+
 type DrawerCornerCoverProps = {
-  cornerRadiusCSS: string; // e.g., '1.5rem'
-  drawerBgColor: string;
   drawerVisible: boolean;
   width: number; // in pixels
-  zIndex: number;
 };
 
 const FADE_IN_DURATION = 0.5;
+const DRAWER_BACKGROUND_COLOR = '#1890FF';
+const CORNER_RADIUS = '1.5rem';
+const BOTTOM_PATCH_HEIGHT = '1.3rem'; // This is the height of the bottom patch, matching the corner radius
 
 const convertRemToPx = (remString: string): number => {
   // Ensure this code runs only in the browser
@@ -29,7 +31,7 @@ const convertRemToPx = (remString: string): number => {
     return 24; // Fallback to a default value (e.g., 24px for 1.5rem)
   }
 
-  // Get the computed font size of the root element (html)
+  // Get the computed font size
   const rootFontSize = Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
 
   return numericalValue * rootFontSize;
@@ -44,28 +46,11 @@ const getSpandrelClipPathString = (type: 'bl' | 'br' | 'tl' | 'tr', R: number): 
     .with('br', () => `path('M ${R} 0 L ${R} ${R} L 0 ${R} A ${R} ${R} 0 0 0 ${R} 0 Z')`)
     .exhaustive();
 
-// background-color: rgb(24, 144, 255);
-// linear-gradient(180deg, rgba(34,34,37,0.9), rgba(29,29,32,0.9) 90.48%);
-// linear-gradient(180deg, rgba(249, 250, 251, 0.9), rgba(242, 244, 247, 0.9) 90.48%)
-// rgb(29, 41, 54)
-const UnmemorizedDrawerCornerCover = ({
-  // Renamed to use with React.memo later
-  cornerRadiusCSS,
-  drawerBgColor,
-  drawerVisible,
-  width,
-  zIndex,
-}: DrawerCornerCoverProps) => {
-  const [radiusInPx, setRadiusInPx] = useState<number>(0);
-  // State to control if the component should be in the DOM
+const UnmemorizedDrawerCornerCover = ({ drawerVisible, width }: DrawerCornerCoverProps) => {
   const [shouldRenderInDOM, setShouldRenderInDOM] = useState(false);
-  // State to control the opacity for CSS transition
   const [isOpacityActive, setIsOpacityActive] = useState(false);
   const [opacityTransitionDuration, setOpacityTransitionDuration] = useState(FADE_IN_DURATION);
-
-  useEffect(() => {
-    setRadiusInPx(convertRemToPx(cornerRadiusCSS));
-  }, [cornerRadiusCSS]);
+  const radiusInPx = convertRemToPx(CORNER_RADIUS); // slightly larger than 1 rem for better visibility
 
   useEffect(() => {
     if (drawerVisible) {
@@ -73,19 +58,17 @@ const UnmemorizedDrawerCornerCover = ({
       setOpacityTransitionDuration(FADE_IN_DURATION); // Set for slower fade-in
 
       const fadeInTimer = setTimeout(() => {
-        if (radiusInPx > 0) {
-          setIsOpacityActive(true); // Trigger opacity to 1
-        }
+        setIsOpacityActive(true);
       }, 20); // Small delay for CSS to pick up initial opacity:0 and new transition-duration
 
       return () => clearTimeout(fadeInTimer);
     } else {
       // For instant fade-out
       setOpacityTransitionDuration(0); // Set duration to 0s
-      setIsOpacityActive(false); // Set opacity to 0 (will be instant)
+      setIsOpacityActive(false); // Set opacity to 0 (instantly)
       setShouldRenderInDOM(false); // Unmount immediately
     }
-  }, [drawerVisible, radiusInPx]);
+  }, [drawerVisible]);
 
   const clipPaths = useMemo(() => {
     if (radiusInPx <= 0) {
@@ -108,28 +91,31 @@ const UnmemorizedDrawerCornerCover = ({
   const coverStyle = {
     height: '100%',
     left: 0,
-    opacity: isOpacityActive && radiusInPx > 0 ? 1 : 0,
+    opacity: isOpacityActive ? 1 : 0,
     pointerEvents: 'none',
     position: 'absolute',
     top: 0,
     transition: `opacity ${opacityTransitionDuration}s ease-in-out`,
     width: `${width}px`, // Updates on resize
-    zIndex,
+    zIndex: 1001, // Ensure it is above drawer element
   } as const;
 
   const cornerPatchBaseStyle = {
-    backgroundColor: drawerBgColor,
-    height: cornerRadiusCSS,
+    backgroundColor: DRAWER_BACKGROUND_COLOR,
+    height: CORNER_RADIUS,
     position: 'absolute',
-    width: cornerRadiusCSS,
+    width: CORNER_RADIUS,
+  } as const;
+  const bottomPatchBaseStyle = {
+    height: BOTTOM_PATCH_HEIGHT,
   } as const;
 
   return (
     <div style={coverStyle}>
       <div style={{ ...cornerPatchBaseStyle, clipPath: clipPaths.tl, left: 0, top: 0 }} />
       <div style={{ ...cornerPatchBaseStyle, clipPath: clipPaths.tr, right: 0, top: 0 }} />
-      <div style={{ ...cornerPatchBaseStyle, bottom: 0, clipPath: clipPaths.bl, left: 0 }} />
-      <div style={{ ...cornerPatchBaseStyle, bottom: 0, clipPath: clipPaths.br, right: 0 }} />
+      <div className={styles['chat-cover-bottom']} style={{ ...bottomPatchBaseStyle, bottom: 0, left: 0 }} />
+      <div className={styles['chat-disclaimer']}>Beamy can make mistakes. Check important info.</div>
     </div>
   );
 };

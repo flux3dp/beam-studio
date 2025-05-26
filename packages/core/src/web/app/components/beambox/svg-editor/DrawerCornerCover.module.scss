@@ -1,0 +1,28 @@
+$primary-color: rgb(24, 144, 255);
+$light-mode-background-color: rgb(232, 239, 252);
+$dark-mode-background-color: rgb(21, 34, 46);
+
+.chat-cover-bottom {
+  background-color: $light-mode-background-color;
+  border: 0.5px solid $primary-color;
+  border-top: none;
+  position: absolute;
+  width: 100%;
+
+  // Apply Dark Mode styles when the user prefers a dark color scheme
+  @media (prefers-color-scheme: dark) {
+    background-color: $dark-mode-background-color;
+  }
+}
+
+.chat-disclaimer {
+  position: absolute;
+  bottom: 0;
+  padding: 4px 16px 0;
+  font-size: 12px;
+  color: $primary-color;
+  text-align: center;
+  line-height: 1.5;
+  width: 100%;
+  box-sizing: border-box;
+}

@@ -45,10 +45,6 @@ export const SvgEditor = (): ReactNode => {
     }
   }, []);
 
-  const drawerBackgroundColor = '#1890FF';
-  const cornerCoverZIndex = 1001;
-  const drawerBorderRadiusCSS = '1.5rem';
-
   return (
     <>
       <div
@@ -89,13 +85,9 @@ export const SvgEditor = (): ReactNode => {
             open={isChatShown}
             placement="left"
             // use style to override :where
-            style={{
-              // borderRadius: drawerBorderRadiusCSS,
-              boxShadow: 'none',
-            }}
+            style={{ boxShadow: 'none' }}
             styles={{
               body: {
-                // borderRadius: drawerBorderRadiusCSS,
                 display: 'flex',
                 flexDirection: 'column',
                 height: '100%',
@@ -128,13 +120,7 @@ export const SvgEditor = (): ReactNode => {
           </Drawer>
         </ConfigProvider>
 
-        <DrawerCornerCover
-          cornerRadiusCSS={drawerBorderRadiusCSS}
-          drawerBgColor={drawerBackgroundColor}
-          drawerVisible={isChatShown}
-          width={width}
-          zIndex={cornerCoverZIndex}
-        />
+        <DrawerCornerCover drawerVisible={isChatShown} width={width} />
       </div>
       {mode === CanvasMode.PathPreview && <PathPreview />}
     </>
