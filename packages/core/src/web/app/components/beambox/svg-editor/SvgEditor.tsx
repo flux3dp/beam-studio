@@ -117,10 +117,9 @@ export const SvgEditor = (): ReactNode => {
                 <Chat />
               </div>
             </Resizable>
+            <DrawerCornerCover drawerVisible={isChatShown} />
           </Drawer>
         </ConfigProvider>
-
-        <DrawerCornerCover drawerVisible={isChatShown} width={width} />
       </div>
       {mode === CanvasMode.PathPreview && <PathPreview />}
     </>

@@ -6,7 +6,6 @@ import styles from './DrawerCornerCover.module.scss';
 
 type DrawerCornerCoverProps = {
   drawerVisible: boolean;
-  width: number; // in pixels
 };
 
 const FADE_IN_DURATION = 0.5;
@@ -46,7 +45,7 @@ const getSpandrelClipPathString = (type: 'bl' | 'br' | 'tl' | 'tr', R: number): 
     .with('br', () => `path('M ${R} 0 L ${R} ${R} L 0 ${R} A ${R} ${R} 0 0 0 ${R} 0 Z')`)
     .exhaustive();
 
-const UnmemorizedDrawerCornerCover = ({ drawerVisible, width }: DrawerCornerCoverProps) => {
+const UnmemorizedDrawerCornerCover = ({ drawerVisible }: DrawerCornerCoverProps) => {
   const [shouldRenderInDOM, setShouldRenderInDOM] = useState(false);
   const [isOpacityActive, setIsOpacityActive] = useState(false);
   const [opacityTransitionDuration, setOpacityTransitionDuration] = useState(FADE_IN_DURATION);
@@ -96,7 +95,7 @@ const UnmemorizedDrawerCornerCover = ({ drawerVisible, width }: DrawerCornerCove
     position: 'absolute',
     top: 0,
     transition: `opacity ${opacityTransitionDuration}s ease-in-out`,
-    width: `${width}px`, // Updates on resize
+    width: '100%',
     zIndex: 1001, // Ensure it is above drawer element
   } as const;
 
