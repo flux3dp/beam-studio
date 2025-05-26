@@ -108,6 +108,25 @@ exports[`test VariableTextSettings form fields 1`] = `
                           </div>
                         </div>
                         <div
+                          class="ant-form-item css-dev-only-do-not-override-hash ant-form-item-hidden"
+                        >
+                          <div
+                            class="ant-row ant-form-item-row css-dev-only-do-not-override-hash"
+                          >
+                            <div
+                              class="ant-col ant-form-item-control css-dev-only-do-not-override-hash"
+                            >
+                              <div
+                                class="ant-form-item-control-input"
+                              >
+                                <div
+                                  class="ant-form-item-control-input-content"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div
                           class="ant-form-item css-dev-only-do-not-override-hash"
                         >
                           <div
@@ -844,11 +863,20 @@ exports[`test VariableTextSettings form fields 1`] = `
                   <div
                     class="footer"
                   >
-                    <div>
-                      <b>
+                    <div
+                      class="csv-block"
+                    >
+                      <b
+                        class="label"
+                      >
                         CSV File
                         : 
                       </b>
+                      <span
+                        class="ant-typography ant-typography-ellipsis ant-typography-ellipsis-single-line css-dev-only-do-not-override-hash"
+                      >
+                        file_name.csv
+                      </span>
                       <button
                         class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined"
                         type="button"
@@ -1023,6 +1051,25 @@ exports[`test VariableTextSettings form fields 2`] = `
                           </div>
                         </div>
                         <div
+                          class="ant-form-item css-dev-only-do-not-override-hash ant-form-item-has-success ant-form-item-hidden"
+                        >
+                          <div
+                            class="ant-row ant-form-item-row css-dev-only-do-not-override-hash"
+                          >
+                            <div
+                              class="ant-col ant-form-item-control css-dev-only-do-not-override-hash"
+                            >
+                              <div
+                                class="ant-form-item-control-input"
+                              >
+                                <div
+                                  class="ant-form-item-control-input-content"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div
                           class="ant-form-item css-dev-only-do-not-override-hash"
                         >
                           <div
@@ -1049,7 +1096,7 @@ exports[`test VariableTextSettings form fields 2`] = `
                                   class="ant-form-item-control-input-content"
                                 >
                                   <div
-                                    class="ant-input-number ant-input-number-in-form-item css-dev-only-do-not-override-hash ant-input-number-outlined ant-input-number-status-warning"
+                                    class="ant-input-number ant-input-number-in-form-item css-dev-only-do-not-override-hash ant-input-number-outlined ant-input-number-status-error"
                                   >
                                     <div
                                       class="ant-input-number-handler-wrap"
@@ -1760,8 +1807,12 @@ exports[`test VariableTextSettings form fields 2`] = `
                   <div
                     class="footer"
                   >
-                    <div>
-                      <b>
+                    <div
+                      class="csv-block"
+                    >
+                      <b
+                        class="label"
+                      >
                         CSV File
                         : 
                       </b>
