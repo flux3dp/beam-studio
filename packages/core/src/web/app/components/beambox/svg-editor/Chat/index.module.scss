@@ -1,8 +1,11 @@
-$primary-color: #1890ff;
+@use '@core/styles/variables' as variables;
+
 $messages-area-bg: #daedff;
 
 .chat-container {
-  background-color: transparent;
+  position: relative;
+  background-color: $messages-area-bg;
+  border-radius: 16px;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
@@ -11,10 +14,10 @@ $messages-area-bg: #daedff;
 }
 
 .chat-iframe {
+  position: absolute;
   border: none;
   border-radius: 0;
-  height: 100%;
-  min-height: 700px;
+  height: calc(100% + 60px); // Add 60px to hide powered by block
   width: 100%;
 }
 
@@ -24,14 +27,14 @@ $messages-area-bg: #daedff;
   left: 0;
   width: 100%;
   z-index: 10;
-  padding: 4px 24px 60px 16px;
+  padding: 4px 24px 0 16px;
   box-sizing: border-box;
 }
 
 .chat-disclaimer {
   padding: 4px 16px 0;
   font-size: 12px;
-  color: $primary-color;
+  color: variables.$primary-blue;
   text-align: center;
   line-height: 1.5;
   width: 100%;

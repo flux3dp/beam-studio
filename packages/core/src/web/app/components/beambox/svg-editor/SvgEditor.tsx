@@ -85,19 +85,20 @@ export const SvgEditor = (): ReactNode => {
             placement="left"
             // use style to override :where
             style={{
-              borderRadius: '1rem',
               boxShadow: 'none',
             }}
             styles={{
               body: {
-                borderRadius: '1rem',
                 display: 'flex',
                 flexDirection: 'column',
                 height: '100%',
                 overflow: 'hidden',
                 padding: '0px',
               },
-              wrapper: { backgroundColor: '#1890FF', boxShadow: 'none' },
+              content: {
+                backgroundColor: 'transparent',
+              },
+              wrapper: { boxShadow: 'none' },
             }}
             width={width}
           >
