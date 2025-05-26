@@ -1248,6 +1248,8 @@ const lang: ILang = {
     area_check: 'Områdekontroll',
     areacheck_desc: 'Sikrer at arbeidsområdet er trygt ved å vise objektets avgrensningsboks og laserhodets akselerasjonssone.',
     calculating_task: 'Beregner oppgave...',
+    contour: 'Kontur',
+    contour_desc: 'Forhåndsvis den faktiske mønsterkonturen.',
     framing: 'Innramming',
     framing_desc: 'Forhåndsviser objektets avgrensningsboks.',
     hull: 'Skrog',

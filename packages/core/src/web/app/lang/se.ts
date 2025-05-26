@@ -1248,6 +1248,8 @@ const lang: ILang = {
     area_check: 'Områdeskontroll',
     areacheck_desc: 'Säkerställer att arbetsområdet är säkert genom att förhandsgranska objektets begränsningsram och laserns accelerationszon.',
     calculating_task: 'Beräknar uppgift...',
+    contour: 'Kontur',
+    contour_desc: 'Förhandsgranska den faktiska mönsterkonturen.',
     framing: 'Inramning',
     framing_desc: 'Förhandsgranskar objektets avgränsningsruta.',
     hull: 'Skrov',

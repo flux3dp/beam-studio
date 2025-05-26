@@ -1248,6 +1248,8 @@ const lang: ILang = {
     area_check: 'Pemeriksaan Area',
     areacheck_desc: 'Memastikan area kerja aman dengan menampilkan kotak pembatas objek dan zona akselerasi kepala laser.',
     calculating_task: 'Menghitung tugas...',
+    contour: 'Kontur',
+    contour_desc: 'Pratinjau garis besar pola sebenarnya.',
     framing: 'Pembingkaian',
     framing_desc: 'Pratinjau kotak pembatas objek.',
     hull: 'Kerangka',
