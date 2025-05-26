@@ -1,3 +1,6 @@
+import { match } from 'ts-pattern';
+
+import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 import { axiosFluxId } from './api/flux-id';
@@ -11,11 +14,11 @@ export default async function checkFirmware(
   }
 
   try {
-    const key =
-      {
-        ado1: 'ador-latest',
-        fhexa1: 'hexa-latest',
-      }[device.model.toLowerCase()] || 'firmware-latest';
+    const key = match<WorkAreaModel, string>(device.model)
+      .with('ado1', () => 'ador-latest')
+      .with('fhexa1', () => 'hexa-latest')
+      .with('fbb2', () => 'nx-latest')
+      .otherwise(() => 'firmware-latest');
     const resp = await axiosFluxId.get(`api/check-update?key=${key}`);
 
     console.log(resp);
