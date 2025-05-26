@@ -27,7 +27,7 @@ const convertBitmapToInfilledRect = (): (() => void) => {
     });
     rect.setAttribute('fill', '#000');
     rect.setAttribute('fill-opacity', '1');
-    elem.parentNode?.appendChild(rect);
+    elem.parentNode?.insertBefore(rect, elem);
     newElems.push(rect);
     oldElemMap.unshift({ elem, nextSibling: elem.nextSibling, parentNode: elem.parentNode });
     elem.remove();

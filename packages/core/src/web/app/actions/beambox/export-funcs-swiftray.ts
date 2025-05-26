@@ -404,8 +404,8 @@ const fetchContourTaskCode = async (): Promise<null | string> => {
   const cleanUpTempModification = async () => {
     revertClipPath();
     revertBitmap();
-    revertVariableText?.();
     await FontFuncs.revertTempConvert();
+    revertVariableText?.();
     SymbolMaker.switchImageSymbolForAll(true);
   };
 
