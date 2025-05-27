@@ -14,9 +14,7 @@ const popUp = (args: IAlert): void => {
 
 export default {
   checkIdExist: (id: string): boolean => {
-    const response = {
-      idExist: false,
-    };
+    const response = { idExist: false };
 
     eventEmitter.emit('CHECK_ID_EXIST', id, response);
 
@@ -26,10 +24,5 @@ export default {
     eventEmitter.emit('POP_BY_ID', id);
   },
   popUp,
-  popUpError: (args: IAlert): void => {
-    popUp({
-      ...args,
-      type: alertConstants.SHOW_POPUP_ERROR,
-    });
-  },
+  popUpError: (args: IAlert): void => popUp({ ...args, type: alertConstants.SHOW_POPUP_ERROR }),
 };

@@ -24,7 +24,7 @@ function preprocessSvgString(rawSvgString: string, type: ImportType, filePath?: 
     );
   }
 
-  // 'path' is non-standard for Blob/File.
+  // 'path' is non-standard for Blob.
   // If 'blob' is a File object, 'blob.name' (the filename) might be available.
   // If 'blob.path' is crucial and comes from a specific environment or custom type,
   // For now, we'll keep the logic but isolate it.
