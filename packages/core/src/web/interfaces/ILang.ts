@@ -1248,6 +1248,8 @@ export interface ILang {
     area_check: string;
     areacheck_desc: string;
     calculating_task: string;
+    contour: string;
+    contour_desc: string;
     framing: string;
     framing_desc: string;
     hull: string;

@@ -1248,6 +1248,8 @@ const lang: ILang = {
     area_check: 'Alueen tarkistus',
     areacheck_desc: 'Varmistaa työalueen turvallisuuden näyttämällä objektin rajauslaatikon ja laserpään kiihdytysvyöhykkeen.',
     calculating_task: 'Lasketaan tehtävää...',
+    contour: 'Ääriviiva',
+    contour_desc: 'Esikatsele todellisen kuvion ääriviivaa.',
     framing: 'Kehystys',
     framing_desc: 'Esikatselee objektin raja-laatikon.',
     hull: 'Runko',

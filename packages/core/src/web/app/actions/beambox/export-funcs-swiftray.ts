@@ -11,12 +11,15 @@ import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 import AwsHelper from '@core/helpers/aws-helper';
 import i18n from '@core/helpers/i18n';
 import updateImagesResolution from '@core/helpers/image/updateImagesResolution';
+import convertBitmapToInfilledRect from '@core/helpers/layer/convertBitmapToInfilledRect';
 import convertClipPath from '@core/helpers/layer/convertClipPath';
 import convertShapeToBitmap from '@core/helpers/layer/convertShapeToBitmap';
 import { tempSplitFullColorLayers } from '@core/helpers/layer/full-color/splitFullColorLayer';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
+import { convertVariableText } from '@core/helpers/variableText';
 import VersionChecker from '@core/helpers/version-checker';
+import type { SwiftrayConvertType } from '@core/interfaces/IControlSocket';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { TaskMetaData } from '@core/interfaces/ITask';
@@ -59,7 +62,7 @@ const generateUploadFile = async (thumbnail: string, thumbnailUrl: string): Prom
     extension: 'svg',
     name: 'svgeditor.svg',
     thumbnail: thumbnail.toString(),
-    uploadName: thumbnailUrl.split('/').pop(),
+    uploadName: thumbnailUrl.split('/').pop() ?? '',
   };
 };
 
@@ -150,7 +153,7 @@ const uploadToParser = async (uploadFile: IWrappedSwiftrayTaskFile): Promise<boo
   return !isCanceled && !errorMessage;
 };
 
-const getTaskCode = (codeType: 'fcode' | 'gcode' | 'preview', taskOptions) =>
+const getTaskCode = (codeType: SwiftrayConvertType, taskOptions) =>
   new Promise<{
     fileTimeCost: null | number;
     metadata: Record<string, string>;
@@ -356,63 +359,108 @@ const fetchTaskCodeSwiftray = async (
   };
 };
 
-// Send svg string and calculate the frame
-const fetchFraming = async (): Promise<boolean> => {
+// Promark only
+const fetchContourTaskCode = async (): Promise<null | string> => {
+  if (!swiftrayClient.checkVersion('PROMARK_CONTOUR')) {
+    return null;
+  }
+
+  let isCanceled = false;
+
   svgCanvas.removeUnusedDefs();
   SymbolMaker.switchImageSymbolForAll(false);
   Progress.openNonstopProgress({
     caption: i18n.lang.beambox.popup.progress.calculating,
-    id: 'upload-scene',
+    id: 'fetch-task-code',
     message: lang.beambox.bottom_right_panel.convert_text_to_path_before_export,
   });
 
   // Convert text to path
+  const revertVariableText = await convertVariableText();
   const res = await FontFuncs.tempConvertTextToPathAmongSvgContent();
 
   if (!res) {
-    Progress.popById('upload-scene');
+    Progress.popById('fetch-task-code');
+    revertVariableText?.();
     SymbolMaker.switchImageSymbolForAll(true);
 
-    return false;
+    return null;
   }
 
-  const svgString = svgCanvas.getSvgString();
-  const uploadConfig = {
-    engraveDpi: dpiTextMap[BeamboxPreference.read('engrave_dpi')],
-    model: BeamboxPreference.read('workarea') || BeamboxPreference.read('model'),
-    rotaryMode: BeamboxPreference.read('rotary_mode'),
+  Progress.update('fetch-task-code', {
+    caption: i18n.lang.beambox.popup.progress.calculating,
+    message: 'Simplifying bitmap',
+  });
+
+  const revertBitmap = convertBitmapToInfilledRect();
+
+  Progress.update('fetch-task-code', {
+    caption: i18n.lang.beambox.popup.progress.calculating,
+    message: 'Calculating clip path',
+  });
+
+  const revertClipPath = await convertClipPath();
+
+  const cleanUpTempModification = async () => {
+    revertClipPath();
+    revertBitmap();
+    await FontFuncs.revertTempConvert();
+    revertVariableText?.();
+    SymbolMaker.switchImageSymbolForAll(true);
   };
 
-  await FontFuncs.revertTempConvert();
+  Progress.update('fetch-task-code', {
+    caption: i18n.lang.beambox.popup.progress.calculating,
+    message: 'Generating Upload File',
+  });
 
-  const loadResult = await swiftrayClient.loadSVG(
-    {
-      data: svgString,
-      extension: 'svg',
-      name: 'svgeditor.svg',
-      thumbnail: '',
-      uploadName: 'framing.svg',
-    },
-    {
-      onError: (message: string) => {
-        Progress.popById('upload-scene');
-        popupError(message);
-      },
-      onFinished: onUploadFinished,
-      onProgressing: onUploadProgressing,
-    },
-    uploadConfig,
-  );
+  const uploadFile = await generateUploadFile('', '');
+
+  await cleanUpTempModification();
+
+  const didUpload = await uploadToParser(uploadFile);
 
   Progress.popById('upload-scene');
 
-  return loadResult.success;
+  if (!didUpload) {
+    return null;
+  }
+
+  Progress.openSteppingProgress({
+    id: 'fetch-task',
+    message: '',
+    onCancel: () => {
+      swiftrayClient.interruptCalculation();
+      isCanceled = true;
+    },
+  });
+
+  const taskConfig: any = {
+    isPromark: true,
+    model: 'fpm1',
+    travelSpeed: controlConfig.travelSpeed,
+  };
+
+  if (BeamboxPreference.read('enable_mask')) {
+    // Note: Swiftray only checks whether the key exists; the value is not used
+    taskConfig.mask = true;
+  }
+
+  const { fileTimeCost, taskCodeBlob } = await getTaskCode('contour', taskConfig);
+
+  Progress.popById('fetch-task');
+
+  if (isCanceled || fileTimeCost === 0 || !taskCodeBlob) {
+    return null;
+  }
+
+  try {
+    return await taskCodeBlob.text();
+  } catch (e) {
+    console.error('Error reading task code blob:', e);
+
+    return null;
+  }
 };
 
-// Send svg string calculate taskcode, output Fcode in default
-// eslint-disable-next-line ts/no-unused-vars
-const fetchTransferredFcodeSwiftray = async (gcodeString: string, thumbnail: string) => {
-  console.warn('fetchTransferredFcode is not yet implement4ed, use fetchTaskCodeSwiftray instead');
-};
-
-export { fetchFraming, fetchTaskCodeSwiftray, fetchTransferredFcodeSwiftray };
+export { fetchContourTaskCode, fetchTaskCodeSwiftray };

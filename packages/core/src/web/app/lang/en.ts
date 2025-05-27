@@ -1248,6 +1248,8 @@ const lang: ILang = {
     area_check: 'Area Check',
     areacheck_desc: "Ensures the work area is safe by previewing the object's bounding box and the laser head's acceleration zone.",
     calculating_task: 'Calculating task...',
+    contour: 'Contour',
+    contour_desc: 'Preview the actual pattern outline.',
     framing: 'Framing',
     framing_desc: "Previews the object's bounding box.",
     hull: 'Hull',
