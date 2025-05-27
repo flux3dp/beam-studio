@@ -1248,6 +1248,8 @@ const lang: ILang = {
     area_check: 'Controllo Area',
     areacheck_desc: "Garantisce la sicurezza dell'area di lavoro visualizzando il riquadro di delimitazione dell'oggetto e la zona di accelerazione della testa laser.",
     calculating_task: 'Calcolo del compito...',
+    contour: 'Contorno',
+    contour_desc: 'Anteprima del contorno reale del motivo.',
     framing: 'Inquadratura',
     framing_desc: "Anteprima del riquadro di delimitazione dell'oggetto.",
     hull: 'Involucro',

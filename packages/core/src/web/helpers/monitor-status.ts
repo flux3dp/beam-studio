@@ -18,6 +18,7 @@ export enum ButtonTypes {
 
 const statusButtonTypeMap: { [status: number]: ButtonTypes[] } = {};
 
+statusButtonTypeMap[DeviceConstants.status.IDLE] = [ButtonTypes.PLAY];
 statusButtonTypeMap[DeviceConstants.status.INIT] = [ButtonTypes.DISABLED_PLAY];
 statusButtonTypeMap[DeviceConstants.status.STARTING] = [ButtonTypes.DISABLED_PLAY];
 statusButtonTypeMap[DeviceConstants.status.RESUME_TO_STARTING] = [

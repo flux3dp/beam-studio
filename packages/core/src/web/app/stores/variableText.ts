@@ -6,6 +6,7 @@ export type VariableTextState = {
   advanceBy: number;
   autoAdvance: boolean;
   csvContent: string[][];
+  csvFileName: string;
   current: number;
   end: number;
   start: number;
@@ -15,6 +16,7 @@ export const useVariableTextState = create<VariableTextState>(() => ({
   advanceBy: 1,
   autoAdvance: true,
   csvContent: [],
+  csvFileName: '',
   current: 0,
   end: 999,
   start: 0,

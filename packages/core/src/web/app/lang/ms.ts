@@ -1248,6 +1248,8 @@ const lang: ILang = {
     area_check: 'Semakan Kawasan',
     areacheck_desc: 'Memastikan kawasan kerja selamat dengan memaparkan kotak sempadan objek dan zon pecutan kepala laser.',
     calculating_task: 'Mengira tugas...',
+    contour: 'Kontur',
+    contour_desc: 'Pratonton kontur corak sebenar.',
     framing: 'Pembingkaian',
     framing_desc: 'Pratonton kotak sempadan objek.',
     hull: 'Kerangka',

@@ -1248,6 +1248,8 @@ const lang: ILang = {
     area_check: 'Kontrola oblasti',
     areacheck_desc: 'Zajišťuje bezpečnost pracovní oblasti náhledem na ohraničující rámeček objektu a zónu akcelerace laserové hlavy.',
     calculating_task: 'Výpočet úlohy...',
+    contour: 'Obrys',
+    contour_desc: 'Náhled skutečného obrysu vzoru.',
     framing: 'Rámování',
     framing_desc: 'Náhled ohraničujícího rámečku objektu.',
     hull: 'Obrys',

@@ -20,6 +20,8 @@ export const renderFramingIcon = (type: TFramingType, className?: string): React
       return <AreaCheck className={className} />;
     case FramingType.RotateAxis:
       return <RotateAxis className={className} />;
+    case FramingType.Contour:
+      return <Contour className={className} />;
     default:
       return null;
   }

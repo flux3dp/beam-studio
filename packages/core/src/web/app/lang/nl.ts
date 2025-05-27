@@ -1248,6 +1248,8 @@ const lang: ILang = {
     area_check: 'Gebied Controle',
     areacheck_desc: 'Zorgt voor een veilige werkruimte door het begrenzingsvak van het object en de versnellingszone van de laserkop te tonen.',
     calculating_task: 'Taak berekenen...',
+    contour: 'Contour',
+    contour_desc: 'Bekijk de werkelijke patroonomtrek.',
     framing: 'Inlijsten',
     framing_desc: 'Geeft een voorbeeld van de begrenzingsbox van het object.',
     hull: 'Omhulsel',

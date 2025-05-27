@@ -8,6 +8,7 @@ import curveEngravingModeController from '@core/app/actions/canvas/curveEngravin
 import tabController from '@core/app/actions/tabController';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import tutorialConstants from '@core/app/constants/tutorial-constants';
+import workareaManager from '@core/app/svgedit/workarea';
 import tutorialController from '@core/app/views/tutorials/tutorialController';
 import { getPassThrough } from '@core/helpers/addOn';
 import { getLatestDeviceInfo } from '@core/helpers/api/discover';
@@ -36,7 +37,7 @@ const workareaEvents = eventEmitterFactory.createEventEmitter('workarea');
 
 interface CanvasContextType {
   changeToPreviewMode: () => void;
-  currentUser: IUser;
+  currentUser: IUser | null;
   endPreviewMode: () => void;
   hasPassthroughExtension: boolean;
   hasUnsavedChange: boolean;
@@ -321,7 +322,14 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
   };
 
   const togglePathPreview = () => {
-    setMode(mode === CanvasMode.PathPreview ? CanvasMode.Draw : CanvasMode.PathPreview);
+    if (mode === CanvasMode.PathPreview) {
+      setMode(CanvasMode.Draw);
+      // Reset view after rerender
+      // This is required after extractVariableText (setSvgContent without resetView)
+      setTimeout(workareaManager.resetView);
+    } else {
+      setMode(CanvasMode.PathPreview);
+    }
   };
 
   const { children } = props;
