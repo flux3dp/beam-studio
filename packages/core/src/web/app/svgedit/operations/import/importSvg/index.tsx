@@ -34,16 +34,25 @@ const PATH_D_COMMAND_COUNT_THRESHOLD = 50_000; // 50,000 commands
 
 const callTooLargeAlert = (id: string, message: JSX.Element | string) =>
   new Promise<boolean>((resolve) => {
+    if (!beamboxPreference.read('alert-import-large-svg')) {
+      resolve(true); // If the user has opted out of the alert, resolve immediately
+    }
+
     alertCaller.popUp({
-      buttonType: alertConstants.YES_NO,
+      alwaysTriggerCheckboxCallbacks: false,
+      buttonType: alertConstants.CONFIRM_CANCEL,
       checkbox: {
-        callbacks: () => console.log('Checkbox callback'),
+        callbacks: () => {
+          console.log('User opted out of large SVG import alert');
+          beamboxPreference.write('alert-import-large-svg', false);
+        },
         text: 'Do not show again',
       },
       id,
       message,
-      onNo: () => resolve(false),
-      onYes: () => resolve(true),
+      onCancel: () => resolve(false),
+      onConfirm: () => resolve(true),
+      reverse: true,
     });
   });
 

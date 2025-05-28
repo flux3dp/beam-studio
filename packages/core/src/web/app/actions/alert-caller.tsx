@@ -12,7 +12,7 @@ const popUp = (args: IAlert): void => {
   eventEmitter.emit('POP_UP', args);
 };
 
-export default {
+const alertCaller = {
   checkIdExist: (id: string): boolean => {
     const response = { idExist: false };
 
@@ -26,3 +26,5 @@ export default {
   popUp,
   popUpError: (args: IAlert): void => popUp({ ...args, type: alertConstants.SHOW_POPUP_ERROR }),
 };
+
+export default alertCaller;
