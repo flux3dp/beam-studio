@@ -65,11 +65,22 @@ interface Props {
   data: IAlert;
 }
 
-const Alert = ({ data }: Props): React.JSX.Element => {
+const Alert = ({
+  data: {
+    alwaysTriggerCheckboxCallbacks = true,
+    animationSrcs,
+    buttons,
+    caption,
+    checkbox,
+    iconUrl,
+    links,
+    message,
+    messageIcon,
+    reverse = false,
+  },
+}: Props): React.JSX.Element => {
   const lang = useI18n().alert;
   const { popFromStack } = useContext(AlertProgressContext);
-  const { buttons, caption, checkbox, iconUrl, links, message, messageIcon } = data;
-
   const [checkboxChecked, setCheckboxChecked] = useState(false);
 
   const renderCheckbox = (): ReactNode => {
@@ -132,16 +143,20 @@ const Alert = ({ data }: Props): React.JSX.Element => {
   };
 
   const animation = useMemo<ReactNode>(() => {
-    if (!data.animationSrcs) return null;
+    if (!animationSrcs) return null;
 
     return (
       <video autoPlay className={styles.video} loop muted>
-        {data.animationSrcs.map(({ src, type }) => (
+        {animationSrcs.map(({ src, type }) => (
           <source key={src} src={src} type={type} />
         ))}
       </video>
     );
-  }, [data.animationSrcs]);
+  }, [animationSrcs]);
+
+  if (reverse) {
+    buttons = buttons?.toReversed();
+  }
 
   const footer = buttons?.map(({ className, label, onClick, type }, idx) => {
     const buttonType = type ?? (className?.includes('primary') ? 'primary' : 'default');
@@ -156,7 +171,12 @@ const Alert = ({ data }: Props): React.JSX.Element => {
             const { callbacks } = checkbox;
 
             if (typeof callbacks === 'function') {
-              callbacks?.();
+              if (buttonType === 'primary' || alwaysTriggerCheckboxCallbacks) {
+                callbacks(); // Only run for primary button
+              }
+
+              // Execute the button's onClick callback after checkbox's callback if provided
+              onClick?.();
             } else if (callbacks.length > idx) {
               callbacks[idx]?.();
             } else {
