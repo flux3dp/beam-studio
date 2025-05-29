@@ -9,5 +9,5 @@ export interface IButton {
   onMouseUp?: () => void;
   right?: boolean;
   title?: string;
-  type?: string;
+  type?: 'default' | 'primary';
 }

@@ -3,6 +3,7 @@ import type { IButton } from './IButton';
 export type MessageIcon = 'error' | 'info' | 'notice' | 'success' | 'warning';
 
 export interface IAlert {
+  alwaysTriggerCheckboxCallbacks?: boolean;
   animationSrcs?: Array<{ src: string; type: string }>;
   buttonLabels?: string[];
   buttons?: IButton[];
@@ -30,5 +31,6 @@ export interface IAlert {
   onRetry?: Function;
   onYes?: Function;
   primaryButtonIndex?: number;
+  reverse?: boolean;
   type?: string;
 }

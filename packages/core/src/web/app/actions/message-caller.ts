@@ -13,9 +13,7 @@ export enum MessageLevel {
 const eventEmitter = eventEmitterFactory.createEventEmitter('alert-progress');
 const MessageCaller = {
   checkIdExist: (id: string): boolean => {
-    const response = {
-      result: false,
-    };
+    const response = { result: false };
 
     eventEmitter.emit('CHECK_PROGRESS_EXIST', id, response);
 
@@ -26,13 +24,7 @@ const MessageCaller = {
   },
   openMessage: (args: IMessage): Promise<void> =>
     new Promise((resolve) => {
-      eventEmitter.emit(
-        'OPEN_MESSAGE',
-        {
-          ...args,
-        },
-        resolve,
-      );
+      eventEmitter.emit('OPEN_MESSAGE', { ...args }, resolve);
     }),
 };
 

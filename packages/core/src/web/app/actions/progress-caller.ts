@@ -6,9 +6,7 @@ const eventEmitter = eventEmitterFactory.createEventEmitter('alert-progress');
 
 export default {
   checkIdExist: (id: string): boolean => {
-    const response = {
-      result: false,
-    };
+    const response = { result: false };
 
     eventEmitter.emit('CHECK_PROGRESS_EXIST', id, response);
 
@@ -16,14 +14,7 @@ export default {
   },
   openMessage: (args: IProgressDialog): Promise<void> =>
     new Promise((resolve) => {
-      eventEmitter.emit(
-        'OPEN_MESSAGE',
-        {
-          ...args,
-          isProgress: true,
-        },
-        resolve,
-      );
+      eventEmitter.emit('OPEN_MESSAGE', { ...args, isProgress: true }, resolve);
     }),
   openNonstopProgress: async (args: IProgressDialog): Promise<void> => {
     if (!args.caption && args.message) {
@@ -31,27 +22,14 @@ export default {
     }
 
     return new Promise((resolve) => {
-      eventEmitter.emit(
-        'OPEN_PROGRESS',
-        {
-          ...args,
-          isProgress: true,
-          type: ProgressConstants.NONSTOP,
-        },
-        resolve,
-      );
+      eventEmitter.emit('OPEN_PROGRESS', { ...args, isProgress: true, type: ProgressConstants.NONSTOP }, resolve);
     });
   },
   openSteppingProgress: (args: IProgressDialog): Promise<void> =>
     new Promise((resolve) => {
       eventEmitter.emit(
         'OPEN_PROGRESS',
-        {
-          ...args,
-          isProgress: true,
-          percentage: args.percentage || 0,
-          type: ProgressConstants.STEPPING,
-        },
+        { ...args, isProgress: true, percentage: args.percentage || 0, type: ProgressConstants.STEPPING },
         resolve,
       );
     }),

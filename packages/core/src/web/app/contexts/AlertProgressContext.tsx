@@ -82,12 +82,7 @@ export class AlertProgressContextProvider extends React.Component<Props, State> 
     });
   };
 
-  checkIdExist = (
-    id: string,
-    response: {
-      idExist: boolean;
-    },
-  ): void => {
+  checkIdExist = (id: string, response: { idExist: boolean }): void => {
     const { alertProgressStack } = this.state;
     const res = alertProgressStack.filter((item) => {
       const { id: itemId } = item;
@@ -120,10 +115,7 @@ export class AlertProgressContextProvider extends React.Component<Props, State> 
     }
 
     this.setState(
-      (cur) => ({
-        ...cur,
-        alertProgressStack: [...cur.alertProgressStack, { ...item, key: generateRandomKey() }],
-      }),
+      (cur) => ({ ...cur, alertProgressStack: [...cur.alertProgressStack, { ...item, key: generateRandomKey() }] }),
       callback,
     );
   };
@@ -131,17 +123,7 @@ export class AlertProgressContextProvider extends React.Component<Props, State> 
   openProgress = (args: IProgressDialog, callback = () => {}): void => {
     const { caption, id, message, type } = args;
 
-    this.pushToStack(
-      {
-        ...args,
-        caption: caption || '',
-        id,
-        isProgress: true,
-        message: message || '',
-        type,
-      },
-      callback,
-    );
+    this.pushToStack({ ...args, caption: caption || '', id, isProgress: true, message: message || '', type }, callback);
   };
 
   closeMessage = (id: string): void => {
@@ -260,23 +242,26 @@ export class AlertProgressContextProvider extends React.Component<Props, State> 
       return buttons;
     }
 
-    const { buttonType, id, onConfirm, onRetry, onYes } = args;
-    let { buttonLabels, callbacks, onCancel, onNo, primaryButtonIndex } = args;
+    const { buttonType, id } = args;
+    let { buttonLabels, callbacks, onCancel, onConfirm, onNo, onRetry, onYes, primaryButtonIndex } = args;
 
     switch (buttonType) {
       case AlertConstants.YES_NO:
+        onYes = onYes || (() => {});
         onNo = onNo || (() => {});
         buttonLabels = [LANG.yes, LANG.no];
         callbacks = [onYes, onNo];
         primaryButtonIndex = primaryButtonIndex || 0;
         break;
       case AlertConstants.CONFIRM_CANCEL:
+        onConfirm = onConfirm || (() => {});
         onCancel = onCancel || (() => {});
         buttonLabels = [LANG.confirm, LANG.cancel];
         primaryButtonIndex = primaryButtonIndex || 0;
         callbacks = [onConfirm, onCancel];
         break;
       case AlertConstants.RETRY_CANCEL:
+        onRetry = onRetry || (() => {});
         onCancel = onCancel || (() => {});
         buttonLabels = [LANG.retry, LANG.cancel];
         primaryButtonIndex = primaryButtonIndex || 0;
