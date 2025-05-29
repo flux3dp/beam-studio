@@ -4,7 +4,7 @@ jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read: mockBeamboxPreferenceRead,
 }));
 
-const inserSvgElement = (svg: SVGElement) => {
+const insertSvgElement = (svg: SVGElement) => {
   const container = document.createElement('mock-use');
 
   container.appendChild(svg);
@@ -12,8 +12,8 @@ const inserSvgElement = (svg: SVGElement) => {
 
   return container;
 };
-const mockImportBarcodeSvgElement = jest.fn().mockImplementation(inserSvgElement);
-const mockImportQrCodeSvgElement = jest.fn().mockImplementation(inserSvgElement);
+const mockImportBarcodeSvgElement = jest.fn().mockImplementation(insertSvgElement);
+const mockImportQrCodeSvgElement = jest.fn().mockImplementation(insertSvgElement);
 
 jest.mock('@core/app/components/dialogs/CodeGenerator/svgOperation', () => ({
   importBarcodeSvgElement: mockImportBarcodeSvgElement,
@@ -357,7 +357,7 @@ describe('test variableText helper', () => {
     document.body.innerHTML = mockBody.extractVariableText;
 
     let expectedExtractResult: HTMLElement;
-    let expectedRenvertResult: HTMLElement;
+    let expectedRevertResult: HTMLElement;
     let extractFn = extractVariableText();
 
     expect(extractFn).not.toBe(null);
@@ -370,7 +370,7 @@ describe('test variableText helper', () => {
     expect(mockClearSelection).toHaveBeenCalledTimes(2);
     expect(mockHideCursor).toHaveBeenCalledTimes(2);
     expect(document.body).toMatchSnapshot();
-    expectedRenvertResult = document.body;
+    expectedRevertResult = document.body;
 
     extractFn.extract();
     expect(mockClearSelection).toHaveBeenCalledTimes(3);
@@ -393,7 +393,7 @@ describe('test variableText helper', () => {
     extractFn.revert();
     expect(mockClearSelection).toHaveBeenCalledTimes(2);
     expect(mockHideCursor).toHaveBeenCalledTimes(2);
-    expect(document.body).toBe(expectedRenvertResult);
+    expect(document.body).toBe(expectedRevertResult);
   });
 });
 
