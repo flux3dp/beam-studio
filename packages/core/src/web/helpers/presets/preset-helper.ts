@@ -23,23 +23,23 @@ const migrateStorage = () => {
         return true;
       }
 
-      existingKeys.add(c.key);
+      existingKeys.add(c.key!);
 
-      return !!defaultPresets[c.key];
+      return Boolean(defaultPresets[c.key!]);
     });
     defaultKeys.forEach((key, idx) => {
       if (!existingKeys.has(key)) {
-        let inserIdx = -1;
+        let insertIndex = -1;
 
         if (idx > 0) {
           const prevKey = defaultKeys[idx - 1];
 
-          inserIdx = presets.findIndex((p) => p.key === prevKey && p.isDefault);
+          insertIndex = presets.findIndex((p) => p.key === prevKey && p.isDefault);
         }
 
         const newPreset = { hide: false, isDefault: true, key };
 
-        presets.splice(inserIdx + 1, 0, newPreset);
+        presets.splice(insertIndex + 1, 0, newPreset);
       }
     });
   } else {
@@ -67,7 +67,7 @@ const migrateStorage = () => {
           presets.splice(inserIdx + 1, 0, newPreset);
         }
       });
-      presets = presets.filter((c) => !(c.isDefault && !defaultPresets[c.key]));
+      presets = presets.filter((c) => !(c.isDefault && !defaultPresets[c.key!]));
       presets.forEach((p, idx) => {
         const { hide, isDefault, key } = p;
 
@@ -103,13 +103,13 @@ const initPresets = (migrate = false) => {
     }
 
     // translate name
-    const unit = storage.get('default-units') || 'mm';
+    const unit = (storage.get('default-units') || 'mm') as 'inches' | 'mm';
     const LANG = i18n.lang.beambox.right_panel.laser_panel;
 
     allPresets.forEach((preset) => {
       if (preset.isDefault && preset.key) {
         const { key } = preset;
-        const translated = LANG.dropdown[unit][key];
+        const translated = LANG.dropdown[unit][key as keyof (typeof LANG.dropdown)[typeof unit]];
 
         preset.name = translated || key;
       }
@@ -122,7 +122,7 @@ const clearPresetsCache = () => {
 };
 
 const reloadPresets = (migrate = false): void => {
-  allPresets = null;
+  allPresets = null; // clear the array
   clearPresetsCache();
   initPresets(migrate);
 };
@@ -170,7 +170,7 @@ const getPresetsList = (model: WorkAreaModel, layerModule: LayerModuleType = Lay
         }
 
         if (isDefault) {
-          const defaultPreset = getDefaultPreset(key, presetModel, layerModule);
+          const defaultPreset = getDefaultPreset(key!, presetModel, layerModule);
 
           if (defaultPreset) {
             return { ...defaultPreset, ...preset };
@@ -179,7 +179,7 @@ const getPresetsList = (model: WorkAreaModel, layerModule: LayerModuleType = Lay
           return null;
         }
 
-        if (printingModules.has(module) !== printingModules.has(layerModule)) {
+        if (printingModules.has(module!) !== printingModules.has(layerModule)) {
           return null;
         }
 
@@ -232,16 +232,16 @@ export const importPresets = async (file?: Blob): Promise<boolean> => {
           const reader = new FileReader();
 
           reader.onloadend = (evt) => {
-            const configString = evt.target.result as string;
+            const configString = evt.target!.result as string;
             const newConfigs = JSON.parse(configString);
-            const { customizedLaserConfigs, defaultLaserConfigsInUse, presets } = newConfigs;
+            const { customizedLaserConfigs, defaultLaserConfigsInUse, presets } = newConfigs as any;
 
             if (presets) {
               storage.set('presets', presets);
             } else if (customizedLaserConfigs && defaultLaserConfigsInUse) {
               // For version <= 2.3.9
               const configNames = new Set(
-                customizedLaserConfigs.filter((config) => !config.isDefault).map((config) => config.name),
+                customizedLaserConfigs.filter((config: any) => !config.isDefault).map((config: any) => config.name),
               );
               let currentConfig = storage.get('customizedLaserConfigs') || [];
 
