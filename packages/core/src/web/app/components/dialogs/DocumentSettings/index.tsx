@@ -45,6 +45,7 @@ const workareaOptions = [
   { label: 'Ador', value: 'ado1' },
   checkFpm1() && { label: 'Promark', value: 'fpm1' },
   { label: 'Beambox II', value: 'fbb2' },
+  isDev() && { label: 'beamo II', value: 'fbm2' },
   isDev() && { label: 'Lazervida', value: 'flv1' },
 ].filter(Boolean);
 

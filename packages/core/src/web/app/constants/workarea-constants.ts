@@ -10,6 +10,7 @@ export type WorkAreaLabel =
   | 'Beambox II'
   | 'Beambox Pro'
   | 'beamo'
+  | 'beamo II'
   | 'HEXA'
   | 'HEXA RF'
   | 'Lazervida'
@@ -17,6 +18,7 @@ export type WorkAreaLabel =
 
 export const workArea = [
   'fbm1',
+  'fbm2',
   'fbb1b',
   'fbb1p',
   'fhexa1',
@@ -142,6 +144,23 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     pxWidth: 300 * dpmm,
     vectorSpeedLimit: 20,
     width: 300,
+  },
+  fbm2: {
+    cameraCenter: [180, 70],
+    height: 240,
+    label: 'beamo II',
+    maxSpeed: 900,
+    minSpeed: 0.5,
+    pxHeight: 240 * dpmm,
+    pxWidth: 360 * dpmm,
+    supportedModules: [
+      LayerModule.LASER_UNIVERSAL,
+      isDev() ? LayerModule.PRINTER_4C : null,
+      isDev() ? LayerModule.WHITE_INK : null,
+      LayerModule.UV_PRINT,
+    ].filter(Boolean),
+    vectorSpeedLimit: 50,
+    width: 360,
   },
   fhexa1: {
     autoFocusOffset: [31.13, 1.2, 6.5],

@@ -5,7 +5,8 @@ export type SupportUsbModels = (typeof supportUsbModelsArray)[number];
 export const supportUsbModelsStrict = new Set(supportUsbModelsArray);
 export const supportUsbModels = new Set(removeReadonly(supportUsbModelsArray));
 
-export const bb2ModelsArray = ['fbb2'] as const;
+// TODO: add fbm2 here just for testing, remove it later
+export const bb2ModelsArray = ['fbb2', 'fbm2'] as const;
 export type Bb2Models = (typeof bb2ModelsArray)[number];
 export const bb2ModelsStrict = new Set(bb2ModelsArray);
 export const bb2Models = new Set(removeReadonly(bb2ModelsArray));
@@ -21,7 +22,7 @@ export const adorModels = new Set(adorModelsArray);
 export const promarkModelsArray = ['fpm1'] as const;
 export const promarkModels = new Set(promarkModelsArray);
 
-export const modelsWithModules = new Set(adorModelsArray);
+export const modelsWithModules = new Set([...adorModelsArray, 'fbm2']);
 
 export const PreviewSpeedLevel = {
   FAST: 3,
@@ -41,6 +42,7 @@ export default {
     fbb1p: ['fbb1p', 'fbb1b', 'fbm1'],
     fbb2: bb2ModelsArray,
     fbm1: ['fbm1'],
+    fbm2: ['fbm2'],
     fhexa1: ['fhexa1', 'fbb1p', 'fbb1b', 'fbm1'],
     fhx2rf3: ['fhx2rf3', 'fhx2rf6', 'fhexa1', 'fbb1p', 'fbb1b', 'fbm1'],
     fhx2rf6: ['fhx2rf3', 'fhx2rf6', 'fhexa1', 'fbb1p', 'fbb1b', 'fbm1'],

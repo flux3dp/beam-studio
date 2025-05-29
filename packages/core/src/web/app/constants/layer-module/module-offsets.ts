@@ -9,6 +9,7 @@ const moduleOffsets = {
   [LayerModule.LASER_1064]: [0, 26.95],
   [LayerModule.LASER_UNIVERSAL]: [0, 0],
   [LayerModule.PRINTER]: [0, -13.37],
+  [LayerModule.WHITE_INK]: [-0.7, -22.8],
 } as Record<LayerModuleType, [number, number]>;
 
 export default moduleOffsets;
