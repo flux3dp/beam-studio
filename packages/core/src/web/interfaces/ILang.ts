@@ -494,6 +494,7 @@ export interface ILang {
             pc_printing: string;
             rubber_bw_engraving: string;
             silver_engraving: string;
+            slate_engraving: string;
             stainless_steel_bw_engraving_diode: string;
             stainless_steel_dark: string;
             stainless_steel_engraving: string;
@@ -557,6 +558,7 @@ export interface ILang {
             pc_printing: string;
             rubber_bw_engraving: string;
             silver_engraving: string;
+            slate_engraving: string;
             stainless_steel_bw_engraving_diode: string;
             stainless_steel_dark: string;
             stainless_steel_engraving: string;
