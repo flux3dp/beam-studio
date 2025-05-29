@@ -8,6 +8,7 @@ import moduleOffsets from '@core/app/constants/layer-module/module-offsets';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
+import getIsDev from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 
 import SettingFormItem from './components/SettingFormItem';
@@ -19,6 +20,7 @@ interface Props {
 
 const AdorModule = ({ options }: Props): React.JSX.Element => {
   const lang = useI18n();
+  const isDev = useMemo(() => getIsDev(), []);
   const { getConfig, getPreference, setPreference } = useSettingStore();
   const selectedModel = getPreference('model');
   const defaultUnit = getConfig('default-units');
@@ -200,6 +202,36 @@ const AdorModule = ({ options }: Props): React.JSX.Element => {
           unit={defaultUnit === 'inches' ? 'in' : 'mm'}
         />
       </SettingFormItem>
+      {isDev && (
+        <SettingFormItem id="2w-ir-laser-offset" label={'white ink'}>
+          <span className="font2" style={{ lineHeight: '32px', marginRight: '10px' }}>
+            X
+          </span>
+          <UnitInput
+            className={{ half: true }}
+            defaultValue={getModuleOffset(LayerModule.WHITE_INK)[0]}
+            forceUsePropsUnit
+            getValue={(val) => editModuleOffsets(LayerModule.WHITE_INK, 'x', val)}
+            id="white-ink-x-offset"
+            max={workareaWidth}
+            min={-workareaWidth}
+            unit={defaultUnit === 'inches' ? 'in' : 'mm'}
+          />
+          <span className="font2" style={{ lineHeight: '32px', marginRight: '10px' }}>
+            Y
+          </span>
+          <UnitInput
+            className={{ half: true }}
+            defaultValue={getModuleOffset(LayerModule.WHITE_INK)[1]}
+            forceUsePropsUnit
+            getValue={(val) => editModuleOffsets(LayerModule.WHITE_INK, 'y', val)}
+            id="white-ink-y-offset"
+            max={workareaHeight}
+            min={-workareaHeight}
+            unit={defaultUnit === 'inches' ? 'in' : 'mm'}
+          />
+        </SettingFormItem>
+      )}
     </>
   );
 };
