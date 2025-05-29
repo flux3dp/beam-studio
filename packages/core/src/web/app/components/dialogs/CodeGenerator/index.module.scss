@@ -10,3 +10,38 @@
 .fw-n {
   font-weight: normal;
 }
+
+.variable-block {
+  margin-top: 20px;
+
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 12px;
+
+    .label {
+      font-weight: bold;
+    }
+
+    .icon {
+      margin-left: 10px;
+      color: #ababab;
+    }
+
+    .select {
+      width: 220px;
+    }
+
+    .offset {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+
+      :global(.ant-input-number) {
+        width: 160px;
+      }
+    }
+  }
+}

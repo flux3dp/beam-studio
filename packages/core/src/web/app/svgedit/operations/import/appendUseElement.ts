@@ -33,7 +33,7 @@ const checkLayerModule = (layer: Element, targetModule: LayerModuleType): boolea
 
 const appendUseElement = (
   symbol: null | SVGSymbolElement,
-  args: { layerName?: string; targetModule?: LayerModuleType; type: ImportType },
+  args: { hidden?: boolean; layerName?: string; targetModule?: LayerModuleType; type: ImportType },
 ): null | {
   command: ICommand;
   element: SVGUseElement;
@@ -44,11 +44,15 @@ const appendUseElement = (
   }
 
   const batchCmd = new history.BatchCommand('Append Use Element');
-  const { layerName, targetModule = getDefaultLaserModule(), type } = args;
+  const { hidden = false, layerName, targetModule = getDefaultLaserModule(), type } = args;
   const useEl = document.createElementNS(NS.SVG, 'use');
 
   useEl.id = svgCanvas.getNextId();
   useEl.setAttributeNS(NS.XLINK, 'xlink:href', `#${symbol.id}`);
+
+  if (hidden) {
+    useEl.style.visibility = 'hidden';
+  }
 
   // switch currentLayer, and create layer if necessary
   let targetLayerName = layerName;

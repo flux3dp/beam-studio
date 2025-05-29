@@ -545,9 +545,11 @@ export default {
 
     if (hasVariableText({ visibleOnly: true })) {
       // Update thumbnail with variable text placeholder
+      SymbolMaker.switchImageSymbolForAll(false);
       await FontFuncs.tempConvertTextToPathAmongSvgContent();
       ({ thumbnail, thumbnailBlobURL } = await generateThumbnail());
       await FontFuncs.revertTempConvert();
+      SymbolMaker.switchImageSymbolForAll(true);
       // Get variable text task info for initial total time estimation
       vtElemHandler = extractVariableText() ?? undefined;
       vtTaskTinfo = ((await convertEngine(device)) as null | VariableTextTask) ?? undefined;

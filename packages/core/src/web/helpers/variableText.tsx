@@ -1,17 +1,29 @@
+import React from 'react';
+
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
+import type { Root } from 'react-dom/client';
+import { createRoot } from 'react-dom/client';
 
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { promarkModels } from '@core/app/actions/beambox/constant';
+import BarcodePreview from '@core/app/components/dialogs/CodeGenerator/BarcodePreview';
+import type { BarcodeProps, BarcodeRef } from '@core/app/components/dialogs/CodeGenerator/BarcodePreview';
+import QRCodePreview from '@core/app/components/dialogs/CodeGenerator/QRCodePreview';
+import type { QRcodeProps, QRcodeRef } from '@core/app/components/dialogs/CodeGenerator/QRCodePreview';
+import {
+  importBarcodeSvgElement,
+  importQrCodeSvgElement,
+} from '@core/app/components/dialogs/CodeGenerator/svgOperation';
 import { useVariableTextState } from '@core/app/stores/variableText';
-import type { ChangeTextCommand } from '@core/app/svgedit/history/history';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
-import setSvgContent from '@core/app/svgedit/operations/import/setSvgContent';
 import textActions from '@core/app/svgedit/text/textactions';
 import textedit from '@core/app/svgedit/text/textedit';
+import { getObjectLayer } from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import { VariableTextType } from '@core/interfaces/ObjectPanel';
 
@@ -33,7 +45,7 @@ export const isVariableTextSupported = (): boolean => {
   return promarkModels.has(workarea);
 };
 
-export const getVariableTextType = (elem: SVGTextElement): VariableTextType => {
+export const getVariableTextType = (elem: SVGElement): VariableTextType => {
   const typeStr = elem.getAttribute('data-vt-type');
   let type: VariableTextType = VariableTextType.NONE;
 
@@ -44,14 +56,11 @@ export const getVariableTextType = (elem: SVGTextElement): VariableTextType => {
   return type;
 };
 
-export const getVariableTextOffset = (elem: SVGTextElement): number => {
+export const getVariableTextOffset = (elem: SVGElement): number => {
   return +(elem.getAttribute('data-vt-offset') ?? '0');
 };
 
-export const getVariableTexts = (opt?: {
-  type?: VariableTextType;
-  visibleOnly?: boolean;
-}): NodeListOf<SVGTextElement> => {
+export const getVariableTexts = (opt?: { type?: VariableTextType; visibleOnly?: boolean }): NodeListOf<SVGElement> => {
   const prefix = opt?.visibleOnly ? 'g.layer:not([display="none"]) ' : '';
 
   if (opt?.type === undefined) {
@@ -92,6 +101,97 @@ const getTextContent = (elem: SVGTextElement) => {
     .join('\u0085');
 };
 
+const getContent = (elem: SVGElement): string => {
+  if (elem.nodeName.toLowerCase() === 'text') {
+    return getTextContent(elem as SVGTextElement);
+  } else {
+    try {
+      const props = JSON.parse(elem.getAttribute('data-props') ?? '') as BarcodeProps | QRcodeProps;
+
+      return props.value;
+    } catch {
+      return '';
+    }
+  }
+};
+
+const updateContent = async (
+  elem: SVGElement,
+  value: string,
+  oldValue: string,
+  batchCmd: IBatchCommand,
+  root: Root,
+): Promise<void> => {
+  if (elem.nodeName.toLowerCase() === 'text') {
+    // Normal text
+    const subcmd = new history.ChangeTextCommand(elem, oldValue, value);
+
+    batchCmd.addSubCommand(subcmd);
+    textedit.renderText(elem, value);
+  } else {
+    // QRcode or Barcode
+    batchCmd.addSubCommand(new history.RemoveElementCommand(elem, elem.nextSibling, elem.parentNode!));
+
+    if (!value) {
+      elem.remove();
+
+      return;
+    }
+
+    const isQrCode = elem.getAttribute('data-code') === 'qrcode';
+
+    try {
+      const svg = await new Promise<null | SVGSVGElement | undefined>((resolve) => {
+        let resolved = false;
+        const props = JSON.parse(elem.getAttribute('data-props') ?? '') as BarcodeProps | QRcodeProps;
+        const refCallback = (refObject?: BarcodeRef | null | QRcodeRef) => {
+          if (refObject?.getElem()) {
+            resolve(refObject?.getElem());
+            resolved = true;
+          }
+        };
+
+        if (isQrCode) {
+          root.render(<QRCodePreview {...(props as QRcodeProps)} ref={refCallback} value={value} />);
+        } else {
+          root.render(<BarcodePreview {...(props as BarcodeProps)} ref={refCallback} value={value} />);
+        }
+
+        setTimeout(() => {
+          if (!resolved) resolve(null);
+        }, 1000);
+      });
+
+      if (svg) {
+        let newElem: SVGElement;
+        const isInvert = elem.getAttribute('data-invert') === 'true';
+        const drawing = svgCanvas.getCurrentDrawing();
+        const layer = getObjectLayer(elem);
+
+        drawing.setCurrentLayer(layer.title);
+
+        if (isQrCode) {
+          newElem = await importQrCodeSvgElement(svg, isInvert, { batchCmd, hidden: true });
+        } else {
+          newElem = await importBarcodeSvgElement(svg, isInvert, { batchCmd, hidden: true });
+        }
+
+        newElem.setAttribute('x', elem.getAttribute('x') || '0');
+        newElem.setAttribute('y', elem.getAttribute('y') || '0');
+        newElem.setAttribute('transform', elem.getAttribute('transform') || '');
+        newElem.setAttribute('data-ratiofixed', elem.getAttribute('data-ratiofixed') || '');
+        newElem.style.visibility = '';
+        elem.replaceWith(newElem);
+        batchCmd.addSubCommand(new history.MoveElementCommand(newElem, null, newElem.parentNode!));
+      }
+
+      elem.remove();
+    } catch (e) {
+      console.error('[VariableText] Failed to update qrcode/barcode content', elem, value, e);
+    }
+  }
+};
+
 const getLocalizedTime = async () => {
   let lang = navigator.language.toLowerCase();
   const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
@@ -122,110 +222,115 @@ export const convertVariableText = async ({
 } = {}): Promise<(() => void) | null> => {
   if (!isVariableTextSupported()) return null;
 
+  const tmpContainer = document.createElement('div');
   const batchCmd = new history.BatchCommand('Bake Variable Text');
-  let texts: NodeListOf<SVGTextElement>;
-  let subcmd: ChangeTextCommand;
+  let texts: NodeListOf<SVGElement>;
 
   svgCanvas.clearSelection();
   textActions.hideCursor();
-  texts = getVariableTexts({ type: VariableTextType.NUMBER, visibleOnly: !addToHistory });
+  tmpContainer.style.visibility = 'hidden';
+  document.body.appendChild(tmpContainer);
 
-  for (const elem of texts) {
-    const currentValue = getRealCurrent(configs.current + getVariableTextOffset(elem), configs.start, configs.end);
-    const content = getTextContent(elem);
-    const regex = /0?(d+|h+|H+)/;
-    const match = content?.match(regex);
+  const root = createRoot(tmpContainer);
 
-    if (!content || !match) continue;
-
-    const padStart = match[0].startsWith('0');
-    const format = match[1][0];
-    const length = match[1].length;
-    let value = '';
-
-    if (format === 'd') {
-      value = currentValue.toString(10);
-    } else if (format === 'h') {
-      value = currentValue.toString(16);
-    } else if (format === 'H') {
-      value = currentValue.toString(16).toUpperCase();
-    }
-
-    if (padStart) {
-      value = value.padStart(length, '0');
-    }
-
-    value = value.slice(-length);
-    value = content.replace(regex, value);
-    subcmd = new history.ChangeTextCommand(elem, content, value);
-    batchCmd.addSubCommand(subcmd);
-    textedit.renderText(elem, value);
-  }
-
-  texts = getVariableTexts({ type: VariableTextType.TIME, visibleOnly: !addToHistory });
-
-  if (texts.length > 0) {
-    const now = await getLocalizedTime();
+  try {
+    texts = getVariableTexts({ type: VariableTextType.NUMBER, visibleOnly: !addToHistory });
 
     for (const elem of texts) {
-      const content = getTextContent(elem);
+      const currentValue = getRealCurrent(configs.current + getVariableTextOffset(elem), configs.start, configs.end);
+      const content = getContent(elem);
+      const regex = /0?(d+|h+|H+)/;
+      const match = content?.match(regex);
+
+      if (!content || !match) continue;
+
+      const padStart = match[0].startsWith('0');
+      const format = match[1][0];
+      const length = match[1].length;
+      let value = '';
+
+      if (format === 'd') {
+        value = currentValue.toString(10);
+      } else if (format === 'h') {
+        value = currentValue.toString(16);
+      } else if (format === 'H') {
+        value = currentValue.toString(16).toUpperCase();
+      }
+
+      if (padStart) {
+        value = value.padStart(length, '0');
+      }
+
+      value = value.slice(-length);
+      value = content.replace(regex, value);
+      await updateContent(elem, value, content, batchCmd, root);
+    }
+
+    texts = getVariableTexts({ type: VariableTextType.TIME, visibleOnly: !addToHistory });
+
+    if (texts.length > 0) {
+      const now = await getLocalizedTime();
+
+      for (const elem of texts) {
+        const content = getContent(elem);
+
+        if (!content) continue;
+
+        const value = now.format(content);
+
+        await updateContent(elem, value, content, batchCmd, root);
+      }
+    }
+
+    texts = getVariableTexts({ type: VariableTextType.CSV, visibleOnly: !addToHistory });
+    for (const elem of texts) {
+      const currentValue = getRealCurrent(configs.current + getVariableTextOffset(elem), configs.start, configs.end);
+      const content = getContent(elem);
+      const csvContent = configs.csvContent[currentValue] || [];
 
       if (!content) continue;
 
-      const value = now.format(content);
+      const value = content.replaceAll(/%(\d+)/g, (_, index) => {
+        return csvContent[Number.parseInt(index, 10)] || '';
+      });
 
-      subcmd = new history.ChangeTextCommand(elem, content, value);
-      batchCmd.addSubCommand(subcmd);
-      textedit.renderText(elem, value);
+      await updateContent(elem, value, content, batchCmd, root);
     }
+
+    if (addToHistory) {
+      const allElements: SVGElement[] = Array.from(getVariableTexts());
+
+      allElements.forEach((elem) => {
+        const type = getVariableTextType(elem);
+        const offset = getVariableTextOffset(elem);
+
+        elem.removeAttribute('data-vt-type');
+        elem.removeAttribute('data-vt-offset');
+        batchCmd.addSubCommand(
+          new history.ChangeElementCommand(elem, {
+            'data-vt-offset': offset,
+            'data-vt-type': type,
+          }),
+        );
+      });
+
+      undoManager.addCommandToHistory(batchCmd);
+
+      return null;
+    }
+
+    return () => batchCmd.unapply({ handleHistoryEvent: () => {}, renderText: textedit.renderText });
+  } finally {
+    svgCanvas.clearSelection();
+    root.unmount();
+    tmpContainer.remove();
   }
-
-  texts = getVariableTexts({ type: VariableTextType.CSV, visibleOnly: !addToHistory });
-  for (const elem of texts) {
-    const currentValue = getRealCurrent(configs.current + getVariableTextOffset(elem), configs.start, configs.end);
-    const content = getTextContent(elem);
-    const csvContent = configs.csvContent[currentValue] || [];
-
-    if (!content) continue;
-
-    const value = content.replaceAll(/%(\d+)/g, (_, index) => {
-      return csvContent[Number.parseInt(index, 10)] || '';
-    });
-
-    subcmd = new history.ChangeTextCommand(elem, content, value);
-    batchCmd.addSubCommand(subcmd);
-    textedit.renderText(elem, value);
-  }
-
-  if (addToHistory) {
-    const allElements: SVGTextElement[] = Array.from(getVariableTexts());
-
-    allElements.forEach((elem) => {
-      const type = getVariableTextType(elem);
-      const offset = getVariableTextOffset(elem);
-
-      elem.removeAttribute('data-vt-type');
-      elem.removeAttribute('data-vt-offset');
-      batchCmd.addSubCommand(
-        new history.ChangeElementCommand(elem, {
-          'data-vt-offset': offset,
-          'data-vt-type': type,
-        }),
-      );
-    });
-
-    undoManager.addCommandToHistory(batchCmd);
-
-    return null;
-  }
-
-  return () => batchCmd.unapply({ handleHistoryEvent: () => {}, renderText: textedit.renderText });
 };
 
 export const removeVariableText = (): (() => void) | null => {
   if (!isVariableTextSupported()) return null;
 
-  const allElements: SVGTextElement[] = Array.from(getVariableTexts());
+  const allElements: SVGElement[] = Array.from(getVariableTexts());
 
   if (allElements.length === 0) return null;
 
@@ -260,38 +365,43 @@ export const extractVariableText = (doExtract = true): null | VariableTextElemHa
 
   if (!svgcontent) return null;
 
-  const oldContent = svgcontent.outerHTML;
-  const cloned = svgcontent.cloneNode(true) as Element;
+  const revertMaps: Array<{ elem: Element; nextSibling: Node | null; parentNode: Node | null }> = [];
 
-  const removeNonVariableTextElem = (node: Element) => {
+  const findNonVariableElem = (node: Element) => {
     const childNodes = node.children;
 
-    if (childNodes.length === 0) {
-      if (node.tagName !== 'title') {
-        node.remove();
-      }
-    } else if (getVariableTextType(node as SVGTextElement)) {
+    if (getVariableTextType(node as SVGElement)) {
       // Keep element
+    } else if (childNodes.length === 0) {
+      if (node.tagName !== 'title') {
+        revertMaps.unshift({ elem: node, nextSibling: node.nextSibling, parentNode: node.parentNode });
+      }
     } else if (node.getAttribute('display') === 'none' || !hasVariableText({ root: node })) {
-      node.remove();
+      revertMaps.unshift({ elem: node, nextSibling: node.nextSibling, parentNode: node.parentNode });
     } else {
-      for (let i = childNodes.length - 1; i >= 0; i -= 1) {
-        removeNonVariableTextElem(childNodes[i]);
+      for (let i = 0; i < childNodes.length; i += 1) {
+        findNonVariableElem(childNodes[i]);
       }
     }
   };
 
-  removeNonVariableTextElem(cloned);
+  findNonVariableElem(svgcontent);
 
   const extract = () => {
     svgCanvas.clearSelection();
     textActions.hideCursor();
-    setSvgContent(cloned.outerHTML);
+    revertMaps.forEach(({ elem }) => elem.remove());
   };
   const revert = () => {
     svgCanvas.clearSelection();
     textActions.hideCursor();
-    setSvgContent(oldContent);
+    revertMaps.forEach(({ elem, nextSibling, parentNode }) => {
+      if (nextSibling) {
+        parentNode!.insertBefore(elem, nextSibling);
+      } else {
+        parentNode!.appendChild(elem);
+      }
+    });
   };
 
   if (doExtract) {
@@ -300,3 +410,18 @@ export const extractVariableText = (doExtract = true): null | VariableTextElemHa
 
   return { extract, revert };
 };
+
+export function setVariableCodeData(
+  elem: SVGElement,
+  type: VariableTextType,
+  offset: number,
+  isInvert: boolean,
+  props: BarcodeProps | QRcodeProps,
+  codeType: string,
+): void {
+  elem.setAttribute('data-vt-type', type.toString());
+  elem.setAttribute('data-vt-offset', offset.toString());
+  elem.setAttribute('data-invert', isInvert.toString());
+  elem.setAttribute('data-props', JSON.stringify(props));
+  elem.setAttribute('data-code', codeType);
+}

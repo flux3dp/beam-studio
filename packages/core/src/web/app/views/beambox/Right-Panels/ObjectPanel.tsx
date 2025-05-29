@@ -302,7 +302,7 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
   };
 
   const renderOptionPanel = (): React.JSX.Element => {
-    return <OptionsPanel elem={elem!} />;
+    return <OptionsPanel elem={elem as SVGElement} />;
   };
 
   const renderActionPanel = (): React.JSX.Element => <ActionsPanel elem={elem as SVGElement} />;
