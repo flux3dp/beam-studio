@@ -111,7 +111,7 @@ export const getExportOpt = (
     }
   }
 
-  if (constant.adorModels.includes(model)) {
+  if (modelsWithModules.has(model)) {
     const { h, w, x, y } = presprayArea.getPosition(true);
     const workareaWidth = workareaObj.width;
 
@@ -236,11 +236,15 @@ export const getExportOpt = (
 
   if (model === 'fhx2rf3' || model == 'fhx2rf6') {
     updateAccOverride({ path: { x: 1000, y: 1000 } });
-  }
-
-  if ((isPassThroughTask || autoFeeder) && model === 'fbb2') {
+  } else if (model === 'fbb2') {
+    if (isPassThroughTask || autoFeeder) {
     config.mep = 30;
     updateAccOverride({ fill: { x: 5000, y: 2000 }, path: { x: 500, y: 500 } });
+    } else {
+      updateAccOverride({ path: { x: 1000, y: 1000 } });
+    }
+  } else if (model === 'ado1') {
+    updateAccOverride({ path: { x: 500, y: 500 } });
   }
 
   if (autoFeeder) {
