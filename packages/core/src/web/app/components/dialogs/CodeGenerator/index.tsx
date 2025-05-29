@@ -7,8 +7,9 @@ import { Flex, Radio, Switch } from 'antd';
 import Select from '@core/app/widgets/AntdSelect';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import UnitInput from '@core/app/widgets/UnitInput';
+import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import useI18n from '@core/helpers/useI18n';
-import { setVariableCodeData } from '@core/helpers/variableText';
+import { isVariableTextSupported, setVariableCodeData } from '@core/helpers/variableText';
 import browser from '@core/implementations/browser';
 import { VariableTextType } from '@core/interfaces/ObjectPanel';
 
@@ -41,6 +42,8 @@ export default function CodeGenerator({ onClose }: Props): React.JSX.Element {
   const [text, setText] = useState('');
   const [vtType, setVtType] = useState(VariableTextType.NONE);
   const [vtOffset, setVtOffset] = useState(0);
+  const workarea = useWorkarea();
+  const showVariableBlock = useMemo(isVariableTextSupported, [workarea]);
   const isVTToggleOn = useMemo(() => vtType !== VariableTextType.NONE, [vtType]);
   const generatorRef = useRef<BarcodeRef | QRcodeRef>(null);
 
@@ -137,43 +140,45 @@ export default function CodeGenerator({ onClose }: Props): React.JSX.Element {
       width="520"
     >
       {renderContent()}
-      <div className={styles['variable-block']}>
-        <div className={styles.row}>
-          <div className={styles.label}>
-            {tOptionPanel.variable_text}
-            <QuestionCircleOutlined
-              className={styles.icon}
-              onClick={() => browser.open(tOptionPanel.variable_text_link)}
-            />
-          </div>
-          <Switch checked={isVTToggleOn} onChange={onToggleVTType} />
-        </div>
-        {isVTToggleOn && (
+      {showVariableBlock && (
+        <div className={styles['variable-block']}>
           <div className={styles.row}>
-            <Select
-              className={styles.select}
-              onChange={(val) => setVtType(val)}
-              onKeyDown={(e) => e.stopPropagation()}
-              options={vtOptions}
-              popupMatchSelectWidth={false}
-              value={vtType}
-            />
-            {vtType !== VariableTextType.TIME && (
-              <div className={styles.offset}>
-                <div>{tOptionPanel.offset}</div>
-                <UnitInput
-                  min={0}
-                  onChange={(val) => {
-                    if (val) setVtOffset(val);
-                  }}
-                  precision={0}
-                  value={vtOffset}
-                />
-              </div>
-            )}
+            <div className={styles.label}>
+              {tOptionPanel.variable_text}
+              <QuestionCircleOutlined
+                className={styles.icon}
+                onClick={() => browser.open(tOptionPanel.variable_text_link)}
+              />
+            </div>
+            <Switch checked={isVTToggleOn} onChange={onToggleVTType} />
           </div>
-        )}
-      </div>
+          {isVTToggleOn && (
+            <div className={styles.row}>
+              <Select
+                className={styles.select}
+                onChange={(val) => setVtType(val)}
+                onKeyDown={(e) => e.stopPropagation()}
+                options={vtOptions}
+                popupMatchSelectWidth={false}
+                value={vtType}
+              />
+              {vtType !== VariableTextType.TIME && (
+                <div className={styles.offset}>
+                  <div>{tOptionPanel.offset}</div>
+                  <UnitInput
+                    min={0}
+                    onChange={(val) => {
+                      if (val) setVtOffset(val);
+                    }}
+                    precision={0}
+                    value={vtOffset}
+                  />
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
     </DraggableModal>
   );
 }

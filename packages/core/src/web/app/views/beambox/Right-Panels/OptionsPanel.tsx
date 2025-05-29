@@ -9,9 +9,11 @@ import PolygonOptions from '@core/app/views/beambox/Right-Panels/Options-Blocks/
 import RectOptions from '@core/app/views/beambox/Right-Panels/Options-Blocks/RectOptions';
 import TextOptions from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions';
 import VariableTextBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/VariableTextBlock';
+import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getObjectLayer } from '@core/helpers/layer/layer-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
+import { isVariableTextSupported } from '@core/helpers/variableText';
 
 import styles from './OptionsPanel.module.scss';
 
@@ -22,7 +24,12 @@ interface Props {
 function OptionsPanel({ elem }: Props): React.JSX.Element {
   const isMobile = useIsMobile();
   let contents: Array<null | React.JSX.Element> = [];
-  const showVariableBlock = useMemo(() => !isMobile && elem?.getAttribute('data-props'), [elem, isMobile]);
+  const workarea = useWorkarea();
+  const supportVariableBlock = useMemo(isVariableTextSupported, [workarea]);
+  const showVariableBlock = useMemo(
+    () => !isMobile && supportVariableBlock && elem?.getAttribute('data-props'),
+    [elem, supportVariableBlock, isMobile],
+  );
   const isFullColor = elem ? getData(getObjectLayer(elem)?.elem, 'fullcolor') : false;
   const elemTagName = useMemo(() => elem?.tagName.toLowerCase(), [elem]);
   const showColorPanel = useMemo(() => {

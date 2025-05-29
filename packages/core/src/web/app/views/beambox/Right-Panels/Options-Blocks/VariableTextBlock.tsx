@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import { QuestionCircleOutlined, SettingFilled } from '@ant-design/icons';
 import { Button, ConfigProvider, Switch } from 'antd';
@@ -10,10 +10,11 @@ import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import Select from '@core/app/widgets/AntdSelect';
 import UnitInput from '@core/app/widgets/UnitInput';
+import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { updateConfigs } from '@core/helpers/update-configs';
 import useI18n from '@core/helpers/useI18n';
-import { getVariableTextOffset, getVariableTextType } from '@core/helpers/variableText';
+import { getVariableTextOffset, getVariableTextType, isVariableTextSupported } from '@core/helpers/variableText';
 import browser from '@core/implementations/browser';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -44,6 +45,8 @@ const VariableTextBlock = ({ elems, id, withDivider = false }: Props) => {
   const t = useI18n().beambox.right_panel.object_panel.option_panel;
   const [isToggleOn, setIsToggleOn] = React.useState(false);
   const [config, setConfig] = React.useState(defaultTextConfigs);
+  const workarea = useWorkarea();
+  const showVariableBlock = useMemo(isVariableTextSupported, [workarea]);
 
   const options = [
     { label: t.number, value: VariableTextType.NUMBER },
@@ -67,6 +70,10 @@ const VariableTextBlock = ({ elems, id, withDivider = false }: Props) => {
     setConfig({ ...defaultTextConfigs, ...newConfigs });
     setIsToggleOn(!includeNone);
   }, [id, elems, config.id.value]);
+
+  if (!showVariableBlock) {
+    return null;
+  }
 
   const onToggle = () => {
     if (isToggleOn) {

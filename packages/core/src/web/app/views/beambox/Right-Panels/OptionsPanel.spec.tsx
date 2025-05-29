@@ -10,6 +10,10 @@ jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => useIsMobile(),
 }));
 
+jest.mock('@core/helpers/variableText', () => ({
+  isVariableTextSupported: () => true,
+}));
+
 jest.mock('@core/app/views/beambox/Right-Panels/Options-Blocks/ImageOptions', () => 'dummy-image-options');
 jest.mock('@core/app/views/beambox/Right-Panels/Options-Blocks/InFillBlock', () => 'dummy-infill-block');
 jest.mock('@core/app/views/beambox/Right-Panels/Options-Blocks/RectOptions', () => 'dummy-rect-options');
