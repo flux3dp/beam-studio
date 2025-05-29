@@ -16,6 +16,7 @@ jest.mock('@core/app/views/beambox/Right-Panels/Options-Blocks/RectOptions', () 
 jest.mock('@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions', () => 'dummy-text-options');
 jest.mock('@core/app/views/beambox/Right-Panels/Options-Blocks/PolygonOptions', () => 'dummy-polygon-options');
 jest.mock('@core/app/views/beambox/Right-Panels/Options-Blocks/MultiColorOptions', () => 'dummy-multi-color-options');
+jest.mock('@core/app/views/beambox/Right-Panels/Options-Blocks/VariableTextBlock', () => 'dummy-variable-text-block');
 jest.mock('@core/app/views/beambox/Right-Panels/ColorPanel', () => 'dummy-color-panel');
 jest.mock('@core/app/views/beambox/Right-Panels/ObjectPanelItem');
 
@@ -29,6 +30,8 @@ jest.mock('@core/helpers/layer/layer-helper', () => ({
   }),
 }));
 
+const getElem = (id: string) => document.getElementById(id) as unknown as SVGElement;
+
 describe('should render correctly', () => {
   beforeEach(() => {
     mockGetAttribute.mockReturnValue(null);
@@ -37,7 +40,7 @@ describe('should render correctly', () => {
   test('rect', () => {
     document.body.innerHTML = '<rect id="rect" />';
 
-    const { container } = render(<OptionsPanel elem={document.getElementById('rect')} />);
+    const { container } = render(<OptionsPanel elem={getElem('rect')} />);
 
     expect(container).toMatchSnapshot();
   });
@@ -45,7 +48,7 @@ describe('should render correctly', () => {
   test('text', () => {
     document.body.innerHTML = '<text id="text" />';
 
-    const { container } = render(<OptionsPanel elem={document.getElementById('text')} />);
+    const { container } = render(<OptionsPanel elem={getElem('text')} />);
 
     expect(container).toMatchSnapshot();
   });
@@ -53,7 +56,7 @@ describe('should render correctly', () => {
   test('image', () => {
     document.body.innerHTML = '<image id="image" />';
 
-    const { container } = render(<OptionsPanel elem={document.getElementById('image')} />);
+    const { container } = render(<OptionsPanel elem={getElem('image')} />);
 
     expect(container).toMatchSnapshot();
   });
@@ -62,7 +65,7 @@ describe('should render correctly', () => {
     test('desktop version', () => {
       document.body.innerHTML = '<polygon id="polygon" />';
 
-      const { container } = render(<OptionsPanel elem={document.getElementById('polygon')} />);
+      const { container } = render(<OptionsPanel elem={getElem('polygon')} />);
 
       expect(container).toMatchSnapshot();
     });
@@ -71,7 +74,25 @@ describe('should render correctly', () => {
       window.FLUX.version = 'web';
       document.body.innerHTML = '<polygon id="polygon" />';
 
-      const { container } = render(<OptionsPanel elem={document.getElementById('polygon')} />);
+      const { container } = render(<OptionsPanel elem={getElem('polygon')} />);
+
+      expect(container).toMatchSnapshot();
+    });
+  });
+
+  describe('use', () => {
+    test('with variable data', () => {
+      document.body.innerHTML = '<use id="use" data-props="{}" />';
+
+      const { container } = render(<OptionsPanel elem={getElem('use')} />);
+
+      expect(container).toMatchSnapshot();
+    });
+
+    test('without variable data', () => {
+      document.body.innerHTML = '<use id="use" />';
+
+      const { container } = render(<OptionsPanel elem={getElem('use')} />);
 
       expect(container).toMatchSnapshot();
     });
@@ -80,7 +101,7 @@ describe('should render correctly', () => {
   test('others', () => {
     document.body.innerHTML = '<xxx id="xxx" />';
 
-    const { container } = render(<OptionsPanel elem={document.getElementById('xxx')} />);
+    const { container } = render(<OptionsPanel elem={getElem('xxx')} />);
 
     expect(container).toMatchSnapshot();
   });
@@ -95,7 +116,7 @@ describe('should render correctly', () => {
     mockGetAttribute.mockReturnValue('1');
     document.body.innerHTML = '<rect id="rect" />';
 
-    const { container } = render(<OptionsPanel elem={document.getElementById('rect')} />);
+    const { container } = render(<OptionsPanel elem={getElem('rect')} />);
 
     expect(container).toMatchSnapshot();
   });
@@ -110,7 +131,7 @@ describe('should render correctly in mobile', () => {
   test('rect', () => {
     document.body.innerHTML = '<rect id="rect" />';
 
-    const { container } = render(<OptionsPanel elem={document.getElementById('rect')} />);
+    const { container } = render(<OptionsPanel elem={getElem('rect')} />);
 
     expect(container).toMatchSnapshot();
   });
@@ -118,7 +139,7 @@ describe('should render correctly in mobile', () => {
   test('text', () => {
     document.body.innerHTML = '<text id="text" />';
 
-    const { container } = render(<OptionsPanel elem={document.getElementById('text')} />);
+    const { container } = render(<OptionsPanel elem={getElem('text')} />);
 
     expect(container).toMatchSnapshot();
   });
@@ -126,7 +147,7 @@ describe('should render correctly in mobile', () => {
   test('image', () => {
     document.body.innerHTML = '<image id="image" />';
 
-    const { container } = render(<OptionsPanel elem={document.getElementById('image')} />);
+    const { container } = render(<OptionsPanel elem={getElem('image')} />);
 
     expect(container).toMatchSnapshot();
   });
@@ -135,7 +156,7 @@ describe('should render correctly in mobile', () => {
     test('desktop version', () => {
       document.body.innerHTML = '<polygon id="polygon" />';
 
-      const { container } = render(<OptionsPanel elem={document.getElementById('polygon')} />);
+      const { container } = render(<OptionsPanel elem={getElem('polygon')} />);
 
       expect(container).toMatchSnapshot();
     });
@@ -144,7 +165,7 @@ describe('should render correctly in mobile', () => {
       window.FLUX.version = 'web';
       document.body.innerHTML = '<polygon id="polygon" />';
 
-      const { container } = render(<OptionsPanel elem={document.getElementById('polygon')} />);
+      const { container } = render(<OptionsPanel elem={getElem('polygon')} />);
 
       expect(container).toMatchSnapshot();
     });
@@ -153,7 +174,7 @@ describe('should render correctly in mobile', () => {
   test('others', () => {
     document.body.innerHTML = '<xxx id="xxx" />';
 
-    const { container } = render(<OptionsPanel elem={document.getElementById('xxx')} />);
+    const { container } = render(<OptionsPanel elem={getElem('xxx')} />);
 
     expect(container).toMatchSnapshot();
   });

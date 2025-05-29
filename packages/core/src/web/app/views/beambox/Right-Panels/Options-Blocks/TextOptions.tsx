@@ -18,8 +18,8 @@ import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/context
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import InFillBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/InFillBlock';
 import StartOffsetBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/StartOffsetBlock';
-import VariableTextBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/VariableTextBlock';
 import VerticalAlignBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/VerticalAlignBlock';
+import VariableTextBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/VariableTextBlock';
 import Select from '@core/app/widgets/AntdSelect';
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import { getCurrentUser } from '@core/helpers/api/flux-id';
@@ -631,7 +631,9 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
           {renderFontStyleBlock()}
         </div>
         {isTextPath ? renderTextPathOptions() : <div className={styles.row}>{renderMultiLineTextOptions()}</div>}
-        {!isTextPath && showVariableText && <VariableTextBlock elems={textElements} id={configs.id.value} />}
+        {!isTextPath && showVariableText && (
+          <VariableTextBlock elems={textElements} id={configs.id.value} withDivider />
+        )}
       </div>
     </ConfigProvider>
   );

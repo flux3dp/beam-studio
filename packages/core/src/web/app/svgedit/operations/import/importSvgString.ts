@@ -22,11 +22,13 @@ getSVGAsync((globalSVG) => {
 const importSvgString = async (
   xmlString: string,
   {
+    hidden = false,
     layerName,
     parentCmd,
     targetModule = getDefaultLaserModule(),
     type = 'nolayer',
   }: {
+    hidden?: boolean;
     layerName?: string;
     parentCmd?: IBatchCommand;
     targetModule?: LayerModuleType;
@@ -60,7 +62,9 @@ const importSvgString = async (
   const { symbols } = parseSvg(batchCmd, svg, type);
 
   const results = (
-    await Promise.all(symbols.map(async (symbol) => appendUseElement(symbol, { layerName, targetModule, type })))
+    await Promise.all(
+      symbols.map(async (symbol) => appendUseElement(symbol, { hidden, layerName, targetModule, type })),
+    )
   ).filter((res) => res?.element);
 
   const commands = results.map(({ command }) => command);

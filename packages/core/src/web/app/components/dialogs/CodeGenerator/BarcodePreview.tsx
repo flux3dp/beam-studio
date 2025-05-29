@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+/* eslint-disable reactRefresh/only-export-components */
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 import classNames from 'classnames';
 import type { Options } from 'jsbarcode';
@@ -6,7 +7,7 @@ import JsBarcode from 'jsbarcode';
 
 import useI18n from '@core/helpers/useI18n';
 
-import styles from './Barcode.module.scss';
+import styles from './BarcodePreview.module.scss';
 
 export type Renderer = 'canvas' | 'image' | 'svg';
 
@@ -58,12 +59,13 @@ export interface BarcodeProps {
   value: string;
 }
 
-export function Barcode({
-  className,
-  options = defaultOptions,
-  renderer = 'svg',
-  value,
-}: Readonly<BarcodeProps>): React.JSX.Element {
+export interface BarcodeRef {
+  getElem: () => null | SVGSVGElement | undefined;
+  getProps: () => BarcodeProps;
+}
+
+const BarcodePreview = forwardRef<BarcodeRef, BarcodeProps>((props: Readonly<BarcodeProps>, ref): React.JSX.Element => {
+  const { className, options = defaultOptions, renderer = 'svg', value } = props;
   const {
     barcode_generator: { barcode: t },
   } = useI18n();
@@ -80,6 +82,11 @@ export function Barcode({
       }
     }
   }, [value, options, t]);
+
+  useImperativeHandle(ref, () => ({
+    getElem: () => containerRef.current,
+    getProps: () => ({ options, value }),
+  }));
 
   const contentClasses = styles[error ? 'hidden' : 'visible'];
   const errorClasses = classNames(styles[error ? 'visible' : 'hidden'], styles['error-span']);
@@ -102,4 +109,6 @@ export function Barcode({
       <span className={errorClasses}>{error}</span>
     </div>
   );
-}
+});
+
+export default BarcodePreview;

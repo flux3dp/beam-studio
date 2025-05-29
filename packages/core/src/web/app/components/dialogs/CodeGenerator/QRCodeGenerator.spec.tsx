@@ -2,22 +2,9 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-import QRCodeGenerator from './QRCodeGenerator';
+import i18n from '@core/helpers/i18n';
 
-jest.mock('@core/helpers/useI18n', () => () => ({
-  alert: {
-    cancel: 'Cancel',
-    confirm: 'Confirm',
-  },
-  qr_code_generator: {
-    error_tolerance: 'Error Tolerance',
-    error_tolerance_link: 'error_tolerance_link',
-    invert: 'Invert background color',
-    placeholder: 'Input a link or text',
-    preview: 'Preview',
-    title: 'QR Code Generator',
-  },
-}));
+import QRCodeGenerator from './QRCodeGenerator';
 
 const mockOpen = jest.fn();
 
@@ -45,7 +32,7 @@ describe('test QRCodeGenerator', () => {
     expect(baseElement).toMatchSnapshot();
 
     fireEvent.click(baseElement.querySelector('.label .anticon'));
-    expect(mockOpen).toBeCalledTimes(1);
-    expect(mockOpen).toBeCalledWith('error_tolerance_link');
+    expect(mockOpen).toHaveBeenCalledTimes(1);
+    expect(mockOpen).toHaveBeenCalledWith(i18n.lang.qr_code_generator.error_tolerance_link);
   });
 });

@@ -3,6 +3,7 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
 import i18n from '@core/helpers/i18n';
+import { VariableTextType } from '@core/interfaces/ObjectPanel';
 
 const mockShowCropPanel = jest.fn();
 const showPhotoEditPanel = jest.fn();
@@ -75,6 +76,12 @@ const toSelectMode = jest.fn();
 jest.mock('@core/app/svgedit/text/textactions', () => ({
   isEditing: true,
   toSelectMode,
+}));
+
+const mockGetVariableTextType = jest.fn();
+
+jest.mock('@core/helpers/variableText', () => ({
+  getVariableTextType: mockGetVariableTextType,
 }));
 
 jest.mock('@core/helpers/web-need-connection-helper', () => (callback) => callback());
@@ -159,6 +166,7 @@ jest.mock(
 describe('should render correctly', () => {
   beforeEach(() => {
     jest.resetAllMocks();
+    mockGetVariableTextType.mockReturnValue(VariableTextType.NONE);
   });
 
   test('no elements', () => {
@@ -241,7 +249,7 @@ describe('should render correctly', () => {
     });
     document.body.innerHTML = '<text id="svg_1" />';
 
-    const { container, getByText } = render(
+    const { container, getByText, rerender } = render(
       <ActionsPanel elem={document.getElementById('svg_1') as unknown as SVGElement} />,
     );
 
@@ -273,6 +281,10 @@ describe('should render correctly', () => {
     expect(triggerGridTool).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.smart_nest));
     expect(mockSvgNestButtons).toHaveBeenCalledTimes(1);
+
+    mockGetVariableTextType.mockReturnValue(VariableTextType.NUMBER);
+    rerender(<ActionsPanel elem={document.getElementById('svg_1') as unknown as SVGElement} />);
+    expect(container).toMatchSnapshot();
   });
 
   test('path', () => {
@@ -375,7 +387,7 @@ describe('should render correctly', () => {
   test('use', () => {
     document.body.innerHTML = '<use id="svg_1" />';
 
-    const { container, getByText } = render(
+    const { container, getByText, rerender } = render(
       <ActionsPanel elem={document.getElementById('svg_1') as unknown as SVGElement} />,
     );
 
@@ -387,6 +399,10 @@ describe('should render correctly', () => {
     expect(triggerGridTool).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.smart_nest));
     expect(mockSvgNestButtons).toHaveBeenCalledTimes(1);
+
+    mockGetVariableTextType.mockReturnValue(VariableTextType.NUMBER);
+    rerender(<ActionsPanel elem={document.getElementById('svg_1') as unknown as SVGElement} />);
+    expect(container).toMatchSnapshot();
   });
 
   describe('g', () => {
@@ -433,6 +449,7 @@ describe('should render correctly in mobile', () => {
   beforeEach(() => {
     jest.resetAllMocks();
     isMobile.mockReturnValue(true);
+    mockGetVariableTextType.mockReturnValue(VariableTextType.NONE);
   });
 
   test('no elements', () => {
@@ -517,7 +534,7 @@ describe('should render correctly in mobile', () => {
     });
     document.body.innerHTML = '<text id="svg_1" />';
 
-    const { container, getByText } = render(
+    const { container, getByText, rerender } = render(
       <ActionsPanel elem={document.getElementById('svg_1') as unknown as SVGElement} />,
     );
 
@@ -549,6 +566,10 @@ describe('should render correctly in mobile', () => {
     expect(triggerGridTool).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.smart_nest));
     expect(mockSvgNestButtons).toHaveBeenCalledTimes(1);
+
+    mockGetVariableTextType.mockReturnValue(VariableTextType.NUMBER);
+    rerender(<ActionsPanel elem={document.getElementById('svg_1') as unknown as SVGElement} />);
+    expect(container).toMatchSnapshot();
   });
 
   test('path', () => {
@@ -651,7 +672,7 @@ describe('should render correctly in mobile', () => {
   test('use', () => {
     document.body.innerHTML = '<use id="svg_1" />';
 
-    const { container, getByText } = render(
+    const { container, getByText, rerender } = render(
       <ActionsPanel elem={document.getElementById('svg_1') as unknown as SVGElement} />,
     );
 
@@ -663,6 +684,10 @@ describe('should render correctly in mobile', () => {
     expect(triggerGridTool).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.smart_nest));
     expect(mockSvgNestButtons).toHaveBeenCalledTimes(1);
+
+    mockGetVariableTextType.mockReturnValue(VariableTextType.NUMBER);
+    rerender(<ActionsPanel elem={document.getElementById('svg_1') as unknown as SVGElement} />);
+    expect(container).toMatchSnapshot();
   });
 
   describe('g', () => {

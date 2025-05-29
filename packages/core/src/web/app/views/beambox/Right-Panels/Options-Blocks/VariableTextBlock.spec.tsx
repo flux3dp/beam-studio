@@ -64,6 +64,13 @@ describe('test VariableTextBlock', () => {
       '<g id="svg_1"><text id="svg_2" data-vt-type="3" data-vt-offset="10"></text><text id="svg_3"></text></g>';
   });
 
+  it('should render divider correctly', () => {
+    const elems = Array.from(document.querySelectorAll('text'));
+    const { container } = render(<VariableTextBlock elems={elems} id="svg_1" withDivider />);
+
+    expect(container).toMatchSnapshot();
+  });
+
   it('should handle value changes correctly', () => {
     const elems = Array.from(document.querySelectorAll('text'));
     const { baseElement, getByRole, getByText } = render(<VariableTextBlock elems={elems} id="svg_1" />);

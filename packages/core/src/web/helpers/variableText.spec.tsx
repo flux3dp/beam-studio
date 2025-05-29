@@ -4,6 +4,22 @@ jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read: mockBeamboxPreferenceRead,
 }));
 
+const inserSvgElement = (svg: SVGElement) => {
+  const container = document.createElement('mock-use');
+
+  container.appendChild(svg);
+  document.body.appendChild(container);
+
+  return container;
+};
+const mockImportBarcodeSvgElement = jest.fn().mockImplementation(inserSvgElement);
+const mockImportQrCodeSvgElement = jest.fn().mockImplementation(inserSvgElement);
+
+jest.mock('@core/app/components/dialogs/CodeGenerator/svgOperation', () => ({
+  importBarcodeSvgElement: mockImportBarcodeSvgElement,
+  importQrCodeSvgElement: mockImportQrCodeSvgElement,
+}));
+
 const mockGetState = jest.fn();
 
 jest.mock('@core/app/stores/variableText', () => ({
@@ -17,11 +33,15 @@ const mockBatchCommand = jest
   .mockImplementation(() => ({ addSubCommand: mockAddSubCommand, unapply: mockUnapply }));
 const mockChangeTextCommand = jest.fn();
 const mockChangeElementCommand = jest.fn();
+const mockMoveElementCommand = jest.fn();
+const mockRemoveElementCommand = jest.fn();
 
 jest.mock('@core/app/svgedit/history/history', () => ({
   BatchCommand: mockBatchCommand,
   ChangeElementCommand: mockChangeElementCommand,
   ChangeTextCommand: mockChangeTextCommand,
+  MoveElementCommand: mockMoveElementCommand,
+  RemoveElementCommand: mockRemoveElementCommand,
 }));
 
 const mockAddCommandToHistory = jest.fn();
@@ -33,10 +53,6 @@ jest.mock('@core/app/svgedit/history/undoManager', () => ({
   beginUndoableChange: mockBeginUndoableChange,
   finishUndoableChange: mockFinishUndoableChange,
 }));
-
-const mockSetSvgContent = jest.fn();
-
-jest.mock('@core/app/svgedit/operations/import/setSvgContent', () => mockSetSvgContent);
 
 const mockHideCursor = jest.fn();
 
@@ -52,12 +68,19 @@ jest.mock('@core/app/svgedit/text/textedit', () => ({
   renderText: mockRenderText,
 }));
 
+jest.mock('@core/helpers/layer/layer-helper', () => ({
+  getObjectLayer: () => 'mock-layer',
+}));
+
 const mockClearSelection = jest.fn();
 
 jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) =>
     callback({
-      Canvas: { clearSelection: mockClearSelection },
+      Canvas: {
+        clearSelection: mockClearSelection,
+        getCurrentDrawing: () => ({ setCurrentLayer: jest.fn() }),
+      },
     }),
 }));
 
@@ -75,6 +98,8 @@ const mockBody = {
 <text id="svg_10" data-vt-type="3" data-vt-offset="0"><tspan>Name: %0</tspan><tspan>Type: %3</tspan><tspan>Key: %1</tspan></text>
 <text id="svg_11" data-vt-type="3" data-vt-offset="1"><tspan>Name: %0</tspan><tspan>Type: %3</tspan><tspan>Key: %1</tspan></text>
 <text id="svg_12" data-vt-type="3" data-vt-offset="2"><tspan>Name: %0</tspan><tspan>Type: %3</tspan><tspan>Key: %1</tspan></text>
+<use id="svg_13" data-vt-type="1" data-vt-offset="0" data-invert="false" data-props="{&quot;errorLevel&quot;:&quot;L&quot;,&quot;isInvert&quot;:false,&quot;value&quot;:&quot;ddd&quot;}" data-code="qrcode"></use>
+<use id="svg_14" data-vt-type="2" data-vt-offset="0" data-invert="true" data-props="{&quot;options&quot;:{&quot;background&quot;:&quot;#000000&quot;,&quot;displayValue&quot;:true,&quot;ean128&quot;:false,&quot;font&quot;:&quot;Noto Sans&quot;,&quot;fontOptions&quot;:&quot; bold&quot;,&quot;fontSize&quot;:20,&quot;format&quot;:&quot;CODE128&quot;,&quot;height&quot;:50,&quot;lineColor&quot;:&quot;#ffffff&quot;,&quot;margin&quot;:10,&quot;textAlign&quot;:&quot;center&quot;,&quot;textMargin&quot;:2,&quot;textPosition&quot;:&quot;bottom&quot;,&quot;width&quot;:2},&quot;value&quot;:&quot;HH:mm:ss&quot;}" data-code="barcode"></use>
 </g>
 `,
   extractVariableText: `
@@ -189,7 +214,7 @@ describe('test variableText helper', () => {
   test('getVariableTexts', () => {
     document.body.innerHTML = mockBody.getVariableTexts;
 
-    const checkIds = (elems: NodeListOf<SVGTextElement>, ids: string[]) => {
+    const checkIds = (elems: NodeListOf<SVGElement>, ids: string[]) => {
       expect(Array.from(elems).map((elem) => elem.id)).toEqual(ids);
     };
 
@@ -258,8 +283,12 @@ describe('test variableText helper', () => {
     expect(mockClearSelection).toHaveBeenCalled();
     expect(mockHideCursor).toHaveBeenCalled();
     expect(mockChangeTextCommand).toHaveBeenCalledTimes(9);
-    expect(mockAddSubCommand).toHaveBeenCalledTimes(9);
+    expect(mockRemoveElementCommand).toHaveBeenCalledTimes(2);
+    expect(mockMoveElementCommand).toHaveBeenCalledTimes(2);
+    expect(mockAddSubCommand).toHaveBeenCalledTimes(13);
     expect(mockRenderText).toHaveBeenCalledTimes(9);
+    expect(mockImportBarcodeSvgElement).toHaveBeenCalledTimes(1);
+    expect(mockImportQrCodeSvgElement).toHaveBeenCalledTimes(1);
     expect(mockChangeElementCommand).not.toHaveBeenCalled();
     expect(mockAddCommandToHistory).not.toHaveBeenCalled();
     expect(document.body).toMatchSnapshot();
@@ -277,8 +306,12 @@ describe('test variableText helper', () => {
     expect(mockClearSelection).toHaveBeenCalled();
     expect(mockHideCursor).toHaveBeenCalled();
     expect(mockChangeTextCommand).toHaveBeenCalledTimes(9);
-    expect(mockAddSubCommand).toHaveBeenCalledTimes(9);
+    expect(mockRemoveElementCommand).toHaveBeenCalledTimes(2);
+    expect(mockMoveElementCommand).toHaveBeenCalledTimes(2);
+    expect(mockAddSubCommand).toHaveBeenCalledTimes(13);
     expect(mockRenderText).toHaveBeenCalledTimes(9);
+    expect(mockImportBarcodeSvgElement).toHaveBeenCalledTimes(1);
+    expect(mockImportQrCodeSvgElement).toHaveBeenCalledTimes(1);
     expect(mockChangeElementCommand).not.toHaveBeenCalled();
     expect(mockAddCommandToHistory).not.toHaveBeenCalled();
     expect(document.body).toBe(expectedResult);
@@ -295,9 +328,13 @@ describe('test variableText helper', () => {
     expect(mockClearSelection).toHaveBeenCalled();
     expect(mockHideCursor).toHaveBeenCalled();
     expect(mockChangeTextCommand).toHaveBeenCalledTimes(9);
+    expect(mockRemoveElementCommand).toHaveBeenCalledTimes(2);
+    expect(mockMoveElementCommand).toHaveBeenCalledTimes(2);
     expect(mockRenderText).toHaveBeenCalledTimes(9);
+    expect(mockImportBarcodeSvgElement).toHaveBeenCalledTimes(1);
+    expect(mockImportQrCodeSvgElement).toHaveBeenCalledTimes(1);
     expect(mockChangeElementCommand).toHaveBeenCalledTimes(10);
-    expect(mockAddSubCommand).toHaveBeenCalledTimes(19);
+    expect(mockAddSubCommand).toHaveBeenCalledTimes(23);
     expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
     expect(document.body).toBe(expectedResult);
   });
@@ -319,42 +356,44 @@ describe('test variableText helper', () => {
   test('extractVariableText', () => {
     document.body.innerHTML = mockBody.extractVariableText;
 
+    let expectedExtractResult: HTMLElement;
+    let expectedRenvertResult: HTMLElement;
     let extractFn = extractVariableText();
 
     expect(extractFn).not.toBe(null);
     expect(mockClearSelection).toHaveBeenCalledTimes(1);
     expect(mockHideCursor).toHaveBeenCalledTimes(1);
-    expect(mockSetSvgContent).toHaveBeenCalledTimes(1);
-    expect(mockSetSvgContent.mock.calls[0][0]).toMatchSnapshot();
+    expect(document.body).toMatchSnapshot();
+    expectedExtractResult = document.body;
 
     extractFn.revert();
     expect(mockClearSelection).toHaveBeenCalledTimes(2);
     expect(mockHideCursor).toHaveBeenCalledTimes(2);
-    expect(mockSetSvgContent).toHaveBeenCalledTimes(2);
-    expect(mockSetSvgContent.mock.calls[1][0]).toMatchSnapshot();
+    expect(document.body).toMatchSnapshot();
+    expectedRenvertResult = document.body;
 
     extractFn.extract();
     expect(mockClearSelection).toHaveBeenCalledTimes(3);
     expect(mockHideCursor).toHaveBeenCalledTimes(3);
-    expect(mockSetSvgContent).toHaveBeenCalledTimes(3);
-    expect(mockSetSvgContent.mock.calls[2][0]).toBe(mockSetSvgContent.mock.calls[0][0]);
+    expect(document.body).toBe(expectedExtractResult);
 
     jest.clearAllMocks();
+    document.body.innerHTML = mockBody.extractVariableText;
     extractFn = extractVariableText(false);
     expect(extractFn).not.toBe(null);
     expect(mockClearSelection).not.toHaveBeenCalled();
     expect(mockHideCursor).not.toHaveBeenCalled();
-    expect(mockSetSvgContent).not.toHaveBeenCalled();
-
-    extractFn.revert();
-    expect(mockClearSelection).toHaveBeenCalledTimes(1);
-    expect(mockHideCursor).toHaveBeenCalledTimes(1);
-    expect(mockSetSvgContent).toHaveBeenCalledTimes(1);
+    expect(document.body.innerHTML).toBe(mockBody.extractVariableText);
 
     extractFn.extract();
+    expect(mockClearSelection).toHaveBeenCalledTimes(1);
+    expect(mockHideCursor).toHaveBeenCalledTimes(1);
+    expect(document.body).toBe(expectedExtractResult);
+
+    extractFn.revert();
     expect(mockClearSelection).toHaveBeenCalledTimes(2);
     expect(mockHideCursor).toHaveBeenCalledTimes(2);
-    expect(mockSetSvgContent).toHaveBeenCalledTimes(2);
+    expect(document.body).toBe(expectedRenvertResult);
   });
 });
 

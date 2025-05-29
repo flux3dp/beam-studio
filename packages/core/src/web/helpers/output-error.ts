@@ -4,6 +4,7 @@
 import Alert from '@core/app/actions/alert-caller';
 import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
+import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 import i18n from '@core/helpers/i18n';
 import Logger from '@core/helpers/logger';
 import dialog from '@core/implementations/dialog';
@@ -55,6 +56,7 @@ const getOutput = (): string[] => {
   output.push(JSON.stringify(reportInfo.ws, null, 2));
 
   output.push('\n\n======::swiftray::======\n');
+  output.push(`swiftray version: ${swiftrayClient.version}\n`);
   output.push(JSON.stringify(reportInfo.swiftray, null, 2));
 
   output.push('\n\n======::storage::======\n');

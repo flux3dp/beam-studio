@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 
-import { Button, ConfigProvider } from 'antd';
+import { Button, ConfigProvider, Tooltip } from 'antd';
 import classNames from 'classnames';
 import { match, P } from 'ts-pattern';
 
@@ -25,10 +25,12 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { isMobile } from '@core/helpers/system-helper';
 import useForceUpdate from '@core/helpers/use-force-update';
 import useI18n from '@core/helpers/useI18n';
+import { getVariableTextType } from '@core/helpers/variableText';
 import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
 import dialog from '@core/implementations/dialog';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import { VariableTextType } from '@core/interfaces/ObjectPanel';
 
 import styles from './ActionsPanel.module.scss';
 
@@ -50,6 +52,7 @@ interface ButtonOpts {
   isFullLine?: boolean;
   isText?: boolean;
   mobileLabel?: string;
+  tooltipIfDisabled?: string;
 }
 
 interface TabButtonOptions extends ButtonOpts {
@@ -147,7 +150,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       onClick: () => void,
       icon: React.JSX.Element,
       mobileIcon: React.JSX.Element,
-      { autoClose, isDisabled, isFullLine, mobileLabel }: ButtonOpts = {},
+      { autoClose, isDisabled, isFullLine, mobileLabel, tooltipIfDisabled }: ButtonOpts = {},
     ): React.JSX.Element =>
       isMobile() ? (
         <ObjectPanelItem.Item
@@ -160,11 +163,13 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
           onClick={onClick}
         />
       ) : (
-        <div className={classNames(styles['btn-container'], { [styles.half]: !isFullLine })} key={label}>
-          <Button block className={styles.btn} disabled={isDisabled} icon={icon} id={id} onClick={onClick}>
-            <span className={styles.label}>{label}</span>
-          </Button>
-        </div>
+        <Tooltip key={label} title={isDisabled ? tooltipIfDisabled : undefined}>
+          <div className={classNames(styles['btn-container'], { [styles.half]: !isFullLine })}>
+            <Button block className={styles.btn} disabled={isDisabled} icon={icon} id={id} onClick={onClick}>
+              <span className={styles.label}>{label}</span>
+            </Button>
+          </div>
+        </Tooltip>
       ),
     [],
   );
@@ -224,11 +229,18 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       convertToPath: convertSvgToPath,
     },
   ): React.JSX.Element => {
-    const isDisabled = match(elem.getAttribute('fill'))
+    const isFilled = match(elem.getAttribute('fill'))
       // 'none' for SVG elements
       // 'nullish' for use elements
       .with(P.union('none', P.nullish), () => false)
       .otherwise(() => true);
+    const isVariableText = getVariableTextType(elem) !== VariableTextType.NONE;
+    const tooltipIfDisabled =
+      isFilled && isVariableText
+        ? lang.diabled_by_infilled_and_variable_text
+        : isFilled
+          ? lang.diabled_by_infilled
+          : lang.diabled_by_variable_text;
 
     return renderButtons(
       'tab',
@@ -255,7 +267,12 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       },
       <ActionPanelIcons.Tab />,
       <ActionPanelIcons.Tab />,
-      { isDisabled, isFullLine: true, ...options },
+      {
+        isDisabled: isFilled || isVariableText,
+        isFullLine: true,
+        ...options,
+        tooltipIfDisabled,
+      },
     );
   };
 
@@ -342,7 +359,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
         () => imageEdit.traceImage(elem as SVGImageElement),
         <ActionPanelIcons.Trace />,
         <ActionPanelIcons.Trace />,
-        { isDisabled: isShading },
+        { isDisabled: isShading, tooltipIfDisabled: lang.diabled_by_gradient },
       ),
       trapezoid: renderButtons(
         'trapezoid',
@@ -389,21 +406,26 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     return contentOrder.map((key) => (content as any)[key]);
   };
 
-  const renderTextActions = (): React.JSX.Element[] => [
-    renderAutoFitButton(),
-    renderConvertToPathButton({ isText: true }),
-    renderButtons(
-      'weld',
-      lang.weld_text,
-      () => convertTextToPath({ isSubCommand: false, weldingTexts: true }),
-      <ActionPanelIcons.WeldText />,
-      <ActionPanelIcons.WeldText />,
-      { isFullLine: true },
-    ),
-    renderSmartNestButton(),
-    renderArrayButton({ isFullLine: true }),
-    renderTabButton({ convertToPath: () => convertTextToPath({ isSubCommand: true }) }),
-  ];
+  const renderTextActions = (): React.JSX.Element[] => {
+    const isVariableText = getVariableTextType(elem) !== VariableTextType.NONE;
+    const tooltipIfDisabled = lang.diabled_by_variable_text;
+
+    return [
+      renderAutoFitButton(),
+      renderConvertToPathButton({ isDisabled: isVariableText, isText: true, tooltipIfDisabled }),
+      renderButtons(
+        'weld',
+        lang.weld_text,
+        () => convertTextToPath({ isSubCommand: false, weldingTexts: true }),
+        <ActionPanelIcons.WeldText />,
+        <ActionPanelIcons.WeldText />,
+        { isDisabled: isVariableText, isFullLine: true, tooltipIfDisabled },
+      ),
+      renderSmartNestButton(),
+      renderArrayButton({ isFullLine: true }),
+      renderTabButton({ convertToPath: () => convertTextToPath({ isSubCommand: true }) }),
+    ];
+  };
 
   const renderTextPathActions = (): React.JSX.Element[] => [
     renderAutoFitButton(),
@@ -474,20 +496,25 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     renderTabButton(),
   ];
 
-  const renderUseActions = (): React.JSX.Element[] => [
-    renderAutoFitButton(),
-    renderButtons(
-      'disassemble_use',
-      lang.disassemble_use,
-      () => disassembleUse(),
-      <ActionPanelIcons.Disassemble />,
-      <ActionPanelIcons.DisassembleMobile />,
-      { isFullLine: true },
-    ),
-    renderSmartNestButton(),
-    renderArrayButton({ isFullLine: true }),
-    renderTabButton({ convertToPath: convertUseToPath }),
-  ];
+  const renderUseActions = (): React.JSX.Element[] => {
+    const isVariableText = getVariableTextType(elem) !== VariableTextType.NONE;
+    const tooltipIfDisabled = lang.diabled_by_variable_text;
+
+    return [
+      renderAutoFitButton(),
+      renderButtons(
+        'disassemble_use',
+        lang.disassemble_use,
+        () => disassembleUse(),
+        <ActionPanelIcons.Disassemble />,
+        <ActionPanelIcons.DisassembleMobile />,
+        { isDisabled: isVariableText, isFullLine: true, tooltipIfDisabled },
+      ),
+      renderSmartNestButton(),
+      renderArrayButton({ isFullLine: true }),
+      renderTabButton({ convertToPath: convertUseToPath }),
+    ];
+  };
 
   const renderGroupActions = (): React.JSX.Element[] => [
     renderAutoFitButton(),
@@ -499,12 +526,14 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     const children = Array.from(elem.childNodes);
     const supportOffset = children.every((child: ChildNode) => !['g', 'image', 'text', 'use'].includes(child.nodeName));
     const appendOptionalButtons = (buttons: React.JSX.Element[]) => {
-      const text = children.find((child) => child.nodeName === 'text') as Element;
+      const text = children.find((child) => child.nodeName === 'text') as SVGElement;
       const pathLike = children.find((child) =>
         ['ellipse', 'line', 'path', 'polygon', 'rect'].includes(child.nodeName),
       ) as SVGElement;
 
       if (children.length === 2 && text && pathLike) {
+        const isVariableText = getVariableTextType(text) !== VariableTextType.NONE;
+
         buttons.push(
           renderButtons(
             'create_textpath',
@@ -523,7 +552,12 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
             },
             <ActionPanelIcons.CreateTextpath />,
             <ActionPanelIcons.CreateTextpath />,
-            { isFullLine: true, mobileLabel: lang.create_textpath_short },
+            {
+              isDisabled: isVariableText,
+              isFullLine: true,
+              mobileLabel: lang.create_textpath_short,
+              tooltipIfDisabled: lang.diabled_by_variable_text,
+            },
           ),
         );
       }
@@ -562,7 +596,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       forceUpdate();
     });
 
-    if (elem) observer.observe(elem, { attributeFilter: ['fill', 'data-shading'] });
+    if (elem) observer.observe(elem, { attributeFilter: ['fill', 'data-shading', 'data-vt-type'] });
 
     return () => observer.disconnect(); // Cleanup
   }, [elem, forceUpdate]);

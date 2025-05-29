@@ -366,6 +366,7 @@ const fetchContourTaskCode = async (): Promise<null | string> => {
   }
 
   let isCanceled = false;
+  const revertVariableText = await convertVariableText();
 
   svgCanvas.removeUnusedDefs();
   SymbolMaker.switchImageSymbolForAll(false);
@@ -376,13 +377,12 @@ const fetchContourTaskCode = async (): Promise<null | string> => {
   });
 
   // Convert text to path
-  const revertVariableText = await convertVariableText();
   const res = await FontFuncs.tempConvertTextToPathAmongSvgContent();
 
   if (!res) {
     Progress.popById('fetch-task-code');
-    revertVariableText?.();
     SymbolMaker.switchImageSymbolForAll(true);
+    revertVariableText?.();
 
     return null;
   }
@@ -405,8 +405,8 @@ const fetchContourTaskCode = async (): Promise<null | string> => {
     revertClipPath();
     revertBitmap();
     await FontFuncs.revertTempConvert();
-    revertVariableText?.();
     SymbolMaker.switchImageSymbolForAll(true);
+    revertVariableText?.();
   };
 
   Progress.update('fetch-task-code', {

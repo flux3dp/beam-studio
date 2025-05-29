@@ -2,12 +2,14 @@ import React, { forwardRef } from 'react';
 
 import { InfoCircleOutlined } from '@ant-design/icons';
 import type { QRCodeProps } from 'antd';
-import { Checkbox, ConfigProvider, Flex, Input, QRCode, Radio } from 'antd';
+import { Checkbox, ConfigProvider, Flex, Input, Radio } from 'antd';
 
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 
 import styles from './QRCodeGenerator.module.scss';
+import QRCodePreview from './QRCodePreview';
+import type { QRcodeRef } from './QRCodePreview';
 
 interface Props {
   isInvert: boolean;
@@ -16,12 +18,12 @@ interface Props {
   text: string;
 }
 
-export default forwardRef<HTMLDivElement, Props>(({ isInvert, setIsInvert, setText, text }, ref): React.JSX.Element => {
+const QRCodeGenerator = forwardRef<QRcodeRef, Props>(({ isInvert, setIsInvert, setText, text }, ref) => {
   const { qr_code_generator: t } = useI18n();
   const [errorLevel, setErrorLevel] = React.useState<QRCodeProps['errorLevel']>('L');
 
   return (
-    <div ref={ref}>
+    <div>
       <Input.TextArea
         className={styles.input}
         maxLength={200}
@@ -33,21 +35,7 @@ export default forwardRef<HTMLDivElement, Props>(({ isInvert, setIsInvert, setTe
         value={text}
       />
       <div className={styles.content}>
-        <div className={styles['qrcode-container']} id="qrcode-container">
-          {text ? (
-            <QRCode
-              bgColor={isInvert ? 'black' : 'transparent'}
-              className={styles.qrcode}
-              color={isInvert ? 'white' : 'black'}
-              errorLevel={errorLevel}
-              size={1000}
-              type="svg"
-              value={text}
-            />
-          ) : (
-            <div className={styles.placeholder}>{t.preview}</div>
-          )}
-        </div>
+        <QRCodePreview errorLevel={errorLevel} isInvert={isInvert} ref={ref} value={text} />
 
         <div className={styles.settings}>
           <div className={styles.label}>
@@ -83,3 +71,5 @@ export default forwardRef<HTMLDivElement, Props>(({ isInvert, setIsInvert, setTe
     </div>
   );
 });
+
+export default QRCodeGenerator;
