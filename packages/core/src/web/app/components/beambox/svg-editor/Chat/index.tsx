@@ -12,7 +12,8 @@ const UnmemorizedChat = () => {
   const workarea = useWorkarea();
   const url = match(workarea)
     .with('fbm1', () => 'bPvkL6zLs0RnJUm9') // beamo
-    .with(P.union('fbb1b', 'fbb1p', 'fbb2'), () => 'N05117vn4lNB5WJk') // Beambox, Beambox Pro, Beambox II
+    .with(P.union('fbb1b', 'fbb1p'), () => 'N05117vn4lNB5WJk') // Beambox, Beambox Pro
+    .with('fbb2', () => 'MmX2ialzth55uAjH') // Beambox II
     .with('fhexa1', () => '18ssC0u14uPrRxHJ') // HEXA
     .with('fpm1', () => 'FtMMdyuoqCoKlnw1') // Promark
     .with('ado1', () => 'bG66TKuYtJ52GLGP') // Ador
