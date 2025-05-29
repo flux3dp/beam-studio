@@ -237,10 +237,10 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     const isVariableText = getVariableTextType(elem) !== VariableTextType.NONE;
     const tooltipIfDisabled =
       isFilled && isVariableText
-        ? lang.diabled_by_infilled_and_variable_text
+        ? lang.disabled_by_infilled_and_variable_text
         : isFilled
-          ? lang.diabled_by_infilled
-          : lang.diabled_by_variable_text;
+          ? lang.disabled_by_infilled
+          : lang.disabled_by_variable_text;
 
     return renderButtons(
       'tab',
@@ -359,7 +359,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
         () => imageEdit.traceImage(elem as SVGImageElement),
         <ActionPanelIcons.Trace />,
         <ActionPanelIcons.Trace />,
-        { isDisabled: isShading, tooltipIfDisabled: lang.diabled_by_gradient },
+        { isDisabled: isShading, tooltipIfDisabled: lang.disabled_by_gradient },
       ),
       trapezoid: renderButtons(
         'trapezoid',
@@ -408,7 +408,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
 
   const renderTextActions = (): React.JSX.Element[] => {
     const isVariableText = getVariableTextType(elem) !== VariableTextType.NONE;
-    const tooltipIfDisabled = lang.diabled_by_variable_text;
+    const tooltipIfDisabled = lang.disabled_by_variable_text;
 
     return [
       renderAutoFitButton(),
@@ -498,7 +498,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
 
   const renderUseActions = (): React.JSX.Element[] => {
     const isVariableText = getVariableTextType(elem) !== VariableTextType.NONE;
-    const tooltipIfDisabled = lang.diabled_by_variable_text;
+    const tooltipIfDisabled = lang.disabled_by_variable_text;
 
     return [
       renderAutoFitButton(),
@@ -556,7 +556,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
               isDisabled: isVariableText,
               isFullLine: true,
               mobileLabel: lang.create_textpath_short,
-              tooltipIfDisabled: lang.diabled_by_variable_text,
+              tooltipIfDisabled: lang.disabled_by_variable_text,
             },
           ),
         );

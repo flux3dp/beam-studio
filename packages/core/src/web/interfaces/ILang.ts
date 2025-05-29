@@ -735,10 +735,10 @@ export interface ILang {
           decompose_path: string;
           detach_path: string;
           detach_path_short: string;
-          diabled_by_gradient: string;
-          diabled_by_infilled: string;
-          diabled_by_infilled_and_variable_text: string;
-          diabled_by_variable_text: string;
+          disabled_by_gradient: string;
+          disabled_by_infilled: string;
+          disabled_by_infilled_and_variable_text: string;
+          disabled_by_variable_text: string;
           disassemble_use: string;
           disassembling: string;
           edit_path: string;
