@@ -1,3 +1,4 @@
+import { sprintf } from 'sprintf-js';
 import { match, P } from 'ts-pattern';
 
 import alertCaller from '@core/app/actions/alert-caller';
@@ -41,15 +42,17 @@ const callTooLargeAlert = (id: string, message: JSX.Element | string) =>
     alertCaller.popUp({
       alwaysTriggerCheckboxCallbacks: false,
       buttonType: alertConstants.CONFIRM_CANCEL,
+      caption: i18n.lang.beambox.popup.import_svg.title,
       checkbox: {
         callbacks: () => {
           console.log('User opted out of large SVG import alert');
           beamboxPreference.write('alert-import-large-svg', false);
         },
-        text: 'Do not show again',
+        text: i18n.lang.alert.dont_show_again,
       },
       id,
       message,
+      messageIcon: 'notice',
       onCancel: () => resolve(false),
       onConfirm: () => resolve(true),
       reverse: true,
@@ -88,11 +91,16 @@ function getPathDComplexity(
 
 async function performSvgPreChecks(
   file: Blob,
-  _lang: ILang, // _lang is still passed, but not used directly in this revised snippet's messages
+  lang: ILang, // _lang is still passed, but not used directly in this revised snippet's messages
   sizeThresholdMaxBytes: number = MAX_SVG_FILE_SIZE_BYTES,
   elementCountThreshold: number = ELEMENT_COUNT_THRESHOLD,
   pathDCommandCountThreshold: number = PATH_D_COMMAND_COUNT_THRESHOLD,
 ): Promise<{ elementCount?: number; proceed: boolean; totalPathDCommands?: number }> {
+  const {
+    beambox: {
+      popup: { import_svg: t },
+    },
+  } = lang;
   const warningMessages = Array.of<Record<'content' | 'id', string>>();
 
   try {
@@ -102,7 +110,7 @@ async function performSvgPreChecks(
       const maxSizeMB = (sizeThresholdMaxBytes / 1024 / 1024).toFixed(2);
 
       warningMessages.push({
-        content: `File size is ${currentSizeMB}MB (threshold: ${maxSizeMB}MB).`,
+        content: sprintf(t.file_size_warning, currentSizeMB, maxSizeMB),
         id: 'file_size_warning',
       });
     }
@@ -124,7 +132,7 @@ async function performSvgPreChecks(
 
     if (doc.getElementsByTagName('parsererror').length > 0) {
       console.warn('SVG parsing error detected.');
-      await callTooLargeAlert('Error', 'Could not parse the SVG file. It might be corrupted or not a valid SVG.');
+      await callTooLargeAlert('Error', i18n.lang.beambox.popup.import_file_contain_invalid_path);
 
       return { proceed: false }; // Hard stop
     }
@@ -134,7 +142,7 @@ async function performSvgPreChecks(
 
     if (elementCount > elementCountThreshold) {
       warningMessages.push({
-        content: `Contains approximately ${elementCount} elements (threshold: ${elementCountThreshold}).`,
+        content: sprintf(t.element_count_warning, elementCount, elementCountThreshold),
         id: 'element_count_warning',
       });
     }
@@ -146,30 +154,27 @@ async function performSvgPreChecks(
 
     if (isTooManyCommands) {
       warningMessages.push({
-        content: `${totalCommands} drawing commands of paths was found (threshold: ${pathDCommandCountThreshold}).`,
+        content: sprintf(t.path_d_command_count_warning, totalCommands, pathDCommandCountThreshold),
         id: 'path_d_command_count_warning',
       });
     }
 
     // 5. Show combined alert if any warnings were generated
     if (warningMessages.length > 0) {
-      const title = 'Performance Warning';
-      const introMessage = 'Potential performance issues detected:';
-      const adviceMessage = 'Importing may cause slowdowns or instability.';
-      const confirmationMessage = 'Do you want to continue?';
       const combinedMessage = (
         <>
-          <div>{introMessage}</div>
+          <div>{t.intro_message}</div>
           <br />
           {warningMessages.map(({ content, id }) => (
             <div key={id}>{content}</div>
           ))}
           <br />
-          <div>{adviceMessage}</div>
-          <div>{confirmationMessage}</div>
+          <div>{t.advice_message}</div>
+          <div>{t.advice_message_2}</div>
+          <div>{t.confirmation_message}</div>
         </>
       );
-      const continueImport = await callTooLargeAlert(title, combinedMessage);
+      const continueImport = await callTooLargeAlert('too_large_svg', combinedMessage);
 
       if (!continueImport) {
         return { elementCount, proceed: false, totalPathDCommands };

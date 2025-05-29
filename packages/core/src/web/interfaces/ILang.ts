@@ -362,6 +362,16 @@ export interface ILang {
       };
       import_file_contain_invalid_path: string;
       import_file_error_ask_for_upload: string;
+      import_svg: {
+        advice_message: string;
+        advice_message_2: string;
+        confirmation_message: string;
+        element_count_warning: string;
+        file_size_warning: string;
+        intro_message: string;
+        path_d_command_count_warning: string;
+        title: string;
+      };
       layer_by_color: string;
       layer_by_layer: string;
       loading_image: string;
