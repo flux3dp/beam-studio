@@ -12,7 +12,6 @@ import type { Prettify } from '@core/interfaces/utils';
 
 export type BeamboxPreference = {
   'af-offset': number;
-  'alert-import-large-svg': boolean;
   'anti-aliasing': boolean;
   'auto-feeder': boolean;
   'auto-feeder-height'?: number;
@@ -96,7 +95,6 @@ export type BeamboxPreferenceValue<T extends BeamboxPreferenceKey> = BeamboxPref
 
 const DEFAULT_PREFERENCE: BeamboxPreference = {
   'af-offset': 0,
-  'alert-import-large-svg': true,
   'anti-aliasing': true,
   'auto-feeder': false,
   'auto-feeder-scale': 1,

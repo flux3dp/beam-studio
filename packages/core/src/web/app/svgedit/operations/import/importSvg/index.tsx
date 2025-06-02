@@ -10,6 +10,7 @@ import alertConstants from '@core/app/constants/alert-constants';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import history from '@core/app/svgedit/history/history';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
+import alertConfig from '@core/helpers/api/alert-config';
 import i18n from '@core/helpers/i18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
@@ -35,7 +36,7 @@ const PATH_D_COMMAND_COUNT_THRESHOLD = 50_000; // 50,000 commands
 
 const callTooLargeAlert = (id: string, message: JSX.Element | string) =>
   new Promise<boolean>((resolve) => {
-    if (!beamboxPreference.read('alert-import-large-svg')) {
+    if (alertConfig.read('skip-svg-import-warning')) {
       resolve(true); // If the user has opted out of the alert, resolve immediately
     }
 
@@ -46,7 +47,7 @@ const callTooLargeAlert = (id: string, message: JSX.Element | string) =>
       checkbox: {
         callbacks: () => {
           console.log('User opted out of large SVG import alert');
-          beamboxPreference.write('alert-import-large-svg', false);
+          alertConfig.write('skip-svg-import-warning', true);
         },
         text: i18n.lang.alert.dont_show_again,
       },
@@ -83,8 +84,6 @@ function getPathDComplexity(
       if (totalCommands > pathCommandThreshold) isTooManyCommands = true;
     }
   }
-
-  console.log({ isTooManyCommands, totalCommands });
 
   return { isTooManyCommands, totalCommands };
 }
