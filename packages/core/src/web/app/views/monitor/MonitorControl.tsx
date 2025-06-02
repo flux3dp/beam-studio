@@ -75,10 +75,12 @@ const MonitorControl = ({
       }
     }
 
-    startCountDown();
-    onPlayingTimer.current = setTimeout(() => {
-      setIsOnPlaying(false);
-    }, 5000);
+    onPlayingTimer.current = setTimeout(
+      () => {
+        setIsOnPlaying(false);
+      },
+      totalTaskTime < 3 ? 2000 : 5000,
+    );
   };
 
   const triggerResume = async () => {
@@ -181,13 +183,18 @@ const MonitorControl = ({
       report?.st_id === DeviceConstants.status.RECONNECTING
     ) {
       stopCountDown();
-    } else if (report?.st_id === DeviceConstants.status.RUNNING && !estimateTaskTimeTimer.current) {
+    } else if (
+      report?.st_id === DeviceConstants.status.RUNNING &&
+      !estimateTaskTimeTimer.current &&
+      !isOnPlaying &&
+      !isFramingTask
+    ) {
       startCountDown();
     } else if (report?.st_id === DeviceConstants.status.ABORTED) {
       stopCountDown();
       setEstimateTaskTime(totalTaskTime);
     }
-  }, [report, isOnPlaying, setEstimateTaskTime, totalTaskTime, startCountDown, isPromark]);
+  }, [report, isOnPlaying, setEstimateTaskTime, totalTaskTime, startCountDown, isPromark, isFramingTask]);
 
   if (mode === Mode.PREVIEW || mode === Mode.FILE_PREVIEW || isFramingTask || isOnPlaying) {
     return (

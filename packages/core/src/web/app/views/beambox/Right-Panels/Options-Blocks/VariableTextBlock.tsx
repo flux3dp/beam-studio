@@ -1,19 +1,20 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import { QuestionCircleOutlined, SettingFilled } from '@ant-design/icons';
-import { Button, Switch } from 'antd';
+import { Button, ConfigProvider, Switch } from 'antd';
 import classNames from 'classnames';
 
 import { showVariableTextSettings } from '@core/app/components/dialogs/VariableTextSettings';
-import { objectPanelInputTheme } from '@core/app/constants/antd-config';
+import { objectPanelInputTheme, selectTheme } from '@core/app/constants/antd-config';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import Select from '@core/app/widgets/AntdSelect';
 import UnitInput from '@core/app/widgets/UnitInput';
+import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { updateConfigs } from '@core/helpers/update-configs';
 import useI18n from '@core/helpers/useI18n';
-import { getVariableTextOffset, getVariableTextType } from '@core/helpers/variableText';
+import { getVariableTextOffset, getVariableTextType, isVariableTextSupported } from '@core/helpers/variableText';
 import browser from '@core/implementations/browser';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -29,8 +30,9 @@ getSVGAsync((globalSVG) => {
 });
 
 interface Props {
-  elems: SVGTextElement[];
+  elems: SVGElement[];
   id: string;
+  withDivider?: boolean;
 }
 
 const defaultTextConfigs: VariableTextConfig = {
@@ -39,10 +41,12 @@ const defaultTextConfigs: VariableTextConfig = {
   type: { hasMultiValue: false, value: VariableTextType.NONE },
 };
 
-const VariableTextBlock = ({ elems, id }: Props) => {
+const VariableTextBlock = ({ elems, id, withDivider = false }: Props) => {
   const t = useI18n().beambox.right_panel.object_panel.option_panel;
   const [isToggleOn, setIsToggleOn] = React.useState(false);
   const [config, setConfig] = React.useState(defaultTextConfigs);
+  const workarea = useWorkarea();
+  const showVariableBlock = useMemo(isVariableTextSupported, [workarea]);
 
   const options = [
     { label: t.number, value: VariableTextType.NUMBER },
@@ -61,14 +65,15 @@ const VariableTextBlock = ({ elems, id }: Props) => {
 
       includeNone = includeNone || type === VariableTextType.NONE;
       updateConfigs(newConfigs, 'type', () => type);
-
-      if (type !== VariableTextType.NONE && type !== VariableTextType.TIME) {
-        updateConfigs(newConfigs, 'offset', () => getVariableTextOffset(elem));
-      }
+      updateConfigs(newConfigs, 'offset', () => getVariableTextOffset(elem));
     }
     setConfig({ ...defaultTextConfigs, ...newConfigs });
     setIsToggleOn(!includeNone);
   }, [id, elems, config.id.value]);
+
+  if (!showVariableBlock) {
+    return null;
+  }
 
   const onToggle = () => {
     if (isToggleOn) {
@@ -130,47 +135,49 @@ const VariableTextBlock = ({ elems, id }: Props) => {
   };
 
   return (
-    <div className={styles.options}>
-      <div className={styles['option-block']}>
-        <div className={styles.label}>
-          {t.variable_text}
-          <QuestionCircleOutlined className={styles.icon} onClick={() => browser.open(t.variable_text_link)} />
-        </div>
-        <Switch checked={isToggleOn} onClick={onToggle} size="small" />
-      </div>
-      {isToggleOn && (
-        <>
-          <div className={classNames(styles['option-block'], styles['with-select'])}>
-            <Select
-              className={styles.select}
-              onChange={(val) => onTypeChange(val)}
-              onKeyDown={(e) => e.stopPropagation()}
-              options={options}
-              popupMatchSelectWidth={false}
-              value={config.type.hasMultiValue ? '-' : config.type.value}
-            />
-            <Button icon={<SettingFilled />} onClick={showVariableTextSettings} type="text" />
+    <ConfigProvider theme={selectTheme}>
+      <div className={classNames({ [styles.divider]: withDivider })}>
+        <div className={styles['option-block']}>
+          <div className={styles.label}>
+            {t.variable_text}
+            <QuestionCircleOutlined className={styles.icon} onClick={() => browser.open(t.variable_text_link)} />
           </div>
-          {(config.type.hasMultiValue || config.type.value !== VariableTextType.TIME) && (
-            <div className={styles['option-block']}>
-              <div className={styles.label}>{t.offset}</div>
-              <UnitInput
-                className={styles.input}
-                controls={false}
-                displayMultiValue={config.offset.hasMultiValue}
-                id="variable-text-offset"
-                min={0}
-                onChange={onOffsetChange}
-                precision={0}
-                theme={objectPanelInputTheme}
-                underline
-                value={config.offset.value}
+          <Switch checked={isToggleOn} onClick={onToggle} size="small" />
+        </div>
+        {isToggleOn && (
+          <>
+            <div className={classNames(styles['option-block'], styles['with-select'])}>
+              <Select
+                className={styles.select}
+                onChange={(val) => onTypeChange(val)}
+                onKeyDown={(e) => e.stopPropagation()}
+                options={options}
+                popupMatchSelectWidth={false}
+                value={config.type.hasMultiValue ? '-' : config.type.value}
               />
+              <Button icon={<SettingFilled />} onClick={showVariableTextSettings} type="text" />
             </div>
-          )}
-        </>
-      )}
-    </div>
+            {(config.type.hasMultiValue || config.type.value !== VariableTextType.TIME) && (
+              <div className={styles['option-block']}>
+                <div className={styles.label}>{t.offset}</div>
+                <UnitInput
+                  className={styles.input}
+                  controls={false}
+                  displayMultiValue={config.offset.hasMultiValue}
+                  id="variable-text-offset"
+                  min={0}
+                  onChange={onOffsetChange}
+                  precision={0}
+                  theme={objectPanelInputTheme}
+                  underline
+                  value={config.offset.value}
+                />
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </ConfigProvider>
   );
 };
 

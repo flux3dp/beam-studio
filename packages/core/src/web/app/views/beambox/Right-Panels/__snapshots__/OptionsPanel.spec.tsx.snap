@@ -239,3 +239,42 @@ exports[`should render correctly text 1`] = `
   </div>
 </div>
 `;
+
+exports[`should render correctly use with variable data 1`] = `
+<div>
+  <div
+    class="panel"
+  >
+    <div
+      class="title"
+    >
+      OPTIONS
+    </div>
+    <dummy-multi-color-options
+      elem="[object HTMLUnknownElement]"
+    />
+    <dummy-variable-text-block
+      elems="[object HTMLUnknownElement]"
+      id="use"
+      withdivider="configName"
+    />
+  </div>
+</div>
+`;
+
+exports[`should render correctly use without variable data 1`] = `
+<div>
+  <div
+    class="panel"
+  >
+    <div
+      class="title"
+    >
+      OPTIONS
+    </div>
+    <dummy-multi-color-options
+      elem="[object HTMLUnknownElement]"
+    />
+  </div>
+</div>
+`;

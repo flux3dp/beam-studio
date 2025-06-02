@@ -1602,6 +1602,63 @@ exports[`should render correctly in mobile text 1`] = `
 </div>
 `;
 
+exports[`should render correctly in mobile text 2`] = `
+<div>
+  <div
+    class="container"
+  >
+    <div
+      class="adm-divider adm-divider-vertical adm-divider-center divider"
+    />
+    <div
+      class="object-panel-item"
+      id="auto-fit"
+    >
+      <div
+        class="main"
+      >
+        <svgr-url />
+      </div>
+      <div
+        class="label"
+      >
+        Auto Fit (Beta)
+      </div>
+    </div>
+    <div
+      class="object-panel-item"
+      id="smart-nest"
+    >
+      <div
+        class="main"
+      >
+        <svgr-url />
+      </div>
+      <div
+        class="label"
+      >
+        Smart Nest
+      </div>
+    </div>
+    <div
+      class="object-panel-item"
+      id="array"
+    >
+      <div
+        class="main"
+      >
+        <svgr-url />
+      </div>
+      <div
+        class="label"
+      >
+        Array
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`should render correctly in mobile use 1`] = `
 <div>
   <div
@@ -1683,6 +1740,63 @@ exports[`should render correctly in mobile use 1`] = `
         class="label"
       >
         Tabs
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`should render correctly in mobile use 2`] = `
+<div>
+  <div
+    class="container"
+  >
+    <div
+      class="adm-divider adm-divider-vertical adm-divider-center divider"
+    />
+    <div
+      class="object-panel-item"
+      id="auto-fit"
+    >
+      <div
+        class="main"
+      >
+        <svgr-url />
+      </div>
+      <div
+        class="label"
+      >
+        Auto Fit (Beta)
+      </div>
+    </div>
+    <div
+      class="object-panel-item"
+      id="smart-nest"
+    >
+      <div
+        class="main"
+      >
+        <svgr-url />
+      </div>
+      <div
+        class="label"
+      >
+        Smart Nest
+      </div>
+    </div>
+    <div
+      class="object-panel-item"
+      id="array"
+    >
+      <div
+        class="main"
+      >
+        <svgr-url />
+      </div>
+      <div
+        class="label"
+      >
+        Array
       </div>
     </div>
   </div>
@@ -2436,6 +2550,147 @@ exports[`should render correctly text 1`] = `
 </div>
 `;
 
+exports[`should render correctly text 2`] = `
+<div>
+  <div
+    class="panel"
+  >
+    <div
+      class="title"
+    >
+      ACTIONS
+    </div>
+    <div
+      class="btns-container"
+    >
+      <div
+        class="btn-container"
+      >
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
+          id="auto-fit"
+          type="button"
+        >
+          <span
+            class="ant-btn-icon"
+          >
+            <svgr-url />
+          </span>
+          <span
+            class="label"
+          >
+            Auto Fit (Beta)
+          </span>
+        </button>
+      </div>
+      <div
+        class="btn-container"
+      >
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
+          disabled=""
+          id="convert_to_path"
+          type="button"
+        >
+          <span
+            class="ant-btn-icon"
+          >
+            <svgr-url />
+          </span>
+          <span
+            class="label"
+          >
+            Convert to Path
+          </span>
+        </button>
+      </div>
+      <div
+        class="btn-container"
+      >
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
+          disabled=""
+          id="weld"
+          type="button"
+        >
+          <span
+            class="ant-btn-icon"
+          >
+            <svgr-url />
+          </span>
+          <span
+            class="label"
+          >
+            Weld Text
+          </span>
+        </button>
+      </div>
+      <div
+        class="btn-container"
+      >
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
+          id="smart-nest"
+          type="button"
+        >
+          <span
+            class="ant-btn-icon"
+          >
+            <svgr-url />
+          </span>
+          <span
+            class="label"
+          >
+            Smart Nest
+          </span>
+        </button>
+      </div>
+      <div
+        class="btn-container"
+      >
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
+          id="array"
+          type="button"
+        >
+          <span
+            class="ant-btn-icon"
+          >
+            <svgr-url />
+          </span>
+          <span
+            class="label"
+          >
+            Array
+          </span>
+        </button>
+      </div>
+      <div
+        class="btn-container"
+      >
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
+          disabled=""
+          id="tab"
+          type="button"
+        >
+          <span
+            class="ant-btn-icon"
+          >
+            <svgr-url />
+          </span>
+          <span
+            class="label"
+          >
+            Tabs
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`should render correctly use 1`] = `
 <div>
   <div
@@ -2534,6 +2789,126 @@ exports[`should render correctly use 1`] = `
       >
         <button
           class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
+          id="tab"
+          type="button"
+        >
+          <span
+            class="ant-btn-icon"
+          >
+            <svgr-url />
+          </span>
+          <span
+            class="label"
+          >
+            Tabs
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`should render correctly use 2`] = `
+<div>
+  <div
+    class="panel"
+  >
+    <div
+      class="title"
+    >
+      ACTIONS
+    </div>
+    <div
+      class="btns-container"
+    >
+      <div
+        class="btn-container"
+      >
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
+          id="auto-fit"
+          type="button"
+        >
+          <span
+            class="ant-btn-icon"
+          >
+            <svgr-url />
+          </span>
+          <span
+            class="label"
+          >
+            Auto Fit (Beta)
+          </span>
+        </button>
+      </div>
+      <div
+        class="btn-container"
+      >
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
+          disabled=""
+          id="disassemble_use"
+          type="button"
+        >
+          <span
+            class="ant-btn-icon"
+          >
+            <svgr-url />
+          </span>
+          <span
+            class="label"
+          >
+            Disassemble
+          </span>
+        </button>
+      </div>
+      <div
+        class="btn-container"
+      >
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
+          id="smart-nest"
+          type="button"
+        >
+          <span
+            class="ant-btn-icon"
+          >
+            <svgr-url />
+          </span>
+          <span
+            class="label"
+          >
+            Smart Nest
+          </span>
+        </button>
+      </div>
+      <div
+        class="btn-container"
+      >
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
+          id="array"
+          type="button"
+        >
+          <span
+            class="ant-btn-icon"
+          >
+            <svgr-url />
+          </span>
+          <span
+            class="label"
+          >
+            Array
+          </span>
+        </button>
+      </div>
+      <div
+        class="btn-container"
+      >
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
+          disabled=""
           id="tab"
           type="button"
         >

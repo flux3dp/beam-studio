@@ -49,10 +49,12 @@ jest.mock('@core/implementations/browser', () => ({
 
 const mockGetVariableTextType = jest.fn().mockImplementation((elem) => +(elem.getAttribute('data-vt-type') ?? '0'));
 const mockGetVariableTextOffset = jest.fn().mockImplementation((elem) => +(elem.getAttribute('data-vt-offset') ?? '0'));
+const mockIsVariableTextSupported = jest.fn();
 
 jest.mock('@core/helpers/variableText', () => ({
   getVariableTextOffset: mockGetVariableTextOffset,
   getVariableTextType: mockGetVariableTextType,
+  isVariableTextSupported: mockIsVariableTextSupported,
 }));
 
 import VariableTextBlock from './VariableTextBlock';
@@ -60,8 +62,25 @@ import VariableTextBlock from './VariableTextBlock';
 describe('test VariableTextBlock', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockIsVariableTextSupported.mockReturnValue(true);
     document.body.innerHTML =
       '<g id="svg_1"><text id="svg_2" data-vt-type="3" data-vt-offset="10"></text><text id="svg_3"></text></g>';
+  });
+
+  test('not support variable texts', () => {
+    mockIsVariableTextSupported.mockReturnValue(false);
+
+    const elems = Array.from(document.querySelectorAll('text'));
+    const { container } = render(<VariableTextBlock elems={elems} id="svg_1" withDivider />);
+
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it('should render divider correctly', () => {
+    const elems = Array.from(document.querySelectorAll('text'));
+    const { container } = render(<VariableTextBlock elems={elems} id="svg_1" withDivider />);
+
+    expect(container).toMatchSnapshot();
   });
 
   it('should handle value changes correctly', () => {

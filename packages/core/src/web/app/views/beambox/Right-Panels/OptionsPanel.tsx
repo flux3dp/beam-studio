@@ -8,23 +8,32 @@ import MultiColorOptions from '@core/app/views/beambox/Right-Panels/Options-Bloc
 import PolygonOptions from '@core/app/views/beambox/Right-Panels/Options-Blocks/PolygonOptions';
 import RectOptions from '@core/app/views/beambox/Right-Panels/Options-Blocks/RectOptions';
 import TextOptions from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions';
+import VariableTextBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/VariableTextBlock';
+import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getObjectLayer } from '@core/helpers/layer/layer-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
+import { isVariableTextSupported } from '@core/helpers/variableText';
 
 import styles from './OptionsPanel.module.scss';
 
 interface Props {
-  elem: Element;
+  elem: null | SVGElement;
 }
 
 function OptionsPanel({ elem }: Props): React.JSX.Element {
   const isMobile = useIsMobile();
   let contents: Array<null | React.JSX.Element> = [];
-  const isFullColor = getData(getObjectLayer(elem as SVGElement)?.elem, 'fullcolor');
+  const workarea = useWorkarea();
+  const supportVariableBlock = useMemo(isVariableTextSupported, [workarea]);
+  const showVariableBlock = useMemo(
+    () => !isMobile && supportVariableBlock && elem?.getAttribute('data-props'),
+    [elem, supportVariableBlock, isMobile],
+  );
+  const isFullColor = elem ? getData(getObjectLayer(elem)?.elem, 'fullcolor') : false;
   const elemTagName = useMemo(() => elem?.tagName.toLowerCase(), [elem]);
   const showColorPanel = useMemo(() => {
-    if (!elem || !['ellipse', 'g', 'path', 'polygon', 'rect', 'text', 'use'].includes(elemTagName)) {
+    if (!elem || !['ellipse', 'g', 'path', 'polygon', 'rect', 'text', 'use'].includes(elemTagName!)) {
       return false;
     }
 
@@ -83,7 +92,12 @@ function OptionsPanel({ elem }: Props): React.JSX.Element {
         ];
       }
     } else if (tagName === 'use') {
-      contents = [showColorPanel ? <MultiColorOptions elem={elem} key="multi-color" /> : null];
+      contents = [
+        showColorPanel ? <MultiColorOptions elem={elem} key="multi-color" /> : null,
+        showVariableBlock ? (
+          <VariableTextBlock elems={[elem]} id={elem.id} key="variable" withDivider={showColorPanel} />
+        ) : null,
+      ];
     } else {
       contents = [
         showColorPanel ? <ColorPanel elem={elem} key="color" /> : <InFillBlock elems={[elem]} key="infill" />,

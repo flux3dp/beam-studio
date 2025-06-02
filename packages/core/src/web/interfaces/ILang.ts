@@ -747,6 +747,10 @@ export interface ILang {
           decompose_path: string;
           detach_path: string;
           detach_path_short: string;
+          disabled_by_gradient: string;
+          disabled_by_infilled: string;
+          disabled_by_infilled_and_variable_text: string;
+          disabled_by_variable_text: string;
           disassemble_use: string;
           disassembling: string;
           edit_path: string;
@@ -2272,6 +2276,7 @@ export interface ILang {
     auto_advance: string;
     auto_advance_hint: string;
     bake: string;
+    bake_description: string;
     browse: string;
     clear: string;
     csv_file: string;
@@ -2284,6 +2289,7 @@ export interface ILang {
     previous: string;
     start: string;
     test: string;
+    test_description: string;
     title: string;
   };
   web_cam: {

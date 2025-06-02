@@ -72,7 +72,7 @@ export class BaseHistoryCommand implements ICommand {
 }
 
 export class MoveElementCommand extends BaseHistoryCommand implements ICommand {
-  private oldNextSibling: Element | Node;
+  private oldNextSibling: Element | Node | null;
 
   private newNextSibling: Element | Node;
 
@@ -80,7 +80,7 @@ export class MoveElementCommand extends BaseHistoryCommand implements ICommand {
 
   public newParent: Element | Node;
 
-  constructor(elem: any, oldNextSibling: Element | Node, oldParent: Element | Node, text?: string) {
+  constructor(elem: any, oldNextSibling: Element | Node | null, oldParent: Element | Node, text?: string) {
     super();
     this.elem = elem as SVGGraphicsElement;
     this.text = text ? `Move ${elem.tagName} to ${text}` : `Move ${elem.tagName}`;
@@ -139,13 +139,13 @@ svgedit.history.InsertElementCommand = InsertElementCommand;
 
 // History command for an element removed from the DOM
 export class RemoveElementCommand extends BaseHistoryCommand implements ICommand {
-  private nextSibling: Element | Node;
+  private nextSibling: Element | Node | null;
 
   private parent: Element | Node;
 
   constructor(
     elem: Element | SVGGraphicsElement,
-    oldNextSibling: Element | Node,
+    oldNextSibling: Element | Node | null,
     oldParent: Element | Node,
     text?: string,
   ) {
@@ -167,7 +167,7 @@ export class RemoveElementCommand extends BaseHistoryCommand implements ICommand
 
   doApply = (): void => {
     svgedit.transformlist.removeElementFromListMap(this.elem);
-    this.parent = this.elem.parentNode;
+    this.parent = this.elem.parentNode!;
     this.parent.removeChild(this.elem);
   };
 

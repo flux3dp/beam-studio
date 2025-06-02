@@ -1,10 +1,9 @@
 import fontFuncs, { convertTextToPathByFontkit, getFontObj } from '@core/app/actions/beambox/font-funcs';
 import NS from '@core/app/constants/namespaces';
-import history from '@core/app/svgedit/history/history';
-import undoManager from '@core/app/svgedit/history/undoManager';
 import importSvgString from '@core/app/svgedit/operations/import/importSvgString';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import type { FontDescriptor } from '@core/interfaces/IFont';
+import type { GeneralFont } from '@core/interfaces/IFont';
+import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 let svgCanvas: ISVGCanvas;
@@ -28,13 +27,13 @@ function extractFontDetails(fontStyle: string): {
   const isBold = /bold/i.test(fontStyle);
   const isItalic = /italic/i.test(fontStyle);
   const fontSizeInfo = fontStyle.match(/(\d+px|\d+em|\d+rem|\d+pt)/)?.[0] || '16px';
-  const fontSize = Number.parseFloat(fontSizeInfo.match(/^(\d+(\.\d+)?)/)?.[0]) || 16;
+  const fontSize = Number.parseFloat(fontSizeInfo.match(/^(\d+(\.\d+)?)/)?.[0] ?? '') || 16;
   const fontFamily = fontStyle.replace(/font:\s*|bold|italic|(\d+px|\d+em|\d+rem|\d+pt)/g, '').trim();
 
   return { fontFamily, fontSize, isBold, isItalic };
 }
 
-function findMatchingFont(fontInfos: FontDescriptor[], isBold: boolean, isItalic: boolean): FontDescriptor {
+function findMatchingFont(fontInfos: GeneralFont[], isBold: boolean, isItalic: boolean): GeneralFont {
   return (
     fontInfos.find(
       ({ postscriptName }) =>
@@ -51,8 +50,10 @@ function preProcessTextTag(svgElement: SVGElement): SVGElement {
   }
 
   texts.forEach((text) => {
-    const { fontFamily, fontSize, isBold, isItalic } = extractFontDetails(text.getAttribute('style'));
-    const fonts: FontDescriptor[] = fontFuncs.requestFontsOfTheFontFamily(fontFamily);
+    const { fontFamily, fontSize, isBold, isItalic } = extractFontDetails(
+      text.getAttribute('style') ?? 'font: 20px Noto Sans',
+    );
+    const fonts: GeneralFont[] = fontFuncs.requestFontsOfTheFontFamily(fontFamily);
     const font = findMatchingFont(fonts, isBold, isItalic);
 
     text.setAttribute('font-family', `'${font.family}'`);
@@ -81,7 +82,7 @@ function getTranslateValues(transform: string): { x: number; y: number } {
 }
 
 /* Barcode */
-async function getDFromBarcodeSvgElement(svgElement: SVGElement) {
+async function getDFromBarcodeSvgElement(svgElement: SVGElement, isInvert = false) {
   const ds = Array.of<string>();
 
   preProcessTextTag(svgElement);
@@ -93,11 +94,17 @@ async function getDFromBarcodeSvgElement(svgElement: SVGElement) {
   svgElement.querySelectorAll('g').forEach((g) => {
     const transform = getTranslateValues(g.getAttribute('transform'));
 
-    g.querySelectorAll('rect').forEach((rect) => {
-      const { x, y } = rect.getBBox();
+    if (isInvert) {
+      g.removeAttribute('transform');
+    }
 
-      rect.setAttribute('x', `${x + transform.x}`);
-      rect.setAttribute('y', `${y + transform.y}`);
+    g.querySelectorAll('rect').forEach((rect) => {
+      if (isInvert) {
+        const { x, y } = rect.getBBox();
+
+        rect.setAttribute('x', `${x + transform.x}`);
+        rect.setAttribute('y', `${y + transform.y}`);
+      }
 
       const { path } = svgCanvas.convertToPath(rect, true);
 
@@ -113,8 +120,11 @@ async function getDFromBarcodeSvgElement(svgElement: SVGElement) {
 
       const tspan = document.createElementNS(NS.SVG, 'tspan');
 
-      tspan.setAttribute('x', `${Number.parseFloat(text.getAttribute('x')) + transform.x}`);
-      tspan.setAttribute('y', `${Number.parseFloat(text.getAttribute('y')) + transform.y}`);
+      if (isInvert) {
+        tspan.setAttribute('x', `${Number.parseFloat(text.getAttribute('x')) + transform.x}`);
+        tspan.setAttribute('y', `${Number.parseFloat(text.getAttribute('y')) + transform.y}`);
+      }
+
       tspan.textContent = textContent;
 
       text.textContent = '';
@@ -136,7 +146,7 @@ async function getSubtractedDFromBarcodeSvgElement(svgElement: SVGElement) {
   backgroundPath.setAttribute('fill', 'black');
   backgroundPath.setAttribute('d', `M0 0h${width}v${height}H0z`);
 
-  const d = await getDFromBarcodeSvgElement(svgElement);
+  const d = await getDFromBarcodeSvgElement(svgElement, true);
   const codePath = document.createElementNS(NS.SVG, 'path');
 
   codePath.setAttribute('fill', 'black');
@@ -154,29 +164,21 @@ async function getSubtractedDFromBarcodeSvgElement(svgElement: SVGElement) {
   return subtractedD;
 }
 
-export async function importBarcodeSvgElement(svgElement: SVGElement, isInvert = false): Promise<void> {
-  const batchCmd = new history.BatchCommand('Import Barcode');
+export async function importBarcodeSvgElement(
+  svgElement: SVGElement,
+  isInvert: boolean,
+  opts?: Partial<{ batchCmd: IBatchCommand; hidden: boolean }>,
+): Promise<SVGElement> {
   const d = isInvert
     ? await getSubtractedDFromBarcodeSvgElement(svgElement)
     : await getDFromBarcodeSvgElement(svgElement);
+  const width = (svgElement.getAttribute('width') ?? '').replace('px', 'mm');
+  const height = (svgElement.getAttribute('height') ?? '').replace('px', 'mm');
+  const viewBox = svgElement.getAttribute('viewBox') ?? '';
+  const svgString = `<svg width="${width}" height="${height}" viewBox="${viewBox}" xmlns="http://www.w3.org/2000/svg">
+  <path d="${d}" fill="black" fill-opacity="1"></path></svg>`;
 
-  const pathElement = svgCanvas.addSvgElementFromJson({
-    attr: { d, fill: 'black', 'fill-opacity': 1, id: svgCanvas.getNextId(), opacity: 1 },
-    curStyles: true,
-    element: 'path',
-  });
-
-  batchCmd.addSubCommand(new history.InsertElementCommand(pathElement));
-
-  svgCanvas.updateElementColor(pathElement);
-  svgCanvas.selectOnly([pathElement]);
-  svgCanvas.zoomSvgElem(10);
-
-  svgElement.remove();
-
-  if (!batchCmd.isEmpty()) {
-    undoManager.addCommandToHistory(batchCmd);
-  }
+  return await importSvgString(svgString, { hidden: opts?.hidden, parentCmd: opts?.batchCmd, type: 'layer' });
 }
 
 /* QR Code */
@@ -190,7 +192,7 @@ function handleQrCodeInvertColor(svgElement: SVGElement): string {
   svg.setAttribute('viewBox', `0 0 ${size} ${size}`);
 
   const [backgroundPath, codePath] = extractSvgTags(new XMLSerializer().serializeToString(svgElement), 'path');
-  const subtractedD = svgCanvas.pathActions.booleanOperation(backgroundPath, codePath, 2);
+  const subtractedD = svgCanvas.pathActions.booleanOperation(backgroundPath, codePath, 2) ?? '';
   const path = document.createElementNS(NS.SVG, 'path');
 
   path.setAttribute('fill', 'black');
@@ -205,11 +207,15 @@ function handleQrCodeInvertColor(svgElement: SVGElement): string {
   return svgString;
 }
 
-export async function importQrCodeSvgElement(svgElement: SVGElement, isInvert = false): Promise<void> {
+export async function importQrCodeSvgElement(
+  svgElement: SVGElement,
+  isInvert: boolean,
+  opts?: Partial<{ batchCmd: IBatchCommand; hidden: boolean }>,
+): Promise<SVGElement> {
   // Remove transparent background in normal QR code
   svgElement.querySelector('[fill="transparent"]')?.remove();
 
   const svgString = isInvert ? handleQrCodeInvertColor(svgElement) : new XMLSerializer().serializeToString(svgElement);
 
-  await importSvgString(svgString, { type: 'layer' });
+  return await importSvgString(svgString, { hidden: opts?.hidden, parentCmd: opts?.batchCmd, type: 'layer' });
 }

@@ -16,8 +16,9 @@ import Select from '@core/app/widgets/AntdSelect';
 import fontHelper from '@core/helpers/fonts/fontHelper';
 import useI18n from '@core/helpers/useI18n';
 
-import { Barcode, defaultOptions, formats } from './Barcode';
 import styles from './BarcodeGenerator.module.scss';
+import type { BarcodeRef } from './BarcodePreview';
+import BarcodePreview, { defaultOptions, formats } from './BarcodePreview';
 
 interface Props {
   isInvert: boolean;
@@ -45,7 +46,7 @@ const renderOption = (option) => {
 };
 // end of copied code
 
-export default forwardRef<HTMLDivElement, Props>(({ isInvert, setIsInvert, setText, text }, ref) => {
+const BarcodeGenerator = forwardRef<BarcodeRef, Props>(({ isInvert, setIsInvert, setText, text }, ref) => {
   const { barcode_generator: t } = useI18n();
   const [options, setOptions] = useState(defaultOptions);
   const [validFontStyles, setValidFontStyles] = useState([]);
@@ -76,8 +77,8 @@ export default forwardRef<HTMLDivElement, Props>(({ isInvert, setIsInvert, setTe
   }, [options.font]);
 
   return (
-    <div ref={ref}>
-      <Barcode className={styles['barcode-container']} options={options} renderer="svg" value={text} />
+    <div>
+      <BarcodePreview className={styles['barcode-container']} options={options} ref={ref} renderer="svg" value={text} />
       <ConfigProvider theme={{ components: { Form: { itemMarginBottom: 12 } } }}>
         <Form>
           <Space.Compact className={classNames(styles['w-100'], styles['mb-20'])}>
@@ -249,3 +250,5 @@ export default forwardRef<HTMLDivElement, Props>(({ isInvert, setIsInvert, setTe
     </div>
   );
 });
+
+export default BarcodeGenerator;

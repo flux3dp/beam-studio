@@ -1,0 +1,681 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test variableText helper convertVariableText 1`] = `
+<body>
+  
+
+  <g
+    class="layer"
+    id="svg_1"
+  >
+    
+
+    <text
+      id="svg_2"
+    >
+      <tspan>
+        ddd
+      </tspan>
+    </text>
+    
+
+    <text
+      data-vt-offset="1234"
+      data-vt-type="1"
+      id="svg_3"
+    >
+      <tspan>
+        234
+      </tspan>
+    </text>
+    
+
+    <text
+      data-vt-offset="30"
+      data-vt-type="1"
+      id="svg_4"
+    >
+      <tspan>
+        30
+      </tspan>
+    </text>
+    
+
+    <text
+      data-vt-offset="30"
+      data-vt-type="1"
+      id="svg_5"
+    >
+      <tspan>
+        030
+      </tspan>
+    </text>
+    
+
+    <text
+      data-vt-offset="30"
+      data-vt-type="1"
+      id="svg_6"
+    >
+      <tspan>
+        01e
+      </tspan>
+    </text>
+    
+
+    <text
+      data-vt-offset="30"
+      data-vt-type="1"
+      id="svg_7"
+    >
+      <tspan>
+        01E
+      </tspan>
+    </text>
+    
+
+    <text
+      data-vt-offset="30"
+      data-vt-type="1"
+      id="svg_8"
+    >
+      <tspan>
+        Not
+      </tspan>
+      <tspan>
+        Number
+      </tspan>
+    </text>
+    
+
+    <text
+      data-vt-type="2"
+      id="svg_9"
+    >
+      <tspan>
+        YYYYescape 2025-02-03
+      </tspan>
+      <tspan>
+        12:34:56.123+08:00Z
+      </tspan>
+      <tspan>
+        星期一 二月
+      </tspan>
+    </text>
+    
+
+    <text
+      data-vt-offset="0"
+      data-vt-type="3"
+      id="svg_10"
+    >
+      <tspan>
+        Name: Name 1
+      </tspan>
+      <tspan>
+        Type: Type 1
+      </tspan>
+      <tspan>
+        Key: Key 1
+      </tspan>
+    </text>
+    
+
+    <text
+      data-vt-offset="1"
+      data-vt-type="3"
+      id="svg_11"
+    >
+      <tspan>
+        Name: Name 2
+      </tspan>
+      <tspan>
+        Type: 
+      </tspan>
+      <tspan>
+        Key: Key 2
+      </tspan>
+    </text>
+    
+
+    <text
+      data-vt-offset="2"
+      data-vt-type="3"
+      id="svg_12"
+    >
+      <tspan>
+        Name: 
+      </tspan>
+      <tspan>
+        Type: 
+      </tspan>
+      <tspan>
+        Key: 
+      </tspan>
+    </text>
+    
+
+    <mock-use
+      data-ratiofixed=""
+      transform=""
+      x="0"
+      y="0"
+    >
+      <svg
+        height="1000"
+        role="img"
+        viewBox="0 0 21 21"
+        width="1000"
+      >
+        <path
+          d="M0,0 h21v21H0z"
+          fill="transparent"
+          shape-rendering="crispEdges"
+        />
+        <path
+          d="M0 0h7v1H0zM9 0h1v1H9zM14,0 h7v1H14zM0 1h1v1H0zM6 1h1v1H6zM9 1h4v1H9zM14 1h1v1H14zM20,1 h1v1H20zM0 2h1v1H0zM2 2h3v1H2zM6 2h1v1H6zM11 2h2v1H11zM14 2h1v1H14zM16 2h3v1H16zM20,2 h1v1H20zM0 3h1v1H0zM2 3h3v1H2zM6 3h1v1H6zM9 3h2v1H9zM14 3h1v1H14zM16 3h3v1H16zM20,3 h1v1H20zM0 4h1v1H0zM2 4h3v1H2zM6 4h1v1H6zM8 4h1v1H8zM10 4h1v1H10zM12 4h1v1H12zM14 4h1v1H14zM16 4h3v1H16zM20,4 h1v1H20zM0 5h1v1H0zM6 5h1v1H6zM9 5h2v1H9zM12 5h1v1H12zM14 5h1v1H14zM20,5 h1v1H20zM0 6h7v1H0zM8 6h1v1H8zM10 6h1v1H10zM12 6h1v1H12zM14,6 h7v1H14zM8 7h1v1H8zM10 7h3v1H10zM2 8h2v1H2zM6 8h4v1H6zM13 8h2v1H13zM16 8h1v1H16zM0 9h1v1H0zM2 9h1v1H2zM5 9h1v1H5zM7 9h3v1H7zM12 9h1v1H12zM14 9h1v1H14zM17 9h1v1H17zM1 10h1v1H1zM3 10h2v1H3zM6 10h1v1H6zM9 10h1v1H9zM11 10h2v1H11zM14 10h1v1H14zM17 10h2v1H17zM20,10 h1v1H20zM0 11h1v1H0zM7 11h2v1H7zM10 11h1v1H10zM12 11h1v1H12zM14 11h6v1H14zM0 12h1v1H0zM2 12h1v1H2zM4 12h1v1H4zM6 12h5v1H6zM13 12h3v1H13zM18 12h1v1H18zM8 13h5v1H8zM14 13h1v1H14zM17 13h1v1H17zM20,13 h1v1H20zM0 14h7v1H0zM8 14h3v1H8zM12 14h1v1H12zM14 14h2v1H14zM17 14h1v1H17zM0 15h1v1H0zM6 15h1v1H6zM9 15h2v1H9zM13 15h4v1H13zM18 15h1v1H18zM0 16h1v1H0zM2 16h3v1H2zM6 16h1v1H6zM11 16h3v1H11zM15 16h2v1H15zM20,16 h1v1H20zM0 17h1v1H0zM2 17h3v1H2zM6 17h1v1H6zM8 17h3v1H8zM12 17h8v1H12zM0 18h1v1H0zM2 18h3v1H2zM6 18h1v1H6zM8 18h1v1H8zM10 18h2v1H10zM13 18h1v1H13zM15 18h1v1H15zM0 19h1v1H0zM6 19h1v1H6zM9 19h2v1H9zM12 19h2v1H12zM15 19h1v1H15zM18,19 h3v1H18zM0 20h7v1H0zM9 20h4v1H9zM14 20h1v1H14zM16 20h1v1H16zM19 20h1v1H19z"
+          fill="black"
+          shape-rendering="crispEdges"
+        />
+      </svg>
+    </mock-use>
+    
+
+    <mock-use
+      data-ratiofixed=""
+      transform=""
+      x="0"
+      y="0"
+    >
+      <svg
+        class="visible barcode-svg"
+        height="92px"
+        id="barcode"
+        style="transform: translate(0,0)"
+        version="1.1"
+        viewBox="0 0 266 92"
+        width="266px"
+        x="0px"
+        xmlns="http://www.w3.org/2000/svg"
+        y="0px"
+      >
+        <rect
+          height="92"
+          style="fill:#000000;"
+          width="266"
+          x="0"
+          y="0"
+        />
+        <g
+          style="fill:#ffffff;"
+          transform="translate(10, 10)"
+        >
+          <rect
+            height="50"
+            width="4"
+            x="0"
+            y="0"
+          />
+          <rect
+            height="50"
+            width="2"
+            x="6"
+            y="0"
+          />
+          <rect
+            height="50"
+            width="6"
+            x="12"
+            y="0"
+          />
+          <rect
+            height="50"
+            width="2"
+            x="22"
+            y="0"
+          />
+          <rect
+            height="50"
+            width="4"
+            x="26"
+            y="0"
+          />
+          <rect
+            height="50"
+            width="6"
+            x="34"
+            y="0"
+          />
+          <rect
+            height="50"
+            width="6"
+            x="44"
+            y="0"
+          />
+          <rect
+            height="50"
+            width="2"
+            x="52"
+            y="0"
+          />
+          <rect
+            height="50"
+            width="8"
+            x="56"
+            y="0"
+          />
+          <rect
+            height="50"
+            width="6"
+            x="66"
+            y="0"
+          />
+          <rect
+            height="50"
+            width="2"
+            x="76"
+            y="0"
+          />
+          <rect
+            height="50"
+            width="4"
+            x="82"
+            y="0"
+          />
+          <rect
+            height="50"
+            width="4"
+            x="88"
+            y="0"
+          />
+          <rect
+            height="50"
+            width="2"
+            x="96"
+            y="0"
+          />
+          <rect
+            height="50"
+            width="6"
+            x="100"
+            y="0"
+          />
+          <rect
+            height="50"
+            width="4"
+            x="110"
+            y="0"
+          />
+          <rect
+            height="50"
+            width="2"
+            x="118"
+            y="0"
+          />
+          <rect
+            height="50"
+            width="6"
+            x="124"
+            y="0"
+          />
+          <rect
+            height="50"
+            width="6"
+            x="132"
+            y="0"
+          />
+          <rect
+            height="50"
+            width="2"
+            x="142"
+            y="0"
+          />
+          <rect
+            height="50"
+            width="4"
+            x="148"
+            y="0"
+          />
+          <rect
+            height="50"
+            width="4"
+            x="154"
+            y="0"
+          />
+          <rect
+            height="50"
+            width="6"
+            x="160"
+            y="0"
+          />
+          <rect
+            height="50"
+            width="2"
+            x="170"
+            y="0"
+          />
+          <rect
+            height="50"
+            width="4"
+            x="176"
+            y="0"
+          />
+          <rect
+            height="50"
+            width="6"
+            x="184"
+            y="0"
+          />
+          <rect
+            height="50"
+            width="2"
+            x="192"
+            y="0"
+          />
+          <rect
+            height="50"
+            width="4"
+            x="198"
+            y="0"
+          />
+          <rect
+            height="50"
+            width="6"
+            x="206"
+            y="0"
+          />
+          <rect
+            height="50"
+            width="2"
+            x="214"
+            y="0"
+          />
+          <rect
+            height="50"
+            width="4"
+            x="220"
+            y="0"
+          />
+          <rect
+            height="50"
+            width="6"
+            x="230"
+            y="0"
+          />
+          <rect
+            height="50"
+            width="2"
+            x="238"
+            y="0"
+          />
+          <rect
+            height="50"
+            width="4"
+            x="242"
+            y="0"
+          />
+          <text
+            style="font: bold 20px Noto Sans"
+            text-anchor="middle"
+            x="123"
+            y="72"
+          >
+            12:34:56
+          </text>
+        </g>
+      </svg>
+    </mock-use>
+    
+
+  </g>
+  
+
+</body>
+`;
+
+exports[`test variableText helper extractVariableText 1`] = `
+<body>
+  
+
+  <g
+    id="svgcontent"
+  >
+    
+
+    <g
+      class="layer"
+      id="svg_1"
+    >
+      
+
+      
+
+      <text
+        data-vt-type="1"
+        id="svg_3"
+      >
+        <tspan />
+      </text>
+      
+
+      <text
+        data-vt-type="1"
+        id="svg_4"
+      >
+        <tspan />
+      </text>
+      
+
+    </g>
+    
+
+    
+
+    
+
+  </g>
+  
+
+</body>
+`;
+
+exports[`test variableText helper extractVariableText 2`] = `
+<body>
+  
+
+  <g
+    id="svgcontent"
+  >
+    
+
+    <g
+      class="layer"
+      id="svg_1"
+    >
+      
+
+      <text
+        id="svg_2"
+      >
+        <tspan />
+      </text>
+      
+
+      <text
+        data-vt-type="1"
+        id="svg_3"
+      >
+        <tspan />
+      </text>
+      
+
+      <text
+        data-vt-type="1"
+        id="svg_4"
+      >
+        <tspan />
+      </text>
+      
+
+    </g>
+    
+
+    <g
+      class="layer"
+      id="svg_5"
+    >
+      
+
+      <text
+        id="svg_6"
+      >
+        <tspan />
+      </text>
+      
+
+    </g>
+    
+
+    <g
+      class="layer"
+      display="none"
+      id="svg_7"
+    >
+      
+
+      <text
+        data-vt-type="1"
+        id="svg_8"
+      />
+      
+
+    </g>
+    
+
+  </g>
+  
+
+</body>
+`;
+
+exports[`test variableText helper removeVariableText 1`] = `
+<body>
+  
+
+  <g
+    class="layer"
+    id="svg_1"
+  >
+    
+
+    <text
+      id="svg_2"
+    />
+    
+
+    
+
+    
+
+  </g>
+  
+
+  <g
+    class="layer"
+    id="svg_5"
+  >
+    
+
+    <text
+      id="svg_6"
+    />
+    
+
+    
+
+  </g>
+  
+
+  <g
+    class="layer"
+    display="none"
+    id="svg_8"
+  >
+    
+
+    
+
+  </g>
+  
+
+</body>
+`;
+
+exports[`test variableText helper removeVariableText 2`] = `
+<body>
+  
+
+  <g
+    class="layer"
+    id="svg_1"
+  >
+    
+
+    <text
+      id="svg_2"
+    />
+    
+
+    <text
+      data-vt-type="1"
+      id="svg_3"
+    />
+    
+
+    <text
+      data-vt-type="1"
+      id="svg_4"
+    />
+    
+
+  </g>
+  
+
+  <g
+    class="layer"
+    id="svg_5"
+  >
+    
+
+    <text
+      id="svg_6"
+    />
+    
+
+    <text
+      data-vt-type="1"
+      id="svg_7"
+    />
+    
+
+  </g>
+  
+
+  <g
+    class="layer"
+    display="none"
+    id="svg_8"
+  >
+    
+
+    <text
+      data-vt-type="1"
+      id="svg_9"
+    />
+    
+
+  </g>
+  
+
+</body>
+`;
