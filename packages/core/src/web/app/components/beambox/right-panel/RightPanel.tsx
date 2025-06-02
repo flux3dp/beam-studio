@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import React, { memo, useCallback, useContext, useEffect, useState } from 'react';
 
 import classNames from 'classnames';
@@ -5,6 +6,7 @@ import { match, P } from 'ts-pattern';
 
 import LayerPanel from '@core/app/components/beambox/right-panel/LayerPanel';
 import Tab from '@core/app/components/beambox/right-panel/Tab';
+import CanvasMode from '@core/app/constants/canvasMode';
 import { PanelType } from '@core/app/constants/right-panel-types';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
@@ -21,8 +23,8 @@ import styles from './RightPanel.module.scss';
 
 const rightPanelEventEmitter = eventEmitterFactory.createEventEmitter('right-panel');
 
-const RightPanel = (): React.JSX.Element => {
-  const { isPathEditing } = useContext(CanvasContext);
+const RightPanel = (): ReactNode => {
+  const { isPathEditing, mode } = useContext(CanvasContext);
   const { selectedElement } = useContext(SelectedElementContext);
   const isMobile = useIsMobile();
   const [panelType, setPanelType] = useState(isMobile ? PanelType.None : PanelType.Layer);
@@ -95,6 +97,8 @@ const RightPanel = (): React.JSX.Element => {
       return PanelType.Layer;
     });
   }, [isPathEditing]);
+
+  if (mode === CanvasMode.PathPreview) return null;
 
   const sideClass = classNames(styles.sidepanels, {
     [styles.short]: window.os === 'Windows' && !isWeb(),

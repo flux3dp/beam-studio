@@ -3,7 +3,6 @@
 import React from 'react';
 
 import { Switch } from 'antd';
-import classNames from 'classnames';
 import { mat4, vec3 } from 'gl-matrix';
 
 import alertCaller from '@core/app/actions/alert-caller';
@@ -752,11 +751,6 @@ class PathPreview extends React.Component<Props, State> {
 
   updateGcode = async (): Promise<void> => {
     const { togglePathPreview } = this.context;
-    const svgEditor = document.getElementById('svg_editor');
-
-    if (svgEditor) {
-      svgEditor.style.display = '';
-    }
 
     let fileTimeCost: number;
     let gcodeBlob: Blob | undefined;
@@ -782,10 +776,6 @@ class PathPreview extends React.Component<Props, State> {
       useSwiftray = vtTask.useSwiftray || normalTask.useSwiftray;
     } else {
       ({ fileTimeCost, gcodeBlob, useSwiftray } = await exportFuncs.getGcode());
-    }
-
-    if (svgEditor) {
-      svgEditor.style.display = 'none';
     }
 
     if (!gcodeBlob) {
@@ -910,18 +900,17 @@ class PathPreview extends React.Component<Props, State> {
 
   updateWorkspace = () => {
     const { height, width } = this.state;
+    const elem = document.getElementById('path-preview-panel') as HTMLElement;
 
-    if (
-      width !== document.getElementById('path-preview-panel').offsetWidth ||
-      height !== Math.max(dimensions.height, document.getElementById('path-preview-panel').offsetHeight - 200)
-    ) {
+    if (!elem) return;
+
+    const { offsetHeight, offsetWidth } = elem;
+
+    if (width !== offsetWidth || height !== Math.max(dimensions.height, offsetHeight - TOOLS_PANEL_HEIGHT)) {
       this.setState(
         {
-          height: Math.max(
-            dimensions.height,
-            window.document.getElementById('path-preview-panel').offsetHeight - TOOLS_PANEL_HEIGHT,
-          ),
-          width: window.document.getElementById('path-preview-panel').offsetWidth,
+          height: Math.max(dimensions.height, offsetHeight - TOOLS_PANEL_HEIGHT),
+          width: offsetWidth,
         },
         this.setCamera,
       );
@@ -1105,8 +1094,8 @@ class PathPreview extends React.Component<Props, State> {
     preventDefault: () => void;
   }) => {
     const p = {
-      left: document.getElementById('path-preview-panel').offsetLeft,
-      top: document.getElementById('path-preview-panel').offsetTop,
+      left: document.getElementById('path-preview-panel')!.offsetLeft,
+      top: document.getElementById('path-preview-panel')!.offsetTop,
     };
 
     e.preventDefault();
@@ -1175,8 +1164,8 @@ class PathPreview extends React.Component<Props, State> {
   wheel = (e: { ctrlKey: any; deltaX: number; deltaY: number; pageX: number; pageY: number }) => {
     // @ts-ignore
     const p = {
-      left: document.getElementById('path-preview-panel').offsetLeft,
-      top: document.getElementById('path-preview-panel').offsetTop,
+      left: document.getElementById('path-preview-panel')!.offsetLeft,
+      top: document.getElementById('path-preview-panel')!.offsetTop,
     };
     const mouseInputDevice = BeamboxPreference.read('mouse_input_device');
     const isTouchpad = mouseInputDevice === 'TOUCHPAD';
@@ -1521,7 +1510,34 @@ class PathPreview extends React.Component<Props, State> {
       };
     };
     const { base64: thumbnail, url: thumbnailUrl } = await generateTaskThumbnail();
-    let modifiedGcodeList;
+    const convertToFcodeAndUpload = async (gcode: string) => {
+      const gcodeToFcodeRes = await exportFuncs.gcodeToFcode(gcode, thumbnail);
+
+      if (!gcodeToFcodeRes) {
+        alertCaller.popUpError({
+          message: 'Failed to generate task: failed to convert fcode.',
+        });
+
+        return;
+      }
+
+      const { fcodeBlob, fileTimeCost } = gcodeToFcodeRes;
+      const report = await deviceMaster.getReport();
+
+      if (report) {
+        const res = await checkDeviceStatus(device);
+
+        if (res) {
+          await exportFuncs.openTaskInDeviceMonitor(device, {
+            blob: fcodeBlob,
+            taskTime: fileTimeCost,
+            thumbnailUrl,
+          });
+        }
+      }
+    };
+
+    let modifiedGcodeList = Array<string>();
 
     if (workspace.simTime > 0 && workspace.simTime < this.simTimeMax - SIM_TIME_MINUTE / 2) {
       progressCaller.openNonstopProgress({
@@ -1704,24 +1720,7 @@ class PathPreview extends React.Component<Props, State> {
                     modifiedGcodeList.push(`F16 3 ${bytesInfo & (bitwiseOperand as any)}`);
                     modifiedGcodeList = modifiedGcodeList.concat(fastGradientGcodeList.slice(fixedIndex + 1));
 
-                    const { fcodeBlob, fileTimeCost } = await exportFuncs.gcodeToFcode(
-                      modifiedGcodeList.join('\n'),
-                      thumbnail,
-                    );
-                    let res = await deviceMaster.getReport();
-
-                    if (res) {
-                      res = await checkDeviceStatus(device);
-
-                      if (res) {
-                        await exportFuncs.openTaskInDeviceMonitor(device, {
-                          blob: fcodeBlob,
-                          taskTime: fileTimeCost,
-                          thumbnailUrl,
-                        });
-                      }
-                    }
-
+                    convertToFcodeAndUpload(modifiedGcodeList.join('\n'));
                     break;
                   } else {
                     yFound = false;
@@ -1770,20 +1769,7 @@ class PathPreview extends React.Component<Props, State> {
 
             modifiedGcodeList = preparation.concat(fastGradientGcodeList.slice(target));
 
-            const { fcodeBlob, fileTimeCost } = await exportFuncs.gcodeToFcode(modifiedGcodeList.join('\n'), thumbnail);
-            let res = await deviceMaster.getReport();
-
-            if (res) {
-              res = await checkDeviceStatus(device);
-
-              if (res) {
-                await exportFuncs.openTaskInDeviceMonitor(device, {
-                  blob: fcodeBlob,
-                  taskTime: fileTimeCost,
-                  thumbnailUrl,
-                });
-              }
-            }
+            convertToFcodeAndUpload(modifiedGcodeList.join('\n'));
           }
         } else {
           const { F, isEngraving, U, Z } = this.searchParams(gcodeList, target);
@@ -1799,21 +1785,7 @@ class PathPreview extends React.Component<Props, State> {
           preparation.push(`G1${isEngraving ? 'V' : 'S'}0`);
 
           modifiedGcodeList = preparation.concat(gcodeList.slice(target));
-
-          const { fcodeBlob, fileTimeCost } = await exportFuncs.gcodeToFcode(modifiedGcodeList.join('\n'), thumbnail);
-          let res = await deviceMaster.getReport();
-
-          if (res) {
-            res = await checkDeviceStatus(device);
-
-            if (res) {
-              await exportFuncs.openTaskInDeviceMonitor(device, {
-                blob: fcodeBlob,
-                taskTime: fileTimeCost,
-                thumbnailUrl,
-              });
-            }
-          }
+          convertToFcodeAndUpload(modifiedGcodeList.join('\n'));
         }
       } catch (error) {
         console.error(error);
@@ -1931,86 +1903,84 @@ class PathPreview extends React.Component<Props, State> {
     const LANG = i18n.lang.beambox.path_preview;
 
     return (
-      <div
-        className={classNames(styles.container, { [styles.mac]: window.os === 'MacOS' })}
-        id="path-preview-panel"
-        style={{ touchAction: 'none', userSelect: 'none' }}
-      >
-        <Pointable
-          onPointerCancel={this.onPointerCancel}
-          onPointerDown={this.onPointerDown}
-          onPointerMove={this.onPointerMove}
-          onPointerUp={this.onPointerUp}
-          onWheel={this.wheel}
-          style={{ height, width }}
-          touchAction="none"
-        >
-          <canvas
-            height={Math.round(height * window.devicePixelRatio)}
-            ref={this.setCanvas}
+      <div className={styles.container}>
+        <div className={styles.main} id="path-preview-panel" style={{ touchAction: 'none', userSelect: 'none' }}>
+          <Pointable
+            onPointerCancel={this.onPointerCancel}
+            onPointerDown={this.onPointerDown}
+            onPointerMove={this.onPointerMove}
+            onPointerUp={this.onPointerUp}
+            onWheel={this.wheel}
             style={{ height, width }}
-            width={Math.round(width * window.devicePixelRatio)}
-          />
-        </Pointable>
-        <div className={styles['tools-panel']}>
-          <ProgressBar
-            handleSimTimeChange={this.handleSimTimeChange}
-            simTime={workspace.simTime}
-            simTimeMax={this.simTimeMax}
-          />
-          <div className={styles.options}>
-            {this.renderPlayButtons()}
-            <div className={styles['speed-control']}>
-              <div className={styles.label}>{LANG.play_speed}</div>
-              <input
-                id="speed"
-                max={4}
-                min={0}
-                onChange={(e) => this.handleSpeedLevelChange(e.target.value)}
-                step="1"
-                type="range"
-                value={speedLevel}
-              />
-              <div>{this.renderSpeed()}</div>
-            </div>
-            <div className={styles['switch-control']}>
-              <div className={styles.control}>
-                <Switch
-                  checked={workspace.showTraversal}
-                  className={styles.switch}
-                  id="show_traversal"
-                  onChange={this.toggleTraversalMoves}
-                  size="small"
+            touchAction="none"
+          >
+            <canvas
+              height={Math.round(height * window.devicePixelRatio)}
+              ref={this.setCanvas}
+              style={{ height, width }}
+              width={Math.round(width * window.devicePixelRatio)}
+            />
+          </Pointable>
+          <div className={styles['tools-panel']}>
+            <ProgressBar
+              handleSimTimeChange={this.handleSimTimeChange}
+              simTime={workspace.simTime}
+              simTimeMax={this.simTimeMax}
+            />
+            <div className={styles.options}>
+              {this.renderPlayButtons()}
+              <div className={styles['speed-control']}>
+                <div className={styles.label}>{LANG.play_speed}</div>
+                <input
+                  id="speed"
+                  max={4}
+                  min={0}
+                  onChange={(e) => this.handleSpeedLevelChange(e.target.value)}
+                  step="1"
+                  type="range"
+                  value={speedLevel}
                 />
+                <div>{this.renderSpeed()}</div>
               </div>
-              <label className={styles.label} htmlFor="show_traversal">
-                {LANG.travel_path}
-              </label>
-            </div>
-            <div className={styles['switch-control']}>
-              <div className={styles.control}>
-                <Switch
-                  checked={isInverting}
-                  className={styles.switch}
-                  id="invert_color"
-                  onChange={this.toggleIsInverting}
-                  size="small"
-                />
+              <div className={styles['switch-control']}>
+                <div className={styles.control}>
+                  <Switch
+                    checked={workspace.showTraversal}
+                    className={styles.switch}
+                    id="show_traversal"
+                    onChange={this.toggleTraversalMoves}
+                    size="small"
+                  />
+                </div>
+                <label className={styles.label} htmlFor="show_traversal">
+                  {LANG.travel_path}
+                </label>
               </div>
-              <label className={styles.label} htmlFor="invert_color">
-                {LANG.invert}
-              </label>
+              <div className={styles['switch-control']}>
+                <div className={styles.control}>
+                  <Switch
+                    checked={isInverting}
+                    className={styles.switch}
+                    id="invert_color"
+                    onChange={this.toggleIsInverting}
+                    size="small"
+                  />
+                </div>
+                <label className={styles.label} htmlFor="invert_color">
+                  {LANG.invert}
+                </label>
+              </div>
+              <div className={styles['current-time']}>{this.transferTime(workspace.simTime, ':')}</div>
+              <div />
             </div>
-            <div className={styles['current-time']}>{this.transferTime(workspace.simTime, ':')}</div>
-            <div />
           </div>
+          <ZoomBlock
+            className={styles['zoom-block']}
+            getZoom={() => this.camera.scale}
+            resetView={this.resetView}
+            setZoom={this.setScale}
+          />
         </div>
-        <ZoomBlock
-          className={styles['zoom-block']}
-          getZoom={() => this.camera.scale}
-          resetView={this.resetView}
-          setZoom={this.setScale}
-        />
         <SidePanel
           currentPosition={this.renderPosition()}
           cutDist={`${Math.round(this.gcodePreview.g1DistReal)} mm`}
