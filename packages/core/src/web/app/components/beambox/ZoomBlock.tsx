@@ -192,8 +192,8 @@ const ZoomBlock = ({ className, getZoom, isPathPreviewing, resetView, setZoom }:
   const zoomIn = useCallback(
     (currentRatio: number) => {
       const ratioInPercent = Math.round(currentRatio * 100);
-      const factor = ratioInPercent <= 500 ? 10 : 100;
-      const targetRatio = ratioInPercent + (factor - (ratioInPercent % factor || factor));
+      const factor = ratioInPercent < 500 ? 10 : 100;
+      const targetRatio = ratioInPercent + (factor - (ratioInPercent % factor) || factor);
 
       setRatio(targetRatio);
     },
