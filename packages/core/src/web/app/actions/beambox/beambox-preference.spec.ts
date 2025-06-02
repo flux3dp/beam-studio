@@ -56,7 +56,6 @@ test('test beambox-preference', () => {
   expect(mockSet).toHaveBeenNthCalledWith(1, 'beambox-preference', {
     abc: '123',
     'af-offset': 0,
-    'alert-import-large-svg': true,
     'anti-aliasing': true,
     'auto-feeder': false,
     'auto-feeder-scale': 1,
