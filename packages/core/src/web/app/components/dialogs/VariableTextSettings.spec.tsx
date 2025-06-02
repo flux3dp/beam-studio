@@ -82,7 +82,6 @@ describe('test VariableTextSettings', () => {
     expect(currentInput.value).toBe('2');
 
     fireEvent.mouseDown(getByText('Test'));
-    await new Promise((resolve) => setTimeout(resolve, 0));
     expect(mockConvertVariableText).toHaveBeenCalled();
     expect(mockConvertVariableText).toHaveBeenNthCalledWith(1, {
       configs: {
@@ -97,6 +96,7 @@ describe('test VariableTextSettings', () => {
     });
     expect(mockRevertVariableText).not.toHaveBeenCalled();
     fireEvent.mouseUp(getByText('Test'));
+    await new Promise((resolve) => setTimeout(resolve, 0));
     expect(mockRevertVariableText).toHaveBeenCalled();
 
     fireEvent.click(getByText('Finalize'));
