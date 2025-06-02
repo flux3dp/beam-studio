@@ -4,6 +4,7 @@ import React from 'react';
 
 import { Switch } from 'antd';
 import { mat4, vec3 } from 'gl-matrix';
+import { funnel } from 'remeda';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
@@ -596,13 +597,14 @@ class PathPreview extends React.Component<Props, State> {
   private gcodePreview: GcodePreview;
   private simTimeMax: number;
   private timeDisplayRatio: number;
-  private simInterval: NodeJS.Timeout;
+  private simInterval?: NodeJS.Timeout;
   private drawGcodeState: any;
-  private gcodeString: string;
-  private fastGradientGcodeString: string;
-  private isUpdating: boolean;
-  private spaceKey: boolean;
+  private gcodeString: string = '';
+  private fastGradientGcodeString?: string;
+  private isUpdating: boolean = false;
+  private spaceKey: boolean = false;
   private jobOrigin?: { x: number; y: number };
+  private resizeHandler: () => void;
 
   constructor(props: Props) {
     super(props);
@@ -659,12 +661,17 @@ class PathPreview extends React.Component<Props, State> {
       width: window.innerWidth - layoutConstants.sidePanelsWidth,
       workspace: defaultWorkspace,
     };
+
+    this.resizeHandler = funnel(() => this.onContainerResized(), {
+      minQuietPeriodMs: 300,
+      triggerAt: 'end',
+    }).call;
   }
 
   componentDidMount(): void {
     window.addEventListener('keydown', this.windowKeyDown);
     window.addEventListener('keyup', this.windowKeyUp);
-    window.addEventListener('resize', this.updateWorkspace);
+    window.addEventListener('resize', this.resizeHandler);
     this.resetView();
     this.updateGcode();
 
@@ -690,7 +697,7 @@ class PathPreview extends React.Component<Props, State> {
   componentWillUnmount() {
     window.removeEventListener('keydown', this.windowKeyDown);
     window.removeEventListener('keyup', this.windowKeyUp);
-    window.removeEventListener('resize', this.updateWorkspace);
+    window.removeEventListener('resize', this.resizeHandler);
 
     canvasEventEmitter.off('canvas-change', this.onDeviceChange);
   }
@@ -898,7 +905,7 @@ class PathPreview extends React.Component<Props, State> {
     }
   };
 
-  updateWorkspace = () => {
+  onContainerResized = () => {
     const { height, width } = this.state;
     const elem = document.getElementById('path-preview-panel') as HTMLElement;
 
@@ -1243,7 +1250,7 @@ class PathPreview extends React.Component<Props, State> {
     if (workspace.simTime >= this.simTimeMax) {
       this.handleSimTimeChange(this.simTimeMax);
       clearInterval(this.simInterval);
-      this.simInterval = null;
+      this.simInterval = undefined;
       this.setState({ playState: PlayState.STOP });
     } else {
       this.handleSimTimeChange(workspace.simTime + SIM_TIME_MINUTE * speedRatio[speedLevel]);
@@ -1251,9 +1258,7 @@ class PathPreview extends React.Component<Props, State> {
   };
 
   private handlePlay = () => {
-    if (this.simInterval) {
-      clearInterval(this.simInterval);
-    }
+    clearInterval(this.simInterval);
 
     const { workspace } = this.state;
 
