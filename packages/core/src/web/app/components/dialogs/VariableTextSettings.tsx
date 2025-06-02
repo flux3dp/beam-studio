@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 import { DesktopOutlined, FontColorsOutlined, LeftOutlined, RightOutlined, UploadOutlined } from '@ant-design/icons';
 import { Button, Col, Divider, Form, InputNumber, Row, Switch, Tooltip, Typography } from 'antd';
@@ -70,6 +70,27 @@ const VariableTextSettings = ({ onClose }: Props): React.ReactNode => {
     setVariableTextState(form.getFieldsValue());
     onClose();
   };
+
+  const handlePreview = () => {
+    if (previewStateRef.current !== previewState.idle) return;
+
+    previewStateRef.current = previewState.converting;
+    previewRef.current = convertVariableText({ configs: form.getFieldsValue() });
+  };
+
+  const handleRevert = async () => {
+    if (previewStateRef.current !== previewState.converting) return;
+
+    previewStateRef.current = previewState.reverting;
+    (await previewRef.current)?.();
+    previewStateRef.current = previewState.idle;
+  };
+
+  useEffect(() => {
+    return () => {
+      handleRevert();
+    };
+  }, []);
 
   return (
     <DraggableModal
@@ -158,23 +179,7 @@ const VariableTextSettings = ({ onClose }: Props): React.ReactNode => {
             </div>
             <Form.Item>
               <Tooltip title={t.test_description}>
-                <Button
-                  block
-                  icon={<DesktopOutlined />}
-                  onMouseDown={() => {
-                    if (previewStateRef.current !== previewState.idle) return;
-
-                    previewStateRef.current = previewState.converting;
-                    previewRef.current = convertVariableText({ configs: form.getFieldsValue() });
-                  }}
-                  onMouseUp={async () => {
-                    if (previewStateRef.current !== previewState.converting) return;
-
-                    previewStateRef.current = previewState.reverting;
-                    (await previewRef.current)?.();
-                    previewStateRef.current = previewState.idle;
-                  }}
-                >
+                <Button block icon={<DesktopOutlined />} onMouseDown={handlePreview} onMouseUp={handleRevert}>
                   {t.test}
                 </Button>
               </Tooltip>
