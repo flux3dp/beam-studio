@@ -126,12 +126,11 @@ const getDpmm = async (): Promise<number> => {
 interface Props {
   className?: string;
   getZoom?: () => number;
-  isPathPreviewing?: boolean;
   resetView: () => void;
   setZoom: (zoom: number) => void;
 }
 
-const ZoomBlock = ({ className, getZoom, isPathPreviewing, resetView, setZoom }: Props): React.JSX.Element => {
+const ZoomBlock = ({ className, getZoom, resetView, setZoom }: Props): React.JSX.Element => {
   const lang = useI18n().beambox.zoom_block;
   const [dpmm, setDpmm] = useState(96 / 25.4);
   const [displayRatio, setDisplayRatio] = useState(1);
@@ -212,13 +211,7 @@ const ZoomBlock = ({ className, getZoom, isPathPreviewing, resetView, setZoom }:
   );
 
   return (
-    <div
-      className={classNames(
-        styles.container,
-        { [styles.mobile]: isMobile, [styles['path-preview']]: isPathPreviewing },
-        className,
-      )}
-    >
+    <div className={classNames(styles.container, { [styles.mobile]: isMobile }, className)}>
       <ContextMenuTrigger holdToDisplay={-1} holdToDisplayMouse={-1} id={contextMenuId}>
         <div className={styles.btn} onClick={() => zoomOut(displayRatio)}>
           <img src="img/icon-minus.svg" />

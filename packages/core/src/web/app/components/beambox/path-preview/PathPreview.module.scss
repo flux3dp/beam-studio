@@ -1,4 +1,6 @@
 .container {
+  position: relative;
+
   .tools-panel {
     height: 100px;
     padding: 40px 20px 0;
@@ -28,7 +30,7 @@
         align-items: center;
         line-height: 18px;
 
-        input[type='range'] {
+        input[type="range"] {
           width: 75px;
           height: 10px;
           margin: 0 10px;
@@ -74,5 +76,9 @@
       line-height: 16px;
       width: 160px;
     }
+  }
+
+  .zoom-block {
+    bottom: 65px;
   }
 }
