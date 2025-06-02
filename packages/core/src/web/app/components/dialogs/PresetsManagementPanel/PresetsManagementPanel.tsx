@@ -68,7 +68,7 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
           return printingModules.has(c.module ?? 0) ? filter === Filter.PRINT : filter === Filter.LASER;
         }
 
-        const hasPreset = presetHelper.modelHasPreset(workarea, c.key);
+        const hasPreset = presetHelper.modelHasPreset(workarea, c.key!);
 
         if (!hasPreset) {
           return false;
@@ -78,7 +78,7 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
           return true;
         }
 
-        const isPrintingPreset = Boolean(presetHelper.getDefaultPreset(c.key, workarea, LayerModule.PRINTER));
+        const isPrintingPreset = Boolean(presetHelper.getDefaultPreset(c.key!, workarea, LayerModule.PRINTER));
 
         return isPrintingPreset ? filter === Filter.PRINT : filter === Filter.LASER;
       }),
@@ -115,7 +115,7 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
 
   const availableModules = useMemo(() => {
     if (selectedPreset?.isDefault && hasModule) {
-      return Object.keys(presets[selectedPreset.key]?.[workarea] || {}).map((m) => Number.parseInt(m, 10));
+      return Object.keys(presets[selectedPreset.key!]?.[workarea] || {}).map((m) => Number.parseInt(m, 10));
     }
 
     return [];
@@ -129,7 +129,7 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
           return cur;
         }
 
-        return availableModules[0];
+        return availableModules[0] as LayerModuleType;
       });
     } else if (selectedPreset?.module) {
       setSelectedModule(selectedPreset.module);
@@ -142,11 +142,11 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
     }
 
     if (!selectedPreset.isDefault) {
-      return { ...selectedPreset, ...editingValues[selectedPreset.name] };
+      return { ...selectedPreset, ...editingValues[selectedPreset.name!] };
     }
 
     const presetModel = presetHelper.getPresetModel(workarea);
-    const keyPresets = presets[selectedPreset.key]?.[presetModel];
+    const keyPresets = presets[selectedPreset.key!]?.[presetModel];
 
     if (!keyPresets) {
       return selectedPreset;
@@ -160,14 +160,14 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
   }, [workarea, selectedPreset, selectedModule, editingValues]);
 
   const handleChange = <T extends ConfigKey>(key: T, value: ConfigKeyTypeMap[T]) => {
-    const { isDefault, name } = selectedPreset;
+    const { isDefault, name } = selectedPreset as any;
 
     if (isDefault) {
       return;
     }
 
     const editing = editingValues[name] || {};
-    const origValue = selectedPreset[key];
+    const origValue = selectedPreset?.[key];
 
     if (origValue === value) {
       delete editing[key];
@@ -187,7 +187,7 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
     preset.hide = !preset.hide;
     setEditingPresets([...editingPresets]);
   };
-  const isPrinting = useMemo(() => printingModules.has(displayPreset.module), [displayPreset]);
+  const isPrinting = useMemo(() => printingModules.has(displayPreset.module!), [displayPreset]);
 
   const handleDelete = () => {
     if (!selectedPreset || selectedPreset?.isDefault) {
@@ -207,8 +207,8 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
     for (let i = 0; i < res.length; i += 1) {
       const { isDefault, name } = editingPresets[i];
 
-      if (editingValues[name] && !isDefault) {
-        res[i] = { ...editingPresets[i], ...editingValues[name] };
+      if (editingValues[name!] && !isDefault) {
+        res[i] = { ...editingPresets[i], ...editingValues[name!] };
       } else {
         res[i] = { ...editingPresets[i] };
       }
@@ -252,7 +252,7 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
   }, [t, onClose]);
 
   const handleAddPreset = async () => {
-    let presetModule: LayerModuleType = LayerModule.LASER_UNIVERSAL;
+    let presetModule: LayerModuleType | null = LayerModule.LASER_UNIVERSAL;
 
     if (hasModule) {
       presetModule = await dialogCaller.showRadioSelectDialog({
@@ -273,7 +273,7 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
       dialogCaller.promptDialog({
         caption: t.new_preset_name,
         onCancel: () => resolve(''),
-        onYes: resolve,
+        onYes: (result) => resolve(result!),
       });
     });
 
@@ -319,7 +319,7 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
           onReorder={setEditingPresets}
           presets={editingPresets}
           ref={listRef}
-          selected={selectedPreset}
+          selected={selectedPreset!}
           setSelectedPreset={setSelectedPreset}
           toggleHidePreset={toggleHidePreset}
         />
@@ -369,7 +369,7 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
               <Select onChange={setSelectedModule} value={selectedModule}>
                 {availableModules.map((m) => (
                   <Select.Option key={m} value={m}>
-                    {moduleTranslations[m]}
+                    {moduleTranslations[m as keyof typeof moduleTranslations]}
                   </Select.Option>
                 ))}
               </Select>

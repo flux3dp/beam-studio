@@ -9,6 +9,7 @@ export type AlertConfigKey =
   | 'skip-job-origin-warning'
   | 'skip-old-firmware-hint-2'
   | 'skip-social-media-invitation'
+  | 'skip-svg-import-warning'
   | 'skip-switch-to-laser-module'
   | 'skip-switch-to-printer-module'
   | 'skip-z-speed-test-info'
@@ -26,7 +27,7 @@ export type AlertConfigKey =
   | 'skip_svg_version_warning'
   | 'skip_variable_text_warning';
 
-export default {
+const alertConfig = {
   read: (key: AlertConfigKey) => {
     const config = storage.get('alert-config') || {};
 
@@ -39,3 +40,5 @@ export default {
     storage.set('alert-config', config);
   },
 };
+
+export default alertConfig;

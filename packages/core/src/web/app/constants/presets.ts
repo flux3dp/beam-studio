@@ -1,7 +1,8 @@
+import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { Preset, PresetModel } from '@core/interfaces/ILayerConfig';
 
-export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<LayerModule, Preset>>>>> = {
+export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<LayerModuleType, Preset>>>>> = {
   acrylic_3mm_cutting: {
     fbb1b: {
       [LayerModule.LASER_UNIVERSAL]: {
@@ -1057,6 +1058,44 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
         module: LayerModule.LASER_1064,
         power: 95,
         speed: 20,
+      },
+    },
+  },
+  slate_engraving: {
+    ado1: {
+      [LayerModule.LASER_10W_DIODE]: {
+        module: LayerModule.LASER_10W_DIODE,
+        power: 50,
+        speed: 100,
+      },
+      [LayerModule.LASER_20W_DIODE]: {
+        module: LayerModule.LASER_20W_DIODE,
+        power: 55,
+        speed: 200,
+      },
+    },
+    fbb1p: {
+      [LayerModule.LASER_UNIVERSAL]: {
+        power: 45,
+        speed: 300,
+      },
+    },
+    fbb2: {
+      [LayerModule.LASER_UNIVERSAL]: {
+        power: 45,
+        speed: 500,
+      },
+    },
+    fbm1: {
+      [LayerModule.LASER_UNIVERSAL]: {
+        power: 40,
+        speed: 150,
+      },
+    },
+    fhexa1: {
+      [LayerModule.LASER_UNIVERSAL]: {
+        power: 30,
+        speed: 500,
       },
     },
   },

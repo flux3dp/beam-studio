@@ -441,7 +441,7 @@ class BeamboxInit {
         buttonType: AlertConstants.YES_NO,
         caption: i18n.lang.beambox.popup.questionnaire.caption,
         iconUrl: 'img/beambox/icon-questionnaire.svg',
-        id: 'qustionnaire',
+        id: 'questionnaire',
         message: i18n.lang.beambox.popup.questionnaire.message,
         onNo: () => {
           resolve();
