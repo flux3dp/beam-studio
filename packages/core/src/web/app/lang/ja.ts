@@ -2283,6 +2283,7 @@ const lang: ILang = {
     auto_advance: '自動進行',
     auto_advance_hint: 'ジョブを実行するたびに、次の可変データに自動的に進みます。',
     bake: '確定する',
+    bake_description: '可変性を解除して通常のテキストに変換',
     browse: '閲覧',
     clear: 'クリア',
     csv_file: 'CSVファイル',
@@ -2295,6 +2296,7 @@ const lang: ILang = {
     previous: '前へ',
     start: '開始',
     test: 'テスト',
+    test_description: '可変テキストを表示するには長押ししてください',
     title: '可変文字設定',
   },
   web_cam: {

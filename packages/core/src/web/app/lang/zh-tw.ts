@@ -2284,6 +2284,7 @@ const lang: ILang = {
     auto_advance: '自動前移',
     auto_advance_hint: '每次執行工作時會自動前進到下一筆可變資料。',
     bake: '完成定稿',
+    bake_description: '清除可變性，轉為一般文字',
     browse: '瀏覽',
     clear: '清除',
     csv_file: 'CSV 檔案',
@@ -2296,6 +2297,7 @@ const lang: ILang = {
     previous: '上一個',
     start: '開始',
     test: '測試',
+    test_description: '長按以預覽可變文字內容',
     title: '可變文字設定',
   },
   web_cam: {

@@ -2283,6 +2283,7 @@ const lang: ILang = {
     auto_advance: 'Avancement automatique',
     auto_advance_hint: 'Passe automatiquement aux données variables suivantes à chaque exécution d’un travail.',
     bake: 'Finaliser',
+    bake_description: 'Effacer la variabilité et convertir en texte normal',
     browse: 'Parcourir',
     clear: 'Effacer',
     csv_file: 'Fichier CSV',
@@ -2295,6 +2296,7 @@ const lang: ILang = {
     previous: 'Précédent',
     start: 'Démarrer',
     test: 'Test',
+    test_description: 'Maintenez enfoncé pour afficher le texte variable',
     title: 'Paramètres des textes variables',
   },
   web_cam: {

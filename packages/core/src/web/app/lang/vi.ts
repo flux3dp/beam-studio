@@ -2283,6 +2283,7 @@ const lang: ILang = {
     auto_advance: 'Tiến tự động',
     auto_advance_hint: 'Tự động chuyển sang dữ liệu biến tiếp theo mỗi khi bạn chạy một tác vụ.',
     bake: 'Hoàn tất',
+    bake_description: 'Xóa tính biến đổi và chuyển thành văn bản thông thường',
     browse: 'Duyệt',
     clear: 'Xóa',
     csv_file: 'Tệp CSV',
@@ -2295,6 +2296,7 @@ const lang: ILang = {
     previous: 'Trước',
     start: 'Bắt đầu',
     test: 'Kiểm tra',
+    test_description: 'Nhấn và giữ để xem văn bản biến đổi',
     title: 'Cài đặt văn bản biến đổi',
   },
   web_cam: {

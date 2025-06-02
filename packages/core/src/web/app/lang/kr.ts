@@ -2283,6 +2283,7 @@ const lang: ILang = {
     auto_advance: '자동 진행',
     auto_advance_hint: '작업을 실행할 때마다 자동으로 다음 변수 데이터로 이동합니다.',
     bake: '최종 확정',
+    bake_description: '가변성을 제거하고 일반 텍스트로 변환',
     browse: '검색',
     clear: '지우기',
     csv_file: 'CSV 파일',
@@ -2295,6 +2296,7 @@ const lang: ILang = {
     previous: '이전',
     start: '시작',
     test: '테스트',
+    test_description: '가변 텍스트를 보려면 길게 누르세요',
     title: '가변 텍스트 설정',
   },
   web_cam: {

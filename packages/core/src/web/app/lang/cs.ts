@@ -2283,6 +2283,7 @@ const lang: ILang = {
     auto_advance: 'Automatický posun',
     auto_advance_hint: 'Při každém spuštění úlohy se automaticky přesune na další proměnná data.',
     bake: 'Dokončit',
+    bake_description: 'Odstranit variabilitu a převést na běžný text',
     browse: 'Prohlížet',
     clear: 'Vymazat',
     csv_file: 'CSV soubor',
@@ -2295,6 +2296,7 @@ const lang: ILang = {
     previous: 'Předchozí',
     start: 'Start',
     test: 'Test',
+    test_description: 'Stiskněte a podržte pro zobrazení proměnného textu',
     title: 'Nastavení proměnných textů',
   },
   web_cam: {

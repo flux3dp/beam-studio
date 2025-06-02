@@ -2283,6 +2283,7 @@ const lang: ILang = {
     auto_advance: 'Automatisch doorgaan',
     auto_advance_hint: 'Gaat automatisch verder naar de volgende variabele gegevens bij elke taakuitvoering.',
     bake: 'Afronden',
+    bake_description: 'Variabiliteit wissen en omzetten naar normale tekst',
     browse: 'Bladeren',
     clear: 'Wissen',
     csv_file: 'CSV-bestand',
@@ -2295,6 +2296,7 @@ const lang: ILang = {
     previous: 'Vorige',
     start: 'Start',
     test: 'Test',
+    test_description: 'Houd ingedrukt om variabele tekst te bekijken',
     title: 'Instellingen voor variabele teksten',
   },
   web_cam: {

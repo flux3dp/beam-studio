@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 
 import { DesktopOutlined, FontColorsOutlined, LeftOutlined, RightOutlined, UploadOutlined } from '@ant-design/icons';
-import { Button, Col, Divider, Form, InputNumber, Row, Switch, Typography } from 'antd';
+import { Button, Col, Divider, Form, InputNumber, Row, Switch, Tooltip, Typography } from 'antd';
 import Papa from 'papaparse';
 
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
@@ -21,11 +21,17 @@ interface Props {
 const fileLimit = 5 * 1024 * 1024; // 5MB
 const min = 0;
 const max = 1000000000;
+const previewState = {
+  converting: 1,
+  idle: 0,
+  reverting: 2,
+};
 
 const VariableTextSettings = ({ onClose }: Props): React.ReactNode => {
   const { alert: tAlert, variable_text_settings: t } = useI18n();
   const store = useVariableTextState();
-  const bakeRef = useRef<(() => void) | null>(null);
+  const previewStateRef = useRef(previewState.idle);
+  const previewRef = useRef<null | Promise<(() => void) | null>>(null);
   const [form] = Form.useForm();
   const current = Form.useWatch('current', form);
   const start = Form.useWatch('start', form);
@@ -151,30 +157,40 @@ const VariableTextSettings = ({ onClose }: Props): React.ReactNode => {
               </Form.Item>
             </div>
             <Form.Item>
-              <Button
-                block
-                icon={<DesktopOutlined />}
-                onMouseDown={async () => {
-                  bakeRef.current = await convertVariableText({ configs: form.getFieldsValue() });
-                }}
-                onMouseUp={() => {
-                  bakeRef.current?.();
-                  bakeRef.current = null;
-                }}
-              >
-                {t.test}
-              </Button>
+              <Tooltip title={t.test_description}>
+                <Button
+                  block
+                  icon={<DesktopOutlined />}
+                  onMouseDown={() => {
+                    if (previewStateRef.current !== previewState.idle) return;
+
+                    previewStateRef.current = previewState.converting;
+                    previewRef.current = convertVariableText({ configs: form.getFieldsValue() });
+                  }}
+                  onMouseUp={async () => {
+                    if (previewStateRef.current !== previewState.converting) return;
+
+                    previewStateRef.current = previewState.reverting;
+                    (await previewRef.current)?.();
+                    previewStateRef.current = previewState.idle;
+                  }}
+                >
+                  {t.test}
+                </Button>
+              </Tooltip>
             </Form.Item>
             <Form.Item>
-              <Button
-                block
-                icon={<FontColorsOutlined />}
-                onClick={async () => {
-                  await convertVariableText({ addToHistory: true, configs: form.getFieldsValue() });
-                }}
-              >
-                {t.bake}
-              </Button>
+              <Tooltip title={t.bake_description}>
+                <Button
+                  block
+                  icon={<FontColorsOutlined />}
+                  onClick={async () => {
+                    await convertVariableText({ addToHistory: true, configs: form.getFieldsValue() });
+                  }}
+                >
+                  {t.bake}
+                </Button>
+              </Tooltip>
             </Form.Item>
             <Form.Item
               className={styles.toggle}

@@ -2276,6 +2276,7 @@ export interface ILang {
     auto_advance: string;
     auto_advance_hint: string;
     bake: string;
+    bake_description: string;
     browse: string;
     clear: string;
     csv_file: string;
@@ -2288,6 +2289,7 @@ export interface ILang {
     previous: string;
     start: string;
     test: string;
+    test_description: string;
     title: string;
   };
   web_cam: {

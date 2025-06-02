@@ -2283,6 +2283,7 @@ const lang: ILang = {
     auto_advance: 'Automatyczne przejście',
     auto_advance_hint: 'Automatycznie przechodzi do kolejnych danych zmiennych przy każdym uruchomieniu zadania.',
     bake: 'Sfinalizuj',
+    bake_description: 'Usuń zmienność i przekształć w zwykły tekst',
     browse: 'Przeglądaj',
     clear: 'Wyczyść',
     csv_file: 'Plik CSV',
@@ -2295,6 +2296,7 @@ const lang: ILang = {
     previous: 'Poprzedni',
     start: 'Start',
     test: 'Test',
+    test_description: 'Przytrzymaj, aby wyświetlić zmienny tekst',
     title: 'Ustawienia tekstów zmiennych',
   },
   web_cam: {

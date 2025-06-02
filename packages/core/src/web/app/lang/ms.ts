@@ -2283,6 +2283,7 @@ const lang: ILang = {
     auto_advance: 'Lanjutan automatik',
     auto_advance_hint: 'Secara automatik maju ke data berubah seterusnya setiap kali kerja dijalankan.',
     bake: 'Dimuktamadkan',
+    bake_description: 'Kosongkan kebolehubahan dan tukar kepada teks biasa',
     browse: 'Semak',
     clear: 'Kosongkan',
     csv_file: 'Fail CSV',
@@ -2295,6 +2296,7 @@ const lang: ILang = {
     previous: 'Sebelumnya',
     start: 'Mula',
     test: 'Ujian',
+    test_description: 'Tekan dan tahan untuk melihat teks berubah',
     title: 'Tetapan teks berubah-ubah',
   },
   web_cam: {

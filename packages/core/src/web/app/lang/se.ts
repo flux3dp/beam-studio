@@ -2283,6 +2283,7 @@ const lang: ILang = {
     auto_advance: 'Automatisk framåtrörelse',
     auto_advance_hint: 'Går automatiskt vidare till nästa variabla data varje gång ett jobb körs.',
     bake: 'Slutför',
+    bake_description: 'Rensa variabilitet och konvertera till vanlig text',
     browse: 'Bläddra',
     clear: 'Rensa',
     csv_file: 'CSV-fil',
@@ -2295,6 +2296,7 @@ const lang: ILang = {
     previous: 'Föregående',
     start: 'Starta',
     test: 'Test',
+    test_description: 'Tryck och håll ned för att visa variabel text',
     title: 'Inställningar för variabla texter',
   },
   web_cam: {

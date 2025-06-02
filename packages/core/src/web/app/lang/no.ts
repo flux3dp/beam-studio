@@ -2283,6 +2283,7 @@ const lang: ILang = {
     auto_advance: 'Automatisk fremdrift',
     auto_advance_hint: 'Går automatisk videre til neste variable data hver gang en jobb kjøres.',
     bake: 'Fullfør',
+    bake_description: 'Deaktiver variabel tekst og konverter til vanlig tekst',
     browse: 'Bla gjennom',
     clear: 'Tøm',
     csv_file: 'CSV-fil',
@@ -2295,6 +2296,7 @@ const lang: ILang = {
     previous: 'Forrige',
     start: 'Start',
     test: 'Test',
+    test_description: 'Trykk og hold for å vise variabel tekst',
     title: 'Innstillinger for variabel tekst',
   },
   web_cam: {

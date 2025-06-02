@@ -2283,6 +2283,7 @@ const lang: ILang = {
     auto_advance: 'Automatisches Weiterschalten',
     auto_advance_hint: 'Wechselt bei jedem Start eines Auftrags automatisch zu den nächsten variablen Daten.',
     bake: 'Abschließen',
+    bake_description: 'Variabilität entfernen und in normalen Text umwandeln',
     browse: 'Durchsuchen',
     clear: 'Löschen',
     csv_file: 'CSV-Datei',
@@ -2295,6 +2296,7 @@ const lang: ILang = {
     previous: 'Zurück',
     start: 'Start',
     test: 'Test',
+    test_description: 'Gedrückt halten, um variablen Text anzuzeigen',
     title: 'Einstellungen für variable Texte',
   },
   web_cam: {

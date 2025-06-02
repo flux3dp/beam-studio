@@ -2283,6 +2283,7 @@ const lang: ILang = {
     auto_advance: 'Lanjut otomatis',
     auto_advance_hint: 'Secara otomatis beralih ke data variabel berikutnya setiap kali pekerjaan dijalankan.',
     bake: 'Selesaikan',
+    bake_description: 'Hapus variabilitas dan ubah ke teks biasa',
     browse: 'Jelajahi',
     clear: 'Bersihkan',
     csv_file: 'File CSV',
@@ -2295,6 +2296,7 @@ const lang: ILang = {
     previous: 'Sebelumnya',
     start: 'Mulai',
     test: 'Tes',
+    test_description: 'Tekan dan tahan untuk melihat teks variabel',
     title: 'Pengaturan teks variabel',
   },
   web_cam: {

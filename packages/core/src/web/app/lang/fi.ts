@@ -2283,6 +2283,7 @@ const lang: ILang = {
     auto_advance: 'Automaattinen eteneminen',
     auto_advance_hint: 'Siirtyy automaattisesti seuraaviin muuttujatietoihin joka kerta työn suorituksen yhteydessä.',
     bake: 'Viimeistele',
+    bake_description: 'Poista muuttuvuus ja muuta tavalliseksi tekstiksi',
     browse: 'Selaa',
     clear: 'Tyhjennä',
     csv_file: 'CSV-tiedosto',
@@ -2295,6 +2296,7 @@ const lang: ILang = {
     previous: 'Edellinen',
     start: 'Aloita',
     test: 'Testi',
+    test_description: 'Paina pitkään nähdäksesi muuttuvan tekstin',
     title: 'Muuttuvan tekstin asetukset',
   },
   web_cam: {
