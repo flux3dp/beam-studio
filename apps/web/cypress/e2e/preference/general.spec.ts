@@ -93,7 +93,7 @@ describe('update the preference', () => {
 
     cy.get('#set-mask').closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'Off');
 
-    cy.get('#font-substitue').closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'On');
+    cy.get('#font-substitute').closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'On');
 
     cy.get('#font-convert').closest('.ant-select').find('.ant-select-selection-item').should('have.text', '2.0');
 

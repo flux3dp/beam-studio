@@ -42,11 +42,11 @@ function Editor({ options, unitInputProps }: Props): React.JSX.Element {
   });
   const fontStyleOptions = FontFuncs
     //
-    .requestFontsOfTheFontFamily(defaultFont.family)
+    .requestManyFontsByFamily(defaultFont.family)
     .map(({ postscriptName, style }) => ({ label: style, value: postscriptName }));
 
   const setFont = (family: string) => {
-    const fonts: GeneralFont[] = FontFuncs.requestFontsOfTheFontFamily(family);
+    const fonts: GeneralFont[] = FontFuncs.requestManyFontsByFamily(family);
     const newDefaultFont: IDefaultFont = fonts.filter(({ style }) => style === 'Regular')[0] || fonts[0];
 
     storage.set('default-font', {
@@ -61,7 +61,7 @@ function Editor({ options, unitInputProps }: Props): React.JSX.Element {
     });
   };
   const setFontStyle = (postscriptName: string) => {
-    const newDefaultFont = FontFuncs.getFontOfPostscriptName(postscriptName);
+    const newDefaultFont = FontFuncs.getFontByPostscriptName(postscriptName);
 
     storage.set('default-font', {
       family: newDefaultFont.family,
