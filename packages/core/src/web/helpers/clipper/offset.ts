@@ -22,7 +22,7 @@ getSVGAsync((globalSVG) => {
   svgedit = globalSVG.Edit;
 });
 
-type OffsetMode =
+export type OffsetMode =
   | 'inwardFilled' // New: Thinner, filled
   | 'inwardOutline' // Current inward behavior
   | 'outwardFilled' // New: Thicker, filled

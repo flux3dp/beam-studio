@@ -15,6 +15,7 @@ import NestSpacingPanel from '@core/app/views/beambox/ToolPanels/NestSpacingPane
 import OffsetCornerPanel from '@core/app/views/beambox/ToolPanels/OffsetCornerPanel';
 import OffsetDirectionPanel from '@core/app/views/beambox/ToolPanels/OffsetDirectionPanel';
 import OffsetDistancePanel from '@core/app/views/beambox/ToolPanels/OffsetDistancePanel';
+import type { OffsetProp } from '@core/app/views/beambox/ToolPanels/OffsetModal';
 import OffsetModal from '@core/app/views/beambox/ToolPanels/OffsetModal';
 import RowColumnPanel from '@core/app/views/beambox/ToolPanels/RowColumn';
 import offsetElements from '@core/helpers/clipper/offset';
@@ -55,11 +56,7 @@ interface Props {
 }
 
 class ToolPanel extends React.Component<Props> {
-  private offset: {
-    cornerType: string;
-    dir: number;
-    distance: number;
-  };
+  private offset: OffsetProp;
 
   private nestOptions: {
     generations: number;
@@ -72,13 +69,13 @@ class ToolPanel extends React.Component<Props> {
     super(props);
     this._setArrayRowColumn = this._setArrayRowColumn.bind(this);
     this._setArrayDistance = this._setArrayDistance.bind(this);
-    this._setOffsetDir = this._setOffsetDir.bind(this);
+    this._setOffsetMode = this._setOffsetMode.bind(this);
     this._setOffsetCorner = this._setOffsetCorner.bind(this);
     this._setOffsetDist = this._setOffsetDist.bind(this);
     this.offset = {
       cornerType: 'sharp',
-      dir: 1, // 1 for outward, 0 for inward
       distance: 5,
+      offsetMode: 'outwardOutline', // 1 for outward, 0 for inward
     };
     this.nestOptions = {
       generations: 3,
@@ -93,20 +90,20 @@ class ToolPanel extends React.Component<Props> {
     this.setState({ rowcolumn: rowColumn });
   }
 
-  _setArrayDistance(distance) {
+  _setArrayDistance(distance: number) {
     this.props.data.distance = distance;
     this.setState({ distance });
   }
 
-  _setOffsetDir(dir) {
-    this.offset.dir = dir;
+  _setOffsetMode(offsetMode: OffsetProp['offsetMode']) {
+    this.offset.offsetMode = offsetMode;
   }
 
-  _setOffsetDist(val) {
+  _setOffsetDist(val: number) {
     this.offset.distance = val;
   }
 
-  _setOffsetCorner(val) {
+  _setOffsetCorner(val: 'round' | 'sharp') {
     this.offset.cornerType = val;
   }
 
@@ -127,7 +124,9 @@ class ToolPanel extends React.Component<Props> {
           panel = <IntervalPanel key={panelName} {...data.distance} onValueChange={this._setArrayDistance} />;
           break;
         case 'offsetDir':
-          panel = <OffsetDirectionPanel dir={this.offset.dir} key={panelName} onValueChange={this._setOffsetDir} />;
+          panel = (
+            <OffsetDirectionPanel dir={this.offset.offsetMode} key={panelName} onValueChange={this._setOffsetMode} />
+          );
           break;
         case 'offsetCorner':
           panel = (
@@ -231,7 +230,11 @@ class ToolPanel extends React.Component<Props> {
 
       case 'offset':
         return () => {
-          offsetElements(this.offset.dir, _mm2pixel(this.offset.distance), this.offset.cornerType as 'round' | 'sharp');
+          offsetElements(
+            this.offset.offsetMode,
+            _mm2pixel(this.offset.distance),
+            this.offset.cornerType as 'round' | 'sharp',
+          );
           unmount();
           svgCanvas.setMode('select');
           drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
@@ -306,7 +309,7 @@ class ToolPanel extends React.Component<Props> {
               closeModal();
             }}
             onOk={async (value) => {
-              this._setOffsetDir(value.dir);
+              this._setOffsetMode(value.dir);
               this._setOffsetDist(value.distance);
               this._setOffsetCorner(value.cornerType);
               await onOk();
