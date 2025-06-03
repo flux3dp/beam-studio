@@ -71,7 +71,7 @@ const BarcodeGenerator = forwardRef<BarcodeRef, Props>(({ isInvert, setIsInvert,
   );
 
   useEffect(() => {
-    const fontStyles = fontFuncs.requestFontsOfTheFontFamily(options.font).map(({ style }) => style);
+    const fontStyles = fontFuncs.requestManyFontsByFamily(options.font).map(({ style }) => style);
 
     setValidFontStyles(fontStyles);
   }, [options.font]);
