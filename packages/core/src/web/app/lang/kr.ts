@@ -2289,6 +2289,7 @@ const lang: ILang = {
     csv_file: 'CSV 파일',
     current: '현재',
     end: '끝',
+    failed_to_convert: '가변 텍스트 객체에 지원되지 않는 형식이 포함되어 있어 콘텐츠가 표시되지 않을 수 있습니다.',
     file_error: 'CSV 파일 분석에 실패했습니다. 파일 형식을 확인하세요.',
     file_size_exceeded: '파일 업로드 실패, 파일 크기가 5MB를 초과했습니다.',
     next: '다음',

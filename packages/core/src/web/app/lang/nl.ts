@@ -2289,6 +2289,7 @@ const lang: ILang = {
     csv_file: 'CSV-bestand',
     current: 'Huidig',
     end: 'Einde',
+    failed_to_convert: 'Het object met variabele tekst bevat een niet-ondersteund formaat, waardoor de inhoud mogelijk niet wordt weergegeven.',
     file_error: 'CSV-bestand kon niet worden verwerkt, controleer het bestandsformaat.',
     file_size_exceeded: 'Bestand upload mislukt, bestandsgrootte overschrijdt 5 MB.',
     next: 'Volgende',

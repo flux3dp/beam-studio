@@ -2289,6 +2289,7 @@ const lang: ILang = {
     csv_file: 'CSVファイル',
     current: '現行',
     end: '終了',
+    failed_to_convert: '可変テキストオブジェクトに未対応の形式が含まれているため、内容が表示されない可能性があります。',
     file_error: 'CSVファイルの解析に失敗しました。ファイル形式を確認してください。',
     file_size_exceeded: 'ファイルのアップロードに失敗しました。ファイルサイズが5MBを超えています。',
     next: '次へ',

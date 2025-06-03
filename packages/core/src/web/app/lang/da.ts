@@ -2289,6 +2289,7 @@ const lang: ILang = {
     csv_file: 'CSV-fil',
     current: 'Nuværende',
     end: 'Slut',
+    failed_to_convert: 'Det variable tekstobjekt indeholder et ikke-understøttet format, hvilket kan forhindre visning af indholdet.',
     file_error: 'Kunne ikke analysere CSV-filen, tjek venligst filformatet.',
     file_size_exceeded: 'Filupload mislykkedes, filstørrelsen overskrider 5 MB.',
     next: 'Næste',

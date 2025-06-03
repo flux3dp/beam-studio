@@ -8,6 +8,7 @@ import { createRoot } from 'react-dom/client';
 
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { promarkModels } from '@core/app/actions/beambox/constant';
+import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import BarcodePreview from '@core/app/components/dialogs/CodeGenerator/BarcodePreview';
 import type { BarcodeProps, BarcodeRef } from '@core/app/components/dialogs/CodeGenerator/BarcodePreview';
 import QRCodePreview from '@core/app/components/dialogs/CodeGenerator/QRCodePreview';
@@ -21,6 +22,7 @@ import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import textActions from '@core/app/svgedit/text/textactions';
 import textedit from '@core/app/svgedit/text/textedit';
+import i18n from '@core/helpers/i18n';
 import { getObjectLayer } from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
@@ -162,7 +164,7 @@ const updateContent = async (
         }, 1000);
       });
 
-      if (svg) {
+      if (svg && svg.innerHTML.trim()) {
         let newElem: SVGElement;
         const isInvert = elem.getAttribute('data-invert') === 'true';
         const drawing = svgCanvas.getCurrentDrawing();
@@ -183,6 +185,11 @@ const updateContent = async (
         newElem.style.visibility = '';
         elem.replaceWith(newElem);
         batchCmd.addSubCommand(new history.MoveElementCommand(newElem, null, newElem.parentNode!));
+      } else {
+        MessageCaller.openMessage({
+          content: i18n.lang.variable_text_settings.failed_to_convert,
+          level: MessageLevel.ERROR,
+        });
       }
 
       elem.remove();

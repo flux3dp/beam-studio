@@ -2289,6 +2289,7 @@ const lang: ILang = {
     csv_file: 'Fail CSV',
     current: 'Semasa',
     end: 'Tamat',
+    failed_to_convert: 'Objek teks boleh ubah mengandungi format yang tidak disokong, yang mungkin menyebabkan kandungan tidak dipaparkan.',
     file_error: 'Gagal memproses fail CSV, sila periksa format fail.',
     file_size_exceeded: 'Muat naik fail gagal, saiz fail melebihi 5 MB.',
     next: 'Seterusnya',

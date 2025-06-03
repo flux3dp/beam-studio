@@ -2282,6 +2282,7 @@ export interface ILang {
     csv_file: string;
     current: string;
     end: string;
+    failed_to_convert: string;
     file_error: string;
     file_size_exceeded: string;
     next: string;

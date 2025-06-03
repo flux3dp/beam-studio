@@ -2289,6 +2289,7 @@ const lang: ILang = {
     csv_file: 'CSV soubor',
     current: 'Aktuální',
     end: 'Konec',
+    failed_to_convert: 'Objekt s proměnným textem obsahuje nepodporovaný formát, což může způsobit, že se obsah nezobrazí.',
     file_error: 'Nepodařilo se analyzovat CSV soubor, zkontrolujte prosím formát souboru.',
     file_size_exceeded: 'Nahrání souboru selhalo, velikost souboru překračuje 5 MB.',
     next: 'Další',

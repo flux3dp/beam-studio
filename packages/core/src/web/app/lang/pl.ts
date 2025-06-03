@@ -2289,6 +2289,7 @@ const lang: ILang = {
     csv_file: 'Plik CSV',
     current: 'Aktualny',
     end: 'Koniec',
+    failed_to_convert: 'Obiekt z tekstem zmiennym zawiera nieobsługiwany format, co może uniemożliwić wyświetlenie zawartości.',
     file_error: 'Nie udało się przetworzyć pliku CSV, sprawdź format pliku.',
     file_size_exceeded: 'Przesyłanie pliku nie powiodło się, rozmiar pliku przekracza 5 MB.',
     next: 'Dalej',

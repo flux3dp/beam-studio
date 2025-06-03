@@ -2289,6 +2289,7 @@ const lang: ILang = {
     csv_file: 'CSV 文件',
     current: '当前',
     end: '结束',
+    failed_to_convert: '可变文字对象中含有不支持的格式，可能导致内容无法显示。',
     file_error: '解析 CSV 文件失败，请检查文件格式。',
     file_size_exceeded: '文件上传失败，文件大小超过5MB。',
     next: '下一个',
