@@ -185,7 +185,7 @@ const VariableTextSettings = ({ onClose }: Props): React.ReactNode => {
               </Tooltip>
             </Form.Item>
             <Form.Item>
-              <Tooltip title={t.bake_description}>
+              <Tooltip placement="bottom" title={t.bake_description}>
                 <Button
                   block
                   icon={<FontColorsOutlined />}
