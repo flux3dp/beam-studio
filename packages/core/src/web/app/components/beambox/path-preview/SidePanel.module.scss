@@ -1,19 +1,14 @@
 @use '@core/styles/variables' as variables;
 
 .container {
-  // TODO: change position to relative and hide original right panel
+  flex: 0 0 auto;
   border: none;
-  position: fixed;
   background-color: #f8f8f8;
   width: variables.$sidePanelWidth;
   padding: 0px;
   opacity: 1;
   overflow-x: visible;
   overflow-y: scroll;
-  z-index: 2;
-  top: 40px;
-  height: calc(100% - 40px);
-  right: 0;
   transition: opacity 0.3s;
   border: 1px solid #e0e0e0;
   border-width: 0 0 0 1px;

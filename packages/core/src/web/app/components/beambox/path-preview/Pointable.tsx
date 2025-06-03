@@ -94,6 +94,7 @@ const updateNodeWithPE = (node, prevProps, nextProps) => {
 };
 
 interface Props {
+  children?: React.ReactNode;
   onPointerCancel?: any;
   onPointerDown?: any;
   onPointerEnter?: any;

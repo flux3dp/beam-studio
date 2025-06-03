@@ -1,4 +1,14 @@
 .container {
+  flex: 1 1 auto;
+  display: flex;
+  overflow: hidden;
+}
+
+.main {
+  flex: 1 1 auto;
+  position: relative;
+  overflow: hidden;
+
   .tools-panel {
     height: 100px;
     padding: 40px 20px 0;
@@ -74,5 +84,9 @@
       line-height: 16px;
       width: 160px;
     }
+  }
+
+  .zoom-block {
+    bottom: 65px;
   }
 }
