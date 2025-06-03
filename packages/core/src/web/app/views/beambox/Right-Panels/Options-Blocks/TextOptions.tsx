@@ -188,7 +188,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
         let font: GeneralFont;
 
         if (postscriptName) {
-          font = FontFuncs.getFontOfPostscriptName(postscriptName);
+          font = FontFuncs.getFontByPostscriptName(postscriptName);
 
           if (!textElement.getAttribute('font-style')) {
             textElement.setAttribute('font-style', font.italic ? 'italic' : 'normal');
@@ -202,7 +202,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
           const weight = textEdit.getFontWeight(textElement);
           const italic = textEdit.getItalic(textElement);
 
-          font = FontFuncs.requestFontByFamilyAndStyle({ family, italic, weight });
+          font = FontFuncs.requestOneFontByFamilyAndStyle({ family, italic, weight });
         }
 
         console.log(font);
@@ -212,7 +212,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
         const sanitizedFamily = [font.family, ...fontFamilyFallback].find((f) => availableFontFamilies.includes(f))!;
 
         if (sanitizedFamily !== font.family) {
-          const newFont = FontFuncs.requestFontsOfTheFontFamily(sanitizedFamily)[0];
+          const newFont = FontFuncs.requestManyFontsByFamily(sanitizedFamily)[0];
 
           console.warn(`unsupported font ${font.family}, fallback to ${sanitizedFamily}`);
           textEdit.setFontFamily(sanitizedFamily, true, [textElement]);
@@ -250,7 +250,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
 
   useEffect(() => {
     const getStyleOptions = (family: string) => {
-      const fontStyles = FontFuncs.requestFontsOfTheFontFamily(family).map((f) => f.style);
+      const fontStyles = FontFuncs.requestManyFontsByFamily(family).map((f) => f.style);
       const options = fontStyles.map((option: string) => ({ label: option, value: option }));
 
       setStyleOptions(options);
@@ -277,7 +277,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
 
   const handleFontFamilyChange = async (newFamily: string, option: FontOption) => {
     const family = option.family ?? newFamily;
-    const newFont = FontFuncs.requestFontsOfTheFontFamily(family)[0];
+    const newFont = FontFuncs.requestManyFontsByFamily(family)[0];
 
     addToHistory(newFont);
 
@@ -377,7 +377,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
   };
 
   const handleFontStyleChange = async (val: string) => {
-    const font = FontFuncs.requestFontByFamilyAndStyle({
+    const font = FontFuncs.requestOneFontByFamilyAndStyle({
       family: fontFamily.value,
       style: val,
     });

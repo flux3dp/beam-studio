@@ -24,7 +24,7 @@ function TextToPath({ options }: Props): React.JSX.Element {
       <div className="subtitle">{lang.settings.groups.text_to_path}</div>
       <SettingSelect
         defaultValue={getPreference('font-substitute')}
-        id="font-substitue"
+        id="font-substitute"
         label={lang.settings.font_substitute}
         onChange={(e) => setPreference('font-substitute', e)}
         options={options}

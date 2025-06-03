@@ -53,7 +53,7 @@ function preProcessTextTag(svgElement: SVGElement): SVGElement {
     const { fontFamily, fontSize, isBold, isItalic } = extractFontDetails(
       text.getAttribute('style') ?? 'font: 20px Noto Sans',
     );
-    const fonts: GeneralFont[] = fontFuncs.requestFontsOfTheFontFamily(fontFamily);
+    const fonts: GeneralFont[] = fontFuncs.requestManyFontsByFamily(fontFamily);
     const font = findMatchingFont(fonts, isBold, isItalic);
 
     text.setAttribute('font-family', `'${font.family}'`);
@@ -88,7 +88,7 @@ async function getDFromBarcodeSvgElement(svgElement: SVGElement, isInvert = fals
   preProcessTextTag(svgElement);
 
   const fontObj = await getFontObj(
-    fontFuncs.getFontOfPostscriptName(svgElement.querySelector('text')?.getAttribute('font-postscript')),
+    fontFuncs.getFontByPostscriptName(svgElement.querySelector('text')?.getAttribute('font-postscript')),
   );
 
   svgElement.querySelectorAll('g').forEach((g) => {
