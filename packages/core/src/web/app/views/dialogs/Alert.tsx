@@ -77,6 +77,7 @@ const Alert = ({
     message,
     messageIcon,
     reverse = false,
+    width = undefined,
   },
 }: Props): React.JSX.Element => {
   const lang = useI18n().alert;
@@ -203,6 +204,7 @@ const Alert = ({
       onCancel={popFromStack}
       open
       title={caption}
+      width={width}
     >
       {renderIcon(iconUrl)}
       {renderMessage(message, messageIcon)}

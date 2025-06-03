@@ -163,11 +163,9 @@ async function performSvgPreChecks(
       const combinedMessage = (
         <>
           <div>{t.intro_message}</div>
-          <br />
           {warningMessages.map(({ content, id }) => (
             <div key={id}>{content}</div>
           ))}
-          <br />
           <div>{t.advice_message}</div>
           <div>{t.advice_message_2}</div>
           <div>{t.confirmation_message}</div>

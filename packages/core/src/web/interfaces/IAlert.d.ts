@@ -33,4 +33,5 @@ export interface IAlert {
   primaryButtonIndex?: number;
   reverse?: boolean;
   type?: string;
+  width?: number;
 }
