@@ -376,7 +376,10 @@ export const extractVariableText = (doExtract = true): null | VariableTextElemHa
       if (node.tagName !== 'title') {
         revertMaps.unshift({ elem: node, nextSibling: node.nextSibling, parentNode: node.parentNode });
       }
-    } else if (node.getAttribute('display') === 'none' || !hasVariableText({ root: node })) {
+    } else if (
+      !node.classList.contains('layer') &&
+      (node.getAttribute('display') === 'none' || !hasVariableText({ root: node }))
+    ) {
       revertMaps.unshift({ elem: node, nextSibling: node.nextSibling, parentNode: node.parentNode });
     } else {
       for (let i = 0; i < childNodes.length; i += 1) {
