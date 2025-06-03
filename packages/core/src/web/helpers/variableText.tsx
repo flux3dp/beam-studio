@@ -226,8 +226,8 @@ export const convertVariableText = async ({
   const batchCmd = new history.BatchCommand('Bake Variable Text');
   let texts: NodeListOf<SVGElement>;
 
+  textActions.clear();
   svgCanvas.clearSelection();
-  textActions.hideCursor();
   tmpContainer.style.visibility = 'hidden';
   document.body.appendChild(tmpContainer);
 
@@ -336,8 +336,8 @@ export const removeVariableText = (): (() => void) | null => {
 
   const revertMaps: Array<{ elem: Element; nextSibling: Node | null; parentNode: Node | null }> = [];
 
+  textActions.clear();
   svgCanvas.clearSelection();
-  textActions.hideCursor();
   allElements.forEach((elem) => {
     revertMaps.unshift({ elem, nextSibling: elem.nextSibling, parentNode: elem.parentNode });
     elem.remove();
@@ -391,13 +391,13 @@ export const extractVariableText = (doExtract = true): null | VariableTextElemHa
   findNonVariableElem(svgcontent);
 
   const extract = () => {
+    textActions.clear();
     svgCanvas.clearSelection();
-    textActions.hideCursor();
     revertMaps.forEach(({ elem }) => elem.remove());
   };
   const revert = () => {
+    textActions.clear();
     svgCanvas.clearSelection();
-    textActions.hideCursor();
     revertMaps.forEach(({ elem, nextSibling, parentNode }) => {
       if (nextSibling) {
         parentNode!.insertBefore(elem, nextSibling);
