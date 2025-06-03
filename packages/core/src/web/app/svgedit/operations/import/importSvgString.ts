@@ -117,7 +117,9 @@ const importSvgString = async (
     }
   }
 
-  svgCanvas.call('changed', [document.getElementById('svgcontent')]);
+  if (!hidden) {
+    svgCanvas.call('changed', [document.getElementById('svgcontent')]);
+  }
 
   return useElements[useElements.length - 1];
 };
