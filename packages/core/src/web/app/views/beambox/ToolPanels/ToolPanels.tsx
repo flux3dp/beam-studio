@@ -23,8 +23,9 @@ import i18n from '@core/helpers/i18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { isMobile } from '@core/helpers/system-helper';
 import storage from '@core/implementations/storage';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-let svgCanvas;
+let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
@@ -34,7 +35,7 @@ const drawingToolEventEmitter = eventEmitterFactory.createEventEmitter('drawing-
 
 const LANG = i18n.lang.beambox.tool_panels;
 
-const _mm2pixel = (pixel_input) => {
+const _mm2pixel = (pixel_input: number) => {
   const { dpmm } = Constant;
 
   return Number(pixel_input * dpmm);
@@ -67,7 +68,7 @@ class ToolPanel extends React.Component<Props> {
     spacing: number;
   };
 
-  constructor(props) {
+  constructor(props: any) {
     super(props);
     this._setArrayRowColumn = this._setArrayRowColumn.bind(this);
     this._setArrayDistance = this._setArrayDistance.bind(this);
@@ -87,9 +88,9 @@ class ToolPanel extends React.Component<Props> {
     };
   }
 
-  _setArrayRowColumn(rowcolumn) {
-    this.props.data.rowcolumn = rowcolumn;
-    this.setState({ rowcolumn });
+  _setArrayRowColumn(rowColumn) {
+    this.props.data.rowcolumn = rowColumn;
+    this.setState({ rowcolumn: rowColumn });
   }
 
   _setArrayDistance(distance) {
@@ -221,7 +222,7 @@ class ToolPanel extends React.Component<Props> {
             dy: _mm2pixel(data.distance.dy),
           };
 
-          await svgCanvas.gridArraySelectedElement(distance, data.rowcolumn);
+          await (svgCanvas as any).gridArraySelectedElement(distance, data.rowcolumn);
           unmount();
           svgCanvas.setMode('select');
           drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');

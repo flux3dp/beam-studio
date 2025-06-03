@@ -22,6 +22,12 @@ getSVGAsync((globalSVG) => {
   svgedit = globalSVG.Edit;
 });
 
+type OffsetMode =
+  | 'inwardFilled' // New: Thinner, filled
+  | 'inwardOutline' // Current inward behavior
+  | 'outwardFilled' // New: Thicker, filled
+  | 'outwardOutline'; // Current outward behavior
+
 const SCALE_FACTOR = 100; // For Clipper operations
 const UNSUPPORTED_TAGS = ['g', 'image', 'text', 'use'] as const;
 
@@ -83,7 +89,7 @@ async function processElementForOffset(
 
 // --- Helper Function: Handle outward offset union ---
 // TODO: This union outwards both direction, which is not for current usage
-async function unionOutwardOffsetPaths(
+export async function unionOutwardOffsetPaths(
   initialPaths: Array<Array<{ X: number; Y: number }>>,
   ClipperLib: any,
 ): Promise<Array<Array<{ X: number; Y: number }>>> {
