@@ -152,9 +152,9 @@ const updateContent = async (
         };
 
         if (isQrCode) {
-          root.render(<QRCodePreview {...(props as QRcodeProps)} ref={refCallback} value={value} />);
+          root.render(<QRCodePreview key={elem.id} {...(props as QRcodeProps)} ref={refCallback} value={value} />);
         } else {
-          root.render(<BarcodePreview {...(props as BarcodeProps)} ref={refCallback} value={value} />);
+          root.render(<BarcodePreview key={elem.id} {...(props as BarcodeProps)} ref={refCallback} value={value} />);
         }
 
         setTimeout(() => {
