@@ -469,8 +469,31 @@ exports[`test variableText helper extractVariableText 1`] = `
     </g>
     
 
+    <g
+      class="layer"
+      id="svg_5"
+    >
+      
+
+      
+
+    </g>
     
 
+    <g
+      class="layer"
+      display="none"
+      id="svg_7"
+    >
+      
+
+      <text
+        data-vt-type="1"
+        id="svg_8"
+      />
+      
+
+    </g>
     
 
   </g>
