@@ -64,23 +64,13 @@ function menuBar() {
 }
 
 const setReferer = () => {
-  const filter = { urls: ['https://id.flux3dp.com/*'] };
-  const testFilter = { urls: ['https://id-test.flux3dp.com/*'] };
+  const filter = { urls: ['https://id.flux3dp.com/*', 'https://id-test.flux3dp.com/*'] };
 
   session.defaultSession.webRequest.onBeforeSendHeaders(filter, (details, callback) => {
-    const header = {
-      ...details.requestHeaders,
-      Referer: 'https://id.flux3dp.com',
-    };
+    const referer = /https:\/\/id(-test)?.flux3dp.com/.exec(details.url);
+    const header = details.requestHeaders;
 
-    callback({ requestHeaders: header });
-  });
-
-  session.defaultSession.webRequest.onBeforeSendHeaders(testFilter, (details, callback) => {
-    const header = {
-      ...details.requestHeaders,
-      Referer: 'https://id-test.flux3dp.com/*',
-    };
+    if (referer) header['Referer'] = referer[0];
 
     callback({ requestHeaders: header });
   });
