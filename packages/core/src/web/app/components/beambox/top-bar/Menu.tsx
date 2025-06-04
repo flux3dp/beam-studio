@@ -414,9 +414,9 @@ export default function Menu({ email }: Props): React.JSX.Element {
       </SubMenu>
       <SubMenu label={menuCms.account}>
         {email ? (
-          <MenuItem onClick={() => callback('SIGN_IN')}>{menuCms.sign_in}</MenuItem>
-        ) : (
           <MenuItem onClick={() => callback('SIGN_OUT')}>{`${menuCms.sign_out} (${email})`}</MenuItem>
+        ) : (
+          <MenuItem onClick={() => callback('SIGN_IN')}>{menuCms.sign_in}</MenuItem>
         )}
         <MenuItem onClick={() => openPage(menuCms.link.design_market)}>{menuCms.design_market}</MenuItem>
         <MenuItem disabled={email === null} onClick={() => callback('MANAGE_ACCOUNT')}>
