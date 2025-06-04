@@ -40,8 +40,16 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
   useEffect(() => registerWindowUpdateTitle(), []);
 
   useEffect(() => {
-    const onTabFocused = () => setIsTabFocused(true);
-    const onTabBlurred = () => setIsTabFocused(false);
+    const onTabFocused = () => {
+      setIsTabFocused(true);
+      // Allow dragging for windows Custom Electron Title Bar
+      document.querySelector('.cet-drag-region')?.classList.remove(styles['no-drag']);
+    };
+    const onTabBlurred = () => {
+      setIsTabFocused(false);
+      // Disable dragging for windows Custom Electron Title Bar
+      document.querySelector('.cet-drag-region')?.classList.add(styles['no-drag']);
+    };
 
     tabController.onFocused(onTabFocused);
     tabController.onBlurred(onTabBlurred);
