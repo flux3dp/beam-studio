@@ -72,7 +72,7 @@ class ClipperBase extends EventEmitter {
     this.instance.AddPaths(path, joinType, endType);
   };
 
-  execute = async (...args): Promise<any> => {
+  execute = async (...args: any): Promise<any> => {
     if (this.worker) {
       return this.sendMessageToWorker('execute', { args });
     }
