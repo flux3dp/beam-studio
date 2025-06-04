@@ -40,16 +40,8 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
   useEffect(() => registerWindowUpdateTitle(), []);
 
   useEffect(() => {
-    const onTabFocused = () => {
-      setIsTabFocused(true);
-      // Allow dragging for windows Custom Electron Title Bar
-      document.querySelector('.cet-drag-region')?.classList.remove(styles['no-drag']);
-    };
-    const onTabBlurred = () => {
-      setIsTabFocused(false);
-      // Disable dragging for windows Custom Electron Title Bar
-      document.querySelector('.cet-drag-region')?.classList.add(styles['no-drag']);
-    };
+    const onTabFocused = () => setIsTabFocused(true);
+    const onTabBlurred = () => setIsTabFocused(false);
 
     tabController.onFocused(onTabFocused);
     tabController.onBlurred(onTabBlurred);
@@ -59,6 +51,12 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
       tabController.offBlurred(onTabBlurred);
     };
   }, []);
+
+  useEffect(() => {
+    // Allow dragging for windows Custom Electron Title Bar
+    document.querySelector('.cet-drag-region')?.classList[isTabFocused ? 'remove' : 'add'](styles['no-drag']);
+    console.log('isTabFocused', isTabFocused, performance.now());
+  }, [isTabFocused]);
 
   useEffect(() => {
     const discover = Discover('top-bar', (deviceList) => {
