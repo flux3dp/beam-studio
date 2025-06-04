@@ -1,7 +1,8 @@
 @use '@core/styles/variables' as variables;
 
 .no-drag {
-  -webkit-app-region: no-drag;
+  // override windows custom electron title bar setting
+  -webkit-app-region: no-drag !important;
 }
 
 .top-bar {
