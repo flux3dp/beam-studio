@@ -276,14 +276,6 @@ class MenuManager extends EventEmitter {
       this.constructMenu();
     });
 
-    ipcMain.on(events.DISABLE_MENU_ITEM, (e, ids) => {
-      this.toggleMenu(ids, false);
-    });
-
-    ipcMain.on(events.ENABLE_MENU_ITEM, (e, ids) => {
-      this.toggleMenu(ids, true);
-    });
-
     ipcMain.on('SET_DEV_MODE', (_, isDevMode) => {
       const hasChanged = this.isDevMode !== isDevMode;
 
