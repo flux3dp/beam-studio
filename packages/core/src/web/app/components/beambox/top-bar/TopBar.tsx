@@ -53,9 +53,8 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
   }, []);
 
   useEffect(() => {
-    // Allow dragging for windows Custom Electron Title Bar
+    // prevent drag region when tab is not focused for windows
     document.querySelector('.cet-drag-region')?.classList[isTabFocused ? 'remove' : 'add'](styles['no-drag']);
-    console.log('isTabFocused', isTabFocused, performance.now());
   }, [isTabFocused]);
 
   useEffect(() => {
