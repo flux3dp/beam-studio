@@ -123,7 +123,7 @@ class UnitInput extends React.Component<Props, States> {
       return;
     }
 
-    this.decimal = 2;
+    this.decimal = 3;
 
     return;
   }
