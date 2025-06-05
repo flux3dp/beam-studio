@@ -49,7 +49,7 @@ export const SvgEditor = (): ReactNode => {
       <div
         className={styles.container}
         id="svg_editor"
-        style={mode === CanvasMode.PathPreview ? { display: 'none' } : {}}
+        style={mode === CanvasMode.PathPreview ? { maxWidth: 0, visibility: 'hidden' } : {}}
       >
         <Banner />
         <div className={styles['workarea-container']} id="workarea-container">

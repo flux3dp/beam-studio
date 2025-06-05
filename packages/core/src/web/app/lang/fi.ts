@@ -2289,6 +2289,7 @@ const lang: ILang = {
     csv_file: 'CSV-tiedosto',
     current: 'Nykyinen',
     end: 'Lopetus',
+    failed_to_convert: 'Muuttuvatekstinen objekti sisältää ei-tuetun muodon, mikä saattaa estää sisällön näkymisen.',
     file_error: 'CSV-tiedoston jäsentäminen epäonnistui, tarkista tiedostomuoto.',
     file_size_exceeded: 'Tiedoston lataus epäonnistui, tiedoston koko ylittää 5 MB.',
     next: 'Seuraava',

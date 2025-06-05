@@ -3,7 +3,7 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 
-export const setSelectedElement = (elem: Element): void => {
+export const setSelectedElement = (elem: Element | null): void => {
   if (!elem) {
     BeamboxGlobalInteraction.onObjectBlur();
   } else {

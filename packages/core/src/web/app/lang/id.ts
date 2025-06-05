@@ -2289,6 +2289,7 @@ const lang: ILang = {
     csv_file: 'File CSV',
     current: 'Saat ini',
     end: 'Akhir',
+    failed_to_convert: 'Objek teks variabel berisi format yang tidak didukung, yang dapat menyebabkan konten tidak ditampilkan.',
     file_error: 'Gagal mengurai file CSV, harap periksa format file.',
     file_size_exceeded: 'Unggah file gagal, ukuran file melebihi 5 MB.',
     next: 'Berikutnya',

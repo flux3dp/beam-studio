@@ -2289,6 +2289,7 @@ const lang: ILang = {
     csv_file: 'Archivo CSV',
     current: 'Actual',
     end: 'Fin',
+    failed_to_convert: 'El objeto de texto variable contiene un formato no compatible, lo que puede impedir que se muestre el contenido.',
     file_error: 'Error al analizar el archivo CSV, por favor revise el formato del archivo.',
     file_size_exceeded: 'Error al subir el archivo, el tamaño del archivo supera los 5 MB.',
     next: 'Siguiente',

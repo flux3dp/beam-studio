@@ -3,12 +3,13 @@ import React from 'react';
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
+import JsBarcode from 'jsbarcode';
 import type { Root } from 'react-dom/client';
 import { createRoot } from 'react-dom/client';
 
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { promarkModels } from '@core/app/actions/beambox/constant';
-import BarcodePreview from '@core/app/components/dialogs/CodeGenerator/BarcodePreview';
+import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import type { BarcodeProps, BarcodeRef } from '@core/app/components/dialogs/CodeGenerator/BarcodePreview';
 import QRCodePreview from '@core/app/components/dialogs/CodeGenerator/QRCodePreview';
 import type { QRcodeProps, QRcodeRef } from '@core/app/components/dialogs/CodeGenerator/QRCodePreview';
@@ -16,11 +17,13 @@ import {
   importBarcodeSvgElement,
   importQrCodeSvgElement,
 } from '@core/app/components/dialogs/CodeGenerator/svgOperation';
+import NS from '@core/app/constants/namespaces';
 import { useVariableTextState } from '@core/app/stores/variableText';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import textActions from '@core/app/svgedit/text/textactions';
 import textedit from '@core/app/svgedit/text/textedit';
+import i18n from '@core/helpers/i18n';
 import { getObjectLayer } from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
@@ -121,6 +124,7 @@ const updateContent = async (
   oldValue: string,
   batchCmd: IBatchCommand,
   root: Root,
+  barcodeSvg: SVGSVGElement,
 ): Promise<void> => {
   if (elem.nodeName.toLowerCase() === 'text') {
     // Normal text
@@ -144,21 +148,26 @@ const updateContent = async (
       const svg = await new Promise<null | SVGSVGElement | undefined>((resolve) => {
         let resolved = false;
         const props = JSON.parse(elem.getAttribute('data-props') ?? '') as BarcodeProps | QRcodeProps;
+        let ref = null as BarcodeRef | null | QRcodeRef;
         const refCallback = (refObject?: BarcodeRef | null | QRcodeRef) => {
           if (refObject?.getElem()) {
             resolve(refObject?.getElem());
             resolved = true;
           }
+
+          ref = refObject || null;
         };
 
         if (isQrCode) {
-          root.render(<QRCodePreview {...(props as QRcodeProps)} ref={refCallback} value={value} />);
+          root.render(<QRCodePreview key={elem.id} {...(props as QRcodeProps)} ref={refCallback} value={value} />);
         } else {
-          root.render(<BarcodePreview {...(props as BarcodeProps)} ref={refCallback} value={value} />);
+          JsBarcode(barcodeSvg, value, (props as BarcodeProps).options);
+          resolve(barcodeSvg);
+          resolved = true;
         }
 
         setTimeout(() => {
-          if (!resolved) resolve(null);
+          if (!resolved) resolve(ref?.getElem());
         }, 1000);
       });
 
@@ -183,12 +192,17 @@ const updateContent = async (
         newElem.style.visibility = '';
         elem.replaceWith(newElem);
         batchCmd.addSubCommand(new history.MoveElementCommand(newElem, null, newElem.parentNode!));
+      } else {
+        throw new Error('Failed to get SVG');
       }
-
-      elem.remove();
     } catch (e) {
+      MessageCaller.openMessage({
+        content: i18n.lang.variable_text_settings.failed_to_convert,
+        level: MessageLevel.ERROR,
+      });
       console.error('[VariableText] Failed to update qrcode/barcode content', elem, value, e);
     }
+    elem.remove();
   }
 };
 
@@ -223,13 +237,18 @@ export const convertVariableText = async ({
   if (!isVariableTextSupported()) return null;
 
   const tmpContainer = document.createElement('div');
+  const barcodeContainer = document.createElement('div');
+  const barcodeSvg = document.createElementNS(NS.SVG, 'svg');
   const batchCmd = new history.BatchCommand('Bake Variable Text');
   let texts: NodeListOf<SVGElement>;
 
+  textActions.clear();
   svgCanvas.clearSelection();
-  textActions.hideCursor();
   tmpContainer.style.visibility = 'hidden';
+  barcodeContainer.style.visibility = 'hidden';
   document.body.appendChild(tmpContainer);
+  document.body.appendChild(barcodeContainer);
+  barcodeContainer.appendChild(barcodeSvg);
 
   const root = createRoot(tmpContainer);
 
@@ -263,7 +282,7 @@ export const convertVariableText = async ({
 
       value = value.slice(-length);
       value = content.replace(regex, value);
-      await updateContent(elem, value, content, batchCmd, root);
+      await updateContent(elem, value, content, batchCmd, root, barcodeSvg);
     }
 
     texts = getVariableTexts({ type: VariableTextType.TIME, visibleOnly: !addToHistory });
@@ -278,7 +297,7 @@ export const convertVariableText = async ({
 
         const value = now.format(content);
 
-        await updateContent(elem, value, content, batchCmd, root);
+        await updateContent(elem, value, content, batchCmd, root, barcodeSvg);
       }
     }
 
@@ -294,8 +313,14 @@ export const convertVariableText = async ({
         return csvContent[Number.parseInt(index, 10)] || '';
       });
 
-      await updateContent(elem, value, content, batchCmd, root);
+      await updateContent(elem, value, content, batchCmd, root, barcodeSvg);
     }
+
+    batchCmd.onAfter = () => {
+      textActions.clear();
+      svgCanvas.clearSelection();
+      svgCanvas.selectorManager.releaseSelectors();
+    };
 
     if (addToHistory) {
       const allElements: SVGElement[] = Array.from(getVariableTexts());
@@ -324,6 +349,7 @@ export const convertVariableText = async ({
     svgCanvas.clearSelection();
     root.unmount();
     tmpContainer.remove();
+    barcodeContainer.remove();
   }
 };
 
@@ -336,14 +362,18 @@ export const removeVariableText = (): (() => void) | null => {
 
   const revertMaps: Array<{ elem: Element; nextSibling: Node | null; parentNode: Node | null }> = [];
 
+  textActions.clear();
   svgCanvas.clearSelection();
-  textActions.hideCursor();
+  svgCanvas.selectorManager.releaseSelectors();
   allElements.forEach((elem) => {
     revertMaps.unshift({ elem, nextSibling: elem.nextSibling, parentNode: elem.parentNode });
     elem.remove();
   });
 
   const revert = () => {
+    textActions.clear();
+    svgCanvas.clearSelection();
+    svgCanvas.selectorManager.releaseSelectors();
     revertMaps.forEach(({ elem, nextSibling, parentNode }) => {
       if (nextSibling) {
         parentNode!.insertBefore(elem, nextSibling);
@@ -371,30 +401,36 @@ export const extractVariableText = (doExtract = true): null | VariableTextElemHa
     const childNodes = node.children;
 
     if (getVariableTextType(node as SVGElement)) {
-      // Keep element
-    } else if (childNodes.length === 0) {
-      if (node.tagName !== 'title') {
-        revertMaps.unshift({ elem: node, nextSibling: node.nextSibling, parentNode: node.parentNode });
-      }
-    } else if (node.getAttribute('display') === 'none' || !hasVariableText({ root: node })) {
+      // Keep variable elements
+      return;
+    }
+
+    // Keep layer structures
+    const shouldKeep = node.classList.contains('layer') || ['filter', 'title'].includes(node.tagName.toLowerCase());
+
+    if (!shouldKeep && (childNodes.length === 0 || !hasVariableText({ root: node }))) {
       revertMaps.unshift({ elem: node, nextSibling: node.nextSibling, parentNode: node.parentNode });
-    } else {
-      for (let i = 0; i < childNodes.length; i += 1) {
-        findNonVariableElem(childNodes[i]);
-      }
+
+      return;
+    }
+
+    for (let i = 0; i < childNodes.length; i += 1) {
+      findNonVariableElem(childNodes[i]);
     }
   };
 
   findNonVariableElem(svgcontent);
 
   const extract = () => {
+    textActions.clear();
     svgCanvas.clearSelection();
-    textActions.hideCursor();
+    svgCanvas.selectorManager.releaseSelectors();
     revertMaps.forEach(({ elem }) => elem.remove());
   };
   const revert = () => {
+    textActions.clear();
     svgCanvas.clearSelection();
-    textActions.hideCursor();
+    svgCanvas.selectorManager.releaseSelectors();
     revertMaps.forEach(({ elem, nextSibling, parentNode }) => {
       if (nextSibling) {
         parentNode!.insertBefore(elem, nextSibling);

@@ -2289,6 +2289,7 @@ const lang: ILang = {
     csv_file: 'Tệp CSV',
     current: 'Hiện tại',
     end: 'Kết thúc',
+    failed_to_convert: 'Đối tượng văn bản biến chứa định dạng không được hỗ trợ, có thể khiến nội dung không hiển thị.',
     file_error: 'Phân tích tệp CSV thất bại, vui lòng kiểm tra định dạng tệp.',
     file_size_exceeded: 'Tải tệp lên thất bại, kích thước tệp vượt quá 5MB.',
     next: 'Tiếp theo',

@@ -1,6 +1,8 @@
+import canvasEvents from '@core/app/actions/canvas/canvasEvents';
 import Dialog from '@core/app/actions/dialog-caller';
 import progressCaller from '@core/app/actions/progress-caller';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
+import textActions from '@core/app/svgedit/text/textactions';
 import { getNextStepRequirement, handleNextStep } from '@core/app/views/tutorials/tutorialController';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import { checkBlockedSerial } from '@core/helpers/device/checkBlockedSerial';
@@ -30,7 +32,9 @@ export const handleExportClick =
 
     promarkButtonHandler.setStatus('preparing');
     // remove all selected elements, to prevent the svg image resource not found
+    textActions.clear();
     svgCanvas.selectOnly([]);
+    canvasEvents.setSelectedElement(null);
 
     if (getNextStepRequirement() === TutorialConstants.SEND_FILE) handleNextStep();
 

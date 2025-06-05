@@ -54,10 +54,10 @@ jest.mock('@core/app/svgedit/history/undoManager', () => ({
   finishUndoableChange: mockFinishUndoableChange,
 }));
 
-const mockHideCursor = jest.fn();
+const mockClear = jest.fn();
 
 jest.mock('@core/app/svgedit/text/textactions', () => ({
-  hideCursor: mockHideCursor,
+  clear: mockClear,
 }));
 
 const mockRenderText = jest.fn().mockImplementation((elem, value) => {
@@ -80,6 +80,7 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
       Canvas: {
         clearSelection: mockClearSelection,
         getCurrentDrawing: () => ({ setCurrentLayer: jest.fn() }),
+        selectorManager: { releaseSelectors: jest.fn() },
       },
     }),
 }));
@@ -281,7 +282,7 @@ describe('test variableText helper', () => {
     expect(revert).not.toBe(null);
     expect(mockGetState).toHaveBeenCalled();
     expect(mockClearSelection).toHaveBeenCalled();
-    expect(mockHideCursor).toHaveBeenCalled();
+    expect(mockClear).toHaveBeenCalled();
     expect(mockChangeTextCommand).toHaveBeenCalledTimes(9);
     expect(mockRemoveElementCommand).toHaveBeenCalledTimes(2);
     expect(mockMoveElementCommand).toHaveBeenCalledTimes(2);
@@ -304,7 +305,7 @@ describe('test variableText helper', () => {
     expect(revert).not.toBe(null);
     expect(mockGetState).not.toHaveBeenCalled();
     expect(mockClearSelection).toHaveBeenCalled();
-    expect(mockHideCursor).toHaveBeenCalled();
+    expect(mockClear).toHaveBeenCalled();
     expect(mockChangeTextCommand).toHaveBeenCalledTimes(9);
     expect(mockRemoveElementCommand).toHaveBeenCalledTimes(2);
     expect(mockMoveElementCommand).toHaveBeenCalledTimes(2);
@@ -326,7 +327,7 @@ describe('test variableText helper', () => {
     expect(revert).toBe(null);
     expect(mockGetState).not.toHaveBeenCalled();
     expect(mockClearSelection).toHaveBeenCalled();
-    expect(mockHideCursor).toHaveBeenCalled();
+    expect(mockClear).toHaveBeenCalled();
     expect(mockChangeTextCommand).toHaveBeenCalledTimes(9);
     expect(mockRemoveElementCommand).toHaveBeenCalledTimes(2);
     expect(mockMoveElementCommand).toHaveBeenCalledTimes(2);
@@ -346,7 +347,7 @@ describe('test variableText helper', () => {
     revert = removeVariableText();
     expect(revert).not.toBe(null);
     expect(mockClearSelection).toHaveBeenCalled();
-    expect(mockHideCursor).toHaveBeenCalled();
+    expect(mockClear).toHaveBeenCalled();
     expect(document.body).toMatchSnapshot();
 
     revert();
@@ -362,19 +363,19 @@ describe('test variableText helper', () => {
 
     expect(extractFn).not.toBe(null);
     expect(mockClearSelection).toHaveBeenCalledTimes(1);
-    expect(mockHideCursor).toHaveBeenCalledTimes(1);
+    expect(mockClear).toHaveBeenCalledTimes(1);
     expect(document.body).toMatchSnapshot();
     expectedExtractResult = document.body;
 
     extractFn.revert();
     expect(mockClearSelection).toHaveBeenCalledTimes(2);
-    expect(mockHideCursor).toHaveBeenCalledTimes(2);
+    expect(mockClear).toHaveBeenCalledTimes(2);
     expect(document.body).toMatchSnapshot();
     expectedRevertResult = document.body;
 
     extractFn.extract();
     expect(mockClearSelection).toHaveBeenCalledTimes(3);
-    expect(mockHideCursor).toHaveBeenCalledTimes(3);
+    expect(mockClear).toHaveBeenCalledTimes(3);
     expect(document.body).toBe(expectedExtractResult);
 
     jest.clearAllMocks();
@@ -382,17 +383,17 @@ describe('test variableText helper', () => {
     extractFn = extractVariableText(false);
     expect(extractFn).not.toBe(null);
     expect(mockClearSelection).not.toHaveBeenCalled();
-    expect(mockHideCursor).not.toHaveBeenCalled();
+    expect(mockClear).not.toHaveBeenCalled();
     expect(document.body.innerHTML).toBe(mockBody.extractVariableText);
 
     extractFn.extract();
     expect(mockClearSelection).toHaveBeenCalledTimes(1);
-    expect(mockHideCursor).toHaveBeenCalledTimes(1);
+    expect(mockClear).toHaveBeenCalledTimes(1);
     expect(document.body).toBe(expectedExtractResult);
 
     extractFn.revert();
     expect(mockClearSelection).toHaveBeenCalledTimes(2);
-    expect(mockHideCursor).toHaveBeenCalledTimes(2);
+    expect(mockClear).toHaveBeenCalledTimes(2);
     expect(document.body).toBe(expectedRevertResult);
   });
 });
@@ -416,20 +417,20 @@ describe('test variableText helper when not supported', () => {
     document.body.innerHTML = mockBody.convertVariableText;
     expect(await convertVariableText()).toBe(null);
     expect(mockClearSelection).not.toHaveBeenCalled();
-    expect(mockHideCursor).not.toHaveBeenCalled();
+    expect(mockClear).not.toHaveBeenCalled();
   });
 
   test('removeVariableText', () => {
     document.body.innerHTML = mockBody.removeVariableText;
     expect(removeVariableText()).toBe(null);
     expect(mockClearSelection).not.toHaveBeenCalled();
-    expect(mockHideCursor).not.toHaveBeenCalled();
+    expect(mockClear).not.toHaveBeenCalled();
   });
 
   test('extractVariableText', () => {
     document.body.innerHTML = mockBody.extractVariableText;
     expect(extractVariableText()).toBe(null);
     expect(mockClearSelection).not.toHaveBeenCalled();
-    expect(mockHideCursor).not.toHaveBeenCalled();
+    expect(mockClear).not.toHaveBeenCalled();
   });
 });

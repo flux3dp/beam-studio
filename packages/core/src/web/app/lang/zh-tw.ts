@@ -2290,6 +2290,7 @@ const lang: ILang = {
     csv_file: 'CSV 檔案',
     current: '目前',
     end: '結束',
+    failed_to_convert: '可變文字物件中含有不支援的格式，可能導致內容無法顯示。',
     file_error: '解析 CSV 檔案失敗，請檢查檔案格式。',
     file_size_exceeded: '檔案上傳失敗，檔案大小超過 5MB。',
     next: '下一個',

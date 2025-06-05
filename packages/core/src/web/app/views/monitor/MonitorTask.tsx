@@ -86,7 +86,15 @@ const MonitorTask = ({ device }: Props): React.JSX.Element => {
   }, []);
 
   const handleFramingStart = useCallback(
-    (forceType?: TFramingType) => manager.current?.startFraming(forceType ?? type, { lowPower: 0 }),
+    async (forceType: TFramingType) => {
+      setType(forceType);
+
+      const res = await manager.current?.startFraming(forceType, { lowPower: 0 });
+
+      if (!res) {
+        setType(type);
+      }
+    },
     [type],
   );
 
@@ -119,7 +127,6 @@ const MonitorTask = ({ device }: Props): React.JSX.Element => {
               }
 
               if (!isFraming || option !== type) {
-                setType(option);
                 setIsFramingTask(true);
                 setIsFraming(true);
                 handleFramingStart(option);

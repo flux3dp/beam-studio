@@ -188,9 +188,7 @@ exports[`test variableText helper convertVariableText 1`] = `
       y="0"
     >
       <svg
-        class="visible barcode-svg"
         height="92px"
-        id="barcode"
         style="transform: translate(0,0)"
         version="1.1"
         viewBox="0 0 266 92"
@@ -469,8 +467,31 @@ exports[`test variableText helper extractVariableText 1`] = `
     </g>
     
 
+    <g
+      class="layer"
+      id="svg_5"
+    >
+      
+
+      
+
+    </g>
     
 
+    <g
+      class="layer"
+      display="none"
+      id="svg_7"
+    >
+      
+
+      <text
+        data-vt-type="1"
+        id="svg_8"
+      />
+      
+
+    </g>
     
 
   </g>
