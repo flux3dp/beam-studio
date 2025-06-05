@@ -3,13 +3,13 @@ import React from 'react';
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
+import JsBarcode from 'jsbarcode';
 import type { Root } from 'react-dom/client';
 import { createRoot } from 'react-dom/client';
 
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
-import BarcodePreview from '@core/app/components/dialogs/CodeGenerator/BarcodePreview';
 import type { BarcodeProps, BarcodeRef } from '@core/app/components/dialogs/CodeGenerator/BarcodePreview';
 import QRCodePreview from '@core/app/components/dialogs/CodeGenerator/QRCodePreview';
 import type { QRcodeProps, QRcodeRef } from '@core/app/components/dialogs/CodeGenerator/QRCodePreview';
@@ -123,6 +123,7 @@ const updateContent = async (
   oldValue: string,
   batchCmd: IBatchCommand,
   root: Root,
+  barcodeSvg: SVGSVGElement,
 ): Promise<void> => {
   if (elem.nodeName.toLowerCase() === 'text') {
     // Normal text
@@ -146,25 +147,30 @@ const updateContent = async (
       const svg = await new Promise<null | SVGSVGElement | undefined>((resolve) => {
         let resolved = false;
         const props = JSON.parse(elem.getAttribute('data-props') ?? '') as BarcodeProps | QRcodeProps;
+        let ref = null as BarcodeRef | null | QRcodeRef;
         const refCallback = (refObject?: BarcodeRef | null | QRcodeRef) => {
           if (refObject?.getElem()) {
             resolve(refObject?.getElem());
             resolved = true;
           }
+
+          ref = refObject || null;
         };
 
         if (isQrCode) {
           root.render(<QRCodePreview key={elem.id} {...(props as QRcodeProps)} ref={refCallback} value={value} />);
         } else {
-          root.render(<BarcodePreview key={elem.id} {...(props as BarcodeProps)} ref={refCallback} value={value} />);
+          JsBarcode(barcodeSvg, value, (props as BarcodeProps).options);
+          resolve(barcodeSvg);
+          resolved = true;
         }
 
         setTimeout(() => {
-          if (!resolved) resolve(null);
+          if (!resolved) resolve(ref?.getElem());
         }, 1000);
       });
 
-      if (svg && svg.innerHTML.trim()) {
+      if (svg) {
         let newElem: SVGElement;
         const isInvert = elem.getAttribute('data-invert') === 'true';
         const drawing = svgCanvas.getCurrentDrawing();
@@ -186,16 +192,16 @@ const updateContent = async (
         elem.replaceWith(newElem);
         batchCmd.addSubCommand(new history.MoveElementCommand(newElem, null, newElem.parentNode!));
       } else {
-        MessageCaller.openMessage({
-          content: i18n.lang.variable_text_settings.failed_to_convert,
-          level: MessageLevel.ERROR,
-        });
+        throw new Error('Failed to get SVG');
       }
-
-      elem.remove();
     } catch (e) {
+      MessageCaller.openMessage({
+        content: i18n.lang.variable_text_settings.failed_to_convert,
+        level: MessageLevel.ERROR,
+      });
       console.error('[VariableText] Failed to update qrcode/barcode content', elem, value, e);
     }
+    elem.remove();
   }
 };
 
@@ -230,13 +236,18 @@ export const convertVariableText = async ({
   if (!isVariableTextSupported()) return null;
 
   const tmpContainer = document.createElement('div');
+  const barcodeContainer = document.createElement('div');
+  const barcodeSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   const batchCmd = new history.BatchCommand('Bake Variable Text');
   let texts: NodeListOf<SVGElement>;
 
   textActions.clear();
   svgCanvas.clearSelection();
   tmpContainer.style.visibility = 'hidden';
+  barcodeContainer.style.visibility = 'hidden';
   document.body.appendChild(tmpContainer);
+  document.body.appendChild(barcodeContainer);
+  barcodeContainer.appendChild(barcodeSvg);
 
   const root = createRoot(tmpContainer);
 
@@ -270,7 +281,7 @@ export const convertVariableText = async ({
 
       value = value.slice(-length);
       value = content.replace(regex, value);
-      await updateContent(elem, value, content, batchCmd, root);
+      await updateContent(elem, value, content, batchCmd, root, barcodeSvg);
     }
 
     texts = getVariableTexts({ type: VariableTextType.TIME, visibleOnly: !addToHistory });
@@ -285,7 +296,7 @@ export const convertVariableText = async ({
 
         const value = now.format(content);
 
-        await updateContent(elem, value, content, batchCmd, root);
+        await updateContent(elem, value, content, batchCmd, root, barcodeSvg);
       }
     }
 
@@ -301,7 +312,7 @@ export const convertVariableText = async ({
         return csvContent[Number.parseInt(index, 10)] || '';
       });
 
-      await updateContent(elem, value, content, batchCmd, root);
+      await updateContent(elem, value, content, batchCmd, root, barcodeSvg);
     }
 
     if (addToHistory) {
@@ -331,6 +342,7 @@ export const convertVariableText = async ({
     svgCanvas.clearSelection();
     root.unmount();
     tmpContainer.remove();
+    barcodeContainer.remove();
   }
 };
 
