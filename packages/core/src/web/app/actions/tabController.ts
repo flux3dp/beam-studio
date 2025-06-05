@@ -86,11 +86,8 @@ class TabController extends EventEmitter {
   };
 
   focusTab = (id: number): void => {
-    if (id === this.currentId) {
-      return;
-    }
+    if (id === this.currentId) return;
 
-    this.setCustomTitleBarDraggable(false);
     communicator.send(TabEvents.FocusTab, id);
   };
 
