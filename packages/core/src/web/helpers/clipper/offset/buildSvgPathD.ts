@@ -30,11 +30,8 @@ export const buildSvgPathD = (scaledPaths: Array<Array<{ X: number; Y: number }>
           .map(({ x, y }) => `L${x},${y}`)
           .join('');
       } else {
-        segments.forEach((segment, index) => {
-          if (index === 0) {
-            pathData += `${segment.points[0].x},${segment.points[0].y}`;
-          }
-
+        pathData += `${segments[0].points[0].x},${segments[0].points[0].y}`;
+        segments.forEach((segment) => {
           const pointsString = segment.points
             .slice(1)
             .map(({ x, y }) => `${x},${y}`)
