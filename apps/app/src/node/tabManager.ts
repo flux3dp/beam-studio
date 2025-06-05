@@ -81,6 +81,7 @@ class TabManager {
       }
 
       if (tab) {
+        tab.view.setVisible(true);
         tab.isLoading = false;
         this.updateTabBounds([tab]);
 
@@ -220,6 +221,7 @@ class TabManager {
   private preloadTab = (): void => {
     if (!this.preloadedTab && (!tabConstants.maxTab || this.tabsList.length < tabConstants.maxTab)) {
       this.preloadedTab = this.createTab();
+      this.preloadedTab.view.setVisible(false);
       this.focusTab(this.focusedId);
     }
   };
@@ -250,7 +252,7 @@ class TabManager {
       const { view } = this.tabsMap[id];
 
       this.focusedId = id;
-
+      view.setVisible(true);
       this.mainWindow.contentView.addChildView(view);
       view.webContents.focus();
 
