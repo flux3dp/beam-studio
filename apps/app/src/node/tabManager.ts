@@ -88,10 +88,7 @@ class TabManager {
           this.focusTab(id);
         }
 
-        if (id === this.focusedId) {
-          this.sendToView(id, TabEvents.TabFocused);
-        }
-
+        this.sendToView(id, id === this.focusedId ? TabEvents.TabFocused : TabEvents.TabBlurred);
         this.notifyTabUpdated();
       }
     });
