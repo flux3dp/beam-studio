@@ -5,6 +5,12 @@ on:
     tags:
       - "app-*"
   workflow_dispatch:
+    inputs:
+      publish_suffix:
+        description: "Publish Suffix"
+        required: false
+        default: ""
+        type: string
 
 jobs:
   build:
@@ -143,6 +149,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           PUBLISH_PATH: ""
+          PUBLISH_SUFFIX: ${{ github.event.inputs.publish_suffix || '' }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           APPLE_ID: ${{ secrets.APPLEID_DEAN }}
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLEIDPASS_DEAN }}
