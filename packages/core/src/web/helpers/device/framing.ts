@@ -271,6 +271,7 @@ class FramingTaskManager extends EventEmitter {
   private isAdor = false;
   private isFcodeV2 = false;
   private isPromark = false;
+  private isProcessing = false;
   private isWorking = false;
   private interrupted = false;
   private rotaryInfo: RotaryInfo = null;
@@ -336,15 +337,19 @@ class FramingTaskManager extends EventEmitter {
     this.changeWorkingStatus(false);
   };
 
-  public startPromarkFraming = async (noRotation: boolean, taskCode?: string): Promise<void> => {
+  public startPromarkFraming = async (noRotation: boolean, taskCode?: string): Promise<boolean> => {
+    if (this.interrupted) {
+      return false;
+    }
+
     swiftrayClient.on('disconnected', this.onSwiftrayDisconnected);
 
     if (this.isWorking) {
-      return;
+      return false;
     }
 
     if (this.rotaryInfo && !noRotation && !swiftrayClient.checkVersion('PROMARK_ROTARY')) {
-      return;
+      return false;
     }
 
     this.changeWorkingStatus(true);
@@ -354,7 +359,7 @@ class FramingTaskManager extends EventEmitter {
     if (!deviceStatus) {
       this.changeWorkingStatus(false);
 
-      return;
+      return false;
     }
 
     if (!this.hasAppliedRedLight) {
@@ -371,6 +376,10 @@ class FramingTaskManager extends EventEmitter {
       }
 
       this.hasAppliedRedLight = true;
+    }
+
+    if (this.interrupted) {
+      return false;
     }
 
     if (taskCode) {
@@ -399,6 +408,8 @@ class FramingTaskManager extends EventEmitter {
         }
       }, 1000);
     }
+
+    return true;
   };
 
   public stopPromarkFraming = async (): Promise<void> => {
@@ -410,6 +421,7 @@ class FramingTaskManager extends EventEmitter {
 
     await deviceMaster.stopFraming();
     this.changeWorkingStatus(false);
+    this.interrupted = true;
   };
 
   public resetPromarkParams = async (): Promise<void> => {
@@ -830,31 +842,34 @@ class FramingTaskManager extends EventEmitter {
     }
   };
 
-  public startFraming = async (type: TFramingType, opts: { lowPower?: number }): Promise<void> => {
-    // Go to Promark logic
-    if (this.isWorking) {
-      return;
+  public startFraming = async (type: TFramingType, opts: { lowPower?: number }): Promise<boolean | undefined> => {
+    if (this.isWorking || this.isProcessing) {
+      return false;
     }
 
-    this.showMessage(i18n.lang.framing.calculating_task);
+    this.interrupted = false;
+    this.isProcessing = true;
+    this.showMessage(i18n.lang.framing.calculating_task, 0);
 
     let isEmpty = false;
+    let taskCode: null | string | undefined;
 
     if (type === FramingType.Contour) {
-      const taskCode = await this.generateTaskCode(type);
-
-      if (taskCode) {
-        await this.startPromarkFraming(false, taskCode);
-      } else {
-        isEmpty = true;
-      }
+      taskCode = await this.generateTaskCode(type);
+      isEmpty = !taskCode;
     } else {
       this.taskPoints = await this.generateTaskPoints(type);
       isEmpty = this.taskPoints.length === 0;
     }
 
+    this.closeMessage();
+    this.isProcessing = false;
+
+    if (this.interrupted) {
+      return false;
+    }
+
     if (isEmpty) {
-      this.closeMessage();
       MessageCaller.openMessage({
         content: i18n.lang.topbar.alerts.add_content_first,
         duration: 3,
@@ -862,18 +877,15 @@ class FramingTaskManager extends EventEmitter {
         level: MessageLevel.INFO,
       });
 
-      return;
+      return false;
     }
 
     if (this.isPromark) {
-      await this.startPromarkFraming(type === FramingType.RotateAxis);
-
-      return;
+      return await this.startPromarkFraming(type === FramingType.RotateAxis, taskCode ?? undefined);
     }
 
     try {
       this.changeWorkingStatus(true);
-      this.interrupted = false;
       await this.initTask();
 
       if (this.interrupted) return;
@@ -900,6 +912,12 @@ class FramingTaskManager extends EventEmitter {
   };
 
   public stopFraming = async (): Promise<void> => {
+    if (this.isProcessing) {
+      this.interrupted = true;
+
+      return;
+    }
+
     if (this.isPromark) {
       await this.stopPromarkFraming();
 
@@ -913,9 +931,9 @@ class FramingTaskManager extends EventEmitter {
     this.interrupted = true;
   };
 
-  private showMessage = (message: string): void => {
+  private showMessage = (message: string, duration?: number): void => {
     MessageCaller.closeMessage(this.messageKey);
-    MessageCaller.openMessage({ content: message, key: this.messageKey, level: MessageLevel.LOADING });
+    MessageCaller.openMessage({ content: message, duration, key: this.messageKey, level: MessageLevel.LOADING });
   };
 
   private closeMessage = (): void => {

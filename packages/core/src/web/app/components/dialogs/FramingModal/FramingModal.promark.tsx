@@ -33,7 +33,15 @@ const PromarkFramingModal = ({ device, onClose, startOnOpen = false }: Props): R
   const shortcutHandler = useRef<(() => void) | null>(null);
 
   const handleStart = useCallback(
-    (forceType?: TFramingType) => manager.current?.startFraming(forceType ?? type, { lowPower: 0 }),
+    async (forceType = type) => {
+      setType(forceType);
+
+      const res = await manager.current?.startFraming(forceType, { lowPower: 0 });
+
+      if (!res) {
+        setType(type);
+      }
+    },
     [type],
   );
 
@@ -118,7 +126,6 @@ const PromarkFramingModal = ({ device, onClose, startOnOpen = false }: Props): R
                 }
 
                 if (!isFraming || option !== type) {
-                  setType(option);
                   handleStart(option);
                 }
               }}
