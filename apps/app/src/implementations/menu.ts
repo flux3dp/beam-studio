@@ -92,13 +92,17 @@ class Menu extends AbstractMenu {
     updateWindowsMenu();
   }
 
-  enable(items: string[]): void {
-    changeMenuItemEnabled(items, true);
+  enable(ids: string[]): void {
+    for (const id of ids) {
+      changeMenuItemEnabled([id], true);
+    }
     this.rerenderMenu();
   }
 
-  disable(items: string[]): void {
-    changeMenuItemEnabled(items, false);
+  disable(ids: string[]): void {
+    for (const id of ids) {
+      changeMenuItemEnabled([id], false);
+    }
     this.rerenderMenu();
   }
 
