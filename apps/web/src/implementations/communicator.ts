@@ -5,6 +5,9 @@ import type { ICommunicator } from '@core/interfaces/ICommunicator';
 export const listener = new EventEmitter();
 export const sender = new EventEmitter();
 export default {
+  off(channel: string, handler: any): void {
+    listener.off(channel, handler);
+  },
   on(channel: string, handler: any): void {
     listener.on(channel, handler);
   },
