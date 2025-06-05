@@ -12,6 +12,7 @@ import { iconButtonTheme, selectTheme } from '@core/app/constants/antd-config';
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
 import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
 import history from '@core/app/svgedit/history/history';
+import type { Selector } from '@core/app/svgedit/selector';
 import selector from '@core/app/svgedit/selector';
 import textEdit from '@core/app/svgedit/text/textedit';
 import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
@@ -102,17 +103,22 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
   const [configs, setConfigs] = useState(defaultTextConfigs);
   const { fontFamily } = configs;
   const [styleOptions, setStyleOptions] = useState<FontOption[]>([]);
-  const selectorRef = useRef(selector.getSelectorManager().requestSelector(elem));
+  const selectorRef = useRef<null | Selector>(null);
   const workarea = useWorkarea();
   const showVariableText = useMemo(isVariableTextSupported, [workarea]);
 
   useEffect(() => {
     selectorRef.current = selector.getSelectorManager().requestSelector(elem);
+
+    return () => {
+      selector.getSelectorManager().releaseSelector(elem);
+      selectorRef.current = null;
+    };
   }, [elem]);
 
   const onConfigChange = <T extends keyof TextOption>(key: T, value: TextOption[T]) => {
     setConfigs((prev) => ({ ...prev, [key]: { hasMultiValue: false, value } }));
-    selectorRef.current.resize();
+    selectorRef.current?.resize();
     updateObjectPanel();
   };
 
@@ -232,7 +238,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
       }
 
       setConfigs({ ...defaultTextConfigs, ...newConfigs });
-      selectorRef.current.resize();
+      selectorRef.current?.resize();
     };
 
     if (availableFontFamilies.length > 0) {

@@ -54,7 +54,7 @@ const init = (injectedConfig, injectedSvgFactory): void => {
  * Class: svgedit.select.Selector
  * Private class for DOM element selection boxes
  */
-class Selector {
+export class Selector {
   public elem: Element;
 
   public inUse: boolean;
