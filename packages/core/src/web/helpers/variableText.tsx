@@ -390,20 +390,23 @@ export const extractVariableText = (doExtract = true): null | VariableTextElemHa
     const childNodes = node.children;
 
     if (getVariableTextType(node as SVGElement)) {
-      // Keep element
-    } else if (childNodes.length === 0) {
-      if (node.tagName !== 'title') {
+      // Keep variable elements
+      return;
+    }
+
+    // Keep layer structures
+    const shouldKeep = node.classList.contains('layer') || ['filter', 'title'].includes(node.tagName.toLowerCase());
+
+    if (!shouldKeep) {
+      if (childNodes.length === 0 || !hasVariableText({ root: node })) {
         revertMaps.unshift({ elem: node, nextSibling: node.nextSibling, parentNode: node.parentNode });
+
+        return;
       }
-    } else if (
-      !node.classList.contains('layer') &&
-      (node.getAttribute('display') === 'none' || !hasVariableText({ root: node }))
-    ) {
-      revertMaps.unshift({ elem: node, nextSibling: node.nextSibling, parentNode: node.parentNode });
-    } else {
-      for (let i = 0; i < childNodes.length; i += 1) {
-        findNonVariableElem(childNodes[i]);
-      }
+    }
+
+    for (let i = 0; i < childNodes.length; i += 1) {
+      findNonVariableElem(childNodes[i]);
     }
   };
 
