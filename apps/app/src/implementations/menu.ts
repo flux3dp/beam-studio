@@ -47,6 +47,12 @@ class Menu extends AbstractMenu {
     this.initMenuEvents();
   }
 
+  rerenderMenu(): void {
+    // force re-render menu
+    ElectronMenu.setApplicationMenu(ElectronMenu.getApplicationMenu());
+    updateWindowsMenu();
+  }
+
   initMenuItemStatus = (): void => {
     // checkboxes
     changeMenuItemChecked(['ZOOM_WITH_WINDOW'], BeamboxPreference.read('zoom_with_window'));
@@ -65,22 +71,19 @@ class Menu extends AbstractMenu {
 
       changeVisibilityByIsBb2(isBb2);
       changeVisibilityByIsPromark(isPromark);
-      // force re-render menu
-      ElectronMenu.setApplicationMenu(ElectronMenu.getApplicationMenu());
+      this.rerenderMenu();
     });
 
     // setting store related
     useSettingStoreEventEmitter.on('changeEnableUvPrintFile', (isEnabled) => {
       changeMenuItemVisible(['EXPORT_UV_PRINT'], isEnabled);
-      // force re-render menu
-      ElectronMenu.setApplicationMenu(ElectronMenu.getApplicationMenu());
+      this.rerenderMenu();
     });
 
     // layer panel related
     layerPanelEventEmitter.on('updateUvPrintStatus', (isUvPrintable = false) => {
       changeMenuItemEnabled(['EXPORT_UV_PRINT'], isUvPrintable);
-      // force re-render menu
-      ElectronMenu.setApplicationMenu(ElectronMenu.getApplicationMenu());
+      this.rerenderMenu();
     });
   };
 
@@ -90,12 +93,18 @@ class Menu extends AbstractMenu {
     updateWindowsMenu();
   }
 
-  enable(items: string[]): void {
-    this.communicator?.send('ENABLE_MENU_ITEM', items);
+  enable(ids: string[]): void {
+    for (const id of ids) {
+      changeMenuItemEnabled([id], true);
+    }
+    this.rerenderMenu();
   }
 
-  disable(items: string[]): void {
-    this.communicator?.send('DISABLE_MENU_ITEM', items);
+  disable(ids: string[]): void {
+    for (const id of ids) {
+      changeMenuItemEnabled([id], false);
+    }
+    this.rerenderMenu();
   }
 
   updateLanguage(): void {

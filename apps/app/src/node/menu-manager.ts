@@ -276,14 +276,6 @@ class MenuManager extends EventEmitter {
       this.constructMenu();
     });
 
-    ipcMain.on(events.DISABLE_MENU_ITEM, (e, ids) => {
-      this.toggleMenu(ids, false);
-    });
-
-    ipcMain.on(events.ENABLE_MENU_ITEM, (e, ids) => {
-      this.toggleMenu(ids, true);
-    });
-
     ipcMain.on('SET_DEV_MODE', (_, isDevMode) => {
       const hasChanged = this.isDevMode !== isDevMode;
 
@@ -317,31 +309,6 @@ class MenuManager extends EventEmitter {
     Menu.setApplicationMenu(this.appmenu);
     updateRecentMenu(false);
     this.emit('NEW_APP_MENU');
-  }
-
-  toggleMenu(ids: string | string[], enabled: boolean): void {
-    const idList = Array.isArray(ids) ? ids : [ids];
-
-    if (!this.appmenu) {
-      return;
-    }
-
-    const iterStack = [...this.appmenu.items];
-
-    while (iterStack.length > 0) {
-      const item = iterStack.pop();
-
-      if (item) {
-        if (item.submenu) {
-          iterStack.push(...item.submenu.items);
-        }
-
-        if (idList.includes(item.id)) {
-          item.enabled = enabled;
-        }
-      }
-    }
-    Menu.setApplicationMenu(this.appmenu);
   }
 
   onMenuClick = (data: MenuData): void => {
