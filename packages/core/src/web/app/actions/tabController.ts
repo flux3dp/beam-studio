@@ -19,23 +19,12 @@ class TabController extends EventEmitter {
     communicator.on(TabEvents.TabFocused, () => {
       this.emit(TabEvents.TabFocused);
       this.isFocused = true;
-
-      const cetDragRegion = document.querySelector('.cet-drag-region') as HTMLDivElement;
-
-      if (cetDragRegion) {
-        cetDragRegion.style.display = 'block';
-      }
+      this.setCustomTitleBarDraggable(true);
     });
     communicator.on(TabEvents.TabBlurred, () => {
       this.emit(TabEvents.TabBlurred);
       this.isFocused = false;
-
-      // prevent drag region when tab is not focused for windows
-      const cetDragRegion = document.querySelector('.cet-drag-region') as HTMLDivElement;
-
-      if (cetDragRegion) {
-        cetDragRegion.style.display = 'none';
-      }
+      this.setCustomTitleBarDraggable(false);
     });
     communicator.on(TabEvents.TabUpdated, (_: unknown, tabs: Tab[]) => {
       this.emit(TabEvents.TabUpdated, tabs);
@@ -101,18 +90,21 @@ class TabController extends EventEmitter {
       return;
     }
 
-    // prevent drag region when tab is not focused for windows
-    const cetDragRegion = document.querySelector('.cet-drag-region') as HTMLDivElement;
-
-    if (cetDragRegion) {
-      cetDragRegion.style.display = 'none';
-    }
-
+    this.setCustomTitleBarDraggable(false);
     communicator.send(TabEvents.FocusTab, id);
   };
 
   setMode = (mode: CanvasMode): void => {
     communicator.send(TabEvents.SetTabMode, mode);
+  };
+
+  /**
+   * used in windows, prevent the title bar blocking mouse events
+   */
+  setCustomTitleBarDraggable = (isDraggable: boolean): void => {
+    const cetDragRegion = document.querySelector('.cet-drag-region') as HTMLDivElement;
+
+    if (cetDragRegion) cetDragRegion.style.display = isDraggable ? 'block' : 'none';
   };
 }
 
