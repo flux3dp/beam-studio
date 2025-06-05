@@ -30,35 +30,40 @@ type OffsetMode =
   | 'outwardFilled' // GAP in single object THICKER (material shrinks)
   | 'outwardOutline'; // Material expands
 
-const SCALE_FACTOR = 100;
-const UNSUPPORTED_TAGS = ['g', 'image', 'text', 'use'] as const;
+const SCALE_FACTOR = 100; // Scale factor for ClipperLib operations, to handle precision issues
+const ROUND_FACTOR = 100; // Used for rounding points in fitPath
+const UNSUPPORTED_TAGS = ['g', 'image', 'text', 'use'] as const; // Tags that are not supported for offset operations
 const MITER_LIMIT = 1; // Miter limit for ClipperOffset
 const ARC_TOLERANCE = 0.25; // Arc tolerance for ClipperOffset
 
 // Helper: Processes a single element to add its paths to a Clipper instance
-// (This is your existing helper, ensure it correctly determines join/end types based on cornerType and path closure)
 async function processElementForOffset(
   elem: SVGElement,
   clipperInstance: ClipperBase,
   ClipperLib: any,
   cornerType: 'round' | 'sharp',
 ): Promise<{ isUnsupported: boolean; success: boolean }> {
-  if (!elem) return { isUnsupported: false, success: false };
+  if (!elem) {
+    console.warn('Element is null or undefined in processElementForOffset.');
 
-  if (UNSUPPORTED_TAGS.includes(elem.tagName)) {
+    return { isUnsupported: false, success: false };
+  }
+
+  // Check for unsupported tags
+  if (UNSUPPORTED_TAGS.includes(elem.tagName as any)) {
     console.log(`Skipping unsupported element: ${elem.tagName}`);
 
-    return { isUnsupported: true, success: true }; // Successfully skipped
+    return { isUnsupported: true, success: true };
   }
 
   try {
     const dPath = svgedit.utilities.getPathDFromElement(elem);
 
     if (!dPath) {
-      // Element might not be a path or path-convertible (e.g. rect, circle if not converted)
       console.warn('Element has no path data:', elem);
 
-      return { isUnsupported: true, success: true }; // Treat as unsupported if no path data
+      // Treat as unsupported if no path data, or could be an error depending on expectations
+      return { isUnsupported: true, success: true };
     }
 
     const bbox = svgedit.utilities.getBBox(elem);
@@ -67,29 +72,26 @@ async function processElementForOffset(
       cx: bbox.x + bbox.width / 2,
       cy: bbox.y + bbox.height / 2,
     };
-    const paths = ClipperLib.dPathToPointPathsAndScale(dPath, rotation, SCALE_FACTOR);
+    const paths = ClipperLib.dPathToPointPathsAndScale(dPath, rotation, SCALE_FACTOR) as Array<
+      Array<{ X: number; Y: number }>
+    >;
 
-    if (!paths || paths.length === 0 || paths[0]?.length === 0) {
-      console.warn('No scalable path points found for element:', elem);
+    if (!paths || paths.length === 0 || paths.some((path) => !path || path.length === 0)) {
+      console.warn('No scalable path points found or empty subpath for element:', elem);
 
-      return { isUnsupported: false, success: false }; // Not unsupported, but failed to process path
+      // Not strictly unsupported, but processing failed for this path
+      return { isUnsupported: false, success: false };
     }
 
-    let isPathClosed = true;
+    // Determine if the path is closed
+    let isPathClosed = paths.every((path: Array<{ X: number; Y: number }>) => {
+      if (!path || path.length === 0) return false; // An empty subpath cannot be closed in this context
 
-    // Ensure paths and sub-paths are valid before checking .at(-1)
-    for (const path of paths) {
-      if (path?.length > 0) {
-        if (!(path[0].X === path.at(-1).X && path[0].Y === path.at(-1).Y)) {
-          isPathClosed = false;
-          break;
-        }
-      } else {
-        // Path with no points or undefined path in paths array
-        isPathClosed = false; // Or handle as error/skip
-        break;
-      }
-    }
+      const firstPoint = path[0];
+      const lastPoint = path.at(-1)!;
+
+      return firstPoint.X === lastPoint.X && firstPoint.Y === lastPoint.Y;
+    }) as boolean;
 
     const { endType, joinType } = match({ cornerType, isPathClosed })
       .with({ isPathClosed: true }, ({ cornerType }) => ({
@@ -112,61 +114,58 @@ async function processElementForOffset(
   } catch (error) {
     console.error('Error processing element for offset:', elem, error);
 
-    return { isUnsupported: false, success: false }; // Failed to process
+    return { isUnsupported: false, success: false };
   }
 }
 
 // Helper: Builds the SVG 'd' path string
-// (Your existing helper, remember to consider the FIXME and fallback for empty segments)
 function buildSvgPathD(scaledPaths: Array<Array<{ X: number; Y: number }>>, simplify: boolean): string {
-  let d = '';
+  return scaledPaths
+    .map((path) => {
+      if (!path || path.length === 0) return '';
 
-  for (const path of scaledPaths) {
-    if (!path || path.length === 0) continue;
-
-    d += 'M';
-
-    if (!simplify) {
-      d += path.map(({ X, Y }) => `${X / SCALE_FACTOR},${Y / SCALE_FACTOR}`).join(' L');
-    } else {
-      const points = path.map(({ X, Y }) => ({
-        x: Math.floor(100 * (X / SCALE_FACTOR)) / 100,
-        y: Math.floor(100 * (Y / SCALE_FACTOR)) / 100,
+      let pathData = 'M';
+      const scaledPoints = path.map(({ X, Y }) => ({
+        x: X / SCALE_FACTOR,
+        y: Y / SCALE_FACTOR,
       }));
-      const segments = fitPath(points);
 
-      if (segments.length === 0 && points.length > 0) {
-        // Fallback for when fitPath doesn't produce segments but we have points (e.g., a single point after M)
-        d += `${points[0].x},${points[0].y}`;
+      if (!simplify) {
+        pathData += scaledPoints.map(({ x, y }) => `${x},${y}`).join(' L');
+      } else {
+        const pointsToFit = scaledPoints.map(({ x, y }) => ({
+          x: Math.round(x * ROUND_FACTOR) / ROUND_FACTOR,
+          y: Math.round(y * ROUND_FACTOR) / ROUND_FACTOR,
+        }));
+        const segments = fitPath(pointsToFit);
 
-        if (points.length > 1) {
-          d += points
+        if (segments.length === 0 && pointsToFit.length > 0) {
+          // Fallback: if fitPath yields no segments, draw straight lines
+          pathData += `${pointsToFit[0].x},${pointsToFit[0].y}`;
+          pathData += pointsToFit
             .slice(1)
-            .map((p) => `L${p.x},${p.y}`)
+            .map(({ x, y }) => `L${x},${y}`)
             .join('');
+        } else {
+          segments.forEach((segment, index) => {
+            if (index === 0) {
+              pathData += `${segment.points[0].x},${segment.points[0].y}`;
+            }
+
+            const pointsString = segment.points
+              .slice(1)
+              .map(({ x, y }) => `${x},${y}`)
+              .join(' ');
+
+            pathData += `${segment.type}${pointsString}`;
+          });
         }
       }
 
-      for (let j = 0; j < segments.length; j += 1) {
-        const segment = segments[j];
-
-        if (j === 0) {
-          d += `${segment.points[0].x},${segment.points[0].y}`;
-        }
-
-        const pointsString = segment.points
-          .slice(1)
-          .map(({ x, y }) => `${x},${y}`)
-          .join(' ');
-
-        d += `${segment.type}${pointsString}`;
-      }
-    }
-
-    d += 'Z'; // Clipper offset paths are typically closed
-  }
-
-  return d.trim();
+      return pathData + 'Z';
+    })
+    .join(' ')
+    .trim();
 }
 
 // Helper: Shows alert messages
@@ -176,17 +175,18 @@ function showOffsetAlert(type: 'failed' | 'unsupported') {
     unsupported: i18n.lang.beambox.tool_panels._offset.not_support_message,
   };
 
-  alertCaller.popUp({ id: 'Offset', message: messages[type], type: alertConstants.SHOW_POPUP_WARNING });
+  alertCaller.popUp({ id: `offset-${type}-alert`, message: messages[type], type: alertConstants.SHOW_POPUP_WARNING });
 }
 
 const offsetElements = async (
   mode: OffsetMode,
-  dist: number, // How much the material's edge moves
+  distance: number,
   cornerType: 'round' | 'sharp',
-  elems?: SVGElement[], // Function will now primarily expect one element for new modes
+  elems?: SVGElement[],
 ): Promise<void> => {
   progressCaller.openNonstopProgress({ id: 'offset-path', message: i18n.lang.beambox.popup.progress.calculating });
-  await new Promise<void>((resolve) => setTimeout(() => resolve(), 100));
+  // Brief pause for UI to update
+  await new Promise<void>((resolve) => setTimeout(resolve, 50));
 
   const targetElements = elems || svgCanvas.getSelectedElems(true);
 
@@ -197,6 +197,7 @@ const offsetElements = async (
     return;
   }
 
+  // For 'Filled' modes, only one element is supported
   if (targetElements.length > 1 && (mode === 'outwardFilled' || mode === 'inwardFilled')) {
     alertCaller.popUp({
       id: 'OffsetMultipleNotSupported',
@@ -208,101 +209,98 @@ const offsetElements = async (
     return;
   }
 
-  const elementToOffset = targetElements[0];
-  const batchCmd = new history.BatchCommand('Create Offset Elements');
+  const elementToOffset = targetElements[0]; // We'll process one element based on the check above or if only one was provided
   const ClipperLib = getClipperLib();
   const co = new ClipperBase('offset', MITER_LIMIT, ARC_TOLERANCE);
+
   const delta: number = match(mode)
-    .with(P.union('outwardFilled', 'outwardOutline'), () => dist * SCALE_FACTOR) // Outward offsets are positive
-    .with(P.union('inwardFilled', 'inwardOutline'), () => -dist * SCALE_FACTOR) // Inward offsets are negative
+    .with(P.union('outwardFilled', 'outwardOutline'), () => distance * SCALE_FACTOR)
+    .with(P.union('inwardFilled', 'inwardOutline'), () => -distance * SCALE_FACTOR)
     .exhaustive();
+
   const processResult = await processElementForOffset(elementToOffset, co, ClipperLib, cornerType);
 
-  let isUnsupportedElement = false;
-  let isProcessingError = false;
-
-  if (!processResult.success) {
-    isProcessingError = true;
-  }
-
   if (processResult.isUnsupported) {
-    isUnsupportedElement = true;
-  }
-
-  let solutionPaths: Array<Array<{ X: number; Y: number }>> = [];
-
-  if (!isProcessingError && !isUnsupportedElement) {
-    try {
-      solutionPaths = await co.execute([], delta);
-    } catch (clipperError) {
-      console.error('Clipper execution failed:', clipperError);
-      isProcessingError = true;
-    }
-  }
-
-  co.terminate();
-
-  solutionPaths = solutionPaths.filter((path) => path?.length);
-
-  if (!isProcessingError && !isUnsupportedElement && solutionPaths.length > 0) {
-    // For modes that expand material outward ('inwardFilled', 'outwardOutline'),
-    // if the offset results in multiple disjoint paths, union them.
-    if ((mode === 'inwardFilled' || mode === 'outwardOutline') && solutionPaths.length > 1) {
-      console.log(`Mode ${mode} resulted in ${solutionPaths.length} paths, attempting to union.`);
-
-      const unionClipper = new ClipperBase('clipper'); // Assuming this sets up for boolean ops
-
-      // Add all current solution paths as subjects for the union operation.
-      await unionClipper.addPaths(solutionPaths, ClipperLib.PolyType.ptSubject, true);
-
-      const unionResultPaths = new ClipperLib.Paths(); // Create a new Paths object for the results
-
-      try {
-        // Your original union call used: unionClipper.execute(1, currentUnion, 1, 1)
-        // Let's assume '1' for ClipType is ctUnion, and '1' for PolyFillType is a valid enum (e.g. pftEvenOdd or pftNonZero)
-        // It's safer to use the ClipperLib constants if available.
-        const clipTypeUnion = ClipperLib.ClipType.ctUnion; // Or the integer '1' if that's how your wrapper expects it
-        const fillRule = ClipperLib.PolyFillType.pftNonZero; // Or pftEvenOdd, or integer '1'
-
-        // The execute signature for boolean operations in Clipper usually involves:
-        // ClipType, OutputPaths, SubjectFillRule, ClipFillRule.
-        // Since we added all paths as subjects, subjectFillRule is key. ClipFillRule might not be used or set same.
-        // This call depends heavily on your `ClipperBase.execute` implementation for boolean ops.
-        const tempSolution = await unionClipper.execute(
-          clipTypeUnion,
-          unionResultPaths, // Output parameter for the union paths
-          fillRule,
-          fillRule,
-        );
-
-        // Check if your execute method returns the paths or modifies unionedResultPaths in place
-        if (tempSolution && tempSolution.length !== undefined) {
-          // If execute returns the paths directly
-          solutionPaths = tempSolution;
-        } else {
-          // If execute modifies unionResultPaths in place
-          solutionPaths = unionResultPaths;
-        }
-      } catch (unionError) {
-        console.error('Union operation failed:', unionError);
-        isProcessingError = true; // Or decide to proceed with un-unioned paths
-      } finally {
-        unionClipper.terminate();
-      }
-    }
-  }
-
-  progressCaller.popById('offset-path'); // Pop progress after computation
-
-  if (isProcessingError || (solutionPaths.length === 0 && !isUnsupportedElement)) {
-    showOffsetAlert('failed');
-    console.log('Offset operation failed or produced no valid paths.');
+    showOffsetAlert('unsupported');
+    progressCaller.popById('offset-path');
+    co.terminate();
 
     return;
   }
 
-  if (isUnsupportedElement) {
-    showOffsetAlert('unsupported');
+  if (!processResult.success) {
+    showOffsetAlert('failed');
+    progressCaller.popById('offset-path');
+    co.terminate();
+
+    return;
+  }
+
+  let solutionPaths: Array<Array<{ X: number; Y: number }>> = [];
+
+  try {
+    solutionPaths = await co.execute([], delta);
+  } catch (clipperError) {
+    console.error('Clipper execution failed:', clipperError);
+    showOffsetAlert('failed');
+    progressCaller.popById('offset-path');
+    co.terminate();
+
+    return;
+  } finally {
+    // Terminate clipper instance for offset operation, but not for union if needed next
+    if (!((mode === 'inwardFilled' || mode === 'outwardOutline') && solutionPaths.length > 1)) {
+      co.terminate();
+    }
+  }
+
+  solutionPaths = solutionPaths.filter((path) => path?.length > 0);
+
+  // Union operation for specific modes if multiple paths result
+  if ((mode === 'inwardFilled' || mode === 'outwardOutline') && solutionPaths.length > 1) {
+    console.log(`Mode ${mode} resulted in ${solutionPaths.length} paths, attempting to union.`);
+
+    const unionClipper = new ClipperBase('clipper'); // Setup for boolean ops
+
+    try {
+      await unionClipper.addPaths(solutionPaths, ClipperLib.PolyType.ptSubject, true); // true for closed paths
+
+      const clipTypeUnion = ClipperLib.ClipType.ctUnion;
+      const fillRule = ClipperLib.PolyFillType.pftNonZero; // Or pftEvenOdd, as appropriate
+      // Assuming execute for boolean ops returns the resulting paths
+      const unionedResultPaths = (await unionClipper.execute(
+        clipTypeUnion,
+        new ClipperLib.Paths(),
+        fillRule,
+        fillRule,
+      )) as Array<Array<{ X: number; Y: number }>>;
+
+      solutionPaths = unionedResultPaths.filter((path) => path?.length > 0);
+    } catch (unionError) {
+      console.error('Union operation failed:', unionError);
+      // Decide whether to show 'failed' or proceed with un-unioned paths.
+      // For now, let's assume failure is critical for these modes.
+      showOffsetAlert('failed');
+      progressCaller.popById('offset-path');
+
+      return;
+    } finally {
+      unionClipper.terminate();
+      co.terminate(); // ensure original co is also terminated
+    }
+  } else if (solutionPaths.length > 0) {
+    // If union was not needed, the original co should be terminated here.
+    // This 'else if' assumes co was not terminated in the 'finally' block of the offset execution
+    // if a union operation was potentially next.
+    co.terminate();
+  }
+
+  progressCaller.popById('offset-path'); // Pop progress after all computations
+
+  if (solutionPaths.length === 0) {
+    // This implies either the offset or the union (if attempted) resulted in no paths.
+    showOffsetAlert('failed');
+    console.log('Offset operation produced no valid paths.');
 
     return;
   }
@@ -311,13 +309,12 @@ const offsetElements = async (
 
   if (!pathD) {
     console.log('Failed to build path string D from solution paths.');
-    showOffsetAlert('failed'); // Or a more specific error
+    showOffsetAlert('failed');
 
-    // If originals were to be deleted, this might leave the user with nothing.
-    // Consider if batchCmd should be cleared or not added to history.
     return;
   }
 
+  const batchCmd = new history.BatchCommand('Create Offset Elements');
   const newElem = svgCanvas.addSvgElementFromJson({
     attr: {
       d: pathD,
@@ -330,7 +327,7 @@ const offsetElements = async (
     element: 'path',
   });
 
-  svgCanvas.pathActions.fixEnd(newElem);
+  svgCanvas.pathActions.fixEnd(newElem); // Usually for ensuring path validity or specific endings
   batchCmd.addSubCommand(new history.InsertElementCommand(newElem));
 
   if (svgCanvas.isUsingLayerColor) {
