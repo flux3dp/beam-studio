@@ -24,7 +24,6 @@ export function buildFileMenu(
     {
       accelerator: `${fnKey}+N`,
       click: callback,
-      enabled: false,
       id: 'CLEAR_SCENE',
       label: r.clear_scene || 'Clear Scene',
     },
