@@ -311,31 +311,6 @@ class MenuManager extends EventEmitter {
     this.emit('NEW_APP_MENU');
   }
 
-  toggleMenu(ids: string | string[], enabled: boolean): void {
-    const idList = Array.isArray(ids) ? ids : [ids];
-
-    if (!this.appmenu) {
-      return;
-    }
-
-    const iterStack = [...this.appmenu.items];
-
-    while (iterStack.length > 0) {
-      const item = iterStack.pop();
-
-      if (item) {
-        if (item.submenu) {
-          iterStack.push(...item.submenu.items);
-        }
-
-        if (idList.includes(item.id)) {
-          item.enabled = enabled;
-        }
-      }
-    }
-    Menu.setApplicationMenu(this.appmenu);
-  }
-
   onMenuClick = (data: MenuData): void => {
     if (data.id) {
       const eventData: MenuData = { ...data };
