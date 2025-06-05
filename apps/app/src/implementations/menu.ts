@@ -50,6 +50,7 @@ class Menu extends AbstractMenu {
   rerenderMenu(): void {
     // force re-render menu
     ElectronMenu.setApplicationMenu(ElectronMenu.getApplicationMenu());
+    updateWindowsMenu();
   }
 
   initMenuItemStatus = (): void => {
