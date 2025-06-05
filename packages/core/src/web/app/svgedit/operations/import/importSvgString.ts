@@ -25,12 +25,14 @@ const importSvgString = async (
     hidden = false,
     layerName,
     parentCmd,
+    removeDefaultLayer = true,
     targetModule = getDefaultLaserModule(),
     type = 'nolayer',
   }: {
     hidden?: boolean;
     layerName?: string;
     parentCmd?: IBatchCommand;
+    removeDefaultLayer?: boolean;
     targetModule?: LayerModuleType;
     type?: ImportType;
   },
@@ -101,7 +103,7 @@ const importSvgString = async (
     }),
   );
 
-  if (useElements.length > 0) {
+  if (useElements.length > 0 && removeDefaultLayer) {
     const cmd = removeDefaultLayerIfEmpty();
 
     if (cmd) {
