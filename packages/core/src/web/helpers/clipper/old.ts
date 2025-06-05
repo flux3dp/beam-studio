@@ -79,7 +79,7 @@ const offsetElements = async (
       cy: bbox.y + bbox.height / 2,
     };
 
-    const paths = ClipperLib.dPathtoPointPathsAndScale(dpath, rotation, scale);
+    const paths = ClipperLib.dPathToPointPathsAndScale(dpath, rotation, scale);
     let closed = true;
 
     for (let j = 0; j < paths.length; j += 1) {

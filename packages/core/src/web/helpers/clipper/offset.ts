@@ -1,5 +1,7 @@
 // Assuming this is used in processElementForOffset
 
+import { match, P } from 'ts-pattern';
+
 import alertCaller from '@core/app/actions/alert-caller';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import progressCaller from '@core/app/actions/progress-caller';
@@ -22,8 +24,16 @@ getSVGAsync((globalSVG) => {
   svgedit = globalSVG.Edit;
 });
 
+type OffsetMode =
+  | 'inwardFilled' // GAP in single object THINNER (material expands)
+  | 'inwardOutline' // Material shrinks
+  | 'outwardFilled' // GAP in single object THICKER (material shrinks)
+  | 'outwardOutline'; // Material expands
+
 const SCALE_FACTOR = 100;
 const UNSUPPORTED_TAGS = ['g', 'image', 'text', 'use'] as const;
+const MITER_LIMIT = 1; // Miter limit for ClipperOffset
+const ARC_TOLERANCE = 0.25; // Arc tolerance for ClipperOffset
 
 // Helper: Processes a single element to add its paths to a Clipper instance
 // (This is your existing helper, ensure it correctly determines join/end types based on cornerType and path closure)
@@ -57,8 +67,7 @@ async function processElementForOffset(
       cx: bbox.x + bbox.width / 2,
       cy: bbox.y + bbox.height / 2,
     };
-
-    const paths = ClipperLib.dPathtoPointPathsAndScale(dPath, rotation, SCALE_FACTOR);
+    const paths = ClipperLib.dPathToPointPathsAndScale(dPath, rotation, SCALE_FACTOR);
 
     if (!paths || paths.length === 0 || paths[0]?.length === 0) {
       console.warn('No scalable path points found for element:', elem);
@@ -70,7 +79,7 @@ async function processElementForOffset(
 
     // Ensure paths and sub-paths are valid before checking .at(-1)
     for (const path of paths) {
-      if (path && path.length > 0) {
+      if (path?.length > 0) {
         if (!(path[0].X === path.at(-1).X && path[0].Y === path.at(-1).Y)) {
           isPathClosed = false;
           break;
@@ -82,25 +91,20 @@ async function processElementForOffset(
       }
     }
 
-    // Determine JoinType and EndType more directly
-    let joinType: any;
-    let endType: any;
-
-    if (isPathClosed) {
-      // For any closed path (like a donut's contours), use etClosedPolygon
-      endType = ClipperLib.EndType.etClosedPolygon;
-      joinType = cornerType === 'round' ? ClipperLib.JoinType.jtRound : ClipperLib.JoinType.jtMiter;
-    } else {
-      // This branch is for open paths
-      if (cornerType === 'round') {
-        joinType = ClipperLib.JoinType.jtRound;
-        endType = ClipperLib.EndType.etOpenRound;
-      } else {
-        // 'sharp' corners for an open path
-        joinType = ClipperLib.JoinType.jtSquare; // jtSquare is often better than jtMiter for open path ends
-        endType = ClipperLib.EndType.etOpenSquare;
-      }
-    }
+    const { endType, joinType } = match({ cornerType, isPathClosed })
+      .with({ isPathClosed: true }, ({ cornerType }) => ({
+        endType: ClipperLib.EndType.etClosedPolygon,
+        joinType: cornerType === 'round' ? ClipperLib.JoinType.jtRound : ClipperLib.JoinType.jtMiter,
+      }))
+      .with({ cornerType: 'round' }, () => ({
+        endType: ClipperLib.EndType.etOpenRound,
+        joinType: ClipperLib.JoinType.jtRound,
+      }))
+      .with({ cornerType: 'sharp' }, () => ({
+        endType: ClipperLib.EndType.etOpenSquare,
+        joinType: ClipperLib.JoinType.jtSquare,
+      }))
+      .exhaustive();
 
     await clipperInstance.addPaths(paths, joinType, endType);
 
@@ -129,9 +133,6 @@ function buildSvgPathD(scaledPaths: Array<Array<{ X: number; Y: number }>>, simp
         x: Math.floor(100 * (X / SCALE_FACTOR)) / 100,
         y: Math.floor(100 * (Y / SCALE_FACTOR)) / 100,
       }));
-
-      if (points.length === 0) continue;
-
       const segments = fitPath(points);
 
       if (segments.length === 0 && points.length > 0) {
@@ -175,18 +176,8 @@ function showOffsetAlert(type: 'failed' | 'unsupported') {
     unsupported: i18n.lang.beambox.tool_panels._offset.not_support_message,
   };
 
-  alertCaller.popUp({
-    id: 'Offset',
-    message: messages[type],
-    type: alertConstants.SHOW_POPUP_WARNING,
-  });
+  alertCaller.popUp({ id: 'Offset', message: messages[type], type: alertConstants.SHOW_POPUP_WARNING });
 }
-
-type OffsetMode =
-  | 'inwardFilled' // GAP in single object THINNER (material expands)
-  | 'inwardOutline' // Material shrinks
-  | 'outwardFilled' // GAP in single object THICKER (material shrinks)
-  | 'outwardOutline'; // Material expands
 
 const offsetElements = async (
   mode: OffsetMode,
@@ -206,8 +197,6 @@ const offsetElements = async (
     return;
   }
 
-  // For Scenario A, we operate on the first selected element.
-  // If multiple are selected, new filled modes might behave unexpectedly or could be disallowed.
   if (targetElements.length > 1 && (mode === 'outwardFilled' || mode === 'inwardFilled')) {
     alertCaller.popUp({
       id: 'OffsetMultipleNotSupported',
@@ -219,37 +208,18 @@ const offsetElements = async (
     return;
   }
 
-  const elementToOffset = targetElements[0]; // Focus on the first element
-
+  const elementToOffset = targetElements[0];
   const batchCmd = new history.BatchCommand('Create Offset Elements');
   const ClipperLib = getClipperLib();
+  const co = new ClipperBase('offset', MITER_LIMIT, ARC_TOLERANCE);
+  const delta: number = match(mode)
+    .with(P.union('outwardFilled', 'outwardOutline'), () => dist * SCALE_FACTOR) // Outward offsets are positive
+    .with(P.union('inwardFilled', 'inwardOutline'), () => -dist * SCALE_FACTOR) // Inward offsets are negative
+    .exhaustive();
+  const processResult = await processElementForOffset(elementToOffset, co, ClipperLib, cornerType);
 
-  let signedDeltaForClipper: number = dist;
-
-  switch (mode) {
-    case 'outwardOutline': // Material expands (outline grows)
-      signedDeltaForClipper *= SCALE_FACTOR; // Positive for outward
-      break;
-    case 'inwardOutline': // Material shrinks (outline shrinks)
-      signedDeltaForClipper *= -SCALE_FACTOR; // Negative for inward
-      break;
-    case 'outwardFilled': // GAP THICKER (material shrinks)
-      signedDeltaForClipper *= SCALE_FACTOR; // Material offset INWARD
-      break;
-    case 'inwardFilled': // GAP THINNER (material expands)
-      signedDeltaForClipper *= -SCALE_FACTOR; // Material offset OUTWARD
-      break;
-    default:
-      console.error('Unknown offset mode:', mode);
-      progressCaller.popById('offset-path');
-
-      return;
-  }
-
-  const offsetClipper = new ClipperBase('offset', 1, 0.25); // MiterLimit, ArcTolerance
   let isUnsupportedElement = false;
   let isProcessingError = false;
-  const processResult = await processElementForOffset(elementToOffset, offsetClipper, ClipperLib, cornerType);
 
   if (!processResult.success) {
     isProcessingError = true;
@@ -263,14 +233,14 @@ const offsetElements = async (
 
   if (!isProcessingError && !isUnsupportedElement) {
     try {
-      solutionPaths = await offsetClipper.execute([], signedDeltaForClipper);
+      solutionPaths = await co.execute([], delta);
     } catch (clipperError) {
       console.error('Clipper execution failed:', clipperError);
       isProcessingError = true;
     }
   }
 
-  offsetClipper.terminate();
+  co.terminate();
 
   solutionPaths = solutionPaths.filter((path) => path?.length);
 
