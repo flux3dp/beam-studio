@@ -518,9 +518,9 @@ svgedit.select.Selector = Selector;
 export class SelectorManager {
   public selectorParentGroup: SVGGElement;
 
-  private rubberBandBox: SVGRectElement;
+  private rubberBandBox: null | SVGRectElement = null;
 
-  private selectorMap: { [id: string]: Selector };
+  private selectorMap: { [id: string]: Selector } = {};
 
   constructor() {
     this.initGroup();
@@ -601,6 +601,13 @@ export class SelectorManager {
     this.selectorMap[elem.id] = selector;
 
     return selector;
+  }
+
+  releaseSelectors(): void {
+    Object.keys(this.selectorMap).forEach((id) => {
+      this.selectorMap[id].cleanUp();
+    });
+    this.selectorMap = {};
   }
 
   releaseSelector(elem: Element): void {

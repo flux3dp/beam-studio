@@ -315,6 +315,12 @@ export const convertVariableText = async ({
       await updateContent(elem, value, content, batchCmd, root, barcodeSvg);
     }
 
+    batchCmd.onAfter = () => {
+      textActions.clear();
+      svgCanvas.clearSelection();
+      svgCanvas.selectorManager.releaseSelectors();
+    };
+
     if (addToHistory) {
       const allElements: SVGElement[] = Array.from(getVariableTexts());
 
@@ -357,12 +363,16 @@ export const removeVariableText = (): (() => void) | null => {
 
   textActions.clear();
   svgCanvas.clearSelection();
+  svgCanvas.selectorManager.releaseSelectors();
   allElements.forEach((elem) => {
     revertMaps.unshift({ elem, nextSibling: elem.nextSibling, parentNode: elem.parentNode });
     elem.remove();
   });
 
   const revert = () => {
+    textActions.clear();
+    svgCanvas.clearSelection();
+    svgCanvas.selectorManager.releaseSelectors();
     revertMaps.forEach(({ elem, nextSibling, parentNode }) => {
       if (nextSibling) {
         parentNode!.insertBefore(elem, nextSibling);
@@ -415,11 +425,13 @@ export const extractVariableText = (doExtract = true): null | VariableTextElemHa
   const extract = () => {
     textActions.clear();
     svgCanvas.clearSelection();
+    svgCanvas.selectorManager.releaseSelectors();
     revertMaps.forEach(({ elem }) => elem.remove());
   };
   const revert = () => {
     textActions.clear();
     svgCanvas.clearSelection();
+    svgCanvas.selectorManager.releaseSelectors();
     revertMaps.forEach(({ elem, nextSibling, parentNode }) => {
       if (nextSibling) {
         parentNode!.insertBefore(elem, nextSibling);

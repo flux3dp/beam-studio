@@ -80,6 +80,7 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
       Canvas: {
         clearSelection: mockClearSelection,
         getCurrentDrawing: () => ({ setCurrentLayer: jest.fn() }),
+        selectorManager: { releaseSelectors: jest.fn() },
       },
     }),
 }));
