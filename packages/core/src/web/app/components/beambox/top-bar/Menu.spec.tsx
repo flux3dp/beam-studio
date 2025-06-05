@@ -58,7 +58,7 @@ describe('should render correctly', () => {
   test('test checkbox menu item', () => {
     read.mockReturnValue(false);
 
-    const { container, getByText } = render(<Menu email={undefined} />);
+    const { container, getByText } = render(<Menu />);
 
     expect(container).toMatchSnapshot();
 

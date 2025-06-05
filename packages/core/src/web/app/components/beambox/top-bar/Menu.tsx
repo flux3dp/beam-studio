@@ -15,7 +15,7 @@ import browser from '@core/implementations/browser';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 interface Props {
-  email: string;
+  email?: string;
 }
 
 export default function Menu({ email }: Props): React.JSX.Element {
@@ -413,10 +413,10 @@ export default function Menu({ email }: Props): React.JSX.Element {
         <MenuItem onClick={() => callback('BOX_GEN')}>{menuCms.tools.box_generator}</MenuItem>
       </SubMenu>
       <SubMenu label={menuCms.account}>
-        {email == null ? (
-          <MenuItem onClick={() => callback('SIGN_IN')}>{menuCms.sign_in}</MenuItem>
-        ) : (
+        {email ? (
           <MenuItem onClick={() => callback('SIGN_OUT')}>{`${menuCms.sign_out} (${email})`}</MenuItem>
+        ) : (
+          <MenuItem onClick={() => callback('SIGN_IN')}>{menuCms.sign_in}</MenuItem>
         )}
         <MenuItem onClick={() => openPage(menuCms.link.design_market)}>{menuCms.design_market}</MenuItem>
         <MenuItem disabled={email === null} onClick={() => callback('MANAGE_ACCOUNT')}>

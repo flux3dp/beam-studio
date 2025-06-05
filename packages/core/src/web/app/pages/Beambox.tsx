@@ -45,8 +45,11 @@ const Beambox = (): React.JSX.Element => {
       window.addEventListener('resize', workareaManager.resetView);
     }
 
+    communicator.on('NEW_APP_MENU', BeamboxGlobalInteraction.attach);
+
     return () => {
       BeamboxGlobalInteraction.detach();
+      communicator.off('NEW_APP_MENU', BeamboxGlobalInteraction.attach);
     };
   });
 
