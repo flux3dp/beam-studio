@@ -104,7 +104,7 @@ class TabController extends EventEmitter {
   setCustomTitleBarDraggable = (isDraggable: boolean): void => {
     const cetDragRegion = document.querySelector('.cet-drag-region') as HTMLDivElement;
 
-    if (cetDragRegion) cetDragRegion.style.display = isDraggable ? 'block' : 'none';
+    if (cetDragRegion) cetDragRegion.style.width = isDraggable ? '' : '0';
   };
 }
 
