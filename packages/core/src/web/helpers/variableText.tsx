@@ -17,6 +17,7 @@ import {
   importBarcodeSvgElement,
   importQrCodeSvgElement,
 } from '@core/app/components/dialogs/CodeGenerator/svgOperation';
+import NS from '@core/app/constants/namespaces';
 import { useVariableTextState } from '@core/app/stores/variableText';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
@@ -237,7 +238,7 @@ export const convertVariableText = async ({
 
   const tmpContainer = document.createElement('div');
   const barcodeContainer = document.createElement('div');
-  const barcodeSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  const barcodeSvg = document.createElementNS(NS.SVG, 'svg');
   const batchCmd = new history.BatchCommand('Bake Variable Text');
   let texts: NodeListOf<SVGElement>;
 
@@ -407,12 +408,10 @@ export const extractVariableText = (doExtract = true): null | VariableTextElemHa
     // Keep layer structures
     const shouldKeep = node.classList.contains('layer') || ['filter', 'title'].includes(node.tagName.toLowerCase());
 
-    if (!shouldKeep) {
-      if (childNodes.length === 0 || !hasVariableText({ root: node })) {
-        revertMaps.unshift({ elem: node, nextSibling: node.nextSibling, parentNode: node.parentNode });
+    if (!shouldKeep && (childNodes.length === 0 || !hasVariableText({ root: node }))) {
+      revertMaps.unshift({ elem: node, nextSibling: node.nextSibling, parentNode: node.parentNode });
 
-        return;
-      }
+      return;
     }
 
     for (let i = 0; i < childNodes.length; i += 1) {
