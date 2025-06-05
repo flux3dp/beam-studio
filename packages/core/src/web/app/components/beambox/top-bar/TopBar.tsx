@@ -53,11 +53,6 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
   }, []);
 
   useEffect(() => {
-    // prevent drag region when tab is not focused for windows
-    document.querySelector('.cet-drag-region')?.classList[isTabFocused ? 'remove' : 'add'](styles['no-drag']);
-  }, [isTabFocused]);
-
-  useEffect(() => {
     const discover = Discover('top-bar', (deviceList) => {
       setHasDiscoveredMachine(deviceList.some(({ serial }) => serial !== 'XXXXXXXXXX'));
       setSelectedDevice((previous) => {

@@ -19,10 +19,23 @@ class TabController extends EventEmitter {
     communicator.on(TabEvents.TabFocused, () => {
       this.emit(TabEvents.TabFocused);
       this.isFocused = true;
+
+      const cetDragRegion = document.querySelector('.cet-drag-region') as HTMLDivElement;
+
+      if (cetDragRegion) {
+        cetDragRegion.style.display = 'block';
+      }
     });
     communicator.on(TabEvents.TabBlurred, () => {
       this.emit(TabEvents.TabBlurred);
       this.isFocused = false;
+
+      // prevent drag region when tab is not focused for windows
+      const cetDragRegion = document.querySelector('.cet-drag-region') as HTMLDivElement;
+
+      if (cetDragRegion) {
+        cetDragRegion.style.display = 'none';
+      }
     });
     communicator.on(TabEvents.TabUpdated, (_: unknown, tabs: Tab[]) => {
       this.emit(TabEvents.TabUpdated, tabs);
@@ -86,6 +99,13 @@ class TabController extends EventEmitter {
   focusTab = (id: number): void => {
     if (id === this.currentId) {
       return;
+    }
+
+    // prevent drag region when tab is not focused for windows
+    const cetDragRegion = document.querySelector('.cet-drag-region') as HTMLDivElement;
+
+    if (cetDragRegion) {
+      cetDragRegion.style.display = 'none';
     }
 
     communicator.send(TabEvents.FocusTab, id);

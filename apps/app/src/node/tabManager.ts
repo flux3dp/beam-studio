@@ -254,10 +254,11 @@ class TabManager {
 
       this.focusedId = id;
 
-      if (oldId !== id) this.sendToView(oldId, TabEvents.TabBlurred);
-
       this.mainWindow.contentView.addChildView(view);
       view.webContents.focus();
+
+      if (oldId !== id) this.sendToView(oldId, TabEvents.TabBlurred);
+
       view.webContents.send(TabEvents.TabFocused);
       this.focusOnReadyId = -1;
     }
