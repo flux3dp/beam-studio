@@ -1,6 +1,7 @@
 import { Menu as ElectronMenu } from '@electron/remote';
 
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import tabController from '@core/app/actions/tabController';
 import { TabEvents } from '@core/app/constants/tabConstants';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import AbstractMenu from '@core/helpers/menubar/AbstractMenu';
@@ -19,6 +20,7 @@ import ElectronUpdater from './electron-updater';
 const updateWindowsMenu = () => {
   if (window.os === 'Windows') {
     window.titlebar?.updateMenu(ElectronMenu.getApplicationMenu());
+    tabController.updateCustomTitleBarDraggable();
   }
 };
 
