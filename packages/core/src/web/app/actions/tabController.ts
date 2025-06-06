@@ -19,12 +19,12 @@ class TabController extends EventEmitter {
     communicator.on(TabEvents.TabFocused, () => {
       this.emit(TabEvents.TabFocused);
       this.isFocused = true;
-      this.setCustomTitleBarDraggable(true);
+      this.updateCustomTitleBarDraggable();
     });
     communicator.on(TabEvents.TabBlurred, () => {
       this.emit(TabEvents.TabBlurred);
       this.isFocused = false;
-      this.setCustomTitleBarDraggable(false);
+      this.updateCustomTitleBarDraggable();
     });
     communicator.on(TabEvents.TabUpdated, (_: unknown, tabs: Tab[]) => {
       this.emit(TabEvents.TabUpdated, tabs);
@@ -98,10 +98,10 @@ class TabController extends EventEmitter {
   /**
    * used in windows, prevent the title bar blocking mouse events
    */
-  setCustomTitleBarDraggable = (isDraggable: boolean): void => {
+  updateCustomTitleBarDraggable = (): void => {
     const cetDragRegion = document.querySelector('.cet-drag-region') as HTMLDivElement;
 
-    if (cetDragRegion) cetDragRegion.style.width = isDraggable ? '' : '0';
+    if (cetDragRegion) cetDragRegion.style.width = this.isFocused ? '' : '0';
   };
 }
 
