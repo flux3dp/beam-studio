@@ -88,10 +88,7 @@ class TabManager {
           this.focusTab(id);
         }
 
-        if (id === this.focusedId) {
-          this.sendToView(id, TabEvents.TabFocused);
-        }
-
+        this.sendToView(id, id === this.focusedId ? TabEvents.TabFocused : TabEvents.TabBlurred);
         this.notifyTabUpdated();
       }
     });
@@ -253,7 +250,6 @@ class TabManager {
       const { view } = this.tabsMap[id];
 
       this.focusedId = id;
-
       this.mainWindow.contentView.addChildView(view);
       view.webContents.focus();
 
