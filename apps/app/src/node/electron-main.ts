@@ -11,7 +11,7 @@ import path from 'path';
 import { pathToFileURL } from 'url';
 
 import * as electronRemote from '@electron/remote/main';
-import { captureMessage, init as SentryInit } from '@sentry/electron';
+import { captureMessage, init as SentryInit } from '@sentry/electron/main';
 import { setupTitlebar } from 'custom-electron-titlebar/main';
 
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
