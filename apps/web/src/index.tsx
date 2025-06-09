@@ -38,6 +38,8 @@ if ('serviceWorker' in navigator) {
 }
 
 if (!('structuredClone' in globalThis)) {
+  // Note: This only works for simple objects and arrays.
+  // For more complex objects, consider using a library like lodash or writing a custom clone function.
   globalThis.structuredClone = (v) => JSON.parse(JSON.stringify(v));
 }
 
