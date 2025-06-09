@@ -71,6 +71,7 @@ import Progress from '../progress-caller';
 import BeamboxPreference from './beambox-preference';
 import PreviewModeController from './preview-mode-controller';
 import ToolPanelsController from './toolPanelsController';
+import fileSystem from '@core/implementations/fileSystem';
 
 // @ts-expect-error this line is required to load svgedit
 if (svgCanvasClass) {
@@ -1856,6 +1857,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       };
 
       const handleFile = async (file) => {
+        const path = fileSystem.getPathForFile(file as File);
         await Progress.openNonstopProgress({
           caption: LANG.popup.loading_image,
           id: 'loading_image',
@@ -1893,11 +1895,11 @@ const svgEditor = (window['svgEditor'] = (function () {
             return 'js';
           }
 
-          if (file.name.toLowerCase().endsWith('.pdf') || (file.path && file.path.toLowerCase().endsWith('.pdf'))) {
+          if (file.name.toLowerCase().endsWith('.pdf') || (path?.toLowerCase().endsWith('.pdf'))) {
             return 'pdf';
           }
 
-          if (file.name.toLowerCase().endsWith('.ai') || (file.path && file.path.toLowerCase().endsWith('.ai'))) {
+          if (file.name.toLowerCase().endsWith('.ai') || (path?.toLowerCase().endsWith('.ai'))) {
             return 'ai';
           }
 
@@ -1962,9 +1964,9 @@ const svgEditor = (window['svgEditor'] = (function () {
         switch (fileType) {
           case 'bvg':
           case 'beam':
-            if (file.path) {
-              currentFileManager.setLocalFile(file.path);
-              svgCanvas.updateRecentFiles(file.path);
+            if (path) {
+              currentFileManager.setLocalFile(path);
+              svgCanvas.updateRecentFiles(path);
             } else {
               currentFileManager.setFileName(file.name, { extractFromPath: true });
             }
