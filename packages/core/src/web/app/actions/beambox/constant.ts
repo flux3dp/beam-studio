@@ -5,8 +5,7 @@ export type SupportUsbModels = (typeof supportUsbModelsArray)[number];
 export const supportUsbModelsStrict = new Set(supportUsbModelsArray);
 export const supportUsbModels = new Set(removeReadonly(supportUsbModelsArray));
 
-// TODO: add fbm2 here just for testing, remove it later
-export const bb2ModelsArray = ['fbb2', 'fbm2'] as const;
+export const bb2ModelsArray = ['fbb2'] as const;
 export type Bb2Models = (typeof bb2ModelsArray)[number];
 export const bb2ModelsStrict = new Set(bb2ModelsArray);
 export const bb2Models = new Set(removeReadonly(bb2ModelsArray));
@@ -40,7 +39,7 @@ export default {
     fad1: adorModelsArray,
     fbb1b: ['fbb1b', 'fbm1'],
     fbb1p: ['fbb1p', 'fbb1b', 'fbm1'],
-    fbb2: bb2ModelsArray,
+    fbb2: [...bb2ModelsArray, 'fbm2'], // TODO: add fbm2 before beamo2 machine model updated
     fbm1: ['fbm1'],
     fbm2: ['fbm2'],
     fhexa1: ['fhexa1', 'fbb1p', 'fbb1b', 'fbm1'],
@@ -91,6 +90,6 @@ export default {
     ultra: 1000,
   },
   dpmm,
-  fcodeV2Models: new Set([...adorModelsArray, ...bb2ModelsArray, ...hexaRfModelsArray]),
+  fcodeV2Models: new Set([...adorModelsArray, ...bb2ModelsArray, ...hexaRfModelsArray, 'fbm2']),
   highPowerModels: ['fhx2rf3', 'fhx2rf6', 'fhexa1', 'ado1', 'flv1', 'fpm1'],
 };
