@@ -32,6 +32,7 @@ describe('test layer-module-helper', () => {
       [LayerModule.PRINTER_4C]: `${lang.layer_module.printing} (4C)`,
       [LayerModule.UNKNOWN]: lang.layer_module.unknown,
       [LayerModule.UV_PRINT]: lang.layer_module.uv_print,
+      [LayerModule.WHITE_INK]: 'White Ink',
     });
   });
 });
