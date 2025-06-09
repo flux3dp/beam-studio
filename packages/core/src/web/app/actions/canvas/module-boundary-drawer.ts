@@ -3,7 +3,7 @@ import constant, { modelsWithModules } from '@core/app/actions/beambox/constant'
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
-import moduleBoundary from '@core/app/constants/layer-module/module-boundary';
+import { getModuleBoundary } from '@core/app/constants/layer-module/module-boundary';
 import workareaManager from '@core/app/svgedit/workarea';
 import { getAutoFeeder } from '@core/helpers/addOn';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
@@ -83,7 +83,7 @@ const update = (module: LayerModuleType): void => {
 
   const d1 = `M0,${workareaTop}H${w}V${workareaBottom}H0V${workareaTop}`;
   const { dpmm } = constant;
-  let { bottom, left, right, top } = moduleBoundary[module] || { bottom: 0, left: 0, right: 0, top: 0 };
+  let { bottom, left, right, top } = getModuleBoundary(model, module);
   const offsets = structuredClone(BeamboxPreference.read('module-offsets'));
   const [offsetX, offsetY] = offsets[module] || [0, 0];
 
