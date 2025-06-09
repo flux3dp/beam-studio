@@ -37,6 +37,10 @@ if ('serviceWorker' in navigator) {
   });
 }
 
+if (!('structuredClone' in globalThis)) {
+  globalThis.structuredClone = (v) => JSON.parse(JSON.stringify(v));
+}
+
 const onFinished = (data: boolean) => {
   const { hash } = window.location;
   const isReady = data;
