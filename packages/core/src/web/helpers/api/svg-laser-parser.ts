@@ -239,8 +239,8 @@ export const getExportOpt = (
     updateAccOverride({ path: { x: 1000, y: 1000 } });
   } else if (model === 'fbb2') {
     if (isPassThroughTask || autoFeeder) {
-    config.mep = 30;
-    updateAccOverride({ fill: { x: 5000, y: 2000 }, path: { x: 500, y: 500 } });
+      config.mep = 30;
+      updateAccOverride({ fill: { x: 5000, y: 2000 }, path: { x: 500, y: 500 } });
     } else {
       updateAccOverride({ path: { x: 1000, y: 1000 } });
     }
