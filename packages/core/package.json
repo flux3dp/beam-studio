@@ -35,7 +35,7 @@
     "imagetracerjs": "^1.2.6",
     "jimp": "^0.10.3",
     "jquery": "^3.6.0",
-    "jsbarcode": "^3.11.6",
+    "jsbarcode": "3.11.6",
     "jsencrypt": "^3.2.0",
     "jspdf": "^3.0.1",
     "jszip": "^3.10.1",

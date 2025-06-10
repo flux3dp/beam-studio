@@ -146,7 +146,7 @@ exports[`test PathEditPanel should render correctly 1`] = `
 exports[`test PathEditPanel should render correctly in mobile 1`] = `
 <div>
   <div
-    class="adm-floating-panel panel panel"
+    class="adm-floating-panel adm-floating-panel-bottom panel panel"
     data-animating="false"
     style="height: 280px; transform: translateY(calc(100% + (-280px)));"
   >

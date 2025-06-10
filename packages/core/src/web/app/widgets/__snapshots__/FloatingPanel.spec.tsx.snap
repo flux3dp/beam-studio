@@ -3,7 +3,7 @@
 exports[`test FloatingPanel should render correctly 1`] = `
 <div>
   <div
-    class="adm-floating-panel mock-class panel"
+    class="adm-floating-panel adm-floating-panel-bottom mock-class panel"
     data-animating="true"
     style="height: 0px; transform: translateY(calc(100% + (0px)));"
   >
