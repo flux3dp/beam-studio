@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-import { Button, Modal, Segmented } from 'antd';
+import { Button, Segmented } from 'antd';
 
+import DraggableModal from '@core/app/widgets/DraggableModal';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './StepElevate.module.scss';
@@ -22,7 +23,7 @@ const StepElevate = ({ onBack, onClose, onNext }: Props): React.JSX.Element => {
   }, [withPrismLift]);
 
   return (
-    <Modal
+    <DraggableModal
       centered
       className={styles.container}
       closable={!!onClose}
@@ -58,7 +59,7 @@ const StepElevate = ({ onBack, onClose, onNext }: Props): React.JSX.Element => {
         <source src={`video/ador-calibration-2/${withPrismLift ? 'prism-lift' : 'wood'}.webm`} type="video/webm" />
         <source src={`video/ador-calibration-2/${withPrismLift ? 'prism-lift' : 'wood'}.mp4`} type="video/mp4" />
       </video>
-    </Modal>
+    </DraggableModal>
   );
 };
 

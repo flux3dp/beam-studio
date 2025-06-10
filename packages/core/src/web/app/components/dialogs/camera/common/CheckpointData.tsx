@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Button, Modal } from 'antd';
+import { Button } from 'antd';
 import { SpinLoading } from 'antd-mobile';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
+import DraggableModal from '@core/app/widgets/DraggableModal';
 import { updateData } from '@core/helpers/camera-calibration-helper';
 import { loadJson } from '@core/helpers/device/jsonDataHelper';
 import useI18n from '@core/helpers/useI18n';
@@ -168,7 +169,7 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
 
   if (!askUser) {
     return (
-      <Modal
+      <DraggableModal
         centered
         closable={!!onClose}
         footer={[]}
@@ -178,12 +179,12 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
         width={400}
       >
         <SpinLoading className={styles.spinner} color="primary" style={{ '--size': '48px' }} />
-      </Modal>
+      </DraggableModal>
     );
   }
 
   return (
-    <Modal
+    <DraggableModal
       centered
       closable={!!onClose}
       footer={[
@@ -203,7 +204,7 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
       {!currentData && lang.calibration.checking_checkpoint}
       {currentData?.data &&
         (currentData.isCheckPointData ? lang.calibration.found_checkpoint : lang.calibration.use_old_camera_parameter)}
-    </Modal>
+    </DraggableModal>
   );
 };
 

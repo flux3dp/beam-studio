@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { Button, Col, Modal, Row } from 'antd';
+import { Button, Col, Row } from 'antd';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
 import alertConstants from '@core/app/constants/alert-constants';
+import DraggableModal from '@core/app/widgets/DraggableModal';
 import { calibrateChessboard, startFisheyeCalibrate } from '@core/helpers/camera-calibration-helper';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
@@ -209,7 +210,7 @@ const CalibrateChessBoard = ({ onBack, onClose, onNext, updateParam }: Props): R
     ].filter((btn) => btn);
 
   return (
-    <Modal
+    <DraggableModal
       centered
       closable
       footer={renderFooter}
@@ -237,7 +238,7 @@ const CalibrateChessBoard = ({ onBack, onClose, onNext, updateParam }: Props): R
           )}
         </Col>
       </Row>
-    </Modal>
+    </DraggableModal>
   );
 };
 

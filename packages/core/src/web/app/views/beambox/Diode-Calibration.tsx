@@ -10,7 +10,7 @@ import Dialog from '@core/app/actions/dialog-caller';
 import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
 import AlertDialog from '@core/app/widgets/AlertDialog';
-import Modal from '@core/app/widgets/Modal';
+import DraggableModal from '@core/app/widgets/DraggableModal';
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import CheckDeviceStatus from '@core/helpers/check-device-status';
 import DeviceErrorHandler from '@core/helpers/device-error-handler';
@@ -34,7 +34,7 @@ let cameraOffset = {
   x: 0,
   y: 0,
 };
-const calibratedMachineUUIDs = [];
+const calibratedMachineUUIDs: string[] = [];
 
 interface Props {
   device: IDeviceInfo;
@@ -571,8 +571,8 @@ export const showDiodeCalibration = (device: IDeviceInfo): void => {
 
   Dialog.addDialogComponent(
     'diode-cali',
-    <Modal>
+    <DraggableModal>
       <DiodeCalibration device={device} onClose={() => Dialog.popDialogById('diode-cali')} />
-    </Modal>,
+    </DraggableModal>,
   );
 };

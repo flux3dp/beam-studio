@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 
-import { Button, Modal } from 'antd';
+import { Button } from 'antd';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import getLevelingData from '@core/app/actions/camera/preview-helper/getLevelingData';
 import progressCaller from '@core/app/actions/progress-caller';
+import DraggableModal from '@core/app/widgets/DraggableModal';
 import { updateData } from '@core/helpers/camera-calibration-helper';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
@@ -84,7 +85,7 @@ const CheckPictures = ({ onClose, onNext, updateParam }: Props): React.JSX.Eleme
   }, []);
 
   return (
-    <Modal
+    <DraggableModal
       centered
       closable={!!onClose}
       footer={[
@@ -99,7 +100,7 @@ const CheckPictures = ({ onClose, onNext, updateParam }: Props): React.JSX.Eleme
       width={400}
     >
       {lang.calibration.checking_pictures}
-    </Modal>
+    </DraggableModal>
   );
 };
 

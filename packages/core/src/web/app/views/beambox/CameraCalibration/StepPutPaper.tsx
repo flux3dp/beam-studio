@@ -1,9 +1,8 @@
 import React, { useContext } from 'react';
 
-import { Modal } from 'antd';
-
 import { STEP_REFOCUS } from '@core/app/constants/cameraConstants';
 import { CalibrationContext } from '@core/app/contexts/CalibrationContext';
+import DraggableModal from '@core/app/widgets/DraggableModal';
 import useI18n from '@core/helpers/useI18n';
 
 const StepPutPaper = (): React.JSX.Element => {
@@ -18,7 +17,7 @@ const StepPutPaper = (): React.JSX.Element => {
   );
 
   return (
-    <Modal
+    <DraggableModal
       cancelText={lang.cancel}
       centered
       className="modal-camera-calibration"
@@ -31,7 +30,7 @@ const StepPutPaper = (): React.JSX.Element => {
     >
       {lang.please_place_paper}
       {video}
-    </Modal>
+    </DraggableModal>
   );
 };
 

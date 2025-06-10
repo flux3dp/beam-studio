@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
-import { Modal, Segmented } from 'antd';
+import { Segmented } from 'antd';
 
 import Alert from '@core/app/actions/alert-caller';
 import Constant from '@core/app/actions/beambox/constant';
@@ -9,6 +9,7 @@ import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { STEP_BEFORE_ANALYZE_PICTURE } from '@core/app/constants/cameraConstants';
 import { CalibrationContext } from '@core/app/contexts/CalibrationContext';
+import DraggableModal from '@core/app/widgets/DraggableModal';
 import { doGetOffsetFromPicture } from '@core/helpers/camera-calibration-helper';
 import CheckDeviceStatus from '@core/helpers/check-device-status';
 import DeviceErrorHandler from '@core/helpers/device-error-handler';
@@ -74,7 +75,7 @@ const StepRefocus = (): React.JSX.Element => {
 
     try {
       await PreviewModeController.start(device);
-      setLastConfig(PreviewModeController.getCameraOffsetStandard());
+      setLastConfig(PreviewModeController.getCameraOffsetStandard()!);
       Progress.openNonstopProgress({
         id: 'taking-picture',
         message: langCalibration.taking_picture,
@@ -95,7 +96,7 @@ const StepRefocus = (): React.JSX.Element => {
   const cutThenCapture = async () => {
     await doCuttingTask();
 
-    const blobUrl = await doCaptureTask();
+    const blobUrl = (await doCaptureTask()) as string;
 
     await doGetOffsetFromPicture(blobUrl, (offset: CameraConfig) => {
       setCurrentOffset(offset);
@@ -105,7 +106,7 @@ const StepRefocus = (): React.JSX.Element => {
 
   const [isAutoFocus, setIsAutoFocus] = useState(false);
   const [isCutButtonDisabled, setIsCutButtonDisabled] = useState(false);
-  const videoElem = useRef(null);
+  const videoElem = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     if (videoElem.current) {
@@ -169,7 +170,7 @@ const StepRefocus = (): React.JSX.Element => {
       setIsCutButtonDisabled(false);
       console.log(error);
 
-      const errorMessage = error instanceof Error ? error.message : DeviceErrorHandler.translate(error);
+      const errorMessage = error instanceof Error ? error.message : DeviceErrorHandler.translate(error as string);
 
       Alert.popUp({
         buttonLabels: [langAlert.ok, langAlert.learn_more],
@@ -191,7 +192,7 @@ const StepRefocus = (): React.JSX.Element => {
   };
 
   return (
-    <Modal
+    <DraggableModal
       cancelText={langCalibration.cancel}
       centered
       className="modal-camera-calibration"
@@ -206,7 +207,7 @@ const StepRefocus = (): React.JSX.Element => {
       {message}
       <br />
       {child}
-    </Modal>
+    </DraggableModal>
   );
 };
 

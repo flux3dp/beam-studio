@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 
 import { QuestionOutlined } from '@ant-design/icons';
-import { Button, Col, Form, InputNumber, Modal, Row, Space } from 'antd';
+import { Button, Col, Form, InputNumber, Row, Space } from 'antd';
 
 import Alert from '@core/app/actions/alert-caller';
 import Constant from '@core/app/actions/beambox/constant';
@@ -10,6 +10,7 @@ import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { STEP_FINISH, STEP_REFOCUS } from '@core/app/constants/cameraConstants';
 import { CalibrationContext } from '@core/app/contexts/CalibrationContext';
+import DraggableModal from '@core/app/widgets/DraggableModal';
 import { sendPictureThenSetConfig } from '@core/helpers/camera-calibration-helper';
 import useI18n from '@core/helpers/useI18n';
 import type { CameraConfig } from '@core/interfaces/Camera';
@@ -41,12 +42,12 @@ const StepBeforeAnalyzePicture = (): React.JSX.Element => {
 
   const renderHintModal = () => {
     const virtualSquare = $('.modal-camera-calibration .virtual-square');
-    const position1 = virtualSquare.offset();
+    const position1 = virtualSquare.offset()!;
 
-    position1.top += virtualSquare.height() + 5;
+    position1.top += (virtualSquare.height() || 0) + 5;
 
     const controls = $('.modal-camera-calibration .controls');
-    const position2 = controls.offset();
+    const position2 = controls.offset()!;
 
     position2.left += 30;
     position2.top -= 45;
@@ -96,7 +97,7 @@ const StepBeforeAnalyzePicture = (): React.JSX.Element => {
 
       console.log(x, y);
       setCameraPosition({ x, y });
-      setImgBlobUrl(blobUrl);
+      setImgBlobUrl(blobUrl!);
     } finally {
       Progress.popById('taking-picture');
     }
@@ -104,24 +105,16 @@ const StepBeforeAnalyzePicture = (): React.JSX.Element => {
 
   const imageScale = 200 / 280;
   const mmToImage = 10 * imageScale;
-  const imgBackground = {
-    background: `url(${imgBlobUrl})`,
-  };
+  const imgBackground = { background: `url(${imgBlobUrl})` };
 
   const calculateSquarePosition = (cc: CameraConfig) => {
+    const { centerX, centerY } = Constant.camera.calibrationPicture;
     const width = (25 * mmToImage) / cc.SX;
     const height = (25 * mmToImage) / cc.SY;
-    const { centerX, centerY } = Constant.camera.calibrationPicture;
     const left = 100 - width / 2 - ((cc.X - centerX + cameraPosition.x) * mmToImage) / cc.SX;
     const top = 100 - height / 2 - ((cc.Y - centerY + cameraPosition.y) * mmToImage) / cc.SY;
 
-    return {
-      height,
-      left,
-      top,
-      transform: `rotate(${-cc.R * (180 / Math.PI)}deg)`,
-      width,
-    };
+    return { height, left, top, transform: `rotate(${-cc.R * (180 / Math.PI)}deg)`, width };
   };
 
   const squareStyle = calculateSquarePosition(currentOffset);
@@ -129,13 +122,10 @@ const StepBeforeAnalyzePicture = (): React.JSX.Element => {
 
   const handleValueChange = (key: string, val: number) => {
     console.log('Key', key, '=', val);
-    setCurrentOffset({
-      ...currentOffset,
-      [key]: val,
-    });
+    setCurrentOffset({ ...currentOffset, [key]: val });
   };
 
-  const convertToDisplayValue = (cc) => ({
+  const convertToDisplayValue = (cc: any) => ({
     R: cc.R * (Math.PI / 180),
     SX: (3.25 - cc.SX) * (100 / 1.625),
     SY: (3.25 - cc.SY) * (100 / 1.625),
@@ -179,7 +169,7 @@ const StepBeforeAnalyzePicture = (): React.JSX.Element => {
               addonAfter={unit}
               max={50}
               min={-50}
-              onChange={(val) => handleValueChange('X', val + 15)}
+              onChange={(val) => handleValueChange('X', val! + 15)}
               precision={2}
               step={unit === 'inches' ? 0.005 : 0.1}
               type="number"
@@ -190,7 +180,7 @@ const StepBeforeAnalyzePicture = (): React.JSX.Element => {
               addonAfter={unit}
               max={50}
               min={-50}
-              onChange={(val) => handleValueChange('Y', val + 30)}
+              onChange={(val) => handleValueChange('Y', val! + 30)}
               precision={2}
               step={unit === 'inches' ? 0.005 : 0.1}
             />
@@ -200,7 +190,7 @@ const StepBeforeAnalyzePicture = (): React.JSX.Element => {
               addonAfter="deg"
               max={180}
               min={-180}
-              onChange={(val) => handleValueChange('R', val * (Math.PI / 180))}
+              onChange={(val) => handleValueChange('R', val! * (Math.PI / 180))}
               precision={3}
               step={0.1}
             />
@@ -210,7 +200,7 @@ const StepBeforeAnalyzePicture = (): React.JSX.Element => {
               addonAfter="%"
               max={200}
               min={10}
-              onChange={(val) => handleValueChange('SX', (200 - val) * (1.625 / 100))}
+              onChange={(val) => handleValueChange('SX', (200 - val!) * (1.625 / 100))}
               precision={2}
               step={0.1}
               type="number"
@@ -221,7 +211,7 @@ const StepBeforeAnalyzePicture = (): React.JSX.Element => {
               addonAfter="%"
               max={200}
               min={10}
-              onChange={(val) => handleValueChange('SY', (200 - val) * (1.625 / 100))}
+              onChange={(val) => handleValueChange('SY', (200 - val!) * (1.625 / 100))}
               precision={2}
               step={0.1}
               type="number"
@@ -249,14 +239,14 @@ const StepBeforeAnalyzePicture = (): React.JSX.Element => {
       Alert.popUp({
         callbacks: () => gotoNextStep(STEP_REFOCUS),
         id: 'menu-item',
-        message: `#816 ${error.toString().replace('Error: ', '')}`,
+        message: `#816 ${(error as string).toString().replace('Error: ', '')}`,
         type: AlertConstants.SHOW_POPUP_ERROR,
       });
     }
   };
 
   return (
-    <Modal
+    <DraggableModal
       centered
       className="modal-camera-calibration"
       closable={false}
@@ -279,7 +269,7 @@ const StepBeforeAnalyzePicture = (): React.JSX.Element => {
       width={500}
     >
       {manualCalibration}
-    </Modal>
+    </DraggableModal>
   );
 };
 

@@ -1,8 +1,9 @@
 import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 
-import { Button, Col, Modal, Row } from 'antd';
+import { Button, Col, Row } from 'antd';
 
+import DraggableModal from '@core/app/widgets/DraggableModal';
 import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
 import useI18n from '@core/helpers/useI18n';
 import type { PerspectiveGrid } from '@core/interfaces/FisheyePreview';
@@ -83,7 +84,7 @@ const CheckPnP = ({
   }, [points, grid]) as Array<[number, number]>;
 
   return (
-    <Modal
+    <DraggableModal
       centered
       closable
       footer={[
@@ -153,7 +154,7 @@ const CheckPnP = ({
           </>
         )}
       </Row>
-    </Modal>
+    </DraggableModal>
   );
 };
 

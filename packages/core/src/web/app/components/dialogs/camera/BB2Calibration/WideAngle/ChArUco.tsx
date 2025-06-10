@@ -1,12 +1,13 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 
 import { LoadingOutlined } from '@ant-design/icons';
-import { Button, Flex, Modal, Progress, Spin } from 'antd';
+import { Button, Flex, Progress, Spin } from 'antd';
 import { sprintf } from 'sprintf-js';
 import { match } from 'ts-pattern';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
+import DraggableModal from '@core/app/widgets/DraggableModal';
 import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
 import { ContextMenu, ContextMenuTrigger, MenuItem } from '@core/helpers/react-contextmenu';
 import useI18n from '@core/helpers/useI18n';
@@ -135,7 +136,7 @@ const ChArUco = ({ onClose, onNext, onPrev, title, updateParam }: Props) => {
   }, [tCali, step, key, img, pauseLive, restartLive, onNext, updateParam]);
 
   return (
-    <Modal
+    <DraggableModal
       cancelText={step > 0 ? tCali.back : tCali.cancel}
       centered
       footer={[
@@ -195,7 +196,7 @@ const ChArUco = ({ onClose, onNext, onPrev, title, updateParam }: Props) => {
           </div>
         </Flex>
       </div>
-    </Modal>
+    </DraggableModal>
   );
 };
 
