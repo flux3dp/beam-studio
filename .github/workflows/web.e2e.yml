@@ -35,7 +35,7 @@ jobs:
         with:
           working-directory: apps/web
           runTests: false
-          install-command: "cp ../../pnpm-lock . && pnpm install --filter=web --filter=core"
+          install-command: "cp ../../pnpm-lock.yml . && pnpm install --filter=web --filter=core"
 
       - name: Setup web and run e2e tests
         uses: cypress-io/github-action@v6
