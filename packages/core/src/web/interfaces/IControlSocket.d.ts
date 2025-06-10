@@ -32,9 +32,9 @@ interface IControlSocket extends EventEmitter {
   endSubTask(): Promise<void>;
   enterRawMode(): Promise<unknown>;
   enterSubTask(mode: Mode, timeout?: number): Promise<void>;
-  fetchAutoLevelingData?: (dataType: string) => Promise<{ [key: string]: number }>;
+  fetchAutoLevelingData?: (dataType: 'bottom_cover' | 'hexa_platform' | 'offset') => Promise<{ [key: string]: number }>;
   // method not supported by SwiftrayClient
-  fetchCameraCalibImage?: (name?: string) => Promise<Blob>;
+  fetchCameraCalibrateImage?: (name?: string) => Promise<Blob>;
   fetchFisheye3DRotation?: () => Promise<RotationParameters3D>;
   fetchFisheyeParams?: () => Promise<FisheyeCameraParameters>;
   fileInfo(path: string, fileName: string): Promise<unknown[]>;
