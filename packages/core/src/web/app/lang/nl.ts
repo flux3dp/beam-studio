@@ -1457,6 +1457,7 @@ const lang: ILang = {
     printing: 'Printen',
     unknown: 'Unknown Module',
     uv_print: 'UV-print',
+    white_ink: 'Witte inkt',
   },
   machine_status: {
     '-17': 'Cartridge IO-modus',

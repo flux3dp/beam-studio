@@ -1457,6 +1457,7 @@ const lang: ILang = {
     printing: 'Impressão',
     unknown: 'Unknown Module',
     uv_print: 'Impressão UV',
+    white_ink: 'Tinta branca',
   },
   machine_status: {
     '-17': 'Modo de E/S do cartucho',

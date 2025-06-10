@@ -1457,6 +1457,7 @@ const lang: ILang = {
     printing: 'Utskrift',
     unknown: 'Unknown Module',
     uv_print: 'UV-utskrift',
+    white_ink: 'Vitt bläck',
   },
   machine_status: {
     '-17': 'Patron I/O-läge',
