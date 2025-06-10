@@ -26,44 +26,53 @@ exports[`test Instruction should render correctly 1`] = `
             tabindex="0"
           >
             <div
-              class="ant-modal-content"
+              class="react-draggable"
+              style="transform: translate(0px,-300px);"
             >
               <div
-                class="ant-modal-header"
+                class="ant-modal-content"
               >
                 <div
-                  class="ant-modal-title"
-                  id="test-id"
+                  class="ant-modal-header"
                 >
-                  title
+                  <div
+                    class="ant-modal-title"
+                    id="test-id"
+                  >
+                    <div
+                      style="cursor: move; width: 100%;"
+                    >
+                      title
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div
-                class="ant-modal-body"
-              >
-                text
-                <video
-                  autoplay=""
-                  class="video"
-                  loop=""
+                <div
+                  class="ant-modal-body"
                 >
-                  <source
-                    src="video.webm"
-                    type="image/webm"
-                  />
-                </video>
-              </div>
-              <div
-                class="ant-modal-footer"
-              >
-                <button
-                  class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined"
-                  type="button"
+                  text
+                  <video
+                    autoplay=""
+                    class="video"
+                    loop=""
+                  >
+                    <source
+                      src="video.webm"
+                      type="image/webm"
+                    />
+                  </video>
+                </div>
+                <div
+                  class="ant-modal-footer"
                 >
-                  <span>
-                    label
-                  </span>
-                </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined"
+                    type="button"
+                  >
+                    <span>
+                      label
+                    </span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>

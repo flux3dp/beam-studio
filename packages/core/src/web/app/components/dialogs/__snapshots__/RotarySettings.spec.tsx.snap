@@ -26,278 +26,313 @@ exports[`test RotarySettings promark rotary settings 1`] = `
             tabindex="0"
           >
             <div
-              class="ant-modal-content"
+              class="react-draggable"
+              style="transform: translate(0px,-300px);"
             >
-              <button
-                aria-label="Close"
-                class="ant-modal-close"
-                type="button"
+              <div
+                class="ant-modal-content"
               >
-                <span
-                  class="ant-modal-close-x"
+                <button
+                  aria-label="Close"
+                  class="ant-modal-close"
+                  type="button"
                 >
                   <span
-                    aria-label="close"
-                    class="anticon anticon-close ant-modal-close-icon"
-                    role="img"
+                    class="ant-modal-close-x"
                   >
-                    <svg
-                      aria-hidden="true"
-                      data-icon="close"
-                      fill="currentColor"
-                      fill-rule="evenodd"
-                      focusable="false"
-                      height="1em"
-                      viewBox="64 64 896 896"
-                      width="1em"
+                    <span
+                      aria-label="close"
+                      class="anticon anticon-close ant-modal-close-icon"
+                      role="img"
                     >
-                      <path
-                        d="M799.86 166.31c.02 0 .04.02.08.06l57.69 57.7c.04.03.05.05.06.08a.12.12 0 010 .06c0 .03-.02.05-.06.09L569.93 512l287.7 287.7c.04.04.05.06.06.09a.12.12 0 010 .07c0 .02-.02.04-.06.08l-57.7 57.69c-.03.04-.05.05-.07.06a.12.12 0 01-.07 0c-.03 0-.05-.02-.09-.06L512 569.93l-287.7 287.7c-.04.04-.06.05-.09.06a.12.12 0 01-.07 0c-.02 0-.04-.02-.08-.06l-57.69-57.7c-.04-.03-.05-.05-.06-.07a.12.12 0 010-.07c0-.03.02-.05.06-.09L454.07 512l-287.7-287.7c-.04-.04-.05-.06-.06-.09a.12.12 0 010-.07c0-.02.02-.04.06-.08l57.7-57.69c.03-.04.05-.05.07-.06a.12.12 0 01.07 0c.03 0 .05.02.09.06L512 454.07l287.7-287.7c.04-.04.06-.05.09-.06a.12.12 0 01.07 0z"
-                      />
-                    </svg>
+                      <svg
+                        aria-hidden="true"
+                        data-icon="close"
+                        fill="currentColor"
+                        fill-rule="evenodd"
+                        focusable="false"
+                        height="1em"
+                        viewBox="64 64 896 896"
+                        width="1em"
+                      >
+                        <path
+                          d="M799.86 166.31c.02 0 .04.02.08.06l57.69 57.7c.04.03.05.05.06.08a.12.12 0 010 .06c0 .03-.02.05-.06.09L569.93 512l287.7 287.7c.04.04.05.06.06.09a.12.12 0 010 .07c0 .02-.02.04-.06.08l-57.7 57.69c-.03.04-.05.05-.07.06a.12.12 0 01-.07 0c-.03 0-.05-.02-.09-.06L512 569.93l-287.7 287.7c-.04.04-.06.05-.09.06a.12.12 0 01-.07 0c-.02 0-.04-.02-.08-.06l-57.69-57.7c-.04-.03-.05-.05-.06-.07a.12.12 0 010-.07c0-.03.02-.05.06-.09L454.07 512l-287.7-287.7c-.04-.04-.05-.06-.06-.09a.12.12 0 010-.07c0-.02.02-.04.06-.08l57.7-57.69c.03-.04.05-.05.07-.06a.12.12 0 01.07 0c.03 0 .05.02.09.06L512 454.07l287.7-287.7c.04-.04.06-.05.09-.06a.12.12 0 01.07 0z"
+                        />
+                      </svg>
+                    </span>
                   </span>
-                </span>
-              </button>
-              <div
-                class="ant-modal-header"
-              >
+                </button>
                 <div
-                  class="ant-modal-title"
-                  id="test-id"
-                >
-                  Rotary Setup
-                </div>
-              </div>
-              <div
-                class="ant-modal-body"
-              >
-                <div
-                  class="container"
+                  class="ant-modal-header"
                 >
                   <div
-                    class="table"
+                    class="ant-modal-title"
+                    id="test-id"
                   >
                     <div
-                      class="title"
+                      style="cursor: move; width: 100%;"
                     >
-                      <label
-                        for="rotary_mode"
-                      >
-                        Rotary
-                      </label>
+                      Rotary Setup
                     </div>
-                    <div>
-                      <button
-                        aria-checked="false"
-                        class="ant-switch switch css-dev-only-do-not-override-hash"
-                        id="rotary_mode"
-                        role="switch"
-                        type="button"
+                  </div>
+                </div>
+                <div
+                  class="ant-modal-body"
+                >
+                  <div
+                    class="container"
+                  >
+                    <div
+                      class="table"
+                    >
+                      <div
+                        class="title"
                       >
-                        <div
-                          class="ant-switch-handle"
-                        />
-                        <span
-                          class="ant-switch-inner"
+                        <label
+                          for="rotary_mode"
                         >
-                          <span
-                            class="ant-switch-inner-checked"
+                          Rotary
+                        </label>
+                      </div>
+                      <div>
+                        <button
+                          aria-checked="false"
+                          class="ant-switch switch css-dev-only-do-not-override-hash"
+                          id="rotary_mode"
+                          role="switch"
+                          type="button"
+                        >
+                          <div
+                            class="ant-switch-handle"
                           />
                           <span
-                            class="ant-switch-inner-unchecked"
-                          />
-                        </span>
-                      </button>
-                    </div>
-                    <div
-                      class="title"
-                    >
-                      <label
-                        for="rotary_type"
-                      >
-                        Type
-                      </label>
-                    </div>
-                    <div>
-                      <div
-                        aria-label="segmented control"
-                        class="ant-segmented ant-segmented-disabled css-dev-only-do-not-override-hash"
-                        id="rotary_type"
-                        role="radiogroup"
-                      >
-                        <div
-                          class="ant-segmented-group"
-                        >
-                          <label
-                            class="ant-segmented-item ant-segmented-item-selected ant-segmented-item-disabled"
+                            class="ant-switch-inner"
                           >
-                            <input
-                              checked=""
-                              class="ant-segmented-item-input"
-                              disabled=""
-                              name="test-id"
-                              type="radio"
+                            <span
+                              class="ant-switch-inner-checked"
                             />
-                            <div
-                              aria-selected="true"
-                              class="ant-segmented-item-label"
-                            >
-                              <div
-                                class="seg"
-                              >
-                                <svgr-url />
-                                <div>
-                                  Roller
-                                </div>
-                              </div>
-                            </div>
-                          </label>
-                          <label
-                            class="ant-segmented-item ant-segmented-item-disabled"
-                          >
-                            <input
-                              class="ant-segmented-item-input"
-                              disabled=""
-                              name="test-id"
-                              type="radio"
-                            />
-                            <div
-                              aria-selected="false"
-                              class="ant-segmented-item-label"
-                            >
-                              <div
-                                class="seg"
-                              >
-                                <svgr-url />
-                                <div>
-                                  Chuck
-                                </div>
-                              </div>
-                            </div>
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      class="title"
-                    >
-                      <label
-                        for="object_diameter"
-                      >
-                        Object Diameter
-                      </label>
-                    </div>
-                    <div>
-                      <div
-                        class="input"
-                      >
-                        UnitInput: 
-                        object_diameter
-                        <p>
-                          addonAfter: 
-                          mm
-                        </p>
-                        <p>
-                          precision: 
-                          2
-                        </p>
-                        <input
-                          disabled=""
-                          id="object_diameter"
-                          min="0"
-                          value=""
-                        />
-                      </div>
-                    </div>
-                    <div
-                      class="title"
-                    >
-                      <label
-                        for="circumference"
-                      >
-                        Circumference
-                      </label>
-                    </div>
-                    <div>
-                      <div
-                        class="input"
-                      >
-                        UnitInput: 
-                        circumference
-                        <p>
-                          addonAfter: 
-                          mm
-                        </p>
-                        <p>
-                          precision: 
-                          4
-                        </p>
-                        <input
-                          disabled=""
-                          id="circumference"
-                          min="0"
-                          value="NaN"
-                        />
-                      </div>
-                    </div>
-                    <div
-                      class="title"
-                    >
-                      <label
-                        for="scale"
-                      >
-                        Rotation Scale
-                      </label>
-                    </div>
-                    <div
-                      class="ant-select ant-select-outlined select css-dev-only-do-not-override-hash ant-select-single ant-select-show-arrow ant-select-disabled"
-                    >
-                      <div
-                        class="ant-select-selector"
-                      >
-                        <span
-                          class="ant-select-selection-wrap"
-                        >
-                          <span
-                            class="ant-select-selection-search"
-                          >
-                            <input
-                              aria-autocomplete="list"
-                              aria-controls="scale_list"
-                              aria-expanded="false"
-                              aria-haspopup="listbox"
-                              aria-owns="scale_list"
-                              autocomplete="off"
-                              class="ant-select-selection-search-input"
-                              disabled=""
-                              id="scale"
-                              readonly=""
-                              role="combobox"
-                              style="opacity: 0;"
-                              type="search"
-                              unselectable="on"
-                              value=""
+                            <span
+                              class="ant-switch-inner-unchecked"
                             />
                           </span>
-                          <span
-                            class="ant-select-selection-placeholder"
+                        </button>
+                      </div>
+                      <div
+                        class="title"
+                      >
+                        <label
+                          for="rotary_type"
+                        >
+                          Type
+                        </label>
+                      </div>
+                      <div>
+                        <div
+                          aria-label="segmented control"
+                          class="ant-segmented ant-segmented-disabled css-dev-only-do-not-override-hash"
+                          id="rotary_type"
+                          role="radiogroup"
+                        >
+                          <div
+                            class="ant-segmented-group"
+                          >
+                            <label
+                              class="ant-segmented-item ant-segmented-item-selected ant-segmented-item-disabled"
+                            >
+                              <input
+                                checked=""
+                                class="ant-segmented-item-input"
+                                disabled=""
+                                name="test-id"
+                                type="radio"
+                              />
+                              <div
+                                aria-selected="true"
+                                class="ant-segmented-item-label"
+                              >
+                                <div
+                                  class="seg"
+                                >
+                                  <svgr-url />
+                                  <div>
+                                    Roller
+                                  </div>
+                                </div>
+                              </div>
+                            </label>
+                            <label
+                              class="ant-segmented-item ant-segmented-item-disabled"
+                            >
+                              <input
+                                class="ant-segmented-item-input"
+                                disabled=""
+                                name="test-id"
+                                type="radio"
+                              />
+                              <div
+                                aria-selected="false"
+                                class="ant-segmented-item-label"
+                              >
+                                <div
+                                  class="seg"
+                                >
+                                  <svgr-url />
+                                  <div>
+                                    Chuck
+                                  </div>
+                                </div>
+                              </div>
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        class="title"
+                      >
+                        <label
+                          for="object_diameter"
+                        >
+                          Object Diameter
+                        </label>
+                      </div>
+                      <div>
+                        <div
+                          class="input"
+                        >
+                          UnitInput: 
+                          object_diameter
+                          <p>
+                            addonAfter: 
+                            mm
+                          </p>
+                          <p>
+                            precision: 
+                            2
+                          </p>
+                          <input
+                            disabled=""
+                            id="object_diameter"
+                            min="0"
+                            value=""
                           />
+                        </div>
+                      </div>
+                      <div
+                        class="title"
+                      >
+                        <label
+                          for="circumference"
+                        >
+                          Circumference
+                        </label>
+                      </div>
+                      <div>
+                        <div
+                          class="input"
+                        >
+                          UnitInput: 
+                          circumference
+                          <p>
+                            addonAfter: 
+                            mm
+                          </p>
+                          <p>
+                            precision: 
+                            4
+                          </p>
+                          <input
+                            disabled=""
+                            id="circumference"
+                            min="0"
+                            value="NaN"
+                          />
+                        </div>
+                      </div>
+                      <div
+                        class="title"
+                      >
+                        <label
+                          for="scale"
+                        >
+                          Rotation Scale
+                        </label>
+                      </div>
+                      <div
+                        class="ant-select ant-select-outlined select css-dev-only-do-not-override-hash ant-select-single ant-select-show-arrow ant-select-disabled"
+                      >
+                        <div
+                          class="ant-select-selector"
+                        >
+                          <span
+                            class="ant-select-selection-wrap"
+                          >
+                            <span
+                              class="ant-select-selection-search"
+                            >
+                              <input
+                                aria-autocomplete="list"
+                                aria-controls="scale_list"
+                                aria-expanded="false"
+                                aria-haspopup="listbox"
+                                aria-owns="scale_list"
+                                autocomplete="off"
+                                class="ant-select-selection-search-input"
+                                disabled=""
+                                id="scale"
+                                readonly=""
+                                role="combobox"
+                                style="opacity: 0;"
+                                type="search"
+                                unselectable="on"
+                                value=""
+                              />
+                            </span>
+                            <span
+                              class="ant-select-selection-placeholder"
+                            />
+                          </span>
+                        </div>
+                        <span
+                          aria-hidden="true"
+                          class="ant-select-arrow"
+                          style="user-select: none;"
+                          unselectable="on"
+                        >
+                          <span
+                            aria-label="down"
+                            class="anticon anticon-down ant-select-suffix"
+                            role="img"
+                          >
+                            <svg
+                              aria-hidden="true"
+                              data-icon="down"
+                              fill="currentColor"
+                              focusable="false"
+                              height="1em"
+                              viewBox="64 64 896 896"
+                              width="1em"
+                            >
+                              <path
+                                d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"
+                              />
+                            </svg>
+                          </span>
                         </span>
                       </div>
-                      <span
-                        aria-hidden="true"
-                        class="ant-select-arrow"
-                        style="user-select: none;"
-                        unselectable="on"
+                      <div
+                        class="sub-item-title"
                       >
+                        Split setting
+                         
                         <span
-                          aria-label="down"
-                          class="anticon anticon-down ant-select-suffix"
+                          aria-label="question-circle"
+                          class="anticon anticon-question-circle"
                           role="img"
+                          tabindex="-1"
                         >
                           <svg
                             aria-hidden="true"
-                            data-icon="down"
+                            data-icon="question-circle"
                             fill="currentColor"
                             focusable="false"
                             height="1em"
@@ -305,179 +340,153 @@ exports[`test RotarySettings promark rotary settings 1`] = `
                             width="1em"
                           >
                             <path
-                              d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"
+                              d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"
+                            />
+                            <path
+                              d="M623.6 316.7C593.6 290.4 554 276 512 276s-81.6 14.5-111.6 40.7C369.2 344 352 380.7 352 420v7.6c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V420c0-44.1 43.1-80 96-80s96 35.9 96 80c0 31.1-22 59.6-56.1 72.7-21.2 8.1-39.2 22.3-52.1 40.9-13.1 19-19.9 41.8-19.9 64.9V620c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8v-22.7a48.3 48.3 0 0130.9-44.8c59-22.7 97.1-74.7 97.1-132.5.1-39.3-17.1-76-48.3-103.3zM472 732a40 40 0 1080 0 40 40 0 10-80 0z"
                             />
                           </svg>
                         </span>
-                      </span>
-                    </div>
-                    <div
-                      class="sub-item-title"
-                    >
-                      Split setting
-                       
-                      <span
-                        aria-label="question-circle"
-                        class="anticon anticon-question-circle"
-                        role="img"
-                        tabindex="-1"
-                      >
-                        <svg
-                          aria-hidden="true"
-                          data-icon="question-circle"
-                          fill="currentColor"
-                          focusable="false"
-                          height="1em"
-                          viewBox="64 64 896 896"
-                          width="1em"
-                        >
-                          <path
-                            d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"
-                          />
-                          <path
-                            d="M623.6 316.7C593.6 290.4 554 276 512 276s-81.6 14.5-111.6 40.7C369.2 344 352 380.7 352 420v7.6c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V420c0-44.1 43.1-80 96-80s96 35.9 96 80c0 31.1-22 59.6-56.1 72.7-21.2 8.1-39.2 22.3-52.1 40.9-13.1 19-19.9 41.8-19.9 64.9V620c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8v-22.7a48.3 48.3 0 0130.9-44.8c59-22.7 97.1-74.7 97.1-132.5.1-39.3-17.1-76-48.3-103.3zM472 732a40 40 0 1080 0 40 40 0 10-80 0z"
-                          />
-                        </svg>
-                      </span>
-                    </div>
-                    <div
-                      class="sub-items"
-                    >
-                      <div
-                        class="title"
-                      >
-                        <label
-                          for="split"
-                        >
-                          Split size
-                        </label>
                       </div>
                       <div
-                        class="control"
+                        class="sub-items"
                       >
                         <div
-                          class="input"
+                          class="title"
                         >
-                          UnitInput: 
-                          split
-                          <p>
-                            addonAfter: 
-                            mm
-                          </p>
-                          <p>
-                            precision: 
-                            2
-                          </p>
-                          <input
-                            disabled=""
-                            id="split"
-                            max="100"
-                            min="0.01"
-                            value="3.45"
-                          />
+                          <label
+                            for="split"
+                          >
+                            Split size
+                          </label>
+                        </div>
+                        <div
+                          class="control"
+                        >
+                          <div
+                            class="input"
+                          >
+                            UnitInput: 
+                            split
+                            <p>
+                              addonAfter: 
+                              mm
+                            </p>
+                            <p>
+                              precision: 
+                              2
+                            </p>
+                            <input
+                              disabled=""
+                              id="split"
+                              max="100"
+                              min="0.01"
+                              value="3.45"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="title"
+                        >
+                          <label
+                            for="overlap"
+                          >
+                            Overlap size
+                          </label>
+                        </div>
+                        <div
+                          class="control"
+                        >
+                          <div
+                            class="input"
+                          >
+                            UnitInput: 
+                            overlap
+                            <p>
+                              addonAfter: 
+                              mm
+                            </p>
+                            <p>
+                              precision: 
+                              2
+                            </p>
+                            <input
+                              disabled=""
+                              id="overlap"
+                              max="3.45"
+                              min="0"
+                              value=""
+                            />
+                          </div>
                         </div>
                       </div>
                       <div
-                        class="title"
+                        class="row"
                       >
                         <label
-                          for="overlap"
+                          class="ant-checkbox-wrapper ant-checkbox-wrapper-disabled css-dev-only-do-not-override-hash"
                         >
-                          Overlap size
+                          <span
+                            class="ant-checkbox ant-wave-target css-dev-only-do-not-override-hash ant-checkbox-disabled"
+                          >
+                            <input
+                              class="ant-checkbox-input"
+                              disabled=""
+                              id="mirror"
+                              type="checkbox"
+                            />
+                            <span
+                              class="ant-checkbox-inner"
+                            />
+                          </span>
+                          <span>
+                            Mirror
+                          </span>
+                        </label>
+                        <label
+                          class="ant-checkbox-wrapper ant-checkbox-wrapper-disabled css-dev-only-do-not-override-hash"
+                        >
+                          <span
+                            class="ant-checkbox ant-wave-target css-dev-only-do-not-override-hash ant-checkbox-disabled"
+                          >
+                            <input
+                              class="ant-checkbox-input"
+                              disabled=""
+                              id="extend"
+                              type="checkbox"
+                            />
+                            <span
+                              class="ant-checkbox-inner"
+                            />
+                          </span>
+                          <span>
+                            Extend Workarea
+                          </span>
                         </label>
                       </div>
-                      <div
-                        class="control"
-                      >
-                        <div
-                          class="input"
-                        >
-                          UnitInput: 
-                          overlap
-                          <p>
-                            addonAfter: 
-                            mm
-                          </p>
-                          <p>
-                            precision: 
-                            2
-                          </p>
-                          <input
-                            disabled=""
-                            id="overlap"
-                            max="3.45"
-                            min="0"
-                            value=""
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      class="row"
-                    >
-                      <label
-                        class="ant-checkbox-wrapper ant-checkbox-wrapper-disabled css-dev-only-do-not-override-hash"
-                      >
-                        <span
-                          class="ant-checkbox ant-wave-target css-dev-only-do-not-override-hash ant-checkbox-disabled"
-                        >
-                          <input
-                            class="ant-checkbox-input"
-                            disabled=""
-                            id="mirror"
-                            type="checkbox"
-                          />
-                          <span
-                            class="ant-checkbox-inner"
-                          />
-                        </span>
-                        <span>
-                          Mirror
-                        </span>
-                      </label>
-                      <label
-                        class="ant-checkbox-wrapper ant-checkbox-wrapper-disabled css-dev-only-do-not-override-hash"
-                      >
-                        <span
-                          class="ant-checkbox ant-wave-target css-dev-only-do-not-override-hash ant-checkbox-disabled"
-                        >
-                          <input
-                            class="ant-checkbox-input"
-                            disabled=""
-                            id="extend"
-                            type="checkbox"
-                          />
-                          <span
-                            class="ant-checkbox-inner"
-                          />
-                        </span>
-                        <span>
-                          Extend Workarea
-                        </span>
-                      </label>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div
-                class="ant-modal-footer"
-              >
-                <button
-                  class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined"
-                  type="button"
+                <div
+                  class="ant-modal-footer"
                 >
-                  <span>
-                    Cancel
-                  </span>
-                </button>
-                <button
-                  class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid"
-                  type="button"
-                >
-                  <span>
-                    Save
-                  </span>
-                </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined"
+                    type="button"
+                  >
+                    <span>
+                      Cancel
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid"
+                    type="button"
+                  >
+                    <span>
+                      Save
+                    </span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -518,357 +527,366 @@ exports[`test RotarySettings should render correctly 1`] = `
             tabindex="0"
           >
             <div
-              class="ant-modal-content"
+              class="react-draggable"
+              style="transform: translate(0px,-300px);"
             >
-              <button
-                aria-label="Close"
-                class="ant-modal-close"
-                type="button"
+              <div
+                class="ant-modal-content"
               >
-                <span
-                  class="ant-modal-close-x"
+                <button
+                  aria-label="Close"
+                  class="ant-modal-close"
+                  type="button"
                 >
                   <span
-                    aria-label="close"
-                    class="anticon anticon-close ant-modal-close-icon"
-                    role="img"
+                    class="ant-modal-close-x"
                   >
-                    <svg
-                      aria-hidden="true"
-                      data-icon="close"
-                      fill="currentColor"
-                      fill-rule="evenodd"
-                      focusable="false"
-                      height="1em"
-                      viewBox="64 64 896 896"
-                      width="1em"
+                    <span
+                      aria-label="close"
+                      class="anticon anticon-close ant-modal-close-icon"
+                      role="img"
                     >
-                      <path
-                        d="M799.86 166.31c.02 0 .04.02.08.06l57.69 57.7c.04.03.05.05.06.08a.12.12 0 010 .06c0 .03-.02.05-.06.09L569.93 512l287.7 287.7c.04.04.05.06.06.09a.12.12 0 010 .07c0 .02-.02.04-.06.08l-57.7 57.69c-.03.04-.05.05-.07.06a.12.12 0 01-.07 0c-.03 0-.05-.02-.09-.06L512 569.93l-287.7 287.7c-.04.04-.06.05-.09.06a.12.12 0 01-.07 0c-.02 0-.04-.02-.08-.06l-57.69-57.7c-.04-.03-.05-.05-.06-.07a.12.12 0 010-.07c0-.03.02-.05.06-.09L454.07 512l-287.7-287.7c-.04-.04-.05-.06-.06-.09a.12.12 0 010-.07c0-.02.02-.04.06-.08l57.7-57.69c.03-.04.05-.05.07-.06a.12.12 0 01.07 0c.03 0 .05.02.09.06L512 454.07l287.7-287.7c.04-.04.06-.05.09-.06a.12.12 0 01.07 0z"
-                      />
-                    </svg>
+                      <svg
+                        aria-hidden="true"
+                        data-icon="close"
+                        fill="currentColor"
+                        fill-rule="evenodd"
+                        focusable="false"
+                        height="1em"
+                        viewBox="64 64 896 896"
+                        width="1em"
+                      >
+                        <path
+                          d="M799.86 166.31c.02 0 .04.02.08.06l57.69 57.7c.04.03.05.05.06.08a.12.12 0 010 .06c0 .03-.02.05-.06.09L569.93 512l287.7 287.7c.04.04.05.06.06.09a.12.12 0 010 .07c0 .02-.02.04-.06.08l-57.7 57.69c-.03.04-.05.05-.07.06a.12.12 0 01-.07 0c-.03 0-.05-.02-.09-.06L512 569.93l-287.7 287.7c-.04.04-.06.05-.09.06a.12.12 0 01-.07 0c-.02 0-.04-.02-.08-.06l-57.69-57.7c-.04-.03-.05-.05-.06-.07a.12.12 0 010-.07c0-.03.02-.05.06-.09L454.07 512l-287.7-287.7c-.04-.04-.05-.06-.06-.09a.12.12 0 010-.07c0-.02.02-.04.06-.08l57.7-57.69c.03-.04.05-.05.07-.06a.12.12 0 01.07 0c.03 0 .05.02.09.06L512 454.07l287.7-287.7c.04-.04.06-.05.09-.06a.12.12 0 01.07 0z"
+                        />
+                      </svg>
+                    </span>
                   </span>
-                </span>
-              </button>
-              <div
-                class="ant-modal-header"
-              >
+                </button>
                 <div
-                  class="ant-modal-title"
-                  id="test-id"
-                >
-                  Rotary Setup
-                </div>
-              </div>
-              <div
-                class="ant-modal-body"
-              >
-                <div
-                  class="container"
+                  class="ant-modal-header"
                 >
                   <div
-                    class="table"
+                    class="ant-modal-title"
+                    id="test-id"
                   >
                     <div
-                      class="title"
+                      style="cursor: move; width: 100%;"
                     >
-                      <label
-                        for="rotary_mode"
-                      >
-                        Rotary
-                      </label>
-                    </div>
-                    <div>
-                      <button
-                        aria-checked="false"
-                        class="ant-switch switch css-dev-only-do-not-override-hash"
-                        id="rotary_mode"
-                        role="switch"
-                        type="button"
-                      >
-                        <div
-                          class="ant-switch-handle"
-                        />
-                        <span
-                          class="ant-switch-inner"
-                        >
-                          <span
-                            class="ant-switch-inner-checked"
-                          />
-                          <span
-                            class="ant-switch-inner-unchecked"
-                          />
-                        </span>
-                      </button>
-                    </div>
-                    <div
-                      class="title"
-                    >
-                      <label
-                        for="rotary_type"
-                      >
-                        Type
-                      </label>
-                    </div>
-                    <div>
-                      <div
-                        aria-label="segmented control"
-                        class="ant-segmented ant-segmented-disabled css-dev-only-do-not-override-hash"
-                        id="rotary_type"
-                        role="radiogroup"
-                      >
-                        <div
-                          class="ant-segmented-group"
-                        >
-                          <label
-                            class="ant-segmented-item ant-segmented-item-selected ant-segmented-item-disabled"
-                          >
-                            <input
-                              checked=""
-                              class="ant-segmented-item-input"
-                              disabled=""
-                              name="test-id"
-                              type="radio"
-                            />
-                            <div
-                              aria-selected="true"
-                              class="ant-segmented-item-label"
-                            >
-                              <div
-                                class="seg"
-                              >
-                                <svgr-url />
-                                <div>
-                                  Roller
-                                </div>
-                              </div>
-                            </div>
-                          </label>
-                          <label
-                            class="ant-segmented-item ant-segmented-item-disabled"
-                          >
-                            <input
-                              class="ant-segmented-item-input"
-                              disabled=""
-                              name="test-id"
-                              type="radio"
-                            />
-                            <div
-                              aria-selected="false"
-                              class="ant-segmented-item-label"
-                            >
-                              <div
-                                class="seg"
-                              >
-                                <svgr-url />
-                                <div>
-                                  Chuck
-                                </div>
-                              </div>
-                            </div>
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      class="title"
-                    >
-                      <label
-                        for="object_diameter"
-                      >
-                        Object Diameter
-                      </label>
-                    </div>
-                    <div>
-                      <div
-                        class="input"
-                      >
-                        UnitInput: 
-                        object_diameter
-                        <p>
-                          addonAfter: 
-                          mm
-                        </p>
-                        <p>
-                          precision: 
-                          2
-                        </p>
-                        <input
-                          disabled=""
-                          id="object_diameter"
-                          min="0"
-                          value=""
-                        />
-                      </div>
-                    </div>
-                    <div
-                      class="title"
-                    >
-                      <label
-                        for="circumference"
-                      >
-                        Circumference
-                      </label>
-                    </div>
-                    <div>
-                      <div
-                        class="input"
-                      >
-                        UnitInput: 
-                        circumference
-                        <p>
-                          addonAfter: 
-                          mm
-                        </p>
-                        <p>
-                          precision: 
-                          4
-                        </p>
-                        <input
-                          disabled=""
-                          id="circumference"
-                          min="0"
-                          value="NaN"
-                        />
-                      </div>
-                    </div>
-                    <div
-                      class="title"
-                    >
-                      <label
-                        for="scale"
-                      >
-                        Rotation Scale
-                      </label>
-                    </div>
-                    <div
-                      class="ant-select ant-select-outlined select css-dev-only-do-not-override-hash ant-select-single ant-select-show-arrow ant-select-disabled"
-                    >
-                      <div
-                        class="ant-select-selector"
-                      >
-                        <span
-                          class="ant-select-selection-wrap"
-                        >
-                          <span
-                            class="ant-select-selection-search"
-                          >
-                            <input
-                              aria-autocomplete="list"
-                              aria-controls="scale_list"
-                              aria-expanded="false"
-                              aria-haspopup="listbox"
-                              aria-owns="scale_list"
-                              autocomplete="off"
-                              class="ant-select-selection-search-input"
-                              disabled=""
-                              id="scale"
-                              readonly=""
-                              role="combobox"
-                              style="opacity: 0;"
-                              type="search"
-                              unselectable="on"
-                              value=""
-                            />
-                          </span>
-                          <span
-                            class="ant-select-selection-placeholder"
-                          />
-                        </span>
-                      </div>
-                      <span
-                        aria-hidden="true"
-                        class="ant-select-arrow"
-                        style="user-select: none;"
-                        unselectable="on"
-                      >
-                        <span
-                          aria-label="down"
-                          class="anticon anticon-down ant-select-suffix"
-                          role="img"
-                        >
-                          <svg
-                            aria-hidden="true"
-                            data-icon="down"
-                            fill="currentColor"
-                            focusable="false"
-                            height="1em"
-                            viewBox="64 64 896 896"
-                            width="1em"
-                          >
-                            <path
-                              d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"
-                            />
-                          </svg>
-                        </span>
-                      </span>
-                    </div>
-                    <div
-                      class="row"
-                    >
-                      <label
-                        class="ant-checkbox-wrapper ant-checkbox-wrapper-disabled css-dev-only-do-not-override-hash"
-                      >
-                        <span
-                          class="ant-checkbox ant-wave-target css-dev-only-do-not-override-hash ant-checkbox-disabled"
-                        >
-                          <input
-                            class="ant-checkbox-input"
-                            disabled=""
-                            id="mirror"
-                            type="checkbox"
-                          />
-                          <span
-                            class="ant-checkbox-inner"
-                          />
-                        </span>
-                        <span>
-                          Mirror
-                        </span>
-                      </label>
-                      <label
-                        class="ant-checkbox-wrapper ant-checkbox-wrapper-disabled css-dev-only-do-not-override-hash"
-                      >
-                        <span
-                          class="ant-checkbox ant-wave-target css-dev-only-do-not-override-hash ant-checkbox-disabled"
-                        >
-                          <input
-                            class="ant-checkbox-input"
-                            disabled=""
-                            id="extend"
-                            type="checkbox"
-                          />
-                          <span
-                            class="ant-checkbox-inner"
-                          />
-                        </span>
-                        <span>
-                          Extend Workarea
-                        </span>
-                      </label>
+                      Rotary Setup
                     </div>
                   </div>
                 </div>
-              </div>
-              <div
-                class="ant-modal-footer"
-              >
-                <button
-                  class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined"
-                  type="button"
+                <div
+                  class="ant-modal-body"
                 >
-                  <span>
-                    Cancel
-                  </span>
-                </button>
-                <button
-                  class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid"
-                  type="button"
+                  <div
+                    class="container"
+                  >
+                    <div
+                      class="table"
+                    >
+                      <div
+                        class="title"
+                      >
+                        <label
+                          for="rotary_mode"
+                        >
+                          Rotary
+                        </label>
+                      </div>
+                      <div>
+                        <button
+                          aria-checked="false"
+                          class="ant-switch switch css-dev-only-do-not-override-hash"
+                          id="rotary_mode"
+                          role="switch"
+                          type="button"
+                        >
+                          <div
+                            class="ant-switch-handle"
+                          />
+                          <span
+                            class="ant-switch-inner"
+                          >
+                            <span
+                              class="ant-switch-inner-checked"
+                            />
+                            <span
+                              class="ant-switch-inner-unchecked"
+                            />
+                          </span>
+                        </button>
+                      </div>
+                      <div
+                        class="title"
+                      >
+                        <label
+                          for="rotary_type"
+                        >
+                          Type
+                        </label>
+                      </div>
+                      <div>
+                        <div
+                          aria-label="segmented control"
+                          class="ant-segmented ant-segmented-disabled css-dev-only-do-not-override-hash"
+                          id="rotary_type"
+                          role="radiogroup"
+                        >
+                          <div
+                            class="ant-segmented-group"
+                          >
+                            <label
+                              class="ant-segmented-item ant-segmented-item-selected ant-segmented-item-disabled"
+                            >
+                              <input
+                                checked=""
+                                class="ant-segmented-item-input"
+                                disabled=""
+                                name="test-id"
+                                type="radio"
+                              />
+                              <div
+                                aria-selected="true"
+                                class="ant-segmented-item-label"
+                              >
+                                <div
+                                  class="seg"
+                                >
+                                  <svgr-url />
+                                  <div>
+                                    Roller
+                                  </div>
+                                </div>
+                              </div>
+                            </label>
+                            <label
+                              class="ant-segmented-item ant-segmented-item-disabled"
+                            >
+                              <input
+                                class="ant-segmented-item-input"
+                                disabled=""
+                                name="test-id"
+                                type="radio"
+                              />
+                              <div
+                                aria-selected="false"
+                                class="ant-segmented-item-label"
+                              >
+                                <div
+                                  class="seg"
+                                >
+                                  <svgr-url />
+                                  <div>
+                                    Chuck
+                                  </div>
+                                </div>
+                              </div>
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        class="title"
+                      >
+                        <label
+                          for="object_diameter"
+                        >
+                          Object Diameter
+                        </label>
+                      </div>
+                      <div>
+                        <div
+                          class="input"
+                        >
+                          UnitInput: 
+                          object_diameter
+                          <p>
+                            addonAfter: 
+                            mm
+                          </p>
+                          <p>
+                            precision: 
+                            2
+                          </p>
+                          <input
+                            disabled=""
+                            id="object_diameter"
+                            min="0"
+                            value=""
+                          />
+                        </div>
+                      </div>
+                      <div
+                        class="title"
+                      >
+                        <label
+                          for="circumference"
+                        >
+                          Circumference
+                        </label>
+                      </div>
+                      <div>
+                        <div
+                          class="input"
+                        >
+                          UnitInput: 
+                          circumference
+                          <p>
+                            addonAfter: 
+                            mm
+                          </p>
+                          <p>
+                            precision: 
+                            4
+                          </p>
+                          <input
+                            disabled=""
+                            id="circumference"
+                            min="0"
+                            value="NaN"
+                          />
+                        </div>
+                      </div>
+                      <div
+                        class="title"
+                      >
+                        <label
+                          for="scale"
+                        >
+                          Rotation Scale
+                        </label>
+                      </div>
+                      <div
+                        class="ant-select ant-select-outlined select css-dev-only-do-not-override-hash ant-select-single ant-select-show-arrow ant-select-disabled"
+                      >
+                        <div
+                          class="ant-select-selector"
+                        >
+                          <span
+                            class="ant-select-selection-wrap"
+                          >
+                            <span
+                              class="ant-select-selection-search"
+                            >
+                              <input
+                                aria-autocomplete="list"
+                                aria-controls="scale_list"
+                                aria-expanded="false"
+                                aria-haspopup="listbox"
+                                aria-owns="scale_list"
+                                autocomplete="off"
+                                class="ant-select-selection-search-input"
+                                disabled=""
+                                id="scale"
+                                readonly=""
+                                role="combobox"
+                                style="opacity: 0;"
+                                type="search"
+                                unselectable="on"
+                                value=""
+                              />
+                            </span>
+                            <span
+                              class="ant-select-selection-placeholder"
+                            />
+                          </span>
+                        </div>
+                        <span
+                          aria-hidden="true"
+                          class="ant-select-arrow"
+                          style="user-select: none;"
+                          unselectable="on"
+                        >
+                          <span
+                            aria-label="down"
+                            class="anticon anticon-down ant-select-suffix"
+                            role="img"
+                          >
+                            <svg
+                              aria-hidden="true"
+                              data-icon="down"
+                              fill="currentColor"
+                              focusable="false"
+                              height="1em"
+                              viewBox="64 64 896 896"
+                              width="1em"
+                            >
+                              <path
+                                d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"
+                              />
+                            </svg>
+                          </span>
+                        </span>
+                      </div>
+                      <div
+                        class="row"
+                      >
+                        <label
+                          class="ant-checkbox-wrapper ant-checkbox-wrapper-disabled css-dev-only-do-not-override-hash"
+                        >
+                          <span
+                            class="ant-checkbox ant-wave-target css-dev-only-do-not-override-hash ant-checkbox-disabled"
+                          >
+                            <input
+                              class="ant-checkbox-input"
+                              disabled=""
+                              id="mirror"
+                              type="checkbox"
+                            />
+                            <span
+                              class="ant-checkbox-inner"
+                            />
+                          </span>
+                          <span>
+                            Mirror
+                          </span>
+                        </label>
+                        <label
+                          class="ant-checkbox-wrapper ant-checkbox-wrapper-disabled css-dev-only-do-not-override-hash"
+                        >
+                          <span
+                            class="ant-checkbox ant-wave-target css-dev-only-do-not-override-hash ant-checkbox-disabled"
+                          >
+                            <input
+                              class="ant-checkbox-input"
+                              disabled=""
+                              id="extend"
+                              type="checkbox"
+                            />
+                            <span
+                              class="ant-checkbox-inner"
+                            />
+                          </span>
+                          <span>
+                            Extend Workarea
+                          </span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="ant-modal-footer"
                 >
-                  <span>
-                    Save
-                  </span>
-                </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined"
+                    type="button"
+                  >
+                    <span>
+                      Cancel
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid"
+                    type="button"
+                  >
+                    <span>
+                      Save
+                    </span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
