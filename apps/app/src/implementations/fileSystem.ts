@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 
 import { app } from '@electron/remote';
+import electron from 'electron';
 
 import type { IFileSystem } from '@core/interfaces/IFileSystem';
 
@@ -21,6 +22,9 @@ export default {
   },
   getPath(path: Path): string {
     return app.getPath(path);
+  },
+  getPathForFile(file: File): string | undefined {
+    return electron.webUtils.getPathForFile(file);
   },
   isDirectory(input: string): boolean {
     return fs.lstatSync(input).isDirectory();

@@ -3,7 +3,7 @@
 exports[`test ElementPanel Header in mobile should render MainType correctly 1`] = `
 <div>
   <div
-    class="adm-floating-panel panel panel"
+    class="adm-floating-panel adm-floating-panel-bottom panel panel"
     data-animating="false"
     style="height: 627px; transform: translateY(calc(100% + (-627px)));"
   >
@@ -88,6 +88,7 @@ exports[`test ElementPanel Header in mobile should render MainType correctly 1`]
             >
               <button
                 class="ant-input-clear-icon ant-input-clear-icon-hidden"
+                tabindex="-1"
                 type="button"
               >
                 <span
@@ -241,7 +242,7 @@ exports[`test ElementPanel Header in mobile should render MainType correctly 1`]
 exports[`test ElementPanel Header in mobile should render MainType correctly 2`] = `
 <div>
   <div
-    class="adm-floating-panel panel panel"
+    class="adm-floating-panel adm-floating-panel-bottom panel panel"
     data-animating="false"
     style="height: 627px; transform: translateY(calc(100% + (-627px)));"
   >
@@ -326,6 +327,7 @@ exports[`test ElementPanel Header in mobile should render MainType correctly 2`]
             >
               <button
                 class="ant-input-clear-icon ant-input-clear-icon-hidden"
+                tabindex="-1"
                 type="button"
               >
                 <span
@@ -479,7 +481,7 @@ exports[`test ElementPanel Header in mobile should render MainType correctly 2`]
 exports[`test ElementPanel Header in mobile should render Search correctly 1`] = `
 <div>
   <div
-    class="adm-floating-panel panel panel"
+    class="adm-floating-panel adm-floating-panel-bottom panel panel"
     data-animating="false"
     style="height: 627px; transform: translateY(calc(100% + (-627px)));"
   >
@@ -564,6 +566,7 @@ exports[`test ElementPanel Header in mobile should render Search correctly 1`] =
             >
               <button
                 class="ant-input-clear-icon"
+                tabindex="-1"
                 type="button"
               >
                 <span
@@ -717,7 +720,7 @@ exports[`test ElementPanel Header in mobile should render Search correctly 1`] =
 exports[`test ElementPanel Header in mobile should render SubType correctly 1`] = `
 <div>
   <div
-    class="adm-floating-panel panel panel"
+    class="adm-floating-panel adm-floating-panel-bottom panel panel"
     data-animating="false"
     style="height: 627px; transform: translateY(calc(100% + (-627px)));"
   >
@@ -805,6 +808,7 @@ exports[`test ElementPanel Header in mobile should render SubType correctly 1`] 
             >
               <button
                 class="ant-input-clear-icon ant-input-clear-icon-hidden"
+                tabindex="-1"
                 type="button"
               >
                 <span
@@ -1082,6 +1086,7 @@ exports[`test ElementPanel Header should render MainType correctly 1`] = `
                     >
                       <button
                         class="ant-input-clear-icon ant-input-clear-icon-hidden"
+                        tabindex="-1"
                         type="button"
                       >
                         <span
@@ -1268,6 +1273,7 @@ exports[`test ElementPanel Header should render Search correctly 1`] = `
                     >
                       <button
                         class="ant-input-clear-icon"
+                        tabindex="-1"
                         type="button"
                       >
                         <span
@@ -1457,6 +1463,7 @@ exports[`test ElementPanel Header should render SubType correctly 1`] = `
                     >
                       <button
                         class="ant-input-clear-icon ant-input-clear-icon-hidden"
+                        tabindex="-1"
                         type="button"
                       >
                         <span

@@ -86,6 +86,10 @@ jobs:
 
       - name: Sign and Publish
         run: |
+          # Copy dynamic linked libraries to the app, workaround for https://github.com/electron-userland/electron-builder/issues/9025
+          rm -rf ./apps/app/public/js/lib
+          cp -R ./packages/core/public/js/lib ./apps/app/public/js
+
           cd ./apps/app
           mkdir ./backend
 

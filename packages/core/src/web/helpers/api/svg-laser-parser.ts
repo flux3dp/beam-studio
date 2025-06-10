@@ -20,6 +20,7 @@ import i18n from '@core/helpers/i18n';
 import isDev from '@core/helpers/is-dev';
 import getJobOrigin, { getRefModule } from '@core/helpers/job-origin';
 import Websocket from '@core/helpers/websocket';
+import fileSystem from '@core/implementations/fileSystem';
 import fs from '@core/implementations/fileSystem';
 import storage from '@core/implementations/storage';
 import type { TaskMetaData } from '@core/interfaces/ITask';
@@ -630,7 +631,8 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
         let hasPath = false;
 
         if (matchImages) {
-          const basename = getBasename(file.path);
+          const path = fileSystem.getPathForFile(file);
+          const basename = getBasename(path);
 
           for (let i = 0; i < matchImages.length; i += 1) {
             const hrefMatch = matchImages[i].match(/xlink:href="[^"]+"/);
@@ -661,7 +663,7 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
             }
 
             // Test Relative Path
-            if (file.path) {
+            if (path) {
               newPath = fs.join(basename, newPath);
 
               if (fs.exists(newPath)) {

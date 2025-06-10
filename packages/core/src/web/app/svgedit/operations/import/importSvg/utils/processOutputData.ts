@@ -1,6 +1,7 @@
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { getDefaultLaserModule } from '@core/helpers/layer-module/layer-module-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import fileSystem from '@core/implementations/fileSystem';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type { ImportType } from '@core/interfaces/ImportSvg';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -63,8 +64,8 @@ const readSVG = (
 
     reader.onloadend = async (e) => {
       const rawSvgString = e.target?.result as string;
-      // path is not a standard property for blob, but if we use File, it will have a path
-      const modifiedSvgString = preprocessSvgString(rawSvgString, type, (input as any).path);
+      const filePath = fileSystem.getPathForFile(input as File);
+      const modifiedSvgString = preprocessSvgString(rawSvgString, type, filePath);
 
       const newElement = await importSvgString(modifiedSvgString, {
         layerName: parsedLayerName,

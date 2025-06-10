@@ -1,5 +1,5 @@
 import path from 'path';
-import url from 'url';
+import { pathToFileURL } from 'url';
 
 import { enable as enableRemote } from '@electron/remote/main';
 import type { BaseWindow, IpcMainEvent } from 'electron';
@@ -188,13 +188,8 @@ class TabManager {
       return { action: 'allow' };
     });
     initStore(webContents);
-    webContents.loadURL(
-      url.format({
-        pathname: path.join(__dirname, '../../index.html'),
-        protocol: 'file:',
-        slashes: true,
-      }),
-    );
+
+    webContents.loadURL(pathToFileURL(path.join(__dirname, '../../index.html')).toString());
 
     if (!process.argv.includes('--test') && (process.defaultApp || this.isDebug)) {
       webContents.openDevTools();

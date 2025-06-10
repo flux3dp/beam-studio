@@ -29,12 +29,17 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "pnpm"
 
+      - name: Copy pnpm-lock.yaml
+        run: cp ../../pnpm-lock.yaml .
+        working-directory: apps/web
+
       # seperate into 2 step according to https://github.com/cypress-io/github-action/blob/master/README.md#pnpm-workspaces
       - name: Install dependencies
         uses: cypress-io/github-action@v6
         with:
           working-directory: apps/web
           runTests: false
+          install-command: pnpm install --filter=web --filter=core
 
       - name: Setup web and run e2e tests
         uses: cypress-io/github-action@v6

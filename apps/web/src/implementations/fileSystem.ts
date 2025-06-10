@@ -11,6 +11,9 @@ export default {
   getPath(path: string): string {
     return '';
   },
+  getPathForFile(file: File): string | undefined {
+    return undefined;
+  },
   isDirectory(input: string): boolean {
     return false;
   },

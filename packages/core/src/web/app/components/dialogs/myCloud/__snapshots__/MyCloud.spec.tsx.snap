@@ -144,7 +144,7 @@ exports[`test MyCloud should rendered correctly 1`] = `
 exports[`test MyCloud should rendered correctly in mobile 1`] = `
 <div>
   <div
-    class="adm-floating-panel panel panel"
+    class="adm-floating-panel adm-floating-panel-bottom panel panel"
     data-animating="true"
     style="height: 0px; transform: translateY(calc(100% + (0px)));"
   >

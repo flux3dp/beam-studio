@@ -4,6 +4,7 @@ export interface IFileSystem {
   delete(path: string): void;
   exists(path: string): boolean;
   getPath(path: string): string;
+  getPathForFile(file: File): string | undefined;
   isDirectory(input: string): boolean;
   isFile(input: string): boolean;
   join(...paths: string[]): string;
