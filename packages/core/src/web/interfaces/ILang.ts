@@ -1042,6 +1042,9 @@ export interface ILang {
     };
     preparing_to_take_picture: string;
     promark_help_link: string;
+    put_charuco_promark_2: string;
+    put_charuco_promark_desc_1: string;
+    put_charuco_promark_desc_2: string;
     put_chessboard: string;
     put_chessboard_1: string;
     put_chessboard_2: string;
@@ -1093,8 +1096,10 @@ export interface ILang {
     use_old_camera_parameter: string;
     with_af: string;
     with_prism_lift: string;
+    with_promark_safe_plus: string;
     without_af: string;
     without_prism_lift: string;
+    without_promark_safe_plus: string;
     x_ratio: string;
     y_ratio: string;
     zendesk_link: string;

@@ -1,3 +1,4 @@
+/* eslint-disable reactRefresh/only-export-components */
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import alertCaller from '@core/app/actions/alert-caller';
@@ -39,14 +40,14 @@ const calibrated = {
 };
 
 // TODO: add unit test
-const AdorCalibration = ({ onClose, type = CalibrationType.CAMERA }: Props): React.JSX.Element => {
+const AdorCalibration = ({ onClose, type = CalibrationType.CAMERA }: Props): React.ReactNode => {
   const isDevMode = isDev();
   const lang = useI18n().calibration;
   const param = useRef<FisheyeCameraParameters>({} as any);
   const [step, setStep] = useState<Step>(Step.WAITING);
   const currentDeviceId = useMemo(() => deviceMaster.currentDevice.info.uuid, []);
   const checkFirstStep = async () => {
-    let fisheyeParameters: FisheyeCameraParameters = null;
+    let fisheyeParameters: FisheyeCameraParameters | null = null;
 
     try {
       const currentParameter = await deviceMaster.fetchFisheyeParams();
@@ -141,10 +142,10 @@ const AdorCalibration = ({ onClose, type = CalibrationType.CAMERA }: Props): Rea
                 ]
           }
           buttons={[{ label: lang.next, onClick: () => setStep(Step.FOCUS_AND_CUT), type: 'primary' }]}
-          onClose={() => onClose(false)}
-          text={
+          contentBeforeSteps={
             type === CalibrationType.IR_LASER ? lang.please_place_dark_colored_paper : lang.please_place_paper_center
           }
+          onClose={() => onClose(false)}
           title={title}
         />
       );
@@ -190,10 +191,10 @@ const AdorCalibration = ({ onClose, type = CalibrationType.CAMERA }: Props): Rea
               type: 'primary',
             },
           ]}
-          onClose={() => onClose(false)}
-          text={
+          contentBeforeSteps={
             type === CalibrationType.PRINTER_HEAD ? lang.ador_autofocus_focusing_block : lang.ador_autofocus_material
           }
+          onClose={() => onClose(false)}
           title={title}
         />
       );
