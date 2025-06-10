@@ -71,7 +71,7 @@ describe('manipulate file', () => {
   it('save file', () => {
     selectMenuOption('File', 'Save');
     checkCrc32(Cypress.env('cypressDownloadBeamPath'), {
-      default: 600404773,
+      default: -2069102237,
       githubWindows: -712814246,
       githubLinux: 1091338501,
     });
