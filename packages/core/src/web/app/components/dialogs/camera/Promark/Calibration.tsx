@@ -23,9 +23,10 @@ interface Props {
   onClose: (complete?: boolean) => void;
   onNext: () => void;
   updateParam: (param: FisheyeCameraParametersV3Cali) => void;
+  withSafe: boolean;
 }
 
-const Calibration = ({ charuco, chessboard, onClose, onNext, updateParam }: Props): React.JSX.Element => {
+const Calibration = ({ charuco, chessboard, onClose, onNext, updateParam, withSafe }: Props): React.JSX.Element => {
   const lang = useI18n().calibration;
   const webCamConnection = useRef<null | WebCamConnection>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -125,7 +126,7 @@ const Calibration = ({ charuco, chessboard, onClose, onNext, updateParam }: Prop
       <div className={styles.container}>
         <div className={styles.desc}>
           <div>1. {lang.put_chessboard_promark_1}</div>
-          <div>2. {lang.put_chessboard_promark_2}</div>
+          <div>2. {withSafe ? lang.put_charuco_promark_2 : lang.put_chessboard_promark_2}</div>
         </div>
         <div className={styles.imgContainer}>
           <video ref={videoRef} />

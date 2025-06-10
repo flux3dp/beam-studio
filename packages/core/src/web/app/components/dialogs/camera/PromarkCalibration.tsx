@@ -1,5 +1,7 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
+import { Segmented } from 'antd';
+
 import alertCaller from '@core/app/actions/alert-caller';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import progressCaller from '@core/app/actions/progress-caller';
@@ -47,6 +49,7 @@ const PromarkCalibration = ({ device: { model, serial }, onClose }: Props): Reac
   const workareaWidth = useMemo(() => getWorkarea(model).width, [model]);
   const calibratingParam = useRef<FisheyeCameraParametersV3Cali>({});
   const useOldData = useRef(false);
+  const [withSafe, setWithSafe] = useState(false);
   const [step, setStep] = useState<Steps>(Steps.CHECKPOINT_DATA);
   const updateParam = useCallback((param: FisheyeCameraParametersV3Cali) => {
     calibratingParam.current = { ...calibratingParam.current, ...param };
@@ -76,13 +79,13 @@ const PromarkCalibration = ({ device: { model, serial }, onClose }: Props): Reac
     const handleDownloadChessboard = () => {
       dialog.writeFileDialog(
         async () => {
-          const resp = await fetch('assets/promark-chessboard.pdf');
+          const resp = await fetch(withSafe ? 'assets/charuco-15-10.pdf' : 'assets/promark-chessboard.pdf');
           const blob = await resp.blob();
 
           return blob;
         },
-        tCali.download_chessboard_file,
-        'Chessboard',
+        withSafe ? tCali.download_calibration_pattern : tCali.download_chessboard_file,
+        withSafe ? 'Calibration Pattern' : 'Chessboard',
         [
           {
             extensions: ['pdf'],
@@ -94,10 +97,17 @@ const PromarkCalibration = ({ device: { model, serial }, onClose }: Props): Reac
 
     return (
       <Instruction
-        animationSrcs={[
-          { src: 'video/promark-calibration/1-chessboard.webm', type: 'video/webm' },
-          { src: 'video/promark-calibration/1-chessboard.mp4', type: 'video/mp4' },
-        ]}
+        animationSrcs={
+          withSafe
+            ? [
+                { src: 'video/promark-calibration/1-charuco.webm', type: 'video/webm' },
+                { src: 'video/promark-calibration/1-charuco.mp4', type: 'video/mp4' },
+              ]
+            : [
+                { src: 'video/promark-calibration/1-chessboard.webm', type: 'video/webm' },
+                { src: 'video/promark-calibration/1-chessboard.mp4', type: 'video/mp4' },
+              ]
+        }
         buttons={[
           {
             label: tCali.next,
@@ -105,12 +115,28 @@ const PromarkCalibration = ({ device: { model, serial }, onClose }: Props): Reac
             type: 'primary',
           },
         ]}
+        contentBeforeSteps={
+          <div className={styles.tab}>
+            <Segmented
+              block
+              onChange={(v) => setWithSafe(v === 1)}
+              options={[
+                { label: tCali.without_promark_safe_plus, value: 0 },
+                { label: tCali.with_promark_safe_plus, value: 1 },
+              ]}
+            />
+          </div>
+        }
         onClose={onClose}
-        steps={[tCali.put_chessboard_promark_desc_1, tCali.put_chessboard_promark_desc_2]}
+        steps={
+          withSafe
+            ? [tCali.put_charuco_promark_desc_1, tCali.put_charuco_promark_desc_2]
+            : [tCali.put_chessboard_promark_desc_1, tCali.put_chessboard_promark_desc_2]
+        }
         title={<Title link={tCali.promark_help_link} title={tCali.put_chessboard} />}
       >
         <div className={styles.link} onClick={handleDownloadChessboard}>
-          {tCali.download_chessboard_file}
+          {withSafe ? tCali.download_calibration_pattern : tCali.download_chessboard_file}
         </div>
       </Instruction>
     );
@@ -124,6 +150,7 @@ const PromarkCalibration = ({ device: { model, serial }, onClose }: Props): Reac
         onClose={onClose}
         onNext={() => setStep(Steps.PUT_PAPER)}
         updateParam={updateParam}
+        withSafe={withSafe}
       />
     );
   }
@@ -165,10 +192,17 @@ const PromarkCalibration = ({ device: { model, serial }, onClose }: Props): Reac
 
     return (
       <Instruction
-        animationSrcs={[
-          { src: 'video/promark-calibration/2-cut.webm', type: 'video/webm' },
-          { src: 'video/promark-calibration/2-cut.mp4', type: 'video/mp4' },
-        ]}
+        animationSrcs={
+          withSafe
+            ? [
+                { src: 'video/promark-calibration/2-cut-with-safe.webm', type: 'video/webm' },
+                { src: 'video/promark-calibration/2-cut-with-safe.mp4', type: 'video/mp4' },
+              ]
+            : [
+                { src: 'video/promark-calibration/2-cut.webm', type: 'video/webm' },
+                { src: 'video/promark-calibration/2-cut.mp4', type: 'video/mp4' },
+              ]
+        }
         buttons={[
           {
             label: tCali.back,

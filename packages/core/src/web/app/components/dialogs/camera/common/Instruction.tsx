@@ -11,13 +11,21 @@ interface Props {
   animationSrcs?: Array<{ src: string; type: string }>;
   buttons: Array<{ label: string; onClick: () => void; type?: 'default' | 'primary' }>;
   children?: React.ReactNode;
+  contentBeforeSteps?: React.ReactNode;
   onClose?: (done?: boolean) => void;
   steps?: Array<ReactNode | ReactNode[]>;
-  text?: string;
   title: React.ReactNode;
 }
 
-const Instruction = ({ animationSrcs, buttons, children, onClose, steps, text, title }: Props): React.JSX.Element => {
+const Instruction = ({
+  animationSrcs,
+  buttons,
+  children,
+  contentBeforeSteps,
+  onClose,
+  steps,
+  title,
+}: Props): React.JSX.Element => {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useDidUpdateEffect(() => {
@@ -40,7 +48,7 @@ const Instruction = ({ animationSrcs, buttons, children, onClose, steps, text, t
       title={title}
       width={400}
     >
-      {text}
+      {contentBeforeSteps}
       {steps && (
         <ol className={styles.steps}>
           {steps.map((step, i) => {

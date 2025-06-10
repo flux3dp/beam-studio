@@ -19,7 +19,7 @@ describe('test Instruction', () => {
       <Instruction
         animationSrcs={[{ src: 'video.webm', type: 'image/webm' }]}
         buttons={[{ label: 'label', onClick: mockOnClick }]}
-        text="text"
+        contentBeforeSteps="text"
         title="title"
       />,
     );
