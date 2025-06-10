@@ -14,10 +14,10 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.14.5",
+    "@babel/core": "^7.26.9",
     "@babel/preset-react": "^7.14.5",
     "@eslint/js": "^9.8.0",
-    "@nx/cypress": "^20.4.6",
+    "@nx/cypress": "20.0.10",
     "@nx/devkit": "20.0.10",
     "@nx/eslint": "20.0.10",
     "@nx/eslint-plugin": "20.0.10",
@@ -62,14 +62,14 @@
     "nx": "20.0.10",
     "prettier": "^3.4.2",
     "react-refresh": "^0.10.0",
-    "ts-jest": "^29.1.0",
+    "ts-jest": "29.2.6",
     "ts-node": "^10.9.1",
     "tslib": "^2.3.0",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.0.0",
     "webpack-cli": "^5.1.4"
   },
-  "packageManager": "pnpm@10.6.3",
+  "packageManager": "pnpm@10.11.1",
   "pnpm": {
     "onlyBuiltDependencies": [
       "@parcel/watcher",
