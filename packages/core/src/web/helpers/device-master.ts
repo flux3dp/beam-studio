@@ -996,7 +996,7 @@ class DeviceMaster {
       controlSocket.setProgressListener(onProgress);
     }
 
-    return controlSocket.fetchCameraCalibImage(fileName);
+    return controlSocket.fetchCameraCalibrateImage(fileName);
   }
 
   async fetchFisheyeParams(): Promise<FisheyeCameraParameters> {
