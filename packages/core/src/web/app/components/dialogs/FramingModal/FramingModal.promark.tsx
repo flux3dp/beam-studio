@@ -1,12 +1,13 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { InfoCircleOutlined, LoadingOutlined } from '@ant-design/icons';
-import { Button, Divider, Flex, Modal, Spin, Tooltip } from 'antd';
+import { Button, Divider, Flex, Spin, Tooltip } from 'antd';
 import classNames from 'classnames';
 
 import { handleExportClick } from '@core/app/actions/beambox/export/GoButton/handleExportClick';
 import { renderFramingIcon } from '@core/app/icons/framing/FramingIcons';
 import icons from '@core/app/icons/icons';
+import DraggableModal from '@core/app/widgets/DraggableModal';
 import type { TFramingType } from '@core/helpers/device/framing';
 import { FramingType } from '@core/helpers/device/framing';
 import FramingTaskManager, { framingOptions, getFramingOptions } from '@core/helpers/device/framing';
@@ -83,7 +84,7 @@ const PromarkFramingModal = ({ device, onClose, startOnOpen = false }: Props): R
   }, []);
 
   return (
-    <Modal
+    <DraggableModal
       centered
       footer={
         <div className={styles.footer}>
@@ -150,7 +151,7 @@ const PromarkFramingModal = ({ device, onClose, startOnOpen = false }: Props): R
           <div className={styles.content}>{tFraming.start_task_description}</div>
         </div>
       </div>
-    </Modal>
+    </DraggableModal>
   );
 };
 

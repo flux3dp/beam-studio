@@ -14,11 +14,11 @@ import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 import StepAskReadjust from './CameraCalibration/StepAskReadjust';
 import StepBeforeAnalyzePicture from './CameraCalibration/StepBeforeAnalyzePicture';
-import StepPutPaper from './CameraCalibration/StepCutPaper';
 import StepFinish from './CameraCalibration/StepFinish';
+import StepPutPaper from './CameraCalibration/StepPutPaper';
 import StepRefocus from './CameraCalibration/StepRefocus';
 
-const CameraCalibrationComponent = (): React.JSX.Element => {
+const CameraCalibrationComponent = (): null | React.JSX.Element => {
   const { currentStep } = useContext(CalibrationContext);
 
   switch (currentStep) {

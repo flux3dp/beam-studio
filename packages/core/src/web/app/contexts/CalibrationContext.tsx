@@ -34,12 +34,12 @@ export const CalibrationContext = createContext<CalibrationContextType>({
   borderless: false,
   calibratedMachines: [],
   cameraPosition: { x: 0, y: 0 },
-  currentOffset: null,
+  currentOffset: null as any,
   currentStep: STEP_PUT_PAPER,
-  device: null,
+  device: null as any,
   gotoNextStep: () => {},
   imgBlobUrl: '',
-  lastConfig: null,
+  lastConfig: null as any,
   onClose: () => {},
   originFanSpeed: 100,
   setCalibratedMachines: () => {},
@@ -59,7 +59,7 @@ interface CalibrationProviderProps {
   onClose: (completed: boolean) => void;
 }
 
-let calibratedMachines = [];
+let calibratedMachines: any[] = [];
 
 export function CalibrationProvider({
   borderless,

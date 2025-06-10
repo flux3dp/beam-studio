@@ -1,8 +1,9 @@
 import type { ReactNode } from 'react';
 import React, { useRef } from 'react';
 
-import { Button, Modal } from 'antd';
+import { Button } from 'antd';
 
+import DraggableModal from '@core/app/widgets/DraggableModal';
 import useDidUpdateEffect from '@core/helpers/hooks/useDidUpdateEffect';
 
 import styles from './Instruction.module.scss';
@@ -33,7 +34,7 @@ const Instruction = ({
   }, [animationSrcs]);
 
   return (
-    <Modal
+    <DraggableModal
       centered
       className={styles.container}
       closable={!!onClose}
@@ -74,7 +75,7 @@ const Instruction = ({
           ))}
         </video>
       )}
-    </Modal>
+    </DraggableModal>
   );
 };
 

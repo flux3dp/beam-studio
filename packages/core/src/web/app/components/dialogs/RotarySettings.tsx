@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { Checkbox, Modal, Segmented, Switch } from 'antd';
+import { Checkbox, Segmented, Switch } from 'antd';
 
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
@@ -11,6 +11,7 @@ import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import RotaryIcons from '@core/app/icons/rotary/RotaryIcons';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import Select from '@core/app/widgets/AntdSelect';
+import DraggableModal from '@core/app/widgets/DraggableModal';
 import UnitInput from '@core/app/widgets/UnitInput';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
@@ -90,7 +91,7 @@ const RotarySettings = ({ afterSave, initData, onClose }: Props): React.JSX.Elem
   const chuckOptionDisabled = rotaryDisabled || !addOnInfo.rotary?.chuck || rotaryType !== RotaryType.Chuck;
 
   return (
-    <Modal
+    <DraggableModal
       cancelText={tGlobal.cancel}
       centered
       okText={tGlobal.save}
@@ -276,7 +277,7 @@ const RotarySettings = ({ afterSave, initData, onClose }: Props): React.JSX.Elem
           )}
         </div>
       </div>
-    </Modal>
+    </DraggableModal>
   );
 };
 

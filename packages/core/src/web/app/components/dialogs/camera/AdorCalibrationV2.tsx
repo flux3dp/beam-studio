@@ -1,5 +1,7 @@
 import React, { useCallback, useRef, useState } from 'react';
 
+import { match } from 'ts-pattern';
+
 import alertCaller from '@core/app/actions/alert-caller';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import progressCaller from '@core/app/actions/progress-caller';
@@ -51,8 +53,8 @@ const AdorCalibrationV2 = ({ factoryMode = false, onClose }: Props): React.JSX.E
     calibratingParam.current = { ...calibratingParam.current, ...param };
   }, []);
 
-  if (step === Step.CHECKPOINT_DATA) {
-    return (
+  return match(step)
+    .with(Step.CHECKPOINT_DATA, () => (
       <CheckpointData
         askUser={factoryMode}
         onClose={onClose}
@@ -66,11 +68,8 @@ const AdorCalibrationV2 = ({ factoryMode = false, onClose }: Props): React.JSX.E
         }}
         updateParam={updateParam}
       />
-    );
-  }
-
-  if (step === Step.CHECK_PICTURE) {
-    return (
+    ))
+    .with(Step.CHECK_PICTURE, () => (
       <CheckPictures
         onClose={onClose}
         onNext={async () => {
@@ -81,11 +80,8 @@ const AdorCalibrationV2 = ({ factoryMode = false, onClose }: Props): React.JSX.E
         }}
         updateParam={updateParam}
       />
-    );
-  }
-
-  if (step === Step.CALIBRATE_CHESSBOARD) {
-    return (
+    ))
+    .with(Step.CALIBRATE_CHESSBOARD, () => (
       <CalibrateChessBoard
         onBack={() => setStep(Step.CHECKPOINT_DATA)}
         onClose={onClose}
@@ -97,64 +93,60 @@ const AdorCalibrationV2 = ({ factoryMode = false, onClose }: Props): React.JSX.E
         }}
         updateParam={updateParam}
       />
-    );
-  }
+    ))
+    .with(Step.PUT_PAPER, () => {
+      const handleNext = async (doCutting = true) => {
+        const deviceStatus = await checkDeviceStatus(deviceMaster.currentDevice.info);
 
-  if (step === Step.PUT_PAPER) {
-    const handleNext = async (doCutting = true) => {
-      const deviceStatus = await checkDeviceStatus(deviceMaster.currentDevice.info);
-
-      if (!deviceStatus) {
-        return;
-      }
-
-      progressCaller.openNonstopProgress({
-        id: PROGRESS_ID,
-        message: tCali.getting_plane_height,
-      });
-      try {
-        const height = await getMaterialHeight();
-        const dh = height - calibratingParam.current.refHeight!;
-
-        console.log('height', height);
-        calibratingParam.current.dh1 = dh;
-
-        progressCaller.update(PROGRESS_ID, { message: tCali.drawing_calibration_image });
-
-        if (doCutting) {
-          await deviceMaster.doAdorCalibrationV2();
+        if (!deviceStatus) {
+          return;
         }
 
-        progressCaller.update(PROGRESS_ID, { message: tCali.preparing_to_take_picture });
-        await prepareToTakePicture();
-        setStep(Step.SOLVE_PNP_INSTRUCTION_1);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        progressCaller.popById(PROGRESS_ID);
-      }
-    };
+        progressCaller.openNonstopProgress({
+          id: PROGRESS_ID,
+          message: tCali.getting_plane_height,
+        });
+        try {
+          const height = await getMaterialHeight();
+          const dh = height - calibratingParam.current.refHeight!;
 
-    return (
-      <Instruction
-        animationSrcs={[
-          { src: 'video/ador-calibration-2/paper.webm', type: 'video/webm' },
-          { src: 'video/ador-calibration-2/paper.mp4', type: 'video/mp4' },
-        ]}
-        buttons={[
-          { label: tCali.back, onClick: () => setStep(Step.CHECKPOINT_DATA) },
-          // { label: tCali.skip, onClick: () => handleNext(false) },
-          { label: tCali.start_engrave, onClick: () => handleNext(true), type: 'primary' },
-        ]}
-        onClose={() => onClose(false)}
-        steps={[tCali.put_paper_step1, tCali.put_paper_step2, tCali.put_paper_step3]}
-        title={tCali.put_paper}
-      />
-    );
-  }
+          console.log('height', height);
+          calibratingParam.current.dh1 = dh;
 
-  if (step === Step.SOLVE_PNP_INSTRUCTION_1) {
-    return (
+          progressCaller.update(PROGRESS_ID, { message: tCali.drawing_calibration_image });
+
+          if (doCutting) {
+            await deviceMaster.doAdorCalibrationV2();
+          }
+
+          progressCaller.update(PROGRESS_ID, { message: tCali.preparing_to_take_picture });
+          await prepareToTakePicture();
+          setStep(Step.SOLVE_PNP_INSTRUCTION_1);
+        } catch (err) {
+          console.error(err);
+        } finally {
+          progressCaller.popById(PROGRESS_ID);
+        }
+      };
+
+      return (
+        <Instruction
+          animationSrcs={[
+            { src: 'video/ador-calibration-2/paper.webm', type: 'video/webm' },
+            { src: 'video/ador-calibration-2/paper.mp4', type: 'video/mp4' },
+          ]}
+          buttons={[
+            { label: tCali.back, onClick: () => setStep(Step.CHECKPOINT_DATA) },
+            // { label: tCali.skip, onClick: () => handleNext(false) },
+            { label: tCali.start_engrave, onClick: () => handleNext(true), type: 'primary' },
+          ]}
+          onClose={() => onClose(false)}
+          steps={[tCali.put_paper_step1, tCali.put_paper_step2, tCali.put_paper_step3]}
+          title={tCali.put_paper}
+        />
+      );
+    })
+    .with(Step.SOLVE_PNP_INSTRUCTION_1, () => (
       <Instruction
         animationSrcs={[
           { src: 'video/ador-calibration-2/align.webm', type: 'video/webm' },
@@ -168,11 +160,8 @@ const AdorCalibrationV2 = ({ factoryMode = false, onClose }: Props): React.JSX.E
         steps={[tCali.solve_pnp_step1, tCali.solve_pnp_step2]}
         title={tCali.solve_pnp_title}
       />
-    );
-  }
-
-  if (step === Step.SOLVE_PNP_1) {
-    return (
+    ))
+    .with(Step.SOLVE_PNP_1, () => (
       <SolvePnP
         dh={calibratingParam.current.dh1!}
         hasNext
@@ -180,13 +169,7 @@ const AdorCalibrationV2 = ({ factoryMode = false, onClose }: Props): React.JSX.E
         onClose={onClose}
         onNext={async (rvec, tvec) => {
           progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: lang.device.processing });
-          updateParam({
-            heights: [calibratingParam.current.dh1!],
-            rvec,
-            rvecs: [rvec],
-            tvec,
-            tvecs: [tvec],
-          });
+          updateParam({ heights: [calibratingParam.current.dh1!], rvec, rvecs: [rvec], tvec, tvecs: [tvec] });
           await updateData(calibratingParam.current);
           await saveCheckPoint(calibratingParam.current);
           console.log('calibratingParam.current', calibratingParam.current);
@@ -196,96 +179,93 @@ const AdorCalibrationV2 = ({ factoryMode = false, onClose }: Props): React.JSX.E
         params={calibratingParam.current}
         refPoints={adorPnPPoints}
       />
-    );
-  }
+    ))
+    .with(Step.ELEVATED_CUT, () => {
+      const handleNext = async () => {
+        const deviceStatus = await checkDeviceStatus(deviceMaster.currentDevice.info);
 
-  if (step === Step.ELEVATED_CUT) {
-    const handleNext = async () => {
-      const deviceStatus = await checkDeviceStatus(deviceMaster.currentDevice.info);
-
-      if (!deviceStatus) {
-        return;
-      }
-
-      progressCaller.openNonstopProgress({
-        id: PROGRESS_ID,
-        message: tCali.getting_plane_height,
-      });
-      try {
-        const height = await getMaterialHeight();
-
-        console.log('height', height);
-
-        const dh = height - calibratingParam.current.refHeight!;
-
-        console.log('dh', dh);
-        calibratingParam.current.dh2 = dh;
-        progressCaller.update(PROGRESS_ID, { message: tCali.drawing_calibration_image });
-        await deviceMaster.doAdorCalibrationV2();
-        progressCaller.update(PROGRESS_ID, { message: tCali.preparing_to_take_picture });
-        await prepareToTakePicture();
-        onNext();
-      } catch (err) {
-        console.error(err);
-      } finally {
-        progressCaller.popById(PROGRESS_ID);
-      }
-    };
-
-    return <StepElevate onBack={() => setStep(Step.SOLVE_PNP_1)} onClose={onClose} onNext={handleNext} />;
-  }
-
-  return (
-    <SolvePnP
-      dh={calibratingParam.current.dh2!}
-      onBack={onBack}
-      onClose={onClose}
-      onNext={async (rvec, tvec) => {
-        const { heights, rvecs, tvecs } = calibratingParam.current;
-
-        rvecs!.push(rvec);
-        tvecs!.push(tvec);
-        heights!.push(calibratingParam.current.dh2!);
-        updateParam({ heights, rvecs, tvecs });
-
-        const { data, success } = await extrinsicRegression(rvecs!, tvecs!, heights!);
-
-        if (!success) {
-          alertCaller.popUpError({ message: 'Failed to do extrinsic regression.' });
-
+        if (!deviceStatus) {
           return;
         }
 
-        updateParam(data!);
-        console.log('calibratingParam.current', calibratingParam.current);
+        progressCaller.openNonstopProgress({
+          id: PROGRESS_ID,
+          message: tCali.getting_plane_height,
+        });
+        try {
+          const height = await getMaterialHeight();
 
-        const param: FisheyeCameraParametersV2 = {
-          d: calibratingParam.current.d!,
-          k: calibratingParam.current.k!,
-          levelingData: calibratingParam.current.levelingData!,
-          refHeight: calibratingParam.current.refHeight!,
-          rvec: calibratingParam.current.rvec!,
-          rvec_polyfit: calibratingParam.current.rvec_polyfit!,
-          source: calibratingParam.current.source,
-          tvec: calibratingParam.current.tvec!,
-          tvec_polyfit: calibratingParam.current.tvec_polyfit!,
-          v: 2,
-        };
-        const res = await setFisheyeConfig(param);
+          console.log('height', height);
 
-        if (res.status === 'ok') {
-          alertCaller.popUp({ message: tCali.camera_parameter_saved_successfully });
-          onClose(true);
-        } else {
-          alertCaller.popUpError({
-            message: `${tCali.failed_to_save_camera_parameter}:<br />${JSON.stringify(res)}`,
-          });
+          const dh = height - calibratingParam.current.refHeight!;
+
+          console.log('dh', dh);
+          calibratingParam.current.dh2 = dh;
+          progressCaller.update(PROGRESS_ID, { message: tCali.drawing_calibration_image });
+          await deviceMaster.doAdorCalibrationV2();
+          progressCaller.update(PROGRESS_ID, { message: tCali.preparing_to_take_picture });
+          await prepareToTakePicture();
+          onNext();
+        } catch (err) {
+          console.error(err);
+        } finally {
+          progressCaller.popById(PROGRESS_ID);
         }
-      }}
-      params={calibratingParam.current}
-      refPoints={adorPnPPoints}
-    />
-  );
+      };
+
+      return <StepElevate onBack={() => setStep(Step.SOLVE_PNP_1)} onClose={onClose} onNext={handleNext} />;
+    })
+    .otherwise(() => (
+      <SolvePnP
+        dh={calibratingParam.current.dh2!}
+        onBack={onBack}
+        onClose={onClose}
+        onNext={async (rvec, tvec) => {
+          const { heights, rvecs, tvecs } = calibratingParam.current;
+
+          rvecs!.push(rvec);
+          tvecs!.push(tvec);
+          heights!.push(calibratingParam.current.dh2!);
+          updateParam({ heights, rvecs, tvecs });
+
+          const { data, success } = await extrinsicRegression(rvecs!, tvecs!, heights!);
+
+          if (!success) {
+            alertCaller.popUpError({ message: 'Failed to do extrinsic regression.' });
+
+            return;
+          }
+
+          updateParam(data!);
+          console.log('calibratingParam.current', calibratingParam.current);
+
+          const param: FisheyeCameraParametersV2 = {
+            d: calibratingParam.current.d!,
+            k: calibratingParam.current.k!,
+            levelingData: calibratingParam.current.levelingData!,
+            refHeight: calibratingParam.current.refHeight!,
+            rvec: calibratingParam.current.rvec!,
+            rvec_polyfit: calibratingParam.current.rvec_polyfit!,
+            source: calibratingParam.current.source,
+            tvec: calibratingParam.current.tvec!,
+            tvec_polyfit: calibratingParam.current.tvec_polyfit!,
+            v: 2,
+          };
+          const res = await setFisheyeConfig(param);
+
+          if (res.status === 'ok') {
+            alertCaller.popUp({ message: tCali.camera_parameter_saved_successfully });
+            onClose(true);
+          } else {
+            alertCaller.popUpError({
+              message: `${tCali.failed_to_save_camera_parameter}:<br />${JSON.stringify(res)}`,
+            });
+          }
+        }}
+        params={calibratingParam.current}
+        refPoints={adorPnPPoints}
+      />
+    ));
 };
 
 export const showAdorCalibrationV2 = async (factoryMode = false): Promise<boolean> => {

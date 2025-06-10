@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 import { LoadingOutlined } from '@ant-design/icons';
-import { Modal, Spin } from 'antd';
+import { Spin } from 'antd';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
+import DraggableModal from '@core/app/widgets/DraggableModal';
 import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
 import { calibrateChessboard } from '@core/helpers/camera-calibration-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -111,7 +112,7 @@ const Calibration = ({ charuco, chessboard, onClose, onNext, updateParam, withSa
   };
 
   return (
-    <Modal
+    <DraggableModal
       cancelText={lang.cancel}
       centered
       maskClosable={false}
@@ -135,7 +136,7 @@ const Calibration = ({ charuco, chessboard, onClose, onNext, updateParam, withSa
           )}
         </div>
       </div>
-    </Modal>
+    </DraggableModal>
   );
 };
 

@@ -1,13 +1,14 @@
 import React, { useEffect, useMemo } from 'react';
 
 import { CameraOutlined, FolderOutlined, PictureOutlined } from '@ant-design/icons';
-import { Modal, Tabs } from 'antd';
+import { Tabs } from 'antd';
 
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import deviceConstants from '@core/app/constants/device-constants';
 import { Mode } from '@core/app/constants/monitor-constants';
 import { MonitorContext } from '@core/app/contexts/MonitorContext';
+import DraggableModal from '@core/app/widgets/DraggableModal';
 import localeHelper from '@core/helpers/locale-helper';
 import MonitorStatus from '@core/helpers/monitor-status';
 import useI18n from '@core/helpers/useI18n';
@@ -113,14 +114,14 @@ const Monitor = ({ device }: Props): React.JSX.Element => {
   }, [LANG, report, uploadProgress]);
 
   return (
-    <Modal centered footer={null} onCancel={onClose} open title={`${device.name} - ${statusText}`}>
+    <DraggableModal centered footer={null} onCancel={onClose} open title={`${device.name} - ${statusText}`}>
       <Tabs
         activeKey={monitorMode}
         items={tabItems}
         onChange={setMonitorMode as any}
         tabBarExtraContent={isPromark ? null : <MonitorTabExtraContent />}
       />
-    </Modal>
+    </DraggableModal>
   );
 };
 

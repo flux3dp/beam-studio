@@ -1,10 +1,11 @@
 import React, { useCallback, useRef } from 'react';
 
 import { LoadingOutlined } from '@ant-design/icons';
-import { Modal, Spin } from 'antd';
+import { Spin } from 'antd';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
+import DraggableModal from '@core/app/widgets/DraggableModal';
 import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
 import { calibrateChessboard } from '@core/helpers/camera-calibration-helper';
 import { ContextMenu, ContextMenuTrigger, MenuItem } from '@core/helpers/react-contextmenu';
@@ -97,7 +98,7 @@ const Calibration = ({ charuco, chessboard, onClose, onNext, updateParam }: Prop
   }, [img]);
 
   return (
-    <Modal
+    <DraggableModal
       cancelText={tCali.cancel}
       centered
       maskClosable={false}
@@ -144,7 +145,7 @@ const Calibration = ({ charuco, chessboard, onClose, onNext, updateParam }: Prop
           setExposureSetting={setExposureSetting}
         />
       </div>
-    </Modal>
+    </DraggableModal>
   );
 };
 

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { LoadingOutlined, QuestionCircleOutlined } from '@ant-design/icons';
-import { Button, InputNumber, Modal, Segmented, Spin, Tooltip } from 'antd';
+import { Button, InputNumber, Segmented, Spin, Tooltip } from 'antd';
 import classNames from 'classnames';
 
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
@@ -10,6 +10,7 @@ import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import { renderFramingIcon } from '@core/app/icons/framing/FramingIcons';
 import icons from '@core/app/icons/icons';
+import DraggableModal from '@core/app/widgets/DraggableModal';
 import type { TFramingType } from '@core/helpers/device/framing';
 import FramingTaskManager, { framingOptions, FramingType, getFramingOptions } from '@core/helpers/device/framing';
 import getDevice from '@core/helpers/device/get-device';
@@ -70,7 +71,7 @@ const FramingModal = ({ device, onClose, startOnOpen = false }: Props): React.JS
   }, []);
 
   return (
-    <Modal
+    <DraggableModal
       centered
       footer={
         <div className={styles.footer}>
@@ -137,7 +138,7 @@ const FramingModal = ({ device, onClose, startOnOpen = false }: Props): React.JS
           <div className={styles.content}>{tFraming[framingOptions[type].description]}</div>
         </div>
       </div>
-    </Modal>
+    </DraggableModal>
   );
 };
 

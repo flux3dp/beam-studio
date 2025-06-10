@@ -1,9 +1,10 @@
 import React, { useContext } from 'react';
 
-import { Modal, Result } from 'antd';
+import { Result } from 'antd';
 
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { CalibrationContext } from '@core/app/contexts/CalibrationContext';
+import DraggableModal from '@core/app/widgets/DraggableModal';
 import useI18n from '@core/helpers/useI18n';
 
 const StepFinish = (): React.JSX.Element => {
@@ -11,7 +12,7 @@ const StepFinish = (): React.JSX.Element => {
   const { borderless, onClose } = useContext(CalibrationContext);
 
   return (
-    <Modal
+    <DraggableModal
       cancelButtonProps={{ style: { display: 'none' } }}
       centered
       className="modal-camera-calibration"
@@ -26,7 +27,7 @@ const StepFinish = (): React.JSX.Element => {
       width={400}
     >
       <Result status="success" title={lang.calibrate_done} />
-    </Modal>
+    </DraggableModal>
   );
 };
 

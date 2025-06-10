@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { Button, Col, Flex, InputNumber, Modal, Progress, Row } from 'antd';
+import { Button, Col, Flex, InputNumber, Progress, Row } from 'antd';
 import classNames from 'classnames';
 
 import alertCaller from '@core/app/actions/alert-caller';
+import DraggableModal from '@core/app/widgets/DraggableModal';
 import { solvePnPCalculate, solvePnPFindCorners, updateData } from '@core/helpers/camera-calibration-helper';
 import useDidUpdateEffect from '@core/helpers/hooks/useDidUpdateEffect';
 import useI18n from '@core/helpers/useI18n';
@@ -245,7 +246,7 @@ const SolvePnP = ({
   }, []);
 
   return (
-    <Modal
+    <DraggableModal
       centered
       closable
       footer={[
@@ -362,7 +363,7 @@ const SolvePnP = ({
           </>
         )}
       </Row>
-    </Modal>
+    </DraggableModal>
   );
 };
 

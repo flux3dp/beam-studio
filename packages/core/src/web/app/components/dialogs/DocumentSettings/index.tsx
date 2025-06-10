@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { QuestionCircleOutlined, SettingFilled, WarningOutlined } from '@ant-design/icons';
-import { Checkbox, Modal, Switch, Tooltip } from 'antd';
+import { Checkbox, Switch, Tooltip } from 'antd';
 import classNames from 'classnames';
 
 import alertCaller from '@core/app/actions/alert-caller';
@@ -19,6 +19,7 @@ import { LaserType, workareaOptions as pmWorkareaOptions } from '@core/app/const
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import Select from '@core/app/widgets/AntdSelect';
+import DraggableModal from '@core/app/widgets/DraggableModal';
 import UnitInput from '@core/app/widgets/UnitInput';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import { checkFpm1, checkHxRf } from '@core/helpers/checkFeature';
@@ -66,7 +67,7 @@ const topBarEventEmitter = eventEmitterFactory.createEventEmitter('top-bar');
 
 const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const {
-    beambox: { document_panel: tDocu },
+    beambox: { document_panel: tDocument },
     global: tGlobal,
   } = useI18n();
   const [engraveDpi, setEngraveDpi] = useState(BeamboxPreference.read('engrave_dpi'));
@@ -250,7 +251,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   );
 
   return (
-    <Modal
+    <DraggableModal
       cancelText={tGlobal.cancel}
       centered
       okText={tGlobal.save}
@@ -270,7 +271,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
             alertCaller.popUp({
               buttonType: alertConstants.CONFIRM_CANCEL,
               id: 'save-document-settings',
-              message: tDocu.notification.changeFromPrintingWorkareaTitle,
+              message: tDocument.notification.changeFromPrintingWorkareaTitle,
               messageIcon: 'notice',
               onCancel: () => resolve(false),
               onConfirm: () => resolve(true),
@@ -284,14 +285,14 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
         unmount();
       }}
       open
-      title={tDocu.document_settings}
+      title={tDocument.document_settings}
       width={440}
     >
       <div className={styles.container}>
         <div className={styles.block}>
           <div className={styles.row}>
             <label className={styles.title} htmlFor="workareaSelect">
-              {tDocu.machine}:
+              {tDocument.machine}:
             </label>
             <Select
               className={styles.control}
@@ -305,7 +306,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
           {workareaObj.dimensionCustomizable && (
             <div className={styles.row}>
               <label className={styles.title} htmlFor="customDimension">
-                {tDocu.workarea}:
+                {tDocument.workarea}:
               </label>
               <Select
                 className={styles.control}
@@ -325,7 +326,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
           {isPromark && (
             <div className={styles.row}>
               <label className={styles.title} htmlFor="pm-laser-source">
-                {tDocu.laser_source}:
+                {tDocument.laser_source}:
               </label>
               <Select
                 className={styles.control}
@@ -343,14 +344,14 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
           )}
           <div className={styles.row}>
             <label className={styles.title} htmlFor="dpi">
-              {tDocu.engrave_dpi}:
+              {tDocument.engrave_dpi}:
             </label>
             <Select
               className={styles.control}
               id="dpi"
               onChange={setEngraveDpi}
               options={dpiOptions.map((value) => ({
-                label: `${tDocu[value]} (${constant.dpiValueMap[value]} DPI)`,
+                label: `${tDocument[value]} (${constant.dpiValueMap[value]} DPI)`,
                 value,
               }))}
               value={engraveDpi}
@@ -361,29 +362,31 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
         {addOnInfo.jobOrigin && (
           <>
             <div className={styles.separator}>
-              <div>{tDocu.start_position}</div>
+              <div>{tDocument.start_position}</div>
               <div className={styles.bar} />
             </div>
             <div className={styles.block}>
               <div className={styles.row}>
                 <label className={styles.title} htmlFor="startFrom">
-                  {tDocu.start_from}:
+                  {tDocument.start_from}:
                 </label>
                 <Select
                   className={styles.control}
                   id="startFrom"
                   onChange={setEnableJobOrigin}
-                  options={[
-                    { label: tDocu.origin, value: false },
-                    { label: tDocu.current_position, value: true },
-                  ]}
+                  options={
+                    [
+                      { label: tDocument.origin, value: false },
+                      { label: tDocument.current_position, value: true },
+                    ] as any
+                  }
                   value={enableJobOrigin}
                   variant="outlined"
                 />
               </div>
               {enableJobOrigin && (
                 <div className={styles.row}>
-                  <label className={styles.title}>{tDocu.job_origin}:</label>
+                  <label className={styles.title}>{tDocument.job_origin}:</label>
                   <div className={styles.control}>
                     <div className={styles.radioGroup}>
                       {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((val) => (
@@ -417,7 +420,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
           </>
         )}
         <div className={styles.separator}>
-          <div>{tDocu.add_on}</div>
+          <div>{tDocument.add_on}</div>
           <div className={styles.bar} />
         </div>
         <div className={styles.modules}>
@@ -425,7 +428,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
             <>
               <div className={classNames(styles.row, styles.full)}>
                 <div className={styles.title}>
-                  <label htmlFor="start_button">{tDocu.start_work_button}</label>
+                  <label htmlFor="start_button">{tDocument.start_work_button}</label>
                 </div>
                 <div className={styles.control}>
                   <Switch
@@ -442,9 +445,9 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                           id="frame_before_start"
                           onChange={(e) => setShouldFrame(e.target.checked)}
                         >
-                          {tDocu.frame_before_start}
+                          {tDocument.frame_before_start}
                         </Checkbox>
-                        <QuestionCircleOutlined onClick={() => browser.open(tDocu.frame_before_start_url)} />
+                        <QuestionCircleOutlined onClick={() => browser.open(tDocument.frame_before_start_url)} />
                       </div>
                     </div>
                   )}
@@ -452,7 +455,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
               </div>
               <div className={styles.row}>
                 <div className={styles.title}>
-                  <label htmlFor="door_protect">{tDocu.door_protect}</label>
+                  <label htmlFor="door_protect">{tDocument.door_protect}</label>
                 </div>
                 <div className={styles.control}>
                   <Switch
@@ -461,7 +464,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                     id="door_protect"
                     onChange={setCheckSafetyDoor}
                   />
-                  <Tooltip title={tDocu.door_protect_desc}>
+                  <Tooltip title={tDocument.door_protect_desc}>
                     <QuestionCircleOutlined />
                   </Tooltip>
                 </div>
@@ -471,7 +474,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
           {addOnInfo.rotary && (
             <div className={classNames(styles.row, styles.full)}>
               <div className={styles.title}>
-                <label htmlFor="rotary_mode">{tDocu.rotary_mode}</label>
+                <label htmlFor="rotary_mode">{tDocument.rotary_mode}</label>
               </div>
               <div className={styles.control}>
                 <Switch
@@ -495,7 +498,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
           {addOnInfo.autoFocus && (
             <div className={styles.row}>
               <div className={styles.title}>
-                <label htmlFor="autofocus-module">{tDocu.enable_autofocus}</label>
+                <label htmlFor="autofocus-module">{tDocument.enable_autofocus}</label>
               </div>
               <div className={styles.control}>
                 <Switch
@@ -511,7 +514,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
           {addOnInfo.openBottom && (
             <div className={styles.row}>
               <div className={styles.title}>
-                <label htmlFor="borderless_mode">{tDocu.borderless_mode}</label>
+                <label htmlFor="borderless_mode">{tDocument.borderless_mode}</label>
               </div>
               <div className={styles.control}>
                 <Switch
@@ -527,7 +530,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
           {addOnInfo.hybridLaser && (
             <div className={styles.row}>
               <div className={styles.title}>
-                <label htmlFor="diode_module">{tDocu.enable_diode}</label>
+                <label htmlFor="diode_module">{tDocument.enable_diode}</label>
               </div>
               <div className={styles.control}>
                 <Switch
@@ -543,7 +546,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
           {showPassThrough && (
             <div className={classNames(styles.row, styles.full)}>
               <div className={styles.title}>
-                <label htmlFor="pass_through">{tDocu.pass_through}</label>
+                <label htmlFor="pass_through">{tDocument.pass_through}</label>
               </div>
               <div className={styles.control}>
                 <Switch
@@ -572,7 +575,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                       size="small"
                       value={passThroughHeight}
                     />
-                    <Tooltip title={tDocu.pass_through_height_desc}>
+                    <Tooltip title={tDocument.pass_through_height_desc}>
                       <QuestionCircleOutlined className={styles.hint} />
                     </Tooltip>
                   </>
@@ -584,7 +587,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
             <>
               <div className={classNames(styles.row, styles.full)}>
                 <div className={styles.title}>
-                  <label htmlFor="auto_feeder">{tDocu.auto_feeder}</label>
+                  <label htmlFor="auto_feeder">{tDocument.auto_feeder}</label>
                 </div>
                 <div className={styles.control}>
                   <Switch
@@ -614,10 +617,10 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                       value={autoFeederHeight}
                     />
                   )}
-                  <Tooltip title={tDocu.auto_feeder_url}>
+                  <Tooltip title={tDocument.auto_feeder_url}>
                     <QuestionCircleOutlined
                       className={styles.hint}
-                      onClick={() => browser.open(tDocu.auto_feeder_url)}
+                      onClick={() => browser.open(tDocument.auto_feeder_url)}
                     />
                   </Tooltip>
                 </div>
@@ -626,8 +629,8 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                 <AddOnSelect
                   id="auto_feeder_scale"
                   onChange={setAutoFeederScale}
-                  title={tDocu.scale}
-                  tooltip={tDocu.auto_feeder_scale}
+                  title={tDocument.scale}
+                  tooltip={tDocument.auto_feeder_scale}
                   value={autoFeederScale}
                 />
               )}
@@ -635,7 +638,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
           )}
         </div>
       </div>
-    </Modal>
+    </DraggableModal>
   );
 };
 
