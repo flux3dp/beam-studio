@@ -39,7 +39,7 @@ export default {
     fad1: adorModelsArray,
     fbb1b: ['fbb1b', 'fbm1'],
     fbb1p: ['fbb1p', 'fbb1b', 'fbm1'],
-    fbb2: [...bb2ModelsArray, 'fbm2'], // TODO: add fbm2 before beamo2 machine model updated
+    fbb2: [...bb2ModelsArray, 'fbm2'], // TODO: add fbm2 until beamo2 machine model updated
     fbm1: ['fbm1'],
     fbm2: ['fbm2'],
     fhexa1: ['fhexa1', 'fbb1p', 'fbb1b', 'fbm1'],
