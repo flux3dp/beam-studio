@@ -34,7 +34,7 @@ let cameraOffset = {
   x: 0,
   y: 0,
 };
-const calibratedMachineUUIDs: any = [];
+const calibratedMachineUUIDs: string[] = [];
 
 interface Props {
   device: IDeviceInfo;

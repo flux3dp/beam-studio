@@ -106,7 +106,7 @@ const StepRefocus = (): React.JSX.Element => {
 
   const [isAutoFocus, setIsAutoFocus] = useState(false);
   const [isCutButtonDisabled, setIsCutButtonDisabled] = useState(false);
-  const videoElem = useRef<any>(null);
+  const videoElem = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     if (videoElem.current) {

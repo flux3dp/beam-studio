@@ -59,7 +59,7 @@ interface CalibrationProviderProps {
   onClose: (completed: boolean) => void;
 }
 
-let calibratedMachines: any[] = [];
+let calibratedMachines: string[] = [];
 
 export function CalibrationProvider({
   borderless,
