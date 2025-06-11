@@ -9,6 +9,7 @@ import useI18n from '@core/helpers/useI18n';
 import type { FisheyeCameraParametersV3, FisheyeCameraParametersV3Cali } from '@core/interfaces/FisheyePreview';
 
 import styles from '../../Calibration.module.scss';
+import Calibration from '../../common/Calibration';
 import CheckPnP from '../../common/CheckPnP';
 import CheckpointData from '../../common/CheckpointData';
 import downloadCalibrationFile from '../../common/downloadCalibrationFile';
@@ -16,8 +17,6 @@ import Instruction from '../../common/Instruction';
 import moveLaserHead from '../../common/moveLaserHead';
 import SolvePnP from '../../common/SolvePnP';
 import { bb2PerspectiveGrid, bb2PnPPoints } from '../../common/solvePnPConstants';
-
-import Calibration from './Calibration';
 
 /* eslint-disable perfectionist/sort-enums */
 enum Steps {

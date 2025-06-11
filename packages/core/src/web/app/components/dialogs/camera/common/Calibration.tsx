@@ -13,20 +13,24 @@ import useI18n from '@core/helpers/useI18n';
 import dialog from '@core/implementations/dialog';
 import type { FisheyeCameraParametersV3Cali } from '@core/interfaces/FisheyePreview';
 
-import ExposureSlider from '../../common/ExposureSlider';
-import handleCalibrationResult from '../../common/handleCalibrationResult';
-import useLiveFeed from '../../common/useLiveFeed';
-
 import styles from './Calibration.module.scss';
+import ExposureSlider from './ExposureSlider';
+import handleCalibrationResult from './handleCalibrationResult';
+import useLiveFeed from './useLiveFeed';
 
-interface Props {
-  charuco?: [number, number];
-  chessboard: [number, number];
+type CalibrationData =
+  | { charuco: [number, number]; chessboard?: [number, number] }
+  | { charuco?: [number, number]; chessboard: [number, number] };
+
+type Props = CalibrationData & {
   onClose: (complete?: boolean) => void;
   onNext: () => void;
   updateParam: (param: FisheyeCameraParametersV3Cali) => void;
-}
+};
 
+/**
+ * Component that provide a live view to calibrate the camera with a chessboard or ChAruCo board.
+ */
 const Calibration = ({ charuco, chessboard, onClose, onNext, updateParam }: Props): React.JSX.Element => {
   const t = useI18n();
   const tCali = t.calibration;
@@ -42,16 +46,18 @@ const Calibration = ({ charuco, chessboard, onClose, onNext, updateParam }: Prop
     try {
       let calibrationRes: null | { d: number[][]; k: number[][]; ret: number; rvec: number[]; tvec: number[] } = null;
 
-      try {
-        const chessboardRes = await calibrateChessboard(img!.blob, 0, chessboard);
+      if (chessboard) {
+        try {
+          const chessboardRes = await calibrateChessboard(img!.blob, 0, chessboard);
 
-        if (chessboardRes.success === true) {
-          const { d, k, ret, rvec, tvec } = chessboardRes.data;
+          if (chessboardRes.success === true) {
+            const { d, k, ret, rvec, tvec } = chessboardRes.data;
 
-          calibrationRes = { d, k, ret, rvec, tvec };
+            calibrationRes = { d, k, ret, rvec, tvec };
+          }
+        } catch (error) {
+          console.error('Failed to calibrate with chessboard', error);
         }
-      } catch (error) {
-        console.error('Failed to calibrate with chessboard', error);
       }
 
       if (!calibrationRes && charuco) {
