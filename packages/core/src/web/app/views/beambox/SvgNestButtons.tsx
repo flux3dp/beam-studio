@@ -71,7 +71,7 @@ class SvgNestButtons extends React.Component<Props, State> {
         cy: bbox.y + bbox.height / 2,
       };
 
-      containerPoints = ClipperLib.dPathtoPointPathsAndScale(containerDpath, rotation, 1);
+      containerPoints = ClipperLib.dPathToPointPathsAndScale(containerDpath, rotation, 1);
     } else {
       const { height: h, width: w } = workareaManager;
 
@@ -118,7 +118,7 @@ class SvgNestButtons extends React.Component<Props, State> {
       const d = svgedit.utilities.getPathDFromElement(elem);
 
       if (d) {
-        const pointPaths = ClipperLib.dPathtoPointPathsAndScale(d, rotation, 1);
+        const pointPaths = ClipperLib.dPathToPointPathsAndScale(d, rotation, 1);
 
         if (pointPaths.length === 1) {
           [points] = pointPaths;

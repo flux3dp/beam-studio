@@ -1548,7 +1548,7 @@ const smoothByFitPath = (elem: SVGPathElement) => {
   };
   const result = Array.of<string>();
   const ClipperLib = getClipperLib();
-  const paths: any[] = ClipperLib.dPathtoPointPathsAndScale(dpath, rotation, scale);
+  const paths: any[] = ClipperLib.dPathToPointPathsAndScale(dpath, rotation, scale);
 
   paths.forEach((path) => {
     result.push('M');
