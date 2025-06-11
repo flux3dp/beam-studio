@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import Icon from '@ant-design/icons';
 import { ConfigProvider, InputNumber, Modal, Slider } from 'antd';
@@ -6,6 +6,7 @@ import classNames from 'classnames';
 
 import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
 import Select from '@core/app/widgets/AntdSelect';
+import type { OffsetMode } from '@core/helpers/clipper/offset/constants';
 import i18n from '@core/helpers/i18n';
 import units from '@core/helpers/units';
 import storage from '@core/implementations/storage';
@@ -29,23 +30,23 @@ const unitSettings: {
   },
 };
 
-interface Value {
+export type OffsetProp = {
   cornerType: 'round' | 'sharp';
-  dir: number;
   distance: number;
-}
+  offsetMode: OffsetMode;
+};
 interface Props {
   onCancel: () => void;
-  onOk: (data: Value) => void;
+  onOk: (data: OffsetProp) => void;
 }
 
 const OffsetModal = ({ onCancel, onOk }: Props): React.JSX.Element => {
-  const unit = React.useMemo(() => (storage.get('default-units') === 'inches' ? 'inch' : 'mm'), []);
+  const unit = useMemo(() => (storage.get('default-units') === 'inches' ? 'inch' : 'mm'), []);
   const setting = unitSettings[unit];
-  const [data, setData] = React.useState<Value>({
+  const [data, setData] = React.useState<OffsetProp>({
     cornerType: 'sharp',
-    dir: 1,
     distance: setting.distance.default,
+    offsetMode: 'outward',
   });
 
   return (
@@ -73,30 +74,33 @@ const OffsetModal = ({ onCancel, onOk }: Props): React.JSX.Element => {
         open
       >
         <div className={styles.title}>{LANG.offset}</div>
-        {/* TODO: add preview */}
         <div className={styles.field}>
           <span className={styles.label}>{LANG._offset.direction}</span>
           <Select
             className={styles.select}
-            dropdownMatchSelectWidth={false}
-            onChange={(val) => setData({ ...data, dir: val })}
+            onChange={(val) => setData({ ...data, offsetMode: val })}
             options={[
-              { label: LANG._offset.outward, value: 1 },
-              { label: LANG._offset.inward, value: 0 },
+              // { label: LANG._offset.outward, value: 1 },
+              // { label: LANG._offset.inward, value: 0 },
+              { label: LANG._offset.outward, value: 'outward' },
+              { label: LANG._offset.inward, value: 'inward' },
+              { label: 'Expand', value: 'expand' },
+              { label: 'Shrink', value: 'shrink' },
             ]}
-            value={data.dir}
+            popupMatchSelectWidth={false}
+            value={data.offsetMode}
           />
         </div>
         <div className={styles.field}>
           <span className={styles.label}>{LANG._offset.corner_type}</span>
           <Select
             className={styles.select}
-            dropdownMatchSelectWidth={false}
             onChange={(val) => setData({ ...data, cornerType: val })}
             options={[
               { label: LANG._offset.sharp, value: 'sharp' },
               { label: LANG._offset.round, value: 'round' },
             ]}
+            popupMatchSelectWidth={false}
             value={data.cornerType}
           />
         </div>
@@ -106,7 +110,7 @@ const OffsetModal = ({ onCancel, onOk }: Props): React.JSX.Element => {
             className={classNames(styles.input, styles['with-unit'])}
             controls={false}
             min={0}
-            onChange={(val) => setData({ ...data, distance: val })}
+            onChange={(val) => setData({ ...data, distance: val! })}
             precision={setting.precision}
             prefix={<span className={styles.unit}>{unit}</span>}
             type="number"

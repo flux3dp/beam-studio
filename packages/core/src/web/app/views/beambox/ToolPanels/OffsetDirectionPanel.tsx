@@ -3,40 +3,53 @@ import React from 'react';
 import classNames from 'classnames';
 
 import SelectView from '@core/app/widgets/Select';
+import type { OffsetMode } from '@core/helpers/clipper/offset/constants';
 import i18n from '@core/helpers/i18n';
 
 const LANG = i18n.lang.beambox.tool_panels;
 
 interface Props {
-  dir: number;
-  onValueChange: (val: number) => void;
+  offsetMode: OffsetMode;
+  onValueChange: (mode: OffsetMode) => void;
 }
 
-function OffsetDirectionPanel({ dir: dirProps, onValueChange }: Props): React.JSX.Element {
-  const [dir, updateDir] = React.useState(dirProps);
+function OffsetDirectionPanel({ offsetMode: offsetMode, onValueChange }: Props): React.JSX.Element {
+  const [mode, setMode] = React.useState(offsetMode);
   const [isCollapsed, updateIsCollapsed] = React.useState(false);
 
-  const updateOffsetDir = (val: number) => {
-    onValueChange(val);
-    updateDir(val);
+  const setOffsetMode = (mode: OffsetMode) => {
+    onValueChange(mode);
+    setMode(mode);
   };
 
-  const getOffsetDir = () =>
+  const getOffsetModeString = () =>
     ({
-      0: LANG._offset.inward,
-      1: LANG._offset.outward,
-    })[dir];
+      expand: 'Expand',
+      inward: LANG._offset.inward,
+      outward: LANG._offset.outward,
+      shrink: 'Shrink',
+    })[mode];
 
   const options = [
     {
       label: LANG._offset.outward,
-      selected: dir === 1,
-      value: 1,
+      selected: mode === 'outward',
+      value: 'outward',
     },
     {
       label: LANG._offset.inward,
-      selected: dir === 0,
-      value: 0,
+      selected: mode === 'inward',
+      value: 'inward',
+    },
+    {
+      label: 'Expand',
+      selected: mode === 'expand',
+      value: 'expand',
+    },
+    {
+      label: 'Shrink',
+      selected: mode === 'shrink',
+      value: 'shrink',
     },
   ];
 
@@ -46,14 +59,14 @@ function OffsetDirectionPanel({ dir: dirProps, onValueChange }: Props): React.JS
         <input className="accordion-switcher" defaultChecked type="checkbox" />
         <p className="caption" onClick={() => updateIsCollapsed(!isCollapsed)}>
           {LANG._offset.direction}
-          <span className="value">{getOffsetDir()}</span>
+          <span className="value">{getOffsetModeString()}</span>
         </p>
         <div className={classNames('tool-panel-body', { collapsed: isCollapsed })}>
           <div className="control offset-dir">
             <SelectView
               id="select-offset-dir"
               onChange={(e) => {
-                updateOffsetDir(Number.parseInt(e.target.value, 10));
+                setOffsetMode(e.target.value as OffsetMode);
               }}
               options={options}
             />
