@@ -14,6 +14,8 @@ export interface IDeviceInfo {
   name: string;
   password: boolean;
   plaintext_password: string;
+  // detect if the probe is showing for Beambox II
+  probe_showed?: boolean;
   serial: string;
   source: string;
   st_id: number;

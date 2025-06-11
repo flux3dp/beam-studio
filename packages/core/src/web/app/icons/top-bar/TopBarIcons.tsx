@@ -1,4 +1,5 @@
 import Account from './account.svg';
+import AutoFocus from './auto-focus.svg';
 import Camera from './camera.svg';
 import CloudFile from './cloud-file.svg';
 import CurveEngraving from './curve-engraving.svg';
@@ -13,6 +14,7 @@ import Undo from './undo.svg';
 
 export default {
   Account,
+  AutoFocus,
   Camera,
   CloudFile,
   CurveEngraving,
