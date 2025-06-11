@@ -20,6 +20,7 @@ import type {
 import styles from '../../Calibration.module.scss';
 import CheckPnP from '../../common/CheckPnP';
 import CheckpointData from '../../common/CheckpointData';
+import downloadCalibrationFile from '../../common/downloadCalibrationFile';
 import Instruction from '../../common/Instruction';
 import ProcessingDialog from '../../common/ProcessingDialog';
 import SolvePnP from '../../common/SolvePnP';
@@ -145,25 +146,6 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
       );
     })
     .with(Step.PREPARE_MATERIALS, () => {
-      const handleDownload = () => {
-        dialog.writeFileDialog(
-          async () => {
-            const resp = await fetch('assets/charuco-15-10.pdf');
-            const blob = await resp.blob();
-
-            return blob;
-          },
-          tCali.download_calibration_pattern,
-          'Calibration Pattern',
-          [
-            {
-              extensions: ['pdf'],
-              name: window.os === 'MacOS' ? 'PDF (*.pdf)' : 'PDF',
-            },
-          ],
-        );
-      };
-
       return (
         <Instruction
           animationSrcs={[
@@ -182,7 +164,7 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
           ]}
           title={title}
         >
-          <div className={styles.link} onClick={handleDownload}>
+          <div className={styles.link} onClick={() => downloadCalibrationFile('assets/charuco-15-10.pdf')}>
             {tCali.download_calibration_pattern}
           </div>
         </Instruction>
