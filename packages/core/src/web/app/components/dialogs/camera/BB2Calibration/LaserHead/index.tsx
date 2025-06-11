@@ -13,9 +13,9 @@ import CheckPnP from '../../common/CheckPnP';
 import CheckpointData from '../../common/CheckpointData';
 import downloadCalibrationFile from '../../common/downloadCalibrationFile';
 import Instruction from '../../common/Instruction';
+import moveLaserHead from '../../common/moveLaserHead';
 import SolvePnP from '../../common/SolvePnP';
 import { bb2PerspectiveGrid, bb2PnPPoints } from '../../common/solvePnPConstants';
-import moveLaserHead from '../moveLaserHead';
 
 import Calibration from './Calibration';
 

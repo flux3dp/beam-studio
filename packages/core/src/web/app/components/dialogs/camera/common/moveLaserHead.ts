@@ -5,7 +5,7 @@ import { getWorkarea } from '@core/app/constants/workarea-constants';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 
-const moveLaserHead = async (): Promise<boolean> => {
+const moveLaserHead = async (position?: [number, number]): Promise<boolean> => {
   let isLineCheckMode = false;
   const lang = i18n.lang.calibration;
 
@@ -22,10 +22,13 @@ const moveLaserHead = async (): Promise<boolean> => {
     await deviceMaster.rawStartLineCheckMode();
     isLineCheckMode = true;
 
-    const { cameraCenter, height, width } = getWorkarea(device.info.model as WorkAreaModel, 'fbb2');
-    const center = cameraCenter ?? [width / 2, height / 2];
+    if (!position) {
+      const { cameraCenter, height, width } = getWorkarea(device.info.model as WorkAreaModel, 'fbb2');
 
-    await deviceMaster.rawMove({ f: 7500, x: center[0], y: center[1] });
+      position = (cameraCenter as [number, number]) ?? [width / 2, height / 2];
+    }
+
+    await deviceMaster.rawMove({ f: 7500, x: position[0], y: position[1] });
     await deviceMaster.rawEndLineCheckMode();
     isLineCheckMode = false;
     await deviceMaster.rawLooseMotor();
