@@ -13,9 +13,6 @@ import IntervalPanel from '@core/app/views/beambox/ToolPanels/Interval';
 import NestGAPanel from '@core/app/views/beambox/ToolPanels/NestGAPanel';
 import NestRotationPanel from '@core/app/views/beambox/ToolPanels/NestRotationPanel';
 import NestSpacingPanel from '@core/app/views/beambox/ToolPanels/NestSpacingPanel';
-import OffsetCornerPanel from '@core/app/views/beambox/ToolPanels/OffsetCornerPanel';
-import OffsetDirectionPanel from '@core/app/views/beambox/ToolPanels/OffsetDirectionPanel';
-import OffsetDistancePanel from '@core/app/views/beambox/ToolPanels/OffsetDistancePanel';
 import type { OffsetProp } from '@core/app/views/beambox/ToolPanels/OffsetModal';
 import OffsetModal from '@core/app/views/beambox/ToolPanels/OffsetModal';
 import RowColumnPanel from '@core/app/views/beambox/ToolPanels/RowColumn';
@@ -26,6 +23,8 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { isMobile } from '@core/helpers/system-helper';
 import storage from '@core/implementations/storage';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
+
+import OffsetPanel from './OffsetPanel';
 
 let svgCanvas: ISVGCanvas;
 
@@ -46,7 +45,7 @@ const _mm2pixel = (pixel_input: number) => {
 const validPanelsMap = {
   gridArray: ['rowColumn', 'distance'],
   nest: ['nestOffset', 'nestRotation', 'nestGA'],
-  offset: ['offsetDir', 'offsetCorner', 'offsetDist'],
+  offset: ['offset'],
   unknown: [],
 };
 
@@ -119,14 +118,16 @@ class ToolPanel extends React.Component<Props> {
         .with('distance', (name) => (
           <IntervalPanel key={name} {...data.distance} onValueChange={this._setArrayDistance} />
         ))
-        .with('offsetDir', (name) => (
-          <OffsetDirectionPanel key={name} offsetMode={this.offset.offsetMode} onValueChange={this._setOffsetMode} />
-        ))
-        .with('offsetCorner', (name) => (
-          <OffsetCornerPanel cornerType={this.offset.cornerType} key={name} onValueChange={this._setOffsetCorner} />
-        ))
-        .with('offsetDist', (name) => (
-          <OffsetDistancePanel distance={this.offset.distance} key={name} onValueChange={this._setOffsetDist} />
+        .with('offset', () => (
+          <OffsetPanel
+            cornerType={this.offset.cornerType}
+            distance={this.offset.distance}
+            key="offset"
+            mode={this.offset.offsetMode}
+            onCornerTypeChange={this._setOffsetCorner}
+            onDistanceChange={this._setOffsetDist}
+            onModeChange={this._setOffsetMode}
+          />
         ))
         .with('nestOffset', (name) => (
           <NestSpacingPanel
@@ -163,10 +164,7 @@ class ToolPanel extends React.Component<Props> {
 
   renderTitle() {
     const { type } = this.props;
-    const titleMap = {
-      gridArray: LANG.grid_array,
-      offset: LANG.offset,
-    };
+    const titleMap = { gridArray: LANG.grid_array, offset: LANG.offset };
     const title = titleMap[type as 'gridArray' | 'offset'];
 
     return (
