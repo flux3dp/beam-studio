@@ -12,6 +12,8 @@ import util from 'util';
 import i18n from '@core/helpers/i18n';
 import type { PdfHelper } from '@core/interfaces/IPdfHelper';
 
+import fileSystem from './fileSystem';
+
 const resourcesRoot = localStorage.getItem('dev-pdf2svg') ? window.process.cwd() : window.process.resourcesPath;
 const tempDir = os.tmpdir();
 
@@ -42,7 +44,11 @@ const pdfToSvgBlob = async (file: File): Promise<{ blob?: Blob; errorMessage?: s
 
     // mac or windows, using packed binary executable
     try {
-      fs.copyFileSync(file.path, tempFilePath);
+      const filePath = fileSystem.getPathForFile(file);
+
+      if (!filePath) throw new Error('Failed to load file path');
+
+      fs.copyFileSync(filePath, tempFilePath);
 
       const execFile = util.promisify(childProcess.execFile);
       const { stderr } = await execFile(pdf2svgPath, [tempFilePath, outPath], {
