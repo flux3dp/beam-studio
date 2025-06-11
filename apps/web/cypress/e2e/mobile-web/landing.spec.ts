@@ -1,5 +1,5 @@
 describe('mobile landing', () => {
-  before(() => {
+  beforeEach(() => {
     cy.viewport('iphone-xr');
     cy.visit('/', {
       onBeforeLoad(window) {
