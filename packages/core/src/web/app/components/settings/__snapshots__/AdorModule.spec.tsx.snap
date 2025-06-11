@@ -195,9 +195,9 @@ exports[`test AdorModule should render correctly 1`] = `
   </div>
   <div>
     mock-select-control id:
-    2w-ir-laser-offset
+    white-ink-offset
     label:
-    white ink
+    White Ink
     url:
     options:
     <span

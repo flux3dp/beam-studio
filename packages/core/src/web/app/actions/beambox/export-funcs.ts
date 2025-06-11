@@ -423,8 +423,10 @@ const openTaskInDeviceMonitor = async (
 export const getConvertEngine = (targetDevice?: IDeviceInfo) => {
   const currentWorkarea = BeamboxPreference.read('workarea');
   const isPromark = promarkModels.has(currentWorkarea);
+
   const useSwiftray =
     hasSwiftray &&
+    currentWorkarea !== 'fbm2' &&
     (isPromark || BeamboxPreference.read('path-engine') === 'swiftray' || targetDevice?.source === 'swiftray');
   const convertEngine = useSwiftray ? fetchTaskCodeSwiftray : fetchTaskCode;
 

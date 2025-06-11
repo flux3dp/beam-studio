@@ -616,8 +616,8 @@ export const moveToOtherLayer = (destLayer: string, callback: () => void, showAl
   };
   const selectedElements = svgCanvas.getSelectedElems();
   const origLayer = getObjectLayer(selectedElements[0])?.elem;
-  const isPrintingLayer = origLayer && printingModules.has(getData(origLayer, 'module'));
-  const isDestPrintingLayer = printingModules.has(getData(getLayerByName(destLayer), 'module'));
+  const isPrintingLayer = origLayer && printingModules.has(getData(origLayer, 'module')!);
+  const isDestPrintingLayer = printingModules.has(getData(getLayerByName(destLayer), 'module')!);
   const moveOutFromFullColorLayer = isPrintingLayer && !isDestPrintingLayer;
   const moveInToFullColorLayer = !isPrintingLayer && isDestPrintingLayer;
 

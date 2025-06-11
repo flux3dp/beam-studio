@@ -4,7 +4,7 @@ import { Collapse } from 'antd';
 import classNames from 'classnames';
 import { useLocation } from 'react-router-dom';
 
-import { adorModels, bb2Models } from '@core/app/actions/beambox/constant';
+import { adorModels, nxModels } from '@core/app/actions/beambox/constant';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './ConnectWired.module.scss';
@@ -12,10 +12,10 @@ import styles from './ConnectWired.module.scss';
 const ConnectWired = (): React.JSX.Element => {
   const lang = useI18n().initialize;
   const { search } = useLocation();
-  const [model, isAdor, isBb2] = useMemo(() => {
-    const model = new URLSearchParams(search).get('model');
+  const [model, isAdor, isNx] = useMemo(() => {
+    const model = new URLSearchParams(search).get('model') ?? '';
 
-    return [model, adorModels.has(model), bb2Models.has(model)];
+    return [model, adorModels.has(model), nxModels.has(model)];
   }, [search]);
 
   const imageSrc = useMemo(() => {
@@ -23,12 +23,12 @@ const ConnectWired = (): React.JSX.Element => {
       return 'core-img/init-panel/ador-network.jpg';
     }
 
-    if (isBb2) {
+    if (isNx) {
       return 'core-img/init-panel/beambox-2-panel.png';
     }
 
     return 'img/init-panel/touch-panel-en.jpg';
-  }, [isAdor, isBb2]);
+  }, [isAdor, isNx]);
 
   const handleNext = () => {
     const urlParams = new URLSearchParams({ model, wired: '1' });
@@ -48,7 +48,7 @@ const ConnectWired = (): React.JSX.Element => {
           {lang.next}
         </div>
       </div>
-      <div className={classNames(styles.main, { [styles.ador]: isAdor, [styles.bb2]: isBb2 })}>
+      <div className={classNames(styles.main, { [styles.ador]: isAdor, [styles.nx]: isNx })}>
         <div className={styles.image}>
           <div className={styles.hint} />
           <img draggable="false" src={imageSrc} />

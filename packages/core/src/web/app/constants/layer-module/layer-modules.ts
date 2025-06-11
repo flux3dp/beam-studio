@@ -16,7 +16,7 @@ export const LayerModule = {
 /* eslint-enable perfectionist/sort-objects */
 export type LayerModuleType = (typeof LayerModule)[keyof typeof LayerModule];
 
-export const printingModules = new Set([LayerModule.PRINTER, LayerModule.PRINTER_4C]);
+export const printingModules = new Set<LayerModuleType>([LayerModule.PRINTER, LayerModule.PRINTER_4C]);
 
 export const fullColorModulesArray = [LayerModule.PRINTER, LayerModule.PRINTER_4C, LayerModule.UV_PRINT] as const;
-export const fullColorModules = new Set(fullColorModulesArray);
+export const fullColorModules = new Set<LayerModuleType>(fullColorModulesArray);

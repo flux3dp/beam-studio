@@ -49,10 +49,10 @@
       }
     }
 
-    &.bb2 {
+    &.nx {
       .image {
         .hint {
-          @include connectionSettingPage.bb2-network-hint;
+          @include connectionSettingPage.nx-network-hint;
         }
       }
     }

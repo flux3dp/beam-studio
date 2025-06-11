@@ -203,7 +203,7 @@ const AdorModule = ({ options }: Props): React.JSX.Element => {
         />
       </SettingFormItem>
       {isDev && (
-        <SettingFormItem id="2w-ir-laser-offset" label={'white ink'}>
+        <SettingFormItem id="white-ink-offset" label={lang.layer_module.white_ink}>
           <span className="font2" style={{ lineHeight: '32px', marginRight: '10px' }}>
             X
           </span>

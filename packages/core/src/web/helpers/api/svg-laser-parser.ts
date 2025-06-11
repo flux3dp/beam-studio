@@ -235,7 +235,7 @@ export const getExportOpt = (
     }
   };
 
-  if (model === 'fhx2rf3' || model == 'fhx2rf6') {
+  if (model === 'fhx2rf4' || model == 'fhx2rf7') {
     updateAccOverride({ path: { x: 1000, y: 1000 } });
   } else if (model === 'fbb2') {
     if (isPassThroughTask || autoFeeder) {

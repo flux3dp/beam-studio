@@ -3,6 +3,7 @@ import React, { useMemo } from 'react';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import { sprintf } from 'sprintf-js';
+import { match } from 'ts-pattern';
 
 import { modelsWithModules } from '@core/app/actions/beambox/constant';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
@@ -28,12 +29,16 @@ export default function WorkAreaInfo({ isInch }: Props): React.JSX.Element {
 
     if (modelsWithModules.has(workarea)) {
       const laserModule = getDefaultLaserModule();
+      const labelSuffix = match(laserModule)
+        .with(LayerModule.LASER_10W_DIODE, () => ' 10W')
+        .with(LayerModule.LASER_20W_DIODE, () => ' 20W')
+        .otherwise(() => '');
       const boundary = getModuleBoundary(workarea, laserModule);
 
       return {
         canvasHeight: (displayHeight ?? height) - boundary.top - boundary.bottom,
         canvasWidth: width - boundary.left - boundary.right,
-        label: `${label} ${laserModule === LayerModule.LASER_10W_DIODE ? '10W' : '20W'}`,
+        label: `${label}${labelSuffix}`,
         value: workarea,
       };
     }
