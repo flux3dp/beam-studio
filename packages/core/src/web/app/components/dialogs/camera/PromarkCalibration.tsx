@@ -14,12 +14,12 @@ import promarkDataStore from '@core/helpers/device/promark/promark-data-store';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import useI18n from '@core/helpers/useI18n';
-import dialog from '@core/implementations/dialog';
 import type { FisheyeCameraParametersV3, FisheyeCameraParametersV3Cali } from '@core/interfaces/FisheyePreview';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 import styles from './Calibration.module.scss';
 import CheckpointData from './common/CheckpointData';
+import downloadCalibrationFile from './common/downloadCalibrationFile';
 import Instruction from './common/Instruction';
 import SolvePnP from './common/SolvePnP';
 import { promarkPnPPoints } from './common/solvePnPConstants';
@@ -77,21 +77,10 @@ const PromarkCalibration = ({ device: { model, serial }, onClose }: Props): Reac
 
   if (step === Steps.PRE_CHESSBOARD) {
     const handleDownloadChessboard = () => {
-      dialog.writeFileDialog(
-        async () => {
-          const resp = await fetch(withSafe ? 'assets/charuco-15-10.pdf' : 'assets/promark-chessboard.pdf');
-          const blob = await resp.blob();
-
-          return blob;
-        },
+      downloadCalibrationFile(
+        withSafe ? 'assets/charuco-15-10.pdf' : 'assets/promark-chessboard.pdf',
         withSafe ? tCali.download_calibration_pattern : tCali.download_chessboard_file,
         withSafe ? 'Calibration Pattern' : 'Chessboard',
-        [
-          {
-            extensions: ['pdf'],
-            name: window.os === 'MacOS' ? 'PDF (*.pdf)' : 'PDF',
-          },
-        ],
       );
     };
 
