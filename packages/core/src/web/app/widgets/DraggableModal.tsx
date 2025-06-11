@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import type { ModalProps } from 'antd';
 import { Modal } from 'antd';
@@ -15,7 +15,7 @@ interface Props extends ModalProps {
 const DraggableModal = (props: Props): React.JSX.Element => {
   const {
     children,
-    defaultPosition = { x: 0, y: -300 },
+    defaultPosition = { x: 0, y: 0 },
     modalRender = (modal) => modal,
     title,
     width,
@@ -23,15 +23,21 @@ const DraggableModal = (props: Props): React.JSX.Element => {
   } = props;
   const [disabled, setDisabled] = useState(true);
   const [bounds, setBounds] = useState({ bottom: 0, left: 0, right: 0, top: 0 });
-  const draggleRef = useRef<HTMLDivElement>(null);
+  const [draggableHeight, setDraggableHeight] = useState(0);
+  const draggableRef = useRef<HTMLDivElement>(null);
+
+  // eslint-disable-next-line hooks/exhaustive-deps
+  useEffect(() => {
+    if (draggableRef.current && draggableHeight !== draggableRef.current.clientHeight) {
+      setDraggableHeight(draggableRef.current.clientHeight);
+    }
+  });
 
   const onStart = (_event: DraggableEvent, uiData: DraggableData) => {
     const { clientHeight, clientWidth } = window.document.documentElement;
-    const targetRect = draggleRef.current?.getBoundingClientRect();
+    const targetRect = draggableRef.current?.getBoundingClientRect();
 
-    if (!targetRect) {
-      return;
-    }
+    if (!targetRect) return;
 
     setBounds({
       bottom: clientHeight - (targetRect.bottom - uiData.y),
@@ -48,10 +54,11 @@ const DraggableModal = (props: Props): React.JSX.Element => {
           bounds={bounds}
           defaultPosition={defaultPosition}
           disabled={disabled}
-          nodeRef={draggleRef}
+          nodeRef={draggableRef}
           onStart={onStart}
+          positionOffset={{ x: 0, y: -draggableHeight / 2 }}
         >
-          <div ref={draggleRef} style={{ width }}>
+          <div ref={draggableRef} style={{ width }}>
             {modalRender(modal)}
           </div>
         </Draggable>
@@ -62,13 +69,9 @@ const DraggableModal = (props: Props): React.JSX.Element => {
           // fix eslintjsx-a11y/mouse-events-have-key-events
           // https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/blob/master/docs/rules/mouse-events-have-key-events.md
           onFocus={() => {}}
-          onMouseOut={() => {
-            setDisabled(true);
-          }}
+          onMouseOut={() => setDisabled(true)}
           onMouseOver={() => {
-            if (disabled) {
-              setDisabled(false);
-            }
+            if (disabled) setDisabled(false);
           }}
           style={{ cursor: 'move', width: '100%' }}
           // end
