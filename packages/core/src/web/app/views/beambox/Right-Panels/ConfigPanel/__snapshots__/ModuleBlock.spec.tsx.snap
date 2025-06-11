@@ -179,40 +179,6 @@ exports[`test ModuleBlock change to 20w should work with preset change 1`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
-                  title="Printing (4C)"
-                >
-                  <div
-                    class="ant-select-item-option-content"
-                  >
-                    Printing (4C)
-                  </div>
-                  <span
-                    aria-hidden="true"
-                    class="ant-select-item-option-state"
-                    style="user-select: none;"
-                    unselectable="on"
-                  />
-                </div>
-                <div
-                  aria-selected="false"
-                  class="ant-select-item ant-select-item-option"
-                  title="White Ink"
-                >
-                  <div
-                    class="ant-select-item-option-content"
-                  >
-                    White Ink
-                  </div>
-                  <span
-                    aria-hidden="true"
-                    class="ant-select-item-option-state"
-                    style="user-select: none;"
-                    unselectable="on"
-                  />
-                </div>
-                <div
-                  aria-selected="false"
-                  class="ant-select-item ant-select-item-option"
                   title="2W Infrared Laser"
                 >
                   <div
@@ -405,40 +371,6 @@ exports[`test ModuleBlock change to printer should work when selecting 2 layer 1
                     class="ant-select-item-option-content"
                   >
                     Printing
-                  </div>
-                  <span
-                    aria-hidden="true"
-                    class="ant-select-item-option-state"
-                    style="user-select: none;"
-                    unselectable="on"
-                  />
-                </div>
-                <div
-                  aria-selected="false"
-                  class="ant-select-item ant-select-item-option"
-                  title="Printing (4C)"
-                >
-                  <div
-                    class="ant-select-item-option-content"
-                  >
-                    Printing (4C)
-                  </div>
-                  <span
-                    aria-hidden="true"
-                    class="ant-select-item-option-state"
-                    style="user-select: none;"
-                    unselectable="on"
-                  />
-                </div>
-                <div
-                  aria-selected="false"
-                  class="ant-select-item ant-select-item-option"
-                  title="White Ink"
-                >
-                  <div
-                    class="ant-select-item-option-content"
-                  >
-                    White Ink
                   </div>
                   <span
                     aria-hidden="true"
