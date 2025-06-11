@@ -8,36 +8,24 @@ import i18n from '@core/helpers/i18n';
 const LANG = i18n.lang.beambox.tool_panels;
 
 interface Props {
-  cornerType: string;
-  onValueChange: (val: string) => void;
+  cornerType: 'round' | 'sharp';
+  onValueChange: (val: 'round' | 'sharp') => void;
 }
 
 function OffsetCornerPanel({ cornerType: cornerTypeProps, onValueChange }: Props): React.JSX.Element {
   const [cornerType, updateCornerType] = React.useState(cornerTypeProps);
   const [isCollapsed, updateIsCollapsed] = React.useState(false);
 
-  const updateOffsetCorner = (val: string) => {
-    onValueChange(val);
-    updateCornerType(val);
+  const updateOffsetCorner = (cornerType: 'round' | 'sharp') => {
+    onValueChange(cornerType);
+    updateCornerType(cornerType);
   };
 
-  const getOffsetCornerText = () =>
-    ({
-      round: LANG._offset.round,
-      sharp: LANG._offset.sharp,
-    })[cornerType];
+  const getOffsetCornerText = () => ({ round: LANG._offset.round, sharp: LANG._offset.sharp })[cornerType];
 
   const options = [
-    {
-      label: LANG._offset.sharp,
-      selected: cornerType === 'sharp',
-      value: 'sharp',
-    },
-    {
-      label: LANG._offset.round,
-      selected: cornerType === 'round',
-      value: 'round',
-    },
+    { label: LANG._offset.sharp, selected: cornerType === 'sharp', value: 'sharp' },
+    { label: LANG._offset.round, selected: cornerType === 'round', value: 'round' },
   ];
 
   return (
