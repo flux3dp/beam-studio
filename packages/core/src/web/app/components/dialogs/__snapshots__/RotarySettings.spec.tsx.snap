@@ -27,7 +27,7 @@ exports[`test RotarySettings promark rotary settings 1`] = `
           >
             <div
               class="react-draggable"
-              style="transform: translate(0px,-300px);"
+              style="transform: translate(0px, 0px)translate(0px,0px);"
             >
               <div
                 class="ant-modal-content"
@@ -528,7 +528,7 @@ exports[`test RotarySettings should render correctly 1`] = `
           >
             <div
               class="react-draggable"
-              style="transform: translate(0px,-300px);"
+              style="transform: translate(0px, 0px)translate(0px,0px);"
             >
               <div
                 class="ant-modal-content"

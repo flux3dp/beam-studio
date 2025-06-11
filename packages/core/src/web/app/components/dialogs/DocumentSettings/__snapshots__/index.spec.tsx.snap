@@ -27,7 +27,7 @@ exports[`test DocumentSettings should render correctly 1`] = `
           >
             <div
               class="react-draggable"
-              style="transform: translate(0px,-300px);"
+              style="width: 440px; transform: translate(0px, 0px)translate(0px,0px);"
             >
               <div
                 class="ant-modal-content"
@@ -556,7 +556,7 @@ exports[`test DocumentSettings should render correctly 2`] = `
           >
             <div
               class="react-draggable"
-              style="transform: translate(0px,-300px);"
+              style="width: 440px; transform: translate(0px, 0px)translate(0px,0px);"
             >
               <div
                 class="ant-modal-content"
@@ -1201,7 +1201,7 @@ exports[`test DocumentSettings should render correctly 3`] = `
           >
             <div
               class="react-draggable"
-              style="transform: translate(0px,-300px);"
+              style="width: 440px; transform: translate(0px, 0px)translate(0px,0px);"
             >
               <div
                 class="ant-modal-content"
@@ -2386,7 +2386,7 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
           >
             <div
               class="react-draggable"
-              style="transform: translate(0px,-300px);"
+              style="width: 440px; transform: translate(0px, 0px)translate(0px,0px);"
             >
               <div
                 class="ant-modal-content"
@@ -3144,7 +3144,7 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
           >
             <div
               class="react-draggable"
-              style="transform: translate(0px,-300px);"
+              style="width: 440px; transform: translate(0px, 0px)translate(0px,0px);"
             >
               <div
                 class="ant-modal-content"
@@ -3902,7 +3902,7 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
           >
             <div
               class="react-draggable"
-              style="transform: translate(0px,-300px);"
+              style="width: 440px; transform: translate(0px, 0px)translate(0px,0px);"
             >
               <div
                 class="ant-modal-content"
