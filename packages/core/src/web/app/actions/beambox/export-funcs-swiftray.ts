@@ -26,7 +26,7 @@ import type { TaskMetaData } from '@core/interfaces/ITask';
 import type { IBaseConfig, IFcodeConfig } from '@core/interfaces/ITaskConfig';
 import type { IWrappedSwiftrayTaskFile } from '@core/interfaces/IWrappedFile';
 
-import { adorModelsArray, promarkModels } from './constant';
+import { adorModels, promarkModels } from './constant';
 import { getAdorPaddingAccel } from './export/ador-utils';
 import generateThumbnail from './export/generate-thumbnail';
 
@@ -269,7 +269,7 @@ const fetchTaskCodeSwiftray = async (
 
   if (device) {
     const vc = VersionChecker(device.version);
-    const isAdor = adorModelsArray.includes(device.model);
+    const isAdor = adorModels.has(device.model);
 
     doesSupportDiodeAndAF = vc.meetRequirement('DIODE_AND_AUTOFOCUS');
     shouldUseFastGradient = shouldUseFastGradient && vc.meetRequirement('FAST_GRADIENT');

@@ -26,7 +26,7 @@ import { Mode } from '@core/app/constants/monitor-constants';
 import { showCameraCalibration } from '@core/app/views/beambox/Camera-Calibration';
 import { showDiodeCalibration } from '@core/app/views/beambox/Diode-Calibration';
 import checkDeviceStatus from '@core/helpers/check-device-status';
-import checkFirmware from '@core/helpers/check-firmware';
+import checkFirmware from '@core/helpers/checkFirmware';
 import { downloadCameraData, uploadCameraData } from '@core/helpers/device/camera-data-backup';
 import { checkBlockedSerial } from '@core/helpers/device/checkBlockedSerial';
 import DeviceMaster from '@core/helpers/device-master';

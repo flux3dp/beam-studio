@@ -53,6 +53,14 @@ type Printing4CConfig = {
   refreshZ: number; // refresh z move
 };
 
+/**
+ * Configs for white ink module, different from printing module white ink
+ */
+type WhiteInkConfig = {
+  whiteInkX: number;
+  whiteInkY: number;
+};
+
 type PromarkConfig = {
   biDirectional: boolean;
   crossHatch: boolean;
@@ -70,7 +78,8 @@ export type ConfigKeyTypeMap = CommonConfig &
   MetaConfig &
   Printing4CConfig &
   PrintingConfig &
-  PromarkConfig;
+  PromarkConfig &
+  WhiteInkConfig;
 
 export type ConfigKey = keyof ConfigKeyTypeMap;
 

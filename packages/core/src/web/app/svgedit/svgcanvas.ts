@@ -5809,7 +5809,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
       setHref(bg_img, url);
     } else if (bg_img) {
-      bg_img.parentNode.removeChild(bg_img);
+      bg_img.remove();
     }
   };
 

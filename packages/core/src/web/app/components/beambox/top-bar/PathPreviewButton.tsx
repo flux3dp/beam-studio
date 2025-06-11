@@ -1,8 +1,9 @@
+import type { ReactNode } from 'react';
 import React, { useContext } from 'react';
 
 import classNames from 'classnames';
 
-import constant from '@core/app/actions/beambox/constant';
+import { modelsWithModules } from '@core/app/actions/beambox/constant';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
@@ -13,10 +14,11 @@ import isWeb from '@core/helpers/is-web';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './PathPreviewButton.module.scss';
 
-let svgCanvas;
+let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
@@ -27,7 +29,7 @@ interface Props {
   togglePathPreview: () => void;
 }
 
-function PathPreviewButton({ isDeviceConnected, togglePathPreview }: Props): React.JSX.Element {
+function PathPreviewButton({ isDeviceConnected, togglePathPreview }: Props): ReactNode {
   const lang = useI18n().topbar;
   const isMobile = useIsMobile();
   const { mode } = useContext(CanvasContext);
@@ -37,7 +39,7 @@ function PathPreviewButton({ isDeviceConnected, togglePathPreview }: Props): Rea
     return null;
   }
 
-  if (!isDev() && constant.adorModels.includes(workarea)) {
+  if (!isDev() && modelsWithModules.has(workarea)) {
     return null;
   }
 

@@ -10,6 +10,7 @@ export type WorkAreaLabel =
   | 'Beambox II'
   | 'Beambox Pro'
   | 'beamo'
+  | 'beamo II'
   | 'HEXA'
   | 'HEXA RF'
   | 'Lazervida'
@@ -17,11 +18,12 @@ export type WorkAreaLabel =
 
 export const workArea = [
   'fbm1',
+  'fbm2',
   'fbb1b',
   'fbb1p',
   'fhexa1',
-  'fhx2rf3',
-  'fhx2rf6',
+  'fhx2rf4',
+  'fhx2rf7',
   'ado1',
   'fpm1',
   'flv1',
@@ -87,6 +89,7 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
       LayerModule.LASER_20W_DIODE,
       LayerModule.PRINTER,
       isDev() ? LayerModule.PRINTER_4C : null,
+      isDev() ? LayerModule.WHITE_INK : null,
       LayerModule.LASER_1064,
       LayerModule.UV_PRINT,
     ].filter(Boolean),
@@ -142,6 +145,24 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     vectorSpeedLimit: 20,
     width: 300,
   },
+  fbm2: {
+    cameraCenter: [180, 70],
+    height: 240,
+    label: 'beamo II',
+    maxSpeed: 750,
+    minSpeed: 0.5,
+    pxHeight: 240 * dpmm,
+    pxWidth: 360 * dpmm,
+    supportedModules: [
+      LayerModule.LASER_UNIVERSAL,
+      isDev() ? LayerModule.PRINTER_4C : null,
+      isDev() ? LayerModule.WHITE_INK : null,
+      LayerModule.LASER_1064,
+      LayerModule.UV_PRINT,
+    ].filter(Boolean),
+    vectorSpeedLimit: 50,
+    width: 360,
+  },
   fhexa1: {
     autoFocusOffset: [31.13, 1.2, 6.5],
     height: 410,
@@ -155,8 +176,8 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     vectorSpeedLimit: 20,
     width: 740,
   },
-  fhx2rf3: hexaRfWorkAreaInfo,
-  fhx2rf6: hexaRfWorkAreaInfo,
+  fhx2rf4: hexaRfWorkAreaInfo,
+  fhx2rf7: hexaRfWorkAreaInfo,
   flv1: {
     height: 400,
     label: 'Lazervida',
@@ -194,7 +215,7 @@ export const getWorkarea = (model: WorkAreaModel, fallbackModel: WorkAreaModel =
 };
 
 export const getSupportedModules = (model: WorkAreaModel): LayerModuleType[] => {
-  const { supportedModules = [LayerModule.LASER_UNIVERSAL, LayerModule.UV_PRINT] } = workareaConstants[model];
+  const { supportedModules = [LayerModule.LASER_UNIVERSAL, LayerModule.UV_PRINT] } = workareaConstants[model] ?? {};
   const isUvPrintEnabled = beamboxPreference.read('enable-uv-print-file');
 
   if (!isUvPrintEnabled) return supportedModules.filter((module) => module !== LayerModule.UV_PRINT);

@@ -1457,6 +1457,7 @@ const lang: ILang = {
     printing: '打印',
     unknown: '未知模块',
     uv_print: 'UV打印',
+    white_ink: '白墨',
   },
   machine_status: {
     '-17': '墨匣模式',

@@ -2,7 +2,7 @@ import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
-import { getDefaultLaserModule } from '@core/helpers/layer-module/layer-module-helper';
+import { getDefaultLaserModule, getPrintingModule } from '@core/helpers/layer-module/layer-module-helper';
 import type { ILang } from '@core/interfaces/ILang';
 
 export async function determineTargetModule(
@@ -20,8 +20,7 @@ export async function determineTargetModule(
       id,
       options: [
         { label: lang.layer_module.general_laser, value: getDefaultLaserModule() },
-        // TODO: should this check workarea for 4c?
-        { label: lang.layer_module.printing, value: LayerModule.PRINTER },
+        { label: lang.layer_module.printing, value: getPrintingModule() },
       ],
       title: lang.beambox.popup.select_import_module,
     });

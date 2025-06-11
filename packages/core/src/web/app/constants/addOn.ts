@@ -126,9 +126,12 @@ const addOnData: Record<WorkAreaModel, AddOnInfo> = {
       roller: true,
     },
   },
+  fbm2: {
+    lowerFocus: true,
+  },
   fhexa1: hexaAddOnInfo,
-  fhx2rf3: hexaRfAddOnInfo,
-  fhx2rf6: hexaRfAddOnInfo,
+  fhx2rf4: hexaRfAddOnInfo,
+  fhx2rf7: hexaRfAddOnInfo,
   flv1: {
     jobOrigin: true,
     rotary: {

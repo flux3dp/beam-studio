@@ -53,7 +53,7 @@ exports[`settings/Editor initially no warning 1`] = `
     Default Document Setting
     url:
     options:
-    [{"label":"beamo","value":"fbm1"},{"label":"Beambox","value":"fbb1b"},{"label":"Beambox Pro","value":"fbb1p"},{"label":"HEXA","value":"fhexa1"},{"label":"HEXA RF","value":"fhx2rf3"},{"label":"Ador","value":"ado1"},{"label":"Promark","value":"fpm1"},{"label":"Lazervida","value":"flv1"},{"label":"Beambox II","value":"fbb2"}]
+    [{"label":"beamo","value":"fbm1"},{"label":"Beambox","value":"fbb1b"},{"label":"Beambox Pro","value":"fbb1p"},{"label":"HEXA","value":"fhexa1"},{"label":"HEXA RF","value":"fhx2rf4"},{"label":"Ador","value":"ado1"},{"label":"Promark","value":"fpm1"},{"label":"Lazervida","value":"flv1"},{"label":"Beambox II","value":"fbb2"}]
     <input
       class="select-control"
       id="set-default-model"
@@ -296,7 +296,7 @@ exports[`settings/Editor initially no warning 2`] = `
     Default Document Setting
     url:
     options:
-    [{"label":"beamo","value":"fbm1"},{"label":"Beambox","value":"fbb1b"},{"label":"Beambox Pro","value":"fbb1p"},{"label":"HEXA","value":"fhexa1"},{"label":"HEXA RF","value":"fhx2rf3"},{"label":"Ador","value":"ado1"},{"label":"Promark","value":"fpm1"},{"label":"Lazervida","value":"flv1"},{"label":"Beambox II","value":"fbb2"}]
+    [{"label":"beamo","value":"fbm1"},{"label":"Beambox","value":"fbb1b"},{"label":"Beambox Pro","value":"fbb1p"},{"label":"HEXA","value":"fhexa1"},{"label":"HEXA RF","value":"fhx2rf4"},{"label":"Ador","value":"ado1"},{"label":"Promark","value":"fpm1"},{"label":"Lazervida","value":"flv1"},{"label":"Beambox II","value":"fbb2"}]
     <input
       class="select-control"
       id="set-default-model"
@@ -539,7 +539,7 @@ exports[`settings/Editor initially no warning 3`] = `
     Default Document Setting
     url:
     options:
-    [{"label":"beamo","value":"fbm1"},{"label":"Beambox","value":"fbb1b"},{"label":"Beambox Pro","value":"fbb1p"},{"label":"HEXA","value":"fhexa1"},{"label":"HEXA RF","value":"fhx2rf3"},{"label":"Ador","value":"ado1"},{"label":"Promark","value":"fpm1"},{"label":"Lazervida","value":"flv1"},{"label":"Beambox II","value":"fbb2"}]
+    [{"label":"beamo","value":"fbm1"},{"label":"Beambox","value":"fbb1b"},{"label":"Beambox Pro","value":"fbb1p"},{"label":"HEXA","value":"fhexa1"},{"label":"HEXA RF","value":"fhx2rf4"},{"label":"Ador","value":"ado1"},{"label":"Promark","value":"fpm1"},{"label":"Lazervida","value":"flv1"},{"label":"Beambox II","value":"fbb2"}]
     <input
       class="select-control"
       id="set-default-model"
@@ -782,7 +782,7 @@ exports[`settings/Editor initially no warning 4`] = `
     Default Document Setting
     url:
     options:
-    [{"label":"beamo","value":"fbm1"},{"label":"Beambox","value":"fbb1b"},{"label":"Beambox Pro","value":"fbb1p"},{"label":"HEXA","value":"fhexa1"},{"label":"HEXA RF","value":"fhx2rf3"},{"label":"Ador","value":"ado1"},{"label":"Promark","value":"fpm1"},{"label":"Lazervida","value":"flv1"},{"label":"Beambox II","value":"fbb2"}]
+    [{"label":"beamo","value":"fbm1"},{"label":"Beambox","value":"fbb1b"},{"label":"Beambox Pro","value":"fbb1p"},{"label":"HEXA","value":"fhexa1"},{"label":"HEXA RF","value":"fhx2rf4"},{"label":"Ador","value":"ado1"},{"label":"Promark","value":"fpm1"},{"label":"Lazervida","value":"flv1"},{"label":"Beambox II","value":"fbb2"}]
     <input
       class="select-control"
       id="set-default-model"

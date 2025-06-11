@@ -1457,6 +1457,7 @@ const lang: ILang = {
     printing: '인쇄',
     unknown: '알 수 없는 모듈',
     uv_print: 'UV 인쇄',
+    white_ink: '흰 잉크',
   },
   machine_status: {
     '-17': 'Cartridge IO Mode',

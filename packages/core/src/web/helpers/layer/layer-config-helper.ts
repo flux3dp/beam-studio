@@ -56,6 +56,8 @@ const attributeMap: Record<ConfigKey, string> = {
   speed: 'data-speed',
   split: 'data-split',
   uv: 'data-uv',
+  whiteInkX: 'data-whiteInkX',
+  whiteInkY: 'data-whiteInkY',
   wInk: 'data-wInk',
   wMultipass: 'data-wMultipass',
   wobbleDiameter: 'data-wobbleDiameter',
@@ -100,6 +102,8 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   repeat: 1,
   speed: 20,
   uv: 0,
+  whiteInkX: 0.8,
+  whiteInkY: 0.6,
   wInk: BeamboxPreference.read('multipass-compensation') ? -12 : -4,
   wMultipass: 3,
   wobbleDiameter: -0.2,
@@ -128,6 +132,9 @@ export const timeRelatedConfigs: Set<ConfigKey> = new Set([
   // 4c
   'refreshInterval',
   'refreshWidth',
+  // white ink
+  'whiteInkX',
+  'whiteInkY',
 ]);
 export const presetRelatedConfigs: Set<ConfigKey> = new Set([
   'power',
@@ -398,6 +405,7 @@ export const getMultiSelectData = <T extends ConfigKey>(
 
 export const initLayerConfig = (layerName: string): void => {
   const workarea = BeamboxPreference.read('workarea');
+  const supportModules = getSupportedModules(workarea);
   const defaultConfig = getDefaultConfig();
   const keys = Object.keys(defaultConfig) as ConfigKey[];
   const layer = getLayerElementByName(layerName);
@@ -412,8 +420,14 @@ export const initLayerConfig = (layerName: string): void => {
 
   for (const key of keys) {
     if (defaultConfig[key] !== undefined) {
-      if (key === 'module' && modelsWithModules.has(workarea)) {
-        writeDataLayer(layer, key, defaultLaserModule);
+      if (key === 'module') {
+        if (supportModules.includes(defaultLaserModule)) {
+          writeDataLayer(layer, key, defaultLaserModule);
+        } else if (supportModules.includes(defaultConfig.module!)) {
+          writeDataLayer(layer, key, defaultConfig.module!);
+        } else {
+          writeDataLayer(layer, key, supportModules[0]);
+        }
       } else {
         writeDataLayer(layer, key, defaultConfig[key] as number | string);
       }

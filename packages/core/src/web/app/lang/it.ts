@@ -1457,6 +1457,7 @@ const lang: ILang = {
     printing: 'Stampa',
     unknown: 'Unknown Module',
     uv_print: 'Stampa UV',
+    white_ink: 'Inchiostro bianco',
   },
   machine_status: {
     '-17': '.machine_status.-17',

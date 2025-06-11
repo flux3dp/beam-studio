@@ -193,5 +193,41 @@ exports[`test AdorModule should render correctly 1`] = `
       />
     </div>
   </div>
+  <div>
+    mock-select-control id:
+    white-ink-offset
+    label:
+    White Ink
+    url:
+    options:
+    <span
+      class="font2"
+      style="line-height: 32px; margin-right: 10px;"
+    >
+      X
+    </span>
+    <div>
+      <input
+        data-testid="white-ink-x-offset"
+        id="white-ink-x-offset"
+        type="number"
+        value="0"
+      />
+    </div>
+    <span
+      class="font2"
+      style="line-height: 32px; margin-right: 10px;"
+    >
+      Y
+    </span>
+    <div>
+      <input
+        data-testid="white-ink-y-offset"
+        id="white-ink-y-offset"
+        type="number"
+        value="0"
+      />
+    </div>
+  </div>
 </div>
 `;

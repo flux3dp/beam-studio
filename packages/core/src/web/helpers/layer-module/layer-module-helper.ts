@@ -1,14 +1,33 @@
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import { adorModels } from '@core/app/actions/beambox/constant';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
+import { getSupportedModules } from '@core/app/constants/workarea-constants';
 import i18n from '@core/helpers/i18n';
 
 const LaserModuleSet = new Set([LayerModule.LASER_10W_DIODE, LayerModule.LASER_20W_DIODE]);
 
 export const getDefaultLaserModule = (): LayerModuleType => {
+  const workarea = beamboxPreference.read('workarea');
+
+  if (!adorModels.has(workarea)) {
+    return LayerModule.LASER_UNIVERSAL;
+  }
+
   const value = beamboxPreference.read('default-laser-module');
 
   return LaserModuleSet.has(value) ? value : LayerModule.LASER_20W_DIODE;
+};
+
+export const getPrintingModule = (): LayerModuleType => {
+  const workarea = beamboxPreference.read('workarea');
+  const supportedModules = getSupportedModules(workarea);
+
+  if (supportedModules.includes(LayerModule.PRINTER_4C)) {
+    return LayerModule.PRINTER_4C;
+  }
+
+  return LayerModule.PRINTER;
 };
 
 export const getModulesTranslations = (): Record<LayerModuleType, string> => {
@@ -24,5 +43,6 @@ export const getModulesTranslations = (): Record<LayerModuleType, string> => {
     [LayerModule.PRINTER_4C]: `${t.printing} (4C)`,
     [LayerModule.UNKNOWN]: t.unknown,
     [LayerModule.UV_PRINT]: t.uv_print,
+    [LayerModule.WHITE_INK]: t.white_ink,
   };
 };

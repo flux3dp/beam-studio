@@ -1,15 +1,19 @@
 import type { Dispatch, SetStateAction } from 'react';
 import React, { createContext, useMemo, useState } from 'react';
 
+import { match } from 'ts-pattern';
+
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { DEFAULT_CONTROLLER_INCH, DEFAULT_CONTROLLER_MM } from '@core/app/constants/boxgen-constants';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
-import moduleBoundary from '@core/app/constants/layer-module/module-boundary';
+import { getModuleBoundary } from '@core/app/constants/layer-module/module-boundary';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { getDefaultLaserModule } from '@core/helpers/layer-module/layer-module-helper';
 import storage from '@core/implementations/storage';
 import type { IController } from '@core/interfaces/IBoxgen';
+
+import { modelsWithModules } from '../actions/beambox/constant';
 
 interface BoxgenContextType {
   boxData: IController;
@@ -38,14 +42,18 @@ export function BoxgenProvider({ children, onClose }: BoxgenProviderProps): Reac
     const currentWorkarea = getWorkarea(workareaValue, 'fbm1');
     const { displayHeight, height, width } = currentWorkarea;
 
-    if (workareaValue === 'ado1') {
+    if (modelsWithModules.has(workareaValue)) {
       const laserModule = getDefaultLaserModule();
-      const boundary = moduleBoundary[laserModule];
+      const boundary = getModuleBoundary(workareaValue, laserModule);
+      const labelSuffix = match(laserModule)
+        .with(LayerModule.LASER_10W_DIODE, () => ' 10W')
+        .with(LayerModule.LASER_20W_DIODE, () => ' 20W')
+        .otherwise(() => '');
 
       return {
         canvasHeight: (displayHeight ?? height) - boundary.top - boundary.bottom,
         canvasWidth: width - boundary.left - boundary.right,
-        label: `${currentWorkarea.label} ${laserModule === LayerModule.LASER_10W_DIODE ? '10W' : '20W'}`,
+        label: `${currentWorkarea.label}${labelSuffix}`,
         value: workareaValue,
       };
     }
