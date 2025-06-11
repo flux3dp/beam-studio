@@ -102,7 +102,13 @@ describe('test Calibration', () => {
 
   it('should render correctly', () => {
     const { baseElement } = render(
-      <Calibration chessboard={[7, 7]} onClose={jest.fn()} onNext={jest.fn()} updateParam={jest.fn()} />,
+      <Calibration
+        chessboard={[7, 7]}
+        description={['step1', 'step2', 'step3']}
+        onClose={jest.fn()}
+        onNext={jest.fn()}
+        updateParam={jest.fn()}
+      />,
     );
 
     expect(baseElement).toMatchSnapshot();
