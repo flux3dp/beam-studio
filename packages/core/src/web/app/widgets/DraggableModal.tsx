@@ -9,10 +9,18 @@ import layoutConstants from '@core/app/constants/layout-constants';
 
 interface Props extends ModalProps {
   defaultPosition?: ControlPosition;
+  width?: number | string;
 }
 
 const DraggableModal = (props: Props): React.JSX.Element => {
-  const { children, defaultPosition = { x: 0, y: -300 }, modalRender = (modal) => modal, title, ...restProps } = props;
+  const {
+    children,
+    defaultPosition = { x: 0, y: -300 },
+    modalRender = (modal) => modal,
+    title,
+    width,
+    ...restProps
+  } = props;
   const [disabled, setDisabled] = useState(true);
   const [bounds, setBounds] = useState({ bottom: 0, left: 0, right: 0, top: 0 });
   const draggleRef = useRef<HTMLDivElement>(null);
@@ -43,7 +51,9 @@ const DraggableModal = (props: Props): React.JSX.Element => {
           nodeRef={draggleRef}
           onStart={onStart}
         >
-          <div ref={draggleRef}>{modalRender(modal)}</div>
+          <div ref={draggleRef} style={{ width }}>
+            {modalRender(modal)}
+          </div>
         </Draggable>
       )}
       title={
@@ -66,6 +76,7 @@ const DraggableModal = (props: Props): React.JSX.Element => {
           {title}
         </div>
       }
+      width={width}
       {...restProps}
     >
       {children}
