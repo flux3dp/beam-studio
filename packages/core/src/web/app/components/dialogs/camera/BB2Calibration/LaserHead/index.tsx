@@ -109,6 +109,7 @@ const LaserHead = ({ isAdvanced, onClose }: Props): React.JSX.Element => {
       <Calibration
         charuco={[15, 10]}
         chessboard={[24, 14]}
+        description={[tCali.put_chessboard_1, tCali.put_chessboard_2, tCali.put_chessboard_3]}
         onClose={onClose}
         onNext={() => setStep(Steps.PUT_PAPER)}
         updateParam={updateParam}

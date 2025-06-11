@@ -23,6 +23,7 @@ type CalibrationData =
   | { charuco?: [number, number]; chessboard: [number, number] };
 
 type Props = CalibrationData & {
+  description?: string[];
   onClose: (complete?: boolean) => void;
   onNext: () => void;
   updateParam: (param: FisheyeCameraParametersV3Cali) => void;
@@ -31,7 +32,7 @@ type Props = CalibrationData & {
 /**
  * Component that provide a live view to calibrate the camera with a chessboard or ChAruCo board.
  */
-const Calibration = ({ charuco, chessboard, onClose, onNext, updateParam }: Props): React.JSX.Element => {
+const Calibration = ({ charuco, chessboard, description, onClose, onNext, updateParam }: Props): React.JSX.Element => {
   const t = useI18n();
   const tCali = t.calibration;
   const { exposureSetting, handleTakePicture, img, pauseLive, restartLive, setExposureSetting } = useLiveFeed();
@@ -116,11 +117,13 @@ const Calibration = ({ charuco, chessboard, onClose, onNext, updateParam }: Prop
       width="80vw"
     >
       <div className={styles.container}>
-        <div className={styles.desc}>
-          <div>1. {tCali.put_chessboard_1}</div>
-          <div>2. {tCali.put_chessboard_2}</div>
-          <div>3. {tCali.put_chessboard_3}</div>
-        </div>
+        {description && (
+          <div className={styles.desc}>
+            {description.map((desc, index) => (
+              <div key={index}>{`${index + 1}. ${desc}`}</div>
+            ))}
+          </div>
+        )}
         <div className={styles.imgContainer}>
           {img ? (
             <>
