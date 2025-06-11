@@ -10,7 +10,6 @@ import getFocalDistance from '@core/helpers/device/camera/getFocalDistance';
 import { loadJson, uploadJson } from '@core/helpers/device/jsonDataHelper';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
-import dialog from '@core/implementations/dialog';
 import type {
   FisheyeCameraParametersV4,
   FisheyeCameraParametersV4Cali,
