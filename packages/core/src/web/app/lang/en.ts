@@ -1457,6 +1457,7 @@ Machines > ‘Promark Name’ > Promark Settings`,
     printing: 'Printing',
     unknown: 'Unknown Module',
     uv_print: 'UV Print',
+    uv_varnish: 'Varnish',
     uv_white_ink: 'White Ink',
   },
   machine_status: {

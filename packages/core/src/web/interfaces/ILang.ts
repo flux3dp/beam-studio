@@ -1445,6 +1445,7 @@ export interface ILang {
     printing: string;
     unknown: string;
     uv_print: string;
+    uv_varnish: string;
     uv_white_ink: string;
   };
   machine_status: {

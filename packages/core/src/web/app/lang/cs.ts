@@ -1457,6 +1457,7 @@ const lang: ILang = {
     printing: 'Probíhá tisk',
     unknown: 'Neznámý modul',
     uv_print: 'UV Tisk',
+    uv_varnish: 'Lak',
     uv_white_ink: 'Bílý inkoust',
   },
   machine_status: {

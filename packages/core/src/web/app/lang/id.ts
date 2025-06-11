@@ -1457,6 +1457,7 @@ const lang: ILang = {
     printing: 'Pencetakan',
     unknown: 'Unknown Module',
     uv_print: 'Cetak UV',
+    uv_varnish: 'Pernis',
     uv_white_ink: 'Tinta putih',
   },
   machine_status: {

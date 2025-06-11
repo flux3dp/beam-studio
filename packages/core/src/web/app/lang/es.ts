@@ -1457,6 +1457,7 @@ const lang: ILang = {
     printing: 'Impresión',
     unknown: 'Módulo desconocido',
     uv_print: 'Impresión UV',
+    uv_varnish: 'Barniz',
     uv_white_ink: 'Tinta blanca',
   },
   machine_status: {

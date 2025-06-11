@@ -1457,6 +1457,7 @@ const lang: ILang = {
     printing: 'Utskrift',
     unknown: 'Unknown Module',
     uv_print: 'UV-utskrift',
+    uv_varnish: 'Lack',
     uv_white_ink: 'Vitt bläck',
   },
   machine_status: {

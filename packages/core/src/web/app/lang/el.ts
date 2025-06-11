@@ -1457,6 +1457,7 @@ const lang: ILang = {
     printing: 'Εκτύπωση',
     unknown: 'Unknown Module',
     uv_print: 'UV Εκτύπωση',
+    uv_varnish: 'Βερνίκι',
     uv_white_ink: 'Λευκό μελάνι',
   },
   machine_status: {

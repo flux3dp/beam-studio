@@ -1457,6 +1457,7 @@ const lang: ILang = {
     printing: 'Druk',
     unknown: 'Moduł nieznany',
     uv_print: 'Druk UV',
+    uv_varnish: 'Lakier',
     uv_white_ink: 'Biały tusz',
   },
   machine_status: {

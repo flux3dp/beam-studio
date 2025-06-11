@@ -1457,6 +1457,7 @@ const lang: ILang = {
     printing: 'การพิมพ์',
     unknown: 'Unknown Module',
     uv_print: 'การพิมพ์ UV',
+    uv_varnish: 'วานิช',
     uv_white_ink: 'หมึกสีขาว',
   },
   machine_status: {

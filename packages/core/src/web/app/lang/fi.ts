@@ -1457,6 +1457,7 @@ const lang: ILang = {
     printing: 'Tulostus',
     unknown: 'Unknown Module',
     uv_print: 'UV-tulostus',
+    uv_varnish: 'Lakka',
     uv_white_ink: 'Valkoinen muste',
   },
   machine_status: {
