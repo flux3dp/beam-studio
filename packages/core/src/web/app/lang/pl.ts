@@ -1457,7 +1457,7 @@ const lang: ILang = {
     printing: 'Druk',
     unknown: 'Moduł nieznany',
     uv_print: 'Druk UV',
-    white_ink: 'Biały tusz',
+    uv_white_ink: 'Biały tusz',
   },
   machine_status: {
     '-17': 'Tryb I/O kasety',

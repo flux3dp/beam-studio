@@ -5,7 +5,7 @@ import NumberBlock from '../NumberBlock';
 const WhiteInkX = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.JSX.Element => {
   return (
     <NumberBlock
-      configKey="whiteInkX"
+      configKey="uvIntervalX"
       id="white-ink-x-interval"
       max={5}
       min={0.01}

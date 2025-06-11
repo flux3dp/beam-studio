@@ -1457,7 +1457,7 @@ const lang: ILang = {
     printing: 'Tulostus',
     unknown: 'Unknown Module',
     uv_print: 'UV-tulostus',
-    white_ink: 'Valkoinen muste',
+    uv_white_ink: 'Valkoinen muste',
   },
   machine_status: {
     '-17': 'Kasetin IO-tila',

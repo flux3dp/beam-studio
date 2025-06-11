@@ -54,11 +54,11 @@ type Printing4CConfig = {
 };
 
 /**
- * Configs for white ink module, different from printing module white ink
+ * Configs for uv module.
  */
-type WhiteInkConfig = {
-  whiteInkX: number;
-  whiteInkY: number;
+type UVConfig = {
+  uvIntervalX: number;
+  uvIntervalY: number;
 };
 
 type PromarkConfig = {
@@ -79,7 +79,7 @@ export type ConfigKeyTypeMap = CommonConfig &
   Printing4CConfig &
   PrintingConfig &
   PromarkConfig &
-  WhiteInkConfig;
+  UVConfig;
 
 export type ConfigKey = keyof ConfigKeyTypeMap;
 

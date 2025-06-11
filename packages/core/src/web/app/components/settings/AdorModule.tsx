@@ -203,15 +203,15 @@ const AdorModule = ({ options }: Props): React.JSX.Element => {
         />
       </SettingFormItem>
       {isDev && (
-        <SettingFormItem id="white-ink-offset" label={lang.layer_module.white_ink}>
+        <SettingFormItem id="white-ink-offset" label={lang.layer_module.uv_white_ink}>
           <span className="font2" style={{ lineHeight: '32px', marginRight: '10px' }}>
             X
           </span>
           <UnitInput
             className={{ half: true }}
-            defaultValue={getModuleOffset(LayerModule.WHITE_INK)[0]}
+            defaultValue={getModuleOffset(LayerModule.UV_WHITE_INK)[0]}
             forceUsePropsUnit
-            getValue={(val) => editModuleOffsets(LayerModule.WHITE_INK, 'x', val)}
+            getValue={(val) => editModuleOffsets(LayerModule.UV_WHITE_INK, 'x', val)}
             id="white-ink-x-offset"
             max={workareaWidth}
             min={-workareaWidth}
@@ -222,9 +222,9 @@ const AdorModule = ({ options }: Props): React.JSX.Element => {
           </span>
           <UnitInput
             className={{ half: true }}
-            defaultValue={getModuleOffset(LayerModule.WHITE_INK)[1]}
+            defaultValue={getModuleOffset(LayerModule.UV_WHITE_INK)[1]}
             forceUsePropsUnit
-            getValue={(val) => editModuleOffsets(LayerModule.WHITE_INK, 'y', val)}
+            getValue={(val) => editModuleOffsets(LayerModule.UV_WHITE_INK, 'y', val)}
             id="white-ink-y-offset"
             max={workareaHeight}
             min={-workareaHeight}

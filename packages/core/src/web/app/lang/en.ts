@@ -1457,7 +1457,7 @@ Machines > ‘Promark Name’ > Promark Settings`,
     printing: 'Printing',
     unknown: 'Unknown Module',
     uv_print: 'UV Print',
-    white_ink: 'White Ink',
+    uv_white_ink: 'White Ink',
   },
   machine_status: {
     '-17': 'Cartridge IO Mode',

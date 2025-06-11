@@ -1457,7 +1457,7 @@ const lang: ILang = {
     printing: 'Pencetakan',
     unknown: 'Unknown Module',
     uv_print: 'Cetakan UV',
-    white_ink: 'Dakwat putih',
+    uv_white_ink: 'Dakwat putih',
   },
   machine_status: {
     '-17': 'Mod IO Kartrij',

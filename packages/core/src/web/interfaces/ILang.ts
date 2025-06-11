@@ -1445,7 +1445,7 @@ export interface ILang {
     printing: string;
     unknown: string;
     uv_print: string;
-    white_ink: string;
+    uv_white_ink: string;
   };
   machine_status: {
     '-17': string;
