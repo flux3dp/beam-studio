@@ -1,8 +1,6 @@
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import type { OffsetMode } from './constants';
-
 let svgCanvas: ISVGCanvas;
 
 getSVGAsync(({ Canvas }) => {
@@ -15,10 +13,7 @@ interface ValidationResult {
   isValid: boolean;
 }
 
-export function validateAndPrepareOffsetData(
-  currentElems: SVGElement[] | undefined,
-  mode: OffsetMode,
-): ValidationResult {
+export function validateAndPrepareOffsetData(currentElems: SVGElement[] | undefined): ValidationResult {
   const targetElements = currentElems || svgCanvas.getSelectedElems(true);
 
   if (targetElements.length === 0) {
@@ -26,16 +21,6 @@ export function validateAndPrepareOffsetData(
 
     return { errorType: 'no_elements', isValid: false };
   }
-
-  // if (targetElements.length > 1 && ['inwardFilled', 'outwardFilled'].includes(mode)) {
-  //   alertCaller.popUp({
-  //     id: 'OffsetMultipleNotSupported',
-  //     message: 'This operation mode currently supports only a single selected element to adjust its internal gaps.',
-  //     type: alertConstants.SHOW_POPUP_WARNING,
-  //   });
-
-  //   return { errorType: 'multiple_elements_not_supported', isValid: false };
-  // }
 
   return { elementsToOffset: targetElements, isValid: true };
 }

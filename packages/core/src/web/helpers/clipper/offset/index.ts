@@ -4,7 +4,7 @@ import i18n from '@core/helpers/i18n';
 import type { OffsetMode } from './constants';
 import { createAndApplyOffsetElement } from './createAndApplyOffsetElement';
 import { performOffsetAndUnionOperations } from './performOffsetAndUnionOperations';
-import { showOffsetAlert } from './showOffSetAlert'; // Corrected import name
+import { showOffsetAlert } from './showOffSetAlert';
 import { validateAndPrepareOffsetData } from './validateAndPrepareOffsetData';
 
 const offsetElements = async (
@@ -16,7 +16,7 @@ const offsetElements = async (
   progressCaller.openNonstopProgress({ id: 'offset-path', message: i18n.lang.beambox.popup.progress.calculating });
   await new Promise((resolve) => setTimeout(resolve, 50)); // Brief pause for UI
 
-  const validation = validateAndPrepareOffsetData(elems, mode);
+  const validation = validateAndPrepareOffsetData(elems);
 
   if (!validation.isValid || !validation.elementsToOffset) {
     progressCaller.popById('offset-path');

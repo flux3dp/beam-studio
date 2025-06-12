@@ -29,7 +29,7 @@ describe('should render correctly', () => {
 
     const { baseElement, getByRole, getByText } = render(<OffsetModal onCancel={onCancel} onOk={onOk} />);
 
-    expect(get).toBeCalledTimes(1);
+    expect(get).toHaveBeenCalledTimes(1);
     expect(baseElement).toMatchSnapshot();
 
     const directionSelect = baseElement.querySelectorAll('.ant-select-selector')[0];
@@ -58,8 +58,8 @@ describe('should render correctly', () => {
     await waitFor(() => expect(offsetSlider.getAttribute('aria-valuenow')).toBe('10'));
     expect(offsetInput.getAttribute('aria-valuenow')).toBe('10');
     fireEvent.click(getByText('Confirm'));
-    expect(onOk).toBeCalledTimes(1);
-    expect(onOk).toBeCalledWith({ cornerType: 'round', dir: 0, distance: 10 });
+    expect(onOk).toHaveBeenCalledTimes(1);
+    expect(onOk).toHaveBeenCalledWith({ cornerType: 'round', distance: 10, mode: 'inward' });
   });
 
   test('default unit is inches', async () => {
@@ -67,7 +67,7 @@ describe('should render correctly', () => {
 
     const { baseElement, getByRole, getByText } = render(<OffsetModal onCancel={onCancel} onOk={onOk} />);
 
-    expect(get).toBeCalledTimes(1);
+    expect(get).toHaveBeenCalledTimes(1);
     expect(baseElement).toMatchSnapshot();
 
     const offsetSlider = getByRole('slider');
@@ -77,7 +77,7 @@ describe('should render correctly', () => {
     await waitFor(() => expect(offsetSlider.getAttribute('aria-valuenow')).toBe('1'));
     expect(offsetInput.getAttribute('aria-valuenow')).toBe('1.5');
     fireEvent.click(getByText('Confirm'));
-    expect(onOk).toBeCalledTimes(1);
-    expect(onOk).toBeCalledWith({ cornerType: 'sharp', dir: 1, distance: 38.1 });
+    expect(onOk).toHaveBeenCalledTimes(1);
+    expect(onOk).toHaveBeenCalledWith({ cornerType: 'sharp', distance: 38.1, mode: 'outward' });
   });
 });

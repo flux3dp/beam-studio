@@ -5,7 +5,7 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import { buildSvgPathD } from './buildSvgPathD';
-import type { Paths } from './constants';
+import type { Path } from './constants';
 import { showOffsetAlert } from './showOffSetAlert'; // Corrected import name
 
 let svgCanvas: ISVGCanvas;
@@ -14,7 +14,7 @@ getSVGAsync(({ Canvas }) => {
   svgCanvas = Canvas;
 });
 
-export function createAndApplyOffsetElement(solutionPaths: Paths): boolean {
+export function createAndApplyOffsetElement(solutionPaths: Path[]): boolean {
   if (solutionPaths.length === 0) {
     showOffsetAlert('failed');
     console.log('Offset operation produced no valid paths (after potential union).');
