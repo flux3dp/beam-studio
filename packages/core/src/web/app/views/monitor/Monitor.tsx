@@ -114,7 +114,7 @@ const Monitor = ({ device }: Props): React.JSX.Element => {
   }, [LANG, report, uploadProgress]);
 
   return (
-    <DraggableModal centered footer={null} onCancel={onClose} open title={`${device.name} - ${statusText}`}>
+    <DraggableModal footer={null} onCancel={onClose} open title={`${device.name} - ${statusText}`}>
       <Tabs
         activeKey={monitorMode}
         items={tabItems}

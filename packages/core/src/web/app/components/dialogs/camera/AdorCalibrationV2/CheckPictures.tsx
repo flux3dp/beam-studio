@@ -86,7 +86,6 @@ const CheckPictures = ({ onClose, onNext, updateParam }: Props): React.JSX.Eleme
 
   return (
     <DraggableModal
-      centered
       closable={!!onClose}
       footer={[
         <Button key="yes" onClick={calibrateDevicePictures} type="primary">

@@ -85,7 +85,6 @@ const PromarkFramingModal = ({ device, onClose, startOnOpen = false }: Props): R
 
   return (
     <DraggableModal
-      centered
       footer={
         <div className={styles.footer}>
           <Button className={classNames(styles.button, styles['mr-8'])} onClick={onClose}>

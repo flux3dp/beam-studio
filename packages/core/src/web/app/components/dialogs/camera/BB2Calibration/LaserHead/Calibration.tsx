@@ -100,7 +100,6 @@ const Calibration = ({ charuco, chessboard, onClose, onNext, updateParam }: Prop
   return (
     <DraggableModal
       cancelText={tCali.cancel}
-      centered
       maskClosable={false}
       okButtonProps={{ disabled: !img }}
       okText={tCali.next}

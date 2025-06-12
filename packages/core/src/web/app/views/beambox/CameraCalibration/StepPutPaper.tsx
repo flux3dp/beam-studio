@@ -19,7 +19,6 @@ const StepPutPaper = (): React.JSX.Element => {
   return (
     <DraggableModal
       cancelText={lang.cancel}
-      centered
       className="modal-camera-calibration"
       okText={lang.next}
       onCancel={() => onClose(false)}

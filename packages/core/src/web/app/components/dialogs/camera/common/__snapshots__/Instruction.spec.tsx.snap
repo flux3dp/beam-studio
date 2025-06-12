@@ -19,7 +19,7 @@ exports[`test Instruction should render correctly 1`] = `
           aria-modal="true"
           class="ant-modal css-dev-only-do-not-override-hash container ant-zoom-appear ant-zoom-appear-prepare ant-zoom"
           role="dialog"
-          style="width: 400px;"
+          style="width: 0px;"
         >
           <div
             style="outline: none;"
@@ -27,7 +27,7 @@ exports[`test Instruction should render correctly 1`] = `
           >
             <div
               class="react-draggable"
-              style="transform: translate(0px,-300px);"
+              style="min-width: 400px; transform: translate(0px, 0px)translate(0px,0px);"
             >
               <div
                 class="ant-modal-content"

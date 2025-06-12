@@ -8,7 +8,7 @@ exports[`test VariableTextSettings form fields 1`] = `
       class="ant-modal-root css-dev-only-do-not-override-hash"
     >
       <div
-        class="ant-modal-wrap"
+        class="ant-modal-wrap ant-modal-centered"
         tabindex="-1"
       >
         <div
@@ -16,7 +16,7 @@ exports[`test VariableTextSettings form fields 1`] = `
           aria-modal="true"
           class="ant-modal css-dev-only-do-not-override-hash modal ant-zoom-appear ant-zoom-appear-prepare ant-zoom"
           role="dialog"
-          style="width: 520px;"
+          style="width: 0px;"
         >
           <div
             style="outline: none;"
@@ -24,7 +24,7 @@ exports[`test VariableTextSettings form fields 1`] = `
           >
             <div
               class="react-draggable"
-              style="transform: translate(456px,80px);"
+              style="min-width: 520px; transform: translate(512px, -344px)translate(-28px,0px);"
             >
               <div
                 class="ant-modal-content"
@@ -951,7 +951,7 @@ exports[`test VariableTextSettings form fields 2`] = `
       class="ant-modal-root css-dev-only-do-not-override-hash"
     >
       <div
-        class="ant-modal-wrap"
+        class="ant-modal-wrap ant-modal-centered"
         tabindex="-1"
       >
         <div
@@ -959,7 +959,7 @@ exports[`test VariableTextSettings form fields 2`] = `
           aria-modal="true"
           class="ant-modal css-dev-only-do-not-override-hash modal ant-zoom-appear ant-zoom-appear-prepare ant-zoom"
           role="dialog"
-          style="width: 520px;"
+          style="width: 0px;"
         >
           <div
             style="outline: none;"
@@ -967,7 +967,7 @@ exports[`test VariableTextSettings form fields 2`] = `
           >
             <div
               class="react-draggable"
-              style="transform: translate(456px,80px);"
+              style="min-width: 520px; transform: translate(512px, -344px)translate(-28px,0px);"
             >
               <div
                 class="ant-modal-content"

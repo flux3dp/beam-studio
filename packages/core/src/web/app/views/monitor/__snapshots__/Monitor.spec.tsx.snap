@@ -19,7 +19,7 @@ exports[`test Monitor should display uploading when has upload progress 1`] = `
           aria-modal="true"
           class="ant-modal css-dev-only-do-not-override-hash ant-zoom-appear ant-zoom-appear-prepare ant-zoom"
           role="dialog"
-          style="width: 520px;"
+          style="width: 0px;"
         >
           <div
             style="outline: none;"
@@ -27,7 +27,7 @@ exports[`test Monitor should display uploading when has upload progress 1`] = `
           >
             <div
               class="react-draggable"
-              style="transform: translate(0px,-300px);"
+              style="min-width: 520px; transform: translate(0px, 0px)translate(0px,0px);"
             >
               <div
                 class="ant-modal-content"
@@ -304,7 +304,7 @@ exports[`test Monitor should render correctly 1`] = `
           aria-modal="true"
           class="ant-modal css-dev-only-do-not-override-hash ant-zoom-appear ant-zoom-appear-prepare ant-zoom"
           role="dialog"
-          style="width: 520px;"
+          style="width: 0px;"
         >
           <div
             style="outline: none;"
@@ -312,7 +312,7 @@ exports[`test Monitor should render correctly 1`] = `
           >
             <div
               class="react-draggable"
-              style="transform: translate(0px,-300px);"
+              style="min-width: 520px; transform: translate(0px, 0px)translate(0px,0px);"
             >
               <div
                 class="ant-modal-content"
@@ -589,7 +589,7 @@ exports[`test Monitor should render correctly when isNorthAmerica 1`] = `
           aria-modal="true"
           class="ant-modal css-dev-only-do-not-override-hash ant-zoom-appear ant-zoom-appear-prepare ant-zoom"
           role="dialog"
-          style="width: 520px;"
+          style="width: 0px;"
         >
           <div
             style="outline: none;"
@@ -597,7 +597,7 @@ exports[`test Monitor should render correctly when isNorthAmerica 1`] = `
           >
             <div
               class="react-draggable"
-              style="transform: translate(0px,-300px);"
+              style="min-width: 520px; transform: translate(0px, 0px)translate(0px,0px);"
             >
               <div
                 class="ant-modal-content"

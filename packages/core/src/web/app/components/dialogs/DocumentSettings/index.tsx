@@ -254,7 +254,6 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   return (
     <DraggableModal
       cancelText={tGlobal.cancel}
-      centered
       okText={tGlobal.save}
       onCancel={unmount}
       onOk={async () => {
