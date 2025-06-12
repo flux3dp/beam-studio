@@ -1804,9 +1804,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     const y = workareaElement.scrollTop / zoom - (pxDisplayHeight ?? pxHeight);
 
     svgcontent.setAttribute('data-workarea', workarea);
-    svgcontent.setAttribute('data-zoom', (Math.round(zoom * 1000) / 1000).toString());
-    svgcontent.setAttribute('data-left', Math.round(x).toString());
-    svgcontent.setAttribute('data-top', Math.round(y).toString());
 
     var output = this.svgToString(svgcontent, 0, unit);
 
