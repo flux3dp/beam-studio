@@ -64,8 +64,8 @@ import PowerBlock from './PowerBlock';
 import RepeatBlock from './RepeatBlock';
 import SpeedBlock from './SpeedBlock';
 import UVBlock from './UVBlock';
-import WhiteInkX from './UVConfigs/UVIntervalX';
-import WhiteInkY from './UVConfigs/UVIntervalY';
+import UVIntervalX from './UVConfigs/UVIntervalX';
+import UVIntervalY from './UVConfigs/UVIntervalY';
 import WhiteInkCheckbox from './WhiteInkCheckbox';
 
 const PARAMETERS_CONSTANT = 'parameters';
@@ -285,8 +285,8 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
       {isPromark && <FillBlock type={UIType} />}
       {isPromark && <DottingTimeBlock type={UIType} />}
       {isDevMode && isPrintingModule && <AdvancedPrintingBlock />}
-      {is4cUV && <WhiteInkX type={UIType} />}
-      {is4cUV && <WhiteInkY type={UIType} />}
+      {is4cUV && <UVIntervalX type={UIType} />}
+      {is4cUV && <UVIntervalY type={UIType} />}
     </>
   );
 
