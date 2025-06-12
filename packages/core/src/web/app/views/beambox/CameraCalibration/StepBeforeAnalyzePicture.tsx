@@ -247,7 +247,6 @@ const StepBeforeAnalyzePicture = (): React.JSX.Element => {
 
   return (
     <DraggableModal
-      centered
       className="modal-camera-calibration"
       closable={false}
       footer={[

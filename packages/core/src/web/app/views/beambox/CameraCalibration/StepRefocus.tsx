@@ -194,7 +194,6 @@ const StepRefocus = (): React.JSX.Element => {
   return (
     <DraggableModal
       cancelText={langCalibration.cancel}
-      centered
       className="modal-camera-calibration"
       okButtonProps={{ disabled: isCutButtonDisabled }}
       okText={langCalibration.start_engrave}

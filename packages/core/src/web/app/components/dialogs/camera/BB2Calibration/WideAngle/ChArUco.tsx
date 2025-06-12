@@ -138,7 +138,6 @@ const ChArUco = ({ onClose, onNext, onPrev, title, updateParam }: Props) => {
   return (
     <DraggableModal
       cancelText={step > 0 ? tCali.back : tCali.cancel}
-      centered
       footer={[
         <Button key="back" onClick={step > 0 ? () => setStep((s) => (s - 1) as Step) : () => onPrev()}>
           {tCali.back}

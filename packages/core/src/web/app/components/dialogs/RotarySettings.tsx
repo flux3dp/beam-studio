@@ -93,7 +93,6 @@ const RotarySettings = ({ afterSave, initData, onClose }: Props): React.JSX.Elem
   return (
     <DraggableModal
       cancelText={tGlobal.cancel}
-      centered
       okText={tGlobal.save}
       onCancel={onClose}
       onOk={() => {

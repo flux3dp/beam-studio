@@ -1,15 +1,19 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import type { ModalProps } from 'antd';
 import { Modal } from 'antd';
 import Draggable from 'react-draggable';
 import type { ControlPosition, DraggableData, DraggableEvent } from 'react-draggable';
+import { match } from 'ts-pattern';
 
 import layoutConstants from '@core/app/constants/layout-constants';
 
-interface Props extends ModalProps {
+interface Props extends Omit<ModalProps, 'centered'> {
+  centered?: boolean;
   defaultPosition?: ControlPosition;
   width?: number | string;
+  xRef?: 'center' | 'left' | 'right';
+  yRef?: 'bottom' | 'center' | 'top';
 }
 
 const DraggableModal = (props: Props): React.JSX.Element => {
@@ -18,18 +22,25 @@ const DraggableModal = (props: Props): React.JSX.Element => {
     defaultPosition = { x: 0, y: 0 },
     modalRender = (modal) => modal,
     title,
-    width,
+    width = 440,
+    xRef = 'center',
+    yRef = 'center',
     ...restProps
   } = props;
   const [disabled, setDisabled] = useState(true);
   const [bounds, setBounds] = useState({ bottom: 0, left: 0, right: 0, top: 0 });
   const [draggableHeight, setDraggableHeight] = useState(0);
+  const [draggableWidth, setDraggableWidth] = useState(0);
   const draggableRef = useRef<HTMLDivElement>(null);
 
   // eslint-disable-next-line hooks/exhaustive-deps
   useEffect(() => {
     if (draggableRef.current && draggableHeight !== draggableRef.current.clientHeight) {
       setDraggableHeight(draggableRef.current.clientHeight);
+    }
+
+    if (draggableRef.current && draggableWidth !== draggableRef.current.clientWidth) {
+      setDraggableWidth(draggableRef.current.clientWidth);
     }
   });
 
@@ -47,8 +58,34 @@ const DraggableModal = (props: Props): React.JSX.Element => {
     });
   };
 
+  const positionOffset = useMemo(() => {
+    const x = match(xRef)
+      .with('left', () => {
+        return -window.innerWidth / 2;
+      })
+      .with('right', () => {
+        return -draggableWidth + window.innerWidth / 2;
+      })
+      .otherwise(() => {
+        return -draggableWidth / 2;
+      });
+    const y = match(yRef)
+      .with('top', () => {
+        return layoutConstants.topBarHeight - window.innerHeight / 2;
+      })
+      .with('bottom', () => {
+        return -draggableHeight + window.innerHeight / 2;
+      })
+      .otherwise(() => {
+        return -draggableHeight / 2;
+      });
+
+    return { x, y };
+  }, [xRef, yRef, draggableWidth, draggableHeight]);
+
   return (
     <Modal
+      centered
       modalRender={(modal) => (
         <Draggable
           bounds={bounds}
@@ -56,9 +93,9 @@ const DraggableModal = (props: Props): React.JSX.Element => {
           disabled={disabled}
           nodeRef={draggableRef}
           onStart={onStart}
-          positionOffset={{ x: 0, y: -draggableHeight / 2 }}
+          positionOffset={positionOffset}
         >
-          <div ref={draggableRef} style={{ width }}>
+          <div ref={draggableRef} style={{ minWidth: width }}>
             {modalRender(modal)}
           </div>
         </Draggable>
@@ -79,7 +116,7 @@ const DraggableModal = (props: Props): React.JSX.Element => {
           {title}
         </div>
       }
-      width={width}
+      width={0}
       {...restProps}
     >
       {children}

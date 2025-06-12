@@ -85,7 +85,6 @@ const CheckPnP = ({
 
   return (
     <DraggableModal
-      centered
       closable
       footer={[
         <Button key="back" onClick={onBack}>

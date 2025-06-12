@@ -211,7 +211,6 @@ const CalibrateChessBoard = ({ onBack, onClose, onNext, updateParam }: Props): R
 
   return (
     <DraggableModal
-      centered
       closable
       footer={renderFooter}
       maskClosable={false}

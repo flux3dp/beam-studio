@@ -14,7 +14,6 @@ const StepFinish = (): React.JSX.Element => {
   return (
     <DraggableModal
       cancelButtonProps={{ style: { display: 'none' } }}
-      centered
       className="modal-camera-calibration"
       okText={lang.finish}
       onOk={() => {

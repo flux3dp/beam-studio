@@ -19,7 +19,7 @@ exports[`test DocumentSettings should render correctly 1`] = `
           aria-modal="true"
           class="ant-modal css-dev-only-do-not-override-hash ant-zoom-appear ant-zoom-appear-prepare ant-zoom"
           role="dialog"
-          style="width: 440px;"
+          style="width: 0px;"
         >
           <div
             style="outline: none;"
@@ -27,7 +27,7 @@ exports[`test DocumentSettings should render correctly 1`] = `
           >
             <div
               class="react-draggable"
-              style="width: 440px; transform: translate(0px, 0px)translate(0px,0px);"
+              style="min-width: 440px; transform: translate(0px, 0px)translate(0px,0px);"
             >
               <div
                 class="ant-modal-content"
@@ -548,7 +548,7 @@ exports[`test DocumentSettings should render correctly 2`] = `
           aria-modal="true"
           class="ant-modal css-dev-only-do-not-override-hash ant-zoom-appear ant-zoom-appear-prepare ant-zoom"
           role="dialog"
-          style="width: 440px;"
+          style="width: 0px;"
         >
           <div
             style="outline: none;"
@@ -556,7 +556,7 @@ exports[`test DocumentSettings should render correctly 2`] = `
           >
             <div
               class="react-draggable"
-              style="width: 440px; transform: translate(0px, 0px)translate(0px,0px);"
+              style="min-width: 440px; transform: translate(0px, 0px)translate(0px,0px);"
             >
               <div
                 class="ant-modal-content"
@@ -1193,7 +1193,7 @@ exports[`test DocumentSettings should render correctly 3`] = `
           aria-modal="true"
           class="ant-modal css-dev-only-do-not-override-hash ant-zoom-appear ant-zoom-appear-prepare ant-zoom"
           role="dialog"
-          style="width: 440px;"
+          style="width: 0px;"
         >
           <div
             style="outline: none;"
@@ -1201,7 +1201,7 @@ exports[`test DocumentSettings should render correctly 3`] = `
           >
             <div
               class="react-draggable"
-              style="width: 440px; transform: translate(0px, 0px)translate(0px,0px);"
+              style="min-width: 440px; transform: translate(0px, 0px)translate(0px,0px);"
             >
               <div
                 class="ant-modal-content"
@@ -2378,7 +2378,7 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
           aria-modal="true"
           class="ant-modal css-dev-only-do-not-override-hash ant-zoom-appear ant-zoom-appear-prepare ant-zoom"
           role="dialog"
-          style="width: 440px;"
+          style="width: 0px;"
         >
           <div
             style="outline: none;"
@@ -2386,7 +2386,7 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
           >
             <div
               class="react-draggable"
-              style="width: 440px; transform: translate(0px, 0px)translate(0px,0px);"
+              style="min-width: 440px; transform: translate(0px, 0px)translate(0px,0px);"
             >
               <div
                 class="ant-modal-content"
@@ -3136,7 +3136,7 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
           aria-modal="true"
           class="ant-modal css-dev-only-do-not-override-hash ant-zoom-appear ant-zoom-appear-prepare ant-zoom"
           role="dialog"
-          style="width: 440px;"
+          style="width: 0px;"
         >
           <div
             style="outline: none;"
@@ -3144,7 +3144,7 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
           >
             <div
               class="react-draggable"
-              style="width: 440px; transform: translate(0px, 0px)translate(0px,0px);"
+              style="min-width: 440px; transform: translate(0px, 0px)translate(0px,0px);"
             >
               <div
                 class="ant-modal-content"
@@ -3894,7 +3894,7 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
           aria-modal="true"
           class="ant-modal css-dev-only-do-not-override-hash ant-zoom-appear ant-zoom-appear-prepare ant-zoom"
           role="dialog"
-          style="width: 440px;"
+          style="width: 0px;"
         >
           <div
             style="outline: none;"
@@ -3902,7 +3902,7 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
           >
             <div
               class="react-draggable"
-              style="width: 440px; transform: translate(0px, 0px)translate(0px,0px);"
+              style="min-width: 440px; transform: translate(0px, 0px)translate(0px,0px);"
             >
               <div
                 class="ant-modal-content"

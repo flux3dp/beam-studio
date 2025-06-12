@@ -72,7 +72,6 @@ const FramingModal = ({ device, onClose, startOnOpen = false }: Props): React.JS
 
   return (
     <DraggableModal
-      centered
       footer={
         <div className={styles.footer}>
           <Button className={classNames(styles.button, styles['mr-8'])} onClick={onClose}>

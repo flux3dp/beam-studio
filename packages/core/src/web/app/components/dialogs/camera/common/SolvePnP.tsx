@@ -247,7 +247,6 @@ const SolvePnP = ({
 
   return (
     <DraggableModal
-      centered
       closable
       footer={[
         <Button className={styles['footer-button']} key="back" onClick={onBack}>

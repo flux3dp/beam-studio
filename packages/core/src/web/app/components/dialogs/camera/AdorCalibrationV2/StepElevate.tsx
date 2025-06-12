@@ -24,7 +24,6 @@ const StepElevate = ({ onBack, onClose, onNext }: Props): React.JSX.Element => {
 
   return (
     <DraggableModal
-      centered
       className={styles.container}
       closable={!!onClose}
       footer={[

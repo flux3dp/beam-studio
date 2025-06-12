@@ -95,8 +95,8 @@ const VariableTextSettings = ({ onClose }: Props): React.ReactNode => {
   return (
     <DraggableModal
       className={styles.modal}
-      // Margin 28, Modal width 540
-      defaultPosition={{ x: window.innerWidth - 28 - 540, y: 80 }}
+      // Margin 28
+      defaultPosition={{ x: -28, y: 0 }}
       footer={
         <div className={styles.footer}>
           <div className={styles['csv-block']}>
@@ -120,6 +120,8 @@ const VariableTextSettings = ({ onClose }: Props): React.ReactNode => {
       onCancel={onClose}
       open
       title={t.title}
+      xRef="right"
+      yRef="top"
     >
       <div>{t.note}</div>
       <Form className={styles.form} form={form} initialValues={store} labelAlign="right" labelCol={{ span: 12 }}>

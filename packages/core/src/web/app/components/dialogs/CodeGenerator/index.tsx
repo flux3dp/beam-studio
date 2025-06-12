@@ -114,7 +114,6 @@ export default function CodeGenerator({ onClose }: Props): React.JSX.Element {
   return (
     <DraggableModal
       cancelText={tAlert.cancel}
-      centered
       className={styles.modal}
       okButtonProps={{ disabled: !text }}
       okText={tAlert.confirm}

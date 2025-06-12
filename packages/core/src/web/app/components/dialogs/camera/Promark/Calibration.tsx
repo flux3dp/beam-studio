@@ -114,7 +114,6 @@ const Calibration = ({ charuco, chessboard, onClose, onNext, updateParam, withSa
   return (
     <DraggableModal
       cancelText={lang.cancel}
-      centered
       maskClosable={false}
       okButtonProps={{ disabled: !webcamConnected }}
       okText={lang.next}

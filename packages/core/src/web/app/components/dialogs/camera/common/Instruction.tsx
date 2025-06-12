@@ -35,7 +35,6 @@ const Instruction = ({
 
   return (
     <DraggableModal
-      centered
       className={styles.container}
       closable={!!onClose}
       footer={buttons.map(({ label, onClick, type }) => (

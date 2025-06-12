@@ -170,7 +170,6 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
   if (!askUser) {
     return (
       <DraggableModal
-        centered
         closable={!!onClose}
         footer={[]}
         maskClosable={false}
@@ -185,7 +184,6 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
 
   return (
     <DraggableModal
-      centered
       closable={!!onClose}
       footer={[
         <Button key="no" onClick={() => onNext(false)}>

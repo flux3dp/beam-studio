@@ -289,7 +289,6 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): React.JSX.Element => {
 
   return (
     <DraggableModal
-      centered
       footer={
         <div className={styles.footer}>
           <Button onClick={handleCancel}>{t.global.cancel}</Button>

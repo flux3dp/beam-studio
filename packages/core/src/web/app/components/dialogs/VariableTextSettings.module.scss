@@ -1,9 +1,5 @@
 // Overwrite antd modal styles
 .modal {
-  min-width: 100vw;
-  max-width: 100vw;
-  top: 0;
-
   :global(.ant-modal-content) {
     width: 540px;
   }
