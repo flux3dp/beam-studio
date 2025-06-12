@@ -5,6 +5,7 @@ import { match } from 'ts-pattern';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import constants from '@core/app/actions/beambox/constant';
+import progressCaller from '@core/app/actions/progress-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
@@ -21,15 +22,9 @@ const AutoFocusButton = (): React.JSX.Element => {
   lang;
 
   const onClick = async () => {
-    await match(selectedDevice)
-      .with(null, () => {})
-      .with({ model: 'fhexa1' }, async () => {
-        await deviceMaster.rawAutoFocus();
-      })
-      .with({ model: 'ado1' }, async () => {
-        await deviceMaster.rawAutoFocus();
-      })
-      .with({ model: 'fbb2' }, async (device) => {
+    const prerequisite = match(selectedDevice)
+      .with(null, () => false)
+      .with({ model: 'fbb2' }, (device) => {
         if (device.probe_showed) {
           alertCaller.popUp({
             caption: 'Auto Focus',
@@ -38,24 +33,35 @@ const AutoFocusButton = (): React.JSX.Element => {
           });
 
           // await deviceMaster.showProbe();
-          return;
+          return false;
         }
 
-        const deviceStatus = await checkDeviceStatus(device);
-
-        if (!deviceStatus) {
-          return;
-        }
-
-        await deviceMaster.select(device);
-
-        console.log(deviceMaster.currentDevice);
-        await deviceMaster.enterRawMode();
-        await deviceMaster.rawAutoFocus();
-        await deviceMaster.rawLooseMotor();
-        await deviceMaster.endSubTask();
+        return true;
       })
-      .otherwise(() => {});
+      .otherwise(() => true);
+
+    if (!prerequisite) {
+      return;
+    }
+
+    const deviceStatus = await checkDeviceStatus(selectedDevice!);
+
+    if (!deviceStatus) {
+      return;
+    }
+
+    progressCaller.openNonstopProgress({
+      id: 'auto-focus',
+      message: 'Auto focusing...',
+    });
+
+    await deviceMaster.select(selectedDevice!);
+    await deviceMaster.enterRawMode();
+    await deviceMaster.rawAutoFocus();
+    await deviceMaster.rawLooseMotor();
+    await deviceMaster.endSubTask();
+
+    progressCaller.popById('auto-focus');
   };
 
   return (
