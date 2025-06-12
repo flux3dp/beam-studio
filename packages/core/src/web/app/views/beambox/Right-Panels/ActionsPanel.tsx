@@ -59,6 +59,10 @@ interface TabButtonOptions extends ButtonOpts {
   convertToPath: () => Promise<ConvertPathResult>;
 }
 
+interface OffsetButtonOptions extends ButtonOpts {
+  convertToPath?: () => Promise<ConvertPathResult>;
+}
+
 type ConvertPathResult = {
   bbox: DOMRect;
   command?: IBatchCommand;
@@ -194,11 +198,29 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       { autoClose: false, ...opts },
     );
 
-  const renderOffsetButton = (opts: ButtonOpts = {}): React.JSX.Element =>
+  const renderOffsetButton = (opts: OffsetButtonOptions = {}): React.JSX.Element =>
     renderButtons(
       'offset',
       lang.offset,
-      () => svgEditor.triggerOffsetTool(),
+      async () => {
+        let convertCommand: IBatchCommand | undefined;
+
+        if (opts.convertToPath) {
+          const { command } = await opts.convertToPath();
+
+          convertCommand = command;
+
+          // if (command) svgCanvas.addCommandToHistory(command);
+
+          // return { bbox, command };
+        }
+
+        svgEditor.triggerOffsetTool();
+
+        if (convertCommand) {
+          convertCommand.doUnapply();
+        }
+      },
       <ActionPanelIcons.Offset />,
       <ActionPanelIcons.Offset />,
       { autoClose: false, ...opts },
@@ -423,6 +445,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       ),
       renderSmartNestButton(),
       renderArrayButton({ isFullLine: true }),
+      renderOffsetButton({ convertToPath: () => convertTextToPath({ isSubCommand: true }) }),
       renderTabButton({ convertToPath: () => convertTextToPath({ isSubCommand: true }) }),
     ];
   };
@@ -519,12 +542,14 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
   const renderGroupActions = (): React.JSX.Element[] => [
     renderAutoFitButton(),
     renderSmartNestButton(),
-    renderArrayButton({ isFullLine: true }),
+    renderOffsetButton(),
+    renderArrayButton(),
   ];
 
   const renderMultiSelectActions = (): React.JSX.Element[] => {
     const children = Array.from(elem.childNodes);
-    const supportOffset = children.every((child: ChildNode) => !['g', 'image', 'text', 'use'].includes(child.nodeName));
+    const supportOffset = true;
+    // children.every((child: ChildNode) => !['g', 'image', 'text', 'use'].includes(child.nodeName));
     const appendOptionalButtons = (buttons: React.JSX.Element[]) => {
       const text = children.find((child) => child.nodeName === 'text') as SVGElement;
       const pathLike = children.find((child) =>
