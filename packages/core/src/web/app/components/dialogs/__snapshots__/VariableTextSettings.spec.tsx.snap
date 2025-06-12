@@ -24,7 +24,7 @@ exports[`test VariableTextSettings form fields 1`] = `
           >
             <div
               class="react-draggable"
-              style="min-width: 440px; transform: translate(512px, -344px)translate(-28px,0px);"
+              style="min-width: 520px; transform: translate(512px, -344px)translate(-28px,0px);"
             >
               <div
                 class="ant-modal-content"
@@ -967,7 +967,7 @@ exports[`test VariableTextSettings form fields 2`] = `
           >
             <div
               class="react-draggable"
-              style="min-width: 440px; transform: translate(512px, -344px)translate(-28px,0px);"
+              style="min-width: 520px; transform: translate(512px, -344px)translate(-28px,0px);"
             >
               <div
                 class="ant-modal-content"
