@@ -2,11 +2,11 @@ import React, { memo } from 'react';
 
 import NumberBlock from '../NumberBlock';
 
-const WhiteInkY = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.JSX.Element => {
+const UVIntervalY = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.JSX.Element => {
   return (
     <NumberBlock
-      configKey="whiteInkY"
-      id="white-ink-y-interval"
+      configKey="uvIntervalY"
+      id="uv-y-interval"
       max={5}
       min={0.01}
       precision={2}
@@ -17,4 +17,4 @@ const WhiteInkY = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-i
   );
 };
 
-export default memo(WhiteInkY);
+export default memo(UVIntervalY);

@@ -1457,7 +1457,8 @@ const lang: ILang = {
     printing: 'Drucken',
     unknown: 'Unbekanntes Modul',
     uv_print: 'UV-Druck',
-    white_ink: 'Weiße Tinte',
+    uv_varnish: 'Lack',
+    uv_white_ink: 'Weiße Tinte',
   },
   machine_status: {
     '-17': 'Cartridge IO Mode',

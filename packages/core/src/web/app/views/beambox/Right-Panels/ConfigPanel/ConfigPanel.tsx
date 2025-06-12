@@ -14,7 +14,7 @@ import dialogCaller from '@core/app/actions/dialog-caller';
 import ColorBlock from '@core/app/components/beambox/right-panel/ColorBlock';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
-import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule, UVModules } from '@core/app/constants/layer-module/layer-modules';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import tutorialConstants from '@core/app/constants/tutorial-constants';
 import { getSupportedModules, getWorkarea } from '@core/app/constants/workarea-constants';
@@ -64,9 +64,9 @@ import PowerBlock from './PowerBlock';
 import RepeatBlock from './RepeatBlock';
 import SpeedBlock from './SpeedBlock';
 import UVBlock from './UVBlock';
+import UVIntervalX from './UVConfigs/UVIntervalX';
+import UVIntervalY from './UVConfigs/UVIntervalY';
 import WhiteInkCheckbox from './WhiteInkCheckbox';
-import WhiteInkX from './whiteInkConfigs/WhiteInkX';
-import WhiteInkY from './whiteInkConfigs/WhiteInkY';
 
 const PARAMETERS_CONSTANT = 'parameters';
 
@@ -103,6 +103,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
   const state = getState();
   const { diode, fullcolor, module } = state;
   const isPrintingModule = useMemo(() => printingModules.has(module.value), [module.value]);
+  const is4cUV = useMemo(() => UVModules.has(module.value), [module.value]);
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
 
   const updateDiodeBoundary = useCallback(() => {
@@ -284,8 +285,8 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
       {isPromark && <FillBlock type={UIType} />}
       {isPromark && <DottingTimeBlock type={UIType} />}
       {isDevMode && isPrintingModule && <AdvancedPrintingBlock />}
-      {module.value === LayerModule.WHITE_INK && <WhiteInkX type={UIType} />}
-      {module.value === LayerModule.WHITE_INK && <WhiteInkY type={UIType} />}
+      {is4cUV && <UVIntervalX type={UIType} />}
+      {is4cUV && <UVIntervalY type={UIType} />}
     </>
   );
 

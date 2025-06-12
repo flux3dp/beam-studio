@@ -7,8 +7,10 @@ export const LayerModule = {
   LASER_20W_DIODE: 2,
   LASER_1064: 4,
   PRINTER: 5,
-  PRINTER_4C: 6, // temp
-  WHITE_INK: 7,
+  PRINTER_4C: 7,
+  // virtual values for uv layer (they are seen as printer 4c in firmware)
+  UV_WHITE_INK: -2,
+  UV_VARNISH: -3,
   UNKNOWN: 9,
   LASER_UNIVERSAL: 15,
   UV_PRINT: -1,
@@ -20,3 +22,5 @@ export const printingModules = new Set<LayerModuleType>([LayerModule.PRINTER, La
 
 export const fullColorModulesArray = [LayerModule.PRINTER, LayerModule.PRINTER_4C, LayerModule.UV_PRINT] as const;
 export const fullColorModules = new Set<LayerModuleType>(fullColorModulesArray);
+// uv for fbm2, not for uv printing export
+export const UVModules = new Set<LayerModuleType>([LayerModule.UV_WHITE_INK, LayerModule.UV_VARNISH]);

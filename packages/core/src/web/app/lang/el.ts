@@ -1457,7 +1457,8 @@ const lang: ILang = {
     printing: 'Εκτύπωση',
     unknown: 'Unknown Module',
     uv_print: 'UV Εκτύπωση',
-    white_ink: 'Λευκό μελάνι',
+    uv_varnish: 'Βερνίκι',
+    uv_white_ink: 'Λευκό μελάνι',
   },
   machine_status: {
     '-17': 'Λειτουργία κασέτας',

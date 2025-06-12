@@ -43,6 +43,7 @@ export const getModulesTranslations = (): Record<LayerModuleType, string> => {
     [LayerModule.PRINTER_4C]: `${t.printing} (4C)`,
     [LayerModule.UNKNOWN]: t.unknown,
     [LayerModule.UV_PRINT]: t.uv_print,
-    [LayerModule.WHITE_INK]: t.white_ink,
+    [LayerModule.UV_VARNISH]: t.uv_varnish,
+    [LayerModule.UV_WHITE_INK]: t.uv_white_ink,
   };
 };

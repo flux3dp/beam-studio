@@ -41,7 +41,6 @@ import { getAddOnInfo } from '@core/app/constants/addOn';
 import AlertConstants from '@core/app/constants/alert-constants';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
-import { getWorkarea } from '@core/app/constants/workarea-constants';
 import beamboxStore from '@core/app/stores/beambox-store';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
@@ -1796,19 +1795,9 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       svgcontent.setAttribute('data-pass_through', BeamboxPreference.read('pass-through-height')!.toFixed(2));
     }
 
-    const workareaElement = document.getElementById('workarea')!;
-    const workareaObj = getWorkarea(workarea);
-    const { pxDisplayHeight, pxHeight, pxWidth } = workareaObj;
-    const zoom = workareaManager.zoomRatio;
-    const x = workareaElement.scrollLeft / zoom - pxWidth;
-    const y = workareaElement.scrollTop / zoom - (pxDisplayHeight ?? pxHeight);
-
     svgcontent.setAttribute('data-workarea', workarea);
-    svgcontent.setAttribute('data-zoom', (Math.round(zoom * 1000) / 1000).toString());
-    svgcontent.setAttribute('data-left', Math.round(x).toString());
-    svgcontent.setAttribute('data-top', Math.round(y).toString());
 
-    var output = this.svgToString(svgcontent, 0, unit);
+    const output = this.svgToString(svgcontent, 0, unit);
 
     svgedit.utilities.moveDefsOutfromSvgContent();
 

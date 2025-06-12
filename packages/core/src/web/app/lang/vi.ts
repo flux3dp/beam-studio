@@ -1457,7 +1457,8 @@ const lang: ILang = {
     printing: 'In ấn',
     unknown: 'Unknown Module',
     uv_print: 'In UV',
-    white_ink: 'Mực trắng',
+    uv_varnish: 'Sơn phủ',
+    uv_white_ink: 'Mực trắng',
   },
   machine_status: {
     '-17': 'Chế độ Cartridge IO',

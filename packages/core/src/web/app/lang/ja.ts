@@ -1457,7 +1457,8 @@ const lang: ILang = {
     printing: '印刷',
     unknown: '不明なモジュール',
     uv_print: 'UV印刷',
-    white_ink: '白インク',
+    uv_varnish: 'ニス',
+    uv_white_ink: '白インク',
   },
   machine_status: {
     '-17': 'Cartridge IO Mode',

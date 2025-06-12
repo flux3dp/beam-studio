@@ -56,8 +56,8 @@ const attributeMap: Record<ConfigKey, string> = {
   speed: 'data-speed',
   split: 'data-split',
   uv: 'data-uv',
-  whiteInkX: 'data-whiteInkX',
-  whiteInkY: 'data-whiteInkY',
+  uvIntervalX: 'data-uvIntervalX',
+  uvIntervalY: 'data-uvIntervalY',
   wInk: 'data-wInk',
   wMultipass: 'data-wMultipass',
   wobbleDiameter: 'data-wobbleDiameter',
@@ -102,8 +102,8 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   repeat: 1,
   speed: 20,
   uv: 0,
-  whiteInkX: 0.8,
-  whiteInkY: 0.6,
+  uvIntervalX: 0.8,
+  uvIntervalY: 0.6,
   wInk: BeamboxPreference.read('multipass-compensation') ? -12 : -4,
   wMultipass: 3,
   wobbleDiameter: -0.2,
@@ -133,8 +133,8 @@ export const timeRelatedConfigs: Set<ConfigKey> = new Set([
   'refreshInterval',
   'refreshWidth',
   // white ink
-  'whiteInkX',
-  'whiteInkY',
+  'uvIntervalX',
+  'uvIntervalY',
 ]);
 export const presetRelatedConfigs: Set<ConfigKey> = new Set([
   'power',

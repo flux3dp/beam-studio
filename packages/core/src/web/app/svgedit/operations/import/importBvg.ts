@@ -58,7 +58,6 @@ export const importBvgString = async (
 
   // loadFromString will lose data-xform and data-wireframe of `use` so set it back here
   if (typeof str === 'string') {
-    const workarea = document.getElementById('workarea');
     const tmp = str.substring(str.indexOf('<use')).split('<use');
 
     for (let i = 1; i < tmp.length; i++) {
@@ -177,33 +176,6 @@ export const importBvgString = async (
     }
 
     LayerPanelController.updateLayerPanel();
-    matched = str.match(/data-zoom="[0-9.]+"/);
-
-    if (matched) {
-      const zoom = Number.parseFloat(matched[0].substring(11, matched[0].length - 1));
-
-      workareaManager.zoom(zoom);
-    }
-
-    matched = str.match(/data-left="[-0-9]+"/);
-
-    const { height, width, zoomRatio } = workareaManager;
-
-    if (matched) {
-      let left = Number.parseInt(matched[0].substring(11, matched[0].length - 1), 10);
-
-      left = Math.round((left + width) * zoomRatio);
-      workarea!.scrollLeft = left;
-    }
-
-    matched = str.match(/data-top="[-0-9]+"/);
-
-    if (matched) {
-      let top = Number.parseInt(matched[0].substring(10, matched[0].length - 1), 10);
-
-      top = Math.round((top + height) * zoomRatio);
-      workarea!.scrollTop = top;
-    }
   }
 
   const { lang } = i18n;

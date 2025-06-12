@@ -93,11 +93,11 @@ test('test beambox-preference', () => {
     low_power: 10,
     model: 'fbb1b',
     'module-offsets': {
+      '-2': [-0.7, -22.8],
       '1': [0, 0],
       '2': [0, 0],
       '4': [0, 26.95],
       '5': [0, -13.37],
-      '7': [-0.7, -22.8],
       '15': [0, 0],
     },
     mouse_input_device: window.os === 'MacOS' ? 'TOUCHPAD' : 'MOUSE',
