@@ -17,8 +17,8 @@ export const buildSvgPathD = (scaledPaths: Array<Array<{ X: number; Y: number }>
       }
 
       const pointsToFit = scaledPoints.map(({ x, y }) => ({
-        x: Math.round(x * ROUND_FACTOR) / ROUND_FACTOR,
-        y: Math.round(y * ROUND_FACTOR) / ROUND_FACTOR,
+        x: Math.round((x / SCALE_FACTOR) * ROUND_FACTOR) / ROUND_FACTOR,
+        y: Math.round((y / SCALE_FACTOR) * ROUND_FACTOR) / ROUND_FACTOR,
       }));
       const segments = fitPath(pointsToFit);
 

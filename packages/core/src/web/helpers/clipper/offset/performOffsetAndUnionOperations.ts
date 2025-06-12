@@ -75,7 +75,7 @@ export async function performOffsetAndUnionOperations(
 
     await match({ flattenedPaths, mode })
       .with({ flattenedPaths: [] }, () => {})
-      .with({ mode: P.union('expand', 'shrink') }, ({ flattenedPaths }) => {
+      .with({ mode: P.union('expand', 'shrink', 'inward') }, ({ flattenedPaths }) => {
         solutionPaths = flattenedPaths;
       })
       .with({ mode: 'outward' }, async ({ flattenedPaths }) => {
