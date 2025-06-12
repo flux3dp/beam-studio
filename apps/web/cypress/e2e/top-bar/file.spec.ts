@@ -71,8 +71,8 @@ describe('manipulate file', () => {
   it('save file', () => {
     selectMenuOption('File', 'Save');
     checkCrc32(Cypress.env('cypressDownloadBeamPath'), {
-      default: -2069102237,
-      githubWindows: -712814246,
+      default: 1539428358,
+      githubWindows: 108291423,
       githubLinux: 1091338501,
     });
   });
@@ -85,11 +85,16 @@ describe('manipulate file', () => {
       .trigger('mouseup', { force: true });
 
     cy.get('#svg_1').should('exist').should('not.have.attr', 'opacity');
+    cy.get('.tab.objects').click();
+    cy.get('#x_position').clear().type('100{enter}');
+    cy.get('#y_position').clear().type('100{enter}');
+    cy.get('#w_size').clear().type('100{enter}');
+    cy.get('#h_size').clear().type('100{enter}');
 
     selectMenuOption('File', 'Save As...');
     checkCrc32(Cypress.env('cypressDownloadNewBeamPath'), {
-      default: -2069102237,
-      githubWindows: 566946691,
+      default: 1539428358,
+      githubWindows: -1177770455,
       githubLinux: -901845600,
     });
   });
@@ -98,7 +103,7 @@ describe('manipulate file', () => {
     exportFile('BVG');
     checkMd5(Cypress.env('cypressDownloadBvgPath'), {
       default: '987ae5c7cd18ff1dbe3ece94679706cb',
-      githubWindows: '96469ce160c77c0a66543468c84d3966',
+      githubWindows: 'c030d54dac12a872df302626b7051bc5',
       githubLinux: '6665836ae47675168573b48d43702405',
     });
   });
@@ -107,7 +112,7 @@ describe('manipulate file', () => {
     exportFile('SVG');
     checkMd5(Cypress.env('cypressDownloadSvgPath'), {
       default: 'ff907d5638b0958ceac26def24c35640',
-      githubWindows: '40bba081ce02b72eecbfd6c63e2055a0',
+      githubWindows: '397ddb0972850dc0e79cbea3fc0edf3a',
       githubLinux: '7b2d301bee1027fdf5e3042821dded8d',
     });
   });
