@@ -2,9 +2,11 @@ import React from 'react';
 
 import type { DefaultOptionType } from 'antd/es/select';
 
+import type { SettingUnitInputProps } from '@core/app/components/settings/components/SettingUnitInput';
+import SettingUnitInput from '@core/app/components/settings/components/SettingUnitInput';
+import XYItem from '@core/app/components/settings/components/XYItem';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
-import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import i18n from '@core/helpers/i18n';
 
 import SettingFormItem from './components/SettingFormItem';
@@ -12,14 +14,14 @@ import SettingSelect from './components/SettingSelect';
 
 type Props = {
   options: DefaultOptionType[];
+  unitInputProps: Partial<SettingUnitInputProps>;
 };
 
-const Path = ({ options }: Props): React.JSX.Element => {
+const Path = ({ options, unitInputProps }: Props): React.JSX.Element => {
   const { lang } = i18n;
   const { getConfig, getPreference, setConfig, setPreference } = useSettingStore();
 
   const selectedModel = getPreference('model');
-  const defaultUnit = getConfig('default-units');
   const workarea = getWorkarea(selectedModel);
 
   return (
@@ -38,30 +40,26 @@ const Path = ({ options }: Props): React.JSX.Element => {
         label={lang.settings.loop_compensation}
         url={lang.settings.help_center_urls.loop_compensation}
       >
-        <UnitInput
-          className={{ half: true }}
-          defaultValue={getConfig('loop_compensation') / 10}
-          forceUsePropsUnit
-          getValue={(v) => setConfig('loop_compensation', Number(v) * 10)}
+        <SettingUnitInput
+          {...unitInputProps}
           id="loop-input"
           max={20}
           min={0}
-          unit={defaultUnit === 'inches' ? 'in' : 'mm'}
+          onChange={(v) => setConfig('loop_compensation', Number(v) * 10)}
+          value={getConfig('loop_compensation') / 10}
         />
       </SettingFormItem>
       {i18n.getActiveLang() === 'zh-cn' ? (
         <div>
           <SettingFormItem id="set_blade_radius" label={lang.settings.blade_radius}>
-            <UnitInput
-              className={{ half: true }}
-              defaultValue={getPreference('blade_radius')}
-              forceUsePropsUnit
-              getValue={(val) => setPreference('blade_radius', val)}
+            <SettingUnitInput
+              {...unitInputProps}
               id="radius-input"
               max={30}
               min={0}
-              step={0.01}
-              unit={defaultUnit === 'inches' ? 'in' : 'mm'}
+              onChange={(val) => setPreference('blade_radius', val)}
+              step={(unitInputProps.step as number) * 0.1}
+              value={getPreference('blade_radius')}
             />
           </SettingFormItem>
           <SettingSelect
@@ -71,34 +69,17 @@ const Path = ({ options }: Props): React.JSX.Element => {
             onChange={(e) => setPreference('blade_precut', e.target.value)}
             options={options}
           />
-          <SettingFormItem id="set_precut_x" label={lang.settings.blade_precut_position}>
-            <span className="font2" style={{ marginRight: '10px' }}>
-              X
-            </span>
-            <UnitInput
-              className={{ half: true }}
-              defaultValue={getPreference('precut_x')}
-              forceUsePropsUnit
-              getValue={(val) => setPreference('precut_x', val)}
-              id="precut-x-input"
-              max={workarea.width}
-              min={0}
-              unit={defaultUnit === 'inches' ? 'in' : 'mm'}
-            />
-            <span className="font2" style={{ marginRight: '10px' }}>
-              Y
-            </span>
-            <UnitInput
-              className={{ half: true }}
-              defaultValue={getPreference('precut_y')}
-              forceUsePropsUnit
-              getValue={(val) => setPreference('precut_y', val)}
-              id="precut-y-input"
-              max={workarea.displayHeight ?? workarea.height}
-              min={0}
-              unit={defaultUnit === 'inches' ? 'in' : 'mm'}
-            />
-          </SettingFormItem>
+          <XYItem
+            id="set_precut_x"
+            label={lang.settings.blade_precut_position}
+            maxX={workarea.width}
+            maxY={workarea.displayHeight ?? workarea.height}
+            minX={0}
+            minY={0}
+            onChange={(axis, val) => setPreference(`precut_${axis}`, val)}
+            unitInputProps={unitInputProps}
+            values={[getPreference('precut_x'), getPreference('precut_y')]}
+          />
         </div>
       ) : null}
     </>

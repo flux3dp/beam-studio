@@ -8,7 +8,9 @@ import settings from '@core/app/app-settings';
 import AdorModule from '@core/app/components/settings/AdorModule';
 import AutoSave from '@core/app/components/settings/AutoSave';
 import BB2Settings from '@core/app/components/settings/BB2Settings';
+import Beamo2Module from '@core/app/components/settings/Beamo2Module';
 import Camera from '@core/app/components/settings/Camera';
+import type { SettingUnitInputProps } from '@core/app/components/settings/components/SettingUnitInput';
 import Connection from '@core/app/components/settings/Connection';
 import Editor from '@core/app/components/settings/Editor';
 import Engraving from '@core/app/components/settings/Engraving';
@@ -34,7 +36,19 @@ function Settings(): React.JSX.Element {
   const [editingAutosaveConfig, setEditingAutosaveConfig] = useState<IConfig>(autoSaveHelper.getConfig());
   const [warnings, setWarnings] = useState<Record<string, string>>({});
   const previousActiveLang = useMemo(() => i18n.getActiveLang(), []);
-  const { updateToStorage } = useSettingStore();
+  const { getConfig, updateToStorage } = useSettingStore();
+  const defaultUnit = getConfig('default-units');
+
+  const commonUnitInputProps: Partial<SettingUnitInputProps> = useMemo(() => {
+    const isInch = defaultUnit === 'inches';
+
+    return {
+      isInch,
+      precision: isInch ? 4 : 2,
+      step: isInch ? 2.54 : 1,
+      unit: isInch ? 'in' : 'mm',
+    };
+  }, [defaultUnit]);
 
   const changeActiveLang = (value: string): void => {
     i18n.setActiveLang(value);
@@ -92,13 +106,14 @@ function Settings(): React.JSX.Element {
               warnings={warnings}
             />
             <Camera options={commonBooleanOptions} />
-            <Editor options={commonBooleanOptions} />
+            <Editor options={commonBooleanOptions} unitInputProps={commonUnitInputProps} />
             <Engraving options={commonBooleanOptions} />
-            <Path options={commonBooleanOptions} />
+            <Path options={commonBooleanOptions} unitInputProps={commonUnitInputProps} />
             <Mask options={commonBooleanOptions} />
             <TextToPath options={commonBooleanOptions} />
-            <Module options={commonBooleanOptions} />
-            <AdorModule options={commonBooleanOptions} />
+            <Module options={commonBooleanOptions} unitInputProps={commonUnitInputProps} />
+            <AdorModule options={commonBooleanOptions} unitInputProps={commonUnitInputProps} />
+            <Beamo2Module unitInputProps={commonUnitInputProps} />
             <BB2Settings options={commonBooleanOptions} />
             <Privacy options={commonBooleanOptions} />
             <Experimental options={commonBooleanOptions} />

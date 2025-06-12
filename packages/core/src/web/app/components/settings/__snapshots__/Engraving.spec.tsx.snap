@@ -56,22 +56,21 @@ exports[`should render correctly 1`] = `
     url:
     options:
     <div>
-      mock-unit-input id:
+      UnitInput: 
       hardware-acceleration
-      unit:
-      mm/s^2
-      min:
-      1
-      max:
-      40000
-      defaultValue:
-      4000
-      forceUsePropsUnit:
-      false
-      className:
-      {"half":true}
+      <p>
+        precision: 
+        0
+      </p>
+      <p>
+        unit: 
+        mm/s^2
+      </p>
       <input
-        class="unit-input"
+        id="hardware-acceleration"
+        max="40000"
+        min="1"
+        value="4000"
       />
     </div>
   </div>
@@ -83,22 +82,21 @@ exports[`should render correctly 1`] = `
     url:
     options:
     <div>
-      mock-unit-input id:
+      UnitInput: 
       hardware-acceleration-diode
-      unit:
-      mm/s^2
-      min:
-      1
-      max:
-      12000
-      defaultValue:
-      4000
-      forceUsePropsUnit:
-      false
-      className:
-      {"half":true}
+      <p>
+        precision: 
+        0
+      </p>
+      <p>
+        unit: 
+        mm/s^2
+      </p>
       <input
-        class="unit-input"
+        id="hardware-acceleration-diode"
+        max="12000"
+        min="1"
+        value="4000"
       />
     </div>
   </div>

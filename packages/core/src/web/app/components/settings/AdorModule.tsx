@@ -2,35 +2,37 @@ import React, { useCallback, useMemo } from 'react';
 
 import type { DefaultOptionType } from 'antd/es/select';
 
+import type { SettingUnitInputProps } from '@core/app/components/settings/components/SettingUnitInput';
+import SettingUnitInput from '@core/app/components/settings/components/SettingUnitInput';
+import XYItem from '@core/app/components/settings/components/XYItem';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
-import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import { getModuleOffsets, updateModuleOffsets } from '@core/helpers/device/moduleOffsets';
-import getIsDev from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 
 import SettingFormItem from './components/SettingFormItem';
 import SettingSelect from './components/SettingSelect';
+import styles from './Settings.module.scss';
 
 interface Props {
   options: DefaultOptionType[];
+  unitInputProps: Partial<SettingUnitInputProps>;
 }
 
 const targetWorkarea: WorkAreaModel = 'ado1';
 
-const AdorModule = ({ options }: Props): React.JSX.Element => {
+const AdorModule = ({ options, unitInputProps }: Props): React.JSX.Element => {
   const lang = useI18n();
-  const isDev = useMemo(() => getIsDev(), []);
-  const { getConfig, getPreference, setPreference } = useSettingStore();
-  const defaultUnit = getConfig('default-units');
-  const { workareaHeight, workareaWidth } = useMemo(() => {
+  const { getPreference, setPreference } = useSettingStore();
+  const commonProps = useMemo(() => {
     const { displayHeight, height, width } = getWorkarea(targetWorkarea);
+    const workareaHeight = displayHeight ?? height;
 
-    return { workareaHeight: displayHeight ?? height, workareaWidth: width };
-  }, []);
+    return { maxX: width, maxY: workareaHeight, minX: -width, minY: -workareaHeight, unitInputProps };
+  }, [unitInputProps]);
 
   const currentModuleOffsets = getPreference('module-offsets');
   const getModuleOffset = useCallback(
@@ -69,7 +71,7 @@ const AdorModule = ({ options }: Props): React.JSX.Element => {
 
   return (
     <>
-      <div className="subtitle">{lang.settings.groups.ador_modules}</div>
+      <div className={styles.subtitle}>{lang.settings.groups.ador_modules}</div>
       <SettingSelect
         defaultValue={getPreference('print-advanced-mode')}
         id="print-advanced-mode"
@@ -85,159 +87,46 @@ const AdorModule = ({ options }: Props): React.JSX.Element => {
         options={defaultLaserModuleOptions}
       />
       <SettingFormItem id="set-low-power" label={lang.settings.low_laser_for_preview}>
-        <UnitInput
-          className={{ half: true }}
-          decimal={0}
-          defaultValue={getPreference('low_power')}
-          getValue={(val) => setPreference('low_power', val)}
+        <SettingUnitInput
           id="low-power"
           max={20}
           min={0}
+          onChange={(val) => {
+            if (val !== null) setPreference('low_power', val);
+          }}
+          precision={0}
           unit="%"
+          value={getPreference('low_power')}
         />
       </SettingFormItem>
-      <SettingFormItem id="10w-laser-offset" label={lang.settings.module_offset_10w}>
-        <span className="font2" style={{ lineHeight: '32px', marginRight: '10px' }}>
-          X
-        </span>
-        <UnitInput
-          className={{ half: true }}
-          defaultValue={getModuleOffset(LayerModule.LASER_10W_DIODE)[0]}
-          forceUsePropsUnit
-          getValue={(val) => editModuleOffsets(LayerModule.LASER_10W_DIODE, 'x', val)}
-          id="10w-laser-x-offset"
-          max={workareaWidth}
-          min={-workareaWidth}
-          unit={defaultUnit === 'inches' ? 'in' : 'mm'}
-        />
-        <span className="font2" style={{ lineHeight: '32px', marginRight: '10px' }}>
-          Y
-        </span>
-        <UnitInput
-          className={{ half: true }}
-          defaultValue={getModuleOffset(LayerModule.LASER_10W_DIODE)[1]}
-          forceUsePropsUnit
-          getValue={(val) => editModuleOffsets(LayerModule.LASER_10W_DIODE, 'y', val)}
-          id="10w-laser-y-offset"
-          max={workareaHeight}
-          min={-workareaHeight}
-          unit={defaultUnit === 'inches' ? 'in' : 'mm'}
-        />
-      </SettingFormItem>
-      <SettingFormItem id="20w-laser-offset" label={lang.settings.module_offset_20w}>
-        <span className="font2" style={{ lineHeight: '32px', marginRight: '10px' }}>
-          X
-        </span>
-        <UnitInput
-          className={{ half: true }}
-          defaultValue={getModuleOffset(LayerModule.LASER_20W_DIODE)[0]}
-          forceUsePropsUnit
-          getValue={(val) => editModuleOffsets(LayerModule.LASER_20W_DIODE, 'x', val)}
-          id="20w-laser-x-offset"
-          max={workareaWidth}
-          min={-workareaWidth}
-          unit={defaultUnit === 'inches' ? 'in' : 'mm'}
-        />
-        <span className="font2" style={{ lineHeight: '32px', marginRight: '10px' }}>
-          Y
-        </span>
-        <UnitInput
-          className={{ half: true }}
-          defaultValue={getModuleOffset(LayerModule.LASER_20W_DIODE)[1]}
-          forceUsePropsUnit
-          getValue={(val) => editModuleOffsets(LayerModule.LASER_20W_DIODE, 'y', val)}
-          id="20w-laser-y-offset"
-          max={workareaHeight}
-          min={-workareaHeight}
-          unit={defaultUnit === 'inches' ? 'in' : 'mm'}
-        />
-      </SettingFormItem>
-      <SettingFormItem id="printer-offset" label={lang.settings.module_offset_printer}>
-        <span className="font2" style={{ lineHeight: '32px', marginRight: '10px' }}>
-          X
-        </span>
-        <UnitInput
-          className={{ half: true }}
-          defaultValue={getModuleOffset(LayerModule.PRINTER)[0]}
-          forceUsePropsUnit
-          getValue={(val) => editModuleOffsets(LayerModule.PRINTER, 'x', val)}
-          id="printer-x-offset"
-          max={workareaWidth}
-          min={-workareaWidth}
-          unit={defaultUnit === 'inches' ? 'in' : 'mm'}
-        />
-        <span className="font2" style={{ lineHeight: '32px', marginRight: '10px' }}>
-          Y
-        </span>
-        <UnitInput
-          className={{ half: true }}
-          defaultValue={getModuleOffset(LayerModule.PRINTER)[1]}
-          forceUsePropsUnit
-          getValue={(val) => editModuleOffsets(LayerModule.PRINTER, 'y', val)}
-          id="printer-y-offset"
-          max={workareaHeight}
-          min={-workareaHeight}
-          unit={defaultUnit === 'inches' ? 'in' : 'mm'}
-        />
-      </SettingFormItem>
-      <SettingFormItem id="2w-ir-laser-offset" label={lang.settings.module_offset_2w_ir}>
-        <span className="font2" style={{ lineHeight: '32px', marginRight: '10px' }}>
-          X
-        </span>
-        <UnitInput
-          className={{ half: true }}
-          defaultValue={getModuleOffset(LayerModule.LASER_1064)[0]}
-          forceUsePropsUnit
-          getValue={(val) => editModuleOffsets(LayerModule.LASER_1064, 'x', val)}
-          id="2w-ir-laser-x-offset"
-          max={workareaWidth}
-          min={-workareaWidth}
-          unit={defaultUnit === 'inches' ? 'in' : 'mm'}
-        />
-        <span className="font2" style={{ lineHeight: '32px', marginRight: '10px' }}>
-          Y
-        </span>
-        <UnitInput
-          className={{ half: true }}
-          defaultValue={getModuleOffset(LayerModule.LASER_1064)[1]}
-          forceUsePropsUnit
-          getValue={(val) => editModuleOffsets(LayerModule.LASER_1064, 'y', val)}
-          id="2w-ir-laser-y-offset"
-          max={workareaHeight}
-          min={-workareaHeight}
-          unit={defaultUnit === 'inches' ? 'in' : 'mm'}
-        />
-      </SettingFormItem>
-      {isDev && (
-        <SettingFormItem id="white-ink-offset" label={lang.layer_module.uv_white_ink}>
-          <span className="font2" style={{ lineHeight: '32px', marginRight: '10px' }}>
-            X
-          </span>
-          <UnitInput
-            className={{ half: true }}
-            defaultValue={getModuleOffset(LayerModule.UV_WHITE_INK)[0]}
-            forceUsePropsUnit
-            getValue={(val) => editModuleOffsets(LayerModule.UV_WHITE_INK, 'x', val)}
-            id="white-ink-x-offset"
-            max={workareaWidth}
-            min={-workareaWidth}
-            unit={defaultUnit === 'inches' ? 'in' : 'mm'}
-          />
-          <span className="font2" style={{ lineHeight: '32px', marginRight: '10px' }}>
-            Y
-          </span>
-          <UnitInput
-            className={{ half: true }}
-            defaultValue={getModuleOffset(LayerModule.UV_WHITE_INK)[1]}
-            forceUsePropsUnit
-            getValue={(val) => editModuleOffsets(LayerModule.UV_WHITE_INK, 'y', val)}
-            id="white-ink-y-offset"
-            max={workareaHeight}
-            min={-workareaHeight}
-            unit={defaultUnit === 'inches' ? 'in' : 'mm'}
-          />
-        </SettingFormItem>
-      )}
+      <XYItem
+        {...commonProps}
+        id="10w-laser-offset"
+        label={lang.settings.module_offset_10w}
+        onChange={(axis, val) => editModuleOffsets(LayerModule.LASER_10W_DIODE, axis, val)}
+        values={getModuleOffset(LayerModule.LASER_10W_DIODE)}
+      />
+      <XYItem
+        {...commonProps}
+        id="20w-laser-offset"
+        label={lang.settings.module_offset_20w}
+        onChange={(axis, val) => editModuleOffsets(LayerModule.LASER_20W_DIODE, axis, val)}
+        values={getModuleOffset(LayerModule.LASER_20W_DIODE)}
+      />
+      <XYItem
+        {...commonProps}
+        id="printer-offset"
+        label={lang.settings.module_offset_printer}
+        onChange={(axis, val) => editModuleOffsets(LayerModule.PRINTER, axis, val)}
+        values={getModuleOffset(LayerModule.PRINTER)}
+      />
+      <XYItem
+        {...commonProps}
+        id="2w-ir-laser-offset"
+        label={lang.settings.module_offset_2w_ir}
+        onChange={(axis, val) => editModuleOffsets(LayerModule.LASER_1064, axis, val)}
+        values={getModuleOffset(LayerModule.LASER_1064)}
+      />
     </>
   );
 };

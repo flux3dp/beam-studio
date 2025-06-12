@@ -18,23 +18,6 @@ jest.mock('@core/app/pages/Settings/useSettingStore', () => ({
 jest.mock('./components/SettingSelect');
 jest.mock('./components/SettingFormItem');
 
-jest.mock(
-  '@core/app/widgets/Unit-Input-v2',
-  () =>
-    ({ className, defaultValue, forceUsePropsUnit, getValue, id, max, min, unit }: any) => (
-      <div>
-        mock-unit-input id:{id}
-        unit:{unit}
-        min:{min}
-        max:{max}
-        defaultValue:{defaultValue}
-        forceUsePropsUnit:{forceUsePropsUnit ? 'true' : 'false'}
-        className:{JSON.stringify(className)}
-        <input className="unit-input" onChange={(e) => getValue(+e.target.value)} />
-      </div>
-    ),
-);
-
 import Engraving from './Engraving';
 
 test('should render correctly', () => {

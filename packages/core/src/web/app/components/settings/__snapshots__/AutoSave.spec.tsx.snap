@@ -55,22 +55,21 @@ exports[`should render correctly initially no warning 1`] = `
     url:
     options:
     <div>
-      mock-unit-input id:
+      UnitInput: 
       save-every
-      unit:
-      m
-      min:
-      1
-      max:
-      60
-      defaultValue:
-      10
-      forceUsePropsUnit:
-      false
-      className:
-      {"half":true}
+      <p>
+        precision: 
+        0
+      </p>
+      <p>
+        unit: 
+        m
+      </p>
       <input
-        class="unit-input"
+        id="save-every"
+        max="60"
+        min="1"
+        value="10"
       />
     </div>
   </div>
@@ -82,21 +81,17 @@ exports[`should render correctly initially no warning 1`] = `
     url:
     options:
     <div>
-      mock-unit-input id:
+      UnitInput: 
       number-of-auto-save
-      unit:
-      min:
-      1
-      max:
-      10
-      defaultValue:
-      5
-      forceUsePropsUnit:
-      false
-      className:
-      {"half":true}
+      <p>
+        precision: 
+        0
+      </p>
       <input
-        class="unit-input"
+        id="number-of-auto-save"
+        max="10"
+        min="1"
+        value="5"
       />
     </div>
   </div>
@@ -156,22 +151,21 @@ exports[`should render correctly initially with warning 1`] = `
     url:
     options:
     <div>
-      mock-unit-input id:
+      UnitInput: 
       save-every
-      unit:
-      m
-      min:
-      1
-      max:
-      60
-      defaultValue:
-      10
-      forceUsePropsUnit:
-      false
-      className:
-      {"half":true}
+      <p>
+        precision: 
+        0
+      </p>
+      <p>
+        unit: 
+        m
+      </p>
       <input
-        class="unit-input"
+        id="save-every"
+        max="60"
+        min="1"
+        value="10"
       />
     </div>
   </div>
@@ -183,21 +177,17 @@ exports[`should render correctly initially with warning 1`] = `
     url:
     options:
     <div>
-      mock-unit-input id:
+      UnitInput: 
       number-of-auto-save
-      unit:
-      min:
-      1
-      max:
-      10
-      defaultValue:
-      5
-      forceUsePropsUnit:
-      false
-      className:
-      {"half":true}
+      <p>
+        precision: 
+        0
+      </p>
       <input
-        class="unit-input"
+        id="number-of-auto-save"
+        max="10"
+        min="1"
+        value="5"
       />
     </div>
   </div>

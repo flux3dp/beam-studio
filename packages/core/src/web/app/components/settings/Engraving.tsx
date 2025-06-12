@@ -2,8 +2,8 @@ import React from 'react';
 
 import type { DefaultOptionType } from 'antd/es/select';
 
+import SettingUnitInput from '@core/app/components/settings/components/SettingUnitInput';
 import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
-import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import isDev from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 
@@ -51,27 +51,25 @@ function Engraving({ options }: Props): React.JSX.Element {
       {isDev() && (
         <>
           <SettingFormItem id="set-hardware-acceleration" label="Padding Accel">
-            <UnitInput
-              className={{ half: true }}
-              decimal={0}
-              defaultValue={getPreference('padding_accel')}
-              getValue={(val) => setPreference('padding_accel', val)}
+            <SettingUnitInput
               id="hardware-acceleration"
               max={40000}
               min={1}
+              onChange={(val) => setPreference('padding_accel', val)}
+              precision={0}
               unit="mm/s^2"
+              value={getPreference('padding_accel')}
             />
           </SettingFormItem>
           <SettingFormItem id="set-hardware-acceleration-diode" label="Padding Accel HL">
-            <UnitInput
-              className={{ half: true }}
-              decimal={0}
-              defaultValue={getPreference('padding_accel_diode')}
-              getValue={(val) => setPreference('padding_accel_diode', val)}
+            <SettingUnitInput
               id="hardware-acceleration-diode"
               max={12000}
               min={1}
+              onChange={(val) => setPreference('padding_accel_diode', val)}
+              precision={0}
               unit="mm/s^2"
+              value={getPreference('padding_accel_diode')}
             />
           </SettingFormItem>
         </>

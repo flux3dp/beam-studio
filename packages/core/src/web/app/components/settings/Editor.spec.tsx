@@ -121,23 +121,6 @@ jest.mock('@core/app/pages/Settings/useSettingStore', () => ({
 jest.mock('./components/SettingSelect');
 jest.mock('./components/SettingFormItem');
 
-jest.mock(
-  '@core/app/widgets/Unit-Input-v2',
-  () =>
-    ({ className, defaultValue, forceUsePropsUnit, getValue, id, max, min, unit }: any) => (
-      <div>
-        mock-unit-input id:{id}
-        unit:{unit}
-        min:{min}
-        max:{max}
-        defaultValue:{defaultValue}
-        forceUsePropsUnit:{forceUsePropsUnit ? 'true' : 'false'}
-        className:{JSON.stringify(className)}
-        <input className="unit-input" onChange={(e) => getValue(+e.target.value)} />
-      </div>
-    ),
-);
-
 jest.mock('@core/helpers/api/swiftray-client', () => ({
   hasSwiftray: true,
 }));
@@ -164,6 +147,12 @@ describe('settings/Editor', () => {
             { label: 'Off', value: false },
           ] as any
         }
+        unitInputProps={{
+          isInch: false,
+          precision: 2,
+          step: 1,
+          unit: 'mm',
+        }}
       />,
     );
 
@@ -184,7 +173,6 @@ describe('settings/Editor', () => {
     expect(container).toMatchSnapshot();
 
     const SelectControls = container.querySelectorAll('.select-control');
-    const UnitInputs = container.querySelectorAll('.unit-input');
 
     fireEvent.change(SelectControls[0], { target: { value: 'inches' } });
     expect(mockSetConfig).toHaveBeenCalledTimes(1);
@@ -232,11 +220,11 @@ describe('settings/Editor', () => {
     expect(mockSetPreference).toHaveBeenCalledTimes(7);
     expect(mockSetPreference).toHaveBeenNthCalledWith(7, 'auto-switch-tab', true);
 
-    fireEvent.change(UnitInputs[0], { target: { value: 1 } });
+    fireEvent.change(container.querySelector('#set-guide-axis-x'), { target: { value: 1 } });
     expect(mockSetPreference).toHaveBeenCalledTimes(8);
     expect(mockSetPreference).toHaveBeenNthCalledWith(8, 'guide_x0', 1);
 
-    fireEvent.change(UnitInputs[1], { target: { value: 2 } });
+    fireEvent.change(container.querySelector('#set-guide-axis-y'), { target: { value: 2 } });
     expect(mockSetPreference).toHaveBeenCalledTimes(9);
     expect(mockSetPreference).toHaveBeenNthCalledWith(9, 'guide_y0', 2);
 

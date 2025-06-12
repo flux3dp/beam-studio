@@ -3,8 +3,8 @@ import * as React from 'react';
 import type { DefaultOptionType } from 'antd/es/select';
 import classNames from 'classnames';
 
+import SettingUnitInput from '@core/app/components/settings/components/SettingUnitInput';
 import PathInput, { InputType } from '@core/app/widgets/PathInput';
-import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import type { IConfig } from '@core/interfaces/IAutosave';
@@ -66,26 +66,24 @@ function AutoSave({
         />
       </SettingFormItem>
       <SettingFormItem id="auto-save-interval" label={lang.settings.autosave_interval}>
-        <UnitInput
-          className={{ half: true }}
-          decimal={0}
-          defaultValue={editingAutosaveConfig.timeInterval}
-          getValue={(timeInterval) => setEditingAutosaveConfig({ ...editingAutosaveConfig, timeInterval })}
+        <SettingUnitInput
           id="save-every"
           max={60}
           min={1}
+          onChange={(timeInterval) => setEditingAutosaveConfig({ ...editingAutosaveConfig, timeInterval })}
+          precision={0}
           unit={lang.monitor.minute}
+          value={editingAutosaveConfig.timeInterval}
         />
       </SettingFormItem>
       <SettingFormItem id="auto-save-maximum-count" label={lang.settings.autosave_number}>
-        <UnitInput
-          className={{ half: true }}
-          decimal={0}
-          defaultValue={editingAutosaveConfig.fileNumber}
-          getValue={(fileNumber) => setEditingAutosaveConfig({ ...editingAutosaveConfig, fileNumber })}
+        <SettingUnitInput
           id="number-of-auto-save"
           max={10}
           min={1}
+          onChange={(fileNumber) => setEditingAutosaveConfig({ ...editingAutosaveConfig, fileNumber })}
+          precision={0}
+          value={editingAutosaveConfig.fileNumber}
         />
       </SettingFormItem>
     </>

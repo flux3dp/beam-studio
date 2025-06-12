@@ -41,10 +41,20 @@ exports[`test AdorModule should render correctly 1`] = `
     url:
     options:
     <div>
+      UnitInput: 
+      low-power
+      <p>
+        precision: 
+        0
+      </p>
+      <p>
+        unit: 
+        %
+      </p>
       <input
-        data-testid="low-power"
         id="low-power"
-        type="number"
+        max="20"
+        min="0"
         value="3"
       />
     </div>
@@ -57,30 +67,48 @@ exports[`test AdorModule should render correctly 1`] = `
     url:
     options:
     <span
-      class="font2"
-      style="line-height: 32px; margin-right: 10px;"
+      class="font2 sub-item"
     >
       X
     </span>
     <div>
+      UnitInput: 
+      10w-laser-offset-x
+      <p>
+        precision: 
+        2
+      </p>
+      <p>
+        unit: 
+        mm
+      </p>
       <input
-        data-testid="10w-laser-x-offset"
-        id="10w-laser-x-offset"
-        type="number"
+        id="10w-laser-offset-x"
+        max="430"
+        min="-430"
         value="10"
       />
     </div>
     <span
-      class="font2"
-      style="line-height: 32px; margin-right: 10px;"
+      class="font2 sub-item"
     >
       Y
     </span>
     <div>
+      UnitInput: 
+      10w-laser-offset-y
+      <p>
+        precision: 
+        2
+      </p>
+      <p>
+        unit: 
+        mm
+      </p>
       <input
-        data-testid="10w-laser-y-offset"
-        id="10w-laser-y-offset"
-        type="number"
+        id="10w-laser-offset-y"
+        max="320"
+        min="-320"
         value="10"
       />
     </div>
@@ -93,30 +121,48 @@ exports[`test AdorModule should render correctly 1`] = `
     url:
     options:
     <span
-      class="font2"
-      style="line-height: 32px; margin-right: 10px;"
+      class="font2 sub-item"
     >
       X
     </span>
     <div>
+      UnitInput: 
+      20w-laser-offset-x
+      <p>
+        precision: 
+        2
+      </p>
+      <p>
+        unit: 
+        mm
+      </p>
       <input
-        data-testid="20w-laser-x-offset"
-        id="20w-laser-x-offset"
-        type="number"
+        id="20w-laser-offset-x"
+        max="430"
+        min="-430"
         value="0"
       />
     </div>
     <span
-      class="font2"
-      style="line-height: 32px; margin-right: 10px;"
+      class="font2 sub-item"
     >
       Y
     </span>
     <div>
+      UnitInput: 
+      20w-laser-offset-y
+      <p>
+        precision: 
+        2
+      </p>
+      <p>
+        unit: 
+        mm
+      </p>
       <input
-        data-testid="20w-laser-y-offset"
-        id="20w-laser-y-offset"
-        type="number"
+        id="20w-laser-offset-y"
+        max="320"
+        min="-320"
         value="0"
       />
     </div>
@@ -129,30 +175,48 @@ exports[`test AdorModule should render correctly 1`] = `
     url:
     options:
     <span
-      class="font2"
-      style="line-height: 32px; margin-right: 10px;"
+      class="font2 sub-item"
     >
       X
     </span>
     <div>
+      UnitInput: 
+      printer-offset-x
+      <p>
+        precision: 
+        2
+      </p>
+      <p>
+        unit: 
+        mm
+      </p>
       <input
-        data-testid="printer-x-offset"
-        id="printer-x-offset"
-        type="number"
+        id="printer-offset-x"
+        max="430"
+        min="-430"
         value="0"
       />
     </div>
     <span
-      class="font2"
-      style="line-height: 32px; margin-right: 10px;"
+      class="font2 sub-item"
     >
       Y
     </span>
     <div>
+      UnitInput: 
+      printer-offset-y
+      <p>
+        precision: 
+        2
+      </p>
+      <p>
+        unit: 
+        mm
+      </p>
       <input
-        data-testid="printer-y-offset"
-        id="printer-y-offset"
-        type="number"
+        id="printer-offset-y"
+        max="320"
+        min="-320"
         value="0"
       />
     </div>
@@ -165,66 +229,48 @@ exports[`test AdorModule should render correctly 1`] = `
     url:
     options:
     <span
-      class="font2"
-      style="line-height: 32px; margin-right: 10px;"
+      class="font2 sub-item"
     >
       X
     </span>
     <div>
+      UnitInput: 
+      2w-ir-laser-offset-x
+      <p>
+        precision: 
+        2
+      </p>
+      <p>
+        unit: 
+        mm
+      </p>
       <input
-        data-testid="2w-ir-laser-x-offset"
-        id="2w-ir-laser-x-offset"
-        type="number"
+        id="2w-ir-laser-offset-x"
+        max="430"
+        min="-430"
         value="0"
       />
     </div>
     <span
-      class="font2"
-      style="line-height: 32px; margin-right: 10px;"
+      class="font2 sub-item"
     >
       Y
     </span>
     <div>
+      UnitInput: 
+      2w-ir-laser-offset-y
+      <p>
+        precision: 
+        2
+      </p>
+      <p>
+        unit: 
+        mm
+      </p>
       <input
-        data-testid="2w-ir-laser-y-offset"
-        id="2w-ir-laser-y-offset"
-        type="number"
-        value="0"
-      />
-    </div>
-  </div>
-  <div>
-    mock-select-control id:
-    white-ink-offset
-    label:
-    White Ink
-    url:
-    options:
-    <span
-      class="font2"
-      style="line-height: 32px; margin-right: 10px;"
-    >
-      X
-    </span>
-    <div>
-      <input
-        data-testid="white-ink-x-offset"
-        id="white-ink-x-offset"
-        type="number"
-        value="0"
-      />
-    </div>
-    <span
-      class="font2"
-      style="line-height: 32px; margin-right: 10px;"
-    >
-      Y
-    </span>
-    <div>
-      <input
-        data-testid="white-ink-y-offset"
-        id="white-ink-y-offset"
-        type="number"
+        id="2w-ir-laser-offset-y"
+        max="320"
+        min="-320"
         value="0"
       />
     </div>

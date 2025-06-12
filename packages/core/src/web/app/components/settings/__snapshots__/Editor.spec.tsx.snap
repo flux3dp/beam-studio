@@ -80,53 +80,49 @@ exports[`settings/Editor initially no warning 1`] = `
     url:
     options:
     <span
-      class="font2"
-      style="line-height: 32px; margin-right: 10px;"
+      class="font2 sub-item"
     >
       X
     </span>
     <div>
-      mock-unit-input id:
-      guide-x-input
-      unit:
-      mm
-      min:
-      0
-      max:
-      400
-      defaultValue:
-      0
-      forceUsePropsUnit:
-      true
-      className:
-      {"half":true}
+      UnitInput: 
+      set-guide-axis-x
+      <p>
+        precision: 
+        2
+      </p>
+      <p>
+        unit: 
+        mm
+      </p>
       <input
-        class="unit-input"
+        id="set-guide-axis-x"
+        max="400"
+        min="0"
+        value="0"
       />
     </div>
     <span
-      class="font2"
-      style="line-height: 32px; margin-right: 10px;"
+      class="font2 sub-item"
     >
       Y
     </span>
     <div>
-      mock-unit-input id:
-      guide-y-input
-      unit:
-      mm
-      min:
-      0
-      max:
-      375
-      defaultValue:
-      0
-      forceUsePropsUnit:
-      true
-      className:
-      {"half":true}
+      UnitInput: 
+      set-guide-axis-y
+      <p>
+        precision: 
+        2
+      </p>
+      <p>
+        unit: 
+        mm
+      </p>
       <input
-        class="unit-input"
+        id="set-guide-axis-y"
+        max="375"
+        min="0"
+        value="0"
       />
     </div>
   </div>
@@ -323,53 +319,49 @@ exports[`settings/Editor initially no warning 2`] = `
     url:
     options:
     <span
-      class="font2"
-      style="line-height: 32px; margin-right: 10px;"
+      class="font2 sub-item"
     >
       X
     </span>
     <div>
-      mock-unit-input id:
-      guide-x-input
-      unit:
-      mm
-      min:
-      0
-      max:
-      400
-      defaultValue:
-      0
-      forceUsePropsUnit:
-      true
-      className:
-      {"half":true}
+      UnitInput: 
+      set-guide-axis-x
+      <p>
+        precision: 
+        2
+      </p>
+      <p>
+        unit: 
+        mm
+      </p>
       <input
-        class="unit-input"
+        id="set-guide-axis-x"
+        max="400"
+        min="0"
+        value="0"
       />
     </div>
     <span
-      class="font2"
-      style="line-height: 32px; margin-right: 10px;"
+      class="font2 sub-item"
     >
       Y
     </span>
     <div>
-      mock-unit-input id:
-      guide-y-input
-      unit:
-      mm
-      min:
-      0
-      max:
-      375
-      defaultValue:
-      0
-      forceUsePropsUnit:
-      true
-      className:
-      {"half":true}
+      UnitInput: 
+      set-guide-axis-y
+      <p>
+        precision: 
+        2
+      </p>
+      <p>
+        unit: 
+        mm
+      </p>
       <input
-        class="unit-input"
+        id="set-guide-axis-y"
+        max="375"
+        min="0"
+        value="0"
       />
     </div>
   </div>
@@ -566,53 +558,49 @@ exports[`settings/Editor initially no warning 3`] = `
     url:
     options:
     <span
-      class="font2"
-      style="line-height: 32px; margin-right: 10px;"
+      class="font2 sub-item"
     >
       X
     </span>
     <div>
-      mock-unit-input id:
-      guide-x-input
-      unit:
-      mm
-      min:
-      0
-      max:
-      400
-      defaultValue:
-      0
-      forceUsePropsUnit:
-      true
-      className:
-      {"half":true}
+      UnitInput: 
+      set-guide-axis-x
+      <p>
+        precision: 
+        2
+      </p>
+      <p>
+        unit: 
+        mm
+      </p>
       <input
-        class="unit-input"
+        id="set-guide-axis-x"
+        max="400"
+        min="0"
+        value="0"
       />
     </div>
     <span
-      class="font2"
-      style="line-height: 32px; margin-right: 10px;"
+      class="font2 sub-item"
     >
       Y
     </span>
     <div>
-      mock-unit-input id:
-      guide-y-input
-      unit:
-      mm
-      min:
-      0
-      max:
-      375
-      defaultValue:
-      0
-      forceUsePropsUnit:
-      true
-      className:
-      {"half":true}
+      UnitInput: 
+      set-guide-axis-y
+      <p>
+        precision: 
+        2
+      </p>
+      <p>
+        unit: 
+        mm
+      </p>
       <input
-        class="unit-input"
+        id="set-guide-axis-y"
+        max="375"
+        min="0"
+        value="0"
       />
     </div>
   </div>
@@ -809,53 +797,49 @@ exports[`settings/Editor initially no warning 4`] = `
     url:
     options:
     <span
-      class="font2"
-      style="line-height: 32px; margin-right: 10px;"
+      class="font2 sub-item"
     >
       X
     </span>
     <div>
-      mock-unit-input id:
-      guide-x-input
-      unit:
-      mm
-      min:
-      0
-      max:
-      400
-      defaultValue:
-      0
-      forceUsePropsUnit:
-      true
-      className:
-      {"half":true}
+      UnitInput: 
+      set-guide-axis-x
+      <p>
+        precision: 
+        2
+      </p>
+      <p>
+        unit: 
+        mm
+      </p>
       <input
-        class="unit-input"
+        id="set-guide-axis-x"
+        max="400"
+        min="0"
+        value="0"
       />
     </div>
     <span
-      class="font2"
-      style="line-height: 32px; margin-right: 10px;"
+      class="font2 sub-item"
     >
       Y
     </span>
     <div>
-      mock-unit-input id:
-      guide-y-input
-      unit:
-      mm
-      min:
-      0
-      max:
-      375
-      defaultValue:
-      0
-      forceUsePropsUnit:
-      true
-      className:
-      {"half":true}
+      UnitInput: 
+      set-guide-axis-y
+      <p>
+        precision: 
+        2
+      </p>
+      <p>
+        unit: 
+        mm
+      </p>
       <input
-        class="unit-input"
+        id="set-guide-axis-y"
+        max="375"
+        min="0"
+        value="0"
       />
     </div>
   </div>
