@@ -1,4 +1,14 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`test HorizontalScrollContainer > should work 1`] = `
+<div>
+  <div
+    class="classname"
+  >
+    <div />
+  </div>
+</div>
+`;
 
 exports[`test HorizontalScrollContainer should work 1`] = `
 <div>

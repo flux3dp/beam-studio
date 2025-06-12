@@ -8,13 +8,13 @@
   "targets": {
     "lint": { "executor": "@nx/eslint:lint" },
     "test": {
-      "executor": "@nx/jest:jest",
+      "executor": "@nx/vite:test",
       "options": {
-        "jestConfig": "packages/core/jest.config.ts",
+        "config": "packages/core/vite.config.ts",
         "passWithNoTests": true,
         "codeCoverage": true,
         "coverageReporters": ["text-summary"],
-        "silent": true
+        "silent": false
       }
     }
   }

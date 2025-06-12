@@ -1,21 +1,22 @@
 {
+  "extends": "./tsconfig.json",
   "compilerOptions": {
-    "target": "es2022",
-    "esModuleInterop": true,
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
-    "sourceMap": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "removeComments": false,
-    "noImplicitAny": false,
-    "downlevelIteration": true,
-    "jsx": "react",
-    "paths": {
-      "@mocks/*": ["packages/core/src/__mocks__/*"],
-      "@core/*": ["packages/core/src/web/*"],
-      "@core/implementations/*": ["packages/core/src/implementations/*"]
-    }
+    "outDir": "../../dist/out-tsc",
+    "types": ["vitest/globals", "vitest/importMeta", "vite/client", "node", "vitest"]
   },
-  "extends": "../../tsconfig.base.json"
+  "include": [
+    "vite.config.ts",
+    "vite.config.mts",
+    "vitest.config.ts",
+    "vitest.config.mts",
+    "src/**/*.test.ts",
+    "src/**/*.spec.ts",
+    "src/**/*.test.tsx",
+    "src/**/*.spec.tsx",
+    "src/**/*.test.js",
+    "src/**/*.spec.js",
+    "src/**/*.test.jsx",
+    "src/**/*.spec.jsx",
+    "src/**/*.d.ts"
+  ]
 }

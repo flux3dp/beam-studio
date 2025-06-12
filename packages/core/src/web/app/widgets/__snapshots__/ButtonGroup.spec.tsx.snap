@@ -1,4 +1,10 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`should render correctly > no buttons 1`] = `
+<div>
+  <span />
+</div>
+`;
 
 exports[`should render correctly has buttons 1`] = `
 <div>

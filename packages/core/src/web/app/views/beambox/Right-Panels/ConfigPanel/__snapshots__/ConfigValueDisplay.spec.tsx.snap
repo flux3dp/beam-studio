@@ -1,4 +1,37 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`test ConfigValueDisplay when type is not panel-item > should render correctly 1`] = `
+<div>
+  <div
+    class="_input_3a7bf7 _underline_3a7bf7 _input_f34598"
+  >
+    <div
+      class="ant-input-number css-dev-only-do-not-override-2vj0hj ant-input-number-outlined"
+    >
+      <div
+        class="ant-input-number-input-wrap"
+      >
+        <input
+          aria-valuemax="100"
+          aria-valuemin="0"
+          aria-valuenow="5"
+          autocomplete="off"
+          class="ant-input-number-input"
+          id="mock-input-id"
+          role="spinbutton"
+          step="1"
+          value="5"
+        />
+      </div>
+    </div>
+    <span
+      class="_unit_3a7bf7 _unit_f34598"
+    >
+      mm
+    </span>
+  </div>
+</div>
+`;
 
 exports[`test ConfigValueDisplay when type is not panel-item should render correctly 1`] = `
 <div>
@@ -22,6 +55,43 @@ exports[`test ConfigValueDisplay when type is not panel-item should render corre
       min="0"
       value="5"
     />
+  </div>
+</div>
+`;
+
+exports[`test ConfigValueDisplay when type is panel-item > should render correctly 1`] = `
+<div>
+  <div
+    class="_input_3a7bf7 _panel-item_6bc8f9"
+  >
+    <div
+      class="ant-input-number-affix-wrapper ant-input-number-affix-wrapper-without-controls css-dev-only-do-not-override-1u9zluj ant-input-number-outlined _input_6bc8f9"
+    >
+      <div
+        class="ant-input-number css-dev-only-do-not-override-1u9zluj"
+      >
+        <div
+          class="ant-input-number-input-wrap"
+        >
+          <input
+            aria-valuemax="100"
+            aria-valuemin="0"
+            aria-valuenow="5"
+            autocomplete="off"
+            class="ant-input-number-input"
+            role="spinbutton"
+            step="1"
+            type="number"
+            value="5"
+          />
+        </div>
+      </div>
+      <span
+        class="ant-input-number-suffix"
+      >
+        mm
+      </span>
+    </div>
   </div>
 </div>
 `;

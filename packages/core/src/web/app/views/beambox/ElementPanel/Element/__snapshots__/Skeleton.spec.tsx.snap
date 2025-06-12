@@ -1,4 +1,32 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`test Skeleton > should render correctly 1`] = `
+<div>
+  <div
+    class="_icon_c6806c _loading_c6806c"
+  />
+  <div
+    class="_icon_c6806c _loading_c6806c"
+  />
+  <div
+    class="_icon_c6806c _loading_c6806c"
+  />
+  <div
+    class="_icon_c6806c _loading_c6806c"
+  />
+  <div
+    class="_icon_c6806c _loading_c6806c"
+  />
+</div>
+`;
+
+exports[`test Skeleton > should render correctly without props 1`] = `
+<div>
+  <div
+    class="_icon_c6806c _loading_c6806c"
+  />
+</div>
+`;
 
 exports[`test Skeleton should render correctly 1`] = `
 <div>
