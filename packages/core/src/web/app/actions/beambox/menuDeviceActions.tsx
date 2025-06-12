@@ -408,9 +408,6 @@ export default {
   LOG_CAMERA: (device: IDeviceInfo): void => {
     getLog(device, 'fluxcamerad.log');
   },
-  LOG_CLOUD: (device: IDeviceInfo): void => {
-    getLog(device, 'fluxcloudd.log');
-  },
   LOG_DISCOVER: (device: IDeviceInfo): void => {
     getLog(device, 'fluxupnpd.log');
   },

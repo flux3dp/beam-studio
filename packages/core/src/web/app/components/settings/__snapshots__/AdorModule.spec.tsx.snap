@@ -45,7 +45,7 @@ exports[`test AdorModule should render correctly 1`] = `
         data-testid="low-power"
         id="low-power"
         type="number"
-        value=""
+        value="3"
       />
     </div>
   </div>

@@ -4,6 +4,7 @@ import constant from '@core/app/actions/beambox/constant';
 import { CHUCK_ROTARY_DIAMETER, RotaryType } from '@core/app/constants/addOn';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
+import type { ModuleOffsets } from '@core/app/constants/layer-module/module-offsets';
 import moduleOffsets from '@core/app/constants/layer-module/module-offsets';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
@@ -53,7 +54,7 @@ export type BeamboxPreference = {
   low_power: number;
   // model is default workarea model
   model: WorkAreaModel;
-  'module-offsets': Record<LayerModuleType, [number, number]>;
+  'module-offsets': ModuleOffsets;
   mouse_input_device: 'MOUSE' | 'TOUCHPAD';
   'multipass-compensation': boolean;
   'one-way-printing': boolean;
@@ -85,7 +86,7 @@ export type BeamboxPreference = {
   show_rulers: boolean;
   simplify_clipper_path: boolean;
   use_layer_color: boolean;
-  vector_speed_constraint?: boolean;
+  vector_speed_constraint: boolean;
   workarea: WorkAreaModel;
   zoom_with_window: boolean;
 };
@@ -169,35 +170,52 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
 
 const eventEmitter = eventEmitterFactory.createEventEmitter('beambox-preference');
 
-const objectKeys = ['customized-dimension', 'module-offsets'] as const;
+type DeepPartial<T> = {
+  [K in keyof T]?: T[K] extends object ? (T[K] extends Function ? T[K] : DeepPartial<T[K]>) : T[K];
+};
+
+function deepApplyDefaults<T extends { [key: string]: any }>(target: DeepPartial<T>, defaults: T) {
+  const keys = Object.keys(defaults) as Array<keyof T>;
+
+  for (const key of keys) {
+    const defaultVal = defaults[key];
+
+    if (!(key in target)) {
+      target[key] = defaultVal;
+    } else if (typeof defaultVal === 'object' && defaultVal !== null && !Array.isArray(defaultVal)) {
+      deepApplyDefaults(target[key]!, defaultVal);
+    }
+  }
+}
 
 class BeamboxPreferenceClass {
   constructor() {
-    // set default preference if key or even beambox-preference doesn't exist
-    const preference: BeamboxPreference = storage.get('beambox-preference') || DEFAULT_PREFERENCE;
+    let preference: BeamboxPreference | null = storage.get('beambox-preference');
 
-    // migrate renamed key
-    const oldValue = preference['vector_speed_contraint' as BeamboxPreferenceKey];
+    if (preference) {
+      // migrate renamed key
+      const oldValue = preference['vector_speed_contraint' as BeamboxPreferenceKey];
 
-    if (oldValue !== undefined) {
-      preference['vector_speed_constraint'] = oldValue as boolean;
-      // @ts-expect-error key is former keyof BeamboxPreference
-      delete preference['vector_speed_contraint'];
-    }
-
-    // to migrate preference of old version
-    for (const key in DEFAULT_PREFERENCE) {
-      if (!(key in preference)) {
-        // @ts-expect-error key is keyof BeamboxPreference
-        preference[key] = DEFAULT_PREFERENCE[key];
-      } else if (objectKeys.includes(key)) {
-        // @ts-expect-error key is keyof BeamboxPreference
-        preference[key] = { ...DEFAULT_PREFERENCE[key], ...preference[key] };
+      if (oldValue !== undefined) {
+        preference['vector_speed_constraint'] = oldValue as boolean;
+        // @ts-expect-error key is former keyof BeamboxPreference
+        delete preference['vector_speed_contraint'];
       }
+
+      // migrate module-offsets from one level (ador only) to two levels
+      if (preference['module-offsets'] && !preference['module-offsets'].ado1) {
+        preference['module-offsets'] = { ado1: preference['module-offsets'] as ModuleOffsets['ado1'] };
+      }
+
+      // update preference from old version (allowing missing fields and used defaults directly)
+      // and handle new keys in nested objects
+      deepApplyDefaults(preference, DEFAULT_PREFERENCE);
+    } else {
+      // init beambox-preference
+      preference = DEFAULT_PREFERENCE;
     }
 
     console.log('startup preference', preference);
-
     storage.set('beambox-preference', preference);
   }
 

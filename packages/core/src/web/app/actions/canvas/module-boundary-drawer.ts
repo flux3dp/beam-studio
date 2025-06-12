@@ -6,6 +6,7 @@ import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { getModuleBoundary } from '@core/app/constants/layer-module/module-boundary';
 import workareaManager from '@core/app/svgedit/workarea';
 import { getAutoFeeder } from '@core/helpers/addOn';
+import { getModuleOffsets } from '@core/helpers/device/moduleOffsets';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
 
@@ -84,8 +85,7 @@ const update = (module: LayerModuleType): void => {
   const d1 = `M0,${workareaTop}H${w}V${workareaBottom}H0V${workareaTop}`;
   const { dpmm } = constant;
   let { bottom, left, right, top } = getModuleBoundary(model, module);
-  const offsets = structuredClone(BeamboxPreference.read('module-offsets'));
-  const [offsetX, offsetY] = offsets[module] || [0, 0];
+  const [offsetX, offsetY] = getModuleOffsets({ module, workarea: model });
 
   if (module === LayerModule.PRINTER && offsetY < 0) {
     top = Math.max(top + offsetY, 0);

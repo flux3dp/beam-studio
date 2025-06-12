@@ -4,10 +4,11 @@ import type { DefaultOptionType } from 'antd/es/select';
 
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
-import moduleOffsets from '@core/app/constants/layer-module/module-offsets';
+import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
+import { getModuleOffsets, updateModuleOffsets } from '@core/helpers/device/moduleOffsets';
 import getIsDev from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 
@@ -18,37 +19,42 @@ interface Props {
   options: DefaultOptionType[];
 }
 
+const targetWorkarea: WorkAreaModel = 'ado1';
+
 const AdorModule = ({ options }: Props): React.JSX.Element => {
   const lang = useI18n();
   const isDev = useMemo(() => getIsDev(), []);
   const { getConfig, getPreference, setPreference } = useSettingStore();
-  const selectedModel = getPreference('model');
   const defaultUnit = getConfig('default-units');
   const { workareaHeight, workareaWidth } = useMemo(() => {
-    const { displayHeight, height, width } = getWorkarea(selectedModel, 'ado1');
+    const { displayHeight, height, width } = getWorkarea(targetWorkarea);
 
     return { workareaHeight: displayHeight ?? height, workareaWidth: width };
-  }, [selectedModel]);
+  }, []);
 
   const currentModuleOffsets = getPreference('module-offsets');
   const getModuleOffset = useCallback(
-    (module: LayerModuleType) => {
-      const val = currentModuleOffsets?.[module] || moduleOffsets[module];
-
-      return [val[0] - moduleOffsets[module][0], val[1] - moduleOffsets[module][1]];
-    },
+    (module: LayerModuleType) =>
+      getModuleOffsets({
+        module,
+        offsets: currentModuleOffsets,
+        useRealValue: false,
+        workarea: targetWorkarea,
+      }),
     [currentModuleOffsets],
   );
   const editModuleOffsets = useCallback(
     (module: LayerModuleType, axis: 'x' | 'y', value: number) => {
-      const index = axis === 'x' ? 0 : 1;
-      const curVal = [...getModuleOffset(module)];
+      const curVal = getModuleOffset(module);
+      const newOffsets = updateModuleOffsets(axis === 'x' ? [value, curVal[1]] : [curVal[0], value], {
+        isRealValue: false,
+        module,
+        offsets: currentModuleOffsets,
+        shouldWrite: false,
+        workarea: targetWorkarea,
+      });
 
-      curVal[index] = value;
-      curVal[0] += moduleOffsets[module][0];
-      curVal[1] += moduleOffsets[module][1];
-
-      setPreference('module-offsets', { ...currentModuleOffsets, [module]: curVal });
+      setPreference('module-offsets', newOffsets);
     },
     [currentModuleOffsets, getModuleOffset, setPreference],
   );
