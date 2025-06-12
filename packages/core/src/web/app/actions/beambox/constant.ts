@@ -23,12 +23,11 @@ export const promarkModels = new Set(promarkModelsArray);
 
 export const modelsWithModules = new Set(adorModelsArray);
 
-export const PreviewSpeedLevel = {
-  FAST: 3,
-  MEDIUM: 2,
-  SLOW: 1,
-} as const;
+export const PreviewSpeedLevel = { FAST: 3, MEDIUM: 2, SLOW: 1 } as const;
 export type PreviewSpeedLevelType = (typeof PreviewSpeedLevel)[keyof typeof PreviewSpeedLevel];
+
+export const needToShowProbeBeforeAutoFocusModelsArray = ['fbb2'] as const;
+export type NeedToShowProbeBeforeAutoFocusModelsType = (typeof needToShowProbeBeforeAutoFocusModelsArray)[number];
 
 export const dpmm = 10;
 

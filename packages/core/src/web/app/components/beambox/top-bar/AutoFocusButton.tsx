@@ -1,10 +1,10 @@
 import React, { useContext } from 'react';
 
 import classNames from 'classnames';
-import { match } from 'ts-pattern';
+import { match, P } from 'ts-pattern';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import constants from '@core/app/actions/beambox/constant';
+import constants, { needToShowProbeBeforeAutoFocusModelsArray } from '@core/app/actions/beambox/constant';
 import progressCaller from '@core/app/actions/progress-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
@@ -22,46 +22,56 @@ const AutoFocusButton = (): React.JSX.Element => {
   lang;
 
   const onClick = async () => {
-    const prerequisite = match(selectedDevice)
-      .with(null, () => false)
-      .with({ model: 'fbb2' }, (device) => {
-        if (device.probe_showed) {
+    try {
+      const deviceStatus = await checkDeviceStatus(selectedDevice!);
+
+      if (!deviceStatus) {
+        alertCaller.popUp({
+          caption: 'Auto Focus',
+          message: 'Please select a device before auto focusing.',
+          type: alertConstants.SHOW_POPUP_ERROR,
+        });
+
+        return;
+      }
+
+      await deviceMaster.select(selectedDevice!);
+
+      const prerequisite = await match(selectedDevice)
+        .with(null, () => false)
+        .with({ model: P.union(...needToShowProbeBeforeAutoFocusModelsArray) }, async () => {
+          const { probe_showed } = await deviceMaster.getDeviceDetailInfo();
+
+          if (probe_showed === '1') {
+            return true;
+          }
+
           alertCaller.popUp({
             caption: 'Auto Focus',
             message: 'Please show the probe before auto focusing.',
             type: alertConstants.SHOW_POPUP_ERROR,
           });
 
-          // await deviceMaster.showProbe();
           return false;
-        }
+        })
+        .otherwise(() => true);
 
-        return true;
-      })
-      .otherwise(() => true);
+      if (!prerequisite) {
+        return;
+      }
 
-    if (!prerequisite) {
-      return;
+      progressCaller.openNonstopProgress({
+        id: 'auto-focus',
+        message: 'Auto focusing...',
+      });
+
+      await deviceMaster.enterRawMode();
+      await deviceMaster.rawAutoFocus();
+      await deviceMaster.rawLooseMotor();
+      await deviceMaster.endSubTask();
+    } finally {
+      progressCaller.popById('auto-focus');
     }
-
-    const deviceStatus = await checkDeviceStatus(selectedDevice!);
-
-    if (!deviceStatus) {
-      return;
-    }
-
-    progressCaller.openNonstopProgress({
-      id: 'auto-focus',
-      message: 'Auto focusing...',
-    });
-
-    await deviceMaster.select(selectedDevice!);
-    await deviceMaster.enterRawMode();
-    await deviceMaster.rawAutoFocus();
-    await deviceMaster.rawLooseMotor();
-    await deviceMaster.endSubTask();
-
-    progressCaller.popById('auto-focus');
   };
 
   return (
