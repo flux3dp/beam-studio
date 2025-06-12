@@ -1796,16 +1796,9 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       svgcontent.setAttribute('data-pass_through', BeamboxPreference.read('pass-through-height')!.toFixed(2));
     }
 
-    const workareaElement = document.getElementById('workarea')!;
-    const workareaObj = getWorkarea(workarea);
-    const { pxDisplayHeight, pxHeight, pxWidth } = workareaObj;
-    const zoom = workareaManager.zoomRatio;
-    const x = workareaElement.scrollLeft / zoom - pxWidth;
-    const y = workareaElement.scrollTop / zoom - (pxDisplayHeight ?? pxHeight);
-
     svgcontent.setAttribute('data-workarea', workarea);
 
-    var output = this.svgToString(svgcontent, 0, unit);
+    const output = this.svgToString(svgcontent, 0, unit);
 
     svgedit.utilities.moveDefsOutfromSvgContent();
 
