@@ -40,8 +40,8 @@ exports[`should render correctly initially no warning 1`] = `
       /MyDocuments
       forceValidValue:
       false
-      className:
-      ""
+      error:
+      false
       <input
         class="path-input"
       />
@@ -136,8 +136,8 @@ exports[`should render correctly initially with warning 1`] = `
       /MyDocuments
       forceValidValue:
       false
-      className:
-      "with-error"
+      error:
+      true
       <input
         class="path-input"
       />

@@ -87,7 +87,6 @@ function Settings(): React.JSX.Element {
 
   return (
     <div className="studio-container settings-studio">
-      <div className="settings-gradient-overlay" />
       <div className="form general">
         <ConfigProvider theme={{ components: { Form: { itemMarginBottom: 20, labelFontSize: 16 } } }}>
           <Form colon={false} labelAlign="left" labelWrap wrapperCol={{ flex: 1 }}>

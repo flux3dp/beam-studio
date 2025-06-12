@@ -11,6 +11,7 @@ import i18n from '@core/helpers/i18n';
 
 import SettingFormItem from './components/SettingFormItem';
 import SettingSelect from './components/SettingSelect';
+import styles from './Settings.module.scss';
 
 type Props = {
   options: DefaultOptionType[];
@@ -26,7 +27,7 @@ const Path = ({ options, unitInputProps }: Props): React.JSX.Element => {
 
   return (
     <>
-      <div className="subtitle">{lang.settings.groups.path}</div>
+      <div className={styles.subtitle}>{lang.settings.groups.path}</div>
       <SettingSelect
         defaultValue={getPreference('vector_speed_constraint')}
         id="set-vector-speed-constraint"

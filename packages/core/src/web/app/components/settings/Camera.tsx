@@ -7,6 +7,7 @@ import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
 import i18n from '@core/helpers/i18n';
 
 import SettingSelect from './components/SettingSelect';
+import styles from './Settings.module.scss';
 
 interface Props {
   options: DefaultOptionType[];
@@ -23,7 +24,7 @@ function Camera({ options }: Props): React.JSX.Element {
 
   return (
     <>
-      <div className="subtitle">{lang.settings.groups.camera}</div>
+      <div className={styles.subtitle}>{lang.settings.groups.camera}</div>
       <SettingSelect
         defaultValue={getPreference('preview_movement_speed_level')}
         id="set-camera-preview-speed-level"

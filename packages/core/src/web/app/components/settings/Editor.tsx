@@ -15,6 +15,7 @@ import storage from '@core/implementations/storage';
 import type { GeneralFont, IDefaultFont } from '@core/interfaces/IFont';
 
 import SettingSelect from './components/SettingSelect';
+import styles from './Settings.module.scss';
 
 const fontFamilies = FontFuncs.requestAvailableFontFamilies(true);
 
@@ -105,7 +106,7 @@ function Editor({ options, unitInputProps }: Props): React.JSX.Element {
 
   return (
     <>
-      <div className="subtitle">{lang.settings.groups.editor}</div>
+      <div className={styles.subtitle}>{lang.settings.groups.editor}</div>
       <SettingSelect
         defaultValue={getConfig('default-units')}
         id="set-default-units"

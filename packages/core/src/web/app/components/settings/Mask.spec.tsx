@@ -2,20 +2,6 @@ import React from 'react';
 import { create } from 'zustand';
 import { fireEvent, render } from '@testing-library/react';
 
-jest.mock('@core/helpers/useI18n', () => () => ({
-  settings: {
-    groups: {
-      mask: 'Workarea Clipping',
-    },
-    help_center_urls: {
-      mask: 'https://support.flux3dp.com/hc/en-us/articles/360004408876',
-    },
-    mask: 'Workarea Clipping',
-    off: 'Off',
-    on: 'On',
-  },
-}));
-
 const mockGetPreference = jest.fn();
 const mockSetPreference = jest.fn();
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-import classNames from 'classnames';
+import { Input } from 'antd';
 
 import dialog from '@core/implementations/dialog';
 import fs from '@core/implementations/fileSystem';
@@ -22,8 +22,8 @@ const propertiesMap = {
 
 interface Props {
   buttonTitle: string;
-  className?: string;
   defaultValue: string;
+  error: boolean;
   forceValidValue?: boolean;
   getValue: (val: string, isValid: boolean) => void;
   type: InputType;
@@ -31,8 +31,8 @@ interface Props {
 
 const PathInput = ({
   buttonTitle,
-  className,
   defaultValue = '',
+  error,
   forceValidValue = true,
   getValue,
   type,
@@ -106,16 +106,17 @@ const PathInput = ({
   };
 
   return (
-    <div className={classNames(styles.container, className)}>
+    <div className={styles.container}>
       <div className={styles.btn} onClick={setValueFromDialog} title={buttonTitle}>
         <img src="img/right-panel/icon-import.svg" />
       </div>
-      <input
+      <Input
         id="location-input"
         onBlur={updateValue}
         onChange={handleChange}
         onKeyUp={handleKeyUp}
         ref={inputEl}
+        status={error ? 'error' : undefined}
         type="text"
         value={displayValue}
       />

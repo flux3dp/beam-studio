@@ -12,6 +12,7 @@ import useI18n from '@core/helpers/useI18n';
 
 import SettingFormItem from './components/SettingFormItem';
 import SettingSelect from './components/SettingSelect';
+import styles from './Settings.module.scss';
 
 interface Props {
   options: DefaultOptionType[];
@@ -33,7 +34,7 @@ const Module = ({ options, unitInputProps }: Props): React.JSX.Element => {
 
   return (
     <>
-      <div className="subtitle">{lang.settings.groups.modules}</div>
+      <div className={styles.subtitle}>{lang.settings.groups.modules}</div>
       <SettingSelect
         defaultValue={getPreference('default-borderless')}
         id="default-open-bottom"

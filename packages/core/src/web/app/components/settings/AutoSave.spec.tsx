@@ -4,14 +4,14 @@ import { fireEvent, render } from '@testing-library/react';
 
 jest.mock('@core/app/widgets/PathInput', () => ({
   __esModule: true,
-  default: ({ buttonTitle, className, 'data-id': dataId, defaultValue, forceValidValue, getValue, type }: any) => (
+  default: ({ buttonTitle, 'data-id': dataId, defaultValue, error, forceValidValue, getValue, type }: any) => (
     <div>
       mock-path-input id:{dataId}
       buttonTitle:{buttonTitle}
       type:{type}
       defaultValue:{defaultValue}
       forceValidValue:{forceValidValue ? 'true' : 'false'}
-      className:{JSON.stringify(className)}
+      error:{error ? 'true' : 'false'}
       <input
         className="path-input"
         onChange={(e) => {

@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { InfoCircleOutlined } from '@ant-design/icons';
+import { Input } from 'antd';
 import type { DefaultOptionType } from 'antd/es/select';
 
 import alert from '@core/app/actions/alert-caller';
@@ -10,6 +12,7 @@ import browser from '@core/implementations/browser';
 
 import SettingFormItem from './components/SettingFormItem';
 import SettingSelect from './components/SettingSelect';
+import styles from './Settings.module.scss';
 
 interface Props {
   options: DefaultOptionType[];
@@ -42,19 +45,20 @@ function Connection({ options }: Props): React.JSX.Element {
 
   return (
     <>
-      <div className="subtitle">
+      <div className={styles.subtitle}>
         {lang.settings.groups.connection}
-        <span className="info-icon-medium">
-          <img onClick={() => browser.open(lang.settings.help_center_urls.connection)} src="img/info.svg" />
-        </span>
+        <InfoCircleOutlined
+          className={styles.icon}
+          onClick={() => browser.open(lang.settings.help_center_urls.connection)}
+        />
       </div>
       <SettingFormItem id="connect-ip-list" label={lang.settings.ip}>
-        <input
+        <Input
           autoComplete="false"
+          className={styles.input}
           defaultValue={getConfig('poke-ip-addr')}
           id="ip-input"
           onBlur={checkIPFormat}
-          type="text"
         />
       </SettingFormItem>
       <SettingSelect

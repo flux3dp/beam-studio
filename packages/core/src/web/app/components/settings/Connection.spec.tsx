@@ -2,23 +2,6 @@ import React from 'react';
 import { create } from 'zustand';
 import { fireEvent, render } from '@testing-library/react';
 
-jest.mock('@core/helpers/i18n', () => ({
-  lang: {
-    settings: {
-      auto_connect: 'Automatically select the only machine',
-      groups: {
-        connection: 'Connection',
-      },
-      guess_poke: 'Search for machine IP address',
-      help_center_urls: {
-        connection: 'https://support.flux3dp.com/hc/en-us/sections/360000302135',
-      },
-      ip: 'Machine IP Address',
-      wrong_ip_format: 'Wrong IP Formats',
-    },
-  },
-}));
-
 const popUp = jest.fn();
 
 jest.mock('@core/app/actions/alert-caller', () => ({ popUp }));
@@ -74,7 +57,7 @@ describe('should render correctly', () => {
     });
     expect(mockSetConfig).not.toHaveBeenCalled();
 
-    fireEvent.click(container.querySelector('img'));
+    fireEvent.click(container.querySelector('.icon'));
     expect(open).toHaveBeenCalledTimes(1);
     expect(open).toHaveBeenNthCalledWith(1, 'https://support.flux3dp.com/hc/en-us/sections/360000302135');
 

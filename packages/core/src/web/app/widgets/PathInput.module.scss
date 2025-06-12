@@ -1,10 +1,11 @@
 .container {
   display: flex;
   align-items: center;
+  width: 240px;
 
   .btn {
     cursor: pointer;
-    width: 32px;
+    min-width: 32px;
     height: 32px;
     margin-right: 8px;
     border: 1px solid #bbbbbb;

@@ -1,7 +1,6 @@
 import * as React from 'react';
 
 import type { DefaultOptionType } from 'antd/es/select';
-import classNames from 'classnames';
 
 import SettingUnitInput from '@core/app/components/settings/components/SettingUnitInput';
 import PathInput, { InputType } from '@core/app/widgets/PathInput';
@@ -11,6 +10,7 @@ import type { IConfig } from '@core/interfaces/IAutosave';
 
 import SettingFormItem from './components/SettingFormItem';
 import SettingSelect from './components/SettingSelect';
+import styles from './Settings.module.scss';
 
 interface Props {
   editingAutosaveConfig: IConfig;
@@ -33,7 +33,7 @@ function AutoSave({
 
   return (
     <>
-      <div className="subtitle">{lang.settings.groups.autosave}</div>
+      <div className={styles.subtitle}>{lang.settings.groups.autosave}</div>
       <SettingSelect
         defaultValue={editingAutosaveConfig.enabled}
         id="set-auto-save"
@@ -48,9 +48,9 @@ function AutoSave({
       >
         <PathInput
           buttonTitle={lang.general.choose_folder}
-          className={classNames({ 'with-error': Boolean(warnings.autosave_directory) })}
           data-id="location-input"
           defaultValue={editingAutosaveConfig.directory}
+          error={Boolean(warnings.autosave_directory)}
           forceValidValue={false}
           getValue={(directory: string, isValid: boolean) => {
             if (!isValid) {

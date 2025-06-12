@@ -6,6 +6,7 @@ import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
 import i18n from '@core/helpers/i18n';
 
 import SettingSelect from './components/SettingSelect';
+import styles from './Settings.module.scss';
 
 interface Props {
   options: DefaultOptionType[];
@@ -17,7 +18,7 @@ function Privacy({ options }: Props): React.JSX.Element {
 
   return (
     <>
-      <div className="subtitle">{lang.settings.groups.privacy}</div>
+      <div className={styles.subtitle}>{lang.settings.groups.privacy}</div>
       <SettingSelect
         defaultValue={getConfig('enable-sentry')}
         id="set-sentry"

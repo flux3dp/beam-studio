@@ -9,6 +9,7 @@ import useI18n from '@core/helpers/useI18n';
 
 import SettingFormItem from './components/SettingFormItem';
 import SettingSelect from './components/SettingSelect';
+import styles from './Settings.module.scss';
 
 interface Props {
   options: DefaultOptionType[];
@@ -24,7 +25,7 @@ function Engraving({ options }: Props): React.JSX.Element {
 
   return (
     <>
-      <div className="subtitle">{lang.settings.groups.engraving}</div>
+      <div className={styles.subtitle}>{lang.settings.groups.engraving}</div>
       <SettingSelect
         defaultValue={getPreference('fast_gradient')}
         id="set-fast-gradient"
