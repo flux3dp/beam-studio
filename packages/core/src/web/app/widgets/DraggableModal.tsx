@@ -22,7 +22,7 @@ const DraggableModal = (props: Props): React.JSX.Element => {
     defaultPosition = { x: 0, y: 0 },
     modalRender = (modal) => modal,
     title,
-    width = 440,
+    width = 520,
     xRef = 'center',
     yRef = 'center',
     ...restProps
