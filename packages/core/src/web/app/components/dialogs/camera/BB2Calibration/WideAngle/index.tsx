@@ -21,6 +21,7 @@ import CheckPnP from '../../common/CheckPnP';
 import CheckpointData from '../../common/CheckpointData';
 import downloadCalibrationFile from '../../common/downloadCalibrationFile';
 import Instruction from '../../common/Instruction';
+import { movePlatformRel } from '../../common/movePlatformRel';
 import ProcessingDialog from '../../common/ProcessingDialog';
 import SolvePnP from '../../common/SolvePnP';
 import {
@@ -28,7 +29,6 @@ import {
   bb2WideAnglePerspectiveGrid,
   getBB2WideAnglePoints,
 } from '../../common/solvePnPConstants';
-import movePlatformRel from '../movePlatformRel';
 
 import ChArUco from './ChArUco';
 
