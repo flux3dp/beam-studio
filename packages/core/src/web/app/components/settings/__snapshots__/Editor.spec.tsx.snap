@@ -236,6 +236,19 @@ exports[`settings/Editor initially no warning 1`] = `
       id="set-enable-uv-print-file"
     />
   </div>
+  <div>
+    mock-select-control id:
+    print-advanced-mode
+    label:
+    Printer Advanced Mode
+    url:
+    options:
+    [{"label":"On","value":true},{"label":"Off","value":false}]
+    <input
+      class="select-control"
+      id="print-advanced-mode"
+    />
+  </div>
 </div>
 `;
 
@@ -473,6 +486,19 @@ exports[`settings/Editor initially no warning 2`] = `
     <input
       class="select-control"
       id="set-enable-uv-print-file"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    print-advanced-mode
+    label:
+    Printer Advanced Mode
+    url:
+    options:
+    [{"label":"On","value":true},{"label":"Off","value":false}]
+    <input
+      class="select-control"
+      id="print-advanced-mode"
     />
   </div>
 </div>
@@ -714,6 +740,19 @@ exports[`settings/Editor initially no warning 3`] = `
       id="set-enable-uv-print-file"
     />
   </div>
+  <div>
+    mock-select-control id:
+    print-advanced-mode
+    label:
+    Printer Advanced Mode
+    url:
+    options:
+    [{"label":"On","value":true},{"label":"Off","value":false}]
+    <input
+      class="select-control"
+      id="print-advanced-mode"
+    />
+  </div>
 </div>
 `;
 
@@ -951,6 +990,19 @@ exports[`settings/Editor initially no warning 4`] = `
     <input
       class="select-control"
       id="set-enable-uv-print-file"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    print-advanced-mode
+    label:
+    Printer Advanced Mode
+    url:
+    options:
+    [{"label":"On","value":true},{"label":"Off","value":false}]
+    <input
+      class="select-control"
+      id="print-advanced-mode"
     />
   </div>
 </div>

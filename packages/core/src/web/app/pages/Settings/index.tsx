@@ -112,7 +112,7 @@ function Settings(): React.JSX.Element {
             <Mask options={commonBooleanOptions} />
             <TextToPath options={commonBooleanOptions} />
             <Module options={commonBooleanOptions} unitInputProps={commonUnitInputProps} />
-            <AdorModule options={commonBooleanOptions} unitInputProps={commonUnitInputProps} />
+            <AdorModule unitInputProps={commonUnitInputProps} />
             {isDev() && <Beamo2Module unitInputProps={commonUnitInputProps} />}
             <BB2Settings options={commonBooleanOptions} />
             <Privacy options={commonBooleanOptions} />

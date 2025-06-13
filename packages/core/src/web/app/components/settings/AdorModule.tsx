@@ -1,7 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
 
-import type { DefaultOptionType } from 'antd/es/select';
-
 import type { SettingUnitInputProps } from '@core/app/components/settings/components/SettingUnitInput';
 import SettingUnitInput from '@core/app/components/settings/components/SettingUnitInput';
 import XYItem from '@core/app/components/settings/components/XYItem';
@@ -18,13 +16,12 @@ import SettingSelect from './components/SettingSelect';
 import styles from './Settings.module.scss';
 
 interface Props {
-  options: DefaultOptionType[];
   unitInputProps: Partial<SettingUnitInputProps>;
 }
 
 const targetWorkarea: WorkAreaModel = 'ado1';
 
-const AdorModule = ({ options, unitInputProps }: Props): React.JSX.Element => {
+const AdorModule = ({ unitInputProps }: Props): React.JSX.Element => {
   const lang = useI18n();
   const { getPreference, setPreference } = useSettingStore();
   const commonProps = useMemo(() => {
@@ -72,13 +69,6 @@ const AdorModule = ({ options, unitInputProps }: Props): React.JSX.Element => {
   return (
     <>
       <div className={styles.subtitle}>{lang.settings.groups.ador_modules}</div>
-      <SettingSelect
-        defaultValue={getPreference('print-advanced-mode')}
-        id="print-advanced-mode"
-        label={lang.settings.printer_advanced_mode}
-        onChange={(e) => setPreference('print-advanced-mode', e)}
-        options={options}
-      />
       <SettingSelect
         defaultValue={getPreference('default-laser-module')}
         id="default-laser-module"

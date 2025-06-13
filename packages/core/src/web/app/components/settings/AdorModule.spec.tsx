@@ -24,10 +24,6 @@ jest.mock('./components/SettingFormItem');
 
 const mockOffsets: ModuleOffsets = { ado1: { [LayerModule.LASER_10W_DIODE]: [10, 10] } };
 const props = {
-  options: [
-    { label: 'On', value: true },
-    { label: 'Off', value: false },
-  ] as any,
   unitInputProps: {
     isInch: false,
     precision: 2,
@@ -58,7 +54,7 @@ describe('test AdorModule', () => {
     expect(container).toMatchSnapshot();
   });
 
-  test('edit value', () => {
+  test('edit offset value', () => {
     const { container, rerender } = render(<AdorModule {...props} />);
     let input = container.querySelector('#\\31 0w-laser-offset-y') as HTMLInputElement;
 
@@ -80,15 +76,6 @@ describe('test AdorModule', () => {
         [LayerModule.PRINTER]: [30, moduleOffsets.ado1[LayerModule.PRINTER][1]],
       },
     });
-  });
-
-  test('edit print advanced mode', () => {
-    const { container } = render(<AdorModule {...props} />);
-    const selectControl = container.querySelector('#print-advanced-mode') as HTMLInputElement;
-
-    fireEvent.change(selectControl, { target: { value: true } });
-    expect(mockSetPreference).toHaveBeenCalledTimes(1);
-    expect(mockSetPreference).toHaveBeenLastCalledWith('print-advanced-mode', true);
   });
 
   test('edit default laser module', () => {

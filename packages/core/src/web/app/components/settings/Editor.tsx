@@ -219,6 +219,13 @@ function Editor({ options, unitInputProps }: Props): React.JSX.Element {
         options={options}
         url={lang.settings.help_center_urls.uv_print_export}
       />
+      <SettingSelect
+        defaultValue={getPreference('print-advanced-mode')}
+        id="print-advanced-mode"
+        label={lang.settings.printer_advanced_mode}
+        onChange={(e) => setPreference('print-advanced-mode', e)}
+        options={options}
+      />
     </>
   );
 }

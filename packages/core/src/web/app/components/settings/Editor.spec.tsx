@@ -156,7 +156,7 @@ describe('settings/Editor', () => {
       />,
     );
 
-    expect(mockGetPreference).toHaveBeenCalledTimes(13);
+    expect(mockGetPreference).toHaveBeenCalledTimes(14);
     expect(mockGetPreference).toHaveBeenNthCalledWith(1, 'model');
     expect(mockGetPreference).toHaveBeenNthCalledWith(2, 'model');
     expect(mockGetPreference).toHaveBeenNthCalledWith(3, 'show_guides');
@@ -170,6 +170,7 @@ describe('settings/Editor', () => {
     expect(mockGetPreference).toHaveBeenNthCalledWith(11, 'path-engine');
     expect(mockGetPreference).toHaveBeenNthCalledWith(12, 'enable-custom-backlash');
     expect(mockGetPreference).toHaveBeenNthCalledWith(13, 'enable-uv-print-file');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(14, 'print-advanced-mode');
     expect(container).toMatchSnapshot();
 
     const SelectControls = container.querySelectorAll('.select-control');
@@ -235,5 +236,13 @@ describe('settings/Editor', () => {
     fireEvent.change(SelectControls[11], { target: { value: true } });
     expect(mockSetPreference).toHaveBeenCalledTimes(11);
     expect(mockSetPreference).toHaveBeenNthCalledWith(11, 'enable-custom-backlash', true);
+
+    fireEvent.change(SelectControls[12], { target: { value: true } });
+    expect(mockSetPreference).toHaveBeenCalledTimes(12);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(12, 'enable-uv-print-file', true);
+
+    fireEvent.change(SelectControls[13], { target: { value: true } });
+    expect(mockSetPreference).toHaveBeenCalledTimes(13);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(13, 'print-advanced-mode', true);
   });
 });
