@@ -35,7 +35,10 @@ class Menu extends AbstractMenu {
     super();
     this.communicator = aCommunicator;
     communicator.on('UPDATE_MENU', updateWindowsMenu);
-    communicator.on('NEW_APP_MENU', updateWindowsMenu);
+    communicator.on('NEW_APP_MENU', () => {
+      updateWindowsMenu();
+      this.initMenuItemStatus();
+    });
     communicator.on(TabEvents.TabFocused, () => {
       this.initMenuItemStatus();
     });
