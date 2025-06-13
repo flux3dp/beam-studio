@@ -21,7 +21,7 @@ import CheckPnP from '../../common/CheckPnP';
 import CheckpointData from '../../common/CheckpointData';
 import downloadCalibrationFile from '../../common/downloadCalibrationFile';
 import Instruction from '../../common/Instruction';
-import { movePlatformRel } from '../../common/movePlatformRel';
+import { moveZRel } from '../../common/moveZRel';
 import ProcessingDialog from '../../common/ProcessingDialog';
 import SolvePnP from '../../common/SolvePnP';
 import {
@@ -241,7 +241,7 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
             onClick: async () => {
               if (step === Step.SOLVE_PNP_INSTRUCTION_2) {
                 progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: tCali.moving_platform });
-                await movePlatformRel(-40);
+                await moveZRel(-40);
 
                 const dh2 = await getFocalDistance();
 
@@ -328,7 +328,7 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
             onBack={async () => {
               if (step === Step.SOLVE_PNP_TL_2) {
                 progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: tCali.moving_platform });
-                await movePlatformRel(40);
+                await moveZRel(40);
                 progressCaller.popById(PROGRESS_ID);
               }
 
@@ -475,7 +475,7 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
 
               await uploadJson(res, 'fisheye', 'wide-angle.json');
               progressCaller.update(PROGRESS_ID, { message: tCali.moving_platform });
-              await movePlatformRel(40);
+              await moveZRel(40);
               alertCaller.popUp({ message: tCali.camera_parameter_saved_successfully });
             } finally {
               progressCaller.popById(PROGRESS_ID);

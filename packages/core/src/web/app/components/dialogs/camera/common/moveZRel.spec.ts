@@ -1,4 +1,4 @@
-import movePlatformRel from './movePlatformRel';
+import moveZRel from './moveZRel';
 
 const mockEnterRawMode = jest.fn();
 const mockRawMoveZRel = jest.fn();
@@ -15,7 +15,7 @@ jest.mock('@core/helpers/device-master', () => ({
   rawMoveZRel: (...args: any) => mockRawMoveZRel(...args),
 }));
 
-describe('test movePlatformRel', () => {
+describe('test moveZRel', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockGetCurrentControlMode.mockReturnValue('');
@@ -27,7 +27,7 @@ describe('test movePlatformRel', () => {
   });
 
   it('should work without error', async () => {
-    await movePlatformRel(10);
+    await moveZRel(10);
     expect(mockEnterRawMode).toHaveBeenCalledTimes(1);
     expect(mockRawMoveZRel).toHaveBeenCalledTimes(1);
     expect(mockEndSubTask).toHaveBeenCalledTimes(1);
@@ -41,7 +41,7 @@ describe('test movePlatformRel', () => {
 
     mockRawMoveZRel.mockRejectedValue(error);
     try {
-      await movePlatformRel(10);
+      await moveZRel(10);
     } catch (e) {
       expect(e).toEqual(error);
     }
