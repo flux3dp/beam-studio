@@ -60,7 +60,7 @@ const Module = ({ options, unitInputProps }: Props): React.JSX.Element => {
         url={lang.settings.help_center_urls.default_enable_diode_module}
       />
       <XYItem
-        id="set_diode_offset_x"
+        id="set_diode_offset"
         label={lang.settings.diode_offset}
         maxX={workarea.width}
         maxY={workarea.height}
