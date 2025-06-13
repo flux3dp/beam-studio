@@ -1821,6 +1821,7 @@ export interface ILang {
     groups: {
       ador_modules: string;
       autosave: string;
+      beamo2_modules: string;
       camera: string;
       connection: string;
       editor: string;
@@ -1867,9 +1868,13 @@ export interface ILang {
     mask: string;
     medium: string;
     module_offset_2w_ir: string;
+    module_offset_4c: string;
     module_offset_10w: string;
     module_offset_20w: string;
+    module_offset_laser: string;
     module_offset_printer: string;
+    module_offset_uv_varnish: string;
+    module_offset_uv_white_ink: string;
     none: string;
     normal: string;
     notification_off: string;

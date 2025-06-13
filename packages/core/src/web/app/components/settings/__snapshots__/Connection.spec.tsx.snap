@@ -31,7 +31,7 @@ exports[`should render correctly invalid ip address is given 1`] = `
     </span>
   </div>
   <div>
-    mock-select-control id:
+    mock-form-item id:
     connect-ip-list
     label:
     Machine IP Address

@@ -73,7 +73,7 @@ exports[`settings/Editor initially no warning 1`] = `
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-form-item id:
     set-guide-axis
     label:
     Guides Origin
@@ -312,7 +312,7 @@ exports[`settings/Editor initially no warning 2`] = `
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-form-item id:
     set-guide-axis
     label:
     Guides Origin
@@ -551,7 +551,7 @@ exports[`settings/Editor initially no warning 3`] = `
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-form-item id:
     set-guide-axis
     label:
     Guides Origin
@@ -790,7 +790,7 @@ exports[`settings/Editor initially no warning 4`] = `
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-form-item id:
     set-guide-axis
     label:
     Guides Origin

@@ -22,7 +22,7 @@ describe('test moduleOffsets helpers', () => {
           [LayerModule.LASER_1064]: [5, 6],
         },
         fbm2: {
-          [LayerModule.WHITE_INK]: [11, 12],
+          [LayerModule.UV_WHITE_INK]: [11, 12],
         },
       },
       workarea: 'ado1',
@@ -51,7 +51,7 @@ describe('test moduleOffsets helpers', () => {
   });
 
   test('getModuleOffsets with given workarea', () => {
-    expect(getModuleOffsets({ module: LayerModule.WHITE_INK, workarea: 'fbm2' })).toEqual([11, 12]);
+    expect(getModuleOffsets({ module: LayerModule.UV_WHITE_INK, workarea: 'fbm2' })).toEqual([11, 12]);
     expect(mockRead).toHaveBeenCalledTimes(1);
     expect(mockRead).toHaveBeenNthCalledWith(1, 'module-offsets');
   });
@@ -63,7 +63,7 @@ describe('test moduleOffsets helpers', () => {
         [LayerModule.LASER_1064]: [5, 6],
       },
       fbm2: {
-        [LayerModule.WHITE_INK]: [11, 12],
+        [LayerModule.UV_WHITE_INK]: [11, 12],
       },
     });
     expect(mockRead).toHaveBeenCalledTimes(2);
@@ -79,7 +79,7 @@ describe('test moduleOffsets helpers', () => {
         [LayerModule.LASER_1064]: [1.5, 2.5],
       },
       fbm2: {
-        [LayerModule.WHITE_INK]: [11, 12],
+        [LayerModule.UV_WHITE_INK]: [11, 12],
       },
     });
     expect(mockRead).toHaveBeenCalledTimes(2);
@@ -95,7 +95,7 @@ describe('test moduleOffsets helpers', () => {
         [LayerModule.LASER_1064]: [5, 6],
       },
       fbm2: {
-        [LayerModule.WHITE_INK]: [11, 12],
+        [LayerModule.UV_WHITE_INK]: [11, 12],
       },
     });
     expect(mockRead).toHaveBeenCalledTimes(2);
@@ -108,7 +108,7 @@ describe('test moduleOffsets helpers', () => {
         [LayerModule.LASER_1064]: [5, 6],
       },
       fbm2: {
-        [LayerModule.WHITE_INK]: [11, 12],
+        [LayerModule.UV_WHITE_INK]: [11, 12],
       },
     });
   });
@@ -124,13 +124,13 @@ describe('test moduleOffsets helpers', () => {
   });
 
   test('updateModuleOffsets with given workarea', () => {
-    expect(updateModuleOffsets([1.5, 2.5], { module: LayerModule.WHITE_INK, workarea: 'fbm2' })).toEqual({
+    expect(updateModuleOffsets([1.5, 2.5], { module: LayerModule.UV_WHITE_INK, workarea: 'fbm2' })).toEqual({
       ado1: {
         [LayerModule.LASER_10W_DIODE]: [1, 2],
         [LayerModule.LASER_1064]: [5, 6],
       },
       fbm2: {
-        [LayerModule.WHITE_INK]: [0.8, -20.3],
+        [LayerModule.UV_WHITE_INK]: [0.8, -20.3],
       },
     });
     expect(mockRead).toHaveBeenCalledTimes(1);
@@ -138,16 +138,16 @@ describe('test moduleOffsets helpers', () => {
   });
 
   test('updateModuleOffsets with new workarea key', () => {
-    expect(updateModuleOffsets([1.5, 2.5], { module: LayerModule.WHITE_INK, workarea: 'fbb2' })).toEqual({
+    expect(updateModuleOffsets([1.5, 2.5], { module: LayerModule.UV_WHITE_INK, workarea: 'fbb2' })).toEqual({
       ado1: {
         [LayerModule.LASER_10W_DIODE]: [1, 2],
         [LayerModule.LASER_1064]: [5, 6],
       },
       fbb2: {
-        [LayerModule.WHITE_INK]: [1.5, 2.5],
+        [LayerModule.UV_WHITE_INK]: [1.5, 2.5],
       },
       fbm2: {
-        [LayerModule.WHITE_INK]: [11, 12],
+        [LayerModule.UV_WHITE_INK]: [11, 12],
       },
     });
     expect(mockRead).toHaveBeenCalledTimes(1);

@@ -16,17 +16,6 @@ interface Props {
   unitInputProps: Partial<SettingUnitInputProps>;
 }
 
-const mockT = {
-  settings: {
-    groups: {
-      beamo2_modules: 'beamo 2 Modules',
-    },
-    module_offset_4c: '4C Offset',
-    module_offset_laser: 'Laser Offset',
-    module_offset_uv_print: 'UV Print Offset',
-    module_offset_white_ink: 'White Ink Offset',
-  },
-};
 const targetWorkarea: WorkAreaModel = 'fbm2';
 
 const Beamo2Module = ({ unitInputProps }: Props): React.JSX.Element => {
@@ -73,11 +62,11 @@ const Beamo2Module = ({ unitInputProps }: Props): React.JSX.Element => {
 
   return (
     <>
-      <div className={styles.subtitle}>{mockT.settings.groups.beamo2_modules}</div>
+      <div className={styles.subtitle}>{lang.settings.groups.beamo2_modules}</div>
       <XYItem
         {...commonProps}
         id="laser-offset"
-        label={mockT.settings.module_offset_laser}
+        label={lang.settings.module_offset_laser}
         onChange={(axis, val) => editModuleOffsets(LayerModule.LASER_UNIVERSAL, axis, val)}
         values={getModuleOffset(LayerModule.LASER_UNIVERSAL)}
       />
@@ -91,23 +80,23 @@ const Beamo2Module = ({ unitInputProps }: Props): React.JSX.Element => {
       <XYItem
         {...commonProps}
         id="4c-offset"
-        label={mockT.settings.module_offset_4c}
+        label={lang.settings.module_offset_4c}
         onChange={(axis, val) => editModuleOffsets(LayerModule.PRINTER_4C, axis, val)}
         values={getModuleOffset(LayerModule.PRINTER_4C)}
       />
       <XYItem
         {...commonProps}
-        id="white-ink-offset"
-        label={mockT.settings.module_offset_white_ink}
-        onChange={(axis, val) => editModuleOffsets(LayerModule.WHITE_INK, axis, val)}
-        values={getModuleOffset(LayerModule.WHITE_INK)}
+        id="uv-white-ink-offset"
+        label={lang.settings.module_offset_uv_white_ink}
+        onChange={(axis, val) => editModuleOffsets(LayerModule.UV_WHITE_INK, axis, val)}
+        values={getModuleOffset(LayerModule.UV_WHITE_INK)}
       />
       <XYItem
         {...commonProps}
-        id="uv-print-offset"
-        label={mockT.settings.module_offset_uv_print}
-        onChange={(axis, val) => editModuleOffsets(LayerModule.UV_PRINT, axis, val)}
-        values={getModuleOffset(LayerModule.UV_PRINT)}
+        id="uv-varnish-offset"
+        label={lang.settings.module_offset_uv_varnish}
+        onChange={(axis, val) => editModuleOffsets(LayerModule.UV_VARNISH, axis, val)}
+        values={getModuleOffset(LayerModule.UV_VARNISH)}
       />
     </>
   );

@@ -49,7 +49,7 @@ exports[`should render correctly 1`] = `
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-form-item id:
     set-hardware-acceleration
     label:
     Padding Accel
@@ -75,7 +75,7 @@ exports[`should render correctly 1`] = `
     </div>
   </div>
   <div>
-    mock-select-control id:
+    mock-form-item id:
     set-hardware-acceleration-diode
     label:
     Padding Accel HL
