@@ -24,6 +24,7 @@ type CalibrationData =
 
 type Props = CalibrationData & {
   description?: string[];
+  indicator?: { height: number | string; left: number | string; top: number | string; width: number | string };
   onClose: (complete?: boolean) => void;
   onNext: () => void;
   updateParam: (param: FisheyeCameraParametersV3Cali) => void;
@@ -32,7 +33,15 @@ type Props = CalibrationData & {
 /**
  * Component that provide a live view to calibrate the camera with a chessboard or ChAruCo board.
  */
-const Calibration = ({ charuco, chessboard, description, onClose, onNext, updateParam }: Props): React.JSX.Element => {
+const Calibration = ({
+  charuco,
+  chessboard,
+  description,
+  indicator,
+  onClose,
+  onNext,
+  updateParam,
+}: Props): React.JSX.Element => {
   const t = useI18n();
   const tCali = t.calibration;
   const { exposureSetting, handleTakePicture, img, pauseLive, restartLive, setExposureSetting } = useLiveFeed();
@@ -134,7 +143,7 @@ const Calibration = ({ charuco, chessboard, description, onClose, onNext, update
                 id="chessboard-context-menu"
               >
                 <img alt="Chessboard" ref={imgRef} src={img?.url} />
-                <div className={styles.indicator} />
+                {indicator && <div className={styles.indicator} style={indicator} />}
               </ContextMenuTrigger>
               <ContextMenu id="chessboard-context-menu">
                 <MenuItem attributes={{ id: 'download' }} onClick={handleDownload}>
