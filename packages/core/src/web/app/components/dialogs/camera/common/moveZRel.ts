@@ -1,6 +1,6 @@
 import deviceMaster from '@core/helpers/device-master';
 
-export const movePlatformRel = async (z: number) => {
+export const moveZRel = async (z: number) => {
   try {
     await deviceMaster.enterRawMode();
     await deviceMaster.rawMoveZRel(z);
@@ -16,4 +16,4 @@ export const movePlatformRel = async (z: number) => {
   }
 };
 
-export default movePlatformRel;
+export default moveZRel;
