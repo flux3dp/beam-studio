@@ -1,9 +1,12 @@
 import deviceMaster from '@core/helpers/device-master';
 
-export const moveZRel = async (z: number) => {
+export const moveZRel = async (z: number, relToHome = false) => {
   try {
     await deviceMaster.enterRawMode();
-    await deviceMaster.rawMoveZRel(z);
+
+    if (relToHome) await deviceMaster.rawMoveZRelToLastHome(z);
+    else await deviceMaster.rawMoveZRel(z);
+
     await deviceMaster.endSubTask();
 
     const zSpeed = 2.33; // 140 mm/min
