@@ -8,6 +8,7 @@ import type { LayerModuleType } from '@core/app/constants/layer-module/layer-mod
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { AlertConfigKey } from '@core/helpers/api/alert-config';
 import alertConfig from '@core/helpers/api/alert-config';
+import { getModuleOffsets } from '@core/helpers/device/moduleOffsets';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type { ILang } from '@core/interfaces/ILang';
 
@@ -18,7 +19,6 @@ export const checkModuleCalibration = async (device: IDeviceInfo, lang: ILang): 
     return;
   }
 
-  const moduleOffsets = BeamboxPreference.read('module-offsets');
   const getLayers = (module: LayerModuleType) =>
     document.querySelectorAll(
       `#svgcontent > g.layer[data-module="${module}"]:not([display="none"]):not([data-repeat="0"])`,
@@ -32,7 +32,7 @@ export const checkModuleCalibration = async (device: IDeviceInfo, lang: ILang): 
   ) => {
     const alertConfigKey = `skip-cali-${layerModule}-warning`;
 
-    if (!moduleOffsets?.[layerModule] && !alertConfig.read(alertConfigKey as AlertConfigKey)) {
+    if (!getModuleOffsets({ module: layerModule, workarea }) && !alertConfig.read(alertConfigKey as AlertConfigKey)) {
       const moduleLayers = [...getLayers(layerModule)];
 
       if (moduleLayers.some((g) => Boolean(g.querySelector(':not(title):not(filter):not(g):not(feColorMatrix)')))) {

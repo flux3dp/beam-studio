@@ -77,6 +77,7 @@ exports[`test Align scroll and next should work when type is Camera 1`] = `
                   <div
                     class="text"
                   >
+                    Please align the middle of the red cross with the cut cross.
                     <span
                       aria-label="question-circle"
                       class="anticon anticon-question-circle tooltip"
@@ -144,6 +145,17 @@ exports[`test Align scroll and next should work when type is Camera 1`] = `
                         <div
                           class="ant-row ant-form-item-row css-dev-only-do-not-override-hash"
                         >
+                          <div
+                            class="ant-col ant-form-item-label css-dev-only-do-not-override-hash"
+                          >
+                            <label
+                              class=""
+                              for="x"
+                              title="X"
+                            >
+                              X
+                            </label>
+                          </div>
                           <div
                             class="ant-col ant-form-item-control css-dev-only-do-not-override-hash"
                           >
@@ -240,6 +252,17 @@ exports[`test Align scroll and next should work when type is Camera 1`] = `
                         <div
                           class="ant-row ant-form-item-row css-dev-only-do-not-override-hash"
                         >
+                          <div
+                            class="ant-col ant-form-item-label css-dev-only-do-not-override-hash"
+                          >
+                            <label
+                              class=""
+                              for="y"
+                              title="Y"
+                            >
+                              Y
+                            </label>
+                          </div>
                           <div
                             class="ant-col ant-form-item-control css-dev-only-do-not-override-hash"
                           >
@@ -346,7 +369,7 @@ exports[`test Align scroll and next should work when type is Camera 1`] = `
                         />
                       </span>
                       <span>
-                        show_last_config
+                        Show Last Result
                       </span>
                     </label>
                     <div
@@ -357,7 +380,7 @@ exports[`test Align scroll and next should work when type is Camera 1`] = `
                         type="button"
                       >
                         <span>
-                          use_last_config
+                          Use Last Calibration Value
                         </span>
                       </button>
                     </div>
@@ -372,7 +395,7 @@ exports[`test Align scroll and next should work when type is Camera 1`] = `
                   type="button"
                 >
                   <span>
-                    back
+                    Back
                   </span>
                 </button>
                 <button
@@ -380,7 +403,7 @@ exports[`test Align scroll and next should work when type is Camera 1`] = `
                   type="button"
                 >
                   <span>
-                    retake
+                    Retake Picture
                   </span>
                 </button>
                 <button
@@ -388,7 +411,7 @@ exports[`test Align scroll and next should work when type is Camera 1`] = `
                   type="button"
                 >
                   <span>
-                    done
+                    Done
                   </span>
                 </button>
               </div>
@@ -482,6 +505,7 @@ exports[`test Align scroll and next should work when type is PRINTER_HEAD 1`] = 
                   <div
                     class="text"
                   >
+                    Please align the middle of the red cross with the printed cross.
                     <span
                       aria-label="question-circle"
                       class="anticon anticon-question-circle tooltip"
@@ -549,6 +573,17 @@ exports[`test Align scroll and next should work when type is PRINTER_HEAD 1`] = 
                         <div
                           class="ant-row ant-form-item-row css-dev-only-do-not-override-hash"
                         >
+                          <div
+                            class="ant-col ant-form-item-label css-dev-only-do-not-override-hash"
+                          >
+                            <label
+                              class=""
+                              for="x"
+                              title="X"
+                            >
+                              X
+                            </label>
+                          </div>
                           <div
                             class="ant-col ant-form-item-control css-dev-only-do-not-override-hash"
                           >
@@ -645,6 +680,17 @@ exports[`test Align scroll and next should work when type is PRINTER_HEAD 1`] = 
                         <div
                           class="ant-row ant-form-item-row css-dev-only-do-not-override-hash"
                         >
+                          <div
+                            class="ant-col ant-form-item-label css-dev-only-do-not-override-hash"
+                          >
+                            <label
+                              class=""
+                              for="y"
+                              title="Y"
+                            >
+                              Y
+                            </label>
+                          </div>
                           <div
                             class="ant-col ant-form-item-control css-dev-only-do-not-override-hash"
                           >
@@ -751,7 +797,7 @@ exports[`test Align scroll and next should work when type is PRINTER_HEAD 1`] = 
                         />
                       </span>
                       <span>
-                        show_last_config
+                        Show Last Result
                       </span>
                     </label>
                     <div
@@ -762,7 +808,7 @@ exports[`test Align scroll and next should work when type is PRINTER_HEAD 1`] = 
                         type="button"
                       >
                         <span>
-                          use_last_config
+                          Use Last Calibration Value
                         </span>
                       </button>
                     </div>
@@ -777,7 +823,7 @@ exports[`test Align scroll and next should work when type is PRINTER_HEAD 1`] = 
                   type="button"
                 >
                   <span>
-                    back
+                    Back
                   </span>
                 </button>
                 <button
@@ -785,7 +831,7 @@ exports[`test Align scroll and next should work when type is PRINTER_HEAD 1`] = 
                   type="button"
                 >
                   <span>
-                    retake
+                    Retake Picture
                   </span>
                 </button>
                 <button
@@ -793,7 +839,7 @@ exports[`test Align scroll and next should work when type is PRINTER_HEAD 1`] = 
                   type="button"
                 >
                   <span>
-                    done
+                    Done
                   </span>
                 </button>
               </div>
@@ -887,6 +933,7 @@ exports[`test Align should render correctly 1`] = `
                   <div
                     class="text"
                   >
+                    Please align the middle of the red cross with the cut cross.
                     <span
                       aria-label="question-circle"
                       class="anticon anticon-question-circle tooltip"
@@ -954,6 +1001,17 @@ exports[`test Align should render correctly 1`] = `
                         <div
                           class="ant-row ant-form-item-row css-dev-only-do-not-override-hash"
                         >
+                          <div
+                            class="ant-col ant-form-item-label css-dev-only-do-not-override-hash"
+                          >
+                            <label
+                              class=""
+                              for="x"
+                              title="X"
+                            >
+                              X
+                            </label>
+                          </div>
                           <div
                             class="ant-col ant-form-item-control css-dev-only-do-not-override-hash"
                           >
@@ -1050,6 +1108,17 @@ exports[`test Align should render correctly 1`] = `
                         <div
                           class="ant-row ant-form-item-row css-dev-only-do-not-override-hash"
                         >
+                          <div
+                            class="ant-col ant-form-item-label css-dev-only-do-not-override-hash"
+                          >
+                            <label
+                              class=""
+                              for="y"
+                              title="Y"
+                            >
+                              Y
+                            </label>
+                          </div>
                           <div
                             class="ant-col ant-form-item-control css-dev-only-do-not-override-hash"
                           >
@@ -1156,7 +1225,7 @@ exports[`test Align should render correctly 1`] = `
                         />
                       </span>
                       <span>
-                        show_last_config
+                        Show Last Result
                       </span>
                     </label>
                     <div
@@ -1167,7 +1236,7 @@ exports[`test Align should render correctly 1`] = `
                         type="button"
                       >
                         <span>
-                          use_last_config
+                          Use Last Calibration Value
                         </span>
                       </button>
                     </div>
@@ -1182,7 +1251,7 @@ exports[`test Align should render correctly 1`] = `
                   type="button"
                 >
                   <span>
-                    back
+                    Back
                   </span>
                 </button>
                 <button
@@ -1190,7 +1259,7 @@ exports[`test Align should render correctly 1`] = `
                   type="button"
                 >
                   <span>
-                    retake
+                    Retake Picture
                   </span>
                 </button>
                 <button
@@ -1198,7 +1267,7 @@ exports[`test Align should render correctly 1`] = `
                   type="button"
                 >
                   <span>
-                    done
+                    Done
                   </span>
                 </button>
               </div>

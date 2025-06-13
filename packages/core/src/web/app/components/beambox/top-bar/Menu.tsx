@@ -110,6 +110,7 @@ export default function Menu({ email }: Props): React.JSX.Element {
       const { model, name, serial } = device;
       const hasModules = modelsWithModules.has(model);
       const isPromark = promarkModels.has(model);
+      const isBeamo = model === 'fbm1';
       const isBb2 = model === 'fbb2';
 
       // Note: SubMenu doesn't support a React.Fragment wrapper (<>...</>) as a child.
@@ -148,30 +149,33 @@ export default function Menu({ email }: Props): React.JSX.Element {
                 {menuCms.calibrate_ir_module}
               </MenuItem>
             )}
-            {model === 'fbm1' && (
+            {isBeamo && (
               <MenuItem disabled={isMobile} onClick={() => callback('CALIBRATE_BEAMBOX_CAMERA_BORDERLESS', device)}>
                 {menuCms.calibrate_beambox_camera_borderless} {isMobile && '(PC Only)'}
               </MenuItem>
             )}
-            {model === 'fbm1' && (
+            {isBeamo && (
               <MenuItem disabled={isMobile} onClick={() => callback('CALIBRATE_DIODE_MODULE', device)}>
                 {menuCms.calibrate_diode_module} {isMobile && '(PC Only)'}
               </MenuItem>
             )}
           </SubMenu>
-          <MenuDivider />
-          <MenuItem onClick={() => callback('UPDATE_FIRMWARE', device)}>{menuCms.update_firmware}</MenuItem>
-          <SubMenu label={menuCms.download_log}>
-            <MenuItem onClick={() => callback('LOG_NETWORK', device)}>{menuCms.log.network}</MenuItem>
-            <MenuItem onClick={() => callback('LOG_HARDWARE', device)}>{menuCms.log.hardware}</MenuItem>
-            <MenuItem onClick={() => callback('LOG_DISCOVER', device)}>{menuCms.log.discover}</MenuItem>
-            <MenuItem onClick={() => callback('LOG_USB', device)}>{menuCms.log.usb}</MenuItem>
-            <MenuItem onClick={() => callback('LOG_USBLIST', device)}>{menuCms.log.usblist}</MenuItem>
-            <MenuItem onClick={() => callback('LOG_CAMERA', device)}>{menuCms.log.camera}</MenuItem>
-            <MenuItem onClick={() => callback('LOG_CLOUD', device)}>{menuCms.log.cloud}</MenuItem>
-            <MenuItem onClick={() => callback('LOG_PLAYER', device)}>{menuCms.log.player}</MenuItem>
-            <MenuItem onClick={() => callback('LOG_ROBOT', device)}>{menuCms.log.robot}</MenuItem>
-          </SubMenu>
+          {!isPromark && <MenuDivider />}
+          {!isPromark && (
+            <MenuItem onClick={() => callback('UPDATE_FIRMWARE', device)}>{menuCms.update_firmware}</MenuItem>
+          )}
+          {!isPromark && (
+            <SubMenu label={menuCms.download_log}>
+              <MenuItem onClick={() => callback('LOG_NETWORK', device)}>{menuCms.log.network}</MenuItem>
+              <MenuItem onClick={() => callback('LOG_HARDWARE', device)}>{menuCms.log.hardware}</MenuItem>
+              <MenuItem onClick={() => callback('LOG_DISCOVER', device)}>{menuCms.log.discover}</MenuItem>
+              <MenuItem onClick={() => callback('LOG_USB', device)}>{menuCms.log.usb}</MenuItem>
+              <MenuItem onClick={() => callback('LOG_USBLIST', device)}>{menuCms.log.usblist}</MenuItem>
+              <MenuItem onClick={() => callback('LOG_CAMERA', device)}>{menuCms.log.camera}</MenuItem>
+              <MenuItem onClick={() => callback('LOG_PLAYER', device)}>{menuCms.log.player}</MenuItem>
+              <MenuItem onClick={() => callback('LOG_ROBOT', device)}>{menuCms.log.robot}</MenuItem>
+            </SubMenu>
+          )}
         </SubMenu>,
       );
     }

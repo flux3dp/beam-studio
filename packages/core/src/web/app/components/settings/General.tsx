@@ -7,6 +7,8 @@ import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 
 import SettingSelect from './components/SettingSelect';
+import styles from './Settings.module.scss';
+
 interface Props {
   changeActiveLang: (val: string) => void;
   options: DefaultOptionType[];
@@ -20,7 +22,7 @@ function General({ changeActiveLang, options, supportedLangs }: Props): React.JS
 
   return (
     <>
-      <div className="subtitle">{lang.settings.groups.general}</div>
+      <div className={styles.subtitle}>{lang.settings.groups.general}</div>
       <SettingSelect
         defaultValue={i18n.getActiveLang()}
         id="select-lang"

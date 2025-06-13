@@ -5,14 +5,14 @@ import { Button, Checkbox, Col, ConfigProvider, Form, InputNumber, Modal, Row, T
 import classNames from 'classnames';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import FisheyePreviewManagerV2 from '@core/app/actions/camera/preview-helper/FisheyePreviewManagerV2';
 import progressCaller from '@core/app/actions/progress-caller';
+import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
-import defaultModuleOffset from '@core/app/constants/layer-module/module-offsets';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { setFisheyeConfig } from '@core/helpers/camera-calibration-helper';
+import { getModuleOffsets, updateModuleOffsets } from '@core/helpers/device/moduleOffsets';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
 import type { FisheyeCameraParametersV1, FisheyeCameraParametersV2 } from '@core/interfaces/FisheyePreview';
@@ -37,7 +37,7 @@ const PROGRESS_ID = 'calibration-align';
 
 // TODO: fix test
 const Align = ({ fisheyeParam, onBack, onClose, title, type }: Props): React.JSX.Element => {
-  const imgContainerRef = useRef<HTMLDivElement>(null);
+  const imgContainerRef = useRef<HTMLDivElement | null>(null);
   const lang = useI18n();
   const [form] = Form.useForm();
   const [showLastResult, setShowLastResult] = useState(false);
@@ -48,7 +48,7 @@ const Align = ({ fisheyeParam, onBack, onClose, title, type }: Props): React.JSX
     y: number;
   }>(null);
 
-  const [img, setImg] = useState<{ blob: Blob; url: string }>(null);
+  const [img, setImg] = useState<null | { blob: Blob; url: string }>(null);
   const handleTakePicture = async (retryTimes = 0) => {
     progressCaller.openNonstopProgress({
       id: PROGRESS_ID,
@@ -130,29 +130,29 @@ const Align = ({ fisheyeParam, onBack, onClose, title, type }: Props): React.JSX
       return fisheyeCenter;
     }
 
-    const moduleOffsets = beamboxPreference.read('module-offsets');
-    let layerModule = LayerModule.PRINTER;
+    let layerModule: LayerModuleType = LayerModule.PRINTER;
 
     if (type === CalibrationType.IR_LASER) {
       layerModule = LayerModule.LASER_1064;
     }
 
-    const defaultVal = defaultModuleOffset[layerModule];
-    const curVal = moduleOffsets?.[layerModule] || defaultVal;
-
-    return [curVal[0] - defaultVal[0], curVal[1] - defaultVal[1]];
+    return getModuleOffsets({
+      module: layerModule,
+      useRealValue: false,
+      workarea: deviceMaster.currentDevice.info.model,
+    });
   }, [type, fisheyeCenter]);
   const getOffsetValueFromScroll = useCallback(
-    (left, top) => {
-      const x = (left - fisheyeCenter[0] + imgContainerRef.current.clientWidth / 2) / PX_PER_MM;
-      const y = (top - fisheyeCenter[1] + imgContainerRef.current.clientHeight / 2) / PX_PER_MM;
+    (left: number, top: number) => {
+      const x = (left - fisheyeCenter[0] + (imgContainerRef.current?.clientWidth ?? 0) / 2) / PX_PER_MM;
+      const y = (top - fisheyeCenter[1] + (imgContainerRef.current?.clientHeight ?? 0) / 2) / PX_PER_MM;
 
       return { x, y };
     },
     [fisheyeCenter],
   );
   const getPxFromOffsetValue = useCallback(
-    (x, y) => {
+    (x: number, y: number) => {
       const left = x * PX_PER_MM + fisheyeCenter[0];
       const top = y * PX_PER_MM + fisheyeCenter[1];
 
@@ -160,7 +160,7 @@ const Align = ({ fisheyeParam, onBack, onClose, title, type }: Props): React.JSX
     },
     [fisheyeCenter],
   );
-  const getScrollFromPx = useCallback((left, top) => {
+  const getScrollFromPx = useCallback((left: number, top: number) => {
     if (!imgContainerRef.current) {
       return { left, top };
     }
@@ -194,7 +194,7 @@ const Align = ({ fisheyeParam, onBack, onClose, title, type }: Props): React.JSX
 
   const handleImgLoad = useCallback(() => {
     if (imgContainerRef.current) {
-      if (!lastResult) {
+      if (!lastResult || !lastResultScroll) {
         imgContainerRef.current.scrollLeft = INIT_GUESS_X - imgContainerRef.current.clientWidth / 2;
         imgContainerRef.current.scrollTop = INIT_GUESS_Y - imgContainerRef.current.clientHeight / 2;
       } else {
@@ -205,8 +205,8 @@ const Align = ({ fisheyeParam, onBack, onClose, title, type }: Props): React.JSX
   }, [lastResult, lastResultScroll]);
 
   const handleValueChange = useCallback(
-    (key: 'x' | 'y', val: number) => {
-      if (imgContainerRef.current) {
+    (key: 'x' | 'y', val: null | number) => {
+      if (imgContainerRef.current && val !== null) {
         if (key === 'x') {
           if (type === CalibrationType.CAMERA) {
             imgContainerRef.current.scrollLeft = val;
@@ -253,8 +253,8 @@ const Align = ({ fisheyeParam, onBack, onClose, title, type }: Props): React.JSX
     const { x, y } = form.getFieldsValue();
 
     if (type === CalibrationType.CAMERA) {
-      const cx = Math.round(x + imgContainerRef.current.clientWidth / 2);
-      const cy = Math.round(y + imgContainerRef.current.clientHeight / 2);
+      const cx = Math.round(x + (imgContainerRef.current?.clientWidth ?? 0) / 2);
+      const cy = Math.round(y + (imgContainerRef.current?.clientHeight ?? 0) / 2);
       const newParam = { ...fisheyeParam, center: [cx, cy] } as FisheyeCameraParametersV1;
 
       try {
@@ -267,17 +267,17 @@ const Align = ({ fisheyeParam, onBack, onClose, title, type }: Props): React.JSX
       }
       onClose(true);
     } else {
-      let layerModule = LayerModule.PRINTER;
+      let layerModule: LayerModuleType = LayerModule.PRINTER;
 
       if (type === CalibrationType.IR_LASER) {
         layerModule = LayerModule.LASER_1064;
       }
 
-      const defaultVal = defaultModuleOffset[layerModule];
-      const moduleOffsets = beamboxPreference.read('module-offsets');
-
-      moduleOffsets[layerModule] = [x + defaultVal[0], y + defaultVal[1]];
-      beamboxPreference.write('module-offsets', moduleOffsets);
+      updateModuleOffsets([x, y], {
+        module: layerModule,
+        shouldWrite: true,
+        workarea: deviceMaster.currentDevice.info.model,
+      });
       onClose(true);
     }
   }, [form, onClose, type, fisheyeParam, lang.calibration.failed_to_save_calibration_results]);

@@ -1,56 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`test AdorModule should render correctly 1`] = `
+exports[`test Beamo2Module should render correctly 1`] = `
 <div>
   <div
     class="subtitle"
   >
-    Ador Modules
-  </div>
-  <div>
-    mock-select-control id:
-    default-laser-module
-    label:
-    Default Laser Module
-    url:
-    options:
-    [{"label":"10W Diode Laser","value":1},{"label":"20W Diode Laser","value":2}]
-    <input
-      class="select-control"
-      id="default-laser-module"
-    />
+    beamo 2 Modules
   </div>
   <div>
     mock-form-item id:
-    set-low-power
+    laser-offset
     label:
-    Laser for Running Frame
-    url:
-    options:
-    <div>
-      UnitInput: 
-      low-power
-      <p>
-        precision: 
-        0
-      </p>
-      <p>
-        unit: 
-        %
-      </p>
-      <input
-        id="low-power"
-        max="20"
-        min="0"
-        value="3"
-      />
-    </div>
-  </div>
-  <div>
-    mock-form-item id:
-    10w-laser-offset
-    label:
-    10W Diode Laser Offset
+    Laser Offset
     url:
     options:
     <span
@@ -60,7 +21,7 @@ exports[`test AdorModule should render correctly 1`] = `
     </span>
     <div>
       UnitInput: 
-      10w-laser-offset-x
+      laser-offset-x
       <p>
         precision: 
         2
@@ -70,9 +31,9 @@ exports[`test AdorModule should render correctly 1`] = `
         mm
       </p>
       <input
-        id="10w-laser-offset-x"
-        max="430"
-        min="-430"
+        id="laser-offset-x"
+        max="360"
+        min="-360"
         value="10"
       />
     </div>
@@ -83,7 +44,7 @@ exports[`test AdorModule should render correctly 1`] = `
     </span>
     <div>
       UnitInput: 
-      10w-laser-offset-y
+      laser-offset-y
       <p>
         precision: 
         2
@@ -93,124 +54,16 @@ exports[`test AdorModule should render correctly 1`] = `
         mm
       </p>
       <input
-        id="10w-laser-offset-y"
-        max="320"
-        min="-320"
+        id="laser-offset-y"
+        max="240"
+        min="-240"
         value="10"
       />
     </div>
   </div>
   <div>
     mock-form-item id:
-    20w-laser-offset
-    label:
-    20W Diode Laser Offset
-    url:
-    options:
-    <span
-      class="font2 sub-item"
-    >
-      X
-    </span>
-    <div>
-      UnitInput: 
-      20w-laser-offset-x
-      <p>
-        precision: 
-        2
-      </p>
-      <p>
-        unit: 
-        mm
-      </p>
-      <input
-        id="20w-laser-offset-x"
-        max="430"
-        min="-430"
-        value="0"
-      />
-    </div>
-    <span
-      class="font2 sub-item"
-    >
-      Y
-    </span>
-    <div>
-      UnitInput: 
-      20w-laser-offset-y
-      <p>
-        precision: 
-        2
-      </p>
-      <p>
-        unit: 
-        mm
-      </p>
-      <input
-        id="20w-laser-offset-y"
-        max="320"
-        min="-320"
-        value="0"
-      />
-    </div>
-  </div>
-  <div>
-    mock-form-item id:
-    printer-offset
-    label:
-    Printer Offset
-    url:
-    options:
-    <span
-      class="font2 sub-item"
-    >
-      X
-    </span>
-    <div>
-      UnitInput: 
-      printer-offset-x
-      <p>
-        precision: 
-        2
-      </p>
-      <p>
-        unit: 
-        mm
-      </p>
-      <input
-        id="printer-offset-x"
-        max="430"
-        min="-430"
-        value="0"
-      />
-    </div>
-    <span
-      class="font2 sub-item"
-    >
-      Y
-    </span>
-    <div>
-      UnitInput: 
-      printer-offset-y
-      <p>
-        precision: 
-        2
-      </p>
-      <p>
-        unit: 
-        mm
-      </p>
-      <input
-        id="printer-offset-y"
-        max="320"
-        min="-320"
-        value="0"
-      />
-    </div>
-  </div>
-  <div>
-    mock-form-item id:
-    2w-ir-laser-offset
+    ir-laser-offset
     label:
     2W Infrared Laser Offset
     url:
@@ -222,7 +75,7 @@ exports[`test AdorModule should render correctly 1`] = `
     </span>
     <div>
       UnitInput: 
-      2w-ir-laser-offset-x
+      ir-laser-offset-x
       <p>
         precision: 
         2
@@ -232,9 +85,9 @@ exports[`test AdorModule should render correctly 1`] = `
         mm
       </p>
       <input
-        id="2w-ir-laser-offset-x"
-        max="430"
-        min="-430"
+        id="ir-laser-offset-x"
+        max="360"
+        min="-360"
         value="0"
       />
     </div>
@@ -245,7 +98,7 @@ exports[`test AdorModule should render correctly 1`] = `
     </span>
     <div>
       UnitInput: 
-      2w-ir-laser-offset-y
+      ir-laser-offset-y
       <p>
         precision: 
         2
@@ -255,9 +108,171 @@ exports[`test AdorModule should render correctly 1`] = `
         mm
       </p>
       <input
-        id="2w-ir-laser-offset-y"
-        max="320"
-        min="-320"
+        id="ir-laser-offset-y"
+        max="240"
+        min="-240"
+        value="0"
+      />
+    </div>
+  </div>
+  <div>
+    mock-form-item id:
+    4c-offset
+    label:
+    Printing (4C) Offset
+    url:
+    options:
+    <span
+      class="font2 sub-item"
+    >
+      X
+    </span>
+    <div>
+      UnitInput: 
+      4c-offset-x
+      <p>
+        precision: 
+        2
+      </p>
+      <p>
+        unit: 
+        mm
+      </p>
+      <input
+        id="4c-offset-x"
+        max="360"
+        min="-360"
+        value="0"
+      />
+    </div>
+    <span
+      class="font2 sub-item"
+    >
+      Y
+    </span>
+    <div>
+      UnitInput: 
+      4c-offset-y
+      <p>
+        precision: 
+        2
+      </p>
+      <p>
+        unit: 
+        mm
+      </p>
+      <input
+        id="4c-offset-y"
+        max="240"
+        min="-240"
+        value="0"
+      />
+    </div>
+  </div>
+  <div>
+    mock-form-item id:
+    uv-white-ink-offset
+    label:
+    White Ink Offset
+    url:
+    options:
+    <span
+      class="font2 sub-item"
+    >
+      X
+    </span>
+    <div>
+      UnitInput: 
+      uv-white-ink-offset-x
+      <p>
+        precision: 
+        2
+      </p>
+      <p>
+        unit: 
+        mm
+      </p>
+      <input
+        id="uv-white-ink-offset-x"
+        max="360"
+        min="-360"
+        value="0"
+      />
+    </div>
+    <span
+      class="font2 sub-item"
+    >
+      Y
+    </span>
+    <div>
+      UnitInput: 
+      uv-white-ink-offset-y
+      <p>
+        precision: 
+        2
+      </p>
+      <p>
+        unit: 
+        mm
+      </p>
+      <input
+        id="uv-white-ink-offset-y"
+        max="240"
+        min="-240"
+        value="0"
+      />
+    </div>
+  </div>
+  <div>
+    mock-form-item id:
+    uv-varnish-offset
+    label:
+    Varnish Offset
+    url:
+    options:
+    <span
+      class="font2 sub-item"
+    >
+      X
+    </span>
+    <div>
+      UnitInput: 
+      uv-varnish-offset-x
+      <p>
+        precision: 
+        2
+      </p>
+      <p>
+        unit: 
+        mm
+      </p>
+      <input
+        id="uv-varnish-offset-x"
+        max="360"
+        min="-360"
+        value="0"
+      />
+    </div>
+    <span
+      class="font2 sub-item"
+    >
+      Y
+    </span>
+    <div>
+      UnitInput: 
+      uv-varnish-offset-y
+      <p>
+        precision: 
+        2
+      </p>
+      <p>
+        unit: 
+        mm
+      </p>
+      <input
+        id="uv-varnish-offset-y"
+        max="240"
+        min="-240"
         value="0"
       />
     </div>

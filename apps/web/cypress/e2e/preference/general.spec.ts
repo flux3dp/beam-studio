@@ -65,8 +65,8 @@ describe('update the preference', () => {
 
     cy.get('#set-guide').closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'Off');
 
-    cy.get('#guide-x-input').should('have.attr', 'value', '0.00');
-    cy.get('#guide-y-input').should('have.attr', 'value', '0.00');
+    cy.get('#set-guide-axis-x').should('have.attr', 'value', '0');
+    cy.get('#set-guide-axis-y').should('have.attr', 'value', '0');
 
     cy.get('#set-bitmap-quality').closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'Low');
 
@@ -89,7 +89,7 @@ describe('update the preference', () => {
       .find('.ant-select-selection-item')
       .should('have.text', 'On');
 
-    cy.get('#loop-input').should('have.attr', 'value', '0.00');
+    cy.get('#loop-input').should('have.attr', 'value', '0');
 
     cy.get('#set-mask').closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'Off');
 
@@ -103,8 +103,8 @@ describe('update the preference', () => {
 
     cy.get('#default-diode').closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'Off');
 
-    cy.get('#diode-offset-x-input').should('have.attr', 'value', '70.00');
-    cy.get('#diode-offset-y-input').should('have.attr', 'value', '7.00');
+    cy.get('#set_diode_offset-x').should('have.attr', 'value', '70');
+    cy.get('#set_diode_offset-y').should('have.attr', 'value', '7');
 
     cy.get('#set-sentry').closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'Off');
   });
@@ -188,8 +188,8 @@ describe('update the preference', () => {
     cy.get('@select').find('.ant-select-selection-item').click();
     cy.get('.ant-select-item-option-content').contains('On').click({ force: true });
 
-    cy.get('#guide-x-input').clear({ force: true }).type('10').blur();
-    cy.get('#guide-y-input').clear({ force: true }).type('10').blur();
+    cy.get('#set-guide-axis-x').clear({ force: true }).type('10').blur();
+    cy.get('#set-guide-axis-y').clear({ force: true }).type('10').blur();
     applySettings();
     cy.get('#horizontal_guide').should('exist').should('have.attr', 'x1', '0').should('have.attr', 'y1', '100');
     cy.get('#vertical_guide').should('exist').should('have.attr', 'x1', '100').should('have.attr', 'y1', '0');

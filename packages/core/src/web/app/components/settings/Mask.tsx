@@ -6,6 +6,7 @@ import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
 import useI18n from '@core/helpers/useI18n';
 
 import SettingSelect from './components/SettingSelect';
+import styles from './Settings.module.scss';
 
 interface Props {
   options: DefaultOptionType[];
@@ -17,7 +18,7 @@ function Mask({ options }: Props): React.JSX.Element {
 
   return (
     <>
-      <div className="subtitle">{lang.settings.groups.mask}</div>
+      <div className={styles.subtitle}>{lang.settings.groups.mask}</div>
       <SettingSelect
         defaultValue={getPreference('enable_mask')}
         id="set-mask"
