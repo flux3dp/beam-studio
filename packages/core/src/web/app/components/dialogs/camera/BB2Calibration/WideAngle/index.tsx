@@ -28,7 +28,7 @@ import SolvePnP from '../../common/SolvePnP';
 import {
   bb2WideAngleCameraPnpPoints,
   bb2WideAnglePerspectiveGrid,
-  getBB2WideAnglePoints,
+  getRegionalPoints,
 } from '../../common/solvePnPConstants';
 
 const enum Step {
@@ -387,11 +387,8 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
 
             for (let i = 0; i < regions.length; i++) {
               const region = regions[i];
-              const imgPoint = getBB2WideAnglePoints(
-                region,
-                imgPoints as Record<WideAngleRegion, Array<[number, number]>>,
-              );
-              const refPoints = getBB2WideAnglePoints(region, bb2WideAngleCameraPnpPoints);
+              const imgPoint = getRegionalPoints(region, imgPoints as Record<WideAngleRegion, Array<[number, number]>>);
+              const refPoints = getRegionalPoints(region, bb2WideAngleCameraPnpPoints);
               const res = await solvePnPCalculate(dh!, imgPoint, refPoints);
 
               if (res.success) {
