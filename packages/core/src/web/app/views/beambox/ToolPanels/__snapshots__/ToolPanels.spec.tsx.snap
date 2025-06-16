@@ -169,14 +169,8 @@ exports[`should render correctly type is offset 1`] = `
         </p>
       </label>
     </div>
-    <dummy-offset-direction-panel
-      dir="1"
-    />
-    <dummy-offset-corner-panel
-      cornertype="sharp"
-    />
-    <dummy-offset-distance-panel
-      distance="5"
+    <dummy-offset-panel
+      offset="[object Object]"
     />
     <div
       class="tool-block"

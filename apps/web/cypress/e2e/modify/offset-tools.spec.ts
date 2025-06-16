@@ -17,7 +17,7 @@ it('offset', () => {
   cy.get('.tab.objects').click();
   cy.get('#offset').click();
   cy.get('#select-offset-corner').select('Round');
-  cy.get('.control > .ui > input').type('{selectall}{backspace}10');
+  cy.get('.control > .ui > input').type('{selectall}{backspace}10{enter}');
   cy.get('.primary').click();
 
   cy.inputValueCloseTo('#w_size', 166.43, 0.1);
