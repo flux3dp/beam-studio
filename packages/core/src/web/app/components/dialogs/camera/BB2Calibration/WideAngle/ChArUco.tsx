@@ -12,7 +12,7 @@ import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
 import { ContextMenu, ContextMenuTrigger, MenuItem } from '@core/helpers/react-contextmenu';
 import useI18n from '@core/helpers/useI18n';
 import dialog from '@core/implementations/dialog';
-import type { FisheyeCameraParametersV4Cali, WideAngleRegion } from '@core/interfaces/FisheyePreview';
+import type { FisheyeCaliParameters, WideAngleRegion } from '@core/interfaces/FisheyePreview';
 
 import ExposureSlider from '../../common/ExposureSlider';
 import handleCalibrationResult from '../../common/handleCalibrationResult';
@@ -37,7 +37,7 @@ interface Props {
   onNext: () => void;
   onPrev: () => void;
   title?: string;
-  updateParam: (param: FisheyeCameraParametersV4Cali) => void;
+  updateParam: (param: FisheyeCaliParameters) => void;
 }
 
 // TODO: how to handle the case when some pictures are not detected or points are too less?
