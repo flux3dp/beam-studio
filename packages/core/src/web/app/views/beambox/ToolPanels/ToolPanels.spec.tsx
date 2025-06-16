@@ -2,19 +2,6 @@ import React from 'react';
 
 import { render } from '@testing-library/react';
 
-jest.mock('@core/helpers/i18n', () => ({
-  lang: {
-    beambox: {
-      tool_panels: {
-        cancel: 'Cancel',
-        confirm: 'Confirm',
-        grid_array: 'Create Grid Array',
-        offset: 'Offset',
-      },
-    },
-  },
-}));
-
 const get = jest.fn();
 
 jest.mock('@core/implementations/storage', () => ({
@@ -62,9 +49,7 @@ jest.mock('@core/app/views/beambox/ToolPanels/NestGAPanel', () => ({ nestOptions
 ));
 jest.mock('@core/app/views/beambox/ToolPanels/NestRotationPanel', () => 'dummy-nest-rotation-panel');
 jest.mock('@core/app/views/beambox/ToolPanels/NestSpacingPanel', () => 'dummy-nest-spacing-panel');
-jest.mock('@core/app/views/beambox/ToolPanels/OffsetCornerPanel', () => 'dummy-offset-corner-panel');
-jest.mock('@core/app/views/beambox/ToolPanels/OffsetDirectionPanel', () => 'dummy-offset-direction-panel');
-jest.mock('@core/app/views/beambox/ToolPanels/OffsetDistancePanel', () => 'dummy-offset-distance-panel');
+jest.mock('@core/app/views/beambox/ToolPanels/OffsetPanel', () => 'dummy-offset-panel');
 jest.mock('@core/app/views/beambox/ToolPanels/RowColumn', () => 'dummy-row-column');
 jest.mock('@core/app/actions/beambox/toolPanelsController', () => ({}));
 

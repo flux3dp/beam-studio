@@ -63,7 +63,7 @@ const wheelEventHandlerGenerator = (
       }
     };
 
-    if (isMouse) {
+    if (isMouse || (!isMouse && ctrlKey)) {
       // mouse
       e.preventDefault();
       e.stopPropagation();

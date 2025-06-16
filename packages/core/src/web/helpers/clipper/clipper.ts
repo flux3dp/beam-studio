@@ -3,7 +3,7 @@ import { EventEmitter } from 'eventemitter3';
 import getClipperLib from './getClipperLib';
 
 class ClipperBase extends EventEmitter {
-  worker: null | Worker;
+  worker: null | Worker = null;
 
   workerMsgId = 0;
 
@@ -56,7 +56,7 @@ class ClipperBase extends EventEmitter {
     const id = this.workerMsgId;
     const response = await new Promise((resolve) => {
       this.once(`message_${id}`, resolve);
-      this.worker.postMessage({ cmd, data, id });
+      this.worker?.postMessage({ cmd, data, id });
     });
 
     return response;
@@ -72,18 +72,14 @@ class ClipperBase extends EventEmitter {
     this.instance.AddPaths(path, joinType, endType);
   };
 
-  execute = async (...args): Promise<any> => {
+  execute = async (...args: any): Promise<any> => {
     if (this.worker) {
-      const res = await this.sendMessageToWorker('execute', { args });
-
-      return res;
+      return this.sendMessageToWorker('execute', { args });
     }
 
     this.instance.Execute(args);
 
-    const res = this.type === 'offset' ? args[0] : args[1];
-
-    return res;
+    return this.type === 'offset' ? args[0] : args[1];
   };
 
   terminate = () => {

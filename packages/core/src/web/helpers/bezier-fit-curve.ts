@@ -19,7 +19,7 @@ export const fitPath = (points: vector2D[]) => {
   output = [];
 
   let start = 0;
-  let currentVecotr = v2Sub(points[0], points[points.length - 1]);
+  let currentVector = v2Sub(points[0], points[points.length - 1]);
   let accumulatedDist = 0;
 
   for (let i = 1; i < points.length; i += 1) {
@@ -39,7 +39,7 @@ export const fitPath = (points: vector2D[]) => {
     const point = points[i];
     const dist = Math.hypot(point.x - points[i - 1].x, point.y - points[i - 1].y);
     const v = v2Sub(points[i], points[i - 1]);
-    const angle = v2Angle(currentVecotr, v);
+    const angle = v2Angle(currentVector, v)!;
 
     if (accumulatedDist + dist >= allowedDist || angle > angleThreshold) {
       if (start !== i - 1) {
@@ -54,7 +54,7 @@ export const fitPath = (points: vector2D[]) => {
     }
 
     accumulatedDist += dist;
-    currentVecotr = v;
+    currentVector = v;
 
     if (i === points.length - 1) {
       const vStart = computeLeftTangent(points, start);
