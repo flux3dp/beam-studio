@@ -27,8 +27,12 @@
       border-style: dashed;
     }
 
-    .spinner {
-      font-size: 48px;
+    .spin {
+      position: absolute;
+
+      .spinner {
+        font-size: 48px;
+      }
     }
 
     margin: 12px 0;

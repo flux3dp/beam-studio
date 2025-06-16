@@ -1,4 +1,5 @@
-import React, { useCallback, useRef } from 'react';
+import type { ReactNode } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 
 import { LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
@@ -16,6 +17,7 @@ import type { FisheyeCameraParametersV3Cali } from '@core/interfaces/FisheyePrev
 import styles from './Calibration.module.scss';
 import ExposureSlider from './ExposureSlider';
 import handleCalibrationResult from './handleCalibrationResult';
+import type { Options } from './useCamera';
 import useLiveFeed from './useLiveFeed';
 
 type CalibrationData =
@@ -23,10 +25,12 @@ type CalibrationData =
   | { charuco?: [number, number]; chessboard: [number, number] };
 
 type Props = CalibrationData & {
+  cameraOptions?: Options;
   description?: string[];
   indicator?: { height: number | string; left: number | string; top: number | string; width: number | string };
   onClose: (complete?: boolean) => void;
   onNext: () => void;
+  title?: ReactNode;
   updateParam: (param: FisheyeCameraParametersV3Cali) => void;
 };
 
@@ -34,18 +38,23 @@ type Props = CalibrationData & {
  * Component that provide a live view to calibrate the camera with a chessboard or ChAruCo board.
  */
 const Calibration = ({
+  cameraOptions,
   charuco,
   chessboard,
   description,
   indicator,
   onClose,
   onNext,
+  title,
   updateParam,
 }: Props): React.JSX.Element => {
   const t = useI18n();
   const tCali = t.calibration;
-  const { exposureSetting, handleTakePicture, img, pauseLive, restartLive, setExposureSetting } = useLiveFeed();
+  const { exposureSetting, handleTakePicture, img, pauseLive, restartLive, setExposureSetting, webCamConnection } =
+    useLiveFeed(cameraOptions);
   const imgRef = useRef<HTMLImageElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const isUsbCamera = useMemo(() => cameraOptions?.source === 'usb', [cameraOptions]);
 
   const handleCalibrate = async () => {
     progressCaller.openNonstopProgress({ id: 'calibrate-chessboard', message: tCali.calibrating });
@@ -54,11 +63,13 @@ const Calibration = ({
     let success = false;
 
     try {
-      let calibrationRes: null | { d: number[][]; k: number[][]; ret: number; rvec: number[]; tvec: number[] } = null;
+      const imgBlob = isUsbCamera ? await webCamConnection?.getPicture()! : img!.blob;
+      let calibrationRes: null | { d: number[][]; k: number[][]; ret: number; rvec: number[][]; tvec: number[][] } =
+        null;
 
       if (chessboard) {
         try {
-          const chessboardRes = await calibrateChessboard(img!.blob, 0, chessboard);
+          const chessboardRes = await calibrateChessboard(imgBlob, 0, chessboard);
 
           if (chessboardRes.success === true) {
             const { d, k, ret, rvec, tvec } = chessboardRes.data;
@@ -122,7 +133,7 @@ const Calibration = ({
       onCancel={() => onClose(false)}
       onOk={handleCalibrate}
       open
-      title={tCali.camera_calibration}
+      title={title ?? tCali.camera_calibration}
       width="80vw"
     >
       <div className={styles.container}>
@@ -134,7 +145,8 @@ const Calibration = ({
           </div>
         )}
         <div className={styles.imgContainer}>
-          {img ? (
+          {isUsbCamera && <video ref={videoRef} />}
+          {!isUsbCamera && img && (
             <>
               <ContextMenuTrigger
                 hideOnLeaveHoldPosition
@@ -151,9 +163,8 @@ const Calibration = ({
                 </MenuItem>
               </ContextMenu>
             </>
-          ) : (
-            <Spin indicator={<LoadingOutlined className={styles.spinner} spin />} />
           )}
+          {!img && <Spin className={styles.spin} indicator={<LoadingOutlined className={styles.spinner} spin />} />}
         </div>
         <ExposureSlider
           className={styles.slider}
