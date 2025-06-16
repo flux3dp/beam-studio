@@ -18,6 +18,7 @@ const moduleOffsets: ModuleOffsets = {
     [LayerModule.LASER_1064]: [0, 0], // temp
     [LayerModule.LASER_UNIVERSAL]: [0, 0],
     [LayerModule.PRINTER_4C]: [0, 0], // temp
+    [LayerModule.UV_VARNISH]: [0, 0], // temp
     [LayerModule.UV_WHITE_INK]: [-0.7, -22.8],
   },
 };
