@@ -17,6 +17,7 @@ import type {
 } from '@core/interfaces/FisheyePreview';
 
 import styles from '../../Calibration.module.scss';
+import ChArUco from '../../common/ChArUco';
 import CheckPnP from '../../common/CheckPnP';
 import CheckpointData from '../../common/CheckpointData';
 import downloadCalibrationFile from '../../common/downloadCalibrationFile';
@@ -29,8 +30,6 @@ import {
   bb2WideAnglePerspectiveGrid,
   getBB2WideAnglePoints,
 } from '../../common/solvePnPConstants';
-
-import ChArUco from './ChArUco';
 
 const enum Step {
   CHECK_DATA,
@@ -170,7 +169,16 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
       );
     })
     .with(Step.CALIBRATE_CHARUCO, () => {
-      return <ChArUco onClose={handleClose} onNext={next} onPrev={prev} title={title} updateParam={updateParam} />;
+      return (
+        <ChArUco
+          cameraIndex={1}
+          onClose={handleClose}
+          onNext={next}
+          onPrev={prev}
+          title={title}
+          updateParam={updateParam}
+        />
+      );
     })
     .with(Step.PUT_PAPER, () => {
       const handleNext = async (doEngraving = true) => {

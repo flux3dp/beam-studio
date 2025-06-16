@@ -14,11 +14,10 @@ import useI18n from '@core/helpers/useI18n';
 import dialog from '@core/implementations/dialog';
 import type { FisheyeCaliParameters, WideAngleRegion } from '@core/interfaces/FisheyePreview';
 
-import ExposureSlider from '../../common/ExposureSlider';
-import handleCalibrationResult from '../../common/handleCalibrationResult';
-import useLiveFeed from '../../common/useLiveFeed';
-
 import styles from './ChArUco.module.scss';
+import ExposureSlider from './ExposureSlider';
+import handleCalibrationResult from './handleCalibrationResult';
+import useLiveFeed from './useLiveFeed';
 
 /* eslint-disable perfectionist/sort-objects */
 const Steps = {
@@ -33,6 +32,7 @@ const Steps = {
 type Step = (typeof Steps)[keyof typeof Steps];
 
 interface Props {
+  cameraIndex?: number;
   onClose: (complete?: boolean) => void;
   onNext: () => void;
   onPrev: () => void;
@@ -41,11 +41,11 @@ interface Props {
 }
 
 // TODO: how to handle the case when some pictures are not detected or points are too less?
-const ChArUco = ({ onClose, onNext, onPrev, title, updateParam }: Props) => {
+const ChArUco = ({ cameraIndex, onClose, onNext, onPrev, title, updateParam }: Props) => {
   const [step, setStep] = useState<Step>(Steps.TopLeft);
   const tCali = useI18n().calibration;
   const { exposureSetting, handleTakePicture, img, pauseLive, restartLive, setExposureSetting } = useLiveFeed({
-    index: 1,
+    index: cameraIndex,
   });
   const imgRef = useRef<HTMLImageElement>(null);
   const data = useRef<Partial<Record<WideAngleRegion, { imgp: number[][]; objp: number[][] }>>>({});
