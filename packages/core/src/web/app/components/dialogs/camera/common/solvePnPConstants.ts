@@ -63,7 +63,7 @@ export const bb2WideAnglePerspectiveGrid: PerspectiveGrid = {
   y: [0, 375, 15],
 } as const;
 
-export const getBB2WideAnglePoints = (
+export const getRegionalPoints = (
   region: WideAngleRegion,
   points: Record<'bottomLeft' | 'bottomRight' | 'topLeft' | 'topRight', Points> = bb2WideAngleCameraPnpPoints,
 ): Points => {
