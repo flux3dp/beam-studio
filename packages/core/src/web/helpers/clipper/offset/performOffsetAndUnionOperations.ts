@@ -96,25 +96,6 @@ export async function performOffsetAndUnionOperations(
 
         unionClipper.terminate();
       })
-      .with({ mode: 'inward' }, async ({ flattenedPaths }) => {
-        const unionClipper = new ClipperBase('clipper');
-
-        try {
-          await unionClipper.addPaths(flattenedPaths, ClipperLib.PolyType.ptSubject, true);
-          solutionPaths = (await unionClipper.execute(
-            ClipperLib.ClipType.ctUnion,
-            new ClipperLib.Paths(),
-            ClipperLib.PolyFillType.pftNonZero,
-            ClipperLib.PolyFillType.pftNonZero,
-          )) as Path[];
-        } catch (unionError) {
-          console.error('Union operation failed:', unionError);
-
-          return { errorType: 'union_failed', solutionPaths: [] };
-        } finally {
-          unionClipper.terminate();
-        }
-      })
       .exhaustive();
 
     return { solutionPaths: solutionPaths.filter((path) => path?.length > 0) };
