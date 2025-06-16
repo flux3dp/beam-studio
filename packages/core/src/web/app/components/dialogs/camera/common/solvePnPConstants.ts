@@ -2,7 +2,9 @@ import { match } from 'ts-pattern';
 
 import type { PerspectiveGrid, WideAngleRegion } from '@core/interfaces/FisheyePreview';
 
-export const adorPnPPoints: Array<[number, number]> = [
+type Points = Array<[number, number]>;
+
+export const adorPnPPoints: Points = [
   [155, 90],
   [275, 90],
   [155, 210],
@@ -13,7 +15,7 @@ export const adorPnPPoints: Array<[number, number]> = [
   [245, 180],
 ];
 
-export const bb2PnPPoints: Array<[number, number]> = [
+export const bb2PnPPoints: Points = [
   [-60, 10],
   [60, 10],
   [-60, 90],
@@ -29,10 +31,7 @@ export const bb2PerspectiveGrid: PerspectiveGrid = {
   y: [0, 100, 10],
 } as const;
 
-export const bb2WideAngleCameraPnpPoints: Record<
-  'bottomLeft' | 'bottomRight' | 'topLeft' | 'topRight',
-  Array<[number, number]>
-> = {
+export const bb2WideAngleCameraPnpPoints: Record<'bottomLeft' | 'bottomRight' | 'topLeft' | 'topRight', Points> = {
   bottomLeft: [
     [90, 240],
     [210, 240],
@@ -66,11 +65,8 @@ export const bb2WideAnglePerspectiveGrid: PerspectiveGrid = {
 
 export const getBB2WideAnglePoints = (
   region: WideAngleRegion,
-  points: Record<
-    'bottomLeft' | 'bottomRight' | 'topLeft' | 'topRight',
-    Array<[number, number]>
-  > = bb2WideAngleCameraPnpPoints,
-): Array<[number, number]> => {
+  points: Record<'bottomLeft' | 'bottomRight' | 'topLeft' | 'topRight', Points> = bb2WideAngleCameraPnpPoints,
+): Points => {
   const res = match(region)
     .with('top', () => [points.topLeft[1], points.topRight[0], points.topLeft[3], points.topRight[2]])
     .with('bottom', () => [points.bottomLeft[1], points.bottomRight[0], points.bottomLeft[3], points.bottomRight[2]])
@@ -82,7 +78,7 @@ export const getBB2WideAnglePoints = (
   return res;
 };
 
-export const promarkPnPPoints: { [size: number]: Array<[number, number]> } = {
+export const promarkPnPPoints: { [size: number]: Points } = {
   110: [
     [5, 5],
     [105, 5],
