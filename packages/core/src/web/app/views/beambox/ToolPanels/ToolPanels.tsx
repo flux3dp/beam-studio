@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import classNames from 'classnames';
+import { match } from 'ts-pattern';
 
 import Constant from '@core/app/actions/beambox/constant';
 import type { ToolPanelType } from '@core/app/actions/beambox/toolPanelsController';
@@ -12,9 +13,6 @@ import IntervalPanel from '@core/app/views/beambox/ToolPanels/Interval';
 import NestGAPanel from '@core/app/views/beambox/ToolPanels/NestGAPanel';
 import NestRotationPanel from '@core/app/views/beambox/ToolPanels/NestRotationPanel';
 import NestSpacingPanel from '@core/app/views/beambox/ToolPanels/NestSpacingPanel';
-import OffsetCornerPanel from '@core/app/views/beambox/ToolPanels/OffsetCornerPanel';
-import OffsetDirectionPanel from '@core/app/views/beambox/ToolPanels/OffsetDirectionPanel';
-import OffsetDistancePanel from '@core/app/views/beambox/ToolPanels/OffsetDistancePanel';
 import OffsetModal from '@core/app/views/beambox/ToolPanels/OffsetModal';
 import RowColumnPanel from '@core/app/views/beambox/ToolPanels/RowColumn';
 import offsetElements from '@core/helpers/clipper/offset';
@@ -23,8 +21,12 @@ import i18n from '@core/helpers/i18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { isMobile } from '@core/helpers/system-helper';
 import storage from '@core/implementations/storage';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-let svgCanvas;
+import type { OffsetProp } from './OffsetPanel';
+import OffsetPanel from './OffsetPanel';
+
+let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
@@ -34,7 +36,7 @@ const drawingToolEventEmitter = eventEmitterFactory.createEventEmitter('drawing-
 
 const LANG = i18n.lang.beambox.tool_panels;
 
-const _mm2pixel = (pixel_input) => {
+const _mm2pixel = (pixel_input: number) => {
   const { dpmm } = Constant;
 
   return Number(pixel_input * dpmm);
@@ -43,7 +45,7 @@ const _mm2pixel = (pixel_input) => {
 const validPanelsMap = {
   gridArray: ['rowColumn', 'distance'],
   nest: ['nestOffset', 'nestRotation', 'nestGA'],
-  offset: ['offsetDir', 'offsetCorner', 'offsetDist'],
+  offset: ['offset'],
   unknown: [],
 };
 
@@ -53,144 +55,175 @@ interface Props {
   unmount: () => void;
 }
 
-class ToolPanel extends React.Component<Props> {
-  private offset: {
-    cornerType: string;
-    dir: number;
-    distance: number;
+const ToolPanel: React.FC<Props> = ({ data, type, unmount }) => {
+  const [rowColumn, setRowColumn] = useState(data.rowcolumn);
+  const [distance, setDistance] = useState(data.distance);
+  const [offset, setOffset] = useState<OffsetProp>({ cornerType: 'sharp', distance: 5, mode: 'outward' });
+
+  const nestOptions = useRef({
+    generations: 3,
+    population: 10,
+    rotations: 1,
+    spacing: 0,
+  }).current;
+
+  const setArrayRowColumn = (newRowColumn: any) => {
+    data.rowcolumn = newRowColumn;
+    setRowColumn(newRowColumn);
   };
 
-  private nestOptions: {
-    generations: number;
-    population: number;
-    rotations: number;
-    spacing: number;
+  const setArrayDistance = (newDistance: { dx: number; dy: number }) => {
+    data.distance = newDistance;
+    setDistance(newDistance);
   };
 
-  constructor(props) {
-    super(props);
-    this._setArrayRowColumn = this._setArrayRowColumn.bind(this);
-    this._setArrayDistance = this._setArrayDistance.bind(this);
-    this._setOffsetDir = this._setOffsetDir.bind(this);
-    this._setOffsetCorner = this._setOffsetCorner.bind(this);
-    this._setOffsetDist = this._setOffsetDist.bind(this);
-    this.offset = {
-      cornerType: 'sharp',
-      dir: 1, // 1 for outward, 0 for inward
-      distance: 5,
+  const onCancel = () => {
+    unmount();
+    svgCanvas.setMode('select');
+    drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
+  };
+
+  const generateOnOk = (newOffset?: OffsetProp): (() => Promise<void> | void) =>
+    match(type)
+      .with('gridArray', () => {
+        const newDistance = {
+          dx: _mm2pixel(data.distance.dx),
+          dy: _mm2pixel(data.distance.dy),
+        };
+
+        return async () => {
+          await (svgCanvas as any).gridArraySelectedElement(newDistance, data.rowcolumn);
+          unmount();
+          svgCanvas.setMode('select');
+          drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
+          currentFileManager.setHasUnsavedChanges(true);
+        };
+      })
+      .with('offset', () => () => {
+        const { cornerType, distance, mode } = newOffset || offset;
+
+        offsetElements(mode, _mm2pixel(distance), cornerType as 'round' | 'sharp');
+        unmount();
+        svgCanvas.setMode('select');
+        drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
+        currentFileManager.setHasUnsavedChanges(true);
+      })
+      .with('nest', () => () => {
+        nestOptions.spacing *= 10; // pixel to mm
+        (svgCanvas as any).nestElements(null, null, nestOptions);
+        unmount();
+        svgCanvas.setMode('select');
+        drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
+      })
+      .otherwise(() => unmount);
+
+  const findPositionStyle = () => {
+    return { bottom: 10, left: 50, position: 'absolute', zIndex: 999 } as React.CSSProperties;
+  };
+
+  useEffect(() => {
+    if (!isMobile() || Dialog.isIdExist(type)) return;
+
+    const closeModal = () => {
+      ObjectPanelController.updateActiveKey(null);
+      Dialog.popDialogById(type);
     };
-    this.nestOptions = {
-      generations: 3,
-      population: 10,
-      rotations: 1,
-      spacing: 0,
-    };
+
+    match(type)
+      .with('gridArray', () =>
+        Dialog.addDialogComponent(
+          type,
+          <ArrayModal
+            onCancel={() => {
+              onCancel();
+              closeModal();
+            }}
+            onOk={async (value) => {
+              setArrayRowColumn({ column: value.column, row: value.row });
+              setArrayDistance({ dx: value.dx, dy: value.dy });
+              await generateOnOk()();
+              closeModal();
+            }}
+          />,
+        ),
+      )
+      .with('offset', () =>
+        Dialog.addDialogComponent(
+          type,
+          <OffsetModal
+            onCancel={() => {
+              onCancel();
+              closeModal();
+            }}
+            onOk={async (offset) => {
+              setOffset(offset);
+              await generateOnOk(offset)();
+              closeModal();
+            }}
+          />,
+        ),
+      )
+      .otherwise(() => {
+        ObjectPanelController.updateActiveKey(null);
+        unmount();
+      });
+    // eslint-disable-next-line hooks/exhaustive-deps
+  }, [type, unmount]);
+
+  if (isMobile()) {
+    return null;
   }
 
-  _setArrayRowColumn(rowcolumn) {
-    this.props.data.rowcolumn = rowcolumn;
-    this.setState({ rowcolumn });
-  }
-
-  _setArrayDistance(distance) {
-    this.props.data.distance = distance;
-    this.setState({ distance });
-  }
-
-  _setOffsetDir(dir) {
-    this.offset.dir = dir;
-  }
-
-  _setOffsetDist(val) {
-    this.offset.distance = val;
-  }
-
-  _setOffsetCorner(val) {
-    this.offset.cornerType = val;
-  }
-
-  renderPanels() {
-    const { data, type } = this.props;
+  const renderPanels = () => {
     const validPanels = validPanelsMap[type] || validPanelsMap.unknown;
-    const panelsToBeRender = [];
 
-    for (let i = 0; i < validPanels.length; ++i) {
-      const panelName = validPanels[i];
-      let panel;
+    return validPanels.map((name) =>
+      match(name)
+        .with('rowColumn', (name) => <RowColumnPanel key={name} {...rowColumn} onValueChange={setArrayRowColumn} />)
+        .with('distance', (name) => <IntervalPanel key={name} {...distance} onValueChange={setArrayDistance} />)
+        .with('offset', () => (
+          <OffsetPanel
+            key="offset"
+            offset={offset}
+            setCornerType={(cornerType) => setOffset((prev) => ({ ...prev, cornerType }))}
+            setDistance={(distance) => setOffset((prev) => ({ ...prev, distance }))}
+            setMode={(mode) => setOffset((prev) => ({ ...prev, mode }))}
+          />
+        ))
+        .with('nestOffset', (name) => (
+          <NestSpacingPanel
+            key={name}
+            onValueChange={(val) => {
+              nestOptions.spacing = val;
+            }}
+            spacing={nestOptions.spacing}
+          />
+        ))
+        .with('nestGA', (name) => (
+          <NestGAPanel
+            key={name}
+            nestOptions={nestOptions}
+            updateNestOptions={(options) => {
+              Object.assign(nestOptions, options);
+            }}
+          />
+        ))
+        .with('nestRotation', (name) => (
+          <NestRotationPanel
+            key={name}
+            onValueChange={(val) => {
+              nestOptions.rotations = val;
+            }}
+            rotations={nestOptions.rotations}
+          />
+        ))
+        .otherwise(() => undefined),
+    );
+  };
 
-      switch (panelName) {
-        case 'rowColumn':
-          panel = <RowColumnPanel key={panelName} {...data.rowcolumn} onValueChange={this._setArrayRowColumn} />;
-          break;
-        case 'distance':
-          panel = <IntervalPanel key={panelName} {...data.distance} onValueChange={this._setArrayDistance} />;
-          break;
-        case 'offsetDir':
-          panel = <OffsetDirectionPanel dir={this.offset.dir} key={panelName} onValueChange={this._setOffsetDir} />;
-          break;
-        case 'offsetCorner':
-          panel = (
-            <OffsetCornerPanel
-              cornerType={this.offset.cornerType}
-              key={panelName}
-              onValueChange={this._setOffsetCorner}
-            />
-          );
-          break;
-        case 'offsetDist':
-          panel = (
-            <OffsetDistancePanel distance={this.offset.distance} key={panelName} onValueChange={this._setOffsetDist} />
-          );
-          break;
-        case 'nestOffset':
-          panel = (
-            <NestSpacingPanel
-              key={panelName}
-              onValueChange={(val) => {
-                this.nestOptions.spacing = val;
-              }}
-              spacing={this.nestOptions.spacing}
-            />
-          );
-          break;
-        case 'nestGA':
-          panel = (
-            <NestGAPanel
-              key={panelName}
-              nestOptions={this.nestOptions}
-              updateNestOptions={(options) => {
-                this.nestOptions = { ...this.nestOptions, ...options };
-              }}
-            />
-          );
-          break;
-        case 'nestRotation':
-          panel = (
-            <NestRotationPanel
-              key={panelName}
-              onValueChange={(val) => {
-                this.nestOptions.rotations = val;
-              }}
-              rotations={this.nestOptions.rotations}
-            />
-          );
-          break;
-        default:
-          break;
-      }
-      panelsToBeRender.push(panel);
-    }
-
-    return panelsToBeRender;
-  }
-
-  renderTitle() {
-    const { type } = this.props;
-    const titleMap = {
-      gridArray: LANG.grid_array,
-      offset: LANG.offset,
-    };
-    const title = titleMap[type];
+  const renderTitle = () => {
+    const titleMap = { gridArray: LANG.grid_array, offset: LANG.offset };
+    const title = titleMap[type as 'gridArray' | 'offset'];
 
     return (
       <div className="tool-panel">
@@ -202,152 +235,34 @@ class ToolPanel extends React.Component<Props> {
         </label>
       </div>
     );
-  }
-
-  _onCancel = () => {
-    this.props.unmount();
-    svgCanvas.setMode('select');
-    drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
   };
 
-  _getOnYes = (): (() => Promise<void> | void) => {
-    const { data, type, unmount } = this.props;
-
-    switch (type) {
-      case 'gridArray':
-        return async () => {
-          const distance = {
-            dx: _mm2pixel(data.distance.dx),
-            dy: _mm2pixel(data.distance.dy),
-          };
-
-          await svgCanvas.gridArraySelectedElement(distance, data.rowcolumn);
-          unmount();
-          svgCanvas.setMode('select');
-          drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
-          currentFileManager.setHasUnsavedChanges(true);
-        };
-
-      case 'offset':
-        return () => {
-          offsetElements(this.offset.dir, _mm2pixel(this.offset.distance), this.offset.cornerType as 'round' | 'sharp');
-          unmount();
-          svgCanvas.setMode('select');
-          drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
-          currentFileManager.setHasUnsavedChanges(true);
-        };
-      case 'nest':
-        return () => {
-          this.nestOptions.spacing *= 10; // pixel to mm
-          svgCanvas.nestElements(null, null, this.nestOptions);
-          unmount();
-          svgCanvas.setMode('select');
-          drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
-        };
-      default:
-        return () => unmount();
-    }
-  };
-
-  renderButtons() {
+  const renderButtons = () => {
     return (
       <div className="tool-block">
         <div className="btn-h-group">
-          <button className="btn btn-default primary" onClick={this._getOnYes()} type="button">
+          <button className="btn btn-default primary" onClick={generateOnOk()} type="button">
             {LANG.confirm}
           </button>
-          <button className="btn btn-default" onClick={this._onCancel} type="button">
+          <button className="btn btn-default" onClick={onCancel} type="button">
             {LANG.cancel}
           </button>
         </div>
       </div>
     );
-  }
+  };
 
-  renderModal(): void {
-    const { type, unmount } = this.props;
+  const lang = storage.get('active-lang') || 'en';
+  const positionStyle = findPositionStyle();
+  const classes = classNames('tool-panels', lang);
 
-    if (Dialog.isIdExist(type)) {
-      return;
-    }
-
-    const closeModal = () => {
-      ObjectPanelController.updateActiveKey(null);
-      Dialog.popDialogById(type);
-    };
-    const onOk = this._getOnYes();
-    const onCancel = this._onCancel;
-
-    switch (type) {
-      case 'gridArray':
-        Dialog.addDialogComponent(
-          type,
-          <ArrayModal
-            onCancel={() => {
-              onCancel();
-              closeModal();
-            }}
-            onOk={async (value) => {
-              this._setArrayRowColumn({ column: value.column, row: value.row });
-              this._setArrayDistance({ dx: value.dx, dy: value.dy });
-              await onOk();
-              closeModal();
-            }}
-          />,
-        );
-        break;
-      case 'offset':
-        Dialog.addDialogComponent(
-          type,
-          <OffsetModal
-            onCancel={() => {
-              onCancel();
-              closeModal();
-            }}
-            onOk={async (value) => {
-              this._setOffsetDir(value.dir);
-              this._setOffsetDist(value.distance);
-              this._setOffsetCorner(value.cornerType);
-              await onOk();
-              closeModal();
-            }}
-          />,
-        );
-        break;
-      default:
-        ObjectPanelController.updateActiveKey(null);
-        unmount();
-    }
-  }
-
-  _findPositionStyle() {
-    return {
-      bottom: 10,
-      left: 50,
-      position: 'absolute',
-      zIndex: 999,
-    } as React.CSSProperties;
-  }
-
-  render() {
-    if (isMobile()) {
-      this.renderModal();
-
-      return null;
-    }
-
-    const lang = storage.get('active-lang') || 'en';
-    const positionStyle = this._findPositionStyle();
-    const classes = classNames('tool-panels', lang);
-
-    return (
-      <div className={classes} id="beamboxToolPanel" style={positionStyle}>
-        {this.renderTitle()}
-        {this.renderPanels()}
-        {this.renderButtons()}
-      </div>
-    );
-  }
-}
+  return (
+    <div className={classes} id="beamboxToolPanel" style={positionStyle}>
+      {renderTitle()}
+      {renderPanels()}
+      {renderButtons()}
+    </div>
+  );
+};
 
 export default ToolPanel;
