@@ -95,6 +95,8 @@ const lang: ILang = {
       auto_feeder: 'Automaattinen syöttölaite',
       auto_feeder_scale: 'Automaattisen syöttölaitteen mittakaava',
       auto_feeder_url: 'https://support.flux3dp.com/hc/en-us/articles/11688230498575',
+      auto_shrink: 'Automaattinen pienennys',
+      auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',
       borderless_mode: 'Avoin pohja',
       current_position: 'Nykyinen Sijainti',
       disable: 'Poista käytöstä',

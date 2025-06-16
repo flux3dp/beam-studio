@@ -95,6 +95,8 @@ const lang: ILang = {
       auto_feeder: 'Auto Feeder',
       auto_feeder_scale: 'Auto Feeder Scale',
       auto_feeder_url: 'https://support.flux3dp.com/hc/en-us/articles/11688230498575',
+      auto_shrink: 'Auto Shrink',
+      auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',
       borderless_mode: 'Open Bottom',
       current_position: 'Current Position',
       disable: 'Disable',

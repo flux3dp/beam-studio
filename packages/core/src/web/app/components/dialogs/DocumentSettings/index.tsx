@@ -5,7 +5,7 @@ import { Checkbox, Switch, Tooltip } from 'antd';
 import classNames from 'classnames';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant, { modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
 import diodeBoundaryDrawer from '@core/app/actions/canvas/diode-boundary-drawer';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
@@ -71,13 +71,13 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     beambox: { document_panel: tDocument },
     global: tGlobal,
   } = useI18n();
-  const [engraveDpi, setEngraveDpi] = useState(BeamboxPreference.read('engrave_dpi'));
+  const [engraveDpi, setEngraveDpi] = useState(beamboxPreference.read('engrave_dpi'));
   const {
     autoFeeder: origAutoFeeder,
     passThrough: origPassThrough,
     workarea: origWorkarea,
   } = useMemo(() => {
-    const workarea = BeamboxPreference.read('workarea');
+    const workarea = beamboxPreference.read('workarea');
     const addOnInfo = getAddOnInfo(workarea);
     const autoFeeder = getAutoFeeder(addOnInfo);
     const passThrough = getPassThrough(addOnInfo);
@@ -86,29 +86,30 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   }, []);
   const [pmInfo, setPmInfo] = useState(getPromarkInfo());
   const [workarea, setWorkarea] = useState(origWorkarea || 'fbb1b');
-  const [customDimension, setCustomDimension] = useState(BeamboxPreference.read('customized-dimension'));
+  const [customDimension, setCustomDimension] = useState(beamboxPreference.read('customized-dimension'));
   const addOnInfo = useMemo(() => getAddOnInfo(workarea), [workarea]);
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
-  const [rotaryMode, setRotaryMode] = useState(BeamboxPreference.read('rotary_mode'));
-  const [enableStartButton, setEnableStartButton] = useState(BeamboxPreference.read('promark-start-button'));
-  const [shouldFrame, setShouldFrame] = useState(BeamboxPreference.read('frame-before-start'));
-  const [enableJobOrigin, setEnableJobOrigin] = useState(BeamboxPreference.read('enable-job-origin'));
-  const [jobOrigin, setJobOrigin] = useState(BeamboxPreference.read('job-origin'));
-  const [borderless, setBorderless] = useState(!!BeamboxPreference.read('borderless'));
-  const [enableDiode, setEnableDiode] = useState(!!BeamboxPreference.read('enable-diode'));
-  const [enableAutofocus, setEnableAutofocus] = useState(!!BeamboxPreference.read('enable-autofocus'));
-  const [passThrough, setPassThrough] = useState(BeamboxPreference.read('pass-through'));
-  const [autoFeeder, setAutoFeeder] = useState(BeamboxPreference.read('auto-feeder'));
-  const [autoFeederScale, setAutoFeederScale] = useState(BeamboxPreference.read('auto-feeder-scale'));
-  const [checkSafetyDoor, setCheckSafetyDoor] = useState(BeamboxPreference.read('promark-safety-door'));
+  const [rotaryMode, setRotaryMode] = useState(beamboxPreference.read('rotary_mode'));
+  const [enableStartButton, setEnableStartButton] = useState(beamboxPreference.read('promark-start-button'));
+  const [shouldFrame, setShouldFrame] = useState(beamboxPreference.read('frame-before-start'));
+  const [enableJobOrigin, setEnableJobOrigin] = useState(beamboxPreference.read('enable-job-origin'));
+  const [jobOrigin, setJobOrigin] = useState(beamboxPreference.read('job-origin'));
+  const [borderless, setBorderless] = useState(!!beamboxPreference.read('borderless'));
+  const [enableDiode, setEnableDiode] = useState(!!beamboxPreference.read('enable-diode'));
+  const [enableAutofocus, setEnableAutofocus] = useState(!!beamboxPreference.read('enable-autofocus'));
+  const [passThrough, setPassThrough] = useState(beamboxPreference.read('pass-through'));
+  const [autoFeeder, setAutoFeeder] = useState(beamboxPreference.read('auto-feeder'));
+  const [autoFeederScale, setAutoFeederScale] = useState(beamboxPreference.read('auto-feeder-scale'));
+  const [checkSafetyDoor, setCheckSafetyDoor] = useState(beamboxPreference.read('promark-safety-door'));
+  const [autoShrink, setAutoShrink] = useState(beamboxPreference.read('auto_shrink'));
 
   const isInch = useMemo(() => storage.get('default-units') === 'inches', []);
   const workareaObj = useMemo(() => getWorkarea(workarea), [workarea]);
   const [passThroughHeight, setPassThroughHeight] = useState<number>(
-    BeamboxPreference.read('pass-through-height') || workareaObj.displayHeight || workareaObj.height,
+    beamboxPreference.read('pass-through-height') || workareaObj.displayHeight || workareaObj.height,
   );
   const [autoFeederHeight, setAutoFeederHeight] = useState<number>(
-    BeamboxPreference.read('auto-feeder-height') || workareaObj.displayHeight || workareaObj.height,
+    beamboxPreference.read('auto-feeder-height') || workareaObj.displayHeight || workareaObj.height,
   );
   const hasCurveEngravingData = useHasCurveEngraving();
   const isCurveEngraving = useMemo(() => {
@@ -170,47 +171,47 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const handleSave = () => {
     const workareaChanged = workarea !== origWorkarea;
     let customDimensionChanged = false;
-    const rotaryChanged = rotaryMode !== BeamboxPreference.read('rotary_mode');
+    const rotaryChanged = rotaryMode !== beamboxPreference.read('rotary_mode');
 
-    BeamboxPreference.write('engrave_dpi', engraveDpi);
-    BeamboxPreference.write('borderless', Boolean(addOnInfo.openBottom && borderless));
-    BeamboxPreference.write('enable-diode', addOnInfo.hybridLaser && enableDiode);
-    BeamboxPreference.write('enable-autofocus', addOnInfo.autoFocus && enableAutofocus);
+    beamboxPreference.write('engrave_dpi', engraveDpi);
+    beamboxPreference.write('borderless', Boolean(addOnInfo.openBottom && borderless));
+    beamboxPreference.write('enable-diode', addOnInfo.hybridLaser && enableDiode);
+    beamboxPreference.write('enable-autofocus', addOnInfo.autoFocus && enableAutofocus);
 
     if (workareaObj.dimensionCustomizable) {
-      const origVal = BeamboxPreference.read('customized-dimension');
+      const origVal = beamboxPreference.read('customized-dimension');
 
       customDimensionChanged =
         customDimension[workarea]?.width !== origVal[workarea]?.width ||
         customDimension[workarea]?.height !== origVal[workarea]?.height;
 
-      BeamboxPreference.write('customized-dimension', { ...origVal, [workarea]: customDimension[workarea] });
+      beamboxPreference.write('customized-dimension', { ...origVal, [workarea]: customDimension[workarea] });
     }
 
-    BeamboxPreference.write('rotary_mode', rotaryMode);
+    beamboxPreference.write('rotary_mode', rotaryMode);
 
     const newPassThrough = Boolean(showPassThrough && passThrough);
     const passThroughChanged = newPassThrough !== origPassThrough;
-    const passThroughHeightChanged = passThroughHeight !== BeamboxPreference.read('pass-through-height');
+    const passThroughHeightChanged = passThroughHeight !== beamboxPreference.read('pass-through-height');
     const newAutoFeeder = Boolean(showAutoFeeder && autoFeeder);
     const autoFeederChanged = newAutoFeeder !== origAutoFeeder;
-    const autoFeederHeightChanged = autoFeederHeight !== BeamboxPreference.read('auto-feeder-height');
+    const autoFeederHeightChanged = autoFeederHeight !== beamboxPreference.read('auto-feeder-height');
 
-    BeamboxPreference.write('pass-through', newPassThrough);
+    beamboxPreference.write('pass-through', newPassThrough);
 
-    if (showPassThrough) BeamboxPreference.write('pass-through-height', Math.max(passThroughHeight, minHeight));
+    if (showPassThrough) beamboxPreference.write('pass-through-height', Math.max(passThroughHeight, minHeight));
 
-    BeamboxPreference.write('auto-feeder', newAutoFeeder);
+    beamboxPreference.write('auto-feeder', newAutoFeeder);
 
     if (showAutoFeeder) {
       const newVal = Math.min(addOnInfo.autoFeeder!.maxHeight, Math.max(minHeight, autoFeederHeight));
 
-      BeamboxPreference.write('auto-feeder-height', newVal);
-      BeamboxPreference.write('auto-feeder-scale', autoFeederScale);
+      beamboxPreference.write('auto-feeder-height', newVal);
+      beamboxPreference.write('auto-feeder-scale', autoFeederScale);
     }
 
-    BeamboxPreference.write('enable-job-origin', enableJobOrigin);
-    BeamboxPreference.write('job-origin', jobOrigin);
+    beamboxPreference.write('enable-job-origin', enableJobOrigin);
+    beamboxPreference.write('job-origin', jobOrigin);
 
     if (
       workareaChanged ||
@@ -233,10 +234,12 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
 
     if (promarkModels.has(workarea)) {
       setPromarkInfo(pmInfo);
-      BeamboxPreference.write('promark-start-button', enableStartButton);
-      BeamboxPreference.write('frame-before-start', shouldFrame);
-      BeamboxPreference.write('promark-safety-door', checkSafetyDoor);
+      beamboxPreference.write('promark-start-button', enableStartButton);
+      beamboxPreference.write('frame-before-start', shouldFrame);
+      beamboxPreference.write('promark-safety-door', checkSafetyDoor);
     }
+
+    beamboxPreference.write('auto_shrink', autoShrink);
 
     presprayArea.togglePresprayArea();
 
@@ -358,6 +361,22 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
               variant="outlined"
             />
           </div>
+          {!isPromark && (
+            <div className={styles.row}>
+              <label className={styles.title} htmlFor="autoShrink">
+                {tDocument.auto_shrink}:
+              </label>
+              <div className={classNames(styles.control, styles['justify-start'])}>
+                <Switch checked={autoShrink} disabled={engraveDpi === 'low'} id="autoShrink" onChange={setAutoShrink} />
+                <Tooltip title={tDocument.auto_shrink_url}>
+                  <QuestionCircleOutlined
+                    className={styles.hint}
+                    onClick={() => browser.open(tDocument.auto_shrink_url)}
+                  />
+                </Tooltip>
+              </div>
+            </div>
+          )}
         </div>
         {addOnInfo.jobOrigin && (
           <>
@@ -431,12 +450,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                   <label htmlFor="start_button">{tDocument.start_work_button}</label>
                 </div>
                 <div className={styles.control}>
-                  <Switch
-                    checked={enableStartButton}
-                    className={styles.switch}
-                    id="start_button"
-                    onChange={setEnableStartButton}
-                  />
+                  <Switch checked={enableStartButton} id="start_button" onChange={setEnableStartButton} />
                   {enableStartButton && (
                     <div className={styles.subCheckbox}>
                       <div>
@@ -458,12 +472,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                   <label htmlFor="door_protect">{tDocument.door_protect}</label>
                 </div>
                 <div className={styles.control}>
-                  <Switch
-                    checked={checkSafetyDoor}
-                    className={styles.switch}
-                    id="door_protect"
-                    onChange={setCheckSafetyDoor}
-                  />
+                  <Switch checked={checkSafetyDoor} id="door_protect" onChange={setCheckSafetyDoor} />
                   <Tooltip title={tDocument.door_protect_desc}>
                     <QuestionCircleOutlined />
                   </Tooltip>
@@ -479,7 +488,6 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
               <div className={styles.control}>
                 <Switch
                   checked={rotaryMode}
-                  className={styles.switch}
                   disabled={!addOnInfo.rotary || isCurveEngraving}
                   id="rotary_mode"
                   onChange={setRotaryMode}
@@ -487,7 +495,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                 <SettingFilled
                   onClick={() =>
                     showRotarySettings({ rotaryMode, workarea }, () => {
-                      setRotaryMode(BeamboxPreference.read('rotary_mode'));
+                      setRotaryMode(beamboxPreference.read('rotary_mode'));
                     })
                   }
                 />
@@ -503,7 +511,6 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
               <div className={styles.control}>
                 <Switch
                   checked={addOnInfo.autoFocus && enableAutofocus}
-                  className={styles.switch}
                   disabled={!addOnInfo.autoFocus}
                   id="autofocus-module"
                   onChange={setEnableAutofocus}
@@ -519,7 +526,6 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
               <div className={styles.control}>
                 <Switch
                   checked={addOnInfo.openBottom && borderless}
-                  className={styles.switch}
                   disabled={!addOnInfo.openBottom}
                   id="borderless_mode"
                   onChange={setBorderless}
@@ -535,7 +541,6 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
               <div className={styles.control}>
                 <Switch
                   checked={addOnInfo.hybridLaser && enableDiode}
-                  className={styles.switch}
                   disabled={!addOnInfo.hybridLaser}
                   id="diode_module"
                   onChange={setEnableDiode}
@@ -551,7 +556,6 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
               <div className={styles.control}>
                 <Switch
                   checked={addOnInfo.passThrough && passThrough}
-                  className={styles.switch}
                   disabled={!addOnInfo.passThrough || isCurveEngraving}
                   id="pass_through"
                   onChange={setPassThrough}
@@ -592,7 +596,6 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                 <div className={styles.control}>
                   <Switch
                     checked={addOnInfo.autoFeeder && autoFeeder}
-                    className={styles.switch}
                     disabled={!addOnInfo.autoFeeder || isCurveEngraving}
                     id="auto_feeder"
                     onChange={setAutoFeeder}

@@ -93,6 +93,8 @@ export interface ILang {
       auto_feeder: string;
       auto_feeder_scale: string;
       auto_feeder_url: string;
+      auto_shrink: string;
+      auto_shrink_url: string;
       borderless_mode: string;
       current_position: string;
       disable: string;

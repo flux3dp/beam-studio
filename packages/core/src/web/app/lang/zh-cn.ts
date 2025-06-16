@@ -95,6 +95,8 @@ const lang: ILang = {
       auto_feeder: '自动送料',
       auto_feeder_scale: '自动送料倍率',
       auto_feeder_url: 'https://support.flux3dp.com/hc/en-us/articles/11688230498575',
+      auto_shrink: '自动內缩',
+      auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',
       borderless_mode: '开盖模式',
       current_position: '当前的位置',
       disable: '关闭',
