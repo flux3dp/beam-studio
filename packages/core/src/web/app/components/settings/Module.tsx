@@ -3,24 +3,26 @@ import * as React from 'react';
 import type { DefaultOptionType } from 'antd/es/select';
 
 import alert from '@core/app/actions/alert-caller';
+import type { SettingUnitInputProps } from '@core/app/components/settings/components/SettingUnitInput';
+import SettingUnitInput from '@core/app/components/settings/components/SettingUnitInput';
+import XYItem from '@core/app/components/settings/components/XYItem';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
-import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import useI18n from '@core/helpers/useI18n';
 
 import SettingFormItem from './components/SettingFormItem';
 import SettingSelect from './components/SettingSelect';
+import styles from './Settings.module.scss';
 
 interface Props {
   options: DefaultOptionType[];
+  unitInputProps: Partial<SettingUnitInputProps>;
 }
 
-const Module = ({ options }: Props): React.JSX.Element => {
+const Module = ({ options, unitInputProps }: Props): React.JSX.Element => {
   const lang = useI18n();
-  const { getConfig, getPreference, setPreference } = useSettingStore();
-
+  const { getPreference, setPreference } = useSettingStore();
   const selectedModel = getPreference('model');
-  const defaultUnit = getConfig('default-units');
   const workarea = getWorkarea(selectedModel);
   const onDiodeOneWayEngravingChanged = (e: boolean) => {
     if (e === false) {
@@ -32,7 +34,7 @@ const Module = ({ options }: Props): React.JSX.Element => {
 
   return (
     <>
-      <div className="subtitle">{lang.settings.groups.modules}</div>
+      <div className={styles.subtitle}>{lang.settings.groups.modules}</div>
       <SettingSelect
         defaultValue={getPreference('default-borderless')}
         id="default-open-bottom"
@@ -57,34 +59,17 @@ const Module = ({ options }: Props): React.JSX.Element => {
         options={options}
         url={lang.settings.help_center_urls.default_enable_diode_module}
       />
-      <SettingFormItem id="set_diode_offset_x" label={lang.settings.diode_offset}>
-        <span className="font2" style={{ lineHeight: '32px', marginRight: '10px' }}>
-          X
-        </span>
-        <UnitInput
-          className={{ half: true }}
-          defaultValue={getPreference('diode_offset_x')}
-          forceUsePropsUnit
-          getValue={(val) => setPreference('diode_offset_x', val)}
-          id="diode-offset-x-input"
-          max={workarea.width}
-          min={0}
-          unit={defaultUnit === 'inches' ? 'in' : 'mm'}
-        />
-        <span className="font2" style={{ lineHeight: '32px', marginRight: '10px' }}>
-          Y
-        </span>
-        <UnitInput
-          className={{ half: true }}
-          defaultValue={getPreference('diode_offset_y')}
-          forceUsePropsUnit
-          getValue={(val) => setPreference('diode_offset_y', val)}
-          id="diode-offset-y-input"
-          max={workarea.height}
-          min={0}
-          unit={defaultUnit === 'inches' ? 'in' : 'mm'}
-        />
-      </SettingFormItem>
+      <XYItem
+        id="set_diode_offset"
+        label={lang.settings.diode_offset}
+        maxX={workarea.width}
+        maxY={workarea.height}
+        minX={0}
+        minY={0}
+        onChange={(axis, val) => setPreference(`diode_offset_${axis}`, val)}
+        unitInputProps={unitInputProps}
+        values={[getPreference('diode_offset_x'), getPreference('diode_offset_y')]}
+      />
       <SettingSelect
         defaultValue={getPreference('diode-one-way-engraving')}
         id="default-diode"
@@ -93,16 +78,13 @@ const Module = ({ options }: Props): React.JSX.Element => {
         options={options}
       />
       <SettingFormItem id="set_af-offset" label={lang.settings.autofocus_offset}>
-        <UnitInput
-          className={{ half: true }}
-          defaultValue={getPreference('af-offset')}
-          forceUsePropsUnit
-          getValue={(val) => setPreference('af-offset', val)}
+        <SettingUnitInput
+          {...unitInputProps}
           id="autofocus-offset-input"
           max={10}
           min={-10}
-          step={defaultUnit === 'inches' ? 0.1 : 1}
-          unit={defaultUnit === 'inches' ? 'in' : 'mm'}
+          onChange={(val) => setPreference('af-offset', val)}
+          value={getPreference('af-offset')}
         />
       </SettingFormItem>
     </>

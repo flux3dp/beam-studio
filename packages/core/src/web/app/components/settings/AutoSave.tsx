@@ -1,16 +1,16 @@
 import * as React from 'react';
 
 import type { DefaultOptionType } from 'antd/es/select';
-import classNames from 'classnames';
 
+import SettingUnitInput from '@core/app/components/settings/components/SettingUnitInput';
 import PathInput, { InputType } from '@core/app/widgets/PathInput';
-import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import type { IConfig } from '@core/interfaces/IAutosave';
 
 import SettingFormItem from './components/SettingFormItem';
 import SettingSelect from './components/SettingSelect';
+import styles from './Settings.module.scss';
 
 interface Props {
   editingAutosaveConfig: IConfig;
@@ -33,7 +33,7 @@ function AutoSave({
 
   return (
     <>
-      <div className="subtitle">{lang.settings.groups.autosave}</div>
+      <div className={styles.subtitle}>{lang.settings.groups.autosave}</div>
       <SettingSelect
         defaultValue={editingAutosaveConfig.enabled}
         id="set-auto-save"
@@ -48,9 +48,9 @@ function AutoSave({
       >
         <PathInput
           buttonTitle={lang.general.choose_folder}
-          className={classNames({ 'with-error': Boolean(warnings.autosave_directory) })}
           data-id="location-input"
           defaultValue={editingAutosaveConfig.directory}
+          error={Boolean(warnings.autosave_directory)}
           forceValidValue={false}
           getValue={(directory: string, isValid: boolean) => {
             if (!isValid) {
@@ -66,26 +66,24 @@ function AutoSave({
         />
       </SettingFormItem>
       <SettingFormItem id="auto-save-interval" label={lang.settings.autosave_interval}>
-        <UnitInput
-          className={{ half: true }}
-          decimal={0}
-          defaultValue={editingAutosaveConfig.timeInterval}
-          getValue={(timeInterval) => setEditingAutosaveConfig({ ...editingAutosaveConfig, timeInterval })}
+        <SettingUnitInput
           id="save-every"
           max={60}
           min={1}
+          onChange={(timeInterval) => setEditingAutosaveConfig({ ...editingAutosaveConfig, timeInterval })}
+          precision={0}
           unit={lang.monitor.minute}
+          value={editingAutosaveConfig.timeInterval}
         />
       </SettingFormItem>
       <SettingFormItem id="auto-save-maximum-count" label={lang.settings.autosave_number}>
-        <UnitInput
-          className={{ half: true }}
-          decimal={0}
-          defaultValue={editingAutosaveConfig.fileNumber}
-          getValue={(fileNumber) => setEditingAutosaveConfig({ ...editingAutosaveConfig, fileNumber })}
+        <SettingUnitInput
           id="number-of-auto-save"
           max={10}
           min={1}
+          onChange={(fileNumber) => setEditingAutosaveConfig({ ...editingAutosaveConfig, fileNumber })}
+          precision={0}
+          value={editingAutosaveConfig.fileNumber}
         />
       </SettingFormItem>
     </>

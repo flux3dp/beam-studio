@@ -6,6 +6,7 @@ import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
 import useI18n from '@core/helpers/useI18n';
 
 import SettingSelect from './components/SettingSelect';
+import styles from './Settings.module.scss';
 
 interface Props {
   options: DefaultOptionType[];
@@ -21,7 +22,7 @@ function TextToPath({ options }: Props): React.JSX.Element {
 
   return (
     <>
-      <div className="subtitle">{lang.settings.groups.text_to_path}</div>
+      <div className={styles.subtitle}>{lang.settings.groups.text_to_path}</div>
       <SettingSelect
         defaultValue={getPreference('font-substitute')}
         id="font-substitue"

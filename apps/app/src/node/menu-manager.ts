@@ -5,7 +5,7 @@ import { app, ipcMain, Menu, MenuItem, shell } from 'electron';
 import Store from 'electron-store';
 import { funnel } from 'remeda';
 
-import { adorModels, promarkModels } from '@core/app/actions/beambox/constant';
+import { adorModels, modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
 import i18n from '@core/helpers/i18n';
 import versionChecker from '@core/helpers/version-checker';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
@@ -95,6 +95,7 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
 
   const menuLabel = source === 'lan' ? name : `${name} (USB)`;
   const machineName = name;
+  const hasModules = modelsWithModules.has(model);
   const isAdor = adorModels.has(model);
   const isPromark = promarkModels.has(model);
   const isBeamo = model === 'fbm1';
@@ -152,17 +153,17 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
             id: 'CALIBRATE_CAMERA_V2_FACTORY',
             label: `${r.calibrate_beambox_camera} (Factory)`,
           },
-        isAdor && {
+        hasModules && {
           click: handleClick,
           id: 'CALIBRATE_PRINTER_MODULE',
           label: r.calibrate_printer_module,
         },
-        isAdor && {
+        hasModules && {
           click: handleClick,
           id: 'CALIBRATE_IR_MODULE',
           label: r.calibrate_ir_module,
         },
-        isAdor &&
+        hasModules &&
           isDevMode && {
             click: handleClick,
             id: 'CATRIDGE_CHIP_SETTING',
@@ -170,7 +171,7 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
           },
       ].filter(Boolean),
     },
-    { type: 'separator' },
+    !isPromark && { type: 'separator' },
     (isAdor || isBb2) && {
       id: 'CAMERA_CALIBRATION_DATA',
       label: r.camera_calibration_data,
@@ -187,12 +188,12 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
         },
       ],
     },
-    {
+    !isPromark && {
       click: handleClick,
       id: 'UPDATE_FIRMWARE',
       label: r.update_firmware,
     },
-    {
+    !isPromark && {
       id: 'DOWNLOAD_LOG',
       label: r.download_log,
       submenu: [

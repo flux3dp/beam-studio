@@ -3,19 +3,6 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 import { create } from 'zustand';
 
-jest.mock('@core/helpers/i18n', () => ({
-  getActiveLang: () => 'en',
-  lang: {
-    settings: {
-      groups: {
-        general: 'General',
-      },
-      language: 'Language',
-      notifications: 'Desktop Notifications',
-    },
-  },
-}));
-
 const mockGetConfig = jest.fn();
 const mockSetConfig = jest.fn();
 

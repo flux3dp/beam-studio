@@ -311,7 +311,7 @@ export const getExportOpt = (
   if (printingBotPadding !== undefined) config.pbp = printingBotPadding;
 
   if (modelsWithModules.has(model)) {
-    const offsets = { ...BeamboxPreference.read('module-offsets') } as Record<string, [number, number]>;
+    const offsets = BeamboxPreference.read('module-offsets')[model]! as Record<string, [number, number]>;
 
     if (hasJobOrigin) {
       const refModule = getRefModule();

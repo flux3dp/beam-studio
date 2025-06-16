@@ -7,7 +7,7 @@ import classNames from 'classnames';
 
 import styles from './UnitInput.module.scss';
 
-interface Props extends InputNumberProps<number> {
+export interface UnitInputProps extends InputNumberProps<number> {
   clipValue?: boolean;
   containerClassName?: string;
   displayMultiValue?: boolean;
@@ -25,7 +25,7 @@ interface Props extends InputNumberProps<number> {
  * if isInch is true, the unit will be inch but the value will still be mm,
  * the transfer will be handled by formatter and parser
  */
-const UnitInput = forwardRef<HTMLInputElement | null, Props>(
+const UnitInput = forwardRef<HTMLInputElement | null, UnitInputProps>(
   (
     {
       clipValue = true,
@@ -43,7 +43,7 @@ const UnitInput = forwardRef<HTMLInputElement | null, Props>(
       unit,
       unitClassName,
       ...props
-    }: Props,
+    }: UnitInputProps,
     outerRef,
   ): React.JSX.Element => {
     const inputRef = useRef<HTMLInputElement | null>(null);
