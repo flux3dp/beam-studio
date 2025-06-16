@@ -4,14 +4,14 @@ import { fireEvent, render } from '@testing-library/react';
 
 jest.mock('@core/app/widgets/PathInput', () => ({
   __esModule: true,
-  default: ({ buttonTitle, className, 'data-id': dataId, defaultValue, forceValidValue, getValue, type }: any) => (
+  default: ({ buttonTitle, 'data-id': dataId, defaultValue, error, forceValidValue, getValue, type }: any) => (
     <div>
       mock-path-input id:{dataId}
       buttonTitle:{buttonTitle}
       type:{type}
       defaultValue:{defaultValue}
       forceValidValue:{forceValidValue ? 'true' : 'false'}
-      className:{JSON.stringify(className)}
+      error:{error ? 'true' : 'false'}
       <input
         className="path-input"
         onChange={(e) => {
@@ -43,23 +43,6 @@ jest.mock('@core/app/pages/Settings/useSettingStore', () => ({
 
 jest.mock('./components/SettingSelect');
 jest.mock('./components/SettingFormItem');
-
-jest.mock(
-  '@core/app/widgets/Unit-Input-v2',
-  () =>
-    ({ className, defaultValue, forceUsePropsUnit, getValue, id, max, min, unit }: any) => (
-      <div>
-        mock-unit-input id:{id}
-        unit:{unit}
-        min:{min}
-        max:{max}
-        defaultValue:{defaultValue}
-        forceUsePropsUnit:{forceUsePropsUnit ? 'true' : 'false'}
-        className:{JSON.stringify(className)}
-        <input className="unit-input" onChange={(e) => getValue(+e.target.value)} />
-      </div>
-    ),
-);
 
 const mockIsWeb = jest.fn();
 
@@ -128,7 +111,7 @@ describe('should render correctly', () => {
       autosave_directory: 'Specified path not found.',
     });
 
-    fireEvent.change(container.querySelector('input.unit-input'), { target: { value: 5 } });
+    fireEvent.change(container.querySelector('#save-every'), { target: { value: 5 } });
     expect(setEditingAutosaveConfig).toHaveBeenCalledTimes(3);
     expect(setEditingAutosaveConfig).toHaveBeenNthCalledWith(3, {
       directory: '/MyDocuments',
@@ -137,7 +120,7 @@ describe('should render correctly', () => {
       timeInterval: 5,
     });
 
-    fireEvent.change(container.querySelectorAll('input.unit-input')[1], { target: { value: 10 } });
+    fireEvent.change(container.querySelector('#number-of-auto-save'), { target: { value: 10 } });
     expect(setEditingAutosaveConfig).toHaveBeenCalledTimes(4);
     expect(setEditingAutosaveConfig).toHaveBeenNthCalledWith(4, {
       directory: '/MyDocuments',

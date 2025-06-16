@@ -3,9 +3,10 @@ import React, { useState } from 'react';
 import type { DefaultOptionType } from 'antd/es/select';
 
 import FontFuncs from '@core/app/actions/beambox/font-funcs';
+import type { SettingUnitInputProps } from '@core/app/components/settings/components/SettingUnitInput';
+import XYItem from '@core/app/components/settings/components/XYItem';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
-import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import { hasSwiftray } from '@core/helpers/api/swiftray-client';
 import { checkFpm1, checkHxRf } from '@core/helpers/checkFeature';
 import isDev from '@core/helpers/is-dev';
@@ -13,21 +14,21 @@ import useI18n from '@core/helpers/useI18n';
 import storage from '@core/implementations/storage';
 import type { GeneralFont, IDefaultFont } from '@core/interfaces/IFont';
 
-import SettingFormItem from './components/SettingFormItem';
 import SettingSelect from './components/SettingSelect';
+import styles from './Settings.module.scss';
 
 const fontFamilies = FontFuncs.requestAvailableFontFamilies(true);
 
 interface Props {
   options: DefaultOptionType[];
+  unitInputProps: Partial<SettingUnitInputProps>;
 }
 
-function Editor({ options }: Props): React.JSX.Element {
+function Editor({ options, unitInputProps }: Props): React.JSX.Element {
   const lang = useI18n();
   const { getConfig, getPreference, setConfig, setPreference } = useSettingStore();
 
   const selectedModel = getPreference('model');
-  const defaultUnit = getConfig('default-units');
   const workarea = getWorkarea(selectedModel);
   const [defaultFont, updateDefaultFont] = useState<IDefaultFont>(
     storage.get('default-font') || { family: 'Arial', style: 'Regular' },
@@ -105,7 +106,7 @@ function Editor({ options }: Props): React.JSX.Element {
 
   return (
     <>
-      <div className="subtitle">{lang.settings.groups.editor}</div>
+      <div className={styles.subtitle}>{lang.settings.groups.editor}</div>
       <SettingSelect
         defaultValue={getConfig('default-units')}
         id="set-default-units"
@@ -141,34 +142,17 @@ function Editor({ options }: Props): React.JSX.Element {
         onChange={(e) => setPreference('show_guides', e)}
         options={options}
       />
-      <SettingFormItem id="set-guide-axis" label={lang.settings.guides_origin}>
-        <span className="font2" style={{ lineHeight: '32px', marginRight: '10px' }}>
-          X
-        </span>
-        <UnitInput
-          className={{ half: true }}
-          defaultValue={getPreference('guide_x0')}
-          forceUsePropsUnit
-          getValue={(val) => setPreference('guide_x0', val)}
-          id="guide-x-input"
-          max={workarea.width}
-          min={0}
-          unit={defaultUnit === 'inches' ? 'in' : 'mm'}
-        />
-        <span className="font2" style={{ lineHeight: '32px', marginRight: '10px' }}>
-          Y
-        </span>
-        <UnitInput
-          className={{ half: true }}
-          defaultValue={getPreference('guide_y0')}
-          forceUsePropsUnit
-          getValue={(val) => setPreference('guide_y0', val)}
-          id="guide-y-input"
-          max={workarea.displayHeight ?? workarea.height}
-          min={0}
-          unit={defaultUnit === 'inches' ? 'in' : 'mm'}
-        />
-      </SettingFormItem>
+      <XYItem
+        id="set-guide-axis"
+        label={lang.settings.guides_origin}
+        maxX={workarea.width}
+        maxY={workarea.displayHeight ?? workarea.height}
+        minX={0}
+        minY={0}
+        onChange={(axis, val) => setPreference(`guide_${axis}0`, val)}
+        unitInputProps={unitInputProps}
+        values={[getPreference('guide_x0'), getPreference('guide_y0')]}
+      />
       <SettingSelect
         defaultValue={getPreference('image_downsampling')}
         id="set-bitmap-quality"
@@ -234,6 +218,13 @@ function Editor({ options }: Props): React.JSX.Element {
         onChange={(e) => setPreference('enable-uv-print-file', e)}
         options={options}
         url={lang.settings.help_center_urls.uv_print_export}
+      />
+      <SettingSelect
+        defaultValue={getPreference('print-advanced-mode')}
+        id="print-advanced-mode"
+        label={lang.settings.printer_advanced_mode}
+        onChange={(e) => setPreference('print-advanced-mode', e)}
+        options={options}
       />
     </>
   );

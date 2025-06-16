@@ -6,6 +6,7 @@ import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
 import isDev from '@core/helpers/is-dev';
 
 import SettingSelect from './components/SettingSelect';
+import styles from './Settings.module.scss';
 
 interface Props {
   options: DefaultOptionType[];
@@ -18,7 +19,7 @@ function Experimental({ options }: Props): React.ReactNode {
 
   return (
     <>
-      <div className="subtitle">Experimental Features</div>
+      <div className={styles.subtitle}>Experimental Features</div>
       <SettingSelect
         defaultValue={getPreference('multipass-compensation')}
         id="multipass-compensation"

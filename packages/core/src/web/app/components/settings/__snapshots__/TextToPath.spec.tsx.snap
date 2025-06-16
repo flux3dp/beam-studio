@@ -25,9 +25,9 @@ exports[`should render correctly 1`] = `
     mock-select-control id:
     font-convert
     label:
-    Convert Text to Path
+    Text-to-Path Converter
     url:
-    https://support.flux3dp.com/hc/Convert-Text-to-Path
+    https://support.flux3dp.com/hc/en-us/articles/9132766761743
     options:
     [{"label":"1.0","value":"1.0"},{"label":"2.0","value":"2.0"}]
     <input

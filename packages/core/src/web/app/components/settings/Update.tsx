@@ -7,6 +7,7 @@ import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 
 import SettingSelect from './components/SettingSelect';
+import styles from './Settings.module.scss';
 
 interface Props {
   options: DefaultOptionType[];
@@ -21,7 +22,7 @@ function Update({ options }: Props): null | React.JSX.Element {
 
   return (
     <>
-      <div className="subtitle">{lang.settings.groups.update}</div>
+      <div className={styles.subtitle}>{lang.settings.groups.update}</div>
       <SettingSelect
         defaultValue={getConfig('auto_check_update')}
         id="set-auto-update"

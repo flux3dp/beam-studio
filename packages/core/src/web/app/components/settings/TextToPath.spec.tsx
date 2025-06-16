@@ -3,20 +3,6 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 import { create } from 'zustand';
 
-jest.mock('@core/helpers/useI18n', () => () => ({
-  settings: {
-    font_convert: 'Convert Text to Path',
-    font_substitute: 'Substitute Unsupported Characters',
-    groups: {
-      text_to_path: 'Text',
-    },
-    help_center_urls: {
-      font_convert: 'https://support.flux3dp.com/hc/Convert-Text-to-Path',
-      font_substitute: 'https://support.flux3dp.com/hc/en-us/articles/360004496575',
-    },
-  },
-}));
-
 const mockGetPreference = jest.fn();
 const mockSetPreference = jest.fn();
 

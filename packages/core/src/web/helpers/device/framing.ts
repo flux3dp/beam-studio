@@ -635,7 +635,7 @@ class FramingTaskManager extends EventEmitter {
   private setLowPowerValue = async (settingValue: number) => {
     this.lowPower = 0;
 
-    if (constant.adorModels.includes(this.device.model) && settingValue > 0) {
+    if (this.isAdor && settingValue > 0) {
       if (deviceMaster.currentControlMode !== '') await deviceMaster.endSubTask();
 
       const t = i18n.lang.topbar.alerts;

@@ -40,7 +40,9 @@ const mockWrite = jest.fn();
 
 const mockBeamboxPreferences = {
   'module-offsets': {
-    [LayerModule.PRINTER]: [0, -13.37],
+    ado1: {
+      [LayerModule.PRINTER]: [0, -13.37],
+    },
   },
 };
 
@@ -62,19 +64,6 @@ const mockSetFisheyeConfig = jest.fn();
 
 jest.mock('@core/helpers/camera-calibration-helper', () => ({
   setFisheyeConfig: (...args) => mockSetFisheyeConfig(...args),
-}));
-
-jest.mock('@core/helpers/useI18n', () => () => ({
-  buttons: {
-    back: 'back',
-    done: 'done',
-  },
-  calibration: {
-    retake: 'retake',
-    show_last_config: 'show_last_config',
-    taking_picture: 'taking_picture',
-    use_last_config: 'use_last_config',
-  },
 }));
 
 const mockOpenNonstopProgress = jest.fn();
@@ -133,14 +122,14 @@ describe('test Align', () => {
       expect(baseElement.querySelector('.ant-modal')).not.toHaveClass('ant-zoom-appear');
       expect(baseElement.querySelector('img').src).not.toBe('');
     });
-    expect(mockConnectCamera).toBeCalledTimes(1);
-    expect(mockGetPerspectiveForAlign).toBeCalledTimes(1);
-    expect(mockSetFisheyeMatrix).toBeCalledTimes(1);
-    expect(mockTakeOnePicture).toBeCalledTimes(1);
-    expect(mockCreateObjectURL).toBeCalledTimes(1);
+    expect(mockConnectCamera).toHaveBeenCalledTimes(1);
+    expect(mockGetPerspectiveForAlign).toHaveBeenCalledTimes(1);
+    expect(mockSetFisheyeMatrix).toHaveBeenCalledTimes(1);
+    expect(mockTakeOnePicture).toHaveBeenCalledTimes(1);
+    expect(mockCreateObjectURL).toHaveBeenCalledTimes(1);
     expect(mockCreateObjectURL).toHaveBeenLastCalledWith('blob');
     expect(baseElement).toMatchSnapshot();
-    fireEvent.click(getByText('show_last_config'));
+    fireEvent.click(getByText('Show Last Result'));
     expect(baseElement.querySelector('.last')).toBeInTheDocument();
   });
 
@@ -163,9 +152,9 @@ describe('test Align', () => {
       expect(baseElement.querySelector('img').src).not.toBe('');
     });
 
-    expect(mockOnBack).toBeCalledTimes(0);
-    fireEvent.click(getByText('back'));
-    expect(mockOnBack).toBeCalledTimes(1);
+    expect(mockOnBack).toHaveBeenCalledTimes(0);
+    fireEvent.click(getByText('Back'));
+    expect(mockOnBack).toHaveBeenCalledTimes(1);
   });
 
   test('scroll and next should work when type is Camera', async () => {
@@ -187,12 +176,12 @@ describe('test Align', () => {
       expect(baseElement.querySelector('.ant-modal')).not.toHaveClass('ant-zoom-appear');
       expect(baseElement.querySelector('img').src).not.toBe('');
     });
-    expect(mockOpenNonstopProgress).toBeCalledTimes(2);
+    expect(mockOpenNonstopProgress).toHaveBeenCalledTimes(2);
     expect(mockOpenNonstopProgress).toHaveBeenLastCalledWith({
       id: 'calibration-align',
-      message: 'taking_picture',
+      message: 'Taking Picture...',
     });
-    expect(mockPopById).toBeCalledTimes(2);
+    expect(mockPopById).toHaveBeenCalledTimes(2);
     expect(mockPopById).toHaveBeenLastCalledWith('calibration-align');
 
     const img = baseElement.querySelector('img');
@@ -210,14 +199,14 @@ describe('test Align', () => {
     expect(imgContainer.scrollLeft).toBe(100);
     fireEvent.change(yInput, { target: { value: 200 } });
     expect(imgContainer.scrollTop).toBe(200);
-    fireEvent.click(getByText('use_last_config'));
+    fireEvent.click(getByText('Use Last Calibration Value'));
     expect(imgContainer.scrollLeft).toBe(1200);
     expect(imgContainer.scrollTop).toBe(1000);
     fireEvent.scroll(imgContainer, { target: { scrollLeft: 500, scrollTop: 600 } });
     expect(xInput).toHaveValue(500);
     expect(yInput).toHaveValue(600);
-    fireEvent.click(getByText('done'));
-    expect(mockSetFisheyeConfig).toBeCalledTimes(1);
+    fireEvent.click(getByText('Done'));
+    expect(mockSetFisheyeConfig).toHaveBeenCalledTimes(1);
     expect(mockSetFisheyeConfig).toHaveBeenLastCalledWith({
       ...mockFishEyeParam,
       center: [500, 600],
@@ -243,12 +232,12 @@ describe('test Align', () => {
       expect(baseElement.querySelector('.ant-modal')).not.toHaveClass('ant-zoom-appear');
       expect(baseElement.querySelector('img').src).not.toBe('');
     });
-    expect(mockOpenNonstopProgress).toBeCalledTimes(2);
+    expect(mockOpenNonstopProgress).toHaveBeenCalledTimes(2);
     expect(mockOpenNonstopProgress).toHaveBeenLastCalledWith({
       id: 'calibration-align',
-      message: 'taking_picture',
+      message: 'Taking Picture...',
     });
-    expect(mockPopById).toBeCalledTimes(2);
+    expect(mockPopById).toHaveBeenCalledTimes(2);
     expect(mockPopById).toHaveBeenLastCalledWith('calibration-align');
 
     const img = baseElement.querySelector('img');
@@ -266,16 +255,21 @@ describe('test Align', () => {
     expect(imgContainer.scrollLeft).toBe(1250);
     fireEvent.change(yInput, { target: { value: 10 } });
     expect(imgContainer.scrollTop).toBe(1050);
-    fireEvent.click(getByText('use_last_config'));
+    fireEvent.click(getByText('Use Last Calibration Value'));
     expect(imgContainer.scrollLeft).toBe(1200);
     expect(imgContainer.scrollTop).toBe(1000);
     fireEvent.scroll(imgContainer, { target: { scrollLeft: 1100, scrollTop: 1100 } });
     expect(xInput).toHaveValue(-20);
     expect(yInput).toHaveValue(20);
-    fireEvent.click(getByText('done'));
-    expect(mockWrite).toBeCalledTimes(1);
+    fireEvent.click(getByText('Done'));
+    expect(mockWrite).toHaveBeenCalledTimes(1);
     expect(mockWrite).toHaveBeenLastCalledWith('module-offsets', {
-      [LayerModule.PRINTER]: [moduleOffsets[LayerModule.PRINTER][0] - 20, moduleOffsets[LayerModule.PRINTER][1] + 20],
+      ado1: {
+        [LayerModule.PRINTER]: [
+          moduleOffsets.ado1[LayerModule.PRINTER][0] - 20,
+          moduleOffsets.ado1[LayerModule.PRINTER][1] + 20,
+        ],
+      },
     });
   });
 });

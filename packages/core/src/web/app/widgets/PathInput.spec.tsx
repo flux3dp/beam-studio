@@ -26,8 +26,8 @@ describe('test PathInput', () => {
     const { container } = render(
       <PathInput
         buttonTitle="Choose Folder"
-        className="with-error"
         defaultValue="defaultFolder"
+        error
         forceValidValue={false}
         getValue={mockGetValue}
         type={1}

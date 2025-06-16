@@ -19,7 +19,7 @@ function SettingFormItem({ children, id, label, url, warning }: Props) {
 
     return (
       <Tooltip title={url}>
-        <InfoCircleOutlined onClick={() => browser.open(url)} style={{ fontSize: 16, marginLeft: 4 }} />
+        <InfoCircleOutlined className={styles.icon} onClick={() => browser.open(url)} />
       </Tooltip>
     );
   };
@@ -33,7 +33,7 @@ function SettingFormItem({ children, id, label, url, warning }: Props) {
   };
 
   return (
-    <Form.Item style={{ lineHeight: '32px' }}>
+    <Form.Item className={styles.row}>
       <Flex>
         <Form.Item
           className={styles['form-item']}
