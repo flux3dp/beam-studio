@@ -35,9 +35,9 @@ const AdorModule = ({ unitInputProps }: Props): React.JSX.Element => {
   const getModuleOffset = useCallback(
     (module: LayerModuleType) =>
       getModuleOffsets({
+        isRelative: true,
         module,
         offsets: currentModuleOffsets,
-        useRealValue: false,
         workarea: targetWorkarea,
       }),
     [currentModuleOffsets],
@@ -46,7 +46,7 @@ const AdorModule = ({ unitInputProps }: Props): React.JSX.Element => {
     (module: LayerModuleType, axis: 'x' | 'y', value: number) => {
       const curVal = getModuleOffset(module);
       const newOffsets = updateModuleOffsets(axis === 'x' ? [value, curVal[1]] : [curVal[0], value], {
-        isRealValue: false,
+        isRelative: true,
         module,
         offsets: currentModuleOffsets,
         shouldWrite: false,

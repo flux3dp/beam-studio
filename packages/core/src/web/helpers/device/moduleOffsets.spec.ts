@@ -37,8 +37,8 @@ describe('test moduleOffsets helpers', () => {
     expect(mockRead).toHaveBeenNthCalledWith(2, 'workarea');
   });
 
-  test('getModuleOffsets with useRealValue false', () => {
-    expect(getModuleOffsets({ module: LayerModule.LASER_1064, useRealValue: false })).toEqual([5, -20.95]);
+  test('getModuleOffsets with isRelative true', () => {
+    expect(getModuleOffsets({ isRelative: true, module: LayerModule.LASER_1064 })).toEqual([5, -20.95]);
     expect(mockRead).toHaveBeenCalledTimes(2);
     expect(mockRead).toHaveBeenNthCalledWith(1, 'module-offsets');
     expect(mockRead).toHaveBeenNthCalledWith(2, 'workarea');
@@ -72,11 +72,11 @@ describe('test moduleOffsets helpers', () => {
     expect(mockWrite).not.toHaveBeenCalled();
   });
 
-  test('updateModuleOffsets with isRealValue true', () => {
-    expect(updateModuleOffsets([1.5, 2.5], { isRealValue: true, module: LayerModule.LASER_1064 })).toEqual({
+  test('updateModuleOffsets with isRelative true', () => {
+    expect(updateModuleOffsets([1.5, 2.5], { isRelative: true, module: LayerModule.LASER_1064 })).toEqual({
       ado1: {
         [LayerModule.LASER_10W_DIODE]: [1, 2],
-        [LayerModule.LASER_1064]: [1.5, 2.5],
+        [LayerModule.LASER_1064]: [1.5, 29.45],
       },
       fbm2: {
         [LayerModule.UV_WHITE_INK]: [11, 12],
@@ -130,7 +130,7 @@ describe('test moduleOffsets helpers', () => {
         [LayerModule.LASER_1064]: [5, 6],
       },
       fbm2: {
-        [LayerModule.UV_WHITE_INK]: [0.8, -20.3],
+        [LayerModule.UV_WHITE_INK]: [1.5, 2.5],
       },
     });
     expect(mockRead).toHaveBeenCalledTimes(1);

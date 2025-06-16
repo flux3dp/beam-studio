@@ -137,8 +137,8 @@ const Align = ({ fisheyeParam, onBack, onClose, title, type }: Props): React.JSX
     }
 
     return getModuleOffsets({
+      isRelative: true,
       module: layerModule,
-      useRealValue: false,
       workarea: deviceMaster.currentDevice.info.model,
     });
   }, [type, fisheyeCenter]);
@@ -274,6 +274,7 @@ const Align = ({ fisheyeParam, onBack, onClose, title, type }: Props): React.JSX
       }
 
       updateModuleOffsets([x, y], {
+        isRelative: true,
         module: layerModule,
         shouldWrite: true,
         workarea: deviceMaster.currentDevice.info.model,
