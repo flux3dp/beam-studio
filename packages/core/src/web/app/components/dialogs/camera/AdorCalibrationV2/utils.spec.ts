@@ -128,18 +128,18 @@ describe('test AdorCalibrationV2 utils', () => {
     await saveCheckPoint({
       d: [[1]],
       k: [[1]],
-      rvec: [1],
+      rvec: [[1]],
       rvec_polyfit: [[1]],
-      tvec: [1],
+      tvec: [[1]],
       tvec_polyfit: [[1]],
     });
     expect(mockStringify).toHaveBeenCalledTimes(1);
     expect(mockStringify).toHaveBeenLastCalledWith({
       d: [[1]],
       k: [[1]],
-      rvec: [1],
+      rvec: [[1]],
       rvec_polyfit: [[1]],
-      tvec: [1],
+      tvec: [[1]],
       tvec_polyfit: [[1]],
     });
     expect(mockUploadToDirectory).toHaveBeenCalledTimes(1);

@@ -25,7 +25,7 @@ interface Props {
   initInterestArea?: { height: number; width: number; x: number; y: number };
   onBack: () => void;
   onClose: (complete: boolean) => void;
-  onNext: (rvec: number[], tvec: number[], imgPoints: Array<[number, number]>) => void;
+  onNext: (rvec: number[][], tvec: number[][], imgPoints: Array<[number, number]>) => void;
   params: FisheyeCaliParameters;
   percent?: number;
   refPoints?: Array<[number, number]>;

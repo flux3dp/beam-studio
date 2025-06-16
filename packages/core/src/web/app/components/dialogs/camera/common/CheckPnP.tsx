@@ -24,8 +24,8 @@ interface Props {
   onClose: (complete?: boolean) => void;
   onNext: () => void;
   params: { d: number[][]; k: number[][] } & (
-    | { rvec: number[]; tvec: number[] }
-    | { rvecs: Record<string, number[]>; tvecs: Record<string, number[]> }
+    | { rvec: number[][]; tvec: number[][] }
+    | { rvecs: Record<string, number[][]>; tvecs: Record<string, number[][]> }
   );
   points?: Array<[number, number]>;
   title?: string;
