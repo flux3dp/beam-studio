@@ -36,6 +36,7 @@ const { dpmm } = constant;
 
 export interface WorkArea {
   autoFocusOffset?: number[]; // [mm, mm]
+  autoShrink?: number;
   cameraCenter?: number[]; // [mm, mm]
   curveSpeedLimit?: number; // mm/s
   deep?: number; // mm
@@ -73,6 +74,7 @@ const hexaRfWorkAreaInfo: WorkArea = {
 export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
   ado1: {
     autoFocusOffset: [20.9, -40.38, 7.5],
+    autoShrink: 0.02,
     cameraCenter: [215, 150],
     deep: 40.5,
     displayHeight: 320,
@@ -95,6 +97,7 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     width: 430,
   },
   fbb1b: {
+    autoShrink: 0.05,
     height: 375,
     label: 'Beambox',
     maxSpeed: 300,
@@ -107,6 +110,7 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     width: 400,
   },
   fbb1p: {
+    autoShrink: 0.05,
     height: 375,
     label: 'Beambox Pro',
     maxSpeed: 300,
@@ -132,6 +136,7 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     width: 600,
   },
   fbm1: {
+    autoShrink: 0.05,
     height: 210,
     label: 'beamo',
     maxSpeed: 300,
@@ -164,6 +169,7 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
   },
   fhexa1: {
     autoFocusOffset: [31.13, 1.2, 6.5],
+    autoShrink: 0.05,
     height: 410,
     label: 'HEXA',
     maxSpeed: 900,

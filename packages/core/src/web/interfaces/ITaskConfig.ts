@@ -60,6 +60,10 @@ export type TFcodeOptionalConfig = Partial<{
    * diode one way engraving
    */
   diode_owe: boolean;
+  /**
+   * erode engraving, in mm
+   */
+  engraving_erode?: number;
   fg: boolean;
   gc: boolean; // output gcode
   job_origin: [number, number];
