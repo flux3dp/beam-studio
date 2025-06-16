@@ -74,7 +74,7 @@ const hexaRfWorkAreaInfo: WorkArea = {
 export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
   ado1: {
     autoFocusOffset: [20.9, -40.38, 7.5],
-    autoShrink: 0.02,
+    autoShrink: 0.05,
     cameraCenter: [215, 150],
     deep: 40.5,
     displayHeight: 320,
@@ -124,6 +124,7 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
   },
   fbb2: {
     autoFocusOffset: [28, 0, 0],
+    autoShrink: 0.05,
     cameraCenter: [300, 150],
     curveSpeedLimit: 50,
     height: 375,
