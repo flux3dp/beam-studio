@@ -1352,7 +1352,9 @@ const svgEditor = (window['svgEditor'] = (function () {
     let triggerOffsetTool = function () {
       if (selectedElement.tagName === 'g' && selectedElement.getAttribute('data-tempgroup') === 'true') {
         const childs: HTMLElement[] = Array.from(selectedElement.childNodes);
-        const supportOffset = true;
+        const supportOffset = childs.every((child) => {
+          return !['image', 'use'].includes(child.tagName);
+        });
 
         if (!supportOffset) {
           Alert.popUp({
