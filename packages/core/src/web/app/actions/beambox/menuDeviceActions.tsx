@@ -20,7 +20,7 @@ import { showPromarkSettings } from '@core/app/components/dialogs/promark/Promar
 import { showZAxisAdjustment } from '@core/app/components/dialogs/promark/ZAxisAdjustment';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { InkDetectionStatus } from '@core/app/constants/layer-module/ink-cartridge';
-import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
+import type { DetectedLayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { Mode } from '@core/app/constants/monitor-constants';
 import { showCameraCalibration } from '@core/app/views/beambox/Camera-Calibration';
@@ -32,7 +32,7 @@ import { checkBlockedSerial } from '@core/helpers/device/checkBlockedSerial';
 import DeviceMaster from '@core/helpers/device-master';
 import firmwareUpdater from '@core/helpers/firmware-updater';
 import i18n from '@core/helpers/i18n';
-import { getModulesTranslations } from '@core/helpers/layer-module/layer-module-helper';
+import { getDetectedModulesTranslations } from '@core/helpers/layer-module/layer-module-helper';
 import { extractVariableText } from '@core/helpers/variableText';
 import VersionChecker from '@core/helpers/version-checker';
 import dialog from '@core/implementations/dialog';
@@ -344,7 +344,13 @@ export default {
 
     try {
       const deviceDetailInfo = await DeviceMaster.getDeviceDetailInfo();
-      const headSubmoduleInfo = JSON.parse(deviceDetailInfo.head_submodule_info);
+      const headSubmoduleInfo = JSON.parse(deviceDetailInfo.head_submodule_info) as {
+        color: string;
+        ink_level: number;
+        serial_number: string;
+        state: InkDetectionStatus;
+        type: string;
+      };
 
       inkLevel = headSubmoduleInfo.ink_level;
     } catch {
@@ -454,13 +460,25 @@ export default {
         await DeviceMaster.select(device);
 
         const deviceDetailInfo = await DeviceMaster.getDeviceDetailInfo();
-        const headType = Number.parseInt(deviceDetailInfo.head_type, 10) as LayerModuleType;
+        const headType = Number.parseInt(deviceDetailInfo.head_type, 10) as DetectedLayerModuleType;
         const headSubmoduleInfo = JSON.parse(deviceDetailInfo.head_submodule_info);
 
         console.log(headSubmoduleInfo);
 
-        const moduleName = getModulesTranslations()[headType] || lang.layer_module.unknown;
-        const { color, ink_level: inkLevel, serial_number: serialNumber, state, type } = headSubmoduleInfo;
+        const moduleName = getDetectedModulesTranslations()[headType] || lang.layer_module.unknown;
+        const {
+          color,
+          ink_level: inkLevel,
+          serial_number: serialNumber,
+          state,
+          type,
+        } = headSubmoduleInfo as {
+          color: string;
+          ink_level: number;
+          serial_number: string;
+          state: InkDetectionStatus;
+          type: string;
+        };
 
         subModuleInfo = (
           <div>
