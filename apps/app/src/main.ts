@@ -72,7 +72,8 @@ const setReferer = () => {
 
     if (referer) header['Referer'] = referer[0];
 
-    callback({ requestHeaders: header });
+    // Send new object to make sure header is updated
+    callback({ requestHeaders: { ...header } });
   });
 };
 
