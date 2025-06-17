@@ -39,13 +39,20 @@ class FisheyePreviewManagerV4 extends FisheyePreviewManagerBase implements Fishe
 
     await rawAndHome(progressId || this.progressId);
 
-    if (cameraPosition) await deviceMaster.rawMove({ f: 7500, x: cameraPosition[0], y: cameraPosition[1] });
+    if (cameraPosition) {
+      await deviceMaster.rawMove({ f: 7500, x: cameraPosition[0], y: cameraPosition[1] });
+
+      const dist = (cameraPosition[0] ** 2 + cameraPosition[1] ** 2) ** 0.5;
+      const time = (dist / (7500 / 60)) * 1.2; // safety margin of 20%
+
+      await new Promise((resolve) => setTimeout(resolve, time * 1000));
+    }
 
     if (height === undefined) {
       progressCaller.update(progressId || this.progressId, { message: 'Getting focal distance...' });
 
-      const height = await getFocalDistance();
-
+      this.objectHeight = await getFocalDistance();
+    } else {
       this.objectHeight = height;
     }
 
