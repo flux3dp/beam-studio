@@ -152,7 +152,7 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
   },
   fbm2: {
     autoShrink: 0.05, // TODO: use same value as other machines, may need to adjust
-    cameraCenter: [180, 70],
+    cameraCenter: [180, 3],
     height: 240,
     label: 'beamo II',
     maxSpeed: 750,
