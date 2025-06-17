@@ -211,22 +211,22 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
         }
       >(step)
         .with(Steps.SOLVE_PNP_TL, () => ({
-          interestArea: { height: 1300, width: 2300, x: 500, y: 900 },
+          interestArea: { height: 1200, width: 1900, x: 900, y: 1200 },
           percent: 25,
           region: 'topLeft',
         }))
         .with(Steps.SOLVE_PNP_TR, () => ({
-          interestArea: { height: 1300, width: 2300, x: 2800, y: 900 },
+          interestArea: { height: 1200, width: 1900, x: 2800, y: 1200 },
           percent: 50,
           region: 'topRight',
         }))
         .with(Steps.SOLVE_PNP_BL, () => ({
-          interestArea: { height: 800, width: 1600, x: 1200, y: 2200 },
+          interestArea: { height: 1000, width: 1500, x: 1300, y: 2300 },
           percent: 75,
           region: 'bottomLeft',
         }))
         .otherwise(() => ({
-          interestArea: { height: 800, width: 1600, x: 2800, y: 2200 },
+          interestArea: { height: 1000, width: 1500, x: 2800, y: 2300 },
           percent: 100,
           region: 'bottomRight',
         }));
