@@ -59,6 +59,7 @@ export interface WorkArea {
 
 const hexaRfWorkAreaInfo: WorkArea = {
   autoFocusOffset: [31.13, 1.2, 6.5],
+  autoShrink: 0.05, // TODO: use same value as other machines, may need to adjust
   height: 410,
   label: 'HEXA RF',
   maxSpeed: 2000,
@@ -150,6 +151,7 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     width: 300,
   },
   fbm2: {
+    autoShrink: 0.05, // TODO: use same value as other machines, may need to adjust
     cameraCenter: [180, 70],
     height: 240,
     label: 'beamo II',

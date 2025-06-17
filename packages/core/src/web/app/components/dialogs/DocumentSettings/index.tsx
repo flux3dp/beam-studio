@@ -139,6 +139,9 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
       setPassThrough(false);
     }
   }, [autoFeeder]);
+  useEffect(() => {
+    if (engraveDpi === 'low') setAutoShrink(false);
+  }, [engraveDpi]);
 
   // for openBottom machine, path-through and autofeed require open-bottom mode
   const { showAutoFeeder, showPassThrough } = useMemo(() => {
