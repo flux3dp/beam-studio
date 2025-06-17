@@ -1,7 +1,12 @@
-import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
+import { DetectedLayerModule, LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import lang from '@core/app/lang/en';
 
-import { getDefaultLaserModule, getModulesTranslations, getPrintingModule } from './layer-module-helper';
+import {
+  getDefaultLaserModule,
+  getDetectedModulesTranslations,
+  getModulesTranslations,
+  getPrintingModule,
+} from './layer-module-helper';
 
 const mockRead = jest.fn();
 
@@ -71,13 +76,26 @@ describe('test layer-module-helper', () => {
       [LayerModule.LASER_20W_DIODE]: lang.layer_module.laser_20w_diode,
       [LayerModule.LASER_1064]: lang.layer_module.laser_2w_infrared,
       [LayerModule.LASER_UNIVERSAL]: lang.layer_module.general_laser,
-      [LayerModule.NONE]: lang.layer_module.none,
       [LayerModule.PRINTER]: lang.layer_module.printing,
       [LayerModule.PRINTER_4C]: `${lang.layer_module.printing} (4C)`,
-      [LayerModule.UNKNOWN]: lang.layer_module.unknown,
       [LayerModule.UV_PRINT]: lang.layer_module.uv_print,
       [LayerModule.UV_VARNISH]: lang.layer_module.uv_varnish,
       [LayerModule.UV_WHITE_INK]: lang.layer_module.uv_white_ink,
+    });
+  });
+
+  test('getDetectedModulesTranslations', () => {
+    expect(getDetectedModulesTranslations()).toEqual({
+      [DetectedLayerModule.LASER_10W_DIODE]: lang.layer_module.laser_10w_diode,
+      [DetectedLayerModule.LASER_20W_DIODE]: lang.layer_module.laser_20w_diode,
+      [DetectedLayerModule.LASER_1064]: lang.layer_module.laser_2w_infrared,
+      [DetectedLayerModule.NONE]: lang.layer_module.none,
+      [DetectedLayerModule.PRINTER]: lang.layer_module.printing,
+      [DetectedLayerModule.PRINTER_4C]: `${lang.layer_module.printing} (4C)`,
+      [DetectedLayerModule.PRINTER_4C_WITH_1064]: `${lang.layer_module.printing} (4C + 1064)`,
+      [DetectedLayerModule.PRINTER_4C_WITH_UV]: `${lang.layer_module.printing} (4C + UV)`,
+      [DetectedLayerModule.PRINTER_4C_WITH_UV_1064]: `${lang.layer_module.printing} (4C + UV + 1064)`,
+      [DetectedLayerModule.UNKNOWN]: lang.layer_module.unknown,
     });
   });
 });

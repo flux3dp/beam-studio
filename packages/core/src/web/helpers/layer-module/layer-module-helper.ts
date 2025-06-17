@@ -1,7 +1,7 @@
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { adorModels } from '@core/app/actions/beambox/constant';
-import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
-import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
+import type { DetectedLayerModuleType, LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
+import { DetectedLayerModule, LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { getSupportedModules } from '@core/app/constants/workarea-constants';
 import i18n from '@core/helpers/i18n';
 
@@ -38,12 +38,27 @@ export const getModulesTranslations = (): Record<LayerModuleType, string> => {
     [LayerModule.LASER_20W_DIODE]: t.laser_20w_diode,
     [LayerModule.LASER_1064]: t.laser_2w_infrared,
     [LayerModule.LASER_UNIVERSAL]: t.general_laser,
-    [LayerModule.NONE]: t.none,
     [LayerModule.PRINTER]: t.printing,
     [LayerModule.PRINTER_4C]: `${t.printing} (4C)`,
-    [LayerModule.UNKNOWN]: t.unknown,
     [LayerModule.UV_PRINT]: t.uv_print,
     [LayerModule.UV_VARNISH]: t.uv_varnish,
     [LayerModule.UV_WHITE_INK]: t.uv_white_ink,
+  };
+};
+
+export const getDetectedModulesTranslations = (): Record<DetectedLayerModuleType, string> => {
+  const t = i18n.lang.layer_module;
+
+  return {
+    [DetectedLayerModule.LASER_10W_DIODE]: t.laser_10w_diode,
+    [DetectedLayerModule.LASER_20W_DIODE]: t.laser_20w_diode,
+    [DetectedLayerModule.LASER_1064]: t.laser_2w_infrared,
+    [DetectedLayerModule.NONE]: t.none,
+    [DetectedLayerModule.PRINTER]: t.printing,
+    [DetectedLayerModule.PRINTER_4C]: `${t.printing} (4C)`,
+    [DetectedLayerModule.PRINTER_4C_WITH_1064]: `${t.printing} (4C + 1064)`,
+    [DetectedLayerModule.PRINTER_4C_WITH_UV]: `${t.printing} (4C + UV)`,
+    [DetectedLayerModule.PRINTER_4C_WITH_UV_1064]: `${t.printing} (4C + UV + 1064)`,
+    [DetectedLayerModule.UNKNOWN]: t.unknown,
   };
 };
