@@ -13,19 +13,27 @@ getSVGAsync(({ Canvas }) => {
 });
 
 interface ValidationResult {
-  command?: IBatchCommand;
   elementsToOffset?: SVGElement[];
   errorType?: 'multiple_elements_not_supported' | 'no_elements';
   isValid: boolean;
 }
 
-async function matchElementType(element: SVGElement, elementsToOffset: SVGElement[], groups: SVGElement[]) {
+async function matchElementType(
+  element: SVGElement,
+  command: IBatchCommand,
+  elementsToOffset: SVGElement[],
+  groups: SVGElement[],
+) {
   await match(element)
-    .with({ children: P.array(), tagName: 'g' }, (elem) => {
+    .with({ children: { length: P.not(0) }, tagName: 'g' }, (elem) => {
       groups.push(elem);
     })
     .with({ tagName: 'text' }, async (element) => {
-      const { path } = await convertTextToPath({ element });
+      const { command: subCommand, path } = await convertTextToPath({ element });
+
+      if (subCommand) {
+        command.addSubCommand(subCommand);
+      }
 
       elementsToOffset.push(path as SVGElement);
     })
@@ -37,7 +45,6 @@ async function matchElementType(element: SVGElement, elementsToOffset: SVGElemen
 export async function validateAndPrepareOffsetData(currentElems: SVGElement[] | undefined): Promise<ValidationResult> {
   const originalElements = currentElems || svgCanvas.getSelectedElems(true);
   let command: IBatchCommand | undefined = new BatchCommand('validateAndPrepareOffsetData');
-  let isUseCommand = false;
 
   if (originalElements.length === 0) {
     console.log('No elements selected or provided for offset.');
@@ -48,8 +55,23 @@ export async function validateAndPrepareOffsetData(currentElems: SVGElement[] | 
   const elementsToOffset: SVGElement[] = [];
   const groups: SVGElement[] = [];
 
-  for await (const elem of originalElements) {
-    await matchElementType(elem, elementsToOffset, groups);
+  for await (const element of originalElements) {
+    await match(element)
+      .with({ children: { length: P.not(0) }, tagName: 'g' }, (elem) => {
+        groups.push(elem);
+      })
+      .with({ tagName: 'text' }, async (element) => {
+        const { command: subCommand, path } = await convertTextToPath({ element });
+
+        if (subCommand) {
+          command.addSubCommand(subCommand);
+        }
+
+        elementsToOffset.push(path!);
+      })
+      .otherwise(() => {
+        elementsToOffset.push(element);
+      });
   }
 
   while (groups.length) {
@@ -57,8 +79,29 @@ export async function validateAndPrepareOffsetData(currentElems: SVGElement[] | 
 
     if (!group) continue;
 
-    await matchElementType(group, elementsToOffset, groups);
+    for await (const element of group.children) {
+      await match(element as SVGElement)
+        .with({ tagName: 'g' }, (element) => {
+          groups.push(element);
+        })
+        .with({ tagName: 'text' }, async (element) => {
+          const { command: subCommand, path } = await convertTextToPath({ element });
+
+          if (subCommand) {
+            command.addSubCommand(subCommand);
+          }
+
+          elementsToOffset.push(path!);
+        })
+        .otherwise((element) => {
+          elementsToOffset.push(element);
+        });
+    }
   }
 
-  return { command: isUseCommand ? command : undefined, elementsToOffset, isValid: true };
+  if (command) {
+    command.doUnapply();
+  }
+
+  return { elementsToOffset, isValid: true };
 }

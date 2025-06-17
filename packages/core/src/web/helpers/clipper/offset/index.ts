@@ -40,10 +40,6 @@ const offsetElements = async (
     return;
   }
 
-  if (validation.command) {
-    validation.command.doUnapply();
-  }
-
   createAndApplyOffsetElement(offsetResult.solutionPaths);
 
   // Pop progress after all operations are done or if an error occurred and handled

@@ -47,14 +47,10 @@ export const convertTextToPath = async ({
   weldingTexts?: boolean;
 }): Promise<ConvertToPathResult> => {
   const isSubCommand = parentCommand !== undefined;
-  const isTextPath = element.getAttribute('data-textpath-g');
-  const textElem = isTextPath ? element.querySelector('text') : element;
 
   if (textActions.isEditing) textActions.toSelectMode();
 
-  svgCanvas.clearSelection();
-
-  const { command, path } = await fontFuncs.convertTextToPath(textElem!, { isSubCommand, weldingTexts });
+  const { command, path } = await fontFuncs.convertTextToPath(element, { isSubCommand, weldingTexts });
 
   if (path && isToSelect) {
     svgCanvas.selectOnly([path]);
