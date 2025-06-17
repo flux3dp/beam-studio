@@ -95,6 +95,8 @@ const lang: ILang = {
       auto_feeder: 'Bộ nạp tự động',
       auto_feeder_scale: 'Tỷ lệ Bộ nạp Tự động',
       auto_feeder_url: 'https://support.flux3dp.com/hc/en-us/articles/11688230498575',
+      auto_shrink: 'Thu nhỏ tự động',
+      auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',
       borderless_mode: 'Mở đáy',
       current_position: 'Vị Trí Hiện Tại',
       disable: 'Tắt',

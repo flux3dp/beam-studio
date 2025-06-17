@@ -38,6 +38,7 @@ jest.mock('@core/app/constants/alert-constants', () => ({
 const mockBeamboxPreferences = {
   'auto-feeder': false,
   'auto-feeder-scale': 1,
+  auto_shrink: false,
   borderless: false,
   'customized-dimension': { fpm1: { height: 150, width: 150 } },
   'enable-autofocus': false,
@@ -156,6 +157,7 @@ describe('test DocumentSettings', () => {
     act(() => {
       fireEvent.click(baseElement.querySelectorAll('.ant-slide-up-appear .ant-select-item-option-content')[1]);
     });
+    fireEvent.click(baseElement.querySelector('button#autoShrink'));
     expect(baseElement).toMatchSnapshot();
 
     expect(mockBeamboxPreferenceWrite).not.toHaveBeenCalled();
@@ -177,7 +179,7 @@ describe('test DocumentSettings', () => {
 
     onConfirm();
     await new Promise((resolve) => setTimeout(resolve, 0));
-    expect(mockBeamboxPreferenceWrite).toHaveBeenCalledTimes(12);
+    expect(mockBeamboxPreferenceWrite).toHaveBeenCalledTimes(13);
     expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(1, 'engrave_dpi', 'high');
     expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(2, 'borderless', true);
     expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(3, 'enable-diode', true);
@@ -190,6 +192,7 @@ describe('test DocumentSettings', () => {
     expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(10, 'auto-feeder-scale', 1);
     expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(11, 'enable-job-origin', true);
     expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(12, 'job-origin', 1);
+    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(13, 'auto_shrink', true);
     expect(mockChangeWorkarea).toHaveBeenCalledTimes(1);
     expect(mockChangeWorkarea).toHaveBeenLastCalledWith('fbm1', { toggleModule: true });
     expect(mockToggleDisplay).toHaveBeenCalledTimes(1);
@@ -229,7 +232,7 @@ describe('test DocumentSettings', () => {
 
     expect(baseElement).toMatchSnapshot();
     fireEvent.click(getByText('Save'));
-    expect(mockBeamboxPreferenceWrite).toHaveBeenCalledTimes(13);
+    expect(mockBeamboxPreferenceWrite).toHaveBeenCalledTimes(14);
     expect(mockBeamboxPreferenceWrite).toHaveBeenCalledWith('customized-dimension', {
       fpm1: { height: 110, width: 110 },
     });

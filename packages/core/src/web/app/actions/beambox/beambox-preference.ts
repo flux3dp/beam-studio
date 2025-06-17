@@ -19,6 +19,7 @@ export type BeamboxPreference = {
   'auto-feeder-scale': number;
   'auto-switch-tab': boolean;
   auto_align: boolean;
+  auto_shrink: boolean;
   blade_precut: boolean;
   blade_radius: number;
   borderless: boolean;
@@ -101,6 +102,7 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   'auto-feeder-scale': 1,
   'auto-switch-tab': false,
   auto_align: true,
+  auto_shrink: false,
   blade_precut: false,
   blade_radius: 0,
   borderless: false,

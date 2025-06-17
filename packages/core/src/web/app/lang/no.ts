@@ -95,6 +95,8 @@ const lang: ILang = {
       auto_feeder: 'Automatisk mater',
       auto_feeder_scale: 'Skala for automatisk mater',
       auto_feeder_url: 'https://support.flux3dp.com/hc/en-us/articles/11688230498575',
+      auto_shrink: 'Automatisk krymping',
+      auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',
       borderless_mode: 'Åpen bunn',
       current_position: 'Gjeldende Posisjon',
       disable: 'Deaktiver',

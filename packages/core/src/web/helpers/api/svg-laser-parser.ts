@@ -338,6 +338,18 @@ export const getExportOpt = (
     config.segment = false;
   }
 
+  if (BeamboxPreference.read('auto_shrink')) {
+    let value = workareaObj.autoShrink;
+
+    if (isDevMode) {
+      const storageValue = localStorage.getItem('auto_shrink');
+
+      if (storageValue) value = Number(storageValue);
+    }
+
+    if (value && value > 0) config.engraving_erode = value;
+  }
+
   if (args) {
     (Object.keys(config) as Array<keyof IFcodeConfig>).forEach((key) => {
       if (['curve_engraving', 'loop_compensation', 'z_offset'].includes(key)) {

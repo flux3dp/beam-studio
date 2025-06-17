@@ -61,6 +61,7 @@ test('test beambox-preference', () => {
     'auto-feeder-scale': 1,
     'auto-switch-tab': false,
     auto_align: true,
+    auto_shrink: false,
     blade_precut: false,
     blade_radius: 0,
     borderless: false,
