@@ -5,7 +5,10 @@ import { getWorkarea } from '@core/app/constants/workarea-constants';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 
-const moveLaserHead = async (position?: [number, number]): Promise<boolean> => {
+const moveLaserHead = async (
+  position?: [number, number],
+  { zMove }: { zMove?: { ref?: 'cur' | 'home'; val: number } } = {},
+): Promise<boolean> => {
   let isLineCheckMode = false;
   const lang = i18n.lang.calibration;
 
@@ -29,6 +32,14 @@ const moveLaserHead = async (position?: [number, number]): Promise<boolean> => {
     }
 
     await deviceMaster.rawMove({ f: 7500, x: position[0], y: position[1] });
+
+    if (zMove) {
+      const { ref = 'cur', val } = zMove;
+
+      if (ref === 'home') await deviceMaster.rawMoveZRelToLastHome(val);
+      else if (val !== 0) await deviceMaster.rawMoveZRel(val);
+    }
+
     await deviceMaster.rawEndLineCheckMode();
     isLineCheckMode = false;
     await deviceMaster.rawLooseMotor();

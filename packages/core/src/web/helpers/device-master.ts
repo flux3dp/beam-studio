@@ -924,6 +924,10 @@ class DeviceMaster {
     await this.doCalibration(fileName);
   }
 
+  async doBeamo2Calibration() {
+    await this.doCalibration('fcode/bm2-calibration.fc');
+  }
+
   async doPromarkCalibration() {
     await this.doCalibration();
   }
