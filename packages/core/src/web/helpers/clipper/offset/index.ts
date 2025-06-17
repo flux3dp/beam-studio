@@ -16,7 +16,7 @@ const offsetElements = async (
   progressCaller.openNonstopProgress({ id: 'offset-path', message: i18n.lang.beambox.popup.progress.calculating });
   await new Promise((resolve) => setTimeout(resolve, 50)); // Brief pause for UI
 
-  const validation = validateAndPrepareOffsetData(elems);
+  const validation = await validateAndPrepareOffsetData(elems);
 
   if (!validation.isValid || !validation.elementsToOffset) {
     progressCaller.popById('offset-path');
@@ -38,6 +38,10 @@ const offsetElements = async (
     progressCaller.popById('offset-path');
 
     return;
+  }
+
+  if (validation.command) {
+    validation.command.doUnapply();
   }
 
   createAndApplyOffsetElement(offsetResult.solutionPaths);

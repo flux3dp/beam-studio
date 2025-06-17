@@ -1352,9 +1352,7 @@ const svgEditor = (window['svgEditor'] = (function () {
     let triggerOffsetTool = function () {
       if (selectedElement.tagName === 'g' && selectedElement.getAttribute('data-tempgroup') === 'true') {
         const childs: HTMLElement[] = Array.from(selectedElement.childNodes);
-        const supportOffset = childs.every((child) => {
-          return !['g', 'image', 'text', 'use'].includes(child.tagName);
-        });
+        const supportOffset = true;
 
         if (!supportOffset) {
           Alert.popUp({
@@ -1895,11 +1893,11 @@ const svgEditor = (window['svgEditor'] = (function () {
             return 'js';
           }
 
-          if (file.name.toLowerCase().endsWith('.pdf') || (path?.toLowerCase().endsWith('.pdf'))) {
+          if (file.name.toLowerCase().endsWith('.pdf') || path?.toLowerCase().endsWith('.pdf')) {
             return 'pdf';
           }
 
-          if (file.name.toLowerCase().endsWith('.ai') || (path?.toLowerCase().endsWith('.ai'))) {
+          if (file.name.toLowerCase().endsWith('.ai') || path?.toLowerCase().endsWith('.ai')) {
             return 'ai';
           }
 

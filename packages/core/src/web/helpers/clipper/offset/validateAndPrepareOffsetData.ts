@@ -1,4 +1,9 @@
+import { match, P } from 'ts-pattern';
+
+import { BatchCommand } from '@core/app/svgedit/history/history';
+import { convertTextToPath } from '@core/helpers/convertToPath';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 let svgCanvas: ISVGCanvas;
@@ -8,13 +13,31 @@ getSVGAsync(({ Canvas }) => {
 });
 
 interface ValidationResult {
+  command?: IBatchCommand;
   elementsToOffset?: SVGElement[];
   errorType?: 'multiple_elements_not_supported' | 'no_elements';
   isValid: boolean;
 }
 
-export function validateAndPrepareOffsetData(currentElems: SVGElement[] | undefined): ValidationResult {
+async function matchElementType(element: SVGElement, elementsToOffset: SVGElement[], groups: SVGElement[]) {
+  await match(element)
+    .with({ children: P.array(), tagName: 'g' }, (elem) => {
+      groups.push(elem);
+    })
+    .with({ tagName: 'text' }, async (element) => {
+      const { path } = await convertTextToPath({ element });
+
+      elementsToOffset.push(path as SVGElement);
+    })
+    .otherwise(() => {
+      elementsToOffset.push(element);
+    });
+}
+
+export async function validateAndPrepareOffsetData(currentElems: SVGElement[] | undefined): Promise<ValidationResult> {
   const originalElements = currentElems || svgCanvas.getSelectedElems(true);
+  let command: IBatchCommand | undefined = new BatchCommand('validateAndPrepareOffsetData');
+  let isUseCommand = false;
 
   if (originalElements.length === 0) {
     console.log('No elements selected or provided for offset.');
@@ -25,12 +48,8 @@ export function validateAndPrepareOffsetData(currentElems: SVGElement[] | undefi
   const elementsToOffset: SVGElement[] = [];
   const groups: SVGElement[] = [];
 
-  for (const elem of originalElements) {
-    if (elem.tagName === 'g' && elem.children.length > 0) {
-      groups.push(elem);
-    } else {
-      elementsToOffset.push(elem);
-    }
+  for await (const elem of originalElements) {
+    await matchElementType(elem, elementsToOffset, groups);
   }
 
   while (groups.length) {
@@ -38,14 +57,8 @@ export function validateAndPrepareOffsetData(currentElems: SVGElement[] | undefi
 
     if (!group) continue;
 
-    for (const child of group.children) {
-      if (child.tagName !== 'g' && child.tagName !== 'use') {
-        elementsToOffset.push(child as SVGElement);
-      } else if (child.tagName === 'g' && child.children.length > 1) {
-        groups.push(child as SVGElement);
-      }
-    }
+    await matchElementType(group, elementsToOffset, groups);
   }
 
-  return { elementsToOffset, isValid: true };
+  return { command: isUseCommand ? command : undefined, elementsToOffset, isValid: true };
 }

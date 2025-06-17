@@ -4,7 +4,6 @@ import { Button, ConfigProvider, Tooltip } from 'antd';
 import classNames from 'classnames';
 import { match, P } from 'ts-pattern';
 
-import FontFuncs from '@core/app/actions/beambox/font-funcs';
 import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
 import textPathEdit from '@core/app/actions/beambox/textPathEdit';
 import Dialog from '@core/app/actions/dialog-caller';
@@ -12,14 +11,13 @@ import { textButtonTheme } from '@core/app/constants/antd-config';
 import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
 import { BatchCommand } from '@core/app/svgedit/history/history';
 import autoFit from '@core/app/svgedit/operations/autoFit';
-import { deleteElements } from '@core/app/svgedit/operations/delete';
 import disassembleUse from '@core/app/svgedit/operations/disassembleUse';
-import textActions from '@core/app/svgedit/text/textactions';
 import textEdit from '@core/app/svgedit/text/textedit';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import { showRotaryWarped } from '@core/app/views/dialogs/image-edit/RotaryWarped';
 import updateElementColor from '@core/helpers/color/updateElementColor';
+import { convertSvgToPath, convertTextToPath, convertUseToPath } from '@core/helpers/convertToPath';
 import imageEdit from '@core/helpers/image-edit';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { isMobile } from '@core/helpers/system-helper';
@@ -59,10 +57,6 @@ interface TabButtonOptions extends ButtonOpts {
   convertToPath: () => Promise<ConvertPathResult>;
 }
 
-interface OffsetButtonOptions extends ButtonOpts {
-  convertToPath?: () => Promise<ConvertPathResult>;
-}
-
 type ConvertPathResult = {
   bbox: DOMRect;
   command?: IBatchCommand;
@@ -87,64 +81,6 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     const fileBlob = await dialog.getFileFromDialog(option);
 
     if (fileBlob) svgEditor.replaceBitmap(fileBlob, elem);
-  };
-
-  const convertSvgToPath = async (
-    element: SVGElement = elem,
-    command: IBatchCommand = new BatchCommand('convertSvgToPath'),
-  ): Promise<ConvertPathResult> => {
-    const { cmd, path } = svgCanvas.convertToPath(element, true);
-
-    svgCanvas.selectOnly([path]);
-    command.addSubCommand(cmd);
-
-    return { bbox: path.getBBox(), command };
-  };
-
-  const convertTextToPath = async ({ isSubCommand = false, weldingTexts = false }): Promise<ConvertPathResult> => {
-    const isTextPath = elem.getAttribute('data-textpath-g');
-    const textElem = isTextPath ? elem.querySelector('text') : elem;
-
-    if (textActions.isEditing) textActions.toSelectMode();
-
-    svgCanvas.clearSelection();
-
-    const { command, path } = await FontFuncs.convertTextToPath(textElem!, { isSubCommand, weldingTexts });
-
-    if (path) svgCanvas.selectOnly([path]);
-
-    return { bbox: path?.getBBox()!, command: command ?? undefined };
-  };
-
-  const convertUseToPath = async (): Promise<ConvertPathResult> => {
-    const command = (await disassembleUse([elem], {
-      addToHistory: false,
-      showProgress: false,
-      skipConfirm: true,
-    })) as BatchCommand;
-
-    const group = svgCanvas.getSelectedElems()[0];
-
-    if (!(group instanceof SVGGElement)) return convertSvgToPath(group, command);
-
-    const head = group.childNodes[0] as SVGPathElement;
-    const pathData = Array.of<string>();
-    const toRemove = Array.of<SVGElement>();
-
-    group.childNodes.forEach((child, index) => {
-      pathData.push((child as SVGPathElement).getAttribute('d')!);
-
-      if (index !== 0) toRemove.push(child as SVGElement);
-    });
-
-    command.addSubCommand(deleteElements(toRemove, true));
-
-    head.setAttribute('d', pathData.join(' '));
-    head.removeAttribute('data-next-sibling');
-
-    svgCanvas.selectOnly([head]);
-
-    return { bbox: head.getBBox(), command };
   };
 
   const renderButtons = useCallback(
@@ -198,25 +134,11 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       { autoClose: false, ...opts },
     );
 
-  const renderOffsetButton = (opts: OffsetButtonOptions = {}): React.JSX.Element =>
+  const renderOffsetButton = (opts: ButtonOpts = {}): React.JSX.Element =>
     renderButtons(
       'offset',
       lang.offset,
-      async () => {
-        let convertCommand: IBatchCommand | undefined;
-
-        if (opts.convertToPath) {
-          const { command } = await opts.convertToPath();
-
-          convertCommand = command;
-        }
-
-        svgEditor.triggerOffsetTool();
-
-        if (convertCommand) {
-          convertCommand.doUnapply();
-        }
-      },
+      () => svgEditor.triggerOffsetTool(),
       <ActionPanelIcons.Offset />,
       <ActionPanelIcons.Offset />,
       { autoClose: false, ...opts },
@@ -226,7 +148,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     renderButtons(
       'convert_to_path',
       lang.convert_to_path,
-      () => (isText ? convertTextToPath({ isSubCommand: false }) : svgCanvas.convertToPath(elem as SVGElement)),
+      () => (isText ? convertTextToPath({ element: elem }) : svgCanvas.convertToPath(elem as SVGElement)),
       <ActionPanelIcons.ConvertToPath />,
       <ActionPanelIcons.ConvertToPathMobile />,
       { isFullLine: true, mobileLabel: lang.outline, ...opts },
@@ -244,7 +166,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
 
   const renderTabButton = (
     { convertToPath, ...options }: TabButtonOptions = {
-      convertToPath: convertSvgToPath,
+      convertToPath: () => convertSvgToPath({ element: elem }),
     },
   ): React.JSX.Element => {
     const isFilled = match(elem.getAttribute('fill'))
@@ -434,15 +356,17 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       renderButtons(
         'weld',
         lang.weld_text,
-        () => convertTextToPath({ isSubCommand: false, weldingTexts: true }),
+        () => convertTextToPath({ element: elem, weldingTexts: true }),
         <ActionPanelIcons.WeldText />,
         <ActionPanelIcons.WeldText />,
         { isDisabled: isVariableText, isFullLine: true, tooltipIfDisabled },
       ),
       renderSmartNestButton(),
       renderArrayButton({ isFullLine: true }),
-      renderOffsetButton({ convertToPath: () => convertTextToPath({ isSubCommand: true }), isFullLine: true }),
-      renderTabButton({ convertToPath: () => convertTextToPath({ isSubCommand: true }) }),
+      renderOffsetButton({ isFullLine: true }),
+      renderTabButton({
+        convertToPath: () => convertTextToPath({ element: elem, parentCommand: new BatchCommand('Text Tab') }),
+      }),
     ];
   };
 
@@ -531,7 +455,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       ),
       renderSmartNestButton(),
       renderArrayButton({ isFullLine: true }),
-      renderTabButton({ convertToPath: convertUseToPath }),
+      renderTabButton({ convertToPath: () => convertUseToPath({ element: elem }) }),
     ];
   };
 
