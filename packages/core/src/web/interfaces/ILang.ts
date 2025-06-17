@@ -870,12 +870,14 @@ export interface ILang {
         corner_type: string;
         direction: string;
         dist: string;
+        expand: string;
         fail_message: string;
         inward: string;
         not_support_message: string;
         outward: string;
         round: string;
         sharp: string;
+        shrink: string;
       };
       array_dimension: string;
       array_interval: string;

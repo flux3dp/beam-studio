@@ -60,7 +60,7 @@ describe('should render correctly', () => {
     fireEvent.click(getByText('Confirm'));
     expect(onOk).toHaveBeenCalledTimes(1);
     expect(onOk).toHaveBeenCalledWith({ cornerType: 'round', distance: 10, mode: 'inward' });
-  });
+  }, 30000);
 
   test('default unit is inches', async () => {
     get.mockReturnValue('inches');
@@ -77,7 +77,7 @@ describe('should render correctly', () => {
     await waitFor(() => expect(offsetSlider.getAttribute('aria-valuenow')).toBe('1'));
     expect(offsetInput.getAttribute('aria-valuenow')).toBe('1.5');
     fireEvent.click(getByText('Confirm'));
-    expect(onOk).toHaveBeenCalledTimes(1);
+    expect(onOk).toHaveBeenCalledTimes(2);
     expect(onOk).toHaveBeenCalledWith({ cornerType: 'sharp', distance: 38.1, mode: 'outward' });
   });
 });

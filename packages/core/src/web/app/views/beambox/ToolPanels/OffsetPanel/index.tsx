@@ -53,8 +53,8 @@ function OffsetPanel({
   const offsetOptions = [
     { label: LANG._offset.outward, value: 'outward' },
     { label: LANG._offset.inward, value: 'inward' },
-    { label: 'Expand', value: 'expand' },
-    { label: 'Shrink', value: 'shrink' },
+    { label: LANG._offset.expand, value: 'expand' },
+    { label: LANG._offset.shrink, value: 'shrink' },
   ].map((option) => ({ ...option, selected: mode === option.value }));
 
   const cornerTypeOptions = [
