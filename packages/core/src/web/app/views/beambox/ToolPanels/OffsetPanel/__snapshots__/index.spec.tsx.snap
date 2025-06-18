@@ -45,12 +45,6 @@ exports[`OffsetPanel default unit is inches 1`] = `
               Inward
             </option>
             <option
-              label="Expand"
-              value="expand"
-            >
-              Expand
-            </option>
-            <option
               label="Shrink"
               value="shrink"
             >
@@ -196,12 +190,6 @@ exports[`OffsetPanel default unit is inches 2`] = `
               value="inward"
             >
               Inward
-            </option>
-            <option
-              label="Expand"
-              value="expand"
-            >
-              Expand
             </option>
             <option
               label="Shrink"
@@ -351,12 +339,6 @@ exports[`OffsetPanel default unit is inches 3`] = `
               Inward
             </option>
             <option
-              label="Expand"
-              value="expand"
-            >
-              Expand
-            </option>
-            <option
               label="Shrink"
               value="shrink"
             >
@@ -502,12 +484,6 @@ exports[`OffsetPanel default unit is mm 1`] = `
               value="inward"
             >
               Inward
-            </option>
-            <option
-              label="Expand"
-              value="expand"
-            >
-              Expand
             </option>
             <option
               label="Shrink"
@@ -657,12 +633,6 @@ exports[`OffsetPanel default unit is mm 2`] = `
               Inward
             </option>
             <option
-              label="Expand"
-              value="expand"
-            >
-              Expand
-            </option>
-            <option
               label="Shrink"
               value="shrink"
             >
@@ -808,12 +778,6 @@ exports[`OffsetPanel default unit is mm 3`] = `
               value="inward"
             >
               Inward
-            </option>
-            <option
-              label="Expand"
-              value="expand"
-            >
-              Expand
             </option>
             <option
               label="Shrink"
@@ -963,12 +927,6 @@ exports[`OffsetPanel default unit is mm 4`] = `
               Inward
             </option>
             <option
-              label="Expand"
-              value="expand"
-            >
-              Expand
-            </option>
-            <option
               label="Shrink"
               value="shrink"
             >
@@ -1114,12 +1072,6 @@ exports[`OffsetPanel default unit is mm 5`] = `
               value="inward"
             >
               Inward
-            </option>
-            <option
-              label="Expand"
-              value="expand"
-            >
-              Expand
             </option>
             <option
               label="Shrink"
