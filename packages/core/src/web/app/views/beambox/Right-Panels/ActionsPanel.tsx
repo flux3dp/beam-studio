@@ -148,7 +148,8 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     renderButtons(
       'convert_to_path',
       lang.convert_to_path,
-      () => (isText ? convertTextToPath({ element: elem }) : svgCanvas.convertToPath(elem as SVGElement)),
+      () =>
+        isText ? convertTextToPath({ element: elem, isToSelect: true }) : svgCanvas.convertToPath(elem as SVGElement),
       <ActionPanelIcons.ConvertToPath />,
       <ActionPanelIcons.ConvertToPathMobile />,
       { isFullLine: true, mobileLabel: lang.outline, ...opts },
@@ -356,7 +357,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       renderButtons(
         'weld',
         lang.weld_text,
-        () => convertTextToPath({ element: elem, weldingTexts: true }),
+        () => convertTextToPath({ element: elem, isToSelect: true, weldingTexts: true }),
         <ActionPanelIcons.WeldText />,
         <ActionPanelIcons.WeldText />,
         { isDisabled: isVariableText, isFullLine: true, tooltipIfDisabled },
@@ -365,7 +366,8 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       renderArrayButton({ isFullLine: true }),
       renderOffsetButton({ isFullLine: true }),
       renderTabButton({
-        convertToPath: () => convertTextToPath({ element: elem, parentCommand: new BatchCommand('Text Tab') }),
+        convertToPath: () =>
+          convertTextToPath({ element: elem, isToSelect: true, parentCommand: new BatchCommand('Text Tab') }),
       }),
     ];
   };
