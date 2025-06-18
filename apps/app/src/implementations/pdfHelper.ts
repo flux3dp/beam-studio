@@ -39,13 +39,13 @@ const pdfToSvgBlob = async (file: File): Promise<{ blob?: Blob; errorMessage?: s
     await init();
   }
 
+  const filePath = fileSystem.getPathForFile(file);
+
   if (pdf2svgPath) {
     const outPath = path.join(tempDir, 'out.svg');
 
     // mac or windows, using packed binary executable
     try {
-      const filePath = fileSystem.getPathForFile(file);
-
       if (!filePath) throw new Error('Failed to load file path');
 
       fs.copyFileSync(filePath, tempFilePath);
@@ -83,7 +83,7 @@ const pdfToSvgBlob = async (file: File): Promise<{ blob?: Blob; errorMessage?: s
       return { errorMessage: lang.error_pdf2svg_not_found };
     }
     try {
-      const { stderr, stdout } = await exec(`pdf2svg "${file.path}" "${outPath}"`);
+      const { stderr, stdout } = await exec(`pdf2svg "${filePath}" "${outPath}"`);
 
       console.log('out', stdout, 'err', stderr);
 

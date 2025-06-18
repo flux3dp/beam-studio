@@ -24,7 +24,7 @@ export default {
     return app.getPath(path);
   },
   getPathForFile(file: File): string | undefined {
-    return electron.webUtils.getPathForFile(file);
+    return file.path || electron.webUtils.getPathForFile(file);
   },
   isDirectory(input: string): boolean {
     return fs.lstatSync(input).isDirectory();
