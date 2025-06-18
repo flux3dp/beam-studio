@@ -77,7 +77,7 @@ describe('should render correctly', () => {
     await waitFor(() => expect(offsetSlider.getAttribute('aria-valuenow')).toBe('1'));
     expect(offsetInput.getAttribute('aria-valuenow')).toBe('1.5');
     fireEvent.click(getByText('Confirm'));
-    expect(onOk).toHaveBeenCalledTimes(2);
+    expect(onOk).toHaveBeenCalledTimes(1);
     expect(onOk).toHaveBeenCalledWith({ cornerType: 'sharp', distance: 38.1, mode: 'outward' });
   });
 });

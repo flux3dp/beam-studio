@@ -18,30 +18,6 @@ interface ValidationResult {
   isValid: boolean;
 }
 
-async function matchElementType(
-  element: SVGElement,
-  command: IBatchCommand,
-  elementsToOffset: SVGElement[],
-  groups: SVGElement[],
-) {
-  await match(element)
-    .with({ children: { length: P.not(0) }, tagName: 'g' }, (elem) => {
-      groups.push(elem);
-    })
-    .with({ tagName: 'text' }, async (element) => {
-      const { command: subCommand, path } = await convertTextToPath({ element });
-
-      if (subCommand) {
-        command.addSubCommand(subCommand);
-      }
-
-      elementsToOffset.push(path as SVGElement);
-    })
-    .otherwise(() => {
-      elementsToOffset.push(element);
-    });
-}
-
 export async function validateAndPrepareOffsetData(currentElems: SVGElement[] | undefined): Promise<ValidationResult> {
   const originalElements = currentElems || svgCanvas.getSelectedElems(true);
   let command: IBatchCommand | undefined = new BatchCommand('validateAndPrepareOffsetData');
