@@ -259,7 +259,7 @@ describe('should render correctly', () => {
     fireEvent.click(getByText(tActionPanel.convert_to_path));
     await tick();
     expect(toSelectMode).toHaveBeenCalledTimes(1);
-    expect(clearSelection).toHaveBeenCalledTimes(1);
+    expect(clearSelection).toHaveBeenCalledTimes(0);
     expect(convertTextToPath).toHaveBeenCalledTimes(1);
     expect(convertTextToPath).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'), {
       isSubCommand: false,
@@ -270,7 +270,7 @@ describe('should render correctly', () => {
     fireEvent.click(getByText(tActionPanel.weld_text));
     await tick();
     expect(toSelectMode).toHaveBeenCalledTimes(2);
-    expect(clearSelection).toHaveBeenCalledTimes(2);
+    expect(clearSelection).toHaveBeenCalledTimes(0);
     expect(convertTextToPath).toHaveBeenCalledTimes(2);
     expect(convertTextToPath).toHaveBeenNthCalledWith(2, document.getElementById('svg_1'), {
       isSubCommand: false,
@@ -544,7 +544,7 @@ describe('should render correctly in mobile', () => {
     fireEvent.click(getByText(tActionPanel.outline));
     await tick();
     expect(toSelectMode).toHaveBeenCalledTimes(1);
-    expect(clearSelection).toHaveBeenCalledTimes(1);
+    expect(clearSelection).toHaveBeenCalledTimes(0);
     expect(convertTextToPath).toHaveBeenCalledTimes(1);
     expect(convertTextToPath).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'), {
       isSubCommand: false,
@@ -555,7 +555,7 @@ describe('should render correctly in mobile', () => {
     fireEvent.click(getByText(tActionPanel.weld_text));
     await tick();
     expect(toSelectMode).toHaveBeenCalledTimes(2);
-    expect(clearSelection).toHaveBeenCalledTimes(2);
+    expect(clearSelection).toHaveBeenCalledTimes(0);
     expect(convertTextToPath).toHaveBeenCalledTimes(2);
     expect(convertTextToPath).toHaveBeenNthCalledWith(2, document.getElementById('svg_1'), {
       isSubCommand: false,

@@ -290,7 +290,27 @@ exports[`should render correctly g single selection 1`] = `
         </button>
       </div>
       <div
-        class="btn-container"
+        class="btn-container half"
+      >
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
+          id="offset"
+          type="button"
+        >
+          <span
+            class="ant-btn-icon"
+          >
+            <svgr-url />
+          </span>
+          <span
+            class="label"
+          >
+            Offset
+          </span>
+        </button>
+      </div>
+      <div
+        class="btn-container half"
       >
         <button
           class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
@@ -822,6 +842,21 @@ exports[`should render correctly in mobile g single selection 1`] = `
         class="label"
       >
         Smart Nest
+      </div>
+    </div>
+    <div
+      class="object-panel-item"
+      id="offset"
+    >
+      <div
+        class="main"
+      >
+        <svgr-url />
+      </div>
+      <div
+        class="label"
+      >
+        Offset
       </div>
     </div>
     <div
@@ -1585,6 +1620,21 @@ exports[`should render correctly in mobile text 1`] = `
     </div>
     <div
       class="object-panel-item"
+      id="offset"
+    >
+      <div
+        class="main"
+      >
+        <svgr-url />
+      </div>
+      <div
+        class="label"
+      >
+        Offset
+      </div>
+    </div>
+    <div
+      class="object-panel-item"
       id="tab"
     >
       <div
@@ -1653,6 +1703,21 @@ exports[`should render correctly in mobile text 2`] = `
         class="label"
       >
         Array
+      </div>
+    </div>
+    <div
+      class="object-panel-item"
+      id="offset"
+    >
+      <div
+        class="main"
+      >
+        <svgr-url />
+      </div>
+      <div
+        class="label"
+      >
+        Offset
       </div>
     </div>
   </div>
@@ -2530,6 +2595,26 @@ exports[`should render correctly text 1`] = `
       >
         <button
           class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
+          id="offset"
+          type="button"
+        >
+          <span
+            class="ant-btn-icon"
+          >
+            <svgr-url />
+          </span>
+          <span
+            class="label"
+          >
+            Offset
+          </span>
+        </button>
+      </div>
+      <div
+        class="btn-container"
+      >
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
           id="tab"
           type="button"
         >
@@ -2662,6 +2747,26 @@ exports[`should render correctly text 2`] = `
             class="label"
           >
             Array
+          </span>
+        </button>
+      </div>
+      <div
+        class="btn-container"
+      >
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
+          id="offset"
+          type="button"
+        >
+          <span
+            class="ant-btn-icon"
+          >
+            <svgr-url />
+          </span>
+          <span
+            class="label"
+          >
+            Offset
           </span>
         </button>
       </div>

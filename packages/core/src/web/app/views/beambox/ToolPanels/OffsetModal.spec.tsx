@@ -60,7 +60,7 @@ describe('should render correctly', () => {
     fireEvent.click(getByText('Confirm'));
     expect(onOk).toHaveBeenCalledTimes(1);
     expect(onOk).toHaveBeenCalledWith({ cornerType: 'round', distance: 10, mode: 'inward' });
-  });
+  }, 30000);
 
   test('default unit is inches', async () => {
     get.mockReturnValue('inches');

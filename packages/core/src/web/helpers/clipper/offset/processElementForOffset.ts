@@ -58,8 +58,27 @@ export async function processElementForOffset(
       return { isUnsupported: false, success: false };
     }
 
+    const uniquePaths = paths.map((path) => {
+      if (path.length === 0) return [];
+
+      const result: Path = [{ X: ~~path[0].X, Y: ~~path[0].Y }]; // Start with the first point
+
+      for (let i = 1; i < path.length; i++) {
+        const prev = path[i - 1];
+        const curr = { X: ~~path[i].X, Y: ~~path[i].Y };
+
+        if (Math.abs(prev.X - curr.X) < 1 && Math.abs(prev.Y - curr.Y) < 1) {
+          continue; // Skip points that are too close to the previous point
+        }
+
+        result.push(curr);
+      }
+
+      return result;
+    });
+
     // Determine if the path is closed
-    let isPathClosed = paths.every((path: Array<{ X: number; Y: number }>) => {
+    let isPathClosed = uniquePaths.every((path: Array<{ X: number; Y: number }>) => {
       if (!path || path.length === 0) return false; // An empty subpath cannot be closed in this context
 
       const firstPoint = path[0];
@@ -79,15 +98,19 @@ export async function processElementForOffset(
             endType: ClipperLib.EndType.etClosedLine,
             joinType: ClipperLib.JoinType.jtMiter,
           }))
+          .otherwise(() => ({ endType: ClipperLib.EndType.etOpenSquare, joinType: ClipperLib.JoinType.jtMiter })),
+      )
+      .with({ isPathClosed: true }, ({ cornerType, mode }) =>
+        match(mode)
+          .with('shrink', () => ({
+            endType: ClipperLib.EndType.etClosedPolygon,
+            joinType: cornerType === 'round' ? ClipperLib.JoinType.jtRound : ClipperLib.JoinType.jtMiter,
+          }))
           .otherwise(() => ({
-            endType: ClipperLib.EndType.etOpenSquare,
-            joinType: ClipperLib.JoinType.jtMiter,
+            endType: ClipperLib.EndType.etClosedLine,
+            joinType: cornerType === 'round' ? ClipperLib.JoinType.jtRound : ClipperLib.JoinType.jtMiter,
           })),
       )
-      .with({ isPathClosed: true }, ({ cornerType }) => ({
-        endType: ClipperLib.EndType.etClosedPolygon,
-        joinType: cornerType === 'round' ? ClipperLib.JoinType.jtRound : ClipperLib.JoinType.jtMiter,
-      }))
       .with({ cornerType: 'round' }, () => ({
         endType: ClipperLib.EndType.etOpenRound,
         joinType: ClipperLib.JoinType.jtRound,
@@ -98,7 +121,7 @@ export async function processElementForOffset(
       }))
       .exhaustive();
 
-    await clipperInstance.addPaths(paths, joinType, endType);
+    await clipperInstance.addPaths(uniquePaths, joinType, endType);
 
     return { isUnsupported: false, success: true };
   } catch (error) {
