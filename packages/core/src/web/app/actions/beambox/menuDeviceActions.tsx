@@ -14,6 +14,7 @@ import {
   showBB2Calibration,
   showBB2WideAngleCameraCalibration,
 } from '@core/app/components/dialogs/camera/BB2Calibration';
+import { showBeamo2Calibration } from '@core/app/components/dialogs/camera/beamo2Calibration';
 import { showPromarkCalibration } from '@core/app/components/dialogs/camera/PromarkCalibration';
 import { parsingChipData } from '@core/app/components/dialogs/CartridgeSettingPanel';
 import { showPromarkSettings } from '@core/app/components/dialogs/promark/PromarkSettings';
@@ -66,6 +67,8 @@ const calibrateCamera = async (
         else showBB2Calibration(isAdvanced);
       } else if (promarkModels.has(device.model)) {
         showPromarkCalibration(device);
+      } else if (device.model === 'fbm2') {
+        showBeamo2Calibration(isAdvanced);
       } else {
         showCameraCalibration(device, isBorderless);
       }
