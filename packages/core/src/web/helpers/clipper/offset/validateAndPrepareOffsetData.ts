@@ -1,7 +1,7 @@
 import { match, P } from 'ts-pattern';
 
 import { BatchCommand } from '@core/app/svgedit/history/history';
-import { convertTextToPath } from '@core/helpers/convertToPath';
+import { convertSvgToPath, convertTextToPath, generateImageRect } from '@core/helpers/convertToPath';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -35,6 +35,32 @@ export async function validateAndPrepareOffsetData(currentElems: SVGElement[] | 
     await match(element)
       .with({ children: { length: P.not(0) }, tagName: 'g' }, (elem) => {
         groups.push(elem);
+      })
+      // .with({ tagName: 'use' }, async (element) => {
+      //   const { command: subCommand, path } = await convertUseToPath({ element });
+
+      //   if (subCommand) {
+      //     command.addSubCommand(subCommand);
+      //   }
+
+      //   elementsToOffset.push(path!);
+      // })
+      .with({ tagName: 'image' }, async (element) => {
+        const { command: subCommand, rect } = generateImageRect(element as SVGImageElement);
+        const { command: subCommand2, path } = await convertSvgToPath({ element: rect!, parentCommand: subCommand });
+
+        // convertToPath: async () => {
+        //   const { command: subCommand, rect } = imageEdit.generateImageRect(elem as SVGImageElement);
+        //   const { bbox, command } = await convertSvgToPath(rect, subCommand);
+
+        //   return { bbox, command };
+        // },
+
+        if (subCommand2) {
+          command.addSubCommand(subCommand2);
+        }
+
+        elementsToOffset.push(path!);
       })
       .with({ tagName: 'text' }, async (element) => {
         const { command: subCommand, path } = await convertTextToPath({ element });
