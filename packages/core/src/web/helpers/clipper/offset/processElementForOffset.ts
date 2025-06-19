@@ -5,7 +5,7 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type ClipperBase from '../clipper';
 
 import type { OffsetMode, Path } from './constants';
-import { SCALE_FACTOR, UNSUPPORTED_TAGS } from './constants';
+import { SCALE_FACTOR } from './constants';
 
 let svgedit: any;
 
@@ -24,13 +24,6 @@ export async function processElementForOffset(
     console.warn('Element is null or undefined in processElementForOffset.');
 
     return { isUnsupported: false, success: false };
-  }
-
-  // Check for unsupported tags
-  if (UNSUPPORTED_TAGS.includes(elem.tagName as any)) {
-    console.log(`Skipping unsupported element: ${elem.tagName}`);
-
-    return { isUnsupported: true, success: true };
   }
 
   try {
