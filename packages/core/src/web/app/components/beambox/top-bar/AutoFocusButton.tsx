@@ -66,6 +66,11 @@ const AutoFocusButton = (): React.JSX.Element => {
       });
 
       await deviceMaster.enterRawMode();
+
+      if (selectedDevice?.model === 'fhexa1') {
+        await deviceMaster.rawUnlock();
+      }
+
       await deviceMaster.rawAutoFocus();
       await deviceMaster.rawLooseMotor();
       await deviceMaster.endSubTask();
