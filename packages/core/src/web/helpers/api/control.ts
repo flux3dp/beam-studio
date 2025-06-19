@@ -45,7 +45,7 @@ class Control extends EventEmitter implements IControlSocket {
 
   private ws!: WrappedWebSocket;
 
-  private dedicatedWs: any[] = [];
+  private dedicatedWs: WrappedWebSocket[] = [];
 
   private fileInfoWsId = 0;
 
@@ -99,15 +99,13 @@ class Control extends EventEmitter implements IControlSocket {
       this.isProcessingTask = false;
     }
 
-    const promise = new Promise<any>((resolve, reject) => {
+    return new Promise<any>((resolve, reject) => {
       this.taskQueue.push({ args, reject, resolve, taskFunction });
 
       if (!this.isProcessingTask && !this.currentTask) {
         this.doTask();
       }
     });
-
-    return promise;
   }
 
   async doTask() {
@@ -1522,40 +1520,43 @@ class Control extends EventEmitter implements IControlSocket {
     return this.useRawLineCheckCommand(command);
   };
 
-  rawAutoFocus = (timeout = 20000): Promise<void> => {
+  rawAutoFocus = (version: 1 | 2, timeout = 20000): Promise<void> => {
     if (this.mode !== 'raw') {
       throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
     }
 
     return new Promise((resolve, reject) => {
       let responseString = '';
-      const command = 'M137P179Q1';
+      // Version 1 uses B206, Version 2 uses M137P179Q1
+      // Version 1 only supported by HEXA after 4.3.12
+      // Version 2 supported by Ador and Beambox II
+      const command = version === 2 ? 'M137P179Q1' : 'B206';
+
+      console.log('raw auto focus command:', command);
+
       let timeoutTimer: NodeJS.Timeout | undefined;
 
       this.on(EVENT_COMMAND_MESSAGE, (response) => {
         if (timeoutTimer) clearTimeout(timeoutTimer);
 
-        if (response && response.status === 'raw') {
+        if (response?.status === 'raw') {
           console.log('raw auto focus:\t', response.text);
           responseString += response.text;
         }
 
-        const resps = responseString.split(/\r?\n/);
-        const i = resps.findIndex((r) => r === 'ok');
+        const responseSplit = responseString.split(/\r?\n/);
 
-        if (i < 0) {
-          responseString = resps[resps.length - 1] || '';
-        }
-
-        if (i >= 0) {
+        if (responseSplit.findIndex((r) => r === 'ok') >= 0) {
           resolve();
 
           return;
         }
 
+        responseString = responseSplit.at(-1) || '';
+
         if (
           response.text.includes('ER:RESET') ||
-          resps.some((resp) => resp.includes('ER:RESET')) ||
+          responseSplit.some((resp) => resp.includes('ER:RESET')) ||
           response.text.includes('error:')
         ) {
           this.removeCommandListeners();
@@ -1564,6 +1565,7 @@ class Control extends EventEmitter implements IControlSocket {
           timeoutTimer = this.setTimeoutTimer(reject, timeout);
         }
       });
+
       this.setDefaultErrorResponse(reject, timeoutTimer);
       this.setDefaultFatalResponse(reject, timeoutTimer);
       timeoutTimer = this.setTimeoutTimer(reject, timeout);

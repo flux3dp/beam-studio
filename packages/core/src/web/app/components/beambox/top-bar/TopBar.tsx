@@ -24,6 +24,7 @@ import checkSoftwareForAdor from '@core/helpers/check-software';
 import getIsWeb from '@core/helpers/is-web';
 import storage from '@core/implementations/storage';
 
+import AutoFocusButton from './AutoFocusButton';
 import Tabs from './tabs/Tabs';
 import styles from './TopBar.module.scss';
 
@@ -89,6 +90,7 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
         <div className={classNames(styles.controls, styles.right)}>
           <SelectMachineButton />
           <DocumentButton />
+          <AutoFocusButton />
           <FrameButton />
           <PathPreviewButton isDeviceConnected={hasDiscoveredMachine} togglePathPreview={togglePathPreview} />
           <GoButton hasDiscoverdMachine={hasDiscoveredMachine} />

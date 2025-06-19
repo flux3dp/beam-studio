@@ -210,15 +210,9 @@ const Discover = (id: string, getDevices: (devices: IDeviceInfo[]) => void) => {
 
   if (idList.length === 0 || index === -1) {
     idList.push(id);
-    dispatchers.push({
-      id,
-      sender: getDevices,
-    });
+    dispatchers.push({ id, sender: getDevices });
   } else {
-    dispatchers[index] = {
-      id,
-      sender: getDevices,
-    };
+    dispatchers[index] = { id, sender: getDevices };
   }
 
   // force callback always executed after return
