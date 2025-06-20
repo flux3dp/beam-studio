@@ -227,6 +227,7 @@ export const convertTextToPathByFontkit = (textElem: Element, fontObj: fontkit.F
     textPaths.forEach((textPath) => {
       let alignOffset = 0;
       const text = textPath.textContent;
+      const charCount = textPath.getNumberOfChars();
       const alignmentBaseline = textPath.getAttribute('alignment-baseline');
       const dominantBaseline = textPath.getAttribute('dominant-baseline');
 
@@ -259,6 +260,8 @@ export const convertTextToPathByFontkit = (textElem: Element, fontObj: fontkit.F
 
       d += glyphs
         .map((char, idx) => {
+          if (i >= charCount) return '';
+
           const pos = positions[idx];
           const start = textPath.getStartPositionOfChar(i);
           const end = textPath.getEndPositionOfChar(i);
@@ -289,6 +292,7 @@ export const convertTextToPathByFontkit = (textElem: Element, fontObj: fontkit.F
 
     tSpans.forEach((tspan) => {
       const text = tspan.textContent;
+      const charCount = tspan.getNumberOfChars();
       const run = fontObj.layout(text!);
       const { direction, glyphs, positions } = run;
       const isRtl = direction === 'rtl';
@@ -302,6 +306,8 @@ export const convertTextToPathByFontkit = (textElem: Element, fontObj: fontkit.F
 
       d += glyphs
         .map((char, idx) => {
+          if (i >= charCount) return '';
+
           const pos = positions[idx];
           const start = tspan.getStartPositionOfChar(i);
           const end = tspan.getEndPositionOfChar(i);
