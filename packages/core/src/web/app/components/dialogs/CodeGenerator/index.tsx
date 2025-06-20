@@ -114,7 +114,6 @@ export default function CodeGenerator({ onClose }: Props): React.JSX.Element {
   return (
     <DraggableModal
       cancelText={tAlert.cancel}
-      className={styles.modal}
       okButtonProps={{ disabled: !text }}
       okText={tAlert.confirm}
       onCancel={onClose}
@@ -136,7 +135,7 @@ export default function CodeGenerator({ onClose }: Props): React.JSX.Element {
           />
         </Flex>
       }
-      width="520"
+      width={520}
     >
       {renderContent()}
       {showVariableBlock && (
