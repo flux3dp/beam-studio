@@ -1,6 +1,6 @@
 import React, { memo, useContext, useMemo } from 'react';
 
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import { Button, Popover } from 'antd-mobile';
 import classNames from 'classnames';
@@ -193,7 +193,9 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
       />
       {warningText ? (
         <div className={styles.warning}>
-          <div className={styles['warning-icon']}>!</div>
+          <div className={styles['warning-icon']}>
+            <ExclamationCircleOutlined />
+          </div>
           <div className={styles['warning-text']}>{warningText}</div>
         </div>
       ) : null}

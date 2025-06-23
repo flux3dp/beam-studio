@@ -1,5 +1,6 @@
 import React, { memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Button, Popover } from 'antd-mobile';
 import classNames from 'classnames';
 
@@ -124,7 +125,9 @@ function PowerBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
       />
       {power.value < (workareaObj.minPower ?? -1) && (
         <div className={styles.warning}>
-          <div className={styles['warning-icon']}>!</div>
+          <div className={styles['warning-icon']}>
+            <ExclamationCircleOutlined />
+          </div>
           <div className={styles['warning-text']}>{t.low_power_warning}</div>
         </div>
       )}
