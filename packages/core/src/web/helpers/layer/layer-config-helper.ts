@@ -110,6 +110,17 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   zStep: 0,
 };
 
+export const moduleBaseConfig: Partial<Record<LayerModuleType, Partial<Omit<ConfigKeyTypeMap, 'module'>>>> = {
+  [LayerModule.PRINTER]: {
+    amDensity: 2,
+    halftone: 1,
+  },
+  [LayerModule.PRINTER_4C]: {
+    amDensity: 5,
+    halftone: 2,
+  },
+};
+
 export const booleanConfig: ConfigKey[] = ['fullcolor', 'ref', 'split', 'biDirectional', 'crossHatch'] as const;
 export const timeRelatedConfigs: Set<ConfigKey> = new Set([
   'speed',
@@ -284,7 +295,11 @@ export const writeDataLayer = <T extends ConfigKey>(
   layer: Element,
   key: T,
   value: ConfigKeyTypeMap[T] | undefined,
-  opts?: { applyPrinting?: boolean; batchCmd?: IBatchCommand },
+  {
+    applyPrinting,
+    batchCmd,
+    shouldApplyModuleBaseConfig = true,
+  }: { applyPrinting?: boolean; batchCmd?: IBatchCommand; shouldApplyModuleBaseConfig?: boolean } = {},
 ): void => {
   if (!layer) {
     return;
@@ -298,7 +313,7 @@ export const writeDataLayer = <T extends ConfigKey>(
 
   if (
     key === 'speed' &&
-    opts?.applyPrinting &&
+    applyPrinting &&
     printingModules.has(Number.parseInt(layer.getAttribute(attributeMap.module) ?? '', 10))
   ) {
     attr = attributeMap.printingSpeed;
@@ -316,10 +331,14 @@ export const writeDataLayer = <T extends ConfigKey>(
     layer.setAttribute(attr, String(value));
   }
 
-  if (opts?.batchCmd) {
+  if (batchCmd) {
     const cmd = new history.ChangeElementCommand(layer, { [attr]: originalValue });
 
-    opts.batchCmd.addSubCommand(cmd);
+    batchCmd.addSubCommand(cmd);
+  }
+
+  if (key === 'module' && shouldApplyModuleBaseConfig) {
+    applyModuleBaseConfig(layer, value as LayerModuleType, { parentCmd: batchCmd });
   }
 };
 
@@ -327,7 +346,7 @@ export const writeData = <T extends ConfigKey>(
   layerName: string,
   key: ConfigKey,
   value: ConfigKeyTypeMap[T] | undefined,
-  opts?: { applyPrinting?: boolean; batchCmd?: IBatchCommand },
+  opts?: { applyPrinting?: boolean; batchCmd?: IBatchCommand; shouldApplyModuleBaseConfig?: boolean },
 ): void => {
   const layer = getLayerElementByName(layerName);
 
@@ -415,11 +434,11 @@ export const initLayerConfig = (layerName: string): void => {
     if (defaultConfig[key] !== undefined) {
       if (key === 'module') {
         if (supportModules.includes(defaultLaserModule)) {
-          writeDataLayer(layer, key, defaultLaserModule);
+          writeDataLayer(layer, key, defaultLaserModule, { shouldApplyModuleBaseConfig: false });
         } else if (supportModules.includes(defaultConfig.module!)) {
-          writeDataLayer(layer, key, defaultConfig.module!);
+          writeDataLayer(layer, key, defaultConfig.module!, { shouldApplyModuleBaseConfig: false });
         } else {
-          writeDataLayer(layer, key, supportModules[0]);
+          writeDataLayer(layer, key, supportModules[0], { shouldApplyModuleBaseConfig: false });
         }
       } else {
         writeDataLayer(layer, key, defaultConfig[key] as number | string);
@@ -522,6 +541,24 @@ export const applyDefaultLaserModule = (): void => {
         writeDataLayer(layer, 'module', defaultLaserModule);
       }
     }
+  }
+};
+
+export const applyModuleBaseConfig = (
+  layer: Element,
+  module: LayerModuleType,
+  { parentCmd }: { parentCmd?: IBatchCommand } = {},
+): void => {
+  const configs = moduleBaseConfig[module];
+
+  if (!configs) {
+    return;
+  }
+
+  for (const key of Object.keys(configs) as ConfigKey[]) {
+    const value = configs[key as keyof typeof configs];
+
+    writeDataLayer(layer, key, value, { batchCmd: parentCmd });
   }
 };
 
