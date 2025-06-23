@@ -1964,6 +1964,12 @@ const lang: ILang = {
       align_center: 'จัดกึ่งกลาง',
       anti_aliasing: 'การปรับความคมชัด',
       auto_align: 'จัดแนวอัตโนมัติ',
+      autofocus: {
+        operating: 'กำลังโฟกัสอัตโนมัติ...',
+        select_device_error: 'กรุณาเลือกอุปกรณ์ก่อนโฟกัสอัตโนมัติ',
+        show_probe_error: 'กรุณาแสดงโพรบก่อนโฟกัสอัตโนมัติ',
+        title: 'โฟกัสอัตโนมัติ',
+      },
       borderless_mode: 'โหมดไร้ขอบ',
       bug_report: 'รายงานข้อบกพร่อง',
       calibrate_beambox_camera: 'ปรับเทียบกล้อง',

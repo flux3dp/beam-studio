@@ -1964,6 +1964,12 @@ const lang: ILang = {
       align_center: 'Zentrieren',
       anti_aliasing: 'Anti-Aliasing',
       auto_align: 'Automatische Ausrichtung',
+      autofocus: {
+        operating: 'Autofokus läuft...',
+        select_device_error: 'Bitte wählen Sie ein Gerät vor dem Autofokus aus.',
+        show_probe_error: 'Bitte zeigen Sie die Sonde vor dem Autofokus.',
+        title: 'Autofokus',
+      },
       borderless_mode: 'Randloser Modus',
       bug_report: 'Fehlerbericht',
       calibrate_beambox_camera: 'Kamera kalibrieren',

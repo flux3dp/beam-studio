@@ -1964,6 +1964,12 @@ const lang: ILang = {
       align_center: 'Στοίχιση στο κέντρο',
       anti_aliasing: 'Αντι-aliasing',
       auto_align: 'Αυτόματη Στοίχιση',
+      autofocus: {
+        operating: 'Αυτόματη εστίαση...',
+        select_device_error: 'Επιλέξτε συσκευή πριν την αυτόματη εστίαση.',
+        show_probe_error: 'Εμφανίστε την ακίδα πριν την αυτόματη εστίαση.',
+        title: 'Αυτόματη Εστίαση',
+      },
       borderless_mode: 'Λειτουργία χωρίς πλαίσιο',
       bug_report: 'Αναφορά σφαλμάτων',
       calibrate_beambox_camera: 'Βαθμονόμηση κάμερας',

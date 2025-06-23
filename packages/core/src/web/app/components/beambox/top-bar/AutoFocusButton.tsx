@@ -16,10 +16,8 @@ import useI18n from '@core/helpers/useI18n';
 import styles from './AutoFocusButton.module.scss';
 
 const AutoFocusButton = (): React.JSX.Element => {
-  const lang = useI18n().topbar.menu;
+  const lang = useI18n().topbar.menu.autofocus;
   const { selectedDevice } = useContext(CanvasContext);
-
-  lang;
 
   const onClick = async () => {
     try {
@@ -27,8 +25,8 @@ const AutoFocusButton = (): React.JSX.Element => {
 
       if (!deviceStatus) {
         alertCaller.popUp({
-          caption: 'Auto Focus',
-          message: 'Please select a device before auto focusing.',
+          caption: lang.title,
+          message: lang.select_device_error,
           type: alertConstants.SHOW_POPUP_ERROR,
         });
 
@@ -47,8 +45,8 @@ const AutoFocusButton = (): React.JSX.Element => {
           }
 
           alertCaller.popUp({
-            caption: 'Auto Focus',
-            message: 'Please show the probe before auto focusing.',
+            caption: lang.title,
+            message: lang.show_probe_error,
             type: alertConstants.SHOW_POPUP_ERROR,
           });
 
@@ -62,7 +60,7 @@ const AutoFocusButton = (): React.JSX.Element => {
 
       progressCaller.openNonstopProgress({
         id: 'auto-focus',
-        message: 'Auto focusing...',
+        message: lang.operating,
       });
 
       await deviceMaster.enterRawMode();
@@ -87,7 +85,7 @@ const AutoFocusButton = (): React.JSX.Element => {
           (!constants.fcodeV2Models.has(selectedDevice.model) && selectedDevice.model !== 'fhexa1'),
       })}
       onClick={onClick}
-      title={'Auto Focus'}
+      title={lang.title}
     >
       <TopBarIcons.AutoFocus />
     </div>

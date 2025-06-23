@@ -1964,6 +1964,12 @@ const lang: ILang = {
       align_center: 'Wyrównaj do środka',
       anti_aliasing: 'Wygładzanie krawędzi',
       auto_align: 'Automatyczne Wyrównanie',
+      autofocus: {
+        operating: 'Automatyczne ustawianie ostrości...',
+        select_device_error: 'Wybierz urządzenie przed autofokusem.',
+        show_probe_error: 'Pokaż sondę przed autofokusem.',
+        title: 'Autofokus',
+      },
       borderless_mode: 'Tryb bez obramowania',
       bug_report: 'Zgłoszenie błędu',
       calibrate_beambox_camera: 'Kalibracja kamery',

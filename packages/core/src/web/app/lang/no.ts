@@ -1964,6 +1964,12 @@ const lang: ILang = {
       align_center: 'Sentrer',
       anti_aliasing: 'Anti-Aliasing',
       auto_align: 'Automatisk Justering',
+      autofocus: {
+        operating: 'Autofokus pågår...',
+        select_device_error: 'Velg en enhet før autofokus.',
+        show_probe_error: 'Vis sonden før autofokus.',
+        title: 'Autofokus',
+      },
       borderless_mode: 'Rammeløs modus',
       bug_report: 'Feilrapport',
       calibrate_beambox_camera: 'Kalibrer kamera',

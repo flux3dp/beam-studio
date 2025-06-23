@@ -1964,6 +1964,12 @@ const lang: ILang = {
       align_center: '중앙 정렬',
       anti_aliasing: '앤티앨리어싱',
       auto_align: '자동 정렬',
+      autofocus: {
+        operating: '자동 초점 조정 중...',
+        select_device_error: '자동 초점 전에 장치를 선택하세요.',
+        show_probe_error: '자동 초점 전에 프로브를 표시하세요.',
+        title: '자동 초점',
+      },
       borderless_mode: '전체 화면 모드',
       bug_report: '버그 신고',
       calibrate_beambox_camera: '카메라 교정',
