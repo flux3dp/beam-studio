@@ -36,10 +36,10 @@ const FluxIdLogin = ({ onClose, silent }: Props): React.JSX.Element => {
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    fluxIDEvents.on('oauth-logged-in', onClose);
+    fluxIDEvents.on('DISMISS_FLUX_LOGIN', onClose);
 
     return () => {
-      fluxIDEvents.removeListener('oauth-logged-in', onClose);
+      fluxIDEvents.off('DISMISS_FLUX_LOGIN', onClose);
     };
   }, [onClose]);
 
@@ -110,6 +110,7 @@ const FluxIdLogin = ({ onClose, silent }: Props): React.JSX.Element => {
           <Form.Item name="password-input">
             <Input.Password
               onKeyDown={(e: React.KeyboardEvent) => e.stopPropagation()}
+              onPressEnter={handleLogin}
               placeholder={lang.password}
               ref={passwordInput}
             />

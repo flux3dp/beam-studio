@@ -19,6 +19,7 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useForceUpdate from '@core/helpers/use-force-update';
 import useI18n from '@core/helpers/useI18n';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { IUser } from '@core/interfaces/IUser';
 
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
@@ -26,7 +27,7 @@ const topBarEventEmitter = eventEmitterFactory.createEventEmitter('top-bar');
 const fluxIDEventEmitter = eventEmitterFactory.createEventEmitter('flux-id');
 const workareaEventEmitter = eventEmitterFactory.createEventEmitter('workarea');
 
-let svgCanvas;
+let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
@@ -78,12 +79,12 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
   const forceUpdate = useForceUpdate();
   const [mode, setMode] = useState<CanvasMode>(CanvasMode.Draw);
   const [isColorPreviewing, setIsColorPreviewing] = useState<boolean>(false);
-  const [currentUser, setCurrentUser] = useState<IUser>(null);
+  const [currentUser, setCurrentUser] = useState<IUser | null>(null);
   const [hasUnsavedChange, setHasUnsavedChange] = useState<boolean>(false);
   const [selectedDevice, setSelectedDevice] = useState<IDeviceInfo | null>(null);
   const [isPathEditing, setIsPathEditing] = useState<boolean>(false);
   const [hasPassthroughExtension, setHasPassthroughExtension] = useState<boolean>(false);
-  const unregisterEndPreviewShortcut = useRef<() => null | void>(null);
+  const unregisterEndPreviewShortcut = useRef<(() => void) | null>(null);
 
   const endPreviewMode = (): void => {
     try {
@@ -110,20 +111,13 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
     }
   };
 
-  const setUser = useCallback((user) => setCurrentUser({ ...user }), []);
+  const setUser = useCallback((user: IUser | null) => setCurrentUser(user ? { ...user } : user), []);
 
   useEffect(() => {
     fluxIDEventEmitter.on('update-user', setUser);
 
-    const handler = (e: CustomEvent) => {
-      setUser(e.detail.user);
-    };
-
-    window.addEventListener('update-user', handler);
-
     return () => {
       fluxIDEventEmitter.removeListener('update-user', setUser);
-      window.removeEventListener('update-user', handler);
     };
   }, [setUser]);
   useEffect(() => {
@@ -224,7 +218,7 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
         return;
       }
 
-      if (!isWorkareaMatched && !(await showResizeAlert(device))) {
+      if (!isWorkareaMatched && !(await showResizeAlert(device!))) {
         settingUpPreview.current = false;
 
         return;
@@ -232,17 +226,20 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
 
       const t = lang.topbar;
       const workarea = document.getElementById('workarea');
+      const setCursor = (cursor: string) => {
+        if (workarea) workarea.style.cursor = cursor;
+      };
 
       // eslint-disable-next-line hooks/rules-of-hooks
       FnWrapper.useSelectTool();
       svgCanvas.clearSelection();
-      workarea.style.cursor = 'wait';
+      setCursor('wait');
 
       try {
         await PreviewModeController.start(device!);
 
         if (!PreviewModeController.isPreviewMode) {
-          workarea.style.cursor = 'auto';
+          setCursor('auto');
           settingUpPreview.current = false;
 
           return;
@@ -256,7 +253,7 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
           isBlocking: true,
         });
 
-        workarea.style.cursor = 'url(img/camera-cursor.svg) 9 12, cell';
+        setCursor('url(img/camera-cursor.svg) 9 12, cell');
 
         if (PreviewModeController.isFullScreen) {
           PreviewModeController.previewFullWorkarea(() => {

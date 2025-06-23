@@ -46,7 +46,6 @@ import checkDeviceStatus from '@core/helpers/check-device-status';
 import deviceMaster from '@core/helpers/device-master';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
-import isWeb from '@core/helpers/is-web';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import versionChecker from '@core/helpers/version-checker';
 import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
@@ -100,20 +99,12 @@ const showLoginDialog = (callback?: () => void, silent = false): void => {
     return;
   }
 
-  if (isWeb() && callback) {
-    window.addEventListener('DISMISS_FLUX_LOGIN', callback);
-  }
-
   addDialogComponent(
     'flux-id-login',
     <FluxIdLogin
       onClose={() => {
-        (window as any).removeEventListener('DISMISS_FLUX_LOGIN', callback);
         popDialogById('flux-id-login');
-
-        if (callback) {
-          callback();
-        }
+        callback?.();
       }}
       silent={silent}
     />,
@@ -125,6 +116,8 @@ const forceLoginWrapper = (
   silent?: boolean,
   failCallback?: () => Promise<void> | void,
 ): void => {
+  console.log('forceLoginWrapper called');
+
   let user = getCurrentUser();
 
   if (!user) {

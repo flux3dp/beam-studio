@@ -1,5 +1,6 @@
 import type { AxiosError, AxiosResponse } from 'axios';
 import axios from 'axios';
+import { funnel } from 'remeda';
 
 import alert from '@core/app/actions/alert-caller';
 import progress from '@core/app/actions/progress-caller';
@@ -12,6 +13,7 @@ import browser from '@core/implementations/browser';
 import communicator from '@core/implementations/communicator';
 import cookies from '@core/implementations/cookies';
 import storage from '@core/implementations/storage';
+import type { Cookie } from '@core/interfaces/ICookies';
 import type { IData } from '@core/interfaces/INounProject';
 import type { IUser } from '@core/interfaces/IUser';
 
@@ -57,9 +59,10 @@ axiosFluxId.interceptors.response.use(
   (error) => ({ error }),
 );
 
+export const fluxIDChannel = new BroadcastChannel('flux-id');
 export const fluxIDEvents = eventEmitterFactory.createEventEmitter('flux-id');
 
-const handleErrorMessage = (error: AxiosError) => {
+const handleErrorMessage = (error?: AxiosError) => {
   if (!error) {
     return;
   }
@@ -75,82 +78,93 @@ const handleErrorMessage = (error: AxiosError) => {
   }
 };
 
-const updateMenu = (info?: IUser) => {
-  communicator.send('UPDATE_ACCOUNT', info);
+const updateAccountMenu = (user: IUser | null = null) => {
+  if (!isWeb()) {
+    communicator.send('UPDATE_ACCOUNT', user);
+  }
 };
 
-const updateUser = (
-  info?: IUser,
-  {
-    isWebSocialSignIn = false,
-    sendToOtherTabs = true,
-  }: { isWebSocialSignIn?: boolean; sendToOtherTabs?: boolean } = {},
-) => {
-  if (info) {
-    if (!currentUser) {
-      if (sendToOtherTabs) updateMenu(info);
+const broadcastUserChanges = funnel(
+  () => {
+    const info = currentUser?.info ?? null;
 
-      currentUser = {
-        email: info.email,
-        info,
-      };
-
-      if (isWebSocialSignIn && isWeb()) {
-        window.opener.dispatchEvent(
-          new CustomEvent('update-user', {
-            detail: {
-              user: currentUser,
-            },
-          }),
-        );
-      }
+    if (isWeb()) {
+      fluxIDChannel.postMessage({ event: 'update-user', info });
     } else {
-      if (currentUser.email !== info.email && sendToOtherTabs) {
-        updateMenu(info);
-      }
+      communicator.send(TabEvents.UpdateUser, info);
+    }
+  },
+  { minQuietPeriodMs: 2000, triggerAt: 'both' },
+);
 
+const updateUser = (info?: IUser | null, { sendToOtherTabs = true }: { sendToOtherTabs?: boolean } = {}) => {
+  const emailChanged = currentUser?.email !== info?.email;
+  const isSignIn = !currentUser && info?.email;
+
+  if (info) {
+    if (currentUser && !emailChanged) {
+      // Update info data without deleting existing properties
       Object.assign(currentUser.info, info);
+    } else {
+      currentUser = { email: info.email, info };
     }
-
-    fluxIDEvents.emit('update-user', currentUser);
   } else {
-    if (currentUser) {
-      currentUser = null;
-
-      if (sendToOtherTabs) updateMenu();
-    }
-
-    fluxIDEvents.emit('update-user', null);
+    currentUser = null;
   }
 
-  if (sendToOtherTabs) communicator.send(TabEvents.UpdateUser, currentUser);
+  fluxIDEvents.emit('update-user', currentUser);
+
+  if (sendToOtherTabs) {
+    broadcastUserChanges.call();
+
+    if (emailChanged) {
+      updateAccountMenu(currentUser);
+    }
+  } else if (isSignIn) {
+    // Close login dialog and handle callbacks
+    // if logging from other tabs or loggin by web oauth
+    fluxIDEvents.emit('DISMISS_FLUX_LOGIN');
+  }
 };
 
-communicator.on(TabEvents.UpdateUser, (_: Event, user: IUser) => {
+// broadcastUserChanges receiver for electron
+communicator.on(TabEvents.UpdateUser, (_: Event, user: IUser | null) => {
   updateUser(user, { sendToOtherTabs: false });
 });
 
-window.addEventListener('update-user', (e: CustomEvent) => {
-  currentUser = e.detail.user;
-});
+// broadcastUserChanges receiver for web
+fluxIDChannel.onmessage = (event) => {
+  if (event.data.event === 'update-user') {
+    const { info } = event.data;
 
-export const getCurrentUser = (): IUser | null => currentUser;
-
-const handleOAuthLoginSuccess = (data: IUser) => {
-  updateUser(data, { isWebSocialSignIn: true });
-  fluxIDEvents.emit('oauth-logged-in');
-  storage.set('keep-flux-id-login', true);
-
-  if (window.location.hash === '#/initialize/connect/flux-id-login') {
-    window.location.hash = '#/initialize/connect/select-machine-model';
+    updateUser(info, { sendToOtherTabs: false });
   }
 };
 
+export const getCurrentUser = (): IUser | null => currentUser;
+
+// Note: In electron, this function is called in the same tab as the login dialog,
+// while in the web version, it is called in a different tab redirecting from the oauth website
+const handleOAuthLoginSuccess = (data: IUser) => {
+  storage.set('keep-flux-id-login', true);
+  updateUser(data);
+  // Close login dialog in electron tab
+  fluxIDEvents.emit('DISMISS_FLUX_LOGIN');
+};
+
+/**
+ * Get full user info
+ * @returns
+ * - null if api error
+ * - IUser with status = 'ok' if logged in
+ * - { info: string, status: 'error' } if not logged in or not verified
+ */
 export const getInfo = async ({
-  isWebSocialSignIn = false,
   sendToOtherTabs = true,
   silent = false,
-}: { isWebSocialSignIn?: boolean; sendToOtherTabs?: boolean; silent?: boolean } = {}) => {
+}: { sendToOtherTabs?: boolean; silent?: boolean } = {}): Promise<
+  (IUser & { status: 'ok' }) | null | { info: string; message: null | string; status: 'error' }
+> => {
   const response = (await axiosFluxId.get('/user/info?query=credits', {
     withCredentials: true,
   })) as ResponseWithError;
@@ -167,7 +181,7 @@ export const getInfo = async ({
 
   if (response.status === 200) {
     if (responseData.status === 'ok') {
-      updateUser(responseData, { isWebSocialSignIn, sendToOtherTabs });
+      updateUser(responseData, { sendToOtherTabs });
     }
 
     return responseData;
@@ -237,7 +251,7 @@ export const signInWithFBToken = async (fb_token: string): Promise<boolean> => {
 
   if (data.status === 'ok') {
     handleOAuthLoginSuccess(data);
-    await getInfo({ isWebSocialSignIn: true, silent: true });
+    await getInfo({ silent: true });
 
     return true;
   }
@@ -278,7 +292,7 @@ export const signInWithGoogleCode = async (info: { [key: string]: string }): Pro
 
   if (responseData.status === 'ok') {
     handleOAuthLoginSuccess(responseData);
-    await getInfo({ isWebSocialSignIn: true, silent: true });
+    await getInfo({ silent: true });
 
     return true;
   }
@@ -297,7 +311,6 @@ export const signOut = async (): Promise<boolean> => {
 
   if (response.status === 200) {
     updateUser();
-    fluxIDEvents.emit('logged-out');
 
     return response.data;
   }
@@ -316,26 +329,25 @@ export const init = async (): Promise<void> => {
 
   if (!isWeb()) {
     // Set csrf cookie for electron only
-    cookies.on('changed', (event, cookie, cause, removed) => {
+    cookies.on('changed', (_event: any, cookie: Cookie, _cause: string, removed: boolean) => {
       if (cookie.domain === FLUXID_DOMAIN && cookie.name === 'csrftoken' && !removed) {
         setHeaders(cookie.value);
       }
     });
-  }
 
-  communicator.on('FB_AUTH_TOKEN', (_: Event, dataString: string) => {
-    const data = parseQueryData(dataString);
-    const token = data.access_token;
+    // Setup oauth events for electron
+    communicator.on('FB_AUTH_TOKEN', (_: Event, dataString: string) => {
+      const data = parseQueryData(dataString);
+      const token = data.access_token;
 
-    signInWithFBToken(token);
-  });
-  communicator.on('GOOGLE_AUTH', (e: Event, dataString: string) => {
-    const data = parseQueryData(dataString);
+      signInWithFBToken(token);
+    });
+    communicator.on('GOOGLE_AUTH', (e: Event, dataString: string) => {
+      const data = parseQueryData(dataString);
 
-    signInWithGoogleCode(data);
-  });
+      signInWithGoogleCode(data);
+    });
 
-  if (!isWeb()) {
     // Init csrftoken for electron
     const csrfcookies = await cookies.get({
       domain: FLUXID_DOMAIN,
@@ -348,11 +360,9 @@ export const init = async (): Promise<void> => {
     }
   }
 
-  const res = await getInfo({ sendToOtherTabs: false, silent: true });
-
-  if (res && res.status !== 'ok') {
-    updateMenu();
-  }
+  // Initialize user info for current tab
+  await getInfo({ sendToOtherTabs: false, silent: true });
+  updateAccountMenu(currentUser);
 };
 
 export const externalLinkFBSignIn = (): void => {

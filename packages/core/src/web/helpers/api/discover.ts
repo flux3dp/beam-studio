@@ -273,6 +273,6 @@ initSmartUpnp();
 
 export const checkConnection = (): boolean => ws?.currentState === WebSocket.OPEN;
 
-export const getLatestDeviceInfo = (uuid: string): IDeviceInfo => deviceMap[uuid] ?? swiftrayDevices[uuid];
+export const getLatestDeviceInfo = (uuid = ''): IDeviceInfo | null => deviceMap[uuid] ?? swiftrayDevices[uuid] ?? null;
 
 export default Discover;
