@@ -33,6 +33,11 @@ const moveLaserHead = async (
 
     await deviceMaster.rawMove({ f: 7500, x: position[0], y: position[1] });
 
+    const dist = (position[0] ** 2 + position[1] ** 2) ** 0.5;
+    const time = (dist / (7500 / 60)) * 2; // safety factor 2
+
+    await new Promise((resolve) => setTimeout(resolve, time * 1000));
+
     if (zMove) {
       const { ref = 'cur', val } = zMove;
 
