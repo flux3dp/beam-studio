@@ -43,7 +43,7 @@ class FisheyePreviewManagerV4 extends FisheyePreviewManagerBase implements Fishe
       await deviceMaster.rawMove({ f: 7500, x: cameraPosition[0], y: cameraPosition[1] });
 
       const dist = (cameraPosition[0] ** 2 + cameraPosition[1] ** 2) ** 0.5;
-      const time = (dist / (7500 / 60)) * 1.2; // safety margin of 20%
+      const time = (dist / (7500 / 60)) * 2; // safety factor 2
 
       await new Promise((resolve) => setTimeout(resolve, time * 1000));
     }
