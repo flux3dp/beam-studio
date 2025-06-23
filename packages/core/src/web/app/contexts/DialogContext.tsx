@@ -1,21 +1,26 @@
 import * as React from 'react';
 
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import isWeb from '@core/helpers/is-web';
+
+interface Props {
+  children: React.ReactNode;
+}
+
+interface IDialogComponent {
+  component: React.JSX.Element;
+  id: string;
+}
 
 export const DialogContext = React.createContext({
-  dialogComponents: [],
+  dialogComponents: [] as IDialogComponent[],
 });
 
 export const eventEmitter = eventEmitterFactory.createEventEmitter();
 
-export class DialogContextProvider extends React.Component<any> {
-  private dialogComponents: Array<{
-    component: React.JSX.Element;
-    id: string;
-  }>;
+export class DialogContextProvider extends React.Component<Props> {
+  private dialogComponents: IDialogComponent[];
 
-  constructor(props) {
+  constructor(props: Props) {
     super(props);
     this.dialogComponents = [];
   }
@@ -25,12 +30,6 @@ export class DialogContextProvider extends React.Component<any> {
     eventEmitter.on('CLEAR_ALL_DIALOG_COMPONENTS', this.clearAllDialogComponents.bind(this));
     eventEmitter.on('CHECK_ID_EXIST', this.isIdExist.bind(this));
     eventEmitter.on('POP_DIALOG_BY_ID', this.popDialogById.bind(this));
-
-    if (isWeb()) {
-      window.addEventListener('DISMISS_FLUX_LOGIN', () => {
-        this.popDialogById.call(this, 'flux-id-login');
-      });
-    }
   }
 
   componentWillUnmount() {

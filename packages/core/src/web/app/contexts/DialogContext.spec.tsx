@@ -51,27 +51,10 @@ describe('should render correctly', () => {
     expect(response.isIdExist).toBeFalsy();
     act(() => eventEmitter.emit('POP_DIALOG_BY_ID', '67890'));
     expect(container).toMatchSnapshot();
-    act(() => window.dispatchEvent(new CustomEvent('DISMISS_FLUX_LOGIN')));
-    expect(container).toMatchSnapshot();
     act(() => eventEmitter.emit('CLEAR_ALL_DIALOG_COMPONENTS'));
     expect(container).toMatchSnapshot();
 
     unmount();
     expect(eventEmitter.eventNames().length).toBe(0);
-  });
-
-  test('web version', () => {
-    window.FLUX.version = 'web';
-
-    const { container } = render(
-      <DialogContextProvider>
-        <Children />
-      </DialogContextProvider>,
-    );
-
-    act(() => eventEmitter.emit('ADD_DIALOG_COMPONENT', 'flux-id-login', <span>Flux Login</span>));
-    expect(container).toMatchSnapshot();
-    act(() => window.dispatchEvent(new CustomEvent('DISMISS_FLUX_LOGIN')));
-    expect(container).toMatchSnapshot();
   });
 });

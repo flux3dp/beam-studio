@@ -47,37 +47,4 @@ exports[`should render correctly desktop version 3`] = `
 </div>
 `;
 
-exports[`should render correctly desktop version 4`] = `
-<div>
-  <div
-    id="12345"
-  >
-    <div>
-      Hello World
-    </div>
-  </div>
-  <div
-    id="flux-id-login"
-  >
-    <span>
-      Flux Login
-    </span>
-  </div>
-</div>
-`;
-
-exports[`should render correctly desktop version 5`] = `<div />`;
-
-exports[`should render correctly web version 1`] = `
-<div>
-  <div
-    id="flux-id-login"
-  >
-    <span>
-      Flux Login
-    </span>
-  </div>
-</div>
-`;
-
-exports[`should render correctly web version 2`] = `<div />`;
+exports[`should render correctly desktop version 4`] = `<div />`;
