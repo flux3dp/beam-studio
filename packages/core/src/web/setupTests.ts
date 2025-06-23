@@ -99,3 +99,20 @@ expect.addSnapshotSerializer({
 });
 
 global.structuredClone = (v) => JSON.parse(JSON.stringify(v));
+
+class BroadcastChannelMock {
+  name: string;
+  constructor(name: string) {
+    this.name = name;
+  }
+  onmessage() {}
+  postMessage() {}
+  close() {}
+  addEventListener() {}
+  removeEventListener() {}
+  onmessageerror() {}
+  dispatchEvent() {
+    return true;
+  }
+}
+global.BroadcastChannel = BroadcastChannelMock;
