@@ -5,7 +5,7 @@ import { Collapse, ConfigProvider } from 'antd';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
-import { printingModules } from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType } from '@core/app/constants/promark-constants';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
@@ -17,6 +17,7 @@ import useForceUpdate from '@core/helpers/use-force-update';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './AdvancedBlock.module.scss';
+import AmDensityBlock from './AmDensityBlock';
 import AutoFocus from './AutoFocus';
 import CurveEngravingZHighSpeed from './CurveEngravingZHighSpeed';
 import Diode from './Diode';
@@ -91,6 +92,10 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
       contents.push(<Diode key="diode" />);
     }
   } else {
+    if (module.value === LayerModule.PRINTER_4C) {
+      contents.push(<AmDensityBlock key="am-density-block" type={type} />);
+    }
+
     contents.push(<SingleColorBlock key="single-color-block" />);
   }
 

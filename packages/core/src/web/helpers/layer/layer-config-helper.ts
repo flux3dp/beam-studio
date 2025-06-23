@@ -19,6 +19,7 @@ import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type { ConfigKey, ConfigKeyTypeMap, ILayerConfig, Preset } from '@core/interfaces/ILayerConfig';
 
 const attributeMap: Record<ConfigKey, string> = {
+  airAssist: 'data-airAssist',
   amDensity: 'data-amDensity',
   backlash: 'data-backlash',
   biDirectional: 'data-biDirectional',
@@ -49,9 +50,6 @@ const attributeMap: Record<ConfigKey, string> = {
   printingStrength: 'data-printingStrength',
   pulseWidth: 'data-pulseWidth',
   ref: 'data-ref',
-  refreshInterval: 'data-refreshInterval',
-  refreshWidth: 'data-refreshWidth',
-  refreshZ: 'data-refreshZ',
   repeat: 'data-repeat',
   speed: 'data-speed',
   split: 'data-split',
@@ -71,6 +69,7 @@ const attributeMap: Record<ConfigKey, string> = {
 export const CUSTOM_PRESET_CONSTANT = ' ';
 
 export const baseConfig: Partial<ConfigKeyTypeMap> = {
+  airAssist: 100,
   amDensity: 2,
   backlash: 0,
   biDirectional: true,
@@ -96,9 +95,6 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   printingSpeed: 60,
   printingStrength: 100,
   pulseWidth: 500,
-  refreshInterval: 20,
-  refreshWidth: 3,
-  refreshZ: 1.5,
   repeat: 1,
   speed: 20,
   uv: 0,
@@ -129,9 +125,6 @@ export const timeRelatedConfigs: Set<ConfigKey> = new Set([
   'crossHatch',
   'wobbleDiameter',
   'wobbleStep',
-  // 4c
-  'refreshInterval',
-  'refreshWidth',
   // white ink
   'uvIntervalX',
   'uvIntervalY',

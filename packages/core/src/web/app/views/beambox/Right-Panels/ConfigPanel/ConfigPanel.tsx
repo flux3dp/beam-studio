@@ -49,7 +49,7 @@ import useI18n from '@core/helpers/useI18n';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import AdvancedBlock from './AdvancedBlock';
-import AdvancedPrintingBlock from './AdvancedPrintingBlock';
+import AirAssistBlock from './AirAssistBlock';
 import Backlash from './Backlash';
 import styles from './ConfigPanel.module.scss';
 import ConfigPanelContext from './ConfigPanelContext';
@@ -278,13 +278,13 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
       {isPrintingModule && <MultipassBlock type={UIType} />}
       {isDevMode && isPrintingModule && fullcolor.value && UIType === 'default' && <WhiteInkCheckbox />}
       {isDevMode && isCustomBacklashEnabled && <Backlash type={UIType} />}
+      {!isPrintingModule && <AirAssistBlock type={UIType} />}
       <RepeatBlock type={UIType} />
       {isDevMode && isPrintingModule && fullcolor.value && UIType === 'panel-item' && (
         <WhiteInkCheckbox type={UIType} />
       )}
       {isPromark && <FillBlock type={UIType} />}
       {isPromark && <DottingTimeBlock type={UIType} />}
-      {isDevMode && isPrintingModule && <AdvancedPrintingBlock />}
       {is4cUV && <UVIntervalX type={UIType} />}
       {is4cUV && <UVIntervalY type={UIType} />}
     </>

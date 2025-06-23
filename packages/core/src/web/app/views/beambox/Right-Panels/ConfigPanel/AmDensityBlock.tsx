@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 
-import NumberBlock from '../NumberBlock';
+import NumberBlock from './NumberBlock';
 
 const AMDensityBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.JSX.Element => {
   return (
