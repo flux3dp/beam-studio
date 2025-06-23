@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 
 import classNames from 'classnames';
 import { match, P } from 'ts-pattern';
@@ -16,11 +16,22 @@ import useI18n from '@core/helpers/useI18n';
 import styles from './AutoFocusButton.module.scss';
 
 const AutoFocusButton = (): React.JSX.Element => {
-  const lang = useI18n().topbar.menu.autofocus;
+  const {
+    topbar: {
+      menu: { autofocus: lang },
+    },
+  } = useI18n();
   const { selectedDevice } = useContext(CanvasContext);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const onClick = async () => {
+    if (isProcessing) {
+      return;
+    }
+
     try {
+      setIsProcessing(true);
+
       const deviceStatus = await checkDeviceStatus(selectedDevice!);
 
       if (!deviceStatus) {
@@ -74,6 +85,7 @@ const AutoFocusButton = (): React.JSX.Element => {
       await deviceMaster.endSubTask();
     } finally {
       progressCaller.popById('auto-focus');
+      setIsProcessing(false);
     }
   };
 
@@ -81,6 +93,7 @@ const AutoFocusButton = (): React.JSX.Element => {
     <div
       className={classNames(styles.button, {
         [styles.disabled]:
+          isProcessing ||
           selectedDevice === null ||
           (!constants.fcodeV2Models.has(selectedDevice.model) && selectedDevice.model !== 'fhexa1'),
       })}
