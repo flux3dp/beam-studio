@@ -167,7 +167,7 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
       LayerModule.LASER_1064,
       LayerModule.UV_PRINT,
     ].filter(Boolean),
-    vectorSpeedLimit: 50,
+    vectorSpeedLimit: 30,
     width: 360,
   },
   fhexa1: {
