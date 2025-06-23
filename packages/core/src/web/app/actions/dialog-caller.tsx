@@ -116,8 +116,6 @@ const forceLoginWrapper = (
   silent?: boolean,
   failCallback?: () => Promise<void> | void,
 ): void => {
-  console.log('forceLoginWrapper called');
-
   let user = getCurrentUser();
 
   if (!user) {
