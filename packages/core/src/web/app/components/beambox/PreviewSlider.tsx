@@ -32,9 +32,9 @@ const PreviewSlider = (): React.ReactNode => {
     const { model, version } = deviceMaster.currentDevice.info;
     const vc = versionChecker(version);
 
-    if (!(constant.adorModels.includes(model) || (model === 'fbb2' && vc.meetRequirement('BB2_SEPARATE_EXPOSURE')))) {
-      return;
-    }
+    if (!constant.fcodeV2Models.has(model)) return;
+
+    if (model === 'fbb2' && !vc.meetRequirement('BB2_SEPARATE_EXPOSURE')) return;
 
     try {
       const control = await deviceMaster.getControl();
@@ -104,7 +104,7 @@ const PreviewSlider = (): React.ReactNode => {
           <Slider
             className={styles.slider}
             max={Math.min(exposureSetting.max, 1000)}
-            min={Math.max(exposureSetting.min, 250)}
+            min={Math.max(exposureSetting.min, 50)}
             onChange={(value: number) => setExposureSetting({ ...exposureSetting, value })}
             onChangeComplete={async (value: number) => {
               setExposureSetting({ ...exposureSetting, value });
