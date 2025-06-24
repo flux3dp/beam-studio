@@ -56,24 +56,25 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
   const updateParam = useCallback((param: FisheyeCameraParametersV4Cali) => {
     calibratingParam.current = { ...calibratingParam.current, ...param };
   }, []);
-  const [step, setStep] = useState<StepsType>(Steps.CHECK_DATA);
+  const [step, setStep] = useState<StepsType>(isAdvanced ? Steps.PRE_CHESSBOARD : Steps.CHECK_DATA);
   const next = useCallback(() => setStep((step) => (step + 1) as StepsType), []);
   const prev = useCallback(() => setStep((step) => (step - 1) as StepsType), []);
-
-  console.log(calibratingParam.current);
 
   return match(step)
     .with(Steps.CHECK_DATA, () => {
       return (
         <CheckpointData
           allowCheckPoint={false}
-          askUser
+          askUser={false}
           onClose={onClose}
           onNext={(res: boolean) => {
             if (res) {
               setStep(Steps.PUT_PAPER);
             } else {
-              setStep(Steps.PRE_CHESSBOARD);
+              alertCaller.popUpError({
+                message: tCalibration.unable_to_load_camera_parameters,
+              });
+              onClose(false);
             }
           }}
           updateParam={updateParam}
@@ -247,7 +248,6 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
               tvec,
               tvecs1: { ...calibratingParam.current.tvecs1, [region]: tvec },
             });
-            console.log('calibratingParam.current', calibratingParam.current);
             progressCaller.popById(PROGRESS_ID);
             next();
           }}
@@ -305,8 +305,6 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
             for (const region of Object.keys(calibratingParam.current.rvecs1!) as WideAngleRegion[]) {
               const rvec = calibratingParam.current.rvecs1?.[region]!.flat()!;
               const tvec = calibratingParam.current.tvecs1?.[region]!.flat()!;
-
-              console.log(rvec);
 
               rvecPolyfits[region] = [
                 [0, 0, 0],

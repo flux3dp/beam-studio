@@ -152,7 +152,7 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
         await this.endCameraPreview();
       }
     } catch (error) {
-      console.log('Failed to end BeamPreviewManager', error);
+      console.log('Failed to end Beamo2PreviewManager', error);
     }
   };
 
@@ -179,7 +179,7 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
 
       return true;
     } catch (error) {
-      MessageCaller.closeMessage('wide-angle-preview');
+      MessageCaller.closeMessage(this.progressId);
       throw error;
     }
   };

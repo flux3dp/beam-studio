@@ -101,6 +101,7 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
   const isBeamo = model === 'fbm1';
   const isBeamo2 = model === 'fbm2';
   const isBb2 = model === 'fbb2';
+  const isBeamo2 = model === 'fbm2';
   const vc = versionChecker(version);
   const handleClick = (item: MenuItem) => callback({ ...item, machineName, serial, source, uuid });
   const submenu = [
@@ -127,7 +128,7 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
       label: r.calibration,
       submenu: [
         { click: handleClick, id: 'CALIBRATE_BEAMBOX_CAMERA', label: r.calibrate_beambox_camera },
-        isBb2 && {
+        (isBb2 || isBeamo2) && {
           click: handleClick,
           id: 'CALIBRATE_CAMERA_ADVANCED',
           label: r.calibrate_camera_advanced,
