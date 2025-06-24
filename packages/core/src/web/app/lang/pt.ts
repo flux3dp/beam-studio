@@ -1029,8 +1029,9 @@ const lang: ILang = {
     moving_laser_head: 'Movendo a cabeça do laser...',
     moving_platform: 'Movendo a plataforma...',
     next: 'Próximo',
-    no_picutre_found: '#846 Seu dispositivo não possui fotos brutas disponíveis para calibração. Entre em contato com o suporte da FLUX.',
+    no_picture_found: '#846 Seu dispositivo não possui fotos brutas disponíveis para calibração. Entre em contato com o suporte da FLUX.',
     perform_autofocus_bb2: 'Por favor, vá ao painel de controle da máquina e pressione AF para realizar o foco automático.',
+    perform_autofocus_bm2: 'Mova manualmente a cabeça do laser sobre o material e depois abaixe a sonda de foco para ativar o foco automático.',
     please_do_camera_calibration_and_focus: {
       beambox: 'Ao calibrar o módulo de laser de diodo, a câmera é necessária.\nCertifique-se de que a câmera desta máquina foi calibrada.\nE ajuste gentilmente a plataforma ao ponto focal (a altura do acrílico virado para baixo)',
       beamo: 'Ao calibrar o módulo de laser de diodo, a câmera é necessária.\nCertifique-se de que a câmera desta máquina foi calibrada.\nE ajuste gentilmente a cabeça do laser para focar no objeto de gravação (a altura do acrílico virado para baixo)',
@@ -1062,6 +1063,7 @@ const lang: ILang = {
     put_chessboard_promark_desc_1: 'Por favor, utilize o papel de xadrez fornecido na caixa de acessórios, ou imprima o seguinte padrão de xadrez em papel A4 para a calibração da câmera.',
     put_chessboard_promark_desc_2: 'Coloque o tabuleiro de xadrez plano e centralizado na plataforma de trabalho.',
     put_paper: 'Coloque o papel',
+    put_paper_bm2_1: 'Coloque duas folhas brancas limpas de tamanho A4 ou Carta lado a lado e alise-as na área de trabalho.',
     put_paper_promark_1: 'Coloque o cartão preto da caixa de acessórios na plataforma de trabalho.',
     put_paper_promark_2: 'Ajuste o foco corretamente e clique em "Iniciar Gravação" para continuar com a gravação.',
     put_paper_skip: 'Se o desenho de calibração não prosseguir automaticamente para tirar a foto, pressione "Pular" para tirar a foto.',

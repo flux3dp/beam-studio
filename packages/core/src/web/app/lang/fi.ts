@@ -1029,8 +1029,9 @@ const lang: ILang = {
     moving_laser_head: 'Siirtää laserpäätä...',
     moving_platform: 'Alustaa siirretään...',
     next: 'Seuraava',
-    no_picutre_found: '#846 Laitteellasi ei ole saatavilla raakakuvia kalibrointia varten. Ota yhteyttä FLUX-tukeen.',
+    no_picture_found: '#846 Laitteellasi ei ole saatavilla raakakuvia kalibrointia varten. Ota yhteyttä FLUX-tukeen.',
     perform_autofocus_bb2: 'Mene laitteen ohjauspaneeliin ja paina AF suorittaaksesi automaattitarkennuksen.',
+    perform_autofocus_bm2: 'Siirrä laserpää käsin materiaalin yläpuolelle ja laske sitten tarkennusanturi käynnistääksesi automaattitarkennuksen.',
     please_do_camera_calibration_and_focus: {
       beambox: 'Diodilasermoduulin kalibrointi vaatii kameran.\nVarmista, että tämän koneen kamera on kalibroitu.\nJa säädä alusta polttopisteeseen (käännetyn akryylin korkeus)',
       beamo: 'Diodilasermoduulin kalibrointi vaatii kameran.\nVarmista, että tämän koneen kamera on kalibroitu.\nJa kohdista laserpää kaiverrettavaan kohteeseen (käännetyn akryylin korkeus)',
@@ -1062,6 +1063,7 @@ const lang: ILang = {
     put_chessboard_promark_desc_1: 'Käytä tarvikelaatikossa mukana toimitettua shakkilautapaperia tai tulosta seuraava shakkikuvio A4-paperille kameran kalibrointia varten.',
     put_chessboard_promark_desc_2: 'Säädä tarkennus oikein ja napsauta sitten "Seuraava" jatkaaksesi kaiverrusta.',
     put_paper: 'Aseta paperi',
+    put_paper_bm2_1: 'Aseta kaksi puhdasta A4- tai kirjekokoista valkoista paperia vierekkäin ja tasoita ne työalueelle.',
     put_paper_promark_1: 'Aseta musta pahvi tarvikelaatikosta työalustalle.',
     put_paper_promark_2: 'Säädä tarkennus oikein ja napsauta sitten "Aloita Kaiverrus" jatkaaksesi kaiverrusta.',
     put_paper_skip: 'Jos kalibrointipiirros ei siirry automaattisesti kuvauksen ottamiseen, paina "Ohita" ottaaksesi kuvan.',

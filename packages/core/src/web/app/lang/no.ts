@@ -1029,8 +1029,9 @@ const lang: ILang = {
     moving_laser_head: 'Flytter laserhodet...',
     moving_platform: 'Flytter plattformen...',
     next: 'Neste',
-    no_picutre_found: '#846 Enheten din har ingen tilgjengelige rå bilder for kalibrering. Vennligst kontakt FLUX-støtte.',
+    no_picture_found: '#846 Enheten din har ingen tilgjengelige rå bilder for kalibrering. Vennligst kontakt FLUX-støtte.',
     perform_autofocus_bb2: 'Vennligst gå til maskinens kontrollpanel og trykk AF for å utføre autofokus.',
+    perform_autofocus_bm2: 'Flytt laserkhodet manuelt over materialet, senk deretter fokusproben for å aktivere autofokus.',
     please_do_camera_calibration_and_focus: {
       beambox: 'Når du kalibrerer diode lasermodulen, trengs kamera.\nVennligst sørg for at kameraet på denne maskinen er kalibrert.\nOg vennligst juster plattformen til brennpunktet (høyden på nedvendt akryl)',
       beamo: 'Når du kalibrerer diode lasermodulen, trengs kamera.\nVennligst sørg for at kameraet på denne maskinen er kalibrert.\nOg vennligst juster laserhodet for å fokusere på graveringsobjektet (høyden på nedvendt akryl)',
@@ -1062,6 +1063,7 @@ const lang: ILang = {
     put_chessboard_promark_desc_1: 'Vennligst bruk sjakkbrettpapiret som følger med i tilbehørsboksen, eller skriv ut det følgende sjakkbrettmønsteret på A4-papir for kamerakalibrering.',
     put_chessboard_promark_desc_2: 'Plasser sjakkbrettet flatt og sentrert på arbeidsplattformen.',
     put_paper: 'Legg papir',
+    put_paper_bm2_1: 'Legg to rene A4- eller brevstore hvite ark ved siden av hverandre og glatt dem ut i arbeidsområdet.',
     put_paper_promark_1: 'Plasser den svarte pappen fra tilbehørsboksen på arbeidsplattformen.',
     put_paper_promark_2: 'Juster fokus riktig, og klikk deretter på "Start Gravering" for å fortsette med graveringen.',
     put_paper_skip: 'Hvis kalibreringstegningen ikke automatisk går videre til å ta bilde, trykk på "Hopp over" for å ta bilde.',

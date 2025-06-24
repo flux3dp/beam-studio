@@ -1029,8 +1029,9 @@ const lang: ILang = {
     moving_laser_head: 'Przemieszczanie głowicy lasera...',
     moving_platform: 'Przesuwanie platformy...',
     next: 'Dalej',
-    no_picutre_found: '#846 Twoje urządzenie nie ma dostępnych zdjęć w formacie raw do kalibracji. Skontaktuj się z obsługą FLUX.',
+    no_picture_found: '#846 Twoje urządzenie nie ma dostępnych zdjęć w formacie raw do kalibracji. Skontaktuj się z obsługą FLUX.',
     perform_autofocus_bb2: 'Proszę przejść do panelu sterowania maszyny i nacisnąć AF, aby wykonać autofokus.',
+    perform_autofocus_bm2: 'Flytt laserkhodet manuelt over materialet, senk deretter fokusproben for å aktivere autofokus.',
     please_do_camera_calibration_and_focus: {
       beambox: 'Podczas kalibracji modułu lasera diodowego potrzebna jest kamera.\nUpewnij się, że kamera tego urządzenia została skalibrowana.\nI uprzejmie dostosuj platformę do punktu ogniskowego',
       beamo: 'Do kalibracji modułu lasera diodowego potrzebna jest kamera.\nUpewnij się, że kamera tego urządzenia została skalibrowana.\nI uprzejmie dostosuj głowicę lasera, do punktu ogniskowego',
@@ -1062,6 +1063,7 @@ const lang: ILang = {
     put_chessboard_promark_desc_1: 'Proszę użyć papieru z szachownicą dostarczonego w pudełku z akcesoriami lub wydrukować poniższy wzór szachownicy na papierze A4 do kalibracji kamery.',
     put_chessboard_promark_desc_2: 'Umieść szachownicę płasko i na środku platformy roboczej.',
     put_paper: 'Połóż Papier',
+    put_paper_bm2_1: 'Umieść dwa czyste białe arkusze formatu A4 lub Letter obok siebie i wyrównaj je na obszarze roboczym.',
     put_paper_promark_1: 'Umieść czarną tekturę z pudełka z akcesoriami na platformie roboczej.',
     put_paper_promark_2: 'Ustaw ostrość prawidłowo, a następnie kliknij "Rozpocznij Grawerować", aby kontynuować grawerowanie.',
     put_paper_skip: 'Jeśli rysunek kalibracyjny nie przejdzie automatycznie do robienia zdjęcia, naciśnij „Pomiń”, aby zrobić zdjęcie.',

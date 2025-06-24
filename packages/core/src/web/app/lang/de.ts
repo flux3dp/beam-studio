@@ -1029,8 +1029,9 @@ const lang: ILang = {
     moving_laser_head: 'Bewege den Laserkopf...',
     moving_platform: 'Plattform wird bewegt...',
     next: 'Nächster',
-    no_picutre_found: '#846 Dein Gerät hat keine verfügbaren Rohfotos für die Kalibrierung. Bitte kontaktiere den FLUX-Support.',
+    no_picture_found: '#846 Dein Gerät hat keine verfügbaren Rohfotos für die Kalibrierung. Bitte kontaktiere den FLUX-Support.',
     perform_autofocus_bb2: 'Bitte gehen Sie zum Maschinensteuerpult und drücken Sie AF, um den Autofokus auszuführen.',
+    perform_autofocus_bm2: 'Bewegen Sie den Laserkopf manuell über das Material und senken Sie dann die Fokussier-Sonde, um den Autofokus auszulösen.',
     please_do_camera_calibration_and_focus: {
       beambox: 'Beim Kalibrieren von Diodenlasermodul wird eine Kamera benötigt\nBitte stelle sicher, dass die Kamera dieser Maschine kalibriert wurde.\nUnd stelle bitte die Plattform auf den Brennpunkt ein (die Höhe des umgedrehten Acryls).',
       beamo: 'Beim Kalibrieren von Diodenlasermodul wird eine Kamera benötigt.\nBitte stelle sicher, dass die Kamera dieser Maschine kalibriert wurde.\nUnd stelle bitte den Laserkopf so ein, dass er auf das Gravurobjekt fokussiert ist (die Höhe des umgedrehten Acryls).',
@@ -1062,6 +1063,7 @@ const lang: ILang = {
     put_chessboard_promark_desc_1: 'Bitte verwenden Sie das im Zubehörkasten bereitgestellte Schachbrettmuster oder drucken Sie das folgende Schachbrettmuster auf A4-Papier für die Kamerakalibrierung.',
     put_chessboard_promark_desc_2: 'Stellen Sie den Fokus richtig ein und klicken Sie dann auf "Weiter", um mit dem Gravieren fortzufahren.',
     put_paper: 'Papier einlegen',
+    put_paper_bm2_1: 'Legen Sie zwei saubere A4- oder Letter-Papierblätter nebeneinander und glätten Sie sie im Arbeitsbereich.',
     put_paper_promark_1: 'Legen Sie die schwarze Pappe aus dem Zubehörkasten auf die Arbeitsplattform.',
     put_paper_promark_2: 'Stellen Sie den Fokus richtig ein und klicken Sie dann auf "Starte Gravur", um mit dem Gravieren fortzufahren.',
     put_paper_skip: 'Wenn die Kalibrierungszeichnung nicht automatisch mit der Aufnahme eines Bildes fortfährt, drücken Sie „Überspringen“, um ein Bild aufzunehmen.',

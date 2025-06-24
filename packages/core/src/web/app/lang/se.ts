@@ -1029,8 +1029,9 @@ const lang: ILang = {
     moving_laser_head: 'Flyttar laserhuvudet...',
     moving_platform: 'Flyttar plattformen...',
     next: 'Nästa',
-    no_picutre_found: '#846 Din enhet har inga tillgängliga råbilder för kalibrering. Vänligen kontakta FLUX-supporten.',
+    no_picture_found: '#846 Din enhet har inga tillgängliga råbilder för kalibrering. Vänligen kontakta FLUX-supporten.',
     perform_autofocus_bb2: 'Gå till maskinens kontrollpanel och tryck på AF för att utföra autofokus.',
+    perform_autofocus_bm2: 'Flytta laserkhuvudet manuellt ovanför materialet och sänk sedan fokusproben för att aktivera autofokus.',
     please_do_camera_calibration_and_focus: {
       beambox: 'När kalibrering av diodlasermodul utförs behövs kamera.\nSe till att kameran på den här maskinen är kalibrerad.\nOch justera plattformen till fokalpunkten (höjden på den vända akrylen)',
       beamo: 'När kalibrering av diodlasermodul utförs behövs kamera.\nSe till att kameran på den här maskinen är kalibrerad.\nOch justera laserhuvudet för att fokusera på graveringsobjektet (höjden på den vända akrylen)',
@@ -1062,6 +1063,7 @@ const lang: ILang = {
     put_chessboard_promark_desc_1: 'Använd det rutnätspapper som medföljer i tillbehörslådan, eller skriv ut följande rutnätmönster på A4-papper för kamerakalibrering.',
     put_chessboard_promark_desc_2: 'Placera schackbrädet plant och centrerat på arbetsplattformen.',
     put_paper: 'Lägg Papper',
+    put_paper_bm2_1: 'Placera två rena A4- eller brevpappersark sida vid sida och släta ut dem i arbetsområdet.',
     put_paper_promark_1: 'Placera det svarta kartongarket från tillbehörslådan på arbetsplattformen.',
     put_paper_promark_2: 'Justera fokuset korrekt och klicka sedan på "Starta Gravyr" för att fortsätta med graveringen.',
     put_paper_skip: 'Om kalibreringsritningen inte automatiskt går vidare till att ta bild, tryck på "Hoppa över" för att ta bild.',

@@ -74,7 +74,7 @@ const CheckPictures = ({ onClose, onNext, updateParam }: Props): React.JSX.Eleme
     if (hasPictures) {
       calibrateDevicePictures();
     } else {
-      alertCaller.popUpError({ message: lang.calibration.no_picutre_found });
+      alertCaller.popUpError({ message: lang.calibration.no_picture_found });
       onClose?.(false);
     }
   }, [lang, progressId, onClose, calibrateDevicePictures]);

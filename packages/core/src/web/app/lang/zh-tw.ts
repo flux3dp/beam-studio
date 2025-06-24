@@ -1029,8 +1029,9 @@ const lang: ILang = {
     moving_laser_head: '移動雷射頭中...',
     moving_platform: '移動平台中...',
     next: '下一步',
-    no_picutre_found: '#846 您的機器中沒有可使用的照片以用於校正，請聯繫 FLUX 客服。',
+    no_picture_found: '#846 您的機器中沒有可使用的照片以用於校正，請聯繫 FLUX 客服。',
     perform_autofocus_bb2: '請前往機器控制面板並按下 AF 以執行自動對焦。',
+    perform_autofocus_bm2: '請手動將雷射頭移至材料上方，然後放下對焦探針以觸發自動對焦。',
     please_do_camera_calibration_and_focus: {
       beambox: '校正二極體雷射需要使用相機校正參數，請確認您的機器已進行過相機校正。並請旋轉升降平台旋鈕，直到輕觸焦距螺絲或焦距尺，完成對焦',
       beamo: '校正二極體雷射需要使用相機校正參數，請確認您的機器已進行過相機校正。並請轉開焦距固定環，調整雷射頭至平台輕觸焦距尺，完成對焦',
@@ -1062,6 +1063,7 @@ const lang: ILang = {
     put_chessboard_promark_desc_1: '請使用配件盒內提供的棋盤格紙，或將以下棋盤格圖檔列印於 A4 紙上，以進行相機校正。',
     put_chessboard_promark_desc_2: '請將棋盤格平放置於工作平台中央。',
     put_paper: '放置紙張',
+    put_paper_bm2_1: '請將兩張乾淨 A4 白紙拼接後鋪平於工作區域',
     put_paper_promark_1: '將配件盒中的黑卡紙放置在工作平台上。',
     put_paper_promark_2: '適當調整焦距，點選「開始繪製校正圖形」以繪製圖形。',
     put_paper_skip: '若繪製校正圖形結束後未自動進入拍攝動作，可按「跳過」以進行拍攝。',

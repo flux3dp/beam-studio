@@ -1029,8 +1029,9 @@ export interface ILang {
     moving_laser_head: string;
     moving_platform: string;
     next: string;
-    no_picutre_found: string;
+    no_picture_found: string;
     perform_autofocus_bb2: string;
+    perform_autofocus_bm2: string;
     please_do_camera_calibration_and_focus: {
       beambox: string;
       beamo: string;
@@ -1062,6 +1063,7 @@ export interface ILang {
     put_chessboard_promark_desc_1: string;
     put_chessboard_promark_desc_2: string;
     put_paper: string;
+    put_paper_bm2_1: string;
     put_paper_promark_1: string;
     put_paper_promark_2: string;
     put_paper_skip: string;
