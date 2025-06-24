@@ -1964,6 +1964,12 @@ const lang: ILang = {
       align_center: 'Zarovnat na střed',
       anti_aliasing: 'Vyhlazení',
       auto_align: 'Automatické Zarovnání',
+      autofocus: {
+        operating: 'Automatické zaostřování...',
+        select_device_error: 'Před automatickým zaostřením prosím vyberte zařízení.',
+        show_probe_error: 'Před automatickým zaostřením prosím zobrazte sondu.',
+        title: 'Automatické zaostření',
+      },
       borderless_mode: 'Mód bez okrajů',
       bug_report: 'Nahlásit chybu',
       calibrate_beambox_camera: 'Kalibrovat kameru',

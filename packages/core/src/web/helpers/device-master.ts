@@ -996,7 +996,7 @@ class DeviceMaster {
       controlSocket.setProgressListener(onProgress);
     }
 
-    return controlSocket.fetchCameraCalibImage(fileName);
+    return controlSocket.fetchCameraCalibrateImage(fileName);
   }
 
   async fetchFisheyeParams(): Promise<FisheyeCameraParameters> {
@@ -1223,7 +1223,10 @@ class DeviceMaster {
   async rawAutoFocus() {
     const controlSocket = await this.getControl();
 
-    return controlSocket.addTask(controlSocket.rawAutoFocus);
+    return controlSocket.addTask(
+      controlSocket.rawAutoFocus,
+      constant.fcodeV2Models.has(this.currentDevice.info.model) ? 2 : 1,
+    );
   }
 
   async rawGetProbePos(): Promise<{ a: number; didAf: boolean; x: number; y: number; z: number }> {

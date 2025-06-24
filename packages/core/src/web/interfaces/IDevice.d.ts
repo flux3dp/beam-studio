@@ -46,6 +46,8 @@ export interface IReport {
 export interface IDeviceDetailInfo {
   head_submodule_info: string;
   head_type: string;
+  // detect if the probe is showing for Beambox II
+  probe_showed: '0' | '1';
   x_acc: string;
 }
 

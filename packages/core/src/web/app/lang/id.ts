@@ -1964,6 +1964,12 @@ const lang: ILang = {
       align_center: 'Rata Tengah',
       anti_aliasing: 'Anti-Aliasing',
       auto_align: 'Penjajaran Otomatis',
+      autofocus: {
+        operating: 'Memfokus otomatis...',
+        select_device_error: 'Silakan pilih perangkat sebelum memfokus otomatis.',
+        show_probe_error: 'Tampilkan probe sebelum memfokus otomatis.',
+        title: 'Fokus Otomatis',
+      },
       borderless_mode: 'Mode Tanpa Batas',
       bug_report: 'Laporan Bug',
       calibrate_beambox_camera: 'Kalibrasi Kamera',
