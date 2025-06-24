@@ -967,6 +967,7 @@ const lang: ILang = {
     at_focus_height: 'tarkennuskorkeudella',
     at_lower_height: 'alemmalla korkeudella',
     back: 'Takaisin',
+    beamo2_autofocus_material: 'Siirrä laserpäätä manuaalisesti materiaalin yläpuolelle ja laske sitten tarkennusanturi laukaistaksesi automaattitarkennuksen.',
     calculating_camera_matrix: 'Lasketaan kameramatriisia...',
     calculating_regression_parameters: 'Lasketaan regressioparametreja...',
     calibrate_camera_before_calibrate_modules: 'Suorita kamerakalibrointi ennen moduulien kalibrointia.',

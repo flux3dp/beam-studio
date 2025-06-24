@@ -967,6 +967,7 @@ const lang: ILang = {
     at_focus_height: 'på fokuseringshøyde',
     at_lower_height: 'på lavere høyde',
     back: 'Tilbake',
+    beamo2_autofocus_material: 'Flytt laserhodet manuelt over materialet, og senk deretter fokussensoren for å aktivere autofokus.',
     calculating_camera_matrix: 'Beregner kameramatrise...',
     calculating_regression_parameters: 'Beregner regresjonsparametere...',
     calibrate_camera_before_calibrate_modules: 'Vennligst utfør kamera-kalibrering før du kalibrerer moduler.',

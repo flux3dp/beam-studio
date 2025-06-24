@@ -967,6 +967,7 @@ const lang: ILang = {
     at_focus_height: 'auf Fokushöhe',
     at_lower_height: 'auf niedrigerer Höhe',
     back: 'Zurück',
+    beamo2_autofocus_material: 'Bewege den Laserkopf manuell über das Material und senke dann die Fokussonde ab, um den Autofokus auszulösen.',
     calculating_camera_matrix: 'Berechnung der Kameramatrix...',
     calculating_regression_parameters: 'Berechnung der Regressionsparameter...',
     calibrate_camera_before_calibrate_modules: 'Bitte führen Sie zuerst eine Kamerakalibrierung durch, bevor Sie die Module kalibrieren.',

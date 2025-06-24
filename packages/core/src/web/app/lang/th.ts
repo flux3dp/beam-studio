@@ -967,6 +967,7 @@ const lang: ILang = {
     at_focus_height: 'ที่ความสูงของการโฟกัส',
     at_lower_height: 'ที่ความสูงต่ำกว่า',
     back: 'กลับ',
+    beamo2_autofocus_material: 'เลื่อนหัวเลเซอร์ด้วยตนเองไปเหนือวัสดุ จากนั้นลดหัววัดโฟกัสลงเพื่อเริ่มระบบโฟกัสอัตโนมัติ',
     calculating_camera_matrix: 'กําลังคํานวณเมทริกซ์กล้อง...',
     calculating_regression_parameters: 'กําลังคํานวณพารามิเตอร์การถดถอย...',
     calibrate_camera_before_calibrate_modules: 'โปรดทําการปรับเทียบกล้องก่อนปรับเทียบโมดูล',

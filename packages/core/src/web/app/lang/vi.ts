@@ -967,6 +967,7 @@ const lang: ILang = {
     at_focus_height: 'ở độ cao lấy nét',
     at_lower_height: 'ở độ cao thấp hơn',
     back: 'Quay Lại',
+    beamo2_autofocus_material: 'Di chuyển đầu laser thủ công lên trên vật liệu, sau đó hạ đầu dò lấy nét để kích hoạt lấy nét tự động.',
     calculating_camera_matrix: 'Đang tính toán ma trận camera...',
     calculating_regression_parameters: 'Đang tính toán tham số hồi quy...',
     calibrate_camera_before_calibrate_modules: 'Vui lòng hiệu chỉnh camera trước khi hiệu chỉnh các mô-đun.',

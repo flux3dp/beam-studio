@@ -428,7 +428,7 @@ exports[`test Align scroll and next should work when type is Camera 1`] = `
 </body>
 `;
 
-exports[`test Align scroll and next should work when type is PRINTER_HEAD 1`] = `
+exports[`test Align scroll and next should work when type is MODULE and module is PRINTER 1`] = `
 <body>
   <div />
   <div>

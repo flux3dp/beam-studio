@@ -967,6 +967,7 @@ const lang: ILang = {
     at_focus_height: 'στο ύψος εστίασης',
     at_lower_height: 'σε χαμηλότερο ύψος',
     back: 'Πiσω',
+    beamo2_autofocus_material: 'Μετακινήστε χειροκίνητα την κεφαλή λέιζερ πάνω από το υλικό και κατεβάστε την ανιχνευτή εστίασης για να ενεργοποιήσετε την αυτόματη εστίαση.',
     calculating_camera_matrix: 'Υπολογισμός Μήτρας Κάμερας...',
     calculating_regression_parameters: 'Υπολογισμός παραμέτρων παλινδρόμησης...',
     calibrate_camera_before_calibrate_modules: 'Παρακαλώ εκτελέστε βαθμονόμηση κάμερας πριν βαθμονομήσετε τις μονάδες.',

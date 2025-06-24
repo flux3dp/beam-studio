@@ -967,6 +967,7 @@ const lang: ILang = {
     at_focus_height: 'pada ketinggian fokus',
     at_lower_height: 'pada ketinggian lebih rendah',
     back: 'Kembali',
+    beamo2_autofocus_material: 'Gerakkan kepala laser secara manual di atas bahan, kemudian turunkan probe fokus untuk mengaktifkan fokus automatik.',
     calculating_camera_matrix: 'Mengira Matriks Kamera...',
     calculating_regression_parameters: 'Mengira Parameter Regresi...',
     calibrate_camera_before_calibrate_modules: 'Lakukan penentusahan kamera sebelum menentusahkan modul.',

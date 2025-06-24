@@ -99,6 +99,7 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
   const isAdor = adorModels.has(model);
   const isPromark = promarkModels.has(model);
   const isBeamo = model === 'fbm1';
+  const isBeamo2 = model === 'fbm2';
   const isBb2 = model === 'fbb2';
   const vc = versionChecker(version);
   const handleClick = (item: MenuItem) => callback({ ...item, machineName, serial, source, uuid });
@@ -153,12 +154,27 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
             id: 'CALIBRATE_CAMERA_V2_FACTORY',
             label: `${r.calibrate_beambox_camera} (Factory)`,
           },
-        hasModules && {
+        isAdor && {
           click: handleClick,
           id: 'CALIBRATE_PRINTER_MODULE',
           label: r.calibrate_printer_module,
         },
-        hasModules && {
+        isBeamo2 && {
+          click: handleClick,
+          id: 'CALIBRATE_PRINTER_4C_MODULE',
+          label: `${r.calibrate_printer_module} (4C)`,
+        },
+        isBeamo2 && {
+          click: handleClick,
+          id: 'CALIBRATE_UV_WHITE_INK_MODULE',
+          label: `${r.calibrate_printer_module} (${i18n.lang.layer_module.uv_white_ink})`,
+        },
+        isBeamo2 && {
+          click: handleClick,
+          id: 'CALIBRATE_UV_VARNISH_MODULE',
+          label: `${r.calibrate_printer_module} (${i18n.lang.layer_module.uv_varnish})`,
+        },
+        (isAdor || isBeamo2) && {
           click: handleClick,
           id: 'CALIBRATE_IR_MODULE',
           label: r.calibrate_ir_module,

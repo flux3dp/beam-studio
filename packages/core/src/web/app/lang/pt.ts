@@ -967,6 +967,7 @@ const lang: ILang = {
     at_focus_height: 'na altura de foco',
     at_lower_height: 'em altura inferior',
     back: 'Voltar',
+    beamo2_autofocus_material: 'Mova manualmente a cabeça do laser sobre o material e, em seguida, abaixe a sonda de foco para acionar o foco automático.',
     calculating_camera_matrix: 'Calculando Matriz da Câmera...',
     calculating_regression_parameters: 'Calculando parâmetros de regressão...',
     calibrate_camera_before_calibrate_modules: 'Calibre a câmera antes de calibrar os módulos.',

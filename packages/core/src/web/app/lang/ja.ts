@@ -967,6 +967,7 @@ const lang: ILang = {
     at_focus_height: '焦点高さで',
     at_lower_height: '低い高さで',
     back: '戻る',
+    beamo2_autofocus_material: 'レーザーヘッドを手動で素材の上に移動し、フォーカスプローブを下ろしてオートフォーカスを起動してください。',
     calculating_camera_matrix: 'カメラ行列の計算中...',
     calculating_regression_parameters: '回帰パラメータの計算中...',
     calibrate_camera_before_calibrate_modules: 'モジュールのキャリブレーションを行う前にカメラのキャリブレーションを行ってください。',

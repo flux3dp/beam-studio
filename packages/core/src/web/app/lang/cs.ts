@@ -967,6 +967,7 @@ const lang: ILang = {
     at_focus_height: 'na výšce zaostření',
     at_lower_height: 'na nižší výšce',
     back: 'Zpět',
+    beamo2_autofocus_material: 'Ručně přesuňte laserovou hlavu nad materiál a poté spusťte ostřicí sondu, aby se spustilo automatické zaostření.',
     calculating_camera_matrix: 'Vypočítávám matici kamery...',
     calculating_regression_parameters: 'Vypočítávám regresní parametry...',
     calibrate_camera_before_calibrate_modules: 'Nechte prosím znovu zkalibrovat kameru před kalibrací modulů.',

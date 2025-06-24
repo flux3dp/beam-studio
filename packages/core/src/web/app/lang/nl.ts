@@ -967,6 +967,7 @@ const lang: ILang = {
     at_focus_height: 'op focushoogte',
     at_lower_height: 'op lagere hoogte',
     back: 'Terug',
+    beamo2_autofocus_material: 'Beweeg de laserhandmatig boven het materiaal en laat vervolgens de focussensor zakken om de autofocus te activeren.',
     calculating_camera_matrix: 'Camera matrix berekenen...',
     calculating_regression_parameters: 'Regressieparameters berekenen...',
     calibrate_camera_before_calibrate_modules: 'Voer eerst een camerakalibratie uit voordat u modules kalibreert.',

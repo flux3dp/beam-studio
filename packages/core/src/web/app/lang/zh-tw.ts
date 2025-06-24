@@ -967,6 +967,7 @@ const lang: ILang = {
     at_focus_height: '對焦高度',
     at_lower_height: '降低高度',
     back: '上一步',
+    beamo2_autofocus_material: '請手動將雷射頭移至材料上方，然後放下對焦探針以觸發自動對焦。',
     calculating_camera_matrix: '計算相機矩陣中...',
     calculating_regression_parameters: '計算回歸參數中...',
     calibrate_camera_before_calibrate_modules: '在校正模組前，請先進行相機校正。',

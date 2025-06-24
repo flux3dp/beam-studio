@@ -5,10 +5,13 @@ import { MenuDivider, MenuItem, SubMenu, Menu as TopBarMenu } from '@szhsin/reac
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { menuItems } from '@core/app/constants/menuItems';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
 import Discover from '@core/helpers/api/discover';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import isWeb from '@core/helpers/is-web';
+import { getModulesTranslations } from '@core/helpers/layer-module/layer-module-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
@@ -105,10 +108,12 @@ export default function Menu({ email }: Props): React.JSX.Element {
 
   const deviceMenus = () => {
     const submenus = [];
+    const modulesTranslations = getModulesTranslations();
 
     for (const device of devices) {
       const { model, name, serial } = device;
       const hasModules = modelsWithModules.has(model);
+      const supportedModules = hasModules ? getWorkarea(model).supportedModules : undefined;
       const isPromark = promarkModels.has(model);
       const isBeamo = model === 'fbm1';
       const isBb2 = model === 'fbb2';
@@ -139,12 +144,27 @@ export default function Menu({ email }: Props): React.JSX.Element {
                 {menuCms.calibrate_camera_advanced} {isMobile && '(PC Only)'}
               </MenuItem>
             )}
-            {hasModules && (
+            {supportedModules?.includes(LayerModule.PRINTER) && (
               <MenuItem disabled={isMobile} onClick={() => callback('CALIBRATE_PRINTER_MODULE', device)}>
                 {menuCms.calibrate_printer_module}
               </MenuItem>
             )}
-            {hasModules && (
+            {supportedModules?.includes(LayerModule.PRINTER_4C) && (
+              <MenuItem disabled={isMobile} onClick={() => callback('CALIBRATE_PRINTER_4C_MODULE', device)}>
+                {menuCms.calibrate_printer_module} (4C)
+              </MenuItem>
+            )}
+            {supportedModules?.includes(LayerModule.UV_WHITE_INK) && (
+              <MenuItem disabled={isMobile} onClick={() => callback('CALIBRATE_UV_WHITE_INK_MODULE', device)}>
+                {menuCms.calibrate_printer_module} ({modulesTranslations[LayerModule.UV_WHITE_INK]})
+              </MenuItem>
+            )}
+            {supportedModules?.includes(LayerModule.UV_VARNISH) && (
+              <MenuItem disabled={isMobile} onClick={() => callback('CALIBRATE_UV_VARNISH_MODULE', device)}>
+                {menuCms.calibrate_printer_module} ({modulesTranslations[LayerModule.UV_VARNISH]})
+              </MenuItem>
+            )}
+            {supportedModules?.includes(LayerModule.LASER_1064) && (
               <MenuItem disabled={isMobile} onClick={() => callback('CALIBRATE_IR_MODULE', device)}>
                 {menuCms.calibrate_ir_module}
               </MenuItem>

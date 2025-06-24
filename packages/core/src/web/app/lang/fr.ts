@@ -967,6 +967,7 @@ const lang: ILang = {
     at_focus_height: 'à la hauteur de mise au point',
     at_lower_height: 'à une hauteur inférieure',
     back: 'Retour',
+    beamo2_autofocus_material: 'Déplacez manuellement la tête laser au-dessus du matériau, puis abaissez la sonde de mise au point pour activer la mise au point automatique.',
     calculating_camera_matrix: 'Calcul de la matrice de caméra...',
     calculating_regression_parameters: 'Calcul des paramètres de régression...',
     calibrate_camera_before_calibrate_modules: "Veuillez effectuer l'étalonnage de la caméra avant d'étalonner les modules.",

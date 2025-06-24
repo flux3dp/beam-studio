@@ -213,17 +213,18 @@ describe('test Align', () => {
     });
   });
 
-  test('scroll and next should work when type is PRINTER_HEAD', async () => {
+  test('scroll and next should work when type is MODULE and module is PRINTER', async () => {
     mockTakeOnePicture.mockResolvedValue({ imgBlob: 'blob' });
     mockCreateObjectURL.mockReturnValue('file://url');
 
     const { baseElement, getByText } = render(
       <Align
         fisheyeParam={mockFishEyeParam}
+        module={LayerModule.PRINTER}
         onBack={mockOnBack}
         onClose={mockOnClose}
         title="title"
-        type={CalibrationType.PRINTER_HEAD}
+        type={CalibrationType.MODULE}
       />,
     );
 
