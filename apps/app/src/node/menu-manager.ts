@@ -101,7 +101,6 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
   const isBeamo = model === 'fbm1';
   const isBeamo2 = model === 'fbm2';
   const isBb2 = model === 'fbb2';
-  const isBeamo2 = model === 'fbm2';
   const vc = versionChecker(version);
   const handleClick = (item: MenuItem) => callback({ ...item, machineName, serial, source, uuid });
   const submenu = [
