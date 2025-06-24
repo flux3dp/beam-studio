@@ -34,7 +34,7 @@ const ExposureSlider = ({ className, exposureSetting, onChanged, setExposureSett
       <Slider
         className={styles.slider}
         max={Math.min(exposureSetting.max, 650)}
-        min={Math.max(exposureSetting.min, 250)}
+        min={Math.max(exposureSetting.min, 50)}
         onAfterChange={async (value: number) => {
           try {
             progressCaller.openNonstopProgress({ id: 'exposure-slider' });
