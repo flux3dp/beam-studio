@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
@@ -50,11 +50,18 @@ const Calibration = ({
 }: Props): React.JSX.Element => {
   const t = useI18n();
   const tCali = t.calibration;
-  const { exposureSetting, handleTakePicture, img, pauseLive, restartLive, setExposureSetting, webCamConnection } =
-    useLiveFeed(cameraOptions);
   const imgRef = useRef<HTMLImageElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const isUsbCamera = useMemo(() => cameraOptions?.source === 'usb', [cameraOptions]);
+  const { exposureSetting, handleTakePicture, img, pauseLive, restartLive, setExposureSetting, webCamConnection } =
+    useLiveFeed({ ...cameraOptions, videoElement: videoRef.current ?? undefined });
+
+  useEffect(() => {
+    if (videoRef.current) {
+      webCamConnection?.switchVideo(videoRef.current);
+    }
+    // eslint-disable-next-line hooks/exhaustive-deps
+  }, [videoRef.current, webCamConnection]);
 
   const handleCalibrate = async () => {
     progressCaller.openNonstopProgress({ id: 'calibrate-chessboard', message: tCali.calibrating });
@@ -86,7 +93,10 @@ const Calibration = ({
 
         if (charucoRes.success) {
           const { imgp, objp } = charucoRes;
-          const { naturalHeight: h, naturalWidth: w } = imgRef.current!;
+          const { h, w } = videoRef.current
+            ? { h: videoRef.current.videoHeight, w: videoRef.current.videoWidth }
+            : { h: imgRef.current!.naturalHeight, w: imgRef.current!.naturalWidth };
+
           const calibrateRes = await cameraCalibrationApi.calibrateFisheye([objp], [imgp], [w, h]);
 
           if (calibrateRes.success) {

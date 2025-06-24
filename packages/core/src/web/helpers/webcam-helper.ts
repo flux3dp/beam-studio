@@ -31,12 +31,10 @@ const listDevices = async (): Promise<MediaDeviceInfo[]> => {
   return devices;
 };
 
-const getDevice = async (id?: string): Promise<MediaDeviceInfo> => {
+const getDevice = async (id?: string): Promise<MediaDeviceInfo | null> => {
   const devices = await listDevices();
 
-  if (devices.length === 0) {
-    return null;
-  }
+  if (devices.length === 0) return null;
 
   if (devices.length === 1) {
     return devices[0];
@@ -130,7 +128,7 @@ export class WebCamConnection {
     canvas.width = this.video.videoWidth;
     canvas.height = this.video.videoHeight;
 
-    const context = canvas.getContext('2d');
+    const context = canvas.getContext('2d')!;
 
     if (flip) {
       context.save();
@@ -143,9 +141,22 @@ export class WebCamConnection {
 
     return new Promise((resolve) => {
       canvas.toBlob((blob) => {
-        resolve(blob);
+        resolve(blob!);
       });
     });
+  };
+
+  switchVideo = (newVideo: HTMLVideoElement): void => {
+    if (newVideo === this.video) return;
+
+    if (this.video) {
+      this.video.pause();
+      this.video.srcObject = null;
+    }
+
+    this.video = newVideo;
+    this.video.srcObject = this.stream;
+    this.video.play();
   };
 
   disconnectWebcam = (): void => {
@@ -171,11 +182,11 @@ const connectWebcam = async (
     video?: HTMLVideoElement;
     width?: number;
   } = {},
-): Promise<WebCamConnection> => {
+): Promise<null | WebCamConnection> => {
   const { timeout = 5000 } = opts;
   const connection = new WebCamConnection(opts);
   const start = Date.now();
-  let error: Error;
+  let error: Error | undefined = undefined;
 
   while (Date.now() - start < timeout) {
     try {
@@ -186,7 +197,7 @@ const connectWebcam = async (
       }
     } catch (err) {
       console.error(err);
-      error = err;
+      error = err as Error;
     }
 
     await new Promise((resolve) => setTimeout(resolve, 500));

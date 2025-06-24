@@ -18,13 +18,13 @@ import type { FisheyeCameraParametersV3, FisheyeCameraParametersV3Cali } from '@
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 import styles from './Calibration.module.scss';
+import Calibration from './common/Calibration';
 import CheckpointData from './common/CheckpointData';
 import downloadCalibrationFile from './common/downloadCalibrationFile';
 import Instruction from './common/Instruction';
 import SolvePnP from './common/SolvePnP';
 import { promarkPnPPoints } from './common/solvePnPConstants';
 import Title from './common/Title';
-import Calibration from './Promark/Calibration';
 
 /* eslint-disable perfectionist/sort-enums */
 enum Steps {
@@ -134,12 +134,17 @@ const PromarkCalibration = ({ device: { model, serial }, onClose }: Props): Reac
   if (step === Steps.CALIBRATION) {
     return (
       <Calibration
+        cameraOptions={{ source: 'usb' }}
         charuco={[15, 10]}
         chessboard={[18, 18]}
+        description={[
+          tCali.put_chessboard_promark_1,
+          withSafe ? tCali.put_charuco_promark_2 : tCali.put_chessboard_promark_2,
+        ]}
         onClose={onClose}
         onNext={() => setStep(Steps.PUT_PAPER)}
+        title={<Title link={tCali.promark_help_link} title={tCali.camera_calibration} />}
         updateParam={updateParam}
-        withSafe={withSafe}
       />
     );
   }
