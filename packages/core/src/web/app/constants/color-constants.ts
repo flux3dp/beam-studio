@@ -147,6 +147,14 @@ const printingLayerColor = [
 
 export const CMYK = [PrintingColors.CYAN, PrintingColors.MAGENTA, PrintingColors.YELLOW, PrintingColors.BLACK];
 
+export const colorMap = {
+  [PrintingColors.BLACK]: 'k',
+  [PrintingColors.CYAN]: 'c',
+  [PrintingColors.MAGENTA]: 'm',
+  [PrintingColors.WHITE]: 'w',
+  [PrintingColors.YELLOW]: 'y',
+};
+
 export default {
   printingLayerColor,
   randomLayerColors,

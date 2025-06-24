@@ -1,18 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { ColorPicker as AntdColorPicker, Button } from 'antd';
 import type { Color } from 'antd/es/color-picker';
 import classNames from 'classnames';
+import { match } from 'ts-pattern';
 
-import colorConstants, { objectsColorPresets } from '@core/app/constants/color-constants';
+import colorConstants, { CMYK, objectsColorPresets } from '@core/app/constants/color-constants';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './ColorPicker.module.scss';
 
 interface Props {
   allowClear?: boolean;
+  colorPresets?: 'cmyk' | 'cmykw' | 'objects';
   disabled?: boolean;
-  forPrinter?: boolean;
   initColor: string;
   onChange: (color: string) => void;
   triggerSize?: 'middle' | 'small';
@@ -21,8 +22,8 @@ interface Props {
 
 const ColorPicker = ({
   allowClear,
+  colorPresets = 'objects',
   disabled = false,
-  forPrinter = false,
   initColor,
   onChange,
   triggerSize = 'middle',
@@ -31,13 +32,17 @@ const ColorPicker = ({
   const [color, setColor] = useState<string>(initColor);
   const [open, setOpen] = useState<boolean>(false);
   const lang = useI18n().alert;
+  const isForPrinter = useMemo(() => colorPresets === 'cmyk' || colorPresets === 'cmykw', [colorPresets]);
 
   useEffect(() => {
     setColor(initColor);
   }, [initColor]);
 
   const panelRender = (panel: React.ReactNode) => {
-    const colorPresets = forPrinter ? colorConstants.printingLayerColor : objectsColorPresets;
+    const presets = match(colorPresets)
+      .with('cmykw', () => colorConstants.printingLayerColor)
+      .with('cmyk', () => CMYK)
+      .otherwise(() => objectsColorPresets);
 
     return (
       <div onClick={(e) => e.stopPropagation()}>
@@ -52,11 +57,11 @@ const ColorPicker = ({
               />
             </div>
           )}
-          {colorPresets.map((preset) => (
+          {presets.map((preset) => (
             <div
               className={classNames(styles['preset-block'], styles.color, {
                 [styles.checked]: preset === color,
-                [styles.printing]: forPrinter,
+                [styles.printing]: isForPrinter,
               })}
               key={preset}
               onClick={() => setColor(preset)}
@@ -65,7 +70,7 @@ const ColorPicker = ({
             </div>
           ))}
         </div>
-        {!forPrinter && <div className={classNames(styles.panel, { [styles.clear]: color === 'none' })}>{panel}</div>}
+        {!isForPrinter && <div className={classNames(styles.panel, { [styles.clear]: color === 'none' })}>{panel}</div>}
         <div className={styles.footer}>
           <Button
             className={styles.btn}
@@ -102,7 +107,7 @@ const ColorPicker = ({
         open={open}
         panelRender={panelRender}
         placement="bottomLeft"
-        rootClassName={classNames({ [styles['no-panel']]: forPrinter })}
+        rootClassName={classNames({ [styles['no-panel']]: isForPrinter })}
         value={color === 'none' ? '#000000' : color}
       >
         <div

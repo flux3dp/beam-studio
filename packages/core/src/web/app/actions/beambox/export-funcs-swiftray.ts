@@ -11,6 +11,7 @@ import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 import AwsHelper from '@core/helpers/aws-helper';
 import i18n from '@core/helpers/i18n';
 import updateImagesResolution from '@core/helpers/image/updateImagesResolution';
+import annotatePrintingColor from '@core/helpers/layer/annotatePrintingColor';
 import convertBitmapToInfilledRect from '@core/helpers/layer/convertBitmapToInfilledRect';
 import convertClipPath from '@core/helpers/layer/convertClipPath';
 import convertShapeToBitmap from '@core/helpers/layer/convertShapeToBitmap';
@@ -234,13 +235,15 @@ const fetchTaskCodeSwiftray = async (
     message: 'Splitting Full color layer',
   });
 
-  // Prepare for Ador cleanup
+  // Prepare for Printing task & clean up temp modification
   const revertShapesToImage = await convertShapeToBitmap();
+  const revertAnnotatePrintingColor = annotatePrintingColor();
   const revertTempSplitFullColorLayers = await tempSplitFullColorLayers();
   const revertClipPath = await convertClipPath();
   const cleanUpTempModification = async () => {
     revertClipPath();
     revertTempSplitFullColorLayers();
+    revertAnnotatePrintingColor();
     revertShapesToImage();
     await FontFuncs.revertTempConvert();
     SymbolMaker.switchImageSymbolForAll(true);

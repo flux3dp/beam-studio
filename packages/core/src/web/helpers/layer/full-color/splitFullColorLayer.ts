@@ -1,5 +1,5 @@
 import progressCaller from '@core/app/actions/progress-caller';
-import { PrintingColors } from '@core/app/constants/color-constants';
+import { colorMap, PrintingColors } from '@core/app/constants/color-constants';
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
 import history from '@core/app/svgedit/history/history';
@@ -42,7 +42,14 @@ const splitFullColorLayer = async (
   const layerModule = getData(layer, 'module');
   const split = getData(layer, 'split');
 
-  if (!printingModules.has(layerModule) || !fullColor || ref || split || layerModule === LayerModule.UV_PRINT) {
+  if (
+    !layerModule ||
+    !printingModules.has(layerModule) ||
+    !fullColor ||
+    ref ||
+    split ||
+    layerModule === LayerModule.UV_PRINT
+  ) {
     return null;
   }
 
@@ -98,13 +105,6 @@ const splitFullColorLayer = async (
   const batchCmd = new history.BatchCommand('Split Full Color Layer');
   const newLayers: Array<Element | null> = [];
   const promises = [];
-  const colorMap = {
-    [PrintingColors.BLACK]: 'k',
-    [PrintingColors.CYAN]: 'c',
-    [PrintingColors.MAGENTA]: 'm',
-    [PrintingColors.WHITE]: 'w',
-    [PrintingColors.YELLOW]: 'y',
-  };
 
   if (is4c) {
     const cloneRes = cloneLayer(layerName, {

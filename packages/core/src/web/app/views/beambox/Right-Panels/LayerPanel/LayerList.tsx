@@ -155,7 +155,7 @@ const LayerList = ({
                 <LayerPanelIcons.FullColor />
               ) : (
                 <ColorPicker
-                  forPrinter={isPrinting}
+                  colorPresets={layerModule === LayerModule.PRINTER_4C ? 'cmyk' : 'cmykw'}
                   initColor={drawing.getLayerColor(layerName)}
                   onChange={(color) => onLayerColorChange(layerName, color)}
                   triggerSize="small"
