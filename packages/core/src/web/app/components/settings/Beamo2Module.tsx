@@ -65,13 +65,6 @@ const Beamo2Module = ({ unitInputProps }: Props): React.JSX.Element => {
       <div className={styles.subtitle}>{lang.settings.groups.beamo2_modules}</div>
       <XYItem
         {...commonProps}
-        id="laser-offset"
-        label={lang.settings.module_offset_laser}
-        onChange={(axis, val) => editModuleOffsets(LayerModule.LASER_UNIVERSAL, axis, val)}
-        values={getModuleOffset(LayerModule.LASER_UNIVERSAL)}
-      />
-      <XYItem
-        {...commonProps}
         id="ir-laser-offset"
         label={lang.settings.module_offset_2w_ir}
         onChange={(axis, val) => editModuleOffsets(LayerModule.LASER_1064, axis, val)}
