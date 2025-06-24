@@ -105,9 +105,6 @@ exports[`test Calibration should render correctly 1`] = `
                           alt="Chessboard"
                           src="mock-url"
                         />
-                        <div
-                          class="indicator"
-                        />
                       </div>
                       <nav
                         class="react-contextmenu"
@@ -286,9 +283,6 @@ exports[`test Calibration should render correctly 2`] = `
                         <img
                           alt="Chessboard"
                           src="mock-url"
-                        />
-                        <div
-                          class="indicator"
                         />
                       </div>
                       <nav
