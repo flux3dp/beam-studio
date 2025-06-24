@@ -1414,6 +1414,7 @@ const lang: ILang = {
     },
     retry: 'Opakovat',
     select_beambox: 'Vyberte svůj Beambox',
+    select_beamo: 'Vyberte svůj beamo',
     select_connection_type: 'Jak se přejete připojit?',
     select_language: 'Vyberte jazyk',
     select_machine_type: 'Vyberte typ vašeho přístroje',

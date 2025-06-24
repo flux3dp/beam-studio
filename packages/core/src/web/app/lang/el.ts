@@ -1414,6 +1414,7 @@ const lang: ILang = {
     },
     retry: 'Επανάληψη',
     select_beambox: 'Επιλέξτε το Beambox σας',
+    select_beamo: 'Επιλέξτε το beamo σας',
     select_connection_type: 'Πώς θέλετε να συνδεθείτε;',
     select_language: 'Επιλέξτε γλώσσα',
     select_machine_type: 'Επιλέξτε τον τύπο του μηχανήματός σας',

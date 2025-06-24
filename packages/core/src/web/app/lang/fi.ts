@@ -1414,6 +1414,7 @@ const lang: ILang = {
     },
     retry: 'Yritä uudelleen',
     select_beambox: 'Valitse Beamboxisi',
+    select_beamo: 'Valitse beamosi',
     select_connection_type: 'Miten haluat muodostaa yhteyden?',
     select_language: 'Valitse kieli',
     select_machine_type: 'Valitse mallisi',

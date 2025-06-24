@@ -1414,6 +1414,7 @@ const lang: ILang = {
     },
     retry: 'Cuba Lagi',
     select_beambox: 'Pilih Beambox Anda',
+    select_beamo: 'Pilih beamo Anda',
     select_connection_type: 'Bagaimana anda mahu sambung?',
     select_language: 'Pilih Bahasa',
     select_machine_type: 'Pilih Model Anda',

@@ -1401,6 +1401,7 @@ export interface ILang {
     };
     retry: string;
     select_beambox: string;
+    select_beamo: string;
     select_connection_type: string;
     // specific caption/content
     select_language: string;

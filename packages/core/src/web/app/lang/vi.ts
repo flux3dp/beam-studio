@@ -1414,6 +1414,7 @@ const lang: ILang = {
     },
     retry: 'Thử lại',
     select_beambox: 'Chọn Beambox của bạn',
+    select_beamo: 'Chọn beamo của bạn',
     select_connection_type: 'Bạn muốn kết nối như thế nào?',
     select_language: 'Chọn ngôn ngữ',
     select_machine_type: 'Chọn loại máy của bạn',

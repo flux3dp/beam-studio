@@ -1414,6 +1414,7 @@ const lang: ILang = {
     },
     retry: 'Opnieuw',
     select_beambox: 'Selecteer uw Beambox',
+    select_beamo: 'Selecteer uw beamo',
     select_connection_type: 'Hoe wilt u verbinden?',
     select_language: 'Selecteer Taal',
     select_machine_type: 'Selecteer Uw Machinetype',
