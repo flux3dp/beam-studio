@@ -1029,8 +1029,9 @@ const lang: ILang = {
     moving_laser_head: 'Đang di chuyển đầu laser...',
     moving_platform: 'Đang di chuyển bệ...',
     next: 'Tiếp',
-    no_picutre_found: '#846 Thiết bị của bạn không có ảnh nguyên bản nào để hiệu chỉnh. Vui lòng liên hệ hỗ trợ FLUX.',
+    no_picture_found: '#846 Thiết bị của bạn không có ảnh nguyên bản nào để hiệu chỉnh. Vui lòng liên hệ hỗ trợ FLUX.',
     perform_autofocus_bb2: 'Vui lòng đi tới bảng điều khiển máy và nhấn AF để thực hiện lấy nét tự động.',
+    perform_autofocus_bm2: 'Di chuyển đầu laser bằng tay lên phía trên vật liệu, sau đó hạ đầu dò lấy nét xuống để kích hoạt chế độ lấy nét tự động.',
     please_do_camera_calibration_and_focus: {
       beambox: 'Khi hiệu chỉnh mô-đun laser đi-ốt, cần có máy ảnh.\nHãy đảm bảo máy ảnh của máy này đã được hiệu chỉnh.\nVà hãy điều chỉnh nền tảng đến điểm tiêu cự (chiều cao của acrylic đã quay xuống)',
       beamo: 'Khi hiệu chỉnh mô-đun laser đi-ốt, cần có máy ảnh.\nHãy đảm bảo máy ảnh của máy này đã được hiệu chỉnh.\nVà hãy điều chỉnh đầu laser để lấy nét vào vật khắc (chiều cao của acrylic đã quay xuống)',
@@ -1062,6 +1063,7 @@ const lang: ILang = {
     put_chessboard_promark_desc_1: 'Vui lòng sử dụng giấy bàn cờ được cung cấp trong hộp phụ kiện hoặc in mẫu bàn cờ sau trên giấy A4 để hiệu chỉnh máy ảnh.',
     put_chessboard_promark_desc_2: 'Vui lòng đặt bàn cờ phẳng và ở trung tâm trên nền làm việc.',
     put_paper: 'Đặt Giấy',
+    put_paper_bm2_1: 'Đặt hai tờ giấy trắng sạch khổ A4 hoặc Letter cạnh nhau và làm phẳng chúng trong khu vực làm việc.',
     put_paper_promark_1: 'Đặt tấm bìa đen từ hộp phụ kiện lên bề mặt làm việc.',
     put_paper_promark_2: 'Điều chỉnh tiêu cự đúng cách, sau đó nhấn "Bắt Đầu Khắc" để tiếp tục khắc.',
     put_paper_skip: 'Nếu bản vẽ hiệu chỉnh không tự động chuyển sang chụp ảnh, hãy nhấn "Bỏ qua" để chụp ảnh.',

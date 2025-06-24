@@ -23,16 +23,16 @@
 
     .indicator {
       position: absolute;
-      width: 80%;
-      left: 10%;
-      height: 65%;
-      top: 30%;
       border: 1px solid red;
       border-style: dashed;
     }
 
-    .spinner {
-      font-size: 48px;
+    .spin {
+      position: absolute;
+
+      .spinner {
+        font-size: 48px;
+      }
     }
 
     margin: 12px 0;

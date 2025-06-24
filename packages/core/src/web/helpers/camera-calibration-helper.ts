@@ -441,8 +441,8 @@ export const calibrateChessboard = async (
         d: number[][];
         k: number[][];
         ret: number;
-        rvec: number[];
-        tvec: number[];
+        rvec: number[][];
+        tvec: number[][];
       };
       success: true;
     }
@@ -480,7 +480,7 @@ export const solvePnPCalculate = async (
   points: Array<[number, number]>,
   refPoints: Array<[number, number]>,
 ): Promise<{
-  data: { rvec: number[]; tvec: number[] };
+  data: { rvec: number[][]; tvec: number[][] };
   success: boolean;
 }> => {
   const resp = await cameraCalibrationApi.solvePnPCalculate(dh, points, refPoints);
@@ -495,8 +495,8 @@ export const updateData = async (data: FisheyeCaliParameters): Promise<boolean> 
 };
 
 export const extrinsicRegression = async (
-  rvecs: number[][],
-  tvecs: number[][],
+  rvecs: number[][][],
+  tvecs: number[][][],
   heights: number[],
 ): Promise<{
   data?: { rvec_polyfit: number[][]; tvec_polyfit: number[][] };

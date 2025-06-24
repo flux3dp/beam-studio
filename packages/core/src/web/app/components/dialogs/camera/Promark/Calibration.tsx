@@ -54,7 +54,8 @@ const Calibration = ({ charuco, chessboard, onClose, onNext, updateParam, withSa
 
     try {
       const imgBlob = await webCamConnection.current?.getPicture()!;
-      let calibrationRes: null | { d: number[][]; k: number[][]; ret: number; rvec: number[]; tvec: number[] } = null;
+      let calibrationRes: null | { d: number[][]; k: number[][]; ret: number; rvec: number[][]; tvec: number[][] } =
+        null;
 
       try {
         const chessboardRes = await calibrateChessboard(imgBlob, 0, chessboard);

@@ -1029,8 +1029,9 @@ const lang: ILang = {
     moving_laser_head: 'Déplacement de la tête laser...',
     moving_platform: 'Déplacement de la plateforme...',
     next: 'Suivant',
-    no_picutre_found: "#846 Votre appareil n'a pas de photos brutes disponibles pour l'étalonnage. Veuillez contacter le support FLUX.",
+    no_picture_found: "#846 Votre appareil n'a pas de photos brutes disponibles pour l'étalonnage. Veuillez contacter le support FLUX.",
     perform_autofocus_bb2: 'Veuillez vous rendre au panneau de commande de la machine et appuyez sur AF pour effectuer la mise au point automatique.',
+    perform_autofocus_bm2: 'Déplacez manuellement la tête laser au-dessus du matériau, puis abaissez la sonde de mise au point pour activer l’autofocus.',
     please_do_camera_calibration_and_focus: {
       beambox: "Lors de l'étalonnage du module laser à diode, une caméra est nécessaire.\nVeuillez vous assurer que la caméra de cette machine a été étalonnée.\nEt veuillez régler la plateforme au point focal (la hauteur de l'acrylique retournée)",
       beamo: "Lors de l'étalonnage du module laser à diode, une caméra est nécessaire.\nVeuillez vous assurer que la caméra de cette machine a été étalonnée.\nEt veuillez régler la tête laser pour se concentrer sur l'objet de gravure (la hauteur de l'acrylique retournée)",
@@ -1062,6 +1063,7 @@ const lang: ILang = {
     put_chessboard_promark_desc_1: "Veuillez utiliser le papier quadrillé fourni dans la boîte d'accessoires ou imprimez le motif de quadrillage suivant sur du papier A4 pour l'étalonnage de la caméra.",
     put_chessboard_promark_desc_2: 'Veuillez placer le damier à plat et au centre de la plateforme de travail.',
     put_paper: 'Mettre du papier',
+    put_paper_bm2_1: 'Placez deux feuilles blanches propres au format A4 ou Lettre côte à côte et aplatissez-les dans la zone de travail.',
     put_paper_promark_1: "Placez le carton noir de la boîte d'accessoires sur la plateforme de travail.",
     put_paper_promark_2: 'Ajustez la mise au point correctement, puis cliquez sur "Commencer Gravure" pour continuer la gravure.',
     put_paper_skip: 'Si le dessin de calibration ne passe pas automatiquement à la prise de photo, appuyez sur « Ignorer » pour prendre une photo.',

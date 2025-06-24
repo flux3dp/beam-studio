@@ -1,4 +1,4 @@
-import type { Dispatch } from 'react';
+import type { Dispatch, ReactNode } from 'react';
 import React from 'react';
 
 import { Slider, Tooltip } from 'antd';
@@ -19,7 +19,7 @@ interface Props {
   setExposureSetting: Dispatch<IConfigSetting | null>;
 }
 
-const ExposureSlider = ({ className, exposureSetting, onChanged, setExposureSetting }: Props): React.JSX.Element => {
+const ExposureSlider = ({ className, exposureSetting, onChanged, setExposureSetting }: Props): ReactNode => {
   const lang = useI18n();
 
   if (!exposureSetting) {
@@ -33,14 +33,14 @@ const ExposureSlider = ({ className, exposureSetting, onChanged, setExposureSett
       </Tooltip>
       <Slider
         className={styles.slider}
-        max={Math.min(exposureSetting.max, 650)}
-        min={Math.max(exposureSetting.min, 250)}
+        max={Math.min(exposureSetting.max, 1000)}
+        min={Math.max(exposureSetting.min, 50)}
         onAfterChange={async (value: number) => {
           try {
             progressCaller.openNonstopProgress({ id: 'exposure-slider' });
             setExposureSetting({ ...exposureSetting, value });
             await deviceMaster.setDeviceSetting('camera_exposure_absolute', value.toString());
-            onChanged();
+            onChanged?.();
           } finally {
             progressCaller.popById('exposure-slider');
           }

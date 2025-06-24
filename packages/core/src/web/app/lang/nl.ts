@@ -1029,8 +1029,9 @@ const lang: ILang = {
     moving_laser_head: 'De laserhoofdkop verplaatsen...',
     moving_platform: 'Platform wordt verplaatst...',
     next: 'Volgende',
-    no_picutre_found: "#846 Uw apparaat heeft geen beschikbare ruwe foto's voor kalibratie. Neem contact op met FLUX-ondersteuning.",
+    no_picture_found: "#846 Uw apparaat heeft geen beschikbare ruwe foto's voor kalibratie. Neem contact op met FLUX-ondersteuning.",
     perform_autofocus_bb2: 'Ga naar het bedieningspaneel van de machine en druk op AF om de autofocus uit te voeren.',
+    perform_autofocus_bm2: 'Verplaats de laserhandmatig boven het materiaal en laat vervolgens de focusprobe zakken om autofocus te activeren.',
     please_do_camera_calibration_and_focus: {
       beambox: 'Wanneer u de diode lasermodule kalibreert, is een camera nodig.\nZorg ervoor dat de camera van deze machine is gekalibreerd.\nEn pas het platform vriendelijk aan op het brandpunt (de hoogte van het omgekeerde acryl)',
       beamo: 'Wanneer u de diode lasermodule kalibreert, is een camera nodig.\nZorg ervoor dat de camera van deze machine is gekalibreerd.\nEn pas de laserkop vriendelijk aan om scherp te stellen op het graveerobject (de hoogte van het omgekeerde acryl)',
@@ -1062,6 +1063,7 @@ const lang: ILang = {
     put_chessboard_promark_desc_1: 'Gebruik het schaakbordpapier dat in de accessoiredoos is meegeleverd, of druk het volgende schaakbordpatroon af op A4-papier voor camerakalibratie.',
     put_chessboard_promark_desc_2: 'Plaats het schaakbord plat en gecentreerd op het werkplatform.',
     put_paper: 'Plaats papier',
+    put_paper_bm2_1: 'Plaats twee schone witte vellen papier van A4- of briefformaat naast elkaar en maak ze vlak in het werkgebied.',
     put_paper_promark_1: 'Plaats het zwarte karton uit de accessoiredoos op het werkplatform.',
     put_paper_promark_2: 'Stel de focus correct af en klik vervolgens op "Graveren Starten" om verder te gaan met graveren.',
     put_paper_skip: 'Als de kalibratietekening niet automatisch doorgaat naar het maken van een foto, druk dan op "Overslaan" om een foto te maken.',

@@ -18,6 +18,7 @@ import type { PreviewManager } from '@core/interfaces/PreviewManager';
 
 import AdorPreviewManager from '../camera/preview-helper/AdorPreviewManager';
 import BB2PreviewManager from '../camera/preview-helper/BB2PreviewManager';
+import Beamo2PreviewManager from '../camera/preview-helper/Beamo2PreviewManager';
 import BeamPreviewManager from '../camera/preview-helper/BeamPreviewManager';
 import PromarkPreviewManager from '../camera/preview-helper/PromarkPreviewManager';
 
@@ -137,6 +138,8 @@ class PreviewModeController {
         this.previewManager = new AdorPreviewManager(device);
       } else if (device.model === 'fbb2') {
         this.previewManager = new BB2PreviewManager(device);
+      } else if (device.model === 'fbm2') {
+        this.previewManager = new Beamo2PreviewManager(device);
       } else {
         this.previewManager = new BeamPreviewManager(device);
       }

@@ -30,7 +30,7 @@ jest.mock('@core/helpers/camera-calibration-helper', () => ({
 const mockUseLiveFeed = jest.fn();
 
 jest.mock(
-  '../../common/useLiveFeed',
+  './useLiveFeed',
   () =>
     (...args) =>
       mockUseLiveFeed(...args),
@@ -42,7 +42,7 @@ jest.mock('@core/implementations/dialog', () => ({
   writeFileDialog: (...args) => mockWriteFileDialog(...args),
 }));
 
-jest.mock('../../common/ExposureSlider', () => ({ exposureSetting, onChange }: any) => (
+jest.mock('./ExposureSlider', () => ({ exposureSetting, onChange }: any) => (
   <div>
     <h1>Mock ExposureSlider</h1>
     <p>min: {exposureSetting.min}</p>
@@ -65,7 +65,7 @@ jest.mock('@core/helpers/api/camera-calibration', () => ({
 const mockHandleCalibrationResult = jest.fn();
 
 jest.mock(
-  '../../common/handleCalibrationResult',
+  './handleCalibrationResult',
   () =>
     (...args) =>
       mockHandleCalibrationResult(...args),
@@ -102,7 +102,13 @@ describe('test Calibration', () => {
 
   it('should render correctly', () => {
     const { baseElement } = render(
-      <Calibration chessboard={[7, 7]} onClose={jest.fn()} onNext={jest.fn()} updateParam={jest.fn()} />,
+      <Calibration
+        chessboard={[7, 7]}
+        description={['step1', 'step2', 'step3']}
+        onClose={jest.fn()}
+        onNext={jest.fn()}
+        updateParam={jest.fn()}
+      />,
     );
 
     expect(baseElement).toMatchSnapshot();

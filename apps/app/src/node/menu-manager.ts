@@ -127,7 +127,7 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
       label: r.calibration,
       submenu: [
         { click: handleClick, id: 'CALIBRATE_BEAMBOX_CAMERA', label: r.calibrate_beambox_camera },
-        isBb2 && {
+        (isBb2 || isBeamo2) && {
           click: handleClick,
           id: 'CALIBRATE_CAMERA_ADVANCED',
           label: r.calibrate_camera_advanced,

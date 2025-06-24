@@ -1,7 +1,8 @@
-import movePlatformRel from './movePlatformRel';
+import moveZRel from './moveZRel';
 
 const mockEnterRawMode = jest.fn();
 const mockRawMoveZRel = jest.fn();
+const mockRawMoveZRelToLastHome = jest.fn();
 const mockEndSubTask = jest.fn();
 const mockGetCurrentControlMode = jest.fn();
 const mockSetTimeout = jest.spyOn(global, 'setTimeout');
@@ -13,9 +14,10 @@ jest.mock('@core/helpers/device-master', () => ({
   endSubTask: (...args: any) => mockEndSubTask(...args),
   enterRawMode: (...args: any) => mockEnterRawMode(...args),
   rawMoveZRel: (...args: any) => mockRawMoveZRel(...args),
+  rawMoveZRelToLastHome: (...args: any) => mockRawMoveZRelToLastHome(...args),
 }));
 
-describe('test movePlatformRel', () => {
+describe('test moveZRel', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockGetCurrentControlMode.mockReturnValue('');
@@ -27,9 +29,17 @@ describe('test movePlatformRel', () => {
   });
 
   it('should work without error', async () => {
-    await movePlatformRel(10);
+    await moveZRel(10);
     expect(mockEnterRawMode).toHaveBeenCalledTimes(1);
     expect(mockRawMoveZRel).toHaveBeenCalledTimes(1);
+    expect(mockEndSubTask).toHaveBeenCalledTimes(1);
+    expect(mockSetTimeout).toHaveBeenCalledTimes(1);
+  });
+
+  it('should call rawMoveZRelToLastHome if relToHome is true', async () => {
+    await moveZRel(10, true);
+    expect(mockEnterRawMode).toHaveBeenCalledTimes(1);
+    expect(mockRawMoveZRel).toHaveBeenCalledTimes(0);
     expect(mockEndSubTask).toHaveBeenCalledTimes(1);
     expect(mockSetTimeout).toHaveBeenCalledTimes(1);
   });
@@ -41,7 +51,7 @@ describe('test movePlatformRel', () => {
 
     mockRawMoveZRel.mockRejectedValue(error);
     try {
-      await movePlatformRel(10);
+      await moveZRel(10);
     } catch (e) {
       expect(e).toEqual(error);
     }

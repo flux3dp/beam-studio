@@ -1029,8 +1029,9 @@ const lang: ILang = {
     moving_laser_head: 'Moving the laser head...',
     moving_platform: 'Moving the platform...',
     next: 'Next',
-    no_picutre_found: '#846 Your device does not have any available raw photos for calibration. Please contact FLUX support.',
+    no_picture_found: '#846 Your device does not have any available raw photos for calibration. Please contact FLUX support.',
     perform_autofocus_bb2: 'Please go to the machine control panel and press AF to perform autofocus.',
+    perform_autofocus_bm2: 'Manually move the laser head above the material, then lower the focus probe to trigger auto focus.',
     please_do_camera_calibration_and_focus: {
       beambox: 'When calibrating diode laser module, camera is needed.\nPlease make sure camera of this machine has been calibrated.\nAnd kindly adjust the platform to the focal point (the height of turned down acrylic)',
       beamo: 'When calibrating diode laser module, camera is needed.\nPlease make sure camera of this machine has been calibrated.\nAnd kindly adjust the laser head to focus on the engraving object (the height of turned down acrylic)',
@@ -1062,6 +1063,7 @@ const lang: ILang = {
     put_chessboard_promark_desc_1: 'Please use the checkerboard paper provided in the accessory box, or print the following checkerboard pattern on A4 paper for camera calibration.',
     put_chessboard_promark_desc_2: 'Please place the checkerboard flat and centered on the work platform',
     put_paper: 'Put Paper',
+    put_paper_bm2_1: 'Place two clean A4 or Letter size white papers side by side and flatten them in the work area.',
     put_paper_promark_1: 'Place the black cardboard from the accessory box on the work platform.',
     put_paper_promark_2: 'Adjust the focus properly, and then click ‘Start Engrave’ to proceed with engraving.',
     put_paper_skip: 'If the calibration drawing does not automatically proceed to taking picture, press "Skip" to take picture.',

@@ -1029,8 +1029,9 @@ const lang: ILang = {
     moving_laser_head: '正在移动激光头...',
     moving_platform: '正在移动平台...',
     next: '下一步',
-    no_picutre_found: '#846 您的设备没有可用于校准的原始照片。请联系FLUX支持。',
+    no_picture_found: '#846 您的设备没有可用于校准的原始照片。请联系FLUX支持。',
     perform_autofocus_bb2: '请前往机器控制面板，按下AF以执行自动对焦。请前往机器控制面板，按下AF以执行自动对焦。',
+    perform_autofocus_bm2: '手动将激光头移至材料上方，然后放下对焦探针以启动自动对焦。',
     please_do_camera_calibration_and_focus: {
       beambox: '校正二极管激光需要使用相机校正参数，请确认您的机器已进行过相机校正。并请旋转升降平台旋钮，直到轻触焦距螺丝或焦距尺，完成对焦',
       beamo: '校正二极管激光需要使用相机校正参数，请确认您的机器已进行过相机校正。并请转开焦距固定环，调整雷射头至平台轻触焦距尺，完成对焦',
@@ -1062,6 +1063,7 @@ const lang: ILang = {
     put_chessboard_promark_desc_1: '请使用附件盒中提供的棋盘纸，或将以下棋盘图案打印在A4纸上用于相机校准。',
     put_chessboard_promark_desc_2: '请将棋盘纸平放并置于工作平台中央。',
     put_paper: '放置纸张',
+    put_paper_bm2_1: '将两张干净的A4或信纸大小的白纸并排放置在工作区域，并将其铺平。',
     put_paper_promark_1: '将配件盒中的黑色硬纸板放置在工作平台上。',
     put_paper_promark_2: '正确调整焦距，然后点击“开始绘制校正图片”以继续雕刻。',
     put_paper_skip: '如果校准图未自动进入拍照，请按“跳过”进行拍照。',

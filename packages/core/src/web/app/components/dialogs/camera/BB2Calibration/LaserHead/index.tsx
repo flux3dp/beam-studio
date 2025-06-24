@@ -6,18 +6,17 @@ import { setFisheyeConfig } from '@core/helpers/camera-calibration-helper';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
-import dialog from '@core/implementations/dialog';
 import type { FisheyeCameraParametersV3, FisheyeCameraParametersV3Cali } from '@core/interfaces/FisheyePreview';
 
 import styles from '../../Calibration.module.scss';
+import Calibration from '../../common/Calibration';
 import CheckPnP from '../../common/CheckPnP';
 import CheckpointData from '../../common/CheckpointData';
+import downloadCalibrationFile from '../../common/downloadCalibrationFile';
 import Instruction from '../../common/Instruction';
+import moveLaserHead from '../../common/moveLaserHead';
 import SolvePnP from '../../common/SolvePnP';
 import { bb2PerspectiveGrid, bb2PnPPoints } from '../../common/solvePnPConstants';
-import moveLaserHead from '../moveLaserHead';
-
-import Calibration from './Calibration';
 
 /* eslint-disable perfectionist/sort-enums */
 enum Steps {
@@ -72,25 +71,6 @@ const LaserHead = ({ isAdvanced, onClose }: Props): React.JSX.Element => {
   }
 
   if (step === Steps.PRE_CHESSBOARD) {
-    const handleDownloadChessboard = () => {
-      dialog.writeFileDialog(
-        async () => {
-          const resp = await fetch('assets/bb2-chessboard.pdf');
-          const blob = await resp.blob();
-
-          return blob;
-        },
-        tCali.download_chessboard_file,
-        'Chessboard',
-        [
-          {
-            extensions: ['pdf'],
-            name: window.os === 'MacOS' ? 'PDF (*.pdf)' : 'PDF',
-          },
-        ],
-      );
-    };
-
     return (
       <Instruction
         animationSrcs={[
@@ -103,9 +83,7 @@ const LaserHead = ({ isAdvanced, onClose }: Props): React.JSX.Element => {
             onClick: async () => {
               const res = await moveLaserHead();
 
-              if (res) {
-                setStep(Steps.CHESSBOARD);
-              }
+              if (res) setStep(Steps.CHESSBOARD);
             },
             type: 'primary',
           },
@@ -114,7 +92,12 @@ const LaserHead = ({ isAdvanced, onClose }: Props): React.JSX.Element => {
         steps={[tCali.put_chessboard_bb2_desc_1, tCali.put_chessboard_bb2_desc_2, tCali.put_chessboard_bb2_desc_3]}
         title={tCali.put_chessboard}
       >
-        <div className={styles.link} onClick={handleDownloadChessboard}>
+        <div
+          className={styles.link}
+          onClick={() =>
+            downloadCalibrationFile('assets/bb2-chessboard.pdf', tCali.download_chessboard_file, 'Chessboard')
+          }
+        >
           {tCali.download_chessboard_file}
         </div>
       </Instruction>
@@ -126,6 +109,8 @@ const LaserHead = ({ isAdvanced, onClose }: Props): React.JSX.Element => {
       <Calibration
         charuco={[15, 10]}
         chessboard={[24, 14]}
+        description={[tCali.put_chessboard_1, tCali.put_chessboard_2, tCali.put_chessboard_3]}
+        indicator={{ height: '65%', left: '10%', top: '30%', width: '80%' }}
         onClose={onClose}
         onNext={() => setStep(Steps.PUT_PAPER)}
         updateParam={updateParam}

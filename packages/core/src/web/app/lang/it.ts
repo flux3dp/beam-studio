@@ -1029,8 +1029,9 @@ const lang: ILang = {
     moving_laser_head: 'Spostamento della testa laser...',
     moving_platform: 'Spostamento della piattaforma...',
     next: 'Avanti',
-    no_picutre_found: '#846 Il tuo dispositivo non dispone di foto raw disponibili per la calibrazione. Si prega di contattare il supporto FLUX.',
+    no_picture_found: '#846 Il tuo dispositivo non dispone di foto raw disponibili per la calibrazione. Si prega di contattare il supporto FLUX.',
     perform_autofocus_bb2: "Per favore, vai al pannello di controllo della macchina e premi AF per eseguire l'autofocus.",
+    perform_autofocus_bm2: 'Sposta manualmente la testa laser sopra il materiale, quindi abbassa la sonda di messa a fuoco per attivare l’autofocus.',
     please_do_camera_calibration_and_focus: {
       beambox: "Per calibrare il modulo laser a diodi è necessaria la fotocamera.\nAssicurarsi che la fotocamera di questa macchina sia stata calibrata.\nE regolare delicatamente la piattaforma al punto focale (l'altezza dell'acrilico ribaltato).",
       beamo: "Per calibrare il modulo laser a diodi è necessaria la fotocamera.\nAssicurarsi che la fotocamera di questa macchina sia stata calibrata.\nE regolare delicatamente la testa laser a fuoco sull'oggetto di incisione (l'altezza dell'acrilico ribaltato).",
@@ -1062,6 +1063,7 @@ const lang: ILang = {
     put_chessboard_promark_desc_1: 'Utilizzare il foglio a scacchiera fornito nella confezione degli accessori, oppure stampare il seguente motivo a scacchiera su un foglio A4 per la calibrazione della fotocamera.',
     put_chessboard_promark_desc_2: 'Si prega di posizionare il modello a scacchiera piatto e centrato sulla piattaforma di lavoro.',
     put_paper: 'Metti Carta',
+    put_paper_bm2_1: 'Posizionare due fogli bianchi puliti di formato A4 o Letter uno accanto all’altro e appiattirli nell’area di lavoro.',
     put_paper_promark_1: 'Posiziona il cartoncino nero dalla scatola degli accessori sulla piattaforma di lavoro.',
     put_paper_promark_2: 'Regola correttamente la messa a fuoco, quindi fai clic su "Avvia Intaglio" per procedere con l\'incisione.',
     put_paper_skip: 'Se il disegno di calibrazione non procede automaticamente con lo scatto, premi "Salta" per scattare la foto.',

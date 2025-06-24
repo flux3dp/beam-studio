@@ -32,13 +32,13 @@ export interface FisheyeCameraParametersV2Cali {
   levelingData?: Record<string, number>;
   refHeight?: number;
   ret?: number;
-  rvec?: number[];
+  rvec?: number[][];
   rvec_polyfit?: number[][];
-  rvecs?: number[][];
+  rvecs?: number[][][];
   source?: 'device' | 'user'; // k, d calibration source by device pictures or user input
-  tvec?: number[];
+  tvec?: number[][];
   tvec_polyfit?: number[][];
-  tvecs?: number[][];
+  tvecs?: number[][][];
 }
 
 /**
@@ -49,10 +49,10 @@ export interface FisheyeCameraParametersV2 {
   k: number[][];
   levelingData?: Record<string, number>;
   refHeight: number;
-  rvec: number[];
+  rvec: number[][];
   rvec_polyfit: number[][];
   source?: 'device' | 'user'; // k, d calibration source by device pictures or user input
-  tvec: number[];
+  tvec: number[][];
   tvec_polyfit: number[][];
   v: 2;
 }
@@ -63,10 +63,10 @@ export interface FisheyeCameraParametersV2 {
 export interface FisheyeCameraParametersV3 {
   d: number[][];
   k: number[][];
-  rvec: number[];
-  rvecs?: number[][];
-  tvec: number[];
-  tvecs?: number[][];
+  rvec: number[][];
+  rvecs?: number[][][];
+  tvec: number[][];
+  tvecs?: number[][][];
   v: 3;
 }
 
@@ -74,8 +74,8 @@ export interface FisheyeCameraParametersV3Cali {
   d?: number[][];
   k?: number[][];
   ret?: number;
-  rvec?: number[];
-  tvec?: number[];
+  rvec?: number[][];
+  tvec?: number[][];
 }
 
 export type WideAngleRegion =
@@ -101,9 +101,9 @@ export interface FisheyeCameraParametersV4<Region = WideAngleRegion> {
   grids?: PerspectiveGrid;
   k: number[][];
   ret?: number;
-  rvec: number[];
+  rvec: number[][];
   rvec_polyfits: Record<Region, number[][]>;
-  tvec: number[];
+  tvec: number[][];
   tvec_polyfits: Record<Region, number[][]>;
   v: 4;
 }
@@ -125,27 +125,27 @@ export interface FisheyeCameraParametersV4Cali<Region = WideAngleRegion> {
   /**
    * rvec and tvec are used for solvepnp to guess the initial points
    */
-  rvec?: number[];
+  rvec?: number[][];
   /**
    * rvecs1: saved region rvec for each region in 1st height
    */
-  rvecs1?: Partial<Record<Region, number[]>>;
+  rvecs1?: Partial<Record<Region, number[][]>>;
   /**
    * rvecs2: saved region rvec for each region in 2nd height
    */
-  rvecs2?: Partial<Record<Region, number[]>>;
+  rvecs2?: Partial<Record<Region, number[][]>>;
   /**
    * rvec and tvec are used for solvepnp to guess the initial points
    */
-  tvec?: number[];
+  tvec?: number[][];
   /**
    * tvecs1: saved region tvec for each region in 1st height
    */
-  tvecs1?: Partial<Record<Region, number[]>>;
+  tvecs1?: Partial<Record<Region, number[][]>>;
   /**
    * rvecs2: saved region rvec for each region in 2nd height
    */
-  tvecs2?: Partial<Record<Region, number[]>>;
+  tvecs2?: Partial<Record<Region, number[][]>>;
 }
 /**
  * PerspectiveGrid is used the generate grid points for perspective transformation

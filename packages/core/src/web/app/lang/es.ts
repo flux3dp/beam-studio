@@ -1029,8 +1029,9 @@ const lang: ILang = {
     moving_laser_head: 'Moviendo la cabeza del láser...',
     moving_platform: 'Moviendo la plataforma...',
     next: 'Siguiente',
-    no_picutre_found: '#846 Tu dispositivo no tiene fotos en bruto disponibles para calibración. Por favor, ponte en contacto con el soporte técnico de FLUX.',
+    no_picture_found: '#846 Tu dispositivo no tiene fotos en bruto disponibles para calibración. Por favor, ponte en contacto con el soporte técnico de FLUX.',
     perform_autofocus_bb2: 'Por favor, vaya al panel de control de la máquina y presione AF para realizar el enfoque automático.',
+    perform_autofocus_bm2: 'Mueva manualmente la cabeza láser sobre el material y luego baje la sonda de enfoque para activar el enfoque automático.',
     please_do_camera_calibration_and_focus: {
       beambox: 'Al calibrar el módulo láser diodo, se necesita una cámara.\nPor favor, asegúrate de que la cámara de esta máquina ha sido calibrada.\nAjusta la plataforma al punto focal (la altura del acrílico rechazado)',
       beamo: 'Al calibrar el módulo láser diodo, se necesita una cámara.\nPor favor, asegúrate de que la cámara de esta máquina ha sido calibrada.\nAjusta la cabeza del láser para enfocar el objeto grabado (la altura del acrílico rechazado)',
@@ -1062,6 +1063,7 @@ const lang: ILang = {
     put_chessboard_promark_desc_1: 'Utilice el papel de tablero de ajedrez proporcionado en la caja de accesorios, o imprima el siguiente patrón de tablero de ajedrez en papel A4 para la calibración de la cámara.',
     put_chessboard_promark_desc_2: 'Ajuste el enfoque correctamente y luego haga clic en "Siguiente" para continuar con el grabado.',
     put_paper: 'Colocar papel',
+    put_paper_bm2_1: 'Coloque dos hojas blancas limpias de tamaño A4 o carta una al lado de la otra y aplánelas en el área de trabajo.',
     put_paper_promark_1: 'Coloque el cartón negro de la caja de accesorios en la plataforma de trabajo.',
     put_paper_promark_2: 'Ajuste el enfoque correctamente y luego haga clic en "Empezar a Grabar" para continuar con el grabado.',
     put_paper_skip: 'Si el dibujo de calibración no procede automáticamente a tomar una foto, presione "Omitir" para tomarla.',

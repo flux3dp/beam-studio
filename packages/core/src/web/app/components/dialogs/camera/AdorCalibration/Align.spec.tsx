@@ -10,6 +10,10 @@ const mockFisheyePreviewManagerV2 = jest.fn();
 
 jest.mock('@core/app/actions/camera/preview-helper/FisheyePreviewManagerV2', () => mockFisheyePreviewManagerV2);
 
+const mockFisheyePreviewManagerV4 = jest.fn();
+
+jest.mock('@core/app/actions/camera/preview-helper/FisheyePreviewManagerV4', () => mockFisheyePreviewManagerV4);
+
 import Align from './Align';
 import CalibrationType from './calibrationTypes';
 

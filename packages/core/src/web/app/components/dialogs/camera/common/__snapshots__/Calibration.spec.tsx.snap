@@ -86,16 +86,13 @@ exports[`test Calibration should render correctly 1`] = `
                       class="desc"
                     >
                       <div>
-                        1. 
-                        Please go to the machine control panel and press AF to perform autofocus.
+                        1. step1
                       </div>
                       <div>
-                        2. 
-                        Please move the chessboard paper or the laser head until the entire chessboard is confirmed to be within the red frame in the live preview window.
+                        2. step2
                       </div>
                       <div>
-                        3. 
-                        Right-click to download the checkerboard image at the current location and check its clarity.
+                        3. step3
                       </div>
                     </div>
                     <div
@@ -107,9 +104,6 @@ exports[`test Calibration should render correctly 1`] = `
                         <img
                           alt="Chessboard"
                           src="mock-url"
-                        />
-                        <div
-                          class="indicator"
                         />
                       </div>
                       <nav
@@ -271,16 +265,13 @@ exports[`test Calibration should render correctly 2`] = `
                       class="desc"
                     >
                       <div>
-                        1. 
-                        Please go to the machine control panel and press AF to perform autofocus.
+                        1. step1
                       </div>
                       <div>
-                        2. 
-                        Please move the chessboard paper or the laser head until the entire chessboard is confirmed to be within the red frame in the live preview window.
+                        2. step2
                       </div>
                       <div>
-                        3. 
-                        Right-click to download the checkerboard image at the current location and check its clarity.
+                        3. step3
                       </div>
                     </div>
                     <div
@@ -292,9 +283,6 @@ exports[`test Calibration should render correctly 2`] = `
                         <img
                           alt="Chessboard"
                           src="mock-url"
-                        />
-                        <div
-                          class="indicator"
                         />
                       </div>
                       <nav

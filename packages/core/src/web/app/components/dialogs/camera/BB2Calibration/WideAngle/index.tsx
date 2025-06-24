@@ -10,7 +10,6 @@ import getFocalDistance from '@core/helpers/device/camera/getFocalDistance';
 import { loadJson, uploadJson } from '@core/helpers/device/jsonDataHelper';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
-import dialog from '@core/implementations/dialog';
 import type {
   FisheyeCameraParametersV4,
   FisheyeCameraParametersV4Cali,
@@ -18,19 +17,19 @@ import type {
 } from '@core/interfaces/FisheyePreview';
 
 import styles from '../../Calibration.module.scss';
+import ChArUco from '../../common/ChArUco';
 import CheckPnP from '../../common/CheckPnP';
 import CheckpointData from '../../common/CheckpointData';
+import downloadCalibrationFile from '../../common/downloadCalibrationFile';
 import Instruction from '../../common/Instruction';
+import { moveZRel } from '../../common/moveZRel';
 import ProcessingDialog from '../../common/ProcessingDialog';
 import SolvePnP from '../../common/SolvePnP';
 import {
   bb2WideAngleCameraPnpPoints,
   bb2WideAnglePerspectiveGrid,
-  getBB2WideAnglePoints,
+  getRegionalPoints,
 } from '../../common/solvePnPConstants';
-import movePlatformRel from '../movePlatformRel';
-
-import ChArUco from './ChArUco';
 
 const enum Step {
   CHECK_DATA,
@@ -145,25 +144,6 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
       );
     })
     .with(Step.PREPARE_MATERIALS, () => {
-      const handleDownload = () => {
-        dialog.writeFileDialog(
-          async () => {
-            const resp = await fetch('assets/charuco-15-10.pdf');
-            const blob = await resp.blob();
-
-            return blob;
-          },
-          tCali.download_calibration_pattern,
-          'Calibration Pattern',
-          [
-            {
-              extensions: ['pdf'],
-              name: window.os === 'MacOS' ? 'PDF (*.pdf)' : 'PDF',
-            },
-          ],
-        );
-      };
-
       return (
         <Instruction
           animationSrcs={[
@@ -182,14 +162,23 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
           ]}
           title={title}
         >
-          <div className={styles.link} onClick={handleDownload}>
+          <div className={styles.link} onClick={() => downloadCalibrationFile('assets/charuco-15-10.pdf')}>
             {tCali.download_calibration_pattern}
           </div>
         </Instruction>
       );
     })
     .with(Step.CALIBRATE_CHARUCO, () => {
-      return <ChArUco onClose={handleClose} onNext={next} onPrev={prev} title={title} updateParam={updateParam} />;
+      return (
+        <ChArUco
+          cameraIndex={1}
+          onClose={handleClose}
+          onNext={next}
+          onPrev={prev}
+          title={title}
+          updateParam={updateParam}
+        />
+      );
     })
     .with(Step.PUT_PAPER, () => {
       const handleNext = async (doEngraving = true) => {
@@ -260,7 +249,7 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
             onClick: async () => {
               if (step === Step.SOLVE_PNP_INSTRUCTION_2) {
                 progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: tCali.moving_platform });
-                await movePlatformRel(-40);
+                await moveZRel(-40);
 
                 const dh2 = await getFocalDistance();
 
@@ -347,7 +336,7 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
             onBack={async () => {
               if (step === Step.SOLVE_PNP_TL_2) {
                 progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: tCali.moving_platform });
-                await movePlatformRel(40);
+                await moveZRel(40);
                 progressCaller.popById(PROGRESS_ID);
               }
 
@@ -398,11 +387,8 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
 
             for (let i = 0; i < regions.length; i++) {
               const region = regions[i];
-              const imgPoint = getBB2WideAnglePoints(
-                region,
-                imgPoints as Record<WideAngleRegion, Array<[number, number]>>,
-              );
-              const refPoints = getBB2WideAnglePoints(region, bb2WideAngleCameraPnpPoints);
+              const imgPoint = getRegionalPoints(region, imgPoints as Record<WideAngleRegion, Array<[number, number]>>);
+              const refPoints = getRegionalPoints(region, bb2WideAngleCameraPnpPoints);
               const res = await solvePnPCalculate(dh!, imgPoint, refPoints);
 
               if (res.success) {
@@ -494,7 +480,7 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
 
               await uploadJson(res, 'fisheye', 'wide-angle.json');
               progressCaller.update(PROGRESS_ID, { message: tCali.moving_platform });
-              await movePlatformRel(40);
+              await moveZRel(40);
               alertCaller.popUp({ message: tCali.camera_parameter_saved_successfully });
             } finally {
               progressCaller.popById(PROGRESS_ID);

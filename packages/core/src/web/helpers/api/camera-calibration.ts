@@ -179,8 +179,8 @@ class CameraCalibrationApi {
           d: number[][];
           k: number[][];
           ret: number;
-          rvec: number[];
-          tvec: number[];
+          rvec: number[][];
+          tvec: number[][];
         };
         success: true;
       }
@@ -283,12 +283,12 @@ class CameraCalibrationApi {
     points: Array<[number, number]>,
     refPoints: Array<[number, number]>,
   ): Promise<{
-    data: { rvec: number[]; tvec: number[] };
+    data: { rvec: number[][]; tvec: number[][] };
     success: boolean;
   }> =>
     new Promise((resolve, reject) => {
       let success = true;
-      let data = {} as { rvec: number[]; tvec: number[] };
+      let data = {} as { rvec: number[][]; tvec: number[][] };
 
       this.events.onMessage = (response) => {
         if (response.status === 'fail') {
@@ -318,8 +318,8 @@ class CameraCalibrationApi {
     img: ArrayBuffer | Blob,
     dh: number,
     params: { d: number[][]; k: number[][] } & (
-      | { rvec: number[]; tvec: number[] }
-      | { rvecs: Record<string, number[]>; tvecs: Record<string, number[]> }
+      | { rvec: number[][]; tvec: number[][] }
+      | { rvecs: Record<string, number[][]>; tvecs: Record<string, number[][]> }
     ),
     grid: PerspectiveGrid,
   ): Promise<
@@ -375,8 +375,8 @@ class CameraCalibrationApi {
     });
 
   extrinsicRegression = (
-    rvecs: number[][],
-    tvecs: number[][],
+    rvecs: number[][][],
+    tvecs: number[][][],
     heights: number[],
   ): Promise<{
     data?: { rvec_polyfit: number[][]; tvec_polyfit: number[][] };
@@ -418,7 +418,9 @@ class CameraCalibrationApi {
     img: ArrayBuffer | Blob,
     squareX: number,
     squareY: number,
-  ): Promise<{ imgp: number[][]; objp: number[][]; success: true } | { reason: string; success: false }> =>
+  ): Promise<
+    { imgp: number[][]; objp: number[][]; ratio: number; success: true } | { reason: string; success: false }
+  > =>
     new Promise((resolve, reject) => {
       this.events.onMessage = (response) => {
         if (response.status === 'continue') {
@@ -458,9 +460,9 @@ class CameraCalibrationApi {
         indices: number[];
         k: number[][];
         ret: number;
-        rvec: number[];
+        rvec: number[][];
         success: true;
-        tvec: number[];
+        tvec: number[][];
       }
     | { reason: string; success: false }
   > =>

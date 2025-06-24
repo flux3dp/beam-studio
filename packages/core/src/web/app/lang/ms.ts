@@ -1029,8 +1029,9 @@ const lang: ILang = {
     moving_laser_head: 'Menggerakkan kepala laser...',
     moving_platform: 'Menggerakkan platform...',
     next: 'Seterusnya',
-    no_picutre_found: '#846 Peranti anda tidak mempunyai gambar mentah yang tersedia untuk kalibrasi. Sila hubungi sokongan FLUX.',
+    no_picture_found: '#846 Peranti anda tidak mempunyai gambar mentah yang tersedia untuk kalibrasi. Sila hubungi sokongan FLUX.',
     perform_autofocus_bb2: 'Sila pergi ke panel kawalan mesin dan tekan AF untuk melakukan autofokus.',
+    perform_autofocus_bm2: 'Alihkan kepala laser secara manual di atas bahan, kemudian turunkan probe fokus untuk mencetuskan fokus automatik.',
     please_do_camera_calibration_and_focus: {
       beambox: 'Semasa menentusahkan modul laser diod, kamera diperlukan.\nPastikan kamera mesin ini telah ditentusahkan.\nDan laraskan platform pada titik fokus (ketinggian akrilik songsang)',
       beamo: 'Semasa menentusahkan modul laser diod, kamera diperlukan.\nPastikan kamera mesin ini telah ditentusahkan.\nDan laraskan kepala laser untuk fokus pada objek ukiran (ketinggian akrilik songsang)',
@@ -1062,6 +1063,7 @@ const lang: ILang = {
     put_chessboard_promark_desc_1: 'Sila gunakan kertas papan dam yang disediakan dalam kotak aksesori, atau cetak corak papan dam berikut pada kertas A4 untuk kalibrasi kamera.',
     put_chessboard_promark_desc_2: 'Sila letakkan kertas papan dam dengan rata dan di tengah-tengah platform kerja.',
     put_paper: 'Letakkan Kertas',
+    put_paper_bm2_1: 'Letakkan dua helai kertas putih bersih bersaiz A4 atau Letter secara bersebelahan dan ratakan di kawasan kerja.',
     put_paper_promark_1: 'Letakkan kadbod hitam dari kotak aksesori di platform kerja.',
     put_paper_promark_2: 'Laraskan fokus dengan betul, kemudian klik "Mula Ukiran" untuk meneruskan ukiran.',
     put_paper_skip: 'Jika lukisan penentukuran tidak meneruskan secara automatik ke pengambilan gambar, tekan "Lompat" untuk mengambil gambar.',

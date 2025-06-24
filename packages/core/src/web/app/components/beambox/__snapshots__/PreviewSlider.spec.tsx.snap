@@ -43,7 +43,7 @@ exports[`test PreviewSlider should render correctly when is previewing Ador 1`] 
         Mock Antd Slider
         <p>
           min: 
-          250
+          50
         </p>
         <p>
           max: 
@@ -107,7 +107,7 @@ exports[`test PreviewSlider should render correctly when is previewing Ador 2`] 
         Mock Antd Slider
         <p>
           min: 
-          250
+          50
         </p>
         <p>
           max: 
@@ -171,7 +171,7 @@ exports[`test PreviewSlider should render correctly when is previewing BB2 1`] =
         Mock Antd Slider
         <p>
           min: 
-          250
+          50
         </p>
         <p>
           max: 
@@ -235,7 +235,7 @@ exports[`test PreviewSlider should render correctly when is previewing BB2 2`] =
         Mock Antd Slider
         <p>
           min: 
-          250
+          50
         </p>
         <p>
           max: 

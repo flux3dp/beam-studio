@@ -1029,8 +1029,9 @@ const lang: ILang = {
     moving_laser_head: 'Pohybuji laserovou hlavou...',
     moving_platform: 'Plošina se pohybuje...',
     next: 'Další',
-    no_picutre_found: '#846 Vaše zařízení nemá dostupné žádné nezpracované fotky ke kalibraci. Kontaktujte prosím podporu FLUX.',
+    no_picture_found: '#846 Vaše zařízení nemá dostupné žádné nezpracované fotky ke kalibraci. Kontaktujte prosím podporu FLUX.',
     perform_autofocus_bb2: 'Přejděte na ovládací panel zařízení a stiskněte tlačítko AF pro automatické zaostření.',
+    perform_autofocus_bm2: 'Ručně posuňte laserovou hlavu nad materiál a poté spusťte zaostřovací sondu pro spuštění automatického zaostření.',
     please_do_camera_calibration_and_focus: {
       beambox: 'Při kalibrování modulu laserové diody je potřeba kamera.\nUjistěte se prosím, že byla kamera tohoto stroje zkalibrována.\nPoté prosím upravte platformu na ústřední bod (výška vypnutého akrylu)',
       beamo: 'Při kalibrování modulu laserové diody je potřeba kamera.\nUjistěte se prosím, že byla kamera tohoto stroje zkalibrována.\nPoté prosím upravte laserovou hlavici, aby se fokusovala na gravírovaný objekt (výška vypnutého akrylu)',
@@ -1062,6 +1063,7 @@ const lang: ILang = {
     put_chessboard_promark_desc_1: 'Použijte šachovnicový papír dodaný v krabici s příslušenstvím, nebo vytiskněte následující šachovnicový vzor na papír velikosti A4 pro kalibraci kamery.',
     put_chessboard_promark_desc_2: 'Správně nastavte zaostření a poté klikněte na "Další" pro pokračování v gravírování.',
     put_paper: 'Vložte papír',
+    put_paper_bm2_1: 'Umístěte dvě čisté bílé papíry velikosti A4 nebo Letter vedle sebe a vyrovnejte je v pracovní oblasti.',
     put_paper_promark_1: 'Položte černou lepenku z příslušenství na pracovní platformu.',
     put_paper_promark_2: 'Správně nastavte zaostření a poté klikněte na "Začít Gravírovat" pro pokračování v gravírování.',
     put_paper_skip: 'Pokud kalibrační kresba automaticky nepokračuje k pořízení snímku, stiskněte „Přeskočit“ pro pořízení snímku.',
