@@ -13,7 +13,6 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { ILang } from '@core/interfaces/ILang';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import { checkModuleCalibration } from './checkModuleCalibration';
 import { exportTask } from './exportTask';
 import { handleExportAlerts } from './handleExportAlerts';
 
@@ -50,7 +49,7 @@ export const handleExportClick =
 
         if (!(await checkDeviceStatus(device))) return;
 
-        await checkModuleCalibration(device, lang);
+        // await checkModuleCalibration(device, lang);
         await exportTask(device, byHandler, lang);
       } finally {
         promarkButtonHandler.handleTaskFinish();

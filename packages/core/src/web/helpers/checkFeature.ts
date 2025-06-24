@@ -11,3 +11,4 @@ export const checkFpm1 = (): boolean =>
     isDev()) &&
   !isWeb();
 export const checkHxRf = (): boolean => isDev();
+export const checkBM2 = (): boolean => isDev();

@@ -9,60 +9,6 @@ exports[`test Beamo2Module should render correctly 1`] = `
   </div>
   <div>
     mock-form-item id:
-    laser-offset
-    label:
-    Laser Offset
-    url:
-    options:
-    <span
-      class="font2 sub-item"
-    >
-      X
-    </span>
-    <div>
-      UnitInput: 
-      laser-offset-x
-      <p>
-        precision: 
-        2
-      </p>
-      <p>
-        unit: 
-        mm
-      </p>
-      <input
-        id="laser-offset-x"
-        max="360"
-        min="-360"
-        value="10"
-      />
-    </div>
-    <span
-      class="font2 sub-item"
-    >
-      Y
-    </span>
-    <div>
-      UnitInput: 
-      laser-offset-y
-      <p>
-        precision: 
-        2
-      </p>
-      <p>
-        unit: 
-        mm
-      </p>
-      <input
-        id="laser-offset-y"
-        max="240"
-        min="-240"
-        value="10"
-      />
-    </div>
-  </div>
-  <div>
-    mock-form-item id:
     ir-laser-offset
     label:
     2W Infrared Laser Offset
@@ -88,7 +34,7 @@ exports[`test Beamo2Module should render correctly 1`] = `
         id="ir-laser-offset-x"
         max="360"
         min="-360"
-        value="0"
+        value="10"
       />
     </div>
     <span
@@ -111,7 +57,7 @@ exports[`test Beamo2Module should render correctly 1`] = `
         id="ir-laser-offset-y"
         max="240"
         min="-240"
-        value="0"
+        value="10"
       />
     </div>
   </div>

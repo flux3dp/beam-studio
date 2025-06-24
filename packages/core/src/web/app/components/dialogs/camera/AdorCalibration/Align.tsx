@@ -7,8 +7,12 @@ import classNames from 'classnames';
 import alertCaller from '@core/app/actions/alert-caller';
 import FisheyePreviewManagerV2 from '@core/app/actions/camera/preview-helper/FisheyePreviewManagerV2';
 import progressCaller from '@core/app/actions/progress-caller';
-import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
-import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
+import {
+  LayerModule,
+  type LayerModuleType,
+  printingModules,
+  UVModules,
+} from '@core/app/constants/layer-module/layer-modules';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { setFisheyeConfig } from '@core/helpers/camera-calibration-helper';
@@ -23,6 +27,7 @@ import getPerspectiveForAlign from './getPerspectiveForAlign';
 
 interface Props {
   fisheyeParam: FisheyeCameraParametersV1 | FisheyeCameraParametersV2;
+  module?: LayerModuleType;
   onBack: () => void;
   onClose: (complete: boolean) => void;
   title: string;
@@ -35,8 +40,16 @@ const INIT_GUESS_Y = Math.round(300 + 1500 / 2);
 const PX_PER_MM = 5;
 const PROGRESS_ID = 'calibration-align';
 
+// TODO: fix take picture for beamo2 (V4)
 // TODO: fix test
-const Align = ({ fisheyeParam, onBack, onClose, title, type }: Props): React.JSX.Element => {
+const Align = ({
+  fisheyeParam,
+  module = LayerModule.LASER_UNIVERSAL,
+  onBack,
+  onClose,
+  title,
+  type,
+}: Props): React.JSX.Element => {
   const imgContainerRef = useRef<HTMLDivElement | null>(null);
   const lang = useI18n();
   const [form] = Form.useForm();
@@ -130,18 +143,12 @@ const Align = ({ fisheyeParam, onBack, onClose, title, type }: Props): React.JSX
       return fisheyeCenter;
     }
 
-    let layerModule: LayerModuleType = LayerModule.PRINTER;
-
-    if (type === CalibrationType.IR_LASER) {
-      layerModule = LayerModule.LASER_1064;
-    }
-
     return getModuleOffsets({
       isRelative: true,
-      module: layerModule,
+      module,
       workarea: deviceMaster.currentDevice.info.model,
     });
-  }, [type, fisheyeCenter]);
+  }, [type, fisheyeCenter, module]);
   const getOffsetValueFromScroll = useCallback(
     (left: number, top: number) => {
       const x = (left - fisheyeCenter[0] + (imgContainerRef.current?.clientWidth ?? 0) / 2) / PX_PER_MM;
@@ -267,21 +274,15 @@ const Align = ({ fisheyeParam, onBack, onClose, title, type }: Props): React.JSX
       }
       onClose(true);
     } else {
-      let layerModule: LayerModuleType = LayerModule.PRINTER;
-
-      if (type === CalibrationType.IR_LASER) {
-        layerModule = LayerModule.LASER_1064;
-      }
-
       updateModuleOffsets([x, y], {
         isRelative: true,
-        module: layerModule,
+        module,
         shouldWrite: true,
         workarea: deviceMaster.currentDevice.info.model,
       });
       onClose(true);
     }
-  }, [form, onClose, type, fisheyeParam, lang.calibration.failed_to_save_calibration_results]);
+  }, [form, onClose, type, fisheyeParam, module, lang.calibration.failed_to_save_calibration_results]);
   const inputStep = useMemo(() => (type === CalibrationType.CAMERA ? 1 : 0.1), [type]);
   const inputPrecision = useMemo(() => (type === CalibrationType.CAMERA ? 0 : 1), [type]);
   const lastValueDisplay = useMemo(() => {
@@ -338,7 +339,7 @@ const Align = ({ fisheyeParam, onBack, onClose, title, type }: Props): React.JSX
     >
       <Row>
         <div className={styles.text}>
-          {type === CalibrationType.PRINTER_HEAD
+          {printingModules.has(module) || UVModules.has(module)
             ? lang.calibration.align_red_cross_print
             : lang.calibration.align_red_cross_cut}
           <Tooltip className={styles.tooltip} title={lang.calibration.hint_adjust_parameters} trigger="hover">

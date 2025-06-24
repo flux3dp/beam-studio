@@ -967,6 +967,7 @@ export interface ILang {
     at_focus_height: string;
     at_lower_height: string;
     back: string;
+    beamo2_autofocus_material: string;
     calculating_camera_matrix: string;
     calculating_regression_parameters: string;
     calibrate_camera_before_calibrate_modules: string;
@@ -1401,6 +1402,7 @@ export interface ILang {
     };
     retry: string;
     select_beambox: string;
+    select_beamo: string;
     select_connection_type: string;
     // specific caption/content
     select_language: string;

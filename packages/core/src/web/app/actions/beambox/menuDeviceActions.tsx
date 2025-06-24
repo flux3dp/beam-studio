@@ -20,7 +20,7 @@ import { showPromarkSettings } from '@core/app/components/dialogs/promark/Promar
 import { showZAxisAdjustment } from '@core/app/components/dialogs/promark/ZAxisAdjustment';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { InkDetectionStatus } from '@core/app/constants/layer-module/ink-cartridge';
-import type { DetectedLayerModuleType } from '@core/app/constants/layer-module/layer-modules';
+import type { DetectedLayerModuleType, LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { Mode } from '@core/app/constants/monitor-constants';
 import { showCameraCalibration } from '@core/app/views/beambox/Camera-Calibration';
@@ -75,7 +75,9 @@ const calibrateCamera = async (
   }
 };
 
-const calibrateModule = async (device: IDeviceInfo, type: CalibrationType) => {
+const calibrateModule = async (device: IDeviceInfo, type: CalibrationType, module?: LayerModuleType) => {
+  if (!checkHash()) return;
+
   try {
     const deviceStatus = await checkDeviceStatus(device);
 
@@ -86,7 +88,7 @@ const calibrateModule = async (device: IDeviceInfo, type: CalibrationType) => {
     const res = await DeviceMaster.select(device);
 
     if (res.success) {
-      showAdorCalibration(type);
+      showAdorCalibration(type, module);
     }
   } catch (error) {
     console.error(error);
@@ -317,14 +319,19 @@ export default {
     }
   },
   CALIBRATE_IR_MODULE: async (device: IDeviceInfo): Promise<void> => {
-    if (!checkHash()) return;
-
-    calibrateModule(device, CalibrationType.IR_LASER);
+    calibrateModule(device, CalibrationType.MODULE, LayerModule.LASER_1064);
+  },
+  CALIBRATE_PRINTER_4C_MODULE: async (device: IDeviceInfo): Promise<void> => {
+    calibrateModule(device, CalibrationType.MODULE, LayerModule.PRINTER_4C);
   },
   CALIBRATE_PRINTER_MODULE: async (device: IDeviceInfo): Promise<void> => {
-    if (!checkHash()) return;
-
-    calibrateModule(device, CalibrationType.PRINTER_HEAD);
+    calibrateModule(device, CalibrationType.MODULE, LayerModule.PRINTER);
+  },
+  CALIBRATE_UV_VARNISH_MODULE: async (device: IDeviceInfo): Promise<void> => {
+    calibrateModule(device, CalibrationType.MODULE, LayerModule.UV_VARNISH);
+  },
+  CALIBRATE_UV_WHITE_INK_MODULE: async (device: IDeviceInfo): Promise<void> => {
+    calibrateModule(device, CalibrationType.MODULE, LayerModule.UV_WHITE_INK);
   },
   CATRIDGE_CHIP_SETTING: async (device: IDeviceInfo): Promise<void> => {
     const res = await DeviceMaster.select(device);

@@ -12,6 +12,8 @@ import { getModuleOffsets } from '@core/helpers/device/moduleOffsets';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type { ILang } from '@core/interfaces/ILang';
 
+// Fixme: checkCalibration won't show any alert since the return value of getModuleOffsets is always truthy
+// Update the logic to check if the module is calibrated or not
 export const checkModuleCalibration = async (device: IDeviceInfo, lang: ILang): Promise<void> => {
   const workarea = BeamboxPreference.read('workarea');
 
@@ -48,23 +50,27 @@ export const checkModuleCalibration = async (device: IDeviceInfo, lang: ILang): 
         });
 
         if (doCali) {
-          await showAdorCalibration(calibrationType);
+          await showAdorCalibration(calibrationType, layerModule);
         }
       }
     }
   };
   const langNotification = lang.layer_module.notification;
 
-  await checkCalibration(
-    LayerModule.PRINTER,
-    CalibrationType.PRINTER_HEAD,
-    langNotification.performPrintingCaliTitle,
-    langNotification.performPrintingCaliMsg,
+  [LayerModule.PRINTER, LayerModule.PRINTER_4C, LayerModule.UV_WHITE_INK, LayerModule.UV_VARNISH].forEach(
+    async (module) => {
+      await checkCalibration(
+        module,
+        CalibrationType.MODULE,
+        langNotification.performPrintingCaliTitle,
+        langNotification.performPrintingCaliMsg,
+      );
+    },
   );
 
   await checkCalibration(
     LayerModule.LASER_1064,
-    CalibrationType.IR_LASER,
+    CalibrationType.MODULE,
     langNotification.performIRCaliTitle,
     langNotification.performIRCaliMsg,
   );

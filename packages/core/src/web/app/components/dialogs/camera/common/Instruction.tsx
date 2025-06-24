@@ -5,6 +5,7 @@ import { Button } from 'antd';
 
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import useDidUpdateEffect from '@core/helpers/hooks/useDidUpdateEffect';
+import useForceUpdate from '@core/helpers/use-force-update';
 
 import styles from './Instruction.module.scss';
 
@@ -28,6 +29,7 @@ const Instruction = ({
   title,
 }: Props): React.JSX.Element => {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const forceUpdate = useForceUpdate();
 
   useDidUpdateEffect(() => {
     videoRef.current?.load();
@@ -68,7 +70,8 @@ const Instruction = ({
       )}
       {children}
       {animationSrcs && (
-        <video autoPlay className={styles.video} loop muted ref={videoRef}>
+        // rerender when video loaded to reposition draggable modal with new content size
+        <video autoPlay className={styles.video} loop muted onLoadedData={forceUpdate} ref={videoRef}>
           {animationSrcs.map(({ src, type }) => (
             <source key={src} src={src} type={type} />
           ))}
