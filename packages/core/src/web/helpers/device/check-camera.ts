@@ -35,6 +35,9 @@ const checkCameraPromark = async (_device: IDeviceInfo): Promise<boolean> => {
     }
 
     const webcam = await webcamHelper.connectWebcam();
+
+    if (!webcam) return false;
+
     const pic = await webcam.getPicture();
 
     // size bigger than PROMARK_GOOD_PICTURE_THRESHOLD is considered as a good picture
