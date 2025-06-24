@@ -6,6 +6,7 @@ import classNames from 'classnames';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import FisheyePreviewManagerV2 from '@core/app/actions/camera/preview-helper/FisheyePreviewManagerV2';
+import FisheyePreviewManagerV4 from '@core/app/actions/camera/preview-helper/FisheyePreviewManagerV4';
 import progressCaller from '@core/app/actions/progress-caller';
 import {
   LayerModule,
@@ -19,14 +20,20 @@ import { setFisheyeConfig } from '@core/helpers/camera-calibration-helper';
 import { getModuleOffsets, updateModuleOffsets } from '@core/helpers/device/moduleOffsets';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
-import type { FisheyeCameraParametersV1, FisheyeCameraParametersV2 } from '@core/interfaces/FisheyePreview';
+import type {
+  FisheyeCameraParametersV1,
+  FisheyeCameraParametersV2,
+  FisheyeCameraParametersV4,
+} from '@core/interfaces/FisheyePreview';
+
+import { bm2PerspectiveGrid } from '../common/solvePnPConstants';
 
 import styles from './Align.module.scss';
 import CalibrationType from './calibrationTypes';
 import getPerspectiveForAlign from './getPerspectiveForAlign';
 
 interface Props {
-  fisheyeParam: FisheyeCameraParametersV1 | FisheyeCameraParametersV2;
+  fisheyeParam: FisheyeCameraParametersV1 | FisheyeCameraParametersV2 | FisheyeCameraParametersV4;
   module?: LayerModuleType;
   onBack: () => void;
   onClose: (complete: boolean) => void;
@@ -92,9 +99,18 @@ const Align = ({
       await deviceMaster.connectCamera();
 
       if ('v' in fisheyeParam) {
-        const manager = new FisheyePreviewManagerV2(deviceMaster.currentDevice.info, fisheyeParam);
+        if (fisheyeParam.v === 4) {
+          const manger = new FisheyePreviewManagerV4(deviceMaster.currentDevice.info, fisheyeParam, bm2PerspectiveGrid);
 
-        await manager.setupFisheyePreview({ defaultHeight: 0, focusPosition: 'E' });
+          const workarea = getWorkarea(deviceMaster.currentDevice.info.model, 'fbm2');
+          const { cameraCenter } = workarea;
+
+          await manger.setupFisheyePreview({ cameraPosition: cameraCenter, height: 0 });
+        } else if (fisheyeParam.v === 2) {
+          const manager = new FisheyePreviewManagerV2(deviceMaster.currentDevice.info, fisheyeParam);
+
+          await manager.setupFisheyePreview({ defaultHeight: 0, focusPosition: 'E' });
+        }
       } else {
         const perspectivePoints = await getPerspectiveForAlign(
           deviceMaster.currentDevice.info,

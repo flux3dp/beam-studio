@@ -25,18 +25,12 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
   private lineCheckEnabled: boolean = false;
   private fisheyeParams?: FisheyeCameraParametersV4;
   private fisheyePreviewManager?: FisheyePreviewManagerV4;
-  private cameraPpmm = 5;
   private grid = bm2PerspectiveGrid;
-  private cameraCenterOffset: { x: number; y: number };
   protected maxMovementSpeed: [number, number] = [54000, 6000]; // mm/min, speed cap of machine
 
   constructor(device: IDeviceInfo) {
     super(device);
     this.progressId = 'beamo2-preview-manager';
-    this.cameraCenterOffset = {
-      x: this.grid.x[0] + (this.grid.x[1] - this.grid.x[0]) / 2,
-      y: this.grid.y[0] + (this.grid.y[1] - this.grid.y[0]) / 2,
-    };
   }
 
   get isFullScreen(): boolean {
