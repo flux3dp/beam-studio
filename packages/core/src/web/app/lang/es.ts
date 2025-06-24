@@ -1966,6 +1966,12 @@ const lang: ILang = {
       align_center: 'Alinear el centro',
       anti_aliasing: 'Suavizado',
       auto_align: 'Alineación Automática',
+      autofocus: {
+        operating: 'Enfocando automáticamente...',
+        select_device_error: 'Seleccione un dispositivo antes de enfocar automáticamente.',
+        show_probe_error: 'Muestre la sonda antes de enfocar automáticamente.',
+        title: 'Enfoque Automático',
+      },
       borderless_mode: 'Modo sin bordes',
       bug_report: 'Informe de errores',
       calibrate_beambox_camera: 'Calibrar la cámara',

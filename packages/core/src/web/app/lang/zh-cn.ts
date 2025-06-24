@@ -1966,6 +1966,12 @@ const lang: ILang = {
       align_center: '置中',
       anti_aliasing: '抗锯齿',
       auto_align: '自动对齐',
+      autofocus: {
+        operating: '自动对焦中...',
+        select_device_error: '请在自动对焦前选择设备。',
+        show_probe_error: '请在自动对焦前显示探针。',
+        title: '自动对焦',
+      },
       borderless_mode: '开盖模式',
       bug_report: '错误回报',
       calibrate_beambox_camera: '校正相机',

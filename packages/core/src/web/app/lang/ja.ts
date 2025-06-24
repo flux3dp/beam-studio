@@ -1966,6 +1966,12 @@ const lang: ILang = {
       align_center: '中央揃え',
       anti_aliasing: 'アンチエイリアス',
       auto_align: '自動整列',
+      autofocus: {
+        operating: '自動フォーカス中...',
+        select_device_error: '自動フォーカスの前にデバイスを選択してください。',
+        show_probe_error: '自動フォーカスの前にプローブを表示してください。',
+        title: '自動フォーカス',
+      },
       borderless_mode: 'ボーダーレスモード',
       bug_report: 'バグ報告',
       calibrate_beambox_camera: 'カメラを校正',

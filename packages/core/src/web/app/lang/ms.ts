@@ -1966,6 +1966,12 @@ const lang: ILang = {
       align_center: 'Jajar tengah',
       anti_aliasing: 'Anti-Aliasing',
       auto_align: 'Penjajaran Auto',
+      autofocus: {
+        operating: 'Memfokus secara automatik...',
+        select_device_error: 'Sila pilih peranti sebelum autofokus.',
+        show_probe_error: 'Sila tunjukkan probe sebelum autofokus.',
+        title: 'Fokus Automatik',
+      },
       borderless_mode: 'Mod Tanpa Sempadan',
       bug_report: 'Laporan Pepijat',
       calibrate_beambox_camera: 'Kalibrasi Kamera',

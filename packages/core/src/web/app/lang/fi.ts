@@ -1966,6 +1966,12 @@ const lang: ILang = {
       align_center: 'Keskitä',
       anti_aliasing: 'Anti-Aliasing',
       auto_align: 'Automaattinen Tasaus',
+      autofocus: {
+        operating: 'Automaattinen tarkennus...',
+        select_device_error: 'Valitse laite ennen automaattitarkennusta.',
+        show_probe_error: 'Näytä anturi ennen automaattitarkennusta.',
+        title: 'Automaattitarkennus',
+      },
       borderless_mode: 'Reunaton tila',
       bug_report: 'Virheraportti',
       calibrate_beambox_camera: 'Kalibroi kamera',

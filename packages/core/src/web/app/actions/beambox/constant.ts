@@ -27,12 +27,11 @@ export const modelsWithModules = new Set([...adorModelsArray, 'fbm2']);
 export const nxModelsArray = ['fbb2', ...hexaRfModelsArray, 'fbm2'] as const;
 export const nxModels = new Set<WorkAreaModel>(nxModelsArray);
 
-export const PreviewSpeedLevel = {
-  FAST: 3,
-  MEDIUM: 2,
-  SLOW: 1,
-} as const;
+export const PreviewSpeedLevel = { FAST: 3, MEDIUM: 2, SLOW: 1 } as const;
 export type PreviewSpeedLevelType = (typeof PreviewSpeedLevel)[keyof typeof PreviewSpeedLevel];
+
+export const needToShowProbeBeforeAutoFocusModelsArray = ['fbb2'] as const;
+export type NeedToShowProbeBeforeAutoFocusModelsType = (typeof needToShowProbeBeforeAutoFocusModelsArray)[number];
 
 export const dpmm = 10;
 

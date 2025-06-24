@@ -1959,6 +1959,12 @@ export interface ILang {
       align_center: string;
       anti_aliasing: string;
       auto_align: string;
+      autofocus: {
+        operating: string;
+        select_device_error: string;
+        show_probe_error: string;
+        title: string;
+      };
       borderless_mode: string;
       bug_report: string;
       calibrate_beambox_camera: string;

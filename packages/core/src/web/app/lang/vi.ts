@@ -1966,6 +1966,12 @@ const lang: ILang = {
       align_center: 'Căn giữa',
       anti_aliasing: 'Làm mịn cạnh',
       auto_align: 'Căn Chỉnh Tự Động',
+      autofocus: {
+        operating: 'Đang lấy nét tự động...',
+        select_device_error: 'Vui lòng chọn thiết bị trước khi lấy nét tự động.',
+        show_probe_error: 'Vui lòng hiển thị đầu dò trước khi lấy nét tự động.',
+        title: 'Lấy Nét Tự Động',
+      },
       borderless_mode: 'Chế độ không viền',
       bug_report: 'Báo cáo lỗi',
       calibrate_beambox_camera: 'Hiệu chỉnh máy ảnh',

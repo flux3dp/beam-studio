@@ -1967,6 +1967,12 @@ const lang: ILang = {
       align_center: '置中',
       anti_aliasing: '反鋸齒',
       auto_align: '自動對齊',
+      autofocus: {
+        operating: '自動對焦中...',
+        select_device_error: '請先選擇設備再進行自動對焦。',
+        show_probe_error: '請先顯示探針再進行自動對焦。',
+        title: '自動對焦',
+      },
       borderless_mode: '開蓋模式',
       bug_report: '錯誤回報',
       calibrate_beambox_camera: '校正相機',

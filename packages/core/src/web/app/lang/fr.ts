@@ -1966,6 +1966,12 @@ const lang: ILang = {
       align_center: 'Centrer',
       anti_aliasing: 'Anticrénelage',
       auto_align: 'Alignement Automatique',
+      autofocus: {
+        operating: 'Mise au point automatique...',
+        select_device_error: 'Veuillez sélectionner un appareil avant la mise au point automatique.',
+        show_probe_error: 'Veuillez afficher la sonde avant la mise au point automatique.',
+        title: 'Mise au point automatique',
+      },
       borderless_mode: 'Mode plein écran',
       bug_report: 'Rapport de bug',
       calibrate_beambox_camera: 'Calibrer la caméra',

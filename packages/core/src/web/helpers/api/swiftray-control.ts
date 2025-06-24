@@ -2,6 +2,8 @@
 import { EventEmitter } from 'eventemitter3';
 
 import ErrorConstants from '@core/app/constants/error-constants';
+import type { RawChipSettings } from '@core/interfaces/Cartridge';
+import type { FisheyeCameraParameters, RotationParameters3D } from '@core/interfaces/FisheyePreview';
 import type { Mode, TPromarkFramingOpt } from '@core/interfaces/IControlSocket';
 import type IControlSocket from '@core/interfaces/IControlSocket';
 import type { IDeviceDetailInfo } from '@core/interfaces/IDevice';
@@ -36,7 +38,7 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
 
   private isProcessingTask = false;
 
-  private sc: SwiftrayClient;
+  private sc!: SwiftrayClient;
 
   private mode: Mode = ''; // null, maintain or raw
 
@@ -52,6 +54,27 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
     this.on('error', (error) => {
       console.log(`SwiftrayControl ${this.port} Socket Error:`, error);
     });
+  }
+  cartridgeIOJsonRpcReq?:
+    | ((
+        method: string,
+        params: unknown,
+      ) => Promise<{ data: { result: { hash: string; sign: string } }; status: string }>)
+    | undefined;
+  checkTaskAlive?: (() => Promise<boolean>) | undefined;
+  fetchCameraCalibrateImage?: ((name?: string) => Promise<Blob>) | undefined;
+  fetchFisheye3DRotation?: (() => Promise<RotationParameters3D>) | undefined;
+  fetchFisheyeParams?: (() => Promise<FisheyeCameraParameters>) | undefined;
+  getCartridgeChipData?: (() => Promise<{ data: { result: RawChipSettings }; status: string }>) | undefined;
+  measureZ?: ((args?: { F?: number; X?: number; Y?: number }) => Promise<number>) | undefined;
+  takeReferenceZ?: ((args?: { F?: number; H?: number; X?: number; Y?: number }) => Promise<number>) | undefined;
+  updateFisheye3DRotation?: ((data: RotationParameters3D) => Promise<{ status: string }>) | undefined;
+  uploadFisheyeParams?: ((data: string) => Promise<{ status: string }>) | undefined;
+  zSpeedLimitTestSetSpeed(speed: number): Promise<boolean> {
+    throw new Error('Method not implemented.');
+  }
+  zSpeedLimitTestStart(): Promise<boolean> {
+    throw new Error('Method not implemented.');
   }
 
   get connection() {
@@ -78,7 +101,7 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
     this._lineNumber = lineNumber;
   }
 
-  addTask<T>(taskFunction: (...args) => T, ...args: any[]) {
+  addTask<T>(taskFunction: (...args: any) => T, ...args: any[]) {
     if (this.taskQueue.length > MAX_TASK_QUEUE) {
       console.error(
         `SwiftrayControl ${this.port} task queue exceeds max queue length. Clear queue and then sendGCode task`,
@@ -100,7 +123,7 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
   }
 
   async doTask() {
-    this.currentTask = this.taskQueue.shift();
+    this.currentTask = this.taskQueue.shift()!;
 
     const { args, reject, resolve, taskFunction } = this.currentTask;
 
@@ -447,8 +470,8 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
 
           fileReader.onload = (e) => {
             try {
-              const jsonString = e.target.result as string;
-              const data = JSON.parse(jsonString);
+              const jsonString = e.target?.result as string;
+              const data = JSON.parse(jsonString) as { [key: string]: number };
 
               resolve(data);
             } catch (err) {
@@ -552,7 +575,7 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
       let isCmdResent = false;
       let responseString = '';
       let retryTimes = 0;
-      let timeoutTimer: NodeJS.Timeout | null;
+      let timeoutTimer: NodeJS.Timeout | undefined;
 
       this.on(EVENT_COMMAND_MESSAGE, (response) => {
         clearTimeout(timeoutTimer);
@@ -666,7 +689,7 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
       let responseString = '';
       const command = '$@';
       let retryTimes = 0;
-      let timeoutTimer: NodeJS.Timeout | null;
+      let timeoutTimer: NodeJS.Timeout | undefined;
 
       this.on(EVENT_COMMAND_MESSAGE, (response) => {
         clearTimeout(timeoutTimer);
@@ -687,7 +710,7 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
           this._isLineCheckMode = true;
           this._lineNumber = 1;
           this.removeCommandListeners();
-          resolve(null);
+          resolve();
 
           return;
         }
@@ -736,7 +759,7 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
       let responseString = '';
       const command = 'M172';
       let retryTimes = 0;
-      let timeoutTimer: NodeJS.Timeout | null;
+      let timeoutTimer: NodeJS.Timeout | undefined;
 
       this.on(EVENT_COMMAND_MESSAGE, (response) => {
         clearTimeout(timeoutTimer);
@@ -756,7 +779,7 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
         if (i >= 0) {
           this._isLineCheckMode = false;
           this.removeCommandListeners();
-          resolve(null);
+          resolve();
 
           return;
         }
@@ -1001,40 +1024,40 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
     return this.useRawLineCheckCommand(command);
   };
 
-  rawAutoFocus = (timeout = 20000): Promise<void> => {
+  rawAutoFocus = (version: 1 | 2, timeout = 20000): Promise<void> => {
     if (this.mode !== 'raw') {
       throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
     }
 
     return new Promise((resolve, reject) => {
       let responseString = '';
-      const command = 'M137P179Q1';
-      let timeoutTimer: NodeJS.Timeout | null;
+      // Version 1 uses B206, Version 2 uses M137P179Q1
+      // Version 1 only supported by HEXA after 4.3.12
+      // Version 2 supported by Ador and Beambox II
+      const command = version === 2 ? 'M137P179Q1' : 'B206';
+      let timeoutTimer: NodeJS.Timeout | undefined;
 
       this.on(EVENT_COMMAND_MESSAGE, (response) => {
-        clearTimeout(timeoutTimer);
+        if (timeoutTimer) clearTimeout(timeoutTimer);
 
-        if (response && response.status === 'raw') {
+        if (response?.status === 'raw') {
           console.log('raw auto focus:\t', response.text);
           responseString += response.text;
         }
 
-        const responses = responseString.split(/\r?\n/);
-        const i = responses.findIndex((r) => r === 'ok');
+        const responseSplit = responseString.split(/\r?\n/);
 
-        if (i < 0) {
-          responseString = responses[responses.length - 1] || '';
-        }
-
-        if (i >= 0) {
+        if (responseSplit.findIndex((r) => r === 'ok') >= 0) {
           resolve();
 
           return;
         }
 
+        responseString = responseSplit.at(-1) || '';
+
         if (
           response.text.includes('ER:RESET') ||
-          responses.some((resp) => resp.includes('ER:RESET')) ||
+          responseSplit.some((resp) => resp.includes('ER:RESET')) ||
           response.text.includes('error:')
         ) {
           this.removeCommandListeners();
@@ -1043,10 +1066,11 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
           timeoutTimer = this.setTimeoutTimer(reject, timeout);
         }
       });
+
       this.setDefaultErrorResponse(reject, timeoutTimer);
       this.setDefaultFatalResponse(reject, timeoutTimer);
       timeoutTimer = this.setTimeoutTimer(reject, timeout);
-      this.sc.sendGCode(command);
+      this.ws?.send(command);
     });
   };
 
@@ -1060,7 +1084,7 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
       let responseString = '';
       const command = 'M136P254';
       let retryTimes = 0;
-      let timeoutTimer: NodeJS.Timeout | null;
+      let timeoutTimer: NodeJS.Timeout | undefined;
 
       this.on(EVENT_COMMAND_MESSAGE, (response) => {
         clearTimeout(timeoutTimer);
@@ -1079,7 +1103,7 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
           if (resIdx >= 0) {
             const resStr = responses[resIdx];
             const match = resStr.match(/\[PRB:([-\d.]+),([-\d.]+),([-\d.]+),([-\d.]+):(\d)\]/);
-            const [, x, y, z, a, didAf] = match;
+            const [, x, y, z, a, didAf] = match!;
 
             this.removeCommandListeners();
             resolve({
@@ -1163,7 +1187,7 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
           if (resIdx >= 0) {
             const resStr = responses[resIdx];
             const match = resStr.match(/\[LAST_POS:([-\d.]+),([-\d.]+),([-\d.]+),([-\d.]+)/);
-            const [, x, y, z, a] = match;
+            const [, x, y, z, a] = match!;
 
             this.removeCommandListeners();
             resolve({ a: Number(a), x: Number(x), y: Number(y), z: Number(z) });
@@ -1295,7 +1319,7 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
     return new Promise<number>((resolve, reject) => {
       let responseString = '';
       const command = typeof baseZ === 'number' ? `B45Z${baseZ}` : 'B45';
-      let timeoutTimer: NodeJS.Timeout | null;
+      let timeoutTimer: NodeJS.Timeout | undefined;
       let retryTimes = 0;
       let isCmdResent = false;
 
@@ -1318,7 +1342,7 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
 
               const resStr = responses[resIdx];
               const data = JSON.parse(resStr);
-              const { z_pos: zPos } = data;
+              const { z_pos: zPos } = data as any;
 
               resolve(Number(zPos));
             } else {

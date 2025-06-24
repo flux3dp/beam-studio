@@ -1966,6 +1966,12 @@ const lang: ILang = {
       align_center: 'Allinea al centro',
       anti_aliasing: 'Anti-aliasing',
       auto_align: 'Allineamento Automatico',
+      autofocus: {
+        operating: 'Messa a fuoco automatica...',
+        select_device_error: 'Selezionare un dispositivo prima della messa a fuoco automatica.',
+        show_probe_error: 'Mostrare la sonda prima della messa a fuoco automatica.',
+        title: 'Messa a Fuoco Automatica',
+      },
       borderless_mode: 'Modalità a schermo intero',
       bug_report: 'Segnalazione bug',
       calibrate_beambox_camera: 'Calibra telecamera',

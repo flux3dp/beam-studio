@@ -1966,6 +1966,12 @@ const lang: ILang = {
       align_center: 'Centreren',
       anti_aliasing: 'Antialiasing',
       auto_align: 'Automatisch Uitlijnen',
+      autofocus: {
+        operating: 'Automatisch scherpstellen...',
+        select_device_error: 'Selecteer een apparaat vóór automatisch scherpstellen.',
+        show_probe_error: 'Toon de sonde vóór automatisch scherpstellen.',
+        title: 'Autofocus',
+      },
       borderless_mode: 'Randloze modus',
       bug_report: 'Fout melden',
       calibrate_beambox_camera: 'Camera kalibreren',
