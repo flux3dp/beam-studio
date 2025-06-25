@@ -70,7 +70,7 @@ describe('manipulate file', () => {
 
   it('save file', () => {
     selectMenuOption('File', 'Save');
-    checkCrc32(Cypress.env('cypressDownloadBeamPath'), { default: -345670066 });
+    checkCrc32(Cypress.env('cypressDownloadBeamPath'), { default: -1551191538 });
   });
 
   it('save as file', () => {
@@ -88,17 +88,17 @@ describe('manipulate file', () => {
     cy.get('#h_size').clear().type('100{enter}');
 
     selectMenuOption('File', 'Save As...');
-    checkCrc32(Cypress.env('cypressDownloadNewBeamPath'), { default: -2091742490 });
+    checkCrc32(Cypress.env('cypressDownloadNewBeamPath'), { default: 1224067459 });
   });
 
   it('export bvg file', () => {
     exportFile('BVG');
-    checkMd5(Cypress.env('cypressDownloadBvgPath'), { default: '3199295c64d1c2f5321743894a690f87' });
+    checkMd5(Cypress.env('cypressDownloadBvgPath'), { default: '8ca9d66a1079e4f45c0034e8c2df8a62' });
   });
 
   it('export svg file', () => {
     exportFile('SVG');
-    checkMd5(Cypress.env('cypressDownloadSvgPath'), { default: '5db560a1b45db0663adc4bd71b3a5635' });
+    checkMd5(Cypress.env('cypressDownloadSvgPath'), { default: '7796489f7bcb1ee2b533515486a7fe20' });
   });
 
   it('export png file', () => {
