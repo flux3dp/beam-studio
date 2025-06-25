@@ -22,7 +22,7 @@ export const ungroupElement = (elem: Element): { batchCmd: IBatchCommand; childr
       batchCmd.addSubCommand(cmd);
     }
 
-    const parent = elem.parentNode;
+    const parent = elem.parentNode!;
     const anchor = elem.nextSibling;
     const children = [];
 
@@ -30,7 +30,7 @@ export const ungroupElement = (elem: Element): { batchCmd: IBatchCommand; childr
     while (elem.firstChild) {
       let child = elem.firstChild as Element;
       const oldNextSibling = child.nextSibling;
-      const oldParent = child.parentNode;
+      const oldParent = child.parentNode!;
 
       if (child.getAttribute('data-imageborder') === 'true') {
         child.remove();
