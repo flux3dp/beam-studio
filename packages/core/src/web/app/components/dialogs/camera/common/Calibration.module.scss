@@ -21,6 +21,11 @@
       max-height: 55vh;
     }
 
+    video {
+      max-height: 55vh;
+      transform: rotate(180deg);
+    }
+
     .indicator {
       position: absolute;
       border: 1px solid red;

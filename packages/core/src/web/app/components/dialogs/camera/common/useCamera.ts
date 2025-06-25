@@ -9,15 +9,17 @@ import type { WebCamConnection } from '@core/helpers/webcam-helper';
 import webcamHelper from '@core/helpers/webcam-helper';
 import type { IConfigSetting } from '@core/interfaces/IDevice';
 
-export type Options = { index?: number; source?: 'usb' | 'wifi' };
+export type Options = { index?: number; source?: 'usb' | 'wifi'; videoElement?: HTMLVideoElement };
 
 const useCamera = (
   handleImg?: (blob: Blob) => boolean | Promise<boolean>,
-  { index = 0, source = 'wifi' }: Options = {},
+  { index = 0, source = 'wifi', videoElement }: Options = {},
 ): {
+  connectWebCam: () => Promise<void>;
   exposureSetting: IConfigSetting | null;
   handleTakePicture: (opts?: { retryTimes?: number; silent?: boolean }) => Promise<Blob | null>;
   setExposureSetting: Dispatch<IConfigSetting | null>;
+  webCamConnection: null | WebCamConnection;
 } => {
   const hasEnded = useRef(false);
   const [exposureSetting, setExposureSetting] = useState<IConfigSetting | null>(null);
@@ -28,11 +30,17 @@ const useCamera = (
     }
 
     try {
-      webCamConnection.current = await webcamHelper.connectWebcam();
+      webCamConnection.current = await webcamHelper.connectWebcam({ video: videoElement });
     } catch (error) {
       console.error('Failed to connect to webcam', error);
       alertCaller.popUpError({ message: `Failed to connect to webcam ${error instanceof Error ? error.message : ''}` });
     }
+  }, [videoElement]);
+
+  useEffect(() => {
+    return () => {
+      webCamConnection.current?.end();
+    };
   }, []);
 
   const handleTakePicture = useCallback(
@@ -142,7 +150,13 @@ const useCamera = (
     // eslint-disable-next-line hooks/exhaustive-deps
   }, []);
 
-  return { exposureSetting, handleTakePicture, setExposureSetting };
+  return {
+    connectWebCam,
+    exposureSetting,
+    handleTakePicture,
+    setExposureSetting,
+    webCamConnection: webCamConnection.current,
+  };
 };
 
 export default useCamera;
