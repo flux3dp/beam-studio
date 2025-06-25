@@ -76,7 +76,7 @@
   }
 
   &.without-drag {
-    height: 32px;
+    min-height: 32px;
 
     .title {
       line-height: 32px;
