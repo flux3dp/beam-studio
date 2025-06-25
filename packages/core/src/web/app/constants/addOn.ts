@@ -12,6 +12,11 @@ export const FEEDER_DIAMETER = 83.54;
 
 export interface AddOnInfo {
   /**
+   * airAssist
+   * if the model support setting air assist value by layer
+   */
+  airAssist?: boolean;
+  /**
    * autoFeeder
    * range: [x, width] in mm, no limit is not set
    * vectorSpeedLimit: override vector speed in workarea constant when autoFeeder is enabled
@@ -50,6 +55,7 @@ const hexaAddOnInfo: AddOnInfo = {
 
 const hexaRfAddOnInfo: AddOnInfo = {
   ...hexaAddOnInfo,
+  airAssist: true,
   autoFeeder: isDev()
     ? {
         maxHeight: 3000,
@@ -92,6 +98,7 @@ const addOnData: Record<WorkAreaModel, AddOnInfo> = {
     },
   },
   fbb2: {
+    airAssist: true,
     autoFeeder: {
       maxHeight: 3000,
       rotaryRatio: CHUCK_ROTARY_DIAMETER / FEEDER_DIAMETER / 2,
@@ -127,6 +134,7 @@ const addOnData: Record<WorkAreaModel, AddOnInfo> = {
     },
   },
   fbm2: {
+    airAssist: true,
     autoFeeder: {
       maxHeight: 3000,
       rotaryRatio: CHUCK_ROTARY_DIAMETER / FEEDER_DIAMETER / 2,

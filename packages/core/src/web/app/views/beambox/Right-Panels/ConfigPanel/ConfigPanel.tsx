@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { memo, useContext, useEffect, useMemo, useState } from 'react';
 
 import { ConfigProvider, Modal } from 'antd';
 import classNames from 'classnames';
@@ -28,6 +28,7 @@ import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelIte
 import tutorialController from '@core/app/views/tutorials/tutorialController';
 import Select from '@core/app/widgets/AntdSelect';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import { useBeamboxPreference } from '@core/helpers/hooks/useBeamboxPreference';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import i18n from '@core/helpers/i18n';
 import isDev from '@core/helpers/is-dev';
@@ -87,6 +88,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
   const { selectedLayers: initLayers } = useContext(LayerPanelContext);
   const lang = useI18n().beambox.right_panel.laser_panel;
   const workarea = useWorkarea();
+  const addOnInfo = useMemo(() => getAddOnInfo(workarea), [workarea]);
   const forceUpdate = useForceUpdate();
   const isDevMode = isDev();
   const [selectedLayers, setSelectedLayers] = useState(initLayers);
@@ -105,18 +107,15 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
   const isPrintingModule = useMemo(() => printingModules.has(module.value), [module.value]);
   const is4cUV = useMemo(() => UVModules.has(module.value), [module.value]);
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
+  const isDiodeEnabled = useBeamboxPreference('enable-diode');
 
-  const updateDiodeBoundary = useCallback(() => {
-    if (beamboxPreference.read('enable-diode') && getAddOnInfo(workarea).hybridLaser) {
+  useEffect(() => {
+    if (isDiodeEnabled && addOnInfo.hybridLaser) {
       diodeBoundaryDrawer.show(diode.value === 1);
     } else {
       diodeBoundaryDrawer.hide();
     }
-  }, [diode.value, workarea]);
-
-  useEffect(() => {
-    updateDiodeBoundary();
-  }, [updateDiodeBoundary]);
+  }, [diode.value, addOnInfo.hybridLaser, isDiodeEnabled]);
 
   useEffect(() => {
     const drawing = svgCanvas.getCurrentDrawing();
@@ -155,7 +154,6 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     postPresetChange();
     presprayArea.togglePresprayArea();
     initState();
-    updateDiodeBoundary();
     // eslint-disable-next-line hooks/exhaustive-deps
   }, [workarea, initState]);
 
@@ -278,7 +276,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
       {isPrintingModule && <MultipassBlock type={UIType} />}
       {isDevMode && isPrintingModule && fullcolor.value && UIType === 'default' && <WhiteInkCheckbox />}
       {isDevMode && isCustomBacklashEnabled && <Backlash type={UIType} />}
-      {!isPrintingModule && <AirAssistBlock type={UIType} />}
+      {addOnInfo.airAssist && !isPrintingModule && <AirAssistBlock type={UIType} />}
       <RepeatBlock type={UIType} />
       {isDevMode && isPrintingModule && fullcolor.value && UIType === 'panel-item' && (
         <WhiteInkCheckbox type={UIType} />

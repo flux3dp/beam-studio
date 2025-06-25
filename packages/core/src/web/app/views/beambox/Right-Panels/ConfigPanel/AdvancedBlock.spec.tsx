@@ -54,6 +54,7 @@ const mockUseHasCurveEngraving = jest.fn();
 
 jest.mock('@core/helpers/hooks/useHasCurveEngraving', () => () => mockUseHasCurveEngraving());
 
+jest.mock('./AmDensityBlock', () => () => <div>Mock AmDensityBlock</div>);
 jest.mock('./AutoFocus', () => () => <div>Mock AutoFocus</div>);
 jest.mock('./CurveEngravingZHighSpeed', () => () => <div>Mock CurveEngravingZHighSpeed</div>);
 jest.mock('./Diode', () => () => <div>Mock Diode</div>);
@@ -111,6 +112,17 @@ describe('test AdvancedBlock', () => {
   it('should render correctly for printer', () => {
     mockGetAddOnInfo.mockReturnValue({ autoFocus: true, hybridLaser: true, lowerFocus: true });
     mockUseConfigPanelStore.mockReturnValue({ module: { value: LayerModule.PRINTER } });
+
+    const { container } = render(<AdvancedBlock />);
+    const collapseHeader = container.querySelector('.ant-collapse-header');
+
+    fireEvent.click(collapseHeader);
+    expect(container).toMatchSnapshot();
+  });
+
+  it('should render correctly for printer 4c', () => {
+    mockGetAddOnInfo.mockReturnValue({ autoFocus: true, hybridLaser: true, lowerFocus: true });
+    mockUseConfigPanelStore.mockReturnValue({ module: { value: LayerModule.PRINTER_4C } });
 
     const { container } = render(<AdvancedBlock />);
     const collapseHeader = container.querySelector('.ant-collapse-header');
