@@ -86,8 +86,8 @@ const migrateStorage = () => {
 };
 
 // default + customized
-let allPresets: Preset[];
-const getAllPresets = (): Preset[] => allPresets;
+let allPresets: Preset[] | undefined;
+const getAllPresets = (): Preset[] => allPresets!;
 
 let presetsCache: {
   [model in PresetModel]?: {
@@ -106,7 +106,7 @@ const initPresets = (migrate = false) => {
     const unit = (storage.get('default-units') || 'mm') as 'inches' | 'mm';
     const LANG = i18n.lang.beambox.right_panel.laser_panel;
 
-    allPresets.forEach((preset) => {
+    allPresets!.forEach((preset) => {
       if (preset.isDefault && preset.key) {
         const { key } = preset;
         const translated = LANG.dropdown[unit][key as keyof (typeof LANG.dropdown)[typeof unit]];
@@ -122,7 +122,7 @@ const clearPresetsCache = () => {
 };
 
 const reloadPresets = (migrate = false): void => {
-  allPresets = null; // clear the array
+  allPresets = undefined; // clear the array
   clearPresetsCache();
   initPresets(migrate);
 };
@@ -163,23 +163,19 @@ const getPresetsList = (model: WorkAreaModel, layerModule: LayerModuleType = Lay
   const res =
     allPresets
       ?.map((preset) => {
-        const { hide, isDefault, key, module } = preset;
+        const { hide, isDefault, key, module: presetModule } = preset;
 
-        if (hide) {
-          return null;
-        }
+        if (hide) return null;
 
         if (isDefault) {
           const defaultPreset = getDefaultPreset(key!, presetModel, layerModule);
 
-          if (defaultPreset) {
-            return { ...defaultPreset, ...preset };
-          }
+          if (defaultPreset) return { ...defaultPreset, ...preset };
 
           return null;
         }
 
-        if (printingModules.has(module!) !== printingModules.has(layerModule)) {
+        if (printingModules.has(presetModule!) && layerModule !== presetModule) {
           return null;
         }
 
@@ -197,7 +193,7 @@ const getPresetsList = (model: WorkAreaModel, layerModule: LayerModuleType = Lay
 };
 
 const savePreset = (preset: Preset): void => {
-  allPresets.push(preset);
+  allPresets!.push(preset);
   storage.set('presets', allPresets);
   clearPresetsCache();
 };

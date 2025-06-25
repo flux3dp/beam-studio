@@ -118,6 +118,7 @@ export const moduleBaseConfig: Partial<Record<LayerModuleType, Partial<Omit<Conf
   [LayerModule.PRINTER_4C]: {
     amDensity: 5,
     halftone: 2,
+    printingSpeed: 15,
   },
 };
 

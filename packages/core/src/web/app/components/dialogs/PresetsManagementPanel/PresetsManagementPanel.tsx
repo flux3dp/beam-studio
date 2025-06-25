@@ -16,8 +16,13 @@ import { getWorkarea } from '@core/app/constants/workarea-constants';
 import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';
 import Select from '@core/app/widgets/AntdSelect';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
-import { baseConfig, getDefaultConfig, postPresetChange } from '@core/helpers/layer/layer-config-helper';
-import { getModulesTranslations } from '@core/helpers/layer-module/layer-module-helper';
+import {
+  baseConfig,
+  getDefaultConfig,
+  moduleBaseConfig,
+  postPresetChange,
+} from '@core/helpers/layer/layer-config-helper';
+import { getModulesTranslations, getPrintingModule } from '@core/helpers/layer-module/layer-module-helper';
 import presetHelper from '@core/helpers/presets/preset-helper';
 import useI18n from '@core/helpers/useI18n';
 import storage from '@core/implementations/storage';
@@ -259,7 +264,7 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
         id: 'import-module',
         options: [
           { label: t.laser, value: LayerModule.LASER_UNIVERSAL },
-          { label: t.print, value: LayerModule.PRINTER },
+          { label: t.print, value: getPrintingModule(workarea) },
         ],
         title: lang.beambox.popup.select_import_module,
       });
@@ -294,9 +299,9 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
       name: name.trim(),
     };
 
-    if (presetModule === LayerModule.PRINTER) {
-      newPreset.halftone = 1;
-      newPreset.speed = baseConfig.printingSpeed;
+    if (printingModules.has(presetModule)) {
+      newPreset.halftone = moduleBaseConfig[presetModule]?.halftone ?? baseConfig.halftone;
+      newPreset.speed = moduleBaseConfig[presetModule]?.printingSpeed ?? baseConfig.printingSpeed;
     }
 
     setEditingPresets([...editingPresets, newPreset]);

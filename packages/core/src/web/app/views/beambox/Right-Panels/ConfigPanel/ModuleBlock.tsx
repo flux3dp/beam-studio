@@ -20,7 +20,13 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import isDev from '@core/helpers/is-dev';
 import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
-import { applyPreset, baseConfig, getData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
+import {
+  applyPreset,
+  baseConfig,
+  getData,
+  moduleBaseConfig,
+  writeDataLayer,
+} from '@core/helpers/layer/layer-config-helper';
 import { getLayerElementByName } from '@core/helpers/layer/layer-helper';
 import { getModulesTranslations } from '@core/helpers/layer-module/layer-module-helper';
 import presetHelper from '@core/helpers/presets/preset-helper';
@@ -143,7 +149,9 @@ const ModuleBlock = (): React.ReactNode => {
           writeDataLayer(layer, 'speed', baseConfig.speed, { batchCmd });
           writeDataLayer(layer, 'power', baseConfig.power, { batchCmd });
         } else if (!isCurrentPrinting && isChangingToPrinting) {
-          writeDataLayer(layer, 'printingSpeed', baseConfig.printingSpeed, { batchCmd });
+          writeDataLayer(layer, 'printingSpeed', moduleBaseConfig[newVal]?.printingSpeed ?? baseConfig.printingSpeed, {
+            batchCmd,
+          });
           writeDataLayer(layer, 'ink', baseConfig.ink, { batchCmd });
           writeDataLayer(layer, 'multipass', baseConfig.multipass, { batchCmd });
         }

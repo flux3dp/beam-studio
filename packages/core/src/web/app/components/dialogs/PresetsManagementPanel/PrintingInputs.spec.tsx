@@ -3,6 +3,7 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
 import PrintingInputs from './PrintingInputs';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 
 const mockRead = jest.fn();
 
@@ -24,32 +25,6 @@ jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   },
 }));
 
-jest.mock('@core/helpers/useI18n', () => () => ({
-  beambox: {
-    right_panel: {
-      laser_panel: {
-        halftone: 'halftone',
-        ink_saturation: 'ink_saturation',
-        print_multipass: 'print_multipass',
-        repeat: 'repeat',
-        slider: {
-          fast: 'fast',
-          high: 'high',
-          low: 'low',
-          regular: 'regular',
-          slow: 'slow',
-          very_fast: 'very_fast',
-          very_high: 'very_high',
-          very_low: 'very_low',
-          very_slow: 'very_slow',
-        },
-        speed: 'speed',
-        times: 'times',
-      },
-    },
-  },
-}));
-
 describe('PrintingInputs', () => {
   const handleChange = jest.fn();
   const preset = {
@@ -68,6 +43,19 @@ describe('PrintingInputs', () => {
   it('should render correctly in simple mode', () => {
     const { container } = render(
       <PrintingInputs handleChange={handleChange} maxSpeed={maxSpeed} minSpeed={minSpeed} preset={preset} />,
+    );
+
+    expect(container).toMatchSnapshot();
+  });
+
+  it('should render correctly for 4c printer module', () => {
+    const { container } = render(
+      <PrintingInputs
+        handleChange={handleChange}
+        maxSpeed={maxSpeed}
+        minSpeed={minSpeed}
+        preset={{ ...preset, module: LayerModule.PRINTER_4C }}
+      />,
     );
 
     expect(container).toMatchSnapshot();

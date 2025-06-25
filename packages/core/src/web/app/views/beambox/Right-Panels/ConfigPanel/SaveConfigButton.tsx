@@ -44,7 +44,6 @@ const SaveConfigButton = (): React.JSX.Element => {
     const newConfig: Preset = { name };
 
     if (printingModules.has(module.value)) {
-      // TODO: should Printer & Printer_4C share configs?
       newConfig.module = module.value;
     }
 
