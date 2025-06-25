@@ -77,10 +77,6 @@ export const convertUseToPath = async ({
   element: SVGElement;
   isToSelect?: boolean;
 }): Promise<ConvertToPathResult> => {
-  const lastSelected = [...svgCanvas.getSelectedElems()];
-
-  console.log(lastSelected);
-
   const command = (await disassembleUse([element], {
     addToHistory: false,
     showProgress: false,
@@ -110,8 +106,6 @@ export const convertUseToPath = async ({
 
   if (isToSelect) {
     svgCanvas.selectOnly([head]);
-  } else {
-    svgCanvas.selectOnly(lastSelected);
   }
 
   return { bbox: head.getBBox(), command, path: head };

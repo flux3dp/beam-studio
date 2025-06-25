@@ -62,20 +62,15 @@ export const disassembleUse = async (
     parentCmd,
     showProgress = true,
     skipConfirm = false,
-  }: {
-    addToHistory?: boolean;
-    parentCmd?: IBatchCommand;
-    showProgress?: boolean;
-    skipConfirm?: boolean;
-  } = {},
+  }: { addToHistory?: boolean; parentCmd?: IBatchCommand; showProgress?: boolean; skipConfirm?: boolean } = {},
 ): Promise<BatchCommand | void> => {
-  if (!elems) elems = [...svgCanvas.getSelectedElems()] as SVGElement[];
-
-  const useLayerColor = beamboxPreference.read('use_layer_color');
-
   const {
     lang: { beambox: t },
   } = i18n;
+
+  if (!elems) elems = [...svgCanvas.getSelectedElems()] as SVGElement[];
+
+  const useLayerColor = beamboxPreference.read('use_layer_color');
 
   if (!skipConfirm) {
     const confirm = await new Promise((resolve) => {

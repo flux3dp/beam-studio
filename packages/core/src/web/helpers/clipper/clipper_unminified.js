@@ -6523,6 +6523,11 @@
       points = points.map((p) => ({ X: p.X * scale, Y: p.Y * scale }));
       switch (commands[i].command) {
         case 'M':
+          if (currentPath.length > 0) {
+            resultPaths.push(currentPath);
+            currentPath = [];
+            lastControlPoint = null;
+          }
         case 'L':
           currentPath.push(...points);
           break;
