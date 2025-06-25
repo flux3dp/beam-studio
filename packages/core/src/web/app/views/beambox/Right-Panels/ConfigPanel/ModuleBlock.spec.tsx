@@ -60,6 +60,11 @@ jest.mock('@core/helpers/layer/layer-config-helper', () => ({
     strength: 15,
   },
   getData: (...args) => mockGetData(...args),
+  moduleBaseConfig: {
+    [LayerModule.PRINTER]: {
+      multipass: 5,
+    },
+  },
   writeDataLayer: (...args) => mockWriteDataLayer(...args),
 }));
 
@@ -372,7 +377,7 @@ describe('test ModuleBlock', () => {
       batchCmd,
     });
     expect(mockWriteDataLayer).toHaveBeenNthCalledWith(4, mockElem1, 'ink', 3, { batchCmd });
-    expect(mockWriteDataLayer).toHaveBeenNthCalledWith(5, mockElem1, 'multipass', 3, { batchCmd });
+    expect(mockWriteDataLayer).toHaveBeenNthCalledWith(5, mockElem1, 'multipass', 5, { batchCmd });
     expect(mockWriteDataLayer).toHaveBeenNthCalledWith(6, mockElem2, 'module', LayerModule.PRINTER, { batchCmd });
     expect(mockWriteDataLayer).toHaveBeenNthCalledWith(7, mockElem2, 'configName', undefined, {
       batchCmd,
@@ -381,7 +386,7 @@ describe('test ModuleBlock', () => {
       batchCmd,
     });
     expect(mockWriteDataLayer).toHaveBeenNthCalledWith(9, mockElem2, 'ink', 3, { batchCmd });
-    expect(mockWriteDataLayer).toHaveBeenNthCalledWith(10, mockElem2, 'multipass', 3, { batchCmd });
+    expect(mockWriteDataLayer).toHaveBeenNthCalledWith(10, mockElem2, 'multipass', 5, { batchCmd });
     expect(mockToggleFullColorLayer).toHaveBeenCalledTimes(2);
     expect(mockToggleFullColorLayer).toHaveBeenNthCalledWith(1, mockElem1, { val: true });
     expect(mockToggleFullColorLayer).toHaveBeenNthCalledWith(2, mockElem2, { val: true });

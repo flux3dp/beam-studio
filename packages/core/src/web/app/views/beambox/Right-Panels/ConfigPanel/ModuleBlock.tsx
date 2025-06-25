@@ -153,7 +153,7 @@ const ModuleBlock = (): React.ReactNode => {
             batchCmd,
           });
           writeDataLayer(layer, 'ink', baseConfig.ink, { batchCmd });
-          writeDataLayer(layer, 'multipass', baseConfig.multipass, { batchCmd });
+          writeDataLayer(layer, 'multipass', moduleBaseConfig[newVal]?.multipass ?? baseConfig.multipass, { batchCmd });
         }
       } else if (newPreset !== oldPreset) {
         applyPreset(layer, newPreset, { batchCmd });

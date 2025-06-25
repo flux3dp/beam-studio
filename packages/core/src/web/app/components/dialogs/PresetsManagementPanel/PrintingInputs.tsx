@@ -14,7 +14,7 @@ import type { ConfigKey, ConfigKeyTypeMap, Preset } from '@core/interfaces/ILaye
 import styles from './PresetsManagementPanel.module.scss';
 
 interface Props {
-  handleChange: <T extends ConfigKey>(key: T, value: ConfigKeyTypeMap[T]) => void;
+  handleChange: <T extends ConfigKey>(key: T, value: ConfigKeyTypeMap[T] | null) => void;
   isInch?: boolean;
   lengthUnit?: 'in' | 'mm';
   maxSpeed: number;

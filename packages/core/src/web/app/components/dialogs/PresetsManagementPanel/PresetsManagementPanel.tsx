@@ -164,7 +164,9 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
     return { ...selectedPreset, ...Object.values(keyPresets)[0] };
   }, [workarea, selectedPreset, selectedModule, editingValues]);
 
-  const handleChange = <T extends ConfigKey>(key: T, value: ConfigKeyTypeMap[T]) => {
+  const handleChange = <T extends ConfigKey>(key: T, value: ConfigKeyTypeMap[T] | null) => {
+    if (value === null) return;
+
     const { isDefault, name } = selectedPreset as any;
 
     if (isDefault) {
