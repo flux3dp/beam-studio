@@ -2182,6 +2182,7 @@ const lang: ILang = {
       png_files: 'PNG',
       save_fcode: '导出工作',
       save_jpg: '汇出 JPG',
+      save_pdf: '导出 PDF',
       save_png: '汇出 PNG',
       save_scene: '导出场景',
       save_svg: '汇出 SVG',

@@ -484,6 +484,9 @@ export const exportUvPrintAsPdf = async (): Promise<void> => {
   svgCanvas.clearSelection();
   svgCanvas.removeUnusedDefs();
 
+  const {
+    topmenu: { file: lang },
+  } = LANG;
   const revert = await convertVariableText();
   const layers = pipe(
     getAllLayerNames(),
@@ -494,7 +497,15 @@ export const exportUvPrintAsPdf = async (): Promise<void> => {
   const defaultFileName = getDefaultFileName();
 
   revert?.();
-  new jsPDF().addImage(base64, 'PNG', 0, 0, 210, 297).save(defaultFileName);
+
+  const pdf = new jsPDF().addImage(base64, 'PNG', 0, 0, 210, 297);
+  const getContent = () => new Blob([pdf.output('blob')], { type: 'application/pdf' });
+
+  lang;
+  await dialog.writeFileDialog(getContent, lang.save_pdf, defaultFileName, [
+    { extensions: ['pdf'], name: window.os === 'MacOS' ? `PDF (*.pdf)` : 'PDF' },
+    { extensions: ['*'], name: lang.all_files },
+  ]);
 };
 
 export default {

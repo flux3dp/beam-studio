@@ -2182,6 +2182,7 @@ const lang: ILang = {
       png_files: 'PNG',
       save_fcode: 'Εξαγωγή Εργασίας FLUX',
       save_jpg: 'Εξαγωγή JPG',
+      save_pdf: 'Εξαγωγή PDF',
       save_png: 'Εξαγωγή PNG',
       save_scene: 'Αποθήκευση Σκηνής',
       save_svg: 'Εξαγωγή SVG',

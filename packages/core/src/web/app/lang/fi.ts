@@ -2182,6 +2182,7 @@ const lang: ILang = {
       png_files: 'PNG',
       save_fcode: 'Vie FLUX-tehtävä',
       save_jpg: 'Vie JPG',
+      save_pdf: 'Vie PDF',
       save_png: 'Vie PNG',
       save_scene: 'Tallenna kohtaus',
       save_svg: 'Vie SVG',

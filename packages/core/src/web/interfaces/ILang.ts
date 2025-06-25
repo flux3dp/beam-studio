@@ -2175,6 +2175,7 @@ export interface ILang {
       png_files: string;
       save_fcode: string;
       save_jpg: string;
+      save_pdf: string;
       save_png: string;
       save_scene: string;
       save_svg: string;

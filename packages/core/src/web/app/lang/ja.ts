@@ -2182,6 +2182,7 @@ const lang: ILang = {
       png_files: 'PNG',
       save_fcode: 'FLUXタスクをエクスポート',
       save_jpg: 'JPGをエクスポート',
+      save_pdf: 'PDFをエクスポート',
       save_png: 'PNGをエクスポート',
       save_scene: 'シーンを保存',
       save_svg: 'SVGをエクスポート',
