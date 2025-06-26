@@ -16,6 +16,8 @@ type CommonConfig = {
 };
 
 type LaserConfig = {
+  /** 0-100, percentage */
+  airAssist: number;
   ceZSpeedLimit: number; // can add CurveEngravingConfig if more ce configs are added
   diode: number;
   focus: number;
@@ -47,12 +49,6 @@ type PrintingConfig = {
   yRatio: number;
 };
 
-type Printing4CConfig = {
-  refreshInterval: number; // refresh to cartridge for # blocks
-  refreshWidth: number; // refresh spray width
-  refreshZ: number; // refresh z move
-};
-
 /**
  * Configs for uv module.
  */
@@ -73,13 +69,7 @@ type PromarkConfig = {
   wobbleStep: number;
 };
 
-export type ConfigKeyTypeMap = CommonConfig &
-  LaserConfig &
-  MetaConfig &
-  Printing4CConfig &
-  PrintingConfig &
-  PromarkConfig &
-  UVConfig;
+export type ConfigKeyTypeMap = CommonConfig & LaserConfig & MetaConfig & PrintingConfig & PromarkConfig & UVConfig;
 
 export type ConfigKey = keyof ConfigKeyTypeMap;
 

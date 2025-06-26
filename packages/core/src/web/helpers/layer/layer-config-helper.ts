@@ -19,6 +19,7 @@ import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type { ConfigKey, ConfigKeyTypeMap, ILayerConfig, Preset } from '@core/interfaces/ILayerConfig';
 
 const attributeMap: Record<ConfigKey, string> = {
+  airAssist: 'data-airAssist',
   amDensity: 'data-amDensity',
   backlash: 'data-backlash',
   biDirectional: 'data-biDirectional',
@@ -49,9 +50,6 @@ const attributeMap: Record<ConfigKey, string> = {
   printingStrength: 'data-printingStrength',
   pulseWidth: 'data-pulseWidth',
   ref: 'data-ref',
-  refreshInterval: 'data-refreshInterval',
-  refreshWidth: 'data-refreshWidth',
-  refreshZ: 'data-refreshZ',
   repeat: 'data-repeat',
   speed: 'data-speed',
   split: 'data-split',
@@ -71,6 +69,7 @@ const attributeMap: Record<ConfigKey, string> = {
 export const CUSTOM_PRESET_CONSTANT = ' ';
 
 export const baseConfig: Partial<ConfigKeyTypeMap> = {
+  airAssist: 100,
   amDensity: 2,
   backlash: 0,
   biDirectional: true,
@@ -96,9 +95,6 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   printingSpeed: 60,
   printingStrength: 100,
   pulseWidth: 500,
-  refreshInterval: 20,
-  refreshWidth: 3,
-  refreshZ: 1.5,
   repeat: 1,
   speed: 20,
   uv: 0,
@@ -112,6 +108,18 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   wSpeed: 100,
   yRatio: 100,
   zStep: 0,
+};
+
+export const moduleBaseConfig: Partial<Record<LayerModuleType, Partial<Omit<ConfigKeyTypeMap, 'module'>>>> = {
+  [LayerModule.PRINTER]: {
+    amDensity: 2,
+    halftone: 1,
+  },
+  [LayerModule.PRINTER_4C]: {
+    amDensity: 5,
+    halftone: 2,
+    printingSpeed: 15,
+  },
 };
 
 export const booleanConfig: ConfigKey[] = ['fullcolor', 'ref', 'split', 'biDirectional', 'crossHatch'] as const;
@@ -129,9 +137,6 @@ export const timeRelatedConfigs: Set<ConfigKey> = new Set([
   'crossHatch',
   'wobbleDiameter',
   'wobbleStep',
-  // 4c
-  'refreshInterval',
-  'refreshWidth',
   // white ink
   'uvIntervalX',
   'uvIntervalY',
@@ -161,8 +166,7 @@ export const laserConfigKeys: ConfigKey[] = [
 ] as const;
 
 export const printerConfigKeys: ConfigKey[] = [
-  'speed',
-  'printingSpeed',
+  'speed', // this will be used as printingSpeed
   'ink',
   'multipass',
   'cRatio',
@@ -291,7 +295,11 @@ export const writeDataLayer = <T extends ConfigKey>(
   layer: Element,
   key: T,
   value: ConfigKeyTypeMap[T] | undefined,
-  opts?: { applyPrinting?: boolean; batchCmd?: IBatchCommand },
+  {
+    applyPrinting,
+    batchCmd,
+    shouldApplyModuleBaseConfig = true,
+  }: { applyPrinting?: boolean; batchCmd?: IBatchCommand; shouldApplyModuleBaseConfig?: boolean } = {},
 ): void => {
   if (!layer) {
     return;
@@ -305,7 +313,7 @@ export const writeDataLayer = <T extends ConfigKey>(
 
   if (
     key === 'speed' &&
-    opts?.applyPrinting &&
+    applyPrinting &&
     printingModules.has(Number.parseInt(layer.getAttribute(attributeMap.module) ?? '', 10))
   ) {
     attr = attributeMap.printingSpeed;
@@ -323,10 +331,14 @@ export const writeDataLayer = <T extends ConfigKey>(
     layer.setAttribute(attr, String(value));
   }
 
-  if (opts?.batchCmd) {
+  if (batchCmd) {
     const cmd = new history.ChangeElementCommand(layer, { [attr]: originalValue });
 
-    opts.batchCmd.addSubCommand(cmd);
+    batchCmd.addSubCommand(cmd);
+  }
+
+  if (key === 'module' && shouldApplyModuleBaseConfig) {
+    applyModuleBaseConfig(layer, value as LayerModuleType, { parentCmd: batchCmd });
   }
 };
 
@@ -334,7 +346,7 @@ export const writeData = <T extends ConfigKey>(
   layerName: string,
   key: ConfigKey,
   value: ConfigKeyTypeMap[T] | undefined,
-  opts?: { applyPrinting?: boolean; batchCmd?: IBatchCommand },
+  opts?: { applyPrinting?: boolean; batchCmd?: IBatchCommand; shouldApplyModuleBaseConfig?: boolean },
 ): void => {
   const layer = getLayerElementByName(layerName);
 
@@ -422,11 +434,11 @@ export const initLayerConfig = (layerName: string): void => {
     if (defaultConfig[key] !== undefined) {
       if (key === 'module') {
         if (supportModules.includes(defaultLaserModule)) {
-          writeDataLayer(layer, key, defaultLaserModule);
+          writeDataLayer(layer, key, defaultLaserModule, { shouldApplyModuleBaseConfig: false });
         } else if (supportModules.includes(defaultConfig.module!)) {
-          writeDataLayer(layer, key, defaultConfig.module!);
+          writeDataLayer(layer, key, defaultConfig.module!, { shouldApplyModuleBaseConfig: false });
         } else {
-          writeDataLayer(layer, key, supportModules[0]);
+          writeDataLayer(layer, key, supportModules[0], { shouldApplyModuleBaseConfig: false });
         }
       } else {
         writeDataLayer(layer, key, defaultConfig[key] as number | string);
@@ -532,6 +544,24 @@ export const applyDefaultLaserModule = (): void => {
   }
 };
 
+export const applyModuleBaseConfig = (
+  layer: Element,
+  module: LayerModuleType,
+  { parentCmd }: { parentCmd?: IBatchCommand } = {},
+): void => {
+  const configs = moduleBaseConfig[module];
+
+  if (!configs) {
+    return;
+  }
+
+  for (const key of Object.keys(configs) as ConfigKey[]) {
+    const value = configs[key as keyof typeof configs];
+
+    writeDataLayer(layer, key, value, { batchCmd: parentCmd });
+  }
+};
+
 export const getConfigKeys = (module: LayerModuleType): ConfigKey[] => {
   const workarea = BeamboxPreference.read('workarea');
 
@@ -581,7 +611,9 @@ export const applyPreset = (
       value = defaultConfig[key];
     }
 
-    if (key === 'speed' || key === 'printingSpeed') {
+    if (key === 'printingSpeed') continue;
+
+    if (key === 'speed') {
       value = Math.max(minSpeed, Math.min(value as number, maxSpeed));
     }
 

@@ -2,13 +2,14 @@ import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { adorModels } from '@core/app/actions/beambox/constant';
 import type { DetectedLayerModuleType, LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { DetectedLayerModule, LayerModule } from '@core/app/constants/layer-module/layer-modules';
+import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getSupportedModules } from '@core/app/constants/workarea-constants';
 import i18n from '@core/helpers/i18n';
 
 const LaserModuleSet = new Set([LayerModule.LASER_10W_DIODE, LayerModule.LASER_20W_DIODE]);
 
-export const getDefaultLaserModule = (): LayerModuleType => {
-  const workarea = beamboxPreference.read('workarea');
+export const getDefaultLaserModule = (workarea?: WorkAreaModel): LayerModuleType => {
+  workarea = workarea ?? beamboxPreference.read('workarea');
 
   if (!adorModels.has(workarea)) {
     return LayerModule.LASER_UNIVERSAL;
@@ -19,8 +20,9 @@ export const getDefaultLaserModule = (): LayerModuleType => {
   return LaserModuleSet.has(value) ? value : LayerModule.LASER_20W_DIODE;
 };
 
-export const getPrintingModule = (): LayerModuleType => {
-  const workarea = beamboxPreference.read('workarea');
+export const getPrintingModule = (workarea?: WorkAreaModel): LayerModuleType => {
+  workarea = workarea ?? beamboxPreference.read('workarea');
+
   const supportedModules = getSupportedModules(workarea);
 
   if (supportedModules.includes(LayerModule.PRINTER_4C)) {

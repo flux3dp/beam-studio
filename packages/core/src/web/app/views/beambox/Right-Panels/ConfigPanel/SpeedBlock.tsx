@@ -1,6 +1,6 @@
 import React, { memo, useContext, useMemo } from 'react';
 
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import { Button, Popover } from 'antd-mobile';
 import classNames from 'classnames';
@@ -9,7 +9,7 @@ import { sprintf } from 'sprintf-js';
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
-import configOptions from '@core/app/constants/config-options';
+import { getSpeedOptions } from '@core/app/constants/config-options';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
@@ -153,8 +153,8 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   };
 
   const sliderOptions = useMemo(
-    () => (simpleMode && isPrinting ? configOptions.getPrintingSpeedOptions(lang) : undefined),
-    [simpleMode, isPrinting, lang],
+    () => (simpleMode && isPrinting ? getSpeedOptions(lang, layerModule) : undefined),
+    [simpleMode, isPrinting, lang, layerModule],
   );
 
   const content = (
@@ -193,7 +193,9 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
       />
       {warningText ? (
         <div className={styles.warning}>
-          <div className={styles['warning-icon']}>!</div>
+          <div className={styles['warning-icon']}>
+            <ExclamationCircleOutlined />
+          </div>
           <div className={styles['warning-text']}>{warningText}</div>
         </div>
       ) : null}

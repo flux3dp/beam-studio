@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import configOptions from '@core/app/constants/config-options';
+import { getSpeedOptions } from '@core/app/constants/config-options';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useBeamboxPreference } from '@core/helpers/hooks/useBeamboxPreference';
@@ -24,10 +24,7 @@ const WhiteInkSpeed = ({ hasMultiValue, onChange, value }: Props): React.JSX.Ele
   const t = lang.beambox.right_panel.laser_panel;
   const simpleMode = !useBeamboxPreference('print-advanced-mode');
 
-  const sliderOptions = useMemo(
-    () => (simpleMode ? configOptions.getPrintingSpeedOptions(lang) : undefined),
-    [simpleMode, lang],
-  );
+  const sliderOptions = useMemo(() => (simpleMode ? getSpeedOptions(lang) : undefined), [simpleMode, lang]);
 
   const { decimal, display: displayUnit } = useMemo(() => {
     const unit: 'inches' | 'mm' = storage.get('default-units') || 'mm';

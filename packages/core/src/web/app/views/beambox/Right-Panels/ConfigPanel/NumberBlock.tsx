@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useContext, useEffect, useMemo } from 'react';
 
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import { Button, Popover } from 'antd-mobile';
 import classNames from 'classnames';
@@ -48,6 +48,7 @@ interface Props {
   tooltip?: string;
   type?: 'default' | 'modal' | 'panel-item';
   unit?: string;
+  warning?: string;
 }
 
 const NumberBlock = ({
@@ -67,6 +68,7 @@ const NumberBlock = ({
   tooltip,
   type = 'default',
   unit,
+  warning,
 }: Props): React.ReactNode => {
   const isPanelType = useMemo(() => type === 'panel-item', [type]);
   const { activeKey } = useContext(ObjectPanelContext);
@@ -191,6 +193,14 @@ const NumberBlock = ({
           step={(sliderStep ?? step) * (isInch ? 1.27 : 1)}
           value={value}
         />
+      )}
+      {warning && (
+        <div className={styles.warning}>
+          <div className={styles['warning-icon']}>
+            <ExclamationCircleOutlined />
+          </div>
+          <div className={styles['warning-text']}>{warning}</div>
+        </div>
       )}
     </div>
   );

@@ -7,7 +7,7 @@ import moduleBoundaryDrawer from '@core/app/actions/canvas/module-boundary-drawe
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import alertConstants from '@core/app/constants/alert-constants';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
-import { fullColorModules, LayerModule } from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { getSupportedModules } from '@core/app/constants/workarea-constants';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import history from '@core/app/svgedit/history/history';
@@ -20,7 +20,13 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import isDev from '@core/helpers/is-dev';
 import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
-import { applyPreset, baseConfig, getData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
+import {
+  applyPreset,
+  baseConfig,
+  getData,
+  moduleBaseConfig,
+  writeDataLayer,
+} from '@core/helpers/layer/layer-config-helper';
 import { getLayerElementByName } from '@core/helpers/layer/layer-helper';
 import { getModulesTranslations } from '@core/helpers/layer-module/layer-module-helper';
 import presetHelper from '@core/helpers/presets/preset-helper';
@@ -63,10 +69,10 @@ const ModuleBlock = (): React.ReactNode => {
   if (supportedModules.length <= 1) return null;
 
   const handleChange = async (newVal: LayerModuleType) => {
-    const isCurrentFullColor = fullColorModules.has(value);
-    const isNextFullColor = fullColorModules.has(newVal);
+    const isCurrentPrinting = printingModules.has(value);
+    const isChangingToPrinting = printingModules.has(newVal);
 
-    if (isCurrentFullColor && !isNextFullColor && !alertConfig.read('skip-switch-to-printer-module')) {
+    if (isCurrentPrinting && !isChangingToPrinting && !alertConfig.read('skip-switch-to-printer-module')) {
       const res = await new Promise((resolve) => {
         alertCaller.popUp({
           buttonType: alertConstants.CONFIRM_CANCEL,
@@ -92,7 +98,7 @@ const ModuleBlock = (): React.ReactNode => {
       if (!res) {
         return;
       }
-    } else if (!isCurrentFullColor && isNextFullColor && !alertConfig.read('skip-switch-to-laser-module')) {
+    } else if (!isCurrentPrinting && isChangingToPrinting && !alertConfig.read('skip-switch-to-laser-module')) {
       const res = await new Promise((resolve) => {
         alertCaller.popUp({
           buttonType: alertConstants.CONFIRM_CANCEL,
@@ -139,19 +145,21 @@ const ModuleBlock = (): React.ReactNode => {
       if (!newPreset) {
         writeDataLayer(layer, 'configName', undefined, { batchCmd });
 
-        if (isCurrentFullColor && !isNextFullColor) {
+        if (isCurrentPrinting && !isChangingToPrinting) {
           writeDataLayer(layer, 'speed', baseConfig.speed, { batchCmd });
           writeDataLayer(layer, 'power', baseConfig.power, { batchCmd });
-        } else if (!isCurrentFullColor && isNextFullColor) {
-          writeDataLayer(layer, 'printingSpeed', baseConfig.printingSpeed, { batchCmd });
+        } else if (!isCurrentPrinting && isChangingToPrinting) {
+          writeDataLayer(layer, 'printingSpeed', moduleBaseConfig[newVal]?.printingSpeed ?? baseConfig.printingSpeed, {
+            batchCmd,
+          });
           writeDataLayer(layer, 'ink', baseConfig.ink, { batchCmd });
-          writeDataLayer(layer, 'multipass', baseConfig.multipass, { batchCmd });
+          writeDataLayer(layer, 'multipass', moduleBaseConfig[newVal]?.multipass ?? baseConfig.multipass, { batchCmd });
         }
       } else if (newPreset !== oldPreset) {
         applyPreset(layer, newPreset, { batchCmd });
       }
 
-      const toggleFullColorCmd = toggleFullColorLayer(layer, { val: isNextFullColor });
+      const toggleFullColorCmd = toggleFullColorLayer(layer, { val: isChangingToPrinting });
 
       if (toggleFullColorCmd && !toggleFullColorCmd.isEmpty()) batchCmd.addSubCommand(toggleFullColorCmd);
     });

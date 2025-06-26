@@ -200,8 +200,8 @@ describe('test layer-config-helper', () => {
     mockGetLayerByName.mockReturnValue(mockLayer);
     mockLayer.getAttribute.mockReturnValue('1');
     toggleFullColorAfterWorkareaChange();
-    expect(mockToggleFullColorLayer).toBeCalledTimes(3);
-    expect(mockLayer.setAttribute).toBeCalledTimes(3);
+    expect(mockToggleFullColorLayer).toHaveBeenCalledTimes(3);
+    expect(mockLayer.setAttribute).toHaveBeenCalledTimes(3);
     expect(mockLayer.setAttribute).toHaveBeenNthCalledWith(1, 'data-module', '15');
     expect(mockLayer.setAttribute).toHaveBeenNthCalledWith(2, 'data-module', '15');
     expect(mockLayer.setAttribute).toHaveBeenNthCalledWith(3, 'data-module', '15');
@@ -219,8 +219,8 @@ describe('test layer-config-helper', () => {
     mockGetLayerByName.mockReturnValue(mockLayer);
     mockLayer.getAttribute.mockReturnValue('15');
     toggleFullColorAfterWorkareaChange();
-    expect(mockToggleFullColorLayer).toBeCalledTimes(3);
-    expect(mockLayer.setAttribute).toBeCalledTimes(3);
+    expect(mockToggleFullColorLayer).toHaveBeenCalledTimes(3);
+    expect(mockLayer.setAttribute).toHaveBeenCalledTimes(3);
     expect(mockLayer.setAttribute).toHaveBeenNthCalledWith(1, 'data-module', '1');
     expect(mockLayer.setAttribute).toHaveBeenNthCalledWith(2, 'data-module', '1');
     expect(mockLayer.setAttribute).toHaveBeenNthCalledWith(3, 'data-module', '1');
@@ -239,7 +239,6 @@ describe('test layer-config-helper', () => {
     ]);
     expect(getConfigKeys(LayerModule.PRINTER)).toEqual([
       'speed',
-      'printingSpeed',
       'ink',
       'multipass',
       'cRatio',

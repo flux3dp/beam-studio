@@ -16,8 +16,13 @@ import { getWorkarea } from '@core/app/constants/workarea-constants';
 import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';
 import Select from '@core/app/widgets/AntdSelect';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
-import { baseConfig, getDefaultConfig, postPresetChange } from '@core/helpers/layer/layer-config-helper';
-import { getModulesTranslations } from '@core/helpers/layer-module/layer-module-helper';
+import {
+  baseConfig,
+  getDefaultConfig,
+  moduleBaseConfig,
+  postPresetChange,
+} from '@core/helpers/layer/layer-config-helper';
+import { getModulesTranslations, getPrintingModule } from '@core/helpers/layer-module/layer-module-helper';
 import presetHelper from '@core/helpers/presets/preset-helper';
 import useI18n from '@core/helpers/useI18n';
 import storage from '@core/implementations/storage';
@@ -159,7 +164,9 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
     return { ...selectedPreset, ...Object.values(keyPresets)[0] };
   }, [workarea, selectedPreset, selectedModule, editingValues]);
 
-  const handleChange = <T extends ConfigKey>(key: T, value: ConfigKeyTypeMap[T]) => {
+  const handleChange = <T extends ConfigKey>(key: T, value: ConfigKeyTypeMap[T] | null) => {
+    if (value === null) return;
+
     const { isDefault, name } = selectedPreset as any;
 
     if (isDefault) {
@@ -259,14 +266,12 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
         id: 'import-module',
         options: [
           { label: t.laser, value: LayerModule.LASER_UNIVERSAL },
-          { label: t.print, value: LayerModule.PRINTER },
+          { label: t.print, value: getPrintingModule(workarea) },
         ],
         title: lang.beambox.popup.select_import_module,
       });
 
-      if (!presetModule) {
-        return;
-      }
+      if (!presetModule) return;
     }
 
     const name = await new Promise<string>((resolve) => {
@@ -277,9 +282,7 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
       });
     });
 
-    if (!name) {
-      return;
-    }
+    if (!name) return;
 
     if (editingPresets.find((p) => p.name === name || p.key === name)) {
       alertCaller.popUpError({ message: tLaserPanel.existing_name });
@@ -294,9 +297,12 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
       name: name.trim(),
     };
 
-    if (presetModule === LayerModule.PRINTER) {
-      newPreset.halftone = 1;
-      newPreset.speed = baseConfig.printingSpeed;
+    // should this use getConfigKeys to filter unneeded keys?
+    delete newPreset.printingSpeed;
+
+    if (printingModules.has(presetModule)) {
+      newPreset.halftone = moduleBaseConfig[presetModule]?.halftone ?? baseConfig.halftone;
+      newPreset.speed = moduleBaseConfig[presetModule]?.printingSpeed ?? baseConfig.printingSpeed;
     }
 
     setEditingPresets([...editingPresets, newPreset]);

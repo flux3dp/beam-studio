@@ -18,6 +18,7 @@ import AwsHelper from '@core/helpers/aws-helper';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import updateImagesResolution from '@core/helpers/image/updateImagesResolution';
+import annotatePrintingColor from '@core/helpers/layer/annotatePrintingColor';
 import convertShapeToBitmap from '@core/helpers/layer/convertShapeToBitmap';
 import { tempSplitFullColorLayers } from '@core/helpers/layer/full-color/splitFullColorLayer';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -133,9 +134,11 @@ const fetchTaskCode = async (
   });
 
   const revertShapesToImage = await convertShapeToBitmap();
+  const revertAnnotatePrintingColor = annotatePrintingColor();
   const revertTempSplitFullColorLayers = await tempSplitFullColorLayers();
   const cleanUp = async () => {
     revertTempSplitFullColorLayers();
+    revertAnnotatePrintingColor();
     revertShapesToImage();
     await FontFuncs.revertTempConvert();
     SymbolMaker.switchImageSymbolForAll(true);

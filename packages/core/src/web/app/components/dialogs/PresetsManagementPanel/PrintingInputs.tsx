@@ -2,7 +2,8 @@ import React, { useMemo } from 'react';
 
 import classNames from 'classnames';
 
-import configOptions from '@core/app/constants/config-options';
+import configOptions, { getSpeedOptions } from '@core/app/constants/config-options';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import Select from '@core/app/widgets/AntdSelect';
 import UnitInput from '@core/app/widgets/UnitInput';
 import { useBeamboxPreference } from '@core/helpers/hooks/useBeamboxPreference';
@@ -13,7 +14,7 @@ import type { ConfigKey, ConfigKeyTypeMap, Preset } from '@core/interfaces/ILaye
 import styles from './PresetsManagementPanel.module.scss';
 
 interface Props {
-  handleChange: <T extends ConfigKey>(key: T, value: ConfigKeyTypeMap[T]) => void;
+  handleChange: <T extends ConfigKey>(key: T, value: ConfigKeyTypeMap[T] | null) => void;
   isInch?: boolean;
   lengthUnit?: 'in' | 'mm';
   maxSpeed: number;
@@ -31,109 +32,112 @@ const PrintingInputs = ({
 }: Props): React.JSX.Element => {
   const simpleMode = !useBeamboxPreference('print-advanced-mode');
   const lang = useI18n();
-  const { multipassOptions, printingSpeedOptions, saturationOptions } = useMemo(
+  const { multipassOptions, saturationOptions, speedOptions } = useMemo(
     () => ({
       multipassOptions: configOptions.multipassOptions,
-      printingSpeedOptions: configOptions.getPrintingSpeedOptions(lang),
       saturationOptions: configOptions.getSaturationOptions(lang),
+      speedOptions: getSpeedOptions(lang, preset.module),
     }),
-    [lang],
+    [lang, preset.module],
   );
+  const is4c = useMemo(() => preset.module === LayerModule.PRINTER_4C, [preset.module]);
   const tLaserPanel = lang.beambox.right_panel.laser_panel;
 
   return (
     <div className={styles.inputs}>
-      <div>
-        <div className={styles.field}>
-          <div className={styles.label}>{tLaserPanel.ink_saturation}</div>
-          {simpleMode ? (
-            <Select
-              className={styles.select}
-              disabled={preset.isDefault}
-              id="inkSelect"
-              onChange={(val) => handleChange('ink', val)}
-              value={preset.ink ?? baseConfig.ink}
-            >
-              {saturationOptions.map((option) => (
-                <Select.Option key={option.value} value={option.value}>
-                  {option.label}
-                </Select.Option>
-              ))}
-            </Select>
-          ) : (
+      {!is4c && (
+        <div>
+          <div className={styles.field}>
+            <div className={styles.label}>{tLaserPanel.ink_saturation}</div>
+            {simpleMode ? (
+              <Select
+                className={styles.select}
+                disabled={preset.isDefault}
+                id="inkSelect"
+                onChange={(val) => handleChange('ink', val)}
+                value={preset.ink ?? baseConfig.ink}
+              >
+                {saturationOptions.map((option) => (
+                  <Select.Option key={option.value} value={option.value}>
+                    {option.label}
+                  </Select.Option>
+                ))}
+              </Select>
+            ) : (
+              <UnitInput
+                className={styles.input}
+                data-testid="ink"
+                disabled={preset.isDefault}
+                max={15}
+                min={1}
+                onChange={(value) => handleChange('ink', value)}
+                precision={0}
+                value={preset.ink ?? baseConfig.ink}
+              />
+            )}
+          </div>
+          <div className={classNames(styles.field, styles.small)}>
+            <div className={styles.label}>Cyan</div>
             <UnitInput
+              addonAfter="%"
               className={styles.input}
-              data-testid="ink"
+              data-testid="cRatio"
               disabled={preset.isDefault}
-              max={15}
-              min={1}
-              onChange={(value) => handleChange('ink', value)}
+              max={200}
+              min={0}
+              onChange={(value) => handleChange('cRatio', value)}
               precision={0}
-              value={preset.ink ?? baseConfig.ink}
+              size="small"
+              value={preset.cRatio ?? baseConfig.cRatio}
             />
-          )}
+          </div>
+          <div className={classNames(styles.field, styles.small)}>
+            <div className={styles.label}>Magenta</div>
+            <UnitInput
+              addonAfter="%"
+              className={styles.input}
+              data-testid="mRatio"
+              disabled={preset.isDefault}
+              max={200}
+              min={0}
+              onChange={(value) => handleChange('mRatio', value)}
+              precision={0}
+              size="small"
+              value={preset.mRatio ?? baseConfig.mRatio}
+            />
+          </div>
+          <div className={classNames(styles.field, styles.small)}>
+            <div className={styles.label}>Yellow</div>
+            <UnitInput
+              addonAfter="%"
+              className={styles.input}
+              data-testid="yRatio"
+              disabled={preset.isDefault}
+              max={200}
+              min={0}
+              onChange={(value) => handleChange('yRatio', value)}
+              precision={0}
+              size="small"
+              value={preset.yRatio ?? baseConfig.yRatio}
+            />
+          </div>
+          <div className={classNames(styles.field, styles.small)}>
+            <div className={styles.label}>Black</div>
+            <UnitInput
+              addonAfter="%"
+              className={styles.input}
+              data-testid="kRatio"
+              disabled={preset.isDefault}
+              max={200}
+              min={0}
+              onChange={(value) => handleChange('kRatio', value)}
+              precision={0}
+              size="small"
+              value={preset.kRatio ?? baseConfig.kRatio}
+            />
+          </div>
         </div>
-        <div className={classNames(styles.field, styles.small)}>
-          <div className={styles.label}>Cyan</div>
-          <UnitInput
-            addonAfter="%"
-            className={styles.input}
-            data-testid="cRatio"
-            disabled={preset.isDefault}
-            max={200}
-            min={0}
-            onChange={(value) => handleChange('cRatio', value)}
-            precision={0}
-            size="small"
-            value={preset.cRatio ?? baseConfig.cRatio}
-          />
-        </div>
-        <div className={classNames(styles.field, styles.small)}>
-          <div className={styles.label}>Magenta</div>
-          <UnitInput
-            addonAfter="%"
-            className={styles.input}
-            data-testid="mRatio"
-            disabled={preset.isDefault}
-            max={200}
-            min={0}
-            onChange={(value) => handleChange('mRatio', value)}
-            precision={0}
-            size="small"
-            value={preset.mRatio ?? baseConfig.mRatio}
-          />
-        </div>
-        <div className={classNames(styles.field, styles.small)}>
-          <div className={styles.label}>Yellow</div>
-          <UnitInput
-            addonAfter="%"
-            className={styles.input}
-            data-testid="yRatio"
-            disabled={preset.isDefault}
-            max={200}
-            min={0}
-            onChange={(value) => handleChange('yRatio', value)}
-            precision={0}
-            size="small"
-            value={preset.yRatio ?? baseConfig.yRatio}
-          />
-        </div>
-        <div className={classNames(styles.field, styles.small)}>
-          <div className={styles.label}>Black</div>
-          <UnitInput
-            addonAfter="%"
-            className={styles.input}
-            data-testid="kRatio"
-            disabled={preset.isDefault}
-            max={200}
-            min={0}
-            onChange={(value) => handleChange('kRatio', value)}
-            precision={0}
-            size="small"
-            value={preset.kRatio ?? baseConfig.kRatio}
-          />
-        </div>
-      </div>
+      )}
       <div>
         <div className={styles.field}>
           <div className={styles.label}>{tLaserPanel.halftone}</div>
@@ -150,7 +154,7 @@ const PrintingInputs = ({
         </div>
         <div className={styles.field}>
           <div className={styles.label}>{tLaserPanel.speed}</div>
-          {simpleMode ? (
+          {simpleMode && speedOptions ? (
             <Select
               className={styles.select}
               disabled={preset.isDefault}
@@ -158,7 +162,7 @@ const PrintingInputs = ({
               onChange={(val) => handleChange('speed', val)}
               value={preset.speed ?? baseConfig.speed}
             >
-              {printingSpeedOptions.map((option) => (
+              {speedOptions.map((option) => (
                 <Select.Option key={option.value} value={option.value}>
                   {option.label}
                 </Select.Option>
