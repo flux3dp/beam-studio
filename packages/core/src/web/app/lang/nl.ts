@@ -2182,6 +2182,7 @@ const lang: ILang = {
       png_files: 'PNG',
       save_fcode: 'Exporteer FLUX-taak',
       save_jpg: 'Exporteer JPG',
+      save_pdf: 'PDF exporteren',
       save_png: 'Exporteer PNG',
       save_scene: 'Scene opslaan',
       save_svg: 'Exporteer SVG',

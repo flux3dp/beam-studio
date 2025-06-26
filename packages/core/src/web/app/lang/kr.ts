@@ -2182,6 +2182,7 @@ const lang: ILang = {
       png_files: 'PNG',
       save_fcode: 'FLUX 작업 내보내기',
       save_jpg: 'JPG 내보내기',
+      save_pdf: 'PDF 내보내기',
       save_png: 'PNG 내보내기',
       save_scene: '장면 저장',
       save_svg: 'SVG 내보내기',

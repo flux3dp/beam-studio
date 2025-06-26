@@ -2182,6 +2182,7 @@ const lang: ILang = {
       png_files: 'PNG',
       save_fcode: 'Xuất FLUX Task',
       save_jpg: 'Xuất JPG',
+      save_pdf: 'Xuất PDF',
       save_png: 'Xuất PNG',
       save_scene: 'Lưu Cảnh',
       save_svg: 'Xuất SVG',

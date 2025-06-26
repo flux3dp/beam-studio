@@ -2182,6 +2182,7 @@ const lang: ILang = {
       png_files: 'PNG',
       save_fcode: 'Eksport Tugas FLUX',
       save_jpg: 'Eksport JPG',
+      save_pdf: 'Eksport PDF',
       save_png: 'Eksport PNG',
       save_scene: 'Simpan Babak',
       save_svg: 'Eksport SVG',

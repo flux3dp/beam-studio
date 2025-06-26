@@ -2182,6 +2182,7 @@ const lang: ILang = {
       png_files: 'PNG',
       save_fcode: 'Ekspor Tugas FLUX',
       save_jpg: 'Ekspor JPG',
+      save_pdf: 'Ekspor PDF',
       save_png: 'Ekspor PNG',
       save_scene: 'Simpan Adegan',
       save_svg: 'Ekspor SVG',
