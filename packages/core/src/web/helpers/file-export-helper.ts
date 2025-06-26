@@ -501,7 +501,6 @@ export const exportUvPrintAsPdf = async (): Promise<void> => {
   const pdf = new jsPDF().addImage(base64, 'PNG', 0, 0, 210, 297);
   const getContent = () => new Blob([pdf.output('blob')], { type: 'application/pdf' });
 
-  lang;
   await dialog.writeFileDialog(getContent, lang.save_pdf, defaultFileName, [
     { extensions: ['pdf'], name: window.os === 'MacOS' ? `PDF (*.pdf)` : 'PDF' },
     { extensions: ['*'], name: lang.all_files },
