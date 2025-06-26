@@ -43,9 +43,7 @@ const SaveConfigButton = (): React.JSX.Element => {
     const keys = getConfigKeys(module.value);
     const newConfig: Preset = { name };
 
-    if (printingModules.has(module.value)) {
-      newConfig.module = module.value;
-    }
+    if (printingModules.has(module.value)) newConfig.module = module.value;
 
     keys.forEach((key: ConfigKey) => {
       newConfig[key] = state[key].value as never;

@@ -166,8 +166,7 @@ export const laserConfigKeys: ConfigKey[] = [
 ] as const;
 
 export const printerConfigKeys: ConfigKey[] = [
-  'speed',
-  'printingSpeed',
+  'speed', // this will be used as printingSpeed
   'ink',
   'multipass',
   'cRatio',
@@ -612,7 +611,9 @@ export const applyPreset = (
       value = defaultConfig[key];
     }
 
-    if (key === 'speed' || key === 'printingSpeed') {
+    if (key === 'printingSpeed') continue;
+
+    if (key === 'speed') {
       value = Math.max(minSpeed, Math.min(value as number, maxSpeed));
     }
 

@@ -271,9 +271,7 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
         title: lang.beambox.popup.select_import_module,
       });
 
-      if (!presetModule) {
-        return;
-      }
+      if (!presetModule) return;
     }
 
     const name = await new Promise<string>((resolve) => {
@@ -284,9 +282,7 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
       });
     });
 
-    if (!name) {
-      return;
-    }
+    if (!name) return;
 
     if (editingPresets.find((p) => p.name === name || p.key === name)) {
       alertCaller.popUpError({ message: tLaserPanel.existing_name });
@@ -300,6 +296,9 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
       module: presetModule,
       name: name.trim(),
     };
+
+    // should this use getConfigKeys to filter unneeded keys?
+    delete newPreset.printingSpeed;
 
     if (printingModules.has(presetModule)) {
       newPreset.halftone = moduleBaseConfig[presetModule]?.halftone ?? baseConfig.halftone;
