@@ -1566,6 +1566,8 @@ const lang: ILang = {
       auto_focus_instruction: 'Flytt laserhodet over objektet og følg animasjonsinstruksjonene for å trykke AF for å fokusere.',
       camera_preview: 'Kameravisning',
       enter_manually: 'Oppgi manuelt',
+      getting_focal_distance: 'Henter fokalavstand...',
+      moving_to_preview_position: 'Flytter til forhåndsvisningsposisjon...',
       please_enter_height: 'Oppgi høyden på objektet for å ta presis kamerabilde.',
     },
     promark_disconnected: '#850 Enhetens tilkobling er brutt, vennligst sjekk enhetens tilkoblingsstatus.',

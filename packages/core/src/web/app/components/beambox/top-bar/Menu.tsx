@@ -4,7 +4,7 @@ import { MenuDivider, MenuItem, SubMenu, Menu as TopBarMenu } from '@szhsin/reac
 
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import { modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
+import { adorModels, modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { menuItems } from '@core/app/constants/menuItems';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
@@ -114,6 +114,7 @@ export default function Menu({ email }: Props): React.JSX.Element {
       const { model, name, serial } = device;
       const hasModules = modelsWithModules.has(model);
       const supportedModules = hasModules ? getWorkarea(model).supportedModules : undefined;
+      const isAdor = adorModels.has(model);
       const isPromark = promarkModels.has(model);
       const isBeamo = model === 'fbm1';
       const isBb2 = model === 'fbb2';
@@ -182,6 +183,12 @@ export default function Menu({ email }: Props): React.JSX.Element {
             )}
           </SubMenu>
           {!isPromark && <MenuDivider />}
+          {(isAdor || isBb2 || isBeamo2) && (
+            <SubMenu label={menuCms.camera_calibration_data}>
+              <MenuItem onClick={() => callback('UPLOAD_CALIBRATION_DATA', device)}>{menuCms.upload_data}</MenuItem>
+              <MenuItem onClick={() => callback('DOWNLOAD_CALIBRATION_DATA', device)}>{menuCms.download_data}</MenuItem>
+            </SubMenu>
+          )}
           {!isPromark && (
             <MenuItem onClick={() => callback('UPDATE_FIRMWARE', device)}>{menuCms.update_firmware}</MenuItem>
           )}

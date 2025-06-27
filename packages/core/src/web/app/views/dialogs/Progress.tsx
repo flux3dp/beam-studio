@@ -17,7 +17,7 @@ const Progress = ({ data }: { data: IProgressDialog }): React.JSX.Element => {
 
   useEffect(() => {
     if (timeout) {
-      setTimeout(() => popById(id), timeout);
+      setTimeout(() => popById(id!), timeout);
     }
     // eslint-disable-next-line hooks/exhaustive-deps
   }, []);
@@ -39,7 +39,7 @@ const Progress = ({ data }: { data: IProgressDialog }): React.JSX.Element => {
       maskClosable={false}
       okButtonProps={{ style: { display: 'none' } }}
       onCancel={() => {
-        popById(id);
+        popById(id!);
         onCancel?.();
       }}
       open

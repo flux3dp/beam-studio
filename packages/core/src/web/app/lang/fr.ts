@@ -1566,6 +1566,8 @@ const lang: ILang = {
       auto_focus_instruction: "Veuillez déplacer la tête du module laser au-dessus de l'objet et suivre les instructions d'animation pour appuyer sur AF pour effectuer la mise au point.",
       camera_preview: 'Aperçu de la caméra',
       enter_manually: 'Entrer manuellement',
+      getting_focal_distance: 'Obtention de la distance focale...',
+      moving_to_preview_position: 'Déplacement vers la position d’aperçu...',
       please_enter_height: "Veuillez entrer la hauteur de l'objet. Afin de capturer un cliché de caméra précis.",
     },
     promark_disconnected: "#850 Connexion de l'appareil interrompue, veuillez vérifier l'état de connexion de l'appareil.",

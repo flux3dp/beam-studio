@@ -1566,6 +1566,8 @@ const lang: ILang = {
       auto_focus_instruction: 'Verplaats de lasermodulekop boven het object en volg de animatie-instructies om op AF te drukken om scherp te stellen.',
       camera_preview: 'Camera voorbeeldweergave',
       enter_manually: 'Handmatig invoeren',
+      getting_focal_distance: 'Bezig met ophalen van brandpuntsafstand...',
+      moving_to_preview_position: 'Bezig met verplaatsen naar voorbeeldpositie...',
       please_enter_height: 'Voer de hoogte van het object in om een nauwkeurige camerafoto te maken.',
     },
     promark_disconnected: '#850 Apparaatverbinding onderbroken, controleer de verbindingsstatus van het apparaat.',

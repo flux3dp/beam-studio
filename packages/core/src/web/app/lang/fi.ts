@@ -1566,6 +1566,8 @@ const lang: ILang = {
       auto_focus_instruction: 'Siirrä lasermoduulin pää kohteen yläpuolelle ja seuraa animaatio-ohjeita painaaksesi AF tarkentaaksesi.',
       camera_preview: 'Kameran esikatselu',
       enter_manually: 'Anna manuaalisesti',
+      getting_focal_distance: 'Haetaan polttoväliä...',
+      moving_to_preview_position: 'Siirrytään esikatseluasentoon...',
       please_enter_height: 'Anna kohteen korkeus. Jotta kameran kuva olisi tarkka.',
     },
     promark_disconnected: '#850 Yhteys laitteeseen katkaistu, tarkista laitteen yhteystila.',

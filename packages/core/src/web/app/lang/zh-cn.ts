@@ -1566,6 +1566,8 @@ const lang: ILang = {
       auto_focus_instruction: '请将激光模块头移至物体上方，并按照动画指示按下AF进行对焦。',
       camera_preview: '相机预览',
       enter_manually: '手动输入',
+      getting_focal_distance: '正在获取焦距...',
+      moving_to_preview_position: '正在移动到预览位置...',
       please_enter_height: '请输入物体的高度，以拍摄精确的相机照片。',
     },
     promark_disconnected: '#850 设备连接中断，请检查设备的连接状态。',

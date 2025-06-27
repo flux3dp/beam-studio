@@ -1566,6 +1566,8 @@ const lang: ILang = {
       auto_focus_instruction: 'Sila gerakkan kepala modul laser di atas objek, dan ikut arahan animasi untuk menekan AF bagi memfokus.',
       camera_preview: 'Pratonton Kamera',
       enter_manually: 'Masukkan Secara Manual',
+      getting_focal_distance: 'Mendapatkan jarak fokus...',
+      moving_to_preview_position: 'Bergerak ke posisi pratonton...',
       please_enter_height: 'Sila masukkan ketinggian objek. Bagi menangkap gambar kamera yang tepat.',
     },
     promark_disconnected: '#850 Sambungan peranti terganggu, sila periksa status sambungan peranti.',

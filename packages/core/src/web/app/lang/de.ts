@@ -1566,6 +1566,8 @@ const lang: ILang = {
       auto_focus_instruction: 'Bewegen Sie bitte den Lasermodulkopf über das Objekt und befolgen Sie die Animationsanweisungen, um auf AF zu drücken, um den Fokus einzustellen.',
       camera_preview: 'Kameravorschau',
       enter_manually: 'Manuell eingeben',
+      getting_focal_distance: 'Ermittle Brennweite...',
+      moving_to_preview_position: 'Bewege zur Vorschauposition...',
       please_enter_height: 'Bitte geben Sie die Höhe des Objekts ein, um eine präzise Kameraaufnahme zu erfassen.',
     },
     promark_disconnected: '#850 Die Verbindung zum Gerät wurde unterbrochen, bitte überprüfen Sie den Verbindungsstatus des Geräts.',

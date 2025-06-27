@@ -28,16 +28,25 @@ class FisheyePreviewManagerV4 extends FisheyePreviewManagerBase implements Fishe
       cameraPosition?: number[];
       height?: number;
       progressId?: string;
+      progressRange?: [number, number];
     } = {},
   ): Promise<boolean> {
     const { lang } = i18n;
-    const { cameraPosition, height, progressId } = args;
+    const { cameraPosition, height, progressId, progressRange: [progressStart, progressEnd] = [0, 100] } = args;
 
     if (!progressId) progressCaller.openNonstopProgress({ id: this.progressId });
+
+    progressCaller.update(progressId || this.progressId, {
+      percentage: progressStart,
+    });
 
     const { params } = this;
 
     await rawAndHome(progressId || this.progressId);
+    progressCaller.update(progressId || this.progressId, {
+      message: lang.message.preview.moving_to_preview_position,
+      percentage: progressStart + (progressEnd - progressStart) * 0.5,
+    });
 
     if (cameraPosition) {
       await deviceMaster.rawMove({ f: 7500, x: cameraPosition[0], y: cameraPosition[1] });
@@ -47,6 +56,11 @@ class FisheyePreviewManagerV4 extends FisheyePreviewManagerBase implements Fishe
 
       await new Promise((resolve) => setTimeout(resolve, time * 1000));
     }
+
+    progressCaller.update(progressId || this.progressId, {
+      percentage: progressStart + (progressEnd - progressStart) * 0.75,
+    });
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     if (height === undefined) {
       progressCaller.update(progressId || this.progressId, { message: 'Getting focal distance...' });
@@ -62,6 +76,10 @@ class FisheyePreviewManagerV4 extends FisheyePreviewManagerBase implements Fishe
     progressCaller.update(progressId || this.progressId, { message: lang.message.connectingCamera });
     await deviceMaster.setFisheyeParam(params);
     await this.onObjectHeightChanged();
+
+    progressCaller.update(progressId || this.progressId, {
+      percentage: progressEnd,
+    });
 
     if (!progressId) progressCaller.popById(this.progressId);
 

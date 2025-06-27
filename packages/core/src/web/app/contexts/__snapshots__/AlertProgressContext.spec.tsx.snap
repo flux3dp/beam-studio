@@ -4,36 +4,36 @@ exports[`should render correctly 1`] = `<div />`;
 
 exports[`should render correctly 2`] = `
 <div>
-  {"caption":"preparing","id":"check-status","isProgress":true,"type":"NONSTOP","message":""}
-  {"id":"get_log","isProgress":true,"message":"downloading","percentage":0,"type":"STEPPING","caption":""}
+  {"caption":"preparing","id":"check-status","isProgress":true,"type":1,"message":""}
+  {"id":"get_log","isProgress":true,"message":"downloading","percentage":0,"type":2,"caption":""}
 </div>
 `;
 
 exports[`should render correctly 3`] = `
 <div>
-  {"caption":"preparing","id":"check-status","isProgress":true,"type":"NONSTOP","message":""}
-  {"id":"get_log","isProgress":true,"message":"downloading","percentage":0,"type":"STEPPING","caption":""}
+  {"caption":"preparing","id":"check-status","isProgress":true,"type":1,"message":""}
+  {"id":"get_log","isProgress":true,"message":"downloading","percentage":0,"type":2,"caption":""}
 </div>
 `;
 
 exports[`should render correctly 4`] = `
 <div>
-  {"caption":"preparing","id":"check-status","isProgress":true,"type":"NONSTOP","message":""}
-  {"id":"get_log","isProgress":true,"message":"downloading","percentage":100,"type":"STEPPING","caption":""}
+  {"caption":"preparing","id":"check-status","isProgress":true,"type":1,"message":""}
+  {"id":"get_log","isProgress":true,"message":"downloading","percentage":100,"type":2,"caption":""}
 </div>
 `;
 
 exports[`should render correctly 5`] = `
 <div>
-  {"caption":"prepared","id":"check-status","isProgress":true,"type":"NONSTOP","message":"prepared"}
-  {"id":"get_log","isProgress":true,"message":"downloading","percentage":100,"type":"STEPPING","caption":""}
+  {"caption":"prepared","id":"check-status","isProgress":true,"type":1,"message":"prepared"}
+  {"id":"get_log","isProgress":true,"message":"downloading","percentage":100,"type":2,"caption":""}
 </div>
 `;
 
 exports[`should render correctly 6`] = `
 <div>
-  {"caption":"prepared","id":"check-status","isProgress":true,"type":"NONSTOP","message":"prepared"}
-  {"id":"get_log","isProgress":true,"message":"downloading","percentage":100,"type":"STEPPING","caption":""}
+  {"caption":"prepared","id":"check-status","isProgress":true,"type":1,"message":"prepared"}
+  {"id":"get_log","isProgress":true,"message":"downloading","percentage":100,"type":2,"caption":""}
   {"buttonType":"YES_NO","message":"File already exists, do you want to replace it?","type":"SHOW_POPUP_INFO","buttons":[{"className":"btn-default primary","label":"Yes"},{"className":"btn-default","label":"No"}],"caption":"INFO"}
   {"checkbox":{"text":"Don't Show this next time."},"message":"Some texts were changed to other Fonts when parsing texts to paths and some character may not converted normally.","type":"SHOW_POPUP_WARNING","buttons":[{"className":"btn-default primary","label":"OK"}],"caption":"WARNING"}
   {"buttonType":"RETRY_CANCEL","id":"monitor-reconnect","message":"The connection with the machine has broken. Do you want to reconnect?","type":"SHOW_POPUP_ERROR","buttons":[{"className":"btn-default primary","label":"Retry"},{"className":"btn-default","label":"Cancel"}],"caption":"UH-OH"}
@@ -46,8 +46,8 @@ exports[`should render correctly 6`] = `
 
 exports[`should render correctly 7`] = `
 <div>
-  {"caption":"prepared","id":"check-status","isProgress":true,"type":"NONSTOP","message":"prepared"}
-  {"id":"get_log","isProgress":true,"message":"downloading","percentage":100,"type":"STEPPING","caption":""}
+  {"caption":"prepared","id":"check-status","isProgress":true,"type":1,"message":"prepared"}
+  {"id":"get_log","isProgress":true,"message":"downloading","percentage":100,"type":2,"caption":""}
   {"buttonType":"YES_NO","message":"File already exists, do you want to replace it?","type":"SHOW_POPUP_INFO","buttons":[{"className":"btn-default primary","label":"Yes"},{"className":"btn-default","label":"No"}],"caption":"INFO"}
   {"checkbox":{"text":"Don't Show this next time."},"message":"Some texts were changed to other Fonts when parsing texts to paths and some character may not converted normally.","type":"SHOW_POPUP_WARNING","buttons":[{"className":"btn-default primary","label":"OK"}],"caption":"WARNING"}
   {"buttonType":"RETRY_CANCEL","id":"monitor-reconnect","message":"The connection with the machine has broken. Do you want to reconnect?","type":"SHOW_POPUP_ERROR","buttons":[{"className":"btn-default primary","label":"Retry"},{"className":"btn-default","label":"Cancel"}],"caption":"UH-OH"}
@@ -59,7 +59,7 @@ exports[`should render correctly 7`] = `
 
 exports[`should render correctly 8`] = `
 <div>
-  {"caption":"prepared","id":"check-status","isProgress":true,"type":"NONSTOP","message":"prepared"}
+  {"caption":"prepared","id":"check-status","isProgress":true,"type":1,"message":"prepared"}
   {"buttonType":"YES_NO","message":"File already exists, do you want to replace it?","type":"SHOW_POPUP_INFO","buttons":[{"className":"btn-default primary","label":"Yes"},{"className":"btn-default","label":"No"}],"caption":"INFO"}
   {"checkbox":{"text":"Don't Show this next time."},"message":"Some texts were changed to other Fonts when parsing texts to paths and some character may not converted normally.","type":"SHOW_POPUP_WARNING","buttons":[{"className":"btn-default primary","label":"OK"}],"caption":"WARNING"}
   {"buttonType":"RETRY_CANCEL","id":"monitor-reconnect","message":"The connection with the machine has broken. Do you want to reconnect?","type":"SHOW_POPUP_ERROR","buttons":[{"className":"btn-default primary","label":"Retry"},{"className":"btn-default","label":"Cancel"}],"caption":"UH-OH"}

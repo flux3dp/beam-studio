@@ -1566,6 +1566,8 @@ const lang: ILang = {
       auto_focus_instruction: 'Flytta laserhuvudet över objektet och följ anvisningarna för att trycka på AF för att fokusera.',
       camera_preview: 'Kameraförhandsgranskning',
       enter_manually: 'Ange manuellt',
+      getting_focal_distance: 'Hämtar brännvidd...',
+      moving_to_preview_position: 'Flyttar till förhandsvisningsposition...',
       please_enter_height: 'Ange objektets höjd. För att ta en exakt kamerabild.',
     },
     promark_disconnected: '#850 Enhetens anslutning har avbrutits, kontrollera enhetens anslutningsstatus.',
