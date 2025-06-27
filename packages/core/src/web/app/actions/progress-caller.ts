@@ -1,6 +1,5 @@
-import ProgressConstants from '@core/app/constants/progress-constants';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import type { IProgressDialog } from '@core/interfaces/IProgress';
+import { type IProgressDialog, ProgressTypes } from '@core/interfaces/IProgress';
 
 const eventEmitter = eventEmitterFactory.createEventEmitter('alert-progress');
 
@@ -22,14 +21,14 @@ export default {
     }
 
     return new Promise((resolve) => {
-      eventEmitter.emit('OPEN_PROGRESS', { ...args, isProgress: true, type: ProgressConstants.NONSTOP }, resolve);
+      eventEmitter.emit('OPEN_PROGRESS', { ...args, isProgress: true, type: ProgressTypes.NONSTOP }, resolve);
     });
   },
   openSteppingProgress: (args: IProgressDialog): Promise<void> =>
     new Promise((resolve) => {
       eventEmitter.emit(
         'OPEN_PROGRESS',
-        { ...args, isProgress: true, percentage: args.percentage || 0, type: ProgressConstants.STEPPING },
+        { ...args, isProgress: true, percentage: args.percentage || 0, type: ProgressTypes.STEPPING },
         resolve,
       );
     }),

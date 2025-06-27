@@ -6,8 +6,7 @@ jest.mock('@core/helpers/eventEmitterFactory', () => ({
   }),
 }));
 
-import ProgressConstants from '@core/app/constants/progress-constants';
-
+import { ProgressTypes } from '@core/interfaces/IProgress';
 import progressCaller from './progress-caller';
 
 describe('test progress-caller', () => {
@@ -19,7 +18,6 @@ describe('test progress-caller', () => {
     progressCaller.openNonstopProgress({
       caption: 'flux caption',
       id: '12345',
-      type: 'flux progress',
     });
     expect(mockEmit).toHaveBeenCalledTimes(1);
     expect(mockEmit).toHaveBeenNthCalledWith(
@@ -29,7 +27,7 @@ describe('test progress-caller', () => {
         caption: 'flux caption',
         id: '12345',
         isProgress: true,
-        type: ProgressConstants.NONSTOP,
+        type: ProgressTypes.NONSTOP,
       },
       expect.anything(),
     );
@@ -37,7 +35,6 @@ describe('test progress-caller', () => {
     progressCaller.openNonstopProgress({
       id: '12345',
       message: 'flux message',
-      type: 'flux progress',
     });
     expect(mockEmit).toHaveBeenCalledTimes(2);
     expect(mockEmit).toHaveBeenNthCalledWith(
@@ -48,7 +45,7 @@ describe('test progress-caller', () => {
         id: '12345',
         isProgress: true,
         message: 'flux message',
-        type: ProgressConstants.NONSTOP,
+        type: ProgressTypes.NONSTOP,
       },
       expect.anything(),
     );
@@ -58,7 +55,6 @@ describe('test progress-caller', () => {
     progressCaller.openSteppingProgress({
       id: '12345',
       percentage: 100,
-      type: 'flux progress',
     });
     expect(mockEmit).toHaveBeenCalledTimes(1);
     expect(mockEmit).toHaveBeenNthCalledWith(
@@ -68,14 +64,13 @@ describe('test progress-caller', () => {
         id: '12345',
         isProgress: true,
         percentage: 100,
-        type: ProgressConstants.STEPPING,
+        type: ProgressTypes.STEPPING,
       },
       expect.anything(),
     );
 
     progressCaller.openSteppingProgress({
       id: '12345',
-      type: 'flux progress',
     });
     expect(mockEmit).toHaveBeenCalledTimes(2);
     expect(mockEmit).toHaveBeenNthCalledWith(
@@ -85,7 +80,7 @@ describe('test progress-caller', () => {
         id: '12345',
         isProgress: true,
         percentage: 0,
-        type: ProgressConstants.STEPPING,
+        type: ProgressTypes.STEPPING,
       },
       expect.anything(),
     );
@@ -106,12 +101,12 @@ describe('test progress-caller', () => {
   test('test popById', () => {
     progressCaller.update('12345', {
       id: '12345',
-      type: 'flux progress',
+      type: ProgressTypes.STEPPING,
     });
     expect(mockEmit).toHaveBeenCalledTimes(1);
     expect(mockEmit).toHaveBeenNthCalledWith(1, 'UPDATE_PROGRESS', '12345', {
       id: '12345',
-      type: 'flux progress',
+      type: ProgressTypes.STEPPING,
     });
   });
 });

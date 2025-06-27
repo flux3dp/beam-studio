@@ -5,10 +5,10 @@ import { act } from 'react-dom/test-utils';
 
 import { MessageLevel } from '@core/app/actions/message-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
-import ProgressConstants from '@core/app/constants/progress-constants';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
 import { AlertProgressContext, AlertProgressContextProvider } from './AlertProgressContext';
+import { ProgressTypes } from '@core/interfaces/IProgress';
 
 jest.mock('@core/helpers/i18n', () => ({
   lang: {
@@ -64,7 +64,7 @@ test('should render correctly', async () => {
       caption: 'preparing',
       id: 'check-status',
       isProgress: true,
-      type: ProgressConstants.NONSTOP,
+      type: ProgressTypes.NONSTOP,
     });
   });
   act(() => {
@@ -73,7 +73,7 @@ test('should render correctly', async () => {
       isProgress: true,
       message: 'downloading',
       percentage: 0,
-      type: ProgressConstants.STEPPING,
+      type: ProgressTypes.STEPPING,
     });
   });
   expect(container).toMatchSnapshot();

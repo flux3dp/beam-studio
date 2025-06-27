@@ -4,13 +4,12 @@ import type { MessageInstance } from 'antd/es/message/interface';
 
 import { MessageLevel } from '@core/app/actions/message-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
-import ProgressConstants from '@core/app/constants/progress-constants';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
 import type { IAlert } from '@core/interfaces/IAlert';
 import type { IButton } from '@core/interfaces/IButton';
 import type { IMessage } from '@core/interfaces/IMessage';
-import type { IProgressDialog } from '@core/interfaces/IProgress';
+import { type IProgressDialog, ProgressTypes } from '@core/interfaces/IProgress';
 
 const LANG = i18n.lang.alert;
 
@@ -191,7 +190,7 @@ export class AlertProgressContextProvider extends React.Component<Props, State> 
 
       const targetObject = targetObjects[targetObjects.length - 1];
 
-      if (targetObject.type === ProgressConstants.NONSTOP && !args.caption && args.message) {
+      if (targetObject.type === ProgressTypes.NONSTOP && !args.caption && args.message) {
         args.caption = args.message;
       }
 
