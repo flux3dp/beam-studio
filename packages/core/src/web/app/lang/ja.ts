@@ -1566,6 +1566,8 @@ const lang: ILang = {
       auto_focus_instruction: 'モジュールヘッドをオブジェクトの上に移動し、アニメーションの指示に従ってAFを押してフォーカスしてください。',
       camera_preview: 'カメラプレビュー',
       enter_manually: '手動で入力',
+      getting_focal_distance: '焦点距離を取得中...',
+      moving_to_preview_position: 'プレビュー位置に移動中...',
       please_enter_height: '正確なカメラショットを撮影するために、物体の高さを入力してください。',
     },
     promark_disconnected: '#850 デバイスの接続が中断されました。デバイスの接続状態を確認してください。',

@@ -1557,6 +1557,8 @@ export interface ILang {
       auto_focus_instruction: string;
       camera_preview: string;
       enter_manually: string;
+      getting_focal_distance: string;
+      moving_to_preview_position: string;
       please_enter_height: string;
     };
     promark_disconnected: string;

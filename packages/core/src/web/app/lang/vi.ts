@@ -1566,6 +1566,8 @@ const lang: ILang = {
       auto_focus_instruction: 'Vui lòng di chuyển đầu mô-đun laser phía trên vật thể, và làm theo hướng dẫn hoạt ảnh để nhấn AF để lấy nét.',
       camera_preview: 'Xem trước Camera',
       enter_manually: 'Nhập thủ công',
+      getting_focal_distance: 'Đang lấy khoảng cách tiêu cự...',
+      moving_to_preview_position: 'Đang di chuyển đến vị trí xem trước...',
       please_enter_height: 'Vui lòng nhập chiều cao của vật thể. Để chụp ảnh camera chính xác.',
     },
     promark_disconnected: '#850 Kết nối thiết bị bị gián đoạn, vui lòng kiểm tra trạng thái kết nối của thiết bị.',

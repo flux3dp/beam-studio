@@ -1566,6 +1566,8 @@ const lang: ILang = {
       auto_focus_instruction: 'Por favor, mova o módulo laser acima do objeto e siga as instruções de animação para pressionar AF para focar.',
       camera_preview: 'Visualização da Câmera',
       enter_manually: 'Inserir Manualmente',
+      getting_focal_distance: 'Obtendo distância focal...',
+      moving_to_preview_position: 'Movendo para a posição de visualização...',
       please_enter_height: 'Por favor, insira a altura do objeto para capturar a imagem da câmera com precisão.',
     },
     promark_disconnected: '#850 Conexão do dispositivo interrompida, por favor verifique o estado da conexão.',

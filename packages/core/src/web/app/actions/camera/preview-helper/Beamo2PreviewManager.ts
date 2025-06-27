@@ -68,6 +68,8 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
     const { lang } = i18n;
 
     try {
+      progressCaller.update(this.progressId, { percentage: 20 });
+
       if (!this.fisheyeParams) {
         try {
           this.fisheyeParams = (await deviceMaster.fetchFisheyeParams()) as FisheyeCameraParametersV4;
@@ -78,6 +80,7 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
       }
 
       this.fisheyePreviewManager = new FisheyePreviewManagerV4(this.device, this.fisheyeParams, this.grid);
+      progressCaller.update(this.progressId, { percentage: 40 });
 
       const workarea = getWorkarea(this.device.model, 'fbm2');
       const { cameraCenter } = workarea;
@@ -86,6 +89,7 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
         cameraPosition: cameraCenter,
         height: 0,
         progressId: this.progressId,
+        progressRange: [40, 100],
       });
     } catch (error) {
       await this.handleSetupError(error);
@@ -109,13 +113,13 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
     const { lang } = i18n;
 
     try {
-      progressCaller.openNonstopProgress({
+      progressCaller.openSteppingProgress({
         id: this.progressId,
         message: sprintf(lang.message.connectingMachine, this.device.name),
       });
       await deviceMaster.connectCamera();
 
-      const res = this.setUpCamera();
+      const res = await this.setUpCamera();
 
       return res;
     } catch (error) {

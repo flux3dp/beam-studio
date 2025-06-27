@@ -1566,6 +1566,8 @@ const lang: ILang = {
       auto_focus_instruction: '레이저 모듈 헤드를 물체 위로 이동하고 포커스를 맞추려면 애니메이션 지침을 따라 주십시오.',
       camera_preview: '카메라 미리보기',
       enter_manually: '수동 입력',
+      getting_focal_distance: '초점 거리 측정 중...',
+      moving_to_preview_position: '미리보기 위치로 이동 중...',
       please_enter_height: '물체의 높이를 입력하여 정확한 카메라 촬영을 위해.',
     },
     promark_disconnected: '#850 장치 연결이 중단되었습니다. 장치의 연결 상태를 확인하세요.',

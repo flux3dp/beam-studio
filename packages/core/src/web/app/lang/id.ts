@@ -1566,6 +1566,8 @@ const lang: ILang = {
       auto_focus_instruction: 'Harap pindahkan kepala modul laser di atas objek, dan ikuti petunjuk animasi untuk menekan AF untuk memfokuskan.',
       camera_preview: 'Pratinjau Kamera',
       enter_manually: 'Masukkan Secara Manual',
+      getting_focal_distance: 'Mengambil jarak fokus...',
+      moving_to_preview_position: 'Memindahkan ke posisi pratinjau...',
       please_enter_height: 'Silakan masukkan tinggi objek agar dapat mengambil gambar kamera yang akurat.',
     },
     promark_disconnected: '#850 Koneksi perangkat terputus, periksa status koneksi perangkat.',

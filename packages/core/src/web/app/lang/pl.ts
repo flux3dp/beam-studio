@@ -1566,6 +1566,8 @@ const lang: ILang = {
       auto_focus_instruction: 'Przesuń głowicę modułu laserowego nad obiekt i postępuj zgodnie z instrukcjami animacji, aby nacisnąć przycisk AF w celu ustawienia ostrości.',
       camera_preview: 'Kamera Zapowiedź',
       enter_manually: 'Wprowadzić ręcznie',
+      getting_focal_distance: 'Pobieranie odległości ogniskowej...',
+      moving_to_preview_position: 'Przenoszenie do pozycji podglądu...',
       please_enter_height: 'Proszę podać wysokość obiektu. Aby uchwycić precyzyjne ujęcie kamery.',
     },
     promark_disconnected: '#850 Połączenie z urządzeniem zostało przerwane, sprawdź status połączenia.',

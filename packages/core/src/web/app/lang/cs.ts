@@ -1566,6 +1566,8 @@ const lang: ILang = {
       auto_focus_instruction: 'Přesuňte prosím hlavici laserového modulu nad objekt a následujte instrukce k stisknutí AF pro fokus.',
       camera_preview: 'Náhled kamery',
       enter_manually: 'Vložit manuálně',
+      getting_focal_distance: 'Získávání ohniskové vzdálenosti...',
+      moving_to_preview_position: 'Přesouvání do náhledové pozice...',
       please_enter_height: 'Zadejte prosím výšku objektu, aby kamera zachytila přesný záběr.',
     },
     promark_disconnected: '#850 Připojení zařízení bylo přerušeno, zkontrolujte stav připojení zařízení.',

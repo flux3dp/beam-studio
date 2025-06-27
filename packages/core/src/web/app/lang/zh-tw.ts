@@ -1566,6 +1566,8 @@ const lang: ILang = {
       auto_focus_instruction: '請將雷射模組頭移至物體上方，並依照動畫指示按下AF進行對焦。',
       camera_preview: '相機預覽',
       enter_manually: '手動輸入',
+      getting_focal_distance: '正在取得焦距...',
+      moving_to_preview_position: '正在移動至相機預覽位置...',
       please_enter_height: '請輸入物體的高度，以拍攝精確的相機照片。',
     },
     promark_disconnected: '#850 設備連線中斷，請確認設備的連線狀態。',

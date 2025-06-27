@@ -1566,6 +1566,8 @@ const lang: ILang = {
       auto_focus_instruction: "Spostare il modulo laser sopra l'oggetto e seguire le istruzioni animate per premere AF per mettere a fuoco.",
       camera_preview: 'Anteprima fotocamera',
       enter_manually: 'Inserisci manualmente',
+      getting_focal_distance: 'Ottenimento della distanza focale...',
+      moving_to_preview_position: 'Spostamento nella posizione di anteprima...',
       please_enter_height: "Inserire l'altezza dell'oggetto. Per catturare uno scatto di fotocamera preciso.",
     },
     promark_disconnected: '#850 Connessione al dispositivo interrotta, controlla lo stato della connessione del dispositivo.',

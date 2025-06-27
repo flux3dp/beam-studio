@@ -1566,6 +1566,8 @@ const lang: ILang = {
       auto_focus_instruction: 'Por favor, mueva la cabeza del módulo láser sobre el objeto y siga las instrucciones de la animación para presionar AF y enfocar.',
       camera_preview: 'Vista de la cámara',
       enter_manually: 'Introducir manualmente',
+      getting_focal_distance: 'Obteniendo distancia focal...',
+      moving_to_preview_position: 'Moviéndose a la posición de vista previa...',
       please_enter_height: 'Por favor, ingrese la altura del objeto para capturar una toma precisa de la cámara.',
     },
     promark_disconnected: '#850 La conexión del dispositivo se ha interrumpido, por favor revise el estado de la conexión.',

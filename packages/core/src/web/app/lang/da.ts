@@ -1566,6 +1566,8 @@ const lang: ILang = {
       auto_focus_instruction: 'Flyt venligst lasermodulet over objektet og følg anvisningerne for at trykke på AF for at fokusere.',
       camera_preview: 'Kamera forhåndsvisning',
       enter_manually: 'Indtast manuelt',
+      getting_focal_distance: 'Henter brændvidde...',
+      moving_to_preview_position: 'Flytter til forhåndsvisningsposition...',
       please_enter_height: 'Angiv venligst objektets højde. For at optage et præcist kamerabillede.',
     },
     promark_disconnected: '#850 Forbindelsen til enheden blev afbrudt, kontroller enhedens forbindelsesstatus.',
