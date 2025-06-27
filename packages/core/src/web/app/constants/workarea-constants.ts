@@ -1,6 +1,7 @@
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
 import isDev from '@core/helpers/is-dev';
+import type { TAccelerationOverride } from '@core/interfaces/ITaskConfig';
 
 import { LayerModule, type LayerModuleType } from './layer-module/layer-modules';
 
@@ -35,6 +36,7 @@ export const workAreaSet = new Set(workArea);
 const { dpmm } = constant;
 
 export interface WorkArea {
+  accOverride?: TAccelerationOverride;
   autoFocusOffset?: number[]; // [mm, mm]
   autoShrink?: number;
   cameraCenter?: number[]; // [mm, mm]
@@ -58,6 +60,7 @@ export interface WorkArea {
 }
 
 const hexaRfWorkAreaInfo: WorkArea = {
+  accOverride: { path: { x: 1000, y: 1000 } },
   autoFocusOffset: [31.13, 1.2, 6.5],
   autoShrink: 0.05, // TODO: use same value as other machines, may need to adjust
   height: 410,
@@ -74,6 +77,7 @@ const hexaRfWorkAreaInfo: WorkArea = {
 
 export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
   ado1: {
+    accOverride: { path: { x: 500, y: 500 } },
     autoFocusOffset: [20.9, -40.38, 7.5],
     autoShrink: 0.05,
     cameraCenter: [215, 150],
@@ -124,6 +128,7 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     width: 600,
   },
   fbb2: {
+    accOverride: { path: { x: 1000, y: 1000 } },
     autoFocusOffset: [28, 0, 0],
     autoShrink: 0.05,
     cameraCenter: [300, 150],
@@ -151,6 +156,7 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     width: 300,
   },
   fbm2: {
+    accOverride: { path: { x: 500, y: 500 } },
     autoShrink: 0.05, // TODO: use same value as other machines, may need to adjust
     cameraCenter: [180, 7],
     height: 240,
