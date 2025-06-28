@@ -167,7 +167,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
 
   const renderTabButton = (
     { convertToPath, ...options }: TabButtonOptions = {
-      convertToPath: () => convertSvgToPath({ element: elem }),
+      convertToPath: () => convertSvgToPath({ element: elem, isToSelect: true }),
     },
   ): React.JSX.Element => {
     const isFilled = match(elem.getAttribute('fill'))
@@ -268,6 +268,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
         <ActionPanelIcons.Invert />,
         <ActionPanelIcons.Invert />,
       ),
+      offset: renderOffsetButton({ isFullLine: true }),
       potrace: renderButtons(
         'potrace',
         lang.outline,
@@ -326,6 +327,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
           'bg-removal',
           'smartNest',
           'trapezoid',
+          'offset',
         ]
       : [
           'autoFit',
@@ -342,6 +344,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
           'array',
           'potrace',
           'trapezoid',
+          'offset',
         ];
 
     return contentOrder.map((key) => (content as any)[key]);
@@ -457,7 +460,8 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       ),
       renderSmartNestButton(),
       renderArrayButton({ isFullLine: true }),
-      renderTabButton({ convertToPath: () => convertUseToPath({ element: elem }) }),
+      renderOffsetButton({ isFullLine: true }),
+      renderTabButton({ convertToPath: () => convertUseToPath({ element: elem, isToSelect: true }) }),
     ];
   };
 
@@ -470,7 +474,6 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
 
   const renderMultiSelectActions = (): React.JSX.Element[] => {
     const children = Array.from(elem.childNodes);
-    const supportOffset = children.every((child: ChildNode) => !['image', 'use'].includes(child.nodeName));
     const appendOptionalButtons = (buttons: React.JSX.Element[]) => {
       const text = children.find((child) => child.nodeName === 'text') as SVGElement;
       const pathLike = children.find((child) =>
@@ -511,15 +514,8 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     let content: React.JSX.Element[] = [];
 
     appendOptionalButtons(content);
-    content = [
-      renderAutoFitButton(),
-      ...content,
-      renderSmartNestButton(),
-      renderOffsetButton({ isDisabled: !supportOffset }),
-      renderArrayButton(),
-    ];
 
-    return content;
+    return [renderAutoFitButton(), ...content, renderSmartNestButton(), renderOffsetButton(), renderArrayButton()];
   };
 
   const content = match(elem?.tagName.toLowerCase())

@@ -613,11 +613,11 @@ const potrace = async (elem?: SVGImageElement): Promise<void> => {
         const pathD = child.getAttribute('d');
 
         if (isTransparentBackground) {
-          const longestPath = pathD.split('M').reduce((a, b) => (a.length > b.length ? a : b));
+          const longestPath = pathD!.split('M').reduce((a, b) => (a.length > b.length ? a : b));
 
           d = `M${longestPath}`;
         } else {
-          d = pathD;
+          d = pathD!;
         }
       }
     }
