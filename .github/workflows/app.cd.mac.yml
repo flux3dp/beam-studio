@@ -94,7 +94,7 @@ jobs:
 
       - name: Build Beam Studio
         run: |
-          pnpm -r install
+          pnpm -r install --filter=app --filter=core
           pnpm dlx nx run app:build
 
       # It is said codesign --deep is not a good practice, but it is the only way to sign Swiftray successfully
