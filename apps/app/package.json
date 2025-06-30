@@ -109,12 +109,20 @@
         {
           "target": "dmg",
           "arch": [
-            "universal"
+            "x64",
+            "arm64"
           ]
         }
       ],
       "icon": "public/logo.icns",
-      "asarUnpack": "**/*.node"
+      "asarUnpack": "**/*.node",
+      "publish": [
+        {
+          "provider": "s3",
+          "bucket": "beamstudio",
+          "path": "/${os}-${arch}${env.PUBLISH_SUFFIX}"
+        }
+      ]
     },
     "linux": {
       "category": "Graphics",
