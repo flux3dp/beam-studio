@@ -152,7 +152,7 @@ const ModuleBlock = (): React.ReactNode => {
           writeDataLayer(layer, 'printingSpeed', moduleBaseConfig[newVal]?.printingSpeed ?? baseConfig.printingSpeed, {
             batchCmd,
           });
-          writeDataLayer(layer, 'ink', baseConfig.ink, { batchCmd });
+          writeDataLayer(layer, 'ink', moduleBaseConfig[newVal]?.ink ?? baseConfig.ink, { batchCmd });
           writeDataLayer(layer, 'multipass', moduleBaseConfig[newVal]?.multipass ?? baseConfig.multipass, { batchCmd });
         }
       } else if (newPreset !== oldPreset) {

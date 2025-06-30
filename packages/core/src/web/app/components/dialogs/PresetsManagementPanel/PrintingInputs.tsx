@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 
 import classNames from 'classnames';
 
-import configOptions, { getSpeedOptions } from '@core/app/constants/config-options';
+import configOptions, { getSaturationOptions, getSpeedOptions } from '@core/app/constants/config-options';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import Select from '@core/app/widgets/AntdSelect';
 import UnitInput from '@core/app/widgets/UnitInput';
@@ -35,7 +35,7 @@ const PrintingInputs = ({
   const { multipassOptions, saturationOptions, speedOptions } = useMemo(
     () => ({
       multipassOptions: configOptions.multipassOptions,
-      saturationOptions: configOptions.getSaturationOptions(lang),
+      saturationOptions: getSaturationOptions(lang, preset.module),
       speedOptions: getSpeedOptions(lang, preset.module),
     }),
     [lang, preset.module],
@@ -49,7 +49,7 @@ const PrintingInputs = ({
         <div>
           <div className={styles.field}>
             <div className={styles.label}>{tLaserPanel.ink_saturation}</div>
-            {simpleMode ? (
+            {simpleMode && saturationOptions ? (
               <Select
                 className={styles.select}
                 disabled={preset.isDefault}
