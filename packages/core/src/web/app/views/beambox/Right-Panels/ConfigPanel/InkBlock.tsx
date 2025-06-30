@@ -2,9 +2,12 @@ import React, { memo, useCallback, useContext, useMemo, useState } from 'react';
 
 import { Button, Popover } from 'antd-mobile';
 import classNames from 'classnames';
+import { match } from 'ts-pattern';
 
 import { PrintingColors } from '@core/app/constants/color-constants';
-import configOptions from '@core/app/constants/config-options';
+import { getSaturationOptions, getWhiteSaturationOptions } from '@core/app/constants/config-options';
+import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
@@ -31,13 +34,12 @@ getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
 
-const MAX_VALUE = 15;
 const MIN_VALUE = 1;
 
 function InkBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.JSX.Element {
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
-  const { change, color, fullcolor, ink } = useConfigPanelStore();
+  const { change, color, fullcolor, ink, module: layerModule } = useConfigPanelStore();
   const { selectedLayers } = useContext(ConfigPanelContext);
   const simpleMode = !useBeamboxPreference('print-advanced-mode');
   const { activeKey } = useContext(ObjectPanelContext);
@@ -61,11 +63,16 @@ function InkBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-it
     if (!simpleMode) return undefined;
 
     if (color.value === PrintingColors.WHITE) {
-      return configOptions.getWhiteSaturationOptions(lang);
+      return getWhiteSaturationOptions(lang, layerModule.value);
     }
 
-    return configOptions.getSaturationOptions(lang);
-  }, [simpleMode, color.value, lang]);
+    return getSaturationOptions(lang, layerModule.value);
+  }, [simpleMode, color.value, lang, layerModule.value]);
+  const [maxValue, unit] = useMemo(() => {
+    return match<LayerModuleType, [number, string | undefined]>(layerModule.value)
+      .with(LayerModule.PRINTER_4C, () => [100, '%'])
+      .otherwise(() => [15, undefined]);
+  }, [layerModule.value]);
   const openModal = useCallback(() => setShowModal(true), []);
   const closeModal = useCallback(() => setShowModal(false), []);
 
@@ -82,16 +89,17 @@ function InkBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-it
       <ConfigValueDisplay
         hasMultiValue={ink.hasMultiValue}
         inputId="saturation-input"
-        max={MAX_VALUE}
+        max={maxValue}
         min={MIN_VALUE}
         onChange={handleChange}
         options={sliderOptions}
         type={type}
+        unit={unit}
         value={ink.value}
       />
       <ConfigSlider
         id="saturation"
-        max={MAX_VALUE}
+        max={maxValue}
         min={MIN_VALUE}
         onChange={handleChange}
         options={sliderOptions}
