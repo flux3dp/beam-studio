@@ -95,6 +95,7 @@ const mockInitState = jest.fn();
 jest.mock('./initState', () => mockInitState);
 
 import InkBlock from './InkBlock';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 
 const mockSelectedLayers = ['layer1', 'layer2'];
 const mockUseConfigPanelStore = jest.fn();
@@ -119,6 +120,7 @@ describe('test InkBlock', () => {
       color: { hasMultiValue: false, value: PrintingColors.CYAN },
       fullcolor: { hasMultiValue: false, value: true },
       ink: { hasMultiValue: false, value: 7 },
+      module: { hasMultiValue: false, value: LayerModule.PRINTER },
     });
     mockUseBeamboxPreference.mockReturnValue(false);
   });
