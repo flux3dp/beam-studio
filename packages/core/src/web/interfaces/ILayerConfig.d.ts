@@ -34,6 +34,9 @@ type PrintingConfig = {
   cRatio: number;
   fullcolor: boolean;
   halftone: number;
+  /**
+   * 1 ~ 9 for ador Printer, 0 ~ 100 for 4c Printer.
+   */
   ink: number;
   kRatio: number;
   mRatio: number;

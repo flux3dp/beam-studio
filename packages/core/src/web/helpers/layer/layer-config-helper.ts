@@ -118,6 +118,7 @@ export const moduleBaseConfig: Partial<Record<LayerModuleType, Partial<Omit<Conf
   [LayerModule.PRINTER_4C]: {
     amDensity: 5,
     halftone: 2,
+    ink: 70,
     printingSpeed: 15,
   },
 };
@@ -459,11 +460,11 @@ export const cloneLayerConfig = (targetLayerName: string, baseLayerName: string)
     if (targetLayer) {
       for (const key of keys) {
         if (booleanConfig.includes(key)) {
-          if (getData(baseLayer, key)) writeDataLayer(targetLayer, key, true);
+          if (getData(baseLayer, key)) writeDataLayer(targetLayer, key, true, { shouldApplyModuleBaseConfig: false });
         } else {
           const value = getData(baseLayer, key);
 
-          if (value) writeDataLayer(targetLayer, key, value);
+          if (value) writeDataLayer(targetLayer, key, value, { shouldApplyModuleBaseConfig: false });
         }
       }
       updateLayerColorFilter(targetLayer as SVGGElement);

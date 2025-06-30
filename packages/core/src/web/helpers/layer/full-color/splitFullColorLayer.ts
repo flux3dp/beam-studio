@@ -118,6 +118,25 @@ const splitFullColorLayer = async (
 
       batchCmd.addSubCommand(cmd);
       writeDataLayer(newLayer, 'split', true);
+
+      const CMYK_FIXED_RATIO = 0.9; // compensation for 4C printing, to avoid over saturation
+
+      const cRatio = getData(layer, 'cRatio');
+
+      if (cRatio) writeDataLayer(newLayer, 'cRatio', cRatio * CMYK_FIXED_RATIO);
+
+      const mRatio = getData(layer, 'mRatio');
+
+      if (mRatio) writeDataLayer(newLayer, 'mRatio', mRatio * CMYK_FIXED_RATIO);
+
+      const yRatio = getData(layer, 'yRatio');
+
+      if (yRatio) writeDataLayer(newLayer, 'yRatio', yRatio * CMYK_FIXED_RATIO);
+
+      const kRatio = getData(layer, 'kRatio');
+
+      if (kRatio) writeDataLayer(newLayer, 'kRatio', kRatio * CMYK_FIXED_RATIO);
+
       for (const { color, data } of colorData) {
         if (!data || color === PrintingColors.WHITE) continue;
 

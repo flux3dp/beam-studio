@@ -10,28 +10,43 @@ const multipassOptions: ConfigOption[] = [{ value: 2 }, { value: 3 }, { value: 4
 
 const whiteMultipassOptions: ConfigOption[] = [{ value: 3 }, { value: 4 }, { value: 5 }, { value: 6 }, { value: 7 }];
 
-const getSaturationOptions = (lang: ILang): ConfigOption[] => {
+export const getSaturationOptions = (
+  lang: ILang,
+  layerModule: LayerModuleType = LayerModule.PRINTER,
+): ConfigOption[] | undefined => {
   const t = lang.beambox.right_panel.laser_panel;
 
-  return [
-    { label: t.slider.very_low, value: 1 },
-    { label: t.slider.low, value: 2 },
-    { label: t.slider.regular, value: 3 },
-    { label: t.slider.high, value: 4 },
-    { label: t.slider.very_high, value: 5 },
-  ];
+  return match(layerModule)
+    .with(LayerModule.PRINTER, () => [
+      { label: t.slider.very_low, value: 1 },
+      { label: t.slider.low, value: 2 },
+      { label: t.slider.regular, value: 3 },
+      { label: t.slider.high, value: 4 },
+      { label: t.slider.very_high, value: 5 },
+    ])
+    .with(LayerModule.PRINTER_4C, () => [
+      { label: t.slider.low, value: 35 },
+      { label: t.slider.regular, value: 70 },
+      { label: t.slider.high, value: 100 },
+    ])
+    .otherwise(() => undefined);
 };
 
-const getWhiteSaturationOptions = (lang: ILang): ConfigOption[] => {
+export const getWhiteSaturationOptions = (
+  lang: ILang,
+  layerModule: LayerModuleType = LayerModule.PRINTER,
+): ConfigOption[] | undefined => {
   const t = lang.beambox.right_panel.laser_panel;
 
-  return [
-    { label: t.slider.very_low, value: 3 },
-    { label: t.slider.low, value: 6 },
-    { label: t.slider.regular, value: 9 },
-    { label: t.slider.high, value: 12 },
-    { label: t.slider.very_high, value: 15 },
-  ];
+  return match(layerModule)
+    .with(LayerModule.PRINTER, () => [
+      { label: t.slider.very_low, value: 3 },
+      { label: t.slider.low, value: 6 },
+      { label: t.slider.regular, value: 9 },
+      { label: t.slider.high, value: 12 },
+      { label: t.slider.very_high, value: 15 },
+    ])
+    .otherwise(() => undefined);
 };
 
 export const getSpeedOptions = (
