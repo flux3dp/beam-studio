@@ -81,7 +81,7 @@ jobs:
 
       - name: Build Beam Studio
         run: |
-          pnpm -r install --filter=app --filter=core
+          pnpm -r install
           pnpm dlx nx run app:build
 
       - name: Sign and Publish
