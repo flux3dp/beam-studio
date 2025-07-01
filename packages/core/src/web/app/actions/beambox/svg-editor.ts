@@ -1350,23 +1350,6 @@ const svgEditor = (window['svgEditor'] = (function () {
     editor.triggerGridTool = triggerGridTool;
 
     let triggerOffsetTool = function () {
-      if (selectedElement.tagName === 'g' && selectedElement.getAttribute('data-tempgroup') === 'true') {
-        const childs: HTMLElement[] = Array.from(selectedElement.childNodes);
-        const supportOffset = childs.every((child) => {
-          return !['image', 'use'].includes(child.tagName);
-        });
-
-        if (!supportOffset) {
-          Alert.popUp({
-            caption: LANG.tool_panels.offset,
-            id: 'Offset not support',
-            message: LANG.tool_panels._offset.not_support_message,
-          });
-
-          return;
-        }
-      }
-
       if (selectedElement != null || multiselected) {
         ToolPanelsController.setVisibility(ToolPanelsController.type != 'offset' || !ToolPanelsController.isVisible);
         ToolPanelsController.setType('offset');

@@ -1,5 +1,5 @@
 import fontFuncs from '@core/app/actions/beambox/font-funcs';
-import { BatchCommand } from '@core/app/svgedit/history/history';
+import history, { BatchCommand } from '@core/app/svgedit/history/history';
 import { deleteElements } from '@core/app/svgedit/operations/delete';
 import disassembleUse from '@core/app/svgedit/operations/disassembleUse';
 import textActions from '@core/app/svgedit/text/textactions';
@@ -15,24 +15,31 @@ type ConvertToPathResult = {
 };
 
 let svgCanvas: ISVGCanvas;
+let svgedit: any;
 
-getSVGAsync(({ Canvas }) => {
+getSVGAsync(({ Canvas, Edit }) => {
   svgCanvas = Canvas;
+  svgedit = Edit;
 });
 
 export const convertSvgToPath = async ({
   element,
+  isToSelect = false,
   parentCommand = new BatchCommand('convertSvgToPath'),
 }: {
   element: SVGElement;
+  isToSelect?: boolean;
   parentCommand?: IBatchCommand;
 }): Promise<ConvertToPathResult> => {
   const { cmd, path } = svgCanvas.convertToPath(element, true);
 
-  svgCanvas.selectOnly([path]);
+  if (isToSelect) {
+    svgCanvas.selectOnly([path]);
+  }
+
   parentCommand.addSubCommand(cmd);
 
-  return { bbox: path.getBBox(), command: parentCommand };
+  return { bbox: path.getBBox(), command: parentCommand, path };
 };
 
 export const convertTextToPath = async ({
@@ -63,7 +70,13 @@ export const convertTextToPath = async ({
   return { bbox: path?.getBBox()!, command: parentCommand || command || undefined, path: path || undefined };
 };
 
-export const convertUseToPath = async ({ element }: { element: SVGElement }): Promise<ConvertToPathResult> => {
+export const convertUseToPath = async ({
+  element,
+  isToSelect = false,
+}: {
+  element: SVGElement;
+  isToSelect?: boolean;
+}): Promise<ConvertToPathResult> => {
   const command = (await disassembleUse([element], {
     addToHistory: false,
     showProgress: false,
@@ -91,7 +104,38 @@ export const convertUseToPath = async ({ element }: { element: SVGElement }): Pr
   head.setAttribute('d', pathData.join(' '));
   head.removeAttribute('data-next-sibling');
 
-  svgCanvas.selectOnly([head]);
+  if (isToSelect) {
+    svgCanvas.selectOnly([head]);
+  }
 
-  return { bbox: head.getBBox(), command };
+  return { bbox: head.getBBox(), command, path: head };
+};
+
+export const generateImageRect = (element?: SVGImageElement): { command?: IBatchCommand; rect?: SVGElement } => {
+  if (!element) {
+    return { command: undefined, rect: undefined };
+  }
+
+  const batchCommand = new history.BatchCommand('Generate Image Rect');
+  const bbox = element.getBBox();
+  const rotation = svgedit.utilities.getRotationAngle(element);
+  const rect = svgCanvas.addSvgElementFromJson({
+    attr: {
+      fill: 'none',
+      height: bbox.height,
+      id: svgCanvas.getNextId(),
+      rotation,
+      stroke: '#000000',
+      'stroke-width': 1,
+      'vector-effect': 'non-scaling-stroke',
+      width: bbox.width,
+      x: bbox.x,
+      y: bbox.y,
+    },
+    element: 'rect',
+  });
+
+  batchCommand.addSubCommand(new history.InsertElementCommand(rect));
+
+  return { command: batchCommand, rect };
 };
