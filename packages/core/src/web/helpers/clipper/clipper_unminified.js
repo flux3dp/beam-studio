@@ -6509,19 +6509,24 @@
     let currentPath = [];
     let startPoint, controlPoints, cPath, qPath;
     let lastControlPoint = null;
-    for (let i = 0; i < commands.length; ++i) {
-      let points = commands[i].points;
-      if (commands[i].command === 'Z') {
+
+    for (const command of commands) {
+      let points = command.points;
+
+      if (command.command === 'Z') {
         currentPath.push(currentPath[0]);
         resultPaths.push(currentPath);
         currentPath = [];
         continue;
       }
+
       if (rotation.angle !== 0) {
         ClipperLib.rotationPoints(rotation, points);
       }
+
       points = points.map((p) => ({ X: p.X * scale, Y: p.Y * scale }));
-      switch (commands[i].command) {
+
+      switch (command.command) {
         case 'M':
           if (currentPath.length > 0) {
             resultPaths.push(currentPath);
@@ -6555,19 +6560,23 @@
           currentPath.push(...cPath);
           break;
         default:
-          console.log('unknown command', commands[i].command);
+          console.log('unknown command', command.command);
           break;
       }
     }
-    if (currentPath.length > 1) {
+
+    if (currentPath.length > 0) {
       resultPaths.push(currentPath);
     }
+
     return resultPaths;
   };
   ClipperLib.dPathSpliter = function (dPath) {
     let commands = [];
     let lastCommand = dPath.match(/[a-df-z]/i).index;
+
     commands.push({ command: dPath[lastCommand].toUpperCase(), points: [] });
+
     for (let i = lastCommand + 1; i < dPath.length; ++i) {
       if (dPath[i].match(/[a-df-z]/i)) {
         const pointsString = dPath.substring(lastCommand + 1, i);
@@ -6579,7 +6588,11 @@
     }
     const pointsString = dPath.substring(lastCommand + 1);
     const point = ClipperLib.pointStringHandler(pointsString);
+
     commands[commands.length - 1].points = point;
+
+    console.log(commands);
+
     return commands;
   };
   ClipperLib.pointStringHandler = function (pString) {
@@ -6654,30 +6667,34 @@
   ClipperLib.generatePointPathFromC = function (startPoint, controlPoints) {
     const maxDistance = 1000;
     const defaultStep = 10;
-    let cPath = [];
-    let curve = new ClipperLib.CCurve(startPoint, controlPoints);
-    if (curve.isLine) {
-      cPath.push(controlPoints[2]);
-    } else {
-      let lastPoint = { ...startPoint, t: 0 };
-      let stack = [];
-      for (let i = 1; i <= defaultStep; ++i) {
-        stack.push({ ...curve.point(i / defaultStep), t: i / defaultStep });
+    const curve = new ClipperLib.CCurve(startPoint, controlPoints);
 
-        while (stack.length > 0) {
-          const p = stack[stack.length - 1];
-          if (Math.sqrt((p.X - lastPoint.X) ** 2 + (p.Y - lastPoint.Y) ** 2) > maxDistance) {
-            const mid_t = (lastPoint.t + p.t) / 2;
-            stack.push({ ...curve.point(mid_t), t: mid_t });
-          } else {
-            stack.pop();
-            cPath.push({ X: p.X, Y: p.Y });
-            lastPoint = p;
-          }
+    if (curve.isLine) {
+      return [controlPoints[2]];
+    }
+
+    const curvePath = [];
+    const stack = [];
+    let lastPoint = { ...startPoint, t: 0 };
+
+    for (let i = 1; i <= defaultStep; i++) {
+      stack.push({ ...curve.point(i / defaultStep), t: i / defaultStep });
+
+      while (stack.length > 0) {
+        const point = stack[stack.length - 1];
+
+        if (Math.sqrt((point.X - lastPoint.X) ** 2 + (point.Y - lastPoint.Y) ** 2) > maxDistance) {
+          const t = (lastPoint.t + point.t) / 2;
+          stack.push({ ...curve.point(t), t: t });
+        } else {
+          stack.pop();
+          curvePath.push({ X: point.X, Y: point.Y });
+          lastPoint = point;
         }
       }
     }
-    return cPath;
+
+    return curvePath;
   };
   ClipperLib.CCurve = function (startPoint, controlPoints) {
     this.x0 = startPoint.X;
@@ -6689,15 +6706,18 @@
     this.x3 = controlPoints[2].X;
     this.y3 = controlPoints[2].Y;
     this.isLine = false;
+
     if (this.x0 == this.x1 && this.y0 == this.y1 && this.x2 == this.x3 && this.y2 == this.y3) {
       this.isLine = true;
     }
+
     this.point = function (t) {
-      const x =
+      const X =
         this.x0 * (1 - t) ** 3 + 3 * this.x1 * t * (1 - t) ** 2 + 3 * this.x2 * t ** 2 * (1 - t) + this.x3 * t ** 3;
-      const y =
+      const Y =
         this.y0 * (1 - t) ** 3 + 3 * this.y1 * t * (1 - t) ** 2 + 3 * this.y2 * t ** 2 * (1 - t) + this.y3 * t ** 3;
-      return { X: x, Y: y };
+
+      return { X, Y };
     };
   };
 })();

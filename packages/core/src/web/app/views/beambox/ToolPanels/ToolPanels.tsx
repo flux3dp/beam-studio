@@ -58,14 +58,8 @@ interface Props {
 const ToolPanel: React.FC<Props> = ({ data, type, unmount }) => {
   const [rowColumn, setRowColumn] = useState(data.rowcolumn);
   const [distance, setDistance] = useState(data.distance);
-  const [offset, setOffset] = useState<OffsetProp>({ cornerType: 'sharp', distance: 5, mode: 'outward' });
-
-  const nestOptions = useRef({
-    generations: 3,
-    population: 10,
-    rotations: 1,
-    spacing: 0,
-  }).current;
+  const [offset, setOffset] = useState<OffsetProp>({ cornerType: 'sharp', distance: 1, mode: 'expand' });
+  const nestOptions = useRef({ generations: 3, population: 10, rotations: 1, spacing: 0 }).current;
 
   const setArrayRowColumn = (newRowColumn: any) => {
     data.rowcolumn = newRowColumn;
