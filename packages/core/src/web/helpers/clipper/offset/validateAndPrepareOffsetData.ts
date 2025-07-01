@@ -47,10 +47,10 @@ export async function validateAndPrepareOffsetData(currentElems: SVGElement[] | 
       })
       .with({ tagName: 'image' }, async (element) => {
         const { command: subCommand, rect } = generateImageRect(element as SVGImageElement);
-        const { command: subCommand2, path } = await convertSvgToPath({ element: rect!, parentCommand: subCommand });
+        const { path } = await convertSvgToPath({ element: rect!, parentCommand: subCommand });
 
-        if (subCommand2) {
-          command.addSubCommand(subCommand2);
+        if (subCommand) {
+          command.addSubCommand(subCommand);
         }
 
         elementsToOffset.push(path!);
