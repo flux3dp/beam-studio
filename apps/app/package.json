@@ -92,7 +92,7 @@
       {
         "provider": "s3",
         "bucket": "beamstudio",
-        "path": "/${os}${arch}${env.PUBLISH_PATH}${env.PUBLISH_SUFFIX}"
+        "path": "/${os}${env.PUBLISH_PATH}${env.PUBLISH_SUFFIX}"
       }
     ],
     "mac": {
