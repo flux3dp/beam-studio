@@ -114,14 +114,7 @@
         }
       ],
       "icon": "public/logo.icns",
-      "asarUnpack": "**/*.node",
-      "publish": [
-        {
-          "provider": "s3",
-          "bucket": "beamstudio",
-          "path": "/${os}-${arch}${env.PUBLISH_SUFFIX}"
-        }
-      ]
+      "asarUnpack": "**/*.node"
     },
     "linux": {
       "category": "Graphics",
