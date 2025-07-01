@@ -114,7 +114,8 @@
         }
       ],
       "icon": "public/logo.icns",
-      "asarUnpack": "**/*.node"
+      "asarUnpack": "**/*.node",
+      "x64ArchFiles": "*"
     },
     "linux": {
       "category": "Graphics",
