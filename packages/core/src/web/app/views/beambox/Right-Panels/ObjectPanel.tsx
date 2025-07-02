@@ -45,13 +45,9 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
 
     const elems = elem.getAttribute('data-tempgroup') === 'true' ? (Array.from(elem.childNodes) as Element[]) : [elem];
 
-    const allowBooleanOperations = (e: Element) => {
-      if (['ellipse', 'polygon', 'rect'].includes(e.tagName.toLowerCase())) {
-        return true;
-      }
-
-      return e.tagName.toLowerCase() === 'path' && svgCanvas.isElemFillable(e);
-    };
+    const allowBooleanOperations = (element: Element) =>
+      ['ellipse', 'polygon', 'rect'].includes(element.tagName.toLowerCase()) ||
+      (element.tagName.toLowerCase() === 'path' && svgCanvas.isElemFillable(element));
     const isSingleGroup = elems?.length === 1 && elems[0].tagName.toLowerCase() === 'g';
     const isEveryElementAllowBooleanOperations = elems?.every(allowBooleanOperations);
 
