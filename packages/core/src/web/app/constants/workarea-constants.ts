@@ -55,6 +55,7 @@ export interface WorkArea {
   pxHeight: number; // px
   pxWidth: number; // px
   supportedModules?: LayerModuleType[];
+  topExpansion?: number; // px
   vectorSpeedLimit?: number; // mm/s
   width: number; // mm
 }
@@ -173,6 +174,7 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
       LayerModule.LASER_1064,
       LayerModule.UV_PRINT,
     ].filter(Boolean),
+    topExpansion: 300,
     vectorSpeedLimit: 30,
     width: 360,
   },

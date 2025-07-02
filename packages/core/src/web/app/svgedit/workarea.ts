@@ -57,7 +57,8 @@ class WorkareaManager {
   }
 
   setWorkarea(model: WorkAreaModel): void {
-    const rotaryExtended = beamboxPreference.read('rotary_mode') && beamboxPreference.read('extend-rotary-workarea');
+    const isRotaryMode = beamboxPreference.read('rotary_mode');
+    const rotaryExtended = isRotaryMode && beamboxPreference.read('extend-rotary-workarea');
     const addOnInfo = getAddOnInfo(model);
     const passThroughMode = getPassThrough(addOnInfo);
     const autoFeeder = getAutoFeeder(addOnInfo);
@@ -103,9 +104,9 @@ class WorkareaManager {
         this.height += expansion;
         this.expansionType = ExpansionType.AUTO_FEEDER;
       }
-    } else if (model === 'fbm2') {
-      this.expansion = [300, 0];
-      this.height += 300;
+    } else if (workarea.topExpansion && !isRotaryMode) {
+      this.expansion = [workarea.topExpansion, 0];
+      this.height += workarea.topExpansion;
       this.expansionType = ExpansionType.MODULE;
     }
 
