@@ -232,7 +232,7 @@ class PreviewModeBackgroundDrawer {
       const rotaryPreveiwBoundaryText = document.createElementNS(NS.SVG, 'text') as SVGTextElement;
       const textNode = document.createTextNode(LANG.unpreviewable_area);
 
-      rotaryPreveiwBoundaryText.setAttribute('font-size', expansion[1] ? '400' : '200');
+      rotaryPreveiwBoundaryText.setAttribute('font-size', expansion[1] ? '400' : '100');
       rotaryPreveiwBoundaryText.appendChild(textNode);
       this.setTextStyle(rotaryPreveiwBoundaryText);
       boundaryGroup.appendChild(rotaryPreveiwBoundaryText);
