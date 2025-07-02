@@ -32,7 +32,6 @@ export const convertSvgToImage = async (
   const svgData = new XMLSerializer().serializeToString(wrapper);
   const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
   const svgUrl = URL.createObjectURL(blob);
-
   const img = new Image();
 
   await new Promise<void>((resolve, reject) => {
@@ -46,7 +45,6 @@ export const convertSvgToImage = async (
 
   const { height, width } = img;
 
-  // 4. Create the new <image> element
   const newImage = svgCanvas.addSvgElementFromJson({
     attr: {
       'data-source-type': 'svg',
