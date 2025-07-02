@@ -14,7 +14,6 @@ jest.mock('@core/app/svgedit/workarea', () => ({
   get expansion() {
     return mockGetExpansion();
   },
-  model: 'ado1',
   get modelHeight() {
     return mockGetHeight();
   },

@@ -1,5 +1,5 @@
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import constant, { adorModels } from '@core/app/actions/beambox/constant';
+import constant from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
@@ -66,12 +66,10 @@ const generatePresprayArea = (): void => {
   const fixedSizeSvg = document.getElementById('fixedSizeSvg');
 
   if (!fixedSizeSvg!.querySelector('#presprayArea')) {
-    const isAdor = adorModels.has(workareaManager.model);
-
     presprayAreaBlock = document.createElementNS(NS.SVG, 'image') as unknown as SVGImageElement;
     presprayAreaBlock.setAttribute('id', 'presprayArea');
-    presprayAreaBlock.setAttribute('x', isAdor ? '4000' : '3300');
-    presprayAreaBlock.setAttribute('y', isAdor ? '2400' : '1000');
+    presprayAreaBlock.setAttribute('x', '4000');
+    presprayAreaBlock.setAttribute('y', '2400');
     presprayAreaBlock.setAttribute('width', areaWidth.toFixed(0));
     presprayAreaBlock.setAttribute('height', areaHeight.toFixed(0));
     presprayAreaBlock.setAttribute('href', presprayIconUrl);
