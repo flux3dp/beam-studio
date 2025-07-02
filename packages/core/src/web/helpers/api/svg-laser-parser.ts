@@ -118,7 +118,9 @@ export const getExportOpt = (
     const workareaWidth = workareaObj.width;
     const minY = workareaManager.minY / dpmm;
 
-    config.prespray = rotaryMode && !hasJobOrigin ? [workareaWidth - 12, 45, 12, h] : [x, y - minY, w, h];
+    if (model !== 'fbm2') {
+      config.prespray = rotaryMode && !hasJobOrigin ? [workareaWidth - 12, 45, 12, h] : [x, y - minY, w, h];
+    }
 
     if (!isDevMode || BeamboxPreference.read('multipass-compensation')) {
       config.mpc = true;

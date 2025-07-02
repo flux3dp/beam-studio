@@ -1,13 +1,14 @@
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
-import { printingModules } from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
 import presprayIconUrl from '@core/app/icons/prespray.svg?url';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import workareaManager from '@core/app/svgedit/workarea';
 import i18n from '@core/helpers/i18n';
+import { hasModuleLayer } from '@core/helpers/layer-module/layer-module-helper';
 
 let presprayAreaBlock: SVGImageElement;
 
@@ -22,13 +23,7 @@ const round = (num: number, decimal: number): number => {
 
 const togglePresprayArea = (): void => {
   const { model } = workareaManager;
-  const shouldShow =
-    document.querySelectorAll(
-      Array.from(printingModules)
-        .map((module) => `g.layer[data-module="${module}"]:not([display="none"])`)
-        .join(', '),
-    ).length > 0;
-
+  const shouldShow = hasModuleLayer([LayerModule.PRINTER], { checkRepeat: false });
   const rotaryMode = beamboxPreference.read('rotary_mode');
   const hasJobOrigin = beamboxPreference.read('enable-job-origin') && getAddOnInfo(model).jobOrigin;
 
