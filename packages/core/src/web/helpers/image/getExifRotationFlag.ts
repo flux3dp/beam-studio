@@ -1,6 +1,6 @@
 // Get exif rotation data
 // ref: https://stackoverflow.com/questions/7584794/accessing-jpeg-exif-rotation-data-in-javascript-on-the-client-side
-const getExifRotationFlag = (arrayBuffer): number => {
+const getExifRotationFlag = (arrayBuffer: ArrayBuffer): number => {
   const view = new DataView(arrayBuffer);
 
   if (view.getUint16(0, false) !== 0xffd8) {
