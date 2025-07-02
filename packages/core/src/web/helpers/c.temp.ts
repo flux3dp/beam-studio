@@ -11,39 +11,32 @@ getSVGAsync(({ Canvas }) => {
   svgCanvas = Canvas;
 });
 
-type ConvertSvgToImageParams = {
-  offset?: number[];
-  parentCmd?: IBatchCommand;
-  scale?: number;
-  svgElement: SVGGElement;
-};
+/**
+ * Converts an SVG element into an SVG <image> element.
+ * @param svgElement The source SVG element (e.g., <g>, <rect>).
+ * @param opts Options for placement, scaling, and history management.
+ * @returns A promise that resolves with the newly created SVGImageElement.
+ */
+export const convertSvgToImage = async (
+  svgElement: SVGGElement,
+  opts?: { offset?: number[]; parentCmd?: IBatchCommand; scale?: number },
+): Promise<SVGImageElement> => {
+  const { offset = [0, 0], parentCmd, scale = 1 } = opts ?? {};
 
-export const convertSvgToImage = async ({
-  offset = [0, 0],
-  parentCmd,
-  scale = 1,
-  svgElement,
-}: ConvertSvgToImageParams): Promise<SVGImageElement | undefined> => {
   let svgUrl: null | string = null;
 
   try {
     const bbox = svgElement.getBBox();
-    // Create a new <svg> wrapper element to hold the cloned SVG
     const wrapper = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 
     wrapper.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-    wrapper.setAttribute('width', String(bbox.width + 10));
-    wrapper.setAttribute('height', String(bbox.height + 10));
+    // Set width/height on the wrapper for the Image loader to read
+    wrapper.setAttribute('width', String(bbox.width * scale));
+    wrapper.setAttribute('height', String(bbox.height * scale));
+    wrapper.setAttribute('viewBox', `${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}`);
 
     const cloned = svgElement.cloneNode(true) as SVGGraphicsElement;
-    const isFilled = cloned.getAttribute('fill') !== 'none' && cloned.getAttribute('fill') !== null;
 
-    console.log(cloned.getAttribute('fill'), isFilled);
-
-    cloned.setAttribute('fill', '#000');
-    cloned.setAttribute('transform', `translate(${-bbox.x + 5}, ${-bbox.y + 5})`);
-    cloned.setAttribute('stroke', '#000');
-    cloned.setAttribute('stroke-width', String(5));
     wrapper.appendChild(cloned);
 
     const svgData = new XMLSerializer().serializeToString(wrapper);
@@ -51,33 +44,36 @@ export const convertSvgToImage = async ({
 
     svgUrl = URL.createObjectURL(blob);
 
+    // Re-introduce the Image loading step for safety and validation
     const img = new Image();
 
     await new Promise<void>((resolve, reject) => {
       img.onload = () => resolve();
-      img.onerror = () => reject(new Error('Failed to load the generated SVG.'));
+      img.onerror = () => reject(new Error('Failed to load the generated SVG into an image.'));
       img.src = svgUrl!;
     });
 
+    // Now, use the validated dimensions from the loaded image
     const { height, width } = img;
+
     const newImage = svgCanvas.addSvgElementFromJson({
       attr: {
         'data-ratiofixed': true,
         'data-shading': true,
         'data-threshold': 254,
-        height,
+        height, // Use validated height
         id: svgCanvas.getNextId(),
-        origImage: img.src,
-        preserveAspectRatio: 'none',
+        origImage: svgUrl,
+        preserveAspectRatio: 'xMidYMid meet',
         style: 'pointer-events:inherit',
-        width,
+        width, // Use validated width
         x: offset[0],
         y: offset[1],
       },
       element: 'image',
     });
 
-    svgCanvas.setHref(newImage, img.src);
+    svgCanvas.setHref(newImage, svgUrl);
     updateElementColor(newImage);
     svgCanvas.selectOnly([newImage]);
 
@@ -89,7 +85,7 @@ export const convertSvgToImage = async ({
       parentCmd.addSubCommand(cmd);
     }
 
-    if (!offset) {
+    if (!offset.every((v) => v === 0)) {
       svgCanvas.alignSelectedElements('l', 'page');
       svgCanvas.alignSelectedElements('t', 'page');
     }
@@ -97,5 +93,11 @@ export const convertSvgToImage = async ({
     return newImage as SVGImageElement;
   } catch (error) {
     console.error('Failed during SVG to Image conversion:', error);
+    throw error;
+  } finally {
+    // This ensures the blob URL is always revoked
+    if (svgUrl) {
+      URL.revokeObjectURL(svgUrl);
+    }
   }
 };
