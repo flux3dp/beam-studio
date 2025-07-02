@@ -17,6 +17,7 @@ import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import { showRotaryWarped } from '@core/app/views/dialogs/image-edit/RotaryWarped';
 import updateElementColor from '@core/helpers/color/updateElementColor';
+import { convertSvgToImage } from '@core/helpers/convertToImage';
 import { convertSvgToPath, convertTextToPath, convertUseToPath } from '@core/helpers/convertToPath';
 import imageEdit from '@core/helpers/image-edit';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -150,6 +151,19 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       lang.convert_to_path,
       () =>
         isText ? convertTextToPath({ element: elem, isToSelect: true }) : svgCanvas.convertToPath(elem as SVGElement),
+      <ActionPanelIcons.ConvertToPath />,
+      <ActionPanelIcons.ConvertToPathMobile />,
+      { isFullLine: true, mobileLabel: lang.outline, ...opts },
+    );
+
+  const renderConvertToImageButton = ({ isText, ...opts }: ButtonOpts = { isText: false }): React.JSX.Element =>
+    renderButtons(
+      'convert_to_image',
+      'Convert to Image',
+      // lang.convert_to_path,
+      () =>
+        // isText ? convertTextToPath({ element: elem, isToSelect: true }) : svgCanvas.convertToPath(elem as SVGElement),
+        convertSvgToImage(elem),
       <ActionPanelIcons.ConvertToPath />,
       <ActionPanelIcons.ConvertToPathMobile />,
       { isFullLine: true, mobileLabel: lang.outline, ...opts },
@@ -438,6 +452,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
   const renderCommonSvgActions = (): React.JSX.Element[] => [
     renderAutoFitButton(),
     renderConvertToPathButton(),
+    renderConvertToImageButton(),
     renderSmartNestButton(),
     renderOffsetButton(),
     renderArrayButton(),
