@@ -215,6 +215,9 @@ class BeamboxPreferenceClass {
         ) {
           // remove legacy default offsets from development builds
           delete preference['module-offsets'].fbm2;
+        } else if (preference['module-offsets'].fbm2?.[LayerModule.LASER_UNIVERSAL]) {
+          // This is for dev, can be removed after setting default
+          delete preference['module-offsets'].fbm2[LayerModule.LASER_UNIVERSAL];
         }
       }
 
