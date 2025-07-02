@@ -210,7 +210,8 @@ class BeamboxPreferenceClass {
           preference['module-offsets'] = { ado1: preference['module-offsets'] as ModuleOffsets['ado1'] };
         } else if (
           preference['module-offsets'].fbm2 &&
-          !preference['module-offsets'].fbm2[LayerModule.LASER_UNIVERSAL]?.[2]
+          !preference['module-offsets'].fbm2[LayerModule.LASER_UNIVERSAL]?.[2] &&
+          moduleOffsets.fbm2?.[LayerModule.LASER_UNIVERSAL]?.[2]
         ) {
           // remove legacy default offsets from development builds
           delete preference['module-offsets'].fbm2;
