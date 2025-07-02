@@ -19,7 +19,6 @@ export async function performOffsetAndUnionOperations(
   cornerType: 'round' | 'sharp',
 ): Promise<OffsetOperationResult> {
   const ClipperLib = getClipperLib();
-
   const delta: number = match(mode)
     .with(P.union('expand', 'outward', 'inward'), () => distance * SCALE_FACTOR)
     .with('shrink', () => -distance * SCALE_FACTOR)
@@ -78,7 +77,7 @@ export async function performOffsetAndUnionOperations(
       .with({ mode: P.union('expand', 'shrink', 'inward') }, ({ flattenedPaths }) => {
         solutionPaths = flattenedPaths;
       })
-      .with({ mode: 'outward' }, async ({ flattenedPaths }) => {
+      .with({ mode: P.union('outward') }, async ({ flattenedPaths }) => {
         const unionClipper = new ClipperBase('clipper');
         const clipTypeUnion = ClipperLib.ClipType.ctUnion;
         const fillRule = ClipperLib.PolyFillType.pftNonZero;

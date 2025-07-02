@@ -23,11 +23,7 @@ const checkIsPathClosed = (path: Array<{ X: number; Y: number }>): boolean => {
 };
 
 const getEndTypeAndJoinType = (
-  pathInfo: {
-    cornerType: 'round' | 'sharp';
-    isPathClosed: boolean;
-    mode: OffsetMode;
-  },
+  pathInfo: { cornerType: 'round' | 'sharp'; isPathClosed: boolean; mode: OffsetMode },
   ClipperLib: any,
 ): { endType: number; joinType: number } =>
   match(pathInfo)

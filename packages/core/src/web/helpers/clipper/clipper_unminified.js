@@ -6713,9 +6713,17 @@
 
     this.point = function (t) {
       const X =
-        this.x0 * (1 - t) ** 3 + 3 * this.x1 * t * (1 - t) ** 2 + 3 * this.x2 * t ** 2 * (1 - t) + this.x3 * t ** 3;
+        this.x0 * (1 - t) ** 3 +
+        //
+        3 * this.x1 * t * (1 - t) ** 2 +
+        3 * this.x2 * t ** 2 * (1 - t) +
+        this.x3 * t ** 3;
       const Y =
-        this.y0 * (1 - t) ** 3 + 3 * this.y1 * t * (1 - t) ** 2 + 3 * this.y2 * t ** 2 * (1 - t) + this.y3 * t ** 3;
+        this.y0 * (1 - t) ** 3 +
+        //
+        3 * this.y1 * t * (1 - t) ** 2 +
+        3 * this.y2 * t ** 2 * (1 - t) +
+        this.y3 * t ** 3;
 
       return { X, Y };
     };
