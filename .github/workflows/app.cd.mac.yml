@@ -20,6 +20,7 @@ jobs:
         node-version: [22]
         python-version: [3.8]
         os: [macOS-13]
+        target: [x64, arm64]
 
     steps:
       - uses: actions/checkout@v4
@@ -133,11 +134,20 @@ jobs:
 
           chmod -R 777 ./node_modules/font-scanner
 
-          pnpm dlx nx run app:dist --publish always
+          echo "Building for macOS ${BUILD_ARCH}..."
+          if [ "$BUILD_ARCH" = "arm64" ]; then
+            export PUBLISH_PATH="-arm64"
+            pnpm dlx nx run app:dist --arm64 --publish always
+          else
+            pnpm dlx nx run app:dist --x64 --publish always
+          fi
+
+
         env:
           PUBLISH_BUCKET: beamstudio
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          BUILD_ARCH: ${{ matrix.target }}
           PUBLISH_PATH: ""
           PUBLISH_SUFFIX: ${{ github.event.inputs.publish_suffix || '' }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
