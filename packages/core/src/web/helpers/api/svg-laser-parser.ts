@@ -330,6 +330,7 @@ export const getExportOpt = (
       // Always reassign offsets to remove optional boolean values
       offsets[key] = [offsets[key]![0] - offsetX, offsets[key]![1] - offsetY];
     });
+    console.debug('offsets', offsets);
 
     config.mof = offsets as Record<LayerModuleType, [number, number]>;
   }

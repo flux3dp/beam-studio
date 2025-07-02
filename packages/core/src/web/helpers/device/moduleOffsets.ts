@@ -19,6 +19,8 @@ export const getModuleOffsets = ({
   const defaultOffset = moduleOffsets[workarea]?.[module] ?? [0, 0];
   const customOffset = offsets?.[workarea]?.[module] ?? defaultOffset;
 
+  console.debug('get model offset', offsets, moduleOffsets);
+
   return isRelative ? [customOffset[0] - defaultOffset[0], customOffset[1] - defaultOffset[1]] : customOffset;
 };
 
