@@ -13,35 +13,30 @@ getSVGAsync((globalSVG) => {
 });
 
 // TODO: add unit test
-const imageToPngBlob = async (image) =>
+const imageToPngBlob = async (image: HTMLImageElement) =>
   new Promise<Blob>((resolve) => {
     const canvas = document.createElement('canvas');
 
     canvas.width = image.width;
     canvas.height = image.height;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d')!;
 
     ctx.drawImage(image, 0, 0);
     canvas.toBlob((blob) => {
-      resolve(blob);
+      resolve(blob!);
     });
   });
 
 const readBitmapFile = async (
   file: Blob | File,
-  opts?: {
-    gray?: boolean;
-    offset?: number[];
-    parentCmd?: IBatchCommand;
-    scale?: number;
-  },
+  opts?: { gray?: boolean; offset?: number[]; parentCmd?: IBatchCommand; scale?: number },
 ): Promise<SVGImageElement> => {
   const { gray = true, offset = [0, 0], parentCmd } = opts ?? {};
   const reader = new FileReader();
   const arrayBuffer = await new Promise<ArrayBuffer>((resolve) => {
     reader.onloadend = (e) => {
-      resolve(e.target.result as ArrayBuffer);
+      resolve(e.target?.result as ArrayBuffer);
     };
     reader.readAsArrayBuffer(file);
   });
@@ -87,17 +82,10 @@ const readBitmapFile = async (
   }
 
   await new Promise<void>((resolve) => {
-    imageData(newImage.getAttribute('origImage'), {
-      grayscale: gray
-        ? {
-            is_rgba: true,
-            is_shading: true,
-            is_svg: false,
-            threshold: 254,
-          }
-        : undefined,
+    imageData(newImage.getAttribute('origImage')!, {
+      grayscale: gray ? { is_rgba: true, is_shading: true, is_svg: false, threshold: 254 } : undefined,
       height,
-      onComplete: (result) => {
+      onComplete: (result: any) => {
         svgCanvas.setHref(newImage, result.pngBase64);
       },
       rotationFlag,
