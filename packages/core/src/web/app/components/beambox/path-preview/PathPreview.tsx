@@ -613,12 +613,12 @@ class PathPreview extends React.Component<Props, State> {
     this.position = [0, 0];
     this.grid = new Grid();
 
-    let { height, width } = workareaManager;
-    const { model } = workareaManager;
+    let { width } = workareaManager;
+    const { maxY, model } = workareaManager;
     const { dpmm } = constant;
+    const height = maxY / dpmm;
 
     width /= dpmm;
-    height /= dpmm;
 
     if (BeamboxPreference.read('enable-job-origin') && getAddOnInfo(model).jobOrigin) {
       this.jobOrigin = getJobOrigin();

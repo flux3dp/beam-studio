@@ -35,7 +35,7 @@ export default interface ISVGCanvas {
     type: 'b' | 'c' | 'l' | 'm' | 'r' | 't',
     relativeTo: 'largest' | 'page' | 'selected' | 'smallest',
   ): void;
-  assignAttributes(element: HTMLElement, args: any): void;
+  assignAttributes(element: Element, args: any): void;
   bind: (eventName: string, callback: ((win: any, elem: any) => void) | boolean) => void;
   booleanOperationSelectedElements: (type: 'diff' | 'intersect' | 'union' | 'xor', isSubCmd?: boolean) => void;
   calcElemFilledInfo: (elem: Element) => { isAllFilled: boolean; isAnyFilled: boolean };
@@ -112,7 +112,7 @@ export default interface ISVGCanvas {
   getStartTransform: () => any;
   getStrokedBBox(elems: Element[]): IRect;
   getSvgRealLocation: (elem: SVGElement) => IRect;
-  getSvgString: (opts?: { unit?: Units }) => string;
+  getSvgString: (opts?: { fixTopExpansion?: boolean; unit?: Units }) => string;
   getTempGroup: () => SVGGElement;
   getTitle: () => string;
   getVisibleElementsAndBBoxes: (elems?: SVGElement[]) => Array<{ bbox: IRect; elem: Element }>;
@@ -161,7 +161,7 @@ export default interface ISVGCanvas {
   selectOnly: (elems: SVGElement[], showGrips?: boolean) => void;
   selectorManager: SelectorManager;
   sensorAreaInfo: { dx: number; dy: number; elem: SVGElement; x: number; y: number };
-  setBackground: (color: string, url: string) => void;
+  setBackground: (color: string, url?: string) => void;
   setBlur(blurValue: number, shouldComplete: boolean): void;
   setBlurNoUndo(blurValue: number): void;
   setColor: (pickerType: string, color: string, preventUndo?: boolean) => void;

@@ -39,7 +39,7 @@ const AdorModule = ({ unitInputProps }: Props): React.JSX.Element => {
         module,
         offsets: currentModuleOffsets,
         workarea: targetWorkarea,
-      }),
+      }) as [number, number],
     [currentModuleOffsets],
   );
   const editModuleOffsets = useCallback(

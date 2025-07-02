@@ -22,18 +22,6 @@ jest.mock('@core/app/actions/canvas/module-boundary-drawer', () => ({
   update: (...args: any) => mockUpdate(...args),
 }));
 
-const mockOn = jest.fn();
-const mockOff = jest.fn();
-const mockEmit = jest.fn();
-
-jest.mock('@core/helpers/eventEmitterFactory', () => ({
-  createEventEmitter: () => ({
-    emit: (...args) => mockEmit(...args),
-    off: (...args) => mockOff(...args),
-    on: (...args) => mockOn(...args),
-  }),
-}));
-
 const mockGetPresetsList = jest.fn();
 
 jest.mock('@core/helpers/presets/preset-helper', () => ({
@@ -150,7 +138,7 @@ describe('test ModuleBlock', () => {
   });
 
   it('should render correctly', () => {
-    const { container, unmount } = render(
+    const { container } = render(
       <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
         <ModuleBlock />
       </ConfigPanelContext.Provider>,
@@ -159,13 +147,6 @@ describe('test ModuleBlock', () => {
     expect(container).toMatchSnapshot();
     expect(mockUseWorkarea).toHaveBeenCalledTimes(1);
     expect(mockUpdate).toHaveBeenCalledTimes(1);
-    expect(mockUpdate).toHaveBeenLastCalledWith(LayerModule.LASER_10W_DIODE);
-    expect(mockOn).toHaveBeenCalledTimes(1);
-    expect(mockOn).toHaveBeenLastCalledWith('canvas-change', expect.any(Function));
-    expect(mockOff).not.toHaveBeenCalled();
-    unmount();
-    expect(mockOff).toHaveBeenCalledTimes(1);
-    expect(mockOff).toHaveBeenLastCalledWith('canvas-change', expect.any(Function));
   });
 
   it('should not render when workarea does not support module', () => {
@@ -188,8 +169,6 @@ describe('test ModuleBlock', () => {
     );
 
     expect(mockUpdate).toHaveBeenCalledTimes(1);
-    expect(mockUpdate).toHaveBeenLastCalledWith(LayerModule.LASER_10W_DIODE);
-    expect(mockOn).toHaveBeenCalledTimes(1);
     fireEvent.mouseDown(baseElement.querySelector('.ant-select-selector'));
 
     const mockElem = {};
@@ -245,8 +224,6 @@ describe('test ModuleBlock', () => {
     );
 
     expect(mockUpdate).toHaveBeenCalledTimes(1);
-    expect(mockUpdate).toHaveBeenLastCalledWith(LayerModule.LASER_10W_DIODE);
-    expect(mockOn).toHaveBeenCalledTimes(1);
     fireEvent.mouseDown(baseElement.querySelector('.ant-select-selector'));
 
     const mockElem = {};
@@ -296,8 +273,6 @@ describe('test ModuleBlock', () => {
     );
 
     expect(mockUpdate).toHaveBeenCalledTimes(1);
-    expect(mockUpdate).toHaveBeenLastCalledWith(LayerModule.LASER_10W_DIODE);
-    expect(mockOn).toHaveBeenCalledTimes(1);
     fireEvent.mouseDown(baseElement.querySelector('.ant-select-selector'));
 
     const mockElem = {};
@@ -349,8 +324,6 @@ describe('test ModuleBlock', () => {
     );
 
     expect(mockUpdate).toHaveBeenCalledTimes(1);
-    expect(mockUpdate).toHaveBeenLastCalledWith(LayerModule.LASER_10W_DIODE);
-    expect(mockOn).toHaveBeenCalledTimes(1);
     fireEvent.mouseDown(baseElement.querySelector('.ant-select-selector'));
 
     const mockElem1 = { name: 'layer1' };

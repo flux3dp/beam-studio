@@ -39,7 +39,7 @@ const layerToImage = async (
   });
 
   const ratio = dpmm / constant.dpmm;
-  const { height, width } = workareaManager;
+  const { height, minY, width } = workareaManager;
   const canvasWidth = Math.round(width * ratio);
   const canvasHeight = Math.round(height * ratio);
   const svgDefs = findDefs();
@@ -48,7 +48,7 @@ const layerToImage = async (
       <svg
         width="${canvasWidth}"
         height="${canvasHeight}"
-        viewBox="0 0 ${width} ${height}"
+        viewBox="0 ${minY} ${width} ${height}"
         xmlns:svg="http://www.w3.org/2000/svg"
         xmlns="http://www.w3.org/2000/svg"
         xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -150,7 +150,7 @@ const layerToImage = async (
     height: Math.round(bbox.height / ratio),
     width: Math.round(bbox.width / ratio),
     x: Math.round(bbox.x / ratio),
-    y: Math.round(bbox.y / ratio),
+    y: Math.round(bbox.y / ratio) + minY,
   };
   const generateBlob = async (canvas: HTMLCanvasElement): Promise<Blob> => {
     const outCanvas = document.createElement('canvas');

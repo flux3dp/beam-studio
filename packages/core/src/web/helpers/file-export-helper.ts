@@ -48,7 +48,7 @@ const switchSymbolWrapper = <T>(fn: () => T): T => {
 };
 
 const generateBeamThumbnail = async (): Promise<ArrayBuffer | null> => {
-  const { height, width } = workareaManager;
+  const { height, minY, width } = workareaManager;
   const svgContent = document.getElementById('svgcontent') as unknown as SVGSVGElement;
   const bbox = svgContent.getBBox();
 
@@ -57,9 +57,9 @@ const generateBeamThumbnail = async (): Promise<ArrayBuffer | null> => {
     bbox.x = 0;
   }
 
-  if (bbox.y < 0) {
-    bbox.height += bbox.y;
-    bbox.y = 0;
+  if (bbox.y < minY) {
+    bbox.height += bbox.y - minY;
+    bbox.y = minY;
   }
 
   if (bbox.width <= 0 || bbox.height <= 0) {

@@ -5,6 +5,7 @@ import layoutConstants from '@core/app/constants/layout-constants';
 import rotaryConstants from '@core/app/constants/rotary-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import beamboxStore from '@core/app/stores/beambox-store';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
@@ -16,21 +17,42 @@ export const enum ExpansionType {
   ROTARY = 1,
   PASS_THROUGH = 2,
   AUTO_FEEDER = 3,
+  MODULE = 4,
 }
 /* eslint-enable perfectionist/sort-enums */
 
 class WorkareaManager {
   model: WorkAreaModel = 'fbm1';
-  width = 3000; // px
-  height = 2100; // px
+  /**
+   * (px) The width of the work area
+   */
+  width = 3000;
+  /**
+   * (px) Total height of the work area with expansion
+   */
+  height = 2100;
+  /**
+   * (px) The height of the work area without expansion; including fixed bottom expansion for modules
+   */
+  modelHeight = 2100;
+  /**
+   * (px) The minimum Y coordinate of the work area
+   */
+  minY = 0;
+  /**
+   * (px) The maximum Y coordinate of the work area
+   */
+  maxY = 2100;
 
   zoomRatio = 1;
   canvasExpansion = 3; // extra space
   expansion: number[] = [0, 0]; // [top, bottom] in pixel
   expansionType?: ExpansionType;
   lastZoomIn = 0;
+  shouldShowGuide = false;
 
   init(model: WorkAreaModel): void {
+    this.shouldShowGuide = beamboxPreference.read('show_guides');
     this.setWorkarea(model);
   }
 
@@ -45,6 +67,7 @@ class WorkareaManager {
     this.model = model;
     this.width = workarea.pxWidth;
     this.height = workarea.pxDisplayHeight ?? workarea.pxHeight;
+    this.modelHeight = this.height;
     this.expansion = [0, 0];
     this.expansionType = undefined;
 
@@ -80,7 +103,14 @@ class WorkareaManager {
         this.height += expansion;
         this.expansionType = ExpansionType.AUTO_FEEDER;
       }
+    } else if (model === 'fbm2') {
+      this.expansion = [300, 0];
+      this.height += 300;
+      this.expansionType = ExpansionType.MODULE;
     }
+
+    this.minY = -this.expansion[0];
+    this.maxY = this.height - this.expansion[0];
 
     const svgcontent = document.getElementById('svgcontent');
     const fixedSizeSvg = document.getElementById('fixedSizeSvg');
@@ -90,6 +120,8 @@ class WorkareaManager {
     fixedSizeSvg?.setAttribute('viewBox', viewBox);
     this.zoom(this.zoomRatio);
     canvasEvents.emit('canvas-change');
+
+    if (this.shouldShowGuide) beamboxStore.emitDrawGuideLines();
 
     if (modelChanged) canvasEvents.emit('model-changed', model);
   }
@@ -132,6 +164,11 @@ class WorkareaManager {
     canvasBackground?.setAttribute('y', y.toString());
     canvasBackground?.setAttribute('width', w.toString());
     canvasBackground?.setAttribute('height', h.toString());
+
+    const canvasBackgroundRect = document.getElementById('canvasBackgroundRect');
+    const yOffset = this.minY * targetZoom * expansionRatio;
+
+    canvasBackgroundRect?.setAttribute('y', yOffset.toString());
 
     const svgcontent = document.getElementById('svgcontent');
 
@@ -181,7 +218,7 @@ class WorkareaManager {
       return;
     }
 
-    const { height, width } = this;
+    const { height, minY, width } = this;
     const hasRulers = beamboxPreference.read('show_rulers');
     const containerWidth = container.clientWidth - (hasRulers ? layoutConstants.rulerWidth : 0);
     const containerHeight = container.clientHeight - (hasRulers ? layoutConstants.rulerWidth : 0);
@@ -203,7 +240,7 @@ class WorkareaManager {
       const y = Number.parseFloat(background.getAttribute('y') ?? '0');
       const defaultScroll = {
         x: (x - offsetX) / zoomLevel,
-        y: (y - offsetY) / zoomLevel,
+        y: (y - offsetY) / zoomLevel + minY,
       };
 
       workArea.scrollLeft = defaultScroll.x * zoomLevel;

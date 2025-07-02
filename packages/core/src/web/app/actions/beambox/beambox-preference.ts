@@ -204,9 +204,17 @@ class BeamboxPreferenceClass {
         delete preference['vector_speed_contraint'];
       }
 
-      // migrate module-offsets from one level (ador only) to two levels
-      if (preference['module-offsets'] && !preference['module-offsets'].ado1) {
-        preference['module-offsets'] = { ado1: preference['module-offsets'] as ModuleOffsets['ado1'] };
+      if (preference['module-offsets']) {
+        if (!preference['module-offsets'].ado1) {
+          // migrate module-offsets from one level (ador only) to two levels
+          preference['module-offsets'] = { ado1: preference['module-offsets'] as ModuleOffsets['ado1'] };
+        } else if (
+          preference['module-offsets'].fbm2 &&
+          !preference['module-offsets'].fbm2[LayerModule.LASER_UNIVERSAL]?.[2]
+        ) {
+          // remove legacy default offsets from development builds
+          delete preference['module-offsets'].fbm2;
+        }
       }
 
       // update preference from old version (allowing missing fields and used defaults directly)

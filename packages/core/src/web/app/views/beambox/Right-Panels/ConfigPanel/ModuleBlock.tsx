@@ -16,7 +16,6 @@ import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import Select from '@core/app/widgets/AntdSelect';
 import alertConfig from '@core/helpers/api/alert-config';
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import isDev from '@core/helpers/is-dev';
 import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
@@ -53,18 +52,8 @@ const ModuleBlock = (): React.ReactNode => {
   const supportedModules = useMemo(() => getSupportedModules(workarea), [workarea]);
 
   useEffect(() => {
-    const handler = () => moduleBoundaryDrawer.update(value as LayerModuleType);
-
-    handler();
-
-    const canvasEvents = eventEmitterFactory.createEventEmitter('canvas');
-
-    canvasEvents.on('canvas-change', handler);
-
-    return () => {
-      canvasEvents.off('canvas-change', handler);
-    };
-  }, [workarea, value]);
+    moduleBoundaryDrawer.update();
+  }, [value]);
 
   if (supportedModules.length <= 1) return null;
 

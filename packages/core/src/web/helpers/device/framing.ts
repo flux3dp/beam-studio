@@ -57,6 +57,8 @@ type Coordinates = {
   minY: number;
 };
 
+type Task = { isOutOfBounds?: boolean; points: Array<[number, number]> };
+
 let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
@@ -110,7 +112,7 @@ const getCoords = async (mm?: boolean): Promise<Coordinates> => {
     minX: undefined,
     minY: undefined,
   };
-  const { height: workareaHeight, width: workareaWidth } = workareaManager;
+  const { maxY: workareaMaxY, minY: workareaMinY, width: workareaWidth } = workareaManager;
   const allLayers = getAllLayers();
   const { dpmm } = constant;
 
@@ -132,9 +134,9 @@ const getCoords = async (mm?: boolean): Promise<Coordinates> => {
 
       if (
         right < 0 ||
-        bottom < 0 ||
+        bottom < workareaMinY ||
         x > workareaWidth ||
-        y > workareaHeight ||
+        y > workareaMaxY ||
         (width === 0 && height === 0 && elem.tagName === 'g')
       ) {
         return;
@@ -162,9 +164,9 @@ const getCoords = async (mm?: boolean): Promise<Coordinates> => {
     const ratio = mm ? dpmm : 1;
 
     coords.minX = Math.max(coords.minX ?? 0, 0) / ratio;
-    coords.minY = Math.max(coords.minY ?? 0, 0) / ratio;
+    coords.minY = Math.max(coords.minY ?? workareaMinY, workareaMinY) / ratio;
     coords.maxX = Math.min(coords.maxX ?? workareaWidth, workareaWidth) / ratio;
-    coords.maxY = Math.min(coords.maxY ?? workareaHeight, workareaHeight) / ratio;
+    coords.maxY = Math.min(coords.maxY ?? workareaMaxY, workareaMaxY) / ratio;
   }
 
   revertVariableText?.();
@@ -172,7 +174,11 @@ const getCoords = async (mm?: boolean): Promise<Coordinates> => {
   return coords as Coordinates;
 };
 
-const getCanvasImage = async (): Promise<Blob | null> => {
+const getCanvasImage = async (negative = false): Promise<Blob | null> => {
+  const { maxY, minY, width } = workareaManager;
+
+  if (negative && minY >= 0) return null;
+
   symbolMaker.switchImageSymbolForAll(false);
 
   const allLayers = getAllLayers()
@@ -205,13 +211,14 @@ const getCanvasImage = async (): Promise<Blob | null> => {
     });
   });
 
-  const { height, width } = workareaManager;
   const svgDefs = findDefs();
+  const height = negative ? -minY : maxY;
+  const y = negative ? minY : 0;
   const svgString = `
     <svg
       width="${width}"
       height="${height}"
-      viewBox="0 0 ${width} ${height}"
+      viewBox="0 ${y} ${width} ${height}"
       xmlns:svg="http://www.w3.org/2000/svg"
       xmlns="http://www.w3.org/2000/svg"
       xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -289,7 +296,7 @@ class FramingTaskManager extends EventEmitter {
   private curPos: { a: number; x: number; y: number } = { a: 0, x: 0, y: 0 };
   private movementFeedrate = 6000; // mm/min
   private lowPower = 0;
-  private taskCache: { [type in TFramingType]?: Array<[number, number]> } = {};
+  private taskCache: { [type in TFramingType]?: Task } = {};
   private taskCodeCache: { [type in TFramingType]?: string } = {};
   private taskPoints: Array<[number, number]> = [];
   private hasAppliedRedLight = false;
@@ -522,16 +529,22 @@ class FramingTaskManager extends EventEmitter {
 
   private generateTaskPoints = async (type: TFramingType): Promise<Array<[number, number]>> => {
     if (this.taskCache[type] && !this.withVT) {
-      return this.taskCache[type];
+      return this.taskCache[type].points;
     }
 
     svgCanvas.clearSelection();
 
     if (type === FramingType.Framing || type === FramingType.RotateFraming) {
       const coords = await getCoords(true);
+      let isOutOfBounds = false;
 
       if (coords.minX === undefined) {
         return [];
+      }
+
+      if (coords.minY < 0) {
+        isOutOfBounds = true;
+        coords.minY = 0;
       }
 
       const res: Array<[number, number]> = [
@@ -542,7 +555,7 @@ class FramingTaskManager extends EventEmitter {
         [coords.minX, coords.minY],
       ];
 
-      this.taskCache[type] = res;
+      this.taskCache[type] = { isOutOfBounds, points: res };
 
       return res;
     }
@@ -553,10 +566,23 @@ class FramingTaskManager extends EventEmitter {
       if (!image) return [];
 
       const points = await getConvexHull(image);
+
+      if (points.length === 0) return [];
+
       const res: Array<[number, number]> = points.map(([x, y]) => [x / constant.dpmm, y / constant.dpmm]);
 
       res.push(res[0]);
-      this.taskCache[type] = res;
+
+      let isOutOfBounds = false;
+      const topImage = await getCanvasImage(true);
+
+      if (topImage) {
+        const res2 = await getConvexHull(topImage);
+
+        isOutOfBounds = res2.length > 0;
+      }
+
+      this.taskCache[type] = { isOutOfBounds, points: res };
 
       return res;
     }
@@ -565,7 +591,7 @@ class FramingTaskManager extends EventEmitter {
       const res = await getAreaCheckTask(this.device, this.jobOrigin);
 
       if (res.length > 0) {
-        this.taskCache[type] = res;
+        this.taskCache[type] = { points: res };
       }
 
       return res;
@@ -586,7 +612,7 @@ class FramingTaskManager extends EventEmitter {
         [0, this.rotaryInfo.y],
       ];
 
-      this.taskCache[type] = res;
+      this.taskCache[type] = { points: res };
 
       return res;
     }
@@ -867,6 +893,15 @@ class FramingTaskManager extends EventEmitter {
 
     if (this.interrupted) {
       return false;
+    }
+
+    if (this.taskCache[type]?.isOutOfBounds) {
+      MessageCaller.openMessage({
+        content: '有物件超出可外框預覽範圍',
+        duration: 3,
+        key: 'out-of-bound',
+        level: MessageLevel.WARNING,
+      });
     }
 
     if (isEmpty) {

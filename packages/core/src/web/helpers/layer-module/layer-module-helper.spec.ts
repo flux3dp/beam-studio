@@ -6,6 +6,7 @@ import {
   getDetectedModulesTranslations,
   getModulesTranslations,
   getPrintingModule,
+  hasModuleLayer,
 } from './layer-module-helper';
 
 const mockRead = jest.fn();
@@ -97,5 +98,37 @@ describe('test layer-module-helper', () => {
       [DetectedLayerModule.PRINTER_4C_WITH_UV_1064]: `${lang.layer_module.printing} (4C + UV + 1064)`,
       [DetectedLayerModule.UNKNOWN]: lang.layer_module.unknown,
     });
+  });
+
+  test('hasModuleLayer', () => {
+    const mockQuery = jest.fn().mockReturnValue(null);
+
+    document.querySelector = mockQuery;
+
+    expect(hasModuleLayer([LayerModule.PRINTER_4C])).toEqual(false);
+    expect(mockQuery).toHaveBeenLastCalledWith('g.layer[data-module="7"]:not([display="none"]):not([data-repeat="0"])');
+
+    expect(hasModuleLayer([LayerModule.PRINTER_4C, LayerModule.PRINTER])).toEqual(false);
+    expect(mockQuery).toHaveBeenLastCalledWith(
+      'g.layer[data-module="7"]:not([display="none"]):not([data-repeat="0"]), g.layer[data-module="5"]:not([display="none"]):not([data-repeat="0"])',
+    );
+
+    expect(hasModuleLayer([LayerModule.PRINTER_4C, LayerModule.PRINTER], { checkRepeat: false })).toEqual(false);
+    expect(mockQuery).toHaveBeenLastCalledWith(
+      'g.layer[data-module="7"]:not([display="none"]), g.layer[data-module="5"]:not([display="none"])',
+    );
+
+    expect(hasModuleLayer([LayerModule.PRINTER_4C, LayerModule.PRINTER], { checkVisible: false })).toEqual(false);
+    expect(mockQuery).toHaveBeenLastCalledWith(
+      'g.layer[data-module="7"]:not([data-repeat="0"]), g.layer[data-module="5"]:not([data-repeat="0"])',
+    );
+
+    expect(
+      hasModuleLayer([LayerModule.PRINTER_4C, LayerModule.PRINTER], { checkRepeat: false, checkVisible: false }),
+    ).toEqual(false);
+    expect(mockQuery).toHaveBeenLastCalledWith('g.layer[data-module="7"], g.layer[data-module="5"]');
+
+    mockQuery.mockReturnValue('mock elem');
+    expect(hasModuleLayer([LayerModule.PRINTER_4C])).toEqual(true);
   });
 });

@@ -4,12 +4,13 @@
  */
 import Alert from '@core/app/actions/alert-caller';
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import constant, { modelsWithModules } from '@core/app/actions/beambox/constant';
+import constant, { dpmm, modelsWithModules } from '@core/app/actions/beambox/constant';
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import Progress from '@core/app/actions/progress-caller';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import AlertConstants from '@core/app/constants/alert-constants';
+import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import workareaManager, { ExpansionType } from '@core/app/svgedit/workarea';
@@ -115,8 +116,9 @@ export const getExportOpt = (
   if (modelsWithModules.has(model)) {
     const { h, w, x, y } = presprayArea.getPosition(true);
     const workareaWidth = workareaObj.width;
+    const minY = workareaManager.minY / dpmm;
 
-    config.prespray = rotaryMode && !hasJobOrigin ? [workareaWidth - 12, 45, 12, h] : [x, y, w, h];
+    config.prespray = rotaryMode && !hasJobOrigin ? [workareaWidth - 12, 45, 12, h] : [x, y - minY, w, h];
 
     if (!isDevMode || BeamboxPreference.read('multipass-compensation')) {
       config.mpc = true;
@@ -305,7 +307,11 @@ export const getExportOpt = (
   if (printingBotPadding !== undefined) config.pbp = printingBotPadding;
 
   if (modelsWithModules.has(model)) {
-    const offsets = BeamboxPreference.read('module-offsets')[model]! as Record<string, [number, number]>;
+    const offsets = BeamboxPreference.read('module-offsets')[model]!;
+    const keys = Object.keys(offsets) as unknown as LayerModuleType[];
+    const { minY } = workareaManager;
+    let offsetX = 0;
+    let offsetY = minY / dpmm;
 
     if (hasJobOrigin) {
       const refModule = getRefModule();
@@ -313,13 +319,17 @@ export const getExportOpt = (
       if (offsets[refModule]) {
         const [refX, refY] = offsets[refModule];
 
-        Object.keys(offsets).forEach((key) => {
-          offsets[key] = [offsets[key][0] - refX, offsets[key][1] - refY];
-        });
+        offsetX += refX;
+        offsetY += refY;
       }
     }
 
-    config.mof = offsets;
+    keys.forEach((key) => {
+      // Always reassign offsets to remove optional boolean values
+      offsets[key] = [offsets[key]![0] - offsetX, offsets[key]![1] - offsetY];
+    });
+
+    config.mof = offsets as Record<LayerModuleType, [number, number]>;
   }
 
   const loopCompensation = Number(storage.get('loop_compensation') || '0');

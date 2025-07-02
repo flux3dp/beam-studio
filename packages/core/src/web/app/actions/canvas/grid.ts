@@ -39,7 +39,7 @@ const updateGrids = (zoomRatio: number, force = false): void => {
     return;
   }
 
-  const { height, width } = workareaManager;
+  const { maxY, minY, width } = workareaManager;
 
   xGridContainer.replaceChildren();
   yGridContainer.replaceChildren();
@@ -48,16 +48,16 @@ const updateGrids = (zoomRatio: number, force = false): void => {
     const line = document.createElementNS(NS.SVG, 'line');
 
     line.setAttribute('x1', x.toString());
-    line.setAttribute('y1', '0');
+    line.setAttribute('y1', minY.toString());
     line.setAttribute('x2', x.toString());
-    line.setAttribute('y2', height.toString());
+    line.setAttribute('y2', maxY.toString());
     line.setAttribute('stroke', 'black');
     line.setAttribute('stroke-width', '1');
     line.setAttribute('vector-effect', 'non-scaling-stroke');
     line.setAttribute('opacity', i % 10 === 0 ? '0.5' : '0.18');
     xGridContainer.appendChild(line);
   }
-  for (let i = 0; i <= height / gridLevel; i += 1) {
+  for (let i = Math.ceil(minY / gridLevel); i <= maxY / gridLevel; i += 1) {
     const y = i * gridLevel;
     const line = document.createElementNS(NS.SVG, 'line');
 

@@ -17,6 +17,10 @@ const rotaryConstants: { [key in WorkAreaModel]?: RotaryConstants } = {
     boundary: [0, 375],
     maxHeight: 1625,
   },
+  fbm2: {
+    boundary: [0, 240],
+    maxHeight: 140,
+  },
   get fpm1() {
     const height = beamboxPreference.read('customized-dimension')?.fpm1?.height || 150;
 

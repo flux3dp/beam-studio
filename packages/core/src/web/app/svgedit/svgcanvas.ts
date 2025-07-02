@@ -35,13 +35,13 @@ import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import ToolPanelsController from '@core/app/actions/beambox/toolPanelsController';
 import grid from '@core/app/actions/canvas/grid';
+import moduleBoundaryDrawer from '@core/app/actions/canvas/module-boundary-drawer';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import AlertConstants from '@core/app/constants/alert-constants';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
-import beamboxStore from '@core/app/stores/beambox-store';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import * as TutorialController from '@core/app/views/tutorials/tutorialController';
@@ -169,6 +169,8 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   const WORKAREA_ALIGN_POINTS = Array.of<IPoint>();
   const updateWorkAreaAlignPoints = () => {
     const levels = [0, 0.5, 1];
+    const { maxY, minY, width } = workareaManager;
+    const withNegativeY = minY < 0;
 
     WORKAREA_ALIGN_POINTS.length = 0;
 
@@ -176,8 +178,19 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       for (const level2 of levels) {
         if (level === 0.5 && level2 === 0.5) continue;
 
-        WORKAREA_ALIGN_POINTS.push({ x: workareaManager.width * level, y: workareaManager.height * level2 });
+        if (withNegativeY && level === 0.5 && level2 === 0) continue;
+
+        WORKAREA_ALIGN_POINTS.push({ x: width * level, y: maxY * level2 });
       }
+
+      if (withNegativeY) {
+        WORKAREA_ALIGN_POINTS.push({ x: width * level, y: minY });
+      }
+    }
+
+    if (withNegativeY) {
+      WORKAREA_ALIGN_POINTS.push({ x: 0, y: (maxY + minY) / 2 });
+      WORKAREA_ALIGN_POINTS.push({ x: width, y: (maxY + minY) / 2 });
     }
   };
 
@@ -632,10 +645,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   updateWorkAreaAlignPoints();
   presprayArea.generatePresprayArea();
   rotaryAxis.init();
-
-  if (BeamboxPreference.read('show_guides')) {
-    beamboxStore.emitDrawGuideLines();
-  }
 
   // import from select.js
   selector.init(curConfig, {
@@ -1756,9 +1765,9 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   //
   // Returns:
   // String containing the SVG image for output
-  this.svgCanvasToString = function (opts: { unit?: Units } = {}) {
+  this.svgCanvasToString = function (opts: { fixTopExpansion?: boolean; unit?: Units } = {}) {
     // keep calling it until there are none to remove
-    const { unit } = opts;
+    const { fixTopExpansion, unit } = opts;
 
     svgedit.utilities.moveDefsIntoSvgContent();
     pathActions.clear();
@@ -1797,7 +1806,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     svgcontent.setAttribute('data-workarea', workarea);
 
-    const output = this.svgToString(svgcontent, 0, unit);
+    const output = this.svgToString(svgcontent, 0, unit, fixTopExpansion);
 
     svgedit.utilities.moveDefsOutfromSvgContent();
 
@@ -1818,10 +1827,11 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   //
   // Returns:
   // String with the given element as an SVG tag
-  this.svgToString = function (elem, indent, unit: Units = 'pt') {
+  this.svgToString = function (elem, indent, unit: Units = 'pt', fixTopExpansion = false) {
     const out = [];
     const toXml = svgedit.utilities.toXml;
     const unitRe = new RegExp('^-?[\\d\\.]+' + unit + '$');
+    const { minY } = workareaManager;
 
     if (elem) {
       cleanupElement(elem);
@@ -1844,7 +1854,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       if (elem.id === 'svgcontent') {
         // Process root element separately
         const { height, width } = workareaManager;
-        const vb = `viewBox="0 0 ${width} ${height}"`;
+        const vb = `viewBox="0 ${fixTopExpansion ? 0 : minY} ${width} ${height}"`;
         let w = units.convertUnit(width, unit).toString();
         let h = units.convertUnit(height, unit).toString();
 
@@ -1975,6 +1985,8 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         out.push('>');
         indent++;
 
+        const needFix = fixTopExpansion && minY < 0 && elem.nodeName === 'g' && elem.classList.contains('layer');
+        let fixed = !needFix;
         var bOneLine = false;
 
         for (let i = 0; i < childs.length; i++) {
@@ -1982,8 +1994,20 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
           switch (child.nodeType) {
             case 1: // element node
+              if (!fixed) {
+                if (!['filter', 'title'].includes(child.nodeName.toLowerCase())) {
+                  out.push('\n');
+                  for (let i = 0; i < indent; i++) {
+                    out.push(' ');
+                  }
+                  out.push(`<g transform="translate(0, ${-minY})">`);
+                  fixed = true;
+                  indent++;
+                }
+              }
+
               out.push('\n');
-              out.push(this.svgToString(childs.item(i), indent));
+              out.push(this.svgToString(childs.item(i), indent, undefined, fixTopExpansion));
               break;
             case 3: // text node
               // to keep the spaces before a line
@@ -2020,6 +2044,11 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
           for (let i = 0; i < indent; i++) {
             out.push(' ');
           }
+        }
+
+        if (needFix && fixed) {
+          out.push('</g>\n');
+          indent--;
         }
 
         out.push('</');
@@ -2514,11 +2543,15 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     if (!layer) return false;
 
     presprayArea.togglePresprayArea();
+    moduleBoundaryDrawer.update({ unionOnly: true });
 
     const oldDisplay = prevVisibility ? 'inline' : 'none';
     const cmd = new history.ChangeElementCommand(layer, { display: oldDisplay }, 'Layer Visibility');
 
-    cmd.onAfter = presprayArea.togglePresprayArea;
+    cmd.onAfter = () => {
+      presprayArea.togglePresprayArea();
+      moduleBoundaryDrawer.update({ unionOnly: true });
+    };
 
     const { addToHistory = true, parentCmd } = opts || {};
 
@@ -5718,9 +5751,9 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     if (relativeTo === 'page') {
       minx = 0;
-      miny = 0;
+      miny = workareaManager.minY;
       maxx = workareaManager.width;
-      maxy = workareaManager.height;
+      maxy = workareaManager.maxY;
     }
 
     var dx = new Array(len);
@@ -5769,7 +5802,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // Parameters:
   // color - String with fill color to apply
   // url - URL or path to image to use
-  this.setBackground = function (color, url) {
+  this.setBackground = function (color: string, url?: string) {
     var bg = svgedit.utilities.getElem('canvasBackground');
     var border = $(bg).find('rect')[0];
     var bg_img = svgedit.utilities.getElem('background_image');

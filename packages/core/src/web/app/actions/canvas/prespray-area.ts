@@ -1,5 +1,5 @@
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import constant from '@core/app/actions/beambox/constant';
+import constant, { adorModels } from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
@@ -33,6 +33,9 @@ const togglePresprayArea = (): void => {
   const hasJobOrigin = beamboxPreference.read('enable-job-origin') && getAddOnInfo(model).jobOrigin;
 
   if (shouldShow && !(rotaryMode && !hasJobOrigin)) {
+    // check boundary
+    startDrag();
+    drag(0, 0);
     presprayAreaBlock.removeAttribute('display');
   } else {
     presprayAreaBlock.setAttribute('display', 'none');
@@ -63,10 +66,12 @@ const generatePresprayArea = (): void => {
   const fixedSizeSvg = document.getElementById('fixedSizeSvg');
 
   if (!fixedSizeSvg!.querySelector('#presprayArea')) {
+    const isAdor = adorModels.has(workareaManager.model);
+
     presprayAreaBlock = document.createElementNS(NS.SVG, 'image') as unknown as SVGImageElement;
     presprayAreaBlock.setAttribute('id', 'presprayArea');
-    presprayAreaBlock.setAttribute('x', '4000');
-    presprayAreaBlock.setAttribute('y', '2400');
+    presprayAreaBlock.setAttribute('x', isAdor ? '4000' : '3300');
+    presprayAreaBlock.setAttribute('y', isAdor ? '2400' : '1000');
     presprayAreaBlock.setAttribute('width', areaWidth.toFixed(0));
     presprayAreaBlock.setAttribute('height', areaHeight.toFixed(0));
     presprayAreaBlock.setAttribute('href', presprayIconUrl);
@@ -93,10 +98,10 @@ const startDrag = (): void => {
   startX = x;
   startY = y;
 
-  const { expansion, height, width } = workareaManager;
+  const { modelHeight, width } = workareaManager;
 
   workareaSize = {
-    h: height - expansion[1],
+    h: modelHeight,
     w: width,
   };
 };

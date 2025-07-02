@@ -19,11 +19,11 @@ jest.mock('@core/helpers/layer/layer-config-helper', () => ({
 }));
 
 const mockWorkareaWidth = jest.fn();
-const mockWorkareaHeight = jest.fn();
+const mockWorkareaMaxY = jest.fn();
 
 jest.mock('@core/app/svgedit/workarea', () => ({
-  get height() {
-    return mockWorkareaHeight();
+  get maxY() {
+    return mockWorkareaMaxY();
   },
   get width() {
     return mockWorkareaWidth();
@@ -50,7 +50,7 @@ describe('test job-origin', () => {
   describe('getJobOrigin', () => {
     beforeEach(() => {
       mockWorkareaWidth.mockReturnValue(100);
-      mockWorkareaHeight.mockReturnValue(200);
+      mockWorkareaMaxY.mockReturnValue(200);
 
       const mockElem = {
         getBBox: () => ({ height: 40, width: 30, x: 10, y: 20 }),
@@ -77,7 +77,7 @@ describe('test job-origin', () => {
         expect(getJobOrigin(px)).toEqual(res);
         expect(document.getElementById).toHaveBeenCalledTimes(1);
         expect(mockWorkareaWidth).toHaveBeenCalledTimes(1);
-        expect(mockWorkareaHeight).toHaveBeenCalledTimes(1);
+        expect(mockWorkareaMaxY).toHaveBeenCalledTimes(1);
       });
     });
   });
