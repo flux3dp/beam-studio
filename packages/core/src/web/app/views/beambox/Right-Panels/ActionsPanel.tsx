@@ -156,14 +156,14 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       { isFullLine: true, mobileLabel: lang.outline, ...opts },
     );
 
-  const renderConvertToImageButton = ({ isText, ...opts }: ButtonOpts = { isText: false }): React.JSX.Element =>
+  const renderConvertToImageButton = (
+    { isText: _isText, ...opts }: ButtonOpts = { isText: false },
+  ): React.JSX.Element =>
     renderButtons(
       'convert_to_image',
       'Convert to Image',
       // lang.convert_to_path,
-      () =>
-        // isText ? convertTextToPath({ element: elem, isToSelect: true }) : svgCanvas.convertToPath(elem as SVGElement),
-        convertSvgToImage(elem),
+      () => convertSvgToImage({ svgElement: elem as SVGGElement }),
       <ActionPanelIcons.ConvertToPath />,
       <ActionPanelIcons.ConvertToPathMobile />,
       { isFullLine: true, mobileLabel: lang.outline, ...opts },
@@ -371,6 +371,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     return [
       renderAutoFitButton(),
       renderConvertToPathButton({ isDisabled: isVariableText, isText: true, tooltipIfDisabled }),
+      renderConvertToImageButton({ isDisabled: isVariableText, isText: true, tooltipIfDisabled }),
       renderButtons(
         'weld',
         lang.weld_text,
@@ -413,6 +414,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       { isFullLine: true, mobileLabel: lang.detach_path_short },
     ),
     renderConvertToPathButton({ isText: true }),
+    renderConvertToImageButton({ isText: true }),
     renderSmartNestButton(),
     renderArrayButton({ isFullLine: true }),
   ];
@@ -436,6 +438,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       { isFullLine: true },
     ),
     renderSmartNestButton(),
+    renderConvertToImageButton(),
     renderOffsetButton(),
     renderArrayButton(),
     renderButtons(
@@ -474,6 +477,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
         { isDisabled: isVariableText, isFullLine: true, tooltipIfDisabled },
       ),
       renderSmartNestButton(),
+      renderConvertToImageButton(),
       renderArrayButton({ isFullLine: true }),
       renderOffsetButton({ isFullLine: true }),
       renderTabButton({ convertToPath: () => convertUseToPath({ element: elem, isToSelect: true }) }),
@@ -483,6 +487,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
   const renderGroupActions = (): React.JSX.Element[] => [
     renderAutoFitButton(),
     renderSmartNestButton(),
+    renderConvertToImageButton(),
     renderOffsetButton(),
     renderArrayButton(),
   ];
@@ -530,7 +535,14 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
 
     appendOptionalButtons(content);
 
-    return [renderAutoFitButton(), ...content, renderSmartNestButton(), renderOffsetButton(), renderArrayButton()];
+    return [
+      renderAutoFitButton(),
+      ...content,
+      renderSmartNestButton(),
+      renderConvertToImageButton(),
+      renderOffsetButton(),
+      renderArrayButton(),
+    ];
   };
 
   const content = match(elem?.tagName.toLowerCase())
