@@ -307,7 +307,7 @@ export const getExportOpt = (
   if (printingBotPadding !== undefined) config.pbp = printingBotPadding;
 
   if (modelsWithModules.has(model)) {
-    const offsets = BeamboxPreference.read('module-offsets')[model]!;
+    const offsets = structuredClone(BeamboxPreference.read('module-offsets')[model]!);
     const keys = Object.keys(offsets) as unknown as LayerModuleType[];
     const { minY } = workareaManager;
     let offsetX = 0;
