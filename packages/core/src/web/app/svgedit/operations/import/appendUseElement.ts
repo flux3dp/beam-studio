@@ -4,7 +4,7 @@ import NS from '@core/app/constants/namespaces';
 import history from '@core/app/svgedit/history/history';
 import rgbToHex from '@core/helpers/color/rgbToHex';
 import i18n from '@core/helpers/i18n';
-import { getData, initLayerConfig, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
+import { getData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { createLayer, getLayerByName } from '@core/helpers/layer/layer-helper';
 import { getDefaultLaserModule } from '@core/helpers/layer-module/layer-module-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -55,7 +55,7 @@ const appendUseElement = (
   }
 
   // switch currentLayer, and create layer if necessary
-  let targetLayerName = layerName;
+  let targetLayerName = layerName!;
   const currentDrawing = svgCanvas.getCurrentDrawing();
 
   if (
@@ -74,11 +74,7 @@ const appendUseElement = (
     const targetLayer = getLayerByName(targetLayerName);
 
     if (!checkLayerModule(targetLayer, targetModule)) {
-      const { cmd, layer: newLayer, name: newLayerName } = createLayer(targetLayerName, { isSubCmd: true });
-
-      if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
-
-      initLayerConfig(newLayerName);
+      const { layer: newLayer } = createLayer(targetLayerName, { initConfig: true, parentCmd: batchCmd });
 
       if (type === 'layer' && targetLayerName) {
         const matchPara = targetLayerName.match(/#([-SP0-9.]*\b)/i);
@@ -136,28 +132,21 @@ const appendUseElement = (
   } else {
     let targetLayer = currentDrawing.getCurrentLayer();
 
-    if (!checkLayerModule(targetLayer, targetModule)) {
-      const {
-        cmd,
-        layer,
-        name: newLayerName,
-      } = createLayer(
+    if (!checkLayerModule(targetLayer!, targetModule)) {
+      const { layer, name: newLayerName } = createLayer(
         printingModules.has(targetModule) ? i18n.lang.layer_module.printing : i18n.lang.layer_module.general_laser,
-        { isSubCmd: true },
+        { initConfig: true, parentCmd: batchCmd },
       );
 
       targetLayer = layer;
 
-      if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
-
-      initLayerConfig(newLayerName);
       svgCanvas.setCurrentLayer(newLayerName);
     }
 
     if (printingModules.has(targetModule)) {
       // TODO: make sure if the targetModule is always suitable for workarea
-      writeDataLayer(targetLayer, 'module', targetModule);
-      writeDataLayer(targetLayer, 'fullcolor', true);
+      writeDataLayer(targetLayer!, 'module', targetModule);
+      writeDataLayer(targetLayer!, 'fullcolor', true);
     }
   }
 

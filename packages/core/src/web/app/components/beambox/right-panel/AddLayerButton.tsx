@@ -5,7 +5,6 @@ import Icon from '@ant-design/icons';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import TutorialController from '@core/app/views/tutorials/tutorialController';
-import { initLayerConfig } from '@core/helpers/layer/layer-config-helper';
 import { createLayer } from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -35,14 +34,14 @@ function AddLayerButton({ setSelectedLayers }: Props): React.JSX.Element {
       i += 1;
       uniqName = `${lang.layers.layer} ${i}`;
     }
-    createLayer(uniqName);
+
+    createLayer(uniqName, { initConfig: true });
 
     if (TutorialController.getNextStepRequirement() === TutorialConstants.ADD_NEW_LAYER) {
       TutorialController.handleNextStep();
     }
 
     svgEditor.updateContextPanel();
-    initLayerConfig(uniqName);
     setSelectedLayers([uniqName]);
   };
 

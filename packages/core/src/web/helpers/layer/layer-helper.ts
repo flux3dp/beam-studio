@@ -6,6 +6,7 @@ import type { LayerModuleType } from '@core/app/constants/layer-module/layer-mod
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import history from '@core/app/svgedit/history/history';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
+import undoManager from '@core/app/svgedit/history/undoManager';
 import clipboard from '@core/app/svgedit/operations/clipboard';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import updateLayerColor from '@core/helpers/color/updateLayerColor';
@@ -140,12 +141,20 @@ export const getLayerName = (layer: Element): string => {
 // TODO: add unittest
 export const createLayer = (
   name: string,
-  opts?: { hexCode?: string; isFullColor?: boolean; isSubCmd?: boolean },
-): { cmd: IBatchCommand; layer: SVGGElement; name: string } => {
+  opts: {
+    addToHistory?: boolean;
+    hexCode?: string;
+    initConfig?: boolean;
+    isFullColor?: boolean;
+    parentCmd?: IBatchCommand;
+  } = {},
+): { layer: SVGGElement; name: string } => {
   const drawing = svgCanvas.getCurrentDrawing();
-  const { hexCode, isFullColor = false, isSubCmd = false } = opts || {};
+  const { addToHistory = true, hexCode, initConfig, isFullColor = false, parentCmd } = opts || {};
   const newLayer = drawing.createLayer(name);
   const finalName = getLayerName(newLayer);
+
+  if (initConfig) initLayerConfig(newLayer);
 
   if (drawing.layer_map[finalName]) {
     if (name && /^#([0-9a-f]{3}){1,2}$/i.test(name)) {
@@ -165,14 +174,13 @@ export const createLayer = (
 
   batchCmd.addSubCommand(new history.InsertElementCommand(newLayer));
 
-  if (!isSubCmd) {
-    svgCanvas.undoMgr.addCommandToHistory(batchCmd);
-  }
+  if (parentCmd) parentCmd.addSubCommand(batchCmd);
+  else if (addToHistory) undoManager.addCommandToHistory(batchCmd);
 
   updateLayerColorFilter(newLayer);
   svgCanvas.clearSelection();
 
-  return { cmd: batchCmd, layer: newLayer, name: finalName };
+  return { layer: newLayer, name: finalName };
 };
 
 export const deleteLayerByName = (layerName: string): ICommand => {
@@ -211,7 +219,7 @@ export const deleteLayers = (layerNames: string[]): void => {
     const newLayer = new svgedit.draw.Layer(LANG.layer1, null, svgcontent, '#333333').getGroup() as Element;
 
     batchCmd.addSubCommand(new history.InsertElementCommand(newLayer));
-    initLayerConfig(LANG.layer1);
+    initLayerConfig(newLayer);
   }
 
   if (!batchCmd.isEmpty()) {
