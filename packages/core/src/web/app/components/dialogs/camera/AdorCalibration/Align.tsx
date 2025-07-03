@@ -5,9 +5,11 @@ import { Button, Checkbox, Col, ConfigProvider, Form, InputNumber, Modal, Row, T
 import classNames from 'classnames';
 
 import alertCaller from '@core/app/actions/alert-caller';
+import DoorChecker from '@core/app/actions/camera/preview-helper/DoorChecker';
 import FisheyePreviewManagerV2 from '@core/app/actions/camera/preview-helper/FisheyePreviewManagerV2';
 import FisheyePreviewManagerV4 from '@core/app/actions/camera/preview-helper/FisheyePreviewManagerV4';
 import progressCaller from '@core/app/actions/progress-caller';
+import moveLaserHead from '@core/app/components/dialogs/camera/common/moveLaserHead';
 import {
   LayerModule,
   type LayerModuleType,
@@ -67,9 +69,76 @@ const Align = ({
     x: number;
     y: number;
   }>(null);
-
+  const doorChecker = useRef<DoorChecker | null>(null);
+  const hasInit = useRef(false);
   const [img, setImg] = useState<null | { blob: Blob; url: string }>(null);
+
+  const initSetup = useCallback(async () => {
+    progressCaller.openNonstopProgress({
+      id: PROGRESS_ID,
+      message: lang.calibration.taking_picture,
+    });
+    try {
+      await deviceMaster.connectCamera();
+
+      if ('v' in fisheyeParam) {
+        if (fisheyeParam.v === 4) {
+          const manger = new FisheyePreviewManagerV4(deviceMaster.currentDevice.info, fisheyeParam, bm2PerspectiveGrid);
+
+          const workarea = getWorkarea(deviceMaster.currentDevice.info.model, 'fbm2');
+          const { cameraCenter } = workarea;
+
+          if (deviceMaster.currentDevice.info.model === 'fbm2') {
+            doorChecker.current = new DoorChecker();
+
+            const res = await doorChecker.current.doorClosedWrapper(() =>
+              manger.setupFisheyePreview({ cameraPosition: cameraCenter, height: 0 }),
+            );
+
+            if (!res) return false;
+          } else {
+            await manger.setupFisheyePreview({ cameraPosition: cameraCenter, height: 0 });
+          }
+        } else if (fisheyeParam.v === 2) {
+          const manager = new FisheyePreviewManagerV2(deviceMaster.currentDevice.info, fisheyeParam);
+
+          await manager.setupFisheyePreview({ defaultHeight: 0, focusPosition: 'E' });
+        }
+      } else {
+        const perspectivePoints = await getPerspectiveForAlign(
+          deviceMaster.currentDevice.info,
+          fisheyeParam,
+          fisheyeParam.center || [INIT_GUESS_X, INIT_GUESS_Y],
+        );
+        const { d, k } = fisheyeParam;
+
+        await deviceMaster.setFisheyeMatrix({ d, k, points: perspectivePoints });
+      }
+
+      return true;
+    } finally {
+      progressCaller.popById(PROGRESS_ID);
+    }
+    // eslint-disable-next-line hooks/exhaustive-deps
+  }, []);
+
   const handleTakePicture = async (retryTimes = 0) => {
+    if (!hasInit.current) {
+      hasInit.current = await initSetup();
+
+      if (!hasInit.current) {
+        return;
+      }
+    }
+
+    if (doorChecker.current && !doorChecker.current.keepClosed) {
+      const res = await doorChecker.current.doorClosedWrapper(moveLaserHead);
+
+      if (!res) {
+        return;
+      }
+    }
+
     progressCaller.openNonstopProgress({
       id: PROGRESS_ID,
       message: lang.calibration.taking_picture,
@@ -90,49 +159,13 @@ const Align = ({
     progressCaller.popById(PROGRESS_ID);
   };
 
-  const initSetup = useCallback(async () => {
-    progressCaller.openNonstopProgress({
-      id: PROGRESS_ID,
-      message: lang.calibration.taking_picture,
-    });
-    try {
-      await deviceMaster.connectCamera();
-
-      if ('v' in fisheyeParam) {
-        if (fisheyeParam.v === 4) {
-          const manger = new FisheyePreviewManagerV4(deviceMaster.currentDevice.info, fisheyeParam, bm2PerspectiveGrid);
-
-          const workarea = getWorkarea(deviceMaster.currentDevice.info.model, 'fbm2');
-          const { cameraCenter } = workarea;
-
-          await manger.setupFisheyePreview({ cameraPosition: cameraCenter, height: 0 });
-        } else if (fisheyeParam.v === 2) {
-          const manager = new FisheyePreviewManagerV2(deviceMaster.currentDevice.info, fisheyeParam);
-
-          await manager.setupFisheyePreview({ defaultHeight: 0, focusPosition: 'E' });
-        }
-      } else {
-        const perspectivePoints = await getPerspectiveForAlign(
-          deviceMaster.currentDevice.info,
-          fisheyeParam,
-          fisheyeParam.center || [INIT_GUESS_X, INIT_GUESS_Y],
-        );
-        const { d, k } = fisheyeParam;
-
-        await deviceMaster.setFisheyeMatrix({ d, k, points: perspectivePoints });
-      }
-    } finally {
-      progressCaller.popById(PROGRESS_ID);
-    }
-    // eslint-disable-next-line hooks/exhaustive-deps
-  }, []);
-
   useEffect(() => {
-    initSetup().then(() => {
-      handleTakePicture();
-    });
+    handleTakePicture();
 
-    return () => deviceMaster.disconnectCamera();
+    return () => {
+      deviceMaster.disconnectCamera();
+      doorChecker.current?.destroy();
+    };
     // eslint-disable-next-line hooks/exhaustive-deps
   }, []);
 

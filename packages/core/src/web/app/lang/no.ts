@@ -1523,6 +1523,8 @@ const lang: ILang = {
       abort_preview: 'Avbryt',
       camera_cable_unstable: 'Det er oppdaget at kameraet overfører bilder ustabilt. Forhåndsvisning kan fortsatt utføres normalt, men det kan være problemer med treg forhåndsvisning eller tidsavbrudd.',
       continue_preview: 'Fortsett',
+      door_opened: 'Døren er åpen',
+      door_opened_text: 'Lukk døren før du starter kameraeksempelvisningen på nytt.',
       fail_to_transmit_image: '#845 Noe gikk galt med bildeoverføringen. Start maskinen eller Beam Studio på nytt. Hvis denne feilen vedvarer, følg denne veiledningen.',
       ws_closed_unexpectly: '#844 Tilkoblingen til maskinkameraet ble uventet lukket. Hvis denne feilen vedvarer, følg denne veiledningen.',
     },

@@ -1523,6 +1523,8 @@ const lang: ILang = {
       abort_preview: 'Abortar',
       camera_cable_unstable: 'Se detecta que la cámara está transfiriendo fotos de manera inestable. La vista previa aún se puede realizar normalmente, pero puede existir el problema de que la vista previa sea lenta o se agote el tiempo de espera.',
       continue_preview: 'Continuar',
+      door_opened: 'Puerta abierta',
+      door_opened_text: 'Por favor, cierre la puerta antes de reiniciar la vista previa de la cámara.',
       fail_to_transmit_image: '#845 Algo salió mal en la transmisión de imágenes. Por favor, reinicia tu máquina o Beam Studio. Si este error persiste, por favor sigue <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/4402756056079">esta guía</a>.',
       ws_closed_unexpectly: '#844 La conexión a la cámara de la máquina se ha cerrado inesperadamente. Si este error persiste, por favor sigue <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/4402755805071">esta guía</a>.',
     },

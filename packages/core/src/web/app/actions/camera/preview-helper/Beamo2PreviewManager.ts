@@ -5,6 +5,7 @@ import alertCaller from '@core/app/actions/alert-caller';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
+import DoorChecker from '@core/app/actions/camera/preview-helper/DoorChecker';
 import MessageCaller from '@core/app/actions/message-caller';
 import progressCaller from '@core/app/actions/progress-caller';
 import { bm2PerspectiveGrid } from '@core/app/components/dialogs/camera/common/solvePnPConstants';
@@ -26,6 +27,7 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
   private fisheyeParams?: FisheyeCameraParametersV4;
   private fisheyePreviewManager?: FisheyePreviewManagerV4;
   private grid = bm2PerspectiveGrid;
+  private doorChecker = new DoorChecker();
   protected maxMovementSpeed: [number, number] = [54000, 6000]; // mm/min, speed cap of machine
 
   constructor(device: IDeviceInfo) {
@@ -79,18 +81,21 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
         }
       }
 
-      this.fisheyePreviewManager = new FisheyePreviewManagerV4(this.device, this.fisheyeParams, this.grid);
+      this.fisheyePreviewManager =
+        this.fisheyePreviewManager ?? new FisheyePreviewManagerV4(this.device, this.fisheyeParams, this.grid);
       progressCaller.update(this.progressId, { percentage: 40 });
 
       const workarea = getWorkarea(this.device.model, 'fbm2');
       const { cameraCenter } = workarea;
 
-      return await this.fisheyePreviewManager.setupFisheyePreview({
-        cameraPosition: cameraCenter,
-        height: 0,
-        progressId: this.progressId,
-        progressRange: [40, 100],
-      });
+      return await this.doorChecker.doorClosedWrapper(() =>
+        this.fisheyePreviewManager!.setupFisheyePreview({
+          cameraPosition: cameraCenter,
+          height: 0,
+          progressId: this.progressId,
+          progressRange: [40, 100],
+        }),
+      );
     } catch (error) {
       await this.handleSetupError(error);
 
@@ -143,6 +148,7 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
 
   end = async (): Promise<void> => {
     this.ended = true;
+    this.doorChecker.destroy();
     MessageCaller.closeMessage('camera-preview');
 
     try {
@@ -155,6 +161,14 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
   };
 
   public preview = async (): Promise<boolean> => {
+    if (!this.doorChecker.keepClosed) {
+      const res = await this.setUpCamera();
+
+      if (!res) {
+        return true;
+      }
+    }
+
     try {
       MessageCaller.openMessage({
         content: i18n.lang.topbar.preview,

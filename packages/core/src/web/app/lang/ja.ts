@@ -1523,6 +1523,8 @@ const lang: ILang = {
       abort_preview: '中止する',
       camera_cable_unstable: 'カメラが写真を不安定に転送していることが検出されました。プレビューは引き続き正常に実行できますが、プレビューが遅い、またはタイムアウトになる問題がある可能性があります。',
       continue_preview: '継続する',
+      door_opened: 'ドアが開いています',
+      door_opened_text: 'カメラプレビューを再起動する前にドアを閉めてください。',
       fail_to_transmit_image: '#845 画像の送信に不具合が発生しました。マシンを再起動してください。このエラーが続く場合は、この<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/4402756056079">ガイド</a>に従ってください。',
       ws_closed_unexpectly: '#844 マシンカメラへの接続が予期せず閉じられました。このエラーが続く場合は、この<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/4402755805071">ガイド</a>に従ってください。',
     },

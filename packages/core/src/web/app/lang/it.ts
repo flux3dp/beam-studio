@@ -1523,6 +1523,8 @@ const lang: ILang = {
       abort_preview: 'Interrompi',
       camera_cable_unstable: "È stato rilevato che la fotocamera sta trasferendo le foto in modo instabile. L'anteprima può essere eseguita normalmente, ma potrebbero esserci problemi di lentezza o timeout.",
       continue_preview: 'Continua',
+      door_opened: 'Porta aperta',
+      door_opened_text: "Chiudere la porta prima di riavviare l'anteprima della fotocamera.",
       fail_to_transmit_image: '#845 Si è verificato un errore durante la trasmissione dell\'immagine. Riavviare la macchina o Beam Studio. Se l\'errore persiste, seguire <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/4402756056079">questa guida</a>.',
       ws_closed_unexpectly: '#844 La connessione alla fotocamera della macchina è stata chiusa inaspettatamente. Se l\'errore persiste, seguire <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/4402755805071">questa guida</a>.',
     },

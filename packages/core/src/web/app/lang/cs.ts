@@ -1523,6 +1523,8 @@ const lang: ILang = {
       abort_preview: 'Zrušit',
       camera_cable_unstable: 'Bylo zjištěno, že kamera nestabilně přenáší fotografie. Stále můžete spustit náhled, ale může nastat problém s pomalým náhledem či vypršením časového limitu.',
       continue_preview: 'Pokračovat',
+      door_opened: 'Dveře otevřené',
+      door_opened_text: 'Před opětovným spuštěním náhledu kamery prosím zavřete dveře.',
       fail_to_transmit_image: '#845 Něco se nepodařilo s přenosem obrázku.Restartujte prosím svůj přístroj nebo Beam Studio. Pokud bude tato chyba přetrvávat, přečtěte si prosím <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/4402756056079">tento návod</a>.',
       ws_closed_unexpectly: '#844 Nečekaně bylo ukončeno spojení s kamerou přístroje. Pokud bude tato chyba přetrvávat, přečtěte si prosím <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/4402755805071">tento návod</a>.',
     },

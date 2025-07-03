@@ -1514,6 +1514,8 @@ export interface ILang {
       abort_preview: string;
       camera_cable_unstable: string;
       continue_preview: string;
+      door_opened: string;
+      door_opened_text: string;
       fail_to_transmit_image: string;
       ws_closed_unexpectly: string;
     };

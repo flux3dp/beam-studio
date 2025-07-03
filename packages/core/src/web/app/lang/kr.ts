@@ -1523,6 +1523,8 @@ const lang: ILang = {
       abort_preview: '중지',
       camera_cable_unstable: '카메라 전송이 불안정하게 이루어지는 것이 감지되었습니다. 미리보기는 정상적으로 수행될 수 있지만, 느린 미리보기 또는 시간 초과의 문제가 발생할 수 있습니다.',
       continue_preview: '계속하기',
+      door_opened: '도어 열림',
+      door_opened_text: '카메라 미리보기를 다시 시작하기 전에 도어를 닫아 주세요.',
       fail_to_transmit_image: '#845 이미지 전송 중 오류가 발생했습니다. 기계나 Beam Studio를 다시 시작해주세요. 만약 이 오류가 계속 발생한다면, <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/4402756056079">이 가이드</a>를 따라주세요.',
       ws_closed_unexpectly: '#844 기계 카메라 연결이 예기치 않게 종료되었습니다. 만약 이 오류가 계속 발생한다면, <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/4402755805071">이 가이드</a>를 따라주세요.',
     },

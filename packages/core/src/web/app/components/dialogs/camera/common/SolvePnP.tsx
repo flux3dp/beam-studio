@@ -4,6 +4,8 @@ import { Button, Col, Flex, InputNumber, Progress, Row } from 'antd';
 import classNames from 'classnames';
 
 import alertCaller from '@core/app/actions/alert-caller';
+import type DoorChecker from '@core/app/actions/camera/preview-helper/DoorChecker';
+import moveLaserHead from '@core/app/components/dialogs/camera/common/moveLaserHead';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import { solvePnPCalculate, solvePnPFindCorners, updateData } from '@core/helpers/camera-calibration-helper';
 import useDidUpdateEffect from '@core/helpers/hooks/useDidUpdateEffect';
@@ -20,6 +22,7 @@ import useCamera from './useCamera';
 interface Props {
   cameraIndex?: number;
   dh: number;
+  doorChecker?: DoorChecker | null;
   hasNext?: boolean;
   imgSource?: 'usb' | 'wifi';
   initInterestArea?: { height: number; width: number; x: number; y: number };
@@ -36,6 +39,7 @@ interface Props {
 const SolvePnP = ({
   cameraIndex,
   dh,
+  doorChecker,
   hasNext = false,
   imgSource = 'wifi',
   initInterestArea,
@@ -130,10 +134,26 @@ const SolvePnP = ({
     [dh, params, refPoints],
   );
 
-  const { exposureSetting, handleTakePicture, setExposureSetting } = useCamera(handleImg, {
+  const {
+    exposureSetting,
+    handleTakePicture: takePicture,
+    setExposureSetting,
+  } = useCamera(handleImg, {
     index: cameraIndex,
     source: imgSource,
   });
+
+  const handleTakePicture = useCallback(async () => {
+    if (doorChecker && !doorChecker.keepClosed) {
+      const res = await doorChecker.doorClosedWrapper(moveLaserHead);
+
+      if (!res) {
+        return;
+      }
+    }
+
+    await takePicture();
+  }, [doorChecker, takePicture]);
 
   useDidUpdateEffect(() => {
     setPoints([]);

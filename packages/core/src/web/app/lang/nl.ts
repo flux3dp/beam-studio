@@ -1523,6 +1523,8 @@ const lang: ILang = {
       abort_preview: 'Afbreken',
       camera_cable_unstable: "Er is gedetecteerd dat de camera foto's instabiel overdraagt. Voorbeeldweergave kan nog steeds normaal worden uitgevoerd, maar er kan sprake zijn van trage voorbeeldweergave of time-out.",
       continue_preview: 'Doorgaan',
+      door_opened: 'Deur geopend',
+      door_opened_text: 'Sluit de deur voordat u de cameravoorvertoning opnieuw start.',
       fail_to_transmit_image: '#845 Er ging iets mis met beeldoverdracht. Start uw machine of Beam Studio opnieuw op. Als deze fout aanhoudt, volg dan <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/4402756056079">deze handleiding</a>.',
       ws_closed_unexpectly: '#844 Verbinding met machinecamera onverwacht verbroken. Als deze fout aanhoudt, volg dan <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/4402755805071">deze handleiding</a>.',
     },

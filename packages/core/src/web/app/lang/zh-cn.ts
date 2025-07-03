@@ -1523,6 +1523,8 @@ const lang: ILang = {
       abort_preview: '中断预览',
       camera_cable_unstable: '侦测到相机传输照片时不稳定，仍能正常进行相机预览，但可能会有预览速度较慢或超时的问题。<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001791895">了解更多</a>',
       continue_preview: '继续预览',
+      door_opened: '门盖已打开',
+      door_opened_text: '请关上门盖后再重新启动相机预览。',
       fail_to_transmit_image: '#845 相机传输照片异常，请将机器重新开机。如果问题持续发生，請參考<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/4402756056079">此则引导</a>。',
       ws_closed_unexpectly: '#844 与机器相机的连线无预期的中断。如果问题持续发生，請參考<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/4402755805071">此则引导</a>。',
     },

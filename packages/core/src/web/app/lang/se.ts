@@ -1523,6 +1523,8 @@ const lang: ILang = {
       abort_preview: 'Avbryt',
       camera_cable_unstable: 'Det upptäcktes att kameran överför bilder ostabilt. Förhandsgranskning kan fortfarande utföras normalt, men det kan finnas problem med långsam förhandsgranskning eller timeout.',
       continue_preview: 'Fortsätt',
+      door_opened: 'Dörren är öppen',
+      door_opened_text: 'Stäng dörren innan du startar om kameraförhandsvisningen.',
       fail_to_transmit_image: '#845 Något gick fel med bildöverföringen. Starta om din maskin eller Beam Studio. Om felet kvarstår, följ <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/4402756056079">denna guide</a>.',
       ws_closed_unexpectly: '#844 Anslutningen till maskinkameran har stängts oväntat. Om felet kvarstår, följ <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/4402755805071">denna guide</a>.',
     },
