@@ -739,7 +739,7 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: 'Odstranění pozadí',
-          ai_bg_removal_reminder: 'Stisknutím tlačítka okamžitě zaplatíte 0,2 kreditu. Přejete si pokračovat?',
+          ai_bg_removal_reminder: 'Stisknutím tlačítka okamžitě zaplatíte 0,02 kreditu. Přejete si pokračovat?',
           ai_bg_removal_short: 'Odstranění pozadí',
           array: 'Pole',
           auto_fit: 'Automaticky přizpůsobit',

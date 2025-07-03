@@ -739,7 +739,7 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: 'Αφαίρεση φόντου',
-          ai_bg_removal_reminder: 'Πατώντας το κουμπί θα χρησιμοποιηθούν αμέσως 0,2 πιστώσεις, θέλετε να συνεχίσετε;',
+          ai_bg_removal_reminder: 'Πατώντας το κουμπί θα χρησιμοποιηθούν αμέσως 0,02 πιστώσεις, θέλετε να συνεχίσετε;',
           ai_bg_removal_short: 'Αφαίρεση φόντου',
           array: 'Πίνακας',
           auto_fit: 'Αυτόματη Προσαρμογή',

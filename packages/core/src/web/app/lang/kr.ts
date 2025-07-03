@@ -739,7 +739,7 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: '인공 지능 배경 제거',
-          ai_bg_removal_reminder: '버튼을 누르면 즉시 0.2 크레딧이 사용됩니다. 계속하시겠습니까?',
+          ai_bg_removal_reminder: '버튼을 누르면 즉시 0.02 크레딧이 사용됩니다. 계속하시겠습니까?',
           ai_bg_removal_short: '배경 제거',
           array: '어레이',
           auto_fit: '자동 맞춤',

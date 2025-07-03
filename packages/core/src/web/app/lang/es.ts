@@ -739,7 +739,7 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: 'Background Removal',
-          ai_bg_removal_reminder: 'Presionar el botón usará inmediatamente 0.2 Credit, ¿quieres continuar?',
+          ai_bg_removal_reminder: 'Presionar el botón usará inmediatamente 0.02 Credit, ¿quieres continuar?',
           ai_bg_removal_short: 'Elim. Fondo',
           array: 'Gama',
           auto_fit: 'Ajuste Automático',

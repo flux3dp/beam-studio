@@ -739,7 +739,7 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: 'Rimozione sfondo',
-          ai_bg_removal_reminder: 'Premendo il pulsante verranno immediatamente utilizzati 0,2 crediti, vuoi continuare?',
+          ai_bg_removal_reminder: 'Premendo il pulsante verranno immediatamente utilizzati 0,02 crediti, vuoi continuare?',
           ai_bg_removal_short: 'Rimozione sfondo',
           array: 'Array',
           auto_fit: 'Adattamento Automatico',

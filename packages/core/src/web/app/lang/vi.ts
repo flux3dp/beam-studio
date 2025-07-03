@@ -739,7 +739,7 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: 'Xóa nền',
-          ai_bg_removal_reminder: 'Nhấn nút sẽ sử dụng ngay 0.2 Tín dụng, bạn có muốn tiếp tục không?',
+          ai_bg_removal_reminder: 'Nhấn nút sẽ sử dụng ngay 0.02 Tín dụng, bạn có muốn tiếp tục không?',
           ai_bg_removal_short: 'Xóa nền',
           array: 'Mảng',
           auto_fit: 'Tự Động Vừa Khít',

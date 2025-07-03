@@ -739,7 +739,7 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: 'Buang Latar Belakang',
-          ai_bg_removal_reminder: 'Menekan butang akan menggunakan 0.2 Kredit dengan serta-merta, anda mahu meneruskan?',
+          ai_bg_removal_reminder: 'Menekan butang akan menggunakan 0.02 Kredit dengan serta-merta, anda mahu meneruskan?',
           ai_bg_removal_short: 'Buang LB',
           array: 'Susunan',
           auto_fit: 'Muat Auto',

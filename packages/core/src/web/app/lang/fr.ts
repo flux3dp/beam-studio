@@ -739,7 +739,7 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: "Suppression de l'arrière-plan",
-          ai_bg_removal_reminder: "L'appui sur le bouton utilisera immédiatement 0,2 crédit, voulez-vous continuer ?",
+          ai_bg_removal_reminder: "L'appui sur le bouton utilisera immédiatement 0,02 crédit, voulez-vous continuer ?",
           ai_bg_removal_short: 'Suppr. arrière-plan',
           array: 'Tableau',
           auto_fit: 'Ajustement Automatique',

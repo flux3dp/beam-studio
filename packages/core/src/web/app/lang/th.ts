@@ -739,7 +739,7 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: 'ลบพื้นหลัง',
-          ai_bg_removal_reminder: 'กดปุ่มจะใช้เครดิต 0.2 เลย ต้องการดําเนินการต่อหรือไม่',
+          ai_bg_removal_reminder: 'กดปุ่มจะใช้เครดิต 0.02 เลย ต้องการดําเนินการต่อหรือไม่',
           ai_bg_removal_short: 'ลบพื้นหลัง',
           array: 'แถวลําดับ',
           auto_fit: 'ปรับให้พอดีอัตโนมัติ',

@@ -347,7 +347,7 @@ const removeBackground = async (elem?: SVGImageElement): Promise<void> => {
     return;
   }
 
-  if (user.info?.subscription && user.info.subscription.credit + user.info.credit < 0.2) {
+  if (user.info?.subscription && user.info.subscription.credit + user.info.credit < 0.02) {
     showBalanceAlert();
 
     return;

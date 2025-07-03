@@ -739,7 +739,7 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: 'Baggrundsfjernelse',
-          ai_bg_removal_reminder: 'Tryk på knappen vil straks bruge 0,2 kredit. Vil du fortsætte?',
+          ai_bg_removal_reminder: 'Tryk på knappen vil straks bruge 0,02 kredit. Vil du fortsætte?',
           ai_bg_removal_short: 'BG fjernelse',
           array: 'Array',
           auto_fit: 'Auto Fit',

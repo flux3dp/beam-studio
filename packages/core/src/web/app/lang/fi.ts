@@ -739,7 +739,7 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: 'Taustan poisto',
-          ai_bg_removal_reminder: 'Painamalla nappia käytetään välittömästi 0,2 hyvitystä, haluatko jatkaa?',
+          ai_bg_removal_reminder: 'Painamalla nappia käytetään välittömästi 0,02 hyvitystä, haluatko jatkaa?',
           ai_bg_removal_short: 'TP',
           array: 'Taulukko',
           auto_fit: 'Automaattinen Sovitus',

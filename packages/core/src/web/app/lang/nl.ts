@@ -739,7 +739,7 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: 'Achtergrond verwijderen',
-          ai_bg_removal_reminder: 'Druk op de knop gebruikt direct 0,2 tegoed, wilt u doorgaan?',
+          ai_bg_removal_reminder: 'Druk op de knop gebruikt direct 0,02 tegoed, wilt u doorgaan?',
           ai_bg_removal_short: 'Achtergrondverw.',
           array: 'Array',
           auto_fit: 'Auto Aanpassen',

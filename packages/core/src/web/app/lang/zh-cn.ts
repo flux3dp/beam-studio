@@ -739,7 +739,7 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: '智能去背',
-          ai_bg_removal_reminder: '按下按钮将立即使用 0.2 Credit，是否继续？',
+          ai_bg_removal_reminder: '按下按钮将立即使用 0.02 Credit，是否继续？',
           ai_bg_removal_short: 'AI抠图',
           array: '阵列',
           auto_fit: '自动适配',

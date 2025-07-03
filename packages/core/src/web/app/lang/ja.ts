@@ -739,7 +739,7 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: 'AI 背景リムーバー',
-          ai_bg_removal_reminder: 'ボタンを押すと、すぐに 0.2 クレジットが使用されます。続行しますか?',
+          ai_bg_removal_reminder: 'ボタンを押すと、すぐに 0.02 クレジットが使用されます。続行しますか?',
           ai_bg_removal_short: '背景削除',
           array: '配列',
           auto_fit: '自動フィット',

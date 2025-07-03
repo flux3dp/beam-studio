@@ -739,7 +739,7 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: 'Usunąć tła',
-          ai_bg_removal_reminder: 'Naciśnięcie przycisku spowoduje natychmiastowe wykorzystanie 0,2 kredytu. Czy chcesz kontynuować?',
+          ai_bg_removal_reminder: 'Naciśnięcie przycisku spowoduje natychmiastowe wykorzystanie 0,02 kredytu. Czy chcesz kontynuować?',
           ai_bg_removal_short: 'BG Usunąć',
           array: 'Szyk',
           auto_fit: 'Dopasowanie Automatyczne',
