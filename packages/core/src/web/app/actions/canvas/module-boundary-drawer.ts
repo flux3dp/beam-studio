@@ -93,13 +93,9 @@ const getUnionBoundary = (
   const [offsetX, offsetY] = getModuleOffsets({ module: currentModule, workarea: model });
   let { bottom, left, right, top } = getModuleBoundary(model, currentModule);
 
-  console.debug('init bound', { bottom, left, right, top });
-
   supportedModules?.forEach((module) => {
     if (module !== currentModule && hasModuleLayer([module])) {
       const boundary = getModuleBoundary(model, module);
-
-      console.debug('model bound', model, boundary);
 
       bottom = Math.max(bottom, boundary.bottom);
       left = Math.max(left, boundary.left);
@@ -107,7 +103,6 @@ const getUnionBoundary = (
       top = Math.max(top, boundary.top);
     }
   });
-  console.debug('model offset', offsetX, offsetY);
 
   left += offsetX;
   right -= offsetX;

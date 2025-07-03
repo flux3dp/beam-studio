@@ -34,8 +34,6 @@ const Beamo2Module = ({ unitInputProps }: Props): React.JSX.Element => {
     };
   }, [unitInputProps]);
 
-  console.debug('Beamo2Module', commonProps);
-
   const currentModuleOffsets = getPreference('module-offsets');
   const getModuleOffset = useCallback(
     (module: LayerModuleType) =>
