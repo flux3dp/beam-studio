@@ -379,6 +379,7 @@ export interface ILang {
       loading_image: string;
       more_than_two_object: string;
       mouse: string;
+      no_curve_engraving_with_modules: string;
       no_support_text: string;
       nolayer: string;
       not_support_object_type: string;
@@ -1517,6 +1518,8 @@ export interface ILang {
       abort_preview: string;
       camera_cable_unstable: string;
       continue_preview: string;
+      door_opened: string;
+      door_opened_text: string;
       fail_to_transmit_image: string;
       ws_closed_unexpectly: string;
     };

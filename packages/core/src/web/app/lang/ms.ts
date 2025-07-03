@@ -381,6 +381,7 @@ const lang: ILang = {
       loading_image: 'Memuatkan imej, sila tunggu...',
       more_than_two_object: 'Terlalu banyak objek. Hanya menyokong 2 objek',
       mouse: 'Tetikus',
+      no_curve_engraving_with_modules: 'Kerja ini merangkumi ukiran permukaan melengkung, yang tidak boleh digunakan bersama dengan cetakan berwarna. Sila matikan lapisan cetakan berwarna dan hantar semula kerja.',
       no_support_text: 'Beam Studio tidak menyokong tag teks pada masa ini. Sila tukar teks kepada laluan sebelum import.',
       nolayer: 'Lapisan Tunggal',
       not_support_object_type: 'Tidak menyokong jenis objek',
@@ -742,7 +743,7 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: 'Buang Latar Belakang',
-          ai_bg_removal_reminder: 'Menekan butang akan menggunakan 0.2 Kredit dengan serta-merta, anda mahu meneruskan?',
+          ai_bg_removal_reminder: 'Menekan butang akan menggunakan 0.02 Kredit dengan serta-merta, anda mahu meneruskan?',
           ai_bg_removal_short: 'Buang LB',
           array: 'Susunan',
           auto_fit: 'Muat Auto',
@@ -1526,6 +1527,8 @@ const lang: ILang = {
       abort_preview: 'Batalkan',
       camera_cable_unstable: 'Kamera menghantar gambar secara tidak stabil dikesan. Pratonton masih boleh dilakukan dengan normal, tetapi mungkin ada masalah pratonton perlahan atau masa tamat.',
       continue_preview: 'Teruskan',
+      door_opened: 'Pintu Terbuka',
+      door_opened_text: 'Sila tutup pintu sebelum memulakan semula pratonton kamera.',
       fail_to_transmit_image: '#845 Sesuatu telah berlaku dengan penghantaran imej. Sila mulakan semula mesin atau Beam Studio anda. Jika ralat ini berterusan, sila ikuti <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/4402756056079">panduan ini</a>.',
       ws_closed_unexpectly: '#844 Sambungan ke kamera mesin telah ditutup secara mengejut. Jika ralat ini berterusan, sila ikuti <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/4402755805071">panduan ini</a>.',
     },

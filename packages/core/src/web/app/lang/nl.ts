@@ -381,6 +381,7 @@ const lang: ILang = {
       loading_image: 'Afbeelding laden, even geduld...',
       more_than_two_object: 'Te veel objecten. Ondersteuning voor slechts 2 objecten',
       mouse: 'Muis',
+      no_curve_engraving_with_modules: 'Deze taak bevat graveren op een gebogen oppervlak, wat niet samen met kleurenprinten kan worden gebruikt. Schakel de kleurenprintlaag uit en verzend de taak opnieuw.',
       no_support_text: 'Beam Studio ondersteunt momenteel geen teksttag. Zet tekst om naar pad voordat u importeert.',
       nolayer: 'Enkele laag',
       not_support_object_type: 'Objecttype wordt niet ondersteund',
@@ -742,7 +743,7 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: 'Achtergrond verwijderen',
-          ai_bg_removal_reminder: 'Druk op de knop gebruikt direct 0,2 tegoed, wilt u doorgaan?',
+          ai_bg_removal_reminder: 'Druk op de knop gebruikt direct 0,02 tegoed, wilt u doorgaan?',
           ai_bg_removal_short: 'Achtergrondverw.',
           array: 'Array',
           auto_fit: 'Auto Aanpassen',
@@ -1526,6 +1527,8 @@ const lang: ILang = {
       abort_preview: 'Afbreken',
       camera_cable_unstable: "Er is gedetecteerd dat de camera foto's instabiel overdraagt. Voorbeeldweergave kan nog steeds normaal worden uitgevoerd, maar er kan sprake zijn van trage voorbeeldweergave of time-out.",
       continue_preview: 'Doorgaan',
+      door_opened: 'Deur geopend',
+      door_opened_text: 'Sluit de deur voordat u de cameravoorvertoning opnieuw start.',
       fail_to_transmit_image: '#845 Er ging iets mis met beeldoverdracht. Start uw machine of Beam Studio opnieuw op. Als deze fout aanhoudt, volg dan <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/4402756056079">deze handleiding</a>.',
       ws_closed_unexpectly: '#844 Verbinding met machinecamera onverwacht verbroken. Als deze fout aanhoudt, volg dan <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/4402755805071">deze handleiding</a>.',
     },

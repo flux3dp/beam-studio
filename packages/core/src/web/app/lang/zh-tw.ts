@@ -381,6 +381,7 @@ const lang: ILang = {
       loading_image: '載入圖片中，請稍候...',
       more_than_two_object: '太多物件，只支援兩物件操作',
       mouse: '滑鼠',
+      no_curve_engraving_with_modules: '此工作包含曲面雕刻，無法與彩色列印同時使用。請關閉彩色列印圖層後重新傳送工作。',
       no_support_text: 'Beam Studio 目前不支援由外部匯入文字標籤，請由向量繪圖軟體將文字轉成路徑後再匯入。',
       nolayer: '不分層',
       not_support_object_type: '不支援的物件類型',
@@ -742,7 +743,7 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: '一鍵去背',
-          ai_bg_removal_reminder: '按下按鈕將立即使用 0.2 Credit，是否繼續？',
+          ai_bg_removal_reminder: '按下按鈕將立即使用 0.02 Credit，是否繼續？',
           ai_bg_removal_short: 'AI去背',
           array: '陣列',
           auto_fit: '自動對位',
@@ -1526,6 +1527,8 @@ const lang: ILang = {
       abort_preview: '中斷預覽',
       camera_cable_unstable: '偵測到相機傳輸照片時不穩定，仍能正常進行相機預覽，但可能會有預覽速度較慢或超時的問題。<a target="_blank" href="https://support.flux3dp.com/hc/zh-tw/articles/360001791895">了解更多</a>',
       continue_preview: '繼續預覽',
+      door_opened: '門蓋開啟',
+      door_opened_text: '請關上門蓋後再重新啟動相機預覽。',
       fail_to_transmit_image: '#845 相機傳輸照片異常，請將機器重新開機。如果問題持續發生，請參考<a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/articles/4402756056079">此則引導</a>。',
       ws_closed_unexpectly: '#844 與機器相機的連線無預期的中斷。如果問題持續發生，請參考<a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/articles/4402755805071">此則引導</a>。',
     },

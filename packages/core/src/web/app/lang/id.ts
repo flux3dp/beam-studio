@@ -381,6 +381,7 @@ const lang: ILang = {
       loading_image: 'Memuat gambar, harap tunggu...',
       more_than_two_object: 'Terlalu banyak objek. Hanya mendukung 2 objek',
       mouse: 'Mouse',
+      no_curve_engraving_with_modules: 'Pekerjaan ini mencakup pengukiran permukaan melengkung, yang tidak dapat digunakan bersamaan dengan pencetakan berwarna. Harap matikan lapisan pencetakan warna dan kirim ulang pekerjaan.',
       no_support_text: 'Beam Studio saat ini tidak mendukung teks. Harap ubah teks ke path sebelum mengimpor.',
       nolayer: 'Lapisan Tunggal',
       not_support_object_type: 'Tidak mendukung jenis objek',
@@ -742,7 +743,7 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: 'Hapus Latar Belakang',
-          ai_bg_removal_reminder: 'Menekan tombol akan segera menggunakan 0,2 Kredit, apakah Anda ingin melanjutkan?',
+          ai_bg_removal_reminder: 'Menekan tombol akan segera menggunakan 0,02 Kredit, apakah Anda ingin melanjutkan?',
           ai_bg_removal_short: 'Hps Latar Blkg',
           array: 'Array',
           auto_fit: 'Pas Otomatis',
@@ -1526,6 +1527,8 @@ const lang: ILang = {
       abort_preview: 'Batalkan',
       camera_cable_unstable: 'Terdeteksi kamera mentransfer foto secara tidak stabil. Pratinjau masih dapat dilakukan, tetapi mungkin ada masalah lambat atau waktu habis.',
       continue_preview: 'Lanjutkan',
+      door_opened: 'Pintu Terbuka',
+      door_opened_text: 'Tutup pintu sebelum memulai ulang pratinjau kamera.',
       fail_to_transmit_image: '#845 Terjadi kesalahan transmisi gambar. Harap mulai ulang mesin atau Beam Studio. Jika error berlanjut, ikuti <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/4402756056079">panduan ini</a>.',
       ws_closed_unexpectly: '#844 Koneksi ke kamera mesin ditutup secara tidak terduga. Jika error berlanjut, ikuti <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/4402755805071">panduan ini</a>.',
     },

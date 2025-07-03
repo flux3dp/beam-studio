@@ -381,6 +381,7 @@ const lang: ILang = {
       loading_image: 'Ladataan kuvaa, odota...',
       more_than_two_object: 'Liikaa objekteja. Vain 2 objektia tuetaan.',
       mouse: 'Hiiri',
+      no_curve_engraving_with_modules: 'Tämä työ sisältää kaarevan pinnan kaiverruksen, jota ei voi käyttää yhdessä väritulostuksen kanssa. Poista väritulostuskerros käytöstä ja lähetä työ uudelleen.',
       no_support_text: 'Beam Studio ei tällä hetkellä tue tekstiä. Muuta teksti poluiksi ennen tuontia.',
       nolayer: 'Yksikerroksinen',
       not_support_object_type: 'Objektityyppiä ei tueta.',
@@ -742,7 +743,7 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: 'Taustan poisto',
-          ai_bg_removal_reminder: 'Painamalla nappia käytetään välittömästi 0,2 hyvitystä, haluatko jatkaa?',
+          ai_bg_removal_reminder: 'Painamalla nappia käytetään välittömästi 0,02 hyvitystä, haluatko jatkaa?',
           ai_bg_removal_short: 'TP',
           array: 'Taulukko',
           auto_fit: 'Automaattinen Sovitus',
@@ -1526,6 +1527,8 @@ const lang: ILang = {
       abort_preview: 'Keskeytä',
       camera_cable_unstable: 'Kameran kuvan siirrossa havaittiin epävakautta. Esikatselu toimii edelleen normaalisti, mutta esikatselussa voi ilmetä hitautta tai aikakatkaisuja.',
       continue_preview: 'Jatka',
+      door_opened: 'Ovi auki',
+      door_opened_text: 'Sulje ovi ennen kameran esikatselun uudelleenkäynnistystä.',
       fail_to_transmit_image: '#845 Kuvan siirrossa tapahtui virhe. Käynnistä kone tai Beam Studio uudelleen. Jos virhe ei poistu, noudata <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/4402756056079">tätä ohjetta</a>.',
       ws_closed_unexpectly: '#844 Yhteys kameran ja koneen välillä katkesi odottamatta. Jos virhe ei poistu, noudata <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/4402755805071">tätä ohjetta</a>.',
     },

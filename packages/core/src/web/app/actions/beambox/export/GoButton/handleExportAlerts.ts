@@ -8,10 +8,12 @@ import curveEngravingModeController from '@core/app/actions/canvas/curveEngravin
 import Dialog from '@core/app/actions/dialog-caller';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { getAutoFeeder } from '@core/helpers/addOn';
 import alertConfig from '@core/helpers/api/alert-config';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
+import { hasModuleLayer } from '@core/helpers/layer-module/layer-module-helper';
 import round from '@core/helpers/math/round';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
@@ -34,6 +36,23 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
   const layers = [...document.querySelectorAll('#svgcontent > g.layer:not([display="none"])')];
   const addOnInfo = getAddOnInfo(workarea);
   const isAutoFeederTask = getAutoFeeder(addOnInfo);
+  const isCurveEngravingTask = curveEngravingModeController.hasArea() && addOnInfo.curveEngraving;
+
+  if (
+    isCurveEngravingTask &&
+    workarea === 'fbm2' &&
+    hasModuleLayer(
+      workareaObj.supportedModules!.filter(
+        (module) => ![LayerModule.LASER_UNIVERSAL, LayerModule.UV_PRINT].includes(module),
+      ),
+    )
+  ) {
+    alertCaller.popUp({
+      message: lang.beambox.popup.no_curve_engraving_with_modules,
+    });
+
+    return false;
+  }
 
   if (!constant.highPowerModels.includes(workarea)) {
     const isPowerTooHigh = layers.some((layer) => {
@@ -151,7 +170,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
   SymbolMaker.switchImageSymbolForAll(false);
 
   const { curveSpeedLimit } = workareaObj;
-  const hasCurveSpeedLimit = curveEngravingModeController.hasArea() && addOnInfo.curveEngraving && curveSpeedLimit;
+  const hasCurveSpeedLimit = isCurveEngravingTask && curveSpeedLimit;
   const handleCurveEngravingSpeedAlert = async (): Promise<void> => {
     if (!hasCurveSpeedLimit) {
       return;

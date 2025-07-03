@@ -381,6 +381,7 @@ const lang: ILang = {
       loading_image: 'Đang tải hình ảnh, vui lòng đợi...',
       more_than_two_object: 'Chỉ hỗ trợ 2 đối tượng',
       mouse: 'Chuột',
+      no_curve_engraving_with_modules: 'Công việc này bao gồm khắc trên bề mặt cong, không thể sử dụng cùng lúc với in màu. Vui lòng tắt lớp in màu và gửi lại công việc.',
       no_support_text: 'Beam Studio hiện không hỗ trợ chữ. Vui lòng chuyển đổi chữ thành đường dẫn trước khi nhập.',
       nolayer: 'Lớp đơn',
       not_support_object_type: 'Không hỗ trợ loại đối tượng này',
@@ -742,7 +743,7 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: 'Xóa nền',
-          ai_bg_removal_reminder: 'Nhấn nút sẽ sử dụng ngay 0.2 Tín dụng, bạn có muốn tiếp tục không?',
+          ai_bg_removal_reminder: 'Nhấn nút sẽ sử dụng ngay 0.02 Tín dụng, bạn có muốn tiếp tục không?',
           ai_bg_removal_short: 'Xóa nền',
           array: 'Mảng',
           auto_fit: 'Tự Động Vừa Khít',
@@ -1526,6 +1527,8 @@ const lang: ILang = {
       abort_preview: 'Hủy bỏ',
       camera_cable_unstable: 'Phát hiện camera đang truyền ảnh không ổn định. Xem trước vẫn có thể thực hiện bình thường, nhưng có thể gặp vấn đề xem trước chậm hoặc hết thời gian chờ.',
       continue_preview: 'Tiếp tục',
+      door_opened: 'Cửa đang mở',
+      door_opened_text: 'Vui lòng đóng cửa trước khi khởi động lại xem trước máy ảnh.',
       fail_to_transmit_image: '#845 Đã xảy ra lỗi khi truyền ảnh. Vui lòng khởi động lại máy hoặc Beam Studio. Nếu lỗi này vẫn xảy ra, vui lòng làm theo <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/4402756056079">hướng dẫn này</a>.',
       ws_closed_unexpectly: '#844 Kết nối với camera máy đã bị đóng bất ngờ. Nếu lỗi này vẫn xảy ra, vui lòng làm theo <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/4402755805071">hướng dẫn này</a>.',
     },

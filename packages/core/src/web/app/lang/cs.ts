@@ -381,6 +381,7 @@ const lang: ILang = {
       loading_image: 'Nahrávám obrázek, prosím vyčkejte...',
       more_than_two_object: 'Příliš mnoho objektů. Podpora pouze pro 2 objekty.',
       mouse: 'Myš',
+      no_curve_engraving_with_modules: 'Tato úloha zahrnuje gravírování na zakřiveném povrchu, které nelze použít současně s barevným tiskem. Vypněte vrstvu barevného tisku a úlohu odešlete znovu.',
       no_support_text: 'Beam Studio v současnosti nepodporuje textové štítky. Převeďte prosím před importem text na cestu.',
       nolayer: 'Jedna vrstva',
       not_support_object_type: 'Nepodporovaný typ objektu.',
@@ -742,7 +743,7 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: 'Odstranění pozadí',
-          ai_bg_removal_reminder: 'Stisknutím tlačítka okamžitě zaplatíte 0,2 kreditu. Přejete si pokračovat?',
+          ai_bg_removal_reminder: 'Stisknutím tlačítka okamžitě zaplatíte 0,02 kreditu. Přejete si pokračovat?',
           ai_bg_removal_short: 'Odstranění pozadí',
           array: 'Pole',
           auto_fit: 'Automaticky přizpůsobit',
@@ -1526,6 +1527,8 @@ const lang: ILang = {
       abort_preview: 'Zrušit',
       camera_cable_unstable: 'Bylo zjištěno, že kamera nestabilně přenáší fotografie. Stále můžete spustit náhled, ale může nastat problém s pomalým náhledem či vypršením časového limitu.',
       continue_preview: 'Pokračovat',
+      door_opened: 'Dveře otevřené',
+      door_opened_text: 'Před opětovným spuštěním náhledu kamery prosím zavřete dveře.',
       fail_to_transmit_image: '#845 Něco se nepodařilo s přenosem obrázku.Restartujte prosím svůj přístroj nebo Beam Studio. Pokud bude tato chyba přetrvávat, přečtěte si prosím <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/4402756056079">tento návod</a>.',
       ws_closed_unexpectly: '#844 Nečekaně bylo ukončeno spojení s kamerou přístroje. Pokud bude tato chyba přetrvávat, přečtěte si prosím <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/4402755805071">tento návod</a>.',
     },

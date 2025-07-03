@@ -381,6 +381,7 @@ const lang: ILang = {
       loading_image: 'Ładowanie obrazu, proszę czekać...',
       more_than_two_object: 'Zbyt wiele obiektów. Obsługa tylko 2 obiektów',
       mouse: 'Mysz',
+      no_curve_engraving_with_modules: 'To zadanie obejmuje grawerowanie na zakrzywionej powierzchni, które nie może być używane razem z drukiem kolorowym. Wyłącz warstwę druku kolorowego i wyślij zadanie ponownie.',
       no_support_text: 'Beam Studio nie obsługuje obecnie tagów tekstowych. Przed zaimportowaniem zamień tekst na ścieżki.',
       nolayer: 'Pojedyncza warstwa',
       not_support_object_type: 'Nie obsługuje typu obiektu',
@@ -742,7 +743,7 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: 'Usunąć tła',
-          ai_bg_removal_reminder: 'Naciśnięcie przycisku spowoduje natychmiastowe wykorzystanie 0,2 kredytu. Czy chcesz kontynuować?',
+          ai_bg_removal_reminder: 'Naciśnięcie przycisku spowoduje natychmiastowe wykorzystanie 0,02 kredytu. Czy chcesz kontynuować?',
           ai_bg_removal_short: 'BG Usunąć',
           array: 'Szyk',
           auto_fit: 'Dopasowanie Automatyczne',
@@ -1526,6 +1527,8 @@ const lang: ILang = {
       abort_preview: 'Przerwij',
       camera_cable_unstable: 'Wykryto, że kamera niestabilnie przesyła zdjęcia. Podgląd można nadal wykonać, ale może wystąpić problem z powolnym podglądem lub przekroczeniem limitu czasu.',
       continue_preview: 'Kontynuuj',
+      door_opened: 'Drzwi otwarte',
+      door_opened_text: 'Zamknij drzwi przed ponownym uruchomieniem podglądu z kamery.',
       fail_to_transmit_image: '#845 Coś poszło nie tak z transmisją obrazu. Uruchom ponownie komputer i Beam Studio. Jeśli ten błąd będzie się powtarzał, postępuj zgodnie z <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/4402756056079">tym przewodnikiem</a>.',
       ws_closed_unexpectly: '#844 Połączenie z kamerą maszyny zostało niespodziewanie zamknięte. If this error persists, please follow <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/4402755805071">this guide</a>.',
     },

@@ -381,6 +381,7 @@ const lang: ILang = {
       loading_image: 'Bild laden, bitte warten...',
       more_than_two_object: 'Zu viele Objekte. Es werden nur 2 Objekte unterstützt.',
       mouse: 'TouchPad',
+      no_curve_engraving_with_modules: 'Dieser Auftrag beinhaltet Gravuren auf einer gewölbten Oberfläche und kann nicht zusammen mit Farbdruck verwendet werden. Bitte deaktivieren Sie die Farbdruckebene und senden Sie den Auftrag erneut.',
       no_support_text: 'Beam Studio unterstützt derzeit keine Text-Tags. Bitte übertrage Text vor dem Importieren in den Pfad.',
       nolayer: 'Einzelne Schicht',
       not_support_object_type: 'Objekttyp wird nicht unterstützt.',
@@ -742,7 +743,7 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: 'AI-Hintergrundentfernung',
-          ai_bg_removal_reminder: 'Durch Drücken der Taste werden sofort 0,2 Credits verbraucht. Möchten Sie fortfahren?',
+          ai_bg_removal_reminder: 'Durch Drücken der Taste werden sofort 0,02 Credits verbraucht. Möchten Sie fortfahren?',
           ai_bg_removal_short: 'BG Entfernung',
           array: 'Anordnung',
           auto_fit: 'Automatische Anpassung',
@@ -1526,6 +1527,8 @@ const lang: ILang = {
       abort_preview: 'Abbrechen',
       camera_cable_unstable: 'Es wird festgestellt, dass die Kamera Fotos instabil überträgt. Die Vorschau kann weiterhin normal ausgeführt werden, es kann jedoch das Problem einer langsamen Vorschau oder eines Zeitlimits auftreten.',
       continue_preview: 'Fortsetzen',
+      door_opened: 'Tür geöffnet',
+      door_opened_text: 'Bitte schließen Sie die Tür, bevor Sie die Kamera-Vorschau neu starten.',
       fail_to_transmit_image: '#845 Bei der Bildübertragung ist ein Fehler aufgetreten. Bitte starten Sie Ihren Maschinen oder Beam Studio neu. Wenn dieser Fehler weiterhin besteht, befolgen Sie <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/4402756056079">diese Anleitung</a>.',
       ws_closed_unexpectly: '#844 Die Verbindung zur Maschinenkamera wurde unerwartet geschlossen. Wenn dieser Fehler weiterhin besteht, befolgen Sie <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/4402755805071">diese Anleitung</a>.',
     },

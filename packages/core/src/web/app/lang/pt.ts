@@ -381,6 +381,7 @@ const lang: ILang = {
       loading_image: 'Carregando imagem, aguarde...',
       more_than_two_object: 'Objetos demais. Suporte apenas para 2 objetos',
       mouse: 'Mouse',
+      no_curve_engraving_with_modules: 'Este trabalho inclui gravação em superfície curva, que não pode ser usada junto com a impressão colorida. Desative a camada de impressão colorida e envie o trabalho novamente.',
       no_support_text: 'O Beam Studio não suporta a tag de texto atualmente. Por favor, converta o texto em caminho antes de importar.',
       nolayer: 'Camada única',
       not_support_object_type: 'Tipo de objeto não suportado',
@@ -742,7 +743,7 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: 'Remoção de fundo',
-          ai_bg_removal_reminder: 'Pressionar o botão usará imediatamente 0,2 créditos de, deseja continuar?',
+          ai_bg_removal_reminder: 'Pressionar o botão usará imediatamente 0,02 créditos de, deseja continuar?',
           ai_bg_removal_short: 'Remoção de fundo',
           array: 'Matriz',
           auto_fit: 'Ajuste Automático',
@@ -1526,6 +1527,8 @@ const lang: ILang = {
       abort_preview: 'Cancelar',
       camera_cable_unstable: 'Foi detectado que a câmera está transferindo fotos de forma instável. A visualização ainda pode ser realizada normalmente, mas pode haver problema de visualização lenta ou tempo limite.',
       continue_preview: 'Continuar',
+      door_opened: 'Porta aberta',
+      door_opened_text: 'Feche a porta antes de reiniciar a visualização da câmera.',
       fail_to_transmit_image: '#845 Ocorreu um erro na transmissão da imagem. Por favor, reinicie sua máquina ou o Beam Studio. Se este erro persistir, siga <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/4402756056079">este guia</a>.',
       ws_closed_unexpectly: '#844 A conexão com a câmera da máquina foi fechada inesperadamente. Se este erro persistir, siga <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/4402755805071">este guia</a>.',
     },

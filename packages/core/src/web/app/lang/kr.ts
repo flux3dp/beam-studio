@@ -381,6 +381,7 @@ const lang: ILang = {
       loading_image: '이미지를 로드 중입니다. 잠시 기다려주세요...',
       more_than_two_object: '오브젝트 수가 너무 많습니다. 2개의 오브젝트만 지원됩니다.',
       mouse: '마우스',
+      no_curve_engraving_with_modules: '이 작업에는 곡면 조각이 포함되어 있으며 컬러 인쇄와 함께 사용할 수 없습니다. 컬러 인쇄 레이어를 끄고 작업을 다시 보내주세요.',
       no_support_text: 'Beam Studio는 현재 텍스트 태그를 지원하지 않습니다. 가져오기 전에 텍스트를 경로로 변환해주세요.',
       nolayer: '단일 레이어',
       not_support_object_type: '오브젝트 유형이 지원되지 않습니다.',
@@ -742,7 +743,7 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: '인공 지능 배경 제거',
-          ai_bg_removal_reminder: '버튼을 누르면 즉시 0.2 크레딧이 사용됩니다. 계속하시겠습니까?',
+          ai_bg_removal_reminder: '버튼을 누르면 즉시 0.02 크레딧이 사용됩니다. 계속하시겠습니까?',
           ai_bg_removal_short: '배경 제거',
           array: '어레이',
           auto_fit: '자동 맞춤',
@@ -1526,6 +1527,8 @@ const lang: ILang = {
       abort_preview: '중지',
       camera_cable_unstable: '카메라 전송이 불안정하게 이루어지는 것이 감지되었습니다. 미리보기는 정상적으로 수행될 수 있지만, 느린 미리보기 또는 시간 초과의 문제가 발생할 수 있습니다.',
       continue_preview: '계속하기',
+      door_opened: '도어 열림',
+      door_opened_text: '카메라 미리보기를 다시 시작하기 전에 도어를 닫아 주세요.',
       fail_to_transmit_image: '#845 이미지 전송 중 오류가 발생했습니다. 기계나 Beam Studio를 다시 시작해주세요. 만약 이 오류가 계속 발생한다면, <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/4402756056079">이 가이드</a>를 따라주세요.',
       ws_closed_unexpectly: '#844 기계 카메라 연결이 예기치 않게 종료되었습니다. 만약 이 오류가 계속 발생한다면, <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/4402755805071">이 가이드</a>를 따라주세요.',
     },

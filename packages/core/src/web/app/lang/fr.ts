@@ -381,6 +381,7 @@ const lang: ILang = {
       loading_image: "Chargement de l'image, veuillez patienter...",
       more_than_two_object: "Trop d'objets. Seuls 2 objets sont pris en charge",
       mouse: 'Souris',
+      no_curve_engraving_with_modules: "Ce travail comprend une gravure sur surface courbe, qui ne peut pas être utilisée avec l'impression couleur. Veuillez désactiver le calque d'impression couleur et renvoyer le travail.",
       no_support_text: "Beam Studio ne prend pas en charge les balises de texte pour le moment. Veuillez convertir le texte en chemin avant l'importation.",
       nolayer: 'Couche unique',
       not_support_object_type: "Type d'objet non pris en charge",
@@ -742,7 +743,7 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: "Suppression de l'arrière-plan",
-          ai_bg_removal_reminder: "L'appui sur le bouton utilisera immédiatement 0,2 crédit, voulez-vous continuer ?",
+          ai_bg_removal_reminder: "L'appui sur le bouton utilisera immédiatement 0,02 crédit, voulez-vous continuer ?",
           ai_bg_removal_short: 'Suppr. arrière-plan',
           array: 'Tableau',
           auto_fit: 'Ajustement Automatique',
@@ -1526,6 +1527,8 @@ const lang: ILang = {
       abort_preview: 'Abandonner',
       camera_cable_unstable: "Il est détecté que la caméra transfère des photos de manière instable. L'aperçu peut encore être effectué normalement, mais il peut y avoir un problème d'aperçu lent ou de dépassement de délai.",
       continue_preview: 'Continuer',
+      door_opened: 'Porte ouverte',
+      door_opened_text: "Veuillez fermer la porte avant de redémarrer l'aperçu de la caméra.",
       fail_to_transmit_image: '#845 Quelque chose s\'est mal passé avec la transmission de l\'image. Veuillez redémarrer votre machine ou Beam Studio. Si cette erreur persiste, veuillez suivre <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/4402756056079">ce guide</a>.',
       ws_closed_unexpectly: '#844 La connexion à la caméra de la machine a été fermée de manière inattendue. Si cette erreur persiste, veuillez suivre <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/4402755805071">ce guide</a>.',
     },

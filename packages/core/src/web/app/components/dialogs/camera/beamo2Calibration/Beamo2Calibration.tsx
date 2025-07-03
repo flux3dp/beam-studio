@@ -1,8 +1,9 @@
-import { type ReactNode, useCallback, useRef, useState } from 'react';
+import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 
 import { match } from 'ts-pattern';
 
 import alertCaller from '@core/app/actions/alert-caller';
+import DoorChecker from '@core/app/actions/camera/preview-helper/DoorChecker';
 import progressCaller from '@core/app/actions/progress-caller';
 import { setFisheyeConfig, solvePnPCalculate } from '@core/helpers/camera-calibration-helper';
 import checkDeviceStatus from '@core/helpers/check-device-status';
@@ -58,6 +59,15 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
   const [step, setStep] = useState<StepsType>(isAdvanced ? Steps.PRE_CHESSBOARD : Steps.CHECK_DATA);
   const next = useCallback(() => setStep((step) => (step + 1) as StepsType), []);
   const prev = useCallback(() => setStep((step) => (step - 1) as StepsType), []);
+  const doorChecker = useRef<DoorChecker | null>(null);
+
+  useEffect(() => {
+    doorChecker.current = new DoorChecker();
+
+    return () => {
+      doorChecker.current?.destroy();
+    };
+  }, []);
 
   return match(step)
     .with(Steps.CHECK_DATA, () => {
@@ -141,12 +151,6 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
 
           if (doEngraving) await deviceMaster.doBeamo2Calibration();
 
-          progressCaller.update(PROGRESS_ID, { message: tCalibration.preparing_to_take_picture });
-
-          const res = await moveLaserHead();
-
-          if (!res) return;
-
           setStep(Steps.SOLVE_PNP_INSTRUCTION);
         } catch (err) {
           console.error(err);
@@ -192,7 +196,17 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
           ]}
           buttons={[
             { label: tCalibration.back, onClick: () => setStep(Steps.PUT_PAPER) },
-            { label: tCalibration.next, onClick: () => setStep(Steps.SOLVE_PNP_TL), type: 'primary' },
+            {
+              label: tCalibration.next,
+              onClick: async () => {
+                const res = await doorChecker.current?.doorClosedWrapper(moveLaserHead);
+
+                if (!res) return;
+
+                setStep(Steps.SOLVE_PNP_TL);
+              },
+              type: 'primary',
+            },
           ]}
           onClose={() => onClose(false)}
           steps={[tCalibration.solve_pnp_step1, tCalibration.solve_pnp_step2]}
@@ -233,6 +247,7 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
       return (
         <SolvePnP
           dh={0}
+          doorChecker={doorChecker.current}
           hasNext
           initInterestArea={interestArea}
           onBack={prev}

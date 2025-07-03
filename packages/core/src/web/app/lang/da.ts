@@ -381,6 +381,7 @@ const lang: ILang = {
       loading_image: 'Indlæser billede, vent venligst...',
       more_than_two_object: 'For mange objekter. Understøtter kun 2 objekter',
       mouse: 'Mus',
+      no_curve_engraving_with_modules: 'Dette job inkluderer gravering på en buet overflade, hvilket ikke kan bruges sammen med farveudskrivning. Slå farveudskrivningslaget fra og send jobbet igen.',
       no_support_text: 'Beam Studio understøtter ikke tekst-tag i øjeblikket. Konvertér tekst til sti før import.',
       nolayer: 'Enkelt lag',
       not_support_object_type: 'Understøtter ikke objekttypen',
@@ -742,7 +743,7 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: 'Baggrundsfjernelse',
-          ai_bg_removal_reminder: 'Tryk på knappen vil straks bruge 0,2 kredit. Vil du fortsætte?',
+          ai_bg_removal_reminder: 'Tryk på knappen vil straks bruge 0,02 kredit. Vil du fortsætte?',
           ai_bg_removal_short: 'BG fjernelse',
           array: 'Array',
           auto_fit: 'Auto Fit',
@@ -1526,6 +1527,8 @@ const lang: ILang = {
       abort_preview: 'Afbryd',
       camera_cable_unstable: 'Det er registreret, at kameraet overfører billeder ustabilt. Forhåndsvisning kan stadig udføres normalt, men der kan være problemer med langsom forhåndsvisning eller timeout.',
       continue_preview: 'Fortsæt',
+      door_opened: 'Døren er åben',
+      door_opened_text: 'Luk venligst døren, før du genstarter kameraforhåndsvisningen.',
       fail_to_transmit_image: '#845 Noget gik galt med billedtransmissionen. Genstart venligst din maskine eller Beam Studio. Hvis denne fejl fortsætter, skal du følge <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/4402756056079">denne vejledning</a>.',
       ws_closed_unexpectly: '#844 Forbindelsen til maskinkameraet er blevet lukket uventet. Hvis denne fejl fortsætter, skal du følge <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/4402755805071">denne vejledning</a>.',
     },
