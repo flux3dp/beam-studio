@@ -547,13 +547,16 @@ class FramingTaskManager extends EventEmitter {
         coords.minY = 0;
       }
 
-      const res: Array<[number, number]> = [
-        [coords.minX, coords.minY],
-        [coords.maxX, coords.minY],
-        [coords.maxX, coords.maxY],
-        [coords.minX, coords.maxY],
-        [coords.minX, coords.minY],
-      ];
+      const res: Array<[number, number]> =
+        coords.maxY < 0
+          ? []
+          : [
+              [coords.minX, coords.minY],
+              [coords.maxX, coords.minY],
+              [coords.maxX, coords.maxY],
+              [coords.minX, coords.maxY],
+              [coords.minX, coords.minY],
+            ];
 
       this.taskCache[type] = { isOutOfBounds, points: res };
 
