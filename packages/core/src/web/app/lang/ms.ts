@@ -1950,6 +1950,7 @@ const lang: ILang = {
       install_correct_headtype: 'Sila pasang modul laser diod 10W/20W dengan betul untuk membolehkan laser beroperasi.',
       job_origin_unavailable: 'Menetapkan asal kerja memerlukan versi firmware 4.3.5 / 5.3.5 atau lebih tinggi. Adakah anda ingin mengemas kini firmware sekarang?',
       job_origin_warning: 'Anda sedang menggunakan “kedudukan semasa” sebagai titik permulaan. Pastikan kepala laser dipindahkan ke kedudukan yang betul untuk mengelakkan perlanggaran.',
+      object_outside_moving_area: 'Beberapa objek berada di luar kawasan pratonton bingkai.',
       power_too_high: 'KUASA TERLALU TINGGI',
       power_too_high_confirm: 'DIAMBIL PERHATIAN',
       power_too_high_msg: 'Menggunakan kuasa laser yang lebih rendah (bawah 70%) akan memanjangkan jangka hayat tiub laser.\nMasukkan "DIAMBIL PERHATIAN" untuk meneruskan.',

@@ -1951,6 +1951,7 @@ const lang: ILang = {
       install_correct_headtype: '請正確安裝10W或20W雷射模組以進行弱出光。',
       job_origin_unavailable: '設定工作起點需要韌體版本 4.3.4 / 5.3.4 或更高版本。您現在要更新韌體嗎？',
       job_origin_warning: '您目前使用「當前位置」作為起點，請確認雷射頭已移至正確位置，以避免碰撞。',
+      object_outside_moving_area: '有物件超出可外框預覽範圍。',
       power_too_high: '功率過高',
       power_too_high_confirm: '知道了',
       power_too_high_msg: '雷射管在高功率（70％ 以上）下耗損較快，使用低功率可以延長雷試管使用壽命。\n輸入「知道了」以繼續。',

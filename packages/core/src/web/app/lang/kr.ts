@@ -1950,6 +1950,7 @@ const lang: ILang = {
       install_correct_headtype: '10W/20W 다이오드 레이저 모듈을 제대로 설치하여 저전력 레이저를 활성화하고 프레임을 실행하세요.',
       job_origin_unavailable: '작업 원점을 설정하려면 펌웨어 버전 4.3.5 / 5.3.5 이상이 필요합니다. 지금 펌웨어를 업데이트하시겠습니까?',
       job_origin_warning: '현재 "현재 위치"를 시작 지점으로 사용 중입니다. 충돌을 방지하려면 레이저 헤드를 올바른 위치로 이동시키십시오.',
+      object_outside_moving_area: '일부 개체가 외곽 미리보기 범위를 벗어났습니다.',
       power_too_high: '파워 너무 높음',
       power_too_high_confirm: '확인',
       power_too_high_msg: '70% 미만의 낮은 레이저 파워를 사용하면 레이저 튜브의 수명이 연장됩니다. 계속하려면 "확인"을 눌러주세요.',

@@ -1950,6 +1950,7 @@ const lang: ILang = {
       install_correct_headtype: 'Installeer de 10W/20W diode lasermodules correct om laag laservermogen voor het uitvoeren van frames in te schakelen.',
       job_origin_unavailable: 'Het instellen van de taakbron vereist firmwareversie 4.3.5 / 5.3.5 of hoger. Wilt u de firmware nu bijwerken?',
       job_origin_warning: 'U gebruikt momenteel de “huidige positie” als startpunt. Zorg ervoor dat de laserkop naar de juiste positie wordt verplaatst om botsingen te voorkomen.',
+      object_outside_moving_area: 'Sommige objecten bevinden zich buiten het voorbeeldkader.',
       power_too_high: 'TE HOGE SPANNING',
       power_too_high_confirm: 'BEGREPEN',
       power_too_high_msg: 'Gebruik een lager laservermogen (onder 70%) om de levensduur van de lasertube te verlengen.\nVoer "BEGREPEN" in om door te gaan.',

@@ -1950,6 +1950,7 @@ const lang: ILang = {
       install_correct_headtype: 'Harap pasang modul laser diode 10W/20W dengan benar untuk mengaktifkan laser rendah agar bingkai dapat berjalan.',
       job_origin_unavailable: 'Pengaturan asal pekerjaan memerlukan versi firmware 4.3.5 / 5.3.5 atau yang lebih baru. Apakah Anda ingin memperbarui firmware sekarang?',
       job_origin_warning: 'Anda saat ini menggunakan "posisi saat ini" sebagai titik awal. Pastikan kepala laser dipindahkan ke posisi yang benar untuk menghindari tabrakan.',
+      object_outside_moving_area: 'Beberapa objek berada di luar area pratinjau bingkai.',
       power_too_high: 'DAYA TERLALU TINGGI',
       power_too_high_confirm: 'SAYA MENGERTI',
       power_too_high_msg: 'Menggunakan daya laser yang lebih rendah (di bawah 70%) akan memperpanjang masa pakai tabung laser.\nMasukkan "SAYA MENGERTI" untuk melanjutkan.',

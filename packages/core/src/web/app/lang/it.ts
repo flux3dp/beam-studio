@@ -1950,6 +1950,7 @@ const lang: ILang = {
       install_correct_headtype: "Installare correttamente i moduli laser da 10W/20W per abilitare il laser a bassa potenza per l'esecuzione della cornice.",
       job_origin_unavailable: "Impostare l'origine del lavoro richiede la versione firmware 4.3.5 / 5.3.5 o superiore. Vuoi aggiornare il firmware ora?",
       job_origin_warning: 'Stai utilizzando la “posizione corrente” come punto di partenza. Assicurati che la testa laser sia spostata nella posizione corretta per evitare collisioni.',
+      object_outside_moving_area: "Alcuni oggetti sono fuori dall'area di anteprima del riquadro.",
       power_too_high: 'POTENZA TROPPO ALTA',
       power_too_high_confirm: 'HO CAPITO',
       power_too_high_msg: 'Utilizzare una potenza laser inferiore (sotto il 70%) estende la durata del tubo laser.\nInserire "HO CAPITO" per procedere.',

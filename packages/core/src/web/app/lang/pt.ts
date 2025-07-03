@@ -1950,6 +1950,7 @@ const lang: ILang = {
       install_correct_headtype: 'Instale os módulos laser de diodo de 10W/20W corretos para habilitar o laser baixo para executar o quadro.',
       job_origin_unavailable: 'Configurar a origem do trabalho requer a versão de firmware 4.3.5 / 5.3.5 ou superior. Deseja atualizar o firmware agora?',
       job_origin_warning: 'Atualmente, você está usando a “posição atual” como ponto de partida. Certifique-se de mover a cabeça do laser para a posição correta para evitar colisões.',
+      object_outside_moving_area: 'Alguns objetos estão fora da área de visualização do contorno.',
       power_too_high: 'POTÊNCIA MUITO ALTA',
       power_too_high_confirm: 'ENTENDI',
       power_too_high_msg: 'Usar potência laser mais baixa (abaixo de 70%) estenderá a vida útil do tubo laser.\nDigite "ENTENDI" para continuar.',

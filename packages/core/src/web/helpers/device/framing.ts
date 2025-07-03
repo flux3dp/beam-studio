@@ -900,7 +900,7 @@ class FramingTaskManager extends EventEmitter {
 
     if (this.taskCache[type]?.isOutOfBounds) {
       MessageCaller.openMessage({
-        content: '有物件超出可外框預覽範圍',
+        content: i18n.lang.topbar.alerts.object_outside_moving_area,
         duration: 3,
         key: 'out-of-bound',
         level: MessageLevel.WARNING,

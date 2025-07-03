@@ -1950,6 +1950,7 @@ const lang: ILang = {
       install_correct_headtype: 'Nainstalujte prosím správně moduly laserových diod 10W/20W, aby mohl laser nízké intenzity zahájit rámování.',
       job_origin_unavailable: 'Proces nastavení vodítek požaduje firmware verze 4.3.4 / 5.3.4 nebo vyšší. Chcete nyní aktualizovat firmware?',
       job_origin_warning: 'Momentálně používáte jako výchozí bod „aktuální pozici“. Ujistěte se, že je laserová hlava přesunuta do správné polohy, aby nedošlo ke kolizím.',
+      object_outside_moving_area: 'Některé objekty přesahují oblast náhledu rámečku.',
       power_too_high: 'PŘÍLIŠ VYSOKÁ INTENZITA',
       power_too_high_confirm: 'ROZUMÍM',
       power_too_high_msg: 'Využívání nižší intenzity laseru (pod 70%) prodlouží životnost laserové trubice.\nStiskněte "ROZUMÍM" pro pokračování.',

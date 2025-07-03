@@ -1950,6 +1950,7 @@ const lang: ILang = {
       install_correct_headtype: 'Bitte installieren Sie 10W/20W-Diodenlasermodule ordnungsgemäß, um Niedriglaser zum Ausführen des Rahmens zu aktivieren.',
       job_origin_unavailable: 'Das Festlegen des Arbeitsursprungs erfordert die Firmware-Version 4.3.5 / 5.3.5 oder höher. Möchten Sie die Firmware jetzt aktualisieren?',
       job_origin_warning: 'Sie verwenden derzeit die „aktuelle Position“ als Startpunkt. Stellen Sie sicher, dass der Laserkopf an die richtige Position bewegt wird, um Kollisionen zu vermeiden.',
+      object_outside_moving_area: 'Einige Objekte befinden sich außerhalb des Vorschau-Rahmenbereichs.',
       power_too_high: 'Leistung zu hoch',
       power_too_high_confirm: 'OK',
       power_too_high_msg: 'Die Verwendung einer niedrigeren Laserleistung (unter 70%) verlängert die Lebensdauer der Laserröhre!\nGeben Sie "OK" ein, um fortzufahren.',
