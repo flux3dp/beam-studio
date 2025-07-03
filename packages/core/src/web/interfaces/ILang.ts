@@ -462,6 +462,8 @@ export interface ILang {
             acrylic_printing: string;
             aluminum_engraving: string;
             aluminum_light: string;
+            bamboo_2mm_cutting: string;
+            bamboo_5mm_cutting: string;
             bamboo_printing: string;
             black_abs: string;
             black_acrylic_3mm_cutting: string;
@@ -526,6 +528,8 @@ export interface ILang {
             acrylic_printing: string;
             aluminum_engraving: string;
             aluminum_light: string;
+            bamboo_2mm_cutting: string;
+            bamboo_5mm_cutting: string;
             bamboo_printing: string;
             black_abs: string;
             black_acrylic_3mm_cutting: string;
