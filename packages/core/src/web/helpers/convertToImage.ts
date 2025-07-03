@@ -12,15 +12,15 @@ getSVGAsync(({ Canvas }) => {
 });
 
 type ConvertSvgToImageParams = {
-  offset?: number[];
   parentCmd?: IBatchCommand;
+  positionOffset?: number[];
   scale?: number;
   svgElement: SVGGElement;
 };
 
 export const convertSvgToImage = async ({
-  offset = [0, 0],
   parentCmd,
+  positionOffset = [50, 50],
   scale = 1,
   svgElement,
 }: ConvertSvgToImageParams): Promise<SVGImageElement | undefined> => {
@@ -30,20 +30,27 @@ export const convertSvgToImage = async ({
     const bbox = svgElement.getBBox();
     // Create a new <svg> wrapper element to hold the cloned SVG
     const wrapper = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const isFilled = svgElement.getAttribute('fill') !== 'none' && svgElement.getAttribute('fill') !== null;
+    const cloned = svgElement.cloneNode(true) as SVGGraphicsElement;
+    let strokeOffset = 0;
+
+    if (!isFilled) {
+      strokeOffset = 5;
+    }
 
     wrapper.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-    wrapper.setAttribute('width', String(bbox.width + 10));
-    wrapper.setAttribute('height', String(bbox.height + 10));
-
-    const cloned = svgElement.cloneNode(true) as SVGGraphicsElement;
-    const isFilled = cloned.getAttribute('fill') !== 'none' && cloned.getAttribute('fill') !== null;
-
-    console.log(cloned.getAttribute('fill'), isFilled);
+    wrapper.setAttribute('width', String(bbox.width + strokeOffset));
+    wrapper.setAttribute('height', String(bbox.height + strokeOffset));
 
     cloned.setAttribute('fill', '#000');
-    cloned.setAttribute('transform', `translate(${-bbox.x + 5}, ${-bbox.y + 5})`);
-    cloned.setAttribute('stroke', '#000');
-    cloned.setAttribute('stroke-width', String(5));
+
+    if (!isFilled) {
+      cloned.setAttribute('fill', 'none');
+      cloned.setAttribute('stroke', '#000');
+      cloned.setAttribute('stroke-width', String(strokeOffset));
+    }
+
+    cloned.setAttribute('transform', `translate(${-bbox.x + strokeOffset / 2}, ${-bbox.y + strokeOffset / 2})`);
     wrapper.appendChild(cloned);
 
     const svgData = new XMLSerializer().serializeToString(wrapper);
@@ -71,8 +78,8 @@ export const convertSvgToImage = async ({
         preserveAspectRatio: 'none',
         style: 'pointer-events:inherit',
         width,
-        x: offset[0],
-        y: offset[1],
+        x: svgElement.getAttribute('x')! + positionOffset[0],
+        y: svgElement.getAttribute('y')! + positionOffset[1],
       },
       element: 'image',
     });
@@ -89,7 +96,7 @@ export const convertSvgToImage = async ({
       parentCmd.addSubCommand(cmd);
     }
 
-    if (!offset) {
+    if (!positionOffset) {
       svgCanvas.alignSelectedElements('l', 'page');
       svgCanvas.alignSelectedElements('t', 'page');
     }
