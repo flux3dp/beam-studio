@@ -381,6 +381,7 @@ const lang: ILang = {
       loading_image: 'Loading image, please wait...',
       more_than_two_object: 'Too many objects. Only support for 2 objects',
       mouse: 'Mouse',
+      no_curve_engraving_with_modules: 'This job includes curved surface engraving, which cannot be used together with color printing. Please turn off the color printing layer and resend the job.',
       no_support_text: 'Beam Studio does not support text tag currently. Please transfer text to path before importing.',
       nolayer: 'Single Layer',
       not_support_object_type: 'Not support object type',

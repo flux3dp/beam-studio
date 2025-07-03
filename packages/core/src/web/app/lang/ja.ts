@@ -381,6 +381,7 @@ const lang: ILang = {
       loading_image: '画像を読み込んでいます。お待ちください…',
       more_than_two_object: 'オブジェクトが多すぎます。2つのオブジェクトのみをサポートします',
       mouse: 'マウス',
+      no_curve_engraving_with_modules: 'この作業には曲面彫刻が含まれており、カラー印刷と同時に使用することはできません。カラー印刷レイヤーをオフにして、作業を再送してください。',
       no_support_text: 'Beam Studioは現在、テキストタグをサポートしていません。インポートする前にテキストをパスに変換してください。',
       nolayer: '単一層',
       not_support_object_type: 'オブジェクトタイプをサポートしていません',

@@ -381,6 +381,7 @@ const lang: ILang = {
       loading_image: 'Ladataan kuvaa, odota...',
       more_than_two_object: 'Liikaa objekteja. Vain 2 objektia tuetaan.',
       mouse: 'Hiiri',
+      no_curve_engraving_with_modules: 'Tämä työ sisältää kaarevan pinnan kaiverruksen, jota ei voi käyttää yhdessä väritulostuksen kanssa. Poista väritulostuskerros käytöstä ja lähetä työ uudelleen.',
       no_support_text: 'Beam Studio ei tällä hetkellä tue tekstiä. Muuta teksti poluiksi ennen tuontia.',
       nolayer: 'Yksikerroksinen',
       not_support_object_type: 'Objektityyppiä ei tueta.',

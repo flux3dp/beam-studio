@@ -381,6 +381,7 @@ const lang: ILang = {
       loading_image: 'Nahrávám obrázek, prosím vyčkejte...',
       more_than_two_object: 'Příliš mnoho objektů. Podpora pouze pro 2 objekty.',
       mouse: 'Myš',
+      no_curve_engraving_with_modules: 'Tato úloha zahrnuje gravírování na zakřiveném povrchu, které nelze použít současně s barevným tiskem. Vypněte vrstvu barevného tisku a úlohu odešlete znovu.',
       no_support_text: 'Beam Studio v současnosti nepodporuje textové štítky. Převeďte prosím před importem text na cestu.',
       nolayer: 'Jedna vrstva',
       not_support_object_type: 'Nepodporovaný typ objektu.',

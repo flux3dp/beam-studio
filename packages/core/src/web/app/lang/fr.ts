@@ -381,6 +381,7 @@ const lang: ILang = {
       loading_image: "Chargement de l'image, veuillez patienter...",
       more_than_two_object: "Trop d'objets. Seuls 2 objets sont pris en charge",
       mouse: 'Souris',
+      no_curve_engraving_with_modules: "Ce travail comprend une gravure sur surface courbe, qui ne peut pas être utilisée avec l'impression couleur. Veuillez désactiver le calque d'impression couleur et renvoyer le travail.",
       no_support_text: "Beam Studio ne prend pas en charge les balises de texte pour le moment. Veuillez convertir le texte en chemin avant l'importation.",
       nolayer: 'Couche unique',
       not_support_object_type: "Type d'objet non pris en charge",

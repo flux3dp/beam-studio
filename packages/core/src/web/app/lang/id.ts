@@ -381,6 +381,7 @@ const lang: ILang = {
       loading_image: 'Memuat gambar, harap tunggu...',
       more_than_two_object: 'Terlalu banyak objek. Hanya mendukung 2 objek',
       mouse: 'Mouse',
+      no_curve_engraving_with_modules: 'Pekerjaan ini mencakup pengukiran permukaan melengkung, yang tidak dapat digunakan bersamaan dengan pencetakan berwarna. Harap matikan lapisan pencetakan warna dan kirim ulang pekerjaan.',
       no_support_text: 'Beam Studio saat ini tidak mendukung teks. Harap ubah teks ke path sebelum mengimpor.',
       nolayer: 'Lapisan Tunggal',
       not_support_object_type: 'Tidak mendukung jenis objek',

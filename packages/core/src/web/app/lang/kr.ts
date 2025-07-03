@@ -381,6 +381,7 @@ const lang: ILang = {
       loading_image: '이미지를 로드 중입니다. 잠시 기다려주세요...',
       more_than_two_object: '오브젝트 수가 너무 많습니다. 2개의 오브젝트만 지원됩니다.',
       mouse: '마우스',
+      no_curve_engraving_with_modules: '이 작업에는 곡면 조각이 포함되어 있으며 컬러 인쇄와 함께 사용할 수 없습니다. 컬러 인쇄 레이어를 끄고 작업을 다시 보내주세요.',
       no_support_text: 'Beam Studio는 현재 텍스트 태그를 지원하지 않습니다. 가져오기 전에 텍스트를 경로로 변환해주세요.',
       nolayer: '단일 레이어',
       not_support_object_type: '오브젝트 유형이 지원되지 않습니다.',

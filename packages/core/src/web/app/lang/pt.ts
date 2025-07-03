@@ -381,6 +381,7 @@ const lang: ILang = {
       loading_image: 'Carregando imagem, aguarde...',
       more_than_two_object: 'Objetos demais. Suporte apenas para 2 objetos',
       mouse: 'Mouse',
+      no_curve_engraving_with_modules: 'Este trabalho inclui gravação em superfície curva, que não pode ser usada junto com a impressão colorida. Desative a camada de impressão colorida e envie o trabalho novamente.',
       no_support_text: 'O Beam Studio não suporta a tag de texto atualmente. Por favor, converta o texto em caminho antes de importar.',
       nolayer: 'Camada única',
       not_support_object_type: 'Tipo de objeto não suportado',

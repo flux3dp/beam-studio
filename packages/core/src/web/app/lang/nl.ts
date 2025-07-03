@@ -381,6 +381,7 @@ const lang: ILang = {
       loading_image: 'Afbeelding laden, even geduld...',
       more_than_two_object: 'Te veel objecten. Ondersteuning voor slechts 2 objecten',
       mouse: 'Muis',
+      no_curve_engraving_with_modules: 'Deze taak bevat graveren op een gebogen oppervlak, wat niet samen met kleurenprinten kan worden gebruikt. Schakel de kleurenprintlaag uit en verzend de taak opnieuw.',
       no_support_text: 'Beam Studio ondersteunt momenteel geen teksttag. Zet tekst om naar pad voordat u importeert.',
       nolayer: 'Enkele laag',
       not_support_object_type: 'Objecttype wordt niet ondersteund',

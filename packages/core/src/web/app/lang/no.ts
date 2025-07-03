@@ -381,6 +381,7 @@ const lang: ILang = {
       loading_image: 'Laster inn bilde, vennligst vent...',
       more_than_two_object: 'For mange objekter. Støtter kun 2 objekter',
       mouse: 'Mus',
+      no_curve_engraving_with_modules: 'Dette arbeidet inkluderer gravering på buet overflate, som ikke kan brukes sammen med fargeutskrift. Slå av fargeutskriftslaget og send jobben på nytt.',
       no_support_text: 'Beam Studio støtter ikke tekst-tag for øyeblikket. Konverter tekst til bane før import.',
       nolayer: 'Enkelt lag',
       not_support_object_type: 'Støtter ikke objekttypen',

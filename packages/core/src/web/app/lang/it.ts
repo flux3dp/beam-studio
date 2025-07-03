@@ -381,6 +381,7 @@ const lang: ILang = {
       loading_image: 'Caricamento immagine in corso...',
       more_than_two_object: 'Troppi oggetti. Supporto solo per 2 oggetti',
       mouse: 'Mouse',
+      no_curve_engraving_with_modules: "Questo lavoro include l'incisione su superfici curve, che non può essere utilizzata insieme alla stampa a colori. Disattiva il livello di stampa a colori e reinvia il lavoro.",
       no_support_text: 'Beam Studio al momento non supporta il testo. Convertire il testo in tracciato prima di importare.',
       nolayer: 'Strato singolo',
       not_support_object_type: 'Tipo di oggetto non supportato',

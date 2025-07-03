@@ -379,6 +379,7 @@ export interface ILang {
       loading_image: string;
       more_than_two_object: string;
       mouse: string;
+      no_curve_engraving_with_modules: string;
       no_support_text: string;
       nolayer: string;
       not_support_object_type: string;

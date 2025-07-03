@@ -381,6 +381,7 @@ const lang: ILang = {
       loading_image: 'Läser in bild, vänta...',
       more_than_two_object: 'För många objekt. Stöder endast 2 objekt',
       mouse: 'Mus',
+      no_curve_engraving_with_modules: 'Detta jobb innehåller gravering på en välvd yta som inte kan användas tillsammans med färgutskrift. Stäng av färgutskriftslagret och skicka jobbet igen.',
       no_support_text: 'Beam Studio stöder inte text just nu. Vänligen omvandla text till bana innan import.',
       nolayer: 'Ett skikt',
       not_support_object_type: 'Stöder inte objekttyp',

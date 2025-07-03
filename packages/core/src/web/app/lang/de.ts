@@ -381,6 +381,7 @@ const lang: ILang = {
       loading_image: 'Bild laden, bitte warten...',
       more_than_two_object: 'Zu viele Objekte. Es werden nur 2 Objekte unterstützt.',
       mouse: 'TouchPad',
+      no_curve_engraving_with_modules: 'Dieser Auftrag beinhaltet Gravuren auf einer gewölbten Oberfläche und kann nicht zusammen mit Farbdruck verwendet werden. Bitte deaktivieren Sie die Farbdruckebene und senden Sie den Auftrag erneut.',
       no_support_text: 'Beam Studio unterstützt derzeit keine Text-Tags. Bitte übertrage Text vor dem Importieren in den Pfad.',
       nolayer: 'Einzelne Schicht',
       not_support_object_type: 'Objekttyp wird nicht unterstützt.',

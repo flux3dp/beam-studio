@@ -381,6 +381,7 @@ const lang: ILang = {
       loading_image: 'Ładowanie obrazu, proszę czekać...',
       more_than_two_object: 'Zbyt wiele obiektów. Obsługa tylko 2 obiektów',
       mouse: 'Mysz',
+      no_curve_engraving_with_modules: 'To zadanie obejmuje grawerowanie na zakrzywionej powierzchni, które nie może być używane razem z drukiem kolorowym. Wyłącz warstwę druku kolorowego i wyślij zadanie ponownie.',
       no_support_text: 'Beam Studio nie obsługuje obecnie tagów tekstowych. Przed zaimportowaniem zamień tekst na ścieżki.',
       nolayer: 'Pojedyncza warstwa',
       not_support_object_type: 'Nie obsługuje typu obiektu',

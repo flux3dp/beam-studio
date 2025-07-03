@@ -381,6 +381,7 @@ const lang: ILang = {
       loading_image: '載入圖片中，請稍候...',
       more_than_two_object: '太多物件，只支援兩物件操作',
       mouse: '滑鼠',
+      no_curve_engraving_with_modules: '此工作包含曲面雕刻，無法與彩色列印同時使用。請關閉彩色列印圖層後重新傳送工作。',
       no_support_text: 'Beam Studio 目前不支援由外部匯入文字標籤，請由向量繪圖軟體將文字轉成路徑後再匯入。',
       nolayer: '不分層',
       not_support_object_type: '不支援的物件類型',

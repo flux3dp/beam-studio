@@ -381,6 +381,7 @@ const lang: ILang = {
       loading_image: 'Đang tải hình ảnh, vui lòng đợi...',
       more_than_two_object: 'Chỉ hỗ trợ 2 đối tượng',
       mouse: 'Chuột',
+      no_curve_engraving_with_modules: 'Công việc này bao gồm khắc trên bề mặt cong, không thể sử dụng cùng lúc với in màu. Vui lòng tắt lớp in màu và gửi lại công việc.',
       no_support_text: 'Beam Studio hiện không hỗ trợ chữ. Vui lòng chuyển đổi chữ thành đường dẫn trước khi nhập.',
       nolayer: 'Lớp đơn',
       not_support_object_type: 'Không hỗ trợ loại đối tượng này',
