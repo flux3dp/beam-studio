@@ -232,8 +232,8 @@ describe('manipulate laser panel', () => {
     cy.wait(5000);
     cy.readFile(cypressDownloadPath)
       .its('presets')
-      .should('have.length', 63)
-      .its('62')
+      .should('have.length', 65)
+      .its('64')
       .its('name')
       .should('eq', 'Hi Flux');
   });
