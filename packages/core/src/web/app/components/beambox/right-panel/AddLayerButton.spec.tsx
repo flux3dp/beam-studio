@@ -36,7 +36,7 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
 const mockCreateLayer = jest.fn();
 
 jest.mock('@core/helpers/layer/layer-helper', () => ({
-  createLayer: (name) => mockCreateLayer(name),
+  createLayer: (...args) => mockCreateLayer(...args),
 }));
 
 const mockGetNextStepRequirement = jest.fn();
