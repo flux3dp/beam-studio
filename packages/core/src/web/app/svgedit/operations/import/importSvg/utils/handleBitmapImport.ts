@@ -1,6 +1,6 @@
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
-import { initLayerConfig, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
+import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { createLayer, removeDefaultLayerIfEmpty } from '@core/helpers/layer/layer-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type { ILang } from '@core/interfaces/ILang';
@@ -19,11 +19,7 @@ export async function handleBitmapImport(
 
     if (!isPrinting || !hasExistingElements) {
       const layerName = lang.beambox.right_panel.layer_panel.layer_bitmap;
-      const { cmd, layer, name } = createLayer(layerName);
-
-      if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
-
-      initLayerConfig(name);
+      const { layer } = createLayer(layerName, { initConfig: true, parentCmd: batchCmd });
 
       if (isPrinting) {
         writeDataLayer(layer, 'module', targetModule);

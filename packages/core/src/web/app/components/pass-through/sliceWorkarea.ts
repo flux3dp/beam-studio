@@ -12,7 +12,7 @@ import workareaManager from '@core/app/svgedit/workarea';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import i18n from '@core/helpers/i18n';
-import { cloneLayerConfig, initLayerConfig, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
+import { cloneLayerConfig, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { createLayer, getLayerName } from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
@@ -56,16 +56,11 @@ const sliceWorkarea = async (
   const generateGuideMark = () => {
     if (guideMark.show) {
       const { width: lineWidth, x } = guideMark;
-      const {
-        cmd,
-        layer: newLayer,
-        name,
-      } = createLayer(lang.guide_mark, {
+      const { layer: newLayer } = createLayer(lang.guide_mark, {
         hexCode: '#9745ff',
-        isSubCmd: true,
+        initConfig: true,
+        parentCmd: batchCmd,
       });
-
-      initLayerConfig(name);
 
       const start = document.createElementNS(NS.SVG, 'path') as SVGPathElement;
       const left = ((x - lineWidth / 2) * dpmm).toFixed(2);
@@ -95,10 +90,6 @@ const sliceWorkarea = async (
       newLayer.appendChild(end);
       updateElementColor(start);
       updateElementColor(end);
-
-      if (cmd && !cmd.isEmpty()) {
-        batchCmd.addSubCommand(cmd);
-      }
     }
   };
 
@@ -145,17 +136,9 @@ const sliceWorkarea = async (
       anyLayer = true;
       clonedLayers[j].hasNewLayer = true;
 
-      const {
-        cmd,
-        layer,
-        name: newLayerName,
-      } = createLayer(`${name} - ${i + 1}`, {
-        isSubCmd: true,
+      const { layer, name: newLayerName } = createLayer(`${name} - ${i + 1}`, {
+        parentCmd: batchCmd,
       });
-
-      if (!cmd.isEmpty()) {
-        batchCmd.addSubCommand(cmd);
-      }
 
       cloneLayerConfig(newLayerName, name);
       layer.setAttribute('data-lock', 'true');
@@ -230,8 +213,9 @@ const sliceWorkarea = async (
     }
 
     if (anyLayer && refImageBase64s?.[i]) {
-      const { cmd, layer, name } = createLayer(`${lang.ref_layer_name}-${i + 1}`, {
-        isSubCmd: true,
+      const { layer } = createLayer(`${lang.ref_layer_name}-${i + 1}`, {
+        initConfig: true,
+        parentCmd: batchCmd,
       });
 
       layer.setAttribute('data-lock', 'true');
@@ -240,11 +224,6 @@ const sliceWorkarea = async (
         layer.setAttribute('display', 'none');
       }
 
-      if (!cmd.isEmpty()) {
-        batchCmd.addSubCommand(cmd);
-      }
-
-      initLayerConfig(name);
       writeDataLayer(layer, 'fullcolor', true);
       writeDataLayer(layer, 'ref', true);
       writeDataLayer(layer, 'repeat', 0);
