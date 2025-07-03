@@ -41,7 +41,11 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
   if (
     isCurveEngravingTask &&
     workarea === 'fbm2' &&
-    hasModuleLayer(workareaObj.supportedModules!.filter((module) => module !== LayerModule.LASER_UNIVERSAL))
+    hasModuleLayer(
+      workareaObj.supportedModules!.filter(
+        (module) => ![LayerModule.LASER_UNIVERSAL, LayerModule.UV_PRINT].includes(module),
+      ),
+    )
   ) {
     alertCaller.popUp({
       message: lang.beambox.popup.no_curve_engraving_with_modules,
