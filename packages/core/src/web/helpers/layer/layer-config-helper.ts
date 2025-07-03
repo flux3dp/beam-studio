@@ -416,19 +416,17 @@ export const getMultiSelectData = <T extends ConfigKey>(
   return { hasMultiValue, value };
 };
 
-export const initLayerConfig = (layerName: string): void => {
-  const workarea = BeamboxPreference.read('workarea');
-  const supportModules = getSupportedModules(workarea);
-  const defaultConfig = getDefaultConfig();
-  const keys = Object.keys(defaultConfig) as ConfigKey[];
-  const layer = getLayerElementByName(layerName);
-
+export const initLayerConfig = (layer: Element): void => {
   if (!layer) {
-    console.warn(`initLayerConfig: Layer ${layerName} not found`);
+    console.warn('initLayerConfig: Layer not found');
 
     return;
   }
 
+  const workarea = BeamboxPreference.read('workarea');
+  const supportModules = getSupportedModules(workarea);
+  const defaultConfig = getDefaultConfig();
+  const keys = Object.keys(defaultConfig) as ConfigKey[];
   const defaultLaserModule = getDefaultLaserModule();
 
   for (const key of keys) {
@@ -449,26 +447,27 @@ export const initLayerConfig = (layerName: string): void => {
 };
 
 export const cloneLayerConfig = (targetLayerName: string, baseLayerName: string): void => {
+  const targetLayer = getLayerElementByName(targetLayerName);
+
+  if (!targetLayer) return;
+
   const baseLayer = getLayerElementByName(baseLayerName);
 
   if (!baseLayer) {
-    initLayerConfig(targetLayerName);
+    initLayerConfig(targetLayer);
   } else {
     const keys = Object.keys(attributeMap) as ConfigKey[];
-    const targetLayer = getLayerElementByName(targetLayerName);
 
-    if (targetLayer) {
-      for (const key of keys) {
-        if (booleanConfig.includes(key)) {
-          if (getData(baseLayer, key)) writeDataLayer(targetLayer, key, true, { shouldApplyModuleBaseConfig: false });
-        } else {
-          const value = getData(baseLayer, key);
+    for (const key of keys) {
+      if (booleanConfig.includes(key)) {
+        if (getData(baseLayer, key)) writeDataLayer(targetLayer, key, true, { shouldApplyModuleBaseConfig: false });
+      } else {
+        const value = getData(baseLayer, key);
 
-          if (value) writeDataLayer(targetLayer, key, value, { shouldApplyModuleBaseConfig: false });
-        }
+        if (value) writeDataLayer(targetLayer, key, value, { shouldApplyModuleBaseConfig: false });
       }
-      updateLayerColorFilter(targetLayer as SVGGElement);
     }
+    updateLayerColorFilter(targetLayer as SVGGElement);
   }
 };
 

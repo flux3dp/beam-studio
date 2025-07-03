@@ -100,11 +100,15 @@ describe('test layer-config-helper', () => {
   });
 
   test('initLayerConfig', () => {
-    initLayerConfig('layer 1');
+    const layer1 = document.querySelectorAll('g')[1] as SVGGElement;
+
+    initLayerConfig(layer1);
     expect(getLayerConfig('layer 1')).toEqual({ ...defaultLaserConfigs, ...trueConfigs });
   });
 
   test('initLayerConfig with module', () => {
+    const layer1 = document.querySelectorAll('g')[1] as SVGGElement;
+
     mockRead.mockImplementation((key) => {
       if (key === 'workarea') {
         return 'ado1';
@@ -112,7 +116,7 @@ describe('test layer-config-helper', () => {
 
       return undefined;
     });
-    initLayerConfig('layer 1');
+    initLayerConfig(layer1);
     expect(getLayerConfig('layer 1')).toEqual({
       ...defaultLaserConfigs,
       ...trueConfigs,

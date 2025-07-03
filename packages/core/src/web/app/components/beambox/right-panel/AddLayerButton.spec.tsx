@@ -36,13 +36,7 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
 const mockCreateLayer = jest.fn();
 
 jest.mock('@core/helpers/layer/layer-helper', () => ({
-  createLayer: (name) => mockCreateLayer(name),
-}));
-
-const mockInitLayerConfig = jest.fn();
-
-jest.mock('@core/helpers/layer/layer-config-helper', () => ({
-  initLayerConfig: (name) => mockInitLayerConfig(name),
+  createLayer: (...args) => mockCreateLayer(...args),
 }));
 
 const mockGetNextStepRequirement = jest.fn();
@@ -76,13 +70,11 @@ describe('test AddLayerButton', () => {
     const { container } = render(<AddLayerButton setSelectedLayers={mockSetSelectedLayers} />);
 
     fireEvent.click(container.querySelector('.btn'));
-    expect(mockHasLayer).toBeCalledTimes(1);
-    expect(mockCreateLayer).toBeCalledTimes(1);
-    expect(mockCreateLayer).toHaveBeenLastCalledWith('Layer 1');
-    expect(mockUpdateContextPanel).toBeCalledTimes(1);
-    expect(mockInitLayerConfig).toBeCalledTimes(1);
-    expect(mockInitLayerConfig).toHaveBeenLastCalledWith('Layer 1');
-    expect(mockSetSelectedLayers).toBeCalledTimes(1);
+    expect(mockHasLayer).toHaveBeenCalledTimes(1);
+    expect(mockCreateLayer).toHaveBeenCalledTimes(1);
+    expect(mockCreateLayer).toHaveBeenLastCalledWith('Layer 1', { initConfig: true });
+    expect(mockUpdateContextPanel).toHaveBeenCalledTimes(1);
+    expect(mockSetSelectedLayers).toHaveBeenCalledTimes(1);
     expect(mockSetSelectedLayers).toHaveBeenLastCalledWith(['Layer 1']);
   });
 
@@ -92,15 +84,13 @@ describe('test AddLayerButton', () => {
     const { container } = render(<AddLayerButton setSelectedLayers={mockSetSelectedLayers} />);
 
     fireEvent.click(container.querySelector('.btn'));
-    expect(mockHasLayer).toBeCalledTimes(2);
+    expect(mockHasLayer).toHaveBeenCalledTimes(2);
     expect(mockHasLayer).toHaveBeenNthCalledWith(1, 'Layer 1');
     expect(mockHasLayer).toHaveBeenNthCalledWith(2, 'Layer 2');
-    expect(mockCreateLayer).toBeCalledTimes(1);
-    expect(mockCreateLayer).toHaveBeenLastCalledWith('Layer 2');
-    expect(mockUpdateContextPanel).toBeCalledTimes(1);
-    expect(mockInitLayerConfig).toBeCalledTimes(1);
-    expect(mockInitLayerConfig).toHaveBeenLastCalledWith('Layer 2');
-    expect(mockSetSelectedLayers).toBeCalledTimes(1);
+    expect(mockCreateLayer).toHaveBeenCalledTimes(1);
+    expect(mockCreateLayer).toHaveBeenLastCalledWith('Layer 2', { initConfig: true });
+    expect(mockUpdateContextPanel).toHaveBeenCalledTimes(1);
+    expect(mockSetSelectedLayers).toHaveBeenCalledTimes(1);
     expect(mockSetSelectedLayers).toHaveBeenLastCalledWith(['Layer 2']);
   });
 });

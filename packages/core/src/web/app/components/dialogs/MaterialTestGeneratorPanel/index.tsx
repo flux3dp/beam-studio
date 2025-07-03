@@ -99,14 +99,11 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): React.JSX.Element => {
     ];
     const [colParam, rowParam] = Object.entries(tableSetting).sort(([, { selected: a }], [, { selected: b }]) => a - b);
 
-    const { cmd: tableCmd } = createLayer('Material Test - Frame', {
+    createLayer('Material Test - Frame', {
       hexCode: '#000',
-      isSubCmd: true,
+      initConfig: true,
+      parentCmd: batchCmd,
     });
-
-    if (tableCmd && !tableCmd.isEmpty()) {
-      batchCmd.addSubCommand(tableCmd);
-    }
 
     svgCanvas.addSvgElementFromJson({
       attr: {
@@ -125,18 +122,14 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): React.JSX.Element => {
       element: 'rect',
     });
 
-    const { cmd: infoCmd, layer: infoLayer } = createLayer('Material Test - Info', {
+    const { layer: infoLayer } = createLayer('Material Test - Info', {
       hexCode: '#000',
-      isSubCmd: true,
+      initConfig: true,
+      parentCmd: batchCmd,
     });
 
     writeDataLayer(infoLayer, 'power', textSetting.power);
     writeDataLayer(infoLayer, 'speed', textSetting.speed);
-
-    if (infoCmd && !infoCmd.isEmpty()) {
-      batchCmd.addSubCommand(infoCmd);
-    }
-
     // rowText
     createNewText(
       (startPadding + (right - startPadding) / 2 - paramWidth[rowParam[0]] / 2) * dpmm,
@@ -205,11 +198,7 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): React.JSX.Element => {
     let [x, y] = [right, bottom].map((value) => value * dpmm);
 
     [...svgInfos].reverse().forEach(({ fillInterval, frequency, name, pulseWidth, repeat, speed, strength }, index) => {
-      const { cmd, layer } = createLayer(name, { isSubCmd: true });
-
-      if (cmd && !cmd.isEmpty()) {
-        batchCmd.addSubCommand(cmd);
-      }
+      const { layer } = createLayer(name, { initConfig: true, parentCmd: batchCmd });
 
       writeDataLayer(layer, 'power', strength);
       writeDataLayer(layer, 'speed', speed);
