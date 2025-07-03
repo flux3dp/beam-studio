@@ -151,6 +151,9 @@ class BeamboxInit {
   }
 
   private displayGuides(): void {
+    if (!BeamboxPreference.read('show_guides')) return;
+
+    document.getElementById('guidesLines')?.remove();
     document.getElementById('horizontal_guide')?.remove();
     document.getElementById('vertical_guide')?.remove();
 
@@ -160,7 +163,7 @@ class BeamboxInit {
       const linesGroup = svgdoc.createElementNS(NS.SVG, 'svg');
       const lineVertical = svgdoc.createElementNS(NS.SVG, 'line');
       const lineHorizontal = svgdoc.createElementNS(NS.SVG, 'line');
-      const { height, width } = workareaManager;
+      const { height, maxY, minY, width } = workareaManager;
 
       utilities.assignAttributes(linesGroup, {
         height: '100%',
@@ -198,8 +201,8 @@ class BeamboxInit {
         'vector-effect': 'non-scaling-stroke',
         x1: BeamboxPreference.read('guide_x0') * 10,
         x2: BeamboxPreference.read('guide_x0') * 10,
-        y1: 0,
-        y2: height,
+        y1: minY,
+        y2: maxY,
       });
 
       linesGroup.appendChild(lineHorizontal);

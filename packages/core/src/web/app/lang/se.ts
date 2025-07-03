@@ -1950,6 +1950,7 @@ const lang: ILang = {
       install_correct_headtype: 'Installera 10W/20W diodlasermoduler korrekt för att aktivera lågeffektslaser för skärning.',
       job_origin_unavailable: 'Att ställa in jobbets ursprung kräver firmwareversion 4.3.5 / 5.3.5 eller senare. Vill du uppdatera firmware nu?',
       job_origin_warning: 'Du använder för närvarande "aktuell position" som startpunkt. Se till att laserhuvudet flyttas till rätt position för att undvika kollisioner.',
+      object_outside_moving_area: 'Vissa objekt ligger utanför förhandsgranskningsramen.',
       power_too_high: 'FÖR HÖG EFFEKT',
       power_too_high_confirm: 'NOTERAT',
       power_too_high_msg: 'Att använda lägre laserstyrka (under 70%) förlänger laserns livslängd.\nSkriv in "NOTERAT" för att fortsätta.',

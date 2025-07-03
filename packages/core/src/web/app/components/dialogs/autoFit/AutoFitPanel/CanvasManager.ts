@@ -14,7 +14,6 @@ export class AutoFitCanvasManager extends EmbeddedCanvasManager {
     this.backgroundImage.setAttribute('x', '0');
     this.backgroundImage.setAttribute('y', '0');
     this.backgroundImage.setAttribute('width', '100%');
-    this.backgroundImage.setAttribute('height', '100%');
     this.backgroundImage.setAttribute('preserveAspectRatio', 'xMidYMid');
     this.backgroundImage.setAttribute('opacity', this._imageOpacity.toFixed(2));
     this.background.appendChild(this.backgroundImage);

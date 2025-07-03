@@ -30,6 +30,7 @@ const setupBackground = (dimension: number[], getRoot: () => Element, getContent
 
   const rect = document.createElementNS(NS.SVG, 'rect');
 
+  rect.setAttribute('id', 'canvasBackgroundRect');
   rect.setAttribute('x', '0');
   rect.setAttribute('y', '0');
   rect.setAttribute('width', '100%');

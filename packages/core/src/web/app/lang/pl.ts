@@ -1950,6 +1950,7 @@ const lang: ILang = {
       install_correct_headtype: 'Zainstaluj prawidłowe moduły lasera diodowego 10 W/20 W, aby włączyć niską moc lasera do uruchomienia ramki.',
       job_origin_unavailable: 'Ustawienie początku zadania wymaga wersji firmware 4.3.5 / 5.3.5 lub wyższej. Czy chcesz teraz zaktualizować firmware?',
       job_origin_warning: 'Obecnie używasz „aktualnej pozycji” jako punktu początkowego. Upewnij się, że głowica lasera została przesunięta do właściwej pozycji, aby uniknąć kolizji.',
+      object_outside_moving_area: 'Niektóre obiekty znajdują się poza obszarem podglądu obramowania.',
       power_too_high: 'ZBYT WYSOKA MOC',
       power_too_high_confirm: 'ROZUMIEM',
       power_too_high_msg: 'Użycie mniejszej mocy lasera (poniżej 70%) wydłuży żywotność tuby laserowej. Wpisz „ROZUMIEM”, aby kontynuować.',

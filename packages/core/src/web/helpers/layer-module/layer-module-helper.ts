@@ -64,3 +64,22 @@ export const getDetectedModulesTranslations = (): Record<DetectedLayerModuleType
     [DetectedLayerModule.UNKNOWN]: t.unknown,
   };
 };
+
+export const hasModuleLayer = (
+  modules: LayerModuleType[],
+  { checkRepeat = true, checkVisible = true }: { checkRepeat?: boolean; checkVisible?: boolean } = {},
+): boolean => {
+  let query = 'g.layer[data-module="{module}"]';
+
+  if (checkVisible) query += ':not([display="none"])';
+
+  if (checkRepeat) query += ':not([data-repeat="0"])';
+
+  return Boolean(
+    document.querySelector(
+      Array.from(modules)
+        .map((module) => query.replace('{module}', module.toString()))
+        .join(', '),
+    ),
+  );
+};

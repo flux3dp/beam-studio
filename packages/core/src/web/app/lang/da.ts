@@ -1950,6 +1950,7 @@ const lang: ILang = {
       install_correct_headtype: 'Installer venligst 10W/20W diode laser moduler korrekt for at aktivere lav laser til kørsel af ramme.',
       job_origin_unavailable: 'Indstilling af joboprindelse kræver firmwareversion 4.3.5 / 5.3.5 eller nyere. Vil du opdatere firmwaren nu?',
       job_origin_warning: 'Momentálně používáte jako výchozí bod „aktuální pozici“. Ujistěte se, že je laserová hlava přesunuta do správné polohy, aby nedošlo ke kolizím.',
+      object_outside_moving_area: 'Nogle objekter er uden for visningsrammens område.',
       power_too_high: 'FOR HØJ EFFEKT',
       power_too_high_confirm: 'NOTERET',
       power_too_high_msg: 'Brug af lavere laserstyrke (under 70%) forlænger laserens levetid.\nIndtast "NOTERET" for at fortsætte.',

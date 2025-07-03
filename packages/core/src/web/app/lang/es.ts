@@ -1950,6 +1950,7 @@ const lang: ILang = {
       install_correct_headtype: 'Instale los módulos láser de diodo de 10W/20W correctamente para habilitar el láser para ejecutar el marco.',
       job_origin_unavailable: 'Establecer el origen del trabajo requiere la versión de firmware 4.3.5 / 5.3.5 o superior. ¿Desea actualizar el firmware ahora?',
       job_origin_warning: 'Actualmente estás utilizando la “posición actual” como punto de inicio. Asegúrate de mover la cabeza láser a la posición correcta para evitar colisiones.',
+      object_outside_moving_area: 'Algunos objetos están fuera del área de vista previa del marco.',
       power_too_high: 'POTENCIA DEMASIADO ALTA',
       power_too_high_confirm: 'ANOTADO',
       power_too_high_msg: 'Usar una potencia de láser menor (menos del 70%) alargará la vida del tubo láser.\nPulsa "ANOTADO" para proceder.',

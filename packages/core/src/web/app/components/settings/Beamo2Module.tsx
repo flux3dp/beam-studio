@@ -33,6 +33,7 @@ const Beamo2Module = ({ unitInputProps }: Props): React.JSX.Element => {
       unitInputProps,
     };
   }, [unitInputProps]);
+
   const currentModuleOffsets = getPreference('module-offsets');
   const getModuleOffset = useCallback(
     (module: LayerModuleType) =>
@@ -41,7 +42,7 @@ const Beamo2Module = ({ unitInputProps }: Props): React.JSX.Element => {
         module,
         offsets: currentModuleOffsets,
         workarea: targetWorkarea,
-      }),
+      }) as [number, number],
     [currentModuleOffsets],
   );
   const editModuleOffsets = useCallback(

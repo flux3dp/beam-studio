@@ -3,7 +3,6 @@ import React from 'react';
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
-import moduleOffsets from '@core/app/constants/layer-module/module-offsets';
 import type { FisheyeCameraParametersV1 } from '@core/interfaces/FisheyePreview';
 
 const mockFisheyePreviewManagerV2 = jest.fn();
@@ -13,9 +12,6 @@ jest.mock('@core/app/actions/camera/preview-helper/FisheyePreviewManagerV2', () 
 const mockFisheyePreviewManagerV4 = jest.fn();
 
 jest.mock('@core/app/actions/camera/preview-helper/FisheyePreviewManagerV4', () => mockFisheyePreviewManagerV4);
-
-import Align from './Align';
-import CalibrationType from './calibrationTypes';
 
 const mockPopUpError = jest.fn();
 
@@ -40,19 +36,12 @@ jest.mock('@core/helpers/device-master', () => ({
   takeOnePicture: (...args) => mockTakeOnePicture(...args),
 }));
 
-const mockWrite = jest.fn();
+const mockGetModuleOffsets = jest.fn().mockReturnValue([0, 0]);
+const mockUpdateModuleOffsets = jest.fn();
 
-const mockBeamboxPreferences = {
-  'module-offsets': {
-    ado1: {
-      [LayerModule.PRINTER]: [0, -13.37],
-    },
-  },
-};
-
-jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
-  read: (key) => mockBeamboxPreferences[key],
-  write: (...args) => mockWrite(...args),
+jest.mock('@core/helpers/device/moduleOffsets', () => ({
+  getModuleOffsets: mockGetModuleOffsets,
+  updateModuleOffsets: mockUpdateModuleOffsets,
 }));
 
 const mockGetPerspectiveForAlign = jest.fn();
@@ -94,6 +83,9 @@ const mockFishEyeParam: FisheyeCameraParametersV1 = {
 };
 
 const mockSetupFisheyePreview = jest.fn();
+
+import Align from './Align';
+import CalibrationType from './calibrationTypes';
 
 describe('test Align', () => {
   beforeEach(() => {
@@ -267,14 +259,12 @@ describe('test Align', () => {
     expect(xInput).toHaveValue(-20);
     expect(yInput).toHaveValue(20);
     fireEvent.click(getByText('Done'));
-    expect(mockWrite).toHaveBeenCalledTimes(1);
-    expect(mockWrite).toHaveBeenLastCalledWith('module-offsets', {
-      ado1: {
-        [LayerModule.PRINTER]: [
-          moduleOffsets.ado1[LayerModule.PRINTER][0] - 20,
-          moduleOffsets.ado1[LayerModule.PRINTER][1] + 20,
-        ],
-      },
+    expect(mockUpdateModuleOffsets).toHaveBeenCalledTimes(1);
+    expect(mockUpdateModuleOffsets).toHaveBeenLastCalledWith([-20, 20], {
+      isRelative: true,
+      module: LayerModule.PRINTER,
+      shouldWrite: true,
+      workarea: 'ado1',
     });
   });
 });

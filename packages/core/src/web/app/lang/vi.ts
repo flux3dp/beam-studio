@@ -1950,6 +1950,7 @@ const lang: ILang = {
       install_correct_headtype: 'Vui lòng lắp đặt mô-đun laser diode 10W/20W đúng để bật laser thấp cho khung chạy.',
       job_origin_unavailable: 'Thiết lập điểm gốc công việc yêu cầu phiên bản firmware 4.3.5 / 5.3.5 trở lên. Bạn có muốn cập nhật firmware ngay bây giờ không?',
       job_origin_warning: 'Bạn hiện đang sử dụng “vị trí hiện tại” làm điểm bắt đầu. Vui lòng đảm bảo đầu laser được di chuyển đến vị trí chính xác để tránh va chạm.',
+      object_outside_moving_area: 'Một số đối tượng nằm ngoài phạm vi xem trước khung.',
       power_too_high: 'CÔNG SUẤT QUÁ CAO',
       power_too_high_confirm: 'ĐÃ GHI NHẬN',
       power_too_high_msg: 'Sử dụng công suất laser thấp hơn (dưới 70%) sẽ kéo dài tuổi thọ ống laser.\nNhập "ĐÃ GHI NHẬN" để tiếp tục.',

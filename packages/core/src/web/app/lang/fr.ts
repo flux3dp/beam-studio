@@ -1950,6 +1950,7 @@ const lang: ILang = {
       install_correct_headtype: 'Veuillez installer correctement les modules laser diode 10W/20W pour activer le laser de découpe.',
       job_origin_unavailable: "La définition de l'origine de la tâche nécessite la version du firmware 4.3.5 / 5.3.5 ou supérieure. Voulez-vous mettre à jour le firmware maintenant?",
       job_origin_warning: 'Vous utilisez actuellement la “position actuelle” comme point de départ. Veuillez vous assurer que la tête laser est déplacée à la position correcte pour éviter les collisions.',
+      object_outside_moving_area: 'Certains objets dépassent la zone de prévisualisation du cadre.',
       power_too_high: 'PUISSANCE TROP ÉLEVÉE',
       power_too_high_confirm: 'PRIS EN COMPTE',
       power_too_high_msg: 'Utiliser une puissance laser inférieure (moins de 70 %) prolongera la durée de vie du tube laser.\nEntrez "PRIS EN COMPTE" pour continuer.',

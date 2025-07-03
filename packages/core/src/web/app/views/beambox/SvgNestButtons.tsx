@@ -73,13 +73,13 @@ class SvgNestButtons extends React.Component<Props, State> {
 
       containerPoints = ClipperLib.dPathToPointPathsAndScale(containerDpath, rotation, 1);
     } else {
-      const { height: h, width: w } = workareaManager;
+      const { maxY, minY, width: w } = workareaManager;
 
       containerPoints = [
-        { x: 0, y: 0 },
-        { x: w, y: 0 },
-        { x: w, y: h },
-        { x: 0, y: h },
+        { x: 0, y: minY },
+        { x: w, y: minY },
+        { x: w, y: maxY },
+        { x: 0, y: maxY },
       ];
     }
 

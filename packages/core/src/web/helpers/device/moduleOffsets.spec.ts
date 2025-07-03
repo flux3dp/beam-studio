@@ -8,6 +8,10 @@ jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   write: mockWrite,
 }));
 
+const mockUpdate = jest.fn();
+
+jest.mock('@core/app/actions/canvas/module-boundary-drawer', () => ({ update: mockUpdate }));
+
 let mockPreference: Record<string, any>;
 
 import { getModuleOffsets, updateModuleOffsets } from './moduleOffsets';
@@ -59,7 +63,7 @@ describe('test moduleOffsets helpers', () => {
   test('updateModuleOffsets with default options', () => {
     expect(updateModuleOffsets([1.5, 2.5])).toEqual({
       ado1: {
-        [LayerModule.LASER_10W_DIODE]: [1.5, 2.5],
+        [LayerModule.LASER_10W_DIODE]: [1.5, 2.5, true],
         [LayerModule.LASER_1064]: [5, 6],
       },
       fbm2: {
@@ -70,13 +74,14 @@ describe('test moduleOffsets helpers', () => {
     expect(mockRead).toHaveBeenNthCalledWith(1, 'module-offsets');
     expect(mockRead).toHaveBeenNthCalledWith(2, 'workarea');
     expect(mockWrite).not.toHaveBeenCalled();
+    expect(mockUpdate).not.toHaveBeenCalled();
   });
 
   test('updateModuleOffsets with isRelative true', () => {
     expect(updateModuleOffsets([1.5, 2.5], { isRelative: true, module: LayerModule.LASER_1064 })).toEqual({
       ado1: {
         [LayerModule.LASER_10W_DIODE]: [1, 2],
-        [LayerModule.LASER_1064]: [1.5, 29.45],
+        [LayerModule.LASER_1064]: [1.5, 29.45, true],
       },
       fbm2: {
         [LayerModule.UV_WHITE_INK]: [11, 12],
@@ -86,12 +91,13 @@ describe('test moduleOffsets helpers', () => {
     expect(mockRead).toHaveBeenNthCalledWith(1, 'module-offsets');
     expect(mockRead).toHaveBeenNthCalledWith(2, 'workarea');
     expect(mockWrite).not.toHaveBeenCalled();
+    expect(mockUpdate).not.toHaveBeenCalled();
   });
 
   test('updateModuleOffsets with shouldWrite true', () => {
     expect(updateModuleOffsets([1.5, 2.5], { shouldWrite: true })).toEqual({
       ado1: {
-        [LayerModule.LASER_10W_DIODE]: [1.5, 2.5],
+        [LayerModule.LASER_10W_DIODE]: [1.5, 2.5, true],
         [LayerModule.LASER_1064]: [5, 6],
       },
       fbm2: {
@@ -104,13 +110,14 @@ describe('test moduleOffsets helpers', () => {
     expect(mockWrite).toHaveBeenCalledTimes(1);
     expect(mockWrite).toHaveBeenNthCalledWith(1, 'module-offsets', {
       ado1: {
-        [LayerModule.LASER_10W_DIODE]: [1.5, 2.5],
+        [LayerModule.LASER_10W_DIODE]: [1.5, 2.5, true],
         [LayerModule.LASER_1064]: [5, 6],
       },
       fbm2: {
         [LayerModule.UV_WHITE_INK]: [11, 12],
       },
     });
+    expect(mockUpdate).toHaveBeenCalledTimes(1);
   });
 
   test('updateModuleOffsets with given offsets', () => {
@@ -118,7 +125,7 @@ describe('test moduleOffsets helpers', () => {
       updateModuleOffsets([1.5, 2.5], {
         offsets: { ado1: { [LayerModule.LASER_10W_DIODE]: [11, 22], [LayerModule.LASER_20W_DIODE]: [33, 44] } },
       }),
-    ).toEqual({ ado1: { [LayerModule.LASER_10W_DIODE]: [1.5, 2.5], [LayerModule.LASER_20W_DIODE]: [33, 44] } });
+    ).toEqual({ ado1: { [LayerModule.LASER_10W_DIODE]: [1.5, 2.5, true], [LayerModule.LASER_20W_DIODE]: [33, 44] } });
     expect(mockRead).toHaveBeenCalledTimes(1);
     expect(mockRead).toHaveBeenNthCalledWith(1, 'workarea');
   });
@@ -130,7 +137,7 @@ describe('test moduleOffsets helpers', () => {
         [LayerModule.LASER_1064]: [5, 6],
       },
       fbm2: {
-        [LayerModule.UV_WHITE_INK]: [1.5, 2.5],
+        [LayerModule.UV_WHITE_INK]: [1.5, 2.5, true],
       },
     });
     expect(mockRead).toHaveBeenCalledTimes(1);
@@ -144,7 +151,7 @@ describe('test moduleOffsets helpers', () => {
         [LayerModule.LASER_1064]: [5, 6],
       },
       fbb2: {
-        [LayerModule.UV_WHITE_INK]: [1.5, 2.5],
+        [LayerModule.UV_WHITE_INK]: [1.5, 2.5, true],
       },
       fbm2: {
         [LayerModule.UV_WHITE_INK]: [11, 12],

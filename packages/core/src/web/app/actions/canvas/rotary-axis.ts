@@ -75,12 +75,12 @@ const checkBoundary = () => {
 const updateBoundary = () => {
   const model: WorkAreaModel = beamboxPreference.read('workarea');
   const enableJobOrigin = beamboxPreference.read('enable-job-origin');
-  const { height } = workareaManager;
+  const { maxY } = workareaManager;
 
   if (rotaryConstants[model]?.boundary && !enableJobOrigin) {
     boundary = rotaryConstants[model].boundary.map((v) => v * constant.dpmm);
   } else {
-    boundary = [0, height];
+    boundary = [0, maxY];
   }
 
   checkBoundary();
@@ -112,8 +112,8 @@ const init = (): void => {
     container.setAttribute('display', 'inline');
     fixedSizeSvg?.appendChild(container);
 
-    const { height } = workareaManager;
-    const initPosition = beamboxPreference.read('rotary-y') ?? height / 2;
+    const { maxY } = workareaManager;
+    const initPosition = beamboxPreference.read('rotary-y') ?? maxY / 2;
 
     rotaryLine = document.createElementNS(NS.SVG, 'line') as unknown as SVGLineElement;
 

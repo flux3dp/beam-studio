@@ -67,7 +67,7 @@ const generateUploadFile = async (thumbnail: string, thumbnailUrl: string) => {
   await updateImagesResolution(true);
   Progress.popById('retrieve-image-data');
 
-  const svgString = svgCanvas.getSvgString();
+  const svgString = svgCanvas.getSvgString({ fixTopExpansion: true });
 
   console.log('File Size', svgString.length);
 

@@ -6,20 +6,19 @@ import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import Constant from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import NS from '@core/app/constants/namespaces';
-import beamboxStore from '@core/app/stores/beambox-store';
 import { setCameraPreviewState } from '@core/app/stores/cameraPreview';
 import workareaManager from '@core/app/svgedit/workarea';
+import { getAbsRect } from '@core/helpers/boundary-helper';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { CameraParameters } from '@core/interfaces/Camera';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-let svgCanvas;
-let svgedit;
+let svgCanvas: ISVGCanvas;
 
-getSVGAsync(({ Canvas, Edit }) => {
+getSVGAsync(({ Canvas }) => {
   svgCanvas = Canvas;
-  svgedit = Edit;
 });
 
 const LANG = i18n.lang.beambox.left_panel;
@@ -35,7 +34,7 @@ class PreviewModeBackgroundDrawer {
 
   protected coordinates: { maxX: number; maxY: number; minX: number; minY: number };
 
-  protected cameraOffset: CameraParameters;
+  protected cameraOffset: CameraParameters | null;
 
   protected backgroundDrawerSubject: Subject<ObservableInput<Blob>>;
 
@@ -51,13 +50,12 @@ class PreviewModeBackgroundDrawer {
   }
 
   private updateRatio() {
-    const { expansion, height, width } = workareaManager;
-    const canvasHeight = height - expansion[1];
+    const { modelHeight, width } = workareaManager;
 
     // if is IOS system (web version), set ratio for canvas limit
     if (navigator.maxTouchPoints > 1 && window.os === 'MacOS') {
-      if (width * canvasHeight > IOS_CANVAS_LIMIT) {
-        this.canvasRatio = Math.floor(1000 * Math.sqrt(IOS_CANVAS_LIMIT / (width * canvasHeight))) / 1000;
+      if (width * modelHeight > IOS_CANVAS_LIMIT) {
+        this.canvasRatio = Math.floor(1000 * Math.sqrt(IOS_CANVAS_LIMIT / (width * modelHeight))) / 1000;
       }
     }
   }
@@ -129,7 +127,7 @@ class PreviewModeBackgroundDrawer {
       }
 
       if (!opacityMerge) {
-        this.canvas.getContext('2d').drawImage(sourceCanvas, minX, minY, width * canvasRatio, height * canvasRatio);
+        this.canvas.getContext('2d')!.drawImage(sourceCanvas, minX, minY, width * canvasRatio, height * canvasRatio);
       } else {
         if (canvasRatio < 1) {
           const scaledCanvas = document.createElement('canvas');
@@ -137,16 +135,16 @@ class PreviewModeBackgroundDrawer {
           scaledCanvas.width = width * canvasRatio;
           scaledCanvas.height = height * canvasRatio;
 
-          const scaledContext = scaledCanvas.getContext('2d', { willReadFrequently: true });
+          const scaledContext = scaledCanvas.getContext('2d', { willReadFrequently: true })!;
 
           scaledContext.drawImage(sourceCanvas, 0, 0, width * canvasRatio, height * canvasRatio);
 
           sourceCanvas = scaledCanvas;
         }
 
-        const sourceCtx = sourceCanvas.getContext('2d', { willReadFrequently: true });
+        const sourceCtx = sourceCanvas.getContext('2d', { willReadFrequently: true })!;
         const sourceData = sourceCtx.getImageData(0, 0, width * canvasRatio, height * canvasRatio);
-        const mainContext = this.canvas.getContext('2d', { willReadFrequently: true });
+        const mainContext = this.canvas.getContext('2d', { willReadFrequently: true })!;
         const mainImageData = mainContext.getImageData(minX, minY, width * canvasRatio, height * canvasRatio);
 
         for (let i = 0; i < mainImageData.data.length; i += 4) {
@@ -183,17 +181,12 @@ class PreviewModeBackgroundDrawer {
    * change the size of the canvas (which also clear the canvas)
    */
   updateCanvasSize = () => {
-    const { expansion, height, width } = workareaManager;
-    const canvasHeight = height - expansion[1];
+    const { modelHeight, width } = workareaManager;
 
     this.clear();
     this.canvas.width = Math.round(width * this.canvasRatio);
-    this.canvas.height = Math.round(canvasHeight * this.canvasRatio);
+    this.canvas.height = Math.round(modelHeight * this.canvasRatio);
     this.resetBoundary();
-
-    if (BeamboxPreference.read('show_guides')) {
-      beamboxStore.emitDrawGuideLines();
-    }
   };
 
   resetBoundary() {
@@ -216,19 +209,22 @@ class PreviewModeBackgroundDrawer {
   drawBoundary() {
     const boundaryGroup = document.createElementNS(NS.SVG, 'g');
     const fixedSizeSvg = document.getElementById('fixedSizeSvg');
-    const { expansion, height, width } = workareaManager;
+    const { expansion, height, maxY, minY, modelHeight, width } = workareaManager;
+
+    if (!fixedSizeSvg) {
+      return;
+    }
 
     boundaryGroup.id = 'previewBoundary';
     boundaryGroup.setAttribute('style', 'pointer-events:none');
     fixedSizeSvg.insertBefore(boundaryGroup, fixedSizeSvg.firstChild);
 
-    if (expansion[1] > 0) {
-      const rotaryPreveiwBoundary = document.createElementNS(NS.SVG, 'rect');
+    const d = getAbsRect(0, minY, width, 0) + getAbsRect(0, modelHeight, width, maxY);
 
-      rotaryPreveiwBoundary.setAttribute('x', '0');
-      rotaryPreveiwBoundary.setAttribute('y', (height - expansion[1]).toString());
-      rotaryPreveiwBoundary.setAttribute('width', width.toString());
-      rotaryPreveiwBoundary.setAttribute('height', expansion[1].toString());
+    if (d) {
+      const rotaryPreveiwBoundary = document.createElementNS(NS.SVG, 'path');
+
+      rotaryPreveiwBoundary.setAttribute('d', d);
       rotaryPreveiwBoundary.setAttribute('fill', '#CCC');
       rotaryPreveiwBoundary.setAttribute('fill-opacity', '0.4');
       boundaryGroup.appendChild(rotaryPreveiwBoundary);
@@ -236,14 +232,14 @@ class PreviewModeBackgroundDrawer {
       const rotaryPreveiwBoundaryText = document.createElementNS(NS.SVG, 'text') as SVGTextElement;
       const textNode = document.createTextNode(LANG.unpreviewable_area);
 
-      rotaryPreveiwBoundaryText.setAttribute('font-size', '400');
+      rotaryPreveiwBoundaryText.setAttribute('font-size', expansion[1] ? '400' : '100');
       rotaryPreveiwBoundaryText.appendChild(textNode);
       this.setTextStyle(rotaryPreveiwBoundaryText);
       boundaryGroup.appendChild(rotaryPreveiwBoundaryText);
 
       const { height: textH, width: textW } = rotaryPreveiwBoundaryText.getBBox();
       const x = (width - textW) / 2;
-      const y = height - (expansion[1] - textH) / 2;
+      const y = expansion[1] ? height - (expansion[1] - textH) / 2 : (textH - expansion[0]) / 2;
 
       rotaryPreveiwBoundaryText.setAttribute('x', x.toString());
       rotaryPreveiwBoundaryText.setAttribute('y', y.toString());
@@ -332,7 +328,7 @@ class PreviewModeBackgroundDrawer {
     svgCanvas.setBackground('#fff');
 
     // clear canvas
-    this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.canvas.getContext('2d')!.clearRect(0, 0, this.canvas.width, this.canvas.height);
     // reset cameraCanvasUrl
     URL.revokeObjectURL(this.cameraCanvasUrl);
 
@@ -380,7 +376,7 @@ class PreviewModeBackgroundDrawer {
 
         // assuming the left-top corner of the image is the correct
         this.canvas
-          .getContext('2d')
+          .getContext('2d')!
           .drawImage(img, 0, 0, img.naturalWidth * imageRatio, img.naturalHeight * imageRatio);
         this.coordinates.minX = 0;
         this.coordinates.minY = 0;
@@ -394,13 +390,13 @@ class PreviewModeBackgroundDrawer {
       img.src = imgUrl;
     });
 
-  getOpenBottomModulePreviewBoundary(uncapturabledHeight) {
-    const svgdoc = document.getElementById('svgcanvas').ownerDocument;
+  getOpenBottomModulePreviewBoundary(uncapturabledHeight: number) {
+    const svgdoc = document.getElementById('svgcanvas')!.ownerDocument;
     const openBottomBoundary = svgdoc.createElementNS(NS.SVG, 'rect');
     const openBottomDescText = svgdoc.createElementNS(NS.SVG, 'text');
     const { height, width } = workareaManager;
 
-    svgedit.utilities.assignAttributes(openBottomBoundary, {
+    svgCanvas.assignAttributes(openBottomBoundary, {
       fill: 'url(#border-pattern)',
       height,
       style: 'pointer-events:none',
@@ -410,7 +406,7 @@ class PreviewModeBackgroundDrawer {
     });
 
     this.setTextStyle(openBottomDescText as SVGTextElement);
-    svgedit.utilities.assignAttributes(openBottomDescText, {
+    svgCanvas.assignAttributes(openBottomDescText, {
       'font-size': 60,
       'text-anchor': 'end',
       x: width - (uncapturabledHeight - 60) / 2,
@@ -424,13 +420,13 @@ class PreviewModeBackgroundDrawer {
     return { openBottomBoundary, openBottomDescText };
   }
 
-  getHybridModulePreviewBoundary(uncapturabledHeight) {
-    const svgdoc = document.getElementById('svgcanvas').ownerDocument;
+  getHybridModulePreviewBoundary(uncapturabledHeight: number) {
+    const svgdoc = document.getElementById('svgcanvas')!.ownerDocument;
     const hybridBorder = svgdoc.createElementNS(NS.SVG, 'rect');
     const hybridDescText = svgdoc.createElementNS(NS.SVG, 'text');
     const { height, width } = workareaManager;
 
-    svgedit.utilities.assignAttributes(hybridBorder, {
+    svgCanvas.assignAttributes(hybridBorder, {
       fill: 'url(#border-pattern)',
       height,
       style: 'pointer-events:none',
@@ -438,7 +434,7 @@ class PreviewModeBackgroundDrawer {
       x: width - Constant.diode.safeDistance.X * Constant.dpmm,
       y: 0,
     });
-    svgedit.utilities.assignAttributes(hybridDescText, {
+    svgCanvas.assignAttributes(hybridDescText, {
       'font-size': 60,
       style: 'pointer-events:none',
       'text-anchor': 'end',

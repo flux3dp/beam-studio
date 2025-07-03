@@ -14,6 +14,7 @@ const useSettingStore = create(() => ({
 }));
 
 jest.mock('@core/app/pages/Settings/useSettingStore', () => ({ useSettingStore }));
+jest.mock('@core/app/actions/canvas/module-boundary-drawer', () => {});
 jest.mock('./components/SettingFormItem');
 
 const mockOffsets: ModuleOffsets = { fbm2: { [LayerModule.LASER_1064]: [10, 10] } };
@@ -53,7 +54,7 @@ describe('test Beamo2Module', () => {
     expect(mockSetPreference).toHaveBeenCalledTimes(1);
     expect(mockSetPreference).toHaveBeenLastCalledWith('module-offsets', {
       fbm2: {
-        [LayerModule.LASER_1064]: [10, 20],
+        [LayerModule.LASER_1064]: [10, 27.9, true],
       },
     });
     mockOffsets.fbm2[LayerModule.LASER_1064] = [10, 20];
@@ -64,7 +65,7 @@ describe('test Beamo2Module', () => {
     expect(mockSetPreference).toHaveBeenLastCalledWith('module-offsets', {
       fbm2: {
         [LayerModule.LASER_1064]: [10, 20],
-        [LayerModule.UV_WHITE_INK]: [29.3, -22.8],
+        [LayerModule.UV_WHITE_INK]: [49.7, -1.1, true],
       },
     });
   });

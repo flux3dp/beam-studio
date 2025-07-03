@@ -18,6 +18,8 @@ const fetchThumbnail = async (): Promise<string[]> => {
     $clonedSvg.find('#canvasBackground #previewBoundary').remove();
     $clonedSvg.find('#canvasBackground #guidesLines').remove();
     $clonedSvg.find('#canvasBackground #diode-boundary').remove();
+    $clonedSvg.find('#canvasBackground').css('overflow', 'visible');
+    $clonedSvg.find('#canvasBackground').children().css('overflow', 'visible');
 
     return $clonedSvg;
   }
@@ -38,19 +40,20 @@ const fetchThumbnail = async (): Promise<string[]> => {
 
   function cropAndDrawOnCanvas(img) {
     const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d')!;
 
     // cropping
     const ratio = img.width / $('#svgroot').width();
     const W = ratio * $('#svgroot').width();
     const H = ratio * $('#svgroot').height();
-    const w = ratio * Number.parseInt($('#canvasBackground').attr('width'), 10);
-    const h = ratio * Number.parseInt($('#canvasBackground').attr('height'), 10);
+    const w = ratio * Number.parseFloat($('#canvasBackground').attr('width'));
+    const h = ratio * Number.parseFloat($('#canvasBackground').attr('height'));
+    const offsetY = ratio * Number.parseFloat($('#canvasBackgroundRect').attr('y'));
     const x = -(W - w) / 2;
-    const y = -(H - h) / 2;
+    const y = -(H - h) / 2 - offsetY;
 
     canvas.width = Math.min(w, 500);
-    canvas.height = h * (canvas.width / w);
+    canvas.height = Math.ceil(h * (canvas.width / w));
 
     ctx.drawImage(img, -x, -y, w, h, 0, 0, canvas.width, canvas.height);
 

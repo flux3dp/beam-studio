@@ -1950,6 +1950,7 @@ const lang: ILang = {
       install_correct_headtype: 'Asenna 10 W / 20 W diodilasermoduulit asianmukaisesti, jotta kehys voidaan käynnistää matalalla teholla.',
       job_origin_unavailable: 'Työn aloituskohdan asettaminen vaatii laiteohjelmistoversion 4.3.5 / 5.3.5 tai uudemman. Haluatko päivittää laiteohjelmiston nyt?',
       job_origin_warning: 'Käytät tällä hetkellä “nykyistä sijaintia” aloituspisteenä. Varmista, että laserkärki on siirretty oikeaan asentoon törmäysten välttämiseksi.',
+      object_outside_moving_area: 'Jotkin objektit ovat esikatselukehyksen alueen ulkopuolella.',
       power_too_high: 'LIIAN SUURI TEHO',
       power_too_high_confirm: 'HUOMAUTETTU',
       power_too_high_msg: 'Matalampi laserteho (alle 70 %) pidentää laserputken käyttöikää.\nKirjoita "HUOMAUTETTU" jatkaaksesi.',

@@ -18,6 +18,7 @@ export class EmbeddedCanvasManager {
   protected background: SVGSVGElement;
   protected width: number;
   protected height: number;
+  protected minY: number;
   private canvasExpansion = 3; // extra space
 
   public zoomRatio = 1;
@@ -69,16 +70,18 @@ export class EmbeddedCanvasManager {
   setupContainer = (container: HTMLDivElement): void => {
     this.width = workareaManager.width;
     this.height = workareaManager.height;
+    this.minY = workareaManager.minY;
     this.container = container;
     this.root = document.createElementNS(NS.SVG, 'svg') as SVGSVGElement;
     this.root.setAttribute('xlinkns', NS.XLINK);
     this.root.setAttribute('xmlns', NS.SVG);
     this.background = document.createElementNS(NS.SVG, 'svg') as SVGSVGElement;
+    this.background.setAttribute('viewBox', `0 ${this.minY} ${this.width} ${this.height}`);
 
     const backgroundRect = document.createElementNS(NS.SVG, 'rect');
 
     backgroundRect.setAttribute('x', '0');
-    backgroundRect.setAttribute('y', '0');
+    backgroundRect.setAttribute('y', `${this.minY}`);
     backgroundRect.setAttribute('width', '100%');
     backgroundRect.setAttribute('height', '100%');
     backgroundRect.setAttribute('fill', '#fff');
@@ -100,7 +103,7 @@ export class EmbeddedCanvasManager {
 
   protected setupContent = (): void => {
     this.svgcontent = document.createElementNS(NS.SVG, 'svg') as SVGSVGElement;
-    this.svgcontent.setAttribute('viewBox', `0 0 ${this.width} ${this.height}`);
+    this.svgcontent.setAttribute('viewBox', `0 ${this.minY} ${this.width} ${this.height}`);
     this.svgcontent.setAttribute('xmlns', NS.SVG);
     this.svgcontent.setAttribute('xmlns:xlink', NS.XLINK);
     this.svgcontent.setAttribute('overflow', 'visible');

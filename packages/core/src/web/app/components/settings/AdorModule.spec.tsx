@@ -19,6 +19,7 @@ const useSettingStore = create(() => ({
 }));
 
 jest.mock('@core/app/pages/Settings/useSettingStore', () => ({ useSettingStore }));
+jest.mock('@core/app/actions/canvas/module-boundary-drawer', () => {});
 jest.mock('./components/SettingSelect');
 jest.mock('./components/SettingFormItem');
 
@@ -62,7 +63,7 @@ describe('test AdorModule', () => {
     expect(mockSetPreference).toHaveBeenCalledTimes(1);
     expect(mockSetPreference).toHaveBeenLastCalledWith('module-offsets', {
       ado1: {
-        [LayerModule.LASER_10W_DIODE]: [10, 20],
+        [LayerModule.LASER_10W_DIODE]: [10, 20, true],
       },
     });
     mockOffsets.ado1[LayerModule.LASER_10W_DIODE] = [10, 20];
@@ -73,7 +74,7 @@ describe('test AdorModule', () => {
     expect(mockSetPreference).toHaveBeenLastCalledWith('module-offsets', {
       ado1: {
         [LayerModule.LASER_10W_DIODE]: [10, 20],
-        [LayerModule.PRINTER]: [30, moduleOffsets.ado1[LayerModule.PRINTER][1]],
+        [LayerModule.PRINTER]: [30, moduleOffsets.ado1[LayerModule.PRINTER][1], true],
       },
     });
   });

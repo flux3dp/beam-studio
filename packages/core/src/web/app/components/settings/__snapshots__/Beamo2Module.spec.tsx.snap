@@ -34,7 +34,7 @@ exports[`test Beamo2Module should render correctly 1`] = `
         id="ir-laser-offset-x"
         max="360"
         min="-360"
-        value="10"
+        value="-71.4"
       />
     </div>
     <span
@@ -57,7 +57,7 @@ exports[`test Beamo2Module should render correctly 1`] = `
         id="ir-laser-offset-y"
         max="240"
         min="-240"
-        value="10"
+        value="2.0999999999999996"
       />
     </div>
   </div>

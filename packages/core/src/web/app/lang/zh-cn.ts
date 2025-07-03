@@ -1950,6 +1950,7 @@ const lang: ILang = {
       install_correct_headtype: '请正确安装10W或20W雷射模块以进入低激光模式。',
       job_origin_unavailable: '设置工作原点需要固件版本4.3.5 / 5.3.5或更高。您现在要更新固件吗？',
       job_origin_warning: '您当前正在使用“当前位置”作为起点。请确保将激光头移动到正确的位置，以避免碰撞。',
+      object_outside_moving_area: '有物件超出可外框预览范围。',
       power_too_high: '功率过高',
       power_too_high_confirm: '知道了',
       power_too_high_msg: '激光管在高功率（70％ 以上）下耗损较快，使用低功率可以延长雷试管使用寿命。\n输入「知道了」以继续。',
