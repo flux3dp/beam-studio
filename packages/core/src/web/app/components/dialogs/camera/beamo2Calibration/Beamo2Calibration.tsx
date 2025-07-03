@@ -21,7 +21,6 @@ import CheckpointData from '../common/CheckpointData';
 import downloadCalibrationFile from '../common/downloadCalibrationFile';
 import Instruction from '../common/Instruction';
 import moveLaserHead from '../common/moveLaserHead';
-import moveZRel from '../common/moveZRel';
 import ProcessingDialog from '../common/ProcessingDialog';
 import SolvePnP from '../common/SolvePnP';
 import { bm2PerspectiveGrid, bm2PnPPoints, getRegionalPoints } from '../common/solvePnPConstants';
@@ -92,7 +91,7 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
             {
               label: tCalibration.next,
               onClick: async () => {
-                const res = await moveLaserHead([180, 25], { zMove: { val: -5 } });
+                const res = await moveLaserHead([180, 25]);
 
                 if (res) setStep(Steps.CHESSBOARD);
               },
@@ -119,7 +118,6 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
           onClose={onClose}
           onNext={async () => {
             progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: tCalibration.moving_laser_head });
-            await moveZRel(5);
             progressCaller.popById(PROGRESS_ID);
             console.log(calibratingParam.current);
             setStep(Steps.PUT_PAPER);

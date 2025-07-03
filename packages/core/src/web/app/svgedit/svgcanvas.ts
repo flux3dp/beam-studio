@@ -2651,7 +2651,10 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     const defaultLayerName = LANG.right_panel.layer_panel.layer1;
 
     canvas.createLayer(defaultLayerName);
-    initLayerConfig(defaultLayerName);
+
+    const defaultLayer = LayerHelper.getLayerElementByName(defaultLayerName);
+
+    initLayerConfig(defaultLayer);
 
     // force update selected layers
     LayerPanelController.setSelectedLayers([]);
