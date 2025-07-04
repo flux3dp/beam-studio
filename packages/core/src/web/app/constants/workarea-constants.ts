@@ -176,7 +176,7 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
       LayerModule.LASER_1064,
       LayerModule.UV_PRINT,
     ].filter(Boolean),
-    topExpansion: 300,
+    topExpansion: 400,
     vectorSpeedLimit: 30,
     width: 360,
   },
