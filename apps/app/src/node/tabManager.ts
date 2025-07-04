@@ -153,6 +153,8 @@ class TabManager {
   };
 
   private createTab = (): Tab => {
+    console.log('Creating new tab', this.focusedId);
+
     const tabView = new WebContentsView({
       webPreferences: {
         contextIsolation: false,

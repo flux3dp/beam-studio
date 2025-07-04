@@ -10,11 +10,11 @@ import FileName from '@core/app/components/beambox/top-bar/FileName';
 import { registerWindowUpdateTitle } from '@core/app/components/beambox/top-bar/FileName/registerWindowUpdateTile';
 import FrameButton from '@core/app/components/beambox/top-bar/FrameButton';
 import GoButton from '@core/app/components/beambox/top-bar/GoButton';
+import HomeButton from '@core/app/components/beambox/top-bar/HomeButton';
 import Menu from '@core/app/components/beambox/top-bar/Menu';
 import PathPreviewButton from '@core/app/components/beambox/top-bar/PathPreviewButton';
 import SelectMachineButton from '@core/app/components/beambox/top-bar/SelectMachineButton';
 import TopBarHints from '@core/app/components/beambox/top-bar/TopBarHints';
-import UserAvatar from '@core/app/components/beambox/top-bar/UserAvatar';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { TopBarHintsContextProvider } from '@core/app/contexts/TopBarHintsContext';
@@ -83,9 +83,14 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
         onClick={() => ObjectPanelController.updateActiveKey(null)}
       >
         <div className={classNames(styles.controls, styles.left, { [styles.space]: isDragRegion || isWeb })}>
-          <UserAvatar user={currentUser} />
-          <CommonTools hide={mode !== CanvasMode.Draw} isWeb={isWeb} />
-          {!isWeb && <Tabs />}
+          {isWeb ? (
+            <>
+              <HomeButton />
+              <CommonTools hide={mode !== CanvasMode.Draw} />
+            </>
+          ) : (
+            <Tabs />
+          )}
         </div>
         <div className={classNames(styles.controls, styles.right)}>
           <SelectMachineButton />

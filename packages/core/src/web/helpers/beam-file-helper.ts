@@ -268,11 +268,12 @@ const readHeader = (headerBuf: Buffer) => {
   vInt = readVInt(headerBuf, offset);
   offset = vInt.offset;
 
-  // console.log('Image Source block Size', vInt.value);
+  console.log('Image Source block Size', vInt.value);
+
   if (offset < headerBuf.length) {
     vInt = readVInt(headerBuf, offset);
     offset = vInt.offset;
-    // console.log('Thumbnail block Size', vInt.value);
+    console.log('Thumbnail block Size', vInt.value);
   }
 };
 
@@ -299,12 +300,34 @@ const readImageSource = (buf: Buffer, offset: number, end: number) => {
 
     const image = document.querySelector(`image#${id}`);
 
+    console.log('image', image);
+
     if (image) {
       image.setAttribute('origImage', src);
       image.setAttribute('preserveAspectRatio', 'none');
       updateImageDisplay(image as SVGImageElement);
     }
   }
+};
+
+const readThumbnail = (buf: Buffer, offset: number, end: number) => {
+  let src = buf.subarray(offset, end);
+
+  console.log('src', src.toString('utf-8'));
+  src = src.toString('base64');
+
+  src = `data:image/png;base64,${src}`;
+
+  const image = document.createElement('img');
+
+  image.setAttribute('xlink:href', src);
+  image.setAttribute('src', src);
+  image.setAttribute('width', '100%');
+  image.setAttribute('height', '100%');
+  image.setAttribute('style', 'object-fit: contain;position:absolute;top:0;left:0;z-index:1000;');
+  document.body.appendChild(image);
+
+  console.log('src', src);
 };
 
 const readBlocks = async (buf: Buffer, offset: number, command?: IBatchCommand) => {
@@ -353,6 +376,7 @@ const readBlocks = async (buf: Buffer, offset: number, command?: IBatchCommand) 
     const { offset: newOffset, value } = readVInt(buf, currentOffset);
 
     console.log('Size', value);
+    readThumbnail(buf, newOffset, newOffset + value);
     currentOffset = newOffset + value;
   } else if (blockType === 4) {
     // misc data
@@ -408,11 +432,13 @@ const readBeam = async (file: File): Promise<void> => {
   const version = signatureBuffer.readUInt8(4);
 
   console.log('Beam Version: ', version);
+  console.log('offset', offset);
 
   const vint = readVInt(buf, offset);
   const headerSize = vint.value;
 
   offset = vint.offset;
+  console.log('Header Size', headerSize, offset);
 
   const headerBuf = buf.subarray(offset, offset + headerSize);
 
@@ -437,7 +463,42 @@ const readBeam = async (file: File): Promise<void> => {
   Progress.popById('loading_image');
 };
 
+const readBeamFileInfo = async (file: File): Promise<{ thumbnail: string; workarea: null | string }> => {
+  const data = await new Promise<ArrayBuffer>((resolve) => {
+    const fr = new FileReader();
+
+    fr.onloadend = (evt) => {
+      resolve(evt.target!.result as ArrayBuffer);
+    };
+    fr.readAsArrayBuffer(file);
+  });
+  const buf = Buffer.from(data);
+
+  // Find data-workarea in the beginning of the file
+  const content = buf.subarray(0, 1000).toString('utf-8');
+  const workareaString = content.match(/data-workarea="([^"]+)"/);
+  const workarea = workareaString ? workareaString[1] : null;
+
+  console.log('content', content, 'workareaString', workareaString, 'workarea', workarea);
+
+  let blockType = 0;
+  let { offset, value: size } = readVInt(buf, 5); // skip signature and metadata
+
+  // Find thumbnail block
+  while (offset < buf.length && blockType !== 3) {
+    offset += size;
+    blockType = buf.readUInt8(offset);
+    ({ offset, value: size } = readVInt(buf, offset + 1));
+  }
+
+  return {
+    thumbnail: blockType === 3 ? `data:image/png;base64,${buf.subarray(offset, offset + size).toString('base64')}` : '',
+    workarea,
+  };
+};
+
 export default {
   generateBeamBuffer,
   readBeam,
+  readBeamFileInfo,
 };

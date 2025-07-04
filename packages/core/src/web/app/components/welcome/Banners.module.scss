@@ -1,0 +1,61 @@
+$shadow-radius: 16px;
+
+@mixin button {
+  position: absolute;
+  top: calc(50%);
+  transform: translateY(-50%);
+  z-index: 1;
+}
+
+.container {
+  position: relative;
+  overflow: hidden;
+  margin: -$shadow-radius;
+  max-height: 300px;
+  flex-shrink: 0;
+
+  @media screen and (max-width: 600px) {
+    max-height: none;
+  }
+
+  .prev {
+    @include button;
+    left: 20px;
+  }
+
+  .next {
+    @include button;
+    right: 20px;
+  }
+
+  .banners {
+    position: relative;
+    right: 100%;
+    transition: right 0.3s;
+    display: flex;
+    height: 100%;
+
+    &.no-transition {
+      transition: none;
+    }
+
+    .banner {
+      width: 100%;
+      flex: 0 0 100%;
+      padding: $shadow-radius;
+      display: flex;
+      justify-content: center;
+
+      > img {
+        border-radius: 12px;
+        box-shadow: 0 3px $shadow-radius 0px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+
+        &:hover {
+          opacity: 0.9;
+        }
+      }
+    }
+  }
+}

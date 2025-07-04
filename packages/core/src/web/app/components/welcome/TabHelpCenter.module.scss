@@ -1,0 +1,32 @@
+@use './mixins' as mixins;
+
+.title {
+  @include mixins.title;
+}
+
+.subtitle {
+  @include mixins.subtitle;
+}
+
+.content {
+  @include mixins.content;
+}
+
+.buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.gradient {
+  background: linear-gradient(96.29deg, #0664ba -2.99%, #107bdd 99.54%) !important;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.grids {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}

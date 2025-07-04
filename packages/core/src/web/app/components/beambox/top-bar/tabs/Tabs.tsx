@@ -129,6 +129,8 @@ const Tabs = (): React.JSX.Element => {
                 const isCurrent = id === currentId;
                 let { title } = isCurrent ? currentTabInfo : tab;
 
+                console.log('Rendering tab', id, title, isCurrent);
+
                 if (isCurrent) {
                   title = `${title || t.untitled}${hasUnsavedChange ? '*' : ''}`;
                 }

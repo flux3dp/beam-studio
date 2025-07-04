@@ -1,0 +1,9 @@
+@use './mixins' as mixins;
+
+.title {
+  @include mixins.title;
+}
+
+.content {
+  @include mixins.content;
+}
