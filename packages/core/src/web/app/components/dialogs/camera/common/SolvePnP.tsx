@@ -143,17 +143,20 @@ const SolvePnP = ({
     source: imgSource,
   });
 
-  const handleTakePicture = useCallback(async () => {
-    if (doorChecker && !doorChecker.keepClosed) {
-      const res = await doorChecker.doorClosedWrapper(moveLaserHead);
+  const handleTakePicture = useCallback(
+    async (relocate = false) => {
+      if (doorChecker && (!doorChecker.keepClosed || relocate)) {
+        const res = await doorChecker.doorClosedWrapper(moveLaserHead);
 
-      if (!res) {
-        return;
+        if (!res) {
+          return;
+        }
       }
-    }
 
-    await takePicture();
-  }, [doorChecker, takePicture]);
+      await takePicture();
+    },
+    [doorChecker, takePicture],
+  );
 
   useDidUpdateEffect(() => {
     setPoints([]);
@@ -272,6 +275,11 @@ const SolvePnP = ({
         <Button className={styles['footer-button']} key="back" onClick={onBack}>
           {lang.buttons.back}
         </Button>,
+        doorChecker ? (
+          <Button className={styles['footer-button']} key="relocate" onClick={() => handleTakePicture(true)}>
+            {lang.calibration.relocate_camera}
+          </Button>
+        ) : null,
         <Button className={styles['footer-button']} key="retry" onClick={() => handleTakePicture()}>
           {lang.calibration.retake}
         </Button>,
@@ -293,6 +301,12 @@ const SolvePnP = ({
     >
       <ol className={styles.steps}>
         <li>{lang.calibration.solve_pnp_step1}</li>
+        {doorChecker && (
+          <>
+            <li>{lang.calibration.solve_pnp_keep_door_closed}</li>
+            <li>{lang.calibration.solve_pnp_relocate_camera}</li>
+          </>
+        )}
         <li>{lang.calibration.solve_pnp_step2}</li>
         <li>{lang.calibration.solve_pnp_step3}</li>
       </ol>

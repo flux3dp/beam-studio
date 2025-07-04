@@ -998,6 +998,7 @@ export interface ILang {
     check_pnp_desc: string;
     checking_checkpoint: string;
     checking_pictures: string;
+    click_next_to_take_picture: string;
     diode_calibration: string;
     do_engraving: string;
     download_and_print_calibration_pattern: string;
@@ -1078,6 +1079,7 @@ export interface ILang {
     put_paper_wide_angle_1: string;
     put_paper_wide_angle_2: string;
     recalibrate: string;
+    relocate_camera: string;
     res_average: string;
     res_excellent: string;
     res_poor: string;
@@ -1085,8 +1087,10 @@ export interface ILang {
     rotation_angle: string;
     show_last_config: string;
     skip: string;
+    solve_pnp_keep_door_closed: string;
     solve_pnp_move_platform: string;
     solve_pnp_open_the_lid: string;
+    solve_pnp_relocate_camera: string;
     solve_pnp_step1: string;
     solve_pnp_step2: string;
     solve_pnp_step3: string;
