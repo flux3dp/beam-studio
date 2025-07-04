@@ -1,6 +1,6 @@
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
-import isDev from '@core/helpers/is-dev';
+import { checkBM2UV } from '@core/helpers/checkFeature';
 import type { TAccelerationOverride } from '@core/interfaces/ITaskConfig';
 
 import { LayerModule, type LayerModuleType } from './layer-module/layer-modules';
@@ -39,6 +39,7 @@ export interface WorkArea {
   accOverride?: TAccelerationOverride;
   autoFocusOffset?: number[]; // [mm, mm]
   autoShrink?: number;
+  calibrationCenter?: number[]; // [mm, mm]
   cameraCenter?: number[]; // [mm, mm]
   curveSpeedLimit?: number; // mm/s
   deep?: number; // mm
@@ -159,6 +160,7 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
   fbm2: {
     accOverride: { path: { x: 500, y: 500 } },
     autoShrink: 0.05, // TODO: use same value as other machines, may need to adjust
+    calibrationCenter: [180, 50],
     cameraCenter: [180, 7],
     height: 240,
     label: 'beamo II',
@@ -168,13 +170,13 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     pxWidth: 360 * dpmm,
     supportedModules: [
       LayerModule.LASER_UNIVERSAL,
-      isDev() ? LayerModule.PRINTER_4C : null,
-      isDev() ? LayerModule.UV_WHITE_INK : null,
-      isDev() ? LayerModule.UV_VARNISH : null,
+      LayerModule.PRINTER_4C,
+      checkBM2UV() ? LayerModule.UV_WHITE_INK : null,
+      checkBM2UV() ? LayerModule.UV_VARNISH : null,
       LayerModule.LASER_1064,
       LayerModule.UV_PRINT,
     ].filter(Boolean),
-    topExpansion: 300,
+    topExpansion: 400,
     vectorSpeedLimit: 30,
     width: 360,
   },

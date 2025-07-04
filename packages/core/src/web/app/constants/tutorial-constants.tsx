@@ -379,14 +379,14 @@ const INTERFACE_TUTORIAL: ITutorial = {
         arrowDirection: 'top',
         position: {
           get right(): number {
-            return calculateRight(170, RightRef.PATH_PREVIEW_BTN);
+            return calculateRight(212, RightRef.PATH_PREVIEW_BTN);
           },
           top: calculateTop(10, TopRef.TOPBAR),
         },
       },
       hintCircle: {
         height: 36,
-        right: calculateRight(150, RightRef.PATH_PREVIEW_BTN),
+        right: calculateRight(192, RightRef.PATH_PREVIEW_BTN),
         top: calculateTop(2),
         width: 150,
       },
@@ -632,7 +632,7 @@ const INTERFACE_TUTORIAL: ITutorial = {
         },
       },
       hintCircle: {
-        height: 290,
+        height: 328,
         right: calculateRight(5, RightRef.RIGHT_SROLL_BAR),
         top: calculateTop(225, TopRef.TOPBAR),
         width: rightPanelInnerWidth - 10,

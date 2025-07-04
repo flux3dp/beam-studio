@@ -177,9 +177,9 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
           ]}
           onClose={onClose}
           steps={[
-            tCalibration.put_paper_step1,
+            tCalibration.put_paper_bm2_1,
             tCalibration.put_paper_step2,
-            tCalibration.perform_autofocus_bb2,
+            tCalibration.perform_autofocus_bm2,
             tCalibration.put_paper_step3,
             tCalibration.put_paper_skip,
           ]}
@@ -209,7 +209,13 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
             },
           ]}
           onClose={() => onClose(false)}
-          steps={[tCalibration.solve_pnp_step1, tCalibration.solve_pnp_step2]}
+          steps={[
+            tCalibration.click_next_to_take_picture,
+            tCalibration.solve_pnp_keep_door_closed,
+            tCalibration.solve_pnp_relocate_camera,
+            tCalibration.solve_pnp_step1,
+            tCalibration.solve_pnp_step2,
+          ]}
           title={tCalibration.solve_pnp_title}
         />
       );

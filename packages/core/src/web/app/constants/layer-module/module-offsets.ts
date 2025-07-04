@@ -28,7 +28,7 @@ const moduleOffsets: ModuleOffsets = {
   fbm2: {
     [LayerModule.LASER_1064]: [81.4, 7.9],
     [LayerModule.LASER_UNIVERSAL]: [0, 0], // TODO: add true flag to force update offset
-    [LayerModule.PRINTER_4C]: [20.8, -24.4],
+    [LayerModule.PRINTER_4C]: [15.5, -37.1],
     [LayerModule.UV_VARNISH]: [30.2, -1.1],
     [LayerModule.UV_WHITE_INK]: [19.7, -1.1],
   },

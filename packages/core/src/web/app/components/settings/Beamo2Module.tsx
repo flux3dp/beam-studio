@@ -7,6 +7,7 @@ import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
+import { checkBM2UV } from '@core/helpers/checkFeature';
 import { getModuleOffsets, updateModuleOffsets } from '@core/helpers/device/moduleOffsets';
 import useI18n from '@core/helpers/useI18n';
 
@@ -78,20 +79,24 @@ const Beamo2Module = ({ unitInputProps }: Props): React.JSX.Element => {
         onChange={(axis, val) => editModuleOffsets(LayerModule.PRINTER_4C, axis, val)}
         values={getModuleOffset(LayerModule.PRINTER_4C)}
       />
-      <XYItem
-        {...commonProps}
-        id="uv-white-ink-offset"
-        label={lang.settings.module_offset_uv_white_ink}
-        onChange={(axis, val) => editModuleOffsets(LayerModule.UV_WHITE_INK, axis, val)}
-        values={getModuleOffset(LayerModule.UV_WHITE_INK)}
-      />
-      <XYItem
-        {...commonProps}
-        id="uv-varnish-offset"
-        label={lang.settings.module_offset_uv_varnish}
-        onChange={(axis, val) => editModuleOffsets(LayerModule.UV_VARNISH, axis, val)}
-        values={getModuleOffset(LayerModule.UV_VARNISH)}
-      />
+      {checkBM2UV() && (
+        <XYItem
+          {...commonProps}
+          id="uv-white-ink-offset"
+          label={lang.settings.module_offset_uv_white_ink}
+          onChange={(axis, val) => editModuleOffsets(LayerModule.UV_WHITE_INK, axis, val)}
+          values={getModuleOffset(LayerModule.UV_WHITE_INK)}
+        />
+      )}
+      {checkBM2UV() && (
+        <XYItem
+          {...commonProps}
+          id="uv-varnish-offset"
+          label={lang.settings.module_offset_uv_varnish}
+          onChange={(axis, val) => editModuleOffsets(LayerModule.UV_VARNISH, axis, val)}
+          values={getModuleOffset(LayerModule.UV_VARNISH)}
+        />
+      )}
     </>
   );
 };

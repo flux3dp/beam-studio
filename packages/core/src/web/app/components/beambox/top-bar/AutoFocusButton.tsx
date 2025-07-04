@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useMemo, useState } from 'react';
 
 import classNames from 'classnames';
 import { match, P } from 'ts-pattern';
@@ -88,15 +88,18 @@ const AutoFocusButton = (): React.JSX.Element => {
       setIsProcessing(false);
     }
   };
+  const deviceSupportAF = useMemo(() => {
+    if (!selectedDevice) return false;
+
+    return (
+      selectedDevice.model === 'fhexa1' ||
+      (constants.fcodeV2Models.has(selectedDevice.model) && selectedDevice.model !== 'fbm2')
+    );
+  }, [selectedDevice]);
 
   return (
     <div
-      className={classNames(styles.button, {
-        [styles.disabled]:
-          isProcessing ||
-          selectedDevice === null ||
-          (!constants.fcodeV2Models.has(selectedDevice.model) && selectedDevice.model !== 'fhexa1'),
-      })}
+      className={classNames(styles.button, { [styles.disabled]: isProcessing || !deviceSupportAF })}
       onClick={onClick}
       title={lang.title}
     >

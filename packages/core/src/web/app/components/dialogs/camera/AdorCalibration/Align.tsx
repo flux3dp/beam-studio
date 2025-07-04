@@ -49,7 +49,6 @@ const INIT_GUESS_Y = Math.round(300 + 1500 / 2);
 const PX_PER_MM = 5;
 const PROGRESS_ID = 'calibration-align';
 
-// TODO: fix take picture for beamo2 (V4)
 // TODO: fix test
 const Align = ({
   fisheyeParam,
@@ -72,6 +71,7 @@ const Align = ({
   const doorChecker = useRef<DoorChecker | null>(null);
   const hasInit = useRef(false);
   const [img, setImg] = useState<null | { blob: Blob; url: string }>(null);
+  const isBM2 = useMemo(() => deviceMaster.currentDevice.info.model === 'fbm2', []);
 
   const initSetup = useCallback(async () => {
     progressCaller.openNonstopProgress({
@@ -88,8 +88,8 @@ const Align = ({
           const workarea = getWorkarea(deviceMaster.currentDevice.info.model, 'fbm2');
           const { cameraCenter } = workarea;
 
-          if (deviceMaster.currentDevice.info.model === 'fbm2') {
-            doorChecker.current = new DoorChecker();
+          if (isBM2) {
+            doorChecker.current = doorChecker.current ?? new DoorChecker();
 
             const res = await doorChecker.current.doorClosedWrapper(() =>
               manger.setupFisheyePreview({ cameraPosition: cameraCenter, height: 0 }),
@@ -122,16 +122,17 @@ const Align = ({
     // eslint-disable-next-line hooks/exhaustive-deps
   }, []);
 
-  const handleTakePicture = async (retryTimes = 0) => {
+  const handleTakePicture = async (retryTimes = 0, relocate = false) => {
     if (!hasInit.current) {
       hasInit.current = await initSetup();
+      relocate = false;
 
       if (!hasInit.current) {
         return;
       }
     }
 
-    if (doorChecker.current && !doorChecker.current.keepClosed) {
+    if (doorChecker.current && (!doorChecker.current.keepClosed || relocate)) {
       const res = await doorChecker.current.doorClosedWrapper(moveLaserHead);
 
       if (!res) {
@@ -180,9 +181,14 @@ const Align = ({
 
   const fisheyeCenter = useMemo(() => {
     if ('v' in fisheyeParam) {
-      const { cameraCenter } = getWorkarea(deviceMaster.currentDevice.info.model as WorkAreaModel, 'ado1');
+      const { calibrationCenter, cameraCenter } = getWorkarea(
+        deviceMaster.currentDevice.info.model as WorkAreaModel,
+        'ado1',
+      );
 
-      return [cameraCenter[0] * PX_PER_MM, cameraCenter[1] * PX_PER_MM];
+      return calibrationCenter
+        ? [calibrationCenter[0] * PX_PER_MM, calibrationCenter[1] * PX_PER_MM]
+        : [cameraCenter![0] * PX_PER_MM, cameraCenter![1] * PX_PER_MM];
     }
 
     return fisheyeParam.center;
@@ -374,6 +380,11 @@ const Align = ({
         <Button className={styles['footer-button']} key="back" onClick={onBack}>
           {lang.buttons.back}
         </Button>,
+        isBM2 ? (
+          <Button className={styles['footer-button']} key="relocate" onClick={() => handleTakePicture(0, true)}>
+            {lang.calibration.relocate_camera}
+          </Button>
+        ) : null,
         <Button className={styles['footer-button']} key="take-picture" onClick={() => handleTakePicture(0)}>
           {lang.calibration.retake}
         </Button>,
