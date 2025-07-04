@@ -164,16 +164,18 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
           id: 'CALIBRATE_PRINTER_4C_MODULE',
           label: `${r.calibrate_printer_module} (4C)`,
         },
-        isBeamo2 && {
-          click: handleClick,
-          id: 'CALIBRATE_UV_WHITE_INK_MODULE',
-          label: `${r.calibrate_printer_module} (${i18n.lang.layer_module.uv_white_ink})`,
-        },
-        isBeamo2 && {
-          click: handleClick,
-          id: 'CALIBRATE_UV_VARNISH_MODULE',
-          label: `${r.calibrate_printer_module} (${i18n.lang.layer_module.uv_varnish})`,
-        },
+        isBeamo2 &&
+          isDevMode && {
+            click: handleClick,
+            id: 'CALIBRATE_UV_WHITE_INK_MODULE',
+            label: `${r.calibrate_printer_module} (${i18n.lang.layer_module.uv_white_ink})`,
+          },
+        isBeamo2 &&
+          isDevMode && {
+            click: handleClick,
+            id: 'CALIBRATE_UV_VARNISH_MODULE',
+            label: `${r.calibrate_printer_module} (${i18n.lang.layer_module.uv_varnish})`,
+          },
         (isAdor || isBeamo2) && {
           click: handleClick,
           id: 'CALIBRATE_IR_MODULE',

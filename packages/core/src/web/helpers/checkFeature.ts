@@ -11,4 +11,5 @@ export const checkFpm1 = (): boolean =>
     isDev()) &&
   !isWeb();
 export const checkHxRf = (): boolean => isDev();
-export const checkBM2 = (): boolean => isDev();
+export const checkBM2 = (): boolean => isDev(); // TODO: release to kol
+export const checkBM2UV = (): boolean => isDev();
