@@ -149,7 +149,7 @@ const Align = ({
 
     if (!imgBlob) {
       if (retryTimes < 3) {
-        handleTakePicture(retryTimes + 1, relocate);
+        handleTakePicture(retryTimes + 1);
       } else {
         alertCaller.popUpError({ message: 'Unable to get image' });
       }
