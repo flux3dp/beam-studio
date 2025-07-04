@@ -39,6 +39,7 @@ export interface WorkArea {
   accOverride?: TAccelerationOverride;
   autoFocusOffset?: number[]; // [mm, mm]
   autoShrink?: number;
+  calibrationCenter?: number[]; // [mm, mm]
   cameraCenter?: number[]; // [mm, mm]
   curveSpeedLimit?: number; // mm/s
   deep?: number; // mm
@@ -159,6 +160,7 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
   fbm2: {
     accOverride: { path: { x: 500, y: 500 } },
     autoShrink: 0.05, // TODO: use same value as other machines, may need to adjust
+    calibrationCenter: [180, 50],
     cameraCenter: [180, 7],
     height: 240,
     label: 'beamo II',

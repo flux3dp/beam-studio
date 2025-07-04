@@ -180,9 +180,14 @@ const Align = ({
 
   const fisheyeCenter = useMemo(() => {
     if ('v' in fisheyeParam) {
-      const { cameraCenter } = getWorkarea(deviceMaster.currentDevice.info.model as WorkAreaModel, 'ado1');
+      const { calibrationCenter, cameraCenter } = getWorkarea(
+        deviceMaster.currentDevice.info.model as WorkAreaModel,
+        'ado1',
+      );
 
-      return [cameraCenter[0] * PX_PER_MM, cameraCenter[1] * PX_PER_MM];
+      return calibrationCenter
+        ? [calibrationCenter[0] * PX_PER_MM, calibrationCenter[1] * PX_PER_MM]
+        : [cameraCenter![0] * PX_PER_MM, cameraCenter![1] * PX_PER_MM];
     }
 
     return fisheyeParam.center;
