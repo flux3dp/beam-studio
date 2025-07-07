@@ -139,6 +139,7 @@ const addOnData: Record<WorkAreaModel, AddOnInfo> = {
       maxHeight: 3000,
       rotaryRatio: CHUCK_ROTARY_DIAMETER / FEEDER_DIAMETER / 2,
       vectorSpeedLimit: 30,
+      xRange: [0, 340],
     },
     curveEngraving: true,
     jobOrigin: true,
