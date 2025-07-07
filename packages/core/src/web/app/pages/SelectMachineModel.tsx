@@ -69,7 +69,7 @@ const SelectMachineModel = (): React.JSX.Element => {
 
     storage.set('printer-is-ready', true);
     dialog.showLoadingWindow();
-    window.location.hash = '#/studio/beambox';
+    window.location.hash = '#/studio/welcome';
     windowLocationReload();
   }, [isNewUser, isSelectBeambox, isSelectBeamo]);
 

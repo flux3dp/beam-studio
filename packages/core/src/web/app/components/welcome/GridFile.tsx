@@ -18,6 +18,7 @@ import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { MyCloudContext } from '@core/app/contexts/MyCloudContext';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
+import type { IFile } from '@core/interfaces/IMyCloud';
 
 import styles from './GridFile.module.scss';
 
@@ -49,6 +50,10 @@ const getFileSize = (bytes: number) => {
   return size.toFixed(1) + units[i];
 };
 
+const isCloudFile = (file: Props['file']): file is IFile => {
+  return !!file.uuid;
+};
+
 const GridFile = ({ file }: Props): React.JSX.Element => {
   const {
     alert: tAlert,
@@ -63,10 +68,12 @@ const GridFile = ({ file }: Props): React.JSX.Element => {
   const [error, setError] = useState(false);
   const isEditing = useMemo(() => editingId === file.uuid, [editingId, file]);
   const isSelected = useMemo(() => selectedId === file.uuid, [selectedId, file]);
+  const isCloud = isCloudFile(file);
+  const fileKey = useMemo(() => (isCloud ? file.uuid! : file.name), [isCloud, file]);
 
   const onClick = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation();
-    setSelectedId(file.uuid);
+    setSelectedId(fileKey);
 
     if (isMobile) {
       setActionDropdownOpen(!actionDropdownOpen);
@@ -74,7 +81,7 @@ const GridFile = ({ file }: Props): React.JSX.Element => {
   };
 
   const onDoubleClick = () => {
-    if (!isMobile) {
+    if (!isMobile && isCloud) {
       fileOperation.open(file);
     }
   };

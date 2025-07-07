@@ -129,7 +129,7 @@ const App = (): React.JSX.Element => {
                   <Route component={PromarkSettings} exact path="/initialize/connect/promark-settings" />
                   <Route component={Settings} exact path="/studio/settings" />
                   <Route component={Beambox} exact path="/studio/beambox" />
-                  <Route component={Welcome} exact path="/welcome" />
+                  <Route component={Welcome} exact path="/studio/welcome" />
                   <Route component={Error} path="/error/*" />
                   <Route component={Home} path="*" />
                 </Switch>

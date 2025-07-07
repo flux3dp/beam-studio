@@ -9,6 +9,11 @@ import ThemedButton from './ThemedButton';
 const guides = [
   {
     category: 10647778378639,
+    name: 'beamo II Guide',
+    src: 'core-img/init-panel/beamo2-real.webp',
+  },
+  {
+    category: 10647778378639,
     name: 'Beambox II Guide',
     src: 'core-img/init-panel/beambox-2-real.png',
   },
@@ -25,7 +30,7 @@ const guides = [
   {
     category: 10647778378639,
     name: 'beamo Guide',
-    src: 'core-img/init-panel/beamo-real.png',
+    src: 'core-img/init-panel/beamo-real.webp',
   },
   {
     category: 10647778378639,
@@ -50,7 +55,7 @@ const guides = [
   {
     category: 10647778378639,
     name: 'Beam Studio Guide',
-    src: 'core-img/init-panel/beambox-2-real.png',
+    src: 'core-img/BeamStudio-logo.png',
   },
 ];
 

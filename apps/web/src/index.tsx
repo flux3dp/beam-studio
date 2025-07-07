@@ -49,7 +49,7 @@ const onFinished = (data: boolean) => {
   const isInitializePage = Boolean(hash.match(/^#\/?initialize/));
 
   if (isReady === true && (hash === '' || isInitializePage)) {
-    window.location.hash = '#/studio/beambox';
+    window.location.hash = '#/studio/welcome';
   } else if (isReady === false && !isInitializePage) {
     window.location.hash = '#';
   }

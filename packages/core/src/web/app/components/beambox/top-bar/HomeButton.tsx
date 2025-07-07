@@ -4,9 +4,9 @@ import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
 
 import styles from './DocumentButton.module.scss';
 
-const HomeButton = (): React.JSX.Element => {
+const HomeButton = () => {
   const showWelcomePage = () => {
-    window.location.hash = '#/welcome';
+    window.location.hash = '#/studio/welcome';
   };
 
   return (

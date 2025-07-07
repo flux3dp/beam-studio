@@ -9,6 +9,12 @@
   font-size: 12px;
   text-align: center;
   transition: all 0.15s ease-in-out;
+  display: flex;
+  flex-direction: column;
+
+  > img {
+    margin: auto;
+  }
 
   &:hover {
     border-color: #1890ff;

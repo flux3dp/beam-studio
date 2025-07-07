@@ -37,6 +37,8 @@ export const SvgEditor = (): ReactNode => {
   };
 
   useEffect(() => {
+    console.log('SvgEditor mounted');
+
     if (window.$) {
       $(svgEditor.init);
     } else {

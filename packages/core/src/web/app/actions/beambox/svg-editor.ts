@@ -75,7 +75,7 @@ import fileSystem from '@core/implementations/fileSystem';
 
 // @ts-expect-error this line is required to load svgedit
 if (svgCanvasClass) {
-  console.log('svgCanvas loaded successfully');
+  console.warn('svgCanvas loaded successfully');
 }
 
 const LANG = i18n.lang.beambox;

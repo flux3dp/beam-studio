@@ -22,6 +22,7 @@ import { DmktIcon } from '@core/app/icons/icons';
 import isWeb from '@core/helpers/is-web';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
+import dialog from '@core/implementations/dialog';
 
 import styles from './Welcome.module.scss';
 
@@ -86,15 +87,62 @@ const Welcome = (): ReactNode => {
 
   const isFullTab = useMemo(() => activeKey === 'beami', [activeKey]);
 
+  const openFile = async () => {
+    // TODO:
+    // open file dialog and load the selected file on canvas
+    const file = await dialog.getFileFromDialog({
+      filters: [
+        {
+          extensions: [
+            'png',
+            'jpg',
+            'jpeg',
+            'jpe',
+            'jif',
+            'jfif',
+            'jfi',
+            'bmp',
+            'jp2',
+            'j2k',
+            'jpf',
+            'jpx',
+            'jpm',
+            'dxf',
+            'ai',
+            'pdf',
+            'svg',
+            'bvg',
+            'beam',
+            'webp',
+          ],
+          name: 'Images',
+        },
+      ],
+    });
+
+    if (file) {
+      window.importingFile = file;
+      location.hash = '#/studio/beambox';
+    }
+  };
+
+  const startNewProject = () => {
+    if (isWeb()) {
+      location.hash = '#/studio/beambox';
+    } else {
+      // add new tab and move to it
+    }
+  };
+
   return (
     <div className={styles.container}>
       {!isWeb() && <Tabs />}
       <div className={styles['top-bar']}>
         <div className={styles.logo}>Logo img</div>
-        <ThemedButton ghost icon={<FolderOpenOutlined />} theme="white">
+        <ThemedButton ghost icon={<FolderOpenOutlined />} onClick={openFile} theme="white">
           Open
         </ThemedButton>
-        <ThemedButton icon={<PlusOutlined />} theme="yellow">
+        <ThemedButton icon={<PlusOutlined />} onClick={startNewProject} theme="yellow">
           New Project
         </ThemedButton>
       </div>

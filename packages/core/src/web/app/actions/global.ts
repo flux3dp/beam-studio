@@ -35,7 +35,7 @@ export default (callback: () => void): void => {
   const isInitializePage = Boolean(hash.match(/^#\/?initialize/));
   const onFinished = (isReady: boolean) => {
     if (isReady === true && (hash === '' || isInitializePage)) {
-      window.location.hash = '#/studio/beambox';
+      window.location.hash = '#/studio/welcome';
     } else if (isReady === false && !isInitializePage) {
       window.location.hash = '#';
     }

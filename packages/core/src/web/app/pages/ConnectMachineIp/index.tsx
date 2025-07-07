@@ -332,7 +332,7 @@ const ConnectMachineIp = (): React.JSX.Element => {
 
     dialogCaller.showLoadingWindow();
 
-    window.location.hash = '#/studio/beambox';
+    window.location.hash = '#/studio/welcome';
     window.location.reload();
   };
 
