@@ -56,7 +56,10 @@ const doCalibration = async (model: WorkAreaModel, type: CalibrationType, module
     } else {
       await deviceMaster.doAdorIRCalibration();
     }
+  } else if (module === LayerModule.PRINTER_4C) {
+    await deviceMaster.doBeamo24CCalibration();
   } else {
+    // TODO: bm2 1064
     console.error('TODO: add calibration fcode');
   }
 };
