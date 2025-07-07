@@ -4,43 +4,44 @@ import classNames from 'classnames';
 import { useLocation } from 'react-router-dom';
 
 import type { SupportUsbModels } from '@core/app/actions/beambox/constant';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './ConnectUsb.module.scss';
+
+type RenderInformation = {
+  steps: string[];
+  title: string;
+};
 
 export default function ConnectUsb(): React.JSX.Element {
   const { initialize: t } = useI18n();
   const { search } = useLocation();
   const model = useMemo(() => new URLSearchParams(search).get('model'), [search]) as SupportUsbModels;
 
-  const renderInformation: Record<SupportUsbModels, { steps: string[]; title: string }> = {
-    ado1: {
-      steps: [
-        t.connect_usb.turn_off_machine,
-        t.connect_usb.tutorial1,
-        t.connect_usb.turn_on_machine,
-        t.connect_usb.wait_for_turning_on,
-      ],
-      title: 'Ador',
-    },
-    fbb2: {
-      steps: [
-        t.connect_usb.turn_off_machine,
-        t.connect_usb.tutorial1,
-        t.connect_usb.turn_on_machine,
-        t.connect_usb.wait_for_turning_on,
-      ],
-      title: 'Beambox II',
-    },
-    fhexa1: {
-      steps: [t.connect_usb.tutorial1, t.connect_usb.tutorial2],
-      title: 'HEXA',
-    },
-    fpm1: {
-      steps: [t.connect_usb.tutorial1, t.connect_usb.connect_camera, t.connect_usb.tutorial2],
-      title: 'Promark Series',
-    },
-  };
+  const renderInfo = useMemo(() => {
+    const renderInformation: Partial<Record<SupportUsbModels, RenderInformation>> = {
+      ado1: {
+        steps: [
+          t.connect_usb.turn_off_machine,
+          t.connect_usb.tutorial1,
+          t.connect_usb.turn_on_machine,
+          t.connect_usb.wait_for_turning_on,
+        ],
+        title: 'Ador',
+      },
+      fhexa1: {
+        steps: [t.connect_usb.tutorial1, t.connect_usb.tutorial2],
+        title: 'HEXA',
+      },
+      fpm1: {
+        steps: [t.connect_usb.tutorial1, t.connect_usb.connect_camera, t.connect_usb.tutorial2],
+        title: 'Promark Series',
+      },
+    };
+
+    return renderInformation[model] ?? { steps: renderInformation.ado1!.steps, title: getWorkarea(model).label };
+  }, [model, t]);
 
   const handleNext = () => {
     const urlParams = new URLSearchParams({ model, usb: '1' });
@@ -52,9 +53,9 @@ export default function ConnectUsb(): React.JSX.Element {
   const renderStep = (model: SupportUsbModels) =>
     model ? (
       <div className={classNames(styles.contents, styles.tutorial)}>
-        <div className={styles.subtitle}>{renderInformation[model].title}</div>
+        <div className={styles.subtitle}>{renderInfo.title}</div>
         <div className={styles.contents}>
-          {renderInformation[model].steps.map((step, index) => (
+          {renderInfo.steps.map((step, index) => (
             <div key={`usb-step-${index + 1}`}>
               {index + 1}. {step}
             </div>

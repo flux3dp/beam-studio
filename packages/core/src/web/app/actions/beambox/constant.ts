@@ -2,7 +2,7 @@ import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 
 const removeReadonly = <T extends string>(arr: ReadonlyArray<T[number]> | T[]) => arr as string[];
 
-export const supportUsbModelsArray = ['ado1', 'fhexa1', 'fhx2rf4', 'fhx2rf7', 'fpm1', 'fbb2'] as const;
+export const supportUsbModelsArray = ['ado1', 'fhexa1', 'fhx2rf4', 'fhx2rf7', 'fpm1', 'fbb2', 'fbm2'] as const;
 export type SupportUsbModels = (typeof supportUsbModelsArray)[number];
 export const supportUsbModelsStrict = new Set(supportUsbModelsArray);
 export const supportUsbModels = new Set(removeReadonly(supportUsbModelsArray));

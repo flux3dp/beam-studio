@@ -66,7 +66,7 @@ exports[`test ConnectUsb should render correctly 1`] = `
             <div>
               2
               . 
-              Connect the machine with your computer with USB cable.
+              Connect the machine to your computer with USB cable.
             </div>
             <div>
               3
@@ -76,7 +76,7 @@ exports[`test ConnectUsb should render correctly 1`] = `
             <div>
               4
               . 
-              Wait for the machine to turn on.
+              Click 'Next' after the startup process is complete and you have entered the main screen.
             </div>
           </div>
         </div>
