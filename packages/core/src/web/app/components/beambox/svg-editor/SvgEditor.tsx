@@ -41,6 +41,14 @@ export const SvgEditor = (): ReactNode => {
 
     if (window.$) {
       $(svgEditor.init);
+
+      const { importingFile } = window;
+
+      console.log('importingFile', importingFile);
+
+      if (importingFile) {
+        svgEditor.handleFile(importingFile);
+      }
     } else {
       console.warn('jQuery ($) is not available for svgEditor.init');
     }
