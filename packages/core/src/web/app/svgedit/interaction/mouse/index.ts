@@ -1132,6 +1132,8 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
     case 'resize':
     case 'multiselect':
       if (currentMode === 'multiselect') {
+        let tempLayer: string | undefined;
+
         svgCanvas.clearBoundingBox();
 
         if (
@@ -1155,13 +1157,12 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
           });
 
           selectedElements = intersectedElements;
+        }
 
-          if (intersectedElements.length) {
-            // if there are intersected elements, select one of them as current layer
-            const tempLayer = intersectedElements.map((elem) => LayerHelper.getObjectLayer(elem).title).find(Boolean);
-
-            svgCanvas.setCurrentLayer(tempLayer!);
-          }
+        if (selectedElements.length) {
+          // if there are intersected elements, select one of them as current layer
+          tempLayer = selectedElements.map((elem) => LayerHelper.getObjectLayer(elem).title).find(Boolean);
+          svgCanvas.setCurrentLayer(tempLayer!);
         }
 
         svgCanvas.selectOnly(selectedElements);
@@ -1169,6 +1170,8 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
         if (selectedElements.length > 1) {
           svgCanvas.tempGroupSelectedElements();
           svgEditor.updateContextPanel();
+        } else if (tempLayer) {
+          LayerPanelController.setSelectedLayers([tempLayer]);
         }
       }
 
