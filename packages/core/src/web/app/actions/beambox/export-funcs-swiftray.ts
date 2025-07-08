@@ -302,12 +302,15 @@ const fetchTaskCodeSwiftray = async (
     codeType = 'gcode';
   }
 
+  const targetDevice = device || TopBarController.getSelectedDevice();
+
   let taskConfig: IBaseConfig | IFcodeConfig = {
+    device: targetDevice,
     enableAutoFocus: doesSupportDiodeAndAF && BeamboxPreference.read('enable-autofocus') && addOnInfo.autoFocus,
     enableDiode: doesSupportDiodeAndAF && BeamboxPreference.read('enable-diode') && addOnInfo.hybridLaser,
     isPromark,
     model,
-    paddingAccel: await getAdorPaddingAccel(device || TopBarController.getSelectedDevice()),
+    paddingAccel: await getAdorPaddingAccel(targetDevice),
     shouldMockFastGradient: isNonFGCode,
     shouldUseFastGradient: shouldUseFastGradient && !isNonFGCode,
     supportAccOverrideV1,
@@ -318,7 +321,7 @@ const fetchTaskCodeSwiftray = async (
 
   taskConfig = {
     ...taskConfig,
-    ...getExportOpt(taskConfig).config,
+    ...(await getExportOpt(taskConfig)).config,
   };
 
   console.log('fetchTaskCodeSwiftray', codeType, 'taskConfig', taskConfig);

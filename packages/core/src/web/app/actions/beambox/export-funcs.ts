@@ -231,7 +231,8 @@ const fetchTaskCode = async (
   });
 
   let didErrorOccur = false;
-  const paddingAccel = await getAdorPaddingAccel(device || TopBarController.getSelectedDevice());
+  const targetDevice = device || TopBarController.getSelectedDevice();
+  const paddingAccel = await getAdorPaddingAccel(targetDevice);
   const addOnInfo = getAddOnInfo(BeamboxPreference.read('workarea'));
   const getTaskCode = (codeType: 'fcode' | 'gcode', getTaskCodeOpts = {}) =>
     new Promise<null | {
@@ -243,6 +244,7 @@ const fetchTaskCode = async (
 
       svgeditorParser.getTaskCode(names, {
         codeType,
+        device: targetDevice,
         enableAutoFocus: doesSupportDiodeAndAF && BeamboxPreference.read('enable-autofocus') && addOnInfo.autoFocus,
         enableDiode: doesSupportDiodeAndAF && BeamboxPreference.read('enable-diode') && addOnInfo.hybridLaser,
         fileMode: '-f',

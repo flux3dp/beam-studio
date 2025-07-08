@@ -5,6 +5,7 @@ import type { Action, SwipeActionRef } from 'antd-mobile/es/components/swipe-act
 import classNames from 'classnames';
 import { match } from 'ts-pattern';
 
+import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { getSupportedModules } from '@core/app/constants/workarea-constants';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
@@ -106,6 +107,10 @@ const LayerList = ({
       const isVis = drawing.getLayerVisibility(layerName);
       const layerModule = getData(layer, 'module');
       const isPrinting = printingModules.has(layerModule!);
+      const colorPresets = match<LayerModuleType | undefined, 'cmyk' | 'cmykw' | undefined>(layerModule)
+        .with(LayerModule.PRINTER_4C, () => 'cmyk')
+        .with(LayerModule.PRINTER, () => 'cmykw')
+        .otherwise(() => undefined);
       let moduleIcon = null;
 
       moduleIcon = match(layerModule)
@@ -155,7 +160,7 @@ const LayerList = ({
                 <LayerPanelIcons.FullColor />
               ) : (
                 <ColorPicker
-                  colorPresets={layerModule === LayerModule.PRINTER_4C ? 'cmyk' : 'cmykw'}
+                  colorPresets={colorPresets}
                   initColor={drawing.getLayerColor(layerName)}
                   onChange={(color) => onLayerColorChange(layerName, color)}
                   triggerSize="small"
