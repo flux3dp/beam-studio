@@ -126,7 +126,8 @@ export const getExportOpt = async (
 
         const res = await deviceMaster.getDeviceSetting('machine_limit_position');
 
-        if (res.value) config.machine_limit_position = res.value;
+        // removing spaces by JSON.parse and stringify
+        if (res.value) config.machine_limit_position = JSON.stringify(JSON.parse(res.value));
       } catch (error) {
         console.error('Failed to get machine_limit_position', error);
       }
