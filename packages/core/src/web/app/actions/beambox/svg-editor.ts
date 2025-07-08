@@ -105,6 +105,10 @@ declare global {
     slider(arg0?: any, arg1?: any, arg3?: any): JQuery;
     SpinButton(options: any): JQuery;
   }
+
+  interface Window {
+    importingFile?: File;
+  }
 }
 
 export interface ISVGEditor {

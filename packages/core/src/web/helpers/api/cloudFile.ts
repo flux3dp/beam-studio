@@ -65,6 +65,8 @@ export const checkResp = async (resp: ResponseWithError): Promise<CheckResponseR
       return { info, message, res: false, status: statusCode };
     }
 
+    console.log('checkResp error:', error);
+
     const errorMessage = `${status}: ${[info, message, detail].filter(Boolean).join(' ')}`;
 
     alertCaller.popUpError({ message: errorMessage });
@@ -89,6 +91,8 @@ export const checkResp = async (resp: ResponseWithError): Promise<CheckResponseR
 
     return { info, message, res: false, shouldCloseModal: true, status: statusCode };
   }
+
+  console.log('error', info, message);
 
   alertCaller.popUpError({ caption: info, message });
 
@@ -254,6 +258,9 @@ export const deleteFile = async (uuid: string): Promise<OperationResult> => {
 export const list = async (): Promise<OperationResult<IFile[]>> => {
   try {
     const resp = await axiosFluxId.get('/api/beam-studio/cloud/list', { withCredentials: true });
+
+    console.log('list cloud files', resp);
+
     const checkRespResult = await checkResp(resp);
 
     if (checkRespResult.res) {

@@ -14,6 +14,9 @@ $top-bar-height: 60px;
 
     .logo {
       margin-right: auto;
+      color: #ffffff;
+      font-size: 28px;
+      line-height: 0;
     }
   }
 
@@ -35,9 +38,34 @@ $top-bar-height: 60px;
       .info {
         display: flex;
         flex-direction: column;
+        justify-content: center;
         gap: 16px;
         border-bottom: 1px solid $border-color;
         background: #f0f0f0;
+        min-height: 164px;
+
+        .avatar {
+          flex-shrink: 0;
+
+          .default-avatar {
+            font-size: 52px;
+            color: #7c7c7c;
+          }
+        }
+
+        .login-hint {
+          font-size: 12px;
+          font-weight: bold;
+        }
+
+        .nickname {
+          font-size: 16px;
+          font-weight: bold;
+        }
+
+        .email {
+          color: #525252;
+        }
       }
 
       .menu {

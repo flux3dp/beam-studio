@@ -1,7 +1,7 @@
 import styles from './GridFile.module.scss';
 
 interface Props {
-  hint: string;
+  hint?: string;
   placeholder: string;
 }
 
