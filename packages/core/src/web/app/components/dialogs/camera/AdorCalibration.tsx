@@ -56,7 +56,10 @@ const doCalibration = async (model: WorkAreaModel, type: CalibrationType, module
     } else {
       await deviceMaster.doAdorIRCalibration();
     }
+  } else if (module === LayerModule.PRINTER_4C) {
+    await deviceMaster.doBeamo24CCalibration();
   } else {
+    // TODO: bm2 1064
     console.error('TODO: add calibration fcode');
   }
 };
@@ -155,10 +158,12 @@ const AdorCalibration = ({
         };
       }
 
+      let prefix = adorModels.has(model) ? 'ador' : 'bm2';
+
       return {
         animationSrcs: [
-          { src: 'video/ador-put-paper.webm', type: 'video/webm' },
-          { src: 'video/ador-put-paper.mp4', type: 'video/mp4' },
+          { src: `video/${prefix}-put-paper.webm`, type: 'video/webm' },
+          { src: `video/${prefix}-put-paper.mp4`, type: 'video/mp4' },
         ],
         content: lang.please_place_paper_center,
       };
@@ -187,11 +192,10 @@ const AdorCalibration = ({
           cutLabel,
         };
       } else {
-        // TODO: update videos for beamo2
         return {
           animationSrcs: [
-            { src: 'video/ador-focus-laser.webm', type: 'video/webm' },
-            { src: 'video/ador-focus-laser.mp4', type: 'video/mp4' },
+            { src: 'video/bm2-focus-laser.webm', type: 'video/webm' },
+            { src: 'video/bm2-focus-laser.mp4', type: 'video/mp4' },
           ],
           content: lang.beamo2_autofocus_material,
           cutLabel: module === LayerModule.LASER_1064 ? undefined : lang.start_printing,

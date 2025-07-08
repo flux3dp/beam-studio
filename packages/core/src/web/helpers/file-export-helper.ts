@@ -48,26 +48,26 @@ const switchSymbolWrapper = <T>(fn: () => T): T => {
 };
 
 const generateBeamThumbnail = async (): Promise<ArrayBuffer | null> => {
-  const { height, minY, width } = workareaManager;
+  const { maxY, minY, width } = workareaManager;
   const svgContent = document.getElementById('svgcontent') as unknown as SVGSVGElement;
   const bbox = svgContent.getBBox();
+  let right = bbox.x + bbox.width;
+  let bottom = bbox.y + bbox.height;
 
-  if (bbox.x < 0) {
-    bbox.width += bbox.x;
-    bbox.x = 0;
-  }
+  if (bbox.x < 0) bbox.x = 0;
 
-  if (bbox.y < minY) {
-    bbox.height += bbox.y - minY;
-    bbox.y = minY;
-  }
+  if (right > width) right = width;
+
+  if (bbox.y < minY) bbox.y = minY;
+
+  if (bottom > maxY) bottom = maxY;
+
+  bbox.width = right - bbox.x;
+  bbox.height = bottom - bbox.y;
 
   if (bbox.width <= 0 || bbox.height <= 0) {
     return null;
   }
-
-  bbox.width = Math.min(bbox.width, width);
-  bbox.height = Math.min(bbox.height, height);
 
   const [imageWidth, imageHeight] = pipe(
     // calculate down ratio

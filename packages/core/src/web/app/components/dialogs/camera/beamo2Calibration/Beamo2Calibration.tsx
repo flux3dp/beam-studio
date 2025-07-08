@@ -162,8 +162,8 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
       return (
         <Instruction
           animationSrcs={[
-            { src: 'video/bb2-calibration/2-put-paper.webm', type: 'video/webm' },
-            { src: 'video/bb2-calibration/2-put-paper.mp4', type: 'video/mp4' },
+            { src: 'video/bm2-calibration/2-put-paper.webm', type: 'video/webm' },
+            { src: 'video/bm2-calibration/2-put-paper.mp4', type: 'video/mp4' },
           ]}
           buttons={[
             isAdvanced
@@ -191,8 +191,8 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
       return (
         <Instruction
           animationSrcs={[
-            { src: 'video/bb2-calibration/3-align.webm', type: 'video/webm' },
-            { src: 'video/bb2-calibration/3-align.mp4', type: 'video/mp4' },
+            { src: 'video/bm2-calibration/3-align.webm', type: 'video/webm' },
+            { src: 'video/bm2-calibration/3-align.mp4', type: 'video/mp4' },
           ]}
           buttons={[
             { label: tCalibration.back, onClick: () => setStep(Steps.PUT_PAPER) },

@@ -928,6 +928,11 @@ class DeviceMaster {
     await this.doCalibration('fcode/bm2-calibration.fc');
   }
 
+  async doBeamo24CCalibration() {
+    // using offset [15.5, -37.1 + 40]
+    await this.doCalibration('fcode/bm2-4c.fc');
+  }
+
   async doPromarkCalibration() {
     await this.doCalibration();
   }

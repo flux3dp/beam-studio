@@ -20,6 +20,7 @@ import AlertConfig from '@core/helpers/api/alert-config';
 import i18n from '@core/helpers/i18n';
 import isDev from '@core/helpers/is-dev';
 import getJobOrigin, { getRefModule } from '@core/helpers/job-origin';
+import round from '@core/helpers/math/round';
 import Websocket from '@core/helpers/websocket';
 import fileSystem from '@core/implementations/fileSystem';
 import fs from '@core/implementations/fileSystem';
@@ -328,7 +329,7 @@ export const getExportOpt = (
 
     keys.forEach((key) => {
       // Always reassign offsets to remove optional boolean values
-      offsets[key] = [offsets[key]![0] - offsetX, offsets[key]![1] - offsetY];
+      offsets[key] = [round(offsets[key]![0] - offsetX, 2), round(offsets[key]![1] - offsetY, 2)];
     });
     config.mof = offsets as Record<LayerModuleType, [number, number]>;
   }
