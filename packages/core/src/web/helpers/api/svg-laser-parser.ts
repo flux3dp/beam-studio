@@ -110,7 +110,7 @@ export const getExportOpt = (
     if (config.job_origin) {
       config.spin = config.job_origin[1] * constant.dpmm;
     } else {
-      config.spin = config.rev ? workareaObj.pxHeight : 0;
+      config.spin = config.rev ? workareaObj.pxHeight : (addOnInfo.autoFeeder!.minY ?? 0);
     }
   }
 
