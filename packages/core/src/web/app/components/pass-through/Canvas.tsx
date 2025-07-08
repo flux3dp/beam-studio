@@ -9,10 +9,14 @@ import { PassThroughContext } from './PassThroughContext';
 
 const Canvas = (): React.JSX.Element => {
   const canvasManager = useMemo(() => PassThroughCanvasManager.getInstance(), []);
-  const { guideMark, passThroughHeight } = useContext(PassThroughContext);
+  const { addOnInfo, guideMark, passThroughHeight, workareaObj } = useContext(PassThroughContext);
 
   useEffect(() => () => PassThroughCanvasManager.clear(), []);
 
+  useEffect(
+    () => canvasManager.setWorkareaLimit(workareaObj.height * constant.dpmm, addOnInfo.passThrough?.minY),
+    [canvasManager, workareaObj, addOnInfo],
+  );
   useEffect(() => {
     canvasManager.setPassThroughHeight(passThroughHeight * constant.dpmm);
   }, [canvasManager, passThroughHeight]);

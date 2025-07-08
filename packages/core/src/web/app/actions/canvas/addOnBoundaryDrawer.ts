@@ -7,6 +7,7 @@ import NS from '@core/app/constants/namespaces';
 import { getSupportedModules } from '@core/app/constants/workarea-constants';
 import workareaManager from '@core/app/svgedit/workarea';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
+import { getRelRect } from '@core/helpers/boundary-helper';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
 export class AddOnBoundaryDrawer {
@@ -113,33 +114,39 @@ export class AddOnBoundaryDrawer {
   };
 
   updateAutoFeederPath = (): void => {
-    const { height: workareaH, model, width: workareaW } = workareaManager;
+    const { height: workareaH, minY: workareaMinY, model, width: workareaW } = workareaManager;
     const addOnInfo = getAddOnInfo(model);
     const { autoFeeder } = addOnInfo;
 
-    if (!getAutoFeeder(addOnInfo) || !autoFeeder?.xRange) {
+    if (!getAutoFeeder(addOnInfo) || !(autoFeeder?.xRange || autoFeeder?.minY)) {
       this.boundary.autoFeeder.setAttribute('d', '');
 
       return;
     }
 
-    let [x, width] = autoFeeder.xRange!;
-    const { dpmm } = constant;
+    const { minY = workareaMinY } = autoFeeder;
+    let [x, width] = [0, workareaW];
 
-    x *= dpmm;
-    width *= dpmm;
+    if (autoFeeder?.xRange) {
+      const { dpmm } = constant;
+
+      [x, width] = autoFeeder.xRange;
+      x *= dpmm;
+      width *= dpmm;
+    }
+
     this.boundary.autoFeeder.setAttribute(
       'd',
-      `M0 0 H${x} V${workareaH} H0 Z M${x + width} 0 H${workareaW} V${workareaH} H${x + width} Z`,
+      getRelRect(0, workareaMinY, workareaW, workareaH) + getRelRect(x, minY, width, workareaH - minY),
     );
 
     return;
   };
 
   updatePassThroughPath = (): void => {
-    const { expansion, height: workareaH, model, width: workareaW } = workareaManager;
+    const { height: workareaH, minY, model, modelHeight, width: workareaW } = workareaManager;
     const addOnInfo = getAddOnInfo(model);
-    const { passThrough } = addOnInfo;
+    const passThrough = addOnInfo.passThrough!;
 
     if (!getPassThrough(addOnInfo)) {
       this.boundary.passThrough.setAttribute('d', '');
@@ -159,7 +166,7 @@ export class AddOnBoundaryDrawer {
 
     this.boundary.passThrough.setAttribute(
       'd',
-      `M0 0 H${workareaW} V${workareaH} H0 Z M${x} ${expansion[0]} H${x + width} V${workareaH - expansion[1]} H${x} Z`,
+      getRelRect(0, minY, workareaW, workareaH) + getRelRect(x, minY, width, modelHeight - minY),
     );
 
     return;

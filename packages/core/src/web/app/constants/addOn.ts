@@ -18,10 +18,17 @@ export interface AddOnInfo {
   airAssist?: boolean;
   /**
    * autoFeeder
-   * range: [x, width] in mm, no limit is not set
+   * xRange: [x, width] in mm, no limit is not set
    * vectorSpeedLimit: override vector speed in workarea constant when autoFeeder is enabled
+   * minY: minimum Y position in px to avoid collision with extension rod
    */
-  autoFeeder?: { maxHeight: number; rotaryRatio: number; vectorSpeedLimit?: number; xRange?: [number, number] };
+  autoFeeder?: {
+    maxHeight: number;
+    minY?: number;
+    rotaryRatio: number;
+    vectorSpeedLimit?: number;
+    xRange?: [number, number];
+  };
   autoFocus?: boolean;
   curveEngraving?: boolean;
   framingLowLaser?: boolean;
@@ -29,7 +36,13 @@ export interface AddOnInfo {
   jobOrigin?: boolean;
   lowerFocus?: boolean;
   openBottom?: boolean;
-  passThrough?: { maxHeight: number; xRange?: [number, number] }; // [x, width] in mm, no limit is not set
+  /**
+   * passThrough
+   * xRange: [x, width] in mm, no limit is not set
+   * minY: minimum Y position in px to avoid collision with extension rod
+   * maxHeight: maximum height in mm for pass-through, make sure padding space is enough if with minY
+   */
+  passThrough?: { maxHeight: number; minY?: number; xRange?: [number, number] };
   redLight?: boolean;
   rotary?: {
     chuck: boolean;
@@ -137,6 +150,7 @@ const addOnData: Record<WorkAreaModel, AddOnInfo> = {
     airAssist: true,
     autoFeeder: {
       maxHeight: 3000,
+      minY: 200,
       rotaryRatio: CHUCK_ROTARY_DIAMETER / FEEDER_DIAMETER / 2,
       vectorSpeedLimit: 30,
       xRange: [0, 340],
@@ -144,7 +158,7 @@ const addOnData: Record<WorkAreaModel, AddOnInfo> = {
     curveEngraving: true,
     jobOrigin: true,
     lowerFocus: true,
-    passThrough: { maxHeight: 200 },
+    passThrough: { maxHeight: 200, minY: 200, xRange: [0, 340] },
     redLight: true,
     rotary: {
       chuck: true,

@@ -3,7 +3,7 @@ import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import constant, { promarkModels } from '@core/app/actions/beambox/constant';
+import constant, { dpmm, promarkModels } from '@core/app/actions/beambox/constant';
 import exportFuncs from '@core/app/actions/beambox/export-funcs';
 import { fetchContourTaskCode } from '@core/app/actions/beambox/export-funcs-swiftray';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
@@ -650,7 +650,7 @@ class FramingTaskManager extends EventEmitter {
         const reverseEngraving = beamboxPreference.read('reverse-engraving');
         const workareaObj = getWorkarea(this.device.model);
 
-        y = reverseEngraving ? workareaObj.height : 0;
+        y = reverseEngraving ? workareaObj.height : (this.addOnInfo.autoFeeder.minY ?? 0) / dpmm;
       }
 
       this.rotaryInfo = {

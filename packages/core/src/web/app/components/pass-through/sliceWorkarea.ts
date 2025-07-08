@@ -1,6 +1,7 @@
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
 import progressCaller from '@core/app/actions/progress-caller';
+import type { AddOnInfo } from '@core/app/constants/addOn';
 import NS from '@core/app/constants/namespaces';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { changeBeamboxPreferenceValue } from '@core/app/svgedit/history/beamboxPreferenceCommand';
@@ -31,14 +32,14 @@ getSVGAsync((globalSVG) => {
 
 const sliceWorkarea = async (
   sliceHeight: number,
-  opt: { guideMark?: GuideMark; parentCmd?: IBatchCommand; refLayers?: boolean } = {},
+  opt: { addOnInfo?: AddOnInfo; guideMark?: GuideMark; parentCmd?: IBatchCommand; refLayers?: boolean } = {},
 ): Promise<void> => {
   const progressId = 'slice-workarea';
   const lang = i18n.lang.pass_through;
 
   progressCaller.openNonstopProgress({ id: progressId, message: lang.exporting });
 
-  const { guideMark = { show: false, width: 40, x: 0 }, parentCmd, refLayers } = opt;
+  const { addOnInfo, guideMark = { show: false, width: 40, x: 0 }, parentCmd, refLayers } = opt;
   const { dpmm } = constant;
   const workarea = beamboxPreference.read('workarea');
   const workareaObj = getWorkarea(workarea);
@@ -66,7 +67,7 @@ const sliceWorkarea = async (
       const left = ((x - lineWidth / 2) * dpmm).toFixed(2);
       const right = ((x + lineWidth / 2) * dpmm).toFixed(2);
       const halfHeight = (lineWidth / Math.sqrt(3)) * dpmm;
-      const startMid = topPaddingPx;
+      const startMid = Math.max(topPaddingPx, (addOnInfo?.passThrough?.minY ?? 0) + halfHeight);
       const startTop = (startMid - halfHeight).toFixed(2);
       const startBottom = (startMid + halfHeight).toFixed(2);
       const endMid = topPaddingPx + sliceHeightPx;

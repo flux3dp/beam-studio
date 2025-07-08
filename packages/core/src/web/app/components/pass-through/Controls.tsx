@@ -5,7 +5,7 @@ import { Switch, Tooltip } from 'antd';
 import classNames from 'classnames';
 import { sprintf } from 'sprintf-js';
 
-import constant from '@core/app/actions/beambox/constant';
+import constant, { dpmm } from '@core/app/actions/beambox/constant';
 import workareaManager from '@core/app/svgedit/workarea';
 import UnitInput from '@core/app/widgets/UnitInput';
 import useI18n from '@core/helpers/useI18n';
@@ -47,17 +47,19 @@ const Controls = (): React.JSX.Element => {
   );
 
   const { show, width: guideMarkWidth, x: guideMarkX } = guideMark;
-  const { widthMax, xMax, xMin } = useMemo(
-    () => ({
+  const { widthMax, xMax, xMin } = useMemo(() => {
+    const bottomPadding = (workareaObj.height - passThroughHeight) / 2;
+    const topPadding = bottomPadding - (addOnInfo.passThrough?.minY ?? 0) / dpmm;
+
+    return {
       widthMax: Math.min(
         (workareaObj.width - guideMarkX) * 2,
-        Math.floor(((workareaObj.height - passThroughHeight) * Math.sqrt(3)) / 2),
+        Math.floor(((topPadding + bottomPadding) * Math.sqrt(3)) / 2),
       ),
       xMax: workareaObj.width - guideMarkWidth / 2,
       xMin: guideMarkWidth / 2,
-    }),
-    [workareaObj.width, workareaObj.height, guideMarkX, guideMarkWidth, passThroughHeight],
-  );
+    };
+  }, [workareaObj.width, workareaObj.height, guideMarkX, guideMarkWidth, passThroughHeight, addOnInfo]);
 
   useEffect(() => {
     if (guideMarkWidth > widthMax) {

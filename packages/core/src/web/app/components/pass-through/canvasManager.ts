@@ -6,6 +6,8 @@ import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
 import styles from './PassThrough.module.scss';
 
 export class PassThroughCanvasManager extends EmbeddedCanvasManager {
+  private workareaHeight: number;
+  private passThroughMinY: number;
   private passThroughHeight: number;
   private passThroughContainer: SVGSVGElement;
   private passThroughSeparator: SVGGElement;
@@ -39,6 +41,12 @@ export class PassThroughCanvasManager extends EmbeddedCanvasManager {
     this.passThroughGuideEnd = document.createElementNS(NS.SVG, 'path') as SVGPathElement;
     this.passThroughGuideEnd.classList.add(styles.guide);
     this.passThroughContainer.appendChild(this.passThroughGuideEnd);
+  };
+
+  setWorkareaLimit = (workareaHeight: number, passThroughMinY = 0): void => {
+    this.workareaHeight = workareaHeight;
+    this.passThroughMinY = passThroughMinY;
+    this.renderGuideMark();
   };
 
   setPassThroughHeight = (val: number): void => {
@@ -90,7 +98,10 @@ export class PassThroughCanvasManager extends EmbeddedCanvasManager {
         const left = (x - width / 2).toFixed(2);
         const right = (x + width / 2).toFixed(2);
         const halfHeight = width / Math.sqrt(3);
-        const startMid = 0;
+        const startMid = Math.max(
+          0,
+          this.passThroughMinY + halfHeight - (this.workareaHeight - this.passThroughHeight) / 2,
+        );
         const startTop = (startMid - halfHeight).toFixed(2);
         const startBottom = (startMid + halfHeight).toFixed(2);
         const endMid = this.passThroughHeight;
