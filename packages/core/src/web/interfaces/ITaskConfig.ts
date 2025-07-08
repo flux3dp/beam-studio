@@ -1,8 +1,11 @@
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import type { BBox } from '@core/interfaces/ICurveEngraving';
 
+import type { IDeviceInfo } from './IDevice';
+
 export interface IBaseConfig {
   codeType?: 'fcode' | 'gcode' | 'preview';
+  device?: IDeviceInfo | null;
   enableAutoFocus?: boolean;
   enableDiode?: boolean;
   isPromark?: boolean;
@@ -68,6 +71,10 @@ export type TFcodeOptionalConfig = Partial<{
   gc: boolean; // output gcode
   job_origin: [number, number];
   loop_compensation: number;
+  /**
+   * json string, current storing data for beamo 2 sliding table
+   */
+  machine_limit_position: string;
   /**
    * clipping mask in [top right bottom left]
    */
