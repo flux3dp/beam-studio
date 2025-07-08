@@ -17,6 +17,7 @@ import workareaManager, { ExpansionType } from '@core/app/svgedit/workarea';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import { getRotaryInfo } from '@core/helpers/addOn/rotary';
 import AlertConfig from '@core/helpers/api/alert-config';
+import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import isDev from '@core/helpers/is-dev';
 import getJobOrigin, { getRefModule } from '@core/helpers/job-origin';
@@ -29,17 +30,17 @@ import type { TaskMetaData } from '@core/interfaces/ITask';
 import type { IBaseConfig, IFcodeConfig, TAccelerationOverride } from '@core/interfaces/ITaskConfig';
 import type { IWrappedTaskFile } from '@core/interfaces/IWrappedFile';
 
-export const getExportOpt = (
+export const getExportOpt = async (
   opt: IBaseConfig,
   args?: string[],
-): {
+): Promise<{
   // without args, return config
   config?: IFcodeConfig;
   curveEngravingData?: string;
   // with args, push data to original args array and return other data
   loopCompensation?: number;
-} => {
-  const { model, supportAccOverrideV1, supportJobOrigin = true, supportPwm = true } = opt;
+}> => {
+  const { device, model, supportAccOverrideV1, supportJobOrigin = true, supportPwm = true } = opt;
   const config: IFcodeConfig = {
     hardware_name: 'beambox',
     model,
@@ -118,6 +119,18 @@ export const getExportOpt = (
     const { h, w, x, y } = presprayArea.getPosition(true);
     const workareaWidth = workareaObj.width;
     const minY = workareaManager.minY / dpmm;
+
+    if (model === 'fbm2' && device?.model === 'fbm2') {
+      try {
+        await deviceMaster.select(device);
+
+        const res = await deviceMaster.getDeviceSetting('machine_limit_position');
+
+        if (res.value) config.machine_limit_position = res.value;
+      } catch (error) {
+        console.error('Failed to get machine_limit_position', error);
+      }
+    }
 
     if (model !== 'fbm2') {
       config.prespray = rotaryMode && !hasJobOrigin ? [workareaWidth - 12, 45, 12, h] : [x, y - minY, w, h];
@@ -570,7 +583,7 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
       let blob;
       let metadata: TaskMetaData;
 
-      const { curveEngravingData, loopCompensation } = getExportOpt(opts, args);
+      const { curveEngravingData, loopCompensation } = await getExportOpt(opts, args);
 
       if (loopCompensation) {
         await setParameter('loop_compensation', loopCompensation);
