@@ -440,6 +440,7 @@ const lang: ILang = {
     right_panel: {
       laser_panel: {
         advanced: '進階設定',
+        air_assist: '吹氣輔助',
         backlash: '背隙調整',
         bi_directional: '雙向',
         by: '', // keep empty on purpose
@@ -617,6 +618,7 @@ const lang: ILang = {
           text: '速度',
           unit: 'mm/s',
         },
+        low_air_assist_warning: '建議將吹氣輔助設為 50% 以上，可有效降低材料起火的風險。',
         low_power_warning: '功率較低時（低於 10 %），有可能不出光。',
         low_speed_warning: '低速下可能會導致材料燃燒。',
         lower_focus: '降低焦距',

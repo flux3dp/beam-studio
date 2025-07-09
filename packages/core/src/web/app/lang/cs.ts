@@ -440,6 +440,7 @@ const lang: ILang = {
     right_panel: {
       laser_panel: {
         advanced: 'Pokročilé',
+        air_assist: 'Air Assist',
         backlash: 'Odpor',
         bi_directional: 'Obousměrný',
         by: 'Podle',
@@ -617,6 +618,7 @@ const lang: ILang = {
           text: 'Rychlost',
           unit: 'mm/s',
         },
+        low_air_assist_warning: 'Doporučuje se nastavit ofukování nad 50 %, aby se účinně snížilo riziko vznícení materiálu.',
         low_power_warning: 'Laser nízké intenzity (pod 10 %) nemusí vyslat laserové světlo.',
         low_speed_warning: 'Nízká rychlost může způsobit pálení materiálu.',
         lower_focus: 'Nižší zaostření',

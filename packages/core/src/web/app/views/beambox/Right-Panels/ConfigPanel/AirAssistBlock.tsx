@@ -1,16 +1,22 @@
 import React, { memo, useMemo } from 'react';
 
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
+import useI18n from '@core/helpers/useI18n';
 
 import NumberBlock from './NumberBlock';
 
 const AirAssistBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.JSX.Element => {
-  const { airAssist, power } = useConfigPanelStore();
+  const { airAssist } = useConfigPanelStore();
+  const {
+    beambox: {
+      right_panel: { laser_panel: t },
+    },
+  } = useI18n();
   const warning = useMemo(() => {
-    if (power.value > 25 && airAssist.value < 15) {
-      return 'Air Assist is recommended to be at least 15% when power is above 25%.';
+    if (airAssist.value < 50) {
+      return t.low_air_assist_warning;
     }
-  }, [power.value, airAssist.value]);
+  }, [airAssist.value, t]);
 
   return (
     <NumberBlock
@@ -19,7 +25,7 @@ const AirAssistBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pa
       max={100}
       min={0}
       precision={0}
-      title="Air Assist"
+      title={t.air_assist}
       type={type}
       unit="%"
       warning={warning}

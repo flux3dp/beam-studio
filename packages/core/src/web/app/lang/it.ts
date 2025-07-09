@@ -440,6 +440,7 @@ const lang: ILang = {
     right_panel: {
       laser_panel: {
         advanced: 'Avanzate',
+        air_assist: 'Assistenza aria',
         backlash: 'Gioco',
         bi_directional: 'Bidirezionale',
         by: 'di',
@@ -617,6 +618,7 @@ const lang: ILang = {
           text: 'Velocità',
           unit: 'mm/s',
         },
+        low_air_assist_warning: "Si consiglia di impostare l'assistenza aria sopra il 50% per ridurre efficacemente il rischio di incendio del materiale.",
         low_power_warning: 'Una potenza laser inferiore (sotto il 10%) potrebbe non emettere il raggio laser.',
         low_speed_warning: 'Una velocità bassa potrebbe causare la combustione del materiale.',
         lower_focus: 'Abbassa la Messa a Fuoco',

@@ -438,6 +438,7 @@ export interface ILang {
     right_panel: {
       laser_panel: {
         advanced: string;
+        air_assist: string;
         backlash: string;
         bi_directional: string;
         by: string;
@@ -615,6 +616,7 @@ export interface ILang {
           text: string;
           unit: string;
         };
+        low_air_assist_warning: string;
         low_power_warning: string;
         low_speed_warning: string;
         lower_focus: string;

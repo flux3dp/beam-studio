@@ -440,6 +440,7 @@ const lang: ILang = {
     right_panel: {
       laser_panel: {
         advanced: 'ขั้นสูง',
+        air_assist: 'ช่วยพ่นลม',
         backlash: 'การย้อนกลับ',
         bi_directional: 'สองทิศทาง',
         by: 'ตามค่า',
@@ -617,6 +618,7 @@ const lang: ILang = {
           text: 'ความเร็ว',
           unit: 'มม./วินาที',
         },
+        low_air_assist_warning: 'แนะนำให้ตั้งค่าช่วยพ่นลมไว้ที่มากกว่า 50% เพื่อช่วยลดความเสี่ยงในการลุกไหม้ของวัสดุได้อย่างมีประสิทธิภาพ',
         low_power_warning: 'กําลังเลเซอร์ต่ํา (ต่ํากว่า 10%) อาจไม่ส่งแสงเลเซอร์ออกมา',
         low_speed_warning: 'ความเร็วต่ําอาจทําให้วัสดุไหม้',
         lower_focus: 'ลดระยะโฟกัส',

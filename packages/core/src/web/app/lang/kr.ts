@@ -440,6 +440,7 @@ const lang: ILang = {
     right_panel: {
       laser_panel: {
         advanced: '고급',
+        air_assist: '에어 어시스트',
         backlash: '백래시',
         bi_directional: '양방향',
         by: '', // keep empty on purpose
@@ -617,6 +618,7 @@ const lang: ILang = {
           text: '속도',
           unit: 'mm/s',
         },
+        low_air_assist_warning: '재료가 불에 탈 위험을 줄이기 위해 에어 어시스트를 50% 이상으로 설정하는 것이 좋습니다.',
         low_power_warning: '10% 이하의 레이저 파워는 레이저 빛을 내지 못할 수 있습니다.',
         low_speed_warning: '속도가 낮으면 재료가 타버릴 수 있습니다.',
         lower_focus: '초점 낮추기',

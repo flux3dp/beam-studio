@@ -440,6 +440,7 @@ const lang: ILang = {
     right_panel: {
       laser_panel: {
         advanced: '詳細設定',
+        air_assist: 'エアアシスト',
         backlash: 'バックラッシュ',
         bi_directional: '双方向',
         by: '', // keep empty on purpose
@@ -617,6 +618,7 @@ const lang: ILang = {
           text: '速度',
           unit: 'mm/秒',
         },
+        low_air_assist_warning: '材料の発火リスクを効果的に低減するために、エアアシストを50%以上に設定することを推奨します。',
         low_power_warning: 'レーザー出力が低い (10% 未満) と、レーザー光が放出されない場合があります。',
         low_speed_warning: '低速では、材料が焼き付く可能性があります。',
         lower_focus: 'フォーカスを下げる',

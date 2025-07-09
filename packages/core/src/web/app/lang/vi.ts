@@ -440,6 +440,7 @@ const lang: ILang = {
     right_panel: {
       laser_panel: {
         advanced: 'Nâng Cao',
+        air_assist: 'Hỗ trợ khí',
         backlash: 'Độ rơ',
         bi_directional: 'Hai Chiều',
         by: 'Bởi',
@@ -617,6 +618,7 @@ const lang: ILang = {
           text: 'Tốc độ',
           unit: 'mm/s',
         },
+        low_air_assist_warning: 'Nên đặt hỗ trợ khí ở mức trên 50% để giảm hiệu quả nguy cơ cháy của vật liệu.',
         low_power_warning: 'Công suất laser thấp (dưới 10%) có thể không phát ra ánh sáng laser.',
         low_speed_warning: 'Tốc độ thấp có thể gây cháy vật liệu.',
         lower_focus: 'Hạ Tiêu Cự',

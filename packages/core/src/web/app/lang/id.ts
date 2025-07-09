@@ -440,6 +440,7 @@ const lang: ILang = {
     right_panel: {
       laser_panel: {
         advanced: 'Lanjutan',
+        air_assist: 'Bantuan udara',
         backlash: 'Backlash',
         bi_directional: 'Dua Arah',
         by: 'Sebesar',
@@ -617,6 +618,7 @@ const lang: ILang = {
           text: 'Kecepatan',
           unit: 'mm/s',
         },
+        low_air_assist_warning: 'Disarankan untuk mengatur bantuan udara di atas 50% untuk secara efektif mengurangi risiko bahan terbakar.',
         low_power_warning: 'Daya laser yang lebih rendah (di bawah 10%) mungkin tidak memancarkan cahaya laser.',
         low_speed_warning: 'Kecepatan rendah dapat menyebabkan pembakaran bahan.',
         lower_focus: 'Turunkan Fokus',
