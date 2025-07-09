@@ -440,6 +440,7 @@ const lang: ILang = {
     right_panel: {
       laser_panel: {
         advanced: 'Advanced',
+        air_assist: 'Air Assist',
         backlash: 'Backlash',
         bi_directional: 'Bi-directional',
         by: 'By',
@@ -617,6 +618,7 @@ const lang: ILang = {
           text: 'Speed',
           unit: 'mm/s',
         },
+        low_air_assist_warning: 'It is recommended to set the air assist to above 50% to effectively reduce the risk of the material catching fire.',
         low_power_warning: 'Lower laser power (under 10%) might not emit the laser light.',
         low_speed_warning: 'Low speed might cause burning of the material.',
         lower_focus: 'Lower Focus',

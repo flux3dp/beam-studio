@@ -440,6 +440,7 @@ const lang: ILang = {
     right_panel: {
       laser_panel: {
         advanced: 'Erweitert',
+        air_assist: 'Luftunterstützung',
         backlash: 'Spiel',
         bi_directional: 'Bidirektional',
         by: 'Um',
@@ -617,6 +618,7 @@ const lang: ILang = {
           text: 'Geschwindigkeit',
           unit: 'mm/s',
         },
+        low_air_assist_warning: 'Es wird empfohlen, die Luftunterstützung auf über 50 % einzustellen, um das Brandrisiko des Materials wirksam zu verringern.',
         low_power_warning: 'Niedrigere Laserleistung (unter 10 %) emittiert das Laserlicht möglicherweise nicht.',
         low_speed_warning: 'Niedrigere Geschwindigkeit kann zu Verbrennungen des Materials führen.',
         lower_focus: 'Fokus Senken',

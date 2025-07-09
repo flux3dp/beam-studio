@@ -440,6 +440,7 @@ const lang: ILang = {
     right_panel: {
       laser_panel: {
         advanced: 'Geavanceerd',
+        air_assist: 'Luchtondersteuning',
         backlash: 'Speling',
         bi_directional: 'Tweerichtingsverkeer',
         by: 'Met',
@@ -617,6 +618,7 @@ const lang: ILang = {
           text: 'Snelheid',
           unit: 'mm/s',
         },
+        low_air_assist_warning: 'Het wordt aanbevolen om de luchttoevoer boven de 50% in te stellen om het risico op brand van het materiaal effectief te verminderen.',
         low_power_warning: 'Lager laservermogen (onder 10%) zou geen laserlicht kunnen uitstralen.',
         low_speed_warning: 'Lage snelheid kan brandplekken op het materiaal veroorzaken.',
         lower_focus: 'Focus Verlagen',

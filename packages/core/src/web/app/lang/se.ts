@@ -440,6 +440,7 @@ const lang: ILang = {
     right_panel: {
       laser_panel: {
         advanced: 'Avancerat',
+        air_assist: 'Luftassistans',
         backlash: 'Backlash',
         bi_directional: 'Dubbelriktad',
         by: 'Med',
@@ -617,6 +618,7 @@ const lang: ILang = {
           text: 'Hastighet',
           unit: 'mm/s',
         },
+        low_air_assist_warning: 'Det rekommenderas att luftassistansen ställs in över 50 % för att effektivt minska risken att materialet börjar brinna.',
         low_power_warning: 'Lägre laserstyrka (under 10%) kanske inte avger laserljuset.',
         low_speed_warning: 'Låg hastighet kan orsaka brännskador på materialet.',
         lower_focus: 'Sänk Fokus',

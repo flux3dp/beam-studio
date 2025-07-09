@@ -440,6 +440,7 @@ const lang: ILang = {
     right_panel: {
       laser_panel: {
         advanced: 'Avancé',
+        air_assist: "Assistance d'air",
         backlash: 'Jeu',
         bi_directional: 'Bidirectionnel',
         by: 'de',
@@ -617,6 +618,7 @@ const lang: ILang = {
           text: 'Vitesse',
           unit: 'mm/s',
         },
+        low_air_assist_warning: "Il est recommandé de régler l'assistance d'air au-dessus de 50 % pour réduire efficacement le risque d'incendie du matériau.",
         low_power_warning: 'Une puissance laser inférieure (moins de 10 %) pourrait ne pas émettre la lumière laser.',
         low_speed_warning: 'Une vitesse lente pourrait brûler le matériau.',
         lower_focus: 'Abaisser la Mise au Point',

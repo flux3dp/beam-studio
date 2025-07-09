@@ -440,6 +440,7 @@ const lang: ILang = {
     right_panel: {
       laser_panel: {
         advanced: 'Edistynyt',
+        air_assist: 'Ilma-avustus',
         backlash: 'Takaisinkytkentä',
         bi_directional: 'Kaksisuuntainen',
         by: 'Määrällä',
@@ -617,6 +618,7 @@ const lang: ILang = {
           text: 'Nopeus',
           unit: 'mm/s',
         },
+        low_air_assist_warning: 'Ilma-avustuksen asettaminen yli 50 %:iin on suositeltavaa materiaalin syttymisriskin tehokkaaseen vähentämiseen.',
         low_power_warning: 'Alhainen laserteho (alle 10 %) ei välttämättä emittoi lasersädettä.',
         low_speed_warning: 'Alhainen nopeus voi aiheuttaa materiaalin palamista.',
         lower_focus: 'Laske Tarkennusta',

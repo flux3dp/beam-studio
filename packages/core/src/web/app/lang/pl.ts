@@ -440,6 +440,7 @@ const lang: ILang = {
     right_panel: {
       laser_panel: {
         advanced: 'Zaawansowane',
+        air_assist: 'Wspomaganie powietrzem',
         backlash: 'Reakcja',
         bi_directional: 'Dwukierunkowy',
         by: 'O',
@@ -617,6 +618,7 @@ const lang: ILang = {
           text: 'Prędkość',
           unit: 'mm/s',
         },
+        low_air_assist_warning: 'Zaleca się ustawienie wspomagania powietrzem powyżej 50%, aby skutecznie zmniejszyć ryzyko zapłonu materiału.',
         low_power_warning: 'Niższa moc lasera (poniżej 10%) może nie emitować światła lasera.',
         low_speed_warning: 'Niska prędkość może spowodować spalenie materiału.',
         lower_focus: 'Obniż Fokus',
