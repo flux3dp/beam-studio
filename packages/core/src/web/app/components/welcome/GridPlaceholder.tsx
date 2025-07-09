@@ -9,7 +9,7 @@ const GridPlaceholder = ({ hint, placeholder }: Props) => {
   return (
     <div className={styles['text-container']}>
       <div className={styles.text}>{placeholder}</div>
-      {hint && <div>{hint}</div>}
+      {hint && <div className={styles.hint}>{hint}</div>}
     </div>
   );
 };

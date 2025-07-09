@@ -17,15 +17,7 @@
   gap: 12px;
 }
 
-.gradient {
-  background: linear-gradient(96.29deg, #0664ba -2.99%, #107bdd 99.54%) !important;
-
-  &:hover {
-    opacity: 0.8;
-  }
-}
-
-.grids {
+.guides {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;

@@ -2,15 +2,22 @@ import { useEffect, useState } from 'react';
 
 import { FolderOpenOutlined } from '@ant-design/icons';
 
-import GridFile from '@core/app/components/welcome/GridFile';
+import GridFile from '@core/app/components/welcome/GridFileLocal';
 import GridNew from '@core/app/components/welcome/GridNew';
 import beamFileHelper from '@core/helpers/beam-file-helper';
+import { todo } from '@core/helpers/dev-helper';
 import fs from '@core/implementations/fileSystem';
 import storage from '@core/implementations/storage';
 
 import styles from './TabRecentFiles.module.scss';
 
-const TabRecentFiles = () => {
+interface Props {
+  startNewProject: () => void;
+}
+
+todo('TabRecentFiles');
+
+const TabRecentFiles = ({ startNewProject }: Props) => {
   const [recentFiles, setRecentFiles] = useState([]);
 
   const getRecentFiles = async () => {
@@ -53,7 +60,7 @@ const TabRecentFiles = () => {
         <FolderOpenOutlined /> Recent Files
       </div>
       <div className={styles.content}>
-        <GridNew />
+        <GridNew startNewProject={startNewProject} />
         {recentFiles.map((file) => (
           <>
             <div>{file.filePath}</div>

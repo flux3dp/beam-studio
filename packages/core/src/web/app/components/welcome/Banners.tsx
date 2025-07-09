@@ -3,6 +3,7 @@ import { useRef } from 'react';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 
+import { todo } from '@core/helpers/dev-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
 import browser from '@core/implementations/browser';
 
@@ -13,6 +14,8 @@ interface IBanner {
   src: string;
   url: string;
 }
+
+todo('Banners', 'Update default banners and URLs and fetch current banners from flux id');
 
 const Banners = () => {
   const isMobile = useIsMobile();

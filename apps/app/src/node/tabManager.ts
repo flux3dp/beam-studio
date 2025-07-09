@@ -189,7 +189,7 @@ class TabManager {
 
       return { action: 'allow' };
     });
-    initStore(webContents);
+    initStore(webContents, this.tabsList.length === 0);
 
     webContents.loadURL(pathToFileURL(path.join(__dirname, '../../index.html')).toString());
 

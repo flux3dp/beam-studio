@@ -19,6 +19,7 @@
 
   .img-container {
     @extend %container;
+
     .guide-lines {
       position: relative;
       width: 90%;
@@ -32,6 +33,7 @@
         max-width: 100%;
         max-height: 100%;
       }
+
       .overlay {
         position: absolute;
         inset: 8px 8px auto auto !important;
@@ -39,6 +41,7 @@
           right: auto !important;
         }
       }
+
       .trigger {
         width: 32px;
         height: 18px;
@@ -60,6 +63,7 @@
 
   .name {
     max-width: min(myCloudVariables.$grid-width, 100%);
+
     .display {
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -69,6 +73,7 @@
       line-height: 24px;
       padding: 0 4px;
     }
+
     .edit {
       height: 24px;
       width: myCloudVariables.$grid-width;

@@ -16,11 +16,14 @@ import dayjs from 'dayjs';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { MyCloudContext } from '@core/app/contexts/MyCloudContext';
+import { todo } from '@core/helpers/dev-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 import type { IFile } from '@core/interfaces/IMyCloud';
 
 import styles from './GridFile.module.scss';
+
+todo('GridFile', 'Fix file mismatch and use different handler for cloud and local files');
 
 interface Props {
   file: {

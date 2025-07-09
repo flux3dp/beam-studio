@@ -1,15 +1,19 @@
 import { FolderOpenOutlined } from '@ant-design/icons';
 
+import { todo } from '@core/helpers/dev-helper';
+
 import styles from './TabRecentFiles.module.scss';
 
-const TabBeami = () => {
+todo('TabBeamy');
+
+const TabBeamy = () => {
   return (
     <div>
       <div className={styles.title}>
-        <FolderOpenOutlined /> Beami AI
+        <FolderOpenOutlined /> Beamy
       </div>
     </div>
   );
 };
 
-export default TabBeami;
+export default TabBeamy;

@@ -72,6 +72,7 @@ import BeamboxPreference from './beambox-preference';
 import PreviewModeController from './preview-mode-controller';
 import ToolPanelsController from './toolPanelsController';
 import fileSystem from '@core/implementations/fileSystem';
+import { IFile } from '@core/interfaces/IMyCloud';
 
 // @ts-expect-error this line is required to load svgedit
 if (svgCanvasClass) {
@@ -107,7 +108,11 @@ declare global {
   }
 
   interface Window {
-    importingFile?: File;
+    importingFile?:
+      | { type: 'normal'; data: File }
+      | { type: 'cloud'; data: File; file: IFile }
+      | { type: 'recent'; data: string };
+    isFirstTab?: boolean;
   }
 }
 

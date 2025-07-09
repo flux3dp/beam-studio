@@ -1,13 +1,19 @@
 import { PlusOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 
+import { mockT } from '@core/helpers/dev-helper';
+
 import styles from './GridFile.module.scss';
 
-const GridNew = () => {
+interface Props {
+  startNewProject: () => void;
+}
+
+const GridNew = ({ startNewProject }: Props) => {
   return (
-    <div className={classNames(styles['text-container'], styles.button)}>
+    <div className={classNames(styles['text-container'], styles.button)} onClick={startNewProject}>
       <PlusOutlined className={styles.icon} />
-      <div className={styles.text}>New Project</div>
+      <div className={styles.text}>{mockT('New Project')}</div>
     </div>
   );
 };

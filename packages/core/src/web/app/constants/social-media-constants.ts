@@ -17,6 +17,10 @@ export const getSocialMedia = () => {
       src: `core-img/social-media/instagram-${langKey}.png`,
       subscribeSrc: `core-img/social-media/subscribe-instagram-${langKey}.png`,
     },
+    shop: {
+      link: isTW ? 'https://tw-shop.flux3dp.com/' : 'https://shop.flux3dp.com/',
+      name: 'Shop',
+    },
     youtube: {
       link: isTW ? 'https://www.youtube.com/@FLUXIncTaiwan' : 'https://www.youtube.com/@fluxinc',
       name: 'YouTube',

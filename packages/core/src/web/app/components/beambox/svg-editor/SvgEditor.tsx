@@ -14,7 +14,10 @@ import PathPreview from '@core/app/components/beambox/path-preview/PathPreview';
 import ZoomBlock from '@core/app/components/beambox/ZoomBlock';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import currentFileManager from '@core/app/svgedit/currentFileManager';
 import workareaManager from '@core/app/svgedit/workarea';
+import beamFileHelper from '@core/helpers/beam-file-helper';
+import communicator from '@core/implementations/communicator';
 
 import Banner from './Banner';
 import Chat from './Chat';
@@ -47,7 +50,15 @@ export const SvgEditor = (): ReactNode => {
       console.log('importingFile', importingFile);
 
       if (importingFile) {
-        svgEditor.handleFile(importingFile);
+        if (importingFile.type === 'normal') {
+          svgEditor.handleFile(importingFile);
+        } else if (importingFile.type === 'cloud') {
+          beamFileHelper.readBeam(importingFile.data).then(() => currentFileManager.setCloudFile(importingFile.file));
+        } else if (importingFile.type === 'recent') {
+          communicator.send('OPEN_RECENT_FILES', importingFile.data);
+        }
+
+        window.importingFile = undefined;
       }
     } else {
       console.warn('jQuery ($) is not available for svgEditor.init');

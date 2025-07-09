@@ -2,9 +2,10 @@ import { useContext, useMemo } from 'react';
 
 import { CloudOutlined } from '@ant-design/icons';
 
-import GridFile from '@core/app/components/welcome/GridFile';
+import GridFile from '@core/app/components/dialogs/myCloud/GridFile';
 import GridPlaceholder from '@core/app/components/welcome/GridPlaceholder';
 import { MyCloudContext, MyCloudProvider } from '@core/app/contexts/MyCloudContext';
+import { mockT } from '@core/helpers/dev-helper';
 import useI18n from '@core/helpers/useI18n';
 import type { IUser } from '@core/interfaces/IUser';
 
@@ -20,7 +21,7 @@ const MyCloudContent = ({ user }: Props) => {
 
   const content = useMemo(() => {
     if (!user) {
-      return <GridPlaceholder placeholder="Login to store your files to the Cloud." />;
+      return <GridPlaceholder placeholder={mockT('Login to store your files to the Cloud.')} />;
     }
 
     if (files === undefined) {
@@ -39,7 +40,7 @@ const MyCloudContent = ({ user }: Props) => {
       </div>
     );
     // eslint-disable-next-line hooks/exhaustive-deps
-  }, [files]);
+  }, [files, user]);
 
   return (
     <div>
@@ -60,7 +61,7 @@ const MyCloudContent = ({ user }: Props) => {
 
 const TabMyCloud = ({ user }: Props) =>
   user ? (
-    <MyCloudProvider onClose={() => {}}>
+    <MyCloudProvider fromWelcomePage onClose={() => {}}>
       <MyCloudContent user={user} />
     </MyCloudProvider>
   ) : (

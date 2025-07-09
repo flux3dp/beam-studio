@@ -1,14 +1,17 @@
 import type { WebContents } from 'electron';
 import ElectronStore from 'electron-store';
 
-const initStore = (webContents: WebContents): void => {
+const initStore = (webContents: WebContents, isWelcomeTab = false): void => {
   const store = new ElectronStore();
+
+  store.set('isWelcomeTab', isWelcomeTab);
 
   if (!store.get('poke-ip-addr')) {
     store.set('poke-ip-addr', '192.168.1.1');
   }
 
   if (!store.get('customizedLaserConfigs')) {
+    console.log('No customized laser configs found, initializing with default values.');
     webContents.executeJavaScript('({...localStorage});', true).then((localStorage) => {
       const keysNeedParse = [
         'auto_check_update',

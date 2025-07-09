@@ -5,7 +5,9 @@ import progressCaller from '@core/app/actions/progress-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import beamFileHelper from '@core/helpers/beam-file-helper';
+import { todo } from '@core/helpers/dev-helper';
 import i18n from '@core/helpers/i18n';
+import isWeb from '@core/helpers/is-web';
 import dialog from '@core/implementations/dialog';
 import type { IFile } from '@core/interfaces/IMyCloud';
 
@@ -115,11 +117,43 @@ export const openFile = async (file: IFile): Promise<OperationResult<Blob>> => {
     const checkRespResult = await checkResp(resp);
 
     if (checkRespResult.res) {
+      todo('open cloud file', 'open file in another tab');
       await beamFileHelper.readBeam(resp.data);
       currentFileManager.setCloudFile(file);
     }
 
     return { ...checkRespResult, data: resp.data, shouldCloseModal: checkRespResult.res };
+  } catch (e) {
+    console.error(e);
+    alertCaller.popUpError({ message: `Error: ${i18n.lang.my_cloud.action.open}` });
+
+    return { data: null, res: false };
+  } finally {
+    progressCaller.popById(id);
+  }
+};
+
+export const openFileInAnotherTab = async (file: IFile): Promise<OperationResult<Blob>> => {
+  const id = 'open-cloud-file-tab';
+
+  await progressCaller.openNonstopProgress({ id });
+  try {
+    const resp = await axiosFluxId.get(`/api/beam-studio/cloud/file/${file.uuid}`, {
+      responseType: 'blob',
+      withCredentials: true,
+    });
+    const checkRespResult = await checkResp(resp);
+
+    if (checkRespResult.res) {
+      if (isWeb()) {
+        window.importingFile = { data: resp.data, file, type: 'cloud' };
+        location.hash = '#/studio/beambox';
+      } else {
+        todo('open cloud file in another tab');
+      }
+    }
+
+    return { ...checkRespResult, data: resp.data };
   } catch (e) {
     console.error(e);
     alertCaller.popUpError({ message: `Error: ${i18n.lang.my_cloud.action.open}` });
@@ -282,5 +316,6 @@ export default {
   duplicateFile,
   list,
   openFile,
+  openFileInAnotherTab,
   renameFile,
 };

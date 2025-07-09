@@ -48,8 +48,10 @@ const onFinished = (data: boolean) => {
   const isReady = data;
   const isInitializePage = Boolean(hash.match(/^#\/?initialize/));
 
+  console.log('isReady:', isReady, 'isFirstTab', window.isFirstTab, 'isWelcomeTab', storage.get('isWelcomeTab'));
+
   if (isReady === true && (hash === '' || isInitializePage)) {
-    window.location.hash = '#/studio/welcome';
+    window.location.hash = window.isFirstTab ? '#/studio/welcome' : '#/studio/beambox';
   } else if (isReady === false && !isInitializePage) {
     window.location.hash = '#';
   }

@@ -105,3 +105,16 @@
     }
   }
 }
+
+.inverse {
+  .tab {
+    &.focused {
+      color: #d9d9d9;
+      background-color: #484848;
+
+      .icon {
+        color: #d9d9d9;
+      }
+    }
+  }
+}
