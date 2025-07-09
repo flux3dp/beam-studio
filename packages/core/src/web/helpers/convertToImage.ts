@@ -18,12 +18,25 @@ type BBox = {
   y: number;
 };
 
-type ConvertSvgToImageParams = {
+export type ConvertSvgToImageParams = {
   parentCmd?: IBatchCommand;
   positionOffset?: number[];
   scale?: number;
   svgElement: SVGGElement;
 };
+
+export const convertibleSvgTags = [
+  'rect',
+  'circle',
+  'ellipse',
+  'line',
+  'polygon',
+  'polyline',
+  'path',
+  'text',
+  'use',
+] as const;
+export const commonSvgTags = ['rect', 'circle', 'ellipse', 'line', 'polygon', 'polyline', 'path'] as const;
 
 /**
  * Calculates the new coordinates of a point after applying an SVG matrix transform.
@@ -59,6 +72,209 @@ export const getTransformedCoordinates = (bbox: BBox, transform: null | string):
   console.warn('No valid matrix transform found. Returning original coordinates.');
 
   return bbox;
+};
+
+export const convertCommonSvgToImage = async ({
+  parentCmd,
+  positionOffset = [0, 0],
+  svgElement,
+}: ConvertSvgToImageParams): Promise<SVGImageElement | undefined> => {
+  let svgUrl: null | string = null;
+
+  if (!commonSvgTags.includes(svgElement.tagName)) {
+    return undefined;
+  }
+
+  try {
+    const bbox = svgElement.getBBox();
+    // Create a new <svg> wrapper element to hold the cloned SVG
+    const wrapper = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const isFilled = svgElement.getAttribute('fill') !== 'none' && svgElement.getAttribute('fill') !== null;
+    const cloned = svgElement.cloneNode(true) as SVGGraphicsElement;
+    const previousTransform = cloned.getAttribute('transform');
+    const transformScale = cloned
+      .getAttribute('transform')
+      ?.match(/matrix\(([^)]+)\)/)![1]
+      .split(' ')[0] as unknown as number;
+    const transformedCoordinates = getTransformedCoordinates(bbox, previousTransform);
+    let strokeOffset = 0;
+
+    if (!isFilled) {
+      strokeOffset = 5;
+    }
+
+    wrapper.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    wrapper.setAttribute('width', String(bbox.width * (transformScale || 1) + strokeOffset));
+    wrapper.setAttribute('height', String(bbox.height * (transformScale || 1) + strokeOffset));
+
+    cloned.setAttribute('fill', '#000');
+    cloned.setAttribute('stroke', '#000');
+
+    if (!isFilled) {
+      cloned.setAttribute('fill', 'none');
+      cloned.setAttribute('stroke-width', String(strokeOffset));
+    }
+
+    cloned.setAttribute(
+      'transform',
+      `translate(${-transformedCoordinates.x + strokeOffset / 2}, ${-transformedCoordinates.y + strokeOffset / 2}) ${previousTransform ?? ''}`,
+    );
+    wrapper.appendChild(cloned);
+
+    const svgData = new XMLSerializer().serializeToString(wrapper);
+    const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+
+    svgUrl = URL.createObjectURL(blob);
+
+    const img = new Image();
+
+    await new Promise<void>((resolve, reject) => {
+      img.onload = () => resolve();
+      img.onerror = () => reject(new Error('Failed to load the generated SVG.'));
+      img.src = svgUrl!;
+    });
+
+    const { height, width } = img;
+    const newImage = svgCanvas.addSvgElementFromJson({
+      attr: {
+        'data-ratiofixed': true,
+        'data-shading': true,
+        'data-threshold': 254,
+        height,
+        id: svgCanvas.getNextId(),
+        origImage: img.src,
+        preserveAspectRatio: 'none',
+        style: 'pointer-events:inherit',
+        width,
+        x: svgElement.getAttribute('x')! + positionOffset[0],
+        y: svgElement.getAttribute('y')! + positionOffset[1],
+      },
+      element: 'image',
+    });
+
+    svgCanvas.setHref(newImage, img.src);
+    updateElementColor(newImage);
+    svgCanvas.selectOnly([newImage]);
+
+    const cmd = new history.InsertElementCommand(newImage);
+
+    if (!parentCmd) {
+      svgCanvas.undoMgr.addCommandToHistory(cmd);
+    } else {
+      parentCmd.addSubCommand(cmd);
+    }
+
+    if (!positionOffset) {
+      svgCanvas.alignSelectedElements('l', 'page');
+      svgCanvas.alignSelectedElements('t', 'page');
+    }
+
+    return newImage as SVGImageElement;
+  } catch (error) {
+    console.error('Failed during SVG to Image conversion:', error);
+  }
+};
+
+export const convertTextToImage = async ({
+  parentCmd,
+  positionOffset = [0, 0],
+  svgElement,
+}: ConvertSvgToImageParams): Promise<SVGImageElement | undefined> => {
+  let svgUrl: null | string = null;
+
+  if (svgElement.tagName !== 'text') {
+    return undefined;
+  }
+
+  try {
+    const bbox = svgElement.getBBox();
+    // Create a new <svg> wrapper element to hold the cloned SVG
+    const wrapper = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const isFilled = svgElement.getAttribute('fill') !== 'none' && svgElement.getAttribute('fill') !== null;
+    const cloned = svgElement.cloneNode(true) as SVGGraphicsElement;
+    const previousTransform = cloned.getAttribute('transform');
+    const transformScale = cloned
+      .getAttribute('transform')
+      ?.match(/matrix\(([^)]+)\)/)![1]
+      .split(' ')[0] as unknown as number;
+    const transformedCoordinates = getTransformedCoordinates(bbox, previousTransform);
+    let strokeOffset = 0;
+
+    console.log('Transformed Coordinates:', transformedCoordinates);
+
+    if (!isFilled) {
+      strokeOffset = 5;
+    }
+
+    wrapper.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    wrapper.setAttribute('width', String(bbox.width * (transformScale || 1)));
+    wrapper.setAttribute('height', String(bbox.height * (transformScale || 1)));
+
+    cloned.setAttribute('fill', '#000');
+    cloned.setAttribute('stroke', '#000');
+
+    if (!isFilled) {
+      cloned.setAttribute('fill', 'none');
+      cloned.setAttribute('stroke-width', String(strokeOffset));
+    }
+
+    cloned.setAttribute(
+      'transform',
+      `translate(${-transformedCoordinates.x}, ${-transformedCoordinates.y}) ${previousTransform ?? ''}`,
+    );
+    wrapper.appendChild(cloned);
+
+    const svgData = new XMLSerializer().serializeToString(wrapper);
+    const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+    const img = new Image();
+
+    svgUrl = URL.createObjectURL(blob);
+
+    await new Promise<void>((resolve, reject) => {
+      img.onload = () => resolve();
+      img.onerror = () => reject(new Error('Failed to load the generated SVG.'));
+      img.src = svgUrl!;
+    });
+
+    const { height, width } = img;
+    const newImage = svgCanvas.addSvgElementFromJson({
+      attr: {
+        'data-ratiofixed': true,
+        'data-shading': true,
+        'data-threshold': 254,
+        height,
+        id: svgCanvas.getNextId(),
+        origImage: img.src,
+        preserveAspectRatio: 'none',
+        style: 'pointer-events:inherit',
+        width,
+        x: transformedCoordinates.x! + positionOffset[0],
+        y: transformedCoordinates.y! + positionOffset[1],
+      },
+      element: 'image',
+    });
+
+    svgCanvas.setHref(newImage, img.src);
+    updateElementColor(newImage);
+    svgCanvas.selectOnly([newImage]);
+
+    const cmd = new history.InsertElementCommand(newImage);
+
+    if (!parentCmd) {
+      svgCanvas.undoMgr.addCommandToHistory(cmd);
+    } else {
+      parentCmd.addSubCommand(cmd);
+    }
+
+    if (!positionOffset) {
+      svgCanvas.alignSelectedElements('l', 'page');
+      svgCanvas.alignSelectedElements('t', 'page');
+    }
+
+    return newImage as SVGImageElement;
+  } catch (error) {
+    console.error('Failed during SVG to Image conversion:', error);
+  }
 };
 
 export const convertUseToImage = async ({
@@ -142,13 +358,12 @@ export const convertSvgToImage = async ({
     const isFilled = svgElement.getAttribute('fill') !== 'none' && svgElement.getAttribute('fill') !== null;
     const cloned = svgElement.cloneNode(true) as SVGGraphicsElement;
     const previousTransform = cloned.getAttribute('transform');
-    let strokeOffset = 0;
-
     const transformScale = cloned
       .getAttribute('transform')
       ?.match(/matrix\(([^)]+)\)/)![1]
       .split(' ')[0] as unknown as number;
     const transformedCoordinates = getTransformedCoordinates(bbox, previousTransform);
+    let strokeOffset = 0;
 
     if (!isFilled) {
       strokeOffset = 5;
