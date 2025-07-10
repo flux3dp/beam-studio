@@ -161,7 +161,6 @@ export default interface ISVGCanvas {
   selectOnly: (elems: SVGElement[], showGrips?: boolean) => void;
   selectorManager: SelectorManager;
   sensorAreaInfo: { dx: number; dy: number; elem: SVGElement; x: number; y: number };
-  setBackground: (color: string, url?: string) => void;
   setBlur(blurValue: number, shouldComplete: boolean): void;
   setBlurNoUndo(blurValue: number): void;
   setColor: (pickerType: string, color: string, preventUndo?: boolean) => void;
