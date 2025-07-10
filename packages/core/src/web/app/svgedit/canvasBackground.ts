@@ -140,7 +140,7 @@ const createMaskElement = (maskType: BackgroundMaskType): void => {
       filter.setAttribute('y', '-50%');
       filter.setAttribute('width', '200%');
       filter.setAttribute('height', '200%');
-      feGaussianBlur.setAttribute('stdDeviation', '5');
+      feGaussianBlur.setAttribute('stdDeviation', '100');
       filter.appendChild(feGaussianBlur);
       defs.appendChild(filter);
 
@@ -156,7 +156,7 @@ const createMaskElement = (maskType: BackgroundMaskType): void => {
       maskEllipse.setAttribute('cx', '50%');
       maskEllipse.setAttribute('cy', '100%');
       maskEllipse.setAttribute('rx', '50%');
-      maskEllipse.setAttribute('ry', '50%');
+      maskEllipse.setAttribute('ry', '70%');
       maskEllipse.setAttribute('fill', 'white');
       maskEllipse.setAttribute('filter', 'url(#fbm2CameraFilter)');
       mask.appendChild(maskEllipse);
