@@ -29,22 +29,26 @@ const StepCrop = ({ onCancel, onCropFinish }: Props): React.JSX.Element => {
   const height = maxY - minY;
 
   useEffect(() => {
-    const img = new Image();
+    const initImage = async () => {
+      const img = new Image();
 
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      const context = canvas.getContext('2d');
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d')!;
 
-      canvas.width = width;
-      canvas.height = height;
-      context.drawImage(img, minX, minY, width, height, 0, 0, width, height);
-      canvas.toBlob((blob) => {
-        const url = URL.createObjectURL(blob);
+        canvas.width = width;
+        canvas.height = height;
+        context.drawImage(img, minX, minY, width, height, 0, 0, width, height);
+        canvas.toBlob((blob) => {
+          const url = URL.createObjectURL(blob!);
 
-        setCroppedCameraCanvasBlobUrl(url);
-      });
+          setCroppedCameraCanvasBlobUrl(url);
+        });
+      };
+      img.src = await PreviewModeBackgroundDrawer.getCameraCanvasUrl();
     };
-    img.src = PreviewModeBackgroundDrawer.getCameraCanvasUrl();
+
+    initImage();
 
     return () => {
       cropperRef.current?.destroy();
