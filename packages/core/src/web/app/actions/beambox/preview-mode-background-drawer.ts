@@ -7,7 +7,7 @@ import Constant from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import NS from '@core/app/constants/namespaces';
 import { setCameraPreviewState } from '@core/app/stores/cameraPreview';
-import { clearBackgroundImage, setBackgroundImage } from '@core/app/svgedit/canvasBackground';
+import { clearBackgroundImage, getBackgroundUrl, setBackgroundImage } from '@core/app/svgedit/canvasBackground';
 import workareaManager from '@core/app/svgedit/workarea';
 import { getAbsRect } from '@core/helpers/boundary-helper';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
@@ -167,7 +167,7 @@ class PreviewModeBackgroundDrawer {
       }
 
       this.canvas.toBlob((blob) => {
-        resolve(blob);
+        resolve(blob!);
 
         if (callback) {
           setTimeout(callback, 1000);
@@ -340,7 +340,7 @@ class PreviewModeBackgroundDrawer {
   }
 
   getCameraCanvasUrl() {
-    return this.cameraCanvasUrl;
+    return getBackgroundUrl(this.canvas.width, this.canvas.height);
   }
 
   getCoordinates() {
@@ -386,7 +386,7 @@ class PreviewModeBackgroundDrawer {
         this.coordinates.maxX = img.naturalWidth * imageRatio;
         this.coordinates.maxY = img.naturalHeight * imageRatio;
         this.canvas.toBlob((blob) => {
-          resolve(blob);
+          resolve(blob!);
           setTimeout(callBack, 1000);
         });
       };

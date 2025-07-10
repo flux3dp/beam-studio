@@ -12,7 +12,7 @@ const dataCache: { data?: AutoFitContour[][]; url: string } = { url: '' };
 
 // TODO: add unit test
 const autoFit = async (elem: SVGElement): Promise<void> => {
-  const previewBackgroundUrl = previewModeBackgroundDrawer.getCameraCanvasUrl();
+  const previewBackgroundUrl = await previewModeBackgroundDrawer.getCameraCanvasUrl();
   const lang = i18n.lang.auto_fit;
 
   if (!previewBackgroundUrl) {
