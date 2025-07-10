@@ -441,6 +441,7 @@ const lang: ILang = {
       laser_panel: {
         advanced: 'Avançado',
         air_assist: 'Assistência de ar',
+        am_density: 'Densidade de pontos de retícula',
         backlash: 'Folga',
         bi_directional: 'Bidirecional',
         by: 'Em',
@@ -1621,6 +1622,8 @@ const lang: ILang = {
     go: 'Iniciar',
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 Sensor de fluxo de ar anômalo',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 Base aberta. Feche a base para continuar.',
+    HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 Falha ao instalar a tampa da cabeça de impressão',
+    HARDWARE_ERROR_COVER_NOT_OPENED: '#925 Falha ao remover a tampa da cabeça de impressão',
     HARDWARE_ERROR_DOOR_OPENED: '#901 Feche a porta para continuar.',
     HARDWARE_ERROR_DRAWER_OPENED: '#911 Gaveta aberta',
     HARDWARE_ERROR_FIRE_DETECTED: '#912 Sensor de chama anômalo',

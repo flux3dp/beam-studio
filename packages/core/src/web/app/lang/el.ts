@@ -441,6 +441,7 @@ const lang: ILang = {
       laser_panel: {
         advanced: 'Προηγμένες',
         air_assist: 'Υποβοήθηση αέρα',
+        am_density: 'Πυκνότητα κουκκίδων ράστερ',
         backlash: 'Οπίσθια κίνηση',
         bi_directional: 'Διπλής Κατεύθυνσης',
         by: 'Κατά',
@@ -1621,6 +1622,8 @@ const lang: ILang = {
     go: 'Έναρξη',
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 Αισθητήρας ροής αέρα ανώμαλος',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 Το κάτω μέρος άνοιξε. Κλείστε το κάτω μέρος για να συνεχίσετε.',
+    HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 Αποτυχία εγκατάστασης καλύμματος κεφαλής εκτύπωσης',
+    HARDWARE_ERROR_COVER_NOT_OPENED: '#925 Αποτυχία αφαίρεσης καλύμματος κεφαλής εκτύπωσης',
     HARDWARE_ERROR_DOOR_OPENED: '#901 Κλείστε την πόρτα για να συνεχίσετε.',
     HARDWARE_ERROR_DRAWER_OPENED: '#911 Το συρτάρι άνοιξε',
     HARDWARE_ERROR_FIRE_DETECTED: '#912 Ανώμαλος αισθητήρας φλόγας',

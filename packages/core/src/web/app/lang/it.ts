@@ -441,6 +441,7 @@ const lang: ILang = {
       laser_panel: {
         advanced: 'Avanzate',
         air_assist: 'Assistenza aria',
+        am_density: 'Densità dei punti di retino',
         backlash: 'Gioco',
         bi_directional: 'Bidirezionale',
         by: 'di',
@@ -1621,6 +1622,8 @@ const lang: ILang = {
     go: 'Avvia',
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 Sensore flusso aria anomalo',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 Fondo aperto. Chiudere fondo per continuare.',
+    HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 Installazione del coperchio della testina di stampa non riuscita',
+    HARDWARE_ERROR_COVER_NOT_OPENED: '#925 Rimozione del coperchio della testina di stampa non riuscita',
     HARDWARE_ERROR_DOOR_OPENED: '#901 Chiudere porta per continuare.',
     HARDWARE_ERROR_DRAWER_OPENED: '#911 Cassetto aperto',
     HARDWARE_ERROR_FIRE_DETECTED: '#912 Sensore fiamma anomalo',

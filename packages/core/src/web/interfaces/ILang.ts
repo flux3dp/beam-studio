@@ -439,6 +439,7 @@ export interface ILang {
       laser_panel: {
         advanced: string;
         air_assist: string;
+        am_density: string;
         backlash: string;
         bi_directional: string;
         by: string;
@@ -1612,6 +1613,8 @@ export interface ILang {
     go: string;
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: string;
     HARDWARE_ERROR_BOTTOM_OPENED: string;
+    HARDWARE_ERROR_COVER_NOT_CLOSED: string;
+    HARDWARE_ERROR_COVER_NOT_OPENED: string;
     HARDWARE_ERROR_DOOR_OPENED: string;
     HARDWARE_ERROR_DRAWER_OPENED: string;
     HARDWARE_ERROR_FIRE_DETECTED: string;

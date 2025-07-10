@@ -441,6 +441,7 @@ const lang: ILang = {
       laser_panel: {
         advanced: 'Edistynyt',
         air_assist: 'Ilma-avustus',
+        am_density: 'Rasteripistetihyys',
         backlash: 'Takaisinkytkentä',
         bi_directional: 'Kaksisuuntainen',
         by: 'Määrällä',
@@ -1621,6 +1622,8 @@ const lang: ILang = {
     go: 'Aloita',
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 Ilmavirtausanturi poikkeava',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 Alaosa auki. Sulje jatkaaksesi',
+    HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 Tulostuspään suojuksen asennus epäonnistui',
+    HARDWARE_ERROR_COVER_NOT_OPENED: '#925 Tulostuspään suojuksen poistaminen epäonnistui',
     HARDWARE_ERROR_DOOR_OPENED: '#901 Sulje ovi jatkaaksesi',
     HARDWARE_ERROR_DRAWER_OPENED: '#911 Laatikko auki',
     HARDWARE_ERROR_FIRE_DETECTED: '#912 Liekkianturi poikkeava',

@@ -441,6 +441,7 @@ const lang: ILang = {
       laser_panel: {
         advanced: 'Avancerat',
         air_assist: 'Luftassistans',
+        am_density: 'Rasterpunkttäthet',
         backlash: 'Backlash',
         bi_directional: 'Dubbelriktad',
         by: 'Med',
@@ -1621,6 +1622,8 @@ const lang: ILang = {
     go: 'Starta',
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 Luftflödessensor avvikande',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 Botten öppen. Stäng botten för att fortsätta.',
+    HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 Det gick inte att installera skrivarhuvudets skydd',
+    HARDWARE_ERROR_COVER_NOT_OPENED: '#925 Det gick inte att ta bort skrivarhuvudets skydd',
     HARDWARE_ERROR_DOOR_OPENED: '#901 Stäng dörren för att fortsätta.',
     HARDWARE_ERROR_DRAWER_OPENED: '#911 Lådan öppnades',
     HARDWARE_ERROR_FIRE_DETECTED: '#912 Flamsäkerhetssensor avvikande',

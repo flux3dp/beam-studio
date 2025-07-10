@@ -441,6 +441,7 @@ const lang: ILang = {
       laser_panel: {
         advanced: 'Avanceret',
         air_assist: 'Luftassistance',
+        am_density: 'Rasterpunkttæthed',
         backlash: 'Tilbageløb',
         bi_directional: 'Tovejskommunikation',
         by: 'Med',
@@ -1621,6 +1622,8 @@ const lang: ILang = {
     go: 'Start',
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 Luftstrømsensor unormal',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 Bund åbnet. Luk bunden for at fortsætte.',
+    HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 Kunne ikke installere printhoveddæksel',
+    HARDWARE_ERROR_COVER_NOT_OPENED: '#925 Kunne ikke fjerne printhoveddækslet',
     HARDWARE_ERROR_DOOR_OPENED: '#901 Luk døren for at fortsætte.',
     HARDWARE_ERROR_DRAWER_OPENED: '#911 Skuffen åbnet',
     HARDWARE_ERROR_FIRE_DETECTED: '#912 Flammesensor unormal',

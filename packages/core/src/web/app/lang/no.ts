@@ -441,6 +441,7 @@ const lang: ILang = {
       laser_panel: {
         advanced: 'Avansert',
         air_assist: 'Luftassistanse',
+        am_density: 'Rasterpunkttetthet',
         backlash: 'Tilbakeslag',
         bi_directional: 'Toveis',
         by: 'Med',
@@ -1621,6 +1622,8 @@ const lang: ILang = {
     go: 'Start',
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 Luftstrømsensor unormal',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 Bunn åpnet. Lukk bunnen for å fortsette.',
+    HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 Kunne ikke installere dekselet til skrivehodet',
+    HARDWARE_ERROR_COVER_NOT_OPENED: '#925 Kunne ikke fjerne dekselet til skrivehodet',
     HARDWARE_ERROR_DOOR_OPENED: '#901 Lukk døren for å fortsette.',
     HARDWARE_ERROR_DRAWER_OPENED: '#911 Skuffen åpnet',
     HARDWARE_ERROR_FIRE_DETECTED: '#912 Flammesensor unormal',

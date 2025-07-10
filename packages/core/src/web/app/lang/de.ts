@@ -441,6 +441,7 @@ const lang: ILang = {
       laser_panel: {
         advanced: 'Erweitert',
         air_assist: 'Luftunterstützung',
+        am_density: 'Rasterpunktdichte',
         backlash: 'Spiel',
         bi_directional: 'Bidirektional',
         by: 'Um',
@@ -1621,6 +1622,8 @@ const lang: ILang = {
     go: 'Start',
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 Luftstromsensor anomal',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 Boden offen. Close the door to continue.',
+    HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 Druckkopfdeckel konnte nicht installiert werden',
+    HARDWARE_ERROR_COVER_NOT_OPENED: '#925 Druckkopfdeckel konnte nicht entfernt werden',
     HARDWARE_ERROR_DOOR_OPENED: '#901 schliesse die Tür, um fortzufahren.',
     HARDWARE_ERROR_DRAWER_OPENED: '#911 Schublade geöffnet',
     HARDWARE_ERROR_FIRE_DETECTED: '#912 Flammensensor anomal',

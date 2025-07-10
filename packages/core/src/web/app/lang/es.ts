@@ -441,6 +441,7 @@ const lang: ILang = {
       laser_panel: {
         advanced: 'Avanzado',
         air_assist: 'Asistencia de aire',
+        am_density: 'Densidad de puntos de trama',
         backlash: 'Holgura',
         bi_directional: 'Bidireccional',
         by: 'Bajar Enfoque En',
@@ -1621,6 +1622,8 @@ const lang: ILang = {
     go: 'Comenzar',
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 Sensor de flujo de aire anómalo',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 Tapa Abierta. Cierra la puerta para continuar.',
+    HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 Error al instalar la tapa del cabezal',
+    HARDWARE_ERROR_COVER_NOT_OPENED: '#925 Error al retirar la tapa del cabezal',
     HARDWARE_ERROR_DOOR_OPENED: '#901 Cierra la puerta para continuar.',
     HARDWARE_ERROR_DRAWER_OPENED: '#911 Cajón abierto',
     HARDWARE_ERROR_FIRE_DETECTED: '#912 Sensor de llama anómalo',

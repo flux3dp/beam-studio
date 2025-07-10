@@ -441,6 +441,7 @@ const lang: ILang = {
       laser_panel: {
         advanced: 'Avancé',
         air_assist: "Assistance d'air",
+        am_density: 'Densité de trame',
         backlash: 'Jeu',
         bi_directional: 'Bidirectionnel',
         by: 'de',
@@ -1621,6 +1622,8 @@ const lang: ILang = {
     go: 'Démarrer',
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: "#913 Débit d'air anormal",
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 Fond ouvert. Fermez le fond pour continuer.',
+    HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 Échec d’installation du capot tête d’impression',
+    HARDWARE_ERROR_COVER_NOT_OPENED: '#925 Échec de retrait du capot tête d’impression',
     HARDWARE_ERROR_DOOR_OPENED: '#901 Fermez la porte pour continuer.',
     HARDWARE_ERROR_DRAWER_OPENED: '#911 Tiroir ouvert',
     HARDWARE_ERROR_FIRE_DETECTED: '#912 Détection de flamme anormale',

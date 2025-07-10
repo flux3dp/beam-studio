@@ -441,6 +441,7 @@ const lang: ILang = {
       laser_panel: {
         advanced: 'Zaawansowane',
         air_assist: 'Wspomaganie powietrzem',
+        am_density: 'Gęstość punktów rastra',
         backlash: 'Reakcja',
         bi_directional: 'Dwukierunkowy',
         by: 'O',
@@ -1621,6 +1622,8 @@ const lang: ILang = {
     go: 'Rozpocznij',
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 Nieprawidłowość czujnika przepływu powietrza',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 Dno otwarte. Zamknij dno, aby kontynuować.',
+    HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 Nie udało się zainstalować pokrywy głowicy drukującej',
+    HARDWARE_ERROR_COVER_NOT_OPENED: '#925 Nie udało się usunąć pokrywy głowicy drukującej',
     HARDWARE_ERROR_DOOR_OPENED: '#901 Zamknij drzwi, aby kontynuować.',
     HARDWARE_ERROR_DRAWER_OPENED: '#911 Szuflada otwarta',
     HARDWARE_ERROR_FIRE_DETECTED: '#912 Nieprawidłowość czujnika płomienia',

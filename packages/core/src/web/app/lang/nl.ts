@@ -441,6 +441,7 @@ const lang: ILang = {
       laser_panel: {
         advanced: 'Geavanceerd',
         air_assist: 'Luchtondersteuning',
+        am_density: 'Rasterpuntdichtheid',
         backlash: 'Speling',
         bi_directional: 'Tweerichtingsverkeer',
         by: 'Met',
@@ -1621,6 +1622,8 @@ const lang: ILang = {
     go: 'Start',
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 Luchtstroomsensor afwijkend',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 Onderkant geopend. Sluit de onderkant om door te gaan.',
+    HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 Installeren printkopkap mislukt',
+    HARDWARE_ERROR_COVER_NOT_OPENED: '#925 Verwijderen printkopkap mislukt',
     HARDWARE_ERROR_DOOR_OPENED: '#901 Sluit de deur om door te gaan.',
     HARDWARE_ERROR_DRAWER_OPENED: '#911 Lade geopend',
     HARDWARE_ERROR_FIRE_DETECTED: '#912 Vlamsensor afwijkend',

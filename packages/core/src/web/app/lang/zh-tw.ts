@@ -441,6 +441,7 @@ const lang: ILang = {
       laser_panel: {
         advanced: '進階設定',
         air_assist: '吹氣輔助',
+        am_density: '網點密度',
         backlash: '背隙調整',
         bi_directional: '雙向',
         by: '', // keep empty on purpose
@@ -600,7 +601,7 @@ const lang: ILang = {
         focus_adjustment: '對焦調整',
         frequency: '頻率',
         gradient_only: '僅適用於漸層圖片',
-        halftone: '半色調',
+        halftone: '混色模式',
         halftone_link: 'https://support.flux3dp.com/hc/zh-tw/articles/9402670389647',
         height: '物件高度',
         ink_saturation: '飽和度',
@@ -1621,6 +1622,8 @@ const lang: ILang = {
     go: '開始',
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 氣流偵測異常',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 底蓋開啟，將底蓋關上以繼續',
+    HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 列印頭保護蓋安裝失敗',
+    HARDWARE_ERROR_COVER_NOT_OPENED: '#925 列印頭保護蓋移除失敗',
     HARDWARE_ERROR_DOOR_OPENED: '#901 門蓋開啟，將門蓋關上以繼續',
     HARDWARE_ERROR_DRAWER_OPENED: '#911 抽屜開啟',
     HARDWARE_ERROR_FIRE_DETECTED: '#912 火焰偵測異常',

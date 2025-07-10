@@ -441,6 +441,7 @@ const lang: ILang = {
       laser_panel: {
         advanced: 'Lanjutan',
         air_assist: 'Bantuan Udara',
+        am_density: 'Ketumpatan titik raster',
         backlash: 'Ricih',
         bi_directional: 'Dua Arah',
         by: 'Dengan',
@@ -1621,6 +1622,8 @@ const lang: ILang = {
     go: 'Mula',
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 Sensor aliran udara mengesan anomali',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 Bahagian bawah Dibuka. Tutup bahagian bawah untuk teruskan.',
+    HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 Gagal memasang penutup kepala cetakan',
+    HARDWARE_ERROR_COVER_NOT_OPENED: '#925 Gagal menanggalkan penutup kepala cetakan',
     HARDWARE_ERROR_DOOR_OPENED: '#901 Tutup pintu untuk teruskan.',
     HARDWARE_ERROR_DRAWER_OPENED: '#911 Laci dibuka',
     HARDWARE_ERROR_FIRE_DETECTED: '#912 Sensor api mengesan anomali',

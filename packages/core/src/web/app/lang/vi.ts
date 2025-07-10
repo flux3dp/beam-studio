@@ -441,6 +441,7 @@ const lang: ILang = {
       laser_panel: {
         advanced: 'Nâng Cao',
         air_assist: 'Hỗ trợ khí',
+        am_density: 'Mật độ điểm lưới',
         backlash: 'Độ rơ',
         bi_directional: 'Hai Chiều',
         by: 'Bởi',
@@ -1621,6 +1622,8 @@ const lang: ILang = {
     go: 'Bắt đầu',
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: 'Cảm biến luồng khí bất thường',
     HARDWARE_ERROR_BOTTOM_OPENED: 'Vui lòng đóng đáy để tiếp tục.',
+    HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 Không thể lắp nắp đầu in',
+    HARDWARE_ERROR_COVER_NOT_OPENED: '#925 Không thể tháo nắp đầu in',
     HARDWARE_ERROR_DOOR_OPENED: '#901 Đóng cửa để tiếp tục.',
     HARDWARE_ERROR_DRAWER_OPENED: 'Ngăn kéo đang mở',
     HARDWARE_ERROR_FIRE_DETECTED: 'Cảm biến lửa bất thường',

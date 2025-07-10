@@ -441,6 +441,7 @@ const lang: ILang = {
       laser_panel: {
         advanced: 'Pokročilé',
         air_assist: 'Air Assist',
+        am_density: 'Hustota rastrových bodů',
         backlash: 'Odpor',
         bi_directional: 'Obousměrný',
         by: 'Podle',
@@ -1621,6 +1622,8 @@ const lang: ILang = {
     go: 'Začít',
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 Anomálie senzoru proudění vzduchu',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 Spodní část otevřena. Pro pokračování prosím uzavřete spodní část.',
+    HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 Instalace krytu tiskové hlavy se nezdařila',
+    HARDWARE_ERROR_COVER_NOT_OPENED: '#925 Odebrání krytu tiskové hlavy se nezdařilo',
     HARDWARE_ERROR_DOOR_OPENED: '#901 Pro pokračování prosím zavřete dvířka.',
     HARDWARE_ERROR_DRAWER_OPENED: '#911 Otevřená dvířka',
     HARDWARE_ERROR_FIRE_DETECTED: '#912 Anomálie senzoru plamene',

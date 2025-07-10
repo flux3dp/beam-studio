@@ -441,6 +441,7 @@ const lang: ILang = {
       laser_panel: {
         advanced: 'ขั้นสูง',
         air_assist: 'ช่วยพ่นลม',
+        am_density: 'ความหนาแน่นของจุดราสเตอร์',
         backlash: 'การย้อนกลับ',
         bi_directional: 'สองทิศทาง',
         by: 'ตามค่า',
@@ -1621,6 +1622,8 @@ const lang: ILang = {
     go: 'เริ่ม',
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 ตรวจพบการไหลของอากาศผิดปกติ',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 ฐานเปิดอยู่ ปิดฐานเพื่อดําเนินการต่อ',
+    HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 ติดตั้งฝาครอบหัวพิมพ์ไม่สำเร็จ',
+    HARDWARE_ERROR_COVER_NOT_OPENED: '#925 ไม่สามารถถอดฝาครอบหัวพิมพ์ได้',
     HARDWARE_ERROR_DOOR_OPENED: '#901 ปิดประตูเพื่อดําเนินการต่อ',
     HARDWARE_ERROR_DRAWER_OPENED: '#911 ลิ้นชักเปิดอยู่',
     HARDWARE_ERROR_FIRE_DETECTED: '#912 ตรวจพบไฟผิดปกติ',

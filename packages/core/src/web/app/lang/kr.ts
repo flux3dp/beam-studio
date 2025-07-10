@@ -441,6 +441,7 @@ const lang: ILang = {
       laser_panel: {
         advanced: '고급',
         air_assist: '에어 어시스트',
+        am_density: '망점 밀도',
         backlash: '백래시',
         bi_directional: '양방향',
         by: '', // keep empty on purpose
@@ -1621,6 +1622,8 @@ const lang: ILang = {
     go: '시작',
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 공기 흐름 센서 이상',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 바닥이 열려 있습니다. 계속하려면 바닥을 닫으세요.',
+    HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 프린트헤드 커버 설치 실패',
+    HARDWARE_ERROR_COVER_NOT_OPENED: '#925 프린트헤드 커버 제거 실패',
     HARDWARE_ERROR_DOOR_OPENED: '#901 계속하려면 문을 닫으세요.',
     HARDWARE_ERROR_DRAWER_OPENED: '#911 서랍(Drawer) 열림',
     HARDWARE_ERROR_FIRE_DETECTED: '#912 화염 센서 이상',
