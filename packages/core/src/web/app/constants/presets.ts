@@ -442,7 +442,7 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
     fbb1p: { [LayerModule.LASER_UNIVERSAL]: { power: 20, speed: 150 } },
     fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 20, speed: 500 } },
     fbm1: { [LayerModule.LASER_UNIVERSAL]: { power: 25, speed: 150 } },
-    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 20, speed: 300 } },
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 15, speed: 300 } },
     fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 20, speed: 300 } },
     flv1: { [LayerModule.LASER_UNIVERSAL]: { power: 100, speed: 150 } },
   },
