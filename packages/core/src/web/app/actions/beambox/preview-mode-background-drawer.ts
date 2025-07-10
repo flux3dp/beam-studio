@@ -7,6 +7,7 @@ import Constant from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import NS from '@core/app/constants/namespaces';
 import { setCameraPreviewState } from '@core/app/stores/cameraPreview';
+import { clearBackgroundImage, setBackgroundImage } from '@core/app/svgedit/canvasBackground';
 import workareaManager from '@core/app/svgedit/workarea';
 import { getAbsRect } from '@core/helpers/boundary-helper';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
@@ -63,6 +64,8 @@ class PreviewModeBackgroundDrawer {
   start(cameraOffset?: CameraParameters) {
     if (cameraOffset) {
       this.cameraOffset = cameraOffset;
+    } else {
+      this.cameraOffset = null;
     }
 
     const currentCanvasRatio = this.canvasRatio;
@@ -325,7 +328,7 @@ class PreviewModeBackgroundDrawer {
       return;
     }
 
-    svgCanvas.setBackground('#fff');
+    clearBackgroundImage();
 
     // clear canvas
     this.canvas.getContext('2d')!.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -359,7 +362,7 @@ class PreviewModeBackgroundDrawer {
     this.cameraCanvasUrl = URL.createObjectURL(blob);
     setCameraPreviewState({ isClean: false });
 
-    svgCanvas.setBackground('#fff', this.cameraCanvasUrl);
+    setBackgroundImage(this.cameraCanvasUrl);
   };
 
   preprocessFullWorkareaImg = async (imgUrl: string, callBack = () => {}) =>
