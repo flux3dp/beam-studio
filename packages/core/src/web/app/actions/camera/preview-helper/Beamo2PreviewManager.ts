@@ -11,10 +11,11 @@ import progressCaller from '@core/app/actions/progress-caller';
 import { bm2PerspectiveGrid } from '@core/app/components/dialogs/camera/common/solvePnPConstants';
 import { CameraType } from '@core/app/constants/cameraConstants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { setMaskImage } from '@core/app/svgedit/canvasBackground';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import type { FisheyeCameraParametersV4 } from '@core/interfaces/FisheyePreview';
-import type { IDeviceInfo } from '@core/interfaces/IDevice';
+import type { IConfigSetting, IDeviceInfo } from '@core/interfaces/IDevice';
 import { MessageLevel } from '@core/interfaces/IMessage';
 import type { PreviewManager } from '@core/interfaces/PreviewManager';
 
@@ -149,7 +150,7 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
   end = async (): Promise<void> => {
     this.ended = true;
     this.doorChecker.destroy();
-    MessageCaller.closeMessage('camera-preview');
+    MessageCaller.closeMessage(this.progressId);
 
     try {
       if (this.cameraType === CameraType.LASER_HEAD) {
@@ -177,11 +178,56 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
         level: MessageLevel.LOADING,
       });
 
+      let exposureSetting: IConfigSetting | null = null;
+
+      try {
+        const exposureRes = await deviceMaster.getDeviceSetting('camera_exposure_absolute');
+
+        exposureSetting = JSON.parse(exposureRes.value) as IConfigSetting;
+      } catch (error) {
+        console.error('Failed to get exposure setting', error);
+      }
+
+      if (exposureSetting) {
+        try {
+          await deviceMaster.setDeviceSetting('camera_exposure_absolute', (exposureSetting.value + 500).toString());
+
+          MessageCaller.openMessage({
+            content: `${i18n.lang.topbar.preview} 1/2`,
+            duration: 20,
+            key: this.progressId,
+            level: MessageLevel.LOADING,
+          });
+        } catch (error) {
+          console.error('Failed to set exposure setting', error);
+        }
+      }
+
       const imgUrl = await this.getPhotoFromMachine();
 
       await new Promise<void>((resolve) => {
         PreviewModeBackgroundDrawer.drawFullWorkarea(imgUrl, resolve);
       });
+
+      if (exposureSetting) {
+        try {
+          await deviceMaster.setDeviceSetting('camera_exposure_absolute', exposureSetting.value.toString());
+        } catch (error) {
+          console.error('Failed to set exposure setting', error);
+        }
+
+        MessageCaller.openMessage({
+          content: `${i18n.lang.topbar.preview} 2/2`,
+          duration: 20,
+          key: this.progressId,
+          level: MessageLevel.LOADING,
+        });
+
+        const darkImgUrl = await this.getPhotoFromMachine();
+
+        setMaskImage(darkImgUrl, 'fbm2Camera');
+      }
+
       MessageCaller.openMessage({
         content: 'Successfully previewed',
         duration: 3,
