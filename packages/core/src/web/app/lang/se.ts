@@ -2054,6 +2054,8 @@ const lang: ILang = {
       import_ador_printing_example_single: 'Exempel på Ador Utskrift - Enfärg',
       import_beambox_2_example: 'Exempel på Beambox II',
       import_beambox_2_focus_probe: 'Beambox II Fokussond - 3 mm',
+      import_beamo_2_laser_example: 'Exempel på beamo II Laser',
+      import_beamo_2_printing_example_full: 'Exempel på beamo II Utskrift - Flerfärg',
       import_hello_beambox: 'Exempel på Beambox',
       import_hello_beamo: 'Exempel på beamo',
       import_hexa_example: 'Exempel på HEXA',

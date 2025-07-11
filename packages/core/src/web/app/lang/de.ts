@@ -2054,6 +2054,8 @@ const lang: ILang = {
       import_ador_printing_example_single: 'Beispiel für Ador Druck - Einzelfarbe',
       import_beambox_2_example: 'Beispiel für Beambox II',
       import_beambox_2_focus_probe: 'Beambox II Fokussonde - 3 mm',
+      import_beamo_2_laser_example: 'Beispiel für beamo II Laser',
+      import_beamo_2_printing_example_full: 'Beispiel für beamo II Druck - Vollfarbe',
       import_hello_beambox: 'Beispiel einer Beambox',
       import_hello_beamo: 'Beispiel für Beamo',
       import_hexa_example: 'Beispiel für HEXA',

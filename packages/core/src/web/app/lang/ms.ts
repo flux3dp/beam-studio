@@ -2054,6 +2054,8 @@ const lang: ILang = {
       import_ador_printing_example_single: 'Contoh Cetakan Ador - Satu Warna',
       import_beambox_2_example: 'Contoh Beambox II',
       import_beambox_2_focus_probe: 'Probe Fokus Beambox II - 3mm',
+      import_beamo_2_laser_example: 'Contoh beamo II Laser',
+      import_beamo_2_printing_example_full: 'Contoh Cetakan beamo II - Warna Penuh',
       import_hello_beambox: 'Contoh Beambox',
       import_hello_beamo: 'Contoh beamo',
       import_hexa_example: 'Contoh HEXA',

@@ -2054,6 +2054,8 @@ const lang: ILang = {
       import_ador_printing_example_single: 'Voorbeeld van Ador Printing - Enkele kleur',
       import_beambox_2_example: 'Beambox II voorbeeld ',
       import_beambox_2_focus_probe: 'Beambox II Focusprobe - 3 mm',
+      import_beamo_2_laser_example: 'Voorbeeld van beamo II Laser',
+      import_beamo_2_printing_example_full: 'Voorbeeld van beamo II Printing - Volledige kleur',
       import_hello_beambox: 'Beambox voorbeeld',
       import_hello_beamo: 'beamo voorbeeld',
       import_hexa_example: 'Voorbeeld van HEXA',

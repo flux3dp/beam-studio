@@ -2055,6 +2055,8 @@ const lang: ILang = {
       import_ador_printing_example_single: 'Ador 列印範例 - 單色',
       import_beambox_2_example: 'Beambox II 範例',
       import_beambox_2_focus_probe: 'Beambox II 對焦尺 - 3mm',
+      import_beamo_2_laser_example: 'beamo II 雷射範例',
+      import_beamo_2_printing_example_full: 'beamo II 印刷範例 - 彩色',
       import_hello_beambox: 'Beambox 範例',
       import_hello_beamo: 'beamo 範例',
       import_hexa_example: 'HEXA 範例',

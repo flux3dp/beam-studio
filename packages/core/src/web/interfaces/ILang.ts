@@ -2047,6 +2047,8 @@ export interface ILang {
       import_ador_printing_example_single: string;
       import_beambox_2_example: string;
       import_beambox_2_focus_probe: string;
+      import_beamo_2_laser_example: string;
+      import_beamo_2_printing_example_full: string;
       import_hello_beambox: string;
       import_hello_beamo: string;
       import_hexa_example: string;

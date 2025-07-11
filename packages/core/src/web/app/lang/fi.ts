@@ -2054,6 +2054,8 @@ const lang: ILang = {
       import_ador_printing_example_single: 'Adorin tulostuksen esimerkki - Yksivärinen',
       import_beambox_2_example: 'Beambox II-esimerkki',
       import_beambox_2_focus_probe: 'Beambox II Tarkennusanturi - 3 mm',
+      import_beamo_2_laser_example: 'beamo IIin laser -esimerkki',
+      import_beamo_2_printing_example_full: 'beamo IIin tulostuksen esimerkki - Täysvärinen',
       import_hello_beambox: 'Beambox-esimerkki',
       import_hello_beamo: 'beamo-esimerkki',
       import_hexa_example: 'Esimerkki HEXA:sta',

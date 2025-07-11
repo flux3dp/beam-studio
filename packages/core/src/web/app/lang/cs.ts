@@ -2054,6 +2054,8 @@ const lang: ILang = {
       import_ador_printing_example_single: 'Příklad Ador tisknutí - jednobarevné',
       import_beambox_2_example: 'Příklad Beambox II',
       import_beambox_2_focus_probe: 'Beambox II Fokusová sonda - 3 mm',
+      import_beamo_2_laser_example: 'Příklad beamo II Laseru',
+      import_beamo_2_printing_example_full: 'Příklad beamo II tisknutí - barevné',
       import_hello_beambox: 'Příklady Beambox',
       import_hello_beamo: 'Příklady beamo',
       import_hexa_example: 'Příklad HEXA',

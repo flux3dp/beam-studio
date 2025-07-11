@@ -2054,6 +2054,8 @@ const lang: ILang = {
       import_ador_printing_example_single: 'Ejemplo de Ador Impresión - Color Único',
       import_beambox_2_example: 'Ejemplo de Beambox II',
       import_beambox_2_focus_probe: 'Sonda de Enfoque Beambox II - 3 mm',
+      import_beamo_2_laser_example: 'Ejemplo de beamo II Laser',
+      import_beamo_2_printing_example_full: 'Ejemplo de beamo II Impresión - Color Completo',
       import_hello_beambox: 'Ejemplo de Beambox',
       import_hello_beamo: 'Ejemplo de beamo',
       import_hexa_example: 'Ejemplo de HEXA',

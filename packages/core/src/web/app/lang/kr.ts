@@ -2054,6 +2054,8 @@ const lang: ILang = {
       import_ador_printing_example_single: 'Ador 인쇄 예시 - 단색',
       import_beambox_2_example: 'Beambox II 예제',
       import_beambox_2_focus_probe: 'Beambox II 초점 탐침 - 3mm',
+      import_beamo_2_laser_example: 'beamo II 레이저 예시',
+      import_beamo_2_printing_example_full: 'beamo II 인쇄 예시 - 풀 컬러',
       import_hello_beambox: 'Beambox 예시',
       import_hello_beamo: '비모 예시',
       import_hexa_example: 'HEXA 예제',

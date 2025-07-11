@@ -2054,6 +2054,8 @@ const lang: ILang = {
       import_ador_printing_example_single: 'Παράδειγμα εκτύπωσης Ador - Ένα χρώμα',
       import_beambox_2_example: 'Παράδειγμα του Beambox II',
       import_beambox_2_focus_probe: 'Beambox II Αισθητήρας Εστίασης - 3mm',
+      import_beamo_2_laser_example: 'Παράδειγμα Laser beamo II',
+      import_beamo_2_printing_example_full: 'Παράδειγμα εκτύπωσης beamo II - Πλήρες χρώμα',
       import_hello_beambox: 'Παράδειγμα Beambox',
       import_hello_beamo: 'Παράδειγμα του beamo',
       import_hexa_example: 'Παράδειγμα HEXA',
