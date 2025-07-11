@@ -1,6 +1,7 @@
 import { match } from 'ts-pattern';
 
 import history from '@core/app/svgedit/history/history';
+import undoManager from '@core/app/svgedit/history/undoManager';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
@@ -13,12 +14,7 @@ getSVGAsync(({ Canvas }) => {
   svgCanvas = Canvas;
 });
 
-type BBox = {
-  height: number;
-  width: number;
-  x: number;
-  y: number;
-};
+type BBox = { height: number; width: number; x: number; y: number };
 
 export type ConvertSvgToImageParams = {
   isToSelect?: boolean;
@@ -80,7 +76,7 @@ export const getTransformedCoordinates = (bbox: BBox, transform: null | string):
 
 export const convertCommonSvgToImage = async ({
   isToSelect = true,
-  parentCmd,
+  parentCmd = new history.BatchCommand('Convert Common SVG to Image'),
   positionOffset = [0, 0],
   svgElement,
 }: ConvertSvgToImageParams): Promise<SVGImageElement | undefined> => {
@@ -175,7 +171,7 @@ export const convertCommonSvgToImage = async ({
 
 export const convertTextToImage = async ({
   isToSelect = true,
-  parentCmd,
+  parentCmd = new history.BatchCommand('Convert Text to Image'),
   positionOffset = [0, 0],
   svgElement,
 }: ConvertSvgToImageParams): Promise<SVGImageElement | undefined> => {
@@ -278,7 +274,7 @@ export const convertTextToImage = async ({
 
 export const convertTextOnPathToImage = async ({
   isToSelect = true,
-  parentCmd,
+  parentCmd = new history.BatchCommand('Convert Text on Path to Image'),
   positionOffset = [0, 0],
   svgElement,
 }: ConvertSvgToImageParams): Promise<SVGImageElement | undefined> => {
@@ -390,7 +386,7 @@ export const convertTextOnPathToImage = async ({
 
 export const convertUseToImage = async ({
   isToSelect = true,
-  parentCmd,
+  parentCmd = new history.BatchCommand('Convert Use to Image'),
   positionOffset = [0, 0],
   svgElement,
 }: ConvertSvgToImageParams): Promise<SVGImageElement | undefined> => {
@@ -456,7 +452,7 @@ export const convertUseToImage = async ({
 };
 
 export const convertGroupToImage = async ({
-  parentCmd,
+  parentCmd = new history.BatchCommand('Convert Group to Image'),
   positionOffset = [0, 0],
   svgElement,
 }: ConvertSvgToImageParams): Promise<SVGImageElement | undefined> => {
@@ -492,19 +488,22 @@ export const convertGroupToImage = async ({
     }
   }
 
-  console.log(svgElement.children);
-
-  console.log('Converted images:', list);
-
   svgCanvas.selectOnly(list);
   svgCanvas.tempGroupSelectedElements();
-  svgCanvas.groupSelectedElements();
+
+  const groupCommand = svgCanvas.groupSelectedElements(true);
+
+  if (groupCommand) {
+    parentCmd.addSubCommand(groupCommand);
+  }
+
+  undoManager.addCommandToHistory(parentCmd);
 
   return undefined;
 };
 
 export const convertSvgToImage = async ({
-  parentCmd,
+  parentCmd = new history.BatchCommand('Convert SVG to Image'),
   positionOffset = [0, 0],
   svgElement,
 }: ConvertSvgToImageParams): Promise<SVGImageElement | undefined> => {
