@@ -17,6 +17,7 @@ import textEdit from '@core/app/svgedit/text/textedit';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import updateElementColor from '@core/helpers/color/updateElementColor';
+import type { ConvertSvgToImageParams } from '@core/helpers/convertToImage';
 import { convertSvgToImage } from '@core/helpers/convertToImage';
 import { convertSvgToPath, convertTextToPath, convertUseToPath } from '@core/helpers/convertToPath';
 import imageEdit from '@core/helpers/image-edit';
@@ -55,6 +56,10 @@ interface ButtonOpts {
 
 interface TabButtonOptions extends ButtonOpts {
   convertToPath: () => Promise<ConvertPathResult>;
+}
+
+interface ConvertToImageButtonOptions extends ButtonOpts {
+  convertToImage?: (params: ConvertSvgToImageParams) => Promise<SVGImageElement | undefined>;
 }
 
 type ConvertPathResult = {
@@ -155,14 +160,17 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       { isFullLine: true, mobileLabel: lang.outline, ...opts },
     );
 
-  const renderConvertToImageButton = ({ isText, ...opts }: ButtonOpts = { isText: false }): React.JSX.Element =>
+  const renderConvertToImageButton = (
+    { convertToImage = convertSvgToImage, isText: _isText = false, ...opts }: ConvertToImageButtonOptions = {
+      convertToImage: convertSvgToImage,
+      isText: false,
+    },
+  ): React.JSX.Element =>
     renderButtons(
       'convert_to_image',
       'Convert to Image',
       // lang.convert_to_path,
-      () =>
-        // isText ? convertTextToPath({ element: elem, isToSelect: true }) : svgCanvas.convertToPath(elem as SVGElement),
-        convertSvgToImage(elem),
+      () => convertToImage({ svgElement: elem as SVGGElement }),
       <ActionPanelIcons.ConvertToPath />,
       <ActionPanelIcons.ConvertToPathMobile />,
       { isFullLine: true, mobileLabel: lang.outline, ...opts },
@@ -368,6 +376,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     return [
       renderAutoFitButton(),
       renderConvertToPathButton({ isDisabled: isVariableText, isText: true, tooltipIfDisabled }),
+      renderConvertToImageButton({ isDisabled: isVariableText, isText: true, tooltipIfDisabled }),
       renderButtons(
         'weld',
         lang.weld_text,
@@ -410,6 +419,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       { isFullLine: true, mobileLabel: lang.detach_path_short },
     ),
     renderConvertToPathButton({ isText: true }),
+    renderConvertToImageButton({ isText: true }),
     renderSmartNestButton(),
     renderArrayButton({ isFullLine: true }),
   ];
@@ -433,6 +443,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       { isFullLine: true },
     ),
     renderSmartNestButton(),
+    renderConvertToImageButton(),
     renderOffsetButton(),
     renderArrayButton(),
     renderButtons(
@@ -471,6 +482,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
         { isDisabled: isVariableText, isFullLine: true, tooltipIfDisabled },
       ),
       renderSmartNestButton(),
+      renderConvertToImageButton(),
       renderArrayButton({ isFullLine: true }),
       renderOffsetButton({ isFullLine: true }),
       renderTabButton({ convertToPath: () => convertUseToPath({ element: elem, isToSelect: true }) }),
@@ -480,6 +492,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
   const renderGroupActions = (): React.JSX.Element[] => [
     renderAutoFitButton(),
     renderSmartNestButton(),
+    renderConvertToImageButton(),
     renderOffsetButton(),
     renderArrayButton(),
   ];
@@ -527,7 +540,14 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
 
     appendOptionalButtons(content);
 
-    return [renderAutoFitButton(), ...content, renderSmartNestButton(), renderOffsetButton(), renderArrayButton()];
+    return [
+      renderAutoFitButton(),
+      ...content,
+      renderSmartNestButton(),
+      renderConvertToImageButton(),
+      renderOffsetButton(),
+      renderArrayButton(),
+    ];
   };
 
   const content = match(elem?.tagName.toLowerCase())
