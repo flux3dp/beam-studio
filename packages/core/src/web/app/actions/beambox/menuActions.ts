@@ -125,8 +125,6 @@ const getExampleFileName = (key: ExampleFileKeys): string | undefined => {
 };
 
 const loadExampleFile = async (path: string | undefined) => {
-  console.log('Loading example file:', path);
-
   if (!path) {
     Alert.popUp({ message: lang.message.unsupported_example_file });
 
