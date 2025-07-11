@@ -284,6 +284,8 @@ export const convertTextOnPathToImage = async ({
 }: ConvertSvgToImageParams): Promise<SVGImageElement | undefined> => {
   let svgUrl: null | string = null;
 
+  console.log('Converting text on path to image:', svgElement);
+
   try {
     const bbox = svgElement.getBBox();
     // Create a new <svg> wrapper element to hold the cloned SVG
@@ -468,8 +470,15 @@ export const convertGroupToImage = async ({
       .with({ tagName: 'text' }, async (textElement) =>
         convertTextToImage({ isToSelect: false, parentCmd, positionOffset, svgElement: textElement as SVGGElement }),
       )
-      .with({ attributes: { 'data-textpath-g': '1' }, tagName: 'g' }, async (element) =>
-        convertTextOnPathToImage({ isToSelect: false, parentCmd, positionOffset, svgElement: element as SVGGElement }),
+      .when(
+        (element) => element.getAttribute('data-textpath-g') === '1',
+        async (element) =>
+          convertTextOnPathToImage({
+            isToSelect: false,
+            parentCmd,
+            positionOffset,
+            svgElement: element as SVGGElement,
+          }),
       )
       .with({ tagName: 'g' }, async (groupElement) =>
         convertGroupToImage({ isToSelect: false, parentCmd, positionOffset, svgElement: groupElement as SVGGElement }),
