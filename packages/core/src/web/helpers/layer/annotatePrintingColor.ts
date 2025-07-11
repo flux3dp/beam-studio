@@ -29,8 +29,6 @@ export const annotatePrintingColor = (): (() => void) => {
     const color = getData(layer, 'color');
     const colorShortName = colorMap[color as PrintingColors];
 
-    console.log(color, colorShortName);
-
     if (!colorShortName) return;
 
     layer.querySelectorAll('image').forEach((image) => {

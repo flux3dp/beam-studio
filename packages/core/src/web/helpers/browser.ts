@@ -47,6 +47,8 @@ export const getBrowser = (): 'Chrome' | 'Edge' | 'Firefox' | 'IE' | 'Safari' | 
   return 'Unknown';
 };
 
+export const isWebKit = navigator.userAgent.includes('AppleWebKit');
+
 export default {
   getBrowser,
 };

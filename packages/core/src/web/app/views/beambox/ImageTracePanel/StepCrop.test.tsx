@@ -83,24 +83,25 @@ describe('test StepCrop', () => {
       minX: 0,
       minY: 0,
     });
-    mockGetCameraCanvasUrl.mockReturnValue('mock-camera-canvas');
+    mockGetCameraCanvasUrl.mockResolvedValue('mock-camera-canvas');
 
     const { baseElement } = render(<StepCrop onCancel={mockOnCancel} onCropFinish={mockOnCropFinish} />);
 
-    expect(mockGetCoordinates).toBeCalledTimes(1);
-    expect(mockGetCameraCanvasUrl).toBeCalledTimes(1);
-    expect(mockDrawImage).toBeCalledTimes(1);
+    await new Promise((resolve) => setTimeout(resolve, 0)); // wait for initImage to complete
+    expect(mockGetCoordinates).toHaveBeenCalledTimes(1);
+    expect(mockGetCameraCanvasUrl).toHaveBeenCalledTimes(1);
+    expect(mockDrawImage).toHaveBeenCalledTimes(1);
     expect(mockDrawImage).toHaveBeenLastCalledWith(expect.anything(), 0, 0, 100, 100, 0, 0, 100, 100);
 
-    expect(mockToBlob).toBeCalledTimes(1);
-    expect(mockCreateObjectURL).not.toBeCalled();
+    expect(mockToBlob).toHaveBeenCalledTimes(1);
+    expect(mockCreateObjectURL).not.toHaveBeenCalled();
     mockCreateObjectURL.mockReturnValue('mock-object-url');
 
     const [callback] = mockToBlob.mock.calls[0];
 
     expect(baseElement).toMatchSnapshot();
     await act(async () => callback('mock-blob'));
-    expect(mockCreateObjectURL).toBeCalledTimes(1);
+    expect(mockCreateObjectURL).toHaveBeenCalledTimes(1);
     expect(mockCreateObjectURL).toHaveBeenLastCalledWith('mock-blob');
     expect(baseElement).toMatchSnapshot();
   });
@@ -112,29 +113,30 @@ describe('test StepCrop', () => {
       minX: 0,
       minY: 0,
     });
-    mockGetCameraCanvasUrl.mockReturnValue('mock-camera-canvas');
+    mockGetCameraCanvasUrl.mockResolvedValue('mock-camera-canvas');
 
     const { baseElement, getByText } = render(<StepCrop onCancel={mockOnCancel} onCropFinish={mockOnCropFinish} />);
 
+    await new Promise((resolve) => setTimeout(resolve, 0)); // wait for initImage to complete
     mockCreateObjectURL.mockReturnValue('mock-object-url');
     await act(async () => mockToBlob.mock.calls[0][0]('mock-blob'));
 
     const img = baseElement.querySelector('img');
 
     fireEvent.load(img);
-    expect(mockGetData).not.toBeCalled();
+    expect(mockGetData).not.toHaveBeenCalled();
     mockGetData.mockReturnValue('mock-data');
-    expect(mockGetCroppedCanvas).not.toBeCalled();
+    expect(mockGetCroppedCanvas).not.toHaveBeenCalled();
     mockGetCroppedCanvas.mockReturnValue({ toBlob: mockToBlob });
-    expect(mockCropper).toBeCalledTimes(1);
+    expect(mockCropper).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText('next'));
-    expect(mockGetData).toBeCalledTimes(1);
-    expect(mockGetCroppedCanvas).toBeCalledTimes(1);
-    expect(mockToBlob).toBeCalledTimes(2);
+    expect(mockGetData).toHaveBeenCalledTimes(1);
+    expect(mockGetCroppedCanvas).toHaveBeenCalledTimes(1);
+    expect(mockToBlob).toHaveBeenCalledTimes(2);
     mockToBlob.mock.calls[1][0]('mock-blob2');
-    expect(mockCreateObjectURL).toBeCalledTimes(2);
+    expect(mockCreateObjectURL).toHaveBeenCalledTimes(2);
     expect(mockCreateObjectURL).toHaveBeenLastCalledWith('mock-blob2');
-    expect(mockOnCropFinish).toBeCalledTimes(1);
+    expect(mockOnCropFinish).toHaveBeenCalledTimes(1);
     expect(mockOnCropFinish).toHaveBeenLastCalledWith('mock-data', 'mock-object-url');
   });
 });

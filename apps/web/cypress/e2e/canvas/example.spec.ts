@@ -58,7 +58,6 @@ const exampleList = [
   {
     label: 'Material Line Test',
     type: 'Material Test',
-    ador: [],
     beam: 'df4c6b2cf36c69f0f919bdc9dec5efd6',
   },
   {
@@ -68,7 +67,6 @@ const exampleList = [
   },
   {
     label: 'Acrylic Focus Probe - 3mm',
-    ador: [],
     beam: '1fbe213caa963b4eee1bad80facf7805',
   },
 ];
@@ -105,14 +103,16 @@ describe('Example Import', () => {
   });
 
   exampleList.forEach(({ label, ador, beam, type }) => {
-    it(`Import ${label} in Ador`, () => {
-      cy.changeWorkarea('Ador');
-      openExample(label, type);
+    if (ador) {
+      it(`Import ${label} in Ador`, () => {
+        cy.changeWorkarea('Ador');
+        openExample(label, type);
 
-      const expectedHash = isWindows ? ador[1] : ador[0];
+        const expectedHash = isWindows ? ador[1] : ador[0];
 
-      validateExample(expectedHash);
-    });
+        validateExample(expectedHash);
+      });
+    }
 
     if (beam) {
       it(`Import ${label} in BeamSeries`, () => {

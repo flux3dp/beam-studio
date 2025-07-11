@@ -53,7 +53,7 @@ const CurveEngraving = ({ data: initData, onClose, onRemeasure }: Props): React.
   const cameraImagePromise = useMemo(async () => {
     const { height, width, x, y } = bbox;
     const { dpmm } = constant;
-    const canvasUrl = previewModeBackgroundDrawer.getCameraCanvasUrl();
+    const canvasUrl = await previewModeBackgroundDrawer.getCameraCanvasUrl();
 
     if (!canvasUrl) {
       return null;
