@@ -1,10 +1,8 @@
 import { match } from 'ts-pattern';
 
 import NS from '@core/app/constants/namespaces';
-import { workareaConstants } from '@core/app/constants/workarea-constants';
 import { isWebKit } from '@core/helpers/browser';
 import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
-import round from '@core/helpers/math/round';
 
 const generateFixedSizeSvg = (dimension: number[]) => {
   const svg = document.createElementNS(NS.SVG, 'svg');
@@ -15,6 +13,22 @@ const generateFixedSizeSvg = (dimension: number[]) => {
   svg.setAttribute('width', '100%');
   svg.setAttribute('height', '100%');
   svg.setAttribute('viewBox', `0 0 ${dimension[0]} ${dimension[1]}`);
+
+  return svg;
+};
+
+const generateModelSizeSvg = (dimension: number[]) => {
+  const svg = document.createElementNS(NS.SVG, 'svg');
+  const defs = document.createElementNS(NS.SVG, 'defs');
+
+  svg.setAttribute('id', 'modelSizeSvg');
+  svg.setAttribute('x', '0');
+  svg.setAttribute('y', '0');
+  svg.setAttribute('width', dimension[0].toString());
+  svg.setAttribute('height', dimension[1].toString());
+
+  defs.setAttribute('id', 'modelSizeDefs');
+  svg.appendChild(defs);
 
   return svg;
 };
@@ -32,11 +46,6 @@ const setupBackground = (dimension: number[], getRoot: () => Element, getContent
   // Chrome 7 has a problem with this when zooming out
   canvasBackground.setAttribute('overflow', isWebKit ? 'none' : 'visible');
 
-  const defs = document.createElementNS(NS.SVG, 'defs');
-
-  defs.setAttribute('id', 'canvasBackgroundDefs');
-  canvasBackground.appendChild(defs);
-
   const rect = document.createElementNS(NS.SVG, 'rect');
 
   rect.setAttribute('id', 'canvasBackgroundRect');
@@ -51,6 +60,7 @@ const setupBackground = (dimension: number[], getRoot: () => Element, getContent
   rect.setAttribute('vector-effect', 'non-scaling-stroke');
 
   canvasBackground.appendChild(rect);
+  canvasBackground.appendChild(generateModelSizeSvg(dimension));
   canvasBackground.appendChild(generateFixedSizeSvg(dimension));
 
   getRoot().insertBefore(canvasBackground, getContent());
@@ -61,20 +71,15 @@ const getBackgroundImageContainer = (): Element => {
 
   if (container) return container;
 
-  const canvasBackground = document.getElementById('canvasBackground');
+  const modelSizeSvg = document.getElementById('modelSizeSvg');
 
-  if (!canvasBackground) throw new Error('Canvas background not found');
+  if (!modelSizeSvg) throw new Error('Canvas background not found');
 
-  const fixedSizeSvg = canvasBackground.querySelector('#fixedSizeSvg');
   const newContainer = document.createElementNS(NS.SVG, 'g');
 
   newContainer.setAttribute('id', 'backgroundImageContainer');
 
-  if (fixedSizeSvg) {
-    canvasBackground.insertBefore(newContainer, fixedSizeSvg);
-  } else {
-    canvasBackground.appendChild(newContainer);
-  }
+  modelSizeSvg.appendChild(newContainer);
 
   return newContainer;
 };
@@ -125,12 +130,8 @@ export const clearBackgroundImage = () => {
 
 type BackgroundMaskType = 'fbm2Camera';
 
-const createMaskElement = (maskType: BackgroundMaskType): void => {
-  if (document.getElementById(maskType)) return;
-
-  const defs = document.getElementById('canvasBackgroundDefs');
-
-  if (!defs) throw new Error('Canvas background definitions not found');
+const createMaskElement = (parent: SVGDefsElement, maskType: BackgroundMaskType): void => {
+  if (parent.querySelector(`#${maskType}`)) return;
 
   match(maskType)
     .with('fbm2Camera', () => {
@@ -144,11 +145,10 @@ const createMaskElement = (maskType: BackgroundMaskType): void => {
       filter.setAttribute('height', '200%');
       feGaussianBlur.setAttribute('stdDeviation', '200');
       filter.appendChild(feGaussianBlur);
-      defs.appendChild(filter);
+      parent.appendChild(filter);
 
       const mask = document.createElementNS(NS.SVG, 'mask');
       const maskEllipse = document.createElementNS(NS.SVG, 'ellipse');
-      const { pxHeight, topExpansion } = workareaConstants.fbm2;
 
       mask.setAttribute('id', maskType);
       mask.setAttribute('maskUnits', 'objectBoundingBox');
@@ -157,13 +157,13 @@ const createMaskElement = (maskType: BackgroundMaskType): void => {
       mask.setAttribute('width', '100%');
       mask.setAttribute('height', '100%');
       maskEllipse.setAttribute('cx', '50%');
-      maskEllipse.setAttribute('cy', `${round((100 * pxHeight) / (pxHeight + (topExpansion ?? 0)), 2)}%`);
+      maskEllipse.setAttribute('cy', '100%');
       maskEllipse.setAttribute('rx', '50%');
-      maskEllipse.setAttribute('ry', '60%');
+      maskEllipse.setAttribute('ry', '50%');
       maskEllipse.setAttribute('fill', 'white');
       maskEllipse.setAttribute('filter', 'url(#fbm2CameraFilter)');
       mask.appendChild(maskEllipse);
-      defs.appendChild(mask);
+      parent.appendChild(mask);
 
       return mask;
     })
@@ -183,7 +183,7 @@ export const setMaskImage = (url: string, maskType: BackgroundMaskType) => {
     URL.revokeObjectURL(image.getAttributeNS(NS.XLINK, 'xlink:href')!);
   }
 
-  createMaskElement(maskType);
+  createMaskElement(document.getElementById('modelSizeDefs') as unknown as SVGDefsElement, maskType);
   image.setAttribute('mask', `url(#${maskType})`);
   image.setAttributeNS(NS.XLINK, 'xlink:href', url);
   clearBackgroundUrlCache();
@@ -224,7 +224,7 @@ export const getBackgroundUrl = async (width: number, height: number): Promise<s
       xmlns="http://www.w3.org/2000/svg"
       xmlns:xlink="http://www.w3.org/1999/xlink"
     >
-      ${(document.getElementById('canvasBackgroundDefs')?.cloneNode(true) as Element).outerHTML ?? ''}
+      ${(document.getElementById('modelSizeDefs')?.cloneNode(true) as Element).outerHTML ?? ''}
       <image
         id="maskImage"
         x="0"
