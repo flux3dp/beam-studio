@@ -8,19 +8,16 @@ import i18n from '@core/helpers/i18n';
 import communicator from '@core/implementations/communicator';
 import storage from '@core/implementations/storage';
 
-const { FLUX } = window;
 const LANG = i18n.lang.update.software;
 
 const checkForUpdate = (isAutoCheck: boolean) => {
-  const currentChannel = FLUX.version.split('-')[1] || 'latest';
-
   if (!isAutoCheck) {
     Progress.openNonstopProgress({ id: 'electron-check-update', message: LANG.checking });
   }
 
   let hasGetResponse = false;
 
-  communicator.send('CHECK_FOR_UPDATE', currentChannel);
+  communicator.send('CHECK_FOR_UPDATE');
   setTimeout(() => {
     if (!hasGetResponse) {
       if (!isAutoCheck) {
@@ -54,7 +51,9 @@ const checkForUpdate = (isAutoCheck: boolean) => {
         return;
       }
 
+      const { FLUX } = window;
       const channel = res.info.version.split('-')[1] || 'latest';
+      const currentChannel = FLUX?.version?.split('-')[1] || 'latest';
 
       if (currentChannel !== channel) {
         console.log(`Current Channel: ${currentChannel}, But got: ${channel}`);
@@ -108,6 +107,7 @@ const checkForUpdate = (isAutoCheck: boolean) => {
 };
 
 const switchVersion = (): void => {
+  const { FLUX } = window;
   const currentChannel = FLUX.version.split('-')[1];
 
   Progress.openNonstopProgress({ id: 'electron-check-switch', message: LANG.checking });
