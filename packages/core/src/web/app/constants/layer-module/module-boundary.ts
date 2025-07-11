@@ -16,6 +16,8 @@ const moduleBoundaries: Partial<
   },
   fbm2: {
     [LayerModule.LASER_1064]: { bottom: 20, left: 0, right: 90, top: 0 },
+    // printer size: 5.3mm x 12.7mm
+    [LayerModule.PRINTER_4C]: { bottom: -12.7, left: 0, right: 0, top: 0 },
   },
 };
 

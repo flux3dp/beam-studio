@@ -441,6 +441,7 @@ const lang: ILang = {
       laser_panel: {
         advanced: '詳細設定',
         air_assist: 'エアアシスト',
+        am_density: '網点密度',
         backlash: 'バックラッシュ',
         bi_directional: '双方向',
         by: '', // keep empty on purpose
@@ -1621,6 +1622,8 @@ const lang: ILang = {
     go: '開始',
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 エアフローセンサー異常',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 ボトムカバーオープン。ドアを閉めて続行します。',
+    HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 プリントヘッドカバーの装着に失敗しました',
+    HARDWARE_ERROR_COVER_NOT_OPENED: '#925 プリントヘッドカバーの取り外しに失敗しました',
     HARDWARE_ERROR_DOOR_OPENED: '#901 続行するにはドアを閉じてください。',
     HARDWARE_ERROR_DRAWER_OPENED: '#911 引き出しが開きました',
     HARDWARE_ERROR_FIRE_DETECTED: '#912 火炎センサー異常',
@@ -2051,6 +2054,8 @@ const lang: ILang = {
       import_ador_printing_example_single: 'Ador プリントの例 - シングルカラー',
       import_beambox_2_example: 'Beambox IIの例',
       import_beambox_2_focus_probe: 'Beambox II フォーカスプローブ - 3mm',
+      import_beamo_2_laser_example: 'beamo II レーザーの例',
+      import_beamo_2_printing_example_full: 'beamo II プリントの例 - フルカラー',
       import_hello_beambox: 'Beamboxの例',
       import_hello_beamo: 'beamoの例',
       import_hexa_example: 'HEXAの例',

@@ -240,6 +240,12 @@ export default function Menu({ email }: Props): React.JSX.Element {
               {menuCms.import_ador_printing_example_full}
             </MenuItem>
             <MenuItem onClick={() => callback('IMPORT_EXAMPLE')}>{menuCms.import_hello_beamo}</MenuItem>
+            <MenuItem onClick={() => callback('IMPORT_EXAMPLE_BEAMO_2_LASER')}>
+              {menuCms.import_beamo_2_laser_example}
+            </MenuItem>
+            <MenuItem onClick={() => callback('IMPORT_EXAMPLE_BEAMO_2_PRINT_FULL')}>
+              {menuCms.import_beamo_2_printing_example_full}
+            </MenuItem>
             <MenuItem onClick={() => callback('IMPORT_HELLO_BEAMBOX')}>{menuCms.import_hello_beambox}</MenuItem>
             <MenuItem onClick={() => callback('IMPORT_EXAMPLE_BEAMBOX_2')}>{menuCms.import_beambox_2_example}</MenuItem>
             <MenuItem onClick={() => callback('IMPORT_EXAMPLE_HEXA')}>{menuCms.import_hexa_example}</MenuItem>

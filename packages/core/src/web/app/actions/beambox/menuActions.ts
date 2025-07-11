@@ -2,7 +2,7 @@ import { Buffer } from 'buffer';
 
 import Alert from '@core/app/actions/alert-caller';
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import constant from '@core/app/actions/beambox/constant';
+import { adorModels } from '@core/app/actions/beambox/constant';
 import ExportFuncs from '@core/app/actions/beambox/export-funcs';
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import Tutorials from '@core/app/actions/beambox/tutorials';
@@ -47,6 +47,8 @@ type ExampleFileKeys =
   | 'ador_example_printing_single'
   | 'beambox_2_example'
   | 'beambox_2_focus_probe'
+  | 'beamo_2_example_laser'
+  | 'beamo_2_example_printing_full'
   | 'example'
   | 'focus_probe'
   | 'hello_beambox'
@@ -67,60 +69,62 @@ type ExampleFileKeys =
   | 'promark_mopa_100w_color_example'
   | 'promark_mopa_100w_color_example_2';
 
-const getExampleFileName = (key: ExampleFileKeys): string => {
+type ExampleFileMap = Partial<Record<ExampleFileKeys, string>>;
+
+const getExampleFileName = (key: ExampleFileKeys): string | undefined => {
   const workarea = BeamboxPreference.read('workarea') || 'fbm1';
 
-  if (!constant.adorModels.includes(workarea)) {
-    return (
-      {
-        beambox_2_example: 'examples/beambox_2_example.bvg',
-        beambox_2_focus_probe: 'examples/beambox_2_focus_probe.bvg',
-        example: 'examples/badge.bvg',
-        focus_probe: 'examples/focus_probe.bvg',
-        hello_beambox: 'examples/hello-beambox.bvg',
-        hexa_example: 'examples/hexa_example.bvg',
-        mat_test_cut: 'examples/mat_test_cut.bvg',
-        mat_test_cut_beambox_2: 'examples/mat_test_cut_beambox_2.bvg',
-        mat_test_engrave: 'examples/mat_test_engrave.bvg',
-        mat_test_engrave_beambox_2: 'examples/mat_test_engrave_beambox_2.bvg',
-        mat_test_line: 'examples/mat_test_line.bvg',
-        mat_test_old: 'examples/mat_test_old.bvg',
-        mat_test_simple_cut: 'examples/mat_test_simple_cut.bvg',
-        promark_example: 'examples/promark_example.bvg',
-        promark_mopa_20w_color_example: 'examples/promark_mopa_20w_color_example.bvg',
-        promark_mopa_60w_color_example: 'examples/promark_mopa_60w_color_example.bvg',
-        promark_mopa_60w_color_example_2: 'examples/promark_mopa_60w_color_example_2.bvg',
-        promark_mopa_100w_color_example: 'examples/promark_mopa_100w_color_example.bvg',
-        promark_mopa_100w_color_example_2: 'examples/promark_mopa_100w_color_example_2.bvg',
-      } as any
-    )[key] as string;
-  }
+  const basicExamples: ExampleFileMap = {
+    beambox_2_example: 'examples/beambox_2_example.bvg',
+    beambox_2_focus_probe: 'examples/beambox_2_focus_probe.bvg',
+    example: 'examples/badge.bvg',
+    focus_probe: 'examples/focus_probe.bvg',
+    hello_beambox: 'examples/hello-beambox.bvg',
+    hexa_example: 'examples/hexa_example.bvg',
+    mat_test_cut: 'examples/mat_test_cut.bvg',
+    mat_test_cut_beambox_2: 'examples/mat_test_cut_beambox_2.bvg',
+    mat_test_engrave: 'examples/mat_test_engrave.bvg',
+    mat_test_engrave_beambox_2: 'examples/mat_test_engrave_beambox_2.bvg',
+    mat_test_line: 'examples/mat_test_line.bvg',
+    mat_test_old: 'examples/mat_test_old.bvg',
+    mat_test_simple_cut: 'examples/mat_test_simple_cut.bvg',
+    promark_example: 'examples/promark_example.bvg',
+    promark_mopa_20w_color_example: 'examples/promark_mopa_20w_color_example.bvg',
+    promark_mopa_60w_color_example: 'examples/promark_mopa_60w_color_example.bvg',
+    promark_mopa_60w_color_example_2: 'examples/promark_mopa_60w_color_example_2.bvg',
+    promark_mopa_100w_color_example: 'examples/promark_mopa_100w_color_example.bvg',
+    promark_mopa_100w_color_example_2: 'examples/promark_mopa_100w_color_example_2.bvg',
+  };
 
-  return (
-    {
+  if (adorModels.has(workarea)) {
+    return {
+      ...basicExamples,
       ador_example_laser: 'examples/ador_example_laser.bvg',
       ador_example_printing_full: 'examples/ador_example_printing_full.bvg',
       ador_example_printing_single: 'examples/ador_example_printing_single.bvg',
-      beambox_2_example: 'examples/beambox_2_example.bvg',
-      example: 'examples/badge.bvg',
-      hello_beambox: 'examples/hello-beambox.bvg',
-      hexa_example: 'examples/hexa_example.bvg',
       mat_test_cut: 'examples/ador_cutting_test.bvg',
       mat_test_engrave: 'examples/ador_engraving_test.bvg',
       mat_test_old: 'examples/ador_engraving_test_classic.bvg',
       mat_test_printing: 'examples/ador_color_ring.bvg',
       mat_test_simple_cut: 'examples/ador_cutting_test_simple.bvg',
-      promark_example: 'examples/promark_example.bvg',
-      promark_mopa_20w_color_example: 'examples/promark_mopa_20w_color_example.bvg',
-      promark_mopa_60w_color_example: 'examples/promark_mopa_60w_color_example.bvg',
-      promark_mopa_60w_color_example_2: 'examples/promark_mopa_60w_color_example_2.bvg',
-      promark_mopa_100w_color_example: 'examples/promark_mopa_100w_color_example.bvg',
-      promark_mopa_100w_color_example_2: 'examples/promark_mopa_100w_color_example_2.bvg',
-    } as any
-  )[key] as string;
+    }[key];
+  }
+
+  if (workarea === 'fbm2') {
+    return {
+      ...basicExamples,
+      beamo_2_example_laser: 'examples/beamo_2_example_laser.bvg',
+      beamo_2_example_printing_full: 'examples/beamo_2_example_printing_full.bvg',
+      mat_test_cut: 'examples/mat_test_cut_beambox_2.bvg',
+      mat_test_engrave: 'examples/mat_test_engrave_beambox_2.bvg',
+      mat_test_printing: 'examples/beamo_2_color_ring.bvg',
+    }[key];
+  }
+
+  return basicExamples[key];
 };
 
-const loadExampleFile = async (path: string) => {
+const loadExampleFile = async (path: string | undefined) => {
   if (!path) {
     Alert.popUp({ message: lang.message.unsupported_example_file });
 
@@ -213,6 +217,9 @@ export default {
   IMPORT_EXAMPLE_ADOR_PRINT_SINGLE: (): Promise<void> =>
     loadExampleFile(getExampleFileName('ador_example_printing_single')),
   IMPORT_EXAMPLE_BEAMBOX_2: (): Promise<void> => loadExampleFile(getExampleFileName('beambox_2_example')),
+  IMPORT_EXAMPLE_BEAMO_2_LASER: (): Promise<void> => loadExampleFile(getExampleFileName('beamo_2_example_laser')),
+  IMPORT_EXAMPLE_BEAMO_2_PRINT_FULL: (): Promise<void> =>
+    loadExampleFile(getExampleFileName('beamo_2_example_printing_full')),
   IMPORT_EXAMPLE_HEXA: (): Promise<void> => loadExampleFile(getExampleFileName('hexa_example')),
   IMPORT_EXAMPLE_PROMARK: (): Promise<void> => loadExampleFile(getExampleFileName('promark_example')),
   IMPORT_EXAMPLE_PROMARK_MOPA_20W_COLOR: (): Promise<void> =>

@@ -81,6 +81,8 @@ export function buildFileMenu(
             { click: callback, id: 'IMPORT_EXAMPLE_ADOR_PRINT_SINGLE', label: r.import_ador_printing_example_single },
             { click: callback, id: 'IMPORT_EXAMPLE_ADOR_PRINT_FULL', label: r.import_ador_printing_example_full },
             { click: callback, id: 'IMPORT_EXAMPLE', label: r.import_hello_beamo },
+            { click: callback, id: 'IMPORT_EXAMPLE_BEAMO_2_LASER', label: r.import_beamo_2_laser_example },
+            { click: callback, id: 'IMPORT_EXAMPLE_BEAMO_2_PRINT_FULL', label: r.import_beamo_2_printing_example_full },
             { click: callback, id: 'IMPORT_HELLO_BEAMBOX', label: r.import_hello_beambox },
             { click: callback, id: 'IMPORT_EXAMPLE_BEAMBOX_2', label: r.import_beambox_2_example },
             { click: callback, id: 'IMPORT_EXAMPLE_HEXA', label: r.import_hexa_example },
