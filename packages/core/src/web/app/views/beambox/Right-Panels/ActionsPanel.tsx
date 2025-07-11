@@ -17,8 +17,7 @@ import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import { showRotaryWarped } from '@core/app/views/dialogs/image-edit/RotaryWarped';
 import updateElementColor from '@core/helpers/color/updateElementColor';
-import type { ConvertSvgToImageParams } from '@core/helpers/convertToImage';
-import { convertSvgToImage } from '@core/helpers/convertToImage';
+import { convertibleSvgTags, convertSvgToImage } from '@core/helpers/convertToImage';
 import { convertSvgToPath, convertTextToPath, convertUseToPath } from '@core/helpers/convertToPath';
 import imageEdit from '@core/helpers/image-edit';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -57,10 +56,6 @@ interface ButtonOpts {
 
 interface TabButtonOptions extends ButtonOpts {
   convertToPath: () => Promise<ConvertPathResult>;
-}
-
-interface ConvertToImageButtonOptions extends ButtonOpts {
-  convertToImage?: (params: ConvertSvgToImageParams) => Promise<SVGImageElement | undefined>;
 }
 
 type ConvertPathResult = {
@@ -162,8 +157,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     );
 
   const renderConvertToImageButton = (
-    { convertToImage = convertSvgToImage, isText: _isText = false, ...opts }: ConvertToImageButtonOptions = {
-      convertToImage: convertSvgToImage,
+    { isText: _isText = false, ...opts }: ButtonOpts = {
       isText: false,
     },
   ): React.JSX.Element =>
@@ -171,7 +165,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       'convert_to_image',
       'Convert to Image',
       // lang.convert_to_path,
-      () => convertToImage({ svgElement: elem as SVGGElement }),
+      () => convertSvgToImage({ svgElement: elem as SVGGElement }),
       <ActionPanelIcons.ConvertToPath />,
       <ActionPanelIcons.ConvertToPathMobile />,
       { isFullLine: true, mobileLabel: lang.outline, ...opts },
@@ -501,7 +495,10 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
   ];
 
   const renderMultiSelectActions = (): React.JSX.Element[] => {
-    const children = Array.from(elem.childNodes);
+    const children = Array.from(elem.childNodes) as SVGElement[];
+    const isConvertibleToImage = children.every(({ tagName }) => convertibleSvgTags.includes(tagName.toLowerCase()));
+    let content: React.JSX.Element[] = [];
+
     const appendOptionalButtons = (buttons: React.JSX.Element[]) => {
       const text = children.find((child) => child.nodeName === 'text') as SVGElement;
       const pathLike = children.find((child) =>
@@ -539,7 +536,6 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
         );
       }
     };
-    let content: React.JSX.Element[] = [];
 
     appendOptionalButtons(content);
 
@@ -547,7 +543,10 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       renderAutoFitButton(),
       ...content,
       renderSmartNestButton(),
-      renderConvertToImageButton(),
+      renderConvertToImageButton({
+        isDisabled: !isConvertibleToImage,
+        tooltipIfDisabled: lang.disabled_by_variable_text,
+      }),
       renderOffsetButton(),
       renderArrayButton(),
     ];
