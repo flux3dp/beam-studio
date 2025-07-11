@@ -59,6 +59,7 @@ class Menu extends AbstractMenu {
     this.setDevMode(isDev);
     this.initMenuItemStatus();
     this.initMenuEvents();
+    ElectronUpdater.autoCheck();
   }
 
   rerenderMenu(): void {
@@ -99,7 +100,6 @@ class Menu extends AbstractMenu {
 
   attach(enabledItems: string[]) {
     super.attach(enabledItems);
-    ElectronUpdater.autoCheck();
     updateWindowsMenu();
   }
 
