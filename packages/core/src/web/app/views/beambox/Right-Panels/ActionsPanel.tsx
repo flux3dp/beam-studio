@@ -18,7 +18,7 @@ import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelIte
 import { showRotaryWarped } from '@core/app/views/dialogs/image-edit/RotaryWarped';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import type { ConvertSvgToImageParams } from '@core/helpers/convertToImage';
-import { convertSvgToImage, convertTextToImage } from '@core/helpers/convertToImage';
+import { convertSvgToImage } from '@core/helpers/convertToImage';
 import { convertSvgToPath, convertTextToPath, convertUseToPath } from '@core/helpers/convertToPath';
 import imageEdit from '@core/helpers/image-edit';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -379,12 +379,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     return [
       renderAutoFitButton(),
       renderConvertToPathButton({ isDisabled: isVariableText, isText: true, tooltipIfDisabled }),
-      renderConvertToImageButton({
-        convertToImage: convertTextToImage,
-        isDisabled: isVariableText,
-        isText: true,
-        tooltipIfDisabled,
-      }),
+      renderConvertToImageButton({ isDisabled: isVariableText, isText: true, tooltipIfDisabled }),
       renderButtons(
         'weld',
         lang.weld_text,

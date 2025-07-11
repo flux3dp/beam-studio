@@ -1,3 +1,5 @@
+import { match } from 'ts-pattern';
+
 import history from '@core/app/svgedit/history/history';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -19,6 +21,7 @@ type BBox = {
 };
 
 export type ConvertSvgToImageParams = {
+  isToSelect?: boolean;
   parentCmd?: IBatchCommand;
   positionOffset?: number[];
   scale?: number;
@@ -35,6 +38,7 @@ export const convertibleSvgTags = [
   'path',
   'text',
   'use',
+  'g',
 ] as const;
 export const commonSvgTags = ['rect', 'circle', 'ellipse', 'line', 'polygon', 'polyline', 'path'] as const;
 
@@ -75,6 +79,7 @@ export const getTransformedCoordinates = (bbox: BBox, transform: null | string):
 };
 
 export const convertCommonSvgToImage = async ({
+  isToSelect = true,
   parentCmd,
   positionOffset = [0, 0],
   svgElement,
@@ -87,16 +92,9 @@ export const convertCommonSvgToImage = async ({
 
   try {
     const bbox = svgElement.getBBox();
-    // Create a new <svg> wrapper element to hold the cloned SVG
     const wrapper = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     const isFilled = svgElement.getAttribute('fill') !== 'none' && svgElement.getAttribute('fill') !== null;
     const cloned = svgElement.cloneNode(true) as SVGGraphicsElement;
-    const previousTransform = cloned.getAttribute('transform');
-    const transformScale = cloned
-      .getAttribute('transform')
-      ?.match(/matrix\(([^)]+)\)/)![1]
-      .split(' ')[0] as unknown as number;
-    const transformedCoordinates = getTransformedCoordinates(bbox, previousTransform);
     let strokeOffset = 0;
 
     if (!isFilled) {
@@ -104,8 +102,8 @@ export const convertCommonSvgToImage = async ({
     }
 
     wrapper.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-    wrapper.setAttribute('width', String(bbox.width * (transformScale || 1) + strokeOffset));
-    wrapper.setAttribute('height', String(bbox.height * (transformScale || 1) + strokeOffset));
+    wrapper.setAttribute('width', String(bbox.width * 1 + strokeOffset));
+    wrapper.setAttribute('height', String(bbox.height * 1 + strokeOffset));
 
     cloned.setAttribute('fill', '#000');
     cloned.setAttribute('stroke', '#000');
@@ -115,10 +113,7 @@ export const convertCommonSvgToImage = async ({
       cloned.setAttribute('stroke-width', String(strokeOffset));
     }
 
-    cloned.setAttribute(
-      'transform',
-      `translate(${-transformedCoordinates.x + strokeOffset / 2}, ${-transformedCoordinates.y + strokeOffset / 2}) ${previousTransform ?? ''}`,
-    );
+    cloned.setAttribute('transform', `translate(${-bbox.x + strokeOffset / 2}, ${-bbox.y + strokeOffset / 2}) `);
     wrapper.appendChild(cloned);
 
     const svgData = new XMLSerializer().serializeToString(wrapper);
@@ -146,15 +141,18 @@ export const convertCommonSvgToImage = async ({
         preserveAspectRatio: 'none',
         style: 'pointer-events:inherit',
         width,
-        x: svgElement.getAttribute('x')! + positionOffset[0],
-        y: svgElement.getAttribute('y')! + positionOffset[1],
+        x: bbox.x + positionOffset[0],
+        y: bbox.y + positionOffset[1],
       },
       element: 'image',
     });
 
     svgCanvas.setHref(newImage, img.src);
     updateElementColor(newImage);
-    svgCanvas.selectOnly([newImage]);
+
+    if (isToSelect) {
+      svgCanvas.selectOnly([newImage]);
+    }
 
     const cmd = new history.InsertElementCommand(newImage);
 
@@ -176,6 +174,7 @@ export const convertCommonSvgToImage = async ({
 };
 
 export const convertTextToImage = async ({
+  isToSelect = true,
   parentCmd,
   positionOffset = [0, 0],
   svgElement,
@@ -188,7 +187,6 @@ export const convertTextToImage = async ({
 
   try {
     const bbox = svgElement.getBBox();
-    // Create a new <svg> wrapper element to hold the cloned SVG
     const wrapper = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     const isFilled = svgElement.getAttribute('fill') !== 'none' && svgElement.getAttribute('fill') !== null;
     const cloned = svgElement.cloneNode(true) as SVGGraphicsElement;
@@ -199,8 +197,6 @@ export const convertTextToImage = async ({
       .split(' ')[0] as unknown as number;
     const transformedCoordinates = getTransformedCoordinates(bbox, previousTransform);
     let strokeOffset = 0;
-
-    console.log('Transformed Coordinates:', transformedCoordinates);
 
     if (!isFilled) {
       strokeOffset = 5;
@@ -256,7 +252,10 @@ export const convertTextToImage = async ({
 
     svgCanvas.setHref(newImage, img.src);
     updateElementColor(newImage);
-    svgCanvas.selectOnly([newImage]);
+
+    if (isToSelect) {
+      svgCanvas.selectOnly([newImage]);
+    }
 
     const cmd = new history.InsertElementCommand(newImage);
 
@@ -277,79 +276,13 @@ export const convertTextToImage = async ({
   }
 };
 
-export const convertUseToImage = async ({
-  parentCmd,
-  positionOffset = [0, 0],
-  svgElement,
-}: ConvertSvgToImageParams): Promise<SVGImageElement | undefined> => {
-  if (!svgElement.getAttribute('xlink:href')) {
-    console.warn('The provided SVG element does not have a valid href attribute.');
-
-    return;
-  }
-
-  const symbolId = svgElement.getAttribute('xlink:href')!;
-  const symbol = document.querySelector(symbolId);
-  const href = symbol?.children[0]?.getAttribute('href')!;
-  const x = Number.parseFloat(svgElement.getAttribute('x') || '0');
-  const y = Number.parseFloat(svgElement.getAttribute('y') || '0');
-  const [width, height] = svgElement
-    .getAttribute('data-xform')!
-    .split(' ')
-    .slice(2, 4)
-    .map((value) => Number.parseFloat(value.split('=')[1]));
-  const previousTransform = svgElement.getAttribute('transform');
-  const transformedCoordinates = getTransformedCoordinates({ height, width, x, y }, previousTransform);
-
-  console.log('Transformed Coordinates:', transformedCoordinates);
-
-  const image = svgCanvas.addSvgElementFromJson({
-    attr: {
-      'data-ratiofixed': true,
-      'data-shading': true,
-      'data-threshold': 254,
-      height: transformedCoordinates.height,
-      id: svgCanvas.getNextId(),
-      origImage: href,
-      preserveAspectRatio: 'none',
-      style: 'pointer-events:inherit',
-      width: transformedCoordinates.width,
-      x: positionOffset[0] + transformedCoordinates.x,
-      y: positionOffset[1] + transformedCoordinates.y,
-    },
-    element: 'image',
-  });
-
-  svgCanvas.setHref(image, href);
-  updateElementColor(image);
-  svgCanvas.selectOnly([image]);
-
-  const cmd = new history.InsertElementCommand(image);
-
-  if (!parentCmd) {
-    svgCanvas.undoMgr.addCommandToHistory(cmd);
-  } else {
-    parentCmd.addSubCommand(cmd);
-  }
-
-  if (!positionOffset) {
-    svgCanvas.alignSelectedElements('l', 'page');
-    svgCanvas.alignSelectedElements('t', 'page');
-  }
-
-  return image as SVGImageElement;
-};
-
-export const convertSvgToImage = async ({
+export const convertTextOnPathToImage = async ({
+  isToSelect = true,
   parentCmd,
   positionOffset = [0, 0],
   svgElement,
 }: ConvertSvgToImageParams): Promise<SVGImageElement | undefined> => {
   let svgUrl: null | string = null;
-
-  if (svgElement.tagName === 'use') {
-    return convertUseToImage({ parentCmd, positionOffset, svgElement: svgElement as SVGGElement });
-  }
 
   try {
     const bbox = svgElement.getBBox();
@@ -421,15 +354,18 @@ export const convertSvgToImage = async ({
         preserveAspectRatio: 'none',
         style: 'pointer-events:inherit',
         width,
-        x: svgElement.getAttribute('x')! + positionOffset[0],
-        y: svgElement.getAttribute('y')! + positionOffset[1],
+        x: transformedCoordinates.x + positionOffset[0],
+        y: transformedCoordinates.y + positionOffset[1],
       },
       element: 'image',
     });
 
     svgCanvas.setHref(newImage, img.src);
     updateElementColor(newImage);
-    svgCanvas.selectOnly([newImage]);
+
+    if (isToSelect) {
+      svgCanvas.selectOnly([newImage]);
+    }
 
     const cmd = new history.InsertElementCommand(newImage);
 
@@ -448,4 +384,150 @@ export const convertSvgToImage = async ({
   } catch (error) {
     console.error('Failed during SVG to Image conversion:', error);
   }
+};
+
+export const convertUseToImage = async ({
+  isToSelect = true,
+  parentCmd,
+  positionOffset = [0, 0],
+  svgElement,
+}: ConvertSvgToImageParams): Promise<SVGImageElement | undefined> => {
+  if (!svgElement.getAttribute('xlink:href')) {
+    console.warn('The provided SVG element does not have a valid href attribute.');
+
+    return;
+  }
+
+  const symbolId = svgElement.getAttribute('xlink:href')!;
+  const symbol = document.querySelector(symbolId);
+  const href = symbol?.children[0]?.getAttribute('href')!;
+  const x = Number.parseFloat(svgElement.getAttribute('x') || '0');
+  const y = Number.parseFloat(svgElement.getAttribute('y') || '0');
+  const [width, height] = svgElement
+    .getAttribute('data-xform')!
+    .split(' ')
+    .slice(2, 4)
+    .map((value) => Number.parseFloat(value.split('=')[1]));
+  const previousTransform = svgElement.getAttribute('transform');
+  const transformedCoordinates = getTransformedCoordinates({ height, width, x, y }, previousTransform);
+
+  console.log('Transformed Coordinates:', transformedCoordinates);
+
+  const image = svgCanvas.addSvgElementFromJson({
+    attr: {
+      'data-ratiofixed': true,
+      'data-shading': true,
+      'data-threshold': 254,
+      height: transformedCoordinates.height,
+      id: svgCanvas.getNextId(),
+      origImage: href,
+      preserveAspectRatio: 'none',
+      style: 'pointer-events:inherit',
+      width: transformedCoordinates.width,
+      x: positionOffset[0] + transformedCoordinates.x,
+      y: positionOffset[1] + transformedCoordinates.y,
+    },
+    element: 'image',
+  });
+
+  svgCanvas.setHref(image, href);
+  updateElementColor(image);
+
+  if (isToSelect) {
+    svgCanvas.selectOnly([image]);
+  }
+
+  const cmd = new history.InsertElementCommand(image);
+
+  if (!parentCmd) {
+    svgCanvas.undoMgr.addCommandToHistory(cmd);
+  } else {
+    parentCmd.addSubCommand(cmd);
+  }
+
+  if (!positionOffset) {
+    svgCanvas.alignSelectedElements('l', 'page');
+    svgCanvas.alignSelectedElements('t', 'page');
+  }
+
+  return image as SVGImageElement;
+};
+
+export const convertGroupToImage = async ({
+  parentCmd,
+  positionOffset = [0, 0],
+  svgElement,
+}: ConvertSvgToImageParams): Promise<SVGImageElement | undefined> => {
+  const list = [];
+
+  for await (const child of svgElement.children) {
+    const image = await match(child)
+      .with({ tagName: 'use' }, async (useElement) =>
+        convertUseToImage({ isToSelect: false, parentCmd, positionOffset, svgElement: useElement as SVGGElement }),
+      )
+      .with({ tagName: 'text' }, async (textElement) =>
+        convertTextToImage({ isToSelect: false, parentCmd, positionOffset, svgElement: textElement as SVGGElement }),
+      )
+      .with({ attributes: { 'data-textpath-g': '1' }, tagName: 'g' }, async (element) =>
+        convertTextOnPathToImage({ isToSelect: false, parentCmd, positionOffset, svgElement: element as SVGGElement }),
+      )
+      .with({ tagName: 'g' }, async (groupElement) =>
+        convertGroupToImage({ isToSelect: false, parentCmd, positionOffset, svgElement: groupElement as SVGGElement }),
+      )
+      .otherwise(async (child) =>
+        convertCommonSvgToImage({ isToSelect: false, parentCmd, positionOffset, svgElement: child as SVGGElement }),
+      );
+
+    if (image) {
+      list.push(image);
+    }
+  }
+
+  console.log(svgElement.children);
+
+  console.log('Converted images:', list);
+
+  svgCanvas.selectOnly(list);
+  svgCanvas.tempGroupSelectedElements();
+  svgCanvas.groupSelectedElements();
+
+  return undefined;
+};
+
+export const convertSvgToImage = async ({
+  parentCmd,
+  positionOffset = [0, 0],
+  svgElement,
+}: ConvertSvgToImageParams): Promise<SVGImageElement | undefined> => {
+  if (svgElement.tagName === 'use') {
+    console.log('Converting use to image:', svgElement);
+
+    return convertUseToImage({ parentCmd, positionOffset, svgElement: svgElement as SVGGElement });
+  }
+
+  if (svgElement.tagName === 'text') {
+    console.log('Converting text to image:', svgElement);
+
+    return convertTextToImage({ parentCmd, positionOffset, svgElement: svgElement as SVGGElement });
+  }
+
+  if (svgElement.tagName === 'g' && svgElement.getAttribute('data-textpath-g') === '1') {
+    console.log('Converting text-on-path to image:', svgElement);
+
+    return convertTextOnPathToImage({ parentCmd, positionOffset, svgElement: svgElement as SVGGElement });
+  }
+
+  if (svgElement.tagName === 'g') {
+    console.log('Converting group to image:', svgElement);
+
+    return convertGroupToImage({ parentCmd, positionOffset, svgElement: svgElement as SVGGElement });
+  }
+
+  if (commonSvgTags.includes(svgElement.tagName)) {
+    console.log('Converting common SVG to image:', svgElement);
+
+    return convertCommonSvgToImage({ parentCmd, positionOffset, svgElement: svgElement as SVGGElement });
+  }
+
+  console.log('The provided SVG element is not convertible:', svgElement.tagName);
 };
