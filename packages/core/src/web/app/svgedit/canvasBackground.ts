@@ -1,8 +1,10 @@
 import { match } from 'ts-pattern';
 
 import NS from '@core/app/constants/namespaces';
+import { workareaConstants } from '@core/app/constants/workarea-constants';
 import { isWebKit } from '@core/helpers/browser';
 import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
+import round from '@core/helpers/math/round';
 
 const generateFixedSizeSvg = (dimension: number[]) => {
   const svg = document.createElementNS(NS.SVG, 'svg');
@@ -140,12 +142,13 @@ const createMaskElement = (maskType: BackgroundMaskType): void => {
       filter.setAttribute('y', '-50%');
       filter.setAttribute('width', '200%');
       filter.setAttribute('height', '200%');
-      feGaussianBlur.setAttribute('stdDeviation', '100');
+      feGaussianBlur.setAttribute('stdDeviation', '200');
       filter.appendChild(feGaussianBlur);
       defs.appendChild(filter);
 
       const mask = document.createElementNS(NS.SVG, 'mask');
       const maskEllipse = document.createElementNS(NS.SVG, 'ellipse');
+      const { pxHeight, topExpansion } = workareaConstants.fbm2;
 
       mask.setAttribute('id', maskType);
       mask.setAttribute('maskUnits', 'objectBoundingBox');
@@ -154,9 +157,9 @@ const createMaskElement = (maskType: BackgroundMaskType): void => {
       mask.setAttribute('width', '100%');
       mask.setAttribute('height', '100%');
       maskEllipse.setAttribute('cx', '50%');
-      maskEllipse.setAttribute('cy', '100%');
+      maskEllipse.setAttribute('cy', `${round((100 * pxHeight) / (pxHeight + (topExpansion ?? 0)), 2)}%`);
       maskEllipse.setAttribute('rx', '50%');
-      maskEllipse.setAttribute('ry', '70%');
+      maskEllipse.setAttribute('ry', '60%');
       maskEllipse.setAttribute('fill', 'white');
       maskEllipse.setAttribute('filter', 'url(#fbm2CameraFilter)');
       mask.appendChild(maskEllipse);
