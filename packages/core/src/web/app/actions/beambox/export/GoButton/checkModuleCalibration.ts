@@ -1,7 +1,7 @@
 import alertCaller from '@core/app/actions/alert-caller';
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { modelsWithModules } from '@core/app/actions/beambox/constant';
-import { showAdorCalibration } from '@core/app/components/dialogs/camera/AdorCalibration';
+import { showModuleCalibration } from '@core/app/components/dialogs/camera/ModuleCalibration';
 import alertConstants from '@core/app/constants/alert-constants';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
@@ -44,7 +44,7 @@ export const checkModuleCalibration = async (device: IDeviceInfo, lang: ILang): 
         });
 
         if (doCali) {
-          await showAdorCalibration(layerModule);
+          await showModuleCalibration(layerModule);
         }
       }
     }

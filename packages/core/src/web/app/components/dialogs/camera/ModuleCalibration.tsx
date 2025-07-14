@@ -53,7 +53,7 @@ const doCalibration = async (model: WorkAreaModel, module: LayerModuleType) => {
 };
 
 // TODO: add unit test
-const AdorCalibration = ({ module = LayerModule.LASER_UNIVERSAL, onClose }: Props): React.ReactNode => {
+const ModuleCalibration = ({ module = LayerModule.LASER_UNIVERSAL, onClose }: Props): React.ReactNode => {
   const lang = useI18n().calibration;
   const param = useRef<FisheyeCameraParameters>({} as any);
   const [step, setStep] = useState<Step>(Step.WAITING);
@@ -236,7 +236,7 @@ const AdorCalibration = ({ module = LayerModule.LASER_UNIVERSAL, onClose }: Prop
   }
 };
 
-export const showAdorCalibration = async (module?: LayerModuleType): Promise<boolean> => {
+export const showModuleCalibration = async (module?: LayerModuleType): Promise<boolean> => {
   if (dialogCaller.isIdExist(DIALOG_ID)) {
     return false;
   }
@@ -244,7 +244,7 @@ export const showAdorCalibration = async (module?: LayerModuleType): Promise<boo
   return new Promise((resolve) => {
     dialogCaller.addDialogComponent(
       DIALOG_ID,
-      <AdorCalibration
+      <ModuleCalibration
         module={module}
         onClose={(completed = false) => {
           dialogCaller.popDialogById(DIALOG_ID);
@@ -255,4 +255,4 @@ export const showAdorCalibration = async (module?: LayerModuleType): Promise<boo
   });
 };
 
-export default AdorCalibration;
+export default ModuleCalibration;

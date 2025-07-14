@@ -7,7 +7,7 @@ import Dialog from '@core/app/actions/dialog-caller';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import MonitorController from '@core/app/actions/monitor-controller';
 import ProgressCaller from '@core/app/actions/progress-caller';
-import { showAdorCalibration } from '@core/app/components/dialogs/camera/AdorCalibration';
+import { showModuleCalibration } from '@core/app/components/dialogs/camera/ModuleCalibration';
 import { showAdorCalibrationV2 } from '@core/app/components/dialogs/camera/AdorCalibrationV2';
 import {
   showBB2Calibration,
@@ -90,7 +90,7 @@ const calibrateModule = async (device: IDeviceInfo, module?: LayerModuleType) =>
     const res = await DeviceMaster.select(device);
 
     if (res.success) {
-      showAdorCalibration(module);
+      showModuleCalibration(module);
     }
   } catch (error) {
     console.error(error);
