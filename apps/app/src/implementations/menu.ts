@@ -78,8 +78,6 @@ class Menu extends AbstractMenu {
 
     const { disabledKeys, enabledKeys } = getExampleVisibility(workarea);
 
-    console.log('updateMenuByWorkarea', workarea, disabledKeys, enabledKeys);
-
     enabledKeys.forEach((key) => changeMenuItemVisible([key], true));
     disabledKeys.forEach((key) => changeMenuItemVisible([key], false));
     this.rerenderMenu();
