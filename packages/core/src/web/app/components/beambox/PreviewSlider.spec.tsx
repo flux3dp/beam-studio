@@ -93,7 +93,7 @@ describe('test PreviewSlider', () => {
     mockIsFullScreen.mockReturnValue(true);
     mockMeetRequirement.mockReturnValue(true);
     document.body.innerHTML =
-      '<g id="backgroundImageContainer"><image id="backgroundImage" style="pointer-events:none; opacity: 1;"/></g>';
+      '<svg id="previewSvg"><image id="backgroundImage" style="pointer-events:none; opacity: 1;"/></svg>';
     mockUseCameraPreviewStore.mockReturnValue({
       isPreviewMode: true,
     });
@@ -101,7 +101,7 @@ describe('test PreviewSlider', () => {
 
   it('should render correctly with preview image', async () => {
     const { container, getByText } = render(<PreviewSlider />);
-    const imageContainer = document.getElementById('backgroundImageContainer');
+    const imageContainer = document.getElementById('previewSvg');
 
     expect(container).toMatchSnapshot();
 
@@ -119,7 +119,7 @@ describe('test PreviewSlider', () => {
   });
 
   it('should render correctly when is previewing', () => {
-    const imageContainer = document.getElementById('backgroundImageContainer');
+    const imageContainer = document.getElementById('previewSvg');
 
     imageContainer.style.opacity = '0.5';
     mockGetCurrentDevice.mockReturnValue({ info: { model: 'model-1' } });
@@ -136,7 +136,7 @@ describe('test PreviewSlider', () => {
   });
 
   it('should render correctly when is previewing Ador', async () => {
-    const imageContainer = document.getElementById('backgroundImageContainer');
+    const imageContainer = document.getElementById('previewSvg');
 
     imageContainer.style.opacity = '0.5';
     mockGetCurrentDevice.mockReturnValue({ info: { model: 'ado1' } });
@@ -176,7 +176,7 @@ describe('test PreviewSlider', () => {
     mockGetMode.mockReturnValue('raw');
     mockIsFullScreen.mockReturnValue(false);
 
-    const imageContainer = document.getElementById('backgroundImageContainer');
+    const imageContainer = document.getElementById('previewSvg');
 
     imageContainer.style.opacity = '0.5';
     mockGetCurrentDevice.mockReturnValue({ info: { model: 'fbb2' } });

@@ -52,7 +52,7 @@ const PreviewSlider = (): React.ReactNode => {
   };
 
   const updateBgOpacity = useCallback((val: string) => {
-    const container: null | SVGGElement = document.querySelector('#backgroundImageContainer');
+    const container: null | SVGGElement = document.querySelector('#previewSvg');
     const bgImg: HTMLElement | null | undefined = container?.querySelector('#backgroundImage');
 
     if (container && bgImg) {

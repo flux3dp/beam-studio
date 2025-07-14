@@ -17,17 +17,18 @@ const generateFixedSizeSvg = (dimension: number[]) => {
   return svg;
 };
 
-const generateModelSizeSvg = (dimension: number[]) => {
+const generatePreviewSvg = (dimension: number[]) => {
   const svg = document.createElementNS(NS.SVG, 'svg');
   const defs = document.createElementNS(NS.SVG, 'defs');
 
-  svg.setAttribute('id', 'modelSizeSvg');
+  svg.setAttribute('id', 'previewSvg');
   svg.setAttribute('x', '0');
   svg.setAttribute('y', '0');
   svg.setAttribute('width', dimension[0].toString());
   svg.setAttribute('height', dimension[1].toString());
+  svg.setAttribute('viewBox', `0 0 ${dimension[0]} ${dimension[1]}`);
 
-  defs.setAttribute('id', 'modelSizeDefs');
+  defs.setAttribute('id', 'previewDefs');
   svg.appendChild(defs);
 
   return svg;
@@ -60,28 +61,10 @@ const setupBackground = (dimension: number[], getRoot: () => Element, getContent
   rect.setAttribute('vector-effect', 'non-scaling-stroke');
 
   canvasBackground.appendChild(rect);
-  canvasBackground.appendChild(generateModelSizeSvg(dimension));
+  canvasBackground.appendChild(generatePreviewSvg(dimension));
   canvasBackground.appendChild(generateFixedSizeSvg(dimension));
 
   getRoot().insertBefore(canvasBackground, getContent());
-};
-
-const getBackgroundImageContainer = (): Element => {
-  const container = document.getElementById('backgroundImageContainer');
-
-  if (container) return container;
-
-  const modelSizeSvg = document.getElementById('modelSizeSvg');
-
-  if (!modelSizeSvg) throw new Error('Canvas background not found');
-
-  const newContainer = document.createElementNS(NS.SVG, 'g');
-
-  newContainer.setAttribute('id', 'backgroundImageContainer');
-
-  modelSizeSvg.appendChild(newContainer);
-
-  return newContainer;
 };
 
 const createImageElement = (id: string): SVGImageElement => {
@@ -108,12 +91,12 @@ const clearBackgroundUrlCache = () => {
 };
 
 export const setBackgroundImage = (url: string) => {
-  const imageContainer = getBackgroundImageContainer();
-  let image: null | SVGImageElement = imageContainer.querySelector('#backgroundImage');
+  const previewSvg = document.getElementById('previewSvg')!;
+  let image: null | SVGImageElement = previewSvg.querySelector('#backgroundImage');
 
   if (!image) {
     image = createImageElement('backgroundImage');
-    imageContainer.appendChild(image);
+    previewSvg.appendChild(image);
   }
 
   image.setAttributeNS(NS.XLINK, 'xlink:href', url);
@@ -121,17 +104,20 @@ export const setBackgroundImage = (url: string) => {
 };
 
 export const clearBackgroundImage = () => {
-  const imageContainer = getBackgroundImageContainer();
+  const previewSvg = document.getElementById('previewSvg')!;
+  const images = previewSvg.querySelectorAll('image');
 
-  while (imageContainer.firstChild) {
-    imageContainer.removeChild(imageContainer.firstChild);
-  }
+  images.forEach((image) => image.remove());
 };
 
 type BackgroundMaskType = 'fbm2Camera';
 
-const createMaskElement = (parent: SVGDefsElement, maskType: BackgroundMaskType): void => {
-  if (parent.querySelector(`#${maskType}`)) return;
+const createMaskElement = (maskType: BackgroundMaskType): void => {
+  const defs = document.getElementById('previewDefs');
+
+  if (!defs) return;
+
+  if (defs.querySelector(`#${maskType}`)) return;
 
   match(maskType)
     .with('fbm2Camera', () => {
@@ -143,9 +129,9 @@ const createMaskElement = (parent: SVGDefsElement, maskType: BackgroundMaskType)
       filter.setAttribute('y', '-50%');
       filter.setAttribute('width', '200%');
       filter.setAttribute('height', '200%');
-      feGaussianBlur.setAttribute('stdDeviation', '200');
+      feGaussianBlur.setAttribute('stdDeviation', '1000');
       filter.appendChild(feGaussianBlur);
-      parent.appendChild(filter);
+      defs.appendChild(filter);
 
       const mask = document.createElementNS(NS.SVG, 'mask');
       const maskEllipse = document.createElementNS(NS.SVG, 'ellipse');
@@ -163,7 +149,7 @@ const createMaskElement = (parent: SVGDefsElement, maskType: BackgroundMaskType)
       maskEllipse.setAttribute('fill', 'white');
       maskEllipse.setAttribute('filter', 'url(#fbm2CameraFilter)');
       mask.appendChild(maskEllipse);
-      parent.appendChild(mask);
+      defs.appendChild(mask);
 
       return mask;
     })
@@ -171,19 +157,19 @@ const createMaskElement = (parent: SVGDefsElement, maskType: BackgroundMaskType)
 };
 
 export const setMaskImage = (url: string, maskType: BackgroundMaskType) => {
-  const imageContainer = getBackgroundImageContainer();
-  let image: null | SVGImageElement = imageContainer.querySelector('#maskImage');
+  const previewSvg = document.getElementById('previewSvg')!;
+  let image: null | SVGImageElement = previewSvg.querySelector('#maskImage');
 
   if (!image) {
     image = createImageElement('maskImage');
-    imageContainer.appendChild(image);
+    previewSvg.appendChild(image);
   }
 
   if (image.getAttributeNS(NS.XLINK, 'xlink:href')) {
     URL.revokeObjectURL(image.getAttributeNS(NS.XLINK, 'xlink:href')!);
   }
 
-  createMaskElement(document.getElementById('modelSizeDefs') as unknown as SVGDefsElement, maskType);
+  createMaskElement(maskType);
   image.setAttribute('mask', `url(#${maskType})`);
   image.setAttributeNS(NS.XLINK, 'xlink:href', url);
   clearBackgroundUrlCache();
@@ -224,7 +210,7 @@ export const getBackgroundUrl = async (width: number, height: number): Promise<s
       xmlns="http://www.w3.org/2000/svg"
       xmlns:xlink="http://www.w3.org/1999/xlink"
     >
-      ${(document.getElementById('modelSizeDefs')?.cloneNode(true) as Element).outerHTML ?? ''}
+      ${(document.getElementById('previewDefs')?.cloneNode(true) as Element).outerHTML ?? ''}
       <image
         id="maskImage"
         x="0"
@@ -256,8 +242,12 @@ export const getBackgroundUrl = async (width: number, height: number): Promise<s
 
   backgroundUrlCache = URL.createObjectURL(blob);
 
+  console.log(canvas.toDataURL());
+
   return backgroundUrlCache;
 };
+
+window.getBackgroundUrl = getBackgroundUrl;
 
 export default {
   setupBackground,
