@@ -157,16 +157,16 @@ export interface PerspectiveGrid {
   y: [number, number, number];
 }
 
-export type FisheyeCameraParameters =
+export type FisheyeCameraParameters<T = any> =
   | FisheyeCameraParametersV1
   | FisheyeCameraParametersV2
   | FisheyeCameraParametersV3
-  | FisheyeCameraParametersV4;
+  | FisheyeCameraParametersV4<T>;
 
-export type FisheyeCaliParameters =
+export type FisheyeCaliParameters<T = any> =
   | FisheyeCameraParametersV2Cali
   | FisheyeCameraParametersV3Cali
-  | FisheyeCameraParametersV4Cali;
+  | FisheyeCameraParametersV4Cali<T>;
 
 /**
  * @deprecated only used for V1, should be removed after all V1 camera is updated to V2
