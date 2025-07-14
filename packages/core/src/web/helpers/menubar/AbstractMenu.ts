@@ -5,9 +5,13 @@ import menuDeviceActions from '@core/app/actions/beambox/menuDeviceActions';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import DeviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
+import type { ExampleFileKey } from '@core/helpers/menubar/exampleFiles';
+import { loadExampleFile } from '@core/helpers/menubar/exampleFiles';
 import customMenuActionProvider from '@core/implementations/customMenuActionProvider';
 import menuEventListenerFactory from '@core/implementations/menuEventListenerFactory';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
+
+type MenuActions = { [key: string]: (device?: IDeviceInfo) => void };
 
 const MENU_ITEMS = [
   'IMPORT',
@@ -45,25 +49,30 @@ export default abstract class AbstractMenu {
 
       const menuEventListener = menuEventListenerFactory.createMenuEventListener();
 
-      menuEventListener.on('MENU_CLICK', (e, menuItem) => {
-        const actions: { [key: string]: (device?: IDeviceInfo) => void } = {
-          ...menuActions,
-          ...menuDeviceActions,
-          ...customMenuActionProvider.getCustomMenuActions(),
-        };
+      menuEventListener.on(
+        'MENU_CLICK',
+        (
+          _: any,
+          menuItem: {
+            id: string;
+            machineName?: string;
+            serial?: string;
+            uuid?: string;
+          },
+        ) => {
+          const actionId = menuItem.id;
+          const commonActions: MenuActions = {
+            ...menuActions,
+            ...customMenuActionProvider.getCustomMenuActions(),
+          };
 
-        if (typeof actions[menuItem.id] === 'function') {
-          const menuActionIds = Object.entries(actions)
-            .filter((action) => action[1].length === 0)
-            .map((action) => action[0]);
-
-          if (menuActionIds.includes(menuItem.id)) {
-            actions[menuItem.id]();
-          } else {
+          if (commonActions[actionId]) {
+            commonActions[actionId]();
+          } else if ((menuDeviceActions as MenuActions)[actionId]) {
             const callback = {
-              onSuccess: (device) => {
+              onSuccess: (device: IDeviceInfo) => {
                 setTimeout(() => MessageCaller.closeMessage('select-device'), 500);
-                actions[menuItem.id](device);
+                (menuDeviceActions as MenuActions)[actionId](device);
               },
               onTimeout: () => {
                 MessageCaller.openMessage({
@@ -87,11 +96,13 @@ export default abstract class AbstractMenu {
             if (menuItem.serial) {
               DeviceMaster.getDiscoveredDevice('serial', menuItem.serial, callback);
             } else {
-              DeviceMaster.getDiscoveredDevice('uuid', menuItem.uuid, callback);
+              DeviceMaster.getDiscoveredDevice('uuid', menuItem.uuid!, callback);
             }
+          } else {
+            loadExampleFile(actionId as ExampleFileKey);
           }
-        }
-      });
+        },
+      );
     };
 
     if (!this.menuEventRegistered) {

@@ -5,15 +5,10 @@ import tabController from '@core/app/actions/tabController';
 import { TabEvents } from '@core/app/constants/tabConstants';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import AbstractMenu from '@core/helpers/menubar/AbstractMenu';
+import { getExampleVisibility } from '@core/helpers/menubar/exampleFiles';
 import communicator from '@core/implementations/communicator';
 
-import {
-  changeMenuItemChecked,
-  changeMenuItemEnabled,
-  changeMenuItemVisible,
-  changeVisibilityByIsBb2,
-  changeVisibilityByIsPromark,
-} from '../electron-menubar-helper';
+import { changeMenuItemChecked, changeMenuItemEnabled, changeMenuItemVisible } from '../electron-menubar-helper';
 
 import ElectronUpdater from './electron-updater';
 
@@ -36,7 +31,6 @@ class Menu extends AbstractMenu {
     this.communicator = aCommunicator;
     communicator.on('UPDATE_MENU', updateWindowsMenu);
     communicator.on('NEW_APP_MENU', () => {
-      updateWindowsMenu();
       this.initMenuItemStatus();
     });
     communicator.on(TabEvents.TabFocused, () => {
@@ -45,6 +39,21 @@ class Menu extends AbstractMenu {
   }
 
   init(): void {
+    // model related
+    canvasEvent.on('model-changed', this.updateMenuByWorkarea);
+
+    // setting store related
+    useSettingStoreEventEmitter.on('changeEnableUvPrintFile', (isEnabled) => {
+      changeMenuItemVisible(['EXPORT_UV_PRINT'], isEnabled);
+      this.rerenderMenu();
+    });
+
+    // layer panel related
+    layerPanelEventEmitter.on('updateUvPrintStatus', (isUvPrintable = false) => {
+      changeMenuItemEnabled(['EXPORT_UV_PRINT'], isUvPrintable);
+      this.rerenderMenu();
+    });
+
     const isDev = localStorage.getItem('dev') === 'true';
 
     this.setDevMode(isDev);
@@ -58,6 +67,24 @@ class Menu extends AbstractMenu {
     updateWindowsMenu();
   }
 
+  updateMenuByWorkarea = (workarea: any): void => {
+    if (workarea === 'fpm1') {
+      changeMenuItemVisible(['MATERIAL_TEST'], false);
+      changeMenuItemVisible(['PROMARK_COLOR_TEST'], true);
+    } else {
+      changeMenuItemVisible(['MATERIAL_TEST'], true);
+      changeMenuItemVisible(['PROMARK_COLOR_TEST'], false);
+    }
+
+    const { disabledKeys, enabledKeys } = getExampleVisibility(workarea);
+
+    console.log('updateMenuByWorkarea', workarea, disabledKeys, enabledKeys);
+
+    enabledKeys.forEach((key) => changeMenuItemVisible([key], true));
+    disabledKeys.forEach((key) => changeMenuItemVisible([key], false));
+    this.rerenderMenu();
+  };
+
   initMenuItemStatus = (): void => {
     // checkboxes
     changeMenuItemChecked(['ZOOM_WITH_WINDOW'], BeamboxPreference.read('zoom_with_window'));
@@ -69,27 +96,7 @@ class Menu extends AbstractMenu {
     changeMenuItemVisible(['EXPORT_UV_PRINT'], BeamboxPreference.read('enable-uv-print-file'));
     changeMenuItemEnabled(['EXPORT_UV_PRINT'], false);
 
-    // model related
-    canvasEvent.on('model-changed', (model) => {
-      const isBb2 = model === 'fbb2';
-      const isPromark = model === 'fpm1';
-
-      changeVisibilityByIsBb2(isBb2);
-      changeVisibilityByIsPromark(isPromark);
-      this.rerenderMenu();
-    });
-
-    // setting store related
-    useSettingStoreEventEmitter.on('changeEnableUvPrintFile', (isEnabled) => {
-      changeMenuItemVisible(['EXPORT_UV_PRINT'], isEnabled);
-      this.rerenderMenu();
-    });
-
-    // layer panel related
-    layerPanelEventEmitter.on('updateUvPrintStatus', (isUvPrintable = false) => {
-      changeMenuItemEnabled(['EXPORT_UV_PRINT'], isUvPrintable);
-      this.rerenderMenu();
-    });
+    this.updateMenuByWorkarea(BeamboxPreference.read('workarea'));
   };
 
   attach(enabledItems: string[]) {

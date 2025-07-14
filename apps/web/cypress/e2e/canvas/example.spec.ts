@@ -68,7 +68,7 @@ const exampleList = [
   },
   {
     label: 'Acrylic Focus Probe - 3mm',
-    ador: [],
+    ador: ['c8330a4265f8ac6d20fc073613dff692'], // TODO: add Windows hash
     beam: '1fbe213caa963b4eee1bad80facf7805',
   },
 ];

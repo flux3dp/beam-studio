@@ -94,14 +94,8 @@ export function buildFileMenu(
           label: r.material_test || 'Material Test',
           submenu: [
             { click: callback, id: 'IMPORT_MATERIAL_TESTING_ENGRAVE', label: r.import_material_testing_engrave },
-            {
-              click: callback,
-              id: 'IMPORT_MATERIAL_TESTING_ENGRAVE_BEAMBOX_2',
-              label: r.import_material_testing_engrave,
-            },
             { click: callback, id: 'IMPORT_MATERIAL_TESTING_OLD', label: r.import_material_testing_old },
             { click: callback, id: 'IMPORT_MATERIAL_TESTING_CUT', label: r.import_material_testing_cut },
-            { click: callback, id: 'IMPORT_MATERIAL_TESTING_CUT_BEAMBOX_2', label: r.import_material_testing_cut },
             { click: callback, id: 'IMPORT_MATERIAL_TESTING_SIMPLECUT', label: r.import_material_testing_simple_cut },
             { click: callback, id: 'IMPORT_MATERIAL_TESTING_LINE', label: r.import_material_testing_line },
             { click: callback, id: 'IMPORT_MATERIAL_TESTING_PRINT', label: r.import_material_printing_test },

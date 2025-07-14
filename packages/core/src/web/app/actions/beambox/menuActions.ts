@@ -1,8 +1,5 @@
-import { Buffer } from 'buffer';
-
 import Alert from '@core/app/actions/alert-caller';
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import { adorModels } from '@core/app/actions/beambox/constant';
 import ExportFuncs from '@core/app/actions/beambox/export-funcs';
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import Tutorials from '@core/app/actions/beambox/tutorials';
@@ -13,7 +10,6 @@ import { gestureIntroduction } from '@core/app/constants/media-tutorials';
 import historyUtils from '@core/app/svgedit/history/utils';
 import clipboard from '@core/app/svgedit/operations/clipboard';
 import disassembleUse from '@core/app/svgedit/operations/disassembleUse';
-import { importBvgString } from '@core/app/svgedit/operations/import/importBvg';
 import workareaManager from '@core/app/svgedit/workarea';
 import { externalLinkMemberDashboard, signOut } from '@core/helpers/api/flux-id';
 import checkQuestionnaire from '@core/helpers/check-questionnaire';
@@ -40,124 +36,6 @@ getSVGAsync((globalSVG) => {
 });
 
 const { lang } = i18n;
-
-type ExampleFileKeys =
-  | 'ador_example_laser'
-  | 'ador_example_printing_full'
-  | 'ador_example_printing_single'
-  | 'beambox_2_example'
-  | 'beambox_2_focus_probe'
-  | 'beamo_2_example_laser'
-  | 'beamo_2_example_printing_full'
-  | 'example'
-  | 'focus_probe'
-  | 'hello_beambox'
-  | 'hexa_example'
-  | 'mat_test_cut'
-  | 'mat_test_cut_beambox_2'
-  | 'mat_test_engrave'
-  | 'mat_test_engrave_beambox_2'
-  | 'mat_test_line'
-  | 'mat_test_old'
-  | 'mat_test_printing'
-  | 'mat_test_simple_cut'
-  | 'promark_example'
-  // mopa color test examples
-  | 'promark_mopa_20w_color_example'
-  | 'promark_mopa_60w_color_example'
-  | 'promark_mopa_60w_color_example_2'
-  | 'promark_mopa_100w_color_example'
-  | 'promark_mopa_100w_color_example_2';
-
-type ExampleFileMap = Partial<Record<ExampleFileKeys, string>>;
-
-const getExampleFileName = (key: ExampleFileKeys): string | undefined => {
-  const workarea = BeamboxPreference.read('workarea') || 'fbm1';
-
-  const basicExamples: ExampleFileMap = {
-    beambox_2_example: 'examples/beambox_2_example.bvg',
-    beambox_2_focus_probe: 'examples/beambox_2_focus_probe.bvg',
-    example: 'examples/badge.bvg',
-    focus_probe: 'examples/focus_probe.bvg',
-    hello_beambox: 'examples/hello-beambox.bvg',
-    hexa_example: 'examples/hexa_example.bvg',
-    mat_test_cut: 'examples/mat_test_cut.bvg',
-    mat_test_cut_beambox_2: 'examples/mat_test_cut_beambox_2.bvg',
-    mat_test_engrave: 'examples/mat_test_engrave.bvg',
-    mat_test_engrave_beambox_2: 'examples/mat_test_engrave_beambox_2.bvg',
-    mat_test_line: 'examples/mat_test_line.bvg',
-    mat_test_old: 'examples/mat_test_old.bvg',
-    mat_test_simple_cut: 'examples/mat_test_simple_cut.bvg',
-    promark_example: 'examples/promark_example.bvg',
-    promark_mopa_20w_color_example: 'examples/promark_mopa_20w_color_example.bvg',
-    promark_mopa_60w_color_example: 'examples/promark_mopa_60w_color_example.bvg',
-    promark_mopa_60w_color_example_2: 'examples/promark_mopa_60w_color_example_2.bvg',
-    promark_mopa_100w_color_example: 'examples/promark_mopa_100w_color_example.bvg',
-    promark_mopa_100w_color_example_2: 'examples/promark_mopa_100w_color_example_2.bvg',
-  };
-
-  if (adorModels.has(workarea)) {
-    return {
-      ...basicExamples,
-      ador_example_laser: 'examples/ador_example_laser.bvg',
-      ador_example_printing_full: 'examples/ador_example_printing_full.bvg',
-      ador_example_printing_single: 'examples/ador_example_printing_single.bvg',
-      mat_test_cut: 'examples/ador_cutting_test.bvg',
-      mat_test_engrave: 'examples/ador_engraving_test.bvg',
-      mat_test_old: 'examples/ador_engraving_test_classic.bvg',
-      mat_test_printing: 'examples/ador_color_ring.bvg',
-      mat_test_simple_cut: 'examples/ador_cutting_test_simple.bvg',
-    }[key];
-  }
-
-  if (workarea === 'fbm2') {
-    return {
-      ...basicExamples,
-      beamo_2_example_laser: 'examples/beamo_2_example_laser.bvg',
-      beamo_2_example_printing_full: 'examples/beamo_2_example_printing_full.bvg',
-      mat_test_cut: 'examples/mat_test_cut_beambox_2.bvg',
-      mat_test_engrave: 'examples/mat_test_engrave_beambox_2.bvg',
-      mat_test_printing: 'examples/beamo_2_color_ring.bvg',
-    }[key];
-  }
-
-  return basicExamples[key];
-};
-
-const loadExampleFile = async (path: string | undefined) => {
-  if (!path) {
-    Alert.popUp({ message: lang.message.unsupported_example_file });
-
-    return;
-  }
-
-  const res = await FileExportHelper.toggleUnsavedChangedDialog();
-
-  if (!res) {
-    return;
-  }
-
-  const oReq = new XMLHttpRequest();
-
-  oReq.open('GET', isWeb() ? `https://beam-studio-web.s3.ap-northeast-1.amazonaws.com/${path}` : path, true);
-  oReq.responseType = 'blob';
-
-  oReq.onload = async function onload() {
-    const resp = oReq.response;
-    const buf = Buffer.from(await new Response(resp).arrayBuffer());
-    let string = buf.toString();
-
-    if (i18n.getActiveLang() !== 'en') {
-      const LANG = i18n.lang.beambox.right_panel.layer_panel;
-
-      string = string.replace(/Engraving/g, LANG.layer_engraving).replace(/Cutting/g, LANG.layer_cutting);
-    }
-
-    await importBvgString(string);
-  };
-
-  oReq.send();
-};
 
 export default {
   ABOUT_BEAM_STUDIO: (): void => Dialog.showAboutBeamStudio(),
@@ -208,41 +86,6 @@ export default {
   IMAGE_SHARPEN: (): void => Dialog.showPhotoEditPanel('sharpen'),
   IMAGE_STAMP: (): Promise<void> => imageEdit.generateStampBevel(),
   IMAGE_VECTORIZE: (): Promise<void> => imageEdit.traceImage(),
-  IMPORT_ACRYLIC_FOCUS_PROBE: (): Promise<void> => loadExampleFile(getExampleFileName('focus_probe')),
-  IMPORT_BEAMBOX_2_FOCUS_PROBE: (): Promise<void> => loadExampleFile(getExampleFileName('beambox_2_focus_probe')),
-  IMPORT_EXAMPLE: (): Promise<void> => loadExampleFile(getExampleFileName('example')),
-  IMPORT_EXAMPLE_ADOR_LASER: (): Promise<void> => loadExampleFile(getExampleFileName('ador_example_laser')),
-  IMPORT_EXAMPLE_ADOR_PRINT_FULL: (): Promise<void> =>
-    loadExampleFile(getExampleFileName('ador_example_printing_full')),
-  IMPORT_EXAMPLE_ADOR_PRINT_SINGLE: (): Promise<void> =>
-    loadExampleFile(getExampleFileName('ador_example_printing_single')),
-  IMPORT_EXAMPLE_BEAMBOX_2: (): Promise<void> => loadExampleFile(getExampleFileName('beambox_2_example')),
-  IMPORT_EXAMPLE_BEAMO_2_LASER: (): Promise<void> => loadExampleFile(getExampleFileName('beamo_2_example_laser')),
-  IMPORT_EXAMPLE_BEAMO_2_PRINT_FULL: (): Promise<void> =>
-    loadExampleFile(getExampleFileName('beamo_2_example_printing_full')),
-  IMPORT_EXAMPLE_HEXA: (): Promise<void> => loadExampleFile(getExampleFileName('hexa_example')),
-  IMPORT_EXAMPLE_PROMARK: (): Promise<void> => loadExampleFile(getExampleFileName('promark_example')),
-  IMPORT_EXAMPLE_PROMARK_MOPA_20W_COLOR: (): Promise<void> =>
-    loadExampleFile(getExampleFileName('promark_mopa_20w_color_example')),
-  IMPORT_EXAMPLE_PROMARK_MOPA_60W_COLOR: (): Promise<void> =>
-    loadExampleFile(getExampleFileName('promark_mopa_60w_color_example')),
-  IMPORT_EXAMPLE_PROMARK_MOPA_60W_COLOR_2: (): Promise<void> =>
-    loadExampleFile(getExampleFileName('promark_mopa_60w_color_example_2')),
-  IMPORT_EXAMPLE_PROMARK_MOPA_100W_COLOR: (): Promise<void> =>
-    loadExampleFile(getExampleFileName('promark_mopa_100w_color_example')),
-  IMPORT_EXAMPLE_PROMARK_MOPA_100W_COLOR_2: (): Promise<void> =>
-    loadExampleFile(getExampleFileName('promark_mopa_100w_color_example_2')),
-  IMPORT_HELLO_BEAMBOX: (): Promise<void> => loadExampleFile(getExampleFileName('hello_beambox')),
-  IMPORT_MATERIAL_TESTING_CUT: (): Promise<void> => loadExampleFile(getExampleFileName('mat_test_cut')),
-  IMPORT_MATERIAL_TESTING_CUT_BEAMBOX_2: (): Promise<void> =>
-    loadExampleFile(getExampleFileName('mat_test_cut_beambox_2')),
-  IMPORT_MATERIAL_TESTING_ENGRAVE: (): Promise<void> => loadExampleFile(getExampleFileName('mat_test_engrave')),
-  IMPORT_MATERIAL_TESTING_ENGRAVE_BEAMBOX_2: (): Promise<void> =>
-    loadExampleFile(getExampleFileName('mat_test_engrave_beambox_2')),
-  IMPORT_MATERIAL_TESTING_LINE: (): Promise<void> => loadExampleFile(getExampleFileName('mat_test_line')),
-  IMPORT_MATERIAL_TESTING_OLD: (): Promise<void> => loadExampleFile(getExampleFileName('mat_test_old')),
-  IMPORT_MATERIAL_TESTING_PRINT: (): Promise<void> => loadExampleFile(getExampleFileName('mat_test_printing')),
-  IMPORT_MATERIAL_TESTING_SIMPLECUT: (): Promise<void> => loadExampleFile(getExampleFileName('mat_test_simple_cut')),
   LAYER_COLOR_CONFIG: (): void => Dialog.showLayerColorConfig(),
   MANAGE_ACCOUNT: (): Promise<void> => externalLinkMemberDashboard(),
   MATERIAL_TEST_GENERATOR: (): void => Dialog.showMaterialTestGenerator(),
