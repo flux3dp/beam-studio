@@ -1,6 +1,8 @@
-let cache: 'Chrome' | 'Edge' | 'Firefox' | 'IE' | 'Safari' | 'Unknown' | null = null;
+type Browser = 'Chrome' | 'Edge' | 'Firefox' | 'IE' | 'Safari' | 'Unknown';
 
-export const getBrowser = (): 'Chrome' | 'Edge' | 'Firefox' | 'IE' | 'Safari' | 'Unknown' => {
+let cache: Browser | null = null;
+
+export const getBrowser = (): Browser => {
   if (cache) {
     return cache;
   }
@@ -46,6 +48,8 @@ export const getBrowser = (): 'Chrome' | 'Edge' | 'Firefox' | 'IE' | 'Safari' | 
 
   return 'Unknown';
 };
+
+export const isAndroid: boolean = /Android/.test(navigator.userAgent);
 
 export default {
   getBrowser,
