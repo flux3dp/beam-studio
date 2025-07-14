@@ -11,7 +11,6 @@ import alertConstants from '@core/app/constants/alert-constants';
 import { LayerModule, type LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import deviceMaster from '@core/helpers/device-master';
-import isDev from '@core/helpers/is-dev';
 import { getModulesTranslations } from '@core/helpers/layer-module/layer-module-helper';
 import useI18n from '@core/helpers/useI18n';
 import type {
@@ -21,7 +20,6 @@ import type {
 } from '@core/interfaces/FisheyePreview';
 
 import Align from './AdorCalibration/Align';
-import CalibrationType from './AdorCalibration/calibrationTypes';
 import Instruction from './common/Instruction';
 
 const PROGRESS_ID = 'fish-eye-calibration';
@@ -37,21 +35,13 @@ enum Step {
 interface Props {
   module?: LayerModuleType;
   onClose: (completed?: boolean) => void;
-  type?: CalibrationType;
 }
 
-const calibrated: {
-  [key in CalibrationType]: { [subkey in LayerModuleType]?: Set<string> };
-} = {
-  [CalibrationType.CAMERA]: {},
-  [CalibrationType.MODULE]: {},
-};
+const calibrated: { [subkey in LayerModuleType]?: Set<string> } = {};
 
-const doCalibration = async (model: WorkAreaModel, type: CalibrationType, module: LayerModuleType) => {
+const doCalibration = async (model: WorkAreaModel, module: LayerModuleType) => {
   if (adorModels.has(model)) {
-    if (type === CalibrationType.CAMERA) {
-      await deviceMaster.doAdorCalibrationCut();
-    } else if (module === LayerModule.PRINTER) {
+    if (module === LayerModule.PRINTER) {
       await deviceMaster.doAdorPrinterCalibration();
     } else {
       await deviceMaster.doAdorIRCalibration();
@@ -65,12 +55,7 @@ const doCalibration = async (model: WorkAreaModel, type: CalibrationType, module
 };
 
 // TODO: add unit test
-const AdorCalibration = ({
-  module = LayerModule.LASER_UNIVERSAL,
-  onClose,
-  type = CalibrationType.CAMERA,
-}: Props): React.ReactNode => {
-  const isDevMode = isDev();
+const AdorCalibration = ({ module = LayerModule.LASER_UNIVERSAL, onClose }: Props): React.ReactNode => {
   const lang = useI18n().calibration;
   const param = useRef<FisheyeCameraParameters>({} as any);
   const [step, setStep] = useState<Step>(Step.WAITING);
@@ -94,18 +79,9 @@ const AdorCalibration = ({
       return;
     }
 
-    if (type === CalibrationType.CAMERA && isDevMode) {
-      alertCaller.popUp({
-        message: 'V1 calibration detected, please use v2 to calibrate camera.',
-      });
-      onClose(false);
-
-      return;
-    }
-
     param.current = { ...fisheyeParameters };
 
-    if (calibrated[type][module]?.has(currentDeviceId)) {
+    if (calibrated[module]?.has(currentDeviceId)) {
       const res = await new Promise<boolean>((resolve) => {
         alertCaller.popUp({
           buttonLabels: [lang.skip],
@@ -134,16 +110,12 @@ const AdorCalibration = ({
   }, []);
 
   const title = useMemo(() => {
-    if (type === CalibrationType.CAMERA) {
-      return lang.camera_calibration;
-    }
-
     return match(module)
       .with(LayerModule.LASER_1064, () => lang.module_calibration_2w_ir)
       .with(LayerModule.PRINTER, () => lang.module_calibration_printer)
       .with(LayerModule.PRINTER_4C, () => `${lang.module_calibration_printer} (4C)`)
       .otherwise(() => `${lang.module_calibration_printer} (${getModulesTranslations()[module]})`);
-  }, [type, module, lang]);
+  }, [module, lang]);
 
   const { animationSrcs, content, cutLabel } = useMemo(() => {
     if (step === Step.PUT_PAPER) {
@@ -215,7 +187,6 @@ const AdorCalibration = ({
           onBack={() => setStep(Step.FOCUS_AND_CUT)}
           onClose={onClose}
           title={title}
-          type={type}
         />
       );
     case Step.PUT_PAPER:
@@ -242,12 +213,12 @@ const AdorCalibration = ({
                   message: lang.drawing_calibration_image,
                 });
                 try {
-                  if (!calibrated[type][module]) {
-                    calibrated[type][module] = new Set();
+                  if (!calibrated[module]) {
+                    calibrated[module] = new Set();
                   }
 
-                  await doCalibration(model, type, module);
-                  calibrated[type][module].add(currentDeviceId);
+                  await doCalibration(model, module);
+                  calibrated[module].add(currentDeviceId);
                   setStep(Step.ALIGN);
                 } finally {
                   progressCaller.popById(PROGRESS_ID);
@@ -267,10 +238,7 @@ const AdorCalibration = ({
   }
 };
 
-export const showAdorCalibration = async (
-  type: CalibrationType = CalibrationType.CAMERA,
-  module?: LayerModuleType,
-): Promise<boolean> => {
+export const showAdorCalibration = async (module?: LayerModuleType): Promise<boolean> => {
   if (dialogCaller.isIdExist(DIALOG_ID)) {
     return false;
   }
@@ -284,7 +252,6 @@ export const showAdorCalibration = async (
           dialogCaller.popDialogById(DIALOG_ID);
           resolve(completed);
         }}
-        type={type}
       />,
     );
   });

@@ -85,7 +85,6 @@ const mockFishEyeParam: FisheyeCameraParametersV1 = {
 const mockSetupFisheyePreview = jest.fn();
 
 import Align from './Align';
-import CalibrationType from './calibrationTypes';
 
 describe('test Align', () => {
   beforeEach(() => {
@@ -104,13 +103,7 @@ describe('test Align', () => {
     mockCreateObjectURL.mockReturnValue('file://url');
 
     const { baseElement, getByText } = render(
-      <Align
-        fisheyeParam={mockFishEyeParam}
-        onBack={mockOnBack}
-        onClose={mockOnClose}
-        title="title"
-        type={CalibrationType.CAMERA}
-      />,
+      <Align fisheyeParam={mockFishEyeParam} onBack={mockOnBack} onClose={mockOnClose} title="title" />,
     );
 
     expect(baseElement.querySelector('img').src).toBe('');
@@ -134,13 +127,7 @@ describe('test Align', () => {
     mockCreateObjectURL.mockReturnValue('file://url');
 
     const { baseElement, getByText } = render(
-      <Align
-        fisheyeParam={mockFishEyeParam}
-        onBack={mockOnBack}
-        onClose={mockOnClose}
-        title="title"
-        type={CalibrationType.CAMERA}
-      />,
+      <Align fisheyeParam={mockFishEyeParam} onBack={mockOnBack} onClose={mockOnClose} title="title" />,
     );
 
     expect(baseElement.querySelector('img').src).toBe('');
@@ -151,62 +138,6 @@ describe('test Align', () => {
     expect(mockOnBack).toHaveBeenCalledTimes(0);
     fireEvent.click(getByText('Back'));
     expect(mockOnBack).toHaveBeenCalledTimes(1);
-  });
-
-  test('scroll and next should work when type is Camera', async () => {
-    mockTakeOnePicture.mockResolvedValue({ imgBlob: 'blob' });
-    mockCreateObjectURL.mockReturnValue('file://url');
-
-    const { baseElement, getByText } = render(
-      <Align
-        fisheyeParam={mockFishEyeParam}
-        onBack={mockOnBack}
-        onClose={mockOnClose}
-        title="title"
-        type={CalibrationType.CAMERA}
-      />,
-    );
-
-    expect(baseElement.querySelector('img').src).toBe('');
-    await waitFor(() => {
-      expect(baseElement.querySelector('.ant-modal')).not.toHaveClass('ant-zoom-appear');
-      expect(baseElement.querySelector('img').src).not.toBe('');
-    });
-    expect(mockOpenNonstopProgress).toHaveBeenCalledTimes(2);
-    expect(mockOpenNonstopProgress).toHaveBeenLastCalledWith({
-      id: 'calibration-align',
-      message: 'Taking Picture...',
-    });
-    expect(mockPopById).toHaveBeenCalledTimes(2);
-    expect(mockPopById).toHaveBeenLastCalledWith('calibration-align');
-
-    const img = baseElement.querySelector('img');
-
-    fireEvent.load(img);
-    expect(baseElement).toMatchSnapshot();
-
-    const xInput = baseElement.querySelector('.ant-input-number-input#x');
-    const yInput = baseElement.querySelector('.ant-input-number-input#y');
-    const imgContainer = baseElement.querySelector('.img-container');
-
-    expect(imgContainer.scrollLeft).toBe(1200);
-    expect(imgContainer.scrollTop).toBe(1000);
-    fireEvent.change(xInput, { target: { value: 100 } });
-    expect(imgContainer.scrollLeft).toBe(100);
-    fireEvent.change(yInput, { target: { value: 200 } });
-    expect(imgContainer.scrollTop).toBe(200);
-    fireEvent.click(getByText('Use Last Calibration Value'));
-    expect(imgContainer.scrollLeft).toBe(1200);
-    expect(imgContainer.scrollTop).toBe(1000);
-    fireEvent.scroll(imgContainer, { target: { scrollLeft: 500, scrollTop: 600 } });
-    expect(xInput).toHaveValue(500);
-    expect(yInput).toHaveValue(600);
-    fireEvent.click(getByText('Done'));
-    expect(mockSetFisheyeConfig).toHaveBeenCalledTimes(1);
-    expect(mockSetFisheyeConfig).toHaveBeenLastCalledWith({
-      ...mockFishEyeParam,
-      center: [500, 600],
-    });
   });
 
   test('scroll and next should work when type is MODULE and module is PRINTER', async () => {
@@ -220,7 +151,6 @@ describe('test Align', () => {
         onBack={mockOnBack}
         onClose={mockOnClose}
         title="title"
-        type={CalibrationType.MODULE}
       />,
     );
 

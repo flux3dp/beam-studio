@@ -2,7 +2,6 @@ import alertCaller from '@core/app/actions/alert-caller';
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { modelsWithModules } from '@core/app/actions/beambox/constant';
 import { showAdorCalibration } from '@core/app/components/dialogs/camera/AdorCalibration';
-import CalibrationType from '@core/app/components/dialogs/camera/AdorCalibration/calibrationTypes';
 import alertConstants from '@core/app/constants/alert-constants';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
@@ -26,12 +25,7 @@ export const checkModuleCalibration = async (device: IDeviceInfo, lang: ILang): 
       `#svgcontent > g.layer[data-module="${module}"]:not([display="none"]):not([data-repeat="0"])`,
     );
 
-  const checkCalibration = async (
-    layerModule: LayerModuleType,
-    calibrationType: CalibrationType,
-    alertTitle: string,
-    alertMsg: string,
-  ) => {
+  const checkCalibration = async (layerModule: LayerModuleType, alertTitle: string, alertMsg: string) => {
     const alertConfigKey = `skip-cali-${layerModule}-warning`;
 
     if (!getModuleOffsets({ module: layerModule, workarea }) && !alertConfig.read(alertConfigKey as AlertConfigKey)) {
@@ -50,7 +44,7 @@ export const checkModuleCalibration = async (device: IDeviceInfo, lang: ILang): 
         });
 
         if (doCali) {
-          await showAdorCalibration(calibrationType, layerModule);
+          await showAdorCalibration(layerModule);
         }
       }
     }
@@ -61,7 +55,6 @@ export const checkModuleCalibration = async (device: IDeviceInfo, lang: ILang): 
     async (module) => {
       await checkCalibration(
         module,
-        CalibrationType.MODULE,
         langNotification.performPrintingCaliTitle,
         langNotification.performPrintingCaliMsg,
       );
@@ -70,7 +63,6 @@ export const checkModuleCalibration = async (device: IDeviceInfo, lang: ILang): 
 
   await checkCalibration(
     LayerModule.LASER_1064,
-    CalibrationType.MODULE,
     langNotification.performIRCaliTitle,
     langNotification.performIRCaliMsg,
   );

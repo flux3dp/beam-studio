@@ -8,7 +8,6 @@ import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import MonitorController from '@core/app/actions/monitor-controller';
 import ProgressCaller from '@core/app/actions/progress-caller';
 import { showAdorCalibration } from '@core/app/components/dialogs/camera/AdorCalibration';
-import CalibrationType from '@core/app/components/dialogs/camera/AdorCalibration/calibrationTypes';
 import { showAdorCalibrationV2 } from '@core/app/components/dialogs/camera/AdorCalibrationV2';
 import {
   showBB2Calibration,
@@ -78,7 +77,7 @@ const calibrateCamera = async (
   }
 };
 
-const calibrateModule = async (device: IDeviceInfo, type: CalibrationType, module?: LayerModuleType) => {
+const calibrateModule = async (device: IDeviceInfo, module?: LayerModuleType) => {
   if (!checkHash()) return;
 
   try {
@@ -91,7 +90,7 @@ const calibrateModule = async (device: IDeviceInfo, type: CalibrationType, modul
     const res = await DeviceMaster.select(device);
 
     if (res.success) {
-      showAdorCalibration(type, module);
+      showAdorCalibration(module);
     }
   } catch (error) {
     console.error(error);
@@ -322,19 +321,19 @@ export default {
     }
   },
   CALIBRATE_IR_MODULE: async (device: IDeviceInfo): Promise<void> => {
-    calibrateModule(device, CalibrationType.MODULE, LayerModule.LASER_1064);
+    calibrateModule(device, LayerModule.LASER_1064);
   },
   CALIBRATE_PRINTER_4C_MODULE: async (device: IDeviceInfo): Promise<void> => {
-    calibrateModule(device, CalibrationType.MODULE, LayerModule.PRINTER_4C);
+    calibrateModule(device, LayerModule.PRINTER_4C);
   },
   CALIBRATE_PRINTER_MODULE: async (device: IDeviceInfo): Promise<void> => {
-    calibrateModule(device, CalibrationType.MODULE, LayerModule.PRINTER);
+    calibrateModule(device, LayerModule.PRINTER);
   },
   CALIBRATE_UV_VARNISH_MODULE: async (device: IDeviceInfo): Promise<void> => {
-    calibrateModule(device, CalibrationType.MODULE, LayerModule.UV_VARNISH);
+    calibrateModule(device, LayerModule.UV_VARNISH);
   },
   CALIBRATE_UV_WHITE_INK_MODULE: async (device: IDeviceInfo): Promise<void> => {
-    calibrateModule(device, CalibrationType.MODULE, LayerModule.UV_WHITE_INK);
+    calibrateModule(device, LayerModule.UV_WHITE_INK);
   },
   CATRIDGE_CHIP_SETTING: async (device: IDeviceInfo): Promise<void> => {
     const res = await DeviceMaster.select(device);

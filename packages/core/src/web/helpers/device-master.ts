@@ -897,11 +897,8 @@ class DeviceMaster {
     }
   };
 
-  async doAdorCalibrationCut() {
-    await this.doCalibration('fcode/ador-camera-v1.fc');
-  }
-
   async doAdorCalibrationV2() {
+    // TODO: should we remove the -v2 suffix?
     await this.doCalibration(`fcode/ador-camera-v2.fc`);
   }
 
