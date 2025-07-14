@@ -242,12 +242,8 @@ export const getBackgroundUrl = async (width: number, height: number): Promise<s
 
   backgroundUrlCache = URL.createObjectURL(blob);
 
-  console.log(canvas.toDataURL());
-
   return backgroundUrlCache;
 };
-
-window.getBackgroundUrl = getBackgroundUrl;
 
 export default {
   setupBackground,
