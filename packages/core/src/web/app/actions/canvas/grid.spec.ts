@@ -31,7 +31,7 @@ describe('test canvas/grid', () => {
   beforeEach(() => {
     jest.resetAllMocks();
     mockRead.mockReturnValue(true);
-    document.body.innerHTML = '<svg id="canvasBackground"><svg id="previewSvg"></svg></svg>';
+    document.body.innerHTML = '<svg id="canvasBackground"></svg>';
   });
 
   test('update zoom and toggle', () => {
