@@ -1,11 +1,20 @@
-let cache: 'Chrome' | 'Edge' | 'Firefox' | 'IE' | 'Safari' | 'Unknown' | null = null;
+type Browser = 'Android' | 'Chrome' | 'Edge' | 'Firefox' | 'IE' | 'Safari' | 'Unknown';
 
-export const getBrowser = (): 'Chrome' | 'Edge' | 'Firefox' | 'IE' | 'Safari' | 'Unknown' => {
+let cache: Browser | null = null;
+
+export const getBrowser = (): Browser => {
   if (cache) {
     return cache;
   }
 
   const { userAgent } = navigator;
+
+  // Detect Android browser
+  if (/Android/.test(userAgent)) {
+    cache = 'Android';
+
+    return 'Android';
+  }
 
   // Detect Chrome
   if (/Chrome/.test(userAgent) && !/Chromium/.test(userAgent) && !/Edg/.test(userAgent)) {
