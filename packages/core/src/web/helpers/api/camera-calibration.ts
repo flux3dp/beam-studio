@@ -352,6 +352,32 @@ class CameraCalibrationApi {
       this.ws.send(`check_pnp ${args}`);
     });
 
+  remapImage = (img: ArrayBuffer | Blob, params?: { d: number[][]; k: number[][] }): Promise<{ blob: Blob }> => {
+    return new Promise((resolve, reject) => {
+      this.events.onMessage = (response) => {
+        if (response instanceof Blob) {
+          resolve({ blob: response });
+        } else if (response.status === 'continue') {
+          this.ws.send(img);
+        }
+      };
+
+      this.events.onError = (response) => {
+        reject(response);
+        console.log('on error', response);
+      };
+      this.events.onFatal = (response) => {
+        reject(response);
+        console.log('on fatal', response);
+      };
+
+      const size = img instanceof Blob ? img.size : img.byteLength;
+      const args = JSON.stringify({ params, size });
+
+      this.ws.send(`remap_image ${args}`);
+    });
+  };
+
   updateData = (data: FisheyeCaliParameters): Promise<boolean> =>
     new Promise((resolve, reject) => {
       this.events.onMessage = (response) => {
