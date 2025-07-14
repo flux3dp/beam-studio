@@ -48,22 +48,3 @@ export const changeMenuItemEnabled = (ids: string[], enabled = true): void => {
     });
   }
 };
-
-export const changeVisibilityByIsBb2 = (isBb2: boolean): void => {
-  changeMenuItemVisible(['IMPORT_EXAMPLE_BEAMBOX_2'], isBb2);
-  changeMenuItemVisible(['IMPORT_MATERIAL_TESTING_ENGRAVE_BEAMBOX_2'], isBb2);
-  changeMenuItemVisible(['IMPORT_MATERIAL_TESTING_CUT_BEAMBOX_2'], isBb2);
-  changeMenuItemVisible(['IMPORT_BEAMBOX_2_FOCUS_PROBE'], isBb2);
-
-  changeMenuItemVisible(['IMPORT_MATERIAL_TESTING_ENGRAVE'], !isBb2);
-  changeMenuItemVisible(['IMPORT_MATERIAL_TESTING_OLD'], !isBb2);
-  changeMenuItemVisible(['IMPORT_MATERIAL_TESTING_CUT'], !isBb2);
-  changeMenuItemVisible(['IMPORT_MATERIAL_TESTING_SIMPLECUT'], !isBb2);
-};
-
-export const changeVisibilityByIsPromark = (isPromark: boolean): void => {
-  changeMenuItemVisible(['IMPORT_EXAMPLE_PROMARK'], isPromark);
-
-  changeMenuItemVisible(['PROMARK_COLOR_TEST'], isPromark);
-  changeMenuItemVisible(['PROMARK_COLOR_TEST', '*'], isPromark);
-};

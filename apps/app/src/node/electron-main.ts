@@ -487,7 +487,8 @@ const init = () => {
   menuManager = new MenuManager();
   menuManager.on(events.MENU_CLICK, onMenuClick);
   menuManager.on('NEW_APP_MENU', () => {
-    tabManager?.sendToAllViews('NEW_APP_MENU');
+    tabManager?.sendToAllViews('UPDATE_MENU');
+    tabManager?.sendToFocusedView('NEW_APP_MENU');
   });
 
   if (!mainWindow) {

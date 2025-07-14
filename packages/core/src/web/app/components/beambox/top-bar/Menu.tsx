@@ -257,22 +257,12 @@ export default function Menu({ email }: Props): React.JSX.Element {
             <MenuItem onClick={() => callback('IMPORT_MATERIAL_TESTING_ENGRAVE')}>
               {menuCms.import_material_testing_engrave}
             </MenuItem>
-            {!isWeb() && (
-              <MenuItem onClick={() => callback('IMPORT_MATERIAL_TESTING_ENGRAVE_BEAMBOX_2')}>
-                {menuCms.import_material_testing_engrave}
-              </MenuItem>
-            )}
             <MenuItem onClick={() => callback('IMPORT_MATERIAL_TESTING_OLD')}>
               {menuCms.import_material_testing_old}
             </MenuItem>
             <MenuItem onClick={() => callback('IMPORT_MATERIAL_TESTING_CUT')}>
               {menuCms.import_material_testing_cut}
             </MenuItem>
-            {!isWeb() && (
-              <MenuItem onClick={() => callback('IMPORT_MATERIAL_TESTING_CUT_BEAMBOX_2')}>
-                {menuCms.import_material_testing_cut}
-              </MenuItem>
-            )}
             <MenuItem onClick={() => callback('IMPORT_MATERIAL_TESTING_SIMPLECUT')}>
               {menuCms.import_material_testing_simple_cut}
             </MenuItem>
@@ -305,11 +295,9 @@ export default function Menu({ email }: Props): React.JSX.Element {
           <MenuItem onClick={() => callback('IMPORT_ACRYLIC_FOCUS_PROBE')}>
             {menuCms.import_acrylic_focus_probe}
           </MenuItem>
-          {!isWeb() && (
-            <MenuItem onClick={() => callback('IMPORT_BEAMBOX_2_FOCUS_PROBE')}>
-              {menuCms.import_beambox_2_focus_probe}
-            </MenuItem>
-          )}
+          <MenuItem onClick={() => callback('IMPORT_BEAMBOX_2_FOCUS_PROBE')}>
+            {menuCms.import_beambox_2_focus_probe}
+          </MenuItem>
         </SubMenu>
         <MenuDivider />
         <SubMenu label={menuCms.export_to}>
