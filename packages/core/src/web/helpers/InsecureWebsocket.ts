@@ -1,6 +1,6 @@
 import alertCaller from '@core/app/actions/alert-caller';
 import alertConstants from '@core/app/constants/alert-constants';
-import { getBrowser } from '@core/helpers/browser';
+import { getBrowser, isAndroid } from '@core/helpers/browser';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import switchProtocol from '@core/helpers/switch-protocol';
@@ -36,7 +36,7 @@ export const checkFluxTunnel = (): boolean => {
     const browserName = getBrowser();
     const isHttps = window.location.protocol === 'https:';
 
-    if (browserName !== 'Chrome' && isHttps) {
+    if (isHttps && (isAndroid || browserName !== 'Chrome')) {
       switchProtocol('http:');
 
       return false;

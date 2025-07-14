@@ -47,6 +47,8 @@ export const getBrowser = (): 'Chrome' | 'Edge' | 'Firefox' | 'IE' | 'Safari' | 
   return 'Unknown';
 };
 
+export const isAndroid: boolean = /Android/i.test(navigator.userAgent);
+
 export default {
   getBrowser,
 };
