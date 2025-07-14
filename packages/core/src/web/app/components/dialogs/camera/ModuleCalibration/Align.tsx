@@ -21,11 +21,7 @@ import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { getModuleOffsets, updateModuleOffsets } from '@core/helpers/device/moduleOffsets';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
-import type {
-  FisheyeCameraParametersV1,
-  FisheyeCameraParametersV2,
-  FisheyeCameraParametersV4,
-} from '@core/interfaces/FisheyePreview';
+import type { FisheyeCameraParameters } from '@core/interfaces/FisheyePreview';
 
 import { bm2PerspectiveGrid } from '../common/solvePnPConstants';
 
@@ -33,7 +29,7 @@ import styles from './Align.module.scss';
 import getPerspectiveForAlign from './getPerspectiveForAlign';
 
 interface Props {
-  fisheyeParam: FisheyeCameraParametersV1 | FisheyeCameraParametersV2 | FisheyeCameraParametersV4;
+  fisheyeParam: FisheyeCameraParameters;
   module?: LayerModuleType;
   onBack: () => void;
   onClose: (complete: boolean) => void;

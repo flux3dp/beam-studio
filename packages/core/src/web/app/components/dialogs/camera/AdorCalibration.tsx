@@ -13,31 +13,29 @@ import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import deviceMaster from '@core/helpers/device-master';
 import { getModulesTranslations } from '@core/helpers/layer-module/layer-module-helper';
 import useI18n from '@core/helpers/useI18n';
-import type {
-  FisheyeCameraParameters,
-  FisheyeCameraParametersV1,
-  FisheyeCameraParametersV2,
-} from '@core/interfaces/FisheyePreview';
+import type { FisheyeCameraParameters } from '@core/interfaces/FisheyePreview';
 
-import Align from './AdorCalibration/Align';
 import Instruction from './common/Instruction';
+import Align from './ModuleCalibration/Align';
 
-const PROGRESS_ID = 'fish-eye-calibration';
-const DIALOG_ID = 'fish-eye-calibration';
+const PROGRESS_ID = 'module-calibration';
+const DIALOG_ID = 'module-calibration';
 
-enum Step {
-  ALIGN = 3,
-  FOCUS_AND_CUT = 2,
-  PUT_PAPER = 1,
+/* eslint-disable perfectionist/sort-enums */
+const enum Step {
   WAITING = 0,
+  PUT_PAPER = 1,
+  FOCUS_AND_CUT = 2,
+  ALIGN = 3,
 }
+/* eslint-enable perfectionist/sort-enums */
 
 interface Props {
   module?: LayerModuleType;
   onClose: (completed?: boolean) => void;
 }
 
-const calibrated: { [subkey in LayerModuleType]?: Set<string> } = {};
+const calibrated: { [subey in LayerModuleType]?: Set<string> } = {};
 
 const doCalibration = async (model: WorkAreaModel, module: LayerModuleType) => {
   if (adorModels.has(model)) {
@@ -182,7 +180,7 @@ const AdorCalibration = ({ module = LayerModule.LASER_UNIVERSAL, onClose }: Prop
     case Step.ALIGN:
       return (
         <Align
-          fisheyeParam={param.current as FisheyeCameraParametersV1 | FisheyeCameraParametersV2}
+          fisheyeParam={param.current}
           module={module}
           onBack={() => setStep(Step.FOCUS_AND_CUT)}
           onClose={onClose}
