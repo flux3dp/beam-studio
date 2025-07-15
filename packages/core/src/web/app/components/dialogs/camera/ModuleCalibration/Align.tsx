@@ -18,29 +18,22 @@ import {
 } from '@core/app/constants/layer-module/layer-modules';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
-import { setFisheyeConfig } from '@core/helpers/camera-calibration-helper';
 import { getModuleOffsets, updateModuleOffsets } from '@core/helpers/device/moduleOffsets';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
-import type {
-  FisheyeCameraParametersV1,
-  FisheyeCameraParametersV2,
-  FisheyeCameraParametersV4,
-} from '@core/interfaces/FisheyePreview';
+import type { FisheyeCameraParameters } from '@core/interfaces/FisheyePreview';
 
 import { bm2PerspectiveGrid } from '../common/solvePnPConstants';
 
 import styles from './Align.module.scss';
-import CalibrationType from './calibrationTypes';
 import getPerspectiveForAlign from './getPerspectiveForAlign';
 
 interface Props {
-  fisheyeParam: FisheyeCameraParametersV1 | FisheyeCameraParametersV2 | FisheyeCameraParametersV4;
+  fisheyeParam: FisheyeCameraParameters;
   module?: LayerModuleType;
   onBack: () => void;
   onClose: (complete: boolean) => void;
   title: string;
-  type: CalibrationType;
 }
 
 // Guess from half of the image size
@@ -56,7 +49,6 @@ const Align = ({
   onBack,
   onClose,
   title,
-  type,
 }: Props): React.JSX.Element => {
   const imgContainerRef = useRef<HTMLDivElement | null>(null);
   const lang = useI18n();
@@ -194,16 +186,12 @@ const Align = ({
     return fisheyeParam.center;
   }, [fisheyeParam]);
   const lastResult = useMemo(() => {
-    if (type === CalibrationType.CAMERA) {
-      return fisheyeCenter;
-    }
-
     return getModuleOffsets({
       isRelative: true,
       module,
       workarea: deviceMaster.currentDevice.info.model,
     });
-  }, [type, fisheyeCenter, module]);
+  }, [module]);
   const getOffsetValueFromScroll = useCallback(
     (left: number, top: number) => {
       const x = (left - fisheyeCenter[0] + (imgContainerRef.current?.clientWidth ?? 0) / 2) / PX_PER_MM;
@@ -237,15 +225,11 @@ const Align = ({
       return null;
     }
 
-    if (type === CalibrationType.CAMERA) {
-      return getScrollFromPx(lastResult[0], lastResult[1]);
-    }
-
     const { left, top } = getPxFromOffsetValue(lastResult[0], lastResult[1]);
 
     return getScrollFromPx(left, top);
     // eslint-disable-next-line hooks/exhaustive-deps
-  }, [lastResult, type, img]);
+  }, [lastResult, img]);
 
   const useLastConfig = useCallback(() => {
     if (imgContainerRef.current && lastResultScroll) {
@@ -270,85 +254,48 @@ const Align = ({
     (key: 'x' | 'y', val: null | number) => {
       if (imgContainerRef.current && val !== null) {
         if (key === 'x') {
-          if (type === CalibrationType.CAMERA) {
-            imgContainerRef.current.scrollLeft = val;
-          } else {
-            const { left } = getPxFromOffsetValue(val, 0);
-            const { left: leftScroll } = getScrollFromPx(left, 0);
+          const { left } = getPxFromOffsetValue(val, 0);
+          const { left: leftScroll } = getScrollFromPx(left, 0);
 
-            imgContainerRef.current.scrollLeft = leftScroll;
-          }
+          imgContainerRef.current.scrollLeft = leftScroll;
 
           return;
         }
 
-        if (type === CalibrationType.CAMERA) {
-          imgContainerRef.current.scrollTop = val;
-        } else {
-          const { top } = getPxFromOffsetValue(0, val);
-          const { top: topScroll } = getScrollFromPx(0, top);
+        const { top } = getPxFromOffsetValue(0, val);
+        const { top: topScroll } = getScrollFromPx(0, top);
 
-          imgContainerRef.current.scrollTop = topScroll;
-        }
+        imgContainerRef.current.scrollTop = topScroll;
       }
     },
-    [type, getPxFromOffsetValue, getScrollFromPx],
+    [getPxFromOffsetValue, getScrollFromPx],
   );
 
   const handleContainerScroll = useCallback(
     (e: React.UIEvent<HTMLDivElement>) => {
-      if (type === CalibrationType.CAMERA) {
-        form.setFieldsValue({
-          x: Math.round(e.currentTarget.scrollLeft),
-          y: Math.round(e.currentTarget.scrollTop),
-        });
-      } else {
-        const { x, y } = getOffsetValueFromScroll(e.currentTarget.scrollLeft, e.currentTarget.scrollTop);
+      const { x, y } = getOffsetValueFromScroll(e.currentTarget.scrollLeft, e.currentTarget.scrollTop);
 
-        form.setFieldsValue({ x, y });
-      }
+      form.setFieldsValue({ x, y });
     },
-    [form, getOffsetValueFromScroll, type],
+    [form, getOffsetValueFromScroll],
   );
 
   const handleDone = useCallback(() => {
     const { x, y } = form.getFieldsValue();
 
-    if (type === CalibrationType.CAMERA) {
-      const cx = Math.round(x + (imgContainerRef.current?.clientWidth ?? 0) / 2);
-      const cy = Math.round(y + (imgContainerRef.current?.clientHeight ?? 0) / 2);
-      const newParam = { ...fisheyeParam, center: [cx, cy] } as FisheyeCameraParametersV1;
-
-      try {
-        setFisheyeConfig(newParam);
-      } catch (err) {
-        console.log(err);
-        alertCaller.popUp({
-          message: `${lang.calibration.failed_to_save_calibration_results} ${err}`,
-        });
-      }
-      onClose(true);
-    } else {
-      updateModuleOffsets([x, y], {
-        isRelative: true,
-        module,
-        shouldWrite: true,
-        workarea: deviceMaster.currentDevice.info.model,
-      });
-      onClose(true);
-    }
-  }, [form, onClose, type, fisheyeParam, module, lang.calibration.failed_to_save_calibration_results]);
-  const inputStep = useMemo(() => (type === CalibrationType.CAMERA ? 1 : 0.1), [type]);
-  const inputPrecision = useMemo(() => (type === CalibrationType.CAMERA ? 0 : 1), [type]);
+    updateModuleOffsets([x, y], {
+      isRelative: true,
+      module,
+      shouldWrite: true,
+      workarea: deviceMaster.currentDevice.info.model,
+    });
+    onClose(true);
+  }, [form, onClose, module]);
   const lastValueDisplay = useMemo(() => {
-    if (type === CalibrationType.CAMERA) {
-      return lastResult;
-    }
-
     const { left, top } = getPxFromOffsetValue(lastResult[0], lastResult[1]);
 
     return [left, top];
-  }, [getPxFromOffsetValue, type, lastResult]);
+  }, [getPxFromOffsetValue, lastResult]);
 
   const handleContainerDragStart = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     dragStartPos.current = {
@@ -449,8 +396,8 @@ const Align = ({
                   onChange={(val) => handleValueChange('x', val)}
                   onKeyDown={(e) => e.stopPropagation()}
                   onKeyUp={(e) => e.stopPropagation()}
-                  precision={inputPrecision}
-                  step={inputStep}
+                  precision={1}
+                  step={0.1}
                   type="number"
                 />
               </Form.Item>
@@ -459,8 +406,8 @@ const Align = ({
                   onChange={(val) => handleValueChange('y', val)}
                   onKeyDown={(e) => e.stopPropagation()}
                   onKeyUp={(e) => e.stopPropagation()}
-                  precision={inputPrecision}
-                  step={inputStep}
+                  precision={1}
+                  step={0.1}
                   type="number"
                 />
               </Form.Item>
