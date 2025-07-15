@@ -7,13 +7,13 @@ import Dialog from '@core/app/actions/dialog-caller';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import MonitorController from '@core/app/actions/monitor-controller';
 import ProgressCaller from '@core/app/actions/progress-caller';
-import { showModuleCalibration } from '@core/app/components/dialogs/camera/ModuleCalibration';
 import { showAdorCalibrationV2 } from '@core/app/components/dialogs/camera/AdorCalibrationV2';
 import {
   showBB2Calibration,
   showBB2WideAngleCameraCalibration,
 } from '@core/app/components/dialogs/camera/BB2Calibration';
 import { showBeamo2Calibration } from '@core/app/components/dialogs/camera/beamo2Calibration';
+import { showModuleCalibration } from '@core/app/components/dialogs/camera/ModuleCalibration';
 import { showPromarkCalibration } from '@core/app/components/dialogs/camera/PromarkCalibration';
 import { parsingChipData } from '@core/app/components/dialogs/CartridgeSettingPanel';
 import { showPromarkSettings } from '@core/app/components/dialogs/promark/PromarkSettings';
