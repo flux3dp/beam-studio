@@ -1,4 +1,6 @@
 import history from '@core/app/svgedit/history/history';
+import { deleteElements } from '@core/app/svgedit/operations/delete';
+import { getRotationAngle, setRotationAngle } from '@core/app/svgedit/transform/rotation';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
@@ -76,10 +78,15 @@ export async function rasterizeGenericSvgElement({
   svgElement: SVGGElement;
 }): Promise<SVGImageElement | undefined> {
   try {
-    const bbox = svgElement.getBBox();
+    const angle = getRotationAngle(svgElement);
     const cloned = svgElement.cloneNode(true) as SVGGraphicsElement;
+    const bbox = svgElement.getBBox();
     const isFilled = !['none', null].includes(svgElement.getAttribute('fill'));
-    const previousTransform = svgElement.getAttribute('transform');
+
+    setRotationAngle(cloned, 0, { addToHistory: false });
+
+    // get return-to-zero transform
+    const previousTransform = cloned.getAttribute('transform');
     const strokeOffset = isFilled ? 0 : 5;
 
     // Prepare the cloned element for rasterization
@@ -137,7 +144,6 @@ export async function rasterizeGenericSvgElement({
       'viewBox',
       `${finalCoords.x} ${finalCoords.y} ${Math.abs(finalWidth) + strokeOffset} ${Math.abs(finalHeight) + strokeOffset}`,
     );
-
     wrapper.appendChild(cloned);
 
     const svgData = new XMLSerializer().serializeToString(wrapper);
@@ -171,9 +177,11 @@ export async function rasterizeGenericSvgElement({
       element: 'image',
     }) as SVGImageElement;
 
+    setRotationAngle(imageElement, angle, { parentCmd });
     svgCanvas.setHref(imageElement, origImage);
     updateElementColor(imageElement);
     finalizeImageCreation(imageElement, isToSelect, parentCmd);
+    parentCmd.addSubCommand(deleteElements([svgElement], true));
 
     return imageElement as SVGImageElement;
   } catch (error) {
