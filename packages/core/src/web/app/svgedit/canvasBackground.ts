@@ -129,7 +129,7 @@ const createMaskElement = (maskType: BackgroundMaskType): void => {
       filter.setAttribute('y', '-50%');
       filter.setAttribute('width', '200%');
       filter.setAttribute('height', '200%');
-      feGaussianBlur.setAttribute('stdDeviation', '1000');
+      feGaussianBlur.setAttribute('stdDeviation', '800');
       filter.appendChild(feGaussianBlur);
       defs.appendChild(filter);
 
