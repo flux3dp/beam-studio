@@ -47,6 +47,7 @@ const Instruction = ({
       maskClosable={false}
       onCancel={() => onClose?.(false)}
       open
+      scrollableContent
       title={title}
       width={400}
     >

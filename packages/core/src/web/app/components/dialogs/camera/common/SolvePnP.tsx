@@ -315,6 +315,7 @@ const SolvePnP = ({
       maskClosable={false}
       onCancel={() => onClose(false)}
       open
+      scrollableContent
       title={<Title link={titleLink} title={title ?? lang.calibration.camera_calibration} />}
       width="80vw"
     >
@@ -330,34 +331,32 @@ const SolvePnP = ({
         <li>{lang.calibration.solve_pnp_step3}</li>
       </ol>
       {percent !== undefined && <Progress className={styles.progress} percent={percent} status="normal" />}
-      <Row gutter={[16, 12]}>
-        <Col span={16}>
-          <ImageDisplay
-            img={img}
-            onDragEnd={handleDragEnd}
-            onDragMove={handleDragMove}
-            onImgLoad={() => setZoomPoints(points)}
-            onScaleChange={onScaleChange}
-            ref={imgContainerRef}
-            renderContents={(scale) =>
-              points.map((p, idx) => (
-                <g
-                  className={classNames(styles.group, { [styles.selected]: idx === selectedPointIdx })}
-                  key={idx}
-                  onMouseDown={(e) => handlePointDragStart(idx, e)}
-                >
-                  <circle cx={p[0]} cy={p[1]} r={5 / scale} />
-                  <circle className={classNames('center', styles.center)} cx={p[0]} cy={p[1]} r={1 / scale} />
-                  <text className={styles.text} fontSize={12 / scale} x={p[0] + 10 / scale} y={p[1] + 10 / scale}>
-                    {idx}
-                  </text>
-                </g>
-              ))
-            }
-            zoomPoints={zoomPoints}
-          />
-        </Col>
-        <Col span={8}>
+      <div className={styles.grid}>
+        <ImageDisplay
+          img={img}
+          onDragEnd={handleDragEnd}
+          onDragMove={handleDragMove}
+          onImgLoad={() => setZoomPoints(points)}
+          onScaleChange={onScaleChange}
+          ref={imgContainerRef}
+          renderContents={(scale) =>
+            points.map((p, idx) => (
+              <g
+                className={classNames(styles.group, { [styles.selected]: idx === selectedPointIdx })}
+                key={idx}
+                onMouseDown={(e) => handlePointDragStart(idx, e)}
+              >
+                <circle cx={p[0]} cy={p[1]} r={5 / scale} />
+                <circle className={classNames('center', styles.center)} cx={p[0]} cy={p[1]} r={1 / scale} />
+                <text className={styles.text} fontSize={12 / scale} x={p[0] + 10 / scale} y={p[1] + 10 / scale}>
+                  {idx}
+                </text>
+              </g>
+            ))
+          }
+          zoomPoints={zoomPoints}
+        />
+        <div>
           {selectedPointIdx >= 0 && points[selectedPointIdx] && (
             <Flex className={styles.info} justify="space-between" vertical>
               <div>
@@ -399,22 +398,18 @@ const SolvePnP = ({
               <img src={`core-img/calibration/solve-pnp-${points.length}-${selectedPointIdx}.jpg`} />
             </Flex>
           )}
-        </Col>
+        </div>
         {exposureSetting && (
           <>
-            <Col span={16}>
-              <ExposureSlider
-                exposureSetting={exposureSetting}
-                onChanged={() => handleTakePicture({ handleImgOpts: { shouldFindCorners: false } })}
-                setExposureSetting={setExposureSetting}
-              />
-            </Col>
-            <Col span={8}>
-              <div className={styles.value}>{exposureSetting.value}</div>
-            </Col>
+            <ExposureSlider
+              exposureSetting={exposureSetting}
+              onChanged={() => handleTakePicture({ handleImgOpts: { shouldFindCorners: false } })}
+              setExposureSetting={setExposureSetting}
+            />
+            <div className={styles.value}>{exposureSetting.value}</div>
           </>
         )}
-      </Row>
+      </div>
     </DraggableModal>
   );
 };

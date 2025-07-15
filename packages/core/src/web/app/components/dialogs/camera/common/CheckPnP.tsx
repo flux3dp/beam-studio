@@ -100,6 +100,7 @@ const CheckPnP = ({
       maskClosable={false}
       onCancel={() => onClose(false)}
       open
+      scrollableContent
       title={<Title title={title ?? tCali.title_confirm_calibration_result} />}
       width="80vw"
     >

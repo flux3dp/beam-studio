@@ -2,15 +2,19 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import type { ModalProps } from 'antd';
 import { Modal } from 'antd';
+import classNames from 'classnames';
 import Draggable from 'react-draggable';
 import type { ControlPosition, DraggableData, DraggableEvent } from 'react-draggable';
 import { match } from 'ts-pattern';
 
 import layoutConstants from '@core/app/constants/layout-constants';
 
+import styles from './DraggableModal.module.scss';
+
 interface Props extends Omit<ModalProps, 'centered'> {
   centered?: boolean;
   defaultPosition?: ControlPosition;
+  scrollableContent?: boolean;
   width?: number | string;
   xRef?: 'center' | 'left' | 'right';
   yRef?: 'bottom' | 'center' | 'top';
@@ -21,6 +25,7 @@ const DraggableModal = (props: Props): React.JSX.Element => {
     children,
     defaultPosition = { x: 0, y: 0 },
     modalRender = (modal) => modal,
+    scrollableContent,
     title,
     width = 520,
     xRef = 'center',
@@ -95,7 +100,11 @@ const DraggableModal = (props: Props): React.JSX.Element => {
           onStart={onStart}
           positionOffset={positionOffset}
         >
-          <div ref={draggableRef} style={{ minWidth: width }}>
+          <div
+            className={classNames({ [styles.scrollable]: scrollableContent })}
+            ref={draggableRef}
+            style={{ minWidth: width }}
+          >
             {modalRender(modal)}
           </div>
         </Draggable>
