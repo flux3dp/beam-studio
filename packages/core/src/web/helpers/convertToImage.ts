@@ -1,4 +1,4 @@
-import { match } from 'ts-pattern';
+import { match, P } from 'ts-pattern';
 
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
@@ -6,24 +6,22 @@ import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import updateElementColor from './color/updateElementColor';
+import { finalizeImageCreation, getTransformedCoordinates, rasterizeGenericSvgElement } from './convertToImage.util';
 import { getSVGAsync } from './svg-editor-helper';
 
+// (The types, constants, and getSVGAsync setup remain the same as your original code)
 let svgCanvas: ISVGCanvas;
 
 getSVGAsync(({ Canvas }) => {
   svgCanvas = Canvas;
 });
 
-type BBox = { height: number; width: number; x: number; y: number };
-
 export type ConvertSvgToImageParams = {
   isToSelect?: boolean;
   parentCmd?: IBatchCommand;
-  positionOffset?: number[];
   scale?: number;
   svgElement: SVGGElement;
 };
-
 export const convertibleSvgTags = [
   'rect',
   'circle',
@@ -36,506 +34,131 @@ export const convertibleSvgTags = [
   'use',
   'g',
 ] as const;
-export const commonSvgTags = ['rect', 'circle', 'ellipse', 'line', 'polygon', 'polyline', 'path'] as const;
 
 /**
- * Calculates the new coordinates of a point after applying an SVG matrix transform.
- * @param bbox The original bbox.
- * @param transform The SVG transform attribute string (e.g., "matrix(a,b,c,d,e,f)").
- * @returns A new bbox with the transformed coordinates.
+ * Converts a <use> element to an <image>. Its logic is unique and doesn't involve rasterization.
+ * Refactored to use the `finalizeImageCreation` helper.
  */
-export const getTransformedCoordinates = (bbox: BBox, transform: null | string): BBox => {
-  // If there's no transform string, return the original point
-  if (!transform) {
-    return bbox;
-  }
-
-  const matrixMatch = transform.match(/matrix\(([^)]+)\)/);
-
-  if (matrixMatch?.[1]) {
-    const matrixValues = matrixMatch[1].split(/[\s,]+/).map(Number);
-
-    if (matrixValues.length === 6) {
-      const [a, b, c, d, e, f] = matrixValues;
-      const { x, y } = bbox;
-
-      // Apply the standard matrix transformation formula
-      const newX = a * x + c * y + e;
-      const newY = b * x + d * y + f;
-      const newWidth = bbox.width * Math.sqrt(a * a + b * b);
-      const newHeight = bbox.height * Math.sqrt(c * c + d * d);
-
-      return { height: newHeight, width: newWidth, x: newX, y: newY };
-    }
-  }
-
-  console.warn('No valid matrix transform found. Returning original coordinates.');
-
-  return bbox;
-};
-
-export const convertCommonSvgToImage = async ({
-  isToSelect = true,
-  parentCmd = new history.BatchCommand('Convert Common SVG to Image'),
-  positionOffset = [0, 0],
-  svgElement,
-}: ConvertSvgToImageParams): Promise<SVGImageElement | undefined> => {
-  let svgUrl: null | string = null;
-
-  if (!commonSvgTags.includes(svgElement.tagName)) {
-    return undefined;
-  }
-
-  try {
-    const bbox = svgElement.getBBox();
-    const wrapper = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    const isFilled = svgElement.getAttribute('fill') !== 'none' && svgElement.getAttribute('fill') !== null;
-    const cloned = svgElement.cloneNode(true) as SVGGraphicsElement;
-    let strokeOffset = 0;
-
-    if (!isFilled) {
-      strokeOffset = 5;
-    }
-
-    wrapper.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-    wrapper.setAttribute('width', String(bbox.width * 1 + strokeOffset));
-    wrapper.setAttribute('height', String(bbox.height * 1 + strokeOffset));
-
-    cloned.setAttribute('fill', '#000');
-    cloned.setAttribute('stroke', '#000');
-
-    if (!isFilled) {
-      cloned.setAttribute('fill', 'none');
-      cloned.setAttribute('stroke-width', String(strokeOffset));
-    }
-
-    cloned.setAttribute('transform', `translate(${-bbox.x + strokeOffset / 2}, ${-bbox.y + strokeOffset / 2}) `);
-    wrapper.appendChild(cloned);
-
-    const svgData = new XMLSerializer().serializeToString(wrapper);
-    const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-
-    svgUrl = URL.createObjectURL(blob);
-
-    const img = new Image();
-
-    await new Promise<void>((resolve, reject) => {
-      img.onload = () => resolve();
-      img.onerror = () => reject(new Error('Failed to load the generated SVG.'));
-      img.src = svgUrl!;
-    });
-
-    const { height, width } = img;
-    const newImage = svgCanvas.addSvgElementFromJson({
-      attr: {
-        'data-ratiofixed': true,
-        'data-shading': true,
-        'data-threshold': 254,
-        height,
-        id: svgCanvas.getNextId(),
-        origImage: img.src,
-        preserveAspectRatio: 'none',
-        style: 'pointer-events:inherit',
-        width,
-        x: bbox.x + positionOffset[0],
-        y: bbox.y + positionOffset[1],
-      },
-      element: 'image',
-    });
-
-    svgCanvas.setHref(newImage, img.src);
-    updateElementColor(newImage);
-
-    if (isToSelect) {
-      svgCanvas.selectOnly([newImage]);
-    }
-
-    const cmd = new history.InsertElementCommand(newImage);
-
-    if (!parentCmd) {
-      svgCanvas.undoMgr.addCommandToHistory(cmd);
-    } else {
-      parentCmd.addSubCommand(cmd);
-    }
-
-    if (!positionOffset) {
-      svgCanvas.alignSelectedElements('l', 'page');
-      svgCanvas.alignSelectedElements('t', 'page');
-    }
-
-    return newImage as SVGImageElement;
-  } catch (error) {
-    console.error('Failed during SVG to Image conversion:', error);
-  }
-};
-
-export const convertTextToImage = async ({
-  isToSelect = true,
-  parentCmd = new history.BatchCommand('Convert Text to Image'),
-  positionOffset = [0, 0],
-  svgElement,
-}: ConvertSvgToImageParams): Promise<SVGImageElement | undefined> => {
-  let svgUrl: null | string = null;
-
-  if (svgElement.tagName !== 'text') {
-    return undefined;
-  }
-
-  try {
-    const bbox = svgElement.getBBox();
-    const wrapper = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    const isFilled = svgElement.getAttribute('fill') !== 'none' && svgElement.getAttribute('fill') !== null;
-    const cloned = svgElement.cloneNode(true) as SVGGraphicsElement;
-    const previousTransform = cloned.getAttribute('transform');
-    const transformScale = cloned
-      .getAttribute('transform')
-      ?.match(/matrix\(([^)]+)\)/)![1]
-      .split(' ')[0] as unknown as number;
-    const transformedCoordinates = getTransformedCoordinates(bbox, previousTransform);
-    let strokeOffset = 0;
-
-    if (!isFilled) {
-      strokeOffset = 5;
-    }
-
-    wrapper.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-    wrapper.setAttribute('width', String(bbox.width * (transformScale || 1)));
-    wrapper.setAttribute('height', String(bbox.height * (transformScale || 1)));
-
-    cloned.setAttribute('fill', '#000');
-    cloned.setAttribute('stroke', '#000');
-
-    if (!isFilled) {
-      cloned.setAttribute('fill', 'none');
-      cloned.setAttribute('stroke-width', String(strokeOffset));
-    }
-
-    cloned.setAttribute(
-      'transform',
-      `translate(${-transformedCoordinates.x}, ${-transformedCoordinates.y}) ${previousTransform ?? ''}`,
-    );
-    wrapper.appendChild(cloned);
-
-    const svgData = new XMLSerializer().serializeToString(wrapper);
-    const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-    const img = new Image();
-
-    svgUrl = URL.createObjectURL(blob);
-
-    await new Promise<void>((resolve, reject) => {
-      img.onload = () => resolve();
-      img.onerror = () => reject(new Error('Failed to load the generated SVG.'));
-      img.src = svgUrl!;
-    });
-
-    const { height, width } = img;
-    const newImage = svgCanvas.addSvgElementFromJson({
-      attr: {
-        'data-ratiofixed': true,
-        'data-shading': true,
-        'data-threshold': 254,
-        height,
-        id: svgCanvas.getNextId(),
-        origImage: img.src,
-        preserveAspectRatio: 'none',
-        style: 'pointer-events:inherit',
-        width,
-        x: transformedCoordinates.x! + positionOffset[0],
-        y: transformedCoordinates.y! + positionOffset[1],
-      },
-      element: 'image',
-    });
-
-    svgCanvas.setHref(newImage, img.src);
-    updateElementColor(newImage);
-
-    if (isToSelect) {
-      svgCanvas.selectOnly([newImage]);
-    }
-
-    const cmd = new history.InsertElementCommand(newImage);
-
-    if (!parentCmd) {
-      svgCanvas.undoMgr.addCommandToHistory(cmd);
-    } else {
-      parentCmd.addSubCommand(cmd);
-    }
-
-    if (!positionOffset) {
-      svgCanvas.alignSelectedElements('l', 'page');
-      svgCanvas.alignSelectedElements('t', 'page');
-    }
-
-    return newImage as SVGImageElement;
-  } catch (error) {
-    console.error('Failed during SVG to Image conversion:', error);
-  }
-};
-
-export const convertTextOnPathToImage = async ({
-  isToSelect = true,
-  parentCmd = new history.BatchCommand('Convert Text on Path to Image'),
-  positionOffset = [0, 0],
-  svgElement,
-}: ConvertSvgToImageParams): Promise<SVGImageElement | undefined> => {
-  let svgUrl: null | string = null;
-
-  console.log('Converting text on path to image:', svgElement);
-
-  try {
-    const bbox = svgElement.getBBox();
-    // Create a new <svg> wrapper element to hold the cloned SVG
-    const wrapper = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    const isFilled = svgElement.getAttribute('fill') !== 'none' && svgElement.getAttribute('fill') !== null;
-    const cloned = svgElement.cloneNode(true) as SVGGraphicsElement;
-    const previousTransform = cloned.getAttribute('transform');
-    const transformScale = cloned
-      .getAttribute('transform')
-      ?.match(/matrix\(([^)]+)\)/)![1]
-      .split(' ')[0] as unknown as number;
-    const transformedCoordinates = getTransformedCoordinates(bbox, previousTransform);
-    let strokeOffset = 0;
-
-    if (!isFilled) {
-      strokeOffset = 5;
-    }
-
-    wrapper.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-    wrapper.setAttribute('width', String(bbox.width * (transformScale || 1) + strokeOffset));
-    wrapper.setAttribute('height', String(bbox.height * (transformScale || 1) + strokeOffset));
-
-    cloned.setAttribute('fill', '#000');
-    cloned.setAttribute('stroke', '#000');
-
-    if (cloned.children.length) {
-      Array.from(cloned.children).forEach((child) => {
-        if (child instanceof SVGGraphicsElement) {
-          child.setAttribute('fill', '#000');
-          child.setAttribute('stroke', '#000');
-        }
-      });
-    }
-
-    if (!isFilled) {
-      cloned.setAttribute('fill', 'none');
-      cloned.setAttribute('stroke-width', String(strokeOffset));
-    }
-
-    cloned.setAttribute(
-      'transform',
-      `translate(${-transformedCoordinates.x + strokeOffset / 2}, ${-transformedCoordinates.y + strokeOffset / 2}) ${previousTransform ?? ''}`,
-    );
-    wrapper.appendChild(cloned);
-
-    const svgData = new XMLSerializer().serializeToString(wrapper);
-    const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-
-    svgUrl = URL.createObjectURL(blob);
-
-    const img = new Image();
-
-    await new Promise<void>((resolve, reject) => {
-      img.onload = () => resolve();
-      img.onerror = () => reject(new Error('Failed to load the generated SVG.'));
-      img.src = svgUrl!;
-    });
-
-    const { height, width } = img;
-    const newImage = svgCanvas.addSvgElementFromJson({
-      attr: {
-        'data-ratiofixed': true,
-        'data-shading': true,
-        'data-threshold': 254,
-        height,
-        id: svgCanvas.getNextId(),
-        origImage: img.src,
-        preserveAspectRatio: 'none',
-        style: 'pointer-events:inherit',
-        width,
-        x: transformedCoordinates.x + positionOffset[0],
-        y: transformedCoordinates.y + positionOffset[1],
-      },
-      element: 'image',
-    });
-
-    svgCanvas.setHref(newImage, img.src);
-    updateElementColor(newImage);
-
-    if (isToSelect) {
-      svgCanvas.selectOnly([newImage]);
-    }
-
-    const cmd = new history.InsertElementCommand(newImage);
-
-    if (!parentCmd) {
-      svgCanvas.undoMgr.addCommandToHistory(cmd);
-    } else {
-      parentCmd.addSubCommand(cmd);
-    }
-
-    if (!positionOffset) {
-      svgCanvas.alignSelectedElements('l', 'page');
-      svgCanvas.alignSelectedElements('t', 'page');
-    }
-
-    return newImage as SVGImageElement;
-  } catch (error) {
-    console.error('Failed during SVG to Image conversion:', error);
-  }
-};
-
-export const convertUseToImage = async ({
+async function convertUseToImage({
   isToSelect = true,
   parentCmd = new history.BatchCommand('Convert Use to Image'),
-  positionOffset = [0, 0],
   svgElement,
-}: ConvertSvgToImageParams): Promise<SVGImageElement | undefined> => {
-  if (!svgElement.getAttribute('xlink:href')) {
-    console.warn('The provided SVG element does not have a valid href attribute.');
+}: ConvertSvgToImageParams): Promise<SVGImageElement | undefined> {
+  const href = svgElement.getAttribute('xlink:href');
+  const symbol = href ? document.querySelector(href) : null;
+  const imageSrc = symbol?.children[0]?.getAttribute('href');
 
-    return;
+  if (!imageSrc) {
+    console.warn('The <use> element does not reference a valid image source.');
+
+    return undefined;
   }
 
-  const symbolId = svgElement.getAttribute('xlink:href')!;
-  const symbol = document.querySelector(symbolId);
-  const href = symbol?.children[0]?.getAttribute('href')!;
   const x = Number.parseFloat(svgElement.getAttribute('x') || '0');
   const y = Number.parseFloat(svgElement.getAttribute('y') || '0');
-  const [width, height] = svgElement
-    .getAttribute('data-xform')!
-    .split(' ')
-    .slice(2, 4)
-    .map((value) => Number.parseFloat(value.split('=')[1]));
-  const previousTransform = svgElement.getAttribute('transform');
-  const transformedCoordinates = getTransformedCoordinates({ height, width, x, y }, previousTransform);
+  const dataXform = svgElement.getAttribute('data-xform');
+  const [w, h] = dataXform
+    ? dataXform
+        .split(' ')
+        .slice(2, 4)
+        .map((v) => Number.parseFloat(v.split('=')[1]))
+    : [0, 0];
+  const {
+    height,
+    width,
+    x: newX,
+    y: newY,
+  } = getTransformedCoordinates({ height: h, width: w, x, y }, svgElement.getAttribute('transform'));
 
-  console.log('Transformed Coordinates:', transformedCoordinates);
-
-  const image = svgCanvas.addSvgElementFromJson({
+  const newImage = svgCanvas.addSvgElementFromJson({
     attr: {
       'data-ratiofixed': true,
       'data-shading': true,
       'data-threshold': 254,
-      height: transformedCoordinates.height,
+      height,
       id: svgCanvas.getNextId(),
-      origImage: href,
+      origImage: imageSrc,
       preserveAspectRatio: 'none',
       style: 'pointer-events:inherit',
-      width: transformedCoordinates.width,
-      x: positionOffset[0] + transformedCoordinates.x,
-      y: positionOffset[1] + transformedCoordinates.y,
+      width,
+      x: newX,
+      y: newY,
     },
     element: 'image',
-  });
+  }) as SVGImageElement;
 
-  svgCanvas.setHref(image, href);
-  updateElementColor(image);
+  svgCanvas.setHref(newImage, imageSrc);
+  updateElementColor(newImage);
+  finalizeImageCreation(newImage, isToSelect, parentCmd);
 
-  if (isToSelect) {
-    svgCanvas.selectOnly([image]);
-  }
+  return newImage as SVGImageElement;
+}
 
-  const cmd = new history.InsertElementCommand(image);
-
-  if (!parentCmd) {
-    svgCanvas.undoMgr.addCommandToHistory(cmd);
-  } else {
-    parentCmd.addSubCommand(cmd);
-  }
-
-  if (!positionOffset) {
-    svgCanvas.alignSelectedElements('l', 'page');
-    svgCanvas.alignSelectedElements('t', 'page');
-  }
-
-  return image as SVGImageElement;
-};
-
-export const convertGroupToImage = async ({
+/**
+ * Recursively converts all elements inside a <g> group to images.
+ * Refactored to call the main `convertSvgToImage` dispatcher.
+ */
+async function convertGroupToImage({
   parentCmd = new history.BatchCommand('Convert Group to Image'),
-  positionOffset = [0, 0],
+  svgElement,
+}: ConvertSvgToImageParams): Promise<undefined> {
+  const groupBatchCmd = new history.BatchCommand('Convert Group to Image');
+  const newImages = [];
+
+  for (const child of Array.from(svgElement.children)) {
+    const image = await convertSvgToImage({
+      isToSelect: false,
+      parentCmd: groupBatchCmd,
+      svgElement: child as SVGGElement,
+    });
+
+    if (image) newImages.push(image);
+  }
+
+  // Group the newly created images
+  if (newImages.length > 0) {
+    svgCanvas.selectOnly(newImages);
+
+    const groupCommand = svgCanvas.groupSelectedElements(true);
+
+    parentCmd.addSubCommand(groupCommand || groupBatchCmd);
+  }
+
+  return undefined; // Groups don't return a single image
+}
+
+/**
+ * Main entry point for converting any supported SVG element to an image.
+ * This function now acts as a dispatcher, using `ts-pattern` for clean matching.
+ */
+export const convertSvgToImage = async ({
+  isToSelect = true,
+  parentCmd = new history.BatchCommand('Convert SVG to Image'),
   svgElement,
 }: ConvertSvgToImageParams): Promise<SVGImageElement | undefined> => {
-  const list = [];
+  const result = await match(svgElement)
+    .with({ tagName: 'use' }, async (svgElement) => convertUseToImage({ isToSelect, parentCmd, svgElement }))
+    .when(
+      // skip border elements(e.g., multi-selection border for use elements)
+      (svgElement) => svgElement.getAttribute('data-imageborder') === 'true',
+      async () => Promise.resolve(undefined),
+    )
+    .when(
+      // match text-on-path elements before group elements, due to their tagName are the same
+      (svgElement) => svgElement.getAttribute('data-textpath-g') === '1',
+      async (svgElement) => rasterizeGenericSvgElement({ isToSelect, parentCmd, svgElement }),
+    )
+    .with({ tagName: 'g' }, async (svgElement) => convertGroupToImage({ isToSelect, parentCmd, svgElement }))
+    .with({ tagName: P.union(...convertibleSvgTags) }, async (svgElement) =>
+      rasterizeGenericSvgElement({ isToSelect, parentCmd, svgElement }),
+    )
+    .otherwise(async ({ tagName }) => {
+      console.log('The provided SVG element is not convertible:', tagName);
 
-  for await (const child of svgElement.children) {
-    const image = await match(child)
-      .with({ tagName: 'use' }, async (useElement) =>
-        convertUseToImage({ isToSelect: false, parentCmd, positionOffset, svgElement: useElement as SVGGElement }),
-      )
-      .with({ tagName: 'text' }, async (textElement) =>
-        convertTextToImage({ isToSelect: false, parentCmd, positionOffset, svgElement: textElement as SVGGElement }),
-      )
-      .when(
-        (element) => element.getAttribute('data-textpath-g') === '1',
-        async (element) =>
-          convertTextOnPathToImage({
-            isToSelect: false,
-            parentCmd,
-            positionOffset,
-            svgElement: element as SVGGElement,
-          }),
-      )
-      .with({ tagName: 'g' }, async (groupElement) =>
-        convertGroupToImage({ isToSelect: false, parentCmd, positionOffset, svgElement: groupElement as SVGGElement }),
-      )
-      .otherwise(async (child) =>
-        convertCommonSvgToImage({ isToSelect: false, parentCmd, positionOffset, svgElement: child as SVGGElement }),
-      );
-
-    if (image) {
-      list.push(image);
-    }
-  }
-
-  svgCanvas.selectOnly(list);
-  svgCanvas.tempGroupSelectedElements();
-
-  const groupCommand = svgCanvas.groupSelectedElements(true);
-
-  if (groupCommand) {
-    parentCmd.addSubCommand(groupCommand);
-  }
+      return Promise.resolve(undefined);
+    });
 
   undoManager.addCommandToHistory(parentCmd);
 
-  return undefined;
-};
-
-export const convertSvgToImage = async ({
-  parentCmd = new history.BatchCommand('Convert SVG to Image'),
-  positionOffset = [0, 0],
-  svgElement,
-}: ConvertSvgToImageParams): Promise<SVGImageElement | undefined> => {
-  if (svgElement.tagName === 'use') {
-    console.log('Converting use to image:', svgElement);
-
-    return convertUseToImage({ parentCmd, positionOffset, svgElement: svgElement as SVGGElement });
-  }
-
-  if (svgElement.tagName === 'text') {
-    console.log('Converting text to image:', svgElement);
-
-    return convertTextToImage({ parentCmd, positionOffset, svgElement: svgElement as SVGGElement });
-  }
-
-  if (svgElement.tagName === 'g' && svgElement.getAttribute('data-textpath-g') === '1') {
-    console.log('Converting text-on-path to image:', svgElement);
-
-    return convertTextOnPathToImage({ parentCmd, positionOffset, svgElement: svgElement as SVGGElement });
-  }
-
-  if (svgElement.tagName === 'g') {
-    console.log('Converting group to image:', svgElement);
-
-    return convertGroupToImage({ parentCmd, positionOffset, svgElement: svgElement as SVGGElement });
-  }
-
-  if (commonSvgTags.includes(svgElement.tagName)) {
-    console.log('Converting common SVG to image:', svgElement);
-
-    return convertCommonSvgToImage({ parentCmd, positionOffset, svgElement: svgElement as SVGGElement });
-  }
-
-  console.log('The provided SVG element is not convertible:', svgElement.tagName);
+  return result;
 };
