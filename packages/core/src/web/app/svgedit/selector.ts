@@ -45,7 +45,7 @@ const iconWidth = 2 * (btnRadius - btnPadding);
 const rectDist = 25;
 const SELECTOR_MAP_RESERVE_SIZE = 5;
 
-const init = (injectedConfig, injectedSvgFactory): void => {
+const init = (injectedConfig: any, injectedSvgFactory: any): void => {
   config = injectedConfig;
   svgFactory = injectedSvgFactory;
 };
@@ -55,17 +55,17 @@ const init = (injectedConfig, injectedSvgFactory): void => {
  * Private class for DOM element selection boxes
  */
 export class Selector {
-  public elem: Element;
+  public elem: Element | null;
 
-  public inUse: boolean;
+  public inUse!: boolean;
 
   public selectorGroup: SVGGElement;
 
   private selectorRect: SVGPathElement;
 
-  private gripsGroup: SVGGElement;
+  private gripsGroup!: SVGGElement;
 
-  private resizeGrips: {
+  private resizeGrips!: {
     e?: SVGCircleElement;
     n?: SVGCircleElement;
     ne?: SVGCircleElement;
@@ -76,25 +76,19 @@ export class Selector {
     w?: SVGCircleElement;
   };
 
-  private rotateGripConnector: SVGLineElement;
+  private rotateGripConnector!: SVGLineElement;
 
-  private rotateGripTop: SVGCircleElement;
+  private rotateGripTop!: SVGCircleElement;
 
-  private rotateGripBottom: SVGGElement;
+  private rotateGripBottom!: SVGGElement;
 
-  private dimensionBG: SVGRectElement;
+  private dimensionBG!: SVGRectElement;
 
-  private dimensionInfo: SVGTextElement;
+  private dimensionInfo!: SVGTextElement;
 
-  private dimension: {
-    angle: number;
-    height: number;
-    width: number;
-    x: number;
-    y: number;
-  };
+  private dimension: null | { angle: number; height: number; width: number; x: number; y: number } = null;
 
-  private isShowing: boolean;
+  private isShowing!: boolean;
 
   /**
    *
@@ -126,20 +120,19 @@ export class Selector {
     this.gripsGroup = document.createElementNS(NS.SVG, 'g') as unknown as SVGGElement;
     // this.selectorParentGroup.appendChild(this.gripsGroup);
     this.resizeGrips = {
-      e: null,
-      n: null,
-      ne: null,
-      nw: null,
-      s: null,
-      se: null,
-      sw: null,
-      w: null,
+      e: undefined,
+      n: undefined,
+      ne: undefined,
+      nw: undefined,
+      s: undefined,
+      se: undefined,
+      sw: undefined,
+      w: undefined,
     };
 
-    const dirs = Object.keys(this.resizeGrips);
+    const dirs = Object.keys(this.resizeGrips) as Array<'e' | 'n' | 'ne' | 'nw' | 's' | 'se' | 'sw' | 'w'>;
 
-    for (let i = 0; i < dirs.length; i += 1) {
-      const dir = dirs[i];
+    for (const dir of dirs) {
       const grip = document.createElementNS(NS.SVG, 'circle') as unknown as SVGCircleElement;
 
       grip.setAttribute('id', `selectorGrip_resize_${dir}`);
@@ -201,12 +194,12 @@ export class Selector {
     this.rotateGripBottom.setAttribute('class', 'hidden-desktop');
     this.gripsGroup.appendChild(this.rotateGripBottom);
 
-    const rotBtn = this.rotateGripBottom.querySelector('circle');
+    const rotBtn = this.rotateGripBottom.querySelector('circle')!;
 
     $.data(rotBtn, 'type', 'rotate');
     rotBtn.setAttribute('data-angleOffset', '-90');
 
-    const rotIcon = this.rotateGripBottom.querySelector('image');
+    const rotIcon = this.rotateGripBottom.querySelector('image')!;
 
     $.data(rotIcon, 'type', 'rotate');
     rotIcon.setAttribute('data-angleOffset', '-90');
@@ -247,7 +240,7 @@ export class Selector {
    * @param bbox Optional bbox to use for resize (prevents duplicate getBBox call).
    */
   calculateDimension(bbox?: BBox) {
-    const { elem } = this;
+    const elem = this.elem as Element;
     const currentZoom = workareaManager.zoomRatio;
     const { tagName } = elem;
 
@@ -376,13 +369,11 @@ export class Selector {
       sw: [x, y + height],
       w: [x, cy],
     };
-    const dirs = Object.keys(positionMap);
+    const dirs = Object.keys(positionMap) as Array<'e' | 'n' | 'ne' | 'nw' | 's' | 'se' | 'sw' | 'w'>;
 
-    for (let i = 0; i < dirs.length; i += 1) {
-      const dir = dirs[i];
-
-      this.resizeGrips[dir].setAttribute('cx', positionMap[dir][0].toString());
-      this.resizeGrips[dir].setAttribute('cy', positionMap[dir][1].toString());
+    for (const dir of dirs) {
+      this.resizeGrips[dir]?.setAttribute('cx', positionMap[dir][0].toString());
+      this.resizeGrips[dir]?.setAttribute('cy', positionMap[dir][1].toString());
     }
 
     if (isMobile()) {
@@ -406,7 +397,13 @@ export class Selector {
   }
 
   updateDimensionInfo() {
-    const { angle, height, width, x, y } = this.dimension;
+    const { angle, height, width, x, y } = this.dimension as {
+      angle: number;
+      height: number;
+      width: number;
+      x: number;
+      y: number;
+    };
     const elemDimension = ObjectPanelController.getDimensionValues();
     let newContent = '';
 
@@ -425,7 +422,9 @@ export class Selector {
         getValue(elemDimension, 'h', { allowUndefined: true, unit }) ??
         getValue(elemDimension, 'ry', { allowUndefined: true, unit });
 
-      if (!!elemH && !!elemW) newContent = `${+elemW.toFixed(1)}${displayUnit} x ${+elemH.toFixed(1)}${displayUnit}`;
+      if (Boolean(elemH) && Boolean(elemW)) {
+        newContent = `${+elemW.toFixed(1)}${displayUnit} x ${+elemH.toFixed(1)}${displayUnit}`;
+      }
     }
 
     this.dimensionInfo.innerHTML = newContent;
@@ -477,7 +476,7 @@ export class Selector {
   }
 
   updateGripCursors() {
-    const { angle } = this.dimension;
+    const { angle } = this.dimension as { angle: number };
     let step = Math.round(angle / 45);
 
     if (step < 0) step += 8;
@@ -498,13 +497,12 @@ export class Selector {
       2: 'nesw',
       3: 'ew',
     };
-    const dirs = Object.keys(this.resizeGrips);
+    const dirs = Object.keys(this.resizeGrips) as Array<'e' | 'n' | 'ne' | 'nw' | 's' | 'se' | 'sw' | 'w'>;
 
-    for (let i = 0; i < dirs.length; i += 1) {
-      const dir = dirs[i];
-      const cursorDir = cursorMap[(directionMap[dir] + step) % 4];
+    for (const dir of dirs) {
+      const cursorDir = cursorMap[((directionMap[dir] + step) % 4) as keyof typeof cursorMap];
 
-      this.resizeGrips[dir].setAttribute('style', `cursor:${cursorDir}-resize`);
+      this.resizeGrips[dir]?.setAttribute('style', `cursor:${cursorDir}-resize`);
     }
   }
 
@@ -516,7 +514,7 @@ export class Selector {
 svgedit.select.Selector = Selector;
 
 export class SelectorManager {
-  public selectorParentGroup: SVGGElement;
+  public selectorParentGroup!: SVGGElement;
 
   private rubberBandBox: null | SVGRectElement = null;
 
@@ -572,7 +570,7 @@ export class SelectorManager {
     }
   }
 
-  requestSelector(elem: Element, bbox?: BBox): Selector {
+  requestSelector(elem: Element, bbox?: BBox): null | Selector {
     if (!elem) return null;
 
     if (this.selectorMap[elem.id] && this.selectorMap[elem.id].inUse) {
