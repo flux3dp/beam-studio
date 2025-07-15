@@ -6,7 +6,7 @@ import alertCaller from '@core/app/actions/alert-caller';
 import getLevelingData from '@core/app/actions/camera/preview-helper/getLevelingData';
 import progressCaller from '@core/app/actions/progress-caller';
 import DraggableModal from '@core/app/widgets/DraggableModal';
-import { updateData } from '@core/helpers/camera-calibration-helper';
+import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
 import type { FisheyeCameraParametersV2Cali } from '@core/interfaces/FisheyePreview';
@@ -44,7 +44,7 @@ const CheckPictures = ({ onClose, onNext, updateParam }: Props): React.JSX.Eleme
 
       if (res) {
         updateParam({ ...res, levelingData, refHeight: 0, source: 'device' });
-        await updateData(res);
+        await cameraCalibrationApi.updateData(res);
         onNext();
       } else {
         onClose?.(false);

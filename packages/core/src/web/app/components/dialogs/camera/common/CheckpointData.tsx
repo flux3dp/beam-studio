@@ -6,7 +6,7 @@ import { SpinLoading } from 'antd-mobile';
 import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
 import DraggableModal from '@core/app/widgets/DraggableModal';
-import { updateData } from '@core/helpers/camera-calibration-helper';
+import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
 import { loadJson } from '@core/helpers/device/jsonDataHelper';
 import useI18n from '@core/helpers/useI18n';
 import type {
@@ -143,7 +143,7 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
       const { data } = currentData!;
 
       try {
-        await updateData(data);
+        await cameraCalibrationApi.updateData(data);
         updateParam(data);
       } catch (e) {
         console.error(e);

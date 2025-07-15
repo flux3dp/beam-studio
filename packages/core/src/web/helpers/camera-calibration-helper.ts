@@ -5,11 +5,7 @@ import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import VersionChecker from '@core/helpers/version-checker';
 import type { CameraConfig } from '@core/interfaces/Camera';
-import type {
-  FisheyeCaliParameters,
-  FisheyeCameraParameters,
-  FisheyeCameraParametersV2Cali,
-} from '@core/interfaces/FisheyePreview';
+import type { FisheyeCameraParameters, FisheyeCameraParametersV2Cali } from '@core/interfaces/FisheyePreview';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 const doAnalyzeResult = async (
@@ -428,68 +424,4 @@ export const getPerspectivePointsZ3Regression = (
   }
 
   return result;
-};
-
-export const calibrateChessboard = async (
-  img: ArrayBuffer | Blob,
-  height: number,
-  chessboard = [48, 36],
-): Promise<
-  | {
-      blob: Blob;
-      data: {
-        d: number[][];
-        k: number[][];
-        ret: number;
-        rvec: number[][];
-        tvec: number[][];
-      };
-      success: true;
-    }
-  | { data: { reason: string }; success: false }
-> => {
-  const resp = cameraCalibrationApi.calibrateChessboard(img, height, chessboard);
-
-  return resp;
-};
-
-export const solvePnPFindCorners = async (
-  img: ArrayBuffer | Blob,
-  dh: number,
-  refPoints: Array<[number, number]>,
-  interestArea?: { height: number; width: number; x: number; y: number },
-): Promise<
-  | {
-      blob: Blob;
-      data: { points: Array<[number, number]> };
-      success: true;
-    }
-  | {
-      blob: null;
-      data: { info: string; reason: string; status: string };
-      success: false;
-    }
-> => {
-  const resp = await cameraCalibrationApi.solvePnPFindCorners(img, dh, refPoints, interestArea);
-
-  return resp;
-};
-
-export const updateData = async (data: FisheyeCaliParameters): Promise<boolean> => {
-  const resp = await cameraCalibrationApi.updateData(data);
-
-  return resp;
-};
-
-export const extrinsicRegression = async (
-  rvecs: number[][][],
-  tvecs: number[][][],
-  heights: number[],
-): Promise<{
-  data?: { rvec_polyfit: number[][]; tvec_polyfit: number[][] };
-  success: boolean;
-}> => {
-  const resp = await cameraCalibrationApi.extrinsicRegression(rvecs, tvecs, heights);
-
-  return resp;
 };
