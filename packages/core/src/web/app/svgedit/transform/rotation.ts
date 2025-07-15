@@ -6,7 +6,7 @@ import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import transfromlist from './transfromlist';
 
 let svgCanvas: ISVGCanvas;
-let svgedit;
+let svgedit: any;
 
 getSVGAsync(({ Canvas, Edit }) => {
   svgCanvas = Canvas;
@@ -61,11 +61,8 @@ export const setRotationAngle = (
 
     rotationNc.setRotate(value, center.x, center.y);
 
-    if (tlist.numberOfItems) {
-      tlist.insertItemBefore(rotationNc, 0);
-    } else {
-      tlist.appendItem(rotationNc);
-    }
+    if (tlist.numberOfItems) tlist.insertItemBefore(rotationNc, 0);
+    else tlist.appendItem(rotationNc);
   } else if (tlist.numberOfItems === 0) {
     elem.removeAttribute('transform');
   }
