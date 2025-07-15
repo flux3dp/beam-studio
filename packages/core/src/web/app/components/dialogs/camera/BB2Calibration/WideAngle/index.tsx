@@ -4,7 +4,8 @@ import { match } from 'ts-pattern';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
-import { extrinsicRegression, solvePnPCalculate } from '@core/helpers/camera-calibration-helper';
+import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
+import { extrinsicRegression } from '@core/helpers/camera-calibration-helper';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import getFocalDistance from '@core/helpers/device/camera/getFocalDistance';
 import { loadJson, uploadJson } from '@core/helpers/device/jsonDataHelper';
@@ -389,7 +390,7 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
               const region = regions[i];
               const imgPoint = getRegionalPoints(region, imgPoints as Record<WideAngleRegion, Array<[number, number]>>);
               const refPoints = getRegionalPoints(region, bb2WideAngleCameraPnpPoints);
-              const res = await solvePnPCalculate(dh!, imgPoint, refPoints);
+              const res = await cameraCalibrationApi.solvePnPCalculate(dh!, imgPoint, refPoints);
 
               if (res.success) {
                 const { rvec, tvec } = res.data;

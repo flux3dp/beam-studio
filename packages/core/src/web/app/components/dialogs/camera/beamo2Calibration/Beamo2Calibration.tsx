@@ -5,7 +5,8 @@ import { match } from 'ts-pattern';
 import alertCaller from '@core/app/actions/alert-caller';
 import DoorChecker from '@core/app/actions/camera/preview-helper/DoorChecker';
 import progressCaller from '@core/app/actions/progress-caller';
-import { setFisheyeConfig, solvePnPCalculate } from '@core/helpers/camera-calibration-helper';
+import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
+import { setFisheyeConfig } from '@core/helpers/camera-calibration-helper';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
@@ -292,7 +293,7 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
               const region = regions[i];
               const imgPoint = getRegionalPoints(region, imgPoints as Record<WideAngleRegion, Array<[number, number]>>);
               const refPoints = getRegionalPoints(region, bm2PnPPoints);
-              const res = await solvePnPCalculate(0, imgPoint, refPoints);
+              const res = await cameraCalibrationApi.solvePnPCalculate(0, imgPoint, refPoints);
 
               if (res.success) {
                 const { rvec, tvec } = res.data;

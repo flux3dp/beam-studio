@@ -475,19 +475,6 @@ export const solvePnPFindCorners = async (
   return resp;
 };
 
-export const solvePnPCalculate = async (
-  dh: number,
-  points: Array<[number, number]>,
-  refPoints: Array<[number, number]>,
-): Promise<{
-  data: { rvec: number[][]; tvec: number[][] };
-  success: boolean;
-}> => {
-  const resp = await cameraCalibrationApi.solvePnPCalculate(dh, points, refPoints);
-
-  return resp;
-};
-
 export const updateData = async (data: FisheyeCaliParameters): Promise<boolean> => {
   const resp = await cameraCalibrationApi.updateData(data);
 
