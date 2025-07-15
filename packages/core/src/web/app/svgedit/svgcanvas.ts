@@ -5799,45 +5799,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
   // Group: Additional editor tools
 
-  // Function: setBackground
-  // Set the background of the editor (NOT the actual document)
-  //
-  // Parameters:
-  // color - String with fill color to apply
-  // url - URL or path to image to use
-  this.setBackground = function (color: string, url?: string) {
-    var bg = svgedit.utilities.getElem('canvasBackground');
-    var border = $(bg).find('rect')[0];
-    var bg_img = svgedit.utilities.getElem('background_image');
-
-    border.setAttribute('fill', color);
-
-    if (url) {
-      if (!bg_img) {
-        bg_img = svgdoc.createElementNS(NS.SVG, 'image');
-        svgedit.utilities.assignAttributes(bg_img, {
-          height: '100%',
-          id: 'background_image',
-          preserveAspectRatio: 'xMinYMin',
-          style: 'pointer-events:none; opacity: 1;',
-          width: '100%',
-        });
-
-        const fixedSizeSvg = svgedit.utilities.getElem('fixedSizeSvg');
-
-        if (fixedSizeSvg) {
-          bg.insertBefore(bg_img, fixedSizeSvg);
-        } else {
-          bg.appendChild(bg_img);
-        }
-      }
-
-      setHref(bg_img, url);
-    } else if (bg_img) {
-      bg_img.remove();
-    }
-  };
-
   // Function: cycleElement
   // Select the next/previous element within the current layer
   //

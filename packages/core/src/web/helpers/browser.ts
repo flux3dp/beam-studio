@@ -50,6 +50,7 @@ export const getBrowser = (): Browser => {
 };
 
 export const isAndroid: boolean = /Android/.test(navigator.userAgent);
+export const isWebKit: boolean = /AppleWebKit/.test(navigator.userAgent);
 
 export default {
   getBrowser,

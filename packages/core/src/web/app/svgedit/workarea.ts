@@ -115,10 +115,12 @@ class WorkareaManager {
 
     const svgcontent = document.getElementById('svgcontent');
     const fixedSizeSvg = document.getElementById('fixedSizeSvg');
+    const previewSvg = document.getElementById('previewSvg');
     const viewBox = `0 0 ${this.width} ${this.height}`;
 
     svgcontent?.setAttribute('viewBox', viewBox);
     fixedSizeSvg?.setAttribute('viewBox', viewBox);
+    previewSvg?.setAttribute('viewBox', `0 0 ${this.width} ${this.modelHeight}`);
     this.zoom(this.zoomRatio);
     canvasEvents.emit('canvas-change');
 
@@ -146,13 +148,16 @@ class WorkareaManager {
     const rootW = w * this.canvasExpansion;
     const rootH = h * this.canvasExpansion;
     const expansionRatio = (this.canvasExpansion - 1) / 2;
-    const x = this.width * targetZoom * expansionRatio;
-    const y = this.height * targetZoom * expansionRatio;
+    const x = (this.width * targetZoom * expansionRatio).toString();
+    const y = (this.height * targetZoom * expansionRatio).toString();
+    const strW = w.toString();
+    const strH = h.toString();
+    const modelH = (this.modelHeight * targetZoom).toString();
 
-    svgroot?.setAttribute('x', x.toString());
-    svgroot?.setAttribute('y', y.toString());
-    svgroot?.setAttribute('width', rootW.toString());
-    svgroot?.setAttribute('height', rootH.toString());
+    svgroot.setAttribute('x', x);
+    svgroot.setAttribute('y', y);
+    svgroot.setAttribute('width', rootW.toString());
+    svgroot.setAttribute('height', rootH.toString());
 
     if (svgCanvas && workareaElem) {
       svgCanvas.style.width = `${Math.max(workareaElem.clientWidth, rootW)}px`;
@@ -161,22 +166,33 @@ class WorkareaManager {
 
     const canvasBackground = document.getElementById('canvasBackground');
 
-    canvasBackground?.setAttribute('x', x.toString());
-    canvasBackground?.setAttribute('y', y.toString());
-    canvasBackground?.setAttribute('width', w.toString());
-    canvasBackground?.setAttribute('height', h.toString());
+    if (canvasBackground) {
+      canvasBackground.setAttribute('x', x);
+      canvasBackground.setAttribute('y', y);
+      canvasBackground.setAttribute('width', strW);
+      canvasBackground.setAttribute('height', strH);
+    }
 
     const canvasBackgroundRect = document.getElementById('canvasBackgroundRect');
     const yOffset = this.minY * targetZoom * expansionRatio;
 
     canvasBackgroundRect?.setAttribute('y', yOffset.toString());
 
+    const previewSvg = document.getElementById('previewSvg');
+
+    if (previewSvg) {
+      previewSvg.setAttribute('width', strW);
+      previewSvg.setAttribute('height', modelH);
+    }
+
     const svgcontent = document.getElementById('svgcontent');
 
-    svgcontent?.setAttribute('x', x.toString());
-    svgcontent?.setAttribute('y', y.toString());
-    svgcontent?.setAttribute('width', w.toString());
-    svgcontent?.setAttribute('height', h.toString());
+    if (svgcontent) {
+      svgcontent.setAttribute('x', x);
+      svgcontent.setAttribute('y', y);
+      svgcontent.setAttribute('width', strW);
+      svgcontent.setAttribute('height', strH);
+    }
 
     if (workareaElem) {
       staticPoint = staticPoint ?? {
