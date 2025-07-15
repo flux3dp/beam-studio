@@ -107,9 +107,14 @@ const init = (zoomRatio = 1): void => {
   gridContainer.appendChild(yGridContainer);
 
   const canvasBackground = document.getElementById('canvasBackground');
-  const fixedSizeSvg = document.getElementById('fixedSizeSvg');
+  const backgroundRect = canvasBackground?.querySelector('#canvasBackgroundRect');
 
-  canvasBackground?.insertBefore(gridContainer, fixedSizeSvg);
+  if (backgroundRect) {
+    canvasBackground!.insertBefore(gridContainer, backgroundRect.nextSibling);
+  } else {
+    canvasBackground?.appendChild(gridContainer);
+  }
+
   updateGrids(zoomRatio);
   updateCanvasSize();
 };

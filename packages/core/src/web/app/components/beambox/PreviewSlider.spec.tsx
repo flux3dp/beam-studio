@@ -92,7 +92,8 @@ describe('test PreviewSlider', () => {
     mockGetMode.mockReturnValue('');
     mockIsFullScreen.mockReturnValue(true);
     mockMeetRequirement.mockReturnValue(true);
-    document.body.innerHTML = '<image id="background_image" style="pointer-events:none; opacity: 1;"/>';
+    document.body.innerHTML =
+      '<svg id="previewSvg"><image id="backgroundImage" style="pointer-events:none; opacity: 1;"/></svg>';
     mockUseCameraPreviewStore.mockReturnValue({
       isPreviewMode: true,
     });
@@ -100,13 +101,12 @@ describe('test PreviewSlider', () => {
 
   it('should render correctly with preview image', async () => {
     const { container, getByText } = render(<PreviewSlider />);
-    const bgImage = document.getElementById('background_image');
+    const imageContainer = document.getElementById('previewSvg');
 
-    expect(bgImage).toHaveStyle({ opacity: 1 });
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getByText('onChange'));
-    expect(bgImage).toHaveStyle({ opacity: 0.25 });
+    expect(imageContainer).toHaveStyle({ opacity: 0.25 });
     expect(container).toMatchSnapshot();
   });
 
@@ -119,9 +119,9 @@ describe('test PreviewSlider', () => {
   });
 
   it('should render correctly when is previewing', () => {
-    const bgImage: HTMLElement = document.getElementById('background_image');
+    const imageContainer = document.getElementById('previewSvg');
 
-    bgImage.style.opacity = '0.5';
+    imageContainer.style.opacity = '0.5';
     mockGetCurrentDevice.mockReturnValue({ info: { model: 'model-1' } });
 
     const { container } = render(
@@ -130,15 +130,15 @@ describe('test PreviewSlider', () => {
       </CanvasContext.Provider>,
     );
 
-    expect(bgImage).toHaveStyle({ opacity: 1 });
+    expect(imageContainer).toHaveStyle({ opacity: 1 });
     expect(container).toMatchSnapshot();
     expect(mockGetDeviceSetting).not.toBeCalled();
   });
 
   it('should render correctly when is previewing Ador', async () => {
-    const bgImage: HTMLElement = document.getElementById('background_image');
+    const imageContainer = document.getElementById('previewSvg');
 
-    bgImage.style.opacity = '0.5';
+    imageContainer.style.opacity = '0.5';
     mockGetCurrentDevice.mockReturnValue({ info: { model: 'ado1' } });
 
     const { container, getByText } = render(
@@ -147,7 +147,7 @@ describe('test PreviewSlider', () => {
       </CanvasContext.Provider>,
     );
 
-    expect(bgImage).toHaveStyle({ opacity: 1 });
+    expect(imageContainer).toHaveStyle({ opacity: 1 });
     await waitFor(() => {
       expect(mockGetMode).toHaveBeenCalledTimes(1);
       expect(mockEndSubTask).not.toHaveBeenCalled();
@@ -176,9 +176,9 @@ describe('test PreviewSlider', () => {
     mockGetMode.mockReturnValue('raw');
     mockIsFullScreen.mockReturnValue(false);
 
-    const bgImage: HTMLElement = document.getElementById('background_image');
+    const imageContainer = document.getElementById('previewSvg');
 
-    bgImage.style.opacity = '0.5';
+    imageContainer.style.opacity = '0.5';
     mockGetCurrentDevice.mockReturnValue({ info: { model: 'fbb2' } });
 
     const { container, getByText } = render(
@@ -187,7 +187,7 @@ describe('test PreviewSlider', () => {
       </CanvasContext.Provider>,
     );
 
-    expect(bgImage).toHaveStyle({ opacity: 1 });
+    expect(imageContainer).toHaveStyle({ opacity: 1 });
     await waitFor(() => {
       expect(mockGetMode).toHaveBeenCalledTimes(1);
       expect(mockEndSubTask).toHaveBeenCalledTimes(1);

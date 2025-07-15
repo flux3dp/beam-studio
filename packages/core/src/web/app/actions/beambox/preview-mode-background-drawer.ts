@@ -7,6 +7,7 @@ import Constant from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import NS from '@core/app/constants/namespaces';
 import { setCameraPreviewState } from '@core/app/stores/cameraPreview';
+import { clearBackgroundImage, getBackgroundUrl, setBackgroundImage } from '@core/app/svgedit/canvasBackground';
 import workareaManager from '@core/app/svgedit/workarea';
 import { getAbsRect } from '@core/helpers/boundary-helper';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
@@ -63,6 +64,8 @@ class PreviewModeBackgroundDrawer {
   start(cameraOffset?: CameraParameters) {
     if (cameraOffset) {
       this.cameraOffset = cameraOffset;
+    } else {
+      this.cameraOffset = null;
     }
 
     const currentCanvasRatio = this.canvasRatio;
@@ -164,7 +167,7 @@ class PreviewModeBackgroundDrawer {
       }
 
       this.canvas.toBlob((blob) => {
-        resolve(blob);
+        resolve(blob!);
 
         if (callback) {
           setTimeout(callback, 1000);
@@ -325,7 +328,7 @@ class PreviewModeBackgroundDrawer {
       return;
     }
 
-    svgCanvas.setBackground('#fff');
+    clearBackgroundImage();
 
     // clear canvas
     this.canvas.getContext('2d')!.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -337,7 +340,7 @@ class PreviewModeBackgroundDrawer {
   }
 
   getCameraCanvasUrl() {
-    return this.cameraCanvasUrl;
+    return getBackgroundUrl(this.canvas.width, this.canvas.height);
   }
 
   getCoordinates() {
@@ -359,7 +362,7 @@ class PreviewModeBackgroundDrawer {
     this.cameraCanvasUrl = URL.createObjectURL(blob);
     setCameraPreviewState({ isClean: false });
 
-    svgCanvas.setBackground('#fff', this.cameraCanvasUrl);
+    setBackgroundImage(this.cameraCanvasUrl);
   };
 
   preprocessFullWorkareaImg = async (imgUrl: string, callBack = () => {}) =>
@@ -383,7 +386,7 @@ class PreviewModeBackgroundDrawer {
         this.coordinates.maxX = img.naturalWidth * imageRatio;
         this.coordinates.maxY = img.naturalHeight * imageRatio;
         this.canvas.toBlob((blob) => {
-          resolve(blob);
+          resolve(blob!);
           setTimeout(callBack, 1000);
         });
       };
