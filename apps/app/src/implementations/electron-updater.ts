@@ -38,7 +38,7 @@ const checkForUpdate = (isAutoCheck: boolean) => {
         Progress.popById('electron-check-update');
       }
 
-      if (res.error) {
+      if (res?.error) {
         console.log(res.error);
 
         if (!isAutoCheck) {
@@ -59,7 +59,7 @@ const checkForUpdate = (isAutoCheck: boolean) => {
         console.log(`Current Channel: ${currentChannel}, But got: ${channel}`);
       }
 
-      if (res.isUpdateAvailable && channel === currentChannel) {
+      if (res?.isUpdateAvailable && channel === currentChannel) {
         const msg = sprintf(LANG.available_update, res.info.version, FLUX.version);
 
         Alert.popUp({
