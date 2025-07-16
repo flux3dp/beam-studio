@@ -113,7 +113,7 @@ export const useImageEditPanelStore = create<ImageEditPanelStore>(
       set((state) => {
         const { currentLine, history, lines } = state;
 
-        if (!currentLine) return state; // No current line to finish
+        if (!currentLine) return state;
 
         const operation: HistoryOperation = {
           line: currentLine,
@@ -128,13 +128,13 @@ export const useImageEditPanelStore = create<ImageEditPanelStore>(
       set((state) => {
         const { currentLine } = state;
 
-        if (!currentLine) return state; // No current line to move
+        if (!currentLine) return state;
 
         if (
           currentLine.points[currentLine.points.length - 2] === x &&
           currentLine.points[currentLine.points.length - 1] === y
         ) {
-          return state; // No change in position
+          return state;
         }
 
         currentLine.points = currentLine.points.concat([x, y]);
@@ -149,11 +149,9 @@ export const useImageEditPanelStore = create<ImageEditPanelStore>(
       }),
     redo: () =>
       set((state) => {
-        const { filters, history, lines } = state;
+        const { currentLine, filters, history, lines } = state;
 
-        if (history.index >= history.operations.length) {
-          return state; // No history to redo
-        }
+        if (history.index >= history.operations.length || currentLine) return state;
 
         const nextOperation = history.operations[history.index];
         const newHistory = { ...history, index: history.index + 1 };
@@ -188,7 +186,7 @@ export const useImageEditPanelStore = create<ImageEditPanelStore>(
 
         if (!addToHistory) return { cornerRadius: value };
 
-        if (currentCornerRadius === value) return state; // No change in corner radius
+        if (currentCornerRadius === value) return state;
 
         const operation: HistoryOperation = {
           mode: 'cornerRadius',
@@ -202,11 +200,9 @@ export const useImageEditPanelStore = create<ImageEditPanelStore>(
     setTolerance: (value: number) => set({ tolerance: value }),
     undo: () =>
       set((state) => {
-        const { filters, history, lines } = state;
+        const { currentLine, filters, history, lines } = state;
 
-        if (history.index === 0) {
-          return state; // No history to undo
-        }
+        if (history.index === 0 || currentLine) return state;
 
         const lastOperation = history.operations[history.index - 1];
         const newHistory = { ...history, index: history.index - 1 };
