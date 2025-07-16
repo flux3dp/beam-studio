@@ -2,6 +2,8 @@ import { match, P } from 'ts-pattern';
 
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
+import { deleteElements } from '@core/app/svgedit/operations/delete';
+import { getRotationAngle, setRotationAngle } from '@core/app/svgedit/transform/rotation';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
@@ -9,7 +11,6 @@ import updateElementColor from './color/updateElementColor';
 import { finalizeImageCreation, getTransformedCoordinates, rasterizeGenericSvgElement } from './convertToImage.util';
 import { getSVGAsync } from './svg-editor-helper';
 
-// (The types, constants, and getSVGAsync setup remain the same as your original code)
 let svgCanvas: ISVGCanvas;
 
 getSVGAsync(({ Canvas }) => {
@@ -22,6 +23,8 @@ export type ConvertSvgToImageParams = {
   scale?: number;
   svgElement: SVGGElement;
 };
+type ConvertToImageResult = undefined | { imageElements: SVGImageElement[]; svgElements: SVGGElement[] };
+
 export const convertibleSvgTags = [
   'rect',
   'circle',
@@ -35,15 +38,18 @@ export const convertibleSvgTags = [
   'g',
 ] as const;
 
+type MainConverterFunc = (params: ConvertSvgToImageParams) => Promise<ConvertToImageResult>;
+
 /**
  * Converts a <use> element to an <image>. Its logic is unique and doesn't involve rasterization.
  * Refactored to use the `finalizeImageCreation` helper.
  */
-async function convertUseToImage({
+const convertUseToImage = async ({
   isToSelect = true,
   parentCmd = new history.BatchCommand('Convert Use to Image'),
   svgElement,
-}: ConvertSvgToImageParams): Promise<SVGImageElement | undefined> {
+}: ConvertSvgToImageParams): Promise<ConvertToImageResult> => {
+  const angle = getRotationAngle(svgElement);
   const href = svgElement.getAttribute('xlink:href');
   const symbol = href ? document.querySelector(href) : null;
   const imageSrc = symbol?.children[0]?.getAttribute('href');
@@ -70,7 +76,7 @@ async function convertUseToImage({
     y: newY,
   } = getTransformedCoordinates({ height: h, width: w, x, y }, svgElement.getAttribute('transform'));
 
-  const newImage = svgCanvas.addSvgElementFromJson({
+  const imageElement = svgCanvas.addSvgElementFromJson({
     attr: {
       'data-ratiofixed': true,
       'data-shading': true,
@@ -87,32 +93,39 @@ async function convertUseToImage({
     element: 'image',
   }) as SVGImageElement;
 
-  svgCanvas.setHref(newImage, imageSrc);
-  updateElementColor(newImage);
-  finalizeImageCreation(newImage, isToSelect, parentCmd);
+  setRotationAngle(imageElement, angle, { parentCmd });
+  svgCanvas.setHref(imageElement, imageSrc);
+  updateElementColor(imageElement);
+  finalizeImageCreation(imageElement, isToSelect, parentCmd);
 
-  return newImage as SVGImageElement;
-}
+  if (isToSelect) parentCmd.addSubCommand(deleteElements([svgElement], true));
+
+  return { imageElements: [imageElement], svgElements: [svgElement] };
+};
 
 /**
- * Recursively converts all elements inside a <g> group to images.
- * Refactored to call the main `convertSvgToImage` dispatcher.
+ * Recursively converts elements inside a <g> group to images.
+ * @param params - The standard conversion parameters.
+ * @param mainConverter - The main `convertSvgToImage` function, injected as a dependency.
  */
-async function convertGroupToImage({
-  parentCmd = new history.BatchCommand('Convert Group to Image'),
-  svgElement,
-}: ConvertSvgToImageParams): Promise<undefined> {
-  const groupBatchCmd = new history.BatchCommand('Convert Group to Image');
+const convertGroupToImage = async (
+  { parentCmd = new history.BatchCommand('Convert Group to Image'), svgElement }: ConvertSvgToImageParams,
+  mainConverter: MainConverterFunc,
+): Promise<ConvertToImageResult> => {
   const newImages = [];
+  const svgElements = [];
 
-  for (const child of Array.from(svgElement.children)) {
-    const image = await convertSvgToImage({
+  for await (const child of Array.from(svgElement.children)) {
+    const result = await mainConverter({
       isToSelect: false,
-      parentCmd: groupBatchCmd,
+      parentCmd,
       svgElement: child as SVGGElement,
     });
 
-    if (image) newImages.push(image);
+    if (result) {
+      newImages.push(...result.imageElements);
+      svgElements.push(...result.svgElements);
+    }
   }
 
   // Group the newly created images
@@ -121,36 +134,42 @@ async function convertGroupToImage({
 
     const groupCommand = svgCanvas.groupSelectedElements(true);
 
-    parentCmd.addSubCommand(groupCommand || groupBatchCmd);
+    if (groupCommand) {
+      parentCmd.addSubCommand(groupCommand);
+    }
   }
 
-  return undefined; // Groups don't return a single image
-}
+  return {
+    imageElements: newImages,
+    svgElements,
+  }; // Return the images and SVG elements created from the group
+};
 
 /**
  * Main entry point for converting any supported SVG element to an image.
- * This function now acts as a dispatcher, using `ts-pattern` for clean matching.
  */
-export const convertSvgToImage = async ({
+export const convertSvgToImage: MainConverterFunc = async ({
   isToSelect = true,
   parentCmd = new history.BatchCommand('Convert SVG to Image'),
   svgElement,
-}: ConvertSvgToImageParams): Promise<SVGImageElement | undefined> => {
+}) => {
+  // console.log(svgElement.cloneNode(true), 'convertSvgToImage', svgElement.tagName);
+
+  if (!svgElement || svgElement.getAttribute('data-imageborder') === 'true') {
+    return undefined;
+  }
+
   const result = await match(svgElement)
-    .with({ tagName: 'use' }, async (svgElement) => convertUseToImage({ isToSelect, parentCmd, svgElement }))
+    .with({ tagName: 'use' }, async (el) => convertUseToImage({ isToSelect, parentCmd, svgElement: el }))
     .when(
-      // skip border elements(e.g., multi-selection border for use elements)
-      (svgElement) => svgElement.getAttribute('data-imageborder') === 'true',
-      async () => Promise.resolve(undefined),
+      (el) => el.getAttribute('data-textpath-g') === '1',
+      async (el) => rasterizeGenericSvgElement({ isToSelect, parentCmd, svgElement: el }),
     )
-    .when(
-      // match text-on-path elements before group elements, due to their tagName are the same
-      (svgElement) => svgElement.getAttribute('data-textpath-g') === '1',
-      async (svgElement) => rasterizeGenericSvgElement({ isToSelect, parentCmd, svgElement }),
+    .with({ tagName: 'g' }, async (el) =>
+      convertGroupToImage({ isToSelect, parentCmd, svgElement: el }, convertSvgToImage),
     )
-    .with({ tagName: 'g' }, async (svgElement) => convertGroupToImage({ isToSelect, parentCmd, svgElement }))
-    .with({ tagName: P.union(...convertibleSvgTags) }, async (svgElement) =>
-      rasterizeGenericSvgElement({ isToSelect, parentCmd, svgElement }),
+    .with({ tagName: P.union(...convertibleSvgTags) }, async (el) =>
+      rasterizeGenericSvgElement({ isToSelect, parentCmd, svgElement: el }),
     )
     .otherwise(async ({ tagName }) => {
       console.log('The provided SVG element is not convertible:', tagName);
@@ -158,7 +177,10 @@ export const convertSvgToImage = async ({
       return Promise.resolve(undefined);
     });
 
-  undoManager.addCommandToHistory(parentCmd);
+  if (isToSelect) {
+    undoManager.addCommandToHistory(parentCmd);
+    parentCmd.addSubCommand(deleteElements(result!.svgElements, true));
+  }
 
   return result;
 };

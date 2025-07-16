@@ -19,13 +19,13 @@ type BBox = { height: number; width: number; x: number; y: number };
  * A helper to add the newly created <image> element to the canvas and handle history.
  * This removes repetitive code from each conversion function.
  */
-export function finalizeImageCreation(newImage: SVGImageElement, isToSelect: boolean, parentCmd: IBatchCommand) {
-  const cmd = new history.InsertElementCommand(newImage);
+export function finalizeImageCreation(imageElement: SVGImageElement, isToSelect: boolean, parentCmd: IBatchCommand) {
+  const cmd = new history.InsertElementCommand(imageElement);
 
   parentCmd.addSubCommand(cmd);
 
   if (isToSelect) {
-    svgCanvas.selectOnly([newImage]);
+    svgCanvas.selectOnly([imageElement]);
   }
 }
 
@@ -76,7 +76,7 @@ export async function rasterizeGenericSvgElement({
   isToSelect: boolean;
   parentCmd: IBatchCommand;
   svgElement: SVGGElement;
-}): Promise<SVGImageElement | undefined> {
+}): Promise<undefined | { imageElements: SVGImageElement[]; svgElements: SVGGElement[] }> {
   try {
     const angle = getRotationAngle(svgElement);
     const cloned = svgElement.cloneNode(true) as SVGGraphicsElement;
@@ -181,9 +181,10 @@ export async function rasterizeGenericSvgElement({
     svgCanvas.setHref(imageElement, origImage);
     updateElementColor(imageElement);
     finalizeImageCreation(imageElement, isToSelect, parentCmd);
-    parentCmd.addSubCommand(deleteElements([svgElement], true));
 
-    return imageElement as SVGImageElement;
+    if (isToSelect) parentCmd.addSubCommand(deleteElements([svgElement], true));
+
+    return { imageElements: [imageElement], svgElements: [svgElement] };
   } catch (error) {
     console.error('Failed during SVG rasterization:', error);
 
