@@ -157,22 +157,20 @@ export const useImageEditPanelStore = create<ImageEditPanelStore>(
         const newHistory = { ...history, index: history.index + 1 };
 
         return match(nextOperation)
-          .with({ mode: 'magicWand' }, () => {
-            filters.push((nextOperation as MagicWandOperation).filter);
+          .with({ mode: 'magicWand' }, ({ filter }) => {
+            filters.push(filter);
 
             return { filters: [...filters], history: newHistory };
           })
-          .with({ mode: 'eraser' }, () => {
-            lines.push((nextOperation as EraserOperation).line);
+          .with({ mode: 'eraser' }, ({ line }) => {
+            lines.push(line);
 
             return { history: newHistory, lines };
           })
-          .with({ mode: 'cornerRadius' }, () => {
-            const { newValue: newVal } = nextOperation as CornerRadiusOperation;
-
+          .with({ mode: 'cornerRadius' }, ({ newValue }) => {
             return {
-              cornerRadius: newVal,
-              currentCornerRadius: newVal,
+              cornerRadius: newValue,
+              currentCornerRadius: newValue,
               history: newHistory,
             };
           })
@@ -218,9 +216,7 @@ export const useImageEditPanelStore = create<ImageEditPanelStore>(
 
             return { history: newHistory, lines };
           })
-          .with({ mode: 'cornerRadius' }, () => {
-            const { oldValue } = lastOperation as CornerRadiusOperation;
-
+          .with({ mode: 'cornerRadius' }, ({ oldValue }) => {
             return {
               cornerRadius: oldValue,
               currentCornerRadius: oldValue,
