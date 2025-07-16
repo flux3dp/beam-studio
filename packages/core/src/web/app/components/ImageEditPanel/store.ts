@@ -74,6 +74,14 @@ interface ImageEditPanelStore extends State {
   undo: () => void;
 }
 
+const clearUndoneHistory = (history: HistoryState): HistoryState => {
+  const { index, operations } = history;
+
+  operations.length = index; // Clear all operations after the current index
+
+  return { index, operations };
+};
+
 const addItemToHistory = (history: HistoryState, item: HistoryOperation): HistoryState => {
   const { index, operations } = history;
 
@@ -133,7 +141,12 @@ export const useImageEditPanelStore = create<ImageEditPanelStore>(
 
         return { currentLine: { ...currentLine } };
       }),
-    lineStart: (line: LineItem) => set(() => ({ currentLine: line })),
+    lineStart: (line: LineItem) =>
+      set((state) => {
+        const newHistory = clearUndoneHistory(state.history);
+
+        return { currentLine: line, history: newHistory };
+      }),
     redo: () =>
       set((state) => {
         const { filters, history, lines } = state;

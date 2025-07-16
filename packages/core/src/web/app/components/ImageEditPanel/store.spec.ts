@@ -138,6 +138,27 @@ describe('test ImageEditPanelStore', () => {
     });
   });
 
+  test('line start should clear undone history', () => {
+    let state = useImageEditPanelStore.getState();
+
+    state.addFilter('f1' as any);
+    state.addFilter('f2' as any);
+    state.undo();
+    state = useImageEditPanelStore.getState();
+    expect(state.history.index).toBe(1);
+    expect(state.history.operations).toHaveLength(2);
+    expect(state.history.operations).toEqual([
+      { filter: 'f1', mode: 'magicWand' },
+      { filter: 'f2', mode: 'magicWand' },
+    ]);
+
+    state.lineStart({ points: [1, 0, 1, 0], strokeWidth: 100 });
+    state = useImageEditPanelStore.getState();
+    expect(state.history.index).toBe(1);
+    expect(state.history.operations).toHaveLength(1);
+    expect(state.history.operations).toEqual([{ filter: 'f1', mode: 'magicWand' }]);
+  });
+
   test('line undo / redo', () => {
     let state = useImageEditPanelStore.getState();
 
