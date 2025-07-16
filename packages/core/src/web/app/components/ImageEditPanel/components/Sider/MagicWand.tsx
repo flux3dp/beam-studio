@@ -13,7 +13,8 @@ const MAX_TOLERANCE = 100;
 
 export default function MagicWand(): React.JSX.Element {
   const { image_edit_panel: lang } = useI18n();
-  const { setTolerance, tolerance } = useImageEditPanelStore();
+  const tolerance = useImageEditPanelStore((state) => state.tolerance);
+  const setTolerance = useImageEditPanelStore((state) => state.setTolerance);
 
   return (
     <div className={styles.wrapper}>

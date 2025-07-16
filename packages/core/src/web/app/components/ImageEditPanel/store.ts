@@ -222,5 +222,3 @@ export const useImageEditPanelStore = create<ImageEditPanelStore>(
       }),
   })),
 );
-
-console.log(useImageEditPanelStore.getState()); // For debugging purposes, can be removed later

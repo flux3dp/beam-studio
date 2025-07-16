@@ -17,7 +17,8 @@ import styles from './PanelContent.module.scss';
 
 const CornerRadius = (): React.JSX.Element => {
   const { image_edit_panel: lang } = useI18n();
-  const { cornerRadius, setCornerRadius } = useImageEditPanelStore();
+  const cornerRadius = useImageEditPanelStore((state) => state.cornerRadius);
+  const setCornerRadius = useImageEditPanelStore((state) => state.setCornerRadius);
 
   return (
     <div className={styles.wrapper}>

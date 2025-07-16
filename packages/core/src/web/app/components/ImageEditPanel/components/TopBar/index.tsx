@@ -3,6 +3,7 @@ import React, { memo, useCallback, useMemo } from 'react';
 import { ArrowLeftOutlined, ArrowRightOutlined, MinusOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import { Button, Flex } from 'antd';
 import classNames from 'classnames';
+import { useShallow } from 'zustand/react/shallow';
 
 import useI18n from '@core/helpers/useI18n';
 
@@ -20,7 +21,9 @@ function TopBar({ handleReset, handleZoomByScale, zoomScale }: Props): React.JSX
   const {
     global: { editing: lang },
   } = useI18n();
-  const { history, redo, undo } = useImageEditPanelStore();
+  const { history, redo, undo } = useImageEditPanelStore(
+    useShallow((s) => ({ history: s.history, redo: s.redo, undo: s.undo })),
+  );
   const { index, operations } = history;
   const { canRedo, canUndo } = useMemo(
     () => ({

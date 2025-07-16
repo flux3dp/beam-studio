@@ -13,7 +13,8 @@ const MAX_BRUSH_SIZE = 128;
 
 export default function Eraser(): React.JSX.Element {
   const { image_edit_panel: lang } = useI18n();
-  const { brushSize, setBrushSize } = useImageEditPanelStore();
+  const brushSize = useImageEditPanelStore((state) => state.brushSize);
+  const setBrushSize = useImageEditPanelStore((state) => state.setBrushSize);
 
   return (
     <div className={styles.wrapper}>
