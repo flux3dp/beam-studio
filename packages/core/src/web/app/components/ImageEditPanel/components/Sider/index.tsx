@@ -30,13 +30,7 @@ interface Tab extends Omit<TabPaneProps, 'tab'> {
   label: React.ReactNode;
 }
 
-function Sider({
-  handleComplete,
-  mode,
-  onClose,
-  setMode,
-  setOperation,
-}: Props): React.JSX.Element {
+function Sider({ handleComplete, mode, onClose, setMode, setOperation }: Props): React.JSX.Element {
   const {
     beambox: { photo_edit_panel: langPhoto },
     buttons: langButtons,
@@ -51,7 +45,7 @@ function Sider({
       label: lang.eraser.title,
     },
     {
-      children: <MagicWand  />,
+      children: <MagicWand />,
       icon: <ImageEditPanelIcons.MagicWand />,
       key: 'magicWand',
       label: lang.magic_wand.title,
