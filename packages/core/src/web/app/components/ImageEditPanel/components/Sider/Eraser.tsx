@@ -18,6 +18,7 @@ export default function Eraser(): React.JSX.Element {
 
   return (
     <div className={styles.wrapper}>
+      <div className={styles.title}>{lang.eraser.title}</div>
       <div className={styles['hint-text']}>
         <QuestionCircleOutlined className={styles.icon} />
         <span>{lang.eraser.description}</span>

@@ -16,6 +16,7 @@ const CornerRadius = (): React.JSX.Element => {
 
   return (
     <div className={styles.wrapper}>
+      <div className={styles.title}>{lang.rounded_corner.title}</div>
       <div className={styles['hint-text']}>
         <QuestionCircleOutlined className={styles.icon} />
         <span>{lang.rounded_corner.description}</span>

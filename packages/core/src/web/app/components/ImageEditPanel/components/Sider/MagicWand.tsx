@@ -18,6 +18,7 @@ export default function MagicWand(): React.JSX.Element {
 
   return (
     <div className={styles.wrapper}>
+      <div className={styles.title}>{lang.magic_wand.title}</div>
       <div className={styles['hint-text']}>
         <QuestionCircleOutlined className={styles.icon} />
         <span>{lang.magic_wand.description}</span>
