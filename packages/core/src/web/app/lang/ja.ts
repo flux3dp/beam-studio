@@ -1341,6 +1341,11 @@ const lang: ILang = {
       title: '魔法の杖',
       tolerance: '許容範囲',
     },
+    rounded_corner: {
+      description: 'オブジェクトの角の丸みを調整します。',
+      radius: '半径',
+      title: '角の丸み',
+    },
     title: '画像編集',
   },
   initialize: {

@@ -2,8 +2,8 @@ import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from '
 
 import { Flex } from 'antd';
 import type Konva from 'konva';
-import type { Filter } from 'konva/lib/Node';
 import { Layer, Line, Stage } from 'react-konva';
+import { match } from 'ts-pattern';
 
 import progressCaller from '@core/app/actions/progress-caller';
 import FullWindowPanel from '@core/app/widgets/FullWindowPanel/FullWindowPanel';
@@ -15,15 +15,15 @@ import calculateBase64 from '@core/helpers/image-edit-panel/calculate-base64';
 import handleFinish from '@core/helpers/image-edit-panel/handle-finish';
 import { preprocessByUrl } from '@core/helpers/image-edit-panel/preprocess';
 import shortcuts from '@core/helpers/shortcuts';
-import useForceUpdate from '@core/helpers/use-force-update';
 import useI18n from '@core/helpers/useI18n';
 
 import type { KonvaImageRef } from './components/KonvaImage';
 import KonvaImage from './components/KonvaImage';
+import type { Mode } from './components/Sider';
 import Sider from './components/Sider';
 import TopBar from './components/TopBar';
-import { useHistory } from './hooks/useHistory';
 import styles from './index.module.scss';
+import { useImageEditPanelStore } from './store';
 import { generateCursorSvg } from './utils/generateCursorSvg';
 import { getMagicWandFilter } from './utils/getMagicWandFilter';
 
@@ -31,11 +31,6 @@ interface Props {
   image: SVGImageElement;
   onClose: () => void;
   src: string;
-}
-
-interface LineItem {
-  points: number[];
-  strokeWidth: number;
 }
 
 const EDITING = 0;
@@ -49,12 +44,21 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
     image_edit_panel: lang,
   } = useI18n();
 
-  const { history, push, redo, undo } = useHistory({
-    hasUndid: false,
-    index: 0,
-    items: [{ filters: [], lines: [] }],
-  });
-  const forceUpdate = useForceUpdate();
+  const {
+    addFilter,
+    brushSize,
+    cornerRadius,
+    currentLine,
+    filters,
+    lineFinish,
+    lineMove,
+    lines,
+    lineStart,
+    redo,
+    resetState,
+    tolerance,
+    undo,
+  } = useImageEditPanelStore();
 
   const { isFullColor, isShading, threshold } = useMemo(
     () => ({
@@ -65,13 +69,9 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
     [image],
   );
   const [imageSize, setImageSize] = useState({ height: 0, width: 0 });
-  const [mode, setMode] = useState<'eraser' | 'magicWand'>('eraser');
-  const [lines, setLines] = useState<LineItem[]>([]);
-  const [filters, setFilters] = useState<Filter[]>([]);
+  const [mode, setMode] = useState<Mode>('eraser');
   const [displayImage, setDisplayImage] = useState('');
   const [progress, setProgress] = useState(EDITING);
-  const [brushSize, setBrushSize] = useState(20);
-  const [tolerance, setTolerance] = useState(40);
   // only for display percentage, not for calculation
   const [zoomScale, setZoomScale] = useState(1);
   const [operation, setOperation] = useState<'drag' | 'eraser' | 'magicWand' | null>(null);
@@ -81,6 +81,9 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
   const layerRef = useRef<Konva.Layer>(null);
   const imageRef = useRef<KonvaImageRef>(null);
   const imageData = useRef<ImageData | null>(null);
+
+  // eslint-disable-next-line hooks/exhaustive-deps
+  useEffect(() => () => resetState(), []);
 
   const { handleWheel, handleZoom, handleZoomByScale, isDragging } = useKonvaCanvas(stageRef as any, {
     onScaleChanged: setZoomScale,
@@ -97,32 +100,18 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
   });
 
   const cursorStyle = useMemo(() => {
-    if (isDragging) {
-      return { cursor: 'grab' };
-    }
-
-    if (mode === 'eraser') {
-      return {
+    return match({ isDragging, mode })
+      .with({ isDragging: true }, () => ({ cursor: 'grabbing' }))
+      .with({ mode: 'eraser' }, () => ({
         cursor: `url('data:image/svg+xml;utf8,${generateCursorSvg(brushSize)}') ${brushSize / 2} ${
           brushSize / 2
         }, auto`,
-      };
-    }
-
-    return { cursor: `url('core-img/image-edit-panel/magic-wand.svg') 7 7, auto` };
+      }))
+      .with({ mode: 'magicWand' }, () => ({ cursor: `url('core-img/image-edit-panel/magic-wand.svg') 7 7, auto` }))
+      .otherwise(() => {
+        return { cursor: 'default' };
+      });
   }, [isDragging, mode, brushSize]);
-
-  const handlePushHistory = useCallback(() => push({ filters, lines }), [push, lines, filters]);
-  const handleHistoryChange = useCallback(
-    (action: 'redo' | 'undo') => () => {
-      const { filters, lines } = action === 'undo' ? undo() : redo();
-
-      setLines(lines);
-      setFilters(filters);
-      requestAnimationFrame(() => stageRef.current!.batchDraw());
-    },
-    [undo, redo],
-  );
 
   const getPointerPositionFromStage = useCallback((stage: Konva.Stage) => {
     const scale = stage.scaleX();
@@ -132,8 +121,29 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
     return { x: (x - stageX) / scale, y: (y - stageY) / scale };
   }, []);
 
+  const getImageData = useCallback(async () => {
+    if (imageData.current) return imageData.current;
+
+    if (imageRef.current?.isCached()) {
+      imageData.current = imageRef.current
+        ._getCachedSceneCanvas()
+        .context._context.getImageData(0, 0, imageSize.width, imageSize.height);
+
+      return imageData.current!;
+    }
+
+    // wait for the image to be loaded, seldom happens but can occur if the image is not cached
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    return getImageData();
+  }, [imageSize]);
+
+  useEffect(() => {
+    imageData.current = null;
+  }, [imageSize, displayImage]);
+
   const handleMouseDown = useCallback(
-    ({ evt, target }: Konva.KonvaEventObject<MouseEvent>) => {
+    async ({ evt, target }: Konva.KonvaEventObject<MouseEvent>) => {
       const stage = target.getStage();
 
       if (isDragging || evt.button !== 0 || !stage) {
@@ -145,19 +155,17 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
 
       if (mode === 'eraser') {
         setOperation('eraser');
-        setLines((prevLines) =>
-          // add two sets of points to create a initial line
-          prevLines.concat([{ points: [x, y, x, y], strokeWidth: brushSize / scale }]),
-        );
+        lineStart({ points: [x, y, x, y], strokeWidth: brushSize / scale });
       } else if (mode === 'magicWand') {
         setOperation('magicWand');
 
-        const filter = getMagicWandFilter(imageData.current!, { tolerance, x, y });
+        const data = await getImageData();
+        const filter = getMagicWandFilter(data, { tolerance, x, y });
 
-        setFilters((prevFilters) => prevFilters.concat(filter));
+        addFilter(filter);
       }
     },
-    [isDragging, getPointerPositionFromStage, mode, brushSize, tolerance],
+    [lineStart, addFilter, isDragging, getPointerPositionFromStage, mode, brushSize, tolerance, getImageData],
   );
 
   const handleMouseMove = useCallback(
@@ -168,30 +176,18 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
 
       const { x, y } = getPointerPositionFromStage(target.getStage()!);
 
-      setLines((prevLines) => {
-        const updatedLines = [...prevLines];
-        const lastLine = { ...updatedLines[updatedLines.length - 1] };
-
-        if (lastLine.points[lastLine.points.length - 2] === x && lastLine.points[lastLine.points.length - 1] === y) {
-          return updatedLines;
-        }
-
-        lastLine.points = lastLine.points.concat([x, y]);
-        updatedLines[updatedLines.length - 1] = lastLine;
-
-        return updatedLines;
-      });
+      lineMove(x, y);
     },
-    [isDragging, getPointerPositionFromStage, operation],
+    [isDragging, getPointerPositionFromStage, operation, lineMove],
   );
 
   const handleExitDrawing = useCallback(() => {
     setOperation(null);
 
-    if (operation === 'eraser' || operation === 'magicWand') {
-      handlePushHistory();
+    if (operation === 'eraser') {
+      lineFinish();
     }
-  }, [handlePushHistory, operation]);
+  }, [operation, lineFinish]);
 
   const handleReset = useCallback(() => {
     const stage = stageRef.current!;
@@ -232,26 +228,6 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
       updateImages();
     }
   }, [image, isFullColor, isShading, onClose, progress, threshold, updateUrl]);
-
-  useEffect(() => {
-    const image = imageRef.current;
-
-    if (!image) {
-      return;
-    }
-
-    if (progress === EDITING) {
-      if (image.isCached()) {
-        imageData.current = image
-          ._getCachedSceneCanvas()
-          .context._context.getImageData(0, 0, imageSize.width, imageSize.height);
-      } else {
-        // force re-render until image is cached
-        requestAnimationFrame(forceUpdate);
-      }
-    }
-    // depends useImageStatus to force re-render
-  }, [progress, imageSize, imageRef.current?.useImageStatus, forceUpdate]);
 
   useEffect(() => {
     const initialize = async () => {
@@ -313,8 +289,8 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
   useEffect(() => {
     const subscribedShortcuts = [
       shortcuts.on(['Escape'], onClose, { isBlocking: true }),
-      shortcuts.on(['Fnkey+z'], handleHistoryChange('undo'), { isBlocking: true }),
-      shortcuts.on(['Shift+Fnkey+z'], handleHistoryChange('redo'), { isBlocking: true }),
+      shortcuts.on(['Fnkey+z'], undo, { isBlocking: true }),
+      shortcuts.on(['Shift+Fnkey+z'], redo, { isBlocking: true }),
       shortcuts.on(['Fnkey-+', 'Fnkey-='], () => handleZoomByScale(1.2), { isBlocking: true, splitKey: '-' }),
       shortcuts.on(['Fnkey+-'], () => handleZoomByScale(0.8), { isBlocking: true }),
     ];
@@ -322,7 +298,13 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
     return () => {
       subscribedShortcuts.forEach((unsubscribe) => unsubscribe());
     };
-  }, [handleHistoryChange, handleZoomByScale, onClose]);
+  }, [undo, redo, handleZoomByScale, onClose]);
+
+  const displayCornerRadius = useMemo(() => {
+    const base = Math.min(imageSize.width / 2, imageSize.height / 2);
+
+    return Math.round((cornerRadius / 100) * base);
+  }, [cornerRadius, imageSize]);
 
   return (
     <FullWindowPanel
@@ -331,24 +313,14 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
       renderContents={() => (
         <>
           <Sider
-            brushSize={brushSize}
             handleComplete={handleComplete}
             mode={mode}
             onClose={onClose}
-            setBrushSize={setBrushSize}
             setMode={setMode}
             setOperation={setOperation}
-            setTolerance={setTolerance}
-            tolerance={tolerance}
           />
           <Flex className={styles['w-100']} vertical>
-            <TopBar
-              handleHistoryChange={handleHistoryChange}
-              handleReset={handleReset}
-              handleZoomByScale={handleZoomByScale}
-              history={history}
-              zoomScale={zoomScale}
-            />
+            <TopBar handleReset={handleReset} handleZoomByScale={handleZoomByScale} zoomScale={zoomScale} />
             <div className={styles['outer-container']}>
               <div className={styles.container} ref={divRef} style={cursorStyle}>
                 <Stage
@@ -362,7 +334,12 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
                   ref={stageRef}
                 >
                   <Layer pixelRatio={1} ref={layerRef}>
-                    <KonvaImage filters={filters} ref={imageRef} src={displayImage} />
+                    <KonvaImage
+                      cornerRadius={displayCornerRadius}
+                      filters={filters}
+                      ref={imageRef}
+                      src={displayImage}
+                    />
                     {lines.map((line, i) => (
                       <Line
                         globalCompositeOperation="destination-out"
@@ -375,6 +352,17 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
                         tension={0.5}
                       />
                     ))}
+                    {currentLine && (
+                      <Line
+                        globalCompositeOperation="destination-out"
+                        lineCap="round"
+                        lineJoin="round"
+                        points={currentLine.points}
+                        stroke="#df4b26"
+                        strokeWidth={currentLine.strokeWidth}
+                        tension={0.5}
+                      />
+                    )}
                   </Layer>
                 </Stage>
               </div>

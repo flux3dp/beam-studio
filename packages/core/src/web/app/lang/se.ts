@@ -1341,6 +1341,11 @@ const lang: ILang = {
       title: 'Magisk Stav',
       tolerance: 'Tolerans',
     },
+    rounded_corner: {
+      description: 'Justera objektets hörnens rundhet.',
+      radius: 'Radie',
+      title: 'Rundat hörn',
+    },
     title: 'Redigera Bild',
   },
   initialize: {

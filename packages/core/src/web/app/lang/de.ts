@@ -1341,6 +1341,11 @@ const lang: ILang = {
       title: 'Zauberstab',
       tolerance: 'Toleranz',
     },
+    rounded_corner: {
+      description: 'Passen Sie die Rundung der Ecken des Objekts an.',
+      radius: 'Radius',
+      title: 'Abgerundete Ecke',
+    },
     title: 'Bild bearbeiten',
   },
   initialize: {

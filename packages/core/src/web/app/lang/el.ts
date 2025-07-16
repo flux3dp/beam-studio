@@ -1341,6 +1341,11 @@ const lang: ILang = {
       title: 'Μαγικό Ραβδί',
       tolerance: 'Ανοχή',
     },
+    rounded_corner: {
+      description: 'Ρυθμίστε την καμπυλότητα των γωνιών του αντικειμένου.',
+      radius: 'Ακτίνα',
+      title: 'Στρογγυλεμένη γωνία',
+    },
     title: 'Επεξεργασία Εικόνας',
   },
   initialize: {

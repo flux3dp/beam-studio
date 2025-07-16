@@ -5,17 +5,15 @@ import { Col, Form, InputNumber, Row, Slider } from 'antd';
 
 import useI18n from '@core/helpers/useI18n';
 
-import styles from './PanelContent.module.scss';
+import { useImageEditPanelStore } from '../../store';
 
-interface Props {
-  setTolerance: (tolerance: number) => void;
-  tolerance: number;
-}
+import styles from './PanelContent.module.scss';
 
 const MAX_TOLERANCE = 100;
 
-export default function MagicWand({ setTolerance, tolerance }: Props): React.JSX.Element {
+export default function MagicWand(): React.JSX.Element {
   const { image_edit_panel: lang } = useI18n();
+  const { setTolerance, tolerance } = useImageEditPanelStore();
 
   return (
     <div className={styles.wrapper}>
@@ -30,7 +28,15 @@ export default function MagicWand({ setTolerance, tolerance }: Props): React.JSX
               <Slider max={MAX_TOLERANCE} min={1} onChange={setTolerance} step={1} value={tolerance} />
             </Col>
             <Col flex="100px">
-              <InputNumber max={MAX_TOLERANCE} min={1} onChange={setTolerance} step={1} value={tolerance} />
+              <InputNumber
+                max={MAX_TOLERANCE}
+                min={1}
+                onChange={(val) => {
+                  if (val !== null) setTolerance(val);
+                }}
+                step={1}
+                value={tolerance}
+              />
             </Col>
           </Row>
         </Form.Item>

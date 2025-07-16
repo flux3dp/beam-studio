@@ -1341,6 +1341,11 @@ const lang: ILang = {
       title: 'Taikasauva',
       tolerance: 'Toleranssi',
     },
+    rounded_corner: {
+      description: 'Säädä objektin kulmien pyöreyttä.',
+      radius: 'Säde',
+      title: 'Pyöristetty kulma',
+    },
     title: 'Muokkaa kuvaa',
   },
   initialize: {

@@ -1341,6 +1341,11 @@ const lang: ILang = {
       title: 'Tongkat Sihir',
       tolerance: 'Toleransi',
     },
+    rounded_corner: {
+      description: 'Laraskan kebulatan sudut objek.',
+      radius: 'Jejari',
+      title: 'Sudut Membulat',
+    },
     title: 'Edit Imej',
   },
   initialize: {

@@ -1341,6 +1341,11 @@ const lang: ILang = {
       title: 'Toverstok',
       tolerance: 'Tolerantie',
     },
+    rounded_corner: {
+      description: 'Pas de ronding van de hoeken van het object aan.',
+      radius: 'Straal',
+      title: 'Afgeronde hoek',
+    },
     title: 'Afbeelding Bewerken',
   },
   initialize: {

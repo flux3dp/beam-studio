@@ -5,17 +5,15 @@ import { Col, Form, InputNumber, Row, Slider } from 'antd';
 
 import useI18n from '@core/helpers/useI18n';
 
-import styles from './PanelContent.module.scss';
+import { useImageEditPanelStore } from '../../store';
 
-interface Props {
-  brushSize: number;
-  setBrushSize: (size: number) => void;
-}
+import styles from './PanelContent.module.scss';
 
 const MAX_BRUSH_SIZE = 128;
 
-export default function Eraser({ brushSize, setBrushSize }: Props): React.JSX.Element {
+export default function Eraser(): React.JSX.Element {
   const { image_edit_panel: lang } = useI18n();
+  const { brushSize, setBrushSize } = useImageEditPanelStore();
 
   return (
     <div className={styles.wrapper}>
@@ -30,7 +28,15 @@ export default function Eraser({ brushSize, setBrushSize }: Props): React.JSX.El
               <Slider max={MAX_BRUSH_SIZE} min={1} onChange={setBrushSize} step={1} value={brushSize} />
             </Col>
             <Col flex="100px">
-              <InputNumber max={MAX_BRUSH_SIZE} min={1} onChange={setBrushSize} step={1} value={brushSize} />
+              <InputNumber
+                max={MAX_BRUSH_SIZE}
+                min={1}
+                onChange={(val) => {
+                  if (val !== null) setBrushSize(val);
+                }}
+                step={1}
+                value={brushSize}
+              />
             </Col>
           </Row>
         </Form.Item>

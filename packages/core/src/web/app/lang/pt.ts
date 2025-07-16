@@ -1341,6 +1341,11 @@ const lang: ILang = {
       title: 'Varinha Mágica',
       tolerance: 'Tolerância',
     },
+    rounded_corner: {
+      description: 'Ajuste a curvatura dos cantos do objeto.',
+      radius: 'Raio',
+      title: 'Canto arredondado',
+    },
     title: 'Editar Imagem',
   },
   initialize: {

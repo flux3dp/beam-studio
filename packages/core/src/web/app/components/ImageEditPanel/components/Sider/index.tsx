@@ -10,20 +10,19 @@ import Header from '@core/app/widgets/FullWindowPanel/Header';
 import FullWindowPanelSider from '@core/app/widgets/FullWindowPanel/Sider';
 import useI18n from '@core/helpers/useI18n';
 
+import CornerRadius from './CornerRadius';
 import Eraser from './Eraser';
 import styles from './index.module.scss';
 import MagicWand from './MagicWand';
 
+export type Mode = 'cornerRadius' | 'eraser' | 'magicWand';
+
 interface Props {
-  brushSize: number;
   handleComplete: () => void;
-  mode: 'eraser' | 'magicWand';
+  mode: Mode;
   onClose: () => void;
-  setBrushSize: (size: number) => void;
-  setMode: (mode: 'eraser' | 'magicWand') => void;
+  setMode: (mode: Mode) => void;
   setOperation: (operation: 'drag' | 'eraser' | 'magicWand' | null) => void;
-  setTolerance: (tolerance: number) => void;
-  tolerance: number;
 }
 
 interface Tab extends Omit<TabPaneProps, 'tab'> {
@@ -32,15 +31,11 @@ interface Tab extends Omit<TabPaneProps, 'tab'> {
 }
 
 function Sider({
-  brushSize,
   handleComplete,
   mode,
   onClose,
-  setBrushSize,
   setMode,
   setOperation,
-  setTolerance,
-  tolerance,
 }: Props): React.JSX.Element {
   const {
     beambox: { photo_edit_panel: langPhoto },
@@ -50,16 +45,22 @@ function Sider({
 
   const tabItems: Tab[] = [
     {
-      children: <Eraser brushSize={brushSize} setBrushSize={setBrushSize} />,
+      children: <Eraser />,
       icon: <ImageEditPanelIcons.Eraser />,
       key: 'eraser',
       label: lang.eraser.title,
     },
     {
-      children: <MagicWand setTolerance={setTolerance} tolerance={tolerance} />,
+      children: <MagicWand  />,
       icon: <ImageEditPanelIcons.MagicWand />,
       key: 'magicWand',
       label: lang.magic_wand.title,
+    },
+    {
+      children: <CornerRadius />,
+      icon: <ImageEditPanelIcons.CornerRadius />,
+      key: 'cornerRadius',
+      label: lang.rounded_corner.title,
     },
   ];
 
