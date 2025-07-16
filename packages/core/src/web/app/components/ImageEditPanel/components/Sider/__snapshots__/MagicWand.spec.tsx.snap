@@ -6,6 +6,11 @@ exports[`test MagicWand should render correctly 1`] = `
     class="wrapper"
   >
     <div
+      class="title"
+    >
+      Magic Wand
+    </div>
+    <div
       class="hint-text"
     >
       <span

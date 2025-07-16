@@ -1,10 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`test CornerRadius should render CornerRadius component 1`] = `
+exports[`test CornerRadius should render correctly 1`] = `
 <div>
   <div
     class="wrapper"
   >
+    <div
+      class="title"
+    >
+      Rounded Corner
+    </div>
     <div
       class="hint-text"
     >

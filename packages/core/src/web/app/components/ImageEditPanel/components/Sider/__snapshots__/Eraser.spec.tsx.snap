@@ -6,6 +6,11 @@ exports[`test Eraser should render correctly 1`] = `
     class="wrapper"
   >
     <div
+      class="title"
+    >
+      Eraser
+    </div>
+    <div
       class="hint-text"
     >
       <span
