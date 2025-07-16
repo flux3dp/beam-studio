@@ -8,7 +8,6 @@ import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
-import { calibrateChessboard } from '@core/helpers/camera-calibration-helper';
 import { ContextMenu, ContextMenuTrigger, MenuItem } from '@core/helpers/react-contextmenu';
 import useI18n from '@core/helpers/useI18n';
 import dialog from '@core/implementations/dialog';
@@ -76,7 +75,7 @@ const Calibration = ({
 
       if (chessboard) {
         try {
-          const chessboardRes = await calibrateChessboard(imgBlob, 0, chessboard);
+          const chessboardRes = await cameraCalibrationApi.calibrateChessboard(imgBlob, 0, chessboard);
 
           if (chessboardRes.success === true) {
             const { d, k, ret, rvec, tvec } = chessboardRes.data;

@@ -1,0 +1,22 @@
+@use '@core/styles/variables' as variables;
+
+.scrollable {
+  :global(.ant-modal-content) {
+    -webkit-app-region: no-drag;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - variables.$topBarHeight);
+  }
+
+  :global(.ant-modal-header) {
+    flex: 0 0;
+  }
+
+  :global(.ant-modal-body) {
+    overflow: scroll;
+  }
+
+  :global(.ant-modal-footer) {
+    flex: 0 0;
+  }
+}

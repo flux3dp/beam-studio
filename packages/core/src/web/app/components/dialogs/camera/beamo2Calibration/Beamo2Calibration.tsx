@@ -5,7 +5,8 @@ import { match } from 'ts-pattern';
 import alertCaller from '@core/app/actions/alert-caller';
 import DoorChecker from '@core/app/actions/camera/preview-helper/DoorChecker';
 import progressCaller from '@core/app/actions/progress-caller';
-import { setFisheyeConfig, solvePnPCalculate } from '@core/helpers/camera-calibration-helper';
+import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
+import { setFisheyeConfig } from '@core/helpers/camera-calibration-helper';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
@@ -221,33 +222,33 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
       );
     })
     .with(Steps.SOLVE_PNP_BL, Steps.SOLVE_PNP_BR, Steps.SOLVE_PNP_TL, Steps.SOLVE_PNP_TR, (step) => {
-      const { interestArea, percent, region } = match<
+      const { interestArea, region, solvePnPStep } = match<
         typeof step,
         {
           interestArea?: { height: number; width: number; x: number; y: number };
-          percent: number;
           region: keyof typeof bm2PnPPoints;
+          solvePnPStep: number;
         }
       >(step)
         .with(Steps.SOLVE_PNP_TL, () => ({
           interestArea: { height: 1200, width: 1900, x: 900, y: 1200 },
-          percent: 25,
           region: 'topLeft',
+          solvePnPStep: 1,
         }))
         .with(Steps.SOLVE_PNP_TR, () => ({
           interestArea: { height: 1200, width: 1900, x: 2800, y: 1200 },
-          percent: 50,
           region: 'topRight',
+          solvePnPStep: 2,
         }))
         .with(Steps.SOLVE_PNP_BL, () => ({
           interestArea: { height: 1000, width: 1500, x: 1300, y: 2300 },
-          percent: 75,
           region: 'bottomLeft',
+          solvePnPStep: 3,
         }))
         .otherwise(() => ({
           interestArea: { height: 1000, width: 1500, x: 2800, y: 2300 },
-          percent: 100,
           region: 'bottomRight',
+          solvePnPStep: 4,
         }));
 
       return (
@@ -271,9 +272,9 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
             next();
           }}
           params={calibratingParam.current}
-          percent={percent}
+          percent={solvePnPStep * 25}
           refPoints={bm2PnPPoints[region]}
-          title={tCalibration.title_align_marker_points}
+          title={`${tCalibration.title_align_marker_points} (${solvePnPStep}/4)`}
         />
       );
     })
@@ -292,7 +293,7 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
               const region = regions[i];
               const imgPoint = getRegionalPoints(region, imgPoints as Record<WideAngleRegion, Array<[number, number]>>);
               const refPoints = getRegionalPoints(region, bm2PnPPoints);
-              const res = await solvePnPCalculate(0, imgPoint, refPoints);
+              const res = await cameraCalibrationApi.solvePnPCalculate(0, imgPoint, refPoints);
 
               if (res.success) {
                 const { rvec, tvec } = res.data;

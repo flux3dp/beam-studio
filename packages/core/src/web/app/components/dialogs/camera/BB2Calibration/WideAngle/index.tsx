@@ -4,7 +4,7 @@ import { match } from 'ts-pattern';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
-import { extrinsicRegression, solvePnPCalculate } from '@core/helpers/camera-calibration-helper';
+import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import getFocalDistance from '@core/helpers/device/camera/getFocalDistance';
 import { loadJson, uploadJson } from '@core/helpers/device/jsonDataHelper';
@@ -389,7 +389,7 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
               const region = regions[i];
               const imgPoint = getRegionalPoints(region, imgPoints as Record<WideAngleRegion, Array<[number, number]>>);
               const refPoints = getRegionalPoints(region, bb2WideAngleCameraPnpPoints);
-              const res = await solvePnPCalculate(dh!, imgPoint, refPoints);
+              const res = await cameraCalibrationApi.solvePnPCalculate(dh!, imgPoint, refPoints);
 
               if (res.success) {
                 const { rvec, tvec } = res.data;
@@ -457,7 +457,7 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
                 const region = regions[i];
                 const rvecs = [rvecs1![region]!, rvecs2![region]!];
                 const tvecs = [tvecs1![region]!, tvecs2![region]!];
-                const res = await extrinsicRegression(rvecs, tvecs, heights);
+                const res = await cameraCalibrationApi.extrinsicRegression(rvecs, tvecs, heights);
 
                 if (!res.success) throw new Error(`Failed to solve extrinsic regression for ${region}.`);
 

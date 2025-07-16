@@ -17,7 +17,6 @@ import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelIte
 import Select from '@core/app/widgets/AntdSelect';
 import alertConfig from '@core/helpers/api/alert-config';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
-import isDev from '@core/helpers/is-dev';
 import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
 import {
   applyPreset,
@@ -172,8 +171,6 @@ const ModuleBlock = (): React.ReactNode => {
 
       return modules.map((value) => {
         const label = moduleTranslations[value] || tModule.unknown;
-
-        if (!isDev() && value === LayerModule.PRINTER_4C) return null;
 
         return { label, value };
       });

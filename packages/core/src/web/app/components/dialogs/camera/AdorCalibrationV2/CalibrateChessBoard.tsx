@@ -6,7 +6,8 @@ import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import DraggableModal from '@core/app/widgets/DraggableModal';
-import { calibrateChessboard, startFisheyeCalibrate } from '@core/helpers/camera-calibration-helper';
+import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
+import { startFisheyeCalibrate } from '@core/helpers/camera-calibration-helper';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
 import dialog from '@core/implementations/dialog';
@@ -82,7 +83,7 @@ const CalibrateChessBoard = ({ onBack, onClose, onNext, updateParam }: Props): R
       try {
         await startFisheyeCalibrate();
 
-        const calibrateRes = await calibrateChessboard(imgBlob, objectHeight.current);
+        const calibrateRes = await cameraCalibrationApi.calibrateChessboard(imgBlob, objectHeight.current);
 
         console.log(calibrateRes);
 

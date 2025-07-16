@@ -5,7 +5,8 @@ import { match } from 'ts-pattern';
 import alertCaller from '@core/app/actions/alert-caller';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import progressCaller from '@core/app/actions/progress-caller';
-import { extrinsicRegression, setFisheyeConfig, updateData } from '@core/helpers/camera-calibration-helper';
+import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
+import { setFisheyeConfig } from '@core/helpers/camera-calibration-helper';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
@@ -170,7 +171,7 @@ const AdorCalibrationV2 = ({ factoryMode = false, onClose }: Props): React.JSX.E
         onNext={async (rvec, tvec) => {
           progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: lang.device.processing });
           updateParam({ heights: [calibratingParam.current.dh1!], rvec, rvecs: [rvec], tvec, tvecs: [tvec] });
-          await updateData(calibratingParam.current);
+          await cameraCalibrationApi.updateData(calibratingParam.current);
           await saveCheckPoint(calibratingParam.current);
           console.log('calibratingParam.current', calibratingParam.current);
           progressCaller.popById(PROGRESS_ID);
@@ -228,7 +229,7 @@ const AdorCalibrationV2 = ({ factoryMode = false, onClose }: Props): React.JSX.E
           heights!.push(calibratingParam.current.dh2!);
           updateParam({ heights, rvecs, tvecs });
 
-          const { data, success } = await extrinsicRegression(rvecs!, tvecs!, heights!);
+          const { data, success } = await cameraCalibrationApi.extrinsicRegression(rvecs!, tvecs!, heights!);
 
           if (!success) {
             alertCaller.popUpError({ message: 'Failed to do extrinsic regression.' });

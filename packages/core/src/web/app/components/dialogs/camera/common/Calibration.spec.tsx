@@ -21,12 +21,6 @@ jest.mock('@core/app/actions/progress-caller', () => ({
   popById: (...args) => mockPopById(...args),
 }));
 
-const mockCalibrateChessboard = jest.fn();
-
-jest.mock('@core/helpers/camera-calibration-helper', () => ({
-  calibrateChessboard: (...args) => mockCalibrateChessboard(...args),
-}));
-
 const mockUseLiveFeed = jest.fn();
 
 jest.mock(
@@ -52,11 +46,13 @@ jest.mock('./ExposureSlider', () => ({ exposureSetting, onChange }: any) => (
   </div>
 ));
 
+const mockCalibrateChessboard = jest.fn();
 const mockDetectChAruCo = jest.fn();
 const mockCalibrateFisheye = jest.fn();
 
 jest.mock('@core/helpers/api/camera-calibration', () => ({
   cameraCalibrationApi: {
+    calibrateChessboard: (...args) => mockCalibrateChessboard(...args),
     calibrateFisheye: (...args) => mockCalibrateFisheye(...args),
     detectChAruCo: (...args) => mockDetectChAruCo(...args),
   },

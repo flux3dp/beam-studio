@@ -10,14 +10,19 @@ import webcamHelper from '@core/helpers/webcam-helper';
 import type { IConfigSetting } from '@core/interfaces/IDevice';
 
 export type Options = { index?: number; source?: 'usb' | 'wifi'; videoElement?: HTMLVideoElement };
+export type HandleTakePictureArgs<T = null> = {
+  callbackArgs?: T;
+  retryTimes?: number;
+  silent?: boolean;
+};
 
-const useCamera = (
-  handleImg?: (blob: Blob) => boolean | Promise<boolean>,
+const useCamera = <T>(
+  handleImg?: (blob: Blob, args?: T) => boolean | Promise<boolean>,
   { index = 0, source = 'wifi', videoElement }: Options = {},
 ): {
   connectWebCam: () => Promise<void>;
   exposureSetting: IConfigSetting | null;
-  handleTakePicture: (opts?: { retryTimes?: number; silent?: boolean }) => Promise<Blob | null>;
+  handleTakePicture: (opts?: HandleTakePictureArgs<T>) => Promise<Blob | null>;
   setExposureSetting: Dispatch<IConfigSetting | null>;
   webCamConnection: null | WebCamConnection;
 } => {
@@ -44,8 +49,8 @@ const useCamera = (
   }, []);
 
   const handleTakePicture = useCallback(
-    async (opts?: { retryTimes?: number; silent?: boolean }) => {
-      const { retryTimes = 0, silent = false } = opts || {};
+    async (opts?: HandleTakePictureArgs<T>) => {
+      const { callbackArgs, retryTimes = 0, silent = false } = opts || {};
 
       if (!silent) {
         progressCaller.openNonstopProgress({
@@ -79,7 +84,7 @@ const useCamera = (
       }
 
       if (handleImg) {
-        const res = await handleImg(imgBlob);
+        const res = await handleImg(imgBlob, callbackArgs);
 
         if (!res && retryTimes < 2) {
           return handleTakePicture({ retryTimes: retryTimes + 1, silent });

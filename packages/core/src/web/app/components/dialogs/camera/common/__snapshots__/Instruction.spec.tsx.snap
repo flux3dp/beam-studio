@@ -26,7 +26,7 @@ exports[`test Instruction should render correctly 1`] = `
             tabindex="0"
           >
             <div
-              class="react-draggable"
+              class="scrollable react-draggable"
               style="min-width: 400px; transform: translate(0px, 0px)translate(0px,0px);"
             >
               <div

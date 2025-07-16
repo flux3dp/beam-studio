@@ -7,7 +7,7 @@ import alertCaller from '@core/app/actions/alert-caller';
 import type DoorChecker from '@core/app/actions/camera/preview-helper/DoorChecker';
 import moveLaserHead from '@core/app/components/dialogs/camera/common/moveLaserHead';
 import DraggableModal from '@core/app/widgets/DraggableModal';
-import { solvePnPCalculate, solvePnPFindCorners, updateData } from '@core/helpers/camera-calibration-helper';
+import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
 import useDidUpdateEffect from '@core/helpers/hooks/useDidUpdateEffect';
 import useI18n from '@core/helpers/useI18n';
 import type { FisheyeCaliParameters } from '@core/interfaces/FisheyePreview';
@@ -35,6 +35,10 @@ interface Props {
   title?: string;
   titleLink?: string;
 }
+
+type HandleImgOpts = {
+  shouldFindCorners?: boolean;
+};
 
 const SolvePnP = ({
   cameraIndex,
@@ -76,7 +80,7 @@ const SolvePnP = ({
   );
 
   const handleImg = useCallback(
-    async (imgBlob: Blob) => {
+    async (imgBlob: Blob, opts: HandleImgOpts = {}) => {
       try {
         let interestArea: undefined | { height: number; width: number; x: number; y: number } = undefined;
 
@@ -96,7 +100,22 @@ const SolvePnP = ({
           };
         }
 
-        const res = await solvePnPFindCorners(imgBlob, dh, refPoints, interestArea || initInterestArea);
+        const { shouldFindCorners = true } = opts;
+
+        if (!shouldFindCorners) {
+          const { blob } = await cameraCalibrationApi.remapImage(imgBlob);
+
+          setImg({ blob, success: true, url: URL.createObjectURL(blob) });
+
+          return true;
+        }
+
+        const res = await cameraCalibrationApi.solvePnPFindCorners(
+          imgBlob,
+          dh,
+          refPoints,
+          interestArea || initInterestArea,
+        );
 
         if (res.success) {
           const { blob, data, success } = res;
@@ -111,14 +130,12 @@ const SolvePnP = ({
 
           if (data.info === 'NO_DATA') {
             if (params.k && params.d) {
-              await updateData(params);
+              await cameraCalibrationApi.updateData(params);
 
-              return await handleImg(imgBlob);
+              return await handleImg(imgBlob, opts);
             }
 
-            alertCaller.popUpError({
-              message: 'No chessboard data detected, please restart calibration.',
-            });
+            alertCaller.popUpError({ message: 'No chessboard data detected, please restart calibration.' });
           }
 
           return false;
@@ -144,16 +161,14 @@ const SolvePnP = ({
   });
 
   const handleTakePicture = useCallback(
-    async (relocate = false) => {
+    async ({ handleImgOpts, relocate = false }: { handleImgOpts?: HandleImgOpts; relocate?: boolean } = {}) => {
       if (doorChecker && (!doorChecker.keepClosed || relocate)) {
         const res = await doorChecker.doorClosedWrapper(moveLaserHead);
 
-        if (!res) {
-          return;
-        }
+        if (!res) return;
       }
 
-      await takePicture();
+      await takePicture({ callbackArgs: handleImgOpts });
     },
     [doorChecker, takePicture],
   );
@@ -224,7 +239,7 @@ const SolvePnP = ({
   }, []);
 
   const handleDone = async () => {
-    const res = await solvePnPCalculate(dh, points, refPoints);
+    const res = await cameraCalibrationApi.solvePnPCalculate(dh, points, refPoints);
 
     if (res.success) {
       const { rvec, tvec } = res.data;
@@ -276,7 +291,11 @@ const SolvePnP = ({
           {lang.buttons.back}
         </Button>,
         doorChecker ? (
-          <Button className={styles['footer-button']} key="relocate" onClick={() => handleTakePicture(true)}>
+          <Button
+            className={styles['footer-button']}
+            key="relocate"
+            onClick={() => handleTakePicture({ relocate: true })}
+          >
             {lang.calibration.relocate_camera}
           </Button>
         ) : null,
@@ -296,6 +315,7 @@ const SolvePnP = ({
       maskClosable={false}
       onCancel={() => onClose(false)}
       open
+      scrollableContent
       title={<Title link={titleLink} title={title ?? lang.calibration.camera_calibration} />}
       width="80vw"
     >
@@ -311,34 +331,32 @@ const SolvePnP = ({
         <li>{lang.calibration.solve_pnp_step3}</li>
       </ol>
       {percent !== undefined && <Progress className={styles.progress} percent={percent} status="normal" />}
-      <Row gutter={[16, 12]}>
-        <Col span={16}>
-          <ImageDisplay
-            img={img}
-            onDragEnd={handleDragEnd}
-            onDragMove={handleDragMove}
-            onImgLoad={() => setZoomPoints(points)}
-            onScaleChange={onScaleChange}
-            ref={imgContainerRef}
-            renderContents={(scale) =>
-              points.map((p, idx) => (
-                <g
-                  className={classNames(styles.group, { [styles.selected]: idx === selectedPointIdx })}
-                  key={idx}
-                  onMouseDown={(e) => handlePointDragStart(idx, e)}
-                >
-                  <circle cx={p[0]} cy={p[1]} r={5 / scale} />
-                  <circle className={classNames('center', styles.center)} cx={p[0]} cy={p[1]} r={1 / scale} />
-                  <text className={styles.text} fontSize={12 / scale} x={p[0] + 10 / scale} y={p[1] + 10 / scale}>
-                    {idx}
-                  </text>
-                </g>
-              ))
-            }
-            zoomPoints={zoomPoints}
-          />
-        </Col>
-        <Col span={8}>
+      <div className={styles.grid}>
+        <ImageDisplay
+          img={img}
+          onDragEnd={handleDragEnd}
+          onDragMove={handleDragMove}
+          onImgLoad={() => setZoomPoints(points)}
+          onScaleChange={onScaleChange}
+          ref={imgContainerRef}
+          renderContents={(scale) =>
+            points.map((p, idx) => (
+              <g
+                className={classNames(styles.group, { [styles.selected]: idx === selectedPointIdx })}
+                key={idx}
+                onMouseDown={(e) => handlePointDragStart(idx, e)}
+              >
+                <circle cx={p[0]} cy={p[1]} r={5 / scale} />
+                <circle className={classNames('center', styles.center)} cx={p[0]} cy={p[1]} r={1 / scale} />
+                <text className={styles.text} fontSize={12 / scale} x={p[0] + 10 / scale} y={p[1] + 10 / scale}>
+                  {idx}
+                </text>
+              </g>
+            ))
+          }
+          zoomPoints={zoomPoints}
+        />
+        <div>
           {selectedPointIdx >= 0 && points[selectedPointIdx] && (
             <Flex className={styles.info} justify="space-between" vertical>
               <div>
@@ -380,22 +398,18 @@ const SolvePnP = ({
               <img src={`core-img/calibration/solve-pnp-${points.length}-${selectedPointIdx}.jpg`} />
             </Flex>
           )}
-        </Col>
+        </div>
         {exposureSetting && (
           <>
-            <Col span={16}>
-              <ExposureSlider
-                exposureSetting={exposureSetting}
-                onChanged={handleTakePicture}
-                setExposureSetting={setExposureSetting}
-              />
-            </Col>
-            <Col span={8}>
-              <div className={styles.value}>{exposureSetting.value}</div>
-            </Col>
+            <ExposureSlider
+              exposureSetting={exposureSetting}
+              onChanged={() => handleTakePicture({ handleImgOpts: { shouldFindCorners: false } })}
+              setExposureSetting={setExposureSetting}
+            />
+            <div className={styles.value}>{exposureSetting.value}</div>
           </>
         )}
-      </Row>
+      </div>
     </DraggableModal>
   );
 };
