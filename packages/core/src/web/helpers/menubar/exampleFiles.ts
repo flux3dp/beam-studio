@@ -4,6 +4,8 @@ import { adorModels, nxModels } from '@core/app/actions/beambox/constant';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { importBvgString } from '@core/app/svgedit/operations/import/importBvg';
 import fileExportHelper from '@core/helpers/file-export-helper';
+import { setFileInAnotherTab } from '@core/helpers/fileImportHelper';
+import { checkIsAtEditor, isAtPage } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 
@@ -152,6 +154,14 @@ export const getExampleFileName = (key: ExampleFileKey): string | undefined => {
 };
 
 export const loadExampleFile = async (key: ExampleFileKey) => {
+  if (isAtPage('welcome')) {
+    setFileInAnotherTab({ key, type: 'example' });
+
+    return;
+  }
+
+  if (!checkIsAtEditor()) return;
+
   const path = getExampleFileName(key);
 
   if (!path) {

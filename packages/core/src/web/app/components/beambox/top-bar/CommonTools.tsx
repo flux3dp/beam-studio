@@ -1,5 +1,6 @@
 import React from 'react';
 
+import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
 import historyUtils from '@core/app/svgedit/history/utils';
 import i18n from '@core/helpers/i18n';
@@ -8,7 +9,7 @@ import { useIsMobile } from '@core/helpers/system-helper';
 
 import styles from './CommonTools.module.scss';
 
-let svgEditor;
+let svgEditor: ISVGEditor;
 
 getSVGAsync((globalSVG) => {
   svgEditor = globalSVG.Editor;
@@ -18,13 +19,12 @@ const LANG = i18n.lang.topbar;
 
 interface Props {
   hide: boolean;
-  isWeb: boolean;
 }
 
-function CommonTools({ hide, isWeb }: Props): React.JSX.Element {
+function CommonTools({ hide }: Props): React.ReactNode {
   const isMobile = useIsMobile();
 
-  if (!isWeb || hide) {
+  if (hide) {
     return null;
   }
 

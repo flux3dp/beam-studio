@@ -4,16 +4,18 @@ export enum TabEvents {
   FocusTab = 'focus-tab',
   GetAllTabs = 'get-all-tabs',
   GetTabId = 'get-tab-id',
+  ImportFileInTab = 'import-file-in-tab',
   MoveTab = 'move-tab',
   SetTabMode = 'set-tab-mode',
   SetTabTitle = 'set-tab-title',
   TabBlurred = 'tab-blurred',
   TabFocused = 'tab-focused',
   TabUpdated = 'tab-updated',
+  updateRecentFiles = 'update-recent-files',
   UpdateUser = 'update-user',
 }
 
 export default {
   // zero or undefined means no limit
-  maxTab: 6,
+  maxTab: 7,
 };

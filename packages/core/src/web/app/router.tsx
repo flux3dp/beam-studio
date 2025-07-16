@@ -44,6 +44,7 @@ import SelectConnectionType from '@core/app/pages/SelectConnectionType';
 import SelectMachineModel from '@core/app/pages/SelectMachineModel';
 import SelectPromarkLaserSource from '@core/app/pages/SelectPromarkLaserSource';
 import Settings from '@core/app/pages/Settings';
+import Welcome from '@core/app/pages/Welcome';
 import AlertsAndProgress from '@core/app/views/dialogs/AlertAndProgress';
 import Dialog from '@core/app/views/dialogs/Dialog';
 import type { StorageKey } from '@core/interfaces/IStorage';
@@ -128,6 +129,7 @@ const App = (): React.JSX.Element => {
                   <Route component={PromarkSettings} exact path="/initialize/connect/promark-settings" />
                   <Route component={Settings} exact path="/studio/settings" />
                   <Route component={Beambox} exact path="/studio/beambox" />
+                  <Route component={Welcome} exact path="/studio/welcome" />
                   <Route component={Error} path="/error/*" />
                   <Route component={Home} path="*" />
                 </Switch>

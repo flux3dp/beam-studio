@@ -93,6 +93,10 @@ class TabManager {
       }
     });
 
+    ipcMain.on(TabEvents.ImportFileInTab, (_e, data) => {
+      this.sendToFocusedView(TabEvents.ImportFileInTab, data);
+    });
+
     const handleWindowSizeChanged = () => {
       const tabs = Object.values(this.tabsMap);
 
@@ -143,9 +147,9 @@ class TabManager {
 
   private serializeTabs = (): FrontendTab[] =>
     this.tabsList.map((id: number) => {
-      const { isCloud, isLoading, mode, title } = this.tabsMap[id];
+      const { isCloud, isLoading, isWelcomeTab, mode, title } = this.tabsMap[id];
 
-      return { id, isCloud, isFocused: id === this.focusedId, isLoading, mode, title };
+      return { id, isCloud, isFocused: id === this.focusedId, isLoading, isWelcomeTab, mode, title };
     });
 
   private notifyTabUpdated = (): void => {
@@ -153,6 +157,7 @@ class TabManager {
   };
 
   private createTab = (): Tab => {
+    const isWelcomeTab = this.tabsList.length < 1;
     const tabView = new WebContentsView({
       webPreferences: {
         contextIsolation: false,
@@ -187,7 +192,7 @@ class TabManager {
 
       return { action: 'allow' };
     });
-    initStore(webContents);
+    initStore(webContents, isWelcomeTab);
 
     webContents.loadURL(pathToFileURL(path.join(__dirname, '../../index.html')).toString());
 
@@ -198,7 +203,8 @@ class TabManager {
     const title = i18n.lang.topbar.untitled;
     const tab: Tab = {
       isCloud: false,
-      isLoading: true,
+      isLoading: !isWelcomeTab,
+      isWelcomeTab,
       title,
       view: tabView,
     };

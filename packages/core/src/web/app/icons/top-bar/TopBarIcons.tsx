@@ -1,3 +1,5 @@
+import { HomeFilled } from '@ant-design/icons';
+
 import Account from './account.svg';
 import AutoFocus from './auto-focus.svg';
 import Camera from './camera.svg';
@@ -21,6 +23,7 @@ export default {
   Document,
   Frame,
   Go,
+  Home: HomeFilled,
   PathPreview,
   Redo,
   SelectMachine,

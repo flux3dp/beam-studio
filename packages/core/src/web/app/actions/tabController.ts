@@ -4,8 +4,11 @@ import type { CanvasMode } from '@core/app/constants/canvasMode';
 import { TabEvents } from '@core/app/constants/tabConstants';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import type { FileData } from '@core/helpers/fileImportHelper';
+import { importFileInCurrentTab } from '@core/helpers/fileImportHelper';
 import i18n from '@core/helpers/i18n';
 import communicator from '@core/implementations/communicator';
+import storage from '@core/implementations/storage';
 import type { Tab } from '@core/interfaces/Tab';
 
 class TabController extends EventEmitter {
@@ -13,6 +16,7 @@ class TabController extends EventEmitter {
 
   public currentId: null | number = null;
   public isFocused = false;
+  private isWelcomeTab: boolean | null = null;
 
   constructor() {
     super();
@@ -28,6 +32,12 @@ class TabController extends EventEmitter {
     });
     communicator.on(TabEvents.TabUpdated, (_: unknown, tabs: Tab[]) => {
       this.emit(TabEvents.TabUpdated, tabs);
+    });
+    communicator.on(TabEvents.ImportFileInTab, (_: unknown, file: FileData) => {
+      importFileInCurrentTab(file);
+    });
+    communicator.on(TabEvents.updateRecentFiles, (_: unknown, recentFiles: string[]) => {
+      storage.set('recent_files', recentFiles);
     });
     this.currentId = communicator.sendSync(TabEvents.GetTabId);
 
@@ -76,6 +86,16 @@ class TabController extends EventEmitter {
   getCurrentId = (): null | number => this.currentId;
 
   getAllTabs = (): Tab[] => communicator.sendSync(TabEvents.GetAllTabs);
+
+  getIsWelcomeTab = (): boolean => {
+    if (this.isWelcomeTab === null) {
+      const tab = this.getAllTabs().find((t) => t.id === this.currentId);
+
+      this.isWelcomeTab = tab?.isWelcomeTab ?? false;
+    }
+
+    return this.isWelcomeTab;
+  };
 
   addNewTab = (): void => communicator.send(TabEvents.AddNewTab);
 

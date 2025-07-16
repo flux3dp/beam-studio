@@ -437,7 +437,39 @@ const readBeam = async (file: File): Promise<void> => {
   Progress.popById('loading_image');
 };
 
+const readBeamFileInfo = async (file: File): Promise<{ thumbnail: string; workarea: null | string }> => {
+  const data = await new Promise<ArrayBuffer>((resolve) => {
+    const fr = new FileReader();
+
+    fr.onloadend = (evt) => {
+      resolve(evt.target!.result as ArrayBuffer);
+    };
+    fr.readAsArrayBuffer(file);
+  });
+  const buf = Buffer.from(data);
+
+  // Find data-workarea in the beginning of the file
+  const content = buf.subarray(0, 1000).toString('utf-8');
+  const workareaString = content.match(/data-workarea="([^"]+)"/);
+  const workarea = workareaString ? workareaString[1] : null;
+  let blockType = 0;
+  let { offset, value: size } = readVInt(buf, 5); // skip signature and metadata
+
+  // Find thumbnail block
+  while (offset < buf.length && blockType !== 3) {
+    offset += size;
+    blockType = buf.readUInt8(offset);
+    ({ offset, value: size } = readVInt(buf, offset + 1));
+  }
+
+  return {
+    thumbnail: blockType === 3 ? `data:image/png;base64,${buf.subarray(offset, offset + size).toString('base64')}` : '',
+    workarea,
+  };
+};
+
 export default {
   generateBeamBuffer,
   readBeam,
+  readBeamFileInfo,
 };
