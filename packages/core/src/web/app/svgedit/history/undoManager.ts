@@ -47,6 +47,8 @@ export class UndoManager implements IUndoManager {
   }
 
   undo(): boolean {
+    console.log('undo', this.undoStackPointer, this.undoStack.length, this.undoStack);
+
     if (this.undoStackPointer > 0) {
       this.undoStackPointer -= 1;
 
