@@ -31,30 +31,26 @@ interface Tab extends Omit<TabPaneProps, 'tab'> {
 }
 
 function Sider({ handleComplete, mode, onClose, setMode, setOperation }: Props): React.JSX.Element {
-  const {
-    beambox: { photo_edit_panel: langPhoto },
-    buttons: langButtons,
-    image_edit_panel: lang,
-  } = useI18n();
+  const { buttons: langButtons, global: langGlobal, image_edit_panel: lang } = useI18n();
 
   const tabItems: Tab[] = [
     {
       children: <Eraser />,
-      icon: <ImageEditPanelIcons.Eraser />,
+      icon: <ImageEditPanelIcons.Eraser className={styles.icon} />,
       key: 'eraser',
-      label: lang.eraser.title,
+      label: '',
     },
     {
       children: <MagicWand />,
-      icon: <ImageEditPanelIcons.MagicWand />,
+      icon: <ImageEditPanelIcons.MagicWand className={styles.icon} />,
       key: 'magicWand',
-      label: lang.magic_wand.title,
+      label: '',
     },
     {
       children: <CornerRadius />,
-      icon: <ImageEditPanelIcons.CornerRadius />,
+      icon: <ImageEditPanelIcons.CornerRadius className={styles.icon} />,
       key: 'cornerRadius',
-      label: lang.rounded_corner.title,
+      label: '',
     },
   ];
 
@@ -77,7 +73,7 @@ function Sider({ handleComplete, mode, onClose, setMode, setOperation }: Props):
         </div>
         <Footer>
           <Button key="ok" onClick={handleComplete} type="primary">
-            {langPhoto.okay}
+            {langGlobal.ok}
           </Button>
         </Footer>
       </Flex>
