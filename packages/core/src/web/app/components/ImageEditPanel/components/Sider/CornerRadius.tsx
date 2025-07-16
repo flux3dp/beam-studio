@@ -9,12 +9,6 @@ import { useImageEditPanelStore } from '../../store';
 
 import styles from './PanelContent.module.scss';
 
-/**
- * value here is the percentage of the half the short side of the image
- * e.g. if the image is 1000x500, and value is 50
- * then the corner radius will be 125 (50% of the short side / 2)
- */
-
 const CornerRadius = (): React.JSX.Element => {
   const { image_edit_panel: lang } = useI18n();
   const cornerRadius = useImageEditPanelStore((state) => state.cornerRadius);
