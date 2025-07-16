@@ -105,8 +105,6 @@ export const useImageEditPanelStore = create<ImageEditPanelStore>(
       set((state) => {
         const { currentLine, history, lines } = state;
 
-        console.log('lineFinish', currentLine, history);
-
         if (!currentLine) return state; // No current line to finish
 
         const operation: HistoryOperation = {
