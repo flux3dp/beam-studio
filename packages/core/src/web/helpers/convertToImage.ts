@@ -3,10 +3,10 @@ import { match, P } from 'ts-pattern';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { deleteElements } from '@core/app/svgedit/operations/delete';
-import { getRotationAngle } from '@core/app/svgedit/transform/rotation';
-import type { IBatchCommand } from '@core/interfaces/IHistory';
+import { getRotationAngle, setRotationAngle } from '@core/app/svgedit/transform/rotation';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
+import type { ConvertSvgToImageParams, ConvertToImageResult } from './convertToImage.util';
 import { createAndFinalizeImage, rasterizeGenericSvgElement } from './convertToImage.util';
 import { getSVGAsync } from './svg-editor-helper';
 
@@ -15,14 +15,6 @@ let svgCanvas: ISVGCanvas;
 getSVGAsync(({ Canvas }) => {
   svgCanvas = Canvas;
 });
-
-export type ConvertSvgToImageParams = {
-  isToSelect?: boolean;
-  parentCmd?: IBatchCommand;
-  scale?: number;
-  svgElement: SVGGElement;
-};
-type ConvertToImageResult = undefined | { imageElements: SVGImageElement[]; svgElements: SVGGElement[] };
 
 export const convertibleSvgTags = [
   'rect',
@@ -83,6 +75,7 @@ const convertGroupToImage = async (
   { parentCmd = new history.BatchCommand('Convert Group to Image'), svgElement }: ConvertSvgToImageParams,
   mainConverter: MainConverterFunc,
 ): Promise<ConvertToImageResult> => {
+  const angle = getRotationAngle(svgElement);
   const imageElements = [];
   const svgElements = [];
 
@@ -99,10 +92,17 @@ const convertGroupToImage = async (
   if (imageElements.length > 0) {
     svgCanvas.selectOnly(imageElements);
 
-    const groupCommand = svgCanvas.groupSelectedElements(true);
+    const groupResult = svgCanvas.groupSelectedElements(true);
 
-    if (groupCommand) {
-      parentCmd.addSubCommand(groupCommand);
+    if (groupResult) {
+      parentCmd.addSubCommand(groupResult.command);
+
+      if (angle) {
+        setRotationAngle(groupResult.group, angle, { parentCmd });
+        console.log('Group created:', svgElement.getAttribute('data-tempgroup'), svgElement.getAttribute('id'));
+        console.log('Group result:', groupResult.group);
+        console.log('Group angle:', angle);
+      }
     }
   }
 

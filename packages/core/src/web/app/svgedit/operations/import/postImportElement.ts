@@ -32,10 +32,10 @@ const postImportElement = async (elem: SVGElement, batchCmd: IBatchCommand) => {
   await disassembleUse([elem], { parentCmd: batchCmd, skipConfirm: true });
 
   if (svgCanvas.getSelectedElems()[0].getAttribute('data-tempgroup')) {
-    const subCmd = svgCanvas.groupSelectedElements();
+    const groupResult = svgCanvas.groupSelectedElements();
 
-    if (subCmd) {
-      batchCmd.addSubCommand(subCmd);
+    if (groupResult) {
+      batchCmd.addSubCommand(groupResult.command);
     }
   }
 
