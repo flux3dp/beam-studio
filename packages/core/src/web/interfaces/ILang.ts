@@ -750,6 +750,7 @@ export interface ILang {
           auto_fit: string;
           bevel: string;
           brightness: string;
+          convert_to_image: string;
           convert_to_path: string;
           create_textpath: string;
           create_textpath_short: string;
