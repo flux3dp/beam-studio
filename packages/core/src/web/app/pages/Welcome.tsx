@@ -29,7 +29,7 @@ import { DmktIcon } from '@core/app/icons/icons';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
 import { axiosFluxId, fluxIDEvents, getCurrentUser, signOut } from '@core/helpers/api/flux-id';
-import { mockT, todo } from '@core/helpers/dev-helper';
+import { todo } from '@core/helpers/dev-helper';
 import { checkTabCount, setFileInAnotherTab } from '@core/helpers/fileImportHelper';
 import { hashMap } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
@@ -73,6 +73,7 @@ const Welcome = (): ReactNode => {
     flux_id_login: tFluxIdLogin,
     my_cloud: tMyCloud,
     topbar: { menu: tMenu },
+    welcome_page: t,
   } = useI18n();
   const isMobile = useIsMobile();
   const [currentUser, setCurrentUser] = useState<IUser | null>(getCurrentUser());
@@ -171,7 +172,7 @@ const Welcome = (): ReactNode => {
     !isWeb() && {
       icon: <FolderOpenOutlined />,
       key: 'recent-files',
-      label: mockT('Recent Files'),
+      label: t.recent_files,
     },
     {
       icon: <CloudOutlined />,
@@ -238,7 +239,7 @@ const Welcome = (): ReactNode => {
           {!isMobile && tMenu.open}
         </ThemedButton>
         <ThemedButton icon={<PlusOutlined />} onClick={startNewProject} theme="yellow">
-          {!isMobile && mockT('New Project')}
+          {!isMobile && t.new_project}
         </ThemedButton>
       </div>
       <div className={styles.content}>
@@ -255,9 +256,7 @@ const Welcome = (): ReactNode => {
               {nickname ? (
                 <div className={styles.nickname}>{nickname}</div>
               ) : (
-                <div className={styles['login-hint']}>
-                  {mockT('Get Free AI credits on us when you sign up for a FLUX account!')}
-                </div>
+                <div className={styles['login-hint']}>{t.not_login_placeholder}</div>
               )}
             </Flex>
             {currentUser ? (
@@ -273,7 +272,7 @@ const Welcome = (): ReactNode => {
                     size="small"
                     theme="yellow"
                   >
-                    {mockT('Member Center')}
+                    {t.member_center}
                   </ThemedButton>
                 </Flex>
               </>
@@ -304,7 +303,7 @@ const Welcome = (): ReactNode => {
                 key="shop"
                 title={
                   <div className={styles['menu-item']}>
-                    <ShoppingOutlined /> {mockT('Shop')}
+                    <ShoppingOutlined /> {t.shop}
                   </div>
                 }
               />
@@ -330,7 +329,7 @@ const Welcome = (): ReactNode => {
                 onClick={() => browser.open(socialMedia.shop.link)}
                 theme="yellow"
               >
-                {mockT('Shop FLUX Products')}
+                {t.shop_products}
               </ThemedButton>
             </div>
           )}

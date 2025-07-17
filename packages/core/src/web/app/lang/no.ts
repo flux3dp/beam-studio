@@ -400,6 +400,7 @@ const lang: ILang = {
         no_questionnaire_available: 'Det er ingen spørreskjemaer tilgjengelig for øyeblikket.',
         unable_to_get_url: 'Kunne ikke hente lenken til spørreskjemaet via internett. Bekreft internettilkoblingen.',
       },
+      reach_tab_count_limit: 'Fanebegrensning nådd',
       recommend_downgrade_software: 'Vi oppdaget en eldre fastvareversjon. Vi jobber med kompatibilitetsproblemer, men foreløpig anbefaler vi å gå tilbake til <a target="_blank" href="https://beamstudio.s3.ap-northeast-1.amazonaws.com/mac/Beam+Studio+1.9.5.dmg">Beam Studio 1.9.5</a>.',
       recommend_upgrade_firmware: 'Vi oppdaget en eldre fastvareversjon. Vi jobber aktivt med kompatibilitetsproblemer, men foreløpig anbefaler vi å oppdatere til nyeste fastvare.',
       save_unsave_changed: 'Vil du lagre ulagrede endringer?',
@@ -1694,6 +1695,7 @@ const lang: ILang = {
     loading_file: 'Laster inn...',
     no_file_subtitle: 'Gå til Meny > "Fil" > "Lagre til skyen"',
     no_file_title: 'Lagre filer til Min sky for å komme i gang.',
+    not_login_title: 'Logg inn for å lagre filene dine i skyen.',
     save_file: {
       choose_action: 'Lagre fil:',
       input_file_name: 'Skriv inn filnavn:',
@@ -2356,6 +2358,25 @@ const lang: ILang = {
   web_cam: {
     no_device: 'Kan ikke oppdage kameramaskinen. Vennligst koble til kameraet på nytt og prøv igjen.',
     no_permission: 'Beam Studio har ikke tillatelse til å få tilgang til kameraet. Sørg for at tillatelsen er gitt til Beam Studio i nettleserinnstillingene eller systeminnstillingene.',
+  },
+  welcome_page: {
+    follow_us: {
+      subtitle: 'Veiledninger, manualer og støtte­ressurser for alt som gjelder FLUX.',
+      user_group: 'Brukergruppe',
+    },
+    help_center: {
+      guides: 'Veiledninger',
+      guides_subtitle: 'Se omfattende veiledninger for alle FLUX-produkter.',
+      submit_request: 'Send inn forespørsel',
+      subtitle: 'Veiledninger, manualer og støtte­ressurser for alt som gjelder FLUX.',
+      visit_help_center: 'Besøk Hjelpesenteret',
+    },
+    member_center: 'Medlemsenter',
+    new_project: 'Nytt prosjekt',
+    not_login_placeholder: 'Få gratis AI-kreditt fra oss når du registrerer en FLUX-konto!',
+    recent_files: 'Nylige filer',
+    shop: 'Butikk',
+    shop_products: 'Kjøp FLUX-produkter',
   },
   z_speed_limit_test: {
     alert_before: 'Før du starter kurvegravering, vil systemet utføre en belastningstest for å forhindre trinntap på grunn av for høy vekt.',

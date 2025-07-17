@@ -400,6 +400,7 @@ const lang: ILang = {
         no_questionnaire_available: 'Hiện không có bảng câu hỏi nào',
         unable_to_get_url: 'Không lấy được liên kết đến bảng câu hỏi qua mạng. Vui lòng kiểm tra kết nối internet',
       },
+      reach_tab_count_limit: 'Đã đạt giới hạn số thẻ',
       recommend_downgrade_software: 'Chúng tôi phát hiện ra phiên bản firmware cũ hơn. Chúng tôi đang khắc phục các vấn đề tương thích, nhưng hiện tại, khuyên bạn dùng <a target="_blank" href="https://beamstudio.s3.ap-northeast-1.amazonaws.com/mac/Beam+Studio+1.9.5.dmg">Beam Studio 1.9.5</a>.',
       recommend_upgrade_firmware: 'Chúng tôi phát hiện ra phiên bản firmware cũ hơn. Chúng tôi đang khắc phục các vấn đề tương thích, nhưng hiện tại, khuyên bạn nên cập nhật lên phiên bản firmware mới nhất.',
       save_unsave_changed: 'Bạn có muốn lưu thay đổi chưa lưu?',
@@ -1694,6 +1695,7 @@ const lang: ILang = {
     loading_file: 'Đang tải...',
     no_file_subtitle: 'Vào Menu > "Tệp" > "Lưu lên đám mây"',
     no_file_title: 'Lưu tệp lên Đám mây của tôi để bắt đầu.',
+    not_login_title: 'Đăng nhập để lưu trữ tệp của bạn lên đám mây.',
     save_file: {
       choose_action: 'Lưu tệp:',
       input_file_name: 'Nhập tên tệp:',
@@ -2356,6 +2358,25 @@ const lang: ILang = {
   web_cam: {
     no_device: 'Không thể phát hiện thiết bị camera. Vui lòng kết nối lại camera và thử lại.',
     no_permission: 'Beam Studio không có quyền truy cập vào camera. Vui lòng đảm bảo rằng quyền đã được cấp cho Beam Studio trong cài đặt trình duyệt hoặc hệ thống.',
+  },
+  welcome_page: {
+    follow_us: {
+      subtitle: 'Hướng dẫn, tài liệu và tài nguyên hỗ trợ cho mọi thứ liên quan đến FLUX.',
+      user_group: 'Nhóm người dùng',
+    },
+    help_center: {
+      guides: 'Hướng dẫn',
+      guides_subtitle: 'Xem hướng dẫn toàn diện cho tất cả sản phẩm FLUX.',
+      submit_request: 'Gửi yêu cầu',
+      subtitle: 'Hướng dẫn, tài liệu và tài nguyên hỗ trợ cho mọi thứ liên quan đến FLUX.',
+      visit_help_center: 'Truy cập Trung tâm trợ giúp',
+    },
+    member_center: 'Trung tâm Thành viên',
+    new_project: 'Dự án mới',
+    not_login_placeholder: 'Nhận tín dụng AI miễn phí từ chúng tôi khi bạn đăng ký tài khoản FLUX!',
+    recent_files: 'Tệp gần đây',
+    shop: 'Cửa hàng',
+    shop_products: 'Mua sản phẩm FLUX',
   },
   z_speed_limit_test: {
     alert_before: 'Trước khi bắt đầu khắc đường cong, hệ thống sẽ thực hiện kiểm tra tải trọng để ngăn chặn mất bước do trọng lượng quá mức.',

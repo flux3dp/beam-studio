@@ -400,6 +400,7 @@ const lang: ILang = {
         no_questionnaire_available: '目前沒有可供填寫的問卷。',
         unable_to_get_url: '無法透過網路取得目前最新問卷的連結，請確認您的網路連線狀況。',
       },
+      reach_tab_count_limit: '已達開啟分頁上限',
       recommend_downgrade_software: '偵測到較舊的韌體版本，我們仍然在積極解決相容問題，但現在建議您先退回 <a target="_blank" href="https://beamstudio.s3.ap-northeast-1.amazonaws.com/mac/Beam+Studio+1.9.5.dmg">Beam Studio 1.9.5</a>',
       recommend_upgrade_firmware: '我們偵測到較舊的韌體版本。我們正在積極解決相容問題，但現在建議您先更新至最新的韌體。',
       save_unsave_changed: '請問是否要儲存未儲存的變更，否則變更將會遺失？',
@@ -1694,6 +1695,7 @@ const lang: ILang = {
     loading_file: '載入中...',
     no_file_subtitle: '轉到選單 > “檔案” > “儲存到雲端”',
     no_file_title: '儲存檔案到我的雲端開始使用。',
+    not_login_title: '登入以將您的檔案存儲到雲端。',
     save_file: {
       choose_action: '保存檔案：',
       input_file_name: '另存新檔為：',
@@ -2357,6 +2359,25 @@ const lang: ILang = {
   web_cam: {
     no_device: '無法檢測到相機設備。請重新連接相機，然後重試。',
     no_permission: 'Beam Studio 沒有權限存取相機。請確保在系統設定或瀏覽器設定中已授予 Beam Studio 權限。',
+  },
+  welcome_page: {
+    follow_us: {
+      subtitle: '所有 FLUX 相關的指南、手冊與支援資源。',
+      user_group: '用戶社群',
+    },
+    help_center: {
+      guides: '指南',
+      guides_subtitle: '查看所有 FLUX 產品的完整指南。',
+      submit_request: '提交請求',
+      subtitle: '所有 FLUX 相關的指南、手冊與支援資源。',
+      visit_help_center: '前往說明中心',
+    },
+    member_center: '會員中心',
+    new_project: '新增專案',
+    not_login_placeholder: '註冊 FLUX 帳號即可免費獲得 AI 點數！',
+    recent_files: '最近的檔案',
+    shop: '商城',
+    shop_products: '選購 FLUX 商品',
   },
   z_speed_limit_test: {
     alert_before: '在進行曲面雕刻前，系統將先測試物體的負重，以防止因過重導致雕刻過程中失步。',

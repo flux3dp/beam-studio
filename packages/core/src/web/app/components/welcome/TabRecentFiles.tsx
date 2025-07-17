@@ -7,7 +7,7 @@ import GridNew from '@core/app/components/welcome/GridNew';
 import { TabEvents } from '@core/app/constants/tabConstants';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import beamFileHelper from '@core/helpers/beam-file-helper';
-import { mockT } from '@core/helpers/dev-helper';
+import useI18n from '@core/helpers/useI18n';
 import communicator from '@core/implementations/communicator';
 import fileSystem from '@core/implementations/fileSystem';
 import storage from '@core/implementations/storage';
@@ -20,6 +20,7 @@ interface Props {
 }
 
 const TabRecentFiles = ({ startNewProject }: Props) => {
+  const { welcome_page: t } = useI18n();
   const [recentFiles, setRecentFiles] = useState<IFile[]>([]);
   const [selectedId, setSelectedId] = useState<null | string>(null);
 
@@ -60,7 +61,7 @@ const TabRecentFiles = ({ startNewProject }: Props) => {
   return (
     <div>
       <div className={styles.title}>
-        <FolderOpenOutlined /> {mockT('Recent Files')}
+        <FolderOpenOutlined /> {t.recent_files}
       </div>
       <div className={styles.content}>
         <GridNew startNewProject={startNewProject} />

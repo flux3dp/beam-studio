@@ -400,6 +400,7 @@ const lang: ILang = {
         no_questionnaire_available: 'Er is momenteel geen vragenlijst beschikbaar.',
         unable_to_get_url: 'Het ophalen van de link naar de vragenlijst via internet is mislukt. Controleer uw internetverbinding.',
       },
+      reach_tab_count_limit: 'Tablimiet bereikt',
       recommend_downgrade_software: 'We hebben een oudere firmwareversie gedetecteerd. We werken actief aan compatibiliteitsproblemen, maar voor nu raden we aan terug te keren naar <a target="_blank" href="https://beamstudio.s3.ap-northeast-1.amazonaws.com/mac/Beam+Studio+1.9.5.dmg">Beam Studio 1.9.5</a>.',
       recommend_upgrade_firmware: 'We hebben een oudere firmwareversie gedetecteerd. We werken actief aan compatibiliteitsproblemen, maar voor nu raden we aan de firmware bij te werken naar de laatste versie.',
       save_unsave_changed: 'Wilt u de niet-opgeslagen wijzigingen opslaan?',
@@ -1694,6 +1695,7 @@ const lang: ILang = {
     loading_file: 'Bezig met laden...',
     no_file_subtitle: 'Ga naar Menu > "Bestand" > "Opslaan in cloud"',
     no_file_title: 'Sla bestanden op in Mijn cloud om te beginnen.',
+    not_login_title: 'Log in om uw bestanden in de cloud op te slaan.',
     save_file: {
       choose_action: 'Bestand opslaan:',
       input_file_name: 'Voer bestandsnaam in:',
@@ -2356,6 +2358,25 @@ const lang: ILang = {
   web_cam: {
     no_device: 'Kan camera-apparaat niet detecteren. Sluit de camera opnieuw aan en probeer het opnieuw.',
     no_permission: 'Beam Studio heeft geen toestemming om toegang te krijgen tot de camera. Zorg ervoor dat de toestemming is verleend aan Beam Studio in de browser- of systeeminstellingen.',
+  },
+  welcome_page: {
+    follow_us: {
+      subtitle: 'Handleidingen, manuals en ondersteuningsbronnen voor alles van FLUX.',
+      user_group: 'Gebruikersgroep',
+    },
+    help_center: {
+      guides: 'Gidsen',
+      guides_subtitle: 'Bekijk uitgebreide gidsen voor alle FLUX-producten.',
+      submit_request: 'Een verzoek indienen',
+      subtitle: 'Handleidingen, manuals en ondersteuningsbronnen voor alles van FLUX.',
+      visit_help_center: 'Bezoek het Helpcentrum',
+    },
+    member_center: 'Ledencentrum',
+    new_project: 'Nieuw project',
+    not_login_placeholder: 'Ontvang gratis AI-tegoed van ons wanneer u zich aanmeldt voor een FLUX-account!',
+    recent_files: 'Recente bestanden',
+    shop: 'Winkel',
+    shop_products: 'FLUX-producten kopen',
   },
   z_speed_limit_test: {
     alert_before: 'Voordat de krommegravure begint, voert het systeem een belastingstest uit om verlies van stappen door overmatig gewicht te voorkomen.',

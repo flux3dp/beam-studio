@@ -400,6 +400,7 @@ const lang: ILang = {
         no_questionnaire_available: '현재 이용 가능한 설문조사가 없습니다.',
         unable_to_get_url: '인터넷 연결을 확인해주세요. 설문조사 링크를 가져올 수 없습니다.',
       },
+      reach_tab_count_limit: '탭 개수 제한에 도달했습니다',
       recommend_downgrade_software: '오래된 펌웨어 버전이 감지되었습니다. 우리는 현재 호환성 문제를 적극적으로 해결하고 있지만 현재로서는 <a target="_blank" href="https://beamstudio.s3.ap-northeast-1.amazonaws.com/mac/Beam+Studio+1.9.5.dmg">Beam Studio 1.9.5</a>로 되돌아가는 것을 권장합니다.',
       recommend_upgrade_firmware: '더 오래된 펌웨어 버전을 감지했습니다. 우리는 활발하게 호환성 문제를 다루고 있지만 지금 당장은 최신 펌웨어로 업데이트하는 것을 권장합니다.',
       save_unsave_changed: '저장하지 않은 변경 사항을 저장하시겠습니까?',
@@ -1694,6 +1695,7 @@ const lang: ILang = {
     loading_file: '로딩 중...',
     no_file_subtitle: '메뉴 > "파일" > "클라우드에 저장"',
     no_file_title: '파일을 내 클라우드에 저장하여 시작하세요.',
+    not_login_title: '파일을 클라우드에 저장하려면 로그인하세요.',
     save_file: {
       choose_action: '파일 저장:',
       input_file_name: '파일 이름 입력:',
@@ -2356,6 +2358,25 @@ const lang: ILang = {
   web_cam: {
     no_device: '카메라 장치를 감지할 수 없습니다. 카메라를 다시 연결하고 다시 시도하십시오.',
     no_permission: 'Beam Studio는 카메라에 액세스할 권한이 없습니다. 브라우저 설정 또는 시스템 설정에서 Beam Studio에 권한이 부여되었는지 확인하십시오.',
+  },
+  welcome_page: {
+    follow_us: {
+      subtitle: 'FLUX 관련 모든 가이드, 매뉴얼, 지원 자료입니다.',
+      user_group: '사용자 그룹',
+    },
+    help_center: {
+      guides: '안내서',
+      guides_subtitle: '모든 FLUX 제품에 대한 포괄적인 가이드를 확인하세요.',
+      submit_request: '요청 제출',
+      subtitle: 'FLUX 관련 모든 가이드, 매뉴얼, 지원 자료입니다.',
+      visit_help_center: '도움말 센터 방문하기',
+    },
+    member_center: '멤버 센터',
+    new_project: '새 프로젝트',
+    not_login_placeholder: 'FLUX 계정에 가입하면 무료 AI 크레딧을 드립니다!',
+    recent_files: '최근 파일',
+    shop: '상점',
+    shop_products: 'FLUX 제품 구매',
   },
   z_speed_limit_test: {
     alert_before: '곡선 조각을 시작하기 전에 시스템이 하중 테스트를 수행하여 과도한 무게로 인한 스텝 손실을 방지합니다.',

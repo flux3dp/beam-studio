@@ -400,6 +400,7 @@ const lang: ILang = {
         no_questionnaire_available: 'Saat ini tidak ada kuesioner yang tersedia.',
         unable_to_get_url: 'Gagal mendapatkan tautan ke kuesioner melalui internet. Harap konfirmasi koneksi internet Anda.',
       },
+      reach_tab_count_limit: 'Batas jumlah tab telah tercapai',
       recommend_downgrade_software: 'Kami mendeteksi versi firmware yang lebih lama. Kami sedang menangani masalah kompatibilitas, tetapi untuk saat ini, kami menyarankan kembali ke <a target="_blank" href="https://beamstudio.s3.ap-northeast-1.amazonaws.com/mac/Beam+Studio+1.9.5.dmg">Beam Studio 1.9.5</a>.',
       recommend_upgrade_firmware: 'Kami mendeteksi versi firmware yang lebih lama. Kami sedang menangani masalah kompatibilitas, tetapi untuk saat ini, kami menyarankan memperbarui ke firmware terbaru.',
       save_unsave_changed: 'Apakah Anda ingin menyimpan perubahan yang belum disimpan?',
@@ -1694,6 +1695,7 @@ const lang: ILang = {
     loading_file: 'Memuat...',
     no_file_subtitle: 'Buka Menu > "Berkas" > "Simpan ke Awan"',
     no_file_title: 'Simpan berkas ke Awan Saya untuk memulai.',
+    not_login_title: 'Masuk untuk menyimpan file Anda ke Cloud.',
     save_file: {
       choose_action: 'Simpan Berkas:',
       input_file_name: 'Masukkan nama berkas:',
@@ -2356,6 +2358,25 @@ const lang: ILang = {
   web_cam: {
     no_device: 'Tidak dapat mendeteksi perangkat kamera. Silakan sambungkan kembali kamera dan coba lagi.',
     no_permission: 'Beam Studio tidak memiliki izin untuk mengakses kamera. Pastikan izin diberikan ke Beam Studio di pengaturan browser atau pengaturan sistem.',
+  },
+  welcome_page: {
+    follow_us: {
+      subtitle: 'Panduan, manual, dan sumber dukungan untuk semua hal tentang FLUX.',
+      user_group: 'Grup Pengguna',
+    },
+    help_center: {
+      guides: 'Panduan',
+      guides_subtitle: 'Lihat panduan lengkap untuk semua produk FLUX.',
+      submit_request: 'Ajukan Permintaan',
+      subtitle: 'Panduan, manual, dan sumber dukungan untuk semua hal tentang FLUX.',
+      visit_help_center: 'Kunjungi Pusat Bantuan',
+    },
+    member_center: 'Pusat Anggota',
+    new_project: 'Proyek Baru',
+    not_login_placeholder: 'Dapatkan kredit AI gratis dari kami saat Anda mendaftar akun FLUX!',
+    recent_files: 'File terbaru',
+    shop: 'Toko',
+    shop_products: 'Beli produk FLUX',
   },
   z_speed_limit_test: {
     alert_before: 'Sebelum memulai ukiran kurva, sistem akan melakukan uji beban untuk mencegah kehilangan langkah akibat berat yang berlebihan.',

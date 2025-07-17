@@ -5,7 +5,6 @@ import { CloudOutlined } from '@ant-design/icons';
 import GridFile from '@core/app/components/dialogs/myCloud/GridFile';
 import GridPlaceholder from '@core/app/components/welcome/GridPlaceholder';
 import { MyCloudContext, MyCloudProvider } from '@core/app/contexts/MyCloudContext';
-import { mockT } from '@core/helpers/dev-helper';
 import useI18n from '@core/helpers/useI18n';
 import type { IUser } from '@core/interfaces/IUser';
 
@@ -23,7 +22,7 @@ const MyCloudContent = ({ user }: Props) => {
     if (!user) {
       return (
         <div className={styles.grids}>
-          <GridPlaceholder placeholder={mockT('Login to store your files to the Cloud.')} />
+          <GridPlaceholder placeholder={t.not_login_title} />
         </div>
       );
     }

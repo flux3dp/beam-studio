@@ -4,8 +4,8 @@ import progressCaller from '@core/app/actions/progress-caller';
 import tabController from '@core/app/actions/tabController';
 import tabConstants, { TabEvents } from '@core/app/constants/tabConstants';
 import cloudFile from '@core/helpers/api/cloudFile';
-import { mockT } from '@core/helpers/dev-helper';
 import { hashMap } from '@core/helpers/hashHelper';
+import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import type { ExampleFileKey } from '@core/helpers/menubar/exampleFiles';
 import { loadExampleFile } from '@core/helpers/menubar/exampleFiles';
@@ -46,7 +46,7 @@ export const checkTabCount = (): boolean => {
       return true;
     }
 
-    alertCaller.popUp({ message: mockT('Tab count limit reached') });
+    alertCaller.popUp({ message: i18n.lang.beambox.popup.reach_tab_count_limit });
 
     return false;
   }

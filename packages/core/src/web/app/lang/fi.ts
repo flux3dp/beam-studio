@@ -400,6 +400,7 @@ const lang: ILang = {
         no_questionnaire_available: 'Kyselyä ei ole saatavilla tällä hetkellä.',
         unable_to_get_url: 'Linkkiä kyselyyn ei voitu hakea internetistä. Tarkista internetyhteys.',
       },
+      reach_tab_count_limit: 'Välilehtien enimmäismäärä saavutettu',
       recommend_downgrade_software: 'Havaitsimme vanhemman laiteohjelmistoversion. Työskentelemme parhaillaan yhteensopivuusongelmien kanssa, mutta toistaiseksi suosittelemme palaamaan Beam Studioon 1.9.5.',
       recommend_upgrade_firmware: 'Havaitsimme vanhemman laiteohjelmistoversion. Yhteensopivuusongelmia korjataan parhaillaan, mutta toistaiseksi suosittelemme päivittämään uusimpaan laiteohjelmistoversioon.',
       save_unsave_changed: 'Haluatko tallentaa tallentamattomat muutokset?',
@@ -1694,6 +1695,7 @@ const lang: ILang = {
     loading_file: 'Ladataan...',
     no_file_subtitle: 'Siirry valikkoon > "Tiedosto" > "Tallenna pilvipalveluun"',
     no_file_title: 'Aloita tallentamalla tiedostoja pilveen.',
+    not_login_title: 'Kirjaudu sisään tallentaaksesi tiedostosi pilveen.',
     save_file: {
       choose_action: 'Tallenna tiedosto:',
       input_file_name: 'Anna tiedoston nimi:',
@@ -2356,6 +2358,25 @@ const lang: ILang = {
   web_cam: {
     no_device: 'Kameralaitetta ei havaittu. Kytke kamera uudelleen ja yritä uudelleen.',
     no_permission: 'Beam Studiolla ei ole lupaa käyttää kameraa. Varmista, että lupa on myönnetty Beam Studiolle selainasetuksissa tai järjestelmäasetuksissa.',
+  },
+  welcome_page: {
+    follow_us: {
+      subtitle: 'FLUXiin liittyvät oppaat, käyttöohjeet ja tukiresurssit.',
+      user_group: 'Käyttäjäryhmä',
+    },
+    help_center: {
+      guides: 'Oppaat',
+      guides_subtitle: 'Katso kattavat oppaat kaikille FLUX-tuotteille.',
+      submit_request: 'Lähetä pyyntö',
+      subtitle: 'FLUXiin liittyvät oppaat, käyttöohjeet ja tukiresurssit.',
+      visit_help_center: 'Siirry ohjekeskukseen',
+    },
+    member_center: 'Jäsenkeskus',
+    new_project: 'Uusi projekti',
+    not_login_placeholder: 'Saat ilmaisia tekoälykrediittejä meiltä, kun rekisteröidyt FLUX-tilille!',
+    recent_files: 'Viimeaikaiset tiedostot',
+    shop: 'Kauppa',
+    shop_products: 'Osta FLUX-tuotteita',
   },
   z_speed_limit_test: {
     alert_before: 'Ennen käyrän kaiverruksen aloittamista järjestelmä suorittaa kuormitustestin estääkseen askelhäviön liiallisen painon vuoksi.',

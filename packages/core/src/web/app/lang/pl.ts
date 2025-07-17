@@ -400,6 +400,7 @@ const lang: ILang = {
         no_questionnaire_available: 'W tej chwili nie ma dostępnej ankiety.',
         unable_to_get_url: 'Nie udało się uzyskać linku do kwestionariusza przez Internet. Potwierdź połączenie internetowe.',
       },
+      reach_tab_count_limit: 'Osiągnięto limit kart',
       recommend_downgrade_software: 'We detected an older firmware version. We are actively addressing compatibility issues, but for now, we recommend reverting to <a target="_blank" href="https://beamstudio.s3.ap-northeast-1.amazonaws.com/mac/Beam+Studio+1.9.5.dmg">Beam Studio 1.9.5</a>.',
       recommend_upgrade_firmware: 'Wykryliśmy starszą wersję oprogramowania sprzętowego. Aktywnie rozwiązujemy problemy ze zgodnością, ale na razie zalecamy aktualizację oprogramowania do najnowszej wersji.',
       save_unsave_changed: 'Czy chcesz zapisać niezapisane zmiany?',
@@ -1694,6 +1695,7 @@ const lang: ILang = {
     loading_file: 'Ładowanie...',
     no_file_subtitle: 'Przejdź do Menu > "Plik" > "Zapisz w chmurze"',
     no_file_title: 'Zapisz pliki w Mojej chmurze, aby rozpocząć.',
+    not_login_title: 'Zaloguj się, aby przechowywać pliki w chmurze.',
     save_file: {
       choose_action: 'Zapisz plik:',
       input_file_name: 'Wprowadź nazwę pliku:',
@@ -2356,6 +2358,25 @@ const lang: ILang = {
   web_cam: {
     no_device: 'Nie można wykryć urządzenia kamery. Proszę podłączyć kamerę ponownie i spróbować ponownie.',
     no_permission: 'Beam Studio nie ma uprawnień do uzyskania dostępu do kamery. Upewnij się, że uprawnienia są przyznane Beam Studio w ustawieniach przeglądarki lub systemu.',
+  },
+  welcome_page: {
+    follow_us: {
+      subtitle: 'Przewodniki, instrukcje i zasoby pomocy dotyczące wszystkiego związanego z FLUX.',
+      user_group: 'Grupa użytkowników',
+    },
+    help_center: {
+      guides: 'Przewodniki',
+      guides_subtitle: 'Zobacz obszerne przewodniki dla wszystkich produktów FLUX.',
+      submit_request: 'Złóż zgłoszenie',
+      subtitle: 'Przewodniki, instrukcje i zasoby pomocy dotyczące wszystkiego związanego z FLUX.',
+      visit_help_center: 'Odwiedź Centrum pomocy',
+    },
+    member_center: 'Centrum członków',
+    new_project: 'Nowy projekt',
+    not_login_placeholder: 'Zdobądź darmowe kredyty AI od nas, rejestrując konto FLUX!',
+    recent_files: 'Ostatnie pliki',
+    shop: 'Sklep',
+    shop_products: 'Kup produkty FLUX',
   },
   z_speed_limit_test: {
     alert_before: 'Przed rozpoczęciem grawerowania krzywej system przeprowadzi test obciążenia, aby zapobiec utracie kroków z powodu nadmiernej wagi.',

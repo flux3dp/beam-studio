@@ -2,7 +2,6 @@ import { FacebookOutlined, LikeOutlined, LinkedinOutlined, PinterestFilled } fro
 import { Button } from 'antd';
 
 import { getSocialMedia } from '@core/app/constants/social-media-constants';
-import { mockT } from '@core/helpers/dev-helper';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 
@@ -10,16 +9,17 @@ import styles from './TabFollowUs.module.scss';
 
 const TabFollowUs = () => {
   const {
-    topbar: { menu: t },
+    topbar: { menu: tMenu },
+    welcome_page: { follow_us: tFollowUs },
   } = useI18n();
   const socialMedia = getSocialMedia();
 
   return (
     <div>
       <div className={styles.title}>
-        <LikeOutlined /> {t.follow_us}
+        <LikeOutlined /> {tMenu.follow_us}
       </div>
-      <div className={styles.subtitle}>{mockT('Get inspirations, deals, freebies and engage with FLUXers!')}</div>
+      <div className={styles.subtitle}>{tFollowUs.subtitle}</div>
       <div className={styles.content}>
         <div className={styles.imgs}>
           <img onClick={() => browser.open(socialMedia.youtube.link)} src={socialMedia.youtube.subscribeSrc} />
@@ -31,7 +31,7 @@ const TabFollowUs = () => {
             onClick={() => browser.open(socialMedia.facebookGroup.link)}
             size="large"
           >
-            {mockT('User Group')}
+            {tFollowUs.user_group}
           </Button>
           <Button
             icon={<PinterestFilled className={styles.icon} />}
