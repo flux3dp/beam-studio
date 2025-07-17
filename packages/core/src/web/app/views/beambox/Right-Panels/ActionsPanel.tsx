@@ -17,7 +17,7 @@ import textEdit from '@core/app/svgedit/text/textedit';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import updateElementColor from '@core/helpers/color/updateElementColor';
-import { convertibleSvgTags, convertSvgToImage } from '@core/helpers/convertToImage';
+import { convertSvgToImage } from '@core/helpers/convertToImage';
 import { convertSvgToPath, convertTextToPath, convertUseToPath } from '@core/helpers/convertToPath';
 import imageEdit from '@core/helpers/image-edit';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -492,7 +492,6 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
 
   const renderMultiSelectActions = (): React.JSX.Element[] => {
     const children = Array.from(elem.childNodes) as SVGElement[];
-    const isConvertibleToImage = children.every(({ tagName }) => convertibleSvgTags.includes(tagName.toLowerCase()));
     let content: React.JSX.Element[] = [];
 
     const appendOptionalButtons = (buttons: React.JSX.Element[]) => {
@@ -539,10 +538,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       renderAutoFitButton(),
       ...content,
       renderSmartNestButton(),
-      renderConvertToImageButton({
-        isDisabled: !isConvertibleToImage,
-        tooltipIfDisabled: lang.disabled_by_variable_text,
-      }),
+      renderConvertToImageButton(),
       renderOffsetButton(),
       renderArrayButton(),
     ];
