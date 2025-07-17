@@ -8,7 +8,7 @@ import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import updateElementColor from './color/updateElementColor';
-import { finalizeImageCreation, getTransformedCoordinates, rasterizeGenericSvgElement } from './convertToImage.util';
+import { finalizeImageCreation, rasterizeGenericSvgElement } from './convertToImage.util';
 import { getSVGAsync } from './svg-editor-helper';
 
 let svgCanvas: ISVGCanvas;
@@ -63,18 +63,12 @@ const convertUseToImage = async ({
   const x = Number.parseFloat(svgElement.getAttribute('x') || '0');
   const y = Number.parseFloat(svgElement.getAttribute('y') || '0');
   const dataXform = svgElement.getAttribute('data-xform');
-  const [w, h] = dataXform
+  const [width, height] = dataXform
     ? dataXform
         .split(' ')
         .slice(2, 4)
         .map((v) => Number.parseFloat(v.split('=')[1]))
     : [0, 0];
-  const {
-    height,
-    width,
-    x: newX,
-    y: newY,
-  } = getTransformedCoordinates({ height: h, width: w, x, y }, svgElement.getAttribute('transform'));
 
   const imageElement = svgCanvas.addSvgElementFromJson({
     attr: {
@@ -87,12 +81,13 @@ const convertUseToImage = async ({
       preserveAspectRatio: 'none',
       style: 'pointer-events:inherit',
       width,
-      x: newX,
-      y: newY,
+      x,
+      y,
     },
     element: 'image',
   }) as SVGImageElement;
 
+  imageElement.setAttribute('transform', svgElement.getAttribute('transform') || '');
   setRotationAngle(imageElement, angle, { parentCmd });
   svgCanvas.setHref(imageElement, imageSrc);
   updateElementColor(imageElement);
@@ -112,25 +107,21 @@ const convertGroupToImage = async (
   { parentCmd = new history.BatchCommand('Convert Group to Image'), svgElement }: ConvertSvgToImageParams,
   mainConverter: MainConverterFunc,
 ): Promise<ConvertToImageResult> => {
-  const newImages = [];
+  const imageElements = [];
   const svgElements = [];
 
   for await (const child of Array.from(svgElement.children)) {
-    const result = await mainConverter({
-      isToSelect: false,
-      parentCmd,
-      svgElement: child as SVGGElement,
-    });
+    const result = await mainConverter({ isToSelect: false, parentCmd, svgElement: child as SVGGElement });
 
     if (result) {
-      newImages.push(...result.imageElements);
+      imageElements.push(...result.imageElements);
       svgElements.push(...result.svgElements);
     }
   }
 
   // Group the newly created images
-  if (newImages.length > 0) {
-    svgCanvas.selectOnly(newImages);
+  if (imageElements.length > 0) {
+    svgCanvas.selectOnly(imageElements);
 
     const groupCommand = svgCanvas.groupSelectedElements(true);
 
@@ -139,10 +130,7 @@ const convertGroupToImage = async (
     }
   }
 
-  return {
-    imageElements: newImages,
-    svgElements,
-  }; // Return the images and SVG elements created from the group
+  return { imageElements, svgElements };
 };
 
 /**
@@ -153,8 +141,6 @@ export const convertSvgToImage: MainConverterFunc = async ({
   parentCmd = new history.BatchCommand('Convert SVG to Image'),
   svgElement,
 }) => {
-  // console.log(svgElement.cloneNode(true), 'convertSvgToImage', svgElement.tagName);
-
   if (!svgElement || svgElement.getAttribute('data-imageborder') === 'true') {
     return undefined;
   }
@@ -177,9 +163,9 @@ export const convertSvgToImage: MainConverterFunc = async ({
       return Promise.resolve(undefined);
     });
 
-  if (isToSelect) {
+  if (isToSelect && result) {
     undoManager.addCommandToHistory(parentCmd);
-    parentCmd.addSubCommand(deleteElements(result!.svgElements, true));
+    parentCmd.addSubCommand(deleteElements(result.svgElements, true));
   }
 
   return result;
