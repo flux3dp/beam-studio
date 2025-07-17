@@ -97,12 +97,10 @@ const convertGroupToImage = async (
     if (groupResult) {
       parentCmd.addSubCommand(groupResult.command);
 
-      if (angle) {
-        setRotationAngle(groupResult.group, angle, { parentCmd });
-        console.log('Group created:', svgElement.getAttribute('data-tempgroup'), svgElement.getAttribute('id'));
-        console.log('Group result:', groupResult.group);
-        console.log('Group angle:', angle);
-      }
+      if (angle) setRotationAngle(groupResult.group, angle, { parentCmd });
+
+      imageElements.length = 0;
+      imageElements.push(groupResult.group as any);
     }
   }
 
