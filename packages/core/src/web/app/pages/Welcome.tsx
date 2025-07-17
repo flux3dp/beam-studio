@@ -29,7 +29,6 @@ import { DmktIcon } from '@core/app/icons/icons';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
 import { axiosFluxId, fluxIDEvents, getCurrentUser, signOut } from '@core/helpers/api/flux-id';
-import { todo } from '@core/helpers/dev-helper';
 import { checkTabCount, setFileInAnotherTab } from '@core/helpers/fileImportHelper';
 import { hashMap } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
@@ -77,11 +76,8 @@ const Welcome = (): ReactNode => {
   } = useI18n();
   const isMobile = useIsMobile();
   const [currentUser, setCurrentUser] = useState<IUser | null>(getCurrentUser());
-
-  todo('TBD', 'Loading state of banners');
-
   const isTW = useMemo(() => i18n.getActiveLang() === 'zh-TW', []);
-  const [banners, setBanners] = useState<IBanner[]>(isTW ? twBanners : enBanners);
+  const [banners, setBanners] = useState<IBanner[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const nickname: string | undefined = useMemo(() => currentUser?.info?.nickname ?? currentUser?.email, [currentUser]);
   const setUser = useCallback((user: IUser | null) => setCurrentUser(user ? { ...user } : user), []);
@@ -99,7 +95,8 @@ const Welcome = (): ReactNode => {
     } catch (error) {
       console.error('Failed to fetch banners:', error);
     }
-  }, []);
+    setBanners(isTW ? twBanners : enBanners);
+  }, [isTW]);
 
   useEffect(() => {
     fetchBanners();
