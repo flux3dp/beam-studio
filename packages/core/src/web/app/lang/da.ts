@@ -2372,6 +2372,7 @@ const lang: ILang = {
       visit_help_center: 'Besøg Hjælpecenteret',
     },
     member_center: 'Medlemscenter',
+    member_center_url: 'https://member.flux3dp.com/en-US/machine-register',
     new_project: 'Nyt projekt',
     not_login_placeholder: 'Få gratis AI-kreditter fra os, når du opretter en FLUX-konto!',
     recent_files: 'Seneste filer',

@@ -2372,6 +2372,7 @@ const lang: ILang = {
       visit_help_center: 'Truy cập Trung tâm trợ giúp',
     },
     member_center: 'Trung tâm Thành viên',
+    member_center_url: 'https://member.flux3dp.com/en-US/machine-register',
     new_project: 'Dự án mới',
     not_login_placeholder: 'Nhận tín dụng AI miễn phí từ chúng tôi khi bạn đăng ký tài khoản FLUX!',
     recent_files: 'Tệp gần đây',

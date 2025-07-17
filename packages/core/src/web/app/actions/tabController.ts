@@ -16,7 +16,7 @@ class TabController extends EventEmitter {
 
   public currentId: null | number = null;
   public isFocused = false;
-  private isWelcomeTab: boolean | null = null;
+  public isWelcomeTab: boolean | null = null;
 
   constructor() {
     super();

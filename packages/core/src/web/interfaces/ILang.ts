@@ -2365,6 +2365,7 @@ export interface ILang {
       visit_help_center: string;
     };
     member_center: string;
+    member_center_url: string;
     new_project: string;
     not_login_placeholder: string;
     recent_files: string;

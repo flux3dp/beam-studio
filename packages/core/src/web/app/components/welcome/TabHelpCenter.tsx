@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import classNames from 'classnames';

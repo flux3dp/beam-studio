@@ -1,4 +1,4 @@
-import { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
   CloudOutlined,
@@ -8,11 +8,9 @@ import {
   QuestionCircleOutlined,
   ShoppingOutlined,
 } from '@ant-design/icons';
-import { Avatar, Button, Flex } from 'antd';
 import { CapsuleTabs } from 'antd-mobile';
 import classNames from 'classnames';
 
-import dialogCaller from '@core/app/actions/dialog-caller';
 import tabController from '@core/app/actions/tabController';
 import Chat from '@core/app/components/beambox/svg-editor/Chat';
 import Tabs from '@core/app/components/beambox/top-bar/tabs/Tabs';
@@ -23,12 +21,12 @@ import TabHelpCenter from '@core/app/components/welcome/TabHelpCenter';
 import TabMyCloud from '@core/app/components/welcome/TabMyCloud';
 import TabRecentFiles from '@core/app/components/welcome/TabRecentFiles';
 import ThemedButton from '@core/app/components/welcome/ThemedButton';
+import UserInfo from '@core/app/components/welcome/UserInfo';
 import { getSocialMedia } from '@core/app/constants/social-media-constants';
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
 import { DmktIcon } from '@core/app/icons/icons';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
-import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
-import { axiosFluxId, fluxIDEvents, getCurrentUser, signOut } from '@core/helpers/api/flux-id';
+import { axiosFluxId, fluxIDEvents, getCurrentUser } from '@core/helpers/api/flux-id';
 import { checkTabCount, setFileInAnotherTab } from '@core/helpers/fileImportHelper';
 import { hashMap } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
@@ -69,7 +67,6 @@ const enBanners: IBanner[] = [
 
 const Welcome = (): ReactNode => {
   const {
-    flux_id_login: tFluxIdLogin,
     my_cloud: tMyCloud,
     topbar: { menu: tMenu },
     welcome_page: t,
@@ -79,7 +76,6 @@ const Welcome = (): ReactNode => {
   const isTW = useMemo(() => i18n.getActiveLang() === 'zh-TW', []);
   const [banners, setBanners] = useState<IBanner[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const nickname: string | undefined = useMemo(() => currentUser?.info?.nickname ?? currentUser?.email, [currentUser]);
   const setUser = useCallback((user: IUser | null) => setCurrentUser(user ? { ...user } : user), []);
   const socialMedia = useMemo(() => getSocialMedia(), []);
 
@@ -104,6 +100,7 @@ const Welcome = (): ReactNode => {
 
   useEffect(() => {
     if (!isWeb() && !tabController.getIsWelcomeTab()) {
+      // Fix tab content after reset
       window.location.hash = hashMap.editor;
     } else {
       window.homePage = hashMap.welcome;
@@ -115,7 +112,7 @@ const Welcome = (): ReactNode => {
     fluxIDEvents.on('update-user', setUser);
 
     return () => {
-      fluxIDEvents.removeListener('update-user', setUser);
+      fluxIDEvents.off('update-user', setUser);
     };
   }, [setUser]);
 
@@ -241,44 +238,7 @@ const Welcome = (): ReactNode => {
       </div>
       <div className={styles.content}>
         <div className={styles.sidebar}>
-          <div className={styles.info}>
-            <Flex align="center" gap={16}>
-              <Avatar
-                alt="avatar"
-                className={styles.avatar}
-                icon={<TopBarIcons.Account className={styles['default-avatar']} />}
-                size={isMobile ? 32 : 52}
-                src={currentUser?.info?.avatar || undefined}
-              />
-              {nickname ? (
-                <div className={styles.nickname}>{nickname}</div>
-              ) : (
-                <div className={styles['login-hint']}>{t.not_login_placeholder}</div>
-              )}
-            </Flex>
-            {currentUser ? (
-              <>
-                {!isMobile && <div className={styles.email}>{currentUser.email}</div>}
-                <Flex gap={8}>
-                  <Button block onClick={signOut} size="small" type="default">
-                    {tMenu.sign_out}
-                  </Button>
-                  <ThemedButton
-                    block
-                    onClick={() => browser.open(tFluxIdLogin.flux_plus.member_center_url)}
-                    size="small"
-                    theme="yellow"
-                  >
-                    {t.member_center}
-                  </ThemedButton>
-                </Flex>
-              </>
-            ) : (
-              <ThemedButton block onClick={() => dialogCaller.showLoginDialog()} theme="yellow">
-                {tMenu.sign_in}
-              </ThemedButton>
-            )}
-          </div>
+          <UserInfo user={currentUser} />
           {isMobile ? (
             <CapsuleTabs
               activeKey={activeKey}

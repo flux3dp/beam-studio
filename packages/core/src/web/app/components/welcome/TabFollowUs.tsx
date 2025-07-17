@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { FacebookOutlined, LikeOutlined, LinkedinOutlined, PinterestFilled } from '@ant-design/icons';
 import { Button } from 'antd';
 

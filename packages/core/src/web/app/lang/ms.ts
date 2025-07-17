@@ -2372,6 +2372,7 @@ const lang: ILang = {
       visit_help_center: 'Lawati Pusat Bantuan',
     },
     member_center: 'Pusat Ahli',
+    member_center_url: 'https://member.flux3dp.com/en-US/machine-register',
     new_project: 'Projek Baharu',
     not_login_placeholder: 'Dapatkan kredit AI percuma daripada kami apabila anda mendaftar akaun FLUX!',
     recent_files: 'Fail Terkini',

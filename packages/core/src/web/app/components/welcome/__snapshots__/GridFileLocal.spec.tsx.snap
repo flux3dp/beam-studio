@@ -1,0 +1,81 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test GridFileLocal should render correctly 1`] = `
+<div>
+  <div
+    class="grid"
+  >
+    <div
+      class="img-container"
+    >
+      <div
+        class="guide-lines"
+        style="background: url(core-img/flux-plus/guide-lines.png);"
+      >
+        <img
+          src="https://s3/url"
+        />
+      </div>
+    </div>
+    <div
+      class="name"
+    >
+      <div
+        class="display"
+      >
+        File name
+      </div>
+    </div>
+    <div
+      class="info"
+    >
+      <div>
+        HEXA
+         • 
+        5.8KB
+      </div>
+      01/09/2024 02:42 PM
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test GridFileLocal should render correctly if selected 1`] = `
+<div>
+  <div
+    class="grid selected"
+  >
+    <div
+      class="img-container"
+    >
+      <div
+        class="guide-lines"
+        style="background: url(core-img/flux-plus/guide-lines.png);"
+      >
+        <img
+          src="https://s3/url"
+        />
+      </div>
+    </div>
+    <div
+      class="name"
+    >
+      <div
+        class="display"
+      >
+        File name
+      </div>
+    </div>
+    <div
+      class="info"
+    >
+      <div>
+        HEXA
+         • 
+        5.8KB
+      </div>
+      01/09/2024 02:42 PM
+    </div>
+  </div>
+</div>
+`;

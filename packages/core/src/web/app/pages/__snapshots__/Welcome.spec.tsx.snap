@@ -1,0 +1,1852 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test Welcome should render correctly 1`] = `
+<div>
+  <div
+    class="container"
+  >
+    <div
+      class="top-bar"
+    >
+      <mock-tabs
+        inverse="true"
+      />
+    </div>
+    <div
+      class="header"
+    >
+      <div
+        class="logo"
+      >
+        <svgr-url />
+      </div>
+      <button
+        class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid ant-btn-background-ghost white"
+        type="button"
+      >
+        <span
+          class="ant-btn-icon"
+        >
+          <span
+            aria-label="folder-open"
+            class="anticon anticon-folder-open"
+            role="img"
+          >
+            <svg
+              aria-hidden="true"
+              data-icon="folder-open"
+              fill="currentColor"
+              focusable="false"
+              height="1em"
+              viewBox="64 64 896 896"
+              width="1em"
+            >
+              <path
+                d="M928 444H820V330.4c0-17.7-14.3-32-32-32H473L355.7 186.2a8.15 8.15 0 00-5.5-2.2H96c-17.7 0-32 14.3-32 32v592c0 17.7 14.3 32 32 32h698c13 0 24.8-7.9 29.7-20l134-332c1.5-3.8 2.3-7.9 2.3-12 0-17.7-14.3-32-32-32zM136 256h188.5l119.6 114.4H748V444H238c-13 0-24.8 7.9-29.7 20L136 643.2V256zm635.3 512H159l103.3-256h612.4L771.3 768z"
+              />
+            </svg>
+          </span>
+        </span>
+        <span>
+          Open
+        </span>
+      </button>
+      <button
+        class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid yellow"
+        type="button"
+      >
+        <span
+          class="ant-btn-icon"
+        >
+          <span
+            aria-label="plus"
+            class="anticon anticon-plus"
+            role="img"
+          >
+            <svg
+              aria-hidden="true"
+              data-icon="plus"
+              fill="currentColor"
+              focusable="false"
+              height="1em"
+              viewBox="64 64 896 896"
+              width="1em"
+            >
+              <path
+                d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z"
+              />
+              <path
+                d="M192 474h672q8 0 8 8v60q0 8-8 8H160q-8 0-8-8v-60q0-8 8-8z"
+              />
+            </svg>
+          </span>
+        </span>
+        <span>
+          New Project
+        </span>
+      </button>
+    </div>
+    <div
+      class="content"
+    >
+      <div
+        class="sidebar"
+      >
+        <mock-user-info />
+        <div
+          class="menu"
+        >
+          <div
+            class="menu-item active"
+          >
+            <span
+              aria-label="folder-open"
+              class="anticon anticon-folder-open"
+              role="img"
+            >
+              <svg
+                aria-hidden="true"
+                data-icon="folder-open"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M928 444H820V330.4c0-17.7-14.3-32-32-32H473L355.7 186.2a8.15 8.15 0 00-5.5-2.2H96c-17.7 0-32 14.3-32 32v592c0 17.7 14.3 32 32 32h698c13 0 24.8-7.9 29.7-20l134-332c1.5-3.8 2.3-7.9 2.3-12 0-17.7-14.3-32-32-32zM136 256h188.5l119.6 114.4H748V444H238c-13 0-24.8 7.9-29.7 20L136 643.2V256zm635.3 512H159l103.3-256h612.4L771.3 768z"
+                />
+              </svg>
+            </span>
+             
+            Recent Files
+          </div>
+          <div
+            class="menu-item"
+          >
+            <span
+              aria-label="cloud"
+              class="anticon anticon-cloud"
+              role="img"
+            >
+              <svg
+                aria-hidden="true"
+                data-icon="cloud"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M811.4 418.7C765.6 297.9 648.9 212 512.2 212S258.8 297.8 213 418.6C127.3 441.1 64 519.1 64 612c0 110.5 89.5 200 199.9 200h496.2C870.5 812 960 722.5 960 612c0-92.7-63.1-170.7-148.6-193.3zm36.3 281a123.07 123.07 0 01-87.6 36.3H263.9c-33.1 0-64.2-12.9-87.6-36.3A123.3 123.3 0 01140 612c0-28 9.1-54.3 26.2-76.3a125.7 125.7 0 0166.1-43.7l37.9-9.9 13.9-36.6c8.6-22.8 20.6-44.1 35.7-63.4a245.6 245.6 0 0152.4-49.9c41.1-28.9 89.5-44.2 140-44.2s98.9 15.3 140 44.2c19.9 14 37.5 30.8 52.4 49.9 15.1 19.3 27.1 40.7 35.7 63.4l13.8 36.5 37.8 10c54.3 14.5 92.1 63.8 92.1 120 0 33.1-12.9 64.3-36.3 87.7z"
+                />
+              </svg>
+            </span>
+             
+            My Cloud
+          </div>
+          <div
+            class="menu-item"
+          >
+            <span
+              aria-label="like"
+              class="anticon anticon-like"
+              role="img"
+            >
+              <svg
+                aria-hidden="true"
+                data-icon="like"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M885.9 533.7c16.8-22.2 26.1-49.4 26.1-77.7 0-44.9-25.1-87.4-65.5-111.1a67.67 67.67 0 00-34.3-9.3H572.4l6-122.9c1.4-29.7-9.1-57.9-29.5-79.4A106.62 106.62 0 00471 99.9c-52 0-98 35-111.8 85.1l-85.9 311H144c-17.7 0-32 14.3-32 32v364c0 17.7 14.3 32 32 32h601.3c9.2 0 18.2-1.8 26.5-5.4 47.6-20.3 78.3-66.8 78.3-118.4 0-12.6-1.8-25-5.4-37 16.8-22.2 26.1-49.4 26.1-77.7 0-12.6-1.8-25-5.4-37 16.8-22.2 26.1-49.4 26.1-77.7-.2-12.6-2-25.1-5.6-37.1zM184 852V568h81v284h-81zm636.4-353l-21.9 19 13.9 25.4a56.2 56.2 0 016.9 27.3c0 16.5-7.2 32.2-19.6 43l-21.9 19 13.9 25.4a56.2 56.2 0 016.9 27.3c0 16.5-7.2 32.2-19.6 43l-21.9 19 13.9 25.4a56.2 56.2 0 016.9 27.3c0 22.4-13.2 42.6-33.6 51.8H329V564.8l99.5-360.5a44.1 44.1 0 0142.2-32.3c7.6 0 15.1 2.2 21.1 6.7 9.9 7.4 15.2 18.6 14.6 30.5l-9.6 198.4h314.4C829 418.5 840 436.9 840 456c0 16.5-7.2 32.1-19.6 43z"
+                />
+              </svg>
+            </span>
+             
+            Follow Us
+          </div>
+          <div
+            class="menu-item"
+          >
+            <span
+              aria-label="question-circle"
+              class="anticon anticon-question-circle"
+              role="img"
+            >
+              <svg
+                aria-hidden="true"
+                data-icon="question-circle"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"
+                />
+                <path
+                  d="M623.6 316.7C593.6 290.4 554 276 512 276s-81.6 14.5-111.6 40.7C369.2 344 352 380.7 352 420v7.6c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V420c0-44.1 43.1-80 96-80s96 35.9 96 80c0 31.1-22 59.6-56.1 72.7-21.2 8.1-39.2 22.3-52.1 40.9-13.1 19-19.9 41.8-19.9 64.9V620c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8v-22.7a48.3 48.3 0 0130.9-44.8c59-22.7 97.1-74.7 97.1-132.5.1-39.3-17.1-76-48.3-103.3zM472 732a40 40 0 1080 0 40 40 0 10-80 0z"
+                />
+              </svg>
+            </span>
+             
+            Help Center
+          </div>
+          <div
+            class="menu-item"
+          >
+            <svgr-url
+              classname="beamy-icon"
+            />
+             
+            Beamy
+          </div>
+          <div
+            class="menu-item"
+          >
+            <span
+              class="anticon dmkt-icon"
+              role="img"
+              style="margin-right: 0.2em;"
+            >
+              <svg
+                height="1em"
+                viewBox="0 0 32 32"
+                width="1em"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <g
+                  data-name="Group 73"
+                  id="Group_73"
+                  transform="translate(7.687 8.269)"
+                >
+                  <path
+                    d="M48.613,0c.478-.014.619.135.612.619-.027,2.041-.023,3.845,0,5.886.005.489-.158.621-.638.6a6.96,6.96,0,0,1-6.5-6.461c-.04-.572.154-.655.644-.64Z"
+                    fill="#484949"
+                    transform="translate(-32.61 0)"
+                  />
+                  <path
+                    d="M42.758,43.71c-.545.019-.738-.111-.691-.711a6.924,6.924,0,0,1,6.271-6.381c.646-.06.906.055.883.8l-.006,5.611c.007.513-.135.7-.662.682Z"
+                    fill="#484949"
+                    transform="translate(-32.596 -28.368)"
+                  />
+                  <path
+                    d="M0,.954V15.119a.646.646,0,0,0,.681.609H.7C5.35,15.783,9.082,12,9.082,8.037A7.956,7.956,0,0,0,.7.347.646.646,0,0,0,0,.938c0,.005,0,.01,0,.016"
+                    fill="#484949"
+                    transform="translate(0 -0.268)"
+                  />
+                </g>
+              </svg>
+            </span>
+             
+            Design Market
+          </div>
+        </div>
+        <div
+          class="cta"
+        >
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid ant-btn-block yellow"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <span
+                aria-label="shopping"
+                class="anticon anticon-shopping"
+                role="img"
+              >
+                <svg
+                  aria-hidden="true"
+                  data-icon="shopping"
+                  fill="currentColor"
+                  focusable="false"
+                  height="1em"
+                  viewBox="64 64 896 896"
+                  width="1em"
+                >
+                  <path
+                    d="M832 312H696v-16c0-101.6-82.4-184-184-184s-184 82.4-184 184v16H192c-17.7 0-32 14.3-32 32v536c0 17.7 14.3 32 32 32h640c17.7 0 32-14.3 32-32V344c0-17.7-14.3-32-32-32zm-432-16c0-61.9 50.1-112 112-112s112 50.1 112 112v16H400v-16zm392 544H232V384h96v88c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-88h224v88c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-88h96v456z"
+                  />
+                </svg>
+              </span>
+            </span>
+            <span>
+              Shop FLUX Products
+            </span>
+          </button>
+        </div>
+      </div>
+      <div
+        class="main"
+      >
+        <mock-banners
+          banners=""
+        />
+        <div
+          class="recent-files"
+        >
+          <mock-tab-recent-files />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test Welcome should render correctly 2`] = `
+<div>
+  <div
+    class="container"
+  >
+    <div
+      class="top-bar"
+    >
+      <mock-tabs
+        inverse="true"
+      />
+    </div>
+    <div
+      class="header"
+    >
+      <div
+        class="logo"
+      >
+        <svgr-url />
+      </div>
+      <button
+        class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid ant-btn-background-ghost white"
+        type="button"
+      >
+        <span
+          class="ant-btn-icon"
+        >
+          <span
+            aria-label="folder-open"
+            class="anticon anticon-folder-open"
+            role="img"
+          >
+            <svg
+              aria-hidden="true"
+              data-icon="folder-open"
+              fill="currentColor"
+              focusable="false"
+              height="1em"
+              viewBox="64 64 896 896"
+              width="1em"
+            >
+              <path
+                d="M928 444H820V330.4c0-17.7-14.3-32-32-32H473L355.7 186.2a8.15 8.15 0 00-5.5-2.2H96c-17.7 0-32 14.3-32 32v592c0 17.7 14.3 32 32 32h698c13 0 24.8-7.9 29.7-20l134-332c1.5-3.8 2.3-7.9 2.3-12 0-17.7-14.3-32-32-32zM136 256h188.5l119.6 114.4H748V444H238c-13 0-24.8 7.9-29.7 20L136 643.2V256zm635.3 512H159l103.3-256h612.4L771.3 768z"
+              />
+            </svg>
+          </span>
+        </span>
+        <span>
+          Open
+        </span>
+      </button>
+      <button
+        class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid yellow"
+        type="button"
+      >
+        <span
+          class="ant-btn-icon"
+        >
+          <span
+            aria-label="plus"
+            class="anticon anticon-plus"
+            role="img"
+          >
+            <svg
+              aria-hidden="true"
+              data-icon="plus"
+              fill="currentColor"
+              focusable="false"
+              height="1em"
+              viewBox="64 64 896 896"
+              width="1em"
+            >
+              <path
+                d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z"
+              />
+              <path
+                d="M192 474h672q8 0 8 8v60q0 8-8 8H160q-8 0-8-8v-60q0-8 8-8z"
+              />
+            </svg>
+          </span>
+        </span>
+        <span>
+          New Project
+        </span>
+      </button>
+    </div>
+    <div
+      class="content"
+    >
+      <div
+        class="sidebar"
+      >
+        <mock-user-info />
+        <div
+          class="menu"
+        >
+          <div
+            class="menu-item"
+          >
+            <span
+              aria-label="folder-open"
+              class="anticon anticon-folder-open"
+              role="img"
+            >
+              <svg
+                aria-hidden="true"
+                data-icon="folder-open"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M928 444H820V330.4c0-17.7-14.3-32-32-32H473L355.7 186.2a8.15 8.15 0 00-5.5-2.2H96c-17.7 0-32 14.3-32 32v592c0 17.7 14.3 32 32 32h698c13 0 24.8-7.9 29.7-20l134-332c1.5-3.8 2.3-7.9 2.3-12 0-17.7-14.3-32-32-32zM136 256h188.5l119.6 114.4H748V444H238c-13 0-24.8 7.9-29.7 20L136 643.2V256zm635.3 512H159l103.3-256h612.4L771.3 768z"
+                />
+              </svg>
+            </span>
+             
+            Recent Files
+          </div>
+          <div
+            class="menu-item"
+          >
+            <span
+              aria-label="cloud"
+              class="anticon anticon-cloud"
+              role="img"
+            >
+              <svg
+                aria-hidden="true"
+                data-icon="cloud"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M811.4 418.7C765.6 297.9 648.9 212 512.2 212S258.8 297.8 213 418.6C127.3 441.1 64 519.1 64 612c0 110.5 89.5 200 199.9 200h496.2C870.5 812 960 722.5 960 612c0-92.7-63.1-170.7-148.6-193.3zm36.3 281a123.07 123.07 0 01-87.6 36.3H263.9c-33.1 0-64.2-12.9-87.6-36.3A123.3 123.3 0 01140 612c0-28 9.1-54.3 26.2-76.3a125.7 125.7 0 0166.1-43.7l37.9-9.9 13.9-36.6c8.6-22.8 20.6-44.1 35.7-63.4a245.6 245.6 0 0152.4-49.9c41.1-28.9 89.5-44.2 140-44.2s98.9 15.3 140 44.2c19.9 14 37.5 30.8 52.4 49.9 15.1 19.3 27.1 40.7 35.7 63.4l13.8 36.5 37.8 10c54.3 14.5 92.1 63.8 92.1 120 0 33.1-12.9 64.3-36.3 87.7z"
+                />
+              </svg>
+            </span>
+             
+            My Cloud
+          </div>
+          <div
+            class="menu-item"
+          >
+            <span
+              aria-label="like"
+              class="anticon anticon-like"
+              role="img"
+            >
+              <svg
+                aria-hidden="true"
+                data-icon="like"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M885.9 533.7c16.8-22.2 26.1-49.4 26.1-77.7 0-44.9-25.1-87.4-65.5-111.1a67.67 67.67 0 00-34.3-9.3H572.4l6-122.9c1.4-29.7-9.1-57.9-29.5-79.4A106.62 106.62 0 00471 99.9c-52 0-98 35-111.8 85.1l-85.9 311H144c-17.7 0-32 14.3-32 32v364c0 17.7 14.3 32 32 32h601.3c9.2 0 18.2-1.8 26.5-5.4 47.6-20.3 78.3-66.8 78.3-118.4 0-12.6-1.8-25-5.4-37 16.8-22.2 26.1-49.4 26.1-77.7 0-12.6-1.8-25-5.4-37 16.8-22.2 26.1-49.4 26.1-77.7-.2-12.6-2-25.1-5.6-37.1zM184 852V568h81v284h-81zm636.4-353l-21.9 19 13.9 25.4a56.2 56.2 0 016.9 27.3c0 16.5-7.2 32.2-19.6 43l-21.9 19 13.9 25.4a56.2 56.2 0 016.9 27.3c0 16.5-7.2 32.2-19.6 43l-21.9 19 13.9 25.4a56.2 56.2 0 016.9 27.3c0 22.4-13.2 42.6-33.6 51.8H329V564.8l99.5-360.5a44.1 44.1 0 0142.2-32.3c7.6 0 15.1 2.2 21.1 6.7 9.9 7.4 15.2 18.6 14.6 30.5l-9.6 198.4h314.4C829 418.5 840 436.9 840 456c0 16.5-7.2 32.1-19.6 43z"
+                />
+              </svg>
+            </span>
+             
+            Follow Us
+          </div>
+          <div
+            class="menu-item"
+          >
+            <span
+              aria-label="question-circle"
+              class="anticon anticon-question-circle"
+              role="img"
+            >
+              <svg
+                aria-hidden="true"
+                data-icon="question-circle"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"
+                />
+                <path
+                  d="M623.6 316.7C593.6 290.4 554 276 512 276s-81.6 14.5-111.6 40.7C369.2 344 352 380.7 352 420v7.6c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V420c0-44.1 43.1-80 96-80s96 35.9 96 80c0 31.1-22 59.6-56.1 72.7-21.2 8.1-39.2 22.3-52.1 40.9-13.1 19-19.9 41.8-19.9 64.9V620c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8v-22.7a48.3 48.3 0 0130.9-44.8c59-22.7 97.1-74.7 97.1-132.5.1-39.3-17.1-76-48.3-103.3zM472 732a40 40 0 1080 0 40 40 0 10-80 0z"
+                />
+              </svg>
+            </span>
+             
+            Help Center
+          </div>
+          <div
+            class="menu-item active"
+          >
+            <svgr-url
+              classname="beamy-icon"
+            />
+             
+            Beamy
+          </div>
+          <div
+            class="menu-item"
+          >
+            <span
+              class="anticon dmkt-icon"
+              role="img"
+              style="margin-right: 0.2em;"
+            >
+              <svg
+                height="1em"
+                viewBox="0 0 32 32"
+                width="1em"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <g
+                  data-name="Group 73"
+                  id="Group_73"
+                  transform="translate(7.687 8.269)"
+                >
+                  <path
+                    d="M48.613,0c.478-.014.619.135.612.619-.027,2.041-.023,3.845,0,5.886.005.489-.158.621-.638.6a6.96,6.96,0,0,1-6.5-6.461c-.04-.572.154-.655.644-.64Z"
+                    fill="#484949"
+                    transform="translate(-32.61 0)"
+                  />
+                  <path
+                    d="M42.758,43.71c-.545.019-.738-.111-.691-.711a6.924,6.924,0,0,1,6.271-6.381c.646-.06.906.055.883.8l-.006,5.611c.007.513-.135.7-.662.682Z"
+                    fill="#484949"
+                    transform="translate(-32.596 -28.368)"
+                  />
+                  <path
+                    d="M0,.954V15.119a.646.646,0,0,0,.681.609H.7C5.35,15.783,9.082,12,9.082,8.037A7.956,7.956,0,0,0,.7.347.646.646,0,0,0,0,.938c0,.005,0,.01,0,.016"
+                    fill="#484949"
+                    transform="translate(0 -0.268)"
+                  />
+                </g>
+              </svg>
+            </span>
+             
+            Design Market
+          </div>
+        </div>
+        <div
+          class="cta"
+        >
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid ant-btn-block yellow"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <span
+                aria-label="shopping"
+                class="anticon anticon-shopping"
+                role="img"
+              >
+                <svg
+                  aria-hidden="true"
+                  data-icon="shopping"
+                  fill="currentColor"
+                  focusable="false"
+                  height="1em"
+                  viewBox="64 64 896 896"
+                  width="1em"
+                >
+                  <path
+                    d="M832 312H696v-16c0-101.6-82.4-184-184-184s-184 82.4-184 184v16H192c-17.7 0-32 14.3-32 32v536c0 17.7 14.3 32 32 32h640c17.7 0 32-14.3 32-32V344c0-17.7-14.3-32-32-32zm-432-16c0-61.9 50.1-112 112-112s112 50.1 112 112v16H400v-16zm392 544H232V384h96v88c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-88h224v88c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-88h96v456z"
+                  />
+                </svg>
+              </span>
+            </span>
+            <span>
+              Shop FLUX Products
+            </span>
+          </button>
+        </div>
+      </div>
+      <div
+        class="main no-padding"
+      >
+        <div
+          class="beamy"
+        >
+          <mock-chat />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test Welcome should render correctly in mobile 1`] = `
+<div>
+  <div
+    class="container"
+  >
+    <div
+      class="top-bar"
+    >
+      <mock-tabs
+        inverse="true"
+      />
+    </div>
+    <div
+      class="header"
+    >
+      <div
+        class="logo"
+      >
+        <svgr-url />
+      </div>
+      <button
+        class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid ant-btn-icon-only ant-btn-background-ghost white"
+        type="button"
+      >
+        <span
+          class="ant-btn-icon"
+        >
+          <span
+            aria-label="folder-open"
+            class="anticon anticon-folder-open"
+            role="img"
+          >
+            <svg
+              aria-hidden="true"
+              data-icon="folder-open"
+              fill="currentColor"
+              focusable="false"
+              height="1em"
+              viewBox="64 64 896 896"
+              width="1em"
+            >
+              <path
+                d="M928 444H820V330.4c0-17.7-14.3-32-32-32H473L355.7 186.2a8.15 8.15 0 00-5.5-2.2H96c-17.7 0-32 14.3-32 32v592c0 17.7 14.3 32 32 32h698c13 0 24.8-7.9 29.7-20l134-332c1.5-3.8 2.3-7.9 2.3-12 0-17.7-14.3-32-32-32zM136 256h188.5l119.6 114.4H748V444H238c-13 0-24.8 7.9-29.7 20L136 643.2V256zm635.3 512H159l103.3-256h612.4L771.3 768z"
+              />
+            </svg>
+          </span>
+        </span>
+      </button>
+      <button
+        class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid ant-btn-icon-only yellow"
+        type="button"
+      >
+        <span
+          class="ant-btn-icon"
+        >
+          <span
+            aria-label="plus"
+            class="anticon anticon-plus"
+            role="img"
+          >
+            <svg
+              aria-hidden="true"
+              data-icon="plus"
+              fill="currentColor"
+              focusable="false"
+              height="1em"
+              viewBox="64 64 896 896"
+              width="1em"
+            >
+              <path
+                d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z"
+              />
+              <path
+                d="M192 474h672q8 0 8 8v60q0 8-8 8H160q-8 0-8-8v-60q0-8 8-8z"
+              />
+            </svg>
+          </span>
+        </span>
+      </button>
+    </div>
+    <div
+      class="content"
+    >
+      <div
+        class="sidebar"
+      >
+        <mock-user-info />
+        <div
+          class="adm-capsule-tabs tabs"
+        >
+          <div
+            class="adm-capsule-tabs-header"
+          >
+            <div
+              class="adm-scroll-mask adm-scroll-mask-left"
+              style="opacity: 0;"
+            />
+            <div
+              class="adm-scroll-mask adm-scroll-mask-right"
+              style="opacity: 0;"
+            />
+            <div
+              class="adm-capsule-tabs-tab-list"
+            >
+              <div
+                class="adm-capsule-tabs-tab-wrapper"
+              >
+                <div
+                  class="adm-capsule-tabs-tab adm-capsule-tabs-tab-active"
+                >
+                  <div
+                    class="menu-item"
+                  >
+                    <span
+                      aria-label="folder-open"
+                      class="anticon anticon-folder-open"
+                      role="img"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        data-icon="folder-open"
+                        fill="currentColor"
+                        focusable="false"
+                        height="1em"
+                        viewBox="64 64 896 896"
+                        width="1em"
+                      >
+                        <path
+                          d="M928 444H820V330.4c0-17.7-14.3-32-32-32H473L355.7 186.2a8.15 8.15 0 00-5.5-2.2H96c-17.7 0-32 14.3-32 32v592c0 17.7 14.3 32 32 32h698c13 0 24.8-7.9 29.7-20l134-332c1.5-3.8 2.3-7.9 2.3-12 0-17.7-14.3-32-32-32zM136 256h188.5l119.6 114.4H748V444H238c-13 0-24.8 7.9-29.7 20L136 643.2V256zm635.3 512H159l103.3-256h612.4L771.3 768z"
+                        />
+                      </svg>
+                    </span>
+                     
+                    Recent Files
+                  </div>
+                </div>
+              </div>
+              <div
+                class="adm-capsule-tabs-tab-wrapper"
+              >
+                <div
+                  class="adm-capsule-tabs-tab"
+                >
+                  <div
+                    class="menu-item"
+                  >
+                    <span
+                      aria-label="cloud"
+                      class="anticon anticon-cloud"
+                      role="img"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        data-icon="cloud"
+                        fill="currentColor"
+                        focusable="false"
+                        height="1em"
+                        viewBox="64 64 896 896"
+                        width="1em"
+                      >
+                        <path
+                          d="M811.4 418.7C765.6 297.9 648.9 212 512.2 212S258.8 297.8 213 418.6C127.3 441.1 64 519.1 64 612c0 110.5 89.5 200 199.9 200h496.2C870.5 812 960 722.5 960 612c0-92.7-63.1-170.7-148.6-193.3zm36.3 281a123.07 123.07 0 01-87.6 36.3H263.9c-33.1 0-64.2-12.9-87.6-36.3A123.3 123.3 0 01140 612c0-28 9.1-54.3 26.2-76.3a125.7 125.7 0 0166.1-43.7l37.9-9.9 13.9-36.6c8.6-22.8 20.6-44.1 35.7-63.4a245.6 245.6 0 0152.4-49.9c41.1-28.9 89.5-44.2 140-44.2s98.9 15.3 140 44.2c19.9 14 37.5 30.8 52.4 49.9 15.1 19.3 27.1 40.7 35.7 63.4l13.8 36.5 37.8 10c54.3 14.5 92.1 63.8 92.1 120 0 33.1-12.9 64.3-36.3 87.7z"
+                        />
+                      </svg>
+                    </span>
+                     
+                    My Cloud
+                  </div>
+                </div>
+              </div>
+              <div
+                class="adm-capsule-tabs-tab-wrapper"
+              >
+                <div
+                  class="adm-capsule-tabs-tab"
+                >
+                  <div
+                    class="menu-item"
+                  >
+                    <span
+                      aria-label="like"
+                      class="anticon anticon-like"
+                      role="img"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        data-icon="like"
+                        fill="currentColor"
+                        focusable="false"
+                        height="1em"
+                        viewBox="64 64 896 896"
+                        width="1em"
+                      >
+                        <path
+                          d="M885.9 533.7c16.8-22.2 26.1-49.4 26.1-77.7 0-44.9-25.1-87.4-65.5-111.1a67.67 67.67 0 00-34.3-9.3H572.4l6-122.9c1.4-29.7-9.1-57.9-29.5-79.4A106.62 106.62 0 00471 99.9c-52 0-98 35-111.8 85.1l-85.9 311H144c-17.7 0-32 14.3-32 32v364c0 17.7 14.3 32 32 32h601.3c9.2 0 18.2-1.8 26.5-5.4 47.6-20.3 78.3-66.8 78.3-118.4 0-12.6-1.8-25-5.4-37 16.8-22.2 26.1-49.4 26.1-77.7 0-12.6-1.8-25-5.4-37 16.8-22.2 26.1-49.4 26.1-77.7-.2-12.6-2-25.1-5.6-37.1zM184 852V568h81v284h-81zm636.4-353l-21.9 19 13.9 25.4a56.2 56.2 0 016.9 27.3c0 16.5-7.2 32.2-19.6 43l-21.9 19 13.9 25.4a56.2 56.2 0 016.9 27.3c0 16.5-7.2 32.2-19.6 43l-21.9 19 13.9 25.4a56.2 56.2 0 016.9 27.3c0 22.4-13.2 42.6-33.6 51.8H329V564.8l99.5-360.5a44.1 44.1 0 0142.2-32.3c7.6 0 15.1 2.2 21.1 6.7 9.9 7.4 15.2 18.6 14.6 30.5l-9.6 198.4h314.4C829 418.5 840 436.9 840 456c0 16.5-7.2 32.1-19.6 43z"
+                        />
+                      </svg>
+                    </span>
+                     
+                    Follow Us
+                  </div>
+                </div>
+              </div>
+              <div
+                class="adm-capsule-tabs-tab-wrapper"
+              >
+                <div
+                  class="adm-capsule-tabs-tab"
+                >
+                  <div
+                    class="menu-item"
+                  >
+                    <span
+                      aria-label="question-circle"
+                      class="anticon anticon-question-circle"
+                      role="img"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        data-icon="question-circle"
+                        fill="currentColor"
+                        focusable="false"
+                        height="1em"
+                        viewBox="64 64 896 896"
+                        width="1em"
+                      >
+                        <path
+                          d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"
+                        />
+                        <path
+                          d="M623.6 316.7C593.6 290.4 554 276 512 276s-81.6 14.5-111.6 40.7C369.2 344 352 380.7 352 420v7.6c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V420c0-44.1 43.1-80 96-80s96 35.9 96 80c0 31.1-22 59.6-56.1 72.7-21.2 8.1-39.2 22.3-52.1 40.9-13.1 19-19.9 41.8-19.9 64.9V620c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8v-22.7a48.3 48.3 0 0130.9-44.8c59-22.7 97.1-74.7 97.1-132.5.1-39.3-17.1-76-48.3-103.3zM472 732a40 40 0 1080 0 40 40 0 10-80 0z"
+                        />
+                      </svg>
+                    </span>
+                     
+                    Help Center
+                  </div>
+                </div>
+              </div>
+              <div
+                class="adm-capsule-tabs-tab-wrapper"
+              >
+                <div
+                  class="adm-capsule-tabs-tab"
+                >
+                  <div
+                    class="menu-item"
+                  >
+                    <svgr-url
+                      classname="beamy-icon"
+                    />
+                     
+                    Beamy
+                  </div>
+                </div>
+              </div>
+              <div
+                class="adm-capsule-tabs-tab-wrapper"
+              >
+                <div
+                  class="adm-capsule-tabs-tab"
+                >
+                  <div
+                    class="menu-item"
+                  >
+                    <span
+                      class="anticon dmkt-icon"
+                      role="img"
+                      style="margin-right: 0.2em;"
+                    >
+                      <svg
+                        height="1em"
+                        viewBox="0 0 32 32"
+                        width="1em"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <g
+                          data-name="Group 73"
+                          id="Group_73"
+                          transform="translate(7.687 8.269)"
+                        >
+                          <path
+                            d="M48.613,0c.478-.014.619.135.612.619-.027,2.041-.023,3.845,0,5.886.005.489-.158.621-.638.6a6.96,6.96,0,0,1-6.5-6.461c-.04-.572.154-.655.644-.64Z"
+                            fill="#484949"
+                            transform="translate(-32.61 0)"
+                          />
+                          <path
+                            d="M42.758,43.71c-.545.019-.738-.111-.691-.711a6.924,6.924,0,0,1,6.271-6.381c.646-.06.906.055.883.8l-.006,5.611c.007.513-.135.7-.662.682Z"
+                            fill="#484949"
+                            transform="translate(-32.596 -28.368)"
+                          />
+                          <path
+                            d="M0,.954V15.119a.646.646,0,0,0,.681.609H.7C5.35,15.783,9.082,12,9.082,8.037A7.956,7.956,0,0,0,.7.347.646.646,0,0,0,0,.938c0,.005,0,.01,0,.016"
+                            fill="#484949"
+                            transform="translate(0 -0.268)"
+                          />
+                        </g>
+                      </svg>
+                    </span>
+                     
+                    Design Market
+                  </div>
+                </div>
+              </div>
+              <div
+                class="adm-capsule-tabs-tab-wrapper cta-tab"
+              >
+                <div
+                  class="adm-capsule-tabs-tab"
+                >
+                  <div
+                    class="menu-item"
+                  >
+                    <span
+                      aria-label="shopping"
+                      class="anticon anticon-shopping"
+                      role="img"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        data-icon="shopping"
+                        fill="currentColor"
+                        focusable="false"
+                        height="1em"
+                        viewBox="64 64 896 896"
+                        width="1em"
+                      >
+                        <path
+                          d="M832 312H696v-16c0-101.6-82.4-184-184-184s-184 82.4-184 184v16H192c-17.7 0-32 14.3-32 32v536c0 17.7 14.3 32 32 32h640c17.7 0 32-14.3 32-32V344c0-17.7-14.3-32-32-32zm-432-16c0-61.9 50.1-112 112-112s112 50.1 112 112v16H400v-16zm392 544H232V384h96v88c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-88h224v88c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-88h96v456z"
+                        />
+                      </svg>
+                    </span>
+                     
+                    Shop
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="main"
+      >
+        <div
+          class="recent-files"
+        >
+          <mock-tab-recent-files />
+        </div>
+        <mock-banners
+          banners=""
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test Welcome should render correctly in mobile 2`] = `
+<div>
+  <div
+    class="container"
+  >
+    <div
+      class="top-bar"
+    >
+      <mock-tabs
+        inverse="true"
+      />
+    </div>
+    <div
+      class="header"
+    >
+      <div
+        class="logo"
+      >
+        <svgr-url />
+      </div>
+      <button
+        class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid ant-btn-icon-only ant-btn-background-ghost white"
+        type="button"
+      >
+        <span
+          class="ant-btn-icon"
+        >
+          <span
+            aria-label="folder-open"
+            class="anticon anticon-folder-open"
+            role="img"
+          >
+            <svg
+              aria-hidden="true"
+              data-icon="folder-open"
+              fill="currentColor"
+              focusable="false"
+              height="1em"
+              viewBox="64 64 896 896"
+              width="1em"
+            >
+              <path
+                d="M928 444H820V330.4c0-17.7-14.3-32-32-32H473L355.7 186.2a8.15 8.15 0 00-5.5-2.2H96c-17.7 0-32 14.3-32 32v592c0 17.7 14.3 32 32 32h698c13 0 24.8-7.9 29.7-20l134-332c1.5-3.8 2.3-7.9 2.3-12 0-17.7-14.3-32-32-32zM136 256h188.5l119.6 114.4H748V444H238c-13 0-24.8 7.9-29.7 20L136 643.2V256zm635.3 512H159l103.3-256h612.4L771.3 768z"
+              />
+            </svg>
+          </span>
+        </span>
+      </button>
+      <button
+        class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid ant-btn-icon-only yellow"
+        type="button"
+      >
+        <span
+          class="ant-btn-icon"
+        >
+          <span
+            aria-label="plus"
+            class="anticon anticon-plus"
+            role="img"
+          >
+            <svg
+              aria-hidden="true"
+              data-icon="plus"
+              fill="currentColor"
+              focusable="false"
+              height="1em"
+              viewBox="64 64 896 896"
+              width="1em"
+            >
+              <path
+                d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z"
+              />
+              <path
+                d="M192 474h672q8 0 8 8v60q0 8-8 8H160q-8 0-8-8v-60q0-8 8-8z"
+              />
+            </svg>
+          </span>
+        </span>
+      </button>
+    </div>
+    <div
+      class="content"
+    >
+      <div
+        class="sidebar"
+      >
+        <mock-user-info />
+        <div
+          class="adm-capsule-tabs tabs"
+        >
+          <div
+            class="adm-capsule-tabs-header"
+          >
+            <div
+              class="adm-scroll-mask adm-scroll-mask-left"
+              style="opacity: 0;"
+            />
+            <div
+              class="adm-scroll-mask adm-scroll-mask-right"
+              style="opacity: 0;"
+            />
+            <div
+              class="adm-capsule-tabs-tab-list"
+            >
+              <div
+                class="adm-capsule-tabs-tab-wrapper"
+              >
+                <div
+                  class="adm-capsule-tabs-tab"
+                >
+                  <div
+                    class="menu-item"
+                  >
+                    <span
+                      aria-label="folder-open"
+                      class="anticon anticon-folder-open"
+                      role="img"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        data-icon="folder-open"
+                        fill="currentColor"
+                        focusable="false"
+                        height="1em"
+                        viewBox="64 64 896 896"
+                        width="1em"
+                      >
+                        <path
+                          d="M928 444H820V330.4c0-17.7-14.3-32-32-32H473L355.7 186.2a8.15 8.15 0 00-5.5-2.2H96c-17.7 0-32 14.3-32 32v592c0 17.7 14.3 32 32 32h698c13 0 24.8-7.9 29.7-20l134-332c1.5-3.8 2.3-7.9 2.3-12 0-17.7-14.3-32-32-32zM136 256h188.5l119.6 114.4H748V444H238c-13 0-24.8 7.9-29.7 20L136 643.2V256zm635.3 512H159l103.3-256h612.4L771.3 768z"
+                        />
+                      </svg>
+                    </span>
+                     
+                    Recent Files
+                  </div>
+                </div>
+              </div>
+              <div
+                class="adm-capsule-tabs-tab-wrapper"
+              >
+                <div
+                  class="adm-capsule-tabs-tab"
+                >
+                  <div
+                    class="menu-item"
+                  >
+                    <span
+                      aria-label="cloud"
+                      class="anticon anticon-cloud"
+                      role="img"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        data-icon="cloud"
+                        fill="currentColor"
+                        focusable="false"
+                        height="1em"
+                        viewBox="64 64 896 896"
+                        width="1em"
+                      >
+                        <path
+                          d="M811.4 418.7C765.6 297.9 648.9 212 512.2 212S258.8 297.8 213 418.6C127.3 441.1 64 519.1 64 612c0 110.5 89.5 200 199.9 200h496.2C870.5 812 960 722.5 960 612c0-92.7-63.1-170.7-148.6-193.3zm36.3 281a123.07 123.07 0 01-87.6 36.3H263.9c-33.1 0-64.2-12.9-87.6-36.3A123.3 123.3 0 01140 612c0-28 9.1-54.3 26.2-76.3a125.7 125.7 0 0166.1-43.7l37.9-9.9 13.9-36.6c8.6-22.8 20.6-44.1 35.7-63.4a245.6 245.6 0 0152.4-49.9c41.1-28.9 89.5-44.2 140-44.2s98.9 15.3 140 44.2c19.9 14 37.5 30.8 52.4 49.9 15.1 19.3 27.1 40.7 35.7 63.4l13.8 36.5 37.8 10c54.3 14.5 92.1 63.8 92.1 120 0 33.1-12.9 64.3-36.3 87.7z"
+                        />
+                      </svg>
+                    </span>
+                     
+                    My Cloud
+                  </div>
+                </div>
+              </div>
+              <div
+                class="adm-capsule-tabs-tab-wrapper"
+              >
+                <div
+                  class="adm-capsule-tabs-tab"
+                >
+                  <div
+                    class="menu-item"
+                  >
+                    <span
+                      aria-label="like"
+                      class="anticon anticon-like"
+                      role="img"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        data-icon="like"
+                        fill="currentColor"
+                        focusable="false"
+                        height="1em"
+                        viewBox="64 64 896 896"
+                        width="1em"
+                      >
+                        <path
+                          d="M885.9 533.7c16.8-22.2 26.1-49.4 26.1-77.7 0-44.9-25.1-87.4-65.5-111.1a67.67 67.67 0 00-34.3-9.3H572.4l6-122.9c1.4-29.7-9.1-57.9-29.5-79.4A106.62 106.62 0 00471 99.9c-52 0-98 35-111.8 85.1l-85.9 311H144c-17.7 0-32 14.3-32 32v364c0 17.7 14.3 32 32 32h601.3c9.2 0 18.2-1.8 26.5-5.4 47.6-20.3 78.3-66.8 78.3-118.4 0-12.6-1.8-25-5.4-37 16.8-22.2 26.1-49.4 26.1-77.7 0-12.6-1.8-25-5.4-37 16.8-22.2 26.1-49.4 26.1-77.7-.2-12.6-2-25.1-5.6-37.1zM184 852V568h81v284h-81zm636.4-353l-21.9 19 13.9 25.4a56.2 56.2 0 016.9 27.3c0 16.5-7.2 32.2-19.6 43l-21.9 19 13.9 25.4a56.2 56.2 0 016.9 27.3c0 16.5-7.2 32.2-19.6 43l-21.9 19 13.9 25.4a56.2 56.2 0 016.9 27.3c0 22.4-13.2 42.6-33.6 51.8H329V564.8l99.5-360.5a44.1 44.1 0 0142.2-32.3c7.6 0 15.1 2.2 21.1 6.7 9.9 7.4 15.2 18.6 14.6 30.5l-9.6 198.4h314.4C829 418.5 840 436.9 840 456c0 16.5-7.2 32.1-19.6 43z"
+                        />
+                      </svg>
+                    </span>
+                     
+                    Follow Us
+                  </div>
+                </div>
+              </div>
+              <div
+                class="adm-capsule-tabs-tab-wrapper"
+              >
+                <div
+                  class="adm-capsule-tabs-tab"
+                >
+                  <div
+                    class="menu-item"
+                  >
+                    <span
+                      aria-label="question-circle"
+                      class="anticon anticon-question-circle"
+                      role="img"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        data-icon="question-circle"
+                        fill="currentColor"
+                        focusable="false"
+                        height="1em"
+                        viewBox="64 64 896 896"
+                        width="1em"
+                      >
+                        <path
+                          d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"
+                        />
+                        <path
+                          d="M623.6 316.7C593.6 290.4 554 276 512 276s-81.6 14.5-111.6 40.7C369.2 344 352 380.7 352 420v7.6c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V420c0-44.1 43.1-80 96-80s96 35.9 96 80c0 31.1-22 59.6-56.1 72.7-21.2 8.1-39.2 22.3-52.1 40.9-13.1 19-19.9 41.8-19.9 64.9V620c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8v-22.7a48.3 48.3 0 0130.9-44.8c59-22.7 97.1-74.7 97.1-132.5.1-39.3-17.1-76-48.3-103.3zM472 732a40 40 0 1080 0 40 40 0 10-80 0z"
+                        />
+                      </svg>
+                    </span>
+                     
+                    Help Center
+                  </div>
+                </div>
+              </div>
+              <div
+                class="adm-capsule-tabs-tab-wrapper"
+              >
+                <div
+                  class="adm-capsule-tabs-tab adm-capsule-tabs-tab-active"
+                >
+                  <div
+                    class="menu-item"
+                  >
+                    <svgr-url
+                      classname="beamy-icon"
+                    />
+                     
+                    Beamy
+                  </div>
+                </div>
+              </div>
+              <div
+                class="adm-capsule-tabs-tab-wrapper"
+              >
+                <div
+                  class="adm-capsule-tabs-tab"
+                >
+                  <div
+                    class="menu-item"
+                  >
+                    <span
+                      class="anticon dmkt-icon"
+                      role="img"
+                      style="margin-right: 0.2em;"
+                    >
+                      <svg
+                        height="1em"
+                        viewBox="0 0 32 32"
+                        width="1em"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <g
+                          data-name="Group 73"
+                          id="Group_73"
+                          transform="translate(7.687 8.269)"
+                        >
+                          <path
+                            d="M48.613,0c.478-.014.619.135.612.619-.027,2.041-.023,3.845,0,5.886.005.489-.158.621-.638.6a6.96,6.96,0,0,1-6.5-6.461c-.04-.572.154-.655.644-.64Z"
+                            fill="#484949"
+                            transform="translate(-32.61 0)"
+                          />
+                          <path
+                            d="M42.758,43.71c-.545.019-.738-.111-.691-.711a6.924,6.924,0,0,1,6.271-6.381c.646-.06.906.055.883.8l-.006,5.611c.007.513-.135.7-.662.682Z"
+                            fill="#484949"
+                            transform="translate(-32.596 -28.368)"
+                          />
+                          <path
+                            d="M0,.954V15.119a.646.646,0,0,0,.681.609H.7C5.35,15.783,9.082,12,9.082,8.037A7.956,7.956,0,0,0,.7.347.646.646,0,0,0,0,.938c0,.005,0,.01,0,.016"
+                            fill="#484949"
+                            transform="translate(0 -0.268)"
+                          />
+                        </g>
+                      </svg>
+                    </span>
+                     
+                    Design Market
+                  </div>
+                </div>
+              </div>
+              <div
+                class="adm-capsule-tabs-tab-wrapper cta-tab"
+              >
+                <div
+                  class="adm-capsule-tabs-tab"
+                >
+                  <div
+                    class="menu-item"
+                  >
+                    <span
+                      aria-label="shopping"
+                      class="anticon anticon-shopping"
+                      role="img"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        data-icon="shopping"
+                        fill="currentColor"
+                        focusable="false"
+                        height="1em"
+                        viewBox="64 64 896 896"
+                        width="1em"
+                      >
+                        <path
+                          d="M832 312H696v-16c0-101.6-82.4-184-184-184s-184 82.4-184 184v16H192c-17.7 0-32 14.3-32 32v536c0 17.7 14.3 32 32 32h640c17.7 0 32-14.3 32-32V344c0-17.7-14.3-32-32-32zm-432-16c0-61.9 50.1-112 112-112s112 50.1 112 112v16H400v-16zm392 544H232V384h96v88c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-88h224v88c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-88h96v456z"
+                        />
+                      </svg>
+                    </span>
+                     
+                    Shop
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="main no-padding"
+      >
+        <div
+          class="beamy"
+        >
+          <mock-chat />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test Welcome should render correctly in web 1`] = `
+<div>
+  <div
+    class="container"
+  >
+    <div
+      class="header"
+    >
+      <div
+        class="logo"
+      >
+        <svgr-url />
+      </div>
+      <button
+        class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid ant-btn-background-ghost white"
+        type="button"
+      >
+        <span
+          class="ant-btn-icon"
+        >
+          <span
+            aria-label="folder-open"
+            class="anticon anticon-folder-open"
+            role="img"
+          >
+            <svg
+              aria-hidden="true"
+              data-icon="folder-open"
+              fill="currentColor"
+              focusable="false"
+              height="1em"
+              viewBox="64 64 896 896"
+              width="1em"
+            >
+              <path
+                d="M928 444H820V330.4c0-17.7-14.3-32-32-32H473L355.7 186.2a8.15 8.15 0 00-5.5-2.2H96c-17.7 0-32 14.3-32 32v592c0 17.7 14.3 32 32 32h698c13 0 24.8-7.9 29.7-20l134-332c1.5-3.8 2.3-7.9 2.3-12 0-17.7-14.3-32-32-32zM136 256h188.5l119.6 114.4H748V444H238c-13 0-24.8 7.9-29.7 20L136 643.2V256zm635.3 512H159l103.3-256h612.4L771.3 768z"
+              />
+            </svg>
+          </span>
+        </span>
+        <span>
+          Open
+        </span>
+      </button>
+      <button
+        class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid yellow"
+        type="button"
+      >
+        <span
+          class="ant-btn-icon"
+        >
+          <span
+            aria-label="plus"
+            class="anticon anticon-plus"
+            role="img"
+          >
+            <svg
+              aria-hidden="true"
+              data-icon="plus"
+              fill="currentColor"
+              focusable="false"
+              height="1em"
+              viewBox="64 64 896 896"
+              width="1em"
+            >
+              <path
+                d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z"
+              />
+              <path
+                d="M192 474h672q8 0 8 8v60q0 8-8 8H160q-8 0-8-8v-60q0-8 8-8z"
+              />
+            </svg>
+          </span>
+        </span>
+        <span>
+          New Project
+        </span>
+      </button>
+    </div>
+    <div
+      class="content"
+    >
+      <div
+        class="sidebar"
+      >
+        <mock-user-info />
+        <div
+          class="menu"
+        >
+          <div
+            class="menu-item active"
+          >
+            <span
+              aria-label="cloud"
+              class="anticon anticon-cloud"
+              role="img"
+            >
+              <svg
+                aria-hidden="true"
+                data-icon="cloud"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M811.4 418.7C765.6 297.9 648.9 212 512.2 212S258.8 297.8 213 418.6C127.3 441.1 64 519.1 64 612c0 110.5 89.5 200 199.9 200h496.2C870.5 812 960 722.5 960 612c0-92.7-63.1-170.7-148.6-193.3zm36.3 281a123.07 123.07 0 01-87.6 36.3H263.9c-33.1 0-64.2-12.9-87.6-36.3A123.3 123.3 0 01140 612c0-28 9.1-54.3 26.2-76.3a125.7 125.7 0 0166.1-43.7l37.9-9.9 13.9-36.6c8.6-22.8 20.6-44.1 35.7-63.4a245.6 245.6 0 0152.4-49.9c41.1-28.9 89.5-44.2 140-44.2s98.9 15.3 140 44.2c19.9 14 37.5 30.8 52.4 49.9 15.1 19.3 27.1 40.7 35.7 63.4l13.8 36.5 37.8 10c54.3 14.5 92.1 63.8 92.1 120 0 33.1-12.9 64.3-36.3 87.7z"
+                />
+              </svg>
+            </span>
+             
+            My Cloud
+          </div>
+          <div
+            class="menu-item"
+          >
+            <span
+              aria-label="like"
+              class="anticon anticon-like"
+              role="img"
+            >
+              <svg
+                aria-hidden="true"
+                data-icon="like"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M885.9 533.7c16.8-22.2 26.1-49.4 26.1-77.7 0-44.9-25.1-87.4-65.5-111.1a67.67 67.67 0 00-34.3-9.3H572.4l6-122.9c1.4-29.7-9.1-57.9-29.5-79.4A106.62 106.62 0 00471 99.9c-52 0-98 35-111.8 85.1l-85.9 311H144c-17.7 0-32 14.3-32 32v364c0 17.7 14.3 32 32 32h601.3c9.2 0 18.2-1.8 26.5-5.4 47.6-20.3 78.3-66.8 78.3-118.4 0-12.6-1.8-25-5.4-37 16.8-22.2 26.1-49.4 26.1-77.7 0-12.6-1.8-25-5.4-37 16.8-22.2 26.1-49.4 26.1-77.7-.2-12.6-2-25.1-5.6-37.1zM184 852V568h81v284h-81zm636.4-353l-21.9 19 13.9 25.4a56.2 56.2 0 016.9 27.3c0 16.5-7.2 32.2-19.6 43l-21.9 19 13.9 25.4a56.2 56.2 0 016.9 27.3c0 16.5-7.2 32.2-19.6 43l-21.9 19 13.9 25.4a56.2 56.2 0 016.9 27.3c0 22.4-13.2 42.6-33.6 51.8H329V564.8l99.5-360.5a44.1 44.1 0 0142.2-32.3c7.6 0 15.1 2.2 21.1 6.7 9.9 7.4 15.2 18.6 14.6 30.5l-9.6 198.4h314.4C829 418.5 840 436.9 840 456c0 16.5-7.2 32.1-19.6 43z"
+                />
+              </svg>
+            </span>
+             
+            Follow Us
+          </div>
+          <div
+            class="menu-item"
+          >
+            <span
+              aria-label="question-circle"
+              class="anticon anticon-question-circle"
+              role="img"
+            >
+              <svg
+                aria-hidden="true"
+                data-icon="question-circle"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"
+                />
+                <path
+                  d="M623.6 316.7C593.6 290.4 554 276 512 276s-81.6 14.5-111.6 40.7C369.2 344 352 380.7 352 420v7.6c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V420c0-44.1 43.1-80 96-80s96 35.9 96 80c0 31.1-22 59.6-56.1 72.7-21.2 8.1-39.2 22.3-52.1 40.9-13.1 19-19.9 41.8-19.9 64.9V620c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8v-22.7a48.3 48.3 0 0130.9-44.8c59-22.7 97.1-74.7 97.1-132.5.1-39.3-17.1-76-48.3-103.3zM472 732a40 40 0 1080 0 40 40 0 10-80 0z"
+                />
+              </svg>
+            </span>
+             
+            Help Center
+          </div>
+          <div
+            class="menu-item"
+          >
+            <svgr-url
+              classname="beamy-icon"
+            />
+             
+            Beamy
+          </div>
+          <div
+            class="menu-item"
+          >
+            <span
+              class="anticon dmkt-icon"
+              role="img"
+              style="margin-right: 0.2em;"
+            >
+              <svg
+                height="1em"
+                viewBox="0 0 32 32"
+                width="1em"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <g
+                  data-name="Group 73"
+                  id="Group_73"
+                  transform="translate(7.687 8.269)"
+                >
+                  <path
+                    d="M48.613,0c.478-.014.619.135.612.619-.027,2.041-.023,3.845,0,5.886.005.489-.158.621-.638.6a6.96,6.96,0,0,1-6.5-6.461c-.04-.572.154-.655.644-.64Z"
+                    fill="#484949"
+                    transform="translate(-32.61 0)"
+                  />
+                  <path
+                    d="M42.758,43.71c-.545.019-.738-.111-.691-.711a6.924,6.924,0,0,1,6.271-6.381c.646-.06.906.055.883.8l-.006,5.611c.007.513-.135.7-.662.682Z"
+                    fill="#484949"
+                    transform="translate(-32.596 -28.368)"
+                  />
+                  <path
+                    d="M0,.954V15.119a.646.646,0,0,0,.681.609H.7C5.35,15.783,9.082,12,9.082,8.037A7.956,7.956,0,0,0,.7.347.646.646,0,0,0,0,.938c0,.005,0,.01,0,.016"
+                    fill="#484949"
+                    transform="translate(0 -0.268)"
+                  />
+                </g>
+              </svg>
+            </span>
+             
+            Design Market
+          </div>
+        </div>
+        <div
+          class="cta"
+        >
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid ant-btn-block yellow"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <span
+                aria-label="shopping"
+                class="anticon anticon-shopping"
+                role="img"
+              >
+                <svg
+                  aria-hidden="true"
+                  data-icon="shopping"
+                  fill="currentColor"
+                  focusable="false"
+                  height="1em"
+                  viewBox="64 64 896 896"
+                  width="1em"
+                >
+                  <path
+                    d="M832 312H696v-16c0-101.6-82.4-184-184-184s-184 82.4-184 184v16H192c-17.7 0-32 14.3-32 32v536c0 17.7 14.3 32 32 32h640c17.7 0 32-14.3 32-32V344c0-17.7-14.3-32-32-32zm-432-16c0-61.9 50.1-112 112-112s112 50.1 112 112v16H400v-16zm392 544H232V384h96v88c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-88h224v88c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-88h96v456z"
+                  />
+                </svg>
+              </span>
+            </span>
+            <span>
+              Shop FLUX Products
+            </span>
+          </button>
+        </div>
+      </div>
+      <div
+        class="main"
+      >
+        <mock-banners
+          banners=""
+        />
+        <div
+          class="my-cloud"
+        >
+          <mock-tab-my-cloud />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test Welcome should render correctly in web 2`] = `
+<div>
+  <div
+    class="container"
+  >
+    <div
+      class="header"
+    >
+      <div
+        class="logo"
+      >
+        <svgr-url />
+      </div>
+      <button
+        class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid ant-btn-background-ghost white"
+        type="button"
+      >
+        <span
+          class="ant-btn-icon"
+        >
+          <span
+            aria-label="folder-open"
+            class="anticon anticon-folder-open"
+            role="img"
+          >
+            <svg
+              aria-hidden="true"
+              data-icon="folder-open"
+              fill="currentColor"
+              focusable="false"
+              height="1em"
+              viewBox="64 64 896 896"
+              width="1em"
+            >
+              <path
+                d="M928 444H820V330.4c0-17.7-14.3-32-32-32H473L355.7 186.2a8.15 8.15 0 00-5.5-2.2H96c-17.7 0-32 14.3-32 32v592c0 17.7 14.3 32 32 32h698c13 0 24.8-7.9 29.7-20l134-332c1.5-3.8 2.3-7.9 2.3-12 0-17.7-14.3-32-32-32zM136 256h188.5l119.6 114.4H748V444H238c-13 0-24.8 7.9-29.7 20L136 643.2V256zm635.3 512H159l103.3-256h612.4L771.3 768z"
+              />
+            </svg>
+          </span>
+        </span>
+        <span>
+          Open
+        </span>
+      </button>
+      <button
+        class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid yellow"
+        type="button"
+      >
+        <span
+          class="ant-btn-icon"
+        >
+          <span
+            aria-label="plus"
+            class="anticon anticon-plus"
+            role="img"
+          >
+            <svg
+              aria-hidden="true"
+              data-icon="plus"
+              fill="currentColor"
+              focusable="false"
+              height="1em"
+              viewBox="64 64 896 896"
+              width="1em"
+            >
+              <path
+                d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z"
+              />
+              <path
+                d="M192 474h672q8 0 8 8v60q0 8-8 8H160q-8 0-8-8v-60q0-8 8-8z"
+              />
+            </svg>
+          </span>
+        </span>
+        <span>
+          New Project
+        </span>
+      </button>
+    </div>
+    <div
+      class="content"
+    >
+      <div
+        class="sidebar"
+      >
+        <mock-user-info />
+        <div
+          class="menu"
+        >
+          <div
+            class="menu-item"
+          >
+            <span
+              aria-label="cloud"
+              class="anticon anticon-cloud"
+              role="img"
+            >
+              <svg
+                aria-hidden="true"
+                data-icon="cloud"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M811.4 418.7C765.6 297.9 648.9 212 512.2 212S258.8 297.8 213 418.6C127.3 441.1 64 519.1 64 612c0 110.5 89.5 200 199.9 200h496.2C870.5 812 960 722.5 960 612c0-92.7-63.1-170.7-148.6-193.3zm36.3 281a123.07 123.07 0 01-87.6 36.3H263.9c-33.1 0-64.2-12.9-87.6-36.3A123.3 123.3 0 01140 612c0-28 9.1-54.3 26.2-76.3a125.7 125.7 0 0166.1-43.7l37.9-9.9 13.9-36.6c8.6-22.8 20.6-44.1 35.7-63.4a245.6 245.6 0 0152.4-49.9c41.1-28.9 89.5-44.2 140-44.2s98.9 15.3 140 44.2c19.9 14 37.5 30.8 52.4 49.9 15.1 19.3 27.1 40.7 35.7 63.4l13.8 36.5 37.8 10c54.3 14.5 92.1 63.8 92.1 120 0 33.1-12.9 64.3-36.3 87.7z"
+                />
+              </svg>
+            </span>
+             
+            My Cloud
+          </div>
+          <div
+            class="menu-item"
+          >
+            <span
+              aria-label="like"
+              class="anticon anticon-like"
+              role="img"
+            >
+              <svg
+                aria-hidden="true"
+                data-icon="like"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M885.9 533.7c16.8-22.2 26.1-49.4 26.1-77.7 0-44.9-25.1-87.4-65.5-111.1a67.67 67.67 0 00-34.3-9.3H572.4l6-122.9c1.4-29.7-9.1-57.9-29.5-79.4A106.62 106.62 0 00471 99.9c-52 0-98 35-111.8 85.1l-85.9 311H144c-17.7 0-32 14.3-32 32v364c0 17.7 14.3 32 32 32h601.3c9.2 0 18.2-1.8 26.5-5.4 47.6-20.3 78.3-66.8 78.3-118.4 0-12.6-1.8-25-5.4-37 16.8-22.2 26.1-49.4 26.1-77.7 0-12.6-1.8-25-5.4-37 16.8-22.2 26.1-49.4 26.1-77.7-.2-12.6-2-25.1-5.6-37.1zM184 852V568h81v284h-81zm636.4-353l-21.9 19 13.9 25.4a56.2 56.2 0 016.9 27.3c0 16.5-7.2 32.2-19.6 43l-21.9 19 13.9 25.4a56.2 56.2 0 016.9 27.3c0 16.5-7.2 32.2-19.6 43l-21.9 19 13.9 25.4a56.2 56.2 0 016.9 27.3c0 22.4-13.2 42.6-33.6 51.8H329V564.8l99.5-360.5a44.1 44.1 0 0142.2-32.3c7.6 0 15.1 2.2 21.1 6.7 9.9 7.4 15.2 18.6 14.6 30.5l-9.6 198.4h314.4C829 418.5 840 436.9 840 456c0 16.5-7.2 32.1-19.6 43z"
+                />
+              </svg>
+            </span>
+             
+            Follow Us
+          </div>
+          <div
+            class="menu-item"
+          >
+            <span
+              aria-label="question-circle"
+              class="anticon anticon-question-circle"
+              role="img"
+            >
+              <svg
+                aria-hidden="true"
+                data-icon="question-circle"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"
+                />
+                <path
+                  d="M623.6 316.7C593.6 290.4 554 276 512 276s-81.6 14.5-111.6 40.7C369.2 344 352 380.7 352 420v7.6c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V420c0-44.1 43.1-80 96-80s96 35.9 96 80c0 31.1-22 59.6-56.1 72.7-21.2 8.1-39.2 22.3-52.1 40.9-13.1 19-19.9 41.8-19.9 64.9V620c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8v-22.7a48.3 48.3 0 0130.9-44.8c59-22.7 97.1-74.7 97.1-132.5.1-39.3-17.1-76-48.3-103.3zM472 732a40 40 0 1080 0 40 40 0 10-80 0z"
+                />
+              </svg>
+            </span>
+             
+            Help Center
+          </div>
+          <div
+            class="menu-item active"
+          >
+            <svgr-url
+              classname="beamy-icon"
+            />
+             
+            Beamy
+          </div>
+          <div
+            class="menu-item"
+          >
+            <span
+              class="anticon dmkt-icon"
+              role="img"
+              style="margin-right: 0.2em;"
+            >
+              <svg
+                height="1em"
+                viewBox="0 0 32 32"
+                width="1em"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <g
+                  data-name="Group 73"
+                  id="Group_73"
+                  transform="translate(7.687 8.269)"
+                >
+                  <path
+                    d="M48.613,0c.478-.014.619.135.612.619-.027,2.041-.023,3.845,0,5.886.005.489-.158.621-.638.6a6.96,6.96,0,0,1-6.5-6.461c-.04-.572.154-.655.644-.64Z"
+                    fill="#484949"
+                    transform="translate(-32.61 0)"
+                  />
+                  <path
+                    d="M42.758,43.71c-.545.019-.738-.111-.691-.711a6.924,6.924,0,0,1,6.271-6.381c.646-.06.906.055.883.8l-.006,5.611c.007.513-.135.7-.662.682Z"
+                    fill="#484949"
+                    transform="translate(-32.596 -28.368)"
+                  />
+                  <path
+                    d="M0,.954V15.119a.646.646,0,0,0,.681.609H.7C5.35,15.783,9.082,12,9.082,8.037A7.956,7.956,0,0,0,.7.347.646.646,0,0,0,0,.938c0,.005,0,.01,0,.016"
+                    fill="#484949"
+                    transform="translate(0 -0.268)"
+                  />
+                </g>
+              </svg>
+            </span>
+             
+            Design Market
+          </div>
+        </div>
+        <div
+          class="cta"
+        >
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid ant-btn-block yellow"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <span
+                aria-label="shopping"
+                class="anticon anticon-shopping"
+                role="img"
+              >
+                <svg
+                  aria-hidden="true"
+                  data-icon="shopping"
+                  fill="currentColor"
+                  focusable="false"
+                  height="1em"
+                  viewBox="64 64 896 896"
+                  width="1em"
+                >
+                  <path
+                    d="M832 312H696v-16c0-101.6-82.4-184-184-184s-184 82.4-184 184v16H192c-17.7 0-32 14.3-32 32v536c0 17.7 14.3 32 32 32h640c17.7 0 32-14.3 32-32V344c0-17.7-14.3-32-32-32zm-432-16c0-61.9 50.1-112 112-112s112 50.1 112 112v16H400v-16zm392 544H232V384h96v88c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-88h224v88c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-88h96v456z"
+                  />
+                </svg>
+              </span>
+            </span>
+            <span>
+              Shop FLUX Products
+            </span>
+          </button>
+        </div>
+      </div>
+      <div
+        class="main no-padding"
+      >
+        <div
+          class="beamy"
+        >
+          <mock-chat />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

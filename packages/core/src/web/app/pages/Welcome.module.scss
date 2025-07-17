@@ -59,44 +59,7 @@ $header-height: 60px;
       }
       @media screen and (max-width: 600px) {
         box-shadow: 0 0px 10px 0px rgba(0, 0, 0, 0.2);
-      }
-
-      .info {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        gap: 16px;
-        border-bottom: 1px solid $border-color;
-        background: #f0f0f0;
-        @media screen and (min-width: 601px) {
-          min-height: 164px;
-        }
-        @media screen and (max-width: 600px) {
-          padding: 12px;
-          gap: 8px;
-        }
-
-        .avatar {
-          flex-shrink: 0;
-
-          .default-avatar {
-            font-size: 52px;
-          }
-        }
-
-        .login-hint {
-          font-size: 12px;
-          font-weight: bold;
-        }
-
-        .nickname {
-          font-size: 16px;
-          font-weight: bold;
-        }
-
-        .email {
-          color: #525252;
-        }
+        z-index: 1;
       }
 
       .menu {
@@ -106,6 +69,7 @@ $header-height: 60px;
         gap: 8px;
         font-size: 16px;
         overflow-y: scroll;
+        border-top: 1px solid $border-color;
 
         .menu-item {
           height: 48px;
@@ -131,6 +95,8 @@ $header-height: 60px;
       }
 
       .tabs {
+        border-top: 1px solid $border-color;
+
         .menu-item {
           display: flex;
           align-items: center;

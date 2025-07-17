@@ -2372,6 +2372,7 @@ const lang: ILang = {
       visit_help_center: 'Siirry ohjekeskukseen',
     },
     member_center: 'Jäsenkeskus',
+    member_center_url: 'https://member.flux3dp.com/en-US/machine-register',
     new_project: 'Uusi projekti',
     not_login_placeholder: 'Saat ilmaisia tekoälykrediittejä meiltä, kun rekisteröidyt FLUX-tilille!',
     recent_files: 'Viimeaikaiset tiedostot',

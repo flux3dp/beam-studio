@@ -2372,6 +2372,7 @@ const lang: ILang = {
       visit_help_center: 'Hilfezentrum besuchen',
     },
     member_center: 'Mitgliederbereich',
+    member_center_url: 'https://member.flux3dp.com/en-US/machine-register',
     new_project: 'Neues Projekt',
     not_login_placeholder: 'Erhalten Sie kostenlose KI-Guthaben von uns, wenn Sie ein FLUX-Konto erstellen!',
     recent_files: 'Kürzliche Dateien',

@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import React, { memo } from 'react';
 
 import type { ButtonProps, ThemeConfig } from 'antd';
 import { Button, ConfigProvider } from 'antd';

@@ -2373,6 +2373,7 @@ const lang: ILang = {
       visit_help_center: '前往說明中心',
     },
     member_center: '會員中心',
+    member_center_url: 'https://member.flux3dp.com/zh-TW/machine-register',
     new_project: '新增專案',
     not_login_placeholder: '註冊 FLUX 帳號即可免費獲得 AI 點數！',
     recent_files: '最近的檔案',
