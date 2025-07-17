@@ -5385,9 +5385,9 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       const stack: Array<{ elem?: Element; originalAngle?: number }> = [{ elem }];
 
       while (stack.length > 0) {
-        const { elem: topElem, originalAngle } = stack.pop();
+        const { elem: topElem, originalAngle } = stack.pop()!;
 
-        if (topElem.tagName !== 'g') {
+        if (topElem!.tagName !== 'g') {
           cmd = await this.flipElementWithRespectToCenter(topElem, centers[centers.length - 1], flipPara);
 
           if (cmd && !cmd.isEmpty()) {
@@ -5435,8 +5435,8 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
           canvas.setRotationAngle(-originalAngle, true, topElem);
         }
       }
-      selectorManager.requestSelector(elem).resize();
-      selectorManager.requestSelector(elem).show(len === 1);
+      selectorManager.requestSelector(elem)?.resize();
+      selectorManager.requestSelector(elem)?.show(len === 1);
       svgEditor.updateContextPanel();
     }
     addCommandToHistory(batchCmd);
