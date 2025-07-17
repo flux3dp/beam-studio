@@ -16,9 +16,8 @@ getSVGAsync(({ Canvas }) => {
 });
 
 export type ConvertSvgToImageParams = {
-  isToSelect: boolean;
-  parentCmd: IBatchCommand;
-  scale?: number;
+  isToSelect?: boolean;
+  parentCmd?: IBatchCommand;
   svgElement: SVGGElement;
 };
 export type ConvertToImageResult = undefined | { imageElements: SVGImageElement[]; svgElements: SVGGElement[] };
@@ -82,7 +81,7 @@ export const getTransformedCoordinates = (bbox: BBox, transform: null | string):
  */
 export const createAndFinalizeImage = async (
   { angle = 0, height, href, transform, width, x, y }: CreateImageParams,
-  { isToSelect, parentCmd, svgElement }: ConvertSvgToImageParams,
+  { isToSelect, parentCmd, svgElement }: Required<ConvertSvgToImageParams>,
 ): Promise<ConvertToImageResult> => {
   const imageElement = svgCanvas.addSvgElementFromJson({
     attr: {
@@ -118,8 +117,8 @@ export const createAndFinalizeImage = async (
  * This function merges the logic of three previous functions.
  */
 export async function rasterizeGenericSvgElement({
-  isToSelect,
-  parentCmd,
+  isToSelect = true,
+  parentCmd = new history.BatchCommand('Convert Generic Svg to Image'),
   svgElement,
 }: ConvertSvgToImageParams): Promise<ConvertToImageResult> {
   try {
