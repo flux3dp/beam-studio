@@ -11,7 +11,7 @@ import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
 import { ContextMenu, ContextMenuTrigger, MenuItem } from '@core/helpers/react-contextmenu';
 import useI18n from '@core/helpers/useI18n';
 import dialog from '@core/implementations/dialog';
-import type { FisheyeCaliParameters, WideAngleRegion } from '@core/interfaces/FisheyePreview';
+import type { FisheyeCaliParameters } from '@core/interfaces/FisheyePreview';
 
 import styles from './ChArUco.module.scss';
 import ExposureSlider from './ExposureSlider';
@@ -23,7 +23,7 @@ interface Props {
   onClose: (complete?: boolean) => void;
   onNext: () => void;
   onPrev: () => void;
-  steps: Array<{ description: string; imageUrl?: string; key: WideAngleRegion }>;
+  steps: Array<{ description: string; imageUrl?: string; key: string }>;
   title?: string;
   updateParam: (param: FisheyeCaliParameters) => void;
 }
