@@ -6,6 +6,7 @@ import BackgroundRemoval from './background-removal.svg';
 import BevelMobile from './bevel-mobile.svg';
 import Bevel from './bevel.svg';
 import Brightness from './brightness.svg';
+import ConvertToImage from './convert-to-image.svg';
 import ConvertToPathMobile from './convert-to-path-mobile.svg';
 import ConvertToPath from './convert-to-path.svg';
 import CreateTextpath from './create-textpath.svg';
@@ -44,6 +45,7 @@ export default {
   Bevel,
   BevelMobile,
   Brightness,
+  ConvertToImage,
   ConvertToPath,
   ConvertToPathMobile,
   CreateTextpath,
