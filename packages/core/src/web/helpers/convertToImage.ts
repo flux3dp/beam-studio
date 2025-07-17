@@ -51,13 +51,10 @@ const convertUseToImage = async ({
     return undefined;
   }
 
-  const x = Number.parseFloat(svgElement.getAttribute('x') || '0');
-  const y = Number.parseFloat(svgElement.getAttribute('y') || '0');
   const dataXform = svgElement.getAttribute('data-xform');
-  const [width, height] = dataXform
-    ?.split(' ')
-    ?.slice(2, 4)
-    ?.map((v) => Number.parseFloat(v.split('=')[1])) || [0, 0];
+  const [formX, formY, width, height] = dataXform?.split(' ')?.map((v) => Number.parseFloat(v.split('=')[1])) || [0, 0];
+  const x = Number.parseFloat(svgElement.getAttribute('x') || '0') + formX;
+  const y = Number.parseFloat(svgElement.getAttribute('y') || '0') + formY;
   const transform = svgElement.getAttribute('transform') || '';
 
   return createAndFinalizeImage(
