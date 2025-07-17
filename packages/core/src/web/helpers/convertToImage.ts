@@ -3,12 +3,11 @@ import { match, P } from 'ts-pattern';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { deleteElements } from '@core/app/svgedit/operations/delete';
-import { getRotationAngle, setRotationAngle } from '@core/app/svgedit/transform/rotation';
+import { getRotationAngle } from '@core/app/svgedit/transform/rotation';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import updateElementColor from './color/updateElementColor';
-import { finalizeImageCreation, rasterizeGenericSvgElement } from './convertToImage.util';
+import { createAndFinalizeImage, rasterizeGenericSvgElement } from './convertToImage.util';
 import { getSVGAsync } from './svg-editor-helper';
 
 let svgCanvas: ISVGCanvas;
@@ -64,38 +63,15 @@ const convertUseToImage = async ({
   const y = Number.parseFloat(svgElement.getAttribute('y') || '0');
   const dataXform = svgElement.getAttribute('data-xform');
   const [width, height] = dataXform
-    ? dataXform
-        .split(' ')
-        .slice(2, 4)
-        .map((v) => Number.parseFloat(v.split('=')[1]))
-    : [0, 0];
+    ?.split(' ')
+    ?.slice(2, 4)
+    ?.map((v) => Number.parseFloat(v.split('=')[1])) || [0, 0];
+  const transform = svgElement.getAttribute('transform') || '';
 
-  const imageElement = svgCanvas.addSvgElementFromJson({
-    attr: {
-      'data-ratiofixed': true,
-      'data-shading': true,
-      'data-threshold': 254,
-      height,
-      id: svgCanvas.getNextId(),
-      origImage: imageSrc,
-      preserveAspectRatio: 'none',
-      style: 'pointer-events:inherit',
-      width,
-      x,
-      y,
-    },
-    element: 'image',
-  }) as SVGImageElement;
-
-  imageElement.setAttribute('transform', svgElement.getAttribute('transform') || '');
-  setRotationAngle(imageElement, angle, { parentCmd });
-  svgCanvas.setHref(imageElement, imageSrc);
-  updateElementColor(imageElement);
-  finalizeImageCreation(imageElement, isToSelect, parentCmd);
-
-  if (isToSelect) parentCmd.addSubCommand(deleteElements([svgElement], true));
-
-  return { imageElements: [imageElement], svgElements: [svgElement] };
+  return createAndFinalizeImage(
+    { angle, height, href: imageSrc, transform, width, x, y },
+    { isToSelect, parentCmd, svgElement },
+  );
 };
 
 /**

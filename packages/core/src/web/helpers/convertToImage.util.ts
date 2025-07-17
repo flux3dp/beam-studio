@@ -1,3 +1,5 @@
+import { pipe } from 'remeda';
+
 import history from '@core/app/svgedit/history/history';
 import { deleteElements } from '@core/app/svgedit/operations/delete';
 import { getRotationAngle, setRotationAngle } from '@core/app/svgedit/transform/rotation';
@@ -14,6 +16,9 @@ getSVGAsync(({ Canvas }) => {
 });
 
 type BBox = { height: number; width: number; x: number; y: number };
+type ConvertToImageResult = undefined | { imageElements: SVGImageElement[]; svgElements: SVGGElement[] };
+type CreateImageParams = Record<'angle' | 'height' | 'width' | 'x' | 'y', number> &
+  Record<'href' | 'transform', string>;
 
 /**
  * A helper to add the newly created <image> element to the canvas and handle history.
@@ -65,40 +70,73 @@ export const getTransformedCoordinates = (bbox: BBox, transform: null | string):
 };
 
 /**
+ * Creates the <image> element on the canvas and finalizes the operation.
+ * This encapsulates all the common steps like setting attributes, color, rotation, and history.
+ */
+export const createAndFinalizeImage = async (
+  { angle, height, href, transform, width, x, y }: CreateImageParams,
+  { isToSelect, parentCmd, svgElement }: { isToSelect: boolean; parentCmd: IBatchCommand; svgElement: SVGGElement },
+): Promise<ConvertToImageResult> => {
+  const imageElement = svgCanvas.addSvgElementFromJson({
+    attr: {
+      'data-ratiofixed': true,
+      'data-shading': true,
+      'data-threshold': 254,
+      height,
+      id: svgCanvas.getNextId(),
+      origImage: href,
+      preserveAspectRatio: 'none',
+      style: 'pointer-events:inherit',
+      width,
+      x,
+      y,
+    },
+    element: 'image',
+  }) as SVGImageElement;
+
+  if (transform) imageElement.setAttribute('transform', transform);
+
+  setRotationAngle(imageElement, angle, { parentCmd });
+  svgCanvas.setHref(imageElement, href);
+  updateElementColor(imageElement);
+  finalizeImageCreation(imageElement, isToSelect, parentCmd);
+
+  if (isToSelect) parentCmd.addSubCommand(deleteElements([svgElement], true));
+
+  return { imageElements: [imageElement], svgElements: [svgElement] };
+};
+
+/**
  * A generic function to rasterize an SVG element (shapes, text) into an image.
  * This function merges the logic of three previous functions.
  */
 export async function rasterizeGenericSvgElement({
-  isToSelect = true,
-  parentCmd = new history.BatchCommand('Rasterize SVG Element'),
+  isToSelect,
+  parentCmd,
   svgElement,
 }: {
   isToSelect: boolean;
   parentCmd: IBatchCommand;
   svgElement: SVGGElement;
-}): Promise<undefined | { imageElements: SVGImageElement[]; svgElements: SVGGElement[] }> {
+}): Promise<ConvertToImageResult> {
   try {
     const angle = getRotationAngle(svgElement);
     const cloned = svgElement.cloneNode(true) as SVGGraphicsElement;
-    const bbox = svgElement.getBBox();
-    const isFilled = !['none', null].includes(svgElement.getAttribute('fill'));
 
     setRotationAngle(cloned, 0, { addToHistory: false });
 
-    // get return-to-zero transform
+    // Rasterization start
+    const bbox = svgElement.getBBox();
+    const isFilled = !['none', null].includes(svgElement.getAttribute('fill'));
+    // Prepare return-to-zero transform
     const previousTransform = cloned.getAttribute('transform');
     const strokeOffset = isFilled ? 0 : 5;
 
-    // Prepare the cloned element for rasterization
     cloned.setAttribute('fill', '#000');
     cloned.setAttribute('stroke', '#000');
 
-    if (!isFilled) {
-      cloned.setAttribute('fill', 'none');
-      cloned.setAttribute('stroke-width', String(strokeOffset));
-    }
+    if (!isFilled) cloned.setAttribute('stroke-width', String(strokeOffset));
 
-    // If the element is a text path, ensure it has a fill and stroke
     if (svgElement.getAttribute('data-textpath-g') === '1') {
       Array.from(cloned.children).forEach((child) => {
         if (child instanceof SVGGraphicsElement) {
@@ -108,15 +146,15 @@ export async function rasterizeGenericSvgElement({
       });
     }
 
-    // Determine coordinates, dimensions, and transform based on element type
     let finalCoords = { x: bbox.x, y: bbox.y };
     let finalWidth = bbox.width + strokeOffset;
     let finalHeight = bbox.height + strokeOffset;
     const isTransformedElement = svgElement.tagName === 'text' || svgElement.getAttribute('data-textpath-g') === '1';
-    // Create SVG wrapper and serialize
     const wrapper = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 
     if (isTransformedElement) {
+      console.log('isTransformedElement', Boolean(previousTransform));
+
       const transformed = getTransformedCoordinates(bbox, previousTransform);
       const scale = Number.parseFloat(previousTransform?.match(/matrix\(([^,]+)/)?.[1] || '1');
 
@@ -132,13 +170,9 @@ export async function rasterizeGenericSvgElement({
     wrapper.setAttribute('width', String(Math.abs(finalWidth)));
     wrapper.setAttribute('height', String(Math.abs(finalHeight)));
 
-    if (finalWidth < 0) {
-      finalCoords.x += finalWidth;
-    }
+    if (finalWidth < 0) finalCoords.x += finalWidth;
 
-    if (finalHeight < 0) {
-      finalCoords.y += finalHeight;
-    }
+    if (finalHeight < 0) finalCoords.y += finalHeight;
 
     wrapper.setAttribute(
       'viewBox',
@@ -146,10 +180,12 @@ export async function rasterizeGenericSvgElement({
     );
     wrapper.appendChild(cloned);
 
-    const svgData = new XMLSerializer().serializeToString(wrapper);
-    const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-    const svgUrl = URL.createObjectURL(blob);
-    // Load image from blob URL
+    // Create image from blob URL
+    const svgUrl = pipe(
+      new XMLSerializer().serializeToString(wrapper),
+      (svgData) => new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' }),
+      URL.createObjectURL,
+    );
     const img = new Image();
 
     await new Promise<void>((resolve, reject) => {
@@ -158,33 +194,10 @@ export async function rasterizeGenericSvgElement({
       img.src = svgUrl;
     });
 
-    const { height, src: origImage, width } = img;
-
-    // Create the new <image> element on the canvas
-    const imageElement = svgCanvas.addSvgElementFromJson({
-      attr: {
-        'data-ratiofixed': true,
-        'data-shading': true,
-        'data-threshold': 254,
-        height,
-        id: svgCanvas.getNextId(),
-        origImage,
-        preserveAspectRatio: 'none',
-        style: 'pointer-events:inherit',
-        width,
-        ...finalCoords,
-      },
-      element: 'image',
-    }) as SVGImageElement;
-
-    setRotationAngle(imageElement, angle, { parentCmd });
-    svgCanvas.setHref(imageElement, origImage);
-    updateElementColor(imageElement);
-    finalizeImageCreation(imageElement, isToSelect, parentCmd);
-
-    if (isToSelect) parentCmd.addSubCommand(deleteElements([svgElement], true));
-
-    return { imageElements: [imageElement], svgElements: [svgElement] };
+    return await createAndFinalizeImage(
+      { angle, height: img.height, href: img.src, transform: '', width: img.width, x: finalCoords.x, y: finalCoords.y },
+      { isToSelect, parentCmd, svgElement },
+    );
   } catch (error) {
     console.error('Failed during SVG rasterization:', error);
 
