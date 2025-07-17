@@ -37,6 +37,10 @@ describe('test CornerRadius', () => {
 
     fireEvent.change(input, { target: { value: '75' } });
 
-    expect(mockSetCornerRadius).toHaveBeenCalledWith(75);
+    expect(mockSetCornerRadius).toHaveBeenCalledWith(75, false);
+
+    fireEvent.blur(input);
+    // mock state did not change, so it is still 50
+    expect(mockSetCornerRadius).toHaveBeenCalledWith(50, true);
   });
 });

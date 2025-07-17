@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { Col, Form, InputNumber, Row, Slider } from 'antd';
+import { Flex, Form, InputNumber, Slider } from 'antd';
 
 import useI18n from '@core/helpers/useI18n';
 
@@ -25,22 +25,25 @@ export default function MagicWand(): React.JSX.Element {
       </div>
       <Form layout="vertical">
         <Form.Item label={`${lang.magic_wand.tolerance}:`}>
-          <Row>
-            <Col flex="auto">
-              <Slider max={MAX_TOLERANCE} min={1} onChange={setTolerance} step={1} value={tolerance} />
-            </Col>
-            <Col flex="100px">
-              <InputNumber
-                max={MAX_TOLERANCE}
-                min={1}
-                onChange={(val) => {
-                  if (val !== null) setTolerance(val);
-                }}
-                step={1}
-                value={tolerance}
-              />
-            </Col>
-          </Row>
+          <Flex align="center" gap={8} justify="between">
+            <Slider
+              className={styles.slider}
+              max={MAX_TOLERANCE}
+              min={1}
+              onChange={setTolerance}
+              step={1}
+              value={tolerance}
+            />
+            <InputNumber
+              max={MAX_TOLERANCE}
+              min={1}
+              onChange={(val) => {
+                if (val !== null) setTolerance(val);
+              }}
+              step={1}
+              value={tolerance}
+            />
+          </Flex>
         </Form.Item>
       </Form>
     </div>
