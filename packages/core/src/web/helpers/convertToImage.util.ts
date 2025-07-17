@@ -15,8 +15,15 @@ getSVGAsync(({ Canvas }) => {
   svgCanvas = Canvas;
 });
 
+export type ConvertSvgToImageParams = {
+  isToSelect: boolean;
+  parentCmd: IBatchCommand;
+  scale?: number;
+  svgElement: SVGGElement;
+};
+export type ConvertToImageResult = undefined | { imageElements: SVGImageElement[]; svgElements: SVGGElement[] };
+
 type BBox = { height: number; width: number; x: number; y: number };
-type ConvertToImageResult = undefined | { imageElements: SVGImageElement[]; svgElements: SVGGElement[] };
 type CreateImageParams = Record<'angle' | 'height' | 'width' | 'x' | 'y', number> &
   Record<'href' | 'transform', string>;
 
@@ -74,8 +81,8 @@ export const getTransformedCoordinates = (bbox: BBox, transform: null | string):
  * This encapsulates all the common steps like setting attributes, color, rotation, and history.
  */
 export const createAndFinalizeImage = async (
-  { angle, height, href, transform, width, x, y }: CreateImageParams,
-  { isToSelect, parentCmd, svgElement }: { isToSelect: boolean; parentCmd: IBatchCommand; svgElement: SVGGElement },
+  { angle = 0, height, href, transform, width, x, y }: CreateImageParams,
+  { isToSelect, parentCmd, svgElement }: ConvertSvgToImageParams,
 ): Promise<ConvertToImageResult> => {
   const imageElement = svgCanvas.addSvgElementFromJson({
     attr: {
@@ -114,11 +121,7 @@ export async function rasterizeGenericSvgElement({
   isToSelect,
   parentCmd,
   svgElement,
-}: {
-  isToSelect: boolean;
-  parentCmd: IBatchCommand;
-  svgElement: SVGGElement;
-}): Promise<ConvertToImageResult> {
+}: ConvertSvgToImageParams): Promise<ConvertToImageResult> {
   try {
     const angle = getRotationAngle(svgElement);
     const cloned = svgElement.cloneNode(true) as SVGGraphicsElement;
