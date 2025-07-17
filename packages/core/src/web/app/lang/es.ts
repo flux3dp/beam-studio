@@ -1341,6 +1341,11 @@ const lang: ILang = {
       title: 'Varita mágica',
       tolerance: 'Tolerancia',
     },
+    rounded_corner: {
+      description: 'Ajusta la redondez de las esquinas del objeto.',
+      radius: 'Radio',
+      title: 'Esquina redondeada',
+    },
     title: 'Editar Imagen',
   },
   initialize: {

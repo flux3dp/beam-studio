@@ -1341,6 +1341,11 @@ const lang: ILang = {
       title: 'Bacchetta Magica',
       tolerance: 'Tolleranza',
     },
+    rounded_corner: {
+      description: 'Regola l’arrotondamento degli angoli dell’oggetto.',
+      radius: 'Raggio',
+      title: 'Angolo arrotondato',
+    },
     title: 'Modifica Immagine',
   },
   initialize: {

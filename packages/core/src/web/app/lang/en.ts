@@ -1341,6 +1341,11 @@ const lang: ILang = {
       title: 'Magic Wand',
       tolerance: 'Tolerance',
     },
+    rounded_corner: {
+      description: "Adjust the roundness of the object's corners.",
+      radius: 'Radius',
+      title: 'Rounded Corner',
+    },
     title: 'Edit Image',
   },
   initialize: {

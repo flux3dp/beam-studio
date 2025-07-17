@@ -1341,6 +1341,11 @@ const lang: ILang = {
       title: '魔術棒',
       tolerance: '容差',
     },
+    rounded_corner: {
+      description: '調整物件的邊角圓滑程度。',
+      radius: '半徑',
+      title: '圓角',
+    },
     title: '編輯圖片',
   },
   initialize: {

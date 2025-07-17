@@ -1341,6 +1341,11 @@ const lang: ILang = {
       title: 'Tryllestav',
       tolerance: 'Tolerance',
     },
+    rounded_corner: {
+      description: 'Juster objektets hjørners rundhed.',
+      radius: 'Radius',
+      title: 'Afrundet hjørne',
+    },
     title: 'Rediger billede',
   },
   initialize: {

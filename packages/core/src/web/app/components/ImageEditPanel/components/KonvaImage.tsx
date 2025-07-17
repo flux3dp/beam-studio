@@ -6,23 +6,24 @@ import { Image } from 'react-konva';
 import useImage from 'use-image';
 
 interface Props {
+  cornerRadius?: number;
   filters?: Filter[];
   src: string;
 }
 
 export type KonvaImageRef = Konva.Image & { useImageStatus: 'failed' | 'loaded' | 'loading' };
 
-const KonvaImage = forwardRef<KonvaImageRef, Props>(({ filters, src }, ref) => {
+const KonvaImage = forwardRef<KonvaImageRef, Props>(({ cornerRadius = 0, filters, src }, ref) => {
   const [image, useImageStatus] = useImage(src, 'anonymous');
   const imageRef = useRef<Konva.Image>(null);
 
   useImperativeHandle(
     ref,
     () =>
-      Object.assign(imageRef.current, {
-        _getCachedSceneCanvas: imageRef.current._getCachedSceneCanvas,
+      Object.assign(imageRef.current!, {
+        _getCachedSceneCanvas: imageRef.current!._getCachedSceneCanvas,
         // these methods are under 3 levels of prototype chain, so expose them explicitly
-        isCached: imageRef.current.isCached,
+        isCached: imageRef.current!.isCached,
         useImageStatus,
       }),
     [useImageStatus],
@@ -30,11 +31,12 @@ const KonvaImage = forwardRef<KonvaImageRef, Props>(({ filters, src }, ref) => {
 
   useEffect(() => {
     if (image) {
-      imageRef.current.cache({ pixelRatio: 1 });
+      imageRef.current!.cache({ pixelRatio: 1 });
     }
-  }, [image]);
+    // force redraw when image or cornerRadius changes
+  }, [image, cornerRadius]);
 
-  return <Image filters={filters} image={image} ref={imageRef} />;
+  return <Image cornerRadius={cornerRadius} filters={filters} image={image} ref={imageRef} />;
 });
 
 export default KonvaImage;

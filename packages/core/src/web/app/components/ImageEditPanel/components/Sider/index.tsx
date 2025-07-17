@@ -10,20 +10,19 @@ import Header from '@core/app/widgets/FullWindowPanel/Header';
 import FullWindowPanelSider from '@core/app/widgets/FullWindowPanel/Sider';
 import useI18n from '@core/helpers/useI18n';
 
+import CornerRadius from './CornerRadius';
 import Eraser from './Eraser';
 import styles from './index.module.scss';
 import MagicWand from './MagicWand';
 
+export type Mode = 'cornerRadius' | 'eraser' | 'magicWand';
+
 interface Props {
-  brushSize: number;
   handleComplete: () => void;
-  mode: 'eraser' | 'magicWand';
+  mode: Mode;
   onClose: () => void;
-  setBrushSize: (size: number) => void;
-  setMode: (mode: 'eraser' | 'magicWand') => void;
+  setMode: (mode: Mode) => void;
   setOperation: (operation: 'drag' | 'eraser' | 'magicWand' | null) => void;
-  setTolerance: (tolerance: number) => void;
-  tolerance: number;
 }
 
 interface Tab extends Omit<TabPaneProps, 'tab'> {
@@ -31,35 +30,27 @@ interface Tab extends Omit<TabPaneProps, 'tab'> {
   label: React.ReactNode;
 }
 
-function Sider({
-  brushSize,
-  handleComplete,
-  mode,
-  onClose,
-  setBrushSize,
-  setMode,
-  setOperation,
-  setTolerance,
-  tolerance,
-}: Props): React.JSX.Element {
-  const {
-    beambox: { photo_edit_panel: langPhoto },
-    buttons: langButtons,
-    image_edit_panel: lang,
-  } = useI18n();
+function Sider({ handleComplete, mode, onClose, setMode, setOperation }: Props): React.JSX.Element {
+  const { buttons: langButtons, global: langGlobal, image_edit_panel: lang } = useI18n();
 
   const tabItems: Tab[] = [
     {
-      children: <Eraser brushSize={brushSize} setBrushSize={setBrushSize} />,
-      icon: <ImageEditPanelIcons.Eraser />,
+      children: <Eraser />,
+      icon: <ImageEditPanelIcons.Eraser className={styles.icon} />,
       key: 'eraser',
-      label: lang.eraser.title,
+      label: '',
     },
     {
-      children: <MagicWand setTolerance={setTolerance} tolerance={tolerance} />,
-      icon: <ImageEditPanelIcons.MagicWand />,
+      children: <MagicWand />,
+      icon: <ImageEditPanelIcons.MagicWand className={styles.icon} />,
       key: 'magicWand',
-      label: lang.magic_wand.title,
+      label: '',
+    },
+    {
+      children: <CornerRadius />,
+      icon: <ImageEditPanelIcons.CornerRadius className={styles.icon} />,
+      key: 'cornerRadius',
+      label: '',
     },
   ];
 
@@ -82,7 +73,7 @@ function Sider({
         </div>
         <Footer>
           <Button key="ok" onClick={handleComplete} type="primary">
-            {langPhoto.okay}
+            {langGlobal.ok}
           </Button>
         </Footer>
       </Flex>

@@ -1341,6 +1341,11 @@ const lang: ILang = {
       title: '마법봉',
       tolerance: '허용 오차',
     },
+    rounded_corner: {
+      description: '객체 모서리의 둥근 정도를 조절합니다.',
+      radius: '반지름',
+      title: '둥근 모서리',
+    },
     title: '이미지 편집',
   },
   initialize: {

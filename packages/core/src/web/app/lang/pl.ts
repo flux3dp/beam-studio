@@ -1341,6 +1341,11 @@ const lang: ILang = {
       title: 'Magiczna Różdżka',
       tolerance: 'Tolerancja',
     },
+    rounded_corner: {
+      description: 'Dostosuj zaokrąglenie rogów obiektu.',
+      radius: 'Promień',
+      title: 'Zaokrąglony róg',
+    },
     title: 'Edytuj Obraz',
   },
   initialize: {

@@ -1327,6 +1327,11 @@ export interface ILang {
       title: string;
       tolerance: string;
     };
+    rounded_corner: {
+      description: string;
+      radius: string;
+      title: string;
+    };
     title: string;
   };
   initialize: {

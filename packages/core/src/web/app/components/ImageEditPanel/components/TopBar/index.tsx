@@ -1,33 +1,38 @@
-import React, { memo, useCallback } from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 
 import { ArrowLeftOutlined, ArrowRightOutlined, MinusOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import { Button, Flex } from 'antd';
 import classNames from 'classnames';
+import { useShallow } from 'zustand/react/shallow';
 
 import useI18n from '@core/helpers/useI18n';
 
-import type { HistoryState } from '../../hooks/useHistory';
+import { useImageEditPanelStore } from '../../store';
 
 import styles from './index.module.scss';
 
 interface Props {
-  handleHistoryChange: (type: 'redo' | 'undo') => () => void;
   handleReset: () => void;
   handleZoomByScale: (scale: number) => void;
-  history: HistoryState;
   zoomScale: number;
 }
 
-function TopBar({
-  handleHistoryChange,
-  handleReset,
-  handleZoomByScale,
-  history: { index, items },
-  zoomScale,
-}: Props): React.JSX.Element {
+function TopBar({ handleReset, handleZoomByScale, zoomScale }: Props): React.JSX.Element {
   const {
     global: { editing: lang },
   } = useI18n();
+  const { history, redo, undo } = useImageEditPanelStore(
+    useShallow((s) => ({ history: s.history, redo: s.redo, undo: s.undo })),
+  );
+  const { index, operations } = history;
+  const { canRedo, canUndo } = useMemo(
+    () => ({
+      canRedo: index < operations.length,
+      canUndo: index > 0,
+    }),
+    [index, operations.length],
+  );
+
   // to realtime update zoom scale display
   const renderZoomButton = useCallback(
     () => (
@@ -58,19 +63,13 @@ function TopBar({
       <div>
         <Button
           className={styles['mr-8px']}
-          disabled={index === 0}
+          disabled={!canUndo}
           icon={<ArrowLeftOutlined />}
-          onClick={handleHistoryChange('undo')}
+          onClick={undo}
           shape="round"
           title={lang.undo}
         />
-        <Button
-          disabled={index === items.length - 1}
-          icon={<ArrowRightOutlined />}
-          onClick={handleHistoryChange('redo')}
-          shape="round"
-          title={lang.redo}
-        />
+        <Button disabled={!canRedo} icon={<ArrowRightOutlined />} onClick={redo} shape="round" title={lang.redo} />
       </div>
       {renderZoomButton()}
     </Flex>

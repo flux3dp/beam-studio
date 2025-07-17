@@ -1341,6 +1341,11 @@ const lang: ILang = {
       title: 'Kouzelná hůlka',
       tolerance: 'Tolerance',
     },
+    rounded_corner: {
+      description: 'Upravte zaoblení rohů objektu.',
+      radius: 'Poloměr',
+      title: 'Zaoblený roh',
+    },
     title: 'Upravit obrázek',
   },
   initialize: {

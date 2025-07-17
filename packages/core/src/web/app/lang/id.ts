@@ -1341,6 +1341,11 @@ const lang: ILang = {
       title: 'Tongkat Ajaib',
       tolerance: 'Toleransi',
     },
+    rounded_corner: {
+      description: 'Sesuaikan kebulatan sudut objek.',
+      radius: 'Radius',
+      title: 'Sudut Membulat',
+    },
     title: 'Edit Gambar',
   },
   initialize: {

@@ -1341,6 +1341,11 @@ const lang: ILang = {
       title: 'ไม้กายสิทธิ์',
       tolerance: 'ความทนทาน',
     },
+    rounded_corner: {
+      description: 'ปรับความโค้งมนของมุมวัตถุ',
+      radius: 'รัศมี',
+      title: 'มุมโค้งมน',
+    },
     title: 'แก้ไขภาพ',
   },
   initialize: {

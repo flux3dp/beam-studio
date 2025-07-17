@@ -1341,6 +1341,11 @@ const lang: ILang = {
       title: 'Đũa Phép',
       tolerance: 'Độ Chịu Lệch',
     },
+    rounded_corner: {
+      description: 'Điều chỉnh độ bo tròn của các góc đối tượng.',
+      radius: 'Bán kính',
+      title: 'Góc bo tròn',
+    },
     title: 'Chỉnh sửa Hình ảnh',
   },
   initialize: {

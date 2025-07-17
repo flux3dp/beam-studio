@@ -1341,6 +1341,11 @@ const lang: ILang = {
       title: 'Baguette magique',
       tolerance: 'Tolérance',
     },
+    rounded_corner: {
+      description: 'Ajustez l’arrondi des coins de l’objet.',
+      radius: 'Rayon',
+      title: 'Coin arrondi',
+    },
     title: "Modifier l'image",
   },
   initialize: {
