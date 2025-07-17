@@ -4734,11 +4734,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     } else {
       // create and insert the group element
       g = addSvgElementFromJson({
-        attr: {
-          'data-ratiofixed': true,
-          'data-tempgroup': true,
-          id: getNextId(),
-        },
+        attr: { 'data-ratiofixed': true, 'data-tempgroup': true, id: getNextId() },
         element: 'g',
       });
 

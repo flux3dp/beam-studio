@@ -162,11 +162,10 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
   ): React.JSX.Element =>
     renderButtons(
       'convert_to_image',
-      'Convert to Image',
-      // lang.convert_to_path,
+      lang.convert_to_image,
       () => convertSvgToImage({ svgElement: elem as SVGGElement }),
-      <ActionPanelIcons.ConvertToPath />,
-      <ActionPanelIcons.ConvertToPathMobile />,
+      <ActionPanelIcons.ConvertToImage />,
+      <ActionPanelIcons.ConvertToImage />,
       { isFullLine: true, mobileLabel: lang.outline, ...opts },
     );
 
