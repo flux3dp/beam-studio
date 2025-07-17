@@ -11,7 +11,7 @@ export enum TabEvents {
   TabBlurred = 'tab-blurred',
   TabFocused = 'tab-focused',
   TabUpdated = 'tab-updated',
-  updateRecentFiles = 'update-recent-files',
+  UpdateRecentFiles = 'update-recent-files',
   UpdateUser = 'update-user',
 }
 

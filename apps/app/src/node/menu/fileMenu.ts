@@ -183,7 +183,7 @@ export const updateRecentMenu = (updateWindowMenu = true): void => {
     const store = new ElectronStore();
     const recentFiles = (store.get('recent_files') || []) as string[];
 
-    getTabManager()?.sendToAllViews(TabEvents.updateRecentFiles, recentFiles);
+    getTabManager()?.sendToAllViews(TabEvents.UpdateRecentFiles, recentFiles);
 
     // @ts-expect-error clear is thought to be not existing but actually exist
     recentMenu.clear();

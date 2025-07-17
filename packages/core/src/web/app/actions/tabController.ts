@@ -36,7 +36,7 @@ class TabController extends EventEmitter {
     communicator.on(TabEvents.ImportFileInTab, (_: unknown, file: FileData) => {
       importFileInCurrentTab(file);
     });
-    communicator.on(TabEvents.updateRecentFiles, (_: unknown, recentFiles: string[]) => {
+    communicator.on(TabEvents.UpdateRecentFiles, (_: unknown, recentFiles: string[]) => {
       storage.set('recent_files', recentFiles);
     });
     this.currentId = communicator.sendSync(TabEvents.GetTabId);

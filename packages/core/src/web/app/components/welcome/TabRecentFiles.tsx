@@ -55,7 +55,7 @@ const TabRecentFiles = ({ startNewProject }: Props) => {
   useEffect(() => {
     getRecentFiles(storage.get('recent_files') || []);
 
-    communicator.on(TabEvents.updateRecentFiles, (_: any, filePaths: string[]) => getRecentFiles(filePaths));
+    communicator.on(TabEvents.UpdateRecentFiles, (_: any, filePaths: string[]) => getRecentFiles(filePaths));
   }, []);
 
   return (
