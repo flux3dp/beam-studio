@@ -134,6 +134,10 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
             setStep(Steps.PUT_PAPER);
           }}
           onPrev={() => setStep(Steps.PRE_CHESSBOARD)}
+          steps={[
+            { description: 'tPut at left.', key: 'left' },
+            { description: 'tPut at right.', key: 'right' },
+          ]}
           updateParam={updateParam}
         />
       );
