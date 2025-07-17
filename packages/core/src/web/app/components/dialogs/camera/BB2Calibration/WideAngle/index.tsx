@@ -176,32 +176,16 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
           onNext={next}
           onPrev={prev}
           steps={[
-            {
-              description: tCali.charuco_position_top_left,
-              imageUrl: 'core-img/calibration/bb2-charuco-topLeft.jpg',
-              key: 'topLeft',
-            },
-            {
-              description: tCali.charuco_position_top_right,
-              imageUrl: 'core-img/calibration/bb2-charuco-topRight.jpg',
-              key: 'topRight',
-            },
-            {
-              description: tCali.charuco_position_bottom_left,
-              imageUrl: 'core-img/calibration/bb2-charuco-bottomLeft.jpg',
-              key: 'bottomLeft',
-            },
-            {
-              description: tCali.charuco_position_bottom_right,
-              imageUrl: 'core-img/calibration/bb2-charuco-bottomRight.jpg',
-              key: 'bottomRight',
-            },
-            {
-              description: tCali.charuco_position_center,
-              imageUrl: 'core-img/calibration/bb2-charuco-center.jpg',
-              key: 'center',
-            },
-          ]}
+            { description: tCali.charuco_position_top_left, key: 'topLeft' },
+            { description: tCali.charuco_position_top_right, key: 'topRight' },
+            { description: tCali.charuco_position_bottom_left, key: 'bottomLeft' },
+            { description: tCali.charuco_position_bottom_right, key: 'bottomRight' },
+            { description: tCali.charuco_position_center, key: 'center' },
+          ].map((step) => ({
+            description: step.description,
+            imageUrl: `core-img/calibration/bb2-charuco-${step.key}.jpg`,
+            key: step.key,
+          }))}
           title={title}
           updateParam={updateParam}
         />
