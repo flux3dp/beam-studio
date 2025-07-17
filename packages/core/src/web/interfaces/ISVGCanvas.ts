@@ -116,7 +116,7 @@ export default interface ISVGCanvas {
   getTitle: () => string;
   getVisibleElementsAndBBoxes: (elems?: SVGElement[]) => Array<{ bbox: IRect; elem: Element }>;
   getZoom: () => number; // Old getter for current_zoom
-  groupSelectedElements: (isSubCmd?: boolean) => BaseHistoryCommand | void;
+  groupSelectedElements: (isSubCmd?: boolean) => void | { command: BaseHistoryCommand; group: SVGGElement };
   groupSvgElem: (elem: SVGElement) => void;
   handleGenerateSensorArea: (evt: MouseEvent) => void;
   identifyLayers: () => void;
