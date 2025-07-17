@@ -26,7 +26,10 @@
 
 .grids {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(myCloudVariables.$grid-width, 1fr));
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(myCloudVariables.$grid-width, 1fr)
+  );
   overflow-y: scroll;
   gap: 20px 10px;
 }
