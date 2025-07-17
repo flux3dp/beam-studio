@@ -4389,7 +4389,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     return getPoints(bbox);
   };
 
-  this.groupSelectedElements = (isSubCmd = false): BaseHistoryCommand | void => {
+  this.groupSelectedElements = (isSubCmd = false): void | { command: BaseHistoryCommand; group: SVGGElement } => {
     if (tempGroup) {
       const children = this.ungroupTempGroup();
 
@@ -4454,7 +4454,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     // update selection
     selectOnly([group], true);
 
-    return batchCmd;
+    return { command: batchCmd, group };
   };
 
   // Function: pushGroupProperties
