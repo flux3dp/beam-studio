@@ -333,7 +333,7 @@ const Welcome = (): ReactNode => {
         </div>
         <div className={classNames(styles.main, { [styles['no-padding']]: isFullTab })}>
           {!isFullTab && !isMobile && <Banners banners={banners} />}
-          <div>{contents[activeKey]}</div>
+          <div className={styles[activeKey]}>{contents[activeKey]}</div>
           {!isFullTab && isMobile && <Banners banners={banners} />}
         </div>
       </div>
