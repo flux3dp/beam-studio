@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { Col, Form, InputNumber, Row, Slider } from 'antd';
+import { Flex, Form, InputNumber, Slider } from 'antd';
 
 import useI18n from '@core/helpers/useI18n';
 
@@ -25,22 +25,25 @@ export default function Eraser(): React.JSX.Element {
       </div>
       <Form layout="vertical">
         <Form.Item label={`${lang.eraser.brush_size}:`}>
-          <Row>
-            <Col flex="auto">
-              <Slider max={MAX_BRUSH_SIZE} min={1} onChange={setBrushSize} step={1} value={brushSize} />
-            </Col>
-            <Col flex="100px">
-              <InputNumber
-                max={MAX_BRUSH_SIZE}
-                min={1}
-                onChange={(val) => {
-                  if (val !== null) setBrushSize(val);
-                }}
-                step={1}
-                value={brushSize}
-              />
-            </Col>
-          </Row>
+          <Flex align="center" gap={8} justify="between">
+            <Slider
+              className={styles.slider}
+              max={MAX_BRUSH_SIZE}
+              min={1}
+              onChange={setBrushSize}
+              step={1}
+              value={brushSize}
+            />
+            <InputNumber
+              max={MAX_BRUSH_SIZE}
+              min={1}
+              onChange={(val) => {
+                if (val !== null) setBrushSize(val);
+              }}
+              step={1}
+              value={brushSize}
+            />
+          </Flex>
         </Form.Item>
       </Form>
     </div>

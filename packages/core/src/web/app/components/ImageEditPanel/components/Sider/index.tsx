@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 
 import type { TabPaneProps } from 'antd';
-import { Button, Flex, Tabs } from 'antd';
+import { Button, ConfigProvider, Flex, Tabs } from 'antd';
 
 import ImageEditPanelIcons from '@core/app/icons/image-edit-panel/ImageEditPanelIcons';
 import BackButton from '@core/app/widgets/FullWindowPanel/BackButton';
@@ -55,29 +55,31 @@ function Sider({ handleComplete, mode, onClose, setMode, setOperation }: Props):
   ];
 
   return (
-    <FullWindowPanelSider className={styles.sider}>
-      <Flex className={styles['h-100']} justify="space-between" vertical>
-        <div>
-          <BackButton onClose={onClose}>{langButtons.back_to_beam_studio}</BackButton>
-          <Header icon={<ImageEditPanelIcons.EditImage />} title={lang.title} />
-          <Tabs
-            activeKey={mode}
-            centered
-            items={tabItems}
-            onChange={(mode) => {
-              setOperation(null);
-              setMode(mode as 'eraser' | 'magicWand');
-            }}
-            size="large"
-          />
-        </div>
-        <Footer>
-          <Button key="ok" onClick={handleComplete} type="primary">
-            {langGlobal.ok}
-          </Button>
-        </Footer>
-      </Flex>
-    </FullWindowPanelSider>
+    <ConfigProvider theme={{ components: { InputNumber: { controlWidth: 80 } } }}>
+      <FullWindowPanelSider className={styles.sider}>
+        <Flex className={styles['h-100']} justify="space-between" vertical>
+          <div>
+            <BackButton onClose={onClose}>{langButtons.back_to_beam_studio}</BackButton>
+            <Header icon={<ImageEditPanelIcons.EditImage />} title={lang.title} />
+            <Tabs
+              activeKey={mode}
+              centered
+              items={tabItems}
+              onChange={(mode) => {
+                setOperation(null);
+                setMode(mode as 'eraser' | 'magicWand');
+              }}
+              size="large"
+            />
+          </div>
+          <Footer>
+            <Button key="ok" onClick={handleComplete} type="primary">
+              {langGlobal.ok}
+            </Button>
+          </Footer>
+        </Flex>
+      </FullWindowPanelSider>
+    </ConfigProvider>
   );
 }
 
