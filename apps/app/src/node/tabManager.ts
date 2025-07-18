@@ -25,6 +25,7 @@ class TabManager {
   private focusOnReadyId = -1;
   private focusedId = -1;
   private isDebug = false;
+  public welcomeTabId = -1;
 
   constructor(mainWindow: BaseWindow, { isDebug = false } = {}) {
     this.mainWindow = mainWindow;
@@ -214,6 +215,10 @@ class TabManager {
     });
     this.updateTabBounds([tab]);
     this.tabsMap[tabView.webContents.id] = tab;
+
+    if (isWelcomeTab) {
+      this.welcomeTabId = tabView.webContents.id;
+    }
 
     return tab;
   };

@@ -54,7 +54,7 @@ const GridFile = ({ file }: Props): React.JSX.Element => {
   const [actionDropdownOpen, setActionDropdownOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const { editingId, fileOperation, selectedId, setEditingId, setSelectedId } = useContext(MyCloudContext);
-  const inputRef = useRef<InputRef | null>(null);
+  const inputRef = useRef<InputRef>(null);
   const [error, setError] = useState(false);
   const isEditing = useMemo(() => editingId === file.uuid, [editingId, file]);
   const isSelected = useMemo(() => selectedId === file.uuid, [selectedId, file]);

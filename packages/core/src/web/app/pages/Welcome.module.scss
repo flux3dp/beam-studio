@@ -8,11 +8,14 @@ $header-height: 60px;
   width: 100vw;
 
   .top-bar {
-    -webkit-app-region: drag;
     display: flex;
     background-color: #333333;
     height: variables.$topBarHeight;
     padding-left: 80px;
+
+    &.draggable {
+      -webkit-app-region: drag;
+    }
 
     ~ .content {
       height: calc(100% - $header-height - variables.$topBarHeight);

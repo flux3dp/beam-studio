@@ -48,7 +48,7 @@ export type StorageKey =
 export interface IStorage {
   clearAll(): IStorage;
   clearAllExceptIP(): IStorage;
-  get(name: StorageKey): any;
+  get(name: StorageKey, useCache?: boolean): any;
   getStore(): any;
   isExisting(key: StorageKey): boolean;
   removeAt(name: StorageKey): IStorage;

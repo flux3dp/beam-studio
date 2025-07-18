@@ -31,7 +31,7 @@ import { checkTabCount, setFileInAnotherTab } from '@core/helpers/fileImportHelp
 import { hashMap } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
-import { useIsMobile } from '@core/helpers/system-helper';
+import { isMac, useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 import dialog from '@core/implementations/dialog';
@@ -77,6 +77,8 @@ const Welcome = (): ReactNode => {
   const [banners, setBanners] = useState<IBanner[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const setUser = useCallback((user: IUser | null) => setCurrentUser(user ? { ...user } : user), []);
+  const [isTabFocused, setIsTabFocused] = useState(true);
+  const draggable = useMemo(() => !isWeb() && isMac(), []);
   const socialMedia = useMemo(() => getSocialMedia(), []);
 
   const fetchBanners = useCallback(async () => {
@@ -107,6 +109,21 @@ const Welcome = (): ReactNode => {
       setIsLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    if (draggable) {
+      const onTabFocused = () => setIsTabFocused(true);
+      const onTabBlurred = () => setIsTabFocused(false);
+
+      tabController.onFocused(onTabFocused);
+      tabController.onBlurred(onTabBlurred);
+
+      return () => {
+        tabController.offFocused(onTabFocused);
+        tabController.offBlurred(onTabBlurred);
+      };
+    }
+  }, [draggable]);
 
   useEffect(() => {
     fluxIDEvents.on('update-user', setUser);
@@ -221,7 +238,7 @@ const Welcome = (): ReactNode => {
   ) : (
     <div className={styles.container}>
       {!isWeb() && (
-        <div className={styles['top-bar']}>
+        <div className={classNames(styles['top-bar'], { [styles.draggable]: draggable && isTabFocused })}>
           <Tabs inverse />
         </div>
       )}

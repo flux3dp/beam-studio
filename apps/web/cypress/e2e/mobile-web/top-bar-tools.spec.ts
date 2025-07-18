@@ -18,7 +18,7 @@ describe('check the existence of the top bar tools on mobile', () => {
     cy.get('.rc-menu__item').contains('Help').should('exist');
   });
 
-  it('welcom page button', () => {
+  it('welcome page button', () => {
     cy.get(`[class*="${topbarModulesPrefix}WelcomePageButton-module__button"]`).should('exist').click();
     cy.location('hash').should('eq', '#/studio/welcome');
   });

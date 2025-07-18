@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { FolderOpenOutlined } from '@ant-design/icons';
 
+import tabController from '@core/app/actions/tabController';
 import GridFile from '@core/app/components/welcome/GridFileLocal';
 import GridNew from '@core/app/components/welcome/GridNew';
 import { TabEvents } from '@core/app/constants/tabConstants';
@@ -23,8 +24,14 @@ const TabRecentFiles = ({ startNewProject }: Props) => {
   const { welcome_page: t } = useI18n();
   const [recentFiles, setRecentFiles] = useState<IFile[]>([]);
   const [selectedId, setSelectedId] = useState<null | string>(null);
+  const needUpdate = useRef(true);
 
-  const getRecentFiles = async (filePaths: string[]) => {
+  const getRecentFiles = async () => {
+    if (!needUpdate.current) return;
+
+    needUpdate.current = false;
+
+    const filePaths = storage.get('recent_files', false) || [];
     const fileInfos: IFile[] = [];
 
     for (const filePath of filePaths) {
@@ -53,9 +60,18 @@ const TabRecentFiles = ({ startNewProject }: Props) => {
   };
 
   useEffect(() => {
-    getRecentFiles(storage.get('recent_files') || []);
+    const onRecentFilesUpdate = () => {
+      needUpdate.current = true;
+    };
 
-    communicator.on(TabEvents.UpdateRecentFiles, (_: any, filePaths: string[]) => getRecentFiles(filePaths));
+    getRecentFiles();
+    communicator.on(TabEvents.UpdateRecentFiles, onRecentFilesUpdate);
+    tabController.onFocused(getRecentFiles);
+
+    return () => {
+      communicator.off(TabEvents.UpdateRecentFiles, onRecentFilesUpdate);
+      tabController.offFocused(getRecentFiles);
+    };
   }, []);
 
   return (

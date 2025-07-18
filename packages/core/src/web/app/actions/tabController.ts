@@ -8,7 +8,6 @@ import type { FileData } from '@core/helpers/fileImportHelper';
 import { importFileInCurrentTab } from '@core/helpers/fileImportHelper';
 import i18n from '@core/helpers/i18n';
 import communicator from '@core/implementations/communicator';
-import storage from '@core/implementations/storage';
 import type { Tab } from '@core/interfaces/Tab';
 
 class TabController extends EventEmitter {
@@ -35,9 +34,6 @@ class TabController extends EventEmitter {
     });
     communicator.on(TabEvents.ImportFileInTab, (_: unknown, file: FileData) => {
       importFileInCurrentTab(file);
-    });
-    communicator.on(TabEvents.UpdateRecentFiles, (_: unknown, recentFiles: string[]) => {
-      storage.set('recent_files', recentFiles);
     });
     this.currentId = communicator.sendSync(TabEvents.GetTabId);
 
