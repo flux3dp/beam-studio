@@ -95,12 +95,6 @@ describe('test TabController', () => {
     expect(mockImportFileInCurrentTab).toHaveBeenCalledWith({ filePath: 'mock-path', type: 'recent' });
   });
 
-  test('handle update recent files', () => {
-    mockCommunicator[TabEvents.UpdateRecentFiles]({}, ['file1', 'file2']);
-    expect(mockSet).toHaveBeenCalledTimes(1);
-    expect(mockSet).toHaveBeenCalledWith('recent_files', ['file1', 'file2']);
-  });
-
   test('getAllTabs', () => {
     tabController.getAllTabs();
     expect(mockSendSync).toHaveBeenCalledTimes(1);

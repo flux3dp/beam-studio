@@ -17,6 +17,10 @@ const mockAddNewTab = jest.fn();
 jest.mock('@core/app/actions/tabController', () => ({
   addNewTab: mockAddNewTab,
   getIsWelcomeTab: mockGetIsWelcomeTab,
+  offBlurred: jest.fn(),
+  offFocused: jest.fn(),
+  onBlurred: jest.fn(),
+  onFocused: jest.fn(),
 }));
 
 jest.mock('@core/helpers/api/flux-id', () => ({
@@ -45,6 +49,7 @@ jest.mock('@core/helpers/is-web', () => mockIsWeb);
 const mockUseIsMobile = jest.fn();
 
 jest.mock('@core/helpers/system-helper', () => ({
+  isMac: () => true,
   useIsMobile: mockUseIsMobile,
 }));
 

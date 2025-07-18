@@ -6,6 +6,14 @@ const mockFetch = jest.fn().mockResolvedValue({ blob: async () => 'mockBlob' });
 
 jest.spyOn(global, 'fetch').mockImplementation(mockFetch);
 
+const mockOnFocused = jest.fn();
+const mockOffFocused = jest.fn();
+
+jest.mock('@core/app/actions/tabController', () => ({
+  offFocused: mockOffFocused,
+  onFocused: mockOnFocused,
+}));
+
 jest.mock('@core/app/svgedit/currentFileManager', () => ({
   extractFileName: (filePath: string) => filePath,
 }));
@@ -19,6 +27,7 @@ jest.mock('@core/helpers/beam-file-helper', () => ({
 const mockCommunicator = {};
 
 jest.mock('@core/implementations/communicator', () => ({
+  off: jest.fn(),
   on: (event, handler) => {
     mockCommunicator[event] = handler;
   },
@@ -59,7 +68,13 @@ describe('test TabRecentFiles', () => {
     expect(container.querySelectorAll('mock-grid-file')).toHaveLength(2);
     expect(container).toMatchSnapshot();
 
-    mockCommunicator[TabEvents.UpdateRecentFiles]({}, ['file3.beam']);
+    mockGet.mockReturnValue(['file3.beam']);
+    mockOnFocused.mock.calls[0][0]();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(mockFetch).toHaveBeenCalledTimes(2);
+
+    mockCommunicator[TabEvents.UpdateRecentFiles]({});
+    mockOnFocused.mock.calls[0][0]();
     await new Promise((resolve) => setTimeout(resolve, 0));
     expect(mockFetch).toHaveBeenNthCalledWith(3, 'file3.beam');
     await new Promise((resolve) => setTimeout(resolve, 0));

@@ -194,9 +194,13 @@ describe('test fileImportHelper', () => {
     test('type is path', async () => {
       mockReadFile.mockReturnValue('file-content');
       await importFileInCurrentTab(mockFiles.path);
-      expect(mockEditor.handleFile).toHaveBeenCalledWith(
-        new File(['file-content'], 'File Name', { type: 'image/svg' }),
-      );
+      expect(mockEditor.handleFile).toHaveBeenCalledTimes(1);
+
+      const file = mockEditor.handleFile.mock.calls[0][0];
+
+      expect(file.path).toBe(mockFiles.path.data.path);
+      expect(file.name).toBe(mockFiles.path.data.name);
+      expect(file.type).toBe(mockFiles.path.data.type);
     });
 
     test('type is cloud', async () => {
