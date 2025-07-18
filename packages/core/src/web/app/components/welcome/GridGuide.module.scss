@@ -1,0 +1,27 @@
+.grid {
+  border-radius: 6px;
+  border: 1px solid #cecece;
+  color: #333333;
+  padding: 16px 16px 20px;
+  font-weight: 500;
+  font-size: 12px;
+  text-align: center;
+  transition: all 0.15s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+
+  > img {
+    margin: auto;
+  }
+
+  &:hover {
+    border-color: #1890ff;
+    color: #1890ff;
+  }
+
+  &:active {
+    border-color: #005bd0;
+    color: #005bd0;
+  }
+}

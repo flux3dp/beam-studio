@@ -1,3 +1,4 @@
+/* eslint-disable reactRefresh/only-export-components */
 import type { Dispatch, SetStateAction } from 'react';
 import React, { createContext, useEffect, useState } from 'react';
 
@@ -42,16 +43,21 @@ export const MyCloudContext = createContext<MyCloudContextType>({
 
 interface MyCloudProviderProps {
   children: React.ReactNode;
+  fromWelcomePage?: boolean;
   onClose: () => void;
 }
 
-export function MyCloudProvider({ children, onClose }: MyCloudProviderProps): React.JSX.Element {
+export function MyCloudProvider({
+  children,
+  fromWelcomePage = false,
+  onClose,
+}: MyCloudProviderProps): React.JSX.Element {
   const [sortBy, setSortBy] = useState('recent');
   const [files, setFiles] = useState<IFile[] | undefined>(undefined);
-  const [editingId, setEditingId] = useState(null);
-  const [selectedId, setSelectedId] = useState(null);
+  const [editingId, setEditingId] = useState<null | string>(null);
+  const [selectedId, setSelectedId] = useState<null | string>(null);
 
-  const sortAndSetFiles = (newFiles: IFile[] = files) => {
+  const sortAndSetFiles = (newFiles: IFile[] | undefined = files) => {
     if (!newFiles) {
       return;
     }
@@ -107,7 +113,7 @@ export function MyCloudProvider({ children, onClose }: MyCloudProviderProps): Re
     setFiles([...newFiles]);
   };
 
-  const getFileList = async (): Promise<IFile[]> => {
+  const getFileList = async (): Promise<IFile[] | undefined> => {
     const { data, shouldCloseModal } = await cloudFile.list();
 
     if (shouldCloseModal) {
@@ -116,7 +122,7 @@ export function MyCloudProvider({ children, onClose }: MyCloudProviderProps): Re
       return [];
     }
 
-    return data;
+    return data ?? undefined;
   };
 
   const refresh = async () => {
@@ -136,7 +142,7 @@ export function MyCloudProvider({ children, onClose }: MyCloudProviderProps): Re
   }, [sortBy]);
 
   const openFile = async (file: IFile) => {
-    const { shouldCloseModal } = await cloudFile.openFile(file);
+    const { shouldCloseModal } = await (fromWelcomePage ? cloudFile.openFileInAnotherTab : cloudFile.openFile)(file);
 
     if (shouldCloseModal) {
       onClose();

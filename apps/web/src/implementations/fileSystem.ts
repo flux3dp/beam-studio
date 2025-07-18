@@ -35,6 +35,9 @@ export default {
   rename(oldPath: string, newPath: string): Promise<void> {
     return Promise.resolve();
   },
+  statSync(filePath: string) {
+    return { mtime: '', size: 0 };
+  },
   writeFile(filePath: string, data: Buffer | string): void {},
   writeStream(path: string, flags: string, data?: Buffer[]): void {},
 } as IFileSystem;

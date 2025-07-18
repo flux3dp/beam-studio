@@ -400,6 +400,7 @@ const lang: ILang = {
         no_questionnaire_available: 'Tiada soal selidik yang tersedia buat masa ini.',
         unable_to_get_url: 'Gagal mendapatkan pautan ke soal selidik melalui internet. Sila sahkan sambungan internet anda.',
       },
+      reach_tab_count_limit: 'Had bilangan tab telah dicapai',
       recommend_downgrade_software: 'Kami mengesan versi perisian tegar yang lebih lama. Kami sedang menangani isu-isu keserasian, tetapi buat masa ini, kami mengesyorkan kembali ke <a target="_blank" href="https://beamstudio.s3.ap-northeast-1.amazonaws.com/mac/Beam+Studio+1.9.5.dmg">Beam Studio 1.9.5</a>.',
       recommend_upgrade_firmware: 'Kami mengesan versi firmware yang lebih lama. Kami sedang menangani isu-isu keserasian, tetapi buat masa ini, kami mengesyorkan mengemas kini ke firmware terkini.',
       save_unsave_changed: 'Adakah anda mahu menyimpan perubahan yang belum disimpan?',
@@ -1694,6 +1695,7 @@ const lang: ILang = {
     loading_file: 'Memuat...',
     no_file_subtitle: 'Pergi ke Menu > "Fail" > "Simpan ke Awan"',
     no_file_title: 'Simpan fail ke Awan Saya untuk bermula.',
+    not_login_title: 'Log masuk untuk menyimpan fail anda ke Awan.',
     save_file: {
       choose_action: 'Simpan Fail:',
       input_file_name: 'Masukkan nama fail:',
@@ -2356,6 +2358,26 @@ const lang: ILang = {
   web_cam: {
     no_device: 'Tidak dapat mengesan peranti kamera. Sila sambungkan semula kamera dan cuba lagi.',
     no_permission: 'Beam Studio tidak mempunyai kebenaran untuk mengakses kamera. Pastikan kebenaran diberikan kepada Beam Studio dalam tetapan pelayar atau sistem.',
+  },
+  welcome_page: {
+    follow_us: {
+      subtitle: 'Panduan, manual, dan sumber sokongan untuk semua perkara berkaitan FLUX.',
+      user_group: 'Kumpulan Pengguna',
+    },
+    help_center: {
+      guides: 'Panduan',
+      guides_subtitle: 'Lihat panduan komprehensif untuk semua produk FLUX.',
+      submit_request: 'Hantar Permintaan',
+      subtitle: 'Panduan, manual, dan sumber sokongan untuk semua perkara berkaitan FLUX.',
+      visit_help_center: 'Lawati Pusat Bantuan',
+    },
+    member_center: 'Pusat Ahli',
+    member_center_url: 'https://member.flux3dp.com/en-US/machine-register',
+    new_project: 'Projek Baharu',
+    not_login_placeholder: 'Dapatkan kredit AI percuma daripada kami apabila anda mendaftar akaun FLUX!',
+    recent_files: 'Fail Terkini',
+    shop: 'Kedai',
+    shop_products: 'Beli produk FLUX',
   },
   z_speed_limit_test: {
     alert_before: 'Sebelum memulakan ukiran lengkung, sistem akan melakukan ujian beban untuk mengelakkan kehilangan langkah akibat berat berlebihan.',

@@ -1,0 +1,8 @@
+@use './_mixins.scss' as mixins;
+
+.button {
+  display: flex;
+  align-items: center;
+  font-size: 22px;
+  @include mixins.button();
+}

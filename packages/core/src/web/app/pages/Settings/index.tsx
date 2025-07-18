@@ -24,6 +24,7 @@ import TextToPath from '@core/app/components/settings/TextToPath';
 import Update from '@core/app/components/settings/Update';
 import autoSaveHelper from '@core/helpers/auto-save-helper';
 import { checkBM2 } from '@core/helpers/checkFeature';
+import { getHomePage } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
 import storage from '@core/implementations/storage';
 import type { IConfig } from '@core/interfaces/IAutosave';
@@ -70,13 +71,13 @@ function Settings(): React.JSX.Element {
     updateToStorage();
 
     autoSaveHelper.setConfig(editingAutosaveConfig);
-    window.location.hash = '#/studio/beambox';
+    window.location.hash = getHomePage();
     window.location.reload();
   };
 
   const handleCancel = (): void => {
     i18n.setActiveLang(previousActiveLang);
-    window.location.hash = '#/studio/beambox';
+    window.location.hash = getHomePage();
     window.location.reload();
   };
 

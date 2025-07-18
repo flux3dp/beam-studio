@@ -12,6 +12,7 @@ export interface IFileSystem {
   readdirSync(path: string): string[];
   readFile(filePath: string, encoding?: BufferEncoding): string;
   rename(oldPath: string, newPath: string): Promise<void>;
+  statSync(filePath: string): { mtime: string; size: number };
   writeFile(filePath: string, data: Buffer | string): void;
   writeStream(path: string, flags: string, data?: Buffer[]): void;
 }

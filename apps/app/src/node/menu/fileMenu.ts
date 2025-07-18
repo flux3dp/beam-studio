@@ -2,6 +2,7 @@ import type { MenuItemConstructorOptions } from 'electron';
 import { ipcMain, Menu, MenuItem } from 'electron';
 import ElectronStore from 'electron-store';
 
+import { TabEvents } from '@core/app/constants/tabConstants';
 import i18n from '@core/helpers/i18n';
 import type { ILang } from '@core/interfaces/ILang';
 
@@ -181,6 +182,11 @@ export const updateRecentMenu = (updateWindowMenu = true): void => {
     const { platform } = process;
     const store = new ElectronStore();
     const recentFiles = (store.get('recent_files') || []) as string[];
+    const tabManager = getTabManager();
+
+    if (tabManager) {
+      tabManager.sendToView(tabManager.welcomeTabId, TabEvents.UpdateRecentFiles);
+    }
 
     // @ts-expect-error clear is thought to be not existing but actually exist
     recentMenu.clear();

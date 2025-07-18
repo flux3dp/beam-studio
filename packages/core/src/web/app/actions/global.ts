@@ -1,4 +1,5 @@
 import workareaManager from '@core/app/svgedit/workarea';
+import { getHomePage, hashMap } from '@core/helpers/hashHelper';
 import Logger from '@core/helpers/logger';
 import shortcuts from '@core/helpers/shortcuts';
 import storage from '@core/implementations/storage';
@@ -35,9 +36,9 @@ export default (callback: () => void): void => {
   const isInitializePage = Boolean(hash.match(/^#\/?initialize/));
   const onFinished = (isReady: boolean) => {
     if (isReady === true && (hash === '' || isInitializePage)) {
-      window.location.hash = '#/studio/beambox';
+      window.location.hash = getHomePage();
     } else if (isReady === false && !isInitializePage) {
-      window.location.hash = '#';
+      window.location.hash = hashMap.root;
     }
 
     callback();

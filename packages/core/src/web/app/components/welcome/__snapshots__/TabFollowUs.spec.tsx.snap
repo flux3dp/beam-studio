@@ -1,0 +1,150 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test TabFollowUs should render correctly 1`] = `
+<div>
+  <div>
+    <div
+      class="title"
+    >
+      <span
+        aria-label="like"
+        class="anticon anticon-like"
+        role="img"
+      >
+        <svg
+          aria-hidden="true"
+          data-icon="like"
+          fill="currentColor"
+          focusable="false"
+          height="1em"
+          viewBox="64 64 896 896"
+          width="1em"
+        >
+          <path
+            d="M885.9 533.7c16.8-22.2 26.1-49.4 26.1-77.7 0-44.9-25.1-87.4-65.5-111.1a67.67 67.67 0 00-34.3-9.3H572.4l6-122.9c1.4-29.7-9.1-57.9-29.5-79.4A106.62 106.62 0 00471 99.9c-52 0-98 35-111.8 85.1l-85.9 311H144c-17.7 0-32 14.3-32 32v364c0 17.7 14.3 32 32 32h601.3c9.2 0 18.2-1.8 26.5-5.4 47.6-20.3 78.3-66.8 78.3-118.4 0-12.6-1.8-25-5.4-37 16.8-22.2 26.1-49.4 26.1-77.7 0-12.6-1.8-25-5.4-37 16.8-22.2 26.1-49.4 26.1-77.7-.2-12.6-2-25.1-5.6-37.1zM184 852V568h81v284h-81zm636.4-353l-21.9 19 13.9 25.4a56.2 56.2 0 016.9 27.3c0 16.5-7.2 32.2-19.6 43l-21.9 19 13.9 25.4a56.2 56.2 0 016.9 27.3c0 16.5-7.2 32.2-19.6 43l-21.9 19 13.9 25.4a56.2 56.2 0 016.9 27.3c0 22.4-13.2 42.6-33.6 51.8H329V564.8l99.5-360.5a44.1 44.1 0 0142.2-32.3c7.6 0 15.1 2.2 21.1 6.7 9.9 7.4 15.2 18.6 14.6 30.5l-9.6 198.4h314.4C829 418.5 840 436.9 840 456c0 16.5-7.2 32.1-19.6 43z"
+          />
+        </svg>
+      </span>
+       
+      Follow Us
+    </div>
+    <div
+      class="subtitle"
+    >
+      Guides, manuals, and support resources for all things FLUX.
+    </div>
+    <div
+      class="content"
+    >
+      <div
+        class="imgs"
+      >
+        <img
+          src="mock-youtube-subs-src"
+        />
+        <img
+          src="mock-instagram-subs-src"
+        />
+      </div>
+      <div
+        class="buttons"
+      >
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-lg"
+          type="button"
+        >
+          <span
+            class="ant-btn-icon"
+          >
+            <span
+              aria-label="facebook"
+              class="anticon anticon-facebook icon"
+              role="img"
+            >
+              <svg
+                aria-hidden="true"
+                data-icon="facebook"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M880 112H144c-17.7 0-32 14.3-32 32v736c0 17.7 14.3 32 32 32h736c17.7 0 32-14.3 32-32V144c0-17.7-14.3-32-32-32zm-32 736H663.9V602.2h104l15.6-120.7H663.9v-77.1c0-35 9.7-58.8 59.8-58.8h63.9v-108c-11.1-1.5-49-4.8-93.2-4.8-92.2 0-155.3 56.3-155.3 159.6v89H434.9v120.7h104.3V848H176V176h672v672z"
+                />
+              </svg>
+            </span>
+          </span>
+          <span>
+            User Group
+          </span>
+        </button>
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-lg"
+          type="button"
+        >
+          <span
+            class="ant-btn-icon"
+          >
+            <span
+              aria-label="pinterest"
+              class="anticon anticon-pinterest icon"
+              role="img"
+            >
+              <svg
+                aria-hidden="true"
+                data-icon="pinterest"
+                fill="currentColor"
+                fill-rule="evenodd"
+                focusable="false"
+                height="1em"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M512 64C264.97 64 64 264.97 64 512c0 192.53 122.08 357.04 292.88 420.28-4.92-43.86-4.14-115.68 3.97-150.46 7.6-32.66 49.11-208.16 49.11-208.16s-12.53-25.1-12.53-62.16c0-58.24 33.74-101.7 75.77-101.7 35.74 0 52.97 26.83 52.97 58.98 0 35.96-22.85 89.66-34.7 139.43-9.87 41.7 20.91 75.7 62.02 75.7 74.43 0 131.64-78.5 131.64-191.77 0-100.27-72.03-170.38-174.9-170.38-119.15 0-189.08 89.38-189.08 181.75 0 35.98 13.85 74.58 31.16 95.58 3.42 4.16 3.92 7.78 2.9 12-3.17 13.22-10.22 41.67-11.63 47.5-1.82 7.68-6.07 9.28-14 5.59-52.3-24.36-85-100.81-85-162.25 0-132.1 95.96-253.43 276.71-253.43 145.29 0 258.18 103.5 258.18 241.88 0 144.34-91.02 260.49-217.31 260.49-42.44 0-82.33-22.05-95.97-48.1 0 0-21 79.96-26.1 99.56-8.82 33.9-46.55 104.13-65.49 136.03A446.16 446.16 0 00512 960c247.04 0 448-200.97 448-448S759.04 64 512 64"
+                />
+              </svg>
+            </span>
+          </span>
+          <span>
+            Pinterest
+          </span>
+        </button>
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-lg"
+          type="button"
+        >
+          <span
+            class="ant-btn-icon"
+          >
+            <span
+              aria-label="linkedin"
+              class="anticon anticon-linkedin icon"
+              role="img"
+            >
+              <svg
+                aria-hidden="true"
+                data-icon="linkedin"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M847.7 112H176.3c-35.5 0-64.3 28.8-64.3 64.3v671.4c0 35.5 28.8 64.3 64.3 64.3h671.4c35.5 0 64.3-28.8 64.3-64.3V176.3c0-35.5-28.8-64.3-64.3-64.3zm0 736c-447.8-.1-671.7-.2-671.7-.3.1-447.8.2-671.7.3-671.7 447.8.1 671.7.2 671.7.3-.1 447.8-.2 671.7-.3 671.7zM230.6 411.9h118.7v381.8H230.6zm59.4-52.2c37.9 0 68.8-30.8 68.8-68.8a68.8 68.8 0 10-137.6 0c-.1 38 30.7 68.8 68.8 68.8zm252.3 245.1c0-49.8 9.5-98 71.2-98 60.8 0 61.7 56.9 61.7 101.2v185.7h118.6V584.3c0-102.8-22.2-181.9-142.3-181.9-57.7 0-96.4 31.7-112.3 61.7h-1.6v-52.2H423.7v381.8h118.6V604.8z"
+                />
+              </svg>
+            </span>
+          </span>
+          <span>
+            LinkedIn
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;

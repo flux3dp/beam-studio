@@ -5,11 +5,12 @@ import { render } from '@testing-library/react';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 
 import SvgEditor from './SvgEditor';
+import type { FileData } from '@core/helpers/fileImportHelper';
 
-const mockGet = jest.fn();
+const mockImportFileInCurrentTab = jest.fn();
 
-jest.mock('implementations/storage', () => ({
-  get: (...args) => mockGet(...args),
+jest.mock('@core/helpers/fileImportHelper', () => ({
+  importFileInCurrentTab: (...args) => mockImportFileInCurrentTab(...args),
 }));
 
 jest.mock('./Workarea', () => () => <div>This is dummy Workarea</div>);
@@ -42,7 +43,6 @@ jest.mock('@core/app/svgedit/workarea', () => ({
 
 describe('test svg-editor', () => {
   test('should render correctly in mac', () => {
-    mockGet.mockReturnValue('inches');
     Object.defineProperty(window, 'os', {
       value: 'MacOS',
     });
@@ -53,7 +53,6 @@ describe('test svg-editor', () => {
   });
 
   test('should render correctly in win', () => {
-    mockGet.mockReturnValue('mm');
     Object.defineProperty(window, 'os', {
       value: 'Windows',
     });
@@ -61,5 +60,14 @@ describe('test svg-editor', () => {
     const { container } = render(<SvgEditor />);
 
     expect(container).toMatchSnapshot();
+  });
+
+  test('should handle file correctly', () => {
+    const mockFile: FileData = { filePath: 'mock-path', type: 'recent' };
+
+    window.importingFile = mockFile;
+    render(<SvgEditor />);
+    expect(mockImportFileInCurrentTab).toHaveBeenCalledWith(mockFile);
+    expect(window.importingFile).toBe(undefined);
   });
 });

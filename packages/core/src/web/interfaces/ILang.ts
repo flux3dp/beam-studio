@@ -398,6 +398,7 @@ export interface ILang {
         no_questionnaire_available: string;
         unable_to_get_url: string;
       };
+      reach_tab_count_limit: string;
       recommend_downgrade_software: string;
       recommend_upgrade_firmware: string;
       save_unsave_changed: string;
@@ -1685,6 +1686,7 @@ export interface ILang {
     loading_file: string;
     no_file_subtitle: string;
     no_file_title: string;
+    not_login_title: string;
     save_file: {
       choose_action: string;
       input_file_name: string;
@@ -2349,6 +2351,26 @@ export interface ILang {
   web_cam: {
     no_device: string;
     no_permission: string;
+  };
+  welcome_page: {
+    follow_us: {
+      subtitle: string;
+      user_group: string;
+    };
+    help_center: {
+      guides: string;
+      guides_subtitle: string;
+      submit_request: string;
+      subtitle: string;
+      visit_help_center: string;
+    };
+    member_center: string;
+    member_center_url: string;
+    new_project: string;
+    not_login_placeholder: string;
+    recent_files: string;
+    shop: string;
+    shop_products: string;
   };
   z_speed_limit_test: {
     alert_before: string;

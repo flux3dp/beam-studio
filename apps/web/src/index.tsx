@@ -10,6 +10,7 @@ import './shortcuts';
 
 import storage from '@core/implementations/storage';
 import router from '@core/app/router';
+import { hashMap } from '@core/helpers/hashHelper';
 
 if (process.env.NODE_ENV !== 'production') {
   console.log('We are in development mode!');
@@ -49,9 +50,9 @@ const onFinished = (data: boolean) => {
   const isInitializePage = Boolean(hash.match(/^#\/?initialize/));
 
   if (isReady === true && (hash === '' || isInitializePage)) {
-    window.location.hash = '#/studio/beambox';
+    window.location.hash = hashMap.welcome;
   } else if (isReady === false && !isInitializePage) {
-    window.location.hash = '#';
+    window.location.hash = hashMap.root;
   }
 
   checkScreenSize();

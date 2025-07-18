@@ -15,6 +15,7 @@ import ZoomBlock from '@core/app/components/beambox/ZoomBlock';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import workareaManager from '@core/app/svgedit/workarea';
+import { importFileInCurrentTab } from '@core/helpers/fileImportHelper';
 
 import Banner from './Banner';
 import Chat from './Chat';
@@ -39,6 +40,11 @@ export const SvgEditor = (): ReactNode => {
   useEffect(() => {
     if (window.$) {
       $(svgEditor.init);
+
+      if (window.importingFile) {
+        importFileInCurrentTab(window.importingFile);
+        window.importingFile = undefined;
+      }
     } else {
       console.warn('jQuery ($) is not available for svgEditor.init');
     }

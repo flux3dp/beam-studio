@@ -72,6 +72,7 @@ import BeamboxPreference from './beambox-preference';
 import PreviewModeController from './preview-mode-controller';
 import ToolPanelsController from './toolPanelsController';
 import fileSystem from '@core/implementations/fileSystem';
+import { FileData } from '@core/helpers/fileImportHelper';
 
 // @ts-expect-error this line is required to load svgedit
 if (svgCanvasClass) {
@@ -104,6 +105,11 @@ declare global {
     draggable(options: any): JQuery;
     slider(arg0?: any, arg1?: any, arg3?: any): JQuery;
     SpinButton(options: any): JQuery;
+  }
+
+  interface Window {
+    importingFile?: FileData;
+    homePage?: string;
   }
 }
 

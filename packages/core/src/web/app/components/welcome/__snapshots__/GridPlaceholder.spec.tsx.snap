@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test GridPlaceholder should render correctly 1`] = `
+<div>
+  <div
+    class="text-container"
+  >
+    <div
+      class="text-content"
+    >
+      <div
+        class="text"
+      >
+        mock-placeholder
+      </div>
+      <div
+        class="hint"
+      >
+        mock-hint
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test GridPlaceholder should render correctly without hint 1`] = `
+<div>
+  <div
+    class="text-container"
+  >
+    <div
+      class="text-content"
+    >
+      <div
+        class="text"
+      >
+        mock-placeholder
+      </div>
+    </div>
+  </div>
+</div>
+`;

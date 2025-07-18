@@ -49,6 +49,14 @@ export default {
 
     return fsPromises.rename(oldPath, newPath);
   },
+  statSync(filePath: string) {
+    const res = fs.statSync(filePath);
+
+    return {
+      mtime: res.mtime.toISOString(),
+      size: res.size,
+    };
+  },
   writeFile(filePath: string, data: Buffer | string): void {
     fs.writeFileSync(filePath, data);
   },

@@ -46,6 +46,11 @@
       background-color: #525252;
     }
 
+    &.small {
+      min-width: 40px;
+      max-width: 40px;
+    }
+
     &.focused {
       color: #333333;
       background-color: #f0f0f0;
@@ -102,6 +107,19 @@
 
     &:hover {
       color: #ffffff;
+    }
+  }
+}
+
+.inverse {
+  .tab {
+    &.focused {
+      color: #d9d9d9;
+      background-color: #484848;
+
+      .icon {
+        color: #d9d9d9;
+      }
     }
   }
 }

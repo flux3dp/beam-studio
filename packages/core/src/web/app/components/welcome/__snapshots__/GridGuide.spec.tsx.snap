@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test GridGuide should render correctly 1`] = `
+<div>
+  <div
+    class="grid"
+  >
+    <img
+      alt="Beam Studio"
+      class="image"
+      src="core-img/BeamStudio-logo.png"
+    />
+    <div
+      class="name"
+    >
+      Beam Studio
+    </div>
+  </div>
+</div>
+`;

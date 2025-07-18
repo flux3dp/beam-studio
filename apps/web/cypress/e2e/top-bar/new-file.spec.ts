@@ -26,6 +26,7 @@ it('check new file after reset', () => {
   cy.contains('Next').click();
   cy.contains('Work Offline').click();
   cy.contains('Skip').click();
+  cy.contains('New Project').click();
   cy.get('button[class^="ant-btn"]').contains('No').click({ timeout: 100000 });
   cy.get('body').then((body) => {
     if (body.find('div.ant-modal-body').length > 0) {

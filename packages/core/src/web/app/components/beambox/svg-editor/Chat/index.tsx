@@ -1,8 +1,10 @@
-import React, { memo, useRef } from 'react';
+import React, { memo, useMemo, useRef } from 'react';
 
 import { Flex } from 'antd';
+import classNames from 'classnames';
 import { match, P } from 'ts-pattern';
 
+import { isAtPage } from '@core/helpers/hashHelper';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 
 import styles from './index.module.scss';
@@ -18,9 +20,10 @@ const UnmemorizedChat = () => {
     .with('fpm1', () => 'FtMMdyuoqCoKlnw1') // Promark
     .with('ado1', () => 'bG66TKuYtJ52GLGP') // Ador
     .otherwise(() => 'bNnVJgi3N9b7X4KV'); // Universal
+  const inWelcomePage = useMemo(() => isAtPage('welcome'), []);
 
   return (
-    <div className={styles['chat-container']}>
+    <div className={classNames(styles['chat-container'], { [styles['welcome-page']]: inWelcomePage })}>
       <iframe className={styles['chat-iframe']} id="beamy-chat" src={`https://udify.app/chatbot/${url}`} />
       <Flex align="center" className={styles['floating-area']} ref={floatingAreaRef} vertical>
         <div className={styles['chat-disclaimer']}>Beamy can make mistakes. Check important info.</div>

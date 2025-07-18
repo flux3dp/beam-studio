@@ -30,6 +30,18 @@ jest.mock('@core/app/svgedit/currentFileManager', () => ({
   },
 }));
 
+const mockImportFileInCurrentTab = jest.fn();
+
+jest.mock('@core/helpers/fileImportHelper', () => ({
+  importFileInCurrentTab: (...args) => mockImportFileInCurrentTab(...args),
+}));
+
+const mockSet = jest.fn();
+
+jest.mock('@core/implementations/storage', () => ({
+  set: (...args) => mockSet(...args),
+}));
+
 describe('test TabController', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -77,6 +89,12 @@ describe('test TabController', () => {
     expect(mockSend).toHaveBeenCalledWith(TabEvents.SetTabTitle, 'name*', true);
   });
 
+  test('handle import files', () => {
+    mockCommunicator[TabEvents.ImportFileInTab]({}, { filePath: 'mock-path', type: 'recent' });
+    expect(mockImportFileInCurrentTab).toHaveBeenCalledTimes(1);
+    expect(mockImportFileInCurrentTab).toHaveBeenCalledWith({ filePath: 'mock-path', type: 'recent' });
+  });
+
   test('getAllTabs', () => {
     tabController.getAllTabs();
     expect(mockSendSync).toHaveBeenCalledTimes(1);
@@ -111,5 +129,25 @@ describe('test TabController', () => {
     tabController.setMode(CanvasMode.Preview);
     expect(mockSend).toHaveBeenCalledTimes(1);
     expect(mockSend).toHaveBeenCalledWith(TabEvents.SetTabMode, CanvasMode.Preview);
+  });
+
+  test('getIsWelcomeTab', () => {
+    tabController.currentId = 1;
+    expect(tabController.getCurrentId()).toBe(1);
+    mockSendSync.mockReturnValue([{ id: 1, isWelcomeTab: true }]);
+    expect(tabController.getIsWelcomeTab()).toBe(true);
+    expect(tabController.isWelcomeTab).toBe(true);
+    expect(mockSendSync).toHaveBeenCalledTimes(1);
+    expect(mockSendSync).toHaveBeenNthCalledWith(1, TabEvents.GetAllTabs);
+
+    expect(tabController.getIsWelcomeTab()).toBe(true);
+    expect(mockSendSync).toHaveBeenCalledTimes(1);
+
+    tabController.isWelcomeTab = null;
+    mockSendSync.mockReturnValue([{ id: 1, isWelcomeTab: false }]);
+    expect(tabController.getIsWelcomeTab()).toBe(false);
+    expect(tabController.isWelcomeTab).toBe(false);
+    expect(mockSendSync).toHaveBeenCalledTimes(2);
+    expect(mockSendSync).toHaveBeenNthCalledWith(2, TabEvents.GetAllTabs);
   });
 });

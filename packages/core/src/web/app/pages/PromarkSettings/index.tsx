@@ -12,6 +12,7 @@ import { getWorkarea } from '@core/app/constants/workarea-constants';
 import promarkDataStore from '@core/helpers/device/promark/promark-data-store';
 import { getSerial } from '@core/helpers/device/promark/promark-info';
 import deviceMaster from '@core/helpers/device-master';
+import { getHomePage } from '@core/helpers/hashHelper';
 import useI18n from '@core/helpers/useI18n';
 import storage from '@core/implementations/storage';
 
@@ -55,7 +56,7 @@ export default function PromarkSettings(): React.JSX.Element {
 
     dialogCaller.showLoadingWindow();
 
-    window.location.hash = '#/studio/beambox';
+    window.location.hash = getHomePage();
     window.location.reload();
   };
 

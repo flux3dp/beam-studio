@@ -400,6 +400,7 @@ const lang: ILang = {
         no_questionnaire_available: 'V současnosti není k dispozici žádný dotazník.',
         unable_to_get_url: 'Nepodařilo se získat odkaz k internetovému dotazníku. Potvrďte prosím své internetové připojení.',
       },
+      reach_tab_count_limit: 'Bylo dosaženo limitu počtu karet',
       recommend_downgrade_software: 'Rozpoznali jsme starší verzi firmwaru. Aktivně adresujeme problémy s kompatibilitou, ale prozatím doporučujeme vrátit se k <a target="_blank" href="https://beamstudio.s3.ap-northeast-1.amazonaws.com/mac/Beam+Studio+1.9.5.dmg">Beam Studio 1.9.5</a>.',
       recommend_upgrade_firmware: 'Rozpoznali jsme starší verzi firmwaru. Aktivně adresujeme problémy s kompatibilitou, ale prozatím doporučujeme nainstalovat nejaktuálnější firmware.',
       save_unsave_changed: 'Přejete si uložit neuložené změny?',
@@ -1694,6 +1695,7 @@ const lang: ILang = {
     loading_file: 'Načítám...',
     no_file_subtitle: 'Klikněte na Menu > "Soubor" > "Uložit do cloudu"',
     no_file_title: 'Pro zahájení uložte soubory do Mého cloudu',
+    not_login_title: 'Přihlaste se k uložení souborů do cloudu.',
     save_file: {
       choose_action: 'Uložit soubor:',
       input_file_name: 'Vložit název souboru:',
@@ -2356,6 +2358,26 @@ const lang: ILang = {
   web_cam: {
     no_device: 'Nelze detekovat kamerové zařízení. Znovu připojte kameru a zkuste to znovu.',
     no_permission: 'Beam Studio nemá oprávnění k přístupu k kameře. Ujistěte se, že je v nastavení prohlížeče nebo systému uděleno oprávnění pro Beam Studio.',
+  },
+  welcome_page: {
+    follow_us: {
+      subtitle: 'Průvodci, příručky a podpůrné zdroje pro vše, co se týká FLUX.',
+      user_group: 'Uživatelská skupina',
+    },
+    help_center: {
+      guides: 'Průvodce',
+      guides_subtitle: 'Zobrazit komplexní návody ke všem produktům FLUX.',
+      submit_request: 'Odeslat žádost',
+      subtitle: 'Průvodci, příručky a podpůrné zdroje pro vše, co se týká FLUX.',
+      visit_help_center: 'Navštívit centrum nápovědy',
+    },
+    member_center: 'Centrum členů',
+    member_center_url: 'https://member.flux3dp.com/en-US/machine-register',
+    new_project: 'Nový projekt',
+    not_login_placeholder: 'Získejte od nás bezplatné AI kredity při registraci účtu FLUX!',
+    recent_files: 'Nedávné soubory',
+    shop: 'Obchod',
+    shop_products: 'Koupit produkty FLUX',
   },
   z_speed_limit_test: {
     alert_before: 'Před zahájením rytí křivky systém provede zátěžový test, aby zabránil ztrátě kroků v důsledku nadměrné hmotnosti.',

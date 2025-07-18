@@ -400,6 +400,7 @@ const lang: ILang = {
         no_questionnaire_available: 'Não há questionário disponível agora.',
         unable_to_get_url: 'Falha ao obter o link para o questionário pela internet. Confirme sua conexão com a internet.',
       },
+      reach_tab_count_limit: 'Limite de abas atingido',
       recommend_downgrade_software: 'Detectamos uma versão de firmware mais antiga. Estamos abordando ativamente problemas de compatibilidade, mas por enquanto recomendamos reverter para <a target="_blank" href="https://beamstudio.s3.ap-northeast-1.amazonaws.com/mac/Beam+Studio+1.9.5.dmg">Beam Studio 1.9.5</a>.',
       recommend_upgrade_firmware: 'Detectamos uma versão de firmware mais antiga. Estamos abordando ativamente problemas de compatibilidade, mas por enquanto recomendamos atualizar para o firmware mais recente.',
       save_unsave_changed: 'Você quer salvar as alterações não salvas?',
@@ -1694,6 +1695,7 @@ const lang: ILang = {
     loading_file: 'Carregando...',
     no_file_subtitle: 'Vá para Menu > "Arquivo" > "Salvar na nuvem"',
     no_file_title: 'Salve arquivos em Minha nuvem para começar.',
+    not_login_title: 'Faça login para armazenar seus arquivos na nuvem.',
     save_file: {
       choose_action: 'Salvar arquivo:',
       input_file_name: 'Digite o nome do arquivo:',
@@ -2356,6 +2358,26 @@ const lang: ILang = {
   web_cam: {
     no_device: 'Não foi possível detectar o dispositivo da câmera. Por favor, reconecte a câmera e tente novamente.',
     no_permission: 'O Beam Studio não tem permissão para acessar a câmera. Certifique-se de que a permissão foi concedida ao Beam Studio nas configurações do navegador ou do sistema.',
+  },
+  welcome_page: {
+    follow_us: {
+      subtitle: 'Guias, manuais e recursos de suporte para tudo relacionado à FLUX.',
+      user_group: 'Grupo de usuários',
+    },
+    help_center: {
+      guides: 'Guias',
+      guides_subtitle: 'Veja guias abrangentes para todos os produtos FLUX.',
+      submit_request: 'Enviar uma Solicitação',
+      subtitle: 'Guias, manuais e recursos de suporte para tudo relacionado à FLUX.',
+      visit_help_center: 'Visite o Centro de Ajuda',
+    },
+    member_center: 'Centro do Membro',
+    member_center_url: 'https://member.flux3dp.com/en-US/machine-register',
+    new_project: 'Novo Projeto',
+    not_login_placeholder: 'Ganhe créditos de IA gratuitos por nossa conta ao criar uma conta FLUX!',
+    recent_files: 'Arquivos Recentes',
+    shop: 'Loja',
+    shop_products: 'Compre produtos FLUX',
   },
   z_speed_limit_test: {
     alert_before: 'Antes de iniciar a gravação de curvas, o sistema realizará um teste de carga para evitar a perda de passos devido ao peso excessivo.',

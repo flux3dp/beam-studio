@@ -5,6 +5,7 @@ import progressCaller from '@core/app/actions/progress-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import beamFileHelper from '@core/helpers/beam-file-helper';
+import { setFileInAnotherTab } from '@core/helpers/fileImportHelper';
 import i18n from '@core/helpers/i18n';
 import dialog from '@core/implementations/dialog';
 import type { IFile } from '@core/interfaces/IMyCloud';
@@ -124,6 +125,12 @@ export const openFile = async (file: IFile): Promise<OperationResult<Blob>> => {
   } finally {
     progressCaller.popById(id);
   }
+};
+
+export const openFileInAnotherTab = async (file: IFile): Promise<OperationResult<null>> => {
+  setFileInAnotherTab({ file, type: 'cloud' });
+
+  return { data: null, res: true };
 };
 
 export const duplicateFile = async (uuid: string): Promise<OperationResult<{ new_file: string }>> => {
@@ -275,5 +282,6 @@ export default {
   duplicateFile,
   list,
   openFile,
+  openFileInAnotherTab,
   renameFile,
 };

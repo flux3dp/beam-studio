@@ -9,6 +9,7 @@ import {
   EllipsisOutlined,
   ExclamationCircleFilled,
 } from '@ant-design/icons';
+import type { InputRef } from 'antd';
 import { Dropdown, Input, Modal } from 'antd';
 import classNames from 'classnames';
 import dayjs from 'dayjs';
@@ -53,7 +54,7 @@ const GridFile = ({ file }: Props): React.JSX.Element => {
   const [actionDropdownOpen, setActionDropdownOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const { editingId, fileOperation, selectedId, setEditingId, setSelectedId } = useContext(MyCloudContext);
-  const inputRef = useRef(null);
+  const inputRef = useRef<InputRef>(null);
   const [error, setError] = useState(false);
   const isEditing = useMemo(() => editingId === file.uuid, [editingId, file]);
   const isSelected = useMemo(() => selectedId === file.uuid, [selectedId, file]);

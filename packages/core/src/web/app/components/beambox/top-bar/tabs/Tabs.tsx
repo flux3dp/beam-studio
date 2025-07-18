@@ -19,7 +19,11 @@ import type Tab from '@core/interfaces/Tab';
 
 import styles from './Tabs.module.scss';
 
-const Tabs = (): React.JSX.Element => {
+interface Props {
+  inverse?: boolean;
+}
+
+const Tabs = ({ inverse }: Props): React.JSX.Element => {
   const t = useI18n().topbar;
   const { hasUnsavedChange } = useContext(CanvasContext);
   const currentId = useMemo(() => tabController.getCurrentId(), []);
@@ -68,7 +72,11 @@ const Tabs = (): React.JSX.Element => {
     tabController.moveTab(srcIdx, dstIdx);
   };
 
-  const renderIcon = useCallback(({ isCloud, isLoading, mode }: Tab) => {
+  const renderIcon = useCallback(({ isCloud, isLoading, isWelcomeTab, mode }: Tab) => {
+    if (isWelcomeTab) {
+      return <TopBarIcons.Home className={styles.icon} />;
+    }
+
     if (isLoading) {
       return <LoadingOutlined className={classNames(styles.icon, styles.loading)} />;
     }
@@ -115,7 +123,7 @@ const Tabs = (): React.JSX.Element => {
   };
 
   return (
-    <div className={styles.container}>
+    <div className={classNames(styles.container, { [styles.inverse]: inverse })}>
       <DragDropContext onDragEnd={handleDragEnd}>
         <Droppable direction="horizontal" droppableId="tabs">
           {(droppableProvided) => (
@@ -125,9 +133,21 @@ const Tabs = (): React.JSX.Element => {
               ref={(node) => droppableProvided.innerRef(node)}
             >
               {tabs.map((tab, idx) => {
-                const { id } = tab;
+                const { id, isWelcomeTab } = tab;
                 const isCurrent = id === currentId;
                 let { title } = isCurrent ? currentTabInfo : tab;
+
+                if (isWelcomeTab) {
+                  return (
+                    <div
+                      className={classNames(styles.tab, styles.small, { [styles.focused]: currentId === id })}
+                      key={id}
+                      onClick={() => tabController.focusTab(id)}
+                    >
+                      {renderIcon(tab)}
+                    </div>
+                  );
+                }
 
                 if (isCurrent) {
                   title = `${title || t.untitled}${hasUnsavedChange ? '*' : ''}`;

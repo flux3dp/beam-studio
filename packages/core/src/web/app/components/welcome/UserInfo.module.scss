@@ -1,0 +1,36 @@
+.info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: #f0f0f0;
+  @media screen and (min-width: 601px) {
+    min-height: 164px;
+    gap: 16px;
+  }
+  @media screen and (max-width: 600px) {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .avatar {
+    flex-shrink: 0;
+
+    .default-avatar {
+      font-size: 52px;
+    }
+  }
+
+  .login-hint {
+    font-size: 12px;
+    font-weight: bold;
+  }
+
+  .nickname {
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  .email {
+    color: #525252;
+  }
+}

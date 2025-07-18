@@ -1,5 +1,14 @@
 @use '@core/styles/variables' as variables;
-@use './variables' as myCloudVariables;
+@use '@core/app/components/dialogs/myCloud/variables' as myCloudVariables;
+
+%container {
+  max-width: 100%;
+  height: 180px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 6px;
+}
 
 .grid {
   display: flex;
@@ -8,12 +17,9 @@
   gap: 4px;
 
   .img-container {
-    max-width: 100%;
+    @extend %container;
     width: myCloudVariables.$grid-width;
-    height: 180px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+
     .guide-lines {
       position: relative;
       width: 90%;

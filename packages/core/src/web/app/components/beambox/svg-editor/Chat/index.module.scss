@@ -63,3 +63,40 @@ $messages-area-bg: #daedff;
   margin-top: -4px;
   box-sizing: border-box;
 }
+
+// Special styles when chat width is larger than 640px
+@media screen and (min-width: (variables.$welcomePageSidePanelWidth + 641px)) {
+  .welcome-page.chat-container {
+    background: #f6f9fb;
+
+    @media (prefers-color-scheme: dark) {
+      background: #202023;
+    }
+
+    &::before {
+      background: #f6f9fb;
+      border: 1px solid #e4e6ea;
+      border-bottom: 0;
+
+      @media (prefers-color-scheme: dark) {
+        background: #202023;
+        border-color: #2e2f31;
+      }
+    }
+
+    .chat-iframe {
+      height: 100%;
+    }
+
+    .floating-area {
+      background: #f0f2f4;
+      border-color: #dfe2e8;
+      border-width: 0 1px 1px 1px;
+
+      @media (prefers-color-scheme: dark) {
+        background: #19191b;
+        border-color: #29292d;
+      }
+    }
+  }
+}
