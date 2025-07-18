@@ -106,6 +106,8 @@ export const importFileInCurrentTab = async (importingFile: FileData): Promise<v
     const fileContent = fileSystem.readFile(data.path);
     const file = new File([fileContent], data.name, data);
 
+    (file as any).path = data.path;
+
     await svgEditor.handleFile(file);
   } else if (importingFile.type === 'cloud') {
     await cloudFile.openFile(importingFile.file);
