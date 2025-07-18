@@ -1,14 +1,21 @@
-import { match, P } from 'ts-pattern';
+import { pipe } from 'remeda';
 
+import { dpmm } from '@core/app/actions/beambox/constant';
 import history from '@core/app/svgedit/history/history';
-import undoManager from '@core/app/svgedit/history/undoManager';
-import { deleteElements } from '@core/app/svgedit/operations/delete';
-import { getRotationAngle, setRotationAngle } from '@core/app/svgedit/transform/rotation';
+import findDefs from '@core/app/svgedit/utils/findDef';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import type { ConvertSvgToImageParams, ConvertToImageResult } from './convertToImage.util';
-import { createAndFinalizeImage, rasterizeGenericSvgElement } from './convertToImage.util';
+import {
+  type ConvertSvgToImageParams,
+  type ConvertToImageResult,
+  createAndFinalizeImage,
+  getUnionBBox,
+} from './convertToImage.util';
+import svgStringToCanvas from './image/svgStringToCanvas';
+import { getObjectLayer, sortLayerNamesByPosition } from './layer/layer-helper';
 import { getSVGAsync } from './svg-editor-helper';
+import symbolMaker from './symbol-helper/symbolMaker';
+import { convertVariableText } from './variableText';
 
 let svgCanvas: ISVGCanvas;
 
@@ -31,113 +38,114 @@ export const convertibleSvgTags = [
 
 type MainConverterFunc = (params: ConvertSvgToImageParams) => Promise<ConvertToImageResult>;
 
-/**
- * Converts a <use> element to an <image>. Its logic is unique and doesn't involve rasterization.
- * Refactored to use the `finalizeImageCreation` helper.
- */
-const convertUseToImage = async ({
-  isToSelect = true,
-  parentCmd = new history.BatchCommand('Convert Use to Image'),
-  svgElement,
-}: ConvertSvgToImageParams): Promise<ConvertToImageResult> => {
-  const angle = getRotationAngle(svgElement);
-  const href = svgElement.getAttribute('xlink:href');
-  const symbol = href ? document.querySelector(href) : null;
-  const imageSrc = symbol?.children[0]?.getAttribute('href');
+const switchSymbolWrapper = <T>(fn: () => T): T => {
+  symbolMaker.switchImageSymbolForAll(false);
 
-  if (!imageSrc) {
-    console.warn('The <use> element does not reference a valid image source.');
-
-    return undefined;
+  try {
+    return fn();
+  } finally {
+    symbolMaker.switchImageSymbolForAll(true);
   }
-
-  const dataXform = svgElement.getAttribute('data-xform');
-  const [formX, formY, width, height] = dataXform?.split(' ')?.map((v) => Number.parseFloat(v.split('=')[1])) || [0, 0];
-  const x = Number.parseFloat(svgElement.getAttribute('x') || '0') + formX;
-  const y = Number.parseFloat(svgElement.getAttribute('y') || '0') + formY;
-  const transform = svgElement.getAttribute('transform') || '';
-
-  return createAndFinalizeImage(
-    { angle, height, href: imageSrc, transform, width, x, y },
-    { isToSelect, parentCmd, svgElement },
-  );
 };
 
-/**
- * Recursively converts elements inside a <g> group to images.
- * @param params - The standard conversion parameters.
- * @param mainConverter - The main `convertSvgToImage` function, injected as a dependency.
- */
-const convertGroupToImage = async (
-  { parentCmd = new history.BatchCommand('Convert Group to Image'), svgElement }: ConvertSvgToImageParams,
-  mainConverter: MainConverterFunc,
-): Promise<ConvertToImageResult> => {
-  const angle = getRotationAngle(svgElement);
-  const imageElements = [];
-  const svgElements = [];
+const getLayerTitles = (svgElement: SVGElement): string[] => {
+  const titles: string[] = [];
+  const elements: SVGElement[] = [svgElement];
+  const getLayerTitle = (element: SVGElement) => {
+    if (element.tagName === 'g') {
+      elements.push(...(element.children as unknown as SVGElement[]));
 
-  for await (const child of Array.from(svgElement.children)) {
-    const result = await mainConverter({ isToSelect: false, parentCmd, svgElement: child as SVGGElement });
-
-    if (result) {
-      imageElements.push(...result.imageElements);
-      svgElements.push(...result.svgElements);
+      return;
     }
+
+    titles.push(getObjectLayer(element)?.title);
+  };
+
+  while (elements.length > 0) {
+    const currentElement = elements.pop()!;
+
+    getLayerTitle(currentElement);
   }
 
-  // Group the newly created images
-  if (imageElements.length > 0) {
-    svgCanvas.selectOnly(imageElements);
-
-    const groupResult = svgCanvas.groupSelectedElements(true);
-
-    if (groupResult) {
-      parentCmd.addSubCommand(groupResult.command);
-
-      if (angle) setRotationAngle(groupResult.group, angle, { parentCmd });
-
-      imageElements.length = 0;
-      imageElements.push(groupResult.group as any);
-    }
-  }
-
-  return { imageElements, svgElements };
+  return titles.filter(Boolean);
 };
 
+// Assuming BBox type is defined
+type BBox = { height: number; width: number; x: number; y: number };
+type Options = { dpi?: number };
+
 /**
- * Main entry point for converting any supported SVG element to an image.
+ * Generates a base64 encoded image from a given set of elements and their union bounding box.
+ *
+ * @param elements - The SVG elements to include in the export.
+ * @param bbox - The union bounding box of the elements.
+ * @param options - Export options like DPI.
+ * @returns A promise that resolves to a base64 data URL string.
  */
-export const convertSvgToImage: MainConverterFunc = async ({
+export const elementsToImageBase64 = async (elements: SVGElement[], bbox: BBox, options?: Options): Promise<string> => {
+  // 1. Get options or use defaults
+  const { dpi = 300 } = options || {};
+
+  // 2. Calculate the final pixel dimensions of the canvas based on the bbox and DPI
+  // (This ratio calculation is preserved from your original function)
+  const ratio = dpi / (dpmm * 25.4);
+  const canvasWidth = Math.round(bbox.width * ratio);
+  const canvasHeight = Math.round(bbox.height * ratio);
+
+  // 3. Get necessary SVG components
+  const svgDefs = findDefs(); // To include shared definitions like gradients or patterns
+  const elementsHtml = elements.map((el) => el.outerHTML).join('');
+
+  // 4. Construct the SVG string. The viewBox is now determined entirely by the unionBBox,
+  // creating a tightly cropped view of the elements.
+  const svgString = `
+    <svg
+      width="${canvasWidth}"
+      height="${canvasHeight}"
+      viewBox="${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+    >
+      ${svgDefs.outerHTML}
+      <g>
+        ${elementsHtml}
+      </g>
+    </svg>`;
+
+  // 5. Render the SVG to a canvas using your existing helper
+  const canvas = await svgStringToCanvas(svgString, canvasWidth, canvasHeight);
+
+  // 6. Return the canvas content as a base64 data URL
+  return canvas.toDataURL('image/png');
+};
+
+export const convertSvgToImage = async ({
   isToSelect = true,
   parentCmd = new history.BatchCommand('Convert SVG to Image'),
   svgElement,
-}) => {
-  if (!svgElement || svgElement.getAttribute('data-imageborder') === 'true') {
-    return undefined;
-  }
+}: ConvertSvgToImageParams): Promise<ConvertToImageResult> => {
+  const layer = pipe(svgElement, getLayerTitles, sortLayerNamesByPosition, (titles) => titles.at(-1));
+  const bbox = getUnionBBox([svgElement])!;
 
-  const result = await match(svgElement)
-    .with({ tagName: 'use' }, async (el) => convertUseToImage({ isToSelect, parentCmd, svgElement: el }))
-    .when(
-      (el) => el.getAttribute('data-textpath-g') === '1',
-      async (el) => rasterizeGenericSvgElement({ isToSelect, parentCmd, svgElement: el }),
-    )
-    .with({ tagName: 'g' }, async (el) =>
-      convertGroupToImage({ isToSelect, parentCmd, svgElement: el }, convertSvgToImage),
-    )
-    .with({ tagName: P.union(...convertibleSvgTags) }, async (el) =>
-      rasterizeGenericSvgElement({ isToSelect, parentCmd, svgElement: el }),
-    )
-    .otherwise(async ({ tagName }) => {
-      console.log('The provided SVG element is not convertible:', tagName);
+  // svgCanvas.clearSelection();
+  svgCanvas.removeUnusedDefs();
 
-      return Promise.resolve(undefined);
-    });
+  const revert = await convertVariableText();
+  const base64 = await switchSymbolWrapper(() =>
+    elementsToImageBase64([svgElement.cloneNode(true) as SVGGElement], bbox!, { dpi: 300 }),
+  );
 
-  if (isToSelect && result) {
-    undoManager.addCommandToHistory(parentCmd);
-    parentCmd.addSubCommand(deleteElements(result.svgElements, true));
-  }
+  revert?.();
 
-  return result;
+  console.log(layer);
+  console.log(bbox);
+
+  await createAndFinalizeImage(
+    { angle: 0, height: bbox.height, href: base64, transform: '', width: bbox.width, x: bbox.x, y: bbox.y },
+    { isToSelect, parentCmd, svgElement },
+  );
+
+  // const output = switchSymbolWrapper(() => rasterizeGenericSvgElement(svgElement, { isToSelect, parentCmd }));
+
+  return undefined;
 };
