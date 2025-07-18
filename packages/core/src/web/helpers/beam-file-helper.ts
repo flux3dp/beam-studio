@@ -468,8 +468,31 @@ const readBeamFileInfo = async (file: File): Promise<{ thumbnail: string; workar
   };
 };
 
+const readBvgFileInfo = async (file: File): Promise<{ thumbnail: string; workarea: null | string }> => {
+  const data = await new Promise<ArrayBuffer>((resolve) => {
+    const fr = new FileReader();
+
+    fr.onloadend = (evt) => {
+      resolve(evt.target!.result as ArrayBuffer);
+    };
+    fr.readAsArrayBuffer(file);
+  });
+  const buf = Buffer.from(data);
+
+  // Find data-workarea in the beginning of the file
+  const content = buf.toString('utf-8');
+  const workareaString = content.match(/data-workarea="([^"]+)"/);
+  const workarea = workareaString ? workareaString[1] : null;
+
+  return {
+    thumbnail: `data:image/svg+xml; charset=utf8, ${encodeURIComponent(content)}`,
+    workarea,
+  };
+};
+
 export default {
   generateBeamBuffer,
   readBeam,
   readBeamFileInfo,
+  readBvgFileInfo,
 };

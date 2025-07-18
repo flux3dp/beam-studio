@@ -39,7 +39,24 @@ const TabRecentFiles = ({ startNewProject }: Props) => {
         const fetchPath = filePath.replaceAll('#', '%23');
         const resp = await fetch(fetchPath);
         const blob = (await resp.blob()) as File;
-        const { thumbnail, workarea } = await beamFileHelper.readBeamFileInfo(blob);
+        let thumbnail: string | undefined;
+        let workarea: null | string = null;
+
+        if (filePath.endsWith('.beam')) {
+          try {
+            ({ thumbnail, workarea } = await beamFileHelper.readBeamFileInfo(blob));
+          } catch (error) {
+            console.error('Error reading beam file info:', filePath, error);
+          }
+        }
+
+        if (!thumbnail) {
+          try {
+            ({ thumbnail, workarea } = await beamFileHelper.readBvgFileInfo(blob));
+          } catch (error) {
+            console.error('Error reading bvg file info:', filePath, error);
+          }
+        }
 
         if (thumbnail) {
           const { mtime, size } = fileSystem.statSync(filePath);
