@@ -1,8 +1,14 @@
 import type { WebContents } from 'electron';
 import ElectronStore from 'electron-store';
 
-const initStore = (webContents: WebContents): void => {
+const initStore = (webContents: WebContents, isWelcomeTab = false): void => {
   const store = new ElectronStore();
+
+  if (isWelcomeTab) {
+    webContents.executeJavaScript("window.homePage = '#/studio/welcome';");
+  } else {
+    webContents.executeJavaScript("window.homePage = '#/studio/beambox';");
+  }
 
   if (!store.get('poke-ip-addr')) {
     store.set('poke-ip-addr', '192.168.1.1');

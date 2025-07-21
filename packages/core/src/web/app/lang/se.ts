@@ -400,6 +400,7 @@ const lang: ILang = {
         no_questionnaire_available: 'Det finns inget frågeformulär tillgängligt just nu.',
         unable_to_get_url: 'Det gick inte att hämta länken till frågeformuläret via internet. Bekräfta din internetanslutning.',
       },
+      reach_tab_count_limit: 'Flikgräns har nåtts',
       recommend_downgrade_software: 'Vi upptäckte en äldre firmwareversion. Vi arbetar aktivt med kompatibilitetsproblem, men för närvarande rekommenderar vi att återgå till Beam Studio 1.9.5.',
       recommend_upgrade_firmware: 'Vi upptäckte en äldre firmware-version. Vi arbetar aktivt med kompatibilitetsproblem, men tills vidare rekommenderar vi att du uppdaterar till den senaste firmware-versionen.',
       save_unsave_changed: 'Vill du spara osparade ändringar?',
@@ -1694,6 +1695,7 @@ const lang: ILang = {
     loading_file: 'Laddar...',
     no_file_subtitle: 'Gå till Meny > "Arkiv" > "Spara till molnet"',
     no_file_title: 'Spara filer till Mitt moln för att komma igång.',
+    not_login_title: 'Logga in för att lagra dina filer i molnet.',
     save_file: {
       choose_action: 'Spara fil:',
       input_file_name: 'Ange filnamn:',
@@ -2356,6 +2358,26 @@ const lang: ILang = {
   web_cam: {
     no_device: 'Kan inte hitta kameranheten. Anslut kameran igen och försök igen.',
     no_permission: 'Beam Studio har inte behörighet att komma åt kameran. Se till att behörigheten är beviljad till Beam Studio i webbläsarinställningarna eller systeminställningarna.',
+  },
+  welcome_page: {
+    follow_us: {
+      subtitle: 'Guider, manualer och supportresurser för allt om FLUX.',
+      user_group: 'Användargrupp',
+    },
+    help_center: {
+      guides: 'Guider',
+      guides_subtitle: 'Visa omfattande guider för alla FLUX-produkter.',
+      submit_request: 'Skicka en begäran',
+      subtitle: 'Guider, manualer och supportresurser för allt om FLUX.',
+      visit_help_center: 'Besök hjälpcentret',
+    },
+    member_center: 'Medlemscenter',
+    member_center_url: 'https://member.flux3dp.com/en-US/machine-register',
+    new_project: 'Nytt projekt',
+    not_login_placeholder: 'Få gratis AI-krediter från oss när du registrerar ett FLUX-konto!',
+    recent_files: 'Senaste filer',
+    shop: 'Butik',
+    shop_products: 'Köp FLUX-produkter',
   },
   z_speed_limit_test: {
     alert_before: 'Innan kurvgraveringen startar, kommer systemet att utföra ett belastningstest för att förhindra stegförlust på grund av överdriven vikt.',

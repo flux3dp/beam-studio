@@ -20,6 +20,7 @@ import checkRpiIp from '@core/helpers/check-rpi-ip';
 import checkSoftwareForAdor from '@core/helpers/check-software';
 import checkCamera from '@core/helpers/device/check-camera';
 import deviceMaster from '@core/helpers/device-master';
+import { getHomePage } from '@core/helpers/hashHelper';
 import isWeb from '@core/helpers/is-web';
 import useI18n from '@core/helpers/useI18n';
 import versionChecker from '@core/helpers/version-checker';
@@ -332,7 +333,7 @@ const ConnectMachineIp = (): React.JSX.Element => {
 
     dialogCaller.showLoadingWindow();
 
-    window.location.hash = '#/studio/beambox';
+    window.location.hash = getHomePage();
     window.location.reload();
   };
 

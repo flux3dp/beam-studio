@@ -11,15 +11,33 @@ export const getSocialMedia = () => {
       name: 'Facebook',
       src: `core-img/social-media/facebook-${langKey}.png`,
     },
+    facebookGroup: {
+      link: 'https://www.facebook.com/groups/flux.laser',
+      name: 'Facebook User Group',
+    },
     instagram: {
       link: isTW ? 'https://www.instagram.com/fluxinctaiwan/' : 'https://www.instagram.com/flux_inc/',
       name: 'Instagram',
       src: `core-img/social-media/instagram-${langKey}.png`,
+      subscribeSrc: `core-img/social-media/subscribe-instagram-${langKey}.png`,
+    },
+    linkedin: {
+      link: 'https://www.linkedin.com/company/flux-technology/posts',
+      name: 'LinkedIn',
+    },
+    pinterest: {
+      link: 'https://www.pinterest.com/flux3dp/',
+      name: 'Pinterest',
+    },
+    shop: {
+      link: isTW ? 'https://tw-shop.flux3dp.com/' : 'https://shop.flux3dp.com/',
+      name: 'Shop',
     },
     youtube: {
       link: isTW ? 'https://www.youtube.com/@FLUXIncTaiwan' : 'https://www.youtube.com/@fluxinc',
       name: 'YouTube',
       src: `core-img/social-media/youtube-${langKey}.png`,
+      subscribeSrc: `core-img/social-media/subscribe-youtube-${langKey}.png`,
     },
   };
 };

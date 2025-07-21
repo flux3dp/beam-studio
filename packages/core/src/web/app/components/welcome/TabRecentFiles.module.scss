@@ -1,0 +1,17 @@
+@use './mixins' as mixins;
+@use '@core/app/components/dialogs/myCloud/variables' as myCloudVariables;
+
+.title {
+  @include mixins.title;
+}
+
+.content {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(myCloudVariables.$grid-width, 1fr)
+  );
+  overflow-y: scroll;
+  gap: 20px 10px;
+  @include mixins.content;
+}

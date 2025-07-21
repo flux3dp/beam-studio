@@ -1,7 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`should render correctly hide 1`] = `<div />`;
-
 exports[`should render correctly is mobile 1`] = `
 <div>
   <div
@@ -20,8 +18,6 @@ exports[`should render correctly is mobile 1`] = `
   </div>
 </div>
 `;
-
-exports[`should render correctly is not web version 1`] = `<div />`;
 
 exports[`should render correctly not hiding, not mobile and in web version 1`] = `
 <div>

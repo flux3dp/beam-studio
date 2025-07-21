@@ -1,0 +1,24 @@
+@use './mixins' as mixins;
+
+.title {
+  @include mixins.title;
+}
+
+.subtitle {
+  @include mixins.subtitle;
+}
+
+.content {
+  @include mixins.content;
+}
+
+.buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.guides {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+}

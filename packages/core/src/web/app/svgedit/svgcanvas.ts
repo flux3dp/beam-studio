@@ -4031,8 +4031,8 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     }
   });
 
-  this.updateRecentFiles = (filePath) => {
-    const recentFiles = storage.get('recent_files') || [];
+  this.updateRecentFiles = (filePath: string) => {
+    const recentFiles = storage.get('recent_files', false) || [];
     const i = recentFiles.indexOf(filePath);
 
     if (i > 0) {

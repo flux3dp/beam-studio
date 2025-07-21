@@ -4,6 +4,8 @@ import currentFileManager from '@core/app/svgedit/currentFileManager';
 import importBvg from '@core/app/svgedit/operations/import/importBvg';
 import BeamFileHelper from '@core/helpers/beam-file-helper';
 import FileExportHelper from '@core/helpers/file-export-helper';
+import { setFileInAnotherTab } from '@core/helpers/fileImportHelper';
+import { isAtPage } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IRecentMenuUpdater } from '@core/interfaces/IRecentMenuUpdater';
@@ -23,7 +25,13 @@ const update = () => {
   communicator.send('UPDATE_RECENT_FILES_MENU');
 };
 
-communicator.on('OPEN_RECENT_FILES', async (evt: any, filePath: string) => {
+const openRecentFiles = async (filePath: string): Promise<void> => {
+  if (isAtPage('welcome')) {
+    setFileInAnotherTab({ filePath, type: 'recent' });
+
+    return;
+  }
+
   const res = await FileExportHelper.toggleUnsavedChangedDialog();
 
   if (res) {
@@ -68,8 +76,11 @@ communicator.on('OPEN_RECENT_FILES', async (evt: any, filePath: string) => {
       update();
     }
   }
-});
+};
+
+communicator.on('OPEN_RECENT_FILES', async (_evt: any, filePath: string) => openRecentFiles(filePath));
 
 export default {
+  openRecentFiles,
   update,
 } as IRecentMenuUpdater;

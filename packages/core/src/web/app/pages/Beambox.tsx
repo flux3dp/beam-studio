@@ -18,6 +18,7 @@ import { TimeEstimationButtonContextProvider } from '@core/app/contexts/TimeEsti
 import workareaManager from '@core/app/svgedit/workarea';
 import ImageTracePanel from '@core/app/views/beambox/ImageTracePanel/ImageTracePanel';
 import { LayerPanelContextProvider } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
+import { hashMap } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
 import openFileHelper from '@core/helpers/open-file-helper';
 import sentryHelper from '@core/helpers/sentry-helper';
@@ -33,6 +34,7 @@ const beamboxInit = new BeamboxInit();
 
 const Beambox = (): React.JSX.Element => {
   React.useEffect(() => {
+    window.homePage = hashMap.editor;
     BeamboxGlobalInteraction.attach();
 
     communicator.send('FRONTEND_READY');

@@ -31,6 +31,7 @@ import { downloadCameraData, uploadCameraData } from '@core/helpers/device/camer
 import { checkBlockedSerial } from '@core/helpers/device/checkBlockedSerial';
 import DeviceMaster from '@core/helpers/device-master';
 import firmwareUpdater from '@core/helpers/firmware-updater';
+import { checkIsAtEditor } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
 import { getDetectedModulesTranslations } from '@core/helpers/layer-module/layer-module-helper';
 import { extractVariableText } from '@core/helpers/variableText';
@@ -78,7 +79,7 @@ const calibrateCamera = async (
 };
 
 const calibrateModule = async (device: IDeviceInfo, module?: LayerModuleType) => {
-  if (!checkHash()) return;
+  if (!checkIsAtEditor()) return;
 
   try {
     const deviceStatus = await checkDeviceStatus(device);
@@ -242,27 +243,14 @@ const backUpCalibrationData = async (device: IDeviceInfo, type: 'download' | 'up
   }
 };
 
-const checkHash = () => {
-  if (window.location.hash === '#/studio/beambox') {
-    return true;
-  }
-
-  Alert.popUp({
-    message: lang.calibration.please_goto_beambox_first,
-    type: AlertConstants.SHOW_POPUP_INFO,
-  });
-
-  return false;
-};
-
 export default {
   CALIBRATE_BEAMBOX_CAMERA: async (device: IDeviceInfo): Promise<void> => {
-    if (!checkHash()) return;
+    if (!checkIsAtEditor()) return;
 
     calibrateCamera(device);
   },
   CALIBRATE_BEAMBOX_CAMERA_BORDERLESS: async (device: IDeviceInfo): Promise<void> => {
-    if (!checkHash()) return;
+    if (!checkIsAtEditor()) return;
 
     const vc = VersionChecker(device.version);
     const isAvailableVersion = vc.meetRequirement('BORDERLESS_MODE');
@@ -280,22 +268,22 @@ export default {
     }
   },
   CALIBRATE_CAMERA_ADVANCED: async (device: IDeviceInfo): Promise<void> => {
-    if (!checkHash()) return;
+    if (!checkIsAtEditor()) return;
 
     calibrateCamera(device, { isAdvanced: true });
   },
   CALIBRATE_CAMERA_V2_FACTORY: async (device: IDeviceInfo): Promise<void> => {
-    if (!checkHash()) return;
+    if (!checkIsAtEditor()) return;
 
     calibrateCamera(device, { factoryMode: true });
   },
   CALIBRATE_CAMERA_WIDE_ANGLE: async (device: IDeviceInfo): Promise<void> => {
-    if (!checkHash()) return;
+    if (!checkIsAtEditor()) return;
 
     calibrateCamera(device, { isWideAngle: true });
   },
   CALIBRATE_DIODE_MODULE: async (device: IDeviceInfo): Promise<void> => {
-    if (!checkHash()) return;
+    if (!checkIsAtEditor()) return;
 
     const vc = VersionChecker(device.version);
     const diodeAvailable = vc.meetRequirement('DIODE_AND_AUTOFOCUS');

@@ -2,18 +2,6 @@ import * as React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-jest.mock('@core/helpers/i18n', () => ({
-  lang: {
-    topbar: {
-      menu: {
-        delete: 'Delete',
-        redo: 'Redo',
-        undo: 'Undo',
-      },
-    },
-  },
-}));
-
 const useIsMobile = jest.fn();
 
 jest.mock('@core/helpers/system-helper', () => ({
@@ -47,22 +35,16 @@ jest.mock('@core/app/svgedit/history/utils', () => ({
 import CommonTools from './CommonTools';
 
 describe('should render correctly', () => {
-  test('is not web version', () => {
-    const { container } = render(<CommonTools hide={false} isWeb={false} />);
-
-    expect(container).toMatchSnapshot();
-  });
-
   test('hide', () => {
-    const { container } = render(<CommonTools hide isWeb />);
+    const { container } = render(<CommonTools hide />);
 
-    expect(container).toMatchSnapshot();
+    expect(container).toBeEmptyDOMElement();
   });
 
   test('is mobile', () => {
     useIsMobile.mockReturnValue(true);
 
-    const { container } = render(<CommonTools hide={false} isWeb />);
+    const { container } = render(<CommonTools hide={false} />);
 
     expect(container).toMatchSnapshot();
   });
@@ -70,7 +52,7 @@ describe('should render correctly', () => {
   test('not hiding, not mobile and in web version', () => {
     useIsMobile.mockReturnValue(false);
 
-    const { container } = render(<CommonTools hide={false} isWeb />);
+    const { container } = render(<CommonTools hide={false} />);
 
     expect(container).toMatchSnapshot();
 
