@@ -1,5 +1,5 @@
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import moduleBoundaryDrawer from '@core/app/actions/canvas/module-boundary-drawer';
+import { boundaryDrawer } from '@core/app/actions/canvas/boundaryDrawer';
 import { LayerModule, type LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import type { ModuleOffsets, OffsetTuple } from '@core/app/constants/layer-module/module-offsets';
 import moduleOffsets from '@core/app/constants/layer-module/module-offsets';
@@ -54,7 +54,7 @@ export const updateModuleOffsets = (
 
   if (shouldWrite) {
     beamboxPreference.write('module-offsets', offsets);
-    moduleBoundaryDrawer.update();
+    boundaryDrawer.update();
   }
 
   return offsets;

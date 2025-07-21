@@ -34,8 +34,8 @@ import Alert from '@core/app/actions/alert-caller';
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import ToolPanelsController from '@core/app/actions/beambox/toolPanelsController';
+import { boundaryDrawer } from '@core/app/actions/canvas/boundaryDrawer';
 import grid from '@core/app/actions/canvas/grid';
-import moduleBoundaryDrawer from '@core/app/actions/canvas/module-boundary-drawer';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import { getAddOnInfo } from '@core/app/constants/addOn';
@@ -2543,14 +2543,14 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     if (!layer) return false;
 
     presprayArea.togglePresprayArea();
-    moduleBoundaryDrawer.update({ unionOnly: true });
+    boundaryDrawer.onSkippedLayersChange();
 
     const oldDisplay = prevVisibility ? 'inline' : 'none';
     const cmd = new history.ChangeElementCommand(layer, { display: oldDisplay }, 'Layer Visibility');
 
     cmd.onAfter = () => {
       presprayArea.togglePresprayArea();
-      moduleBoundaryDrawer.update({ unionOnly: true });
+      boundaryDrawer.onSkippedLayersChange();
     };
 
     const { addToHistory = true, parentCmd } = opts || {};

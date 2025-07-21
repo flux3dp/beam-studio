@@ -16,12 +16,6 @@ const mockUseWorkarea = jest.fn();
 
 jest.mock('@core/helpers/hooks/useWorkarea', () => mockUseWorkarea);
 
-const mockUpdate = jest.fn();
-
-jest.mock('@core/app/actions/canvas/module-boundary-drawer', () => ({
-  update: (...args: any) => mockUpdate(...args),
-}));
-
 const mockGetPresetsList = jest.fn();
 
 jest.mock('@core/helpers/presets/preset-helper', () => ({
@@ -146,7 +140,6 @@ describe('test ModuleBlock', () => {
 
     expect(container).toMatchSnapshot();
     expect(mockUseWorkarea).toHaveBeenCalledTimes(1);
-    expect(mockUpdate).toHaveBeenCalledTimes(1);
   });
 
   it('should not render when workarea does not support module', () => {
@@ -168,7 +161,6 @@ describe('test ModuleBlock', () => {
       </ConfigPanelContext.Provider>,
     );
 
-    expect(mockUpdate).toHaveBeenCalledTimes(1);
     fireEvent.mouseDown(baseElement.querySelector('.ant-select-selector'));
 
     const mockElem = {};
@@ -223,7 +215,6 @@ describe('test ModuleBlock', () => {
       </ConfigPanelContext.Provider>,
     );
 
-    expect(mockUpdate).toHaveBeenCalledTimes(1);
     fireEvent.mouseDown(baseElement.querySelector('.ant-select-selector'));
 
     const mockElem = {};
@@ -272,7 +263,6 @@ describe('test ModuleBlock', () => {
       </ConfigPanelContext.Provider>,
     );
 
-    expect(mockUpdate).toHaveBeenCalledTimes(1);
     fireEvent.mouseDown(baseElement.querySelector('.ant-select-selector'));
 
     const mockElem = {};
@@ -323,7 +313,6 @@ describe('test ModuleBlock', () => {
       </ConfigPanelContext.Provider>,
     );
 
-    expect(mockUpdate).toHaveBeenCalledTimes(1);
     fireEvent.mouseDown(baseElement.querySelector('.ant-select-selector'));
 
     const mockElem1 = { name: 'layer1' };

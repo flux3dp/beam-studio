@@ -17,7 +17,7 @@ const fetchThumbnail = async (): Promise<string[]> => {
     $clonedSvg.find('#canvasBackground #previewSvg').remove();
     $clonedSvg.find('#canvasBackground #previewBoundary').remove();
     $clonedSvg.find('#canvasBackground #guidesLines').remove();
-    $clonedSvg.find('#canvasBackground #diode-boundary').remove();
+    $clonedSvg.find('#canvasBackground #workarea-boundary').remove();
     $clonedSvg.find('#canvasBackground').css('overflow', 'visible');
     $clonedSvg.find('#canvasBackground').children().css('overflow', 'visible');
 

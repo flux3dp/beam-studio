@@ -8,7 +8,6 @@ import { sprintf } from 'sprintf-js';
 import alertCaller from '@core/app/actions/alert-caller';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { promarkModels } from '@core/app/actions/beambox/constant';
-import diodeBoundaryDrawer from '@core/app/actions/canvas/diode-boundary-drawer';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import ColorBlock from '@core/app/components/beambox/right-panel/ColorBlock';
@@ -28,7 +27,6 @@ import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelIte
 import tutorialController from '@core/app/views/tutorials/tutorialController';
 import Select from '@core/app/widgets/AntdSelect';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import { useBeamboxPreference } from '@core/helpers/hooks/useBeamboxPreference';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import i18n from '@core/helpers/i18n';
 import isDev from '@core/helpers/is-dev';
@@ -103,19 +101,10 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
   const { change, getState } = useConfigPanelStore();
   const supportedModules = useMemo(() => getSupportedModules(workarea), [workarea]);
   const state = getState();
-  const { diode, fullcolor, module } = state;
+  const { fullcolor, module } = state;
   const isPrintingModule = useMemo(() => printingModules.has(module.value), [module.value]);
   const is4cUV = useMemo(() => UVModules.has(module.value), [module.value]);
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
-  const isDiodeEnabled = useBeamboxPreference('enable-diode');
-
-  useEffect(() => {
-    if (isDiodeEnabled && addOnInfo.hybridLaser) {
-      diodeBoundaryDrawer.show(diode.value === 1);
-    } else {
-      diodeBoundaryDrawer.hide();
-    }
-  }, [diode.value, addOnInfo.hybridLaser, isDiodeEnabled]);
 
   useEffect(() => {
     const drawing = svgCanvas.getCurrentDrawing();

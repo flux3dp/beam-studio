@@ -14,7 +14,7 @@ const useSettingStore = create(() => ({
 }));
 
 jest.mock('@core/app/pages/Settings/useSettingStore', () => ({ useSettingStore }));
-jest.mock('@core/app/actions/canvas/module-boundary-drawer', () => {});
+jest.mock('@core/app/actions/canvas/boundaryDrawer', () => {});
 jest.mock('./components/SettingFormItem');
 
 const mockOffsets: ModuleOffsets = { fbm2: { [LayerModule.LASER_1064]: [10, 10] } };

@@ -1,9 +1,8 @@
-import React, { memo, useContext, useEffect, useMemo } from 'react';
+import React, { memo, useContext, useMemo } from 'react';
 
 import { pipe } from 'remeda';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import moduleBoundaryDrawer from '@core/app/actions/canvas/module-boundary-drawer';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import alertConstants from '@core/app/constants/alert-constants';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
@@ -49,10 +48,6 @@ const ModuleBlock = (): React.ReactNode => {
   const { value } = module;
   const workarea = useWorkarea();
   const supportedModules = useMemo(() => getSupportedModules(workarea), [workarea]);
-
-  useEffect(() => {
-    moduleBoundaryDrawer.update();
-  }, [value]);
 
   if (supportedModules.length <= 1) return null;
 

@@ -19,7 +19,7 @@ const useSettingStore = create(() => ({
 }));
 
 jest.mock('@core/app/pages/Settings/useSettingStore', () => ({ useSettingStore }));
-jest.mock('@core/app/actions/canvas/module-boundary-drawer', () => {});
+jest.mock('@core/app/actions/canvas/boundaryDrawer', () => {});
 jest.mock('./components/SettingSelect');
 jest.mock('./components/SettingFormItem');
 

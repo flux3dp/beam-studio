@@ -1,0 +1,9 @@
+.boundary {
+  + text {
+    opacity: 0;
+  }
+
+  &:hover + text {
+    opacity: 1;
+  }
+}
