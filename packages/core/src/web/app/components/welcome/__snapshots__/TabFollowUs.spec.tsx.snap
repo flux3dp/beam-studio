@@ -31,7 +31,7 @@ exports[`test TabFollowUs should render correctly 1`] = `
     <div
       class="subtitle"
     >
-      Guides, manuals, and support resources for all things FLUX.
+      Get inspirations, deals, freebies and engage with FLUXers!
     </div>
     <div
       class="content"
