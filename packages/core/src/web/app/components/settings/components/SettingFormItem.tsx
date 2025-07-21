@@ -1,4 +1,4 @@
-import { InfoCircleOutlined } from '@ant-design/icons';
+import { InfoCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Flex, Form, Tooltip } from 'antd';
 
 import browser from '@core/implementations/browser';
@@ -9,19 +9,30 @@ type Props = {
   children: React.ReactNode;
   id?: string;
   label: string;
+  tooltip?: string;
   url?: string;
   warning?: string;
 };
 
-function SettingFormItem({ children, id, label, url, warning }: Props) {
+function SettingFormItem({ children, id, label, tooltip, url, warning }: Props) {
   const renderInfo = () => {
-    if (!url) return null;
+    if (url) {
+      return (
+        <Tooltip title={url}>
+          <InfoCircleOutlined className={styles.icon} onClick={() => browser.open(url)} />
+        </Tooltip>
+      );
+    }
 
-    return (
-      <Tooltip title={url}>
-        <InfoCircleOutlined className={styles.icon} onClick={() => browser.open(url)} />
-      </Tooltip>
-    );
+    if (tooltip) {
+      return (
+        <Tooltip title={tooltip}>
+          <QuestionCircleOutlined className={styles.icon} />
+        </Tooltip>
+      );
+    }
+
+    return null;
   };
 
   const renderWarning = () => {

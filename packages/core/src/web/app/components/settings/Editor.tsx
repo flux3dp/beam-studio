@@ -227,6 +227,22 @@ function Editor({ options, unitInputProps }: Props): React.JSX.Element {
         onChange={(e) => setPreference('print-advanced-mode', e)}
         options={options}
       />
+      <SettingSelect
+        defaultValue={getPreference('use-real-boundary')}
+        id="use-real-boundary"
+        label={lang.settings.use_real_boundary}
+        onChange={(e) => setPreference('use-real-boundary', e)}
+        options={options}
+        tooltip={lang.settings.use_real_boundary_tooltip}
+      />
+      <SettingSelect
+        defaultValue={getPreference('crop-task-thumbnail')}
+        id="crop-task-thumbnail"
+        label={lang.settings.crop_task_thumbnail}
+        onChange={(e) => setPreference('crop-task-thumbnail', e)}
+        options={options}
+        tooltip={lang.settings.crop_task_thumbnail_tooltip}
+      />
     </>
   );
 }

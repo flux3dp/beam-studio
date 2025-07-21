@@ -1832,6 +1832,8 @@ const lang: ILang = {
     confirm_remove_default: 'Mesin lalai akan dibuang.',
     confirm_reset: 'Sahkan tetapkan semula Beam Studio?',
     continuous_drawing: 'Lukisan Berterusan',
+    crop_task_thumbnail: 'Imej kecil potong kandungan',
+    crop_task_thumbnail_tooltip: 'Paparkan hanya lakaran kecil kawasan yang mengandungi kandungan, kecuali kawasan kanvas kosong.',
     curve_engraving_speed_limit: 'Had kelajuan ukiran lengkung',
     custom_preview_height: 'Ketinggian Pratonton Tersuai',
     default_beambox_model: 'Tetapan Dokumen Lalai',
@@ -1940,6 +1942,10 @@ const lang: ILang = {
     trace_output: 'Output Imej Jejak',
     update_beta: 'Beta',
     update_latest: 'Terkini',
+    use_real_boundary: 'Gunakan julat maksimum',
+    use_real_boundary_tooltip: 'Kembangkan ke kawasan kerja maksimum sebenar, tanpa had oleh garis grid integer.',
+    use_union_boundary: 'Papar kawasan kerja bertindih',
+    use_union_boundary_tooltip: 'Paparkan kawasan kerja bertindih bagi beberapa modul',
     vector_speed_constraint: 'Had Kelajuan',
     wrong_ip_format: 'Format IP Salah',
   },
@@ -2361,7 +2367,7 @@ const lang: ILang = {
   },
   welcome_page: {
     follow_us: {
-      subtitle: 'Panduan, manual, dan sumber sokongan untuk semua perkara berkaitan FLUX.',
+      subtitle: 'Dapatkan inspirasi, tawaran, hadiah percuma dan berinteraksi dengan pengguna FLUX!',
       user_group: 'Kumpulan Pengguna',
     },
     help_center: {

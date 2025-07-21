@@ -1825,6 +1825,8 @@ export interface ILang {
     confirm_remove_default: string;
     confirm_reset: string;
     continuous_drawing: string;
+    crop_task_thumbnail: string;
+    crop_task_thumbnail_tooltip: string;
     curve_engraving_speed_limit: string;
     custom_preview_height: string;
     default_beambox_model: string;
@@ -1933,6 +1935,10 @@ export interface ILang {
     trace_output: string;
     update_beta: string;
     update_latest: string;
+    use_real_boundary: string;
+    use_real_boundary_tooltip: string;
+    use_union_boundary: string;
+    use_union_boundary_tooltip: string;
     vector_speed_constraint: string;
     wrong_ip_format: string;
   };

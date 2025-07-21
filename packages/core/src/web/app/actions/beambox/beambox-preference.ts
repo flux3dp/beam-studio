@@ -24,6 +24,7 @@ export type BeamboxPreference = {
   blade_radius: number;
   borderless: boolean;
   continuous_drawing: boolean;
+  'crop-task-thumbnail': boolean;
   curve_engraving_speed_limit: boolean;
   'customized-dimension': Partial<Record<WorkAreaModel, { height: number; width: number }>>;
   'default-autofocus': boolean;
@@ -86,6 +87,8 @@ export type BeamboxPreference = {
   show_guides: boolean;
   show_rulers: boolean;
   simplify_clipper_path: boolean;
+  'use-real-boundary': boolean;
+  'use-union-boundary': boolean;
   use_layer_color: boolean;
   vector_speed_constraint: boolean;
   workarea: WorkAreaModel;
@@ -107,6 +110,7 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   blade_radius: 0,
   borderless: false,
   continuous_drawing: false,
+  'crop-task-thumbnail': true,
   curve_engraving_speed_limit: true,
   'customized-dimension': { fpm1: { height: 150, width: 150 } },
   'default-autofocus': false,
@@ -164,6 +168,8 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   show_guides: false,
   show_rulers: false,
   simplify_clipper_path: false,
+  'use-real-boundary': false,
+  'use-union-boundary': true,
   use_layer_color: true,
   vector_speed_constraint: true,
   workarea: 'fbb1b',

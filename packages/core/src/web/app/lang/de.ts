@@ -1832,6 +1832,8 @@ const lang: ILang = {
     confirm_remove_default: 'Die Standardmaschine wird entfernt.',
     confirm_reset: 'Bestätige das Zurücksetzen von Beam Studio?',
     continuous_drawing: 'Kontinuierliches Zeichnen',
+    crop_task_thumbnail: 'Inhalt zugeschnittenes Vorschaubild',
+    crop_task_thumbnail_tooltip: 'Zeige nur die Miniatur des Bereichs mit Inhalt, ohne leere Leinwandbereiche.',
     curve_engraving_speed_limit: 'Geschwindigkeitsbegrenzung für Kurvengravur',
     custom_preview_height: 'Benutzerdefinierte Vorschauhöhe',
     default_beambox_model: 'Standarddokumenteinstellung',
@@ -1940,6 +1942,10 @@ const lang: ILang = {
     trace_output: 'Bildverfolgungsausgabe',
     update_beta: 'Beta',
     update_latest: 'Neueste',
+    use_real_boundary: 'Maximale Reichweite verwenden',
+    use_real_boundary_tooltip: 'Auf den tatsächlichen maximalen Arbeitsbereich erweitern, ohne durch Ganzzahllinien eingeschränkt zu sein.',
+    use_union_boundary: 'Überlappenden Arbeitsbereich anzeigen',
+    use_union_boundary_tooltip: 'Anzeige überlappender Arbeitsbereiche mehrerer Module',
     vector_speed_constraint: 'Geschwindigkeitsbegrenzung',
     wrong_ip_format: 'Falsche IP-Formate',
   },
@@ -2361,7 +2367,7 @@ const lang: ILang = {
   },
   welcome_page: {
     follow_us: {
-      subtitle: 'Anleitungen, Handbücher und Support-Ressourcen rund um FLUX.',
+      subtitle: 'Hol dir Inspirationen, Angebote, Gratisartikel und tausche dich mit FLUX-Nutzern aus!',
       user_group: 'Benutzergruppe',
     },
     help_center: {

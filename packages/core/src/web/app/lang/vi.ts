@@ -1832,6 +1832,8 @@ const lang: ILang = {
     confirm_remove_default: 'Máy mặc định sẽ bị xóa.',
     confirm_reset: 'Xác nhận đặt lại Beam Studio?',
     continuous_drawing: 'Vẽ liên tục',
+    crop_task_thumbnail: 'Thu nhỏ cắt nội dung',
+    crop_task_thumbnail_tooltip: 'Chỉ hiển thị ảnh thu nhỏ của khu vực có nội dung, loại trừ các vùng trống trên canvas.',
     curve_engraving_speed_limit: 'Giới hạn tốc độ khắc đường cong',
     custom_preview_height: 'Chiều cao xem trước tùy chỉnh',
     default_beambox_model: 'Thiết lập mặc định',
@@ -1940,6 +1942,10 @@ const lang: ILang = {
     trace_output: 'Kết quả trích xuất ảnh',
     update_beta: 'Beta',
     update_latest: 'Mới nhất',
+    use_real_boundary: 'Sử dụng phạm vi tối đa',
+    use_real_boundary_tooltip: 'Mở rộng đến vùng làm việc tối đa thực tế, không bị giới hạn bởi các đường lưới số nguyên.',
+    use_union_boundary: 'Hiển thị khu vực làm việc chồng chéo',
+    use_union_boundary_tooltip: 'Hiển thị vùng làm việc chồng lên nhau của nhiều mô-đun',
     vector_speed_constraint: 'Giới hạn tốc độ',
     wrong_ip_format: 'Định dạng IP không hợp lệ',
   },
@@ -2361,7 +2367,7 @@ const lang: ILang = {
   },
   welcome_page: {
     follow_us: {
-      subtitle: 'Hướng dẫn, tài liệu và tài nguyên hỗ trợ cho mọi thứ liên quan đến FLUX.',
+      subtitle: 'Nhận cảm hứng, ưu đãi, quà tặng miễn phí và kết nối với cộng đồng FLUX!',
       user_group: 'Nhóm người dùng',
     },
     help_center: {

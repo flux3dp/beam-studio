@@ -1,11 +1,12 @@
 import React from 'react';
 
-function SettingSelect({ id, label, onChange, options, url }: any) {
+function SettingSelect({ id, label, onChange, options, tooltip, url }: any) {
   return (
     <div>
       mock-select-control id:{id}
       label:{label}
       url:{url}
+      {tooltip && `tooltip:${tooltip}`}
       options:{JSON.stringify(options)}
       <input
         className="select-control"

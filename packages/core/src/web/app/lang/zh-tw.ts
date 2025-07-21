@@ -1833,6 +1833,8 @@ const lang: ILang = {
     confirm_remove_default: '將會刪除預設機器',
     confirm_reset: '確認要重置 Beam Studio?',
     continuous_drawing: '連續繪製',
+    crop_task_thumbnail: '內容裁切縮圖',
+    crop_task_thumbnail_tooltip: '僅顯示含有內容區域的縮圖，排除空白畫布區域。',
     curve_engraving_speed_limit: '曲面雕刻速度限制',
     custom_preview_height: '自訂預覽高度',
     default_beambox_model: '預設文件設定',
@@ -1941,6 +1943,10 @@ const lang: ILang = {
     trace_output: '向量化及影像描圖輸出',
     update_beta: 'Beta',
     update_latest: '穩定版',
+    use_real_boundary: '使用最大範圍',
+    use_real_boundary_tooltip: '擴展至實際最大工作區域，不受整數格線限制。',
+    use_union_boundary: '顯示重疊工作範圍',
+    use_union_boundary_tooltip: '顯示多模組重疊的工作區域',
     vector_speed_constraint: '限制上限速度',
     wrong_ip_format: 'IP格式錯誤',
   },
@@ -2362,7 +2368,7 @@ const lang: ILang = {
   },
   welcome_page: {
     follow_us: {
-      subtitle: '所有 FLUX 相關的指南、手冊與支援資源。',
+      subtitle: '獲取靈感、優惠、免費好康，並與 FLUX 用戶互動！',
       user_group: '用戶社群',
     },
     help_center: {

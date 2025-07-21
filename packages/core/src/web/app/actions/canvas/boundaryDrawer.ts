@@ -19,7 +19,6 @@ import {
   getTextPosition,
   mergeBoundaries,
 } from '@core/helpers/boundary-helper';
-import { todo } from '@core/helpers/dev-helper';
 import { getModuleOffsets } from '@core/helpers/device/moduleOffsets';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { hasModuleLayer } from '@core/helpers/layer-module/layer-module-helper';
@@ -48,11 +47,8 @@ export class BoundaryDrawer {
   private changedKeys: Set<BoundaryKey> = new Set();
 
   private constructor() {
-    todo('Add beamboxPreference');
-    // this.useRealBoundary = beamboxPreference.read('use-real-boundary');
-    // this.useUnionBoundary = beamboxPreference.read('use-union-boundary');
-    this.useRealBoundary = true;
-    this.useUnionBoundary = false;
+    this.useRealBoundary = beamboxPreference.read('use-real-boundary');
+    this.useUnionBoundary = beamboxPreference.read('use-union-boundary');
     this.container = createBoundaryContainer('workarea-boundary');
     this.boundary = createBoundaryPath('boundary-path', this.container, !this.useRealBoundary);
     this.text = createBoundaryText(this.container);

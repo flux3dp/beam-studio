@@ -1832,6 +1832,8 @@ const lang: ILang = {
     confirm_remove_default: 'Oletuslaite poistetaan.',
     confirm_reset: 'Vahvista Beam Studion nollaus',
     continuous_drawing: 'Jatkuva piirto',
+    crop_task_thumbnail: 'Sisällön rajattu pikkukuva',
+    crop_task_thumbnail_tooltip: 'Näytä vain sisältöalueen pikkukuva, jättäen tyhjät kangasalueet pois.',
     curve_engraving_speed_limit: 'Kaiverruksen nopeusrajoitus kaareville pinnoille',
     custom_preview_height: 'Mukautettu esikatselukorkeus',
     default_beambox_model: 'Oletusasiakirja-asetukset',
@@ -1940,6 +1942,10 @@ const lang: ILang = {
     trace_output: 'Kuvan jäljityslähtö',
     update_beta: 'Beeta',
     update_latest: 'Viimeisin',
+    use_real_boundary: 'Käytä maksimi aluetta',
+    use_real_boundary_tooltip: 'Laajenna todelliseen maksimaaliseen työalueeseen, ilman rajoituksia kokonaislukuruudukon viivoilla.',
+    use_union_boundary: 'Näytä päällekkäinen työalue',
+    use_union_boundary_tooltip: 'Näytä useiden moduulien päällekkäiset työalueet',
     vector_speed_constraint: 'Nopeusrajoitus',
     wrong_ip_format: 'Väärä IP-muoto',
   },
@@ -2361,7 +2367,7 @@ const lang: ILang = {
   },
   welcome_page: {
     follow_us: {
-      subtitle: 'FLUXiin liittyvät oppaat, käyttöohjeet ja tukiresurssit.',
+      subtitle: 'Hanki inspiraatiota, tarjouksia, ilmaisia etuja ja ole yhteydessä FLUX-käyttäjiin!',
       user_group: 'Käyttäjäryhmä',
     },
     help_center: {

@@ -1832,6 +1832,8 @@ const lang: ILang = {
     confirm_remove_default: 'Το προεπιλεγμένο μηχάνημα θα αφαιρεθεί.',
     confirm_reset: 'Επιβεβαίωση επαναφοράς Beam Studio',
     continuous_drawing: 'Συνεχής σχεδίαση',
+    crop_task_thumbnail: 'Μικρογραφία περικομμένου περιεχομένου',
+    crop_task_thumbnail_tooltip: 'Εμφανίστε μόνο τη μικρογραφία της περιοχής που περιέχει περιεχόμενο, εξαιρώντας τα κενά μέρη του καμβά.',
     curve_engraving_speed_limit: 'Όριο ταχύτητας χάραξης καμπύλης',
     custom_preview_height: 'Προσαρμοσμένο Ύψος Προεπισκόπησης',
     default_beambox_model: 'Προεπιλεγμένη ρύθμιση εγγράφου',
@@ -1940,6 +1942,10 @@ const lang: ILang = {
     trace_output: 'Έξοδος ιχνηλάτησης εικόνας',
     update_beta: 'Δοκιμαστική έκδοση',
     update_latest: 'Τελευταία',
+    use_real_boundary: 'Χρησιμοποιήστε τη μέγιστη εμβέλεια',
+    use_real_boundary_tooltip: 'Επέκταση στην πραγματική μέγιστη περιοχή εργασίας, χωρίς περιορισμό από γραμμές ακέραιου πλέγματος.',
+    use_union_boundary: 'Εμφάνιση επικαλυπτόμενης περιοχής εργασίας',
+    use_union_boundary_tooltip: 'Εμφάνιση επικαλυπτόμενων περιοχών εργασίας πολλών μονάδων',
     vector_speed_constraint: 'Όριο ταχύτητας',
     wrong_ip_format: 'Λανθασμένη μορφή IP',
   },
@@ -2361,7 +2367,7 @@ const lang: ILang = {
   },
   welcome_page: {
     follow_us: {
-      subtitle: 'Οδηγοί, εγχειρίδια και πόροι υποστήριξης για όλα όσα σχετίζονται με τη FLUX.',
+      subtitle: 'Πάρε έμπνευση, προσφορές, δωρεάν δώρα και συνδέσου με την κοινότητα της FLUX!',
       user_group: 'Ομάδα χρηστών',
     },
     help_center: {

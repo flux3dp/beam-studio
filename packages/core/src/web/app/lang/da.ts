@@ -1832,6 +1832,8 @@ const lang: ILang = {
     confirm_remove_default: 'Standardmaskinen vil blive fjernet.',
     confirm_reset: 'Bekræft nulstilling af Beam Studio?',
     continuous_drawing: 'Kontinuerlig tegning',
+    crop_task_thumbnail: 'Indhold beskåret miniature',
+    crop_task_thumbnail_tooltip: 'Vis kun miniaturebilledet af området med indhold og ekskluder tomme lærredsområder.',
     curve_engraving_speed_limit: 'Hastighedsgrænse for kurvegravering',
     custom_preview_height: 'Brugerdefineret Forhåndsvisningshøjde',
     default_beambox_model: 'Standard dokumentindstilling',
@@ -1940,6 +1942,10 @@ const lang: ILang = {
     trace_output: 'Billede Spor Output',
     update_beta: 'Beta',
     update_latest: 'Latest',
+    use_real_boundary: 'Brug maksimal rækkevidde',
+    use_real_boundary_tooltip: 'Udvid til det faktiske maksimale arbejdsområde uden begrænsning af heltals gitterlinjer.',
+    use_union_boundary: 'Vis overlappende arbejdsområde',
+    use_union_boundary_tooltip: 'Vis overlappende arbejdsområder for flere moduler',
     vector_speed_constraint: 'Hastighedsgrænse',
     wrong_ip_format: 'Forkert IP-format',
   },
@@ -2361,7 +2367,7 @@ const lang: ILang = {
   },
   welcome_page: {
     follow_us: {
-      subtitle: 'Vejledninger, manualer og supportressourcer til alt om FLUX.',
+      subtitle: 'Få inspiration, tilbud, gratis ting og engagér dig med FLUX-brugere!',
       user_group: 'Brugergruppe',
     },
     help_center: {

@@ -1832,6 +1832,8 @@ const lang: ILang = {
     confirm_remove_default: 'Výchozí přístroj bude odstraněn.',
     confirm_reset: 'Potvrdit restart Beam Studia?',
     continuous_drawing: 'Souvislé kreslení',
+    crop_task_thumbnail: 'Náhled oříznutého obsahu',
+    crop_task_thumbnail_tooltip: 'Zobrazte pouze miniaturu oblasti obsahující obsah, s vyloučením prázdných oblastí plátna.',
     curve_engraving_speed_limit: 'Omezení rychlosti gravírování křivky',
     custom_preview_height: 'Vlastní výška náhledu',
     default_beambox_model: 'Výchozí nastavení dokumentu',
@@ -1940,6 +1942,10 @@ const lang: ILang = {
     trace_output: 'Výstup obkreslování obrázku',
     update_beta: 'Beta',
     update_latest: 'Poslední',
+    use_real_boundary: 'Použít maximální rozsah',
+    use_real_boundary_tooltip: 'Rozšiřte na skutečnou maximální pracovní oblast bez omezení celočíselnými mřížkovými čarami.',
+    use_union_boundary: 'Zobrazit překrývající se pracovní oblast',
+    use_union_boundary_tooltip: 'Zobrazit překrývající se pracovní oblasti více modulů',
     vector_speed_constraint: 'Omezení rychlosti',
     wrong_ip_format: 'Špatné formáty IP',
   },
@@ -2361,7 +2367,7 @@ const lang: ILang = {
   },
   welcome_page: {
     follow_us: {
-      subtitle: 'Průvodci, příručky a podpůrné zdroje pro vše, co se týká FLUX.',
+      subtitle: 'Získejte inspiraci, nabídky, dárky a zapojte se do komunity FLUX!',
       user_group: 'Uživatelská skupina',
     },
     help_center: {

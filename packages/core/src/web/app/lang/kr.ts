@@ -1832,6 +1832,8 @@ const lang: ILang = {
     confirm_remove_default: '기본 기계가 제거됩니다.',
     confirm_reset: 'Beam Studio 재설정을 확인하시겠습니까?',
     continuous_drawing: '연속 그리기',
+    crop_task_thumbnail: '콘텐츠 자르기 썸네일',
+    crop_task_thumbnail_tooltip: '내용이 포함된 영역의 축소판만 표시하고 빈 캔버스 영역은 제외합니다.',
     curve_engraving_speed_limit: '곡선 조각 속도 제한',
     custom_preview_height: '사용자 정의 미리보기 높이',
     default_beambox_model: '기본 문서 설정',
@@ -1940,6 +1942,10 @@ const lang: ILang = {
     trace_output: '이미지 추적 출력',
     update_beta: '베타',
     update_latest: '최신',
+    use_real_boundary: '최대 범위 사용',
+    use_real_boundary_tooltip: '실제 최대 작업 영역까지 확장하며, 정수 격자선에 제한받지 않습니다.',
+    use_union_boundary: '겹치는 작업 영역 표시',
+    use_union_boundary_tooltip: '여러 모듈의 겹치는 작업 영역 표시',
     vector_speed_constraint: '속도 제한',
     wrong_ip_format: '잘못된 IP 형식',
   },
@@ -2361,7 +2367,7 @@ const lang: ILang = {
   },
   welcome_page: {
     follow_us: {
-      subtitle: 'FLUX 관련 모든 가이드, 매뉴얼, 지원 자료입니다.',
+      subtitle: '영감을 얻고, 할인과 무료 혜택을 받고, FLUX 사용자들과 소통하세요!',
       user_group: '사용자 그룹',
     },
     help_center: {
