@@ -11,6 +11,11 @@ jest.mock('@core/app/components/welcome/TabMyCloud', () => 'mock-tab-my-cloud');
 jest.mock('@core/app/components/welcome/TabRecentFiles', () => 'mock-tab-recent-files');
 jest.mock('@core/app/components/welcome/UserInfo', () => 'mock-user-info');
 
+jest.mock('@core/app/actions/beambox/beambox-global-interaction', () => ({
+  attach: jest.fn(),
+  detach: jest.fn(),
+}));
+
 const mockClearScene = jest.fn();
 const mockImportImage = jest.fn();
 
