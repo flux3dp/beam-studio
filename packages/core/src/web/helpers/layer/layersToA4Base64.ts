@@ -43,6 +43,8 @@ export const layersToA4Base64 = async (layers: SVGGElement[], options?: Options)
     ${outerHTML}
     </svg>`;
 
+    console.log(svgString);
+
     return svgStringToCanvas(svgString, canvasWidth, canvasHeight);
   };
 

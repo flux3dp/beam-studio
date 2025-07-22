@@ -1,20 +1,15 @@
-import { pipe } from 'remeda';
+import { map, pipe, prop } from 'remeda';
 
 import { dpmm } from '@core/app/actions/beambox/constant';
 import history from '@core/app/svgedit/history/history';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import {
-  type ConvertSvgToImageParams,
-  type ConvertToImageResult,
-  createAndFinalizeImage,
-  getUnionBBox,
-} from './convertToImage.util';
+import type { ConvertSvgToImageParams, ConvertToImageResult } from './convertToImage.util';
+import { createAndFinalizeImage, getUnionBBox } from './convertToImage.util';
 import svgStringToCanvas from './image/svgStringToCanvas';
 import { getObjectLayer, sortLayerNamesByPosition } from './layer/layer-helper';
 import { getSVGAsync } from './svg-editor-helper';
-import symbolMaker from './symbol-helper/symbolMaker';
 import { convertVariableText } from './variableText';
 
 let svgCanvas: ISVGCanvas;
@@ -35,18 +30,6 @@ export const convertibleSvgTags = [
   'use',
   'g',
 ] as const;
-
-type MainConverterFunc = (params: ConvertSvgToImageParams) => Promise<ConvertToImageResult>;
-
-const switchSymbolWrapper = <T>(fn: () => T): T => {
-  symbolMaker.switchImageSymbolForAll(false);
-
-  try {
-    return fn();
-  } finally {
-    symbolMaker.switchImageSymbolForAll(true);
-  }
-};
 
 const getLayerTitles = (svgElement: SVGElement): string[] => {
   const titles: string[] = [];
@@ -82,21 +65,24 @@ type Options = { dpi?: number };
  * @param options - Export options like DPI.
  * @returns A promise that resolves to a base64 data URL string.
  */
-export const elementsToImageBase64 = async (elements: SVGElement[], bbox: BBox, options?: Options): Promise<string> => {
-  // 1. Get options or use defaults
-  const { dpi = 300 } = options || {};
-
-  // 2. Calculate the final pixel dimensions of the canvas based on the bbox and DPI
+export const elementsToImageBase64 = async (
+  elements: SVGElement[],
+  bbox: BBox,
+  { dpi = 300 }: Options,
+): Promise<string> => {
+  // Calculate the final pixel dimensions of the canvas based on the bbox and DPI
   // (This ratio calculation is preserved from your original function)
   const ratio = dpi / (dpmm * 25.4);
   const canvasWidth = Math.round(bbox.width * ratio);
   const canvasHeight = Math.round(bbox.height * ratio);
-
-  // 3. Get necessary SVG components
+  // Get necessary SVG components
   const svgDefs = findDefs(); // To include shared definitions like gradients or patterns
-  const elementsHtml = elements.map((el) => el.outerHTML).join('');
-
-  // 4. Construct the SVG string. The viewBox is now determined entirely by the unionBBox,
+  const elementsHtml = pipe(
+    elements,
+    map((el) => el.cloneNode(true) as SVGGElement), // Clone elements to avoid modifying the original SVG
+    map(prop('outerHTML')),
+  );
+  // Construct the SVG string. The viewBox is now determined entirely by the unionBBox,
   // creating a tightly cropped view of the elements.
   const svgString = `
     <svg
@@ -112,10 +98,10 @@ export const elementsToImageBase64 = async (elements: SVGElement[], bbox: BBox, 
       </g>
     </svg>`;
 
-  // 5. Render the SVG to a canvas using your existing helper
+  // Render the SVG to a canvas using your existing helper
   const canvas = await svgStringToCanvas(svgString, canvasWidth, canvasHeight);
 
-  // 6. Return the canvas content as a base64 data URL
+  // Return the canvas content as a base64 data URL
   return canvas.toDataURL('image/png');
 };
 
@@ -131,9 +117,7 @@ export const convertSvgToImage = async ({
   svgCanvas.removeUnusedDefs();
 
   const revert = await convertVariableText();
-  const base64 = await switchSymbolWrapper(() =>
-    elementsToImageBase64([svgElement.cloneNode(true) as SVGGElement], bbox!, { dpi: 300 }),
-  );
+  const base64 = await elementsToImageBase64([svgElement], bbox!, { dpi: 300 });
 
   revert?.();
 
@@ -144,8 +128,6 @@ export const convertSvgToImage = async ({
     { angle: 0, height: bbox.height, href: base64, transform: '', width: bbox.width, x: bbox.x, y: bbox.y },
     { isToSelect, parentCmd, svgElement },
   );
-
-  // const output = switchSymbolWrapper(() => rasterizeGenericSvgElement(svgElement, { isToSelect, parentCmd }));
 
   return undefined;
 };

@@ -575,12 +575,15 @@ const switchImageSymbol = (elem: SVGUseElement, shouldUseImage: boolean): IBatch
 const switchImageSymbolForAll = (shouldUseImage: boolean): void => {
   Progress.openNonstopProgress({ id: 'switch-all-symbol' });
 
-  const layers = $('#svgcontent > g.layer').toArray();
+  const layers = Array.from(document.querySelector('#svgcontent')?.children!).filter(
+    (el) => el.tagName === 'g' && (el.classList.contains('layer') || el.getAttribute('data-tempgroup') === 'true'),
+  );
 
   layers.forEach((layer) => {
     const uses: SVGUseElement[] = Array.from(layer.querySelectorAll('use'));
 
     uses.forEach((use) => {
+      console.log(`Switching ${use.id} to ${shouldUseImage ? 'image' : 'svg symbol'}`);
       switchImageSymbol(use, shouldUseImage);
     });
   });
@@ -597,5 +600,7 @@ const symbolMaker = {
   switchImageSymbol,
   switchImageSymbolForAll,
 };
+
+window.symbolMaker = symbolMaker; // For debugging purposes
 
 export default symbolMaker;

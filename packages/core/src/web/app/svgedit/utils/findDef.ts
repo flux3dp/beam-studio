@@ -1,6 +1,8 @@
+import { match } from 'ts-pattern';
+
 import NS from '@core/app/constants/namespaces';
 
-export const findDefs = (): SVGDefsElement => {
+export const findDefs = (defType: 'all' | 'image' | 'path' = 'all'): SVGDefsElement => {
   let svgElement = document.getElementById('svg_defs') as unknown as SVGSVGElement;
 
   if (!svgElement) {
@@ -23,7 +25,28 @@ export const findDefs = (): SVGDefsElement => {
     svgElement.insertBefore(defs, svgElement.firstChild);
   }
 
-  return defs;
+  console.log(`findDefs: ${defType}`, defs);
+
+  return match(defType)
+    .with('image', () => {
+      const imageDefs = defs.querySelectorAll('image');
+
+      if (imageDefs.length > 0) {
+        return imageDefs[0].parentElement as SVGDefsElement;
+      }
+
+      return defs;
+    })
+    .with('path', () => {
+      const pathDefs = defs.querySelectorAll('path');
+
+      if (pathDefs.length > 0) {
+        return pathDefs[0].parentElement as SVGDefsElement;
+      }
+
+      return defs;
+    })
+    .otherwise(() => defs);
 };
 
 export default findDefs;
