@@ -4,7 +4,7 @@ import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant, { dpmm } from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
-import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { getModuleBoundary } from '@core/app/constants/layer-module/module-boundary';
 import { getSupportedModules, getWorkarea } from '@core/app/constants/workarea-constants';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
@@ -297,7 +297,7 @@ export class BoundaryDrawer {
         top += offsetY;
         bottom -= offsetY;
 
-        if (module === LayerModule.PRINTER_4C) {
+        if (printingModules.has(module)) {
           // Add extra height for printer head
           bottom -= 127;
         }
