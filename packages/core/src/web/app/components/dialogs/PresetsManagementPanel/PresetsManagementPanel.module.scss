@@ -149,7 +149,7 @@ div.modal-wrap {
       display: flex;
       gap: 12%;
       max-height: 200px;
-      overflow-y: scroll;
+      overflow-y: auto;
 
       > div {
         flex-grow: 1;
