@@ -1,13 +1,24 @@
 import { match, P } from 'ts-pattern';
 
+import ungroupElement from '@core/app/svgedit/group/ungroup';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { deleteElements } from '@core/app/svgedit/operations/delete';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
+import { getSVGAsync } from '../svg-editor-helper';
+
+import { combineImagesIntoSingleElement } from './combineImagesIntoSingleElement';
 import { convertGroupToImage } from './convertGroupToImage';
 import { convertUseToImage } from './convertUseToImage';
 import { rasterizeGenericSvgElement } from './rasterizeGenericSvgElement';
 import type { MainConverterFunc } from './types';
+
+let svgCanvas: ISVGCanvas;
+
+getSVGAsync(({ Canvas }) => {
+  svgCanvas = Canvas;
+});
 
 export const convertibleSvgTags = [
   'rect',
@@ -36,6 +47,7 @@ export const convertSvgToImage: MainConverterFunc = async ({
 
   const result = await match(svgElement)
     .with({ tagName: 'use' }, async (el) => convertUseToImage({ isToSelect, parentCmd, svgElement: el }))
+    .with({ tagName: 'image' }, async (el) => ({ imageElements: [el as SVGImageElement], svgElements: [] }))
     .when(
       (el) => el.getAttribute('data-textpath-g') === '1',
       async (el) => rasterizeGenericSvgElement({ isToSelect, parentCmd, svgElement: el }),
@@ -53,8 +65,46 @@ export const convertSvgToImage: MainConverterFunc = async ({
     });
 
   if (isToSelect && result) {
-    undoManager.addCommandToHistory(parentCmd);
+    const toSelect = [];
+
+    if (result.svgElements.length > 0) {
+      const origImageElement = result.imageElements[0] as SVGImageElement;
+      const elements = [origImageElement];
+
+      result.imageElements.length = 0;
+
+      while (elements.length > 0) {
+        const element = elements.pop() as SVGImageElement;
+
+        if (element.tagName === 'g' && element.getAttribute('data-textpath-g') !== '1') {
+          const { batchCmd, children } = ungroupElement(element);
+
+          parentCmd.addSubCommand(batchCmd);
+
+          elements.push(...(children as SVGImageElement[]));
+        } else {
+          toSelect.push(element);
+          result.imageElements.push(element);
+        }
+      }
+    }
+
     parentCmd.addSubCommand(deleteElements(result.svgElements, true));
+    svgCanvas.selectOnly(toSelect);
+
+    // Only combine if there's more than one image
+    if (toSelect.length > 1) {
+      // Wait for href transformation to complete from blob to base64
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      const combinedImage = await combineImagesIntoSingleElement(toSelect as SVGImageElement[]);
+
+      parentCmd.addSubCommand(new history.InsertElementCommand(combinedImage));
+      parentCmd.addSubCommand(deleteElements(toSelect, true));
+      svgCanvas.selectOnly([combinedImage]);
+    }
+
+    undoManager.addCommandToHistory(parentCmd);
   }
 
   return result;
