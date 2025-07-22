@@ -46,11 +46,11 @@ const fetchThumbnail = async (): Promise<string[]> => {
 
     if (beamboxPreference.read('crop-task-thumbnail')) {
       const { maxY, minY, width } = workareaManager;
-      let x = Number.parseFloat($('#svgcontent').attr('x'));
-      let y = Number.parseFloat($('#svgcontent').attr('y'));
-      let w = Number.parseFloat($('#svgcontent').attr('width'));
-      const ratio = w / width;
       const svgContent = document.getElementById('svgcontent') as unknown as SVGSVGElement;
+      let x = Number.parseFloat(svgContent.getAttribute('x') ?? '0');
+      let y = Number.parseFloat(svgContent.getAttribute('y') ?? '0');
+      let w = Number.parseFloat(svgContent.getAttribute('width') ?? '0');
+      const ratio = w / width;
       const bbox = svgContent.getBBox();
       const padding = 100;
       let right = bbox.x + bbox.width + padding;

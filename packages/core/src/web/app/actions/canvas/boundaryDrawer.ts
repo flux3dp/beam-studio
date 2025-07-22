@@ -61,7 +61,7 @@ export class BoundaryDrawer {
   checkMouseTarget = (target: Element): boolean => target.id === 'boundary-path';
 
   onSkippedLayersChange = () => {
-    if (this.useUnionBoundary && this.useUnionBoundary) {
+    if (this.supportMultiModules && this.useUnionBoundary) {
       this.changedKeys.add('module');
       this.update();
     }
