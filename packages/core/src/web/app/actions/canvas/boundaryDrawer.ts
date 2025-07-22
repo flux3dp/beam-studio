@@ -6,7 +6,7 @@ import { getAddOnInfo } from '@core/app/constants/addOn';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { getModuleBoundary } from '@core/app/constants/layer-module/module-boundary';
-import { getSupportedModules, getWorkarea } from '@core/app/constants/workarea-constants';
+import { getSupportedModules } from '@core/app/constants/workarea-constants';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import workareaManager from '@core/app/svgedit/workarea';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
@@ -43,7 +43,7 @@ export class BoundaryDrawer {
   /**
    * Boundaries in px. Top expansion is not included.
    */
-  private boundaries: Partial<Record<BoundaryKey, TBoundary>> = {};
+  public boundaries: Partial<Record<BoundaryKey, TBoundary>> = {};
   private changedKeys: Set<BoundaryKey> = new Set();
 
   private constructor() {
@@ -238,8 +238,8 @@ export class BoundaryDrawer {
 
     if (diode) {
       // Moving boundary + Module offsets
-      this.boundaries.diode.left = (beamboxPreference.read('diode_offset_x') ?? constant.diode.defaultOffsetX) * dpmm;
-      this.boundaries.diode.top = (beamboxPreference.read('diode_offset_y') ?? constant.diode.defaultOffsetY) * dpmm;
+      this.boundaries.diode.left = beamboxPreference.read('diode_offset_x') * dpmm;
+      this.boundaries.diode.top = beamboxPreference.read('diode_offset_y') * dpmm;
     } else {
       // Moving boundary with diode addon
       this.boundaries.diode.right = constant.diode.limitX * dpmm;
@@ -252,7 +252,7 @@ export class BoundaryDrawer {
     const boundary = getModuleBoundary(model, currentModule);
 
     if (this.supportMultiModules && this.useUnionBoundary) {
-      const { supportedModules } = getWorkarea(model);
+      const supportedModules = getSupportedModules(model);
 
       supportedModules?.forEach((module) => {
         if (module !== currentModule && hasModuleLayer([module])) {
