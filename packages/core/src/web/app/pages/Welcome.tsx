@@ -79,7 +79,7 @@ const Welcome = (): ReactNode => {
   const [isLoading, setIsLoading] = useState(true);
   const setUser = useCallback((user: IUser | null) => setCurrentUser(user ? { ...user } : user), []);
   const [isTabFocused, setIsTabFocused] = useState(true);
-  const draggable = useMemo(() => !isWeb() && isMac(), []);
+  const isDesktopMac = useMemo(() => !isWeb() && isMac(), []);
   const socialMedia = useMemo(() => getSocialMedia(), []);
 
   const fetchBanners = useCallback(async () => {
@@ -119,7 +119,7 @@ const Welcome = (): ReactNode => {
   }, []);
 
   useEffect(() => {
-    if (draggable) {
+    if (isDesktopMac) {
       const onTabFocused = () => setIsTabFocused(true);
       const onTabBlurred = () => setIsTabFocused(false);
 
@@ -131,7 +131,7 @@ const Welcome = (): ReactNode => {
         tabController.offBlurred(onTabBlurred);
       };
     }
-  }, [draggable]);
+  }, [isDesktopMac]);
 
   useEffect(() => {
     fluxIDEvents.on('update-user', setUser);
@@ -202,7 +202,12 @@ const Welcome = (): ReactNode => {
   ) : (
     <div className={styles.container}>
       {!isWeb() && (
-        <div className={classNames(styles['top-bar'], { [styles.draggable]: draggable && isTabFocused })}>
+        <div
+          className={classNames(styles['top-bar'], {
+            [styles.draggable]: isDesktopMac && isTabFocused,
+            [styles.mac]: isDesktopMac,
+          })}
+        >
           <Tabs inverse />
         </div>
       )}

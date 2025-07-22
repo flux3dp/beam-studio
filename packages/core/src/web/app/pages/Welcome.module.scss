@@ -11,14 +11,24 @@ $header-height: 60px;
     display: flex;
     background-color: #333333;
     height: variables.$topBarHeight;
-    padding-left: 80px;
+
+    ~ .content {
+      height: calc(
+        100% - $header-height - variables.$topBarHeight -
+          variables.$menuBarHeight
+      );
+    }
+
+    &.mac {
+      padding-left: variables.$windowControlsWidth;
+
+      ~ .content {
+        height: calc(100% - $header-height - variables.$topBarHeight);
+      }
+    }
 
     &.draggable {
       -webkit-app-region: drag;
-    }
-
-    ~ .content {
-      height: calc(100% - $header-height - variables.$topBarHeight);
     }
   }
 
