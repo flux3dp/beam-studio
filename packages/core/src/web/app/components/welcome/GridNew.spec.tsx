@@ -2,19 +2,23 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-import GridNew from './GridNew';
+const mockClearScene = jest.fn();
 
-const mockStartNewProject = jest.fn();
+jest.mock('@core/app/actions/beambox/svgeditor-function-wrapper', () => ({
+  clearScene: mockClearScene,
+}));
+
+import GridNew from './GridNew';
 
 describe('test GridNew', () => {
   it('should render correctly', () => {
-    const { container } = render(<GridNew startNewProject={mockStartNewProject} />);
+    const { container } = render(<GridNew />);
 
     expect(container).toMatchSnapshot();
 
     const button = container.querySelector('.button');
 
     fireEvent.click(button);
-    expect(mockStartNewProject).toHaveBeenCalled();
+    expect(mockClearScene).toHaveBeenCalled();
   });
 });

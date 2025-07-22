@@ -364,6 +364,7 @@ const lang: ILang = {
         message: "Rejoignez notre groupe Facebook officiel pour vous connecter avec d'autres utilisateurs de découpe laser FLUX, discuter des lasers FLUX, partager des œuvres laser et rester à jour avec les dernières mises à jour sur nos produits. Nous avons hâte de vous y voir !",
         title: 'Rejoignez le groupe officiel des utilisateurs FLUX',
       },
+      failed_to_load_svg: 'Impossible de charger les données SVG',
       import_file_contain_invalid_path: "#808 Le fichier SVG importé contient un chemin d'image non valide. Assurez-vous que tous les fichiers image existent ou intégrez l'image dans le fichier",
       import_file_error_ask_for_upload: "Échec de l'importation du fichier SVG. Êtes-vous prêt à fournir le fichier à l'équipe de développement pour le rapport de bug ?",
       import_svg: {
@@ -1046,7 +1047,7 @@ const lang: ILang = {
       beambox: "Lors de l'étalonnage du module laser à diode, une caméra est nécessaire.\nVeuillez vous assurer que la caméra de cette machine a été étalonnée.\nEt veuillez régler la plateforme au point focal (la hauteur de l'acrylique retournée)",
       beamo: "Lors de l'étalonnage du module laser à diode, une caméra est nécessaire.\nVeuillez vous assurer que la caméra de cette machine a été étalonnée.\nEt veuillez régler la tête laser pour se concentrer sur l'objet de gravure (la hauteur de l'acrylique retournée)",
     },
-    please_goto_beambox_first: "Veuillez passer en mode gravure (Beambox) afin d'utiliser cette fonctionnalité.",
+    please_goto_editor_first: 'Veuillez terminer la configuration avant de continuer',
     please_place_dark_colored_paper: 'Veuillez placer une feuille de papier de couleur foncée de format A4 ou Letter au centre de la zone de travail.',
     please_place_paper: 'Veuillez placer une feuille de papier blanc de format A4 ou Letter dans le coin supérieur gauche de la zone de travail.',
     please_place_paper_center: 'Veuillez placer une feuille de papier blanc de format A4 ou Letter au centre de la zone de travail.',

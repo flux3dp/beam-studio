@@ -364,6 +364,7 @@ const lang: ILang = {
         message: 'Junte-se ao nosso grupo oficial no Facebook para conectar-se com outros usuários de laser FLUX, discutir lasers FLUX, compartilhar trabalhos a laser e ficar por dentro das últimas atualizações dos nossos produtos. Mal podemos esperar para vê-lo por lá!',
         title: 'Junte-se ao grupo oficial de usuários FLUX',
       },
+      failed_to_load_svg: 'Não foi possível carregar os dados SVG',
       import_file_contain_invalid_path: '#808 O arquivo SVG importado contém caminho de imagem inválido. Certifique-se de que todas as imagens existam ou incorpore a imagem no arquivo',
       import_file_error_ask_for_upload: 'Falha ao importar arquivo SVG. Deseja enviar o arquivo à equipe de desenvolvimento para relatar erros?',
       import_svg: {
@@ -1046,7 +1047,7 @@ const lang: ILang = {
       beambox: 'Ao calibrar o módulo de laser de diodo, a câmera é necessária.\nCertifique-se de que a câmera desta máquina foi calibrada.\nE ajuste gentilmente a plataforma ao ponto focal (a altura do acrílico virado para baixo)',
       beamo: 'Ao calibrar o módulo de laser de diodo, a câmera é necessária.\nCertifique-se de que a câmera desta máquina foi calibrada.\nE ajuste gentilmente a cabeça do laser para focar no objeto de gravação (a altura do acrílico virado para baixo)',
     },
-    please_goto_beambox_first: 'Por favor, mude para o Modo de Gravação (Beambox) para usar este recurso.',
+    please_goto_editor_first: 'Conclua a configuração antes de prosseguir',
     please_place_dark_colored_paper: 'Por favor, coloque uma folha de papel escuro tamanho A4 ou Carta no centro da área de trabalho.',
     please_place_paper: 'Por favor, coloque uma folha de papel branco tamanho A4 ou Carta no canto superior esquerdo da área de trabalho.',
     please_place_paper_center: 'Por favor, coloque uma folha de papel branco tamanho A4 ou Carta no centro da área de trabalho.',

@@ -364,6 +364,7 @@ const lang: ILang = {
         message: 'Gå med i vår officiella Facebook-grupp för att kontakta andra FLUX-laseranvändare, diskutera FLUX-lasrar, dela laserkonst och hålla dig uppdaterad om de senaste uppdateringarna av våra produkter. Vi ser fram emot att se dig där!',
         title: 'Gå med i FLUX officiella användargrupp',
       },
+      failed_to_load_svg: 'Det gick inte att ladda SVG-data',
       import_file_contain_invalid_path: '#808 Importerad SVG-fil innehåller ogiltig bildsökväg. Se till att alla bildfiler finns eller bädda in bild i filen',
       import_file_error_ask_for_upload: 'Misslyckades med att importera SVG-filen. Vill du skicka filen till utvecklingsteamet för felrapportering?',
       import_svg: {
@@ -1046,7 +1047,7 @@ const lang: ILang = {
       beambox: 'När kalibrering av diodlasermodul utförs behövs kamera.\nSe till att kameran på den här maskinen är kalibrerad.\nOch justera plattformen till fokalpunkten (höjden på den vända akrylen)',
       beamo: 'När kalibrering av diodlasermodul utförs behövs kamera.\nSe till att kameran på den här maskinen är kalibrerad.\nOch justera laserhuvudet för att fokusera på graveringsobjektet (höjden på den vända akrylen)',
     },
-    please_goto_beambox_first: 'Växla till graveringsläge (Beambox) för att kunna använda den här funktionen.',
+    please_goto_editor_first: 'Slutför installationen innan du fortsätter',
     please_place_dark_colored_paper: 'Placera ett A4- eller brevpappersark i mörkt färgat papper i mitten av arbetsområdet.',
     please_place_paper: 'Placera ett A4- eller brevpappersark i vitt papper i det övre vänstra hörnet av arbetsområdet.',
     please_place_paper_center: 'Placera ett A4- eller brevpappersark i vitt papper i mitten av arbetsområdet.',

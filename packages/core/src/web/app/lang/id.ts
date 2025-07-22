@@ -364,6 +364,7 @@ const lang: ILang = {
         message: 'Bergabunglah dengan grup Facebook resmi kami untuk terhubung dengan pengguna laser FLUX lainnya, membahas laser FLUX, berbagi karya seni laser, dan tetap update dengan pembaruan terbaru pada produk kami. Kami tidak sabar melihat Anda di sana!',
         title: 'Bergabung dengan Grup Pengguna Resmi FLUX',
       },
+      failed_to_load_svg: 'Tidak dapat memuat data SVG',
       import_file_contain_invalid_path: '#808 File SVG yang diimpor berisi path gambar yang tidak valid. Pastikan semua file gambar ada atau sisipkan gambar dalam file',
       import_file_error_ask_for_upload: 'Gagal mengimpor file SVG. Apakah Anda bersedia memberikan file ke tim pengembang untuk laporan bug ?',
       import_svg: {
@@ -1046,7 +1047,7 @@ const lang: ILang = {
       beambox: 'Saat mengkalibrasi modul laser diode, kamera diperlukan.\nPastikan kamera mesin ini telah dikalibrasi.\nDan sesuaikan platform ke titik fokus (tinggi akrilik yang dibalik)',
       beamo: 'Saat mengkalibrasi modul laser diode, kamera diperlukan.\nPastikan kamera mesin ini telah dikalibrasi.\nDan sesuaikan kepala laser untuk fokus pada objek ukiran (tinggi akrilik yang dibalik)',
     },
-    please_goto_beambox_first: 'Silakan beralih ke Mode Pengukiran ( Beambox ) untuk menggunakan fitur ini.',
+    please_goto_editor_first: 'Harap selesaikan pengaturan sebelum melanjutkan',
     please_place_dark_colored_paper: 'Silakan letakkan kertas berwarna gelap ukuran A4 atau Letter di tengah area kerja.',
     please_place_paper: 'Silakan letakkan kertas putih ukuran A4 atau Letter di pojok kiri atas area kerja.',
     please_place_paper_center: 'Silakan letakkan kertas putih ukuran A4 atau Letter di tengah area kerja.',

@@ -364,6 +364,7 @@ const lang: ILang = {
         message: 'Word lid van onze officiële Facebook-groep om in contact te komen met andere FLUX-lasergebruikers, FLUX-lasers te bespreken, laserkunstwerken te delen en op de hoogte te blijven van de nieuwste updates over onze producten. We kijken ernaar uit u daar te zien!',
         title: 'Word lid van de officiële FLUX gebruikersgroep',
       },
+      failed_to_load_svg: 'Kan SVG-gegevens niet laden',
       import_file_contain_invalid_path: '#808 Geïmporteerd SVG-bestand bevat ongeldig pad naar afbeelding. Zorg ervoor dat alle afbeeldingen bestaan of inbed de afbeelding in het bestand',
       import_file_error_ask_for_upload: 'Importeren van SVG-bestand mislukt. Wilt u het bestand beschikbaar stellen aan het ontwikkelteam voor bugrapportage?',
       import_svg: {
@@ -1046,7 +1047,7 @@ const lang: ILang = {
       beambox: 'Wanneer u de diode lasermodule kalibreert, is een camera nodig.\nZorg ervoor dat de camera van deze machine is gekalibreerd.\nEn pas het platform vriendelijk aan op het brandpunt (de hoogte van het omgekeerde acryl)',
       beamo: 'Wanneer u de diode lasermodule kalibreert, is een camera nodig.\nZorg ervoor dat de camera van deze machine is gekalibreerd.\nEn pas de laserkop vriendelijk aan om scherp te stellen op het graveerobject (de hoogte van het omgekeerde acryl)',
     },
-    please_goto_beambox_first: 'Schakel over naar de graveermodus (Beambox) om deze functie te gebruiken.',
+    please_goto_editor_first: 'Voltooi de installatie voordat u verdergaat',
     please_place_dark_colored_paper: 'Plaats een A4- of briefpapierformaat donkergekleurd papier in het midden van het werkgebied.',
     please_place_paper: 'Plaats een A4- of briefpapierformaat wit papier linksboven in het werkgebied.',
     please_place_paper_center: 'Plaats een A4- of briefpapierformaat wit papier in het midden van het werkgebied.',

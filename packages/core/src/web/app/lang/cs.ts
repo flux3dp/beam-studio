@@ -364,6 +364,7 @@ const lang: ILang = {
         message: 'Přidejte se k naší oficiální facebookové skupině, kde se propojíte s dalšími uživateli FLUX a kde můžete diskutovat o FLUX laserech, sdílet své laserové výtvory a být v obraze ohledně našich produktů. Těšíme se na vás!',
         title: 'Přidejte se k oficiální uživatelské skupině FLUX',
       },
+      failed_to_load_svg: 'Nelze načíst data SVG',
       import_file_contain_invalid_path: '#808 Importovaný SVG soubor obsahuje nesprávnou cestu k obrázku. Ujistěte se prosím, že všechny soubory obrázků existují nebo do souboru vložte obrázek',
       import_file_error_ask_for_upload: 'Nepodařilo se importovat SVG soubor. Jste ochotní soubor poskytnout vývojářskému týmu pro nahlášení chyby?',
       import_svg: {
@@ -1046,7 +1047,7 @@ const lang: ILang = {
       beambox: 'Při kalibrování modulu laserové diody je potřeba kamera.\nUjistěte se prosím, že byla kamera tohoto stroje zkalibrována.\nPoté prosím upravte platformu na ústřední bod (výška vypnutého akrylu)',
       beamo: 'Při kalibrování modulu laserové diody je potřeba kamera.\nUjistěte se prosím, že byla kamera tohoto stroje zkalibrována.\nPoté prosím upravte laserovou hlavici, aby se fokusovala na gravírovaný objekt (výška vypnutého akrylu)',
     },
-    please_goto_beambox_first: 'Abyste tuto funkci mohli použít, přepněte prosím na mód gravírování ( Beambox ).',
+    please_goto_editor_first: 'Před pokračováním dokončete nastavení',
     please_place_dark_colored_paper: 'Umístěte prosím A4 nebo tmavý dopisový papír doprostřed pracovní oblasti.',
     please_place_paper: 'Umístěte prosím A4 nebo bílý dopisový papír do levého horního rohu pracovní oblasti.',
     please_place_paper_center: 'Umístěte prosím A4 nebo bílý dopisový papír doprostřed pracovní oblasti.',

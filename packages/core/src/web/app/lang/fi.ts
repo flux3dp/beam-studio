@@ -364,6 +364,7 @@ const lang: ILang = {
         message: 'Liity viralliseen FLUX Facebook-ryhmäämme yhdistääksesi muiden FLUX-laserkäyttäjien kanssa, keskustellaksesi FLUX-lasereista, jakaaksesi laser-taidetta ja pysyäksesi ajan tasalla tuotteidemme uusimmista päivityksistä. Odotamme sinua innolla!',
         title: 'Liity FLUX:n viralliseen käyttäjäryhmään',
       },
+      failed_to_load_svg: 'SVG-tietoja ei voi ladata',
       import_file_contain_invalid_path: '#808 Tuodussa SVG-tiedostossa on virheellisiä kuvapolkuja. Varmista, että kaikki kuvatiedostot ovat olemassa tai upota kuvat tiedostoon.',
       import_file_error_ask_for_upload: 'Tiedoston tuonti epäonnistui. Haluatko tarjota tiedoston kehitystiimille vianraporttia varten?',
       import_svg: {
@@ -1046,7 +1047,7 @@ const lang: ILang = {
       beambox: 'Diodilasermoduulin kalibrointi vaatii kameran.\nVarmista, että tämän koneen kamera on kalibroitu.\nJa säädä alusta polttopisteeseen (käännetyn akryylin korkeus)',
       beamo: 'Diodilasermoduulin kalibrointi vaatii kameran.\nVarmista, että tämän koneen kamera on kalibroitu.\nJa kohdista laserpää kaiverrettavaan kohteeseen (käännetyn akryylin korkeus)',
     },
-    please_goto_beambox_first: 'Siirry kaiverrustilaan (Beambox) käyttääksesi tätä ominaisuutta.',
+    please_goto_editor_first: 'Suorita asetukset ennen jatkamista',
     please_place_dark_colored_paper: 'Aseta A4- tai kirjekokoinen tumma paperi työalueen keskelle.',
     please_place_paper: 'Aseta A4- tai kirjekokoinen valkoinen paperi työalueen vasempaan ylänurkkaan.',
     please_place_paper_center: 'Aseta A4- tai kirjekokoinen valkoinen paperi työalueen keskelle.',

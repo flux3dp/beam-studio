@@ -364,6 +364,7 @@ const lang: ILang = {
         message: "Unisciti al nostro gruppo Facebook ufficiale per connetterti con altri utenti laser FLUX, discutere dei laser FLUX, condividere opere laser e rimanere aggiornato sulle ultime novità sui nostri prodotti. Non vediamo l'ora di vederti lì!",
         title: 'Unisciti al gruppo ufficiale degli utenti FLUX',
       },
+      failed_to_load_svg: 'Impossibile caricare i dati SVG',
       import_file_contain_invalid_path: '#808 Il file SVG importato contiene percorsi immagine non validi. Assicurarsi che tutti i file immagine esistano o incorporare le immagini nel file',
       import_file_error_ask_for_upload: 'Non è stato possibile importare il file SVG. Vuoi fornire il file al team di sviluppo per la segnalazione di bug?',
       import_svg: {
@@ -1046,7 +1047,7 @@ const lang: ILang = {
       beambox: "Per calibrare il modulo laser a diodi è necessaria la fotocamera.\nAssicurarsi che la fotocamera di questa macchina sia stata calibrata.\nE regolare delicatamente la piattaforma al punto focale (l'altezza dell'acrilico ribaltato).",
       beamo: "Per calibrare il modulo laser a diodi è necessaria la fotocamera.\nAssicurarsi che la fotocamera di questa macchina sia stata calibrata.\nE regolare delicatamente la testa laser a fuoco sull'oggetto di incisione (l'altezza dell'acrilico ribaltato).",
     },
-    please_goto_beambox_first: 'Per utilizzare questa funzione, passa prima alla Modalità Incisione (Beambox).',
+    please_goto_editor_first: 'Completare la configurazione prima di procedere',
     please_place_dark_colored_paper: "Posiziona un foglio di carta colorata scura formato A4 o Letter al centro dell'area di lavoro.",
     please_place_paper: "Posiziona un foglio di carta bianca formato A4 o Letter nell'angolo in alto a sinistra dell'area di lavoro.",
     please_place_paper_center: "Posiziona un foglio di carta bianca formato A4 o Letter al centro dell'area di lavoro.",

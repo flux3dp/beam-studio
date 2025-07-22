@@ -16,11 +16,7 @@ import type { IFile } from '@core/interfaces/IMyCloud';
 
 import styles from './TabRecentFiles.module.scss';
 
-interface Props {
-  startNewProject: () => void;
-}
-
-const TabRecentFiles = ({ startNewProject }: Props) => {
+const TabRecentFiles = () => {
   const { welcome_page: t } = useI18n();
   const [recentFiles, setRecentFiles] = useState<IFile[]>([]);
   const [selectedId, setSelectedId] = useState<null | string>(null);
@@ -97,7 +93,7 @@ const TabRecentFiles = ({ startNewProject }: Props) => {
         <FolderOpenOutlined /> {t.recent_files}
       </div>
       <div className={styles.content}>
-        <GridNew startNewProject={startNewProject} />
+        <GridNew />
         {recentFiles.map((file) => (
           <GridFile file={file} key={file.name} selectedId={selectedId} setSelectedId={setSelectedId} />
         ))}

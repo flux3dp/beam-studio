@@ -364,6 +364,7 @@ const lang: ILang = {
         message: 'Treten Sie unserer offiziellen Facebook-Gruppe bei, um mit anderen FLUX Laseranwendern in Kontakt zu treten, über FLUX Laser zu diskutieren, Laserkunstwerke auszutauschen und über die neuesten Updates zu unseren Produkten auf dem Laufenden zu bleiben. Wir können es kaum erwarten, Sie dort zu sehen!',
         title: 'Der offiziellen FLUX Benutzergruppe beitreten',
       },
+      failed_to_load_svg: 'SVG-Daten konnten nicht geladen werden',
       import_file_contain_invalid_path: '#808 Importierte SVG-Datei enthält ungültigen Bildpfad. Bitte stelle sicher, dass alle Bilddateien existieren oder betten Sie das Bild in die Datei',
       import_file_error_ask_for_upload: 'Importierte SVG-Datei konnte nicht importiert werden. Bist du bereit, dem Entwicklerteam eine Datei für den Fehlerbericht zur Verfügung zu stellen ?',
       import_svg: {
@@ -1046,7 +1047,7 @@ const lang: ILang = {
       beambox: 'Beim Kalibrieren von Diodenlasermodul wird eine Kamera benötigt\nBitte stelle sicher, dass die Kamera dieser Maschine kalibriert wurde.\nUnd stelle bitte die Plattform auf den Brennpunkt ein (die Höhe des umgedrehten Acryls).',
       beamo: 'Beim Kalibrieren von Diodenlasermodul wird eine Kamera benötigt.\nBitte stelle sicher, dass die Kamera dieser Maschine kalibriert wurde.\nUnd stelle bitte den Laserkopf so ein, dass er auf das Gravurobjekt fokussiert ist (die Höhe des umgedrehten Acryls).',
     },
-    please_goto_beambox_first: 'Bitte wechsle in den Gravurmodus (Beambox), um diese Funktion nutzen zu können.',
+    please_goto_editor_first: 'Bitte schließen Sie die Einrichtung ab, bevor Sie fortfahren',
     please_place_dark_colored_paper: 'Bitte legen Sie ein A4- oder Letter-Format dunkles Papier in die Mitte des Arbeitsbereichs.',
     please_place_paper: 'Bitte lege ein weißes Papier im A4- oder Letter-Format in die linke obere Ecke des Arbeitsbereichs.',
     please_place_paper_center: 'Legen Sie ein A4- oder Letter-Format weißes Papier in die Mitte des Arbeitsbereichs.',

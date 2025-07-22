@@ -362,6 +362,7 @@ export interface ILang {
         message: string;
         title: string;
       };
+      failed_to_load_svg: string;
       import_file_contain_invalid_path: string;
       import_file_error_ask_for_upload: string;
       import_svg: {
@@ -1046,7 +1047,7 @@ export interface ILang {
       beambox: string;
       beamo: string;
     };
-    please_goto_beambox_first: string;
+    please_goto_editor_first: string;
     please_place_dark_colored_paper: string;
     please_place_paper: string;
     please_place_paper_center: string;

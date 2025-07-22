@@ -21,7 +21,7 @@ export const checkIsAtEditor = () => {
   }
 
   alertCaller.popUp({
-    message: i18n.lang.calibration.please_goto_beambox_first,
+    message: i18n.lang.calibration.please_goto_editor_first,
     type: alertConstants.SHOW_POPUP_INFO,
   });
 

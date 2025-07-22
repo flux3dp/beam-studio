@@ -364,6 +364,7 @@ const lang: ILang = {
         message: "Join our official Facebook group to connect with other FLUX laser users, discuss FLUX lasers, share laser artwork, and stay up to date with the latest updates on our products. We can't wait to see you there!",
         title: 'Join FLUX Official User Group',
       },
+      failed_to_load_svg: 'Unable to load SVG data',
       import_file_contain_invalid_path: '#808 Imported SVG file contains invalid image path. Please make sure all image files exist or embed image in the file',
       import_file_error_ask_for_upload: 'Failed to Imported SVG file. Are you willing to provide file to develop team for bug report ?',
       import_svg: {
@@ -1046,7 +1047,7 @@ const lang: ILang = {
       beambox: 'When calibrating diode laser module, camera is needed.\nPlease make sure camera of this machine has been calibrated.\nAnd kindly adjust the platform to the focal point (the height of turned down acrylic)',
       beamo: 'When calibrating diode laser module, camera is needed.\nPlease make sure camera of this machine has been calibrated.\nAnd kindly adjust the laser head to focus on the engraving object (the height of turned down acrylic)',
     },
-    please_goto_beambox_first: 'Please switch to Engraving Mode ( Beambox ) in order to use this feature.',
+    please_goto_editor_first: 'Please complete the setup before proceeding',
     please_place_dark_colored_paper: 'Please place an A4 or Letter size dark-colored paper in the center of the workarea.',
     please_place_paper: 'Please place an A4 or Letter size white paper at left-top corner of workarea.',
     please_place_paper_center: 'Please place an A4 or Letter size white paper at the center of workarea.',

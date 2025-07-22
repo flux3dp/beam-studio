@@ -364,6 +364,7 @@ const lang: ILang = {
         message: 'Dołączyćnasza oficjalna grupa na Facebooku, w której możesz kontaktować się z innymi użytkownikami laserów FLUX, omawiać lasery FLUX, dzielić się grafikami dotyczącymi laserów i być na bieżąco z najnowszymi aktualizacjami naszych produktów. Nie możemy się doczekać, aż Cię tam zobaczymy!',
         title: 'Dołączyć FLUX Official User Group',
       },
+      failed_to_load_svg: 'Nie można załadować danych SVG',
       import_file_contain_invalid_path: '#808 Zaimportowany plik SVG zawiera nieprawidłową ścieżkę do obrazu. Upewnij się, że wszystkie pliki obrazów istnieją lub umieść obraz w pliku',
       import_file_error_ask_for_upload: 'Nie udało się zaimportować pliku SVG. Czy chcesz udostępnić plik zespołowi programistycznemu w celu zgłoszenia błędu?',
       import_svg: {
@@ -1046,7 +1047,7 @@ const lang: ILang = {
       beambox: 'Podczas kalibracji modułu lasera diodowego potrzebna jest kamera.\nUpewnij się, że kamera tego urządzenia została skalibrowana.\nI uprzejmie dostosuj platformę do punktu ogniskowego',
       beamo: 'Do kalibracji modułu lasera diodowego potrzebna jest kamera.\nUpewnij się, że kamera tego urządzenia została skalibrowana.\nI uprzejmie dostosuj głowicę lasera, do punktu ogniskowego',
     },
-    please_goto_beambox_first: 'Aby skorzystać z tej funkcji, przełącz się na tryb grawerowania (Beambox).',
+    please_goto_editor_first: 'Ukończ konfigurację przed kontynuacją',
     please_place_dark_colored_paper: 'Proszę umieścić ciemny papier formatu A4 lub Letter na środku obszaru roboczego.',
     please_place_paper: 'Proszę umieścić białą kartkę A4 w lewym górnym rogu obszaru roboczego.',
     please_place_paper_center: 'Proszę umieścić białą kartkę A4 w lewym górnym rogu obszaru roboczego',

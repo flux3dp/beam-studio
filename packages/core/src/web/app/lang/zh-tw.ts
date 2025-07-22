@@ -364,6 +364,7 @@ const lang: ILang = {
         message: '即刻加入 FLUX 官方用戶社群，與廣大 FLUX 用戶分享使用心得、展示雷雕作品以及獲取最新的產品資訊。',
         title: '加入 FLUX 官方用戶社群',
       },
+      failed_to_load_svg: '無法載入 SVG 資料',
       import_file_contain_invalid_path: '#808 匯入的SVG檔案中含有不存在的圖片路徑，請確認檔案中所有連結之圖片皆存在，或改將圖片嵌入檔案中。',
       import_file_error_ask_for_upload: '讀取 SVG 檔時發生錯誤，是否願意上傳檔案回報錯誤給開發團隊？',
       import_svg: {
@@ -1046,7 +1047,7 @@ const lang: ILang = {
       beambox: '校正二極體雷射需要使用相機校正參數，請確認您的機器已進行過相機校正。並請旋轉升降平台旋鈕，直到輕觸焦距螺絲或焦距尺，完成對焦',
       beamo: '校正二極體雷射需要使用相機校正參數，請確認您的機器已進行過相機校正。並請轉開焦距固定環，調整雷射頭至平台輕觸焦距尺，完成對焦',
     },
-    please_goto_beambox_first: '請先選擇 Beambox 功能，再進行校正',
+    please_goto_editor_first: '請先完成設定後再進行此操作',
     please_place_dark_colored_paper: '請將乾淨 A4 深色紙放在工作區的中央。',
     please_place_paper: '請將乾淨 A4 白紙放在工作區域的左上角',
     please_place_paper_center: '請將乾淨 A4 白紙放在工作區的中央。',

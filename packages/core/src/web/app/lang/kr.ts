@@ -364,6 +364,7 @@ const lang: ILang = {
         message: '공식 Facebook 그룹에 가입하여 다른 FLUX 레이저 사용자들과 교류하고, FLUX 레이저에 대해 토론하고, 레이저 아트웍을 공유하고, 제품에 대한 최신 업데이트를 받아보세요. 여러분을 빨리 만나고 싶습니다!',
         title: 'FLUX 공식 사용자 그룹 가입',
       },
+      failed_to_load_svg: 'SVG 데이터를 불러올 수 없습니다',
       import_file_contain_invalid_path: '#808 가져온 SVG 파일에는 잘못된 이미지 경로가 포함되어 있습니다. 모든 이미지 파일이 존재하거나 이미지를 파일에 포함시켰는지 확인해주세요.',
       import_file_error_ask_for_upload: 'SVG 파일을 가져오는 데 실패했습니다. 버그 보고를 위해 개발팀에 파일을 제공하시겠습니까?',
       import_svg: {
@@ -1046,7 +1047,7 @@ const lang: ILang = {
       beambox: '다이오드 레이저 모듈 보정시 카메라가 필요합니다. 이 기계의 카메라가 보정되었는지 확인해주세요. 그리고 플랫폼을 초점에 맞추십시오 (뒤집힌 아크릴의 높이).',
       beamo: '다이오드 레이저 모듈 보정시 카메라가 필요합니다. 이 기계의 카메라가 보정되었는지 확인해주세요. 그리고 레이저 헤드를 조정하여 조각 된 아크릴의 높이에 초점을 맞추십시오.',
     },
-    please_goto_beambox_first: '이 기능을 사용하려면 Engraving Mode (Beambox)로 전환하십시오.',
+    please_goto_editor_first: '이 작업을 진행하기 전에 설정을 완료하세요',
     please_place_dark_colored_paper: 'A4 또는 레터 사이즈의 어두운 색 종이를 작업 영역 중앙에 놓아주세요.',
     please_place_paper: '좌측 상단 모서리에 A4 또는 Letter 크기의 흰색 종이를 놓으십시오.',
     please_place_paper_center: 'A4 또는 편지 사이즈의 흰 종이를 작업 영역 가운데 놓아 주십시오.',
