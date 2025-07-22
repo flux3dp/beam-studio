@@ -20,12 +20,14 @@ import type { ConfigKey, ConfigKeyTypeMap, ILayerConfig, Preset } from '@core/in
 
 const attributeMap: Record<ConfigKey, string> = {
   airAssist: 'data-airAssist',
+  amAngleMap: 'data-amAngleMap',
   amDensity: 'data-amDensity',
   backlash: 'data-backlash',
   biDirectional: 'data-biDirectional',
   ceZSpeedLimit: 'data-ceZSpeedLimit',
   clipRect: 'data-clipRect',
   color: 'data-color',
+  colorCurvesMap: 'data-colorCurvesMap',
   configName: 'data-configName',
   cRatio: 'data-cRatio',
   crossHatch: 'data-crossHatch',
@@ -124,6 +126,7 @@ export const moduleBaseConfig: Partial<Record<LayerModuleType, Partial<Omit<Conf
 };
 
 export const booleanConfig: ConfigKey[] = ['fullcolor', 'ref', 'split', 'biDirectional', 'crossHatch'] as const;
+export const objectConfig: ConfigKey[] = ['amAngleMap', 'colorCurvesMap'] as const;
 export const timeRelatedConfigs: Set<ConfigKey> = new Set([
   'speed',
   'repeat',
@@ -285,6 +288,20 @@ export const getData = <T extends ConfigKey>(
     return (layer.getAttribute(attr) === '1') as ConfigKeyTypeMap[T];
   }
 
+  if (objectConfig.includes(key)) {
+    const value = layer.getAttribute(attr);
+
+    if (value) {
+      try {
+        return JSON.parse(value) as ConfigKeyTypeMap[T];
+      } catch (e) {
+        console.error(`Failed to parse object config for key "${key}":`, e);
+      }
+    }
+
+    return defaultConfig[key] as ConfigKeyTypeMap[T];
+  }
+
   if (key === 'module') {
     return Number(layer.getAttribute(attr) || LayerModule.LASER_UNIVERSAL) as ConfigKeyTypeMap[T];
   }
@@ -324,6 +341,10 @@ export const writeDataLayer = <T extends ConfigKey>(
 
   if (booleanConfig.includes(key)) {
     value = (value ? '1' : undefined) as ConfigKeyTypeMap[T];
+  }
+
+  if (objectConfig.includes(key)) {
+    value = (value ? JSON.stringify(value) : undefined) as ConfigKeyTypeMap[T];
   }
 
   if (value === undefined) {

@@ -12,6 +12,7 @@ import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import useHasCurveEngraving from '@core/helpers/hooks/useHasCurveEngraving';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
+import isDev from '@core/helpers/is-dev';
 import { getPromarkLimit } from '@core/helpers/layer/layer-config-helper';
 import useForceUpdate from '@core/helpers/use-force-update';
 import useI18n from '@core/helpers/useI18n';
@@ -19,6 +20,7 @@ import useI18n from '@core/helpers/useI18n';
 import styles from './AdvancedBlock.module.scss';
 import AmDensityBlock from './AmDensityBlock';
 import AutoFocus from './AutoFocus';
+import ColorAdvancedSettingButton from './ColorAdvancedSetting/ColorAdvancedSettingButton';
 import CurveEngravingZHighSpeed from './CurveEngravingZHighSpeed';
 import Diode from './Diode';
 import FocusBlock from './FocusBlock';
@@ -94,6 +96,8 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
   } else {
     if (module.value === LayerModule.PRINTER_4C) {
       contents.push(<AmDensityBlock key="am-density-block" type={type} />);
+
+      if (isDev()) contents.push(<ColorAdvancedSettingButton key="color-advanced-setting-button" />);
     }
 
     contents.push(<SingleColorBlock key="single-color-block" />);

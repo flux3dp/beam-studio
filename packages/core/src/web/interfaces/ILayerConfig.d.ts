@@ -30,7 +30,9 @@ type LaserConfig = {
 };
 
 type PrintingConfig = {
+  amAngleMap: Record<'c' | 'k' | 'm' | 'y', number> | undefined;
   amDensity: number;
+  colorCurvesMap: Record<'c' | 'k' | 'm' | 'y', number[]> | undefined;
   cRatio: number;
   fullcolor: boolean;
   halftone: number;
