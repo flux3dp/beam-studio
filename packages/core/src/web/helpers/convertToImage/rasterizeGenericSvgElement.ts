@@ -1,116 +1,11 @@
 import { pipe } from 'remeda';
 
 import history from '@core/app/svgedit/history/history';
-import { deleteElements } from '@core/app/svgedit/operations/delete';
 import { getRotationAngle, setRotationAngle } from '@core/app/svgedit/transform/rotation';
-import type { IBatchCommand } from '@core/interfaces/IHistory';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import updateElementColor from './color/updateElementColor';
-import { getSVGAsync } from './svg-editor-helper';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync(({ Canvas }) => {
-  svgCanvas = Canvas;
-});
-
-export type ConvertSvgToImageParams = {
-  isToSelect?: boolean;
-  parentCmd?: IBatchCommand;
-  svgElement: SVGGElement;
-};
-export type ConvertToImageResult = undefined | { imageElements: SVGImageElement[]; svgElements: SVGGElement[] };
-
-type BBox = { height: number; width: number; x: number; y: number };
-type CreateImageParams = Record<'angle' | 'height' | 'width' | 'x' | 'y', number> &
-  Record<'href' | 'transform', string>;
-
-/**
- * A helper to add the newly created <image> element to the canvas and handle history.
- * This removes repetitive code from each conversion function.
- */
-export function finalizeImageCreation(imageElement: SVGImageElement, isToSelect: boolean, parentCmd: IBatchCommand) {
-  const cmd = new history.InsertElementCommand(imageElement);
-
-  parentCmd.addSubCommand(cmd);
-
-  if (isToSelect) {
-    svgCanvas.selectOnly([imageElement]);
-  }
-}
-
-/**
- * Calculates the new bounding box of an element after a matrix transform.
- * Refactored for better readability and safety.
- */
-export const getTransformedCoordinates = (bbox: BBox, transform: null | string): BBox => {
-  if (!transform) return bbox;
-
-  const matrixMatch = transform.match(/matrix\(([^)]+)\)/);
-
-  if (!matrixMatch?.[1]) {
-    console.warn('No valid matrix transform found. Returning original coordinates.');
-
-    return bbox;
-  }
-
-  const matrixValues = matrixMatch[1].split(/[\s,]+/).map(Number);
-
-  if (matrixValues.length !== 6 || matrixValues.some(Number.isNaN)) {
-    console.warn('Invalid matrix values found. Returning original coordinates.');
-
-    return bbox;
-  }
-
-  const [a, b, c, d, e, f] = matrixValues;
-  const { height, width, x, y } = bbox;
-
-  // Apply transformation to the top-left corner
-  const newX = a * x + c * y + e;
-  const newY = b * x + d * y + f;
-  const newWidth = width * Math.sqrt(a * a + b * b);
-  const newHeight = height * Math.sqrt(c * c + d * d);
-
-  return { height: newHeight, width: newWidth, x: newX, y: newY };
-};
-
-/**
- * Creates the <image> element on the canvas and finalizes the operation.
- * This encapsulates all the common steps like setting attributes, color, rotation, and history.
- */
-export const createAndFinalizeImage = async (
-  { angle = 0, height, href, transform, width, x, y }: CreateImageParams,
-  { isToSelect, parentCmd, svgElement }: Required<ConvertSvgToImageParams>,
-): Promise<ConvertToImageResult> => {
-  const imageElement = svgCanvas.addSvgElementFromJson({
-    attr: {
-      'data-ratiofixed': true,
-      'data-shading': true,
-      'data-threshold': 254,
-      height,
-      id: svgCanvas.getNextId(),
-      origImage: href,
-      preserveAspectRatio: 'none',
-      style: 'pointer-events:inherit',
-      width,
-      x,
-      y,
-    },
-    element: 'image',
-  }) as SVGImageElement;
-
-  if (transform) imageElement.setAttribute('transform', transform);
-
-  setRotationAngle(imageElement, angle, { parentCmd });
-  svgCanvas.setHref(imageElement, href);
-  updateElementColor(imageElement);
-  finalizeImageCreation(imageElement, isToSelect, parentCmd);
-
-  if (isToSelect) parentCmd.addSubCommand(deleteElements([svgElement], true));
-
-  return { imageElements: [imageElement], svgElements: [svgElement] };
-};
+import { createAndFinalizeImage } from './createAndFinalizeImage';
+import { getTransformedCoordinates } from './getTransformedCoordinates';
+import type { ConvertSvgToImageParams, ConvertToImageResult } from './types';
 
 /**
  * A generic function to rasterize an SVG element (shapes, text) into an image.
