@@ -126,6 +126,8 @@ const Welcome = (): ReactNode => {
 
   useEffect(() => {
     fluxIDEvents.on('update-user', setUser);
+    // Init user again in case it was updated before fluxIDEvents.on
+    setUser(getCurrentUser());
 
     return () => {
       fluxIDEvents.off('update-user', setUser);
