@@ -364,6 +364,7 @@ const lang: ILang = {
         message: 'Únete a nuestro grupo oficial de Facebook para conectar con otros usuarios de láser FLUX, hablar de los láseres FLUX, compartir ilustraciones de láser y estar al día de las últimas actualizaciones de nuestros productos. ¡Estamos deseando verte por allí!',
         title: 'Únete al grupo oficial de usuarios de FLUX',
       },
+      failed_to_load_svg: 'No se pueden cargar los datos SVG',
       import_file_contain_invalid_path: '#808 El archivo SVG importado contiene una ruta de imagen inválida. Por favor, asegúrese de que todos los archivos de imagen existen o incrustar la imagen en el archivo',
       import_file_error_ask_for_upload: 'No se importó el archivo SVG. ¿Estás dispuesto a proporcionar el archivo para desarrollar el equipo para el informe de errores?',
       import_svg: {
@@ -1046,7 +1047,7 @@ const lang: ILang = {
       beambox: 'Al calibrar el módulo láser diodo, se necesita una cámara.\nPor favor, asegúrate de que la cámara de esta máquina ha sido calibrada.\nAjusta la plataforma al punto focal (la altura del acrílico rechazado)',
       beamo: 'Al calibrar el módulo láser diodo, se necesita una cámara.\nPor favor, asegúrate de que la cámara de esta máquina ha sido calibrada.\nAjusta la cabeza del láser para enfocar el objeto grabado (la altura del acrílico rechazado)',
     },
-    please_goto_beambox_first: 'Por favor, cambia al Modo de Grabación ( Beambox ) para poder usar esta función.',
+    please_goto_editor_first: 'Complete la configuración antes de continuar',
     please_place_dark_colored_paper: 'Coloque un papel de tamaño A4 o carta de color oscuro en el centro del área de trabajo.',
     please_place_paper: 'Por favor, coloca un papel blanco tamaño A4 o Carta en la esquina tuperior izquierda del área de trabajo',
     please_place_paper_center: 'Coloque una hoja de papel blanco de tamaño A4 o carta en el centro del área de trabajo.',
@@ -1832,6 +1833,8 @@ const lang: ILang = {
     confirm_remove_default: 'La máquina predeterminada va a ser eliminada.',
     confirm_reset: '¿Confirma el restablecimiento de Beam Studio?',
     continuous_drawing: 'Dibujo continuo',
+    crop_task_thumbnail: 'Miniatura de recorte de contenido',
+    crop_task_thumbnail_tooltip: 'Mostrar solo la miniatura del área que contiene contenido, excluyendo las áreas en blanco del lienzo.',
     curve_engraving_speed_limit: 'Límite de velocidad de grabado en curva',
     custom_preview_height: 'Altura de la previsualización',
     default_beambox_model: 'Configuración de documentos por defecto',
@@ -1940,6 +1943,10 @@ const lang: ILang = {
     trace_output: 'Salida de Trazado / Imagen de rastro',
     update_beta: 'Beta',
     update_latest: 'Último',
+    use_real_boundary: 'Usar rango máximo',
+    use_real_boundary_tooltip: 'Expandir al área de trabajo máxima real, sin restricciones por líneas de cuadrícula enteras.',
+    use_union_boundary: 'Mostrar área de trabajo superpuesta',
+    use_union_boundary_tooltip: 'Mostrar áreas de trabajo superpuestas de múltiples módulos',
     vector_speed_constraint: 'Límite de velocidad',
     wrong_ip_format: 'Formatos IP incorrectos',
   },
@@ -2361,7 +2368,7 @@ const lang: ILang = {
   },
   welcome_page: {
     follow_us: {
-      subtitle: 'Guías, manuales y recursos de soporte para todo lo relacionado con FLUX.',
+      subtitle: 'Obtén inspiración, ofertas, obsequios y conecta con otros usuarios de FLUX.',
       user_group: 'Grupo de usuarios',
     },
     help_center: {

@@ -364,6 +364,7 @@ const lang: ILang = {
         message: '即刻加入 FLUX 官方用戶社群，與廣大 FLUX 用戶分享使用心得、展示雷雕作品以及獲取最新的產品資訊。',
         title: '加入 FLUX 官方用戶社群',
       },
+      failed_to_load_svg: '無法載入 SVG 資料',
       import_file_contain_invalid_path: '#808 匯入的SVG檔案中含有不存在的圖片路徑，請確認檔案中所有連結之圖片皆存在，或改將圖片嵌入檔案中。',
       import_file_error_ask_for_upload: '讀取 SVG 檔時發生錯誤，是否願意上傳檔案回報錯誤給開發團隊？',
       import_svg: {
@@ -1046,7 +1047,7 @@ const lang: ILang = {
       beambox: '校正二極體雷射需要使用相機校正參數，請確認您的機器已進行過相機校正。並請旋轉升降平台旋鈕，直到輕觸焦距螺絲或焦距尺，完成對焦',
       beamo: '校正二極體雷射需要使用相機校正參數，請確認您的機器已進行過相機校正。並請轉開焦距固定環，調整雷射頭至平台輕觸焦距尺，完成對焦',
     },
-    please_goto_beambox_first: '請先選擇 Beambox 功能，再進行校正',
+    please_goto_editor_first: '請先完成設定後再進行此操作',
     please_place_dark_colored_paper: '請將乾淨 A4 深色紙放在工作區的中央。',
     please_place_paper: '請將乾淨 A4 白紙放在工作區域的左上角',
     please_place_paper_center: '請將乾淨 A4 白紙放在工作區的中央。',
@@ -1833,6 +1834,8 @@ const lang: ILang = {
     confirm_remove_default: '將會刪除預設機器',
     confirm_reset: '確認要重置 Beam Studio?',
     continuous_drawing: '連續繪製',
+    crop_task_thumbnail: '內容裁切縮圖',
+    crop_task_thumbnail_tooltip: '僅顯示含有內容區域的縮圖，排除空白畫布區域。',
     curve_engraving_speed_limit: '曲面雕刻速度限制',
     custom_preview_height: '自訂預覽高度',
     default_beambox_model: '預設文件設定',
@@ -1941,6 +1944,10 @@ const lang: ILang = {
     trace_output: '向量化及影像描圖輸出',
     update_beta: 'Beta',
     update_latest: '穩定版',
+    use_real_boundary: '使用最大範圍',
+    use_real_boundary_tooltip: '擴展至實際最大工作區域，不受整數格線限制。',
+    use_union_boundary: '顯示重疊工作範圍',
+    use_union_boundary_tooltip: '顯示多模組重疊的工作區域',
     vector_speed_constraint: '限制上限速度',
     wrong_ip_format: 'IP格式錯誤',
   },
@@ -2362,7 +2369,7 @@ const lang: ILang = {
   },
   welcome_page: {
     follow_us: {
-      subtitle: '所有 FLUX 相關的指南、手冊與支援資源。',
+      subtitle: '獲取靈感、優惠、免費好康，並與 FLUX 用戶互動！',
       user_group: '用戶社群',
     },
     help_center: {

@@ -249,6 +249,34 @@ exports[`settings/Editor initially no warning 1`] = `
       id="print-advanced-mode"
     />
   </div>
+  <div>
+    mock-select-control id:
+    use-real-boundary
+    label:
+    Use Maximum Range
+    url:
+    tooltip:Expand to the actual maximum work area, unrestricted by integer grid lines.
+    options:
+    [{"label":"On","value":true},{"label":"Off","value":false}]
+    <input
+      class="select-control"
+      id="use-real-boundary"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    crop-task-thumbnail
+    label:
+    Content Crop Thumbnail
+    url:
+    tooltip:Display only the thumbnail of the area containing content, excluding blank canvas areas.
+    options:
+    [{"label":"On","value":true},{"label":"Off","value":false}]
+    <input
+      class="select-control"
+      id="crop-task-thumbnail"
+    />
+  </div>
 </div>
 `;
 
@@ -499,6 +527,34 @@ exports[`settings/Editor initially no warning 2`] = `
     <input
       class="select-control"
       id="print-advanced-mode"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    use-real-boundary
+    label:
+    Use Maximum Range
+    url:
+    tooltip:Expand to the actual maximum work area, unrestricted by integer grid lines.
+    options:
+    [{"label":"On","value":true},{"label":"Off","value":false}]
+    <input
+      class="select-control"
+      id="use-real-boundary"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    crop-task-thumbnail
+    label:
+    Content Crop Thumbnail
+    url:
+    tooltip:Display only the thumbnail of the area containing content, excluding blank canvas areas.
+    options:
+    [{"label":"On","value":true},{"label":"Off","value":false}]
+    <input
+      class="select-control"
+      id="crop-task-thumbnail"
     />
   </div>
 </div>
@@ -753,6 +809,34 @@ exports[`settings/Editor initially no warning 3`] = `
       id="print-advanced-mode"
     />
   </div>
+  <div>
+    mock-select-control id:
+    use-real-boundary
+    label:
+    Use Maximum Range
+    url:
+    tooltip:Expand to the actual maximum work area, unrestricted by integer grid lines.
+    options:
+    [{"label":"On","value":true},{"label":"Off","value":false}]
+    <input
+      class="select-control"
+      id="use-real-boundary"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    crop-task-thumbnail
+    label:
+    Content Crop Thumbnail
+    url:
+    tooltip:Display only the thumbnail of the area containing content, excluding blank canvas areas.
+    options:
+    [{"label":"On","value":true},{"label":"Off","value":false}]
+    <input
+      class="select-control"
+      id="crop-task-thumbnail"
+    />
+  </div>
 </div>
 `;
 
@@ -1003,6 +1087,34 @@ exports[`settings/Editor initially no warning 4`] = `
     <input
       class="select-control"
       id="print-advanced-mode"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    use-real-boundary
+    label:
+    Use Maximum Range
+    url:
+    tooltip:Expand to the actual maximum work area, unrestricted by integer grid lines.
+    options:
+    [{"label":"On","value":true},{"label":"Off","value":false}]
+    <input
+      class="select-control"
+      id="use-real-boundary"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    crop-task-thumbnail
+    label:
+    Content Crop Thumbnail
+    url:
+    tooltip:Display only the thumbnail of the area containing content, excluding blank canvas areas.
+    options:
+    [{"label":"On","value":true},{"label":"Off","value":false}]
+    <input
+      class="select-control"
+      id="crop-task-thumbnail"
     />
   </div>
 </div>

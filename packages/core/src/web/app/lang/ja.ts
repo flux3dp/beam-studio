@@ -364,6 +364,7 @@ const lang: ILang = {
         message: '公式Facebookグループに参加して、他のFLUXレーザーユーザーとつながり、FLUXレーザーについて語り合い、レーザーアート作品を共有し、製品に関する最新情報を入手しませんか？ご参加をお待ちしております！',
         title: 'FLUX公式ユーザーグループへの参加',
       },
+      failed_to_load_svg: 'SVGデータを読み込めません',
       import_file_contain_invalid_path: '#808 インポートされたSVGファイルに無効は画像パスが含まれています。すべての画像ファイルが存在することを確認するか、ファイルに画像を埋め込んでください',
       import_file_error_ask_for_upload: 'インポートされたSVGファイルに失敗しました。バグレポート用のチームを開発するためのファイルを提供してもよろしいですか？',
       import_svg: {
@@ -1046,7 +1047,7 @@ const lang: ILang = {
       beambox: 'ダイオードレーザーモジュールを校正する場合、カメラが必要です。\nプラットフォームを焦点に合わせてください（折り返されたアクリルの高さ）',
       beamo: 'ダイオードレーザーモジュールを校正する場合、カメラが必要です。\nレーザーヘッドを調整して、彫刻オブジェクトに焦点を合わせます（折り返されたアクリルの高さ）',
     },
-    please_goto_beambox_first: 'この機能を使用するには、彫刻モード（Beambox）に切り替えてください。',
+    please_goto_editor_first: '操作を続行する前に設定を完了してください',
     please_place_dark_colored_paper: 'A4 サイズまたはレターサイズの黒紙を作業エリアの中央に置いてください。',
     please_place_paper: 'ワークエリアの左上隅にA4またはレターサイズの白い用紙を置いてください',
     please_place_paper_center: 'A4 サイズまたはレターサイズの白紙を作業エリアの中央に置いてください。',
@@ -1832,6 +1833,8 @@ const lang: ILang = {
     confirm_remove_default: 'デフォルトマシンが削除されます。',
     confirm_reset: 'Beam Studioのリセットを確認しますか？',
     continuous_drawing: '連続描画',
+    crop_task_thumbnail: 'コンテンツ切り抜きサムネイル',
+    crop_task_thumbnail_tooltip: '内容がある領域のサムネイルのみを表示し、空白のキャンバス領域は除外します。',
     curve_engraving_speed_limit: 'カーブ彫刻の速度制限',
     custom_preview_height: 'カスタムプレビュー高さ',
     default_beambox_model: 'デフォルト作業エリア',
@@ -1940,6 +1943,10 @@ const lang: ILang = {
     trace_output: 'ベクトル化/トレース画像出力',
     update_beta: 'ベータ',
     update_latest: '最新',
+    use_real_boundary: '最大範囲を使用する',
+    use_real_boundary_tooltip: '実際の最大作業領域まで拡張し、整数グリッド線の制限を受けません。',
+    use_union_boundary: '重なっている作業領域を表示',
+    use_union_boundary_tooltip: '複数モジュールの重複する作業領域を表示',
     vector_speed_constraint: '速度制限',
     wrong_ip_format: '間違ったIP形式',
   },
@@ -2361,7 +2368,7 @@ const lang: ILang = {
   },
   welcome_page: {
     follow_us: {
-      subtitle: 'FLUX に関するすべてのガイド、マニュアル、サポートリソース。',
+      subtitle: 'アイデア、セール情報、無料特典を手に入れ、FLUXユーザーと交流しましょう！',
       user_group: 'ユーザーグループ',
     },
     help_center: {

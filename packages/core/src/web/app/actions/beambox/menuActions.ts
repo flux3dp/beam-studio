@@ -53,7 +53,7 @@ export default {
     OutputError.downloadErrorLog();
   },
   CHANGE_LOGS: (): void => Dialog.showChangLog(),
-  CLEAR_SCENE: (): Promise<void> => svgEditor.clearScene(),
+  CLEAR_SCENE: (): Promise<void> => FnWrapper.clearScene(),
   CODE_GENERATOR: (): void => Dialog.showCodeGenerator(),
   COPY: (): void => svgEditor.copySelected(),
   CUT: (): void => svgEditor.cutSelected(),

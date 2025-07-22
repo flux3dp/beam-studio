@@ -10,7 +10,7 @@ jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
 
 const mockUpdate = jest.fn();
 
-jest.mock('@core/app/actions/canvas/module-boundary-drawer', () => ({ update: mockUpdate }));
+jest.mock('@core/app/actions/canvas/boundaryDrawer', () => ({ boundaryDrawer: { update: mockUpdate } }));
 
 let mockPreference: Record<string, any>;
 

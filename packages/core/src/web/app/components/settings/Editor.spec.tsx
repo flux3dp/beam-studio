@@ -156,7 +156,7 @@ describe('settings/Editor', () => {
       />,
     );
 
-    expect(mockGetPreference).toHaveBeenCalledTimes(14);
+    expect(mockGetPreference).toHaveBeenCalledTimes(16);
     expect(mockGetPreference).toHaveBeenNthCalledWith(1, 'model');
     expect(mockGetPreference).toHaveBeenNthCalledWith(2, 'model');
     expect(mockGetPreference).toHaveBeenNthCalledWith(3, 'show_guides');
@@ -171,6 +171,8 @@ describe('settings/Editor', () => {
     expect(mockGetPreference).toHaveBeenNthCalledWith(12, 'enable-custom-backlash');
     expect(mockGetPreference).toHaveBeenNthCalledWith(13, 'enable-uv-print-file');
     expect(mockGetPreference).toHaveBeenNthCalledWith(14, 'print-advanced-mode');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(15, 'use-real-boundary');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(16, 'crop-task-thumbnail');
     expect(container).toMatchSnapshot();
 
     const SelectControls = container.querySelectorAll('.select-control');

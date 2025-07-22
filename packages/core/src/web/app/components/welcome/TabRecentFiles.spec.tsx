@@ -53,13 +53,11 @@ jest.mock('@core/app/components/welcome/GridNew', () => 'mock-grid-new');
 import TabRecentFiles from './TabRecentFiles';
 import { TabEvents } from '@core/app/constants/tabConstants';
 
-const mockStartNewProject = jest.fn();
-
 describe('test TabRecentFiles', () => {
   it('should render correctly', async () => {
     mockGet.mockReturnValue(['file1.beam', 'file2.beam']);
 
-    const { container } = render(<TabRecentFiles startNewProject={mockStartNewProject} />);
+    const { container } = render(<TabRecentFiles />);
 
     await new Promise((resolve) => setTimeout(resolve, 0));
     expect(mockFetch).toHaveBeenNthCalledWith(1, 'file1.beam');

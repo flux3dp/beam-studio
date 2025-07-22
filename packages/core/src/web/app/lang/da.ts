@@ -364,6 +364,7 @@ const lang: ILang = {
         message: 'Tilmeld vores officielle Facebook-gruppe for at oprette forbindelse med andre FLUX-laserbrugere, diskutere FLUX-lasere, dele laserkunst og holde dig opdateret med de seneste opdateringer på vores produkter. Vi glæder os til at se dig der!',
         title: 'Tilmeld FLUX officiel brugergruppe',
       },
+      failed_to_load_svg: 'Kan ikke indlæse SVG-data',
       import_file_contain_invalid_path: '#808 Importeret SVG-fil indeholder ugyldig billedsti. Sørg for, at alle billedfiler findes, eller indsæt billede i filen',
       import_file_error_ask_for_upload: 'Kunne ikke importere SVG-fil. Er du villig til at give filen til udviklingsholdet til fejlrapport?',
       import_svg: {
@@ -1046,7 +1047,7 @@ const lang: ILang = {
       beambox: 'Når du kalibrerer laserdiodemodulet, er kameraet nødvendigt.\nSørg venligst for, at kameraet på denne maskine er kalibreret.\nJuster venligst platformen til fokuspunktet (højden af det nedadgående akryl)',
       beamo: 'Når du kalibrerer laserdiodemodulet, er kameraet nødvendigt.\nSørg venligst for, at kameraet på denne maskine er kalibreret.\nJuster venligst laserhovedet til at fokusere på graveringsobjektet (højden af det nedadgående akryl)',
     },
-    please_goto_beambox_first: 'Skift venligst til graveringstilstand (Beambox) for at bruge denne funktion.',
+    please_goto_editor_first: 'Fuldfør opsætningen, før du fortsætter',
     please_place_dark_colored_paper: 'Anbring venligst et A4- eller brevstørrelse mørkt farvet papir i midten af arbejdsområdet.',
     please_place_paper: 'Anbring venligst et A4- eller brevstørrelse hvidt papir i venstre øverste hjørne af arbejdsområdet.',
     please_place_paper_center: 'Anbring venligst et A4- eller brevstørrelse hvidt papir i midten af arbejdsområdet.',
@@ -1832,6 +1833,8 @@ const lang: ILang = {
     confirm_remove_default: 'Standardmaskinen vil blive fjernet.',
     confirm_reset: 'Bekræft nulstilling af Beam Studio?',
     continuous_drawing: 'Kontinuerlig tegning',
+    crop_task_thumbnail: 'Indhold beskåret miniature',
+    crop_task_thumbnail_tooltip: 'Vis kun miniaturebilledet af området med indhold og ekskluder tomme lærredsområder.',
     curve_engraving_speed_limit: 'Hastighedsgrænse for kurvegravering',
     custom_preview_height: 'Brugerdefineret Forhåndsvisningshøjde',
     default_beambox_model: 'Standard dokumentindstilling',
@@ -1940,6 +1943,10 @@ const lang: ILang = {
     trace_output: 'Billede Spor Output',
     update_beta: 'Beta',
     update_latest: 'Latest',
+    use_real_boundary: 'Brug maksimal rækkevidde',
+    use_real_boundary_tooltip: 'Udvid til det faktiske maksimale arbejdsområde uden begrænsning af heltals gitterlinjer.',
+    use_union_boundary: 'Vis overlappende arbejdsområde',
+    use_union_boundary_tooltip: 'Vis overlappende arbejdsområder for flere moduler',
     vector_speed_constraint: 'Hastighedsgrænse',
     wrong_ip_format: 'Forkert IP-format',
   },
@@ -2361,7 +2368,7 @@ const lang: ILang = {
   },
   welcome_page: {
     follow_us: {
-      subtitle: 'Vejledninger, manualer og supportressourcer til alt om FLUX.',
+      subtitle: 'Få inspiration, tilbud, gratis ting og engagér dig med FLUX-brugere!',
       user_group: 'Brugergruppe',
     },
     help_center: {

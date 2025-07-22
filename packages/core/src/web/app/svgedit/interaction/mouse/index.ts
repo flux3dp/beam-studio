@@ -5,6 +5,7 @@ import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
 import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
+import { boundaryDrawer } from '@core/app/actions/canvas/boundaryDrawer';
 import canvasEvents from '@core/app/actions/canvas/canvasEvents';
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
@@ -147,6 +148,8 @@ const mouseDown = async (evt: MouseEvent) => {
 
   if (mouseTarget.tagName === 'a' && mouseTarget.childNodes.length === 1) {
     mouseTarget = mouseTarget.firstChild as SVGElement;
+  } else if (boundaryDrawer.checkMouseTarget(mouseTarget)) {
+    mouseTarget = svgRoot;
   }
 
   if (mouseTarget === svgCanvas.selectorManager.selectorParentGroup && selectedElements[0]) {

@@ -32,6 +32,7 @@ const UserInfo = ({ user }: Props): ReactNode => {
           alt="avatar"
           className={styles.avatar}
           icon={<TopBarIcons.Account className={styles['default-avatar']} />}
+          onClick={dialogCaller.showFluxCreditDialog}
           size={isMobile ? 32 : 52}
           src={user?.info?.avatar || undefined}
         />

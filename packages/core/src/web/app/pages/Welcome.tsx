@@ -11,6 +11,7 @@ import {
 import { CapsuleTabs } from 'antd-mobile';
 import classNames from 'classnames';
 
+import funcs from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import tabController from '@core/app/actions/tabController';
 import Chat from '@core/app/components/beambox/svg-editor/Chat';
 import Tabs from '@core/app/components/beambox/top-bar/tabs/Tabs';
@@ -27,14 +28,12 @@ import FluxIcons from '@core/app/icons/flux/FluxIcons';
 import { DmktIcon } from '@core/app/icons/icons';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import { axiosFluxId, fluxIDEvents, getCurrentUser } from '@core/helpers/api/flux-id';
-import { checkTabCount, setFileInAnotherTab } from '@core/helpers/fileImportHelper';
 import { hashMap } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import { isMac, useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
-import dialog from '@core/implementations/dialog';
 import type { IUser } from '@core/interfaces/IUser';
 
 import styles from './Welcome.module.scss';
@@ -127,57 +126,13 @@ const Welcome = (): ReactNode => {
 
   useEffect(() => {
     fluxIDEvents.on('update-user', setUser);
+    // Init user again in case it was updated before fluxIDEvents.on
+    setUser(getCurrentUser());
 
     return () => {
       fluxIDEvents.off('update-user', setUser);
     };
   }, [setUser]);
-
-  const openFile = async () => {
-    if (!checkTabCount()) return;
-
-    const file = await dialog.getFileFromDialog({
-      filters: [
-        {
-          extensions: [
-            'png',
-            'jpg',
-            'jpeg',
-            'jpe',
-            'jif',
-            'jfif',
-            'jfi',
-            'bmp',
-            'jp2',
-            'j2k',
-            'jpf',
-            'jpx',
-            'jpm',
-            'dxf',
-            'ai',
-            'pdf',
-            'svg',
-            'bvg',
-            'beam',
-            'webp',
-          ],
-          name: 'Images',
-        },
-      ],
-    });
-
-    if (file) {
-      setFileInAnotherTab({ data: file, type: 'normal' });
-    }
-  };
-
-  const startNewProject = () => {
-    if (isWeb()) {
-      location.hash = hashMap.editor;
-    } else if (checkTabCount()) {
-      tabController.addNewTab();
-    }
-  };
 
   const menuItems = [
     !isWeb() && {
@@ -228,7 +183,7 @@ const Welcome = (): ReactNode => {
     follow: <TabFollowUs />,
     'help-center': <TabHelpCenter />,
     'my-cloud': <TabMyCloud user={currentUser} />,
-    'recent-files': <TabRecentFiles startNewProject={startNewProject} />,
+    'recent-files': <TabRecentFiles />,
   };
 
   const isFullTab = useMemo(() => activeKey === 'beamy', [activeKey]);
@@ -246,10 +201,10 @@ const Welcome = (): ReactNode => {
         <div className={styles.logo}>
           <FluxIcons.FluxLogo />
         </div>
-        <ThemedButton ghost icon={<FolderOpenOutlined />} onClick={openFile} theme="white">
+        <ThemedButton ghost icon={<FolderOpenOutlined />} onClick={funcs.importImage} theme="white">
           {!isMobile && tMenu.open}
         </ThemedButton>
-        <ThemedButton icon={<PlusOutlined />} onClick={startNewProject} theme="yellow">
+        <ThemedButton icon={<PlusOutlined />} onClick={funcs.clearScene} theme="yellow">
           {!isMobile && t.new_project}
         </ThemedButton>
       </div>

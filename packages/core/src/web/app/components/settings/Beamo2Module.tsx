@@ -1,5 +1,8 @@
 import React, { useCallback, useMemo } from 'react';
 
+import type { DefaultOptionType } from 'antd/es/select';
+
+import SettingSelect from '@core/app/components/settings/components/SettingSelect';
 import type { SettingUnitInputProps } from '@core/app/components/settings/components/SettingUnitInput';
 import XYItem from '@core/app/components/settings/components/XYItem';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
@@ -14,12 +17,13 @@ import useI18n from '@core/helpers/useI18n';
 import styles from './Settings.module.scss';
 
 interface Props {
+  options: DefaultOptionType[];
   unitInputProps: Partial<SettingUnitInputProps>;
 }
 
 const targetWorkarea: WorkAreaModel = 'fbm2';
 
-const Beamo2Module = ({ unitInputProps }: Props): React.JSX.Element => {
+const Beamo2Module = ({ options, unitInputProps }: Props): React.JSX.Element => {
   const lang = useI18n();
   const { getPreference, setPreference } = useSettingStore();
   const commonProps = useMemo(() => {
@@ -97,6 +101,14 @@ const Beamo2Module = ({ unitInputProps }: Props): React.JSX.Element => {
           values={getModuleOffset(LayerModule.UV_VARNISH)}
         />
       )}
+      <SettingSelect
+        defaultValue={getPreference('use-union-boundary')}
+        id="use-union-boundary"
+        label={lang.settings.use_union_boundary}
+        onChange={(e) => setPreference('use-union-boundary', e)}
+        options={options}
+        tooltip={lang.settings.use_union_boundary_tooltip}
+      />
     </>
   );
 };

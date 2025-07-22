@@ -364,6 +364,7 @@ const lang: ILang = {
         message: 'Tham gia nhóm Facebook chính thức của chúng tôi để kết nối với các người dùng laser FLUX khác, thảo luận về sản phẩm laser FLUX, chia sẻ tác phẩm và cập nhật các bản cập nhật mới nhất. Chúng tôi mong được gặp bạn!',
         title: 'Tham gia nhóm người dùng chính thức FLUX',
       },
+      failed_to_load_svg: 'Không thể tải dữ liệu SVG',
       import_file_contain_invalid_path: '#808 Tệp SVG được nhập chứa đường dẫn hình ảnh không hợp lệ. Hãy đảm bảo tất cả hình ảnh tồn tại hoặc nhúng hình vào tệp',
       import_file_error_ask_for_upload: 'Nhập tệp SVG thất bại. Bạn có muốn cung cấp tệp cho nhóm phát triển để báo cáo lỗi?',
       import_svg: {
@@ -1046,7 +1047,7 @@ const lang: ILang = {
       beambox: 'Khi hiệu chỉnh mô-đun laser đi-ốt, cần có máy ảnh.\nHãy đảm bảo máy ảnh của máy này đã được hiệu chỉnh.\nVà hãy điều chỉnh nền tảng đến điểm tiêu cự (chiều cao của acrylic đã quay xuống)',
       beamo: 'Khi hiệu chỉnh mô-đun laser đi-ốt, cần có máy ảnh.\nHãy đảm bảo máy ảnh của máy này đã được hiệu chỉnh.\nVà hãy điều chỉnh đầu laser để lấy nét vào vật khắc (chiều cao của acrylic đã quay xuống)',
     },
-    please_goto_beambox_first: 'Vui lòng chuyển sang Chế độ Khắc (Beambox) để sử dụng tính năng này.',
+    please_goto_editor_first: 'Vui lòng hoàn tất cài đặt trước khi tiếp tục',
     please_place_dark_colored_paper: 'Vui lòng đặt một tờ giấy khổ A4 hoặc Letter màu tối ở giữa khu vực làm việc.',
     please_place_paper: 'Vui lòng đặt một tờ giấy khổ A4 hoặc Letter màu trắng ở góc trái trên của khu vực làm việc.',
     please_place_paper_center: 'Vui lòng đặt một tờ giấy khổ A4 hoặc Letter màu trắng ở giữa khu vực làm việc.',
@@ -1832,6 +1833,8 @@ const lang: ILang = {
     confirm_remove_default: 'Máy mặc định sẽ bị xóa.',
     confirm_reset: 'Xác nhận đặt lại Beam Studio?',
     continuous_drawing: 'Vẽ liên tục',
+    crop_task_thumbnail: 'Thu nhỏ cắt nội dung',
+    crop_task_thumbnail_tooltip: 'Chỉ hiển thị ảnh thu nhỏ của khu vực có nội dung, loại trừ các vùng trống trên canvas.',
     curve_engraving_speed_limit: 'Giới hạn tốc độ khắc đường cong',
     custom_preview_height: 'Chiều cao xem trước tùy chỉnh',
     default_beambox_model: 'Thiết lập mặc định',
@@ -1940,6 +1943,10 @@ const lang: ILang = {
     trace_output: 'Kết quả trích xuất ảnh',
     update_beta: 'Beta',
     update_latest: 'Mới nhất',
+    use_real_boundary: 'Sử dụng phạm vi tối đa',
+    use_real_boundary_tooltip: 'Mở rộng đến vùng làm việc tối đa thực tế, không bị giới hạn bởi các đường lưới số nguyên.',
+    use_union_boundary: 'Hiển thị khu vực làm việc chồng chéo',
+    use_union_boundary_tooltip: 'Hiển thị vùng làm việc chồng lên nhau của nhiều mô-đun',
     vector_speed_constraint: 'Giới hạn tốc độ',
     wrong_ip_format: 'Định dạng IP không hợp lệ',
   },
@@ -2361,7 +2368,7 @@ const lang: ILang = {
   },
   welcome_page: {
     follow_us: {
-      subtitle: 'Hướng dẫn, tài liệu và tài nguyên hỗ trợ cho mọi thứ liên quan đến FLUX.',
+      subtitle: 'Nhận cảm hứng, ưu đãi, quà tặng miễn phí và kết nối với cộng đồng FLUX!',
       user_group: 'Nhóm người dùng',
     },
     help_center: {

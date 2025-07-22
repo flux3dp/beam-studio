@@ -364,6 +364,7 @@ const lang: ILang = {
         message: 'Sertai kumpulan Facebook rasmi kami untuk berhubung dengan pengguna laser FLUX yang lain, berkongsi karya laser, dan sentiasa dikemas kini dengan maklumat terkini mengenai produk kami. Kami tidak sabar untuk berjumpa dengan anda di sana!',
         title: 'Sertai Kumpulan Pengguna Rasmi FLUX',
       },
+      failed_to_load_svg: 'Tidak dapat memuat data SVG',
       import_file_contain_invalid_path: '#808 Fail SVG yang diimport mengandungi laluan imej yang tidak sah. Sila pastikan semua fail imej wujud atau benam imej dalam fail',
       import_file_error_ask_for_upload: 'Gagal untuk Imported SVG file. Adakah anda bersedia untuk menyediakan fail kepada pasukan pembangunan untuk laporan pepijat ?',
       import_svg: {
@@ -1046,7 +1047,7 @@ const lang: ILang = {
       beambox: 'Semasa menentusahkan modul laser diod, kamera diperlukan.\nPastikan kamera mesin ini telah ditentusahkan.\nDan laraskan platform pada titik fokus (ketinggian akrilik songsang)',
       beamo: 'Semasa menentusahkan modul laser diod, kamera diperlukan.\nPastikan kamera mesin ini telah ditentusahkan.\nDan laraskan kepala laser untuk fokus pada objek ukiran (ketinggian akrilik songsang)',
     },
-    please_goto_beambox_first: 'Sila tukar ke Mod Pengukiran (Beambox) untuk menggunakan ciri ini.',
+    please_goto_editor_first: 'Sila lengkapkan tetapan sebelum meneruskan',
     please_place_dark_colored_paper: 'Sila letakkan kertas berwarna gelap bersaiz A4 atau Surat di tengah kawasan kerja.',
     please_place_paper: 'Sila letakkan kertas A4 atau Saiz Surat berwarna putih di penjuru kiri atas ruang kerja.',
     please_place_paper_center: 'Sila letakkan kertas A4 atau Saiz Surat berwarna putih di tengah ruang kerja.',
@@ -1832,6 +1833,8 @@ const lang: ILang = {
     confirm_remove_default: 'Mesin lalai akan dibuang.',
     confirm_reset: 'Sahkan tetapkan semula Beam Studio?',
     continuous_drawing: 'Lukisan Berterusan',
+    crop_task_thumbnail: 'Imej kecil potong kandungan',
+    crop_task_thumbnail_tooltip: 'Paparkan hanya lakaran kecil kawasan yang mengandungi kandungan, kecuali kawasan kanvas kosong.',
     curve_engraving_speed_limit: 'Had kelajuan ukiran lengkung',
     custom_preview_height: 'Ketinggian Pratonton Tersuai',
     default_beambox_model: 'Tetapan Dokumen Lalai',
@@ -1940,6 +1943,10 @@ const lang: ILang = {
     trace_output: 'Output Imej Jejak',
     update_beta: 'Beta',
     update_latest: 'Terkini',
+    use_real_boundary: 'Gunakan julat maksimum',
+    use_real_boundary_tooltip: 'Kembangkan ke kawasan kerja maksimum sebenar, tanpa had oleh garis grid integer.',
+    use_union_boundary: 'Papar kawasan kerja bertindih',
+    use_union_boundary_tooltip: 'Paparkan kawasan kerja bertindih bagi beberapa modul',
     vector_speed_constraint: 'Had Kelajuan',
     wrong_ip_format: 'Format IP Salah',
   },
@@ -2361,7 +2368,7 @@ const lang: ILang = {
   },
   welcome_page: {
     follow_us: {
-      subtitle: 'Panduan, manual, dan sumber sokongan untuk semua perkara berkaitan FLUX.',
+      subtitle: 'Dapatkan inspirasi, tawaran, hadiah percuma dan berinteraksi dengan pengguna FLUX!',
       user_group: 'Kumpulan Pengguna',
     },
     help_center: {

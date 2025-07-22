@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { act, fireEvent, render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 
 jest.mock('@core/app/components/beambox/svg-editor/Chat', () => 'mock-chat');
 jest.mock('@core/app/components/beambox/top-bar/tabs/Tabs', () => 'mock-tabs');
@@ -10,6 +10,14 @@ jest.mock('@core/app/components/welcome/TabHelpCenter', () => 'mock-tab-help-cen
 jest.mock('@core/app/components/welcome/TabMyCloud', () => 'mock-tab-my-cloud');
 jest.mock('@core/app/components/welcome/TabRecentFiles', () => 'mock-tab-recent-files');
 jest.mock('@core/app/components/welcome/UserInfo', () => 'mock-user-info');
+
+const mockClearScene = jest.fn();
+const mockImportImage = jest.fn();
+
+jest.mock('@core/app/actions/beambox/svgeditor-function-wrapper', () => ({
+  clearScene: mockClearScene,
+  importImage: mockImportImage,
+}));
 
 const mockGetIsWelcomeTab = jest.fn();
 const mockAddNewTab = jest.fn();
@@ -34,14 +42,6 @@ jest.mock('@core/helpers/api/flux-id', () => ({
   getCurrentUser: jest.fn(),
 }));
 
-const mockCheckTabCount = jest.fn();
-const mockSetFileInAnotherTab = jest.fn();
-
-jest.mock('@core/helpers/fileImportHelper', () => ({
-  checkTabCount: mockCheckTabCount,
-  setFileInAnotherTab: mockSetFileInAnotherTab,
-}));
-
 const mockIsWeb = jest.fn();
 
 jest.mock('@core/helpers/is-web', () => mockIsWeb);
@@ -59,41 +59,26 @@ jest.mock('@core/implementations/browser', () => ({
   open: mockOpen,
 }));
 
-const mockGetFileFromDialog = jest.fn();
-
-jest.mock('@core/implementations/dialog', () => ({
-  getFileFromDialog: mockGetFileFromDialog,
-}));
-
 import Welcome from './Welcome';
 
 describe('test Welcome', () => {
   beforeEach(() => {
     jest.resetAllMocks();
     mockUseIsMobile.mockReturnValue(false);
-    mockCheckTabCount.mockReturnValue(true);
     mockGetIsWelcomeTab.mockReturnValue(true);
   });
 
   it('should render correctly', async () => {
-    const mockFile = { key: 'mock-file' };
-
-    mockGetFileFromDialog.mockResolvedValue(mockFile);
-
     const { container, getByText } = render(<Welcome />);
 
     expect(container).toMatchSnapshot();
     expect(window.homePage).toBe('#/studio/welcome');
 
-    await act(() => fireEvent.click(getByText('Open')));
-    expect(mockCheckTabCount).toHaveBeenCalledTimes(1);
-    expect(mockGetFileFromDialog).toHaveBeenCalledTimes(1);
-    expect(mockSetFileInAnotherTab).toHaveBeenCalledTimes(1);
-    expect(mockSetFileInAnotherTab).toHaveBeenNthCalledWith(1, { data: mockFile, type: 'normal' });
+    fireEvent.click(getByText('Open'));
+    expect(mockImportImage).toHaveBeenCalledTimes(1);
 
     fireEvent.click(getByText('New Project'));
-    expect(mockCheckTabCount).toHaveBeenCalledTimes(2);
-    expect(mockAddNewTab).toHaveBeenCalledTimes(1);
+    expect(mockClearScene).toHaveBeenCalledTimes(1);
 
     fireEvent.click(getByText('Beamy'));
     expect(container).toMatchSnapshot();
@@ -116,9 +101,7 @@ describe('test Welcome', () => {
     expect(window.homePage).toBe('#/studio/welcome');
 
     fireEvent.click(getByText('New Project'));
-    expect(mockCheckTabCount).not.toHaveBeenCalled();
-    expect(mockAddNewTab).not.toHaveBeenCalled();
-    expect(window.location.hash).toBe('#/studio/beambox');
+    expect(mockClearScene).toHaveBeenCalledTimes(1);
 
     fireEvent.click(getByText('Beamy'));
     expect(container).toMatchSnapshot();

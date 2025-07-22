@@ -14,11 +14,16 @@ const useSettingStore = create(() => ({
 }));
 
 jest.mock('@core/app/pages/Settings/useSettingStore', () => ({ useSettingStore }));
-jest.mock('@core/app/actions/canvas/module-boundary-drawer', () => {});
+jest.mock('@core/app/actions/canvas/boundaryDrawer', () => {});
 jest.mock('./components/SettingFormItem');
+jest.mock('./components/SettingSelect');
 
 const mockOffsets: ModuleOffsets = { fbm2: { [LayerModule.LASER_1064]: [10, 10] } };
-const props = {
+const props: any = {
+  options: [
+    { label: 'On', value: true },
+    { label: 'Off', value: false },
+  ],
   unitInputProps: {
     isInch: false,
     precision: 2,
@@ -68,5 +73,15 @@ describe('test Beamo2Module', () => {
         [LayerModule.UV_WHITE_INK]: [49.7, -1.1, true],
       },
     });
+  });
+
+  test('edit on/off value', () => {
+    const { container } = render(<Beamo2Module {...props} />);
+
+    const SelectControls = container.querySelectorAll('.select-control');
+
+    fireEvent.change(SelectControls[0], { target: { value: 'false' } });
+    expect(mockSetPreference).toHaveBeenCalledTimes(1);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(1, 'use-union-boundary', false);
   });
 });

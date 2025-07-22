@@ -81,14 +81,6 @@ jest.mock(
       mockChangeWorkarea(...args),
 );
 
-const mockDiodeBoundaryDrawerShow = jest.fn();
-const mockDiodeBoundaryDrawerHide = jest.fn();
-
-jest.mock('@core/app/actions/canvas/diode-boundary-drawer', () => ({
-  hide: () => mockDiodeBoundaryDrawerHide(),
-  show: () => mockDiodeBoundaryDrawerShow(),
-}));
-
 const mockGetPromarkInfo = jest.fn();
 const mockSetPromarkInfo = jest.fn();
 
@@ -197,8 +189,6 @@ describe('test DocumentSettings', () => {
     expect(mockChangeWorkarea).toHaveBeenLastCalledWith('fbm1', { toggleModule: true });
     expect(mockToggleDisplay).toHaveBeenCalledTimes(1);
     expect(mockTogglePresprayArea).toHaveBeenCalledTimes(1);
-    expect(mockDiodeBoundaryDrawerShow).toHaveBeenCalledTimes(0);
-    expect(mockDiodeBoundaryDrawerHide).toHaveBeenCalledTimes(0);
     expect(mockCreateEventEmitter).toHaveBeenCalledTimes(1);
     expect(mockCreateEventEmitter).toHaveBeenNthCalledWith(1, 'canvas');
     expect(mockEventEmitter.emit).toHaveBeenCalledTimes(2);

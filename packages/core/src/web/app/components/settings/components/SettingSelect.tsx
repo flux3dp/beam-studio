@@ -10,14 +10,15 @@ type CommonProps = {
   label: string;
   onChange: (value: any) => void;
   options: DefaultOptionType[];
+  tooltip?: string;
   url?: string;
 };
 
 type Props = CommonProps & OneOf<{ defaultValue: boolean | number | string }, { value: string }>;
 
-function SettingSelect({ defaultValue, id, label, onChange, options, url, value }: Props) {
+function SettingSelect({ defaultValue, id, label, onChange, options, tooltip, url, value }: Props) {
   return (
-    <SettingFormItem id={`${id}-label`} label={label} url={url}>
+    <SettingFormItem id={`${id}-label`} label={label} tooltip={tooltip} url={url}>
       <Select
         defaultValue={defaultValue}
         id={id}

@@ -1,7 +1,11 @@
+import tabController from '@core/app/actions/tabController';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
 import * as TutorialController from '@core/app/views/tutorials/tutorialController';
+import { checkTabCount, setFileInAnotherTab } from '@core/helpers/fileImportHelper';
+import { checkIsAtEditor, hashMap, isAtPage } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
 import ImageData from '@core/helpers/image-data';
+import isWeb from '@core/helpers/is-web';
 import { createLayer } from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import dialog from '@core/implementations/dialog';
@@ -58,11 +62,32 @@ const funcs = {
   alignTop(): void {
     align('t');
   },
+  async clearScene() {
+    if (isAtPage('welcome')) {
+      if (isWeb()) {
+        location.hash = hashMap.editor;
+      } else if (checkTabCount()) {
+        tabController.addNewTab();
+      }
+
+      return;
+    } else if (!checkIsAtEditor()) {
+      return;
+    }
+
+    await svgEditor.clearScene();
+  },
   clearSelection(): void {
     svgCanvas.clearSelection();
   },
   // main panel
   importImage: async (): Promise<void> => {
+    if (isAtPage('welcome')) {
+      if (!checkTabCount()) return;
+    } else if (!checkIsAtEditor()) {
+      return;
+    }
+
     const file = await dialog.getFileFromDialog({
       filters: [
         {
@@ -94,7 +119,13 @@ const funcs = {
     });
 
     if (file) {
-      svgEditor.handleFile(file);
+      if (isAtPage('welcome')) {
+        setFileInAnotherTab({ data: file, type: 'normal' });
+
+        return;
+      } else {
+        svgEditor.handleFile(file);
+      }
     }
 
     svgEditor.clickSelect();

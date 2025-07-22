@@ -362,6 +362,7 @@ export interface ILang {
         message: string;
         title: string;
       };
+      failed_to_load_svg: string;
       import_file_contain_invalid_path: string;
       import_file_error_ask_for_upload: string;
       import_svg: {
@@ -1046,7 +1047,7 @@ export interface ILang {
       beambox: string;
       beamo: string;
     };
-    please_goto_beambox_first: string;
+    please_goto_editor_first: string;
     please_place_dark_colored_paper: string;
     please_place_paper: string;
     please_place_paper_center: string;
@@ -1825,6 +1826,8 @@ export interface ILang {
     confirm_remove_default: string;
     confirm_reset: string;
     continuous_drawing: string;
+    crop_task_thumbnail: string;
+    crop_task_thumbnail_tooltip: string;
     curve_engraving_speed_limit: string;
     custom_preview_height: string;
     default_beambox_model: string;
@@ -1933,6 +1936,10 @@ export interface ILang {
     trace_output: string;
     update_beta: string;
     update_latest: string;
+    use_real_boundary: string;
+    use_real_boundary_tooltip: string;
+    use_union_boundary: string;
+    use_union_boundary_tooltip: string;
     vector_speed_constraint: string;
     wrong_ip_format: string;
   };

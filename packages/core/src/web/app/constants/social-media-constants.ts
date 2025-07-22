@@ -12,7 +12,7 @@ export const getSocialMedia = () => {
       src: `core-img/social-media/facebook-${langKey}.png`,
     },
     facebookGroup: {
-      link: 'https://www.facebook.com/groups/flux.laser',
+      link: isTW ? 'https://www.facebook.com/groups/beambox.tw' : 'https://www.facebook.com/groups/flux.laser',
       name: 'Facebook User Group',
     },
     instagram: {

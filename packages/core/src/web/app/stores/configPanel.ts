@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { combine } from 'zustand/middleware';
+import { combine, subscribeWithSelector } from 'zustand/middleware';
 
 import { getDefaultConfig } from '@core/helpers/layer/layer-config-helper';
 import type { ConfigKey, ILayerConfig } from '@core/interfaces/ILayerConfig';
@@ -28,47 +28,49 @@ interface ConfigPanelStore extends State {
   update: (payload: Partial<ILayerConfig> & { selectedLayer?: string }) => void;
 }
 
-export const useConfigPanelStore = create<ConfigPanelStore>(
-  combine(getDefaultState(), (set, get) => ({
-    change: (payload: { [key in keyof ILayerConfig]?: ILayerConfig[key]['value'] } & { selectedLayer?: string }) => {
-      set((state) => {
-        const newState = { ...state };
+export const useConfigPanelStore = create(
+  subscribeWithSelector<ConfigPanelStore>(
+    combine(getDefaultState(), (set, get) => ({
+      change: (payload: { [key in keyof ILayerConfig]?: ILayerConfig[key]['value'] } & { selectedLayer?: string }) => {
+        set((state) => {
+          const newState = { ...state };
 
-        Object.keys(payload).forEach((key) => {
-          if (key !== 'selectedLayer') {
-            newState[key as keyof State] = { value: payload[key as keyof ILayerConfig] } as any;
-          } else {
-            newState.selectedLayer = payload.selectedLayer;
-          }
+          Object.keys(payload).forEach((key) => {
+            if (key !== 'selectedLayer') {
+              newState[key as keyof State] = { value: payload[key as keyof ILayerConfig] } as any;
+            } else {
+              newState.selectedLayer = payload.selectedLayer;
+            }
+          });
+
+          return newState;
         });
+      },
 
-        return newState;
-      });
-    },
+      getState: () => {
+        const {
+          change: _change,
+          getState: _getState,
+          rename: _rename,
+          reset: _reset,
+          update: _update,
+          ...states
+        } = get() as ConfigPanelStore;
 
-    getState: () => {
-      const {
-        change: _change,
-        getState: _getState,
-        rename: _rename,
-        reset: _reset,
-        update: _update,
-        ...states
-      } = get() as ConfigPanelStore;
+        return states;
+      },
 
-      return states;
-    },
+      rename: (name: string) => {
+        set((state) => ({ ...state, configName: { value: name } }));
+      },
 
-    rename: (name: string) => {
-      set((state) => ({ ...state, configName: { value: name } }));
-    },
+      reset: () => {
+        set(getDefaultState());
+      },
 
-    reset: () => {
-      set(getDefaultState());
-    },
-
-    update: (payload: Partial<ILayerConfig> & { selectedLayer?: string }) => {
-      set((state) => ({ ...state, ...payload }));
-    },
-  })),
+      update: (payload: Partial<ILayerConfig> & { selectedLayer?: string }) => {
+        set((state) => ({ ...state, ...payload }));
+      },
+    })),
+  ),
 );

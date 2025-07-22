@@ -45,7 +45,7 @@ export const importBvgString = async (
   if (!setContentCmd) {
     alertCaller.popUp({
       id: 'load SVG fail',
-      message: 'Error: Unable to load SVG data',
+      message: i18n.lang.beambox.popup.failed_to_load_svg,
       type: alertConstants.SHOW_POPUP_WARNING,
     });
 

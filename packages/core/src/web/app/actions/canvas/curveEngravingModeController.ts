@@ -13,6 +13,7 @@ import BeamboxPreferenceCommand from '@core/app/svgedit/history/beamboxPreferenc
 import CustomCommand from '@core/app/svgedit/history/CustomCommand';
 import { BatchCommand } from '@core/app/svgedit/history/history';
 import workareaManager from '@core/app/svgedit/workarea';
+import { getAbsRect, getRelRect } from '@core/helpers/boundary-helper';
 import RawModeCurveMeasurer from '@core/helpers/device/curve-measurer/raw';
 import RedLightCurveMeasurer from '@core/helpers/device/curve-measurer/red-light';
 import getDevice from '@core/helpers/device/get-device';
@@ -353,14 +354,14 @@ class CurveEngravingModeController {
 
     const workarea = beamboxPreference.read('workarea');
     const { autoFocusOffset = [0, 0, 0], height: workareaH, width: workareaW } = getWorkarea(workarea);
-    const { height, width } = workareaManager;
+    const { maxY, minY, width } = workareaManager;
     const { dpmm } = constant;
     const leftBound = (autoFocusOffset[0] > 0 ? autoFocusOffset[0] : 0) * dpmm;
     const rightBound = (autoFocusOffset[0] < 0 ? workareaW + autoFocusOffset[0] : workareaW) * dpmm;
     const topBound = (autoFocusOffset[1] > 0 ? autoFocusOffset[1] : 0) * dpmm;
     const bottomBound = (autoFocusOffset[1] < 0 ? workareaH + autoFocusOffset[1] : workareaH) * dpmm;
-    const d1 = `M0,0H${width}V${height}H0V0Z`;
-    const d2 = `M${leftBound},${topBound}H${rightBound}V${bottomBound}H${leftBound}V${topBound}Z`;
+    const d1 = getAbsRect(0, minY, width, maxY);
+    const d2 = getAbsRect(leftBound, topBound, rightBound, bottomBound);
 
     this.boundaryPath.setAttribute('d', `${d1} ${d2}`);
   };
@@ -384,7 +385,7 @@ class CurveEngravingModeController {
       this.boundarySvg!.appendChild(this.areaPath);
     }
 
-    const { height, width } = workareaManager;
+    const { height, minY, width } = workareaManager;
     let { height: h, width: w, x, y } = this.data.bbox;
     const { dpmm } = constant;
 
@@ -393,8 +394,8 @@ class CurveEngravingModeController {
     w *= dpmm;
     h *= dpmm;
 
-    const d1 = `M0,0H${width}V${height}H0V0Z`;
-    const d2 = `M${x},${y}H${x + w}V${y + h}H${x}V${y}Z`;
+    const d1 = getRelRect(0, minY, width, height);
+    const d2 = getRelRect(x, y, w, h);
 
     this.areaPath.setAttribute('d', `${d1} ${d2}`);
   };

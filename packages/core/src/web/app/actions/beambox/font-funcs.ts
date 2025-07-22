@@ -650,8 +650,22 @@ const convertTextToPath = async (
     color = color !== 'none' ? color : textElement.getAttribute('fill')!;
 
     let res: IConvertInfo = null;
+    let preferGhost = BeamboxPreference.read('font-convert') === '1.0';
 
-    if (BeamboxPreference.read('font-convert') === '1.0') {
+    if (preferGhost && fontObj) {
+      try {
+        const content = textElement.textContent;
+        const { direction } = fontObj.layout(content);
+
+        if (direction === 'rtl') {
+          preferGhost = false;
+        }
+      } catch (e) {
+        console.log('Test font direction failed', e);
+      }
+    }
+
+    if (preferGhost) {
       if (isWeb() && !checkConnection()) {
         Alert.popUp({
           buttonLabels: [i18n.lang.topbar.menu.add_new_machine],

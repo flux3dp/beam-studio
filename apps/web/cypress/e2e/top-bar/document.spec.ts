@@ -142,7 +142,8 @@ describe('manipulate document setting', () => {
     cy.changeWorkarea('beamo', false);
     clickAndCheck('borderless_mode', true);
     cy.get('button[class^="ant-btn"]').contains('Save').click();
-    cy.get('rect#open-bottom-boundary').should('exist');
+    cy.get('#boundary-path').should('exist');
+    cy.get('#boundary-path').should('have.attr', 'd', 'M0,0H3000V2100H0ZM0,0H2600V2100H0Z');
   });
 
   it('check autofocus', () => {
@@ -161,11 +162,12 @@ describe('manipulate document setting', () => {
     cy.changeWorkarea('beamo', false);
     clickAndCheck('diode_module', true);
     cy.get('button[class^="ant-btn"]').contains('Save').click();
-    cy.get('#diode-boundary').children().should('have.attr', 'd', 'M3000,2100H0,V2000H2500V0H3000V2100');
+    cy.get('#boundary-path').should('exist');
+    cy.get('#boundary-path').should('have.attr', 'd', 'M0,0H3000V2100H0ZM0,0H2500V2000H0Z');
     cy.findAllByText('Advanced').should('exist');
     cy.contains('Advanced').click();
     cy.findAllByText('Diode Laser').should('exist');
     cy.get('#diode').should('have.attr', 'aria-checked', 'false').click();
-    cy.get('#diode-boundary').children().should('have.attr', 'd', 'M0,0H3000V70H700V2100H0V0');
+    cy.get('#boundary-path').should('have.attr', 'd', 'M0,0H3000V2100H0ZM700,100H3000V2100H700Z');
   });
 });

@@ -3,7 +3,6 @@ import { match } from 'ts-pattern';
 
 import { dpmm } from '@core/app/actions/beambox/constant';
 import { findDefs } from '@core/app/svgedit/utils/findDef';
-import workareaManager from '@core/app/svgedit/workarea';
 import { svgStringToCanvas } from '@core/helpers/image/svgStringToCanvas';
 
 type Options = {
@@ -14,8 +13,6 @@ type Options = {
 export const layersToA4Base64 = async (layers: SVGGElement[], options?: Options): Promise<string> => {
   const { dpi = 300, orientation = 'portrait' } = options || {};
   const { height, width } = orientation === 'portrait' ? { height: 2970, width: 2100 } : { height: 2100, width: 2970 };
-  const { height: originalHeight, minY } = workareaManager;
-  const y = (minY / originalHeight) * height;
   const ratio = dpi / (dpmm * 25.4);
   const canvasWidth = Math.round(width * ratio);
   const canvasHeight = Math.round(height * ratio);
@@ -34,7 +31,7 @@ export const layersToA4Base64 = async (layers: SVGGElement[], options?: Options)
     <svg
     width="${canvasWidth}"
     height="${canvasHeight}"
-    viewBox="0 ${y} ${width} ${height}"
+    viewBox="0 0 ${width} ${height}"
     xmlns:svg="http://www.w3.org/2000/svg"
     xmlns="http://www.w3.org/2000/svg"
     xmlns:xlink="http://www.w3.org/1999/xlink"
