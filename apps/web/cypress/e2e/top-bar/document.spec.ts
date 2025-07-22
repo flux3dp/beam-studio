@@ -158,7 +158,7 @@ describe('manipulate document setting', () => {
     cy.get('#height').should('have.value', '3');
   });
 
-  it.only('check diode laser', () => {
+  it('check diode laser', () => {
     cy.changeWorkarea('beamo', false);
     clickAndCheck('diode_module', true);
     cy.get('button[class^="ant-btn"]').contains('Save').click();
