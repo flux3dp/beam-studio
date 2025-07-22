@@ -110,6 +110,7 @@ export const ConfigModalBlock: ThemeConfig = {
       activeShadow: 'none',
       controlWidth: 40,
       hoverBorderColor: '#cecece',
+      paddingInlineSM: 0,
     },
     Slider: {
       handleLineWidth: 2,
@@ -130,7 +131,7 @@ export const ColorRatioModalBlock: ThemeConfig = {
   components: {
     ...ConfigModalBlock.components,
     Slider: {
-      ...ConfigModalBlock.components.Slider,
+      ...ConfigModalBlock.components!.Slider,
       dotActiveBorderColor: '#494949',
       handleActiveColor: '#494949',
       handleColor: '#cecece',

@@ -93,6 +93,7 @@ const ColorRationModal = ({ fullColor, onClose }: Props): React.JSX.Element => {
                   label={t.color_strength}
                   setValue={(val) => handleValueChange('cRatio', val)}
                   title="Cyan"
+                  unit="%"
                   value={draftValue.cRatio.value}
                 />
               </Col>
@@ -102,6 +103,7 @@ const ColorRationModal = ({ fullColor, onClose }: Props): React.JSX.Element => {
                   label={t.color_strength}
                   setValue={(val) => handleValueChange('mRatio', val)}
                   title="Magenta"
+                  unit="%"
                   value={draftValue.mRatio.value}
                 />
               </Col>
@@ -111,6 +113,7 @@ const ColorRationModal = ({ fullColor, onClose }: Props): React.JSX.Element => {
                   label={t.color_strength}
                   setValue={(val) => handleValueChange('yRatio', val)}
                   title="Yellow"
+                  unit="%"
                   value={draftValue.yRatio.value}
                 />
               </Col>
@@ -120,6 +123,7 @@ const ColorRationModal = ({ fullColor, onClose }: Props): React.JSX.Element => {
                   label={t.color_strength}
                   setValue={(val) => handleValueChange('kRatio', val)}
                   title="Black"
+                  unit="%"
                   value={draftValue.kRatio.value}
                 />
               </Col>
@@ -130,6 +134,7 @@ const ColorRationModal = ({ fullColor, onClose }: Props): React.JSX.Element => {
             color={colorLayer}
             label={t.color_strength}
             setValue={(val) => handleValueChange('printingStrength', val)}
+            unit="%"
             value={draftValue.printingStrength.value}
           />
         )}
