@@ -35,8 +35,6 @@ const beamboxInit = new BeamboxInit();
 const Beambox = (): React.JSX.Element => {
   React.useEffect(() => {
     window.homePage = hashMap.editor;
-    BeamboxGlobalInteraction.attach();
-
     communicator.send('FRONTEND_READY');
     // Init view
     workareaManager.resetView();

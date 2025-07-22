@@ -11,6 +11,7 @@ import {
 import { CapsuleTabs } from 'antd-mobile';
 import classNames from 'classnames';
 
+import beamboxGlobalInteraction from '@core/app/actions/beambox/beambox-global-interaction';
 import funcs from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import tabController from '@core/app/actions/tabController';
 import Chat from '@core/app/components/beambox/svg-editor/Chat';
@@ -34,6 +35,7 @@ import isWeb from '@core/helpers/is-web';
 import { isMac, useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
+import communicator from '@core/implementations/communicator';
 import type { IUser } from '@core/interfaces/IUser';
 
 import styles from './Welcome.module.scss';
@@ -104,8 +106,15 @@ const Welcome = (): ReactNode => {
       // Fix tab content after reset
       window.location.hash = hashMap.editor;
     } else {
+      communicator.on('NEW_APP_MENU', beamboxGlobalInteraction.attach);
+      beamboxGlobalInteraction.attach();
       window.homePage = hashMap.welcome;
       setIsLoading(false);
+
+      return () => {
+        beamboxGlobalInteraction.detach();
+        communicator.off('NEW_APP_MENU', beamboxGlobalInteraction.attach);
+      };
     }
   }, []);
 

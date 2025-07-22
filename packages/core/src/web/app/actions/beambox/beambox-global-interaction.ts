@@ -1,4 +1,5 @@
 import tabController from '@core/app/actions/tabController';
+import { isAtPage } from '@core/helpers/hashHelper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import menu from '@core/implementations/menu';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -12,30 +13,22 @@ getSVGAsync((globalSVG) => {
 class BeamboxGlobalInteraction {
   constructor() {
     tabController.onFocused(() => {
+      this.attach();
       this.onObjectBlur();
       this.onObjectFocus();
     });
   }
 
   attach() {
-    menu.attach([
-      'IMPORT',
-      'SAVE_SCENE',
-      'UNDO',
-      'REDO',
-      'EXPORT_FLUX_TASK',
-      'DOCUMENT_SETTING',
-      'CLEAR_SCENE',
-      'ZOOM_IN',
-      'ZOOM_OUT',
-      'AUTO_ALIGN',
-      'FITS_TO_WINDOW',
-      'ZOOM_WITH_WINDOW',
-      'SHOW_GRIDS',
-      'SHOW_LAYER_COLOR',
-      'NETWORK_TESTING',
-      'ABOUT_BEAM_STUDIO',
-    ]);
+    if (isAtPage('welcome')) {
+      menu.attach(['CLEAR_SCENE', 'OPEN', 'RECENT', 'SAMPLES']);
+    } else if (isAtPage('editor')) {
+      // enable all
+      menu.attach();
+    } else {
+      // disable all
+      menu.attach([]);
+    }
   }
 
   onObjectFocus(elems?: Element[]) {

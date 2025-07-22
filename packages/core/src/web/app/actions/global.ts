@@ -35,7 +35,7 @@ export default (callback: () => void): void => {
   const { hash } = window.location;
   const isInitializePage = Boolean(hash.match(/^#\/?initialize/));
   const onFinished = (isReady: boolean) => {
-    if (isReady === true && (hash === '' || isInitializePage)) {
+    if ((isReady === true || window.homePage === hashMap.editor) && (hash === '' || isInitializePage)) {
       window.location.hash = getHomePage();
     } else if (isReady === false && !isInitializePage) {
       window.location.hash = hashMap.root;

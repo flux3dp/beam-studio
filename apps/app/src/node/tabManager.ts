@@ -355,8 +355,17 @@ class TabManager {
     } = {},
   ): Promise<boolean> => {
     const { focusedId, tabsMap } = this;
+    let isClosable: boolean;
 
-    if (tabsMap[id] && (allowEmpty || this.tabsList.length > 1)) {
+    if (!tabsMap[id]) return false;
+
+    if (this.welcomeTabId === id) {
+      isClosable = allowEmpty && this.tabsList.length === 1;
+    } else {
+      isClosable = allowEmpty || this.tabsList.length > 1;
+    }
+
+    if (isClosable) {
       const res = await this.closeWebContentsView(
         tabsMap[id].view,
         tabsMap[id].isLoading || tabsMap[id] === this.preloadedTab,

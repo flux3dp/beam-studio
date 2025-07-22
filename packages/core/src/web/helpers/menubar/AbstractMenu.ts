@@ -13,23 +13,27 @@ import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 type MenuActions = { [key: string]: (device?: IDeviceInfo) => void };
 
+/**
+ * Special menu items that should be disabled in certain pages
+ * Set `enabled: false` in electron menu and update them by attach/detach
+ */
 const MENU_ITEMS = [
-  'IMPORT',
-  'EXPORT_FLUX_TASK',
-  'SAVE_SCENE',
-  'UNDO',
-  'DUPLICATE',
-  'PHOTO_EDIT',
-  'DOCUMENT_SETTING',
-  'CLEAR_SCENE',
-  'ZOOM_IN',
-  'ZOOM_OUT',
-  'FITS_TO_WINDOW',
-  'ZOOM_WITH_WINDOW',
-  'SHOW_GRIDS',
-  'SHOW_LAYER_COLOR',
+  '_edit',
+  '_view',
+  '_tools',
   'NETWORK_TESTING',
-  'ABOUT_BEAM_STUDIO',
+  // _file
+  'CLEAR_SCENE',
+  'OPEN',
+  'RECENT',
+  'SAVE_AS',
+  'SAVE_SCENE',
+  'SAVE_TO_CLOUD',
+  'SAMPLES',
+  'EXPORT_TO',
+  // _help
+  'START_TUTORIAL',
+  'START_UI_INTRO',
 ];
 
 export default abstract class AbstractMenu {
@@ -110,14 +114,22 @@ export default abstract class AbstractMenu {
     }
   }
 
-  attach(enabledItems: string[]): void {
-    const disabledItems = [];
+  attach(enabledItems?: string[]): void {
+    let disabledItems: string[] = [];
 
-    for (const item of MENU_ITEMS) {
-      if (!enabledItems.includes(item)) {
-        disabledItems.push(item);
+    if (!enabledItems) {
+      enabledItems = MENU_ITEMS;
+    } else if (enabledItems.length === 0) {
+      enabledItems = [];
+      disabledItems = MENU_ITEMS;
+    } else {
+      for (const item of MENU_ITEMS) {
+        if (!enabledItems.includes(item)) {
+          disabledItems.push(item);
+        }
       }
     }
+
     this.enable(enabledItems);
     this.disable(disabledItems);
   }
