@@ -104,26 +104,22 @@ export const convertSvgToImage: MainConverterFunc = async ({
     console.log(result.imageElements);
 
     parentCmd.addSubCommand(deleteElements(result.svgElements, true));
-    svgCanvas.selectOnly(result.imageElements);
 
-    // Only combine if there's more than one image
-    if (result.imageElements.length > 1) {
-      // Wait for href transformation to complete from blob to base64
-      try {
-        await waitForHrefTransformation(result.imageElements);
-      } catch (error) {
-        console.error('Error waiting for image loads:', error);
-        progressCaller.popById('convert-svg-to-image');
+    // Wait for href transformation to complete from blob to base64
+    try {
+      await waitForHrefTransformation(result.imageElements);
+    } catch (error) {
+      console.error('Error waiting for image loads:', error);
+      progressCaller.popById('convert-svg-to-image');
 
-        return undefined;
-      }
-
-      const combinedImage = await combineImagesIntoSingleElement(result.imageElements, { layer });
-
-      parentCmd.addSubCommand(new history.InsertElementCommand(combinedImage));
-      parentCmd.addSubCommand(deleteElements(result.imageElements, true));
-      svgCanvas.selectOnly([combinedImage]);
+      return undefined;
     }
+
+    const combinedImage = await combineImagesIntoSingleElement(result.imageElements, { layer });
+
+    parentCmd.addSubCommand(new history.InsertElementCommand(combinedImage));
+    parentCmd.addSubCommand(deleteElements(result.imageElements, true));
+    svgCanvas.selectOnly([combinedImage]);
 
     undoManager.addCommandToHistory(parentCmd);
     progressCaller.popById('convert-svg-to-image');
