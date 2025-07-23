@@ -43,7 +43,7 @@ export async function rasterizeGenericSvgElement({
       });
     }
 
-    let finalCoords = { x: bbox.x, y: bbox.y };
+    let finalCoords = { x: bbox.x - strokeOffset / 2, y: bbox.y - strokeOffset / 2 };
     let finalWidth = bbox.width + strokeOffset;
     let finalHeight = bbox.height + strokeOffset;
     const isTransformedElement = svgElement.tagName === 'text' || svgElement.getAttribute('data-textpath-g') === '1';
@@ -56,8 +56,8 @@ export async function rasterizeGenericSvgElement({
       const scale = Number.parseFloat(previousTransform?.match(/matrix\(([^,]+)/)?.[1] || '1');
 
       finalCoords = { x: transformed.x - (strokeOffset / 2) * scale, y: transformed.y - (strokeOffset / 2) * scale };
-      finalWidth = bbox.width * scale;
-      finalHeight = bbox.height * scale;
+      finalWidth *= scale;
+      finalHeight *= scale;
 
       if (previousTransform) cloned.setAttribute('transform', previousTransform);
     }
