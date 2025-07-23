@@ -293,7 +293,8 @@ export class BoundaryDrawer {
       if (isRotary || isAutoFeeder) {
         top = this.boundaries.autoFeeder?.top ?? 0;
         bottom = 0;
-      } else {
+      } else if (module !== LayerModule.PRINTER) {
+        // FIXME: Ador printer spec: height 270; Ignoring module offsets to keep workarea height consistent
         top += offsetY;
         bottom -= offsetY;
 
