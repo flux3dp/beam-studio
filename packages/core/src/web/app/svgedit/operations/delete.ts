@@ -91,7 +91,7 @@ export const deleteElements = (elems: Element[], isSub = false): IBatchCommand =
     const { nextSibling } = elemToRemove;
 
     if (parent == null) {
-      console.warn('The element has no parent', elem);
+      console.warn('The element has no parent', elem.id, elem.tagName);
     } else {
       parent.removeChild(elemToRemove);
       deletedElems.push(elem); // for the copy

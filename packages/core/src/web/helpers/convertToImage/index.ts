@@ -8,8 +8,11 @@ import undoManager from '@core/app/svgedit/history/undoManager';
 import { deleteElements } from '@core/app/svgedit/operations/delete';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
+import updateElementColor from '../color/updateElementColor';
+import { convertTextToPath } from '../convertToPath';
 import i18n from '../i18n';
 import { sortLayerNamesByPosition } from '../layer/layer-helper';
+import moveElementsToLayer from '../layer/moveToLayer';
 import { getSVGAsync } from '../svg-editor-helper';
 
 import { combineImagesIntoSingleElement } from './combineImagesIntoSingleElement';
@@ -61,22 +64,52 @@ export const convertSvgToImage: MainConverterFunc = async ({
   const layer = pipe(svgElement, getLayerTitles, sortLayerNamesByPosition, (titles) => titles.at(-1));
 
   const result = await match(svgElement)
-    .with({ tagName: 'use' }, async (el) => convertUseToImage({ isToSelect, parentCmd, svgElement: el }))
+    .with({ tagName: 'use' }, async (el) => await convertUseToImage({ isToSelect, parentCmd, svgElement: el }))
     .with({ tagName: 'image' }, async (el) => ({ imageElements: [el as SVGImageElement], svgElements: [el] }))
     .when(
       (el) => el.getAttribute('data-textpath-g') === '1',
-      async (el) => rasterizeGenericSvgElement({ isToSelect, parentCmd, svgElement: el }),
+      async (el) => {
+        const pathEl = el.querySelector('path');
+        const textEl = el.querySelector('text');
+
+        if (!pathEl || !textEl) {
+          console.warn('Invalid text path group:', el);
+
+          return { imageElements: [], svgElements: [] };
+        }
+
+        const pathResult = await convertSvgToImage({ isToSelect: false, parentCmd, svgElement: pathEl });
+        const textResult = await convertSvgToImage({ isToSelect: false, parentCmd, svgElement: textEl });
+
+        if (!pathResult || !textResult) {
+          console.warn('Failed to convert text path group:', el);
+
+          return { imageElements: [], svgElements: [] };
+        }
+
+        return {
+          imageElements: [...pathResult.imageElements, ...textResult.imageElements],
+          svgElements: [...pathResult.svgElements, ...textResult.svgElements],
+        };
+      },
     )
-    .with({ tagName: 'g' }, async (el) =>
-      convertGroupToImage({ isToSelect, parentCmd, svgElement: el }, convertSvgToImage),
+    .with(
+      { tagName: 'g' },
+      async (el) => await convertGroupToImage({ isToSelect, parentCmd, svgElement: el }, convertSvgToImage),
     )
-    .with({ tagName: P.union(...convertibleSvgTags) }, async (el) =>
-      rasterizeGenericSvgElement({ isToSelect, parentCmd, svgElement: el }),
+    .with({ tagName: 'text' }, async (el) => {
+      const { path } = await convertTextToPath({ element: el, isToSelect: false, parentCommand: parentCmd });
+
+      return await rasterizeGenericSvgElement({ isToSelect, parentCmd, svgElement: path! });
+    })
+    .with(
+      { tagName: P.union(...convertibleSvgTags) },
+      async (el) => await rasterizeGenericSvgElement({ isToSelect, parentCmd, svgElement: el }),
     )
     .otherwise(async ({ tagName }) => {
       console.log('The provided SVG element is not convertible:', tagName);
 
-      return Promise.resolve(undefined);
+      return await Promise.resolve(undefined);
     });
 
   if (isToSelect && result) {
@@ -100,11 +133,6 @@ export const convertSvgToImage: MainConverterFunc = async ({
       }
     }
 
-    console.log(result.svgElements);
-    console.log(result.imageElements);
-
-    parentCmd.addSubCommand(deleteElements(result.svgElements, true));
-
     // Wait for href transformation to complete from blob to base64
     try {
       await waitForHrefTransformation(result.imageElements);
@@ -115,10 +143,18 @@ export const convertSvgToImage: MainConverterFunc = async ({
       return undefined;
     }
 
-    const combinedImage = await combineImagesIntoSingleElement(result.imageElements, { layer });
+    const combinedImage = await combineImagesIntoSingleElement(result.imageElements);
 
     parentCmd.addSubCommand(new history.InsertElementCommand(combinedImage));
-    parentCmd.addSubCommand(deleteElements(result.imageElements, true));
+    parentCmd.addSubCommand(deleteElements([...result.svgElements, ...result.imageElements], true));
+
+    if (layer) {
+      const moveCmd = moveElementsToLayer(layer, [combinedImage]);
+
+      if (moveCmd) parentCmd.addSubCommand(moveCmd);
+    }
+
+    updateElementColor(combinedImage);
     svgCanvas.selectOnly([combinedImage]);
 
     undoManager.addCommandToHistory(parentCmd);

@@ -1,5 +1,6 @@
 import fontFuncs from '@core/app/actions/beambox/font-funcs';
 import history, { BatchCommand } from '@core/app/svgedit/history/history';
+import undoManager from '@core/app/svgedit/history/undoManager';
 import { deleteElements } from '@core/app/svgedit/operations/delete';
 import disassembleUse from '@core/app/svgedit/operations/disassembleUse';
 import textActions from '@core/app/svgedit/text/textactions';
@@ -7,6 +8,12 @@ import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import { getSVGAsync } from './svg-editor-helper';
+
+type ConvertToPathParams = {
+  element: SVGElement;
+  isToSelect?: boolean;
+  parentCommand?: IBatchCommand;
+};
 
 type ConvertToPathResult = {
   bbox: DOMRect;
@@ -26,11 +33,7 @@ export const convertSvgToPath = async ({
   element,
   isToSelect = false,
   parentCommand = new BatchCommand('convertSvgToPath'),
-}: {
-  element: SVGElement;
-  isToSelect?: boolean;
-  parentCommand?: IBatchCommand;
-}): Promise<ConvertToPathResult> => {
+}: ConvertToPathParams): Promise<ConvertToPathResult> => {
   const { cmd, path } = svgCanvas.convertToPath(element, true);
 
   if (isToSelect) {
@@ -38,6 +41,7 @@ export const convertSvgToPath = async ({
   }
 
   parentCommand.addSubCommand(cmd);
+  undoManager.addCommandToHistory(parentCommand);
 
   return { bbox: path.getBBox(), command: parentCommand, path };
 };
@@ -54,32 +58,60 @@ export const convertTextToPath = async ({
   weldingTexts?: boolean;
 }): Promise<ConvertToPathResult> => {
   const isSubCommand = parentCommand !== undefined;
-  const isTextPath = element.getAttribute('data-textpath-g');
-  const textElem = isTextPath ? element.querySelector('text')! : element;
 
   if (textActions.isEditing) textActions.toSelectMode();
 
-  const res = await fontFuncs.convertTextToPath(textElem, { isSubCommand, weldingTexts });
+  const { command, path } = await fontFuncs.convertTextToPath(element, { isSubCommand: true, weldingTexts });
 
-  if (!res.path) {
-    return {
-      bbox: { height: 0, width: 0, x: 0, y: 0 } as DOMRect, // Default bbox if res is null
-      command: undefined,
-      path: undefined,
-    };
+  if (command && isSubCommand) {
+    parentCommand.addSubCommand(command);
   }
 
-  const { command, path, textPathPath } = res;
+  if (command && !isSubCommand) {
+    undoManager.addCommandToHistory(command);
+  }
 
   if (path && isToSelect) {
-    svgCanvas.multiSelect([path, textPathPath].filter(Boolean) as SVGElement[]);
+    svgCanvas.multiSelect([path].filter(Boolean) as SVGElement[]);
+  }
+
+  return { bbox: path?.getBBox()!, command: parentCommand || command || undefined, path: path || undefined };
+};
+
+export const convertTextOnPathToPath = async ({
+  element,
+  isToSelect = false,
+  parentCommand,
+  weldingTexts = false,
+}: {
+  element: SVGElement;
+  isToSelect?: boolean;
+  parentCommand?: IBatchCommand;
+  weldingTexts?: boolean;
+}): Promise<ConvertToPathResult> => {
+  const isSubCommand = parentCommand !== undefined;
+  const pathElement = element.querySelector('path');
+  const textElement = element.querySelector('text');
+
+  if (textActions.isEditing) textActions.toSelectMode();
+
+  svgCanvas.clearSelection();
+
+  const { command, path } = await fontFuncs.convertTextToPath(textElement!, { isSubCommand, weldingTexts });
+
+  if (isToSelect) {
+    svgCanvas.selectOnly([pathElement, path].filter(Boolean) as SVGPathElement[]);
   }
 
   if (command && isSubCommand) {
     parentCommand.addSubCommand(command);
   }
 
-  return { bbox: path?.getBBox()!, command: parentCommand || command || undefined, path: path || undefined };
+  if (command && !isSubCommand) {
+    undoManager.addCommandToHistory(command);
+  }
+
+  return { bbox: path!.getBBox(), command: parentCommand, path: path || undefined };
 };
 
 export const convertUseToPath = async ({
