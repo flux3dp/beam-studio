@@ -73,6 +73,13 @@ export const getUnionBBox = (elements: SVGElement[]): BBox | null => {
         const y = Number.parseFloat(element.getAttribute('y') || '0') + formY;
 
         untransformedBBox = { height, width, x, y };
+      } else if (element.tagName === 'image') {
+        untransformedBBox = {
+          height: Number.parseFloat(element.getAttribute('height') || '0'),
+          width: Number.parseFloat(element.getAttribute('width') || '0'),
+          x: Number.parseFloat(element.getAttribute('x') || '0'),
+          y: Number.parseFloat(element.getAttribute('y') || '0'),
+        };
       } else {
         try {
           untransformedBBox = element.getBBox();
