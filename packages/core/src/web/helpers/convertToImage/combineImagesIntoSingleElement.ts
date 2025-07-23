@@ -2,6 +2,7 @@ import { dpmm } from '@core/app/actions/beambox/constant';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import updateElementColor from '../color/updateElementColor';
+import { moveToOtherLayer } from '../layer/layer-helper';
 import { getSVGAsync } from '../svg-editor-helper'; // Assuming this path
 
 import { getUnionBBox } from './getUnionBBox'; // Make sure this is imported
@@ -18,7 +19,10 @@ getSVGAsync(({ Canvas }) => {
  * @param elements - An array of SVGImageElement objects to combine.
  * @returns The final, single SVGImageElement that has been added to the canvas.
  */
-export const combineImagesIntoSingleElement = async (elements: SVGImageElement[]): Promise<SVGImageElement> => {
+export const combineImagesIntoSingleElement = async (
+  elements: SVGImageElement[],
+  { layer }: { layer?: string },
+): Promise<SVGImageElement> => {
   // 1. Calculate the union bounding box of all the images.
   // This gives us the final position (x, y) and size (width, height) of our new image.
   const bbox = getUnionBBox(elements);
@@ -86,6 +90,8 @@ export const combineImagesIntoSingleElement = async (elements: SVGImageElement[]
   }) as SVGImageElement;
 
   svgCanvas.setHref(finalImage, pngUrl);
+  svgCanvas.selectOnly([finalImage]);
+  moveToOtherLayer(layer!, () => {}, false);
   updateElementColor(finalImage);
 
   return finalImage;
