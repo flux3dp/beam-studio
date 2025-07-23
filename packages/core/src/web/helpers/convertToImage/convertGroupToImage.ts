@@ -37,10 +37,15 @@ export const convertGroupToImage = async (
   mainConverter: MainConverterFunc,
 ): Promise<ConvertToImageResult> => {
   const angle = getRotationAngle(svgElement);
+  const children = [...Array.from(svgElement.children)];
   const imageElements = [];
   const svgElements = [];
 
-  for await (const child of Array.from(svgElement.children)) {
+  if (svgElement.getAttribute('data-tempgroup') === 'true') {
+    svgCanvas.ungroupTempGroup(svgElement);
+  }
+
+  for await (const child of children) {
     const result = await mainConverter({ isToSelect: false, parentCmd, svgElement: child as SVGGElement });
 
     if (result) {
