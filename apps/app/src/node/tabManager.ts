@@ -90,6 +90,7 @@ class TabManager {
         }
 
         this.sendToView(id, id === this.focusedId ? TabEvents.TabFocused : TabEvents.TabBlurred);
+        this.sendToView(id, 'window-fullscreen', this.mainWindow.isFullScreen());
         this.notifyTabUpdated();
       }
     });
@@ -348,15 +349,26 @@ class TabManager {
     id: number,
     {
       allowEmpty = false,
+      keepWelcomeTab = true,
       shouldCloseWindow = false,
     }: {
       allowEmpty?: boolean;
+      keepWelcomeTab?: boolean;
       shouldCloseWindow?: boolean;
     } = {},
   ): Promise<boolean> => {
     const { focusedId, tabsMap } = this;
+    let isClosable: boolean;
 
-    if (tabsMap[id] && (allowEmpty || this.tabsList.length > 1)) {
+    if (!tabsMap[id]) return false;
+
+    if (this.welcomeTabId === id && keepWelcomeTab) {
+      isClosable = allowEmpty && this.tabsList.length === 1;
+    } else {
+      isClosable = allowEmpty || this.tabsList.length > 1;
+    }
+
+    if (isClosable) {
       const res = await this.closeWebContentsView(
         tabsMap[id].view,
         tabsMap[id].isLoading || tabsMap[id] === this.preloadedTab,
@@ -412,7 +424,7 @@ class TabManager {
     for (let i = 0; i < ids.length; i += 1) {
       const id = Number.parseInt(ids[i], 10);
 
-      const res = await this.closeTab(id, { allowEmpty: true, shouldCloseWindow });
+      const res = await this.closeTab(id, { allowEmpty: true, keepWelcomeTab: false, shouldCloseWindow });
 
       if (!res) {
         return false;

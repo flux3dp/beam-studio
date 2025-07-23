@@ -11,7 +11,7 @@
     auto-fill,
     minmax(myCloudVariables.$grid-width, 1fr)
   );
-  overflow-y: scroll;
+  overflow-y: auto;
   gap: 20px 10px;
   @include mixins.content;
 }

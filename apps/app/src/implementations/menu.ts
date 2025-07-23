@@ -98,7 +98,7 @@ class Menu extends AbstractMenu {
     this.updateMenuByWorkarea(BeamboxPreference.read('workarea'));
   };
 
-  attach(enabledItems: string[]) {
+  attach(enabledItems?: string[]) {
     super.attach(enabledItems);
     updateWindowsMenu();
   }

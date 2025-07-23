@@ -22,6 +22,7 @@ import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts
 import Discover from '@core/helpers/api/discover';
 import checkSoftwareForAdor from '@core/helpers/check-software';
 import getIsWeb from '@core/helpers/is-web';
+import communicator from '@core/implementations/communicator';
 import storage from '@core/implementations/storage';
 
 import AutoFocusButton from './AutoFocusButton';
@@ -37,19 +38,23 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
   const [hasDiscoveredMachine, setHasDiscoveredMachine] = useState(false);
   const defaultDeviceUUID = useRef<null | string>(storage.get('selected-device'));
   const [isTabFocused, setIsTabFocused] = useState(false);
+  const [isFullScreen, setIsFullScreen] = useState(false);
 
   useEffect(() => registerWindowUpdateTitle(), []);
 
   useEffect(() => {
     const onTabFocused = () => setIsTabFocused(true);
     const onTabBlurred = () => setIsTabFocused(false);
+    const onFullScreenChange = (_: unknown, isFullScreen: boolean) => setIsFullScreen(isFullScreen);
 
     tabController.onFocused(onTabFocused);
     tabController.onBlurred(onTabBlurred);
+    communicator.on('window-fullscreen', onFullScreenChange);
 
     return () => {
       tabController.offFocused(onTabFocused);
       tabController.offBlurred(onTabBlurred);
+      communicator.off('window-fullscreen', onFullScreenChange);
     };
   }, []);
 
@@ -82,7 +87,11 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
         })}
         onClick={() => ObjectPanelController.updateActiveKey(null)}
       >
-        <div className={classNames(styles.controls, styles.left, { [styles.space]: isDragRegion || isWeb })}>
+        <div
+          className={classNames(styles.controls, styles.left, {
+            [styles.space]: (isDragRegion && !isFullScreen) || isWeb,
+          })}
+        >
           {isWeb ? (
             <>
               <WelcomePageButton />

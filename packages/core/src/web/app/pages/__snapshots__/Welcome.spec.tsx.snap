@@ -6,7 +6,7 @@ exports[`test Welcome should render correctly 1`] = `
     class="container"
   >
     <div
-      class="top-bar draggable"
+      class="top-bar draggable mac space"
     >
       <mock-tabs
         inverse="true"
@@ -308,7 +308,7 @@ exports[`test Welcome should render correctly 2`] = `
     class="container"
   >
     <div
-      class="top-bar draggable"
+      class="top-bar draggable mac space"
     >
       <mock-tabs
         inverse="true"
@@ -607,7 +607,7 @@ exports[`test Welcome should render correctly in mobile 1`] = `
     class="container"
   >
     <div
-      class="top-bar draggable"
+      class="top-bar draggable mac space"
     >
       <mock-tabs
         inverse="true"
@@ -965,7 +965,7 @@ exports[`test Welcome should render correctly in mobile 2`] = `
     class="container"
   >
     <div
-      class="top-bar draggable"
+      class="top-bar draggable mac space"
     >
       <mock-tabs
         inverse="true"

@@ -439,6 +439,7 @@ class MenuManager extends EventEmitter {
 
     menuItems.push(buildFileMenu(fnKey, r, callback, this.isDevMode));
     menuItems.push({
+      enabled: false,
       id: '_edit',
       label: r.edit,
       submenu: [
@@ -555,6 +556,7 @@ class MenuManager extends EventEmitter {
     });
 
     menuItems.push({
+      enabled: false,
       id: '_view',
       label: r.view,
       submenu: [
@@ -622,12 +624,13 @@ class MenuManager extends EventEmitter {
           id: 'ADD_NEW_MACHINE',
           label: r.add_new_machine || 'Add New Machine',
         },
-        { click: callback, id: 'NETWORK_TESTING', label: r.network_testing || 'Test Network' },
+        { click: callback, enabled: false, id: 'NETWORK_TESTING', label: r.network_testing || 'Test Network' },
         { type: 'separator' },
       ],
     });
 
     menuItems.push({
+      enabled: false,
       id: '_tools',
       label: r.tools.title,
       submenu: [
@@ -677,8 +680,8 @@ class MenuManager extends EventEmitter {
 
     helpSubmenu.push(
       ...[
-        { click: callback, id: 'START_TUTORIAL', label: r.show_start_tutorial },
-        { click: callback, id: 'START_UI_INTRO', label: r.show_ui_intro },
+        { click: callback, enabled: false, id: 'START_TUTORIAL', label: r.show_start_tutorial },
+        { click: callback, enabled: false, id: 'START_UI_INTRO', label: r.show_ui_intro },
         { click: callback, id: 'QUESTIONNAIRE', label: r.questionnaire },
         { click: callback, id: 'CHANGE_LOGS', label: r.change_logs },
         {

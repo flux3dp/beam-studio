@@ -165,7 +165,6 @@ export default {
     });
   },
   START_UI_INTRO: (): void => Tutorials.startInterfaceTutorial(() => {}),
-  SVG_NEST: (): void => Dialog.showSvgNestButtons(),
   UNDO: (): void => {
     if (shortcuts.isInBaseScope()) {
       historyUtils.undo();

@@ -11,6 +11,7 @@ import {
 import { CapsuleTabs } from 'antd-mobile';
 import classNames from 'classnames';
 
+import beamboxGlobalInteraction from '@core/app/actions/beambox/beambox-global-interaction';
 import funcs from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import tabController from '@core/app/actions/tabController';
 import Chat from '@core/app/components/beambox/svg-editor/Chat';
@@ -34,6 +35,7 @@ import isWeb from '@core/helpers/is-web';
 import { isMac, useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
+import communicator from '@core/implementations/communicator';
 import type { IUser } from '@core/interfaces/IUser';
 
 import styles from './Welcome.module.scss';
@@ -77,8 +79,9 @@ const Welcome = (): ReactNode => {
   const [isLoading, setIsLoading] = useState(true);
   const setUser = useCallback((user: IUser | null) => setCurrentUser(user ? { ...user } : user), []);
   const [isTabFocused, setIsTabFocused] = useState(true);
-  const draggable = useMemo(() => !isWeb() && isMac(), []);
+  const isDesktopMac = useMemo(() => !isWeb() && isMac(), []);
   const socialMedia = useMemo(() => getSocialMedia(), []);
+  const [isFullScreen, setIsFullScreen] = useState(false);
 
   const fetchBanners = useCallback(async () => {
     try {
@@ -104,13 +107,25 @@ const Welcome = (): ReactNode => {
       // Fix tab content after reset
       window.location.hash = hashMap.editor;
     } else {
+      const onFullScreenChange = (_: unknown, isFullScreen: boolean) => setIsFullScreen(isFullScreen);
+
+      communicator.on('window-fullscreen', onFullScreenChange);
+      communicator.on('NEW_APP_MENU', beamboxGlobalInteraction.attach);
+      beamboxGlobalInteraction.attach();
       window.homePage = hashMap.welcome;
       setIsLoading(false);
+      communicator.send('FRONTEND_READY');
+
+      return () => {
+        beamboxGlobalInteraction.detach();
+        communicator.off('NEW_APP_MENU', beamboxGlobalInteraction.attach);
+        communicator.off('window-fullscreen', onFullScreenChange);
+      };
     }
   }, []);
 
   useEffect(() => {
-    if (draggable) {
+    if (isDesktopMac) {
       const onTabFocused = () => setIsTabFocused(true);
       const onTabBlurred = () => setIsTabFocused(false);
 
@@ -122,7 +137,7 @@ const Welcome = (): ReactNode => {
         tabController.offBlurred(onTabBlurred);
       };
     }
-  }, [draggable]);
+  }, [isDesktopMac]);
 
   useEffect(() => {
     fluxIDEvents.on('update-user', setUser);
@@ -193,7 +208,13 @@ const Welcome = (): ReactNode => {
   ) : (
     <div className={styles.container}>
       {!isWeb() && (
-        <div className={classNames(styles['top-bar'], { [styles.draggable]: draggable && isTabFocused })}>
+        <div
+          className={classNames(styles['top-bar'], {
+            [styles.draggable]: isDesktopMac && isTabFocused,
+            [styles.mac]: isDesktopMac,
+            [styles.space]: isDesktopMac && !isFullScreen,
+          })}
+        >
           <Tabs inverse />
         </div>
       )}

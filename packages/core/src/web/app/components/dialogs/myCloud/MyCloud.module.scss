@@ -41,7 +41,7 @@ $content-height: 60vh;
 .grids {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(variables.$grid-width, 1fr));
-  overflow-y: scroll;
+  overflow-y: auto;
   gap: 20px 10px;
   height: $content-height;
 }

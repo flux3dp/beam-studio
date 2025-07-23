@@ -32,25 +32,29 @@ export function buildFileMenu(
     {
       accelerator: `${fnKey}+O`,
       click: callback,
+      enabled: false,
       id: 'OPEN',
       label: r.open || 'Open',
     },
-    { id: 'RECENT', label: r.recent || 'Open Recent', submenu: [] },
+    { enabled: false, id: 'RECENT', label: r.recent || 'Open Recent', submenu: [] },
     { type: 'separator' },
     {
       accelerator: `${fnKey}+S`,
       click: callback,
+      enabled: false,
       id: 'SAVE_SCENE',
       label: r.save_scene || 'Save Scene',
     },
     {
       accelerator: `Shift+${fnKey}+S`,
       click: callback,
+      enabled: false,
       id: 'SAVE_AS',
       label: r.save_as,
     },
     {
       click: callback,
+      enabled: false,
       id: 'SAVE_TO_CLOUD',
       label: r.save_to_cloud,
     },
@@ -71,6 +75,7 @@ export function buildFileMenu(
     },
     { type: 'separator' },
     {
+      enabled: false,
       id: 'SAMPLES',
       label: r.samples || 'Examples',
       submenu: [
@@ -132,6 +137,7 @@ export function buildFileMenu(
     },
     { type: 'separator' },
     {
+      enabled: false,
       id: 'EXPORT_TO',
       label: r.export_to || 'Export to',
       submenu: [
