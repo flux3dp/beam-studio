@@ -18,7 +18,12 @@ import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { convertSvgToImage } from '@core/helpers/convertToImage';
-import { convertSvgToPath, convertTextToPath, convertUseToPath } from '@core/helpers/convertToPath';
+import {
+  convertSvgToPath,
+  convertTextOnPathToPath,
+  convertTextToPath,
+  convertUseToPath,
+} from '@core/helpers/convertToPath';
 import imageEdit from '@core/helpers/image-edit';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { isMobile } from '@core/helpers/system-helper';
@@ -51,6 +56,10 @@ interface ButtonOpts {
   isText?: boolean;
   mobileLabel?: string;
   tooltipIfDisabled?: string;
+}
+
+interface ConvertButtonOptions extends ButtonOpts {
+  converter?: () => Promise<ConvertPathResult>;
 }
 
 interface TabButtonOptions extends ButtonOpts {
@@ -144,12 +153,17 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       { autoClose: false, ...opts },
     );
 
-  const renderConvertToPathButton = ({ isText, ...opts }: ButtonOpts = { isText: false }): React.JSX.Element =>
+  const renderConvertToPathButton = (
+    { converter, isText, ...opts }: ConvertButtonOptions = { converter: undefined, isText: false },
+  ): React.JSX.Element =>
     renderButtons(
       'convert_to_path',
       lang.convert_to_path,
       () =>
-        isText ? convertTextToPath({ element: elem, isToSelect: true }) : svgCanvas.convertToPath(elem as SVGElement),
+        match({ converter, isText })
+          .with({ converter: P.nonNullable }, async ({ converter }) => converter())
+          .with({ isText: true }, async () => convertTextToPath({ element: elem, isToSelect: true }))
+          .otherwise(async () => convertSvgToPath({ element: elem, isToSelect: true })),
       <ActionPanelIcons.ConvertToPath />,
       <ActionPanelIcons.ConvertToPathMobile />,
       { isFullLine: true, mobileLabel: lang.outline, ...opts },
@@ -388,7 +402,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     ];
   };
 
-  const renderTextPathActions = (): React.JSX.Element[] => [
+  const renderTextOnPathActions = (): React.JSX.Element[] => [
     renderAutoFitButton(),
     renderButtons(
       'edit_path',
@@ -411,7 +425,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       <ActionPanelIcons.DecomposeTextpath />,
       { isFullLine: true, mobileLabel: lang.detach_path_short },
     ),
-    renderConvertToPathButton({ isText: true }),
+    renderConvertToPathButton({ converter: () => convertTextOnPathToPath({ element: elem, isToSelect: true }) }),
     renderConvertToImageButton({ isText: true }),
     renderSmartNestButton(),
     renderArrayButton({ isFullLine: true }),
@@ -553,7 +567,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     .with('g', () =>
       match(elem)
         .when((e) => e.getAttribute('data-tempgroup') === 'true', renderMultiSelectActions)
-        .when((e) => e.getAttribute('data-textpath-g'), renderTextPathActions)
+        .when((e) => e.getAttribute('data-textpath-g'), renderTextOnPathActions)
         .otherwise(renderGroupActions),
     )
     .otherwise(() => null);

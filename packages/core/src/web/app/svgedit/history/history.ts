@@ -172,6 +172,7 @@ export class RemoveElementCommand extends BaseHistoryCommand implements ICommand
   };
 
   doUnapply = (): void => {
+    this.elem = this.elem as SVGGraphicsElement;
     svgedit.transformlist.removeElementFromListMap(this.elem);
     this.parent.insertBefore(this.elem, this.nextSibling);
   };
