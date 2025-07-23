@@ -58,6 +58,7 @@ type ConvertToTextPathResult =
       command: IBatchCommand;
       path: SVGPathElement;
       status: ConvertResultType;
+      textPathPath?: SVGPathElement;
     }
   | {
       command: null;
@@ -755,6 +756,8 @@ const convertTextToPath = async (
       return { command: null, path: null, status: ConvertResult.CONTINUE };
     }
 
+    let textPathPath: SVGPathElement | undefined = undefined;
+
     if (!isTempConvert) {
       const parent = textElement.parentNode!;
       const { nextSibling } = textElement;
@@ -763,6 +766,8 @@ const convertTextToPath = async (
       batchCmd.addSubCommand(new history.RemoveElementCommand(elem, nextSibling!, parent));
 
       if (textElement.getAttribute('data-textpath')) {
+        textPathPath = parent.querySelector('path') as SVGPathElement;
+
         const cmd = textPathEdit.ungroupTextPath(parent as SVGGElement);
 
         if (cmd && !cmd.isEmpty()) {
@@ -777,7 +782,7 @@ const convertTextToPath = async (
 
     const finalStatus = hasUnsupportedFont ? ConvertResult.UNSUPPORT : ConvertResult.CONTINUE;
 
-    return { command: batchCmd, path: newPathElement, status: finalStatus };
+    return { command: batchCmd, path: newPathElement, status: finalStatus, textPathPath };
   } catch (err) {
     Alert.popUp({
       caption: `#846 ${LANG.text_to_path.error_when_parsing_text}`,

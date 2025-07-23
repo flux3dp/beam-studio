@@ -54,13 +54,25 @@ export const convertTextToPath = async ({
   weldingTexts?: boolean;
 }): Promise<ConvertToPathResult> => {
   const isSubCommand = parentCommand !== undefined;
+  const isTextPath = element.getAttribute('data-textpath-g');
+  const textElem = isTextPath ? element.querySelector('text')! : element;
 
   if (textActions.isEditing) textActions.toSelectMode();
 
-  const { command, path } = await fontFuncs.convertTextToPath(element, { isSubCommand, weldingTexts });
+  const res = await fontFuncs.convertTextToPath(textElem, { isSubCommand, weldingTexts });
+
+  if (!res.path) {
+    return {
+      bbox: { height: 0, width: 0, x: 0, y: 0 } as DOMRect, // Default bbox if res is null
+      command: undefined,
+      path: undefined,
+    };
+  }
+
+  const { command, path, textPathPath } = res;
 
   if (path && isToSelect) {
-    svgCanvas.selectOnly([path]);
+    svgCanvas.multiSelect([path, textPathPath].filter(Boolean) as SVGElement[]);
   }
 
   if (command && isSubCommand) {

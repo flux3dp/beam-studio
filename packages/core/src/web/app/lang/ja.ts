@@ -759,7 +759,7 @@ const lang: ILang = {
           create_textpath_short: 'パステキスト',
           crop: 'クロップ',
           decompose_path: '離散パスを分解する',
-          detach_path: 'パステキスト作成',
+          detach_path: 'パステキストを解除',
           detach_path_short: '解散',
           disabled_by_gradient: 'この機能を使用する前に、シェーディングを無効にしてください。',
           disabled_by_infilled: 'この機能を使用する前に、インフィルを閉じてください。',
