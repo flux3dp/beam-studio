@@ -296,16 +296,16 @@ function createWindow() {
   });
   networkHelper.registerEvents();
 
+  // see https://github.com/AlexTorresDev/custom-electron-titlebar/blob/2471c5a4df6c9146f7f8d8598e503789cfc1190c/src/main/attach-titlebar-to-window.ts
+  mainWindow.on('enter-full-screen', () => {
+    tabManager?.sendToAllViews('window-fullscreen', true);
+  });
+  mainWindow.on('leave-full-screen', () => {
+    tabManager?.sendToAllViews('window-fullscreen', false);
+  });
+
   if (process.platform === 'win32') {
     // original attachTitlebarToWindow for windows
-
-    // see https://github.com/AlexTorresDev/custom-electron-titlebar/blob/2471c5a4df6c9146f7f8d8598e503789cfc1190c/src/main/attach-titlebar-to-window.ts
-    mainWindow.on('enter-full-screen', () => {
-      tabManager?.sendToAllViews('window-fullscreen', true);
-    });
-    mainWindow.on('leave-full-screen', () => {
-      tabManager?.sendToAllViews('window-fullscreen', false);
-    });
     mainWindow.on('focus', () => {
       tabManager?.sendToFocusedView('window-focus', true);
     });

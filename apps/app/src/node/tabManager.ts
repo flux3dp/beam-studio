@@ -90,6 +90,7 @@ class TabManager {
         }
 
         this.sendToView(id, id === this.focusedId ? TabEvents.TabFocused : TabEvents.TabBlurred);
+        this.sendToView(id, 'window-fullscreen', this.mainWindow.isFullScreen());
         this.notifyTabUpdated();
       }
     });

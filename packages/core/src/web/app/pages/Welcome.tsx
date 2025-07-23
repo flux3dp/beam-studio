@@ -81,6 +81,7 @@ const Welcome = (): ReactNode => {
   const [isTabFocused, setIsTabFocused] = useState(true);
   const isDesktopMac = useMemo(() => !isWeb() && isMac(), []);
   const socialMedia = useMemo(() => getSocialMedia(), []);
+  const [isFullScreen, setIsFullScreen] = useState(false);
 
   const fetchBanners = useCallback(async () => {
     try {
@@ -106,14 +107,19 @@ const Welcome = (): ReactNode => {
       // Fix tab content after reset
       window.location.hash = hashMap.editor;
     } else {
+      const onFullScreenChange = (_: unknown, isFullScreen: boolean) => setIsFullScreen(isFullScreen);
+
+      communicator.on('window-fullscreen', onFullScreenChange);
       communicator.on('NEW_APP_MENU', beamboxGlobalInteraction.attach);
       beamboxGlobalInteraction.attach();
       window.homePage = hashMap.welcome;
       setIsLoading(false);
+      communicator.send('FRONTEND_READY');
 
       return () => {
         beamboxGlobalInteraction.detach();
         communicator.off('NEW_APP_MENU', beamboxGlobalInteraction.attach);
+        communicator.off('window-fullscreen', onFullScreenChange);
       };
     }
   }, []);
@@ -206,6 +212,7 @@ const Welcome = (): ReactNode => {
           className={classNames(styles['top-bar'], {
             [styles.draggable]: isDesktopMac && isTabFocused,
             [styles.mac]: isDesktopMac,
+            [styles.space]: isDesktopMac && !isFullScreen,
           })}
         >
           <Tabs inverse />
