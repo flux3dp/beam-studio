@@ -49,6 +49,12 @@
     &.small {
       min-width: 40px;
       max-width: 40px;
+      padding: 0;
+      justify-content: center;
+
+      .icon {
+        font-size: 20px;
+      }
     }
 
     &.focused {
