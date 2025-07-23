@@ -62,7 +62,7 @@ export const convertSvgToImage: MainConverterFunc = async ({
 
   const result = await match(svgElement)
     .with({ tagName: 'use' }, async (el) => convertUseToImage({ isToSelect, parentCmd, svgElement: el }))
-    .with({ tagName: 'image' }, async (el) => ({ imageElements: [el as SVGImageElement], svgElements: [] }))
+    .with({ tagName: 'image' }, async (el) => ({ imageElements: [el as SVGImageElement], svgElements: [el] }))
     .when(
       (el) => el.getAttribute('data-textpath-g') === '1',
       async (el) => rasterizeGenericSvgElement({ isToSelect, parentCmd, svgElement: el }),
@@ -80,11 +80,8 @@ export const convertSvgToImage: MainConverterFunc = async ({
     });
 
   if (isToSelect && result) {
-    const toSelect = [];
-
     if (result.svgElements.length > 0) {
-      const origImageElement = result.imageElements[0] as SVGImageElement;
-      const elements = [origImageElement];
+      const elements = [...result.imageElements];
 
       result.imageElements.length = 0;
 
@@ -98,20 +95,22 @@ export const convertSvgToImage: MainConverterFunc = async ({
 
           elements.push(...(children as SVGImageElement[]));
         } else {
-          toSelect.push(element);
           result.imageElements.push(element);
         }
       }
     }
 
+    console.log(result.svgElements);
+    console.log(result.imageElements);
+
     parentCmd.addSubCommand(deleteElements(result.svgElements, true));
-    svgCanvas.selectOnly(toSelect);
+    svgCanvas.selectOnly(result.imageElements);
 
     // Only combine if there's more than one image
-    if (toSelect.length > 1) {
+    if (result.imageElements.length > 1) {
       // Wait for href transformation to complete from blob to base64
       try {
-        await waitForHrefTransformation(toSelect as SVGImageElement[]);
+        await waitForHrefTransformation(result.imageElements);
       } catch (error) {
         console.error('Error waiting for image loads:', error);
         progressCaller.popById('convert-svg-to-image');
@@ -119,10 +118,10 @@ export const convertSvgToImage: MainConverterFunc = async ({
         return undefined;
       }
 
-      const combinedImage = await combineImagesIntoSingleElement(toSelect as SVGImageElement[], { layer });
+      const combinedImage = await combineImagesIntoSingleElement(result.imageElements, { layer });
 
       parentCmd.addSubCommand(new history.InsertElementCommand(combinedImage));
-      parentCmd.addSubCommand(deleteElements(toSelect, true));
+      parentCmd.addSubCommand(deleteElements(result.imageElements, true));
       svgCanvas.selectOnly([combinedImage]);
     }
 
