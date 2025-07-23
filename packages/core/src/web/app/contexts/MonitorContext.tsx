@@ -1045,7 +1045,7 @@ export class MonitorContextProvider extends React.Component<Props, State> {
         const { previewTask } = this.state;
         const { taskBlob, taskTime } = await this.getTaskWithVariableText();
 
-        if (previewTask?.metadata['3D_CURVE_TASK'] === '1') {
+        if (previewTask?.metadata['3D_CURVE_TASK'] === '1' && device.model !== 'fbm2') {
           this.stopReport();
 
           const res = await doZSpeedLimitTest(device);
