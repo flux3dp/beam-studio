@@ -14,6 +14,11 @@
 
   .avatar {
     flex-shrink: 0;
+    cursor: pointer;
+
+    &:hover {
+      filter: brightness(90%);
+    }
 
     .default-avatar {
       font-size: 52px;

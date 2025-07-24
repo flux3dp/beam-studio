@@ -141,13 +141,8 @@ const GridFile = ({ file }: Props): React.JSX.Element => {
           </>
         }
       />
-      <div className={styles['img-container']}>
-        <div
-          className={styles['guide-lines']}
-          onClick={onClick}
-          onDoubleClick={onDoubleClick}
-          style={{ background: "url('core-img/flux-plus/guide-lines.png')" }}
-        >
+      <div className={styles['img-container']} onClick={onClick} onDoubleClick={onDoubleClick}>
+        <div className={styles['guide-lines']} style={{ background: "url('core-img/flux-plus/guide-lines.png')" }}>
           {file.thumbnail_url && <img src={`${file.thumbnail_url}?lastmod=${file.last_modified_at}`} />}
           <Dropdown
             getPopupContainer={(triggerNode) => triggerNode.parentElement!}

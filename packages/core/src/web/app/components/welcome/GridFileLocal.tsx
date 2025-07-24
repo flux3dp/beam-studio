@@ -50,13 +50,8 @@ const GridFileLocal = ({ file, selectedId, setSelectedId }: Props): React.JSX.El
 
   return (
     <div className={classNames(styles.grid, { [styles.selected]: isSelected })}>
-      <div className={styles['img-container']}>
-        <div
-          className={styles['guide-lines']}
-          onClick={onClick}
-          onDoubleClick={onDoubleClick}
-          style={{ background: "url('core-img/flux-plus/guide-lines.png')" }}
-        >
+      <div className={styles['img-container']} onClick={onClick} onDoubleClick={onDoubleClick}>
+        <div className={styles['guide-lines']} style={{ background: "url('core-img/flux-plus/guide-lines.png')" }}>
           <img src={file.thumbnail_url!} />
         </div>
       </div>

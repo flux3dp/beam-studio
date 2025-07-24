@@ -8,6 +8,7 @@
   justify-content: center;
   align-items: center;
   border-radius: 6px;
+  padding: 10px;
 }
 
 .grid {
@@ -19,16 +20,24 @@
   .img-container {
     @extend %container;
     width: myCloudVariables.$grid-width;
+    cursor: pointer;
+    border: solid 1px transparent;
+    border-radius: 12px;
+
+    &:hover {
+      border-color: #eeeeee;
+    }
 
     .guide-lines {
       position: relative;
-      width: 90%;
-      height: 90%;
+      width: 100%;
+      height: 100%;
       display: flex;
       justify-content: center;
       align-items: center;
       border-radius: 6px;
       border: 1px solid #e0e0e0;
+      padding: 4px;
 
       > img {
         max-width: 100%;
@@ -70,6 +79,7 @@
       max-width: 100%;
       line-height: 24px;
       padding: 0 4px;
+      cursor: pointer;
     }
     .edit {
       height: 24px;
@@ -86,7 +96,6 @@
   &.selected {
     .img-container {
       background: #eeeeee;
-      border-radius: 12px;
     }
 
     .name {
