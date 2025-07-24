@@ -265,21 +265,26 @@ describe('test boundaryDrawer', () => {
     mockHasModuleLayer.mockImplementation(([module]) =>
       [LayerModule.LASER_1064, LayerModule.LASER_UNIVERSAL].includes(module),
     );
-    mockGetModuleOffsets.mockReturnValue([-12.5, -12.5]);
+    mockGetModuleOffsets.mockImplementation(({ module }) =>
+      module === LayerModule.UV_WHITE_INK ? [-12.5, -12.5] : [7.5, 7.5],
+    );
     registeredEvents.canvas['canvas-change']();
     jest.advanceTimersByTime(100);
     expect(mockGetModuleBoundary).toHaveBeenCalledTimes(3);
     expect(mockGetModuleBoundary).toHaveBeenNthCalledWith(1, 'fbm2', LayerModule.UV_WHITE_INK);
     expect(mockGetModuleBoundary).toHaveBeenNthCalledWith(2, 'fbm2', LayerModule.LASER_UNIVERSAL);
     expect(mockGetModuleBoundary).toHaveBeenNthCalledWith(3, 'fbm2', LayerModule.LASER_1064);
-    expect(mockHasModuleLayer).toHaveBeenCalledTimes(4);
+    expect(mockHasModuleLayer).toHaveBeenCalledTimes(8);
     expect(mockHasModuleLayer).toHaveBeenNthCalledWith(1, [LayerModule.LASER_UNIVERSAL]);
     expect(mockHasModuleLayer).toHaveBeenNthCalledWith(2, [LayerModule.PRINTER_4C]);
     expect(mockHasModuleLayer).toHaveBeenNthCalledWith(3, [LayerModule.UV_VARNISH]);
     expect(mockHasModuleLayer).toHaveBeenNthCalledWith(4, [LayerModule.LASER_1064]);
     expect(boundaryDrawer.boundaries.module).toEqual({ bottom: 211, left: 222, right: 433, top: 444 });
+    expect(mockGetModuleOffsets).toHaveBeenCalledTimes(3);
     expect(mockGetModuleOffsets).toHaveBeenNthCalledWith(1, { module: LayerModule.UV_WHITE_INK, workarea: 'fbm2' });
-    expectBoundaryResult('M0,0H3600V2400H0ZM100,400H3000V2000H100Z');
+    expect(mockGetModuleOffsets).toHaveBeenNthCalledWith(2, { module: LayerModule.LASER_UNIVERSAL, workarea: 'fbm2' });
+    expect(mockGetModuleOffsets).toHaveBeenNthCalledWith(3, { module: LayerModule.LASER_1064, workarea: 'fbm2' });
+    expectBoundaryResult('M0,0H3600V2400H0ZM300,600H3000V2000H300Z');
   });
 
   test('show boundary with diode module addon', async () => {
