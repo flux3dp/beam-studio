@@ -13,16 +13,7 @@ import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 type MenuActions = { [key: string]: (device?: IDeviceInfo) => void };
 
-/**
- * Special menu items that should be disabled in certain pages
- * Set `enabled: false` in electron menu and update them by attach/detach
- */
-const MENU_ITEMS = [
-  '_edit',
-  '_view',
-  '_tools',
-  'NETWORK_TESTING',
-  // _file
+const FILE_MENU_ITEMS = [
   'CLEAR_SCENE',
   'OPEN',
   'RECENT',
@@ -31,6 +22,51 @@ const MENU_ITEMS = [
   'SAVE_TO_CLOUD',
   'SAMPLES',
   'EXPORT_TO',
+];
+const EDIT_MENU_ITEMS = [
+  'UNDO',
+  'REDO',
+  'CUT',
+  'COPY',
+  'PASTE',
+  'PASTE_IN_PLACE',
+  'DUPLICATE',
+  'DELETE',
+  'GROUP',
+  'UNGROUP',
+  'PATH',
+  'PHOTO_EDIT',
+  'SVG_EDIT',
+  'LAYER',
+  'DOCUMENT_SETTING',
+  'ROTARY_SETUP',
+];
+const VIEW_MENU_ITEMS = [
+  'ZOOM_IN',
+  'ZOOM_OUT',
+  'FITS_TO_WINDOW',
+  'ZOOM_WITH_WINDOW',
+  'SHOW_GRIDS',
+  'SHOW_RULERS',
+  'SHOW_LAYER_COLOR',
+  'AUTO_ALIGN',
+  'ANTI_ALIASING',
+];
+const TOOLS_MENU_ITEMS = ['MATERIAL_TEST_GENERATOR', 'CODE_GENERATOR', 'BOX_GEN'];
+
+/**
+ * Special menu items that should be disabled in certain pages
+ *
+ * Set `enabled: false` in electron menu and update them by attach/detach
+ *
+ * `enabled` in first-layer submenu won't take effect in Windows; list all items in the submenu
+ */
+const MENU_ITEMS = [
+  ...FILE_MENU_ITEMS,
+  ...EDIT_MENU_ITEMS,
+  ...VIEW_MENU_ITEMS,
+  ...TOOLS_MENU_ITEMS,
+  'NETWORK_TESTING',
   // _help
   'START_TUTORIAL',
   'START_UI_INTRO',

@@ -14,22 +14,22 @@ class BeamboxGlobalInteraction {
   constructor() {
     tabController.onFocused(() => {
       this.attach();
-      this.onObjectBlur();
-      this.onObjectFocus();
     });
   }
 
-  attach() {
+  attach = () => {
     if (isAtPage('welcome')) {
       menu.attach(['CLEAR_SCENE', 'OPEN', 'RECENT', 'SAMPLES']);
     } else if (isAtPage('editor')) {
       // enable all
       menu.attach();
+      this.onObjectBlur();
+      this.onObjectFocus();
     } else {
       // disable all
       menu.attach([]);
     }
-  }
+  };
 
   onObjectFocus(elems?: Element[]) {
     let selectedElements = elems || svgCanvas?.getSelectedElems().filter(Boolean);

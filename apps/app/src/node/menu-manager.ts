@@ -439,29 +439,49 @@ class MenuManager extends EventEmitter {
 
     menuItems.push(buildFileMenu(fnKey, r, callback, this.isDevMode));
     menuItems.push({
-      enabled: false,
       id: '_edit',
       label: r.edit,
       submenu: [
         {
           accelerator: `${fnKey}+Z`,
           click: callback,
+          enabled: false,
           id: 'UNDO',
           label: r.undo || 'Undo',
         },
         {
           accelerator: `${fnKey}+Shift+Z`,
           click: callback,
+          enabled: false,
           id: 'REDO',
           label: r.redo || 'Redo',
         },
         { type: 'separator' },
-        { id: 'CUT', label: r.cut, role: 'cut' },
-        { id: 'COPY', label: r.copy, role: 'copy' },
-        { id: 'PASTE', label: r.paste, role: 'paste' },
+        {
+          accelerator: `${fnKey}+X`,
+          click: callback,
+          enabled: false,
+          id: 'CUT',
+          label: r.cut,
+        },
+        {
+          accelerator: `${fnKey}+C`,
+          click: callback,
+          enabled: false,
+          id: 'COPY',
+          label: r.copy,
+        },
+        {
+          accelerator: `${fnKey}+V`,
+          click: callback,
+          enabled: false,
+          id: 'PASTE',
+          label: r.paste,
+        },
         {
           accelerator: `${fnKey}+Shift+V`,
           click: callback,
+          enabled: false,
           id: 'PASTE_IN_PLACE',
           label: r.paste_in_place,
         },
@@ -535,6 +555,7 @@ class MenuManager extends EventEmitter {
           ],
         },
         {
+          enabled: false,
           id: 'LAYER',
           label: r.layer_setting,
           submenu: [
@@ -548,33 +569,36 @@ class MenuManager extends EventEmitter {
         { type: 'separator' },
         {
           click: callback,
+          enabled: false,
           id: 'DOCUMENT_SETTING',
           label: r.document_setting || 'Document Setting',
         },
-        { click: callback, id: 'ROTARY_SETUP', label: r.rotary_setup || 'Rotary Setup' },
+        { click: callback, enabled: false, id: 'ROTARY_SETUP', label: r.rotary_setup || 'Rotary Setup' },
       ].filter((item) => !!item),
     });
 
     menuItems.push({
-      enabled: false,
       id: '_view',
       label: r.view,
       submenu: [
         {
           accelerator: process.platform === 'win32' ? 'CmdOrCtrl++' : 'CmdOrCtrl+Plus',
           click: callback,
+          enabled: false,
           id: 'ZOOM_IN',
           label: r.zoom_in || 'Zoom In',
         },
         {
           accelerator: `${fnKey}+-`,
           click: callback,
+          enabled: false,
           id: 'ZOOM_OUT',
           label: r.zoom_out || 'Zoom Out',
         },
-        { click: callback, id: 'FITS_TO_WINDOW', label: r.fit_to_window || 'Fit To Window' },
+        { click: callback, enabled: false, id: 'FITS_TO_WINDOW', label: r.fit_to_window || 'Fit To Window' },
         {
           click: callback,
+          enabled: false,
           id: 'ZOOM_WITH_WINDOW',
           label: r.zoom_with_window || 'Zoom With Window',
           type: 'checkbox',
@@ -583,30 +607,35 @@ class MenuManager extends EventEmitter {
         {
           checked: true,
           click: callback,
+          enabled: false,
           id: 'SHOW_GRIDS',
           label: r.show_grids || 'Show Grids',
           type: 'checkbox',
         },
         {
           click: callback,
+          enabled: false,
           id: 'SHOW_RULERS',
           label: r.show_rulers,
           type: 'checkbox',
         },
         {
           click: callback,
+          enabled: false,
           id: 'SHOW_LAYER_COLOR',
           label: r.show_layer_color || 'Show Layer Color',
           type: 'checkbox',
         },
         {
           click: callback,
+          enabled: false,
           id: 'AUTO_ALIGN',
           label: r.auto_align || 'Auto Align',
           type: 'checkbox',
         },
         {
           click: callback,
+          enabled: false,
           id: 'ANTI_ALIASING',
           label: r.anti_aliasing,
           type: 'checkbox',
@@ -630,13 +659,12 @@ class MenuManager extends EventEmitter {
     });
 
     menuItems.push({
-      enabled: false,
       id: '_tools',
       label: r.tools.title,
       submenu: [
-        { click: callback, id: 'MATERIAL_TEST_GENERATOR', label: r.tools.material_test_generator },
-        { click: callback, id: 'CODE_GENERATOR', label: r.tools.code_generator },
-        { click: callback, id: 'BOX_GEN', label: r.tools.box_generator },
+        { click: callback, enabled: false, id: 'MATERIAL_TEST_GENERATOR', label: r.tools.material_test_generator },
+        { click: callback, enabled: false, id: 'CODE_GENERATOR', label: r.tools.code_generator },
+        { click: callback, enabled: false, id: 'BOX_GEN', label: r.tools.box_generator },
       ],
     });
 
