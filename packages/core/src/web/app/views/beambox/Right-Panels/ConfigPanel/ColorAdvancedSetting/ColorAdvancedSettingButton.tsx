@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import React, { useContext } from 'react';
 
 import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';
 

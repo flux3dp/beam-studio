@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ColorAdvancedSettingButton should renders correctly 1`] = `
+<div>
+  <div
+    class="panel"
+  >
+    <span
+      class="title"
+    >
+      Color Advanced Setting
+      <span
+        class="icon"
+      >
+        <svgr-url />
+      </span>
+    </span>
+  </div>
+</div>
+`;
