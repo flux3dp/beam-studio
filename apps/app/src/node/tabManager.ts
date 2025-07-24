@@ -172,6 +172,7 @@ class TabManager {
 
     const { webContents } = tabView;
 
+    webContents.setBackgroundThrottling(false);
     // to access the iframe in the webview
     webContents.session.webRequest.onHeadersReceived({ urls: ['https://udify.app/*'] }, (details, callback) => {
       if (details && details.responseHeaders) {
