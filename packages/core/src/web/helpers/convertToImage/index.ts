@@ -9,7 +9,7 @@ import { deleteElements } from '@core/app/svgedit/operations/delete';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import updateElementColor from '../color/updateElementColor';
-import { convertTextToPath } from '../convertToPath';
+import { convertTextOnPathToPath, convertTextToPath } from '../convertToPath';
 import i18n from '../i18n';
 import { sortLayerNamesByPosition } from '../layer/layer-helper';
 import moveElementsToLayer from '../layer/moveToLayer';
@@ -69,28 +69,9 @@ export const convertSvgToImage: MainConverterFunc = async ({
     .when(
       (el) => el.getAttribute('data-textpath-g') === '1',
       async (el) => {
-        const pathEl = el.querySelector('path');
-        const textEl = el.querySelector('text');
+        const { group } = await convertTextOnPathToPath({ element: el, parentCommand: parentCmd });
 
-        if (!pathEl || !textEl) {
-          console.warn('Invalid text path group:', el);
-
-          return { imageElements: [], svgElements: [] };
-        }
-
-        const pathResult = await convertSvgToImage({ isToSelect: false, parentCmd, svgElement: pathEl });
-        const textResult = await convertSvgToImage({ isToSelect: false, parentCmd, svgElement: textEl });
-
-        if (!pathResult || !textResult) {
-          console.warn('Failed to convert text path group:', el);
-
-          return { imageElements: [], svgElements: [] };
-        }
-
-        return {
-          imageElements: [...pathResult.imageElements, ...textResult.imageElements],
-          svgElements: [...pathResult.svgElements, ...textResult.svgElements],
-        };
+        return await convertSvgToImage({ isToSelect: false, parentCmd, svgElement: group });
       },
     )
     .with(
