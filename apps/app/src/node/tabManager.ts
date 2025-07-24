@@ -349,11 +349,9 @@ class TabManager {
     id: number,
     {
       allowEmpty = false,
-      keepWelcomeTab = true,
       shouldCloseWindow = false,
     }: {
       allowEmpty?: boolean;
-      keepWelcomeTab?: boolean;
       shouldCloseWindow?: boolean;
     } = {},
   ): Promise<boolean> => {
@@ -362,7 +360,7 @@ class TabManager {
 
     if (!tabsMap[id]) return false;
 
-    if (this.welcomeTabId === id && keepWelcomeTab) {
+    if (this.welcomeTabId === id) {
       isClosable = allowEmpty && this.tabsList.length === 1;
     } else {
       isClosable = allowEmpty || this.tabsList.length > 1;
@@ -421,10 +419,10 @@ class TabManager {
   } = {}): Promise<boolean> => {
     const ids = Object.keys(this.tabsMap);
 
-    for (let i = 0; i < ids.length; i += 1) {
+    for (let i = ids.length - 1; i >= 0; i -= 1) {
       const id = Number.parseInt(ids[i], 10);
 
-      const res = await this.closeTab(id, { allowEmpty: true, keepWelcomeTab: false, shouldCloseWindow });
+      const res = await this.closeTab(id, { allowEmpty: true, shouldCloseWindow });
 
       if (!res) {
         return false;
