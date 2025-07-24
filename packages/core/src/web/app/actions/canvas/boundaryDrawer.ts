@@ -23,6 +23,7 @@ import { getModuleOffsets } from '@core/helpers/device/moduleOffsets';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { hasModuleLayer } from '@core/helpers/layer-module/layer-module-helper';
 
+const printerHeight = 12.7; // mm
 const keys = ['autoFeeder', 'passThrough', 'openBottom', 'diode', 'module', 'uvPrint'] as const;
 
 type BoundaryKey = (typeof keys)[number];
@@ -269,39 +270,55 @@ export class BoundaryDrawer {
     };
   };
 
-  updateFinalBoundary = (module: LayerModuleType): void => {
+  updateFinalBoundary = (currentModule: LayerModuleType): void => {
     const { maxY: workareaBottom, minY: workareaTop, model, width: w } = workareaManager;
     const addOnInfo = getAddOnInfo(model);
     const isRotary = Boolean(beamboxPreference.read('rotary_mode') && addOnInfo.rotary);
     const isAutoFeeder = getAutoFeeder(addOnInfo);
     const finalBoundary: TBoundary = { bottom: 0, left: 0, right: 0, top: 0 };
     let { bottom, left, right, top } = finalBoundary;
-    let [offsetX, offsetY] = getModuleOffsets({ module, workarea: model });
+    const [offsetX, offsetY] = getModuleOffsets({ module: currentModule, workarea: model });
+    const unionOffsets = {
+      bottom: -offsetY - (printingModules.has(currentModule) ? printerHeight : 0),
+      left: offsetX,
+      right: -offsetX,
+      top: offsetY,
+    };
 
     if (this.boundaries.uvPrint) {
       ({ bottom, left, right, top } = this.boundaries.uvPrint);
     } else {
+      if (this.supportMultiModules && this.useUnionBoundary) {
+        const supportedModules = getSupportedModules(model);
+
+        supportedModules?.forEach((module) => {
+          if (module !== currentModule && hasModuleLayer([module])) {
+            const offsets = getModuleOffsets({ module, workarea: model });
+
+            mergeBoundaries(unionOffsets, {
+              bottom: -offsets[1] - (printingModules.has(module) ? printerHeight : 0),
+              left: offsets[0],
+              right: -offsets[0],
+              top: offsets[1],
+            });
+          }
+        });
+      }
+
       keys.forEach((key) => {
         mergeBoundaries(finalBoundary, this.boundaries[key]);
       });
       ({ bottom, left, right, top } = finalBoundary);
-      offsetX *= dpmm;
-      offsetY *= dpmm;
-      left += offsetX;
-      right -= offsetX;
+      left += unionOffsets.left * dpmm;
+      right += unionOffsets.right * dpmm;
 
       if (isRotary || isAutoFeeder) {
         top = this.boundaries.autoFeeder?.top ?? 0;
         bottom = 0;
-      } else if (module !== LayerModule.PRINTER) {
+      } else if (currentModule !== LayerModule.PRINTER) {
         // FIXME: Ador printer spec: height 270; Ignoring module offsets to keep workarea height consistent
-        top += offsetY;
-        bottom -= offsetY;
-
-        if (printingModules.has(module)) {
-          // Add extra height for printer head
-          bottom -= 127;
-        }
+        top += unionOffsets.top * dpmm;
+        bottom += unionOffsets.bottom * dpmm;
       }
 
       if (!this.useRealBoundary) {
