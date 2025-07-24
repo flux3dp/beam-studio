@@ -26,9 +26,9 @@ const FILE_MENU_ITEMS = [
 const EDIT_MENU_ITEMS = [
   'UNDO',
   'REDO',
-  'CUT',
-  'COPY',
-  'PASTE',
+  // 'CUT',
+  // 'COPY',
+  // 'PASTE',
   'PASTE_IN_PLACE',
   'DUPLICATE',
   'DELETE',
