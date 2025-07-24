@@ -63,8 +63,6 @@ const basicExamples: ExampleFileMap = {
   IMPORT_EXAMPLE_ADOR_PRINT_FULL: '',
   IMPORT_EXAMPLE_ADOR_PRINT_SINGLE: '',
   IMPORT_EXAMPLE_BEAMBOX_2: 'examples/beambox_2_example.bvg',
-  IMPORT_EXAMPLE_BEAMO_2_LASER: 'examples/beamo_2_example_laser.bvg',
-  IMPORT_EXAMPLE_BEAMO_2_PRINT_FULL: '',
   IMPORT_EXAMPLE_HEXA: 'examples/hexa_example.bvg',
   IMPORT_HELLO_BEAMBOX: 'examples/hello-beambox.bvg',
 };
@@ -98,6 +96,7 @@ export const getExamples = (workarea: WorkAreaModel): ExampleFileMap => {
     if (workarea === 'fbm2') {
       examples = {
         ...examples,
+        IMPORT_EXAMPLE_BEAMO_2_LASER: 'examples/beamo_2_example_laser.bvg',
         IMPORT_EXAMPLE_BEAMO_2_PRINT_FULL: 'examples/beamo_2_example_printing_full.bvg',
         IMPORT_MATERIAL_TESTING_PRINT: 'examples/beamo_2_color_ring.bvg',
       };

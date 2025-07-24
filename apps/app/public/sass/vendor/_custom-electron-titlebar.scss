@@ -1,3 +1,7 @@
 .cet-action-menu-item {
   text-decoration: none;
 }
+
+.cet-action-item.disabled {
+  pointer-events: none;
+}
