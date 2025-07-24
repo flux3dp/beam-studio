@@ -13,11 +13,12 @@ import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import requirejsHelper from '@core/helpers/requirejs-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './SvgNestButtons.module.scss';
 
-let svgCanvas;
-let svgedit;
+let svgCanvas: ISVGCanvas;
+let svgedit: any;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
@@ -43,17 +44,17 @@ interface State {
 }
 
 class SvgNestButtons extends React.Component<Props, State> {
-  private undoNestChanges: any[];
+  private undoNestChanges: any[] = [];
 
-  private nestedElements: any[];
+  private nestedElements: any[] = [];
 
-  constructor(props) {
+  constructor(props: any) {
     super(props);
     this.state = {
       isWorking: false,
     };
 
-    if (!window['SvgNest']) {
+    if (!window['SvgNest' as any]) {
       setUpSvgNest();
     }
   }
@@ -99,7 +100,7 @@ class SvgNestButtons extends React.Component<Props, State> {
 
       switch (elem.tagName) {
         case 'use':
-          bbox = svgCanvas.getSvgRealLocation(elem);
+          bbox = svgCanvas.getSvgRealLocation(elem as SVGUseElement);
           break;
         case 'filter':
           continue;
@@ -169,7 +170,7 @@ class SvgNestButtons extends React.Component<Props, State> {
         const undoRecord = {
           attrs: {
             transform: elem.getAttribute('transform'),
-          } as { [key: string]: string },
+          } as { [key: string]: null | string },
           element: elem,
         };
 
@@ -194,7 +195,7 @@ class SvgNestButtons extends React.Component<Props, State> {
       }
     }
 
-    const SvgNest = window['SvgNest'];
+    const SvgNest = window['SvgNest' as any] as any;
 
     if (config) {
       SvgNest.config(config);
@@ -204,7 +205,7 @@ class SvgNestButtons extends React.Component<Props, State> {
   };
 
   stopNestElement = (): void => {
-    const SvgNest = window['SvgNest'];
+    const SvgNest = window['SvgNest' as any] as any;
 
     SvgNest.stop();
 
@@ -227,7 +228,7 @@ class SvgNestButtons extends React.Component<Props, State> {
       svgCanvas.tempGroupSelectedElements();
     }
 
-    this.nestedElements = null;
+    this.nestedElements = [];
   };
 
   close = (): void => {
@@ -261,8 +262,8 @@ class SvgNestButtons extends React.Component<Props, State> {
         const layerNumber = drawing.getNumLayers();
 
         for (let i = 0; i < layerNumber; i += 1) {
-          const name = drawing.getLayerName(i);
-          const layer = drawing.getLayerByName(name);
+          const name = drawing.getLayerName(i)!;
+          const layer = drawing.getLayerByName(name)!;
 
           if (layer.getAttribute('display') === 'none' || layer.getAttribute('data-lock') === 'true') {
             continue;
@@ -273,7 +274,7 @@ class SvgNestButtons extends React.Component<Props, State> {
 
           for (let j = 0; j < childNodes.length; j += 1) {
             if (!['filter', 'title'].includes(children[j].nodeName)) {
-              elems.push(children[j]);
+              elems.push(children[j] as unknown as SVGElement);
             }
           }
         }
