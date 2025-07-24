@@ -4,28 +4,13 @@ import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import { getSVGAsync } from '../svg-editor-helper';
 
-import type { ConvertSvgToImageParams, ConvertToImageResult } from './types';
+import type { ConvertSvgToImageParams, ConvertToImageResult, MainConverterFunc } from './types';
 
 let svgCanvas: ISVGCanvas;
 
 getSVGAsync(({ Canvas }) => {
   svgCanvas = Canvas;
 });
-
-export const convertibleSvgTags = [
-  'rect',
-  'circle',
-  'ellipse',
-  'line',
-  'polygon',
-  'polyline',
-  'path',
-  'text',
-  'use',
-  'g',
-] as const;
-
-type MainConverterFunc = (params: ConvertSvgToImageParams) => Promise<ConvertToImageResult>;
 
 /**
  * Recursively converts elements inside a <g> group to images.
@@ -41,6 +26,7 @@ export const convertGroupToImage = async (
   const imageElements = [];
   const svgElements = [];
 
+  // remove temporary group to prevent the element cannot be inserted during undo
   if (svgElement.getAttribute('data-tempgroup') === 'true') {
     svgCanvas.ungroupTempGroup(svgElement);
   }
@@ -48,10 +34,10 @@ export const convertGroupToImage = async (
   for await (const child of children) {
     const result = await mainConverter({ isToSelect: false, parentCmd, svgElement: child as SVGGElement });
 
-    if (result) {
-      imageElements.push(...result.imageElements);
-      svgElements.push(...result.svgElements);
-    }
+    if (!result) continue;
+
+    svgElements.push(...result.svgElements);
+    imageElements.push(...result.imageElements);
   }
 
   // Group the newly created images

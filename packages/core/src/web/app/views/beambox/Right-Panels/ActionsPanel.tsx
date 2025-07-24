@@ -425,7 +425,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       <ActionPanelIcons.DecomposeTextpath />,
       { isFullLine: true, mobileLabel: lang.detach_path_short },
     ),
-    renderConvertToPathButton({ converter: () => convertTextOnPathToPath({ element: elem, isToSelect: true }) }),
+    renderConvertToPathButton({ converter: () => convertTextOnPathToPath({ element: elem }) }),
     renderConvertToImageButton({ isText: true }),
     renderSmartNestButton(),
     renderArrayButton({ isFullLine: true }),

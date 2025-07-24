@@ -80,16 +80,16 @@ export const convertTextToPath = async ({
 
 export const convertTextOnPathToPath = async ({
   element,
-  isToSelect = false,
-  parentCommand,
+  isToSelect: _isToSelect,
+  parentCommand = new BatchCommand('Convert Text on Path to Path'),
   weldingTexts = false,
 }: {
   element: SVGElement;
   isToSelect?: boolean;
   parentCommand?: IBatchCommand;
   weldingTexts?: boolean;
-}): Promise<ConvertToPathResult> => {
-  const isSubCommand = parentCommand !== undefined;
+}): Promise<ConvertToPathResult & { group: SVGGElement }> => {
+  const isSubCommand = parentCommand.getText() !== 'Convert Text on Path to Path';
   const pathElement = element.querySelector('path');
   const textElement = element.querySelector('text');
 
@@ -99,19 +99,22 @@ export const convertTextOnPathToPath = async ({
 
   const { command, path } = await fontFuncs.convertTextToPath(textElement!, { isSubCommand, weldingTexts });
 
-  if (isToSelect) {
-    svgCanvas.selectOnly([pathElement, path].filter(Boolean) as SVGPathElement[]);
-  }
+  svgCanvas.selectOnly([pathElement!, path!]);
 
-  if (command && isSubCommand) {
-    parentCommand.addSubCommand(command);
-  }
+  const { command: groupCmd, group } = svgCanvas.groupSelectedElements(true)!;
 
-  if (command && !isSubCommand) {
-    undoManager.addCommandToHistory(command);
-  }
+  if (command) parentCommand.addSubCommand(command);
 
-  return { bbox: path!.getBBox(), command: parentCommand, path: path || undefined };
+  if (groupCmd) parentCommand.addSubCommand(groupCmd);
+
+  if (!isSubCommand) undoManager.addCommandToHistory(parentCommand);
+
+  return {
+    bbox: path!.getBBox(),
+    command: parentCommand,
+    group,
+    path: path || undefined,
+  };
 };
 
 export const convertUseToPath = async ({
