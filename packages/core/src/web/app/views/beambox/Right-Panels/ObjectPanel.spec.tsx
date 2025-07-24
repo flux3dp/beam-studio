@@ -65,41 +65,6 @@ jest.mock('@core/app/views/beambox/Right-Panels/ObjectPanelItem', () => ({
   },
 }));
 
-jest.mock('@core/helpers/useI18n', () => () => ({
-  beambox: {
-    right_panel: {
-      laser_panel: {
-        parameters: 'Parameters',
-      },
-      object_panel: {
-        align: 'Align',
-        boolean: 'Boolean',
-        bottom_align: 'Bottom Align',
-        center_align: 'Center Align',
-        difference: 'Difference',
-        distribute: 'Distribute',
-        group: 'Group',
-        hdist: 'Horizontal Distribute',
-        intersect: 'Intersect',
-        left_align: 'Left Align',
-        middle_align: 'Middle Align',
-        right_align: 'Right Align',
-        subtract: 'Subtract',
-        top_align: 'Top Align',
-        ungroup: 'Ungroup',
-        union: 'Union',
-        vdist: 'Vertical Distribute',
-      },
-    },
-  },
-  topbar: {
-    menu: {
-      delete: 'Delete',
-      duplicate: 'Duplicate',
-    },
-  },
-}));
-
 const alignTop = jest.fn();
 const alignMiddle = jest.fn();
 const alignBottom = jest.fn();
@@ -156,6 +121,10 @@ const addDialogComponent = jest.fn();
 
 jest.mock('@core/app/actions/dialog-caller', () => ({
   addDialogComponent: (...args) => addDialogComponent(...args),
+}));
+
+jest.mock('./utils/convertAndBooleanOperate', () => ({
+  convertAndBooleanOperate: ({ operation }) => booleanOperationSelectedElements(operation),
 }));
 
 import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
