@@ -15,7 +15,7 @@ const moduleBoundaries: Partial<
     [LayerModule.PRINTER]: { bottom: 50, left: 0, right: 0, top: 0 },
   },
   fbm2: {
-    [LayerModule.LASER_1064]: { bottom: 20, left: 0, right: 90, top: 0 },
+    [LayerModule.LASER_1064]: { bottom: 20, left: 0, right: 90, top: 20 },
   },
 };
 
