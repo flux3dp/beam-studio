@@ -10,7 +10,7 @@ exports[`should render correctly desktop version 1`] = `
       <div
         class="title"
       >
-        Log in or Register
+        Log in or Sign Up
       </div>
       <div
         class="oauth"
@@ -198,7 +198,7 @@ exports[`should render correctly desktop version 2`] = `
       <div
         class="title"
       >
-        Log in or Register
+        Log in or Sign Up
       </div>
       <div
         class="oauth"
@@ -386,7 +386,7 @@ exports[`should render correctly mobile version 1`] = `
       <div
         class="title"
       >
-        Log in or Register
+        Log in or Sign Up
       </div>
       <div
         class="oauth"
@@ -577,7 +577,7 @@ exports[`should render correctly web version 1`] = `
       <div
         class="title"
       >
-        Log in or Register
+        Log in or Sign Up
       </div>
       <div
         class="oauth"

@@ -131,7 +131,7 @@ exports[`test UserInfo should render correctly when not login 1`] = `
       type="button"
     >
       <span>
-        Log in or Register
+        Log in or Sign Up
       </span>
     </button>
   </div>
