@@ -50,8 +50,8 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
       const lowerCase = e.tagName.toLowerCase();
 
       return (
-        ['ellipse', 'polygon', 'rect'].includes(lowerCase) ||
-        (['path', 'text'].includes(lowerCase) && svgCanvas.isElemFillable(e))
+        ['ellipse', 'polygon', 'rect', 'text'].includes(lowerCase) ||
+        (['path'].includes(lowerCase) && svgCanvas.isElemFillable(e))
       );
     };
     const isSingleGroup = elems?.length === 1 && elems[0].tagName.toLowerCase() === 'g';

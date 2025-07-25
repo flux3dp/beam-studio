@@ -98,14 +98,12 @@ const distHori = jest.fn();
 const distVert = jest.fn();
 const groupSelectedElements = jest.fn();
 const ungroupSelectedElement = jest.fn();
-const booleanOperationSelectedElements = jest.fn();
 const getLayerName = jest.fn();
 const deleteSelected = jest.fn();
 
 getSVGAsync.mockImplementation((callback) => {
   callback({
     Canvas: {
-      booleanOperationSelectedElements,
       distHori,
       distVert,
       getCurrentDrawing: () => ({ getLayerName }),
@@ -122,6 +120,8 @@ const addDialogComponent = jest.fn();
 jest.mock('@core/app/actions/dialog-caller', () => ({
   addDialogComponent: (...args) => addDialogComponent(...args),
 }));
+
+const booleanOperationSelectedElements = jest.fn();
 
 jest.mock('./utils/convertAndBooleanOperate', () => ({
   convertAndBooleanOperate: ({ operation }) => booleanOperationSelectedElements(operation),
