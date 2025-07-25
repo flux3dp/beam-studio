@@ -24,7 +24,6 @@ import TabMyCloud from '@core/app/components/welcome/TabMyCloud';
 import TabRecentFiles from '@core/app/components/welcome/TabRecentFiles';
 import ThemedButton from '@core/app/components/welcome/ThemedButton';
 import UserInfo from '@core/app/components/welcome/UserInfo';
-import { getSocialMedia } from '@core/app/constants/social-media-constants';
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
 import { DmktIcon } from '@core/app/icons/icons';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
@@ -32,6 +31,7 @@ import { axiosFluxId, fluxIDEvents, getCurrentUser } from '@core/helpers/api/flu
 import { hashMap } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
+import localeHelper from '@core/helpers/locale-helper';
 import { isMac, useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
@@ -48,23 +48,17 @@ interface MenuItem {
   onClick?: () => void;
 }
 
-const twBanners: IBanner[] = [
-  {
-    image_desktop: 'https://cdn.shopify.com/s/files/1/0668/8830/2868/files/bs_banner_desktop.png?v=1752660857',
-    image_mobile: 'https://cdn.shopify.com/s/files/1/0668/8830/2868/files/tw_bs_banner_mobile.png?v=1752660857',
-    url: 'https://tw-shop.flux3dp.com/',
-  },
-];
+const twBanner: IBanner = {
+  image_desktop: 'core-img/welcome-page/banner_tw_desktop.png',
+  image_mobile: 'core-img/welcome-page/banner_tw_mobile.png',
+  url: 'https://tw-shop.flux3dp.com/',
+};
 
-const enBanners: IBanner[] = [
-  {
-    image_desktop:
-      'https://cdn.shopify.com/s/files/1/0624/2415/4305/files/Shopify-Banner_FLUX-Shop_Desktop.webp?v=1741090136',
-    image_mobile:
-      'https://cdn.shopify.com/s/files/1/0624/2415/4305/files/Shopify-Banner_FLUX-Shop_Mobile.webp?v=1741090152',
-    url: 'https://shop.flux3dp.com/',
-  },
-];
+const naBanner: IBanner = {
+  image_desktop: 'core-img/welcome-page/banner_na_desktop.png',
+  image_mobile: 'core-img/welcome-page/banner_na_mobile.png',
+  url: 'https://shop.flux3dp.com/',
+};
 
 const Welcome = (): ReactNode => {
   const {
@@ -74,14 +68,17 @@ const Welcome = (): ReactNode => {
   } = useI18n();
   const isMobile = useIsMobile();
   const [currentUser, setCurrentUser] = useState<IUser | null>(getCurrentUser());
-  const isTW = useMemo(() => i18n.getActiveLang() === 'zh-TW', []);
   const [banners, setBanners] = useState<IBanner[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const setUser = useCallback((user: IUser | null) => setCurrentUser(user ? { ...user } : user), []);
   const [isTabFocused, setIsTabFocused] = useState(true);
   const isDesktopMac = useMemo(() => !isWeb() && isMac(), []);
-  const socialMedia = useMemo(() => getSocialMedia(), []);
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const defaultShopBanner = useMemo(() => {
+    if (localeHelper.isTw) return twBanner;
+    else if (localeHelper.isNorthAmerica) return naBanner;
+    else return null;
+  }, []);
 
   const fetchBanners = useCallback(async () => {
     try {
@@ -95,8 +92,8 @@ const Welcome = (): ReactNode => {
     } catch (error) {
       console.error('Failed to fetch banners:', error);
     }
-    setBanners(isTW ? twBanners : enBanners);
-  }, [isTW]);
+    setBanners(defaultShopBanner ? [defaultShopBanner] : []);
+  }, [defaultShopBanner]);
 
   useEffect(() => {
     fetchBanners();
@@ -186,7 +183,7 @@ const Welcome = (): ReactNode => {
     if (key === 'dmkt') {
       browser.open(tMenu.link.design_market);
     } else if (key === 'shop') {
-      browser.open(socialMedia.shop.link);
+      browser.open(defaultShopBanner!.url);
     } else {
       setActiveKey(key);
     }
@@ -248,15 +245,17 @@ const Welcome = (): ReactNode => {
                   }
                 />
               ))}
-              <CapsuleTabs.Tab
-                className={styles['cta-tab']}
-                key="shop"
-                title={
-                  <div className={styles['menu-item']}>
-                    <ShoppingOutlined /> {t.shop}
-                  </div>
-                }
-              />
+              {defaultShopBanner && (
+                <CapsuleTabs.Tab
+                  className={styles['cta-tab']}
+                  key="shop"
+                  title={
+                    <div className={styles['menu-item']}>
+                      <ShoppingOutlined /> {t.shop}
+                    </div>
+                  }
+                />
+              )}
             </CapsuleTabs>
           ) : (
             <div className={styles.menu}>
@@ -271,12 +270,12 @@ const Welcome = (): ReactNode => {
               ))}
             </div>
           )}
-          {!isMobile && (
+          {!isMobile && defaultShopBanner && (
             <div className={styles.cta}>
               <ThemedButton
                 block
                 icon={<ShoppingOutlined />}
-                onClick={() => browser.open(socialMedia.shop.link)}
+                onClick={() => browser.open(defaultShopBanner.url)}
                 theme="yellow"
               >
                 {t.shop_products}

@@ -29,10 +29,6 @@ export const getSocialMedia = () => {
       link: 'https://www.pinterest.com/flux3dp/',
       name: 'Pinterest',
     },
-    shop: {
-      link: isTW ? 'https://tw-shop.flux3dp.com/' : 'https://shop.flux3dp.com/',
-      name: 'Shop',
-    },
     youtube: {
       link: isTW ? 'https://www.youtube.com/@FLUXIncTaiwan' : 'https://www.youtube.com/@fluxinc',
       name: 'YouTube',
