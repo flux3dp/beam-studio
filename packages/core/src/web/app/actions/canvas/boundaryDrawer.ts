@@ -28,6 +28,9 @@ const keys = ['autoFeeder', 'passThrough', 'openBottom', 'diode', 'module', 'uvP
 
 type BoundaryKey = (typeof keys)[number];
 
+const beamboxPreferenceEvents = eventEmitterFactory.createEventEmitter('beambox-preference');
+const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
+
 export class BoundaryDrawer {
   private static instance: BoundaryDrawer;
 
@@ -107,9 +110,6 @@ export class BoundaryDrawer {
       this.changedKeys.add('diode');
       this.update();
     };
-
-    const beamboxPreferenceEvents = eventEmitterFactory.createEventEmitter('beambox-preference');
-    const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 
     beamboxPreferenceEvents.on('auto-feeder', onAutoFeederChange);
     beamboxPreferenceEvents.on('pass-through', onPassThroughChange);
@@ -350,6 +350,11 @@ export class BoundaryDrawer {
         getAbsRect(left, workareaTop + top, w - right, workareaBottom - bottom),
     );
 
+    workareaManager.boundary.minY = workareaTop + top;
+    workareaManager.boundary.maxY = workareaBottom - bottom;
+    workareaManager.boundary.maxX = w - right;
+    workareaManager.boundary.minX = left;
+
     const { rotate, x, y } = getTextPosition(left, top, right, bottom);
 
     this.text.setAttribute('x', `${x}`);
@@ -362,6 +367,8 @@ export class BoundaryDrawer {
       this.text.setAttribute('text-anchor', 'middle');
       this.text.removeAttribute('transform');
     }
+
+    canvasEventEmitter.emit('boundary-updated', workareaManager.boundary);
   };
 
   updateHandler = funnel(

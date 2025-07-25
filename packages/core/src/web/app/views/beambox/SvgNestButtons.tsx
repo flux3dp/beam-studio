@@ -45,7 +45,6 @@ interface State {
 
 class SvgNestButtons extends React.Component<Props, State> {
   private undoNestChanges: any[] = [];
-
   private nestedElements: any[] = [];
 
   constructor(props: any) {
@@ -64,7 +63,7 @@ class SvgNestButtons extends React.Component<Props, State> {
     const ClipperLib = getClipperLib();
 
     if (containerElem) {
-      const containerDpath = svgedit.utilities.getPathDFromElement(containerElem);
+      const containerDPath = svgedit.utilities.getPathDFromElement(containerElem);
       const bbox = svgedit.utilities.getBBox(containerElem);
       const rotation = {
         angle: svgedit.utilities.getRotationAngle(containerElem),
@@ -72,15 +71,17 @@ class SvgNestButtons extends React.Component<Props, State> {
         cy: bbox.y + bbox.height / 2,
       };
 
-      containerPoints = ClipperLib.dPathToPointPathsAndScale(containerDpath, rotation, 1);
+      containerPoints = ClipperLib.dPathToPointPathsAndScale(containerDPath, rotation, 1);
     } else {
-      const { maxY, minY, width: w } = workareaManager;
+      const {
+        boundary: { maxX, maxY, minX, minY },
+      } = workareaManager;
 
       containerPoints = [
-        { x: 0, y: minY },
-        { x: w, y: minY },
-        { x: w, y: maxY },
-        { x: 0, y: maxY },
+        { x: minX, y: minY },
+        { x: maxX, y: minY },
+        { x: maxX, y: maxY },
+        { x: minX, y: maxY },
       ];
     }
 
@@ -88,7 +89,7 @@ class SvgNestButtons extends React.Component<Props, State> {
 
     this.undoNestChanges = [];
     this.nestedElements = [...elements];
-    for (let i = 0; i < elements.length; i += 1) {
+    for (let i = 0; i < elements.length; i++) {
       let elem = elements[i];
 
       if (!elem) {
@@ -168,9 +169,7 @@ class SvgNestButtons extends React.Component<Props, State> {
         }
 
         const undoRecord = {
-          attrs: {
-            transform: elem.getAttribute('transform'),
-          } as { [key: string]: null | string },
+          attrs: { transform: elem.getAttribute('transform') } as { [key: string]: null | string },
           element: elem,
         };
 
@@ -190,6 +189,7 @@ class SvgNestButtons extends React.Component<Props, State> {
             undoRecord.attrs.y = elem.getAttribute('y');
             break;
         }
+
         elementsToUndo.push(...elem.childNodes);
         this.undoNestChanges.push(undoRecord);
       }
@@ -211,9 +211,9 @@ class SvgNestButtons extends React.Component<Props, State> {
 
     const batchCmd = new history.BatchCommand('Svg Nest');
 
-    for (let i = 0; i < this.undoNestChanges.length; i += 1) {
-      const elem = this.undoNestChanges[i].element;
-      const subCmd = new history.ChangeElementCommand(elem, this.undoNestChanges[i].attrs);
+    for (const change of this.undoNestChanges) {
+      const elem = change.element;
+      const subCmd = new history.ChangeElementCommand(elem, change.attrs);
 
       batchCmd.addSubCommand(subCmd);
     }
@@ -269,12 +269,11 @@ class SvgNestButtons extends React.Component<Props, State> {
             continue;
           }
 
-          const { childNodes } = layer;
-          const children = $(layer).children();
+          const { children } = layer;
 
-          for (let j = 0; j < childNodes.length; j += 1) {
-            if (!['filter', 'title'].includes(children[j].nodeName)) {
-              elems.push(children[j] as unknown as SVGElement);
+          for (const child of children) {
+            if (!['filter', 'title'].includes(child.nodeName)) {
+              elems.push(child as unknown as SVGElement);
             }
           }
         }
@@ -283,11 +282,7 @@ class SvgNestButtons extends React.Component<Props, State> {
       console.log(elems);
 
       if (elems.length === 0) {
-        Alert.popUp({
-          caption: LANG.nest,
-
-          message: LANG._nest.no_element,
-        });
+        Alert.popUp({ caption: LANG.nest, message: LANG._nest.no_element });
 
         return;
       }
@@ -297,15 +292,12 @@ class SvgNestButtons extends React.Component<Props, State> {
       this.stopNestElement();
     }
 
-    this.setState({
-      isWorking: !isWorking,
-    });
+    this.setState({ isWorking: !isWorking });
   };
 
   renderStartButton = (): React.JSX.Element => {
     const { isWorking } = this.state;
     const icon = isWorking ? <LoadingOutlined /> : <CaretRightOutlined />;
-
     const label = isWorking ? LANG._nest.stop_nest : LANG._nest.start_nest;
 
     return (
@@ -319,7 +311,6 @@ class SvgNestButtons extends React.Component<Props, State> {
 
   render(): React.JSX.Element {
     const { isWorking } = this.state;
-
     const endText = LANG._nest.end;
     const isWindows = !isWeb() && window.os === 'Windows';
     const className = classNames(styles.container, { [styles.win]: isWindows });

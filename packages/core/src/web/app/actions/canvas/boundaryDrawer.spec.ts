@@ -43,6 +43,7 @@ jest.mock('@core/app/stores/configPanel', () => ({
 
 const defaultWorkarea = {
   bb2: {
+    boundary: { maxY: 3750, minY: 0, width: 6000 },
     expansion: [0, 0],
     height: 3750,
     maxY: 3750,
@@ -51,6 +52,7 @@ const defaultWorkarea = {
     width: 6000,
   },
   bm1: {
+    boundary: { maxY: 2100, minY: 0, width: 3000 },
     expansion: [0, 0],
     height: 2100,
     maxY: 2100,
@@ -59,6 +61,7 @@ const defaultWorkarea = {
     width: 3000,
   },
   bm2: {
+    boundary: { maxY: 2400, minY: -400, width: 3600 },
     expansion: [400, 0],
     height: 2800,
     maxY: 2400,
@@ -67,6 +70,7 @@ const defaultWorkarea = {
     width: 3600,
   },
   bm2NoExpansion: {
+    boundary: { maxY: 2400, minY: 0, width: 3600 },
     expansion: [0, 0],
     height: 2400,
     maxY: 2400,
@@ -98,6 +102,11 @@ jest.mock('@core/helpers/eventEmitterFactory', () => ({
     registeredEvents[key] = {};
 
     return {
+      emit: (event: string, ...args: any[]) => {
+        if (registeredEvents[key][event]) {
+          registeredEvents[key][event](...args);
+        }
+      },
       on: (event: string, listener: any) => {
         registeredEvents[key][event] = listener;
       },
