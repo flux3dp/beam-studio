@@ -37,11 +37,6 @@ exports[`test ColorRatioBlock should render correctly 1`] = `
             />
           </div>
         </div>
-        <span
-          class="unit"
-        >
-          %
-        </span>
       </span>
     </div>
     <div
