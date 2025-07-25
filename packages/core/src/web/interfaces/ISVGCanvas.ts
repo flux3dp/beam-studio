@@ -37,7 +37,7 @@ export default interface ISVGCanvas {
   ): void;
   assignAttributes(element: Element, args: any): void;
   bind: (eventName: string, callback: ((win: any, elem: any) => void) | boolean) => void;
-  booleanOperationSelectedElements: (type: 'diff' | 'intersect' | 'union' | 'xor', isSubCmd?: boolean) => void;
+  booleanOperationSelectedElements: (type: 'diff' | 'intersect' | 'union' | 'xor', isSubCmd?: boolean) => IBatchCommand;
   calcElemFilledInfo: (elem: Element) => { isAllFilled: boolean; isAnyFilled: boolean };
   calculateTransformedBBox(elem: Element): IRect;
   call: (eventName: string, args?: any | SVGElement[]) => void;

@@ -20,6 +20,7 @@ import useI18n from '@core/helpers/useI18n';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './ObjectPanel.module.scss';
+import { convertAndBooleanOperate } from './utils/convertAndBooleanOperate';
 
 let svgCanvas: ISVGCanvas;
 let svgEditor: ISVGEditor;
@@ -46,24 +47,25 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
     const elems = elem.getAttribute('data-tempgroup') === 'true' ? (Array.from(elem.childNodes) as Element[]) : [elem];
 
     const allowBooleanOperations = (e: Element) => {
-      if (['ellipse', 'polygon', 'rect'].includes(e.tagName.toLowerCase())) {
-        return true;
-      }
+      const lowerCase = e.tagName.toLowerCase();
 
-      return e.tagName.toLowerCase() === 'path' && svgCanvas.isElemFillable(e);
+      return (
+        ['ellipse', 'polygon', 'rect', 'text'].includes(lowerCase) ||
+        (['path'].includes(lowerCase) && svgCanvas.isElemFillable(e))
+      );
     };
     const isSingleGroup = elems?.length === 1 && elems[0].tagName.toLowerCase() === 'g';
-    const isEveryElementAllowBooleanOperations = elems?.every(allowBooleanOperations);
+    const isAllowedBooleanOperate = elems?.every(allowBooleanOperations);
 
     return {
-      boolean: elems?.length > 1 && isEveryElementAllowBooleanOperations,
-      difference: elems?.length > 1 && isEveryElementAllowBooleanOperations,
+      boolean: elems?.length > 1 && isAllowedBooleanOperate,
+      difference: elems?.length > 1 && isAllowedBooleanOperate,
       dist: elems?.length > 2,
       group: !isSingleGroup || elems?.length > 1,
-      intersect: elems?.length > 1 && isEveryElementAllowBooleanOperations,
-      subtract: elems?.length === 2 && isEveryElementAllowBooleanOperations,
+      intersect: elems?.length > 1 && isAllowedBooleanOperate,
+      subtract: elems?.length === 2 && isAllowedBooleanOperate,
       ungroup: isSingleGroup && !elem.getAttribute('data-textpath-g') && !elem.getAttribute('data-pass-through'),
-      union: elems?.length > 1 && isEveryElementAllowBooleanOperations,
+      union: elems?.length > 1 && isAllowedBooleanOperate,
     };
   };
 
@@ -152,25 +154,25 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
               disabled: !buttonAvailability.union,
               icon: <ObjectPanelIcons.Union />,
               label: tObjectPanel.union,
-              onClick: () => svgCanvas.booleanOperationSelectedElements('union'),
+              onClick: async () => convertAndBooleanOperate({ element: elem as SVGGElement, operation: 'union' }),
             },
             {
               disabled: !buttonAvailability.subtract,
               icon: <ObjectPanelIcons.Subtract />,
               label: tObjectPanel.subtract,
-              onClick: () => svgCanvas.booleanOperationSelectedElements('diff'),
+              onClick: async () => convertAndBooleanOperate({ element: elem as SVGGElement, operation: 'diff' }),
             },
             {
               disabled: !buttonAvailability.intersect,
               icon: <ObjectPanelIcons.Intersect />,
               label: tObjectPanel.intersect,
-              onClick: () => svgCanvas.booleanOperationSelectedElements('intersect'),
+              onClick: async () => convertAndBooleanOperate({ element: elem as SVGGElement, operation: 'intersect' }),
             },
             {
               disabled: !buttonAvailability.difference,
               icon: <ObjectPanelIcons.Diff />,
               label: tObjectPanel.difference,
-              onClick: () => svgCanvas.booleanOperationSelectedElements('xor'),
+              onClick: async () => convertAndBooleanOperate({ element: elem as SVGGElement, operation: 'xor' }),
             },
           ]}
           content={<ObjectPanelIcons.Union />}
@@ -266,28 +268,28 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
                 tObjectPanel.union,
                 <ObjectPanelIcons.Union />,
                 !buttonAvailability.union,
-                () => svgCanvas.booleanOperationSelectedElements('union'),
+                async () => convertAndBooleanOperate({ element: elem as SVGGElement, operation: 'union' }),
                 'union',
               )}
               {renderToolBtn(
                 tObjectPanel.subtract,
                 <ObjectPanelIcons.Subtract />,
                 !buttonAvailability.subtract,
-                () => svgCanvas.booleanOperationSelectedElements('diff'),
+                async () => convertAndBooleanOperate({ element: elem as SVGGElement, operation: 'diff' }),
                 'subtract',
               )}
               {renderToolBtn(
                 tObjectPanel.intersect,
                 <ObjectPanelIcons.Intersect />,
                 !buttonAvailability.intersect,
-                () => svgCanvas.booleanOperationSelectedElements('intersect'),
+                async () => convertAndBooleanOperate({ element: elem as SVGGElement, operation: 'intersect' }),
                 'intersect',
               )}
               {renderToolBtn(
                 tObjectPanel.difference,
                 <ObjectPanelIcons.Diff />,
                 !buttonAvailability.difference,
-                () => svgCanvas.booleanOperationSelectedElements('xor'),
+                async () => convertAndBooleanOperate({ element: elem as SVGGElement, operation: 'xor' }),
                 'difference',
               )}
             </div>
