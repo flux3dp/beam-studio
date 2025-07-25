@@ -132,8 +132,7 @@ const fetchTaskCode = async (
     message: 'Spliting Full color layer',
   });
 
-  await updateImagesResolution();
-
+  const revertUpdateImagesResolution = await updateImagesResolution();
   const revertShapesToImage = await convertShapeToBitmap();
   const revertAnnotatePrintingColor = annotatePrintingColor();
   const revertTempSplitFullColorLayers = await tempSplitFullColorLayers();
@@ -141,6 +140,7 @@ const fetchTaskCode = async (
     revertTempSplitFullColorLayers();
     revertAnnotatePrintingColor();
     revertShapesToImage();
+    revertUpdateImagesResolution();
     await FontFuncs.revertTempConvert();
     SymbolMaker.switchImageSymbolForAll(true);
   };
@@ -530,11 +530,12 @@ export default {
 
     const { thumbnail, thumbnailBlobURL } = await generateThumbnail();
 
-    await updateImagesResolution();
+    const revertUpdateImagesResolution = await updateImagesResolution();
 
     const uploadFile = await generateUploadFile(thumbnail, thumbnailBlobURL);
 
     await FontFuncs.revertTempConvert();
+    revertUpdateImagesResolution();
 
     return { thumbnailBlobURL, uploadFile };
   },

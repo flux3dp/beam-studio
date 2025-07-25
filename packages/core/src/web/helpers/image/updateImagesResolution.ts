@@ -6,17 +6,20 @@ import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getAllLayers } from '@core/helpers/layer/layer-helper';
 import type { IImageDataResult } from '@core/interfaces/IImage';
 
+import updateImageDisplay from './updateImageDisplay';
+
 /**
- * updateImagesResolution update all images resolution for exporting or light weight display
- * @param fullResolution target resolution: full resolution if true, otherwise low resolution
+ * updateImagesResolution update all images resolution for exporting
+ * @returns a function to revert the changes
  */
-const updateImagesResolution = async (): Promise<void> => {
+const updateImagesResolution = async (): Promise<() => void> => {
   const allLayers = getAllLayers();
   const isImagesDownSamplingEnabled = beamboxPreference.read('image_downsampling');
   const engraveDpi = beamboxPreference.read('engrave_dpi');
   const isHighResolution = engraveDpi === 'high' || engraveDpi === 'ultra';
 
   const promises: Array<Promise<void>> = [];
+  const changedImages: SVGImageElement[] = [];
 
   allLayers.forEach((layer) => {
     const layerModule = getData(layer, 'module');
@@ -36,6 +39,7 @@ const updateImagesResolution = async (): Promise<void> => {
       const isShading = image.getAttribute('data-shading') === 'true';
       const threshold = Number.parseInt(image.getAttribute('data-threshold') || '128', 10);
 
+      changedImages.push(image as SVGImageElement);
       promises.push(
         new Promise<void>((resolve) => {
           imageData(origImage, {
@@ -59,6 +63,12 @@ const updateImagesResolution = async (): Promise<void> => {
   });
 
   await Promise.all(promises);
+
+  return () => {
+    changedImages.forEach((image) => {
+      updateImageDisplay(image);
+    });
+  };
 };
 
 export default updateImagesResolution;

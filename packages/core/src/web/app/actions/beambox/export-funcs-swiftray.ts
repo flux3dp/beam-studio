@@ -51,7 +51,6 @@ const generateUploadFile = async (thumbnail: string, thumbnailUrl: string): Prom
     id: 'retrieve-image-data',
     message: lang.beambox.bottom_right_panel.retreive_image_data,
   });
-  await updateImagesResolution();
   Progress.popById('retrieve-image-data');
 
   const svgString = svgCanvas.getSvgString({ fixTopExpansion: true });
@@ -236,6 +235,7 @@ const fetchTaskCodeSwiftray = async (
   });
 
   // Prepare for Printing task & clean up temp modification
+  const revertUpdateImagesResolution = await updateImagesResolution();
   const revertShapesToImage = await convertShapeToBitmap();
   const revertAnnotatePrintingColor = annotatePrintingColor();
   const revertTempSplitFullColorLayers = await tempSplitFullColorLayers();
@@ -245,6 +245,7 @@ const fetchTaskCodeSwiftray = async (
     revertTempSplitFullColorLayers();
     revertAnnotatePrintingColor();
     revertShapesToImage();
+    revertUpdateImagesResolution();
     await FontFuncs.revertTempConvert();
     SymbolMaker.switchImageSymbolForAll(true);
   };
