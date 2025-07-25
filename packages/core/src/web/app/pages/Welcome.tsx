@@ -82,7 +82,11 @@ const Welcome = (): ReactNode => {
 
   const fetchBanners = useCallback(async () => {
     try {
-      const resp = await axiosFluxId.get(`/api/beam-studio/banners?locale=${i18n.getActiveLang()}`);
+      let lang = i18n.getActiveLang();
+
+      if (lang === 'zh-tw' && !localeHelper.isTw) lang = 'en';
+
+      const resp = await axiosFluxId.get(`/api/beam-studio/banners?locale=${lang}`);
 
       if (resp.data.banners.length > 0) {
         setBanners(resp.data.banners);

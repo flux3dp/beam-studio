@@ -2049,7 +2049,7 @@ const lang: ILang = {
       export_UV_print: 'UV印刷PDF',
       file: 'ファイル',
       fit_to_window: 'ウィンドウサイズに合わせる',
-      follow_us: '公式SNS',
+      follow_us: 'フォロー',
       forum: 'コミュニティフォーラム',
       group: 'グループ化',
       help: 'ヘルプ',

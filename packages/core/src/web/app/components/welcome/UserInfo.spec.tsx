@@ -68,7 +68,7 @@ describe('test UserInfo', () => {
 
     expect(container).toMatchSnapshot();
 
-    fireEvent.click(getByText('Log in or Register'));
+    fireEvent.click(getByText('Log in or Sign Up'));
     expect(mockShowLoginDialog).toHaveBeenCalled();
   });
 });
