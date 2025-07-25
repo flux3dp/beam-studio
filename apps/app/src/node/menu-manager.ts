@@ -55,13 +55,13 @@ function buildOSXAppMenu(callback: (data: MenuData) => void) {
 }
 
 function buildAccountMenuItems(callback: (data: MenuData) => void, accInfo: null | { email: string }) {
-  const signoutLabel = accInfo ? `${r.sign_out} (${accInfo.email})` : r.sign_out;
+  const signoutLabel = accInfo ? `${r.logout} (${accInfo.email})` : r.logout;
 
   return [
     {
       click: callback,
       id: 'SIGN_IN',
-      label: r.sign_in,
+      label: r.login_or_register,
       visible: !accInfo,
     },
     {

@@ -7,7 +7,7 @@ exports[`test FluxCredit should render correctly 1`] = `
       class="content"
     >
       <img
-        alt="You’re signed in."
+        alt="Logged in"
         src="core-img/flux-plus/man-high-five.jpg"
       />
       <div
@@ -16,7 +16,7 @@ exports[`test FluxCredit should render correctly 1`] = `
         <div
           class="title"
         >
-          You’re signed in.
+          Logged in
         </div>
         <div
           class="subtitle"
@@ -122,7 +122,7 @@ exports[`test FluxCredit should render correctly 1`] = `
             type="button"
           >
             <span>
-              Sign Out
+              Log out
             </span>
           </button>
         </div>
@@ -144,7 +144,7 @@ exports[`test FluxCredit should render correctly without user detail 1`] = `
         <div
           class="title"
         >
-          You’re signed in.
+          Logged in
         </div>
         <div
           class="subtitle"
@@ -219,7 +219,7 @@ exports[`test FluxCredit should render correctly without user detail 1`] = `
             type="button"
           >
             <span>
-              Sign Out
+              Log out
             </span>
           </button>
         </div>

@@ -28,7 +28,10 @@ interface Props {
 }
 
 const FluxIdLogin = ({ onClose, silent }: Props): React.JSX.Element => {
-  const lang = useI18n().flux_id_login;
+  const {
+    flux_id_login: lang,
+    topbar: { menu: tMenu },
+  } = useI18n();
 
   const emailInput = useRef<InputRef>(null);
   const passwordInput = useRef<InputRef>(null);
@@ -96,7 +99,7 @@ const FluxIdLogin = ({ onClose, silent }: Props): React.JSX.Element => {
   return (
     <FluxPlusModal className={styles['flux-login']} hideMobileBanner onClose={onClose}>
       <>
-        <div className={styles.title}>{lang.login}</div>
+        <div className={styles.title}>{tMenu.login_or_register}</div>
         {renderOAuthContent()}
         <Divider>or</Divider>
         <Form className={styles['login-inputs']}>

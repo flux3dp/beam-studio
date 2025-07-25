@@ -45,7 +45,7 @@ describe('test UserInfo', () => {
 
     expect(container).toMatchSnapshot();
 
-    fireEvent.click(getByText('Sign Out'));
+    fireEvent.click(getByText('Log out'));
     expect(mockSignOut).toHaveBeenCalled();
 
     fireEvent.click(getByText('Member Center'));
@@ -68,7 +68,7 @@ describe('test UserInfo', () => {
 
     expect(container).toMatchSnapshot();
 
-    fireEvent.click(getByText('Sign In'));
+    fireEvent.click(getByText('Log in or Register'));
     expect(mockShowLoginDialog).toHaveBeenCalled();
   });
 });
