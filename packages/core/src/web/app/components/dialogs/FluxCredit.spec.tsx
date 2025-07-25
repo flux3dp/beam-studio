@@ -18,26 +18,6 @@ jest.mock('@core/implementations/browser', () => ({
   open: (...args) => open(...args),
 }));
 
-jest.mock('@core/helpers/useI18n', () => () => ({
-  flux_id_login: {
-    email: 'Email',
-    flux_plus: {
-      ai_credit_tooltip: 'For AI background removal',
-      explore_plans: 'Explore FLUX+ Plans',
-      flux_credit_tooltip: 'For DMKT designs and AI background removal',
-      goto_member_center: 'Go to Member Center',
-      member_center_url: 'https://member_center_url',
-      thank_you: 'Thanks for being a valued member!',
-    },
-    login_success: 'You’re signed in.',
-  },
-  topbar: {
-    menu: {
-      sign_out: 'Sign Out',
-    },
-  },
-}));
-
 jest.mock('./FluxPlusModal', () => 'mock-FluxPlusModal');
 
 const getCurrentUser = jest.fn();
@@ -72,9 +52,9 @@ describe('test FluxCredit', () => {
 
     fireEvent.click(getByText('Go to Member Center'));
     expect(open).toBeCalledTimes(1);
-    expect(open).toBeCalledWith('https://member_center_url');
+    expect(open).toBeCalledWith('https://member.flux3dp.com/en-US/subscription');
 
-    fireEvent.click(getByText('Sign Out'));
+    fireEvent.click(getByText('Log out'));
     expect(signOut).toBeCalledTimes(1);
     waitFor(() => expect(onClose).toBeCalledTimes(1));
   });

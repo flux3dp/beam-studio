@@ -38,7 +38,7 @@ exports[`test UserInfo should render correctly 1`] = `
         type="button"
       >
         <span>
-          Sign Out
+          Log out
         </span>
       </button>
       <button
@@ -87,7 +87,7 @@ exports[`test UserInfo should render correctly in mobile 1`] = `
         type="button"
       >
         <span>
-          Sign Out
+          Log out
         </span>
       </button>
       <button
@@ -131,7 +131,7 @@ exports[`test UserInfo should render correctly when not login 1`] = `
       type="button"
     >
       <span>
-        Sign In
+        Log in or Register
       </span>
     </button>
   </div>

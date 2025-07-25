@@ -2099,6 +2099,8 @@ export interface ILang {
         usb: string;
         usblist: string;
       };
+      login_or_register: string;
+      logout: string;
       machine_info: string;
       machines: string;
       manage_account: string;
@@ -2136,8 +2138,6 @@ export interface ILang {
       show_rulers: string;
       show_start_tutorial: string;
       show_ui_intro: string;
-      sign_in: string;
-      sign_out: string;
       software_update: string;
       svg_edit: string;
       switch_to_beta: string;

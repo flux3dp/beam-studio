@@ -119,7 +119,7 @@ exports[`should render correctly already signed in 1`] = `
             role="menuitem"
             tabindex="-1"
           >
-            Sign Out (tester@flux3dp.com)
+            Log out (tester@flux3dp.com)
           </li>
           <li
             class="rc-menu__item"

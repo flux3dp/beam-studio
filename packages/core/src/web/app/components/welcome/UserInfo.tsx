@@ -47,7 +47,7 @@ const UserInfo = ({ user }: Props): ReactNode => {
           {!isMobile && <div className={styles.email}>{user.email}</div>}
           <Flex gap={8}>
             <Button block onClick={signOut} size="small" type="default">
-              {tMenu.sign_out}
+              {tMenu.logout}
             </Button>
             <ThemedButton block onClick={() => browser.open(t.member_center_url)} size="small" theme="yellow">
               {t.member_center}
@@ -56,7 +56,7 @@ const UserInfo = ({ user }: Props): ReactNode => {
         </>
       ) : (
         <ThemedButton block onClick={() => dialogCaller.showLoginDialog()} theme="yellow">
-          {tMenu.sign_in}
+          {tMenu.login_or_register}
         </ThemedButton>
       )}
     </div>

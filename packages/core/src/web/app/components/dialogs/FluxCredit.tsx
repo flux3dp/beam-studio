@@ -68,7 +68,7 @@ const FluxCredit = ({ onClose }: Props): React.JSX.Element => {
             }}
             type="default"
           >
-            {LANG.topbar.menu.sign_out}
+            {LANG.topbar.menu.logout}
           </Button>
         </Space>
       </div>

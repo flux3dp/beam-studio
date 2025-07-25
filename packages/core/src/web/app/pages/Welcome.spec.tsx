@@ -51,6 +51,8 @@ const mockIsWeb = jest.fn();
 
 jest.mock('@core/helpers/is-web', () => mockIsWeb);
 
+jest.mock('@core/helpers/locale-helper', () => ({ isNorthAmerica: true, isTw: false }));
+
 const mockUseIsMobile = jest.fn();
 
 jest.mock('@core/helpers/system-helper', () => ({

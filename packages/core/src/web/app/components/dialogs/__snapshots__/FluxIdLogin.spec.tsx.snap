@@ -10,7 +10,7 @@ exports[`should render correctly desktop version 1`] = `
       <div
         class="title"
       >
-        Sign In
+        Log in or Register
       </div>
       <div
         class="oauth"
@@ -155,7 +155,7 @@ exports[`should render correctly desktop version 1`] = `
             type="button"
           >
             <span>
-              Sign In
+              Log in
             </span>
           </button>
         </div>
@@ -198,7 +198,7 @@ exports[`should render correctly desktop version 2`] = `
       <div
         class="title"
       >
-        Sign In
+        Log in or Register
       </div>
       <div
         class="oauth"
@@ -343,7 +343,7 @@ exports[`should render correctly desktop version 2`] = `
             type="button"
           >
             <span>
-              Sign In
+              Log in
             </span>
           </button>
         </div>
@@ -386,7 +386,7 @@ exports[`should render correctly mobile version 1`] = `
       <div
         class="title"
       >
-        Sign In
+        Log in or Register
       </div>
       <div
         class="oauth"
@@ -531,7 +531,7 @@ exports[`should render correctly mobile version 1`] = `
             type="button"
           >
             <span>
-              Sign In
+              Log in
             </span>
           </button>
         </div>
@@ -577,7 +577,7 @@ exports[`should render correctly web version 1`] = `
       <div
         class="title"
       >
-        Sign In
+        Log in or Register
       </div>
       <div
         class="oauth"
@@ -722,7 +722,7 @@ exports[`should render correctly web version 1`] = `
             type="button"
           >
             <span>
-              Sign In
+              Log in
             </span>
           </button>
         </div>

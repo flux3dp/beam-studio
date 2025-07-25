@@ -29,6 +29,13 @@ const detectNorthAmerica = detectLocale(
 );
 const isNorthAmerica = detectNorthAmerica();
 
+const detectTw = detectLocale(
+  (schema) => schema.region === 'TW',
+  // UTC+8 timezone
+  (timezoneOffset) => timezoneOffset === -480,
+);
+const isTw = detectTw();
+
 const detectTwOrHk = detectLocale(
   (schema) => schema.region === 'TW' || schema.region === 'HK',
   // UTC+8 timezone
@@ -102,6 +109,7 @@ export default {
   detectMy,
   detectNorthAmerica,
   detectPs,
+  detectTw,
   detectTwOrHk,
   getRegion,
   isJp,
@@ -109,5 +117,6 @@ export default {
   isMy,
   isNorthAmerica,
   isPs,
+  isTw,
   isTwOrHk,
 };
