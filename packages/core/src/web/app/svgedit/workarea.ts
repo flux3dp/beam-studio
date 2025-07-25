@@ -43,6 +43,10 @@ class WorkareaManager {
    * (px) The maximum Y coordinate of the work area
    */
   maxY = 2100;
+  /**
+   * (px) The boundary of the work area, used for alignment
+   */
+  boundary = { maxX: 3000, maxY: 2100, minX: 0, minY: 0 };
 
   zoomRatio = 1;
   canvasExpansion = 3; // extra space
@@ -112,6 +116,10 @@ class WorkareaManager {
 
     this.minY = -this.expansion[0];
     this.maxY = this.height - this.expansion[0];
+    this.boundary.maxY = this.maxY;
+    this.boundary.minY = this.minY;
+    this.boundary.maxX = this.width;
+    this.boundary.minX = 0;
 
     const svgcontent = document.getElementById('svgcontent');
     const fixedSizeSvg = document.getElementById('fixedSizeSvg');
@@ -195,10 +203,7 @@ class WorkareaManager {
     }
 
     if (workareaElem) {
-      staticPoint = staticPoint ?? {
-        x: workareaElem.clientWidth / 2,
-        y: workareaElem.clientHeight / 2,
-      };
+      staticPoint = staticPoint ?? { x: workareaElem.clientWidth / 2, y: workareaElem.clientHeight / 2 };
 
       const oldScroll = { x: workareaElem.scrollLeft, y: workareaElem.scrollTop };
       const zoomChanged = targetZoom / oldZoomRatio;

@@ -168,32 +168,35 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   const WORKAREA_ALIGN_POINTS = Array.of<IPoint>();
   const updateWorkAreaAlignPoints = () => {
     const levels = [0, 0.5, 1];
-    const { maxY, minY, width } = workareaManager;
+    const {
+      boundary: { maxX, maxY, minX, minY },
+    } = workareaManager;
     const withNegativeY = minY < 0;
+    const width = maxX - minX;
 
     WORKAREA_ALIGN_POINTS.length = 0;
 
     for (const level of levels) {
+      const x = minX + width * level;
+
       for (const level2 of levels) {
-        if (level === 0.5 && level2 === 0.5) continue;
+        if ((level === 0.5 && level2 === 0.5) || (withNegativeY && level === 0.5 && level2 === 0)) continue;
 
-        if (withNegativeY && level === 0.5 && level2 === 0) continue;
-
-        WORKAREA_ALIGN_POINTS.push({ x: width * level, y: maxY * level2 });
+        WORKAREA_ALIGN_POINTS.push({ x, y: maxY * level2 });
       }
 
       if (withNegativeY) {
-        WORKAREA_ALIGN_POINTS.push({ x: width * level, y: minY });
+        WORKAREA_ALIGN_POINTS.push({ x, y: minY });
       }
     }
 
     if (withNegativeY) {
-      WORKAREA_ALIGN_POINTS.push({ x: 0, y: (maxY + minY) / 2 });
-      WORKAREA_ALIGN_POINTS.push({ x: width, y: (maxY + minY) / 2 });
+      WORKAREA_ALIGN_POINTS.push({ x: minX, y: (maxY + minY) / 2 });
+      WORKAREA_ALIGN_POINTS.push({ x: maxX, y: (maxY + minY) / 2 });
     }
   };
 
-  canvasEventEmitter.on('document-settings-saved', () => {
+  canvasEventEmitter.on('boundary-updated', () => {
     updateWorkAreaAlignPoints();
     clearSelection();
   });
@@ -5658,10 +5661,14 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     } // loop for each element to find the bbox and adjust min/max
 
     if (relativeTo === 'page') {
-      minx = 0;
-      miny = workareaManager.minY;
-      maxx = workareaManager.width;
-      maxy = workareaManager.maxY;
+      const {
+        boundary: { maxX, maxY, minX, minY },
+      } = workareaManager;
+
+      minx = minX;
+      miny = minY;
+      maxx = maxX;
+      maxy = maxY;
     }
 
     var dx = new Array(len);
