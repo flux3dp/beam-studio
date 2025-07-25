@@ -30,6 +30,10 @@ export const convertElementsToPathInTempGroup = async ({
   const childrenList = [...Array.from(children)];
   const [textList, otherList] = partition(childrenList, ({ tagName }) => tagName === 'text');
 
+  if (textList.length === 0) {
+    return [element];
+  }
+
   svgCanvas.ungroupTempGroup(element);
 
   const convertResult = await Promise.all(
