@@ -1,0 +1,939 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test ColorAdvancedSetting should handle color curve initialization 1`] = `
+<body>
+  <div />
+  <div>
+    <div
+      class="ant-modal-root css-dev-only-do-not-override-hash"
+    >
+      <div
+        class="ant-modal-mask"
+      />
+      <div
+        class="ant-modal-wrap ant-modal-centered"
+        tabindex="-1"
+      >
+        <div
+          aria-labelledby="test-id"
+          aria-modal="true"
+          class="ant-modal css-dev-only-do-not-override-hash ant-zoom-appear ant-zoom-appear-prepare ant-zoom"
+          role="dialog"
+          style="width: 0px;"
+        >
+          <div
+            style="outline: none;"
+            tabindex="0"
+          >
+            <div
+              class="react-draggable"
+              style="min-width: 600px; transform: translate(0px, 0px)translate(0px,0px);"
+            >
+              <div
+                class="ant-modal-content"
+              >
+                <button
+                  aria-label="Close"
+                  class="ant-modal-close"
+                  type="button"
+                >
+                  <span
+                    class="ant-modal-close-x"
+                  >
+                    <span
+                      aria-label="close"
+                      class="anticon anticon-close ant-modal-close-icon"
+                      role="img"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        data-icon="close"
+                        fill="currentColor"
+                        fill-rule="evenodd"
+                        focusable="false"
+                        height="1em"
+                        viewBox="64 64 896 896"
+                        width="1em"
+                      >
+                        <path
+                          d="M799.86 166.31c.02 0 .04.02.08.06l57.69 57.7c.04.03.05.05.06.08a.12.12 0 010 .06c0 .03-.02.05-.06.09L569.93 512l287.7 287.7c.04.04.05.06.06.09a.12.12 0 010 .07c0 .02-.02.04-.06.08l-57.7 57.69c-.03.04-.05.05-.07.06a.12.12 0 01-.07 0c-.03 0-.05-.02-.09-.06L512 569.93l-287.7 287.7c-.04.04-.06.05-.09.06a.12.12 0 01-.07 0c-.02 0-.04-.02-.08-.06l-57.69-57.7c-.04-.03-.05-.05-.06-.07a.12.12 0 010-.07c0-.03.02-.05.06-.09L454.07 512l-287.7-287.7c-.04-.04-.05-.06-.06-.09a.12.12 0 010-.07c0-.02.02-.04.06-.08l57.7-57.69c.03-.04.05-.05.07-.06a.12.12 0 01.07 0c.03 0 .05.02.09.06L512 454.07l287.7-287.7c.04-.04.06-.05.09-.06a.12.12 0 01.07 0z"
+                        />
+                      </svg>
+                    </span>
+                  </span>
+                </button>
+                <div
+                  class="ant-modal-header"
+                >
+                  <div
+                    class="ant-modal-title"
+                    id="test-id"
+                  >
+                    <div
+                      style="cursor: move; width: 100%;"
+                    >
+                      Color Advanced Settings
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="ant-modal-body"
+                >
+                  <div
+                    class="ant-row css-dev-only-do-not-override-hash"
+                    style="margin-left: -5px; margin-right: -5px; row-gap: 0;"
+                  >
+                    <div
+                      class="ant-col ant-col-24 css-dev-only-do-not-override-hash"
+                      style="padding-left: 5px; padding-right: 5px;"
+                    >
+                      <div
+                        class="title"
+                      >
+                        Am Angles
+                      </div>
+                    </div>
+                    <div
+                      class="ant-col ant-col-12 css-dev-only-do-not-override-hash"
+                      style="padding-left: 5px; padding-right: 5px;"
+                    >
+                      <div>
+                        Mock ModalBlock
+                        <p>
+                          Color: 
+                          c
+                        </p>
+                        <p>
+                          Label: 
+                          C angle
+                        </p>
+                        <p>
+                          Unit: 
+                          °
+                        </p>
+                        <p>
+                          Value: 
+                          75
+                        </p>
+                        <button
+                          id="modal-block-increase-c"
+                        />
+                      </div>
+                    </div>
+                    <div
+                      class="ant-col ant-col-12 css-dev-only-do-not-override-hash"
+                      style="padding-left: 5px; padding-right: 5px;"
+                    >
+                      <div>
+                        Mock ModalBlock
+                        <p>
+                          Color: 
+                          m
+                        </p>
+                        <p>
+                          Label: 
+                          M angle
+                        </p>
+                        <p>
+                          Unit: 
+                          °
+                        </p>
+                        <p>
+                          Value: 
+                          45
+                        </p>
+                        <button
+                          id="modal-block-increase-m"
+                        />
+                      </div>
+                    </div>
+                    <div
+                      class="ant-col ant-col-12 css-dev-only-do-not-override-hash"
+                      style="padding-left: 5px; padding-right: 5px;"
+                    >
+                      <div>
+                        Mock ModalBlock
+                        <p>
+                          Color: 
+                          y
+                        </p>
+                        <p>
+                          Label: 
+                          Y angle
+                        </p>
+                        <p>
+                          Unit: 
+                          °
+                        </p>
+                        <p>
+                          Value: 
+                          90
+                        </p>
+                        <button
+                          id="modal-block-increase-y"
+                        />
+                      </div>
+                    </div>
+                    <div
+                      class="ant-col ant-col-12 css-dev-only-do-not-override-hash"
+                      style="padding-left: 5px; padding-right: 5px;"
+                    >
+                      <div>
+                        Mock ModalBlock
+                        <p>
+                          Color: 
+                          k
+                        </p>
+                        <p>
+                          Label: 
+                          K angle
+                        </p>
+                        <p>
+                          Unit: 
+                          °
+                        </p>
+                        <p>
+                          Value: 
+                          15
+                        </p>
+                        <button
+                          id="modal-block-increase-k"
+                        />
+                      </div>
+                    </div>
+                    <div
+                      class="ant-col ant-col-24 css-dev-only-do-not-override-hash"
+                      style="padding-left: 5px; padding-right: 5px;"
+                    >
+                      <div
+                        class="title"
+                      >
+                        Color Curves
+                      </div>
+                    </div>
+                    <div
+                      class="ant-col ant-col-12 css-dev-only-do-not-override-hash"
+                      style="padding-left: 5px; padding-right: 5px;"
+                    >
+                      <div>
+                        Mock ColorCurveControl
+                        <p>
+                          Color: 
+                          c
+                        </p>
+                        <p>
+                          Title: 
+                          C Color Curve
+                        </p>
+                        <p>
+                          Value: 
+                          [0,88,170,229,255]
+                        </p>
+                        <button
+                          id="color-curve-control-set-value-c"
+                        />
+                      </div>
+                    </div>
+                    <div
+                      class="ant-col ant-col-12 css-dev-only-do-not-override-hash"
+                      style="padding-left: 5px; padding-right: 5px;"
+                    >
+                      <div>
+                        Mock ColorCurveControl
+                        <p>
+                          Color: 
+                          m
+                        </p>
+                        <p>
+                          Title: 
+                          M Color Curve
+                        </p>
+                        <p>
+                          Value: 
+                          [0,90,149,204,241]
+                        </p>
+                        <button
+                          id="color-curve-control-set-value-m"
+                        />
+                      </div>
+                    </div>
+                    <div
+                      class="ant-col ant-col-12 css-dev-only-do-not-override-hash"
+                      style="padding-left: 5px; padding-right: 5px;"
+                    >
+                      <div>
+                        Mock ColorCurveControl
+                        <p>
+                          Color: 
+                          y
+                        </p>
+                        <p>
+                          Title: 
+                          Y Color Curve
+                        </p>
+                        <p>
+                          Value: 
+                          [0,96,147,186,249]
+                        </p>
+                        <button
+                          id="color-curve-control-set-value-y"
+                        />
+                      </div>
+                    </div>
+                    <div
+                      class="ant-col ant-col-12 css-dev-only-do-not-override-hash"
+                      style="padding-left: 5px; padding-right: 5px;"
+                    >
+                      <div>
+                        Mock ColorCurveControl
+                        <p>
+                          Color: 
+                          k
+                        </p>
+                        <p>
+                          Title: 
+                          K Color Curve
+                        </p>
+                        <p>
+                          Value: 
+                          [0,60,109,163,207]
+                        </p>
+                        <button
+                          id="color-curve-control-set-value-k"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="ant-modal-footer"
+                >
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined"
+                    type="button"
+                  >
+                    <span>
+                      Cancel
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid"
+                    type="button"
+                  >
+                    <span>
+                      OK
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            style="width: 0px; height: 0px; overflow: hidden; outline: none;"
+            tabindex="0"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`test ColorAdvancedSetting should render correctly with default values 1`] = `
+<body>
+  <div />
+  <div>
+    <div
+      class="ant-modal-root css-dev-only-do-not-override-hash"
+    >
+      <div
+        class="ant-modal-mask"
+      />
+      <div
+        class="ant-modal-wrap ant-modal-centered"
+        tabindex="-1"
+      >
+        <div
+          aria-labelledby="test-id"
+          aria-modal="true"
+          class="ant-modal css-dev-only-do-not-override-hash ant-zoom-appear ant-zoom-appear-prepare ant-zoom"
+          role="dialog"
+          style="width: 0px;"
+        >
+          <div
+            style="outline: none;"
+            tabindex="0"
+          >
+            <div
+              class="react-draggable"
+              style="min-width: 600px; transform: translate(0px, 0px)translate(0px,0px);"
+            >
+              <div
+                class="ant-modal-content"
+              >
+                <button
+                  aria-label="Close"
+                  class="ant-modal-close"
+                  type="button"
+                >
+                  <span
+                    class="ant-modal-close-x"
+                  >
+                    <span
+                      aria-label="close"
+                      class="anticon anticon-close ant-modal-close-icon"
+                      role="img"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        data-icon="close"
+                        fill="currentColor"
+                        fill-rule="evenodd"
+                        focusable="false"
+                        height="1em"
+                        viewBox="64 64 896 896"
+                        width="1em"
+                      >
+                        <path
+                          d="M799.86 166.31c.02 0 .04.02.08.06l57.69 57.7c.04.03.05.05.06.08a.12.12 0 010 .06c0 .03-.02.05-.06.09L569.93 512l287.7 287.7c.04.04.05.06.06.09a.12.12 0 010 .07c0 .02-.02.04-.06.08l-57.7 57.69c-.03.04-.05.05-.07.06a.12.12 0 01-.07 0c-.03 0-.05-.02-.09-.06L512 569.93l-287.7 287.7c-.04.04-.06.05-.09.06a.12.12 0 01-.07 0c-.02 0-.04-.02-.08-.06l-57.69-57.7c-.04-.03-.05-.05-.06-.07a.12.12 0 010-.07c0-.03.02-.05.06-.09L454.07 512l-287.7-287.7c-.04-.04-.05-.06-.06-.09a.12.12 0 010-.07c0-.02.02-.04.06-.08l57.7-57.69c.03-.04.05-.05.07-.06a.12.12 0 01.07 0c.03 0 .05.02.09.06L512 454.07l287.7-287.7c.04-.04.06-.05.09-.06a.12.12 0 01.07 0z"
+                        />
+                      </svg>
+                    </span>
+                  </span>
+                </button>
+                <div
+                  class="ant-modal-header"
+                >
+                  <div
+                    class="ant-modal-title"
+                    id="test-id"
+                  >
+                    <div
+                      style="cursor: move; width: 100%;"
+                    >
+                      Color Advanced Settings
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="ant-modal-body"
+                >
+                  <div
+                    class="ant-row css-dev-only-do-not-override-hash"
+                    style="margin-left: -5px; margin-right: -5px; row-gap: 0;"
+                  >
+                    <div
+                      class="ant-col ant-col-24 css-dev-only-do-not-override-hash"
+                      style="padding-left: 5px; padding-right: 5px;"
+                    >
+                      <div
+                        class="title"
+                      >
+                        Am Angles
+                      </div>
+                    </div>
+                    <div
+                      class="ant-col ant-col-12 css-dev-only-do-not-override-hash"
+                      style="padding-left: 5px; padding-right: 5px;"
+                    >
+                      <div>
+                        Mock ModalBlock
+                        <p>
+                          Color: 
+                          c
+                        </p>
+                        <p>
+                          Label: 
+                          C angle
+                        </p>
+                        <p>
+                          Unit: 
+                          °
+                        </p>
+                        <p>
+                          Value: 
+                          75
+                        </p>
+                        <button
+                          id="modal-block-increase-c"
+                        />
+                      </div>
+                    </div>
+                    <div
+                      class="ant-col ant-col-12 css-dev-only-do-not-override-hash"
+                      style="padding-left: 5px; padding-right: 5px;"
+                    >
+                      <div>
+                        Mock ModalBlock
+                        <p>
+                          Color: 
+                          m
+                        </p>
+                        <p>
+                          Label: 
+                          M angle
+                        </p>
+                        <p>
+                          Unit: 
+                          °
+                        </p>
+                        <p>
+                          Value: 
+                          45
+                        </p>
+                        <button
+                          id="modal-block-increase-m"
+                        />
+                      </div>
+                    </div>
+                    <div
+                      class="ant-col ant-col-12 css-dev-only-do-not-override-hash"
+                      style="padding-left: 5px; padding-right: 5px;"
+                    >
+                      <div>
+                        Mock ModalBlock
+                        <p>
+                          Color: 
+                          y
+                        </p>
+                        <p>
+                          Label: 
+                          Y angle
+                        </p>
+                        <p>
+                          Unit: 
+                          °
+                        </p>
+                        <p>
+                          Value: 
+                          90
+                        </p>
+                        <button
+                          id="modal-block-increase-y"
+                        />
+                      </div>
+                    </div>
+                    <div
+                      class="ant-col ant-col-12 css-dev-only-do-not-override-hash"
+                      style="padding-left: 5px; padding-right: 5px;"
+                    >
+                      <div>
+                        Mock ModalBlock
+                        <p>
+                          Color: 
+                          k
+                        </p>
+                        <p>
+                          Label: 
+                          K angle
+                        </p>
+                        <p>
+                          Unit: 
+                          °
+                        </p>
+                        <p>
+                          Value: 
+                          15
+                        </p>
+                        <button
+                          id="modal-block-increase-k"
+                        />
+                      </div>
+                    </div>
+                    <div
+                      class="ant-col ant-col-24 css-dev-only-do-not-override-hash"
+                      style="padding-left: 5px; padding-right: 5px;"
+                    >
+                      <div
+                        class="title"
+                      >
+                        Color Curves
+                      </div>
+                    </div>
+                    <div
+                      class="ant-col ant-col-24 css-dev-only-do-not-override-hash"
+                      style="padding-left: 5px; padding-right: 5px;"
+                    >
+                      <button
+                        class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-primary ant-btn-variant-outlined"
+                        type="button"
+                      >
+                        <span>
+                          + Color Curve
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="ant-modal-footer"
+                >
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined"
+                    type="button"
+                  >
+                    <span>
+                      Cancel
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid"
+                    type="button"
+                  >
+                    <span>
+                      OK
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            style="width: 0px; height: 0px; overflow: hidden; outline: none;"
+            tabindex="0"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`test ColorAdvancedSetting should render correctly with set values 1`] = `
+<body>
+  <div />
+  <div>
+    <div
+      class="ant-modal-root css-dev-only-do-not-override-hash"
+    >
+      <div
+        class="ant-modal-mask"
+      />
+      <div
+        class="ant-modal-wrap ant-modal-centered"
+        tabindex="-1"
+      >
+        <div
+          aria-labelledby="test-id"
+          aria-modal="true"
+          class="ant-modal css-dev-only-do-not-override-hash ant-zoom-appear ant-zoom-appear-prepare ant-zoom"
+          role="dialog"
+          style="width: 0px;"
+        >
+          <div
+            style="outline: none;"
+            tabindex="0"
+          >
+            <div
+              class="react-draggable"
+              style="min-width: 600px; transform: translate(0px, 0px)translate(0px,0px);"
+            >
+              <div
+                class="ant-modal-content"
+              >
+                <button
+                  aria-label="Close"
+                  class="ant-modal-close"
+                  type="button"
+                >
+                  <span
+                    class="ant-modal-close-x"
+                  >
+                    <span
+                      aria-label="close"
+                      class="anticon anticon-close ant-modal-close-icon"
+                      role="img"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        data-icon="close"
+                        fill="currentColor"
+                        fill-rule="evenodd"
+                        focusable="false"
+                        height="1em"
+                        viewBox="64 64 896 896"
+                        width="1em"
+                      >
+                        <path
+                          d="M799.86 166.31c.02 0 .04.02.08.06l57.69 57.7c.04.03.05.05.06.08a.12.12 0 010 .06c0 .03-.02.05-.06.09L569.93 512l287.7 287.7c.04.04.05.06.06.09a.12.12 0 010 .07c0 .02-.02.04-.06.08l-57.7 57.69c-.03.04-.05.05-.07.06a.12.12 0 01-.07 0c-.03 0-.05-.02-.09-.06L512 569.93l-287.7 287.7c-.04.04-.06.05-.09.06a.12.12 0 01-.07 0c-.02 0-.04-.02-.08-.06l-57.69-57.7c-.04-.03-.05-.05-.06-.07a.12.12 0 010-.07c0-.03.02-.05.06-.09L454.07 512l-287.7-287.7c-.04-.04-.05-.06-.06-.09a.12.12 0 010-.07c0-.02.02-.04.06-.08l57.7-57.69c.03-.04.05-.05.07-.06a.12.12 0 01.07 0c.03 0 .05.02.09.06L512 454.07l287.7-287.7c.04-.04.06-.05.09-.06a.12.12 0 01.07 0z"
+                        />
+                      </svg>
+                    </span>
+                  </span>
+                </button>
+                <div
+                  class="ant-modal-header"
+                >
+                  <div
+                    class="ant-modal-title"
+                    id="test-id"
+                  >
+                    <div
+                      style="cursor: move; width: 100%;"
+                    >
+                      Color Advanced Settings
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="ant-modal-body"
+                >
+                  <div
+                    class="ant-row css-dev-only-do-not-override-hash"
+                    style="margin-left: -5px; margin-right: -5px; row-gap: 0;"
+                  >
+                    <div
+                      class="ant-col ant-col-24 css-dev-only-do-not-override-hash"
+                      style="padding-left: 5px; padding-right: 5px;"
+                    >
+                      <div
+                        class="title"
+                      >
+                        Am Angles
+                      </div>
+                    </div>
+                    <div
+                      class="ant-col ant-col-12 css-dev-only-do-not-override-hash"
+                      style="padding-left: 5px; padding-right: 5px;"
+                    >
+                      <div>
+                        Mock ModalBlock
+                        <p>
+                          Color: 
+                          c
+                        </p>
+                        <p>
+                          Label: 
+                          C angle
+                        </p>
+                        <p>
+                          Unit: 
+                          °
+                        </p>
+                        <p>
+                          Value: 
+                          1
+                        </p>
+                        <button
+                          id="modal-block-increase-c"
+                        />
+                      </div>
+                    </div>
+                    <div
+                      class="ant-col ant-col-12 css-dev-only-do-not-override-hash"
+                      style="padding-left: 5px; padding-right: 5px;"
+                    >
+                      <div>
+                        Mock ModalBlock
+                        <p>
+                          Color: 
+                          m
+                        </p>
+                        <p>
+                          Label: 
+                          M angle
+                        </p>
+                        <p>
+                          Unit: 
+                          °
+                        </p>
+                        <p>
+                          Value: 
+                          3
+                        </p>
+                        <button
+                          id="modal-block-increase-m"
+                        />
+                      </div>
+                    </div>
+                    <div
+                      class="ant-col ant-col-12 css-dev-only-do-not-override-hash"
+                      style="padding-left: 5px; padding-right: 5px;"
+                    >
+                      <div>
+                        Mock ModalBlock
+                        <p>
+                          Color: 
+                          y
+                        </p>
+                        <p>
+                          Label: 
+                          Y angle
+                        </p>
+                        <p>
+                          Unit: 
+                          °
+                        </p>
+                        <p>
+                          Value: 
+                          4
+                        </p>
+                        <button
+                          id="modal-block-increase-y"
+                        />
+                      </div>
+                    </div>
+                    <div
+                      class="ant-col ant-col-12 css-dev-only-do-not-override-hash"
+                      style="padding-left: 5px; padding-right: 5px;"
+                    >
+                      <div>
+                        Mock ModalBlock
+                        <p>
+                          Color: 
+                          k
+                        </p>
+                        <p>
+                          Label: 
+                          K angle
+                        </p>
+                        <p>
+                          Unit: 
+                          °
+                        </p>
+                        <p>
+                          Value: 
+                          2
+                        </p>
+                        <button
+                          id="modal-block-increase-k"
+                        />
+                      </div>
+                    </div>
+                    <div
+                      class="ant-col ant-col-24 css-dev-only-do-not-override-hash"
+                      style="padding-left: 5px; padding-right: 5px;"
+                    >
+                      <div
+                        class="title"
+                      >
+                        Color Curves
+                      </div>
+                    </div>
+                    <div
+                      class="ant-col ant-col-12 css-dev-only-do-not-override-hash"
+                      style="padding-left: 5px; padding-right: 5px;"
+                    >
+                      <div>
+                        Mock ColorCurveControl
+                        <p>
+                          Color: 
+                          c
+                        </p>
+                        <p>
+                          Title: 
+                          C Color Curve
+                        </p>
+                        <p>
+                          Value: 
+                          [0,1,2,3,4]
+                        </p>
+                        <button
+                          id="color-curve-control-set-value-c"
+                        />
+                      </div>
+                    </div>
+                    <div
+                      class="ant-col ant-col-12 css-dev-only-do-not-override-hash"
+                      style="padding-left: 5px; padding-right: 5px;"
+                    >
+                      <div>
+                        Mock ColorCurveControl
+                        <p>
+                          Color: 
+                          m
+                        </p>
+                        <p>
+                          Title: 
+                          M Color Curve
+                        </p>
+                        <p>
+                          Value: 
+                          [0,1,2,3,4]
+                        </p>
+                        <button
+                          id="color-curve-control-set-value-m"
+                        />
+                      </div>
+                    </div>
+                    <div
+                      class="ant-col ant-col-12 css-dev-only-do-not-override-hash"
+                      style="padding-left: 5px; padding-right: 5px;"
+                    >
+                      <div>
+                        Mock ColorCurveControl
+                        <p>
+                          Color: 
+                          y
+                        </p>
+                        <p>
+                          Title: 
+                          Y Color Curve
+                        </p>
+                        <p>
+                          Value: 
+                          [0,1,2,3,4]
+                        </p>
+                        <button
+                          id="color-curve-control-set-value-y"
+                        />
+                      </div>
+                    </div>
+                    <div
+                      class="ant-col ant-col-12 css-dev-only-do-not-override-hash"
+                      style="padding-left: 5px; padding-right: 5px;"
+                    >
+                      <div>
+                        Mock ColorCurveControl
+                        <p>
+                          Color: 
+                          k
+                        </p>
+                        <p>
+                          Title: 
+                          K Color Curve
+                        </p>
+                        <p>
+                          Value: 
+                          [0,1,2,3,4]
+                        </p>
+                        <button
+                          id="color-curve-control-set-value-k"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="ant-modal-footer"
+                >
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined"
+                    type="button"
+                  >
+                    <span>
+                      Cancel
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid"
+                    type="button"
+                  >
+                    <span>
+                      OK
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            style="width: 0px; height: 0px; overflow: hidden; outline: none;"
+            tabindex="0"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;
