@@ -64,7 +64,6 @@ const generateUploadFile = async (thumbnail: string, thumbnailUrl: string) => {
     id: 'retrieve-image-data',
     message: lang.beambox.bottom_right_panel.retreive_image_data,
   });
-  await updateImagesResolution(true);
   Progress.popById('retrieve-image-data');
 
   const svgString = svgCanvas.getSvgString({ fixTopExpansion: true });
@@ -133,6 +132,7 @@ const fetchTaskCode = async (
     message: 'Spliting Full color layer',
   });
 
+  const revertUpdateImagesResolution = await updateImagesResolution();
   const revertShapesToImage = await convertShapeToBitmap();
   const revertAnnotatePrintingColor = annotatePrintingColor();
   const revertTempSplitFullColorLayers = await tempSplitFullColorLayers();
@@ -140,6 +140,7 @@ const fetchTaskCode = async (
     revertTempSplitFullColorLayers();
     revertAnnotatePrintingColor();
     revertShapesToImage();
+    revertUpdateImagesResolution();
     await FontFuncs.revertTempConvert();
     SymbolMaker.switchImageSymbolForAll(true);
   };
@@ -528,9 +529,13 @@ export default {
     await FontFuncs.tempConvertTextToPathAmongSvgContent();
 
     const { thumbnail, thumbnailBlobURL } = await generateThumbnail();
+
+    const revertUpdateImagesResolution = await updateImagesResolution();
+
     const uploadFile = await generateUploadFile(thumbnail, thumbnailBlobURL);
 
     await FontFuncs.revertTempConvert();
+    revertUpdateImagesResolution();
 
     return { thumbnailBlobURL, uploadFile };
   },
