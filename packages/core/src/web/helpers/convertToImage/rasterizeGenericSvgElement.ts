@@ -2,10 +2,17 @@ import { pipe } from 'remeda';
 
 import history from '@core/app/svgedit/history/history';
 import { getRotationAngle, setRotationAngle } from '@core/app/svgedit/transform/rotation';
+import workareaManager from '@core/app/svgedit/workarea';
 
 import { createAndFinalizeImage } from './createAndFinalizeImage';
 import { getTransformedCoordinates } from './getTransformedCoordinates';
 import type { ConvertSvgToImageParams, ConvertToImageResult } from './types';
+
+const getStrokeWidth = () => {
+  const { zoomRatio } = workareaManager;
+
+  return Math.max(0.85 / zoomRatio + 0.85, 1.5);
+};
 
 /**
  * A generic function to rasterize an SVG element (shapes, text) into an image.
@@ -27,7 +34,7 @@ export async function rasterizeGenericSvgElement({
     const isFilled = !['none', null].includes(svgElement.getAttribute('fill'));
     // Prepare return-to-zero transform
     const previousTransform = cloned.getAttribute('transform');
-    const strokeOffset = isFilled ? 0 : 5;
+    const strokeOffset = isFilled ? 0 : getStrokeWidth();
 
     cloned.setAttribute('fill', '#000');
     cloned.setAttribute('stroke', '#000');
