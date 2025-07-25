@@ -84,7 +84,8 @@ const Welcome = (): ReactNode => {
     try {
       let lang = i18n.getActiveLang();
 
-      if (lang === 'zh-tw' && !localeHelper.isTw) lang = 'en';
+      if (localeHelper.isNorthAmerica) lang = '_na';
+      else if (localeHelper.isTw) lang = '_tw';
 
       const resp = await axiosFluxId.get(`/api/beam-studio/banners?locale=${lang}`);
 
