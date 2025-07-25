@@ -135,6 +135,12 @@ getSVGAsync.mockImplementation((callback) => {
   });
 });
 
+const mockConvertToImage = jest.fn();
+
+jest.mock('@core/helpers/convertToImage', () => ({
+  convertToImage: (...args) => mockConvertToImage(...args),
+}));
+
 import ActionsPanel from './ActionsPanel';
 
 const mockUpdateElementColor = jest.fn();
