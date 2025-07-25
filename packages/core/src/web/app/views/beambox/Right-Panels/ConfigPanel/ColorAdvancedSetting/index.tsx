@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { Button, Col, ConfigProvider, Row } from 'antd';
 
@@ -24,7 +24,7 @@ export const ColorAdvancedSetting = ({ onClose, selectedLayers }: Props) => {
     colorCurvesMap: { value: colorCurvesMap },
     update,
   } = useConfigPanelStore();
-  const { value: amAngleMapValue = { c: 22.5, k: 52.5, m: 22.5, y: 22.5 } } = amAngleMap;
+  const { value: amAngleMapValue = { c: 75, k: 15, m: 45, y: 90 } } = amAngleMap;
   const [draftAngleMap, setDraftAngleMap] = useState({ ...amAngleMapValue });
   const [draftColorCurvesMap, setDraftColorCurvesMap] = useState(colorCurvesMap);
 
@@ -34,10 +34,10 @@ export const ColorAdvancedSetting = ({ onClose, selectedLayers }: Props) => {
   const initColorCurvesMap = useCallback(() => {
     // color curve for backend am
     const newColorCurvesMap = {
-      c: [0, 47, 107, 159, 255],
-      k: [0, 47, 111, 143, 255],
-      m: [0, 43, 115, 169, 255],
-      y: [0, 59, 115, 175, 255],
+      c: [0, 88, 170, 229, 255],
+      k: [0, 60, 109, 163, 207],
+      m: [0, 90, 149, 204, 241],
+      y: [0, 96, 147, 186, 249],
     };
 
     setDraftColorCurvesMap(newColorCurvesMap);
@@ -71,8 +71,6 @@ export const ColorAdvancedSetting = ({ onClose, selectedLayers }: Props) => {
     });
     onClose();
   }, [selectedLayers, amAngleMapValue, draftAngleMap, colorCurvesMap, draftColorCurvesMap, onClose, update]);
-
-  console.log('draftColorCurvesMap', draftColorCurvesMap);
 
   return (
     <DraggableModal
