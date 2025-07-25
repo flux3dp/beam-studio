@@ -64,7 +64,6 @@ const generateUploadFile = async (thumbnail: string, thumbnailUrl: string) => {
     id: 'retrieve-image-data',
     message: lang.beambox.bottom_right_panel.retreive_image_data,
   });
-  await updateImagesResolution(true);
   Progress.popById('retrieve-image-data');
 
   const svgString = svgCanvas.getSvgString({ fixTopExpansion: true });
@@ -132,6 +131,8 @@ const fetchTaskCode = async (
     caption: i18n.lang.beambox.popup.progress.calculating,
     message: 'Spliting Full color layer',
   });
+
+  await updateImagesResolution();
 
   const revertShapesToImage = await convertShapeToBitmap();
   const revertAnnotatePrintingColor = annotatePrintingColor();
@@ -528,6 +529,9 @@ export default {
     await FontFuncs.tempConvertTextToPathAmongSvgContent();
 
     const { thumbnail, thumbnailBlobURL } = await generateThumbnail();
+
+    await updateImagesResolution();
+
     const uploadFile = await generateUploadFile(thumbnail, thumbnailBlobURL);
 
     await FontFuncs.revertTempConvert();

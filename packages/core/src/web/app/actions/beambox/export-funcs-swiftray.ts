@@ -51,7 +51,7 @@ const generateUploadFile = async (thumbnail: string, thumbnailUrl: string): Prom
     id: 'retrieve-image-data',
     message: lang.beambox.bottom_right_panel.retreive_image_data,
   });
-  await updateImagesResolution(true);
+  await updateImagesResolution();
   Progress.popById('retrieve-image-data');
 
   const svgString = svgCanvas.getSvgString({ fixTopExpansion: true });

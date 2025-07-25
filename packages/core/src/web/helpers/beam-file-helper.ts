@@ -88,7 +88,6 @@ import undoManager from '@core/app/svgedit/history/undoManager';
 import { importBvgString } from '@core/app/svgedit/operations/import/importBvg';
 import workareaManager from '@core/app/svgedit/workarea';
 import updateImageDisplay from '@core/helpers/image/updateImageDisplay';
-import updateImagesResolution from '@core/helpers/image/updateImagesResolution';
 import { hasVariableText } from '@core/helpers/variableText';
 import type { CurveEngraving } from '@core/interfaces/ICurveEngraving';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
@@ -344,7 +343,6 @@ const readBlocks = async (buf: Buffer, offset: number, command?: IBatchCommand) 
     currentOffset = newOffset;
     console.log('Size', value);
     readImageSource(buf, currentOffset, currentOffset + value);
-    updateImagesResolution(false);
     currentOffset += value;
   } else if (blockType === 3) {
     // thumbnail
