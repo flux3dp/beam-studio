@@ -72,7 +72,7 @@ export const convertTextToPath = async ({
   }
 
   if (path && isToSelect) {
-    svgCanvas.multiSelect([path].filter(Boolean) as SVGElement[]);
+    svgCanvas.selectOnly([path]);
   }
 
   return { bbox: path?.getBBox()!, command: parentCommand || command || undefined, path: path || undefined };
