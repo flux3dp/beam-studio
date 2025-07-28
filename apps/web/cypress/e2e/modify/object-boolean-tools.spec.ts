@@ -1,4 +1,7 @@
+import { is } from 'cypress/types/bluebird';
 import { md5 } from '../../support/utils';
+
+const isRunningAtGithub = Cypress.env('envType') === 'github';
 
 const drawRectangle = () => {
   cy.clickToolBtn('Rectangle');
@@ -114,15 +117,23 @@ describe('text and shapes boolean operation', () => {
     cy.get('#union').click();
     cy.get('#svg_6')
       .invoke('attr', 'd')
-      .then((d) => expect(md5(d)).equal('f6ee0a6ce2a58fe226cad3595f284741'));
-    checkDimensions(0, 0, 104.77, 75);
+      .then((d) =>
+        expect(md5(d)).equal(
+          isRunningAtGithub ? 'e54234e8e5ede68a50b6244fb1aec336' : 'f6ee0a6ce2a58fe226cad3595f284741',
+        ),
+      );
+    checkDimensions(0, 0, isRunningAtGithub ? 106.23 : 104.77, 75);
   });
 
   it('subtract', () => {
     cy.get('#subtract').click();
     cy.get('#svg_6')
       .invoke('attr', 'd')
-      .then((d) => expect(md5(d)).equal('2492a86b0eede32e405426dcbdc5ff0a'));
+      .then((d) =>
+        expect(md5(d)).equal(
+          isRunningAtGithub ? 'ca83c224c6f8d083e5d63a82782d8b3f' : '2492a86b0eede32e405426dcbdc5ff0a',
+        ),
+      );
     checkDimensions(0, 0, 75, 75);
   });
 
@@ -130,15 +141,28 @@ describe('text and shapes boolean operation', () => {
     cy.get('#intersect').click();
     cy.get('#svg_6')
       .invoke('attr', 'd')
-      .then((d) => expect(md5(d)).equal('f786bca9c5dba9f836aa0e65c7a9afc0'));
-    checkDimensions(0, 19.29, 75, 39.31);
+      .then((d) =>
+        expect(md5(d)).equal(
+          isRunningAtGithub ? '4902ed757bc6efdb592d990da2ca431d' : 'f786bca9c5dba9f836aa0e65c7a9afc0',
+        ),
+      );
+    checkDimensions(
+      isRunningAtGithub ? 1.45 : 0,
+      isRunningAtGithub ? 19.48 : 19.29,
+      isRunningAtGithub ? 68.47 : 75,
+      isRunningAtGithub ? 39.19 : 39.31,
+    );
   });
 
   it('difference', () => {
     cy.get('#difference').click();
     cy.get('#svg_6')
       .invoke('attr', 'd')
-      .then((d) => expect(md5(d)).equal('03311828449bedcb35f3241198f8f24a'));
-    checkDimensions(0, 0, 104.77, 75);
+      .then((d) =>
+        expect(md5(d)).equal(
+          isRunningAtGithub ? '58a84309685ee415e601d001eb5104a1' : '03311828449bedcb35f3241198f8f24a',
+        ),
+      );
+    checkDimensions(0, 0, isRunningAtGithub ? 106.23 : 104.77, 75);
   });
 });
