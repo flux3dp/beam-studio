@@ -99,11 +99,7 @@ class Menu extends AbstractMenu {
   }
 
   enable(ids: string[]): void {
-    const start = performance.now();
-
     this.changeMenuItemStatus(ids, 'enabled', true);
-
-    console.log(`Menu enabled in ${performance.now() - start} ms`);
   }
 
   disable(ids: string[]): void {
