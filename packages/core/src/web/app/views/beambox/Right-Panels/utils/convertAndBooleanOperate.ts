@@ -1,14 +1,7 @@
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
+import { doBooleanOperationOnSelected } from '@core/app/svgedit/operations/booleanOperation';
 import { convertElementsToPathInTempGroup } from '@core/helpers/convertElementsToPathInTempGroup';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync(({ Canvas }) => {
-  svgCanvas = Canvas;
-});
 
 export const convertAndBooleanOperate = async ({
   element,
@@ -23,8 +16,6 @@ export const convertAndBooleanOperate = async ({
 
   await convertElementsToPathInTempGroup({ element, parentCommand });
 
-  const command = svgCanvas.booleanOperationSelectedElements(operation, true);
-
-  parentCommand.addSubCommand(command);
+  doBooleanOperationOnSelected(operation, { parentCmd: parentCommand });
   undoManager.addCommandToHistory(parentCommand);
 };

@@ -39,7 +39,6 @@ import grid from '@core/app/actions/canvas/grid';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import { getAddOnInfo } from '@core/app/constants/addOn';
-import AlertConstants from '@core/app/constants/alert-constants';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
@@ -4056,100 +4055,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
    * @param {{row: number, column: number}} arraySize
    */
   this.gridArraySelectedElement = clipboard.generateSelectedElementArray;
-
-  /**
-   * Boolean Operate elements
-   * @param {string} mode one of ['intersect', 'union', 'diff', 'xor']
-   * @param {boolean} isSubCmd whether this operation is subcmd
-   */
-  this.booleanOperationSelectedElements = function (mode, isSubCmd = false) {
-    if (tempGroup) {
-      const children = this.ungroupTempGroup();
-
-      this.selectOnly(children, false);
-    }
-
-    let len = selectedElements.length;
-
-    for (let i = 0; i < selectedElements.length; ++i) {
-      if (!selectedElements[i]) {
-        len = i;
-        break;
-      }
-    }
-
-    if (len < 2) {
-      Alert.popUp({
-        id: 'Boolean Operate',
-        message: LANG.popup.select_at_least_two,
-        type: AlertConstants.SHOW_POPUP_ERROR,
-      });
-
-      return;
-    }
-
-    if (len > 2 && mode === 'diff') {
-      Alert.popUp({
-        id: 'Boolean Operate',
-        message: LANG.popup.more_than_two_object,
-        type: AlertConstants.SHOW_POPUP_ERROR,
-      });
-
-      return;
-    }
-
-    const batchCmd = new history.BatchCommand(`${mode} Elements`);
-    const modemap = { diff: 2, intersect: 0, union: 1, xor: 3 };
-    const clipType = modemap[mode];
-    let d = '';
-    let basePathText = '';
-
-    if (selectedElements[0].tagName === 'rect' && selectedElements[0].getAttribute('rx')) {
-      const cloned = selectedElements[0].cloneNode(true);
-
-      cloned.setAttribute('ry', selectedElements[0].getAttribute('rx'));
-      basePathText = cloned.outerHTML;
-    } else {
-      basePathText = selectedElements[0].outerHTML;
-    }
-
-    for (let i = len - 1; i >= 1; i -= 1) {
-      d = pathActions.booleanOperationByPaperjs(basePathText, selectedElements[i], clipType);
-      basePathText = `<path d="${d}" />`;
-    }
-
-    const base = selectedElements[0];
-    const element = addSvgElementFromJson({
-      attr: {
-        d,
-        fill: base.getAttribute('fill'),
-        'fill-opacity': base.getAttribute('fill-opacity'),
-        id: getNextId(),
-        opacity: cur_shape.opacity,
-        stroke: '#000',
-      },
-      curStyles: false,
-      element: 'path',
-    });
-
-    pathActions.fixEnd(element);
-
-    if (this.isUsingLayerColor) {
-      updateElementColor(element);
-    }
-
-    batchCmd.addSubCommand(new history.InsertElementCommand(element));
-
-    const cmd = deleteSelectedElements(true);
-
-    if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
-
-    if (!isSubCmd) addCommandToHistory(batchCmd);
-
-    this.selectOnly([element], true);
-
-    return batchCmd;
-  };
 
   this.simplifyPath = (elems) => {
     if (tempGroup) {

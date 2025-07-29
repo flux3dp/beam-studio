@@ -121,10 +121,10 @@ jest.mock('@core/app/actions/dialog-caller', () => ({
   addDialogComponent: (...args) => addDialogComponent(...args),
 }));
 
-const booleanOperationSelectedElements = jest.fn();
+const mockConvertAndBooleanOperate = jest.fn();
 
 jest.mock('./utils/convertAndBooleanOperate', () => ({
-  convertAndBooleanOperate: ({ operation }) => booleanOperationSelectedElements(operation),
+  convertAndBooleanOperate: ({ operation }) => mockConvertAndBooleanOperate(operation),
 }));
 
 import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
@@ -282,17 +282,17 @@ describe('should render correctly', () => {
       fireEvent.click(container.querySelector('button[title="Group"]'));
       expect(groupSelectedElements).toHaveBeenCalledTimes(1);
       fireEvent.click(container.querySelector('button[title="Union"]'));
-      expect(booleanOperationSelectedElements).toHaveBeenCalledTimes(1);
-      expect(booleanOperationSelectedElements).toHaveBeenNthCalledWith(1, 'union');
+      expect(mockConvertAndBooleanOperate).toHaveBeenCalledTimes(1);
+      expect(mockConvertAndBooleanOperate).toHaveBeenNthCalledWith(1, 'union');
       fireEvent.click(container.querySelector('button[title="Subtract"]'));
-      expect(booleanOperationSelectedElements).toHaveBeenCalledTimes(2);
-      expect(booleanOperationSelectedElements).toHaveBeenNthCalledWith(2, 'diff');
+      expect(mockConvertAndBooleanOperate).toHaveBeenCalledTimes(2);
+      expect(mockConvertAndBooleanOperate).toHaveBeenNthCalledWith(2, 'diff');
       fireEvent.click(container.querySelector('button[title="Intersect"]'));
-      expect(booleanOperationSelectedElements).toHaveBeenCalledTimes(3);
-      expect(booleanOperationSelectedElements).toHaveBeenNthCalledWith(3, 'intersect');
+      expect(mockConvertAndBooleanOperate).toHaveBeenCalledTimes(3);
+      expect(mockConvertAndBooleanOperate).toHaveBeenNthCalledWith(3, 'intersect');
       fireEvent.click(container.querySelector('button[title="Difference"]'));
-      expect(booleanOperationSelectedElements).toHaveBeenCalledTimes(4);
-      expect(booleanOperationSelectedElements).toHaveBeenNthCalledWith(4, 'xor');
+      expect(mockConvertAndBooleanOperate).toHaveBeenCalledTimes(4);
+      expect(mockConvertAndBooleanOperate).toHaveBeenNthCalledWith(4, 'xor');
     });
 
     test('contains other types of elements', () => {
@@ -481,17 +481,17 @@ describe('should render correctly in mobile', () => {
       fireEvent.click(getByText('Group'));
       expect(groupSelectedElements).toHaveBeenCalledTimes(1);
       fireEvent.click(getByText('Union'));
-      expect(booleanOperationSelectedElements).toHaveBeenCalledTimes(1);
-      expect(booleanOperationSelectedElements).toHaveBeenNthCalledWith(1, 'union');
+      expect(mockConvertAndBooleanOperate).toHaveBeenCalledTimes(1);
+      expect(mockConvertAndBooleanOperate).toHaveBeenNthCalledWith(1, 'union');
       fireEvent.click(getByText('Subtract'));
-      expect(booleanOperationSelectedElements).toHaveBeenCalledTimes(2);
-      expect(booleanOperationSelectedElements).toHaveBeenNthCalledWith(2, 'diff');
+      expect(mockConvertAndBooleanOperate).toHaveBeenCalledTimes(2);
+      expect(mockConvertAndBooleanOperate).toHaveBeenNthCalledWith(2, 'diff');
       fireEvent.click(getByText('Intersect'));
-      expect(booleanOperationSelectedElements).toHaveBeenCalledTimes(3);
-      expect(booleanOperationSelectedElements).toHaveBeenNthCalledWith(3, 'intersect');
+      expect(mockConvertAndBooleanOperate).toHaveBeenCalledTimes(3);
+      expect(mockConvertAndBooleanOperate).toHaveBeenNthCalledWith(3, 'intersect');
       fireEvent.click(getByText('Difference'));
-      expect(booleanOperationSelectedElements).toHaveBeenCalledTimes(4);
-      expect(booleanOperationSelectedElements).toHaveBeenNthCalledWith(4, 'xor');
+      expect(mockConvertAndBooleanOperate).toHaveBeenCalledTimes(4);
+      expect(mockConvertAndBooleanOperate).toHaveBeenNthCalledWith(4, 'xor');
     });
 
     test('contains other types of elements', () => {

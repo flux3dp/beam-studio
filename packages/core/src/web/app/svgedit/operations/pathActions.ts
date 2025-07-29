@@ -1252,7 +1252,7 @@ const moveNode = (attr, newValue): void => {
   svgedit.path.path.endChanges('Move path point');
 };
 
-const fixEnd = (elem): void => {
+export const fixEnd = (elem: SVGPathElement): void => {
   // Adds an extra segment if the last seg before a Z doesn't end
   // at its M point
   // M0,0 L0,100 L100,100 z
@@ -1625,7 +1625,7 @@ const booleanOperation = (pathHTML1: string, pathHTML2: string, clipType: number
   return svgPath.getAttribute('d');
 };
 
-const booleanOperationByPaperjs = (baseHTML: string, elem2: SVGPathElement, clipType: number) => {
+export const booleanOperationByPaperjs = (baseHTML: string, elem2: SVGElement, clipType: number) => {
   let elem2HTML = '';
   const rx = elem2.getAttribute('rx');
 

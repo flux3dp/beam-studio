@@ -55,17 +55,17 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
       );
     };
     const isSingleGroup = elems?.length === 1 && elems[0].tagName.toLowerCase() === 'g';
-    const isAllowedBooleanOperate = elems?.every(allowBooleanOperations);
+    const canDoBoolean = elems?.every(allowBooleanOperations);
 
     return {
-      boolean: elems?.length > 1 && isAllowedBooleanOperate,
-      difference: elems?.length > 1 && isAllowedBooleanOperate,
+      boolean: elems?.length > 1 && canDoBoolean,
+      difference: elems?.length > 1 && canDoBoolean,
       dist: elems?.length > 2,
       group: !isSingleGroup || elems?.length > 1,
-      intersect: elems?.length > 1 && isAllowedBooleanOperate,
-      subtract: elems?.length === 2 && isAllowedBooleanOperate,
+      intersect: elems?.length > 1 && canDoBoolean,
+      subtract: elems?.length === 2 && canDoBoolean,
       ungroup: isSingleGroup && !elem.getAttribute('data-textpath-g') && !elem.getAttribute('data-pass-through'),
-      union: elems?.length > 1 && isAllowedBooleanOperate,
+      union: elems?.length > 1 && canDoBoolean,
     };
   };
 
