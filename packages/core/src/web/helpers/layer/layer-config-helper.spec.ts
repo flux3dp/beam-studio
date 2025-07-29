@@ -31,6 +31,7 @@ import {
   toggleFullColorAfterWorkareaChange,
   writeData,
 } from './layer-config-helper';
+import type { ConfigKey } from '@core/interfaces/ILayerConfig';
 
 const mockGetAllPresets = jest.fn();
 const mockGetDefaultPreset = jest.fn();
@@ -57,17 +58,23 @@ jest.mock(
       mockToggleFullColorLayer(...args),
 );
 
-const defaultLaserConfigs = Object.keys(baseConfig).reduce((acc, key) => {
+const defaultConfigs = Object.keys(baseConfig).reduce((acc, key) => {
   acc[key] = { value: baseConfig[key] };
 
   return acc;
 }, {});
 
-booleanConfig.forEach((key) => {
-  defaultLaserConfigs[key] = { value: false };
+const optionalConfigs: ConfigKey[] = ['amAngleMap', 'colorCurvesMap'] as const;
+
+optionalConfigs.forEach((key) => {
+  defaultConfigs[key] = { value: undefined };
 });
 
-Object.assign(defaultLaserConfigs, {
+booleanConfig.forEach((key) => {
+  defaultConfigs[key] = { value: false };
+});
+
+Object.assign(defaultConfigs, {
   clipRect: { value: undefined },
   color: { value: '#333333' },
 });
@@ -78,8 +85,8 @@ const trueConfigs = {
   biDirectional: { value: true },
 };
 
-const defaultMultiValueLaserConfigs = Object.keys(defaultLaserConfigs).reduce((acc, key) => {
-  acc[key] = { hasMultiValue: false, value: defaultLaserConfigs[key].value };
+const defaultMultiValueConfigs = Object.keys(defaultConfigs).reduce((acc, key) => {
+  acc[key] = { hasMultiValue: false, value: defaultConfigs[key].value };
 
   return acc;
 }, {});
@@ -103,7 +110,7 @@ describe('test layer-config-helper', () => {
     const layer1 = document.querySelectorAll('g')[1] as SVGGElement;
 
     initLayerConfig(layer1);
-    expect(getLayerConfig('layer 1')).toEqual({ ...defaultLaserConfigs, ...trueConfigs });
+    expect(getLayerConfig('layer 1')).toEqual({ ...defaultConfigs, ...trueConfigs });
   });
 
   test('initLayerConfig with module', () => {
@@ -118,7 +125,7 @@ describe('test layer-config-helper', () => {
     });
     initLayerConfig(layer1);
     expect(getLayerConfig('layer 1')).toEqual({
-      ...defaultLaserConfigs,
+      ...defaultConfigs,
       ...trueConfigs,
       module: { value: 1 },
     });
@@ -127,7 +134,7 @@ describe('test layer-config-helper', () => {
   test('write zstep data', () => {
     writeData('layer 1', 'zStep', 1);
     expect(getLayerConfig('layer 1')).toEqual({
-      ...defaultLaserConfigs,
+      ...defaultConfigs,
       zStep: { value: 1 },
     });
   });
@@ -136,16 +143,16 @@ describe('test layer-config-helper', () => {
     writeData('layer 1', 'speed', 30);
     cloneLayerConfig('layer 3', 'layer 1');
     expect(getLayerConfig('layer 3')).toEqual({
-      ...defaultLaserConfigs,
+      ...defaultConfigs,
       speed: { value: 30 },
     });
   });
 
   test('getLayersConfig', () => {
-    expect(getLayersConfig(['layer 0', 'layer 1', 'layer 2', 'layer 3'])).toEqual(defaultMultiValueLaserConfigs);
+    expect(getLayersConfig(['layer 0', 'layer 1', 'layer 2', 'layer 3'])).toEqual(defaultMultiValueConfigs);
     writeData('layer 1', 'speed', 30);
     expect(getLayersConfig(['layer 0', 'layer 1', 'layer 2', 'layer 3'])).toEqual({
-      ...defaultMultiValueLaserConfigs,
+      ...defaultMultiValueConfigs,
       speed: { hasMultiValue: true, value: 30 },
     });
   });
@@ -156,20 +163,20 @@ describe('test layer-config-helper', () => {
     writeData('layer 1', 'power', 20);
 
     expect(getLayersConfig(['layer 0', 'layer 1', 'layer 2', 'layer 3'])).toEqual({
-      ...defaultMultiValueLaserConfigs,
+      ...defaultMultiValueConfigs,
       diode: { hasMultiValue: true, value: 1 },
       height: { hasMultiValue: true, value: -1 },
       power: { hasMultiValue: true, value: 20 },
     });
     writeData('layer 1', 'height', 1);
     expect(getLayersConfig(['layer 0', 'layer 1', 'layer 2', 'layer 3'])).toEqual({
-      ...defaultMultiValueLaserConfigs,
+      ...defaultMultiValueConfigs,
       diode: { hasMultiValue: true, value: 1 },
       height: { hasMultiValue: true, value: 1 },
       power: { hasMultiValue: true, value: 20 },
     });
     expect(getLayersConfig(['layer 0', 'layer 1', 'layer 2', 'layer 3'], 'layer 2')).toEqual({
-      ...defaultMultiValueLaserConfigs,
+      ...defaultMultiValueConfigs,
       diode: { hasMultiValue: true, value: 1 },
       height: { hasMultiValue: true, value: 1 },
       power: { hasMultiValue: true, value: 15 },
@@ -179,13 +186,13 @@ describe('test layer-config-helper', () => {
   test('getLayerConfig of printing layer', () => {
     writeData('layer 1', 'module', 5);
     expect(getLayerConfig('layer 1')).toEqual({
-      ...defaultLaserConfigs,
+      ...defaultConfigs,
       module: { value: 5 },
       speed: { value: 60 },
     });
     writeData('layer 1', 'speed', 30, { applyPrinting: true });
     expect(getLayerConfig('layer 1')).toEqual({
-      ...defaultLaserConfigs,
+      ...defaultConfigs,
       module: { value: 5 },
       printingSpeed: { value: 30 },
       speed: { value: 30 },
