@@ -25,9 +25,7 @@ export const doBooleanOperation = (
   mode: BooleanOperationMode,
   { addToHistory = true, parentCmd }: { addToHistory?: boolean; parentCmd?: IBatchCommand } = {},
 ): void => {
-  let len = elements.length;
-
-  if (len < 2) {
+  if (elements.length < 2) {
     alertCaller.popUp({
       id: 'Boolean Operate',
       message: i18n.lang.beambox.popup.select_at_least_two,
@@ -37,7 +35,7 @@ export const doBooleanOperation = (
     return;
   }
 
-  if (len > 2 && mode === 'diff') {
+  if (elements.length > 2 && mode === 'diff') {
     alertCaller.popUp({
       id: 'Boolean Operate',
       message: i18n.lang.beambox.popup.more_than_two_object,
@@ -64,7 +62,7 @@ export const doBooleanOperation = (
     basePathText = elements[0].outerHTML;
   }
 
-  for (let i = len - 1; i >= 1; i -= 1) {
+  for (let i = elements.length - 1; i >= 1; i -= 1) {
     d = booleanOperationByPaperjs(basePathText, elements[i], clipType)!;
     basePathText = `<path d="${d}" />`;
   }
