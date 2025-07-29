@@ -4,9 +4,8 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { ICustomMenuActionProvider } from '@core/interfaces/ICustomMenuActionProvider';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import { changeMenuItemChecked } from '../electron-menubar-helper';
-
 import ElectronUpdater from './electron-updater';
+import menu from './menu';
 
 let svgCanvas: ISVGCanvas;
 
@@ -20,35 +19,35 @@ export default {
       ANTI_ALIASING: () => {
         const newValue = viewMenu.toggleAntiAliasing();
 
-        changeMenuItemChecked(['ANTI_ALIASING'], newValue);
+        menu.changeMenuItemStatus(['ANTI_ALIASING'], 'checked', newValue);
       },
       AUTO_ALIGN: () => {
         const toggleAutoAlign = svgCanvas.toggleAutoAlign();
 
-        changeMenuItemChecked(['AUTO_ALIGN'], toggleAutoAlign);
+        menu.changeMenuItemStatus(['AUTO_ALIGN'], 'checked', toggleAutoAlign);
       },
       RELOAD_APP: () => windowLocationReload(),
       SHOW_GRIDS: () => {
         const showGrid = viewMenu.toggleGrid();
 
-        changeMenuItemChecked(['SHOW_GRIDS'], showGrid);
+        menu.changeMenuItemStatus(['SHOW_GRIDS'], 'checked', showGrid);
       },
       SHOW_LAYER_COLOR: () => {
         const isUsingLayerColor = viewMenu.toggleLayerColor();
 
-        changeMenuItemChecked(['SHOW_LAYER_COLOR'], isUsingLayerColor);
+        menu.changeMenuItemStatus(['SHOW_LAYER_COLOR'], 'checked', isUsingLayerColor);
       },
       SHOW_RULERS: () => {
         const shouldShowRulers = viewMenu.toggleRulers();
 
-        changeMenuItemChecked(['SHOW_RULERS'], shouldShowRulers);
+        menu.changeMenuItemStatus(['SHOW_RULERS'], 'checked', shouldShowRulers);
       },
       SWITCH_VERSION: () => ElectronUpdater.switchVersion(),
       UPDATE_BS: () => ElectronUpdater.checkForUpdate(),
       ZOOM_WITH_WINDOW: () => {
         const zoomWithWindow = viewMenu.toggleZoomWithWindow();
 
-        changeMenuItemChecked(['ZOOM_WITH_WINDOW'], zoomWithWindow);
+        menu.changeMenuItemStatus(['ZOOM_WITH_WINDOW'], 'checked', zoomWithWindow);
       },
     };
   },
