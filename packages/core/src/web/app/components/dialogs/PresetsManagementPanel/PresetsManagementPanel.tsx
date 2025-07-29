@@ -101,7 +101,7 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
     }
 
     const { isDefault, key, name } = selectedPreset;
-    const item = listRef.current.querySelector(`[data-key="${isDefault ? key : name}"]`);
+    const item = listRef.current.querySelector(`[data-key="${isDefault ? key : name?.replaceAll('"', '\\"')}"]`);
 
     if (!item) {
       return;
