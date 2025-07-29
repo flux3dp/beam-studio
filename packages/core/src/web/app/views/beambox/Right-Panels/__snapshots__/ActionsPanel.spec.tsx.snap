@@ -58,6 +58,26 @@ exports[`should render correctly ellipse 1`] = `
       >
         <button
           class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
+          id="convert_to_image"
+          type="button"
+        >
+          <span
+            class="ant-btn-icon"
+          >
+            <svgr-url />
+          </span>
+          <span
+            class="label"
+          >
+            Convert to Image
+          </span>
+        </button>
+      </div>
+      <div
+        class="btn-container"
+      >
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
           id="smart-nest"
           type="button"
         >
@@ -192,6 +212,26 @@ exports[`should render correctly g multiple selection 1`] = `
         </button>
       </div>
       <div
+        class="btn-container"
+      >
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
+          id="convert_to_image"
+          type="button"
+        >
+          <span
+            class="ant-btn-icon"
+          >
+            <svgr-url />
+          </span>
+          <span
+            class="label"
+          >
+            Convert to Image
+          </span>
+        </button>
+      </div>
+      <div
         class="btn-container half"
       >
         <button
@@ -286,6 +326,26 @@ exports[`should render correctly g single selection 1`] = `
             class="label"
           >
             Smart Nest
+          </span>
+        </button>
+      </div>
+      <div
+        class="btn-container"
+      >
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
+          id="convert_to_image"
+          type="button"
+        >
+          <span
+            class="ant-btn-icon"
+          >
+            <svgr-url />
+          </span>
+          <span
+            class="label"
+          >
+            Convert to Image
           </span>
         </button>
       </div>
@@ -692,6 +752,21 @@ exports[`should render correctly in mobile ellipse 1`] = `
     </div>
     <div
       class="object-panel-item"
+      id="convert_to_image"
+    >
+      <div
+        class="main"
+      >
+        <svgr-url />
+      </div>
+      <div
+        class="label"
+      >
+        Outline
+      </div>
+    </div>
+    <div
+      class="object-panel-item"
       id="smart-nest"
     >
       <div
@@ -794,6 +869,21 @@ exports[`should render correctly in mobile g multiple selection 1`] = `
     </div>
     <div
       class="object-panel-item"
+      id="convert_to_image"
+    >
+      <div
+        class="main"
+      >
+        <svgr-url />
+      </div>
+      <div
+        class="label"
+      >
+        Outline
+      </div>
+    </div>
+    <div
+      class="object-panel-item"
       id="offset"
     >
       <div
@@ -862,6 +952,21 @@ exports[`should render correctly in mobile g single selection 1`] = `
         class="label"
       >
         Smart Nest
+      </div>
+    </div>
+    <div
+      class="object-panel-item"
+      id="convert_to_image"
+    >
+      <div
+        class="main"
+      >
+        <svgr-url />
+      </div>
+      <div
+        class="label"
+      >
+        Outline
       </div>
     </div>
     <div
@@ -1160,6 +1265,21 @@ exports[`should render correctly in mobile line 1`] = `
     </div>
     <div
       class="object-panel-item"
+      id="convert_to_image"
+    >
+      <div
+        class="main"
+      >
+        <svgr-url />
+      </div>
+      <div
+        class="label"
+      >
+        Outline
+      </div>
+    </div>
+    <div
+      class="object-panel-item"
       id="smart-nest"
     >
       <div
@@ -1304,6 +1424,21 @@ exports[`should render correctly in mobile path 1`] = `
     </div>
     <div
       class="object-panel-item"
+      id="convert_to_image"
+    >
+      <div
+        class="main"
+      >
+        <svgr-url />
+      </div>
+      <div
+        class="label"
+      >
+        Outline
+      </div>
+    </div>
+    <div
+      class="object-panel-item"
       id="offset"
     >
       <div
@@ -1392,6 +1527,21 @@ exports[`should render correctly in mobile polygon 1`] = `
     <div
       class="object-panel-item"
       id="convert_to_path"
+    >
+      <div
+        class="main"
+      >
+        <svgr-url />
+      </div>
+      <div
+        class="label"
+      >
+        Outline
+      </div>
+    </div>
+    <div
+      class="object-panel-item"
+      id="convert_to_image"
     >
       <div
         class="main"
@@ -1508,6 +1658,21 @@ exports[`should render correctly in mobile rect 1`] = `
     </div>
     <div
       class="object-panel-item"
+      id="convert_to_image"
+    >
+      <div
+        class="main"
+      >
+        <svgr-url />
+      </div>
+      <div
+        class="label"
+      >
+        Outline
+      </div>
+    </div>
+    <div
+      class="object-panel-item"
       id="smart-nest"
     >
       <div
@@ -1596,6 +1761,21 @@ exports[`should render correctly in mobile text 1`] = `
     <div
       class="object-panel-item"
       id="convert_to_path"
+    >
+      <div
+        class="main"
+      >
+        <svgr-url />
+      </div>
+      <div
+        class="label"
+      >
+        Outline
+      </div>
+    </div>
+    <div
+      class="object-panel-item"
+      id="convert_to_image"
     >
       <div
         class="main"
@@ -1814,6 +1994,21 @@ exports[`should render correctly in mobile use 1`] = `
     </div>
     <div
       class="object-panel-item"
+      id="convert_to_image"
+    >
+      <div
+        class="main"
+      >
+        <svgr-url />
+      </div>
+      <div
+        class="label"
+      >
+        Outline
+      </div>
+    </div>
+    <div
+      class="object-panel-item"
       id="array"
     >
       <div
@@ -1901,6 +2096,21 @@ exports[`should render correctly in mobile use 2`] = `
     </div>
     <div
       class="object-panel-item"
+      id="convert_to_image"
+    >
+      <div
+        class="main"
+      >
+        <svgr-url />
+      </div>
+      <div
+        class="label"
+      >
+        Outline
+      </div>
+    </div>
+    <div
+      class="object-panel-item"
       id="array"
     >
       <div
@@ -1983,6 +2193,26 @@ exports[`should render correctly line 1`] = `
             class="label"
           >
             Convert to Path
+          </span>
+        </button>
+      </div>
+      <div
+        class="btn-container"
+      >
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
+          id="convert_to_image"
+          type="button"
+        >
+          <span
+            class="ant-btn-icon"
+          >
+            <svgr-url />
+          </span>
+          <span
+            class="label"
+          >
+            Convert to Image
           </span>
         </button>
       </div>
@@ -2182,6 +2412,26 @@ exports[`should render correctly path 1`] = `
         </button>
       </div>
       <div
+        class="btn-container"
+      >
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
+          id="convert_to_image"
+          type="button"
+        >
+          <span
+            class="ant-btn-icon"
+          >
+            <svgr-url />
+          </span>
+          <span
+            class="label"
+          >
+            Convert to Image
+          </span>
+        </button>
+      </div>
+      <div
         class="btn-container half"
       >
         <button
@@ -2316,6 +2566,26 @@ exports[`should render correctly polygon 1`] = `
             class="label"
           >
             Convert to Path
+          </span>
+        </button>
+      </div>
+      <div
+        class="btn-container"
+      >
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
+          id="convert_to_image"
+          type="button"
+        >
+          <span
+            class="ant-btn-icon"
+          >
+            <svgr-url />
+          </span>
+          <span
+            class="label"
+          >
+            Convert to Image
           </span>
         </button>
       </div>
@@ -2462,6 +2732,26 @@ exports[`should render correctly rect 1`] = `
       >
         <button
           class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
+          id="convert_to_image"
+          type="button"
+        >
+          <span
+            class="ant-btn-icon"
+          >
+            <svgr-url />
+          </span>
+          <span
+            class="label"
+          >
+            Convert to Image
+          </span>
+        </button>
+      </div>
+      <div
+        class="btn-container"
+      >
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
           id="smart-nest"
           type="button"
         >
@@ -2592,6 +2882,26 @@ exports[`should render correctly text 1`] = `
             class="label"
           >
             Convert to Path
+          </span>
+        </button>
+      </div>
+      <div
+        class="btn-container"
+      >
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
+          id="convert_to_image"
+          type="button"
+        >
+          <span
+            class="ant-btn-icon"
+          >
+            <svgr-url />
+          </span>
+          <span
+            class="label"
+          >
+            Convert to Image
           </span>
         </button>
       </div>
@@ -2751,6 +3061,27 @@ exports[`should render correctly text 2`] = `
             class="label"
           >
             Convert to Path
+          </span>
+        </button>
+      </div>
+      <div
+        class="btn-container"
+      >
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
+          disabled=""
+          id="convert_to_image"
+          type="button"
+        >
+          <span
+            class="ant-btn-icon"
+          >
+            <svgr-url />
+          </span>
+          <span
+            class="label"
+          >
+            Convert to Image
           </span>
         </button>
       </div>
@@ -2939,6 +3270,26 @@ exports[`should render correctly use 1`] = `
       >
         <button
           class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
+          id="convert_to_image"
+          type="button"
+        >
+          <span
+            class="ant-btn-icon"
+          >
+            <svgr-url />
+          </span>
+          <span
+            class="label"
+          >
+            Convert to Image
+          </span>
+        </button>
+      </div>
+      <div
+        class="btn-container"
+      >
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
           id="array"
           type="button"
         >
@@ -3070,6 +3421,26 @@ exports[`should render correctly use 2`] = `
             class="label"
           >
             Smart Nest
+          </span>
+        </button>
+      </div>
+      <div
+        class="btn-container"
+      >
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
+          id="convert_to_image"
+          type="button"
+        >
+          <span
+            class="ant-btn-icon"
+          >
+            <svgr-url />
+          </span>
+          <span
+            class="label"
+          >
+            Convert to Image
           </span>
         </button>
       </div>
