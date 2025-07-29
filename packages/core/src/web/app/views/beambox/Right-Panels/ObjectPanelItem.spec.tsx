@@ -21,12 +21,10 @@ const distHori = jest.fn();
 const distVert = jest.fn();
 const groupSelectedElements = jest.fn();
 const ungroupSelectedElement = jest.fn();
-const booleanOperationSelectedElements = jest.fn();
 
 getSVGAsync.mockImplementation((callback) => {
   callback({
     Editor: {
-      booleanOperationSelectedElements,
       distHori,
       distVert,
       groupSelectedElements,
