@@ -340,6 +340,7 @@ export class BoundaryDrawer {
 
     if (bottom === 0 && left === 0 && right === 0 && top === 0) {
       this.boundary.setAttribute('d', '');
+      canvasEventEmitter.emit('boundary-updated', workareaManager.boundary);
 
       return;
     }
