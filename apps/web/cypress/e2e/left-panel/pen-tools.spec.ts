@@ -1,6 +1,6 @@
 describe('pen tools', () => {
-  beforeEach(() => {
-    cy.landingEditor();
+  // 1. Define helper functions right inside the test suite.
+  const drawComplexPenPath = () => {
     cy.clickToolBtn('Pen');
     cy.get('svg#svgcontent').trigger('mousedown', 100, 100, { force: true });
     cy.get('svg#svgcontent').trigger('mouseup', { force: true });
@@ -14,55 +14,53 @@ describe('pen tools', () => {
     cy.get('svg#svgcontent').dblclick({ force: true });
     cy.get('#svg_1', { timeout: 7000 }).should('exist');
     cy.get('#drawingCtrlPoint_0c2').should('exist');
+  };
+
+  const assertPointPosition = (selector: string, x: number, y: number) => {
+    cy.get(selector)
+      .first()
+      .should(($grip) => {
+        expect($grip.attr('cx')).to.be.closeTo(x, 1);
+        expect($grip.attr('cy')).to.be.closeTo(y, 1);
+      });
+  };
+
+  // 2. Set up the initial state for all tests.
+  beforeEach(() => {
+    cy.landingEditor();
+    drawComplexPenPath();
   });
 
-  it('path curve', () => {
-    cy.get('#pathpointgrip_0').first().should(($grip) => { expect($grip.attr('cx')).to.be.closeTo(100, 1); });
-    cy.get('#pathpointgrip_0').first().should(($grip) => { expect($grip.attr('cy')).to.be.closeTo(100, 1); });
-    cy.get('#pathpointgrip_1').first().should(($grip) => { expect($grip.attr('cx')).to.be.closeTo(250, 1); });
-    cy.get('#pathpointgrip_0').first().should(($grip) => { expect($grip.attr('cy')).to.be.closeTo(100, 1); });
+  // 3. Keep unique tests as they are, but use the helper.
+  it('should correctly render the initial path curve', () => {
+    assertPointPosition('#pathpointgrip_0', 100, 100);
+    assertPointPosition('#pathpointgrip_1', 250, 250);
   });
 
-  it('path nodetype corner', () => {
-    cy.get('#pathpointgrip_3', { timeout: 7000 }).dblclick();
-    cy.get('#pathedit-panel').should('exist');
-    cy.get('[title="Corner"]').click();
-    cy.get('#ctrlpointgrip_4c1')
-      .trigger('mousedown', { which: 1, pageX: 50, pageY: 50 })
-      .trigger('mousemove', { which: 1, pageX: 100, pageY: 400 })
-      .trigger('mouseup');
+  // 4. Group similar tests into a data array and loop through them.
+  const nodeTypeTests = [
+    { type: 'Corner', expected: { c1x: 650, c1y: 400, c2x: 400, c2y: 539 } },
+    { type: 'Smooth', expected: { c1x: 650, c1y: 400, c2x: 285, c2y: 142 } },
+    { type: 'Symmetry', expected: { c1x: 650, c1y: 400, c2x: 350, c2y: 188 } },
+  ];
 
-    cy.get('#ctrlpointgrip_4c1').first().should(($grip) => { expect($grip.attr('cx')).to.be.closeTo(650, 1); });
-    cy.get('#ctrlpointgrip_4c1').first().should(($grip) => { expect($grip.attr('cy')).to.be.closeTo(400, 1); });
-    cy.get('#ctrlpointgrip_3c2').first().should(($grip) => { expect($grip.attr('cx')).to.be.closeTo(400, 1); });
-    cy.get('#ctrlpointgrip_3c2').first().should(($grip) => { expect($grip.attr('cy')).to.be.closeTo(550, 1); });
-  });
+  nodeTypeTests.forEach((test) => {
+    it(`should handle path nodetype: ${test.type}`, () => {
+      cy.get('#pathpointgrip_3').dblclick();
+      cy.get('#pathedit-panel').should('exist');
 
-  it('path nodetype smooth', () => {
-    cy.get('#pathpointgrip_3', { timeout: 7000 }).dblclick();
-    cy.get('#pathedit-panel').should('exist');
-    cy.get('[title="Smooth"]').click();
-    cy.get('#ctrlpointgrip_4c1')
-      .trigger('mousedown', { which: 1, pageX: 50, pageY: 50 })
-      .trigger('mousemove', { which: 1, pageX: 100, pageY: 400 })
-      .trigger('mouseup');
+      // The "Symmetry" test doesn't click a button, it's the default.
+      if (test.type !== 'Symmetry') {
+        cy.get(`[title="${test.type}"]`).click();
+      }
 
-    cy.get('#ctrlpointgrip_4c1').first().should(($grip) => { expect($grip.attr('cx')).to.be.closeTo(650, 1); });
-    cy.get('#ctrlpointgrip_4c1').first().should(($grip) => { expect($grip.attr('cy')).to.be.closeTo(400, 1); });
-    cy.get('#ctrlpointgrip_3c2').first().should(($grip) => { expect($grip.attr('cx')).to.be.closeTo(277, 1); });
-    cy.get('#ctrlpointgrip_3c2').first().should(($grip) => { expect($grip.attr('cy')).to.be.closeTo(151, 1); });
-  });
+      cy.get('#ctrlpointgrip_4c1')
+        .trigger('mousedown', { which: 1, pageX: 50, pageY: 50 })
+        .trigger('mousemove', { which: 1, pageX: 100, pageY: 400 })
+        .trigger('mouseup');
 
-  it('path nodetype symmetry', () => {
-    cy.get('#pathpointgrip_3', { timeout: 7000 }).dblclick();
-    cy.get('#pathedit-panel').should('exist');
-    cy.get('#ctrlpointgrip_4c1')
-      .trigger('mousedown', { which: 1, pageX: 50, pageY: 50 })
-      .trigger('mousemove', { which: 1, pageX: 100, pageY: 400 })
-      .trigger('mouseup');
-    cy.get('#ctrlpointgrip_4c1').first().should(($grip) => { expect($grip.attr('cx')).to.be.closeTo(650, 1); });
-    cy.get('#ctrlpointgrip_4c1').first().should(($grip) => { expect($grip.attr('cy')).to.be.closeTo(400, 1); });
-    cy.get('#ctrlpointgrip_3c2').first().should(($grip) => { expect($grip.attr('cx')).to.be.closeTo(350, 1); });
-    cy.get('#ctrlpointgrip_3c2').first().should(($grip) => { expect($grip.attr('cy')).to.be.closeTo(200, 1); });
+      assertPointPosition('#ctrlpointgrip_4c1', test.expected.c1x, test.expected.c1y);
+      assertPointPosition('#ctrlpointgrip_3c2', test.expected.c2x, test.expected.c2y);
+    });
   });
 });

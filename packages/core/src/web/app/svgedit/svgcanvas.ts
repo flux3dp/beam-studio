@@ -167,35 +167,32 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   let alignEdges: Array<Record<'x1' | 'x2' | 'y1' | 'y2', number>> = [];
   const WORKAREA_ALIGN_POINTS = Array.of<IPoint>();
   const updateWorkAreaAlignPoints = () => {
-    const levels = [0, 0.5, 1];
-    const { maxY, minY, width } = workareaManager;
-    const withNegativeY = minY < 0;
+    const {
+      boundary: { maxX, maxY, minX, minY },
+    } = workareaManager;
+    const midX = (minX + maxX) / 2;
+    const midY = (minY + maxY) / 2;
+    const points = [
+      // Top row
+      { x: minX, y: minY },
+      { x: midX, y: minY },
+      { x: maxX, y: minY },
+      // Middle side
+      { x: minX, y: midY },
+      { x: maxX, y: midY },
+      // Bottom row
+      { x: minX, y: maxY },
+      { x: midX, y: maxY },
+      { x: maxX, y: maxY },
+    ];
 
     WORKAREA_ALIGN_POINTS.length = 0;
-
-    for (const level of levels) {
-      for (const level2 of levels) {
-        if (level === 0.5 && level2 === 0.5) continue;
-
-        if (withNegativeY && level === 0.5 && level2 === 0) continue;
-
-        WORKAREA_ALIGN_POINTS.push({ x: width * level, y: maxY * level2 });
-      }
-
-      if (withNegativeY) {
-        WORKAREA_ALIGN_POINTS.push({ x: width * level, y: minY });
-      }
-    }
-
-    if (withNegativeY) {
-      WORKAREA_ALIGN_POINTS.push({ x: 0, y: (maxY + minY) / 2 });
-      WORKAREA_ALIGN_POINTS.push({ x: width, y: (maxY + minY) / 2 });
-    }
+    WORKAREA_ALIGN_POINTS.push(...points);
   };
 
-  canvasEventEmitter.on('document-settings-saved', () => {
+  canvasEventEmitter.on('boundary-updated', () => {
     updateWorkAreaAlignPoints();
-    clearSelection();
+    this.collectAlignPoints();
   });
 
   // This function resets the svgcontent element while keeping it in the DOM.
@@ -5658,10 +5655,14 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     } // loop for each element to find the bbox and adjust min/max
 
     if (relativeTo === 'page') {
-      minx = 0;
-      miny = workareaManager.minY;
-      maxx = workareaManager.width;
-      maxy = workareaManager.maxY;
+      const {
+        boundary: { maxX, maxY, minX, minY },
+      } = workareaManager;
+
+      minx = minX;
+      miny = minY;
+      maxx = maxX;
+      maxy = maxY;
     }
 
     var dx = new Array(len);

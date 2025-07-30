@@ -67,13 +67,13 @@ describe('ador layer', () => {
     cy.get(`div[class*="${moduleBlockPrefix}select"] > .ant-select-selector`).should('have.text', 'Printing');
 
     const moveElement = (layer: string, expectedText: string) => {
+      cy.get('#svg_1').click({ force: true });
       cy.get('select[title="Move selected elements to a different layer"]').select(layer);
       cy.get('.ant-modal-title').should('have.text', expectedText);
       cy.contains('button.ant-btn', 'Confirm').click({ force: true });
     };
 
     moveElement('Layer 1', 'Move selected element to Layer 1 and convert it into laser element?');
-    cy.get('#svg_1').click({ force: true });
     moveElement('Layer 2', 'Move selected element to Layer 2 and convert it into printing element?');
   });
 

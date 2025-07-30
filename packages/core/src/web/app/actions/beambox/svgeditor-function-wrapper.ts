@@ -30,9 +30,9 @@ const setCrosshairCursor = () => {
 
 const align = (type: 'b' | 'c' | 'l' | 'm' | 'r' | 't') => {
   if (svgCanvas.getTempGroup()) {
-    const childeren = svgCanvas.ungroupTempGroup();
+    const children = svgCanvas.ungroupTempGroup();
 
-    svgCanvas.selectOnly(childeren, false);
+    svgCanvas.selectOnly(children, false);
   }
 
   const selectedElements = svgCanvas.getSelectedElems();
@@ -173,15 +173,10 @@ const funcs = {
         element: 'image',
       });
 
-      ImageData(newImage.getAttribute('origImage'), {
-        grayscale: {
-          is_rgba: true,
-          is_shading: false,
-          is_svg: false,
-          threshold,
-        },
+      ImageData(newImage.getAttribute('origImage')!, {
+        grayscale: { is_rgba: true, is_shading: false, is_svg: false, threshold },
         height,
-        onComplete(result) {
+        onComplete(result: any) {
           svgCanvas.setHref(newImage, result.pngBase64);
         },
         width,
