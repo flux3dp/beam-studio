@@ -74,7 +74,7 @@ export async function rasterizeGenericSvgElement({
 
     wrapper.setAttribute(
       'viewBox',
-      `${finalCoords.x} ${finalCoords.y} ${Math.abs(finalWidth) + strokeOffset} ${Math.abs(finalHeight) + strokeOffset}`,
+      `${finalCoords.x} ${finalCoords.y} ${Math.abs(finalWidth)} ${Math.abs(finalHeight)}`,
     );
     wrapper.appendChild(cloned);
 
