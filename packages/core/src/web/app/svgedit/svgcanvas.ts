@@ -192,7 +192,11 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
   canvasEventEmitter.on('boundary-updated', () => {
     updateWorkAreaAlignPoints();
+
+    const currentElements = [...selectedElements];
+
     clearSelection();
+    selectOnly(currentElements);
   });
 
   // This function resets the svgcontent element while keeping it in the DOM.
