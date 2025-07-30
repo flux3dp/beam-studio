@@ -167,33 +167,27 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   let alignEdges: Array<Record<'x1' | 'x2' | 'y1' | 'y2', number>> = [];
   const WORKAREA_ALIGN_POINTS = Array.of<IPoint>();
   const updateWorkAreaAlignPoints = () => {
-    const levels = [0, 0.5, 1];
     const {
       boundary: { maxX, maxY, minX, minY },
     } = workareaManager;
-    const withNegativeY = minY < 0;
-    const width = maxX - minX;
+    const midX = (minX + maxX) / 2;
+    const midY = (minY + maxY) / 2;
+    const points = [
+      // Top row
+      { x: minX, y: minY },
+      { x: midX, y: minY },
+      { x: maxX, y: minY },
+      // Middle side
+      { x: minX, y: midY },
+      { x: maxX, y: midY },
+      // Bottom row
+      { x: minX, y: maxY },
+      { x: midX, y: maxY },
+      { x: maxX, y: maxY },
+    ];
 
     WORKAREA_ALIGN_POINTS.length = 0;
-
-    for (const level of levels) {
-      const x = minX + width * level;
-
-      for (const level2 of levels) {
-        if ((level === 0.5 && level2 === 0.5) || (withNegativeY && level === 0.5 && level2 === 0)) continue;
-
-        WORKAREA_ALIGN_POINTS.push({ x, y: maxY * level2 });
-      }
-
-      if (withNegativeY) {
-        WORKAREA_ALIGN_POINTS.push({ x, y: minY });
-      }
-    }
-
-    if (withNegativeY) {
-      WORKAREA_ALIGN_POINTS.push({ x: minX, y: (maxY + minY) / 2 });
-      WORKAREA_ALIGN_POINTS.push({ x: maxX, y: (maxY + minY) / 2 });
-    }
+    WORKAREA_ALIGN_POINTS.push(...points);
   };
 
   canvasEventEmitter.on('boundary-updated', () => {

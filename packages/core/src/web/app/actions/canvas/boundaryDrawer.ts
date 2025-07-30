@@ -350,10 +350,10 @@ export class BoundaryDrawer {
         getAbsRect(left, workareaTop + top, w - right, workareaBottom - bottom),
     );
 
-    workareaManager.boundary.minY = workareaTop + top;
-    workareaManager.boundary.maxY = workareaBottom - bottom;
-    workareaManager.boundary.maxX = w - right;
-    workareaManager.boundary.minX = left;
+    workareaManager.boundary.minY = Math.max(workareaTop, workareaTop + top);
+    workareaManager.boundary.maxY = Math.min(workareaBottom, workareaBottom - bottom);
+    workareaManager.boundary.maxX = Math.min(w, w - right);
+    workareaManager.boundary.minX = Math.max(0, left);
 
     const { rotate, x, y } = getTextPosition(left, top, right, bottom);
 
