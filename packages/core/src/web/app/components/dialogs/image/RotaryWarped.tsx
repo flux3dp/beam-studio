@@ -69,7 +69,10 @@ const rotateCorners = (w: number, h: number, rotation: number, points: number[][
 
 const RotaryWarped = ({ elem, onClose }: Props): React.JSX.Element => {
   const lang = useI18n();
-  const t = lang.beambox.photo_edit_panel;
+  const {
+    beambox: { photo_edit_panel: t },
+    global: tGlobal,
+  } = lang;
   const isInch = useMemo(() => storage.get('default-units') === 'inches', []);
   const [inputType, setInputType] = useState<number>(0);
   const [previewImgUrl, setPreviewImgUrl] = useState<string>('');
@@ -349,7 +352,7 @@ const RotaryWarped = ({ elem, onClose }: Props): React.JSX.Element => {
             </Button>
           </div>
           <div>
-            <Button onClick={onClose}>{t.cancel}</Button>
+            <Button onClick={onClose}>{tGlobal.cancel}</Button>
             <Button onClick={handleApply} type="primary">
               {t.warp}
             </Button>
