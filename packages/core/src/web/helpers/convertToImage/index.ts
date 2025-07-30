@@ -81,7 +81,7 @@ export const convertSvgToImage: MainConverterFunc = async ({
     .with({ tagName: 'text' }, async (el) => {
       const { path } = await convertTextToPath({ element: el, isToSelect: false, parentCommand: parentCmd });
 
-      return await rasterizeGenericSvgElement({ isToSelect, parentCmd, svgElement: path! });
+      return await convertSvgToImage({ isToSelect, parentCmd, svgElement: path! });
     })
     .with(
       { tagName: P.union(...convertibleSvgTags) },
