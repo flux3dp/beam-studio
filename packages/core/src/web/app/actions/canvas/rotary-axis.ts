@@ -113,7 +113,7 @@ const init = (): void => {
     fixedSizeSvg?.appendChild(container);
 
     const { maxY } = workareaManager;
-    const initPosition = beamboxPreference.read('rotary-y') ?? maxY / 2;
+    const initPosition = Number(beamboxPreference.read('rotary-y')) || maxY / 2;
 
     rotaryLine = document.createElementNS(NS.SVG, 'line') as unknown as SVGLineElement;
 
