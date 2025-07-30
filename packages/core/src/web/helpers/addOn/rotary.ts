@@ -26,7 +26,7 @@ export const getRotaryInfo = (workarea?: WorkAreaModel, axisInMm = false): Rotar
 
   const info: RotaryInfo = {
     useAAxis: constant.fcodeV2Models.has(workarea),
-    y: rotaryAxis.getPosition(axisInMm) ?? 0,
+    y: rotaryAxis.getPosition(axisInMm),
     yRatio: getRotaryRatio(addOnInfo),
   };
 
