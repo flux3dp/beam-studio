@@ -1,17 +1,18 @@
-import { pipe } from 'remeda';
-
 import history from '@core/app/svgedit/history/history';
 import { getRotationAngle, setRotationAngle } from '@core/app/svgedit/transform/rotation';
 import workareaManager from '@core/app/svgedit/workarea';
 
+import { getObjectLayer } from '../layer/layer-helper';
+
 import { createAndFinalizeImage } from './createAndFinalizeImage';
+import { getPngUrlFromSvg } from './getPngUrlFromSvg';
 import { getTransformedCoordinates } from './getTransformedCoordinates';
 import type { ConvertSvgToImageParams, ConvertToImageResult } from './types';
 
 const getStrokeWidth = () => {
   const { zoomRatio } = workareaManager;
 
-  return Math.max(0.85 / zoomRatio + 0.85, 1.5);
+  return Math.max(0.85 / zoomRatio + 0.85, 2);
 };
 
 /**
@@ -32,23 +33,18 @@ export async function rasterizeGenericSvgElement({
     // Rasterization start
     const bbox = svgElement.getBBox();
     const isFilled = !['none', null].includes(svgElement.getAttribute('fill'));
+    const { elem: layerElement } = getObjectLayer(svgElement);
+    const isFullColor = layerElement.getAttribute('data-fullcolor') === '1';
     // Prepare return-to-zero transform
     const previousTransform = cloned.getAttribute('transform');
     const strokeOffset = isFilled ? 0 : getStrokeWidth();
 
-    cloned.setAttribute('fill', '#000');
-    cloned.setAttribute('stroke', '#000');
+    if (!isFullColor) {
+      cloned.setAttribute('fill', '#000');
+      cloned.setAttribute('stroke', '#000');
+    }
 
     if (!isFilled) cloned.setAttribute('stroke-width', String(strokeOffset));
-
-    if (svgElement.getAttribute('data-textpath-g') === '1') {
-      Array.from(cloned.children).forEach((child) => {
-        if (child instanceof SVGGraphicsElement) {
-          child.setAttribute('fill', '#000');
-          child.setAttribute('stroke', '#000');
-        }
-      });
-    }
 
     let finalCoords = { x: bbox.x - strokeOffset / 2, y: bbox.y - strokeOffset / 2 };
     let finalWidth = bbox.width + strokeOffset;
@@ -57,8 +53,6 @@ export async function rasterizeGenericSvgElement({
     const wrapper = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 
     if (isTransformedElement) {
-      console.log('isTransformedElement', Boolean(previousTransform));
-
       const transformed = getTransformedCoordinates(bbox, previousTransform);
       const scale = Number.parseFloat(previousTransform?.match(/matrix\(([^,]+)/)?.[1] || '1');
 
@@ -84,22 +78,11 @@ export async function rasterizeGenericSvgElement({
     );
     wrapper.appendChild(cloned);
 
-    // Create image from blob URL
-    const svgUrl = pipe(
-      new XMLSerializer().serializeToString(wrapper),
-      (svgData) => new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' }),
-      URL.createObjectURL,
-    );
     const img = new Image();
-
-    await new Promise<void>((resolve, reject) => {
-      img.onload = () => resolve();
-      img.onerror = () => reject(new Error('Failed to load the generated SVG.'));
-      img.src = svgUrl;
-    });
+    const href = await getPngUrlFromSvg(wrapper, { img });
 
     return await createAndFinalizeImage(
-      { angle, height: img.height, href: img.src, transform: '', width: img.width, x: finalCoords.x, y: finalCoords.y },
+      { angle, height: img.height, href, transform: '', width: img.width, x: finalCoords.x, y: finalCoords.y },
       { isToSelect, parentCmd, svgElement },
     );
   } catch (error) {

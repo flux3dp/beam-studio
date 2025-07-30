@@ -3,6 +3,7 @@ import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import { getSVGAsync } from '../svg-editor-helper'; // Assuming this path
 
+import { getPngUrlFromSvg } from './getPngUrlFromSvg';
 import { getUnionBBox } from './getUnionBBox'; // Make sure this is imported
 
 let svgCanvas: ISVGCanvas;
@@ -42,32 +43,7 @@ export const combineImagesIntoSingleElement = async (elements: SVGImageElement[]
   });
 
   // 4. Serialize the wrapper SVG into a string and create a data URL.
-  const svgString = new XMLSerializer().serializeToString(wrapper);
-  const svgUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgString)}`;
-  const pngUrl = await new Promise<string>((resolve, reject) => {
-    const img = new Image();
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    const renderWidth = (bbox.width * 300) / (dpmm * 25.4);
-    const renderHeight = (bbox.height * 300) / (dpmm * 25.4);
-
-    canvas.width = renderWidth;
-    canvas.height = renderHeight;
-
-    img.onload = () => {
-      if (ctx) {
-        ctx.drawImage(img, 0, 0, renderWidth, renderHeight);
-        // Export the canvas content as a PNG data URL
-        resolve(canvas.toDataURL('image/png'));
-      } else {
-        reject(new Error('Failed to get 2D context from canvas.'));
-      }
-    };
-    img.onerror = () => {
-      reject(new Error('Failed to load the combined SVG for rasterization.'));
-    };
-    img.src = svgUrl;
-  });
+  const pngUrl = await getPngUrlFromSvg(wrapper);
 
   // 5. Use `svgCanvas.addSvgElementFromJson` to create the final, large image element.
   const imageElement = svgCanvas.addSvgElementFromJson({
