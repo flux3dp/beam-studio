@@ -46,8 +46,10 @@ const doCalibration = async (model: WorkAreaModel, module: LayerModuleType) => {
     }
   } else if (module === LayerModule.PRINTER_4C) {
     await deviceMaster.doBeamo24CCalibration();
+  } else if (module === LayerModule.LASER_1064) {
+    await deviceMaster.doBeamo2IRCalibration();
   } else {
-    // TODO: bm2 1064
+    // TODO: bm2 white ink, varnish
     console.error('TODO: add calibration fcode');
   }
 };

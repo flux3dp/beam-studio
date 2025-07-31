@@ -5850,7 +5850,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     return { height, width, x, y };
   };
 
-  this.calculateTransformedBBox = function (elem) {
+  this.calculateTransformedBBox = function (elem: Element, ignoreRotation = true): IRect {
     const tlist = svgedit.transformlist.getTransformList(elem);
     const bbox = elem.getBBox();
     let points = [
@@ -5863,7 +5863,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     for (let i = tlist.numberOfItems - 1; i >= 0; i--) {
       const t = tlist.getItem(i);
 
-      if (t.type === 4) {
+      if (ignoreRotation && t.type === 4) {
         break;
       }
 

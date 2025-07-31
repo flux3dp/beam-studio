@@ -165,8 +165,8 @@ const sliceWorkarea = async (
       for (let k = children.length - 1; k >= 0; k -= 1) {
         const child = children[k] as SVGGraphicsElement;
 
-        if (child.tagName !== 'use' && child.tagName !== 'text' && child.getBBox) {
-          const { height: childH, y: childY } = child.getBBox();
+        if (child.tagName !== 'use' && child.tagName !== 'text') {
+          const { height: childH, y: childY } = svgCanvas.calculateTransformedBBox(child, false);
 
           if (childY + childH < start || childY > end) {
             child.remove();

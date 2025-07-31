@@ -38,7 +38,7 @@ export default interface ISVGCanvas {
   assignAttributes(element: Element, args: any): void;
   bind: (eventName: string, callback: ((win: any, elem: any) => void) | boolean) => void;
   calcElemFilledInfo: (elem: Element) => { isAllFilled: boolean; isAnyFilled: boolean };
-  calculateTransformedBBox(elem: Element): IRect;
+  calculateTransformedBBox(elem: Element, ignoreRotation?: boolean): IRect;
   call: (eventName: string, args?: any | SVGElement[]) => void;
   changeSelectedAttribute(attr: string, val: number | string, elems?: Element[]): void;
   changeSelectedAttributeNoUndo: (attr: string, val: number | string, elems?: Element[]) => void;
