@@ -1,3 +1,5 @@
+@use '@core/styles/mixins' as mixins;
+
 .container {
   display: flex;
   gap: 32px;
@@ -94,6 +96,8 @@
 }
 
 .footer {
+  @include mixins.footer;
+
   margin-top: 12px;
   display: flex;
   justify-content: space-between;

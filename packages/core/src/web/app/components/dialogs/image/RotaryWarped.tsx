@@ -3,7 +3,6 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Button, Modal, Segmented } from 'antd';
 
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import progressCaller from '@core/app/actions/progress-caller';
 import AlertIcons from '@core/app/icons/alerts/AlertIcons';
 import { getRotationAngle } from '@core/app/svgedit/transform/rotation';
@@ -13,15 +12,12 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 import storage from '@core/implementations/storage';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './RotaryWarped.module.scss';
 
-let svgCanvas: ISVGCanvas;
 let svgEditor;
 
 getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
   svgEditor = globalSVG.Editor;
 });
 
@@ -40,7 +36,7 @@ const rotateImage = (w: number, h: number, rotation: number, source: CanvasImage
   canvas.width = Math.round(rotatedW);
   canvas.height = Math.round(rotatedH);
 
-  const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext('2d')!;
 
   ctx.save();
   ctx.translate(rotatedW / 2, rotatedH / 2);
@@ -69,7 +65,10 @@ const rotateCorners = (w: number, h: number, rotation: number, points: number[][
 
 const RotaryWarped = ({ elem, onClose }: Props): React.JSX.Element => {
   const lang = useI18n();
-  const t = lang.beambox.photo_edit_panel;
+  const {
+    beambox: { photo_edit_panel: t },
+    global: tGlobal,
+  } = lang;
   const isInch = useMemo(() => storage.get('default-units') === 'inches', []);
   const [inputType, setInputType] = useState<number>(0);
   const [previewImgUrl, setPreviewImgUrl] = useState<string>('');
@@ -83,7 +82,7 @@ const RotaryWarped = ({ elem, onClose }: Props): React.JSX.Element => {
       const trapezoidData = elem.getAttribute('data-trapezoid');
 
       if (trapezoidData) {
-        const { a, b, origImage } = JSON.parse(trapezoidData);
+        const { a, b, origImage } = JSON.parse(trapezoidData) as { a: number; b: number; origImage: string };
 
         return { ...imageInfo, imgUrl: origImage, initA: a, initB: b, rotation: r };
       }
@@ -96,8 +95,8 @@ const RotaryWarped = ({ elem, onClose }: Props): React.JSX.Element => {
   const [diameterA, setDiaMeterA] = useState(initA ?? beamboxPreference.read('rotary-chuck-obj-d'));
   const [diameterB, setDiaMeterB] = useState(initB ?? beamboxPreference.read('rotary-chuck-obj-d'));
   const img = useRef<HTMLImageElement>(new Image());
-  const previewCanvas = useRef<HTMLCanvasElement>(null);
-  const imgLoad = useRef<Promise<void>>(null);
+  const previewCanvas = useRef<HTMLCanvasElement | null>(null);
+  const imgLoad = useRef<null | Promise<void>>(null);
   const segmentOptions = useMemo(
     () => [
       { label: t.diameter, value: 0 },
@@ -140,7 +139,7 @@ const RotaryWarped = ({ elem, onClose }: Props): React.JSX.Element => {
       const min = Math.min(diameterA, diameterB);
 
       if (max === min) {
-        setPreviewImgUrl(previewCanvas.current?.toDataURL());
+        setPreviewImgUrl(previewCanvas.current?.toDataURL() || '');
 
         return;
       }
@@ -246,21 +245,21 @@ const RotaryWarped = ({ elem, onClose }: Props): React.JSX.Element => {
       newCanvas.width = newW;
       newCanvas.height = newH;
 
-      const ctx = newCanvas.getContext('2d');
+      const ctx = newCanvas.getContext('2d')!;
 
       ctx.drawImage(result, dw, dh, newW, newH, 0, 0, newW, newH);
       result = newCanvas;
     }
 
-    const blob = await new Promise<Blob>((resolve) => result.toBlob(resolve));
+    const blob = await new Promise<Blob>((resolve) => result.toBlob((b) => resolve(b!)));
     const url = URL.createObjectURL(blob);
     const base64Img = await imageEdit.generateBase64Image(url, shading, threshold, isFullColor);
     const changes: { [key: string]: number | string } = { origImage: url, 'xlink:href': base64Img };
 
     if (origW !== result.width) {
       const wRatio = result.width / origW;
-      const curX = Number.parseFloat(elem.getAttribute('x'));
-      const curWidth = Number.parseFloat(elem.getAttribute('width'));
+      const curX = Number.parseFloat(elem.getAttribute('x') ?? '0');
+      const curWidth = Number.parseFloat(elem.getAttribute('width') ?? '0');
       const newWidth = curWidth * wRatio;
       const newX = curX + (curWidth - newWidth) / 2;
 
@@ -270,8 +269,8 @@ const RotaryWarped = ({ elem, onClose }: Props): React.JSX.Element => {
 
     if (origH !== result.height) {
       const hRatio = result.height / origH;
-      const curY = Number.parseFloat(elem.getAttribute('y'));
-      const curHeight = Number.parseFloat(elem.getAttribute('height'));
+      const curY = Number.parseFloat(elem.getAttribute('y') ?? '0');
+      const curHeight = Number.parseFloat(elem.getAttribute('height') ?? '0');
       const newHeight = curHeight * hRatio;
       const newY = curY + (curHeight - newHeight) / 2;
 
@@ -349,7 +348,7 @@ const RotaryWarped = ({ elem, onClose }: Props): React.JSX.Element => {
             </Button>
           </div>
           <div>
-            <Button onClick={onClose}>{t.cancel}</Button>
+            <Button onClick={onClose}>{tGlobal.cancel}</Button>
             <Button onClick={handleApply} type="primary">
               {t.warp}
             </Button>
@@ -389,7 +388,11 @@ const RotaryWarped = ({ elem, onClose }: Props): React.JSX.Element => {
                 id="input_a"
                 isInch={isInch}
                 min={0.01}
-                onChange={(val) => setDiaMeterA(inputType === 0 ? val : val / Math.PI)}
+                onChange={(val) => {
+                  if (val === null) return;
+
+                  setDiaMeterA(inputType === 0 ? val : val / Math.PI);
+                }}
                 precision={isInch ? 4 : 2}
                 value={inputType === 0 ? diameterA : diameterA * Math.PI}
               />
@@ -404,7 +407,11 @@ const RotaryWarped = ({ elem, onClose }: Props): React.JSX.Element => {
                 id="input_b"
                 isInch={isInch}
                 min={0.01}
-                onChange={(val) => setDiaMeterB(inputType === 0 ? val : val / Math.PI)}
+                onChange={(val) => {
+                  if (val === null) return;
+
+                  setDiaMeterB(inputType === 0 ? val : val / Math.PI);
+                }}
                 precision={isInch ? 4 : 2}
                 value={inputType === 0 ? diameterB : diameterB * Math.PI}
               />
@@ -423,30 +430,3 @@ const RotaryWarped = ({ elem, onClose }: Props): React.JSX.Element => {
 };
 
 export default RotaryWarped;
-
-export const showRotaryWarped = (elem?: SVGImageElement): void => {
-  if (isIdExist('rotary-warped')) {
-    return;
-  }
-
-  let targetElem = elem;
-
-  if (!targetElem) {
-    const selectedElements = svgCanvas.getSelectedElems();
-
-    if (selectedElements.length !== 1) {
-      return;
-    }
-
-    targetElem = selectedElements[0] as SVGImageElement;
-  }
-
-  if (!targetElem) {
-    return;
-  }
-
-  addDialogComponent(
-    'rotary-warped',
-    <RotaryWarped elem={targetElem} onClose={() => popDialogById('rotary-warped')} />,
-  );
-};

@@ -309,7 +309,6 @@ export interface ILang {
       aspect_ratio: string;
       brightness: string;
       brightness_and_contrast: string;
-      cancel: string;
       circumference: string;
       compare: string;
       contrast: string;
@@ -318,7 +317,6 @@ export interface ILang {
       diameter: string;
       free: string;
       invert: string;
-      okay: string;
       original: string;
       phote_edit: string;
       processing: string;

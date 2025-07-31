@@ -65,9 +65,9 @@ describe('mobile image tools', () => {
     cy.get('#grading').click();
     cy.get('.ant-modal-content').should('exist');
     cy.wait(1000);
-    cy.get('[class*="src-web-app-views-beambox-Photo-Edit-Panel-module__field--"]').should('exist');
+    cy.get('[class*="_-_-packages-core-src-web-app-components-dialogs-image-index-module__field--"]').should('exist');
     cy.get('.ant-modal-content .ant-input-number-input').eq(0).type('25{enter}');
-    cy.get('button.ant-btn').contains('Okay').click();
+    cy.get('button.ant-btn').contains('OK').click();
     cy.get('.progress').should('not.exist');
     cy.wait(5000);
     cy.get('#svg_1')
@@ -86,7 +86,7 @@ describe('mobile image tools', () => {
     cy.get('.point-se').move({ deltaX: 0, deltaY: -100 });
     cy.get('button.ant-btn').contains('OK').click();
     cy.get('.progress', { timeout: 10000 }).should('not.exist');
-    cy.get('.photo-edit-panel', { timeout: 5000 }).should('not.exist');
+    cy.get('div.ant-modal-body').should('not.exist');
     cy.wait(3000);
     cy.get('#svg_1')
       .invoke('attr', 'xlink:href')

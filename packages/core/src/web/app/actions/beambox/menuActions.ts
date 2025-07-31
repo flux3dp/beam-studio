@@ -5,6 +5,7 @@ import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import Tutorials from '@core/app/actions/beambox/tutorials';
 import Dialog from '@core/app/actions/dialog-caller';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
+import { showCurvePanel, showSharpenPanel } from '@core/app/components/dialogs/image';
 import { showRotarySettings } from '@core/app/components/dialogs/RotarySettings';
 import { gestureIntroduction } from '@core/app/constants/media-tutorials';
 import historyUtils from '@core/app/svgedit/history/utils';
@@ -81,9 +82,9 @@ export default {
   FOLLOW_US: (): void => Dialog.showSocialMedia(),
   GROUP: () => svgCanvas.groupSelectedElements(),
   IMAGE_CROP: (): void => Dialog.showCropPanel(),
-  IMAGE_CURVE: (): void => Dialog.showPhotoEditPanel('curve'),
+  IMAGE_CURVE: (): void => showCurvePanel(),
   IMAGE_INVERT: (): Promise<void> => imageEdit.colorInvert(),
-  IMAGE_SHARPEN: (): void => Dialog.showPhotoEditPanel('sharpen'),
+  IMAGE_SHARPEN: (): Promise<void> | void => showSharpenPanel(),
   IMAGE_STAMP: (): Promise<void> => imageEdit.generateStampBevel(),
   IMAGE_VECTORIZE: (): Promise<void> => imageEdit.traceImage(),
   LAYER_COLOR_CONFIG: (): void => Dialog.showLayerColorConfig(),

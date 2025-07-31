@@ -13,6 +13,7 @@ import FirmwareUpdate from '@core/app/components/dialogs/FirmwareUpdate';
 import FluxCredit from '@core/app/components/dialogs/FluxCredit';
 import FluxIdLogin from '@core/app/components/dialogs/FluxIdLogin';
 import FluxPlusWarning from '@core/app/components/dialogs/FluxPlusWarning';
+import CropPanel from '@core/app/components/dialogs/image/CropPanel';
 import MaterialTestGeneratorPanel from '@core/app/components/dialogs/MaterialTestGeneratorPanel';
 import MediaTutorial from '@core/app/components/dialogs/MediaTutorial';
 import MyCloud from '@core/app/components/dialogs/myCloud/MyCloud';
@@ -29,12 +30,9 @@ import { eventEmitter } from '@core/app/contexts/DialogContext';
 import ElementPanel from '@core/app/views/beambox/ElementPanel/ElementPanel';
 import LayerColorConfigPanel from '@core/app/views/beambox/Layer-Color-Config';
 import NetworkTestingPanel from '@core/app/views/beambox/NetworkTestingPanel';
-import type { PhotoEditMode } from '@core/app/views/beambox/Photo-Edit-Panel';
-import PhotoEditPanel from '@core/app/views/beambox/Photo-Edit-Panel';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import SvgNestButtons from '@core/app/views/beambox/SvgNestButtons';
 import DeviceSelector from '@core/app/views/dialogs/DeviceSelector';
-import CropPanel from '@core/app/views/dialogs/image-edit/CropPanel';
 import Prompt from '@core/app/views/dialogs/Prompt';
 import Tutorial from '@core/app/views/tutorials/Tutorial';
 import DialogBox from '@core/app/widgets/Dialog-Box';
@@ -616,30 +614,6 @@ export default {
     }
 
     addDialogComponent('network-test', <NetworkTestingPanel ip={ip!} onClose={() => popDialogById('network-test')} />);
-  },
-  showPhotoEditPanel: (mode: PhotoEditMode): void => {
-    if (isIdExist('photo-edit')) {
-      return;
-    }
-
-    const selectedElements = svgCanvas.getSelectedElems();
-
-    if (selectedElements.length !== 1) {
-      return;
-    }
-
-    const element = selectedElements[0];
-    const src = element.getAttribute('origImage') || element.getAttribute('xlink:href');
-
-    addDialogComponent(
-      'photo-edit',
-      <PhotoEditPanel
-        element={element as unknown as HTMLElement}
-        mode={mode}
-        src={src!}
-        unmount={() => popDialogById('photo-edit')}
-      />,
-    );
   },
   showRadioSelectDialog: <T,>({
     options,
