@@ -35,7 +35,10 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
   acrylic_printing: {
     ado1: { [LayerModule.PRINTER]: { ink: 2, module: LayerModule.PRINTER, multipass: 4, speed: 30 } },
   },
-  aluminum_engraving: { ado1: { [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 80, speed: 20 } } },
+  aluminum_engraving: {
+    ado1: { [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 80, speed: 20 } },
+    fbm2: { [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 80, speed: 20 } },
+  },
   aluminum_light: {
     fpm1_0_20: { [LayerModule.LASER_UNIVERSAL]: { fillInterval: 0.01, frequency: 27, power: 90, speed: 3500 } },
     fpm1_0_30: { [LayerModule.LASER_UNIVERSAL]: { fillInterval: 0.01, frequency: 30, power: 72, speed: 3500 } },
@@ -88,6 +91,7 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
       [LayerModule.LASER_20W_DIODE]: { module: LayerModule.LASER_20W_DIODE, power: 65, speed: 175 },
       [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 50, speed: 40 },
     },
+    fbm2: { [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 50, speed: 40 } },
   },
   brass_dark: {
     fpm1_0_50: { [LayerModule.LASER_UNIVERSAL]: { fillInterval: 0.01, frequency: 45, power: 90, speed: 700 } },
@@ -101,7 +105,10 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
       [LayerModule.LASER_UNIVERSAL]: { fillInterval: 0.01, frequency: 55, power: 100, pulseWidth: 300, speed: 900 },
     },
   },
-  brass_engraving: { ado1: { [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 85, speed: 30 } } },
+  brass_engraving: {
+    ado1: { [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 85, speed: 30 } },
+    fbm2: { [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 85, speed: 30 } },
+  },
   brass_light: {
     fpm1_0_20: { [LayerModule.LASER_UNIVERSAL]: { fillInterval: 0.01, frequency: 27, power: 90, speed: 1500 } },
     fpm1_0_30: { [LayerModule.LASER_UNIVERSAL]: { fillInterval: 0.01, frequency: 30, power: 72, speed: 1500 } },
@@ -197,8 +204,14 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
   gloss_leather_printing: {
     ado1: { [LayerModule.PRINTER]: { ink: 3, module: LayerModule.PRINTER, multipass: 3, speed: 60 } },
   },
-  gold_engraving: { ado1: { [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 95, speed: 10 } } },
-  iron_engraving: { ado1: { [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 90, speed: 20 } } },
+  gold_engraving: {
+    ado1: { [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 95, speed: 10 } },
+    fbm2: { [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 95, speed: 10 } },
+  },
+  iron_engraving: {
+    ado1: { [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 90, speed: 20 } },
+    fbm2: { [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 90, speed: 20 } },
+  },
   leather_3mm_cutting: {
     ado1: {
       [LayerModule.LASER_10W_DIODE]: { module: LayerModule.LASER_10W_DIODE, power: 100, speed: 4 },
@@ -291,7 +304,10 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
     fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 35, speed: 100 } },
     fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 45, speed: 300 } },
   },
-  silver_engraving: { ado1: { [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 95, speed: 20 } } },
+  silver_engraving: {
+    ado1: { [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 95, speed: 20 } },
+    fbm2: { [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 95, speed: 20 } },
+  },
   slate_engraving: {
     ado1: {
       [LayerModule.LASER_10W_DIODE]: { module: LayerModule.LASER_10W_DIODE, power: 50, speed: 100 },
@@ -320,6 +336,7 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
   },
   stainless_steel_engraving: {
     ado1: { [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 90, speed: 20 } },
+    fbm2: { [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 90, speed: 20 } },
   },
   stainless_steel_light: {
     fpm1_0_20: { [LayerModule.LASER_UNIVERSAL]: { fillInterval: 0.01, frequency: 27, power: 50, speed: 4500 } },
@@ -358,7 +375,10 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
       [LayerModule.LASER_UNIVERSAL]: { fillInterval: 0.05, frequency: 330, power: 25, pulseWidth: 500, speed: 2500 },
     },
   },
-  ti_engraving: { ado1: { [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 75, speed: 30 } } },
+  ti_engraving: {
+    ado1: { [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 75, speed: 30 } },
+    fbm2: { [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 75, speed: 30 } },
+  },
   titanium_dark: {
     fpm1_0_20: { [LayerModule.LASER_UNIVERSAL]: { fillInterval: 0.01, frequency: 27, power: 100, speed: 700 } },
     fpm1_0_30: { [LayerModule.LASER_UNIVERSAL]: { fillInterval: 0.01, frequency: 30, power: 80, speed: 700 } },
