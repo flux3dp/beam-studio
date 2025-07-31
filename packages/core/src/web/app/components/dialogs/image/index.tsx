@@ -1,5 +1,6 @@
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import Curve from './Curve';
@@ -28,18 +29,19 @@ const getProps = () => {
   };
 };
 
-export const showSharpenPanel = () => {
-  if (isIdExist('sharpen-panel')) return;
+export const showSharpenPanel = () =>
+  webNeedConnectionWrapper(() => {
+    if (isIdExist('sharpen-panel')) return;
 
-  const data = getProps();
+    const data = getProps();
 
-  if (!data) return;
+    if (!data) return;
 
-  const { element, src } = data;
-  const onClose = () => popDialogById('sharpen-panel');
+    const { element, src } = data;
+    const onClose = () => popDialogById('sharpen-panel');
 
-  addDialogComponent('sharpen-panel', <Sharpen element={element} onClose={onClose} src={src} />);
-};
+    addDialogComponent('sharpen-panel', <Sharpen element={element} onClose={onClose} src={src} />);
+  });
 
 export const showCurvePanel = () => {
   if (isIdExist('curve-panel')) return;

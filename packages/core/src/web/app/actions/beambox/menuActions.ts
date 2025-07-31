@@ -22,7 +22,6 @@ import viewMenu from '@core/helpers/menubar/view';
 import OutputError from '@core/helpers/output-error';
 import shortcuts from '@core/helpers/shortcuts';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
 import browser from '@core/implementations/browser';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -85,7 +84,7 @@ export default {
   IMAGE_CROP: (): void => Dialog.showCropPanel(),
   IMAGE_CURVE: (): void => showCurvePanel(),
   IMAGE_INVERT: (): Promise<void> => imageEdit.colorInvert(),
-  IMAGE_SHARPEN: () => webNeedConnectionWrapper(showSharpenPanel),
+  IMAGE_SHARPEN: (): Promise<void> | void => showSharpenPanel(),
   IMAGE_STAMP: (): Promise<void> => imageEdit.generateStampBevel(),
   IMAGE_VECTORIZE: (): Promise<void> => imageEdit.traceImage(),
   LAYER_COLOR_CONFIG: (): void => Dialog.showLayerColorConfig(),

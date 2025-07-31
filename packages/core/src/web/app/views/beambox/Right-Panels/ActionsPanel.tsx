@@ -24,7 +24,6 @@ import { isMobile } from '@core/helpers/system-helper';
 import useForceUpdate from '@core/helpers/use-force-update';
 import useI18n from '@core/helpers/useI18n';
 import { getVariableTextType } from '@core/helpers/variableText';
-import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
 import dialog from '@core/implementations/dialog';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -287,7 +286,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       sharpen: renderButtons(
         'sharpen',
         lang.sharpen,
-        () => webNeedConnectionWrapper(showSharpenPanel),
+        showSharpenPanel,
         <ActionPanelIcons.Sharpen />,
         <ActionPanelIcons.SharpenMobile />,
         { autoClose: false },
