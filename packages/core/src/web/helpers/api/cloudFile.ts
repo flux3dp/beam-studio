@@ -107,6 +107,7 @@ export const openFile = async (file: IFile): Promise<OperationResult<Blob>> => {
   try {
     const resp = await axiosFluxId.get(`/api/beam-studio/cloud/file/${file.uuid}`, {
       responseType: 'blob',
+      timeout: 120000,
       withCredentials: true,
     });
     const checkRespResult = await checkResp(resp);
