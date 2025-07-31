@@ -67,7 +67,7 @@ describe('mobile image tools', () => {
     cy.wait(1000);
     cy.get('[class*="_-_-packages-core-src-web-app-components-dialogs-image-index-module__field--"]').should('exist');
     cy.get('.ant-modal-content .ant-input-number-input').eq(0).type('25{enter}');
-    cy.get('button.ant-btn').contains('Okay').click();
+    cy.get('button.ant-btn').contains('OK').click();
     cy.get('.progress').should('not.exist');
     cy.wait(5000);
     cy.get('#svg_1')
