@@ -144,6 +144,7 @@ const saveToCloud = async (uuid?: string): Promise<boolean> => {
     if (uuid) {
       resp = await axiosFluxId.put(`/api/beam-studio/cloud/file/${uuid}`, form, {
         headers: getDefaultHeader(),
+        timeout: 120000,
         withCredentials: true,
       });
     } else {
@@ -157,6 +158,7 @@ const saveToCloud = async (uuid?: string): Promise<boolean> => {
       form.append('type', 'file');
       resp = await axiosFluxId.post(`/api/beam-studio/cloud/add/${fileName}`, form, {
         headers: getDefaultHeader(),
+        timeout: 120000,
         withCredentials: true,
       });
     }
