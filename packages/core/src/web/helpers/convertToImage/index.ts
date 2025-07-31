@@ -81,7 +81,7 @@ export const convertSvgToImage: MainConverterFunc = async ({
     .with({ tagName: 'text' }, async (el) => {
       const { path } = await convertTextToPath({ element: el, isToSelect: false, parentCommand: parentCmd });
 
-      return await rasterizeGenericSvgElement({ isToSelect, parentCmd, svgElement: path! });
+      return await convertSvgToImage({ isToSelect, parentCmd, svgElement: path! });
     })
     .with(
       { tagName: P.union(...convertibleSvgTags) },
@@ -137,10 +137,10 @@ export const convertSvgToImage: MainConverterFunc = async ({
 
     updateElementColor(combinedImage);
     svgCanvas.selectOnly([combinedImage]);
-
     undoManager.addCommandToHistory(parentCmd);
-    progressCaller.popById('convert-svg-to-image');
   }
+
+  progressCaller.popById('convert-svg-to-image');
 
   return result;
 };

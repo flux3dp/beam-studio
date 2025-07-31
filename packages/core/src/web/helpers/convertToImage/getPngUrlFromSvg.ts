@@ -11,9 +11,9 @@ export const getPngUrlFromSvg = async (
 
     image.onload = () => {
       if (ctx) {
-        canvas.width = image.width;
-        canvas.height = image.height;
-        ctx.drawImage(image, 0, 0, image.width, image.height);
+        canvas.width = image.naturalWidth;
+        canvas.height = image.naturalHeight;
+        ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
         // Export the canvas content as a PNG data URL
         resolve(canvas.toDataURL('image/png'));
       } else {
