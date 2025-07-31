@@ -1,4 +1,3 @@
-import { dpmm } from '@core/app/actions/beambox/constant';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import { getSVGAsync } from '../svg-editor-helper'; // Assuming this path
@@ -31,8 +30,8 @@ export const combineImagesIntoSingleElement = async (elements: SVGImageElement[]
   const wrapper = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 
   wrapper.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-  wrapper.setAttribute('width', String((bbox.width * 300) / (dpmm * 25.4)));
-  wrapper.setAttribute('height', String((bbox.height * 300) / (dpmm * 25.4)));
+  wrapper.setAttribute('width', String(bbox.width));
+  wrapper.setAttribute('height', String(bbox.height));
   wrapper.setAttribute('viewBox', `${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}`);
 
   // 3. Clone each image and position it correctly within the new SVG wrapper.

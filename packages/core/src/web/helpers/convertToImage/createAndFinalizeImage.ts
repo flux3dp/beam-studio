@@ -18,7 +18,7 @@ getSVGAsync(({ Canvas }) => {
  * This encapsulates all the common steps like setting attributes, color, rotation, and history.
  */
 export const createAndFinalizeImage = async (
-  { angle = 0, height, href, transform, width, x, y }: CreateImageParams,
+  { angle = 0, attributes, dimensions, href, transform = '' }: CreateImageParams,
   { parentCmd, svgElement }: Required<ConvertSvgToImageParams>,
 ): Promise<ConvertToImageResult> => {
   const imageElement = svgCanvas.addSvgElementFromJson({
@@ -26,14 +26,11 @@ export const createAndFinalizeImage = async (
       'data-ratiofixed': true,
       'data-shading': true,
       'data-threshold': 254,
-      height,
       id: svgCanvas.getNextId(),
       origImage: href,
       preserveAspectRatio: 'none',
       style: 'pointer-events:inherit',
-      width,
-      x,
-      y,
+      ...dimensions,
     },
     element: 'image',
   }) as SVGImageElement;
@@ -44,6 +41,13 @@ export const createAndFinalizeImage = async (
   setRotationAngle(imageElement, angle, { parentCmd });
   svgCanvas.setHref(imageElement, href);
   updateElementColor(imageElement);
+
+  if (attributes) {
+    Object.entries(attributes).forEach(([key, value]) => {
+      imageElement.setAttribute(key, String(value));
+    });
+    parentCmd.addSubCommand(new history.ChangeElementCommand(imageElement, attributes));
+  }
 
   return { imageElements: [imageElement], svgElements: [svgElement] };
 };

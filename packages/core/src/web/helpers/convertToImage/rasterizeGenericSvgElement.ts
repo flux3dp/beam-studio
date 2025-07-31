@@ -6,18 +6,64 @@ import { getObjectLayer } from '../layer/layer-helper';
 
 import { createAndFinalizeImage } from './createAndFinalizeImage';
 import { getPngUrlFromSvg } from './getPngUrlFromSvg';
-import { getTransformedCoordinates } from './getTransformedCoordinates';
 import type { ConvertSvgToImageParams, ConvertToImageResult } from './types';
 
 const getStrokeWidth = () => {
   const { zoomRatio } = workareaManager;
 
-  return Math.max(0.85 / zoomRatio + 0.85, 2);
+  return Math.max(0.85 / zoomRatio + 0.85, 1.5);
+};
+
+/** Prepares a clone of the SVG element for rasterization. */
+const prepareElementForRaster = (svgElement: SVGGraphicsElement) => {
+  const cloned = svgElement.cloneNode(true) as SVGGraphicsElement;
+
+  setRotationAngle(cloned, 0, { addToHistory: false });
+
+  const isFilled = !['none', null].includes(svgElement.getAttribute('fill'));
+  const { elem: layerElement } = getObjectLayer(svgElement);
+  const isFullColor = layerElement.getAttribute('data-fullcolor') === '1';
+  const strokeOffset = isFilled ? 0 : getStrokeWidth();
+
+  if (!isFullColor) {
+    cloned.setAttribute('fill', '#000');
+    cloned.setAttribute('stroke', '#000');
+  }
+
+  if (!isFilled) {
+    cloned.setAttribute('stroke-width', String(strokeOffset));
+  }
+
+  return { cloned, strokeOffset };
+};
+
+/** Creates an SVG wrapper with the correct dimensions and viewBox. */
+const createSvgWrapper = (
+  { height, width, x, y }: Record<'height' | 'width' | 'x' | 'y', number>,
+  element: SVGGraphicsElement,
+) => {
+  const wrapper = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+
+  wrapper.setAttribute('display', 'block');
+  wrapper.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+  wrapper.setAttribute('width', String(Math.abs(width)));
+  wrapper.setAttribute('height', String(Math.abs(height)));
+
+  let viewBoxX = x;
+  let viewBoxY = y;
+
+  if (width < 0) viewBoxX = x + width;
+
+  if (height < 0) viewBoxY = y + height;
+
+  wrapper.setAttribute('viewBox', `${viewBoxX} ${viewBoxY} ${Math.abs(width)} ${Math.abs(height)}`);
+  wrapper.appendChild(element);
+
+  return wrapper;
 };
 
 /**
  * A generic function to rasterize an SVG element (shapes, text) into an image.
- * This function merges the logic of three previous functions.
  */
 export async function rasterizeGenericSvgElement({
   isToSelect = true,
@@ -25,66 +71,26 @@ export async function rasterizeGenericSvgElement({
   svgElement,
 }: ConvertSvgToImageParams): Promise<ConvertToImageResult> {
   try {
+    // 1. Get initial state and prepare the element
     const angle = getRotationAngle(svgElement);
-    const cloned = svgElement.cloneNode(true) as SVGGraphicsElement;
+    const { cloned, strokeOffset } = prepareElementForRaster(svgElement);
 
-    setRotationAngle(cloned, 0, { addToHistory: false });
-
-    // Rasterization start
+    // 2. Calculate final dimensions
     const bbox = svgElement.getBBox();
-    const isFilled = !['none', null].includes(svgElement.getAttribute('fill'));
-    const { elem: layerElement } = getObjectLayer(svgElement);
-    const isFullColor = layerElement.getAttribute('data-fullcolor') === '1';
-    // Prepare return-to-zero transform
-    const previousTransform = cloned.getAttribute('transform');
-    const strokeOffset = isFilled ? 0 : getStrokeWidth();
+    const initialDimensions = {
+      height: bbox.height + strokeOffset,
+      width: bbox.width + strokeOffset,
+      x: bbox.x - strokeOffset / 2,
+      y: bbox.y - strokeOffset / 2,
+    };
 
-    if (!isFullColor) {
-      cloned.setAttribute('fill', '#000');
-      cloned.setAttribute('stroke', '#000');
-    }
-
-    if (!isFilled) cloned.setAttribute('stroke-width', String(strokeOffset));
-
-    let finalCoords = { x: bbox.x - strokeOffset / 2, y: bbox.y - strokeOffset / 2 };
-    let finalWidth = bbox.width + strokeOffset;
-    let finalHeight = bbox.height + strokeOffset;
-    const isTransformedElement = svgElement.tagName === 'text' || svgElement.getAttribute('data-textpath-g') === '1';
-    const wrapper = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-
-    if (isTransformedElement) {
-      const transformed = getTransformedCoordinates(bbox, previousTransform);
-      const scale = Number.parseFloat(previousTransform?.match(/matrix\(([^,]+)/)?.[1] || '1');
-
-      finalCoords = { x: transformed.x - (strokeOffset / 2) * scale, y: transformed.y - (strokeOffset / 2) * scale };
-      finalWidth *= scale;
-      finalHeight *= scale;
-
-      if (previousTransform) cloned.setAttribute('transform', previousTransform);
-    }
-
-    wrapper.setAttribute('display', 'block');
-    wrapper.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-    wrapper.setAttribute('width', String(Math.abs(finalWidth)));
-    wrapper.setAttribute('height', String(Math.abs(finalHeight)));
-
-    if (finalWidth < 0) finalCoords.x += finalWidth;
-
-    if (finalHeight < 0) finalCoords.y += finalHeight;
-
-    wrapper.setAttribute(
-      'viewBox',
-      `${finalCoords.x} ${finalCoords.y} ${Math.abs(finalWidth)} ${Math.abs(finalHeight)}`,
-    );
-    wrapper.appendChild(cloned);
-
+    // 3. Create wrapper, rasterize, and finalize
+    const wrapper = createSvgWrapper(initialDimensions, cloned);
     const img = new Image();
     const href = await getPngUrlFromSvg(wrapper, { img });
+    const dimensions = { height: img.height, width: img.width, x: initialDimensions.x, y: initialDimensions.y };
 
-    return await createAndFinalizeImage(
-      { angle, height: img.height, href, transform: '', width: img.width, x: finalCoords.x, y: finalCoords.y },
-      { isToSelect, parentCmd, svgElement },
-    );
+    return await createAndFinalizeImage({ angle, dimensions, href }, { isToSelect, parentCmd, svgElement });
   } catch (error) {
     console.error('Failed during SVG rasterization:', error);
 
