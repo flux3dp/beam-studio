@@ -18,7 +18,7 @@ getSVGAsync(({ Canvas }) => {
  * This encapsulates all the common steps like setting attributes, color, rotation, and history.
  */
 export const createAndFinalizeImage = async (
-  { angle = 0, height, href, transform, width, x, y }: CreateImageParams,
+  { angle = 0, height, href, transform = '', width, x, y }: CreateImageParams,
   { parentCmd, svgElement }: Required<ConvertSvgToImageParams>,
 ): Promise<ConvertToImageResult> => {
   const imageElement = svgCanvas.addSvgElementFromJson({
