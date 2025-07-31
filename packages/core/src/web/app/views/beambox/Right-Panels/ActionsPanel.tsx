@@ -7,6 +7,7 @@ import { match, P } from 'ts-pattern';
 import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
 import textPathEdit from '@core/app/actions/beambox/textPathEdit';
 import Dialog from '@core/app/actions/dialog-caller';
+import { showCurvePanel, showSharpenPanel } from '@core/app/components/dialogs/image';
 import { showRotaryWarped } from '@core/app/components/dialogs/image/RotaryWarped';
 import { textButtonTheme } from '@core/app/constants/antd-config';
 import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
@@ -24,7 +25,6 @@ import { isMobile } from '@core/helpers/system-helper';
 import useForceUpdate from '@core/helpers/use-force-update';
 import useI18n from '@core/helpers/useI18n';
 import { getVariableTextType } from '@core/helpers/variableText';
-import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
 import dialog from '@core/implementations/dialog';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -248,7 +248,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       grading: renderButtons(
         'grading',
         lang.grading,
-        () => Dialog.showPhotoEditPanel('curve'),
+        showCurvePanel,
         <ActionPanelIcons.Grading />,
         <ActionPanelIcons.Brightness />,
         { autoClose: false, mobileLabel: lang.brightness },
@@ -287,9 +287,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       sharpen: renderButtons(
         'sharpen',
         lang.sharpen,
-        () => {
-          webNeedConnectionWrapper(() => Dialog.showPhotoEditPanel('sharpen'));
-        },
+        showSharpenPanel,
         <ActionPanelIcons.Sharpen />,
         <ActionPanelIcons.SharpenMobile />,
         { autoClose: false },

@@ -14,8 +14,6 @@ import FluxCredit from '@core/app/components/dialogs/FluxCredit';
 import FluxIdLogin from '@core/app/components/dialogs/FluxIdLogin';
 import FluxPlusWarning from '@core/app/components/dialogs/FluxPlusWarning';
 import CropPanel from '@core/app/components/dialogs/image/CropPanel';
-import type { PhotoEditMode } from '@core/app/components/dialogs/image/Photo-Edit-Panel';
-import PhotoEditPanel from '@core/app/components/dialogs/image/Photo-Edit-Panel';
 import MaterialTestGeneratorPanel from '@core/app/components/dialogs/MaterialTestGeneratorPanel';
 import MediaTutorial from '@core/app/components/dialogs/MediaTutorial';
 import MyCloud from '@core/app/components/dialogs/myCloud/MyCloud';
@@ -616,30 +614,6 @@ export default {
     }
 
     addDialogComponent('network-test', <NetworkTestingPanel ip={ip!} onClose={() => popDialogById('network-test')} />);
-  },
-  showPhotoEditPanel: (mode: PhotoEditMode): void => {
-    if (isIdExist('photo-edit')) {
-      return;
-    }
-
-    const selectedElements = svgCanvas.getSelectedElems();
-
-    if (selectedElements.length !== 1) {
-      return;
-    }
-
-    const element = selectedElements[0];
-    const src = element.getAttribute('origImage') || element.getAttribute('xlink:href');
-
-    addDialogComponent(
-      'photo-edit',
-      <PhotoEditPanel
-        element={element as unknown as HTMLElement}
-        mode={mode}
-        src={src!}
-        unmount={() => popDialogById('photo-edit')}
-      />,
-    );
   },
   showRadioSelectDialog: <T,>({
     options,
