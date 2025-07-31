@@ -6,12 +6,10 @@ import i18n from '@core/helpers/i18n';
 import { VariableTextType } from '@core/interfaces/ObjectPanel';
 
 const mockShowCropPanel = jest.fn();
-const showPhotoEditPanel = jest.fn();
 const mockSvgNestButtons = jest.fn();
 
 jest.mock('@core/app/actions/dialog-caller', () => ({
   showCropPanel: (...args) => mockShowCropPanel(...args),
-  showPhotoEditPanel,
   showSvgNestButtons: (...args) => mockSvgNestButtons(...args),
 }));
 
@@ -57,10 +55,14 @@ jest.mock('@core/app/actions/beambox/textPathEdit', () => ({
   editPath: editTextPath,
 }));
 
+const mockShowCurvePanel = jest.fn();
 const mockShowRotaryWarped = jest.fn();
+const mockShowSharpenPanel = jest.fn();
 
-jest.mock('@core/app/views/dialogs/image-edit/RotaryWarped', () => ({
+jest.mock('@core/app/components/dialogs/image', () => ({
+  showCurvePanel: (...args) => mockShowCurvePanel(...args),
   showRotaryWarped: (...args) => mockShowRotaryWarped(...args),
+  showSharpenPanel: (...args) => mockShowSharpenPanel(...args),
 }));
 
 const openNonstopProgress = jest.fn();
@@ -216,12 +218,10 @@ describe('should render correctly', () => {
     expect(mockTraceImage).toHaveBeenCalledTimes(1);
 
     fireEvent.click(getByText(tActionPanel.grading));
-    expect(showPhotoEditPanel).toHaveBeenCalledTimes(1);
-    expect(showPhotoEditPanel).toHaveBeenNthCalledWith(1, 'curve');
+    expect(mockShowCurvePanel).toHaveBeenCalledTimes(1);
 
     fireEvent.click(getByText(tActionPanel.sharpen));
-    expect(showPhotoEditPanel).toHaveBeenCalledTimes(2);
-    expect(showPhotoEditPanel).toHaveBeenNthCalledWith(2, 'sharpen');
+    expect(mockShowSharpenPanel).toHaveBeenCalledTimes(1);
 
     fireEvent.click(getByText(tActionPanel.crop));
     expect(mockShowCropPanel).toHaveBeenCalledTimes(1);
@@ -496,13 +496,11 @@ describe('should render correctly in mobile', () => {
     expect(mockPotrace).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'));
 
     fireEvent.click(getByText(tActionPanel.brightness));
-    expect(showPhotoEditPanel).toHaveBeenCalledTimes(1);
-    expect(showPhotoEditPanel).toHaveBeenNthCalledWith(1, 'curve');
+    expect(mockShowCurvePanel).toHaveBeenCalledTimes(1);
 
     mockCheckConnection.mockReturnValueOnce(true);
     fireEvent.click(getByText(tActionPanel.sharpen));
-    expect(showPhotoEditPanel).toHaveBeenCalledTimes(2);
-    expect(showPhotoEditPanel).toHaveBeenNthCalledWith(2, 'sharpen');
+    expect(mockShowSharpenPanel).toHaveBeenCalledTimes(1);
 
     fireEvent.click(getByText(tActionPanel.crop));
     expect(mockShowCropPanel).toHaveBeenCalledTimes(1);

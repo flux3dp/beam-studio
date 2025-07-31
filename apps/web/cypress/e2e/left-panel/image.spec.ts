@@ -85,7 +85,7 @@ describe('manipulate image function', () => {
     cy.get('svg.curve-control-svg').trigger('mousemove', { clientX: 900, clientY: 325, force: true });
     cy.get('svg.curve-control-svg').trigger('mouseup');
     cy.get('rect#1').should('have.attr', 'fill-opacity', '1').should('have.attr', 'y', '197');
-    cy.get('button[class^="ant-btn"]').contains('Okay').click();
+    cy.get('button[class^="ant-btn"]').contains('OK').click();
     cy.get('.progress', { timeout: 5000 }).should('not.exist');
     cy.wait(10000);
     cy.get('#svg_1')

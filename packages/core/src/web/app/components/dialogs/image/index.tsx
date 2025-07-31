@@ -3,6 +3,7 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import Curve from './Curve';
+import RotaryWarped from './RotaryWarped';
 import Sharpen from './Sharpen';
 
 let svgCanvas: ISVGCanvas;
@@ -51,4 +52,25 @@ export const showCurvePanel = () => {
   const onClose = () => popDialogById('curve-panel');
 
   addDialogComponent('curve-panel', <Curve element={element} onClose={onClose} src={src} />);
+};
+
+export const showRotaryWarped = (elem?: SVGImageElement): void => {
+  if (isIdExist('rotary-warped')) return;
+
+  let targetElem = elem;
+
+  if (!targetElem) {
+    const data = getProps();
+
+    if (!data) return;
+
+    targetElem = data.element;
+  }
+
+  if (!targetElem) return;
+
+  addDialogComponent(
+    'rotary-warped',
+    <RotaryWarped elem={targetElem} onClose={() => popDialogById('rotary-warped')} />,
+  );
 };

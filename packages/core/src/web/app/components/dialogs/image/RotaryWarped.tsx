@@ -3,7 +3,6 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Button, Modal, Segmented } from 'antd';
 
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import progressCaller from '@core/app/actions/progress-caller';
 import AlertIcons from '@core/app/icons/alerts/AlertIcons';
 import { getRotationAngle } from '@core/app/svgedit/transform/rotation';
@@ -13,15 +12,12 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 import storage from '@core/implementations/storage';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './RotaryWarped.module.scss';
 
-let svgCanvas: ISVGCanvas;
 let svgEditor;
 
 getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
   svgEditor = globalSVG.Editor;
 });
 
@@ -434,30 +430,3 @@ const RotaryWarped = ({ elem, onClose }: Props): React.JSX.Element => {
 };
 
 export default RotaryWarped;
-
-export const showRotaryWarped = (elem?: SVGImageElement): void => {
-  if (isIdExist('rotary-warped')) {
-    return;
-  }
-
-  let targetElem = elem;
-
-  if (!targetElem) {
-    const selectedElements = svgCanvas.getSelectedElems();
-
-    if (selectedElements.length !== 1) {
-      return;
-    }
-
-    targetElem = selectedElements[0] as SVGImageElement;
-  }
-
-  if (!targetElem) {
-    return;
-  }
-
-  addDialogComponent(
-    'rotary-warped',
-    <RotaryWarped elem={targetElem} onClose={() => popDialogById('rotary-warped')} />,
-  );
-};

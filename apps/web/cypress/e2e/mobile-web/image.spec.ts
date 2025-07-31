@@ -65,7 +65,7 @@ describe('mobile image tools', () => {
     cy.get('#grading').click();
     cy.get('.ant-modal-content').should('exist');
     cy.wait(1000);
-    cy.get('[class*="src-web-app-views-beambox-Photo-Edit-Panel-module__field--"]').should('exist');
+    cy.get('[class*="_-_-packages-core-src-web-app-components-dialogs-image-index-module__field--"]').should('exist');
     cy.get('.ant-modal-content .ant-input-number-input').eq(0).type('25{enter}');
     cy.get('button.ant-btn').contains('Okay').click();
     cy.get('.progress').should('not.exist');
