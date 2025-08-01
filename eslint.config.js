@@ -62,6 +62,7 @@ module.exports = [
         JSX: true,
         NodeJS: true,
         NodeListOf: false,
+        PermissionName: true,
         React: true,
         THREE: true,
       },

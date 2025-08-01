@@ -1,8 +1,5 @@
 export const updateSymbolStyle = (symbol: SVGSymbolElement, oldId: string) => {
-  const styles = symbol.querySelectorAll('style, STYLE');
-
-  for (let i = 0; i < styles.length; i += 1) {
-    const style = styles[i];
+  for (const style of symbol.querySelectorAll('style, STYLE')) {
     const { textContent } = style;
 
     if (!textContent) continue;

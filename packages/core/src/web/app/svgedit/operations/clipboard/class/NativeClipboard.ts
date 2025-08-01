@@ -4,8 +4,9 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { ClipboardCore, ClipboardElement } from '@core/interfaces/Clipboard';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import BaseClipboardCore from './base';
-import { updateSymbolStyle } from './utils';
+import { updateSymbolStyle } from '../updateSymbolStyle';
+
+import { Clipboard } from './Clipboard';
 
 let svgCanvas: ISVGCanvas;
 
@@ -38,9 +39,7 @@ const serializeElement = ({
     nodeValue,
   };
 
-  for (let i = 0; i < attributes?.length; i += 1) {
-    const { namespaceURI, nodeName, value } = attributes[i];
-
+  for (const { namespaceURI, nodeName, value } of attributes) {
     result.attributes.push({ namespaceURI, nodeName, value });
   }
 
@@ -51,21 +50,15 @@ const serializeElement = ({
   return result;
 };
 
-export class NativeClipboard extends BaseClipboardCore implements ClipboardCore {
+export class NativeClipboard extends Clipboard implements ClipboardCore {
   protected writeDataToClipboard = async (elems: Element[]): Promise<void> => {
-    const serializedData: ClipboardData = {
-      elements: [],
-      imageData: {},
-      refs: {},
-    };
+    const serializedData: ClipboardData = { elements: [], imageData: {}, refs: {} };
 
     elems.forEach((elem) => serializedData.elements.push(serializeElement(elem)));
 
     const keys = Object.keys(this.refClipboard);
 
-    for (let i = 0; i < keys.length; i += 1) {
-      const key = keys[i];
-
+    for (const key of keys) {
       serializedData.refs[key] = serializeElement(this.refClipboard[key]);
     }
 
@@ -75,9 +68,7 @@ export class NativeClipboard extends BaseClipboardCore implements ClipboardCore 
     );
     const promises = [];
 
-    for (let i = 0; i < origImageUrls.length; i += 1) {
-      const origImage = origImageUrls[i]!;
-
+    for (const origImage of origImageUrls) {
       if (!origImage) continue;
 
       promises.push(
@@ -186,15 +177,13 @@ export class NativeClipboard extends BaseClipboardCore implements ClipboardCore 
 
 const checkNativeClipboardByPermissions = async (): Promise<boolean | undefined> => {
   try {
-    // eslint-disable-next-line no-undef
     const readState = (await navigator.permissions.query({ name: 'clipboard-read' as PermissionName })).state;
-    // eslint-disable-next-line no-undef
     const writeState = (await navigator.permissions.query({ name: 'clipboard-write' as PermissionName })).state;
 
     return match([readState, writeState])
       .with(['granted', 'granted'], () => true)
       .when(
-        ([r, w]) => r === 'denied' || w === 'denied',
+        ([r, w]) => [r, w].includes('denied'),
         () => false,
       )
       .otherwise(() => undefined);
@@ -240,5 +229,3 @@ export const checkNativeClipboardSupport = async (): Promise<boolean> => {
 
   return checkNativeClipboardByReadWrite();
 };
-
-export default NativeClipboard;
