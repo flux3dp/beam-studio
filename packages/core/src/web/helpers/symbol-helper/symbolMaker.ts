@@ -285,11 +285,7 @@ const getStrokeWidth = (imageRatio: number, scale: number) => {
 
   let strokeWidth = (0.8 * imageRatio) / (scale * workareaManager.zoomRatio);
 
-  if (strokeWidth < 1.5) {
-    strokeWidth = (strokeWidth / 1.5) ** (1 / 3) * 1.5;
-  }
-
-  return strokeWidth;
+  return Math.max(4, strokeWidth);
 };
 
 const sendTaskToWorker = async (data: any) =>
@@ -365,7 +361,7 @@ const makeImageSymbol = async (
       return { tempSvg, tempSymbol, tempUse };
     };
 
-    const calculateSVGBBox = () => {
+    const calculateSvgBBox = () => {
       const bbText = symbol.getAttribute('data-bbox');
       let bb: { height: number; width: number; x: number; y: number };
 
@@ -401,7 +397,7 @@ const makeImageSymbol = async (
       return bbObject;
     };
 
-    const bb = calculateSVGBBox();
+    const bb = calculateSvgBBox();
     const imageRatio = calculateImageRatio(bb);
     const strokeWidth = fullColor ? 1 : getStrokeWidth(imageRatio, scale);
 

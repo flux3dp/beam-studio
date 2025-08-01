@@ -31,6 +31,7 @@ const prepareElementForRaster = (svgElement: SVGGraphicsElement) => {
   }
 
   if (!isFilled) {
+    cloned.setAttribute('fill', 'none');
     cloned.setAttribute('stroke-width', String(strokeOffset));
   }
 
