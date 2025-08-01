@@ -47,16 +47,6 @@ export default interface ISVGCanvas {
   clearAlignLines: () => void;
   clearBoundingBox: () => void;
   clearSelection: (noCall?: boolean) => void;
-  cloneSelectedElements: (
-    dx: number | number[],
-    dy: number | number[],
-    opts?: {
-      addToHistory?: boolean;
-      callChangOnMove?: boolean;
-      parentCmd?: IBatchCommand;
-      selectElement?: boolean;
-    },
-  ) => Promise<null | { cmd: IBatchCommand; elems: Element[] }>;
   collectAlignPoints: () => void;
   convertGradients: (elem: Element) => void;
   convertToNum(attr: string, val: number): number;

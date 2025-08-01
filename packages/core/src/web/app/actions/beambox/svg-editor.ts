@@ -29,7 +29,7 @@ import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import history from '@core/app/svgedit/history/history';
 import historyUtils from '@core/app/svgedit/history/utils';
-import clipboard from '@core/app/svgedit/operations/clipboard';
+import { copySelectedElements, cutSelectedElements, pasteInCenter } from '@core/app/svgedit/operations/clipboard';
 import { deleteSelectedElements } from '@core/app/svgedit/operations/delete';
 import importBitmap from '@core/app/svgedit/operations/import/importBitmap';
 import importBvg from '@core/app/svgedit/operations/import/importBvg';
@@ -1410,7 +1410,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       }
 
       if (!textActions.isEditing && (selectedElement != null || multiselected)) {
-        clipboard.cutSelectedElements();
+        cutSelectedElements();
       }
     };
 
@@ -1432,7 +1432,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       }
 
       if (!textActions.isEditing && (selectedElement != null || multiselected)) {
-        clipboard.copySelectedElements();
+        copySelectedElements();
       }
     };
 
@@ -1536,7 +1536,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       }
 
       if (!importedFromClipboard) {
-        clipboard.pasteInCenter();
+        pasteInCenter();
       }
     });
 

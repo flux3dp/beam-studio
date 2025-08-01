@@ -7,6 +7,7 @@ import Constant from '@core/app/actions/beambox/constant';
 import type { ToolPanelType } from '@core/app/actions/beambox/toolPanelsController';
 import Dialog from '@core/app/actions/dialog-caller';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
+import { generateSelectedElementArray } from '@core/app/svgedit/operations/clipboard';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import ArrayModal from '@core/app/views/beambox/ToolPanels/ArrayModal';
 import IntervalPanel from '@core/app/views/beambox/ToolPanels/Interval';
@@ -92,7 +93,7 @@ const ToolPanel: React.FC<Props> = ({ data, type, unmount }) => {
         };
 
         return async () => {
-          await (svgCanvas as any).gridArraySelectedElement(newDistance, data.rowcolumn);
+          await generateSelectedElementArray(newDistance, data.rowcolumn);
           unmount();
           svgCanvas.setMode('select');
           drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');

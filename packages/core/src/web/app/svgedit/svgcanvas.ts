@@ -75,7 +75,6 @@ import history from './history/history';
 import historyRecording from './history/historyrecording';
 import undoManager from './history/undoManager';
 import { MouseInteraction } from './interaction/mouse';
-import clipboard from './operations/clipboard';
 import { deleteSelectedElements } from './operations/delete';
 import disassembleUse from './operations/disassembleUse';
 import importSvgString from './operations/import/importSvgString';
@@ -4046,13 +4045,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     recentMenuUpdater.update();
   };
 
-  /**
-   * Create grid array of selected element
-   * @param {{dx: number, dy: number}} interval
-   * @param {{row: number, column: number}} arraySize
-   */
-  this.gridArraySelectedElement = clipboard.generateSelectedElementArray;
-
   this.simplifyPath = (elems) => {
     if (tempGroup) {
       const children = this.ungroupTempGroup();
@@ -5555,8 +5547,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     return batchCmd;
   };
-
-  this.cloneSelectedElements = clipboard.cloneSelectedElements;
 
   // Function: alignSelectedElements
   // Aligns selected elements
