@@ -752,6 +752,7 @@ const lang: ILang = {
           auto_fit: '自動對位',
           bevel: '生成斜角',
           brightness: '亮度對比',
+          convert_to_image: '轉換為圖片',
           convert_to_path: '轉換為路徑',
           create_textpath: '建立路徑文字',
           create_textpath_short: '路徑文字',

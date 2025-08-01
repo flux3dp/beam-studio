@@ -752,6 +752,7 @@ const lang: ILang = {
           auto_fit: 'Muat Auto',
           bevel: 'Bevel',
           brightness: 'Kecerahan',
+          convert_to_image: 'Tukar ke Imej',
           convert_to_path: 'Tukar ke Laluan',
           create_textpath: 'Cipta Teks pada Laluan',
           create_textpath_short: 'Teks Laluan',

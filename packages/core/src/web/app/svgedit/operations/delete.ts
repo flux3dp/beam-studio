@@ -70,7 +70,7 @@ export const deleteElements = (elems: Element[], isSub = false): IBatchCommand =
   const deletedElems = [];
 
   for (const elem of elems) {
-    if (!elem) {
+    if (!elem || !elem?.tagName) {
       break;
     }
 
@@ -83,7 +83,7 @@ export const deleteElements = (elems: Element[], isSub = false): IBatchCommand =
     let elemToRemove = elem;
 
     // Get the parent if it's a single-child anchor
-    if (parent.tagName === 'a' && parent.childNodes.length === 1) {
+    if (parent?.tagName === 'a' && parent?.childNodes.length === 1) {
       elemToRemove = parent;
       parent = parent.parentNode as Element;
     }
@@ -91,7 +91,7 @@ export const deleteElements = (elems: Element[], isSub = false): IBatchCommand =
     const { nextSibling } = elemToRemove;
 
     if (parent == null) {
-      console.warn('The element has no parent', elem);
+      console.warn('The element has no parent', elem.id, elem.tagName);
     } else {
       parent.removeChild(elemToRemove);
       deletedElems.push(elem); // for the copy

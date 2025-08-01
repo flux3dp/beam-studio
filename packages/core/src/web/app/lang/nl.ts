@@ -752,6 +752,7 @@ const lang: ILang = {
           auto_fit: 'Auto Aanpassen',
           bevel: 'Afronden',
           brightness: 'Helderheid',
+          convert_to_image: 'Converteren naar afbeelding',
           convert_to_path: 'Converteren naar pad',
           create_textpath: 'Tekst op pad maken',
           create_textpath_short: 'Padtekst',
