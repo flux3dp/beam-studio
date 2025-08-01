@@ -11,7 +11,7 @@ import type { ConvertSvgToImageParams, ConvertToImageResult } from './types';
 const getStrokeWidth = () => {
   const { zoomRatio } = workareaManager;
 
-  return Math.max(0.85 / zoomRatio + 0.85, 2);
+  return Math.max(0.85 / zoomRatio + 0.85, 1.5);
 };
 
 /** Prepares a clone of the SVG element for rasterization. */

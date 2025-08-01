@@ -3,9 +3,11 @@ import { match, P } from 'ts-pattern';
 
 import progressCaller from '@core/app/actions/progress-caller';
 import ungroupElement from '@core/app/svgedit/group/ungroup';
+import type { BatchCommand } from '@core/app/svgedit/history/history';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { deleteElements } from '@core/app/svgedit/operations/delete';
+import disassembleUse from '@core/app/svgedit/operations/disassembleUse';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import updateElementColor from '../color/updateElementColor';
@@ -17,7 +19,6 @@ import { getSVGAsync } from '../svg-editor-helper';
 
 import { combineImagesIntoSingleElement } from './combineImagesIntoSingleElement';
 import { convertGroupToImage } from './convertGroupToImage';
-import { convertUseToImage } from './convertUseToImage';
 import { getLayerTitles } from './getLayerTitles';
 import { rasterizeGenericSvgElement } from './rasterizeGenericSvgElement';
 import type { MainConverterFunc } from './types';
@@ -64,7 +65,19 @@ export const convertSvgToImage: MainConverterFunc = async ({
   const layer = pipe(svgElement, getLayerTitles, sortLayerNamesByPosition, (titles) => titles.at(-1));
 
   const result = await match(svgElement)
-    .with({ tagName: 'use' }, async (el) => await convertUseToImage({ isToSelect, parentCmd, svgElement: el }))
+    .with({ tagName: 'use' }, async (el) => {
+      const command = (await disassembleUse([el], {
+        addToHistory: false,
+        showProgress: false,
+        skipConfirm: true,
+      })) as BatchCommand;
+
+      parentCmd.addSubCommand(command);
+
+      const group = svgCanvas.getSelectedElems()[0];
+
+      return await convertGroupToImage({ isToSelect, parentCmd, svgElement: group as SVGGElement }, convertSvgToImage);
+    })
     .with({ tagName: 'image' }, async (el) => ({ imageElements: [el as SVGImageElement], svgElements: [el] }))
     .when(
       (el) => el.getAttribute('data-textpath-g') === '1',
