@@ -5,6 +5,7 @@ import { Tooltip } from 'antd';
 import { Button, Popover } from 'antd-mobile';
 import classNames from 'classnames';
 import { sprintf } from 'sprintf-js';
+import { useShallow } from 'zustand/react/shallow';
 
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { promarkModels } from '@core/app/actions/beambox/constant';
@@ -13,6 +14,7 @@ import { getSpeedOptions } from '@core/app/constants/config-options';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
@@ -72,8 +74,12 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   const workarea = useWorkarea();
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
   const addOnInfo = useMemo(() => getAddOnInfo(workarea), [workarea]);
-  const autoFeeder = useBeamboxPreference('auto-feeder');
-  const borderless = useBeamboxPreference('borderless');
+  const { autoFeeder, borderless } = useDocumentStore(
+    useShallow((state) => ({
+      autoFeeder: state['auto-feeder'],
+      borderless: state.borderless,
+    })),
+  );
   const isAutoFeederOn = useMemo(
     () => getAutoFeeder(addOnInfo, { autoFeeder, borderless }),
     [addOnInfo, autoFeeder, borderless],

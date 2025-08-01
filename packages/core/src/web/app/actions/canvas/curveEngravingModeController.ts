@@ -1,5 +1,4 @@
 import alertCaller from '@core/app/actions/alert-caller';
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
 import progressCaller from '@core/app/actions/progress-caller';
 import { showCurveEngraving, showMeasureArea } from '@core/app/components/dialogs/CurveEngraving';
@@ -9,7 +8,8 @@ import { CanvasMode } from '@core/app/constants/canvasMode';
 import NS from '@core/app/constants/namespaces';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import cursorIconUrl from '@core/app/icons/left-panel/curve-select.svg?url';
-import BeamboxPreferenceCommand from '@core/app/svgedit/history/beamboxPreferenceCommand';
+import type { DocumentStateKey } from '@core/app/stores/documentStore';
+import { changeDocumentStoreValue } from '@core/app/stores/documentStore';
 import CustomCommand from '@core/app/svgedit/history/CustomCommand';
 import { BatchCommand } from '@core/app/svgedit/history/history';
 import workareaManager from '@core/app/svgedit/workarea';
@@ -50,7 +50,7 @@ class CurveEngravingModeController {
   }
 
   checkSupport = () => {
-    const workarea = beamboxPreference.read('workarea');
+    const workarea = workareaManager.model;
 
     return getAddOnInfo(workarea).curveEngraving;
   };
@@ -207,7 +207,7 @@ class CurveEngravingModeController {
 
   setArea = async (bbox: { height: number; width: number; x: number; y: number }) => {
     let { height, width, x, y } = bbox;
-    const workarea = beamboxPreference.read('workarea');
+    const workarea = workareaManager.model;
     const { autoFocusOffset = [0, 0, 0], height: workareaH, width: workareaW } = getWorkarea(workarea);
     const leftBound = autoFocusOffset[0] > 0 ? autoFocusOffset[0] : 0;
     const rightBound = autoFocusOffset[0] < 0 ? workareaW + autoFocusOffset[0] : workareaW;
@@ -352,7 +352,7 @@ class CurveEngravingModeController {
       this.boundarySvg!.appendChild(this.boundaryPath);
     }
 
-    const workarea = beamboxPreference.read('workarea');
+    const workarea = workareaManager.model;
     const { autoFocusOffset = [0, 0, 0], height: workareaH, width: workareaW } = getWorkarea(workarea);
     const { maxY, minY, width } = workareaManager;
     const { dpmm } = constant;
@@ -421,13 +421,14 @@ class CurveEngravingModeController {
       this.updateAreaPath();
       canvasEventEmitter.emit('CURVE_ENGRAVING_AREA_SET');
     };
-    const beamboxPreferenceCmds = (['rotary_mode', 'auto-feeder', 'pass-through'] as const).map(
-      (key) => new BeamboxPreferenceCommand(key, beamboxPreference.read(key), false),
-    );
 
     customCmd.onAfter = postLoadData;
-
-    beamboxPreferenceCmds.forEach((c) => cmd.addSubCommand(c));
+    ['rotary_mode', 'auto-feeder', 'pass-through'].forEach((key) => {
+      changeDocumentStoreValue(key as DocumentStateKey, false, {
+        changeBeamboxPreference: true,
+        parentCmd: cmd,
+      });
+    });
     cmd.addSubCommand(customCmd);
 
     cmd.apply();

@@ -8,6 +8,7 @@ import { LayerModule, printingModules } from '@core/app/constants/layer-module/l
 import { getModuleBoundary } from '@core/app/constants/layer-module/module-boundary';
 import { getSupportedModules } from '@core/app/constants/workarea-constants';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import workareaManager from '@core/app/svgedit/workarea';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import type { TBoundary } from '@core/helpers/boundary-helper';
@@ -111,10 +112,10 @@ export class BoundaryDrawer {
       this.update();
     };
 
-    beamboxPreferenceEvents.on('auto-feeder', onAutoFeederChange);
-    beamboxPreferenceEvents.on('pass-through', onPassThroughChange);
-    beamboxPreferenceEvents.on('borderless', onBorderlessChange);
-    beamboxPreferenceEvents.on('enable-diode', onEnableDiodeChange);
+    useDocumentStore.subscribe((state) => state['auto-feeder'], onAutoFeederChange);
+    useDocumentStore.subscribe((state) => state['pass-through'], onPassThroughChange);
+    useDocumentStore.subscribe((state) => state['borderless'], onBorderlessChange);
+    useDocumentStore.subscribe((state) => state['enable-diode'], onEnableDiodeChange);
     beamboxPreferenceEvents.on('diode_offset_x', onDiodeChange);
     beamboxPreferenceEvents.on('diode_offset_y', onDiodeChange);
     canvasEventEmitter.on('canvas-change', onCanvasChange);
@@ -192,7 +193,7 @@ export class BoundaryDrawer {
   };
 
   updateOpenBottomBoundary = (): void => {
-    const enabled = beamboxPreference.read('borderless');
+    const enabled = useDocumentStore.getState()['borderless'];
     const { model } = workareaManager;
     const { openBottom } = getAddOnInfo(model);
 
@@ -227,7 +228,7 @@ export class BoundaryDrawer {
   updateDiodeBoundary = (diode: number): void => {
     const { model } = workareaManager;
     const addOnInfo = getAddOnInfo(model);
-    const isDiodeEnabled = beamboxPreference.read('enable-diode') && addOnInfo.hybridLaser;
+    const isDiodeEnabled = useDocumentStore.getState()['enable-diode'] && addOnInfo.hybridLaser;
 
     if (!isDiodeEnabled) {
       this.boundaries.diode = undefined;
@@ -273,7 +274,7 @@ export class BoundaryDrawer {
   updateFinalBoundary = (currentModule: LayerModuleType): void => {
     const { maxY: workareaBottom, minY: workareaTop, model, width: w } = workareaManager;
     const addOnInfo = getAddOnInfo(model);
-    const isRotary = Boolean(beamboxPreference.read('rotary_mode') && addOnInfo.rotary);
+    const isRotary = Boolean(useDocumentStore.getState()['rotary_mode'] && addOnInfo.rotary);
     const isAutoFeeder = getAutoFeeder(addOnInfo);
     const finalBoundary: TBoundary = { bottom: 0, left: 0, right: 0, top: 0 };
     let { bottom, left, right, top } = finalBoundary;

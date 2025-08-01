@@ -9,6 +9,8 @@ import beamboxStore from '@core/app/stores/beambox-store';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
+import { useDocumentStore } from '../stores/documentStore';
+
 const canvasEvents = eventEmitterFactory.createEventEmitter('canvas');
 const zoomBlockEventEmitter = eventEmitterFactory.createEventEmitter('zoom-block');
 
@@ -61,8 +63,11 @@ class WorkareaManager {
   }
 
   setWorkarea(model: WorkAreaModel): void {
-    const isRotaryMode = beamboxPreference.read('rotary_mode');
-    const rotaryExtended = isRotaryMode && beamboxPreference.read('extend-rotary-workarea');
+    console.log('setWorkarea', model);
+
+    const documentStore = useDocumentStore.getState();
+    const isRotaryMode = documentStore.rotary_mode;
+    const rotaryExtended = isRotaryMode && documentStore['extend-rotary-workarea'];
     const addOnInfo = getAddOnInfo(model);
     const passThroughMode = getPassThrough(addOnInfo);
     const autoFeeder = getAutoFeeder(addOnInfo);
@@ -89,7 +94,7 @@ class WorkareaManager {
       this.height += this.expansion[1];
       this.expansionType = ExpansionType.ROTARY;
     } else if (passThroughMode) {
-      const passThroughHeight = beamboxPreference.read('pass-through-height');
+      const passThroughHeight = documentStore['pass-through-height'];
 
       if (passThroughHeight && passThroughHeight * dpmm > this.height) {
         const expansion = passThroughHeight * dpmm - this.height;
@@ -99,7 +104,7 @@ class WorkareaManager {
         this.expansionType = ExpansionType.PASS_THROUGH;
       }
     } else if (autoFeeder) {
-      const autoFeederHeight = beamboxPreference.read('auto-feeder-height');
+      const autoFeederHeight = documentStore['auto-feeder-height'];
 
       if (autoFeederHeight && autoFeederHeight * dpmm > this.height) {
         const expansion = autoFeederHeight * dpmm - this.height;

@@ -3,13 +3,14 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Checkbox, Segmented, Switch } from 'antd';
 
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import { getAddOnInfo, RotaryType } from '@core/app/constants/addOn';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import RotaryIcons from '@core/app/icons/rotary/RotaryIcons';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
+import workareaManager from '@core/app/svgedit/workarea';
 import Select from '@core/app/widgets/AntdSelect';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import UnitInput from '@core/app/widgets/UnitInput';
@@ -38,16 +39,18 @@ const RotarySettings = ({ afterSave, initData, onClose }: Props): React.JSX.Elem
     topbar: { menu: tMenu },
   } = useI18n();
 
-  const workarea = useMemo(() => initData?.workarea ?? beamboxPreference.read('workarea'), [initData?.workarea]);
+  const workarea = useMemo(() => initData?.workarea ?? workareaManager.model, [initData?.workarea]);
   const addOnInfo = useMemo(() => getAddOnInfo(workarea), [workarea]);
-  const [rotaryMode, setRotaryMode] = useState<boolean>(initData?.rotaryMode ?? beamboxPreference.read('rotary_mode'));
-  const [rotaryType, setRotaryType] = useState<number>(beamboxPreference.read('rotary-type'));
-  const [diameter, setDiaMeter] = useState(beamboxPreference.read('rotary-chuck-obj-d'));
-  const [scale, setScale] = useState<number>(beamboxPreference.read('rotary-scale'));
-  const [split, setSplit] = useState(beamboxPreference.read('rotary-split'));
-  const [overlap, setOverlap] = useState(beamboxPreference.read('rotary-overlap'));
-  const [extend, setExtend] = useState<boolean>(Boolean(beamboxPreference.read('extend-rotary-workarea')));
-  const [mirror, setMirror] = useState<boolean>(Boolean(beamboxPreference.read('rotary-mirror')));
+  const [rotaryMode, setRotaryMode] = useState<boolean>(
+    initData?.rotaryMode ?? useDocumentStore.getState().rotary_mode,
+  );
+  const [rotaryType, setRotaryType] = useState<number>(useDocumentStore.getState()['rotary-type']);
+  const [diameter, setDiaMeter] = useState(useDocumentStore.getState()['rotary-chuck-obj-d']);
+  const [scale, setScale] = useState<number>(useDocumentStore.getState()['rotary-scale']);
+  const [split, setSplit] = useState(useDocumentStore.getState()['rotary-split']);
+  const [overlap, setOverlap] = useState(useDocumentStore.getState()['rotary-overlap']);
+  const [extend, setExtend] = useState<boolean>(Boolean(useDocumentStore.getState()['extend-rotary-workarea']));
+  const [mirror, setMirror] = useState<boolean>(Boolean(useDocumentStore.getState()['rotary-mirror']));
   const isInch = useMemo(() => storage.get('default-units') === 'inches', []);
 
   useEffect(() => {
@@ -55,28 +58,29 @@ const RotarySettings = ({ afterSave, initData, onClose }: Props): React.JSX.Elem
   }, [split, overlap]);
 
   const handleSave = async () => {
-    const rotaryChanged = rotaryMode !== beamboxPreference.read('rotary_mode');
-    const extendChanged = extend !== beamboxPreference.read('extend-rotary-workarea');
+    const { set, ...origState } = useDocumentStore.getState();
+    const rotaryChanged = rotaryMode !== origState.rotary_mode;
+    const extendChanged = extend !== origState['extend-rotary-workarea'];
 
-    beamboxPreference.write('rotary_mode', rotaryMode);
-    beamboxPreference.write('rotary-type', rotaryType);
-    beamboxPreference.write('rotary-scale', scale);
+    set('rotary_mode', rotaryMode);
+    set('rotary-type', rotaryType);
+    set('rotary-scale', scale);
 
     if (rotaryType === RotaryType.Chuck) {
-      beamboxPreference.write('rotary-chuck-obj-d', diameter);
+      set('rotary-chuck-obj-d', diameter);
     }
 
     if (addOnInfo.rotary?.mirror) {
-      beamboxPreference.write('rotary-mirror', mirror);
+      set('rotary-mirror', mirror);
     }
 
     if (addOnInfo.rotary?.extendWorkarea) {
-      beamboxPreference.write('extend-rotary-workarea', extend);
+      set('extend-rotary-workarea', extend);
     }
 
     if (addOnInfo.rotary?.split) {
-      beamboxPreference.write('rotary-split', split);
-      beamboxPreference.write('rotary-overlap', overlap);
+      set('rotary-split', split);
+      set('rotary-overlap', overlap);
     }
 
     if (rotaryChanged || extendChanged) {

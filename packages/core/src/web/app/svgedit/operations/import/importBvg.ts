@@ -8,8 +8,8 @@ import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { changeDocumentStoreValue } from '@core/app/stores/documentStore';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
-import { changeBeamboxPreferenceValue } from '@core/app/svgedit/history/beamboxPreferenceCommand';
 import history from '@core/app/svgedit/history/history';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import findDefs from '@core/app/svgedit/utils/findDef';
@@ -90,15 +90,15 @@ export const importBvgString = async (
       }
 
       if (addOnInfo.rotary) {
-        cmd = changeBeamboxPreferenceValue('rotary_mode', rotaryMode === 'true', { parentCmd: batchCmd });
+        cmd = changeDocumentStoreValue('rotary_mode', rotaryMode === 'true', { parentCmd: batchCmd });
 
         if (rotaryMode === 'true') {
-          changeBeamboxPreferenceValue('pass-through', false, { parentCmd: batchCmd });
-          changeBeamboxPreferenceValue('auto-feeder', false, { parentCmd: batchCmd });
+          changeDocumentStoreValue('pass-through', false, { parentCmd: batchCmd });
+          changeDocumentStoreValue('auto-feeder', false, { parentCmd: batchCmd });
           curveEngravingModeController.clearArea(false);
         }
       } else {
-        cmd = changeBeamboxPreferenceValue('rotary_mode', false, { parentCmd: batchCmd });
+        cmd = changeDocumentStoreValue('rotary_mode', false, { parentCmd: batchCmd });
         beamboxPreference.write('rotary_mode', false);
       }
 
@@ -112,9 +112,9 @@ export const importBvgString = async (
     const engraveDpi = str.match(/data-engrave_dpi="([a-zA-Z]+)"/)?.[1];
 
     if (engraveDpi) {
-      changeBeamboxPreferenceValue('engrave_dpi', engraveDpi as 'high' | 'low' | 'medium', { parentCmd: batchCmd });
+      changeDocumentStoreValue('engrave_dpi', engraveDpi as 'high' | 'low' | 'medium', { parentCmd: batchCmd });
     } else {
-      changeBeamboxPreferenceValue('engrave_dpi', 'medium', { parentCmd: batchCmd });
+      changeDocumentStoreValue('engrave_dpi', 'medium', { parentCmd: batchCmd });
     }
 
     if (addOnInfo.hybridLaser) {
@@ -122,9 +122,9 @@ export const importBvgString = async (
 
       if (matched && matched[1]) {
         if (matched[1] === 'true') {
-          changeBeamboxPreferenceValue('enable-diode', true, { parentCmd: batchCmd });
+          changeDocumentStoreValue('enable-diode', true, { parentCmd: batchCmd });
         } else {
-          changeBeamboxPreferenceValue('enable-diode', false, { parentCmd: batchCmd });
+          changeDocumentStoreValue('enable-diode', false, { parentCmd: batchCmd });
         }
       }
     }
@@ -134,9 +134,9 @@ export const importBvgString = async (
 
       if (matched && matched[1]) {
         if (matched[1] === 'true') {
-          changeBeamboxPreferenceValue('enable-autofocus', true, { parentCmd: batchCmd });
+          changeDocumentStoreValue('enable-autofocus', true, { parentCmd: batchCmd });
         } else {
-          changeBeamboxPreferenceValue('enable-autofocus', false, { parentCmd: batchCmd });
+          changeDocumentStoreValue('enable-autofocus', false, { parentCmd: batchCmd });
         }
       }
     }
@@ -148,11 +148,11 @@ export const importBvgString = async (
         const height = Number.parseFloat(matched[1]);
 
         if (!Number.isNaN(height) && height > 0) {
-          changeBeamboxPreferenceValue('pass-through', true, { parentCmd: batchCmd });
-          changeBeamboxPreferenceValue('pass-through-height', height, { parentCmd: batchCmd });
+          changeDocumentStoreValue('pass-through', true, { parentCmd: batchCmd });
+          changeDocumentStoreValue('pass-through-height', height, { parentCmd: batchCmd });
 
-          changeBeamboxPreferenceValue('auto-feeder', false, { parentCmd: batchCmd });
-          changeBeamboxPreferenceValue('rotary_mode', false, { parentCmd: batchCmd });
+          changeDocumentStoreValue('auto-feeder', false, { parentCmd: batchCmd });
+          changeDocumentStoreValue('rotary_mode', false, { parentCmd: batchCmd });
           curveEngravingModeController.clearArea(false);
         }
       }
@@ -165,11 +165,11 @@ export const importBvgString = async (
         const height = Number.parseFloat(matched[1]);
 
         if (!Number.isNaN(height) && height > 0) {
-          changeBeamboxPreferenceValue('auto-feeder', true, { parentCmd: batchCmd });
-          changeBeamboxPreferenceValue('auto-feeder-height', height, { parentCmd: batchCmd });
+          changeDocumentStoreValue('auto-feeder', true, { parentCmd: batchCmd });
+          changeDocumentStoreValue('auto-feeder-height', height, { parentCmd: batchCmd });
 
-          changeBeamboxPreferenceValue('rotary_mode', false, { parentCmd: batchCmd });
-          changeBeamboxPreferenceValue('pass-through', false, { parentCmd: batchCmd });
+          changeDocumentStoreValue('rotary_mode', false, { parentCmd: batchCmd });
+          changeDocumentStoreValue('pass-through', false, { parentCmd: batchCmd });
           curveEngravingModeController.clearArea(false);
         }
       }

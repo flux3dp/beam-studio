@@ -5,7 +5,6 @@ import { Checkbox, Switch, Tooltip } from 'antd';
 import classNames from 'classnames';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant, { modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
@@ -16,6 +15,7 @@ import CanvasMode from '@core/app/constants/canvasMode';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType, workareaOptions as pmWorkareaOptions } from '@core/app/constants/promark-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import Select from '@core/app/widgets/AntdSelect';
 import DraggableModal from '@core/app/widgets/DraggableModal';
@@ -70,13 +70,13 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     beambox: { document_panel: tDocument },
     global: tGlobal,
   } = useI18n();
-  const [engraveDpi, setEngraveDpi] = useState(beamboxPreference.read('engrave_dpi'));
+  const [engraveDpi, setEngraveDpi] = useState(useDocumentStore.getState().engrave_dpi);
   const {
     autoFeeder: origAutoFeeder,
     passThrough: origPassThrough,
     workarea: origWorkarea,
   } = useMemo(() => {
-    const workarea = beamboxPreference.read('workarea');
+    const workarea = useDocumentStore.getState().workarea;
     const addOnInfo = getAddOnInfo(workarea);
     const autoFeeder = getAutoFeeder(addOnInfo);
     const passThrough = getPassThrough(addOnInfo);
@@ -85,30 +85,30 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   }, []);
   const [pmInfo, setPmInfo] = useState(getPromarkInfo());
   const [workarea, setWorkarea] = useState(origWorkarea || 'fbb1b');
-  const [customDimension, setCustomDimension] = useState(beamboxPreference.read('customized-dimension'));
+  const [customDimension, setCustomDimension] = useState(useDocumentStore.getState()['customized-dimension']);
   const addOnInfo = useMemo(() => getAddOnInfo(workarea), [workarea]);
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
-  const [rotaryMode, setRotaryMode] = useState(beamboxPreference.read('rotary_mode'));
-  const [enableStartButton, setEnableStartButton] = useState(beamboxPreference.read('promark-start-button'));
-  const [shouldFrame, setShouldFrame] = useState(beamboxPreference.read('frame-before-start'));
-  const [enableJobOrigin, setEnableJobOrigin] = useState(beamboxPreference.read('enable-job-origin'));
-  const [jobOrigin, setJobOrigin] = useState(beamboxPreference.read('job-origin'));
-  const [borderless, setBorderless] = useState(!!beamboxPreference.read('borderless'));
-  const [enableDiode, setEnableDiode] = useState(!!beamboxPreference.read('enable-diode'));
-  const [enableAutofocus, setEnableAutofocus] = useState(!!beamboxPreference.read('enable-autofocus'));
-  const [passThrough, setPassThrough] = useState(beamboxPreference.read('pass-through'));
-  const [autoFeeder, setAutoFeeder] = useState(beamboxPreference.read('auto-feeder'));
-  const [autoFeederScale, setAutoFeederScale] = useState(beamboxPreference.read('auto-feeder-scale'));
-  const [checkSafetyDoor, setCheckSafetyDoor] = useState(beamboxPreference.read('promark-safety-door'));
-  const [autoShrink, setAutoShrink] = useState(beamboxPreference.read('auto_shrink'));
+  const [rotaryMode, setRotaryMode] = useState(useDocumentStore.getState().rotary_mode);
+  const [enableStartButton, setEnableStartButton] = useState(useDocumentStore.getState()['promark-start-button']);
+  const [shouldFrame, setShouldFrame] = useState(useDocumentStore.getState()['frame-before-start']);
+  const [enableJobOrigin, setEnableJobOrigin] = useState(useDocumentStore.getState()['enable-job-origin']);
+  const [jobOrigin, setJobOrigin] = useState(useDocumentStore.getState()['job-origin']);
+  const [borderless, setBorderless] = useState(!!useDocumentStore.getState().borderless);
+  const [enableDiode, setEnableDiode] = useState(!!useDocumentStore.getState()['enable-diode']);
+  const [enableAutofocus, setEnableAutofocus] = useState(!!useDocumentStore.getState()['enable-autofocus']);
+  const [passThrough, setPassThrough] = useState(useDocumentStore.getState()['pass-through']);
+  const [autoFeeder, setAutoFeeder] = useState(useDocumentStore.getState()['auto-feeder']);
+  const [autoFeederScale, setAutoFeederScale] = useState(useDocumentStore.getState()['auto-feeder-scale']);
+  const [checkSafetyDoor, setCheckSafetyDoor] = useState(useDocumentStore.getState()['promark-safety-door']);
+  const [autoShrink, setAutoShrink] = useState(useDocumentStore.getState()['auto_shrink']);
 
   const isInch = useMemo(() => storage.get('default-units') === 'inches', []);
   const workareaObj = useMemo(() => getWorkarea(workarea), [workarea]);
   const [passThroughHeight, setPassThroughHeight] = useState<number>(
-    beamboxPreference.read('pass-through-height') || workareaObj.displayHeight || workareaObj.height,
+    useDocumentStore.getState()['pass-through-height'] || workareaObj.displayHeight || workareaObj.height,
   );
   const [autoFeederHeight, setAutoFeederHeight] = useState<number>(
-    beamboxPreference.read('auto-feeder-height') || workareaObj.displayHeight || workareaObj.height,
+    useDocumentStore.getState()['auto-feeder-height'] || workareaObj.displayHeight || workareaObj.height,
   );
   const hasCurveEngravingData = useHasCurveEngraving();
   const isCurveEngraving = useMemo(() => {
@@ -173,47 +173,49 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const handleSave = () => {
     const workareaChanged = workarea !== origWorkarea;
     let customDimensionChanged = false;
-    const rotaryChanged = rotaryMode !== beamboxPreference.read('rotary_mode');
+    const { set, ...origState } = useDocumentStore.getState();
 
-    beamboxPreference.write('engrave_dpi', engraveDpi);
-    beamboxPreference.write('borderless', Boolean(addOnInfo.openBottom && borderless));
-    beamboxPreference.write('enable-diode', addOnInfo.hybridLaser && enableDiode);
-    beamboxPreference.write('enable-autofocus', addOnInfo.autoFocus && enableAutofocus);
+    const rotaryChanged = rotaryMode !== origState.rotary_mode;
+
+    set('engrave_dpi', engraveDpi);
+    set('borderless', Boolean(addOnInfo.openBottom && borderless));
+    set('enable-diode', addOnInfo.hybridLaser && enableDiode);
+    set('enable-autofocus', addOnInfo.autoFocus && enableAutofocus);
 
     if (workareaObj.dimensionCustomizable) {
-      const origVal = beamboxPreference.read('customized-dimension');
+      const origVal = origState['customized-dimension'];
 
       customDimensionChanged =
         customDimension[workarea]?.width !== origVal[workarea]?.width ||
         customDimension[workarea]?.height !== origVal[workarea]?.height;
 
-      beamboxPreference.write('customized-dimension', { ...origVal, [workarea]: customDimension[workarea] });
+      set('customized-dimension', { ...origVal, [workarea]: customDimension[workarea] });
     }
 
-    beamboxPreference.write('rotary_mode', rotaryMode);
+    set('rotary_mode', rotaryMode);
 
     const newPassThrough = Boolean(showPassThrough && passThrough);
     const passThroughChanged = newPassThrough !== origPassThrough;
-    const passThroughHeightChanged = passThroughHeight !== beamboxPreference.read('pass-through-height');
+    const passThroughHeightChanged = passThroughHeight !== origState['pass-through-height'];
     const newAutoFeeder = Boolean(showAutoFeeder && autoFeeder);
     const autoFeederChanged = newAutoFeeder !== origAutoFeeder;
-    const autoFeederHeightChanged = autoFeederHeight !== beamboxPreference.read('auto-feeder-height');
+    const autoFeederHeightChanged = autoFeederHeight !== origState['auto-feeder-height'];
 
-    beamboxPreference.write('pass-through', newPassThrough);
+    set('pass-through', newPassThrough);
 
-    if (showPassThrough) beamboxPreference.write('pass-through-height', Math.max(passThroughHeight, minHeight));
+    if (showPassThrough) set('pass-through-height', Math.max(passThroughHeight, minHeight));
 
-    beamboxPreference.write('auto-feeder', newAutoFeeder);
+    set('auto-feeder', newAutoFeeder);
 
     if (showAutoFeeder) {
       const newVal = Math.min(addOnInfo.autoFeeder!.maxHeight, Math.max(minHeight, autoFeederHeight));
 
-      beamboxPreference.write('auto-feeder-height', newVal);
-      beamboxPreference.write('auto-feeder-scale', autoFeederScale);
+      set('auto-feeder-height', newVal);
+      set('auto-feeder-scale', autoFeederScale);
     }
 
-    beamboxPreference.write('enable-job-origin', enableJobOrigin);
-    beamboxPreference.write('job-origin', jobOrigin);
+    set('enable-job-origin', enableJobOrigin);
+    set('job-origin', jobOrigin);
 
     if (
       workareaChanged ||
@@ -230,13 +232,12 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
 
     if (promarkModels.has(workarea)) {
       setPromarkInfo(pmInfo);
-      beamboxPreference.write('promark-start-button', enableStartButton);
-      beamboxPreference.write('frame-before-start', shouldFrame);
-      beamboxPreference.write('promark-safety-door', checkSafetyDoor);
+      set('promark-start-button', enableStartButton);
+      set('frame-before-start', shouldFrame);
+      set('promark-safety-door', checkSafetyDoor);
     }
 
-    beamboxPreference.write('auto_shrink', autoShrink);
-
+    set('auto_shrink', autoShrink);
     presprayArea.togglePresprayArea();
 
     const canvasEvents = eventEmitterFactory.createEventEmitter('canvas');
@@ -491,7 +492,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                 <SettingFilled
                   onClick={() =>
                     showRotarySettings({ rotaryMode, workarea }, () => {
-                      setRotaryMode(beamboxPreference.read('rotary_mode'));
+                      setRotaryMode(useDocumentStore.getState().rotary_mode);
                     })
                   }
                 />

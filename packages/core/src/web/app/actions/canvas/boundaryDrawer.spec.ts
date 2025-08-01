@@ -2,15 +2,12 @@ import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 
 jest.useFakeTimers();
 
-const registeredEvents: any = { store: {} };
+const registeredEvents: any = { document: {}, store: {} };
 
 const defaultBeamboxPreference = {
-  borderless: false,
   diode_offset_x: 70,
   diode_offset_y: 7,
-  'enable-diode': false,
   'enable-uv-print-file': false,
-  rotary_mode: false,
   'use-real-boundary': false,
   'use-union-boundary': true,
 };
@@ -37,6 +34,31 @@ jest.mock('@core/app/stores/configPanel', () => ({
       const key = selector({ diode: { value: 'diode' }, module: { value: 'module' }, repeat: 'repeat' });
 
       registeredEvents.store[key] = listener;
+    },
+  },
+}));
+
+const defaultDocumentStore = {
+  borderless: false,
+  'enable-diode': false,
+  rotary_mode: false,
+};
+const mockDocumentStore = { ...defaultDocumentStore };
+
+const mockGetDocumentStore = jest.fn().mockReturnValue(mockDocumentStore);
+
+jest.mock('@core/app/stores/documentStore', () => ({
+  useDocumentStore: {
+    getState: mockGetDocumentStore,
+    subscribe: (selector: any, listener: any) => {
+      const key = selector({
+        'auto-feeder': 'auto-feeder',
+        borderless: 'borderless',
+        'enable-diode': 'enable-diode',
+        'pass-through': 'pass-through',
+      });
+
+      registeredEvents.document[key] = listener;
     },
   },
 }));
@@ -145,6 +167,7 @@ describe('test boundaryDrawer', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     Object.assign(mockBeamboxPreference, defaultBeamboxPreference);
+    Object.assign(mockDocumentStore, defaultDocumentStore);
     Object.assign(mockWorkarea, defaultWorkarea.bb2);
     Object.assign(mockState, { diode: { value: 0 }, module: { value: 15 } });
     mockGetModuleBoundary.mockReturnValue({ bottom: 0, left: 0, right: 0, top: 0 });
@@ -166,19 +189,17 @@ describe('test boundaryDrawer', () => {
     expect(mockGetPassThrough).toHaveBeenCalledTimes(1);
     expect(boundaryDrawer.boundaries.passThrough).toBeUndefined();
     // open bottom
-    expect(mockRead).toHaveBeenNthCalledWith(1, 'borderless');
     expect(boundaryDrawer.boundaries.openBottom).toBeUndefined();
     // uv print
-    expect(mockRead).toHaveBeenNthCalledWith(2, 'enable-uv-print-file');
+    expect(mockRead).toHaveBeenNthCalledWith(1, 'enable-uv-print-file');
     expect(boundaryDrawer.boundaries.uvPrint).toBeUndefined();
     // module
     expect(mockGetModuleBoundary).toHaveBeenNthCalledWith(1, 'fbb2', LayerModule.LASER_UNIVERSAL);
     expect(boundaryDrawer.boundaries.module).toEqual({ bottom: 0, left: 0, right: 0, top: 0 });
     // diode
-    expect(mockRead).toHaveBeenNthCalledWith(3, 'enable-diode');
     expect(boundaryDrawer.boundaries.diode).toBeUndefined();
     // final boundary
-    expect(mockRead).toHaveBeenNthCalledWith(4, 'rotary_mode');
+    expect(mockGetDocumentStore).toHaveBeenCalledTimes(3); // borderless, enable-diode, rotary_mode
     expect(mockGetModuleOffsets).toHaveBeenNthCalledWith(1, { module: LayerModule.LASER_UNIVERSAL, workarea: 'fbb2' });
     expectBoundaryResult('');
   });
@@ -186,7 +207,7 @@ describe('test boundaryDrawer', () => {
   test('show boundary with auto feeder', async () => {
     await resetBoundaryDrawer();
     mockGetAutoFeeder.mockReturnValue(true);
-    registeredEvents['beambox-preference']['auto-feeder']();
+    registeredEvents.document['auto-feeder']();
     jest.advanceTimersByTime(100);
     expect(mockGetAutoFeeder).toHaveBeenCalledTimes(2);
     expect(boundaryDrawer.boundaries.autoFeeder).toEqual({ bottom: 0, left: 1000, right: 1000, top: 0 });
@@ -199,7 +220,7 @@ describe('test boundaryDrawer', () => {
     mockWorkarea.expansion = [0, 123];
     mockWorkarea.height = 3750 + 123;
     mockWorkarea.maxY = 3750 + 123;
-    registeredEvents['beambox-preference']['pass-through']();
+    registeredEvents.document['pass-through']();
     jest.advanceTimersByTime(100);
     expect(mockGetPassThrough).toHaveBeenCalledTimes(1);
     expect(boundaryDrawer.boundaries.passThrough).toEqual({ bottom: 123, left: 1000, right: 1000, top: 0 });
@@ -209,10 +230,10 @@ describe('test boundaryDrawer', () => {
   test('show boundary with open bottom', async () => {
     await resetBoundaryDrawer();
     Object.assign(mockWorkarea, defaultWorkarea.bm1);
-    mockBeamboxPreference.borderless = true;
-    registeredEvents['beambox-preference']['borderless']();
+    mockDocumentStore.borderless = true;
+    registeredEvents.document['borderless']();
     jest.advanceTimersByTime(100);
-    expect(mockRead).toHaveBeenNthCalledWith(1, 'borderless');
+    expect(mockGetDocumentStore).toHaveBeenCalledTimes(2); // borderless, rotary_mode
     expect(boundaryDrawer.boundaries.openBottom).toEqual({ bottom: 0, left: 0, right: 400, top: 0 });
     expectBoundaryResult('M0,0H3000V2100H0ZM0,0H2600V2100H0Z');
   });
@@ -298,23 +319,23 @@ describe('test boundaryDrawer', () => {
 
   test('show boundary with diode module addon', async () => {
     await resetBoundaryDrawer();
-    mockBeamboxPreference['enable-diode'] = true;
+    mockDocumentStore['enable-diode'] = true;
     Object.assign(mockWorkarea, defaultWorkarea.bm1);
-    registeredEvents['beambox-preference']['enable-diode']();
+    registeredEvents.document['enable-diode']();
     jest.advanceTimersByTime(100);
-    expect(mockRead).toHaveBeenNthCalledWith(1, 'enable-diode');
+    expect(mockGetDocumentStore).toHaveBeenCalledTimes(2); // enable-diode, rotary_mode
     expect(boundaryDrawer.boundaries.diode).toEqual({ bottom: 100, left: 0, right: 500, top: 0 });
     expectBoundaryResult('M0,0H3000V2100H0ZM0,0H2500V2000H0Z');
   });
 
   test('show boundary with diode module layer', async () => {
     await resetBoundaryDrawer();
-    mockBeamboxPreference['enable-diode'] = true;
+    mockDocumentStore['enable-diode'] = true;
     mockState.diode.value = 1;
     Object.assign(mockWorkarea, defaultWorkarea.bm1);
-    registeredEvents['beambox-preference']['enable-diode']();
+    registeredEvents.document['enable-diode']();
     jest.advanceTimersByTime(100);
-    expect(mockRead).toHaveBeenNthCalledWith(1, 'enable-diode');
+    expect(mockGetDocumentStore).toHaveBeenCalledTimes(2); // enable-diode, rotary_mode
     expect(boundaryDrawer.boundaries.diode).toEqual({ bottom: 0, left: 700, right: 0, top: 70 });
     expectBoundaryResult('M0,0H3000V2100H0ZM700,100H3000V2100H700Z');
   });
@@ -323,8 +344,8 @@ describe('test boundaryDrawer', () => {
     // open bottom + diode
     await resetBoundaryDrawer();
     Object.assign(mockWorkarea, defaultWorkarea.bm1);
-    mockBeamboxPreference.borderless = true;
-    mockBeamboxPreference['enable-diode'] = true;
+    mockDocumentStore.borderless = true;
+    mockDocumentStore['enable-diode'] = true;
     mockState.diode.value = 1;
     registeredEvents.canvas['canvas-change']();
     jest.advanceTimersByTime(100);

@@ -1,6 +1,6 @@
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import type { AddOnInfo } from '@core/app/constants/addOn';
 import { getAddOnInfo } from '@core/app/constants/addOn';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 
 /**
  * get if auto feeder is enabled according to beambox preference, add-on info and borderless setting
@@ -12,17 +12,19 @@ export const getAutoFeeder = (
   addOnInfo?: AddOnInfo,
   values: { autoFeeder?: boolean; borderless?: boolean } = {},
 ): boolean => {
+  const documentStore = useDocumentStore.getState();
+
   if (!addOnInfo) {
-    addOnInfo = getAddOnInfo(beamboxPreference.read('workarea'));
+    addOnInfo = getAddOnInfo(documentStore.workarea);
   }
 
   if (!addOnInfo.autoFeeder) return false;
 
   const { autoFeeder, borderless } = values;
 
-  if (!(autoFeeder ?? beamboxPreference.read('auto-feeder'))) return false;
+  if (!(autoFeeder ?? documentStore['auto-feeder'])) return false;
 
-  return addOnInfo.openBottom ? (borderless ?? beamboxPreference.read('borderless')) : true;
+  return addOnInfo.openBottom ? (borderless ?? documentStore.borderless) : true;
 };
 
 /**
@@ -35,15 +37,17 @@ export const getPassThrough = (
   addOnInfo?: AddOnInfo,
   values: { borderless?: boolean; passThrough?: boolean } = {},
 ): boolean => {
+  const documentStore = useDocumentStore.getState();
+
   if (!addOnInfo) {
-    addOnInfo = getAddOnInfo(beamboxPreference.read('workarea'));
+    addOnInfo = getAddOnInfo(documentStore.workarea);
   }
 
   if (!addOnInfo.passThrough) return false;
 
   const { borderless, passThrough } = values;
 
-  if (!(passThrough ?? beamboxPreference.read('pass-through'))) return false;
+  if (!(passThrough ?? documentStore['pass-through'])) return false;
 
-  return addOnInfo.openBottom ? (borderless ?? beamboxPreference.read('borderless')) : true;
+  return addOnInfo.openBottom ? (borderless ?? documentStore.borderless) : true;
 };
