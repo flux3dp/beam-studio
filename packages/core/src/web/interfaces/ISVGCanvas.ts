@@ -16,7 +16,7 @@ export interface IPoint {
   y: number;
 }
 
-interface IRect {
+export interface IRect {
   height: number;
   width: number;
   x: number;

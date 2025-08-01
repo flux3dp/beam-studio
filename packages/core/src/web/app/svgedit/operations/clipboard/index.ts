@@ -11,11 +11,11 @@ import type { ClipboardCore } from '@core/interfaces/Clipboard';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import undoManager from '../history/undoManager';
+import undoManager from '../../history/undoManager';
 
-import MemoryClipboard from './clipboard/MemoryClipboard';
-import NativeClipboard, { checkNativeClipboardSupport } from './clipboard/NativeClipboard';
-import { updateSymbolStyle } from './clipboard/utils';
+import { MemoryClipboard } from './class/MemoryClipboard';
+import { checkNativeClipboardSupport, NativeClipboard } from './class/NativeClipboard';
+import { updateSymbolStyle } from './updateSymbolStyle';
 
 // TODO: decouple with svgcanvas
 const { svgedit } = window;
@@ -34,13 +34,9 @@ checkNativeClipboardSupport().then((res) => {
   if (res) clipboardCore = new NativeClipboard();
 });
 
-export const hasClipboardData = async (): Promise<boolean> => {
-  return clipboardCore.hasData();
-};
+export const hasClipboardData = async (): Promise<boolean> => clipboardCore.hasData();
 
-const copyElements = async (elems: Element[]): Promise<void> => {
-  await clipboardCore.copyElements(elems);
-};
+const copyElements = async (elems: Element[]): Promise<void> => clipboardCore.copyElements(elems);
 
 const copySelectedElements = async (): Promise<void> => {
   const selectedElems = svgCanvas.getSelectedWithoutTempGroup();
@@ -70,19 +66,15 @@ const cutSelectedElements = async (): Promise<void> => {
 
 const pasteRef = async (
   useElement: SVGUseElement,
-  opts?: {
-    addToHistory?: boolean;
-    parentCmd?: IBatchCommand;
-  },
+  { addToHistory = true, parentCmd }: { addToHistory?: boolean; parentCmd?: IBatchCommand } = {},
 ): Promise<void> => {
-  const { addToHistory = true, parentCmd } = opts || {};
   const batchCmd = new history.BatchCommand('Paste Ref');
   const drawing = svgCanvas.getCurrentDrawing();
   const symbolId = svgedit.utilities.getHref(useElement);
   const refElement = clipboardCore.getRefFromClipboard(symbolId)!;
   const copiedRef = refElement.cloneNode(true) as SVGSymbolElement;
 
-  copiedRef.id = drawing.getNextId();
+  copiedRef.id = (drawing as any).getNextId();
   copiedRef.setAttribute('data-image-symbol', `${copiedRef.id}_image`);
   updateSymbolStyle(copiedRef, refElement.id);
 
@@ -106,7 +98,7 @@ const pasteRef = async (
   updateElementColor(useElement);
 };
 
-export const handlePastedRef = async (copy: Element, opts: { parentCmd?: IBatchCommand } = {}): Promise<void> => {
+export const handlePastedRef = async (copy: SVGGElement, opts: { parentCmd?: IBatchCommand } = {}): Promise<void> => {
   const promises = Array.of<Promise<void>>();
   const uses = Array.from(copy.querySelectorAll('use'));
 
@@ -119,7 +111,7 @@ export const handlePastedRef = async (copy: Element, opts: { parentCmd?: IBatchC
     promises.push(pasteRef(use, { parentCmd: opts?.parentCmd }));
   });
 
-  const passThroughObjects = Array.from(copy.querySelectorAll('[data-pass-through]'));
+  const passThroughObjects = Array.from(copy.querySelectorAll('[data-pass-through]')) as SVGGElement[];
 
   if (copy.getAttribute('data-pass-through')) passThroughObjects.push(copy);
 
@@ -127,7 +119,7 @@ export const handlePastedRef = async (copy: Element, opts: { parentCmd?: IBatchC
     const clipPath = element.querySelector(':scope > clipPath');
 
     if (clipPath) {
-      element.childNodes.forEach((child: SVGGraphicsElement) => {
+      (element.childNodes as NodeListOf<SVGGraphicsElement>).forEach((child: SVGGraphicsElement) => {
         if (child.getAttribute('clip-path')?.startsWith('url')) {
           child.setAttribute('clip-path', `url(#${clipPath.id})`);
         }
@@ -135,7 +127,7 @@ export const handlePastedRef = async (copy: Element, opts: { parentCmd?: IBatchC
     }
   });
 
-  const textPathGroups = Array.from(copy.querySelectorAll('[data-textpath-g="1"]'));
+  const textPathGroups = Array.from(copy.querySelectorAll('[data-textpath-g="1"]')) as SVGGElement[];
 
   if (copy.getAttribute('data-textpath-g') === '1') textPathGroups.push(copy);
 
@@ -175,7 +167,7 @@ const pasteElements = async (args: {
       continue;
     }
 
-    const copy = drawing.copyElem(elem);
+    const copy = drawing.copyElem(elem) as SVGGElement;
 
     // See if elem with elem ID is in the DOM already
     if (!svgedit.utilities.getElem(elem.id)) {
@@ -185,36 +177,36 @@ const pasteElements = async (args: {
     pasted.push(copy);
 
     if (copy.getAttribute('data-origin-layer') && clipboard.length > 1) {
-      const layer = drawing.getLayerByName(copy.getAttribute('data-origin-layer')) || drawing.getCurrentLayer();
+      const layer = drawing.getLayerByName(copy.getAttribute('data-origin-layer')!) || drawing.getCurrentLayer();
 
-      layer.appendChild(copy);
+      layer!.appendChild(copy);
     } else {
-      drawing.getCurrentLayer().appendChild(copy);
+      drawing.getCurrentLayer()!.appendChild(copy);
     }
 
     const promise = handlePastedRef(copy);
 
     batchCmd.addSubCommand(new history.InsertElementCommand(copy));
-    svgCanvas.restoreRefElems(copy);
+    (svgCanvas as any).restoreRefElems(copy);
     promise.then(() => {
       updateElementColor(copy);
     });
   }
 
-  if (selectElement) svgCanvas.selectOnly(pasted, true);
+  if (selectElement) svgCanvas.selectOnly(pasted as SVGGElement[], true);
 
   if (type !== 'in_place') {
     let ctrX: number;
     let ctrY: number;
 
     if (type === 'mouse') {
-      const lastClickPoint = svgCanvas.getLastClickPoint();
+      const lastClickPoint = (svgCanvas as any).getLastClickPoint();
 
       ctrX = lastClickPoint.x;
       ctrY = lastClickPoint.y;
     } else if (type === 'point') {
-      ctrX = x;
-      ctrY = y;
+      ctrX = x!;
+      ctrY = y!;
     }
 
     const bbox = svgCanvas.getStrokedBBox(pasted);
@@ -260,27 +252,18 @@ const cloneElements = async (
   elements: Element[],
   dx: number | number[],
   dy: number | number[],
-  opts: {
-    addToHistory?: boolean;
-    callChangOnMove?: boolean;
-    parentCmd?: IBatchCommand;
-    selectElement?: boolean;
-  } = {
-    addToHistory: true,
-    callChangOnMove: true,
-    selectElement: true,
-  },
+  {
+    addToHistory = true,
+    callChangOnMove = true,
+    parentCmd,
+    selectElement = true,
+  }: { addToHistory?: boolean; callChangOnMove?: boolean; parentCmd?: IBatchCommand; selectElement?: boolean } = {},
 ): Promise<null | { cmd: IBatchCommand; elems: Element[] }> => {
-  const { addToHistory = true, callChangOnMove = true, parentCmd, selectElement = true } = opts;
   const batchCmd = new history.BatchCommand('Clone elements');
 
   await copyElements(elements);
 
-  const pasteRes = await pasteElements({
-    isSubCmd: true,
-    selectElement,
-    type: 'in_place',
-  });
+  const pasteRes = await pasteElements({ isSubCmd: true, selectElement, type: 'in_place' });
 
   if (!pasteRes) return null;
 
@@ -344,7 +327,7 @@ const pasteInCenter = async (): Promise<null | { cmd: IBatchCommand; elems: Elem
 const generateSelectedElementArray = async (
   interval: { dx: number; dy: number },
   { column, row }: { column: number; row: number },
-): Promise<IBatchCommand> => {
+): Promise<IBatchCommand | null> => {
   const batchCmd = new history.BatchCommand('Grid elements');
 
   await copySelectedElements();
@@ -364,7 +347,7 @@ const generateSelectedElementArray = async (
 
         const { cmd: pasteCmd, elems } = pasteRes;
 
-        arrayElements.push(...elems);
+        arrayElements.push(...(elems as SVGGElement[]));
 
         elems.forEach((elem) => {
           if (elem.getAttribute('data-vt-offset')) {
