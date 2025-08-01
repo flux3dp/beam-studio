@@ -6,8 +6,11 @@ import type { LayerModuleType } from '@core/app/constants/layer-module/layer-mod
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { ModuleOffsets } from '@core/app/constants/layer-module/module-offsets';
 import moduleOffsets from '@core/app/constants/layer-module/module-offsets';
+import { TabEvents } from '@core/app/constants/tabConstants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import type { DocumentStateKey } from '@core/app/stores/documentStore';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import communicator from '@core/implementations/communicator';
 import storage from '@core/implementations/storage';
 import type { Prettify } from '@core/interfaces/utils';
 
@@ -54,7 +57,7 @@ export type BeamboxPreference = {
   'job-origin': number;
   'keep-preview-result': boolean;
   low_power: number;
-  // model is default workarea model
+  /** model: default workarea model */
   model: WorkAreaModel;
   'module-offsets': ModuleOffsets;
   mouse_input_device: 'MOUSE' | 'TOUCHPAD';
@@ -97,6 +100,11 @@ export type BeamboxPreference = {
 
 export type BeamboxPreferenceKey = Prettify<keyof BeamboxPreference>;
 export type BeamboxPreferenceValue<T extends BeamboxPreferenceKey> = BeamboxPreference[T];
+/**
+ * Global preferences: preferences that are shared across all tabs and not specific to a document.
+ * Should handle preferences changes in other tabs with TabEvents.BeamboxPreferenceChanged
+ */
+export type GlobalPreference = Omit<BeamboxPreference, DocumentStateKey>;
 
 const DEFAULT_PREFERENCE: BeamboxPreference = {
   'af-offset': 0,
@@ -198,7 +206,7 @@ function deepApplyDefaults<T extends { [key: string]: any }>(target: DeepPartial
 
 class BeamboxPreferenceClass {
   constructor() {
-    let preference: BeamboxPreference | null = storage.get('beambox-preference');
+    let preference: BeamboxPreference | null = storage.get('beambox-preference', false);
 
     if (preference) {
       // migrate renamed key
@@ -237,18 +245,30 @@ class BeamboxPreferenceClass {
 
     console.log('startup preference', preference);
     storage.set('beambox-preference', preference);
+    communicator.on(
+      TabEvents.BeamboxPreferenceChanged,
+      (key: BeamboxPreferenceKey, value: BeamboxPreferenceValue<BeamboxPreferenceKey>) => {
+        eventEmitter.emit(key, value);
+      },
+    );
   }
 
-  read<Key extends BeamboxPreferenceKey>(key: Key, useCache = true): BeamboxPreferenceValue<Key> {
-    return storage.get('beambox-preference', useCache)[key];
+  read<Key extends BeamboxPreferenceKey>(key: Key): BeamboxPreferenceValue<Key> {
+    return storage.get('beambox-preference', false)[key];
   }
 
-  write<Key extends BeamboxPreferenceKey>(key: Key, value: BeamboxPreferenceValue<Key>): void {
+  write<Key extends BeamboxPreferenceKey>(
+    key: Key,
+    value: BeamboxPreferenceValue<Key>,
+    isGlobalPreference: boolean = true,
+  ): void {
     const preference = storage.get('beambox-preference', false);
 
     preference[key] = value;
     storage.set('beambox-preference', preference);
     eventEmitter.emit(key, value);
+
+    if (isGlobalPreference) communicator.send(TabEvents.BeamboxPreferenceChanged, key, value);
   }
 }
 

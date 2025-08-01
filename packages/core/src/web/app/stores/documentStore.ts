@@ -94,7 +94,7 @@ export const useDocumentStore = create(
 
       set: <K extends keyof DocumentState>(key: K, value: DocumentState[K]) => {
         set(() => {
-          beamboxPreference.write(key, value as any);
+          beamboxPreference.write(key, value as any, false);
 
           return { [key]: value };
         });
@@ -147,7 +147,7 @@ export function changeDocumentStoreValue<Key extends DocumentStateKey>(
     const batchCmd = new history.BatchCommand();
 
     batchCmd.addSubCommand(cmd);
-    changeBeamboxPreferenceValue(key, value as any, { parentCmd: batchCmd });
+    changeBeamboxPreferenceValue(key, value as any, { isGlobalPreference: false, parentCmd: batchCmd });
     cmd = batchCmd;
   }
 

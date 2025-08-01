@@ -13,30 +13,30 @@ export class BeamboxPreferenceCommand<Key extends BeamboxPreferenceKey> extends 
     private key: Key,
     private oldValue: BeamboxPreferenceValue<Key>,
     private newValue: BeamboxPreferenceValue<Key>,
+    private isGlobalPreference: boolean = true,
   ) {
     super();
   }
 
   doApply = (): void => {
-    beamboxPreference.write(this.key, this.newValue);
+    beamboxPreference.write(this.key, this.newValue, this.isGlobalPreference);
   };
 
   doUnapply = (): void => {
-    beamboxPreference.write(this.key, this.oldValue);
+    beamboxPreference.write(this.key, this.oldValue, this.isGlobalPreference);
   };
 }
 
 export function changeBeamboxPreferenceValue<Key extends BeamboxPreferenceKey>(
   key: Key,
   value: BeamboxPreferenceValue<Key>,
-  opts: { parentCmd?: IBatchCommand } = {},
+  { isGlobalPreference = true, parentCmd }: { isGlobalPreference?: boolean; parentCmd?: IBatchCommand } = {},
 ): BeamboxPreferenceCommand<Key> {
-  const { parentCmd } = opts;
   const oldValue = beamboxPreference.read(key);
 
-  beamboxPreference.write(key, value);
+  beamboxPreference.write(key, value, isGlobalPreference);
 
-  const cmd = new BeamboxPreferenceCommand(key, oldValue, value);
+  const cmd = new BeamboxPreferenceCommand(key, oldValue, value, isGlobalPreference);
 
   if (parentCmd) parentCmd.addSubCommand(cmd);
 
