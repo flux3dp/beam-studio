@@ -752,6 +752,7 @@ const lang: ILang = {
           auto_fit: 'Ajuste Automático',
           bevel: 'Biselar',
           brightness: 'Brillo',
+          convert_to_image: 'Convertir en imagen',
           convert_to_path: 'Convertir en trayectoria',
           create_textpath: 'Crear Tecto de Trayectoria',
           create_textpath_short: 'Texto camino',

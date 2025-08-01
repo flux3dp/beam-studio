@@ -752,6 +752,7 @@ const lang: ILang = {
           auto_fit: 'Ajustement Automatique',
           bevel: 'Chanfrein',
           brightness: 'Luminosité',
+          convert_to_image: 'Convertir en image',
           convert_to_path: 'Convertir en tracé',
           create_textpath: 'Créer un texte sur un tracé',
           create_textpath_short: 'Texte sur tracé',

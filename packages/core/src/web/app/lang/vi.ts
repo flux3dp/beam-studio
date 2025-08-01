@@ -752,6 +752,7 @@ const lang: ILang = {
           auto_fit: 'Tự Động Vừa Khít',
           bevel: 'Bo góc',
           brightness: 'Độ sáng',
+          convert_to_image: 'Chuyển thành hình ảnh',
           convert_to_path: 'Chuyển đổi thành đường viền',
           create_textpath: 'Tạo chữ trên đường viền',
           create_textpath_short: 'Chữ trên đường dẫn',

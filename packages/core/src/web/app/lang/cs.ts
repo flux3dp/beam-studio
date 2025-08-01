@@ -752,6 +752,7 @@ const lang: ILang = {
           auto_fit: 'Automaticky přizpůsobit',
           bevel: 'Zkosit',
           brightness: 'Jas',
+          convert_to_image: 'Převést na obrázek',
           convert_to_path: 'Převést na cestu',
           create_textpath: 'Vytvořit text na cestě',
           create_textpath_short: 'Text na cestě',
