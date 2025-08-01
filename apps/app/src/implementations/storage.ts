@@ -63,7 +63,7 @@ class ElectronStorage implements IStorage {
 
   isExisting = (key: string): boolean => this.storeCache[key] !== undefined;
 
-  getStore = () => this.storeCache;
+  getStore = () => this.store.store;
 }
 
 const storage = new ElectronStorage();
