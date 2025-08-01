@@ -44,16 +44,6 @@ jest.mock('@core/app/actions/canvas/grid', () => ({
   toggleGrids: () => mockToggleGrids(),
 }));
 
-const mockCreateEventEmitter = jest.fn();
-
-jest.mock('@core/helpers/eventEmitterFactory', () => ({
-  createEventEmitter: (...args) => mockCreateEventEmitter(...args),
-}));
-
-const mockEventEmitter = {
-  emit: jest.fn(),
-};
-
 describe('test view', () => {
   afterEach(() => {
     jest.resetAllMocks();
@@ -95,17 +85,15 @@ describe('test view', () => {
 
     const result = viewMenu.toggleGrid();
 
-    expect(mockToggleGrids).toBeCalledTimes(1);
-    expect(mockRead).toBeCalledTimes(1);
-    expect(mockWrite).toBeCalledTimes(1);
+    expect(mockToggleGrids).toHaveBeenCalledTimes(1);
+    expect(mockRead).toHaveBeenCalledTimes(1);
+    expect(mockWrite).toHaveBeenCalledTimes(1);
     expect(mockWrite).toHaveBeenNthCalledWith(1, 'show_grids', false);
     expect(result).toBeFalsy();
   });
 
   describe('test toggleRulers', () => {
-    beforeEach(() => {
-      mockCreateEventEmitter.mockReturnValue(mockEventEmitter);
-    });
+    beforeEach(() => {});
 
     afterEach(() => {
       jest.resetAllMocks();
@@ -116,10 +104,6 @@ describe('test view', () => {
 
       const result = viewMenu.toggleRulers();
 
-      expect(mockCreateEventEmitter).toBeCalledTimes(1);
-      expect(mockCreateEventEmitter).toHaveBeenLastCalledWith('canvas');
-      expect(mockEventEmitter.emit).toBeCalledTimes(1);
-      expect(mockEventEmitter.emit).toHaveBeenLastCalledWith('update-ruler');
       expect(mockWrite).toHaveBeenCalledTimes(1);
       expect(mockWrite).toHaveBeenNthCalledWith(1, 'show_rulers', true);
       expect(result).toBeTruthy();
@@ -130,10 +114,6 @@ describe('test view', () => {
 
       const result = viewMenu.toggleRulers();
 
-      expect(mockCreateEventEmitter).toBeCalledTimes(1);
-      expect(mockCreateEventEmitter).toHaveBeenLastCalledWith('canvas');
-      expect(mockEventEmitter.emit).toBeCalledTimes(1);
-      expect(mockEventEmitter.emit).toHaveBeenLastCalledWith('update-ruler');
       expect(mockWrite).toHaveBeenCalledTimes(1);
       expect(mockWrite).toHaveBeenNthCalledWith(1, 'show_rulers', false);
       expect(result).toBeFalsy();

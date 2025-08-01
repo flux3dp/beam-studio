@@ -58,10 +58,9 @@ describe('Ruler Component', () => {
     expect(container.querySelector('#rulers')).toHaveStyle('display: none');
   });
 
-  test('calls updateRulers on update-ruler and zoom-changed events', () => {
+  test('calls updateRulers on and zoom-changed events', () => {
     render(<Ruler />);
-    expect(mockEmitter.on).toHaveBeenCalledTimes(2);
-    expect(mockEmitter.on).toHaveBeenNthCalledWith(1, 'update-ruler', expect.any(Function));
-    expect(mockEmitter.on).toHaveBeenNthCalledWith(2, 'zoom-changed', expect.any(Function));
+    expect(mockEmitter.on).toHaveBeenCalledTimes(1);
+    expect(mockEmitter.on).toHaveBeenNthCalledWith(1, 'zoom-changed', expect.any(Function));
   });
 });

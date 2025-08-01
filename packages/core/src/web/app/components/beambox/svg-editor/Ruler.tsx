@@ -1,14 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import workareaManager from '@core/app/svgedit/workarea';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import { useBeamboxPreference } from '@core/helpers/hooks/useBeamboxPreference';
 import storage from '@core/implementations/storage';
 
 import styles from './Ruler.module.scss';
 
 const Ruler = (): React.JSX.Element => {
-  const showShowRulers = beamboxPreference.read('show_rulers');
+  const shouldShowRulers = useBeamboxPreference('show_rulers');
   const canvasEventEmitter = useMemo(() => eventEmitterFactory.createEventEmitter('canvas'), []);
   const rulersRef = useRef<HTMLDivElement>(null);
   const xContainerRef = useRef<HTMLDivElement>(null);
@@ -166,27 +166,23 @@ const Ruler = (): React.JSX.Element => {
 
   useEffect(() => {
     const handler = () => {
-      const shouldShowRulers = beamboxPreference.read('show_rulers');
-
-      rulersRef.current?.style.setProperty('display', shouldShowRulers ? '' : 'none');
-
-      if (shouldShowRulers) {
-        requestAnimationFrame(updateRulers);
-      }
+      requestAnimationFrame(updateRulers);
     };
 
-    handler();
-    canvasEventEmitter.on('update-ruler', handler);
-    canvasEventEmitter.on('zoom-changed', handler);
+    if (shouldShowRulers) {
+      handler();
+      canvasEventEmitter.on('zoom-changed', handler);
 
-    return () => {
-      canvasEventEmitter.off('update-ruler', handler);
-      canvasEventEmitter.off('zoom-changed', handler);
-    };
-  }, [canvasEventEmitter, updateRulers]);
+      return () => {
+        canvasEventEmitter.off('zoom-changed', handler);
+      };
+    }
+
+    return () => {};
+  }, [shouldShowRulers, canvasEventEmitter, updateRulers]);
 
   return (
-    <div className={styles.rulers} id="rulers" ref={rulersRef} style={{ display: showShowRulers ? '' : 'none' }}>
+    <div className={styles.rulers} id="rulers" ref={rulersRef} style={{ display: shouldShowRulers ? '' : 'none' }}>
       <div className={styles.corner} />
       <div className={styles.x} id="ruler_x">
         <div className={styles.container} ref={xContainerRef} />

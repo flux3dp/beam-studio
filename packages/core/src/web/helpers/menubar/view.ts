@@ -2,7 +2,6 @@ import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import grid from '@core/app/actions/canvas/grid';
 import workareaManager from '@core/app/svgedit/workarea';
 import updateLayerColor from '@core/helpers/color/updateLayerColor';
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
@@ -45,11 +44,9 @@ const toggleGrid = (): boolean => {
 };
 
 const toggleRulers = (): boolean => {
-  const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
   const shouldShowRulers = !BeamboxPreference.read('show_rulers');
 
   BeamboxPreference.write('show_rulers', shouldShowRulers);
-  canvasEventEmitter.emit('update-ruler');
 
   return shouldShowRulers;
 };
