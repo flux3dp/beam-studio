@@ -1,11 +1,11 @@
 import Alert from '@core/app/actions/alert-caller';
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import Constant, { promarkModels } from '@core/app/actions/beambox/constant';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { CameraType } from '@core/app/constants/cameraConstants';
 import { setCameraPreviewState } from '@core/app/stores/cameraPreview';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import checkOldFirmware from '@core/helpers/device/checkOldFirmware';
 import deviceMaster from '@core/helpers/device-master';
@@ -94,7 +94,7 @@ class PreviewModeController {
       return false;
     }
 
-    if (BeamboxPreference.read('borderless') && !vc.meetRequirement('BORDERLESS_MODE')) {
+    if (useDocumentStore.getState().borderless && !vc.meetRequirement('BORDERLESS_MODE')) {
       const message = `#814 ${LANG.calibration.update_firmware_msg1} 2.5.1 ${LANG.calibration.update_firmware_msg2} ${LANG.beambox.popup.or_turn_off_borderless_mode}`;
       const caption = LANG.beambox.left_panel.borderless_preview;
 

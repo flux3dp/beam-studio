@@ -5,6 +5,8 @@ import Progress from '@core/app/actions/progress-caller';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { controlConfig } from '@core/app/constants/promark-constants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
+import workareaManager from '@core/app/svgedit/workarea';
 import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
 import { getExportOpt } from '@core/helpers/api/svg-laser-parser';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
@@ -123,10 +125,11 @@ const uploadToParser = async (uploadFile: IWrappedSwiftrayTaskFile): Promise<boo
     },
   });
 
+  const documentState = useDocumentStore.getState();
   const uploadConfig = {
-    engraveDpi: dpiTextMap[BeamboxPreference.read('engrave_dpi')],
-    model: BeamboxPreference.read('workarea') || BeamboxPreference.read('model'),
-    rotaryMode: BeamboxPreference.read('rotary_mode'),
+    engraveDpi: dpiTextMap[documentState['engrave_dpi']],
+    model: workareaManager.model,
+    rotaryMode: documentState['rotary_mode'],
   };
 
   await swiftrayClient.loadSVG(
@@ -292,11 +295,11 @@ const fetchTaskCodeSwiftray = async (
     },
   });
 
-  const addOnInfo = getAddOnInfo(BeamboxPreference.read('workarea'));
+  const addOnInfo = getAddOnInfo(workareaManager.model);
   let codeType = opts.output || 'fcode';
   const { fgGcode = false } = opts;
   const isNonFGCode = codeType === 'gcode' && !fgGcode;
-  const model = BeamboxPreference.read('workarea') || BeamboxPreference.read('model');
+  const model = workareaManager.model;
   const isPromark = promarkModels.has(model);
 
   if (isPromark) {
@@ -304,11 +307,12 @@ const fetchTaskCodeSwiftray = async (
   }
 
   const targetDevice = device || TopBarController.getSelectedDevice();
+  const documentState = useDocumentStore.getState();
 
   let taskConfig: IBaseConfig | IFcodeConfig = {
     device: targetDevice,
-    enableAutoFocus: doesSupportDiodeAndAF && BeamboxPreference.read('enable-autofocus') && addOnInfo.autoFocus,
-    enableDiode: doesSupportDiodeAndAF && BeamboxPreference.read('enable-diode') && addOnInfo.hybridLaser,
+    enableAutoFocus: doesSupportDiodeAndAF && documentState['enable-autofocus'] && addOnInfo.autoFocus,
+    enableDiode: doesSupportDiodeAndAF && documentState['enable-diode'] && addOnInfo.hybridLaser,
     isPromark,
     model,
     paddingAccel: await getAdorPaddingAccel(targetDevice),

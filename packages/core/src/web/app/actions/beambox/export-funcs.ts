@@ -10,7 +10,9 @@ import { getAddOnInfo } from '@core/app/constants/addOn';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { Mode } from '@core/app/constants/monitor-constants';
 import type { PreviewTask, VariableTextTask } from '@core/app/contexts/MonitorContext';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
+import workareaManager from '@core/app/svgedit/workarea';
 import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
 import svgLaserParser from '@core/helpers/api/svg-laser-parser';
 import { hasSwiftray } from '@core/helpers/api/swiftray-client';
@@ -164,11 +166,12 @@ const fetchTaskCode = async (
     },
   });
 
+  const documentState = useDocumentStore.getState();
   const uploadRes = await svgeditorParser.uploadToSvgeditorAPI(uploadFile, {
     engraveDpi:
       // (isDev() && BeamboxPreference.read('engrave-dpi-value')) ||
-      BeamboxPreference.read('engrave_dpi'),
-    model: BeamboxPreference.read('workarea') || BeamboxPreference.read('model'),
+      documentState['engrave_dpi'],
+    model: workareaManager.model,
     onProgressing: (data: { message: string; percentage: number }) => {
       // message: Analyzing SVG - 0.0%
       Progress.update('upload-scene', {
@@ -234,7 +237,7 @@ const fetchTaskCode = async (
   let didErrorOccur = false;
   const targetDevice = device || TopBarController.getSelectedDevice();
   const paddingAccel = await getAdorPaddingAccel(targetDevice);
-  const addOnInfo = getAddOnInfo(BeamboxPreference.read('workarea'));
+  const addOnInfo = getAddOnInfo(workareaManager.model);
   const getTaskCode = (codeType: 'fcode' | 'gcode', getTaskCodeOpts = {}) =>
     new Promise<null | {
       fileTimeCost: number;
@@ -246,10 +249,10 @@ const fetchTaskCode = async (
       svgeditorParser.getTaskCode(names, {
         codeType,
         device: targetDevice,
-        enableAutoFocus: doesSupportDiodeAndAF && BeamboxPreference.read('enable-autofocus') && addOnInfo.autoFocus,
-        enableDiode: doesSupportDiodeAndAF && BeamboxPreference.read('enable-diode') && addOnInfo.hybridLaser,
+        enableAutoFocus: doesSupportDiodeAndAF && documentState['enable-autofocus'] && addOnInfo.autoFocus,
+        enableDiode: doesSupportDiodeAndAF && documentState['enable-diode'] && addOnInfo.hybridLaser,
         fileMode: '-f',
-        model: BeamboxPreference.read('workarea') || BeamboxPreference.read('model'),
+        model: workareaManager.model,
         onError: (message: string) => {
           Progress.popById('fetch-task');
           Alert.popUp({
@@ -350,8 +353,8 @@ const fetchTransferredFcode = async (gcodeString: string, thumbnail: string) => 
       { arrayBuffer, size: blob.size, thumbnailSize: thumbnail.length },
       {
         codeType,
-        model: BeamboxPreference.read('workarea') || BeamboxPreference.read('model'),
-        onError: (message) => {
+        model: workareaManager.model,
+        onError: (message: string) => {
           Progress.popById('fetch-task');
           Alert.popUp({
             buttonType: AlertConstants.YES_NO,
@@ -427,7 +430,7 @@ const openTaskInDeviceMonitor = async (
 };
 
 export const getConvertEngine = (targetDevice?: IDeviceInfo) => {
-  const currentWorkarea = BeamboxPreference.read('workarea');
+  const currentWorkarea = workareaManager.model;
   const isPromark = promarkModels.has(currentWorkarea);
 
   const useSwiftray =

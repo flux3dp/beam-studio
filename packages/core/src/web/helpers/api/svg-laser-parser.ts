@@ -13,6 +13,7 @@ import AlertConstants from '@core/app/constants/alert-constants';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import workareaManager, { ExpansionType } from '@core/app/svgedit/workarea';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import { getRotaryInfo } from '@core/helpers/addOn/rotary';
@@ -45,6 +46,7 @@ export const getExportOpt = async (
     hardware_name: 'beambox',
     model,
   };
+  const documentState = useDocumentStore.getState();
 
   const isDevMode = isDev();
   const paddingAccel = BeamboxPreference.read('padding_accel');
@@ -80,7 +82,7 @@ export const getExportOpt = async (
   if (BeamboxPreference.read('reverse-engraving')) config.rev = true;
 
   const addOnInfo = getAddOnInfo(model);
-  const hasJobOrigin = BeamboxPreference.read('enable-job-origin') && addOnInfo.jobOrigin && supportJobOrigin;
+  const hasJobOrigin = documentState['enable-job-origin'] && addOnInfo.jobOrigin && supportJobOrigin;
 
   if (hasJobOrigin) {
     // firmware version / model check
@@ -105,7 +107,7 @@ export const getExportOpt = async (
     }
   } else if (autoFeeder) {
     config.rotary_y_ratio = addOnInfo.autoFeeder!.rotaryRatio;
-    config.rotary_y_ratio *= BeamboxPreference.read('auto-feeder-scale');
+    config.rotary_y_ratio *= documentState['auto-feeder-scale'];
     config.rotary_z_motion = false;
 
     if (config.job_origin) {
@@ -172,7 +174,7 @@ export const getExportOpt = async (
     }
   }
 
-  const isBorderLess = BeamboxPreference.read('borderless') && addOnInfo.openBottom;
+  const isBorderLess = documentState.borderless && addOnInfo.openBottom;
 
   if (BeamboxPreference.read('enable_mask') || isBorderLess) {
     const clipRect: [number, number, number, number] = [0, 0, 0, 0]; // top right bottom left
@@ -358,7 +360,7 @@ export const getExportOpt = async (
     config.segment = false;
   }
 
-  if (BeamboxPreference.read('auto_shrink')) {
+  if (documentState.auto_shrink) {
     let value = workareaObj.autoShrink;
 
     if (isDevMode) {

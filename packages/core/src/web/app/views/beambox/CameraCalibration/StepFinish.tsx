@@ -4,6 +4,7 @@ import { Result } from 'antd';
 
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { CalibrationContext } from '@core/app/contexts/CalibrationContext';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import useI18n from '@core/helpers/useI18n';
 
@@ -18,7 +19,7 @@ const StepFinish = (): React.JSX.Element => {
       okText={lang.finish}
       onOk={() => {
         BeamboxPreference.write('should_remind_calibrate_camera', false);
-        BeamboxPreference.write('borderless', borderless);
+        useDocumentStore.getState().set('borderless', borderless);
         onClose(true);
       }}
       open

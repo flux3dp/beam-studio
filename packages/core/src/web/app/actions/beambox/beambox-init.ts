@@ -13,6 +13,7 @@ import AlertConstants from '@core/app/constants/alert-constants';
 import FontConstants from '@core/app/constants/font-constants';
 import { gestureIntroduction } from '@core/app/constants/media-tutorials';
 import BeamboxStore from '@core/app/stores/beambox-store';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import workareaManager from '@core/app/svgedit/workarea';
 import { showCameraCalibration } from '@core/app/views/beambox/Camera-Calibration';
 import alertHelper from '@core/helpers/alert-helper';
@@ -41,40 +42,40 @@ class BeamboxInit {
   constructor() {
     migrate();
 
-    const workarea = BeamboxPreference.read('workarea');
+    const { borderless, set, workarea } = useDocumentStore.getState();
     const addOnInfo = getAddOnInfo(workarea);
 
     if (addOnInfo.autoFocus) {
       const defaultAutoFocus = BeamboxPreference.read('default-autofocus');
 
-      BeamboxPreference.write('enable-autofocus', defaultAutoFocus);
+      set('enable-autofocus', defaultAutoFocus);
     } else {
-      BeamboxPreference.write('enable-autofocus', false);
+      set('enable-autofocus', false);
     }
 
     if (addOnInfo.hybridLaser) {
       const defaultDiode = BeamboxPreference.read('default-diode');
 
-      BeamboxPreference.write('enable-diode', defaultDiode);
+      set('enable-diode', defaultDiode);
     } else {
-      BeamboxPreference.write('enable-diode', false);
+      set('enable-diode', false);
     }
 
     let defaultBorderless = BeamboxPreference.read('default-borderless');
 
     if (defaultBorderless === undefined) {
-      BeamboxPreference.write('default-borderless', BeamboxPreference.read('borderless'));
+      BeamboxPreference.write('default-borderless', borderless);
       defaultBorderless = BeamboxPreference.read('default-borderless');
     }
 
     if (addOnInfo.openBottom) {
-      BeamboxPreference.write('borderless', defaultBorderless);
+      set('borderless', defaultBorderless);
     } else {
-      BeamboxPreference.write('borderless', false);
+      set('borderless', false);
     }
 
     if (!addOnInfo.rotary) {
-      BeamboxPreference.write('rotary_mode', false);
+      set('rotary_mode', false);
     }
 
     if (!storage.get('default-units')) {

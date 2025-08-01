@@ -7,6 +7,7 @@ import Constant from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import NS from '@core/app/constants/namespaces';
 import { setCameraPreviewState } from '@core/app/stores/cameraPreview';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import { clearBackgroundImage, getBackgroundUrl, setBackgroundImage } from '@core/app/svgedit/canvasBackground';
 import workareaManager from '@core/app/svgedit/workarea';
 import { getAbsRect } from '@core/helpers/boundary-helper';
@@ -298,12 +299,14 @@ class PreviewModeBackgroundDrawer {
       borderPattern.appendChild(patternLine);
       boundaryGroup.appendChild(borderTop);
 
-      if (BeamboxPreference.read('enable-diode') && getAddOnInfo(BeamboxPreference.read('workarea')).hybridLaser) {
+      const documentState = useDocumentStore.getState();
+
+      if (documentState['enable-diode'] && getAddOnInfo(workareaManager.model).hybridLaser) {
         const { hybridBorder, hybridDescText } = this.getHybridModulePreviewBoundary(uncapturabledHeight);
 
         boundaryGroup.appendChild(hybridBorder);
         boundaryGroup.appendChild(hybridDescText);
-      } else if (BeamboxPreference.read('borderless')) {
+      } else if (documentState.borderless) {
         const { openBottomBoundary, openBottomDescText } = this.getOpenBottomModulePreviewBoundary(uncapturabledHeight);
 
         boundaryGroup.appendChild(openBottomBoundary);

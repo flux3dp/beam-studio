@@ -1,10 +1,10 @@
 import alertCaller from '@core/app/actions/alert-caller';
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { modelsWithModules } from '@core/app/actions/beambox/constant';
 import { showModuleCalibration } from '@core/app/components/dialogs/camera/ModuleCalibration';
 import alertConstants from '@core/app/constants/alert-constants';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
+import workareaManager from '@core/app/svgedit/workarea';
 import type { AlertConfigKey } from '@core/helpers/api/alert-config';
 import alertConfig from '@core/helpers/api/alert-config';
 import { getModuleOffsets } from '@core/helpers/device/moduleOffsets';
@@ -14,7 +14,7 @@ import type { ILang } from '@core/interfaces/ILang';
 // Fixme: checkCalibration won't show any alert since the return value of getModuleOffsets is always truthy
 // Update the logic to check if the module is calibrated or not
 export const checkModuleCalibration = async (device: IDeviceInfo, lang: ILang): Promise<void> => {
-  const workarea = BeamboxPreference.read('workarea');
+  const workarea = workareaManager.model;
 
   if (!modelsWithModules.has(workarea) || !modelsWithModules.has(device.model)) {
     return;

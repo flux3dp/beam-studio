@@ -29,7 +29,7 @@ export type AlertConfigKey =
 
 const alertConfig = {
   read: (key: AlertConfigKey) => {
-    const config = storage.get('alert-config') || {};
+    const config = storage.get('alert-config', false) || {};
 
     return config[key];
   },

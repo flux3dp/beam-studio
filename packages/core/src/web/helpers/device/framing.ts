@@ -12,6 +12,7 @@ import { getAddOnInfo } from '@core/app/constants/addOn';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
 import { getAutoFeeder } from '@core/helpers/addOn';
@@ -94,7 +95,7 @@ export const framingOptions = {
 
 export const getFramingOptions = (device: IDeviceInfo): TFramingType[] => {
   if (promarkModels.has(device.model)) {
-    const withRotary = Boolean(beamboxPreference.read('rotary_mode') && getAddOnInfo(device.model).rotary);
+    const withRotary = Boolean(useDocumentStore.getState().rotary_mode && getAddOnInfo(device.model).rotary);
 
     if (withRotary) return [FramingType.RotateAxis, FramingType.RotateFraming];
 
@@ -317,7 +318,7 @@ class FramingTaskManager extends EventEmitter {
     this.withVT = hasVariableText();
 
     if (
-      beamboxPreference.read('enable-job-origin') &&
+      useDocumentStore.getState()['enable-job-origin'] &&
       this.addOnInfo.jobOrigin &&
       this.vc.meetRequirement(this.isAdor ? 'ADOR_JOB_ORIGIN' : 'JOB_ORIGIN')
     ) {
@@ -656,7 +657,7 @@ class FramingTaskManager extends EventEmitter {
       this.rotaryInfo = {
         useAAxis: this.isFcodeV2,
         y,
-        yRatio: this.addOnInfo.autoFeeder.rotaryRatio * beamboxPreference.read('auto-feeder-scale'),
+        yRatio: this.addOnInfo.autoFeeder.rotaryRatio * useDocumentStore.getState()['auto-feeder-scale'],
       };
     }
   };

@@ -1,4 +1,4 @@
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 
 import type { WorkAreaModel } from './workarea-constants';
 
@@ -22,7 +22,7 @@ const rotaryConstants: { [key in WorkAreaModel]?: RotaryConstants } = {
     maxHeight: 140,
   },
   get fpm1() {
-    const height = beamboxPreference.read('customized-dimension')?.fpm1?.height || 150;
+    const height = useDocumentStore.getState()['customized-dimension']?.fpm1?.height || 150;
 
     return { boundary: [0, height], maxHeight: 500 - height };
   },

@@ -12,6 +12,7 @@ import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
 import type { WorkArea, WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import workareaManager from '@core/app/svgedit/workarea';
 import alertConfig from '@core/helpers/api/alert-config';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
@@ -39,7 +40,7 @@ class BasePreviewManager implements PreviewManager {
   constructor(device: IDeviceInfo) {
     this.device = device;
     // or use device.model?
-    this.workarea = beamboxPreference.read('workarea');
+    this.workarea = workareaManager.model;
     this.workareaObj = getWorkarea(this.workarea);
   }
 

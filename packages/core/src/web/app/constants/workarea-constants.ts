@@ -1,5 +1,6 @@
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import { checkBM2UV } from '@core/helpers/checkFeature';
 import type { TAccelerationOverride } from '@core/interfaces/ITaskConfig';
 
@@ -223,8 +224,8 @@ export const getWorkarea = (model: WorkAreaModel, fallbackModel: WorkAreaModel =
   const res = workareaConstants[model] || workareaConstants[fallbackModel];
 
   if (res.dimensionCustomizable) {
-    const customizeDimension = beamboxPreference.read('customized-dimension');
-    const { height = res.height, width = res.width } = customizeDimension[model] || {};
+    const customizeDimension = useDocumentStore.getState()['customized-dimension'];
+    const { height = res.height, width = res.width } = customizeDimension?.[model] || {};
 
     return { ...res, height, pxHeight: height * dpmm, pxWidth: width * dpmm, width };
   }

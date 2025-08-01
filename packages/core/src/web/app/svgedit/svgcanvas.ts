@@ -41,6 +41,7 @@ import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import * as TutorialController from '@core/app/views/tutorials/tutorialController';
@@ -1780,23 +1781,24 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       selectOnly([current_group]);
     }
 
-    const workarea: WorkAreaModel = BeamboxPreference.read('workarea');
+    const documentState = useDocumentStore.getState();
+    const workarea: WorkAreaModel = documentState.workarea;
     const addOnInfo = getAddOnInfo(workarea);
-    const engraveDpi = BeamboxPreference.read('engrave_dpi');
-    const isUsingDiode = !!(BeamboxPreference.read('enable-diode') && addOnInfo.hybridLaser);
-    const isUsingAF = !!BeamboxPreference.read('enable-autofocus');
+    const engraveDpi = documentState.engrave_dpi;
+    const isUsingDiode = !!(documentState['enable-diode'] && addOnInfo.hybridLaser);
+    const isUsingAF = !!documentState['enable-autofocus'];
 
     svgcontent.setAttribute('data-engrave_dpi', engraveDpi);
-    svgcontent.setAttribute('data-rotary_mode', BeamboxPreference.read('rotary_mode') ? 'true' : 'false');
+    svgcontent.setAttribute('data-rotary_mode', documentState.rotary_mode ? 'true' : 'false');
     svgcontent.setAttribute('data-en_diode', String(isUsingDiode));
     svgcontent.setAttribute('data-en_af', String(isUsingAF));
 
     if (getAutoFeeder(addOnInfo)) {
-      svgcontent.setAttribute('data-auto-feeder-height', BeamboxPreference.read('auto-feeder-height')!.toFixed(2));
+      svgcontent.setAttribute('data-auto-feeder-height', documentState['auto-feeder-height']!.toFixed(2));
     }
 
     if (getPassThrough(addOnInfo)) {
-      svgcontent.setAttribute('data-pass_through', BeamboxPreference.read('pass-through-height')!.toFixed(2));
+      svgcontent.setAttribute('data-pass_through', documentState['pass-through-height']!.toFixed(2));
     }
 
     svgcontent.setAttribute('data-workarea', workarea);
