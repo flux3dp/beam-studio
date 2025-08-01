@@ -3,12 +3,13 @@ import selector from '@core/app/svgedit/selector';
 import workareaManager from '@core/app/svgedit/workarea';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 // TODO: decouple with svgcanvas
 
 const { svgedit } = window;
 
-let svgCanvas;
+let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;

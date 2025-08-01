@@ -35,7 +35,7 @@ export const cloneElements = async (
 
   await copyElements(elements);
 
-  const pasteRes = await pasteElements({ isSubCmd: true, selectElement, type: 'in_place' });
+  const pasteRes = await pasteElements({ isSubCmd: true, selectElement, type: 'inPlace' });
 
   if (!pasteRes) return null;
 

@@ -135,7 +135,7 @@ export default class Workarea extends React.PureComponent<{ className: string },
           <MenuItem disabled={!paste} onClick={() => pasteElements({ type: 'mouse' })}>
             {LANG.paste}
           </MenuItem>
-          <MenuItem disabled={!paste} onClick={() => pasteElements({ type: 'in_place' })}>
+          <MenuItem disabled={!paste} onClick={() => pasteElements({ type: 'inPlace' })}>
             {LANG.paste_in_place}
           </MenuItem>
           <MenuItem disabled={!select} onClick={async () => cloneSelectedElements(20, 20)}>
