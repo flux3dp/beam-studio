@@ -127,6 +127,12 @@ jest.mock('./utils/convertAndBooleanOperate', () => ({
   convertAndBooleanOperate: ({ operation }) => mockConvertAndBooleanOperate(operation),
 }));
 
+const mockCloneSelectedElements = jest.fn();
+
+jest.mock('@core/app/svgedit/operations/clipboard', () => ({
+  cloneSelectedElements: (...args) => mockCloneSelectedElements(...args),
+}));
+
 import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
 import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 

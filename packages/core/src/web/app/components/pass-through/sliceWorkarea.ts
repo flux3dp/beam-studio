@@ -23,7 +23,7 @@ import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import { PassThroughCanvasManager } from './canvasManager';
 
 let svgCanvas: ISVGCanvas;
-let svgedit;
+let svgedit: any;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
@@ -250,7 +250,7 @@ const sliceWorkarea = async (
       const uses = origLayer.querySelectorAll('use');
 
       uses.forEach((use) => deleteUseRef(use, { parentCmd: batchCmd }));
-      batchCmd.addSubCommand(new history.RemoveElementCommand(origLayer, nextSibling, parent));
+      batchCmd.addSubCommand(new history.RemoveElementCommand(origLayer, nextSibling, parent!));
     }
   });
   generateGuideMark();

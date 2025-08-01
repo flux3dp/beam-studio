@@ -15,17 +15,10 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
 }));
 
 const setMode = jest.fn();
-const gridArraySelectedElement = jest.fn();
 const nestElements = jest.fn();
 
 getSVGAsync.mockImplementation((callback) => {
-  callback({
-    Canvas: {
-      gridArraySelectedElement,
-      nestElements,
-      setMode,
-    },
-  });
+  callback({ Canvas: { nestElements, setMode } });
 });
 
 const mockSetHasUnsavedChanges = jest.fn();
@@ -67,6 +60,12 @@ jest.mock('@core/app/actions/dialog-caller', () => ({
   addDialogComponent,
   isIdExist,
   popDialogById,
+}));
+
+const mockGenerateSelectedElementArray = jest.fn();
+
+jest.mock('@core/app/svgedit/operations/clipboard', () => ({
+  generateSelectedElementArray: (...args) => mockGenerateSelectedElementArray(...args),
 }));
 
 import ToolPanels from './ToolPanels';
