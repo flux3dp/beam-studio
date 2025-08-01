@@ -752,6 +752,7 @@ const lang: ILang = {
           auto_fit: 'ปรับให้พอดีอัตโนมัติ',
           bevel: 'ขอบเขต',
           brightness: 'ความสว่าง',
+          convert_to_image: 'แปลงเป็นภาพ',
           convert_to_path: 'แปลงเป็นเส้นทาง',
           create_textpath: 'สร้างข้อความบนเส้นทาง',
           create_textpath_short: 'ข้อความบนเส้นทาง',
