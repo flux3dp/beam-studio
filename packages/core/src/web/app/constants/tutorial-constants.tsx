@@ -386,7 +386,9 @@ const INTERFACE_TUTORIAL: ITutorial = {
       },
       hintCircle: {
         height: 36,
-        right: calculateRight(192, RightRef.PATH_PREVIEW_BTN),
+        get right(): number {
+          return calculateRight(192, RightRef.PATH_PREVIEW_BTN);
+        },
         top: calculateTop(2),
         width: 150,
       },
