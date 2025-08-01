@@ -3,7 +3,7 @@
  */
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
-import clipboard from '@core/app/svgedit/operations/clipboard';
+import { cloneElements } from '@core/app/svgedit/operations/clipboard';
 import { moveElements } from '@core/app/svgedit/operations/move';
 import { getRotationAngle, setRotationAngle } from '@core/app/svgedit/transform/rotation';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -93,7 +93,7 @@ const apply = async (
       dx += elemDx * Math.cos(dAngle) - elemDy * Math.sin(dAngle) - elemDx;
       dy += elemDx * Math.sin(dAngle) + elemDy * Math.cos(dAngle) - elemDy;
 
-      const res = await clipboard.cloneElements([elemToClone], [dx], [dy], {
+      const res = await cloneElements([elemToClone], [dx], [dy], {
         callChangOnMove: false,
         parentCmd: batchCmd,
         selectElement: false,

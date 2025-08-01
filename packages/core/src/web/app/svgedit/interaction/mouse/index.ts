@@ -13,7 +13,7 @@ import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import { MouseButtons } from '@core/app/constants/mouse-constants';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
 import history from '@core/app/svgedit/history/history';
-import clipboard, { hasClipboardData } from '@core/app/svgedit/operations/clipboard';
+import { cloneSelectedElements, hasClipboardData } from '@core/app/svgedit/operations/clipboard';
 import createNewText from '@core/app/svgedit/text/createNewText';
 import textEdit from '@core/app/svgedit/text/textedit';
 import touchEvents from '@core/app/svgedit/touchEvents';
@@ -277,7 +277,7 @@ const mouseDown = async (evt: MouseEvent) => {
 
           if (!rightClick) {
             if (evt.altKey) {
-              const cmd = (await clipboard.cloneSelectedElements(0, 0, { addToHistory: false }))?.cmd;
+              const cmd = (await cloneSelectedElements(0, 0, { addToHistory: false }))?.cmd;
 
               selectedElements = svgCanvas.getSelectedElems();
 

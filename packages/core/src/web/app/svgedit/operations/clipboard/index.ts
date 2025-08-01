@@ -15,7 +15,7 @@ import undoManager from '../../history/undoManager';
 
 import { MemoryClipboard } from './class/MemoryClipboard';
 import { checkNativeClipboardSupport, NativeClipboard } from './class/NativeClipboard';
-import { updateSymbolStyle } from './updateSymbolStyle';
+import { updateSymbolStyle } from './helpers/updateSymbolStyle';
 
 // TODO: decouple with svgcanvas
 const { svgedit } = window;
@@ -38,7 +38,7 @@ export const hasClipboardData = async (): Promise<boolean> => clipboardCore.hasD
 
 const copyElements = async (elems: Element[]): Promise<void> => clipboardCore.copyElements(elems);
 
-const copySelectedElements = async (): Promise<void> => {
+export const copySelectedElements = async (): Promise<void> => {
   const selectedElems = svgCanvas.getSelectedWithoutTempGroup();
 
   await copyElements(selectedElems);
@@ -58,7 +58,7 @@ const cutElements = async (elems: Element[]): Promise<void> => {
   }
 };
 
-const cutSelectedElements = async (): Promise<void> => {
+export const cutSelectedElements = async (): Promise<void> => {
   const selectedElems = svgCanvas.getSelectedWithoutTempGroup();
 
   await cutElements(selectedElems);
@@ -141,7 +141,7 @@ export const handlePastedRef = async (copy: SVGGElement, opts: { parentCmd?: IBa
   await Promise.allSettled(promises);
 };
 
-const pasteElements = async (args: {
+export const pasteElements = async (args: {
   isSubCmd?: boolean;
   selectElement?: boolean;
   type: 'in_place' | 'mouse' | 'point';
@@ -196,8 +196,8 @@ const pasteElements = async (args: {
   if (selectElement) svgCanvas.selectOnly(pasted as SVGGElement[], true);
 
   if (type !== 'in_place') {
-    let ctrX: number;
-    let ctrY: number;
+    let ctrX: number = 0;
+    let ctrY: number = 0;
 
     if (type === 'mouse') {
       const lastClickPoint = (svgCanvas as any).getLastClickPoint();
@@ -248,7 +248,7 @@ const pasteElements = async (args: {
  * @param dx dx of the cloned elements
  * @param dy dy of the cloned elements
  */
-const cloneElements = async (
+export const cloneElements = async (
   elements: Element[],
   dx: number | number[],
   dy: number | number[],
@@ -293,7 +293,7 @@ const cloneElements = async (
  * @param dx dx of the cloned elements
  * @param dy dy of the cloned elements
  */
-const cloneSelectedElements = async (
+export const cloneSelectedElements = async (
   dx: number | number[],
   dy: number | number[],
   opts: {
@@ -315,7 +315,7 @@ const cloneSelectedElements = async (
   return res;
 };
 
-const pasteInCenter = async (): Promise<null | { cmd: IBatchCommand; elems: Element[] }> => {
+export const pasteInCenter = async (): Promise<null | { cmd: IBatchCommand; elems: Element[] }> => {
   const zoom = workareaManager.zoomRatio;
   const workarea = document.getElementById('workarea')!;
   const x = (workarea.scrollLeft + workarea.clientWidth / 2) / zoom - workareaManager.width;
@@ -324,7 +324,7 @@ const pasteInCenter = async (): Promise<null | { cmd: IBatchCommand; elems: Elem
   return pasteElements({ type: 'point', x, y });
 };
 
-const generateSelectedElementArray = async (
+export const generateSelectedElementArray = async (
   interval: { dx: number; dy: number },
   { column, row }: { column: number; row: number },
 ): Promise<IBatchCommand | null> => {
@@ -386,16 +386,4 @@ const generateSelectedElementArray = async (
   }
 
   return null;
-};
-
-export default {
-  cloneElements,
-  cloneSelectedElements,
-  copySelectedElements,
-  cutElements,
-  cutSelectedElements,
-  generateSelectedElementArray,
-  handlePastedRef,
-  pasteElements,
-  pasteInCenter,
 };

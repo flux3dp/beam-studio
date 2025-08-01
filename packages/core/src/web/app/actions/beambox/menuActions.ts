@@ -9,7 +9,7 @@ import { showCurvePanel, showSharpenPanel } from '@core/app/components/dialogs/i
 import { showRotarySettings } from '@core/app/components/dialogs/RotarySettings';
 import { gestureIntroduction } from '@core/app/constants/media-tutorials';
 import historyUtils from '@core/app/svgedit/history/utils';
-import clipboard from '@core/app/svgedit/operations/clipboard';
+import { cloneSelectedElements, pasteElements, pasteInCenter } from '@core/app/svgedit/operations/clipboard';
 import disassembleUse from '@core/app/svgedit/operations/disassembleUse';
 import workareaManager from '@core/app/svgedit/workarea';
 import { externalLinkMemberDashboard, signOut } from '@core/helpers/api/flux-id';
@@ -65,7 +65,7 @@ export default {
   DUPLICATE: (): Promise<null | {
     cmd: IBatchCommand;
     elems: Element[];
-  }> => clipboard.cloneSelectedElements(20, 20),
+  }> => cloneSelectedElements(20, 20),
   EXPORT_BVG: (): Promise<boolean> => FileExportHelper.exportAsBVG(),
   EXPORT_FLUX_TASK: (): void => {
     if (isWeb()) {
@@ -98,11 +98,11 @@ export default {
   PASTE: (): Promise<null | {
     cmd: IBatchCommand;
     elems: Element[];
-  }> => clipboard.pasteInCenter(),
+  }> => pasteInCenter(),
   PASTE_IN_PLACE: (): Promise<null | {
     cmd: IBatchCommand;
     elems: Element[];
-  }> => clipboard.pasteElements({ type: 'in_place' }),
+  }> => pasteElements({ type: 'in_place' }),
   PREFERENCE: async (): Promise<void> => {
     Dialog.clearAllDialogComponents();
 

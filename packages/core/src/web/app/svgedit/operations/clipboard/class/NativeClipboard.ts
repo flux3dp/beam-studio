@@ -4,7 +4,7 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { ClipboardCore, ClipboardElement } from '@core/interfaces/Clipboard';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import { updateSymbolStyle } from '../updateSymbolStyle';
+import { updateSymbolStyle } from '../helpers/updateSymbolStyle';
 
 import { Clipboard } from './Clipboard';
 

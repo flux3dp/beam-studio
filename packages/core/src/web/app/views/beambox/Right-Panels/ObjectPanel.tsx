@@ -9,6 +9,7 @@ import dialogCaller from '@core/app/actions/dialog-caller';
 import { iconButtonTheme } from '@core/app/constants/antd-config';
 import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
+import { cloneSelectedElements } from '@core/app/svgedit/operations/clipboard';
 import ActionsPanel from '@core/app/views/beambox/Right-Panels/ActionsPanel';
 import ConfigPanel from '@core/app/views/beambox/Right-Panels/ConfigPanel/ConfigPanel';
 import DimensionPanel from '@core/app/views/beambox/Right-Panels/DimensionPanel/DimensionPanel';
@@ -91,7 +92,7 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
         content={<ObjectPanelIcons.Duplicate />}
         id="duplicate"
         label={lang.topbar.menu.duplicate}
-        onClick={async () => svgCanvas.cloneSelectedElements(20, 20)}
+        onClick={async () => cloneSelectedElements(20, 20)}
       />
       <ObjectPanelItem.Item
         autoClose={false}
