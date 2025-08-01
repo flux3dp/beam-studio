@@ -74,9 +74,13 @@ export const convertSvgToImage: MainConverterFunc = async ({
 
       parentCmd.addSubCommand(command);
 
-      const group = svgCanvas.getSelectedElems()[0];
+      const group = svgCanvas.getSelectedElems()[0] as SVGGElement;
 
-      return await convertGroupToImage({ isToSelect, parentCmd, svgElement: group as SVGGElement }, convertSvgToImage);
+      if (group.tagName !== 'g') {
+        return await convertSvgToImage({ isToSelect, parentCmd, svgElement: group });
+      }
+
+      return await convertGroupToImage({ isToSelect, parentCmd, svgElement: group }, convertSvgToImage);
     })
     .with({ tagName: 'image' }, async (el) => ({ imageElements: [el as SVGImageElement], svgElements: [el] }))
     .when(
