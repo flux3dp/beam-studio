@@ -1,6 +1,7 @@
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import imageData from '@core/helpers/image-data';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getAllLayers } from '@core/helpers/layer/layer-helper';
@@ -15,7 +16,7 @@ import updateImageDisplay from './updateImageDisplay';
 const updateImagesResolution = async (): Promise<() => void> => {
   const allLayers = getAllLayers();
   const isImagesDownSamplingEnabled = beamboxPreference.read('image_downsampling');
-  const engraveDpi = beamboxPreference.read('engrave_dpi');
+  const { engrave_dpi: engraveDpi } = useDocumentStore.getState();
   const isHighResolution = engraveDpi === 'high' || engraveDpi === 'ultra';
 
   const promises: Array<Promise<void>> = [];

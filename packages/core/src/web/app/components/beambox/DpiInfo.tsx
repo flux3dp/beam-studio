@@ -3,7 +3,7 @@ import React from 'react';
 import classNames from 'classnames';
 
 import constant from '@core/app/actions/beambox/constant';
-import { useBeamboxPreference } from '@core/helpers/hooks/useBeamboxPreference';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
@@ -12,7 +12,7 @@ import styles from './DpiInfo.module.scss';
 // TODO: Rearrange corner info/buttons together
 const DpiInfo = (): React.JSX.Element => {
   const lang = useI18n().beambox.document_panel;
-  const engraveDpi = useBeamboxPreference('engrave_dpi');
+  const engraveDpi = useDocumentStore((state) => state.engrave_dpi);
   const isMobile = useIsMobile();
 
   return (
