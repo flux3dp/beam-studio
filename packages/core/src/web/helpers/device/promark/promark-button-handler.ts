@@ -1,9 +1,9 @@
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import tabController from '@core/app/actions/tabController';
 import { showFramingModal } from '@core/app/components/dialogs/FramingModal';
 import { CanvasMode } from '@core/app/constants/canvasMode';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import FullWindowPanelStyles from '@core/app/widgets/FullWindowPanel/FullWindowPanel.module.scss';
 import deviceMaster from '@core/helpers/device-master';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
@@ -49,9 +49,10 @@ class PromarkButtonHandler {
   private exportFn: (byManager: boolean) => Promise<void> = async () => {};
 
   constructor() {
-    canvasEventEmitter.on('document-settings-saved', this.onDocChanged);
+    useDocumentStore.subscribe((state) => state['promark-start-button'], this.onDocChanged);
+    useDocumentStore.subscribe((state) => state['frame-before-start'], this.onDocChanged);
+    useDocumentStore.subscribe((state) => state.workarea, this.onModelChanged);
     this.onDocChanged();
-    canvasEventEmitter.on('model-changed', this.onModelChanged);
     this.onModelChanged();
     this.updateRequirement('tab', isWeb() || tabController.getCurrentId() < 3);
     tabController.onFocused(this.onTabFocused);
@@ -71,12 +72,15 @@ class PromarkButtonHandler {
   };
 
   onDocChanged = (): void => {
-    this.shouldFrameFirst = beamboxPreference.read('frame-before-start');
-    this.updateRequirement('enabled', beamboxPreference.read('promark-start-button'));
+    const { 'frame-before-start': frameBeforeStart, 'promark-start-button': promarkStartButton } =
+      useDocumentStore.getState();
+
+    this.shouldFrameFirst = frameBeforeStart;
+    this.updateRequirement('enabled', promarkStartButton);
   };
 
   onModelChanged = (): void => {
-    const workarea = beamboxPreference.read('workarea');
+    const { workarea } = useDocumentStore.getState();
 
     this.updateRequirement('workarea', promarkModels.has(workarea));
   };
