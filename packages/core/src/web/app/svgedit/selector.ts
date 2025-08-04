@@ -397,13 +397,7 @@ export class Selector {
   }
 
   updateDimensionInfo() {
-    const { angle, height, width, x, y } = this.dimension as {
-      angle: number;
-      height: number;
-      width: number;
-      x: number;
-      y: number;
-    };
+    const { angle, height, width, x, y } = this.dimension!;
     const elemDimension = ObjectPanelController.getDimensionValues();
     let newContent = '';
 
@@ -476,7 +470,7 @@ export class Selector {
   }
 
   updateGripCursors() {
-    const { angle } = this.dimension as { angle: number };
+    const { angle } = this.dimension!;
     let step = Math.round(angle / 45);
 
     if (step < 0) step += 8;

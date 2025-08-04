@@ -3,7 +3,7 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import transfromlist from './transfromlist';
+import transformlist from './transformlist';
 
 let svgCanvas: ISVGCanvas;
 let svgedit: any;
@@ -28,7 +28,7 @@ const getRotationAngleFromTransformList = (tlist: null | SVGTransformList, toRad
 };
 
 export const getRotationAngle = (elem: SVGElement, toRad = false): number => {
-  const tlist = transfromlist.getTransformList(elem as SVGGraphicsElement);
+  const tlist = transformlist.getTransformList(elem as SVGGraphicsElement);
 
   return getRotationAngleFromTransformList(tlist, toRad);
 };

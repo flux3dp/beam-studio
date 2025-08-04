@@ -99,6 +99,7 @@ describe('test postImportElement', () => {
       skipConfirm: true,
     });
     expect(mockGroupSelectedElements).toHaveBeenCalledTimes(1);
+    expect(mockGroupSelectedElements).toHaveReturnedWith(mockCmd3);
     expect(mockUpdateElementColor).toHaveBeenCalledTimes(1);
     expect(mockUpdateElementColor).toHaveBeenCalledWith(mockPathElement);
   });

@@ -861,7 +861,7 @@ const lang: ILang = {
     tag: {
       g: '群组',
       image: '图片',
-      text: '文字¶',
+      text: '文字',
       use: '汇入图档',
     },
     time_est_button: {

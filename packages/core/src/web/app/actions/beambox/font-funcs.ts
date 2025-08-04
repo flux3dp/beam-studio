@@ -3,7 +3,6 @@ import { sprintf } from 'sprintf-js';
 
 import Alert from '@core/app/actions/alert-caller';
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import textPathEdit from '@core/app/actions/beambox/textPathEdit';
 import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
 import history from '@core/app/svgedit/history/history';
@@ -58,7 +57,6 @@ type ConvertToTextPathResult =
       command: IBatchCommand;
       path: SVGPathElement;
       status: ConvertResultType;
-      textPathPath?: SVGPathElement;
     }
   | {
       command: null;
@@ -756,24 +754,12 @@ const convertTextToPath = async (
       return { command: null, path: null, status: ConvertResult.CONTINUE };
     }
 
-    let textPathPath: SVGPathElement | undefined = undefined;
-
     if (!isTempConvert) {
       const parent = textElement.parentNode!;
       const { nextSibling } = textElement;
       const elem = parent.removeChild(textElement);
 
       batchCmd.addSubCommand(new history.RemoveElementCommand(elem, nextSibling!, parent));
-
-      if (textElement.getAttribute('data-textpath')) {
-        textPathPath = parent.querySelector('path') as SVGPathElement;
-
-        const cmd = textPathEdit.ungroupTextPath(parent as SVGGElement);
-
-        if (cmd && !cmd.isEmpty()) {
-          batchCmd.addSubCommand(cmd);
-        }
-      }
 
       if (!batchCmd.isEmpty() && !isSubCommand) {
         svgCanvas.undoMgr.addCommandToHistory(batchCmd);
@@ -782,7 +768,7 @@ const convertTextToPath = async (
 
     const finalStatus = hasUnsupportedFont ? ConvertResult.UNSUPPORT : ConvertResult.CONTINUE;
 
-    return { command: batchCmd, path: newPathElement, status: finalStatus, textPathPath };
+    return { command: batchCmd, path: newPathElement, status: finalStatus };
   } catch (err) {
     Alert.popUp({
       caption: `#846 ${LANG.text_to_path.error_when_parsing_text}`,
