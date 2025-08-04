@@ -4521,9 +4521,9 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
                               </span>
                               <span
                                 class="ant-select-selection-item"
-                                title="High (500 DPI)"
+                                title="Medium (250 DPI)"
                               >
-                                High (500 DPI)
+                                Medium (250 DPI)
                               </span>
                             </span>
                           </div>

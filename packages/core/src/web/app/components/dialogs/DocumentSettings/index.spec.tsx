@@ -35,7 +35,8 @@ jest.mock('@core/app/constants/alert-constants', () => ({
   CONFIRM_CANCEL: 'CONFIRM_CANCEL',
 }));
 
-const mockBeamboxPreferences = {
+const mockUpdate = jest.fn();
+const mockDocumentState = {
   'auto-feeder': false,
   'auto-feeder-scale': 1,
   auto_shrink: false,
@@ -48,15 +49,14 @@ const mockBeamboxPreferences = {
   'job-origin': 1,
   'path-trough': false,
   rotary_mode: false,
+  update: mockUpdate,
   workarea: 'fbm1',
 };
-const mockBeamboxPreferenceWrite = jest.fn();
+const mockGetState = jest.fn();
 
-jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
-  read: (key) => mockBeamboxPreferences[key],
-  write: (key, value) => {
-    mockBeamboxPreferences[key] = value;
-    mockBeamboxPreferenceWrite(key, value);
+jest.mock('@core/app/stores/documentStore', () => ({
+  useDocumentStore: {
+    getState: () => mockGetState(),
   },
 }));
 
@@ -105,7 +105,7 @@ describe('test DocumentSettings', () => {
     jest.clearAllMocks();
     mockGetPromarkInfo.mockReturnValue({ laserType: LaserType.Desktop, watt: 20 });
     mockQuerySelectorAll.mockReturnValue([]);
-    mockBeamboxPreferences.workarea = 'fbm1';
+    mockGetState.mockReturnValue(mockDocumentState);
   });
 
   it('should render correctly for ador', async () => {
@@ -122,7 +122,8 @@ describe('test DocumentSettings', () => {
   });
 
   it('should render correctly', async () => {
-    mockBeamboxPreferences.workarea = 'ado1';
+    mockGetState.mockReturnValue({ ...mockDocumentState, workarea: 'ado1' });
+    mockQuerySelectorAll.mockReturnValue([]);
     document.querySelectorAll = mockQuerySelectorAll;
 
     const { baseElement, getByText } = render(<DocumentSettings unmount={mockUnmount} />);
@@ -152,7 +153,7 @@ describe('test DocumentSettings', () => {
     fireEvent.click(baseElement.querySelector('button#autoShrink'));
     expect(baseElement).toMatchSnapshot();
 
-    expect(mockBeamboxPreferenceWrite).not.toHaveBeenCalled();
+    expect(mockUpdate).not.toHaveBeenCalled();
     expect(mockUnmount).not.toHaveBeenCalled();
     expect(mockChangeWorkarea).not.toHaveBeenCalled();
     mockQuerySelectorAll.mockReturnValueOnce([1]);
@@ -171,20 +172,22 @@ describe('test DocumentSettings', () => {
 
     onConfirm();
     await new Promise((resolve) => setTimeout(resolve, 0));
-    expect(mockBeamboxPreferenceWrite).toHaveBeenCalledTimes(13);
-    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(1, 'engrave_dpi', 'high');
-    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(2, 'borderless', true);
-    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(3, 'enable-diode', true);
-    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(4, 'enable-autofocus', true);
-    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(5, 'rotary_mode', false);
-    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(6, 'pass-through', true);
-    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(7, 'pass-through-height', 500);
-    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(8, 'auto-feeder', false);
-    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(9, 'auto-feeder-height', 320);
-    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(10, 'auto-feeder-scale', 1);
-    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(11, 'enable-job-origin', true);
-    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(12, 'job-origin', 1);
-    expect(mockBeamboxPreferenceWrite).toHaveBeenNthCalledWith(13, 'auto_shrink', true);
+    expect(mockUpdate).toHaveBeenCalledTimes(1);
+    expect(mockUpdate).toHaveBeenLastCalledWith({
+      'auto-feeder': false,
+      'auto-feeder-height': 320,
+      'auto-feeder-scale': 1,
+      auto_shrink: true,
+      borderless: true,
+      'enable-autofocus': true,
+      'enable-diode': true,
+      'enable-job-origin': true,
+      engrave_dpi: 'high',
+      'job-origin': 1,
+      'pass-through': true,
+      'pass-through-height': 500,
+      rotary_mode: false,
+    });
     expect(mockChangeWorkarea).toHaveBeenCalledTimes(1);
     expect(mockChangeWorkarea).toHaveBeenLastCalledWith('fbm1', { toggleModule: true });
     expect(mockToggleDisplay).toHaveBeenCalledTimes(1);
@@ -222,13 +225,15 @@ describe('test DocumentSettings', () => {
 
     expect(baseElement).toMatchSnapshot();
     fireEvent.click(getByText('Save'));
-    expect(mockBeamboxPreferenceWrite).toHaveBeenCalledTimes(14);
-    expect(mockBeamboxPreferenceWrite).toHaveBeenCalledWith('customized-dimension', {
-      fpm1: { height: 110, width: 110 },
-    });
-    expect(mockBeamboxPreferenceWrite).toHaveBeenCalledWith('promark-start-button', true);
-    expect(mockBeamboxPreferenceWrite).toHaveBeenCalledWith('frame-before-start', true);
-    expect(mockBeamboxPreferenceWrite).toHaveBeenCalledWith('promark-safety-door', true);
+    expect(mockUpdate).toHaveBeenCalledTimes(1);
+    expect(mockUpdate).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        'customized-dimension': { fpm1: { height: 110, width: 110 } },
+        'frame-before-start': true,
+        'promark-safety-door': true,
+        'promark-start-button': true,
+      }),
+    );
     expect(mockSetPromarkInfo).toHaveBeenCalledTimes(1);
     expect(mockSetPromarkInfo).toHaveBeenLastCalledWith({ laserType: LaserType.MOPA, watt: 60 });
   });
@@ -244,7 +249,13 @@ describe('test DocumentSettings', () => {
     fireEvent.click(baseElement.querySelector('button#auto_feeder'));
     fireEvent.change(baseElement.querySelector('#auto_feeder_height'), { target: { value: 870 } });
     fireEvent.click(getByText('Save'));
-    expect(mockBeamboxPreferenceWrite).toHaveBeenCalledWith('auto-feeder', true);
-    expect(mockBeamboxPreferenceWrite).toHaveBeenCalledWith('auto-feeder-height', 870);
+
+    expect(mockUpdate).toHaveBeenCalledTimes(1);
+    expect(mockUpdate).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        'auto-feeder': true,
+        'auto-feeder-height': 870,
+      }),
+    );
   });
 });

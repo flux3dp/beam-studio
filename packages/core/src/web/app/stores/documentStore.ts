@@ -76,7 +76,6 @@ const getInitDocumentStore = (): DocumentState => {
     'rotary-type': preference['rotary-type'],
     'rotary-y': preference['rotary-y'],
     rotary_mode: preference.rotary_mode,
-    rotary_y_coord: preference.rotary_y_coord,
     workarea: preference.workarea,
   };
 };
@@ -101,6 +100,10 @@ export const useDocumentStore = create(
 
       update: (payload: Partial<DocumentState>) => {
         set(() => {
+          for (const [key, value] of Object.entries(payload)) {
+            beamboxPreference.write(key as DocumentStateKey, value as any, false);
+          }
+
           return payload;
         });
       },

@@ -15,6 +15,7 @@ import CanvasMode from '@core/app/constants/canvasMode';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType, workareaOptions as pmWorkareaOptions } from '@core/app/constants/promark-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import type { DocumentState } from '@core/app/stores/documentStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import Select from '@core/app/widgets/AntdSelect';
@@ -173,14 +174,16 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const handleSave = () => {
     const workareaChanged = workarea !== origWorkarea;
     let customDimensionChanged = false;
-    const { set, ...origState } = useDocumentStore.getState();
+    const { update, ...origState } = useDocumentStore.getState();
 
     const rotaryChanged = rotaryMode !== origState.rotary_mode;
 
-    set('engrave_dpi', engraveDpi);
-    set('borderless', Boolean(addOnInfo.openBottom && borderless));
-    set('enable-diode', addOnInfo.hybridLaser && enableDiode);
-    set('enable-autofocus', addOnInfo.autoFocus && enableAutofocus);
+    const newState: Partial<DocumentState> = {
+      borderless: Boolean(addOnInfo.openBottom && borderless),
+      'enable-autofocus': Boolean(addOnInfo.autoFocus && enableAutofocus),
+      'enable-diode': Boolean(addOnInfo.hybridLaser && enableDiode),
+      engrave_dpi: engraveDpi,
+    };
 
     if (workareaObj.dimensionCustomizable) {
       const origVal = origState['customized-dimension'];
@@ -189,10 +192,10 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
         customDimension[workarea]?.width !== origVal[workarea]?.width ||
         customDimension[workarea]?.height !== origVal[workarea]?.height;
 
-      set('customized-dimension', { ...origVal, [workarea]: customDimension[workarea] });
+      newState['customized-dimension'] = { ...origVal, [workarea]: customDimension[workarea] };
     }
 
-    set('rotary_mode', rotaryMode);
+    newState.rotary_mode = rotaryMode;
 
     const newPassThrough = Boolean(showPassThrough && passThrough);
     const passThroughChanged = newPassThrough !== origPassThrough;
@@ -201,21 +204,33 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     const autoFeederChanged = newAutoFeeder !== origAutoFeeder;
     const autoFeederHeightChanged = autoFeederHeight !== origState['auto-feeder-height'];
 
-    set('pass-through', newPassThrough);
+    newState['pass-through'] = newPassThrough;
 
-    if (showPassThrough) set('pass-through-height', Math.max(passThroughHeight, minHeight));
+    if (showPassThrough) {
+      newState['pass-through-height'] = Math.max(passThroughHeight, minHeight);
+    }
 
-    set('auto-feeder', newAutoFeeder);
+    newState['auto-feeder'] = newAutoFeeder;
 
     if (showAutoFeeder) {
       const newVal = Math.min(addOnInfo.autoFeeder!.maxHeight, Math.max(minHeight, autoFeederHeight));
 
-      set('auto-feeder-height', newVal);
-      set('auto-feeder-scale', autoFeederScale);
+      newState['auto-feeder-height'] = newVal;
+      newState['auto-feeder-scale'] = autoFeederScale;
     }
 
-    set('enable-job-origin', enableJobOrigin);
-    set('job-origin', jobOrigin);
+    newState['enable-job-origin'] = enableJobOrigin;
+    newState.auto_shrink = autoShrink;
+    newState['job-origin'] = jobOrigin;
+
+    if (promarkModels.has(workarea)) {
+      setPromarkInfo(pmInfo);
+      newState['promark-start-button'] = enableStartButton;
+      newState['frame-before-start'] = shouldFrame;
+      newState['promark-safety-door'] = checkSafetyDoor;
+    }
+
+    update(newState);
 
     if (
       workareaChanged ||
@@ -230,14 +245,6 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
       rotaryAxis.toggleDisplay();
     }
 
-    if (promarkModels.has(workarea)) {
-      setPromarkInfo(pmInfo);
-      set('promark-start-button', enableStartButton);
-      set('frame-before-start', shouldFrame);
-      set('promark-safety-door', checkSafetyDoor);
-    }
-
-    set('auto_shrink', autoShrink);
     presprayArea.togglePresprayArea();
 
     const canvasEvents = eventEmitterFactory.createEventEmitter('canvas');
