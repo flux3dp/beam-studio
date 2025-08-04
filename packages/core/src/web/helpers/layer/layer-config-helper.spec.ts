@@ -13,6 +13,12 @@ jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read: (key: string) => mockRead(key),
 }));
 
+const mockGetState = jest.fn();
+
+jest.mock('@core/app/stores/documentStore', () => ({
+  useDocumentStore: { getState: mockGetState },
+}));
+
 const mockGetPromarkInfo = jest.fn();
 
 jest.mock('@core/helpers/device/promark/promark-info', () => ({
@@ -100,6 +106,7 @@ describe('test layer-config-helper', () => {
       <g class="layer" data-color="#333333"><title>layer 3</title></g>
     `;
     mockGetDefaultLaserModule.mockReturnValue(1);
+    mockGetState.mockReturnValue({ workarea: 'fbm1' });
   });
 
   it('should return null layer when layer does not exist', () => {
@@ -116,13 +123,7 @@ describe('test layer-config-helper', () => {
   test('initLayerConfig with module', () => {
     const layer1 = document.querySelectorAll('g')[1] as SVGGElement;
 
-    mockRead.mockImplementation((key) => {
-      if (key === 'workarea') {
-        return 'ado1';
-      }
-
-      return undefined;
-    });
+    mockGetState.mockReturnValue({ workarea: 'ado1' });
     initLayerConfig(layer1);
     expect(getLayerConfig('layer 1')).toEqual({
       ...defaultConfigs,
@@ -200,7 +201,7 @@ describe('test layer-config-helper', () => {
   });
 
   test('toggleFullColorAfterWorkareaChange to workarea without module', () => {
-    mockRead.mockReturnValue('fbm1');
+    mockGetState.mockReturnValue({ workarea: 'fbm1' });
     mockGetAllLayerNames.mockReturnValue(['layer 1', 'layer 2', 'layer 3']);
 
     const mockLayer = {
@@ -219,7 +220,7 @@ describe('test layer-config-helper', () => {
   });
 
   test('toggleFullColorAfterWorkareaChange to workarea with module', () => {
-    mockRead.mockReturnValue('ado1');
+    mockGetState.mockReturnValue({ workarea: 'ado1' });
     mockGetAllLayerNames.mockReturnValue(['layer 1', 'layer 2', 'layer 3']);
 
     const mockLayer = {
@@ -265,7 +266,7 @@ describe('test layer-config-helper', () => {
       'uv',
       'repeat',
     ]);
-    mockRead.mockReturnValue('fpm1');
+    mockGetState.mockReturnValue({ workarea: 'fpm1' });
     expect(getConfigKeys(LayerModule.PRINTER)).toEqual([
       'speed',
       'power',

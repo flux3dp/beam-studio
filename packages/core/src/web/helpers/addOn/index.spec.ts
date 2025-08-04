@@ -1,10 +1,12 @@
 import type { AddOnInfo } from '@core/app/constants/addOn';
 import { getAutoFeeder, getPassThrough } from '.';
 
-const mockRead = jest.fn();
+const mockGetState = jest.fn();
 
-jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
-  read: (...args) => mockRead(...args),
+jest.mock('@core/app/stores/documentStore', () => ({
+  useDocumentStore: {
+    getState: () => mockGetState(),
+  },
 }));
 
 const mockGetAddOnInfo = jest.fn();
@@ -22,35 +24,34 @@ describe('test getAutoFeeder', () => {
     const addOnInfo = { autoFeeder: false } as unknown as AddOnInfo;
 
     expect(getAutoFeeder(addOnInfo)).toBe(false);
-    expect(mockRead).not.toHaveBeenCalled();
     expect(mockGetAddOnInfo).not.toHaveBeenCalled();
   });
 
   it('should return false when model supports but preference is false', () => {
     const addOnInfo = { autoFeeder: true } as unknown as AddOnInfo;
 
-    mockRead.mockReturnValue(false);
+    mockGetState.mockReturnValue({ 'auto-feeder': false });
     expect(getAutoFeeder(addOnInfo)).toBe(false);
   });
 
   it('should return false when model supports but borderless is false', () => {
     const addOnInfo = { autoFeeder: true, openBottom: true } as unknown as AddOnInfo;
 
-    mockRead.mockReturnValueOnce(true).mockReturnValueOnce(false);
+    mockGetState.mockReturnValueOnce({ 'auto-feeder': true, borderless: false });
     expect(getAutoFeeder(addOnInfo)).toBe(false);
   });
 
   it('should return true when model supports and preference is true', () => {
     const addOnInfo = { autoFeeder: true } as unknown as AddOnInfo;
 
-    mockRead.mockReturnValue(true);
+    mockGetState.mockReturnValue({ 'auto-feeder': true });
     expect(getAutoFeeder(addOnInfo)).toBe(true);
   });
 
   it('should return true when model, borderless and preference is true', () => {
     const addOnInfo = { autoFeeder: true, openBottom: true } as unknown as AddOnInfo;
 
-    mockRead.mockReturnValue(true);
+    mockGetState.mockReturnValue({ 'auto-feeder': true, borderless: true });
     expect(getAutoFeeder(addOnInfo)).toBe(true);
   });
 
@@ -58,7 +59,7 @@ describe('test getAutoFeeder', () => {
     const addOnInfo = { autoFeeder: true };
 
     mockGetAddOnInfo.mockReturnValue(addOnInfo);
-    mockRead.mockReturnValueOnce('model').mockReturnValueOnce(true);
+    mockGetState.mockReturnValue({ 'auto-feeder': true, workarea: 'model' });
     expect(getAutoFeeder()).toBe(true);
     expect(mockGetAddOnInfo).toHaveBeenCalledTimes(1);
     expect(mockGetAddOnInfo).toHaveBeenLastCalledWith('model');
@@ -74,35 +75,34 @@ describe('test getPassThrough', () => {
     const addOnInfo = { passThrough: false } as unknown as AddOnInfo;
 
     expect(getPassThrough(addOnInfo)).toBe(false);
-    expect(mockRead).not.toHaveBeenCalled();
     expect(mockGetAddOnInfo).not.toHaveBeenCalled();
   });
 
   it('should return false when model supports but preference is false', () => {
     const addOnInfo = { passThrough: true } as unknown as AddOnInfo;
 
-    mockRead.mockReturnValue(false);
+    mockGetState.mockReturnValue({ 'pass-through': false });
     expect(getPassThrough(addOnInfo)).toBe(false);
   });
 
   it('should return false when model supports but borderless is false', () => {
     const addOnInfo = { openBottom: true, passThrough: true } as unknown as AddOnInfo;
 
-    mockRead.mockReturnValueOnce(true).mockReturnValueOnce(false);
+    mockGetState.mockReturnValue({ borderless: false, 'pass-through': true });
     expect(getPassThrough(addOnInfo)).toBe(false);
   });
 
   it('should return true when model supports and preference is true', () => {
     const addOnInfo = { passThrough: true } as unknown as AddOnInfo;
 
-    mockRead.mockReturnValue(true);
+    mockGetState.mockReturnValue({ 'pass-through': true });
     expect(getPassThrough(addOnInfo)).toBe(true);
   });
 
   it('should return true when model, borderless and preference is true', () => {
     const addOnInfo = { openBottom: true, passThrough: true } as unknown as AddOnInfo;
 
-    mockRead.mockReturnValue(true);
+    mockGetState.mockReturnValue({ borderless: true, 'pass-through': true });
     expect(getPassThrough(addOnInfo)).toBe(true);
   });
 
@@ -110,7 +110,7 @@ describe('test getPassThrough', () => {
     const addOnInfo = { passThrough: true };
 
     mockGetAddOnInfo.mockReturnValue(addOnInfo);
-    mockRead.mockReturnValueOnce('model').mockReturnValueOnce(true);
+    mockGetState.mockReturnValue({ 'pass-through': true, workarea: 'model' });
     expect(getPassThrough()).toBe(true);
     expect(mockGetAddOnInfo).toHaveBeenCalledTimes(1);
     expect(mockGetAddOnInfo).toHaveBeenLastCalledWith('model');

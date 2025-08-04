@@ -15,6 +15,14 @@ jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read: (...args) => mockRead(...args),
 }));
 
+const mockGetState = jest.fn();
+
+jest.mock('@core/app/stores/documentStore', () => ({
+  useDocumentStore: {
+    getState: () => mockGetState(),
+  },
+}));
+
 const mockGetSupportedModules = jest.fn();
 
 jest.mock('@core/app/constants/workarea-constants', () => ({
@@ -27,48 +35,53 @@ describe('test layer-module-helper', () => {
   });
 
   test('getDefaultLaserModule when workarea is Ador', () => {
-    mockRead.mockReturnValueOnce('ado1').mockReturnValueOnce(LayerModule.LASER_10W_DIODE);
+    mockRead.mockReturnValueOnce(LayerModule.LASER_10W_DIODE);
+    mockGetState.mockReturnValue({ workarea: 'ado1' });
     expect(getDefaultLaserModule()).toBe(LayerModule.LASER_10W_DIODE);
-    expect(mockRead).toHaveBeenCalledTimes(2);
-    expect(mockRead).toHaveBeenNthCalledWith(1, 'workarea');
-    expect(mockRead).toHaveBeenNthCalledWith(2, 'default-laser-module');
+    expect(mockRead).toHaveBeenCalledTimes(1);
+    expect(mockRead).toHaveBeenNthCalledWith(1, 'default-laser-module');
+    expect(mockGetState).toHaveBeenCalledTimes(1);
 
     mockRead.mockReset();
-    mockRead.mockReturnValueOnce('ado1').mockReturnValueOnce(LayerModule.LASER_20W_DIODE);
+    mockGetState.mockReset();
+    mockRead.mockReturnValueOnce(LayerModule.LASER_20W_DIODE);
+    mockGetState.mockReturnValue({ workarea: 'ado1' });
     expect(getDefaultLaserModule()).toBe(LayerModule.LASER_20W_DIODE);
-    expect(mockRead).toHaveBeenCalledTimes(2);
-    expect(mockRead).toHaveBeenNthCalledWith(1, 'workarea');
-    expect(mockRead).toHaveBeenNthCalledWith(2, 'default-laser-module');
+    expect(mockRead).toHaveBeenCalledTimes(1);
+    expect(mockRead).toHaveBeenNthCalledWith(1, 'default-laser-module');
+    expect(mockGetState).toHaveBeenCalledTimes(1);
 
     mockRead.mockReset();
-    mockRead.mockReturnValueOnce('ado1').mockReturnValueOnce(LayerModule.LASER_1064);
+    mockGetState.mockReset();
+    mockRead.mockReturnValueOnce(LayerModule.LASER_1064);
+    mockGetState.mockReturnValue({ workarea: 'ado1' });
     expect(getDefaultLaserModule()).toBe(LayerModule.LASER_20W_DIODE);
-    expect(mockRead).toHaveBeenCalledTimes(2);
-    expect(mockRead).toHaveBeenNthCalledWith(1, 'workarea');
-    expect(mockRead).toHaveBeenNthCalledWith(2, 'default-laser-module');
+    expect(mockRead).toHaveBeenCalledTimes(1);
+    expect(mockRead).toHaveBeenNthCalledWith(1, 'default-laser-module');
+    expect(mockGetState).toHaveBeenCalledTimes(1);
   });
 
   test('getDefaultLaserModule when workarea is not Ador', () => {
-    mockRead.mockReturnValueOnce('fbm2');
+    mockGetState.mockReturnValue({ workarea: 'fbm2' });
     expect(getDefaultLaserModule()).toBe(LayerModule.LASER_UNIVERSAL);
-    expect(mockRead).toHaveBeenCalledTimes(1);
-    expect(mockRead).toHaveBeenNthCalledWith(1, 'workarea');
+    expect(mockGetState).toHaveBeenCalledTimes(1);
+    expect(mockRead).not.toHaveBeenCalled();
   });
 
   test('getPrintingModule when supported modules includes 4c', () => {
-    mockRead.mockReturnValueOnce('fbm2');
+    mockGetState.mockReturnValue({ workarea: 'fbm2' });
     mockGetSupportedModules.mockReturnValue([LayerModule.PRINTER_4C]);
     expect(getPrintingModule()).toBe(LayerModule.PRINTER_4C);
-    expect(mockRead).toHaveBeenCalledTimes(1);
-    expect(mockRead).toHaveBeenNthCalledWith(1, 'workarea');
+    expect(mockGetState).toHaveBeenCalledTimes(1);
+    expect(mockRead).not.toHaveBeenCalled();
   });
 
   test('getPrintingModule when supported modules does not include 4c', () => {
-    mockRead.mockReturnValueOnce('fbm2');
+    mockGetState.mockReturnValue({ workarea: 'fbm2' });
     mockGetSupportedModules.mockReturnValue([LayerModule.PRINTER]);
     expect(getPrintingModule()).toBe(LayerModule.PRINTER);
-    expect(mockRead).toHaveBeenCalledTimes(1);
-    expect(mockRead).toHaveBeenNthCalledWith(1, 'workarea');
+    expect(mockGetState).toHaveBeenCalledTimes(1);
+    expect(mockRead).not.toHaveBeenCalled();
   });
 
   test('getModulesTranslations', () => {

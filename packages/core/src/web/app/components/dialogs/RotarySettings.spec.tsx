@@ -6,12 +6,11 @@ import { RotaryType } from '@core/app/constants/addOn';
 
 import RotarySettings from './RotarySettings';
 
-const mockRead = jest.fn();
-const mockWrite = jest.fn();
+const mockUpdate = jest.fn();
+const mockGetState = jest.fn();
 
-jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
-  read: (...args) => mockRead(...args),
-  write: (...args) => mockWrite(...args),
+jest.mock('@core/app/stores/documentStore', () => ({
+  useDocumentStore: { getState: () => mockGetState() },
 }));
 
 const mockChangeWorkarea = jest.fn();
@@ -50,7 +49,10 @@ const mockOnClose = jest.fn();
 describe('test RotarySettings', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockRead.mockImplementation((key) => (key === 'workarea' ? 'ado1' : undefined));
+    mockGetState.mockReturnValue({
+      update: mockUpdate,
+      workarea: 'ado1',
+    });
   });
 
   it('should render correctly', () => {
@@ -110,13 +112,15 @@ describe('test RotarySettings', () => {
     const saveButton = baseElement.querySelector('.ant-btn-primary');
 
     fireEvent.click(saveButton);
-    expect(mockWrite).toHaveBeenCalledTimes(6);
-    expect(mockWrite).toHaveBeenNthCalledWith(1, 'rotary_mode', true);
-    expect(mockWrite).toHaveBeenNthCalledWith(2, 'rotary-type', RotaryType.Chuck);
-    expect(mockWrite).toHaveBeenNthCalledWith(3, 'rotary-scale', 2);
-    expect(mockWrite).toHaveBeenNthCalledWith(4, 'rotary-chuck-obj-d', 10);
-    expect(mockWrite).toHaveBeenNthCalledWith(5, 'rotary-mirror', false);
-    expect(mockWrite).toHaveBeenNthCalledWith(6, 'extend-rotary-workarea', true);
+    expect(mockUpdate).toHaveBeenCalledTimes(1);
+    expect(mockUpdate).toHaveBeenCalledWith({
+      'extend-rotary-workarea': true,
+      'rotary-chuck-obj-d': 10,
+      'rotary-mirror': false,
+      'rotary-scale': 2,
+      'rotary-type': RotaryType.Chuck,
+      rotary_mode: true,
+    });
     expect(mockChangeWorkarea).toHaveBeenCalledTimes(1);
     expect(mockChangeWorkarea).toHaveBeenLastCalledWith('ado1', { toggleModule: false });
     expect(mockToggleDisplay).toHaveBeenCalledTimes(1);
@@ -124,7 +128,11 @@ describe('test RotarySettings', () => {
   });
 
   test('promark rotary settings', () => {
-    mockRead.mockImplementation((key) => ({ 'rotary-split': 3.45, workarea: 'fpm1' })[key]);
+    mockGetState.mockReturnValue({
+      'rotary-split': 3.45,
+      update: mockUpdate,
+      workarea: 'fpm1',
+    });
 
     const { baseElement, getByText } = render(<RotarySettings onClose={mockOnClose} />);
 
@@ -152,15 +160,26 @@ describe('test RotarySettings', () => {
     const saveButton = baseElement.querySelector('.ant-btn-primary');
 
     fireEvent.click(saveButton);
-    expect(mockWrite).toHaveBeenCalledTimes(8);
-    expect(mockWrite).toHaveBeenNthCalledWith(1, 'rotary_mode', true);
-    expect(mockWrite).toHaveBeenNthCalledWith(2, 'rotary-type', RotaryType.Chuck);
-    expect(mockWrite).toHaveBeenNthCalledWith(3, 'rotary-scale', 2);
-    expect(mockWrite).toHaveBeenNthCalledWith(4, 'rotary-chuck-obj-d', 10);
-    expect(mockWrite).toHaveBeenNthCalledWith(5, 'rotary-mirror', true);
-    expect(mockWrite).toHaveBeenNthCalledWith(6, 'extend-rotary-workarea', true);
-    expect(mockWrite).toHaveBeenNthCalledWith(7, 'rotary-split', 2);
-    expect(mockWrite).toHaveBeenNthCalledWith(8, 'rotary-overlap', 1);
+    expect(mockUpdate).toHaveBeenCalledTimes(1);
+    expect(mockUpdate).toHaveBeenLastCalledWith({
+      'extend-rotary-workarea': true,
+      'rotary-chuck-obj-d': 10,
+      'rotary-mirror': true,
+      'rotary-overlap': 1,
+      'rotary-scale': 2,
+      'rotary-split': 2,
+      'rotary-type': RotaryType.Chuck,
+      rotary_mode: true,
+    });
+    // expect(mockWrite).toHaveBeenCalledTimes(8);
+    // expect(mockWrite).toHaveBeenNthCalledWith(1, 'rotary_mode', true);
+    // expect(mockWrite).toHaveBeenNthCalledWith(2, 'rotary-type', RotaryType.Chuck);
+    // expect(mockWrite).toHaveBeenNthCalledWith(3, 'rotary-scale', 2);
+    // expect(mockWrite).toHaveBeenNthCalledWith(4, 'rotary-chuck-obj-d', 10);
+    // expect(mockWrite).toHaveBeenNthCalledWith(5, 'rotary-mirror', true);
+    // expect(mockWrite).toHaveBeenNthCalledWith(6, 'extend-rotary-workarea', true);
+    // expect(mockWrite).toHaveBeenNthCalledWith(7, 'rotary-split', 2);
+    // expect(mockWrite).toHaveBeenNthCalledWith(8, 'rotary-overlap', 1);
     expect(mockChangeWorkarea).toHaveBeenCalledTimes(1);
     expect(mockChangeWorkarea).toHaveBeenLastCalledWith('fpm1', { toggleModule: false });
     expect(mockToggleDisplay).toHaveBeenCalledTimes(1);

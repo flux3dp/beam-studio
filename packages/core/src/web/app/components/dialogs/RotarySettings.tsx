@@ -8,9 +8,9 @@ import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/
 import { getAddOnInfo, RotaryType } from '@core/app/constants/addOn';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import RotaryIcons from '@core/app/icons/rotary/RotaryIcons';
+import type { DocumentState } from '@core/app/stores/documentStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
-import workareaManager from '@core/app/svgedit/workarea';
 import Select from '@core/app/widgets/AntdSelect';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import UnitInput from '@core/app/widgets/UnitInput';
@@ -39,7 +39,7 @@ const RotarySettings = ({ afterSave, initData, onClose }: Props): React.JSX.Elem
     topbar: { menu: tMenu },
   } = useI18n();
 
-  const workarea = useMemo(() => initData?.workarea ?? workareaManager.model, [initData?.workarea]);
+  const workarea = useMemo(() => initData?.workarea ?? useDocumentStore.getState()['workarea'], [initData?.workarea]);
   const addOnInfo = useMemo(() => getAddOnInfo(workarea), [workarea]);
   const [rotaryMode, setRotaryMode] = useState<boolean>(
     initData?.rotaryMode ?? useDocumentStore.getState().rotary_mode,
@@ -58,30 +58,34 @@ const RotarySettings = ({ afterSave, initData, onClose }: Props): React.JSX.Elem
   }, [split, overlap]);
 
   const handleSave = async () => {
-    const { set, ...origState } = useDocumentStore.getState();
+    const { update, ...origState } = useDocumentStore.getState();
     const rotaryChanged = rotaryMode !== origState.rotary_mode;
     const extendChanged = extend !== origState['extend-rotary-workarea'];
 
-    set('rotary_mode', rotaryMode);
-    set('rotary-type', rotaryType);
-    set('rotary-scale', scale);
+    const newState: Partial<DocumentState> = {
+      'rotary-scale': scale,
+      'rotary-type': rotaryType,
+      rotary_mode: rotaryMode,
+    };
 
     if (rotaryType === RotaryType.Chuck) {
-      set('rotary-chuck-obj-d', diameter);
+      newState['rotary-chuck-obj-d'] = diameter;
     }
 
     if (addOnInfo.rotary?.mirror) {
-      set('rotary-mirror', mirror);
+      newState['rotary-mirror'] = mirror;
     }
 
     if (addOnInfo.rotary?.extendWorkarea) {
-      set('extend-rotary-workarea', extend);
+      newState['extend-rotary-workarea'] = extend;
     }
 
     if (addOnInfo.rotary?.split) {
-      set('rotary-split', split);
-      set('rotary-overlap', overlap);
+      newState['rotary-split'] = split;
+      newState['rotary-overlap'] = overlap;
     }
+
+    update(newState);
 
     if (rotaryChanged || extendChanged) {
       changeWorkarea(workarea, { toggleModule: false });

@@ -1,7 +1,7 @@
-const mockBeamboxPreferenceRead = jest.fn();
+const mockGetDocumentState = jest.fn();
 
-jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
-  read: mockBeamboxPreferenceRead,
+jest.mock('@core/app/stores/documentStore', () => ({
+  useDocumentStore: { getState: mockGetDocumentState },
 }));
 
 const insertSvgElement = (svg: SVGElement) => {
@@ -165,7 +165,7 @@ import {
 describe('test variableText helper', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockBeamboxPreferenceRead.mockReturnValue('fpm1');
+    mockGetDocumentState.mockReturnValue({ workarea: 'fpm1' });
   });
 
   test('isVariableTextSupported', () => {
@@ -401,7 +401,7 @@ describe('test variableText helper', () => {
 describe('test variableText helper when not supported', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockBeamboxPreferenceRead.mockReturnValue('ado1');
+    mockGetDocumentState.mockReturnValue({ workarea: 'ado1' });
   });
 
   test('isVariableTextSupported', () => {
