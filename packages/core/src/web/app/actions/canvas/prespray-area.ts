@@ -1,9 +1,9 @@
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
 import presprayIconUrl from '@core/app/icons/prespray.svg?url';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import workareaManager from '@core/app/svgedit/workarea';
@@ -24,8 +24,8 @@ const round = (num: number, decimal: number): number => {
 const togglePresprayArea = (): void => {
   const { model } = workareaManager;
   const shouldShow = hasModuleLayer([LayerModule.PRINTER], { checkRepeat: false });
-  const rotaryMode = beamboxPreference.read('rotary_mode');
-  const hasJobOrigin = beamboxPreference.read('enable-job-origin') && getAddOnInfo(model).jobOrigin;
+  const { 'enable-job-origin': enableJobOrigin, rotary_mode: rotaryMode } = useDocumentStore.getState();
+  const hasJobOrigin = enableJobOrigin && getAddOnInfo(model).jobOrigin;
 
   if (shouldShow && !(rotaryMode && !hasJobOrigin)) {
     // check boundary

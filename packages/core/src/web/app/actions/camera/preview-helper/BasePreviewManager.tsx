@@ -12,6 +12,7 @@ import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
 import type { WorkArea, WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import workareaManager from '@core/app/svgedit/workarea';
 import alertConfig from '@core/helpers/api/alert-config';
 import deviceMaster from '@core/helpers/device-master';
@@ -155,8 +156,10 @@ class BasePreviewManager implements PreviewManager {
   };
 
   protected getMovementSpeed = (): number => {
+    const { 'enable-diode': enableDiode } = useDocumentStore.getState();
+
     // fixed to 3600 for diode laser
-    if (beamboxPreference.read('enable-diode') && getAddOnInfo(this.workarea).hybridLaser) {
+    if (enableDiode && getAddOnInfo(this.workarea).hybridLaser) {
       return 3600;
     }
 

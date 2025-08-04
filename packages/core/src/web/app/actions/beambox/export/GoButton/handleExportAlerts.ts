@@ -10,6 +10,7 @@ import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import { getAutoFeeder } from '@core/helpers/addOn';
 import alertConfig from '@core/helpers/api/alert-config';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
@@ -100,8 +101,9 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
   }
 
   let hasJobOrigin = false;
+  const { 'enable-job-origin': enableJobOrigin, rotary_mode: rotaryMode } = useDocumentStore.getState();
 
-  if (addOnInfo.jobOrigin && beamboxPreference.read('enable-job-origin')) {
+  if (addOnInfo.jobOrigin && enableJobOrigin) {
     if (!vc.meetRequirement(isAdor ? 'ADOR_JOB_ORIGIN' : 'JOB_ORIGIN')) {
       const res = await new Promise((resolve) => {
         alertCaller.popUp({
@@ -159,7 +161,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
   }
 
   if (isPromark) {
-    if (beamboxPreference.read('rotary_mode') && !swiftrayClient.checkVersion('PROMARK_ROTARY')) {
+    if (rotaryMode && !swiftrayClient.checkVersion('PROMARK_ROTARY')) {
       return false;
     }
 

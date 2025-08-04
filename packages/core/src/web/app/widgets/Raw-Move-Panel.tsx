@@ -1,8 +1,8 @@
 import * as React from 'react';
 
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import DeviceMaster from '@core/helpers/device-master';
 
 interface Props {
@@ -43,17 +43,11 @@ class RawMovePanel extends React.Component<Props, State> {
   }
 
   getSafeDistance(): { x: number; y: number } {
-    if (BeamboxPreference.read('enable-diode')) {
-      return {
-        x: 45,
-        y: 15,
-      };
-    }
+    const { 'enable-diode': enableDiode } = useDocumentStore.getState();
 
-    return {
-      x: 10,
-      y: 15,
-    };
+    if (enableDiode) return { x: 45, y: 15 };
+
+    return { x: 10, y: 15 };
   }
 
   handleMoveEnd = (): void => {

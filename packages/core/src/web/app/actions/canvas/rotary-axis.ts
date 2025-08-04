@@ -1,8 +1,7 @@
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
 import NS from '@core/app/constants/namespaces';
 import rotaryConstants from '@core/app/constants/rotary-constants';
-import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import workareaManager from '@core/app/svgedit/workarea';
@@ -52,7 +51,7 @@ const setPosition = (val: number, opts: { unit?: 'mm' | 'px'; write?: boolean } 
   transparentRotaryLine.setAttribute('y2', pxY.toString());
 
   if (write) {
-    beamboxPreference.write('rotary-y', pxY);
+    useDocumentStore.getState().set('rotary-y', pxY);
   }
 };
 
@@ -67,12 +66,11 @@ const checkBoundary = () => {
 };
 
 const updateBoundary = () => {
-  const model: WorkAreaModel = beamboxPreference.read('workarea');
-  const enableJobOrigin = beamboxPreference.read('enable-job-origin');
+  const { 'enable-job-origin': enableJobOrigin, workarea } = useDocumentStore.getState();
   const { maxY } = workareaManager;
 
-  if (rotaryConstants[model]?.boundary && !enableJobOrigin) {
-    boundary = rotaryConstants[model].boundary.map((v) => v * constant.dpmm);
+  if (rotaryConstants[workarea]?.boundary && !enableJobOrigin) {
+    boundary = rotaryConstants[workarea].boundary.map((v) => v * constant.dpmm);
   } else {
     boundary = [0, maxY];
   }
@@ -86,8 +84,8 @@ canvasEventEmitter.on('canvas-change', updateBoundary);
 canvasEventEmitter.on('document-settings-saved', updateBoundary);
 
 const toggleDisplay = (): void => {
-  const rotaryMode = beamboxPreference.read('rotary_mode') && !beamboxPreference.read('enable-job-origin');
-  const visible = rotaryMode ? 'visible' : 'none';
+  const { 'enable-job-origin': enableJobOrigin, rotary_mode: rotaryMode } = useDocumentStore.getState();
+  const visible = rotaryMode && !enableJobOrigin ? 'visible' : 'none';
 
   rotaryLine?.setAttribute('display', visible);
   transparentRotaryLine?.setAttribute('display', visible);
@@ -175,7 +173,7 @@ const mouseUp = (): void => {
     batchCmd.addSubCommand(new history.ChangeElementCommand(rotaryLine, { y1: startY, y2: startY }));
     batchCmd.addSubCommand(new history.ChangeElementCommand(transparentRotaryLine, { y1: startY, y2: startY }));
     batchCmd.onAfter = () => {
-      beamboxPreference.write('rotary-y', getPosition());
+      useDocumentStore.getState().set('rotary-y', getPosition());
     };
     undoManager.addCommandToHistory(batchCmd);
   }
