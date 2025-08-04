@@ -2,28 +2,24 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-jest.mock('@core/helpers/i18n', () => ({
-  lang: {
-    beambox: {
-      tool_panels: {
-        _offset: {
-          dist: 'Offset Distance',
-        },
-      },
-    },
-  },
-}));
-
 const get = jest.fn();
 
 jest.mock('@core/implementations/storage', () => ({
   get,
 }));
 
-const read = jest.fn();
+const mockGetState = jest.fn();
 
-jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
-  read,
+jest.mock('@core/app/stores/documentStore', () => ({
+  useDocumentStore: {
+    getState: mockGetState,
+  },
+}));
+
+const mockGetWorkarea = jest.fn();
+
+jest.mock('@core/app/constants/workarea-constants', () => ({
+  getWorkarea: mockGetWorkarea,
 }));
 
 jest.mock('@core/app/widgets/Unit-Input-v2', () => ({ defaultValue, getValue, id, max, min, unit }: any) => (
@@ -40,13 +36,14 @@ jest.mock('@core/app/widgets/Unit-Input-v2', () => ({ defaultValue, getValue, id
 import Interval from './Interval';
 
 describe('should render correctly', () => {
-  afterEach(() => {
+  beforeEach(() => {
     jest.resetAllMocks();
+    mockGetState.mockReturnValue({ workarea: 'fbb1b' });
+    mockGetWorkarea.mockReturnValue({ height: 375, width: 400 });
   });
 
   test('default unit is inches', () => {
     get.mockReturnValue('inches');
-    read.mockReturnValue('fbb1b');
 
     const onValueChange = jest.fn();
     const { container, rerender } = render(<Interval dx={25.4} dy={25.4} onValueChange={onValueChange} />);
@@ -74,7 +71,6 @@ describe('should render correctly', () => {
 
   test('default unit is mm', () => {
     get.mockReturnValue(undefined);
-    read.mockReturnValue('fbb1b');
 
     const { container } = render(<Interval dx={25.4} dy={25.4} onValueChange={jest.fn()} />);
 

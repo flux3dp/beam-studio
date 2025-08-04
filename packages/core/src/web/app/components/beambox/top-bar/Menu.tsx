@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 
 import { MenuDivider, MenuItem, SubMenu, Menu as TopBarMenu } from '@szhsin/react-menu';
 
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { adorModels, modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
@@ -24,12 +23,12 @@ interface Props {
 export default function Menu({ email }: Props): React.JSX.Element {
   const eventEmitter = React.useMemo(() => eventEmitterFactory.createEventEmitter('top-bar-menu'), []);
   const [devices, setDevices] = useState(Array<IDeviceInfo>());
-  const [shouldShowRulers, changeShouldShowRulers] = useState(BeamboxPreference.read('show_rulers'));
-  const [shouldShowGrids, changeShouldShowGrids] = useState(BeamboxPreference.read('show_grids'));
-  const [shouldUseLayerColor, changeShouldUseLayerColor] = useState(BeamboxPreference.read('use_layer_color'));
-  const [isUsingAntiAliasing, setIsUsingAntiAliasing] = useState(BeamboxPreference.read('anti-aliasing'));
-  const [isAutoAlign, setIsAutoAlign] = useState(BeamboxPreference.read('auto_align'));
-  const [shouldZoomWithWindow, changeShouldZoomWithWindow] = useState(BeamboxPreference.read('zoom_with_window'));
+  const [shouldShowRulers, changeShouldShowRulers] = useState(beamboxPreference.read('show_rulers'));
+  const [shouldShowGrids, changeShouldShowGrids] = useState(beamboxPreference.read('show_grids'));
+  const [shouldUseLayerColor, changeShouldUseLayerColor] = useState(beamboxPreference.read('use_layer_color'));
+  const [isUsingAntiAliasing, setIsUsingAntiAliasing] = useState(beamboxPreference.read('anti-aliasing'));
+  const [isAutoAlign, setIsAutoAlign] = useState(beamboxPreference.read('auto_align'));
+  const [shouldZoomWithWindow, changeShouldZoomWithWindow] = useState(beamboxPreference.read('zoom_with_window'));
   const [duplicateDisabled, setDuplicateDisabled] = useState(true);
   const [svgEditDisabled, setSvgEditDisabled] = useState(true);
   const [decomposePathDisabled, setDecomposePathDisabled] = useState(true);

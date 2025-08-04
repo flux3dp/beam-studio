@@ -106,6 +106,12 @@ jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read: mockPreferenceRead,
 }));
 
+const mockUseDocumentStore = jest.fn();
+
+jest.mock('@core/app/stores/documentStore', () => ({
+  useDocumentStore: mockUseDocumentStore,
+}));
+
 import ModuleBlock from './ModuleBlock';
 
 const mockUseConfigPanelStore = jest.fn();

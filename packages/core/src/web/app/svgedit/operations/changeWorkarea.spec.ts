@@ -1,11 +1,5 @@
 import changeWorkarea from './changeWorkarea';
 
-const mockRead = jest.fn();
-
-jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
-  read: (...args) => mockRead(...args),
-}));
-
 const mockSetWorkarea = jest.fn();
 const mockResetView = jest.fn();
 
@@ -20,28 +14,30 @@ jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   toggleFullColorAfterWorkareaChange: (...args) => mockToggleFullColorAfterWorkareaChange(...args),
 }));
 
-const mockChangeBeamboxPreferenceValue = jest.fn();
+const mockChangeDocumentStoreValue = jest.fn();
+const mockGetState = jest.fn();
 
-jest.mock('@core/app/svgedit/history/beamboxPreferenceCommand', () => ({
-  changeBeamboxPreferenceValue: (...args) => mockChangeBeamboxPreferenceValue(...args),
+jest.mock('@core/app/stores/documentStore', () => ({
+  changeDocumentStoreValue: (...args) => mockChangeDocumentStoreValue(...args),
+  useDocumentStore: {
+    getState: () => mockGetState(),
+  },
 }));
 
 describe('test changeWorkarea', () => {
   beforeEach(() => {
     jest.resetAllMocks();
+    mockGetState.mockReturnValue({ workarea: 'fbm1' });
   });
 
   it('should work correctly', () => {
-    mockRead.mockReturnValue('fbm1');
-
     const mockCmd = { onAfter: () => {} };
 
-    mockChangeBeamboxPreferenceValue.mockReturnValue(mockCmd);
+    mockChangeDocumentStoreValue.mockReturnValue(mockCmd);
     changeWorkarea('fbm1');
-    expect(mockRead).toHaveBeenCalledTimes(1);
-    expect(mockRead).toHaveBeenLastCalledWith('workarea');
-    expect(mockChangeBeamboxPreferenceValue).toHaveBeenCalledTimes(1);
-    expect(mockChangeBeamboxPreferenceValue).toHaveBeenLastCalledWith('workarea', 'fbm1');
+    expect(mockGetState).toHaveBeenCalledTimes(1);
+    expect(mockChangeDocumentStoreValue).toHaveBeenCalledTimes(1);
+    expect(mockChangeDocumentStoreValue).toHaveBeenLastCalledWith('workarea', 'fbm1');
     expect(mockSetWorkarea).toHaveBeenCalledTimes(1);
     expect(mockSetWorkarea).toHaveBeenLastCalledWith('fbm1');
     expect(mockResetView).toHaveBeenCalledTimes(1);
@@ -50,10 +46,9 @@ describe('test changeWorkarea', () => {
     const { onAfter } = mockCmd;
 
     jest.resetAllMocks();
-    mockRead.mockReturnValue('ado1');
+    mockGetState.mockReturnValue({ workarea: 'ado1' });
     onAfter();
-    expect(mockRead).toHaveBeenCalledTimes(1);
-    expect(mockRead).toHaveBeenLastCalledWith('workarea');
+    expect(mockGetState).toHaveBeenCalledTimes(1);
     expect(mockSetWorkarea).toHaveBeenCalledTimes(1);
     expect(mockSetWorkarea).toHaveBeenLastCalledWith('ado1');
     expect(mockResetView).toHaveBeenCalledTimes(1);
@@ -61,16 +56,13 @@ describe('test changeWorkarea', () => {
   });
 
   it('should work correctly with toggleModule = false', () => {
-    mockRead.mockReturnValue('fbm1');
-
     const mockCmd = { onAfter: () => {} };
 
-    mockChangeBeamboxPreferenceValue.mockReturnValue(mockCmd);
+    mockChangeDocumentStoreValue.mockReturnValue(mockCmd);
     changeWorkarea('fbm1', { toggleModule: false });
-    expect(mockRead).toHaveBeenCalledTimes(1);
-    expect(mockRead).toHaveBeenLastCalledWith('workarea');
-    expect(mockChangeBeamboxPreferenceValue).toHaveBeenCalledTimes(1);
-    expect(mockChangeBeamboxPreferenceValue).toHaveBeenLastCalledWith('workarea', 'fbm1');
+    expect(mockGetState).toHaveBeenCalledTimes(1);
+    expect(mockChangeDocumentStoreValue).toHaveBeenCalledTimes(1);
+    expect(mockChangeDocumentStoreValue).toHaveBeenLastCalledWith('workarea', 'fbm1');
     expect(mockSetWorkarea).toHaveBeenCalledTimes(1);
     expect(mockSetWorkarea).toHaveBeenLastCalledWith('fbm1');
     expect(mockResetView).toHaveBeenCalledTimes(1);
@@ -79,10 +71,9 @@ describe('test changeWorkarea', () => {
     const { onAfter } = mockCmd;
 
     jest.resetAllMocks();
-    mockRead.mockReturnValue('ado1');
+    mockGetState.mockReturnValue({ workarea: 'ado1' });
     onAfter();
-    expect(mockRead).toHaveBeenCalledTimes(1);
-    expect(mockRead).toHaveBeenLastCalledWith('workarea');
+    expect(mockGetState).toHaveBeenCalledTimes(1);
     expect(mockSetWorkarea).toHaveBeenCalledTimes(1);
     expect(mockSetWorkarea).toHaveBeenLastCalledWith('ado1');
     expect(mockResetView).toHaveBeenCalledTimes(1);
