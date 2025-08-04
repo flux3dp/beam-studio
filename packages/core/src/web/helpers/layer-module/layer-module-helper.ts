@@ -4,12 +4,13 @@ import type { DetectedLayerModuleType, LayerModuleType } from '@core/app/constan
 import { DetectedLayerModule, LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getSupportedModules } from '@core/app/constants/workarea-constants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import i18n from '@core/helpers/i18n';
 
 const LaserModuleSet = new Set([LayerModule.LASER_10W_DIODE, LayerModule.LASER_20W_DIODE]);
 
 export const getDefaultLaserModule = (workarea?: WorkAreaModel): LayerModuleType => {
-  workarea = workarea ?? beamboxPreference.read('workarea');
+  workarea = workarea ?? useDocumentStore.getState().workarea;
 
   if (!adorModels.has(workarea)) {
     return LayerModule.LASER_UNIVERSAL;
@@ -21,7 +22,7 @@ export const getDefaultLaserModule = (workarea?: WorkAreaModel): LayerModuleType
 };
 
 export const getPrintingModule = (workarea?: WorkAreaModel): LayerModuleType => {
-  workarea = workarea ?? beamboxPreference.read('workarea');
+  workarea = workarea ?? useDocumentStore.getState().workarea;
 
   const supportedModules = getSupportedModules(workarea);
 

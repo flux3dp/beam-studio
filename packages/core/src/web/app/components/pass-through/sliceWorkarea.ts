@@ -1,9 +1,9 @@
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
 import progressCaller from '@core/app/actions/progress-caller';
 import type { AddOnInfo } from '@core/app/constants/addOn';
 import NS from '@core/app/constants/namespaces';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import { changeBeamboxPreferenceValue } from '@core/app/svgedit/history/beamboxPreferenceCommand';
 import history from '@core/app/svgedit/history/history';
 import { handlePastedRef } from '@core/app/svgedit/operations/clipboard';
@@ -41,7 +41,7 @@ const sliceWorkarea = async (
 
   const { addOnInfo, guideMark = { show: false, width: 40, x: 0 }, parentCmd, refLayers } = opt;
   const { dpmm } = constant;
-  const workarea = beamboxPreference.read('workarea');
+  const workarea = useDocumentStore.getState().workarea;
   const workareaObj = getWorkarea(workarea);
   const batchCmd = new history.BatchCommand('Slice Workarea');
   const currentDrawing = svgCanvas.getCurrentDrawing();

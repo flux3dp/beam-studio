@@ -2,12 +2,12 @@
 import { EventEmitter } from 'eventemitter3';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant, { promarkModels } from '@core/app/actions/beambox/constant';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import workareaManager, { ExpansionType } from '@core/app/svgedit/workarea';
 import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
 import deviceMaster from '@core/helpers/device-master';
@@ -556,7 +556,7 @@ class SwiftrayClient extends EventEmitter {
   }
 
   public async upload(data: Blob, path?: string): Promise<void> {
-    const checkDoor = beamboxPreference.read('promark-safety-door');
+    const checkDoor = useDocumentStore.getState()['promark-safety-door'];
 
     try {
       const text = await data.text();

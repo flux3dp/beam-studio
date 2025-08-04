@@ -1,8 +1,8 @@
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import getRotaryRatio from '@core/helpers/device/get-rotary-ratio';
 
 export type RotaryInfo = null | {
@@ -14,15 +14,22 @@ export type RotaryInfo = null | {
 };
 
 export const getRotaryInfo = (workarea?: WorkAreaModel, axisInMm = false): RotaryInfo => {
+  const {
+    'rotary-overlap': rotaryOverlap,
+    'rotary-split': rotarySplit,
+    rotary_mode: rotaryMode,
+    workarea: documentWorkarea,
+  } = useDocumentStore.getState();
+
   if (!workarea) {
-    workarea = beamboxPreference.read('workarea');
+    workarea = documentWorkarea;
   }
 
   const addOnInfo = getAddOnInfo(workarea);
 
   if (!addOnInfo.rotary) return null;
 
-  if (!beamboxPreference.read('rotary_mode')) return null;
+  if (!rotaryMode) return null;
 
   const info: RotaryInfo = {
     useAAxis: constant.fcodeV2Models.has(workarea),
@@ -31,8 +38,8 @@ export const getRotaryInfo = (workarea?: WorkAreaModel, axisInMm = false): Rotar
   };
 
   if (addOnInfo.rotary.split) {
-    info!.ySplit = beamboxPreference.read('rotary-split');
-    info!.yOverlap = beamboxPreference.read('rotary-overlap');
+    info!.ySplit = rotarySplit;
+    info!.yOverlap = rotaryOverlap;
   }
 
   return info;

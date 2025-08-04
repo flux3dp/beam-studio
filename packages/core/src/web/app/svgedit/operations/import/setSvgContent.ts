@@ -1,6 +1,6 @@
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import NS from '@core/app/constants/namespaces';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import history from '@core/app/svgedit/history/history';
 import selector from '@core/app/svgedit/selector';
 import findDefs from '@core/app/svgedit/utils/findDef';
@@ -23,7 +23,7 @@ getSVGAsync((globalSVG) => {
 });
 
 const postContentChange = () => {
-  const svgContent = document.getElementById('svgcontent');
+  const svgContent = document.getElementById('svgcontent')!;
 
   svgCanvas.resetCurrentDrawing(svgContent);
 
@@ -60,7 +60,7 @@ const postContentChange = () => {
 
     const { parentElement } = svg;
 
-    if (parentElement.childNodes.length === 1 && parentElement.nodeName === 'g') {
+    if (parentElement?.childNodes.length === 1 && parentElement?.nodeName === 'g') {
       parentElement.id = parentElement.id || svgCanvas.getNextId();
     } else {
       svgCanvas.groupSvgElem(svg);
@@ -74,7 +74,7 @@ const postContentChange = () => {
     await fontHelper.getMonotypeFonts();
 
     const font = fontHelper.findFont({
-      postscriptName: text.getAttribute('font-postscript'),
+      postscriptName: text.getAttribute('font-postscript')!,
     }) as WebFont;
     const { success } = await fontHelper.applyMonotypeStyle(font, user, true);
 
@@ -91,7 +91,7 @@ const postContentChange = () => {
 
   svgCanvas.convertGradients(svgContent);
 
-  const { pxDisplayHeight, pxHeight, pxWidth } = getWorkarea(beamboxPreference.read('workarea'));
+  const { pxDisplayHeight, pxHeight, pxWidth } = getWorkarea(useDocumentStore.getState().workarea);
 
   svgContent.setAttribute('id', 'svgcontent');
   svgContent.setAttribute('overflow', 'visible');

@@ -3,12 +3,11 @@ import React, { createContext, useMemo, useState } from 'react';
 
 import { match } from 'ts-pattern';
 
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { DEFAULT_CONTROLLER_INCH, DEFAULT_CONTROLLER_MM } from '@core/app/constants/boxgen-constants';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { getModuleBoundary } from '@core/app/constants/layer-module/module-boundary';
-import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import { getDefaultLaserModule } from '@core/helpers/layer-module/layer-module-helper';
 import storage from '@core/implementations/storage';
 import type { IController } from '@core/interfaces/IBoxgen';
@@ -37,7 +36,7 @@ interface BoxgenProviderProps {
 }
 
 export function BoxgenProvider({ children, onClose }: BoxgenProviderProps): React.JSX.Element {
-  const workareaValue: WorkAreaModel = BeamboxPreference.read('workarea') || 'fbm1';
+  const workareaValue = useDocumentStore((state) => state.workarea);
   const workarea = useMemo(() => {
     const currentWorkarea = getWorkarea(workareaValue, 'fbm1');
     const { displayHeight, height, width } = currentWorkarea;

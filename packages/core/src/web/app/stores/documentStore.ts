@@ -36,7 +36,6 @@ export type DocumentState = Pick<
   | 'rotary-type'
   | 'rotary-y'
   | 'rotary_mode'
-  | 'rotary_y_coord'
   | 'workarea'
 >;
 

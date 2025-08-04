@@ -1,6 +1,6 @@
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { modelsWithModules } from '@core/app/actions/beambox/constant';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
+import workareaManager from '@core/app/svgedit/workarea';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -15,9 +15,7 @@ getSVGAsync((globalSVG) => {
 
 // TODO: add unit test
 const importBitmap = async (file: File): Promise<void> => {
-  const workarea = beamboxPreference.read('workarea');
-
-  if (modelsWithModules.has(workarea)) {
+  if (modelsWithModules.has(workareaManager.model)) {
     const drawing = svgCanvas.getCurrentDrawing();
     const currentLayer = drawing.getCurrentLayer()!;
 

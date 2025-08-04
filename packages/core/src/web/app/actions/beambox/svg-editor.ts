@@ -77,6 +77,7 @@ import PreviewModeController from './preview-mode-controller';
 import ToolPanelsController from './toolPanelsController';
 import fileSystem from '@core/implementations/fileSystem';
 import { FileData } from '@core/helpers/fileImportHelper';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 
 // @ts-expect-error this line is required to load svgedit
 if (svgCanvasClass) {
@@ -168,13 +169,13 @@ const svgEditor = (window['svgEditor'] = (function () {
   // set workarea according to default model.
   const defaultModel = BeamboxPreference.read('model');
 
-  if (defaultModel) BeamboxPreference.write('workarea', defaultModel);
+  if (defaultModel) useDocumentStore.getState().set('workarea', defaultModel);
 
   // EDITOR PROPERTIES: (defined below)
   //		curPrefs, curConfig, canvas, storage, uiStrings
   //
   // STATE MAINTENANCE PROPERTIES
-  const workarea = BeamboxPreference.read('workarea') as WorkAreaModel;
+  const workarea = useDocumentStore.getState().workarea;
   const { pxDisplayHeight, pxHeight, pxWidth } = getWorkarea(workarea);
   const editor: ISVGEditor = {
     addExtension: () => {},

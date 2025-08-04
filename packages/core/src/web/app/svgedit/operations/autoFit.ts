@@ -1,5 +1,4 @@
 import alertCaller from '@core/app/actions/alert-caller';
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
 import previewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import progressCaller from '@core/app/actions/progress-caller';
@@ -7,6 +6,8 @@ import { showAutoFitPanel } from '@core/app/components/dialogs/autoFit';
 import getUtilWS from '@core/helpers/api/utils-ws';
 import i18n from '@core/helpers/i18n';
 import type { AutoFitContour } from '@core/interfaces/IAutoFit';
+
+import workareaManager from '../workarea';
 
 const dataCache: { data?: AutoFitContour[][]; url: string } = { url: '' };
 
@@ -26,14 +27,13 @@ const autoFit = async (elem: SVGElement): Promise<void> => {
     const utilWS = getUtilWS();
     const resp = await fetch(previewBackgroundUrl);
     const blob = await resp.blob();
-    const workarea = beamboxPreference.read('workarea');
     let data: AutoFitContour[][];
 
     if (dataCache.url === previewBackgroundUrl && dataCache.data) {
       data = dataCache.data;
     } else {
       data = await utilWS.getAllSimilarContours(blob, {
-        isSplcingImg: !constant.adorModels.includes(workarea),
+        isSplcingImg: !constant.adorModels.includes(workareaManager.model),
       });
       dataCache.url = previewBackgroundUrl;
       dataCache.data = data;

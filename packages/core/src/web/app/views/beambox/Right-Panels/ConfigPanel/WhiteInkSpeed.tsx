@@ -1,9 +1,8 @@
 import React, { useMemo } from 'react';
 
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { getSpeedOptions } from '@core/app/constants/config-options';
-import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useBeamboxPreference } from '@core/helpers/hooks/useBeamboxPreference';
 import useI18n from '@core/helpers/useI18n';
 import storage from '@core/implementations/storage';
@@ -33,7 +32,7 @@ const WhiteInkSpeed = ({ hasMultiValue, onChange, value }: Props): React.JSX.Ele
 
     return { decimal: d, display };
   }, []);
-  const workarea: WorkAreaModel = beamboxPreference.read('workarea');
+  const workarea = useDocumentStore((state) => state.workarea);
   const { maxValue, minValue } = useMemo(() => {
     const workareaObj = getWorkarea(workarea);
 

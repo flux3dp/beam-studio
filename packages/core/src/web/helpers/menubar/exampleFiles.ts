@@ -1,7 +1,7 @@
 import alertCaller from '@core/app/actions/alert-caller';
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { adorModels, nxModels } from '@core/app/actions/beambox/constant';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import { importBvgString } from '@core/app/svgedit/operations/import/importBvg';
 import fileExportHelper from '@core/helpers/file-export-helper';
 import { setFileInAnotherTab } from '@core/helpers/fileImportHelper';
@@ -147,7 +147,7 @@ export const getExampleVisibility = (
 };
 
 export const getExampleFileName = (key: ExampleFileKey): string | undefined => {
-  const workarea = beamboxPreference.read('workarea') || 'fbm1';
+  const workarea = useDocumentStore.getState().workarea;
 
   return getExamples(workarea)[key];
 };

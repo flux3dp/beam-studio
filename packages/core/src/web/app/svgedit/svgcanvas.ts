@@ -634,9 +634,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     () => svgcontent,
   );
 
-  const model = BeamboxPreference.read('workarea');
-
-  workareaManager.init(model);
+  workareaManager.init(useDocumentStore.getState()['workarea']);
   grid.init(workareaManager.zoomRatio);
   updateWorkAreaAlignPoints();
   presprayArea.generatePresprayArea();
@@ -804,7 +802,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   this.getRoot = () => svgroot;
   this.getRootElem = () => svgroot;
   this.getRootScreenMatrix = () => root_sctm;
-  this.getRotaryDisplayCoord = () => BeamboxPreference.read('rotary_y_coord');
   this.getRubberBox = () => rubberBox;
   this.getSelectedElems = (ungroupTempGroup = false) => {
     if (ungroupTempGroup && tempGroup) {
@@ -833,7 +830,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   this.setLastClickPoint = (point) => {
     lastClickPoint = point;
   };
-  this.setRotaryDisplayCoord = (val: number) => BeamboxPreference.write('rotary_y_coord', val);
 
   this.unsafeAccess = {
     setCurrentMode: (v) => {

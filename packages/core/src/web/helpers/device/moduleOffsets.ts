@@ -4,12 +4,13 @@ import { LayerModule, type LayerModuleType } from '@core/app/constants/layer-mod
 import type { ModuleOffsets, OffsetTuple } from '@core/app/constants/layer-module/module-offsets';
 import moduleOffsets from '@core/app/constants/layer-module/module-offsets';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 
 export const getModuleOffsets = ({
   isRelative = false,
   module = LayerModule.LASER_10W_DIODE,
   offsets = beamboxPreference.read('module-offsets'),
-  workarea = beamboxPreference.read('workarea'),
+  workarea = useDocumentStore.getState().workarea,
 }: Partial<{
   isRelative: boolean;
   module: LayerModuleType;
@@ -29,7 +30,7 @@ export const updateModuleOffsets = (
     module = LayerModule.LASER_10W_DIODE,
     offsets = beamboxPreference.read('module-offsets'),
     shouldWrite = false,
-    workarea = beamboxPreference.read('workarea'),
+    workarea = useDocumentStore.getState().workarea,
   }: Partial<{
     isRelative: boolean;
     module: LayerModuleType;

@@ -1,11 +1,11 @@
 import type { Dispatch, SetStateAction } from 'react';
 import React, { createContext, useMemo, useState } from 'react';
 
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import type { AddOnInfo } from '@core/app/constants/addOn';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import type { WorkArea, WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import type { GuideMark } from '@core/interfaces/IPassThrough';
 
 import sliceWorkarea from './sliceWorkarea';
@@ -41,7 +41,7 @@ interface Props {
 }
 
 export function PassThroughProvider({ children }: Props): React.JSX.Element {
-  const workarea: WorkAreaModel = useMemo(() => beamboxPreference.read('workarea'), []);
+  const workarea = useDocumentStore((state) => state.workarea);
   const workareaObj = useMemo(() => getWorkarea(workarea), [workarea]);
   const addOnInfo = useMemo(() => getAddOnInfo(workarea), [workarea]);
   const [guideMark, setGuideMark] = useState<GuideMark>({

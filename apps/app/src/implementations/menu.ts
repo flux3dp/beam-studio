@@ -4,6 +4,7 @@ import { funnel } from 'remeda';
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import tabController from '@core/app/actions/tabController';
 import { TabEvents } from '@core/app/constants/tabConstants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import AbstractMenu from '@core/helpers/menubar/AbstractMenu';
 import { getExampleVisibility } from '@core/helpers/menubar/exampleFiles';
@@ -18,7 +19,6 @@ const updateWindowsMenu = () => {
   }
 };
 
-const canvasEvent = eventEmitterFactory.createEventEmitter('canvas');
 const layerPanelEventEmitter = eventEmitterFactory.createEventEmitter('layer-panel');
 const useSettingStoreEventEmitter = eventEmitterFactory.createEventEmitter('useSettingStore');
 
@@ -40,7 +40,7 @@ class Menu extends AbstractMenu {
 
   init(): void {
     // model related
-    canvasEvent.on('model-changed', this.updateMenuByWorkarea);
+    useDocumentStore.subscribe((state) => state.workarea, this.updateMenuByWorkarea);
 
     // setting store related
     useSettingStoreEventEmitter.on('changeEnableUvPrintFile', (isEnabled) => {
@@ -90,7 +90,7 @@ class Menu extends AbstractMenu {
     this.changeMenuItemStatus(['EXPORT_UV_PRINT'], 'visible', BeamboxPreference.read('enable-uv-print-file'));
     this.changeMenuItemStatus(['EXPORT_UV_PRINT'], 'enabled', false);
 
-    this.updateMenuByWorkarea(BeamboxPreference.read('workarea'));
+    this.updateMenuByWorkarea(useDocumentStore.getState().workarea);
   };
 
   attach(enabledItems?: string[]) {

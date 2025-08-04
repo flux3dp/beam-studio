@@ -1,10 +1,10 @@
 import Alert from '@core/app/actions/alert-caller';
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
 import type { SelectionResult } from '@core/app/constants/connection-constants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
 import checkSoftwareForAdor from '@core/helpers/check-software';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
@@ -89,7 +89,7 @@ const getDevice = async (showModal = false): Promise<{ device: IDeviceInfo | nul
           canvasEvents.emit('document-settings-saved');
         }
 
-        isWorkareaMatched = model === BeamboxPreference.read('workarea');
+        isWorkareaMatched = model === useDocumentStore.getState().workarea;
 
         if (!isWorkareaMatched && isNewDevice) {
           isWorkareaMatched = await showResizeAlert(device);
@@ -104,7 +104,7 @@ const getDevice = async (showModal = false): Promise<{ device: IDeviceInfo | nul
       }
     }
   } else {
-    isWorkareaMatched = device.model === BeamboxPreference.read('workarea');
+    isWorkareaMatched = device.model === useDocumentStore.getState().workarea;
   }
 
   return { device, isWorkareaMatched };

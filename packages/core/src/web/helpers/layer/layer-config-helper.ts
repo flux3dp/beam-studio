@@ -6,8 +6,8 @@ import { modelsWithModules, promarkModels } from '@core/app/actions/beambox/cons
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType } from '@core/app/constants/promark-constants';
-import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getSupportedModules, getWorkarea } from '@core/app/constants/workarea-constants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import history from '@core/app/svgedit/history/history';
 import updateLayerColorFilter from '@core/helpers/color/updateLayerColorFilter';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
@@ -218,7 +218,7 @@ const getLayerElementByName = (layerName: string) =>
  * @returns Default config based on Promark laser type and watt
  */
 export const getDefaultConfig = (): Partial<ConfigKeyTypeMap> => {
-  const workarea = BeamboxPreference.read('workarea');
+  const workarea = useDocumentStore.getState().workarea;
   const isPromark = promarkModels.has(workarea);
   const config = structuredClone(baseConfig);
 
@@ -444,7 +444,7 @@ export const initLayerConfig = (layer: Element): void => {
     return;
   }
 
-  const workarea = BeamboxPreference.read('workarea');
+  const workarea = useDocumentStore.getState().workarea;
   const supportModules = getSupportedModules(workarea);
   const defaultConfig = getDefaultConfig();
   const keys = Object.keys(defaultConfig) as ConfigKey[];
@@ -523,7 +523,7 @@ export const getLayersConfig = (layerNames: string[], currentLayerName?: string)
 };
 
 export const toggleFullColorAfterWorkareaChange = (): void => {
-  const workarea = BeamboxPreference.read('workarea') || BeamboxPreference.read('model');
+  const workarea = useDocumentStore.getState().workarea;
   const supportedModules = getSupportedModules(workarea);
   const layerNames = getAllLayerNames();
   const defaultLaserModule = getDefaultLaserModule();
@@ -547,7 +547,7 @@ export const toggleFullColorAfterWorkareaChange = (): void => {
 };
 
 export const applyDefaultLaserModule = (): void => {
-  const workarea = BeamboxPreference.read('workarea');
+  const workarea = useDocumentStore.getState().workarea;
 
   if (modelsWithModules.has(workarea)) {
     const layerNames = getAllLayerNames();
@@ -584,7 +584,7 @@ export const applyModuleBaseConfig = (
 };
 
 export const getConfigKeys = (module: LayerModuleType): ConfigKey[] => {
-  const workarea = BeamboxPreference.read('workarea');
+  const workarea = useDocumentStore.getState().workarea;
 
   if (promarkModels.has(workarea)) {
     return promarkConfigKeys;
@@ -616,7 +616,7 @@ export const applyPreset = (
   preset: Preset,
   opts: { applyName?: boolean; batchCmd?: IBatchCommand } = {},
 ): void => {
-  const workarea: WorkAreaModel = BeamboxPreference.read('workarea');
+  const workarea = useDocumentStore.getState().workarea;
   const { maxSpeed, minSpeed } = getWorkarea(workarea);
   const { applyName = true, batchCmd } = opts;
   const { module = LayerModule.LASER_UNIVERSAL } = preset;
@@ -651,7 +651,7 @@ export const applyPreset = (
  */
 export const postPresetChange = (): void => {
   // TODO: add test
-  const workarea: WorkAreaModel = BeamboxPreference.read('workarea');
+  const workarea = useDocumentStore.getState().workarea;
   const { maxSpeed, minSpeed } = getWorkarea(workarea);
   const isPromark = promarkModels.has(workarea);
   const promarkLimit = isPromark ? getPromarkLimit() : null;

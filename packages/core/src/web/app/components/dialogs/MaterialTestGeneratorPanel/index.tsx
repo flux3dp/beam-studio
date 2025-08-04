@@ -2,10 +2,10 @@ import React, { useMemo, useRef, useState } from 'react';
 
 import { Button, Flex, Radio } from 'antd';
 
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant, { promarkModels } from '@core/app/actions/beambox/constant';
 import svgEditor from '@core/app/actions/beambox/svg-editor';
 import { LaserType } from '@core/app/constants/promark-constants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import createNewText from '@core/app/svgedit/text/createNewText';
@@ -71,7 +71,7 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): React.JSX.Element => {
   const t = useI18n();
   const isInch = useMemo(() => storage.get('default-units') === 'inches', []);
   const { laserType } = getPromarkInfo();
-  const workarea = useMemo(() => beamboxPreference.read('workarea'), []);
+  const workarea = useDocumentStore((state) => state.workarea);
   const { isMopa, isPromark } = useMemo(
     () => ({
       isMopa: laserType === LaserType.MOPA,

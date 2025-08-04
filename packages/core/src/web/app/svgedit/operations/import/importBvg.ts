@@ -1,5 +1,4 @@
 import alertCaller from '@core/app/actions/alert-caller';
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { modelsWithModules } from '@core/app/actions/beambox/constant';
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
@@ -8,7 +7,7 @@ import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
-import { changeDocumentStoreValue } from '@core/app/stores/documentStore';
+import { changeDocumentStoreValue, useDocumentStore } from '@core/app/stores/documentStore';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import history from '@core/app/svgedit/history/history';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
@@ -54,7 +53,7 @@ export const importBvgString = async (
 
   if (!setContentCmd.isEmpty()) batchCmd.addSubCommand(setContentCmd);
 
-  const currentWorkarea: WorkAreaModel = beamboxPreference.read('workarea');
+  const currentWorkarea: WorkAreaModel = workareaManager.model;
 
   // loadFromString will lose data-xform and data-wireframe of `use` so set it back here
   if (typeof str === 'string') {
@@ -99,7 +98,6 @@ export const importBvgString = async (
         }
       } else {
         cmd = changeDocumentStoreValue('rotary_mode', false, { parentCmd: batchCmd });
-        beamboxPreference.write('rotary_mode', false);
       }
 
       cmd.onAfter = () => {
@@ -229,7 +227,7 @@ export const importBvgString = async (
 
   const { addToHistory = true, parentCmd } = opts;
   const postImportBvgString = async () => {
-    const workarea = beamboxPreference.read('workarea');
+    const { workarea } = useDocumentStore.getState();
 
     // toggle full color setting according workarea supported modules
     toggleFullColorAfterWorkareaChange();

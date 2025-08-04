@@ -79,9 +79,9 @@
 */
 import { Buffer } from 'buffer';
 
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import Progress from '@core/app/actions/progress-caller';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useVariableTextState, type VariableTextState } from '@core/app/stores/variableText';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
@@ -424,7 +424,7 @@ const readBeam = async (file: File): Promise<void> => {
   }
 
   const postReadBeam = () => {
-    workareaManager.setWorkarea(beamboxPreference.read('workarea'));
+    workareaManager.setWorkarea(useDocumentStore.getState().workarea);
     workareaManager.resetView();
   };
 
