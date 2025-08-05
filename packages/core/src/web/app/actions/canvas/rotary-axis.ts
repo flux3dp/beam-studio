@@ -21,9 +21,9 @@ const round = (num: number, decimal: number): number => {
   return Math.round(num * factor) / factor;
 };
 
-const getPosition = (mm = false): null | number => {
+const getPosition = (mm = false): number => {
   if (!rotaryLine) {
-    return null;
+    return 0;
   }
 
   const pxY = round(Number.parseFloat(rotaryLine.getAttribute('y1') ?? '0'), 2);
@@ -57,19 +57,13 @@ const setPosition = (val: number, opts: { unit?: 'mm' | 'px'; write?: boolean } 
 };
 
 const checkBoundary = () => {
-  const position = getPosition();
-
-  if (position === null) {
+  if (!rotaryLine) {
     return;
   }
 
   const [min, max] = boundary;
 
-  if (position < min) {
-    setPosition(min);
-  } else if (position > max) {
-    setPosition(max);
-  }
+  setPosition(Math.min(Math.max(getPosition(), min), max));
 };
 
 const updateBoundary = () => {
@@ -84,6 +78,7 @@ const updateBoundary = () => {
   }
 
   checkBoundary();
+  toggleDisplay();
 };
 
 canvasEventEmitter.on('canvas-change', updateBoundary);
@@ -91,90 +86,88 @@ canvasEventEmitter.on('canvas-change', updateBoundary);
 canvasEventEmitter.on('document-settings-saved', updateBoundary);
 
 const toggleDisplay = (): void => {
-  const rotaryMode = beamboxPreference.read('rotary_mode');
+  const rotaryMode = beamboxPreference.read('rotary_mode') && !beamboxPreference.read('enable-job-origin');
+  const visible = rotaryMode ? 'visible' : 'none';
 
-  rotaryLine?.setAttribute('display', rotaryMode ? 'visible' : 'none');
-  transparentRotaryLine?.setAttribute('display', rotaryMode ? 'visible' : 'none');
+  rotaryLine?.setAttribute('display', visible);
+  transparentRotaryLine?.setAttribute('display', visible);
 };
 
 const init = (): void => {
-  if (!rotaryLine) {
-    const fixedSizeSvg = document.getElementById('fixedSizeSvg');
-
-    container = document.createElementNS(NS.SVG, 'svg') as unknown as SVGSVGElement;
-    container.setAttribute('id', 'rotaryAxis');
-    container.setAttribute('width', '100%');
-    container.setAttribute('height', '100%');
-    container.setAttribute('x', '0');
-    container.setAttribute('y', '0');
-    container.setAttribute('style', 'cursor:ns-resize');
-    container.setAttribute('overflow', 'visible');
-    container.setAttribute('display', 'inline');
-    fixedSizeSvg?.appendChild(container);
-
-    const { maxY } = workareaManager;
-    const initPosition = beamboxPreference.read('rotary-y') ?? maxY / 2;
-
-    rotaryLine = document.createElementNS(NS.SVG, 'line') as unknown as SVGLineElement;
-
-    const rotaryLineWidth = 3;
-    const transparentLineWidth = 7;
-
-    rotaryLine.setAttribute('id', 'rotaryLine');
-    rotaryLine.setAttribute('x1', '0%');
-    rotaryLine.setAttribute('x2', '100%');
-    rotaryLine.setAttribute('y1', initPosition.toString());
-    rotaryLine.setAttribute('y2', initPosition.toString());
-    rotaryLine.setAttribute('stroke-width', rotaryLineWidth.toString());
-    rotaryLine.setAttribute('vector-effect', 'non-scaling-stroke');
-    rotaryLine.setAttribute('stroke', 'rgba(0, 128, 255, 0.3)');
-    rotaryLine.setAttribute('fill', 'none');
-    rotaryLine.setAttribute('style', `cursor:ns-resize;stroke-width:${rotaryLineWidth}`);
-    rotaryLine.setAttribute('display', 'none');
-    container.appendChild(rotaryLine);
-
-    transparentRotaryLine = document.createElementNS(NS.SVG, 'line') as unknown as SVGLineElement;
-    transparentRotaryLine.setAttribute('id', 'transparentRotaryLine');
-    transparentRotaryLine.setAttribute('x1', '0%');
-    transparentRotaryLine.setAttribute('x2', '100%');
-    transparentRotaryLine.setAttribute('y1', initPosition.toString());
-    transparentRotaryLine.setAttribute('y2', initPosition.toString());
-    transparentRotaryLine.setAttribute('stroke-width', transparentLineWidth.toString());
-    transparentRotaryLine.setAttribute('vector-effect', 'non-scaling-stroke');
-    transparentRotaryLine.setAttribute('stroke', 'transparent');
-    transparentRotaryLine.setAttribute('fill', 'none');
-    transparentRotaryLine.setAttribute('style', `cursor:ns-resize`);
-    transparentRotaryLine.setAttribute('display', 'none');
-    container.appendChild(transparentRotaryLine);
-
-    const title = document.createElementNS(NS.SVG, 'title');
-
-    title.textContent = 'Rotary Axis';
-    container.appendChild(title);
-
-    toggleDisplay();
-    updateBoundary();
+  if (rotaryLine) {
+    return; // already initialized
   }
+
+  const fixedSizeSvg = document.getElementById('fixedSizeSvg');
+
+  container = document.createElementNS(NS.SVG, 'svg') as unknown as SVGSVGElement;
+  container.setAttribute('id', 'rotaryAxis');
+  container.setAttribute('width', '100%');
+  container.setAttribute('height', '100%');
+  container.setAttribute('x', '0');
+  container.setAttribute('y', '0');
+  container.setAttribute('style', 'cursor:ns-resize');
+  container.setAttribute('overflow', 'visible');
+  container.setAttribute('display', 'inline');
+  fixedSizeSvg?.appendChild(container);
+
+  const { maxY } = workareaManager;
+  const initPosition = Number(beamboxPreference.read('rotary-y')) || maxY / 2;
+
+  rotaryLine = document.createElementNS(NS.SVG, 'line') as unknown as SVGLineElement;
+
+  const rotaryLineWidth = 3;
+  const transparentLineWidth = 7;
+
+  rotaryLine.setAttribute('id', 'rotaryLine');
+  rotaryLine.setAttribute('x1', '0%');
+  rotaryLine.setAttribute('x2', '100%');
+  rotaryLine.setAttribute('y1', initPosition.toString());
+  rotaryLine.setAttribute('y2', initPosition.toString());
+  rotaryLine.setAttribute('stroke-width', rotaryLineWidth.toString());
+  rotaryLine.setAttribute('vector-effect', 'non-scaling-stroke');
+  rotaryLine.setAttribute('stroke', 'rgba(0, 128, 255, 0.3)');
+  rotaryLine.setAttribute('fill', 'none');
+  rotaryLine.setAttribute('style', `cursor:ns-resize;stroke-width:${rotaryLineWidth}`);
+  rotaryLine.setAttribute('display', 'none');
+  container.appendChild(rotaryLine);
+
+  transparentRotaryLine = document.createElementNS(NS.SVG, 'line') as unknown as SVGLineElement;
+  transparentRotaryLine.setAttribute('id', 'transparentRotaryLine');
+  transparentRotaryLine.setAttribute('x1', '0%');
+  transparentRotaryLine.setAttribute('x2', '100%');
+  transparentRotaryLine.setAttribute('y1', initPosition.toString());
+  transparentRotaryLine.setAttribute('y2', initPosition.toString());
+  transparentRotaryLine.setAttribute('stroke-width', transparentLineWidth.toString());
+  transparentRotaryLine.setAttribute('vector-effect', 'non-scaling-stroke');
+  transparentRotaryLine.setAttribute('stroke', 'transparent');
+  transparentRotaryLine.setAttribute('fill', 'none');
+  transparentRotaryLine.setAttribute('style', `cursor:ns-resize`);
+  transparentRotaryLine.setAttribute('display', 'none');
+  container.appendChild(transparentRotaryLine);
+
+  const title = document.createElementNS(NS.SVG, 'title');
+
+  title.textContent = 'Rotary Axis';
+  container.appendChild(title);
+
+  toggleDisplay();
+  updateBoundary();
 };
 
-const checkMouseTarget = (elem: Element): boolean => !!elem.closest('#rotaryAxis');
+const checkMouseTarget = (elem: Element): boolean => Boolean(elem.closest('#rotaryAxis'));
 
 let startY = 0;
 const mouseDown = (): void => {
-  startY = getPosition() ?? 0;
+  startY = getPosition();
 };
 
 const mouseMove = (y: number): void => {
-  const val = Math.min(Math.max(y, boundary[0]), boundary[1]);
-
-  setPosition(val, { write: false });
+  setPosition(Math.min(Math.max(y, boundary[0]), boundary[1]), { write: false });
 };
 const mouseUp = (): void => {
   checkBoundary();
-
-  const val = getPosition(false) ?? 0;
-
-  setPosition(val, { write: true });
+  setPosition(getPosition(false), { write: true });
 
   if (rotaryLine) {
     const batchCmd = new history.BatchCommand('Move Rotary Axis');
@@ -182,9 +175,7 @@ const mouseUp = (): void => {
     batchCmd.addSubCommand(new history.ChangeElementCommand(rotaryLine, { y1: startY, y2: startY }));
     batchCmd.addSubCommand(new history.ChangeElementCommand(transparentRotaryLine, { y1: startY, y2: startY }));
     batchCmd.onAfter = () => {
-      const position = getPosition();
-
-      beamboxPreference.write('rotary-y', position);
+      beamboxPreference.write('rotary-y', getPosition());
     };
     undoManager.addCommandToHistory(batchCmd);
   }
