@@ -24,10 +24,13 @@ import TabMyCloud from '@core/app/components/welcome/TabMyCloud';
 import TabRecentFiles from '@core/app/components/welcome/TabRecentFiles';
 import ThemedButton from '@core/app/components/welcome/ThemedButton';
 import UserInfo from '@core/app/components/welcome/UserInfo';
+import { TabEvents } from '@core/app/constants/tabConstants';
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
 import { DmktIcon } from '@core/app/icons/icons';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import { axiosFluxId, fluxIDEvents, getCurrentUser } from '@core/helpers/api/flux-id';
+import type { FileData } from '@core/helpers/fileImportHelper';
+import { setFileInAnotherTab } from '@core/helpers/fileImportHelper';
 import { hashMap } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
@@ -110,17 +113,43 @@ const Welcome = (): ReactNode => {
       window.location.hash = hashMap.editor;
     } else {
       const onFullScreenChange = (_: unknown, isFullScreen: boolean) => setIsFullScreen(isFullScreen);
+      const onOpenFile = (_: unknown, filePath: string) => {
+        console.log('File opened:', filePath);
+
+        const importingFile: FileData = {
+          data: {
+            name: filePath,
+            path: filePath,
+            type: filePath,
+          },
+          type: 'path',
+        };
+
+        if (tabController.isFocused) {
+          setFileInAnotherTab(importingFile);
+        } else {
+          communicator.send(TabEvents.ImportFileInTab, importingFile);
+        }
+      };
 
       communicator.on('window-fullscreen', onFullScreenChange);
+      communicator.on('open-file', onOpenFile);
       communicator.on('NEW_APP_MENU', beamboxGlobalInteraction.attach);
       beamboxGlobalInteraction.attach();
       window.homePage = hashMap.welcome;
       setIsLoading(false);
       communicator.send('FRONTEND_READY');
 
+      const path = communicator.sendSync('GET_OPEN_FILE');
+
+      if (path) {
+        onOpenFile(undefined, path);
+      }
+
       return () => {
         beamboxGlobalInteraction.detach();
         communicator.off('NEW_APP_MENU', beamboxGlobalInteraction.attach);
+        communicator.off('open-file', onOpenFile);
         communicator.off('window-fullscreen', onFullScreenChange);
       };
     }

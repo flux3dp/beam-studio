@@ -20,7 +20,6 @@ import ImageTracePanel from '@core/app/views/beambox/ImageTracePanel/ImageTraceP
 import { LayerPanelContextProvider } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
 import { hashMap } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
-import openFileHelper from '@core/helpers/open-file-helper';
 import sentryHelper from '@core/helpers/sentry-helper';
 import BeamboxInit from '@core/implementations/beamboxInit';
 import communicator from '@core/implementations/communicator';
@@ -39,7 +38,6 @@ const Beambox = (): React.JSX.Element => {
     // Init view
     workareaManager.resetView();
     beamboxInit.showStartUpDialogs();
-    openFileHelper.loadOpenFile();
 
     if (BeamboxPreference.read('zoom_with_window')) {
       window.addEventListener('resize', workareaManager.resetView);
