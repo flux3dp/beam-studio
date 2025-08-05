@@ -67,6 +67,7 @@ const Module = ({ options, unitInputProps }: Props): React.JSX.Element => {
         minX={0}
         minY={0}
         onChange={(axis, val) => setPreference(`diode_offset_${axis}`, val)}
+        tooltip={lang.settings.engraving_offset_tooltip}
         unitInputProps={unitInputProps}
         values={[getPreference('diode_offset_x'), getPreference('diode_offset_y')]}
       />

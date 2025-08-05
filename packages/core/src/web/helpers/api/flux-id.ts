@@ -44,7 +44,8 @@ export const getRedirectUri = (withState = true) => {
 
 const OAUTH_TOKEN = new Set<string>();
 
-export const FLUXID_HOST = 'https://id.flux3dp.com';
+// export const FLUXID_HOST = 'https://id.flux3dp.com';
+export const FLUXID_HOST = 'http://localhost:8001';
 
 const FLUXID_DOMAIN = '.flux3dp.com';
 
@@ -515,9 +516,11 @@ export const recordMachines = async (): Promise<void> => {
   let shouldRecord = true;
 
   try {
-    const serials = deviceMaster.getAvailableDevices();
+    const devices = deviceMaster.getAvailableDevices();
     const registeredMachines = storage.get('registered-devices', false) || [];
-    const newMachines = serials.filter((serial) => !registeredMachines.includes(serial));
+    const newMachines = devices
+      .filter((device) => !registeredMachines.includes(device.serial) && device.model !== 'fpm1')
+      .map((device) => device.serial);
 
     if (newMachines.length === 0) return;
 

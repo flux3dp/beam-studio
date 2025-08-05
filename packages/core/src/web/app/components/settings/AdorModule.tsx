@@ -94,6 +94,7 @@ const AdorModule = ({ unitInputProps }: Props): React.JSX.Element => {
         id="10w-laser-offset"
         label={lang.settings.module_offset_10w}
         onChange={(axis, val) => editModuleOffsets(LayerModule.LASER_10W_DIODE, axis, val)}
+        tooltip={lang.settings.engraving_offset_tooltip}
         values={getModuleOffset(LayerModule.LASER_10W_DIODE)}
       />
       <XYItem
@@ -101,6 +102,7 @@ const AdorModule = ({ unitInputProps }: Props): React.JSX.Element => {
         id="20w-laser-offset"
         label={lang.settings.module_offset_20w}
         onChange={(axis, val) => editModuleOffsets(LayerModule.LASER_20W_DIODE, axis, val)}
+        tooltip={lang.settings.engraving_offset_tooltip}
         values={getModuleOffset(LayerModule.LASER_20W_DIODE)}
       />
       <XYItem
@@ -108,6 +110,7 @@ const AdorModule = ({ unitInputProps }: Props): React.JSX.Element => {
         id="printer-offset"
         label={lang.settings.module_offset_printer}
         onChange={(axis, val) => editModuleOffsets(LayerModule.PRINTER, axis, val)}
+        tooltip={lang.settings.printing_offset_tooltip}
         values={getModuleOffset(LayerModule.PRINTER)}
       />
       <XYItem
@@ -115,6 +118,7 @@ const AdorModule = ({ unitInputProps }: Props): React.JSX.Element => {
         id="2w-ir-laser-offset"
         label={lang.settings.module_offset_2w_ir}
         onChange={(axis, val) => editModuleOffsets(LayerModule.LASER_1064, axis, val)}
+        tooltip={lang.settings.engraving_offset_tooltip}
         values={getModuleOffset(LayerModule.LASER_1064)}
       />
     </>

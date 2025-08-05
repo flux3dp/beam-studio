@@ -52,6 +52,7 @@ exports[`test AdorModule should render correctly 1`] = `
     label:
     10W Diode Laser Offset
     url:
+    tooltip:If the engraving result is shifted to the left or upward, please decrease the X/Y offset; if it is shifted to the right or downward, please increase the X/Y offset.
     options:
     <span
       class="font2 sub-item"
@@ -106,6 +107,7 @@ exports[`test AdorModule should render correctly 1`] = `
     label:
     20W Diode Laser Offset
     url:
+    tooltip:If the engraving result is shifted to the left or upward, please decrease the X/Y offset; if it is shifted to the right or downward, please increase the X/Y offset.
     options:
     <span
       class="font2 sub-item"
@@ -160,6 +162,7 @@ exports[`test AdorModule should render correctly 1`] = `
     label:
     Printer Offset
     url:
+    tooltip:If the print result is shifted to the left or up, please decrease the X/Y offset; when it is shifted to the right or down, please increase the X/Y offset.
     options:
     <span
       class="font2 sub-item"
@@ -214,6 +217,7 @@ exports[`test AdorModule should render correctly 1`] = `
     label:
     2W Infrared Laser Offset
     url:
+    tooltip:If the engraving result is shifted to the left or upward, please decrease the X/Y offset; if it is shifted to the right or downward, please increase the X/Y offset.
     options:
     <span
       class="font2 sub-item"
