@@ -40,6 +40,7 @@ export type StorageKey =
   | 'questionnaire-version'
   | 'rating-record'
   | 'recent_files'
+  | 'registered-devices'
   | 'selected-device'
   | 'sentry-send-devices'
   | 'setting-printer'
