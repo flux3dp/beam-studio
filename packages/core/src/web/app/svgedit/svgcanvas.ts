@@ -4195,7 +4195,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     set('auto_align', newValue);
 
-    return value;
+    return newValue;
   };
 
   this.drawAlignLine = function (tx: number, ty: number, x: IPoint | null, y: IPoint | null, index: number = 0) {
