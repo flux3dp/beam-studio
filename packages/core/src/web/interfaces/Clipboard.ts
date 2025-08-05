@@ -14,6 +14,9 @@ export interface ClipboardData {
   elements: ClipboardElement[];
   imageData: Record<string, string>;
   refs: Record<string, ClipboardElement>;
+  // The source of the clipboard data, e.g., the current tab ID.
+  // This can be used to identify where the clipboard data originated from.
+  source: string;
 }
 
 export interface ClipboardCore {

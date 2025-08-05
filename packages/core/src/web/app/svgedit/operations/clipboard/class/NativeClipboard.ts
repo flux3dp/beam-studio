@@ -1,5 +1,6 @@
 import { match } from 'ts-pattern';
 
+import tabController from '@core/app/actions/tabController';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { ClipboardCore, ClipboardData, ClipboardElement } from '@core/interfaces/Clipboard';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -33,8 +34,10 @@ const serializeElement = ({
     nodeValue,
   };
 
-  for (const { namespaceURI, nodeName, value } of attributes) {
-    result.attributes.push({ namespaceURI, nodeName, value });
+  if (attributes?.length) {
+    for (const { namespaceURI, nodeName, value } of attributes) {
+      result.attributes.push({ namespaceURI, nodeName, value });
+    }
   }
 
   childNodes?.forEach((node) => {
@@ -46,7 +49,12 @@ const serializeElement = ({
 
 export class NativeClipboard extends Clipboard implements ClipboardCore {
   protected writeDataToClipboard = async (elems: Element[]): Promise<void> => {
-    const serializedData: ClipboardData = { elements: [], imageData: {}, refs: {} };
+    const serializedData: ClipboardData = {
+      elements: [],
+      imageData: {},
+      refs: {},
+      source: String(tabController.currentId),
+    };
 
     elems.forEach((elem) => serializedData.elements.push(serializeElement(elem)));
 
@@ -62,14 +70,14 @@ export class NativeClipboard extends Clipboard implements ClipboardCore {
     );
     const promises = [];
 
-    for (const origImage of origImageUrls) {
-      if (!origImage) continue;
+    for (const url of origImageUrls) {
+      if (!url) continue;
 
       promises.push(
         // eslint-disable-next-line no-async-promise-executor
         new Promise<void>(async (resolve) => {
           try {
-            const resp = await fetch(origImage);
+            const resp = await fetch(url);
             const blob = await resp.blob();
             const base64 = await new Promise<string>((resolve) => {
               const reader = new FileReader();
@@ -78,7 +86,7 @@ export class NativeClipboard extends Clipboard implements ClipboardCore {
               reader.readAsDataURL(blob);
             });
 
-            serializedData.imageData[origImage] = base64;
+            serializedData.imageData[url] = base64;
           } finally {
             resolve();
           }

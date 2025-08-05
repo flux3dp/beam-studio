@@ -1,3 +1,4 @@
+import tabController from '@core/app/actions/tabController';
 import history from '@core/app/svgedit/history/history';
 import { moveElements } from '@core/app/svgedit/operations/move';
 import selector from '@core/app/svgedit/selector';
@@ -14,11 +15,9 @@ import { clipboardCore } from '../singleton';
 const { svgedit } = window;
 
 let svgCanvas: ISVGCanvas;
-let svgEdit: any;
 
-getSVGAsync(({ Canvas, Edit }) => {
+getSVGAsync(({ Canvas }) => {
   svgCanvas = Canvas;
-  svgEdit = Edit;
 });
 
 export const pasteElements = async ({
@@ -50,8 +49,6 @@ export const pasteElements = async ({
     if (!svgedit.utilities.getElem(elem.id)) {
       copy.id = elem.id;
     }
-
-    console.log('Copying element:', elem, 'to:', copy);
 
     pasted.push(copy);
 
@@ -131,7 +128,7 @@ export const pasteElements = async ({
 };
 
 /**
- * @deprecated Use pasteWithOffset or pasteElements({ type: 'coordinate', ... }) instead.
+ * @deprecated Use pasteWithDefaultPosition or pasteElements({ type: 'coordinate', ... }) instead.
  */
 export const pasteInCenter = async (): Promise<null | { cmd: IBatchCommand; elems: Element[] }> => {
   const zoom = workareaManager.zoomRatio;
@@ -152,5 +149,13 @@ export const pasteWithDefaultPosition = async (
   x = 100,
   y = 100,
 ): Promise<null | { cmd: IBatchCommand; elems: Element[] }> => {
-  return pasteElements({ type: 'inPlace', x, y });
+  const rawData = await clipboardCore.getRawData();
+
+  if (!rawData) {
+    return null;
+  }
+
+  const isPasteToSourceTab = rawData.source === String(tabController.currentId);
+
+  return isPasteToSourceTab ? pasteElements({ type: 'inPlace', x, y }) : pasteElements({ type: 'inPlace' });
 };

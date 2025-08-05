@@ -51,6 +51,10 @@ export class Clipboard implements ClipboardCore {
     await this.writeDataToClipboard(elems);
   };
 
+  getRawData(): Promise<null> {
+    throw new Error('Method not implemented.');
+  }
+
   getData = async (): Promise<Element[]> => {
     throw new Error('Method not implemented.');
   };
