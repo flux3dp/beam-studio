@@ -3,7 +3,6 @@
  * Ref: https://github.com/flux3dp/fluxghost/wiki/websocket-svg-laser-parser
  */
 import Alert from '@core/app/actions/alert-caller';
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant, { dpmm, modelsWithModules } from '@core/app/actions/beambox/constant';
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
@@ -14,6 +13,7 @@ import type { LayerModuleType } from '@core/app/constants/layer-module/layer-mod
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import workareaManager, { ExpansionType } from '@core/app/svgedit/workarea';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import { getRotaryInfo } from '@core/helpers/addOn/rotary';
@@ -47,9 +47,10 @@ export const getExportOpt = async (
     model,
   };
   const documentState = useDocumentStore.getState();
+  const globalPreference = useGlobalPreferenceStore.getState();
 
   const isDevMode = isDev();
-  const paddingAccel = BeamboxPreference.read('padding_accel');
+  const paddingAccel = globalPreference['padding_accel'];
   const useDevPaddingAcc = isDevMode && paddingAccel;
   const workareaObj = getWorkarea(model);
 
@@ -79,7 +80,7 @@ export const getExportOpt = async (
 
   if (opt.codeType === 'gcode') config.gc = true;
 
-  if (BeamboxPreference.read('reverse-engraving')) config.rev = true;
+  if (globalPreference['reverse-engraving']) config.rev = true;
 
   const addOnInfo = getAddOnInfo(model);
   const hasJobOrigin = documentState['enable-job-origin'] && addOnInfo.jobOrigin && supportJobOrigin;
@@ -139,44 +140,44 @@ export const getExportOpt = async (
       config.prespray = rotaryMode && !hasJobOrigin ? [workareaWidth - 12, 45, 12, h] : [x, y - minY, w, h];
     }
 
-    if (!isDevMode || BeamboxPreference.read('multipass-compensation')) {
+    if (!isDevMode || globalPreference['multipass-compensation']) {
       config.mpc = true;
     }
 
-    if (!isDevMode || BeamboxPreference.read('one-way-printing')) {
+    if (!isDevMode || globalPreference['one-way-printing']) {
       config.owp = true;
     }
   }
 
-  const bladeRadius = BeamboxPreference.read('blade_radius');
+  const bladeRadius = globalPreference['blade_radius'];
 
   if (i18n.getActiveLang() === 'zh-cn' && bladeRadius > 0) {
     config.blade = bladeRadius;
 
-    if (BeamboxPreference.read('blade_precut')) {
-      config.precut = [BeamboxPreference.read('precut_x'), BeamboxPreference.read('precut_y')];
+    if (globalPreference['blade_precut']) {
+      config.precut = [globalPreference['precut_x'], globalPreference['precut_y']];
     }
   }
 
   if (opt.enableAutoFocus && addOnInfo.autoFocus) {
     config.af = true;
 
-    if (BeamboxPreference.read('af-offset')) {
-      config.z_offset = BeamboxPreference.read('af-offset');
+    if (globalPreference['af-offset']) {
+      config.z_offset = globalPreference['af-offset'];
     }
   }
 
   if (opt.enableDiode) {
-    config.diode = [BeamboxPreference.read('diode_offset_x'), BeamboxPreference.read('diode_offset_y')];
+    config.diode = [globalPreference['diode_offset_x'], globalPreference['diode_offset_y']];
 
-    if (BeamboxPreference.read('diode-one-way-engraving')) {
+    if (globalPreference['diode-one-way-engraving']) {
       config.diode_owe = true;
     }
   }
 
   const isBorderLess = documentState.borderless && addOnInfo.openBottom;
 
-  if (BeamboxPreference.read('enable_mask') || isBorderLess) {
+  if (globalPreference['enable_mask'] || isBorderLess) {
     const clipRect: [number, number, number, number] = [0, 0, 0, 0]; // top right bottom left
 
     if (isBorderLess) {
@@ -211,12 +212,12 @@ export const getExportOpt = async (
   }
 
   if (config.curve_engraving) {
-    if (BeamboxPreference.read('curve_engraving_speed_limit') && workareaObj.curveSpeedLimit) {
+    if (globalPreference['curve_engraving_speed_limit'] && workareaObj.curveSpeedLimit) {
       config.csl = workareaObj.curveSpeedLimit * 60; // convert to mm/min
     }
   }
 
-  if (BeamboxPreference.read('vector_speed_constraint')) {
+  if (globalPreference['vector_speed_constraint']) {
     const vectorSpeedLimit = (autoFeeder && addOnInfo.autoFeeder?.vectorSpeedLimit) || workareaObj.vectorSpeedLimit;
 
     if (vectorSpeedLimit) {
@@ -232,7 +233,7 @@ export const getExportOpt = async (
   // default min_speed is 3 if not set
   config.min_speed = workareaObj.minSpeed;
 
-  if (BeamboxPreference.read('enable-custom-backlash')) config.cbl = true;
+  if (!isDevMode && globalPreference['enable-custom-backlash']) config.cbl = true;
 
   let printingTopPadding: number | undefined = undefined;
   let printingBotPadding: number | undefined = undefined;
@@ -326,7 +327,7 @@ export const getExportOpt = async (
   if (printingBotPadding !== undefined) config.pbp = printingBotPadding;
 
   if (modelsWithModules.has(model)) {
-    const offsets = structuredClone(BeamboxPreference.read('module-offsets')[model]!);
+    const offsets = structuredClone(globalPreference['module-offsets'][model]!);
     const keys = Object.keys(offsets) as unknown as LayerModuleType[];
     const { minY } = workareaManager;
     let offsetX = 0;
@@ -356,7 +357,7 @@ export const getExportOpt = async (
     config.loop_compensation = loopCompensation;
   }
 
-  if (rotaryMode || autoFeeder || !BeamboxPreference.read('segmented-engraving')) {
+  if (rotaryMode || autoFeeder || !globalPreference['segmented-engraving']) {
     config.segment = false;
   }
 

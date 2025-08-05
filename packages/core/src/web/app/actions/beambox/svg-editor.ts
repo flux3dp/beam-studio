@@ -78,6 +78,7 @@ import ToolPanelsController from './toolPanelsController';
 import fileSystem from '@core/implementations/fileSystem';
 import { FileData } from '@core/helpers/fileImportHelper';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 
 // @ts-expect-error this line is required to load svgedit
 if (svgCanvasClass) {
@@ -167,7 +168,7 @@ interface ISVGPref {
 
 const svgEditor = (window['svgEditor'] = (function () {
   // set workarea according to default model.
-  const defaultModel = BeamboxPreference.read('model');
+  const defaultModel = useGlobalPreferenceStore.getState()['model'];
 
   if (defaultModel) useDocumentStore.getState().set('workarea', defaultModel);
 

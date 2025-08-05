@@ -1,8 +1,8 @@
 import Alert from '@core/app/actions/alert-caller';
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import Dialog from '@core/app/actions/dialog-caller';
 import Progress from '@core/app/actions/progress-caller';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import Discover from '@core/helpers/api/discover';
 import i18n from '@core/helpers/i18n';
 
@@ -37,7 +37,7 @@ const startNewUserTutorial = async (callback: () => void): Promise<void> => {
   Progress.popById('tutorial-find-machine');
 
   if (isAnyMachineAvailable) {
-    const autoSwitch = beamboxPreference.read('auto-switch-tab');
+    const autoSwitch = useGlobalPreferenceStore.getState()['auto-switch-tab'];
     const tutorial = {
       ...TutorialConstants.NEW_USER_TUTORIAL,
       dialogStylesAndContents: autoSwitch

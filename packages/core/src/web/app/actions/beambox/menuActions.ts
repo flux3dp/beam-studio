@@ -1,5 +1,4 @@
 import Alert from '@core/app/actions/alert-caller';
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import ExportFuncs from '@core/app/actions/beambox/export-funcs';
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import Tutorials from '@core/app/actions/beambox/tutorials';
@@ -8,6 +7,7 @@ import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import { showCurvePanel, showSharpenPanel } from '@core/app/components/dialogs/image';
 import { showRotarySettings } from '@core/app/components/dialogs/RotarySettings';
 import { gestureIntroduction } from '@core/app/constants/media-tutorials';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import historyUtils from '@core/app/svgedit/history/utils';
 import { cloneSelectedElements, pasteElements, pasteWithDefaultPosition } from '@core/app/svgedit/operations/clipboard';
 import disassembleUse from '@core/app/svgedit/operations/disassembleUse';
@@ -153,12 +153,13 @@ export default {
   SIGN_OUT: (): Promise<boolean> => signOut(),
   START_GESTURE_INTRO: (): Promise<void> => Dialog.showMediaTutorial(gestureIntroduction),
   START_TUTORIAL: (): void => {
-    const continuousDrawing = BeamboxPreference.read('continuous_drawing');
+    const globalPreference = useGlobalPreferenceStore.getState();
+    const continuousDrawing = globalPreference['continuous_drawing'];
 
-    BeamboxPreference.write('continuous_drawing', false);
+    globalPreference.set('continuous_drawing', false, false);
 
     Tutorials.startNewUserTutorial(() => {
-      BeamboxPreference.write('continuous_drawing', continuousDrawing);
+      globalPreference.set('continuous_drawing', continuousDrawing, false);
       MessageCaller.openMessage({
         content: lang.tutorial.tutorial_complete,
         level: MessageLevel.SUCCESS,

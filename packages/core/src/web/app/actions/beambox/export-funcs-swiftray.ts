@@ -1,11 +1,11 @@
 import Alert from '@core/app/actions/alert-caller';
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import FontFuncs from '@core/app/actions/beambox/font-funcs';
 import Progress from '@core/app/actions/progress-caller';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { controlConfig } from '@core/app/constants/promark-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import workareaManager from '@core/app/svgedit/workarea';
 import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
 import { getExportOpt } from '@core/helpers/api/svg-laser-parser';
@@ -269,7 +269,7 @@ const fetchTaskCodeSwiftray = async (
   }
 
   let doesSupportDiodeAndAF = true;
-  let shouldUseFastGradient = BeamboxPreference.read('fast_gradient') !== false;
+  let shouldUseFastGradient = useGlobalPreferenceStore.getState().fast_gradient !== false;
   let supportPwm: boolean | undefined;
   let supportJobOrigin: boolean | undefined;
   let supportAccOverrideV1: boolean | undefined;
@@ -452,7 +452,7 @@ const fetchContourTaskCode = async (): Promise<null | string> => {
     travelSpeed: controlConfig.travelSpeed,
   };
 
-  if (BeamboxPreference.read('enable_mask')) {
+  if (useGlobalPreferenceStore.getState().enable_mask) {
     // Note: Swiftray only checks whether the key exists; the value is not used
     taskConfig.mask = true;
   }

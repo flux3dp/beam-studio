@@ -22,6 +22,7 @@ import storage from '@core/implementations/storage';
 import type { FontDescriptor, GeneralFont, IFontQuery, WebFont } from '@core/interfaces/IFont';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 
 let svgCanvas: ISVGCanvas;
 let svgedit: any;
@@ -597,6 +598,7 @@ const convertTextToPath = async (
 
   try {
     const { isSubCommand = false, isTempConvert = false, weldingTexts = false } = opts || {};
+    const globalPreference = useGlobalPreferenceStore.getState();
 
     setTextPostscriptNameIfNeeded(textElement);
 
@@ -612,7 +614,7 @@ const convertTextToPath = async (
 
     let hasUnsupportedFont = false;
 
-    if (BeamboxPreference.read('font-substitute')) {
+    if (globalPreference['font-substitute']) {
       const { font: newFont, unsupportedChar } = await substitutedFont(font, textElement);
 
       if (newFont.postscriptName !== origFontPostscriptName && unsupportedChar && unsupportedChar.length > 0) {
@@ -649,7 +651,7 @@ const convertTextToPath = async (
     color = color !== 'none' ? color : textElement.getAttribute('fill')!;
 
     let res: IConvertInfo = null;
-    let preferGhost = BeamboxPreference.read('font-convert') === '1.0';
+    let preferGhost = globalPreference['font-convert'] === '1.0';
 
     if (preferGhost && fontObj) {
       try {

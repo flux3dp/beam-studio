@@ -1,5 +1,4 @@
 import Alert from '@core/app/actions/alert-caller';
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant, { promarkModels } from '@core/app/actions/beambox/constant';
 import generateThumbnail from '@core/app/actions/beambox/export/generate-thumbnail';
 import { fetchTaskCodeSwiftray } from '@core/app/actions/beambox/export-funcs-swiftray';
@@ -11,6 +10,7 @@ import AlertConstants from '@core/app/constants/alert-constants';
 import { Mode } from '@core/app/constants/monitor-constants';
 import type { PreviewTask, VariableTextTask } from '@core/app/contexts/MonitorContext';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import workareaManager from '@core/app/svgedit/workarea';
 import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
@@ -168,9 +168,7 @@ const fetchTaskCode = async (
 
   const documentState = useDocumentStore.getState();
   const uploadRes = await svgeditorParser.uploadToSvgeditorAPI(uploadFile, {
-    engraveDpi:
-      // (isDev() && BeamboxPreference.read('engrave-dpi-value')) ||
-      documentState['engrave_dpi'],
+    engraveDpi: documentState['engrave_dpi'],
     model: workareaManager.model,
     onProgressing: (data: { message: string; percentage: number }) => {
       // message: Analyzing SVG - 0.0%
@@ -208,7 +206,7 @@ const fetchTaskCode = async (
   });
 
   let doesSupportDiodeAndAF = true;
-  let shouldUseFastGradient = BeamboxPreference.read('fast_gradient') !== false;
+  let shouldUseFastGradient = useGlobalPreferenceStore.getState().fast_gradient !== false;
   let supportPwm: boolean;
   let supportJobOrigin: boolean;
   let supportAccOverrideV1: boolean;
@@ -436,7 +434,9 @@ export const getConvertEngine = (targetDevice?: IDeviceInfo) => {
   const useSwiftray =
     hasSwiftray &&
     currentWorkarea !== 'fbm2' &&
-    (isPromark || BeamboxPreference.read('path-engine') === 'swiftray' || targetDevice?.source === 'swiftray');
+    (isPromark ||
+      useGlobalPreferenceStore.getState()['path-engine'] === 'swiftray' ||
+      targetDevice?.source === 'swiftray');
   const convertEngine = useSwiftray ? fetchTaskCodeSwiftray : fetchTaskCode;
 
   return { convertEngine, useSwiftray };

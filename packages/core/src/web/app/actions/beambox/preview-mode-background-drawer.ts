@@ -2,12 +2,12 @@ import type { ObservableInput } from 'rxjs';
 import { from, Subject } from 'rxjs';
 import { concatMap } from 'rxjs/operators';
 
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import Constant from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import NS from '@core/app/constants/namespaces';
 import { setCameraPreviewState } from '@core/app/stores/cameraPreview';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { clearBackgroundImage, getBackgroundUrl, setBackgroundImage } from '@core/app/svgedit/canvasBackground';
 import workareaManager from '@core/app/svgedit/workarea';
 import { getAbsRect } from '@core/helpers/boundary-helper';
@@ -73,7 +73,7 @@ class PreviewModeBackgroundDrawer {
 
     this.updateRatio();
 
-    if (!BeamboxPreference.read('keep-preview-result') || currentCanvasRatio !== this.canvasRatio) {
+    if (!useGlobalPreferenceStore.getState()['keep-preview-result'] || currentCanvasRatio !== this.canvasRatio) {
       // which also clear the canvas
       this.updateCanvasSize();
     }

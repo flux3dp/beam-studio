@@ -5,7 +5,6 @@ import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import { getAddOnInfo } from '@core/app/constants/addOn';
@@ -13,6 +12,7 @@ import alertConstants from '@core/app/constants/alert-constants';
 import type { WorkArea, WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import workareaManager from '@core/app/svgedit/workarea';
 import alertConfig from '@core/helpers/api/alert-config';
 import deviceMaster from '@core/helpers/device-master';
@@ -40,7 +40,6 @@ class BasePreviewManager implements PreviewManager {
 
   constructor(device: IDeviceInfo) {
     this.device = device;
-    // or use device.model?
     this.workarea = workareaManager.model;
     this.workareaObj = getWorkarea(this.workarea);
   }
@@ -163,7 +162,8 @@ class BasePreviewManager implements PreviewManager {
       return 3600;
     }
 
-    const previewMovementSpeedLevel = beamboxPreference.read('preview_movement_speed_level');
+    // TODO: subscribe to change preview speed on change
+    const previewMovementSpeedLevel = useGlobalPreferenceStore.getState()['preview_movement_speed_level'];
 
     if (previewMovementSpeedLevel === PreviewSpeedLevel.FAST) {
       return 18000;
