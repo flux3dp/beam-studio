@@ -1,10 +1,10 @@
 import { Menu as ElectronMenu } from '@electron/remote';
 import { funnel } from 'remeda';
 
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import tabController from '@core/app/actions/tabController';
 import { TabEvents } from '@core/app/constants/tabConstants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import AbstractMenu from '@core/helpers/menubar/AbstractMenu';
 import { getExampleVisibility } from '@core/helpers/menubar/exampleFiles';
@@ -80,14 +80,16 @@ class Menu extends AbstractMenu {
   };
 
   initMenuItemStatus = (): void => {
+    const globalPreference = useGlobalPreferenceStore.getState();
+
     // checkboxes
-    this.changeMenuItemStatus(['ZOOM_WITH_WINDOW'], 'checked', BeamboxPreference.read('zoom_with_window'));
-    this.changeMenuItemStatus(['SHOW_GRIDS'], 'checked', BeamboxPreference.read('show_grids'));
-    this.changeMenuItemStatus(['SHOW_RULERS'], 'checked', BeamboxPreference.read('show_rulers'));
-    this.changeMenuItemStatus(['SHOW_LAYER_COLOR'], 'checked', BeamboxPreference.read('use_layer_color'));
-    this.changeMenuItemStatus(['ANTI_ALIASING'], 'checked', BeamboxPreference.read('anti-aliasing'));
-    this.changeMenuItemStatus(['AUTO_ALIGN'], 'checked', BeamboxPreference.read('auto_align'));
-    this.changeMenuItemStatus(['EXPORT_UV_PRINT'], 'visible', BeamboxPreference.read('enable-uv-print-file'));
+    this.changeMenuItemStatus(['ZOOM_WITH_WINDOW'], 'checked', globalPreference.zoom_with_window);
+    this.changeMenuItemStatus(['SHOW_GRIDS'], 'checked', globalPreference.show_grids);
+    this.changeMenuItemStatus(['SHOW_RULERS'], 'checked', globalPreference.show_rulers);
+    this.changeMenuItemStatus(['SHOW_LAYER_COLOR'], 'checked', globalPreference.use_layer_color);
+    this.changeMenuItemStatus(['ANTI_ALIASING'], 'checked', globalPreference['anti-aliasing']);
+    this.changeMenuItemStatus(['AUTO_ALIGN'], 'checked', globalPreference.auto_align);
+    this.changeMenuItemStatus(['EXPORT_UV_PRINT'], 'visible', globalPreference['enable-uv-print-file']);
     this.changeMenuItemStatus(['EXPORT_UV_PRINT'], 'enabled', false);
 
     this.updateMenuByWorkarea(useDocumentStore.getState().workarea);

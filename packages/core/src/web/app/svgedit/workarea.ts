@@ -1,4 +1,3 @@
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import layoutConstants from '@core/app/constants/layout-constants';
@@ -7,6 +6,7 @@ import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import beamboxStore from '@core/app/stores/beambox-store';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
@@ -57,7 +57,8 @@ class WorkareaManager {
   shouldShowGuide = false;
 
   init(model: WorkAreaModel): void {
-    this.shouldShowGuide = beamboxPreference.read('show_guides');
+    // TODO: move guides to independent handler
+    this.shouldShowGuide = useGlobalPreferenceStore.getState().show_guides;
     this.setWorkarea(model);
   }
 
@@ -245,7 +246,7 @@ class WorkareaManager {
     }
 
     const { height, minY, width } = this;
-    const hasRulers = beamboxPreference.read('show_rulers');
+    const hasRulers = useGlobalPreferenceStore.getState().show_rulers;
     const containerWidth = container.clientWidth - (hasRulers ? layoutConstants.rulerWidth : 0);
     const containerHeight = container.clientHeight - (hasRulers ? layoutConstants.rulerWidth : 0);
     const workareaToDimensionRatio = Math.min(containerWidth / width, containerHeight / height);

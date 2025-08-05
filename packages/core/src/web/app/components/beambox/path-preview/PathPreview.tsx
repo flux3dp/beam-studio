@@ -7,7 +7,6 @@ import { mat4, vec3 } from 'gl-matrix';
 import { funnel } from 'remeda';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant, { promarkModels } from '@core/app/actions/beambox/constant';
 import exportFuncs from '@core/app/actions/beambox/export-funcs';
 import { dpiTextMap } from '@core/app/actions/beambox/export-funcs-swiftray';
@@ -23,6 +22,7 @@ import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import workareaManager from '@core/app/svgedit/workarea';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import { checkBlockedSerial } from '@core/helpers/device/checkBlockedSerial';
@@ -1175,7 +1175,7 @@ class PathPreview extends React.Component<Props, State> {
       left: document.getElementById('path-preview-panel')!.offsetLeft,
       top: document.getElementById('path-preview-panel')!.offsetTop,
     };
-    const mouseInputDevice = BeamboxPreference.read('mouse_input_device');
+    const mouseInputDevice = useGlobalPreferenceStore.getState()['mouse_input_device'];
     const isTouchpad = mouseInputDevice === 'TOUCHPAD';
 
     if (isTouchpad) {
@@ -1578,7 +1578,7 @@ class PathPreview extends React.Component<Props, State> {
           }
         }
 
-        if (BeamboxPreference.read('fast_gradient')) {
+        if (useGlobalPreferenceStore.getState()['fast_gradient']) {
           if (!this.fastGradientGcodeString) {
             const fastGradientGcodeBlob = await exportFuncs.getFastGradientGcode();
 
