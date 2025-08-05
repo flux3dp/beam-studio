@@ -81,7 +81,7 @@ export const convertTextToPath = async ({
 export const convertTextOnPathToPath = async ({
   element,
   isToSelect: _isToSelect,
-  parentCommand = new BatchCommand('Convert Text on Path to Path'),
+  parentCommand,
   weldingTexts = false,
 }: {
   element: SVGElement;
@@ -89,7 +89,10 @@ export const convertTextOnPathToPath = async ({
   parentCommand?: IBatchCommand;
   weldingTexts?: boolean;
 }): Promise<ConvertToPathResult & { group: SVGGElement }> => {
-  const isSubCommand = parentCommand.getText() !== 'Convert Text on Path to Path';
+  const isSubCommand = Boolean(parentCommand);
+
+  if (!parentCommand) parentCommand = new BatchCommand('Convert Text on Path to Path');
+
   const pathElement = element.querySelector('path');
   const textElement = element.querySelector('text');
 

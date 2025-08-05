@@ -16,7 +16,7 @@ const mockSelectOnly = jest.fn();
 const mockSetSvgElemSize = jest.fn().mockReturnValue(mockCmd1);
 const mockSetSvgElemPosition = jest.fn().mockReturnValue(mockCmd2);
 const mockGetSelectedElems = jest.fn();
-const mockGroupSelectedElements = jest.fn().mockReturnValue(mockCmd3);
+const mockGroupSelectedElements = jest.fn().mockReturnValue({ command: mockCmd3 });
 
 jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) =>
@@ -99,7 +99,7 @@ describe('test postImportElement', () => {
       skipConfirm: true,
     });
     expect(mockGroupSelectedElements).toHaveBeenCalledTimes(1);
-    expect(mockGroupSelectedElements).toHaveReturnedWith(mockCmd3);
+    expect(mockAddSubCommand).toHaveBeenNthCalledWith(5, mockCmd3);
     expect(mockUpdateElementColor).toHaveBeenCalledTimes(1);
     expect(mockUpdateElementColor).toHaveBeenCalledWith(mockPathElement);
   });

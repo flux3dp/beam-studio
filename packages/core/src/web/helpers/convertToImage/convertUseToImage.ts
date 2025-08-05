@@ -35,7 +35,9 @@ export const convertUseToImage = async ({
   // 2. The new <image> will have the natural dimensions of the source.
   // All positioning and scaling is handled by the transform attribute.
   const dataXform = svgElement.getAttribute('data-xform');
-  const [formX, formY, width, height] = dataXform?.split(' ')?.map((v) => Number.parseFloat(v.split('=')[1])) || [0, 0];
+  const [formX, formY, width, height] = dataXform?.split(' ')?.map((v) => Number.parseFloat(v.split('=')[1])) || [
+    0, 0, 0, 0,
+  ];
   const x = Number.parseFloat(svgElement.getAttribute('x') || '0') + formX;
   const y = Number.parseFloat(svgElement.getAttribute('y') || '0') + formY;
   const transform = svgElement.getAttribute('transform') || '';
