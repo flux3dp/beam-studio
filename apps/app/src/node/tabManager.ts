@@ -99,8 +99,8 @@ class TabManager {
       this.sendToFocusedView(TabEvents.ImportFileInTab, data);
     });
 
-    ipcMain.on(TabEvents.BeamboxPreferenceChanged, (e, key, value) => {
-      this.sendToOtherViews(e.sender.id, TabEvents.BeamboxPreferenceChanged, key, value);
+    ipcMain.on(TabEvents.GlobalPreferenceChanged, (e, key, value) => {
+      this.sendToOtherViews(e.sender.id, TabEvents.GlobalPreferenceChanged, key, value);
     });
 
     const handleWindowSizeChanged = () => {

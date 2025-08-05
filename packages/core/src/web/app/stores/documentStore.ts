@@ -81,7 +81,7 @@ const getInitDocumentStore = (): DocumentState => {
 };
 
 /**
- * Document store storing the states in BeamboxPreference which are not shared by all tabs.
+ * Document Store stores the states in BeamboxPreference which are not shared by all tabs.
  */
 export const useDocumentStore = create(
   subscribeWithSelector<DocumentStore>(

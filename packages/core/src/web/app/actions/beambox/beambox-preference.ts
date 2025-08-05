@@ -102,7 +102,7 @@ export type BeamboxPreferenceKey = Prettify<keyof BeamboxPreference>;
 export type BeamboxPreferenceValue<T extends BeamboxPreferenceKey> = BeamboxPreference[T];
 /**
  * Global preferences: preferences that are shared across all tabs and not specific to a document.
- * Should handle preferences changes in other tabs with TabEvents.BeamboxPreferenceChanged
+ * Should handle preferences changes in other tabs with TabEvents.GlobalPreference
  */
 export type GlobalPreference = Omit<BeamboxPreference, DocumentStateKey>;
 
@@ -246,7 +246,7 @@ class BeamboxPreferenceClass {
     console.log('startup preference', preference);
     storage.set('beambox-preference', preference);
     communicator.on(
-      TabEvents.BeamboxPreferenceChanged,
+      TabEvents.GlobalPreferenceChanged,
       (key: BeamboxPreferenceKey, value: BeamboxPreferenceValue<BeamboxPreferenceKey>) => {
         eventEmitter.emit(key, value);
       },
@@ -268,7 +268,7 @@ class BeamboxPreferenceClass {
     storage.set('beambox-preference', preference);
     eventEmitter.emit(key, value);
 
-    if (isGlobalPreference) communicator.send(TabEvents.BeamboxPreferenceChanged, key, value);
+    if (isGlobalPreference) communicator.send(TabEvents.GlobalPreferenceChanged, key, value);
   }
 }
 

@@ -1,10 +1,10 @@
 export enum TabEvents {
   AddNewTab = 'add-new-tab',
-  BeamboxPreferenceChanged = 'beambox-preference-changed',
   CloseTab = 'close-tab',
   FocusTab = 'focus-tab',
   GetAllTabs = 'get-all-tabs',
   GetTabId = 'get-tab-id',
+  GlobalPreferenceChanged = 'global-preference-changed',
   ImportFileInTab = 'import-file-in-tab',
   MoveTab = 'move-tab',
   SetTabMode = 'set-tab-mode',
