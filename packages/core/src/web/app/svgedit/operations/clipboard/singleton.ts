@@ -7,10 +7,10 @@ import { checkNativeClipboardSupport, NativeClipboard } from './class/NativeClip
 export let clipboardCore: ClipboardCore = new MemoryClipboard();
 
 // Asynchronously check for native clipboard support and switch the implementation if supported.
-checkNativeClipboardSupport().then((hasNativeSupport) => {
-  console.log('checkNativeClipboardSupport', hasNativeSupport);
+checkNativeClipboardSupport().then((isNativeClipboardSupported) => {
+  console.log('🚀 ~ clipboard/singleton.ts:11 ~ isNativeClipboardSupported:', isNativeClipboardSupported);
 
-  if (hasNativeSupport) {
+  if (isNativeClipboardSupported) {
     clipboardCore = new NativeClipboard();
   }
 });

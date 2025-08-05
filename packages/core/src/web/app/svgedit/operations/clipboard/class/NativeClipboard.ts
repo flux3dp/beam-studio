@@ -1,7 +1,7 @@
 import { match } from 'ts-pattern';
 
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import type { ClipboardCore, ClipboardElement } from '@core/interfaces/Clipboard';
+import type { ClipboardCore, ClipboardData, ClipboardElement } from '@core/interfaces/Clipboard';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import { updateSymbolStyle } from '../helpers/updateSymbolStyle';
@@ -13,12 +13,6 @@ let svgCanvas: ISVGCanvas;
 getSVGAsync(({ Canvas }) => {
   svgCanvas = Canvas;
 });
-
-interface ClipboardData {
-  elements: ClipboardElement[];
-  imageData: Record<string, string>;
-  refs: Record<string, ClipboardElement>;
-}
 
 const serializeElement = ({
   attributes,
@@ -96,21 +90,29 @@ export class NativeClipboard extends Clipboard implements ClipboardCore {
     try {
       await navigator.clipboard.writeText(`BX clip:${JSON.stringify(serializedData)}`);
     } catch (err) {
-      console.log('🚀 ~ file: NativeClipboard:108 ~ writeDataToClipboard ~ err:', err);
+      console.log('🚀 ~ NativeClipboard.ts:99 ~ NativeClipboard ~ err:', err);
     }
   };
 
-  getData = async (): Promise<Element[]> => {
+  getRawData = async (): Promise<ClipboardData | null> => {
     const clipboardData = await navigator.clipboard.readText();
 
     if (!clipboardData.startsWith('BX clip:')) {
+      return null;
+    }
+
+    return JSON.parse(clipboardData.substring(8)) as ClipboardData;
+  };
+
+  getData = async (): Promise<Element[]> => {
+    const data = await this.getRawData();
+
+    if (!data) {
       return [];
     }
 
-    const drawing = svgCanvas.getCurrentDrawing();
-    const data = JSON.parse(clipboardData.substring(8)) as ClipboardData;
     const { elements, imageData, refs } = data;
-
+    const drawing = svgCanvas.getCurrentDrawing();
     const keys = Object.keys(refs);
 
     this.refClipboard = {};
@@ -168,7 +170,7 @@ export class NativeClipboard extends Clipboard implements ClipboardCore {
 
       return clipboardData.startsWith('BX clip:');
     } catch (err) {
-      console.log('🚀 ~ file: NativeClipboard.ts:180 ~ hasData ~ err:', err);
+      console.log('🚀 ~ NativeClipboard.ts:171 ~ NativeClipboard ~ err:', err);
 
       return false;
     }

@@ -1,3 +1,21 @@
+export interface ClipboardElement {
+  attributes: Array<Record<'namespaceURI' | 'nodeName' | 'value', null | string>>;
+  childNodes: ClipboardElement[];
+  dataGSVG?: string;
+  dataSymbol?: string;
+  innerHTML: string;
+  namespaceURI: null | string;
+  nodeName: string;
+  nodeType: number;
+  nodeValue: null | string;
+}
+
+export interface ClipboardData {
+  elements: ClipboardElement[];
+  imageData: Record<string, string>;
+  refs: Record<string, ClipboardElement>;
+}
+
 export interface ClipboardCore {
   addRefToClipboard(useElement: SVGUseElement): void;
 
@@ -12,19 +30,12 @@ export interface ClipboardCore {
    */
   getData(): Promise<Element[]>;
 
+  /**
+   * Get the raw data from the clipboard.
+   */
+  getRawData(): Promise<ClipboardData | null>;
+
   getRefFromClipboard(id: string): Element | undefined;
 
   hasData(): Promise<boolean>;
-}
-
-export interface ClipboardElement {
-  attributes: Array<Record<'namespaceURI' | 'nodeName' | 'value', null | string>>;
-  childNodes: ClipboardElement[];
-  dataGSVG?: string;
-  dataSymbol?: string;
-  innerHTML: string;
-  namespaceURI: null | string;
-  nodeName: string;
-  nodeType: number;
-  nodeValue: null | string;
 }

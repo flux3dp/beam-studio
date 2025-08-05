@@ -14,39 +14,44 @@ import { clipboardCore } from '../singleton';
 const { svgedit } = window;
 
 let svgCanvas: ISVGCanvas;
+let svgEdit: any;
 
-getSVGAsync(({ Canvas }) => {
+getSVGAsync(({ Canvas, Edit }) => {
   svgCanvas = Canvas;
+  svgEdit = Edit;
 });
 
-export const pasteElements = async (args: {
+export const pasteElements = async ({
+  isSubCmd = false,
+  selectElement = true,
+  type,
+  x,
+  y,
+}: {
   isSubCmd?: boolean;
   selectElement?: boolean;
-  type: 'in_place' | 'mouse' | 'point';
+  type: 'coordinate' | 'inPlace' | 'mouse';
   x?: number;
   y?: number;
 }): Promise<null | { cmd: IBatchCommand; elems: Element[] }> => {
-  const { isSubCmd = false, selectElement = true, type, x, y } = args || {};
   const clipboard = await clipboardCore.getData();
 
-  if (!clipboard?.length) {
-    return null;
-  }
+  if (!clipboard?.length) return null;
 
-  const pasted = [];
+  const pasted = Array.of<SVGGElement>();
   const batchCmd = new history.BatchCommand('Paste elements');
   const drawing = svgCanvas.getCurrentDrawing();
 
-  // Move elements to lastClickPoint
   for (const elem of clipboard) {
     if (!elem) continue;
 
     const copy = drawing.copyElem(elem) as SVGGElement;
 
-    // See if elem with elem ID is in the DOM already
     if (!svgedit.utilities.getElem(elem.id)) {
       copy.id = elem.id;
     }
+
+    console.log('Copying element:', elem, 'to:', copy);
 
     pasted.push(copy);
 
@@ -62,39 +67,47 @@ export const pasteElements = async (args: {
 
     batchCmd.addSubCommand(new history.InsertElementCommand(copy));
     (svgCanvas as any).restoreRefElems(copy);
-    promise.then(() => {
-      updateElementColor(copy);
-    });
+
+    await promise;
+    updateElementColor(copy);
   }
 
-  if (selectElement) svgCanvas.selectOnly(pasted as SVGGElement[], true);
+  if (selectElement) svgCanvas.selectOnly(pasted, true);
 
-  if (type !== 'in_place') {
-    let ctrX: number = 0;
-    let ctrY: number = 0;
+  // Unified positioning logic
+  let dx: number | undefined;
+  let dy: number | undefined;
+
+  if (type === 'inPlace' && (x !== undefined || y !== undefined)) {
+    // Paste in place with an offset
+    dx = x;
+    dy = y;
+  } else if (type === 'mouse' || type === 'coordinate') {
+    // Paste at a specific point (mouse or coordinate)
+    let ctrX = 0;
+    let ctrY = 0;
 
     if (type === 'mouse') {
       const lastClickPoint = (svgCanvas as any).getLastClickPoint();
 
       ctrX = lastClickPoint.x;
       ctrY = lastClickPoint.y;
-    } else if (type === 'point') {
+    } else {
       ctrX = x!;
       ctrY = y!;
     }
 
     const bbox = svgCanvas.getStrokedBBox(pasted);
-    const cx = ctrX - (bbox.x + bbox.width / 2);
-    const cy = ctrY - (bbox.y + bbox.height / 2);
-    const dx: number[] = [];
-    const dy: number[] = [];
 
-    pasted.forEach(() => {
-      dx.push(cx);
-      dy.push(cy);
-    });
+    dx = ctrX - (bbox.x + bbox.width / 2);
+    dy = ctrY - (bbox.y + bbox.height / 2);
+  }
 
-    const cmd = moveElements(dx, dy, pasted, false, true);
+  // Apply the move command if an offset is calculated
+  if (dx !== undefined && dy !== undefined) {
+    const dxArr = Array(pasted.length).fill(dx);
+    const dyArr = Array(pasted.length).fill(dy);
+    const cmd = moveElements(dxArr, dyArr, pasted, false, true);
 
     batchCmd.addSubCommand(cmd);
   }
@@ -117,11 +130,27 @@ export const pasteElements = async (args: {
   return { cmd: batchCmd, elems: pasted };
 };
 
+/**
+ * @deprecated Use pasteWithOffset or pasteElements({ type: 'coordinate', ... }) instead.
+ */
 export const pasteInCenter = async (): Promise<null | { cmd: IBatchCommand; elems: Element[] }> => {
   const zoom = workareaManager.zoomRatio;
   const workarea = document.getElementById('workarea')!;
   const x = (workarea.scrollLeft + workarea.clientWidth / 2) / zoom - workareaManager.width;
   const y = (workarea.scrollTop + workarea.clientHeight / 2) / zoom - workareaManager.height;
 
-  return pasteElements({ type: 'point', x, y });
+  return pasteElements({ type: 'coordinate', x, y });
+};
+
+/**
+ * Pastes elements to the current drawing with a default offset with 100 100 pixels.
+ * Or pastes in place if the first element from clipboard is not present.
+ * @param x - The horizontal offset. Defaults to 100.
+ * @param y - The vertical offset. Defaults to 100.
+ */
+export const pasteWithDefaultPosition = async (
+  x = 100,
+  y = 100,
+): Promise<null | { cmd: IBatchCommand; elems: Element[] }> => {
+  return pasteElements({ type: 'inPlace', x, y });
 };

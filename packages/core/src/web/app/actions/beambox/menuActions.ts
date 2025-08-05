@@ -9,7 +9,7 @@ import { showCurvePanel, showSharpenPanel } from '@core/app/components/dialogs/i
 import { showRotarySettings } from '@core/app/components/dialogs/RotarySettings';
 import { gestureIntroduction } from '@core/app/constants/media-tutorials';
 import historyUtils from '@core/app/svgedit/history/utils';
-import { cloneSelectedElements, pasteElements, pasteInCenter } from '@core/app/svgedit/operations/clipboard';
+import { cloneSelectedElements, pasteElements, pasteWithDefaultPosition } from '@core/app/svgedit/operations/clipboard';
 import disassembleUse from '@core/app/svgedit/operations/disassembleUse';
 import workareaManager from '@core/app/svgedit/workarea';
 import { externalLinkMemberDashboard, signOut } from '@core/helpers/api/flux-id';
@@ -98,11 +98,11 @@ export default {
   PASTE: (): Promise<null | {
     cmd: IBatchCommand;
     elems: Element[];
-  }> => pasteInCenter(),
+  }> => pasteWithDefaultPosition(),
   PASTE_IN_PLACE: (): Promise<null | {
     cmd: IBatchCommand;
     elems: Element[];
-  }> => pasteElements({ type: 'in_place' }),
+  }> => pasteElements({ type: 'inPlace' }),
   PREFERENCE: async (): Promise<void> => {
     Dialog.clearAllDialogComponents();
 

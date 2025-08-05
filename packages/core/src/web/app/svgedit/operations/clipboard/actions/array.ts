@@ -28,7 +28,7 @@ export const generateSelectedElementArray = async (
   for (let i = 0; i < column; i++) {
     for (let j = 0; j < row; j++) {
       if (i !== 0 || j !== 0) {
-        const pasteRes = await pasteElements({ isSubCmd: true, selectElement: false, type: 'in_place' });
+        const pasteRes = await pasteElements({ isSubCmd: true, selectElement: false, type: 'inPlace' });
 
         if (!pasteRes) continue;
 
