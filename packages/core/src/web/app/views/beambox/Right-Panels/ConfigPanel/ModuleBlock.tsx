@@ -1,4 +1,4 @@
-import React, { memo, useContext, useMemo } from 'react';
+import React, { memo, useContext } from 'react';
 
 import { pipe } from 'remeda';
 
@@ -7,7 +7,6 @@ import presprayArea from '@core/app/actions/canvas/prespray-area';
 import alertConstants from '@core/app/constants/alert-constants';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
-import { getSupportedModules } from '@core/app/constants/workarea-constants';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
@@ -15,6 +14,7 @@ import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import Select from '@core/app/widgets/AntdSelect';
 import alertConfig from '@core/helpers/api/alert-config';
+import { useSupportedModules } from '@core/helpers/hooks/useSupportedModules';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
 import {
@@ -47,7 +47,7 @@ const ModuleBlock = (): React.ReactNode => {
   const { selectedLayers } = useContext(ConfigPanelContext);
   const { value } = module;
   const workarea = useWorkarea();
-  const supportedModules = useMemo(() => getSupportedModules(workarea), [workarea]);
+  const supportedModules = useSupportedModules(workarea);
 
   if (supportedModules.length <= 1) return null;
 

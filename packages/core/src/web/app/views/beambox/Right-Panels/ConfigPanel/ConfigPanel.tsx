@@ -16,7 +16,7 @@ import type { LayerModuleType } from '@core/app/constants/layer-module/layer-mod
 import { LayerModule, UVModules } from '@core/app/constants/layer-module/layer-modules';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import tutorialConstants from '@core/app/constants/tutorial-constants';
-import { getSupportedModules, getWorkarea } from '@core/app/constants/workarea-constants';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import history from '@core/app/svgedit/history/history';
@@ -27,6 +27,7 @@ import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelIte
 import tutorialController from '@core/app/views/tutorials/tutorialController';
 import Select from '@core/app/widgets/AntdSelect';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import { useSupportedModules } from '@core/helpers/hooks/useSupportedModules';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import i18n from '@core/helpers/i18n';
 import isDev from '@core/helpers/is-dev';
@@ -99,7 +100,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     [lang.dropdown.parameters, lang.custom_preset, lang.various_preset],
   );
   const { change, getState } = useConfigPanelStore();
-  const supportedModules = useMemo(() => getSupportedModules(workarea), [workarea]);
+  const supportedModules = useSupportedModules(workarea);
   const state = getState();
   const { fullcolor, module } = state;
   const isPrintingModule = useMemo(() => printingModules.has(module.value), [module.value]);

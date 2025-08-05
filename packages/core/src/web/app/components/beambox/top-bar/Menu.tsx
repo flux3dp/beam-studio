@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 
 import { MenuDivider, MenuItem, SubMenu, Menu as TopBarMenu } from '@szhsin/react-menu';
 
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { adorModels, modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { menuItems } from '@core/app/constants/menuItems';
@@ -30,6 +29,7 @@ export default function Menu({ email }: Props): React.JSX.Element {
   const isUsingAntiAliasing = useGlobalPreferenceStore((state) => state['anti-aliasing']);
   const isAutoAlign = useGlobalPreferenceStore((state) => state.auto_align);
   const shouldZoomWithWindow = useGlobalPreferenceStore((state) => state.zoom_with_window);
+  const isUvPrintFileEnabled = useGlobalPreferenceStore((state) => state['enable-uv-print-file']);
   const [duplicateDisabled, setDuplicateDisabled] = useState(true);
   const [svgEditDisabled, setSvgEditDisabled] = useState(true);
   const [decomposePathDisabled, setDecomposePathDisabled] = useState(true);
@@ -306,7 +306,7 @@ export default function Menu({ email }: Props): React.JSX.Element {
           <MenuItem onClick={() => callback('EXPORT_PNG')}>{menuCms.export_PNG}</MenuItem>
           <MenuItem onClick={() => callback('EXPORT_JPG')}>{menuCms.export_JPG}</MenuItem>
           <MenuItem onClick={() => callback('EXPORT_FLUX_TASK')}>{hotkey('export_flux_task')}</MenuItem>
-          {beamboxPreference.read('enable-uv-print-file') && (
+          {isUvPrintFileEnabled && (
             <MenuItem onClick={() => callback('EXPORT_UV_PRINT')}>{menuCms.export_UV_print}</MenuItem>
           )}
         </SubMenu>

@@ -1,4 +1,3 @@
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import workareaManager from '@core/app/svgedit/workarea';
 import updateLayerColor from '@core/helpers/color/updateLayerColor';
@@ -10,14 +9,6 @@ let svgCanvas: ISVGCanvas;
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
-
-const updateAntiAliasing = (on: boolean): void => {
-  const svgContent = document.getElementById('svgcontent');
-
-  if (svgContent) {
-    svgContent.style.shapeRendering = on ? '' : 'optimizeSpeed';
-  }
-};
 
 const updateUseLayerColor = (): void => {
   const layers = Array.from(document.querySelectorAll('g.layer'));
@@ -87,20 +78,35 @@ const toggleZoomWithWindow = (): boolean => {
   return newValue;
 };
 
-const toggleAntiAliasing = (): boolean => {
-  const newValue = !BeamboxPreference.read('anti-aliasing');
+const updateAntiAliasing = (): void => {
+  const svgContent = document.getElementById('svgcontent');
 
-  updateAntiAliasing(newValue);
-  BeamboxPreference.write('anti-aliasing', newValue);
+  if (!svgContent) return;
+
+  const value = useGlobalPreferenceStore.getState()['anti-aliasing'];
+
+  svgContent.style.shapeRendering = value ? '' : 'optimizeSpeed';
+};
+
+const toggleAntiAliasing = (): boolean => {
+  const { 'anti-aliasing': value, set } = useGlobalPreferenceStore.getState();
+  const newValue = !value;
+
+  set('anti-aliasing', newValue);
 
   return newValue;
 };
 
+const initAntiAliasing = (): void => {
+  updateAntiAliasing();
+  useGlobalPreferenceStore.subscribe((state) => state['anti-aliasing'], updateAntiAliasing);
+};
+
 export default {
+  initAntiAliasing,
   toggleAntiAliasing,
   toggleGrid,
   toggleLayerColor,
   toggleRulers,
   toggleZoomWithWindow,
-  updateAntiAliasing,
 };

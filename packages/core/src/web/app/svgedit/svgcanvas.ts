@@ -31,7 +31,6 @@
 // svgedit libs
 
 import Alert from '@core/app/actions/alert-caller';
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import ToolPanelsController from '@core/app/actions/beambox/toolPanelsController';
 import { boundaryDrawer } from '@core/app/actions/canvas/boundaryDrawer';
@@ -217,9 +216,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       })
       .appendTo(svgroot);
 
-    const isUsingAntiAliasing = BeamboxPreference.read('anti-aliasing');
-
-    viewMenu.updateAntiAliasing(isUsingAntiAliasing);
+    viewMenu.initAntiAliasing();
   });
 
   clearSvgContentElement();
@@ -4180,13 +4177,23 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     $('[id^="align_text"]').remove();
   };
 
-  this.toggleAutoAlign = () => {
-    const value = !BeamboxPreference.read('auto_align');
+  const onAutoAlignChanged = () => {
+    const { auto_align: value } = useGlobalPreferenceStore.getState();
 
     this.isAutoAlign = value;
 
-    BeamboxPreference.write('auto_align', value);
-    this.clearAlignLines();
+    if (!this.isAutoAlign) {
+      this.clearAlignLines();
+    }
+  };
+
+  useGlobalPreferenceStore.subscribe((state) => state.auto_align, onAutoAlignChanged);
+
+  this.toggleAutoAlign = () => {
+    const { auto_align: value, set } = useGlobalPreferenceStore.getState();
+    const newValue = !value;
+
+    set('auto_align', newValue);
 
     return value;
   };

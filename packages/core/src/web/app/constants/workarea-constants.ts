@@ -1,8 +1,9 @@
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { checkBM2UV } from '@core/helpers/checkFeature';
 import type { TAccelerationOverride } from '@core/interfaces/ITaskConfig';
+
+import { useGlobalPreferenceStore } from '../stores/globalPreferenceStore';
 
 import { LayerModule, type LayerModuleType } from './layer-module/layer-modules';
 
@@ -233,9 +234,11 @@ export const getWorkarea = (model: WorkAreaModel, fallbackModel: WorkAreaModel =
   return { ...res };
 };
 
-export const getSupportedModules = (model: WorkAreaModel): LayerModuleType[] => {
+export const getSupportedModules = (
+  model: WorkAreaModel,
+  isUvPrintEnabled: boolean = useGlobalPreferenceStore.getState()['enable-uv-print-file'],
+): LayerModuleType[] => {
   const { supportedModules = [LayerModule.LASER_UNIVERSAL, LayerModule.UV_PRINT] } = workareaConstants[model] ?? {};
-  const isUvPrintEnabled = beamboxPreference.read('enable-uv-print-file');
 
   if (!isUvPrintEnabled) return supportedModules.filter((module) => module !== LayerModule.UV_PRINT);
 

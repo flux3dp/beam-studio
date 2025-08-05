@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useRef } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 
 import { SwipeAction } from 'antd-mobile';
 import type { Action, SwipeActionRef } from 'antd-mobile/es/components/swipe-action';
@@ -7,11 +7,11 @@ import { match } from 'ts-pattern';
 
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
-import { getSupportedModules } from '@core/app/constants/workarea-constants';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
 import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
 import ColorPicker from '@core/app/widgets/ColorPicker';
+import { useSupportedModules } from '@core/helpers/hooks/useSupportedModules';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import {
@@ -73,7 +73,7 @@ const LayerList = ({
   const currentLayerName = drawing.getCurrentLayerName();
   const isMobile = useIsMobile();
   const workarea = useWorkarea();
-  const supportedModules = useMemo(() => getSupportedModules(workarea), [workarea]);
+  const supportedModules = useSupportedModules(workarea);
   const ref = useRef<SwipeActionRef>(null);
 
   useEffect(() => {
