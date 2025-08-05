@@ -326,6 +326,10 @@ let initOpenPath = '';
 
 app.on('open-file', (event, filePath) => {
   initOpenPath = filePath;
+
+  if (tabManager) {
+    tabManager.sendToView(tabManager.welcomeTabId, 'open-file', filePath);
+  }
 });
 
 ipcMain.on('GET_OPEN_FILE', (evt) => {
