@@ -416,10 +416,7 @@ const mouseDown = async (evt: MouseEvent) => {
         element: 'rect',
       });
 
-      if (svgCanvas.isUsingLayerColor) {
-        updateElementColor(newRect);
-      }
-
+      updateElementColor(newRect);
       svgCanvas.selectOnly([newRect], true);
       break;
     case 'line':
@@ -445,8 +442,7 @@ const mouseDown = async (evt: MouseEvent) => {
         element: 'line',
       });
 
-      if (svgCanvas.isUsingLayerColor) updateElementColor(newLine);
-
+      updateElementColor(newLine);
       svgCanvas.selectOnly([newLine], true);
       canvasEvents.addLine(newLine);
       break;
@@ -469,8 +465,7 @@ const mouseDown = async (evt: MouseEvent) => {
         element: 'ellipse',
       });
 
-      if (svgCanvas.isUsingLayerColor) updateElementColor(newEllipse);
-
+      updateElementColor(newEllipse);
       svgCanvas.selectOnly([newEllipse], true);
       break;
     case 'text':

@@ -245,12 +245,6 @@ class BeamboxPreferenceClass {
 
     console.log('startup preference', preference);
     storage.set('beambox-preference', preference);
-    communicator.on(
-      TabEvents.GlobalPreferenceChanged,
-      (key: BeamboxPreferenceKey, value: BeamboxPreferenceValue<BeamboxPreferenceKey>) => {
-        eventEmitter.emit(key, value);
-      },
-    );
   }
 
   read<Key extends BeamboxPreferenceKey>(key: Key): BeamboxPreferenceValue<Key> {
@@ -260,7 +254,7 @@ class BeamboxPreferenceClass {
   write<Key extends BeamboxPreferenceKey>(
     key: Key,
     value: BeamboxPreferenceValue<Key>,
-    isGlobalPreference: boolean = true,
+    shouldNotifyChanges: boolean = true,
   ): void {
     const preference = storage.get('beambox-preference', false);
 
@@ -268,7 +262,7 @@ class BeamboxPreferenceClass {
     storage.set('beambox-preference', preference);
     eventEmitter.emit(key, value);
 
-    if (isGlobalPreference) communicator.send(TabEvents.GlobalPreferenceChanged, key, value);
+    if (shouldNotifyChanges) communicator.send(TabEvents.GlobalPreferenceChanged, key, value);
   }
 }
 

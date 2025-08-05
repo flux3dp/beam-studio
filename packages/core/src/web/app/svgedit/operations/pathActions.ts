@@ -326,10 +326,7 @@ const mouseDown = (evt: MouseEvent, mouseTarget: SVGElement, startX: number, sta
         element: 'path',
       });
 
-      if (svgCanvas.isUsingLayerColor) {
-        updateElementColor(drawnPath);
-      }
-
+      updateElementColor(drawnPath!);
       // set stretchy line to first point
       stretchy.setAttribute('d', ['M', ...wrapPrecision([mouseX, mouseY, mouseX, mouseY])].join(' '));
       index = subpath ? svgedit.path.path.segs.length : 0;

@@ -7,6 +7,7 @@ import { adorModels, modelsWithModules, promarkModels } from '@core/app/actions/
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { menuItems } from '@core/app/constants/menuItems';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import Discover from '@core/helpers/api/discover';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import isWeb from '@core/helpers/is-web';
@@ -23,12 +24,12 @@ interface Props {
 export default function Menu({ email }: Props): React.JSX.Element {
   const eventEmitter = React.useMemo(() => eventEmitterFactory.createEventEmitter('top-bar-menu'), []);
   const [devices, setDevices] = useState(Array<IDeviceInfo>());
-  const [shouldShowRulers, changeShouldShowRulers] = useState(beamboxPreference.read('show_rulers'));
-  const [shouldShowGrids, changeShouldShowGrids] = useState(beamboxPreference.read('show_grids'));
-  const [shouldUseLayerColor, changeShouldUseLayerColor] = useState(beamboxPreference.read('use_layer_color'));
-  const [isUsingAntiAliasing, setIsUsingAntiAliasing] = useState(beamboxPreference.read('anti-aliasing'));
-  const [isAutoAlign, setIsAutoAlign] = useState(beamboxPreference.read('auto_align'));
-  const [shouldZoomWithWindow, changeShouldZoomWithWindow] = useState(beamboxPreference.read('zoom_with_window'));
+  const shouldShowRulers = useGlobalPreferenceStore((state) => state.show_rulers);
+  const shouldShowGrids = useGlobalPreferenceStore((state) => state.show_grids);
+  const shouldUseLayerColor = useGlobalPreferenceStore((state) => state.use_layer_color);
+  const isUsingAntiAliasing = useGlobalPreferenceStore((state) => state['anti-aliasing']);
+  const isAutoAlign = useGlobalPreferenceStore((state) => state.auto_align);
+  const shouldZoomWithWindow = useGlobalPreferenceStore((state) => state.zoom_with_window);
   const [duplicateDisabled, setDuplicateDisabled] = useState(true);
   const [svgEditDisabled, setSvgEditDisabled] = useState(true);
   const [decomposePathDisabled, setDecomposePathDisabled] = useState(true);
@@ -369,7 +370,6 @@ export default function Menu({ email }: Props): React.JSX.Element {
           checked={shouldZoomWithWindow}
           onClick={() => {
             callback('ZOOM_WITH_WINDOW');
-            changeShouldZoomWithWindow(!shouldZoomWithWindow);
           }}
           type="checkbox"
         >
@@ -380,7 +380,6 @@ export default function Menu({ email }: Props): React.JSX.Element {
           checked={shouldShowGrids}
           onClick={() => {
             callback('SHOW_GRIDS');
-            changeShouldShowGrids(!shouldShowGrids);
           }}
           type="checkbox"
         >
@@ -390,7 +389,6 @@ export default function Menu({ email }: Props): React.JSX.Element {
           checked={shouldShowRulers}
           onClick={() => {
             callback('SHOW_RULERS');
-            changeShouldShowRulers(!shouldShowRulers);
           }}
           type="checkbox"
         >
@@ -400,7 +398,6 @@ export default function Menu({ email }: Props): React.JSX.Element {
           checked={shouldUseLayerColor}
           onClick={() => {
             callback('SHOW_LAYER_COLOR');
-            changeShouldUseLayerColor(!shouldUseLayerColor);
           }}
           type="checkbox"
         >
@@ -410,7 +407,6 @@ export default function Menu({ email }: Props): React.JSX.Element {
           checked={isAutoAlign}
           onClick={() => {
             callback('AUTO_ALIGN');
-            setIsAutoAlign(!isAutoAlign);
           }}
           type="checkbox"
         >
@@ -420,7 +416,6 @@ export default function Menu({ email }: Props): React.JSX.Element {
           checked={isUsingAntiAliasing}
           onClick={() => {
             callback('ANTI_ALIASING');
-            setIsUsingAntiAliasing(!isUsingAntiAliasing);
           }}
           type="checkbox"
         >

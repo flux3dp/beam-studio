@@ -1,5 +1,5 @@
 import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import grid from '@core/app/actions/canvas/grid';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import workareaManager from '@core/app/svgedit/workarea';
 import updateLayerColor from '@core/helpers/color/updateLayerColor';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -19,42 +19,48 @@ const updateAntiAliasing = (on: boolean): void => {
   }
 };
 
-const toggleLayerColor = (): boolean => {
-  const isUsingLayerColor = !svgCanvas.isUsingLayerColor;
-
-  svgCanvas.isUsingLayerColor = isUsingLayerColor;
-  BeamboxPreference.write('use_layer_color', isUsingLayerColor);
-
+const updateUseLayerColor = (): void => {
   const layers = Array.from(document.querySelectorAll('g.layer'));
 
   layers.forEach((layer) => {
     updateLayerColor(layer as SVGGElement);
   });
+};
+const initUseLayerColor = (): void => {
+  useGlobalPreferenceStore.subscribe((state) => state.use_layer_color, updateUseLayerColor);
+};
 
-  return isUsingLayerColor;
+initUseLayerColor();
+
+const toggleLayerColor = (): boolean => {
+  const { set, use_layer_color: value } = useGlobalPreferenceStore.getState();
+  const newValue = !value;
+
+  set('use_layer_color', newValue);
+
+  return newValue;
 };
 
 const toggleGrid = (): boolean => {
-  const newVal = !BeamboxPreference.read('show_grids');
+  const { set, show_grids: value } = useGlobalPreferenceStore.getState();
+  const newVal = !value;
 
-  BeamboxPreference.write('show_grids', newVal);
-  grid.toggleGrids();
+  set('show_grids', newVal);
 
   return newVal;
 };
 
 const toggleRulers = (): boolean => {
-  const shouldShowRulers = !BeamboxPreference.read('show_rulers');
+  const { set, show_rulers: value } = useGlobalPreferenceStore.getState();
+  const newVal = !value;
 
-  BeamboxPreference.write('show_rulers', shouldShowRulers);
+  set('show_rulers', newVal);
 
-  return shouldShowRulers;
+  return newVal;
 };
 
-const toggleZoomWithWindow = (): boolean => {
-  workareaManager.resetView();
-
-  const zoomWithWindow = !BeamboxPreference.read('zoom_with_window');
+const updateZoomWithWindow = (): void => {
+  const zoomWithWindow = useGlobalPreferenceStore.getState()['zoom_with_window'];
 
   if (zoomWithWindow) {
     window.removeEventListener('resize', workareaManager.resetView);
@@ -62,10 +68,23 @@ const toggleZoomWithWindow = (): boolean => {
   } else {
     window.removeEventListener('resize', workareaManager.resetView);
   }
+};
+const initZoomWithWindow = (): void => {
+  updateZoomWithWindow();
+  useGlobalPreferenceStore.subscribe((state) => state['zoom_with_window'], updateZoomWithWindow);
+};
 
-  BeamboxPreference.write('zoom_with_window', zoomWithWindow);
+initZoomWithWindow();
 
-  return zoomWithWindow;
+const toggleZoomWithWindow = (): boolean => {
+  workareaManager.resetView();
+
+  const { set, zoom_with_window: value } = useGlobalPreferenceStore.getState();
+  const newValue = !value;
+
+  set('zoom_with_window', newValue);
+
+  return newValue;
 };
 
 const toggleAntiAliasing = (): boolean => {

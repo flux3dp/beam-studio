@@ -17,9 +17,6 @@ jest.mock('@core/app/svgedit/workarea', () => ({
 jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) => {
     callback({
-      Canvas: {
-        isUsingLayerColor: false,
-      },
       Editor: {
         curConfig: {
           showGrid: true,

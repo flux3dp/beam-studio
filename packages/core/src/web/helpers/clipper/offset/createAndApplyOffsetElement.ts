@@ -40,10 +40,7 @@ export function createAndApplyOffsetElement(solutionPaths: Path[]): boolean {
 
   svgCanvas.pathActions.fixEnd(newElem);
   batchCmd.addSubCommand(new history.InsertElementCommand(newElem));
-
-  if (svgCanvas.isUsingLayerColor) {
-    updateElementColor(newElem);
-  }
+  updateElementColor(newElem);
 
   svgCanvas.selectOnly([newElem], true);
   svgCanvas.addCommandToHistory(batchCmd);

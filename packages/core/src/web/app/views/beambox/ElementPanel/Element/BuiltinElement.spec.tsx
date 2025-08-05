@@ -76,7 +76,6 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
         addSvgElementFromJson: mockAddSvgElementFromJson,
         getCurrentDrawing: () => ({ getCurrentLayerName: mockGetCurrentLayerName }),
         getNextId: jest.fn(),
-        isUsingLayerColor: true,
         selectOnly: mockSelectOnly,
       },
     }),

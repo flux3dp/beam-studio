@@ -42,6 +42,7 @@ import { getAddOnInfo } from '@core/app/constants/addOn';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import * as TutorialController from '@core/app/views/tutorials/tutorialController';
@@ -775,8 +776,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   textEdit.updateCurText(curText);
   textEdit.useDefaultFont();
 
-  this.isUsingLayerColor = BeamboxPreference.read('use_layer_color');
-  this.isAutoAlign = BeamboxPreference.read('auto_align');
+  this.isAutoAlign = useGlobalPreferenceStore.getState().auto_align;
 
   let root_sctm = null;
 
@@ -4439,7 +4439,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     if (!batchCmd.isEmpty() && !isSubCmd) addCommandToHistory(batchCmd);
 
-    if (canvas.isUsingLayerColor) updateElementColor(group);
+    updateElementColor(group);
 
     // update selection
     selectOnly([group], true);
@@ -4880,9 +4880,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       targetLayer.appendChild(elem);
     }
 
-    if (this.isUsingLayerColor) {
-      updateElementColor(elem);
-    }
+    updateElementColor(elem);
 
     if (tempGroup.childNodes.length > 1) {
       selectorManager.requestSelector(tempGroup).resize();
@@ -4966,9 +4964,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
           targetLayer.appendChild(elem);
         }
 
-        if (this.isUsingLayerColor) {
-          updateElementColor(elem);
-        }
+        updateElementColor(elem as SVGElement);
 
         children[i++] = elem;
       }

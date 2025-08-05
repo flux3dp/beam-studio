@@ -1,9 +1,9 @@
 /* global EventListener */
 import alertCaller from '@core/app/actions/alert-caller';
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import progressCaller from '@core/app/actions/progress-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import NS from '@core/app/constants/namespaces';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import i18n from '@core/helpers/i18n';
@@ -70,8 +70,6 @@ export const disassembleUse = async (
 
   if (!elems) elems = [...svgCanvas.getSelectedElems()] as SVGElement[];
 
-  const useLayerColor = beamboxPreference.read('use_layer_color');
-
   if (!skipConfirm) {
     const confirm = await new Promise((resolve) => {
       alertCaller.popUp({
@@ -129,7 +127,7 @@ export const disassembleUse = async (
     svgCanvas.setCurrentLayer(layerTitle);
     LayerPanelController.updateLayerPanel();
 
-    const color = (useLayerColor ? getData(layer, 'color') : '#000') ?? '#000';
+    const color = (useGlobalPreferenceStore.getState().use_layer_color ? getData(layer, 'color') : '#000') ?? '#000';
     const drawing = svgCanvas.getCurrentDrawing();
     const wireframe = elem.getAttribute('data-wireframe') === 'true';
 

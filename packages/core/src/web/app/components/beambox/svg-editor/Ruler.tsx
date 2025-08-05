@@ -1,14 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import workareaManager from '@core/app/svgedit/workarea';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import { useBeamboxPreference } from '@core/helpers/hooks/useBeamboxPreference';
 import storage from '@core/implementations/storage';
 
 import styles from './Ruler.module.scss';
 
 const Ruler = (): React.JSX.Element => {
-  const shouldShowRulers = useBeamboxPreference('show_rulers');
+  const shouldShowRulers = useGlobalPreferenceStore((state) => state.show_rulers);
   const canvasEventEmitter = useMemo(() => eventEmitterFactory.createEventEmitter('canvas'), []);
   const rulersRef = useRef<HTMLDivElement>(null);
   const xContainerRef = useRef<HTMLDivElement>(null);

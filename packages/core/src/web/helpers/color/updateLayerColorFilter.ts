@@ -1,5 +1,5 @@
-import beamboxPrefernce from '@core/app/actions/beambox/beambox-preference';
 import NS from '@core/app/constants/namespaces';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 
 const hexToRgb = (hexColorCode) => {
   const res = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hexColorCode);
@@ -25,8 +25,8 @@ const updateLayerColorFilter = (layer: SVGGElement): void => {
     return;
   }
 
-  const useLayerColor = beamboxPrefernce.read('use_layer_color');
-  const color = useLayerColor ? layer.getAttribute('data-color') : '#000';
+  const useLayerColor = useGlobalPreferenceStore.getState().use_layer_color;
+  const color = (useLayerColor ? layer.getAttribute('data-color') : '#000') ?? '#000';
   const { b, g, r } = hexToRgb(color);
 
   if (filter) {

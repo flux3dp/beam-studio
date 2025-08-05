@@ -96,10 +96,7 @@ const importSvgString = async (
       });
 
       svgCanvas.setHref(element, `#${imageSymbol.id}`);
-
-      if (svgCanvas.isUsingLayerColor) {
-        updateElementColor(element);
-      }
+      updateElementColor(element);
     }),
   );
 
