@@ -1,3 +1,6 @@
+// Add this import at the top of the file
+import path from 'path';
+
 import alertCaller from '@core/app/actions/alert-caller';
 import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
 import progressCaller from '@core/app/actions/progress-caller';
@@ -31,7 +34,9 @@ export type FileData =
   | { data: File; type: 'normal' }
   | { data: FileMeta; type: 'path' }
   | { file: IFile; type: 'cloud' }
+  | { filePath: string; type: 'open' }
   | { filePath: string; type: 'recent' }
+  // Add a new type for opening files from a path
   | { key: ExampleFileKey; type: 'example' };
 
 const id = 'import-file-in-another-tab';
@@ -64,9 +69,9 @@ export const setFileInAnotherTab = async (importingFile: FileData): Promise<void
     let data = importingFile;
 
     if (importingFile.type === 'normal') {
-      const path = fileSystem.getPathForFile(importingFile.data);
+      const filePath = fileSystem.getPathForFile(importingFile.data);
 
-      if (!path) {
+      if (!filePath) {
         progressCaller.popById(id);
         throw new Error('Failed to load file path');
       }
@@ -74,7 +79,7 @@ export const setFileInAnotherTab = async (importingFile: FileData): Promise<void
       data = {
         data: {
           name: importingFile.data.name,
-          path,
+          path: filePath,
           type: importingFile.data.type,
         },
         type: 'path',
@@ -115,5 +120,18 @@ export const importFileInCurrentTab = async (importingFile: FileData): Promise<v
     await recentMenuUpdater.openRecentFiles(importingFile.filePath);
   } else if (importingFile.type === 'example') {
     await loadExampleFile(importingFile.key);
+    // Add a new handler for the 'open' type
+  } else if (importingFile.type === 'open') {
+    const { filePath } = importingFile;
+    const fileName = path.basename(filePath);
+    const fileContent = fileSystem.readFile(filePath);
+
+    if (fileContent) {
+      const file = new File([fileContent as any], fileName);
+
+      // Storing the path on the file object is useful for other parts of the app
+      (file as any).path = filePath;
+      await svgEditor.handleFile(file);
+    }
   }
 };
