@@ -97,7 +97,7 @@ export const ImageEditComparePanel = ({
     );
   }
 
-  const maxModalWidth = window.innerWidth - 32;
+  const maxModalWidth = Math.min(window.innerWidth - 32, 0.65 * window.innerWidth);
   const maxModalHeight = window.innerHeight - 2 * layoutConstants.topBarHeight;
   const modalPaddingX = 48;
   const modalControlHeight = 116;
@@ -131,7 +131,7 @@ export const ImageEditComparePanel = ({
       onCancel={onClose}
       open
       title={title}
-      width={imgDisplayWidth + contentWidth + modalPaddingX}
+      width={Math.min(imgDisplayWidth + contentWidth + modalPaddingX, maxModalWidth)}
     >
       <Row gutter={10} justify="center">
         <Col flex={`0 0 ${imgDisplayWidth}px`}>
