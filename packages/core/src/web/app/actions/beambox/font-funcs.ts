@@ -2,9 +2,9 @@ import * as fontkit from 'fontkit';
 import { sprintf } from 'sprintf-js';
 
 import Alert from '@core/app/actions/alert-caller';
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import history from '@core/app/svgedit/history/history';
 import { moveElements } from '@core/app/svgedit/operations/move';
 import textedit from '@core/app/svgedit/text/textedit';
@@ -22,7 +22,6 @@ import storage from '@core/implementations/storage';
 import type { FontDescriptor, GeneralFont, IFontQuery, WebFont } from '@core/interfaces/IFont';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 
 let svgCanvas: ISVGCanvas;
 let svgedit: any;
