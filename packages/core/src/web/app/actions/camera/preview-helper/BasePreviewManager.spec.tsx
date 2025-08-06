@@ -17,10 +17,12 @@ jest.mock('@core/app/svgedit/workarea', () => ({
   model: 'fbm1',
 }));
 
-const mockRead = jest.fn();
+const mockGetGlobalPreferenceStore = jest.fn();
 
-jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
-  read: (...args) => mockRead(...args),
+jest.mock('@core/app/stores/globalPreferenceStore', () => ({
+  useGlobalPreferenceStore: {
+    getState: () => mockGetGlobalPreferenceStore(),
+  },
 }));
 
 const mockAlertConfigRead = jest.fn();
@@ -215,7 +217,9 @@ describe('test BasePreviewManager', () => {
     testSets.forEach(({ expected, label, value }) => {
       test(`moveTo ${label}`, async () => {
         mockGetState.mockReturnValue({ 'enable-diode': false });
-        mockRead.mockReturnValue(value);
+        mockGetGlobalPreferenceStore.mockReturnValue({
+          preview_movement_speed_level: value,
+        });
 
         const basePreviewManager = new BasePreviewManager(mockDeviceInfo);
 
@@ -245,7 +249,9 @@ describe('test BasePreviewManager', () => {
 
     test('moveTo with diode', async () => {
       mockGetState.mockReturnValue({ 'enable-diode': true });
-      mockRead.mockReturnValue(PreviewSpeedLevel.FAST);
+      mockGetGlobalPreferenceStore.mockReturnValue({
+        preview_movement_speed_level: PreviewSpeedLevel.FAST,
+      });
       mockGetAddOnInfo.mockReturnValue({ hybridLaser: true });
 
       const basePreviewManager = new BasePreviewManager(mockDeviceInfo);

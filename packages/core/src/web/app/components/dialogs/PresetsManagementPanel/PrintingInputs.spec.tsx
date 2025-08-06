@@ -5,10 +5,10 @@ import { fireEvent, render } from '@testing-library/react';
 import PrintingInputs from './PrintingInputs';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 
-const mockRead = jest.fn();
+const mockUseGlobalPreferenceStore = jest.fn();
 
-jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
-  read: (...args) => mockRead(...args),
+jest.mock('@core/app/stores/globalPreferenceStore', () => ({
+  useGlobalPreferenceStore: (...args) => mockUseGlobalPreferenceStore(...args),
 }));
 
 jest.mock('@core/helpers/layer/layer-config-helper', () => ({
@@ -81,7 +81,7 @@ describe('PrintingInputs', () => {
   });
 
   it('should render correctly in advanced mode', () => {
-    mockRead.mockReturnValue(true);
+    mockUseGlobalPreferenceStore.mockReturnValue(true);
 
     const { container } = render(
       <PrintingInputs handleChange={handleChange} maxSpeed={maxSpeed} minSpeed={minSpeed} preset={preset} />,
@@ -91,7 +91,7 @@ describe('PrintingInputs', () => {
   });
 
   test('change value in advanced mode', () => {
-    mockRead.mockReturnValue(true);
+    mockUseGlobalPreferenceStore.mockReturnValue(true);
 
     const { getByTestId } = render(
       <PrintingInputs handleChange={handleChange} maxSpeed={maxSpeed} minSpeed={minSpeed} preset={preset} />,

@@ -1,9 +1,11 @@
 import updateLayerColor from './updateLayerColor';
 
-const mockRead = jest.fn();
+const mockGetState = jest.fn();
 
-jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
-  read: (...args) => mockRead(...args),
+jest.mock('@core/app/stores/globalPreferenceStore', () => ({
+  useGlobalPreferenceStore: {
+    getState: () => mockGetState(),
+  },
 }));
 
 const mockGetLayerName = jest.fn();
@@ -48,11 +50,10 @@ describe('test updateLayerColor', () => {
 
     layer.appendChild(mockRect);
     layer.setAttribute('data-color', '#123456');
-    mockRead.mockReturnValueOnce(true);
+    mockGetState.mockReturnValue({ use_layer_color: true });
     mockGetLayerName.mockReturnValueOnce(null);
     await updateLayerColor(layer as Element as SVGGElement);
-    expect(mockRead).toBeCalledTimes(1);
-    expect(mockRead).toHaveBeenNthCalledWith(1, 'use_layer_color');
+    expect(mockGetState).toHaveBeenCalledTimes(1);
     expect(mockSetElementsColor).toHaveBeenCalledWith([mockRect], '#123456', false);
     expect(mockUpdateLayerColorFilter).toHaveBeenCalledWith(layer);
   });

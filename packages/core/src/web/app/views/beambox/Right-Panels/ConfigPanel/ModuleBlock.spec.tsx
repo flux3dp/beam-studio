@@ -100,12 +100,6 @@ const mockInitState = jest.fn();
 
 jest.mock('./initState', () => mockInitState);
 
-const mockPreferenceRead = jest.fn();
-
-jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
-  read: mockPreferenceRead,
-}));
-
 const mockUseDocumentStore = jest.fn();
 
 jest.mock('@core/app/stores/documentStore', () => ({

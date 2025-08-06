@@ -7,11 +7,16 @@ jest.mock('@core/helpers/layer-module/layer-module-helper', () => ({
   getDefaultLaserModule: () => mockGetDefaultLaserModule(),
 }));
 
-const mockRead = jest.fn();
+const mockGetGlobalPreference = jest.fn();
+const mockSubscribeGlobalPreference = jest.fn();
 
-jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
-  read: (key: string) => mockRead(key),
+jest.mock('@core/app/stores/globalPreferenceStore', () => ({
+  useGlobalPreferenceStore: {
+    getState: mockGetGlobalPreference,
+    subscribe: mockSubscribeGlobalPreference,
+  },
 }));
+mockGetGlobalPreference.mockReturnValue({ 'multipass-compensation': false });
 
 const mockGetState = jest.fn();
 
@@ -295,5 +300,23 @@ describe('test layer-config-helper', () => {
       frequency: { max: 1000, min: 1 },
       pulseWidth: { max: 500, min: 2 },
     });
+  });
+
+  test('baseConfig when multipass-compensation changed', () => {
+    expect(mockSubscribeGlobalPreference).toHaveBeenCalledTimes(1);
+
+    const selector = mockSubscribeGlobalPreference.mock.calls[0][0];
+    const handler = mockSubscribeGlobalPreference.mock.calls[0][1];
+
+    console.log(selector, handler);
+
+    handler(selector({ 'multipass-compensation': true }));
+
+    expect(baseConfig.ink).toEqual(3);
+    expect(baseConfig.wInk).toEqual(-12);
+
+    handler(selector({ 'multipass-compensation': false }));
+    expect(baseConfig.ink).toEqual(1);
+    expect(baseConfig.wInk).toEqual(-4);
   });
 });

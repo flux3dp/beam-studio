@@ -91,9 +91,9 @@ canvasEventEmitter.on('canvas-change', () => {
   });
 });
 
-const toggleGrids = (): void => {
-  show = useGlobalPreferenceStore.getState().show_grids;
-  gridContainer.style.display = show ? 'inline' : 'none';
+const toggleGrids = (value: boolean = useGlobalPreferenceStore.getState().show_grids): void => {
+  show = value;
+  gridContainer.style.display = value ? 'inline' : 'none';
   updateGrids(lastZoomRatio, true);
 };
 

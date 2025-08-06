@@ -1,14 +1,6 @@
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import workareaManager from '@core/app/svgedit/workarea';
 import updateLayerColor from '@core/helpers/color/updateLayerColor';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
 
 const updateUseLayerColor = (): void => {
   const layers = Array.from(document.querySelectorAll('g.layer'));
@@ -50,10 +42,8 @@ const toggleRulers = (): boolean => {
   return newVal;
 };
 
-const updateZoomWithWindow = (): void => {
-  const zoomWithWindow = useGlobalPreferenceStore.getState()['zoom_with_window'];
-
-  if (zoomWithWindow) {
+const updateZoomWithWindow = (value: boolean): void => {
+  if (value) {
     window.removeEventListener('resize', workareaManager.resetView);
     window.addEventListener('resize', workareaManager.resetView);
   } else {
@@ -61,7 +51,7 @@ const updateZoomWithWindow = (): void => {
   }
 };
 const initZoomWithWindow = (): void => {
-  updateZoomWithWindow();
+  updateZoomWithWindow(useGlobalPreferenceStore.getState().zoom_with_window);
   useGlobalPreferenceStore.subscribe((state) => state['zoom_with_window'], updateZoomWithWindow);
 };
 
@@ -78,12 +68,10 @@ const toggleZoomWithWindow = (): boolean => {
   return newValue;
 };
 
-const updateAntiAliasing = (): void => {
+const updateAntiAliasing = (value: boolean): void => {
   const svgContent = document.getElementById('svgcontent');
 
   if (!svgContent) return;
-
-  const value = useGlobalPreferenceStore.getState()['anti-aliasing'];
 
   svgContent.style.shapeRendering = value ? '' : 'optimizeSpeed';
 };
@@ -98,7 +86,7 @@ const toggleAntiAliasing = (): boolean => {
 };
 
 const initAntiAliasing = (): void => {
-  updateAntiAliasing();
+  updateAntiAliasing(useGlobalPreferenceStore.getState()['anti-aliasing']);
   useGlobalPreferenceStore.subscribe((state) => state['anti-aliasing'], updateAntiAliasing);
 };
 

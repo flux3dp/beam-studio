@@ -30,7 +30,7 @@ class BasePreviewManager implements PreviewManager {
   protected workareaObj: WorkArea;
   protected ended = false;
   protected lastPosition: [number, number] = [0, 0];
-  protected movementSpeed: number; // mm/min
+  protected movementSpeed: null | number = null; // mm/min
   protected maxMovementSpeed: [number, number] = [18000, 6000]; // mm/min, speed cap of machine
   protected _isFullScreen = false;
 

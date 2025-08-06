@@ -2,7 +2,7 @@ import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 
 jest.useFakeTimers();
 
-const registeredEvents: any = { document: {}, store: {} };
+const registeredEvents: any = { document: {}, globalPreference: {}, store: {} };
 
 const defaultBeamboxPreference = {
   diode_offset_x: 70,
@@ -11,11 +11,37 @@ const defaultBeamboxPreference = {
   'use-real-boundary': false,
   'use-union-boundary': true,
 };
-const mockBeamboxPreference = { ...defaultBeamboxPreference };
-const mockRead = jest.fn().mockImplementation((key) => mockBeamboxPreference[key]);
+const defaultGlobalPreference = {
+  diode_offset_x: 70,
+  diode_offset_y: 7,
+  'enable-uv-print-file': false,
+  'use-real-boundary': false,
+  'use-union-boundary': true,
+};
+const mockGlobalPreference = { ...defaultGlobalPreference };
+const mockGetGlobalPreference = jest.fn().mockReturnValue(mockGlobalPreference);
 
-jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
-  read: mockRead,
+jest.mock('@core/app/stores/globalPreferenceStore', () => ({
+  useGlobalPreferenceStore: {
+    getState: mockGetGlobalPreference,
+    subscribe: (selector: any, listener: any) => {
+      const key = selector({
+        diode_offset_x: 'diode_offset_x',
+        diode_offset_y: 'diode_offset_y',
+        'enable-uv-print-file': 'enable-uv-print-file',
+        'use-real-boundary': 'use-real-boundary',
+        'use-union-boundary': 'use-union-boundary',
+      });
+
+      if (Array.isArray(key)) {
+        key.forEach((k) => {
+          registeredEvents.globalPreference[k] = listener;
+        });
+      } else {
+        registeredEvents.globalPreference[key] = listener;
+      }
+    },
+  },
 }));
 
 const mockGetModuleBoundary = jest.fn();
@@ -150,8 +176,6 @@ const resetBoundaryDrawer = async () => {
   jest.resetModules();
   // @ts-ignore
   ({ boundaryDrawer } = await import('./boundaryDrawer'));
-  expect(mockRead).toHaveBeenNthCalledWith(1, 'use-real-boundary');
-  expect(mockRead).toHaveBeenNthCalledWith(2, 'use-union-boundary');
   jest.clearAllMocks();
   boundaryDrawer.registerEvents();
 };
@@ -166,7 +190,7 @@ const expectBoundaryResult = (d: string) => {
 describe('test boundaryDrawer', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    Object.assign(mockBeamboxPreference, defaultBeamboxPreference);
+    Object.assign(mockGlobalPreference, defaultBeamboxPreference);
     Object.assign(mockDocumentStore, defaultDocumentStore);
     Object.assign(mockWorkarea, defaultWorkarea.bb2);
     Object.assign(mockState, { diode: { value: 0 }, module: { value: 15 } });
@@ -191,7 +215,6 @@ describe('test boundaryDrawer', () => {
     // open bottom
     expect(boundaryDrawer.boundaries.openBottom).toBeUndefined();
     // uv print
-    expect(mockRead).toHaveBeenNthCalledWith(1, 'enable-uv-print-file');
     expect(boundaryDrawer.boundaries.uvPrint).toBeUndefined();
     // module
     expect(mockGetModuleBoundary).toHaveBeenNthCalledWith(1, 'fbb2', LayerModule.LASER_UNIVERSAL);
@@ -240,11 +263,10 @@ describe('test boundaryDrawer', () => {
 
   test('show boundary with uv print layer', async () => {
     await resetBoundaryDrawer();
-    mockBeamboxPreference['enable-uv-print-file'] = true;
+    mockGlobalPreference['enable-uv-print-file'] = true;
     mockState.module.value = LayerModule.UV_PRINT;
     registeredEvents.store['module']();
     jest.advanceTimersByTime(100);
-    expect(mockRead).toHaveBeenNthCalledWith(1, 'enable-uv-print-file');
     expect(boundaryDrawer.boundaries.uvPrint).toEqual({ bottom: 1650, left: 0, right: 3030, top: 0 });
     expectBoundaryResult('M0,0H6000V3750H0ZM0,0H2970V2100H0Z');
   });
@@ -282,7 +304,6 @@ describe('test boundaryDrawer', () => {
 
   test('show boundary with union module', async () => {
     // compare with 'show boundary with single module'
-    mockBeamboxPreference['use-union-boundary'] = true;
     await resetBoundaryDrawer();
     Object.assign(mockWorkarea, defaultWorkarea.bm2NoExpansion);
     mockWorkarea.expansion = [0, 0];
@@ -298,7 +319,9 @@ describe('test boundaryDrawer', () => {
     mockGetModuleOffsets.mockImplementation(({ module }) =>
       module === LayerModule.UV_WHITE_INK ? [-12.5, -12.5] : [7.5, 7.5],
     );
+    mockGlobalPreference['use-union-boundary'] = true;
     registeredEvents.canvas['canvas-change']();
+    registeredEvents.globalPreference['use-union-boundary']();
     jest.advanceTimersByTime(100);
     expect(mockGetModuleBoundary).toHaveBeenCalledTimes(3);
     expect(mockGetModuleBoundary).toHaveBeenNthCalledWith(1, 'fbm2', LayerModule.UV_WHITE_INK);
@@ -364,7 +387,6 @@ describe('test boundaryDrawer', () => {
 
   test('show real boundary', async () => {
     // compare with 'show boundary with single module'
-    mockBeamboxPreference['use-real-boundary'] = true;
     await resetBoundaryDrawer();
     Object.assign(mockWorkarea, defaultWorkarea.bm2NoExpansion);
     mockWorkarea.expansion = [0, 0];
@@ -372,6 +394,8 @@ describe('test boundaryDrawer', () => {
     mockGetModuleBoundary.mockReturnValue({ bottom: 11.1, left: 22.2, right: 33.3, top: 44.4 });
     mockGetModuleOffsets.mockReturnValue([-12.5, -12.5]);
     registeredEvents.store['module']();
+    mockGlobalPreference['use-real-boundary'] = true;
+    registeredEvents.globalPreference['use-real-boundary']();
     jest.advanceTimersByTime(100);
     expect(mockGetModuleBoundary).toHaveBeenNthCalledWith(1, 'fbm2', LayerModule.UV_WHITE_INK);
     expect(boundaryDrawer.boundaries.module).toEqual({ bottom: 111, left: 222, right: 333, top: 444 });

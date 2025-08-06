@@ -1,9 +1,8 @@
 import constant from '@core/app/actions/beambox/constant';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { checkBM2UV } from '@core/helpers/checkFeature';
 import type { TAccelerationOverride } from '@core/interfaces/ITaskConfig';
-
-import { useGlobalPreferenceStore } from '../stores/globalPreferenceStore';
 
 import { LayerModule, type LayerModuleType } from './layer-module/layer-modules';
 

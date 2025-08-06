@@ -3,10 +3,10 @@ import React from 'react';
 
 import { render } from '@testing-library/react';
 
-const mockUseBeamboxPreference = jest.fn();
+const mockUseGlobalPreferenceStore = jest.fn();
 
-jest.mock('@core/helpers/hooks/useBeamboxPreference', () => ({
-  useBeamboxPreference: (...args) => mockUseBeamboxPreference(...args),
+jest.mock('@core/app/stores/globalPreferenceStore', () => ({
+  useGlobalPreferenceStore: (...args) => mockUseGlobalPreferenceStore(...args),
 }));
 
 const mockCreateEventEmitter = jest.fn();
@@ -37,7 +37,7 @@ import Ruler from './Ruler';
 describe('Ruler Component', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseBeamboxPreference.mockReturnValue(true);
+    mockUseGlobalPreferenceStore.mockReturnValue(true);
     mockGet.mockReturnValue('mm');
     mockCreateEventEmitter.mockReturnValue(mockEmitter);
   });
@@ -50,7 +50,7 @@ describe('Ruler Component', () => {
   });
 
   test('hides the rulers when show_rulers preference is false', () => {
-    mockUseBeamboxPreference.mockReturnValue(false);
+    mockUseGlobalPreferenceStore.mockReturnValue(false);
 
     const { container } = render(<Ruler />);
 
