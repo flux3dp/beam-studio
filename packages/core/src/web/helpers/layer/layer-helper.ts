@@ -7,7 +7,7 @@ import { printingModules } from '@core/app/constants/layer-module/layer-modules'
 import history from '@core/app/svgedit/history/history';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
 import undoManager from '@core/app/svgedit/history/undoManager';
-import clipboard from '@core/app/svgedit/operations/clipboard';
+import { handlePastedRef } from '@core/app/svgedit/operations/clipboard';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import updateLayerColor from '@core/helpers/color/updateLayerColor';
 import updateLayerColorFilter from '@core/helpers/color/updateLayerColorFilter';
@@ -272,7 +272,7 @@ export const cloneLayer = (
         newLayer.appendChild(copiedElem);
       }
     }
-    clipboard.handlePastedRef(newLayer, { parentCmd: batchCmd });
+    handlePastedRef(newLayer, { parentCmd: batchCmd });
   }
 
   cloneLayerConfig(newName, layerName);

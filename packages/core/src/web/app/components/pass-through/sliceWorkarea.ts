@@ -6,7 +6,7 @@ import NS from '@core/app/constants/namespaces';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { changeBeamboxPreferenceValue } from '@core/app/svgedit/history/beamboxPreferenceCommand';
 import history from '@core/app/svgedit/history/history';
-import clipboard from '@core/app/svgedit/operations/clipboard';
+import { handlePastedRef } from '@core/app/svgedit/operations/clipboard';
 import { deleteUseRef } from '@core/app/svgedit/operations/delete';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
@@ -23,7 +23,7 @@ import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import { PassThroughCanvasManager } from './canvasManager';
 
 let svgCanvas: ISVGCanvas;
-let svgedit;
+let svgedit: any;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
@@ -189,7 +189,7 @@ const sliceWorkarea = async (
           }
         }
       });
-      updateUseElementPromises.push(clipboard.handlePastedRef(container));
+      updateUseElementPromises.push(handlePastedRef(container));
 
       const clipPath = document.createElementNS(NS.SVG, 'clipPath') as SVGClipPathElement;
       const clipRect = document.createElementNS(NS.SVG, 'rect') as SVGRectElement;
@@ -250,7 +250,7 @@ const sliceWorkarea = async (
       const uses = origLayer.querySelectorAll('use');
 
       uses.forEach((use) => deleteUseRef(use, { parentCmd: batchCmd }));
-      batchCmd.addSubCommand(new history.RemoveElementCommand(origLayer, nextSibling, parent));
+      batchCmd.addSubCommand(new history.RemoveElementCommand(origLayer, nextSibling, parent!));
     }
   });
   generateGuideMark();

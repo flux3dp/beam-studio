@@ -1,9 +1,9 @@
-import type { ClipboardCore } from '@core/interfaces/Clipboard';
+import type { ClipboardCore, ClipboardData } from '@core/interfaces/Clipboard';
 
 // TODO: decouple with svgcanvas
 const { svgedit } = window;
 
-export class BaseClipboardCore implements ClipboardCore {
+export class Clipboard implements ClipboardCore {
   protected refClipboard: Record<string, Element> = {};
 
   addRefToClipboard = (useElement: SVGUseElement): void => {
@@ -19,8 +19,7 @@ export class BaseClipboardCore implements ClipboardCore {
 
   getRefFromClipboard = (id: string): Element | undefined => this.refClipboard[id];
 
-  // eslint-disable-next-line ts/no-unused-vars
-  protected writeDataToClipboard = async (elems: Element[]): Promise<void> => {
+  protected writeDataToClipboard = async (_elems: Element[]): Promise<void> => {
     throw new Error('Method not implemented.');
   };
 
@@ -30,8 +29,7 @@ export class BaseClipboardCore implements ClipboardCore {
 
     this.refClipboard = {};
 
-    for (let i = 0; i < elems.length; i += 1) {
-      const elem = elems[i];
+    for (const elem of elems) {
       const layerName = elem.closest('g.layer')?.querySelector('title')?.textContent;
 
       if (layerName) elem.setAttribute('data-origin-layer', layerName);
@@ -41,7 +39,7 @@ export class BaseClipboardCore implements ClipboardCore {
 
       if (layerName && !layerNames.has(layerName)) {
         layerNames.add(layerName);
-        layerCount += 1;
+        layerCount++;
       }
     }
 
@@ -53,13 +51,13 @@ export class BaseClipboardCore implements ClipboardCore {
     await this.writeDataToClipboard(elems);
   };
 
+  getRawData(): Promise<ClipboardData | null> {
+    throw new Error('Method not implemented.');
+  }
+
   getData = async (): Promise<Element[]> => {
     throw new Error('Method not implemented.');
   };
 
-  hasData = async (): Promise<boolean> => {
-    return false;
-  };
+  hasData = async (): Promise<boolean> => false;
 }
-
-export default BaseClipboardCore;

@@ -1,23 +1,19 @@
 import { match } from 'ts-pattern';
 
+import tabController from '@core/app/actions/tabController';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import type { ClipboardCore, ClipboardElement } from '@core/interfaces/Clipboard';
+import type { ClipboardCore, ClipboardData, ClipboardElement } from '@core/interfaces/Clipboard';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import BaseClipboardCore from './base';
-import { updateSymbolStyle } from './utils';
+import { updateSymbolStyle } from '../helpers/updateSymbolStyle';
+
+import { Clipboard } from './Clipboard';
 
 let svgCanvas: ISVGCanvas;
 
 getSVGAsync(({ Canvas }) => {
   svgCanvas = Canvas;
 });
-
-interface ClipboardData {
-  elements: ClipboardElement[];
-  imageData: Record<string, string>;
-  refs: Record<string, ClipboardElement>;
-}
 
 const serializeElement = ({
   attributes,
@@ -38,10 +34,10 @@ const serializeElement = ({
     nodeValue,
   };
 
-  for (let i = 0; i < attributes?.length; i += 1) {
-    const { namespaceURI, nodeName, value } = attributes[i];
-
-    result.attributes.push({ namespaceURI, nodeName, value });
+  if (attributes?.length) {
+    for (const { namespaceURI, nodeName, value } of attributes) {
+      result.attributes.push({ namespaceURI, nodeName, value });
+    }
   }
 
   childNodes?.forEach((node) => {
@@ -51,21 +47,20 @@ const serializeElement = ({
   return result;
 };
 
-export class NativeClipboard extends BaseClipboardCore implements ClipboardCore {
+export class NativeClipboard extends Clipboard implements ClipboardCore {
   protected writeDataToClipboard = async (elems: Element[]): Promise<void> => {
     const serializedData: ClipboardData = {
       elements: [],
       imageData: {},
       refs: {},
+      source: String(tabController.currentId),
     };
 
     elems.forEach((elem) => serializedData.elements.push(serializeElement(elem)));
 
     const keys = Object.keys(this.refClipboard);
 
-    for (let i = 0; i < keys.length; i += 1) {
-      const key = keys[i];
-
+    for (const key of keys) {
       serializedData.refs[key] = serializeElement(this.refClipboard[key]);
     }
 
@@ -75,16 +70,14 @@ export class NativeClipboard extends BaseClipboardCore implements ClipboardCore 
     );
     const promises = [];
 
-    for (let i = 0; i < origImageUrls.length; i += 1) {
-      const origImage = origImageUrls[i]!;
-
-      if (!origImage) continue;
+    for (const url of origImageUrls) {
+      if (!url) continue;
 
       promises.push(
         // eslint-disable-next-line no-async-promise-executor
         new Promise<void>(async (resolve) => {
           try {
-            const resp = await fetch(origImage);
+            const resp = await fetch(url);
             const blob = await resp.blob();
             const base64 = await new Promise<string>((resolve) => {
               const reader = new FileReader();
@@ -93,7 +86,7 @@ export class NativeClipboard extends BaseClipboardCore implements ClipboardCore 
               reader.readAsDataURL(blob);
             });
 
-            serializedData.imageData[origImage] = base64;
+            serializedData.imageData[url] = base64;
           } finally {
             resolve();
           }
@@ -105,21 +98,29 @@ export class NativeClipboard extends BaseClipboardCore implements ClipboardCore 
     try {
       await navigator.clipboard.writeText(`BX clip:${JSON.stringify(serializedData)}`);
     } catch (err) {
-      console.log('🚀 ~ file: NativeClipboard:108 ~ writeDataToClipboard ~ err:', err);
+      console.log('🚀 ~ NativeClipboard.ts:101 ~ NativeClipboard ~ err:', err);
     }
   };
 
-  getData = async (): Promise<Element[]> => {
+  getRawData = async (): Promise<ClipboardData | null> => {
     const clipboardData = await navigator.clipboard.readText();
 
     if (!clipboardData.startsWith('BX clip:')) {
+      return null;
+    }
+
+    return JSON.parse(clipboardData.substring(8)) as ClipboardData;
+  };
+
+  getData = async (): Promise<Element[]> => {
+    const data = await this.getRawData();
+
+    if (!data) {
       return [];
     }
 
-    const drawing = svgCanvas.getCurrentDrawing();
-    const data = JSON.parse(clipboardData.substring(8)) as ClipboardData;
     const { elements, imageData, refs } = data;
-
+    const drawing = svgCanvas.getCurrentDrawing();
     const keys = Object.keys(refs);
 
     this.refClipboard = {};
@@ -177,7 +178,7 @@ export class NativeClipboard extends BaseClipboardCore implements ClipboardCore 
 
       return clipboardData.startsWith('BX clip:');
     } catch (err) {
-      console.log('🚀 ~ file: NativeClipboard.ts:180 ~ hasData ~ err:', err);
+      console.log('🚀 ~ NativeClipboard.ts:181 ~ NativeClipboard ~ err:', err);
 
       return false;
     }
@@ -186,15 +187,13 @@ export class NativeClipboard extends BaseClipboardCore implements ClipboardCore 
 
 const checkNativeClipboardByPermissions = async (): Promise<boolean | undefined> => {
   try {
-    // eslint-disable-next-line no-undef
     const readState = (await navigator.permissions.query({ name: 'clipboard-read' as PermissionName })).state;
-    // eslint-disable-next-line no-undef
     const writeState = (await navigator.permissions.query({ name: 'clipboard-write' as PermissionName })).state;
 
     return match([readState, writeState])
       .with(['granted', 'granted'], () => true)
       .when(
-        ([r, w]) => r === 'denied' || w === 'denied',
+        ([r, w]) => [r, w].includes('denied'),
         () => false,
       )
       .otherwise(() => undefined);
@@ -240,5 +239,3 @@ export const checkNativeClipboardSupport = async (): Promise<boolean> => {
 
   return checkNativeClipboardByReadWrite();
 };
-
-export default NativeClipboard;
