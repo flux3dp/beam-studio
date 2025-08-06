@@ -1375,6 +1375,7 @@ const lang: ILang = {
       check_swiftray_connection: '서버 연결 확인 중',
       check_swiftray_connection_unreachable: '서버에 연결할 수 없음',
       check_usb: 'USB 연결 확인',
+      connection_failed_hint: '기계에 연결할 수 없습니다. 문제 해결을 위해 <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">이 가이드</a>를 참조하세요.',
       enter_ip: '기계 IP를 입력하세요.',
       finish_setting: '만들기 시작!',
       invalid_format: '잘못된 형식',

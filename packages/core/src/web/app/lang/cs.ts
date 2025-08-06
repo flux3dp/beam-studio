@@ -1375,6 +1375,7 @@ const lang: ILang = {
       check_swiftray_connection: 'Kontrola připojení k serveru',
       check_swiftray_connection_unreachable: 'server není dosažitelný',
       check_usb: 'Zkontrolujte USB připojení.',
+      connection_failed_hint: 'Nelze se připojit ke stroji. Podívejte se na <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">tento návod</a> pro řešení problému.',
       enter_ip: 'Zadejte IP adresu svého přístroje.',
       finish_setting: 'Pojďme tvořit!',
       invalid_format: 'Špatný formát',

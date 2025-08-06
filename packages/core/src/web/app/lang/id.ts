@@ -1375,6 +1375,7 @@ const lang: ILang = {
       check_swiftray_connection: 'Memeriksa koneksi server',
       check_swiftray_connection_unreachable: 'server tidak dapat dijangkau',
       check_usb: 'Periksa Koneksi USB',
+      connection_failed_hint: 'Tidak dapat terhubung ke mesin. Silakan lihat <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">panduan ini</a> untuk memecahkan masalah.',
       enter_ip: 'Masukkan IP Mesin Anda',
       finish_setting: 'Mulai Membuat!',
       invalid_format: 'Format tidak valid',

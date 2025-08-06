@@ -1375,6 +1375,7 @@ const lang: ILang = {
       check_swiftray_connection: 'Comprobando conexión con el servidor',
       check_swiftray_connection_unreachable: 'servidor inalcanzable',
       check_usb: 'Verificar la conexión USB',
+      connection_failed_hint: 'No se puede conectar a la máquina. Consulte <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">esta guía</a> para solucionar el problema.',
       enter_ip: 'Introduce la IP de tu máquina',
       finish_setting: 'Finalizar el ajuste',
       invalid_format: 'Formato inválido',

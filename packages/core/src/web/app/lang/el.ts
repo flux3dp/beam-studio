@@ -1375,6 +1375,7 @@ const lang: ILang = {
       check_swiftray_connection: 'Έλεγχος σύνδεσης διακομιστή',
       check_swiftray_connection_unreachable: 'ο διακομιστής δεν είναι προσβάσιμος',
       check_usb: 'Έλεγχος σύνδεσης USB',
+      connection_failed_hint: 'Δεν είναι δυνατή η σύνδεση με το μηχάνημα. Ανατρέξτε σε <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">αυτόν τον οδηγό</a> για την επίλυση του προβλήματος.',
       enter_ip: 'Εισάγετε τη διεύθυνση IP του μηχανήματός σας',
       finish_setting: 'Ξεκινήστε τη δημιουργία!',
       invalid_format: 'Μη έγκυρη μορφή',
