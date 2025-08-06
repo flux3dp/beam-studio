@@ -752,6 +752,7 @@ const lang: ILang = {
           auto_fit: '自动适配',
           bevel: '生成斜角',
           brightness: '亮度对比',
+          convert_to_image: '转换为图片',
           convert_to_path: '转换为路径',
           create_textpath: '建立路径文本',
           create_textpath_short: '建立路径文本',

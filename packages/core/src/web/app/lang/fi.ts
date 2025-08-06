@@ -752,6 +752,7 @@ const lang: ILang = {
           auto_fit: 'Automaattinen Sovitus',
           bevel: 'Viiste',
           brightness: 'Kirkkaus',
+          convert_to_image: 'Muunna kuvaksi',
           convert_to_path: 'Muunna poluksi',
           create_textpath: 'Luo teksti polulle',
           create_textpath_short: 'Polun teksti',

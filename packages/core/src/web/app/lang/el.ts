@@ -752,6 +752,7 @@ const lang: ILang = {
           auto_fit: 'Αυτόματη Προσαρμογή',
           bevel: 'Λοξοτομία',
           brightness: 'Φωτεινότητα',
+          convert_to_image: 'Μετατροπή σε εικόνα',
           convert_to_path: 'Μετατροπή σε μονοπάτι',
           create_textpath: 'Δημιουργία κειμένου σε μονοπάτι',
           create_textpath_short: 'Μονοπάτι κειμένου',

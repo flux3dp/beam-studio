@@ -47,30 +47,26 @@ export class UndoManager implements IUndoManager {
   }
 
   undo(): boolean {
-    if (this.undoStackPointer > 0) {
-      this.undoStackPointer -= 1;
+    if (this.undoStackPointer <= 0) return false;
 
-      const cmd = this.undoStack[this.undoStackPointer];
+    this.undoStackPointer--;
 
-      cmd.unapply(this.handler);
+    const cmd = this.undoStack[this.undoStackPointer];
 
-      return true;
-    }
+    cmd.unapply(this.handler);
 
-    return false;
+    return true;
   }
 
   redo(): boolean {
-    if (this.undoStackPointer < this.undoStack.length && this.undoStack.length > 0) {
-      const cmd = this.undoStack[this.undoStackPointer];
+    if (this.undoStackPointer >= this.undoStack.length || this.undoStack.length <= 0) return false;
 
-      this.undoStackPointer += 1;
-      cmd.apply(this.handler);
+    const cmd = this.undoStack[this.undoStackPointer];
 
-      return true;
-    }
+    this.undoStackPointer += 1;
+    cmd.apply(this.handler);
 
-    return false;
+    return true;
   }
 
   addCommandToHistory(cmd: BaseHistoryCommand): void {

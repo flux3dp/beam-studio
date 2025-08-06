@@ -752,6 +752,7 @@ const lang: ILang = {
           auto_fit: '自動フィット',
           bevel: 'テーパー',
           brightness: '輝度',
+          convert_to_image: '画像に変換',
           convert_to_path: 'パスに変換',
           create_textpath: 'パステキスト作成',
           create_textpath_short: 'パステキスト',

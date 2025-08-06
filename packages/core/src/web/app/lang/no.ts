@@ -752,6 +752,7 @@ const lang: ILang = {
           auto_fit: 'Automatisk Tilpasning',
           bevel: 'Fas',
           brightness: 'Lysstyrke',
+          convert_to_image: 'Konverter til bilde',
           convert_to_path: 'Konverter til bane',
           create_textpath: 'Lag tekstbane',
           create_textpath_short: 'Tekstbane',
