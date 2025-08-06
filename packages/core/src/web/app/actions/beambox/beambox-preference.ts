@@ -82,7 +82,6 @@ export type BeamboxPreference = {
   'rotary-type': RotaryType;
   'rotary-y': null | number;
   rotary_mode: boolean;
-  rotary_y_coord: number;
   'segmented-engraving': boolean;
   should_remind_calibrate_camera: boolean;
   show_grids: boolean;
@@ -168,7 +167,6 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   'rotary-type': RotaryType.Roller,
   'rotary-y': null,
   rotary_mode: false,
-  rotary_y_coord: 5,
   'segmented-engraving': true,
   should_remind_calibrate_camera: true,
   show_grids: true,

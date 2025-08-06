@@ -69,7 +69,6 @@ const getInitStore = (): GlobalPreference => {
     preview_movement_speed_level: preference.preview_movement_speed_level,
     'print-advanced-mode': preference['print-advanced-mode'],
     'reverse-engraving': preference['reverse-engraving'],
-    rotary_y_coord: preference.rotary_y_coord,
     'segmented-engraving': preference['segmented-engraving'],
     should_remind_calibrate_camera: preference.should_remind_calibrate_camera,
     show_grids: preference.show_grids,
