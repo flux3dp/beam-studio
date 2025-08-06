@@ -97,10 +97,7 @@ describe('test preset-helper', () => {
       { hide: false, isDefault: true, key: 'pre1', name: 'pre1_name', power: 30, speed: 30 },
       { hide: false, isDefault: true, key: 'pre2', name: 'pre2_name', power: 40, speed: 40 },
     ]);
-    expect(presetHelper.getPresetsList('fbm1', LayerModule.LASER_10W_DIODE)).toEqual([
-      { hide: false, isDefault: true, key: 'pre1', name: 'pre1_name', power: 30, speed: 30 },
-      { hide: false, isDefault: true, key: 'pre2', name: 'pre2_name', power: 40, speed: 40 },
-    ]);
+    expect(presetHelper.getPresetsList('fbm1', LayerModule.LASER_10W_DIODE)).toEqual([]);
     expect(presetHelper.getPresetsList('ado1', LayerModule.LASER_10W_DIODE)).toEqual([
       { hide: false, isDefault: true, key: 'pre1', name: 'pre1_name', power: 50, speed: 50 },
     ]);
