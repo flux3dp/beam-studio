@@ -12,7 +12,7 @@ import type { DocumentStateKey } from './documentStore';
 
 /**
  * Global Preference Store
- * This store manages the global preferences that are shared across all tabs.
+ * Use useGlobalPreferenceStore.subscribe to subscribe to changes outside of React components if needed.
  */
 export type GlobalPreference = Omit<BeamboxPreference, DocumentStateKey>;
 export type GlobalPreferenceKey = keyof GlobalPreference;
@@ -117,7 +117,6 @@ export const useGlobalPreferenceStore = create(
 communicator.on(
   TabEvents.GlobalPreferenceChanged,
   <K extends keyof GlobalPreference>(_: unknown, key: K, value: GlobalPreference[K]) => {
-    console.log(`Global preference changed: ${key} = ${value}`);
     useGlobalPreferenceStore.getState().set(key, value, false);
   },
 );
