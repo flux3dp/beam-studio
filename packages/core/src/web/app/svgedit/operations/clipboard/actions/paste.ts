@@ -118,7 +118,7 @@ export const pasteElements = async ({
     if (pasted.length === 1) {
       const selectorManager = selector.getSelectorManager();
 
-      selectorManager.requestSelector(pasted[0]).resize();
+      selectorManager.requestSelector(pasted[0])?.resize();
     } else {
       svgCanvas.tempGroupSelectedElements();
     }
@@ -152,7 +152,7 @@ export const pasteWithDefaultPosition = async (
   const rawData = await clipboardCore.getRawData();
 
   if (!rawData) {
-    return null;
+    return pasteElements({ type: 'inPlace', x, y });
   }
 
   const isPasteToSourceTab = rawData.source === String(tabController.currentId);

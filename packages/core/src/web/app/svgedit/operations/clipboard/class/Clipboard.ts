@@ -1,4 +1,4 @@
-import type { ClipboardCore } from '@core/interfaces/Clipboard';
+import type { ClipboardCore, ClipboardData } from '@core/interfaces/Clipboard';
 
 // TODO: decouple with svgcanvas
 const { svgedit } = window;
@@ -51,7 +51,7 @@ export class Clipboard implements ClipboardCore {
     await this.writeDataToClipboard(elems);
   };
 
-  getRawData(): Promise<null> {
+  getRawData(): Promise<ClipboardData | null> {
     throw new Error('Method not implemented.');
   }
 
