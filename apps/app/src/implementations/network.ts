@@ -13,16 +13,9 @@ export default {
     }),
   dnsLookUpAll(
     hostname: string,
-    options?: {
-      family?: number;
-      hints?: number;
-      verbatim?: boolean;
-    },
+    options?: { family?: number; hints?: number; verbatim?: boolean },
   ): Promise<dns.LookupAddress[]> {
-    return dns.promises.lookup(hostname, {
-      ...options,
-      all: true,
-    });
+    return dns.promises.lookup(hostname, { ...options, all: true });
   },
   networkTest: (ip: string, time: number, onProgress: (_percentage: number) => void) =>
     new Promise((resolve) => {
