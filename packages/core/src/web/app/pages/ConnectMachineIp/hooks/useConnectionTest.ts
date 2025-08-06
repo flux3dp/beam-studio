@@ -65,7 +65,7 @@ export const useConnectionTest = (model: string, isUsb: boolean, ipValue: string
     updateTestState({ testState: TestState.IP_TESTING });
 
     for (const [i, ip] of testingIps.entries()) {
-      const { error, isExisting } = await network.checkIPExist(ip, 3);
+      const { error, isExisting } = await network.checkIPExist(ip, 5);
 
       if (isExisting) {
         return ip;

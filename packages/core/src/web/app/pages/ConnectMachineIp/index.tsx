@@ -5,6 +5,7 @@ import classNames from 'classnames';
 
 import { adorModels, bb2Models, promarkModels } from '@core/app/actions/beambox/constant';
 import TestInfo from '@core/app/components/settings/connection/TestInfo';
+import { ConnectMachineFailedStates } from '@core/app/constants/connection-test';
 import Discover from '@core/helpers/api/discover';
 import checkRpiIp from '@core/helpers/check-rpi-ip';
 import useI18n from '@core/helpers/useI18n';
@@ -96,6 +97,9 @@ const ConnectMachineIp = (): React.JSX.Element => {
           )}
           <TestInfo connectionCountDown={countDownDisplay} firmwareVersion={device?.version} testState={testState} />
           {isPromark && <Hint message={lang.initialize.connect_machine_ip.promark_hint} />}
+          {ConnectMachineFailedStates.includes(testState) && (
+            <Hint message={lang.initialize.connect_machine_ip.connection_failed_hint} />
+          )}
         </div>
       </div>
     </div>

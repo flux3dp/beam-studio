@@ -1361,6 +1361,7 @@ export interface ILang {
       check_swiftray_connection: string;
       check_swiftray_connection_unreachable: string;
       check_usb: string;
+      connection_failed_hint: string;
       enter_ip: string;
       finish_setting: string;
       invalid_format: string;
