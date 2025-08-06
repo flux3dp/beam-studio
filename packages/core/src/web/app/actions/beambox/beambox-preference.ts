@@ -9,7 +9,6 @@ import moduleOffsets from '@core/app/constants/layer-module/module-offsets';
 import { TabEvents } from '@core/app/constants/tabConstants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import type { DocumentStateKey } from '@core/app/stores/documentStore';
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import communicator from '@core/implementations/communicator';
 import storage from '@core/implementations/storage';
 import type { Prettify } from '@core/interfaces/utils';
@@ -184,8 +183,6 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   zoom_with_window: false,
 };
 
-const eventEmitter = eventEmitterFactory.createEventEmitter('beambox-preference');
-
 type DeepPartial<T> = {
   [K in keyof T]?: T[K] extends object ? (T[K] extends Function ? T[K] : DeepPartial<T[K]>) : T[K];
 };
@@ -260,7 +257,6 @@ class BeamboxPreferenceClass {
 
     preference[key] = value;
     storage.set('beambox-preference', preference);
-    eventEmitter.emit(key, value);
 
     if (shouldNotifyChanges) communicator.send(TabEvents.GlobalPreferenceChanged, key, value);
   }

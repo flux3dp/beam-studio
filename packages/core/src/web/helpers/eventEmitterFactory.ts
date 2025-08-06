@@ -2,7 +2,6 @@ import { EventEmitter } from 'eventemitter3';
 
 const eventEmitters: Record<string, any> = {
   'alert-progress': null,
-  'beambox-preference': null,
   canvas: null,
   'flux-id': null,
   'layer-panel': null,
