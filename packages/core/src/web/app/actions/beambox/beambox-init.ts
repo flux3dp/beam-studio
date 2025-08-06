@@ -8,12 +8,10 @@ import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import { showAdorCalibrationV2 } from '@core/app/components/dialogs/camera/AdorCalibrationV2';
 import { showBB2Calibration } from '@core/app/components/dialogs/camera/BB2Calibration';
 import updateFontConvert from '@core/app/components/dialogs/updateFontConvert';
-import { getAddOnInfo } from '@core/app/constants/addOn';
 import AlertConstants from '@core/app/constants/alert-constants';
 import FontConstants from '@core/app/constants/font-constants';
 import { gestureIntroduction } from '@core/app/constants/media-tutorials';
 import BeamboxStore from '@core/app/stores/beambox-store';
-import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import workareaManager from '@core/app/svgedit/workarea';
 import { showCameraCalibration } from '@core/app/views/beambox/Camera-Calibration';
@@ -42,43 +40,6 @@ import type { IDefaultFont } from '@core/interfaces/IFont';
 class BeamboxInit {
   constructor() {
     migrate();
-
-    const { borderless, set, workarea } = useDocumentStore.getState();
-    const globalPreference = useGlobalPreferenceStore.getState();
-    const addOnInfo = getAddOnInfo(workarea);
-
-    if (addOnInfo.autoFocus) {
-      const defaultAutoFocus = globalPreference['default-autofocus'];
-
-      set('enable-autofocus', defaultAutoFocus);
-    } else {
-      set('enable-autofocus', false);
-    }
-
-    if (addOnInfo.hybridLaser) {
-      const defaultDiode = globalPreference['default-diode'];
-
-      set('enable-diode', defaultDiode);
-    } else {
-      set('enable-diode', false);
-    }
-
-    let defaultBorderless = globalPreference['default-borderless'];
-
-    if (defaultBorderless === undefined) {
-      globalPreference.set('default-borderless', borderless);
-      defaultBorderless = borderless;
-    }
-
-    if (addOnInfo.openBottom) {
-      set('borderless', defaultBorderless);
-    } else {
-      set('borderless', false);
-    }
-
-    if (!addOnInfo.rotary) {
-      set('rotary_mode', false);
-    }
 
     if (!storage.get('default-units')) {
       const { timeZone } = Intl.DateTimeFormat().resolvedOptions();

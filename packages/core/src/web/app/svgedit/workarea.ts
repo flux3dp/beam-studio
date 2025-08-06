@@ -1,3 +1,5 @@
+import { shallow } from 'zustand/shallow';
+
 import constant from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import layoutConstants from '@core/app/constants/layout-constants';
@@ -60,11 +62,31 @@ class WorkareaManager {
     // TODO: move guides to independent handler
     this.shouldShowGuide = useGlobalPreferenceStore.getState().show_guides;
     this.setWorkarea(model);
+    useDocumentStore.subscribe(
+      (state) => [
+        state.workarea,
+        // used in getWorkarea
+        state['customized-dimension'],
+        state.rotary_mode,
+        // used in getAddOnInfo
+        state.borderless,
+        state['extend-rotary-workarea'],
+        // used in getAddOnInfo
+        state['pass-through'],
+        state['pass-through-height'],
+        // used in getAddOnInfo
+        state['auto-feeder'],
+        state['auto-feeder-height'],
+      ],
+      ([newWorkarea]) => {
+        this.setWorkarea(newWorkarea as WorkAreaModel);
+        this.resetView();
+      },
+      { equalityFn: shallow },
+    );
   }
 
   setWorkarea(model: WorkAreaModel): void {
-    console.log('setWorkarea', model);
-
     const documentStore = useDocumentStore.getState();
     const isRotaryMode = documentStore.rotary_mode;
     const rotaryExtended = isRotaryMode && documentStore['extend-rotary-workarea'];
@@ -84,7 +106,7 @@ class WorkareaManager {
     const { dpmm } = constant;
 
     if (rotaryExtended && rotaryConstants[model]) {
-      const { boundary, maxHeight } = rotaryConstants[model];
+      const { boundary, maxHeight } = rotaryConstants[model]!;
       const [, upperBound] = boundary ? [boundary[0] * dpmm, boundary[1] * dpmm] : [0, this.height];
       const pxMaxHeight = maxHeight * dpmm;
 

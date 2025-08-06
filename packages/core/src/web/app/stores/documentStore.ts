@@ -2,10 +2,13 @@ import { create } from 'zustand';
 import { combine, subscribeWithSelector } from 'zustand/middleware';
 
 import type { BeamboxPreference } from '@core/app/actions/beambox/beambox-preference';
+import communicator from '@core/implementations/communicator';
 import storage from '@core/implementations/storage';
 import type { IBatchCommand, ICommand } from '@core/interfaces/IHistory';
 
 import beamboxPreference from '../actions/beambox/beambox-preference';
+import { getAddOnInfo } from '../constants/addOn';
+import { TabEvents } from '../constants/tabConstants';
 import { changeBeamboxPreferenceValue } from '../svgedit/history/beamboxPreferenceCommand';
 import history, { BaseHistoryCommand } from '../svgedit/history/history';
 
@@ -49,16 +52,22 @@ export type DocumentStore = DocumentState & {
 
 const getInitDocumentStore = (): DocumentState => {
   const preference = storage.get('beambox-preference', false) as BeamboxPreference;
+  const defaultWorkarea = preference.model;
+  const addOnInfo = getAddOnInfo(defaultWorkarea);
+  const isAutofocusEnabled = Boolean(preference['default-autofocus'] && addOnInfo.autoFocus);
+  const isDiodeEnabled = Boolean(preference['default-diode'] && addOnInfo.hybridLaser);
+  const isBorderlessEnabled = Boolean(preference['default-borderless'] && addOnInfo.openBottom);
+  const isRotaryEnabled = Boolean(preference.rotary_mode && addOnInfo.rotary);
 
   return {
     'auto-feeder': preference['auto-feeder'],
     'auto-feeder-height': preference['auto-feeder-height'],
     'auto-feeder-scale': preference['auto-feeder-scale'],
     auto_shrink: preference.auto_shrink,
-    borderless: preference.borderless,
+    borderless: isBorderlessEnabled,
     'customized-dimension': preference['customized-dimension'],
-    'enable-autofocus': preference['default-autofocus'],
-    'enable-diode': preference['default-diode'],
+    'enable-autofocus': isAutofocusEnabled,
+    'enable-diode': isDiodeEnabled,
     'enable-job-origin': preference['enable-job-origin'],
     engrave_dpi: preference.engrave_dpi,
     'extend-rotary-workarea': preference['extend-rotary-workarea'],
@@ -75,8 +84,8 @@ const getInitDocumentStore = (): DocumentState => {
     'rotary-split': preference['rotary-split'],
     'rotary-type': preference['rotary-type'],
     'rotary-y': preference['rotary-y'],
-    rotary_mode: preference.rotary_mode,
-    workarea: preference.workarea,
+    rotary_mode: isRotaryEnabled,
+    workarea: defaultWorkarea,
   };
 };
 
@@ -86,9 +95,7 @@ const getInitDocumentStore = (): DocumentState => {
 export const useDocumentStore = create(
   subscribeWithSelector<DocumentStore>(
     combine(getInitDocumentStore(), (set) => ({
-      reload: () => {
-        set(getInitDocumentStore());
-      },
+      reload: () => set(getInitDocumentStore()),
 
       set: <K extends keyof DocumentState>(key: K, value: DocumentState[K]) => {
         set(() => {
@@ -110,6 +117,10 @@ export const useDocumentStore = create(
     })),
   ),
 );
+
+communicator.on(TabEvents.ReloadDocumentStore, () => {
+  useDocumentStore.getState().reload();
+});
 
 export class DocumentStoreCommand<Key extends DocumentStateKey> extends BaseHistoryCommand implements ICommand {
   elements = () => [];

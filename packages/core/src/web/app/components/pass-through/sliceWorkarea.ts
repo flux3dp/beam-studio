@@ -258,8 +258,6 @@ const sliceWorkarea = async (
   const onAfter = () => {
     currentDrawing.identifyLayers();
     LayerPanelController.setSelectedLayers([]);
-    workareaManager.setWorkarea(workarea);
-    workareaManager.resetView();
   };
 
   onAfter();

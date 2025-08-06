@@ -167,11 +167,6 @@ interface ISVGPref {
 }
 
 const svgEditor = (window['svgEditor'] = (function () {
-  // set workarea according to default model.
-  const defaultModel = useGlobalPreferenceStore.getState()['model'];
-
-  if (defaultModel) useDocumentStore.getState().set('workarea', defaultModel);
-
   // EDITOR PROPERTIES: (defined below)
   //		curPrefs, curConfig, canvas, storage, uiStrings
   //
