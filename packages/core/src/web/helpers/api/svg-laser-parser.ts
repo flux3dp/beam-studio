@@ -97,7 +97,7 @@ export const getExportOpt = async (
   const autoFeeder = getAutoFeeder(addOnInfo);
 
   if (rotaryInfo) {
-    config.spin = rotaryInfo.y;
+    config.spin = config.job_origin ? config.job_origin[1] * constant.dpmm : rotaryInfo.y;
     config.rotary_split = rotaryInfo.ySplit;
     config.rotary_overlap = rotaryInfo.yOverlap;
 
