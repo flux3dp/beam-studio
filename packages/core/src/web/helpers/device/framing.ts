@@ -2,7 +2,6 @@ import { EventEmitter } from 'eventemitter3';
 import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant, { dpmm, promarkModels } from '@core/app/actions/beambox/constant';
 import exportFuncs from '@core/app/actions/beambox/export-funcs';
 import { fetchContourTaskCode } from '@core/app/actions/beambox/export-funcs-swiftray';
@@ -13,6 +12,7 @@ import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
 import { getAutoFeeder } from '@core/helpers/addOn';
@@ -648,7 +648,7 @@ class FramingTaskManager extends EventEmitter {
       if (this.jobOrigin) {
         y = this.jobOrigin.y;
       } else {
-        const reverseEngraving = beamboxPreference.read('reverse-engraving');
+        const reverseEngraving = useGlobalPreferenceStore.getState()['reverse-engraving'];
         const workareaObj = getWorkarea(this.device.model);
 
         y = reverseEngraving ? workareaObj.height : (this.addOnInfo.autoFeeder.minY ?? 0) / dpmm;

@@ -6,7 +6,6 @@ import { piped } from 'remeda';
 import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import dialogCaller from '@core/app/actions/dialog-caller';
@@ -19,6 +18,7 @@ import tutorialConstants from '@core/app/constants/tutorial-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import history from '@core/app/svgedit/history/history';
 import DottingTimeBlock from '@core/app/views/beambox/Right-Panels/ConfigPanel/DottingTimeBlock';
 import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
@@ -248,7 +248,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     }
   };
 
-  const isCustomBacklashEnabled = beamboxPreference.read('enable-custom-backlash');
+  const isCustomBacklashEnabled = useGlobalPreferenceStore((state) => state['enable-custom-backlash']);
   const dropdownOptions = presetList.map((e) => ({
     key: e.key || e.name,
     label: e.name,

@@ -7,7 +7,6 @@ import classNames from 'classnames';
 import { sprintf } from 'sprintf-js';
 import { useShallow } from 'zustand/react/shallow';
 
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import { getSpeedOptions } from '@core/app/constants/config-options';
@@ -15,6 +14,7 @@ import { printingModules } from '@core/app/constants/layer-module/layer-modules'
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
@@ -23,7 +23,6 @@ import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelIte
 import objectPanelItemStyles from '@core/app/views/beambox/Right-Panels/ObjectPanelItem.module.scss';
 import { getAutoFeeder } from '@core/helpers/addOn';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import { useBeamboxPreference } from '@core/helpers/hooks/useBeamboxPreference';
 import useHasCurveEngraving from '@core/helpers/hooks/useHasCurveEngraving';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import doLayersContainsVector from '@core/helpers/layer/check-vector';
@@ -44,7 +43,7 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   const t = lang.beambox.right_panel.laser_panel;
   const { change, module, speed } = useConfigPanelStore();
   const { selectedLayers } = useContext(ConfigPanelContext);
-  const simpleMode = !useBeamboxPreference('print-advanced-mode');
+  const simpleMode = !useGlobalPreferenceStore((state) => state['print-advanced-mode']);
   const { activeKey } = useContext(ObjectPanelContext);
   const visible = activeKey === 'speed';
   const { hasVector } = useContext(LayerPanelContext);
@@ -121,14 +120,8 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
       limit: fakeUnit === 'mm' ? `${vectorSpeedLimit} mm/s` : `${round(vectorSpeedLimit / 25.4, 2)} in/s`,
     });
   }, [fakeUnit, t, vectorSpeedLimit, isAutoFeederOn]);
-
-  const { curve: hasCurveLimit, vector: hasVectorLimit } = useMemo(
-    () => ({
-      curve: BeamboxPreference.read('curve_engraving_speed_limit'),
-      vector: BeamboxPreference.read('vector_speed_constraint'),
-    }),
-    [],
-  );
+  const hasCurveLimit = useGlobalPreferenceStore((state) => state.curve_engraving_speed_limit);
+  const hasVectorLimit = useGlobalPreferenceStore((state) => state.vector_speed_constraint);
 
   let warningText = '';
 

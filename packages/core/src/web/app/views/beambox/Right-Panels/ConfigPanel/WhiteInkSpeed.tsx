@@ -3,7 +3,7 @@ import React, { useMemo } from 'react';
 import { getSpeedOptions } from '@core/app/constants/config-options';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
-import { useBeamboxPreference } from '@core/helpers/hooks/useBeamboxPreference';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import useI18n from '@core/helpers/useI18n';
 import storage from '@core/implementations/storage';
 
@@ -21,7 +21,7 @@ interface Props {
 const WhiteInkSpeed = ({ hasMultiValue, onChange, value }: Props): React.JSX.Element => {
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
-  const simpleMode = !useBeamboxPreference('print-advanced-mode');
+  const simpleMode = !useGlobalPreferenceStore((state) => state['print-advanced-mode']);
 
   const sliderOptions = useMemo(() => (simpleMode ? getSpeedOptions(lang) : undefined), [simpleMode, lang]);
 

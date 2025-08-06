@@ -1,10 +1,10 @@
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { adorModels } from '@core/app/actions/beambox/constant';
 import type { DetectedLayerModuleType, LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { DetectedLayerModule, LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getSupportedModules } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import i18n from '@core/helpers/i18n';
 
 const LaserModuleSet = new Set([LayerModule.LASER_10W_DIODE, LayerModule.LASER_20W_DIODE]);
@@ -16,7 +16,7 @@ export const getDefaultLaserModule = (workarea?: WorkAreaModel): LayerModuleType
     return LayerModule.LASER_UNIVERSAL;
   }
 
-  const value = beamboxPreference.read('default-laser-module');
+  const value = useGlobalPreferenceStore.getState()['default-laser-module'];
 
   return LaserModuleSet.has(value) ? value : LayerModule.LASER_20W_DIODE;
 };

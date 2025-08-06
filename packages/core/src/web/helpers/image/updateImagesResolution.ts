@@ -1,7 +1,7 @@
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import imageData from '@core/helpers/image-data';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getAllLayers } from '@core/helpers/layer/layer-helper';
@@ -15,7 +15,7 @@ import updateImageDisplay from './updateImageDisplay';
  */
 const updateImagesResolution = async (): Promise<() => void> => {
   const allLayers = getAllLayers();
-  const isImagesDownSamplingEnabled = beamboxPreference.read('image_downsampling');
+  const { image_downsampling: isImagesDownSamplingEnabled } = useGlobalPreferenceStore.getState();
   const { engrave_dpi: engraveDpi } = useDocumentStore.getState();
   const isHighResolution = engraveDpi === 'high' || engraveDpi === 'ultra';
 
@@ -71,5 +71,15 @@ const updateImagesResolution = async (): Promise<() => void> => {
     });
   };
 };
+
+const updateAllImageResolution = () => {
+  const images = Array.from(document.getElementById('svgcontent')?.querySelectorAll('image') ?? []);
+
+  images.forEach((image) => {
+    updateImageDisplay(image as SVGImageElement, { useNativeSize: true });
+  });
+};
+
+useGlobalPreferenceStore.subscribe((state) => state.image_downsampling, updateAllImageResolution);
 
 export default updateImagesResolution;

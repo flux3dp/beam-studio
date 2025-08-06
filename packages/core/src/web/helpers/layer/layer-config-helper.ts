@@ -1,13 +1,13 @@
 import { pipe } from 'remeda';
 import { match } from 'ts-pattern';
 
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType } from '@core/app/constants/promark-constants';
 import { getSupportedModules, getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import history from '@core/app/svgedit/history/history';
 import updateLayerColorFilter from '@core/helpers/color/updateLayerColorFilter';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
@@ -87,7 +87,7 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   frequency: 27,
   halftone: 1, // 1 for fm, 2 for am
   height: -3,
-  ink: BeamboxPreference.read('multipass-compensation') ? 3 : 1,
+  ink: useGlobalPreferenceStore.getState()['multipass-compensation'] ? 3 : 1,
   kRatio: 100,
   minPower: 0,
   module: LayerModule.LASER_UNIVERSAL,
@@ -102,7 +102,7 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   uv: 0,
   uvIntervalX: 0.8,
   uvIntervalY: 0.6,
-  wInk: BeamboxPreference.read('multipass-compensation') ? -12 : -4,
+  wInk: useGlobalPreferenceStore.getState()['multipass-compensation'] ? -12 : -4,
   wMultipass: 3,
   wobbleDiameter: -0.2,
   wobbleStep: -0.05,
@@ -111,6 +111,14 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   yRatio: 100,
   zStep: 0,
 };
+
+useGlobalPreferenceStore.subscribe(
+  (state) => state['multipass-compensation'],
+  (value) => {
+    baseConfig.ink = value ? 3 : 1;
+    baseConfig.wInk = value ? -12 : -4;
+  },
+);
 
 export const moduleBaseConfig: Partial<Record<LayerModuleType, Partial<Omit<ConfigKeyTypeMap, 'module'>>>> = {
   [LayerModule.PRINTER]: {

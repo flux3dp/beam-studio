@@ -10,12 +10,12 @@ import CanvasMode from '@core/app/constants/canvasMode';
 import { PanelType } from '@core/app/constants/right-panel-types';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { ObjectPanelContextProvider } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 import ObjectPanel from '@core/app/views/beambox/Right-Panels/ObjectPanel';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import PathEditPanel from '@core/app/views/beambox/Right-Panels/PathEditPanel';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import { useBeamboxPreference } from '@core/helpers/hooks/useBeamboxPreference';
 import isWeb from '@core/helpers/is-web';
 import { useIsMobile } from '@core/helpers/system-helper';
 
@@ -28,7 +28,7 @@ const RightPanel = (): ReactNode => {
   const { selectedElement } = useContext(SelectedElementContext);
   const isMobile = useIsMobile();
   const [panelType, setPanelType] = useState(isMobile ? PanelType.None : PanelType.Layer);
-  const isTabAutoSwitch = useBeamboxPreference('auto-switch-tab');
+  const isTabAutoSwitch = useGlobalPreferenceStore((state) => state['auto-switch-tab']);
 
   useEffect(() => {
     rightPanelEventEmitter.on('SET_PANEL_TYPE', setPanelType);

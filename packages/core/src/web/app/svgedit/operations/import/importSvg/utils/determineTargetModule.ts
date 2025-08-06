@@ -1,7 +1,7 @@
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { getDefaultLaserModule, getPrintingModule } from '@core/helpers/layer-module/layer-module-helper';
 import type { ILang } from '@core/interfaces/ILang';
 
@@ -16,7 +16,7 @@ export async function determineTargetModule(
     const id = 'import-module';
 
     return dialogCaller.showRadioSelectDialog({
-      defaultValue: beamboxPreference.read(id),
+      defaultValue: useGlobalPreferenceStore.getState()[id],
       id,
       options: [
         { label: lang.layer_module.general_laser, value: getDefaultLaserModule() },

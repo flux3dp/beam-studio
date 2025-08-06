@@ -20,7 +20,6 @@ const updateWindowsMenu = () => {
 };
 
 const layerPanelEventEmitter = eventEmitterFactory.createEventEmitter('layer-panel');
-const useSettingStoreEventEmitter = eventEmitterFactory.createEventEmitter('useSettingStore');
 
 class Menu extends AbstractMenu {
   private communicator;
@@ -41,12 +40,13 @@ class Menu extends AbstractMenu {
   init(): void {
     // model related
     useDocumentStore.subscribe((state) => state.workarea, this.updateMenuByWorkarea);
-
-    // setting store related
-    useSettingStoreEventEmitter.on('changeEnableUvPrintFile', (isEnabled) => {
-      this.changeMenuItemStatus(['EXPORT_UV_PRINT'], 'visible', isEnabled);
-      this.rerenderMenu();
-    });
+    useGlobalPreferenceStore.subscribe(
+      (state) => state['enable-uv-print-file'],
+      (newValue) => {
+        this.changeMenuItemStatus(['EXPORT_UV_PRINT'], 'visible', newValue);
+        this.rerenderMenu();
+      },
+    );
 
     // layer panel related
     layerPanelEventEmitter.on('updateUvPrintStatus', (isUvPrintable = false) => {

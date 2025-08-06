@@ -1,8 +1,8 @@
 /* eslint-disable no-fallthrough */
 import * as paper from 'paper';
 
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import history from '@core/app/svgedit/history/history';
 import PathNodePoint from '@core/app/svgedit/path/PathNodePoint';
 import SegmentControlPoint from '@core/app/svgedit/path/SegmentControlPoint';
@@ -213,7 +213,7 @@ const finishPath = (toEditMode = true) => {
 const toEditMode = (element: Element): void => {
   svgedit.path.path = svgedit.path.getPath(element);
 
-  const isContinuousDrawing = BeamboxPreference.read('continuous_drawing');
+  const isContinuousDrawing = useGlobalPreferenceStore.getState()['continuous_drawing'];
 
   previousMode = isContinuousDrawing ? svgCanvas.getCurrentMode() : 'select';
   svgCanvas.unsafeAccess.setCurrentMode('pathedit');
@@ -277,7 +277,7 @@ const mouseDown = (evt: MouseEvent, mouseTarget: SVGElement, startX: number, sta
   modeOnMouseDown = currentMode;
 
   if (currentMode === 'path') {
-    const isContinuousDrawing = BeamboxPreference.read('continuous_drawing');
+    const isContinuousDrawing = useGlobalPreferenceStore.getState()['continuous_drawing'];
 
     previousMode = isContinuousDrawing ? 'path' : 'select';
 

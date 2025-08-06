@@ -4,7 +4,10 @@ import { getObjectLayer } from '@core/helpers/layer/layer-helper';
 import type { IImageDataResult } from '@core/interfaces/IImage';
 
 // TODO: add test
-const updateImageDisplay = (elem: SVGImageElement): Promise<void> => {
+const updateImageDisplay = (
+  elem: SVGImageElement,
+  { useNativeSize = false }: { useNativeSize?: boolean } = {},
+): Promise<void> => {
   const imgUrl = elem.getAttribute('origImage');
 
   if (!imgUrl) {
@@ -48,7 +51,7 @@ const updateImageDisplay = (elem: SVGImageElement): Promise<void> => {
             is_svg: false,
             threshold,
           },
-      height: Number.parseFloat(elem.getAttribute('height')),
+      height: useNativeSize ? undefined : Number.parseFloat(elem.getAttribute('height') ?? '0'),
       onComplete: (result: IImageDataResult) => {
         elem.setAttributeNS(NS.XLINK, 'xlink:href', result.pngBase64);
 
@@ -61,7 +64,7 @@ const updateImageDisplay = (elem: SVGImageElement): Promise<void> => {
 
         resolve();
       },
-      width: Number.parseFloat(elem.getAttribute('width')),
+      width: useNativeSize ? undefined : Number.parseFloat(elem.getAttribute('width') ?? '0'),
     });
   });
 };
