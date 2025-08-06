@@ -125,11 +125,11 @@ export class DocumentStoreCommand<Key extends DocumentStateKey> extends BaseHist
   }
 
   doApply = (): void => {
-    useDocumentStore().set(this.key, this.newValue);
+    useDocumentStore.getState().set(this.key, this.newValue);
   };
 
   doUnapply = (): void => {
-    useDocumentStore().set(this.key, this.oldValue);
+    useDocumentStore.getState().set(this.key, this.oldValue);
   };
 }
 
