@@ -2,9 +2,9 @@ import React, { useContext } from 'react';
 
 import { Result } from 'antd';
 
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { CalibrationContext } from '@core/app/contexts/CalibrationContext';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import useI18n from '@core/helpers/useI18n';
 
@@ -18,7 +18,7 @@ const StepFinish = (): React.JSX.Element => {
       className="modal-camera-calibration"
       okText={lang.finish}
       onOk={() => {
-        BeamboxPreference.write('should_remind_calibrate_camera', false);
+        useGlobalPreferenceStore.getState().set('should_remind_calibrate_camera', false);
         useDocumentStore.getState().set('borderless', borderless);
         onClose(true);
       }}
