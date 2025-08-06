@@ -65,8 +65,9 @@ export const pasteElements = async ({
     batchCmd.addSubCommand(new history.InsertElementCommand(copy));
     (svgCanvas as any).restoreRefElems(copy);
 
-    await promise;
-    updateElementColor(copy);
+    promise.then(() => {
+      updateElementColor(copy);
+    });
   }
 
   if (selectElement) svgCanvas.selectOnly(pasted, true);
