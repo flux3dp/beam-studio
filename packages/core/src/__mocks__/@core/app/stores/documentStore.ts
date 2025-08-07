@@ -1,4 +1,4 @@
-import type { DocumentState } from '@core/app/stores/documentStore';
+import type { DocumentState } from '@core/interfaces/Preference';
 import { CHUCK_ROTARY_DIAMETER, RotaryType } from '@core/app/constants/addOn';
 
 const state: DocumentState = {
