@@ -148,7 +148,7 @@ class BeamboxPreferenceClass {
   }
 
   read<Key extends BeamboxPreferenceKey>(key: Key): BeamboxPreferenceValue<Key> {
-    return storage.get('beambox-preference', false)[key];
+    return storage.get('beambox-preference')[key];
   }
 
   write<Key extends BeamboxPreferenceKey>(
@@ -156,7 +156,7 @@ class BeamboxPreferenceClass {
     value: BeamboxPreferenceValue<Key>,
     shouldNotifyChanges: boolean = true,
   ): void {
-    const preference = storage.get('beambox-preference', false);
+    const preference = storage.get('beambox-preference');
 
     preference[key] = value;
     storage.set('beambox-preference', preference);

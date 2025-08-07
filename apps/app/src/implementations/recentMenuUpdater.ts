@@ -71,7 +71,7 @@ const openRecentFiles = async (filePath: string): Promise<void> => {
       });
       storage.set(
         'recent_files',
-        storage.get('recent_files', false).filter((path: string) => path !== filePath),
+        storage.get('recent_files').filter((path: string) => path !== filePath),
       );
       update();
     }

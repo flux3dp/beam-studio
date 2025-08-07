@@ -234,7 +234,7 @@ const svgEditor = (window['svgEditor'] = (function () {
     'zh-tw': 'zh-TW',
   };
   const defaultFont: IDefaultFont = storage.get('default-font');
-  let pressedKey = [];
+  let pressedKey: string[] = [];
 
   document.addEventListener('keydown', (e) => {
     if (!pressedKey.includes(e.key)) {

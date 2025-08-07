@@ -90,7 +90,6 @@ const memoize = <T extends (arg: any) => any>(fn: T): T => {
   }) as T;
 };
 
-// TODO: Fix config
 let fontNameMapObj: Record<string, string> = storage.get('font-name-map') || {};
 
 if (fontNameMapObj.navigatorLang !== navigator.language) {

@@ -14,7 +14,7 @@ const initStore = (webContents: WebContents, isWelcomeTab = false): void => {
     store.set('poke-ip-addr', '192.168.1.1');
   }
 
-  if (!store.get('customizedLaserConfigs')) {
+  if (!store.get('customizedLaserConfigs') && !store.get('presets')) {
     webContents.executeJavaScript('({...localStorage});', true).then((localStorage) => {
       const keysNeedParse = [
         'auto_check_update',
