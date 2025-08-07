@@ -93,7 +93,7 @@ export const useDocumentStore = create(
   ),
 );
 
-communicator.on(TabEvents.ReloadDocumentStore, () => {
+communicator.on(TabEvents.ReloadSettings, () => {
   useDocumentStore.getState().reload();
 });
 

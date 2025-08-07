@@ -237,7 +237,7 @@ class TabManager {
   };
 
   addNewTab = (): void => {
-    if (this.preloadedTab) this.preloadedTab.view.webContents.send(TabEvents.ReloadDocumentStore);
+    if (this.preloadedTab) this.preloadedTab.view.webContents.send(TabEvents.ReloadSettings);
 
     const newTab = this.preloadedTab ?? this.createTab();
 

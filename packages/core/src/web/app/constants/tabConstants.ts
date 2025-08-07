@@ -7,7 +7,7 @@ export enum TabEvents {
   GlobalPreferenceChanged = 'global-preference-changed',
   ImportFileInTab = 'import-file-in-tab',
   MoveTab = 'move-tab',
-  ReloadDocumentStore = 'reload-document-store',
+  ReloadSettings = 'reload-settings',
   SetTabMode = 'set-tab-mode',
   SetTabTitle = 'set-tab-title',
   TabBlurred = 'tab-blurred',
