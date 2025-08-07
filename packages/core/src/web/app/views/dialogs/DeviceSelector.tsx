@@ -9,7 +9,7 @@ import deviceConstants from '@core/app/constants/device-constants';
 import ConnectionTypeIcons from '@core/app/icons/connection-type/ConnectionTypeIcons';
 import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
 import discover, { SEND_DEVICES_INTERVAL } from '@core/helpers/api/discover';
-import fileExportHelper from '@core/helpers/file-export-helper';
+import fileExportHelper from '@core/helpers/file/export';
 import i18n from '@core/helpers/i18n';
 import browser from '@core/implementations/browser';
 import os from '@core/implementations/os';

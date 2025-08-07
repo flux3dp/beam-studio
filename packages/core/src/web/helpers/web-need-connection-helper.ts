@@ -2,7 +2,7 @@ import alertCaller from '@core/app/actions/alert-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import { checkConnection } from '@core/helpers/api/discover';
-import fileExportHelper from '@core/helpers/file-export-helper';
+import fileExportHelper from '@core/helpers/file/export';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 
