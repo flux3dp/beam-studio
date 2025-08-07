@@ -1,108 +1,18 @@
-import type { PreviewSpeedLevelType } from '@core/app/actions/beambox/constant';
 import { PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
 import constant from '@core/app/actions/beambox/constant';
 import { CHUCK_ROTARY_DIAMETER, RotaryType } from '@core/app/constants/addOn';
-import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { ModuleOffsets } from '@core/app/constants/layer-module/module-offsets';
 import moduleOffsets from '@core/app/constants/layer-module/module-offsets';
 import { TabEvents } from '@core/app/constants/tabConstants';
-import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
-import type { DocumentStateKey } from '@core/app/stores/documentStore';
 import communicator from '@core/implementations/communicator';
 import storage from '@core/implementations/storage';
-import type { Prettify } from '@core/interfaces/utils';
+import type { BeamboxPreference, BeamboxPreferenceKey, BeamboxPreferenceValue } from '@core/interfaces/Preference';
 
-export type BeamboxPreference = {
-  'af-offset': number;
-  'anti-aliasing': boolean;
-  'auto-feeder': boolean;
-  'auto-feeder-height'?: number;
-  'auto-feeder-scale': number;
-  'auto-switch-tab': boolean;
-  auto_align: boolean;
-  auto_shrink: boolean;
-  blade_precut: boolean;
-  blade_radius: number;
-  borderless: boolean;
-  continuous_drawing: boolean;
-  'crop-task-thumbnail': boolean;
-  curve_engraving_speed_limit: boolean;
-  'customized-dimension': Partial<Record<WorkAreaModel, { height: number; width: number }>>;
-  'default-autofocus': boolean;
-  'default-borderless': boolean;
-  'default-diode': boolean;
-  'default-laser-module': LayerModuleType;
-  'diode-one-way-engraving': boolean;
-  diode_offset_x: number;
-  diode_offset_y: number;
-  'enable-autofocus'?: boolean;
-  'enable-custom-backlash': boolean;
-  'enable-custom-preview-height': boolean;
-  'enable-diode'?: boolean;
-  'enable-job-origin': boolean;
-  'enable-uv-print-file': boolean;
-  enable_mask: boolean;
-  engrave_dpi: 'high' | 'low' | 'medium' | 'ultra';
-  'extend-rotary-workarea': boolean;
-  fast_gradient: boolean;
-  'font-convert': '1.0' | '2.0';
-  'font-substitute': boolean;
-  'frame-before-start': boolean;
-  guide_x0: number;
-  guide_y0: number;
-  image_downsampling: boolean;
-  'import-module'?: LayerModuleType;
-  'job-origin': number;
-  'keep-preview-result': boolean;
-  low_power: number;
-  /** model: default workarea model */
-  model: WorkAreaModel;
-  'module-offsets': ModuleOffsets;
-  mouse_input_device: 'MOUSE' | 'TOUCHPAD';
-  'multipass-compensation': boolean;
-  'one-way-printing': boolean;
-  padding_accel: number;
-  padding_accel_diode: number;
-  'pass-through': boolean;
-  'pass-through-height'?: number;
-  'path-engine': 'fluxghost' | 'swiftray';
-  precut_x: number;
-  precut_y: number;
-  preview_movement_speed_level: PreviewSpeedLevelType;
-  'print-advanced-mode': boolean;
-  'promark-safety-door': boolean;
-  'promark-start-button': boolean;
-  'reverse-engraving': boolean;
-  'rotary-chuck-obj-d': number;
-  'rotary-mirror': boolean;
-  'rotary-overlap': number;
-  'rotary-scale': number; // extra rotary scale when exporting
-  'rotary-split': number;
-  'rotary-type': RotaryType;
-  'rotary-y': null | number;
-  rotary_mode: boolean;
-  'segmented-engraving': boolean;
-  should_remind_calibrate_camera: boolean;
-  show_grids: boolean;
-  show_guides: boolean;
-  show_rulers: boolean;
-  simplify_clipper_path: boolean;
-  'use-real-boundary': boolean;
-  'use-union-boundary': boolean;
-  use_layer_color: boolean;
-  vector_speed_constraint: boolean;
-  workarea: WorkAreaModel;
-  zoom_with_window: boolean;
-};
-
-export type BeamboxPreferenceKey = Prettify<keyof BeamboxPreference>;
-export type BeamboxPreferenceValue<T extends BeamboxPreferenceKey> = BeamboxPreference[T];
 /**
  * Global preferences: preferences that are shared across all tabs and not specific to a document.
  * Should handle preferences changes in other tabs with TabEvents.GlobalPreference
  */
-export type GlobalPreference = Omit<BeamboxPreference, DocumentStateKey>;
 
 const DEFAULT_PREFERENCE: BeamboxPreference = {
   'af-offset': 0,

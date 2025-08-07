@@ -1,48 +1,16 @@
 import { create } from 'zustand';
 import { combine, subscribeWithSelector } from 'zustand/middleware';
 
-import type { BeamboxPreference } from '@core/app/actions/beambox/beambox-preference';
 import communicator from '@core/implementations/communicator';
 import storage from '@core/implementations/storage';
 import type { IBatchCommand, ICommand } from '@core/interfaces/IHistory';
+import type { BeamboxPreference, DocumentState, DocumentStateKey } from '@core/interfaces/Preference';
 
 import beamboxPreference from '../actions/beambox/beambox-preference';
 import { getAddOnInfo } from '../constants/addOn';
 import { TabEvents } from '../constants/tabConstants';
 import { changeBeamboxPreferenceValue } from '../svgedit/history/beamboxPreferenceCommand';
 import history, { BaseHistoryCommand } from '../svgedit/history/history';
-
-export type DocumentState = Pick<
-  BeamboxPreference,
-  | 'auto-feeder'
-  | 'auto-feeder-height'
-  | 'auto-feeder-scale'
-  | 'auto_shrink'
-  | 'borderless'
-  | 'customized-dimension'
-  | 'enable-autofocus'
-  | 'enable-diode'
-  | 'enable-job-origin'
-  | 'engrave_dpi'
-  | 'extend-rotary-workarea'
-  | 'frame-before-start'
-  | 'job-origin'
-  | 'pass-through'
-  | 'pass-through-height'
-  | 'promark-safety-door'
-  | 'promark-start-button'
-  | 'rotary-chuck-obj-d'
-  | 'rotary-mirror'
-  | 'rotary-overlap'
-  | 'rotary-scale'
-  | 'rotary-split'
-  | 'rotary-type'
-  | 'rotary-y'
-  | 'rotary_mode'
-  | 'workarea'
->;
-
-export type DocumentStateKey = keyof DocumentState;
 
 export type DocumentStore = DocumentState & {
   reload: () => void;
@@ -58,6 +26,13 @@ const getInitDocumentStore = (): DocumentState => {
   const isDiodeEnabled = Boolean(preference['default-diode'] && addOnInfo.hybridLaser);
   const isBorderlessEnabled = Boolean(preference['default-borderless'] && addOnInfo.openBottom);
   const isRotaryEnabled = Boolean(preference.rotary_mode && addOnInfo.rotary);
+
+  // Write default values to BeamboxPreference, may not need because the value will always reset by getInitDocumentStore
+  beamboxPreference.write('workarea', defaultWorkarea, false);
+  beamboxPreference.write('enable-autofocus', isAutofocusEnabled, false);
+  beamboxPreference.write('enable-diode', isDiodeEnabled, false);
+  beamboxPreference.write('borderless', isBorderlessEnabled, false);
+  beamboxPreference.write('rotary_mode', isRotaryEnabled, false);
 
   return {
     'auto-feeder': preference['auto-feeder'],

@@ -3,19 +3,10 @@ import { combine, subscribeWithSelector } from 'zustand/middleware';
 
 import communicator from '@core/implementations/communicator';
 import storage from '@core/implementations/storage';
+import type { BeamboxPreference, GlobalPreference, GlobalPreferenceKey } from '@core/interfaces/Preference';
 
-import type { BeamboxPreference } from '../actions/beambox/beambox-preference';
 import beamboxPreference from '../actions/beambox/beambox-preference';
 import { TabEvents } from '../constants/tabConstants';
-
-import type { DocumentStateKey } from './documentStore';
-
-/**
- * Global Preference Store
- * Use useGlobalPreferenceStore.subscribe to subscribe to changes outside of React components if needed.
- */
-export type GlobalPreference = Omit<BeamboxPreference, DocumentStateKey>;
-export type GlobalPreferenceKey = keyof GlobalPreference;
 
 export type GlobalPreferenceStore = GlobalPreference & {
   reload: () => void;
@@ -84,7 +75,7 @@ const getInitStore = (): GlobalPreference => {
 };
 
 /**
- * Document Store stores the states in BeamboxPreference which are not shared by all tabs.
+ * Global Preference Store stores the states in BeamboxPreference that are shared by all tabs.
  */
 export const useGlobalPreferenceStore = create(
   subscribeWithSelector<GlobalPreferenceStore>(
