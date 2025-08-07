@@ -20,6 +20,7 @@ import { pathToFileURL } from 'url';
 import * as electronRemote from '@electron/remote/main';
 import { captureMessage, init as SentryInit } from '@sentry/electron/main';
 import { setupTitlebar } from 'custom-electron-titlebar/main';
+import { pick } from 'remeda';
 
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
@@ -38,45 +39,55 @@ import { UpdateManager } from './updateManager';
 electronRemote.initialize();
 
 SentryInit({ dsn: 'https://bbd96134db9147658677dcf024ae5a83@o28957.ingest.sentry.io/5617300' });
-captureMessage('User Census', {
-  level: 'info',
-  tags: {
-    census: 'v1',
-    from: 'backend',
-  },
-});
-
+captureMessage('User Census', { level: 'info', tags: { census: 'v1', from: 'backend' } });
 setupTitlebar();
 
 let mainWindow: BaseWindow | null;
 let menuManager: MenuManager | null;
 let tabManager: null | TabManager;
+let DEBUG = false;
+let fileToOpenOnLaunch: null | string = null;
+const pendingFileMap = new Map<number, string>();
 
 const globalData: {
-  backend: { alive: boolean; logfile?: string; port?: number };
+  backend: { alive: boolean; logFile?: string; port?: number };
   devices: { [key: string]: IDeviceInfo };
 } = { backend: { alive: false }, devices: {} };
-
 let logger: { write: (data: string) => void };
+
+const getFilePathFromArgv = (argv: string[]): null | string => {
+  const potentialPath = argv.find((arg) => {
+    if (!arg.startsWith('--') && arg !== process.execPath && !arg.startsWith('beam-studio://')) {
+      try {
+        // Check if the path exists and is a file.
+        return fs.existsSync(arg) && fs.lstatSync(arg).isFile();
+      } catch {
+        return false;
+      }
+    }
+
+    return false;
+  });
+
+  return potentialPath || null;
+};
 
 function createLogFile() {
   const storageDir = app.getPath('userData');
 
-  function chkDir(target: string) {
-    if (fs.existsSync(target)) {
-      return;
-    }
+  const checkDir = (target: string) => {
+    if (fs.existsSync(target)) return;
 
-    chkDir(path.dirname(target));
+    checkDir(path.dirname(target));
     fs.mkdirSync(target);
-  }
-  chkDir(storageDir);
+  };
+
+  checkDir(storageDir);
 
   const filename = path.join(app.getPath('userData'), 'backend.log');
 
-  globalData.backend.logfile = filename;
+  globalData.backend.logFile = filename;
 
-  // global.backend.logfile = filename;
   let writeStream = fs.createWriteStream(filename, { flags: 'w' });
 
   logger = writeStream;
@@ -98,14 +109,11 @@ function createLogFile() {
   return writeStream;
 }
 
-let DEBUG = false;
-
 logger = process.stderr.isTTY ? process.stderr : createLogFile();
 
-if (process.argv.indexOf('--debug-mode') > 0) {
+if (process.argv.includes('--debug-mode') || process.env.DEBUG) {
   DEBUG = true;
   console.log('DEBUG Mode');
-  // require('electron-reload')(__dirname);
 }
 
 // Solve transparent window issue
@@ -158,7 +166,6 @@ function onDeviceUpdated(deviceInfo: IDeviceInfo) {
 }
 
 bootstrap();
-
 UpdateManager.init();
 
 const backendManager = new BackendManager({
@@ -167,7 +174,7 @@ const backendManager = new BackendManager({
   on_ready: onGhostUp,
   on_stderr: (data) => logger.write(`${data}`),
   on_stopped: onGhostDown,
-  server: process.argv.indexOf('--server') > 0,
+  server: process.argv.includes('--server'),
   trace_pid: process.pid,
 });
 
@@ -178,9 +185,7 @@ let monitorManager: MonitorManager | null = null;
 
 if (process.argv.includes('--monitor')) {
   console.log('Starting Monitor');
-  monitorManager = new MonitorManager({
-    location: process.env.BACKEND || '',
-  });
+  monitorManager = new MonitorManager({ location: process.env.BACKEND || '' });
   // kill process first, in case last time shut down
   monitorManager.killProcSync();
   monitorManager.startProc();
@@ -189,35 +194,30 @@ if (process.argv.includes('--monitor')) {
 let shadowWindow: BrowserWindow;
 let shouldCloseShadowWindow = false;
 
-const loadShadowWindow = () => {
-  shadowWindow?.loadURL(pathToFileURL(path.join(__dirname, '../../shadow-index.html')).toString());
-};
-
 const createShadowWindow = () => {
-  if (!shadowWindow) {
-    shadowWindow = new BrowserWindow({
-      show: false,
-      webPreferences: {
-        contextIsolation: false,
-        nodeIntegration: true,
-      },
-    });
-    // shadowWindow.webContents.openDevTools();
-    loadShadowWindow();
-
-    shadowWindow.on('close', (e) => {
-      if (!shouldCloseShadowWindow) {
-        e.preventDefault();
-      } else {
-        console.log('Shadow window closed');
-      }
-    });
+  if (shadowWindow) {
+    return;
   }
+
+  shadowWindow = new BrowserWindow({ show: false, webPreferences: { contextIsolation: false, nodeIntegration: true } });
+
+  // shadowWindow.webContents.openDevTools();
+  shadowWindow?.loadURL(pathToFileURL(path.join(__dirname, '../../shadow-index.html')).toString());
+
+  shadowWindow.on('close', (e) => {
+    if (!shouldCloseShadowWindow) {
+      e.preventDefault();
+
+      return;
+    }
+
+    console.log('Shadow window closed');
+  });
 };
 
-function createWindow() {
-  // Create the browser window.
+function createMainWindow() {
   console.log('Creating main window');
+
   mainWindow = new BaseWindow({
     frame: process.platform !== 'win32',
     height: 650,
@@ -228,6 +228,7 @@ function createWindow() {
     trafficLightPosition: { x: 12, y: 14 },
     width: 1300,
   });
+
   tabManager = new TabManager(mainWindow, { isDebug: DEBUG });
   tabManager.addNewTab();
   setTabManager(tabManager);
@@ -238,6 +239,7 @@ function createWindow() {
     monitorManager?.killProc();
     backendManager.stop();
     shouldCloseShadowWindow = true;
+
     try {
       shadowWindow.close();
     } catch (error) {
@@ -248,22 +250,22 @@ function createWindow() {
   mainWindow.on('close', async (evt) => {
     console.log('Main window close event', isCloseConfirmed);
 
-    if (!isCloseConfirmed) {
-      evt.preventDefault();
-
-      if (tabManager) {
-        const res = await tabManager.closeAllTabs();
-
-        if (!res) {
-          return;
-        }
-      }
-
-      isCloseConfirmed = true;
-      mainWindow?.close();
-    } else {
+    if (isCloseConfirmed) {
       doClose();
+
+      return;
     }
+
+    evt.preventDefault();
+
+    if (tabManager) {
+      const res = await tabManager.closeAllTabs();
+
+      if (!res) return;
+    }
+
+    isCloseConfirmed = true;
+    mainWindow?.close();
   });
 
   mainWindow.on('closed', () => {
@@ -289,9 +291,11 @@ function createWindow() {
   menuManager?.on('DEBUG-INSPECT', () => {
     tabManager?.getFocusedView()?.webContents.openDevTools();
   });
+
   ipcMain.on('DEBUG-INSPECT', (evt) => {
     evt.sender.openDevTools();
   });
+
   networkHelper.registerEvents();
 
   // see https://github.com/AlexTorresDev/custom-electron-titlebar/blob/2471c5a4df6c9146f7f8d8598e503789cfc1190c/src/main/attach-titlebar-to-window.ts
@@ -319,32 +323,17 @@ function createWindow() {
   }
 }
 
-let didGetOpenFile = false;
-let initOpenPath = '';
-
 app.on('open-file', (event, filePath) => {
-  initOpenPath = filePath;
+  console.log('App opened with file:', filePath, event);
 
-  if (filePath && tabManager) {
+  event.preventDefault();
+
+  fileToOpenOnLaunch = filePath;
+
+  if (app.isReady() && tabManager) {
     // Send the file path to the focused renderer process
     tabManager.sendToFocusedView('open-file', filePath);
   }
-});
-
-ipcMain.on('GET_OPEN_FILE', (evt) => {
-  if (!didGetOpenFile) {
-    didGetOpenFile = true;
-
-    if (process.platform === 'win32' && process.argv.length > 1) {
-      [, initOpenPath] = process.argv;
-    }
-
-    if (initOpenPath && fs.existsSync(initOpenPath)) {
-      evt.returnValue = initOpenPath;
-    }
-  }
-
-  evt.returnValue = null;
 });
 
 ipcMain.on('ASK_FOR_PERMISSION', async (event, key: 'camera' | 'microphone') => {
@@ -369,42 +358,30 @@ ipcMain.on('ASK_FOR_PERMISSION', async (event, key: 'camera' | 'microphone') => 
   event.returnValue = true;
 });
 
-ipcMain.on('DEVICE_UPDATED', (event, deviceInfo: IDeviceInfo) => {
+ipcMain.on('DEVICE_UPDATED', (_event, deviceInfo: IDeviceInfo) => {
   onDeviceUpdated(deviceInfo);
 });
 
-ipcMain.on(events.CHECK_BACKEND_STATUS, (evt) => {
+ipcMain.on(events.CHECK_BACKEND_STATUS, (event) => {
   if (mainWindow) {
-    evt.sender.send(events.NOTIFY_BACKEND_STATUS, {
-      backend: globalData.backend,
-      devices: globalData.devices,
-    });
+    event.sender.send(events.NOTIFY_BACKEND_STATUS, { backend: globalData.backend, devices: globalData.devices });
   } else {
     console.error('Recv async-status request but main window not exist');
   }
 });
 
-ipcMain.on(events.SVG_URL_TO_IMG_URL, (e, data) => {
-  const { bb, fullColor, id, imageRatio, imgHeight: height, imgWidth: width, strokeWidth, svgUrl } = data;
+ipcMain.on(events.SVG_URL_TO_IMG_URL, (event, data) => {
+  const info = pick(data, ['bb', 'fullColor', 'id', 'imageRatio', 'strokeWidth']);
+  const { imgHeight: height, imgWidth: width, svgUrl: url } = data;
 
   if (shadowWindow) {
-    const senderId = e.sender.id;
+    const senderId = event.sender.id;
 
-    shadowWindow.webContents.send(events.SVG_URL_TO_IMG_URL, {
-      bb,
-      fullColor,
-      height,
-      id,
-      imageRatio,
-      senderId,
-      strokeWidth,
-      url: svgUrl,
-      width,
-    });
+    shadowWindow.webContents.send(events.SVG_URL_TO_IMG_URL, { ...info, height, senderId, url, width });
   }
 });
 
-ipcMain.on(events.SVG_URL_TO_IMG_URL_DONE, (e, data) => {
+ipcMain.on(events.SVG_URL_TO_IMG_URL_DONE, (_event, data) => {
   const { id, imageUrl, senderId } = data;
 
   tabManager?.sendToView(senderId, `${events.SVG_URL_TO_IMG_URL_DONE}_${id}`, imageUrl);
@@ -414,9 +391,27 @@ fontHelper.registerEvents();
 
 let editingStandardInput = false;
 
-ipcMain.on(events.SET_EDITING_STANDARD_INPUT, (event, arg) => {
+ipcMain.on(events.SET_EDITING_STANDARD_INPUT, (_event, arg) => {
   editingStandardInput = arg;
   console.log('Set SET_EDITING_STANDARD_INPUT', arg);
+});
+
+ipcMain.on('FRONTEND_READY', (event) => {
+  const webContents = event.sender;
+  const webContentsId = webContents.id;
+
+  // Check if we have a pending file for the window that just became ready
+  if (pendingFileMap.has(webContentsId)) {
+    const filePath = pendingFileMap.get(webContentsId);
+
+    console.log(`Renderer ${webContentsId} is ready. Sending file: ${filePath}`);
+
+    // Send the file path
+    webContents.send('open-file', filePath);
+
+    // Remove the file from the map so we don't send it again
+    pendingFileMap.delete(webContentsId);
+  }
 });
 
 console.log('Running Beam Studio on ', os.arch());
@@ -425,8 +420,8 @@ app.setAsDefaultProtocolClient('beam-studio');
 
 if (gotTheLock) {
   // win32 deep link handler
-  app.on('second-instance', (e, argv) => {
-    e.preventDefault();
+  app.on('second-instance', (event, argv) => {
+    event.preventDefault();
     console.log(argv);
 
     if (mainWindow) {
@@ -443,59 +438,44 @@ if (gotTheLock) {
       handleDeepLinkUrl(tabManager?.getAllViews() || [], linkUrl);
     }
 
-    // Handle file open on Windows
-    const filePath = argv.find((arg) => {
-      // Basic check to see if it's a file path and not a command line switch
-      // You might want to make this more robust depending on your needs
-      if (!arg.startsWith('--') && arg !== process.execPath) {
-        try {
-          return fs.existsSync(arg) && fs.lstatSync(arg).isFile();
-        } catch {
-          return false;
-        }
-      }
-
-      return false;
-    });
+    const filePath = getFilePathFromArgv(argv);
 
     if (filePath && tabManager) {
       // Send the file path to the focused renderer process
       tabManager.sendToFocusedView('open-file', filePath);
     }
   });
+
+  // On non-macOS platforms, the initial file path comes from process arguments.
+  if (process.platform !== 'darwin') {
+    fileToOpenOnLaunch = getFilePathFromArgv(process.argv);
+  }
 }
 
 // macOS deep link handler
 app.on('will-finish-launching', () => {
-  app.on('open-url', (event, openUrl) => {
+  app.on('open-url', (_event, openUrl) => {
     handleDeepLinkUrl(tabManager?.getAllViews() || [], openUrl);
   });
 });
 
-if (os.arch() === 'ia32' || os.arch() === 'x32') {
-  app.commandLine.appendSwitch('js-flags', '--max-old-space-size=2048');
-} else {
-  app.commandLine.appendSwitch('js-flags', '--max-old-space-size=4096');
-}
+app.commandLine.appendSwitch('js-flags', `--max-old-space-size=${['ia32', 'x32'].includes(os.arch()) ? 2048 : 4096}`);
 
 const onMenuClick = (data: { id: string; machineName?: string; serial?: string; uuid?: string }) => {
-  data = {
-    id: data.id,
-    machineName: data.machineName,
-    serial: data.serial,
-    uuid: data.uuid,
-  };
+  const info = pick(data, ['id', 'machineName', 'serial', 'uuid']);
 
-  if (editingStandardInput) {
-    if (data.id === 'REDO') {
-      tabManager?.getFocusedView()?.webContents.redo();
-    }
+  if (!editingStandardInput) {
+    tabManager?.sendToFocusedView(events.MENU_CLICK, info);
 
-    if (data.id === 'UNDO') {
-      tabManager?.getFocusedView()?.webContents.undo();
-    }
-  } else {
-    tabManager?.sendToFocusedView(events.MENU_CLICK, data);
+    return;
+  }
+
+  if (info.id === 'REDO') {
+    tabManager?.getFocusedView()?.webContents.redo();
+  }
+
+  if (info.id === 'UNDO') {
+    tabManager?.getFocusedView()?.webContents.undo();
   }
 };
 
@@ -509,21 +489,37 @@ const init = () => {
 
   if (!mainWindow) {
     createShadowWindow();
-    createWindow();
+    createMainWindow();
   } else {
     console.log('MainWindow instance', mainWindow);
     mainWindow.focus();
   }
 };
 
+function openInitialFileInTab() {
+  if (fileToOpenOnLaunch && tabManager) {
+    const view = tabManager.getFocusedView();
+
+    if (view) {
+      const webContents = view.webContents;
+
+      // Store the file path with the window's ID and clear the global variable.
+      pendingFileMap.set(webContents.id, fileToOpenOnLaunch);
+      fileToOpenOnLaunch = null;
+      console.log(`File path for window ${webContents.id} is buffered, waiting for renderer to be ready.`);
+    }
+  }
+}
+
 app.whenReady().then(() => {
   init();
+  openInitialFileInTab();
 
   app.on('activate', () => {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
+      createMainWindow();
     }
   });
 });
