@@ -8,8 +8,7 @@ import { CanvasMode } from '@core/app/constants/canvasMode';
 import NS from '@core/app/constants/namespaces';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import cursorIconUrl from '@core/app/icons/left-panel/curve-select.svg?url';
-import type { DocumentStateKey } from '@core/app/stores/documentStore';
-import { changeDocumentStoreValue } from '@core/app/stores/documentStore';
+import { changeMultipleDocumentStoreValues } from '@core/app/stores/documentStore';
 import CustomCommand from '@core/app/svgedit/history/CustomCommand';
 import { BatchCommand } from '@core/app/svgedit/history/history';
 import workareaManager from '@core/app/svgedit/workarea';
@@ -423,12 +422,10 @@ class CurveEngravingModeController {
     };
 
     customCmd.onAfter = postLoadData;
-    ['rotary_mode', 'auto-feeder', 'pass-through'].forEach((key) => {
-      changeDocumentStoreValue(key as DocumentStateKey, false, {
-        changeBeamboxPreference: true,
-        parentCmd: cmd,
-      });
-    });
+    changeMultipleDocumentStoreValues(
+      { 'auto-feeder': false, 'pass-through': false, rotary_mode: false },
+      { parentCmd: cmd },
+    );
     cmd.addSubCommand(customCmd);
 
     cmd.apply();
