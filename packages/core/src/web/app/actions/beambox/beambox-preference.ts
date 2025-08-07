@@ -106,7 +106,7 @@ function deepApplyDefaults<T extends { [key: string]: any }>(target: DeepPartial
 
 class BeamboxPreferenceClass {
   constructor() {
-    let preference: BeamboxPreference | null = storage.get('beambox-preference', false);
+    let preference: BeamboxPreference | null = storage.get('beambox-preference');
 
     if (preference) {
       // migrate renamed key
