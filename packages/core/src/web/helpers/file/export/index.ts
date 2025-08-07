@@ -16,6 +16,9 @@ import beamFileHelper from '@core/helpers/beam-file-helper';
 import i18n from '@core/helpers/i18n';
 import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
 import isWeb from '@core/helpers/is-web';
+import { getData } from '@core/helpers/layer/layer-config-helper';
+import { getAllLayerNames, getLayerElementByName } from '@core/helpers/layer/layer-helper';
+import { layersToA4Base64 } from '@core/helpers/layer/layersToA4Base64';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import { convertVariableText } from '@core/helpers/variableText';
@@ -23,10 +26,6 @@ import communicator from '@core/implementations/communicator';
 import dialog from '@core/implementations/dialog';
 import fs from '@core/implementations/fileSystem';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-
-import { getData } from './layer/layer-config-helper';
-import { getAllLayerNames, getLayerElementByName } from './layer/layer-helper';
-import { layersToA4Base64 } from './layer/layersToA4Base64';
 
 let svgCanvas: ISVGCanvas;
 

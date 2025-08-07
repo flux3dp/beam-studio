@@ -14,7 +14,7 @@ import disassembleUse from '@core/app/svgedit/operations/disassembleUse';
 import workareaManager from '@core/app/svgedit/workarea';
 import { externalLinkMemberDashboard, signOut } from '@core/helpers/api/flux-id';
 import checkQuestionnaire from '@core/helpers/check-questionnaire';
-import FileExportHelper from '@core/helpers/file-export-helper';
+import FileExportHelper from '@core/helpers/file/export';
 import i18n from '@core/helpers/i18n';
 import imageEdit from '@core/helpers/image-edit';
 import isWeb from '@core/helpers/is-web';

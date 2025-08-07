@@ -2,7 +2,7 @@ import React from 'react';
 
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
-import fileExportHelper from '@core/helpers/file-export-helper';
+import fileExportHelper from '@core/helpers/file/export';
 import { hashMap } from '@core/helpers/hashHelper';
 
 import styles from './WelcomePageButton.module.scss';

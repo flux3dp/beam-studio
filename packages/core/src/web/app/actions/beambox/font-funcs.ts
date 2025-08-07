@@ -11,7 +11,7 @@ import textedit from '@core/app/svgedit/text/textedit';
 import AlertConfig from '@core/helpers/api/alert-config';
 import { checkConnection } from '@core/helpers/api/discover';
 import SvgLaserParser from '@core/helpers/api/svg-laser-parser';
-import fileExportHelper from '@core/helpers/file-export-helper';
+import fileExportHelper from '@core/helpers/file/export';
 import fontHelper from '@core/helpers/fonts/fontHelper';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';

@@ -1,4 +1,4 @@
-import { generateBeamBuffer } from '@core/helpers/file-export-helper';
+import { generateBeamBuffer } from '@core/helpers/file/export';
 import isWeb from '@core/helpers/is-web';
 import fs from '@core/implementations/fileSystem';
 import storage from '@core/implementations/storage';
