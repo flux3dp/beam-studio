@@ -156,7 +156,7 @@ export function changeDocumentStoreValue<Key extends DocumentStateKey>(
     const batchCmd = new history.BatchCommand();
 
     batchCmd.addSubCommand(cmd);
-    changeBeamboxPreferenceValue(key, value as any, { isGlobalPreference: false, parentCmd: batchCmd });
+    changeBeamboxPreferenceValue(key, value as any, { parentCmd: batchCmd, shouldNotifyChanges: false });
     cmd = batchCmd;
   }
 
@@ -182,8 +182,8 @@ export function changeMultipleDocumentStoreValues(
     batchCmd.addSubCommand(cmd);
     for (const [key, value] of Object.entries(payload)) {
       changeBeamboxPreferenceValue(key as DocumentStateKey, value as any, {
-        isGlobalPreference: false,
         parentCmd: batchCmd,
+        shouldNotifyChanges: false,
       });
     }
     cmd = batchCmd;
