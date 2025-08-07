@@ -549,6 +549,8 @@ export const toggleFullColorAfterWorkareaChange = (): void => {
         toggleFullColorLayer(layer, { val: false });
       } else {
         writeDataLayer(layer, 'module', defaultLaserModule);
+
+        if (printingModules.has(module)) toggleFullColorLayer(layer, { val: false });
       }
     }
   }
