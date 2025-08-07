@@ -7,7 +7,7 @@ import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
-import { changeMultipleDocumentStoreValues } from '@core/app/stores/documentStore';
+import { changeMultipleDocumentStoreValues, useDocumentStore } from '@core/app/stores/documentStore';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import history from '@core/app/svgedit/history/history';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
@@ -227,10 +227,17 @@ export const importBvgString = async (
 
   const { addToHistory = true, parentCmd } = opts;
   const postImportBvgString = async () => {
+    const { workarea } = useDocumentStore.getState();
+
     // toggle full color setting according workarea supported modules
     toggleFullColorAfterWorkareaChange();
     presprayArea.togglePresprayArea();
     LayerPanelController.setSelectedLayers([]);
+
+    if (!parentCmd) {
+      workareaManager.setWorkarea(workarea);
+      workareaManager.resetView();
+    }
 
     await symbolMaker.reRenderAllImageSymbols();
   };

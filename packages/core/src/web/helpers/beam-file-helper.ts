@@ -81,10 +81,12 @@ import { Buffer } from 'buffer';
 
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import Progress from '@core/app/actions/progress-caller';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useVariableTextState, type VariableTextState } from '@core/app/stores/variableText';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { importBvgString } from '@core/app/svgedit/operations/import/importBvg';
+import workareaManager from '@core/app/svgedit/workarea';
 import updateImageDisplay from '@core/helpers/image/updateImageDisplay';
 import { hasVariableText } from '@core/helpers/variableText';
 import type { CurveEngraving } from '@core/interfaces/ICurveEngraving';
@@ -420,6 +422,14 @@ const readBeam = async (file: File): Promise<void> => {
   while (offset > 0) {
     offset = await readBlocks(buf, offset, command);
   }
+
+  const postReadBeam = (): void => {
+    workareaManager.setWorkarea(useDocumentStore.getState().workarea);
+    workareaManager.resetView();
+  };
+
+  command.onAfter = postReadBeam;
+  postReadBeam();
 
   undoManager.addCommandToHistory(command);
   Progress.popById('loading_image');
