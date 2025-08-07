@@ -29,7 +29,7 @@ class CurrentFileManager {
   };
 
   updateTitle = () => {
-    TopBarController.updateTitle(this.name, this.isCloudFile);
+    TopBarController.updateTitle(this.name || 'Undefined', this.isCloudFile);
   };
 
   extractFileName = (filepath: string) => {
