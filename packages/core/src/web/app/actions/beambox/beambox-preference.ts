@@ -9,11 +9,6 @@ import communicator from '@core/implementations/communicator';
 import storage from '@core/implementations/storage';
 import type { BeamboxPreference, BeamboxPreferenceKey, BeamboxPreferenceValue } from '@core/interfaces/Preference';
 
-/**
- * Global preferences: preferences that are shared across all tabs and not specific to a document.
- * Should handle preferences changes in other tabs with TabEvents.GlobalPreference
- */
-
 const DEFAULT_PREFERENCE: BeamboxPreference = {
   'af-offset': 0,
   'anti-aliasing': true,
