@@ -3,7 +3,14 @@ import { app, BaseWindow, BrowserWindow, ipcMain, systemPreferences } from 'elec
 
 app.commandLine.appendSwitch('ignore-gpu-blacklist');
 app.commandLine.appendSwitch('--no-sandbox');
-// app.allowRendererProcessReuse = false;
+
+const gotTheLock = app.requestSingleInstanceLock();
+
+if (!gotTheLock) {
+  // If we failed to get the lock, another instance is already running.
+  // Quit this new instance immediately. The primary instance will handle the file opening.
+  app.quit();
+}
 
 import fs from 'fs';
 import os from 'os';
@@ -28,54 +35,6 @@ import networkHelper from './network-helper';
 import TabManager from './tabManager';
 import { UpdateManager } from './updateManager';
 
-const gotTheLock = app.requestSingleInstanceLock();
-
-if (!gotTheLock) {
-  // If we failed to get the lock, another instance is already running.
-  // Quit this new instance immediately. The primary instance will handle the file opening.
-  app.quit();
-} else {
-  // win32 deep link handler
-  app.on('second-instance', (e, argv) => {
-    e.preventDefault();
-    console.log(argv);
-
-    if (mainWindow) {
-      if (mainWindow.isMinimized()) {
-        mainWindow.restore();
-      }
-
-      mainWindow.focus();
-    }
-
-    const linkUrl = getDeepLinkUrl(argv);
-
-    if (linkUrl) {
-      handleDeepLinkUrl(tabManager?.getAllViews() || [], linkUrl);
-    }
-
-    // Handle file open on Windows
-    const filePath = argv.find((arg) => {
-      // Basic check to see if it's a file path and not a command line switch
-      // You might want to make this more robust depending on your needs
-      if (!arg.startsWith('--') && arg !== process.execPath) {
-        try {
-          return fs.existsSync(arg) && fs.lstatSync(arg).isFile();
-        } catch {
-          return false;
-        }
-      }
-
-      return false;
-    });
-
-    if (filePath && tabManager) {
-      // Send the file path to the focused renderer process
-      tabManager.sendToFocusedView('open-file', filePath);
-    }
-  });
-}
-
 electronRemote.initialize();
 
 SentryInit({ dsn: 'https://bbd96134db9147658677dcf024ae5a83@o28957.ingest.sentry.io/5617300' });
@@ -94,18 +53,9 @@ let menuManager: MenuManager | null;
 let tabManager: null | TabManager;
 
 const globalData: {
-  backend: {
-    alive: boolean;
-    logfile?: string;
-    port?: number;
-  };
+  backend: { alive: boolean; logfile?: string; port?: number };
   devices: { [key: string]: IDeviceInfo };
-} = {
-  backend: {
-    alive: false,
-  },
-  devices: {},
-};
+} = { backend: { alive: false }, devices: {} };
 
 let logger: { write: (data: string) => void };
 
@@ -375,8 +325,9 @@ let initOpenPath = '';
 app.on('open-file', (event, filePath) => {
   initOpenPath = filePath;
 
-  if (tabManager) {
-    tabManager.sendToView(tabManager.welcomeTabId, 'open-file', filePath);
+  if (filePath && tabManager) {
+    // Send the file path to the focused renderer process
+    tabManager.sendToFocusedView('open-file', filePath);
   }
 });
 
@@ -471,6 +422,48 @@ ipcMain.on(events.SET_EDITING_STANDARD_INPUT, (event, arg) => {
 console.log('Running Beam Studio on ', os.arch());
 
 app.setAsDefaultProtocolClient('beam-studio');
+
+if (gotTheLock) {
+  // win32 deep link handler
+  app.on('second-instance', (e, argv) => {
+    e.preventDefault();
+    console.log(argv);
+
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) {
+        mainWindow.restore();
+      }
+
+      mainWindow.focus();
+    }
+
+    const linkUrl = getDeepLinkUrl(argv);
+
+    if (linkUrl) {
+      handleDeepLinkUrl(tabManager?.getAllViews() || [], linkUrl);
+    }
+
+    // Handle file open on Windows
+    const filePath = argv.find((arg) => {
+      // Basic check to see if it's a file path and not a command line switch
+      // You might want to make this more robust depending on your needs
+      if (!arg.startsWith('--') && arg !== process.execPath) {
+        try {
+          return fs.existsSync(arg) && fs.lstatSync(arg).isFile();
+        } catch {
+          return false;
+        }
+      }
+
+      return false;
+    });
+
+    if (filePath && tabManager) {
+      // Send the file path to the focused renderer process
+      tabManager.sendToFocusedView('open-file', filePath);
+    }
+  });
+}
 
 // macOS deep link handler
 app.on('will-finish-launching', () => {
