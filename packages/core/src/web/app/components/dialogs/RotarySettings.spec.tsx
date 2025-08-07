@@ -171,15 +171,6 @@ describe('test RotarySettings', () => {
       'rotary-type': RotaryType.Chuck,
       rotary_mode: true,
     });
-    // expect(mockWrite).toHaveBeenCalledTimes(8);
-    // expect(mockWrite).toHaveBeenNthCalledWith(1, 'rotary_mode', true);
-    // expect(mockWrite).toHaveBeenNthCalledWith(2, 'rotary-type', RotaryType.Chuck);
-    // expect(mockWrite).toHaveBeenNthCalledWith(3, 'rotary-scale', 2);
-    // expect(mockWrite).toHaveBeenNthCalledWith(4, 'rotary-chuck-obj-d', 10);
-    // expect(mockWrite).toHaveBeenNthCalledWith(5, 'rotary-mirror', true);
-    // expect(mockWrite).toHaveBeenNthCalledWith(6, 'extend-rotary-workarea', true);
-    // expect(mockWrite).toHaveBeenNthCalledWith(7, 'rotary-split', 2);
-    // expect(mockWrite).toHaveBeenNthCalledWith(8, 'rotary-overlap', 1);
     expect(mockChangeWorkarea).toHaveBeenCalledTimes(1);
     expect(mockChangeWorkarea).toHaveBeenLastCalledWith('fpm1', { toggleModule: false });
     expect(mockToggleDisplay).toHaveBeenCalledTimes(1);
