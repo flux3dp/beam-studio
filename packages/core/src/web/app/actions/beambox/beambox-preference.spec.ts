@@ -44,7 +44,7 @@ jest.mock('@core/app/actions/beambox/constant', () => ({
 }));
 
 test('test beambox-preference', () => {
-  expect(mockGet).toHaveBeenNthCalledWith(1, 'beambox-preference', false);
+  expect(mockGet).toHaveBeenNthCalledWith(1, 'beambox-preference');
   expect(mockSet).toHaveBeenNthCalledWith(1, 'beambox-preference', {
     abc: '123',
     'af-offset': 0,
@@ -142,10 +142,10 @@ test('test beambox-preference', () => {
     mouse_input_device: 'TOUCHPAD',
   });
   expect(beamboxPreference.read('mouse_input_device')).toBe('TOUCHPAD');
-  expect(mockGet).toHaveBeenNthCalledWith(2, 'beambox-preference', false);
+  expect(mockGet).toHaveBeenNthCalledWith(2, 'beambox-preference');
 
   mockGet.mockReturnValue({});
   beamboxPreference.write('mouse_input_device', 'MOUSE');
-  expect(mockGet).toHaveBeenNthCalledWith(3, 'beambox-preference', false);
+  expect(mockGet).toHaveBeenNthCalledWith(3, 'beambox-preference');
   expect(mockSet).toHaveBeenNthCalledWith(2, 'beambox-preference', { mouse_input_device: 'MOUSE' });
 });
