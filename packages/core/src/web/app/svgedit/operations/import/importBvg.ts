@@ -7,7 +7,7 @@ import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
-import { changeDocumentStoreValue } from '@core/app/stores/documentStore';
+import { changeMultipleDocumentStoreValues } from '@core/app/stores/documentStore';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import history from '@core/app/svgedit/history/history';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
@@ -18,8 +18,9 @@ import i18n from '@core/helpers/i18n';
 import { applyDefaultLaserModule, toggleFullColorAfterWorkareaChange } from '@core/helpers/layer/layer-config-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
-import type { IBatchCommand, ICommand } from '@core/interfaces/IHistory';
+import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import type { DocumentState } from '@core/interfaces/Preference';
 
 import setSvgContent from './setSvgContent';
 
@@ -78,41 +79,34 @@ export const importBvgString = async (
 
     let matched = str.match(/data-rotary_mode="([^"]*)"/);
     const addOnInfo = getAddOnInfo(currentWorkarea as WorkAreaModel);
+    const newDocumentState: Partial<DocumentState> = {};
 
     if (matched) {
       let rotaryMode: string = matched[1];
-
-      let cmd: ICommand;
 
       if (['0', '1'].includes(rotaryMode)) {
         rotaryMode = rotaryMode === '1' ? 'true' : 'false';
       }
 
       if (addOnInfo.rotary) {
-        cmd = changeDocumentStoreValue('rotary_mode', rotaryMode === 'true', { parentCmd: batchCmd });
+        newDocumentState['rotary_mode'] = rotaryMode === 'true';
 
         if (rotaryMode === 'true') {
-          changeDocumentStoreValue('pass-through', false, { parentCmd: batchCmd });
-          changeDocumentStoreValue('auto-feeder', false, { parentCmd: batchCmd });
+          newDocumentState['auto-feeder'] = false;
+          newDocumentState['pass-through'] = false;
           curveEngravingModeController.clearArea(false);
         }
       } else {
-        cmd = changeDocumentStoreValue('rotary_mode', false, { parentCmd: batchCmd });
+        newDocumentState['rotary_mode'] = false;
       }
-
-      cmd.onAfter = () => {
-        rotaryAxis.toggleDisplay();
-      };
-
-      rotaryAxis.toggleDisplay();
     }
 
     const engraveDpi = str.match(/data-engrave_dpi="([a-zA-Z]+)"/)?.[1];
 
     if (engraveDpi) {
-      changeDocumentStoreValue('engrave_dpi', engraveDpi as 'high' | 'low' | 'medium', { parentCmd: batchCmd });
+      newDocumentState['engrave_dpi'] = engraveDpi as 'high' | 'low' | 'medium' | 'ultra';
     } else {
-      changeDocumentStoreValue('engrave_dpi', 'medium', { parentCmd: batchCmd });
+      newDocumentState['engrave_dpi'] = 'medium';
     }
 
     if (addOnInfo.hybridLaser) {
@@ -120,9 +114,9 @@ export const importBvgString = async (
 
       if (matched && matched[1]) {
         if (matched[1] === 'true') {
-          changeDocumentStoreValue('enable-diode', true, { parentCmd: batchCmd });
+          newDocumentState['enable-diode'] = true;
         } else {
-          changeDocumentStoreValue('enable-diode', false, { parentCmd: batchCmd });
+          newDocumentState['enable-diode'] = false;
         }
       }
     }
@@ -132,9 +126,9 @@ export const importBvgString = async (
 
       if (matched && matched[1]) {
         if (matched[1] === 'true') {
-          changeDocumentStoreValue('enable-autofocus', true, { parentCmd: batchCmd });
+          newDocumentState['enable-autofocus'] = true;
         } else {
-          changeDocumentStoreValue('enable-autofocus', false, { parentCmd: batchCmd });
+          newDocumentState['enable-autofocus'] = false;
         }
       }
     }
@@ -146,11 +140,10 @@ export const importBvgString = async (
         const height = Number.parseFloat(matched[1]);
 
         if (!Number.isNaN(height) && height > 0) {
-          changeDocumentStoreValue('pass-through', true, { parentCmd: batchCmd });
-          changeDocumentStoreValue('pass-through-height', height, { parentCmd: batchCmd });
-
-          changeDocumentStoreValue('auto-feeder', false, { parentCmd: batchCmd });
-          changeDocumentStoreValue('rotary_mode', false, { parentCmd: batchCmd });
+          newDocumentState['pass-through'] = true;
+          newDocumentState['pass-through-height'] = height;
+          newDocumentState['auto-feeder'] = false;
+          newDocumentState['rotary_mode'] = false;
           curveEngravingModeController.clearArea(false);
         }
       }
@@ -163,15 +156,22 @@ export const importBvgString = async (
         const height = Number.parseFloat(matched[1]);
 
         if (!Number.isNaN(height) && height > 0) {
-          changeDocumentStoreValue('auto-feeder', true, { parentCmd: batchCmd });
-          changeDocumentStoreValue('auto-feeder-height', height, { parentCmd: batchCmd });
-
-          changeDocumentStoreValue('rotary_mode', false, { parentCmd: batchCmd });
-          changeDocumentStoreValue('pass-through', false, { parentCmd: batchCmd });
+          newDocumentState['auto-feeder'] = true;
+          newDocumentState['auto-feeder-height'] = height;
+          newDocumentState['pass-through'] = false;
+          newDocumentState['rotary_mode'] = false;
           curveEngravingModeController.clearArea(false);
         }
       }
     }
+
+    const cmd = changeMultipleDocumentStoreValues(newDocumentState, { parentCmd: batchCmd });
+
+    rotaryAxis.toggleDisplay();
+
+    cmd.onAfter = () => {
+      rotaryAxis.toggleDisplay();
+    };
 
     LayerPanelController.updateLayerPanel();
   }

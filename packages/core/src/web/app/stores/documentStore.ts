@@ -97,10 +97,10 @@ communicator.on(TabEvents.ReloadDocumentStore, () => {
   useDocumentStore.getState().reload();
 });
 
-export class DocumentStoreCommand<Key extends DocumentStateKey> extends BaseHistoryCommand implements ICommand {
+export class SingleDocumentStoreCommand<Key extends DocumentStateKey> extends BaseHistoryCommand implements ICommand {
   elements = () => [];
 
-  type = () => 'DocumentStoreCommand';
+  type = () => 'SingleDocumentStoreCommand';
 
   constructor(
     private key: Key,
@@ -119,6 +119,27 @@ export class DocumentStoreCommand<Key extends DocumentStateKey> extends BaseHist
   };
 }
 
+export class MultipleDocumentStoreCommand extends BaseHistoryCommand implements ICommand {
+  elements = () => [];
+
+  type = () => 'MultipleDocumentStoreCommand';
+
+  constructor(
+    private oldValue: Partial<DocumentState>,
+    private newValue: Partial<DocumentState>,
+  ) {
+    super();
+  }
+
+  doApply = (): void => {
+    useDocumentStore.getState().update(this.newValue);
+  };
+
+  doUnapply = (): void => {
+    useDocumentStore.getState().update(this.oldValue);
+  };
+}
+
 export function changeDocumentStoreValue<Key extends DocumentStateKey>(
   key: Key,
   value: DocumentState[Key],
@@ -129,13 +150,42 @@ export function changeDocumentStoreValue<Key extends DocumentStateKey>(
 
   store.set(key, value);
 
-  let cmd: ICommand = new DocumentStoreCommand(key, oldValue, value);
+  let cmd: ICommand = new SingleDocumentStoreCommand(key, oldValue, value);
 
   if (changeBeamboxPreference) {
     const batchCmd = new history.BatchCommand();
 
     batchCmd.addSubCommand(cmd);
     changeBeamboxPreferenceValue(key, value as any, { isGlobalPreference: false, parentCmd: batchCmd });
+    cmd = batchCmd;
+  }
+
+  if (parentCmd) parentCmd.addSubCommand(cmd);
+
+  return cmd;
+}
+
+export function changeMultipleDocumentStoreValues(
+  payload: Partial<DocumentState>,
+  { changeBeamboxPreference = true, parentCmd }: { changeBeamboxPreference?: boolean; parentCmd?: IBatchCommand } = {},
+): ICommand {
+  const store = useDocumentStore.getState();
+  const oldValues = Object.fromEntries(Object.entries(payload).map(([key]) => [key, store[key as DocumentStateKey]]));
+
+  store.update(payload);
+
+  let cmd: ICommand = new MultipleDocumentStoreCommand(oldValues, payload);
+
+  if (changeBeamboxPreference) {
+    const batchCmd = new history.BatchCommand();
+
+    batchCmd.addSubCommand(cmd);
+    for (const [key, value] of Object.entries(payload)) {
+      changeBeamboxPreferenceValue(key as DocumentStateKey, value as any, {
+        isGlobalPreference: false,
+        parentCmd: batchCmd,
+      });
+    }
     cmd = batchCmd;
   }
 
