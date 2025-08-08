@@ -544,14 +544,9 @@ export const toggleFullColorAfterWorkareaChange = (): void => {
     const module = getData(layer, 'module') as LayerModuleType;
 
     if (!supportedModules.includes(module)) {
-      if (!modelsWithModules.has(workarea)) {
-        writeDataLayer(layer, 'module', LayerModule.LASER_UNIVERSAL);
-        toggleFullColorLayer(layer, { val: false });
-      } else {
-        writeDataLayer(layer, 'module', defaultLaserModule);
+      writeDataLayer(layer, 'module', defaultLaserModule);
 
-        if (printingModules.has(module)) toggleFullColorLayer(layer, { val: false });
-      }
+      if (printingModules.has(module)) toggleFullColorLayer(layer, { val: false });
     }
   }
 };

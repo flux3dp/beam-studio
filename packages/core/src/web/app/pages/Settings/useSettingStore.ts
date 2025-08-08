@@ -2,26 +2,21 @@ import { match, P } from 'ts-pattern';
 import { create } from 'zustand';
 import { combine } from 'zustand/middleware';
 
-import type {
-  BeamboxPreferenceKey,
-  BeamboxPreference as BeamboxPreferenceType,
-  BeamboxPreferenceValue,
-} from '@core/app/actions/beambox/beambox-preference';
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import storage from '@core/implementations/storage';
 import type { StorageKey } from '@core/interfaces/IStorage';
+import type { GlobalPreference, GlobalPreferenceKey } from '@core/interfaces/Preference';
 
 export type State = {
-  beamboxPreferenceChanges: Partial<BeamboxPreferenceType>;
+  beamboxPreferenceChanges: Partial<GlobalPreference>;
   configChanges: Partial<Record<StorageKey, any>>;
 };
 
 export type Action = {
   getConfig: (key: StorageKey) => any;
-  getPreference: <Key extends BeamboxPreferenceKey>(key: Key) => BeamboxPreferenceValue<Key>;
+  getPreference: <Key extends GlobalPreferenceKey>(key: Key) => GlobalPreference[Key];
   setConfig: (key: StorageKey, value: any) => void;
-  setPreference: <Key extends BeamboxPreferenceKey>(key: Key, value: BeamboxPreferenceValue<Key>) => void;
+  setPreference: <Key extends GlobalPreferenceKey>(key: Key, value: GlobalPreference[Key]) => void;
   updateToStorage: () => void;
 };
 
@@ -89,8 +84,8 @@ export const useSettingStore = create<Action & State>(
         const { beamboxPreferenceChanges } = get();
 
         return key in beamboxPreferenceChanges && beamboxPreferenceChanges[key]
-          ? beamboxPreferenceChanges[key]
-          : beamboxPreference.read(key);
+          ? beamboxPreferenceChanges[key]!
+          : (useGlobalPreferenceStore.getState() as GlobalPreference)[key];
       },
       setConfig: (key, value) =>
         set(() => {

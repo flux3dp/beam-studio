@@ -308,10 +308,7 @@ describe('test layer-config-helper', () => {
     const selector = mockSubscribeGlobalPreference.mock.calls[0][0];
     const handler = mockSubscribeGlobalPreference.mock.calls[0][1];
 
-    console.log(selector, handler);
-
     handler(selector({ 'multipass-compensation': true }));
-
     expect(baseConfig.ink).toEqual(3);
     expect(baseConfig.wInk).toEqual(-12);
 

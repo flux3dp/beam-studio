@@ -109,8 +109,6 @@ describe('test view', () => {
   });
 
   describe('test toggleRulers', () => {
-    beforeEach(() => {});
-
     afterEach(() => {
       jest.resetAllMocks();
     });

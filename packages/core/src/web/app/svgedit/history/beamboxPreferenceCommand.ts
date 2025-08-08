@@ -1,6 +1,6 @@
-import type { BeamboxPreferenceKey, BeamboxPreferenceValue } from '@core/app/actions/beambox/beambox-preference';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import type { IBatchCommand, ICommand } from '@core/interfaces/IHistory';
+import type { BeamboxPreferenceKey, BeamboxPreferenceValue } from '@core/interfaces/Preference';
 
 import { BaseHistoryCommand } from './history';
 

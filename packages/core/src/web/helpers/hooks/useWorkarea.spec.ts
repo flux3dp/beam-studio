@@ -11,8 +11,6 @@ describe('test useWorkarea', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockUseDocumentStore.mockImplementation((selector = (state) => state) => {
-      console.log('useDocumentStore called with selector:', selector);
-
       return selector(mockState);
     });
   });

@@ -233,7 +233,7 @@ export const getExportOpt = async (
   // default min_speed is 3 if not set
   config.min_speed = workareaObj.minSpeed;
 
-  if (!isDevMode && globalPreference['enable-custom-backlash']) config.cbl = true;
+  if (isDevMode && globalPreference['enable-custom-backlash']) config.cbl = true;
 
   let printingTopPadding: number | undefined = undefined;
   let printingBotPadding: number | undefined = undefined;
