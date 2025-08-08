@@ -7,9 +7,11 @@ import '@core/helpers/global-helper';
 import globalEvents from '@core/app/actions/global';
 import router from '@core/app/router';
 import fileExportHelper from '@core/helpers/file-export-helper';
+import { setFileInAnotherTab } from '@core/helpers/fileImportHelper';
 import communicator from '@core/implementations/communicator';
 
 import initBackendEvents from './init-backend-events';
+
 import './loader';
 
 declare global {
@@ -28,7 +30,7 @@ declare global {
       debug: boolean;
       dev: boolean;
       ghostPort: number;
-      logfile?: any;
+      logFile?: any;
       timestamp: number;
       version: string;
       websockets: any;
@@ -83,6 +85,14 @@ export default function main(): void {
 
   setReferer();
   menuBar();
+
+  communicator.on('open-file', (_event: any, filePath: string) => {
+    if (filePath) {
+      // Use the helper to open the file in a new tab
+      setFileInAnotherTab({ filePath, type: 'open' });
+    }
+  });
+
   communicator.on('WINDOW_CLOSE', async () => {
     const res = await fileExportHelper.toggleUnsavedChangedDialog();
 

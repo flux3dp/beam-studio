@@ -19,7 +19,7 @@ declare global {
       debug: boolean;
       dev: boolean;
       ghostPort: number;
-      logfile?: any;
+      logFile?: any;
       timestamp: number;
       version: string;
       websockets: any;
