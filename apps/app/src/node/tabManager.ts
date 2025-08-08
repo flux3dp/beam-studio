@@ -219,6 +219,28 @@ class TabManager {
     webContents.on('devtools-closed', () => {
       this.updateTabBounds([tab]);
     });
+    webContents.on('destroyed', () => {
+      const { id } = webContents;
+
+      if (tabView === this.preloadedTab?.view) {
+        this.preloadedTab = null;
+        console.log('Preloaded tab destroyed');
+      }
+
+      if (id) {
+        if (this.tabsMap[id]) {
+          console.log(`Tab ${id} destroyed unexpectedly`);
+        }
+
+        if (id === this.focusedId && !this.tabsMap[this.welcomeTabId].view.webContents?.isDestroyed()) {
+          this.focusTab(this.welcomeTabId);
+        }
+
+        delete this.tabsMap[id];
+        this.tabsList = this.tabsList.filter((tabId) => tabId !== id);
+        this.notifyTabUpdated();
+      }
+    });
     this.updateTabBounds([tab]);
     this.tabsMap[tabView.webContents.id] = tab;
 
@@ -239,9 +261,14 @@ class TabManager {
   addNewTab = (): void => {
     if (this.preloadedTab) this.preloadedTab.view.webContents.send(TabEvents.ReloadSettings);
 
-    const newTab = this.preloadedTab ?? this.createTab();
+    let newTab = this.preloadedTab ?? this.createTab();
 
     this.preloadedTab = null;
+
+    // Fix unexpected tab destruction
+    while (!newTab.view.webContents) {
+      newTab = this.createTab();
+    }
 
     const { id } = newTab.view.webContents;
 
@@ -469,14 +496,14 @@ class TabManager {
   sendToAllViews = (event: string, data?: unknown): void => {
     const views = this.getAllViews();
 
-    views.forEach((view) => view.webContents.send(event, data));
+    views.forEach((view) => view.webContents?.send(event, data));
   };
 
   sendToFocusedView = (event: string, data?: unknown): void => {
     const { focusedId, tabsMap } = this;
 
     if (tabsMap[focusedId]) {
-      tabsMap[focusedId].view.webContents.send(event, data);
+      tabsMap[focusedId].view.webContents?.send(event, data);
     }
   };
 }
