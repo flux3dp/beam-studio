@@ -1231,7 +1231,7 @@ const lang: ILang = {
     UUID: 'UUID',
   },
   device_selection: {
-    no_beambox: '#801 Emme löydä laitettasi verkosta.\nNoudata <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">ohjetta</a> yhteysongelman vianmääritykseen.',
+    no_device: '#801 Emme löydä laitettasi verkosta.\nNoudata <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">ohjetta</a> yhteysongelman vianmääritykseen.',
     no_device_web: "#801 Tarkista koneesi tila tai napsauta alla olevaa 'Koneen asetukset' asettaaksesi koneen.",
     select_usb_device: 'Valitse USB-laite',
   },

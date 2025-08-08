@@ -1231,7 +1231,7 @@ const lang: ILang = {
     UUID: 'UUID',
   },
   device_selection: {
-    no_beambox: '#801 Wir können Ihren Computer nicht im Netzwerk finden.\nBefolgen Sie bitte <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">die Anleitung</a>, um das Verbindungsproblem zu beheben.',
+    no_device: '#801 Wir können Ihren Computer nicht im Netzwerk finden.\nBefolgen Sie bitte <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">die Anleitung</a>, um das Verbindungsproblem zu beheben.',
     no_device_web: "#801 Überprüfen Sie bitte den Status Ihrer Maschine oder klicken Sie unten auf 'Maschineneinrichtung', um die Maschine einzurichten.",
     select_usb_device: 'USB-Gerät auswählen',
   },

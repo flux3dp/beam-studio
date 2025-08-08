@@ -1231,7 +1231,7 @@ const lang: ILang = {
     UUID: 'UUID',
   },
   device_selection: {
-    no_beambox: '#801 เราไม่พบเครื่องของคุณในเครือข่าย\nโปรดทําตาม<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">คําแนะนํา</a>เพื่อแก้ไขปัญหาการเชื่อมต่อ',
+    no_device: '#801 เราไม่พบเครื่องของคุณในเครือข่าย\nโปรดทําตาม<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">คําแนะนํา</a>เพื่อแก้ไขปัญหาการเชื่อมต่อ',
     no_device_web: "#801 กรุณาตรวจสอบสถานะของเครื่องของคุณหรือคลิกที่ 'ตั้งค่าเครื่อง' ด้านล่างเพื่อตั้งค่าเครื่อง.",
     select_usb_device: 'เลือกอุปกรณ์ USB',
   },

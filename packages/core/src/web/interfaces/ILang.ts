@@ -1231,7 +1231,7 @@ export interface ILang {
     UUID: string;
   };
   device_selection: {
-    no_beambox: string;
+    no_device: string;
     no_device_web: string;
     select_usb_device: string;
   };

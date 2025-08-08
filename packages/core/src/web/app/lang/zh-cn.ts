@@ -1231,7 +1231,7 @@ const lang: ILang = {
     UUID: 'UUID',
   },
   device_selection: {
-    no_beambox: '#801 我们在网路上找不到您的机器，\n请参考<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">此指南</a>排除连线问题！',
+    no_device: '#801 我们在网路上找不到您的机器，\n请参考<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">此指南</a>排除连线问题！',
     no_device_web: '#801 请检查您的机器状态，或点击下方的‘机器设置’来设置机器。',
     select_usb_device: '选择 USB 设备',
   },

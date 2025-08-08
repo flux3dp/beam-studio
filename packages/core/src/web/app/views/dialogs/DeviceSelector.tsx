@@ -73,7 +73,7 @@ const DeviceSelector = ({ onClose, onSelect }: Props): React.JSX.Element => {
             }
           },
           caption: i18n.lang.alert.oops,
-          message: i18n.lang.device_selection.no_beambox,
+          message: i18n.lang.device_selection.no_device,
           onCancel: () => {
             onSelect(null);
             onClose();
