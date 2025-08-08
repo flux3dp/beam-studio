@@ -265,14 +265,14 @@ const saveFile = async (): Promise<boolean> => {
   const path = currentFileManager.getPath();
 
   if (!path) {
-    return saveAsFile();
+    return await saveAsFile();
   }
 
   svgCanvas.clearSelection();
   svgCanvas.removeUnusedDefs();
 
   if (currentFileManager.isCloudFile) {
-    return saveToCloud(path);
+    return await saveToCloud(path);
   }
 
   if (path.endsWith('.bvg')) {
@@ -289,7 +289,7 @@ const saveFile = async (): Promise<boolean> => {
   if (path.endsWith('.beam')) {
     const buffer = await generateBeamBuffer();
 
-    fs.writeStream(path, 'w', [buffer]);
+    fs.writeFile(path, buffer);
     currentFileManager.setHasUnsavedChanges(false, false);
 
     return true;
@@ -447,7 +447,7 @@ const exportAsImage = async (type: 'jpg' | 'png'): Promise<void> => {
 
   base64 = base64.replace(/^data:image\/\w+;base64,/, '');
 
-  const getContent = () => new Blob([Buffer.from(base64, 'base64')]);
+  const getContent = () => new Blob([Buffer.from(base64, 'base64') as any]);
   const fileTypeName = `${langFile[`${type}_files`]}`;
 
   Progress.popById('export_image');
