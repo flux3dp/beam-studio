@@ -4,8 +4,8 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { Modal, Spin } from 'antd';
 import classNames from 'classnames';
 
-import Alert from '@core/app/actions/alert-caller';
-import AlertConstants from '@core/app/constants/alert-constants';
+import alertCaller from '@core/app/actions/alert-caller';
+import alertConstants from '@core/app/constants/alert-constants';
 import deviceConstants from '@core/app/constants/device-constants';
 import ConnectionTypeIcons from '@core/app/icons/connection-type/ConnectionTypeIcons';
 import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
@@ -18,11 +18,11 @@ import styles from './DeviceSelector.module.scss';
 
 interface Props {
   onClose: () => void;
-  onSelect: (device: IDeviceInfo) => void;
+  onSelect: (device: IDeviceInfo | null) => void;
 }
 
 const DeviceSelector = ({ onClose, onSelect }: Props): React.JSX.Element => {
-  const [deviceList, setDeviceList] = useState([]);
+  const [deviceList, setDeviceList] = useState<IDeviceInfo[]>([]);
   const selectedDevice = TopBarController.getSelectedDevice();
   const selectedKey = selectedDevice?.serial;
   const discoverer = useMemo(
@@ -54,14 +54,14 @@ const DeviceSelector = ({ onClose, onSelect }: Props): React.JSX.Element => {
   );
 
   const status = i18n.lang.machine_status;
-  const timeout = useRef(null);
+  const timeout = useRef<NodeJS.Timeout | undefined>(undefined);
 
   useEffect(() => {
     if (deviceList.length === 0) {
       timeout.current = setTimeout(() => {
-        Alert.popUp({
+        alertCaller.popUp({
           buttonLabels: [i18n.lang.topbar.menu.add_new_machine],
-          buttonType: AlertConstants.CUSTOM_CANCEL,
+          buttonType: alertConstants.CUSTOM_CANCEL,
           callbacks: async () => {
             onSelect(null);
             onClose();
@@ -91,8 +91,9 @@ const DeviceSelector = ({ onClose, onSelect }: Props): React.JSX.Element => {
   const list =
     deviceList.length > 0 ? (
       deviceList.map((device: IDeviceInfo) => {
-        const statusText = status[device.st_id] || status.UNKNOWN;
-        const statusColor = deviceConstants.statusColor[device.st_id] || 'grey';
+        const statusText = status[device.st_id as keyof typeof status] || status.UNKNOWN;
+        const statusColor =
+          deviceConstants.statusColor[device.st_id as keyof typeof deviceConstants.statusColor] || 'grey';
         const connectionType = ['10.55.0.1', '10.55.0.17'].includes(device.ipaddr) ? 'USB' : 'Wifi';
         const Icon = ConnectionTypeIcons[connectionType];
         let progress = '';
