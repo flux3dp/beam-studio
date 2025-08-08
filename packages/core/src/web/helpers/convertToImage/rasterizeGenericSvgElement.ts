@@ -8,8 +8,16 @@ import { createAndFinalizeImage } from './createAndFinalizeImage';
 import { getPngUrlFromSvg } from './getPngUrlFromSvg';
 import type { ConvertSvgToImageParams, ConvertToImageResult } from './types';
 
-const getStrokeWidth = () => {
+const getStrokeWidth = ({
+  isFilled = false,
+  isFullColor = false,
+  strokeWidth = 1,
+}: { isFilled?: boolean; isFullColor?: boolean; strokeWidth?: number } = {}) => {
   const { zoomRatio } = workareaManager;
+
+  if (isFilled && !isFullColor) return 0;
+
+  if (isFilled && isFullColor) return strokeWidth;
 
   return Math.max(0.85 / zoomRatio + 0.85, 1.5);
 };
@@ -20,10 +28,11 @@ const prepareElementForRaster = (svgElement: SVGGraphicsElement) => {
 
   setRotationAngle(cloned, 0, { addToHistory: false });
 
-  const isFilled = !['none', null].includes(svgElement.getAttribute('fill'));
   const { elem: layerElement } = getObjectLayer(svgElement);
+  const isFilled = !['none', null].includes(svgElement.getAttribute('fill'));
   const isFullColor = layerElement.getAttribute('data-fullcolor') === '1';
-  const strokeOffset = isFilled ? 0 : getStrokeWidth();
+  const originalStrokeWidth = Number.parseFloat(svgElement.getAttribute('stroke-width') || '0');
+  const strokeOffset = getStrokeWidth({ isFilled, isFullColor, strokeWidth: originalStrokeWidth });
 
   if (!isFullColor) {
     cloned.setAttribute('fill', '#000');
