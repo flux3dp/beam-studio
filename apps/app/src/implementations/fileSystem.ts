@@ -9,7 +9,7 @@ import type { IFileSystem } from '@core/interfaces/IFileSystem';
 export type Path = 'appData' | 'documents' | 'userData';
 export default {
   appendFile(filePath: string, data: Buffer | string): void {
-    fs.appendFileSync(filePath, data);
+    fs.appendFileSync(filePath, data as any);
   },
   copyFile(src: string, dest: string): void {
     fs.copyFileSync(src, dest);
@@ -58,7 +58,7 @@ export default {
     };
   },
   writeFile(filePath: string, data: Buffer | string): void {
-    fs.writeFileSync(filePath, data);
+    fs.writeFileSync(filePath, data as any);
   },
   writeStream(path: string, flags: string, data?: Buffer[]): void {
     const stream = fs.createWriteStream(path, {

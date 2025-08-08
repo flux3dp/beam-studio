@@ -37,11 +37,6 @@ const Beambox = (): React.JSX.Element => {
     // Init view
     workareaManager.resetView();
     beamboxInit.showStartUpDialogs();
-    openFileHelper.loadOpenFile();
-
-    if (BeamboxPreference.read('zoom_with_window')) {
-      window.addEventListener('resize', workareaManager.resetView);
-    }
 
     communicator.on('NEW_APP_MENU', BeamboxGlobalInteraction.attach);
 

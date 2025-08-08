@@ -333,10 +333,10 @@ class TabManager {
         return;
       }
 
-      let eventReceivced = false;
+      let eventReceived = false;
       const saveDialogPoppedHandler = (evt: IpcMainEvent) => {
         if (evt.sender === view.webContents) {
-          eventReceivced = true;
+          eventReceived = true;
           ipcMain.removeListener('SAVE_DIALOG_POPPED', saveDialogPoppedHandler);
 
           if (this.focusedId !== id) {
@@ -344,9 +344,9 @@ class TabManager {
           }
         }
       };
-      const closeReplyHander = (event: IpcMainEvent, reply: boolean) => {
+      const closeReplyHandler = (event: IpcMainEvent, reply: boolean) => {
         if (event.sender === view.webContents) {
-          eventReceivced = true;
+          eventReceived = true;
 
           if (reply) {
             closeHandler();
@@ -354,18 +354,18 @@ class TabManager {
             resolve(false);
           }
 
-          ipcMain.removeListener('CLOSE_REPLY', closeReplyHander);
+          ipcMain.removeListener('CLOSE_REPLY', closeReplyHandler);
           ipcMain.removeListener('SAVE_DIALOG_POPPED', saveDialogPoppedHandler);
         }
       };
 
-      ipcMain.on('CLOSE_REPLY', closeReplyHander);
+      ipcMain.on('CLOSE_REPLY', closeReplyHandler);
       ipcMain.on('SAVE_DIALOG_POPPED', saveDialogPoppedHandler);
       view.webContents.send('WINDOW_CLOSE');
       // if no event received in 10 seconds
       // something may goes wrong in frontend, close the view
       setTimeout(() => {
-        if (!eventReceivced) {
+        if (!eventReceived) {
           closeHandler();
         }
       }, 10000);
