@@ -102,6 +102,12 @@ const defaultMultiValueConfigs = Object.keys(defaultConfigs).reduce((acc, key) =
   return acc;
 }, {});
 
+const mockLayer = {
+  getAttribute: jest.fn(),
+  removeAttribute: jest.fn(),
+  setAttribute: jest.fn(),
+};
+
 describe('test layer-config-helper', () => {
   beforeEach(() => {
     document.body.innerHTML = `
@@ -110,8 +116,10 @@ describe('test layer-config-helper', () => {
       <g class="layer" data-color="#333333"><title>layer 2</title></g>
       <g class="layer" data-color="#333333"><title>layer 3</title></g>
     `;
-    mockGetDefaultLaserModule.mockReturnValue(1);
+    jest.resetAllMocks();
     mockGetState.mockReturnValue({ workarea: 'fbm1' });
+    mockGetGlobalPreference.mockReturnValue({ 'multipass-compensation': false });
+    mockGetLayerByName.mockReturnValue(mockLayer);
   });
 
   it('should return null layer when layer does not exist', () => {
@@ -209,13 +217,9 @@ describe('test layer-config-helper', () => {
     mockGetState.mockReturnValue({ workarea: 'fbm1' });
     mockGetAllLayerNames.mockReturnValue(['layer 1', 'layer 2', 'layer 3']);
 
-    const mockLayer = {
-      getAttribute: jest.fn(),
-      setAttribute: jest.fn(),
-    };
-
     mockGetLayerByName.mockReturnValue(mockLayer);
-    mockLayer.getAttribute.mockReturnValue('1');
+    mockLayer.getAttribute.mockReturnValue('5');
+    mockGetDefaultLaserModule.mockReturnValue(15);
     toggleFullColorAfterWorkareaChange();
     expect(mockToggleFullColorLayer).toHaveBeenCalledTimes(3);
     expect(mockLayer.setAttribute).toHaveBeenCalledTimes(3);
@@ -228,15 +232,10 @@ describe('test layer-config-helper', () => {
     mockGetState.mockReturnValue({ workarea: 'ado1' });
     mockGetAllLayerNames.mockReturnValue(['layer 1', 'layer 2', 'layer 3']);
 
-    const mockLayer = {
-      getAttribute: jest.fn(),
-      setAttribute: jest.fn(),
-    };
-
-    mockGetLayerByName.mockReturnValue(mockLayer);
     mockLayer.getAttribute.mockReturnValue('15');
+    mockGetDefaultLaserModule.mockReturnValue(1);
     toggleFullColorAfterWorkareaChange();
-    expect(mockToggleFullColorLayer).toHaveBeenCalledTimes(3);
+    expect(mockToggleFullColorLayer).not.toHaveBeenCalled();
     expect(mockLayer.setAttribute).toHaveBeenCalledTimes(3);
     expect(mockLayer.setAttribute).toHaveBeenNthCalledWith(1, 'data-module', '1');
     expect(mockLayer.setAttribute).toHaveBeenNthCalledWith(2, 'data-module', '1');
@@ -302,7 +301,12 @@ describe('test layer-config-helper', () => {
     });
   });
 
-  test('baseConfig when multipass-compensation changed', () => {
+  test('baseConfig when multipass-compensation changed', async () => {
+    jest.resetModules();
+
+    // @ts-ignore
+    const { baseConfig } = await import('./layer-config-helper');
+
     expect(mockSubscribeGlobalPreference).toHaveBeenCalledTimes(1);
 
     const selector = mockSubscribeGlobalPreference.mock.calls[0][0];
