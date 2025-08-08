@@ -49,7 +49,7 @@ interface Props {
 interface State {
   contextTargetLayers?: [string];
   disableScroll?: boolean;
-  draggingDestIndex?: number;
+  draggingDestIndex?: null | number;
   draggingLayer?: string;
 }
 

@@ -1,102 +1,13 @@
-import type { PreviewSpeedLevelType } from '@core/app/actions/beambox/constant';
 import { PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
 import constant from '@core/app/actions/beambox/constant';
 import { CHUCK_ROTARY_DIAMETER, RotaryType } from '@core/app/constants/addOn';
-import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { ModuleOffsets } from '@core/app/constants/layer-module/module-offsets';
 import moduleOffsets from '@core/app/constants/layer-module/module-offsets';
-import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import { TabEvents } from '@core/app/constants/tabConstants';
+import communicator from '@core/implementations/communicator';
 import storage from '@core/implementations/storage';
-import type { Prettify } from '@core/interfaces/utils';
-
-export type BeamboxPreference = {
-  'af-offset': number;
-  'anti-aliasing': boolean;
-  'auto-feeder': boolean;
-  'auto-feeder-height'?: number;
-  'auto-feeder-scale': number;
-  'auto-switch-tab': boolean;
-  auto_align: boolean;
-  auto_shrink: boolean;
-  blade_precut: boolean;
-  blade_radius: number;
-  borderless: boolean;
-  continuous_drawing: boolean;
-  'crop-task-thumbnail': boolean;
-  curve_engraving_speed_limit: boolean;
-  'customized-dimension': Partial<Record<WorkAreaModel, { height: number; width: number }>>;
-  'default-autofocus': boolean;
-  'default-borderless': boolean;
-  'default-diode': boolean;
-  'default-laser-module': LayerModuleType;
-  'diode-one-way-engraving': boolean;
-  diode_offset_x: number;
-  diode_offset_y: number;
-  'enable-autofocus'?: boolean;
-  'enable-custom-backlash': boolean;
-  'enable-custom-preview-height': boolean;
-  'enable-diode'?: boolean;
-  'enable-job-origin': boolean;
-  'enable-uv-print-file': boolean;
-  enable_mask: boolean;
-  engrave_dpi: 'high' | 'low' | 'medium' | 'ultra';
-  'extend-rotary-workarea': boolean;
-  fast_gradient: boolean;
-  'font-convert': '1.0' | '2.0';
-  'font-substitute': boolean;
-  'frame-before-start': boolean;
-  guide_x0: number;
-  guide_y0: number;
-  image_downsampling: boolean;
-  'import-module'?: LayerModuleType;
-  'job-origin': number;
-  'keep-preview-result': boolean;
-  low_power: number;
-  // model is default workarea model
-  model: WorkAreaModel;
-  'module-offsets': ModuleOffsets;
-  mouse_input_device: 'MOUSE' | 'TOUCHPAD';
-  'multipass-compensation': boolean;
-  'one-way-printing': boolean;
-  padding_accel: number;
-  padding_accel_diode: number;
-  'pass-through': boolean;
-  'pass-through-height'?: number;
-  'path-engine': 'fluxghost' | 'swiftray';
-  precut_x: number;
-  precut_y: number;
-  preview_movement_speed_level: PreviewSpeedLevelType;
-  'print-advanced-mode': boolean;
-  'promark-safety-door': boolean;
-  'promark-start-button': boolean;
-  'reverse-engraving': boolean;
-  'rotary-chuck-obj-d': number;
-  'rotary-mirror': boolean;
-  'rotary-overlap': number;
-  'rotary-scale': number; // extra rotary scale when exporting
-  'rotary-split': number;
-  'rotary-type': RotaryType;
-  'rotary-y': null | number;
-  rotary_mode: boolean;
-  rotary_y_coord: number;
-  'segmented-engraving': boolean;
-  should_remind_calibrate_camera: boolean;
-  show_grids: boolean;
-  show_guides: boolean;
-  show_rulers: boolean;
-  simplify_clipper_path: boolean;
-  'use-real-boundary': boolean;
-  'use-union-boundary': boolean;
-  use_layer_color: boolean;
-  vector_speed_constraint: boolean;
-  workarea: WorkAreaModel;
-  zoom_with_window: boolean;
-};
-
-export type BeamboxPreferenceKey = Prettify<keyof BeamboxPreference>;
-export type BeamboxPreferenceValue<T extends BeamboxPreferenceKey> = BeamboxPreference[T];
+import type { BeamboxPreference, BeamboxPreferenceKey, BeamboxPreferenceValue } from '@core/interfaces/Preference';
 
 const DEFAULT_PREFERENCE: BeamboxPreference = {
   'af-offset': 0,
@@ -161,7 +72,6 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   'rotary-type': RotaryType.Roller,
   'rotary-y': null,
   rotary_mode: false,
-  rotary_y_coord: 5,
   'segmented-engraving': true,
   should_remind_calibrate_camera: true,
   show_grids: true,
@@ -175,8 +85,6 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   workarea: 'fbb1b',
   zoom_with_window: false,
 };
-
-const eventEmitter = eventEmitterFactory.createEventEmitter('beambox-preference');
 
 type DeepPartial<T> = {
   [K in keyof T]?: T[K] extends object ? (T[K] extends Function ? T[K] : DeepPartial<T[K]>) : T[K];
@@ -243,12 +151,17 @@ class BeamboxPreferenceClass {
     return storage.get('beambox-preference')[key];
   }
 
-  write<Key extends BeamboxPreferenceKey>(key: Key, value: BeamboxPreferenceValue<Key>): void {
+  write<Key extends BeamboxPreferenceKey>(
+    key: Key,
+    value: BeamboxPreferenceValue<Key>,
+    shouldNotifyChanges: boolean = true,
+  ): void {
     const preference = storage.get('beambox-preference');
 
     preference[key] = value;
     storage.set('beambox-preference', preference);
-    eventEmitter.emit(key, value);
+
+    if (shouldNotifyChanges) communicator.send(TabEvents.GlobalPreferenceChanged, key, value);
   }
 }
 

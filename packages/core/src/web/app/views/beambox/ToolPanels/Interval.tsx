@@ -2,8 +2,8 @@ import React from 'react';
 
 import classNames from 'classnames';
 
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import i18n from '@core/helpers/i18n';
 import storage from '@core/implementations/storage';
@@ -75,7 +75,7 @@ class Interval extends React.Component<Props, State> {
 
   render(): React.JSX.Element {
     const { dx, dy, isCollapsed } = this.state;
-    const workarea = getWorkarea(BeamboxPreference.read('workarea'));
+    const workarea = getWorkarea(useDocumentStore.getState().workarea);
 
     return (
       <div className="tool-panel">

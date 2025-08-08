@@ -1,5 +1,5 @@
 import Alert from '@core/app/actions/alert-caller';
-import BeamboxPreference, { migrate } from '@core/app/actions/beambox/beambox-preference';
+import { migrate } from '@core/app/actions/beambox/beambox-preference';
 import Constant from '@core/app/actions/beambox/constant';
 import Tutorials from '@core/app/actions/beambox/tutorials';
 import { boundaryDrawer } from '@core/app/actions/canvas/boundaryDrawer';
@@ -8,11 +8,11 @@ import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import { showAdorCalibrationV2 } from '@core/app/components/dialogs/camera/AdorCalibrationV2';
 import { showBB2Calibration } from '@core/app/components/dialogs/camera/BB2Calibration';
 import updateFontConvert from '@core/app/components/dialogs/updateFontConvert';
-import { getAddOnInfo } from '@core/app/constants/addOn';
 import AlertConstants from '@core/app/constants/alert-constants';
 import FontConstants from '@core/app/constants/font-constants';
 import { gestureIntroduction } from '@core/app/constants/media-tutorials';
 import BeamboxStore from '@core/app/stores/beambox-store';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import workareaManager from '@core/app/svgedit/workarea';
 import { showCameraCalibration } from '@core/app/views/beambox/Camera-Calibration';
 import alertHelper from '@core/helpers/alert-helper';
@@ -40,42 +40,6 @@ import type { IDefaultFont } from '@core/interfaces/IFont';
 class BeamboxInit {
   constructor() {
     migrate();
-
-    const workarea = BeamboxPreference.read('workarea');
-    const addOnInfo = getAddOnInfo(workarea);
-
-    if (addOnInfo.autoFocus) {
-      const defaultAutoFocus = BeamboxPreference.read('default-autofocus');
-
-      BeamboxPreference.write('enable-autofocus', defaultAutoFocus);
-    } else {
-      BeamboxPreference.write('enable-autofocus', false);
-    }
-
-    if (addOnInfo.hybridLaser) {
-      const defaultDiode = BeamboxPreference.read('default-diode');
-
-      BeamboxPreference.write('enable-diode', defaultDiode);
-    } else {
-      BeamboxPreference.write('enable-diode', false);
-    }
-
-    let defaultBorderless = BeamboxPreference.read('default-borderless');
-
-    if (defaultBorderless === undefined) {
-      BeamboxPreference.write('default-borderless', BeamboxPreference.read('borderless'));
-      defaultBorderless = BeamboxPreference.read('default-borderless');
-    }
-
-    if (addOnInfo.openBottom) {
-      BeamboxPreference.write('borderless', defaultBorderless);
-    } else {
-      BeamboxPreference.write('borderless', false);
-    }
-
-    if (!addOnInfo.rotary) {
-      BeamboxPreference.write('rotary_mode', false);
-    }
 
     if (!storage.get('default-units')) {
       const { timeZone } = Intl.DateTimeFormat().resolvedOptions();
@@ -106,8 +70,8 @@ class BeamboxInit {
   async showStartUpDialogs(): Promise<void> {
     await this.askAndInitSentry();
 
+    const globalPreference = useGlobalPreferenceStore.getState();
     const isNewUser = Boolean(storage.get('new-user'));
-    const defaultFontConvert = BeamboxPreference.read('font-convert');
     const hasMachineConnection = checkConnection();
 
     if (isWeb() && navigator.maxTouchPoints >= 1) {
@@ -140,8 +104,8 @@ class BeamboxInit {
       await this.showQuestionnaire();
     }
 
-    if (!defaultFontConvert && !isNewUser) {
-      BeamboxPreference.write('font-convert', await updateFontConvert());
+    if (!globalPreference['font-convert'] && !isNewUser) {
+      globalPreference.set('font-convert', await updateFontConvert());
     }
 
     // ratingHelper.init();
@@ -151,7 +115,10 @@ class BeamboxInit {
   }
 
   private displayGuides(): void {
-    if (!BeamboxPreference.read('show_guides')) return;
+    // TODO: update guide lines dynamically
+    const { guide_x0: x, guide_y0: y, show_guides: showGuides } = useGlobalPreferenceStore.getState();
+
+    if (!showGuides) return;
 
     document.getElementById('guidesLines')?.remove();
     document.getElementById('horizontal_guide')?.remove();
@@ -186,8 +153,8 @@ class BeamboxInit {
         'vector-effect': 'non-scaling-stroke',
         x1: 0,
         x2: width,
-        y1: BeamboxPreference.read('guide_y0') * 10,
-        y2: BeamboxPreference.read('guide_y0') * 10,
+        y1: y * 10,
+        y2: y * 10,
       });
 
       utilities.assignAttributes(lineVertical, {
@@ -199,8 +166,8 @@ class BeamboxInit {
         'stroke-width': '2',
         style: 'pointer-events:none',
         'vector-effect': 'non-scaling-stroke',
-        x1: BeamboxPreference.read('guide_x0') * 10,
-        x2: BeamboxPreference.read('guide_x0') * 10,
+        x1: x * 10,
+        x2: x * 10,
         y1: minY,
         y2: maxY,
       });

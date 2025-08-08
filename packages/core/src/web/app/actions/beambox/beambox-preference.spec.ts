@@ -43,14 +43,6 @@ jest.mock('@core/app/actions/beambox/constant', () => ({
   },
 }));
 
-const mockEmit = jest.fn();
-
-jest.mock('@core/helpers/eventEmitterFactory', () => ({
-  createEventEmitter: () => ({
-    emit: (...args) => mockEmit(...args),
-  }),
-}));
-
 test('test beambox-preference', () => {
   expect(mockGet).toHaveBeenNthCalledWith(1, 'beambox-preference');
   expect(mockSet).toHaveBeenNthCalledWith(1, 'beambox-preference', {
@@ -132,7 +124,6 @@ test('test beambox-preference', () => {
     'rotary-type': 1,
     'rotary-y': null,
     rotary_mode: false,
-    rotary_y_coord: 5,
     'segmented-engraving': true,
     should_remind_calibrate_camera: true,
     show_grids: true,
@@ -154,9 +145,7 @@ test('test beambox-preference', () => {
   expect(mockGet).toHaveBeenNthCalledWith(2, 'beambox-preference');
 
   mockGet.mockReturnValue({});
-  expect(mockEmit).not.toHaveBeenCalled();
   beamboxPreference.write('mouse_input_device', 'MOUSE');
   expect(mockGet).toHaveBeenNthCalledWith(3, 'beambox-preference');
   expect(mockSet).toHaveBeenNthCalledWith(2, 'beambox-preference', { mouse_input_device: 'MOUSE' });
-  expect(mockEmit).toHaveBeenNthCalledWith(1, 'mouse_input_device', 'MOUSE');
 });

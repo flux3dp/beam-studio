@@ -1,4 +1,4 @@
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import workareaManager from '@core/app/svgedit/workarea';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 
@@ -44,7 +44,7 @@ const fetchThumbnail = async (): Promise<string[]> => {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d')!;
 
-    if (beamboxPreference.read('crop-task-thumbnail')) {
+    if (useGlobalPreferenceStore.getState()['crop-task-thumbnail']) {
       const { maxY, minY, width } = workareaManager;
       const svgContent = document.getElementById('svgcontent') as unknown as SVGSVGElement;
       let x = Number.parseFloat(svgContent.getAttribute('x') ?? '0');

@@ -77,6 +77,8 @@ import PreviewModeController from './preview-mode-controller';
 import ToolPanelsController from './toolPanelsController';
 import fileSystem from '@core/implementations/fileSystem';
 import { FileData } from '@core/helpers/fileImportHelper';
+import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 
 // @ts-expect-error this line is required to load svgedit
 if (svgCanvasClass) {
@@ -165,16 +167,11 @@ interface ISVGPref {
 }
 
 const svgEditor = (window['svgEditor'] = (function () {
-  // set workarea according to default model.
-  const defaultModel = BeamboxPreference.read('model');
-
-  if (defaultModel) BeamboxPreference.write('workarea', defaultModel);
-
   // EDITOR PROPERTIES: (defined below)
   //		curPrefs, curConfig, canvas, storage, uiStrings
   //
   // STATE MAINTENANCE PROPERTIES
-  const workarea = BeamboxPreference.read('workarea') as WorkAreaModel;
+  const workarea = useDocumentStore.getState().workarea;
   const { pxDisplayHeight, pxHeight, pxWidth } = getWorkarea(workarea);
   const editor: ISVGEditor = {
     addExtension: () => {},
@@ -237,7 +234,7 @@ const svgEditor = (window['svgEditor'] = (function () {
     'zh-tw': 'zh-TW',
   };
   const defaultFont: IDefaultFont = storage.get('default-font');
-  let pressedKey = [];
+  let pressedKey: string[] = [];
 
   document.addEventListener('keydown', (e) => {
     if (!pressedKey.includes(e.key)) {

@@ -2,8 +2,8 @@
  * SVGCanvas Text Actions
  */
 
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import textPathEdit from '@core/app/actions/beambox/textPathEdit';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import history from '@core/app/svgedit/history/history';
 import { deleteElements, deleteSelectedElements } from '@core/app/svgedit/operations/delete';
@@ -938,7 +938,7 @@ class TextActions {
     this.isEditing = true;
     this.allowDbl = false;
 
-    const isContinuousDrawing = BeamboxPreference.read('continuous_drawing');
+    const isContinuousDrawing = useGlobalPreferenceStore.getState()['continuous_drawing'];
 
     this.previousMode = isContinuousDrawing ? currentMode : 'select';
     svgCanvas.setMode('textedit');

@@ -12,7 +12,7 @@ class ElectronStorage implements IStorage {
     this.storeCache = this.store.store;
   }
 
-  get = (name: string, useCache = true): any => {
+  get = (name: string, useCache = false): any => {
     const store = useCache ? this.storeCache : this.store.store;
     let item: any = name ? store[name] : store;
 
@@ -53,7 +53,7 @@ class ElectronStorage implements IStorage {
   };
 
   clearAllExceptIP = (): IStorage => {
-    const ip = this.get('poke-ip-addr');
+    const ip = this.get('poke-ip-addr', false);
 
     this.clearAll();
     this.set('poke-ip-addr', ip);
@@ -61,9 +61,15 @@ class ElectronStorage implements IStorage {
     return this;
   };
 
-  isExisting = (key: string): boolean => this.storeCache[key] !== undefined;
+  isExisting = (key: string, useCache = false): boolean => {
+    if (useCache) {
+      return this.storeCache[key] !== undefined;
+    }
 
-  getStore = () => this.storeCache;
+    return this.store.get(key) !== undefined;
+  };
+
+  getStore = () => this.store.store;
 }
 
 const storage = new ElectronStorage();

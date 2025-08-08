@@ -1,7 +1,7 @@
 import { EventEmitter } from 'eventemitter3';
 
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import ExportFuncs from '@core/app/actions/beambox/export-funcs';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import { importBvgString } from '@core/app/svgedit/operations/import/importBvg';
 import Discover from '@core/helpers/api/discover';
 import svgLaserParser from '@core/helpers/api/svg-laser-parser';
@@ -126,9 +126,10 @@ export default window['EasyManipulator'] = class EasyManipulator extends EventEm
     await importBvgString(this.bvg);
 
     const { uploadFile } = await ExportFuncs.prepareFileWrappedFromSvgStringAndThumbnail();
+    const { engrave_dpi: engraveDpi, workarea } = useDocumentStore.getState();
     const { message, res } = await svgeditorParser.uploadToSvgeditorAPI(uploadFile, {
-      engraveDpi: BeamboxPreference.read('engrave_dpi'),
-      model: this.device ? this.device.model : BeamboxPreference.read('workarea') || BeamboxPreference.read('model'),
+      engraveDpi,
+      model: this.device ? this.device.model : workarea,
     });
 
     if (res) {
@@ -157,11 +158,12 @@ export default window['EasyManipulator'] = class EasyManipulator extends EventEm
     }>((resolve) => {
       const names = []; // don't know what this is for
       const codeType = 'fcode';
+      const { workarea } = useDocumentStore.getState();
 
       svgeditorParser.getTaskCode(names, {
         codeType,
         fileMode: '-f',
-        model: this.device ? this.device.model : BeamboxPreference.read('workarea') || BeamboxPreference.read('model'),
+        model: this.device ? this.device.model : workarea,
         onFinished: (codeBlob, timeCost) => {
           resolve({ fileTimeCost: timeCost, taskCodeBlob: codeBlob });
           this.emit('CALCULATED', { detail: { fileTimeCost: timeCost, taskCodeBlob: codeBlob } });

@@ -1,9 +1,11 @@
 import getJobOrigin, { getRefModule } from './job-origin';
 
-const mockRead = jest.fn();
+const mockGetState = jest.fn();
 
-jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
-  read: (...args) => mockRead(...args),
+jest.mock('@core/app/stores/documentStore', () => ({
+  useDocumentStore: {
+    getState: () => mockGetState(),
+  },
 }));
 
 const mockGetAllLayers = jest.fn();
@@ -73,7 +75,7 @@ describe('test job-origin', () => {
 
     testCases.forEach(({ jobOrigin, px, res }) => {
       test(`getJobOrigin with value ${jobOrigin}`, () => {
-        mockRead.mockReturnValue(jobOrigin);
+        mockGetState.mockReturnValue({ 'job-origin': jobOrigin });
         expect(getJobOrigin(px)).toEqual(res);
         expect(document.getElementById).toHaveBeenCalledTimes(1);
         expect(mockWorkareaWidth).toHaveBeenCalledTimes(1);

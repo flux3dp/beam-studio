@@ -1,5 +1,4 @@
 import alertCaller from '@core/app/actions/alert-caller';
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { modelsWithModules } from '@core/app/actions/beambox/constant';
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
@@ -8,8 +7,8 @@ import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { changeMultipleDocumentStoreValues, useDocumentStore } from '@core/app/stores/documentStore';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
-import { changeBeamboxPreferenceValue } from '@core/app/svgedit/history/beamboxPreferenceCommand';
 import history from '@core/app/svgedit/history/history';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import findDefs from '@core/app/svgedit/utils/findDef';
@@ -19,8 +18,9 @@ import i18n from '@core/helpers/i18n';
 import { applyDefaultLaserModule, toggleFullColorAfterWorkareaChange } from '@core/helpers/layer/layer-config-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
-import type { IBatchCommand, ICommand } from '@core/interfaces/IHistory';
+import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import type { DocumentState } from '@core/interfaces/Preference';
 
 import setSvgContent from './setSvgContent';
 
@@ -54,7 +54,7 @@ export const importBvgString = async (
 
   if (!setContentCmd.isEmpty()) batchCmd.addSubCommand(setContentCmd);
 
-  const currentWorkarea: WorkAreaModel = beamboxPreference.read('workarea');
+  const currentWorkarea: WorkAreaModel = workareaManager.model;
 
   // loadFromString will lose data-xform and data-wireframe of `use` so set it back here
   if (typeof str === 'string') {
@@ -79,42 +79,34 @@ export const importBvgString = async (
 
     let matched = str.match(/data-rotary_mode="([^"]*)"/);
     const addOnInfo = getAddOnInfo(currentWorkarea as WorkAreaModel);
+    const newDocumentState: Partial<DocumentState> = {};
 
     if (matched) {
       let rotaryMode: string = matched[1];
-
-      let cmd: ICommand;
 
       if (['0', '1'].includes(rotaryMode)) {
         rotaryMode = rotaryMode === '1' ? 'true' : 'false';
       }
 
       if (addOnInfo.rotary) {
-        cmd = changeBeamboxPreferenceValue('rotary_mode', rotaryMode === 'true', { parentCmd: batchCmd });
+        newDocumentState['rotary_mode'] = rotaryMode === 'true';
 
         if (rotaryMode === 'true') {
-          changeBeamboxPreferenceValue('pass-through', false, { parentCmd: batchCmd });
-          changeBeamboxPreferenceValue('auto-feeder', false, { parentCmd: batchCmd });
+          newDocumentState['auto-feeder'] = false;
+          newDocumentState['pass-through'] = false;
           curveEngravingModeController.clearArea(false);
         }
       } else {
-        cmd = changeBeamboxPreferenceValue('rotary_mode', false, { parentCmd: batchCmd });
-        beamboxPreference.write('rotary_mode', false);
+        newDocumentState['rotary_mode'] = false;
       }
-
-      cmd.onAfter = () => {
-        rotaryAxis.toggleDisplay();
-      };
-
-      rotaryAxis.toggleDisplay();
     }
 
     const engraveDpi = str.match(/data-engrave_dpi="([a-zA-Z]+)"/)?.[1];
 
     if (engraveDpi) {
-      changeBeamboxPreferenceValue('engrave_dpi', engraveDpi as 'high' | 'low' | 'medium', { parentCmd: batchCmd });
+      newDocumentState['engrave_dpi'] = engraveDpi as 'high' | 'low' | 'medium' | 'ultra';
     } else {
-      changeBeamboxPreferenceValue('engrave_dpi', 'medium', { parentCmd: batchCmd });
+      newDocumentState['engrave_dpi'] = 'medium';
     }
 
     if (addOnInfo.hybridLaser) {
@@ -122,9 +114,9 @@ export const importBvgString = async (
 
       if (matched && matched[1]) {
         if (matched[1] === 'true') {
-          changeBeamboxPreferenceValue('enable-diode', true, { parentCmd: batchCmd });
+          newDocumentState['enable-diode'] = true;
         } else {
-          changeBeamboxPreferenceValue('enable-diode', false, { parentCmd: batchCmd });
+          newDocumentState['enable-diode'] = false;
         }
       }
     }
@@ -134,9 +126,9 @@ export const importBvgString = async (
 
       if (matched && matched[1]) {
         if (matched[1] === 'true') {
-          changeBeamboxPreferenceValue('enable-autofocus', true, { parentCmd: batchCmd });
+          newDocumentState['enable-autofocus'] = true;
         } else {
-          changeBeamboxPreferenceValue('enable-autofocus', false, { parentCmd: batchCmd });
+          newDocumentState['enable-autofocus'] = false;
         }
       }
     }
@@ -148,11 +140,10 @@ export const importBvgString = async (
         const height = Number.parseFloat(matched[1]);
 
         if (!Number.isNaN(height) && height > 0) {
-          changeBeamboxPreferenceValue('pass-through', true, { parentCmd: batchCmd });
-          changeBeamboxPreferenceValue('pass-through-height', height, { parentCmd: batchCmd });
-
-          changeBeamboxPreferenceValue('auto-feeder', false, { parentCmd: batchCmd });
-          changeBeamboxPreferenceValue('rotary_mode', false, { parentCmd: batchCmd });
+          newDocumentState['pass-through'] = true;
+          newDocumentState['pass-through-height'] = height;
+          newDocumentState['auto-feeder'] = false;
+          newDocumentState['rotary_mode'] = false;
           curveEngravingModeController.clearArea(false);
         }
       }
@@ -165,15 +156,22 @@ export const importBvgString = async (
         const height = Number.parseFloat(matched[1]);
 
         if (!Number.isNaN(height) && height > 0) {
-          changeBeamboxPreferenceValue('auto-feeder', true, { parentCmd: batchCmd });
-          changeBeamboxPreferenceValue('auto-feeder-height', height, { parentCmd: batchCmd });
-
-          changeBeamboxPreferenceValue('rotary_mode', false, { parentCmd: batchCmd });
-          changeBeamboxPreferenceValue('pass-through', false, { parentCmd: batchCmd });
+          newDocumentState['auto-feeder'] = true;
+          newDocumentState['auto-feeder-height'] = height;
+          newDocumentState['pass-through'] = false;
+          newDocumentState['rotary_mode'] = false;
           curveEngravingModeController.clearArea(false);
         }
       }
     }
+
+    const cmd = changeMultipleDocumentStoreValues(newDocumentState, { parentCmd: batchCmd });
+
+    rotaryAxis.toggleDisplay();
+
+    cmd.onAfter = () => {
+      rotaryAxis.toggleDisplay();
+    };
 
     LayerPanelController.updateLayerPanel();
   }
@@ -229,7 +227,7 @@ export const importBvgString = async (
 
   const { addToHistory = true, parentCmd } = opts;
   const postImportBvgString = async () => {
-    const workarea = beamboxPreference.read('workarea');
+    const { workarea } = useDocumentStore.getState();
 
     // toggle full color setting according workarea supported modules
     toggleFullColorAfterWorkareaChange();

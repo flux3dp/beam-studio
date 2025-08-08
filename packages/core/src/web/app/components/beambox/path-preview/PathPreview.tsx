@@ -7,7 +7,6 @@ import { mat4, vec3 } from 'gl-matrix';
 import { funnel } from 'remeda';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant, { promarkModels } from '@core/app/actions/beambox/constant';
 import exportFuncs from '@core/app/actions/beambox/export-funcs';
 import { dpiTextMap } from '@core/app/actions/beambox/export-funcs-swiftray';
@@ -22,6 +21,8 @@ import layoutConstants from '@core/app/constants/layout-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import workareaManager from '@core/app/svgedit/workarea';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import { checkBlockedSerial } from '@core/helpers/device/checkBlockedSerial';
@@ -620,7 +621,7 @@ class PathPreview extends React.Component<Props, State> {
 
     width /= dpmm;
 
-    if (BeamboxPreference.read('enable-job-origin') && getAddOnInfo(model).jobOrigin) {
+    if (useDocumentStore.getState()['enable-job-origin'] && getAddOnInfo(model).jobOrigin) {
       this.jobOrigin = getJobOrigin();
     }
 
@@ -810,7 +811,7 @@ class PathPreview extends React.Component<Props, State> {
       }
 
       if (this.gcodeString.length > 83) {
-        const workarea = BeamboxPreference.read('workarea') || 'fbm1';
+        const workarea = workareaManager.model;
         const isPromark = promarkModels.has(workarea);
         const parsedGcode = parseGcode(this.gcodeString, isPromark);
         // For Promark rotary display
@@ -819,7 +820,7 @@ class PathPreview extends React.Component<Props, State> {
         this.gcodePreview.setParsedGcode(
           parsedGcode,
           isPromark,
-          (dpiTextMap[BeamboxPreference.read('engrave_dpi')] || 254) / 25.4,
+          (dpiTextMap[useDocumentStore.getState()['engrave_dpi']] || 254) / 25.4,
           rotaryRatio,
         );
         this.simTimeMax =
@@ -1003,7 +1004,7 @@ class PathPreview extends React.Component<Props, State> {
   };
 
   onDeviceChange = (): void => {
-    const workarea: WorkAreaModel = BeamboxPreference.read('workarea') || 'fbm1';
+    const workarea: WorkAreaModel = workareaManager.model;
     const { height, width } = getWorkarea(workarea);
 
     settings.machineWidth = width;
@@ -1174,7 +1175,7 @@ class PathPreview extends React.Component<Props, State> {
       left: document.getElementById('path-preview-panel')!.offsetLeft,
       top: document.getElementById('path-preview-panel')!.offsetTop,
     };
-    const mouseInputDevice = BeamboxPreference.read('mouse_input_device');
+    const mouseInputDevice = useGlobalPreferenceStore.getState()['mouse_input_device'];
     const isTouchpad = mouseInputDevice === 'TOUCHPAD';
 
     if (isTouchpad) {
@@ -1347,7 +1348,7 @@ class PathPreview extends React.Component<Props, State> {
   };
 
   private searchParams = (gcodeList: string[], target: number) => {
-    const enableAutofocus = BeamboxPreference.read('enable-autofocus');
+    const enableAutofocus = useDocumentStore.getState()['enable-autofocus'];
     let U = -1;
     let F = -1;
     let Z = -1;
@@ -1416,8 +1417,9 @@ class PathPreview extends React.Component<Props, State> {
       return;
     }
 
-    const currentWorkarea = BeamboxPreference.read('workarea') || BeamboxPreference.read('model');
+    const currentWorkarea = workareaManager.model;
     const allowedWorkareas = constant.allowedWorkarea[device.model];
+    const documentState = useDocumentStore.getState();
 
     if (currentWorkarea && allowedWorkareas) {
       if (!allowedWorkareas.includes(currentWorkarea)) {
@@ -1576,7 +1578,7 @@ class PathPreview extends React.Component<Props, State> {
           }
         }
 
-        if (BeamboxPreference.read('fast_gradient')) {
+        if (useGlobalPreferenceStore.getState()['fast_gradient']) {
           if (!this.fastGradientGcodeString) {
             const fastGradientGcodeBlob = await exportFuncs.getFastGradientGcode();
 
@@ -1688,7 +1690,7 @@ class PathPreview extends React.Component<Props, State> {
 
                     const { F, U, Z } = this.searchParams(fastGradientGcodeList, cacheIndex);
 
-                    if (BeamboxPreference.read('enable-autofocus') && Z > -1) {
+                    if (documentState['enable-autofocus'] && Z > -1) {
                       modifiedGcodeList.push('G1 Z-1.0000');
                       modifiedGcodeList.push(`G1 Z${Z}`);
                     }
@@ -1762,7 +1764,7 @@ class PathPreview extends React.Component<Props, State> {
 
             const { F, isEngraving, U, Z } = this.searchParams(fastGradientGcodeList, target);
 
-            if (BeamboxPreference.read('enable-autofocus') && Z > 0) {
+            if (documentState['enable-autofocus'] && Z > 0) {
               preparation.push('G1 Z-1.0000');
               preparation.push(`G1 Z${Z}`);
             }
@@ -1779,7 +1781,7 @@ class PathPreview extends React.Component<Props, State> {
         } else {
           const { F, isEngraving, U, Z } = this.searchParams(gcodeList, target);
 
-          if (BeamboxPreference.read('enable-autofocus')) {
+          if (documentState['enable-autofocus']) {
             preparation.push('G1 Z-1.0000');
             preparation.push(`G1 Z${Z}`);
           }

@@ -5,13 +5,15 @@ import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
 import type { WorkArea, WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import workareaManager from '@core/app/svgedit/workarea';
 import alertConfig from '@core/helpers/api/alert-config';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
@@ -28,7 +30,7 @@ class BasePreviewManager implements PreviewManager {
   protected workareaObj: WorkArea;
   protected ended = false;
   protected lastPosition: [number, number] = [0, 0];
-  protected movementSpeed: number; // mm/min
+  protected movementSpeed: null | number = null; // mm/min
   protected maxMovementSpeed: [number, number] = [18000, 6000]; // mm/min, speed cap of machine
   protected _isFullScreen = false;
 
@@ -38,8 +40,7 @@ class BasePreviewManager implements PreviewManager {
 
   constructor(device: IDeviceInfo) {
     this.device = device;
-    // or use device.model?
-    this.workarea = beamboxPreference.read('workarea');
+    this.workarea = workareaManager.model;
     this.workareaObj = getWorkarea(this.workarea);
   }
 
@@ -154,12 +155,15 @@ class BasePreviewManager implements PreviewManager {
   };
 
   protected getMovementSpeed = (): number => {
+    const { 'enable-diode': enableDiode } = useDocumentStore.getState();
+
     // fixed to 3600 for diode laser
-    if (beamboxPreference.read('enable-diode') && getAddOnInfo(this.workarea).hybridLaser) {
+    if (enableDiode && getAddOnInfo(this.workarea).hybridLaser) {
       return 3600;
     }
 
-    const previewMovementSpeedLevel = beamboxPreference.read('preview_movement_speed_level');
+    // TODO: subscribe to change preview speed on change
+    const previewMovementSpeedLevel = useGlobalPreferenceStore.getState()['preview_movement_speed_level'];
 
     if (previewMovementSpeedLevel === PreviewSpeedLevel.FAST) {
       return 18000;

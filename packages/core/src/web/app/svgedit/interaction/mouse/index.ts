@@ -1,7 +1,6 @@
 /* eslint-disable no-case-declarations */
 import { match, P } from 'ts-pattern';
 
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
 import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
@@ -12,6 +11,7 @@ import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import { MouseButtons } from '@core/app/constants/mouse-constants';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import history from '@core/app/svgedit/history/history';
 import { cloneSelectedElements, hasClipboardData } from '@core/app/svgedit/operations/clipboard';
 import createNewText from '@core/app/svgedit/text/createNewText';
@@ -416,10 +416,7 @@ const mouseDown = async (evt: MouseEvent) => {
         element: 'rect',
       });
 
-      if (svgCanvas.isUsingLayerColor) {
-        updateElementColor(newRect);
-      }
-
+      updateElementColor(newRect);
       svgCanvas.selectOnly([newRect], true);
       break;
     case 'line':
@@ -445,8 +442,7 @@ const mouseDown = async (evt: MouseEvent) => {
         element: 'line',
       });
 
-      if (svgCanvas.isUsingLayerColor) updateElementColor(newLine);
-
+      updateElementColor(newLine);
       svgCanvas.selectOnly([newLine], true);
       canvasEvents.addLine(newLine);
       break;
@@ -469,8 +465,7 @@ const mouseDown = async (evt: MouseEvent) => {
         element: 'ellipse',
       });
 
-      if (svgCanvas.isUsingLayerColor) updateElementColor(newEllipse);
-
+      updateElementColor(newEllipse);
       svgCanvas.selectOnly([newEllipse], true);
       break;
     case 'text':
@@ -1080,7 +1075,7 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
   let attrs;
   let t;
 
-  const isContinuousDrawing = BeamboxPreference.read('continuous_drawing');
+  const isContinuousDrawing = useGlobalPreferenceStore.getState()['continuous_drawing'];
 
   const doPreview = () => {
     const callback = () => {

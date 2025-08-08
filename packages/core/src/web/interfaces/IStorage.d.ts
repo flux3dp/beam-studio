@@ -10,20 +10,16 @@ export type StorageKey =
   | 'black-list'
   | 'customizedLaserConfigs' // For version <= 2.3.9, maybe we can remove this in the future
   | 'default-font'
-  | 'default-printer'
   | 'default-units'
   | 'defaultLaserConfigsInUse' // For version <= 2.3.9, maybe we can remove this in the future
   | 'did-gesture-tutorial'
   | 'elements-history'
   | 'enable-sentry'
-  | 'firmware-update-ignore-list'
   | 'flux-rsa-key'
   | 'font-history'
   | 'font-name-map'
   | 'guessing_poke'
-  | 'host'
   | 'keep-flux-id-login'
-  | 'laser-defaults'
   | 'last-installed-version'
   | 'last-promark-serial'
   | 'last-record-activity'
@@ -33,24 +29,21 @@ export type StorageKey =
   | 'new-user'
   | 'notification'
   | 'poke-ip-addr'
-  | 'presets'
+  | 'presets' // For version > 2.3.9, replace 'customizedLaserConfigs' & 'defaultLaserConfigsInUse'
   | 'printer-is-ready'
-  | 'printers'
   | 'promark-store'
   | 'questionnaire-version'
   | 'rating-record'
   | 'recent_files'
   | 'selected-device'
-  | 'sentry-send-devices'
-  | 'setting-printer'
-  | 'setting-wifi';
+  | 'sentry-send-devices';
 
 export interface IStorage {
   clearAll(): IStorage;
   clearAllExceptIP(): IStorage;
   get(name: StorageKey, useCache?: boolean): any;
   getStore(): any;
-  isExisting(key: StorageKey): boolean;
+  isExisting(key: StorageKey, useCache?: boolean): boolean;
   removeAt(name: StorageKey): IStorage;
   set(name: StorageKey, val: any): IStorage;
 }

@@ -2,15 +2,7 @@ import React from 'react';
 
 import { render } from '@testing-library/react';
 
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-
 import DpiInfo from './DpiInfo';
-
-const mockRead = jest.fn();
-
-jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
-  read: () => mockRead(),
-}));
 
 const mockUseIsMobile = jest.fn();
 
@@ -18,28 +10,39 @@ jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => mockUseIsMobile(),
 }));
 
+const mockUseDocumentStore = jest.fn();
+const mockState = {
+  engrave_dpi: 'low',
+};
+
+jest.mock('@core/app/stores/documentStore', () => ({
+  useDocumentStore: (...args) => mockUseDocumentStore(...args),
+}));
+
 describe('test DpiInfo', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockState.engrave_dpi = 'low';
+    mockUseIsMobile.mockReturnValue(false);
+    mockUseDocumentStore.mockImplementation((selector) => {
+      return selector(mockState);
+    });
   });
 
   it('should render correctly', async () => {
-    const eventEmitter = eventEmitterFactory.createEventEmitter('beambox-preference');
-
-    mockRead.mockReturnValue('low');
-
-    const { container } = render(<DpiInfo />);
+    const { container, rerender } = render(<DpiInfo />);
 
     expect(container).toMatchSnapshot();
 
-    eventEmitter.emit('engrave_dpi', 'high');
-    await new Promise((resolve) => setTimeout(resolve));
+    mockState.engrave_dpi = 'high';
+    rerender(<DpiInfo />);
+
     expect(container).toMatchSnapshot();
   });
 
   it('should render correctly in mobile', () => {
     mockUseIsMobile.mockReturnValue(true);
-    mockRead.mockReturnValue('ultra');
+    mockState.engrave_dpi = 'ultra';
 
     const { container } = render(<DpiInfo />);
 

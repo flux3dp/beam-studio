@@ -4,8 +4,8 @@ import type { RadioChangeEvent } from 'antd';
 import { Divider, Flex, Radio, Space } from 'antd';
 import classNames from 'classnames';
 
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { laserSourceWattMap, LaserType, workareaOptions } from '@core/app/constants/promark-constants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import { setPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import useI18n from '@core/helpers/useI18n';
 import type { PromarkInfo } from '@core/interfaces/Promark';
@@ -47,10 +47,10 @@ export default function ChoosePromarkLaserSource(): React.JSX.Element {
   const onWorkareaChange = (e: RadioChangeEvent) => setWorkarea(e.target.value);
 
   const handleNext = () => {
-    const customizedDimension = beamboxPreference.read('customized-dimension');
+    const { 'customized-dimension': customizedDimension, set } = useDocumentStore.getState();
     const [source, watt] = laserSource.split('-');
 
-    beamboxPreference.write('customized-dimension', {
+    set('customized-dimension', {
       ...customizedDimension,
       fpm1: { height: workarea, width: workarea },
     });

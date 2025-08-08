@@ -1,10 +1,9 @@
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
 import progressCaller from '@core/app/actions/progress-caller';
 import type { AddOnInfo } from '@core/app/constants/addOn';
 import NS from '@core/app/constants/namespaces';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
-import { changeBeamboxPreferenceValue } from '@core/app/svgedit/history/beamboxPreferenceCommand';
+import { changeDocumentStoreValue, useDocumentStore } from '@core/app/stores/documentStore';
 import history from '@core/app/svgedit/history/history';
 import { handlePastedRef } from '@core/app/svgedit/operations/clipboard';
 import { deleteUseRef } from '@core/app/svgedit/operations/delete';
@@ -41,7 +40,7 @@ const sliceWorkarea = async (
 
   const { addOnInfo, guideMark = { show: false, width: 40, x: 0 }, parentCmd, refLayers } = opt;
   const { dpmm } = constant;
-  const workarea = beamboxPreference.read('workarea');
+  const workarea = useDocumentStore.getState().workarea;
   const workareaObj = getWorkarea(workarea);
   const batchCmd = new history.BatchCommand('Slice Workarea');
   const currentDrawing = svgCanvas.getCurrentDrawing();
@@ -243,7 +242,7 @@ const sliceWorkarea = async (
   clonedLayers.forEach(({ hasNewLayer, origLayer }) => {
     if (hasNewLayer) {
       const { nextSibling } = origLayer;
-      const parent = origLayer.parentNode;
+      const parent = origLayer.parentNode!;
 
       origLayer.remove();
 
@@ -254,13 +253,11 @@ const sliceWorkarea = async (
     }
   });
   generateGuideMark();
-  changeBeamboxPreferenceValue('pass-through', false, { parentCmd: batchCmd });
+  changeDocumentStoreValue('pass-through', false, { parentCmd: batchCmd });
 
   const onAfter = () => {
     currentDrawing.identifyLayers();
     LayerPanelController.setSelectedLayers([]);
-    workareaManager.setWorkarea(workarea);
-    workareaManager.resetView();
   };
 
   onAfter();

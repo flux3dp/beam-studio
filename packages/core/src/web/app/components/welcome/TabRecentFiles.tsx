@@ -27,7 +27,7 @@ const TabRecentFiles = () => {
 
     needUpdate.current = false;
 
-    const filePaths = storage.get('recent_files', false) || [];
+    const filePaths = storage.get('recent_files') || [];
     const fileInfos: IFile[] = [];
 
     for (const filePath of filePaths) {

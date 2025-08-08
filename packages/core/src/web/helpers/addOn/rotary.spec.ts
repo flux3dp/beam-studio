@@ -1,7 +1,9 @@
-const mockRead = jest.fn();
+const mockGetState = jest.fn();
 
-jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
-  read: mockRead,
+jest.mock('@core/app/stores/documentStore', () => ({
+  useDocumentStore: {
+    getState: () => mockGetState(),
+  },
 }));
 
 const mockGetPosition = jest.fn();
@@ -31,25 +33,23 @@ describe('test getAutoFeeder', () => {
 
   it('should return null if addOnInfo not support', () => {
     mockGetAddOnInfo.mockReturnValue({});
+    mockGetState.mockReturnValue({});
 
     expect(getRotaryInfo('ado1')).toBe(null);
-    expect(mockRead).not.toHaveBeenCalled();
     expect(mockGetAddOnInfo).toHaveBeenCalledWith('ado1');
   });
 
   it('should return null when model supports but preference is false', () => {
     mockGetAddOnInfo.mockReturnValue({ rotary: { roller: true } });
-    mockRead.mockReturnValue(false);
+    mockGetState.mockReturnValue({ rotary_mode: false });
 
     expect(getRotaryInfo('ado1')).toBe(null);
     expect(mockGetAddOnInfo).toHaveBeenCalledWith('ado1');
-    expect(mockRead).toHaveBeenCalledTimes(1);
-    expect(mockRead).toHaveBeenLastCalledWith('rotary_mode');
   });
 
   it('should return basic info when model not supports split', () => {
     mockGetAddOnInfo.mockReturnValue({ rotary: {} });
-    mockRead.mockReturnValue(true);
+    mockGetState.mockReturnValue({ rotary_mode: true });
 
     expect(getRotaryInfo('ado1')).toEqual({
       useAAxis: true,
@@ -57,8 +57,6 @@ describe('test getAutoFeeder', () => {
       yRatio: 1.23,
     });
     expect(mockGetAddOnInfo).toHaveBeenCalledWith('ado1');
-    expect(mockRead).toHaveBeenCalledTimes(1);
-    expect(mockRead).toHaveBeenLastCalledWith('rotary_mode');
     expect(mockGetPosition).toHaveBeenCalledTimes(1);
     expect(mockGetPosition).toHaveBeenLastCalledWith(false);
     expect(mockGetRotaryRatio).toHaveBeenCalledTimes(1);
@@ -66,7 +64,7 @@ describe('test getAutoFeeder', () => {
 
   it('should return split info when model supports', () => {
     mockGetAddOnInfo.mockReturnValue({ rotary: { split: true } });
-    mockRead.mockImplementation((key) => ({ 'rotary-overlap': 1, 'rotary-split': 2, rotary_mode: true })[key]);
+    mockGetState.mockReturnValue({ 'rotary-overlap': 1, 'rotary-split': 2, rotary_mode: true });
 
     expect(getRotaryInfo('fpm1')).toEqual({
       useAAxis: false,
@@ -76,10 +74,7 @@ describe('test getAutoFeeder', () => {
       ySplit: 2,
     });
     expect(mockGetAddOnInfo).toHaveBeenCalledWith('fpm1');
-    expect(mockRead).toHaveBeenCalledTimes(3);
-    expect(mockRead).toHaveBeenNthCalledWith(1, 'rotary_mode');
-    expect(mockRead).toHaveBeenNthCalledWith(2, 'rotary-split');
-    expect(mockRead).toHaveBeenNthCalledWith(3, 'rotary-overlap');
+    expect(mockGetState).toHaveBeenCalledTimes(1);
     expect(mockGetPosition).toHaveBeenCalledTimes(1);
     expect(mockGetPosition).toHaveBeenLastCalledWith(false);
     expect(mockGetRotaryRatio).toHaveBeenCalledTimes(1);
@@ -87,7 +82,7 @@ describe('test getAutoFeeder', () => {
 
   it('should read workarea if not provided', () => {
     mockGetAddOnInfo.mockReturnValue({ rotary: {} });
-    mockRead.mockImplementation((key) => ({ rotary_mode: true, workarea: 'ado1' })[key]);
+    mockGetState.mockReturnValue({ rotary_mode: true, workarea: 'ado1' });
 
     expect(getRotaryInfo()).toEqual({
       useAAxis: true,
@@ -95,9 +90,6 @@ describe('test getAutoFeeder', () => {
       yRatio: 1.23,
     });
     expect(mockGetAddOnInfo).toHaveBeenCalledWith('ado1');
-    expect(mockRead).toHaveBeenCalledTimes(2);
-    expect(mockRead).toHaveBeenNthCalledWith(1, 'workarea');
-    expect(mockRead).toHaveBeenNthCalledWith(2, 'rotary_mode');
     expect(mockGetPosition).toHaveBeenCalledTimes(1);
     expect(mockGetPosition).toHaveBeenLastCalledWith(false);
     expect(mockGetRotaryRatio).toHaveBeenCalledTimes(1);
@@ -105,7 +97,7 @@ describe('test getAutoFeeder', () => {
 
   it('should get y in mm when flag is true', () => {
     mockGetAddOnInfo.mockReturnValue({ rotary: {} });
-    mockRead.mockReturnValue(true);
+    mockGetState.mockReturnValue({ rotary_mode: true });
 
     expect(getRotaryInfo('ado1', true)).toEqual({
       useAAxis: true,
@@ -113,8 +105,6 @@ describe('test getAutoFeeder', () => {
       yRatio: 1.23,
     });
     expect(mockGetAddOnInfo).toHaveBeenCalledWith('ado1');
-    expect(mockRead).toHaveBeenCalledTimes(1);
-    expect(mockRead).toHaveBeenLastCalledWith('rotary_mode');
     expect(mockGetPosition).toHaveBeenCalledTimes(1);
     expect(mockGetPosition).toHaveBeenLastCalledWith(true);
     expect(mockGetRotaryRatio).toHaveBeenCalledTimes(1);

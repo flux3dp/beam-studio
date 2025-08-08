@@ -1,13 +1,13 @@
 import { pipe } from 'remeda';
 import { match } from 'ts-pattern';
 
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType } from '@core/app/constants/promark-constants';
-import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getSupportedModules, getWorkarea } from '@core/app/constants/workarea-constants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import history from '@core/app/svgedit/history/history';
 import updateLayerColorFilter from '@core/helpers/color/updateLayerColorFilter';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
@@ -87,7 +87,7 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   frequency: 27,
   halftone: 1, // 1 for fm, 2 for am
   height: -3,
-  ink: BeamboxPreference.read('multipass-compensation') ? 3 : 1,
+  ink: useGlobalPreferenceStore.getState()['multipass-compensation'] ? 3 : 1,
   kRatio: 100,
   minPower: 0,
   module: LayerModule.LASER_UNIVERSAL,
@@ -102,7 +102,7 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   uv: 0,
   uvIntervalX: 0.8,
   uvIntervalY: 0.6,
-  wInk: BeamboxPreference.read('multipass-compensation') ? -12 : -4,
+  wInk: useGlobalPreferenceStore.getState()['multipass-compensation'] ? -12 : -4,
   wMultipass: 3,
   wobbleDiameter: -0.2,
   wobbleStep: -0.05,
@@ -111,6 +111,14 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   yRatio: 100,
   zStep: 0,
 };
+
+useGlobalPreferenceStore.subscribe(
+  (state) => state['multipass-compensation'],
+  (value) => {
+    baseConfig.ink = value ? 3 : 1;
+    baseConfig.wInk = value ? -12 : -4;
+  },
+);
 
 export const moduleBaseConfig: Partial<Record<LayerModuleType, Partial<Omit<ConfigKeyTypeMap, 'module'>>>> = {
   [LayerModule.PRINTER]: {
@@ -218,7 +226,7 @@ const getLayerElementByName = (layerName: string) =>
  * @returns Default config based on Promark laser type and watt
  */
 export const getDefaultConfig = (): Partial<ConfigKeyTypeMap> => {
-  const workarea = BeamboxPreference.read('workarea');
+  const workarea = useDocumentStore.getState().workarea;
   const isPromark = promarkModels.has(workarea);
   const config = structuredClone(baseConfig);
 
@@ -444,7 +452,7 @@ export const initLayerConfig = (layer: Element): void => {
     return;
   }
 
-  const workarea = BeamboxPreference.read('workarea');
+  const workarea = useDocumentStore.getState().workarea;
   const supportModules = getSupportedModules(workarea);
   const defaultConfig = getDefaultConfig();
   const keys = Object.keys(defaultConfig) as ConfigKey[];
@@ -523,7 +531,7 @@ export const getLayersConfig = (layerNames: string[], currentLayerName?: string)
 };
 
 export const toggleFullColorAfterWorkareaChange = (): void => {
-  const workarea = BeamboxPreference.read('workarea') || BeamboxPreference.read('model');
+  const workarea = useDocumentStore.getState().workarea;
   const supportedModules = getSupportedModules(workarea);
   const layerNames = getAllLayerNames();
   const defaultLaserModule = getDefaultLaserModule();
@@ -536,18 +544,15 @@ export const toggleFullColorAfterWorkareaChange = (): void => {
     const module = getData(layer, 'module') as LayerModuleType;
 
     if (!supportedModules.includes(module)) {
-      if (!modelsWithModules.has(workarea)) {
-        writeDataLayer(layer, 'module', LayerModule.LASER_UNIVERSAL);
-        toggleFullColorLayer(layer, { val: false });
-      } else {
-        writeDataLayer(layer, 'module', defaultLaserModule);
-      }
+      writeDataLayer(layer, 'module', defaultLaserModule);
+
+      if (printingModules.has(module)) toggleFullColorLayer(layer, { val: false });
     }
   }
 };
 
 export const applyDefaultLaserModule = (): void => {
-  const workarea = BeamboxPreference.read('workarea');
+  const workarea = useDocumentStore.getState().workarea;
 
   if (modelsWithModules.has(workarea)) {
     const layerNames = getAllLayerNames();
@@ -584,7 +589,7 @@ export const applyModuleBaseConfig = (
 };
 
 export const getConfigKeys = (module: LayerModuleType): ConfigKey[] => {
-  const workarea = BeamboxPreference.read('workarea');
+  const workarea = useDocumentStore.getState().workarea;
 
   if (promarkModels.has(workarea)) {
     return promarkConfigKeys;
@@ -616,7 +621,7 @@ export const applyPreset = (
   preset: Preset,
   opts: { applyName?: boolean; batchCmd?: IBatchCommand } = {},
 ): void => {
-  const workarea: WorkAreaModel = BeamboxPreference.read('workarea');
+  const workarea = useDocumentStore.getState().workarea;
   const { maxSpeed, minSpeed } = getWorkarea(workarea);
   const { applyName = true, batchCmd } = opts;
   const { module = LayerModule.LASER_UNIVERSAL } = preset;
@@ -651,7 +656,7 @@ export const applyPreset = (
  */
 export const postPresetChange = (): void => {
   // TODO: add test
-  const workarea: WorkAreaModel = BeamboxPreference.read('workarea');
+  const workarea = useDocumentStore.getState().workarea;
   const { maxSpeed, minSpeed } = getWorkarea(workarea);
   const isPromark = promarkModels.has(workarea);
   const promarkLimit = isPromark ? getPromarkLimit() : null;

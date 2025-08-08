@@ -7,7 +7,6 @@ import JsBarcode from 'jsbarcode';
 import type { Root } from 'react-dom/client';
 import { createRoot } from 'react-dom/client';
 
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import type { BarcodeProps, BarcodeRef } from '@core/app/components/dialogs/CodeGenerator/BarcodePreview';
@@ -18,6 +17,7 @@ import {
   importQrCodeSvgElement,
 } from '@core/app/components/dialogs/CodeGenerator/svgOperation';
 import NS from '@core/app/constants/namespaces';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useVariableTextState } from '@core/app/stores/variableText';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
@@ -43,9 +43,8 @@ export const isVariableTextSupported = (): boolean => {
   // Note:
   // When supporting Fcode machines, update MonitorContext.getTaskWithVariableText and check PathPreview.updateGcode
   // When supporting in mobile, add VariableTextBlock in TextOptions and fix UI of VariableTextSettings
-  const workarea = beamboxPreference.read('workarea');
 
-  return promarkModels.has(workarea);
+  return promarkModels.has(useDocumentStore.getState().workarea);
 };
 
 export const getVariableTextType = (elem: SVGElement): VariableTextType => {

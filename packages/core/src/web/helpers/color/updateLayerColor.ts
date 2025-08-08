@@ -1,4 +1,4 @@
-import beamboxPrefernce from '@core/app/actions/beambox/beambox-preference';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { getLayerName } from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 
@@ -13,8 +13,8 @@ getSVGAsync((globalSVG) => {
 
 // TODO: add test
 const updateLayerColor = async (layer: SVGGElement): Promise<void> => {
-  const useLayerColor = beamboxPrefernce.read('use_layer_color');
-  const color = useLayerColor ? layer.getAttribute('data-color') : '#000';
+  const useLayerColor = useGlobalPreferenceStore.getState().use_layer_color;
+  const color = (useLayerColor ? layer.getAttribute('data-color') : '#000') ?? '#000';
   const isFullColor = layer.getAttribute('data-fullcolor') === '1';
   const elems = Array.from(layer.childNodes);
   const tempGroup = svgCanvas.getTempGroup();

@@ -3,10 +3,12 @@ import { CHUCK_ROTARY_DIAMETER, RotaryType } from '@core/app/constants/addOn';
 
 import getRotaryRatio from './get-rotary-ratio';
 
-const mockRead = jest.fn();
+const mockGetState = jest.fn();
 
-jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
-  read: (...args) => mockRead(...args),
+jest.mock('@core/app/stores/documentStore', () => ({
+  useDocumentStore: {
+    getState: () => mockGetState(),
+  },
 }));
 
 const mockAddOnInfo: AddOnInfo = {
@@ -23,27 +25,27 @@ const mockAddOnInfo: AddOnInfo = {
   },
 };
 
-let mockPreference: Record<string, any>;
+let mockState: Record<string, any>;
 
 describe('test getRotaryRatio', () => {
   beforeEach(() => {
     jest.resetAllMocks();
-    mockPreference = {
+    mockState = {
       'rotary-chuck-obj-d': CHUCK_ROTARY_DIAMETER,
       'rotary-mirror': false,
       'rotary-scale': 1,
       'rotary-type': RotaryType.Roller,
     };
-    mockRead.mockImplementation((key) => mockPreference[key]);
+    mockGetState.mockReturnValue(mockState);
   });
 
   test('non chuck rotary', () => {
-    mockPreference = { ...mockPreference, 'rotary-type': RotaryType.Roller };
+    mockState = { ...mockState, 'rotary-type': RotaryType.Roller };
     expect(getRotaryRatio(mockAddOnInfo)).toBe(1);
   });
 
   test('non chuck rotary with mirror', () => {
-    mockPreference = { ...mockPreference, 'rotary-mirror': true, 'rotary-type': RotaryType.Roller };
+    mockGetState.mockReturnValue({ ...mockState, 'rotary-mirror': true, 'rotary-type': RotaryType.Roller });
     expect(
       getRotaryRatio({
         ...mockAddOnInfo,
@@ -56,29 +58,29 @@ describe('test getRotaryRatio', () => {
   });
 
   test('roller with scale', () => {
-    mockPreference = {
-      ...mockPreference,
+    mockGetState.mockReturnValue({
+      ...mockState,
       'rotary-scale': 2,
-    };
+    });
     expect(getRotaryRatio(mockAddOnInfo)).toBe(2);
   });
 
   test('chuck rotary', () => {
-    mockPreference = {
-      ...mockPreference,
+    mockGetState.mockReturnValue({
+      ...mockState,
       'rotary-chuck-obj-d': CHUCK_ROTARY_DIAMETER * 2,
       'rotary-type': RotaryType.Chuck,
-    };
+    });
     expect(getRotaryRatio(mockAddOnInfo)).toBeCloseTo(0.5);
   });
 
   test('chuck rotary with mirror', () => {
-    mockPreference = {
-      ...mockPreference,
+    mockGetState.mockReturnValue({
+      ...mockState,
       'rotary-chuck-obj-d': CHUCK_ROTARY_DIAMETER * 2,
       'rotary-mirror': true,
       'rotary-type': RotaryType.Chuck,
-    };
+    });
     expect(
       getRotaryRatio({
         ...mockAddOnInfo,
@@ -91,12 +93,12 @@ describe('test getRotaryRatio', () => {
   });
 
   test('chuck rotary with non-default diameter', () => {
-    mockPreference = {
-      ...mockPreference,
+    mockGetState.mockReturnValue({
+      ...mockState,
       'rotary-chuck-obj-d': CHUCK_ROTARY_DIAMETER * 2,
       'rotary-mirror': true,
       'rotary-type': RotaryType.Chuck,
-    };
+    });
     expect(
       getRotaryRatio({
         ...mockAddOnInfo,
@@ -109,13 +111,13 @@ describe('test getRotaryRatio', () => {
   });
 
   test('chuck with mirror and scale', () => {
-    mockPreference = {
-      ...mockPreference,
+    mockGetState.mockReturnValue({
+      ...mockState,
       'rotary-chuck-obj-d': CHUCK_ROTARY_DIAMETER * 2,
       'rotary-mirror': true,
       'rotary-scale': 2,
       'rotary-type': RotaryType.Chuck,
-    };
+    });
     expect(
       getRotaryRatio({
         ...mockAddOnInfo,

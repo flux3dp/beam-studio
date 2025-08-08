@@ -1,7 +1,6 @@
 import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant, { promarkModels } from '@core/app/actions/beambox/constant';
 import { executeFirmwareUpdate } from '@core/app/actions/beambox/menuDeviceActions';
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
@@ -10,6 +9,8 @@ import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { getAutoFeeder } from '@core/helpers/addOn';
 import alertConfig from '@core/helpers/api/alert-config';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
@@ -100,8 +101,9 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
   }
 
   let hasJobOrigin = false;
+  const { 'enable-job-origin': enableJobOrigin, rotary_mode: rotaryMode } = useDocumentStore.getState();
 
-  if (addOnInfo.jobOrigin && beamboxPreference.read('enable-job-origin')) {
+  if (addOnInfo.jobOrigin && enableJobOrigin) {
     if (!vc.meetRequirement(isAdor ? 'ADOR_JOB_ORIGIN' : 'JOB_ORIGIN')) {
       const res = await new Promise((resolve) => {
         alertCaller.popUp({
@@ -123,6 +125,8 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
     hasJobOrigin = true;
   }
 
+  const globalPreference = useGlobalPreferenceStore.getState();
+
   if (isAutoFeederTask && !alertConfig.read('skip-auto-feeder-instruction')) {
     let animationSrcs = [
       { src: 'video/bb2-auto-feeder/top-down.webm', type: 'video/webm' },
@@ -134,7 +138,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
         { src: 'video/bb2-auto-feeder/job-origin.webm', type: 'video/webm' },
         { src: 'video/bb2-auto-feeder/job-origin.mp4', type: 'video/mp4' },
       ];
-    } else if (beamboxPreference.read('reverse-engraving')) {
+    } else if (globalPreference['reverse-engraving']) {
       animationSrcs = [
         { src: 'video/bb2-auto-feeder/bottom-up.webm', type: 'video/webm' },
         { src: 'video/bb2-auto-feeder/bottom-up.mp4', type: 'video/mp4' },
@@ -159,7 +163,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
   }
 
   if (isPromark) {
-    if (beamboxPreference.read('rotary_mode') && !swiftrayClient.checkVersion('PROMARK_ROTARY')) {
+    if (rotaryMode && !swiftrayClient.checkVersion('PROMARK_ROTARY')) {
       return false;
     }
 
@@ -204,7 +208,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
             ? `${round(curveSpeedLimit / 25.4, 2)} in/s`
             : `${curveSpeedLimit} mm/s`;
 
-        if (!beamboxPreference.read('curve_engraving_speed_limit')) {
+        if (!globalPreference['curve_engraving_speed_limit']) {
           if (!alertConfig.read('skip_curve_speed_warning')) {
             const message = sprintf(lang.beambox.popup.too_fast_for_curve, { limit });
 
@@ -338,7 +342,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
             ? `${round(vectorSpeedLimit / 25.4, 2)} in/s`
             : `${vectorSpeedLimit} mm/s`;
 
-        if (!beamboxPreference.read('vector_speed_constraint')) {
+        if (!globalPreference['vector_speed_constraint']) {
           if (!alertConfig.read('skip_path_speed_warning')) {
             const message = sprintf(
               isAutoFeederTask ? lang.beambox.popup.too_fast_for_auto_feeder : lang.beambox.popup.too_fast_for_path,

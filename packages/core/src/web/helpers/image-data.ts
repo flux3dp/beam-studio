@@ -3,7 +3,7 @@
  */
 import exifr from 'exifr';
 
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import imageProcessor from '@core/implementations/imageProcessor';
 
 import grayScale from './grayscale';
@@ -78,7 +78,7 @@ export default async (source: Blob | string, opts: any) => {
       width: opts.width || image.bitmap.width,
     };
     // DownSampling
-    const imageDownsampling = BeamboxPreference.read('image_downsampling');
+    const imageDownsampling = useGlobalPreferenceStore.getState()['image_downsampling'];
 
     if (imageDownsampling !== false && !opts.isFullResolution) {
       const longSide = Math.max(size.width, size.height);
@@ -137,7 +137,7 @@ export default async (source: Blob | string, opts: any) => {
       const rotationFlag = getExifRotationFlag(arrayBuffer);
 
       // DownSampling
-      if (BeamboxPreference.read('image_downsampling')) {
+      if (useGlobalPreferenceStore.getState()['image_downsampling']) {
         if (!opts.isFullResolution) {
           const longSide = Math.max(size.width, size.height);
           const downRatio = Math.min(1, (1.5 * window.innerWidth) / longSide);

@@ -2,10 +2,20 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-const read = jest.fn();
+const defaultGlobalPreference = {
+  'anti-aliasing': true,
+  auto_align: true,
+  'enable-uv-print-file': true,
+  show_grids: true,
+  show_rulers: true,
+  use_layer_color: true,
+  zoom_with_window: true,
+};
+const mockGlobalPreference = { ...defaultGlobalPreference };
+const mockUseGlobalPreferenceStore = jest.fn();
 
-jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
-  read,
+jest.mock('@core/app/stores/globalPreferenceStore', () => ({
+  useGlobalPreferenceStore: mockUseGlobalPreferenceStore,
 }));
 
 const open = jest.fn();
@@ -37,8 +47,13 @@ window.os = 'MacOS';
 import Menu from './Menu';
 
 describe('should render correctly', () => {
+  beforeEach(() => {
+    Object.assign(mockGlobalPreference, defaultGlobalPreference);
+    mockUseGlobalPreferenceStore.mockImplementation((selector) => selector(mockGlobalPreference));
+  });
+
   test('open the browser and reach the correct page', () => {
-    read.mockReturnValue(true);
+    mockUseGlobalPreferenceStore.mockReturnValue(true);
 
     const { container, getByText } = render(<Menu email={undefined} />);
 
@@ -56,9 +71,13 @@ describe('should render correctly', () => {
   });
 
   test('test checkbox menu item', () => {
-    read.mockReturnValue(false);
+    const keys = Object.keys(mockGlobalPreference);
 
-    const { container, getByText } = render(<Menu />);
+    for (const key of keys) {
+      mockGlobalPreference[key] = false;
+    }
+
+    const { container, getByText, rerender } = render(<Menu />);
 
     expect(container).toMatchSnapshot();
 
@@ -71,11 +90,13 @@ describe('should render correctly', () => {
     expect(emit).toHaveBeenNthCalledWith(1, 'MENU_CLICK', null, {
       id: 'SHOW_RULERS',
     });
+    mockGlobalPreference.show_rulers = true;
+    rerender(<Menu />);
     expect(container).toMatchSnapshot();
   });
 
   test('already signed in', () => {
-    read.mockReturnValue(true);
+    mockUseGlobalPreferenceStore.mockReturnValue(true);
 
     const { container, getByText } = render(<Menu email="tester@flux3dp.com" />);
 

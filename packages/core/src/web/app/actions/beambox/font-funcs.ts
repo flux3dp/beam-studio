@@ -2,9 +2,9 @@ import * as fontkit from 'fontkit';
 import { sprintf } from 'sprintf-js';
 
 import Alert from '@core/app/actions/alert-caller';
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import history from '@core/app/svgedit/history/history';
 import { moveElements } from '@core/app/svgedit/operations/move';
 import textedit from '@core/app/svgedit/text/textedit';
@@ -90,7 +90,6 @@ const memoize = <T extends (arg: any) => any>(fn: T): T => {
   }) as T;
 };
 
-// TODO: Fix config
 let fontNameMapObj: Record<string, string> = storage.get('font-name-map') || {};
 
 if (fontNameMapObj.navigatorLang !== navigator.language) {
@@ -597,6 +596,7 @@ const convertTextToPath = async (
 
   try {
     const { isSubCommand = false, isTempConvert = false, weldingTexts = false } = opts || {};
+    const globalPreference = useGlobalPreferenceStore.getState();
 
     setTextPostscriptNameIfNeeded(textElement);
 
@@ -612,7 +612,7 @@ const convertTextToPath = async (
 
     let hasUnsupportedFont = false;
 
-    if (BeamboxPreference.read('font-substitute')) {
+    if (globalPreference['font-substitute']) {
       const { font: newFont, unsupportedChar } = await substitutedFont(font, textElement);
 
       if (newFont.postscriptName !== origFontPostscriptName && unsupportedChar && unsupportedChar.length > 0) {
@@ -649,7 +649,7 @@ const convertTextToPath = async (
     color = color !== 'none' ? color : textElement.getAttribute('fill')!;
 
     let res: IConvertInfo = null;
-    let preferGhost = BeamboxPreference.read('font-convert') === '1.0';
+    let preferGhost = globalPreference['font-convert'] === '1.0';
 
     if (preferGhost && fontObj) {
       try {

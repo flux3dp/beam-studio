@@ -4,12 +4,12 @@ import { LoadingOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Button, InputNumber, Segmented, Spin, Tooltip } from 'antd';
 import classNames from 'classnames';
 
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import { renderFramingIcon } from '@core/app/icons/framing/FramingIcons';
 import icons from '@core/app/icons/icons';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import type { TFramingType } from '@core/helpers/device/framing';
 import FramingTaskManager, { framingOptions, FramingType, getFramingOptions } from '@core/helpers/device/framing';
@@ -33,7 +33,7 @@ const FramingModal = ({ device, onClose, startOnOpen = false }: Props): React.JS
   const { framing: tFraming } = lang;
   const options = useMemo(() => getFramingOptions(device), [device]);
   const [isFraming, setIsFraming] = useState<boolean>(false);
-  const [lowLaser, setLowLaser] = useState<number>(beamboxPreference.read('low_power') ?? 10);
+  const [lowLaser, setLowLaser] = useState<number>(useGlobalPreferenceStore.getState()['low_power'] ?? 10);
   const [type, setType] = useState<TFramingType>(FramingType.Framing);
   const manager = useRef<FramingTaskManager | null>(null);
   const shortcutHandler = useRef<(() => void) | null>(null);

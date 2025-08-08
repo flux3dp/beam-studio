@@ -4,9 +4,9 @@ import classNames from 'classnames';
 
 import configOptions, { getSaturationOptions, getSpeedOptions } from '@core/app/constants/config-options';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import Select from '@core/app/widgets/AntdSelect';
 import UnitInput from '@core/app/widgets/UnitInput';
-import { useBeamboxPreference } from '@core/helpers/hooks/useBeamboxPreference';
 import { baseConfig } from '@core/helpers/layer/layer-config-helper';
 import useI18n from '@core/helpers/useI18n';
 import type { ConfigKey, ConfigKeyTypeMap, Preset } from '@core/interfaces/ILayerConfig';
@@ -30,7 +30,7 @@ const PrintingInputs = ({
   minSpeed,
   preset,
 }: Props): React.JSX.Element => {
-  const simpleMode = !useBeamboxPreference('print-advanced-mode');
+  const simpleMode = !useGlobalPreferenceStore((state) => state['print-advanced-mode']);
   const lang = useI18n();
   const { multipassOptions, saturationOptions, speedOptions } = useMemo(
     () => ({

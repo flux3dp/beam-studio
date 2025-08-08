@@ -1,32 +1,41 @@
-import viewMenu from './view';
+const subscribedEvents = {};
 
-const mockRead = jest.fn();
-const mockWrite = jest.fn();
+const mockGetGlobalPreference = jest.fn();
+const mockSubscribe = jest.fn();
+const mockSet = jest.fn();
 
-jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
-  read: (...args) => mockRead(...args),
-  write: (...args) => mockWrite(...args),
+const mockGlobalPreference = {
+  'anti-aliasing': false,
+  set: mockSet,
+  show_grids: true,
+  show_rulers: true,
+  use_layer_color: true,
+  zoom_with_window: true,
+};
+
+jest.mock('@core/app/stores/globalPreferenceStore', () => ({
+  useGlobalPreferenceStore: {
+    getState: mockGetGlobalPreference,
+    subscribe: mockSubscribe,
+  },
 }));
+mockGetGlobalPreference.mockReturnValue(mockGlobalPreference);
+mockSubscribe.mockImplementation((selector, callback) => {
+  const key = selector({
+    'anti-aliasing': 'anti-aliasing',
+    use_layer_color: 'use_layer_color',
+    zoom_with_window: 'zoom_with_window',
+  });
+
+  subscribedEvents[key] = callback;
+});
+
+import viewMenu from './view';
 
 const resetView = jest.fn();
 
 jest.mock('@core/app/svgedit/workarea', () => ({
   resetView: (...args) => resetView(...args),
-}));
-
-jest.mock('@core/helpers/svg-editor-helper', () => ({
-  getSVGAsync: (callback) => {
-    callback({
-      Canvas: {
-        isUsingLayerColor: false,
-      },
-      Editor: {
-        curConfig: {
-          showGrid: true,
-        },
-      },
-    });
-  },
 }));
 
 const updateLayerColor = jest.fn();
@@ -38,25 +47,19 @@ jest.mock(
       updateLayerColor(...args),
 );
 
-const mockToggleGrids = jest.fn();
-
-jest.mock('@core/app/actions/canvas/grid', () => ({
-  toggleGrids: () => mockToggleGrids(),
-}));
-
-const mockCreateEventEmitter = jest.fn();
-
-jest.mock('@core/helpers/eventEmitterFactory', () => ({
-  createEventEmitter: (...args) => mockCreateEventEmitter(...args),
-}));
-
-const mockEventEmitter = {
-  emit: jest.fn(),
-};
-
 describe('test view', () => {
-  afterEach(() => {
+  beforeEach(() => {
     jest.resetAllMocks();
+    mockGetGlobalPreference.mockReturnValue(mockGlobalPreference);
+    mockSubscribe.mockImplementation((selector, callback) => {
+      const key = selector({
+        'anti-aliasing': 'anti-aliasing',
+        use_layer_color: 'use_layer_color',
+        zoom_with_window: 'zoom_with_window',
+      });
+
+      subscribedEvents[key] = callback;
+    });
   });
 
   describe('test updateAntiAliasing', () => {
@@ -66,76 +69,67 @@ describe('test view', () => {
 
     test('svg content is existing', () => {
       document.body.innerHTML = '<div id="svgcontent" />';
-      viewMenu.updateAntiAliasing(false);
+      viewMenu.initAntiAliasing();
       expect(document.body.innerHTML).toBe('<div id="svgcontent" style="shape-rendering: optimizeSpeed;"></div>');
-      viewMenu.updateAntiAliasing(true);
+      subscribedEvents['anti-aliasing'](true);
       expect(document.body.innerHTML).toBe('<div id="svgcontent" style=""></div>');
     });
 
     test('svg content does not exist', () => {
       document.body.innerHTML = '<div id="abcde" />';
-      viewMenu.updateAntiAliasing(true);
+      viewMenu.initAntiAliasing();
       expect(document.body.innerHTML).toBe('<div id="abcde"></div>');
     });
   });
 
   test('test toggleLayerColor', () => {
+    mockGetGlobalPreference.mockReturnValue({ ...mockGlobalPreference, use_layer_color: false });
     document.body.innerHTML = '<g class="layer" /><g class="layer" />';
 
     const result = viewMenu.toggleLayerColor();
 
-    expect(mockWrite).toHaveBeenCalledTimes(1);
-    expect(mockWrite).toHaveBeenNthCalledWith(1, 'use_layer_color', true);
-    expect(updateLayerColor).toHaveBeenCalledTimes(2);
+    expect(mockSet).toHaveBeenCalledTimes(1);
+    expect(mockSet).toHaveBeenNthCalledWith(1, 'use_layer_color', true);
     expect(result).toBeTruthy();
+
+    expect(updateLayerColor).not.toHaveBeenCalled();
+    subscribedEvents['use_layer_color']();
+    expect(updateLayerColor).toHaveBeenCalledTimes(2);
   });
 
   test('test toggleGrid', () => {
-    mockRead.mockReturnValue(true);
+    mockGetGlobalPreference.mockReturnValue({ ...mockGlobalPreference, show_grids: true });
 
     const result = viewMenu.toggleGrid();
 
-    expect(mockToggleGrids).toBeCalledTimes(1);
-    expect(mockRead).toBeCalledTimes(1);
-    expect(mockWrite).toBeCalledTimes(1);
-    expect(mockWrite).toHaveBeenNthCalledWith(1, 'show_grids', false);
+    expect(mockGetGlobalPreference).toHaveBeenCalledTimes(1);
+    expect(mockSet).toHaveBeenCalledTimes(1);
+    expect(mockSet).toHaveBeenNthCalledWith(1, 'show_grids', false);
     expect(result).toBeFalsy();
   });
 
   describe('test toggleRulers', () => {
-    beforeEach(() => {
-      mockCreateEventEmitter.mockReturnValue(mockEventEmitter);
-    });
-
     afterEach(() => {
       jest.resetAllMocks();
     });
 
     test('default is false', () => {
-      mockRead.mockReturnValue(false);
+      mockGetGlobalPreference.mockReturnValue({ ...mockGlobalPreference, show_rulers: false });
 
       const result = viewMenu.toggleRulers();
 
-      expect(mockCreateEventEmitter).toBeCalledTimes(1);
-      expect(mockCreateEventEmitter).toHaveBeenLastCalledWith('canvas');
-      expect(mockEventEmitter.emit).toBeCalledTimes(1);
-      expect(mockEventEmitter.emit).toHaveBeenLastCalledWith('update-ruler');
-      expect(mockWrite).toHaveBeenCalledTimes(1);
-      expect(mockWrite).toHaveBeenNthCalledWith(1, 'show_rulers', true);
+      expect(mockSet).toHaveBeenCalledTimes(1);
+      expect(mockSet).toHaveBeenNthCalledWith(1, 'show_rulers', true);
       expect(result).toBeTruthy();
     });
 
     test('default is true', () => {
-      mockRead.mockReturnValue(true);
+      mockGetGlobalPreference.mockReturnValue({ ...mockGlobalPreference, show_rulers: true });
 
       const result = viewMenu.toggleRulers();
 
-      expect(mockCreateEventEmitter).toBeCalledTimes(1);
-      expect(mockCreateEventEmitter).toHaveBeenLastCalledWith('canvas');
-      expect(mockEventEmitter.emit).toBeCalledTimes(1);
-      expect(mockEventEmitter.emit).toHaveBeenLastCalledWith('update-ruler');
-      expect(mockWrite).toHaveBeenCalledTimes(1);
-      expect(mockWrite).toHaveBeenNthCalledWith(1, 'show_rulers', false);
+      expect(mockSet).toHaveBeenCalledTimes(1);
+      expect(mockSet).toHaveBeenNthCalledWith(1, 'show_rulers', false);
       expect(result).toBeFalsy();
     });
   });
@@ -146,34 +140,42 @@ describe('test view', () => {
     });
 
     test('default is false', () => {
-      const addEventListener = jest.spyOn(window, 'addEventListener');
-      const removeEventListener = jest.spyOn(window, 'removeEventListener');
+      mockGetGlobalPreference.mockReturnValue({ ...mockGlobalPreference, zoom_with_window: false });
+
       const result = viewMenu.toggleZoomWithWindow();
 
       expect(resetView).toHaveBeenCalledTimes(1);
+      expect(mockSet).toHaveBeenCalledTimes(1);
+      expect(mockSet).toHaveBeenNthCalledWith(1, 'zoom_with_window', true);
+      expect(result).toBeTruthy();
+
+      const addEventListener = jest.spyOn(window, 'addEventListener');
+      const removeEventListener = jest.spyOn(window, 'removeEventListener');
+
+      subscribedEvents['zoom_with_window'](result);
       expect(removeEventListener).toHaveBeenCalledTimes(1);
       expect(removeEventListener).toHaveBeenNthCalledWith(1, 'resize', expect.any(Function));
       expect(addEventListener).toHaveBeenCalledTimes(1);
       expect(addEventListener).toHaveBeenNthCalledWith(1, 'resize', expect.any(Function));
-      expect(mockWrite).toHaveBeenCalledTimes(1);
-      expect(mockWrite).toHaveBeenNthCalledWith(1, 'zoom_with_window', true);
-      expect(result).toBeTruthy();
     });
 
     test('default is true', () => {
-      mockRead.mockReturnValue(true);
+      mockGetGlobalPreference.mockReturnValue({ ...mockGlobalPreference, zoom_with_window: true });
 
-      const addEventListener = jest.spyOn(window, 'addEventListener');
-      const removeEventListener = jest.spyOn(window, 'removeEventListener');
       const result = viewMenu.toggleZoomWithWindow();
 
       expect(resetView).toHaveBeenCalledTimes(1);
+      expect(mockSet).toHaveBeenCalledTimes(1);
+      expect(mockSet).toHaveBeenNthCalledWith(1, 'zoom_with_window', false);
+      expect(result).toBeFalsy();
+
+      const addEventListener = jest.spyOn(window, 'addEventListener');
+      const removeEventListener = jest.spyOn(window, 'removeEventListener');
+
+      subscribedEvents['zoom_with_window'](result);
       expect(removeEventListener).toHaveBeenCalledTimes(1);
       expect(removeEventListener).toHaveBeenNthCalledWith(1, 'resize', expect.any(Function));
       expect(addEventListener).not.toHaveBeenCalled();
-      expect(mockWrite).toHaveBeenCalledTimes(1);
-      expect(mockWrite).toHaveBeenNthCalledWith(1, 'zoom_with_window', false);
-      expect(result).toBeFalsy();
     });
   });
 
@@ -183,22 +185,22 @@ describe('test view', () => {
     });
 
     test('default is false', () => {
-      mockRead.mockReturnValue(false);
+      mockGetGlobalPreference.mockReturnValue({ ...mockGlobalPreference, 'anti-aliasing': false });
 
       const result = viewMenu.toggleAntiAliasing();
 
-      expect(mockWrite).toHaveBeenCalledTimes(1);
-      expect(mockWrite).toHaveBeenNthCalledWith(1, 'anti-aliasing', true);
+      expect(mockSet).toHaveBeenCalledTimes(1);
+      expect(mockSet).toHaveBeenNthCalledWith(1, 'anti-aliasing', true);
       expect(result).toBeTruthy();
     });
 
     test('default is true', () => {
-      mockRead.mockReturnValue(true);
+      mockGetGlobalPreference.mockReturnValue({ ...mockGlobalPreference, 'anti-aliasing': true });
 
       const result = viewMenu.toggleAntiAliasing();
 
-      expect(mockWrite).toHaveBeenCalledTimes(1);
-      expect(mockWrite).toHaveBeenNthCalledWith(1, 'anti-aliasing', false);
+      expect(mockSet).toHaveBeenCalledTimes(1);
+      expect(mockSet).toHaveBeenNthCalledWith(1, 'anti-aliasing', false);
       expect(result).toBeFalsy();
     });
   });

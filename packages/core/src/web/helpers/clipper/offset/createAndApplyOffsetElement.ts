@@ -1,4 +1,4 @@
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import history from '@core/app/svgedit/history/history';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -22,7 +22,7 @@ export function createAndApplyOffsetElement(solutionPaths: Path[]): boolean {
     return false;
   }
 
-  const pathD = buildSvgPathD(solutionPaths, beamboxPreference.read('simplify_clipper_path'));
+  const pathD = buildSvgPathD(solutionPaths, useGlobalPreferenceStore.getState()['simplify_clipper_path']);
 
   if (!pathD) {
     console.log('Failed to build path string D from solution paths.');
@@ -40,10 +40,7 @@ export function createAndApplyOffsetElement(solutionPaths: Path[]): boolean {
 
   svgCanvas.pathActions.fixEnd(newElem);
   batchCmd.addSubCommand(new history.InsertElementCommand(newElem));
-
-  if (svgCanvas.isUsingLayerColor) {
-    updateElementColor(newElem);
-  }
+  updateElementColor(newElem);
 
   svgCanvas.selectOnly([newElem], true);
   svgCanvas.addCommandToHistory(batchCmd);

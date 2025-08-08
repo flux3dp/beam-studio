@@ -1,7 +1,6 @@
 import React from 'react';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import Boxgen from '@core/app/components/boxgen/Boxgen';
 import AboutBeamStudio from '@core/app/components/dialogs/AboutBeamStudio';
 import AnnouncementPanel from '@core/app/components/dialogs/AnnouncementPanel';
@@ -27,6 +26,8 @@ import ImageEditPanel from '@core/app/components/ImageEditPanel';
 import TabPanel from '@core/app/components/TabPanel';
 import alertConstants from '@core/app/constants/alert-constants';
 import { eventEmitter } from '@core/app/contexts/DialogContext';
+import type { GlobalPreferenceKey } from '@core/app/stores/globalPreferenceStore';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import ElementPanel from '@core/app/views/beambox/ElementPanel/ElementPanel';
 import LayerColorConfigPanel from '@core/app/views/beambox/Layer-Color-Config';
 import NetworkTestingPanel from '@core/app/views/beambox/NetworkTestingPanel';
@@ -641,7 +642,7 @@ export default {
           }}
           onOk={(val) => {
             popDialogById(id);
-            beamboxPreference.write(id as any, val);
+            useGlobalPreferenceStore.getState().set(id as GlobalPreferenceKey, val as any);
             resolve(val);
           }}
           options={options}

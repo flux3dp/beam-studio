@@ -1,6 +1,6 @@
 import { funnel } from 'remeda';
+import { shallow } from 'zustand/shallow';
 
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant, { dpmm } from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
@@ -8,6 +8,8 @@ import { LayerModule, printingModules } from '@core/app/constants/layer-module/l
 import { getModuleBoundary } from '@core/app/constants/layer-module/module-boundary';
 import { getSupportedModules } from '@core/app/constants/workarea-constants';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
+import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import workareaManager from '@core/app/svgedit/workarea';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import type { TBoundary } from '@core/helpers/boundary-helper';
@@ -28,7 +30,6 @@ const keys = ['autoFeeder', 'passThrough', 'openBottom', 'diode', 'module', 'uvP
 
 type BoundaryKey = (typeof keys)[number];
 
-const beamboxPreferenceEvents = eventEmitterFactory.createEventEmitter('beambox-preference');
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 
 export class BoundaryDrawer {
@@ -51,8 +52,10 @@ export class BoundaryDrawer {
   private changedKeys: Set<BoundaryKey> = new Set();
 
   private constructor() {
-    this.useRealBoundary = beamboxPreference.read('use-real-boundary');
-    this.useUnionBoundary = beamboxPreference.read('use-union-boundary');
+    const globalPreference = useGlobalPreferenceStore.getState();
+
+    this.useRealBoundary = globalPreference['use-real-boundary'];
+    this.useUnionBoundary = globalPreference['use-union-boundary'];
     this.container = createBoundaryContainer('workarea-boundary');
     this.boundary = createBoundaryPath('boundary-path', this.container, !this.useRealBoundary);
     this.text = createBoundaryText(this.container);
@@ -111,12 +114,27 @@ export class BoundaryDrawer {
       this.update();
     };
 
-    beamboxPreferenceEvents.on('auto-feeder', onAutoFeederChange);
-    beamboxPreferenceEvents.on('pass-through', onPassThroughChange);
-    beamboxPreferenceEvents.on('borderless', onBorderlessChange);
-    beamboxPreferenceEvents.on('enable-diode', onEnableDiodeChange);
-    beamboxPreferenceEvents.on('diode_offset_x', onDiodeChange);
-    beamboxPreferenceEvents.on('diode_offset_y', onDiodeChange);
+    const onGlobalPreferenceChange = () => {
+      const globalPreference = useGlobalPreferenceStore.getState();
+
+      this.useRealBoundary = globalPreference['use-real-boundary'];
+      this.useUnionBoundary = globalPreference['use-union-boundary'];
+      this.boundary.setAttribute('stroke', !this.useRealBoundary ? '#000' : '');
+      this.update();
+    };
+
+    useDocumentStore.subscribe((state) => state['auto-feeder'], onAutoFeederChange);
+    useDocumentStore.subscribe((state) => state['pass-through'], onPassThroughChange);
+    useDocumentStore.subscribe((state) => state['borderless'], onBorderlessChange);
+    useDocumentStore.subscribe((state) => state['enable-diode'], onEnableDiodeChange);
+    useGlobalPreferenceStore.subscribe((state) => [state['diode_offset_x'], state['diode_offset_y']], onDiodeChange, {
+      equalityFn: shallow,
+    });
+    useGlobalPreferenceStore.subscribe(
+      (state) => [state['use-real-boundary'], state['use-union-boundary']],
+      onGlobalPreferenceChange,
+      { equalityFn: shallow },
+    );
     canvasEventEmitter.on('canvas-change', onCanvasChange);
     useConfigPanelStore.subscribe((state) => state.diode.value, onDiodeChange);
     useConfigPanelStore.subscribe((state) => state.module.value, onModuleChange);
@@ -192,7 +210,7 @@ export class BoundaryDrawer {
   };
 
   updateOpenBottomBoundary = (): void => {
-    const enabled = beamboxPreference.read('borderless');
+    const enabled = useDocumentStore.getState()['borderless'];
     const { model } = workareaManager;
     const { openBottom } = getAddOnInfo(model);
 
@@ -227,7 +245,7 @@ export class BoundaryDrawer {
   updateDiodeBoundary = (diode: number): void => {
     const { model } = workareaManager;
     const addOnInfo = getAddOnInfo(model);
-    const isDiodeEnabled = beamboxPreference.read('enable-diode') && addOnInfo.hybridLaser;
+    const isDiodeEnabled = useDocumentStore.getState()['enable-diode'] && addOnInfo.hybridLaser;
 
     if (!isDiodeEnabled) {
       this.boundaries.diode = undefined;
@@ -238,9 +256,11 @@ export class BoundaryDrawer {
     this.boundaries.diode = { bottom: 0, left: 0, right: 0, top: 0 };
 
     if (diode) {
+      const { diode_offset_x: x, diode_offset_y: y } = useGlobalPreferenceStore.getState();
+
       // Moving boundary + Module offsets
-      this.boundaries.diode.left = beamboxPreference.read('diode_offset_x') * dpmm;
-      this.boundaries.diode.top = beamboxPreference.read('diode_offset_y') * dpmm;
+      this.boundaries.diode.left = x * dpmm;
+      this.boundaries.diode.top = y * dpmm;
     } else {
       // Moving boundary with diode addon
       this.boundaries.diode.right = constant.diode.limitX * dpmm;
@@ -273,7 +293,7 @@ export class BoundaryDrawer {
   updateFinalBoundary = (currentModule: LayerModuleType): void => {
     const { maxY: workareaBottom, minY: workareaTop, model, width: w } = workareaManager;
     const addOnInfo = getAddOnInfo(model);
-    const isRotary = Boolean(beamboxPreference.read('rotary_mode') && addOnInfo.rotary);
+    const isRotary = Boolean(useDocumentStore.getState()['rotary_mode'] && addOnInfo.rotary);
     const isAutoFeeder = getAutoFeeder(addOnInfo);
     const finalBoundary: TBoundary = { bottom: 0, left: 0, right: 0, top: 0 };
     let { bottom, left, right, top } = finalBoundary;

@@ -2,11 +2,11 @@ import jsPDF from 'jspdf';
 import { filter, map, pipe, prop } from 'remeda';
 
 import Alert from '@core/app/actions/alert-caller';
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
@@ -133,11 +133,10 @@ const saveToCloud = async (uuid?: string): Promise<boolean> => {
       prop('buffer'),
       (arrayBuffer) => new Blob([arrayBuffer]),
     );
-    const workarea = beamboxPreference.read('workarea');
     const form = new FormData();
 
     form.append('file', blob);
-    form.append('workarea', workarea);
+    form.append('workarea', useDocumentStore.getState().workarea);
 
     let resp: ResponseWithError;
 

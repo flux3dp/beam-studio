@@ -37,10 +37,7 @@ const importElement = async (IconComponent: ComponentType, jsonMap: any) => {
     });
 
     undoManager.addCommandToHistory(new history.InsertElementCommand(newElement));
-
-    if (svgCanvas.isUsingLayerColor) {
-      updateElementColor(newElement);
-    }
+    updateElementColor(newElement);
 
     svgCanvas.selectOnly([newElement]);
   } else {

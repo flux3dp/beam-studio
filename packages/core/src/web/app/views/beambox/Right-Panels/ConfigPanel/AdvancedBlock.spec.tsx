@@ -7,10 +7,11 @@ import { LaserType } from '@core/app/constants/promark-constants';
 
 import AdvancedBlock from './AdvancedBlock';
 
-const mockRead = jest.fn();
+const mockUseDocumentStore = jest.fn();
+let mockState = { 'enable-autofocus': true, 'enable-diode': true };
 
-jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
-  read: (key: string) => mockRead(key),
+jest.mock('@core/app/stores/documentStore', () => ({
+  useDocumentStore: (...args) => mockUseDocumentStore(...args),
 }));
 
 const mockOn = jest.fn();
@@ -74,7 +75,8 @@ jest.mock('@core/app/stores/configPanel', () => ({
 
 describe('test AdvancedBlock', () => {
   beforeEach(() => {
-    mockRead.mockReturnValue(true);
+    mockState = { 'enable-autofocus': true, 'enable-diode': true };
+    mockUseDocumentStore.mockImplementation((selector) => selector(mockState));
     mockGetAddOnInfo.mockReturnValue({ autoFocus: false, hybridLaser: false, lowerFocus: false });
     mockUseHasCurveEngraving.mockReturnValue(false);
     mockUseWorkarea.mockReturnValue('fbb1');
@@ -83,7 +85,7 @@ describe('test AdvancedBlock', () => {
   });
 
   it('should render correctly for non-printer, no addon', () => {
-    mockRead.mockReturnValue(false);
+    mockState = { 'enable-autofocus': false, 'enable-diode': false };
 
     const { container } = render(<AdvancedBlock />);
 

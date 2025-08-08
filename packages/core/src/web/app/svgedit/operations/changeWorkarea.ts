@@ -1,19 +1,12 @@
-import beamboxPreferences from '@core/app/actions/beambox/beambox-preference';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
-import { changeBeamboxPreferenceValue } from '@core/app/svgedit/history/beamboxPreferenceCommand';
-import workareaManager from '@core/app/svgedit/workarea';
+import { changeDocumentStoreValue } from '@core/app/stores/documentStore';
 import { toggleFullColorAfterWorkareaChange } from '@core/helpers/layer/layer-config-helper';
 import type { ICommand } from '@core/interfaces/IHistory';
 
 const changeWorkarea = (workarea: WorkAreaModel, opts: { toggleModule?: boolean } = {}): ICommand => {
   const { toggleModule = true } = opts;
-  const cmd = changeBeamboxPreferenceValue('workarea', workarea);
+  const cmd = changeDocumentStoreValue('workarea', workarea);
   const postWorkareaChange = () => {
-    const currentValue = beamboxPreferences.read('workarea');
-
-    workareaManager.setWorkarea(currentValue);
-    workareaManager.resetView();
-
     if (toggleModule) toggleFullColorAfterWorkareaChange();
   };
 

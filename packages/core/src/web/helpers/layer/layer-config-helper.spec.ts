@@ -7,10 +7,21 @@ jest.mock('@core/helpers/layer-module/layer-module-helper', () => ({
   getDefaultLaserModule: () => mockGetDefaultLaserModule(),
 }));
 
-const mockRead = jest.fn();
+const mockGetGlobalPreference = jest.fn();
+const mockSubscribeGlobalPreference = jest.fn();
 
-jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
-  read: (key: string) => mockRead(key),
+jest.mock('@core/app/stores/globalPreferenceStore', () => ({
+  useGlobalPreferenceStore: {
+    getState: mockGetGlobalPreference,
+    subscribe: mockSubscribeGlobalPreference,
+  },
+}));
+mockGetGlobalPreference.mockReturnValue({ 'multipass-compensation': false });
+
+const mockGetState = jest.fn();
+
+jest.mock('@core/app/stores/documentStore', () => ({
+  useDocumentStore: { getState: mockGetState },
 }));
 
 const mockGetPromarkInfo = jest.fn();
@@ -91,6 +102,12 @@ const defaultMultiValueConfigs = Object.keys(defaultConfigs).reduce((acc, key) =
   return acc;
 }, {});
 
+const mockLayer = {
+  getAttribute: jest.fn(),
+  removeAttribute: jest.fn(),
+  setAttribute: jest.fn(),
+};
+
 describe('test layer-config-helper', () => {
   beforeEach(() => {
     document.body.innerHTML = `
@@ -99,7 +116,10 @@ describe('test layer-config-helper', () => {
       <g class="layer" data-color="#333333"><title>layer 2</title></g>
       <g class="layer" data-color="#333333"><title>layer 3</title></g>
     `;
-    mockGetDefaultLaserModule.mockReturnValue(1);
+    jest.resetAllMocks();
+    mockGetState.mockReturnValue({ workarea: 'fbm1' });
+    mockGetGlobalPreference.mockReturnValue({ 'multipass-compensation': false });
+    mockGetLayerByName.mockReturnValue(mockLayer);
   });
 
   it('should return null layer when layer does not exist', () => {
@@ -116,13 +136,7 @@ describe('test layer-config-helper', () => {
   test('initLayerConfig with module', () => {
     const layer1 = document.querySelectorAll('g')[1] as SVGGElement;
 
-    mockRead.mockImplementation((key) => {
-      if (key === 'workarea') {
-        return 'ado1';
-      }
-
-      return undefined;
-    });
+    mockGetState.mockReturnValue({ workarea: 'ado1' });
     initLayerConfig(layer1);
     expect(getLayerConfig('layer 1')).toEqual({
       ...defaultConfigs,
@@ -200,16 +214,12 @@ describe('test layer-config-helper', () => {
   });
 
   test('toggleFullColorAfterWorkareaChange to workarea without module', () => {
-    mockRead.mockReturnValue('fbm1');
+    mockGetState.mockReturnValue({ workarea: 'fbm1' });
     mockGetAllLayerNames.mockReturnValue(['layer 1', 'layer 2', 'layer 3']);
 
-    const mockLayer = {
-      getAttribute: jest.fn(),
-      setAttribute: jest.fn(),
-    };
-
     mockGetLayerByName.mockReturnValue(mockLayer);
-    mockLayer.getAttribute.mockReturnValue('1');
+    mockLayer.getAttribute.mockReturnValue('5');
+    mockGetDefaultLaserModule.mockReturnValue(15);
     toggleFullColorAfterWorkareaChange();
     expect(mockToggleFullColorLayer).toHaveBeenCalledTimes(3);
     expect(mockLayer.setAttribute).toHaveBeenCalledTimes(3);
@@ -219,18 +229,13 @@ describe('test layer-config-helper', () => {
   });
 
   test('toggleFullColorAfterWorkareaChange to workarea with module', () => {
-    mockRead.mockReturnValue('ado1');
+    mockGetState.mockReturnValue({ workarea: 'ado1' });
     mockGetAllLayerNames.mockReturnValue(['layer 1', 'layer 2', 'layer 3']);
 
-    const mockLayer = {
-      getAttribute: jest.fn(),
-      setAttribute: jest.fn(),
-    };
-
-    mockGetLayerByName.mockReturnValue(mockLayer);
     mockLayer.getAttribute.mockReturnValue('15');
+    mockGetDefaultLaserModule.mockReturnValue(1);
     toggleFullColorAfterWorkareaChange();
-    expect(mockToggleFullColorLayer).toHaveBeenCalledTimes(3);
+    expect(mockToggleFullColorLayer).not.toHaveBeenCalled();
     expect(mockLayer.setAttribute).toHaveBeenCalledTimes(3);
     expect(mockLayer.setAttribute).toHaveBeenNthCalledWith(1, 'data-module', '1');
     expect(mockLayer.setAttribute).toHaveBeenNthCalledWith(2, 'data-module', '1');
@@ -265,7 +270,7 @@ describe('test layer-config-helper', () => {
       'uv',
       'repeat',
     ]);
-    mockRead.mockReturnValue('fpm1');
+    mockGetState.mockReturnValue({ workarea: 'fpm1' });
     expect(getConfigKeys(LayerModule.PRINTER)).toEqual([
       'speed',
       'power',
@@ -294,5 +299,25 @@ describe('test layer-config-helper', () => {
       frequency: { max: 1000, min: 1 },
       pulseWidth: { max: 500, min: 2 },
     });
+  });
+
+  test('baseConfig when multipass-compensation changed', async () => {
+    jest.resetModules();
+
+    // @ts-ignore
+    const { baseConfig } = await import('./layer-config-helper');
+
+    expect(mockSubscribeGlobalPreference).toHaveBeenCalledTimes(1);
+
+    const selector = mockSubscribeGlobalPreference.mock.calls[0][0];
+    const handler = mockSubscribeGlobalPreference.mock.calls[0][1];
+
+    handler(selector({ 'multipass-compensation': true }));
+    expect(baseConfig.ink).toEqual(3);
+    expect(baseConfig.wInk).toEqual(-12);
+
+    handler(selector({ 'multipass-compensation': false }));
+    expect(baseConfig.ink).toEqual(1);
+    expect(baseConfig.wInk).toEqual(-4);
   });
 });

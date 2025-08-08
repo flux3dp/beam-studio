@@ -1,25 +1,31 @@
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 
-const mockRead = jest.fn();
-const mockWrite = jest.fn();
+const mockGetState = jest.fn();
 
-jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
-  read: mockRead,
-  write: mockWrite,
+jest.mock('@core/app/stores/documentStore', () => ({
+  useDocumentStore: { getState: mockGetState },
+}));
+
+const mockGetGlobalPreference = jest.fn();
+const mockSet = jest.fn();
+
+jest.mock('@core/app/stores/globalPreferenceStore', () => ({
+  useGlobalPreferenceStore: {
+    getState: mockGetGlobalPreference,
+  },
 }));
 
 const mockUpdate = jest.fn();
 
 jest.mock('@core/app/actions/canvas/boundaryDrawer', () => ({ boundaryDrawer: { update: mockUpdate } }));
 
-let mockPreference: Record<string, any>;
-
 import { getModuleOffsets, updateModuleOffsets } from './moduleOffsets';
 
 describe('test moduleOffsets helpers', () => {
   beforeEach(() => {
     jest.resetAllMocks();
-    mockPreference = {
+    mockGetState.mockReturnValue({ workarea: 'ado1' });
+    mockGetGlobalPreference.mockReturnValue({
       'module-offsets': {
         ado1: {
           [LayerModule.LASER_10W_DIODE]: [1, 2],
@@ -29,35 +35,31 @@ describe('test moduleOffsets helpers', () => {
           [LayerModule.UV_WHITE_INK]: [11, 12],
         },
       },
-      workarea: 'ado1',
-    };
-    mockRead.mockImplementation((key) => mockPreference[key]);
+      set: mockSet,
+    });
   });
 
   test('getModuleOffsets with default props', () => {
     expect(getModuleOffsets()).toEqual([1, 2]);
-    expect(mockRead).toHaveBeenCalledTimes(2);
-    expect(mockRead).toHaveBeenNthCalledWith(1, 'module-offsets');
-    expect(mockRead).toHaveBeenNthCalledWith(2, 'workarea');
+    expect(mockGetGlobalPreference).toHaveBeenCalledTimes(1);
+    expect(mockGetState).toHaveBeenCalledTimes(1);
   });
 
   test('getModuleOffsets with isRelative true', () => {
     expect(getModuleOffsets({ isRelative: true, module: LayerModule.LASER_1064 })).toEqual([5, -20.95]);
-    expect(mockRead).toHaveBeenCalledTimes(2);
-    expect(mockRead).toHaveBeenNthCalledWith(1, 'module-offsets');
-    expect(mockRead).toHaveBeenNthCalledWith(2, 'workarea');
+    expect(mockGetGlobalPreference).toHaveBeenCalledTimes(1);
+    expect(mockGetState).toHaveBeenCalledTimes(1);
   });
 
   test('getModuleOffsets with given offsets', () => {
     expect(getModuleOffsets({ offsets: { ado1: { [LayerModule.LASER_10W_DIODE]: [11, 22] } } })).toEqual([11, 22]);
-    expect(mockRead).toHaveBeenCalledTimes(1);
-    expect(mockRead).toHaveBeenNthCalledWith(1, 'workarea');
+    expect(mockGetState).toHaveBeenCalledTimes(1);
   });
 
   test('getModuleOffsets with given workarea', () => {
     expect(getModuleOffsets({ module: LayerModule.UV_WHITE_INK, workarea: 'fbm2' })).toEqual([11, 12]);
-    expect(mockRead).toHaveBeenCalledTimes(1);
-    expect(mockRead).toHaveBeenNthCalledWith(1, 'module-offsets');
+    expect(mockGetGlobalPreference).toHaveBeenCalledTimes(1);
+    expect(mockGetState).not.toHaveBeenCalled();
   });
 
   test('updateModuleOffsets with default options', () => {
@@ -70,10 +72,9 @@ describe('test moduleOffsets helpers', () => {
         [LayerModule.UV_WHITE_INK]: [11, 12],
       },
     });
-    expect(mockRead).toHaveBeenCalledTimes(2);
-    expect(mockRead).toHaveBeenNthCalledWith(1, 'module-offsets');
-    expect(mockRead).toHaveBeenNthCalledWith(2, 'workarea');
-    expect(mockWrite).not.toHaveBeenCalled();
+    expect(mockGetGlobalPreference).toHaveBeenCalledTimes(1);
+    expect(mockGetState).toHaveBeenCalledTimes(1);
+    expect(mockSet).not.toHaveBeenCalled();
     expect(mockUpdate).not.toHaveBeenCalled();
   });
 
@@ -87,10 +88,9 @@ describe('test moduleOffsets helpers', () => {
         [LayerModule.UV_WHITE_INK]: [11, 12],
       },
     });
-    expect(mockRead).toHaveBeenCalledTimes(2);
-    expect(mockRead).toHaveBeenNthCalledWith(1, 'module-offsets');
-    expect(mockRead).toHaveBeenNthCalledWith(2, 'workarea');
-    expect(mockWrite).not.toHaveBeenCalled();
+    expect(mockGetGlobalPreference).toHaveBeenCalledTimes(1);
+    expect(mockGetState).toHaveBeenCalledTimes(1);
+    expect(mockSet).not.toHaveBeenCalled();
     expect(mockUpdate).not.toHaveBeenCalled();
   });
 
@@ -104,11 +104,11 @@ describe('test moduleOffsets helpers', () => {
         [LayerModule.UV_WHITE_INK]: [11, 12],
       },
     });
-    expect(mockRead).toHaveBeenCalledTimes(2);
-    expect(mockRead).toHaveBeenNthCalledWith(1, 'module-offsets');
-    expect(mockRead).toHaveBeenNthCalledWith(2, 'workarea');
-    expect(mockWrite).toHaveBeenCalledTimes(1);
-    expect(mockWrite).toHaveBeenNthCalledWith(1, 'module-offsets', {
+    // 1 for module-offsets, 1 for set
+    expect(mockGetGlobalPreference).toHaveBeenCalledTimes(2);
+    expect(mockGetState).toHaveBeenCalledTimes(1);
+    expect(mockSet).toHaveBeenCalledTimes(1);
+    expect(mockSet).toHaveBeenNthCalledWith(1, 'module-offsets', {
       ado1: {
         [LayerModule.LASER_10W_DIODE]: [1.5, 2.5, true],
         [LayerModule.LASER_1064]: [5, 6],
@@ -126,8 +126,7 @@ describe('test moduleOffsets helpers', () => {
         offsets: { ado1: { [LayerModule.LASER_10W_DIODE]: [11, 22], [LayerModule.LASER_20W_DIODE]: [33, 44] } },
       }),
     ).toEqual({ ado1: { [LayerModule.LASER_10W_DIODE]: [1.5, 2.5, true], [LayerModule.LASER_20W_DIODE]: [33, 44] } });
-    expect(mockRead).toHaveBeenCalledTimes(1);
-    expect(mockRead).toHaveBeenNthCalledWith(1, 'workarea');
+    expect(mockGetState).toHaveBeenCalledTimes(1);
   });
 
   test('updateModuleOffsets with given workarea', () => {
@@ -140,8 +139,8 @@ describe('test moduleOffsets helpers', () => {
         [LayerModule.UV_WHITE_INK]: [1.5, 2.5, true],
       },
     });
-    expect(mockRead).toHaveBeenCalledTimes(1);
-    expect(mockRead).toHaveBeenNthCalledWith(1, 'module-offsets');
+    expect(mockGetGlobalPreference).toHaveBeenCalledTimes(1);
+    expect(mockGetState).not.toHaveBeenCalled();
   });
 
   test('updateModuleOffsets with new workarea key', () => {
@@ -157,7 +156,7 @@ describe('test moduleOffsets helpers', () => {
         [LayerModule.UV_WHITE_INK]: [11, 12],
       },
     });
-    expect(mockRead).toHaveBeenCalledTimes(1);
-    expect(mockRead).toHaveBeenNthCalledWith(1, 'module-offsets');
+    expect(mockGetGlobalPreference).toHaveBeenCalledTimes(1);
+    expect(mockGetState).not.toHaveBeenCalled();
   });
 });

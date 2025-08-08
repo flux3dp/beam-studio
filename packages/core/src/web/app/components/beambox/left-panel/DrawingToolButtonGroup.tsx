@@ -11,9 +11,9 @@ import { getAddOnInfo } from '@core/app/constants/addOn';
 import { getSocialMedia } from '@core/app/constants/social-media-constants';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import { getCurrentUser } from '@core/helpers/api/flux-id';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import { useBeamboxPreference } from '@core/helpers/hooks/useBeamboxPreference';
 import isDev from '@core/helpers/is-dev';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -49,11 +49,11 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
   const tLeftPanel = lang.beambox.left_panel;
   const { changeToPreviewMode, hasPassthroughExtension, selectedDevice, setupPreviewMode } = useContext(CanvasContext);
   const { isChatShown, setIsChatShown } = useChatStore();
-  const workarea = useBeamboxPreference('workarea');
+  const workarea = useDocumentStore((state) => state.workarea);
   const addOnInfo = getAddOnInfo(workarea);
-  const isRotary = useBeamboxPreference('rotary_mode') && Boolean(addOnInfo.rotary);
-  const isAutoFeeder = useBeamboxPreference('auto-feeder') && Boolean(addOnInfo.autoFeeder);
-  const isPassThrough = useBeamboxPreference('pass-through') && Boolean(addOnInfo.passThrough);
+  const isRotary = useDocumentStore((state) => state.rotary_mode) && Boolean(addOnInfo.rotary);
+  const isAutoFeeder = useDocumentStore((state) => state['auto-feeder']) && Boolean(addOnInfo.autoFeeder);
+  const isPassThrough = useDocumentStore((state) => state['pass-through']) && Boolean(addOnInfo.passThrough);
   const isCurveEngravingDisabled = useMemo(
     () => isAutoFeeder || isRotary || isPassThrough,
     [isAutoFeeder, isRotary, isPassThrough],

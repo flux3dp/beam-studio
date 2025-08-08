@@ -1,6 +1,6 @@
-import type { BeamboxPreferenceKey, BeamboxPreferenceValue } from '@core/app/actions/beambox/beambox-preference';
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import type { IBatchCommand, ICommand } from '@core/interfaces/IHistory';
+import type { BeamboxPreferenceKey, BeamboxPreferenceValue } from '@core/interfaces/Preference';
 
 import { BaseHistoryCommand } from './history';
 
@@ -13,30 +13,30 @@ export class BeamboxPreferenceCommand<Key extends BeamboxPreferenceKey> extends 
     private key: Key,
     private oldValue: BeamboxPreferenceValue<Key>,
     private newValue: BeamboxPreferenceValue<Key>,
+    private shouldNotifyChanges: boolean = true,
   ) {
     super();
   }
 
   doApply = (): void => {
-    beamboxPreference.write(this.key, this.newValue);
+    beamboxPreference.write(this.key, this.newValue, this.shouldNotifyChanges);
   };
 
   doUnapply = (): void => {
-    beamboxPreference.write(this.key, this.oldValue);
+    beamboxPreference.write(this.key, this.oldValue, this.shouldNotifyChanges);
   };
 }
 
 export function changeBeamboxPreferenceValue<Key extends BeamboxPreferenceKey>(
   key: Key,
   value: BeamboxPreferenceValue<Key>,
-  opts: { parentCmd?: IBatchCommand } = {},
+  { parentCmd, shouldNotifyChanges = true }: { parentCmd?: IBatchCommand; shouldNotifyChanges?: boolean } = {},
 ): BeamboxPreferenceCommand<Key> {
-  const { parentCmd } = opts;
   const oldValue = beamboxPreference.read(key);
 
-  beamboxPreference.write(key, value);
+  beamboxPreference.write(key, value, shouldNotifyChanges);
 
-  const cmd = new BeamboxPreferenceCommand(key, oldValue, value);
+  const cmd = new BeamboxPreferenceCommand(key, oldValue, value, shouldNotifyChanges);
 
   if (parentCmd) parentCmd.addSubCommand(cmd);
 

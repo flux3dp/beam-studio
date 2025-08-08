@@ -1,6 +1,6 @@
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { modelsWithModules } from '@core/app/actions/beambox/constant';
 import layoutConstants from '@core/app/constants/layout-constants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import isDev from '@core/helpers/is-dev';
 
 export enum TopRef {
@@ -40,7 +40,7 @@ export const calculateRight = (right: number, ref: RightRef = RightRef.WINDOW): 
     case RightRef.RIGHT_PANEL:
       return right + layoutConstants.rightPanelWidth;
     case RightRef.PATH_PREVIEW_BTN: {
-      const workarea = beamboxPreference.read('workarea');
+      const workarea = useDocumentStore.getState().workarea;
       const shouldHideBtn = !isDev() && modelsWithModules.has(workarea);
       const offset = shouldHideBtn ? 6 : 48;
 

@@ -1,10 +1,11 @@
 import alertCaller from '@core/app/actions/alert-caller';
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
 import ExportFuncs from '@core/app/actions/beambox/export-funcs';
 import { executeFirmwareUpdate } from '@core/app/actions/beambox/menuDeviceActions';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
+import workareaManager from '@core/app/svgedit/workarea';
 import alertConfig from '@core/helpers/api/alert-config';
 import checkOldFirmware from '@core/helpers/device/checkOldFirmware';
 import promarkButtonHandler from '@core/helpers/device/promark/promark-button-handler';
@@ -35,7 +36,8 @@ export const exportTask = async (device: IDeviceInfo, byHandler: boolean, lang: 
     return;
   }
 
-  const rotaryMode = BeamboxPreference.read('rotary_mode');
+  const documentState = useDocumentStore.getState();
+  const rotaryMode = documentState['rotary_mode'];
 
   // Check 4.1.5 / 4.1.6 rotary
   if (rotaryMode && ['4.1.5', '4.1.6'].includes(version) && model !== 'fhexa1') {
@@ -76,7 +78,7 @@ export const exportTask = async (device: IDeviceInfo, byHandler: boolean, lang: 
     return;
   }
 
-  const currentWorkarea = BeamboxPreference.read('workarea') || BeamboxPreference.read('model');
+  const currentWorkarea = workareaManager.model;
   const allowedWorkareas = constant.allowedWorkarea[model];
 
   if (currentWorkarea && allowedWorkareas) {
@@ -91,11 +93,7 @@ export const exportTask = async (device: IDeviceInfo, byHandler: boolean, lang: 
     }
   }
 
-  if (
-    addOnInfo.jobOrigin &&
-    BeamboxPreference.read('enable-job-origin') &&
-    !alertConfig.read('skip-job-origin-warning')
-  ) {
+  if (addOnInfo.jobOrigin && documentState['enable-job-origin'] && !alertConfig.read('skip-job-origin-warning')) {
     await new Promise((resolve) => {
       alertCaller.popUp({
         callbacks: () => resolve(null),

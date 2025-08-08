@@ -1,10 +1,9 @@
 import React, { useMemo } from 'react';
 
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { getSpeedOptions } from '@core/app/constants/config-options';
-import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
-import { useBeamboxPreference } from '@core/helpers/hooks/useBeamboxPreference';
+import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import useI18n from '@core/helpers/useI18n';
 import storage from '@core/implementations/storage';
 
@@ -22,7 +21,7 @@ interface Props {
 const WhiteInkSpeed = ({ hasMultiValue, onChange, value }: Props): React.JSX.Element => {
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
-  const simpleMode = !useBeamboxPreference('print-advanced-mode');
+  const simpleMode = !useGlobalPreferenceStore((state) => state['print-advanced-mode']);
 
   const sliderOptions = useMemo(() => (simpleMode ? getSpeedOptions(lang) : undefined), [simpleMode, lang]);
 
@@ -33,7 +32,7 @@ const WhiteInkSpeed = ({ hasMultiValue, onChange, value }: Props): React.JSX.Ele
 
     return { decimal: d, display };
   }, []);
-  const workarea: WorkAreaModel = beamboxPreference.read('workarea');
+  const workarea = useDocumentStore((state) => state.workarea);
   const { maxValue, minValue } = useMemo(() => {
     const workareaObj = getWorkarea(workarea);
 

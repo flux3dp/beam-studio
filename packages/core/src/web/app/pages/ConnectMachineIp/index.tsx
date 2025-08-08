@@ -5,13 +5,14 @@ import classNames from 'classnames';
 import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { adorModels, bb2Models, promarkModels } from '@core/app/actions/beambox/constant';
 import menuDeviceActions from '@core/app/actions/beambox/menuDeviceActions';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import TestInfo from '@core/app/components/settings/connection/TestInfo';
 import TestState, { isTesting } from '@core/app/constants/connection-test';
 import { workAreaSet } from '@core/app/constants/workarea-constants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import alertConfig from '@core/helpers/api/alert-config';
 import Discover from '@core/helpers/api/discover';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
@@ -292,8 +293,8 @@ const ConnectMachineIp = (): React.JSX.Element => {
 
     const deviceModel = workAreaSet.has(device.model) ? device.model : 'fbb1b';
 
-    BeamboxPreference.write('model', deviceModel);
-    BeamboxPreference.write('workarea', deviceModel);
+    useGlobalPreferenceStore.getState().set('model', deviceModel);
+    useDocumentStore.getState().set('workarea', deviceModel);
 
     let pokeIPs = storage.get('poke-ip-addr')?.split(/[,;] ?/) || [];
 

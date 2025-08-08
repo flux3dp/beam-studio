@@ -1,5 +1,4 @@
 import alertCaller from '@core/app/actions/alert-caller';
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import alertConstants from '@core/app/constants/alert-constants';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
@@ -83,8 +82,7 @@ export const doBooleanOperation = (
 
   fixEnd(element);
 
-  if (beamboxPreference.read('use_layer_color')) updateElementColor(element);
-
+  updateElementColor(element);
   batchCmd.addSubCommand(new history.InsertElementCommand(element));
 
   const cmd = deleteElements(elements, true);

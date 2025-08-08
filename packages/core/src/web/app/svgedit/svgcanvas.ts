@@ -31,7 +31,6 @@
 // svgedit libs
 
 import Alert from '@core/app/actions/alert-caller';
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import ToolPanelsController from '@core/app/actions/beambox/toolPanelsController';
 import { boundaryDrawer } from '@core/app/actions/canvas/boundaryDrawer';
@@ -41,6 +40,8 @@ import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import * as TutorialController from '@core/app/views/tutorials/tutorialController';
@@ -215,9 +216,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       })
       .appendTo(svgroot);
 
-    const isUsingAntiAliasing = BeamboxPreference.read('anti-aliasing');
-
-    viewMenu.updateAntiAliasing(isUsingAntiAliasing);
+    viewMenu.initAntiAliasing();
   });
 
   clearSvgContentElement();
@@ -633,9 +632,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     () => svgcontent,
   );
 
-  const model = BeamboxPreference.read('workarea');
-
-  workareaManager.init(model);
+  workareaManager.init(useDocumentStore.getState()['workarea']);
   grid.init(workareaManager.zoomRatio);
   updateWorkAreaAlignPoints();
   presprayArea.generatePresprayArea();
@@ -776,8 +773,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   textEdit.updateCurText(curText);
   textEdit.useDefaultFont();
 
-  this.isUsingLayerColor = BeamboxPreference.read('use_layer_color');
-  this.isAutoAlign = BeamboxPreference.read('auto_align');
+  this.isAutoAlign = useGlobalPreferenceStore.getState().auto_align;
 
   let root_sctm = null;
 
@@ -803,7 +799,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   this.getRoot = () => svgroot;
   this.getRootElem = () => svgroot;
   this.getRootScreenMatrix = () => root_sctm;
-  this.getRotaryDisplayCoord = () => BeamboxPreference.read('rotary_y_coord');
   this.getRubberBox = () => rubberBox;
   this.getSelectedElems = (ungroupTempGroup = false) => {
     if (ungroupTempGroup && tempGroup) {
@@ -832,7 +827,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   this.setLastClickPoint = (point) => {
     lastClickPoint = point;
   };
-  this.setRotaryDisplayCoord = (val: number) => BeamboxPreference.write('rotary_y_coord', val);
 
   this.unsafeAccess = {
     setCurrentMode: (v) => {
@@ -1780,23 +1774,24 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       selectOnly([current_group]);
     }
 
-    const workarea: WorkAreaModel = BeamboxPreference.read('workarea');
+    const documentState = useDocumentStore.getState();
+    const workarea: WorkAreaModel = documentState.workarea;
     const addOnInfo = getAddOnInfo(workarea);
-    const engraveDpi = BeamboxPreference.read('engrave_dpi');
-    const isUsingDiode = !!(BeamboxPreference.read('enable-diode') && addOnInfo.hybridLaser);
-    const isUsingAF = !!BeamboxPreference.read('enable-autofocus');
+    const engraveDpi = documentState.engrave_dpi;
+    const isUsingDiode = !!(documentState['enable-diode'] && addOnInfo.hybridLaser);
+    const isUsingAF = !!documentState['enable-autofocus'];
 
     svgcontent.setAttribute('data-engrave_dpi', engraveDpi);
-    svgcontent.setAttribute('data-rotary_mode', BeamboxPreference.read('rotary_mode') ? 'true' : 'false');
+    svgcontent.setAttribute('data-rotary_mode', documentState.rotary_mode ? 'true' : 'false');
     svgcontent.setAttribute('data-en_diode', String(isUsingDiode));
     svgcontent.setAttribute('data-en_af', String(isUsingAF));
 
     if (getAutoFeeder(addOnInfo)) {
-      svgcontent.setAttribute('data-auto-feeder-height', BeamboxPreference.read('auto-feeder-height')!.toFixed(2));
+      svgcontent.setAttribute('data-auto-feeder-height', documentState['auto-feeder-height']!.toFixed(2));
     }
 
     if (getPassThrough(addOnInfo)) {
-      svgcontent.setAttribute('data-pass_through', BeamboxPreference.read('pass-through-height')!.toFixed(2));
+      svgcontent.setAttribute('data-pass_through', documentState['pass-through-height']!.toFixed(2));
     }
 
     svgcontent.setAttribute('data-workarea', workarea);
@@ -4027,7 +4022,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   });
 
   this.updateRecentFiles = (filePath: string) => {
-    const recentFiles = storage.get('recent_files', false) || [];
+    const recentFiles = storage.get('recent_files') || [];
     const i = recentFiles.indexOf(filePath);
 
     if (i > 0) {
@@ -4182,15 +4177,25 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     $('[id^="align_text"]').remove();
   };
 
-  this.toggleAutoAlign = () => {
-    const value = !BeamboxPreference.read('auto_align');
+  const onAutoAlignChanged = () => {
+    const { auto_align: value } = useGlobalPreferenceStore.getState();
 
     this.isAutoAlign = value;
 
-    BeamboxPreference.write('auto_align', value);
-    this.clearAlignLines();
+    if (!this.isAutoAlign) {
+      this.clearAlignLines();
+    }
+  };
 
-    return value;
+  useGlobalPreferenceStore.subscribe((state) => state.auto_align, onAutoAlignChanged);
+
+  this.toggleAutoAlign = () => {
+    const { auto_align: value, set } = useGlobalPreferenceStore.getState();
+    const newValue = !value;
+
+    set('auto_align', newValue);
+
+    return newValue;
   };
 
   this.drawAlignLine = function (tx: number, ty: number, x: IPoint | null, y: IPoint | null, index: number = 0) {
@@ -4441,7 +4446,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     if (!batchCmd.isEmpty() && !isSubCmd) addCommandToHistory(batchCmd);
 
-    if (canvas.isUsingLayerColor) updateElementColor(group);
+    updateElementColor(group);
 
     // update selection
     selectOnly([group], true);
@@ -4882,9 +4887,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       targetLayer.appendChild(elem);
     }
 
-    if (this.isUsingLayerColor) {
-      updateElementColor(elem);
-    }
+    updateElementColor(elem);
 
     if (tempGroup.childNodes.length > 1) {
       selectorManager.requestSelector(tempGroup).resize();
@@ -4968,9 +4971,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
           targetLayer.appendChild(elem);
         }
 
-        if (this.isUsingLayerColor) {
-          updateElementColor(elem);
-        }
+        updateElementColor(elem as SVGElement);
 
         children[i++] = elem;
       }

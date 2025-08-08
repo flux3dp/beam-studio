@@ -1,5 +1,5 @@
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import progressCaller from '@core/app/actions/progress-caller';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 
@@ -17,7 +17,7 @@ const rawAndHome = async (progressId?: string): Promise<void> => {
   progressCaller.update('preview-mode-controller', { message: lang.message.exitingRotaryMode });
   await deviceMaster.rawSetRotary(false);
 
-  const rotaryMode = beamboxPreference.read('rotary_mode');
+  const rotaryMode = useDocumentStore.getState()['rotary_mode'];
 
   progressCaller.update('preview-mode-controller', { message: lang.message.homing });
 

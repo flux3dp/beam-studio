@@ -16,6 +16,7 @@ exports[`should render correctly default unit is inches 1`] = `
       <p
         class="caption"
       >
+        Array Interval
         <span
           class="value"
         >
@@ -30,7 +31,9 @@ exports[`should render correctly default unit is inches 1`] = `
         >
           <span
             class="text-center header"
-          />
+          >
+            X
+          </span>
           <div>
             mock-unit-input id:
             array_width
@@ -52,7 +55,9 @@ exports[`should render correctly default unit is inches 1`] = `
         >
           <span
             class="text-center header"
-          />
+          >
+            Y
+          </span>
           <div>
             mock-unit-input id:
             array_height
@@ -91,6 +96,7 @@ exports[`should render correctly default unit is inches 2`] = `
       <p
         class="caption"
       >
+        Array Interval
         <span
           class="value"
         >
@@ -105,7 +111,9 @@ exports[`should render correctly default unit is inches 2`] = `
         >
           <span
             class="text-center header"
-          />
+          >
+            X
+          </span>
           <div>
             mock-unit-input id:
             array_width
@@ -127,7 +135,9 @@ exports[`should render correctly default unit is inches 2`] = `
         >
           <span
             class="text-center header"
-          />
+          >
+            Y
+          </span>
           <div>
             mock-unit-input id:
             array_height
@@ -166,6 +176,7 @@ exports[`should render correctly default unit is inches 3`] = `
       <p
         class="caption"
       >
+        Array Interval
         <span
           class="value"
         >
@@ -180,7 +191,9 @@ exports[`should render correctly default unit is inches 3`] = `
         >
           <span
             class="text-center header"
-          />
+          >
+            X
+          </span>
           <div>
             mock-unit-input id:
             array_width
@@ -202,7 +215,9 @@ exports[`should render correctly default unit is inches 3`] = `
         >
           <span
             class="text-center header"
-          />
+          >
+            Y
+          </span>
           <div>
             mock-unit-input id:
             array_height
@@ -241,6 +256,7 @@ exports[`should render correctly default unit is inches 4`] = `
       <p
         class="caption"
       >
+        Array Interval
         <span
           class="value"
         >
@@ -255,7 +271,9 @@ exports[`should render correctly default unit is inches 4`] = `
         >
           <span
             class="text-center header"
-          />
+          >
+            X
+          </span>
           <div>
             mock-unit-input id:
             array_width
@@ -277,7 +295,9 @@ exports[`should render correctly default unit is inches 4`] = `
         >
           <span
             class="text-center header"
-          />
+          >
+            Y
+          </span>
           <div>
             mock-unit-input id:
             array_height
@@ -316,6 +336,7 @@ exports[`should render correctly default unit is inches 5`] = `
       <p
         class="caption"
       >
+        Array Interval
         <span
           class="value"
         >
@@ -330,7 +351,9 @@ exports[`should render correctly default unit is inches 5`] = `
         >
           <span
             class="text-center header"
-          />
+          >
+            X
+          </span>
           <div>
             mock-unit-input id:
             array_width
@@ -352,7 +375,9 @@ exports[`should render correctly default unit is inches 5`] = `
         >
           <span
             class="text-center header"
-          />
+          >
+            Y
+          </span>
           <div>
             mock-unit-input id:
             array_height
@@ -391,6 +416,7 @@ exports[`should render correctly default unit is mm 1`] = `
       <p
         class="caption"
       >
+        Array Interval
         <span
           class="value"
         >
@@ -405,7 +431,9 @@ exports[`should render correctly default unit is mm 1`] = `
         >
           <span
             class="text-center header"
-          />
+          >
+            X
+          </span>
           <div>
             mock-unit-input id:
             array_width
@@ -427,7 +455,9 @@ exports[`should render correctly default unit is mm 1`] = `
         >
           <span
             class="text-center header"
-          />
+          >
+            Y
+          </span>
           <div>
             mock-unit-input id:
             array_height

@@ -1,15 +1,16 @@
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { boundaryDrawer } from '@core/app/actions/canvas/boundaryDrawer';
 import { LayerModule, type LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import type { ModuleOffsets, OffsetTuple } from '@core/app/constants/layer-module/module-offsets';
 import moduleOffsets from '@core/app/constants/layer-module/module-offsets';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 
 export const getModuleOffsets = ({
   isRelative = false,
   module = LayerModule.LASER_10W_DIODE,
-  offsets = beamboxPreference.read('module-offsets'),
-  workarea = beamboxPreference.read('workarea'),
+  offsets = useGlobalPreferenceStore.getState()['module-offsets'],
+  workarea = useDocumentStore.getState().workarea,
 }: Partial<{
   isRelative: boolean;
   module: LayerModuleType;
@@ -27,9 +28,9 @@ export const updateModuleOffsets = (
   {
     isRelative = false,
     module = LayerModule.LASER_10W_DIODE,
-    offsets = beamboxPreference.read('module-offsets'),
+    offsets = useGlobalPreferenceStore.getState()['module-offsets'],
     shouldWrite = false,
-    workarea = beamboxPreference.read('workarea'),
+    workarea = useDocumentStore.getState().workarea,
   }: Partial<{
     isRelative: boolean;
     module: LayerModuleType;
@@ -53,7 +54,7 @@ export const updateModuleOffsets = (
   offsets[workarea][module][2] = true;
 
   if (shouldWrite) {
-    beamboxPreference.write('module-offsets', offsets);
+    useGlobalPreferenceStore.getState().set('module-offsets', offsets);
     boundaryDrawer.update();
   }
 

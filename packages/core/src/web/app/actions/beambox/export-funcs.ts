@@ -1,5 +1,4 @@
 import Alert from '@core/app/actions/alert-caller';
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant, { promarkModels } from '@core/app/actions/beambox/constant';
 import generateThumbnail from '@core/app/actions/beambox/export/generate-thumbnail';
 import { fetchTaskCodeSwiftray } from '@core/app/actions/beambox/export-funcs-swiftray';
@@ -10,7 +9,10 @@ import { getAddOnInfo } from '@core/app/constants/addOn';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { Mode } from '@core/app/constants/monitor-constants';
 import type { PreviewTask, VariableTextTask } from '@core/app/contexts/MonitorContext';
+import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
+import workareaManager from '@core/app/svgedit/workarea';
 import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
 import svgLaserParser from '@core/helpers/api/svg-laser-parser';
 import { hasSwiftray } from '@core/helpers/api/swiftray-client';
@@ -164,11 +166,10 @@ const fetchTaskCode = async (
     },
   });
 
+  const documentState = useDocumentStore.getState();
   const uploadRes = await svgeditorParser.uploadToSvgeditorAPI(uploadFile, {
-    engraveDpi:
-      // (isDev() && BeamboxPreference.read('engrave-dpi-value')) ||
-      BeamboxPreference.read('engrave_dpi'),
-    model: BeamboxPreference.read('workarea') || BeamboxPreference.read('model'),
+    engraveDpi: documentState['engrave_dpi'],
+    model: workareaManager.model,
     onProgressing: (data: { message: string; percentage: number }) => {
       // message: Analyzing SVG - 0.0%
       Progress.update('upload-scene', {
@@ -205,7 +206,7 @@ const fetchTaskCode = async (
   });
 
   let doesSupportDiodeAndAF = true;
-  let shouldUseFastGradient = BeamboxPreference.read('fast_gradient') !== false;
+  let shouldUseFastGradient = useGlobalPreferenceStore.getState().fast_gradient !== false;
   let supportPwm: boolean;
   let supportJobOrigin: boolean;
   let supportAccOverrideV1: boolean;
@@ -234,7 +235,7 @@ const fetchTaskCode = async (
   let didErrorOccur = false;
   const targetDevice = device || TopBarController.getSelectedDevice();
   const paddingAccel = await getAdorPaddingAccel(targetDevice);
-  const addOnInfo = getAddOnInfo(BeamboxPreference.read('workarea'));
+  const addOnInfo = getAddOnInfo(workareaManager.model);
   const getTaskCode = (codeType: 'fcode' | 'gcode', getTaskCodeOpts = {}) =>
     new Promise<null | {
       fileTimeCost: number;
@@ -246,10 +247,10 @@ const fetchTaskCode = async (
       svgeditorParser.getTaskCode(names, {
         codeType,
         device: targetDevice,
-        enableAutoFocus: doesSupportDiodeAndAF && BeamboxPreference.read('enable-autofocus') && addOnInfo.autoFocus,
-        enableDiode: doesSupportDiodeAndAF && BeamboxPreference.read('enable-diode') && addOnInfo.hybridLaser,
+        enableAutoFocus: doesSupportDiodeAndAF && documentState['enable-autofocus'] && addOnInfo.autoFocus,
+        enableDiode: doesSupportDiodeAndAF && documentState['enable-diode'] && addOnInfo.hybridLaser,
         fileMode: '-f',
-        model: BeamboxPreference.read('workarea') || BeamboxPreference.read('model'),
+        model: workareaManager.model,
         onError: (message: string) => {
           Progress.popById('fetch-task');
           Alert.popUp({
@@ -350,8 +351,8 @@ const fetchTransferredFcode = async (gcodeString: string, thumbnail: string) => 
       { arrayBuffer, size: blob.size, thumbnailSize: thumbnail.length },
       {
         codeType,
-        model: BeamboxPreference.read('workarea') || BeamboxPreference.read('model'),
-        onError: (message) => {
+        model: workareaManager.model,
+        onError: (message: string) => {
           Progress.popById('fetch-task');
           Alert.popUp({
             buttonType: AlertConstants.YES_NO,
@@ -427,13 +428,15 @@ const openTaskInDeviceMonitor = async (
 };
 
 export const getConvertEngine = (targetDevice?: IDeviceInfo) => {
-  const currentWorkarea = BeamboxPreference.read('workarea');
+  const currentWorkarea = workareaManager.model;
   const isPromark = promarkModels.has(currentWorkarea);
 
   const useSwiftray =
     hasSwiftray &&
     currentWorkarea !== 'fbm2' &&
-    (isPromark || BeamboxPreference.read('path-engine') === 'swiftray' || targetDevice?.source === 'swiftray');
+    (isPromark ||
+      useGlobalPreferenceStore.getState()['path-engine'] === 'swiftray' ||
+      targetDevice?.source === 'swiftray');
   const convertEngine = useSwiftray ? fetchTaskCodeSwiftray : fetchTaskCode;
 
   return { convertEngine, useSwiftray };

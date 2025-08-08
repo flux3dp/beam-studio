@@ -3,13 +3,10 @@ import React from 'react';
 
 import { render } from '@testing-library/react';
 
-import Ruler from './Ruler';
+const mockUseGlobalPreferenceStore = jest.fn();
 
-// Mock necessary modules
-const mockRead = jest.fn();
-
-jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
-  read: (...args) => mockRead(...args),
+jest.mock('@core/app/stores/globalPreferenceStore', () => ({
+  useGlobalPreferenceStore: (...args) => mockUseGlobalPreferenceStore(...args),
 }));
 
 const mockCreateEventEmitter = jest.fn();
@@ -35,10 +32,12 @@ const mockEmitter = {
   on: jest.fn(),
 };
 
+import Ruler from './Ruler';
+
 describe('Ruler Component', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockRead.mockReturnValue(true);
+    mockUseGlobalPreferenceStore.mockReturnValue(true);
     mockGet.mockReturnValue('mm');
     mockCreateEventEmitter.mockReturnValue(mockEmitter);
   });
@@ -51,17 +50,16 @@ describe('Ruler Component', () => {
   });
 
   test('hides the rulers when show_rulers preference is false', () => {
-    mockRead.mockReturnValue(false);
+    mockUseGlobalPreferenceStore.mockReturnValue(false);
 
     const { container } = render(<Ruler />);
 
     expect(container.querySelector('#rulers')).toHaveStyle('display: none');
   });
 
-  test('calls updateRulers on update-ruler and zoom-changed events', () => {
+  test('calls updateRulers on and zoom-changed events', () => {
     render(<Ruler />);
-    expect(mockEmitter.on).toHaveBeenCalledTimes(2);
-    expect(mockEmitter.on).toHaveBeenNthCalledWith(1, 'update-ruler', expect.any(Function));
-    expect(mockEmitter.on).toHaveBeenNthCalledWith(2, 'zoom-changed', expect.any(Function));
+    expect(mockEmitter.on).toHaveBeenCalledTimes(1);
+    expect(mockEmitter.on).toHaveBeenNthCalledWith(1, 'zoom-changed', expect.any(Function));
   });
 });

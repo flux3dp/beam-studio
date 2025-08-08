@@ -1,3 +1,4 @@
+import updateElementColor from '@core/helpers/color/updateElementColor';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -52,8 +53,7 @@ export const ungroupElement = (elem: Element): { batchCmd: IBatchCommand; childr
 
       if (originalLayer) {
         originalLayer.appendChild(child);
-
-        if (svgCanvas.isUsingLayerColor) svgCanvas.updateElementColor(child);
+        updateElementColor(child);
       } else {
         child = parent.insertBefore(child, anchor);
       }

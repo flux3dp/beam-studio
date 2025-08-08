@@ -5,10 +5,24 @@ import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 import BasePreviewManager from './BasePreviewManager';
 
-const mockRead = jest.fn();
+const mockGetState = jest.fn();
 
-jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
-  read: (...args) => mockRead(...args),
+jest.mock('@core/app/stores/documentStore', () => ({
+  useDocumentStore: {
+    getState: () => mockGetState(),
+  },
+}));
+
+jest.mock('@core/app/svgedit/workarea', () => ({
+  model: 'fbm1',
+}));
+
+const mockGetGlobalPreferenceStore = jest.fn();
+
+jest.mock('@core/app/stores/globalPreferenceStore', () => ({
+  useGlobalPreferenceStore: {
+    getState: () => mockGetGlobalPreferenceStore(),
+  },
 }));
 
 const mockAlertConfigRead = jest.fn();
@@ -85,7 +99,7 @@ describe('test BasePreviewManager', () => {
 
     const basePreviewManager = new BasePreviewManager(mockDeviceInfo);
 
-    expect(mockGetWorkarea).toBeCalledTimes(1);
+    expect(mockGetWorkarea).toHaveBeenCalledTimes(1);
     expect(basePreviewManager.constrainPreviewXY(50, 50)).toEqual({ x: 50, y: 50 });
     expect(basePreviewManager.constrainPreviewXY(150, 150)).toEqual({ x: 100, y: 100 });
     expect(basePreviewManager.constrainPreviewXY(-50, -50)).toEqual({ x: 0, y: 0 });
@@ -101,9 +115,9 @@ describe('test BasePreviewManager', () => {
       const res = await basePreviewManager.getPhotoFromMachine();
 
       expect(res).toEqual('mock-url');
-      expect(mockPopUp).not.toBeCalled();
-      expect(mockCreateObjectURL).toBeCalledTimes(1);
-      expect(mockCreateObjectURL).toBeCalledWith('mock-blob');
+      expect(mockPopUp).not.toHaveBeenCalled();
+      expect(mockCreateObjectURL).toHaveBeenCalledTimes(1);
+      expect(mockCreateObjectURL).toHaveBeenCalledWith('mock-blob');
     });
 
     test('getPhotoFromMachine no blob', async () => {
@@ -122,8 +136,8 @@ describe('test BasePreviewManager', () => {
       const p = basePreviewManager.getPhotoFromMachine();
 
       await new Promise((r) => setTimeout(r));
-      expect(mockPopUp).toBeCalledTimes(1);
-      expect(mockPopUp).toBeCalledWith({
+      expect(mockPopUp).toHaveBeenCalledTimes(1);
+      expect(mockPopUp).toHaveBeenCalledWith({
         buttonLabels: [lang.message.camera.abort_preview, lang.message.camera.continue_preview],
         callbacks: [expect.any(Function), expect.any(Function)],
         checkbox: {
@@ -140,8 +154,8 @@ describe('test BasePreviewManager', () => {
       const res = await p;
 
       expect(res).toEqual('mock-url');
-      expect(mockCreateObjectURL).toBeCalledTimes(1);
-      expect(mockCreateObjectURL).toBeCalledWith('mock-blob');
+      expect(mockCreateObjectURL).toHaveBeenCalledTimes(1);
+      expect(mockCreateObjectURL).toHaveBeenCalledWith('mock-blob');
     });
 
     test('getPhotoFromMachine with alert abort', async () => {
@@ -154,8 +168,8 @@ describe('test BasePreviewManager', () => {
       const p = basePreviewManager.getPhotoFromMachine();
 
       await new Promise((r) => setTimeout(r));
-      expect(mockPopUp).toBeCalledTimes(1);
-      expect(mockPopUp).toBeCalledWith({
+      expect(mockPopUp).toHaveBeenCalledTimes(1);
+      expect(mockPopUp).toHaveBeenCalledWith({
         buttonLabels: [lang.message.camera.abort_preview, lang.message.camera.continue_preview],
         callbacks: [expect.any(Function), expect.any(Function)],
         checkbox: {
@@ -173,7 +187,7 @@ describe('test BasePreviewManager', () => {
 
       expect(res).toBeNull();
       expect(mockCreateObjectURL).not.toBeCalled();
-      expect(mockEnd).toBeCalledTimes(1);
+      expect(mockEnd).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -188,9 +202,9 @@ describe('test BasePreviewManager', () => {
     const res = await basePreviewManager.getPhotoAfterMoveTo(50, 50);
 
     expect(res).toEqual('mock-url');
-    expect(mockMoveTo).toBeCalledTimes(1);
-    expect(mockMoveTo).toBeCalledWith(50, 50);
-    expect(mockGetPhotoFromMachine).toBeCalledTimes(1);
+    expect(mockMoveTo).toHaveBeenCalledTimes(1);
+    expect(mockMoveTo).toHaveBeenCalledWith(50, 50);
+    expect(mockGetPhotoFromMachine).toHaveBeenCalledTimes(1);
   });
 
   describe('test move to & preview move speed', () => {
@@ -202,16 +216,9 @@ describe('test BasePreviewManager', () => {
 
     testSets.forEach(({ expected, label, value }) => {
       test(`moveTo ${label}`, async () => {
-        mockRead.mockImplementation((key) => {
-          if (key === 'enable-diode') {
-            return false;
-          }
-
-          if (key === 'workarea') {
-            return 'fbm1';
-          }
-
-          return value;
+        mockGetState.mockReturnValue({ 'enable-diode': false });
+        mockGetGlobalPreferenceStore.mockReturnValue({
+          preview_movement_speed_level: value,
         });
 
         const basePreviewManager = new BasePreviewManager(mockDeviceInfo);
@@ -232,25 +239,18 @@ describe('test BasePreviewManager', () => {
 
         jest.runAllTimers();
         await p;
-        expect(mockSelect).toBeCalledTimes(1);
-        expect(mockGetControl).toBeCalledTimes(1);
-        expect(mockEnterRawMode).toBeCalledTimes(1);
-        expect(mockRawMove).toBeCalledTimes(1);
-        expect(mockRawMove).toBeCalledWith({ f: expected, x: 50, y: 50 });
+        expect(mockSelect).toHaveBeenCalledTimes(1);
+        expect(mockGetControl).toHaveBeenCalledTimes(1);
+        expect(mockEnterRawMode).toHaveBeenCalledTimes(1);
+        expect(mockRawMove).toHaveBeenCalledTimes(1);
+        expect(mockRawMove).toHaveBeenCalledWith({ f: expected, x: 50, y: 50 });
       });
     });
 
     test('moveTo with diode', async () => {
-      mockRead.mockImplementation((key) => {
-        if (key === 'enable-diode') {
-          return true;
-        }
-
-        if (key === 'workarea') {
-          return 'fbm1';
-        }
-
-        return PreviewSpeedLevel.FAST;
+      mockGetState.mockReturnValue({ 'enable-diode': true });
+      mockGetGlobalPreferenceStore.mockReturnValue({
+        preview_movement_speed_level: PreviewSpeedLevel.FAST,
       });
       mockGetAddOnInfo.mockReturnValue({ hybridLaser: true });
 
@@ -272,11 +272,11 @@ describe('test BasePreviewManager', () => {
 
       jest.runAllTimers();
       await p;
-      expect(mockSelect).toBeCalledTimes(1);
-      expect(mockGetControl).toBeCalledTimes(1);
-      expect(mockEnterRawMode).toBeCalledTimes(1);
-      expect(mockRawMove).toBeCalledTimes(1);
-      expect(mockRawMove).toBeCalledWith({ f: 3600, x: 50, y: 50 });
+      expect(mockSelect).toHaveBeenCalledTimes(1);
+      expect(mockGetControl).toHaveBeenCalledTimes(1);
+      expect(mockEnterRawMode).toHaveBeenCalledTimes(1);
+      expect(mockRawMove).toHaveBeenCalledTimes(1);
+      expect(mockRawMove).toHaveBeenCalledWith({ f: 3600, x: 50, y: 50 });
     });
   });
 });

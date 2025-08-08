@@ -99,6 +99,10 @@ class TabManager {
       this.sendToFocusedView(TabEvents.ImportFileInTab, data);
     });
 
+    ipcMain.on(TabEvents.GlobalPreferenceChanged, (e, key, value) => {
+      this.sendToOtherViews(e.sender.id, TabEvents.GlobalPreferenceChanged, key, value);
+    });
+
     const handleWindowSizeChanged = () => {
       const tabs = Object.values(this.tabsMap);
 
@@ -233,6 +237,8 @@ class TabManager {
   };
 
   addNewTab = (): void => {
+    if (this.preloadedTab) this.preloadedTab.view.webContents.send(TabEvents.ReloadSettings);
+
     const newTab = this.preloadedTab ?? this.createTab();
 
     this.preloadedTab = null;
@@ -450,12 +456,12 @@ class TabManager {
     }
   };
 
-  sendToOtherViews = (senderId: number, event: string, data?: unknown): void => {
+  sendToOtherViews = (senderId: number, event: string, ...data: unknown[]): void => {
     const views = this.getAllViews();
 
     views.forEach((view) => {
       if (view.webContents.id !== senderId) {
-        view.webContents.send(event, data);
+        view.webContents.send(event, ...data);
       }
     });
   };

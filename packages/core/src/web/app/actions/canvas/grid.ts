@@ -1,5 +1,5 @@
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import NS from '@core/app/constants/namespaces';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import workareaManager from '@core/app/svgedit/workarea';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
@@ -11,7 +11,7 @@ let currentGridInterval: number;
 let gridContainer: SVGSVGElement;
 let xGridContainer: SVGGElement;
 let yGridContainer: SVGGElement;
-let show = beamboxPreference.read('show_grids');
+let show = false;
 let lastZoomRatio = 1;
 
 const getGridInterval = (zoomRatio: number): number => {
@@ -91,9 +91,9 @@ canvasEventEmitter.on('canvas-change', () => {
   });
 });
 
-const toggleGrids = (): void => {
-  show = beamboxPreference.read('show_grids');
-  gridContainer.style.display = show ? 'inline' : 'none';
+const toggleGrids = (value: boolean = useGlobalPreferenceStore.getState().show_grids): void => {
+  show = value;
+  gridContainer.style.display = value ? 'inline' : 'none';
   updateGrids(lastZoomRatio, true);
 };
 
@@ -115,8 +115,10 @@ const init = (zoomRatio = 1): void => {
     canvasBackground?.appendChild(gridContainer);
   }
 
-  updateGrids(zoomRatio);
+  lastZoomRatio = zoomRatio;
+  toggleGrids();
   updateCanvasSize();
+  useGlobalPreferenceStore.subscribe((state) => state.show_grids, toggleGrids);
 };
 
 export default {

@@ -1,13 +1,14 @@
 import React, { memo, useEffect, useMemo } from 'react';
 
 import { Collapse, ConfigProvider } from 'antd';
+import { useShallow } from 'zustand/react/shallow';
 
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType } from '@core/app/constants/promark-constants';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import useHasCurveEngraving from '@core/helpers/hooks/useHasCurveEngraving';
@@ -42,6 +43,12 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
     () => (promarkInfo ? getPromarkLimit() : null),
     // eslint-disable-next-line hooks/exhaustive-deps
     [promarkInfo?.laserType, promarkInfo?.watt],
+  );
+  const { isAutoFocusEnabled, isDiodeEnabled } = useDocumentStore(
+    useShallow((state) => ({
+      isAutoFocusEnabled: state['enable-autofocus'],
+      isDiodeEnabled: state['enable-diode'],
+    })),
   );
 
   useEffect(() => {
@@ -85,12 +92,12 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
     } else {
       if (addOnInfo.lowerFocus) {
         contents.push(<FocusBlock key="focus-block" type={type} />);
-      } else if (addOnInfo.autoFocus && beamboxPreference.read('enable-autofocus')) {
+      } else if (addOnInfo.autoFocus && isAutoFocusEnabled) {
         contents.push(<AutoFocus key="auto-focus" />);
       }
     }
 
-    if (addOnInfo.hybridLaser && beamboxPreference.read('enable-diode')) {
+    if (addOnInfo.hybridLaser && isDiodeEnabled) {
       contents.push(<Diode key="diode" />);
     }
   } else {

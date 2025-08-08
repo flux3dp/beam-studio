@@ -2,9 +2,9 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Button, Modal, Segmented } from 'antd';
 
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import progressCaller from '@core/app/actions/progress-caller';
 import AlertIcons from '@core/app/icons/alerts/AlertIcons';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import { getRotationAngle } from '@core/app/svgedit/transform/rotation';
 import UnitInput from '@core/app/widgets/UnitInput';
 import imageEdit from '@core/helpers/image-edit';
@@ -92,8 +92,8 @@ const RotaryWarped = ({ elem, onClose }: Props): React.JSX.Element => {
 
     return { ...imageInfo, initA: null, initB: null, rotation: r };
   }, [elem]);
-  const [diameterA, setDiaMeterA] = useState(initA ?? beamboxPreference.read('rotary-chuck-obj-d'));
-  const [diameterB, setDiaMeterB] = useState(initB ?? beamboxPreference.read('rotary-chuck-obj-d'));
+  const [diameterA, setDiaMeterA] = useState(initA ?? useDocumentStore.getState()['rotary-chuck-obj-d']);
+  const [diameterB, setDiaMeterB] = useState(initB ?? useDocumentStore.getState()['rotary-chuck-obj-d']);
   const img = useRef<HTMLImageElement>(new Image());
   const previewCanvas = useRef<HTMLCanvasElement | null>(null);
   const imgLoad = useRef<null | Promise<void>>(null);

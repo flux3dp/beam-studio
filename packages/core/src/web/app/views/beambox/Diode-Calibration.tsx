@@ -3,12 +3,12 @@ import React from 'react';
 import classNames from 'classnames';
 
 import Alert from '@core/app/actions/alert-caller';
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import Constant from '@core/app/actions/beambox/constant';
 import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import Dialog from '@core/app/actions/dialog-caller';
 import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import AlertDialog from '@core/app/widgets/AlertDialog';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
@@ -468,8 +468,10 @@ class DiodeCalibration extends React.Component<Props, State> {
               const offsetY = Constant.diode.calibrationPicture.offsetY + dy;
 
               console.log(offsetX, offsetY);
-              BeamboxPreference.write('diode_offset_x', offsetX);
-              BeamboxPreference.write('diode_offset_y', offsetY);
+              useGlobalPreferenceStore.getState().update({
+                diode_offset_x: offsetX,
+                diode_offset_y: offsetY,
+              });
               this.updateCurrentStep(STEP_FINISH);
             },
           },

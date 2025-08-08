@@ -121,7 +121,6 @@ export default interface ISVGCanvas {
   ): Promise<SVGUseElement>;
   isAutoAlign: boolean;
   isElemFillable: (elem: Element) => boolean;
-  isUsingLayerColor: boolean;
   leaveContext: () => void;
   mergeAllLayers: () => void;
   mergeLayer: () => void;

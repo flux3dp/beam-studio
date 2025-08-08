@@ -105,10 +105,10 @@ jest.mock('@core/app/stores/configPanel', () => ({
   useConfigPanelStore: (...args) => mockUseConfigPanelStore(...args),
 }));
 
-const mockUseBeamboxPreference = jest.fn();
+const mockUseGlobalPreferenceStore = jest.fn();
 
-jest.mock('@core/helpers/hooks/useBeamboxPreference', () => ({
-  useBeamboxPreference: (...args) => mockUseBeamboxPreference(...args),
+jest.mock('@core/app/stores/globalPreferenceStore', () => ({
+  useGlobalPreferenceStore: (...args) => mockUseGlobalPreferenceStore(...args),
 }));
 
 describe('test InkBlock', () => {
@@ -122,7 +122,7 @@ describe('test InkBlock', () => {
       ink: { hasMultiValue: false, value: 7 },
       module: { hasMultiValue: false, value: LayerModule.PRINTER },
     });
-    mockUseBeamboxPreference.mockReturnValue(false);
+    mockUseGlobalPreferenceStore.mockReturnValue(false);
   });
 
   it('should render correctly', () => {

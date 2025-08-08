@@ -1,7 +1,7 @@
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import constant from '@core/app/actions/beambox/constant';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import workareaManager from '@core/app/svgedit/workarea';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getAllLayers } from '@core/helpers/layer/layer-helper';
@@ -26,7 +26,7 @@ const getJobOrigin = (px = false): { x: number; y: number } => {
   const top = Math.max(boundary.y, 0);
   const right = Math.min(boundary.x + boundary.width, workareaWidth);
   const bottom = Math.min(boundary.y + boundary.height, maxY);
-  const jobOrigin = beamboxPreference.read('job-origin');
+  const jobOrigin = useDocumentStore.getState()['job-origin'];
   const xRef = (jobOrigin - 1) % 3;
   const yRef = Math.floor((jobOrigin - 1) / 3);
   const res = { x: 0, y: 0 };

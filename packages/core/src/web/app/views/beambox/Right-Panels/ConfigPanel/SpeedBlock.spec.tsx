@@ -77,10 +77,16 @@ jest.mock('@core/implementations/storage', () => ({
   get: (...args) => mockStorageGet(...args),
 }));
 
-const mockPrefRead = jest.fn();
+const mockUseGlobalPreferenceStore = jest.fn();
+const initialGlobalPreference = {
+  curve_engraving_speed_limit: true,
+  'print-advanced-mode': false,
+  vector_speed_constraint: true,
+};
+const mockGlobalPreference = { ...initialGlobalPreference };
 
-jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
-  read: (...args) => mockPrefRead(...args),
+jest.mock('@core/app/stores/globalPreferenceStore', () => ({
+  useGlobalPreferenceStore: (...args) => mockUseGlobalPreferenceStore(...args),
 }));
 
 const mockAddCommandToHistory = jest.fn();
@@ -132,12 +138,6 @@ const mockUseWorkarea = jest.fn();
 
 jest.mock('@core/helpers/hooks/useWorkarea', () => () => mockUseWorkarea());
 
-const mockUseBeamboxPreference = jest.fn();
-
-jest.mock('@core/helpers/hooks/useBeamboxPreference', () => ({
-  useBeamboxPreference: (key) => mockUseBeamboxPreference(key),
-}));
-
 const mockGetAutoFeeder = jest.fn();
 
 jest.mock('@core/helpers/addOn', () => ({
@@ -160,14 +160,16 @@ describe('test SpeedBlock', () => {
     });
     mockUseHasCurveEngraving.mockReturnValue(false);
     mockStorageGet.mockReturnValue('mm');
-    mockPrefRead.mockReturnValueOnce(true).mockReturnValueOnce(true);
     mockUseWorkarea.mockReturnValue('fbm1');
     mockGetAutoFeeder.mockReturnValue(false);
-    mockUseBeamboxPreference.mockReturnValue(false);
     mockUseConfigPanelStore.mockReturnValue({
       change: mockChange,
       module: { hasMultiValue: false, value: LayerModule.LASER_10W_DIODE },
       speed: { hasMultiValue: false, value: 87 },
+    });
+    Object.assign(mockGlobalPreference, initialGlobalPreference);
+    mockUseGlobalPreferenceStore.mockImplementation((selector) => {
+      return selector(mockGlobalPreference);
     });
   });
 
@@ -180,9 +182,6 @@ describe('test SpeedBlock', () => {
 
     expect(mockStorageGet).toHaveBeenCalledTimes(1);
     expect(mockStorageGet).toHaveBeenLastCalledWith('default-units');
-    expect(mockPrefRead).toHaveBeenCalledTimes(2);
-    expect(mockPrefRead).toHaveBeenNthCalledWith(1, 'curve_engraving_speed_limit');
-    expect(mockPrefRead).toHaveBeenNthCalledWith(2, 'vector_speed_constraint');
     expect(container).toMatchSnapshot();
   });
 
@@ -238,7 +237,7 @@ describe('test SpeedBlock', () => {
   it('should render correctly when has auto feeder vector speed warning', () => {
     mockUseWorkarea.mockReturnValue('fbb2');
     mockGetAutoFeeder.mockReturnValue(true);
-    mockUseBeamboxPreference.mockReturnValue(true);
+    mockGlobalPreference['print-advanced-mode'] = true;
 
     const { container } = render(
       <LayerPanelContext.Provider value={{ hasVector: true } as any}>

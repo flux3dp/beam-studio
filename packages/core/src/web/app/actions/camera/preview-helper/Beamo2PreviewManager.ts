@@ -2,7 +2,6 @@ import { sprintf } from 'sprintf-js';
 import { match } from 'ts-pattern';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import DoorChecker from '@core/app/actions/camera/preview-helper/DoorChecker';
@@ -11,6 +10,7 @@ import progressCaller from '@core/app/actions/progress-caller';
 import { bm2PerspectiveGrid } from '@core/app/components/dialogs/camera/common/solvePnPConstants';
 import { CameraType } from '@core/app/constants/cameraConstants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { setMaskImage } from '@core/app/svgedit/canvasBackground';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
@@ -41,7 +41,7 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
   }
 
   protected getMovementSpeed = (): number => {
-    const previewMovementSpeedLevel = beamboxPreference.read('preview_movement_speed_level');
+    const previewMovementSpeedLevel = useGlobalPreferenceStore.getState()['preview_movement_speed_level'];
 
     return match(previewMovementSpeedLevel)
       .with(PreviewSpeedLevel.FAST, () => 42000)

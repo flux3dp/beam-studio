@@ -8,10 +8,12 @@ jest.mock('@core/app/constants/layout-constants', () => ({
   topBarHeight: 10,
 }));
 
-const mockBeamboxPreferenceRead = jest.fn();
+const mockGetState = jest.fn();
 
-jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
-  read: (...args) => mockBeamboxPreferenceRead(...args),
+jest.mock('@core/app/stores/documentStore', () => ({
+  useDocumentStore: {
+    getState: () => mockGetState(),
+  },
 }));
 
 const mockIsDev = jest.fn();
@@ -68,7 +70,7 @@ describe('test calculateRight', () => {
   });
 
   test('RightRef.PATH_PREVIEW_BTN with beamo', () => {
-    mockBeamboxPreferenceRead.mockReturnValue('fbm1');
+    mockGetState.mockReturnValue({ workarea: 'fbm1' });
 
     const result = calculateRight(10, RightRef.PATH_PREVIEW_BTN);
 
@@ -76,7 +78,7 @@ describe('test calculateRight', () => {
   });
 
   test('RightRef.PATH_PREVIEW_BTN with Ador', () => {
-    mockBeamboxPreferenceRead.mockReturnValue('ado1');
+    mockGetState.mockReturnValue({ workarea: 'ado1' });
 
     const result = calculateRight(10, RightRef.PATH_PREVIEW_BTN);
 

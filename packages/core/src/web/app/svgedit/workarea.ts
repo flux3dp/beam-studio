@@ -1,4 +1,5 @@
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import { shallow } from 'zustand/shallow';
+
 import constant from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import layoutConstants from '@core/app/constants/layout-constants';
@@ -6,6 +7,8 @@ import rotaryConstants from '@core/app/constants/rotary-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import beamboxStore from '@core/app/stores/beambox-store';
+import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
@@ -56,13 +59,37 @@ class WorkareaManager {
   shouldShowGuide = false;
 
   init(model: WorkAreaModel): void {
-    this.shouldShowGuide = beamboxPreference.read('show_guides');
+    // TODO: move guides to independent handler
+    this.shouldShowGuide = useGlobalPreferenceStore.getState().show_guides;
     this.setWorkarea(model);
+    useDocumentStore.subscribe(
+      (state) => [
+        state.workarea,
+        // used in getWorkarea
+        state['customized-dimension'],
+        state.rotary_mode,
+        // used in getAddOnInfo
+        state.borderless,
+        state['extend-rotary-workarea'],
+        // used in getAddOnInfo
+        state['pass-through'],
+        state['pass-through-height'],
+        // used in getAddOnInfo
+        state['auto-feeder'],
+        state['auto-feeder-height'],
+      ],
+      ([newWorkarea]) => {
+        this.setWorkarea(newWorkarea as WorkAreaModel);
+        this.resetView();
+      },
+      { equalityFn: shallow },
+    );
   }
 
   setWorkarea(model: WorkAreaModel): void {
-    const isRotaryMode = beamboxPreference.read('rotary_mode');
-    const rotaryExtended = isRotaryMode && beamboxPreference.read('extend-rotary-workarea');
+    const documentStore = useDocumentStore.getState();
+    const isRotaryMode = documentStore.rotary_mode;
+    const rotaryExtended = isRotaryMode && documentStore['extend-rotary-workarea'];
     const addOnInfo = getAddOnInfo(model);
     const passThroughMode = getPassThrough(addOnInfo);
     const autoFeeder = getAutoFeeder(addOnInfo);
@@ -79,7 +106,7 @@ class WorkareaManager {
     const { dpmm } = constant;
 
     if (rotaryExtended && rotaryConstants[model]) {
-      const { boundary, maxHeight } = rotaryConstants[model];
+      const { boundary, maxHeight } = rotaryConstants[model]!;
       const [, upperBound] = boundary ? [boundary[0] * dpmm, boundary[1] * dpmm] : [0, this.height];
       const pxMaxHeight = maxHeight * dpmm;
 
@@ -89,7 +116,7 @@ class WorkareaManager {
       this.height += this.expansion[1];
       this.expansionType = ExpansionType.ROTARY;
     } else if (passThroughMode) {
-      const passThroughHeight = beamboxPreference.read('pass-through-height');
+      const passThroughHeight = documentStore['pass-through-height'];
 
       if (passThroughHeight && passThroughHeight * dpmm > this.height) {
         const expansion = passThroughHeight * dpmm - this.height;
@@ -99,7 +126,7 @@ class WorkareaManager {
         this.expansionType = ExpansionType.PASS_THROUGH;
       }
     } else if (autoFeeder) {
-      const autoFeederHeight = beamboxPreference.read('auto-feeder-height');
+      const autoFeederHeight = documentStore['auto-feeder-height'];
 
       if (autoFeederHeight && autoFeederHeight * dpmm > this.height) {
         const expansion = autoFeederHeight * dpmm - this.height;
@@ -241,7 +268,7 @@ class WorkareaManager {
     }
 
     const { height, minY, width } = this;
-    const hasRulers = beamboxPreference.read('show_rulers');
+    const hasRulers = useGlobalPreferenceStore.getState().show_rulers;
     const containerWidth = container.clientWidth - (hasRulers ? layoutConstants.rulerWidth : 0);
     const containerHeight = container.clientHeight - (hasRulers ? layoutConstants.rulerWidth : 0);
     const workareaToDimensionRatio = Math.min(containerWidth / width, containerHeight / height);

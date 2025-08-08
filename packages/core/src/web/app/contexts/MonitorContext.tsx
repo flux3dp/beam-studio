@@ -1,7 +1,6 @@
 import * as React from 'react';
 
 import Alert from '@core/app/actions/alert-caller';
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import Constant, { promarkModels } from '@core/app/actions/beambox/constant';
 import exportFuncs, { getConvertEngine } from '@core/app/actions/beambox/export-funcs';
 import Progress from '@core/app/actions/progress-caller';
@@ -9,6 +8,7 @@ import AlertConstants from '@core/app/constants/alert-constants';
 import DeviceConstants from '@core/app/constants/device-constants';
 import type { ItemType } from '@core/app/constants/monitor-constants';
 import { Mode } from '@core/app/constants/monitor-constants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import { setVariableTextState, useVariableTextState } from '@core/app/stores/variableText';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 import doZSpeedLimitTest from '@core/helpers/device/doZSpeedLimitTest';
@@ -746,8 +746,7 @@ export class MonitorContextProvider extends React.Component<Props, State> {
     this.modeBeforeRelocate = mode;
 
     const getCameraOffset = async () => {
-      const isBorderless = BeamboxPreference.read('borderless') || false;
-      const configName = isBorderless ? 'camera_offset_borderless' : 'camera_offset';
+      const configName = useDocumentStore.getState().borderless ? 'camera_offset_borderless' : 'camera_offset';
       const resp = await DeviceMaster.getDeviceSetting(configName);
 
       console.log(`Reading ${configName}\nResp = ${resp.value}`);

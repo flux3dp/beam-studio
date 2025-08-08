@@ -2,12 +2,12 @@ import { sprintf } from 'sprintf-js';
 import { match, P } from 'ts-pattern';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { modelsWithModules } from '@core/app/actions/beambox/constant';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import progressCaller from '@core/app/actions/progress-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import history from '@core/app/svgedit/history/history';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import alertConfig from '@core/helpers/api/alert-config';
@@ -236,7 +236,7 @@ const importSvg = async (
   }
 
   const batchCmd = parentCmd ?? new history.BatchCommand('Import SVG');
-  const hasModule = modelsWithModules.has(beamboxPreference.read('workarea'));
+  const hasModule = modelsWithModules.has(useDocumentStore.getState().workarea);
 
   targetModule = await determineTargetModule(targetModule, hasModule, lang);
 
