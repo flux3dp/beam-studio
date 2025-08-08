@@ -14,9 +14,7 @@ const ConnectEthernet = (): React.JSX.Element => {
     const queryString = window.location.hash.split('?')[1] || '';
     const urlParams = new URLSearchParams(queryString);
 
-    return {
-      model: urlParams.get('model'),
-    };
+    return { model: urlParams.get('model')! };
   }, []);
 
   const guideHref =

@@ -1375,6 +1375,7 @@ const lang: ILang = {
       check_swiftray_connection: 'Đang kiểm tra kết nối với máy chủ',
       check_swiftray_connection_unreachable: 'không thể kết nối máy chủ',
       check_usb: 'Kiểm tra kết nối USB',
+      connection_failed_hint: 'Không thể kết nối với máy. Vui lòng tham khảo <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">hướng dẫn này</a> để khắc phục sự cố.',
       enter_ip: 'Nhập địa chỉ IP của máy',
       finish_setting: 'Bắt đầu tạo!',
       invalid_format: 'Định dạng không hợp lệ',

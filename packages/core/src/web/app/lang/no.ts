@@ -1375,6 +1375,7 @@ const lang: ILang = {
       check_swiftray_connection: 'Sjekker serverforbindelse',
       check_swiftray_connection_unreachable: 'server utilgjengelig',
       check_usb: 'Sjekk USB-tilkobling',
+      connection_failed_hint: 'Kan ikke koble til maskinen. Se <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">denne veiledningen</a> for feilsøking.',
       enter_ip: 'Skriv inn maskin-IP-en din',
       finish_setting: 'Start å lage!',
       invalid_format: 'Ugyldig format',

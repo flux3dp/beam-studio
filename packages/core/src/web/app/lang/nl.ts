@@ -1375,6 +1375,7 @@ const lang: ILang = {
       check_swiftray_connection: 'Serververbinding controleren',
       check_swiftray_connection_unreachable: 'server niet bereikbaar',
       check_usb: 'Controleer USB-verbinding',
+      connection_failed_hint: 'Kan geen verbinding maken met de machine. Raadpleeg <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">deze gids</a> om het probleem op te lossen.',
       enter_ip: 'Voer uw machine-IP in',
       finish_setting: 'Begin met ontwerpen!',
       invalid_format: 'Ongeldig formaat',

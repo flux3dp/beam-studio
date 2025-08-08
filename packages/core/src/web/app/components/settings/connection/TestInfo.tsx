@@ -1,7 +1,9 @@
 import React, { useMemo } from 'react';
 
+import { match } from 'ts-pattern';
+
 import { promarkModels } from '@core/app/actions/beambox/constant';
-import TestState from '@core/app/constants/connection-test';
+import { TestState } from '@core/app/constants/connection-test';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './TestInfo.module.scss';
@@ -18,7 +20,7 @@ const TestInfo = ({ connectionCountDown, firmwareVersion = '', testState }: Prop
     const queryString = window.location.hash.split('?')[1] || '';
     const urlParams = new URLSearchParams(queryString);
 
-    return { model: urlParams.get('model') };
+    return { model: urlParams.get('model') || '' };
   }, []);
 
   const isPromark = promarkModels.has(model);
@@ -28,21 +30,11 @@ const TestInfo = ({ connectionCountDown, firmwareVersion = '', testState }: Prop
       return null;
     }
 
-    let status = 'OK ✅';
-
-    switch (testState) {
-      case TestState.IP_TESTING:
-        status = '';
-        break;
-      case TestState.IP_FORMAT_ERROR:
-        status = `${tConnect.invalid_ip}${tConnect.invalid_format}`;
-        break;
-      case TestState.IP_UNREACHABLE:
-        status = unreachableError;
-        break;
-      default:
-        break;
-    }
+    const status = match(testState)
+      .with(TestState.IP_TESTING, () => '')
+      .with(TestState.IP_FORMAT_ERROR, () => `${tConnect.invalid_ip}${tConnect.invalid_format}`)
+      .with(TestState.IP_UNREACHABLE, () => unreachableError)
+      .otherwise(() => 'OK ✅');
 
     return <div className={styles.info} id="ip-test-info">{`${reached}... ${status}`}</div>;
   };
@@ -52,13 +44,10 @@ const TestInfo = ({ connectionCountDown, firmwareVersion = '', testState }: Prop
       return null;
     }
 
-    let status = 'OK ✅';
-
-    if (testState === TestState.CONNECTION_TESTING) {
-      status = `${connectionCountDown}s`;
-    } else if (testState === TestState.CONNECTION_TEST_FAILED) {
-      status = 'Fail';
-    }
+    const status = match(testState)
+      .with(TestState.CONNECTION_TESTING, () => `${connectionCountDown}s`)
+      .with(TestState.CONNECTION_TEST_FAILED, () => 'Fail')
+      .otherwise(() => 'OK ✅');
 
     return (
       <div className={styles.info} id="machine-test-info">
@@ -80,13 +69,10 @@ const TestInfo = ({ connectionCountDown, firmwareVersion = '', testState }: Prop
       return null;
     }
 
-    let status = '';
-
-    if (testState === TestState.TEST_COMPLETED) {
-      status = 'OK ✅';
-    } else if (testState === TestState.CAMERA_TEST_FAILED) {
-      status = 'Fail';
-    }
+    const status = match(testState)
+      .with(TestState.TEST_COMPLETED, () => 'OK ✅')
+      .with(TestState.CAMERA_TEST_FAILED, () => 'Fail')
+      .otherwise(() => '');
 
     return <div className={styles.info}>{`${tConnect.check_camera}... ${status}`}</div>;
   };

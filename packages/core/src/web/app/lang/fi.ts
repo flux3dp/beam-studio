@@ -1375,6 +1375,7 @@ const lang: ILang = {
       check_swiftray_connection: 'Tarkistetaan yhteys palvelimeen',
       check_swiftray_connection_unreachable: 'palvelin ei ole saavutettavissa',
       check_usb: 'Tarkista USB-yhteys',
+      connection_failed_hint: 'Yhteyttä koneeseen ei voitu muodostaa. Katso <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">tämä ohje</a> ongelman ratkaisemiseksi.',
       enter_ip: 'Anna laitteesi IP-osoite',
       finish_setting: 'Aloita luominen!',
       invalid_format: 'Virheellinen muoto',

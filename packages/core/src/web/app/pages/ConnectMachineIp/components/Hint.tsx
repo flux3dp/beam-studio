@@ -6,7 +6,7 @@ import browser from '@core/implementations/browser';
 
 import styles from './Hint.module.scss';
 
-export default ({ message }: { message: string }): React.JSX.Element => {
+const Hint = ({ message }: { message: string }): React.JSX.Element => {
   // Regex to match <a> tags with href and text inside
   const linkRegex = /<a\s+[^>]*href="([^"]+)"[^>]*>(.*?)<\/a>/gi;
 
@@ -43,3 +43,5 @@ export default ({ message }: { message: string }): React.JSX.Element => {
 
   return <div className={classNames(styles.contents, styles.tutorial)}>{parseMessage(message)}</div>;
 };
+
+export default Hint;
