@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import { adorModels, bb2Models, promarkModels } from '@core/app/actions/beambox/constant';
+import { promarkModels } from '@core/app/actions/beambox/constant';
 import menuDeviceActions from '@core/app/actions/beambox/menuDeviceActions';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import { isTesting, TestState } from '@core/app/constants/connection-test';
@@ -32,11 +32,7 @@ export const useConnectionTest = (model: string, isUsb: boolean, ipValue: string
   const countDown = useRef(0);
   const intervalId = useRef(0);
   const discoveredDevicesRef = useRef(Array.of<IDeviceInfo>());
-
-  const [isAdor, isBb2, isPromark] = useMemo(
-    () => [adorModels.has(model), bb2Models.has(model), promarkModels.has(model)],
-    [model],
-  );
+  const isPromark = useMemo(() => promarkModels.has(model), [model]);
   const testingIps = isUsb ? ['10.55.0.1', '10.55.0.17'] : [ipValue];
 
   const discoverer = useMemo(
@@ -195,7 +191,7 @@ export const useConnectionTest = (model: string, isUsb: boolean, ipValue: string
     // for correctly select promark device serial
     const res = await deviceMaster.select(device);
 
-    console.log('🚀 ~ useConnectionTest.ts:199 ~ handleStartTestForPromark ~ res:', res);
+    console.log('🚀 ~ useConnectionTest.ts:194 ~ handleStartTestForPromark ~ res:', res);
 
     await testCamera(device);
   };
@@ -276,5 +272,5 @@ export const useConnectionTest = (model: string, isUsb: boolean, ipValue: string
     // eslint-disable-next-line hooks/exhaustive-deps
   }, [isUsb]);
 
-  return { handleStartTest, isAdor, isBb2, isPromark, onFinish, state };
+  return { handleStartTest, isPromark, onFinish, state };
 };

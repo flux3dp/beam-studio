@@ -1,15 +1,12 @@
 import type { KeyboardEventHandler } from 'react';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import classNames from 'classnames';
 
-import { adorModels, bb2Models, promarkModels } from '@core/app/actions/beambox/constant';
+import { adorModels, bb2Models } from '@core/app/actions/beambox/constant';
 import TestInfo from '@core/app/components/settings/connection/TestInfo';
 import { ConnectMachineFailedStates } from '@core/app/constants/connection-test';
-import Discover from '@core/helpers/api/discover';
-import checkRpiIp from '@core/helpers/check-rpi-ip';
 import useI18n from '@core/helpers/useI18n';
-import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 import ConnectionImage from './components/ConnectionImage';
 import Hint from './components/Hint';
@@ -20,8 +17,6 @@ import styles from './index.module.scss';
 const ConnectMachineIp = (): React.JSX.Element => {
   const lang = useI18n();
   const [ipValue, setIpValue] = useState('');
-  const intervalId = useRef(0);
-  const discoveredDevicesRef = useRef(Array.of<IDeviceInfo>());
   const { isUsb, isWired, model } = useMemo(() => {
     const queryString = window.location.hash.split('?')[1] || '';
     const urlParams = new URLSearchParams(queryString);
@@ -32,40 +27,13 @@ const ConnectMachineIp = (): React.JSX.Element => {
       model: urlParams.get('model')!,
     };
   }, []);
-  const { handleStartTest, onFinish, state } = useConnectionTest(model, isUsb, ipValue, setIpValue);
-  const discoverer = useMemo(
-    () =>
-      Discover('connect-machine-ip', (devices) => {
-        discoveredDevicesRef.current = devices;
-      }),
-    [],
-  );
-
-  useEffect(() => () => discoverer.removeListener('connect-machine-ip'), [discoverer]);
-
-  const [isAdor, isBb2, isPromark] = useMemo(
-    () => [adorModels.has(model), bb2Models.has(model), promarkModels.has(model)],
-    [model],
-  );
-
-  useEffect(() => {
-    if (isUsb) {
-      handleStartTest();
-    } else {
-      checkRpiIp().then((ip) => ip && setIpValue(ip));
-    }
-
-    return () => {
-      clearInterval(intervalId.current);
-    };
-    // eslint-disable-next-line hooks/exhaustive-deps
-  }, [isUsb]);
+  const [isAdor, isBb2] = useMemo(() => [adorModels.has(model), bb2Models.has(model)], [model]);
+  const { handleStartTest, isPromark, onFinish, state } = useConnectionTest(model, isUsb, ipValue, setIpValue);
+  const { countDownDisplay, device, testState } = state;
 
   const handleInputKeyDown: KeyboardEventHandler = ({ key }) => {
     if (key === 'Enter') handleStartTest();
   };
-
-  const { countDownDisplay, device, testState } = state;
 
   return (
     <div className={styles.container}>

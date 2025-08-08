@@ -1,7 +1,7 @@
 import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import { modelsWithModules } from '@core/app/actions/beambox/constant';
+import { adorModels } from '@core/app/actions/beambox/constant';
 import alertConstants from '@core/app/constants/alert-constants';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
@@ -13,7 +13,7 @@ export default function checkSoftwareForAdor(device: IDeviceInfo, show_alert = t
   const { version } = window.FLUX;
   const { model } = device;
 
-  if (!isWeb() && versionCompare(version, '2.2') && modelsWithModules.has(model)) {
+  if (!isWeb() && versionCompare(version, '2.2') && adorModels.has(model)) {
     if (show_alert) {
       alertCaller.popUp({
         buttonType: alertConstants.SHOW_POPUP_INFO,

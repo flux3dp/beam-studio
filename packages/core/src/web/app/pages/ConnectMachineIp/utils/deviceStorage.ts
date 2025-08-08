@@ -1,7 +1,8 @@
 // ConnectMachineIp/utils/deviceStorage.ts
-import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
 import { adorModels, promarkModels } from '@core/app/actions/beambox/constant';
 import { workAreaSet } from '@core/app/constants/workarea-constants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import alertConfig from '@core/helpers/api/alert-config';
 import deviceMaster from '@core/helpers/device-master';
 import storage from '@core/implementations/storage';
@@ -10,8 +11,8 @@ import type { IDeviceInfo } from '@core/interfaces/IDevice';
 export const saveDeviceAndSettings = async (device: IDeviceInfo): Promise<void> => {
   const deviceModel = workAreaSet.has(device.model) ? device.model : 'fbb1b';
 
-  BeamboxPreference.write('model', deviceModel);
-  BeamboxPreference.write('workarea', deviceModel);
+  useGlobalPreferenceStore.getState().set('model', deviceModel);
+  useDocumentStore.getState().set('workarea', deviceModel);
 
   let pokeIPs = storage.get('poke-ip-addr')?.split(/[,;] ?/) || [];
 
