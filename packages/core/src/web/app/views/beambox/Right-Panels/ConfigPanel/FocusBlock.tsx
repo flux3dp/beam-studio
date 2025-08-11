@@ -81,7 +81,7 @@ const FocusBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
             configKey="focus"
             id="focus-adjustment"
             lightTitle
-            max={10}
+            max={isDevMode ? 40 : 10}
             min={0.01}
             precision={2}
             title={t.by}

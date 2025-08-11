@@ -995,6 +995,8 @@ const lang: ILang = {
     charuco_position_bottom_left: 'unten links',
     charuco_position_bottom_right: 'unten rechts',
     charuco_position_center: 'mitte',
+    charuco_position_left: 'links',
+    charuco_position_right: 'rechts',
     charuco_position_top_left: 'oben links',
     charuco_position_top_right: 'oben rechts',
     check_checkpoint_data: 'Checkpoint-Daten',
@@ -1231,7 +1233,9 @@ const lang: ILang = {
     UUID: 'UUID',
   },
   device_selection: {
-    no_beambox: '#801 Wir können Ihren Computer nicht im Netzwerk finden.\nBefolgen Sie bitte <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">die Anleitung</a>, um das Verbindungsproblem zu beheben.',
+    go_to_settings: 'Zu Den Einstellungen',
+    macos_15_local_network_permission: 'Unter macOS 15 oder neuer aktivieren Sie bitte den Zugriff von Beam Studio auf das lokale Netzwerk unter Systemeinstellungen > Datenschutz & Sicherheit > Lokales Netzwerk.',
+    no_device: '#801 Wir können Ihren Computer nicht im Netzwerk finden.\nBefolgen Sie bitte <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">die Anleitung</a>, um das Verbindungsproblem zu beheben.',
     no_device_web: "#801 Überprüfen Sie bitte den Status Ihrer Maschine oder klicken Sie unten auf 'Maschineneinrichtung', um die Maschine einzurichten.",
     select_usb_device: 'USB-Gerät auswählen',
   },
@@ -1385,6 +1389,7 @@ const lang: ILang = {
       starts_with_169254: 'Beginnt mit 169.254',
       succeeded_message: 'Erfolgreich verbunden 🎉',
       unreachable: 'IP nicht erreichbar',
+      unreachable_macos_15: 'Unter macOS 15 oder neuer aktivieren Sie bitte den Zugriff von Beam Studio auf das lokale Netzwerk unter Systemeinstellungen > <a target="_blank" href="x-apple.systempreferences:com.apple.preference.security?Privacy_LocalNetwork">Datenschutz & Sicherheit</a> > Lokales Netzwerk.',
     },
     connect_usb: {
       connect_camera: 'Verbinden Sie die Kamera der Maschine mit Ihrem Computer über ein USB-Kabel.',

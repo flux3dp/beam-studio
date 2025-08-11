@@ -1,5 +1,6 @@
 export interface IOperatingSystem {
   arch: () => string;
+  isMacOS15OrLater?: boolean;
   networkInterfaces: () => {
     [id: string]: Array<{
       address: string;

@@ -995,6 +995,8 @@ const lang: ILang = {
     charuco_position_bottom_left: 'linksonder',
     charuco_position_bottom_right: 'rechtsonder',
     charuco_position_center: 'midden',
+    charuco_position_left: 'links',
+    charuco_position_right: 'rechts',
     charuco_position_top_left: 'linksboven',
     charuco_position_top_right: 'rechtsboven',
     check_checkpoint_data: 'Controlepuntgegevens',
@@ -1231,7 +1233,9 @@ const lang: ILang = {
     UUID: 'UUID',
   },
   device_selection: {
-    no_beambox: '#801 We kunnen uw machine niet vinden in het netwerk.\nVolg de <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">handleiding</a> om verbindingsproblemen op te lossen.',
+    go_to_settings: 'Ga Naar Instellingen',
+    macos_15_local_network_permission: 'Op macOS 15 of nieuwer, schakel de toegang van Beam Studio tot het lokale netwerk in via Systeeminstellingen > Privacy & Beveiliging > Lokaal netwerk.',
+    no_device: '#801 We kunnen uw machine niet vinden in het netwerk.\nVolg de <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">handleiding</a> om verbindingsproblemen op te lossen.',
     no_device_web: "#801 Controleer de status van uw machine, of klik op 'Machine-instellingen' hieronder om de machine in te stellen.",
     select_usb_device: 'Selecteer USB-apparaat',
   },
@@ -1385,6 +1389,7 @@ const lang: ILang = {
       starts_with_169254: 'Begint met 169.254',
       succeeded_message: 'Verbinding gelukt 🎉',
       unreachable: 'IP onbereikbaar',
+      unreachable_macos_15: 'Op macOS 15 of later, schakel de toegang van Beam Studio tot het lokale netwerk in via Systeeminstellingen > <a target="_blank" href="x-apple.systempreferences:com.apple.preference.security?Privacy_LocalNetwork">Privacy en beveiliging</a> > Lokaal netwerk.',
     },
     connect_usb: {
       connect_camera: 'Verbind de camera van de machine met uw computer via een USB-kabel.',

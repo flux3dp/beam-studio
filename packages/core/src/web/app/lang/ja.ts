@@ -995,6 +995,8 @@ const lang: ILang = {
     charuco_position_bottom_left: '左下',
     charuco_position_bottom_right: '右下',
     charuco_position_center: '中央',
+    charuco_position_left: '左',
+    charuco_position_right: '右',
     charuco_position_top_left: '左上',
     charuco_position_top_right: '右上',
     check_checkpoint_data: 'チェックポイントデータ',
@@ -1231,7 +1233,9 @@ const lang: ILang = {
     UUID: 'UUID',
   },
   device_selection: {
-    no_beambox: '#801 お使いのマシンがネットワーク上で見つかりません。\n<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">このガイド</a>に従って、接続の問題をトラブルシューティングしてください。',
+    go_to_settings: '設定に移動',
+    macos_15_local_network_permission: 'macOS 15以降では、システム設定 > プライバシーとセキュリティ > ローカルネットワーク でBeam Studioのローカルネットワークへのアクセスを有効にしてください。',
+    no_device: '#801 お使いのマシンがネットワーク上で見つかりません。\n<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">このガイド</a>に従って、接続の問題をトラブルシューティングしてください。',
     no_device_web: '#801 マシンのステータスを確認するか、下の「マシン設定」をクリックしてマシンを設定してください。',
     select_usb_device: 'USBデバイスを選択',
   },
@@ -1385,6 +1389,7 @@ const lang: ILang = {
       starts_with_169254: '169.254で始まる',
       succeeded_message: '接続に成功しました 🎉',
       unreachable: 'IP 到達不能',
+      unreachable_macos_15: 'macOS 15 以降では、システム設定 > <a target="_blank" href="x-apple.systempreferences:com.apple.preference.security?Privacy_LocalNetwork">プライバシーとセキュリティ</a> > ローカルネットワーク で Beam Studio のローカルネットワークアクセスを有効にしてください。',
     },
     connect_usb: {
       connect_camera: '機械のカメラをUSBケーブルでコンピューターに接続してください。',

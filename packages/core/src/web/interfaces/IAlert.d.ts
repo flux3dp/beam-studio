@@ -2,11 +2,15 @@ import type { IButton } from './IButton';
 
 export type MessageIcon = 'error' | 'info' | 'notice' | 'success' | 'warning';
 
+export type AlertButton = IButton & {
+  isLeft?: boolean;
+};
+
 export interface IAlert {
   alwaysTriggerCheckboxCallbacks?: boolean;
   animationSrcs?: Array<{ src: string; type: string }>;
   buttonLabels?: string[];
-  buttons?: IButton[];
+  buttons?: AlertButton[];
   buttonType?: string;
   callbacks?: Function | Function[];
   caption?: string;

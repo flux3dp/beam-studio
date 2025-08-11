@@ -8,7 +8,6 @@ import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/
 import { getAddOnInfo, RotaryType } from '@core/app/constants/addOn';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import RotaryIcons from '@core/app/icons/rotary/RotaryIcons';
-import type { DocumentState } from '@core/app/stores/documentStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import Select from '@core/app/widgets/AntdSelect';
@@ -17,6 +16,7 @@ import UnitInput from '@core/app/widgets/UnitInput';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 import storage from '@core/implementations/storage';
+import type { DocumentState } from '@core/interfaces/Preference';
 
 import styles from './RotarySettings.module.scss';
 

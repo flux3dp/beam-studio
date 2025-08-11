@@ -995,6 +995,8 @@ const lang: ILang = {
     charuco_position_bottom_left: 'bawah kiri',
     charuco_position_bottom_right: 'bawah kanan',
     charuco_position_center: 'tengah',
+    charuco_position_left: 'kiri',
+    charuco_position_right: 'kanan',
     charuco_position_top_left: 'atas kiri',
     charuco_position_top_right: 'atas kanan',
     check_checkpoint_data: 'Data kawalan titik',
@@ -1231,7 +1233,9 @@ const lang: ILang = {
     UUID: 'UUID',
   },
   device_selection: {
-    no_beambox: '#801 Kami tidak dapat mengesan mesin anda dalam rangkaian.\nSila ikuti <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">panduan</a> untuk menyelesaikan masalah sambungan.',
+    go_to_settings: 'Pergi Ke Tetapan',
+    macos_15_local_network_permission: 'Pada macOS 15 atau lebih baru, sila benarkan akses Beam Studio ke rangkaian tempatan di Tetapan Sistem > Privasi & Keselamatan > Rangkaian Tempatan.',
+    no_device: '#801 Kami tidak dapat mengesan mesin anda dalam rangkaian.\nSila ikuti <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">panduan</a> untuk menyelesaikan masalah sambungan.',
     no_device_web: "#801 Semak status mesin anda, atau klik pada 'Tambah Mesin Baru' di bawah untuk menetapkan mesin.",
     select_usb_device: 'Pilih Peranti USB',
   },
@@ -1385,6 +1389,7 @@ const lang: ILang = {
       starts_with_169254: 'Bermula dengan 169.254',
       succeeded_message: 'Berjaya disambungkan 🎉',
       unreachable: 'IP tidak boleh dicapai',
+      unreachable_macos_15: 'Dalam macOS 15 atau lebih baharu, sila aktifkan akses Beam Studio ke rangkaian tempatan di Tetapan Sistem > <a target="_blank" href="x-apple.systempreferences:com.apple.preference.security?Privacy_LocalNetwork">Privasi & Keselamatan</a> > Rangkaian Tempatan.',
     },
     connect_usb: {
       connect_camera: 'Sambungkan kamera mesin ke komputer anda dengan kabel USB.',

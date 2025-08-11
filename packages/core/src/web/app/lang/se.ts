@@ -995,6 +995,8 @@ const lang: ILang = {
     charuco_position_bottom_left: 'nedre vänster',
     charuco_position_bottom_right: 'nedre höger',
     charuco_position_center: 'mitten',
+    charuco_position_left: 'vänster',
+    charuco_position_right: 'höger',
     charuco_position_top_left: 'övre vänster',
     charuco_position_top_right: 'övre höger',
     check_checkpoint_data: 'Kontrollpunktsdata',
@@ -1231,7 +1233,9 @@ const lang: ILang = {
     UUID: 'UUID',
   },
   device_selection: {
-    no_beambox: '#801 Vi hittar inte din maskin i nätverket.\nFölj <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">guiden</a> för att felsöka anslutningsproblemet.',
+    go_to_settings: 'Gå Till Inställningar',
+    macos_15_local_network_permission: 'På macOS 15 eller senare, aktivera Beam Studios åtkomst till det lokala nätverket under Systeminställningar > Integritet och säkerhet > Lokalt nätverk.',
+    no_device: '#801 Vi hittar inte din maskin i nätverket.\nFölj <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">guiden</a> för att felsöka anslutningsproblemet.',
     no_device_web: "#801 Kontrollera statusen för din maskin, eller klicka på 'Maskininställning' nedan för att ställa in maskinen.",
     select_usb_device: 'Välj USB-enhet',
   },
@@ -1385,6 +1389,7 @@ const lang: ILang = {
       starts_with_169254: 'Börjar med 169.254',
       succeeded_message: 'Ansluten 🎉',
       unreachable: 'IP oåtkomlig',
+      unreachable_macos_15: 'På macOS 15 eller senare, aktivera Beam Studios åtkomst till det lokala nätverket i Systeminställningar > <a target="_blank" href="x-apple.systempreferences:com.apple.preference.security?Privacy_LocalNetwork">Sekretess och säkerhet</a> > Lokalt nätverk.',
     },
     connect_usb: {
       connect_camera: 'Anslut maskinens kamera till din dator med en USB-kabel.',

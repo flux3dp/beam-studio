@@ -995,6 +995,8 @@ const lang: ILang = {
     charuco_position_bottom_left: '左下角',
     charuco_position_bottom_right: '右下角',
     charuco_position_center: '中央',
+    charuco_position_left: '左側',
+    charuco_position_right: '右側',
     charuco_position_top_left: '左上角',
     charuco_position_top_right: '右上角',
     check_checkpoint_data: '檢查點資料',
@@ -1231,7 +1233,9 @@ const lang: ILang = {
     UUID: 'UUID',
   },
   device_selection: {
-    no_beambox: '#801 我們在網路上找不到您的機器，<br/>此功能需要在與機器連線的狀態下才會運作，請先新增機器設定連線，<br/>請參考<a target="_blank" href="https://support.flux3dp.com/hc/zh-tw/articles/360001683556">此指南</a>排除連線問題！',
+    go_to_settings: '前往設定',
+    macos_15_local_network_permission: '若您使用 macOS 15 或以上版本，請至「系統設定 > 隱私與安全性 > 區域網路」啟用 Beam Studio 的區域網路權限。',
+    no_device: '#801 我們在網路上找不到您的機器，<br/>此功能需要在與機器連線的狀態下才會運作，請先新增機器設定連線，<br/>請參考<a target="_blank" href="https://support.flux3dp.com/hc/zh-tw/articles/360001683556">此指南</a>排除連線問題！',
     no_device_web: '#801 請檢查機器狀態，或者點選以下『新增或設定機器』，進行機器設定。',
     select_usb_device: '選擇 USB 裝置',
   },
@@ -1385,6 +1389,7 @@ const lang: ILang = {
       starts_with_169254: '由 169.254 開頭',
       succeeded_message: '連線成功 🎉',
       unreachable: '無法連接至指定 IP',
+      unreachable_macos_15: '若您使用 macOS 15 或以上版本，請至系統設定 > <a target="_blank" href="x-apple.systempreferences:com.apple.preference.security?Privacy_LocalNetwork">隱私與安全性</a> > 區域網路 啟用 Beam Studio 的區域網路權限。',
     },
     connect_usb: {
       connect_camera: '將機器的攝影機與您的電腦以 USB 線連接。',

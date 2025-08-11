@@ -314,7 +314,6 @@ class FramingTaskManager extends EventEmitter {
     this.isAdor = constant.adorModels.includes(device.model);
     this.isPromark = promarkModels.has(device.model);
     this.isFcodeV2 = constant.fcodeV2Models.has(device.model);
-    this.rotaryInfo = getRotaryInfo(this.device.model, true);
     this.withVT = hasVariableText();
 
     if (
@@ -326,6 +325,8 @@ class FramingTaskManager extends EventEmitter {
     } else {
       this.jobOrigin = null;
     }
+
+    this.rotaryInfo = getRotaryInfo(this.device.model, { axisInMm: true, forceY: this.jobOrigin?.y });
   }
 
   private resetEnabledInfo = () => {
@@ -638,7 +639,7 @@ class FramingTaskManager extends EventEmitter {
     this.showMessage(sprintf(lang.message.connectingMachine, this.device.name));
     this.resetEnabledInfo();
     this.curPos = { a: 0, x: 0, y: 0 };
-    this.rotaryInfo = getRotaryInfo(this.device.model, true);
+    this.rotaryInfo = getRotaryInfo(this.device.model, { axisInMm: true, forceY: this.jobOrigin?.y });
 
     const autoFeeder = getAutoFeeder(this.addOnInfo);
 

@@ -995,6 +995,8 @@ export interface ILang {
     charuco_position_bottom_left: string;
     charuco_position_bottom_right: string;
     charuco_position_center: string;
+    charuco_position_left: string;
+    charuco_position_right: string;
     charuco_position_top_left: string;
     charuco_position_top_right: string;
     check_checkpoint_data: string;
@@ -1231,7 +1233,9 @@ export interface ILang {
     UUID: string;
   };
   device_selection: {
-    no_beambox: string;
+    go_to_settings: string;
+    macos_15_local_network_permission: string;
+    no_device: string;
     no_device_web: string;
     select_usb_device: string;
   };
@@ -1371,6 +1375,7 @@ export interface ILang {
       starts_with_169254: string;
       succeeded_message: string;
       unreachable: string;
+      unreachable_macos_15: string;
     };
     connect_usb: {
       connect_camera: string;

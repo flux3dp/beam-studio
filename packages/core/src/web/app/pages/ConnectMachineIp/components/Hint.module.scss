@@ -6,3 +6,7 @@
     color: #606060;
   }
 }
+
+.contents + .contents {
+  margin-top: 5px;
+}

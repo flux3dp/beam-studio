@@ -187,5 +187,6 @@ export default {
   mouseDown,
   mouseMove,
   mouseUp,
+  setPosition,
   toggleDisplay,
 };

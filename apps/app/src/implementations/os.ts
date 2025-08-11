@@ -52,12 +52,30 @@ export const macKernelVersionMap = {
   '23.4.0': '14.4',
   '23.5.0': '14.5',
   '24.0.0': '15.0',
+  '25.0.0': '26.0', // Thank you Apple
 } as const;
 
 export type MacKernelVersionMap = keyof typeof macKernelVersionMap;
 
+const isMacOS15OrLater = (() => {
+  try {
+    if (os.type() !== 'Darwin') {
+      return false;
+    }
+
+    const release = os.release();
+
+    return Number.parseInt(release?.split('.')[0] || '0', 10) >= 24;
+  } catch (e) {
+    console.warn('Failed to determine macOS version:', e);
+
+    return false;
+  }
+})();
+
 export default {
   arch: os.arch,
+  isMacOS15OrLater,
   networkInterfaces: os.networkInterfaces,
   process: {
     exec: util.promisify(childProcess.exec),

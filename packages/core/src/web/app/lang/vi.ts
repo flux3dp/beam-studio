@@ -995,6 +995,8 @@ const lang: ILang = {
     charuco_position_bottom_left: 'dưới bên trái',
     charuco_position_bottom_right: 'dưới bên phải',
     charuco_position_center: 'trung tâm',
+    charuco_position_left: 'trái',
+    charuco_position_right: 'phải',
     charuco_position_top_left: 'trên bên trái',
     charuco_position_top_right: 'trên bên phải',
     check_checkpoint_data: 'Dữ liệu kiểm tra điểm',
@@ -1231,7 +1233,9 @@ const lang: ILang = {
     UUID: 'UUID',
   },
   device_selection: {
-    no_beambox: '#801 Chúng tôi không tìm thấy máy của bạn trên mạng.\nVui lòng làm theo <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">hướng dẫn</a> để khắc phục sự cố kết nối.',
+    go_to_settings: 'Đi Đến Cài Đặt',
+    macos_15_local_network_permission: 'Trên macOS 15 trở lên, vui lòng bật quyền truy cập mạng cục bộ của Beam Studio trong Cài đặt hệ thống > Quyền riêng tư & Bảo mật > Mạng cục bộ.',
+    no_device: '#801 Chúng tôi không tìm thấy máy của bạn trên mạng.\nVui lòng làm theo <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">hướng dẫn</a> để khắc phục sự cố kết nối.',
     no_device_web: "#801 Vui lòng kiểm tra tình trạng của máy bạn, hoặc nhấn vào 'Thiết lập máy in' bên dưới để cài đặt máy.",
     select_usb_device: 'Chọn thiết bị USB',
   },
@@ -1385,6 +1389,7 @@ const lang: ILang = {
       starts_with_169254: 'Bắt đầu bằng 169.254',
       succeeded_message: 'Kết nối thành công 🎉',
       unreachable: 'Không thể truy cập IP',
+      unreachable_macos_15: 'Trên macOS 15 hoặc mới hơn, hãy bật quyền truy cập mạng cục bộ cho Beam Studio trong Cài đặt hệ thống > <a target="_blank" href="x-apple.systempreferences:com.apple.preference.security?Privacy_LocalNetwork">Quyền riêng tư & bảo mật</a> > Mạng cục bộ.',
     },
     connect_usb: {
       connect_camera: 'Kết nối máy ảnh của máy với máy tính của bạn bằng cáp USB.',

@@ -13,7 +13,10 @@ export type RotaryInfo = null | {
   ySplit?: number;
 };
 
-export const getRotaryInfo = (workarea?: WorkAreaModel, axisInMm = false): RotaryInfo => {
+export const getRotaryInfo = (
+  workarea?: WorkAreaModel,
+  { axisInMm = false, forceY }: { axisInMm?: boolean; forceY?: number } = {},
+): RotaryInfo => {
   const {
     'rotary-overlap': rotaryOverlap,
     'rotary-split': rotarySplit,
@@ -33,7 +36,7 @@ export const getRotaryInfo = (workarea?: WorkAreaModel, axisInMm = false): Rotar
 
   const info: RotaryInfo = {
     useAAxis: constant.fcodeV2Models.has(workarea),
-    y: rotaryAxis.getPosition(axisInMm),
+    y: forceY !== undefined ? forceY : rotaryAxis.getPosition(axisInMm),
     yRatio: getRotaryRatio(addOnInfo),
   };
 
