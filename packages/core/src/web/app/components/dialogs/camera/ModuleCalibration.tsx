@@ -119,18 +119,19 @@ const ModuleCalibration = ({ module = LayerModule.LASER_UNIVERSAL, onClose }: Pr
 
   const { animationSrcs, content, cutLabel } = useMemo(() => {
     if (step === Step.PUT_PAPER) {
-      // TODO: update videos for beamo2
       if (module === LayerModule.LASER_1064) {
+        const prefix = adorModels.has(model) ? '' : 'bm2-';
+
         return {
           animationSrcs: [
-            { src: 'video/put-dark-paper.webm', type: 'video/webm' },
-            { src: 'video/put-dark-paper.mp4', type: 'video/mp4' },
+            { src: `video/${prefix}put-dark-paper.webm`, type: 'video/webm' },
+            { src: `video/${prefix}put-dark-paper.mp4`, type: 'video/mp4' },
           ],
           content: lang.please_place_dark_colored_paper,
         };
       }
 
-      let prefix = adorModels.has(model) ? 'ador' : 'bm2';
+      const prefix = adorModels.has(model) ? 'ador' : 'bm2';
 
       return {
         animationSrcs: [
@@ -164,10 +165,12 @@ const ModuleCalibration = ({ module = LayerModule.LASER_UNIVERSAL, onClose }: Pr
           cutLabel,
         };
       } else {
+        const videoName = module === LayerModule.LASER_1064 ? 'bm2-focus-ir' : 'bm2-focus-laser';
+
         return {
           animationSrcs: [
-            { src: 'video/bm2-focus-laser.webm', type: 'video/webm' },
-            { src: 'video/bm2-focus-laser.mp4', type: 'video/mp4' },
+            { src: `video/${videoName}.webm`, type: 'video/webm' },
+            { src: `video/${videoName}.mp4`, type: 'video/mp4' },
           ],
           content: lang.beamo2_autofocus_material,
           cutLabel: module === LayerModule.LASER_1064 ? undefined : lang.start_printing,
