@@ -232,7 +232,7 @@ class TabManager {
           console.log(`Tab ${id} destroyed unexpectedly`);
         }
 
-        if (id === this.focusedId && !this.tabsMap[this.welcomeTabId].view.webContents?.isDestroyed()) {
+        if (id === this.focusedId && !this.tabsMap[this.welcomeTabId]?.view?.webContents?.isDestroyed()) {
           this.focusTab(this.welcomeTabId);
         }
 
