@@ -137,7 +137,11 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
           steps={[
             { description: tCalibration.charuco_position_left, key: 'left' },
             { description: tCalibration.charuco_position_right, key: 'right' },
-          ]}
+          ].map(({ description, key }) => ({
+            description,
+            imageUrl: `core-img/calibration/bm2-charuco-${key}.jpg`,
+            key,
+          }))}
           updateParam={updateParam}
         />
       );
