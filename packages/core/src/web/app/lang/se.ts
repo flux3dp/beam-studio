@@ -1387,6 +1387,7 @@ const lang: ILang = {
       starts_with_169254: 'Börjar med 169.254',
       succeeded_message: 'Ansluten 🎉',
       unreachable: 'IP oåtkomlig',
+      unreachable_macos_15: 'På macOS 15 eller senare, aktivera Beam Studios åtkomst till det lokala nätverket i Systeminställningar > <a target="_blank" href="x-apple.systempreferences:com.apple.preference.security?Privacy_LocalNetwork">Sekretess och säkerhet</a> > Lokalt nätverk.',
     },
     connect_usb: {
       connect_camera: 'Anslut maskinens kamera till din dator med en USB-kabel.',

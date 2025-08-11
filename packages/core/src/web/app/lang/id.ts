@@ -1387,6 +1387,7 @@ const lang: ILang = {
       starts_with_169254: 'Dimulai dengan 169.254',
       succeeded_message: 'Berhasil terhubung 🎉',
       unreachable: 'IP tidak dapat dijangkau',
+      unreachable_macos_15: 'Di macOS 15 atau lebih baru, aktifkan akses Beam Studio ke jaringan lokal di Pengaturan Sistem > <a target="_blank" href="x-apple.systempreferences:com.apple.preference.security?Privacy_LocalNetwork">Privasi & Keamanan</a> > Jaringan Lokal.',
     },
     connect_usb: {
       connect_camera: 'Hubungkan kamera mesin ke komputer Anda dengan kabel USB.',

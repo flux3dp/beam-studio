@@ -1387,6 +1387,7 @@ const lang: ILang = {
       starts_with_169254: 'Ξεκινά με 169.254',
       succeeded_message: 'Επιτυχής σύνδεση 🎉',
       unreachable: 'Μη προσβάσιμη διεύθυνση IP',
+      unreachable_macos_15: 'Σε macOS 15 ή νεότερο, ενεργοποιήστε την πρόσβαση του Beam Studio στο τοπικό δίκτυο από τις Ρυθμίσεις συστήματος > <a target="_blank" href="x-apple.systempreferences:com.apple.preference.security?Privacy_LocalNetwork">Απόρρητο και ασφάλεια</a> > Τοπικό δίκτυο.',
     },
     connect_usb: {
       connect_camera: 'Συνδέστε την κάμερα της μηχανής στον υπολογιστή σας με καλώδιο USB.',

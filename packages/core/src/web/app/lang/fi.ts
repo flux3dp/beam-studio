@@ -1387,6 +1387,7 @@ const lang: ILang = {
       starts_with_169254: 'Alkaa numerolla 169.254',
       succeeded_message: 'Yhteys muodostettu onnistuneesti 🎉',
       unreachable: 'IP-osoite ei vastaa',
+      unreachable_macos_15: 'macOS 15:ssä tai uudemmassa salli Beam Studion pääsy paikallisverkkoon kohdassa Järjestelmäasetukset > <a target="_blank" href="x-apple.systempreferences:com.apple.preference.security?Privacy_LocalNetwork">Tietosuoja ja turvallisuus</a> > Paikallisverkko.',
     },
     connect_usb: {
       connect_camera: 'Yhdistä laitteen kamera tietokoneeseesi USB-kaapelilla.',

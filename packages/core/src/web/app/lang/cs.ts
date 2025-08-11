@@ -1387,6 +1387,7 @@ const lang: ILang = {
       starts_with_169254: 'Začíná 169.254',
       succeeded_message: 'Úspěšně připojeno 🎉',
       unreachable: 'Nedosažitelné IP',
+      unreachable_macos_15: 'V systému macOS 15 nebo novějším povolte aplikaci Beam Studio přístup k místní síti v Nastavení systému > <a target="_blank" href="x-apple.systempreferences:com.apple.preference.security?Privacy_LocalNetwork">Soukromí a zabezpečení</a> > Místní síť.',
     },
     connect_usb: {
       connect_camera: 'Připojte kameru stroje k počítači pomocí USB kabelu.',

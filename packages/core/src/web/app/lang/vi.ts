@@ -1387,6 +1387,7 @@ const lang: ILang = {
       starts_with_169254: 'Bắt đầu bằng 169.254',
       succeeded_message: 'Kết nối thành công 🎉',
       unreachable: 'Không thể truy cập IP',
+      unreachable_macos_15: 'Trên macOS 15 hoặc mới hơn, hãy bật quyền truy cập mạng cục bộ cho Beam Studio trong Cài đặt hệ thống > <a target="_blank" href="x-apple.systempreferences:com.apple.preference.security?Privacy_LocalNetwork">Quyền riêng tư & bảo mật</a> > Mạng cục bộ.',
     },
     connect_usb: {
       connect_camera: 'Kết nối máy ảnh của máy với máy tính của bạn bằng cáp USB.',

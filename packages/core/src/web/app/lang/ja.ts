@@ -1387,6 +1387,7 @@ const lang: ILang = {
       starts_with_169254: '169.254で始まる',
       succeeded_message: '接続に成功しました 🎉',
       unreachable: 'IP 到達不能',
+      unreachable_macos_15: 'macOS 15 以降では、システム設定 > <a target="_blank" href="x-apple.systempreferences:com.apple.preference.security?Privacy_LocalNetwork">プライバシーとセキュリティ</a> > ローカルネットワーク で Beam Studio のローカルネットワークアクセスを有効にしてください。',
     },
     connect_usb: {
       connect_camera: '機械のカメラをUSBケーブルでコンピューターに接続してください。',

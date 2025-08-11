@@ -1387,6 +1387,7 @@ const lang: ILang = {
       starts_with_169254: '由 169.254 开头',
       succeeded_message: '连线成功 🎉',
       unreachable: '无法连接至指定 IP',
+      unreachable_macos_15: '在 macOS 15 或更高版本中，请在系统设置 > <a target="_blank" href="x-apple.systempreferences:com.apple.preference.security?Privacy_LocalNetwork">隐私与安全性</a> > 本地网络 中启用 Beam Studio 对本地网络的访问权限。',
     },
     connect_usb: {
       connect_camera: '将机器的摄像头与您的电脑以 USB 线连接。',

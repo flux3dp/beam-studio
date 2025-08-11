@@ -1387,6 +1387,7 @@ const lang: ILang = {
       starts_with_169254: 'Begint met 169.254',
       succeeded_message: 'Verbinding gelukt 🎉',
       unreachable: 'IP onbereikbaar',
+      unreachable_macos_15: 'Op macOS 15 of later, schakel de toegang van Beam Studio tot het lokale netwerk in via Systeeminstellingen > <a target="_blank" href="x-apple.systempreferences:com.apple.preference.security?Privacy_LocalNetwork">Privacy en beveiliging</a> > Lokaal netwerk.',
     },
     connect_usb: {
       connect_camera: 'Verbind de camera van de machine met uw computer via een USB-kabel.',
