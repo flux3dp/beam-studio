@@ -106,22 +106,33 @@ exports[`test Alert should render correctly 1`] = `
               <div
                 class="ant-modal-footer"
               >
-                <button
-                  class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined"
-                  type="button"
+                <div
+                  class="footer"
                 >
-                  <span>
-                    Yes
-                  </span>
-                </button>
-                <button
-                  class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined"
-                  type="button"
-                >
-                  <span>
-                    No
-                  </span>
-                </button>
+                  <div
+                    class="left"
+                  />
+                  <div
+                    class="right"
+                  >
+                    <button
+                      class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined"
+                      type="button"
+                    >
+                      <span>
+                        Yes
+                      </span>
+                    </button>
+                    <button
+                      class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined"
+                      type="button"
+                    >
+                      <span>
+                        No
+                      </span>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -228,22 +239,33 @@ exports[`test Alert should render correctly with help center link 1`] = `
               <div
                 class="ant-modal-footer"
               >
-                <button
-                  class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined"
-                  type="button"
+                <div
+                  class="footer"
                 >
-                  <span>
-                    Yes
-                  </span>
-                </button>
-                <button
-                  class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined"
-                  type="button"
-                >
-                  <span>
-                    No
-                  </span>
-                </button>
+                  <div
+                    class="left"
+                  />
+                  <div
+                    class="right"
+                  >
+                    <button
+                      class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined"
+                      type="button"
+                    >
+                      <span>
+                        Yes
+                      </span>
+                    </button>
+                    <button
+                      class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined"
+                      type="button"
+                    >
+                      <span>
+                        No
+                      </span>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
