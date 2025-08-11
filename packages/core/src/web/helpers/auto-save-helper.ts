@@ -4,7 +4,7 @@ import fs from '@core/implementations/fileSystem';
 import storage from '@core/implementations/storage';
 import type { IConfig } from '@core/interfaces/IAutosave';
 
-let autoSaveInterval = null;
+let autoSaveInterval: any = null;
 
 const AUTO_SAVE_CONFIG_STORAGE_KEY = 'auto-save-config';
 const AUTO_SAVE_OLD_PREFIX = 'beam-studio auto-save-';
@@ -38,7 +38,7 @@ const useDefaultConfig = async (): Promise<void> => {
     return null;
   };
 
-  const directory = getDefaultPath();
+  const directory = getDefaultPath()!;
   const defaultConfig = {
     directory,
     enabled: true,
