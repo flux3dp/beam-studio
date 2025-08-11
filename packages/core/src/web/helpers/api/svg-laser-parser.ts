@@ -92,12 +92,14 @@ export const getExportOpt = async (
     config.job_origin = [Math.round(x * 10 ** 3) / 10 ** 3, Math.round(y * 10 ** 3) / 10 ** 3];
   }
 
-  const rotaryInfo = getRotaryInfo(model);
+  const rotaryInfo = getRotaryInfo(model, {
+    forceY: config.job_origin ? config.job_origin[1] * constant.dpmm : undefined,
+  });
   const rotaryMode = Boolean(rotaryInfo);
   const autoFeeder = getAutoFeeder(addOnInfo);
 
   if (rotaryInfo) {
-    config.spin = config.job_origin ? config.job_origin[1] * constant.dpmm : rotaryInfo.y;
+    config.spin = rotaryInfo.y;
     config.rotary_split = rotaryInfo.ySplit;
     config.rotary_overlap = rotaryInfo.yOverlap;
 
