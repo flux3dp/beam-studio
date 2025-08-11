@@ -995,6 +995,8 @@ const lang: ILang = {
     charuco_position_bottom_left: 'κάτω αριστερά',
     charuco_position_bottom_right: 'κάτω δεξιά',
     charuco_position_center: 'κέντρο',
+    charuco_position_left: 'αριστερά',
+    charuco_position_right: 'δεξιά',
     charuco_position_top_left: 'επάνω αριστερά',
     charuco_position_top_right: 'επάνω δεξιά',
     check_checkpoint_data: 'Δεδομένα σημείου ελέγχου',

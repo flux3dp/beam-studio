@@ -61,8 +61,10 @@ jest.mock('@core/app/stores/documentStore', () => ({
 }));
 
 const mockToggleDisplay = jest.fn();
+const mockSetPosition = jest.fn();
 
 jest.mock('@core/app/actions/canvas/rotary-axis', () => ({
+  setPosition: (...args) => mockSetPosition(...args),
   toggleDisplay: () => mockToggleDisplay(),
 }));
 
@@ -156,6 +158,7 @@ describe('test DocumentSettings', () => {
     expect(mockUpdate).not.toHaveBeenCalled();
     expect(mockUnmount).not.toHaveBeenCalled();
     expect(mockChangeWorkarea).not.toHaveBeenCalled();
+    expect(mockSetPosition).not.toHaveBeenCalled();
     mockQuerySelectorAll.mockReturnValueOnce([1]);
     fireEvent.click(getByText('Save'));
     expect(mockPopUp).toHaveBeenCalledTimes(1);
@@ -190,6 +193,8 @@ describe('test DocumentSettings', () => {
     });
     expect(mockChangeWorkarea).toHaveBeenCalledTimes(1);
     expect(mockChangeWorkarea).toHaveBeenLastCalledWith('fbm1', { toggleModule: true });
+    expect(mockSetPosition).toHaveBeenCalledTimes(1);
+    expect(mockSetPosition).toHaveBeenLastCalledWith(1050, { write: true });
     expect(mockToggleDisplay).toHaveBeenCalledTimes(1);
     expect(mockTogglePresprayArea).toHaveBeenCalledTimes(1);
     expect(mockCreateEventEmitter).toHaveBeenCalledTimes(1);

@@ -995,6 +995,8 @@ const lang: ILang = {
     charuco_position_bottom_left: 'kiri bawah',
     charuco_position_bottom_right: 'kanan bawah',
     charuco_position_center: 'tengah',
+    charuco_position_left: 'kiri',
+    charuco_position_right: 'kanan',
     charuco_position_top_left: 'kiri atas',
     charuco_position_top_right: 'kanan atas',
     check_checkpoint_data: 'Data titik kontrol',

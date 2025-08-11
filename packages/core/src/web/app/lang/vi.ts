@@ -995,6 +995,8 @@ const lang: ILang = {
     charuco_position_bottom_left: 'dưới bên trái',
     charuco_position_bottom_right: 'dưới bên phải',
     charuco_position_center: 'trung tâm',
+    charuco_position_left: 'trái',
+    charuco_position_right: 'phải',
     charuco_position_top_left: 'trên bên trái',
     charuco_position_top_right: 'trên bên phải',
     check_checkpoint_data: 'Dữ liệu kiểm tra điểm',

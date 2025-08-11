@@ -995,6 +995,8 @@ const lang: ILang = {
     charuco_position_bottom_left: '左下角',
     charuco_position_bottom_right: '右下角',
     charuco_position_center: '中央',
+    charuco_position_left: '左側',
+    charuco_position_right: '右側',
     charuco_position_top_left: '左上角',
     charuco_position_top_right: '右上角',
     check_checkpoint_data: '檢查點資料',

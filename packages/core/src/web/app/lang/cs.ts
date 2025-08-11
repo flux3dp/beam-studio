@@ -995,6 +995,8 @@ const lang: ILang = {
     charuco_position_bottom_left: 'levý dolní',
     charuco_position_bottom_right: 'pravý dolní',
     charuco_position_center: 'střed',
+    charuco_position_left: 'vlevo',
+    charuco_position_right: 'vpravo',
     charuco_position_top_left: 'levý horní',
     charuco_position_top_right: 'pravý horní',
     check_checkpoint_data: 'Data kontrolního bodu',

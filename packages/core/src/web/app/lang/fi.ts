@@ -995,6 +995,8 @@ const lang: ILang = {
     charuco_position_bottom_left: 'alavasen',
     charuco_position_bottom_right: 'alaoikea',
     charuco_position_center: 'keskellä',
+    charuco_position_left: 'vasen',
+    charuco_position_right: 'oikea',
     charuco_position_top_left: 'ylävasen',
     charuco_position_top_right: 'yläoikea',
     check_checkpoint_data: 'Tarkistuspisteen tiedot',
