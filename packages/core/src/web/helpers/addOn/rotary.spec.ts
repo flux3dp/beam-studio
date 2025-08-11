@@ -99,7 +99,7 @@ describe('test getAutoFeeder', () => {
     mockGetAddOnInfo.mockReturnValue({ rotary: {} });
     mockGetState.mockReturnValue({ rotary_mode: true });
 
-    expect(getRotaryInfo('ado1', true)).toEqual({
+    expect(getRotaryInfo('ado1', { axisInMm: true })).toEqual({
       useAAxis: true,
       y: 10,
       yRatio: 1.23,
@@ -108,5 +108,16 @@ describe('test getAutoFeeder', () => {
     expect(mockGetPosition).toHaveBeenCalledTimes(1);
     expect(mockGetPosition).toHaveBeenLastCalledWith(true);
     expect(mockGetRotaryRatio).toHaveBeenCalledTimes(1);
+  });
+
+  it('should use job origin y if provided', () => {
+    mockGetAddOnInfo.mockReturnValue({ rotary: {} });
+    mockGetState.mockReturnValue({ rotary_mode: true });
+
+    expect(getRotaryInfo('ado1', { forceY: 15 })).toEqual({
+      useAAxis: true,
+      y: 15,
+      yRatio: 1.23,
+    });
   });
 });
