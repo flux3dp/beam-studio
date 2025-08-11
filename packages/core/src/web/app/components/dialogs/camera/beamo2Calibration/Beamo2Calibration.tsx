@@ -135,8 +135,8 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
           }}
           onPrev={() => setStep(Steps.PRE_CHESSBOARD)}
           steps={[
-            { description: 'tLeft', key: 'left' },
-            { description: 'tRight', key: 'right' },
+            { description: tCalibration.charuco_position_left, key: 'left' },
+            { description: tCalibration.charuco_position_right, key: 'right' },
           ]}
           updateParam={updateParam}
         />
