@@ -336,9 +336,21 @@ export class BoundaryDrawer {
         top = this.boundaries.autoFeeder?.top ?? 0;
         bottom = 0;
       } else if (currentModule !== LayerModule.PRINTER) {
-        // FIXME: Ador printer spec: height 270; Ignoring module offsets to keep workarea height consistent
         top += unionOffsets.top * dpmm;
         bottom += unionOffsets.bottom * dpmm;
+      } else {
+        // FIXME: Ador printer spec: height 270; Ignoring module offsets in some case to keep workarea height consistent
+        const offsetYPx = offsetY * dpmm;
+
+        top += printerHeight * dpmm;
+
+        if (offsetYPx >= 0) {
+          top = Math.max(top, offsetYPx);
+          bottom -= offsetYPx;
+        } else {
+          top = Math.max(top + offsetYPx, 0);
+          bottom = Math.max(bottom, -offsetYPx);
+        }
       }
 
       if (!this.useRealBoundary) {
