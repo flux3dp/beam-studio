@@ -38,9 +38,9 @@ const getOutput = (): string[] => {
   output.push('\n\n======::devices::======\n');
   output.push(JSON.stringify(reportInfo.discoverDeviceList, null, 2));
 
-  if (window.FLUX.logfile) {
+  if (window.FLUX.logFile) {
     try {
-      const buf = fs.readFile(window.FLUX.logfile, 'utf8');
+      const buf = fs.readFile(window.FLUX.logFile, 'utf8');
 
       output.push('\n\n======::backend::======\n');
       output.push(buf);
@@ -84,30 +84,24 @@ const getOutput = (): string[] => {
 
 export default {
   downloadErrorLog: async (): Promise<void> => {
-    console.log('Outputing');
+    console.log('Output error log');
 
     const output = getOutput();
-    const fileName = `bugreport_${Math.floor(Date.now() / 1000)}.txt`;
+    const fileName = `bug_report_${Math.floor(Date.now() / 1000)}.txt`;
     const getContent = () => output.join('');
 
     await dialog.writeFileDialog(getContent, LANG.popup.bug_report, fileName, [
-      {
-        extensions: ['txt'],
-        name: window.os === 'MacOS' ? 'txt (*.txt)' : 'txt',
-      },
+      { extensions: ['txt'], name: window.os === 'MacOS' ? 'txt (*.txt)' : 'txt' },
     ]);
   },
   getOutput,
   uploadBackendErrorLog: async (): Promise<void> => {
-    Progress.openNonstopProgress({
-      id: 'output-error-log',
-      message: LANG.popup.progress.uploading,
-    });
+    Progress.openNonstopProgress({ id: 'output-error-log', message: LANG.popup.progress.uploading });
 
     const output = getOutput();
     const reportFile = new Blob(output, { type: 'application/octet-stream' });
     // reportFile.lastModifiedDate = new Date();
-    const reportName = `bugreport_${Math.floor(Date.now() / 1000)}_${window.os}_${window.FLUX.version}.log`;
+    const reportName = `bug_report_${Math.floor(Date.now() / 1000)}_${window.os}_${window.FLUX.version}.log`;
     const uploadFormData = new FormData();
 
     uploadFormData.append('file', reportFile);
@@ -118,10 +112,7 @@ export default {
     const url = `https://beamstudio-bug-report.s3.amazonaws.com/backend/${reportName}`;
     const config = {
       body: uploadFormData,
-      headers: new Headers({
-        Accept: 'application/xml',
-        'Content-Type': 'multipart/form-data',
-      }),
+      headers: new Headers({ Accept: 'application/xml', 'Content-Type': 'multipart/form-data' }),
       method: 'PUT',
     };
 
