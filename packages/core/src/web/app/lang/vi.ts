@@ -1231,6 +1231,8 @@ const lang: ILang = {
     UUID: 'UUID',
   },
   device_selection: {
+    go_to_settings: 'Đi Đến Cài Đặt',
+    macos_15_local_network_permission: 'Trên macOS 15 trở lên, vui lòng bật quyền truy cập mạng cục bộ của Beam Studio trong Cài đặt hệ thống > Quyền riêng tư & Bảo mật > Mạng cục bộ.',
     no_device: '#801 Chúng tôi không tìm thấy máy của bạn trên mạng.\nVui lòng làm theo <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">hướng dẫn</a> để khắc phục sự cố kết nối.',
     no_device_web: "#801 Vui lòng kiểm tra tình trạng của máy bạn, hoặc nhấn vào 'Thiết lập máy in' bên dưới để cài đặt máy.",
     select_usb_device: 'Chọn thiết bị USB',

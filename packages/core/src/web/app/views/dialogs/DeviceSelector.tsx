@@ -8,7 +8,7 @@ import alertCaller from '@core/app/actions/alert-caller';
 import deviceConstants from '@core/app/constants/device-constants';
 import ConnectionTypeIcons from '@core/app/icons/connection-type/ConnectionTypeIcons';
 import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
-import discover from '@core/helpers/api/discover';
+import discover, { SEND_DEVICES_INTERVAL } from '@core/helpers/api/discover';
 import fileExportHelper from '@core/helpers/file-export-helper';
 import i18n from '@core/helpers/i18n';
 import browser from '@core/implementations/browser';
@@ -61,21 +61,41 @@ const DeviceSelector = ({ onClose, onSelect }: Props): React.JSX.Element => {
   useEffect(() => {
     if (deviceList.length === 0) {
       timeout.current = setTimeout(() => {
+        let message = i18n.lang.device_selection.no_device;
+        const buttons: AlertButton[] = [
+          {
+            label: i18n.lang.topbar.menu.add_new_machine,
+            onClick: async () => {
+              onSelect(null);
+              onClose();
+
+              const res = await fileExportHelper.toggleUnsavedChangedDialog();
+
+              if (res) {
+                window.location.hash = '#/initialize/connect/select-machine-model';
+              }
+            },
+            type: 'primary',
+          },
+          {
+            label: i18n.lang.global.cancel,
+          },
+        ];
+
+        if (os.isMacOS15OrLater) {
+          message = `${message}<br><br>${i18n.lang.device_selection.macos_15_local_network_permission}`;
+          buttons.push({
+            isLeft: true,
+            label: i18n.lang.device_selection.go_to_settings,
+            onClick: () => browser.open('x-apple.systempreferences:com.apple.preference.security?Privacy_LocalNetwork'),
+          });
+        }
+
         alertCaller.popUp({
           buttonLabels: [i18n.lang.topbar.menu.add_new_machine],
-          buttonType: alertConstants.CUSTOM_CANCEL,
-          callbacks: async () => {
-            onSelect(null);
-            onClose();
-
-            const res = await fileExportHelper.toggleUnsavedChangedDialog();
-
-            if (res) {
-              window.location.hash = '#/initialize/connect/select-machine-model';
-            }
-          },
+          buttons,
           caption: i18n.lang.alert.oops,
-          message: i18n.lang.device_selection.no_device,
+          message,
           onCancel: () => {
             onSelect(null);
             onClose();

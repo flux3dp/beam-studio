@@ -1231,6 +1231,8 @@ const lang: ILang = {
     UUID: 'UUID',
   },
   device_selection: {
+    go_to_settings: 'Vai Alle Impostazioni',
+    macos_15_local_network_permission: 'Su macOS 15 o versioni successive, abilita l’accesso di Beam Studio alla rete locale in Impostazioni di sistema > Privacy e sicurezza > Rete locale.',
     no_device: '#801 Impossibile trovare la macchina sulla rete.\nSeguire la <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">guida</a> per risolvere il problema di connessione.',
     no_device_web: "#801 Controlla lo stato della tua macchina o clicca su 'Configura macchina' qui sotto per configurare la macchina.",
     select_usb_device: 'Seleziona dispositivo USB',

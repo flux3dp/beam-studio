@@ -1231,6 +1231,8 @@ const lang: ILang = {
     UUID: 'UUID',
   },
   device_selection: {
+    go_to_settings: 'Přejít Do Nastavení',
+    macos_15_local_network_permission: 'V macOS 15 nebo novějším prosím povolte přístup Beam Studio k místní síti v Nastavení systému > Soukromí a zabezpečení > Místní síť.',
     no_device: '#801 Nemůžeme najít v síti váš přístroj.\n Podívejte se prosím do tohoto <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">návodu</a> pro řešení problému s připojením.',
     no_device_web: '#801  Zkontrolujte prosím stav vašeho přístroje nebo klikněte v dolní části na Nastavení přístroje k řádnému nastavení přístroje.',
     select_usb_device: 'Vyberte zařízení USB',

@@ -1231,6 +1231,8 @@ const lang: ILang = {
     UUID: 'UUID',
   },
   device_selection: {
+    go_to_settings: 'Siirry Asetuksiin',
+    macos_15_local_network_permission: 'macOS 15:ssa tai uudemmassa salli Beam Studion pääsy paikallisverkkoon kohdassa Järjestelmäasetukset > Tietosuoja ja turvallisuus > Paikallisverkko.',
     no_device: '#801 Emme löydä laitettasi verkosta.\nNoudata <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">ohjetta</a> yhteysongelman vianmääritykseen.',
     no_device_web: "#801 Tarkista koneesi tila tai napsauta alla olevaa 'Koneen asetukset' asettaaksesi koneen.",
     select_usb_device: 'Valitse USB-laite',

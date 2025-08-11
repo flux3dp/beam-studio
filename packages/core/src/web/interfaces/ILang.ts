@@ -1231,6 +1231,8 @@ export interface ILang {
     UUID: string;
   };
   device_selection: {
+    go_to_settings: string;
+    macos_15_local_network_permission: string;
     no_device: string;
     no_device_web: string;
     select_usb_device: string;
@@ -1371,6 +1373,7 @@ export interface ILang {
       starts_with_169254: string;
       succeeded_message: string;
       unreachable: string;
+      unreachable_macos_15: string;
     };
     connect_usb: {
       connect_camera: string;

@@ -1231,6 +1231,8 @@ const lang: ILang = {
     UUID: 'UUID',
   },
   device_selection: {
+    go_to_settings: 'Go to Settings',
+    macos_15_local_network_permission: 'On macOS 15 or later, please enable Beam Studio’s access to the local network in System Settings > Privacy & Security > Local Network.',
     no_device: '#801 We can\'t find your machine on the network.\nKindly follow the <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">guide</a> to troubleshoot the connection problem.',
     no_device_web: '#801 Please check the status of your machine, or click on ‘Machine Setup’ below to set up machine.',
     select_usb_device: 'Select USB Device',
@@ -1385,6 +1387,7 @@ const lang: ILang = {
       starts_with_169254: 'Starts with 169.254',
       succeeded_message: 'Successfully connected 🎉',
       unreachable: 'IP unreachable',
+      unreachable_macos_15: 'On macOS 15 or later, please enable Beam Studio’s access to the Local network in System Settings > <a target="_blank" href="x-apple.systempreferences:com.apple.preference.security?Privacy_LocalNetwork">Privacy and Security</a> > Local Network.',
     },
     connect_usb: {
       connect_camera: "Connect the machine's camera to your computer with USB cable.",

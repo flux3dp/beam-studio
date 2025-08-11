@@ -1231,6 +1231,8 @@ const lang: ILang = {
     UUID: 'UUID',
   },
   device_selection: {
+    go_to_settings: 'Przejdź Do Ustawień',
+    macos_15_local_network_permission: 'W systemie macOS 15 lub nowszym włącz dostęp Beam Studio do sieci lokalnej w Ustawienia systemowe > Prywatność i bezpieczeństwo > Sieć lokalna.',
     no_device: '#801 Nie możemy znaleźć Twojej maszyny w sieci.',
     no_device_web: '#801 Sprawdź status swojej maszyny lub kliknij poniżej „Konfiguracja maszyny”, aby skonfigurować maszynę.',
     select_usb_device: 'Wybierz urządzenie USB',

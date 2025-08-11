@@ -5,8 +5,9 @@ import classNames from 'classnames';
 
 import { adorModels, bb2Models } from '@core/app/actions/beambox/constant';
 import TestInfo from '@core/app/components/settings/connection/TestInfo';
-import { ConnectMachineFailedStates } from '@core/app/constants/connection-test';
+import { ConnectMachineFailedStates, TestState } from '@core/app/constants/connection-test';
 import useI18n from '@core/helpers/useI18n';
+import os from '@core/implementations/os';
 
 import ConnectionImage from './components/ConnectionImage';
 import Hint from './components/Hint';
@@ -65,6 +66,9 @@ const ConnectMachineIp = (): React.JSX.Element => {
           )}
           <TestInfo connectionCountDown={countDownDisplay} firmwareVersion={device?.version} testState={testState} />
           {isPromark && <Hint message={lang.initialize.connect_machine_ip.promark_hint} />}
+          {testState === TestState.IP_UNREACHABLE && os.isMacOS15OrLater && (
+            <Hint message={lang.initialize.connect_machine_ip.unreachable_macos_15} />
+          )}
           {ConnectMachineFailedStates.includes(testState) && (
             <Hint message={lang.initialize.connect_machine_ip.connection_failed_hint} />
           )}

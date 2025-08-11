@@ -1231,6 +1231,8 @@ const lang: ILang = {
     UUID: 'UUID',
   },
   device_selection: {
+    go_to_settings: 'Pergi Ke Tetapan',
+    macos_15_local_network_permission: 'Pada macOS 15 atau lebih baru, sila benarkan akses Beam Studio ke rangkaian tempatan di Tetapan Sistem > Privasi & Keselamatan > Rangkaian Tempatan.',
     no_device: '#801 Kami tidak dapat mengesan mesin anda dalam rangkaian.\nSila ikuti <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">panduan</a> untuk menyelesaikan masalah sambungan.',
     no_device_web: "#801 Semak status mesin anda, atau klik pada 'Tambah Mesin Baru' di bawah untuk menetapkan mesin.",
     select_usb_device: 'Pilih Peranti USB',
