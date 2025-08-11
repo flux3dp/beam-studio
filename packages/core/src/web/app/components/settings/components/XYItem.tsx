@@ -17,6 +17,7 @@ interface Props {
   minX: number;
   minY: number;
   onChange: (axis: 'x' | 'y', value: number) => void;
+  tooltip?: string;
   unitInputProps: Partial<SettingUnitInputProps>;
   values: [number, number];
 }
@@ -29,10 +30,11 @@ const XYItem = ({
   minX,
   minY,
   onChange,
+  tooltip,
   unitInputProps,
   values: [x, y],
 }: Props): React.JSX.Element => (
-  <SettingFormItem id={id} label={label}>
+  <SettingFormItem id={id} label={label} tooltip={tooltip}>
     <span className={classNames('font2', styles['sub-item'])}>X</span>
     <SettingUnitInput
       {...unitInputProps}
