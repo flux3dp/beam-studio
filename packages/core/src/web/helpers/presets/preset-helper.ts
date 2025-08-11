@@ -144,11 +144,7 @@ const getDefaultPreset = (
 ): null | Preset => {
   const presetModel = getPresetModel(model);
 
-  return (
-    defaultPresets[key]?.[presetModel]?.[layerModule] ||
-    defaultPresets[key]?.[presetModel]?.[LayerModule.LASER_UNIVERSAL] ||
-    null
-  );
+  return defaultPresets[key]?.[presetModel]?.[layerModule] || null;
 };
 
 const modelHasPreset = (model: WorkAreaModel, key: string): boolean =>
