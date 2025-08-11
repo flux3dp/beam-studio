@@ -1,3 +1,8 @@
+// Add this import at the top of the file
+import path from 'path';
+
+import { match } from 'ts-pattern';
+
 import alertCaller from '@core/app/actions/alert-caller';
 import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
 import progressCaller from '@core/app/actions/progress-caller';
@@ -31,7 +36,9 @@ export type FileData =
   | { data: File; type: 'normal' }
   | { data: FileMeta; type: 'path' }
   | { file: IFile; type: 'cloud' }
+  | { filePath: string; type: 'open' }
   | { filePath: string; type: 'recent' }
+  // Add a new type for opening files from a path
   | { key: ExampleFileKey; type: 'example' };
 
 const id = 'import-file-in-another-tab';
@@ -64,9 +71,9 @@ export const setFileInAnotherTab = async (importingFile: FileData): Promise<void
     let data = importingFile;
 
     if (importingFile.type === 'normal') {
-      const path = fileSystem.getPathForFile(importingFile.data);
+      const filePath = fileSystem.getPathForFile(importingFile.data);
 
-      if (!path) {
+      if (!filePath) {
         progressCaller.popById(id);
         throw new Error('Failed to load file path');
       }
@@ -74,7 +81,7 @@ export const setFileInAnotherTab = async (importingFile: FileData): Promise<void
       data = {
         data: {
           name: importingFile.data.name,
-          path,
+          path: filePath,
           type: importingFile.data.type,
         },
         type: 'path',
@@ -99,21 +106,40 @@ export const setFileInAnotherTab = async (importingFile: FileData): Promise<void
 };
 
 export const importFileInCurrentTab = async (importingFile: FileData): Promise<void> => {
-  if (importingFile.type === 'normal') {
-    await svgEditor.handleFile(importingFile.data);
-  } else if (importingFile.type === 'path') {
-    const data = importingFile.data;
-    const fileContent = fileSystem.readFile(data.path);
-    const file = new File([fileContent], data.name, data);
+  // TODO: this function cannot handle svg file correctly, which `type` equals ''
+  match(importingFile)
+    .with({ type: 'normal' }, async (importingFile) => {
+      await svgEditor.handleFile(importingFile.data);
+    })
+    .with({ type: 'path' }, async (importingFile) => {
+      const data = importingFile.data;
+      const fileContent = fileSystem.readFile(data.path);
+      const file = new File([fileContent], data.name, data);
 
-    (file as any).path = data.path;
+      (file as any).path = data.path;
 
-    await svgEditor.handleFile(file);
-  } else if (importingFile.type === 'cloud') {
-    await cloudFile.openFile(importingFile.file);
-  } else if (importingFile.type === 'recent') {
-    await recentMenuUpdater.openRecentFiles(importingFile.filePath);
-  } else if (importingFile.type === 'example') {
-    await loadExampleFile(importingFile.key);
-  }
+      await svgEditor.handleFile(file);
+    })
+    .with({ type: 'cloud' }, async (importingFile) => {
+      await cloudFile.openFile(importingFile.file);
+    })
+    .with({ type: 'recent' }, async (importingFile) => {
+      await recentMenuUpdater.openRecentFiles(importingFile.filePath);
+    })
+    .with({ type: 'example' }, async (importingFile) => {
+      await loadExampleFile(importingFile.key);
+    })
+    .with({ type: 'open' }, async (importingFile) => {
+      const { filePath } = importingFile;
+      const fileName = path.basename(filePath);
+      const fileContent = fileSystem.readFile(filePath);
+
+      if (fileContent) {
+        const file = new File([fileContent], fileName);
+
+        // Storing the path on the file object is useful for other parts of the app
+        (file as any).path = filePath;
+        await svgEditor.handleFile(file);
+      }
+    });
 };
