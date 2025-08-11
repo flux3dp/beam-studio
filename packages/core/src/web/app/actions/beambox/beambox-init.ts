@@ -5,6 +5,7 @@ import Tutorials from '@core/app/actions/beambox/tutorials';
 import { boundaryDrawer } from '@core/app/actions/canvas/boundaryDrawer';
 import Dialog from '@core/app/actions/dialog-caller';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
+import tabController from '@core/app/actions/tabController';
 import { showAdorCalibrationV2 } from '@core/app/components/dialogs/camera/AdorCalibrationV2';
 import { showBB2Calibration } from '@core/app/components/dialogs/camera/BB2Calibration';
 import updateFontConvert from '@core/app/components/dialogs/updateFontConvert';
@@ -21,7 +22,7 @@ import aiExtension from '@core/helpers/api/ai-extension';
 import AlertConfig from '@core/helpers/api/alert-config';
 import cloud from '@core/helpers/api/cloud';
 import { checkConnection } from '@core/helpers/api/discover';
-import fluxId from '@core/helpers/api/flux-id';
+import fluxId, { recordMachines } from '@core/helpers/api/flux-id';
 import autoSaveHelper from '@core/helpers/auto-save-helper';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import checkQuestionnaire from '@core/helpers/check-questionnaire';
@@ -65,6 +66,10 @@ class BeamboxInit {
 
     // WebSocket for Adobe Illustrator Plug-In
     aiExtension.init();
+
+    if (isWeb() || tabController.getIsWelcomeTab()) {
+      setTimeout(recordMachines, 10000);
+    }
   }
 
   async showStartUpDialogs(): Promise<void> {

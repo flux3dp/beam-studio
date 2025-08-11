@@ -1850,6 +1850,7 @@ export interface ILang {
     enable_uv_print_file: string;
     enabled: string;
     engraving_direction: string;
+    engraving_offset_tooltip: string;
     fast_gradient: string;
     font_convert: string;
     font_substitute: string;
@@ -1920,6 +1921,7 @@ export interface ILang {
     on: string;
     preview_movement_speed: string;
     printer_advanced_mode: string;
+    printing_offset_tooltip: string;
     remove_default_machine_button: string;
     reset: string;
     reset_now: string;
