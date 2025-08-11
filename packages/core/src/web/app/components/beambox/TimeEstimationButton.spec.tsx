@@ -8,37 +8,6 @@ import { TimeEstimationButtonContext } from '@core/app/contexts/TimeEstimationBu
 
 import TimeEstimationButton from './TimeEstimationButton';
 
-// for duration-formatter and connection helper
-jest.mock('@core/helpers/i18n', () => ({
-  lang: {
-    alert: {
-      oops: 'Oops...',
-    },
-    device_selection: {
-      no_beambox: '#801',
-    },
-    monitor: {
-      hour: 'h',
-      minute: 'm',
-      second: 's',
-    },
-    topbar: {
-      menu: {
-        add_new_machine: 'Machine Setup',
-      },
-    },
-  },
-}));
-
-jest.mock('@core/helpers/useI18n', () => () => ({
-  beambox: {
-    time_est_button: {
-      calculate: 'Estimate time',
-      estimate_time: 'Estimated Time:',
-    },
-  },
-}));
-
 const mockPopUp = jest.fn();
 
 jest.mock('@core/app/actions/alert-caller', () => ({

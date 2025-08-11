@@ -15,7 +15,6 @@ import CanvasMode from '@core/app/constants/canvasMode';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType, workareaOptions as pmWorkareaOptions } from '@core/app/constants/promark-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
-import type { DocumentState } from '@core/app/stores/documentStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import Select from '@core/app/widgets/AntdSelect';
@@ -30,6 +29,7 @@ import isDev from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 import storage from '@core/implementations/storage';
+import type { DocumentState } from '@core/interfaces/Preference';
 import type { PromarkInfo } from '@core/interfaces/Promark';
 
 import AddOnSelect from './AddOnSelect';

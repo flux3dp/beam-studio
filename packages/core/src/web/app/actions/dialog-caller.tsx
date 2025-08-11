@@ -26,7 +26,6 @@ import ImageEditPanel from '@core/app/components/ImageEditPanel';
 import TabPanel from '@core/app/components/TabPanel';
 import alertConstants from '@core/app/constants/alert-constants';
 import { eventEmitter } from '@core/app/contexts/DialogContext';
-import type { GlobalPreferenceKey } from '@core/app/stores/globalPreferenceStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import ElementPanel from '@core/app/views/beambox/ElementPanel/ElementPanel';
 import LayerColorConfigPanel from '@core/app/views/beambox/Layer-Color-Config';
@@ -55,6 +54,7 @@ import type { IDialogBoxStyle, IInputLightBox, IPrompt } from '@core/interfaces/
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { IMediaTutorial, ITutorial } from '@core/interfaces/ITutorial';
+import type { GlobalPreferenceKey } from '@core/interfaces/Preference';
 
 let svgCanvas: ISVGCanvas;
 
