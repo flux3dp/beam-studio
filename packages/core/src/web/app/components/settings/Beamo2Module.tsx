@@ -74,6 +74,7 @@ const Beamo2Module = ({ options, unitInputProps }: Props): React.JSX.Element => 
         id="ir-laser-offset"
         label={lang.settings.module_offset_2w_ir}
         onChange={(axis, val) => editModuleOffsets(LayerModule.LASER_1064, axis, val)}
+        tooltip={lang.settings.engraving_offset_tooltip}
         values={getModuleOffset(LayerModule.LASER_1064)}
       />
       <XYItem
@@ -81,6 +82,7 @@ const Beamo2Module = ({ options, unitInputProps }: Props): React.JSX.Element => 
         id="4c-offset"
         label={lang.settings.module_offset_4c}
         onChange={(axis, val) => editModuleOffsets(LayerModule.PRINTER_4C, axis, val)}
+        tooltip={lang.settings.printing_offset_tooltip}
         values={getModuleOffset(LayerModule.PRINTER_4C)}
       />
       {checkBM2UV() && (
@@ -89,6 +91,7 @@ const Beamo2Module = ({ options, unitInputProps }: Props): React.JSX.Element => 
           id="uv-white-ink-offset"
           label={lang.settings.module_offset_uv_white_ink}
           onChange={(axis, val) => editModuleOffsets(LayerModule.UV_WHITE_INK, axis, val)}
+          tooltip={lang.settings.printing_offset_tooltip}
           values={getModuleOffset(LayerModule.UV_WHITE_INK)}
         />
       )}
@@ -98,6 +101,7 @@ const Beamo2Module = ({ options, unitInputProps }: Props): React.JSX.Element => 
           id="uv-varnish-offset"
           label={lang.settings.module_offset_uv_varnish}
           onChange={(axis, val) => editModuleOffsets(LayerModule.UV_VARNISH, axis, val)}
+          tooltip={lang.settings.printing_offset_tooltip}
           values={getModuleOffset(LayerModule.UV_VARNISH)}
         />
       )}
