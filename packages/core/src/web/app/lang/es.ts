@@ -995,6 +995,8 @@ const lang: ILang = {
     charuco_position_bottom_left: 'inferior izquierda',
     charuco_position_bottom_right: 'inferior derecha',
     charuco_position_center: 'centro',
+    charuco_position_left: 'izquierda',
+    charuco_position_right: 'derecha',
     charuco_position_top_left: 'superior izquierda',
     charuco_position_top_right: 'superior derecha',
     check_checkpoint_data: 'Datos del punto de control',

@@ -1,9 +1,8 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { LoadingOutlined } from '@ant-design/icons';
 import { Button, Flex, Progress, Spin } from 'antd';
 import { sprintf } from 'sprintf-js';
-import { match } from 'ts-pattern';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
@@ -12,59 +11,42 @@ import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
 import { ContextMenu, ContextMenuTrigger, MenuItem } from '@core/helpers/react-contextmenu';
 import useI18n from '@core/helpers/useI18n';
 import dialog from '@core/implementations/dialog';
-import type { FisheyeCaliParameters, WideAngleRegion } from '@core/interfaces/FisheyePreview';
+import type { FisheyeCaliParameters } from '@core/interfaces/FisheyePreview';
 
 import styles from './ChArUco.module.scss';
 import ExposureSlider from './ExposureSlider';
 import handleCalibrationResult from './handleCalibrationResult';
 import useLiveFeed from './useLiveFeed';
 
-/* eslint-disable perfectionist/sort-objects */
-const Steps = {
-  TopLeft: 0,
-  TopRight: 1,
-  BottomLeft: 2,
-  BottomRight: 3,
-  Center: 4,
-} as const;
-
-/* eslint-enable perfectionist/sort-objects */
-type Step = (typeof Steps)[keyof typeof Steps];
-
 interface Props {
   cameraIndex?: number;
   onClose: (complete?: boolean) => void;
   onNext: () => void;
   onPrev: () => void;
+  steps: Array<{ description: string; imageUrl?: string; key: string }>;
   title?: string;
   updateParam: (param: FisheyeCaliParameters) => void;
 }
 
 // TODO: how to handle the case when some pictures are not detected or points are too less?
-const ChArUco = ({ cameraIndex, onClose, onNext, onPrev, title, updateParam }: Props) => {
-  const [step, setStep] = useState<Step>(Steps.TopLeft);
+const ChArUco = ({ cameraIndex, onClose, onNext, onPrev, steps, title, updateParam }: Props) => {
+  const [step, setStep] = useState(0);
   const tCali = useI18n().calibration;
   const { exposureSetting, handleTakePicture, img, pauseLive, restartLive, setExposureSetting } = useLiveFeed({
     index: cameraIndex,
   });
   const imgRef = useRef<HTMLImageElement>(null);
-  const data = useRef<Partial<Record<WideAngleRegion, { imgp: number[][]; objp: number[][] }>>>({});
+  const data = useRef<Array<{ imgp: number[][]; objp: number[][] }>>([]);
+
+  useEffect(() => {
+    data.current = Array(steps.length).fill(null);
+  }, [steps]);
 
   const handleDownload = useCallback(() => {
     dialog.writeFileDialog(() => img!.blob, 'Save Picture', 'wide-angle.jpg');
   }, [img]);
 
-  const { key, positionText } = useMemo(
-    () =>
-      match<Step, { key: WideAngleRegion; positionText: string }>(step)
-        .with(Steps.TopLeft, () => ({ key: 'topLeft', positionText: tCali.charuco_position_top_left }))
-        .with(Steps.TopRight, () => ({ key: 'topRight', positionText: tCali.charuco_position_top_right }))
-        .with(Steps.BottomLeft, () => ({ key: 'bottomLeft', positionText: tCali.charuco_position_bottom_left }))
-        .with(Steps.BottomRight, () => ({ key: 'bottomRight', positionText: tCali.charuco_position_bottom_right }))
-        .with(Steps.Center, () => ({ key: 'center', positionText: tCali.charuco_position_center }))
-        .exhaustive(),
-    [step, tCali],
-  );
+  const { description, imageUrl } = useMemo(() => steps[step], [step, steps]);
 
   const handleNext = useCallback(async () => {
     pauseLive();
@@ -82,19 +64,20 @@ const ChArUco = ({ cameraIndex, onClose, onNext, onPrev, title, updateParam }: P
       return;
     }
 
-    data.current[key] = { imgp: res.imgp, objp: res.objp };
+    data.current[step] = { imgp: res.imgp, objp: res.objp };
 
-    if (step !== Steps.Center) {
-      setStep((s) => (s + 1) as Step);
+    if (step !== steps.length - 1) {
+      setStep((s) => s + 1);
       restartLive();
     } else {
       const { naturalHeight: h, naturalWidth: w } = imgRef.current!;
       const objPoints: number[][][] = [];
       const imgPoints: number[][][] = [];
-      const regions = ['topLeft', 'topRight', 'bottomLeft', 'bottomRight', 'center'] as const;
 
-      for (const region of regions) {
-        const { imgp, objp } = data.current[region]!;
+      for (let i = 0; i < steps.length; i++) {
+        if (!data.current[i]) continue;
+
+        const { imgp, objp } = data.current[i]!;
 
         imgPoints.push(imgp);
         objPoints.push(objp);
@@ -120,12 +103,12 @@ const ChArUco = ({ cameraIndex, onClose, onNext, onPrev, title, updateParam }: P
         return;
       }
 
-      if (indices.length !== 5) {
-        const failedRegion = [];
+      if (indices.length !== steps.length) {
+        const failedKeys = [];
 
-        for (let i = 1; i < 5; i++) {
+        for (let i = 0; i < steps.length; i++) {
           if (!indices.includes(i)) {
-            failedRegion.push(regions[i]);
+            failedKeys.push(steps[i].key);
           }
         }
       }
@@ -133,13 +116,13 @@ const ChArUco = ({ cameraIndex, onClose, onNext, onPrev, title, updateParam }: P
       updateParam({ d, k, ret, rvec, tvec });
       onNext();
     }
-  }, [tCali, step, key, img, pauseLive, restartLive, onNext, updateParam]);
+  }, [tCali, steps, step, img, pauseLive, restartLive, onNext, updateParam]);
 
   return (
     <DraggableModal
       cancelText={step > 0 ? tCali.back : tCali.cancel}
       footer={[
-        <Button key="back" onClick={step > 0 ? () => setStep((s) => (s - 1) as Step) : () => onPrev()}>
+        <Button key="back" onClick={step > 0 ? () => setStep((s) => s - 1) : () => onPrev()}>
           {tCali.back}
         </Button>,
         <Button disabled={!img} key="next" onClick={handleNext} type="primary">
@@ -155,11 +138,11 @@ const ChArUco = ({ cameraIndex, onClose, onNext, onPrev, title, updateParam }: P
       <div className={styles.container}>
         <ol className={styles.desc}>
           <li>{tCali.charuco_open_the_machine_lid}</li>
-          <li dangerouslySetInnerHTML={{ __html: sprintf(tCali.charuco_place_charuco, positionText) }} />
-          {step === Steps.TopLeft && <li dangerouslySetInnerHTML={{ __html: tCali.charuco_auto_focus }} />}
+          <li dangerouslySetInnerHTML={{ __html: sprintf(tCali.charuco_place_charuco, description) }} />
+          {step === 0 && <li dangerouslySetInnerHTML={{ __html: tCali.charuco_auto_focus }} />}
           <li>{tCali.charuco_capture}</li>
         </ol>
-        <Progress className={styles.progress} percent={(step + 1) * 20} status="normal" />
+        <Progress className={styles.progress} percent={(step + 1) * (100 / steps.length)} status="normal" />
         <Flex align="center" className={styles.content} justify="space-between">
           <div className={styles.left}>
             <div className={styles.imgContainer}>
@@ -190,9 +173,7 @@ const ChArUco = ({ cameraIndex, onClose, onNext, onPrev, title, updateParam }: P
               setExposureSetting={setExposureSetting}
             />
           </div>
-          <div className={styles.right}>
-            <img src={`core-img/calibration/bb2-charuco-${key}.jpg`} />
-          </div>
+          <div className={styles.right}>{imageUrl && <img src={imageUrl} />}</div>
         </Flex>
       </div>
     </DraggableModal>
