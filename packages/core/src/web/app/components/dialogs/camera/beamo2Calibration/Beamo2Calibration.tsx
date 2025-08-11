@@ -95,8 +95,8 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
       return (
         <Instruction
           animationSrcs={[
-            { src: 'video/bb2-calibration/1-chessboard.webm', type: 'video/webm' },
-            { src: 'video/bb2-calibration/1-chessboard.mp4', type: 'video/mp4' },
+            { src: 'video/bm2-calibration/1-chessboard.webm', type: 'video/webm' },
+            { src: 'video/bm2-calibration/1-chessboard.mp4', type: 'video/mp4' },
           ]}
           buttons={[
             {
