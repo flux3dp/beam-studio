@@ -5,12 +5,13 @@ import { Tooltip } from 'antd';
 import { Button, Popover } from 'antd-mobile';
 import classNames from 'classnames';
 import { sprintf } from 'sprintf-js';
+import { match } from 'ts-pattern';
 import { useShallow } from 'zustand/react/shallow';
 
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import { getSpeedOptions } from '@core/app/constants/config-options';
-import { printingModules } from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import { useDocumentStore } from '@core/app/stores/documentStore';
@@ -25,6 +26,7 @@ import { getAutoFeeder } from '@core/helpers/addOn';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import useHasCurveEngraving from '@core/helpers/hooks/useHasCurveEngraving';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
+import isDev from '@core/helpers/is-dev';
 import doLayersContainsVector from '@core/helpers/layer/check-vector';
 import { CUSTOM_PRESET_CONSTANT, writeData } from '@core/helpers/layer/layer-config-helper';
 import round from '@core/helpers/math/round';
@@ -85,7 +87,7 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   );
   const {
     curveSpeedLimit,
-    maxSpeed: maxValue,
+    maxSpeed: workareaMaxSpeed,
     minSpeed: minValue,
     minSpeedWarning,
     vectorSpeedLimit,
@@ -101,31 +103,39 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
     };
   }, [workarea, addOnInfo, isAutoFeederOn]);
 
+  const maxValue = useMemo(() => {
+    if (isDev()) return workareaMaxSpeed;
+
+    return match(layerModule)
+      .with(LayerModule.PRINTER_4C, () => 45)
+      .otherwise(() => workareaMaxSpeed);
+  }, [workareaMaxSpeed, layerModule]);
+
   const curveEngravingSpeedWarning = useMemo(() => {
-    if (!curveSpeedLimit) {
+    if (!curveSpeedLimit || isPrinting) {
       return '';
     }
 
     return sprintf(t.speed_constrain_warning_curve_engraving, {
       limit: fakeUnit === 'mm' ? `${curveSpeedLimit} mm/s` : `${round(curveSpeedLimit / 25.4, 2)} in/s`,
     });
-  }, [fakeUnit, curveSpeedLimit, t.speed_constrain_warning_curve_engraving]);
+  }, [fakeUnit, curveSpeedLimit, t.speed_constrain_warning_curve_engraving, isPrinting]);
 
   const vectorSpeedWarning = useMemo(() => {
-    if (!vectorSpeedLimit) {
+    if (!vectorSpeedLimit || isPrinting) {
       return '';
     }
 
     return sprintf(isAutoFeederOn ? t.speed_constrain_warning_auto_feeder : t.speed_constrain_warning, {
       limit: fakeUnit === 'mm' ? `${vectorSpeedLimit} mm/s` : `${round(vectorSpeedLimit / 25.4, 2)} in/s`,
     });
-  }, [fakeUnit, t, vectorSpeedLimit, isAutoFeederOn]);
+  }, [fakeUnit, t, vectorSpeedLimit, isAutoFeederOn, isPrinting]);
   const hasCurveLimit = useGlobalPreferenceStore((state) => state.curve_engraving_speed_limit);
   const hasVectorLimit = useGlobalPreferenceStore((state) => state.vector_speed_constraint);
 
   let warningText = '';
 
-  if (!isPromark) {
+  if (!isPromark && !isPrinting) {
     if (hasCurveLimit && hasCurveEngraving && curveSpeedLimit && value > curveSpeedLimit) {
       warningText = curveEngravingSpeedWarning;
     } else if (hasVector && hasVectorLimit && vectorSpeedLimit && value > vectorSpeedLimit) {

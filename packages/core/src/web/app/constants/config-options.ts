@@ -65,10 +65,10 @@ export const getSpeedOptions = (
     ])
     .with(LayerModule.PRINTER_4C, () => [
       { label: t.slider.very_slow, value: 5 },
-      { label: t.slider.slow, value: 10 },
-      { label: t.slider.regular, value: 15 },
-      { label: t.slider.fast, value: 20 },
-      { label: t.slider.very_fast, value: 30 },
+      { label: t.slider.slow, value: 15 },
+      { label: t.slider.regular, value: 25 },
+      { label: t.slider.fast, value: 35 },
+      { label: t.slider.very_fast, value: 45 },
     ])
     .otherwise(() => undefined);
 };

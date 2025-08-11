@@ -400,6 +400,72 @@ exports[`test SpeedBlock should render correctly when has vector warning 1`] = `
 </div>
 `;
 
+exports[`test SpeedBlock should render correctly when module is 4C 1`] = `
+<div>
+  <div
+    class="panel default"
+  >
+    <span
+      class="title"
+    >
+      Speed
+    </span>
+    <div>
+      MockConfigValueDisplay
+      <p>
+        inputId: 
+        speed-input
+      </p>
+      <p>
+        type: 
+        default
+      </p>
+      <p>
+        max: 
+        45
+      </p>
+      <p>
+        min: 
+        0.5
+      </p>
+      <p>
+        value: 
+        1
+      </p>
+      <p>
+        unit: 
+        mm/s
+      </p>
+      <p>
+        hasMultiValue: 
+      </p>
+      <p>
+        decimal: 
+        1
+      </p>
+      <p>
+        options: 
+        [{"label":"Slowest","value":5},{"label":"Slow","value":15},{"label":"Regular","value":25},{"label":"Fast","value":35},{"label":"Fastest","value":45}]
+      </p>
+      <button
+        type="button"
+      >
+        MockConfigValueDisplayButton
+      </button>
+    </div>
+    <input
+      class="mock-config-slider"
+      id="speed"
+      max="45"
+      min="0.5"
+      step="0.1"
+      type="range"
+      value="1"
+    />
+  </div>
+</div>
+`;
+
 exports[`test SpeedBlock should render correctly when type is panel-item 1`] = `
 <div>
   <div>

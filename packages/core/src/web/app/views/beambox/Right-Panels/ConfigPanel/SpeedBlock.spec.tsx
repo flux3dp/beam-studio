@@ -7,6 +7,15 @@ import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts
 
 import ConfigPanelContext from './ConfigPanelContext';
 
+const mockIsDev = jest.fn();
+
+jest.mock(
+  '@core/helpers/is-dev',
+  () =>
+    (...args) =>
+      mockIsDev(...args),
+);
+
 jest.mock('./ConfigSlider', () => ({ id, max, min, onChange, value }: any) => (
   <input
     className="mock-config-slider"
@@ -171,6 +180,7 @@ describe('test SpeedBlock', () => {
     mockUseGlobalPreferenceStore.mockImplementation((selector) => {
       return selector(mockGlobalPreference);
     });
+    mockIsDev.mockReturnValue(true);
   });
 
   it('should render correctly when unit is mm', () => {
@@ -270,6 +280,25 @@ describe('test SpeedBlock', () => {
 
     expect(container).toMatchSnapshot();
     expect(container.querySelector('.warning')).toBeInTheDocument();
+  });
+
+  it('should render correctly when module is 4C', () => {
+    mockIsDev.mockReturnValue(false);
+    mockUseWorkarea.mockReturnValue('fbm2');
+
+    mockUseConfigPanelStore.mockReturnValue({
+      change: mockChange,
+      module: { hasMultiValue: false, value: LayerModule.PRINTER_4C },
+      speed: { value: 1 },
+    });
+
+    const { container } = render(
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
+        <SpeedBlock />
+      </ConfigPanelContext.Provider>,
+    );
+
+    expect(container).toMatchSnapshot();
   });
 
   test('onChange should work', () => {
