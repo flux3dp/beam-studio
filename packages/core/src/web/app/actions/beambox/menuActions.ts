@@ -14,7 +14,16 @@ import disassembleUse from '@core/app/svgedit/operations/disassembleUse';
 import workareaManager from '@core/app/svgedit/workarea';
 import { externalLinkMemberDashboard, signOut } from '@core/helpers/api/flux-id';
 import checkQuestionnaire from '@core/helpers/check-questionnaire';
-import FileExportHelper from '@core/helpers/file/export';
+import {
+  exportAsBVG,
+  exportAsImage,
+  exportAsSVG,
+  exportUvPrintAsPdf,
+  saveAsFile,
+  saveFile,
+  saveToCloud,
+  toggleUnsavedChangedDialog,
+} from '@core/helpers/file/export';
 import i18n from '@core/helpers/i18n';
 import imageEdit from '@core/helpers/image-edit';
 import isWeb from '@core/helpers/is-web';
@@ -41,7 +50,7 @@ const { lang } = i18n;
 export default {
   ABOUT_BEAM_STUDIO: (): void => Dialog.showAboutBeamStudio(),
   ADD_NEW_MACHINE: async () => {
-    const res = await FileExportHelper.toggleUnsavedChangedDialog();
+    const res = await toggleUnsavedChangedDialog();
 
     if (res) {
       window.location.hash = '#/initialize/connect/select-machine-model';
@@ -66,7 +75,7 @@ export default {
     cmd: IBatchCommand;
     elems: Element[];
   }> => cloneSelectedElements(20, 20),
-  EXPORT_BVG: (): Promise<boolean> => FileExportHelper.exportAsBVG(),
+  EXPORT_BVG: (): Promise<boolean> => exportAsBVG(),
   EXPORT_FLUX_TASK: (): void => {
     if (isWeb()) {
       Dialog.forceLoginWrapper(() => ExportFuncs.exportFcode());
@@ -74,10 +83,10 @@ export default {
       ExportFuncs.exportFcode();
     }
   },
-  EXPORT_JPG: (): Promise<void> => FileExportHelper.exportAsImage('jpg'),
-  EXPORT_PNG: (): Promise<void> => FileExportHelper.exportAsImage('png'),
-  EXPORT_SVG: (): Promise<void> => FileExportHelper.exportAsSVG(),
-  EXPORT_UV_PRINT: (): Promise<void> => FileExportHelper.exportUvPrintAsPdf(),
+  EXPORT_JPG: (): Promise<void> => exportAsImage('jpg'),
+  EXPORT_PNG: (): Promise<void> => exportAsImage('png'),
+  EXPORT_SVG: (): Promise<void> => exportAsSVG(),
+  EXPORT_UV_PRINT: (): Promise<void> => exportUvPrintAsPdf(),
   FITS_TO_WINDOW: (): void => workareaManager.resetView(),
   FOLLOW_US: (): void => Dialog.showSocialMedia(),
   GROUP: () => svgCanvas.groupSelectedElements(),
@@ -106,7 +115,7 @@ export default {
   PREFERENCE: async (): Promise<void> => {
     Dialog.clearAllDialogComponents();
 
-    const res = await FileExportHelper.toggleUnsavedChangedDialog();
+    const res = await toggleUnsavedChangedDialog();
 
     if (res) {
       window.location.hash = '#/studio/settings';
@@ -143,9 +152,9 @@ export default {
     }
   },
   ROTARY_SETUP: () => showRotarySettings(),
-  SAVE_AS: (): Promise<boolean> => FileExportHelper.saveAsFile(),
-  SAVE_SCENE: (): Promise<boolean> => FileExportHelper.saveFile(),
-  SAVE_TO_CLOUD: (): Promise<boolean> => FileExportHelper.saveToCloud(),
+  SAVE_AS: (): Promise<boolean> => saveAsFile(),
+  SAVE_SCENE: (): Promise<boolean> => saveFile(),
+  SAVE_TO_CLOUD: (): Promise<boolean> => saveToCloud(),
   SHOW_GRIDS: (): boolean => viewMenu.toggleGrid(),
   SHOW_LAYER_COLOR: (): boolean => viewMenu.toggleLayerColor(),
   SHOW_RULERS: (): boolean => viewMenu.toggleRulers(),

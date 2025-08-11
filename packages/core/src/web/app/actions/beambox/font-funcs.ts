@@ -11,7 +11,7 @@ import textedit from '@core/app/svgedit/text/textedit';
 import AlertConfig from '@core/helpers/api/alert-config';
 import { checkConnection } from '@core/helpers/api/discover';
 import SvgLaserParser from '@core/helpers/api/svg-laser-parser';
-import fileExportHelper from '@core/helpers/file/export';
+import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import fontHelper from '@core/helpers/fonts/fontHelper';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
@@ -670,7 +670,7 @@ const convertTextToPath = async (
           buttonLabels: [i18n.lang.topbar.menu.add_new_machine],
           buttonType: AlertConstants.CUSTOM_CANCEL,
           callbacks: async () => {
-            const saveRes = await fileExportHelper.toggleUnsavedChangedDialog();
+            const saveRes = await toggleUnsavedChangedDialog();
 
             if (saveRes) {
               window.location.hash = '#/initialize/connect/select-machine-model';

@@ -2,7 +2,7 @@ import alertCaller from '@core/app/actions/alert-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import { checkConnection } from '@core/helpers/api/discover';
-import fileExportHelper from '@core/helpers/file/export';
+import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 
@@ -14,7 +14,7 @@ const webNeedConnectionWrapper = <T>(callback: () => Promise<T> | T): Promise<T>
       callbacks: async () => {
         ObjectPanelController.updateActiveKey(null);
 
-        const res = await fileExportHelper.toggleUnsavedChangedDialog();
+        const res = await toggleUnsavedChangedDialog();
 
         if (res) {
           window.location.hash = '#/initialize/connect/select-machine-model';
@@ -24,7 +24,7 @@ const webNeedConnectionWrapper = <T>(callback: () => Promise<T> | T): Promise<T>
       message: i18n.lang.device_selection.no_device_web,
     });
 
-    return null;
+    return null as T;
   }
 
   return callback();
