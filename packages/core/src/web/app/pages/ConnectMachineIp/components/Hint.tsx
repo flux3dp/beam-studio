@@ -1,7 +1,5 @@
 import React from 'react';
 
-import classNames from 'classnames';
-
 import browser from '@core/implementations/browser';
 
 import styles from './Hint.module.scss';
@@ -41,7 +39,7 @@ const Hint = ({ message }: { message: string }): React.JSX.Element => {
     return parts;
   };
 
-  return <div className={classNames(styles.contents, styles.tutorial)}>{parseMessage(message)}</div>;
+  return <div className={styles.contents}>{parseMessage(message)}</div>;
 };
 
 export default Hint;

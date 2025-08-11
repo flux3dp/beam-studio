@@ -1,3 +1,5 @@
 import type { IOperatingSystem } from '@core/interfaces/IOperatingSystem';
 
-export default {} as IOperatingSystem;
+export default {
+  isMacOS15OrLater: false,
+} as IOperatingSystem;

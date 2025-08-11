@@ -1233,7 +1233,9 @@ const lang: ILang = {
     UUID: 'UUID',
   },
   device_selection: {
-    no_beambox: '#801 Kami tidak dapat menemukan mesin Anda di jaringan.\nHarap ikuti <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">panduan</a> untuk mengatasi masalah koneksi.',
+    go_to_settings: 'Masuk Ke Pengaturan',
+    macos_15_local_network_permission: 'Di macOS 15 atau yang lebih baru, aktifkan akses Beam Studio ke jaringan lokal di Pengaturan Sistem > Privasi & Keamanan > Jaringan Lokal.',
+    no_device: '#801 Kami tidak dapat menemukan mesin Anda di jaringan.\nHarap ikuti <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">panduan</a> untuk mengatasi masalah koneksi.',
     no_device_web: "#801 Periksa status mesin Anda, atau klik 'Setup Mesin' di bawah untuk mengatur mesin.",
     select_usb_device: 'Pilih Perangkat USB',
   },
@@ -1387,6 +1389,7 @@ const lang: ILang = {
       starts_with_169254: 'Dimulai dengan 169.254',
       succeeded_message: 'Berhasil terhubung 🎉',
       unreachable: 'IP tidak dapat dijangkau',
+      unreachable_macos_15: 'Di macOS 15 atau lebih baru, aktifkan akses Beam Studio ke jaringan lokal di Pengaturan Sistem > <a target="_blank" href="x-apple.systempreferences:com.apple.preference.security?Privacy_LocalNetwork">Privasi & Keamanan</a> > Jaringan Lokal.',
     },
     connect_usb: {
       connect_camera: 'Hubungkan kamera mesin ke komputer Anda dengan kabel USB.',

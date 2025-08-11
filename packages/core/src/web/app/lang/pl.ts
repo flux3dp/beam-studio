@@ -1233,7 +1233,9 @@ const lang: ILang = {
     UUID: 'UUID',
   },
   device_selection: {
-    no_beambox: '#801 Nie możemy znaleźć Twojej maszyny w sieci.',
+    go_to_settings: 'Przejdź Do Ustawień',
+    macos_15_local_network_permission: 'W systemie macOS 15 lub nowszym włącz dostęp Beam Studio do sieci lokalnej w Ustawienia systemowe > Prywatność i bezpieczeństwo > Sieć lokalna.',
+    no_device: '#801 Nie możemy znaleźć Twojej maszyny w sieci.',
     no_device_web: '#801 Sprawdź status swojej maszyny lub kliknij poniżej „Konfiguracja maszyny”, aby skonfigurować maszynę.',
     select_usb_device: 'Wybierz urządzenie USB',
   },
@@ -1387,6 +1389,7 @@ const lang: ILang = {
       starts_with_169254: 'Zaczyna się od 169.254',
       succeeded_message: 'Zakończ ustawianie 🎉',
       unreachable: 'IP nieosiągalne',
+      unreachable_macos_15: 'W systemie macOS 15 lub nowszym włącz dostęp Beam Studio do sieci lokalnej w Ustawieniach systemowych > <a target="_blank" href="x-apple.systempreferences:com.apple.preference.security?Privacy_LocalNetwork">Prywatność i bezpieczeństwo</a> > Sieć lokalna.',
     },
     connect_usb: {
       connect_camera: 'Podłącz kamerę maszyny do komputera za pomocą kabla USB.',

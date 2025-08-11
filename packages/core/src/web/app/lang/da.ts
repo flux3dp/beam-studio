@@ -1233,7 +1233,9 @@ const lang: ILang = {
     UUID: 'UUID',
   },
   device_selection: {
-    no_beambox: '#801 Vi kan ikke finde din maskine på netværket.\nFølg venligst <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">guiden</a> for at finde fejlen i forbindelsen.',
+    go_to_settings: 'Gå Til Indstillinger',
+    macos_15_local_network_permission: 'På macOS 15 eller nyere skal du aktivere Beam Studios adgang til det lokale netværk under Systemindstillinger > Privatliv og sikkerhed > Lokalt netværk.',
+    no_device: '#801 Vi kan ikke finde din maskine på netværket.\nFølg venligst <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">guiden</a> for at finde fejlen i forbindelsen.',
     no_device_web: "#801 Tjek venligst status for din maskine, eller klik på 'Maskinopsætning' nedenfor for at opsætte maskinen.",
     select_usb_device: 'Vælg USB-enhed',
   },
@@ -1387,6 +1389,7 @@ const lang: ILang = {
       starts_with_169254: 'Starter med 169.254',
       succeeded_message: 'Forbindelse oprettet 🎉',
       unreachable: 'IP utilgængelig',
+      unreachable_macos_15: 'V systému macOS 15 nebo novějším povolte aplikaci Beam Studio přístup k místní síti v Nastavení systému > <a target="_blank" href="x-apple.systempreferences:com.apple.preference.security?Privacy_LocalNetwork">Soukromí a zabezpečení</a> > Místní síť.',
     },
     connect_usb: {
       connect_camera: 'Tilslut maskinens kamera til din computer med et USB-kabel.',

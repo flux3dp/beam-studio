@@ -1,10 +1,10 @@
 import dialogCaller from '@core/app/actions/dialog-caller';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
-import type { GlobalPreferenceKey } from '@core/app/stores/globalPreferenceStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import type { ILang } from '@core/interfaces/ILang';
 import type { ImportType } from '@core/interfaces/ImportSvg';
+import type { GlobalPreferenceKey } from '@core/interfaces/Preference';
 
 // TODO: check currentImportType is valid?
 export async function determineImportType(

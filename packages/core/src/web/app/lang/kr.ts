@@ -1233,7 +1233,9 @@ const lang: ILang = {
     UUID: 'UUID',
   },
   device_selection: {
-    no_beambox: '#801 네트워크에서 기계를 찾을 수 없습니다. 친절하게 <a target=""_blank"" href=""https://support.flux3dp.com/hc/en-us/articles/360001683556"">안내</a>를 따라 연결 문제를 해결해 주세요.',
+    go_to_settings: '설정으로 이동',
+    macos_15_local_network_permission: 'macOS 15 이상에서는 시스템 설정 > 개인 정보 보호 및 보안 > 로컬 네트워크에서 Beam Studio의 로컬 네트워크 접근을 허용해 주세요.',
+    no_device: '#801 네트워크에서 기계를 찾을 수 없습니다. 친절하게 <a target=""_blank"" href=""https://support.flux3dp.com/hc/en-us/articles/360001683556"">안내</a>를 따라 연결 문제를 해결해 주세요.',
     no_device_web: "#801 기계 상태를 확인하거나 아래의 '기계 설정'을 클릭하여 기계를 설정하십시오.",
     select_usb_device: 'USB 장치를 선택하십시오',
   },
@@ -1387,6 +1389,7 @@ const lang: ILang = {
       starts_with_169254: '169.254로 시작함',
       succeeded_message: '성공적으로 연결됨 🎉',
       unreachable: 'IP에 연결할 수 없음',
+      unreachable_macos_15: 'macOS 15 이상에서 시스템 설정 > <a target="_blank" href="x-apple.systempreferences:com.apple.preference.security?Privacy_LocalNetwork">개인정보 보호 및 보안</a> > 로컬 네트워크에서 Beam Studio의 로컬 네트워크 접근을 허용하세요.',
     },
     connect_usb: {
       connect_camera: '기계의 카메라를 USB 케이블로 컴퓨터에 연결하세요.',

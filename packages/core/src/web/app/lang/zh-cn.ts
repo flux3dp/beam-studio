@@ -1233,7 +1233,9 @@ const lang: ILang = {
     UUID: 'UUID',
   },
   device_selection: {
-    no_beambox: '#801 我们在网路上找不到您的机器，\n请参考<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">此指南</a>排除连线问题！',
+    go_to_settings: '前往设置',
+    macos_15_local_network_permission: '在 macOS 15 或更高版本中，请在系统设置 > 隐私与安全性 > 本地网络中启用 Beam Studio 对本地网络的访问权限。',
+    no_device: '#801 我们在网路上找不到您的机器，\n请参考<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">此指南</a>排除连线问题！',
     no_device_web: '#801 请检查您的机器状态，或点击下方的‘机器设置’来设置机器。',
     select_usb_device: '选择 USB 设备',
   },
@@ -1387,6 +1389,7 @@ const lang: ILang = {
       starts_with_169254: '由 169.254 开头',
       succeeded_message: '连线成功 🎉',
       unreachable: '无法连接至指定 IP',
+      unreachable_macos_15: '在 macOS 15 或更高版本中，请在系统设置 > <a target="_blank" href="x-apple.systempreferences:com.apple.preference.security?Privacy_LocalNetwork">隐私与安全性</a> > 本地网络 中启用 Beam Studio 对本地网络的访问权限。',
     },
     connect_usb: {
       connect_camera: '将机器的摄像头与您的电脑以 USB 线连接。',

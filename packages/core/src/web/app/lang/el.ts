@@ -1233,7 +1233,9 @@ const lang: ILang = {
     UUID: 'UUID',
   },
   device_selection: {
-    no_beambox: '#801 Δεν μπορούμε να βρούμε το μηχάνημά σας στο δίκτυο.\nΠαρακαλώ ακολουθήστε τον <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">οδηγό</a> για αντιμετώπιση προβλημάτων σύνδεσης.',
+    go_to_settings: 'Μετάβαση Στις Ρυθμίσεις',
+    macos_15_local_network_permission: 'Σε macOS 15 ή νεότερη έκδοση, ενεργοποιήστε την πρόσβαση του Beam Studio στο τοπικό δίκτυο στις Ρυθμίσεις συστήματος > Απόρρητο & Ασφάλεια > Τοπικό δίκτυο.',
+    no_device: '#801 Δεν μπορούμε να βρούμε το μηχάνημά σας στο δίκτυο.\nΠαρακαλώ ακολουθήστε τον <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">οδηγό</a> για αντιμετώπιση προβλημάτων σύνδεσης.',
     no_device_web: "#801 Ελέγξτε την κατάσταση της μηχανής σας ή κάντε κλικ στο 'Ρύθμιση μηχανής' παρακάτω για να ρυθμίσετε τη μηχανή.",
     select_usb_device: 'Επιλέξτε συσκευή USB',
   },
@@ -1387,6 +1389,7 @@ const lang: ILang = {
       starts_with_169254: 'Ξεκινά με 169.254',
       succeeded_message: 'Επιτυχής σύνδεση 🎉',
       unreachable: 'Μη προσβάσιμη διεύθυνση IP',
+      unreachable_macos_15: 'Σε macOS 15 ή νεότερο, ενεργοποιήστε την πρόσβαση του Beam Studio στο τοπικό δίκτυο από τις Ρυθμίσεις συστήματος > <a target="_blank" href="x-apple.systempreferences:com.apple.preference.security?Privacy_LocalNetwork">Απόρρητο και ασφάλεια</a> > Τοπικό δίκτυο.',
     },
     connect_usb: {
       connect_camera: 'Συνδέστε την κάμερα της μηχανής στον υπολογιστή σας με καλώδιο USB.',
