@@ -45,7 +45,7 @@ const getSelectedDevice = (): IDeviceInfo | null => {
   return response.selectedDevice;
 };
 
-const setSelectedDevice = (device: IDeviceInfo): void => {
+const setSelectedDevice = (device: IDeviceInfo | null): void => {
   topBarEventEmitter.emit('SET_SELECTED_DEVICE', device);
 };
 

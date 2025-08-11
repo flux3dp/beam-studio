@@ -159,10 +159,13 @@ const Alert = ({
     buttons = buttons?.toReversed();
   }
 
-  const footer = buttons?.map(({ className, label, onClick, type }, idx) => {
+  const leftButtons: ReactNode[] = [];
+  const rightButtons: ReactNode[] = [];
+
+  buttons?.forEach(({ className, isLeft, label, onClick, type }, idx) => {
     const buttonType = type ?? (className?.includes('primary') ? 'primary' : 'default');
 
-    return (
+    (isLeft ? leftButtons : rightButtons).push(
       <Button
         key={label}
         onClick={() => {
@@ -190,7 +193,7 @@ const Alert = ({
         type={buttonType as 'default' | 'primary'}
       >
         {label}
-      </Button>
+      </Button>,
     );
   });
 
@@ -199,7 +202,12 @@ const Alert = ({
       centered
       className={styles.container}
       closable={false}
-      footer={footer}
+      footer={
+        <div className={styles.footer}>
+          <div className={styles.left}>{leftButtons}</div>
+          <div className={styles.right}>{rightButtons}</div>
+        </div>
+      }
       maskClosable={false}
       onCancel={popFromStack}
       open

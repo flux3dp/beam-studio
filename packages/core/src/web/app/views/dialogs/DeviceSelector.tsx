@@ -5,13 +5,15 @@ import { Modal, Spin } from 'antd';
 import classNames from 'classnames';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import alertConstants from '@core/app/constants/alert-constants';
 import deviceConstants from '@core/app/constants/device-constants';
 import ConnectionTypeIcons from '@core/app/icons/connection-type/ConnectionTypeIcons';
 import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
-import discover, { SEND_DEVICES_INTERVAL } from '@core/helpers/api/discover';
+import discover from '@core/helpers/api/discover';
 import fileExportHelper from '@core/helpers/file-export-helper';
 import i18n from '@core/helpers/i18n';
+import browser from '@core/implementations/browser';
+import os from '@core/implementations/os';
+import type { AlertButton } from '@core/interfaces/IAlert';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 import styles from './DeviceSelector.module.scss';

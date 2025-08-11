@@ -143,7 +143,7 @@ const showFluxPlusWarning = (monotype?: boolean): void => {
 
 eventEmitter.on('SHOW_FLUX_PLUS_WARNING', showFluxPlusWarning);
 
-const showDeviceSelector = (onSelect: (device: IDeviceInfo) => void) => {
+const showDeviceSelector = (onSelect: (device: IDeviceInfo | null) => void) => {
   addDialogComponent(
     'device-selector',
     <DeviceSelector onClose={() => popDialogById('device-selector')} onSelect={onSelect} />,
@@ -207,9 +207,9 @@ export default {
         />,
       );
     }),
-  selectDevice: async (): Promise<IDeviceInfo> => {
+  selectDevice: async (): Promise<IDeviceInfo | null> => {
     const device = await webNeedConnectionWrapper(
-      () => new Promise<IDeviceInfo>((resolve) => showDeviceSelector(resolve)),
+      () => new Promise<IDeviceInfo | null>((resolve) => showDeviceSelector(resolve)),
     );
 
     return device;
