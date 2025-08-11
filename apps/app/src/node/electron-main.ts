@@ -493,22 +493,8 @@ const init = () => {
   }
 };
 
-function openInitialFileInTab() {
-  if (fileToOpenOnLaunch && tabManager) {
-    const view = tabManager.getFocusedView();
-
-    if (view) {
-      const webContents = view.webContents;
-
-      // Store the file path with the window's ID and clear the global variable.
-      console.log(`File path for window ${webContents.id} is buffered, waiting for renderer to be ready.`);
-    }
-  }
-}
-
 app.whenReady().then(() => {
   init();
-  openInitialFileInTab();
 
   app.on('activate', () => {
     // On macOS it's common to re-create a window in the app when the

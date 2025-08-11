@@ -117,7 +117,7 @@ class TabManager {
     this.mainWindow.on('unmaximize', handleWindowSizeChanged);
     this.mainWindow.on('closed', () => {
       this.tabsList.forEach((id) => {
-        this.tabsMap[id].view.webContents.close();
+        this.tabsMap[id]?.view?.webContents?.close();
       });
     });
   };
@@ -402,7 +402,7 @@ class TabManager {
 
     if (isClosable) {
       const res = await this.closeWebContentsView(
-        tabsMap[id].view,
+        tabsMap[id]?.view,
         tabsMap[id].isLoading || tabsMap[id] === this.preloadedTab,
       );
 
