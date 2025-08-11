@@ -995,6 +995,8 @@ export interface ILang {
     charuco_position_bottom_left: string;
     charuco_position_bottom_right: string;
     charuco_position_center: string;
+    charuco_position_left: string;
+    charuco_position_right: string;
     charuco_position_top_left: string;
     charuco_position_top_right: string;
     check_checkpoint_data: string;

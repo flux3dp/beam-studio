@@ -995,6 +995,8 @@ const lang: ILang = {
     charuco_position_bottom_left: '왼쪽 하단',
     charuco_position_bottom_right: '오른쪽 하단',
     charuco_position_center: '중앙',
+    charuco_position_left: '왼쪽',
+    charuco_position_right: '오른쪽',
     charuco_position_top_left: '왼쪽 상단',
     charuco_position_top_right: '오른쪽 상단',
     check_checkpoint_data: '체크포인트 데이터',

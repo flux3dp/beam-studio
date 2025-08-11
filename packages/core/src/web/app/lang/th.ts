@@ -995,6 +995,8 @@ const lang: ILang = {
     charuco_position_bottom_left: 'ซ้ายล่าง',
     charuco_position_bottom_right: 'ขวาล่าง',
     charuco_position_center: 'กึ่งกลาง',
+    charuco_position_left: 'ซ้าย',
+    charuco_position_right: 'ขวา',
     charuco_position_top_left: 'ซ้ายบน',
     charuco_position_top_right: 'ขวาบน',
     check_checkpoint_data: 'ข้อมูลจุดตรวจสอบ',
