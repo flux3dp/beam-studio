@@ -5,6 +5,7 @@ import { funnel } from 'remeda';
 import alert from '@core/app/actions/alert-caller';
 import progress from '@core/app/actions/progress-caller';
 import { TabEvents } from '@core/app/constants/tabConstants';
+import deviceMaster from '@core/helpers/device-master';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
@@ -508,6 +509,45 @@ export const getDefaultHeader = () => {
   }
 
   return undefined;
+};
+
+export const recordMachines = async (): Promise<void> => {
+  let shouldRecord = true;
+
+  try {
+    const devices = deviceMaster.getAvailableDevices();
+    const registeredMachines = storage.get('registered-devices', false) || [];
+    const newMachines = devices
+      .filter((device) => !registeredMachines.includes(device.serial) && device.model !== 'fpm1')
+      .map((device) => device.serial);
+
+    if (newMachines.length === 0) return;
+
+    const response = (await axiosFluxId.post(
+      '/machine/activity/beam-studio',
+      { serials: newMachines },
+      { withCredentials: true },
+    )) as ResponseWithError;
+
+    if (response.status === 200) {
+      const { data } = response;
+
+      if (data.status === 'ok') {
+        storage.set('registered-devices', [...registeredMachines, ...newMachines]);
+      } else if (data.info === 'IGNORED') {
+        shouldRecord = false;
+      }
+    } else {
+      shouldRecord = false;
+    }
+  } catch (error) {
+    console.error('Error recording machines:', error);
+    shouldRecord = false;
+  } finally {
+    if (shouldRecord) {
+      setTimeout(recordMachines, 60000);
+    }
+  }
 };
 
 export default {

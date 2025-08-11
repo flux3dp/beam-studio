@@ -13,6 +13,8 @@ jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => useIsMobile(),
 }));
 
+jest.mock('@core/app/contexts/ElementPanelContext', () => ({ ElementPanelContext: React.createContext({}) }));
+
 jest.mock('./MainContent', () => 'main-content');
 
 const mockSetActiveMainType = jest.fn();

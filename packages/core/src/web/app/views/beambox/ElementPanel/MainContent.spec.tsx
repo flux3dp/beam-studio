@@ -11,6 +11,8 @@ jest.mock('@core/app/actions/dialog-caller', () => ({
   showLoginDialog: mockShowLoginDialog,
 }));
 
+jest.mock('@core/app/contexts/ElementPanelContext', () => ({ ElementPanelContext: React.createContext({}) }));
+
 jest.mock('./Element/BuiltinElement', () => 'builtin-element');
 jest.mock('./Element/NPElement', () => 'NP-element');
 jest.mock('./GridContent', () => 'grid-content');

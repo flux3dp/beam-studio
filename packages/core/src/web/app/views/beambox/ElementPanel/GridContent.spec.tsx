@@ -4,6 +4,8 @@ import { fireEvent, render } from '@testing-library/react';
 
 import { ElementPanelContext } from '@core/app/contexts/ElementPanelContext';
 
+jest.mock('@core/app/contexts/ElementPanelContext', () => ({ ElementPanelContext: React.createContext({}) }));
+
 jest.mock('./Element/BuiltinElement', () => 'builtin-element');
 jest.mock('./Element/NPElement', () => 'NP-element');
 jest.mock('./Element/Skeleton', () => 'skeleton');
