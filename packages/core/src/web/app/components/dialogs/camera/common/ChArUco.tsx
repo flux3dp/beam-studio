@@ -108,7 +108,7 @@ const ChArUco = ({ cameraIndex, onClose, onNext, onPrev, steps, title, updatePar
 
         for (let i = 0; i < steps.length; i++) {
           if (!indices.includes(i)) {
-            failedKeys.push(steps[i - 1].key);
+            failedKeys.push(steps[i].key);
           }
         }
       }
