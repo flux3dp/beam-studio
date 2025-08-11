@@ -66,11 +66,11 @@ const ConnectMachineIp = (): React.JSX.Element => {
           )}
           <TestInfo connectionCountDown={countDownDisplay} firmwareVersion={device?.version} testState={testState} />
           {isPromark && <Hint message={lang.initialize.connect_machine_ip.promark_hint} />}
-          {testState === TestState.IP_UNREACHABLE && os.isMacOS15OrLater && (
-            <Hint message={lang.initialize.connect_machine_ip.unreachable_macos_15} />
-          )}
           {ConnectMachineFailedStates.includes(testState) && (
             <Hint message={lang.initialize.connect_machine_ip.connection_failed_hint} />
+          )}
+          {testState === TestState.IP_UNREACHABLE && os.isMacOS15OrLater && (
+            <Hint message={lang.initialize.connect_machine_ip.unreachable_macos_15} />
           )}
         </div>
       </div>

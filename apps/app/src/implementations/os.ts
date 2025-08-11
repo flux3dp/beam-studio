@@ -58,13 +58,19 @@ export const macKernelVersionMap = {
 export type MacKernelVersionMap = keyof typeof macKernelVersionMap;
 
 const isMacOS15OrLater = (() => {
-  if (os.type() !== 'Darwin') {
+  try {
+    if (os.type() !== 'Darwin') {
+      return false;
+    }
+
+    const release = os.release();
+
+    return Number.parseInt(release?.split('.')[0] || '0', 10) >= 24;
+  } catch (e) {
+    console.warn('Failed to determine macOS version:', e);
+
     return false;
   }
-
-  const release = os.release();
-
-  return Number.parseInt(release?.split('.')[0] || '0', 10) >= 24;
 })();
 
 export default {
