@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
+import isDev from '@core/helpers/is-dev';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
 import useI18n from '@core/helpers/useI18n';
 
@@ -21,14 +22,17 @@ const FocusBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   const t = lang.beambox.right_panel.laser_panel;
   const { change, focus, focusStep, repeat } = useConfigPanelStore();
   const { selectedLayers } = useContext(ConfigPanelContext);
+  const isDevMode = useMemo(() => isDev(), []);
 
   const focusStepMax = useMemo(() => {
+    if (isDevMode) return 40;
+
     if (repeat.value <= 1) {
       return 10;
     }
 
     return 10 / (repeat.value - 1);
-  }, [repeat]);
+  }, [repeat, isDevMode]);
 
   const toggleFocusAdjust = () => {
     const value = -focus.value;
