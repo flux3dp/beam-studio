@@ -47,7 +47,6 @@ let menuManager: MenuManager | null;
 let tabManager: null | TabManager;
 let DEBUG = false;
 let fileToOpenOnLaunch: null | string = null;
-const pendingFileMap = new Map<number, string>();
 
 const globalData: {
   backend: { alive: boolean; logFile?: string; port?: number };
@@ -401,16 +400,14 @@ ipcMain.on('FRONTEND_READY', (event) => {
   const webContentsId = webContents.id;
 
   // Check if we have a pending file for the window that just became ready
-  if (pendingFileMap.has(webContentsId)) {
-    const filePath = pendingFileMap.get(webContentsId);
-
-    console.log(`Renderer ${webContentsId} is ready. Sending file: ${filePath}`);
+  if (webContentsId === tabManager?.welcomeTabId) {
+    console.log(`WelcomeTab Id: ${webContentsId} is ready. Sending file: ${fileToOpenOnLaunch}`);
 
     // Send the file path
-    webContents.send('open-file', filePath);
+    webContents.send('open-file', fileToOpenOnLaunch);
 
-    // Remove the file from the map so we don't send it again
-    pendingFileMap.delete(webContentsId);
+    // Clear the global variable
+    fileToOpenOnLaunch = null;
   }
 });
 
@@ -504,8 +501,6 @@ function openInitialFileInTab() {
       const webContents = view.webContents;
 
       // Store the file path with the window's ID and clear the global variable.
-      pendingFileMap.set(webContents.id, fileToOpenOnLaunch);
-      fileToOpenOnLaunch = null;
       console.log(`File path for window ${webContents.id} is buffered, waiting for renderer to be ready.`);
     }
   }
