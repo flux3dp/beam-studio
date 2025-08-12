@@ -1,3 +1,4 @@
+import NS from '@core/app/constants/namespaces';
 import history from '@core/app/svgedit/history/history';
 
 import { createAndFinalizeImage } from './createAndFinalizeImage';
@@ -48,7 +49,7 @@ export const convertUseToImage = async ({
   }
 
   // Rebuild a single matrix from all non-rotation transforms.
-  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  const svg = document.createElementNS(NS.SVG, 'svg');
   const combinedMatrix = otherTransforms.reduce((acc, matrix) => acc.multiply(matrix), svg.createSVGMatrix());
   let transformString = '';
 
