@@ -1,6 +1,6 @@
 import type { IChangeLog } from '@core/interfaces/IChangeLog';
 
-// 2.5.7 beta
+// 2.5.8 beta
 const CHANGES_TW = {
   added: ['新增 向量圖的向量轉點陣圖功能。'],
   changed: [
@@ -22,22 +22,22 @@ const CHANGES_TW = {
 };
 
 const CHANGES_EN = {
-  added: [
-    'Added Beam Studio Home page.',
-    'Added "Rounded Corners" feature in "Edit Image".',
-    'Added AF (Auto Focus) button (Ador, Beambox II, and HEXA only, HEXA requires firmware v4.3.11 or later).',
-    'Added offset feature for vector and raster objects.',
-    'Added "Content Crop Thumbnail" option in Preferences.',
-    'Added "Use Maximum Range" option in Preferences.',
-  ],
+  added: ['Added Convert to Image function for vector objects.'],
   changed: [
-    'Changed the credit calculation method for the AI Background Removal feature.',
-    'RTL text will now automatically use Text-to-Path converter 2.0.',
-    'Changed the interface and behavior of the "Non-working area"',
+    'Changed some document settings to now apply to new tabs.',
+    'Changed text can now be directly united with paths.',
+    'Changed alignment functions to take non-work areas into account.',
+    'Changed the initial coordinates for rotation axis center display.',
+    'Cancelled setting the rotation axis center when using the current position.',
+    'Changed error messages shown when unable to connect to machine by IP.',
+    'Changed the Sharpen tool window for images.',
+    'Changed the behavior for copy and paste.',
   ],
   fixed: [
-    'Fixed an issue where a text-on-path object will disappear after being converted to a path.',
-    'Fixed incorrect engraving order when loop compensation is set to 0.',
+    'Fixed an issue where rotated objects were not fully displayed after using the Passthrough function.',
+    'Fixed an issue where some preferences were not correctly applied in new tabs.',
+    'Fixed an issue in v2.5.7 where double-clicking a .beam file did not open it correctly.',
+    'Fixed an error when uploading large files to the My Cloud.',
   ],
 };
 
