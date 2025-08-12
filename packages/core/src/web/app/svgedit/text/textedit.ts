@@ -196,7 +196,7 @@ const renderText = (elem: Element, val?: string, showGrips?: boolean): void => {
   if (showGrips) {
     const selectorManager = selector.getSelectorManager();
 
-    selectorManager.requestSelector(textElem).resize();
+    selectorManager.requestSelector(textElem)?.resize();
   }
 };
 

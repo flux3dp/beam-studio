@@ -4,6 +4,7 @@ import undoManager from '@core/app/svgedit/history/undoManager';
 import { deleteElements } from '@core/app/svgedit/operations/delete';
 import disassembleUse from '@core/app/svgedit/operations/disassembleUse';
 import textActions from '@core/app/svgedit/text/textactions';
+import textedit from '@core/app/svgedit/text/textedit';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
@@ -188,4 +189,42 @@ export const generateImageRect = (element?: SVGImageElement): { command?: IBatch
   batchCommand.addSubCommand(new history.InsertElementCommand(rect));
 
   return { command: batchCommand, rect };
+};
+
+/**
+ * Converts all <text> and text-on-path elements on the canvas to paths.
+ * @returns A promise that resolves to a function that can revert the conversion.
+ */
+export const convertAllTextToPath = async (): Promise<() => void> => {
+  // 1. Create a master command to record all changes.
+  const parentCommand = new history.BatchCommand('Convert All Text to Path');
+
+  // 2. Find and convert all text-on-a-path elements first.
+  const textOnPathElements = document.querySelectorAll<SVGGElement>('[data-textpath-g="1"]');
+
+  for (const element of textOnPathElements) {
+    await convertTextOnPathToPath({ element, parentCommand });
+  }
+
+  // 3. Find all regular <text> elements, excluding those already handled.
+  const allTextElements = Array.from(document.querySelectorAll<SVGTextElement>('text'));
+  const regularTextElements = allTextElements.filter((textEl) => !textEl.closest('[data-textpath-g="1"]'));
+
+  for (const element of regularTextElements) {
+    await convertTextToPath({ element, parentCommand });
+  }
+
+  /**
+   * Reverts the conversion from text to paths.
+   */
+  const revert = () => {
+    // The unapply method reverses the command. It requires an object with a
+    // renderText function, which we can get from the editor's textActions.
+    parentCommand.unapply({
+      handleHistoryEvent: () => {},
+      renderText: textedit.renderText,
+    });
+  };
+
+  return revert;
 };

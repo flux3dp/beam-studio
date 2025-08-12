@@ -5,17 +5,19 @@ import Progress from '@core/app/actions/progress-caller';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import workareaManager from '@core/app/svgedit/workarea';
+import { convertAllTextToPath } from '@core/helpers/convertToPath';
 import i18n from '@core/helpers/i18n';
 import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getAllLayerNames, getLayerElementByName } from '@core/helpers/layer/layer-helper';
 import { layersToA4Base64 } from '@core/helpers/layer/layersToA4Base64';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { isMac } from '@core/helpers/system-helper';
 import { convertVariableText } from '@core/helpers/variableText';
 import dialog from '@core/implementations/dialog';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import { getDefaultFileName, switchSymbolWrapper } from '../utils';
+import { getDefaultFileName, switchSymbolWrapper } from '../utils/common';
 import { checkNounProjectElements, removeNPElementsWrapper } from '../utils/nounProject';
 
 let svgCanvas: ISVGCanvas;
@@ -50,7 +52,7 @@ export const exportAsBVG = async (): Promise<boolean> => {
       }),
     );
   const newFilePath = await dialog.writeFileDialog(getContent, langFile.save_scene, defaultFileName, [
-    { extensions: ['bvg'], name: window.os === 'MacOS' ? `${langFile.scene_files} (*.bvg)` : langFile.scene_files },
+    { extensions: ['bvg'], name: isMac() ? `${langFile.scene_files} (*.bvg)` : langFile.scene_files },
     { extensions: ['*'], name: langFile.all_files },
   ]);
 
@@ -73,7 +75,7 @@ export const exportAsSVG = async (): Promise<void> => {
   svgCanvas.clearSelection();
 
   const getContent = async () => {
-    const revert = await convertVariableText();
+    const reverts = [await convertVariableText(), await convertAllTextToPath()];
     const allLayers = document.querySelectorAll('g.layer');
 
     allLayers.forEach((layer) => layer.removeAttribute('clip-path'));
@@ -82,7 +84,7 @@ export const exportAsSVG = async (): Promise<void> => {
     const res = removeNPElementsWrapper(() => switchSymbolWrapper(() => svgCanvas.getSvgString({ unit: 'mm' })));
 
     allLayers.forEach((layer) => layer.setAttribute('clip-path', 'url(#scene_mask)'));
-    revert?.();
+    reverts.forEach((revert) => revert?.());
 
     return res;
   };
@@ -90,7 +92,7 @@ export const exportAsSVG = async (): Promise<void> => {
   const langFile = LANG.topmenu.file;
 
   await dialog.writeFileDialog(getContent, langFile.save_svg, defaultFileName, [
-    { extensions: ['svg'], name: window.os === 'MacOS' ? `${langFile.svg_files} (*.svg)` : langFile.svg_files },
+    { extensions: ['svg'], name: isMac() ? `${langFile.svg_files} (*.svg)` : langFile.svg_files },
     { extensions: ['*'], name: langFile.all_files },
   ]);
 };
@@ -99,11 +101,11 @@ export const exportAsImage = async (type: 'jpg' | 'png'): Promise<void> => {
   svgCanvas.clearSelection();
   svgCanvas.removeUnusedDefs();
 
-  const revert = await convertVariableText();
+  const reverts = [await convertVariableText(), await convertAllTextToPath()];
   const output = switchSymbolWrapper(() => svgCanvas.getSvgString());
   const langFile = LANG.topmenu.file;
 
-  revert?.();
+  reverts.forEach((revert) => revert?.());
   Progress.openNonstopProgress({ id: 'export_image', message: langFile.converting });
 
   const defaultFileName = getDefaultFileName();
@@ -129,7 +131,7 @@ export const exportAsImage = async (type: 'jpg' | 'png'): Promise<void> => {
 
   Progress.popById('export_image');
   await dialog.writeFileDialog(getContent, langFile[`save_${type}`], defaultFileName, [
-    { extensions: [type], name: window.os === 'MacOS' ? `${fileTypeName} (*.${type})` : fileTypeName },
+    { extensions: [type], name: isMac() ? `${fileTypeName} (*.${type})` : fileTypeName },
     { extensions: ['*'], name: langFile.all_files },
   ]);
 };
@@ -156,7 +158,7 @@ export const exportUvPrintAsPdf = async (): Promise<void> => {
   const getContent = () => new Blob([pdf.output('blob')], { type: 'application/pdf' });
 
   await dialog.writeFileDialog(getContent, lang.save_pdf, defaultFileName, [
-    { extensions: ['pdf'], name: window.os === 'MacOS' ? `PDF (*.pdf)` : 'PDF' },
+    { extensions: ['pdf'], name: isMac() ? `PDF (*.pdf)` : 'PDF' },
     { extensions: ['*'], name: lang.all_files },
   ]);
 };
