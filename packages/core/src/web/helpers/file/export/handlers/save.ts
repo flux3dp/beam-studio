@@ -9,8 +9,8 @@ import dialog from '@core/implementations/dialog';
 import fs from '@core/implementations/fileSystem';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import { getDefaultFileName } from '../utils';
 import { generateBeamBuffer } from '../utils/beam';
+import { getDefaultFileName } from '../utils/common';
 
 import { saveToCloud } from './cloud';
 
