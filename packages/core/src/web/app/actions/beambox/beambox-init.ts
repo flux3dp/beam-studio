@@ -12,6 +12,7 @@ import updateFontConvert from '@core/app/components/dialogs/updateFontConvert';
 import AlertConstants from '@core/app/constants/alert-constants';
 import FontConstants from '@core/app/constants/font-constants';
 import { gestureIntroduction } from '@core/app/constants/media-tutorials';
+import NS from '@core/app/constants/namespaces';
 import BeamboxStore from '@core/app/stores/beambox-store';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import workareaManager from '@core/app/svgedit/workarea';
@@ -129,12 +130,11 @@ class BeamboxInit {
     document.getElementById('horizontal_guide')?.remove();
     document.getElementById('vertical_guide')?.remove();
 
-    const { NS, utilities } = window.svgedit;
+    const { utilities } = window.svgedit;
     const guidesLines = (() => {
-      const svgdoc = document.getElementById('svgcanvas')!.ownerDocument;
-      const linesGroup = svgdoc.createElementNS(NS.SVG, 'svg');
-      const lineVertical = svgdoc.createElementNS(NS.SVG, 'line');
-      const lineHorizontal = svgdoc.createElementNS(NS.SVG, 'line');
+      const linesGroup = document.createElementNS(NS.SVG, 'svg');
+      const lineVertical = document.createElementNS(NS.SVG, 'line');
+      const lineHorizontal = document.createElementNS(NS.SVG, 'line');
       const { height, maxY, minY, width } = workareaManager;
 
       utilities.assignAttributes(linesGroup, {
