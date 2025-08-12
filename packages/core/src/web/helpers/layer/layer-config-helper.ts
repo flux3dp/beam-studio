@@ -129,7 +129,7 @@ export const moduleBaseConfig: Partial<Record<LayerModuleType, Partial<Omit<Conf
     amDensity: 5,
     halftone: 2,
     ink: 70,
-    printingSpeed: 15,
+    printingSpeed: 25,
   },
 };
 
