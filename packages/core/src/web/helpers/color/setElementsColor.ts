@@ -9,10 +9,10 @@ const setElementsColor = (elements: Element[], color: string, isFullColor = fals
   const descendants: Array<Element | typeof endByColorSymbol | typeof endByLayerSymbol> = [...elements];
   let svgByColor = 0;
   let isWireFrame = false;
-  const promises = [];
+  const promises: Array<Promise<void>> = [];
 
   while (descendants.length > 0) {
-    const elem = descendants.pop();
+    const elem = descendants.pop()!;
 
     if (elem === endByColorSymbol) {
       svgByColor -= 1;
@@ -26,7 +26,8 @@ const setElementsColor = (elements: Element[], color: string, isFullColor = fals
       if (['circle', 'ellipse', 'line', 'path', 'polygon', 'rect', 'text'].includes(elem.tagName)) {
         if (!isFullColor) {
           // remove stroke for self drawn elements, set stroke color for imported elements
-          elem.removeAttribute('stroke-width');
+          if (elem.tagName !== 'text') elem.removeAttribute('stroke-width');
+
           elem.setAttribute('vector-effect', 'non-scaling-stroke');
 
           if (((isWireFrame && svgByColor === 0) || attrStroke) && attrStroke !== 'none') {
@@ -77,7 +78,7 @@ const setElementsColor = (elements: Element[], color: string, isFullColor = fals
         descendants.push(...(elem.childNodes as unknown as Element[]));
 
         const href = elem.getAttribute('href') || elem.getAttribute('xlink:href');
-        const symbol = (elem.getRootNode() as Element).querySelector(href);
+        const symbol = href ? (elem.getRootNode() as Element).querySelector(href) : null;
 
         if (symbol) {
           descendants.push(symbol);

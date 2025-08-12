@@ -1,6 +1,6 @@
 export interface TextAttribute {
   fill?: string;
-  fill_opacity: number | string;
+  fill_opacity?: number | string;
   fill_paint?: string;
   font_family: string;
   font_postscriptName: string;
@@ -13,5 +13,5 @@ export interface TextAttribute {
   stroke_opacity?: number | string;
   stroke_paint?: string;
   stroke_width?: number | string;
-  text_anchor: string;
+  text_anchor?: string;
 }

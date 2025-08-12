@@ -15,6 +15,7 @@ import { gestureIntroduction } from '@core/app/constants/media-tutorials';
 import NS from '@core/app/constants/namespaces';
 import BeamboxStore from '@core/app/stores/beambox-store';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import { initCurText } from '@core/app/svgedit/text/textedit';
 import workareaManager from '@core/app/svgedit/workarea';
 import { showCameraCalibration } from '@core/app/views/beambox/Camera-Calibration';
 import alertHelper from '@core/helpers/alert-helper';
@@ -64,6 +65,7 @@ class BeamboxInit {
     alertHelper.registerAlertEvents();
     boundaryDrawer.registerEvents();
     registerImageSymbolEvents();
+    initCurText();
 
     // WebSocket for Adobe Illustrator Plug-In
     aiExtension.init();

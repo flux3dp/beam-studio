@@ -233,7 +233,6 @@ const svgEditor = (window['svgEditor'] = (function () {
     'zh-cn': 'zh-CN',
     'zh-tw': 'zh-TW',
   };
-  const defaultFont: IDefaultFont = storage.get('default-font');
   let pressedKey: string[] = [];
 
   document.addEventListener('keydown', (e) => {
@@ -335,15 +334,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       showGrid: true, // Set by ext-grid.js
       showlayers: true,
       snappingStep: 10,
-      text: {
-        fill: '#fff',
-        fill_opacity: '0',
-        font_family: defaultFont ? defaultFont.family : 'Arial',
-        font_postscriptName: defaultFont ? defaultFont.postscriptName : 'ArialMT',
-        font_size: isWeb() ? 200 : 100,
-        stroke_width: 1,
-        text_anchor: 'start',
-      },
       wireframe: true,
     },
     /**

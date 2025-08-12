@@ -3,10 +3,14 @@
  */
 
 import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
+import NS from '@core/app/constants/namespaces';
+import { TabEvents } from '@core/app/constants/tabConstants';
 import selector from '@core/app/svgedit/selector';
 import textActions from '@core/app/svgedit/text/textactions';
 import { getRotationAngle } from '@core/app/svgedit/transform/rotation';
+import isWeb from '@core/helpers/is-web';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import communicator from '@core/implementations/communicator';
 import storage from '@core/implementations/storage';
 import type { IDefaultFont } from '@core/interfaces/IFont';
 import type { ICommand } from '@core/interfaces/IHistory';
@@ -14,7 +18,6 @@ import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { TextAttribute } from '@core/interfaces/Text';
 
 const { svgedit } = window;
-const { NS } = svgedit;
 
 // Note: curText is initialized when svgCanvas is ready
 // Initial value is defined in svg-editor.ts defaultConfig.text
@@ -26,6 +29,17 @@ getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
   svgEditor = globalSVG.Editor;
 });
+
+export const initCurText = () => {
+  const defaultFont: IDefaultFont = storage.get('default-font');
+
+  curText = {
+    font_family: defaultFont ? defaultFont.family : 'Arial',
+    font_postscriptName: defaultFont ? defaultFont.postscriptName : 'ArialMT',
+    font_size: isWeb() ? 200 : 100,
+    stroke_width: 2,
+  };
+};
 
 const updateCurText = (newValue: Partial<TextAttribute>): void => {
   curText = { ...curText, ...newValue };
@@ -39,6 +53,10 @@ const useDefaultFont = (): void => {
     curText.font_postscriptName = defaultFont.postscriptName;
   }
 };
+
+communicator.on(TabEvents.ReloadSettings, () => {
+  useDefaultFont();
+});
 
 const getCurText = (): TextAttribute => curText;
 
