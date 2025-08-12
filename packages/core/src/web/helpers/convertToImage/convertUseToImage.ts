@@ -1,12 +1,12 @@
+import NS from '@core/app/constants/namespaces';
 import history from '@core/app/svgedit/history/history';
-import { getRotationAngle } from '@core/app/svgedit/transform/rotation';
 
 import { createAndFinalizeImage } from './createAndFinalizeImage';
 import type { ConvertSvgToImageParams, ConvertToImageResult } from './types';
 
 /**
  * Converts a <use> element to a sharp <image> by respecting the
- * source's natural dimensions and using transforms for scaling and positioning.
+ * source's dimensions and using transforms for scaling and positioning.
  */
 export const convertUseToImage = async ({
   isToSelect = true,
@@ -23,28 +23,46 @@ export const convertUseToImage = async ({
     return undefined;
   }
 
-  // 1. Load the blob URL into an in-memory image to get its true dimensions.
-  const naturalSize = await new Promise<{ height: number; width: number }>((resolve, reject) => {
-    const img = new Image();
-
-    img.onload = () => resolve({ height: img.naturalHeight, width: img.naturalWidth });
-    img.onerror = () => reject(new Error('Failed to load image from blob URL.'));
-    img.src = href;
-  });
-
-  // 2. The new <image> will have the natural dimensions of the source.
-  // All positioning and scaling is handled by the transform attribute.
   const dataXform = svgElement.getAttribute('data-xform');
-  const [formX, formY, width, height] = dataXform?.split(' ')?.map((v) => Number.parseFloat(v.split('=')[1])) || [
-    0, 0, 0, 0,
-  ];
-  const x = Number.parseFloat(svgElement.getAttribute('x') || '0') + formX;
-  const y = Number.parseFloat(svgElement.getAttribute('y') || '0') + formY;
-  const transform = svgElement.getAttribute('transform') || '';
-  const dimensions = { height: naturalSize.height, width: naturalSize.width, x, y };
+  const [formX = 0, formY = 0, width = 0, height = 0] =
+    dataXform?.split(' ').map((v) => Number.parseFloat(v.split('=')[1])) || [];
+  const dimensions = {
+    height,
+    width,
+    x: Number.parseFloat(svgElement.getAttribute('x') || '0') + formX,
+    y: Number.parseFloat(svgElement.getAttribute('y') || '0') + formY,
+  };
 
+  // Separate the rotation from all other transforms.
+  let angle = 0;
+  const otherTransforms: SVGMatrix[] = [];
+  const transforms = svgElement.transform.baseVal;
+
+  for (let i = 0; i < transforms.numberOfItems; i++) {
+    const t = transforms.getItem(i);
+
+    if (t.type === SVGTransform.SVG_TRANSFORM_ROTATE) {
+      angle = t.angle;
+    } else {
+      otherTransforms.push(t.matrix);
+    }
+  }
+
+  // Rebuild a single matrix from all non-rotation transforms.
+  const svg = document.createElementNS(NS.SVG, 'svg');
+  const combinedMatrix = otherTransforms.reduce((acc, matrix) => acc.multiply(matrix), svg.createSVGMatrix());
+  let transformString = '';
+
+  // Check if the matrix is not the identity matrix to avoid adding an unnecessary transform.
+  if (!combinedMatrix.isIdentity) {
+    const { a, b, c, d, e, f } = combinedMatrix;
+
+    transformString = `matrix(${a},${b},${c},${d},${e},${f})`;
+  }
+
+  // Create the new image, applying the separated components.
   return await createAndFinalizeImage(
-    { angle: getRotationAngle(svgElement), attributes: { height, width }, dimensions, href, transform },
+    { angle, dimensions, href, transform: transformString },
     { isToSelect, parentCmd, svgElement },
   );
 };
