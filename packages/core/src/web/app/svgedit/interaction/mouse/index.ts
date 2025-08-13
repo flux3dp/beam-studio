@@ -679,7 +679,7 @@ const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: 
     }
   }
 
-  svgCanvas.selectorManager.requestSelector(selected).resize();
+  svgCanvas.selectorManager.requestSelector(selected)?.resize();
   svgCanvas.call('transition', svgCanvas.getSelectedElems());
 
   if (svgedit.utilities.getElem('text_cursor')) svgCanvas.textActions.init();
@@ -816,7 +816,7 @@ const mouseMove = (evt: MouseEvent) => {
             if (tlist.numberOfItems) tlist.replaceItem(xform, 0);
             else tlist.appendItem(xform);
 
-            svgCanvas.selectorManager.requestSelector(selected).resize();
+            svgCanvas.selectorManager.requestSelector(selected)?.resize();
           }
 
           if (svgCanvas.sensorAreaInfo) {
@@ -877,7 +877,7 @@ const mouseMove = (evt: MouseEvent) => {
         [x2, y2] = findAndDrawAlignPoints(x2, y2);
       }
 
-      svgCanvas.selectorManager.requestSelector(selected).resize();
+      svgCanvas.selectorManager.requestSelector(selected)?.resize();
       shape.setAttributeNS(null, 'x2', x2);
       shape.setAttributeNS(null, 'y2', y2);
       ObjectPanelController.updateDimensionValues({ x2, y2 });
@@ -918,7 +918,7 @@ const mouseMove = (evt: MouseEvent) => {
 
       svgedit.utilities.assignAttributes(shape, { height: h, width: w, x: newX, y: newY }, 1000);
       ObjectPanelController.updateDimensionValues({ height: h, width: w, x: newX, y: newY });
-      svgCanvas.selectorManager.requestSelector(selected).resize();
+      svgCanvas.selectorManager.requestSelector(selected)?.resize();
 
       break;
     case 'ellipse':
@@ -938,7 +938,7 @@ const mouseMove = (evt: MouseEvent) => {
       shape.setAttributeNS(null, 'ry', ry);
 
       ObjectPanelController.updateDimensionValues({ rx, ry });
-      svgCanvas.selectorManager.requestSelector(selected).resize();
+      svgCanvas.selectorManager.requestSelector(selected)?.resize();
       break;
     // update path stretch line coordinates
     case 'path':
@@ -1225,7 +1225,7 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
             });
           }
 
-          svgCanvas.selectorManager.requestSelector(selected).show(true);
+          svgCanvas.selectorManager.requestSelector(selected)?.show(true);
         }
 
         // always recalculate dimensions to strip off stray identity transforms
@@ -1257,7 +1257,7 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
             for (const element of selectedElements) {
               if (!element?.firstChild && element?.tagName !== 'use') {
                 // Not needed for groups (incorrectly resizes elems), possibly not needed at all?
-                svgCanvas.selectorManager.requestSelector(element).resize();
+                svgCanvas.selectorManager.requestSelector(element)?.resize();
               }
             }
           }
@@ -1500,7 +1500,7 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
 
     if (!isContinuousDrawing) {
       if (currentMode === 'textedit') {
-        svgCanvas.selectorManager.requestSelector(element).show(true);
+        svgCanvas.selectorManager.requestSelector(element)?.show(true);
       } else if (element.parentNode) {
         svgCanvas.selectOnly([element], true);
         svgCanvas.call('changed', [element]);
