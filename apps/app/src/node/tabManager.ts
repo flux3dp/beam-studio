@@ -103,6 +103,10 @@ class TabManager {
       this.sendToOtherViews(e.sender.id, TabEvents.GlobalPreferenceChanged, key, value);
     });
 
+    ipcMain.on(TabEvents.StorageValueChanged, (e, key, value) => {
+      this.sendToOtherViews(e.sender.id, TabEvents.StorageValueChanged, key, value);
+    });
+
     const handleWindowSizeChanged = () => {
       const tabs = Object.values(this.tabsMap);
 

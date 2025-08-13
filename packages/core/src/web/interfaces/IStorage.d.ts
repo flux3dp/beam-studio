@@ -13,7 +13,7 @@ export interface Storage {
   'active-lang': string;
   'ador-backup-path': string;
   'alert-config': any;
-  'announcement-record': AnnouncementRecord; // IRecord
+  'announcement-record': AnnouncementRecord;
   'auto-save-config': AutoSaveConfig;
   auto_check_update: boolean;
   auto_connect: boolean;
@@ -60,12 +60,12 @@ export interface Storage {
 
 export type StorageKey = keyof Storage;
 
-export interface IStorage {
-  clearAll(): IStorage;
-  clearAllExceptIP(): IStorage;
+export interface StorageManager {
+  clearAll(): StorageManager;
+  clearAllExceptIP(): StorageManager;
   get<K extends StorageKey>(name: K, useCache?: boolean): Storage[K];
   getStore(): Storage;
   isExisting(key: StorageKey, useCache?: boolean): boolean;
-  removeAt(name: StorageKey): IStorage;
-  set<K extends StorageKey>(name: K, val: Storage[K]): IStorage;
+  removeAt(name: StorageKey): StorageManager;
+  set<K extends StorageKey>(name: K, val: Storage[K], shouldNotifyOthers?: boolean): StorageManager;
 }

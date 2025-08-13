@@ -1,3 +1,3 @@
-import type { IStorage } from '@core/interfaces/IStorage';
+import type { StorageManager } from '@core/interfaces/IStorage';
 
-export default {} as IStorage;
+export default {} as StorageManager;

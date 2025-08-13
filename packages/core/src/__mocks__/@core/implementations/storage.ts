@@ -1,8 +1,8 @@
-import type { IStorage, StorageKey } from '@core/interfaces/IStorage';
+import type { StorageKey, StorageManager } from '@core/interfaces/IStorage';
 
 let storage: any = {};
 
-const instance: IStorage = {
+const instance: StorageManager = {
   clearAll: () => {
     storage = {};
 
