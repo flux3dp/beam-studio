@@ -67,11 +67,7 @@ const getOutput = (): string[] => {
     const key = keys[i];
     let value = store.get(key);
 
-    console.log(key, value);
-
-    if (typeof value === 'string' && value.startsWith('-----BEGIN RSA PRIVATE KEY-----\n')) {
-      value = '[hidden]';
-    }
+    if (key === 'flux-rsa-key') value = '[hidden]';
 
     output.push(`${key}=${typeof value === 'object' ? JSON.stringify(value) : value}\n\n`);
   }
