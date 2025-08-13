@@ -1,8 +1,6 @@
-import tabController from '@core/app/actions/tabController';
 import history from '@core/app/svgedit/history/history';
 import { moveElements } from '@core/app/svgedit/operations/move';
 import selector from '@core/app/svgedit/selector';
-import workareaManager from '@core/app/svgedit/workarea';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
@@ -11,6 +9,7 @@ import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import undoManager from '../../../history/undoManager';
 import { handlePastedRef } from '../helpers/paste';
 import { clipboardCore } from '../singleton';
+import { updateSignatureClipboardCommand, useClipboardStore } from '../useClipboardStore';
 
 const { svgedit } = window;
 
@@ -35,7 +34,9 @@ export const pasteElements = async ({
 }): Promise<null | { cmd: IBatchCommand; elems: Element[] }> => {
   const clipboard = await clipboardCore.getData();
 
-  if (!clipboard?.length) return null;
+  if (!clipboard?.length) {
+    return null;
+  }
 
   const pasted = Array.of<SVGGElement>();
   const batchCmd = new history.BatchCommand('Paste elements');
@@ -64,7 +65,6 @@ export const pasteElements = async ({
 
     batchCmd.addSubCommand(new history.InsertElementCommand(copy));
     (svgCanvas as any).restoreRefElems(copy);
-
     promise.then(() => {
       updateElementColor(copy);
     });
@@ -72,7 +72,6 @@ export const pasteElements = async ({
 
   if (selectElement) svgCanvas.selectOnly(pasted, true);
 
-  // Unified positioning logic
   let dx: number | undefined;
   let dy: number | undefined;
 
@@ -129,20 +128,10 @@ export const pasteElements = async ({
 };
 
 /**
- * @deprecated Use pasteWithDefaultPosition or pasteElements({ type: 'coordinate', ... }) instead.
- */
-export const pasteInCenter = async (): Promise<null | { cmd: IBatchCommand; elems: Element[] }> => {
-  const zoom = workareaManager.zoomRatio;
-  const workarea = document.getElementById('workarea')!;
-  const x = (workarea.scrollLeft + workarea.clientWidth / 2) / zoom - workareaManager.width;
-  const y = (workarea.scrollTop + workarea.clientHeight / 2) / zoom - workareaManager.height;
-
-  return pasteElements({ type: 'coordinate', x, y });
-};
-
-/**
- * Pastes elements to the current drawing with a default offset with 100 100 pixels.
- * Or pastes in place if the first element from clipboard is not present.
+ * Pastes elements from the clipboard.
+ * - If pasting the same content consecutively, applies an incremental offset.
+ * - If pasting new content, resets the offset.
+ * - If pasting from another tab, pastes in place without an offset.
  * @param x - The horizontal offset. Defaults to 100.
  * @param y - The vertical offset. Defaults to 100.
  */
@@ -150,13 +139,29 @@ export const pasteWithDefaultPosition = async (
   x = 100,
   y = 100,
 ): Promise<null | { cmd: IBatchCommand; elems: Element[] }> => {
-  const rawData = await clipboardCore.getRawData();
+  const batchCommand = new history.BatchCommand('Paste elements with default position');
+  const elements = await clipboardCore.getData();
 
-  if (!rawData) {
-    return pasteElements({ type: 'inPlace', x, y });
+  if (elements.length === 0) {
+    return null;
   }
 
-  const isPasteToSourceTab = rawData.source === String(tabController.currentId);
+  const newSignature = elements.map((el) => el.outerHTML.replace(/\s*id="[^"]*"/g, '')).join('');
+  const updateSignatureCommand = new updateSignatureClipboardCommand(newSignature);
 
-  return isPasteToSourceTab ? pasteElements({ type: 'inPlace', x, y }) : pasteElements({ type: 'inPlace' });
+  useClipboardStore.getState().updateSignature(newSignature);
+
+  const consecutivePasteCounter = useClipboardStore.getState().counter;
+  const offsetX = x * consecutivePasteCounter;
+  const offsetY = y * consecutivePasteCounter;
+
+  const pasteCommand = await pasteElements({ isSubCmd: true, type: 'inPlace', x: offsetX, y: offsetY });
+
+  batchCommand.addSubCommand(updateSignatureCommand);
+  batchCommand.addSubCommand(pasteCommand?.cmd!);
+
+  undoManager.addCommandToHistory(batchCommand);
+  svgCanvas.call('changed', pasteCommand?.elems!);
+
+  return { cmd: batchCommand, elems: pasteCommand?.elems! };
 };
