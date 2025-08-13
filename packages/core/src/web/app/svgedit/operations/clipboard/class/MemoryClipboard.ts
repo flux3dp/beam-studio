@@ -13,9 +13,9 @@ export class MemoryClipboard extends Clipboard implements ClipboardCore {
     this.clipboardData = [...elems];
   };
 
-  getRawData = async (): Promise<ClipboardData> =>
+  getRawData = async (): Promise<ClipboardData | null> =>
     // only provide id and source for paste check
-    ({ id: this.id, source: 'web' }) as ClipboardData;
+    this.clipboardData.length ? ({ id: this.id, source: 'web' } as ClipboardData) : null;
 
   getData = async (): Promise<Element[]> => this.clipboardData;
 
