@@ -1070,6 +1070,8 @@ const lang: ILang = {
     put_chessboard_bb2_desc_1: 'Please download the following chessboard file and print it on A4 or letter size paper (the printed chessboard should have 1x1 cm squares).',
     put_chessboard_bb2_desc_2: 'Secure the printed chessboard paper onto a non-deformable board, such as acrylic or glass, ensuring that the chessboard is smooth and free of wrinkles or lifting.',
     put_chessboard_bb2_desc_3: 'Place the board with the chessboard flatly at the center of the work area.',
+    put_chessboard_bm2_1: 'Please download and print the following file on A4 paper for the camera calibration.',
+    put_chessboard_bm2_2: 'Please place the calibration paper flat in the designated position on the work platform.',
     put_chessboard_promark_1: 'Adjust the focal distance to the appropriate focus for the field lens.',
     put_chessboard_promark_2: "Please ensure the checkerboard paper is clearly visible without glare. Click 'Next' to take a photo.",
     put_chessboard_promark_desc_1: 'Please use the checkerboard paper provided in the accessory box, or print the following checkerboard pattern on A4 paper for camera calibration.',

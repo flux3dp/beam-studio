@@ -1070,6 +1070,8 @@ const lang: ILang = {
     put_chessboard_bb2_desc_1: '請下載以下棋盤格檔案，並將其列印於 A4 紙上（列印後的棋盤格需為 1x1 cm）。',
     put_chessboard_bb2_desc_2: '將列印好的棋盤紙平整地貼在壓克力或玻璃等不易變形的板材上，務必確保棋盤格平整且無皺摺或浮起。',
     put_chessboard_bb2_desc_3: '將貼有棋盤格的板材平放於工作區域的中央。',
+    put_chessboard_bm2_1: '請下載並將以下檔案列印在A4紙上，用於相機校正。',
+    put_chessboard_bm2_2: '請將校正紙平放在工作區域的指定位置。',
     put_chessboard_promark_1: '將焦距調整至該場鏡的適當焦距。',
     put_chessboard_promark_2: '請確認棋盤格清晰可見，避免反光。點選「下一步」以拍攝照片。',
     put_chessboard_promark_desc_1: '請使用配件盒內提供的棋盤格紙，或將以下棋盤格圖檔列印於 A4 紙上，以進行相機校正。',

@@ -1070,6 +1070,8 @@ const lang: ILang = {
     put_chessboard_bb2_desc_1: 'Laden Sie die folgende Schachbrettdatei herunter und drucken Sie sie auf A4-Papier aus (das gedruckte Schachbrett sollte Quadrate von 1x1 cm haben).',
     put_chessboard_bb2_desc_2: 'Befestigen Sie das gedruckte Schachbrettpapier auf einer unverformbaren Platte wie Acryl oder Glas und stellen Sie sicher, dass das Schachbrett glatt und frei von Falten oder Hebungen ist.',
     put_chessboard_bb2_desc_3: 'Legen Sie die Platte mit dem Schachbrett flach in die Mitte des Arbeitsbereichs.',
+    put_chessboard_bm2_1: 'Bitte laden Sie die folgende Datei herunter und drucken Sie sie auf A4-Papier für die Kamerakalibrierung aus.',
+    put_chessboard_bm2_2: 'Bitte legen Sie das Kalibrierungspapier flach an der vorgesehenen Position auf der Arbeitsfläche ab.',
     put_chessboard_promark_1: 'Passen Sie den Brennabstand auf die geeignete Schärfe für das Feldobjektiv an.',
     put_chessboard_promark_2: 'Stellen Sie sicher, dass das Schachbrettmuster ohne Blendung klar sichtbar ist. Klicken Sie auf "Weiter", um ein Foto zu machen.',
     put_chessboard_promark_desc_1: 'Bitte verwenden Sie das im Zubehörkasten bereitgestellte Schachbrettmuster oder drucken Sie das folgende Schachbrettmuster auf A4-Papier für die Kamerakalibrierung.',

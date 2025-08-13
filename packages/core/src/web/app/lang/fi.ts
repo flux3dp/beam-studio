@@ -1070,6 +1070,8 @@ const lang: ILang = {
     put_chessboard_bb2_desc_1: 'Lataa seuraava shakkilautatiedosto ja tulosta se A4-paperille (tulostetun shakkilaudan neliöiden koko tulee olla 1x1 cm).',
     put_chessboard_bb2_desc_2: 'Kiinnitä tulostettu shakkilauta muotonsa pitävälle alustalle, kuten akryylille tai lasille, varmistaen, että lauta on sileä eikä siinä ole ryppyjä tai kohoumia.',
     put_chessboard_bb2_desc_3: 'Aseta alusta, jossa on shakkilauta, tasaisesti työalueen keskelle.',
+    put_chessboard_bm2_1: 'Lataa ja tulosta seuraava tiedosto A4-paperille kameran kalibrointia varten.',
+    put_chessboard_bm2_2: 'Aseta kalibrointipaperi tasaisesti työalueen määrättyyn kohtaan.',
     put_chessboard_promark_1: 'Säädä polttoväli sopivaksi kenttälinssin tarkennukselle.',
     put_chessboard_promark_2: 'Varmista, että shakkilautapaperi on selkeästi näkyvissä ilman häikäisyä. Napsauta "Seuraava" ottaaksesi kuvan.',
     put_chessboard_promark_desc_1: 'Käytä tarvikelaatikossa mukana toimitettua shakkilautapaperia tai tulosta seuraava shakkikuvio A4-paperille kameran kalibrointia varten.',
