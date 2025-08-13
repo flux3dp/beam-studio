@@ -16,6 +16,9 @@ const moduleBoundaries: Partial<
   },
   fbm2: {
     [LayerModule.LASER_1064]: { bottom: 20, left: 0, right: 90, top: 20 },
+    [LayerModule.PRINTER_4C]: { bottom: 0, left: 0, right: 10, top: 0 },
+    [LayerModule.UV_VARNISH]: { bottom: 0, left: 0, right: 10, top: 0 },
+    [LayerModule.UV_WHITE_INK]: { bottom: 0, left: 0, right: 10, top: 0 },
   },
 };
 
