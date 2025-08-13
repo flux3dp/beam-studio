@@ -328,10 +328,22 @@ describe('test boundaryDrawer', () => {
     expect(mockGetModuleBoundary).toHaveBeenNthCalledWith(2, 'fbm2', LayerModule.LASER_UNIVERSAL);
     expect(mockGetModuleBoundary).toHaveBeenNthCalledWith(3, 'fbm2', LayerModule.LASER_1064);
     expect(mockHasModuleLayer).toHaveBeenCalledTimes(8);
-    expect(mockHasModuleLayer).toHaveBeenNthCalledWith(1, [LayerModule.LASER_UNIVERSAL]);
-    expect(mockHasModuleLayer).toHaveBeenNthCalledWith(2, [LayerModule.PRINTER_4C]);
-    expect(mockHasModuleLayer).toHaveBeenNthCalledWith(3, [LayerModule.UV_VARNISH]);
-    expect(mockHasModuleLayer).toHaveBeenNthCalledWith(4, [LayerModule.LASER_1064]);
+    expect(mockHasModuleLayer).toHaveBeenNthCalledWith(1, [LayerModule.LASER_UNIVERSAL], {
+      checkRepeat: true,
+      checkVisible: true,
+    });
+    expect(mockHasModuleLayer).toHaveBeenNthCalledWith(2, [LayerModule.PRINTER_4C], {
+      checkRepeat: true,
+      checkVisible: true,
+    });
+    expect(mockHasModuleLayer).toHaveBeenNthCalledWith(3, [LayerModule.UV_VARNISH], {
+      checkRepeat: true,
+      checkVisible: true,
+    });
+    expect(mockHasModuleLayer).toHaveBeenNthCalledWith(4, [LayerModule.LASER_1064], {
+      checkRepeat: true,
+      checkVisible: true,
+    });
     expect(boundaryDrawer.boundaries.module).toEqual({ bottom: 211, left: 222, right: 433, top: 444 });
     expect(mockGetModuleOffsets).toHaveBeenCalledTimes(3);
     expect(mockGetModuleOffsets).toHaveBeenNthCalledWith(1, { module: LayerModule.UV_WHITE_INK, workarea: 'fbm2' });

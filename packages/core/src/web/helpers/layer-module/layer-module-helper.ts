@@ -68,7 +68,7 @@ export const getDetectedModulesTranslations = (): Record<DetectedLayerModuleType
 
 export const hasModuleLayer = (
   modules: LayerModuleType[],
-  { checkRepeat = true, checkVisible = true }: { checkRepeat?: boolean; checkVisible?: boolean } = {},
+  { checkRepeat = false, checkVisible = false }: { checkRepeat?: boolean; checkVisible?: boolean } = {},
 ): boolean => {
   let query = 'g.layer[data-module="{module}"]';
 

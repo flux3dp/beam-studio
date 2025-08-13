@@ -46,6 +46,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
       workareaObj.supportedModules!.filter(
         (module) => ![LayerModule.LASER_UNIVERSAL, LayerModule.UV_PRINT].includes(module),
       ),
+      { checkRepeat: true, checkVisible: true },
     )
   ) {
     alertCaller.popUp({

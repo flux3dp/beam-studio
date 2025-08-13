@@ -276,7 +276,7 @@ export class BoundaryDrawer {
       const supportedModules = getSupportedModules(model);
 
       supportedModules?.forEach((module) => {
-        if (module !== currentModule && hasModuleLayer([module])) {
+        if (module !== currentModule && hasModuleLayer([module], { checkRepeat: true, checkVisible: true })) {
           mergeBoundaries(boundary, getModuleBoundary(model, module));
         }
       });
@@ -312,7 +312,7 @@ export class BoundaryDrawer {
         const supportedModules = getSupportedModules(model);
 
         supportedModules?.forEach((module) => {
-          if (module !== currentModule && hasModuleLayer([module])) {
+          if (module !== currentModule && hasModuleLayer([module], { checkRepeat: true, checkVisible: true })) {
             const offsets = getModuleOffsets({ module, workarea: model });
 
             mergeBoundaries(unionOffsets, {
