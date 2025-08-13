@@ -108,6 +108,7 @@ export const useGlobalPreferenceStore = create(
 communicator.on(
   TabEvents.GlobalPreferenceChanged,
   <K extends keyof GlobalPreference>(_: unknown, key: K, value: GlobalPreference[K]) => {
-    useGlobalPreferenceStore.getState().set(key, value, false);
+    // use setState to avoid write to storage multiple times
+    useGlobalPreferenceStore.setState({ [key]: value });
   },
 );
