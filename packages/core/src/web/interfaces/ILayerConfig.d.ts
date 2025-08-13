@@ -45,6 +45,7 @@ type PrintingConfig = {
   multipass: number;
   printingSpeed: number;
   printingStrength: number;
+  refreshInterval: number;
   split: boolean;
   uv: number;
   wInk: number;

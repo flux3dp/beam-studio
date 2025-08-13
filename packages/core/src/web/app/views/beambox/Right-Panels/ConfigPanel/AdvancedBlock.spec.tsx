@@ -66,6 +66,7 @@ jest.mock('./PulseWidthBlock', () => () => <div>Mock PulseWidthBlock</div>);
 jest.mock('./SingleColorBlock', () => () => <div>Mock SingleColorBlock</div>);
 jest.mock('./WobbleBlock', () => () => <div>Mock WobbleBlock</div>);
 jest.mock('./ConfigPanelContext', () => createContext(null));
+jest.mock('./RefreshIntervalBlock', () => () => <div>Mock RefreshIntervalBlock</div>);
 
 const mockUseConfigPanelStore = jest.fn();
 

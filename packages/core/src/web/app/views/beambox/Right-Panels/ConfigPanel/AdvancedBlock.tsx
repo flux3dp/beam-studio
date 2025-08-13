@@ -27,6 +27,7 @@ import Diode from './Diode';
 import FocusBlock from './FocusBlock';
 import FrequencyBlock from './FrequencyBlock';
 import PulseWidthBlock from './PulseWidthBlock';
+import RefreshIntervalBlock from './RefreshIntervalBlock';
 import SingleColorBlock from './SingleColorBlock';
 import WobbleBlock from './WobbleBlock';
 
@@ -104,7 +105,10 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
     if (module.value === LayerModule.PRINTER_4C) {
       contents.push(<AmDensityBlock key="am-density-block" type={type} />);
 
-      if (isDev()) contents.push(<ColorAdvancedSettingButton key="color-advanced-setting-button" />);
+      if (isDev()) {
+        contents.push(<ColorAdvancedSettingButton key="color-advanced-setting-button" />);
+        contents.push(<RefreshIntervalBlock key="refresh-interval-block" type={type} />);
+      }
     }
 
     contents.push(<SingleColorBlock key="single-color-block" />);
