@@ -1070,6 +1070,8 @@ const lang: ILang = {
     put_chessboard_bb2_desc_1: 'Last ned den følgende sjakkbrettfilen og skriv den ut på A4-papir (det utskrevne sjakkbrettet skal ha ruter på 1x1 cm).',
     put_chessboard_bb2_desc_2: 'Fest det utskrevne sjakkbrettet på en ikke-deformerbar plate, for eksempel akryl eller glass, og sørg for at sjakkbrettet er glatt og uten rynker eller løft.',
     put_chessboard_bb2_desc_3: 'Plasser platen med sjakkbrettet flatt i midten av arbeidsområdet.',
+    put_chessboard_bm2_1: 'Last ned og skriv ut følgende fil på A4-papir for kamerakalibrering.',
+    put_chessboard_bm2_2: 'Plasser kalibreringsarket flatt på den angitte posisjonen på arbeidsområdet.',
     put_chessboard_promark_1: 'Juster brennvidden til riktig fokus for feltlinsen.',
     put_chessboard_promark_2: 'Sørg for at sjakkbrettpapiret er tydelig synlig uten gjenskinn. Klikk på "Neste" for å ta et bilde.',
     put_chessboard_promark_desc_1: 'Vennligst bruk sjakkbrettpapiret som følger med i tilbehørsboksen, eller skriv ut det følgende sjakkbrettmønsteret på A4-papir for kamerakalibrering.',

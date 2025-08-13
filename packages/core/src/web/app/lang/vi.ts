@@ -1070,6 +1070,8 @@ const lang: ILang = {
     put_chessboard_bb2_desc_1: 'Vui lòng tải xuống tệp bàn cờ sau đây và in nó trên giấy A4 (bàn cờ in ra phải có các ô kích thước 1x1 cm).',
     put_chessboard_bb2_desc_2: 'Gắn giấy bàn cờ đã in lên một tấm bảng không bị biến dạng, chẳng hạn như acrylic hoặc kính, đảm bảo bàn cờ phẳng, không có nếp gấp hoặc mép bị nhô lên.',
     put_chessboard_bb2_desc_3: 'Đặt bảng với bàn cờ nằm phẳng ở trung tâm khu vực làm việc.',
+    put_chessboard_bm2_1: 'Tải xuống và in tệp sau trên giấy A4 để hiệu chỉnh camera.',
+    put_chessboard_bm2_2: 'Đặt giấy hiệu chỉnh phẳng ở vị trí được chỉ định trên khu vực làm việc.',
     put_chessboard_promark_1: 'Điều chỉnh khoảng cách tiêu cự đến điểm lấy nét phù hợp cho ống kính trường.',
     put_chessboard_promark_2: 'Hãy đảm bảo giấy bàn cờ hiển thị rõ ràng mà không bị chói. Nhấn "Tiếp theo" để chụp ảnh.',
     put_chessboard_promark_desc_1: 'Vui lòng sử dụng giấy bàn cờ được cung cấp trong hộp phụ kiện hoặc in mẫu bàn cờ sau trên giấy A4 để hiệu chỉnh máy ảnh.',

@@ -1070,6 +1070,8 @@ const lang: ILang = {
     put_chessboard_bb2_desc_1: 'Proszę pobrać poniższy plik szachownicy i wydrukować go na papierze A4 (wydrukowana szachownica powinna mieć pola o wymiarach 1x1 cm).',
     put_chessboard_bb2_desc_2: 'Zamocuj wydrukowaną szachownicę na nienaruszalnej płycie, takiej jak akryl lub szkło, upewniając się, że szachownica jest gładka i pozbawiona zmarszczek lub uniesionych krawędzi.',
     put_chessboard_bb2_desc_3: 'Umieść płytę z szachownicą płasko w centrum obszaru roboczego.',
+    put_chessboard_bm2_1: 'Pobierz i wydrukuj poniższy plik na papierze A4 w celu kalibracji kamery.',
+    put_chessboard_bm2_2: 'Umieść arkusz kalibracyjny płasko w wyznaczonym miejscu na polu roboczym.',
     put_chessboard_promark_1: 'Dostosuj odległość ogniskową do odpowiedniego punktu skupienia dla soczewki polowej.',
     put_chessboard_promark_2: 'Upewnij się, że papier z szachownicą jest wyraźnie widoczny bez odblasków. Kliknij "Dalej", aby zrobić zdjęcie.',
     put_chessboard_promark_desc_1: 'Proszę użyć papieru z szachownicą dostarczonego w pudełku z akcesoriami lub wydrukować poniższy wzór szachownicy na papierze A4 do kalibracji kamery.',

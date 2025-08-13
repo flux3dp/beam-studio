@@ -1070,6 +1070,8 @@ const lang: ILang = {
     put_chessboard_bb2_desc_1: 'Por favor, baixe o seguinte arquivo de tabuleiro de xadrez e imprima-o em papel A4 (o tabuleiro de xadrez impresso deve ter quadrados de 1x1 cm).',
     put_chessboard_bb2_desc_2: 'Fixe o tabuleiro de xadrez impresso em uma superfície indeformável, como acrílico ou vidro, garantindo que o tabuleiro esteja liso, sem rugas ou bordas levantadas.',
     put_chessboard_bb2_desc_3: 'Coloque a superfície com o tabuleiro de xadrez plana no centro da área de trabalho.',
+    put_chessboard_bm2_1: 'Baixe e imprima o seguinte arquivo em papel A4 para a calibração da câmera.',
+    put_chessboard_bm2_2: 'Coloque o papel de calibração plano na posição designada na área de trabalho.',
     put_chessboard_promark_1: 'Ajuste a distância focal para o foco adequado da lente de campo.',
     put_chessboard_promark_2: 'Certifique-se de que o papel de xadrez esteja claramente visível, sem reflexo. Clique em "Próximo" para tirar uma foto.',
     put_chessboard_promark_desc_1: 'Por favor, utilize o papel de xadrez fornecido na caixa de acessórios, ou imprima o seguinte padrão de xadrez em papel A4 para a calibração da câmera.',

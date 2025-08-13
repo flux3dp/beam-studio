@@ -110,11 +110,7 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
             },
           ]}
           onClose={onClose}
-          steps={[
-            tCalibration.put_chessboard_bb2_desc_1,
-            tCalibration.put_chessboard_bb2_desc_2,
-            tCalibration.put_chessboard_bb2_desc_3,
-          ]}
+          steps={[tCalibration.put_chessboard_bm2_1, tCalibration.put_chessboard_bm2_2]}
           title={tCalibration.put_chessboard}
         >
           <div className={styles.link} onClick={() => downloadCalibrationFile('assets/charuco-15-10.pdf')}>

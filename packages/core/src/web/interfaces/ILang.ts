@@ -1070,6 +1070,8 @@ export interface ILang {
     put_chessboard_bb2_desc_1: string;
     put_chessboard_bb2_desc_2: string;
     put_chessboard_bb2_desc_3: string;
+    put_chessboard_bm2_1: string;
+    put_chessboard_bm2_2: string;
     put_chessboard_promark_1: string;
     put_chessboard_promark_2: string;
     put_chessboard_promark_desc_1: string;

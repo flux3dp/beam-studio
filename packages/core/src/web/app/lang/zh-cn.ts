@@ -1070,6 +1070,8 @@ const lang: ILang = {
     put_chessboard_bb2_desc_1: '请下载以下棋盘文件，并将其打印在A4纸上（打印的棋盘应为1x1厘米的方格）。',
     put_chessboard_bb2_desc_2: '将打印好的棋盘纸固定在不可变形的板材上，例如亚克力或玻璃，确保棋盘平整，无皱褶或翘起。',
     put_chessboard_bb2_desc_3: '将带有棋盘的板材平放在工作区域的中心位置。',
+    put_chessboard_bm2_1: '请下载并将以下文件打印在A4纸上用于相机校准。',
+    put_chessboard_bm2_2: '请将校准纸平放在工作区域的指定位置。',
     put_chessboard_promark_1: '调整焦距至适合场镜的焦点。',
     put_chessboard_promark_2: '请确保棋盘纸清晰可见且无眩光。点击“下一步”拍照。',
     put_chessboard_promark_desc_1: '请使用附件盒中提供的棋盘纸，或将以下棋盘图案打印在A4纸上用于相机校准。',
