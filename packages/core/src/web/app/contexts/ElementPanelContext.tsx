@@ -58,7 +58,7 @@ export interface Content {
   term: string;
 }
 
-interface History {
+export interface History {
   npIcon?: IIcon; // np icon
   path?: { fileName: string; folder: string }; // builtin icon
   type: 'builtin' | 'np';

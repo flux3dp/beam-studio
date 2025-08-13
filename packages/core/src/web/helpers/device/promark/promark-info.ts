@@ -14,8 +14,8 @@ const defaultValue: PromarkInfo = {
 export const getSerial = (): string => {
   const { model, serial } = TopBarController.getSelectedDevice() ?? {};
 
-  if (promarkModels.has(model)) {
-    return serial;
+  if (promarkModels.has(model!)) {
+    return serial!;
   }
 
   return storage.get('last-promark-serial') || 'no-serial';

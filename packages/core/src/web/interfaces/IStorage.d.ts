@@ -1,50 +1,71 @@
-export type StorageKey =
-  | 'active-lang'
-  | 'ador-backup-path'
-  | 'alert-config'
-  | 'announcement-record'
-  | 'auto-save-config'
-  | 'auto_check_update'
-  | 'auto_connect'
-  | 'beambox-preference'
-  | 'black-list'
-  | 'customizedLaserConfigs' // For version <= 2.3.9, maybe we can remove this in the future
-  | 'default-font'
-  | 'default-units'
-  | 'defaultLaserConfigsInUse' // For version <= 2.3.9, maybe we can remove this in the future
-  | 'did-gesture-tutorial'
-  | 'elements-history'
-  | 'enable-sentry'
-  | 'flux-rsa-key'
-  | 'font-history'
-  | 'font-name-map'
-  | 'guessing_poke'
-  | 'keep-flux-id-login'
-  | 'last-installed-version'
-  | 'last-promark-serial'
-  | 'last-record-activity'
-  | 'layer-color-config'
-  | 'layer-panel-height'
-  | 'loop_compensation'
-  | 'new-user'
-  | 'notification'
-  | 'poke-ip-addr'
-  | 'presets' // For version > 2.3.9, replace 'customizedLaserConfigs' & 'defaultLaserConfigsInUse'
-  | 'printer-is-ready'
-  | 'promark-store'
-  | 'questionnaire-version'
-  | 'rating-record'
-  | 'recent_files'
-  | 'registered-devices'
-  | 'selected-device'
-  | 'sentry-send-devices';
+import type { ColorConfig } from '@core/app/constants/color-constants';
+import type { History } from '@core/app/contexts/ElementPanelContext';
+import type { IRecord as AnnouncementRecord } from '@core/helpers/announcement-helper';
+import type { IRecord as RatingRecord } from '@core/helpers/rating-helper';
+
+import type { IConfig as AutoSaveConfig } from './IAutosave';
+import type { IDefaultFont } from './IFont';
+import type { Preset } from './ILayerConfig';
+import type { BeamboxPreference } from './Preference';
+import type { PromarkStore } from './Promark';
+
+export interface Storage {
+  'active-lang': string;
+  'ador-backup-path': string;
+  'alert-config': any;
+  'announcement-record': AnnouncementRecord; // IRecord
+  'auto-save-config': AutoSaveConfig;
+  auto_check_update: boolean;
+  auto_connect: boolean;
+  'beambox-preference': BeamboxPreference;
+  'black-list': string;
+  /** @deprecated Customized laser configurations for version <= 2.3.9 */
+  customizedLaserConfigs: any;
+  'default-font': IDefaultFont;
+  'default-units': 'inches' | 'mm';
+  /** @deprecated Customized laser configurations for version <= 2.3.9 */
+  defaultLaserConfigsInUse: any;
+  /** 1 for done */
+  'did-gesture-tutorial': number;
+  'elements-history': History[];
+  'enable-sentry': boolean;
+  'flux-rsa-key': string;
+  'font-history': string[];
+  /** font name to display name */
+  'font-name-map': Record<string, string>;
+  guessing_poke: boolean;
+  'keep-flux-id-login': boolean;
+  'last-installed-version': string;
+  'last-promark-serial': string;
+  'last-record-activity': string;
+  'layer-color-config': { array: ColorConfig[]; dict: Record<string, ColorConfig> };
+  'layer-panel-height': number;
+  loop_compensation: number;
+  'new-user': boolean;
+  notification: boolean;
+  'poke-ip-addr': string;
+  /** For version > 2.3.9, replace 'customizedLaserConfigs' & 'defaultLaserConfigsInUse' */
+  presets: Preset[];
+  'printer-is-ready': boolean;
+  'promark-store': Record<string, PromarkStore>;
+  'questionnaire-version': number;
+  'rating-record': RatingRecord;
+  recent_files: string[];
+  /** array of registered machine serial */
+  'registered-devices': string[];
+  'selected-device'?: string;
+  /** map with key: device uuid value: software version */
+  'sentry-send-devices'?: Record<string, string>;
+}
+
+export type StorageKey = keyof Storage;
 
 export interface IStorage {
   clearAll(): IStorage;
   clearAllExceptIP(): IStorage;
-  get(name: StorageKey, useCache?: boolean): any;
-  getStore(): any;
+  get<K extends StorageKey>(name: K, useCache?: boolean): Storage[K];
+  getStore(): Storage;
   isExisting(key: StorageKey, useCache?: boolean): boolean;
   removeAt(name: StorageKey): IStorage;
-  set(name: StorageKey, val: any): IStorage;
+  set<K extends StorageKey>(name: K, val: Storage[K]): IStorage;
 }
