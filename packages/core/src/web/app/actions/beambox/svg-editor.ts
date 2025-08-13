@@ -61,8 +61,6 @@ import { importPresets } from '@core/helpers/presets/preset-helper';
 import Shortcuts from '@core/helpers/shortcuts';
 import { isMobile } from '@core/helpers/system-helper';
 import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
-import type { IDefaultFont } from '@core/interfaces/IFont';
-import type { IStorage } from '@core/interfaces/IStorage';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type ISVGConfig from '@core/interfaces/ISVGConfig';
 
@@ -143,7 +141,6 @@ export interface ISVGEditor {
   setLang: (lang: any, allStrings: any) => void;
   setPanning: (active: any) => void;
   showSaveWarning: boolean;
-  storage: IStorage;
   storagePromptClosed: boolean;
   tool_scale: number;
   toolButtonClick: (button: any, noHiding: any) => boolean;
@@ -495,18 +492,6 @@ const svgEditor = (window['svgEditor'] = (function () {
   };
 
   editor.init = function () {
-    // var host = location.hostname,
-    //	onWeb = host && host.indexOf('.') >= 0;
-    // Some FF versions throw security errors here when directly accessing
-    try {
-      if ('localStorage' in window) {
-        // && onWeb removed so Webkit works locally
-        editor.storage = storage;
-      }
-    } catch (err) {
-      console.log(err);
-    }
-
     // Todo: Avoid var-defined functions and group functions together, etc. where possible
     var good_langs = [];
 

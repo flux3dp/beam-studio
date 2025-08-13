@@ -1,6 +1,6 @@
 import Store from 'electron-store';
 
-import type { IStorage } from '@core/interfaces/IStorage';
+import type { IStorage, Storage } from '@core/interfaces/IStorage';
 
 class ElectronStorage implements IStorage {
   private store: Store;
@@ -69,7 +69,7 @@ class ElectronStorage implements IStorage {
     return this.store.get(key) !== undefined;
   };
 
-  getStore = () => this.store.store;
+  getStore = () => this.store.store as unknown as Storage;
 }
 
 const storage = new ElectronStorage();
