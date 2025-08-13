@@ -13,6 +13,7 @@ export interface ClipboardElement {
 export interface ClipboardData {
   elements: ClipboardElement[];
   imageData: Record<string, string>;
+  outerHTMLs: string[];
   refs: Record<string, ClipboardElement>;
   // The source of the clipboard data, e.g., the current tab ID.
   // This can be used to identify where the clipboard data originated from.

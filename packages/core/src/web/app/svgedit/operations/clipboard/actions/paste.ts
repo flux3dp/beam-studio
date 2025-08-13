@@ -140,13 +140,19 @@ export const pasteWithDefaultPosition = async (
   y = 100,
 ): Promise<null | { cmd: IBatchCommand; elems: Element[] }> => {
   const batchCommand = new history.BatchCommand('Paste elements with default position');
-  const elements = await clipboardCore.getData();
+  const rawData = await clipboardCore.getRawData();
 
-  if (elements.length === 0) {
+  if (!rawData) {
     return null;
   }
 
-  const newSignature = elements.map((el) => el.outerHTML.replace(/\s*id="[^"]*"/g, '')).join('');
+  const outerHTMLs = rawData.outerHTMLs;
+
+  if (outerHTMLs.length === 0) {
+    return null;
+  }
+
+  const newSignature = outerHTMLs.map((outerHTML) => outerHTML.replace(/\s*id="[^"]*"/g, '')).join('');
   const updateSignatureCommand = new updateSignatureClipboardCommand(newSignature);
 
   useClipboardStore.getState().updateSignature(newSignature);

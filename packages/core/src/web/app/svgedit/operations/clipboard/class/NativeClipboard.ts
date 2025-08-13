@@ -52,11 +52,15 @@ export class NativeClipboard extends Clipboard implements ClipboardCore {
     const serializedData: ClipboardData = {
       elements: [],
       imageData: {},
+      outerHTMLs: [],
       refs: {},
       source: String(tabController.currentId),
     };
 
-    elems.forEach((elem) => serializedData.elements.push(serializeElement(elem)));
+    elems.forEach((elem) => {
+      serializedData.elements.push(serializeElement(elem));
+      serializedData.outerHTMLs.push(elem.outerHTML);
+    });
 
     const keys = Object.keys(this.refClipboard);
 

@@ -13,8 +13,7 @@ getSVGAsync(({ Canvas }) => {
 export const copyElements = async (elems: Element[]): Promise<void> => {
   await clipboardCore.copyElements(elems);
 
-  const elements = await clipboardCore.getData();
-  const initialSignature = elements.map((el) => el.outerHTML.replace(/\s*id="[^"]*"/g, '')).join('');
+  const initialSignature = elems.map((el) => el.outerHTML.replace(/\s*id="[^"]*"/g, '')).join('');
 
   useClipboardStore.getState().reset(initialSignature);
 };
