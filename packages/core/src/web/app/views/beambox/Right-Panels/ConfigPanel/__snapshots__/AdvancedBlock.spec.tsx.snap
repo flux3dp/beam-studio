@@ -265,6 +265,9 @@ exports[`test AdvancedBlock should render correctly for printer 4c 1`] = `
               Mock ColorAdvancedSettingButton
             </div>
             <div>
+              Mock RefreshIntervalBlock
+            </div>
+            <div>
               Mock SingleColorBlock
             </div>
           </div>
