@@ -146,21 +146,19 @@ export const pasteWithDefaultPosition = async (
     return null;
   }
 
-  const outerHTMLs = rawData.outerHTMLs;
+  const dataId = rawData.id;
 
-  if (outerHTMLs.length === 0) {
+  if (!dataId) {
     return null;
   }
 
-  const newSignature = outerHTMLs.map((outerHTML) => outerHTML.replace(/\s*id="[^"]*"/g, '')).join('');
-  const updateSignatureCommand = new updateSignatureClipboardCommand(newSignature);
+  const updateSignatureCommand = new updateSignatureClipboardCommand(dataId);
 
-  useClipboardStore.getState().updateSignature(newSignature);
+  useClipboardStore.getState().updateSignature(dataId);
 
   const consecutivePasteCounter = useClipboardStore.getState().counter;
   const offsetX = x * consecutivePasteCounter;
   const offsetY = y * consecutivePasteCounter;
-
   const pasteCommand = await pasteElements({ isSubCmd: true, type: 'inPlace', x: offsetX, y: offsetY });
 
   batchCommand.addSubCommand(updateSignatureCommand);
