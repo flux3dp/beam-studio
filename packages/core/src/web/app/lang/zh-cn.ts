@@ -1482,6 +1482,7 @@ const lang: ILang = {
       convertFromPrintingModuleMsg: '请注意，如果您继续此操作，打印图层的颜色设置将会被删除，并根据当前图层参数而定。',
       convertFromPrintingModuleTitle: '您是否要将打印图层转换为激光图层？',
       importedDocumentContainsPrinting: '文档包含打印图层，您想将工作区更改为Ador吗？',
+      importedDocumentContainsPrinting4C: '文档包含打印图层 (4C)，您想将工作区更改为 beamo II 吗？',
       performIRCaliMsg: '点击「确认」执行校准，或通过顶部菜单中的「机器」 > 「您的机器名称」 > 「校准红外模块」进行校准。',
       performIRCaliTitle: '执行红外模块校准',
       performPrintingCaliMsg: '点击「确认」执行校准，或通过顶部菜单中的「机器」 > 「您的机器名称」 > 「校准打印模块」进行校准。',

@@ -1482,6 +1482,7 @@ const lang: ILang = {
       convertFromPrintingModuleMsg: 'Harap perhatikan bahwa jika Anda menyelesaikan operasi ini, pengaturan warna lapisan cetak akan dihapus dan disesuaikan dengan lapisan saat ini.',
       convertFromPrintingModuleTitle: 'Apakah Anda ingin mengubah modul Pencetakan menjadi modul Laser?',
       importedDocumentContainsPrinting: 'Dokumen berisi lapisan cetak, apakah Anda ingin mengubah area kerja ke Ador?',
+      importedDocumentContainsPrinting4C: 'Dokumen berisi lapisan cetak (4C), apakah Anda ingin mengubah area kerja ke beamo II?',
       performIRCaliMsg: 'Klik "Konfirmasi" untuk mengeksekusi kalibrasi, atau akses kalibrasi melalui menu atas. <br /> (Mesin> [Nama Mesin Anda]> Kalibrasi Modul Inframerah)',
       performIRCaliTitle: 'Lakukan kalibrasi modul Inframerah',
       performPrintingCaliMsg: 'Klik "Konfirmasi" untuk mengeksekusi kalibrasi, atau akses kalibrasi melalui menu atas. <br /> (Mesin> [Nama Mesin Anda]> Kalibrasi Modul Cetak)',

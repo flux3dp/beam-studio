@@ -1482,6 +1482,7 @@ const lang: ILang = {
       convertFromPrintingModuleMsg: 'Houd er rekening mee dat als u deze bewerking voltooit, de kleurinstellingen van de printlaag worden verwijderd en ingesteld volgens de huidige laag.',
       convertFromPrintingModuleTitle: 'Wilt u de Printmodule converteren naar de Lasermodule?',
       importedDocumentContainsPrinting: 'Het document bevat een printlaag, wilt u het werkgebied wijzigen naar printen?',
+      importedDocumentContainsPrinting4C: 'Het document bevat een printlaag (4C), wilt u het werkgebied wijzigen naar beamo II?',
       performIRCaliMsg: 'Klik op "Bevestigen" om de kalibratie uit te voeren, of open de kalibratie via het bovenste menu. <br /> (Machine> [Uw machinenaam]> Kalibreer lasermodule)',
       performIRCaliTitle: 'Voer de kalibratie van de lasermodule uit',
       performPrintingCaliMsg: 'Klik op "Bevestigen" om de kalibratie uit te voeren, of open de kalibratie via het bovenste menu. <br /> (Machine> [Uw machinenaam]> Kalibreer printmodule)',

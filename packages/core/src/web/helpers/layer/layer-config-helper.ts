@@ -561,6 +561,8 @@ export const applyDefaultLaserModule = (): void => {
     const layerNames = getAllLayerNames();
     const defaultLaserModule = getDefaultLaserModule();
 
+    if (defaultLaserModule === LayerModule.LASER_UNIVERSAL) return;
+
     for (const layerName of layerNames) {
       const layer = getLayerByName(layerName);
 

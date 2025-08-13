@@ -1482,6 +1482,7 @@ const lang: ILang = {
       convertFromPrintingModuleMsg: 'Huomaa, että jos suoritat tämän toiminnon, tulostuskerroksen väriasetukset poistetaan ja asetetaan nykyisen kerroksen mukaan.',
       convertFromPrintingModuleTitle: 'Haluatko muuntaa tulostusmoduulin lasermoduuliksi?',
       importedDocumentContainsPrinting: 'Asiakirja sisältää tulostuskerroksen, haluatko vaihtaa työalueen Adoriin?',
+      importedDocumentContainsPrinting4C: 'Asiakirja sisältää tulostuskerroksen (4C), haluatko vaihtaa työalueen beamo II:een?',
       performIRCaliMsg: 'Napsauta "Vahvista" suorittaaksesi kalibroinnin, tai käytä kalibrointia ylävalikon kautta.<br />(Kone > [Koneen nimi] > Kalibroi infrapunamoduuli)',
       performIRCaliTitle: 'Suorita infrapunamoduulin kalibrointi',
       performPrintingCaliMsg: 'Napsauta "Vahvista" suorittaaksesi kalibroinnin, tai käytä kalibrointia ylävalikon kautta.<br />(Kone > [Koneen nimi] > Kalibroi tulostusmoduuli)',

@@ -1,11 +1,10 @@
 import alertCaller from '@core/app/actions/alert-caller';
-import { modelsWithModules } from '@core/app/actions/beambox/constant';
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
-import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
+import { fullColorHeadModules, LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { changeMultipleDocumentStoreValues, useDocumentStore } from '@core/app/stores/documentStore';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
@@ -16,6 +15,7 @@ import workareaManager from '@core/app/svgedit/workarea';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import i18n from '@core/helpers/i18n';
 import { applyDefaultLaserModule, toggleFullColorAfterWorkareaChange } from '@core/helpers/layer/layer-config-helper';
+import { hasModuleLayer } from '@core/helpers/layer-module/layer-module-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
@@ -178,31 +178,32 @@ export const importBvgString = async (
 
   const { lang } = i18n;
   let newWorkarea = currentWorkarea;
+  const hasPrintingLayer = hasModuleLayer([LayerModule.PRINTER]);
+  const shouldChangeToAdor = currentWorkarea !== 'ado1' && hasPrintingLayer;
+  const has4CLayer = hasModuleLayer(fullColorHeadModules);
+  const shouldChangeToBeamo2 = currentWorkarea !== 'fbm2' && has4CLayer;
 
-  if (!modelsWithModules.has(currentWorkarea)) {
-    const hasPrintingLayer =
-      document.getElementById('svgcontent')?.querySelectorAll(`g.layer[data-module="${LayerModule.PRINTER}"]`).length! >
-      0;
-
-    if (hasPrintingLayer) {
-      const res = await new Promise<boolean>((resolve) => {
-        alertCaller.popUp({
-          buttonType: alertConstants.YES_NO,
-          id: 'ask-change-workarea',
-          message: lang.layer_module.notification.importedDocumentContainsPrinting,
-          onNo: () => resolve(false),
-          onYes: () => resolve(true),
-        });
+  if (shouldChangeToAdor || shouldChangeToBeamo2) {
+    const message = shouldChangeToBeamo2
+      ? lang.layer_module.notification.importedDocumentContainsPrinting4C
+      : lang.layer_module.notification.importedDocumentContainsPrinting;
+    const res = await new Promise<boolean>((resolve) => {
+      alertCaller.popUp({
+        buttonType: alertConstants.YES_NO,
+        id: 'ask-change-workarea',
+        message,
+        onNo: () => resolve(false),
+        onYes: () => resolve(true),
       });
+    });
 
-      if (res) {
-        newWorkarea = 'ado1';
-      } else {
-        alertCaller.popUp({
-          message: lang.layer_module.notification.printingLayersConverted,
-          type: alertConstants.SHOW_POPUP_INFO,
-        });
-      }
+    if (res) {
+      newWorkarea = shouldChangeToAdor ? 'ado1' : 'fbm2';
+    } else {
+      alertCaller.popUp({
+        message: lang.layer_module.notification.printingLayersConverted,
+        type: alertConstants.SHOW_POPUP_INFO,
+      });
     }
   } else {
     applyDefaultLaserModule();

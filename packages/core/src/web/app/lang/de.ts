@@ -1482,6 +1482,7 @@ const lang: ILang = {
       convertFromPrintingModuleMsg: 'Bitte beachten Sie, dass bei Abschluss dieser Operation die Farbeinstellungen der Druckebene entfernt und entsprechend der aktuellen Ebene festgelegt werden.',
       convertFromPrintingModuleTitle: 'Möchten Sie das Druckmodul in ein Lasermodul umwandeln?',
       importedDocumentContainsPrinting: 'Das Dokument enthält Druckebenen. Möchten Sie den Arbeitsbereich auf Ador ändern?',
+      importedDocumentContainsPrinting4C: 'Das Dokument enthält Druckebenen (4C). Möchten Sie den Arbeitsbereich auf beamo II ändern?',
       performIRCaliMsg: "Klicken Sie auf 'Bestätigen', um die Kalibrierung durchzuführen, oder greifen Sie über das Hauptmenü darauf zu.<br />(Maschine > [Ihr Maschinenname] > Infrarotmodul kalibrieren)",
       performIRCaliTitle: 'Führen Sie die Kalibrierung des Infrarotmoduls durch.',
       performPrintingCaliMsg: "Klicken Sie auf 'Bestätigen', um die Kalibrierung durchzuführen, oder greifen Sie über das Hauptmenü darauf zu.<br />(Maschine > [Ihr Maschinenname] > Druckmodul kalibrieren)",

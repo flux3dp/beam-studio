@@ -1482,6 +1482,7 @@ const lang: ILang = {
       convertFromPrintingModuleMsg: 'Vui lòng lưu ý rằng nếu bạn hoàn tất thao tác này, các cài đặt màu của lớp in ấn sẽ bị xóa và được đặt theo lớp hiện tại.',
       convertFromPrintingModuleTitle: 'Bạn có muốn chuyển đổi mô-đun In ấn thành mô-đun Laser?',
       importedDocumentContainsPrinting: 'Tài liệu chứa lớp in ấn, bạn có muốn chuyển sang Không gian Làm việc Ador?',
+      importedDocumentContainsPrinting4C: 'Tài liệu chứa lớp in ấn (4C), bạn có muốn chuyển sang Không gian Làm việc beamo II?',
       performIRCaliMsg: 'Nhấp “Xác nhận” để thực hiện hiệu chuẩn, hoặc truy cập hiệu chuẩn qua menu trên cùng. <br />(Máy > [Tên máy của bạn] > Hiệu chuẩn Module Hồng ngoại)',
       performIRCaliTitle: 'Thực hiện hiệu chuẩn Module Hồng ngoại',
       performPrintingCaliMsg: 'Nhấp “Xác nhận” để thực hiện hiệu chuẩn, hoặc truy cập hiệu chuẩn qua menu trên cùng.<br /> (Máy > [Tên máy của bạn] > Hiệu chuẩn Module In ấn)',

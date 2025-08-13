@@ -1482,6 +1482,7 @@ const lang: ILang = {
       convertFromPrintingModuleMsg: '이 작업을 완료하면 인쇄 레이어의 색상 설정이 제거되어 현재 레이어에 따라 설정됩니다.',
       convertFromPrintingModuleTitle: '인쇄 모듈을 레이저 모듈로 변환하시겠습니까?',
       importedDocumentContainsPrinting: '이 문서에는 인쇄 레이어가 포함되어 있습니다. 작업 영역을 Ador로 변경하시겠습니까?',
+      importedDocumentContainsPrinting4C: '이 문서에는 인쇄 레이어 (4C)가 포함되어 있습니다. 작업 영역을 beamo II로 변경하시겠습니까?',
       performIRCaliMsg: '확인"을 클릭하여 보정을 실행하거나 상단 메뉴에서 보정에 접근하십시오.<br />(기계 > [귀하의 기계 이름] > 적외선 모듈 보정)',
       performIRCaliTitle: '적외선 모듈 보정을 수행하세요."',
       performPrintingCaliMsg: '확인"을 클릭하여 보정을 실행하거나 상단 메뉴에서 보정에 접근하십시오.<br />(기계 > [귀하의 기계 이름] > 프린터 모듈 보정)',

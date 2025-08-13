@@ -1482,6 +1482,7 @@ const lang: ILang = {
       convertFromPrintingModuleMsg: 'Pozor: Pokud tuto operaci dokončíte, nastavení barev tiskové vrstvy bude odstraněno a nastaveno podle současné vrstvy.',
       convertFromPrintingModuleTitle: 'Přejte si převést Tiskový modul na Laserový modul?',
       importedDocumentContainsPrinting: 'Dokument obsahuje tiskovou vrstvu, přejete si změnit pracovní oblast na Ador?',
+      importedDocumentContainsPrinting4C: 'Dokument obsahuje tiskovou vrstvu (4C), přejete si změnit pracovní oblast na beamo II?',
       performIRCaliMsg: 'Klikněte na Potvrdit k provedení kalibrace, nebo vyberte kalibraci přes horní menu.<br />(Přístroj > [Jméno vašeho přístroje] > Kalibrovat infračervený modul)',
       performIRCaliTitle: 'Proveďte kalibraci infračerveného modulu',
       performPrintingCaliMsg: 'Klikněte na Potvrdit k provedení kalibrace, nebo vyberte kalibraci přes horní menu.<br />(Přístroj > [Jméno vašeho přístroje] > Kalibrovat tiskový modul)',

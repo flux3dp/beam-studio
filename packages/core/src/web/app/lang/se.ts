@@ -1482,6 +1482,7 @@ const lang: ILang = {
       convertFromPrintingModuleMsg: 'Observera att om du slutför den här åtgärden kommer färginställningarna för utskriftslagret att tas bort och ställas in enligt aktuellt lager.',
       convertFromPrintingModuleTitle: 'Vill du konvertera utskriftsmodulen till lasermodul?',
       importedDocumentContainsPrinting: 'Dokumentet innehåller utskriftslager, vill du ändra arbetsområde till Ador?',
+      importedDocumentContainsPrinting4C: 'Dokumentet innehåller utskriftslager (4C), vill du ändra arbetsområde till beamo II?',
       performIRCaliMsg: 'Klicka på "Bekräfta" för att utföra kalibreringen eller gå till kalibrering via huvudmenyn.<br />(Maskin > [Ditt maskinnamn] > Kalibrera infraröd modul)',
       performIRCaliTitle: 'Utför infraröd modulkalibrering',
       performPrintingCaliMsg: 'Klicka på "Bekräfta" för att utföra kalibreringen eller gå till kalibrering via huvudmenyn.<br />(Maskin > [Ditt maskinnamn] > Kalibrera utskriftsmodul)',

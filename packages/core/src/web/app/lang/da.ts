@@ -1482,6 +1482,7 @@ const lang: ILang = {
       convertFromPrintingModuleMsg: 'Vær opmærksom på, at hvis du gennemfører denne handling, vil farveindstillingerne i printlaget blive fjernet og indstillet i henhold til det aktuelle lag.',
       convertFromPrintingModuleTitle: 'Vil du konvertere Printmodulet til Lasermodulet?',
       importedDocumentContainsPrinting: 'Dokumentet indeholder printlag, vil du ændre arbejdsområde til Ador?',
+      importedDocumentContainsPrinting4C: 'Dokumentet indeholder printlag (4C), vil du ændre arbejdsområde til beamo II?',
       performIRCaliMsg: 'Klik på "Bekræft" for at udføre kalibreringen, eller få adgang til kalibrering via topmenuen.<br />(Maskine > [Dit maskinnavn] > Kalibrer infrarød modul)',
       performIRCaliTitle: 'Udfør kalibrering af infrarød modul',
       performPrintingCaliMsg: 'Klik på "Bekræft" for at udføre kalibreringen, eller få adgang til kalibrering via topmenuen.<br />(Maskine > [Dit maskinnavn] > Kalibrer printmodul)',

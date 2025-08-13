@@ -1482,6 +1482,7 @@ const lang: ILang = {
       convertFromPrintingModuleMsg: 'Należy pamiętać, że po wykonaniu tej operacji ustawienia kolorów warstwy druku zostaną usunięte i ustawione zgodnie z bieżącą warstwą.',
       convertFromPrintingModuleTitle: 'Czy chcesz przekonwertować moduł drukowania na moduł lasera?',
       importedDocumentContainsPrinting: 'Dokument zawiera warstwę do druku, czy chcesz zmienić obszar roboczy na Ador?',
+      importedDocumentContainsPrinting4C: 'Dokument zawiera warstwę do druku (4C), czy chcesz zmienić obszar roboczy na beamo II?',
       performIRCaliMsg: 'Kliknij „Potwierdź”, aby wykonać kalibrację lub przejdź do kalibracji z górnego menu. ( Urządzenie > [Nazwa Twojego urządzenia] > Kalibruj moduł podczerwieni)',
       performIRCaliTitle: 'Wykonaj kalibrację modułu podczerwieni',
       performPrintingCaliMsg: 'Kliknij „Potwierdź”, aby wykonać kalibrację lub przejdź do kalibracji z górnego menu.( Urządzenie > [Nazwa Twojego urządzenia] > Kalibruj moduł drukujący)',
