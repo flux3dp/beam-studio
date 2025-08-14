@@ -11,9 +11,9 @@ import Elements, {
   SearchMap,
   SubTypeSearchKeyMap,
 } from '@core/app/constants/element-panel-constants';
+import { setStorage, useStorageStore } from '@core/app/stores/storageStore';
 import { getCurrentUser, getNPIconsByTerm } from '@core/helpers/api/flux-id';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import storage from '@core/implementations/storage';
 import type { IIcon } from '@core/interfaces/INounProject';
 import type { IUser } from '@core/interfaces/IUser';
 
@@ -124,9 +124,7 @@ export const ElementPanelProvider = ({ children, onClose }: ElementPanelProvider
   const [hasLogin, setHasLogin] = useState(!!getCurrentUser());
   const [searchKey, setSearchKey] = useState<string | undefined>(undefined);
   const [contents, setContents] = useState<Content[]>([]);
-  const [historyIcons, setHistoryIcons] = useState<History[]>(
-    (storage.get('elements-history') || []).slice(0, previewCount),
-  );
+  const historyIcons = useStorageStore((state) => state['elements-history']).slice(0, previewCount);
   const cacheRef = useRef<ICache>({ [ContentType.MainType]: {}, [ContentType.Search]: {}, [ContentType.SubType]: {} });
   const searchRef = useRef({ term: '', timer: null as NodeJS.Timeout | null });
   const contentRef = useRef(0);
@@ -178,8 +176,7 @@ export const ElementPanelProvider = ({ children, onClose }: ElementPanelProvider
     }
 
     newHistory.unshift(history);
-    setHistoryIcons(newHistory);
-    storage.set('elements-history', newHistory);
+    setStorage('elements-history', newHistory);
   };
 
   const getNPIcons = async (contentObj: Content) => {
