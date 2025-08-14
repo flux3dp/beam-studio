@@ -15,6 +15,7 @@ import { CanvasMode } from '@core/app/constants/canvasMode';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
+import alertConfig from '@core/helpers/api/alert-config';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import deviceMaster from '@core/helpers/device-master';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -37,6 +38,8 @@ type Props = {
 
 const AutoFocusButton = ({ toggleAutoFocus }: Props): React.JSX.Element => {
   const {
+    alert,
+    message,
     topbar: {
       menu: { autofocus: lang },
     },
@@ -97,6 +100,26 @@ const AutoFocusButton = ({ toggleAutoFocus }: Props): React.JSX.Element => {
       stopPinning();
 
       return;
+    }
+
+    if (!alertConfig.read('skip_auto_focus_warning')) {
+      const shouldContinue = await new Promise<boolean>((resolve) => {
+        alertCaller.popUp({
+          buttonLabels: [message.camera.abort_preview, message.camera.continue_preview],
+          callbacks: [() => resolve(false), () => resolve(true)],
+          checkbox: {
+            callbacks: () => alertConfig.write('skip_auto_focus_warning', true),
+            text: alert.dont_show_again,
+          },
+          id: 'camera_cable_alert',
+          message:
+            'After entering auto focus mode, the laser head will be reset and moved to the specified position for focusing. \nPlease ensure that the target position is on the material and that there are no obstacles in the movement path.',
+          primaryButtonIndex: 1,
+          type: alertConstants.SHOW_POPUP_WARNING,
+        });
+      });
+
+      if (!shouldContinue) return;
     }
 
     setIsProcessing(true);
