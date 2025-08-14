@@ -96,8 +96,7 @@ jobs:
       - name: Build Beam Studio
         run: |
           pnpm -r install --filter="." --filter="app" --filter="core"
-          pnpm dlx nx reset
-          pnpm dlx nx run app:build
+          pnpm nx run app:build
 
       # It is said codesign --deep is not a good practice, but it is the only way to sign Swiftray successfully
       # https://developer.apple.com/forums/thread/129980
@@ -138,9 +137,9 @@ jobs:
           echo "Building for macOS ${BUILD_ARCH}..."
           if [ "$BUILD_ARCH" = "arm64" ]; then
             export PUBLISH_PATH="-arm64"
-            pnpm dlx nx run app:dist --arm64 --publish always
+            pnpm nx run app:dist --arm64 --publish always
           else
-            pnpm dlx nx run app:dist --x64 --publish always
+            pnpm nx run app:dist --x64 --publish always
           fi
 
 
