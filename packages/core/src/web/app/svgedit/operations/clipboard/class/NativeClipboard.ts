@@ -1,4 +1,5 @@
 import { match } from 'ts-pattern';
+import { v4 as uuid } from 'uuid';
 
 import tabController from '@core/app/actions/tabController';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -6,6 +7,7 @@ import type { ClipboardCore, ClipboardData, ClipboardElement } from '@core/inter
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import { updateSymbolStyle } from '../helpers/updateSymbolStyle';
+import { useClipboardStore } from '../useClipboardStore';
 
 import { Clipboard } from './Clipboard';
 
@@ -51,12 +53,17 @@ export class NativeClipboard extends Clipboard implements ClipboardCore {
   protected writeDataToClipboard = async (elems: Element[]): Promise<void> => {
     const serializedData: ClipboardData = {
       elements: [],
+      id: uuid(),
       imageData: {},
       refs: {},
       source: String(tabController.currentId),
     };
 
-    elems.forEach((elem) => serializedData.elements.push(serializeElement(elem)));
+    useClipboardStore.getState().reset(serializedData.id);
+
+    elems.forEach((elem) => {
+      serializedData.elements.push(serializeElement(elem));
+    });
 
     const keys = Object.keys(this.refClipboard);
 

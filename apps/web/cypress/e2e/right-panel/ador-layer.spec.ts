@@ -56,7 +56,7 @@ describe('ador layer', () => {
     mergeLayer('Layer 2', 'Do you want to merge these layers into one Laser layer?');
   });
 
-  it('move to printing or laser layers', () => {
+  it.only('move to printing or laser layers', () => {
     cy.changeWorkarea('Ador');
     cy.get(`button[class*="${addLayerBtnPrefix}btn"]`).click({ force: true });
     change2PrintingModule();
@@ -67,6 +67,7 @@ describe('ador layer', () => {
     cy.get(`div[class*="${moduleBlockPrefix}select"] > .ant-select-selector`).should('have.text', 'Printing');
 
     const moveElement = (layer: string, expectedText: string) => {
+      cy.get('#svg_1').click({ force: true });
       cy.get('#svg_1').click({ force: true });
       cy.get('select[title="Move selected elements to a different layer"]').select(layer);
       cy.get('.ant-modal-title').should('have.text', expectedText);

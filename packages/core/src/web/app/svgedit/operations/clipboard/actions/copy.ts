@@ -9,11 +9,14 @@ getSVGAsync(({ Canvas }) => {
   svgCanvas = Canvas;
 });
 
-export const copyElements = async (elems: Element[]): Promise<void> => clipboardCore.copyElements(elems);
+export const copyElements = async (elems: Element[]): Promise<void> => {
+  await clipboardCore.copyElements(elems);
+};
 
 export const copySelectedElements = async (): Promise<void> => {
   const selectedElems = svgCanvas.getSelectedWithoutTempGroup();
 
   await copyElements(selectedElems);
+
   svgCanvas.tempGroupSelectedElements();
 };
