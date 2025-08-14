@@ -117,20 +117,26 @@ describe('test layer-module-helper', () => {
 
     document.querySelector = mockQuery;
 
-    expect(hasModuleLayer([LayerModule.PRINTER_4C])).toEqual(false);
+    expect(hasModuleLayer([LayerModule.PRINTER_4C], { checkRepeat: true, checkVisible: true })).toEqual(false);
     expect(mockQuery).toHaveBeenLastCalledWith('g.layer[data-module="7"]:not([display="none"]):not([data-repeat="0"])');
 
-    expect(hasModuleLayer([LayerModule.PRINTER_4C, LayerModule.PRINTER])).toEqual(false);
+    expect(
+      hasModuleLayer([LayerModule.PRINTER_4C, LayerModule.PRINTER], { checkRepeat: true, checkVisible: true }),
+    ).toEqual(false);
     expect(mockQuery).toHaveBeenLastCalledWith(
       'g.layer[data-module="7"]:not([display="none"]):not([data-repeat="0"]), g.layer[data-module="5"]:not([display="none"]):not([data-repeat="0"])',
     );
 
-    expect(hasModuleLayer([LayerModule.PRINTER_4C, LayerModule.PRINTER], { checkRepeat: false })).toEqual(false);
+    expect(
+      hasModuleLayer([LayerModule.PRINTER_4C, LayerModule.PRINTER], { checkRepeat: false, checkVisible: true }),
+    ).toEqual(false);
     expect(mockQuery).toHaveBeenLastCalledWith(
       'g.layer[data-module="7"]:not([display="none"]), g.layer[data-module="5"]:not([display="none"])',
     );
 
-    expect(hasModuleLayer([LayerModule.PRINTER_4C, LayerModule.PRINTER], { checkVisible: false })).toEqual(false);
+    expect(
+      hasModuleLayer([LayerModule.PRINTER_4C, LayerModule.PRINTER], { checkRepeat: true, checkVisible: false }),
+    ).toEqual(false);
     expect(mockQuery).toHaveBeenLastCalledWith(
       'g.layer[data-module="7"]:not([data-repeat="0"]), g.layer[data-module="5"]:not([data-repeat="0"])',
     );
@@ -141,6 +147,6 @@ describe('test layer-module-helper', () => {
     expect(mockQuery).toHaveBeenLastCalledWith('g.layer[data-module="7"], g.layer[data-module="5"]');
 
     mockQuery.mockReturnValue('mock elem');
-    expect(hasModuleLayer([LayerModule.PRINTER_4C])).toEqual(true);
+    expect(hasModuleLayer([LayerModule.PRINTER_4C], { checkRepeat: true, checkVisible: true })).toEqual(true);
   });
 });

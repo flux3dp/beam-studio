@@ -91,6 +91,12 @@ jest.mock('@core/helpers/device/promark/promark-info', () => ({
   setPromarkInfo: (...args) => mockSetPromarkInfo(...args),
 }));
 
+const mockHasModuleLayer = jest.fn();
+
+jest.mock('@core/helpers/layer-module/layer-module-helper', () => ({
+  hasModuleLayer: mockHasModuleLayer,
+}));
+
 const mockOpen = jest.fn();
 
 jest.mock('@core/implementations/browser', () => ({
@@ -98,7 +104,6 @@ jest.mock('@core/implementations/browser', () => ({
 }));
 
 const mockUnmount = jest.fn();
-const mockQuerySelectorAll = jest.fn();
 
 import DocumentSettings from './index';
 
@@ -106,13 +111,11 @@ describe('test DocumentSettings', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockGetPromarkInfo.mockReturnValue({ laserType: LaserType.Desktop, watt: 20 });
-    mockQuerySelectorAll.mockReturnValue([]);
+    mockHasModuleLayer.mockReturnValue(false);
     mockGetState.mockReturnValue(mockDocumentState);
   });
 
   it('should render correctly for ador', async () => {
-    document.querySelectorAll = mockQuerySelectorAll;
-
     const { baseElement } = render(<DocumentSettings unmount={mockUnmount} />);
     const workareaToggle = baseElement.querySelector('input#workareaSelect');
 
@@ -125,8 +128,6 @@ describe('test DocumentSettings', () => {
 
   it('should render correctly', async () => {
     mockGetState.mockReturnValue({ ...mockDocumentState, workarea: 'ado1' });
-    mockQuerySelectorAll.mockReturnValue([]);
-    document.querySelectorAll = mockQuerySelectorAll;
 
     const { baseElement, getByText } = render(<DocumentSettings unmount={mockUnmount} />);
 
@@ -159,8 +160,9 @@ describe('test DocumentSettings', () => {
     expect(mockUnmount).not.toHaveBeenCalled();
     expect(mockChangeWorkarea).not.toHaveBeenCalled();
     expect(mockSetPosition).not.toHaveBeenCalled();
-    mockQuerySelectorAll.mockReturnValueOnce([1]);
+    mockHasModuleLayer.mockReturnValue(true);
     fireEvent.click(getByText('Save'));
+    expect(mockHasModuleLayer).toHaveBeenCalledTimes(1);
     expect(mockPopUp).toHaveBeenCalledTimes(1);
     expect(mockPopUp).toHaveBeenLastCalledWith({
       buttonType: alertConstants.CONFIRM_CANCEL,
@@ -206,8 +208,6 @@ describe('test DocumentSettings', () => {
   });
 
   it('should render correctly for promark', async () => {
-    document.querySelectorAll = mockQuerySelectorAll;
-
     const { baseElement, getByText } = render(<DocumentSettings unmount={mockUnmount} />);
 
     act(() => fireEvent.mouseDown(baseElement.querySelector('input#workareaSelect')));
@@ -244,8 +244,6 @@ describe('test DocumentSettings', () => {
   });
 
   test('set auto feeder height', async () => {
-    document.querySelectorAll = mockQuerySelectorAll;
-
     const { baseElement, getByText } = render(<DocumentSettings unmount={mockUnmount} />);
 
     act(() => fireEvent.mouseDown(baseElement.querySelector('input#workareaSelect')));

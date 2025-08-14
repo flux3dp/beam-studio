@@ -23,7 +23,7 @@ const round = (num: number, decimal: number): number => {
 
 const togglePresprayArea = (): void => {
   const { model } = workareaManager;
-  const shouldShow = hasModuleLayer([LayerModule.PRINTER], { checkRepeat: false });
+  const shouldShow = hasModuleLayer([LayerModule.PRINTER], { checkVisible: true });
   const { 'enable-job-origin': enableJobOrigin, rotary_mode: rotaryMode } = useDocumentStore.getState();
   const hasJobOrigin = enableJobOrigin && getAddOnInfo(model).jobOrigin;
 

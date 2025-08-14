@@ -151,9 +151,8 @@ const MonitorTask = ({ device }: Props): React.JSX.Element => {
       percent = Number(uploadProgress);
     } else if (report && report.st_id !== DeviceConstants.status.IDLE) {
       percent = Math.min(
-        useEstTime
-          ? Math.round(((totalTaskTime - estimateTaskTime) / totalTaskTime) * 100)
-          : Number.parseInt((report.prog * 100).toFixed(1), 10),
+        useEstTime ? Math.round(((totalTaskTime - estimateTaskTime) / totalTaskTime) * 100) : 99,
+        Number.parseInt((report.prog * 100).toFixed(1), 10),
         99,
       );
 

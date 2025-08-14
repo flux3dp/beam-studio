@@ -26,6 +26,7 @@ import { getPromarkInfo, setPromarkInfo } from '@core/helpers/device/promark/pro
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import useHasCurveEngraving from '@core/helpers/hooks/useHasCurveEngraving';
 import isDev from '@core/helpers/is-dev';
+import { hasModuleLayer } from '@core/helpers/layer-module/layer-module-helper';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 import storage from '@core/implementations/storage';
@@ -271,11 +272,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
           origWorkarea !== workarea &&
           modelsWithModules.has(origWorkarea) &&
           !modelsWithModules.has(workarea) &&
-          document.querySelectorAll(
-            Array.from(printingModules)
-              .map((module) => `g.layer[data-module="${module}"]`)
-              .join(', '),
-          ).length
+          hasModuleLayer(Array.from(printingModules))
         ) {
           const res = await new Promise((resolve) => {
             alertCaller.popUp({

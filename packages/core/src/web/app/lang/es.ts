@@ -1482,6 +1482,7 @@ const lang: ILang = {
       convertFromPrintingModuleMsg: 'Tenga en cuenta que si completa esta operación, la configuración de color de la capa de impresión se eliminará y se establecerá de acuerdo con la capa actual.',
       convertFromPrintingModuleTitle: '¿Desea convertir el módulo de impresión en un módulo láser?',
       importedDocumentContainsPrinting: 'El documento contiene capas de impresión. ¿Desea cambiar al área de trabajo a Ador?',
+      importedDocumentContainsPrinting4C: 'El documento contiene capas de impresión (4C). ¿Desea cambiar el área de trabajo a beamo II?',
       performIRCaliMsg: 'Haz clic en "Confirmar" para ejecutar la calibración o accede a la calibración a través del menú superior.<br />(Máquina > [Nombre de tu máquina] > Calibrar módulo infrarrojo)',
       performIRCaliTitle: 'Realizar la calibración del módulo infrarrojo.',
       performPrintingCaliMsg: 'Haz clic en "Confirmar" para ejecutar la calibración o accede a la calibración a través del menú superior.<br />(Máquina > [Nombre de tu máquina] > Calibrar Módulo de Impresión)',

@@ -1482,6 +1482,7 @@ const lang: ILang = {
       convertFromPrintingModuleMsg: "Veuillez noter que si vous terminez cette opération, les paramètres de couleur de la couche d'impression seront supprimés et définis en fonction de la couche actuelle.",
       convertFromPrintingModuleTitle: 'Voulez-vous convertir le module Impression en module Laser ?',
       importedDocumentContainsPrinting: "Le document contient une couche d'impression, souhaitez-vous changer l'espace de travail en Ador ?",
+      importedDocumentContainsPrinting4C: "Le document contient une couche d'impression (4C), souhaitez-vous changer l'espace de travail en beamo II ?",
       performIRCaliMsg: "Cliquez sur « Confirmer » pour exécuter l'étalonnage ou accédez à l'étalonnage via le menu supérieur. <br /> (Machine > [Nom de votre machine] > Étalonner le module infrarouge)",
       performIRCaliTitle: "Effectuez l'étalonnage du module infrarouge",
       performPrintingCaliMsg: "Cliquez sur « Confirmer » pour exécuter l'étalonnage ou accédez à l'étalonnage via le menu supérieur. <br /> (Machine> [Nom de votre machine]> Étalonner le module d'impression)",

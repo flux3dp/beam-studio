@@ -1482,6 +1482,7 @@ const lang: ILang = {
       convertFromPrintingModuleMsg: 'Tieni presente che se completi questa operazione, le impostazioni di colore dello strato di stampa verranno rimosse e impostate in base allo strato corrente.',
       convertFromPrintingModuleTitle: 'Vuoi convertire il modulo di stampa in modulo laser?',
       importedDocumentContainsPrinting: "Il documento contiene uno strato di stampa, vuoi cambiare l'area di lavoro in Ador?",
+      importedDocumentContainsPrinting4C: "Il documento contiene uno strato di stampa (4C), vuoi cambiare l'area di lavoro in beamo II?",
       performIRCaliMsg: 'Fare clic su "Conferma" per eseguire la calibrazione o accedere alla calibrazione dal menu in alto.<br />(Macchina> [Nome macchina] > Calibra modulo a infrarossi)',
       performIRCaliTitle: 'Esegui la calibrazione del modulo a infrarossi',
       performPrintingCaliMsg: 'Fare clic su "Conferma" per eseguire la calibrazione o accedere alla calibrazione dal menu in alto.<br />(Macchina> [Nome macchina] > Calibra modulo di stampa)',

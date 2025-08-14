@@ -1482,6 +1482,7 @@ const lang: ILang = {
       convertFromPrintingModuleMsg: 'この操作を完了すると、印刷レイヤーの色設定が削除され、現在のレイヤに設定されます。',
       convertFromPrintingModuleTitle: '印刷モジュールをレーザーモジュールに変換しますか？',
       importedDocumentContainsPrinting: 'このドキュメントには印刷レイヤーが含まれています。Adorの作業領域に切り替えますか？',
+      importedDocumentContainsPrinting4C: 'このドキュメントには印刷レイヤー (4C) が含まれています。beamo II の作業領域に切り替えますか？',
       performIRCaliMsg: '「確認」をクリックしてキャリブレーションを実行する、または上部メニューからアクセスしてください。<br />（機器 > [ご使用の機器名] > 赤外線モジュールのキャリブレーション）',
       performIRCaliTitle: '赤外線モジュールのキャリブレーション実行',
       performPrintingCaliMsg: '「確認」をクリックしてキャリブレーションを実行する、または上部メニューからアクセスしてください。<br />（機器 > [ご使用の機器名] > プリンターモジュールのキャリブレーション',

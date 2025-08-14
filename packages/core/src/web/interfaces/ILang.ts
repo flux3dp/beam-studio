@@ -1470,6 +1470,7 @@ export interface ILang {
       convertFromPrintingModuleMsg: string;
       convertFromPrintingModuleTitle: string;
       importedDocumentContainsPrinting: string;
+      importedDocumentContainsPrinting4C: string;
       performIRCaliMsg: string;
       performIRCaliTitle: string;
       performPrintingCaliMsg: string;

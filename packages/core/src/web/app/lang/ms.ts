@@ -1482,6 +1482,7 @@ const lang: ILang = {
       convertFromPrintingModuleMsg: 'Sila ambil perhatian bahawa jika anda melengkapkan operasi ini, tetapan warna lapisan pencetakan akan dibuang dan ditetapkan mengikut lapisan semasa.',
       convertFromPrintingModuleTitle: 'Adakah anda mahu menukar modul Pencetakan kepada modul Laser?',
       importedDocumentContainsPrinting: 'Dokumen mengandungi lapisan pencetakan, adakah anda mahu menukar ruang kerja kepada Ador?',
+      importedDocumentContainsPrinting4C: 'Dokumen mengandungi lapisan pencetakan (4C), adakah anda mahu menukar ruang kerja kepada beamo II?',
       performIRCaliMsg: 'Klik “Sahkan” untuk melaksanakan penentukuran, atau akses penentukuran melalui menu atas.<br />(Mesin > [Nama Mesin Anda] > Tentukur Modul Inframerah)',
       performIRCaliTitle: 'Lakukan penentukuran modul Inframerah',
       performPrintingCaliMsg: 'Klik “Sahkan” untuk melaksanakan penentukuran, atau akses penentukuran melalui menu atas.<br />(Mesin > [Nama Mesin Anda] > Tentukur Modul Percetakan)',

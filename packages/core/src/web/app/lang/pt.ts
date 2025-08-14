@@ -1482,6 +1482,7 @@ const lang: ILang = {
       convertFromPrintingModuleMsg: 'Tenha em mente que se completar esta operação, as configurações de cor da camada de impressão serão removidas e definidas de acordo com a camada atual.',
       convertFromPrintingModuleTitle: 'Deseja converter o módulo de Impressão para o módulo Laser?',
       importedDocumentContainsPrinting: 'O documento contém camada de impressão, deseja alterar a área de trabalho para Ador?',
+      importedDocumentContainsPrinting4C: 'O documento contém camada de impressão (4C), deseja alterar a área de trabalho para beamo II?',
       performIRCaliMsg: 'Clique em "Confirmar" para executar a calibração ou acesse a calibração pelo menu superior.<br />(Máquina > [Nome da sua máquina] > Calibrar módulo Infravermelho)',
       performIRCaliTitle: 'Executar a calibração do módulo Infravermelho',
       performPrintingCaliMsg: 'Clique em "Confirmar" para executar a calibração ou acesse a calibração pelo menu superior.<br />(Máquina > [Nome da sua máquina] > Calibrar módulo de impressão)',
