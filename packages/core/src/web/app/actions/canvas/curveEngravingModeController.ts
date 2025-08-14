@@ -207,11 +207,15 @@ class CurveEngravingModeController {
   setArea = async (bbox: { height: number; width: number; x: number; y: number }) => {
     let { height, width, x, y } = bbox;
     const workarea = workareaManager.model;
-    const { autoFocusOffset = [0, 0, 0], height: workareaH, width: workareaW } = getWorkarea(workarea);
-    const leftBound = autoFocusOffset[0] > 0 ? autoFocusOffset[0] : 0;
-    const rightBound = autoFocusOffset[0] < 0 ? workareaW + autoFocusOffset[0] : workareaW;
-    const topBound = autoFocusOffset[1] > 0 ? autoFocusOffset[1] : 0;
-    const bottomBound = autoFocusOffset[1] < 0 ? workareaH + autoFocusOffset[1] : workareaH;
+    const {
+      autoFocusOffset: [offsetX, offsetY] = [0, 0, 0],
+      height: workareaH,
+      width: workareaW,
+    } = getWorkarea(workarea);
+    const leftBound = Math.max(offsetX, 0);
+    const rightBound = workareaW + Math.min(offsetX, 0);
+    const topBound = Math.max(offsetY, 0);
+    const bottomBound = workareaH + Math.min(offsetY, 0);
 
     if (x < leftBound) {
       width -= leftBound - x;
@@ -352,13 +356,17 @@ class CurveEngravingModeController {
     }
 
     const workarea = workareaManager.model;
-    const { autoFocusOffset = [0, 0, 0], height: workareaH, width: workareaW } = getWorkarea(workarea);
+    const {
+      autoFocusOffset: [offsetX, offsetY] = [0, 0, 0],
+      height: workareaH,
+      width: workareaW,
+    } = getWorkarea(workarea);
     const { maxY, minY, width } = workareaManager;
     const { dpmm } = constant;
-    const leftBound = (autoFocusOffset[0] > 0 ? autoFocusOffset[0] : 0) * dpmm;
-    const rightBound = (autoFocusOffset[0] < 0 ? workareaW + autoFocusOffset[0] : workareaW) * dpmm;
-    const topBound = (autoFocusOffset[1] > 0 ? autoFocusOffset[1] : 0) * dpmm;
-    const bottomBound = (autoFocusOffset[1] < 0 ? workareaH + autoFocusOffset[1] : workareaH) * dpmm;
+    const leftBound = Math.max(offsetX, 0) * dpmm;
+    const rightBound = (workareaW + Math.min(offsetX, 0)) * dpmm;
+    const topBound = Math.max(offsetY, 0) * dpmm;
+    const bottomBound = (workareaH + Math.min(offsetY, 0)) * dpmm;
     const d1 = getAbsRect(0, minY, width, maxY);
     const d2 = getAbsRect(leftBound, topBound, rightBound, bottomBound);
 

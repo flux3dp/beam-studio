@@ -46,9 +46,13 @@ const Banner = (): React.ReactNode => {
     () => hasCurveEngravingData || mode === CanvasMode.CurveEngraving,
     [hasCurveEngravingData, mode],
   );
-  const isNeedBanner = isAutoFeeder || isBorderlessPreview || isCurveEngraving || isPassThrough || isRotary;
+  const isAutoFocus = useMemo(() => mode === CanvasMode.AutoFocus, [mode]);
+  const isNeedBanner =
+    isAutoFeeder || isBorderlessPreview || isCurveEngraving || isPassThrough || isRotary || isAutoFocus;
   const messageMap = {
     autoFeeder: lang.beambox.banner.auto_feeder,
+    autofocus1: 'Auto Focus Mode',
+    autofocus2: 'Click anywhere to perform autofocus.',
     curveEngraving: lang.beambox.banner.curve_engraving,
     openBottomPreview: `${lang.beambox.banner.camera_preview} ${lang.beambox.banner.camera_preview_borderless_mode}`,
     passThrough: lang.beambox.banner.pass_through,
@@ -65,6 +69,11 @@ const Banner = (): React.ReactNode => {
     else if (isPassThrough) list.push(messageMap.passThrough);
     else if (isCurveEngraving) list.push(messageMap.curveEngraving);
     else if (isRotary) list.push(messageMap.rotary);
+
+    if (isAutoFocus) {
+      list.push(messageMap.autofocus1);
+      list.push(messageMap.autofocus2);
+    }
 
     if (!list.length) return '';
 

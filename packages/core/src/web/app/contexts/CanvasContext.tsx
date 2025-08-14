@@ -1,6 +1,8 @@
 import type { Dispatch, SetStateAction } from 'react';
 import React, { createContext, useCallback, useEffect, useRef, useState } from 'react';
 
+import { match } from 'ts-pattern';
+
 import alertCaller from '@core/app/actions/alert-caller';
 import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
@@ -50,7 +52,7 @@ interface CanvasContextType {
   setMode: (mode: CanvasMode) => void;
   setSelectedDevice: Dispatch<SetStateAction<IDeviceInfo | null>>;
   setupPreviewMode: (opts?: { callback?: () => void; showModal?: boolean }) => void;
-  toggleAutoFocus: () => void;
+  toggleAutoFocus: (forceState?: boolean) => void;
   togglePathPreview: () => void;
   updateCanvasContext: () => void;
 }
@@ -323,8 +325,11 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
     setMode(mode === CanvasMode.PathPreview ? CanvasMode.Draw : CanvasMode.PathPreview);
   };
 
-  const toggleAutoFocus = () => {
-    setMode(mode === CanvasMode.AutoFocus ? CanvasMode.Draw : CanvasMode.AutoFocus);
+  const toggleAutoFocus = (forceState?: boolean) => {
+    match(forceState)
+      .with(true, () => setMode(CanvasMode.AutoFocus))
+      .with(false, () => setMode(CanvasMode.Draw))
+      .otherwise(() => setMode(mode === CanvasMode.AutoFocus ? CanvasMode.Draw : CanvasMode.AutoFocus));
   };
 
   const { children } = props;

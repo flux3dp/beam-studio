@@ -1,5 +1,7 @@
 import React, { memo, useContext, useEffect, useRef } from 'react';
 
+import { match } from 'ts-pattern';
+
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import CurveEngravingTool from '@core/app/components/beambox/LeftPanel/components/CurveEngravingTool';
 import DrawingToolButtonGroup from '@core/app/components/beambox/LeftPanel/components/DrawingToolButtonGroup';
@@ -14,7 +16,7 @@ import useI18n from '@core/helpers/useI18n';
 import styles from './index.module.scss';
 
 const UnmemorizedLeftPanel = () => {
-  const { mode, togglePathPreview } = useContext(CanvasContext);
+  const { mode, toggleAutoFocus, togglePathPreview } = useContext(CanvasContext);
   const modeRef = useRef(mode);
   const {
     beambox: { left_panel },
@@ -45,12 +47,10 @@ const UnmemorizedLeftPanel = () => {
     return () => unsubscribes.forEach((unsubscribe) => unsubscribe());
   }, [mode]);
 
-  if (mode === CanvasMode.Draw) {
-    return <DrawingToolButtonGroup className={styles.container} />;
-  }
-
-  if (mode === CanvasMode.PathPreview) {
-    return (
+  return match(mode)
+    .with(CanvasMode.Draw, () => <DrawingToolButtonGroup className={styles.container} />)
+    .with(CanvasMode.CurveEngraving, () => <CurveEngravingTool className={styles.container} />)
+    .with(CanvasMode.PathPreview, () => (
       <div className={styles.container}>
         <LeftPanelButton
           icon={<LeftPanelIcons.Back />}
@@ -59,14 +59,18 @@ const UnmemorizedLeftPanel = () => {
           title={left_panel.label.end_preview}
         />
       </div>
-    );
-  }
-
-  if (mode === CanvasMode.CurveEngraving) {
-    return <CurveEngravingTool className={styles.container} />;
-  }
-
-  return <PreviewToolButtonGroup className={styles.container} />;
+    ))
+    .with(CanvasMode.AutoFocus, () => (
+      <div className={styles.container}>
+        <LeftPanelButton
+          icon={<LeftPanelIcons.Back />}
+          id="Exit-Preview"
+          onClick={toggleAutoFocus}
+          title={left_panel.label.end_preview}
+        />
+      </div>
+    ))
+    .otherwise(() => <PreviewToolButtonGroup className={styles.container} />);
 };
 
 const LeftPanel = memo(UnmemorizedLeftPanel);
