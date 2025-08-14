@@ -100,7 +100,7 @@ const appendUseElement = (
         }
       } else if (type === 'color') {
         const layerColorConfig = storage.get('layer-color-config') || {};
-        const index = layerColorConfig.dict ? layerColorConfig.dict[layerName] : undefined;
+        const index = layerName ? layerColorConfig.dict?.[layerName] : undefined;
         const laserConst = i18n.lang.beambox.right_panel.laser_panel;
 
         if (index !== undefined) {

@@ -38,7 +38,7 @@ export interface Storage {
   'last-installed-version': string;
   'last-promark-serial': string;
   'last-record-activity': string;
-  'layer-color-config': { array: ColorConfig[]; dict: Record<string, ColorConfig> };
+  'layer-color-config': { array: ColorConfig[]; dict: Record<string, number> };
   'layer-panel-height': number;
   loop_compensation: number;
   'new-user': boolean;
@@ -54,7 +54,7 @@ export interface Storage {
   /** array of registered machine serial */
   'registered-devices': string[];
   'selected-device'?: string;
-  /** map with key: device uuid value: software version */
+  /** map with key: device uuid value: firmware version */
   'sentry-send-devices'?: Record<string, string>;
 }
 

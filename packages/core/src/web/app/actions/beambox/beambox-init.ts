@@ -220,7 +220,7 @@ class BeamboxInit {
       defaultFont = fontHelper.getAvailableFonts()[0];
     }
 
-    storage.set('default-font', {
+    setStorage('default-font', {
       family: defaultFont.family,
       postscriptName: defaultFont.postscriptName,
       style: defaultFont.style,

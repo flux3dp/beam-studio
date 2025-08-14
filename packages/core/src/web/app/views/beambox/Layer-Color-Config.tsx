@@ -331,7 +331,7 @@ const LayerColorConfigPanel = (props: Props): React.JSX.Element => {
   };
 
   const onSave = () => {
-    const backwardCompatibleConfigDict = {};
+    const backwardCompatibleConfigDict: Record<string, number> = {};
 
     dataSource.forEach((config, index) => {
       backwardCompatibleConfigDict[config.color] = index;
