@@ -151,7 +151,7 @@ const addOnData: Record<WorkAreaModel, AddOnInfo> = {
     autoFeeder: {
       maxHeight: 3000,
       minY: 200,
-      rotaryRatio: CHUCK_ROTARY_DIAMETER / FEEDER_DIAMETER / 2,
+      rotaryRatio: CHUCK_ROTARY_DIAMETER / FEEDER_DIAMETER,
       vectorSpeedLimit: 30,
       xRange: [0, 340],
     },
@@ -162,7 +162,7 @@ const addOnData: Record<WorkAreaModel, AddOnInfo> = {
     redLight: true,
     rotary: {
       chuck: true,
-      chuckDiameter: CHUCK_ROTARY_DIAMETER / 2,
+      chuckDiameter: CHUCK_ROTARY_DIAMETER,
       defaultMirror: true,
       extendWorkarea: true,
       mirror: true,
