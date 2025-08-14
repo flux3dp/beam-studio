@@ -4,7 +4,7 @@ import { Flex } from 'antd';
 import classNames from 'classnames';
 
 import BeamboxGlobalInteraction from '@core/app/actions/beambox/beambox-global-interaction';
-import LeftPanel from '@core/app/components/beambox/left-panel/LeftPanel';
+import LeftPanel from '@core/app/components/beambox/LeftPanel';
 import PreviewSlider from '@core/app/components/beambox/PreviewSlider';
 import RightPanel from '@core/app/components/beambox/right-panel/RightPanel';
 import SvgEditor from '@core/app/components/beambox/svg-editor/SvgEditor';

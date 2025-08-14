@@ -5,7 +5,7 @@ import { enable as enableRemote } from '@electron/remote/main';
 import type { BaseWindow, IpcMainEvent } from 'electron';
 import { ipcMain, WebContentsView } from 'electron';
 
-import type CanvasMode from '@core/app/constants/canvasMode';
+import type { CanvasMode } from '@core/app/constants/canvasMode';
 import tabConstants, { TabEvents } from '@core/app/constants/tabConstants';
 import i18n from '@core/helpers/i18n';
 import type { Tab as FrontendTab } from '@core/interfaces/Tab';

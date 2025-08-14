@@ -11,7 +11,7 @@ import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import { showRotarySettings } from '@core/app/components/dialogs/RotarySettings';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
-import CanvasMode from '@core/app/constants/canvasMode';
+import { CanvasMode } from '@core/app/constants/canvasMode';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType, workareaOptions as pmWorkareaOptions } from '@core/app/constants/promark-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';

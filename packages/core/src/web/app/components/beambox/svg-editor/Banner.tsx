@@ -4,7 +4,7 @@ import { Flex } from 'antd';
 import { useShallow } from 'zustand/react/shallow';
 
 import { getAddOnInfo } from '@core/app/constants/addOn';
-import CanvasMode from '@core/app/constants/canvasMode';
+import { CanvasMode } from '@core/app/constants/canvasMode';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
@@ -15,7 +15,6 @@ import styles from './Banner.module.scss';
 
 // only beamo openBottom with rotary mode would provide 2 lines of banner
 // beamo add-on openBottom, document setting borderless
-
 const Banner = (): React.ReactNode => {
   const lang = useI18n();
   const { mode, selectedDevice } = useContext(CanvasContext);

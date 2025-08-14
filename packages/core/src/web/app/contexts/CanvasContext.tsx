@@ -50,6 +50,7 @@ interface CanvasContextType {
   setMode: (mode: CanvasMode) => void;
   setSelectedDevice: Dispatch<SetStateAction<IDeviceInfo | null>>;
   setupPreviewMode: (opts?: { callback?: () => void; showModal?: boolean }) => void;
+  toggleAutoFocus: () => void;
   togglePathPreview: () => void;
   updateCanvasContext: () => void;
 }
@@ -69,6 +70,7 @@ const CanvasContext = createContext<CanvasContextType>({
   setMode: () => {},
   setSelectedDevice: () => {},
   setupPreviewMode: () => {},
+  toggleAutoFocus: () => {},
   togglePathPreview: () => {},
   updateCanvasContext: () => {},
 });
@@ -249,9 +251,7 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
           endPreviewMode();
         };
 
-        unregisterEndPreviewShortcut.current = shortcuts.on(['Escape'], triggerEndPreview, {
-          isBlocking: true,
-        });
+        unregisterEndPreviewShortcut.current = shortcuts.on(['Escape'], triggerEndPreview, { isBlocking: true });
 
         setCursor('url(img/camera-cursor.svg) 9 12, cell');
 
@@ -268,14 +268,16 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
       } catch (error) {
         console.error(error);
 
-        if (error.message && error.message.startsWith('Camera WS')) {
-          alertCaller.popUpError({
-            message: `${t.alerts.fail_to_connect_with_camera}<br/>${error.message || ''}`,
-          });
-        } else {
-          alertCaller.popUpError({
-            message: `${t.alerts.fail_to_start_preview}<br/>${error.message || ''}`,
-          });
+        if (error instanceof Error) {
+          if (error.message && error.message.startsWith('Camera WS')) {
+            alertCaller.popUpError({
+              message: `${t.alerts.fail_to_connect_with_camera}<br/>${error.message || ''}`,
+            });
+          } else {
+            alertCaller.popUpError({
+              message: `${t.alerts.fail_to_start_preview}<br/>${error.message || ''}`,
+            });
+          }
         }
 
         // eslint-disable-next-line hooks/rules-of-hooks
@@ -284,7 +286,7 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
         settingUpPreview.current = false;
       }
     },
-    [lang, updateCanvasContext],
+    [lang],
   );
 
   useEffect(() => {
@@ -321,6 +323,10 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
     setMode(mode === CanvasMode.PathPreview ? CanvasMode.Draw : CanvasMode.PathPreview);
   };
 
+  const toggleAutoFocus = () => {
+    setMode(mode === CanvasMode.AutoFocus ? CanvasMode.Draw : CanvasMode.AutoFocus);
+  };
+
   const { children } = props;
 
   return (
@@ -340,6 +346,7 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
         setMode,
         setSelectedDevice,
         setupPreviewMode,
+        toggleAutoFocus,
         togglePathPreview,
         updateCanvasContext,
       }}
