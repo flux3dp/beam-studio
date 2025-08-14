@@ -1,17 +1,17 @@
 import React, { memo, useContext, useEffect } from 'react';
 
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
-import CurveEngravingTool from '@core/app/components/beambox/left-panel/CurveEngravingTool';
-import DrawingToolButtonGroup from '@core/app/components/beambox/left-panel/DrawingToolButtonGroup';
-import LeftPanelButton from '@core/app/components/beambox/left-panel/LeftPanelButton';
-import PreviewToolButtonGroup from '@core/app/components/beambox/left-panel/PreviewToolButtonGroup';
+import CurveEngravingTool from '@core/app/components/beambox/LeftPanel/components/CurveEngravingTool';
+import DrawingToolButtonGroup from '@core/app/components/beambox/LeftPanel/components/DrawingToolButtonGroup';
+import LeftPanelButton from '@core/app/components/beambox/LeftPanel/components/LeftPanelButton';
+import PreviewToolButtonGroup from '@core/app/components/beambox/LeftPanel/components/PreviewToolButtonGroup';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import i18n from '@core/helpers/i18n';
 import shortcuts from '@core/helpers/shortcuts';
 
-import styles from './LeftPanel.module.scss';
+import styles from './index.module.scss';
 
 const LANG = i18n.lang.beambox.left_panel;
 
