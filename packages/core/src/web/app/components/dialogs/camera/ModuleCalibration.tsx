@@ -5,6 +5,7 @@ import { match } from 'ts-pattern';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import { adorModels } from '@core/app/actions/beambox/constant';
+import exportFuncs from '@core/app/actions/beambox/export-funcs';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import progressCaller from '@core/app/actions/progress-caller';
 import alertConstants from '@core/app/constants/alert-constants';
@@ -37,7 +38,7 @@ interface Props {
 
 const calibrated: { [subey in LayerModuleType]?: Set<string> } = {};
 
-const doCalibration = async (model: WorkAreaModel, module: LayerModuleType) => {
+const doCalibration = async (model: WorkAreaModel, module: LayerModuleType): Promise<boolean> => {
   if (adorModels.has(model)) {
     if (module === LayerModule.PRINTER) {
       await deviceMaster.doAdorPrinterCalibration();
@@ -45,13 +46,27 @@ const doCalibration = async (model: WorkAreaModel, module: LayerModuleType) => {
       await deviceMaster.doAdorIRCalibration();
     }
   } else if (module === LayerModule.PRINTER_4C) {
-    await deviceMaster.doBeamo24CCalibration();
+    try {
+      const res = await deviceMaster.getDeviceSetting('machine_limit_position');
+
+      if (!res.value) throw new Error('machine_limit_position is not set');
+
+      const blob = await exportFuncs.fetchBeamo24CCalibrationTaskCode(JSON.stringify(JSON.parse(res.value)));
+
+      if (blob) await deviceMaster.doCalibration({ blob });
+      else return false;
+    } catch (error) {
+      console.error('Failed to get machine_limit_position', error);
+      await deviceMaster.doBeamo24CCalibration();
+    }
   } else if (module === LayerModule.LASER_1064) {
     await deviceMaster.doBeamo2IRCalibration();
   } else {
     // TODO: bm2 white ink, varnish
     console.error('TODO: add calibration fcode');
   }
+
+  return true;
 };
 
 // TODO: add unit test
@@ -220,9 +235,12 @@ const ModuleCalibration = ({ module = LayerModule.LASER_UNIVERSAL, onClose }: Pr
                     calibrated[module] = new Set();
                   }
 
-                  await doCalibration(model, module);
-                  calibrated[module].add(currentDeviceId);
-                  setStep(Step.ALIGN);
+                  const res = await doCalibration(model, module);
+
+                  if (res) {
+                    calibrated[module].add(currentDeviceId);
+                    setStep(Step.ALIGN);
+                  }
                 } finally {
                   progressCaller.popById(PROGRESS_ID);
                 }

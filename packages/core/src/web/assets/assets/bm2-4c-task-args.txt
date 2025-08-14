@@ -1,0 +1,1 @@
+go -f -fbm2 -model fbm2 -acc 5000 -mpc -owp -fg -vsc -vsl 1800 -min-speed 0.5 -acc-override {"path":{"x":500,"y":500}} -mof {"4":[81.4,47.9],"7":[15.5,2.9],"8":[19.7,38.9],"9":[30.2,38.9],"15":[0,40]}	

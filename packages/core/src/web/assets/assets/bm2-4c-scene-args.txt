@@ -1,0 +1,1 @@
+svgeditor_upload bm2-4c-calibration 5069 998 -workarea [360,280] -fbm2 -model fbm2 -mdpi

@@ -844,15 +844,14 @@ class DeviceMaster {
     }
   }
 
-  doCalibration = async (fcodeSource?: string) => {
+  doCalibration = async ({ blob, fcodeSource }: { blob?: Blob; fcodeSource?: string } = {}) => {
     const vc = VersionChecker(this.currentDevice.info.version);
-    let blob: Blob;
 
     if (fcodeSource) {
       const resp = await fetch(fcodeSource);
 
       blob = await resp.blob();
-    } else {
+    } else if (!blob) {
       // fake data to upload for swiftray
       blob = new Blob(['']);
     }
@@ -899,17 +898,17 @@ class DeviceMaster {
 
   async doAdorCalibrationV2() {
     // TODO: should we remove the -v2 suffix?
-    await this.doCalibration(`fcode/ador-camera-v2.fc`);
+    await this.doCalibration({ fcodeSource: 'fcode/ador-camera-v2.fc' });
   }
 
   async doAdorPrinterCalibration() {
     // using offset [0, -13.37]
-    await this.doCalibration('fcode/ador-printer.fc');
+    await this.doCalibration({ fcodeSource: 'fcode/ador-printer.fc' });
   }
 
   async doAdorIRCalibration() {
     // using offset [0, 26.95]
-    await this.doCalibration('fcode/ador-ir.fc');
+    await this.doCalibration({ fcodeSource: 'fcode/ador-ir.fc' });
   }
 
   async doBB2Calibration(type: '' | 'wide-angle' = '') {
@@ -918,21 +917,21 @@ class DeviceMaster {
       .with('wide-angle', () => 'fcode/bb2-calibration-wide-angle.fc')
       .exhaustive();
 
-    await this.doCalibration(fileName);
+    await this.doCalibration({ fcodeSource: fileName });
   }
 
   async doBeamo2Calibration() {
-    await this.doCalibration('fcode/bm2-calibration.fc');
+    await this.doCalibration({ fcodeSource: 'fcode/bm2-calibration.fc' });
   }
 
   async doBeamo24CCalibration() {
     // using offset [15.5, -37.1 + 40]
-    await this.doCalibration('fcode/bm2-4c.fc');
+    await this.doCalibration({ fcodeSource: 'fcode/bm2-4c.fc' });
   }
 
   async doBeamo2IRCalibration() {
     // using offset [81.4, 7.9 + 40]
-    await this.doCalibration('fcode/bm2-ir.fc');
+    await this.doCalibration({ fcodeSource: 'fcode/bm2-ir.fc' });
   }
 
   async doPromarkCalibration() {

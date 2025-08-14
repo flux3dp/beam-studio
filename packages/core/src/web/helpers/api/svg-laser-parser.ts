@@ -575,6 +575,7 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
       names: string[],
       opts: IBaseConfig & {
         fileMode?: string;
+        forceArgString?: string;
         onError?: (message: string) => void;
         onFinished: (blob: Blob, duration: number, metadata: TaskMetaData) => void;
         onProgressing?: (data: { message: string; percentage: number }) => void;
@@ -589,14 +590,16 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
       let blob;
       let metadata: TaskMetaData;
 
-      const { curveEngravingData, loopCompensation } = await getExportOpt(opts, args);
+      if (!opts.forceArgString) {
+        const { curveEngravingData, loopCompensation } = await getExportOpt(opts, args);
 
-      if (loopCompensation) {
-        await setParameter('loop_compensation', loopCompensation);
-      }
+        if (loopCompensation) {
+          await setParameter('loop_compensation', loopCompensation);
+        }
 
-      if (curveEngravingData) {
-        await setParameter('curve_engraving', curveEngravingData);
+        if (curveEngravingData) {
+          await setParameter('curve_engraving', curveEngravingData);
+        }
       }
 
       events.onMessage = (data) => {
@@ -617,7 +620,7 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
           opts.onError?.(data.message);
         }
       };
-      ws.send(args.join(' '));
+      ws.send(opts.forceArgString ?? args.join(' '));
     },
     interruptCalculation: () => {
       ws.send('interrupt');
@@ -809,10 +812,12 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
       file: IWrappedTaskFile,
       {
         engraveDpi = 'medium',
+        forceArgString,
         model,
         onProgressing,
       }: {
         engraveDpi?: string;
+        forceArgString?: string;
         model: WorkAreaModel;
         onProgressing?: (data: { message: string; percentage: number }) => void;
       },
@@ -858,6 +863,12 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
 
             resolve({ message: errorMessages, res: false });
           };
+
+          if (forceArgString) {
+            ws.send(forceArgString);
+
+            return;
+          }
 
           const args = [orderName, file.uploadName, file.size, file.thumbnailSize];
 
