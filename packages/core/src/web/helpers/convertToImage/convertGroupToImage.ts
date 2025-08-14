@@ -1,3 +1,4 @@
+import NS from '@core/app/constants/namespaces';
 import history from '@core/app/svgedit/history/history';
 import { getRotationAngle, setRotationAngle } from '@core/app/svgedit/transform/rotation';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -25,6 +26,28 @@ export const convertGroupToImage = async (
   const children = [...Array.from(svgElement.children)];
   const imageElements = [];
   const svgElements = [];
+  const otherTransforms: SVGMatrix[] = [];
+  const transforms = svgElement.transform.baseVal;
+
+  for (let i = 0; i < transforms.numberOfItems; i++) {
+    const t = transforms.getItem(i);
+
+    if (t.type !== SVGTransform.SVG_TRANSFORM_ROTATE) {
+      otherTransforms.push(t.matrix);
+    }
+  }
+
+  // Rebuild a single matrix from all non-rotation transforms.
+  const svg = document.createElementNS(NS.SVG, 'svg');
+  const combinedMatrix = otherTransforms.reduce((acc, matrix) => acc.multiply(matrix), svg.createSVGMatrix());
+  let transformString = '';
+
+  // Check if the matrix is not the identity matrix to avoid adding an unnecessary transform.
+  if (!combinedMatrix.isIdentity) {
+    const { a, b, c, d, e, f } = combinedMatrix;
+
+    transformString = `matrix(${a},${b},${c},${d},${e},${f})`;
+  }
 
   // remove temporary group to prevent the element cannot be inserted during undo
   if (svgElement.getAttribute('data-tempgroup') === 'true') {
@@ -48,6 +71,8 @@ export const convertGroupToImage = async (
 
     if (groupResult) {
       parentCmd.addSubCommand(groupResult.command);
+
+      if (transformString) groupResult.group.setAttribute('transform', transformString);
 
       if (angle) setRotationAngle(groupResult.group, angle, { parentCmd });
 
