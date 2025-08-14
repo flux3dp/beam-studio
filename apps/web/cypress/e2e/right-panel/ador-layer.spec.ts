@@ -56,7 +56,7 @@ describe('ador layer', () => {
     mergeLayer('Layer 2', 'Do you want to merge these layers into one Laser layer?');
   });
 
-  it.only('move to printing or laser layers', () => {
+  it('move to printing or laser layers', () => {
     cy.changeWorkarea('Ador');
     cy.get(`button[class*="${addLayerBtnPrefix}btn"]`).click({ force: true });
     change2PrintingModule();
