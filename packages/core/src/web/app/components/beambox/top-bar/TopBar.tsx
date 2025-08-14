@@ -34,7 +34,8 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
     () => pipe(getIsWeb(), (isWeb) => ({ isDragRegion: window.os === 'MacOS' && !isWeb, isWeb })),
     [],
   );
-  const { currentUser, hasUnsavedChange, mode, setSelectedDevice, togglePathPreview } = useContext(CanvasContext);
+  const { currentUser, hasUnsavedChange, mode, setSelectedDevice, toggleAutoFocus, togglePathPreview } =
+    useContext(CanvasContext);
   const [hasDiscoveredMachine, setHasDiscoveredMachine] = useState(false);
   const defaultDeviceUUID = useRef<null | string>(storage.get('selected-device'));
   const [isTabFocused, setIsTabFocused] = useState(false);
@@ -104,7 +105,7 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
         <div className={classNames(styles.controls, styles.right)}>
           <SelectMachineButton />
           <DocumentButton />
-          <AutoFocusButton />
+          <AutoFocusButton toggleAutoFocus={toggleAutoFocus} />
           <FrameButton />
           <PathPreviewButton isDeviceConnected={hasDiscoveredMachine} togglePathPreview={togglePathPreview} />
           <GoButton hasDiscoverdMachine={hasDiscoveredMachine} />

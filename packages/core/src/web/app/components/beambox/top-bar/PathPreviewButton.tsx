@@ -35,11 +35,7 @@ function PathPreviewButton({ isDeviceConnected, togglePathPreview }: Props): Rea
   const { mode } = useContext(CanvasContext);
   const workarea = useWorkarea();
 
-  if (isMobile || !checkWebGL()) {
-    return null;
-  }
-
-  if (!isDev() && modelsWithModules.has(workarea)) {
+  if (isMobile || !checkWebGL() || (!isDev() && modelsWithModules.has(workarea))) {
     return null;
   }
 

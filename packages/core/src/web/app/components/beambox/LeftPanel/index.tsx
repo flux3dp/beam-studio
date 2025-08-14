@@ -16,10 +16,11 @@ import styles from './index.module.scss';
 const LANG = i18n.lang.beambox.left_panel;
 
 const UnmemorizedLeftPanel = () => {
-  const { mode, togglePathPreview } = useContext(CanvasContext);
+  const { mode, toggleAutoFocus, togglePathPreview } = useContext(CanvasContext);
 
   useEffect(() => {
     const handleMouseUp = () => FnWrapper.clearSelection();
+    const toUnregisterList = Array.of<() => void>();
 
     $('#layerpanel').on('mouseup', handleMouseUp);
 
@@ -32,7 +33,7 @@ const UnmemorizedLeftPanel = () => {
       p: FnWrapper.insertPath,
       t: FnWrapper.insertText,
       v: FnWrapper.useSelectTool,
-    };
+    } as const;
 
     const registeredHandlers: Record<string, () => void> = {};
 
@@ -44,14 +45,12 @@ const UnmemorizedLeftPanel = () => {
       };
 
       registeredHandlers[key] = handler;
-      shortcuts.on([key], handler);
+      toUnregisterList.push(shortcuts.on([key], handler));
     });
 
     return () => {
       $('#layerpanel').off('mouseup', handleMouseUp);
-      Object.entries(registeredHandlers).forEach(([key]) => {
-        shortcuts.off([key]);
-      });
+      toUnregisterList.forEach((unregister) => unregister());
     };
   }, [mode]);
 
@@ -66,6 +65,19 @@ const UnmemorizedLeftPanel = () => {
           icon={<LeftPanelIcons.Back />}
           id="Exit-Preview"
           onClick={togglePathPreview}
+          title={LANG.label.end_preview}
+        />
+      </div>
+    );
+  }
+
+  if (mode === CanvasMode.AutoFocus) {
+    return (
+      <div className={styles.container}>
+        <LeftPanelButton
+          icon={<LeftPanelIcons.Back />}
+          id="Exit-Preview"
+          onClick={toggleAutoFocus}
           title={LANG.label.end_preview}
         />
       </div>

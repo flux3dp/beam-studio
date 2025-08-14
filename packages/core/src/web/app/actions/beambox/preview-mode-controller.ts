@@ -419,6 +419,6 @@ class PreviewModeController {
   };
 }
 
-const instance = new PreviewModeController();
+const previewModeController = new PreviewModeController();
 
-export default instance;
+export default previewModeController;
