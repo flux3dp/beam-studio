@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo, useContext, useEffect } from 'react';
 
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import CurveEngravingTool from '@core/app/components/beambox/left-panel/CurveEngravingTool';
@@ -15,109 +15,70 @@ import styles from './LeftPanel.module.scss';
 
 const LANG = i18n.lang.beambox.left_panel;
 
-class LeftPanel extends React.PureComponent {
-  declare context: React.ContextType<typeof CanvasContext>;
+const UnmemorizedLeftPanel = () => {
+  const { mode, togglePathPreview } = useContext(CanvasContext);
 
-  componentDidMount(): void {
-    // Selection Management
-    // TODO: move to layer panel
-    $('#layerpanel').on('mouseup', () => {
-      FnWrapper.clearSelection();
+  useEffect(() => {
+    const handleMouseUp = () => FnWrapper.clearSelection();
+
+    $('#layerpanel').on('mouseup', handleMouseUp);
+
+    const shortcutsMap = {
+      '\\': FnWrapper.insertLine,
+      c: FnWrapper.insertEllipse,
+      e: () => $('#left-Element').trigger('click'),
+      i: FnWrapper.importImage,
+      m: FnWrapper.insertRectangle,
+      p: FnWrapper.insertPath,
+      t: FnWrapper.insertText,
+      v: FnWrapper.useSelectTool,
+    };
+
+    const registeredHandlers: Record<string, () => void> = {};
+
+    Object.entries(shortcutsMap).forEach(([key, callback]) => {
+      const handler = () => {
+        if (mode === CanvasMode.Draw) {
+          callback();
+        }
+      };
+
+      registeredHandlers[key] = handler;
+      shortcuts.on([key], handler);
     });
 
-    shortcuts.on(['v'], () => {
-      const { mode } = this.context;
+    return () => {
+      $('#layerpanel').off('mouseup', handleMouseUp);
+      Object.entries(registeredHandlers).forEach(([key]) => {
+        shortcuts.off([key]);
+      });
+    };
+  }, [mode]);
 
-      if (mode === CanvasMode.Draw) {
-        FnWrapper.useSelectTool();
-      }
-    });
-
-    shortcuts.on(['i'], () => {
-      const { mode } = this.context;
-
-      if (mode === CanvasMode.Draw) {
-        FnWrapper.importImage();
-      }
-    });
-
-    shortcuts.on(['t'], () => {
-      const { mode } = this.context;
-
-      if (mode === CanvasMode.Draw) {
-        FnWrapper.insertText();
-      }
-    });
-
-    shortcuts.on(['m'], () => {
-      const { mode } = this.context;
-
-      if (mode === CanvasMode.Draw) {
-        FnWrapper.insertRectangle();
-      }
-    });
-
-    shortcuts.on(['c'], () => {
-      const { mode } = this.context;
-
-      if (mode === CanvasMode.Draw) {
-        FnWrapper.insertEllipse();
-      }
-    });
-
-    shortcuts.on(['\\'], () => {
-      const { mode } = this.context;
-
-      if (mode === CanvasMode.Draw) {
-        FnWrapper.insertLine();
-      }
-    });
-
-    shortcuts.on(['p'], () => {
-      const { mode } = this.context;
-
-      if (mode === CanvasMode.Draw) {
-        FnWrapper.insertPath();
-      }
-    });
-
-    shortcuts.on(['e'], () => {
-      const { mode } = this.context;
-
-      if (mode === CanvasMode.Draw) {
-        $('#left-Element').trigger('click');
-      }
-    });
+  if (mode === CanvasMode.Draw) {
+    return <DrawingToolButtonGroup className={styles.container} />;
   }
 
-  render(): React.JSX.Element {
-    const { mode, togglePathPreview } = this.context;
-
-    if (mode === CanvasMode.Draw) {
-      return <DrawingToolButtonGroup className={styles.container} />;
-    }
-
-    if (mode === CanvasMode.PathPreview) {
-      return (
-        <div className={styles.container}>
-          <LeftPanelButton
-            icon={<LeftPanelIcons.Back />}
-            id="Exit-Preview"
-            onClick={togglePathPreview}
-            title={LANG.label.end_preview}
-          />
-        </div>
-      );
-    }
-
-    if (mode === CanvasMode.CurveEngraving) {
-      return <CurveEngravingTool className={styles.container} />;
-    }
-
-    return <PreviewToolButtonGroup className={styles.container} />;
+  if (mode === CanvasMode.PathPreview) {
+    return (
+      <div className={styles.container}>
+        <LeftPanelButton
+          icon={<LeftPanelIcons.Back />}
+          id="Exit-Preview"
+          onClick={togglePathPreview}
+          title={LANG.label.end_preview}
+        />
+      </div>
+    );
   }
-}
 
-LeftPanel.contextType = CanvasContext;
+  if (mode === CanvasMode.CurveEngraving) {
+    return <CurveEngravingTool className={styles.container} />;
+  }
+
+  return <PreviewToolButtonGroup className={styles.container} />;
+};
+
+const LeftPanel = memo(UnmemorizedLeftPanel);
 
 export default LeftPanel;
