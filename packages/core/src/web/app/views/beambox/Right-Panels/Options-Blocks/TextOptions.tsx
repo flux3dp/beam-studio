@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Button, ConfigProvider, Switch } from 'antd';
 import type { DefaultOptionType } from 'antd/es/select';
@@ -11,6 +11,7 @@ import progressCaller from '@core/app/actions/progress-caller';
 import { iconButtonTheme, selectTheme } from '@core/app/constants/antd-config';
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
 import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
+import { setStorage, useStorageStore } from '@core/app/stores/storageStore';
 import history from '@core/app/svgedit/history/history';
 import type { Selector } from '@core/app/svgedit/selector';
 import selector from '@core/app/svgedit/selector';
@@ -32,7 +33,6 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
 import { updateConfigs } from '@core/helpers/update-configs';
 import { isVariableTextSupported } from '@core/helpers/variableText';
-import storage from '@core/implementations/storage';
 import type { GeneralFont } from '@core/interfaces/IFont';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { TextConfig, TextOption } from '@core/interfaces/ObjectPanel';
@@ -98,8 +98,8 @@ const getFontFamilyOption = (family: string, isHistory = false): FontOption => {
 const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) => {
   const isMobile = useIsMobile();
   const { updateObjectPanel } = useContext(ObjectPanelContext);
+  const fontHistory = useStorageStore((state) => state['font-history']);
   const [availableFontFamilies, setAvailableFontFamilies] = useState<string[]>([]);
-  const [historyFontFamilies, setHistoryFontFamilies] = useState<FontOption[]>([]);
   const [configs, setConfigs] = useState(defaultTextConfigs);
   const { fontFamily } = configs;
   const [styleOptions, setStyleOptions] = useState<FontOption[]>([]);
@@ -125,53 +125,36 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
   const addToHistory = (font: GeneralFont) => {
     if (!font.family) return;
 
-    const history: string[] = (storage.get('font-history') || []).filter((name: string) => name !== font.family);
+    const newHistory: string[] = (fontHistory ?? []).filter((name: string) => name !== font.family);
 
-    if (!history.includes(font.family)) {
-      history.unshift(font.family);
+    newHistory.unshift(font.family);
 
-      if (history.length > maxHistory) {
-        history.pop();
-      }
+    if (newHistory.length > maxHistory) newHistory.pop();
 
-      storage.set('font-history', history);
-    }
-
-    const historyOption = getFontFamilyOption(font.family, true);
-    const newHistoryFontFamilies = historyFontFamilies.filter((option) => option.family !== font.family);
-
-    newHistoryFontFamilies.unshift(historyOption);
-
-    if (newHistoryFontFamilies.length > maxHistory) {
-      newHistoryFontFamilies.pop();
-    }
-
-    setHistoryFontFamilies(newHistoryFontFamilies);
+    setStorage('font-history', newHistory);
   };
 
-  const getFontFamilies = async () => {
+  const historyFontFamilies = useMemo(() => {
+    const families = FontFuncs.requestAvailableFontFamilies();
+
+    return (fontHistory ?? [])
+      .map((family) => (families.includes(family) ? getFontFamilyOption(family, true) : null))
+      .filter(Boolean);
+  }, [fontHistory]);
+
+  const getFontFamilies = useCallback(async () => {
     const families = FontFuncs.requestAvailableFontFamilies();
 
     setAvailableFontFamilies(families);
-
-    const history: string[] = storage.get('font-history') || [];
-    const historyOptions: FontOption[] = [];
-
-    history.forEach((family) => {
-      if (families.includes(family)) {
-        historyOptions.push(getFontFamilyOption(family, true));
-      }
-    });
-    setHistoryFontFamilies(historyOptions);
-  };
+  }, []);
 
   useEffect(() => {
     eventEmitter.on('GET_MONOTYPE_FONTS', getFontFamilies);
 
     return () => {
-      eventEmitter.removeListener('GET_MONOTYPE_FONTS');
+      eventEmitter.removeListener('GET_MONOTYPE_FONTS', getFontFamilies);
     };
-  }, []);
+  }, [getFontFamilies]);
 
   useEffect(() => {
     const getStateFromElem = () => {
@@ -246,7 +229,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     } else {
       getFontFamilies();
     }
-  }, [elem, textElements, availableFontFamilies, configs.id.value]);
+  }, [elem, textElements, availableFontFamilies, configs.id.value, getFontFamilies]);
 
   useEffect(() => {
     const getStyleOptions = (family: string) => {
