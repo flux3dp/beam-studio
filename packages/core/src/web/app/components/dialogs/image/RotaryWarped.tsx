@@ -5,13 +5,13 @@ import { Button, Modal, Segmented } from 'antd';
 import progressCaller from '@core/app/actions/progress-caller';
 import AlertIcons from '@core/app/icons/alerts/AlertIcons';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import { getRotationAngle } from '@core/app/svgedit/transform/rotation';
 import UnitInput from '@core/app/widgets/UnitInput';
 import imageEdit from '@core/helpers/image-edit';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
-import storage from '@core/implementations/storage';
 
 import styles from './RotaryWarped.module.scss';
 
@@ -69,7 +69,7 @@ const RotaryWarped = ({ elem, onClose }: Props): React.JSX.Element => {
     beambox: { photo_edit_panel: t },
     global: tGlobal,
   } = lang;
-  const isInch = useMemo(() => storage.get('default-units') === 'inches', []);
+  const isInch = useStorageStore((state) => state['default-units'] === 'inches');
   const [inputType, setInputType] = useState<number>(0);
   const [previewImgUrl, setPreviewImgUrl] = useState<string>('');
   const [originalImgUrl, setOriginalImgUrl] = useState<string>('');

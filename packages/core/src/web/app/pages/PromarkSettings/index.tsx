@@ -9,12 +9,12 @@ import LensBlock from '@core/app/components/dialogs/promark/LensBlock';
 import RedDotBlock from '@core/app/components/dialogs/promark/RedDotBlock';
 import { defaultField, defaultGalvoParameters, defaultRedLight } from '@core/app/constants/promark-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import promarkDataStore from '@core/helpers/device/promark/promark-data-store';
 import { getSerial } from '@core/helpers/device/promark/promark-info';
 import deviceMaster from '@core/helpers/device-master';
 import { getHomePage } from '@core/helpers/hashHelper';
 import useI18n from '@core/helpers/useI18n';
-import storage from '@core/implementations/storage';
 
 import styles from './index.module.scss';
 
@@ -24,7 +24,7 @@ export default function PromarkSettings(): React.JSX.Element {
   const [redDot, setRedDot] = useState(defaultRedLight);
   const [galvoParameters, setGalvoParameters] = useState(defaultGalvoParameters);
 
-  const isInch = useMemo(() => storage.get('default-units') === 'inches', []);
+  const isInch = useStorageStore((state) => state['default-units'] === 'inches');
   const serial = useMemo(getSerial, []);
   const { width } = useMemo(() => getWorkarea('fpm1'), []);
 

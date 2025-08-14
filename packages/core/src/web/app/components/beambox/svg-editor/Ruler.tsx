@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import workareaManager from '@core/app/svgedit/workarea';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import storage from '@core/implementations/storage';
 
 import styles from './Ruler.module.scss';
 
@@ -13,7 +13,7 @@ const Ruler = (): React.JSX.Element => {
   const rulersRef = useRef<HTMLDivElement>(null);
   const xContainerRef = useRef<HTMLDivElement>(null);
   const yContainerRef = useRef<HTMLDivElement>(null);
-  const unit = storage.get('default-units');
+  const isInch = useStorageStore((state) => state['default-units'] === 'inches');
 
   const updateRulers = useCallback(() => {
     const { canvasExpansion, height, width, zoomRatio } = workareaManager;
@@ -26,7 +26,6 @@ const Ruler = (): React.JSX.Element => {
       return;
     }
 
-    const isInch = unit === 'inches';
     // big step before zoom
     const step =
       (() => {
@@ -162,7 +161,7 @@ const Ruler = (): React.JSX.Element => {
         (yContainerRef.current.parentNode as Element).scrollTop = workArea.scrollTop;
       }
     }
-  }, [unit]);
+  }, [isInch]);
 
   useEffect(() => {
     const handler = () => {
@@ -190,7 +189,7 @@ const Ruler = (): React.JSX.Element => {
       <div className={styles.y} id="ruler_y">
         <div className={styles.container} ref={yContainerRef} />
       </div>
-      <div className={styles.unit}>{unit === 'inches' ? 'inch' : 'mm'}</div>
+      <div className={styles.unit}>{isInch ? 'inch' : 'mm'}</div>
     </div>
   );
 };

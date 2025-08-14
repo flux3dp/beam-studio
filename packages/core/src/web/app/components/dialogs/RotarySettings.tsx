@@ -9,13 +9,13 @@ import { getAddOnInfo, RotaryType } from '@core/app/constants/addOn';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import RotaryIcons from '@core/app/icons/rotary/RotaryIcons';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import Select from '@core/app/widgets/AntdSelect';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import UnitInput from '@core/app/widgets/UnitInput';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
-import storage from '@core/implementations/storage';
 import type { DocumentState } from '@core/interfaces/Preference';
 
 import styles from './RotarySettings.module.scss';
@@ -51,7 +51,7 @@ const RotarySettings = ({ afterSave, initData, onClose }: Props): React.JSX.Elem
   const [overlap, setOverlap] = useState(useDocumentStore.getState()['rotary-overlap']);
   const [extend, setExtend] = useState<boolean>(Boolean(useDocumentStore.getState()['extend-rotary-workarea']));
   const [mirror, setMirror] = useState<boolean>(Boolean(useDocumentStore.getState()['rotary-mirror']));
-  const isInch = useMemo(() => storage.get('default-units') === 'inches', []);
+  const isInch = useStorageStore((state) => state['default-units'] === 'inches');
 
   useEffect(() => {
     if (overlap > split) setOverlap(split);

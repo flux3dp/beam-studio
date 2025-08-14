@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { ArrowDownOutlined, ArrowUpOutlined, LoadingOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Button, Flex, Modal, Spin, Tooltip } from 'antd';
@@ -8,13 +8,13 @@ import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/
 import alertConstants from '@core/app/constants/alert-constants';
 import deviceConstants from '@core/app/constants/device-constants';
 import Icons from '@core/app/icons/icons';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import UnitInput from '@core/app/widgets/UnitInput';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import { generateCalibrationTaskString, loadTaskToSwiftray } from '@core/helpers/device/promark/calibration';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
-import storage from '@core/implementations/storage';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 import type { MarkParameters } from './ParametersBlock';
@@ -29,7 +29,7 @@ interface Props {
 export const ZAxisAdjustment = ({ device, onClose }: Props): React.JSX.Element => {
   const { global: tGlobal, monitor: tMonitor, promark_settings: t } = useI18n();
   const { model } = device;
-  const isInch = useMemo(() => storage.get('default-units') === 'inches', []);
+  const isInch = useStorageStore((state) => state['default-units'] === 'inches');
   const [zAxis, setZAxis] = useState(1);
   const [isPreviewing, setIsPreviewing] = useState(false);
   const [isMoving, setIsMoving] = useState(false);

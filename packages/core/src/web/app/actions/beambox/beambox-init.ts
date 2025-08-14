@@ -15,6 +15,7 @@ import { gestureIntroduction } from '@core/app/constants/media-tutorials';
 import NS from '@core/app/constants/namespaces';
 import BeamboxStore from '@core/app/stores/beambox-store';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import { getStorage, setStorage } from '@core/app/stores/storageStore';
 import { initCurText } from '@core/app/svgedit/text/textedit';
 import workareaManager from '@core/app/svgedit/workarea';
 import { showCameraCalibration } from '@core/app/views/beambox/Camera-Calibration';
@@ -44,16 +45,16 @@ class BeamboxInit {
   constructor() {
     migrate();
 
-    if (!storage.get('default-units')) {
+    if (!getStorage('default-units')) {
       const { timeZone } = Intl.DateTimeFormat().resolvedOptions();
       const isEn = navigator.language.slice(0, 2).toLocaleLowerCase() === 'en';
 
       if (timeZone.startsWith('America') && isEn) {
-        storage.set('default-units', 'inches');
+        setStorage('default-units', 'inches');
       }
     }
 
-    if (!storage.get('default-font')) {
+    if (!getStorage('default-font')) {
       this.initDefaultFont();
     }
 

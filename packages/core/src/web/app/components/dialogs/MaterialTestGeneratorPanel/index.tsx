@@ -6,6 +6,7 @@ import constant, { promarkModels } from '@core/app/actions/beambox/constant';
 import svgEditor from '@core/app/actions/beambox/svg-editor';
 import { LaserType } from '@core/app/constants/promark-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import createNewText from '@core/app/svgedit/text/createNewText';
@@ -18,7 +19,6 @@ import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { createLayer } from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
-import storage from '@core/implementations/storage';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
@@ -69,7 +69,7 @@ const getEnd = (start: number, block: BlockInfo) =>
 
 const MaterialTestGeneratorPanel = ({ onClose }: Props): React.JSX.Element => {
   const t = useI18n();
-  const isInch = useMemo(() => storage.get('default-units') === 'inches', []);
+  const isInch = useStorageStore((state) => state['default-units'] === 'inches');
   const { laserType } = getPromarkInfo();
   const workarea = useDocumentStore((state) => state.workarea);
   const { isMopa, isPromark } = useMemo(

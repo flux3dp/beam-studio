@@ -11,6 +11,7 @@ import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import { getStorage } from '@core/app/stores/storageStore';
 import { getAutoFeeder } from '@core/helpers/addOn';
 import alertConfig from '@core/helpers/api/alert-config';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
@@ -19,7 +20,6 @@ import round from '@core/helpers/math/round';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import VersionChecker from '@core/helpers/version-checker';
-import storage from '@core/implementations/storage';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type { ILang } from '@core/interfaces/ILang';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -205,7 +205,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
     if (isTooFast) {
       await new Promise<void>((resolve) => {
         const limit =
-          storage.get('default-units') === 'inches'
+          getStorage('default-units') === 'inches'
             ? `${round(curveSpeedLimit / 25.4, 2)} in/s`
             : `${curveSpeedLimit} mm/s`;
 
@@ -339,7 +339,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
     if (isTooFast) {
       await new Promise<void>((resolve) => {
         const limit =
-          storage.get('default-units') === 'inches'
+          getStorage('default-units') === 'inches'
             ? `${round(vectorSpeedLimit / 25.4, 2)} in/s`
             : `${vectorSpeedLimit} mm/s`;
 

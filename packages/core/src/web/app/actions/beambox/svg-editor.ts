@@ -77,6 +77,7 @@ import fileSystem from '@core/implementations/fileSystem';
 import { FileData } from '@core/helpers/fileImportHelper';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import { getStorage } from '@core/app/stores/storageStore';
 
 // @ts-expect-error this line is required to load svgedit
 if (svgCanvasClass) {
@@ -297,7 +298,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       baseUnit: 'px',
       // Change the following to preferences and add pref controls to the UI (e.g., initTool, wireframe, showlayers)?
       canvasName: 'default',
-      defaultUnit: storage.get('default-units') || 'mm',
       // DOCUMENT PROPERTIES
       // Change the following to a preference (already in the Document Properties dialog)?
       dimensions: editor.dimensions,
@@ -328,10 +328,8 @@ const svgEditor = (window['svgEditor'] = (function () {
       preventAllURLConfig: true,
       preventURLContentLoading: true,
       // EXTENSION-RELATED (GRID)
-      showGrid: true, // Set by ext-grid.js
       showlayers: true,
       snappingStep: 10,
-      wireframe: true,
     },
     /**
      * LOCALE
@@ -1578,7 +1576,7 @@ const svgEditor = (window['svgEditor'] = (function () {
     Actions = (function () {
       return {
         setAll: function () {
-          const moveUnit = storage.get('default-units') === 'inches' ? 25.4 : 10; // 0.1 in : 1 mm
+          const moveUnit = getStorage('default-units') === 'inches' ? 25.4 : 10; // 0.1 in : 1 mm
 
           Shortcuts.on(['Delete', 'Backspace'], () => deleteSelected());
           Shortcuts.on(['Fnkey+a'], (e) => {

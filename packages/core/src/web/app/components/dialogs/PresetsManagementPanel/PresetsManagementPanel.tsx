@@ -14,6 +14,7 @@ import { LayerModule, printingModules } from '@core/app/constants/layer-module/l
 import presets from '@core/app/constants/presets';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import Select from '@core/app/widgets/AntdSelect';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import {
@@ -25,7 +26,6 @@ import {
 import { getModulesTranslations, getPrintingModule } from '@core/helpers/layer-module/layer-module-helper';
 import presetHelper from '@core/helpers/presets/preset-helper';
 import useI18n from '@core/helpers/useI18n';
-import storage from '@core/implementations/storage';
 import type { ConfigKey, ConfigKeyTypeMap, Preset } from '@core/interfaces/ILayerConfig';
 
 import Footer from './Footer';
@@ -57,7 +57,7 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
   const [filter, setFilter] = useState<(typeof Filter)[keyof typeof Filter]>(hasModule ? Filter.ALL : Filter.LASER);
   const listRef = useRef<HTMLDivElement>(null);
-  const isInch = useMemo(() => (storage.get('default-units') || 'mm') === 'inches', []);
+  const isInch = useStorageStore((state) => state['default-units'] === 'inches');
   const lengthUnit = useMemo(() => (isInch ? 'in' : 'mm'), [isInch]);
   const moduleTranslations = useMemo(() => getModulesTranslations(), []);
   const [editingPresets, setEditingPresets] = useState(presetHelper.getAllPresets());

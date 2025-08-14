@@ -6,11 +6,11 @@ import { Button, Checkbox, Modal, Tooltip } from 'antd';
 import { underlineInputTheme } from '@core/app/constants/antd-config';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import UnitInput from '@core/app/widgets/UnitInput';
 import getDevice from '@core/helpers/device/get-device';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
-import storage from '@core/implementations/storage';
 
 import styles from './PreviewHeight.module.scss';
 
@@ -45,7 +45,7 @@ const getProbeHeight = async () => {
 
     const { deep } = getWorkarea(device.info.model as WorkAreaModel, 'ado1');
 
-    return Math.round((deep - z) * 100) / 100;
+    return Math.round((deep! - z) * 100) / 100;
   } catch (err) {
     console.log(err);
 
@@ -60,8 +60,7 @@ const PreviewHeight = ({ initValue, onClose, onOk }: Props): React.JSX.Element =
   const [adjustChecked, setAdjustChecked] = useState(!hasInitValue);
   const [step, setStep] = useState(hasInitValue ? Step.ADJUST : Step.ASK_FOCUS);
   const [value, setValue] = useState(initValue);
-  const unit = useMemo(() => (storage.get('default-units') === 'inches' ? 'in' : 'mm'), []);
-  const isInch = useMemo(() => unit === 'in', [unit]);
+  const isInch = useStorageStore((state) => state['default-units'] === 'inches');
 
   useEffect(() => {
     let effectEnded = false;
@@ -182,7 +181,7 @@ const PreviewHeight = ({ initValue, onClose, onOk }: Props): React.JSX.Element =
           step={isInch ? 0.254 : 0.1}
           theme={underlineInputTheme}
           underline
-          unit={unit}
+          unit={isInch ? 'in' : 'mm'}
           value={value}
         />
         {hasInitValue && (

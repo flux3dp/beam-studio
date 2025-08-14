@@ -5,11 +5,11 @@ import { Button, Flex } from 'antd';
 import type Konva from 'konva';
 
 import constant from '@core/app/actions/beambox/constant';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import UnitInput from '@core/app/widgets/UnitInput';
 import round from '@core/helpers/math/round';
 import shortcuts from '@core/helpers/shortcuts';
 import useI18n from '@core/helpers/useI18n';
-import storage from '@core/implementations/storage';
 import type { AutoFitContour } from '@core/interfaces/IAutoFit';
 
 import styles from './Controls.module.scss';
@@ -27,7 +27,7 @@ interface Props {
 const Controls = ({ contour, dimension, imageRef, initDimension, setDimension }: Props): React.JSX.Element => {
   const { auto_fit: t } = useI18n();
   const { dpmm } = constant;
-  const isInch = useMemo(() => storage.get('default-units') === 'inches', []);
+  const isInch = useStorageStore((state) => state['default-units'] === 'inches');
   const initialCenter = useMemo(() => calculateDimensionCenter(initDimension), [initDimension]);
 
   const handleResetPosition = useCallback(() => {
@@ -96,6 +96,8 @@ const Controls = ({ contour, dimension, imageRef, initDimension, setDimension }:
             className={styles.input}
             isInch={isInch}
             onChange={(val) => {
+              if (val === null) return;
+
               const targetCenterX = val * dpmm + initialCenter.x;
               const targetX = targetCenterX - (width / 2) * Math.cos(rad) + (height / 2) * Math.sin(rad);
 
@@ -115,6 +117,8 @@ const Controls = ({ contour, dimension, imageRef, initDimension, setDimension }:
             className={styles.input}
             isInch={isInch}
             onChange={(val) => {
+              if (val === null) return;
+
               const targetCenterY = val * dpmm + initialCenter.y;
               const targetY = targetCenterY - (width / 2) * Math.sin(rad) - (height / 2) * Math.cos(rad);
 
@@ -133,6 +137,8 @@ const Controls = ({ contour, dimension, imageRef, initDimension, setDimension }:
             addonAfter="deg"
             className={styles.input}
             onChange={(val) => {
+              if (val === null) return;
+
               const newRad = (val * Math.PI) / 180;
               const newX = centerX - (width / 2) * Math.cos(newRad) + (height / 2) * Math.sin(newRad);
               const newY = centerY - (width / 2) * Math.sin(newRad) - (height / 2) * Math.cos(newRad);

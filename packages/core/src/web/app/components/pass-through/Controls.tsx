@@ -6,11 +6,11 @@ import classNames from 'classnames';
 import { sprintf } from 'sprintf-js';
 
 import constant, { dpmm } from '@core/app/actions/beambox/constant';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import workareaManager from '@core/app/svgedit/workarea';
 import UnitInput from '@core/app/widgets/UnitInput';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
-import storage from '@core/implementations/storage';
 
 import styles from './PassThrough.module.scss';
 import { PassThroughContext } from './PassThroughContext';
@@ -90,7 +90,7 @@ const Controls = (): React.JSX.Element => {
     [widthMax, setGuideMark],
   );
 
-  const isInch = useMemo(() => storage.get('default-units') === 'inches', []);
+  const isInch = useStorageStore((state) => state['default-units'] === 'inches');
   const objectSize = useMemo(() => {
     const svgcontent = document.getElementById('svgcontent') as unknown as SVGSVGElement;
 
@@ -117,8 +117,11 @@ const Controls = (): React.JSX.Element => {
 
   return (
     <div className={styles.controls}>
-      {lang.help_links[workarea] && (
-        <div className={styles.link} onClick={() => browser.open(lang.help_links[workarea])}>
+      {lang.help_links[workarea as keyof typeof lang.help_links] && (
+        <div
+          className={styles.link}
+          onClick={() => browser.open(lang.help_links[workarea as keyof typeof lang.help_links])}
+        >
           {sprintf(lang.help_text, { model: workareaObj.label })}
         </div>
       )}

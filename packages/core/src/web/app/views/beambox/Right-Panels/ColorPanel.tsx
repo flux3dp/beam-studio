@@ -7,6 +7,7 @@ import constant from '@core/app/actions/beambox/constant';
 import ColorBlock from '@core/app/components/beambox/right-panel/ColorBlock';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import ColorPicker from '@core/app/widgets/ColorPicker';
@@ -17,13 +18,13 @@ import useDidUpdateEffect from '@core/helpers/hooks/useDidUpdateEffect';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
-import storage from '@core/implementations/storage';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './ColorPanel.module.scss';
 
 const workareaEvents = eventEmitterFactory.createEventEmitter('workarea');
 
-let svgCanvas;
+let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
@@ -136,25 +137,20 @@ const ColorPanel = ({ elem }: Props): React.JSX.Element => {
     svgCanvas.changeSelectedAttribute('stroke-width', val, [elem]);
     setState({ ...state, strokeWidth: val });
   };
+  const isInch = useStorageStore((state) => state['default-units'] === 'inches');
 
   const { decimal, max, ratio, step, unit } = useMemo(
     () =>
-      storage.get('default-units') === 'inches'
-        ? {
-            decimal: 2,
-            max: 127,
-            ratio: constant.dpmm * 25.4,
-            step: constant.dpmm * 0.254,
-            unit: 'inch',
-          }
+      isInch
+        ? { decimal: 2, max: 127, ratio: constant.dpmm * 25.4, step: constant.dpmm * 0.254, unit: 'inch' }
         : { decimal: 1, max: 100, ratio: constant.dpmm, step: constant.dpmm * 0.1, unit: 'mm' },
-    [],
+    [isInch],
   );
 
   const startPreviewMode = (type: number, color: string) => {
     setIsColorPreviewing(true);
     svgCanvas.unsafeAccess.setCurrentMode('preview_color');
-    svgCanvas.selectorManager.requestSelector(elem).resize();
+    svgCanvas.selectorManager.requestSelector(elem)?.resize();
     workareaEvents.emit('update-context-menu', { menuDisabled: true });
     setPreviewState({ currentStep: EditStep.Previewing, type });
     previewRef.current = { newColor: color, origColor: color };
@@ -175,7 +171,7 @@ const ColorPanel = ({ elem }: Props): React.JSX.Element => {
 
       setIsColorPreviewing(false);
       svgCanvas.unsafeAccess.setCurrentMode('select');
-      svgCanvas.selectorManager.requestSelector(elem).resize();
+      svgCanvas.selectorManager.requestSelector(elem)?.resize();
       workareaEvents.emit('update-context-menu', { menuDisabled: false });
     }
 

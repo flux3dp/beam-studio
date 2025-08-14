@@ -6,9 +6,9 @@ import { Button, Divider, Popover } from 'antd-mobile';
 import classNames from 'classnames';
 
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 import units from '@core/helpers/units';
-import storage from '@core/implementations/storage';
 
 import styles from './ObjectPanelItem.module.scss';
 
@@ -76,7 +76,8 @@ const ObjectPanelNumber = ({
   const context = useContext(ObjectPanelContext);
   const { activeKey } = context;
   const isActive = activeKey === id;
-  const shouldConvert2Inch = useMemo(() => unit === 'mm' && storage.get('default-units') === 'inches', [unit]);
+  const isDefaultInch = useStorageStore((state) => state['default-units'] === 'inches');
+  const shouldConvert2Inch = useMemo(() => unit === 'mm' && isDefaultInch, [unit, isDefaultInch]);
   // for unit conversion
   const fakeUnit = shouldConvert2Inch ? 'inch' : 'mm';
   const defaultPrecision = shouldConvert2Inch ? 4 : 2;
