@@ -1,3 +1,6 @@
+/**
+ * I18n implementation for nodejs usage
+ */
 import ElectronStore from 'electron-store';
 import { match } from 'ts-pattern';
 

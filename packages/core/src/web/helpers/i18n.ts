@@ -1,3 +1,5 @@
+import { match } from 'ts-pattern';
+
 import AppSettings from '@core/app/app-settings';
 import LangCs from '@core/app/lang/cs';
 import LangDa from '@core/app/lang/da';
@@ -21,62 +23,61 @@ import LangTh from '@core/app/lang/th';
 import LangVi from '@core/app/lang/vi';
 import LangZHCN from '@core/app/lang/zh-cn';
 import LangZHTW from '@core/app/lang/zh-tw';
+import { setStorage, useStorageStore } from '@core/app/stores/storageStore';
 import storage from '@core/implementations/storage';
 import type { ILang } from '@core/interfaces/ILang';
 
-const ACTIVE_LANG = 'active-lang';
-const langCache: { [key: string]: ILang } = {
-  cs: LangCs,
-  da: LangDa,
-  de: LangDe,
-  el: LangEl,
-  en: LangEn,
-  es: LangEs,
-  fi: LangFi,
-  fr: LangFr,
-  id: LangId,
-  it: LangIt,
-  ja: LangJa,
-  kr: LangKr,
-  ms: LangMs,
-  nl: LangNl,
-  no: LangNo,
-  pl: LangPl,
-  pt: LangPt,
-  se: LangSe,
-  th: LangTh,
-  vi: LangVi,
-  'zh-cn': LangZHCN,
-  'zh-tw': LangZHTW,
+const getLang = (lang: string): ILang => {
+  return match(lang)
+    .with('cs', () => LangCs)
+    .with('da', () => LangDa)
+    .with('de', () => LangDe)
+    .with('el', () => LangEl)
+    .with('en', () => LangEn)
+    .with('es', () => LangEs)
+    .with('fi', () => LangFi)
+    .with('fr', () => LangFr)
+    .with('id', () => LangId)
+    .with('it', () => LangIt)
+    .with('ja', () => LangJa)
+    .with('kr', () => LangKr)
+    .with('ms', () => LangMs)
+    .with('nl', () => LangNl)
+    .with('no', () => LangNo)
+    .with('pl', () => LangPl)
+    .with('pt', () => LangPt)
+    .with('se', () => LangSe)
+    .with('th', () => LangTh)
+    .with('vi', () => LangVi)
+    .with('zh-cn', () => LangZHCN)
+    .with('zh-tw', () => LangZHTW)
+    .otherwise(() => LangEn);
 };
+let activeLang = storage.get('active-lang') || AppSettings.i18n.default_lang;
+let lang = getLang(activeLang);
 
-let activeLang = (storage.get(ACTIVE_LANG) as string) || AppSettings.i18n.default_lang;
-
-/**
- * set active language
- *
- * @param {string} language code in lower case
- *
- * @return string
- */
 export function getActiveLang(): string {
-  return (storage.get(ACTIVE_LANG) as string) || AppSettings.i18n.default_lang;
+  return activeLang;
 }
 
-/**
- * set active language
- *
- * @param {string} language code in lower case
- */
-export function setActiveLang(lang: string): void {
-  activeLang = lang;
-  storage.set(ACTIVE_LANG, lang);
+export function setActiveLang(newVal: string): void {
+  activeLang = newVal;
+  lang = getLang(activeLang);
+  setStorage('active-lang', newVal);
 }
+
+useStorageStore.subscribe(
+  (state) => state['active-lang'],
+  (newValue) => {
+    activeLang = newValue;
+    lang = getLang(activeLang);
+  },
+);
 
 export default {
   getActiveLang,
   get lang(): ILang {
-    return langCache[activeLang] || langCache[AppSettings.i18n.default_lang];
+    return lang;
   },
   setActiveLang,
 };
