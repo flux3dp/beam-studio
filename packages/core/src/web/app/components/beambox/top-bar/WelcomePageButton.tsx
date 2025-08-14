@@ -1,6 +1,7 @@
 import React from 'react';
 
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
+import currentFileManager from '@core/app/svgedit/currentFileManager';
 import fileExportHelper from '@core/helpers/file-export-helper';
 import { hashMap } from '@core/helpers/hashHelper';
 
@@ -12,6 +13,8 @@ const WelcomePageButton = () => {
 
     if (res) {
       window.location.hash = hashMap.welcome;
+      currentFileManager.setHasUnsavedChanges(false);
+      window.location.reload();
     }
   };
 
