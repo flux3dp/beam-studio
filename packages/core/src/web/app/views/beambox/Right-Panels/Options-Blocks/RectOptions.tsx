@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 
 import Constant from '@core/app/actions/beambox/constant';
 import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
@@ -9,7 +10,6 @@ import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import i18n from '@core/helpers/i18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
-import storage from '@core/implementations/storage';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './RectOptions.module.scss';
@@ -30,6 +30,7 @@ function RectOptions({ elem }: Props): React.JSX.Element {
   const isMobile = useIsMobile();
   const { dimensionValues, updateDimensionValues } = useContext(ObjectPanelContext);
   const { rx } = dimensionValues;
+  const isInch = useStorageStore((state) => state['default-units'] === 'inches');
 
   const handleRoundedCornerChange = (val: number) => {
     val *= Constant.dpmm;
@@ -38,9 +39,6 @@ function RectOptions({ elem }: Props): React.JSX.Element {
   };
 
   const renderRoundCornerBlock = () => {
-    const unit = storage.get('default-units') || 'mm';
-    const isInch = unit === 'inches';
-
     return isMobile ? (
       <ObjectPanelItem.Number
         id="rounded-corner"

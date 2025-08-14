@@ -1,11 +1,11 @@
 import React, { memo, useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { objectPanelInputTheme } from '@core/app/constants/antd-config';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import UnitInput from '@core/app/widgets/UnitInput';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { useIsMobile } from '@core/helpers/system-helper';
-import storage from '@core/implementations/storage';
 import type { DimensionValues, SizeKey, SizeKeyShort } from '@core/interfaces/ObjectPanel';
 
 import styles from './DimensionPanel.module.scss';
@@ -29,9 +29,11 @@ const SizeInput = ({ onBlur, onChange, type, value }: Props): React.JSX.Element 
   const inputRef = useRef<HTMLInputElement>(null);
   const objectPanelEventEmitter = useMemo(() => eventEmitterFactory.createEventEmitter('object-panel'), []);
   const isMobile = useIsMobile();
-  const isInch = useMemo(() => storage.get('default-units') === 'inches', []);
-  const unit = useMemo(() => (isInch ? 'in' : 'mm'), [isInch]);
-  const precision = useMemo(() => (isInch ? 4 : 2), [isInch]);
+  const isInch = useStorageStore((state) => state['default-units'] === 'inches');
+  const { precision, unit } = useMemo<{ precision: number; unit: 'in' | 'mm' }>(
+    () => (isInch ? { precision: 4, unit: 'in' } : { precision: 2, unit: 'mm' }),
+    [isInch],
+  );
 
   useEffect(() => {
     const handler = (newValues: DimensionValues) => {

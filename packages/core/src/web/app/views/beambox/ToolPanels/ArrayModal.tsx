@@ -5,9 +5,9 @@ import { ConfigProvider, InputNumber, Modal, Slider } from 'antd';
 import classNames from 'classnames';
 
 import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import i18n from '@core/helpers/i18n';
 import units from '@core/helpers/units';
-import storage from '@core/implementations/storage';
 
 import styles from './ArrayModal.module.scss';
 
@@ -40,7 +40,7 @@ interface Props {
 }
 
 const ArrayModal = ({ onCancel, onOk }: Props): React.JSX.Element => {
-  const unit = React.useMemo(() => (storage.get('default-units') === 'inches' ? 'inch' : 'mm'), []);
+  const unit = useStorageStore((state) => (state['default-units'] === 'inches' ? 'inch' : 'mm'));
   const setting = unitSettings[unit];
   const [data, setData] = React.useState<Value>({
     column: 3,

@@ -5,10 +5,10 @@ import { ConfigProvider, InputNumber, Modal, Slider } from 'antd';
 import classNames from 'classnames';
 
 import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import Select from '@core/app/widgets/AntdSelect';
 import i18n from '@core/helpers/i18n';
 import units from '@core/helpers/units';
-import storage from '@core/implementations/storage';
 
 import styles from './OffsetModal.module.scss';
 import type { OffsetProp } from './OffsetPanel';
@@ -36,7 +36,7 @@ interface Props {
 }
 
 const OffsetModal = ({ onCancel, onOk }: Props): React.JSX.Element => {
-  const unit = storage.get('default-units') === 'inches' ? 'inch' : 'mm';
+  const unit = useStorageStore((state) => (state['default-units'] === 'inches' ? 'inch' : 'mm'));
   const setting = unitSettings[unit];
   const [offset, setOffset] = useState<OffsetProp>({
     cornerType: 'sharp',

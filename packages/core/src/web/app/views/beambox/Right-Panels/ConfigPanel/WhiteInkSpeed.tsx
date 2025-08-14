@@ -4,8 +4,8 @@ import { getSpeedOptions } from '@core/app/constants/config-options';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import useI18n from '@core/helpers/useI18n';
-import storage from '@core/implementations/storage';
 
 import ConfigSlider from './ConfigSlider';
 import ConfigValueDisplay from './ConfigValueDisplay';
@@ -25,13 +25,10 @@ const WhiteInkSpeed = ({ hasMultiValue, onChange, value }: Props): React.JSX.Ele
 
   const sliderOptions = useMemo(() => (simpleMode ? getSpeedOptions(lang) : undefined), [simpleMode, lang]);
 
+  const isInch = useStorageStore((state) => state['default-units'] === 'inches');
   const { decimal, display: displayUnit } = useMemo(() => {
-    const unit: 'inches' | 'mm' = storage.get('default-units') || 'mm';
-    const display = { inches: 'in/s', mm: 'mm/s' }[unit];
-    const d = { inches: 2, mm: 1 }[unit];
-
-    return { decimal: d, display };
-  }, []);
+    return isInch ? { decimal: 2, display: 'in/s' } : { decimal: 1, display: 'mm/s' };
+  }, [isInch]);
   const workarea = useDocumentStore((state) => state.workarea);
   const { maxValue, minValue } = useMemo(() => {
     const workareaObj = getWorkarea(workarea);
