@@ -13,48 +13,36 @@ import useI18n from '@core/helpers/useI18n';
 
 import styles from './LeftPanel.module.scss';
 
-const LeftPanel = memo(() => {
+const UnmemorizedLeftPanel = () => {
   const { mode, togglePathPreview } = useContext(CanvasContext);
   const modeRef = useRef(mode);
   const {
-    beambox: { left_panel: t },
+    beambox: { left_panel },
   } = useI18n();
 
   useEffect(() => {
     const checkMode = (targetMode: CanvasMode = CanvasMode.Draw) => modeRef.current === targetMode;
-    const unsubscribes: Array<() => void> = [
-      shortcuts.on(['v'], () => {
-        // eslint-disable-next-line hooks/rules-of-hooks
-        if (checkMode()) FnWrapper.useSelectTool();
-      }),
-      shortcuts.on(['i'], () => {
-        if (checkMode()) FnWrapper.importImage();
-      }),
-      shortcuts.on(['t'], () => {
-        if (checkMode()) FnWrapper.insertText();
-      }),
-      shortcuts.on(['m'], () => {
-        if (checkMode(CanvasMode.Draw)) FnWrapper.insertRectangle();
-      }),
-      shortcuts.on(['c'], () => {
-        if (checkMode(CanvasMode.Draw)) FnWrapper.insertEllipse();
-      }),
-      shortcuts.on(['\\'], () => {
-        if (checkMode(CanvasMode.Draw)) FnWrapper.insertLine();
-      }),
-      shortcuts.on(['p'], () => {
-        if (checkMode(CanvasMode.Draw)) FnWrapper.insertPath();
-      }),
-      shortcuts.on(['e'], () => {
-        if (checkMode(CanvasMode.Draw)) $('#left-Element').trigger('click');
-      }),
-    ];
+    const shortcutsMap = {
+      '\\': FnWrapper.insertLine,
+      c: FnWrapper.insertEllipse,
+      e: () => $('#left-Element').trigger('click'),
+      i: FnWrapper.importImage,
+      m: FnWrapper.insertRectangle,
+      p: FnWrapper.insertPath,
+      t: FnWrapper.insertText,
+      v: FnWrapper.useSelectTool,
+    };
+    const unsubscribes = Array.of<() => void>();
+
+    Object.entries(shortcutsMap).forEach(([key, callback]) => {
+      const handler = () => {
+        if (checkMode()) callback();
+      };
+
+      unsubscribes.push(shortcuts.on([key], handler));
+    });
 
     return () => unsubscribes.forEach((unsubscribe) => unsubscribe());
-  }, []);
-
-  useEffect(() => {
-    modeRef.current = mode;
   }, [mode]);
 
   if (mode === CanvasMode.Draw) {
@@ -68,7 +56,7 @@ const LeftPanel = memo(() => {
           icon={<LeftPanelIcons.Back />}
           id="Exit-Preview"
           onClick={togglePathPreview}
-          title={t.label.end_preview}
+          title={left_panel.label.end_preview}
         />
       </div>
     );
@@ -79,6 +67,8 @@ const LeftPanel = memo(() => {
   }
 
   return <PreviewToolButtonGroup className={styles.container} />;
-});
+};
+
+const LeftPanel = memo(UnmemorizedLeftPanel);
 
 export default LeftPanel;
