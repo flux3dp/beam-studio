@@ -7,9 +7,9 @@ import { ipcMain, WebContentsView } from 'electron';
 
 import type CanvasMode from '@core/app/constants/canvasMode';
 import tabConstants, { TabEvents } from '@core/app/constants/tabConstants';
-import i18n from '@core/helpers/i18n';
 import type { Tab as FrontendTab } from '@core/interfaces/Tab';
 
+import i18n from './helpers/i18n';
 import initStore from './helpers/initStore';
 import events from './ipc-events';
 

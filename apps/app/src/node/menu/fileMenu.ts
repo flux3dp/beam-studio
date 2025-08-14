@@ -3,9 +3,9 @@ import { ipcMain, Menu, MenuItem } from 'electron';
 import ElectronStore from 'electron-store';
 
 import { TabEvents } from '@core/app/constants/tabConstants';
-import i18n from '@core/helpers/i18n';
 import type { ILang } from '@core/interfaces/ILang';
 
+import i18n from '../helpers/i18n';
 import { getFocusedView, getTabManager } from '../helpers/tabHelper';
 import type { MenuData } from '../interfaces/Menu';
 
