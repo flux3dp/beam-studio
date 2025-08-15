@@ -73,21 +73,19 @@ export const exportAsSVG = async (): Promise<void> => {
   }
 
   svgCanvas.clearSelection();
+  svgCanvas.removeUnusedDefs();
 
-  const getContent = async () => {
-    const reverts = [await convertVariableText(), await convertAllTextToPath()];
-    const allLayers = document.querySelectorAll('g.layer');
+  const reverts = [await convertVariableText(), await convertAllTextToPath()];
+  const allLayers = document.querySelectorAll('g.layer');
 
-    allLayers.forEach((layer) => layer.removeAttribute('clip-path'));
-    svgCanvas.removeUnusedDefs();
+  allLayers.forEach((layer) => layer.removeAttribute('clip-path'));
 
-    const res = removeNPElementsWrapper(() => switchSymbolWrapper(() => svgCanvas.getSvgString({ unit: 'mm' })));
+  const res = removeNPElementsWrapper(() => switchSymbolWrapper(() => svgCanvas.getSvgString({ unit: 'mm' })));
 
-    allLayers.forEach((layer) => layer.setAttribute('clip-path', 'url(#scene_mask)'));
-    reverts.forEach((revert) => revert?.());
+  allLayers.forEach((layer) => layer.setAttribute('clip-path', 'url(#scene_mask)'));
+  reverts.forEach((revert) => revert?.());
 
-    return res;
-  };
+  const getContent = () => res;
   const defaultFileName = getDefaultFileName();
   const langFile = LANG.topmenu.file;
 
