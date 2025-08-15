@@ -53,6 +53,7 @@ const getLang = (lang: string): ILang => {
     .with('zh-tw', () => LangZHTW)
     .otherwise(() => LangEn);
 };
+
 let activeLang = storage.get('active-lang') || AppSettings.i18n.default_lang;
 let lang = getLang(activeLang);
 
