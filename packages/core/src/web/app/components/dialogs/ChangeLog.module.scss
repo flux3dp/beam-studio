@@ -1,0 +1,17 @@
+.item {
+  display: flex;
+  padding: 0 0 2px;
+
+  .index {
+    width: 20px;
+    margin: 0 15px 0 0;
+    text-align: right;
+  }
+
+  .log {
+    line-height: 20px;
+    width: calc(100% - 35px);
+    margin: 0;
+    white-space: pre-wrap;
+  }
+}

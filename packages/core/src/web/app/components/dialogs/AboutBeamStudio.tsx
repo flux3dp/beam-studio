@@ -27,9 +27,9 @@ function AboutBeamStudio({ onClose }: Props): React.JSX.Element {
         </Col>
         <Col span={12}>
           <strong>Beam Studio</strong>
-          <div className="version">{`${t.version} ${FLUX.version}`}</div>
-          <div className="copyright">{`Copyright ⓒ ${new Date().getFullYear()} FLUX Inc.`}</div>
-          <div className="credit" dangerouslySetInnerHTML={{ __html: t.credit }} />
+          <div>{`${t.version} ${FLUX.version}`}</div>
+          <div>{`Copyright ⓒ ${new Date().getFullYear()} FLUX Inc.`}</div>
+          <div dangerouslySetInnerHTML={{ __html: t.credit }} />
         </Col>
       </Row>
     </Modal>

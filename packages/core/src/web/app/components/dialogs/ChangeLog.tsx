@@ -1,35 +1,36 @@
+import type { ReactNode } from 'react';
 import React from 'react';
 
-import { Button, Modal } from 'antd';
+import { Button } from 'antd';
 
+import DraggableModal from '@core/app/widgets/DraggableModal';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
+import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 import changelog from '@core/implementations/changelog';
+import type { IChangeLogContent } from '@core/interfaces/IChangeLog';
 
-const LANG = i18n.lang.change_logs;
+import styles from './ChangeLog.module.scss';
 
 interface Props {
   onClose: () => void;
 }
 
-function ChangeLog({ onClose }: Props): React.JSX.Element {
+function ChangeLog({ onClose }: Props): ReactNode {
+  const { change_logs: t, global: tGlobal } = useI18n();
   const renderChangeLogs = () => {
     const CHANGES = i18n.getActiveLang().startsWith('zh') ? changelog.CHANGES_TW : changelog.CHANGES_EN;
     const logs = [];
 
-    for (const key of Object.keys(CHANGES)) {
+    for (const key of Object.keys(CHANGES) as Array<keyof IChangeLogContent>) {
       if (CHANGES[key].length > 0) {
-        logs.push(
-          <strong className="change-log-category" key={key}>
-            {LANG[key]}
-          </strong>,
-        );
+        logs.push(<strong key={key}>{t[key]}</strong>);
         for (let i = 0; i < CHANGES[key].length; i += 1) {
           logs.push(
-            <div className="change-log-item" key={`${key}-${i}`}>
-              <span className="index">{`${i + 1}.`}</span>
-              <span className="log">{CHANGES[key][i]}</span>
+            <div className={styles.item} key={`${key}-${i}`}>
+              <span className={styles.index}>{`${i + 1}.`}</span>
+              <span className={styles.log}>{CHANGES[key][i]}</span>
             </div>,
           );
         }
@@ -50,39 +51,34 @@ function ChangeLog({ onClose }: Props): React.JSX.Element {
   const renderVersion = () => {
     const { version } = window.FLUX;
 
-    if (isWeb()) {
-      return null;
-    }
+    if (isWeb()) return null;
 
     return (
       <div className="app">
         {`📖 Beam Studio ${version.replace('-', ' ')} `}
-        {LANG.change_log}
+        {t.change_log}
       </div>
     );
   };
 
-  const handleLink = () => {
-    browser.open(LANG.help_center_url);
-  };
-
   return (
-    <Modal
+    <DraggableModal
       centered
       footer={[
-        <Button key="older-version" onClick={handleLink}>
-          {LANG.see_older_version}
+        <Button key="older-version" onClick={() => browser.open(t.help_center_url)}>
+          {t.see_older_version}
         </Button>,
         <Button key="ok" onClick={onClose} type="primary">
-          OK
+          {tGlobal.ok}
         </Button>,
       ]}
       onCancel={onClose}
       open
+      scrollableContent
       title={renderVersion()}
     >
-      <div className="change-log-container">{changeLogs}</div>
-    </Modal>
+      <div>{changeLogs}</div>
+    </DraggableModal>
   );
 }
 

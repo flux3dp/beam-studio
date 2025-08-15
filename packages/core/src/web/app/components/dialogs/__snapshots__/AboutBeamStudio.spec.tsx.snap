@@ -81,19 +81,13 @@ exports[`test AboutBeamStudio should render correctly 1`] = `
                     <strong>
                       Beam Studio
                     </strong>
-                    <div
-                      class="version"
-                    >
+                    <div>
                       Version 1.2.3
                     </div>
-                    <div
-                      class="copyright"
-                    >
+                    <div>
                       Copyright ⓒ 1976 FLUX Inc.
                     </div>
-                    <div
-                      class="credit"
-                    >
+                    <div>
                       Beam Studio is made possible by the 
                       <a
                         href="https://github.com/flux3dp/beam-studio"
