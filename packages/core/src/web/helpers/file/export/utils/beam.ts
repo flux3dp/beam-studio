@@ -18,13 +18,11 @@ const generateBeamThumbnail = async (): Promise<ArrayBuffer | null> => {
   const { maxY, minY, width } = workareaManager;
   const svgContent = document.getElementById('svgcontent') as unknown as SVGSVGElement;
   const bbox = svgContent.getBBox();
-
-  bbox.x = Math.max(bbox.x, 0);
-  bbox.y = Math.max(bbox.y, minY);
-
   const right = Math.min(bbox.x + bbox.width, width);
   const bottom = Math.min(bbox.y + bbox.height, maxY);
 
+  bbox.x = Math.max(bbox.x, 0);
+  bbox.y = Math.max(bbox.y, minY);
   bbox.width = right - bbox.x;
   bbox.height = bottom - bbox.y;
 
