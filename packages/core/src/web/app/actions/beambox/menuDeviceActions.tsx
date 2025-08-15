@@ -540,7 +540,7 @@ export default {
     );
 
     Alert.popUp({
-      buttonLabels: [i18n.lang.topmenu.device.network_test, i18n.lang.topmenu.ok],
+      buttonLabels: [i18n.lang.topmenu.device.network_test, i18n.lang.global.ok],
       callbacks: [() => Dialog.showNetworkTestingPanel(device.ipaddr), () => {}],
       caption: device.name,
       id: 'machine-info',

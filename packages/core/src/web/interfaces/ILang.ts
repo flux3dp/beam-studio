@@ -2227,7 +2227,6 @@ export interface ILang {
       scene_files: string;
       svg_files: string;
     };
-    ok: string;
     version: string;
   };
   tutorial: {

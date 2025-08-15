@@ -2234,7 +2234,6 @@ const lang: ILang = {
       scene_files: 'Plik Beam Studio',
       svg_files: 'SVG',
     },
-    ok: 'OK',
     version: 'Wersja',
   },
   tutorial: {

@@ -2234,7 +2234,6 @@ const lang: ILang = {
       scene_files: 'Σκηνές Beam Studio',
       svg_files: 'SVG',
     },
-    ok: 'ΕΝΤΑΞΕΙ',
     version: 'Έκδοση',
   },
   tutorial: {
