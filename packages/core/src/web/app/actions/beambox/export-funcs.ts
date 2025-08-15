@@ -324,6 +324,108 @@ const fetchTaskCode = async (
   };
 };
 
+// Modified from fetchTaskCode
+const fetchBeamo24CCalibrationTaskCode = async (limitPosition: string) => {
+  let isCanceled = false;
+  let modelId = 'upload-scene';
+
+  Progress.openSteppingProgress({
+    caption: i18n.lang.beambox.popup.progress.calculating,
+    id: modelId,
+    message: '',
+    onCancel: async () => {
+      svgeditorParser.interruptCalculation();
+      isCanceled = true;
+    },
+  });
+
+  const sceneArgsResp = await fetch('/assets/bm2-4c-scene-args.txt');
+  const sceneArgsString = await sceneArgsResp.text();
+  const fileResp = await fetch('/assets/bm2-4c-scene.txt');
+  const scene = await fileResp.text();
+  const data = Buffer.from(scene, 'utf8');
+  const uploadRes = await svgeditorParser.uploadToSvgeditorAPI({ data, size: data.length } as any, {
+    forceArgString: sceneArgsString,
+    model: 'fbm2',
+    onProgressing: (data: { message: string; percentage: number }) => {
+      // message: Analyzing SVG - 0.0%
+      Progress.update(modelId, {
+        caption: i18n.lang.beambox.popup.progress.calculating,
+        message: data.message,
+        percentage: data.percentage * 100,
+      });
+    },
+  });
+
+  if (isCanceled) return null;
+
+  Progress.popById(modelId);
+
+  if (!uploadRes.res) {
+    Alert.popUp({
+      buttonType: AlertConstants.INFO,
+      id: 'get-taskcode-error',
+      message: `#806 ${uploadRes.message}`,
+      type: AlertConstants.SHOW_POPUP_ERROR,
+    });
+
+    return null;
+  }
+
+  modelId = 'fetch-task';
+  Progress.openSteppingProgress({
+    id: modelId,
+    message: '',
+    onCancel: () => {
+      svgeditorParser.interruptCalculation();
+      isCanceled = true;
+    },
+  });
+
+  let didErrorOccur = false;
+  const taskArgsResp = await fetch('/assets/bm2-4c-task-args.txt');
+  const taskArgsString = await taskArgsResp.text();
+  const taskCodeRes = await new Promise<null | {
+    fileTimeCost: number;
+    metadata: TaskMetaData;
+    taskCodeBlob: Blob;
+  }>((resolve) => {
+    svgeditorParser.getTaskCode([], {
+      forceArgString: `${taskArgsString} -machine-limit-position ${limitPosition}`,
+      onError: (message: string) => {
+        Progress.popById(modelId);
+        Alert.popUp({
+          buttonType: AlertConstants.INFO,
+          id: 'get-taskcode-error',
+          message: `#806 ${message}`,
+          type: AlertConstants.SHOW_POPUP_ERROR,
+        });
+        didErrorOccur = true;
+        resolve(null);
+      },
+      onFinished: (taskBlob: Blob, timeCost: number, metadata: TaskMetaData) => {
+        Progress.update(modelId, { message: lang.message.uploading_fcode, percentage: 100 });
+        resolve({ fileTimeCost: timeCost, metadata, taskCodeBlob: taskBlob });
+      },
+      onProgressing: (data: { message: string; percentage: number }) => {
+        // message: Calculating Toolpath 28.6%
+        Progress.update(modelId, {
+          message: data.message,
+          percentage: data.percentage * 100,
+        });
+      },
+    } as any);
+  });
+
+  if (isCanceled || didErrorOccur) return null;
+
+  Progress.popById(modelId);
+
+  if (!taskCodeRes) return null;
+
+  return taskCodeRes.taskCodeBlob;
+};
+
 // Send svg string calculate taskcode, output Fcode in default
 const fetchTransferredFcode = async (gcodeString: string, thumbnail: string) => {
   let isErrorOccur = false;
@@ -483,6 +585,7 @@ export default {
 
     fileReader.readAsArrayBuffer(taskCodeBlob);
   },
+  fetchBeamo24CCalibrationTaskCode,
   gcodeToFcode: async (
     gcodeString: string,
     thumbnail: string,
