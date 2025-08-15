@@ -27,8 +27,6 @@ getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
 
-const LANG = i18n.lang;
-
 export const exportAsBVG = async (): Promise<boolean> => {
   if (!(await checkNounProjectElements())) {
     return false;
@@ -37,7 +35,7 @@ export const exportAsBVG = async (): Promise<boolean> => {
   svgCanvas.clearSelection();
 
   const defaultFileName = getDefaultFileName();
-  const langFile = LANG.topmenu.file;
+  const langFile = i18n.lang.topmenu.file;
 
   svgCanvas.removeUnusedDefs();
 
@@ -90,7 +88,7 @@ export const exportAsSVG = async (): Promise<void> => {
     return res;
   };
   const defaultFileName = getDefaultFileName();
-  const langFile = LANG.topmenu.file;
+  const langFile = i18n.lang.topmenu.file;
 
   await dialog.writeFileDialog(getContent, langFile.save_svg, defaultFileName, [
     { extensions: ['svg'], name: isMac() ? `${langFile.svg_files} (*.svg)` : langFile.svg_files },
@@ -99,7 +97,7 @@ export const exportAsSVG = async (): Promise<void> => {
 };
 
 export const exportAsImage = async (type: 'jpg' | 'png'): Promise<void> => {
-  const langFile = LANG.topmenu.file;
+  const langFile = i18n.lang.topmenu.file;
 
   svgCanvas.clearSelection();
   svgCanvas.removeUnusedDefs();
@@ -146,8 +144,8 @@ export const exportUvPrintAsPdf = async (): Promise<void> => {
 
   const {
     topmenu: { file: lang },
-  } = LANG;
-  const revert = await convertVariableText();
+  } = i18n.lang;
+  const reverts = [await convertVariableText(), (await convertAllTextToPath()).revert];
   const layers = pipe(
     getAllLayerNames(),
     filter((layerName) => getData(getLayerElementByName(layerName), 'module') === LayerModule.UV_PRINT),
@@ -156,7 +154,7 @@ export const exportUvPrintAsPdf = async (): Promise<void> => {
   const base64 = await switchSymbolWrapper(() => layersToA4Base64(layers));
   const defaultFileName = getDefaultFileName();
 
-  revert?.();
+  reverts.toReversed().forEach((revert) => revert?.());
 
   const pdf = new jsPDF().addImage(base64, 'PNG', 0, 0, 210, 297);
   const getContent = () => new Blob([pdf.output('blob')], { type: 'application/pdf' });
