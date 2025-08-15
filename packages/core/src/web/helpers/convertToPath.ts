@@ -1,4 +1,7 @@
-import fontFuncs from '@core/app/actions/beambox/font-funcs';
+import alertCaller from '@core/app/actions/alert-caller';
+import type { ConvertResultType } from '@core/app/actions/beambox/font-funcs';
+import fontFuncs, { ConvertResult } from '@core/app/actions/beambox/font-funcs';
+import alertConstants from '@core/app/constants/alert-constants';
 import history, { BatchCommand } from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { deleteElements } from '@core/app/svgedit/operations/delete';
@@ -8,6 +11,8 @@ import textedit from '@core/app/svgedit/text/textedit';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
+import alertConfig from './api/alert-config';
+import i18n from './i18n';
 import { getSVGAsync } from './svg-editor-helper';
 
 type ConvertToPathParams = {
@@ -20,6 +25,10 @@ type ConvertToPathResult = {
   bbox: DOMRect;
   command: IBatchCommand | undefined;
   path?: SVGPathElement;
+};
+
+type ConvertTextToPathResult = ConvertToPathResult & {
+  status: ConvertResultType;
 };
 
 let svgCanvas: ISVGCanvas;
@@ -57,12 +66,12 @@ export const convertTextToPath = async ({
   isToSelect?: boolean;
   parentCommand?: IBatchCommand;
   weldingTexts?: boolean;
-}): Promise<ConvertToPathResult> => {
+}): Promise<ConvertTextToPathResult> => {
   const isSubCommand = parentCommand !== undefined;
 
   if (textActions.isEditing) textActions.toSelectMode();
 
-  const { command, path } = await fontFuncs.convertTextToPath(element, { isSubCommand: true, weldingTexts });
+  const { command, path, status } = await fontFuncs.convertTextToPath(element, { isSubCommand: true, weldingTexts });
 
   if (command && isSubCommand) {
     parentCommand.addSubCommand(command);
@@ -76,7 +85,7 @@ export const convertTextToPath = async ({
     svgCanvas.selectOnly([path]);
   }
 
-  return { bbox: path?.getBBox()!, command: parentCommand || command || undefined, path: path || undefined };
+  return { bbox: path?.getBBox()!, command: parentCommand || command || undefined, path: path || undefined, status };
 };
 
 export const convertTextOnPathToPath = async ({
@@ -195,24 +204,26 @@ export const generateImageRect = (element?: SVGImageElement): { command?: IBatch
  * Converts all <text> and text-on-path elements on the canvas to paths.
  * @returns A promise that resolves to a function that can revert the conversion.
  */
-export const convertAllTextToPath = async (): Promise<() => void> => {
+export const convertAllTextToPath = async (): Promise<{
+  revert: () => void;
+  success: boolean;
+}> => {
   // 1. Create a master command to record all changes.
   const parentCommand = new history.BatchCommand('Convert All Text to Path');
-  const svgContent = document.getElementById('svgcontent')!;
+  const texts = [
+    ...document.querySelectorAll('#svgcontent g.layer:not([display="none"]) text'),
+    ...document.querySelectorAll('#svg_defs text'),
+  ] as SVGElement[];
+  let isAnyFontUnsupported = false;
 
-  // 2. Find and convert all text-on-a-path elements first.
-  const textOnPathElements = svgContent.querySelectorAll<SVGGElement>('[data-textpath-g="1"]');
+  for (const element of texts) {
+    const { status } = await convertTextToPath({ element, parentCommand });
 
-  for (const element of textOnPathElements) {
-    await convertTextOnPathToPath({ element, parentCommand });
-  }
+    if (status === ConvertResult.CANCEL_OPERATION) {
+      return { revert: () => {}, success: false };
+    }
 
-  // 3. Find all regular <text> elements, excluding those already handled.
-  const allTextElements = Array.from(svgContent.querySelectorAll<SVGTextElement>('text'));
-  const regularTextElements = allTextElements.filter((textEl) => !textEl.closest('[data-textpath-g="1"]'));
-
-  for (const element of regularTextElements) {
-    await convertTextToPath({ element, parentCommand });
+    if (status === ConvertResult.UNSUPPORT) isAnyFontUnsupported = true;
   }
 
   /**
@@ -227,5 +238,25 @@ export const convertAllTextToPath = async (): Promise<() => void> => {
     });
   };
 
-  return revert;
+  if (isAnyFontUnsupported && !alertConfig.read('skip_check_thumbnail_warning')) {
+    await new Promise<void>((resolve) => {
+      alertCaller.popUp({
+        callbacks: () => resolve(),
+        checkbox: {
+          callbacks: () => {
+            alertConfig.write('skip_check_thumbnail_warning', true);
+            resolve();
+          },
+          text: i18n.lang.alert.dont_show_again,
+        },
+        message: i18n.lang.beambox.object_panels.text_to_path.check_thumbnail_warning,
+        type: alertConstants.SHOW_POPUP_WARNING,
+      });
+    });
+  }
+
+  return {
+    revert,
+    success: true,
+  };
 };

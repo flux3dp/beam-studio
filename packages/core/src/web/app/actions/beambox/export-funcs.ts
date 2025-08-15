@@ -2,7 +2,6 @@ import Alert from '@core/app/actions/alert-caller';
 import constant, { promarkModels } from '@core/app/actions/beambox/constant';
 import generateThumbnail from '@core/app/actions/beambox/export/generate-thumbnail';
 import { fetchTaskCodeSwiftray } from '@core/app/actions/beambox/export-funcs-swiftray';
-import FontFuncs from '@core/app/actions/beambox/font-funcs';
 import MonitorController from '@core/app/actions/monitor-controller';
 import Progress from '@core/app/actions/progress-caller';
 import { getAddOnInfo } from '@core/app/constants/addOn';
@@ -17,6 +16,7 @@ import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarCont
 import svgLaserParser from '@core/helpers/api/svg-laser-parser';
 import { hasSwiftray } from '@core/helpers/api/swiftray-client';
 import AwsHelper from '@core/helpers/aws-helper';
+import { convertAllTextToPath } from '@core/helpers/convertToPath';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import updateImagesResolution from '@core/helpers/image/updateImagesResolution';
@@ -113,9 +113,9 @@ const fetchTaskCode = async (
     message: lang.beambox.bottom_right_panel.convert_text_to_path_before_export,
   });
 
-  const res = await FontFuncs.tempConvertTextToPathAmongSvgContent();
+  const { revert, success } = await convertAllTextToPath();
 
-  if (!res) {
+  if (!success) {
     Progress.popById('fetch-task-code');
     SymbolMaker.switchImageSymbolForAll(true);
 
@@ -131,7 +131,7 @@ const fetchTaskCode = async (
 
   Progress.update('fetch-task-code', {
     caption: i18n.lang.beambox.popup.progress.calculating,
-    message: 'Spliting Full color layer',
+    message: 'Splitting Full color layer',
   });
 
   const revertUpdateImagesResolution = await updateImagesResolution();
@@ -143,7 +143,7 @@ const fetchTaskCode = async (
     revertAnnotatePrintingColor();
     revertShapesToImage();
     revertUpdateImagesResolution();
-    await FontFuncs.revertTempConvert();
+    revert();
     SymbolMaker.switchImageSymbolForAll(true);
   };
 
@@ -632,7 +632,7 @@ export default {
     thumbnailBlobURL: string;
     uploadFile: IWrappedTaskFile;
   }> => {
-    await FontFuncs.tempConvertTextToPathAmongSvgContent();
+    const { revert } = await convertAllTextToPath();
 
     const { thumbnail, thumbnailBlobURL } = await generateThumbnail();
 
@@ -640,8 +640,8 @@ export default {
 
     const uploadFile = await generateUploadFile(thumbnail, thumbnailBlobURL);
 
-    await FontFuncs.revertTempConvert();
     revertUpdateImagesResolution();
+    revert();
 
     return { thumbnailBlobURL, uploadFile };
   },
@@ -664,9 +664,11 @@ export default {
     if (hasVariableText({ visibleOnly: true })) {
       // Update thumbnail with variable text placeholder
       SymbolMaker.switchImageSymbolForAll(false);
-      await FontFuncs.tempConvertTextToPathAmongSvgContent();
+
+      const { revert } = await convertAllTextToPath();
+
       ({ thumbnail, thumbnailBlobURL } = await generateThumbnail());
-      await FontFuncs.revertTempConvert();
+      revert();
       SymbolMaker.switchImageSymbolForAll(true);
       // Get variable text task info for initial total time estimation
       vtElemHandler = extractVariableText() ?? undefined;
