@@ -14,7 +14,6 @@ import { getDefaultFileName } from '../utils/common';
 
 import { saveToCloud } from './cloud';
 
-const LANG = i18n.lang;
 let svgCanvas: ISVGCanvas;
 
 getSVGAsync(({ Canvas }) => {
@@ -26,7 +25,7 @@ export const saveAsFile = async (): Promise<boolean> => {
   svgCanvas.removeUnusedDefs();
 
   const defaultFileName = getDefaultFileName();
-  const langFile = LANG.topmenu.file;
+  const langFile = i18n.lang.topmenu.file;
   const getContent = async () =>
     pipe(
       await generateBeamBuffer(),
