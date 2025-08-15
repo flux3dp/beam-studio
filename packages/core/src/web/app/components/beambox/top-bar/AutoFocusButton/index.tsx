@@ -61,18 +61,12 @@ const AutoFocusButton = ({ toggleAutoFocus }: Props): React.JSX.Element => {
       setIsProcessing(true);
       progressCaller.openNonstopProgress({ id: 'auto-focus', message: lang.operating });
 
-      await deviceMaster.enterRawMode();
-
-      if (model === 'fhexa1') {
-        await deviceMaster.rawUnlock();
-      }
-
       const _f = getMovementSpeed(model);
 
       // If coordinates were provided by the pin, move the device head first.
       if (coords) {
-        const x = Math.max(0, Math.min(coords.x / dpmm - offsetX, width - offsetX));
-        const y = Math.max(0, Math.min(coords.y / dpmm - offsetY, height - offsetY));
+        const x = Math.max(offsetX, Math.min(coords.x / dpmm - offsetX, width - offsetX));
+        const y = Math.max(offsetY, Math.min(coords.y / dpmm - offsetY, height - offsetY));
 
         await deviceMaster.rawMove({ x, y });
       }
@@ -155,12 +149,31 @@ const AutoFocusButton = ({ toggleAutoFocus }: Props): React.JSX.Element => {
         return false;
       })
       .otherwise(() => true);
+    const setupDevice = async () => {
+      try {
+        progressCaller.openNonstopProgress({ id: 'auto-focus', message: message.homing });
+
+        progressCaller.update('auto-focus', { message: message.enteringRawMode });
+        await deviceMaster.enterRawMode();
+        progressCaller.update('auto-focus', { message: message.exitingRotaryMode });
+        await deviceMaster.rawSetRotary(false);
+        progressCaller.update('auto-focus', { message: message.homing });
+        await deviceMaster.rawHome();
+
+        if (selectedDevice?.model === 'fhexa1') {
+          await deviceMaster.rawUnlock();
+        }
+      } finally {
+        progressCaller.popById('auto-focus');
+      }
+    };
 
     setIsProcessing(false); // End of pre-flight checks
 
     if (prerequisite) {
       svgCanvas.clearSelection();
       toggleAutoFocus();
+      await setupDevice();
       startPinning(); // If all checks pass, enter pinning mode.
     }
   };
