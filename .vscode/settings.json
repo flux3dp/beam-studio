@@ -76,12 +76,13 @@
     "swiftray",
     "taskcode",
     "textedit",
-    "tlist",
     "Titlebar",
+    "tlist",
     "topbar",
     "topmenu",
     "Touchpad",
     "transformlist",
+    "unapply",
     "undoable",
     "ungroup",
     "Ungrouping",
@@ -90,6 +91,7 @@
     "unsupport",
     "Upnp",
     "workarea",
+    "workareas",
     "xform",
     "XLINK"
   ]

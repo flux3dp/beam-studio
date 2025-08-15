@@ -1,5 +1,4 @@
 import Alert from '@core/app/actions/alert-caller';
-import FontFuncs from '@core/app/actions/beambox/font-funcs';
 import Progress from '@core/app/actions/progress-caller';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import AlertConstants from '@core/app/constants/alert-constants';
@@ -11,6 +10,7 @@ import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarCont
 import { getExportOpt } from '@core/helpers/api/svg-laser-parser';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 import AwsHelper from '@core/helpers/aws-helper';
+import { convertAllTextToPath } from '@core/helpers/convertToPath';
 import i18n from '@core/helpers/i18n';
 import updateImagesResolution from '@core/helpers/image/updateImagesResolution';
 import annotatePrintingColor from '@core/helpers/layer/annotatePrintingColor';
@@ -93,7 +93,7 @@ const popupError = (message: string): void => {
   }
 };
 
-const onUploadProgressing = (data): void => {
+const onUploadProgressing = (data: any): void => {
   Progress.update('upload-scene', {
     caption: i18n.lang.beambox.popup.progress.calculating,
     message: data.message,
@@ -156,7 +156,7 @@ const uploadToParser = async (uploadFile: IWrappedSwiftrayTaskFile): Promise<boo
   return !isCanceled && !errorMessage;
 };
 
-const getTaskCode = (codeType: SwiftrayConvertType, taskOptions) =>
+const getTaskCode = (codeType: SwiftrayConvertType, taskOptions: any) =>
   new Promise<{
     fileTimeCost: null | number;
     metadata: Record<string, string>;
@@ -215,9 +215,9 @@ const fetchTaskCodeSwiftray = async (
   });
 
   // Convert text to path
-  const res = await FontFuncs.tempConvertTextToPathAmongSvgContent();
+  const { revert, success } = await convertAllTextToPath();
 
-  if (!res) {
+  if (!success) {
     Progress.popById('fetch-task-code');
     SymbolMaker.switchImageSymbolForAll(true);
 
@@ -249,7 +249,7 @@ const fetchTaskCodeSwiftray = async (
     revertAnnotatePrintingColor();
     revertShapesToImage();
     revertUpdateImagesResolution();
-    await FontFuncs.revertTempConvert();
+    revert();
     SymbolMaker.switchImageSymbolForAll(true);
   };
 
@@ -362,8 +362,8 @@ const fetchTaskCodeSwiftray = async (
   }
 
   return {
-    fileTimeCost,
-    metadata,
+    fileTimeCost: fileTimeCost!,
+    metadata: metadata as any,
     taskCodeBlob,
     thumbnail,
     thumbnailBlobURL,
@@ -388,9 +388,9 @@ const fetchContourTaskCode = async (): Promise<null | string> => {
   });
 
   // Convert text to path
-  const res = await FontFuncs.tempConvertTextToPathAmongSvgContent();
+  const { revert, success } = await convertAllTextToPath();
 
-  if (!res) {
+  if (!success) {
     Progress.popById('fetch-task-code');
     SymbolMaker.switchImageSymbolForAll(true);
     revertVariableText?.();
@@ -415,7 +415,7 @@ const fetchContourTaskCode = async (): Promise<null | string> => {
   const cleanUpTempModification = async () => {
     revertClipPath();
     revertBitmap();
-    await FontFuncs.revertTempConvert();
+    revert();
     SymbolMaker.switchImageSymbolForAll(true);
     revertVariableText?.();
   };

@@ -52,7 +52,7 @@ import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarCont
 import { getNextStepRequirement } from '@core/app/views/tutorials/tutorialController';
 import BeamFileHelper from '@core/helpers/beam-file-helper';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import fileExportHelper from '@core/helpers/file-export-helper';
+import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import i18n from '@core/helpers/i18n';
 import getExifRotationFlag from '@core/helpers/image/getExifRotationFlag';
 import ImageData from '@core/helpers/image-data';
@@ -1556,7 +1556,7 @@ const svgEditor = (window['svgEditor'] = (function () {
     };
 
     var clearScene = async function () {
-      const res = await fileExportHelper.toggleUnsavedChangedDialog();
+      const res = await toggleUnsavedChangedDialog();
 
       if (!res) {
         return;

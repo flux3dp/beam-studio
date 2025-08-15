@@ -1,6 +1,7 @@
 import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
 import autoSaveHelper from '@core/helpers/auto-save-helper';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import i18n from '@core/helpers/i18n';
 import type { IFile } from '@core/interfaces/IMyCloud';
 
 class CurrentFileManager {
@@ -29,7 +30,7 @@ class CurrentFileManager {
   };
 
   updateTitle = () => {
-    TopBarController.updateTitle(this.name, this.isCloudFile);
+    TopBarController.updateTitle(this.name || i18n.lang.topbar.untitled, this.isCloudFile);
   };
 
   extractFileName = (filepath: string) => {

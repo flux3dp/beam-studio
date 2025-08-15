@@ -9,7 +9,7 @@ import deviceConstants from '@core/app/constants/device-constants';
 import ConnectionTypeIcons from '@core/app/icons/connection-type/ConnectionTypeIcons';
 import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
 import discover, { SEND_DEVICES_INTERVAL } from '@core/helpers/api/discover';
-import fileExportHelper from '@core/helpers/file-export-helper';
+import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import i18n from '@core/helpers/i18n';
 import browser from '@core/implementations/browser';
 import os from '@core/implementations/os';
@@ -24,7 +24,7 @@ interface Props {
 }
 
 const DeviceSelector = ({ onClose, onSelect }: Props): React.JSX.Element => {
-  const [deviceList, setDeviceList] = useState<IDeviceInfo[]>([]);
+  const [deviceList, setDeviceList] = useState(Array.of<IDeviceInfo>());
   const selectedDevice = TopBarController.getSelectedDevice();
   const selectedKey = selectedDevice?.serial;
   const discoverer = useMemo(
@@ -69,7 +69,7 @@ const DeviceSelector = ({ onClose, onSelect }: Props): React.JSX.Element => {
               onSelect(null);
               onClose();
 
-              const res = await fileExportHelper.toggleUnsavedChangedDialog();
+              const res = await toggleUnsavedChangedDialog();
 
               if (res) {
                 window.location.hash = '#/initialize/connect/select-machine-model';

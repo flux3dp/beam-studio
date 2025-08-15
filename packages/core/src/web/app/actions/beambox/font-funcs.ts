@@ -8,10 +8,9 @@ import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore
 import history from '@core/app/svgedit/history/history';
 import { moveElements } from '@core/app/svgedit/operations/move';
 import textedit from '@core/app/svgedit/text/textedit';
-import AlertConfig from '@core/helpers/api/alert-config';
 import { checkConnection } from '@core/helpers/api/discover';
 import SvgLaserParser from '@core/helpers/api/svg-laser-parser';
-import fileExportHelper from '@core/helpers/file-export-helper';
+import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import fontHelper from '@core/helpers/fonts/fontHelper';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
@@ -31,7 +30,6 @@ getSVGAsync(({ Canvas, Edit }) => {
   svgedit = Edit;
 });
 
-const { $ } = window;
 const svgWebSocket = SvgLaserParser({ type: 'svgeditor' });
 const LANG = i18n.lang.beambox.object_panels;
 const fontObjCache = new Map<string, fontkit.Font>();
@@ -44,15 +42,15 @@ const SubstituteResult = {
 
 type SubstituteResultType = (typeof SubstituteResult)[keyof typeof SubstituteResult];
 
-const ConvertResult = {
+export const ConvertResult = {
   CANCEL_OPERATION: 0,
   CONTINUE: 2,
   UNSUPPORT: 1,
 } as const;
 
-type ConvertResultType = (typeof ConvertResult)[keyof typeof ConvertResult];
+export type ConvertResultType = (typeof ConvertResult)[keyof typeof ConvertResult];
 
-type ConvertToTextPathResult =
+export type ConvertToTextPathResult =
   | {
       command: IBatchCommand;
       path: SVGPathElement;
@@ -63,8 +61,6 @@ type ConvertToTextPathResult =
       path: null;
       status: ConvertResultType;
     };
-
-const tempPaths: SVGPathElement[] = [];
 
 type IConvertInfo = null | {
   d: string;
@@ -582,7 +578,7 @@ const setTextPostscriptNameIfNeeded = (textElement: Element) => {
 
 const convertTextToPath = async (
   textElement: Element,
-  opts?: { isSubCommand?: boolean; isTempConvert?: boolean; weldingTexts?: boolean },
+  opts?: { isSubCommand?: boolean; weldingTexts?: boolean },
 ): Promise<ConvertToTextPathResult> => {
   if (!textElement.textContent) {
     console.warn('Text element has no content, skipping conversion.');
@@ -595,15 +591,13 @@ const convertTextToPath = async (
   let newPathElement: null | SVGPathElement = null;
 
   try {
-    const { isSubCommand = false, isTempConvert = false, weldingTexts = false } = opts || {};
+    const { isSubCommand = false, weldingTexts = false } = opts || {};
     const globalPreference = useGlobalPreferenceStore.getState();
 
     setTextPostscriptNameIfNeeded(textElement);
 
     // Create a batch command for the undo/redo manager. Groups all changes into one undo step.
     const batchCmd = new history.BatchCommand('Text to Path');
-    // Store original font attributes for potential restoration (used in temp convert).
-    const origFontFamily = textElement.getAttribute('font-family')!;
     const origFontPostscriptName = textElement.getAttribute('font-postscript')!;
     // Get the Font object based on the PostScript name.
     let font = getFontOfPostscriptName(origFontPostscriptName);
@@ -670,7 +664,7 @@ const convertTextToPath = async (
           buttonLabels: [i18n.lang.topbar.menu.add_new_machine],
           buttonType: AlertConstants.CUSTOM_CANCEL,
           callbacks: async () => {
-            const saveRes = await fileExportHelper.toggleUnsavedChangedDialog();
+            const saveRes = await toggleUnsavedChangedDialog();
 
             if (saveRes) {
               window.location.hash = '#/initialize/connect/select-machine-model';
@@ -734,15 +728,6 @@ const convertTextToPath = async (
         moveElements([moveElement.x], [moveElement.y], [path], false);
       }
 
-      if (isTempConvert) {
-        textElement.setAttribute('display', 'none');
-        textElement.setAttribute('font-family', origFontFamily);
-        textElement.setAttribute('font-postscript', origFontPostscriptName);
-        textElement.setAttribute('stroke-width', '2');
-        textElement.setAttribute('data-path-id', newPathId);
-        tempPaths.push(path as any);
-      }
-
       svgedit.recalculate.recalculateDimensions(path);
     } else {
       Alert.popUp({
@@ -754,16 +739,14 @@ const convertTextToPath = async (
       return { command: null, path: null, status: ConvertResult.CONTINUE };
     }
 
-    if (!isTempConvert) {
-      const parent = textElement.parentNode!;
-      const { nextSibling } = textElement;
-      const elem = parent.removeChild(textElement);
+    const parent = textElement.parentNode!;
+    const { nextSibling } = textElement;
+    const elem = parent.removeChild(textElement);
 
-      batchCmd.addSubCommand(new history.RemoveElementCommand(elem, nextSibling!, parent));
+    batchCmd.addSubCommand(new history.RemoveElementCommand(elem, nextSibling!, parent));
 
-      if (!batchCmd.isEmpty() && !isSubCommand) {
-        svgCanvas.undoMgr.addCommandToHistory(batchCmd);
-      }
+    if (!batchCmd.isEmpty() && !isSubCommand) {
+      svgCanvas.undoMgr.addCommandToHistory(batchCmd);
     }
 
     const finalStatus = hasUnsupportedFont ? ConvertResult.UNSUPPORT : ConvertResult.CONTINUE;
@@ -782,55 +765,6 @@ const convertTextToPath = async (
   }
 };
 
-const tempConvertTextToPathAmongSvgContent = async () => {
-  let isAnyFontUnsupported = false;
-  const texts = [
-    ...document.querySelectorAll('#svgcontent g.layer:not([display="none"]) text'),
-    ...document.querySelectorAll('#svg_defs text'),
-  ];
-
-  for (const text of texts) {
-    const { status } = await convertTextToPath(text, { isTempConvert: true });
-
-    if (status === ConvertResult.CANCEL_OPERATION) return false;
-
-    if (status === ConvertResult.UNSUPPORT) isAnyFontUnsupported = true;
-  }
-
-  if (isAnyFontUnsupported && !AlertConfig.read('skip_check_thumbnail_warning')) {
-    await new Promise<void>((resolve) => {
-      Alert.popUp({
-        callbacks: () => resolve(),
-        checkbox: {
-          callbacks: () => {
-            AlertConfig.write('skip_check_thumbnail_warning', true);
-            resolve();
-          },
-          text: i18n.lang.alert.dont_show_again,
-        },
-        message: LANG.text_to_path.check_thumbnail_warning,
-        type: AlertConstants.SHOW_POPUP_WARNING,
-      });
-    });
-  }
-
-  return true;
-};
-
-const revertTempConvert = async (): Promise<void> => {
-  const texts = [...$('#svgcontent').find('text').toArray(), ...$('#svg_defs').find('text').toArray()];
-
-  texts.forEach((t) => {
-    $(t).removeAttr('display');
-  });
-
-  for (const tempPath of tempPaths) {
-    tempPath.remove();
-  }
-
-  tempPaths.length = 0;
-};
-
 export default {
   convertTextToPath,
   fontNameMap,
@@ -838,6 +772,4 @@ export default {
   requestAvailableFontFamilies,
   requestFontByFamilyAndStyle,
   requestFontsOfTheFontFamily,
-  revertTempConvert,
-  tempConvertTextToPathAmongSvgContent,
 };

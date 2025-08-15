@@ -28,7 +28,7 @@ jest.mock('@core/app/actions/beambox/export-funcs', () => ({
 
 const mockToggleUnsavedChangedDialog = jest.fn();
 
-jest.mock('@core/helpers/file-export-helper', () => ({
+jest.mock('@core/helpers/file/export', () => ({
   toggleUnsavedChangedDialog: (...args) => mockToggleUnsavedChangedDialog(...args),
 }));
 
