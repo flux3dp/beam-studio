@@ -47,7 +47,7 @@ exports[`test workarea should render correctly 1`] = `
       Duplicate
     </dummy-menu-item>
     <div
-      class="seperator"
+      class="separator"
     />
     <dummy-menu-item
       disabled="true"
@@ -55,7 +55,7 @@ exports[`test workarea should render correctly 1`] = `
       Delete
     </dummy-menu-item>
     <div
-      class="seperator"
+      class="separator"
     />
     <dummy-menu-item
       disabled="true"
@@ -68,7 +68,7 @@ exports[`test workarea should render correctly 1`] = `
       Ungroup
     </dummy-menu-item>
     <div
-      class="seperator"
+      class="separator"
     />
     <dummy-menu-item
       disabled="true"
@@ -91,7 +91,7 @@ exports[`test workarea should render correctly 1`] = `
       Send to Back
     </dummy-menu-item>
     <div
-      class="seperator"
+      class="separator"
     />
     <dummy-sub-menu
       disabled="true"
@@ -159,7 +159,7 @@ exports[`test workarea should render correctly 2`] = `
       Duplicate
     </dummy-menu-item>
     <div
-      class="seperator"
+      class="separator"
     />
     <dummy-menu-item
       disabled="false"
@@ -167,7 +167,7 @@ exports[`test workarea should render correctly 2`] = `
       Delete
     </dummy-menu-item>
     <div
-      class="seperator"
+      class="separator"
     />
     <dummy-menu-item
       disabled="true"
@@ -180,7 +180,7 @@ exports[`test workarea should render correctly 2`] = `
       Ungroup
     </dummy-menu-item>
     <div
-      class="seperator"
+      class="separator"
     />
     <dummy-menu-item
       disabled="false"
@@ -203,7 +203,7 @@ exports[`test workarea should render correctly 2`] = `
       Send to Back
     </dummy-menu-item>
     <div
-      class="seperator"
+      class="separator"
     />
     <dummy-sub-menu
       disabled="false"

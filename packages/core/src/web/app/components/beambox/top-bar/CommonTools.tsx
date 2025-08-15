@@ -3,9 +3,9 @@ import React from 'react';
 import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
 import historyUtils from '@core/app/svgedit/history/utils';
-import i18n from '@core/helpers/i18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
+import useI18n from '@core/helpers/useI18n';
 
 import styles from './CommonTools.module.scss';
 
@@ -15,13 +15,12 @@ getSVGAsync((globalSVG) => {
   svgEditor = globalSVG.Editor;
 });
 
-const LANG = i18n.lang.topbar;
-
 interface Props {
   hide: boolean;
 }
 
 function CommonTools({ hide }: Props): React.ReactNode {
+  const t = useI18n().topbar.menu;
   const isMobile = useIsMobile();
 
   if (hide) {
@@ -30,14 +29,14 @@ function CommonTools({ hide }: Props): React.ReactNode {
 
   return (
     <div className={styles['common-tools-container']}>
-      <div onClick={historyUtils.undo} title={LANG.menu.undo}>
+      <div onClick={historyUtils.undo} title={t.undo}>
         <TopBarIcons.Undo />
       </div>
-      <div onClick={historyUtils.redo} title={LANG.menu.redo}>
+      <div onClick={historyUtils.redo} title={t.redo}>
         <TopBarIcons.Redo />
       </div>
       {!isMobile && (
-        <div onClick={() => svgEditor.deleteSelected()} title={LANG.menu.delete}>
+        <div onClick={() => svgEditor.deleteSelected()} title={t.delete}>
           <TopBarIcons.Trash />
         </div>
       )}
