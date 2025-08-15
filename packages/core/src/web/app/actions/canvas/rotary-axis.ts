@@ -1,4 +1,5 @@
 import constant from '@core/app/actions/beambox/constant';
+import { getAddOnInfo } from '@core/app/constants/addOn';
 import NS from '@core/app/constants/namespaces';
 import rotaryConstants from '@core/app/constants/rotary-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
@@ -84,8 +85,9 @@ canvasEventEmitter.on('canvas-change', updateBoundary);
 canvasEventEmitter.on('document-settings-saved', updateBoundary);
 
 const toggleDisplay = (): void => {
-  const { 'enable-job-origin': enableJobOrigin, rotary_mode: rotaryMode } = useDocumentStore.getState();
-  const visible = rotaryMode && !enableJobOrigin ? 'visible' : 'none';
+  const { 'enable-job-origin': enableJobOrigin, rotary_mode: rotaryMode, workarea } = useDocumentStore.getState();
+  const isJobOriginEnabled = Boolean(enableJobOrigin && getAddOnInfo(workarea).jobOrigin);
+  const visible = rotaryMode && !isJobOriginEnabled ? 'visible' : 'none';
 
   rotaryLine?.setAttribute('display', visible);
   transparentRotaryLine?.setAttribute('display', visible);
