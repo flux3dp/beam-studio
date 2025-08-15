@@ -84,7 +84,7 @@ exports[`test AboutBeamStudio should render correctly 1`] = `
                     <div
                       class="version"
                     >
-                      Version undefined
+                      Version 1.2.3
                     </div>
                     <div
                       class="copyright"
@@ -94,7 +94,21 @@ exports[`test AboutBeamStudio should render correctly 1`] = `
                     <div
                       class="credit"
                     >
-                      credit
+                      Beam Studio is made possible by the 
+                      <a
+                        href="https://github.com/flux3dp/beam-studio"
+                        target="_blank"
+                      >
+                        Beam Studio
+                      </a>
+                       open source project and other 
+                      <a
+                        href="https://flux3dp.com/credits/"
+                        target="_blank"
+                      >
+                        open source software
+                      </a>
+                      .
                     </div>
                   </div>
                 </div>

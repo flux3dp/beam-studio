@@ -4,16 +4,6 @@ import { fireEvent, render } from '@testing-library/react';
 
 import AboutBeamStudio from './AboutBeamStudio';
 
-jest.mock('@core/helpers/i18n', () => ({
-  lang: {
-    topmenu: {
-      credit: 'credit',
-      ok: 'OK',
-      version: 'Version',
-    },
-  },
-}));
-
 window.FLUX = {
   version: '1.2.3',
 } as any;
