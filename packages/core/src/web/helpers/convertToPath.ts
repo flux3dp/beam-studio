@@ -198,16 +198,17 @@ export const generateImageRect = (element?: SVGImageElement): { command?: IBatch
 export const convertAllTextToPath = async (): Promise<() => void> => {
   // 1. Create a master command to record all changes.
   const parentCommand = new history.BatchCommand('Convert All Text to Path');
+  const svgContent = document.getElementById('svgcontent')!;
 
   // 2. Find and convert all text-on-a-path elements first.
-  const textOnPathElements = document.querySelectorAll<SVGGElement>('[data-textpath-g="1"]');
+  const textOnPathElements = svgContent.querySelectorAll<SVGGElement>('[data-textpath-g="1"]');
 
   for (const element of textOnPathElements) {
     await convertTextOnPathToPath({ element, parentCommand });
   }
 
   // 3. Find all regular <text> elements, excluding those already handled.
-  const allTextElements = Array.from(document.querySelectorAll<SVGTextElement>('text'));
+  const allTextElements = Array.from(svgContent.querySelectorAll<SVGTextElement>('text'));
   const regularTextElements = allTextElements.filter((textEl) => !textEl.closest('[data-textpath-g="1"]'));
 
   for (const element of regularTextElements) {
