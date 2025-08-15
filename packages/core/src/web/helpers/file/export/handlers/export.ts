@@ -1,5 +1,6 @@
 import jsPDF from 'jspdf';
 import { filter, map, pipe } from 'remeda';
+import { match } from 'ts-pattern';
 
 import Progress from '@core/app/actions/progress-caller';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
@@ -75,17 +76,19 @@ export const exportAsSVG = async (): Promise<void> => {
   svgCanvas.clearSelection();
   svgCanvas.removeUnusedDefs();
 
-  const reverts = [await convertVariableText(), await convertAllTextToPath()];
-  const allLayers = document.querySelectorAll('g.layer');
+  const getContent = async () => {
+    const reverts = [await convertVariableText(), (await convertAllTextToPath()).revert];
+    const allLayers = document.querySelectorAll('g.layer');
 
-  allLayers.forEach((layer) => layer.removeAttribute('clip-path'));
+    allLayers.forEach((layer) => layer.removeAttribute('clip-path'));
 
-  const res = removeNPElementsWrapper(() => switchSymbolWrapper(() => svgCanvas.getSvgString({ unit: 'mm' })));
+    const res = removeNPElementsWrapper(() => switchSymbolWrapper(() => svgCanvas.getSvgString({ unit: 'mm' })));
 
-  allLayers.forEach((layer) => layer.setAttribute('clip-path', 'url(#scene_mask)'));
-  reverts.forEach((revert) => revert?.());
+    allLayers.forEach((layer) => layer.setAttribute('clip-path', 'url(#scene_mask)'));
+    reverts.toReversed().forEach((revert) => revert?.());
 
-  const getContent = () => res;
+    return res;
+  };
   const defaultFileName = getDefaultFileName();
   const langFile = LANG.topmenu.file;
 
@@ -96,35 +99,38 @@ export const exportAsSVG = async (): Promise<void> => {
 };
 
 export const exportAsImage = async (type: 'jpg' | 'png'): Promise<void> => {
+  const langFile = LANG.topmenu.file;
+
   svgCanvas.clearSelection();
   svgCanvas.removeUnusedDefs();
 
-  const reverts = [await convertVariableText(), await convertAllTextToPath()];
-  const output = switchSymbolWrapper(() => svgCanvas.getSvgString());
-  const langFile = LANG.topmenu.file;
+  const getContent = async () => {
+    const reverts = [await convertVariableText(), (await convertAllTextToPath()).revert];
+    const output = switchSymbolWrapper(() => svgCanvas.getSvgString());
 
-  reverts.forEach((revert) => revert?.());
-  Progress.openNonstopProgress({ id: 'export_image', message: langFile.converting });
+    reverts.toReversed().forEach((revert) => revert?.());
+    Progress.openNonstopProgress({ id: 'export_image', message: langFile.converting });
 
+    const { height, width } = workareaManager;
+    const canvas = await svgStringToCanvas(output, width, height);
+    const base64 = match(type)
+      .with('png', () =>
+        pipe(canvas.toDataURL('image/png'), (base64) => base64.replace(/^data:image\/\w+;base64,/, '')),
+      )
+      .with('jpg', () => {
+        const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+
+        ctx.globalCompositeOperation = 'destination-over';
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, width, height);
+
+        return pipe(canvas.toDataURL('image/jpeg', 1.0), (base64) => base64.replace(/^data:image\/\w+;base64,/, ''));
+      })
+      .exhaustive();
+
+    return new Blob([Buffer.from(base64, 'base64') as unknown as Blob]);
+  };
   const defaultFileName = getDefaultFileName();
-  const { height, width } = workareaManager;
-  const canvas = await svgStringToCanvas(output, width, height);
-  let base64 = '';
-
-  if (type === 'png') {
-    base64 = canvas.toDataURL('image/png');
-  } else if (type === 'jpg') {
-    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-
-    ctx.globalCompositeOperation = 'destination-over';
-    ctx.fillStyle = 'white';
-    ctx.fillRect(0, 0, width, height);
-    base64 = canvas.toDataURL('image/jpeg', 1.0);
-  }
-
-  base64 = base64.replace(/^data:image\/\w+;base64,/, '');
-
-  const getContent = () => new Blob([Buffer.from(base64, 'base64') as unknown as Blob]);
   const fileTypeName = `${langFile[`${type}_files`]}`;
 
   Progress.popById('export_image');
