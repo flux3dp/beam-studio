@@ -52,7 +52,7 @@ class AdorPreviewManager extends BasePreviewManager implements PreviewManager {
         this.fisheyeManager = new FisheyePreviewManagerV2(this.device, params);
       }
 
-      const res = await this.fisheyeManager.setupFisheyePreview({ progressId: this.progressId });
+      const res = await this.fisheyeManager!.setupFisheyePreview({ progressId: this.progressId });
 
       return res;
     } catch (error) {

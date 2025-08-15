@@ -6,13 +6,12 @@ import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore
 import Discover from '@core/helpers/api/discover';
 import i18n from '@core/helpers/i18n';
 
-const LANG = i18n.lang.tutorial;
 const getMachineForTutorial = async () =>
   new Promise((resolve) => {
-    let discover = Discover('tutorial', (machines) => {
+    let discover: null | ReturnType<typeof Discover> = Discover('tutorial', (machines) => {
       if (machines.length > 0) {
         resolve(true);
-        discover.removeListener('tutorial');
+        discover?.removeListener('tutorial');
         discover = null;
       }
     });
@@ -20,13 +19,15 @@ const getMachineForTutorial = async () =>
     setTimeout(() => {
       if (discover) {
         resolve(false);
-        discover.removeListener('tutorial');
+        discover?.removeListener('tutorial');
         discover = null;
       }
     }, 3000);
   });
 
 const startNewUserTutorial = async (callback: () => void): Promise<void> => {
+  const LANG = i18n.lang.tutorial;
+
   Progress.openNonstopProgress({
     id: 'tutorial-find-machine',
     message: LANG.look_for_machine,
@@ -78,7 +79,7 @@ const startNewUserTutorial = async (callback: () => void): Promise<void> => {
   }
 };
 
-const startInterfaceTutorial = (callback) => {
+const startInterfaceTutorial = (callback: () => void) => {
   Dialog.showTutorial(TutorialConstants.INTERFACE_TUTORIAL, callback);
 };
 

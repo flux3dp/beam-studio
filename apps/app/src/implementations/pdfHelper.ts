@@ -32,9 +32,9 @@ const init = async () => {
   }
 };
 
-const lang = i18n.lang.beambox.popup.pdf2svg;
-
 const pdfToSvgBlob = async (file: File): Promise<{ blob?: Blob; errorMessage?: string }> => {
+  const lang = i18n.lang.beambox.popup.pdf2svg;
+
   if (!isInitialized) {
     await init();
   }

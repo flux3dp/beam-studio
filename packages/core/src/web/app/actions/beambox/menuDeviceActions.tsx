@@ -39,8 +39,6 @@ import VersionChecker from '@core/helpers/version-checker';
 import dialog from '@core/implementations/dialog';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
-const { lang } = i18n;
-
 const calibrateCamera = async (
   device: IDeviceInfo,
   {
@@ -99,6 +97,7 @@ const calibrateModule = async (device: IDeviceInfo, module?: LayerModuleType) =>
 };
 
 export const executeFirmwareUpdate = async (device: IDeviceInfo): Promise<void> => {
+  const { lang } = i18n;
   const updateFirmware = async () => {
     try {
       const response = await checkFirmware(device);
@@ -106,7 +105,7 @@ export const executeFirmwareUpdate = async (device: IDeviceInfo): Promise<void> 
       const { caption, message } = lang.update.firmware.latest_firmware;
 
       MessageCaller.openMessage({
-        content: i18n.lang.update.software.checking,
+        content: lang.update.software.checking,
         duration: 1,
         key: 'checking-firmware',
         level: MessageLevel.SUCCESS,
@@ -139,7 +138,7 @@ export const executeFirmwareUpdate = async (device: IDeviceInfo): Promise<void> 
     ProgressCaller.openNonstopProgress({ caption: lang.update.preparing, id: 'check-status' });
     ProgressCaller.popById('check-status');
     MessageCaller.openMessage({
-      content: i18n.lang.update.software.checking,
+      content: lang.update.software.checking,
       duration: 10,
       key: 'checking-firmware',
       level: MessageLevel.LOADING,
@@ -204,7 +203,9 @@ const getLog = async (device: IDeviceInfo, log: string) => {
         ProgressCaller.popById('get_log');
 
         const msg =
-          errorData === 'canceled' ? lang.topmenu.device.download_log_canceled : lang.topmenu.device.download_log_error;
+          errorData === 'canceled'
+            ? i18n.lang.topmenu.device.download_log_canceled
+            : i18n.lang.topmenu.device.download_log_error;
 
         Alert.popUp({
           message: msg,
@@ -258,7 +259,7 @@ export default {
     if (isAvailableVersion) {
       calibrateCamera(device, { isBorderless: true });
     } else {
-      const langCameraCali = lang.calibration;
+      const langCameraCali = i18n.lang.calibration;
       const message = `${langCameraCali.update_firmware_msg1} 2.5.1 ${langCameraCali.update_firmware_msg2}`;
 
       Alert.popUp({
@@ -299,7 +300,7 @@ export default {
         console.error(error);
       }
     } else {
-      const langDiodeCali = lang.calibration;
+      const langDiodeCali = i18n.lang.calibration;
       const message = `${langDiodeCali.update_firmware_msg1} 3.0.0 ${langDiodeCali.update_firmware_msg2}`;
 
       Alert.popUp({
@@ -442,7 +443,7 @@ export default {
       const data = await DeviceMaster.lsusb();
 
       Alert.popUp({
-        caption: lang.topmenu.device.log.usblist,
+        caption: i18n.lang.topmenu.device.log.usblist,
         message: data.usbs.join('\n'),
         type: AlertConstants.SHOW_POPUP_INFO,
       });
@@ -450,6 +451,7 @@ export default {
   },
   MACHINE_INFO: async (device: IDeviceInfo): Promise<void> => {
     const isAdor = constant.adorModels.includes(device.model);
+    const { lang } = i18n;
     let subModuleInfo = null;
 
     if (isAdor) {
@@ -462,7 +464,7 @@ export default {
 
         console.log(headSubmoduleInfo);
 
-        const moduleName = getDetectedModulesTranslations()[headType] || lang.layer_module.unknown;
+        const moduleName = getDetectedModulesTranslations()[headType] || i18n.lang.layer_module.unknown;
         const {
           color,
           ink_level: inkLevel,
@@ -519,26 +521,26 @@ export default {
     const info = (
       <div>
         <div>
-          {lang.device.model_name}: {device.model.toUpperCase()}
+          {i18n.lang.device.model_name}: {device.model.toUpperCase()}
         </div>
         <div>
-          {lang.device.IP}: {device.ipaddr}
+          {i18n.lang.device.IP}: {device.ipaddr}
         </div>
         <div>
-          {lang.device.serial_number}: {device.serial}
+          {i18n.lang.device.serial_number}: {device.serial}
         </div>
         <div>
-          {lang.device.firmware_version}: {device.version}
+          {i18n.lang.device.firmware_version}: {device.version}
         </div>
         <div>
-          {lang.device.UUID}: {device.uuid}
+          {i18n.lang.device.UUID}: {device.uuid}
         </div>
         {subModuleInfo}
       </div>
     );
 
     Alert.popUp({
-      buttonLabels: [lang.topmenu.device.network_test, lang.topmenu.ok],
+      buttonLabels: [i18n.lang.topmenu.device.network_test, i18n.lang.topmenu.ok],
       callbacks: [() => Dialog.showNetworkTestingPanel(device.ipaddr), () => {}],
       caption: device.name,
       id: 'machine-info',

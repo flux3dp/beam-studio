@@ -233,14 +233,12 @@ class BeamboxInit {
 
     if (enableSentry === null) {
       await new Promise<void>((resolve) => {
-        const LANG = i18n.lang;
-
         Alert.popUp({
           buttonType: AlertConstants.YES_NO,
-          caption: LANG.beambox.popup.sentry.title,
+          caption: i18n.lang.beambox.popup.sentry.title,
           iconUrl: 'img/beambox/icon-analyze.svg',
           id: 'ask-sentry',
-          message: LANG.beambox.popup.sentry.message,
+          message: i18n.lang.beambox.popup.sentry.message,
           onNo: () => {
             storage.set('enable-sentry', false);
             resolve();
@@ -297,13 +295,12 @@ class BeamboxInit {
     });
 
   private async doFirstTimeCameraCalibration(): Promise<boolean> {
-    const LANG = i18n.lang.tutorial;
     const askForRetry = () =>
       new Promise<boolean>((resolve) => {
         Alert.popUp({
           buttonType: AlertConstants.YES_NO,
-          caption: LANG.camera_calibration_failed,
-          message: LANG.ask_retry_calibration,
+          caption: i18n.lang.tutorial.camera_calibration_failed,
+          message: i18n.lang.tutorial.ask_retry_calibration,
           onNo: async () => resolve(false),
           onYes: async () => resolve(await this.doFirstTimeCameraCalibration()),
         });
@@ -349,14 +346,12 @@ class BeamboxInit {
 
   private showTutorial(isNewUser: boolean): Promise<boolean> {
     if (!AlertConfig.read('skip-interface-tutorial')) {
-      const LANG = i18n.lang.tutorial;
-
       return new Promise<boolean>((resolve) => {
         Alert.popUp({
           buttonType: AlertConstants.YES_NO,
-          caption: LANG.welcome,
+          caption: i18n.lang.tutorial.welcome,
           id: 'ask-tutorial',
-          message: isNewUser ? LANG.needNewUserTutorial : LANG.needNewInterfaceTutorial,
+          message: isNewUser ? i18n.lang.tutorial.needNewUserTutorial : i18n.lang.tutorial.needNewInterfaceTutorial,
           onNo: () => {
             AlertConfig.write('skip-interface-tutorial', true);
             resolve(false);
@@ -365,7 +360,7 @@ class BeamboxInit {
             const tutorialCallback = () => {
               AlertConfig.write('skip-interface-tutorial', true);
               MessageCaller.openMessage({
-                content: LANG.tutorial_complete,
+                content: i18n.lang.tutorial.tutorial_complete,
                 level: MessageLevel.SUCCESS,
               });
               resolve(true);

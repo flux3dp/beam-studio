@@ -83,8 +83,6 @@ import { getStorage } from '@core/app/stores/storageStore';
 if (svgCanvasClass) {
   console.log('svgCanvas loaded successfully');
 }
-
-const LANG = i18n.lang.beambox;
 // TODO: change to require('svgedit')
 const { $, svgedit } = window;
 
@@ -1318,11 +1316,13 @@ const svgEditor = (window['svgEditor'] = (function () {
         ToolPanelsController.setType('gridArray');
         ToolPanelsController.render();
       } else {
+        const lang = i18n.lang.beambox;
+
         Alert.popUp({
           callbacks: () => ObjectPanelController.updateActiveKey(null),
-          caption: LANG.left_panel.label.array,
+          caption: lang.left_panel.label.array,
           id: 'select first',
-          message: LANG.popup.select_first,
+          message: lang.popup.select_first,
         });
       }
     };
@@ -1335,11 +1335,13 @@ const svgEditor = (window['svgEditor'] = (function () {
         ToolPanelsController.setType('offset');
         ToolPanelsController.render();
       } else {
+        const lang = i18n.lang.beambox;
+
         Alert.popUp({
           callbacks: () => ObjectPanelController.updateActiveKey(null),
-          caption: LANG.tool_panels.offset,
+          caption: lang.tool_panels.offset,
           id: 'select first',
-          message: LANG.popup.select_first,
+          message: lang.popup.select_first,
         });
       }
     };
@@ -1352,10 +1354,12 @@ const svgEditor = (window['svgEditor'] = (function () {
         ToolPanelsController.setType('nest');
         ToolPanelsController.render();
       } else {
+        const lang = i18n.lang.beambox;
+
         Alert.popUp({
-          caption: LANG.tool_panels.nest,
+          caption: lang.tool_panels.nest,
           id: 'select first',
-          message: LANG.popup.select_first,
+          message: lang.popup.select_first,
         });
       }
     };
@@ -1499,7 +1503,7 @@ const svgEditor = (window['svgEditor'] = (function () {
                   });
                 } else {
                   Alert.popUp({
-                    message: LANG.svg_editor.unable_to_fetch_clipboard_img,
+                    message: i18n.lang.beambox.svg_editor.unable_to_fetch_clipboard_img,
                     type: AlertConstants.SHOW_POPUP_WARNING,
                   });
                 }
@@ -1722,7 +1726,7 @@ const svgEditor = (window['svgEditor'] = (function () {
     // get the text contents of the file and send it to the canvas
     if (window.FileReader) {
       const replaceBitmap = async (file, imageElem) => {
-        Progress.openNonstopProgress({ caption: LANG.popup.loading_image, id: 'loading_image' });
+        Progress.openNonstopProgress({ caption: i18n.lang.beambox.popup.loading_image, id: 'loading_image' });
 
         return new Promise<void>((resolve, reject) => {
           const reader = new FileReader();
@@ -1820,9 +1824,10 @@ const svgEditor = (window['svgEditor'] = (function () {
       };
 
       const handleFile = async (file) => {
+        const lang = i18n.lang.beambox;
         const path = fileSystem.getPathForFile(file as File);
         await Progress.openNonstopProgress({
-          caption: LANG.popup.loading_image,
+          caption: lang.popup.loading_image,
           id: 'loading_image',
         });
         svgCanvas.clearSelection();
@@ -1919,7 +1924,7 @@ const svgEditor = (window['svgEditor'] = (function () {
             Progress.popById('loading_image');
             Alert.popUp({
               id: 'import_unknown',
-              message: LANG.svg_editor.unnsupported_file_type,
+              message: lang.svg_editor.unnsupported_file_type,
               type: AlertConstants.SHOW_POPUP_WARNING,
             });
             break;

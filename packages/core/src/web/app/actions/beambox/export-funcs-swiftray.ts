@@ -39,8 +39,6 @@ getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
 
-const { lang } = i18n;
-
 export const dpiTextMap = {
   high: 508,
   low: 127,
@@ -51,7 +49,7 @@ export const dpiTextMap = {
 const generateUploadFile = async (thumbnail: string, thumbnailUrl: string): Promise<IWrappedSwiftrayTaskFile> => {
   Progress.openNonstopProgress({
     id: 'retrieve-image-data',
-    message: lang.beambox.bottom_right_panel.retreive_image_data,
+    message: i18n.lang.beambox.bottom_right_panel.retreive_image_data,
   });
   Progress.popById('retrieve-image-data');
 
@@ -82,7 +80,7 @@ const popupError = (message: string): void => {
     Alert.popUp({
       buttonType: AlertConstants.YES_NO,
       id: 'get-taskcode-error',
-      message: `#806 ${message}\n${lang.beambox.bottom_right_panel.export_file_error_ask_for_upload}`,
+      message: `#806 ${message}\n${i18n.lang.beambox.bottom_right_panel.export_file_error_ask_for_upload}`,
       onYes: () => {
         const svgString = svgCanvas.getSvgString();
 
@@ -93,7 +91,7 @@ const popupError = (message: string): void => {
   }
 };
 
-const onUploadProgressing = (data: any): void => {
+const onUploadProgressing = (data: { message: string; percentage: number }): void => {
   Progress.update('upload-scene', {
     caption: i18n.lang.beambox.popup.progress.calculating,
     message: data.message,
@@ -104,7 +102,7 @@ const onUploadProgressing = (data: any): void => {
 const onUploadFinished = (): void => {
   Progress.update('upload-scene', {
     caption: i18n.lang.beambox.popup.progress.calculating,
-    message: lang.message.uploading_fcode,
+    message: i18n.lang.message.uploading_fcode,
     percentage: 100,
   });
 };
@@ -175,7 +173,7 @@ const getTaskCode = (codeType: SwiftrayConvertType, taskOptions: any) =>
           });
         },
         onFinished: (taskBlob, timeCost, metadata) => {
-          Progress.update('fetch-task', { message: lang.message.uploading_fcode, percentage: 100 });
+          Progress.update('fetch-task', { message: i18n.lang.message.uploading_fcode, percentage: 100 });
           resolve({ fileTimeCost: timeCost, metadata, taskCodeBlob: taskBlob });
         },
         onProgressing: (data) => {
@@ -211,7 +209,7 @@ const fetchTaskCodeSwiftray = async (
   Progress.openNonstopProgress({
     caption: i18n.lang.beambox.popup.progress.calculating,
     id: 'fetch-task-code',
-    message: lang.beambox.bottom_right_panel.convert_text_to_path_before_export,
+    message: i18n.lang.beambox.bottom_right_panel.convert_text_to_path_before_export,
   });
 
   // Convert text to path
@@ -384,7 +382,7 @@ const fetchContourTaskCode = async (): Promise<null | string> => {
   Progress.openNonstopProgress({
     caption: i18n.lang.beambox.popup.progress.calculating,
     id: 'fetch-task-code',
-    message: lang.beambox.bottom_right_panel.convert_text_to_path_before_export,
+    message: i18n.lang.beambox.bottom_right_panel.convert_text_to_path_before_export,
   });
 
   // Convert text to path

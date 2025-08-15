@@ -45,8 +45,6 @@ getSVGAsync((globalSVG) => {
   svgEditor = globalSVG.Editor;
 });
 
-const { lang } = i18n;
-
 export default {
   ABOUT_BEAM_STUDIO: (): void => Dialog.showAboutBeamStudio(),
   ADD_NEW_MACHINE: async () => {
@@ -170,7 +168,7 @@ export default {
     Tutorials.startNewUserTutorial(() => {
       globalPreference.set('continuous_drawing', continuousDrawing, false);
       MessageCaller.openMessage({
-        content: lang.tutorial.tutorial_complete,
+        content: i18n.lang.tutorial.tutorial_complete,
         level: MessageLevel.SUCCESS,
       });
     });
