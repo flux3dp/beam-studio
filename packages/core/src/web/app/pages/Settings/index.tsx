@@ -27,7 +27,7 @@ import { checkBM2 } from '@core/helpers/checkFeature';
 import { getHomePage } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
 import storage from '@core/implementations/storage';
-import type { IConfig } from '@core/interfaces/IAutosave';
+import type { AutoSaveConfig } from '@core/interfaces/AutoSaveConfig';
 import type { ILang } from '@core/interfaces/ILang';
 
 import { useSettingStore } from './useSettingStore';
@@ -35,7 +35,7 @@ import { useSettingStore } from './useSettingStore';
 function Settings(): React.JSX.Element {
   const { supported_langs } = settings.i18n;
   const [lang, setLang] = useState<ILang>(i18n.lang);
-  const [editingAutosaveConfig, setEditingAutosaveConfig] = useState<IConfig>(autoSaveHelper.getConfig());
+  const [editingAutosaveConfig, setEditingAutosaveConfig] = useState<AutoSaveConfig>(autoSaveHelper.getConfig());
   const [warnings, setWarnings] = useState<Record<string, string>>({});
   const previousActiveLang = useMemo(() => i18n.getActiveLang(), []);
   const { getConfig, updateToStorage } = useSettingStore();
