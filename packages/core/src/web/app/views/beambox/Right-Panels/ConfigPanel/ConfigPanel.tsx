@@ -42,7 +42,7 @@ import {
   writeData,
 } from '@core/helpers/layer/layer-config-helper';
 import { getLayerElementByName, moveToOtherLayer } from '@core/helpers/layer/layer-helper';
-import presetHelper from '@core/helpers/presets/preset-helper';
+import { usePresetList } from '@core/helpers/presets/preset-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useForceUpdate from '@core/helpers/use-force-update';
 import useI18n from '@core/helpers/useI18n';
@@ -149,7 +149,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
 
   useEffect(() => initState(selectedLayers), [selectedLayers]);
 
-  const presetList = presetHelper.getPresetsList(workarea, module.value);
+  const presetList = usePresetList(workarea, module.value);
   const dropdownValue = useMemo(() => {
     const { configName: name, diode, ink, multipass, power, repeat, speed, zStep } = state;
     const hasMultiValueList = [speed, power, ink, repeat, diode, zStep, name, multipass];
@@ -212,7 +212,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
         val = Math.max(minSpeed, Math.min(val as number, maxSpeed));
       }
 
-      payload[key] = val!;
+      payload[key] = val! as any;
     }
 
     timeEstimationButtonEventEmitter.emit('SET_ESTIMATED_TIME', null);

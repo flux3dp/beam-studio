@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { Flex } from 'antd';
 
@@ -7,7 +7,7 @@ import Select from '@core/app/widgets/AntdSelect';
 import UnitInput from '@core/app/widgets/UnitInput';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import { getDefaultLaserModule } from '@core/helpers/layer-module/layer-module-helper';
-import presetHelper from '@core/helpers/presets/preset-helper';
+import { usePresetList } from '@core/helpers/presets/preset-helper';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './Form.module.scss';
@@ -31,15 +31,12 @@ export default function TextSettingForm({ className, handleChange, isInch, setti
   } = useI18n();
   const lengthUnit = isInch ? 'in/s' : 'mm/s';
   const workarea = useWorkarea();
-  const { dropdownOptions, maxSpeed, presetList } = React.useMemo(() => {
-    const list = presetHelper.getPresetsList(workarea, getDefaultLaserModule());
-
-    return {
-      dropdownOptions: list.map(({ key, name }) => ({ label: name, value: key || name })),
-      maxSpeed: getWorkarea(workarea).maxSpeed,
-      presetList: list,
-    };
-  }, [workarea]);
+  const presetList = usePresetList(workarea, getDefaultLaserModule());
+  const maxSpeed = useMemo(() => getWorkarea(workarea).maxSpeed, [workarea]);
+  const dropdownOptions = useMemo(
+    () => presetList.map(({ key, name }) => ({ label: name, value: key || name })),
+    [presetList],
+  );
 
   const handleSelectChange = (value: string) => {
     const targetPreset = presetList.find(({ key }) => key === value);
@@ -87,7 +84,7 @@ export default function TextSettingForm({ className, handleChange, isInch, setti
           key="text-power"
           max={100}
           min={1}
-          onChange={(value) => handleValueChange('power', value)}
+          onChange={(value) => handleValueChange('power', value!)}
           value={setting.power}
         />
         <UnitInput
@@ -97,7 +94,7 @@ export default function TextSettingForm({ className, handleChange, isInch, setti
           key="text-speed"
           max={maxSpeed}
           min={1}
-          onChange={(value) => handleValueChange('speed', value)}
+          onChange={(value) => handleValueChange('speed', value!)}
           precision={isInch ? 4 : 0}
           step={isInch ? 25.4 : 1}
           value={setting.speed}

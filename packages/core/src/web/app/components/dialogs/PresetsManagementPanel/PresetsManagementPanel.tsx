@@ -24,7 +24,16 @@ import {
   postPresetChange,
 } from '@core/helpers/layer/layer-config-helper';
 import { getModulesTranslations, getPrintingModule } from '@core/helpers/layer-module/layer-module-helper';
-import presetHelper from '@core/helpers/presets/preset-helper';
+import {
+  exportPresets,
+  getAllPresets,
+  getDefaultPreset,
+  getPresetModel,
+  importPresets,
+  modelHasPreset,
+  resetPresetList,
+  savePresetList,
+} from '@core/helpers/presets/preset-helper';
 import useI18n from '@core/helpers/useI18n';
 import type { ConfigKey, ConfigKeyTypeMap, Preset } from '@core/interfaces/ILayerConfig';
 
@@ -60,7 +69,7 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
   const isInch = useStorageStore((state) => state['default-units'] === 'inches');
   const lengthUnit = useMemo(() => (isInch ? 'in' : 'mm'), [isInch]);
   const moduleTranslations = useMemo(() => getModulesTranslations(), []);
-  const [editingPresets, setEditingPresets] = useState(presetHelper.getAllPresets());
+  const [editingPresets, setEditingPresets] = useState(getAllPresets());
   const [editingValues, setEditingValues] = useState<Record<string, Preset>>({});
   const displayList = useMemo(
     () =>
@@ -73,7 +82,7 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
           return printingModules.has(c.module ?? 0) ? filter === Filter.PRINT : filter === Filter.LASER;
         }
 
-        const hasPreset = presetHelper.modelHasPreset(workarea, c.key!);
+        const hasPreset = modelHasPreset(workarea, c.key!);
 
         if (!hasPreset) {
           return false;
@@ -83,7 +92,7 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
           return true;
         }
 
-        const isPrintingPreset = Boolean(presetHelper.getDefaultPreset(c.key!, workarea, LayerModule.PRINTER));
+        const isPrintingPreset = Boolean(getDefaultPreset(c.key!, workarea, LayerModule.PRINTER));
 
         return isPrintingPreset ? filter === Filter.PRINT : filter === Filter.LASER;
       }),
@@ -150,7 +159,7 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
       return { ...selectedPreset, ...editingValues[selectedPreset.name!] };
     }
 
-    const presetModel = presetHelper.getPresetModel(workarea);
+    const presetModel = getPresetModel(workarea);
     const keyPresets = presets[selectedPreset.key!]?.[presetModel];
 
     if (!keyPresets) {
@@ -225,16 +234,16 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
   }, [editingPresets, editingValues]);
 
   const handleSave = useCallback(() => {
-    presetHelper.savePresetList(getCurrentPresets());
+    savePresetList(getCurrentPresets());
     postPresetChange();
     onClose();
   }, [getCurrentPresets, onClose]);
 
   const handleImport = useCallback(async () => {
-    const res = await presetHelper.importPresets();
+    const res = await importPresets();
 
     if (res) {
-      const newPresets = presetHelper.getAllPresets();
+      const newPresets = getAllPresets();
 
       setEditingPresets(newPresets);
       setSelectedPreset(newPresets[0]);
@@ -242,7 +251,7 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
   }, []);
 
   const handleExport = useCallback(() => {
-    presetHelper.exportPresets(getCurrentPresets());
+    exportPresets(getCurrentPresets());
   }, [getCurrentPresets]);
 
   const handleReset = useCallback(() => {
@@ -250,7 +259,7 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
       buttonType: alertConstants.CONFIRM_CANCEL,
       message: t.sure_to_reset,
       onConfirm: () => {
-        presetHelper.resetPresetList();
+        resetPresetList();
         postPresetChange();
         onClose();
       },

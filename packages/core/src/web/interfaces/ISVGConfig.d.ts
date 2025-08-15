@@ -5,7 +5,6 @@ export default interface ISVGConfig {
   // Change the following to preferences and
   // add pref controls to the UI (e.g., initTool, wireframe, showlayers)?
   canvasName?: string;
-  defaultUnit?: string;
   // DOCUMENT PROPERTIES
   // Change the following to a preference (already in the Document Properties dialog)?
   dimensions?: number[];
