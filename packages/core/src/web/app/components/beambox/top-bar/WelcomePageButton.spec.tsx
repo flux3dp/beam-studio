@@ -10,7 +10,7 @@ jest.mock('@core/app/svgedit/currentFileManager', () => ({
 
 const mockToggleUnsavedChangedDialog = jest.fn();
 
-jest.mock('@core/helpers/file-export-helper', () => ({
+jest.mock('@core/helpers/file/export', () => ({
   toggleUnsavedChangedDialog: mockToggleUnsavedChangedDialog,
 }));
 
