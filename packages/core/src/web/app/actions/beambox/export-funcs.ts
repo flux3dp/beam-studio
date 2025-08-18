@@ -339,9 +339,9 @@ const fetchBeamo24CCalibrationTaskCode = async (limitPosition: string) => {
     },
   });
 
-  const sceneArgsResp = await fetch('/assets/bm2-4c-scene-args.txt');
+  const sceneArgsResp = await fetch('assets/bm2-4c-scene-args.txt');
   const sceneArgsString = await sceneArgsResp.text();
-  const fileResp = await fetch('/assets/bm2-4c-scene.txt');
+  const fileResp = await fetch('assets/bm2-4c-scene.txt');
   const scene = await fileResp.text();
   const data = Buffer.from(scene, 'utf8');
   const uploadRes = await svgeditorParser.uploadToSvgeditorAPI({ data, size: data.length } as any, {
@@ -383,7 +383,7 @@ const fetchBeamo24CCalibrationTaskCode = async (limitPosition: string) => {
   });
 
   let didErrorOccur = false;
-  const taskArgsResp = await fetch('/assets/bm2-4c-task-args.txt');
+  const taskArgsResp = await fetch('assets/bm2-4c-task-args.txt');
   const taskArgsString = await taskArgsResp.text();
   const taskCodeRes = await new Promise<null | {
     fileTimeCost: number;
