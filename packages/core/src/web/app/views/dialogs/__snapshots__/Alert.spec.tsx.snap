@@ -209,7 +209,7 @@ exports[`test Alert should render correctly with help center link 1`] = `
                     type="button"
                   >
                     <span>
-                      Learn more
+                      Learn More
                     </span>
                   </button>
                 </div>

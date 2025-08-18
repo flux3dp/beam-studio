@@ -26,16 +26,6 @@ jest.mock('@core/app/actions/beambox/preview-mode-background-drawer', () => ({
   getCoordinates: () => mockGetCoordinates(),
 }));
 
-jest.mock('@core/helpers/i18n', () => ({
-  lang: {
-    beambox: {
-      image_trace_panel: {
-        next: 'next',
-      },
-    },
-  },
-}));
-
 const mockCreateObjectURL = jest.fn();
 const mockRevokeObjectURL = jest.fn();
 
@@ -129,7 +119,7 @@ describe('test StepCrop', () => {
     expect(mockGetCroppedCanvas).not.toHaveBeenCalled();
     mockGetCroppedCanvas.mockReturnValue({ toBlob: mockToBlob });
     expect(mockCropper).toHaveBeenCalledTimes(1);
-    fireEvent.click(getByText('next'));
+    fireEvent.click(getByText('Next'));
     expect(mockGetData).toHaveBeenCalledTimes(1);
     expect(mockGetCroppedCanvas).toHaveBeenCalledTimes(1);
     expect(mockToBlob).toHaveBeenCalledTimes(2);

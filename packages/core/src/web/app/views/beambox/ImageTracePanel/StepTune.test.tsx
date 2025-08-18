@@ -19,20 +19,6 @@ jest.mock('@core/app/actions/beambox/svgeditor-function-wrapper', () => ({
   insertImage: (...args) => mockInsertImage(...args),
 }));
 
-jest.mock('@core/helpers/i18n', () => ({
-  lang: {
-    beambox: {
-      image_trace_panel: {
-        back: 'back',
-        cancel: 'cancel',
-        next: 'next',
-        threshold: 'threshold',
-        tuning: 'tuning',
-      },
-    },
-  },
-}));
-
 const mockGetCoordinates = jest.fn();
 
 jest.mock('@core/app/actions/beambox/preview-mode-background-drawer', () => ({
@@ -73,7 +59,7 @@ describe('test StepTune', () => {
 
     expect(baseElement).toMatchSnapshot();
 
-    expect(mockImageData).toBeCalledTimes(1);
+    expect(mockImageData).toHaveBeenCalledTimes(1);
     expect(mockImageData).toHaveBeenLastCalledWith('mock-url', expect.anything());
 
     const { onComplete } = mockImageData.mock.calls[0][1];
@@ -87,9 +73,9 @@ describe('test StepTune', () => {
       <StepTune cropData={mockCropData} imageUrl="mock-url" onClose={mockOnClose} onGoBack={mockOnGoBack} />,
     );
 
-    expect(mockOnGoBack).not.toBeCalled();
-    fireEvent.click(getByText('back'));
-    expect(mockOnGoBack).toBeCalledTimes(1);
+    expect(mockOnGoBack).not.toHaveBeenCalled();
+    fireEvent.click(getByText('Back'));
+    expect(mockOnGoBack).toHaveBeenCalledTimes(1);
   });
 
   test('ok button should work', async () => {
@@ -97,28 +83,28 @@ describe('test StepTune', () => {
       <StepTune cropData={mockCropData} imageUrl="mock-url" onClose={mockOnClose} onGoBack={mockOnGoBack} />,
     );
 
-    expect(mockImageData).toBeCalledTimes(1);
+    expect(mockImageData).toHaveBeenCalledTimes(1);
     expect(mockImageData).toHaveBeenLastCalledWith('mock-url', expect.anything());
 
     const { onComplete } = mockImageData.mock.calls[0][1];
 
     act(() => onComplete({ pngBase64: 'mock-base64' }));
-    expect(mockTraceAndImportPath).not.toBeCalled();
-    expect(mockInsertImage).not.toBeCalled();
-    expect(mockOnClose).not.toBeCalled();
+    expect(mockTraceAndImportPath).not.toHaveBeenCalled();
+    expect(mockInsertImage).not.toHaveBeenCalled();
+    expect(mockOnClose).not.toHaveBeenCalled();
     mockGetCoordinates.mockReturnValue({ minX: 20, minY: 30 });
     await act(async () => {
-      fireEvent.click(getByText('next'));
+      fireEvent.click(getByText('Next'));
     });
-    expect(mockTraceAndImportPath).toBeCalledTimes(1);
+    expect(mockTraceAndImportPath).toHaveBeenCalledTimes(1);
     expect(mockTraceAndImportPath).toHaveBeenLastCalledWith('mock-base64', {
       height: 100,
       width: 100,
       x: 30,
       y: 40,
     });
-    expect(mockInsertImage).toBeCalledTimes(1);
+    expect(mockInsertImage).toHaveBeenCalledTimes(1);
     expect(mockInsertImage).toHaveBeenLastCalledWith('mock-url', { height: 100, width: 100, x: 30, y: 40 }, 128);
-    expect(mockOnClose).toBeCalledTimes(1);
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
 });
