@@ -52,13 +52,13 @@ const migrateStorage = () => {
       }
     });
   } else {
-    const customizedLaserConfigs = storage.get('customizedLaserConfigs');
+    const customizedLaserConfigs = getStorage('customizedLaserConfigs');
 
     // For version <= 2.3.9, maybe we can remove this in the future
     if (customizedLaserConfigs) {
       presets = [...customizedLaserConfigs];
 
-      const defaultLaserConfigsInUse = storage.get('defaultLaserConfigsInUse') || {};
+      const defaultLaserConfigsInUse = getStorage('defaultLaserConfigsInUse') || {};
 
       defaultKeys.forEach((key, idx) => {
         if (!defaultLaserConfigsInUse[key]) {
@@ -253,13 +253,13 @@ export const importPresets = async (file?: Blob): Promise<boolean> => {
             const { customizedLaserConfigs, defaultLaserConfigsInUse, presets } = newConfigs as any;
 
             if (presets) {
-              storage.set('presets', presets);
+              setStorage('presets', presets);
             } else if (customizedLaserConfigs && defaultLaserConfigsInUse) {
               // For version <= 2.3.9
               const configNames = new Set(
                 customizedLaserConfigs.filter((config: any) => !config.isDefault).map((config: any) => config.name),
               );
-              let currentConfig = storage.get('customizedLaserConfigs') || [];
+              let currentConfig = getStorage('customizedLaserConfigs') || [];
 
               if (typeof currentConfig === 'string') {
                 currentConfig = JSON.parse(currentConfig);
@@ -272,8 +272,8 @@ export const importPresets = async (file?: Blob): Promise<boolean> => {
                   customizedLaserConfigs.push(config);
                 }
               }
-              storage.set('customizedLaserConfigs', customizedLaserConfigs);
-              storage.set('defaultLaserConfigsInUse', defaultLaserConfigsInUse);
+              setStorage('customizedLaserConfigs', customizedLaserConfigs);
+              setStorage('defaultLaserConfigsInUse', defaultLaserConfigsInUse);
               storage.removeAt('presets');
             }
 

@@ -5,11 +5,6 @@ import { fireEvent, render, waitFor } from '@testing-library/react';
 const mockOnClick1 = jest.fn();
 const mockOnClick2 = jest.fn();
 const mockUpdateValue = jest.fn();
-const mockStorage = jest.fn();
-
-jest.mock('@core/implementations/storage', () => ({
-  get: (key) => mockStorage(key),
-}));
 
 const getSVGAsync = jest.fn();
 
@@ -37,6 +32,13 @@ const mockActions = [
   { icon: <span>mock icon 1</span>, label: 'mock action 1', onClick: mockOnClick1 },
   { disabled: true, icon: <span>mock icon 2</span>, label: 'mock action 2', onClick: mockOnClick2 },
 ];
+
+const mockUseStorageStore = jest.fn();
+const mockStorage = { 'default-units': 'mm' };
+
+jest.mock('@core/app/stores/storageStore', () => ({
+  useStorageStore: mockUseStorageStore,
+}));
 
 import { ObjectPanelContextProvider } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 
@@ -94,6 +96,8 @@ const MockSelect = ({
 describe('should render correctly', () => {
   beforeEach(() => {
     jest.resetAllMocks();
+    mockUseStorageStore.mockImplementation((selector?) => (selector ? selector(mockStorage) : mockStorage));
+    mockStorage['default-units'] = 'mm';
   });
 
   test('divider', () => {
@@ -179,8 +183,6 @@ describe('should render correctly', () => {
 
   describe('number item', () => {
     test('when unit is mm', async () => {
-      mockStorage.mockReturnValue('mm');
-
       const { baseElement, container, getByText } = render(<MockNumberItem id="mock-number-item-mm" />);
 
       expect(container).toMatchSnapshot();
@@ -243,7 +245,7 @@ describe('should render correctly', () => {
     });
 
     test('when unit is inch', async () => {
-      mockStorage.mockReturnValue('inches');
+      mockStorage['default-units'] = 'inches';
 
       const { baseElement, container, getByText } = render(<MockNumberItem id="mock-number-item-inch" />);
 
@@ -289,7 +291,7 @@ describe('should render correctly', () => {
     });
 
     test('when unit is degree', async () => {
-      mockStorage.mockReturnValue('inches');
+      mockStorage['default-units'] = 'inches';
 
       const { baseElement, container } = render(<MockNumberItem id="mock-number-item-angle" unit="degree" />);
 
@@ -392,7 +394,7 @@ describe('should render correctly', () => {
     });
 
     test('with multiple options', async () => {
-      mockStorage.mockReturnValue('inches');
+      mockStorage['default-units'] = 'inches';
 
       const { baseElement, container, getByText } = render(
         <MockSelect

@@ -5,7 +5,6 @@ import { cloneSelectedElements, pasteElements } from '@core/app/svgedit/operatio
 import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { useSetState } from '@core/helpers/hooks/useSetState';
-import i18n from '@core/helpers/i18n';
 import { getObjectLayer, moveToOtherLayer } from '@core/helpers/layer/layer-helper';
 import { ContextMenu, ContextMenuTrigger, MenuItem, SubMenu } from '@core/helpers/react-contextmenu';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -62,7 +61,8 @@ const Workarea = memo(({ className }: { className: string }) => {
     select: false,
     ungroup: false,
   });
-  const t = useI18n().beambox.context_menu;
+  const lang = useI18n().beambox;
+  const t = lang.context_menu;
   const isTouchable = useMemo(() => navigator.maxTouchPoints >= 1, []);
 
   // Note: Keep context to update current layer(trigger rerender) when moving a single element
@@ -89,7 +89,7 @@ const Workarea = memo(({ className }: { className: string }) => {
     return (
       <>
         <div className="separator" />
-        <SubMenu disabled={!select} title={i18n.lang.beambox.right_panel.layer_panel.move_elems_to}>
+        <SubMenu disabled={!select} title={lang.right_panel.layer_panel.move_elems_to}>
           {layerNames.map((layerName) => (
             <MenuItem
               disabled={layerName === currentLayer}
