@@ -403,7 +403,7 @@ const fetchBeamo24CCalibrationTaskCode = async (limitPosition: string) => {
         resolve(null);
       },
       onFinished: (taskBlob: Blob, timeCost: number, metadata: TaskMetaData) => {
-        Progress.update(modelId, { message: lang.message.uploading_fcode, percentage: 100 });
+        Progress.update(modelId, { message: i18n.lang.message.uploading_fcode, percentage: 100 });
         resolve({ fileTimeCost: timeCost, metadata, taskCodeBlob: taskBlob });
       },
       onProgressing: (data: { message: string; percentage: number }) => {

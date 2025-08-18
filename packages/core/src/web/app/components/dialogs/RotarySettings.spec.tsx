@@ -28,12 +28,6 @@ jest.mock('@core/app/actions/canvas/rotary-axis', () => ({
   toggleDisplay: (...args) => mockToggleDisplay(...args),
 }));
 
-const mockStorageGet = jest.fn();
-
-jest.mock('@core/implementations/storage', () => ({
-  get: (...args) => mockStorageGet(...args),
-}));
-
 const mockAddDialogComponent = jest.fn();
 const mockIsIdExist = jest.fn();
 const mockPopDialogById = jest.fn();

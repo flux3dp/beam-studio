@@ -23,8 +23,7 @@ import LangTh from '@core/app/lang/th';
 import LangVi from '@core/app/lang/vi';
 import LangZHCN from '@core/app/lang/zh-cn';
 import LangZHTW from '@core/app/lang/zh-tw';
-import { setStorage, useStorageStore } from '@core/app/stores/storageStore';
-import storage from '@core/implementations/storage';
+import { getStorage, setStorage, useStorageStore } from '@core/app/stores/storageStore';
 import type { ILang } from '@core/interfaces/ILang';
 
 const getLang = (lang: string): ILang => {
@@ -54,7 +53,7 @@ const getLang = (lang: string): ILang => {
     .otherwise(() => LangEn);
 };
 
-let activeLang = storage.get('active-lang') || AppSettings.i18n.default_lang;
+let activeLang = getStorage('active-lang') || AppSettings.i18n.default_lang;
 let lang = getLang(activeLang);
 
 export function getActiveLang(): string {

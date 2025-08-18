@@ -75,12 +75,6 @@ const mockBatchCommand = {
   addSubCommand: (...args) => mockAddSubCommand(...args),
 };
 
-const mockGet = jest.fn();
-
-jest.mock('@core/implementations/storage', () => ({
-  get: (...args) => mockGet(...args),
-}));
-
 const mockDeleteElements = jest.fn();
 
 jest.mock('@core/app/svgedit/operations/delete', () => ({
@@ -123,22 +117,6 @@ jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => mockUseIsMobile(),
 }));
 
-jest.mock('@core/helpers/useI18n', () => () => ({
-  beambox: {
-    right_panel: {
-      object_panel: {
-        option_panel: {
-          color: 'Color',
-          fill: 'Infill',
-          stroke: 'Stroke',
-          stroke_color: 'Stroke Color',
-          stroke_width: 'Stroke Width',
-        },
-      },
-    },
-  },
-}));
-
 const mockElem = {
   getAttribute: jest.fn(),
 };
@@ -147,7 +125,6 @@ describe('test ColorPanel', () => {
   beforeEach(() => {
     jest.resetAllMocks();
     mockElem.getAttribute.mockReturnValueOnce('#ff0000').mockReturnValueOnce('#00ff00').mockReturnValueOnce('1');
-    mockGet.mockReturnValueOnce('mm');
     mockCreateBatchCommand.mockReturnValue(mockBatchCommand);
   });
 
@@ -159,8 +136,6 @@ describe('test ColorPanel', () => {
     expect(mockElem.getAttribute).toHaveBeenNthCalledWith(1, 'fill');
     expect(mockElem.getAttribute).toHaveBeenNthCalledWith(2, 'stroke');
     expect(mockElem.getAttribute).toHaveBeenNthCalledWith(3, 'stroke-width');
-    expect(mockGet).toHaveBeenCalledTimes(1);
-    expect(mockGet).toHaveBeenNthCalledWith(1, 'default-units');
   });
 
   test('set stroke width should work', () => {
@@ -227,7 +202,6 @@ describe('test ColorPanel mobile', () => {
   beforeEach(() => {
     jest.resetAllMocks();
     mockElem.getAttribute.mockReturnValueOnce('#ff0000').mockReturnValueOnce('#00ff00').mockReturnValueOnce('1');
-    mockGet.mockReturnValueOnce('mm');
     mockUseIsMobile.mockReturnValue(true);
     mockCreateBatchCommand.mockReturnValue(mockBatchCommand);
     mockRequestSelector.mockReturnValue({ resize: jest.fn() });
@@ -241,8 +215,6 @@ describe('test ColorPanel mobile', () => {
     expect(mockElem.getAttribute).toHaveBeenNthCalledWith(1, 'fill');
     expect(mockElem.getAttribute).toHaveBeenNthCalledWith(2, 'stroke');
     expect(mockElem.getAttribute).toHaveBeenNthCalledWith(3, 'stroke-width');
-    expect(mockGet).toHaveBeenCalledTimes(1);
-    expect(mockGet).toHaveBeenNthCalledWith(1, 'default-units');
     act(() => {
       fireEvent.click(getByText('Infill'));
     });

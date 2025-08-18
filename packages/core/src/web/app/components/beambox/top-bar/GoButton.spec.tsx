@@ -21,12 +21,6 @@ jest.mock('@core/helpers/api/alert-config', () => ({
   write: (...args) => write(...args),
 }));
 
-const beamboxPreferenceRead = jest.fn();
-
-jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
-  read: (...args) => beamboxPreferenceRead(...args),
-}));
-
 const showConfirmPromptDialog = jest.fn();
 
 jest.mock('@core/app/actions/dialog-caller', () => ({
@@ -37,12 +31,6 @@ const uploadFcode = jest.fn();
 
 jest.mock('@core/app/actions/beambox/export-funcs', () => ({
   uploadFcode: (...args) => uploadFcode(...args),
-}));
-
-const get = jest.fn();
-
-jest.mock('@core/implementations/storage', () => ({
-  get: (...args) => get(...args),
 }));
 
 const switchImageSymbolForAll = jest.fn();

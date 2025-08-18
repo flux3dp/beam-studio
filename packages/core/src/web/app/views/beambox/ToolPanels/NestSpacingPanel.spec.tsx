@@ -2,23 +2,7 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-jest.mock('@core/helpers/i18n', () => ({
-  lang: {
-    beambox: {
-      tool_panels: {
-        _nest: {
-          spacing: 'Spacing',
-        },
-      },
-    },
-  },
-}));
-
-const get = jest.fn();
-
-jest.mock('@core/implementations/storage', () => ({
-  get,
-}));
+import { setStorage } from '@mocks/@core/app/stores/storageStore';
 
 jest.mock('@core/app/widgets/Unit-Input-v2', () => ({ defaultValue, getValue, min, unit }: any) => (
   <div>
@@ -37,7 +21,7 @@ describe('should render correctly', () => {
   });
 
   test('default unit is inches', () => {
-    get.mockReturnValue('inches');
+    setStorage('default-units', 'inches');
 
     const onValueChange = jest.fn();
     const { container } = render(<NestSpacingPanel onValueChange={onValueChange} spacing={100} />);
@@ -51,7 +35,7 @@ describe('should render correctly', () => {
   });
 
   test('default unit is mm', () => {
-    get.mockReturnValue(undefined);
+    setStorage('default-units', 'mm');
 
     const onValueChange = jest.fn();
     const { container } = render(<NestSpacingPanel onValueChange={onValueChange} spacing={100} />);

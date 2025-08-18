@@ -3,9 +3,9 @@ import React, { useEffect, useMemo, useState } from 'react';
 import classNames from 'classnames';
 
 import { getWorkarea } from '@core/app/constants/workarea-constants';
-import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
+import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import useI18n from '@core/helpers/useI18n';
 
 interface Props {
@@ -19,7 +19,7 @@ const Interval = ({ dx: propsDx, dy: propsDy, onValueChange }: Props) => {
   const [dx, setDx] = useState(propsDx);
   const [dy, setDy] = useState(propsDy);
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const workarea = useDocumentStore((state) => state.workarea);
+  const workarea = useWorkarea();
   const { displayHeight, height, width } = useMemo(() => getWorkarea(workarea), [workarea]);
   const isInch = useStorageStore((state) => state['default-units'] === 'inches');
 

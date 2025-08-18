@@ -4,6 +4,14 @@ import { fireEvent, render } from '@testing-library/react';
 
 import i18n from '@core/helpers/i18n';
 
+const get = jest.fn();
+const set = jest.fn();
+
+jest.mock('@core/implementations/storage', () => ({
+  get: (...args) => get(...args),
+  set: (...args) => set(...args),
+}));
+
 import FluxIdLogin from './FluxIdLogin';
 
 const popUpError = jest.fn();
@@ -24,14 +32,6 @@ const open = jest.fn();
 
 jest.mock('@core/implementations/browser', () => ({
   open: (...args) => open(...args),
-}));
-
-const get = jest.fn();
-const set = jest.fn();
-
-jest.mock('@core/implementations/storage', () => ({
-  get: (...args) => get(...args),
-  set: (...args) => set(...args),
 }));
 
 const externalLinkFBSignIn = jest.fn();

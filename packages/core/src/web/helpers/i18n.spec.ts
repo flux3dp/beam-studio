@@ -1,38 +1,55 @@
-// Define mock functions at the top
-const mockGet = jest.fn();
-const mockSet = jest.fn();
+const mockGetStorage = jest.fn();
+const mockSetStorage = jest.fn();
+const mockSubscribe = jest.fn();
 
-// Use jest.doMock to mock the modules after defining the mock functions
-jest.mock('@core/implementations/storage', () => ({
-  get: (...args) => mockGet(...args),
-  set: (...args) => mockSet(...args),
+jest.mock('@core/app/stores/storageStore', () => ({
+  getStorage: (...args) => mockGetStorage(...args),
+  setStorage: (...args) => mockSetStorage(...args),
+  useStorageStore: {
+    subscribe: (...args) => mockSubscribe(...args),
+  },
 }));
 
-// Import the module to be tested
-import i18n from './i18n';
+let i18n;
 
-test('test i18n', () => {
-  // Mock the return value of `mockGet`
-  mockGet.mockReturnValue(undefined);
+const resetI18n = async () => {
+  jest.resetModules();
+  jest.clearAllMocks();
+  // @ts-ignore
+  i18n = (await import('./i18n')).default;
+};
 
-  // Test the default language
-  expect(i18n.getActiveLang()).toBe('en');
-  expect(mockGet).toHaveBeenCalledTimes(2);
-  expect(mockGet).toHaveBeenNthCalledWith(2, 'active-lang');
+describe('test i18n', () => {
+  beforeEach(async () => {
+    await resetI18n();
+  });
 
-  // Mock the return value of `mockGet` to simulate a different language
-  mockGet.mockReturnValue('zh-tw');
+  test('setActiveLang', () => {
+    // Test the default language
+    expect(i18n.getActiveLang()).toBe('en');
+    expect(mockGetStorage).toHaveBeenCalledTimes(1);
+    expect(mockGetStorage).toHaveBeenNthCalledWith(1, 'active-lang');
 
-  // Test the updated language
-  expect(i18n.getActiveLang()).toBe('zh-tw');
+    // Test setting a new language
+    i18n.setActiveLang('zh-tw');
 
-  // Test setting a new language
-  i18n.setActiveLang('en');
+    // Verify that `mockSet` was called correctly
+    expect(mockSetStorage).toHaveBeenCalledTimes(1);
+    expect(mockSetStorage).toHaveBeenNthCalledWith(1, 'active-lang', 'zh-tw');
 
-  // Verify that `mockSet` was called correctly
-  expect(mockSet).toHaveBeenCalledTimes(1);
-  expect(mockSet).toHaveBeenNthCalledWith(1, 'active-lang', 'en');
+    console.log(i18n);
 
-  // Test a translation
-  expect(i18n.lang.topbar.untitled).toBe('Untitled');
+    // Test a translation
+    expect(i18n.lang.topbar.untitled).toBe('未命名');
+  });
+
+  test('subscribe', () => {
+    i18n.setActiveLang('zh-tw');
+    expect(i18n.lang.topbar.untitled).toBe('未命名');
+
+    const [selector, callback] = mockSubscribe.mock.calls[0];
+
+    callback(selector({ 'active-lang': 'en' }));
+    expect(i18n.lang.topbar.untitled).toBe('Untitled');
+  });
 });

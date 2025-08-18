@@ -2,14 +2,11 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
+import { setStorage } from '@mocks/@core/app/stores/storageStore';
+
 const mockSetCornerType = jest.fn();
 const mockSetMode = jest.fn();
 const mockSetDistance = jest.fn();
-const mockGet = jest.fn();
-
-jest.mock('@core/implementations/storage', () => ({
-  get: mockGet,
-}));
 
 jest.mock('@core/app/widgets/Unit-Input-v2', () => ({ defaultValue, getValue, min, unit }: any) => (
   <div>
@@ -25,7 +22,6 @@ import OffsetPanel from './index';
 describe('OffsetPanel', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGet.mockReturnValue(undefined); // Default to mm
   });
 
   it('default unit is mm', () => {
@@ -66,7 +62,7 @@ describe('OffsetPanel', () => {
   });
 
   it('default unit is inches', () => {
-    mockGet.mockReturnValue('inches');
+    setStorage('default-units', 'inches');
 
     const { container } = render(
       <OffsetPanel
