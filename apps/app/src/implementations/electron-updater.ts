@@ -3,7 +3,7 @@ import { sprintf } from 'sprintf-js';
 import Alert from '@core/app/actions/alert-caller';
 import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
-import FileExportHelper from '@core/helpers/file-export-helper';
+import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import i18n from '@core/helpers/i18n';
 import communicator from '@core/implementations/communicator';
 import storage from '@core/implementations/storage';
@@ -78,7 +78,7 @@ const checkForUpdate = (isAutoCheck: boolean) => {
                 caption: LANG.check_update,
                 message: downloadedMsg,
                 onYes: async () => {
-                  const unsavedDialogRes = await FileExportHelper.toggleUnsavedChangedDialog();
+                  const unsavedDialogRes = await toggleUnsavedChangedDialog();
 
                   if (unsavedDialogRes) {
                     communicator.send('QUIT_AND_INSTALL');
@@ -149,7 +149,7 @@ const switchVersion = (): void => {
                 caption: LANG.switch_version,
                 message: downloadedMsg,
                 onYes: async () => {
-                  const unsavedDialogRes = await FileExportHelper.toggleUnsavedChangedDialog();
+                  const unsavedDialogRes = await toggleUnsavedChangedDialog();
 
                   if (unsavedDialogRes) {
                     communicator.send('QUIT_AND_INSTALL');

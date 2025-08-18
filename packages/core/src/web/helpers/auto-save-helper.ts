@@ -1,18 +1,18 @@
-import { generateBeamBuffer } from '@core/helpers/file-export-helper';
+import { generateBeamBuffer } from '@core/helpers/file/export';
 import isWeb from '@core/helpers/is-web';
 import fs from '@core/implementations/fileSystem';
 import storage from '@core/implementations/storage';
-import type { IConfig } from '@core/interfaces/IAutosave';
+import type { AutoSaveConfig } from '@core/interfaces/AutoSaveConfig';
 
-let autoSaveInterval = null;
+let autoSaveInterval: NodeJS.Timeout | undefined;
 
 const AUTO_SAVE_CONFIG_STORAGE_KEY = 'auto-save-config';
 const AUTO_SAVE_OLD_PREFIX = 'beam-studio auto-save-';
 const AUTO_SAVE_NEW_PREFIX = 'beam-studio autosave-';
 
-const getConfig = (): IConfig => storage.get(AUTO_SAVE_CONFIG_STORAGE_KEY) as IConfig;
+const getConfig = (): AutoSaveConfig => storage.get(AUTO_SAVE_CONFIG_STORAGE_KEY) as AutoSaveConfig;
 
-const setConfig = (config: IConfig): void => {
+const setConfig = (config: AutoSaveConfig): void => {
   storage.set(AUTO_SAVE_CONFIG_STORAGE_KEY, config);
 };
 
@@ -38,7 +38,7 @@ const useDefaultConfig = async (): Promise<void> => {
     return null;
   };
 
-  const directory = getDefaultPath();
+  const directory = getDefaultPath()!;
   const defaultConfig = {
     directory,
     enabled: true,

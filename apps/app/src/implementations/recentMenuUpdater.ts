@@ -3,7 +3,7 @@ import AlertConstants from '@core/app/constants/alert-constants';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import importBvg from '@core/app/svgedit/operations/import/importBvg';
 import BeamFileHelper from '@core/helpers/beam-file-helper';
-import FileExportHelper from '@core/helpers/file-export-helper';
+import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import { setFileInAnotherTab } from '@core/helpers/fileImportHelper';
 import { isAtPage } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
@@ -32,7 +32,7 @@ const openRecentFiles = async (filePath: string): Promise<void> => {
     return;
   }
 
-  const res = await FileExportHelper.toggleUnsavedChangedDialog();
+  const res = await toggleUnsavedChangedDialog();
 
   if (res) {
     if (fs.exists(filePath)) {

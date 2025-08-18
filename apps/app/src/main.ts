@@ -6,7 +6,7 @@ import '@core/helpers/global-helper';
 
 import globalEvents from '@core/app/actions/global';
 import router from '@core/app/router';
-import fileExportHelper from '@core/helpers/file-export-helper';
+import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import { setFileInAnotherTab } from '@core/helpers/fileImportHelper';
 import communicator from '@core/implementations/communicator';
 
@@ -94,7 +94,7 @@ export default function main(): void {
   });
 
   communicator.on('WINDOW_CLOSE', async () => {
-    const res = await fileExportHelper.toggleUnsavedChangedDialog();
+    const res = await toggleUnsavedChangedDialog();
 
     if (res) {
       communicator.send('CLOSE_REPLY', true);

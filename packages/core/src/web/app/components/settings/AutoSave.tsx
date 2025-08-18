@@ -6,16 +6,16 @@ import SettingUnitInput from '@core/app/components/settings/components/SettingUn
 import PathInput, { InputType } from '@core/app/widgets/PathInput';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
-import type { IConfig } from '@core/interfaces/IAutosave';
+import type { AutoSaveConfig } from '@core/interfaces/AutoSaveConfig';
 
 import SettingFormItem from './components/SettingFormItem';
 import SettingSelect from './components/SettingSelect';
 import styles from './Settings.module.scss';
 
 interface Props {
-  editingAutosaveConfig: IConfig;
+  editingAutosaveConfig: AutoSaveConfig;
   options: DefaultOptionType[];
-  setEditingAutosaveConfig: (config: IConfig) => void;
+  setEditingAutosaveConfig: (config: AutoSaveConfig) => void;
   setWarnings: (warnings: Record<string, string>) => void;
   warnings: Record<string, string>;
 }
