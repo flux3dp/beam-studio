@@ -4,31 +4,6 @@ import { fireEvent, render } from '@testing-library/react';
 
 import FirmwareUpdate from './FirmwareUpdate';
 
-jest.mock('@core/helpers/i18n', () => ({
-  lang: {
-    update: {
-      download: 'ONLINE UPDATE',
-      firmware: {
-        caption: 'A Firmware Update to the machine is available',
-        message_pattern_1: '"%s" is now ready for firmware update.',
-        message_pattern_2: '%s Firmware v%s is now available - You have v%s.',
-      },
-      later: 'LATER',
-      release_note: 'Release Note:',
-      skip: 'Skip This Version',
-      upload: 'UPLOAD',
-    },
-  },
-}));
-
-const mockGet = jest.fn();
-const mockSet = jest.fn();
-
-jest.mock('@core/implementations/storage', () => ({
-  get: (...args) => mockGet(...args),
-  set: (...args) => mockSet(...args),
-}));
-
 const mockOnDownload = jest.fn();
 const mockOnClose = jest.fn();
 const mockOnInstall = jest.fn();
@@ -50,18 +25,18 @@ describe('test update dialog', () => {
 
     expect(baseElement).toMatchSnapshot();
 
-    expect(mockOnClose).not.toBeCalled();
-    expect(mockOnInstall).not.toBeCalled();
+    expect(mockOnClose).not.toHaveBeenCalled();
+    expect(mockOnInstall).not.toHaveBeenCalled();
     fireEvent.click(getByText('UPLOAD'));
-    expect(mockOnInstall).toBeCalledTimes(1);
-    expect(mockOnClose).toBeCalledTimes(1);
+    expect(mockOnInstall).toHaveBeenCalledTimes(1);
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
 
-    expect(mockOnDownload).not.toBeCalled();
+    expect(mockOnDownload).not.toHaveBeenCalled();
     fireEvent.click(getByText('ONLINE UPDATE'));
-    expect(mockOnDownload).toBeCalledTimes(1);
-    expect(mockOnClose).toBeCalledTimes(2);
+    expect(mockOnDownload).toHaveBeenCalledTimes(1);
+    expect(mockOnClose).toHaveBeenCalledTimes(2);
 
     fireEvent.click(getByText('LATER'));
-    expect(mockOnClose).toBeCalledTimes(3);
+    expect(mockOnClose).toHaveBeenCalledTimes(3);
   });
 });
