@@ -64,7 +64,7 @@ const MonitorTask = ({ device }: Props): React.JSX.Element => {
     if (isFramingTask) {
       jobTimeStr = `${FormatDuration(Math.max(totalTaskTime, 1))}`;
     } else if (isWorking && report?.prog && time) {
-      jobTimeStr = `${FormatDuration(Math.max(totalTaskTime * (1 - report.prog), 1, byReport ? time : 1))} ${tMonitor.left}`;
+      jobTimeStr = `${FormatDuration(Math.max(totalTaskTime * (1 - report.prog), 1, byReport ? 1 : time))} ${tMonitor.left}`;
     } else if (time) {
       jobTimeStr = `${FormatDuration(Math.max(time, 1))} ${isWorking ? tMonitor.left : ''}`;
     }
